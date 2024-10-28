@@ -1,16 +1,16 @@
 package one.modality.event.frontoffice.activities.audiorecordings;
 
+import dev.webfx.extras.panes.CollapsePane;
 import dev.webfx.extras.panes.ColumnsPane;
-import dev.webfx.extras.panes.MonoPane;
 import dev.webfx.platform.util.collection.Collections;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Cursor;
+import javafx.scene.Node;
 import javafx.scene.control.Label;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
-import javafx.scene.shape.SVGPath;
-import one.modality.base.client.icons.SvgIcons;
+import javafx.scene.paint.Color;
 import one.modality.base.shared.entities.Event;
 import one.modality.event.frontoffice.medias.EventThumbnailView;
 
@@ -43,37 +43,35 @@ final class EventsOfYearView {
 
     private void buildUi() {
         ColumnsPane columnsPane = new ColumnsPane();
-        columnsPane.setMaxWidth(BOX_WIDTH * 2 + 50);
+        //columnsPane.setMaxWidth(BOX_WIDTH * 2 + 50);
         columnsPane.setMaxColumnCount(2);
         columnsPane.setHgap(20);
         columnsPane.setVgap(50);
         columnsPane.setAlignment(Pos.TOP_LEFT);
 
         columnsPane.getChildren().setAll(Collections.map(events, event -> {
-            VBox currentEventVBox = new EventThumbnailView(event).getView();
-            currentEventVBox.setMaxWidth(BOX_WIDTH);
-            currentEventVBox.setMinWidth(BOX_WIDTH);
-            currentEventVBox.setMinHeight(100);
-            currentEventVBox.setCursor(Cursor.HAND);
-            currentEventVBox.setOnMouseClicked(e -> onEventClicked.accept(event));
-            return currentEventVBox;
+            VBox eventView = new EventThumbnailView(event).getView();
+            eventView.setMaxWidth(BOX_WIDTH);
+            //eventView.setMinWidth(BOX_WIDTH);
+            eventView.setMinHeight(100);
+            eventView.setCursor(Cursor.HAND);
+            eventView.setOnMouseClicked(e -> onEventClicked.accept(event));
+            return eventView;
         }));
 
         Label currentYearLabel = new Label(String.valueOf(year));
+        currentYearLabel.setMinWidth(50);
 
-        SVGPath topArrow = SvgIcons.createTopPointingChevron();
-        SVGPath bottomArrow = SvgIcons.createBottomPointingChevron();
-        MonoPane arrowButtonMonoPane = SvgIcons.createToggleButtonPane(topArrow, bottomArrow, true, isPanelVisible -> {
-            columnsPane.setVisible(isPanelVisible);
-            columnsPane.setManaged(isPanelVisible);
-        });
+        CollapsePane collapsePane = new CollapsePane(columnsPane);
+        Node chevronNode = CollapsePane.armChevron(CollapsePane.createPlainChevron(Color.BLACK), collapsePane);
 
-        HBox yearArrowLine = new HBox(40, currentYearLabel, arrowButtonMonoPane);
-        yearArrowLine.setPadding(new Insets(100, 0, 30, 0));
+        HBox yearArrowLine = new HBox(10, currentYearLabel, chevronNode);
+        yearArrowLine.setPadding(new Insets(30, 0, 0, 0));
+        collapsePane.setPadding(new Insets(30, 0, 70, 0));
 
         container.getChildren().addAll(
             yearArrowLine,
-            columnsPane
+            collapsePane
         );
     }
 }

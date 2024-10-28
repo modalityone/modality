@@ -10,13 +10,11 @@ import dev.webfx.stack.orm.entity.EntityList;
 import dev.webfx.stack.orm.entity.EntityStoreQuery;
 import javafx.application.Platform;
 import javafx.geometry.Insets;
-import javafx.geometry.Orientation;
 import javafx.geometry.Pos;
 import javafx.scene.Node;
 import javafx.scene.control.Label;
-import javafx.scene.control.Separator;
-import javafx.scene.layout.HBox;
-import javafx.scene.layout.VBox;
+import javafx.scene.layout.*;
+import javafx.scene.paint.Color;
 import javafx.scene.web.WebEngine;
 import javafx.scene.web.WebView;
 import one.modality.base.client.icons.SvgIcons;
@@ -97,14 +95,13 @@ final class EventVideosWallView {
                         attendances.stream().collect(Collectors.groupingBy(a -> a.getScheduledItem().getDate()));
                     new TreeMap<>(perDayGroups)
                         .forEach((day, dayAttendances) -> {
-                            Separator separator = new Separator(Orientation.HORIZONTAL);
-                            separator.setMaxWidth(800);
-                            container.getChildren().addAll(
-                                new VideosOfDayView(day, dayAttendances, medias, container, nodeShower).getView(),
-                                separator
+                            Region view = new VideosOfDayView(day, dayAttendances, medias, container, nodeShower).getView();
+                            view.setBorder(new Border(new BorderStroke(Color.LIGHTGRAY, BorderStrokeStyle.SOLID, null, new BorderWidths(0, 0, 1, 0))));
+                            container.getChildren().add(
+                                view
                             );
                         });
-                    container.getChildren().remove(container.getChildren().size() - 1);
+                    //container.getChildren().remove(container.getChildren().size() - 1);
                 }
             }));
     }
