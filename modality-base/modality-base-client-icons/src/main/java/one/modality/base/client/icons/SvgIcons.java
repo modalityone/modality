@@ -57,8 +57,12 @@ public final class SvgIcons {
         return setSVGPathStroke(svgPath, stroke, strokeWidth);
     }
 
+    public static MonoPane createButtonPane(Node buttonContent) {
+        return new MonoPane(buttonContent);
+    }
+
     public static MonoPane createButtonPane(Node buttonContent, Runnable onClicked) {
-        return armButton(new MonoPane(buttonContent), onClicked);
+        return armButton(createButtonPane(buttonContent), onClicked);
     }
 
     public static <N extends Node> N armButton(N buttonNode, Runnable onClicked) {

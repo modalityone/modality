@@ -1,1 +1,3 @@
 one.modality.event.frontoffice.activities.videos.VideosRouting$VideosUiRoute
+one.modality.event.frontoffice.activities.videos.EventVideosWallRouting$EventVideosWallUiRoute
+one.modality.event.frontoffice.activities.videos.SessionVideoPlayerRouting$VideOfSessionUiRoute
