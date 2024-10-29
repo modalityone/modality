@@ -42,11 +42,9 @@ final class EventsOfYearView {
     }
 
     private void buildUi() {
-        ColumnsPane columnsPane = new ColumnsPane();
+        ColumnsPane columnsPane = new ColumnsPane(20, 50);
         //columnsPane.setMaxWidth(BOX_WIDTH * 2 + 50);
         columnsPane.setMaxColumnCount(2);
-        columnsPane.setHgap(20);
-        columnsPane.setVgap(50);
         columnsPane.setAlignment(Pos.TOP_LEFT);
 
         columnsPane.getChildren().setAll(Collections.map(events, event -> {
