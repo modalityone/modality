@@ -7,7 +7,7 @@ import javafx.scene.control.Button;
 import javafx.scene.control.CheckBox;
 import javafx.scene.layout.VBox;
 import javafx.scene.text.Text;
-import one.modality.base.frontoffice.utility.GeneralUtility;
+import one.modality.base.frontoffice.utility.tyler.GeneralUtility;
 
 final class AccountSettingsActivity extends ViewDomainActivityBase {
 

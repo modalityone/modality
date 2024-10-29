@@ -1,4 +1,4 @@
-package one.modality.base.frontoffice.utility;
+package one.modality.base.frontoffice.utility.tyler;
 
 import dev.webfx.kit.util.properties.FXProperties;
 import dev.webfx.stack.i18n.I18n;
@@ -7,7 +7,7 @@ import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
 import javafx.scene.text.FontWeight;
 import javafx.scene.text.Text;
-import one.modality.base.frontoffice.fx.FXApp;
+import one.modality.base.frontoffice.utility.tyler.fx.FXApp;
 
 import java.util.function.Function;
 

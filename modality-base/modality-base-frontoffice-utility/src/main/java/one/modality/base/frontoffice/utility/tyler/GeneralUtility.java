@@ -1,4 +1,4 @@
-package one.modality.base.frontoffice.utility;
+package one.modality.base.frontoffice.utility.tyler;
 
 import dev.webfx.kit.util.properties.FXProperties;
 import dev.webfx.platform.util.Arrays;
@@ -22,7 +22,7 @@ import javafx.scene.text.Font;
 import javafx.scene.text.FontWeight;
 import javafx.scene.text.Text;
 import javafx.util.Duration;
-import one.modality.base.frontoffice.fx.FXApp;
+import one.modality.base.frontoffice.utility.tyler.fx.FXApp;
 
 import java.util.function.Consumer;
 
@@ -75,10 +75,6 @@ public class GeneralUtility {
         b.setStroke(Color.BLACK);
         b.setStrokeWidth(0.5);
         return b;
-    }
-
-    public static void onPageWidthChanged(double pageWidth) {
-        FXApp.fontRatio.set(computeFontFactor(pageWidth));
     }
 
     public static double computeFontFactor(double pageWidth) {

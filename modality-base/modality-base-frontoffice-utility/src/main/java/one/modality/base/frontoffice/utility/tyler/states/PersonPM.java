@@ -1,4 +1,4 @@
-package one.modality.base.frontoffice.states;
+package one.modality.base.frontoffice.utility.tyler.states;
 
 import javafx.beans.property.*;
 import one.modality.base.shared.entities.Country;

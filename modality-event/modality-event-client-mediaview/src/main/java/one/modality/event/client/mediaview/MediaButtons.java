@@ -16,8 +16,8 @@ import javafx.scene.shape.SVGPath;
 import javafx.scene.shape.StrokeLineCap;
 import javafx.scene.shape.StrokeLineJoin;
 import javafx.util.Duration;
-import one.modality.base.frontoffice.utility.StyleUtility;
-import one.modality.base.frontoffice.utility.TextUtility;
+import one.modality.base.frontoffice.utility.tyler.StyleUtility;
+import one.modality.base.frontoffice.utility.tyler.TextUtility;
 
 /**
  * @author Bruno Salmon

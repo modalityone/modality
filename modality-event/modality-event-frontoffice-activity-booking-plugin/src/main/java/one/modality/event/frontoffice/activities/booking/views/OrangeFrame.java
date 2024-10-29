@@ -12,9 +12,9 @@ import javafx.scene.paint.Color;
 import javafx.scene.text.FontWeight;
 import javafx.scene.text.Text;
 import javafx.stage.Screen;
-import one.modality.base.frontoffice.utility.GeneralUtility;
-import one.modality.base.frontoffice.utility.StyleUtility;
-import one.modality.base.frontoffice.utility.TextUtility;
+import one.modality.base.frontoffice.utility.tyler.GeneralUtility;
+import one.modality.base.frontoffice.utility.tyler.StyleUtility;
+import one.modality.base.frontoffice.utility.tyler.TextUtility;
 
 /**
  * @author Bruno Salmon

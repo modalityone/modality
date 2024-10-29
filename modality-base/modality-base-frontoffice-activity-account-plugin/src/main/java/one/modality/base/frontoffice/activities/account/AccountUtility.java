@@ -15,11 +15,11 @@ import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.scene.shape.Circle;
 import javafx.scene.text.Text;
-import one.modality.base.frontoffice.fx.FXAccount;
-import one.modality.base.frontoffice.states.PersonPM;
-import one.modality.base.frontoffice.utility.GeneralUtility;
-import one.modality.base.frontoffice.utility.StyleUtility;
-import one.modality.base.frontoffice.utility.TextUtility;
+import one.modality.base.frontoffice.utility.tyler.fx.FXAccount;
+import one.modality.base.frontoffice.utility.tyler.states.PersonPM;
+import one.modality.base.frontoffice.utility.tyler.GeneralUtility;
+import one.modality.base.frontoffice.utility.tyler.StyleUtility;
+import one.modality.base.frontoffice.utility.tyler.TextUtility;
 import one.modality.base.shared.entities.Country;
 
 public final class AccountUtility {

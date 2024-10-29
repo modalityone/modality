@@ -11,8 +11,8 @@ import javafx.scene.layout.BackgroundFill;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 import one.modality.base.frontoffice.activities.account.AccountUtility;
-import one.modality.base.frontoffice.fx.FXAccount;
-import one.modality.base.frontoffice.utility.GeneralUtility;
+import one.modality.base.frontoffice.utility.tyler.fx.FXAccount;
+import one.modality.base.frontoffice.utility.tyler.GeneralUtility;
 
 final class AccountFriendsAndFamilyEditActivity extends ViewDomainActivityBase implements ButtonFactoryMixin  {
 

@@ -1,4 +1,4 @@
-package one.modality.base.frontoffice.browser;
+package one.modality.base.frontoffice.utility.browser;
 
 import dev.webfx.extras.util.scene.SceneUtil;
 import dev.webfx.platform.browser.Browser;
@@ -22,8 +22,8 @@ import javafx.scene.paint.Color;
 import javafx.scene.web.WebView;
 import one.modality.base.client.mainframe.fx.FXMainFrameDialogArea;
 import one.modality.base.frontoffice.mainframe.fx.FXBackgroundNode;
-import one.modality.base.frontoffice.utility.GeneralUtility;
-import one.modality.base.frontoffice.utility.StyleUtility;
+import one.modality.base.frontoffice.utility.tyler.GeneralUtility;
+import one.modality.base.frontoffice.utility.tyler.StyleUtility;
 
 /**
  * @author Bruno Salmon

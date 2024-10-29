@@ -21,15 +21,13 @@ import javafx.scene.control.ContentDisplay;
 import javafx.scene.control.Hyperlink;
 import javafx.scene.control.Label;
 import javafx.scene.control.ScrollPane;
-import javafx.scene.layout.Background;
-import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.VBox;
-import javafx.scene.paint.Color;
 import javafx.scene.text.FontWeight;
 import javafx.scene.text.TextAlignment;
 import javafx.stage.Screen;
-import one.modality.base.frontoffice.utility.GeneralUtility;
-import one.modality.base.frontoffice.utility.StyleUtility;
+import one.modality.base.frontoffice.utility.activity.FrontOfficeActivityUtil;
+import one.modality.base.frontoffice.utility.tyler.GeneralUtility;
+import one.modality.base.frontoffice.utility.tyler.StyleUtility;
 import one.modality.base.shared.entities.Document;
 import one.modality.crm.shared.services.authn.fx.FXModalityUserPrincipal;
 
@@ -44,8 +42,6 @@ import static dev.webfx.stack.orm.dql.DqlStatement.where;
  * @author Bruno Salmon
  */
 final class AccountActivity extends ViewDomainActivityBase implements OperationActionFactoryMixin {
-
-    private static final double MAX_PAGE_WIDTH = 1200; // Similar value to website
 
     private final ObservableList<Document> upcomingBookingsFeed = FXCollections.observableArrayList();
     private final ObservableList<Document> pastBookingsFeed = FXCollections.observableArrayList();
@@ -87,7 +83,7 @@ final class AccountActivity extends ViewDomainActivityBase implements OperationA
 
         Hyperlink logoutLink = ActionBinder.bindButtonToAction(new Hyperlink(), newOperationAction(LogoutRequest::new));
         VBox.setMargin(logoutLink, new Insets(50));
-        VBox vBox = new VBox(
+        VBox pageContainer = new VBox(
             upcomingBookingsLabel,
             upcomingBookingsContainer,
             pastBookingsLabel,
@@ -95,34 +91,32 @@ final class AccountActivity extends ViewDomainActivityBase implements OperationA
             //GeneralUtility.createOrangeLineSeparator(),
             logoutLink
         );
-        vBox.setAlignment(Pos.TOP_CENTER);
-        vBox.setMaxWidth(MAX_PAGE_WIDTH);
-        vBox.setBackground(Background.fill(Color.WHITE));
+        pageContainer.setAlignment(Pos.TOP_CENTER);
 
         FXProperties.runOnPropertiesChange(() -> {
-            double width = vBox.getWidth();
+            double width = pageContainer.getWidth();
             double fontFactor = GeneralUtility.computeFontFactor(width);
             GeneralUtility.setLabeledFont(upcomingBookingsLabel, StyleUtility.TEXT_FAMILY, FontWeight.BOLD, fontFactor * 16);
             GeneralUtility.setLabeledFont(pastBookingsLabel, StyleUtility.TEXT_FAMILY, FontWeight.BOLD, fontFactor * 16);
             GeneralUtility.setLabeledFont(logoutLink, StyleUtility.TEXT_FAMILY, FontWeight.BOLD, fontFactor * 16);
-        }, vBox.widthProperty());
+        }, pageContainer.widthProperty());
 
-        ScrollPane scrollPane = ControlUtil.createVerticalScrollPane(new BorderPane(vBox));
+        ScrollPane scrollPane = FrontOfficeActivityUtil.createActivityPageScrollPane(pageContainer, false);
 
         // Lazy loading when the user scrolls down
         double lazyLoadingBottomSpace = Screen.getPrimary().getVisualBounds().getHeight();
-        vBox.setPadding(new Insets(0, 0, lazyLoadingBottomSpace, 0));
+        pageContainer.setPadding(new Insets(0, 0, lazyLoadingBottomSpace, 0));
         FXProperties.runOnPropertiesChange(() -> {
-            if (ControlUtil.computeScrollPaneVBottomOffset(scrollPane) > vBox.getHeight() - lazyLoadingBottomSpace) {
+            if (ControlUtil.computeScrollPaneVBottomOffset(scrollPane) > pageContainer.getHeight() - lazyLoadingBottomSpace) {
                 Document lastBooking = Collections.last(pastBookingsFeed);
                 if (lastBooking == null)
-                    vBox.setPadding(Insets.EMPTY);
+                    pageContainer.setPadding(Insets.EMPTY);
                 else {
                     LocalDate startDate = lastBooking.getEvent().getStartDate();
                     FXProperties.setIfNotEquals(loadPastEventsBeforeDateProperty, startDate);
                 }
             }
-        }, scrollPane.vvalueProperty(), vBox.heightProperty());
+        }, scrollPane.vvalueProperty(), pageContainer.heightProperty());
 
         return scrollPane;
     }

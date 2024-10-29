@@ -1,4 +1,4 @@
-package one.modality.base.frontoffice.utility;
+package one.modality.base.frontoffice.utility.tyler;
 
 import javafx.scene.paint.Color;
 

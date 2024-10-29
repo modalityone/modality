@@ -1,4 +1,4 @@
-package one.modality.base.frontoffice.fx;
+package one.modality.base.frontoffice.utility.tyler.fx;
 
 import dev.webfx.stack.orm.entity.*;
 import javafx.beans.property.ObjectProperty;
@@ -8,7 +8,7 @@ import javafx.beans.property.StringProperty;
 import javafx.collections.FXCollections;
 import javafx.collections.ListChangeListener;
 import javafx.collections.ObservableList;
-import one.modality.base.frontoffice.states.PersonPM;
+import one.modality.base.frontoffice.utility.tyler.states.PersonPM;
 import one.modality.base.shared.entities.Person;
 
 import java.util.Objects;

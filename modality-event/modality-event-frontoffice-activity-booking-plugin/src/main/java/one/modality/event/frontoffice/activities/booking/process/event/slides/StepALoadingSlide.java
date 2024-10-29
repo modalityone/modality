@@ -8,7 +8,7 @@ import javafx.scene.layout.Priority;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.SVGPath;
-import one.modality.base.frontoffice.utility.StyleUtility;
+import one.modality.base.frontoffice.utility.tyler.StyleUtility;
 import one.modality.event.frontoffice.activities.booking.process.event.BookEventActivity;
 
 final class StepALoadingSlide extends StepSlide {

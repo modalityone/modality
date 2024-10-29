@@ -1,11 +1,11 @@
-package one.modality.base.frontoffice.fx;
+package one.modality.base.frontoffice.utility.tyler.fx;
 
 import javafx.beans.property.DoubleProperty;
 import javafx.beans.property.SimpleDoubleProperty;
 import javafx.collections.FXCollections;
 import javafx.collections.ListChangeListener;
 import javafx.collections.ObservableList;
-import one.modality.base.frontoffice.entities.Center;
+import one.modality.base.frontoffice.utility.tyler.entities.Center;
 import one.modality.base.shared.entities.Organization;
 
 import java.util.Arrays;

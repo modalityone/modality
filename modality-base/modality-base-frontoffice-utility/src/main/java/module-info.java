@@ -13,6 +13,8 @@ module modality.base.frontoffice.utility {
     requires modality.base.client.mainframe.fx;
     requires modality.base.frontoffice.mainframe.fx;
     requires modality.base.shared.entities;
+    requires webfx.extras.panes;
+    requires webfx.extras.util.control;
     requires webfx.extras.util.scene;
     requires webfx.kit.util;
     requires webfx.platform.browser;
@@ -26,10 +28,11 @@ module modality.base.frontoffice.utility {
     requires webfx.stack.ui.dialog;
 
     // Exported packages
-    exports one.modality.base.frontoffice.browser;
-    exports one.modality.base.frontoffice.entities;
-    exports one.modality.base.frontoffice.fx;
-    exports one.modality.base.frontoffice.states;
-    exports one.modality.base.frontoffice.utility;
+    exports one.modality.base.frontoffice.utility.activity;
+    exports one.modality.base.frontoffice.utility.browser;
+    exports one.modality.base.frontoffice.utility.tyler;
+    exports one.modality.base.frontoffice.utility.tyler.entities;
+    exports one.modality.base.frontoffice.utility.tyler.fx;
+    exports one.modality.base.frontoffice.utility.tyler.states;
 
 }

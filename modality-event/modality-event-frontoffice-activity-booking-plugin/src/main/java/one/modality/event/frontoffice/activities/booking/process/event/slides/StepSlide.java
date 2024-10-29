@@ -21,7 +21,7 @@ import javafx.scene.paint.Color;
 import javafx.scene.text.Text;
 import javafx.stage.Screen;
 import one.modality.base.client.mainframe.fx.FXMainFrameDialogArea;
-import one.modality.base.frontoffice.utility.TextUtility;
+import one.modality.base.frontoffice.utility.tyler.TextUtility;
 import one.modality.base.shared.entities.Event;
 import one.modality.base.shared.entities.Person;
 import one.modality.base.shared.entities.markers.HasPersonalDetails;

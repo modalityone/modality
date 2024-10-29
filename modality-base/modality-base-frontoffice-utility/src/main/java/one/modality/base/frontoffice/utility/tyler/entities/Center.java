@@ -1,4 +1,4 @@
-package one.modality.base.frontoffice.entities;
+package one.modality.base.frontoffice.utility.tyler.entities;
 
 import one.modality.base.shared.entities.Organization;
 
