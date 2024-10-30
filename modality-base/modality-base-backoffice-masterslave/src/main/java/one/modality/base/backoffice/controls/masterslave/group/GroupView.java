@@ -239,12 +239,13 @@ public final class GroupView<E extends Entity> implements UiBuilder,
     private boolean isAggregateExpression(Expression<?> expression) {
         if (expression instanceof As)
             expression = ((As<?>) expression).getOperand();
-        if (expression instanceof Call)
+        if (expression instanceof Call) {
             switch (((Call<?>) expression).getFunctionName()) {
                 case "count":
                 case "sum":
                     return true;
             }
+        }
         return false;
     }
 
