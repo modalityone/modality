@@ -262,12 +262,11 @@ public final class BookingDetailsPanel implements
     }
 
     private Node buildCommentView() {
-        ColumnsPane columnsPane = new ColumnsPane(
+        ColumnsPane columnsPane = new ColumnsPane(5, // Space between the 3 comments
                 createComment("Person request", "request"),
                 createComment("Registration comment", "comment"),
                 createComment("Assisted needs", "specialNeeds")
         );
-        columnsPane.setHgap(5); // Space between the 3 comments
         columnsPane.setPadding(new Insets(2, 0, 0, 0)); // Small padding on top
         return columnsPane;
     }

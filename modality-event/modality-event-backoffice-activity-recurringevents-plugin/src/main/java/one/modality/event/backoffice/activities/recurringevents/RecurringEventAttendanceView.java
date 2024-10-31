@@ -57,7 +57,7 @@ final class RecurringEventAttendanceView {
     private final RecurringEventsActivity activity;
     private final BooleanProperty activeProperty = new SimpleBooleanProperty();
     private final VisualGrid eventTable = new VisualGrid();
-    private final ColumnsPane attendancePane = new ColumnsPane();
+    private final ColumnsPane attendancePane = new ColumnsPane(20, 20);
     private ReactiveObjectsMapper<ScheduledItem, Node> scheduledItemObjectMapper;
 
     RecurringEventAttendanceView(RecurringEventsActivity activity) {
@@ -70,8 +70,6 @@ final class RecurringEventAttendanceView {
         TextTheme.createSecondaryTextFacet(currentEventLabel).style();
 
         attendancePane.setMinColumnWidth(300);
-        attendancePane.setHgap(20);
-        attendancePane.setVgap(20);
         attendancePane.setPadding(new Insets(60, 0, 0, 0));
         attendancePane.setId("attendanceFlowPane");
         eventTable.setFullHeight(true);
