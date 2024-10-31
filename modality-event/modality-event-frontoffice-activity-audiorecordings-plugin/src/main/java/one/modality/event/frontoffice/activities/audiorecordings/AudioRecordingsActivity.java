@@ -53,7 +53,12 @@ final class AudioRecordingsActivity extends ViewDomainActivityBase {
     }
 
     @Override
-    public Node buildUi() {
+    public Node buildUi() { // Reminder: called only once (rebuild = bad UX) => UI is reacting to parameter changes
+
+        // *************************************************************************************************************
+        // ********************************* Building the static part of the UI ****************************************
+        // *************************************************************************************************************
+
         Label headerLabel = Bootstrap.h2(Bootstrap.strong(I18nControls.bindI18nProperties(new Label(), AudioRecordingsI18nKeys.AudioRecordingsHeader)));
         Label checkoutLabel = I18nControls.bindI18nProperties(new Label(), AudioRecordingsI18nKeys.CheckoutAudioRecordings);
         VBox perYearEventsWithBookedAudiosVBox = new VBox();
@@ -64,6 +69,11 @@ final class AudioRecordingsActivity extends ViewDomainActivityBase {
             perYearEventsWithBookedAudiosVBox
         );
 
+
+        // *************************************************************************************************************
+        // *********************************** Reacting to parameter changes *******************************************
+        // *************************************************************************************************************
+
         ObservableLists.runNowAndOnListChange(change -> {
             TreeMap<Integer, List<Event>> perYearEvents = new TreeMap<>(Comparator.reverseOrder());
             perYearEvents.putAll(eventsWithBookedAudios.stream().collect(Collectors.groupingBy(e -> e.getStartDate().getYear())));
@@ -72,6 +82,11 @@ final class AudioRecordingsActivity extends ViewDomainActivityBase {
                 new EventsOfYearView(year, events, this::showRecordingsForEvent).getView()
             ));
         }, eventsWithBookedAudios);
+
+
+        // *************************************************************************************************************
+        // ************************************* Building final container **********************************************
+        // *************************************************************************************************************
 
         pageContainer.setPadding(new Insets(PAGE_TOP_BOTTOM_PADDING, 0, PAGE_TOP_BOTTOM_PADDING, 0));
         return FrontOfficeActivityUtil.createActivityPageScrollPane(pageContainer, false);

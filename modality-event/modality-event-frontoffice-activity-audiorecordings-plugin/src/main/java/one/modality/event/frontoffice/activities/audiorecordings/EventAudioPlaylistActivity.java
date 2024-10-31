@@ -31,10 +31,6 @@ import one.modality.base.shared.entities.KnownItemFamily;
 import one.modality.base.shared.entities.Media;
 import one.modality.base.shared.entities.ScheduledItem;
 import one.modality.crm.shared.services.authn.fx.FXUserPersonId;
-import one.modality.event.client.mediaview.MediaInfoView;
-
-import java.util.ArrayList;
-import java.util.List;
 
 /**
  * @author Bruno Salmon
@@ -87,13 +83,13 @@ final class EventAudioPlaylistActivity extends ViewDomainActivityBase {
     }
 
     @Override
-    public Node buildUi() {
-        List<AudioRecordingMediaInfoView> playerList = new ArrayList<>();
+    public Node buildUi() { // Reminder: called only once (rebuild = bad UX) => UI is reacting to parameter changes
 
-        MonoPane backArrow = SvgIcons.createButtonPane(SvgIcons.createBackArrow(), () -> {
-            playerList.forEach(MediaInfoView::stopPlayer);
-            getHistory().goBack();
-        });
+        // *************************************************************************************************************
+        // ********************************* Building the static part of the UI ****************************************
+        // *************************************************************************************************************
+
+        MonoPane backArrow = SvgIcons.createButtonPane(SvgIcons.createBackArrow(), () -> getHistory().goBack());
         backArrow.setPadding(new Insets(20));
 
         Label eventLabel = Bootstrap.h2(Bootstrap.strong(I18nControls.bindI18nProperties(new Label(), new I18nSubKey("expression: i18n(this)", eventProperty), eventProperty)));
@@ -106,26 +102,33 @@ final class EventAudioPlaylistActivity extends ViewDomainActivityBase {
         backArrowTitleLine.setAlignment(Pos.CENTER_LEFT);
 
         VBox audioTracksVBox = new VBox(10);
+
+        VBox pageContainer = new VBox(100,
+            backArrowTitleLine,
+            audioTracksVBox
+        );
+
+
+        // *************************************************************************************************************
+        // *********************************** Reacting to parameter changes *******************************************
+        // *************************************************************************************************************
+
         ObservableLists.runNowAndOnListChange(change -> {
             if (scheduledAudioItems.isEmpty()) {
                 Label noContentLabel = Bootstrap.h3(Bootstrap.textWarning(I18nControls.bindI18nProperties(new Label(), AudioRecordingsI18nKeys.NoAudioRecordingForThisEvent)));
                 noContentLabel.setPadding(new Insets(150, 0, 100, 0));
                 audioTracksVBox.getChildren().setAll(noContentLabel);
             } else {
-                audioTracksVBox.getChildren().setAll(Collections.map(scheduledAudioItems, scheduledRecordingItem -> {
-                    SessionAudioTrackView sessionAudioTrackView = new SessionAudioTrackView(scheduledRecordingItem, publishedMedias);
-                    AudioRecordingMediaInfoView mediaView = sessionAudioTrackView.getMediaView();
-                    if (mediaView != null)
-                        playerList.add(mediaView);
-                    return sessionAudioTrackView.getView();
-                }));
+                audioTracksVBox.getChildren().setAll(Collections.map(scheduledAudioItems, scheduledRecordingItem ->
+                    new SessionAudioTrackView(scheduledRecordingItem, publishedMedias).getView())
+                );
             }
         }, scheduledAudioItems);
 
-        VBox pageContainer = new VBox(100,
-            backArrowTitleLine,
-            audioTracksVBox
-        );
+
+        // *************************************************************************************************************
+        // ************************************* Building final container **********************************************
+        // *************************************************************************************************************
 
         // Setting a max width for big desktop screens
         pageContainer.setPadding(new Insets(PAGE_TOP_BOTTOM_PADDING, 0, PAGE_TOP_BOTTOM_PADDING, 0));
