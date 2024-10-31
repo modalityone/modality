@@ -2,6 +2,7 @@ package one.modality.event.frontoffice.activities.videos;
 
 import dev.webfx.extras.panes.CollapsePane;
 import dev.webfx.extras.panes.MonoPane;
+import dev.webfx.extras.player.video.web.GenericWebVideoPlayer;
 import dev.webfx.extras.styles.bootstrap.Bootstrap;
 import dev.webfx.kit.util.properties.FXProperties;
 import dev.webfx.kit.util.properties.ObservableLists;
@@ -31,13 +32,13 @@ import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 import javafx.scene.text.TextAlignment;
-import javafx.scene.web.WebView;
 import one.modality.base.client.icons.SvgIcons;
 import one.modality.base.frontoffice.utility.activity.FrontOfficeActivityUtil;
 import one.modality.base.shared.entities.Event;
 import one.modality.base.shared.entities.KnownItemFamily;
 import one.modality.base.shared.entities.ScheduledItem;
 import one.modality.crm.shared.services.authn.fx.FXUserPersonId;
+import one.modality.event.client.mediaview.Players;
 
 import java.time.LocalDate;
 import java.util.List;
@@ -58,6 +59,9 @@ final class EventVideosWallActivity extends ViewDomainActivityBase {
     private final ObjectProperty<Event> eventProperty = new SimpleObjectProperty<>();
     private final ObservableList<ScheduledItem> videoScheduledItems = FXCollections.observableArrayList();
 
+    private final VBox livestreamVBox = new VBox(20);
+    private final GenericWebVideoPlayer livestreamVideoPlayer = new GenericWebVideoPlayer();
+
     @Override
     protected void updateModelFromContextParameters() {
         pathEventIdProperty.set(Numbers.toInteger(getParameter(EventVideosWallRouting.PATH_EVENT_ID_PARAMETER_NAME)));
@@ -70,7 +74,10 @@ final class EventVideosWallActivity extends ViewDomainActivityBase {
         FXProperties.runNowAndOnPropertiesChange(() -> {
             Object eventId = pathEventIdProperty.get();
             EntityId userPersonId = FXUserPersonId.getUserPersonId();
-            if (eventId != null && userPersonId != null) {
+            if (eventId == null || userPersonId == null) {
+                videoScheduledItems.clear();
+                eventProperty.set(null);
+            } else {
                 entityStore.executeQueryBatch(
                         new EntityStoreQuery("select name, label.(de,en,es,fr,pt), shortDescription, audioExpirationDate, startDate, endDate, livestreamUrl, vodExpirationDate" +
                                              " from Event" +
@@ -92,7 +99,20 @@ final class EventVideosWallActivity extends ViewDomainActivityBase {
     }
 
     @Override
-    public Node buildUi() {
+    public void onResume() {
+        super.onResume();
+        // Restarting the livestream video player (if relevant) when reentering this activity. This will also ensure that
+        // any possible previous playing player (ex: podcast) will be paused if/when the livestream video player restarts.
+        updateLivestreamVideoPlayerStateAndVisibility();
+    }
+
+    @Override
+    public Node buildUi() { // Reminder: called only once (rebuild = bad UX) => UI is reacting to parameter changes
+
+        // *************************************************************************************************************
+        // ********************************* Building the static part of the UI ****************************************
+        // *************************************************************************************************************
+
         // Back arrow and event title
         MonoPane backArrow = SvgIcons.createButtonPane(SvgIcons.createBackArrow(), getHistory()::goBack);
 
@@ -117,14 +137,17 @@ final class EventVideosWallActivity extends ViewDomainActivityBase {
         Label livestreamLabel = Bootstrap.h4(Bootstrap.strong(I18nControls.bindI18nProperties(new Label(), VideosI18nKeys.LivestreamTitle)));
         livestreamLabel.setWrapText(true);
 
-        WebView webView = new WebView();
-        webView.prefHeightProperty().bind(FXProperties.compute(webView.widthProperty(), w -> w.doubleValue() / 16d * 9d));
+        Node livestreamVideoView = livestreamVideoPlayer.getVideoView();
+        /*if (livestreamVideoView instanceof Region) {
+            Region videoRegion = (Region) livestreamVideoView;
+            videoRegion.prefHeightProperty().bind(FXProperties.compute(videoRegion.widthProperty(), w -> w.doubleValue() / 16d * 9d));
+        }*/
 
         Label pastVideoLabel = Bootstrap.h4(Bootstrap.strong(I18nControls.bindI18nProperties(new Label(), VideosI18nKeys.PastRecordings)));
 
-        VBox livestreamVBox = new VBox(20,
+        livestreamVBox.getChildren().setAll(
             livestreamLabel,
-            webView
+            livestreamVideoView
         );
 
         // Videos box (see below for population)
@@ -136,6 +159,11 @@ final class EventVideosWallActivity extends ViewDomainActivityBase {
             livestreamVBox,
             videosVBox
         );
+
+
+        // *************************************************************************************************************
+        // *********************************** Reacting to parameter changes *******************************************
+        // *************************************************************************************************************
 
         ObservableList<DayVideosWallView> dayVideosWallViews = FXCollections.observableArrayList();
         BooleanProperty collapsedAllProperty = new SimpleBooleanProperty() {
@@ -171,17 +199,35 @@ final class EventVideosWallActivity extends ViewDomainActivityBase {
         }, dayVideosWallViews);
 
         // Hiding / showing the livestream box (in dependence of the event)
-        FXProperties.runOnPropertiesChange(() -> {
-            Event event = eventProperty.get();
-            //If the event has a GlobalLiveStreamLink, and the event is not finished, we display the livestream screen.
-            //TODO see how to we manage the timezone of the user.
-            boolean showLivestream = Strings.isNotEmpty(event.getLivestreamUrl()) && Times.isFuture(event.getEndDate());
-            livestreamVBox.setVisible(showLivestream);
-            livestreamVBox.setManaged(showLivestream);
-            webView.getEngine().load(showLivestream ? event.getLivestreamUrl() : null);
-        }, eventProperty);
+        FXProperties.runOnPropertiesChange(this::updateLivestreamVideoPlayerStateAndVisibility, eventProperty);
+
+        // *************************************************************************************************************
+        // ************************************* Building final container **********************************************
+        // *************************************************************************************************************
 
         pageContainer.setPadding(new Insets(PAGE_TOP_BOTTOM_PADDING, 0, PAGE_TOP_BOTTOM_PADDING, 0));
         return FrontOfficeActivityUtil.createActivityPageScrollPane(pageContainer, true);
     }
+
+    private void updateLivestreamVideoPlayerStateAndVisibility() {
+        Event event = eventProperty.get();
+        //If the event has a GlobalLiveStreamLink, and the event is not finished, we display the livestream screen.
+        //TODO see how to we manage the timezone of the user.
+        String eventLivestreamUrl = event == null || Times.isPast(event.getEndDate()) ? null : event.getLivestreamUrl();
+        boolean showLivestream = Strings.isNotEmpty(eventLivestreamUrl);
+        if (showLivestream) {
+            livestreamVideoPlayer.getPlaylist().setAll(eventLivestreamUrl);
+            livestreamVideoPlayer.play(); // Will display and start the video (silent if before or after session)
+            // The livestream player (Castr) doesn't support notification (unfortunately), so we don't wait onPlay()
+            // to be called, we just inform right now that the livestream player is now playing, which will stop
+            // any possible previous player (such as podcasts) immediately.
+            Players.setPlayingPlayer(livestreamVideoPlayer);
+        } else {
+            // If there is no livestream, we pause the player (will actually stop it because pause is not supported)
+            Players.pausePlayer(livestreamVideoPlayer); // ensures we silent the possible previous playing livestream
+        }
+        livestreamVBox.setVisible(showLivestream);
+        livestreamVBox.setManaged(showLivestream);
+    }
+
 }

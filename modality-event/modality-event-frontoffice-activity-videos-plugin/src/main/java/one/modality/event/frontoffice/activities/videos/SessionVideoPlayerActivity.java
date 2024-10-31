@@ -1,6 +1,7 @@
 package one.modality.event.frontoffice.activities.videos;
 
 import dev.webfx.extras.panes.MonoPane;
+import dev.webfx.extras.player.video.web.GenericWebVideoPlayer;
 import dev.webfx.extras.styles.bootstrap.Bootstrap;
 import dev.webfx.kit.util.properties.FXProperties;
 import dev.webfx.platform.console.Console;
@@ -20,12 +21,12 @@ import javafx.scene.Node;
 import javafx.scene.control.Label;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
-import javafx.scene.web.WebView;
 import one.modality.base.client.icons.SvgIcons;
 import one.modality.base.frontoffice.utility.activity.FrontOfficeActivityUtil;
 import one.modality.base.shared.entities.Media;
 import one.modality.base.shared.entities.ScheduledItem;
 import one.modality.crm.shared.services.authn.fx.FXUserPersonId;
+import one.modality.event.client.mediaview.Players;
 
 /**
  * @author Bruno Salmon
@@ -39,6 +40,9 @@ final class SessionVideoPlayerActivity extends ViewDomainActivityBase {
     private final ObjectProperty<ScheduledItem> scheduledVideoItemProperty = new SimpleObjectProperty<>();
     private final ObservableList<Media> publishedMedias = FXCollections.observableArrayList();
 
+    private final Label sessionTitleLabel = Bootstrap.strong(new Label());
+    private final GenericWebVideoPlayer sessionVideoPlayer = new GenericWebVideoPlayer();
+
     @Override
     protected void updateModelFromContextParameters() {
         scheduledVideoItemIdProperty.set(Numbers.toInteger(getParameter(SessionVideoPlayerRouting.SCHEDULED_VIDEO_ITEM_ID_PARAMETER_NAME)));
@@ -51,7 +55,10 @@ final class SessionVideoPlayerActivity extends ViewDomainActivityBase {
         FXProperties.runNowAndOnPropertiesChange(() -> {
             Object scheduledVideoItemId = scheduledVideoItemIdProperty.get();
             EntityId userPersonId = FXUserPersonId.getUserPersonId();
-            if (scheduledVideoItemId != null && userPersonId != null) {
+            if (scheduledVideoItemId == null || userPersonId == null) {
+                publishedMedias.clear();
+                scheduledVideoItemProperty.set(null);
+            } else {
                 entityStore.executeQueryBatch(
                         new EntityStoreQuery("select parent.name" +
                                              " from ScheduledItem si" +
@@ -71,32 +78,65 @@ final class SessionVideoPlayerActivity extends ViewDomainActivityBase {
     }
 
     @Override
-    public Node buildUi() {
+    public void onResume() {
+        super.onResume();
+        // Restarting the session video player (if relevant) when reentering this activity. This will also ensure that
+        // any possible previous playing player (ex: podcast) will be paused if/when the session video player restarts.
+        updateSessionTitleAndVideoPlayerState();
+    }
+
+    @Override
+    public Node buildUi() { // Reminder: called only once (rebuild = bad UX) => UI is reacting to parameter changes
+
+        // *************************************************************************************************************
+        // ********************************* Building the static part of the UI ****************************************
+        // *************************************************************************************************************
+
         // Back arrow and event title
         MonoPane backArrow = SvgIcons.createButtonPane(SvgIcons.createBackArrow(), getHistory()::goBack);
 
-        Label titleLabel = Bootstrap.strong(new Label());
-        titleLabel.setWrapText(true);
-        HBox firstLine = new HBox(40, backArrow, titleLabel);
+        sessionTitleLabel.setWrapText(true);
+        HBox firstLine = new HBox(40, backArrow, sessionTitleLabel);
 
-        // Load the video player URL
-        WebView webView = new WebView();
-        webView.prefHeightProperty().bind(FXProperties.compute(webView.widthProperty(), w -> w.doubleValue() / 16d * 9d));
+        Node videoView = sessionVideoPlayer.getVideoView();
+        /*if (videoView instanceof Region) {
+            Region videoRegion = (Region) videoView;
+            videoRegion.prefHeightProperty().bind(FXProperties.compute(videoRegion.widthProperty(), w -> w.doubleValue() / 16d * 9d));
+        }*/
 
         VBox pageContainer = new VBox(40,
             firstLine,
-            webView
+            videoView
         );
 
-        FXProperties.runOnPropertiesChange(() -> {
-            ScheduledItem scheduledVideoItem = scheduledVideoItemProperty.get();
-            String title = scheduledVideoItem.getParent().getName();
-            String url = publishedMedias.get(0).getUrl();
-            titleLabel.setText(title);
-            webView.getEngine().load(url);
-        }, scheduledVideoItemProperty);
+
+        // *************************************************************************************************************
+        // *********************************** Reacting to parameter changes *******************************************
+        // *************************************************************************************************************
+
+        // Auto starting the video for each requested session
+        FXProperties.runNowAndOnPropertiesChange(this::updateSessionTitleAndVideoPlayerState,
+            scheduledVideoItemProperty);
+
+
+        // *************************************************************************************************************
+        // ************************************* Building final container **********************************************
+        // *************************************************************************************************************
 
         pageContainer.setPadding(new Insets(PAGE_TOP_BOTTOM_PADDING, 0, PAGE_TOP_BOTTOM_PADDING, 0));
         return FrontOfficeActivityUtil.createActivityPageScrollPane(pageContainer, true);
+    }
+
+    private void updateSessionTitleAndVideoPlayerState() {
+        ScheduledItem scheduledVideoItem = scheduledVideoItemProperty.get();
+        Media firstMedia = Collections.first(publishedMedias);
+        if (scheduledVideoItem != null && firstMedia != null) { // may not yet be loaded on first call
+            String title = scheduledVideoItem.getParent().getName();
+            String url = firstMedia.getUrl();
+            sessionTitleLabel.setText(title);
+            sessionVideoPlayer.getPlaylist().setAll(url);
+            sessionVideoPlayer.play();
+            Players.setPlayingPlayer(sessionVideoPlayer);
+        }
     }
 }
