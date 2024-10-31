@@ -1,11 +1,13 @@
 package one.modality.event.frontoffice.activities.audiorecordings;
 
+import dev.webfx.extras.panes.CenteredPane;
 import dev.webfx.extras.panes.MonoPane;
 import dev.webfx.extras.styles.bootstrap.Bootstrap;
 import dev.webfx.kit.util.properties.FXProperties;
 import dev.webfx.kit.util.properties.ObservableLists;
 import dev.webfx.platform.console.Console;
 import dev.webfx.platform.util.Numbers;
+import dev.webfx.platform.util.Strings;
 import dev.webfx.platform.util.collection.Collections;
 import dev.webfx.stack.i18n.controls.I18nControls;
 import dev.webfx.stack.i18n.spi.impl.I18nSubKey;
@@ -22,8 +24,9 @@ import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Node;
 import javafx.scene.control.Label;
-import javafx.scene.layout.HBox;
+import javafx.scene.layout.Region;
 import javafx.scene.layout.VBox;
+import javafx.scene.text.TextAlignment;
 import one.modality.base.client.icons.SvgIcons;
 import one.modality.base.frontoffice.utility.activity.FrontOfficeActivityUtil;
 import one.modality.base.shared.entities.Event;
@@ -89,24 +92,31 @@ final class EventAudioPlaylistActivity extends ViewDomainActivityBase {
         // ********************************* Building the static part of the UI ****************************************
         // *************************************************************************************************************
 
-        MonoPane backArrow = SvgIcons.createButtonPane(SvgIcons.createBackArrow(), () -> getHistory().goBack());
-        backArrow.setPadding(new Insets(20));
+        MonoPane backArrow = SvgIcons.createButtonPane(SvgIcons.createBackArrow(), getHistory()::goBack);
 
         Label eventLabel = Bootstrap.h2(Bootstrap.strong(I18nControls.bindI18nProperties(new Label(), new I18nSubKey("expression: i18n(this)", eventProperty), eventProperty)));
-        Label eventDescriptionLabel = I18nControls.bindI18nProperties(new Label(), new I18nSubKey("expression: shortDescription", eventProperty), eventProperty);
-        VBox titleVBox = new VBox(eventLabel, eventDescriptionLabel);
-        titleVBox.setAlignment(Pos.CENTER_LEFT);
+        eventLabel.setWrapText(true);
+        eventLabel.setTextAlignment(TextAlignment.CENTER);
 
-        HBox backArrowTitleLine = new HBox(50, backArrow, titleVBox);
-        backArrowTitleLine.setPadding(new Insets(0, 0, 100, 0));
-        backArrowTitleLine.setAlignment(Pos.CENTER_LEFT);
+        Label eventDescriptionLabel = I18nControls.bindI18nProperties(new Label(), new I18nSubKey("expression: shortDescription", eventProperty), eventProperty);
+        eventDescriptionLabel.setWrapText(true);
+        eventDescriptionLabel.setTextAlignment(TextAlignment.CENTER);
+        eventDescriptionLabel.managedProperty().bind(FXProperties.compute(eventDescriptionLabel.textProperty(), Strings::isNotEmpty));
+
+        VBox titleVBox = new VBox(eventLabel, eventDescriptionLabel);
+
+        CenteredPane backArrowAndTitlePane = new CenteredPane();
+        backArrowAndTitlePane.setLeft(backArrow);
+        backArrowAndTitlePane.setCenter(titleVBox);
 
         VBox audioTracksVBox = new VBox(10);
+        audioTracksVBox.setMaxWidth(Region.USE_PREF_SIZE);
 
         VBox pageContainer = new VBox(100,
-            backArrowTitleLine,
+            backArrowAndTitlePane,
             audioTracksVBox
         );
+        pageContainer.setAlignment(Pos.CENTER);
 
 
         // *************************************************************************************************************

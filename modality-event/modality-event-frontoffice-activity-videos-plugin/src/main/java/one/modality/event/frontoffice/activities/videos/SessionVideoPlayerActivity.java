@@ -1,5 +1,6 @@
 package one.modality.event.frontoffice.activities.videos;
 
+import dev.webfx.extras.panes.CenteredPane;
 import dev.webfx.extras.panes.MonoPane;
 import dev.webfx.extras.player.video.web.GenericWebVideoPlayer;
 import dev.webfx.extras.styles.bootstrap.Bootstrap;
@@ -19,8 +20,8 @@ import javafx.collections.ObservableList;
 import javafx.geometry.Insets;
 import javafx.scene.Node;
 import javafx.scene.control.Label;
-import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
+import javafx.scene.text.TextAlignment;
 import one.modality.base.client.icons.SvgIcons;
 import one.modality.base.frontoffice.utility.activity.FrontOfficeActivityUtil;
 import one.modality.base.shared.entities.Media;
@@ -40,7 +41,7 @@ final class SessionVideoPlayerActivity extends ViewDomainActivityBase {
     private final ObjectProperty<ScheduledItem> scheduledVideoItemProperty = new SimpleObjectProperty<>();
     private final ObservableList<Media> publishedMedias = FXCollections.observableArrayList();
 
-    private final Label sessionTitleLabel = Bootstrap.strong(new Label());
+    private final Label sessionTitleLabel = Bootstrap.h2(Bootstrap.strong(new Label()));
     private final GenericWebVideoPlayer sessionVideoPlayer = new GenericWebVideoPlayer();
 
     @Override
@@ -96,7 +97,11 @@ final class SessionVideoPlayerActivity extends ViewDomainActivityBase {
         MonoPane backArrow = SvgIcons.createButtonPane(SvgIcons.createBackArrow(), getHistory()::goBack);
 
         sessionTitleLabel.setWrapText(true);
-        HBox firstLine = new HBox(40, backArrow, sessionTitleLabel);
+        sessionTitleLabel.setTextAlignment(TextAlignment.CENTER);
+
+        CenteredPane backArrowAndTitlePane = new CenteredPane();
+        backArrowAndTitlePane.setLeft(backArrow);
+        backArrowAndTitlePane.setCenter(sessionTitleLabel);
 
         Node videoView = sessionVideoPlayer.getVideoView();
         /*if (videoView instanceof Region) {
@@ -105,7 +110,7 @@ final class SessionVideoPlayerActivity extends ViewDomainActivityBase {
         }*/
 
         VBox pageContainer = new VBox(40,
-            firstLine,
+            backArrowAndTitlePane,
             videoView
         );
 

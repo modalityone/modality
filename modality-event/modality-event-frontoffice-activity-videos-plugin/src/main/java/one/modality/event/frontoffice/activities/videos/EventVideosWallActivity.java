@@ -1,5 +1,6 @@
 package one.modality.event.frontoffice.activities.videos;
 
+import dev.webfx.extras.panes.CenteredPane;
 import dev.webfx.extras.panes.CollapsePane;
 import dev.webfx.extras.panes.MonoPane;
 import dev.webfx.extras.player.video.web.GenericWebVideoPlayer;
@@ -119,19 +120,22 @@ final class EventVideosWallActivity extends ViewDomainActivityBase {
         Label eventLabel = Bootstrap.h2(Bootstrap.strong(I18nControls.bindI18nProperties(new Label(), new I18nSubKey("expression: i18n(this)", eventProperty), eventProperty)));
         eventLabel.setWrapText(true);
         eventLabel.setTextAlignment(TextAlignment.CENTER);
+
         Label eventDescriptionLabel = I18nControls.bindI18nProperties(new Label(), new I18nSubKey("expression: shortDescription", eventProperty), eventProperty);
         eventDescriptionLabel.setWrapText(true);
         eventDescriptionLabel.setTextAlignment(TextAlignment.CENTER);
+        eventDescriptionLabel.managedProperty().bind(FXProperties.compute(eventDescriptionLabel.textProperty(), Strings::isNotEmpty));
+
         VBox titleVBox = new VBox(
             eventLabel,
-            eventDescriptionLabel,
-            backArrow
+            eventDescriptionLabel
         );
         titleVBox.setAlignment(Pos.CENTER);
-        backArrow.setManaged(false);
-        backArrow.setLayoutX(18);
-        backArrow.layoutYProperty().bind(FXProperties.compute(eventLabel.layoutYProperty(), y -> y.doubleValue() + 18));
-        VBox.setMargin(eventLabel, new Insets(0, 0, 0, 40));
+        //VBox.setMargin(eventLabel, new Insets(0, 0, 0, 40));
+
+        CenteredPane backArrowAndTitlePane = new CenteredPane();
+        backArrowAndTitlePane.setLeft(backArrow);
+        backArrowAndTitlePane.setCenter(titleVBox);
 
         // Livestream box
         Label livestreamLabel = Bootstrap.h4(Bootstrap.strong(I18nControls.bindI18nProperties(new Label(), VideosI18nKeys.LivestreamTitle)));
@@ -154,8 +158,8 @@ final class EventVideosWallActivity extends ViewDomainActivityBase {
         VBox videosVBox = new VBox(30);
 
         // Assembling all together in the page container
-        VBox pageContainer = new VBox(20,
-            titleVBox,
+        VBox pageContainer = new VBox(50,
+            backArrowAndTitlePane,
             livestreamVBox,
             videosVBox
         );
