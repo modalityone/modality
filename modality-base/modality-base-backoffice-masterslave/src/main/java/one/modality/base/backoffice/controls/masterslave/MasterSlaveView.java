@@ -1,17 +1,15 @@
 package one.modality.base.backoffice.controls.masterslave;
 
+import dev.webfx.kit.util.properties.FXProperties;
+import dev.webfx.stack.orm.entity.Entity;
 import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.ObjectProperty;
-import javafx.beans.property.SimpleBooleanProperty;
-import javafx.beans.property.SimpleObjectProperty;
 import javafx.geometry.Orientation;
 import javafx.scene.Node;
 import javafx.scene.control.SplitPane;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.StackPane;
 import one.modality.base.backoffice.controls.masterslave.group.GroupView;
-import dev.webfx.stack.orm.entity.Entity;
-import dev.webfx.kit.util.properties.FXProperties;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -46,12 +44,7 @@ public class MasterSlaveView implements UiBuilder {
         return stackPane;
     }
 
-    private final ObjectProperty<Node> masterViewProperty = new SimpleObjectProperty<Node>() { // GWT doesn't accept <>
-        @Override
-        protected void invalidated() {
-            updateView();
-        }
-    };
+    private final ObjectProperty<Node> masterViewProperty = FXProperties.newObjectProperty(this::updateView);
 
     public ObjectProperty<Node> masterViewProperty() {
         return masterViewProperty;
@@ -65,12 +58,7 @@ public class MasterSlaveView implements UiBuilder {
         return masterViewProperty().get();
     }
 
-    private final ObjectProperty<Node> slaveViewProperty = new SimpleObjectProperty<Node>() { // GWT doesn't accept <>
-        @Override
-        protected void invalidated() {
-            updateView();
-        }
-    };
+    private final ObjectProperty<Node> slaveViewProperty = FXProperties.newObjectProperty(this::updateView);
 
     public ObjectProperty<Node> slaveViewProperty() {
         return slaveViewProperty;
@@ -84,12 +72,7 @@ public class MasterSlaveView implements UiBuilder {
         return slaveViewProperty().get();
     }
 
-    private final BooleanProperty slaveVisibleProperty = new SimpleBooleanProperty() {
-        @Override
-        protected void invalidated() {
-            updateView();
-        }
-    };
+    private final BooleanProperty slaveVisibleProperty = FXProperties.newBooleanProperty(this::updateView);
 
     public BooleanProperty slaveVisibleProperty() {
         return slaveVisibleProperty;

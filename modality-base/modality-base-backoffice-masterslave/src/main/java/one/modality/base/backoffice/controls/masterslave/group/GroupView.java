@@ -1,5 +1,6 @@
 package one.modality.base.backoffice.controls.masterslave.group;
 
+import dev.webfx.kit.util.properties.FXProperties;
 import javafx.beans.property.*;
 import javafx.scene.Node;
 import javafx.scene.control.Tab;
@@ -52,12 +53,7 @@ public final class GroupView<E extends Entity> implements UiBuilder,
     private final ObjectProperty<VisualSelection> groupVisualSelectionProperty = VisualSelection.createVisualSelectionProperty();
     @Override public ObjectProperty<VisualSelection> groupVisualSelectionProperty() { return groupVisualSelectionProperty; }
 
-    private final ObjectProperty<E> selectedGroupProperty = new SimpleObjectProperty<>() {
-        @Override
-        protected void invalidated() {
-            updateSelectedGroupCondition();
-        }
-    };
+    private final ObjectProperty<E> selectedGroupProperty = FXProperties.newObjectProperty(this::updateSelectedGroupCondition);
     @Override public ObjectProperty<E> selectedGroupProperty() { return selectedGroupProperty; }
 
     private final ObjectProperty<DqlStatement> selectedGroupConditionDqlStatementProperty = new SimpleObjectProperty<>();

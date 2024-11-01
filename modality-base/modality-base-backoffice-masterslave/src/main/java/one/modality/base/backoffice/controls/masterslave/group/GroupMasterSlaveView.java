@@ -1,22 +1,20 @@
 package one.modality.base.backoffice.controls.masterslave.group;
 
+import dev.webfx.kit.util.properties.FXProperties;
+import dev.webfx.stack.orm.entity.Entity;
+import dev.webfx.stack.orm.reactive.dql.statement.conventions.HasSelectedMasterProperty;
+import dev.webfx.stack.orm.reactive.dql.statement.conventions.HasSlaveVisibilityCondition;
+import dev.webfx.stack.orm.reactive.mapping.entities_to_visual.conventions.HasGroupVisualResultProperty;
+import dev.webfx.stack.orm.reactive.mapping.entities_to_visual.conventions.HasMasterVisualResultProperty;
+import dev.webfx.stack.orm.reactive.mapping.entities_to_visual.conventions.HasSlaveVisualResultProperty;
+import dev.webfx.stack.ui.controls.ControlFactoryMixin;
 import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.ObjectProperty;
-import javafx.beans.property.SimpleBooleanProperty;
-import javafx.beans.property.SimpleObjectProperty;
 import javafx.scene.Node;
 import one.modality.base.backoffice.controls.masterslave.MasterSlaveView;
 import one.modality.base.backoffice.controls.masterslave.MasterTableView;
 import one.modality.base.backoffice.controls.masterslave.SlaveTableView;
 import one.modality.base.backoffice.controls.masterslave.UiBuilder;
-import dev.webfx.stack.orm.reactive.dql.statement.conventions.HasSelectedMasterProperty;
-import dev.webfx.stack.orm.reactive.dql.statement.conventions.HasSlaveVisibilityCondition;
-import dev.webfx.stack.orm.reactive.mapping.entities_to_visual.conventions.HasSlaveVisualResultProperty;
-import dev.webfx.stack.orm.reactive.mapping.entities_to_visual.conventions.HasGroupVisualResultProperty;
-import dev.webfx.stack.orm.reactive.mapping.entities_to_visual.conventions.HasMasterVisualResultProperty;
-import dev.webfx.stack.ui.controls.ControlFactoryMixin;
-import dev.webfx.stack.orm.entity.Entity;
-import dev.webfx.kit.util.properties.FXProperties;
 
 import java.util.function.Function;
 
@@ -35,12 +33,7 @@ public class GroupMasterSlaveView extends MasterSlaveView {
         setGroupView(groupView);
     }
 
-    private final ObjectProperty<Node> groupViewProperty = new SimpleObjectProperty<Node/*GWT*/>() {
-        @Override
-        protected void invalidated() {
-            updateView();
-        }
-    };
+    private final ObjectProperty<Node> groupViewProperty = FXProperties.newObjectProperty(this::updateView);
 
     public ObjectProperty<Node> groupViewProperty() {
         return groupViewProperty;
@@ -59,12 +52,7 @@ public class GroupMasterSlaveView extends MasterSlaveView {
         updateSplitPane(isGroupVisible() ? getGroupView() : null, isMasterVisible() ? getMasterView() : null, isSlaveVisible() ? getSlaveView() : null);
     }
 
-    private final BooleanProperty groupVisibleProperty = new SimpleBooleanProperty() {
-        @Override
-        protected void invalidated() {
-            updateView();
-        }
-    };
+    private final BooleanProperty groupVisibleProperty = FXProperties.newBooleanProperty(this::updateView);
 
     public BooleanProperty groupVisibleProperty() {
         return groupVisibleProperty;
@@ -79,12 +67,7 @@ public class GroupMasterSlaveView extends MasterSlaveView {
         groupVisibleProperty().setValue(groupVisible);
     }
 
-    private final BooleanProperty masterVisibleProperty = new SimpleBooleanProperty(true) {
-        @Override
-        protected void invalidated() {
-            updateView();
-        }
-    };
+    private final BooleanProperty masterVisibleProperty = FXProperties.newBooleanProperty(true, this::updateView);
 
     public BooleanProperty masterVisibleProperty() {
         return masterVisibleProperty;

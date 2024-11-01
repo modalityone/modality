@@ -19,12 +19,8 @@ public final class FXModalityUserPrincipal {
 
     private final static BooleanProperty loggedInProperty = new SimpleBooleanProperty();
 
-    private final static ObjectProperty<ModalityUserPrincipal> modalityUserPrincipalProperty = new SimpleObjectProperty<>() {
-        @Override
-        protected void invalidated() {
-            Console.log("modalityUserPrincipal = " + get());
-        }
-    };
+    private final static ObjectProperty<ModalityUserPrincipal> modalityUserPrincipalProperty = FXProperties.newObjectProperty(mup ->
+            Console.log("modalityUserPrincipal = " + mup));
 
     public static ReadOnlyBooleanProperty loggedInProperty() {
         return loggedInProperty;

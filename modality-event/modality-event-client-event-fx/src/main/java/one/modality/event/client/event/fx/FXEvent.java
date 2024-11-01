@@ -1,5 +1,6 @@
 package one.modality.event.client.event.fx;
 
+import dev.webfx.kit.util.properties.FXProperties;
 import dev.webfx.stack.orm.entity.Entities;
 import dev.webfx.stack.orm.entity.EntityId;
 import dev.webfx.stack.orm.entity.EntityStore;
@@ -17,17 +18,14 @@ public final class FXEvent {
 
     public static final String EXPECTED_FIELDS = "icon,name,startDate,endDate,organization.(" + FXOrganization.EXPECTED_FIELDS + ")";
 
-    private final static ObjectProperty<Event> eventProperty = new SimpleObjectProperty<>() {
-        @Override
-        protected void invalidated() {
-            FXEventId.setEventId(getEventId());
-            if (get() != null) {
-                lastNonNullEventProperty.set(get());
-            }
-        }
-    };
-
     private final static ObjectProperty<Event> lastNonNullEventProperty = new SimpleObjectProperty<>();
+
+    private final static ObjectProperty<Event> eventProperty = FXProperties.newObjectProperty(event -> {
+        FXEventId.setEventId(getEventId());
+        if (event != null) {
+            lastNonNullEventProperty.set(event);
+        }
+    });
 
     static {
         FXEventId.init();

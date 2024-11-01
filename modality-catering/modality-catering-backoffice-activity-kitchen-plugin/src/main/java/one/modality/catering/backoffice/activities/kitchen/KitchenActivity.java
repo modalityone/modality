@@ -23,7 +23,6 @@ import dev.webfx.stack.orm.reactive.call.query.ReactiveQueryCall;
 import dev.webfx.stack.routing.uirouter.activity.uiroute.UiRouteActivityContextMixin;
 import javafx.application.Platform;
 import javafx.beans.property.ObjectProperty;
-import javafx.beans.property.SimpleObjectProperty;
 import javafx.collections.ListChangeListener;
 import javafx.geometry.Insets;
 import javafx.scene.Node;
@@ -60,12 +59,7 @@ final class KitchenActivity extends ViewDomainActivityBase
     private final DietaryOptionKeyPanel dietaryOptionKeyPanel = new DietaryOptionKeyPanel();
 
     private final Map<LocalDate, AttendanceDayPanel> attendanceDayPanels = new HashMap<>();
-    private final ObjectProperty<YearMonth> selectedYearMonthProperty = new SimpleObjectProperty<>() {
-        @Override
-        protected void invalidated() {
-            refreshCalendar();
-        }
-    };
+    private final ObjectProperty<YearMonth> selectedYearMonthProperty = FXProperties.newObjectProperty(this::refreshCalendar);
 
     @Override
     public Node buildUi() {

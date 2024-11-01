@@ -24,7 +24,6 @@ import dev.webfx.stack.ui.dialog.DialogCallback;
 import dev.webfx.stack.ui.dialog.DialogUtil;
 import javafx.application.Platform;
 import javafx.beans.property.BooleanProperty;
-import javafx.beans.property.SimpleBooleanProperty;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Cursor;
@@ -68,22 +67,23 @@ public class PersonalDetailsPanel implements ModalityButtonFactoryMixin {
     private UpdateStore updateStore;
     private final ButtonSelectorParameters parameters;
 
-    private final BooleanProperty editableProperty = new SimpleBooleanProperty(false) {
-        @Override
-        protected void invalidated() {
-            boolean editable = get();
-            if (editable) {
-                if (updateStore == null)
-                    updateStore = UpdateStore.createAbove(entity.getStore());
-                updatingEntity = updateStore.updateEntity(entity);
-            }
-            updateUiEditable();
+    private final BooleanProperty editableProperty = FXProperties.newBooleanProperty(editable -> {
+        if (editable) {
+            if (updateStore == null)
+                updateStore = UpdateStore.createAbove(entity.getStore());
+            updatingEntity = updateStore.updateEntity(entity);
         }
-    };
+        updateUiEditable();
+    });
 
     private final Hyperlink updateLink = newHyperlink(ModalityI18nKeys.Update, e -> setEditable(true));
     private final Hyperlink saveLink = newHyperlink(ModalityI18nKeys.Save, e -> save());
-    private final Hyperlink cancelLink = newHyperlink(ModalityI18nKeys.Cancel, e -> cancel()); { cancelLink.setContentDisplay(ContentDisplay.TEXT_ONLY); }
+    private final Hyperlink cancelLink = newHyperlink(ModalityI18nKeys.Cancel, e -> cancel());
+
+    {
+        cancelLink.setContentDisplay(ContentDisplay.TEXT_ONLY);
+    }
+
     private final Hyperlink closeLink = newHyperlink("Close" /* ? */, e -> close());
     private final MonoPane switchButton;
     private Runnable previousSceneCancelAccelerator;
@@ -113,7 +113,7 @@ public class PersonalDetailsPanel implements ModalityButtonFactoryMixin {
         top.setAlignment(Pos.CENTER);
         BorderPane.setMargin(top, new Insets(15, 15, 0, 15));
         container.setTop(top);
-        firstNameTextField = newMaterialTextField( CrmI18nKeys.FirstName);
+        firstNameTextField = newMaterialTextField(CrmI18nKeys.FirstName);
         lastNameTextField = newMaterialTextField(CrmI18nKeys.LastName);
         maleRadioButton = newRadioButton(CrmI18nKeys.Male);
         femaleRadioButton = newRadioButton(CrmI18nKeys.Female);
@@ -200,11 +200,11 @@ public class PersonalDetailsPanel implements ModalityButtonFactoryMixin {
             syncModelFromUi(updatingEntity);
             if (updateStore.hasChanges()) {
                 updateStore.submitChanges()
-                        .onFailure(dev.webfx.platform.console.Console::log)
-                        .onSuccess(submitResultBatch -> {
-                            syncModelFromUi(entity);
-                            setEditable(false);
-                        });
+                    .onFailure(dev.webfx.platform.console.Console::log)
+                    .onSuccess(submitResultBatch -> {
+                        syncModelFromUi(entity);
+                        setEditable(false);
+                    });
             }
         }
     }
@@ -311,18 +311,18 @@ public class PersonalDetailsPanel implements ModalityButtonFactoryMixin {
 
     protected Node[] materialChildren() {
         return Arrays.nonNulls(Node[]::new,
-                firstNameTextField,
-                lastNameTextField,
-                newMaterialRegion(genderBox, CrmI18nKeys.Gender),
-                newMaterialRegion(ageBox, CrmI18nKeys.Age),
-                childRadioButton.isSelected() ? newMaterialRegion(birthDatePicker, CrmI18nKeys.BirthDate) : null,
-                emailTextField,
-                phoneTextField,
-                streetTextField,
-                postCodeTextField,
-                cityNameTextField,
-                countryButton,
-                organizationButton
+            firstNameTextField,
+            lastNameTextField,
+            newMaterialRegion(genderBox, CrmI18nKeys.Gender),
+            newMaterialRegion(ageBox, CrmI18nKeys.Age),
+            childRadioButton.isSelected() ? newMaterialRegion(birthDatePicker, CrmI18nKeys.BirthDate) : null,
+            emailTextField,
+            phoneTextField,
+            streetTextField,
+            postCodeTextField,
+            cityNameTextField,
+            countryButton,
+            organizationButton
         );
     }
 /*

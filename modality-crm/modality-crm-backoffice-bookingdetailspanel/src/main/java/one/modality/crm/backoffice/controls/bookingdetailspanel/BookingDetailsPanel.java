@@ -65,19 +65,13 @@ import java.util.function.Function;
 import java.util.function.Supplier;
 
 public final class BookingDetailsPanel implements
-        OperationActionFactoryMixin,
-        HasActiveProperty,
-        UiBuilder {
+    OperationActionFactoryMixin,
+    HasActiveProperty,
+    UiBuilder {
 
     public static final String REQUIRED_FIELDS = "person_firstName,person_lastName,person_age,person_email,person_organization,person_phone,person_cityName,person_country,person_carer1Name,person_carer2Name,event.startDate,dates"; // event.startDate is required for the personal details panel
 
-    private final ObjectProperty<Document> selectedDocumentProperty = new SimpleObjectProperty<>() {
-        @Override
-        protected void invalidated() {
-            personalDetailsPanel.setEditable(false);
-            personalDetailsPanel.setEntity(get());
-        }
-    };
+    private final ObjectProperty<Document> selectedDocumentProperty;
     private final BooleanProperty activeProperty = new SimpleBooleanProperty(true);
     // We don't need access to the data inside that visual result of all bookings, but the purpose of this property is to
     // detect the changes such as server push notifications after pressing the toggle buttons (ex: mark/unmark as arrived)
@@ -92,6 +86,10 @@ public final class BookingDetailsPanel implements
         this.mixin = mixin;
         this.dataSourceModel = dataSourceModel;
         personalDetailsPanel = new BookingPersonalDetailsPanel(dataSourceModel, new ButtonSelectorParameters().setButtonFactory(mixin).setDialogParentGetter(FXMainFrameDialogArea::getDialogArea));
+        selectedDocumentProperty = FXProperties.newObjectProperty(selectedDocument -> {
+            personalDetailsPanel.setEditable(false);
+            personalDetailsPanel.setEntity(selectedDocument);
+        });
     }
 
     @Override
@@ -119,24 +117,24 @@ public final class BookingDetailsPanel implements
     public Node buildUi() {
         BorderPane container = new BorderPane();
         FlexPane flexButtonBar = new FlexPane(5, 2,
-                createFlexButton(ShowBookingEditorRequest::new),
-                createFlexButton(ToggleMarkDocumentAsReadRequest::new),
-                createFlexButton(ToggleMarkDocumentAsWillPayRequest::new),
-                createFlexButton(ToggleCancelDocumentRequest::new),
-                createFlexButton(ToggleMarkDocumentAsArrivedRequest::new)
+            createFlexButton(ShowBookingEditorRequest::new),
+            createFlexButton(ToggleMarkDocumentAsReadRequest::new),
+            createFlexButton(ToggleMarkDocumentAsWillPayRequest::new),
+            createFlexButton(ToggleCancelDocumentRequest::new),
+            createFlexButton(ToggleMarkDocumentAsArrivedRequest::new)
         );
         BorderPane.setMargin(flexButtonBar, new Insets(1, 0, 1, 0));
         container.setTop(flexButtonBar);
         container.setCenter(new TabPane(
-                createTab("PersonalDetails", buildPersonalDetailsView()),
-                createFilterTab("Options", "{class: 'DocumentLine', columns: `site,item,dates,lockAllocation,resourceConfiguration,comment,price_isCustom,price_net,price_nonRefundable,price_minDeposit,price_deposit`, where: 'document=${selectedDocument}', orderBy: 'item.family.ord,site..ord,item.ord'}"),
-                createFilterTab("Payments", "{class: 'MoneyTransfer', columns: `date,method,transactionRef,comment,amount,verified`, where: 'document=${selectedDocument}', orderBy: 'date,id'}"),
-                createTab("Comments", buildCommentView()),
-                createFilterTab("Cart", "{class: 'Document', columns:`ref,multipleBookingIcon,langIcon,genderIcon,person_firstName,person_lastName,person_age,noteIcon,price_net,price_deposit,price_balance`, where: 'cart=(select cart from Document where id=${selectedDocument})', orderBy: 'ref'}"),
-                createFilterTab("MultipleBookings", "{class: 'Document', columns:`ref,multipleBookingIcon,langIcon,genderIcon,person_firstName,person_lastName,person_age,noteIcon,price_deposit,plainOptions`, where: 'multipleBooking=(select multipleBooking from Document where id=${selectedDocument})', orderBy: 'ref'}"),
-                createFilterTab("Family", "{class: 'Document', columns:`ref,multipleBookingIcon,langIcon,genderIcon,person_firstName,person_lastName,person_age,noteIcon,price_deposit,plainOptions`, where: 'person_carer1Document=${selectedDocument} or person_carer2Document=${selectedDocument} or id=(select person_carer1Document from Document where id=${selectedDocument}) or id=(select person_carer2Document from Document where id=${selectedDocument})', orderBy: 'ref'}"),
-                createFilterTab("Mails", "{class: 'Mail', columns: 'date,subject,transmitted,error', where: 'document=${selectedDocument}', orderBy: 'date desc'}"),
-                createFilterTab("History", "{class: 'History', columns: 'date,userDisplay,comment,request', where: 'document=${selectedDocument}', orderBy: 'date desc'}")
+            createTab("PersonalDetails", buildPersonalDetailsView()),
+            createFilterTab("Options", "{class: 'DocumentLine', columns: `site,item,dates,lockAllocation,resourceConfiguration,comment,price_isCustom,price_net,price_nonRefundable,price_minDeposit,price_deposit`, where: 'document=${selectedDocument}', orderBy: 'item.family.ord,site..ord,item.ord'}"),
+            createFilterTab("Payments", "{class: 'MoneyTransfer', columns: `date,method,transactionRef,comment,amount,verified`, where: 'document=${selectedDocument}', orderBy: 'date,id'}"),
+            createTab("Comments", buildCommentView()),
+            createFilterTab("Cart", "{class: 'Document', columns:`ref,multipleBookingIcon,langIcon,genderIcon,person_firstName,person_lastName,person_age,noteIcon,price_net,price_deposit,price_balance`, where: 'cart=(select cart from Document where id=${selectedDocument})', orderBy: 'ref'}"),
+            createFilterTab("MultipleBookings", "{class: 'Document', columns:`ref,multipleBookingIcon,langIcon,genderIcon,person_firstName,person_lastName,person_age,noteIcon,price_deposit,plainOptions`, where: 'multipleBooking=(select multipleBooking from Document where id=${selectedDocument})', orderBy: 'ref'}"),
+            createFilterTab("Family", "{class: 'Document', columns:`ref,multipleBookingIcon,langIcon,genderIcon,person_firstName,person_lastName,person_age,noteIcon,price_deposit,plainOptions`, where: 'person_carer1Document=${selectedDocument} or person_carer2Document=${selectedDocument} or id=(select person_carer1Document from Document where id=${selectedDocument}) or id=(select person_carer2Document from Document where id=${selectedDocument})', orderBy: 'ref'}"),
+            createFilterTab("Mails", "{class: 'Mail', columns: 'date,subject,transmitted,error', where: 'document=${selectedDocument}', orderBy: 'date desc'}"),
+            createFilterTab("History", "{class: 'History', columns: 'date,userDisplay,comment,request', where: 'document=${selectedDocument}', orderBy: 'date desc'}")
         ));
         return container;
     }
@@ -170,14 +168,14 @@ public final class BookingDetailsPanel implements
         String classOnly = dqlStatementString.substring(0, dqlStatementString.indexOf(',')) + "}";
         ObjectProperty<Entity> selectedEntityProperty = new SimpleObjectProperty<>();
         ReactiveVisualMapper<Entity> visualMapper = ReactiveVisualMapper.createPushReactiveChain()
-                .always(classOnly)
-                .ifNotNullOtherwiseEmptyString(selectedDocumentProperty, document -> Strings.replaceAll(dqlStatementString, "${selectedDocument}", document.getPrimaryKey()))
-                .bindActivePropertyTo(tab.selectedProperty())
-                .setDataSourceModel(dataSourceModel)
-                .applyDomainModelRowStyle()
-                .visualizeResultInto(table)
-                .setSelectedEntityHandler(selectedEntityProperty::set)
-                .start();
+            .always(classOnly)
+            .ifNotNullOtherwiseEmptyString(selectedDocumentProperty, document -> Strings.replaceAll(dqlStatementString, "${selectedDocument}", document.getPrimaryKey()))
+            .bindActivePropertyTo(tab.selectedProperty())
+            .setDataSourceModel(dataSourceModel)
+            .applyDomainModelRowStyle()
+            .visualizeResultInto(table)
+            .setSelectedEntityHandler(selectedEntityProperty::set)
+            .start();
         tab.getProperties().put("selectedEntityProperty", selectedEntityProperty); // used by getTabSelectedEntityProperty()
         tab.getProperties().put("visualMapper", visualMapper); // used by getTabVisualMapper()
 
@@ -185,45 +183,45 @@ public final class BookingDetailsPanel implements
         switch (i18nKey) {
             case "Options":
                 contextMenuActionGroupFactory = () -> newActionGroup(
-                        newSelectedDocumentOperationAction(AddNewDocumentLineRequest::new), // Executor not implemented yet
-                        newSeparatorActionGroup(
-                                newTabSelectedDocumentLineOperationAction(EditDocumentLineRequest::new, tab), // PropertySheet not using DocumentService
-                                newTabSelectedDocumentLineOperationAction(ToggleCancelDocumentLineRequest::new, tab),
-                                newTabSelectedDocumentLineOperationAction(DeleteDocumentLineRequest::new, tab)
-                        ),
-                        newTabCopyActionGroup(true, tab)
+                    newSelectedDocumentOperationAction(AddNewDocumentLineRequest::new), // Executor not implemented yet
+                    newSeparatorActionGroup(
+                        newTabSelectedDocumentLineOperationAction(EditDocumentLineRequest::new, tab), // PropertySheet not using DocumentService
+                        newTabSelectedDocumentLineOperationAction(ToggleCancelDocumentLineRequest::new, tab),
+                        newTabSelectedDocumentLineOperationAction(DeleteDocumentLineRequest::new, tab)
+                    ),
+                    newTabCopyActionGroup(true, tab)
                 );
                 break;
             case "Payments":
                 contextMenuActionGroupFactory = () -> newActionGroup(
-                        newSelectedDocumentOperationAction(AddNewPaymentRequest::new),
-                        newSelectedDocumentOperationAction(AddNewTransferRequest::new),
-                        newSeparatorActionGroup(
-                                newTabSelectedMoneyTransferOperationAction(EditPaymentRequest::new, tab),
-                                newTabSelectedMoneyTransferOperationAction(DeletePaymentRequest::new, tab)
-                        ),
-                        newTabCopyActionGroup(true, tab)
+                    newSelectedDocumentOperationAction(AddNewPaymentRequest::new),
+                    newSelectedDocumentOperationAction(AddNewTransferRequest::new),
+                    newSeparatorActionGroup(
+                        newTabSelectedMoneyTransferOperationAction(EditPaymentRequest::new, tab),
+                        newTabSelectedMoneyTransferOperationAction(DeletePaymentRequest::new, tab)
+                    ),
+                    newTabCopyActionGroup(true, tab)
                 );
                 break;
             case "MultipleBookings":
                 contextMenuActionGroupFactory = () -> newActionGroup(
-                        newTabSelectedDocumentOperationAction(MergeMultipleBookingsOptionsRequest::new, tab),
-                        newTabSelectedDocumentOperationAction(CancelOtherMultipleBookingsRequest::new, tab),
-                        newTabSelectedDocumentOperationAction(GetBackCancelledMultipleBookingsDepositRequest::new, tab),
-                        newSeparatorAction(),
-                        newTabSelectedDocumentOperationAction(ToggleMarkNotMultipleBookingRequest::new, tab)
+                    newTabSelectedDocumentOperationAction(MergeMultipleBookingsOptionsRequest::new, tab),
+                    newTabSelectedDocumentOperationAction(CancelOtherMultipleBookingsRequest::new, tab),
+                    newTabSelectedDocumentOperationAction(GetBackCancelledMultipleBookingsDepositRequest::new, tab),
+                    newSeparatorAction(),
+                    newTabSelectedDocumentOperationAction(ToggleMarkNotMultipleBookingRequest::new, tab)
                 );
                 break;
             case "Cart":
                 contextMenuActionGroupFactory = () -> newActionGroup(
-                        newTabSelectedDocumentOperationAction(OpenBookingCartRequest::new, tab)
+                    newTabSelectedDocumentOperationAction(OpenBookingCartRequest::new, tab)
                 );
                 break;
             case "Mails":
                 contextMenuActionGroupFactory = () -> newActionGroup(
-                        newTabSelectedMailOperationAction(OpenMailRequest::new, tab),
-                        newSelectedDocumentOperationAction(ComposeNewMailRequest::new),
-                        newTabCopyActionGroup(true, tab)
+                    newTabSelectedMailOperationAction(OpenMailRequest::new, tab),
+                    newSelectedDocumentOperationAction(ComposeNewMailRequest::new),
+                    newTabCopyActionGroup(true, tab)
                 );
                 break;
             case "History":
@@ -263,9 +261,9 @@ public final class BookingDetailsPanel implements
 
     private Node buildCommentView() {
         ColumnsPane columnsPane = new ColumnsPane(5, // Space between the 3 comments
-                createComment("Person request", "request"),
-                createComment("Registration comment", "comment"),
-                createComment("Assisted needs", "specialNeeds")
+            createComment("Person request", "request"),
+            createComment("Registration comment", "comment"),
+            createComment("Assisted needs", "specialNeeds")
         );
         columnsPane.setPadding(new Insets(2, 0, 0, 0)); // Small padding on top
         return columnsPane;
@@ -280,21 +278,20 @@ public final class BookingDetailsPanel implements
         titledPane.setCollapsible(false);
         titledPane.setMaxHeight(Double.MAX_VALUE);
         GridPane.setColumnIndex(titledPane, columnIndex++);
-        Hyperlink updateLink = I18nControls.bindI18nTextProperty(new Hyperlink(),  ModalityI18nKeys.Update);
-        Hyperlink saveLink   = I18nControls.bindI18nTextProperty(new Hyperlink(), ModalityI18nKeys.Save);
+        Hyperlink updateLink = I18nControls.bindI18nTextProperty(new Hyperlink(), ModalityI18nKeys.Update);
+        Hyperlink saveLink = I18nControls.bindI18nTextProperty(new Hyperlink(), ModalityI18nKeys.Save);
         Hyperlink cancelLink = I18nControls.bindI18nTextProperty(new Hyperlink(), ModalityI18nKeys.Cancel);
-        BooleanProperty editableProperty = new SimpleBooleanProperty(true) {
-            @Override
-            protected void invalidated() {
-                boolean editable = get();
-                updateLink.setManaged(!editable);  updateLink.setVisible(!editable);
-                saveLink  .setManaged( editable);  saveLink  .setVisible( editable);
-                cancelLink.setManaged( editable);  cancelLink.setVisible( editable);
-                textArea  .setEditable(editable);
-                if (!editable)
-                    textSyncer.run();
-            }
-        };
+        BooleanProperty editableProperty = FXProperties.newBooleanProperty(true, editable -> {
+            updateLink.setManaged(!editable);
+            updateLink.setVisible(!editable);
+            saveLink.setManaged(editable);
+            saveLink.setVisible(editable);
+            cancelLink.setManaged(editable);
+            cancelLink.setVisible(editable);
+            textArea.setEditable(editable);
+            if (!editable)
+                textSyncer.run();
+        });
         FXProperties.runNowAndOnPropertiesChange(() -> {
             editableProperty.set(false);
             textSyncer.run();
@@ -311,18 +308,18 @@ public final class BookingDetailsPanel implements
             Document updatedDocument = updateStore.updateEntity(originalDocument);
             updatedDocument.setFieldValue(commentField, textArea.getText());
             OperationUtil.turnOnButtonsWaitModeDuringExecution(
-                    updateStore.submitChanges().onSuccess(x -> {
-                        // Now that the changes have been successfully recorded in the database, we will exit the edit
-                        // mode. But this will also trigger textSyncer, which will copy the text from the original
-                        // document, which still contains the previous value (until the push notification arrives).
-                        // So to prevent that, we need to update first the original document with the latest value
-                        // entered by the user.
-                        originalDocument.setFieldValue(commentField, updatedDocument.getFieldValue(commentField));
-                        // TODO: add a generic method to UpdateStore to apply the commited changes to the underlying store
-                        // Now we can exit the edit mode.
-                        editableProperty.set(false);
-                    }),
-                    saveLink, cancelLink
+                updateStore.submitChanges().onSuccess(x -> {
+                    // Now that the changes have been successfully recorded in the database, we will exit the edit
+                    // mode. But this will also trigger textSyncer, which will copy the text from the original
+                    // document, which still contains the previous value (until the push notification arrives).
+                    // So to prevent that, we need to update first the original document with the latest value
+                    // entered by the user.
+                    originalDocument.setFieldValue(commentField, updatedDocument.getFieldValue(commentField));
+                    // TODO: add a generic method to UpdateStore to apply the commited changes to the underlying store
+                    // Now we can exit the edit mode.
+                    editableProperty.set(false);
+                }),
+                saveLink, cancelLink
             );
         });
         HBox buttonBar = new HBox(10, updateLink, saveLink, cancelLink);
@@ -342,13 +339,13 @@ public final class BookingDetailsPanel implements
 
     private OperationAction<?, Object> newSelectedDocumentOperationAction(Function<Document, ?> operationRequestFactory) {
         return newOperationAction(
-                // Creating a new operation request associated to the selected document each time the user clicks on this action
-                () -> operationRequestFactory.apply(getSelectedDocument()),
-                // Refreshing the graphical properties of this action (through i18n) each time the user selects another document,
-                selectedDocumentProperty,
-                // or when the server refreshes the data, in particular on push notification after that action has been
-                // executed (ex: "Mark as arrived" => arrived=true in database => server push => "Unmark as arrived").
-                bookingsVisualResultProperty
+            // Creating a new operation request associated to the selected document each time the user clicks on this action
+            () -> operationRequestFactory.apply(getSelectedDocument()),
+            // Refreshing the graphical properties of this action (through i18n) each time the user selects another document,
+            selectedDocumentProperty,
+            // or when the server refreshes the data, in particular on push notification after that action has been
+            // executed (ex: "Mark as arrived" => arrived=true in database => server push => "Unmark as arrived").
+            bookingsVisualResultProperty
         );
     }
 
@@ -356,13 +353,13 @@ public final class BookingDetailsPanel implements
     private <E extends Entity> OperationAction<?, Object> newTabSelectedEntityOperationAction(Function<E, ?> operationRequestFactory, Tab tab) {
         ObjectProperty<E> tabSelectedEntityProperty = getTabSelectedEntityProperty(tab);
         return newOperationAction(
-                // Creating a new operation request associated to the selected entity in the tab each time the user clicks on this action
-                () -> operationRequestFactory.apply(tabSelectedEntityProperty.get()),
-                // Refreshing the graphical properties of this action (through i18n) each time the user selects another entity in this tab,
-                tabSelectedEntityProperty,
-                // or when the server refreshes the data, in particular on push notification after that action has been
-                // executed (ex: "Cancel" => cancelled=true in database => server push => "Uncancel").
-                getTabVisualMapper(tab).visualResultProperty()
+            // Creating a new operation request associated to the selected entity in the tab each time the user clicks on this action
+            () -> operationRequestFactory.apply(tabSelectedEntityProperty.get()),
+            // Refreshing the graphical properties of this action (through i18n) each time the user selects another entity in this tab,
+            tabSelectedEntityProperty,
+            // or when the server refreshes the data, in particular on push notification after that action has been
+            // executed (ex: "Cancel" => cancelled=true in database => server push => "Uncancel").
+            getTabVisualMapper(tab).visualResultProperty()
         );
     }
 
@@ -385,8 +382,8 @@ public final class BookingDetailsPanel implements
     private ActionGroup newTabCopyActionGroup(boolean hasSeparators, Tab tab) {
         ReactiveVisualMapper<Entity> visualMapper = getTabVisualMapper(tab);
         return newActionGroup(null, hasSeparators,
-                newOperationAction(() -> new CopySelectionRequest(visualMapper.getSelectedEntities(), visualMapper.getEntityColumns())),
-                newOperationAction(() -> new CopyAllRequest(visualMapper.getCurrentEntities(), visualMapper.getEntityColumns()))
+            newOperationAction(() -> new CopySelectionRequest(visualMapper.getSelectedEntities(), visualMapper.getEntityColumns())),
+            newOperationAction(() -> new CopyAllRequest(visualMapper.getCurrentEntities(), visualMapper.getEntityColumns()))
         );
     }
 
