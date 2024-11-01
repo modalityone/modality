@@ -187,12 +187,12 @@ public abstract class MediaLinksManagement {
                 //  validationSupport.addUrlOrEmptyValidation(linkTextField, linkTextField, "UrlIsMalformed");
                 validationSupport.addUrlOrEmptyValidation(linkTextField, linkTextField, I18n.getI18nText( MediasI18nKeys.MalformedUrl));
 
-                Label durationLabel = I18nControls.bindI18nProperties(new Label(), MediasI18nKeys.ExactDuration);
+                Label durationLabel = I18nControls.newLabel(MediasI18nKeys.ExactDuration);
                 TextField durationTextField = new TextField();
                 durationTextField.setMaxWidth(100);
                 validationSupport.addMinimumDurationValidation(durationTextField, durationTextField, I18n.getI18nText(MediasI18nKeys.DurationShouldBeAtLeast60s));
 
-                Button retrieveDurationButton = I18nControls.bindI18nProperties(Bootstrap.primaryButton(new Button()), MediasI18nKeys.RetrieveDuration);
+                Button retrieveDurationButton = Bootstrap.primaryButton(I18nControls.newButton(MediasI18nKeys.RetrieveDuration));
                 HBox secondLine = new HBox(durationLabel, durationTextField, retrieveDurationButton);
                 secondLine.setAlignment(Pos.CENTER_RIGHT);
                 secondLine.setSpacing(10);
@@ -292,7 +292,7 @@ public abstract class MediaLinksManagement {
         }
 
         protected HBox buildLastLine() {
-            Button saveButton = Bootstrap.largeSuccessButton(I18nControls.bindI18nProperties(new Button(), ModalityI18nKeys.Save));
+            Button saveButton = Bootstrap.largeSuccessButton(I18nControls.newButton(ModalityI18nKeys.Save));
             saveButton.disableProperty().bind(updateStore.hasChangesProperty().not());
             saveButton.setOnAction(e -> {
                 if (!validationSupportInitialised[0]) {

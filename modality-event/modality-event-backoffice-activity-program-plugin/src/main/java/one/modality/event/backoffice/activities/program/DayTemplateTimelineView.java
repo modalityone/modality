@@ -172,7 +172,7 @@ final class DayTemplateTimelineView implements ButtonFactoryMixin {
         syncStartTimeUiFromModel();
         FXProperties.runOnPropertiesChange(this::syncStartTimeModelFromUi, fromTextField.textProperty());
 
-        Label toLabel = I18nControls.bindI18nProperties(new Label(), ProgramI18nKeys.To);
+        Label toLabel = I18nControls.newLabel(ProgramI18nKeys.To);
         //TextTheme.createSecondaryTextFacet(subtitle).style();
 
         untilTextField.setPromptText("13:00");

@@ -53,7 +53,7 @@ public class LiveStreamingView {
     public Node buildContainer() {
         BorderPane mainFrame = new BorderPane();
         mainFrame.setPadding(new Insets(0,0,30,0));
-        Label title = I18nControls.bindI18nProperties(new Label(), MediasI18nKeys.LiveStreamingTitle);
+        Label title = I18nControls.newLabel(MediasI18nKeys.LiveStreamingTitle);
         title.setPadding(new Insets(30));
         title.setGraphicTextGap(30);
         TextTheme.createPrimaryTextFacet(title).style();
@@ -71,7 +71,7 @@ public class LiveStreamingView {
         liveMessageHTMLEditor.setMode(BASIC);
         liveMessageHTMLEditor.setPrefHeight(270);
 
-        Label liveMessageLabel = I18nControls.bindI18nProperties(new Label(), MediasI18nKeys.LiveInfoMessage);
+        Label liveMessageLabel = I18nControls.newLabel(MediasI18nKeys.LiveInfoMessage);
         liveMessageLabel.setTextFill(Color.WHITE);
         liveMessageLabel.getStyleClass().add(Bootstrap.STRONG);
 
@@ -107,11 +107,11 @@ public class LiveStreamingView {
         HtmlTextEditor explanationHTMLEditor = new HtmlTextEditor();
         explanationHTMLEditor.setMode(HtmlTextEditor.Mode.STANDARD);
         explanationHTMLEditor.setPrefHeight(450);
-        Label explanationLabel = I18nControls.bindI18nProperties(new Label(), MediasI18nKeys.ExplanationText);
+        Label explanationLabel = I18nControls.newLabel(MediasI18nKeys.ExplanationText);
        // HBox explanationHBox = new HBox(explanationLabel,explanationHTMLEditor);
         mainVBox.getChildren().addAll(new HBox(explanationLabel),explanationHTMLEditor);
 
-        Label areWeUsingIndividualLinksForEachSessionLabel = I18nControls.bindI18nProperties(new Label(), MediasI18nKeys.AreWeUsingIndividualLinksForEachSession);
+        Label areWeUsingIndividualLinksForEachSessionLabel = I18nControls.newLabel(MediasI18nKeys.AreWeUsingIndividualLinksForEachSession);
         Switch areWeUsingIndividualLinksForEachSessionSwitch = new Switch();
 
         HBox individualLinksHBox = new HBox();
@@ -121,7 +121,7 @@ public class LiveStreamingView {
 
         HBox globalLinkLine = new HBox();
         globalLinkLine.setAlignment(Pos.CENTER_LEFT);
-        Label liveStreamGlobalLink = I18nControls.bindI18nProperties(new Label(), MediasI18nKeys.LiveStreamGlobalLink);
+        Label liveStreamGlobalLink = I18nControls.newLabel(MediasI18nKeys.LiveStreamGlobalLink);
         liveStreamGlobalLink.setPadding(new Insets(0,10,0,0));
         // liveStreamGlobalLink.setMinWidth(labelMinWith);
         globalLinkLine.getChildren().add(liveStreamGlobalLink);

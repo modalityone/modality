@@ -104,17 +104,17 @@ public class AlterRoomPane extends VBox {
         Label availabilityLabel = createHeadingLabel("Availability");
 
         table = new VisualGrid();
-        Button createButton = I18nControls.bindI18nProperties(new Button(), ModalityI18nKeys.Create);
+        Button createButton = I18nControls.newButton(ModalityI18nKeys.Create);
         createButton.setOnAction(e -> create());
-        Button updateButton = I18nControls.bindI18nProperties(new Button(), ModalityI18nKeys.Update);
+        Button updateButton = I18nControls.newButton(ModalityI18nKeys.Update);
         updateButton.setOnAction(e -> update());
-        Button deleteButton = I18nControls.bindI18nProperties(new Button(), ModalityI18nKeys.Delete);
+        Button deleteButton = I18nControls.newButton(ModalityI18nKeys.Delete);
         deleteButton.setOnAction(e -> confirmDelete());
         Button deleteRoomButton = new Button("Delete room"); // ???
-        saveButton = I18nControls.bindI18nProperties(new Button(), ModalityI18nKeys.Save);
+        saveButton = I18nControls.newButton(ModalityI18nKeys.Save);
         saveButton.setOnAction(e -> confirmSave());
         saveButton.setVisible(false);
-        cancelButton = I18nControls.bindI18nProperties(new Button(), ModalityI18nKeys.Cancel);
+        cancelButton = I18nControls.newButton(ModalityI18nKeys.Cancel);
         cancelButton.setOnAction(e -> cancel());
         cancelButton.setVisible(false);
 

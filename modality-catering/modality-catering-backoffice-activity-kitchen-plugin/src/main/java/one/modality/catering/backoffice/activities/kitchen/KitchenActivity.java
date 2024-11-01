@@ -148,7 +148,7 @@ final class KitchenActivity extends ViewDomainActivityBase
 
         Platform.runLater(() -> {
             if (dietaryOptionSvgs.isEmpty()) {
-                Label noDataLabel = I18nControls.bindI18nProperties(new Label(), CateringI18nKeys.NoMealsData);
+                Label noDataLabel = I18nControls.newLabel(CateringI18nKeys.NoMealsData);
                 TextTheme.createPrimaryTextFacet(noDataLabel).requestedFont(NO_DATA_MSG_FONT).style();
                 noDataLabel.setWrapText(true);
                 keyPane.getChildren().setAll(noDataLabel);

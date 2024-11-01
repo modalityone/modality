@@ -45,11 +45,11 @@ public final class BookingView {
     private final Text eventCountryLocationText = TextUtility.createText(StyleUtility.ELEMENT_GRAY_COLOR);
     private final Label personLabel = new Label();
     private final Label statusLabel = new Label();
-    private final Text totalPriceLabel = I18n.bindI18nProperties(new Text(), EcommerceI18nKeys.Total);
+    private final Text totalPriceLabel = I18n.newText(EcommerceI18nKeys.Total);
     private final Text totalPriceValue = new Text();
-    private final Text remainingPriceLabel = I18n.bindI18nProperties(new Text(), EcommerceI18nKeys.RemainingAmount);
+    private final Text remainingPriceLabel = I18n.newText(EcommerceI18nKeys.RemainingAmount);
     private final Text remainingPriceValue = new Text();
-    private final Text paidPriceLabel = I18n.bindI18nProperties(new Text(),  EcommerceI18nKeys.Paid);
+    private final Text paidPriceLabel = I18n.newText(EcommerceI18nKeys.Paid);
     private final Text paidPriceValue = new Text();
     private final List<Button> buttons = new ArrayList<>();
 
@@ -209,7 +209,7 @@ public final class BookingView {
     }
 
     private Button createPaymentButton() {
-        return Bootstrap.dangerButton(I18nControls.bindI18nProperties(new Button(), EcommerceI18nKeys.Pay, EventPriceFormatter.formatWithCurrency(booking.getPriceNet() - booking.getPriceDeposit(), booking.getEvent())));
+        return Bootstrap.dangerButton(I18nControls.newButton(EcommerceI18nKeys.Pay, EventPriceFormatter.formatWithCurrency(booking.getPriceNet() - booking.getPriceDeposit(), booking.getEvent())));
     }
 
     public Node getView() {

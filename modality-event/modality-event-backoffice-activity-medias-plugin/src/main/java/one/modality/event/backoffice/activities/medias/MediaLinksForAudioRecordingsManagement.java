@@ -38,13 +38,13 @@ public class MediaLinksForAudioRecordingsManagement extends MediaLinksManagement
 
         VBox topContent = new VBox();
 
-        Label languageLabel = I18nControls.bindI18nProperties(new Label(), MediasI18nKeys.Language, languageItem.getName());
+        Label languageLabel = I18nControls.newLabel(MediasI18nKeys.Language, languageItem.getName());
         languageLabel.setPadding(new Insets(30, 0, 60, 0));
         languageLabel.getStyleClass().add(Bootstrap.H4);
         languageLabel.getStyleClass().add(Bootstrap.TEXT_SECONDARY);
         topContent.getChildren().add(languageLabel);
 
-        Label publishAllLabel = I18nControls.bindI18nProperties(new Label(), MediasI18nKeys.PublishAll, currentItemCode);
+        Label publishAllLabel = I18nControls.newLabel(MediasI18nKeys.PublishAll, currentItemCode);
         Switch publishAllSwitch = new Switch();
         //We add the media to the update store
         workingMediasForCurrentLanguage.setAll(recordingsMediasReadFromDatabase.stream().map(localUpdateStore::updateEntity).collect(Collectors.toList()));
@@ -57,7 +57,7 @@ public class MediaLinksForAudioRecordingsManagement extends MediaLinksManagement
 
         Region spacer = new Region();
         HBox.setHgrow(spacer, Priority.ALWAYS);
-        Button saveButton = Bootstrap.successButton(I18nControls.bindI18nProperties(new Button(), ModalityI18nKeys.Save));
+        Button saveButton = Bootstrap.successButton(I18nControls.newButton(ModalityI18nKeys.Save));
         saveButton.disableProperty().bind(localUpdateStore.hasChangesProperty().not());
         HBox publishAllHBox = new HBox(publishAllLabel, publishAllSwitch, spacer, saveButton);
         publishAllHBox.setSpacing(10);

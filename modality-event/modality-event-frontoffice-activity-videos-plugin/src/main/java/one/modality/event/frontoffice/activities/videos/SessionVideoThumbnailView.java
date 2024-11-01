@@ -73,7 +73,7 @@ final class SessionVideoThumbnailView {
             descriptionLine
         );
 
-        Label delayedLabel = Bootstrap.strong(I18nControls.bindI18nProperties(new Label(), VideosI18nKeys.VideoDelayed));
+        Label delayedLabel = Bootstrap.strong(I18nControls.newLabel(VideosI18nKeys.VideoDelayed));
         delayedLabel.setTextFill(Color.WHITE);
         HBox delayedLine = new HBox(delayedLabel);
         delayedLine.setAlignment(Pos.CENTER);
@@ -81,9 +81,9 @@ final class SessionVideoThumbnailView {
         delayedLine.setMinWidth(TEACHING_BOX_WIDTH);
         delayedLine.setMaxHeight(25);
 
-        Label unavailableLabel = Bootstrap.textDanger( I18nControls.bindI18nProperties(new Label(), VideosI18nKeys.Unavailable));
-        Label expiredLabel     = Bootstrap.textDanger( I18nControls.bindI18nProperties(new Label(), VideosI18nKeys.Expired));
-        Label availableLabel   = Bootstrap.textSuccess(I18nControls.bindI18nProperties(new Label(), VideosI18nKeys.Available));
+        Label unavailableLabel = Bootstrap.textDanger( I18nControls.newLabel(VideosI18nKeys.Unavailable));
+        Label expiredLabel     = Bootstrap.textDanger( I18nControls.newLabel(VideosI18nKeys.Expired));
+        Label availableLabel   = Bootstrap.textSuccess(I18nControls.newLabel(VideosI18nKeys.Available));
 
         // --
 

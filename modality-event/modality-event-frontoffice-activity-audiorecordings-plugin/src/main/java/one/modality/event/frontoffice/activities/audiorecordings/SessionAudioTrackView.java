@@ -62,7 +62,7 @@ final class SessionAudioTrackView {
         );
         //Here we should have only one media for audio
         if (publishedMedias.isEmpty()) {
-            Label noMediaLabel = I18nControls.bindI18nProperties(new Label(), AudioRecordingsI18nKeys.AudioRecordingNotYetPublished);
+            Label noMediaLabel = I18nControls.newLabel(AudioRecordingsI18nKeys.AudioRecordingNotYetPublished);
             noMediaLabel.getStyleClass().add(Bootstrap.TEXT_WARNING);
             container.getChildren().add(noMediaLabel);
         } else {

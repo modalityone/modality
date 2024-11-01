@@ -52,7 +52,7 @@ final class Step2CheckoutSlide extends StepSlide {
     // Node property that will be managed by the sub-router to mount the CheckoutAccountActivity (when routed)
     private final ObjectProperty<Node> checkoutAccountMountNodeProperty = new SimpleObjectProperty<>();
     private final GuestPanel guestPanel = new GuestPanel();
-    private final Button submitButton = Bootstrap.largeSuccessButton(I18nControls.bindI18nProperties(new Button(), ModalityI18nKeys.Submit));
+    private final Button submitButton = Bootstrap.largeSuccessButton(I18nControls.newButton(ModalityI18nKeys.Submit));
     private final BooleanProperty step1PersonToBookWasShownProperty = new SimpleBooleanProperty();
 
     public Step2CheckoutSlide(BookEventActivity bookEventActivity) {
@@ -93,8 +93,8 @@ final class Step2CheckoutSlide extends StepSlide {
 
         // Adding the container that will display the CheckoutAccountActivity (and eventually the login page before)
         BorderPane signInContainer = new BorderPane();
-        Label loginLabel = Bootstrap.textPrimary(Bootstrap.strong(I18nControls.bindI18nProperties(new Label(), BookingI18nKeys.LoginBeforeBooking)));
-        Hyperlink orGuestLink = Bootstrap.textPrimary(I18nControls.bindI18nProperties(new Hyperlink(), BookingI18nKeys.OrBookAsGuest));
+        Label loginLabel = Bootstrap.textPrimary(Bootstrap.strong(I18nControls.newLabel(BookingI18nKeys.LoginBeforeBooking)));
+        Hyperlink orGuestLink = Bootstrap.textPrimary(I18nControls.newHyperlink(BookingI18nKeys.OrBookAsGuest));
         VBox signIntopVBox = new VBox(10, loginLabel, orGuestLink);
         signIntopVBox.setAlignment(Pos.TOP_CENTER);
         BorderPane.setMargin(signIntopVBox, new Insets(0, 0, 20, 0));
@@ -118,14 +118,14 @@ final class Step2CheckoutSlide extends StepSlide {
             flipPane.flipToBack();
             guestPanel.onShowing();
         });
-        Hyperlink orAccountLink = Bootstrap.textPrimary(I18nControls.bindI18nProperties(new Hyperlink(), BookingI18nKeys.OrBookUsingAccount));
+        Hyperlink orAccountLink = Bootstrap.textPrimary(I18nControls.newHyperlink(BookingI18nKeys.OrBookUsingAccount));
         guestPanel.addTopNode(orAccountLink);
         orAccountLink.setOnAction(e -> {
             flipPane.flipToFront();
             guestPanel.onHiding();
         });
 
-        CheckBox facilityFeeCheckBox = I18nControls.bindI18nProperties(new CheckBox(), BookingI18nKeys.FacilityFee);
+        CheckBox facilityFeeCheckBox = I18nControls.newCheckBox(BookingI18nKeys.FacilityFee);
         VBox.setMargin(facilityFeeCheckBox, new Insets(50, 0, 50, 0));
         Document document = getWorkingBooking().getLastestDocumentAggregate().getDocument();
         facilityFeeCheckBox.setSelected(document.isPersonFacilityFee());
@@ -180,8 +180,8 @@ final class Step2CheckoutSlide extends StepSlide {
 
         summaryGridPane.getChildren().clear();
         addRow(
-            Bootstrap.textPrimary(Bootstrap.strong(I18nControls.bindI18nProperties(new Label(), "Summary"))), // ???
-            Bootstrap.textPrimary(Bootstrap.strong(I18nControls.bindI18nProperties(new Label(), EcommerceI18nKeys.Price))),
+            Bootstrap.textPrimary(Bootstrap.strong(I18nControls.newLabel("Summary"))), // ???
+            Bootstrap.textPrimary(Bootstrap.strong(I18nControls.newLabel(EcommerceI18nKeys.Price))),
             new Label()
         );
 
@@ -200,7 +200,7 @@ final class Step2CheckoutSlide extends StepSlide {
         if (total < noDiscountTotalPrice) {
             Label price = new Label(EventPriceFormatter.formatWithCurrency(total - noDiscountTotalPrice, workingBooking.getEvent()));
             addRow(
-                I18nControls.bindI18nProperties(new Label(), EcommerceI18nKeys.Discount),
+                I18nControls.newLabel(EcommerceI18nKeys.Discount),
                 price,
                 new Label()
             );
@@ -277,9 +277,9 @@ final class Step2CheckoutSlide extends StepSlide {
     }
 
     private void addTotalLine(String col1I18n, Object col1Amount, String col2I18n, Object col2Amount, String col3I18n, Object col3Amount) {
-        Label col1Label = I18nControls.bindI18nProperties(new Label(), col1I18n, col1Amount);
-        Label col2Label = I18nControls.bindI18nProperties(new Label(), col2I18n, col2Amount);
-        Label col3Label = I18nControls.bindI18nProperties(new Label(), col3I18n, col3Amount);
+        Label col1Label = I18nControls.newLabel(col1I18n, col1Amount);
+        Label col2Label = I18nControls.newLabel(col2I18n, col2Amount);
+        Label col3Label = I18nControls.newLabel(col3I18n, col3Amount);
         ColumnsPane totalPane = new ColumnsPane(col1Label, col2Label, col3Label);
         totalPane.setMaxWidth(Double.MAX_VALUE);
         totalPane.setPadding(new Insets(7));

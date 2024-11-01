@@ -42,7 +42,7 @@ final class ProgramActivity extends ViewDomainActivityBase {
 
     @Override
     public Node buildUi() {
-        Label title = I18nControls.bindI18nProperties(new Label(), ProgramI18nKeys.ProgramTitle);
+        Label title = I18nControls.newLabel(ProgramI18nKeys.ProgramTitle);
         title.setContentDisplay(ContentDisplay.TOP);
         title.setPadding(new Insets(30));
         title.setGraphicTextGap(30);

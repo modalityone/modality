@@ -18,11 +18,10 @@ final class RecurringEventRenderers {
         // eventStateRenderer
         ValueRendererRegistry.registerValueRenderer("eventStateRenderer", (value, context) -> {
             EventState state = EventState.of((String) value);
-            Text toReturn = new Text();
             if (state == null) {
-                return Bootstrap.textSecondary(I18n.bindI18nProperties(toReturn, RecurringEventsI18nKeys.NOT_DEFINED));
+                return Bootstrap.textSecondary(I18n.newText(RecurringEventsI18nKeys.NOT_DEFINED));
             }
-            I18n.bindI18nProperties(toReturn, state.toString());
+            Text toReturn = I18n.newText(state.toString());
             switch (state) {
                 case DRAFT:
                 case OPENABLE:
@@ -54,7 +53,7 @@ final class RecurringEventRenderers {
         // confirmRenderer (used for the last column of the bookings displayed in RecurringEventAttendanceView)
         ValueRendererRegistry.registerValueRenderer("confirmRenderer", (value, context) -> {
             Document document = (Document) value;
-            Text confirmText = I18n.bindI18nProperties(new Text(), document.isConfirmed() ? "BookingConfirmed" : "BookingUnconfirmed");
+            Text confirmText = I18n.newText(document.isConfirmed() ? "BookingConfirmed" : "BookingUnconfirmed");
             confirmText.getStyleClass().add(document.isConfirmed() ? "booking-status-confirmed" : "booking-status-unconfirmed");
             return confirmText;
         });

@@ -95,7 +95,7 @@ public class VideoView {
     }
 
     public void drawContainer() {
-        Label title = I18nControls.bindI18nProperties(new Label(), MediasI18nKeys.VideoSettingsTitle);
+        Label title = I18nControls.newLabel(MediasI18nKeys.VideoSettingsTitle);
         title.setPadding(new Insets(30));
         title.setGraphicTextGap(30);
         TextTheme.createPrimaryTextFacet(title).style();
@@ -107,19 +107,19 @@ public class VideoView {
         VBox masterSettings = new VBox();
         masterSettings.setPadding(new Insets(20));
 
-        Label masterLabel = I18nControls.bindI18nProperties(new Label(), MediasI18nKeys.MasterSettings);
+        Label masterLabel = I18nControls.newLabel(MediasI18nKeys.MasterSettings);
         masterLabel.getStyleClass().add(Bootstrap.STRONG);
         masterLabel.setPadding(new Insets(20,0,0,0));
         masterSettings.getChildren().add(masterLabel);
 
         Event currentEvent = updateStore.updateEntity(FXEvent.getEvent());
 
-        Label liveStreamGlobalLink = I18nControls.bindI18nProperties(new Label(), MediasI18nKeys.LiveStreamGlobalLink);
+        Label liveStreamGlobalLink = I18nControls.newLabel(MediasI18nKeys.LiveStreamGlobalLink);
         liveStreamGlobalLink.getStyleClass().add(Bootstrap.TEXT_SECONDARY);
         liveStreamGlobalLink.setPadding(new Insets(15,0,0,0));
         masterSettings.getChildren().add(liveStreamGlobalLink);
 
-        Label liveStreamGlobalComment = I18nControls.bindI18nProperties(new Label(), MediasI18nKeys.LiveStreamGlobalLinkComment);
+        Label liveStreamGlobalComment = I18nControls.newLabel(MediasI18nKeys.LiveStreamGlobalLinkComment);
         liveStreamGlobalComment.getStyleClass().add(Bootstrap.TEXT_SECONDARY);
         liveStreamGlobalComment.getStyleClass().add(Bootstrap.SMALL);
         masterSettings.getChildren().add(liveStreamGlobalComment);
@@ -141,12 +141,12 @@ public class VideoView {
         masterSettings.getChildren().add(livestreamGlobalLinkTextField);
 
 
-        Label availableUntilLabel = I18nControls.bindI18nProperties(new Label(), MediasI18nKeys.AvailableUntil);
+        Label availableUntilLabel = I18nControls.newLabel(MediasI18nKeys.AvailableUntil);
         availableUntilLabel.getStyleClass().add(Bootstrap.TEXT_SECONDARY);
         availableUntilLabel.setPadding(new Insets(15,0,0,0));
         masterSettings.getChildren().add(availableUntilLabel);
 
-        Label availableUntilCommentLabel = I18nControls.bindI18nProperties(new Label(), MediasI18nKeys.AvailableUntilComment);
+        Label availableUntilCommentLabel = I18nControls.newLabel(MediasI18nKeys.AvailableUntilComment);
         availableUntilCommentLabel.getStyleClass().add(Bootstrap.TEXT_SECONDARY);
         availableUntilCommentLabel.getStyleClass().add(Bootstrap.SMALL);
         availableUntilCommentLabel.setPadding(new Insets(0,0,10,0));
@@ -184,12 +184,12 @@ public class VideoView {
             }
         });
 
-        Label vodAvailableAfterLive = I18nControls.bindI18nProperties(new Label(), MediasI18nKeys.VODAvailableAfter);
+        Label vodAvailableAfterLive = I18nControls.newLabel(MediasI18nKeys.VODAvailableAfter);
         vodAvailableAfterLive.getStyleClass().add(Bootstrap.TEXT_SECONDARY);
         vodAvailableAfterLive.setPadding(new Insets(15,0,0,0));
         masterSettings.getChildren().add(vodAvailableAfterLive);
 
-        Label vodAvailableAfterLiveComment = I18nControls.bindI18nProperties(new Label(), MediasI18nKeys.VODAvailableAfterComment);
+        Label vodAvailableAfterLiveComment = I18nControls.newLabel(MediasI18nKeys.VODAvailableAfterComment);
         vodAvailableAfterLiveComment.getStyleClass().add(Bootstrap.TEXT_SECONDARY);
         vodAvailableAfterLiveComment.getStyleClass().add(Bootstrap.SMALL);
         masterSettings.getChildren().add(vodAvailableAfterLiveComment);
@@ -203,7 +203,7 @@ public class VideoView {
 
 
         //SAVE BUTTON
-        Button saveButton = Bootstrap.successButton(I18nControls.bindI18nProperties(new Button(), ModalityI18nKeys.Save));
+        Button saveButton = Bootstrap.successButton(I18nControls.newButton(ModalityI18nKeys.Save));
         saveButton.disableProperty().bind(updateStore.hasChangesProperty().not());
         addUpdateStoreHasChangesProperty(updateStore.hasChangesProperty());
 

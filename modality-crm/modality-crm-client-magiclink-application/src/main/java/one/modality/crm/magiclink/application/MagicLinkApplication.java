@@ -22,7 +22,7 @@ import one.modality.base.client.i18n.ModalityI18nKeys;
 
 public class MagicLinkApplication extends Application {
 
-    private final Text text = I18n.bindI18nProperties(new Text(), MagicLinkI18nKeys.MagicLinkInitialMessage);
+    private final Text text = I18n.newText(MagicLinkI18nKeys.MagicLinkInitialMessage);
     private String token;
     private final VBox content = new VBox(20, text);
     private Stage stage;
@@ -61,7 +61,7 @@ public class MagicLinkApplication extends Application {
         Label passwordLabel = Bootstrap.textSecondary(I18nControls.bindI18nTextProperty(new Label(), MagicLinkI18nKeys.NewPassword));
         PasswordField passwordField = new PasswordField();
         passwordField.setMaxWidth(250);
-        Button confirmButton = Bootstrap.successButton(I18nControls.bindI18nProperties(new Button(), ModalityI18nKeys.Confirm));
+        Button confirmButton = Bootstrap.successButton(I18nControls.newButton(ModalityI18nKeys.Confirm));
         confirmButton.setPrefWidth(250);
         confirmButton.setOnAction(l -> {
             AuthenticationService.updateCredentials(new MagicLinkPasswordUpdate(passwordField.getText()))

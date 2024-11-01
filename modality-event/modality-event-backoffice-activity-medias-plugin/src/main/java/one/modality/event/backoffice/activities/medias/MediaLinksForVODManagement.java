@@ -127,7 +127,7 @@ public class MediaLinksForVODManagement extends MediaLinksManagement {
                 teachingTitle.getStyleClass().add(Bootstrap.STRONG);
                 startTimeLabel.getStyleClass().add(Bootstrap.STRONG);
 
-                Button saveButton = Bootstrap.largeSuccessButton(I18nControls.bindI18nProperties(new Button(), ModalityI18nKeys.Save));
+                Button saveButton = Bootstrap.largeSuccessButton(I18nControls.newButton(ModalityI18nKeys.Save));
                 saveButton.disableProperty().bind(localUpdateStore.hasChangesProperty().not());
 
                 HBox saveButtonContainer = new HBox(saveButton);
@@ -139,8 +139,8 @@ public class MediaLinksForVODManagement extends MediaLinksManagement {
                 currentVBox.getChildren().add(firstLine);
 
 
-                Label linksLabel = I18nControls.bindI18nProperties(new Label(), MediasI18nKeys.VODLinks);
-                Label noLinkLabel = I18nControls.bindI18nProperties(new Label(), MediasI18nKeys.NoLinkDefinedYet);
+                Label linksLabel = I18nControls.newLabel(MediasI18nKeys.VODLinks);
+                Label noLinkLabel = I18nControls.newLabel(MediasI18nKeys.NoLinkDefinedYet);
                 HBox linkLabelHBox = new HBox(linksLabel, noLinkLabel);
                 linkLabelHBox.setSpacing(10);
                 currentVBox.getChildren().add(linkLabelHBox);
@@ -187,7 +187,7 @@ public class MediaLinksForVODManagement extends MediaLinksManagement {
                 addMediaHBox.setAlignment(Pos.CENTER_LEFT);
                 addMediaHBox.setSpacing(20);
 
-                Label addLinkLabel = Bootstrap.small(I18nControls.bindI18nProperties(new Label(), MediasI18nKeys.AddLink));
+                Label addLinkLabel = Bootstrap.small(I18nControls.newLabel(MediasI18nKeys.AddLink));
                 TextTheme.createSecondaryTextFacet(addLinkLabel).style();
 
                 SVGPath addIcon = SvgIcons.setSVGPathFill(SvgIcons.createPlusPath(), Color.web("#0096D6"));
@@ -207,7 +207,7 @@ public class MediaLinksForVODManagement extends MediaLinksManagement {
                 addMediaHBox.getChildren().addAll(addLinkLabel, addButton);
                 currentVBox.getChildren().add(addMediaHBox);
 
-                Label publicationDelayedLabel = I18nControls.bindI18nProperties(new Label(), MediasI18nKeys.VODDelayed);
+                Label publicationDelayedLabel = I18nControls.newLabel(MediasI18nKeys.VODDelayed);
                 Switch publicationDelayedSwitch = new Switch();
                 if (workingCurrentVideoScheduledItem.isVodDelayed() != null)
                     publicationDelayedSwitch.setSelected(workingCurrentVideoScheduledItem.isVodDelayed());
@@ -216,7 +216,7 @@ public class MediaLinksForVODManagement extends MediaLinksManagement {
                 Region spacer = new Region();
                 HBox.setHgrow(spacer, Priority.ALWAYS);
 
-                Label publishedLabel = I18nControls.bindI18nProperties(new Label(), MediasI18nKeys.VODPublished);
+                Label publishedLabel = I18nControls.newLabel(MediasI18nKeys.VODPublished);
                 Switch publishedSwitch = new Switch();
                 publishedSwitch.selectedProperty().addListener(observable -> {
                     //Here we update all the media
@@ -242,7 +242,7 @@ public class MediaLinksForVODManagement extends MediaLinksManagement {
                 publicationInfoHBox.setPadding(new Insets(20, 0, 0, 0));
                 currentVBox.getChildren().add(publicationInfoHBox);
 
-                Label commentLabel = I18nControls.bindI18nProperties(new Label(), MediasI18nKeys.VODComment);
+                Label commentLabel = I18nControls.newLabel(MediasI18nKeys.VODComment);
                 commentLabel.setPadding(new Insets(20, 0, 0, 0));
                 currentVBox.getChildren().add(commentLabel);
 
@@ -260,7 +260,7 @@ public class MediaLinksForVODManagement extends MediaLinksManagement {
                 customContentAvailableUntilHBox.setPadding(new Insets(20, 0, 0, 0));
                 customContentAvailableUntilHBox.setMaxWidth(URL_TEXT_FIELD_WITH);
 
-                Label customExpirationDate = I18nControls.bindI18nProperties(new Label(), MediasI18nKeys.VODCustomExpirationDate);
+                Label customExpirationDate = I18nControls.newLabel(MediasI18nKeys.VODCustomExpirationDate);
                 Switch customExpirationDateSwitch = new Switch();
                 if (workingCurrentVideoScheduledItem.getExpirationDate() != null) {
                     customExpirationDateSwitch.setSelected(true);
@@ -277,7 +277,7 @@ public class MediaLinksForVODManagement extends MediaLinksManagement {
                 rightHBox.visibleProperty().bind(customExpirationDateSwitch.selectedProperty());
                 rightHBox.managedProperty().bind(customExpirationDateSwitch.selectedProperty());
 
-                Label contentAvailableUntilLabel = I18nControls.bindI18nProperties(new Label(), MediasI18nKeys.AvailableUntil);
+                Label contentAvailableUntilLabel = I18nControls.newLabel(MediasI18nKeys.AvailableUntil);
                 rightHBox.getChildren().add(contentAvailableUntilLabel);
 
                 TextField availableUntilDateTextField = new TextField();

@@ -75,22 +75,22 @@ final class ProgramView extends ModalitySlaveEditor<Event> {
     private VBox buildUi() {
         // Building the top line
         ObjectProperty<Event> loadedEventProperty = programModel.loadedEventProperty();
-        Label subtitle = I18nControls.bindI18nProperties(Bootstrap.h4(new Label()),
-            new I18nSubKey("expression: '[" + ProgramI18nKeys.Programme + "] - ' + name + ' (' + dateIntervalFormat(startDate, endDate) +')'", loadedEventProperty), loadedEventProperty);
+        Label subtitle = Bootstrap.h4(I18nControls.newLabel(
+            new I18nSubKey("expression: '[" + ProgramI18nKeys.Programme + "] - ' + name + ' (' + dateIntervalFormat(startDate, endDate) +')'", loadedEventProperty), loadedEventProperty));
         subtitle.setWrapText(true);
         TextTheme.createSecondaryTextFacet(subtitle).style();
 
-        Button addTemplateButton = Bootstrap.primaryButton(I18nControls.bindI18nProperties(new Button(), ProgramI18nKeys.AddDayTemplate));
+        Button addTemplateButton = Bootstrap.primaryButton(I18nControls.newButton(ProgramI18nKeys.AddDayTemplate));
         addTemplateButton.setGraphicTextGap(10);
         addTemplateButton.setOnAction(e -> programModel.addNewDayTemplate());
 
         HBox topLine = new HBox(subtitle, LayoutUtil.createHGrowable(), addTemplateButton);
 
         // Building the bottom line
-        Button cancelButton = Bootstrap.largeSecondaryButton(I18nControls.bindI18nProperties(new Button(), ProgramI18nKeys.CancelProgram));
+        Button cancelButton = Bootstrap.largeSecondaryButton(I18nControls.newButton(ProgramI18nKeys.CancelProgram));
         cancelButton.setOnAction(e -> programModel.cancelChanges());
 
-        Button saveButton = Bootstrap.largeSuccessButton(I18nControls.bindI18nProperties(new Button(), ProgramI18nKeys.SaveProgram));
+        Button saveButton = Bootstrap.largeSuccessButton(I18nControls.newButton(ProgramI18nKeys.SaveProgram));
         saveButton.setOnAction(e -> programModel.saveChanges(saveButton, cancelButton));
 
         UpdateStore updateStore = programModel.getUpdateStore();
@@ -99,10 +99,10 @@ final class ProgramView extends ModalitySlaveEditor<Event> {
         saveButton.disableProperty().bind(hasNoChangesProperty);
         cancelButton.disableProperty().bind(hasNoChangesProperty);
 
-        Button generateProgramButton = Bootstrap.largePrimaryButton(I18nControls.bindI18nProperties(new Button(), ProgramI18nKeys.GenerateProgram));
+        Button generateProgramButton = Bootstrap.largePrimaryButton(I18nControls.newButton(ProgramI18nKeys.GenerateProgram));
         generateProgramButton.setOnAction(e -> ModalityDialog.showConfirmationDialog(ProgramI18nKeys.ProgramGenerationConfirmation, () -> programModel.generateProgram(generateProgramButton)));
 
-        Button deleteProgramButton = Bootstrap.largePrimaryButton(I18nControls.bindI18nProperties(new Button(), ProgramI18nKeys.DeleteProgram));
+        Button deleteProgramButton = Bootstrap.largePrimaryButton(I18nControls.newButton(ProgramI18nKeys.DeleteProgram));
         deleteProgramButton.setOnAction(e -> ModalityDialog.showConfirmationDialog(ProgramI18nKeys.DeleteProgramConfirmation, () -> programModel.deleteProgram(deleteProgramButton)));
 
         generateProgramButton.disableProperty().bind(hasChangesProperty);
@@ -127,9 +127,9 @@ final class ProgramView extends ModalitySlaveEditor<Event> {
 
         // Building the event state line
         Label eventStateLabel = Bootstrap.h4(Bootstrap.textSecondary(new Label()));
-        FXProperties.runNowAndOnPropertiesChange(() -> {
-            I18nControls.bindI18nProperties(eventStateLabel, programGeneratedProperty.get() ? ProgramI18nKeys.ScheduledItemsAlreadyGenerated : ProgramI18nKeys.ScheduledItemsNotYetGenerated);
-        }, programGeneratedProperty);
+        FXProperties.runNowAndOnPropertiesChange(() ->
+            I18nControls.bindI18nProperties(eventStateLabel, programGeneratedProperty.get() ? ProgramI18nKeys.ScheduledItemsAlreadyGenerated : ProgramI18nKeys.ScheduledItemsNotYetGenerated)
+        , programGeneratedProperty);
 
         HBox eventStateLine = new HBox(eventStateLabel);
         eventStateLine.setAlignment(Pos.CENTER);

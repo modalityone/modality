@@ -34,11 +34,11 @@ final class GuestPanel implements MaterialFactoryMixin {
     private final TextField firstNameTextField = newMaterialTextField(CrmI18nKeys.FirstName);
     private final TextField lastNameTextField = newMaterialTextField(CrmI18nKeys.LastName);
     private final TextField emailTextField = newMaterialTextField(CrmI18nKeys.Email);
-    private final Button guestSubmitButton = Bootstrap.largeButton(I18nControls.bindI18nProperties(new Button(), ModalityI18nKeys.Submit));
+    private final Button guestSubmitButton = Bootstrap.largeButton(I18nControls.newButton(ModalityI18nKeys.Submit));
     private final ModalityValidationSupport validationSupport = new ModalityValidationSupport();
 
     public GuestPanel() {
-        Label guestDetailsLabel = Bootstrap.textPrimary(Bootstrap.strong(I18nControls.bindI18nProperties(new Label(), BookingI18nKeys.GuestDetails)));
+        Label guestDetailsLabel = Bootstrap.textPrimary(Bootstrap.strong(I18nControls.newLabel(BookingI18nKeys.GuestDetails)));
         guestTopVBox.getChildren().add(guestDetailsLabel);
         guestTopVBox.setAlignment(Pos.TOP_CENTER);
         BorderPane.setMargin(guestTopVBox, new Insets(0, 0, 20,0));

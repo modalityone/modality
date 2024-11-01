@@ -115,11 +115,11 @@ final class EventVideosWallActivity extends ViewDomainActivityBase {
         // Back arrow and event title
         MonoPane backArrow = SvgIcons.createButtonPane(SvgIcons.createBackArrow(), getHistory()::goBack);
 
-        Label eventLabel = Bootstrap.h2(Bootstrap.strong(I18nControls.bindI18nProperties(new Label(), new I18nSubKey("expression: i18n(this)", eventProperty), eventProperty)));
+        Label eventLabel = Bootstrap.h2(Bootstrap.strong(I18nControls.newLabel(new I18nSubKey("expression: i18n(this)", eventProperty), eventProperty)));
         eventLabel.setWrapText(true);
         eventLabel.setTextAlignment(TextAlignment.CENTER);
 
-        Label eventDescriptionLabel = I18nControls.bindI18nProperties(new Label(), new I18nSubKey("expression: shortDescription", eventProperty), eventProperty);
+        Label eventDescriptionLabel = I18nControls.newLabel(new I18nSubKey("expression: shortDescription", eventProperty), eventProperty);
         eventDescriptionLabel.setWrapText(true);
         eventDescriptionLabel.setTextAlignment(TextAlignment.CENTER);
         eventDescriptionLabel.managedProperty().bind(FXProperties.compute(eventDescriptionLabel.textProperty(), Strings::isNotEmpty));
@@ -136,7 +136,7 @@ final class EventVideosWallActivity extends ViewDomainActivityBase {
         backArrowAndTitlePane.setCenter(titleVBox);
 
         // Livestream box
-        Label livestreamLabel = Bootstrap.h4(Bootstrap.strong(I18nControls.bindI18nProperties(new Label(), VideosI18nKeys.LivestreamTitle)));
+        Label livestreamLabel = Bootstrap.h4(Bootstrap.strong(I18nControls.newLabel(VideosI18nKeys.LivestreamTitle)));
         livestreamLabel.setWrapText(true);
 
         Node livestreamVideoView = livestreamVideoPlayer.getVideoView();
@@ -153,8 +153,8 @@ final class EventVideosWallActivity extends ViewDomainActivityBase {
         // VBox showing all days and their videos (each node = container with day label + all videos of that day)
         VBox dayVideosWallVBox = new VBox(30); // Will be populated later (see below)
 
-        Label pastVideoLabel = Bootstrap.h4(Bootstrap.strong(I18nControls.bindI18nProperties(new Label(), VideosI18nKeys.PastRecordings)));
-        Label noContentLabel = Bootstrap.h3(Bootstrap.textWarning(I18nControls.bindI18nProperties(new Label(), VideosI18nKeys.NoVideosForThisEvent)));
+        Label pastVideoLabel = Bootstrap.h4(Bootstrap.strong(I18nControls.newLabel(VideosI18nKeys.PastRecordings)));
+        Label noContentLabel = Bootstrap.h3(Bootstrap.textWarning(I18nControls.newLabel(VideosI18nKeys.NoVideosForThisEvent)));
         noContentLabel.setPadding(new Insets(150, 0, 100, 0));
 
         // Assembling all together in the page container

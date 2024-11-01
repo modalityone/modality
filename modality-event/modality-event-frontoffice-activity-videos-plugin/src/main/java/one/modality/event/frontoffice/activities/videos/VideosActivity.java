@@ -57,7 +57,7 @@ final class VideosActivity extends ViewDomainActivityBase {
 
     @Override
     public Node buildUi() {
-        Label headerLabel = Bootstrap.h2(Bootstrap.strong(I18nControls.bindI18nProperties(new Label(), VideosI18nKeys.VideosHeader)));
+        Label headerLabel = Bootstrap.h2(Bootstrap.strong(I18nControls.newLabel(VideosI18nKeys.VideosHeader)));
         VBox.setMargin(headerLabel, new Insets(0,0,50,0));
 
         ColumnsPane columnsPane = new ColumnsPane(20, 50);

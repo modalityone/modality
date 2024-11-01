@@ -95,7 +95,7 @@ public class RecordingsView {
     public void drawContainer() {
         mainFrame.setPadding(new Insets(0, 0, 30, 0));
 
-        Label title = I18nControls.bindI18nProperties(new Label(), MediasI18nKeys.RecordingsTitle);
+        Label title = I18nControls.newLabel(MediasI18nKeys.RecordingsTitle);
         title.setPadding(new Insets(30));
         title.setGraphicTextGap(30);
         TextTheme.createPrimaryTextFacet(title).style();
@@ -107,17 +107,17 @@ public class RecordingsView {
         VBox masterSettings = new VBox();
         masterSettings.setPadding(new Insets(20));
 
-        Label masterLabel = I18nControls.bindI18nProperties(new Label(), MediasI18nKeys.MasterSettings);
+        Label masterLabel = I18nControls.newLabel(MediasI18nKeys.MasterSettings);
         masterLabel.getStyleClass().add(Bootstrap.STRONG);
         masterLabel.setPadding(new Insets(20, 0, 0, 0));
         masterSettings.getChildren().add(masterLabel);
 
-        Label availableUntilLabel = I18nControls.bindI18nProperties(new Label(), MediasI18nKeys.AvailableUntil);
+        Label availableUntilLabel = I18nControls.newLabel(MediasI18nKeys.AvailableUntil);
         availableUntilLabel.getStyleClass().add(Bootstrap.TEXT_SECONDARY);
         availableUntilLabel.setPadding(new Insets(15, 0, 0, 0));
         masterSettings.getChildren().add(availableUntilLabel);
 
-        Label availableUntilCommentLabel = I18nControls.bindI18nProperties(new Label(), MediasI18nKeys.AvailableUntilComment);
+        Label availableUntilCommentLabel = I18nControls.newLabel(MediasI18nKeys.AvailableUntilComment);
         availableUntilCommentLabel.getStyleClass().add(Bootstrap.TEXT_SECONDARY);
         availableUntilCommentLabel.getStyleClass().add(Bootstrap.SMALL);
         availableUntilCommentLabel.setPadding(new Insets(0, 0, 5, 0));
@@ -148,7 +148,7 @@ public class RecordingsView {
 
         contentAvailableOfflineSwitch = new Switch();
 
-        Label availableOfflineLabel = I18nControls.bindI18nProperties(new Label(), MediasI18nKeys.AvailableOffline);
+        Label availableOfflineLabel = I18nControls.newLabel(MediasI18nKeys.AvailableOffline);
         availableOfflineLabel.setPadding(new Insets(0, 0, 0, 10));
         TextTheme.createSecondaryTextFacet(availableOfflineLabel).style();
         HBox offlineManagementHBox = new HBox(contentAvailableOfflineSwitch, availableOfflineLabel);
@@ -159,7 +159,7 @@ public class RecordingsView {
         // masterSettings.getChildren().add(offlineManagementHBox);
 
         //SAVE BUTTON
-        Button saveButton = Bootstrap.successButton(I18nControls.bindI18nProperties(new Button(), ModalityI18nKeys.Save));
+        Button saveButton = Bootstrap.successButton(I18nControls.newButton(ModalityI18nKeys.Save));
         VBox.setMargin(saveButton, new Insets(20, 0, 0, 0));
         addUpdateStoreHasChangesProperty(updateStore.hasChangesProperty());
         saveButton.disableProperty().bind(updateStore.hasChangesProperty().not());
@@ -186,7 +186,7 @@ public class RecordingsView {
 
         /* The language section */
         /* **********************/
-        Label languageLabel = I18nControls.bindI18nProperties(new Label(), MediasI18nKeys.SelectLanguage);
+        Label languageLabel = I18nControls.newLabel(MediasI18nKeys.SelectLanguage);
         languageLabel.getStyleClass().add(Bootstrap.STRONG);
         languageLabel.setPadding(new Insets(30, 0, 10, 0));
         masterSettings.getChildren().add(languageLabel);

@@ -24,17 +24,17 @@ public class ModalityDialog {
     }
 
     public static void showConfirmationDialog(Object confirmationMessageI18nKey, Runnable onConfirmed, Runnable onCancelled) {
-        Text titleConfirmationText = I18n.bindI18nProperties(new Text(), ModalityI18nKeys.AreYouSure);
+        Text titleConfirmationText = I18n.newText(ModalityI18nKeys.AreYouSure);
         Bootstrap.textSuccess(Bootstrap.strong(Bootstrap.h3(titleConfirmationText)));
         BorderPane dialog = new BorderPane();
         dialog.setTop(titleConfirmationText);
         BorderPane.setAlignment(titleConfirmationText, Pos.CENTER);
-        Text confirmationText = I18n.bindI18nProperties(new Text(), confirmationMessageI18nKey);
+        Text confirmationText = I18n.newText(confirmationMessageI18nKey);
         dialog.setCenter(confirmationText);
         BorderPane.setAlignment(confirmationText, Pos.CENTER);
         BorderPane.setMargin(confirmationText, new Insets(30, 0, 30, 0));
-        Button confirmButton = Bootstrap.largeDangerButton(I18nControls.bindI18nProperties(new Button(), ModalityI18nKeys.Confirm));
-        Button cancelButton = Bootstrap.largeSecondaryButton(I18nControls.bindI18nProperties(new Button(), ModalityI18nKeys.Cancel));
+        Button confirmButton = Bootstrap.largeDangerButton(I18nControls.newButton(ModalityI18nKeys.Confirm));
+        Button cancelButton = Bootstrap.largeSecondaryButton(I18nControls.newButton(ModalityI18nKeys.Cancel));
 
         HBox buttonsHBox = new HBox(cancelButton, confirmButton);
         buttonsHBox.setAlignment(Pos.CENTER);

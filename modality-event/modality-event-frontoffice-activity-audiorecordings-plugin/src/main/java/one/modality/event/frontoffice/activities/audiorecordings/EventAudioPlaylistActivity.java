@@ -104,11 +104,11 @@ final class EventAudioPlaylistActivity extends ViewDomainActivityBase {
 
         MonoPane backArrow = SvgIcons.createButtonPane(SvgIcons.createBackArrow(), getHistory()::goBack);
 
-        Label eventLabel = Bootstrap.h2(Bootstrap.strong(I18nControls.bindI18nProperties(new Label(), new I18nSubKey("expression: i18n(this)", eventProperty), eventProperty)));
+        Label eventLabel = Bootstrap.h2(Bootstrap.strong(I18nControls.newLabel(new I18nSubKey("expression: i18n(this)", eventProperty), eventProperty)));
         eventLabel.setWrapText(true);
         eventLabel.setTextAlignment(TextAlignment.CENTER);
 
-        Label eventDescriptionLabel = I18nControls.bindI18nProperties(new Label(), new I18nSubKey("expression: shortDescription", eventProperty), eventProperty);
+        Label eventDescriptionLabel = I18nControls.newLabel(new I18nSubKey("expression: shortDescription", eventProperty), eventProperty);
         eventDescriptionLabel.setWrapText(true);
         eventDescriptionLabel.setTextAlignment(TextAlignment.CENTER);
         eventDescriptionLabel.managedProperty().bind(FXProperties.compute(eventDescriptionLabel.textProperty(), Strings::isNotEmpty));
@@ -122,7 +122,7 @@ final class EventAudioPlaylistActivity extends ViewDomainActivityBase {
         VBox audioTracksVBox = new VBox(10);
         audioTracksVBox.setMaxWidth(Region.USE_PREF_SIZE);
 
-        Label noContentLabel = Bootstrap.h3(Bootstrap.textWarning(I18nControls.bindI18nProperties(new Label(), AudioRecordingsI18nKeys.NoAudioRecordingForThisEvent)));
+        Label noContentLabel = Bootstrap.h3(Bootstrap.textWarning(I18nControls.newLabel(AudioRecordingsI18nKeys.NoAudioRecordingForThisEvent)));
         noContentLabel.setPadding(new Insets(150, 0, 100, 0));
 
         VBox loadedContentVBox = new VBox(100,

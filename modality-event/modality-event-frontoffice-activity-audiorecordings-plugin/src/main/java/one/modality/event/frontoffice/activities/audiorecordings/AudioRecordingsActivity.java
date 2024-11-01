@@ -60,8 +60,8 @@ final class AudioRecordingsActivity extends ViewDomainActivityBase {
         // ********************************* Building the static part of the UI ****************************************
         // *************************************************************************************************************
 
-        Label headerLabel = Bootstrap.h2(Bootstrap.strong(I18nControls.bindI18nProperties(new Label(), AudioRecordingsI18nKeys.AudioRecordingsHeader)));
-        Label checkoutLabel = I18nControls.bindI18nProperties(new Label(), AudioRecordingsI18nKeys.CheckoutAudioRecordings);
+        Label headerLabel = Bootstrap.h2(Bootstrap.strong(I18nControls.newLabel(AudioRecordingsI18nKeys.AudioRecordingsHeader)));
+        Label checkoutLabel = I18nControls.newLabel(AudioRecordingsI18nKeys.CheckoutAudioRecordings);
         VBox perYearEventsWithBookedAudiosVBox = new VBox();
 
         VBox pageContainer = new VBox(

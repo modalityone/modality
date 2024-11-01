@@ -552,7 +552,7 @@ final class ManageRecurringEventView {
     public Node buildContainer() {
         BorderPane mainFrame = new BorderPane();
         //Displaying The title of the frame
-        Label title = I18nControls.bindI18nProperties(new Label(), RecurringEventsI18nKeys.EventTitle);
+        Label title = I18nControls.newLabel(RecurringEventsI18nKeys.EventTitle);
         title.setPadding(new Insets(30));
         title.setGraphicTextGap(30);
         TextTheme.createPrimaryTextFacet(title).style();
@@ -563,11 +563,11 @@ final class ManageRecurringEventView {
         //mainFrame.setTop( title);
 
         //Displaying the list of events
-        Label currentEventLabel = Bootstrap.h3(I18nControls.bindI18nProperties(new Label(), RecurringEventsI18nKeys.ListEvents));
+        Label currentEventLabel = Bootstrap.h3(I18nControls.newLabel(RecurringEventsI18nKeys.ListEvents));
         currentEventLabel.setPadding(new Insets(15, 0, 20, 0));
         TextTheme.createSecondaryTextFacet(currentEventLabel).style();
 
-        Button addButton = Bootstrap.successButton(I18nControls.bindI18nProperties(new Button(), RecurringEventsI18nKeys.AddEventInformationButton));
+        Button addButton = Bootstrap.successButton(I18nControls.newButton(RecurringEventsI18nKeys.AddEventInformationButton));
 
         addButton.setOnAction((event -> masterSlaveEventLinker.checkSlaveSwitchApproval(true, () -> {
             resetTextFields();
@@ -598,7 +598,7 @@ final class ManageRecurringEventView {
                         final TextField searchTextField = super.getSearchTextField();
                         private final UpdateStore updateStoreForSite = UpdateStore.create(DataSourceModelService.getDefaultDataSourceModel());
 
-                        final Text addSiteText = I18n.bindI18nProperties(new Text(), RecurringEventsI18nKeys.AddNewLocation);
+                        final Text addSiteText = I18n.newText(RecurringEventsI18nKeys.AddNewLocation);
                         final MonoPane addSitePane = new MonoPane(addSiteText);
 
                         {
@@ -665,11 +665,11 @@ final class ManageRecurringEventView {
                 }));
         })));
 
-        titleEventDetailsLabel = I18nControls.bindI18nProperties(new Label(), RecurringEventsI18nKeys.EventDetailsTitle);
+        titleEventDetailsLabel = I18nControls.newLabel(RecurringEventsI18nKeys.EventDetailsTitle);
         titleEventDetailsLabel.setPadding(new Insets(30, 0, 20, 0));
         TextTheme.createSecondaryTextFacet(titleEventDetailsLabel).style();
 
-        deleteButton = Bootstrap.dangerButton(I18nControls.bindI18nProperties(new Button(), RecurringEventsI18nKeys.DeleteEvent));
+        deleteButton = Bootstrap.dangerButton(I18nControls.newButton(RecurringEventsI18nKeys.DeleteEvent));
         deleteButton.setGraphicTextGap(10);
         //We manage the property of the button in css
         deleteButton.setId("DeleteEvent");
@@ -685,16 +685,16 @@ final class ManageRecurringEventView {
                     updateStore.submitChanges()
                         .onFailure(x -> Platform.runLater(() -> {
                             areWeDeleting = false;
-                            Text infoText = I18n.bindI18nProperties(new Text(), RecurringEventsI18nKeys.ErrorWhileDeletingEvent);
+                            Text infoText = I18n.newText(RecurringEventsI18nKeys.ErrorWhileDeletingEvent);
                             Bootstrap.textSuccess(Bootstrap.strong(Bootstrap.h3(infoText)));
                             BorderPane errorDialog = new BorderPane();
                             errorDialog.setTop(infoText);
                             BorderPane.setAlignment(infoText, Pos.CENTER);
-                            Text deleteErrorTest = I18n.bindI18nProperties(new Text(), RecurringEventsI18nKeys.ErrorWhileDeletingEventDetails);
+                            Text deleteErrorTest = I18n.newText(RecurringEventsI18nKeys.ErrorWhileDeletingEventDetails);
                             errorDialog.setCenter(deleteErrorTest);
                             BorderPane.setAlignment(deleteErrorTest, Pos.CENTER);
                             BorderPane.setMargin(deleteErrorTest, new Insets(30, 0, 30, 0));
-                            Button okErrorButton = Bootstrap.largeDangerButton(I18nControls.bindI18nProperties(new Button(), ModalityI18nKeys.Ok));
+                            Button okErrorButton = Bootstrap.largeDangerButton(I18nControls.newButton(ModalityI18nKeys.Ok));
 
                             DialogCallback errorMessageCallback = DialogUtil.showModalNodeInGoldLayout(errorDialog, FXMainFrameDialogArea.getDialogArea());
                             okErrorButton.setOnAction(m -> errorMessageCallback.closeDialog());
@@ -717,7 +717,7 @@ final class ManageRecurringEventView {
 
         final int LABEL_WIDTH = 150;
         HBox line1InLeftPanel = new HBox();
-        Label nameOfEventLabel = I18nControls.bindI18nProperties(new Label(), RecurringEventsI18nKeys.NameOfTheEvent);
+        Label nameOfEventLabel = I18nControls.newLabel(RecurringEventsI18nKeys.NameOfTheEvent);
         nameOfEventLabel.setMinWidth(LABEL_WIDTH);
         /* Temporarily commented as not yet supported by WebFX
         nameOfEventTextField.setTextFormatter(new TextFormatter<>(change -> {
@@ -735,12 +735,12 @@ final class ManageRecurringEventView {
         });
         line1InLeftPanel.getChildren().setAll(nameOfEventLabel, nameOfEventTextField);
 
-        siteLabel = I18nControls.bindI18nProperties(new Label(), RecurringEventsI18nKeys.Location);
+        siteLabel = I18nControls.newLabel(RecurringEventsI18nKeys.Location);
         siteLabel.setMinWidth(LABEL_WIDTH);
         locationHBox = new HBox(siteLabel);
         locationHBox.setPadding(new Insets(20, 0, 0, 0));
 
-        Label shortDescriptionLabel = I18nControls.bindI18nProperties(new Label(), RecurringEventsI18nKeys.ShortDescription);
+        Label shortDescriptionLabel = I18nControls.newLabel(RecurringEventsI18nKeys.ShortDescription);
         shortDescriptionLabel.setMinWidth(LABEL_WIDTH);
         shortDescriptionHtmlEditor.setMode(BASIC);
         shortDescriptionHtmlEditor.setPrefHeight(150);
@@ -752,7 +752,7 @@ final class ManageRecurringEventView {
         HBox shortDescriptionLineInLeftPanel = new HBox(shortDescriptionLabel, shortDescriptionHtmlEditor);
         shortDescriptionLineInLeftPanel.setPadding(new Insets(20, 0, 0, 0));
 
-        Label descriptionLabel = I18nControls.bindI18nProperties(new Label(), RecurringEventsI18nKeys.Description);
+        Label descriptionLabel = I18nControls.newLabel(RecurringEventsI18nKeys.Description);
         descriptionLabel.setMinWidth(LABEL_WIDTH);
         descriptionHtmlEditor.setMode(STANDARD);
         descriptionHtmlEditor.setMaxHeight(400);
@@ -766,7 +766,7 @@ final class ManageRecurringEventView {
 
         HBox line4InLeftPanel = new HBox();
         line4InLeftPanel.setAlignment(Pos.CENTER_LEFT);
-        Label uploadPictureLabel = I18nControls.bindI18nProperties(new Label(), RecurringEventsI18nKeys.UploadFileDescription);
+        Label uploadPictureLabel = I18nControls.newLabel(RecurringEventsI18nKeys.UploadFileDescription);
         uploadPictureLabel.setMinWidth(LABEL_WIDTH);
 
         HtmlText uploadText = new HtmlText();
@@ -795,7 +795,7 @@ final class ManageRecurringEventView {
             isPictureDisplayed.setValue(true);
         });
 
-        Label uploadButtonDescription = Bootstrap.small(I18nControls.bindI18nProperties(new Label(), RecurringEventsI18nKeys.SelectYourFile));
+        Label uploadButtonDescription = Bootstrap.small(I18nControls.newLabel(RecurringEventsI18nKeys.SelectYourFile));
 
         TextTheme.createPrimaryTextFacet(uploadButtonDescription).style();
 
@@ -814,7 +814,7 @@ final class ManageRecurringEventView {
         imageStackPane.setMinHeight(100);
         //  imageStackPane.setPrefSize(200,210);
         imageStackPane.setAlignment(Pos.CENTER);
-        Label emptyPictureLabel = Bootstrap.small(I18nControls.bindI18nProperties(new Label(), RecurringEventsI18nKeys.NoPictureSelected));
+        Label emptyPictureLabel = Bootstrap.small(I18nControls.newLabel(RecurringEventsI18nKeys.NoPictureSelected));
         TextTheme.createSecondaryTextFacet(emptyPictureLabel).style();
 
         trashImage = SvgIcons.armButton(SvgIcons.createTrashSVGPath(), () -> {
@@ -843,13 +843,13 @@ final class ManageRecurringEventView {
         VBox.setVgrow(line3InLeftPanel, Priority.ALWAYS); // vertically (via line3InLeftPanel)
 
         //The right pane (VBox)
-        Label timeOfEventLabel = I18nControls.bindI18nProperties(new Label(), RecurringEventsI18nKeys.TimeOfTheEvent);
+        Label timeOfEventLabel = I18nControls.newLabel(RecurringEventsI18nKeys.TimeOfTheEvent);
         timeOfEventLabel.setPadding(new Insets(0, 50, 0, 0));
         timeOfTheEventTextField.setMaxWidth(60);
         timeOfTheEventTextField.textProperty().addListener(changeOnStartTimeOrDurationListener);
 
 
-        Label durationLabel = I18nControls.bindI18nProperties(new Label(), RecurringEventsI18nKeys.Duration);
+        Label durationLabel = I18nControls.newLabel(RecurringEventsI18nKeys.Duration);
         durationLabel.setPadding(new Insets(0, 50, 0, 50));
         durationTextField.setMaxWidth(40);
         durationTextField.textProperty().addListener(changeOnStartTimeOrDurationListener);
@@ -858,13 +858,13 @@ final class ManageRecurringEventView {
         HBox line1 = new HBox(timeOfEventLabel, timeOfTheEventTextField, durationLabel, durationTextField);
         line1.setAlignment(Pos.CENTER_LEFT);
         line1.setPadding(new Insets(0, 0, 20, 0));
-        datesOfTheEventLabel = I18nControls.bindI18nProperties(new Label(), ModalityI18nKeys.Dates);
+        datesOfTheEventLabel = I18nControls.newLabel(ModalityI18nKeys.Dates);
         datesOfTheEventLabel.setPadding(new Insets(0, 0, 5, 0));
         calendarPane = new EventCalendarPane();
         calendarPane.getDatePicker().getSelectedDates().addListener(onChangeDateListener);
 
         final int labelWidth = 200;
-        Label externalLinkLabel = I18nControls.bindI18nProperties(new Label(), RecurringEventsI18nKeys.ExternalLink);
+        Label externalLinkLabel = I18nControls.newLabel(RecurringEventsI18nKeys.ExternalLink);
         externalLinkLabel.setPadding(new Insets(0, 20, 0, 0));
         externalLinkLabel.setPrefWidth(labelWidth);
         externalLinkTextField.setPrefWidth(400);
@@ -873,7 +873,7 @@ final class ManageRecurringEventView {
         line4.setPadding(new Insets(20, 0, 0, 0));
         line4.setAlignment(Pos.CENTER_LEFT);
 
-        Label advertisedLabel = I18nControls.bindI18nProperties(new Label(), RecurringEventsI18nKeys.Advertised);
+        Label advertisedLabel = I18nControls.newLabel(RecurringEventsI18nKeys.Advertised);
         advertisedLabel.setPadding(new Insets(0, 20, 0, 0));
         advertisedLabel.setPrefWidth(labelWidth);
         advertisedSwitch = new Switch();
@@ -882,7 +882,7 @@ final class ManageRecurringEventView {
         line5.setPadding(new Insets(20, 0, 0, 0));
         line5.setAlignment(Pos.CENTER_LEFT);
 
-        Label publishLabel = I18nControls.bindI18nProperties(new Label(), RecurringEventsI18nKeys.Published);
+        Label publishLabel = I18nControls.newLabel(RecurringEventsI18nKeys.Published);
         publishLabel.setPadding(new Insets(0, 20, 0, 0));
         publishLabel.setPrefWidth(labelWidth);
         registrationOpenSwitch = new Switch();
@@ -921,11 +921,11 @@ final class ManageRecurringEventView {
         eventDetailsPane.setHorizontalSpace(50);
         eventDetailsPane.setVerticalSpace(20);
 
-        cancelButton = Bootstrap.largeSecondaryButton(I18nControls.bindI18nProperties(new Button(), RecurringEventsI18nKeys.CancelButton));
+        cancelButton = Bootstrap.largeSecondaryButton(I18nControls.newButton(RecurringEventsI18nKeys.CancelButton));
         cancelButton.setOnAction(e -> displayEventDetails(currentEditedEvent));
         cancelButton.disableProperty().bind(FXProperties.compute(currentMode, mode -> mode.intValue() == ADD_MODE));
 
-        saveButton = Bootstrap.largeSuccessButton(I18nControls.bindI18nProperties(new Button(), RecurringEventsI18nKeys.SaveButton));
+        saveButton = Bootstrap.largeSuccessButton(I18nControls.newButton(RecurringEventsI18nKeys.SaveButton));
         saveButton.setOnAction(event -> {
             if (validateForm()) {
                 if (previousEventState == null) {
@@ -989,8 +989,8 @@ final class ManageRecurringEventView {
      * containing the datePicker, the separator vertical line, and the list of start time
      */
     private class EventCalendarPane extends Pane {
-        Label daySelected = I18nControls.bindI18nProperties(new Label(), RecurringEventsI18nKeys.DaysSelected);
-        Label selectEachDayLabel = I18nControls.bindI18nProperties(new Label(), RecurringEventsI18nKeys.SelectTheDays);
+        Label daySelected = I18nControls.newLabel(RecurringEventsI18nKeys.DaysSelected);
+        Label selectEachDayLabel = I18nControls.newLabel(RecurringEventsI18nKeys.SelectTheDays);
         Line verticalLine;
         VBox recurringEventsVBox = new VBox();
         ScrollPane recurringEventsScrollPane = new ScrollPane();

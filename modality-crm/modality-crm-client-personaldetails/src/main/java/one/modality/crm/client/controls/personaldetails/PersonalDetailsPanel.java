@@ -103,7 +103,7 @@ public class PersonalDetailsPanel implements ModalityButtonFactoryMixin {
         if (buttonSelectorParameters.getDropParent() == null)
             buttonSelectorParameters.setDropParent(container);
         buttonSelectorParameters.checkValid();
-        Label topLabel = I18nControls.bindI18nProperties(new Label(), CrmI18nKeys.YourPersonalDetails);
+        Label topLabel = I18nControls.newLabel(CrmI18nKeys.YourPersonalDetails);
         SVGPath switchIcon = new SVGPath();
         switchIcon.setContent("M 2.2857143,10.285714 H 0 V 16 H 5.7142857 V 13.714286 H 2.2857143 Z M 0,5.7142857 H 2.2857143 V 2.2857143 H 5.7142857 V 0 H 0 Z M 13.714286,13.714286 H 10.285714 V 16 H 16 V 10.285714 H 13.714286 Z M 10.285714,0 v 2.2857143 h 3.428572 V 5.7142857 H 16 V 0 Z");
         switchIcon.setFill(Color.GRAY);

@@ -60,11 +60,11 @@ final class Step1BookDatesSlide extends StepSlide {
         personToBookScalePane.managedProperty().bind(personToBookButton.managedProperty());
         VBox.setMargin(personToBookScalePane, new Insets(30, 0, 20, 0));
 
-        Text scheduleText = I18n.bindI18nProperties(new Text(), BookingI18nKeys.Schedule);
+        Text scheduleText = I18n.newText(BookingI18nKeys.Schedule);
         Bootstrap.textPrimary(Bootstrap.h4(scheduleText));
         VBox.setMargin(scheduleText, new Insets(20, 0, 10, 0));
 
-        Label selectTheCourseText = I18nControls.bindI18nProperties(new Label(), BookingI18nKeys.SelectTheEvent);
+        Label selectTheCourseText = I18nControls.newLabel(BookingI18nKeys.SelectTheEvent);
         selectTheCourseText.setTextAlignment(TextAlignment.CENTER);
         selectTheCourseText.setWrapText(true);
         VBox.setMargin(selectTheCourseText, new Insets(0, 0, 5, 0));
@@ -81,7 +81,7 @@ final class Step1BookDatesSlide extends StepSlide {
         priceText.getStyleClass().add("subtitle-grey");
         VBox.setMargin(priceText, new Insets(20, 0, 0, 0));
 
-        Button checkoutButton = Bootstrap.largeSuccessButton(I18nControls.bindI18nProperties(new Button(), BookingI18nKeys.ProceedCheckout));
+        Button checkoutButton = Bootstrap.largeSuccessButton(I18nControls.newButton(BookingI18nKeys.ProceedCheckout));
         checkoutButton.setMinWidth(300);
         ButtonFactory.resetDefaultButton(checkoutButton);
         ScalePane checkoutScalePane = new ScalePane(ScaleMode.FIT_WIDTH, checkoutButton);

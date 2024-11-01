@@ -24,7 +24,7 @@ final class Step4PendingPaymentSlide extends StepSlide {
         title.setWrapText(true);
         title.setPadding(new Insets(50, 0, 30, 0));
 
-        Label message = Bootstrap.textDanger(Bootstrap.h5(I18nControls.bindI18nProperties(new Label(), BookingI18nKeys.PaymentPendingMessage)));
+        Label message = Bootstrap.textDanger(Bootstrap.h5(I18nControls.newLabel(BookingI18nKeys.PaymentPendingMessage)));
 
         mainVbox.getChildren().setAll(title, message);
     }

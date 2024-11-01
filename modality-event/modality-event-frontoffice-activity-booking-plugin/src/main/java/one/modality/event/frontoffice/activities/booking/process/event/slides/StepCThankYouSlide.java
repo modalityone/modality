@@ -29,16 +29,16 @@ final class StepCThankYouSlide extends StepSlide {
         ScalePane headerImageScalePane = new ScalePane(headerImageView);
         headerImageScalePane.setPadding(new Insets(30,0,50,0));
 
-        Label bookingConfirmedLabel = Bootstrap.textSuccess(Bootstrap.h3(I18nControls.bindI18nProperties(new Label(), BookingI18nKeys.BookingSubmitted)));
+        Label bookingConfirmedLabel = Bootstrap.textSuccess(Bootstrap.h3(I18nControls.newLabel(BookingI18nKeys.BookingSubmitted)));
         bookingConfirmedLabel.setContentDisplay(ContentDisplay.TOP);
         bookingConfirmedLabel.setGraphicTextGap(10);
 
-        Label thankYouLabel = Bootstrap.textSecondary(Bootstrap.h4(I18nControls.bindI18nProperties(new Label(), BookingI18nKeys.ThankYouForBooking)));
+        Label thankYouLabel = Bootstrap.textSecondary(Bootstrap.h4(I18nControls.newLabel(BookingI18nKeys.ThankYouForBooking)));
         thankYouLabel.setWrapText(true);
         thankYouLabel.setTextAlignment(TextAlignment.CENTER);
         VBox.setMargin(thankYouLabel, new Insets(20,0,50,0));
 
-        Label bookingNumber = I18nControls.bindI18nProperties(new Label(), BookingI18nKeys.BookingNumber0, getWorkingBookingProperties().bookingReferenceProperty());
+        Label bookingNumber = I18nControls.newLabel(BookingI18nKeys.BookingNumber0, getWorkingBookingProperties().bookingReferenceProperty());
         bookingNumber.setWrapText(true);
         bookingNumber.setTextAlignment(TextAlignment.CENTER);
 

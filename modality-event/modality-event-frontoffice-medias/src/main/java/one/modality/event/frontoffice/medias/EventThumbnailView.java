@@ -32,7 +32,7 @@ public final class EventThumbnailView {
         container.setMinHeight(100);
         container.setBorder(BorderFactory.newBorder(Color.LIGHTGRAY, 2));
 
-        Label eventLabel = Bootstrap.strong(I18nControls.bindI18nProperties(new Label(), new I18nSubKey("expression: i18n(this)", event)));
+        Label eventLabel = Bootstrap.strong(I18nControls.newLabel(new I18nSubKey("expression: i18n(this)", event)));
         VBox.setMargin(eventLabel, new Insets(15));
 
         Label shortDescriptionLabel = new Label(event.getShortDescription());

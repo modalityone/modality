@@ -65,7 +65,7 @@ final class RecurringEventAttendanceView {
     }
 
     Node buildContainer() {
-        Label currentEventLabel = Bootstrap.h3(I18nControls.bindI18nProperties(new Label(),"CurrentClasses"));
+        Label currentEventLabel = Bootstrap.h3(I18nControls.newLabel(RecurringEventsI18nKeys.CurrentClasses));
         currentEventLabel.setPadding(new Insets(0, 0, 20, 0));
         TextTheme.createSecondaryTextFacet(currentEventLabel).style();
 
@@ -125,7 +125,7 @@ final class RecurringEventAttendanceView {
             boxesContainer.setCenter(linesGrid);
             BorderPane.setAlignment(linesGrid, Pos.TOP_CENTER);
 
-            Label totalCountLabel = I18nControls.bindI18nProperties(new Label(),"Total {0}", linesGrid.rowCountProperty());
+            Label totalCountLabel = I18nControls.newLabel("Total {0}" /* ??? */, linesGrid.rowCountProperty());
             totalCountLabel.setPadding(new Insets(5,0,0,0));
             totalCountLabel.getStyleClass().add("booking-total-count");
             boxesContainer.setBottom(totalCountLabel);

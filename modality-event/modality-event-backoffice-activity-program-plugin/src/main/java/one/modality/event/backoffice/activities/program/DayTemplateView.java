@@ -110,7 +110,7 @@ final class DayTemplateView {
         ObservableLists.bindConverted(listOfSelectedDatesVBox.getChildren(), workingDayTemplateDateViews, DayTemplateDateView::getView);
 
         //****************************  TOP  ******************************************//
-        Label duplicateButton = I18nControls.bindI18nProperties(new Label(), ProgramI18nKeys.DuplicateIcon);
+        Label duplicateButton = I18nControls.newLabel(ProgramI18nKeys.DuplicateIcon);
         duplicateButton.setOnMouseClicked(e -> dayTemplateModel.duplicate());
         duplicateButton.setCursor(Cursor.HAND);
 
@@ -141,7 +141,7 @@ final class DayTemplateView {
         centerBorderPane.setCenter(addButton);
         BorderPane.setAlignment(addButton, Pos.TOP_LEFT);
 
-        Label deleteButton = Bootstrap.small(Bootstrap.textDanger(I18nControls.bindI18nProperties(new Label(), ProgramI18nKeys.DeleteDayTemplate)));
+        Label deleteButton = Bootstrap.small(Bootstrap.textDanger(I18nControls.newLabel(ProgramI18nKeys.DeleteDayTemplate)));
         SvgIcons.armButton(deleteButton, dayTemplateModel::deleteDayTemplate);
         deleteButton.setPadding(new Insets(30, 0, 0, 0));
 
@@ -157,7 +157,7 @@ final class DayTemplateView {
         BorderPane bottomBorderPane = new BorderPane();
         BorderPane.setAlignment(bottomBorderPane, Pos.CENTER);
         bottomBorderPane.setMaxWidth(600);
-        Label assignDateLabel = I18nControls.bindI18nProperties(new Label(), ProgramI18nKeys.AssignDay);
+        Label assignDateLabel = I18nControls.newLabel(ProgramI18nKeys.AssignDay);
         TextTheme.createPrimaryTextFacet(assignDateLabel).style();
         assignDateLabel.getStyleClass().add(Bootstrap.SMALL);
         assignDateLabel.setPadding(new Insets(5, 0, 10, 0));
