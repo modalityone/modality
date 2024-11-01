@@ -15,6 +15,7 @@ module modality.event.frontoffice.activity.audiorecordings.plugin {
     requires modality.event.frontoffice.medias;
     requires webfx.extras.panes;
     requires webfx.extras.styles.bootstrap;
+    requires webfx.extras.util.control;
     requires webfx.kit.util;
     requires webfx.platform.blob;
     requires webfx.platform.console;

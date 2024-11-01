@@ -21,7 +21,6 @@ import dev.webfx.stack.orm.entity.EntityStoreQuery;
 import javafx.application.Platform;
 import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.ObjectProperty;
-import javafx.beans.property.SimpleBooleanProperty;
 import javafx.beans.property.SimpleObjectProperty;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
@@ -31,7 +30,6 @@ import javafx.scene.Node;
 import javafx.scene.control.Label;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
-import javafx.scene.paint.Color;
 import javafx.scene.text.TextAlignment;
 import one.modality.base.client.icons.SvgIcons;
 import one.modality.base.frontoffice.utility.activity.FrontOfficeActivityUtil;
@@ -147,21 +145,23 @@ final class EventVideosWallActivity extends ViewDomainActivityBase {
             videoRegion.prefHeightProperty().bind(FXProperties.compute(videoRegion.widthProperty(), w -> w.doubleValue() / 16d * 9d));
         }*/
 
-        Label pastVideoLabel = Bootstrap.h4(Bootstrap.strong(I18nControls.bindI18nProperties(new Label(), VideosI18nKeys.PastRecordings)));
-
         livestreamVBox.getChildren().setAll(
             livestreamLabel,
             livestreamVideoView
         );
 
-        // Videos box (see below for population)
-        VBox videosVBox = new VBox(30);
+        // VBox showing all days and their videos (each node = container with day label + all videos of that day)
+        VBox dayVideosWallVBox = new VBox(30); // Will be populated later (see below)
+
+        Label pastVideoLabel = Bootstrap.h4(Bootstrap.strong(I18nControls.bindI18nProperties(new Label(), VideosI18nKeys.PastRecordings)));
+        Label noContentLabel = Bootstrap.h3(Bootstrap.textWarning(I18nControls.bindI18nProperties(new Label(), VideosI18nKeys.NoVideosForThisEvent)));
+        noContentLabel.setPadding(new Insets(150, 0, 100, 0));
 
         // Assembling all together in the page container
         VBox pageContainer = new VBox(50,
             backArrowAndTitlePane,
             livestreamVBox,
-            videosVBox
+            dayVideosWallVBox
         );
 
 
@@ -169,41 +169,42 @@ final class EventVideosWallActivity extends ViewDomainActivityBase {
         // *********************************** Reacting to parameter changes *******************************************
         // *************************************************************************************************************
 
-        ObservableList<DayVideosWallView> dayVideosWallViews = FXCollections.observableArrayList();
-        BooleanProperty collapsedAllProperty = new SimpleBooleanProperty() {
-            @Override
-            protected void invalidated() {
-                dayVideosWallViews.forEach(view -> view.setCollapsed(get()));
-            }
-        };
-        Node collapsedAllChevron = CollapsePane.armChevron(CollapsePane.createPlainChevron(Color.BLACK), collapsedAllProperty);
-        HBox pastVideoLabelAndChevronLine = new HBox(30, pastVideoLabel, collapsedAllChevron);
-        pastVideoLabelAndChevronLine.setAlignment(Pos.CENTER_LEFT);
+        // Showing / hiding the livestream box (in dependence of the event)
+        FXProperties.runNowAndOnPropertiesChange(this::updateLivestreamVideoPlayerStateAndVisibility, eventProperty);
 
+        // Creating an intermediate observable list of DayVideosWallView, each element being a view for 1 day with all its videos
+        ObservableList<DayVideosWallView> dayVideosWallViews = FXCollections.observableArrayList(); // will be populated below
+
+        // Creating a global chevron to collapse or expand all video days all together
+        BooleanProperty collapsedAllProperty = FXProperties.newBooleanProperty(collapsed ->
+                dayVideosWallViews.forEach(view -> view.setCollapsed(collapsed))
+        );
+        Node globalChevron = CollapsePane.armChevron(CollapsePane.createBlackChevron(), collapsedAllProperty);
+        HBox pastVideoLabelAndChevronLine = new HBox(30, pastVideoLabel, globalChevron);
+        pastVideoLabelAndChevronLine.setAlignment(Pos.CENTER_LEFT); // so pastVideoLabel & globalChevron are vertically aligned
+
+        // Populating dayVideosWallViews from videoScheduledItems = flat list of all videos of the event (not yet grouped by day)
         ObservableLists.runNowAndOnListChange(change -> {
+            // Grouping videos per day
             Map<LocalDate, List<ScheduledItem>> perDayGroups =
                 videoScheduledItems.stream().collect(Collectors.groupingBy(ScheduledItem::getDate));
             dayVideosWallViews.clear();
-            new TreeMap<>(perDayGroups)
+            new TreeMap<>(perDayGroups) // The purpose of using a TreeMap is to sort the groups by keys (= days)
                 .forEach((day, dayScheduledVideos) -> dayVideosWallViews.add(
+                    // Passing the day, the videos of that day, and the history (for backward navigation)
                     new DayVideosWallView(day, dayScheduledVideos, getHistory())
                 ));
         }, videoScheduledItems);
 
-        // Populating the videos box (reacting to attendances changes)
+        // Now that we have dayVideosWallViews populated, we can populate the final VBox showing all days and their videos
         ObservableLists.runNowAndOnListChange(change -> {
             if (dayVideosWallViews.isEmpty()) {
-                Label noContentLabel = Bootstrap.h3(Bootstrap.textWarning(I18nControls.bindI18nProperties(new Label(), VideosI18nKeys.NoVideosForThisEvent)));
-                noContentLabel.setPadding(new Insets(150, 0, 100, 0));
-                videosVBox.getChildren().setAll(noContentLabel);
+                dayVideosWallVBox.getChildren().setAll(noContentLabel);
             } else {
-                videosVBox.getChildren().setAll(pastVideoLabelAndChevronLine);
-                videosVBox.getChildren().addAll(Collections.map(dayVideosWallViews, DayVideosWallView::getView));
+                dayVideosWallVBox.getChildren().setAll(pastVideoLabelAndChevronLine);
+                dayVideosWallVBox.getChildren().addAll(Collections.map(dayVideosWallViews, DayVideosWallView::getView));
             }
         }, dayVideosWallViews);
-
-        // Hiding / showing the livestream box (in dependence of the event)
-        FXProperties.runOnPropertiesChange(this::updateLivestreamVideoPlayerStateAndVisibility, eventProperty);
 
         // *************************************************************************************************************
         // ************************************* Building final container **********************************************

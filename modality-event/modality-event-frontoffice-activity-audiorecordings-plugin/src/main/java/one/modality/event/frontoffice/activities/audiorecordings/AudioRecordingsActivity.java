@@ -22,6 +22,7 @@ import one.modality.crm.shared.services.authn.fx.FXUserPersonId;
 
 import java.util.Comparator;
 import java.util.List;
+import java.util.Map;
 import java.util.TreeMap;
 import java.util.stream.Collectors;
 
@@ -74,12 +75,19 @@ final class AudioRecordingsActivity extends ViewDomainActivityBase {
         // *********************************** Reacting to parameter changes *******************************************
         // *************************************************************************************************************
 
+        // Populating perYearEventsWithBookedAudiosVBox from eventsWithBookedAudios = flat list of events (not yet grouped by year)
         ObservableLists.runNowAndOnListChange(change -> {
+            // Grouping events per year
+            Map<Integer, List<Event>> perYearGroups = eventsWithBookedAudios.stream().collect(Collectors.groupingBy(e -> e.getStartDate().getYear()));
+            // Using a TreeMap to sort the groups by keys (= years) in reverse order (latest years listed first)
             TreeMap<Integer, List<Event>> perYearEvents = new TreeMap<>(Comparator.reverseOrder());
-            perYearEvents.putAll(eventsWithBookedAudios.stream().collect(Collectors.groupingBy(e -> e.getStartDate().getYear())));
+            perYearEvents.putAll(perYearGroups);
             perYearEventsWithBookedAudiosVBox.getChildren().clear();
+            // final population of perYearEventsWithBookedAudiosVBox
             perYearEvents.forEach((year, events) -> perYearEventsWithBookedAudiosVBox.getChildren().add(
-                new EventsOfYearView(year, events, this::showRecordingsForEvent).getView()
+                // Passing the year, the events of the year (with booked audio recordings), and the history (for ability
+                // to route to EventAudioPlaylistActivity when clicking on an event)
+                new EventsOfYearView(year, events, getHistory()).getView()
             ));
         }, eventsWithBookedAudios);
 
@@ -90,10 +98,6 @@ final class AudioRecordingsActivity extends ViewDomainActivityBase {
 
         pageContainer.setPadding(new Insets(PAGE_TOP_BOTTOM_PADDING, 0, PAGE_TOP_BOTTOM_PADDING, 0));
         return FrontOfficeActivityUtil.createActivityPageScrollPane(pageContainer, false);
-    }
-
-    private void showRecordingsForEvent(Event event) {
-        getHistory().push(EventAudioPlaylistRouting.getEventRecordingsPlaylistPath(event));
     }
 
 }

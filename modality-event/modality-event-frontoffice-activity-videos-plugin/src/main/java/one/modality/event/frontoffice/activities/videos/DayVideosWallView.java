@@ -58,7 +58,7 @@ final class DayVideosWallView {
         dateLabel.setMinWidth(150);
 
         collapsePane.setContent(columnsPane);
-        Node chevronNode = CollapsePane.armChevron(CollapsePane.createPlainChevron(Color.BLACK), collapsePane);
+        Node chevronNode = CollapsePane.armChevron(CollapsePane.createBlackChevron(), collapsePane);
 
         HBox dateAndChevronTopLine = new HBox(10, dateLabel, chevronNode);
 

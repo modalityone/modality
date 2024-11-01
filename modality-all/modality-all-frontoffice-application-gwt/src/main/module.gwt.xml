@@ -195,11 +195,12 @@
     <!--=====================< modality-base-frontoffice-mainframe-fx >=====================-->
     <source path="one/modality/base/frontoffice/mainframe/fx"/>
     <!--=======================< modality-base-frontoffice-utility >========================-->
-    <source path="one/modality/base/frontoffice/browser"/>
-    <source path="one/modality/base/frontoffice/entities"/>
-    <source path="one/modality/base/frontoffice/fx"/>
-    <source path="one/modality/base/frontoffice/states"/>
-    <source path="one/modality/base/frontoffice/utility"/>
+    <source path="one/modality/base/frontoffice/utility/activity"/>
+    <source path="one/modality/base/frontoffice/utility/browser"/>
+    <source path="one/modality/base/frontoffice/utility/tyler"/>
+    <source path="one/modality/base/frontoffice/utility/tyler/entities"/>
+    <source path="one/modality/base/frontoffice/utility/tyler/fx"/>
+    <source path="one/modality/base/frontoffice/utility/tyler/states"/>
     <!--==========================< modality-base-shared-context >==========================-->
     <source path="one/modality/base/shared/context"/>
     <source path="one/modality/base/shared/context/serial"/>

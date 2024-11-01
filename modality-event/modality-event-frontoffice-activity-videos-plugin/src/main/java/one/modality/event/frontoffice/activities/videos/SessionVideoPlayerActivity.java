@@ -15,8 +15,6 @@ import dev.webfx.stack.orm.entity.EntityStoreQuery;
 import javafx.application.Platform;
 import javafx.beans.property.ObjectProperty;
 import javafx.beans.property.SimpleObjectProperty;
-import javafx.collections.FXCollections;
-import javafx.collections.ObservableList;
 import javafx.geometry.Insets;
 import javafx.scene.Node;
 import javafx.scene.control.Label;
@@ -29,6 +27,9 @@ import one.modality.base.shared.entities.ScheduledItem;
 import one.modality.crm.shared.services.authn.fx.FXUserPersonId;
 import one.modality.event.client.mediaview.Players;
 
+import java.util.ArrayList;
+import java.util.List;
+
 /**
  * @author Bruno Salmon
  */
@@ -39,7 +40,7 @@ final class SessionVideoPlayerActivity extends ViewDomainActivityBase {
     private final ObjectProperty<Object> scheduledVideoItemIdProperty = new SimpleObjectProperty<>();
 
     private final ObjectProperty<ScheduledItem> scheduledVideoItemProperty = new SimpleObjectProperty<>();
-    private final ObservableList<Media> publishedMedias = FXCollections.observableArrayList();
+    private final List<Media> publishedMedias = new ArrayList<>(); // No need to be observable (reacting to scheduledVideoItemProperty is enough)
 
     private final Label sessionTitleLabel = Bootstrap.h2(Bootstrap.strong(new Label()));
     private final GenericWebVideoPlayer sessionVideoPlayer = new GenericWebVideoPlayer();
@@ -58,7 +59,7 @@ final class SessionVideoPlayerActivity extends ViewDomainActivityBase {
             EntityId userPersonId = FXUserPersonId.getUserPersonId();
             if (scheduledVideoItemId == null || userPersonId == null) {
                 publishedMedias.clear();
-                scheduledVideoItemProperty.set(null);
+                scheduledVideoItemProperty.set(null); // Will update UI
             } else {
                 entityStore.executeQueryBatch(
                         new EntityStoreQuery("select parent.name" +
@@ -71,8 +72,8 @@ final class SessionVideoPlayerActivity extends ViewDomainActivityBase {
                             new Object[]{scheduledVideoItemId}))
                     .onFailure(Console::log)
                     .onSuccess(entityLists -> Platform.runLater(() -> {
-                        publishedMedias.setAll(entityLists[1]);
-                        scheduledVideoItemProperty.set((ScheduledItem) Collections.first(entityLists[0]));
+                        Collections.setAll(publishedMedias, entityLists[1]);
+                        scheduledVideoItemProperty.set((ScheduledItem) Collections.first(entityLists[0]));  // Will update UI
                     }));
             }
         }, scheduledVideoItemIdProperty, FXUserPersonId.userPersonIdProperty());
@@ -93,9 +94,10 @@ final class SessionVideoPlayerActivity extends ViewDomainActivityBase {
         // ********************************* Building the static part of the UI ****************************************
         // *************************************************************************************************************
 
-        // Back arrow and event title
+        // Back arrow for backward navigation
         MonoPane backArrow = SvgIcons.createButtonPane(SvgIcons.createBackArrow(), getHistory()::goBack);
 
+        // Session title
         sessionTitleLabel.setWrapText(true);
         sessionTitleLabel.setTextAlignment(TextAlignment.CENTER);
 
