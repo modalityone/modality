@@ -6,6 +6,8 @@ import dev.webfx.extras.theme.layout.FXLayoutMode;
 import dev.webfx.extras.theme.luminance.LuminanceTheme;
 import dev.webfx.extras.theme.text.TextTheme;
 import dev.webfx.extras.util.animation.Animations;
+import dev.webfx.extras.util.control.ControlUtil;
+import dev.webfx.extras.util.layout.LayoutUtil;
 import dev.webfx.kit.launcher.WebFxKitLauncher;
 import dev.webfx.kit.util.properties.FXProperties;
 import dev.webfx.platform.conf.SourcesConfig;
@@ -34,20 +36,19 @@ import javafx.scene.image.ImageView;
 import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Circle;
-import javafx.scene.shape.Rectangle;
 import javafx.scene.shape.Shape;
 import javafx.scene.text.Font;
 import javafx.scene.text.FontWeight;
 import javafx.scene.text.Text;
 import javafx.util.Duration;
 import one.modality.base.backoffice.ganttcanvas.MainFrameGanttCanvas;
-import one.modality.base.backoffice.mainframe.headernode.MainFrameHeaderNodeProvider;
 import one.modality.base.backoffice.mainframe.fx.FXMainFrameHeaderTabs;
-import one.modality.base.client.tile.Tab;
+import one.modality.base.backoffice.mainframe.headernode.MainFrameHeaderNodeProvider;
 import one.modality.base.client.application.ModalityClientMainFrameActivity;
 import one.modality.base.client.gantt.fx.interstice.FXGanttInterstice;
 import one.modality.base.client.mainframe.fx.FXMainFrameDialogArea;
 import one.modality.base.client.profile.fx.FXProfile;
+import one.modality.base.client.tile.Tab;
 
 import java.util.Comparator;
 import java.util.function.Consumer;
@@ -287,11 +288,8 @@ public final class ModalityBackOfficeMainFrameActivity extends ModalityClientMai
                     boolean animate = isGanttCanvasShowing == capturedWasGanttCanvasShowingBeforeTabsChange;
                     // We animate prefHeightProperty to show the tabs (when new height > 0) or hide them (when new height = 0)
                     Timeline timeline = Animations.animateProperty(clipPane.prefHeightProperty(), newHeight, animate);
-                    if (timeline == null)
-                        headerTabsBar.getChildren().setAll(tabs);
-                    else
-                        // At the end of the animation, we clear the bar if the new screen has no bars
-                        timeline.setOnFinished(e -> headerTabsBar.getChildren().setAll(tabs));
+                    // At the end of the animation, we clear the bar if the new screen has no bars
+                    Animations.setOrCallOnTimelineFinished(timeline, e -> headerTabsBar.getChildren().setAll(tabs));
                 };
                 // For other cases, we will animate the height transition and need for that to give the new height
                 if (tabs.isEmpty()) { // Case where we transition from a screen with tabs to a screen with no tabs (but with gantt canvas)
@@ -349,12 +347,12 @@ public final class ModalityBackOfficeMainFrameActivity extends ModalityClientMai
                 noIncomingTrafficScheduled[0].cancel();
                 noIncomingTrafficScheduled[0] = UiScheduler.scheduleDelay(TRAFFIC_MILLIS, () -> incomingTrafficLed.setFill(NO_TRAFFIC_COLOR));
             });
-            statusBar.getChildren().addAll(new Rectangle(10, 0), trafficText, outgoingTrafficLed, incomingTrafficLed);
+            statusBar.getChildren().addAll(LayoutUtil.createHSpace(10), trafficText, outgoingTrafficLed, incomingTrafficLed);
         }
         // Pending operations
         Text pendingText = createStatusText("PendingCalls");
         Text pendingCountText = createStatusText(null);
-        ProgressIndicator pendingIndicator = new ProgressIndicator();
+        ProgressIndicator pendingIndicator = ControlUtil.createProgressIndicator(16);
         Timeline[] pendingFadeTimeline = { new Timeline() };
         FXProperties.runNowAndOnPropertiesChange(() -> UiScheduler.runInUiThread(() -> {
             int pendingCalls = PendingBusCall.pendingCallsCountProperty().getValue();
@@ -369,8 +367,7 @@ public final class ModalityBackOfficeMainFrameActivity extends ModalityClientMai
             }
         }), PendingBusCall.pendingCallsCountProperty());
         StackPane pendingPane = new StackPane(pendingIndicator, pendingCountText);
-        pendingPane.setPrefSize(16, 16);
-        statusBar.getChildren().addAll(new Rectangle(10, 0), pendingText, pendingPane);
+        statusBar.getChildren().addAll(LayoutUtil.createHSpace(10), pendingText, pendingPane);
 
         statusBar.setAlignment(Pos.CENTER);
         // Considering the bottom of the safe area, in particular for OS like iPadOS with a bar at the bottom
