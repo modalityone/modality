@@ -20,14 +20,16 @@ public final class ModalityI18nProvider extends AstI18nProvider {
             String s = (String) messageKey;
             if (s.startsWith("expression:")) {
                 Entity entity = findEntity(i18nKey);
-                if (entity != null) {
-                    String expression = s.substring(11);
-                    Object tokenValue = entity.evaluate(expression);
-                    if (tokenValue instanceof String)
-                        i18nKey = new I18nSubKey(tokenValue, i18nKey);
-                    else
-                        return tokenValue;
-                }
+                // If no entities is found (can happen before data is loaded), we display nothing (displaying the
+                // expression would look ugly for the final user). This can eventually be commented when not in production.
+                if (entity == null)
+                    return null;
+                String expression = s.substring(11);
+                Object tokenValue = entity.evaluate(expression);
+                if (tokenValue instanceof String)
+                    i18nKey = new I18nSubKey(tokenValue, i18nKey);
+                else
+                    return tokenValue;
             }
         }
         return super.getDictionaryTokenValueImpl(i18nKey, tokenKey, dictionary, skipDefaultDictionary, originalDictionary, skipMessageKeyInterpretation, skipMessageLoading);
