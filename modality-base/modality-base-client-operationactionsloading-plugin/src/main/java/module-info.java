@@ -9,6 +9,7 @@ module modality.base.client.operationactionsloading.plugin {
     requires javafx.base;
     requires javafx.controls;
     requires modality.base.client.conf;
+    requires webfx.extras.util.control;
     requires webfx.platform.boot;
     requires webfx.platform.conf;
     requires webfx.platform.console;

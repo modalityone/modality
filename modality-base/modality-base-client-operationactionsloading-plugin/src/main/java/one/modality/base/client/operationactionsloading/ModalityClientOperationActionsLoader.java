@@ -1,5 +1,6 @@
 package one.modality.base.client.operationactionsloading;
 
+import dev.webfx.extras.util.control.ControlUtil;
 import dev.webfx.platform.boot.spi.ApplicationModuleBooter;
 import dev.webfx.platform.conf.Config;
 import dev.webfx.platform.conf.ConfigLoader;
@@ -111,8 +112,7 @@ public final class ModalityClientOperationActionsLoader implements ApplicationMo
             if (operationRequest instanceof RouteRequest) {
                 return null;
             }
-            ProgressIndicator progressIndicator = new ProgressIndicator();
-            progressIndicator.setPrefSize(16, 16);
+            ProgressIndicator progressIndicator = ControlUtil.createProgressIndicator(16);
             return progressIndicator;
         });
 

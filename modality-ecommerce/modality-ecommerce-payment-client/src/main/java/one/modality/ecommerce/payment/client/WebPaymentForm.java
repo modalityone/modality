@@ -2,6 +2,7 @@ package one.modality.ecommerce.payment.client;
 
 import dev.webfx.extras.panes.FlexPane;
 import dev.webfx.extras.panes.MonoPane;
+import dev.webfx.extras.util.control.ControlUtil;
 import dev.webfx.extras.webview.pane.LoadOptions;
 import dev.webfx.extras.webview.pane.WebViewPane;
 import dev.webfx.platform.async.Future;
@@ -175,24 +176,20 @@ public class WebPaymentForm {
     private void showLoadingFormOverlay() {
         VBox vBox = new VBox(5,
                 createLabel("The " + getGatewayName() + " payment form is loading"),
-                createProgressIndicator(32)
+                createProgressIndicator()
         );
         vBox.setAlignment(Pos.CENTER);
         showOverlay(vBox);
     }
 
-    private ProgressIndicator createProgressIndicator(double size) {
-        ProgressIndicator pi = new ProgressIndicator();
-        pi.setMinSize(size, size);
-        pi.setPrefSize(size, size);
-        pi.setMaxSize(size, size);
-        return pi;
+    private ProgressIndicator createProgressIndicator() {
+        return ControlUtil.createProgressIndicator(32);
     }
 
     private void showVerificationProcessOverlay() {
         VBox vBox = new VBox(5,
                 createLabel(getGatewayName() + " is capturing your details"),
-                createProgressIndicator(32)
+                createProgressIndicator()
         );
         vBox.setAlignment(Pos.CENTER);
         showOverlay(vBox);
@@ -203,7 +200,7 @@ public class WebPaymentForm {
         VBox vBox = new VBox(5,
                 createLabel("Your details have been successfully captured by " + getGatewayName()),
                 createLabel(getGatewayName() + " is now completing your payment"),
-                createProgressIndicator(32)
+                createProgressIndicator()
         );
         vBox.setAlignment(Pos.CENTER);
         showOverlay(vBox);
@@ -212,7 +209,7 @@ public class WebPaymentForm {
     private void showCancellingOverlay() {
         VBox vBox = new VBox(5,
                 createLabel("We are cancelling your payment"),
-                createProgressIndicator(32)
+                createProgressIndicator()
         );
         vBox.setAlignment(Pos.CENTER);
         showOverlay(vBox);
