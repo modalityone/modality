@@ -2,13 +2,10 @@ package one.modality.event.client.mediaview;
 
 import dev.webfx.extras.imagestore.ImageStore;
 import dev.webfx.extras.panes.MonoPane;
+import dev.webfx.extras.player.Media;
 import dev.webfx.extras.player.Player;
 import dev.webfx.extras.player.Status;
-import dev.webfx.extras.player.audio.media.AudioMediaPlayer;
-import dev.webfx.extras.player.video.IntegrationMode;
-import dev.webfx.extras.player.video.VideoPlayer;
-import dev.webfx.extras.player.video.web.wistia.WistiaVideoPlayer;
-import dev.webfx.extras.player.video.web.youtube.YoutubeVideoPlayer;
+import dev.webfx.extras.player.multi.all.AllPlayers;
 import dev.webfx.extras.util.animation.Animations;
 import dev.webfx.kit.util.properties.FXProperties;
 import dev.webfx.kit.util.properties.Unregisterable;
@@ -52,8 +49,7 @@ public abstract class MediaInfoView {
     // be retrieved from the already existing media players (if the user already played that podcast) so its visual
     // state can be re-established in that case. Otherwise - if the podcast hasn't been played so far in this session -
     // the media player will be null until the user presses the play button.
-    public Player player;
-    protected VideoPlayer videoPlayer;
+    private final Player player = AllPlayers.createAllAudioVideoPlayer();
     protected boolean isAudio, isVideo, isWistiaVideo, isYoutubeVideo, isWideVideo;
     private Unregisterable mediaPlayerBinding; // will allow to unbind a recycled view from its previous associated media player.
     protected HasMediaInfo mediaInfo;
@@ -194,7 +190,7 @@ public abstract class MediaInfoView {
         // Arming buttons
         GeneralUtility.onNodeClickedWithoutScroll(e -> play(), playButton, imageView);
         GeneralUtility.onNodeClickedWithoutScroll(e -> pause(), pauseButton);
-        GeneralUtility.onNodeClickedWithoutScroll(e -> seekRelative(30), forwardButton);
+        GeneralUtility.onNodeClickedWithoutScroll(e -> seekRelative(+30), forwardButton);
         GeneralUtility.onNodeClickedWithoutScroll(e -> seekRelative(-10), backwardButton);
         GeneralUtility.onNodeClickedWithoutScroll(e -> seekX(e.getX()), progressBar);
         progressBar   .setOnMouseDragged(         e -> seekX(e.getX()));
@@ -237,18 +233,12 @@ public abstract class MediaInfoView {
         // If no, the player associated with this podcast should be null
         // If this podcast view was previously associated with a player, we unbind it.
         unbindMediaPlayer(); // will unregister the possible existing binding, and reset the visual state
-        // We check if this track has already been played
-        player = Players.getPlayerAssociatedWithTrack(getTrack());
-        videoPlayer = player instanceof VideoPlayer ? (VideoPlayer) player : null;
         // For videos with no image on top of them, we display the video straightaway (but don't play it yet)
         if (isVideo && image == null) {
-            if (videoPlayer == null)
-                createPlayer();
-            videoPlayer.displayVideo();
+            setPlayerMedia();
+            player.displayVideo();
         }
-        if (player != null) {  // If yes, we reuse the same player straightaway
-            bindMediaPlayer(); // => will restore the visual state from the player (play/pause button & progress bar)
-        }
+        bindMediaPlayer(); // => will restore the visual state from the player (play/pause button & progress bar)
     }
 
     public void setDecorated(boolean decorated) {
@@ -259,26 +249,16 @@ public abstract class MediaInfoView {
         this.wideVideoMaxWidth = wideVideoMaxWidth;
     }
 
-    private String getTrack() {
+    private String getMediaToken() {
         if (isAudio)
             return ((HasAudioUrl) mediaInfo).getAudioUrl();
         if (isWistiaVideo)
-            return ((HasWistiaVideoId) mediaInfo).getWistiaVideoId();
-        return ((HasYoutubeVideoId) mediaInfo).getYoutubeVideoId();
+            return "wistia:" + ((HasWistiaVideoId) mediaInfo).getWistiaVideoId();
+        return "youtube:" + ((HasYoutubeVideoId) mediaInfo).getYoutubeVideoId();
     }
 
     public Node getView() {
         return mediaPane;
-    }
-
-    private Node getVideoView() {
-        return getVideoView(player);
-    }
-
-    private static Node getVideoView(Player player) {
-        if (player instanceof VideoPlayer)
-            return ((VideoPlayer) player).getVideoView();
-        return null;
     }
 
     private void updateFavorite() {
@@ -292,83 +272,58 @@ public abstract class MediaInfoView {
     protected abstract void toggleAsFavorite();
 
     private void play() {
-        // Creating the media player if not already done
-        if (player == null)
-            createPlayer();
+        // Setting the media of the player if not already done
+        setPlayerMedia();
         // Starting playing
         player.play();
         updatePlayPauseButtons(true);
     }
 
     private void pause() {
-        Players.pausePlayer(player); // will callback onPause()
-    }
-
-    void onPause() {
-        // Normally the previous call should update the player status and the listener set in bindMediaPlayer()
-        // should detect it and update the play/pause button, but just in case this doesn't happen for some reason,
-        // we ensure the button is displayed as paused.
-        updatePlayPauseButtons(false);
+        player.pause();
     }
 
     private void seekRelative(double relativeSeconds) {
-        if (player != null)
-            player.seek(player.getCurrentTime().add(Duration.seconds(relativeSeconds)));
+        player.seek(player.getCurrentTime().add(Duration.seconds(relativeSeconds)));
     }
 
     private void seekX(double x) {
-        if (player != null) {
-            double percentage = x / progressBar.getWidth();
-            Duration seekTime = mediaDuration.multiply(percentage);
-            player.seek(seekTime);
-        }
+        double percentage = x / progressBar.getWidth();
+        Duration seekTime = mediaDuration.multiply(percentage);
+        player.seek(seekTime);
     }
 
-    private void createPlayer() {
-        player = isAudio ? new AudioMediaPlayer() : isWistiaVideo ? new WistiaVideoPlayer() : new YoutubeVideoPlayer();
-        videoPlayer = player instanceof VideoPlayer ? (VideoPlayer) player : null;
-        String track = getTrack();
-        player.getPlaylist().setAll(track);
+    private void setPlayerMedia() {
+        String mediaToken = getMediaToken();
+        Media media = player.acceptMedia(mediaToken);
+        player.setMedia(media);
         player.setOnEndOfPlaying(player::stop); // Forcing stop status (sometimes this doesn't happen automatically for any reason)
-        // Registering the playing track
-        Players.associatePlayerWithTrack(player, getTrack());
         // Binding this media player with this podcast view
         bindMediaPlayer();
-    }
-    public void stopPlayer() {
-        if (player != null) {
-            player.stop();
-        }
     }
 
     private void bindMediaPlayer() {
         unbindMediaPlayer(); // in case this view was previously bound with another player
-        videoContainer.setContent(getVideoView());
+        videoContainer.setContent(player.getMediaView());
         if (isVideo) {
-            Node videoView = getVideoView();
-            if (videoView != null) {
-                Players.associateVideoViewWithMediaInfoView(videoView, this);
-            }
             mediaPlayerBinding = FXProperties.runNowAndOnPropertiesChange(() -> {
-                boolean playing = videoPlayer != null && videoPlayer.isPlaying();
                 // Resetting the video to the beginning,
-                if (videoPlayer != null && videoPlayer.getStatus() == Status.STOPPED)
-                    videoPlayer.resetToInitialState();
-                updatePlayPauseButtons(playing);
-            }, videoPlayer.statusProperty());
+                if (player.getStatus() == Status.STOPPED)
+                    player.resetToInitialState();
+                updatePlayPauseButtons(null);
+            }, player.statusProperty());
         } else { // audio
             mediaPlayerBinding = FXProperties.runNowAndOnPropertiesChange(() -> {
-                if (player == null)
-                    return;
+                updatePlayPauseButtons(null);
                 boolean isPlaying = player.isPlaying();
-                updatePlayPauseButtons(isPlaying);
                 Status status = player.getStatus();
-                if (status == null || status == Status.UNKNOWN)
+                if (status == null || status == Status.LOADING)
                     progressBar.setProgress(ProgressBar.INDETERMINATE_PROGRESS);
                 else
-                    updateElapsedTimeAndProgressBar(isPlaying || status == Status.PAUSED ? player.getCurrentTime() : mediaDuration);
+                    updateElapsedTimeAndProgressBar(status == Status.NO_MEDIA ? Duration.ZERO : isPlaying || status == Status.PAUSED ? player.getCurrentTime() : mediaDuration);
             }, player.statusProperty(), player.currentTimeProperty());
         }
+        // Not yet supported by WebFX
         //mediaPlayer.setOnError(() -> System.out.println("An error occurred: " + mediaPlayer.getError()));
     }
 
@@ -381,27 +336,19 @@ public abstract class MediaInfoView {
         updateElapsedTimeAndProgressBar(Duration.ZERO);
     }
 
-    protected void updatePlayPauseButtons(boolean isPlaying) {
-        pauseButton.setVisible(decorated && isPlaying && !isWideVideo);
-        playButton.setVisible(decorated && !isPlaying && !isWideVideo);
-        Status status = player == null ? null : player.getStatus();
+    protected void updatePlayPauseButtons(Boolean anticipatePlaying) {
+        Status status = player.getStatus();
+        boolean playing = status == Status.PLAYING;
+        pauseButton.setVisible(decorated && !isWideVideo && (anticipatePlaying != null ? anticipatePlaying : playing));
+        playButton.setVisible(decorated && !isWideVideo && (anticipatePlaying != null ? !anticipatePlaying : !playing));
         // Sometimes this method is called with an anticipated value for isPlaying (ex: play() method). So we check if
         // the player is really playing
-        boolean reallyPlaying = status == Status.PLAYING;
-        //Console.log("isPlaying = " + isPlaying + ", reallyPlaying = " + reallyPlaying + " for " + player + ", title = " + mediaInfo.getTitle());
-        // Note: when paused, only the seamless player is able to resume, others are just stopped
-        boolean showVideo = isVideo && (image == null || isPlaying && (reallyPlaying || status == Status.PAUSED && videoPlayer.getIntegrationMode() == IntegrationMode.SEAMLESS));
+        // Note: when paused, we prefer to show the image (if available) if the player is not able to resume (navigation api not supported)
+        boolean showVideo = isVideo && (image == null || !Boolean.FALSE.equals(anticipatePlaying) && (playing || status == Status.PAUSED && player.getNavigationSupport().api()));
         // Note: using setVisible(false) doesn't prevent wistia player to appear sometimes, while setOpacity(0) does
         videoContainer.setOpacity(showVideo ? 1 : 0);
         imageView.setMouseTransparent(showVideo);
         showImage(!showVideo);
-        // Updating Players when relevant:
-        if (isPlaying) { // if this player is playing, then we report this to Players
-            if (reallyPlaying) // we double-check the status because the play() method actually anticipates
-                Players.setPlayingPlayer(player); // the playing status while Players concept is to for actual playing status
-        } else if (Players.getPlayingPlayer() == player) { // if it's not playing while it was declared as the playing player
-            Players.setNoPlayingPlayer(); // we report Players that it's not anymore
-        }
     }
 
     private void showImage(boolean showImage) {
@@ -448,4 +395,5 @@ public abstract class MediaInfoView {
         int seconds = ((int) duration.toSeconds()) % 60;
         return (minutes < 10 ? "0" : "") + minutes + ":" + (seconds < 10 ? "0" : "") + seconds;
     }
+
 }

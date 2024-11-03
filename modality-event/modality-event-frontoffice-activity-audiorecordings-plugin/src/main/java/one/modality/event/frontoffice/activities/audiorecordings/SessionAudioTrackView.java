@@ -27,8 +27,6 @@ final class SessionAudioTrackView {
     private final ScheduledItem scheduledAudioItem;
     private final List<Media> publishedMedias;
 
-    private AudioRecordingMediaInfoView mediaView;
-
     private final VBox container = new VBox();
 
     public SessionAudioTrackView(ScheduledItem scheduledAudioItem, List<Media> publishedMedias) {
@@ -43,18 +41,14 @@ final class SessionAudioTrackView {
         return container;
     }
 
-    AudioRecordingMediaInfoView getMediaView() {
-        return mediaView;
-    }
-
     private void buildUi() {
         String title = scheduledAudioItem.getParent().getName();
         Timeline timeline = scheduledAudioItem.getParent().getTimeline();
         LocalDate date = scheduledAudioItem.getDate();
         LocalTime startTime = timeline.getStartTime();
 
-        Label dateLabel = Bootstrap.strong(new Label(date.format(DateTimeFormatter.ofPattern("dd MMMM yyyy")) + " - " +
-                                                     startTime.format(DateTimeFormatter.ofPattern("HH:mm"))));
+        Label dateLabel = Bootstrap.strong(new Label(
+            date.format(DateTimeFormatter.ofPattern("dd MMMM yyyy")) + " - " + startTime.format(DateTimeFormatter.ofPattern("HH:mm"))));
         Label titleLabel = new Label(title);
         container.getChildren().addAll(
             dateLabel,
@@ -66,13 +60,14 @@ final class SessionAudioTrackView {
             noMediaLabel.getStyleClass().add(Bootstrap.TEXT_WARNING);
             container.getChildren().add(noMediaLabel);
         } else {
-            String url = publishedMedias.get(0).getUrl();
+            Media firstMedia = publishedMedias.get(0);
+            String url = firstMedia.getUrl();
             AudioMedia audioMedia = new AudioMedia();
             audioMedia.setAudioUrl(url);
             audioMedia.setTitle(title);
             audioMedia.setDate(LocalDateTime.of(date, startTime));
-            audioMedia.setDurationMillis(publishedMedias.get(0).getDurationMillis());
-            mediaView = new AudioRecordingMediaInfoView();
+            audioMedia.setDurationMillis(firstMedia.getDurationMillis());
+            AudioRecordingMediaInfoView mediaView = new AudioRecordingMediaInfoView();
             mediaView.setMediaInfo(audioMedia);
             container.getChildren().add(mediaView.getView());
 

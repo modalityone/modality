@@ -11,10 +11,10 @@ module modality.event.frontoffice.activity.videos.plugin {
     requires modality.base.frontoffice.utility;
     requires modality.base.shared.entities;
     requires modality.crm.client.authn.fx;
-    requires modality.event.client.mediaview;
     requires modality.event.frontoffice.medias;
     requires webfx.extras.panes;
-    requires webfx.extras.player.video.web;
+    requires webfx.extras.player;
+    requires webfx.extras.player.multi.all;
     requires webfx.extras.styles.bootstrap;
     requires webfx.kit.util;
     requires webfx.platform.console;

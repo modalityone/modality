@@ -4,9 +4,9 @@ import one.modality.base.shared.entities.markers.HasAudioUrl;
 import one.modality.base.shared.entities.markers.HasMediaInfo;
 
 import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
 
 public class AudioMedia implements HasMediaInfo, HasAudioUrl {
+
     private String url = "";
     private String title = "";
     private String excerpt = "";
@@ -35,14 +35,9 @@ public class AudioMedia implements HasMediaInfo, HasAudioUrl {
         return title;
     }
 
-    public String getDateTimeForFileToString() {
-        return getDate().format(DateTimeFormatter.ofPattern("YYYY-MM-DD - HHmm"));
-    }
-
     @Override
     public void setExcerpt(String excerpt) {
         this.excerpt = excerpt;
-
     }
 
     @Override
@@ -53,7 +48,6 @@ public class AudioMedia implements HasMediaInfo, HasAudioUrl {
     @Override
     public void setImageUrl(String imageUrl) {
         this.imageUrl = imageUrl;
-
     }
 
     @Override

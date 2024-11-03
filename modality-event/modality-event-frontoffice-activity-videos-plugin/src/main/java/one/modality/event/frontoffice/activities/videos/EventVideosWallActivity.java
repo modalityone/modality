@@ -3,7 +3,9 @@ package one.modality.event.frontoffice.activities.videos;
 import dev.webfx.extras.panes.CenteredPane;
 import dev.webfx.extras.panes.CollapsePane;
 import dev.webfx.extras.panes.MonoPane;
-import dev.webfx.extras.player.video.web.GenericWebVideoPlayer;
+import dev.webfx.extras.player.StartOptionsBuilder;
+import dev.webfx.extras.player.multi.MultiPlayer;
+import dev.webfx.extras.player.multi.all.AllPlayers;
 import dev.webfx.extras.styles.bootstrap.Bootstrap;
 import dev.webfx.kit.util.properties.FXProperties;
 import dev.webfx.kit.util.properties.ObservableLists;
@@ -37,7 +39,6 @@ import one.modality.base.shared.entities.Event;
 import one.modality.base.shared.entities.KnownItemFamily;
 import one.modality.base.shared.entities.ScheduledItem;
 import one.modality.crm.shared.services.authn.fx.FXUserPersonId;
-import one.modality.event.client.mediaview.Players;
 
 import java.time.LocalDate;
 import java.util.List;
@@ -59,7 +60,7 @@ final class EventVideosWallActivity extends ViewDomainActivityBase {
     private final ObservableList<ScheduledItem> videoScheduledItems = FXCollections.observableArrayList();
 
     private final VBox livestreamVBox = new VBox(20);
-    private final GenericWebVideoPlayer livestreamVideoPlayer = new GenericWebVideoPlayer();
+    private final MultiPlayer livestreamVideoPlayer = AllPlayers.createAllVideoPlayer();
 
     @Override
     protected void updateModelFromContextParameters() {
@@ -129,7 +130,6 @@ final class EventVideosWallActivity extends ViewDomainActivityBase {
             eventDescriptionLabel
         );
         titleVBox.setAlignment(Pos.CENTER);
-        //VBox.setMargin(eventLabel, new Insets(0, 0, 0, 40));
 
         CenteredPane backArrowAndTitlePane = new CenteredPane();
         backArrowAndTitlePane.setLeft(backArrow);
@@ -139,11 +139,11 @@ final class EventVideosWallActivity extends ViewDomainActivityBase {
         Label livestreamLabel = Bootstrap.h4(Bootstrap.strong(I18nControls.newLabel(VideosI18nKeys.LivestreamTitle)));
         livestreamLabel.setWrapText(true);
 
-        Node livestreamVideoView = livestreamVideoPlayer.getVideoView();
-        /*if (livestreamVideoView instanceof Region) {
-            Region videoRegion = (Region) livestreamVideoView;
-            videoRegion.prefHeightProperty().bind(FXProperties.compute(videoRegion.widthProperty(), w -> w.doubleValue() / 16d * 9d));
-        }*/
+        livestreamVideoPlayer.setStartOptions(new StartOptionsBuilder()
+            .setAutoplay(true)
+            .setAspectRatioTo16by9() // should be read from metadata but hardcoded for now
+            .build());
+        Node livestreamVideoView = livestreamVideoPlayer.getMediaView();
 
         livestreamVBox.getChildren().setAll(
             livestreamLabel,
@@ -151,7 +151,7 @@ final class EventVideosWallActivity extends ViewDomainActivityBase {
         );
 
         // VBox showing all days and their videos (each node = container with day label + all videos of that day)
-        VBox dayVideosWallVBox = new VBox(30); // Will be populated later (see below)
+        VBox dayVideosWallVBox = new VBox(30); // Will be populated later (see reacting code below)
 
         Label pastVideoLabel = Bootstrap.h4(Bootstrap.strong(I18nControls.newLabel(VideosI18nKeys.PastRecordings)));
         Label noContentLabel = Bootstrap.h3(Bootstrap.textWarning(I18nControls.newLabel(VideosI18nKeys.NoVideosForThisEvent)));
@@ -221,15 +221,16 @@ final class EventVideosWallActivity extends ViewDomainActivityBase {
         String eventLivestreamUrl = event == null || Times.isPast(event.getEndDate()) ? null : event.getLivestreamUrl();
         boolean showLivestream = Strings.isNotEmpty(eventLivestreamUrl);
         if (showLivestream) {
-            livestreamVideoPlayer.getPlaylist().setAll(eventLivestreamUrl);
+            livestreamVideoPlayer.setMedia(livestreamVideoPlayer.acceptMedia(eventLivestreamUrl));
             livestreamVideoPlayer.play(); // Will display and start the video (silent if before or after session)
             // The livestream player (Castr) doesn't support notification (unfortunately), so we don't wait onPlay()
             // to be called, we just inform right now that the livestream player is now playing, which will stop
             // any possible previous player (such as podcasts) immediately.
-            Players.setPlayingPlayer(livestreamVideoPlayer);
+            //MediaPlayers.setPlayingPlayer(livestreamVideoPlayer);
         } else {
             // If there is no livestream, we pause the player (will actually stop it because pause is not supported)
-            Players.pausePlayer(livestreamVideoPlayer); // ensures we silent the possible previous playing livestream
+            //MediaPlayers.pausePlayer(livestreamVideoPlayer); // ensures we silent the possible previous playing livestream
+            livestreamVideoPlayer.pause();
         }
         livestreamVBox.setVisible(showLivestream);
         livestreamVBox.setManaged(showLivestream);

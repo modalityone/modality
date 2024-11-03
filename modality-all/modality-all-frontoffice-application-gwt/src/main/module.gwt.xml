@@ -303,13 +303,18 @@
     <!--==============================< webfx-extras-player >===============================-->
     <source path="dev/webfx/extras/player"/>
     <source path="dev/webfx/extras/player/impl"/>
-    <!--========================< webfx-extras-player-audio-media >=========================-->
-    <source path="dev/webfx/extras/player/audio/media"/>
+    <source path="dev/webfx/extras/player/multi"/>
+    <!--=====================< webfx-extras-player-audio-javafxmedia >======================-->
+    <source path="dev/webfx/extras/player/audio/javafxmedia"/>
+    <!--=========================< webfx-extras-player-multi-all >==========================-->
+    <source path="dev/webfx/extras/player/multi/all"/>
     <!--===========================< webfx-extras-player-video >============================-->
     <source path="dev/webfx/extras/player/video"/>
     <source path="dev/webfx/extras/player/video/impl"/>
     <!--=========================< webfx-extras-player-video-web >==========================-->
     <source path="dev/webfx/extras/player/video/web"/>
+    <!--======================< webfx-extras-player-video-web-castr >=======================-->
+    <source path="dev/webfx/extras/player/video/web/castr"/>
     <!--======================< webfx-extras-player-video-web-wistia >======================-->
     <source path="dev/webfx/extras/player/video/web/wistia"/>
     <!--=====================< webfx-extras-player-video-web-youtube >======================-->

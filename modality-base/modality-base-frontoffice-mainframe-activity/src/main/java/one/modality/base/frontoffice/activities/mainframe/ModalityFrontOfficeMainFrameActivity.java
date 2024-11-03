@@ -6,6 +6,7 @@ import dev.webfx.extras.panes.ScalePane;
 import dev.webfx.extras.panes.TransitionPane;
 import dev.webfx.extras.panes.transitions.CircleTransition;
 import dev.webfx.extras.panes.transitions.FadeTransition;
+import dev.webfx.extras.player.Players;
 import dev.webfx.kit.launcher.WebFxKitLauncher;
 import dev.webfx.kit.util.properties.FXProperties;
 import dev.webfx.platform.conf.SourcesConfig;
@@ -41,6 +42,7 @@ import one.modality.base.client.mainframe.fx.FXMainFrameOverlayArea;
 import one.modality.base.client.mainframe.fx.FXMainFrameTransiting;
 import one.modality.base.frontoffice.mainframe.fx.FXBackgroundNode;
 import one.modality.base.frontoffice.mainframe.fx.FXCollapseFooter;
+import one.modality.base.frontoffice.utility.tyler.StyleUtility;
 
 public final class ModalityFrontOfficeMainFrameActivity extends ModalityClientMainFrameActivity {
 
@@ -144,7 +146,17 @@ public final class ModalityFrontOfficeMainFrameActivity extends ModalityClientMa
         }, mainFrame.widthProperty(), mainFrame.heightProperty());
 
         setUpContextMenu(mainFrame, this::contextMenuActionGroup);
+
+        setupPlayersGlobalConfiguration();
+
         return mainFrame;
+    }
+
+    private static void setupPlayersGlobalConfiguration() {
+        // Fullscreen button
+        ModalityFullscreenButton.setupModalityFullscreenButton();
+        // Players color (actually only Wistia supports it)
+        Players.setGlobalPlayerColor(StyleUtility.MAIN_ORANGE_COLOR);
     }
 
     private void updateDialogArea() {

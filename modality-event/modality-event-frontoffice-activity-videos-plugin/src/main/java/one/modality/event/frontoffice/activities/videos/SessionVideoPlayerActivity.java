@@ -2,7 +2,9 @@ package one.modality.event.frontoffice.activities.videos;
 
 import dev.webfx.extras.panes.CenteredPane;
 import dev.webfx.extras.panes.MonoPane;
-import dev.webfx.extras.player.video.web.GenericWebVideoPlayer;
+import dev.webfx.extras.player.StartOptionsBuilder;
+import dev.webfx.extras.player.multi.MultiPlayer;
+import dev.webfx.extras.player.multi.all.AllPlayers;
 import dev.webfx.extras.styles.bootstrap.Bootstrap;
 import dev.webfx.kit.util.properties.FXProperties;
 import dev.webfx.platform.console.Console;
@@ -25,7 +27,6 @@ import one.modality.base.frontoffice.utility.activity.FrontOfficeActivityUtil;
 import one.modality.base.shared.entities.Media;
 import one.modality.base.shared.entities.ScheduledItem;
 import one.modality.crm.shared.services.authn.fx.FXUserPersonId;
-import one.modality.event.client.mediaview.Players;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -43,7 +44,7 @@ final class SessionVideoPlayerActivity extends ViewDomainActivityBase {
     private final List<Media> publishedMedias = new ArrayList<>(); // No need to be observable (reacting to scheduledVideoItemProperty is enough)
 
     private final Label sessionTitleLabel = Bootstrap.h2(Bootstrap.strong(new Label()));
-    private final GenericWebVideoPlayer sessionVideoPlayer = new GenericWebVideoPlayer();
+    private final MultiPlayer sessionVideoPlayer = AllPlayers.createAllVideoPlayer();
 
     @Override
     protected void updateModelFromContextParameters() {
@@ -105,11 +106,11 @@ final class SessionVideoPlayerActivity extends ViewDomainActivityBase {
         backArrowAndTitlePane.setLeft(backArrow);
         backArrowAndTitlePane.setCenter(sessionTitleLabel);
 
-        Node videoView = sessionVideoPlayer.getVideoView();
-        /*if (videoView instanceof Region) {
-            Region videoRegion = (Region) videoView;
-            videoRegion.prefHeightProperty().bind(FXProperties.compute(videoRegion.widthProperty(), w -> w.doubleValue() / 16d * 9d));
-        }*/
+        sessionVideoPlayer.setStartOptions(new StartOptionsBuilder()
+            .setAutoplay(true)
+            .setAspectRatioTo16by9() // should be read from metadata but hardcoded for now
+            .build());
+        Node videoView = sessionVideoPlayer.getMediaView();
 
         VBox pageContainer = new VBox(40,
             backArrowAndTitlePane,
@@ -141,9 +142,8 @@ final class SessionVideoPlayerActivity extends ViewDomainActivityBase {
             String title = scheduledVideoItem.getParent().getName();
             String url = firstMedia.getUrl();
             sessionTitleLabel.setText(title);
-            sessionVideoPlayer.getPlaylist().setAll(url);
+            sessionVideoPlayer.setMedia(sessionVideoPlayer.acceptMedia(url));
             sessionVideoPlayer.play();
-            Players.setPlayingPlayer(sessionVideoPlayer);
         }
     }
 }
