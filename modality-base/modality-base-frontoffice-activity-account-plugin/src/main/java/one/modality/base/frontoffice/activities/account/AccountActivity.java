@@ -93,8 +93,7 @@ final class AccountActivity extends ViewDomainActivityBase implements OperationA
         );
         pageContainer.setAlignment(Pos.TOP_CENTER);
 
-        FXProperties.runOnPropertiesChange(() -> {
-            double width = pageContainer.getWidth();
+        FXProperties.runOnDoublePropertyChange(width -> {
             double fontFactor = GeneralUtility.computeFontFactor(width);
             GeneralUtility.setLabeledFont(upcomingBookingsLabel, StyleUtility.TEXT_FAMILY, FontWeight.BOLD, fontFactor * 16);
             GeneralUtility.setLabeledFont(pastBookingsLabel, StyleUtility.TEXT_FAMILY, FontWeight.BOLD, fontFactor * 16);

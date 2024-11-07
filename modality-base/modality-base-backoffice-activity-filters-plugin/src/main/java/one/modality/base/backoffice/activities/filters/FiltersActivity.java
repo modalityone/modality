@@ -66,12 +66,12 @@ final class FiltersActivity extends ViewDomainActivityBase implements OperationA
                 dialogVisualGrid.setCursor(Cursor.HAND);
                 BorderPane.setAlignment(dialogVisualGrid, Pos.TOP_LEFT);
                 updateDialogVisualGrid();
-                dialogVisualGrid.visualSelectionProperty().addListener((observable, oldValue, vs) -> {
+                FXProperties.runOnPropertyChange(vs -> {
                     setSelectedItem(vs == null || vs.getSelectedRow() == 0 ? null : searchedClasses.get(vs.getSelectedRow() - 1));
                     pm.filterClassProperty().set(toText(getSelectedItem()));
                     closeDialog();
-                });
-                FXProperties.runOnPropertiesChange(this::updateDialogVisualGrid, searchTextProperty());
+                }, dialogVisualGrid.visualSelectionProperty());
+                FXProperties.runOnPropertyChange(this::updateDialogVisualGrid, searchTextProperty());
             }
             @Override
             protected Node getOrCreateButtonContentFromSelectedItem() {

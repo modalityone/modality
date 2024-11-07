@@ -306,9 +306,9 @@ public abstract class MediaInfoView {
         unbindMediaPlayer(); // in case this view was previously bound with another player
         videoContainer.setContent(player.getMediaView());
         if (isVideo) {
-            mediaPlayerBinding = FXProperties.runNowAndOnPropertiesChange(() -> {
+            mediaPlayerBinding = FXProperties.runNowAndOnPropertyChange(status -> {
                 // Resetting the video to the beginning,
-                if (player.getStatus() == Status.STOPPED)
+                if (status == Status.STOPPED)
                     player.resetToInitialState();
                 updatePlayPauseButtons(null);
             }, player.statusProperty());

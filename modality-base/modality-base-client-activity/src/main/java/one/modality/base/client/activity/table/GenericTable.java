@@ -41,7 +41,9 @@ public class GenericTable<PM extends GenericTablePresentationModel> {
         // User inputs: the UI state changes are transferred in the presentation model
         pm.searchTextProperty().bind(searchBox.textProperty());
         //pm.limitProperty().bind(Bindings.when(limitCheckBox.selectedProperty()).then(table.heightProperty().divide(36)).otherwise(-1)); // not implemented in webfx-kit-javafxbase-emul
-        FXProperties.runNowAndOnPropertiesChange(() -> pm.limitProperty().setValue(limitCheckBox.isSelected() ? (table.getHeight() - TABLE_HEADER_HEIGHT + TABLE_ROW_HEIGHT) / TABLE_ROW_HEIGHT : -1), limitCheckBox.selectedProperty(), table.heightProperty());
+        FXProperties.runNowAndOnPropertiesChange(() ->
+            pm.limitProperty().setValue(limitCheckBox.isSelected() ? (table.getHeight() - TABLE_HEADER_HEIGHT + TABLE_ROW_HEIGHT) / TABLE_ROW_HEIGHT : -1),
+            limitCheckBox.selectedProperty(), table.heightProperty());
         table.fullHeightProperty().bind(limitCheckBox.selectedProperty());
         //pm.limitProperty().bind(limitCheckBox.selectedProperty());
         pm.genericVisualSelectionProperty().bindBidirectional(table.visualSelectionProperty());

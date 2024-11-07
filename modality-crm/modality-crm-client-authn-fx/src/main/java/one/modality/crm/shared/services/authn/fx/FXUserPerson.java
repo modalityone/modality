@@ -5,7 +5,6 @@ import dev.webfx.platform.console.Console;
 import dev.webfx.platform.uischeduler.UiScheduler;
 import dev.webfx.stack.orm.datasourcemodel.service.DataSourceModelService;
 import dev.webfx.stack.orm.domainmodel.DataSourceModel;
-import dev.webfx.stack.orm.entity.EntityId;
 import dev.webfx.stack.orm.entity.EntityStore;
 import javafx.beans.property.ObjectProperty;
 import javafx.beans.property.SimpleObjectProperty;
@@ -19,8 +18,7 @@ public final class FXUserPerson {
     private final static ObjectProperty<Person> userPersonProperty = new SimpleObjectProperty<>();
 
     static {
-        FXProperties.runNowAndOnPropertiesChange(() -> {
-            EntityId userPersonId = FXUserPersonId.getUserPersonId();
+        FXProperties.runNowAndOnPropertyChange(userPersonId -> {
             if (userPersonId == null)
                 setUserPerson(null);
             else {

@@ -1,5 +1,6 @@
 package one.modality.base.client.entities.util;
 
+import dev.webfx.kit.util.properties.FXProperties;
 import javafx.beans.property.Property;
 import javafx.beans.property.SimpleObjectProperty;
 import javafx.scene.control.Labeled;
@@ -55,7 +56,7 @@ public final class Labels {
 
     public static Property<String> translateLabel(Label label) {
         Property<String> translation = new SimpleObjectProperty<>(instantTranslateLabel(label));
-        I18n.languageProperty().addListener((observable, oldValue, newValue) -> translation.setValue(instantTranslateLabel(label)));
+        FXProperties.runOnPropertyChange(() -> translation.setValue(instantTranslateLabel(label)), I18n.languageProperty());
         return translation;
     }
 

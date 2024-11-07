@@ -1,6 +1,7 @@
 package one.modality.catering.backoffice.activities.kitchen;
 
 import dev.webfx.extras.theme.text.TextTheme;
+import dev.webfx.kit.util.properties.FXProperties;
 import dev.webfx.stack.cache.client.LocalStorageCache;
 import dev.webfx.stack.i18n.I18n;
 import javafx.application.Platform;
@@ -53,7 +54,7 @@ public class MealsSelectionPane extends VBox {
         for (Item item : organizationAllMealsItemsObservableList) {
             CheckBox itemCheckBox = new CheckBox(item.getName() + " (" + abbreviationGenerator.getAbbreviation(item.getName()) + ")");
             itemCheckBox.setSelected(true);
-            itemCheckBox.selectedProperty().addListener((observableValue, oldValue, newValue) -> updateSelectedItems());
+            FXProperties.runOnPropertyChange(this::updateSelectedItems, itemCheckBox.selectedProperty());
             itemCheckBox.setCursor(Cursor.HAND);
             TextTheme.createDefaultTextFacet(itemCheckBox).style();
             itemCheckBoxMap.put(item, itemCheckBox);

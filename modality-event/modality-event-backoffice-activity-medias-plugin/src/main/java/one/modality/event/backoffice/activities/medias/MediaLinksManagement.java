@@ -217,10 +217,10 @@ public abstract class MediaLinksManagement {
                     mediaToBeUpdatedOnSaveButton = currentMedia.get(0);
                 }
 
-                durationTextField.textProperty().addListener((observable, oldValue, newValue) -> {
-                    currentMedia.get(0).setDurationMillis(Long.parseLong(newValue) * 1000);
-                });
-                linkTextField.textProperty().addListener((observable, oldValue, newValue) -> {
+                FXProperties.runOnPropertyChange(durationText ->
+                    currentMedia.get(0).setDurationMillis(Long.parseLong(durationText) * 1000)
+                , durationTextField.textProperty());
+                FXProperties.runOnPropertyChange(linkText -> {
                     //If there is a change and the mediaList for this teaching is empty, we create the Recording Scheduled Item and the Media associated
                     if (mediaList.isEmpty()) {
                         Media createdMedia = updateStore.insertEntity(Media.class);
@@ -229,12 +229,12 @@ public abstract class MediaLinksManagement {
                         currentMedia.add(createdMedia);
                         mediaList.add(createdMedia);
                     }
-                    currentMedia.get(0).setUrl(newValue);
+                    currentMedia.get(0).setUrl(linkText);
                     publishedInfo.setVisible(true);
                     secondLine.setVisible(true);
                     secondLine.setManaged(true);
                     //If the new value is empty, we delete the media
-                    if (newValue.isEmpty() && !mediaList.isEmpty()) {
+                    if (linkText.isEmpty() && !mediaList.isEmpty()) {
                         updateStore.deleteEntity(currentMedia.get(0));
                         mediaList.remove(currentMedia.get(0));
                         currentMedia.clear();
@@ -242,7 +242,7 @@ public abstract class MediaLinksManagement {
                         secondLine.setVisible(false);
                         secondLine.setManaged(false);
                     }
-                });
+                }, linkTextField.textProperty());
 
 
                 retrieveDurationButton.setOnAction(e -> {
@@ -266,7 +266,7 @@ public abstract class MediaLinksManagement {
 
 
                 //currentMedia is necessarily not empty here.
-                publishedSwitch.selectedProperty().addListener((observable, oldValue, newValue) -> currentMedia.get(0).setPublished(newValue));
+                FXProperties.runOnPropertyChange(published -> currentMedia.get(0).setPublished(published), publishedSwitch.selectedProperty());
                 Region anotherSpacer = new Region();
                 HBox.setHgrow(anotherSpacer, Priority.ALWAYS);
 
@@ -296,8 +296,8 @@ public abstract class MediaLinksManagement {
             saveButton.disableProperty().bind(updateStore.hasChangesProperty().not());
             saveButton.setOnAction(e -> {
                 if (!validationSupportInitialised[0]) {
-                    FXProperties.runNowAndOnPropertiesChange(() -> {
-                        if (I18n.getDictionary() != null) {
+                    FXProperties.runNowAndOnPropertyChange(dictionary -> {
+                        if (dictionary != null) {
                             validationSupport.reset();
                         }
                     }, I18n.dictionaryProperty());
@@ -353,10 +353,10 @@ public abstract class MediaLinksManagement {
             percentageLabel.setPadding(new Insets(0, 30, 0, 0));
             hBoxToReturn.getChildren().add(percentageLabel);
 
-            cssProperty.addListener((obs, oldClass, newClass) -> {
+            FXProperties.runOnPropertyChange((o, oldClass, newClass) -> {
                 percentageLabel.getStyleClass().removeAll(oldClass); // Remove the old class
                 percentageLabel.getStyleClass().add(newClass);       // Add the new class
-            });
+            }, cssProperty);
             updatePercentageProperty(currentDate, percentageProperty, cssProperty);
 
             Color arrowsColor = Color.web("#0096D6");

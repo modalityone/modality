@@ -121,7 +121,7 @@ final class DayTemplateView {
         templateNameTextField.setPromptText("Name this template"); // ???
         HBox.setHgrow(templateNameTextField, Priority.ALWAYS);
         syncTemplateNameUiFromModel();
-        FXProperties.runOnPropertiesChange(this::syncTemplateNameModelFromUi, templateNameTextField.textProperty());
+        FXProperties.runOnPropertyChange(this::syncTemplateNameModelFromUi, templateNameTextField.textProperty());
 
         HBox topLine = new HBox(20, templateNameTextField, duplicateButton);
 

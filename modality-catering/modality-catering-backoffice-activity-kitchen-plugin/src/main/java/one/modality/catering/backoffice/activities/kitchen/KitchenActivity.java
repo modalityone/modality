@@ -95,12 +95,11 @@ final class KitchenActivity extends ViewDomainActivityBase
 
         // Updating the query each time the selected month or organization change (this will make the reactive call sending the query to the server)
         FXProperties.runOnPropertiesChange(this::updateQueryArgument, selectedYearMonthProperty, FXOrganizationId.organizationIdProperty());
-        FXProperties.runNowAndOnPropertiesChange(() -> mealsSelectionPane.setOrganization(FXOrganization.getOrganization()), FXOrganization.organizationProperty());
+        FXProperties.runNowAndOnPropertyChange(mealsSelectionPane::setOrganization, FXOrganization.organizationProperty());
         mealsSelectionPane.selectedItemsObservableList().addListener((ListChangeListener<Item>) c -> rebuildDayPanels());
 
         // Setting the initial selection = this month
-        FXProperties.runNowAndOnPropertiesChange(() -> {
-            Object ganttSelectedObject = FXGanttSelection.getGanttSelectedObject();
+        FXProperties.runNowAndOnPropertyChange(ganttSelectedObject -> {
             if (ganttSelectedObject instanceof YearMonth)
                 selectedYearMonthProperty.set((YearMonth) ganttSelectedObject);
         }, FXGanttSelection.ganttSelectedObjectProperty());
@@ -222,7 +221,7 @@ final class KitchenActivity extends ViewDomainActivityBase
     @Override
     protected void startLogic() {
         reactiveQueryCall.bindActivePropertyTo(activeProperty());
-        reactiveQueryCall.resultProperty().addListener((observable, oldValue, result) -> {
+        FXProperties.runOnPropertyChange(result -> {
             attendanceCounts = new AttendanceCounts();
             attendanceCounts.storeDietaryOptionSvg("Total", "{fill: '#828788', svgPath: 'm 0.971924,10.7805 c 0,-2.85307 1.133386,-5.5893 3.150816,-7.60673 2.01743,-2.01744 4.75366,-3.1508208 7.60676,-3.1508208 2.8531,0 5.5893,1.1333808 7.6067,3.1508208 2.0175,2.01743 3.1508,4.75366 3.1508,7.60673 0,2.8531 -1.1333,5.5893 -3.1508,7.6068 -2.0174,2.0174 -4.7536,3.1508 -7.6067,3.1508 -2.8531,0 -5.58933,-1.1334 -7.60676,-3.1508 C 2.10531,16.3698 0.971924,13.6336 0.971924,10.7805 Z M 11.7295,1.36764 C 9.95688,1.36774 8.22032,1.86836 6.71969,2.81188 5.21906,3.75541 4.01535,5.10349 3.2471,6.70096 2.47885,8.29844 2.17729,10.0804 2.37713,11.8417 c 0.19984,1.7613 0.89295,3.4304 1.99956,4.8151 0.95473,-1.5383 3.05649,-3.1869 7.35281,-3.1869 4.2963,0 6.3967,1.6472 7.3528,3.1869 1.1066,-1.3847 1.7997,-3.0538 1.9995,-4.8151 C 21.2817,10.0804 20.9801,8.29844 20.2119,6.70096 19.4436,5.10349 18.2399,3.75541 16.7393,2.81188 15.2386,1.86836 13.5021,1.36774 11.7295,1.36764 Z m 4.034,6.72357 c 0,1.06991 -0.425,2.09599 -1.1816,2.85249 -0.7565,0.7566 -1.7826,1.1816 -2.8525,1.1816 -1.0699,0 -2.09599,-0.425 -2.85253,-1.1816 C 8.12033,10.1872 7.69531,9.16112 7.69531,8.09121 c 0,-1.0699 0.42502,-2.09599 1.18156,-2.85253 0.75654,-0.75653 1.78263,-1.18155 2.85253,-1.18155 1.0699,0 2.096,0.42502 2.8525,1.18155 0.7566,0.75654 1.1816,1.78263 1.1816,2.85253 z'}");
             displayedMealNames = new HashSet<>();
@@ -247,7 +246,7 @@ final class KitchenActivity extends ViewDomainActivityBase
             }
 
             rebuildDayPanels();
-        });
+        }, reactiveQueryCall.resultProperty());
         reactiveQueryCall.setResultCacheEntry(LocalStorageCache.get().getCacheEntry("cache-kitchen-mealsCount"));
         reactiveQueryCall.start();
     }

@@ -60,7 +60,7 @@ public class RoomsAlterationView {
             roomListPane.getColumnConstraints().add(columnConstraints);
         }
         resourceConfigurationLoader.getResourceConfigurations().addListener((ListChangeListener<? super ResourceConfiguration>) change -> addRoomNodes(roomListPane));
-        FXProperties.runNowAndOnPropertiesChange(() -> addRoomNodes(roomListPane), roomTypeProperty);
+        FXProperties.runNowAndOnPropertyChange(() -> addRoomNodes(roomListPane), roomTypeProperty);
 
         scrollPane = ControlUtil.createVerticalScrollPane(roomListPane);
         return scrollPane;

@@ -170,7 +170,7 @@ final class EventVideosWallActivity extends ViewDomainActivityBase {
         // *************************************************************************************************************
 
         // Showing / hiding the livestream box (in dependence of the event)
-        FXProperties.runNowAndOnPropertiesChange(this::updateLivestreamVideoPlayerStateAndVisibility, eventProperty);
+        FXProperties.runNowAndOnPropertyChange(this::updateLivestreamVideoPlayerStateAndVisibility, eventProperty);
 
         // Creating an intermediate observable list of DayVideosWallView, each element being a view for 1 day with all its videos
         ObservableList<DayVideosWallView> dayVideosWallViews = FXCollections.observableArrayList(); // will be populated below

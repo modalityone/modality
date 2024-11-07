@@ -123,8 +123,7 @@ final class SessionVideoPlayerActivity extends ViewDomainActivityBase {
         // *************************************************************************************************************
 
         // Auto starting the video for each requested session
-        FXProperties.runNowAndOnPropertiesChange(this::updateSessionTitleAndVideoPlayerState,
-            scheduledVideoItemProperty);
+        FXProperties.runNowAndOnPropertyChange(this::updateSessionTitleAndVideoPlayerState, scheduledVideoItemProperty);
 
 
         // *************************************************************************************************************

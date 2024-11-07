@@ -61,8 +61,8 @@ final class ProgramModel {
         this.programItemFamily = programItemFamily;
         entityStore = EntityStore.create(dataSourceModel);
         updateStore = UpdateStore.createAbove(entityStore);
-        FXProperties.runNowAndOnPropertiesChange(() -> {
-            if (I18n.getDictionary() != null && validationSupportInitialised)
+        FXProperties.runNowAndOnPropertyChange(dictionary -> {
+            if (dictionary != null && validationSupportInitialised)
                 resetValidation();
         }, I18n.dictionaryProperty());
     }

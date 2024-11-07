@@ -154,7 +154,7 @@ final class DayTemplateTimelineView implements ButtonFactoryMixin {
             .always(FXOrganization.organizationProperty(), o -> DqlStatement.where("organization=?", o));
 
         syncItemUiFromModel();
-        FXProperties.runOnPropertiesChange(this::syncItemModelFromUi, itemSelector.selectedItemProperty());
+        FXProperties.runOnPropertyChange(this::syncItemModelFromUi, itemSelector.selectedItemProperty());
 
         Button itemButton = itemSelector.getButton();
         getValidationSupport().addValidationRule(FXProperties.compute(itemSelector.selectedItemProperty(),
@@ -170,7 +170,7 @@ final class DayTemplateTimelineView implements ButtonFactoryMixin {
             I18n.getI18nText("ValidationTimeFormatIncorrect")); // Declared in Recurring activity!
 
         syncStartTimeUiFromModel();
-        FXProperties.runOnPropertiesChange(this::syncStartTimeModelFromUi, fromTextField.textProperty());
+        FXProperties.runOnPropertyChange(this::syncStartTimeModelFromUi, fromTextField.textProperty());
 
         Label toLabel = I18nControls.newLabel(ProgramI18nKeys.To);
         //TextTheme.createSecondaryTextFacet(subtitle).style();
@@ -183,11 +183,11 @@ final class DayTemplateTimelineView implements ButtonFactoryMixin {
             I18n.getI18nText("ValidationTimeFormatIncorrect")); // Declared in Recurring activity!
 
         syncEndTimeUiFromModel();
-        FXProperties.runOnPropertiesChange(this::syncEndTimeModelFromUi, untilTextField.textProperty());
+        FXProperties.runOnPropertyChange(this::syncEndTimeModelFromUi, untilTextField.textProperty());
 
         nameTextField.setPromptText(ProgramI18nKeys.NameThisLine);
         syncNameUiFromModel();
-        FXProperties.runOnPropertiesChange(this::syncNameModelFromUi, nameTextField.textProperty());
+        FXProperties.runOnPropertyChange(this::syncNameModelFromUi, nameTextField.textProperty());
 
         MonoPane trashButton = SvgIcons.createButtonPane(SvgIcons.createTrashSVGPath(), dayTemplateTimelineModel::removeTemplateTimeLine);
         ShapeTheme.createSecondaryShapeFacet(trashButton).style(); // Make it gray

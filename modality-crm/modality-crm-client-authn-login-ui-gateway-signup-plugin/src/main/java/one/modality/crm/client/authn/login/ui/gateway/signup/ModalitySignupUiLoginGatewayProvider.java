@@ -167,8 +167,8 @@ public class ModalitySignupUiLoginGatewayProvider extends UiLoginGatewayProvider
 
     private void initFormValidation() {
         if(!validationSupportInitialised) {
-            FXProperties.runNowAndOnPropertiesChange(() -> {
-                if (I18n.getDictionary() != null) {
+            FXProperties.runNowAndOnPropertyChange(dictionary -> {
+                if (dictionary != null) {
                     validationSupport.reset();
                     validationSupport.addEmailValidation(emailInput,emailLabel,"Email format incorrect");
                     validationSupport.addNonEmptyValidation(firstNameInput,firstNameLabel,"First Name required");

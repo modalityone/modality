@@ -323,9 +323,9 @@ public final class ModalityBackOfficeMainFrameActivity extends ModalityClientMai
     protected Region createMainFrameFooter() {
         Text connectionText = createStatusText("Connection");
         Shape connectionLed = new Circle(8);
-        FXProperties.runNowAndOnPropertiesChange(() -> {
-            connectionLed.setFill(FXConnected.isConnected() ? CONNECTED_COLOR : DISCONNECTED_COLOR);
-        }, FXConnected.connectedProperty());
+        FXProperties.runNowAndOnPropertyChange(connected ->
+            connectionLed.setFill(connected ? CONNECTED_COLOR : DISCONNECTED_COLOR), FXConnected.connectedProperty()
+        );
         HBox statusBar = new HBox(10, connectionText, connectionLed);
         Bus bus = BusService.bus();
         if (bus instanceof NetworkBus) { // Actually always true
@@ -354,7 +354,7 @@ public final class ModalityBackOfficeMainFrameActivity extends ModalityClientMai
         Text pendingCountText = createStatusText(null);
         ProgressIndicator pendingIndicator = ControlUtil.createProgressIndicator(16);
         Timeline[] pendingFadeTimeline = { new Timeline() };
-        FXProperties.runNowAndOnPropertiesChange(() -> UiScheduler.runInUiThread(() -> {
+        FXProperties.runNowAndOnPropertyChange(() -> UiScheduler.runInUiThread(() -> {
             int pendingCalls = PendingBusCall.pendingCallsCountProperty().getValue();
             pendingCountText.setText("" + pendingCalls);
             if (pendingCalls > 0) {
@@ -371,10 +371,9 @@ public final class ModalityBackOfficeMainFrameActivity extends ModalityClientMai
 
         statusBar.setAlignment(Pos.CENTER);
         // Considering the bottom of the safe area, in particular for OS like iPadOS with a bar at the bottom
-        FXProperties.runNowAndOnPropertiesChange(() -> {
-            Insets sai = WebFxKitLauncher.getSafeAreaInsets();
-            statusBar.setPadding(new Insets(Math.max(5, sai.getTop()), Math.max(5, sai.getRight()), Math.max(5, sai.getBottom()), Math.max(5, sai.getLeft())));
-        }, WebFxKitLauncher.safeAreaInsetsProperty());
+        FXProperties.runNowAndOnPropertyChange(sai ->
+            statusBar.setPadding(new Insets(Math.max(5, sai.getTop()), Math.max(5, sai.getRight()), Math.max(5, sai.getBottom()), Math.max(5, sai.getLeft()))), WebFxKitLauncher.safeAreaInsetsProperty()
+        );
         LuminanceTheme.createApplicationFrameFacet(statusBar).style();
         return statusBar;
     }

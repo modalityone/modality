@@ -38,9 +38,9 @@ public class MoneyTransferEntityGraph extends Pane implements ControlFactoryMixi
 	public MoneyTransferEntityGraph() {
 		moneyAccountPanes.addListener((ListChangeListener<MoneyAccountPane>) c -> updateLayout());
 		moneyFlowArrowViews.addListener((ListChangeListener<MoneyFlowArrowView>) c -> updateLayout());
-		selectedMoneyFlow.addListener((observable, oldValue, newValue) -> moneyFlowArrowViews().forEach(arrow -> {
-			arrow.setHighlighted(newValue != null && newValue.equals(arrow.moneyFlowProperty().get()));
-		}));
+		FXProperties.runOnPropertyChange(moneyFlow -> moneyFlowArrowViews().forEach(arrow ->
+			arrow.setHighlighted(moneyFlow != null && moneyFlow.equals(arrow.moneyFlowProperty().get()))
+		), selectedMoneyFlow);
 	}
 
 	private void updateLayout() {

@@ -75,8 +75,8 @@ final class Step3PaymentSlide extends StepSlide {
         I18nControls.bindI18nProperties(payButton, BookingI18nKeys.Pay0, workingBookingProperties.formattedBalanceProperty());
         I18nControls.bindI18nProperties(cancelButton, ModalityI18nKeys.Cancel);
         payButton.setDefaultButton(true);
-        FXProperties.runNowAndOnPropertiesChange(() -> {
-            if (webPaymentForm.isUserInteractionAllowed()) {
+        FXProperties.runNowAndOnPropertyChange(userInteractionAllowed -> {
+            if (userInteractionAllowed) {
                 turnOffWaitMode();
             } else {
                 turnOnWaitMode();

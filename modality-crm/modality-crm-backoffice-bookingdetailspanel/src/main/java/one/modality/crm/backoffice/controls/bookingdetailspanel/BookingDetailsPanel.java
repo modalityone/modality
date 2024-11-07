@@ -159,7 +159,7 @@ public final class BookingDetailsPanel implements
         VisualGrid table = new VisualGrid();
         Tab tab = createTab(i18nKey, table);
         // The following is required only for gwt version for any reason (otherwise the table height is not resized when growing)
-        FXProperties.runOnPropertiesChange(() -> {
+        FXProperties.runOnPropertyChange(() -> {
             TabPane tabPane = tab.getTabPane();
             if (tabPane != null)
                 tabPane.requestLayout();
@@ -292,11 +292,11 @@ public final class BookingDetailsPanel implements
             if (!editable)
                 textSyncer.run();
         });
-        FXProperties.runNowAndOnPropertiesChange(() -> {
+        FXProperties.runNowAndOnPropertyChange(() -> {
             editableProperty.set(false);
             textSyncer.run();
         }, selectedDocumentProperty);
-        FXProperties.runOnPropertiesChange(() -> {
+        FXProperties.runOnPropertyChange(() -> {
             if (!editableProperty.get())
                 textSyncer.run();
         }, bookingsVisualResultProperty);

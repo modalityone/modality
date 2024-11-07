@@ -20,9 +20,9 @@ public class TextUtility {
     public static Text getText(String content, Color color, double size) {
         Text text = createText(content, color);
 
-        FXProperties.runNowAndOnPropertiesChange(() -> {
-            setTextFont(text, StyleUtility.TEXT_FAMILY, FontWeight.findByWeight(500), size * FXApp.fontRatio.get());
-        }, FXApp.fontRatio);
+        FXProperties.runNowAndOnDoublePropertyChange(fontRatio ->
+            setTextFont(text, StyleUtility.TEXT_FAMILY, FontWeight.findByWeight(500), size * fontRatio), FXApp.fontRatio
+        );
 
         return text;
     }

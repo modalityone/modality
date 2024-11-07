@@ -194,7 +194,7 @@ public final class ModalityValidationSupport {
             //popOverContentNode.setEffect(new DropShadow());
             showPopOver(errorDecorationNode);
             // Removing the error pop over when the status is valid again
-            validator.getValidationStatus().validProperty().addListener(new ChangeListener<Boolean>() {
+            validator.getValidationStatus().validProperty().addListener(new ChangeListener<>() {
                 @Override
                 public void changed(ObservableValue<? extends Boolean> observable, Boolean oldValue, Boolean valid) {
                     if (valid) {

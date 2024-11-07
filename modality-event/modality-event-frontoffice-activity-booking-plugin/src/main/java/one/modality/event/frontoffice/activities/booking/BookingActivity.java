@@ -93,8 +93,7 @@ final class BookingActivity extends ViewDomainActivityBase implements ButtonFact
         pageContainer.setAlignment(Pos.CENTER);
         pageContainer.setPadding(new Insets(0, 0, 200, 0)); // Footer margin (white)
 
-        FXProperties.runOnPropertiesChange(() -> {
-            double width = pageContainer.getWidth();
+        FXProperties.runOnDoublePropertyChange(width -> {
             double fontFactor = GeneralUtility.computeFontFactor(width);
             GeneralUtility.setLabeledFont(headerLabel, StyleUtility.TEXT_FAMILY, FontWeight.BOLD, fontFactor * 21);
             GeneralUtility.setLabeledFont(internationalEventsLabel, StyleUtility.TEXT_FAMILY, FontWeight.BOLD, fontFactor * 16);

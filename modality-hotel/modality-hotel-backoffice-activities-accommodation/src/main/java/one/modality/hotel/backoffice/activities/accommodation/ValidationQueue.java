@@ -1,11 +1,9 @@
 package one.modality.hotel.backoffice.activities.accommodation;
 
-import dev.webfx.platform.util.function.Callable;
+import dev.webfx.kit.util.properties.FXProperties;
 import javafx.beans.property.BooleanProperty;
-import javafx.beans.property.SimpleBooleanProperty;
 
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
 import java.util.function.Consumer;
 
@@ -55,13 +53,11 @@ public class ValidationQueue {
     private void next() {
         if (!consumers.isEmpty()) {
             Consumer<BooleanProperty> consumer = consumers.remove(0);
-            BooleanProperty booleanProperty = new SimpleBooleanProperty();
-            booleanProperty.addListener((observable, oldValue, newValue) -> {
+            consumer.accept(FXProperties.newBooleanProperty(newValue -> {
                 if (newValue) {
                     next();
                 }
-            });
-            consumer.accept(booleanProperty);
+            }));
         } else {
             onSuccess.run();
         }

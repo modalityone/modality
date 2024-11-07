@@ -37,7 +37,7 @@ final class UnauthorizedActivity extends ViewDomainActivityBase {
         svgPath.setFill(null);
         Text text = new Text();
         text.setText("Authorization check...");
-        FXProperties.runNowAndOnPropertiesChange(() -> {
+        FXProperties.runNowAndOnPropertyChange(() -> {
             // Postponing the verification in case there is a busy UI build
             UiScheduler.scheduleDeferred(() -> {
                 boolean waiting = FXAuthorizationsWaiting.isAuthorizationsWaiting();

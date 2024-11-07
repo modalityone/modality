@@ -113,11 +113,11 @@ public final class BookEventActivity extends ViewDomainActivityBase implements B
     @Override
     protected void startLogic() {
         // Initial load of the event policy + possible existing booking of the user (if logged-in)
-        FXProperties.runNowAndOnPropertiesChange(this::loadPolicyAndBooking, FXEvent.eventProperty());
+        FXProperties.runNowAndOnPropertyChange(this::loadPolicyAndBooking, FXEvent.eventProperty());
 
         // Subsequent loading when changing the person to book (load of possible booking + reapply new selected dates)
-        FXProperties.runOnPropertiesChange(() -> loadBookingWithSamePolicy(true),
-            FXPersonToBook.personToBookProperty());
+        FXProperties.runOnPropertyChange(() ->
+            loadBookingWithSamePolicy(true), FXPersonToBook.personToBookProperty());
     }
 
     void loadPolicyAndBooking() {

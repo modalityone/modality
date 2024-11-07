@@ -75,8 +75,7 @@ public final class FXEventId {
 
     static {
         // Initializing the eventId from the last value stored in the session
-        FXProperties.runNowAndOnPropertiesChange(() -> {
-            Session session = FXSession.getSession();
+        FXProperties.runNowAndOnPropertyChange(session -> {
             Object primaryKey = session == null ? null : session.get(SESSION_FX_EVENT_ID_KEY);
             setEventId(primaryKey == null ? null : EntityId.create(Event.class, primaryKey));
         }, FXSession.sessionProperty());

@@ -151,8 +151,7 @@ final class Step2CheckoutSlide extends StepSlide {
 
         signInContainer.centerProperty().bind(checkoutAccountMountNodeProperty); // managed by sub-router
 
-        FXProperties.runNowAndOnPropertiesChange(() -> {
-            Person personToBook = FXPersonToBook.getPersonToBook();
+        FXProperties.runNowAndOnPropertyChange(personToBook -> {
             boolean loggedIn = personToBook != null; // Means that the user is logged in with an account in Modality
             if (!loggedIn && signInContainer.getCenter() == null) {
                 WindowHistory.getProvider().push(CheckoutAccountRouting.getPath());

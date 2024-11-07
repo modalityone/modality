@@ -35,13 +35,12 @@ import javafx.scene.text.FontWeight;
 import javafx.scene.web.WebView;
 import one.modality.base.client.i18n.ModalityI18nKeys;
 import one.modality.base.client.mainframe.fx.FXMainFrameDialogArea;
+import one.modality.base.frontoffice.utility.browser.BrowserUtil;
 import one.modality.base.frontoffice.utility.tyler.GeneralUtility;
 import one.modality.base.frontoffice.utility.tyler.StyleUtility;
-import one.modality.base.shared.entities.Country;
 import one.modality.base.shared.entities.Organization;
 import one.modality.crm.backoffice.organization.fx.FXOrganization;
 import one.modality.crm.backoffice.organization.fx.FXOrganizationId;
-import one.modality.base.frontoffice.utility.browser.BrowserUtil;
 import one.modality.event.frontoffice.activities.booking.BookingI18nKeys;
 import one.modality.event.frontoffice.activities.booking.fx.FXCountry;
 import one.modality.event.frontoffice.activities.booking.fx.FXOrganizations;
@@ -75,7 +74,7 @@ public final class OrganizationSelectorView {
         LayoutUtil.setAllUnmanagedWhenInvisible(presentationPane, websiteLink, addressLink, phoneLink, emailLink);
 
         organizationMapView.placeEntityProperty().bind(FXOrganization.organizationProperty());
-        FXProperties.runNowAndOnPropertiesChange(e -> updateFromOrganization(), FXOrganization.organizationProperty());
+        FXProperties.runNowAndOnPropertyChange(this::updateFromOrganization, FXOrganization.organizationProperty());
     }
 
     public Node getView() {
@@ -256,8 +255,7 @@ public final class OrganizationSelectorView {
         Hyperlink backLink = GeneralUtility.createHyperlink(ModalityI18nKeys.Back, Color.WHITE);
         GeneralUtility.onNodeClickedWithoutScroll(event -> flipToFrontOrganization(), backLink);
 
-        FXProperties.runNowAndOnPropertiesChange(() -> {
-            Country country = FXCountry.getCountry();
+        FXProperties.runNowAndOnPropertyChange(country -> {
             if (country != null) {
                 Float latitude = country.getLatitude();
                 Float longitude = country.getLongitude();

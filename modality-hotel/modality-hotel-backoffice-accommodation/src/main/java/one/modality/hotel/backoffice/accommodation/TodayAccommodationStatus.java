@@ -67,7 +67,7 @@ public final class TodayAccommodationStatus {
     public GridPane createStatusBar() {
         GridPane statusBar = new GridPane();
         statusBar.setAlignment(Pos.CENTER); // Makes a difference for the Web version (otherwise children appears on top)
-        FXProperties.runNowAndOnPropertiesChange(() -> updateStatusBar(statusBar), FXToday.todayProperty());
+        FXProperties.runNowAndOnPropertyChange(() -> updateStatusBar(statusBar), FXToday.todayProperty());
         ObservableLists.runOnListChange(c -> updateStatusBar(statusBar), todayScheduledResources());
         return statusBar;
     }

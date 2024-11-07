@@ -165,8 +165,8 @@ public class RecordingsView {
         saveButton.disableProperty().bind(updateStore.hasChangesProperty().not());
         saveButton.setOnAction(e -> {
             if (!validationSupportInitialised[0]) {
-                FXProperties.runNowAndOnPropertiesChange(() -> {
-                    if (I18n.getDictionary() != null) {
+                FXProperties.runNowAndOnPropertyChange(dictionary -> {
+                    if (dictionary != null) {
                         validationSupport.reset();
                     }
                 }, I18n.dictionaryProperty());
@@ -244,12 +244,13 @@ public class RecordingsView {
                         percentageLabel.setPadding(new Insets(0, 0, 0, 40));
                         currentLanguageHBox.getChildren().add(percentageLabel);
 
-                        cssProperty.addListener((obs, oldClass, newClass) -> {
+                        FXProperties.runOnPropertyChange((obs, oldClass, newClass) -> {
                             percentageLabel.getStyleClass().removeAll(oldClass); // Remove the old class
                             percentageLabel.getStyleClass().add(newClass);       // Add the new class
-                        });
+                        }, cssProperty);
 
-                        newLanguageLinksManagement.getRecordingsMediasReadFromDatabase().addListener((InvalidationListener) observable -> updatePercentageProperty(percentageProperty, cssProperty, currentItem));
+                        ObservableLists.runOnListChange(() -> updatePercentageProperty(percentageProperty, cssProperty, currentItem)
+                        , newLanguageLinksManagement.getRecordingsMediasReadFromDatabase());
                         //We call it manually the first time
                         updatePercentageProperty(percentageProperty, cssProperty, currentItem);
                         languageListVBox.getChildren().add(currentLanguageHBox);

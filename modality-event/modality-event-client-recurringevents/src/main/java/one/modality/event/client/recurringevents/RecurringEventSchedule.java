@@ -50,8 +50,7 @@ public class RecurringEventSchedule {
         columnsPane.setMaxColumnCount(4);
         columnsPane.setMaxWidth(800);
 
-        FXProperties.runOnPropertiesChange(() -> {
-            double width = columnsPane.getWidth();
+        FXProperties.runOnDoublePropertyChange(width -> {
             double gap = width / 800 * 20;
             columnsPane.setHgap(gap);
             columnsPane.setVgap(gap);

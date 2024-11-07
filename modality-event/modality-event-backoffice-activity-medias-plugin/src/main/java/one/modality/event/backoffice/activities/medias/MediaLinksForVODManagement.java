@@ -342,8 +342,8 @@ public class MediaLinksForVODManagement extends MediaLinksManagement {
                 //The action on the save button
                 saveButton.setOnAction(e -> {
                     if (!validationSupportInitialised[0]) {
-                        FXProperties.runNowAndOnPropertiesChange(() -> {
-                            if (I18n.getDictionary() != null) {
+                        FXProperties.runNowAndOnPropertyChange(dictionary -> {
+                            if (dictionary != null) {
                                 validationSupport.reset();
                             }
                         }, I18n.dictionaryProperty());

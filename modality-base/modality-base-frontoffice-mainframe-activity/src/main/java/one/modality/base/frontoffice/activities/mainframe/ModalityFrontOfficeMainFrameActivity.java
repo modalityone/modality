@@ -104,8 +104,8 @@ public final class ModalityFrontOfficeMainFrameActivity extends ModalityClientMa
         // here: when the user is navigating back to the WebView, we want him to retrieve the WebView in the exact same
         // state as when he left it. So we try to not modify these children anymore once the backgroundNode is set.
         // That's why we encapsulated the mount node inside a container that won't change in that list.
-        FXProperties.runNowAndOnPropertiesChange(() -> {
-            backgroundNode = FXBackgroundNode.getBackgroundNode();
+        FXProperties.runNowAndOnPropertyChange(backgroundNode -> {
+            this.backgroundNode = backgroundNode;
             mainFrame.getChildren().setAll(Collections.listOfRemoveNulls(
                     backgroundNode,      // may be a WebView
                     mountTransitionPane, // contains a standard mount node, or null if we want to display the backgroundNode
@@ -115,9 +115,8 @@ public final class ModalityFrontOfficeMainFrameActivity extends ModalityClientMa
         }, FXBackgroundNode.backgroundNodeProperty());
 
         // Reacting to the mount node changes:
-        FXProperties.runNowAndOnPropertiesChange(() -> {
+        FXProperties.runNowAndOnPropertyChange(mountNode -> {
             // Updating the mount node container with the new mount node
-            Node mountNode = getMountNode();
             if (mountNode instanceof Region) {
                 ((Region) mountNode).minHeightProperty().bind(mountTransitionPane.heightProperty());
             }
@@ -198,7 +197,7 @@ public final class ModalityFrontOfficeMainFrameActivity extends ModalityClientMa
         mainFrameChildren.addAll(firstOverlayChildIndex, overlayChildren);
     }
 
-    protected ActionGroup contextMenuActionGroup() {
+    private ActionGroup contextMenuActionGroup() {
         return newActionGroup(
                 ChangeLanguageRequestEmitter.getProvidedEmitters().stream()
                         .map(emitter -> newOperationAction(emitter::emitLanguageRequest))
@@ -224,8 +223,8 @@ public final class ModalityFrontOfficeMainFrameActivity extends ModalityClientMa
         collapsePane.setClipEnabled(false);
         collapsePane.collapsedProperty().bind(FXCollapseFooter.collapseFooterProperty());
         // Considering the bottom of the safe area, in particular for OS like iPadOS with a bar at the bottom
-        FXProperties.runNowAndOnPropertiesChange(() -> {
-            double safeAreaBottom = WebFxKitLauncher.getSafeAreaInsets().getBottom();
+        FXProperties.runNowAndOnPropertyChange(sai -> {
+            double safeAreaBottom = sai.getBottom();
             // we already have a 5px padding for the buttons
             collapsePane.setPadding(new Insets(0, 0, Math.max(0, safeAreaBottom - 5), 0));
         }, WebFxKitLauncher.safeAreaInsetsProperty());

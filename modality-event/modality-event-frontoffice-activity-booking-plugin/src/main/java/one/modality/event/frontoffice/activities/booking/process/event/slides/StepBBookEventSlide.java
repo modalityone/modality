@@ -153,8 +153,7 @@ final class StepBBookEventSlide extends StepSlide {
         mainVbox.setPadding(Insets.EMPTY);
         mainVbox.getChildren().setAll(orangePane, digitsTransitionPane);
 
-        FXProperties.runOnPropertiesChange(() -> {
-            double width = mainVbox.getWidth();
+        FXProperties.runOnDoublePropertyChange(width -> {
             double maxPageWidth = Math.min(MAX_PAGE_WIDTH, 0.90 * width);
             double orangeVerticalGap = maxPageWidth * 0.1;
             orangePane.setPadding(new Insets(orangeVerticalGap, 0, orangeVerticalGap, 0));
