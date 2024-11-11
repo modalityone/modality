@@ -1,0 +1,45 @@
+/* Bootstrap style */
+* {
+    -bootstrap-white: #fff ;
+    
+    -bootstrap-grey1: #e6e6e6 ;
+    -bootstrap-grey2: #d4d4d4 ;
+    -bootstrap-grey3: #ccc ;
+    -bootstrap-grey4: #adadad ;
+    -bootstrap-grey5: #8c8c8c ;
+    -bootstrap-grey6: #777777 ;
+    -bootstrap-grey7: #333 ;
+
+    -bootstrap-blue1: #88c9ff; /* Lightest shade */
+    -bootstrap-blue2: #70c0ff;
+    -bootstrap-blue3: #58b7ff;
+    -bootstrap-blue4: #40afff;
+    -bootstrap-blue5: #0596FF; /* New base blue */
+    -bootstrap-blue6: #0478e6; /* Darker shade */
+    -bootstrap-blue7: #0361cc;
+    -bootstrap-blue8: #0251b3;
+    -bootstrap-blue9: #01429a;
+    -bootstrap-blue10: #003682; /* Darkest shade */
+    -bootstrap-blue11: #00285b;
+
+    -bootstrap-green1: #5cb85c ;
+    -bootstrap-green2: #4cae4c ;
+    -bootstrap-green3: #449d44 ;
+    -bootstrap-green4: #398439 ;
+    -bootstrap-green5: #255625 ;
+    -bootstrap-green6: #3c763d ;
+
+    -bootstrap-orange1: #f0ad4e ;
+    -bootstrap-orange2: #eea236 ;
+    -bootstrap-orange3: #ec971f ;
+    -bootstrap-orange4: #d58512 ;
+    -bootstrap-orange5: #985f0d ;
+    -bootstrap-orange6: #8a6d3b ;
+
+    -bootstrap-red1: #d9534f ;
+    -bootstrap-red2: #d43f3a ;
+    -bootstrap-red3: #c9302c ;
+    -bootstrap-red4: #ac2925 ;
+    -bootstrap-red5: #761c19 ;
+    -bootstrap-red6: #a94442 ;
+}
