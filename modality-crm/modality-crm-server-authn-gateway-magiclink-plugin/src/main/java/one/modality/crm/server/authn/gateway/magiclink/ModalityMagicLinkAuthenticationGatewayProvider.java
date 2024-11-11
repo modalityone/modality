@@ -71,41 +71,37 @@ public class ModalityMagicLinkAuthenticationGatewayProvider implements ServerAut
     }
 
     private Future<Void> createAndSendMagicLink(MagicLinkRequest request) {
-        String token = Uuid.randomUuid();
-        String lang = Strings.toSafeString(request.getLanguage());
-        String link = request.getClientOrigin() + MAGIC_LINK_APP_ROUTE.replace(":token", token).replace(":lang", lang);
-        if (link.startsWith(":")) // temporary workaround for requests coming from desktops & mobiles
-            link = "http" + link;
         return storeAndSendMagicLink(
             ThreadLocalStateHolder.getRunId(), // runId = this runId (runId of the session where the request originates)
-            token, // token = new token
-            lang, // lang
-            link, // client origin
+            Strings.toSafeString(request.getLanguage()), // lang
+            request.getClientOrigin(), // client origin
             request.getEmail(),
             request.getContext()
         );
     }
 
     private Future<Void> renewAndSendMagicLink(MagicLinkRenewalRequest request) {
-        String token = request.getPreviousToken();
         return EntityStore.create(dataSourceModel)
-            .<MagicLink>executeQuery("select loginRunId, token, lang, link, email from MagicLink where token=?", token)
+            .<MagicLink>executeQuery("select loginRunId, lang, link, email from MagicLink where token=? order by id desc limit 1", request.getPreviousToken())
             .map(Collections::first)
             .compose(magicLink -> {
                 if (magicLink == null)
-                    return Future.failedFuture("Token not found");
+                    return Future.failedFuture("Magic link token not found");
+                String link = magicLink.getLink();
+                String clientOrigin = link.substring(0, link.indexOf(MAGIC_LINK_APP_ROUTE));
                 return storeAndSendMagicLink(
                     magicLink.getLoginRunId(),
-                    token,
                     magicLink.getLang(),
-                    magicLink.getLink(),
+                    clientOrigin,
                     magicLink.getEmail(),
                     null
                 );
             });
     }
 
-    private Future<Void> storeAndSendMagicLink(String loginRunId, String token, String lang, String link, String email, Object context) {
+    private Future<Void> storeAndSendMagicLink(String loginRunId, String lang, String clientOrigin, String email, Object context) {
+        String token = Uuid.randomUuid();
+        String link = clientOrigin + MAGIC_LINK_APP_ROUTE.replace(":token", token).replace(":lang", lang);
         UpdateStore updateStore = UpdateStore.create(dataSourceModel);
         MagicLink magicLink = updateStore.insertEntity(MagicLink.class);
         magicLink.setLoginRunId(loginRunId);
