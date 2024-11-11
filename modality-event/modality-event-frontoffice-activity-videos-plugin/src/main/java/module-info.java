@@ -8,7 +8,6 @@ module modality.event.frontoffice.activity.videos.plugin {
     requires javafx.graphics;
     requires modality.base.client.icons;
     requires modality.base.client.util;
-    requires modality.base.frontoffice.utility;
     requires modality.base.shared.entities;
     requires modality.crm.client.authn.fx;
     requires modality.event.frontoffice.medias;

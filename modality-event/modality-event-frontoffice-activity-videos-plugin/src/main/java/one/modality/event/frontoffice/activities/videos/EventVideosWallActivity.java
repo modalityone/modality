@@ -34,7 +34,6 @@ import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.scene.text.TextAlignment;
 import one.modality.base.client.icons.SvgIcons;
-import one.modality.base.frontoffice.utility.activity.FrontOfficeActivityUtil;
 import one.modality.base.shared.entities.Event;
 import one.modality.base.shared.entities.KnownItemFamily;
 import one.modality.base.shared.entities.ScheduledItem;
@@ -211,7 +210,8 @@ final class EventVideosWallActivity extends ViewDomainActivityBase {
         // *************************************************************************************************************
 
         pageContainer.setPadding(new Insets(PAGE_TOP_BOTTOM_PADDING, 0, PAGE_TOP_BOTTOM_PADDING, 0));
-        return FrontOfficeActivityUtil.createActivityPageScrollPane(pageContainer, true);
+        return pageContainer;
+        //return FrontOfficeActivityUtil.createActivityPageScrollPane(pageContainer, true);
     }
 
     private void updateLivestreamVideoPlayerStateAndVisibility() {

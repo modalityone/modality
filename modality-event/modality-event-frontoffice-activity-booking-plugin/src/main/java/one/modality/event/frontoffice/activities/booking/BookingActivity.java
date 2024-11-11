@@ -32,7 +32,6 @@ import javafx.scene.text.FontWeight;
 import javafx.scene.text.TextAlignment;
 import one.modality.base.client.tile.Tab;
 import one.modality.base.client.tile.TabsBar;
-import one.modality.base.frontoffice.utility.activity.FrontOfficeActivityUtil;
 import one.modality.base.frontoffice.utility.tyler.GeneralUtility;
 import one.modality.base.frontoffice.utility.tyler.StyleUtility;
 import one.modality.base.shared.entities.Event;
@@ -124,7 +123,8 @@ final class BookingActivity extends ViewDomainActivityBase implements ButtonFact
             entitiesToObjectsMapper = new ObservableEntitiesToObjectsMapper<>(localEventsOfSelectedType, factory, (Event e, IndividualEntityToObjectMapper<Event, Node> m) -> m.onEntityChangedOrReplaced(e), (Event e1, IndividualEntityToObjectMapper<Event, Node> m1) -> m1.onEntityRemoved(e1));
         ObservableLists.bindConverted(localEventsContainer.getChildren(), entitiesToObjectsMapper.getMappedObjects(), IndividualEntityToObjectMapper::getMappedObject);
 
-        return FrontOfficeActivityUtil.createActivityPageScrollPane(pageContainer, true);
+        return pageContainer;
+        //return FrontOfficeActivityUtil.createActivityPageScrollPane(pageContainer, true);
     }
 
     private void showLocalEventsOfType(Entity eventType) {

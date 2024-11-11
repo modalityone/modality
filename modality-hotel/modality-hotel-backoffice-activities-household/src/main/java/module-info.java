@@ -6,6 +6,7 @@
 module modality.hotel.backoffice.activities.household {
 
     // Direct dependencies modules
+    requires javafx.base;
     requires javafx.controls;
     requires javafx.graphics;
     requires modality.base.backoffice.mainframe.fx;
@@ -18,6 +19,7 @@ module modality.hotel.backoffice.activities.household {
     requires webfx.extras.time.layout;
     requires webfx.extras.time.layout.gantt;
     requires webfx.extras.time.window;
+    requires webfx.kit.util;
     requires webfx.platform.windowhistory;
     requires webfx.stack.cache.client;
     requires webfx.stack.orm.domainmodel.activity;
@@ -28,7 +30,6 @@ module modality.hotel.backoffice.activities.household {
     requires webfx.stack.routing.uirouter;
     requires webfx.stack.ui.operation;
     requires webfx.stack.ui.operation.action;
-    requires webfx.kit.util;
 
     // Exported packages
     exports one.modality.hotel.backoffice.activities.household;
