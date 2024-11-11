@@ -19,6 +19,7 @@ module modality.hotel.backoffice.activities.household {
     requires webfx.extras.time.layout;
     requires webfx.extras.time.layout.gantt;
     requires webfx.extras.time.window;
+    requires webfx.kit.util;
     requires webfx.platform.windowhistory;
     requires webfx.stack.cache.client;
     requires webfx.stack.orm.domainmodel.activity;

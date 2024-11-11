@@ -23,7 +23,6 @@ import javafx.scene.control.Label;
 import javafx.scene.layout.VBox;
 import javafx.scene.text.TextAlignment;
 import one.modality.base.client.icons.SvgIcons;
-import one.modality.base.frontoffice.utility.activity.FrontOfficeActivityUtil;
 import one.modality.base.shared.entities.Media;
 import one.modality.base.shared.entities.ScheduledItem;
 import one.modality.crm.shared.services.authn.fx.FXUserPersonId;
@@ -123,8 +122,7 @@ final class SessionVideoPlayerActivity extends ViewDomainActivityBase {
         // *************************************************************************************************************
 
         // Auto starting the video for each requested session
-        FXProperties.runNowAndOnPropertiesChange(this::updateSessionTitleAndVideoPlayerState,
-            scheduledVideoItemProperty);
+        FXProperties.runNowAndOnPropertyChange(this::updateSessionTitleAndVideoPlayerState, scheduledVideoItemProperty);
 
 
         // *************************************************************************************************************
@@ -132,7 +130,8 @@ final class SessionVideoPlayerActivity extends ViewDomainActivityBase {
         // *************************************************************************************************************
 
         pageContainer.setPadding(new Insets(PAGE_TOP_BOTTOM_PADDING, 0, PAGE_TOP_BOTTOM_PADDING, 0));
-        return FrontOfficeActivityUtil.createActivityPageScrollPane(pageContainer, true);
+        return pageContainer;
+        //return FrontOfficeActivityUtil.createActivityPageScrollPane(pageContainer, true);
     }
 
     private void updateSessionTitleAndVideoPlayerState() {

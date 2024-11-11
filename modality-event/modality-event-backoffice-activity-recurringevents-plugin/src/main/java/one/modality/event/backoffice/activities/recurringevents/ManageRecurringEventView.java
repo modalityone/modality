@@ -233,8 +233,8 @@ final class ManageRecurringEventView {
      */
     private void initFormValidation() {
         if (!validationSupportInitialised) {
-            FXProperties.runNowAndOnPropertiesChange(() -> {
-                if (I18n.getDictionary() != null) {
+            FXProperties.runNowAndOnPropertyChange(dictionary -> {
+                if (dictionary != null) {
                     validationSupport.reset();
                     validationSupport.addRequiredInput(nameOfEventTextField);
                     validationSupport.addValidationRule(FXProperties.compute(timeOfTheEventTextField.textProperty(), s1 -> isLocalTimeTextValid(timeOfTheEventTextField.getText())), timeOfTheEventTextField, I18n.getI18nText("ValidationTimeFormatIncorrect"));
@@ -640,7 +640,7 @@ final class ManageRecurringEventView {
                         //We had a listener on the search text field to purpose to add the input as a new site if not existing
                         protected Node getOrCreateButtonContentFromSelectedItem() {
                             ObservableList<Site> siteList = siteSelector.getObservableEntities();
-                            searchTextField.textProperty().addListener((observableValue, s, t1) -> {
+                            FXProperties.runOnPropertyChange(searchText -> {
                                 List<String> siteNames = siteList.stream()
                                     .map(Site::getName)
                                     .collect(Collectors.toList());
@@ -652,7 +652,7 @@ final class ManageRecurringEventView {
                                     addSitePane.setVisible(false);
                                     addSitePane.setManaged(false);
                                 }
-                            });
+                            }, searchTextField.textProperty());
                             return super.getOrCreateButtonContentFromSelectedItem();
                         }
                     }.always(FXOrganization.organizationProperty(), o -> DqlStatement.where("organization=?", o)).autoSelectFirstEntity();

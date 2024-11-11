@@ -31,14 +31,14 @@ public final class EventView {
 
     private final ImageView eventImageView = new ImageView();
     private final ScalePane eventImageScalePane = new ScalePane(eventImageView);
-    private final Label eventNameLabel = GeneralUtility.createLabel(StyleUtility.MAIN_ORANGE_COLOR);
+    private final Label eventNameLabel = GeneralUtility.createLabel(StyleUtility.MAIN_BRAND_COLOR);
     private final Label eventDescriptionLabel = GeneralUtility.createLabel(Color.BLACK);
     private final Text eventDateText = TextUtility.createText(Color.BLACK);
     private final Text eventCentreLocationText = TextUtility.createText(StyleUtility.ELEMENT_GRAY_COLOR);
     private final Text eventCountryLocationText = TextUtility.createText(StyleUtility.ELEMENT_GRAY_COLOR);
     private final Node eventLocation = GeneralUtility.createVList(0, 0,
-            eventCentreLocationText,
-            eventCountryLocationText
+        eventCentreLocationText,
+        eventCountryLocationText
     );
     private final Button comingSoonButton = GeneralUtility.createButton(BookingI18nKeys.comingSoon);
     private final Button bookButton = GeneralUtility.createButton(BookingI18nKeys.bookNow);
@@ -46,15 +46,15 @@ public final class EventView {
     private final BorderPane buttonContainer = new BorderPane();
 
     private final VBox container = new VBox(10,
-            eventImageScalePane,
-            GeneralUtility.createSplitRow(
-                    new VBox(10,
-                            eventNameLabel,
-                            eventDescriptionLabel,
-                            eventLocation),
-                    centeredVBox(
-                            eventDateText,
-                            buttonContainer), 80, 0)
+        eventImageScalePane,
+        GeneralUtility.createSplitRow(
+            new VBox(10,
+                eventNameLabel,
+                eventDescriptionLabel,
+                eventLocation),
+            centeredVBox(
+                eventDateText,
+                buttonContainer), 80, 0)
     );
 
     public EventView() {
@@ -62,20 +62,20 @@ public final class EventView {
         container.setPadding(new Insets(40));
         container.setBackground(Background.fill(StyleUtility.BACKGROUND_GRAY_COLOR));
 
-        FXProperties.runNowAndOnPropertiesChange(() ->
-                        eventDescriptionLabel.setManaged(Strings.isNotEmpty(eventDescriptionLabel.getText()))
-                , eventDescriptionLabel.textProperty());
+        FXProperties.runNowAndOnPropertyChange(text ->
+            eventDescriptionLabel.setManaged(Strings.isNotEmpty(text)), eventDescriptionLabel.textProperty()
+        );
 
-        FXProperties.runOnPropertiesChange(() -> {
-            double fontFactor = GeneralUtility.computeFontFactor(container.getWidth());
-            GeneralUtility.setLabeledFont(eventNameLabel,        StyleUtility.TEXT_FAMILY, FontWeight.SEMI_BOLD,   fontFactor * StyleUtility.MEDIUM_TEXT_SIZE);
+        FXProperties.runOnDoublePropertyChange(width -> {
+            double fontFactor = GeneralUtility.computeFontFactor(width);
+            GeneralUtility.setLabeledFont(eventNameLabel, StyleUtility.TEXT_FAMILY, FontWeight.SEMI_BOLD, fontFactor * StyleUtility.MEDIUM_TEXT_SIZE);
             GeneralUtility.setLabeledFont(eventDescriptionLabel, StyleUtility.TEXT_FAMILY, FontWeight.NORMAL, fontFactor * 10);
-            GeneralUtility.setLabeledFont(comingSoonButton,      StyleUtility.TEXT_FAMILY, FontWeight.NORMAL, fontFactor * 11);
-            GeneralUtility.setLabeledFont(bookButton,            StyleUtility.TEXT_FAMILY, FontWeight.NORMAL, fontFactor * 11);
-            GeneralUtility.setLabeledFont(closedButton,          StyleUtility.TEXT_FAMILY, FontWeight.NORMAL, fontFactor * 11);
-            TextUtility.setTextFont(eventDateText,               StyleUtility.TEXT_FAMILY, FontWeight.NORMAL, fontFactor * 10);
-            TextUtility.setTextFont(eventCentreLocationText,     StyleUtility.TEXT_FAMILY, FontWeight.NORMAL, fontFactor * 8);
-            TextUtility.setTextFont(eventCountryLocationText,    StyleUtility.TEXT_FAMILY, FontWeight.MEDIUM, fontFactor * 8);
+            GeneralUtility.setLabeledFont(comingSoonButton, StyleUtility.TEXT_FAMILY, FontWeight.NORMAL, fontFactor * 11);
+            GeneralUtility.setLabeledFont(bookButton, StyleUtility.TEXT_FAMILY, FontWeight.NORMAL, fontFactor * 11);
+            GeneralUtility.setLabeledFont(closedButton, StyleUtility.TEXT_FAMILY, FontWeight.NORMAL, fontFactor * 11);
+            TextUtility.setTextFont(eventDateText, StyleUtility.TEXT_FAMILY, FontWeight.NORMAL, fontFactor * 10);
+            TextUtility.setTextFont(eventCentreLocationText, StyleUtility.TEXT_FAMILY, FontWeight.NORMAL, fontFactor * 8);
+            TextUtility.setTextFont(eventCountryLocationText, StyleUtility.TEXT_FAMILY, FontWeight.MEDIUM, fontFactor * 8);
             CornerRadii radii = new CornerRadii(4 * fontFactor);
             Background redBackground = new Background(new BackgroundFill(StyleUtility.IMPORTANT_RED_COLOR, radii, null));
             Background blueBackground = new Background(new BackgroundFill(StyleUtility.MAIN_BLUE_COLOR, radii, null));

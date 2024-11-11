@@ -92,7 +92,7 @@ public class Tile extends MonoPane {
         setOnMouseExited(e -> onHover(false));
         setCursor(Cursor.HAND);
         htmlText.setMouseTransparent(true);
-        FXProperties.runNowAndOnPropertiesChange(this::onActionPropertiesChanged, action.textProperty(), action.graphicProperty());
+        FXProperties.runNowAndOnPropertiesChange(this::onActionPropertiesChanged, action.textProperty(), action.graphicFactoryProperty());
         if (!useHtml) {
             setAlignment(Pos.BOTTOM_CENTER); // for a possible folding animation from bottom to top
             setMinWidth(USE_PREF_SIZE);
@@ -139,9 +139,9 @@ public class Tile extends MonoPane {
             htmlText.setText("<center style='line-height: 1em'>" + action.getText() + "</center>");
         else
             text.setText(action.getText());
-        Node newGraphic = action.getGraphic();
+        Node newGraphic = action.createGraphic();
         if (graphic != newGraphic && allowsGraphic) {
-            graphic = action.getGraphic();
+            graphic = newGraphic;
             scaledGraphic = graphic == null ? null : new ScalePane(graphic);
         }
         if (scaledGraphic == null)

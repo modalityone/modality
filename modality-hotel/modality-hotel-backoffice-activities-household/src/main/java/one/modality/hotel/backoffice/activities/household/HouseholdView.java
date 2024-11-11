@@ -5,6 +5,7 @@ import dev.webfx.extras.time.layout.bar.LocalDateBar;
 import dev.webfx.extras.time.layout.gantt.LocalDateGanttLayout;
 import dev.webfx.extras.time.layout.impl.ObjectBounds;
 import dev.webfx.extras.time.window.TimeWindowUtil;
+import dev.webfx.kit.util.properties.FXProperties;
 import dev.webfx.stack.cache.client.LocalStorageCache;
 import dev.webfx.stack.orm.reactive.entities.dql_to_entities.ReactiveEntitiesMapper;
 import javafx.collections.FXCollections;
@@ -56,14 +57,14 @@ final class HouseholdView {
                 // When the user clicks on a bar after the guest left, it's to tell the system that the bed has been
                 // cleaned.
                 barsLayout.setSelectionEnabled(true);
-                barsLayout.selectedChildProperty().addListener((observable, oldValue, bar) -> {
-                    if (bar != null) { // ignoring null (which happens when resetting selection in last line of this code)
-                        AttendanceBlock block = bar.getInstance();
+                FXProperties.runOnPropertyChange(selectedBar -> {
+                    if (selectedBar != null) { // ignoring null (which happens when resetting selection in last line of this code)
+                        AttendanceBlock block = selectedBar.getInstance();
                         // The user can click on bars only when the guest has arrived
                         if (block.isCheckedIn()) {
                             // Also, the person must have left already in order to mark the bed as cleaned, so we ignore
                             // any click on a stay that has not yet ended.
-                            if (bar.getEndTime().isAfter(FXToday.getToday()))
+                            if (selectedBar.getEndTime().isAfter(FXToday.getToday()))
                                 return;
                             DocumentLine documentLine = block.getDocumentLine();
                             // The bed needs cleaning if there is no previous cleaning date, or if the cleaning was prior to the stay
@@ -76,7 +77,7 @@ final class HouseholdView {
                         // Resetting the selection to null, so that the user can select the same bar again
                         barsLayout.setSelectedChild(null);
                     }
-                });
+                }, barsLayout.selectedChildProperty());
                 // We made the child row header clickable (the area where the bed is displayed via drawBed()). When the
                 // user clicks on that area, we move the time window to reveal the latest stay that occupied that bed
                 // (the stay bar will appear so that the last day will be in the center of the time window). This will

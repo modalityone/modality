@@ -4,9 +4,8 @@ import dev.webfx.extras.panes.TransitionPane;
 import dev.webfx.extras.panes.transitions.CircleTransition;
 import dev.webfx.extras.util.control.ControlUtil;
 import dev.webfx.extras.webtext.HtmlText;
+import dev.webfx.kit.util.properties.FXProperties;
 import dev.webfx.platform.uischeduler.UiScheduler;
-import javafx.beans.InvalidationListener;
-import javafx.beans.Observable;
 import javafx.beans.property.ReadOnlyBooleanProperty;
 import javafx.beans.property.ReadOnlyObjectProperty;
 import javafx.scene.control.Labeled;
@@ -17,8 +16,8 @@ import one.modality.base.client.mainframe.fx.FXMainFrameTransiting;
 import one.modality.base.shared.entities.Event;
 import one.modality.ecommerce.payment.CancelPaymentResult;
 import one.modality.ecommerce.payment.client.WebPaymentForm;
-import one.modality.event.frontoffice.activities.booking.process.event.BookEventActivity;
 import one.modality.event.client.recurringevents.RecurringEventSchedule;
+import one.modality.event.frontoffice.activities.booking.process.event.BookEventActivity;
 
 public final class LettersSlideController {
 
@@ -74,14 +73,10 @@ public final class LettersSlideController {
     }
 
     private void displaySlideOnTransitionComplete(StepSlide slide, ReadOnlyBooleanProperty transitingProperty) {
-        transitingProperty.addListener(new InvalidationListener() {
-            @Override
-            public void invalidated(Observable observable) {
-                //Console.log("transition changed (assuming finished)");
-                transitingProperty.removeListener(this);
-                displaySlide(slide);
-            }
-        });
+        FXProperties.runOrUnregisterOnPropertyChange((thisListener, oldValue, newValue) -> {
+            thisListener.unregister();
+            displaySlide(slide);
+        }, transitingProperty);
     }
 
     private void displayLoadingSlide() {

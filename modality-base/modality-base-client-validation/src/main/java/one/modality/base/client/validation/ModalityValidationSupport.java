@@ -18,7 +18,6 @@ import javafx.application.Platform;
 import javafx.beans.binding.Bindings;
 import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.SimpleBooleanProperty;
-import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableBooleanValue;
 import javafx.beans.value.ObservableValue;
 import javafx.geometry.Insets;
@@ -194,16 +193,13 @@ public final class ModalityValidationSupport {
             //popOverContentNode.setEffect(new DropShadow());
             showPopOver(errorDecorationNode);
             // Removing the error pop over when the status is valid again
-            validator.getValidationStatus().validProperty().addListener(new ChangeListener<Boolean>() {
-                @Override
-                public void changed(ObservableValue<? extends Boolean> observable, Boolean oldValue, Boolean valid) {
-                    if (valid) {
-                        observable.removeListener(this);
-                        popOverOwnerNode = null;
-                        hidePopOver();
-                    }
+            FXProperties.runOrUnregisterOnPropertyChange((thisListener, oldValue, valid) -> {
+                if (valid) {
+                    thisListener.unregister();
+                    popOverOwnerNode = null;
+                    hidePopOver();
                 }
-            });
+            }, validator.getValidationStatus().validProperty());
         }
     }
 

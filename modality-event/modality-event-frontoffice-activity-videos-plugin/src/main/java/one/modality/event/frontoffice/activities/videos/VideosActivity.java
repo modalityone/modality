@@ -7,7 +7,6 @@ import dev.webfx.kit.util.properties.ObservableLists;
 import dev.webfx.platform.console.Console;
 import dev.webfx.stack.i18n.controls.I18nControls;
 import dev.webfx.stack.orm.domainmodel.activity.viewdomain.impl.ViewDomainActivityBase;
-import dev.webfx.stack.orm.entity.EntityId;
 import dev.webfx.stack.orm.entity.EntityStore;
 import javafx.application.Platform;
 import javafx.collections.FXCollections;
@@ -17,7 +16,6 @@ import javafx.scene.Cursor;
 import javafx.scene.Node;
 import javafx.scene.control.Label;
 import javafx.scene.layout.VBox;
-import one.modality.base.frontoffice.utility.activity.FrontOfficeActivityUtil;
 import one.modality.base.shared.entities.Event;
 import one.modality.base.shared.entities.KnownItemFamily;
 import one.modality.crm.shared.services.authn.fx.FXUserPersonId;
@@ -40,9 +38,8 @@ final class VideosActivity extends ViewDomainActivityBase {
         // Creating our own entity store to hold the loaded data without interfering with other activities
         EntityStore entityStore = EntityStore.create(getDataSourceModel()); // Activity datasource model is available at this point
         // Loading the list of events with videos booked by the user and put it into eventsWithBookedVideos
-        FXProperties.runNowAndOnPropertiesChange(() -> {
+        FXProperties.runNowAndOnPropertyChange(userPersonId -> {
             eventsWithBookedVideos.clear();
-            EntityId userPersonId = FXUserPersonId.getUserPersonId();
             if (userPersonId != null) {
                 entityStore.<Event>executeQuery(
                     "select name, label.(de,en,es,fr,pt), shortDescription, audioExpirationDate, startDate, endDate, livestreamUrl, vodExpirationDate" +
@@ -78,7 +75,8 @@ final class VideosActivity extends ViewDomainActivityBase {
 
         pageContainer.setPadding(new Insets(PAGE_TOP_BOTTOM_PADDING, 0, PAGE_TOP_BOTTOM_PADDING, 0));
 
-        return FrontOfficeActivityUtil.createActivityPageScrollPane(pageContainer, false);
+        return pageContainer;
+        //return FrontOfficeActivityUtil.createActivityPageScrollPane(pageContainer, false);
     }
 
     private void showEventVideosWall(Event event) {

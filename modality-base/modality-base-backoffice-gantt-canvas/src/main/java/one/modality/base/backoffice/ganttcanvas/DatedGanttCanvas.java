@@ -112,10 +112,10 @@ public final class DatedGanttCanvas implements TimeWindow<LocalDate> {
                 // 2) when the gantt visibility changes (ex: with/without events) => impact layers visibility
                 FXGanttVisibility.ganttVisibilityProperty()
         );
-        FXProperties.runOnPropertiesChange(this::markCanvasAsDirty, FXGanttHighlight.ganttHighlightedDayProperty());
+        FXProperties.runOnPropertyChange(this::markCanvasAsDirty, FXGanttHighlight.ganttHighlightedDayProperty());
 
         // Updating i18n texts when necessary
-        FXProperties.runNowAndOnPropertiesChange(this::updateI18nTexts, I18n.dictionaryProperty());
+        FXProperties.runNowAndOnPropertyChange(this::updateI18nTexts, I18n.dictionaryProperty());
 
         FXGanttHighlight.addDayHighlight(daysLayer, globalCanvasDrawer);
 

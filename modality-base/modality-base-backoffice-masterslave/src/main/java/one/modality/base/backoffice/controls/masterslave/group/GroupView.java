@@ -153,9 +153,9 @@ public final class GroupView<E extends Entity> implements UiBuilder,
             control.visualResultProperty().bind(groupVisualResultProperty());
             groupVisualSelectionProperty().bindBidirectional(control.visualSelectionProperty());
         } else if (control != null)
-            groupVisualResultProperty().addListener((observable, oldValue, rs) ->
+            FXProperties.runOnPropertyChange(rs ->
                     control.setVisualResult(toSingleSeriesChartVisualResult(rs, control instanceof VisualPieChart))
-            );
+            , groupVisualResultProperty());
         return control;
     }
 

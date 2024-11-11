@@ -32,7 +32,6 @@ import javafx.scene.text.FontWeight;
 import javafx.scene.text.TextAlignment;
 import one.modality.base.client.tile.Tab;
 import one.modality.base.client.tile.TabsBar;
-import one.modality.base.frontoffice.utility.activity.FrontOfficeActivityUtil;
 import one.modality.base.frontoffice.utility.tyler.GeneralUtility;
 import one.modality.base.frontoffice.utility.tyler.StyleUtility;
 import one.modality.base.shared.entities.Event;
@@ -59,7 +58,7 @@ final class BookingActivity extends ViewDomainActivityBase implements ButtonFact
 
     @Override
     public Node buildUi() {
-        Label headerLabel = GeneralUtility.createLabel(BookingI18nKeys.eventsHeader, StyleUtility.MAIN_ORANGE_COLOR);
+        Label headerLabel = GeneralUtility.createLabel(BookingI18nKeys.eventsHeader, StyleUtility.MAIN_BRAND_COLOR);
         headerLabel.setTextAlignment(TextAlignment.CENTER);
 
         String headerImageUrl = SourcesConfig.getSourcesRootConfig().childConfigAt("modality.event.frontoffice.activity.booking").getString("headerImageUrl");
@@ -93,8 +92,7 @@ final class BookingActivity extends ViewDomainActivityBase implements ButtonFact
         pageContainer.setAlignment(Pos.CENTER);
         pageContainer.setPadding(new Insets(0, 0, 200, 0)); // Footer margin (white)
 
-        FXProperties.runOnPropertiesChange(() -> {
-            double width = pageContainer.getWidth();
+        FXProperties.runOnDoublePropertyChange(width -> {
             double fontFactor = GeneralUtility.computeFontFactor(width);
             GeneralUtility.setLabeledFont(headerLabel, StyleUtility.TEXT_FAMILY, FontWeight.BOLD, fontFactor * 21);
             GeneralUtility.setLabeledFont(internationalEventsLabel, StyleUtility.TEXT_FAMILY, FontWeight.BOLD, fontFactor * 16);
@@ -125,7 +123,8 @@ final class BookingActivity extends ViewDomainActivityBase implements ButtonFact
             entitiesToObjectsMapper = new ObservableEntitiesToObjectsMapper<>(localEventsOfSelectedType, factory, (Event e, IndividualEntityToObjectMapper<Event, Node> m) -> m.onEntityChangedOrReplaced(e), (Event e1, IndividualEntityToObjectMapper<Event, Node> m1) -> m1.onEntityRemoved(e1));
         ObservableLists.bindConverted(localEventsContainer.getChildren(), entitiesToObjectsMapper.getMappedObjects(), IndividualEntityToObjectMapper::getMappedObject);
 
-        return FrontOfficeActivityUtil.createActivityPageScrollPane(pageContainer, true);
+        return pageContainer;
+        //return FrontOfficeActivityUtil.createActivityPageScrollPane(pageContainer, true);
     }
 
     private void showLocalEventsOfType(Entity eventType) {

@@ -20,12 +20,10 @@ import javafx.scene.Node;
 import javafx.scene.control.ContentDisplay;
 import javafx.scene.control.Hyperlink;
 import javafx.scene.control.Label;
-import javafx.scene.control.ScrollPane;
 import javafx.scene.layout.VBox;
 import javafx.scene.text.FontWeight;
 import javafx.scene.text.TextAlignment;
 import javafx.stage.Screen;
-import one.modality.base.frontoffice.utility.activity.FrontOfficeActivityUtil;
 import one.modality.base.frontoffice.utility.tyler.GeneralUtility;
 import one.modality.base.frontoffice.utility.tyler.StyleUtility;
 import one.modality.base.shared.entities.Document;
@@ -49,7 +47,7 @@ final class AccountActivity extends ViewDomainActivityBase implements OperationA
 
     @Override
     public Node buildUi() {
-        Label upcomingBookingsLabel = GeneralUtility.createLabel(AccountI18nKeys.YourUpcomingBookings, StyleUtility.MAIN_ORANGE_COLOR);
+        Label upcomingBookingsLabel = GeneralUtility.createLabel(AccountI18nKeys.YourUpcomingBookings, StyleUtility.MAIN_BRAND_COLOR);
         upcomingBookingsLabel.setContentDisplay(ContentDisplay.TOP);
         upcomingBookingsLabel.setTextAlignment(TextAlignment.CENTER);
         upcomingBookingsLabel.setPadding(new Insets(25, 0, 40, 0));
@@ -57,7 +55,7 @@ final class AccountActivity extends ViewDomainActivityBase implements OperationA
         //VBox.setMargin(upcomingBookingsLabel, new Insets(0, 0, 10, 0));
         VBox upcomingBookingsContainer = new VBox(10);
 
-        Label pastBookingsLabel = GeneralUtility.createLabel(AccountI18nKeys.YourPastBookings, StyleUtility.MAIN_ORANGE_COLOR);
+        Label pastBookingsLabel = GeneralUtility.createLabel(AccountI18nKeys.YourPastBookings, StyleUtility.MAIN_BRAND_COLOR);
         pastBookingsLabel.setContentDisplay(ContentDisplay.TOP);
         pastBookingsLabel.setTextAlignment(TextAlignment.CENTER);
         pastBookingsLabel.setPadding(new Insets(25, 0, 40, 0));
@@ -93,32 +91,33 @@ final class AccountActivity extends ViewDomainActivityBase implements OperationA
         );
         pageContainer.setAlignment(Pos.TOP_CENTER);
 
-        FXProperties.runOnPropertiesChange(() -> {
-            double width = pageContainer.getWidth();
+        FXProperties.runOnDoublePropertyChange(width -> {
             double fontFactor = GeneralUtility.computeFontFactor(width);
             GeneralUtility.setLabeledFont(upcomingBookingsLabel, StyleUtility.TEXT_FAMILY, FontWeight.BOLD, fontFactor * 16);
             GeneralUtility.setLabeledFont(pastBookingsLabel, StyleUtility.TEXT_FAMILY, FontWeight.BOLD, fontFactor * 16);
             GeneralUtility.setLabeledFont(logoutLink, StyleUtility.TEXT_FAMILY, FontWeight.BOLD, fontFactor * 16);
         }, pageContainer.widthProperty());
 
-        ScrollPane scrollPane = FrontOfficeActivityUtil.createActivityPageScrollPane(pageContainer, false);
 
         // Lazy loading when the user scrolls down
-        double lazyLoadingBottomSpace = Screen.getPrimary().getVisualBounds().getHeight();
-        pageContainer.setPadding(new Insets(0, 0, lazyLoadingBottomSpace, 0));
-        FXProperties.runOnPropertiesChange(() -> {
-            if (ControlUtil.computeScrollPaneVBottomOffset(scrollPane) > pageContainer.getHeight() - lazyLoadingBottomSpace) {
-                Document lastBooking = Collections.last(pastBookingsFeed);
-                if (lastBooking == null)
-                    pageContainer.setPadding(Insets.EMPTY);
-                else {
-                    LocalDate startDate = lastBooking.getEvent().getStartDate();
-                    FXProperties.setIfNotEquals(loadPastEventsBeforeDateProperty, startDate);
+        ControlUtil.onScrollPaneAncestorSet(pageContainer, scrollPane -> {
+            double lazyLoadingBottomSpace = Screen.getPrimary().getVisualBounds().getHeight();
+            pageContainer.setPadding(new Insets(0, 0, lazyLoadingBottomSpace, 0));
+            FXProperties.runOnPropertiesChange(() -> {
+                if (ControlUtil.computeScrollPaneVBottomOffset(scrollPane) > pageContainer.getHeight() - lazyLoadingBottomSpace) {
+                    Document lastBooking = Collections.last(pastBookingsFeed);
+                    if (lastBooking == null)
+                        pageContainer.setPadding(Insets.EMPTY);
+                    else {
+                        LocalDate startDate = lastBooking.getEvent().getStartDate();
+                        FXProperties.setIfNotEquals(loadPastEventsBeforeDateProperty, startDate);
+                    }
                 }
-            }
-        }, scrollPane.vvalueProperty(), pageContainer.heightProperty());
+            }, scrollPane.vvalueProperty(), pageContainer.heightProperty());
+        });
 
-        return scrollPane;
+        return pageContainer;
+        //return FrontOfficeActivityUtil.createActivityPageScrollPane(pageContainer, false);
     }
 
     @Override

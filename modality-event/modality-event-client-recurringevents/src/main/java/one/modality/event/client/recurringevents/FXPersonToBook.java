@@ -15,9 +15,7 @@ public class FXPersonToBook {
 
     static {
         // When the modality user changes, we reset the person to book to be that user
-        FXProperties.runNowAndOnPropertiesChange(() -> {
-            setPersonToBook(FXUserPerson.getUserPerson());
-        }, FXUserPerson.userPersonProperty());
+        FXProperties.runNowAndOnPropertyChange(FXPersonToBook::setPersonToBook, FXUserPerson.userPersonProperty());
     }
 
     public static Person getPersonToBook() {

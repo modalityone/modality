@@ -27,7 +27,7 @@ public final class MyBookingPersonalDetailsPanel extends BookingPersonalDetailsP
                 .autoSelectFirstEntity();
         personButton = personSelector.toMaterialButton(CrmI18nKeys.PersonToBook);
         personButton.visibleProperty().bind(FXModalityUserPrincipal.loggedInProperty());
-        FXProperties.runOnPropertiesChange(p -> syncUiFromModel((Person) p.getValue()), personSelector.selectedItemProperty());
+        FXProperties.runOnPropertyChange(person -> syncUiFromModel(person), personSelector.selectedItemProperty());
     }
 
 /*

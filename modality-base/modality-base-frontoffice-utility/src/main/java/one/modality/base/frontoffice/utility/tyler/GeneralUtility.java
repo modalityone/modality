@@ -24,6 +24,7 @@ import javafx.scene.text.Text;
 import javafx.util.Duration;
 import one.modality.base.frontoffice.utility.tyler.fx.FXApp;
 
+import java.util.Objects;
 import java.util.function.Consumer;
 
 public class GeneralUtility {
@@ -89,11 +90,9 @@ public class GeneralUtility {
     public static Node createCheckBoxDirect(BooleanProperty property, boolean isRadio, boolean isReverse, String label, boolean isDisabled) {
         Rectangle b = createCheckBoxRaw();
 
-        b.setFill((isReverse != property.get()) ? StyleUtility.MAIN_ORANGE_COLOR : Color.WHITE);
-
-        property.addListener((observableValue, aBoolean, t1) -> {
-            b.setFill((isReverse != property.get()) ? StyleUtility.MAIN_ORANGE_COLOR : Color.WHITE);
-        });
+        FXProperties.runNowAndOnPropertyChange(value ->
+            b.setFill((isReverse != value) ? StyleUtility.MAIN_BRAND_COLOR : Color.WHITE)
+        , property);
 
         if (!isDisabled) b.setOnMouseClicked(e -> property.set(isRadio ? !isReverse : !property.get()));
 
@@ -103,11 +102,9 @@ public class GeneralUtility {
     public static Node createRadioCheckBoxBySelection(StringProperty selectedProperty, String label) {
         Rectangle b = createCheckBoxRaw();
 
-        b.setFill(selectedProperty.get().equals(label) ? StyleUtility.MAIN_ORANGE_COLOR : Color.WHITE);
-
-        selectedProperty.addListener((observableValue, aBoolean, t1) -> {
-            b.setFill(selectedProperty.get().equals(label) ? StyleUtility.MAIN_ORANGE_COLOR : Color.WHITE);
-        });
+        FXProperties.runNowAndOnPropertyChange(value ->
+                b.setFill(Objects.equals(value, label) ? StyleUtility.MAIN_BRAND_COLOR : Color.WHITE)
+            , selectedProperty);
 
         b.setOnMouseClicked(e -> { selectedProperty.set(selectedProperty.get().equals(label) ? "" : label); });
 
@@ -158,9 +155,9 @@ public class GeneralUtility {
         Button b = new Button(label);
         b.setTextFill(Color.WHITE);
 
-        FXProperties.runNowAndOnPropertiesChange(() -> {
-            b.setBackground(new Background(new BackgroundFill(color, new CornerRadii(radius*FXApp.fontRatio.get()), null)));
-            setLabeledFont(b, StyleUtility.TEXT_FAMILY, FontWeight.findByWeight(500), fontSize * FXApp.fontRatio.get());
+        FXProperties.runNowAndOnDoublePropertyChange(fontRatio -> {
+            b.setBackground(new Background(new BackgroundFill(color, new CornerRadii(radius * fontRatio), null)));
+            setLabeledFont(b, StyleUtility.TEXT_FAMILY, FontWeight.findByWeight(500), fontSize * fontRatio);
         }, FXApp.fontRatio);
 
         return b;
@@ -190,9 +187,9 @@ public class GeneralUtility {
     }
 
     public static <T extends Labeled> T setupLabeled(T labeled, String i18nKey, Color color, FontWeight fontWeight, double fontSize) {
-        FXProperties.runNowAndOnPropertiesChange(() -> {
-            setLabeledFont(labeled, StyleUtility.TEXT_FAMILY, fontWeight, fontSize * FXApp.fontRatio.get());
-        }, FXApp.fontRatio);
+        FXProperties.runNowAndOnDoublePropertyChange(fontRatio ->
+            setLabeledFont(labeled, StyleUtility.TEXT_FAMILY, fontWeight, fontSize * fontRatio), FXApp.fontRatio
+        );
         return setupLabeled(labeled, i18nKey, color);
     }
 
@@ -223,7 +220,7 @@ public class GeneralUtility {
 
     public static Region createOrangeLineSeparator() {
         Region line = new Region();
-        line.setBackground(Background.fill(StyleUtility.MAIN_ORANGE_COLOR));
+        line.setBackground(Background.fill(StyleUtility.MAIN_BRAND_COLOR));
         line.setMinHeight(1);
         line.setPrefWidth(Double.MAX_VALUE);
         return line;

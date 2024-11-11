@@ -1,15 +1,16 @@
 package one.modality.base.frontoffice.activities.mainframe;
 
-import dev.webfx.extras.panes.CollapsePane;
-import dev.webfx.extras.panes.ColumnsPane;
-import dev.webfx.extras.panes.ScalePane;
-import dev.webfx.extras.panes.TransitionPane;
+import dev.webfx.extras.panes.*;
 import dev.webfx.extras.panes.transitions.CircleTransition;
 import dev.webfx.extras.panes.transitions.FadeTransition;
 import dev.webfx.extras.player.Players;
+import dev.webfx.extras.util.control.ControlUtil;
 import dev.webfx.kit.launcher.WebFxKitLauncher;
 import dev.webfx.kit.util.properties.FXProperties;
+import dev.webfx.kit.util.properties.ObservableLists;
 import dev.webfx.platform.conf.SourcesConfig;
+import dev.webfx.platform.console.Console;
+import dev.webfx.platform.os.OperatingSystem;
 import dev.webfx.platform.util.Arrays;
 import dev.webfx.platform.util.collection.Collections;
 import dev.webfx.stack.i18n.operations.ChangeLanguageRequestEmitter;
@@ -18,21 +19,22 @@ import dev.webfx.stack.ui.action.Action;
 import dev.webfx.stack.ui.action.ActionBinder;
 import dev.webfx.stack.ui.action.ActionGroup;
 import javafx.beans.InvalidationListener;
-import javafx.beans.value.ChangeListener;
-import javafx.beans.value.ObservableValue;
+import javafx.beans.property.BooleanProperty;
+import javafx.beans.property.ObjectProperty;
 import javafx.collections.ObservableList;
-import javafx.geometry.HPos;
 import javafx.geometry.Insets;
-import javafx.geometry.VPos;
+import javafx.geometry.Point2D;
+import javafx.geometry.Pos;
 import javafx.scene.Cursor;
 import javafx.scene.Node;
 import javafx.scene.control.Button;
 import javafx.scene.control.ContentDisplay;
+import javafx.scene.control.ScrollPane;
 import javafx.scene.effect.DropShadow;
-import javafx.scene.layout.Background;
-import javafx.scene.layout.Pane;
-import javafx.scene.layout.Region;
+import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
+import javafx.scene.paint.Paint;
+import javafx.scene.shape.SVGPath;
 import javafx.scene.text.Font;
 import javafx.scene.text.FontWeight;
 import one.modality.base.client.application.ModalityClientMainFrameActivity;
@@ -46,15 +48,23 @@ import one.modality.base.frontoffice.utility.tyler.StyleUtility;
 
 public final class ModalityFrontOfficeMainFrameActivity extends ModalityClientMainFrameActivity {
 
-    private final static String[] sortedPossibleRoutingOperations =
-            SourcesConfig.getSourcesRootConfig().childConfigAt("modality.base.frontoffice.application")
-                    .getString("buttonRoutingOperations").split(",");
+    private static final double MAX_PAGE_WIDTH = 1200; // Similar value to website
+    private static final double WEB_MENU_HEIGHT = 96;
 
-    private Pane mainFrame;
+    private final static String[] sortedPossibleRoutingOperations =
+        SourcesConfig.getSourcesRootConfig().childConfigAt("modality.base.frontoffice.application")
+            .getString("buttonRoutingOperations").split(",");
+
+    private final BooleanProperty mobileLayoutProperty =
+        FXProperties.newBooleanProperty(OperatingSystem.isMobile(), this::onMobileLayoutChange);
+
+    private Pane mainFrameContainer;
     private Node backgroundNode; // can be used to hold a WebView, and prevent iFrame reload in the web version
     private final TransitionPane mountTransitionPane = new TransitionPane();
-    private Region mainFrameFooter;
-    private ScalePane[] scaledFooterButtons;
+    private CollapsePane overlayWebMenuBar;
+    private CollapsePane mobileMenuBar;
+    private CollapsePane insideButtonBar;
+    private ScalePane[] scaledMobileButtons;
     private Pane dialogArea;
     private int firstOverlayChildIndex;
 
@@ -64,40 +74,54 @@ public final class ModalityFrontOfficeMainFrameActivity extends ModalityClientMa
         mountTransitionPane.setAnimateFirstContent(true);
         mountTransitionPane.setTransition(new CircleTransition());
         // And then a fade transition for subsequent activities
-        mountTransitionPane.transitingProperty().addListener(new ChangeListener<>() {
-            @Override
-            public void changed(ObservableValue<? extends Boolean> observable, Boolean oldValue, Boolean newValue) {
-                if (oldValue && !newValue) {
-                    mountTransitionPane.setTransition(new FadeTransition());
-                    mountTransitionPane.transitingProperty().removeListener(this);
-                }
+        FXProperties.runOrUnregisterOnPropertyChange((thisListener, oldValue, transiting) -> {
+            if (!transiting) { // Ending a transition
+                mountTransitionPane.setTransition(new FadeTransition());
+                thisListener.unregister();
             }
-        });
+        }, mountTransitionPane.transitingProperty());
         //mountTransitionPane.setKeepsLeavingNodes(true); // Note: activities with video players should call TransitionPane.setKeepsLeavingNode(node, false)
         FXMainFrameTransiting.transitingProperty().bind(mountTransitionPane.transitingProperty());
-        mainFrame = new Pane() { // Children are set later in updateMountNode()
+        mainFrameContainer = new LayoutPane() { // Children are set later in updateMountNode()
             @Override
-            protected void layoutChildren() {
-                double width = getWidth(), height = getHeight();
-                double headerHeight = 0;
-                double footerHeight = 0;
-                if (mainFrameFooter != null) {
-                    footerHeight = mainFrameFooter.prefHeight(width);
-                    layoutInArea(mainFrameFooter, 0, height - footerHeight, width, footerHeight, 0, HPos.CENTER, VPos.BOTTOM);
+            protected void layoutChildren(double width, double height) {
+                double headerHeight = 0, footerHeight = 0;
+                boolean isMobileLayout = mobileLayoutProperty.get();
+                if (isMobileLayout) {
+                    footerHeight = mobileMenuBar.prefHeight(width);
+                    layoutInArea(mobileMenuBar, 0, height - footerHeight, width, footerHeight);
+                } else if (insideButtonBar != null) {
+                    Point2D p = insideButtonBar.localToScene(0, 0);
+                    layoutInArea(overlayWebMenuBar, p.getX(), 0, insideButtonBar.getWidth(), insideButtonBar.getHeight());
+                    headerHeight = 0;
                 }
                 double mountNodeY = headerHeight;
                 double mountNodeHeight = height - headerHeight - footerHeight;
                 mountTransitionPane.setMinHeight(mountNodeHeight);
-                layoutInArea(mountTransitionPane, 0, mountNodeY, width, mountNodeHeight, 0, null, HPos.CENTER, VPos.TOP);
+                layoutInArea(mountTransitionPane, 0, mountNodeY, width, mountNodeHeight);
                 if (backgroundNode != null) { // Same position & size as the mount node (if present)
-                    layoutInArea(backgroundNode, 0, mountNodeY, width, mountNodeHeight, 0, null, HPos.CENTER, VPos.TOP);
+                    layoutInArea(backgroundNode, 0, mountNodeY, width, mountNodeHeight);
                 }
                 if (dialogArea != null) { // Same position & size as the mount node (if present)
-                    layoutInArea(dialogArea, 0, mountNodeY, width, mountNodeHeight, 0, null, HPos.CENTER, VPos.TOP);
+                    layoutInArea(dialogArea, 0, mountNodeY, width, mountNodeHeight);
                 }
             }
         };
-        mainFrameFooter = createMainFrameFooter();
+        mobileMenuBar = createRouteButtonBar(true);
+        overlayWebMenuBar = createRouteButtonBar(false);
+        overlayWebMenuBar.setVisible(false);
+        double[] lastMouseY = { 0 };
+        mainFrameContainer.setOnMouseMoved(e -> {
+            double mouseY = e.getY();
+            if (Math.abs(mouseY - lastMouseY[0]) > 5 && !FXCollapseFooter.isCollapseFooter()) {
+                boolean up = mouseY < lastMouseY[0];
+                if (up && mouseY < mainFrameContainer.getHeight() / 3)
+                    overlayWebMenuBar.setCollapsed(false);
+                else if (!up && mouseY > WEB_MENU_HEIGHT)
+                    overlayWebMenuBar.setCollapsed(true);
+            }
+            lastMouseY[0] = mouseY;
+        });
 
         // To be aware: if backgroundNode is set to a WebView (which is actually its main purpose), then modifying the
         // mainFrame children again will cause the iFrame to reload in the web version, which is what we want to prevent
@@ -106,25 +130,59 @@ public final class ModalityFrontOfficeMainFrameActivity extends ModalityClientMa
         // That's why we encapsulated the mount node inside a container that won't change in that list.
         FXProperties.runNowAndOnPropertiesChange(() -> {
             backgroundNode = FXBackgroundNode.getBackgroundNode();
-            mainFrame.getChildren().setAll(Collections.listOfRemoveNulls(
-                    backgroundNode,      // may be a WebView
-                    mountTransitionPane, // contains a standard mount node, or null if we want to display the backgroundNode
-                    mainFrameFooter));   // the footer (front-office navigation buttons bar)
-            firstOverlayChildIndex = mainFrame.getChildren().size();
+            boolean isMobileLayout = mobileLayoutProperty.get();
+            mainFrameContainer.getChildren().setAll(Collections.listOfRemoveNulls(
+                backgroundNode,      // may be a WebView
+                mountTransitionPane, // contains a standard mount node, or null if we want to display the backgroundNode
+                isMobileLayout ? mobileMenuBar : overlayWebMenuBar));   // the footer (front-office navigation buttons bar)
+            firstOverlayChildIndex = mainFrameContainer.getChildren().size();
             updateOverlayChildren();
-        }, FXBackgroundNode.backgroundNodeProperty());
+            if (getMountNode() == null)
+                overlayWebMenuBar.setCollapsed(true);
+        }, FXBackgroundNode.backgroundNodeProperty(), mobileLayoutProperty, mountNodeProperty());
 
         // Reacting to the mount node changes:
-        FXProperties.runNowAndOnPropertiesChange(() -> {
+        FXProperties.runNowAndOnPropertyChange(mountNode -> {
             // Updating the mount node container with the new mount node
-            Node mountNode = getMountNode();
             if (mountNode instanceof Region) {
                 ((Region) mountNode).minHeightProperty().bind(mountTransitionPane.heightProperty());
             }
             UiRouter uiRouter = getUiRouter();
             mountTransitionPane.setReverse(uiRouter.getHistory().isGoingBackward());
-            mountTransitionPane.transitToContent(mountNode);
-            //mountNodeContainer.setCenter(mountNode);
+            ScrollPane scrollPane = mountNode == null ? null : (ScrollPane) mountNode.getProperties().get("embedding-scrollpane");
+            if (scrollPane == null && mountNode != null) {
+                CollapsePane topButtonBar = createRouteButtonBar(false);
+                VBox vBox = new VBox(topButtonBar, mountNode);
+                vBox.setMaxWidth(MAX_PAGE_WIDTH);
+                BorderPane borderPane = new BorderPane(vBox);
+                ScrollPane finalScrollPane = scrollPane = ControlUtil.createVerticalScrollPane(borderPane);
+                mountNode.getProperties().put("embedding-scrollpane", scrollPane);
+                double[] lastScrollPaneContentHeight = { 0 };
+                FXProperties.runOnPropertyChange((o, oldValue, newValue) -> {
+                    insideButtonBar = topButtonBar;
+                    if (mountTransitionPane.isTransiting())
+                        return;
+                    // Visibility management:
+                    if (newValue.doubleValue() == 0)// Making the overlay web menu bar invisible when reaching the top
+                        overlayWebMenuBar.setVisible(false); // because there is already a web menu on top of that page
+                    else if (ControlUtil.computeScrollPaneVTopOffset(finalScrollPane) > finalScrollPane.getHeight())
+                        overlayWebMenuBar.setVisible(true); // Making it visible when the top one is no more in the view
+                    // port (however it will not be showing while it's collapsed)
+                    // Collapse management:
+                    // Collapsing the overlay web menu if an activity explicitly asked to do so
+                    if (FXCollapseFooter.isCollapseFooter())
+                        overlayWebMenuBar.setCollapsed(true);
+                    // or if the content change its height (ex: lazy loading) because the change of the scroll position
+                    // (ex: new content added => scroll position goes up) is not coming from the user in that case.
+                    else if (lastScrollPaneContentHeight[0] != borderPane.getHeight())
+                        overlayWebMenuBar.setCollapsed(true);
+                    // otherwise (we assume the scroll position comes from the user) if the user is scrolling up
+                    else
+                        overlayWebMenuBar.setCollapsed(newValue.doubleValue() > oldValue.doubleValue());
+                    lastScrollPaneContentHeight[0] = borderPane.getHeight();
+                }, scrollPane.vvalueProperty());
+            }
+            mountTransitionPane.transitToContent(scrollPane);
             // When the mount node is null, this is to indicate that we want to display the background node instead
             boolean displayBackgroundNode = mountNode == null;
             // We make the background node visible only when we want to display it
@@ -136,32 +194,38 @@ public final class ModalityFrontOfficeMainFrameActivity extends ModalityClientMa
             updateDialogArea();
         }, mountNodeProperty());
 
-        FXMainFrameOverlayArea.setOverlayArea(mainFrame);
-        FXMainFrameOverlayArea.getOverlayChildren().addListener((InvalidationListener) observable -> updateOverlayChildren());
+        FXMainFrameOverlayArea.setOverlayArea(mainFrameContainer);
+        ObservableLists.runOnListChange(this::updateOverlayChildren, FXMainFrameOverlayArea.getOverlayChildren());
 
         // Requesting a layout for containerPane on layout mode changes
         FXProperties.runNowAndOnPropertiesChange(() -> {
-            double footerHeight = Math.max(0.08 * (Math.min(mainFrame.getHeight(), mainFrame.getWidth())), 40);
-            Arrays.forEach(scaledFooterButtons, scaledButton -> scaledButton.setPrefHeight(footerHeight));
-        }, mainFrame.widthProperty(), mainFrame.heightProperty());
+            double footerHeight = Math.max(0.08 * (Math.min(mainFrameContainer.getHeight(), mainFrameContainer.getWidth())), 40);
+            Arrays.forEach(scaledMobileButtons, scaledButton -> scaledButton.setPrefHeight(footerHeight));
+        }, mainFrameContainer.widthProperty(), mainFrameContainer.heightProperty());
 
-        setUpContextMenu(mainFrame, this::contextMenuActionGroup);
+        setUpContextMenu(mainFrameContainer, this::contextMenuActionGroup);
 
         setupPlayersGlobalConfiguration();
 
-        return mainFrame;
+        mainFrameContainer.setOnMouseClicked(e -> {
+            if (e.isShiftDown())
+                FXProperties.toggleProperty(mobileLayoutProperty);
+        });
+
+        mainFrameContainer.setBackground(Background.fill(Color.WHITE));
+        return mainFrameContainer;
     }
 
     private static void setupPlayersGlobalConfiguration() {
         // Fullscreen button
         ModalityFullscreenButton.setupModalityFullscreenButton();
         // Players color (actually only Wistia supports it)
-        Players.setGlobalPlayerColor(StyleUtility.MAIN_ORANGE_COLOR);
+        Players.setGlobalPlayerColor(StyleUtility.MAIN_BRAND_COLOR);
     }
 
     private void updateDialogArea() {
         if (dialogArea != null)
-            mainFrame.getChildren().remove(dialogArea);
+            mainFrameContainer.getChildren().remove(dialogArea);
         dialogArea = null;
         Node relatedDialogNode = getMountNode();
         if (relatedDialogNode != null) {
@@ -182,7 +246,7 @@ public final class ModalityFrontOfficeMainFrameActivity extends ModalityClientMa
     }
 
     private void showHideDialogArea() {
-        ObservableList<Node> mainFrameChildren = mainFrame.getChildren();
+        ObservableList<Node> mainFrameChildren = mainFrameContainer.getChildren();
         if (dialogArea.getChildren().isEmpty())
             mainFrameChildren.remove(dialogArea);
         else if (!mainFrameChildren.contains(dialogArea)) {
@@ -190,49 +254,59 @@ public final class ModalityFrontOfficeMainFrameActivity extends ModalityClientMa
         }
     }
 
+    private void onMobileLayoutChange(boolean mobileLayout) {
+        Console.log("mobileLayout = " + mobileLayout);
+    }
+
     private void updateOverlayChildren() {
-        ObservableList<Node> mainFrameChildren = mainFrame.getChildren();
+        ObservableList<Node> mainFrameChildren = mainFrameContainer.getChildren();
         ObservableList<Node> overlayChildren = FXMainFrameOverlayArea.getOverlayChildren();
         while (firstOverlayChildIndex < mainFrameChildren.size())
             mainFrameChildren.remove(firstOverlayChildIndex);
         mainFrameChildren.addAll(firstOverlayChildIndex, overlayChildren);
     }
 
-    protected ActionGroup contextMenuActionGroup() {
+    private ActionGroup contextMenuActionGroup() {
         return newActionGroup(
-                ChangeLanguageRequestEmitter.getProvidedEmitters().stream()
-                        .map(emitter -> newOperationAction(emitter::emitLanguageRequest))
-                        .toArray(Action[]::new)
+            ChangeLanguageRequestEmitter.getProvidedEmitters().stream()
+                .map(emitter -> newOperationAction(emitter::emitLanguageRequest))
+                .toArray(Action[]::new)
         );
     }
 
-    @Override
-    protected Region createMainFrameHeader() {
-        return null;
-    }
-
-    @Override
-    protected Region createMainFrameFooter() {
+    private CollapsePane createRouteButtonBar(boolean mobileLayout) {
         Button[] buttons = RoutingActions.filterRoutingActions(this, this, sortedPossibleRoutingOperations)
-                .stream().map(this::createRouteButton)
-                .toArray(Button[]::new);
-        scaledFooterButtons = Arrays.map(buttons, ModalityFrontOfficeMainFrameActivity::scaleButton, ScalePane[]::new);
-        ColumnsPane buttonBar = new ColumnsPane(scaledFooterButtons);
+            .stream().map(action -> createRouteButton(action, mobileLayout))
+            .toArray(Button[]::new);
+        Node buttonBar;
+        if (mobileLayout) {
+            scaledMobileButtons = Arrays.map(buttons, ModalityFrontOfficeMainFrameActivity::scaleButton, ScalePane[]::new);
+            buttonBar = new ColumnsPane(scaledMobileButtons);
+        } else {
+            HBox hBox = new HBox(10, buttons);
+            hBox.setAlignment(Pos.CENTER_RIGHT);
+            hBox.setMaxWidth(MAX_PAGE_WIDTH);
+            hBox.setPrefHeight(WEB_MENU_HEIGHT);
+            hBox.setBackground(Background.fill(Color.WHITE));
+            buttonBar = hBox;
+        }
         buttonBar.getStyleClass().setAll("button-bar"); // Style class used in Modality.css to make buttons square (remove round corners)
         CollapsePane collapsePane = new CollapsePane(buttonBar);
-        collapsePane.setEffect(new DropShadow());
-        collapsePane.setClipEnabled(false);
-        collapsePane.collapsedProperty().bind(FXCollapseFooter.collapseFooterProperty());
-        // Considering the bottom of the safe area, in particular for OS like iPadOS with a bar at the bottom
-        FXProperties.runNowAndOnPropertiesChange(() -> {
-            double safeAreaBottom = WebFxKitLauncher.getSafeAreaInsets().getBottom();
-            // we already have a 5px padding for the buttons
-            collapsePane.setPadding(new Insets(0, 0, Math.max(0, safeAreaBottom - 5), 0));
-        }, WebFxKitLauncher.safeAreaInsetsProperty());
+        if (mobileLayout) {
+            collapsePane.setEffect(new DropShadow());
+            collapsePane.setClipEnabled(false);
+            collapsePane.collapsedProperty().bind(FXCollapseFooter.collapseFooterProperty());
+            // Considering the bottom of the safe area, in particular for OS like iPadOS with a bar at the bottom
+            FXProperties.runNowAndOnPropertyChange(sai -> {
+                double safeAreaBottom = sai.getBottom();
+                // we already have a 5px padding for the buttons
+                collapsePane.setPadding(new Insets(0, 0, Math.max(0, safeAreaBottom - 5), 0));
+            }, WebFxKitLauncher.safeAreaInsetsProperty());
+        }
         return collapsePane;
     }
 
-    private Button createRouteButton(Action routeAction) {
+    private Button createRouteButton(Action routeAction, boolean mobileLayout) {
         Button button = new Button();
         ActionBinder.bindButtonToAction(button, routeAction);
         // Route buttons should never be disabled, because even if the route is not authorized, users should be able to
@@ -244,16 +318,29 @@ public final class ModalityFrontOfficeMainFrameActivity extends ModalityClientMa
         button.setContentDisplay(ContentDisplay.TOP);
         button.setGraphicTextGap(0);
         // Temporarily hardcoded style. TODO: move to CSS
-        button.setTextFill(Color.web("#838788")); // Same color as SVG
+        if (!mobileLayout)
+            button.setTextFill(Color.BLACK);
         button.setBackground(Background.fill(Color.WHITE));
-        button.setFont(Font.font("Montserrat", FontWeight.BOLD, 6));
-        button.setStyle("-fx-font-family: Montserrat; -fx-font-weight: bold; -fx-font-size: 6px; -fx-background-color: white; -fx-background-radius: 0");
+        FXProperties.runNowAndOnPropertyChange(graphic -> {
+            if (graphic instanceof SVGPath) {
+                SVGPath svgPath = (SVGPath) graphic;
+                boolean hasStroke = svgPath.getStroke() != null;
+                ObjectProperty<Paint> svgColorProperty = hasStroke ? svgPath.strokeProperty() : svgPath.fillProperty();
+                if (mobileLayout) {
+                    button.textFillProperty().bind(svgColorProperty);
+                } else
+                    svgColorProperty.bind(button.textFillProperty());
+            }
+        }, button.graphicProperty());
+        int fontSize = mobileLayout ? 6 : 13;
+        button.setFont(Font.font("Montserrat", FontWeight.BOLD, fontSize));
+        button.setStyle("-fx-font-family: Montserrat; -fx-font-weight: bold; -fx-font-size: " + (fontSize) + "px; -fx-background-color: white; -fx-background-radius: 0");
         button.setPadding(new Insets(5));
         return button;
     }
 
     private static ScalePane scaleButton(Button button) {
-        ScalePane scalePane = new ScalePane(button);
+        ScalePane scalePane = new ScalePane(ScaleMode.FIT_HEIGHT, button);
         scalePane.setStretchWidth(true);
         scalePane.setStretchHeight(true);
         scalePane.managedProperty().bind(button.managedProperty()); // Should it be in MonoPane?

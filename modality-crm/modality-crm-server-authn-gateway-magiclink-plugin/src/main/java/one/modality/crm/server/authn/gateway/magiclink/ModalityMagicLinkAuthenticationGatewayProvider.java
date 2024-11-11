@@ -4,6 +4,7 @@ import dev.webfx.platform.async.Future;
 import dev.webfx.platform.async.Promise;
 import dev.webfx.platform.console.Console;
 import dev.webfx.platform.util.Strings;
+import dev.webfx.platform.util.collection.Collections;
 import dev.webfx.platform.util.uuid.Uuid;
 import dev.webfx.stack.authn.*;
 import dev.webfx.stack.authn.logout.server.LogoutPush;
@@ -52,34 +53,68 @@ public class ModalityMagicLinkAuthenticationGatewayProvider implements ServerAut
 
     @Override
     public boolean acceptsUserCredentials(Object userCredentials) {
-        return userCredentials instanceof MagicLinkRequest || userCredentials instanceof MagicLinkCredentials;
+        return userCredentials instanceof MagicLinkRequest
+               || userCredentials instanceof MagicLinkCredentials
+               || userCredentials instanceof MagicLinkRenewalRequest
+            ;
     }
 
     @Override
     public Future<?> authenticate(Object userCredentials) {
         if (userCredentials instanceof MagicLinkRequest)
             return createAndSendMagicLink((MagicLinkRequest) userCredentials);
+        if (userCredentials instanceof MagicLinkRenewalRequest)
+            return renewAndSendMagicLink((MagicLinkRenewalRequest) userCredentials);
         if (userCredentials instanceof MagicLinkCredentials)
             return authenticateWithMagicLink((MagicLinkCredentials) userCredentials);
         return Future.failedFuture(getClass().getSimpleName() + ".authenticate() requires a " + MagicLinkRequest.class.getSimpleName() + " or " + MagicLinkCredentials.class.getSimpleName() + " argument");
     }
 
     private Future<Void> createAndSendMagicLink(MagicLinkRequest request) {
-        String loginRunId = ThreadLocalStateHolder.getRunId();
-        UpdateStore updateStore = UpdateStore.create(dataSourceModel);
-        MagicLink magicLink = updateStore.insertEntity(MagicLink.class);
-        magicLink.setLoginRunId(loginRunId);
         String token = Uuid.randomUuid();
-        magicLink.setToken(token);
         String lang = Strings.toSafeString(request.getLanguage());
-        magicLink.setLang(lang);
         String link = request.getClientOrigin() + MAGIC_LINK_APP_ROUTE.replace(":token", token).replace(":lang", lang);
         if (link.startsWith(":")) // temporary workaround for requests coming from desktops & mobiles
             link = "http" + link;
+        return storeAndSendMagicLink(
+            ThreadLocalStateHolder.getRunId(), // runId = this runId (runId of the session where the request originates)
+            token, // token = new token
+            lang, // lang
+            link, // client origin
+            request.getEmail(),
+            request.getContext()
+        );
+    }
+
+    private Future<Void> renewAndSendMagicLink(MagicLinkRenewalRequest request) {
+        String token = request.getPreviousToken();
+        return EntityStore.create(dataSourceModel)
+            .<MagicLink>executeQuery("select loginRunId, token, lang, link, email from MagicLink where token=?", token)
+            .map(Collections::first)
+            .compose(magicLink -> {
+                if (magicLink == null)
+                    return Future.failedFuture("Token not found");
+                return storeAndSendMagicLink(
+                    magicLink.getLoginRunId(),
+                    token,
+                    magicLink.getLang(),
+                    magicLink.getLink(),
+                    magicLink.getEmail(),
+                    null
+                );
+            });
+    }
+
+    private Future<Void> storeAndSendMagicLink(String loginRunId, String token, String lang, String link, String email, Object context) {
+        UpdateStore updateStore = UpdateStore.create(dataSourceModel);
+        MagicLink magicLink = updateStore.insertEntity(MagicLink.class);
+        magicLink.setLoginRunId(loginRunId);
+        magicLink.setToken(token);
+        magicLink.setLang(lang);
         magicLink.setLink(link);
-        magicLink.setEmail(request.getEmail());
-        ModalityContext modalityContext = request.getContext() instanceof ModalityContext ? (ModalityContext) request.getContext()
-            : new ModalityContext(1 /* default organizationId if no context is provider */, null, null, null);
+        magicLink.setEmail(email);
+        ModalityContext modalityContext = context instanceof ModalityContext ? (ModalityContext) context
+            : new ModalityContext(1 /* default organizationId if no context is provided */, null, null, null);
         return updateStore.submitChanges()
             .compose(ignoredBatch -> {
                 modalityContext.setMagicLinkId(magicLink.getPrimaryKey());

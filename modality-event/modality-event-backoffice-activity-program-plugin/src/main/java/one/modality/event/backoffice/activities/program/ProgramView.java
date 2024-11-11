@@ -127,9 +127,9 @@ final class ProgramView extends ModalitySlaveEditor<Event> {
 
         // Building the event state line
         Label eventStateLabel = Bootstrap.h4(Bootstrap.textSecondary(new Label()));
-        FXProperties.runNowAndOnPropertiesChange(() ->
-            I18nControls.bindI18nProperties(eventStateLabel, programGeneratedProperty.get() ? ProgramI18nKeys.ScheduledItemsAlreadyGenerated : ProgramI18nKeys.ScheduledItemsNotYetGenerated)
-        , programGeneratedProperty);
+        FXProperties.runNowAndOnPropertyChange(programGenerated ->
+            I18nControls.bindI18nProperties(eventStateLabel, programGenerated ? ProgramI18nKeys.ScheduledItemsAlreadyGenerated : ProgramI18nKeys.ScheduledItemsNotYetGenerated), programGeneratedProperty
+        );
 
         HBox eventStateLine = new HBox(eventStateLabel);
         eventStateLine.setAlignment(Pos.CENTER);
