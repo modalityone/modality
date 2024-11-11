@@ -30,7 +30,7 @@ final class OrangeFrame {
                 bottom
         );
 
-        orangeFrame.setBackground(Background.fill(StyleUtility.MAIN_ORANGE_COLOR));
+        orangeFrame.setBackground(Background.fill(StyleUtility.MAIN_BRAND_COLOR));
         orangeFrame.setAlignment(Pos.CENTER);
 
         FXProperties.runOnDoublePropertyChange(width -> {

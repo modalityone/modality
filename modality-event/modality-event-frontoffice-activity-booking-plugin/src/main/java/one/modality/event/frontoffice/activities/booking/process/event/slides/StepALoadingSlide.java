@@ -28,7 +28,7 @@ final class StepALoadingSlide extends StepSlide {
         GoldenRatioPane goldenRatioPane = new GoldenRatioPane(svgPath);
         VBox.setVgrow(goldenRatioPane, Priority.ALWAYS);
         mainVbox.getChildren().setAll(goldenRatioPane);
-        mainVbox.setBackground(Background.fill(StyleUtility.MAIN_ORANGE_COLOR));
+        mainVbox.setBackground(Background.fill(StyleUtility.MAIN_BRAND_COLOR));
         mainVbox.setPadding(Insets.EMPTY); // Removing extra bottom padding
     }
 }

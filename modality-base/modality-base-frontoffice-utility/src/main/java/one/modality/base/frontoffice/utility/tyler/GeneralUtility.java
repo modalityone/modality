@@ -91,7 +91,7 @@ public class GeneralUtility {
         Rectangle b = createCheckBoxRaw();
 
         FXProperties.runNowAndOnPropertyChange(value ->
-            b.setFill((isReverse != value) ? StyleUtility.MAIN_ORANGE_COLOR : Color.WHITE)
+            b.setFill((isReverse != value) ? StyleUtility.MAIN_BRAND_COLOR : Color.WHITE)
         , property);
 
         if (!isDisabled) b.setOnMouseClicked(e -> property.set(isRadio ? !isReverse : !property.get()));
@@ -103,7 +103,7 @@ public class GeneralUtility {
         Rectangle b = createCheckBoxRaw();
 
         FXProperties.runNowAndOnPropertyChange(value ->
-                b.setFill(Objects.equals(value, label) ? StyleUtility.MAIN_ORANGE_COLOR : Color.WHITE)
+                b.setFill(Objects.equals(value, label) ? StyleUtility.MAIN_BRAND_COLOR : Color.WHITE)
             , selectedProperty);
 
         b.setOnMouseClicked(e -> { selectedProperty.set(selectedProperty.get().equals(label) ? "" : label); });
@@ -220,7 +220,7 @@ public class GeneralUtility {
 
     public static Region createOrangeLineSeparator() {
         Region line = new Region();
-        line.setBackground(Background.fill(StyleUtility.MAIN_ORANGE_COLOR));
+        line.setBackground(Background.fill(StyleUtility.MAIN_BRAND_COLOR));
         line.setMinHeight(1);
         line.setPrefWidth(Double.MAX_VALUE);
         return line;

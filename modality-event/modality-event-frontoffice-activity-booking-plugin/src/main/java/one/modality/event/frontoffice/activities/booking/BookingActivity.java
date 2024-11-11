@@ -59,7 +59,7 @@ final class BookingActivity extends ViewDomainActivityBase implements ButtonFact
 
     @Override
     public Node buildUi() {
-        Label headerLabel = GeneralUtility.createLabel(BookingI18nKeys.eventsHeader, StyleUtility.MAIN_ORANGE_COLOR);
+        Label headerLabel = GeneralUtility.createLabel(BookingI18nKeys.eventsHeader, StyleUtility.MAIN_BRAND_COLOR);
         headerLabel.setTextAlignment(TextAlignment.CENTER);
 
         String headerImageUrl = SourcesConfig.getSourcesRootConfig().childConfigAt("modality.event.frontoffice.activity.booking").getString("headerImageUrl");

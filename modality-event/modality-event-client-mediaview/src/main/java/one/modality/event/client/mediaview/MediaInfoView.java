@@ -61,7 +61,7 @@ public abstract class MediaInfoView {
     private Image image;
     private final Rectangle imageClip = new Rectangle();
     protected final Text dateText = TextUtility.createText(StyleUtility.ELEMENT_GRAY_COLOR);
-    protected final Label titleLabel = GeneralUtility.createLabel(StyleUtility.MAIN_ORANGE_COLOR);
+    protected final Label titleLabel = GeneralUtility.createLabel(StyleUtility.MAIN_BRAND_COLOR);
     private final Label excerptLabel = GeneralUtility.createLabel(Color.BLACK);
     protected final Pane playButton = MediaButtons.createPlayButton();
     protected final Pane pauseButton = MediaButtons.createPauseButton();
@@ -213,7 +213,7 @@ public abstract class MediaInfoView {
         isYoutubeVideo = !isAudio && (mediaInfo instanceof HasYoutubeVideoId && ((HasYoutubeVideoId) mediaInfo).getYoutubeVideoId() != null);
         isVideo = isWistiaVideo || isYoutubeVideo;
         isWideVideo = isVideo && mediaInfo.getExcerpt() == null;
-        titleLabel.setTextFill(isWideVideo ? StyleUtility.ELEMENT_GRAY_COLOR : StyleUtility.MAIN_ORANGE_COLOR);
+        titleLabel.setTextFill(isWideVideo ? StyleUtility.ELEMENT_GRAY_COLOR : StyleUtility.MAIN_BRAND_COLOR);
         // Updating all fields and UI from the podcast
         imageView.setPreserveRatio(true);
         imageView.setClip(isAudio ? imageClip : null);

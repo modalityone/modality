@@ -145,7 +145,7 @@ final class StepBBookEventSlide extends StepSlide {
 
         VBox orangePane = new VBox(gridPane); // For any reason, using MonoPane makes height grows when width grows
         orangePane.setAlignment(Pos.CENTER);
-        orangePane.setBackground(Background.fill(StyleUtility.MAIN_ORANGE_COLOR));
+        orangePane.setBackground(Background.fill(StyleUtility.MAIN_BRAND_COLOR));
         orangePane.setMaxWidth(Double.MAX_VALUE);
 
         Region digitsTransitionPane = digitsSlideController.getContainer();

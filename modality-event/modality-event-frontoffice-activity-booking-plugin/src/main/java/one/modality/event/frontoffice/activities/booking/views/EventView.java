@@ -31,7 +31,7 @@ public final class EventView {
 
     private final ImageView eventImageView = new ImageView();
     private final ScalePane eventImageScalePane = new ScalePane(eventImageView);
-    private final Label eventNameLabel = GeneralUtility.createLabel(StyleUtility.MAIN_ORANGE_COLOR);
+    private final Label eventNameLabel = GeneralUtility.createLabel(StyleUtility.MAIN_BRAND_COLOR);
     private final Label eventDescriptionLabel = GeneralUtility.createLabel(Color.BLACK);
     private final Text eventDateText = TextUtility.createText(Color.BLACK);
     private final Text eventCentreLocationText = TextUtility.createText(StyleUtility.ELEMENT_GRAY_COLOR);
