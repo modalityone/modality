@@ -34,7 +34,8 @@ import java.time.LocalDateTime;
  */
 public class ModalityMagicLinkAuthenticationGatewayProvider implements ServerAuthenticationGatewayProvider, HasDataSourceModel {
 
-    private static final String MAGIC_LINK_APP_ROUTE = "/magic-link/#/:lang/:token";
+    private static final String MAGIC_LINK_APP_ROUTE_PREFIX = "/magic-link/#/";
+    private static final String MAGIC_LINK_APP_ROUTE_FULL = MAGIC_LINK_APP_ROUTE_PREFIX + ":lang/:token";
 
     private final DataSourceModel dataSourceModel;
 
@@ -88,7 +89,7 @@ public class ModalityMagicLinkAuthenticationGatewayProvider implements ServerAut
                 if (magicLink == null)
                     return Future.failedFuture("Magic link token not found");
                 String link = magicLink.getLink();
-                String clientOrigin = link.substring(0, link.indexOf(MAGIC_LINK_APP_ROUTE));
+                String clientOrigin = link.substring(0, link.indexOf(MAGIC_LINK_APP_ROUTE_PREFIX));
                 return storeAndSendMagicLink(
                     magicLink.getLoginRunId(),
                     magicLink.getLang(),
@@ -101,7 +102,7 @@ public class ModalityMagicLinkAuthenticationGatewayProvider implements ServerAut
 
     private Future<Void> storeAndSendMagicLink(String loginRunId, String lang, String clientOrigin, String email, Object context) {
         String token = Uuid.randomUuid();
-        String link = clientOrigin + MAGIC_LINK_APP_ROUTE.replace(":token", token).replace(":lang", lang);
+        String link = clientOrigin + MAGIC_LINK_APP_ROUTE_FULL.replace(":token", token).replace(":lang", lang);
         UpdateStore updateStore = UpdateStore.create(dataSourceModel);
         MagicLink magicLink = updateStore.insertEntity(MagicLink.class);
         magicLink.setLoginRunId(loginRunId);
