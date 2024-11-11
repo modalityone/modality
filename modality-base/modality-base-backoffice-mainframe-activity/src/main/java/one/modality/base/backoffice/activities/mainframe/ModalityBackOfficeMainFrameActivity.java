@@ -10,6 +10,7 @@ import dev.webfx.extras.util.control.ControlUtil;
 import dev.webfx.extras.util.layout.LayoutUtil;
 import dev.webfx.kit.launcher.WebFxKitLauncher;
 import dev.webfx.kit.util.properties.FXProperties;
+import dev.webfx.kit.util.properties.ObservableLists;
 import dev.webfx.platform.conf.SourcesConfig;
 import dev.webfx.platform.resource.Resource;
 import dev.webfx.platform.scheduler.Scheduled;
@@ -23,7 +24,6 @@ import dev.webfx.stack.com.bus.spi.impl.client.NetworkBus;
 import dev.webfx.stack.i18n.I18n;
 import dev.webfx.stack.session.state.client.fx.FXConnected;
 import javafx.animation.Timeline;
-import javafx.beans.InvalidationListener;
 import javafx.collections.ListChangeListener;
 import javafx.collections.ObservableList;
 import javafx.geometry.HPos;
@@ -207,7 +207,7 @@ public final class ModalityBackOfficeMainFrameActivity extends ModalityClientMai
             dialogArea = (Pane) properties.get(arbitraryKey);
             if (dialogArea == null) {
                 properties.put(arbitraryKey, dialogArea = new Pane());
-                dialogArea.getChildren().addListener((InvalidationListener) observable -> showHideDialogArea());
+                ObservableLists.runOnListChange(this::showHideDialogArea, dialogArea.getChildren());
             } else
                 showHideDialogArea();
         }
