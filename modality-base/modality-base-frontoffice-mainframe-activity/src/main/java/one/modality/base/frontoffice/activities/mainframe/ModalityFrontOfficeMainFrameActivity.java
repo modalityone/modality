@@ -93,7 +93,6 @@ public final class ModalityFrontOfficeMainFrameActivity extends ModalityClientMa
                 } else if (insideButtonBar != null) {
                     Point2D p = insideButtonBar.localToScene(0, 0);
                     layoutInArea(overlayWebMenuBar, p.getX(), 0, insideButtonBar.getWidth(), insideButtonBar.getHeight());
-                    headerHeight = 0;
                 }
                 double mountNodeY = headerHeight;
                 double mountNodeHeight = height - headerHeight - footerHeight;
@@ -144,9 +143,6 @@ public final class ModalityFrontOfficeMainFrameActivity extends ModalityClientMa
         // Reacting to the mount node changes:
         FXProperties.runNowAndOnPropertyChange(mountNode -> {
             // Updating the mount node container with the new mount node
-            if (mountNode instanceof Region) {
-                ((Region) mountNode).minHeightProperty().bind(mountTransitionPane.heightProperty());
-            }
             UiRouter uiRouter = getUiRouter();
             mountTransitionPane.setReverse(uiRouter.getHistory().isGoingBackward());
             ScrollPane scrollPane = mountNode == null ? null : (ScrollPane) mountNode.getProperties().get("embedding-scrollpane");
@@ -154,6 +150,11 @@ public final class ModalityFrontOfficeMainFrameActivity extends ModalityClientMa
                 CollapsePane topButtonBar = createRouteButtonBar(false);
                 VBox vBox = new VBox(topButtonBar, mountNode);
                 vBox.setMaxWidth(MAX_PAGE_WIDTH);
+                if (mountNode instanceof Region) {
+                    FXProperties.runOnPropertiesChange(() -> {
+                        ((Region) mountNode).setMinHeight(mountTransitionPane.getMinHeight() - topButtonBar.getHeight());
+                    }, mountTransitionPane.minHeightProperty(), topButtonBar.heightProperty());
+                }
                 BorderPane borderPane = new BorderPane(vBox);
                 ScrollPane finalScrollPane = scrollPane = ControlUtil.createVerticalScrollPane(borderPane);
                 mountNode.getProperties().put("embedding-scrollpane", scrollPane);
