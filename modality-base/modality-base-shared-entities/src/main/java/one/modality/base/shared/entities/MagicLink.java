@@ -73,4 +73,12 @@ public interface MagicLink extends Entity {
         return getStringFieldValue("link");
     }
 
+    default void setRequestedPath(String requestedPath) {
+        setFieldValue("requestedPath", requestedPath);
+    }
+
+    default String getRequestedPath() {
+        return getStringFieldValue("requestedPath");
+    }
+
 }
