@@ -24,6 +24,7 @@
         <module>modality-crm-backoffice-operations-mail</module>
         <module>modality-crm-backoffice-organization-fx</module>
         <module>modality-crm-client-activity-login-plugin</module>
+        <module>modality-crm-client-activity-magiclink-plugin</module>
         <module>modality-crm-client-activity-unauthorized-plugin</module>
         <module>modality-crm-client-authn-fx</module>
         <module>modality-crm-client-authn-login-ui-gateway-signup-plugin</module>
