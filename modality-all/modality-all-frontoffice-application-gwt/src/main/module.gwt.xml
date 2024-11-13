@@ -100,6 +100,10 @@
     <source path="one/modality/base/client/application"/>
     <resource path="dev/webfx/kit/css/fonts/montserrat"/>
     <public path="" includes="dev/webfx/kit/css/fonts/montserrat/"/>
+    <resource path="dev/webfx/kit/css/fonts/poppins"/>
+    <public path="" includes="dev/webfx/kit/css/fonts/poppins/"/>
+    <resource path="dev/webfx/kit/css/fonts/roboto"/>
+    <public path="" includes="dev/webfx/kit/css/fonts/roboto/"/>
     <resource path="images/buddhas"/>
     <public path="" includes="images/buddhas/"/>
     <resource path="one/modality/base/client/images"/>

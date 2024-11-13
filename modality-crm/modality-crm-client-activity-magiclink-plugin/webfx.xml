@@ -15,6 +15,6 @@
         <provider interface="dev.webfx.stack.routing.uirouter.operations.RouteRequestEmitter">one.modality.crm.activities.magiclink.MagicLinkRouting$RouteToMagicLinkRequestEmitter</provider>
     </providers>
 
-    <i18n javaKeysClass="one.modality.crm.magiclink.activity.MagicLinkI18nKeys"/>
+    <i18n javaKeysClass="one.modality.crm.activities.magiclink.MagicLinkI18nKeys"/>
 
 </project>

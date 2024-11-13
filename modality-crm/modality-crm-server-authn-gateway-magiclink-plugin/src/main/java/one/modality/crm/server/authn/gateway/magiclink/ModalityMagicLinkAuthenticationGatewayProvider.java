@@ -90,7 +90,7 @@ public class ModalityMagicLinkAuthenticationGatewayProvider implements ServerAut
 
     private Future<Void> renewAndSendMagicLink(MagicLinkRenewalRequest request) {
         return EntityStore.create(dataSourceModel)
-            .<MagicLink>executeQuery("select loginRunId, lang, link, email, successUrl from MagicLink where token=? order by id desc limit 1", request.getPreviousToken())
+            .<MagicLink>executeQuery("select loginRunId, lang, link, email, requestedPath from MagicLink where token=? order by id desc limit 1", request.getPreviousToken())
             .map(Collections::first)
             .compose(magicLink -> {
                 if (magicLink == null)

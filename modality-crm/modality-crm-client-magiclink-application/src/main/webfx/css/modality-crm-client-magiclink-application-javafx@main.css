@@ -1,0 +1,7 @@
+.login {
+    -fx-background-color: rgba(255, 255, 255, 0.7); /* White with 20% transparency */
+    -fx-background-radius: 20px;
+    -fx-border-color: lightgray;
+    -fx-border-radius: 20px;
+    -fx-effect: dropshadow(gaussian, lightgray, 10, 0, 0, 0)
+}

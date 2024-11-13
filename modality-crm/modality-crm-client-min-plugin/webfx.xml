@@ -10,6 +10,7 @@
         <used-by-source-modules/>
 
         <plugin-module>modality-crm-client-i18n</plugin-module>
+        <plugin-module>modality-base-client-bootstrap</plugin-module>
 
         <plugin-module>modality-crm-client-authz-required-plugin</plugin-module>
         <plugin-module>modality-crm-client-activity-unauthorized-plugin</plugin-module>

@@ -9,6 +9,7 @@
     <dependencies>
         <used-by-source-modules/>
         <plugin-module>webfx-platform-substitution-var-windowlocation-plugin</plugin-module>
+        <plugin-module>modality-base-client-bootstrap</plugin-module>
     </dependencies>
 
     <providers>
