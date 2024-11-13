@@ -5,16 +5,16 @@ module modality.crm.client.magiclink.application {
     // Direct dependencies modules
     requires javafx.controls;
     requires javafx.graphics;
-    requires modality.base.client.i18n;
+    requires modality.base.client.bootstrap;
     requires modality.base.client.icons;
     requires webfx.extras.panes;
     requires webfx.extras.styles.bootstrap;
     requires webfx.extras.webtext;
+    requires webfx.platform.conf;
     requires webfx.platform.console;
     requires webfx.platform.uischeduler;
     requires webfx.platform.windowlocation;
     requires webfx.stack.authn;
-    requires webfx.stack.authn.login.ui;
     requires webfx.stack.authn.login.ui.gateway.password.plugin;
     requires webfx.stack.i18n;
     requires webfx.stack.i18n.controls;

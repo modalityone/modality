@@ -25,6 +25,51 @@
     src: url('webfx-css:fonts/montserrat/Montserrat-BoldItalic.ttf');
 }
 
+@font-face {
+    font-family: 'Poppins';
+    font-weight: bold;
+    src: url('webfx-css:fonts/poppins/Poppins-Bold.otf');
+}
+
+@font-face {
+    font-family: 'Poppins';
+    font-style: italic;
+    src: url('webfx-css:fonts/poppins/Poppins-Italic.otf');
+}
+
+@font-face {
+    font-family: 'Poppins';
+    font-weight: bold;
+    font-style: italic;
+    src: url('webfx-css:fonts/poppins/Poppins-BoldItalic.otf');
+}
+
+@font-face {
+    font-family: 'Roboto';
+    font-weight: bold;
+    src: url('webfx-css:fonts/roboto/Roboto-Bold.ttf');
+}
+
+@font-face {
+    font-family: 'Roboto';
+    font-style: italic;
+    src: url('webfx-css:fonts/roboto/Roboto-Italic.ttf');
+}
+
+@font-face {
+    font-family: 'Roboto';
+    font-style: light;
+    src: url('webfx-css:fonts/roboto/Roboto-Light.ttf');
+}
+
+@font-face {
+    font-family: 'Roboto';
+    font-weight: bold;
+    font-style: italic;
+    src: url('webfx-css:fonts/roboto/Roboto-BoldItalic.ttf');
+}
+
+
 
 /*===== webfx-extras-bootstrap-javafx@main.css from webfx-extras-styles-bootstrap =====*/
 
@@ -117,6 +162,14 @@
     -fx-border-color: -bootstrap-blue6;
 }
 
+.btn-primary .svg-path {
+    -fx-fill: inherit;  /* Inherit the fill color from the parent (btn-primary) */
+}
+
+.btn-primary .progress-indicator {
+    -fx-accent: -bootstrap-white;
+}
+
 .btn-primary:hover {
     -fx-text-fill: -bootstrap-white;
     -fx-fill: -bootstrap-white;
@@ -129,6 +182,13 @@
     -fx-fill: -bootstrap-white;
     -fx-background-color: -bootstrap-grey4;
     -fx-border-color: -bootstrap-grey5;
+}
+.btn-secondary .svg-path {
+    -fx-fill: inherit;  /* Inherit the fill color from the parent (btn-primary) */
+}
+
+.btn-secondary .progress-indicator {
+    -fx-accent: -bootstrap-white;
 }
 
 .btn-secondary:hover {
@@ -145,6 +205,14 @@
     -fx-border-color: -bootstrap-green2;
 }
 
+.btn-success .svg-path {
+    -fx-fill: inherit;  /* Inherit the fill color from the parent (btn-primary) */
+}
+
+.btn-success .progress-indicator {
+    -fx-accent: -bootstrap-white;
+}
+
 .btn-success:hover {
     -fx-text-fill: -bootstrap-white;
     -fx-fill: -bootstrap-white;
@@ -157,6 +225,14 @@
     -fx-fill: -bootstrap-white;
     -fx-background-color: -bootstrap-blue1;
     -fx-border-color: -bootstrap-blue2;
+}
+
+.btn-info .progress-indicator {
+    -fx-accent: -bootstrap-white;
+}
+
+.btn-info .svg-path {
+    -fx-fill: inherit;  /* Inherit the fill color from the parent (btn-primary) */
 }
 
 .btn-info:hover {
@@ -173,6 +249,15 @@
     -fx-border-color: -bootstrap-orange2;
 }
 
+.btn-warning .svg-path {
+    -fx-fill: inherit;  /* Inherit the fill color from the parent (btn-primary) */
+}
+
+.btn-warning .progress-indicator {
+    -fx-accent: -bootstrap-white;
+}
+
+
 .btn-warning:hover {
     -fx-text-fill: -bootstrap-white;
     -fx-fill: -bootstrap-white;
@@ -186,6 +271,14 @@
     -fx-fill: -bootstrap-white;
     -fx-background-color: -bootstrap-red1;
     -fx-border-color: -bootstrap-red2;
+}
+
+.btn-danger .svg-path {
+    -fx-fill: inherit;  /* Inherit the fill color from the parent (btn-primary) */
+}
+
+.btn-danger .progress-indicator {
+    -fx-accent: -bootstrap-white;
 }
 
 .btn-danger:hover {
@@ -423,29 +516,6 @@ HtmlText, HtmlTextEditor {
 
 /*===== webfx-stack-authn-login-ui-portal-javafx@main.css from webfx-stack-authn-login-ui-portal =====*/
 
-
-.login {
-    -fx-font-size: 18px;
-}
-
-.login Button {
-    -fx-background-color: #0096D6FF;
-    -fx-background-radius: 10px;
-    -fx-text-fill: white;
-    -fx-curson: hand;
-}
-
-.login Button SVGPath {
-    -fx-fill: white;
-}
-
-.login .or {
-    -fx-fill: #888;
-}
-
-.login .line {
-    -fx-background-color: lightgray;
-}
 
 .login .background {
     -fx-background-color: white;

@@ -2,33 +2,47 @@ package one.modality.crm.magiclink.application;
 
 import dev.webfx.extras.panes.ScalePane;
 import dev.webfx.extras.styles.bootstrap.Bootstrap;
+import dev.webfx.extras.webtext.HtmlText;
+import dev.webfx.platform.conf.SourcesConfig;
 import dev.webfx.platform.console.Console;
 import dev.webfx.platform.uischeduler.UiScheduler;
 import dev.webfx.platform.windowlocation.WindowLocation;
 import dev.webfx.stack.authn.*;
-import dev.webfx.stack.authn.login.ui.FXLoginContext;
 import dev.webfx.stack.authn.login.ui.spi.impl.gateway.password.PasswordI18nKeys;
 import dev.webfx.stack.i18n.I18n;
 import dev.webfx.stack.i18n.controls.I18nControls;
 import dev.webfx.stack.ui.operation.OperationUtil;
 import javafx.application.Application;
+import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
+import javafx.scene.control.Hyperlink;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
-import javafx.scene.layout.BorderPane;
-import javafx.scene.layout.VBox;
+import javafx.scene.image.Image;
+import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.SVGPath;
 import javafx.scene.text.Text;
+import javafx.scene.text.TextAlignment;
 import javafx.stage.Stage;
+import one.modality.base.client.bootstrap.ModalityStyle;
 import one.modality.base.client.icons.SvgIcons;
 
+
 public class MagicLinkApplication extends Application implements dev.webfx.stack.ui.controls.MaterialFactoryMixin {
+
     private String token;
-    private final VBox content = new VBox(20);
     private Stage stage;
+    private Label loginTitleLabel;
+    private Label successMessageLabel;
+    private TextField textField;
+    private Label infoMessageForTextFieldLabel;
+    private Hyperlink hyperlink;
+    private Button actionButton;
+    private VBox mainVBox;
+    private ScalePane checkMarkForActionButtonScalePane;
 
     @Override
     public void init() {
@@ -43,7 +57,7 @@ public class MagicLinkApplication extends Application implements dev.webfx.stack
     }
 
     private void readTokenAndSetLanguage() {
-        String hash = "/en/b2e6b8bd-db9e-bf89-c8e8-8b73fb3d48ec";//WindowLocation.getHash();
+        String hash = "/en/2a9713db-fdad-ab95-2dfc-b29d8106725c";//WindowLocation.getHash();
         String route = hash != null ? hash : WindowLocation.getPath();
         if (route != null) {
             int tokenSlashIndex = route.lastIndexOf('/');
@@ -59,126 +73,177 @@ public class MagicLinkApplication extends Application implements dev.webfx.stack
     }
 
     private void onSuccess() {
-        Label titleLabel = Bootstrap.textPrimary(I18nControls.newLabel(MagicLinkI18nKeys.Recovery));
-        titleLabel.getStyleClass().add(Bootstrap.H2);
-        Label message = new Label();
-        message.setPrefWidth(300);
-        Label successMessage = Bootstrap.textSuccess(I18nControls.newLabel(MagicLinkI18nKeys.PasswordChanged));
-        successMessage.setManaged(false);
-        successMessage.setGraphic(SvgIcons.createCheckMarkSVGPath());
-
-        Label errorMessage = Bootstrap.textDanger(I18nControls.newLabel(MagicLinkI18nKeys.ErrorWhileUpdatingPassword));
-        errorMessage.setManaged(false);
-
-        message.setWrapText(true);
-        I18n.bindI18nTextProperty(message.textProperty(), MagicLinkI18nKeys.MagicLinkSuccessMessage);
-        TextField passwordField = newMaterialTextField(MagicLinkI18nKeys.NewPassword);
-        passwordField.setMaxWidth(300);
-        Button confirmButton = Bootstrap.largePrimaryButton(I18nControls.newButton(MagicLinkI18nKeys.ConfirmChange));
-        confirmButton.setOnAction(l -> {
-            AuthenticationService.updateCredentials(new MagicLinkPasswordUpdate(passwordField.getText()))
+        I18n.bindI18nTextProperty(loginTitleLabel.textProperty(), MagicLinkI18nKeys.Recovery);
+        I18n.bindI18nTextProperty(successMessageLabel.textProperty(), MagicLinkI18nKeys.ChangeYourPassword);
+        I18n.bindI18nTextProperty(actionButton.textProperty(),MagicLinkI18nKeys.ConfirmChange);
+        //TODO: for some reason the bold doesn't work
+        successMessageLabel.getStyleClass().setAll(Bootstrap.STRONG);
+        infoMessageForTextFieldLabel.setVisible(false);
+        actionButton.setGraphic(null);
+        actionButton.setOnAction(l -> {
+            AuthenticationService.updateCredentials(new MagicLinkPasswordUpdate(textField.getText()))
                 .onFailure(e -> {
                     Console.log("Error Updating password: " + e);
-                    errorMessage.setManaged(true);
+                    //           errorMessage.setManaged(true);
                 })
                 .onSuccess(ignored -> {
                     Console.log("Password Updated");
-                    successMessage.setManaged(true);
+                    //            successMessage.setManaged(true);
                 });
         });
-        content.getChildren().setAll(titleLabel,message, successMessage,passwordField, confirmButton);
     }
 
     private void onFailure(Throwable e) {
         String technicalMessage = e.getMessage();
         Console.log("Technical error: " + technicalMessage);
-        Object i18nTitleKey = MagicLinkI18nKeys.MagicLinkUnexpectedError;
-        Label titleLabel = Bootstrap.textPrimary(new Label());
-        titleLabel.getStyleClass().add(Bootstrap.H2);
-
-        Label message = new Label();
-
-        message.setMaxWidth(300);
-        message.setWrapText(true);
-        Object i18nMessageKey = MagicLinkI18nKeys.MagicLinkUnexpectedError;
 
         if (technicalMessage != null) {
             //The error Message are defined in ModalityMagicLinkAuthenticationGatewayProvider
             if (technicalMessage.contains("not found")) {
-                message.setWrapText(true);
-                i18nTitleKey = MagicLinkI18nKeys.MagicLinkUnrecognisedErrorTitle;
-                i18nMessageKey = MagicLinkI18nKeys.MagicLinkUnrecognisedError;
-                content.getChildren().addAll(titleLabel,message);
-            } else if (technicalMessage.contains("used")) {
-                TextField emailTexField = newMaterialTextField(PasswordI18nKeys.Email);
-                emailTexField.setMaxWidth(300);
-                message.setWrapText(true);
-                i18nTitleKey = MagicLinkI18nKeys.MagicLinkAlreadyUsedErrorTitle;
-                i18nMessageKey = MagicLinkI18nKeys.MagicLinkAlreadyUsedError;
-                Button sendLinkButton = createSendLinkButton(content,emailTexField,message);
-                content.getChildren().addAll(titleLabel,message,emailTexField,sendLinkButton);
-            } else if (technicalMessage.contains("expired")) {
-                TextField emailTexField = newMaterialTextField(PasswordI18nKeys.Email);
-                emailTexField.setMaxWidth(300);
-                i18nTitleKey = MagicLinkI18nKeys.MagicLinkExpiredErrorTitle;
-                i18nMessageKey = MagicLinkI18nKeys.MagicLinkExpiredError;
-                Button sendLinkButton = createSendLinkButton(content,emailTexField,message);
-                content.getChildren().addAll(titleLabel,message,emailTexField,sendLinkButton);
-            } if (technicalMessage.contains("address")) {
-                i18nTitleKey = MagicLinkI18nKeys.MagicLinkPushErrorTitle;
-                i18nMessageKey = MagicLinkI18nKeys.MagicLinkPushError;
-                content.getChildren().addAll(titleLabel,message);
+                I18n.bindI18nTextProperty(loginTitleLabel.textProperty(), MagicLinkI18nKeys.MagicLinkUnrecognisedErrorTitle);
+                I18n.bindI18nTextProperty(successMessageLabel.textProperty(), MagicLinkI18nKeys.MagicLinkUnexpectedError);
+            }
+            else if (technicalMessage.contains("used")) {
+                I18nControls.bindI18nProperties(loginTitleLabel, MagicLinkI18nKeys.MagicLinkAlreadyUsedErrorTitle);
+                I18nControls.bindI18nProperties(successMessageLabel, MagicLinkI18nKeys.MagicLinkAlreadyUsedError);
+                I18n.bindI18nTextProperty(actionButton.textProperty(),PasswordI18nKeys.SendLink);
+                //TODO: for some reason the bold doesn't work
+                successMessageLabel.getStyleClass().setAll(Bootstrap.STRONG);
+                infoMessageForTextFieldLabel.setVisible(false);
+                actionButton.setGraphic(null);
+                actionButton.setOnAction(event -> {
+                    Object credentials = new MagicLinkRenewalRequest(token);
+                    OperationUtil.turnOnButtonsWaitMode(actionButton);
+                    new AuthenticationRequest()
+                        .setUserCredentials(credentials)
+                        .executeAsync()
+                        .onComplete(ar -> UiScheduler.runInUiThread(() -> OperationUtil.turnOffButtonsWaitMode(actionButton)))
+                        .onFailure(failure->Console.log("Fail to renew Magik Link:" + failure.getMessage() ))
+                        .onSuccess(ignored -> UiScheduler.runInUiThread(() -> {
+                            actionButton.setGraphic(checkMarkForActionButtonScalePane);
+                            successMessageLabel.textProperty().unbind();
+                            successMessageLabel.getStyleClass().setAll(Bootstrap.TEXT_SUCCESS);
+                            successMessageLabel.setText(I18n.getI18nText(MagicLinkI18nKeys.MagicLinkSentCheckYourMailBox));
+                            actionButton.setDisable(true);
+                            textField.setDisable(true);
+                        }));
+                });
+            }
+            else if (technicalMessage.contains("expired")) {
+                I18n.bindI18nTextProperty(loginTitleLabel.textProperty(), MagicLinkI18nKeys.MagicLinkExpiredErrorTitle);
+                I18n.bindI18nTextProperty(successMessageLabel.textProperty(), MagicLinkI18nKeys.MagicLinkExpiredError);
+                I18n.bindI18nTextProperty(actionButton.textProperty(), PasswordI18nKeys.SendLink);
+                infoMessageForTextFieldLabel.setVisible(false);
+                actionButton.setGraphic(null);
+                actionButton.setOnAction(event -> {
+                    Object credentials = new MagicLinkRenewalRequest(token);
+                    OperationUtil.turnOnButtonsWaitMode(actionButton);
+                    new AuthenticationRequest()
+                        .setUserCredentials(credentials)
+                        .executeAsync()
+                        .onComplete(ar -> UiScheduler.runInUiThread(() -> OperationUtil.turnOffButtonsWaitMode(actionButton)))
+                        .onFailure(failure->Console.log("Fail to renew Magik Link:" + failure.getMessage() ))
+                        .onSuccess(ignored -> UiScheduler.runInUiThread(() -> {
+                            actionButton.setGraphic(checkMarkForActionButtonScalePane);
+                            successMessageLabel.textProperty().unbind();
+                            successMessageLabel.getStyleClass().setAll(Bootstrap.TEXT_SUCCESS);
+                            successMessageLabel.setText(I18n.getI18nText(MagicLinkI18nKeys.MagicLinkSentCheckYourMailBox));
+                            actionButton.setDisable(true);
+                            textField.setDisable(true);
+                            // content.getChildren().removeAll(emailTexField,sendLinkButton);
+                        }));
+                });
+            }
+            if (technicalMessage.contains("address")) {
+                I18n.bindI18nTextProperty(loginTitleLabel.textProperty(), MagicLinkI18nKeys.MagicLinkPushErrorTitle);
+                I18n.bindI18nTextProperty(successMessageLabel.textProperty(), MagicLinkI18nKeys.MagicLinkPushError);
             }
             if (technicalMessage.contains("closed")) {
-                i18nTitleKey = MagicLinkI18nKeys.MagicLinkBusClosedErrorTitle;
-                i18nMessageKey = MagicLinkI18nKeys.MagicLinkBusClosedError;
-                content.getChildren().addAll(titleLabel,message);
+                I18n.bindI18nTextProperty(loginTitleLabel.textProperty(), MagicLinkI18nKeys.MagicLinkBusClosedErrorTitle);
+                I18n.bindI18nTextProperty(successMessageLabel.textProperty(), MagicLinkI18nKeys.MagicLinkBusClosedError);
             }
-            I18n.bindI18nTextProperty(titleLabel.textProperty(), i18nTitleKey);
-            I18n.bindI18nTextProperty(message.textProperty(), i18nMessageKey);
         }
     }
 
     @Override
     public void start(Stage primaryStage) {
-        BorderPane loginWindow = new BorderPane();
-        content.getStyleClass().add("login");
-        loginWindow.setCenter(content);
-        content.setAlignment(Pos.CENTER);
-        content.setMaxWidth(500);
-        content.setMaxHeight(400);
+        BorderPane loginWindowBorderPane = new BorderPane();
+
+        String backgroundImageUrl = SourcesConfig.getSourcesRootConfig().childConfigAt("one.modality.crm.magiclink.application").getString("backgroundImageUrl");
+        Image backgroundImage = new Image(backgroundImageUrl);
+//        ScalePane headerImageScalePane = new ScalePane(headerImageView);
+        //headerImageScalePane.setMaxHeight(1024);
+        BackgroundImage background = new BackgroundImage(
+            backgroundImage,
+            BackgroundRepeat.NO_REPEAT,   // Repeat settings
+            BackgroundRepeat.NO_REPEAT,
+            BackgroundPosition.CENTER,    // Position of the image
+            BackgroundSize.DEFAULT        // Size settings
+        );
+        loginWindowBorderPane.setBackground(new Background(background));
+
+        HBox dharmaWheelAndTitleHbox = new HBox();
+        dharmaWheelAndTitleHbox.setAlignment(Pos.CENTER);
+        dharmaWheelAndTitleHbox.setSpacing(50);
+        SVGPath dharmaWheel = SvgIcons.createDharmaWheelSVGPath();
+        dharmaWheel.setFill(Color.web(ModalityStyle.primaryColor()));
+
+        HtmlText kadampaTitleHTMLText = ModalityStyle.h1Primary(new HtmlText());
+        I18n.bindI18nTextProperty(kadampaTitleHTMLText.textProperty(),PasswordI18nKeys.KadampaBookingSystem);
+        dharmaWheelAndTitleHbox.getChildren().addAll(dharmaWheel,kadampaTitleHTMLText);
+
+        VBox loginVBox = new VBox();
+        loginVBox.setAlignment(Pos.CENTER);
+        initialiseMainVBox(loginVBox);
+        loginVBox.getChildren().addAll(dharmaWheelAndTitleHbox,mainVBox);
+        loginVBox.setSpacing(60);
+
+        loginWindowBorderPane.setCenter(loginVBox);
+
         stage = primaryStage;
-        stage.setScene(new Scene(loginWindow, 800, 600));
+        stage.setScene(new Scene(loginWindowBorderPane, 1440, 1024));
         stage.show();
-
-
-
     }
 
-    private Button createSendLinkButton(VBox container,TextField emailTexField, Label message) {
-        Button sendLinkButton = Bootstrap.largePrimaryButton(I18nControls.newButton((PasswordI18nKeys.SendLink)));
+    private void initialiseMainVBox(VBox container) {
+        mainVBox = new VBox();
+        mainVBox.setMinWidth(container.getMinWidth());
+        mainVBox.getStyleClass().add("login");
+        mainVBox.setAlignment(Pos.TOP_CENTER);
+        mainVBox.setMaxWidth(586);
+        mainVBox.setMinHeight(506);
+
+        int vSpacing = 45;
+        loginTitleLabel = ModalityStyle.h2Primary(I18nControls.newLabel(MagicLinkI18nKeys.Recovery));
+        loginTitleLabel.setPadding(new Insets(vSpacing,0,0,0));
+
+        successMessageLabel = ModalityStyle.textSuccess(new Label("Success Message"));
+        successMessageLabel.setPadding(new Insets(vSpacing,0,0,0));
+        successMessageLabel.setVisible(true);
+        successMessageLabel.setTextAlignment(TextAlignment.CENTER);
+        successMessageLabel.setWrapText(true);
+
+        VBox textFieldAndMessageVbox = new VBox(10);
+        textField = newMaterialTextField(PasswordI18nKeys.Email);
+        VBox.setMargin(textField,new Insets(vSpacing,0,0,0));
+        textFieldAndMessageVbox.setMaxWidth(300);
+
+        infoMessageForTextFieldLabel = Bootstrap.small(new Label("Info message"));
+        infoMessageForTextFieldLabel.setVisible(true);
+        textFieldAndMessageVbox.getChildren().addAll(textField,infoMessageForTextFieldLabel);
+
+        hyperlink = new Hyperlink("hyperlink");
+        hyperlink.setVisible(true);
+        hyperlink.setPadding(new Insets(vSpacing+30,0,0,0));
+
+        actionButton = Bootstrap.largePrimaryButton(I18nControls.newButton(MagicLinkI18nKeys.ConfirmChange));
         SVGPath checkMark = SvgIcons.createCheckMarkSVGPath();
         checkMark.setFill(Color.WHITE);
-        ScalePane scalePane = new ScalePane(checkMark);
-        sendLinkButton.setGraphic(null);
-        sendLinkButton.setOnAction(event -> {
-            //if (validationSupport.isValid())
-            Object credentials = new MagicLinkRequest(emailTexField.getText(), WindowLocation.getOrigin(), I18n.getLanguage(), FXLoginContext.getLoginContext());
-            OperationUtil.turnOnButtonsWaitMode(sendLinkButton);
-            new AuthenticationRequest()
-                .setUserCredentials(credentials)
-                .executeAsync()
-                .onComplete(ar -> UiScheduler.runInUiThread(() -> OperationUtil.turnOffButtonsWaitMode(sendLinkButton)))
-                .onFailure(failure->Console.log("Failure"))
-                .onSuccess(ignored -> UiScheduler.runInUiThread(() -> {
-                    sendLinkButton.setGraphic(scalePane);
-                    message.textProperty().unbind();
-                    message.getStyleClass().add(Bootstrap.TEXT_SUCCESS);
-                    message.setText(I18n.getI18nText(MagicLinkI18nKeys.MagicLinkSentCheckYourMailBox));
-                    content.getChildren().removeAll(emailTexField,sendLinkButton);
-                }));
-        });
-        return sendLinkButton;
+        checkMarkForActionButtonScalePane = new ScalePane(checkMark);
+
+        VBox.setMargin(actionButton,new Insets(vSpacing-20,0,0,0));
+        mainVBox.getChildren().addAll(loginTitleLabel,successMessageLabel,textFieldAndMessageVbox,hyperlink,actionButton);
     }
+
 
 }

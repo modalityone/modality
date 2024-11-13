@@ -14,10 +14,10 @@
     --bootstrap-blue2: #46b8da ;
     --bootstrap-blue3: #31b0d5 ;
     --bootstrap-blue4: #269abc ;
-    --bootstrap-blue5: #337ab7 ;
-    --bootstrap-blue6: #2e6da4 ;
+    --bootstrap-blue5: #0096D6; /* New base blue */
+    --bootstrap-blue6: #0478e6;
     --bootstrap-blue7: #1b6d85 ;
-    --bootstrap-blue8: #286090 ;
+    --bootstrap-blue8: #0088d6 ;
     --bootstrap-blue9: #204d74 ;
     --bootstrap-blue10: #122b40 ;
     --bootstrap-blue11: #31708f ;
@@ -27,7 +27,7 @@
     --bootstrap-green3: #449d44 ;
     --bootstrap-green4: #398439 ;
     --bootstrap-green5: #255625 ;
-    --bootstrap-green6: #3c763d ;
+     -bootstrap-green6: #41BA4D ;
 
     --bootstrap-orange1: #f0ad4e ;
     --bootstrap-orange2: #eea236 ;
