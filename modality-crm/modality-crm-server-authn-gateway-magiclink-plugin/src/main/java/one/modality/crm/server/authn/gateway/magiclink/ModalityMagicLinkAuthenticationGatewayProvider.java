@@ -94,7 +94,7 @@ public class ModalityMagicLinkAuthenticationGatewayProvider implements ServerAut
                 if (magicLink == null)
                     return Future.failedFuture("Magic link token not found");
                 String link = magicLink.getLink();
-                String clientOrigin = link.substring(0, link.indexOf(MAGIC_LINK_ACTIVITY_PATH_PREFIX));
+                String clientOrigin = unhashPath(link.substring(0, link.indexOf(MAGIC_LINK_ACTIVITY_PATH_PREFIX)));
                 return storeAndSendMagicLink(
                     magicLink.getLoginRunId(),
                     magicLink.getLang(),
