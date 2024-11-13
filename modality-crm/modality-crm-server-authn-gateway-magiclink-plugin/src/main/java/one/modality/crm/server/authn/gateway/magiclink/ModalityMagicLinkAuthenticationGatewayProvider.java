@@ -29,6 +29,7 @@ import one.modality.crm.shared.services.authn.ModalityUserPrincipal;
 import java.time.Clock;
 import java.time.Duration;
 import java.time.LocalDateTime;
+import java.util.Objects;
 
 /**
  * @author Bruno Salmon
@@ -39,7 +40,8 @@ public class ModalityMagicLinkAuthenticationGatewayProvider implements ServerAut
     private static final Duration LINK_EXPIRATION_DURATION = Duration.ofMinutes(10);
 
     private static final String MAGIC_LINK_ACTIVITY_PATH_PREFIX = "/magic-link";
-    private static final String MAGIC_LINK_ACTIVITY_PATH_FULL = MAGIC_LINK_ACTIVITY_PATH_PREFIX + "/:token"; //  + "/#/:lang/:token";
+    private static final String MAGIC_LINK_ACTIVITY_PATH_FULL = MAGIC_LINK_ACTIVITY_PATH_PREFIX + "/:token";
+    private static final String HASH_PATH = "/#";
 
     private final DataSourceModel dataSourceModel;
 
@@ -94,7 +96,7 @@ public class ModalityMagicLinkAuthenticationGatewayProvider implements ServerAut
                 if (magicLink == null)
                     return Future.failedFuture("Magic link token not found");
                 String link = magicLink.getLink();
-                String clientOrigin = unhashPath(link.substring(0, link.indexOf(MAGIC_LINK_ACTIVITY_PATH_PREFIX)));
+                String clientOrigin = withoutHashSuffix(link.substring(0, link.indexOf(MAGIC_LINK_ACTIVITY_PATH_PREFIX)));
                 return storeAndSendMagicLink(
                     magicLink.getLoginRunId(),
                     magicLink.getLang(),
@@ -111,8 +113,8 @@ public class ModalityMagicLinkAuthenticationGatewayProvider implements ServerAut
             clientOrigin = (clientOrigin.contains(":80") ? "http" : "https") + clientOrigin.substring(clientOrigin.indexOf("://"));
         }
         String token = Uuid.randomUuid();
-        String link = clientOrigin + hashPath(MAGIC_LINK_ACTIVITY_PATH_FULL.replace(":token", token).replace(":lang", lang));
-        requestedPath = unhashPath(requestedPath);
+        String link = clientOrigin + withHashPrefix(MAGIC_LINK_ACTIVITY_PATH_FULL.replace(":token", token).replace(":lang", lang));
+        requestedPath = withoutHashPrefix(requestedPath);
         UpdateStore updateStore = UpdateStore.create(dataSourceModel);
         MagicLink magicLink = updateStore.insertEntity(MagicLink.class);
         magicLink.setLoginRunId(loginRunId);
@@ -251,12 +253,18 @@ public class ModalityMagicLinkAuthenticationGatewayProvider implements ServerAut
         return LogoutPush.pushLogoutMessageToClient();
     }
 
-    private static String hashPath(String path) {
-        return path.startsWith("/#") ? path : "/#" + path;
+    private static String withHashPrefix(String path) {
+        return path.startsWith(HASH_PATH) ? path : HASH_PATH + path;
     }
 
-    private static String unhashPath(String path) {
-        return Strings.removePrefix(path, "/#");
+    private static String withoutHashPrefix(String path) {
+        String p = Strings.removePrefix(path, HASH_PATH);
+        return Objects.equals(p, path) ? p : withoutHashPrefix(p);
+    }
+
+    private static String withoutHashSuffix(String path) {
+        String p = Strings.removeSuffix(path, HASH_PATH);
+        return Objects.equals(p, path) ? p : withoutHashSuffix(p);
     }
 
 }
