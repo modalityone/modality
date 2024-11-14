@@ -140,11 +140,10 @@ public final class BookingDetailsPanel implements
     }
 
     private Button createFlexButton(Function<Document, ?> operationRequestFactory) {
-        Button button = new Button();
+        Button button = ActionBinder.newActionButton(newSelectedDocumentOperationAction(operationRequestFactory));
         button.setMinWidth(Region.USE_PREF_SIZE);
         button.setMaxWidth(Double.MAX_VALUE);
         button.setCursor(Cursor.HAND);
-        ActionBinder.bindButtonToAction(button, newSelectedDocumentOperationAction(operationRequestFactory));
         return button;
     }
 

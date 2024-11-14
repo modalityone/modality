@@ -134,7 +134,7 @@ final class ModalityClientProfilePanel {
         FXProperties.runOnPropertyChange(FXPaletteMode::setVariedPalette, paletteModeSwitch.selectedProperty());
 
         // Logout button
-        Button logoutButton = ActionBinder.bindButtonToAction(new Button(), actionFactory.newOperationAction(LogoutRequest::new));
+        Button logoutButton = ActionBinder.newActionButton(actionFactory.newOperationAction(LogoutRequest::new));
 
         vBox.getChildren().setAll(
                 identityLink,

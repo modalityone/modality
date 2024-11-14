@@ -79,7 +79,7 @@ final class AccountActivity extends ViewDomainActivityBase implements OperationA
                 });
         });
 
-        Hyperlink logoutLink = ActionBinder.bindButtonToAction(new Hyperlink(), newOperationAction(LogoutRequest::new));
+        Hyperlink logoutLink = ActionBinder.newActionHyperlink(newOperationAction(LogoutRequest::new));
         VBox.setMargin(logoutLink, new Insets(50));
         VBox pageContainer = new VBox(
             upcomingBookingsLabel,
