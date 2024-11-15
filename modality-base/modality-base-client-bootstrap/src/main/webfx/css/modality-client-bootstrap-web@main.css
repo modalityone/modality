@@ -43,3 +43,8 @@
     --bootstrap-red5: #761c19 ;
     --bootstrap-red6: #a94442 ;
 }
+
+.disabled:hover {
+    cursor: not-allowed;
+ }
+
