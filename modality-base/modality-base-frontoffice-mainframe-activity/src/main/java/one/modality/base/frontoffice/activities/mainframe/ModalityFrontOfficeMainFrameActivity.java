@@ -10,7 +10,7 @@ import dev.webfx.kit.util.properties.FXProperties;
 import dev.webfx.kit.util.properties.ObservableLists;
 import dev.webfx.platform.conf.SourcesConfig;
 import dev.webfx.platform.console.Console;
-import dev.webfx.platform.os.OperatingSystem;
+import dev.webfx.platform.useragent.UserAgent;
 import dev.webfx.platform.util.Arrays;
 import dev.webfx.platform.util.collection.Collections;
 import dev.webfx.stack.i18n.operations.ChangeLanguageRequestEmitter;
@@ -46,6 +46,9 @@ import one.modality.base.frontoffice.mainframe.fx.FXBackgroundNode;
 import one.modality.base.frontoffice.mainframe.fx.FXCollapseFooter;
 import one.modality.base.frontoffice.utility.tyler.StyleUtility;
 
+import java.util.List;
+import java.util.Objects;
+
 public final class ModalityFrontOfficeMainFrameActivity extends ModalityClientMainFrameActivity {
 
     private static final double MAX_PAGE_WIDTH = 1200; // Similar value to website
@@ -56,7 +59,7 @@ public final class ModalityFrontOfficeMainFrameActivity extends ModalityClientMa
             .getString("buttonRoutingOperations").split(",");
 
     private final BooleanProperty mobileLayoutProperty =
-        FXProperties.newBooleanProperty(OperatingSystem.isMobile(), this::onMobileLayoutChange);
+        FXProperties.newBooleanProperty(UserAgent.isNative(), this::onMobileLayoutChange);
 
     private Pane mainFrameContainer;
     private Node backgroundNode; // can be used to hold a WebView, and prevent iFrame reload in the web version
@@ -130,10 +133,15 @@ public final class ModalityFrontOfficeMainFrameActivity extends ModalityClientMa
         FXProperties.runNowAndOnPropertiesChange(() -> {
             backgroundNode = FXBackgroundNode.getBackgroundNode();
             boolean isMobileLayout = mobileLayoutProperty.get();
-            mainFrameContainer.getChildren().setAll(Collections.listOfRemoveNulls(
+            // Here are the children we need to set for the main frame container
+            List<Node> children = Collections.listOfRemoveNulls(
                 backgroundNode,      // may be a WebView
                 mountTransitionPane, // contains a standard mount node, or null if we want to display the backgroundNode
-                isMobileLayout ? mobileMenuBar : overlayWebMenuBar));   // the footer (front-office navigation buttons bar)
+                isMobileLayout ? mobileMenuBar : overlayWebMenuBar); // mobile menu bar (at bottom) or overlay web menu bar (in addition to the one inside mountTransitionPane)
+            // We call setAll() only if they differ, because setAll() is basically a clear() + addAll() and this causes
+            // unnecessary changes in the DOM which in addition cause iFrames to unload
+            if (!Objects.equals(children, mainFrameContainer.getChildren()))
+                mainFrameContainer.getChildren().setAll(children);
             firstOverlayChildIndex = mainFrameContainer.getChildren().size();
             updateOverlayChildren();
             if (getMountNode() == null)
