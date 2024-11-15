@@ -17,6 +17,7 @@
         <plugin-module>modality-crm-client-activity-login-plugin</plugin-module>
         <plugin-module>modality-crm-client-activity-magiclink-plugin</plugin-module>
         <plugin-module>webfx-stack-authn-login-ui-gateway-password-plugin</plugin-module>
+        <plugin-module>webfx-stack-authn-login-ui-gateway-magiclink-plugin</plugin-module>
 
     </dependencies>
 
