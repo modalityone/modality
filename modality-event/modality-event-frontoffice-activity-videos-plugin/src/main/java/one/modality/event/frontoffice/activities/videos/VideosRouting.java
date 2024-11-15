@@ -30,7 +30,7 @@ public final class VideosRouting {
 
         public static UiRoute<?> uiRoute() {
             return UiRoute.create(VideosRouting.getPath()
-                    , false
+                    , true
                     , VideosActivity::new
                     , ViewDomainActivityContextFinal::new
             );

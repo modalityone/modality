@@ -14,6 +14,7 @@ module modality.base.client.operationactionsloading.plugin {
     requires webfx.platform.conf;
     requires webfx.platform.console;
     requires webfx.platform.scheduler;
+    requires webfx.platform.util;
     requires webfx.stack.authz.client;
     requires webfx.stack.cache.client;
     requires webfx.stack.i18n;

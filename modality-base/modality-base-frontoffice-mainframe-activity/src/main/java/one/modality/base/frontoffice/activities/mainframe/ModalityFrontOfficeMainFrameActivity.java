@@ -54,9 +54,9 @@ public final class ModalityFrontOfficeMainFrameActivity extends ModalityClientMa
     private static final double MAX_PAGE_WIDTH = 1200; // Similar value to website
     private static final double WEB_MENU_HEIGHT = 96;
 
-    private final static String[] sortedPossibleRoutingOperations =
+    private final static String[] mainMenuOperationCodes =
         SourcesConfig.getSourcesRootConfig().childConfigAt("modality.base.frontoffice.application")
-            .getString("buttonRoutingOperations").split(",");
+            .getString("mainMenuOperationCodes").split(",");
 
     private final BooleanProperty mobileLayoutProperty =
         FXProperties.newBooleanProperty(UserAgent.isNative(), this::onMobileLayoutChange);
@@ -109,8 +109,8 @@ public final class ModalityFrontOfficeMainFrameActivity extends ModalityClientMa
                 }
             }
         };
-        mobileMenuBar = createRouteButtonBar(true);
-        overlayWebMenuBar = createRouteButtonBar(false);
+        mobileMenuBar = createMainMenuButtonBar(true);
+        overlayWebMenuBar = createMainMenuButtonBar(false);
         overlayWebMenuBar.setVisible(false);
         double[] lastMouseY = { 0 };
         mainFrameContainer.setOnMouseMoved(e -> {
@@ -155,7 +155,7 @@ public final class ModalityFrontOfficeMainFrameActivity extends ModalityClientMa
             mountTransitionPane.setReverse(uiRouter.getHistory().isGoingBackward());
             ScrollPane scrollPane = mountNode == null ? null : (ScrollPane) mountNode.getProperties().get("embedding-scrollpane");
             if (scrollPane == null && mountNode != null) {
-                CollapsePane topButtonBar = createRouteButtonBar(false);
+                CollapsePane topButtonBar = createMainMenuButtonBar(false);
                 VBox vBox = new VBox(topButtonBar, mountNode);
                 vBox.setMaxWidth(MAX_PAGE_WIDTH);
                 if (mountNode instanceof Region) {
@@ -283,9 +283,9 @@ public final class ModalityFrontOfficeMainFrameActivity extends ModalityClientMa
         );
     }
 
-    private CollapsePane createRouteButtonBar(boolean mobileLayout) {
-        Button[] buttons = RoutingActions.filterRoutingActions(this, this, sortedPossibleRoutingOperations)
-            .stream().map(action -> createRouteButton(action, mobileLayout))
+    private CollapsePane createMainMenuButtonBar(boolean mobileLayout) {
+        Button[] buttons = RoutingActions.filterRoutingActions(this, this, mainMenuOperationCodes)
+            .stream().map(action -> createMainMenuButton(action, mobileLayout))
             .toArray(Button[]::new);
         Node buttonBar;
         if (mobileLayout) {
@@ -315,14 +315,9 @@ public final class ModalityFrontOfficeMainFrameActivity extends ModalityClientMa
         return collapsePane;
     }
 
-    private Button createRouteButton(Action routeAction, boolean mobileLayout) {
-        Button button = new Button();
-        ActionBinder.bindButtonToAction(button, routeAction);
-        // Route buttons should never be disabled, because even if the route is not authorized, users should be able to
-        // press the route button, they will either get the "Unauthorized message" from the UI router if they are logged
-        // in, or - most importantly - the login window if they are not logged in (ex: Account button).
-        button.disableProperty().unbind();
-        button.setDisable(false);
+    private Button createMainMenuButton(Action routeAction, boolean mobileLayout) {
+        Button button = ActionBinder.newActionButton(routeAction);
+        //button.visibleProperty().bind(button.disabledProperty().not());
         button.setCursor(Cursor.HAND);
         button.setContentDisplay(ContentDisplay.TOP);
         button.setGraphicTextGap(0);
@@ -352,6 +347,7 @@ public final class ModalityFrontOfficeMainFrameActivity extends ModalityClientMa
         ScalePane scalePane = new ScalePane(ScaleMode.FIT_HEIGHT, button);
         scalePane.setStretchWidth(true);
         scalePane.setStretchHeight(true);
+        scalePane.visibleProperty().bind(button.visibleProperty());
         scalePane.managedProperty().bind(button.managedProperty()); // Should it be in MonoPane?
         return scalePane;
     }

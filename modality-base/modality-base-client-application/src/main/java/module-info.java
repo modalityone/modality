@@ -19,6 +19,7 @@ module modality.base.client.application {
     requires webfx.kit.util.scene;
     requires webfx.platform.boot;
     requires transitive webfx.platform.util;
+    requires webfx.platform.windowhistory;
     requires webfx.stack.authn.logout.client;
     requires webfx.stack.orm.datasourcemodel.service;
     requires transitive webfx.stack.orm.domainmodel.activity;

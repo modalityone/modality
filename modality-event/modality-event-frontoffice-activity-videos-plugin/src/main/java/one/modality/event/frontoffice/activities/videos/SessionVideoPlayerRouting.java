@@ -31,7 +31,7 @@ public final class SessionVideoPlayerRouting {
 
         public static UiRoute<?> uiRoute() {
             return UiRoute.create(SessionVideoPlayerRouting.getPath()
-                , false
+                , true
                 , SessionVideoPlayerActivity::new
                 , ViewDomainActivityContextFinal::new
             );

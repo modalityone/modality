@@ -50,8 +50,8 @@ public final class ModalityClientOperationActionsLoader implements ApplicationMo
     @Override
     public void bootModule() {
         Config config = ConfigLoader.getRootConfig().childConfigAt(CONFIG_PATH);
-        hideUnauthorizedRouteOperationActions = config.getBoolean("hideUnauthorizedRouteOperationActions", false);
-        hideUnauthorizedOtherOperationActions = config.getBoolean("hideUnauthorizedOtherOperationActions", true);
+        hideUnauthorizedRouteOperationActions = config.getBoolean("hideUnauthorizedRouteOperationActions");
+        hideUnauthorizedOtherOperationActions = config.getBoolean("hideUnauthorizedOtherOperationActions");
 
         EntityStore.create(DataSourceModelService.getDefaultDataSourceModel())
                 .executeCachedQuery(
@@ -69,10 +69,19 @@ public final class ModalityClientOperationActionsLoader implements ApplicationMo
         OperationActionRegistry registry = getOperationActionRegistry();
         // Registering graphical properties for all loaded operations
         for (Entity operation : operations) {
+            // Extracting all info about the operation from the database
             String operationCode = operation.evaluate("code");
             String i18nCode = operation.getStringFieldValue("i18nCode");
             boolean isPublic = operation.getBooleanFieldValue("public");
-            Object i18nKey = new ModalityOperationI18nKey(i18nCode, operationCode);
+            // Note: if a i18nCode is read from the database, it should be considered as first choice, before the default
+            // i18n key provided by the software (via operation request). This is part of the Modality customization
+            // features. This will indeed happen here because ModalityOperationI18nKey implements HasDictionaryMessageKey,
+            // and getDictionaryMessageKey() will return that passed i18nCode. However, if no i18nCode is read from
+            // the database (i.e. i18nCode is null or empty), getDictionaryMessageKey() should return the default i18n
+            // key instead. This can't happen immediately because we don't have an operation request instance at this
+            // stage to read that default i18n key. We will do it through setOperationActionGraphicalPropertiesUpdater()
+            // below. Until this happens, getDictionaryMessageKey() will return null.
+            ModalityOperationI18nKey i18nKey = new ModalityOperationI18nKey(i18nCode);
             Action operationGraphicalAction;
             if (isPublic) {
                 operationGraphicalAction = newAction(i18nKey);
@@ -100,8 +109,12 @@ public final class ModalityClientOperationActionsLoader implements ApplicationMo
             Action graphicalAction = registry.getGraphicalActionFromOperationRequest(operationRequest);
             if (graphicalAction != null) {
                 Object i18nKey = graphicalAction.getUserData();
-                if (i18nKey instanceof ModalityOperationI18nKey)
+                if (i18nKey instanceof ModalityOperationI18nKey) {
+                    // Refreshing the operation request instance before asking an I18n refresh.
+                    // Note: This call will also set the default i18nKey provided by the software (via operation request)
+                    // if no i18nCode was read from the database.
                     ((ModalityOperationI18nKey) i18nKey).setOperationRequest(operationRequest);
+                }
                 I18n.refreshMessageTokenProperties(i18nKey);
             }
         });
@@ -109,9 +122,11 @@ public final class ModalityClientOperationActionsLoader implements ApplicationMo
 
     static {
         OperationAction.setActionExecutingIconFactory(operationRequest -> {
+            // We don't show an executing icon for route requests
             if (operationRequest instanceof RouteRequest) {
                 return null;
             }
+            // Don't inline this variable, otherwise the WebFX CLI won't detect the dependency to javafx-controls
             ProgressIndicator progressIndicator = ControlUtil.createProgressIndicator(16);
             return progressIndicator;
         });
@@ -122,11 +137,11 @@ public final class ModalityClientOperationActionsLoader implements ApplicationMo
             }
             String i18nKey;
             if (throwable == null) {
-                i18nKey = "ExecutedSuccessfullyActionIcon";
+                i18nKey = ModalityOperationI18nKeys.ExecutedSuccessfullyActionIcon;
             } else if (throwable instanceof UserCancellationException) {
-                i18nKey = "ExecutedCancelledByUserActionIcon";
+                i18nKey = ModalityOperationI18nKeys.ExecutedCancelledByUserActionIcon;
             } else {
-                i18nKey = "ExecutedErrorActionIcon";
+                i18nKey = ModalityOperationI18nKeys.ExecutedErrorActionIcon;
             }
             return I18n.getI18nGraphic(i18nKey);
         });

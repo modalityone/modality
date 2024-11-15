@@ -3,6 +3,7 @@ package one.modality.event.frontoffice.activities.booking;
 
 public interface BookingI18nKeys {
 
+    String Booking = "Booking";
     String eventsHeader = "eventsHeader";
     String internationalEvents = "internationalEvents";
     String localEvents = "localEvents";
@@ -18,7 +19,6 @@ public interface BookingI18nKeys {
     String closed = "closed";
     String at = "at";
     String Schedule = "Schedule";
-    String GPEvent = "GPEvent";
     String SelectTheEvent = "SelectTheEvent";
     String SelectAllClasses = "SelectAllClasses";
     String ProceedCheckout = "ProceedCheckout";

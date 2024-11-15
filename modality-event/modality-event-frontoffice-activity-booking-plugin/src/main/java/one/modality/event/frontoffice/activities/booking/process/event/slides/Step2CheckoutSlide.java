@@ -315,7 +315,7 @@ final class Step2CheckoutSlide extends StepSlide {
             workingBooking.submitChanges(historyHelper.buildHistory())
                 .onFailure(result -> UiScheduler.runInUiThread(() -> {
                     turnOffWaitMode();
-                    displayErrorMessage("ErrorWhileInsertingBooking");
+                    displayErrorMessage(BookingI18nKeys.ErrorWhileInsertingBooking);
                     Console.log(result);
                 }))
                 .onSuccess(result -> UiScheduler.runInUiThread(() -> {

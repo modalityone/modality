@@ -49,12 +49,12 @@ final class HomeActivity extends ViewDomainActivityBase
                 .setShadowed(true);
     }
 
-    protected Collection<Action> homeRoutingActions() {
+    private Collection<Action> homeRoutingActions() {
         return RoutingActions.filterRoutingActions(this::operationCodeToAction, sortedPossibleHomeRoutingOperations);
     }
 
     private Action operationCodeToAction(String operationCode) {
-        RouteRequestEmitter routeRequestEmitter = RoutingActions.findRouteRequestEmitter(operationCode, this);
+        RouteRequestEmitter routeRequestEmitter = RoutingActions.findRouteRequestEmitterWithOperationCode(operationCode, this);
         if (routeRequestEmitter == null) {
             return new ActionBuilder()
                     .setI18nKey(Strings.removePrefix(operationCode, "RouteTo"))

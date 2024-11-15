@@ -36,6 +36,7 @@ import one.modality.ecommerce.payment.client.WebPaymentForm;
 import one.modality.event.client.recurringevents.FXPersonToBook;
 import one.modality.event.client.recurringevents.RecurringEventSchedule;
 import one.modality.event.client.recurringevents.WorkingBooking;
+import one.modality.event.frontoffice.activities.booking.BookingI18nKeys;
 import one.modality.event.frontoffice.activities.booking.fx.FXGuestToBook;
 import one.modality.event.frontoffice.activities.booking.process.event.BookEventActivity;
 import one.modality.event.frontoffice.activities.booking.process.event.WorkingBookingProperties;
@@ -130,7 +131,7 @@ abstract class StepSlide implements Supplier<Node> {
             )
             .onFailure(paymentResult -> UiScheduler.runInUiThread(() -> {
                 turnOffWaitMode();
-                displayErrorMessage("ErrorWhileInitiatingPayment");
+                displayErrorMessage(BookingI18nKeys.ErrorWhileInitiatingPayment);
                 Console.log(paymentResult);
             }))
             .onSuccess(paymentResult -> UiScheduler.runInUiThread(() -> {

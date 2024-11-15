@@ -30,7 +30,7 @@ public final class AudioRecordingsRouting {
 
         public static UiRoute<?> uiRoute() {
             return UiRoute.create(AudioRecordingsRouting.getPath()
-                    , false
+                    , true
                     , AudioRecordingsActivity::new
                     , ViewDomainActivityContextFinal::new
             );

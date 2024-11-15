@@ -31,7 +31,7 @@ public final class EventAudioPlaylistRouting {
 
         public static UiRoute<?> uiRoute() {
             return UiRoute.create(EventAudioPlaylistRouting.getPath()
-                , false
+                , true
                 , EventAudioPlaylistActivity::new
                 , ViewDomainActivityContextFinal::new
             );

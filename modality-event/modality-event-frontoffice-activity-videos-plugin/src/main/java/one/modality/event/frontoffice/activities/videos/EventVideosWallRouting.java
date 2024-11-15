@@ -31,7 +31,7 @@ public final class EventVideosWallRouting {
 
         public static UiRoute<?> uiRoute() {
             return UiRoute.create(EventVideosWallRouting.getPath()
-                , false
+                , true
                 , EventVideosWallActivity::new
                 , ViewDomainActivityContextFinal::new
             );

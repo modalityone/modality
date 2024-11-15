@@ -106,19 +106,19 @@ final class Step3PaymentSlide extends StepSlide {
 
         webPaymentForm
             .setOnLoadFailure(errorMsg -> {
-                displayErrorMessage("ErrorWhileLoadingPaymentForm");
+                displayErrorMessage(BookingI18nKeys.ErrorWhileLoadingPaymentForm);
                 Console.log(errorMsg);
             })
             .setOnInitFailure(errorMsg -> {
-                displayErrorMessage("ErrorWhileInitializingHTMLPaymentForm");
+                displayErrorMessage(BookingI18nKeys.ErrorWhileInitializingHTMLPaymentForm);
                 Console.log(errorMsg);
             })
             .setOnVerificationFailure(errorMsg -> {
-                displayErrorMessage("ErrorPaymentGatewayFailure");
+                displayErrorMessage(BookingI18nKeys.ErrorPaymentGatewayFailure);
                 Console.log(errorMsg);
             })
             .setOnPaymentFailure(errorMsg -> {
-                displayErrorMessage("ErrorPaymentModalityFailure");
+                displayErrorMessage(BookingI18nKeys.ErrorPaymentModalityFailure);
                 Console.log(errorMsg);
             })
             .setOnPaymentCompletion(status -> {

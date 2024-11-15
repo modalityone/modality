@@ -439,6 +439,10 @@
     <!--===============================< webfx-extras-panes >===============================-->
     <source path="dev/webfx/extras/panes"/>
     <source path="dev/webfx/extras/panes/transitions"/>
+    <!--==============================< webfx-extras-player >===============================-->
+    <source path="dev/webfx/extras/player"/>
+    <source path="dev/webfx/extras/player/impl"/>
+    <source path="dev/webfx/extras/player/multi"/>
     <!--=========================< webfx-extras-styles-bootstrap >==========================-->
     <source path="dev/webfx/extras/styles/bootstrap"/>
     <!--=======================< webfx-extras-styles-materialdesign >=======================-->
@@ -959,6 +963,9 @@
     <!--=============================< webfx-stack-ui-action >==============================-->
     <source path="dev/webfx/stack/ui/action"/>
     <source path="dev/webfx/stack/ui/action/impl"/>
+    <!--==========================< webfx-stack-ui-action-tuner >===========================-->
+    <source path="dev/webfx/stack/ui/action/tuner"/>
+    <source path="dev/webfx/stack/ui/action/tuner/logout"/>
     <!--============================< webfx-stack-ui-controls >=============================-->
     <source path="dev/webfx/stack/ui/controls"/>
     <source path="dev/webfx/stack/ui/controls/alert"/>

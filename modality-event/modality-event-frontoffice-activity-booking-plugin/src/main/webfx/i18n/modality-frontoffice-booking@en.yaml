@@ -1,3 +1,8 @@
+Booking:
+  text: "Book now"
+  graphic:
+    fill: "#838788"
+    svgPath: "M 3.7 3.1 C 2.6 3.1 1.7 4 1.7 5.1 V 12.3 C 1.7 13.4 2.6 14.3 3.7 14.3 H 12.3 C 13.4 14.3 14.3 13.4 14.3 12.3 V 5.1 C 14.3 4 13.4 3.1 12.3 3.1 H 3.7 Z M 0 5.1 C 0 3.1 1.7 1.4 3.7 1.4 H 12.3 C 14.3 1.4 16 3.1 16 5.1 V 12.3 C 16 14.3 14.3 16 12.3 16 H 3.7 C 1.7 16 0 14.3 0 12.3 V 5.1 Z M 6.2 11.3 H 3.7 V 9.7 H 6.2 V 11.3 Z M 11.9 11.3 H 9.4 V 9.7 H 11.9 V 11.3 Z M 5.1 0 C 5.6 0 6 0.4 6 0.8 V 3.7 C 6 4.2 5.6 4.5 5.1 4.5 C 4.7 4.5 4.3 4.2 4.3 3.7 V 0.8 C 4.3 0.4 4.7 0 5.1 0 Z M 10.9 0 C 11.3 0 11.7 0.4 11.7 0.8 V 3.7 C 11.7 4.2 11.3 4.5 10.9 4.5 C 10.4 4.5 10 4.2 10 3.7 V 0.8 C 10 0.4 10.4 0 10.9 0 Z M 0 6.6 C 0 6.1 0.4 5.7 0.8 5.7 H 15.2 C 15.6 5.7 16 6.1 16 6.6 C 16 7 15.6 7.4 15.2 7.4 H 0.8 C 0.4 7.4 0 7 0 6.6 Z"
 eventsHeader: "YOUR NEXT MEANINGFUL EVENT IS HERE"
 internationalEvents: "International Events"
 localEvents: "Local Events"
@@ -25,7 +30,6 @@ bookNow: "Book now"
 closed: "Closed"
 at: "At"
 Schedule: "Schedule"
-GPEvent: "GP Classes"
 SelectTheEvent: "Select the classes you wish to book"
 SelectAllClasses: "Select all classes"
 ProceedCheckout: "Proceed to checkout"
@@ -43,7 +47,7 @@ Pay0:
 TotalBookingPrice0: " | Total booking price: {0}"
 PaymentInformation0: "Please enter your payment information in the secure portal {0}, our payment provider. We do not store any credit card information."
 Square:
-  text: "" # because included in SVG path
+  text: "" # empty because the text is included in SVG path
   graphic:
     fill: "#3E4348"
     # without Square text

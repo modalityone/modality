@@ -3,6 +3,7 @@ package one.modality.base.frontoffice.activities.account;
 
 public interface AccountI18nKeys {
 
+    String Account = "Account";
     String YourUpcomingBookings = "YourUpcomingBookings";
     String YourPastBookings = "YourPastBookings";
     String BookingStatusPaymentRequired = "BookingStatusPaymentRequired";
