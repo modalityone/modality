@@ -434,6 +434,8 @@
     <!--===============================< webfx-extras-layer >===============================-->
     <source path="dev/webfx/extras/layer"/>
     <source path="dev/webfx/extras/layer/interact"/>
+    <!--==========================< webfx-extras-media-metadata >===========================-->
+    <source path="dev/webfx/extras/media/metadata"/>
     <!--===============================< webfx-extras-panes >===============================-->
     <source path="dev/webfx/extras/panes"/>
     <source path="dev/webfx/extras/panes/transitions"/>
