@@ -9,6 +9,7 @@ module modality.ecommerce.backoffice.activity.bookings.plugin {
     requires javafx.base;
     requires javafx.controls;
     requires javafx.graphics;
+    requires modality.base.backoffice.activity.home.plugin;
     requires modality.base.backoffice.mainframe.fx;
     requires modality.base.backoffice.masterslave;
     requires modality.base.backoffice.operations.generic;
@@ -27,6 +28,7 @@ module modality.ecommerce.backoffice.activity.bookings.plugin {
     requires webfx.extras.visual.grid;
     requires webfx.platform.windowhistory;
     requires webfx.stack.cache.client;
+    requires webfx.stack.i18n;
     requires webfx.stack.orm.domainmodel.activity;
     requires webfx.stack.orm.dql;
     requires webfx.stack.orm.expression;

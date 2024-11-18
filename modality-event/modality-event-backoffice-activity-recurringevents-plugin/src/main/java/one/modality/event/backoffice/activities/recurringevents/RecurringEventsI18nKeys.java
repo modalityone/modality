@@ -3,8 +3,8 @@ package one.modality.event.backoffice.activities.recurringevents;
 
 public interface RecurringEventsI18nKeys {
 
+    String RecurringEvents = "RecurringEvents";
     String EventTitle = "EventTitle";
-    String GPClasses = "GPClasses";
     String ListEvents = "ListEvents";
     String CurrentClasses = "CurrentClasses";
     String EventDetailsTitle = "EventDetailsTitle";
@@ -55,6 +55,7 @@ public interface RecurringEventsI18nKeys {
     String ErrorWhileDeletingEventDetails = "ErrorWhileDeletingEventDetails";
     String Published = "Published";
     String Advertised = "Advertised";
+    String GPClasses = "GPClasses";
     String SaveDraft = "SaveDraft";
     String DiscardButton = "DiscardButton";
 

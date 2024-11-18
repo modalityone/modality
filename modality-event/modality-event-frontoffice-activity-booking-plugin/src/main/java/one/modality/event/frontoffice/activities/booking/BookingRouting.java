@@ -1,6 +1,7 @@
 package one.modality.event.frontoffice.activities.booking;
 
 import dev.webfx.platform.windowhistory.spi.BrowsingHistory;
+import dev.webfx.stack.i18n.HasI18nKey;
 import dev.webfx.stack.orm.domainmodel.activity.viewdomain.impl.ViewDomainActivityContextFinal;
 import dev.webfx.stack.routing.router.auth.authz.RouteRequest;
 import dev.webfx.stack.routing.uirouter.UiRoute;
@@ -34,7 +35,7 @@ public final class BookingRouting {
         }
     }
 
-    public static final class RouteToBookingRequest extends RoutePushRequest implements HasOperationCode {
+    public static final class RouteToBookingRequest extends RoutePushRequest implements HasOperationCode, HasI18nKey {
 
         public RouteToBookingRequest(BrowsingHistory browsingHistory) {
             super(getPath(), browsingHistory);
@@ -43,6 +44,11 @@ public final class BookingRouting {
         @Override
         public Object getOperationCode() {
             return OPERATION_CODE;
+        }
+
+        @Override
+        public Object getI18nKey() {
+            return BookingI18nKeys.Booking;
         }
     }
 

@@ -10,6 +10,7 @@ module modality.base.client.activity.console.plugin {
     requires webfx.platform.uischeduler;
     requires webfx.platform.useragent;
     requires webfx.platform.windowhistory;
+    requires webfx.stack.i18n;
     requires webfx.stack.routing.router.client;
     requires webfx.stack.routing.uirouter;
     requires webfx.stack.ui.operation;

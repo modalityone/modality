@@ -17,4 +17,6 @@
         <provider interface="dev.webfx.stack.routing.uirouter.operations.RouteRequestEmitter">one.modality.crm.client.activities.login.LoginRouting$RouteToLoginRequestEmitter</provider>
     </providers>
 
+    <i18n javaKeysClass="one.modality.crm.client.activities.login.LoginI18nKeys"/>
+
 </project>

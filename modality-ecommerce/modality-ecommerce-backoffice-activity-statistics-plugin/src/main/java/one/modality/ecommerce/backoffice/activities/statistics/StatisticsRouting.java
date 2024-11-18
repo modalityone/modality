@@ -1,6 +1,7 @@
 package one.modality.ecommerce.backoffice.activities.statistics;
 
 import dev.webfx.platform.windowhistory.spi.BrowsingHistory;
+import dev.webfx.stack.i18n.HasI18nKey;
 import dev.webfx.stack.orm.domainmodel.activity.viewdomain.impl.ViewDomainActivityContextFinal;
 import dev.webfx.stack.routing.router.auth.authz.RouteRequest;
 import dev.webfx.stack.routing.router.util.PathBuilder;
@@ -10,6 +11,7 @@ import dev.webfx.stack.routing.uirouter.impl.UiRouteImpl;
 import dev.webfx.stack.routing.uirouter.operations.RoutePushRequest;
 import dev.webfx.stack.routing.uirouter.operations.RouteRequestEmitter;
 import dev.webfx.stack.ui.operation.HasOperationCode;
+import one.modality.base.backoffice.activities.home.HomeI18nKeys;
 import one.modality.base.client.util.routing.ModalityRoutingUtil;
 
 /**
@@ -44,7 +46,7 @@ public final class StatisticsRouting {
         }
     }
 
-    public static final class RouteToStatisticsRequest extends RoutePushRequest implements HasOperationCode {
+    public static final class RouteToStatisticsRequest extends RoutePushRequest implements HasOperationCode, HasI18nKey {
 
         public RouteToStatisticsRequest(Object eventId, BrowsingHistory history) {
             super(getEventStatisticsPath(eventId), history);
@@ -55,6 +57,10 @@ public final class StatisticsRouting {
             return OPERATION_CODE;
         }
 
+        @Override
+        public Object getI18nKey() {
+            return HomeI18nKeys.FinancesAndStats;
+        }
     }
 
     public static final class RouteToStatisticsRequestEmitter implements RouteRequestEmitter {

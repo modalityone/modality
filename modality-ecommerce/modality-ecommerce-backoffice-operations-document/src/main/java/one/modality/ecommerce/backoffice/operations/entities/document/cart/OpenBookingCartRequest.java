@@ -1,13 +1,15 @@
 package one.modality.ecommerce.backoffice.operations.entities.document.cart;
 
 import dev.webfx.platform.async.AsyncFunction;
+import dev.webfx.stack.i18n.HasI18nKey;
 import dev.webfx.stack.ui.operation.HasOperationCode;
 import dev.webfx.stack.ui.operation.HasOperationExecutor;
 import javafx.scene.layout.Pane;
 import one.modality.base.client.mainframe.fx.FXMainFrameDialogArea;
 import one.modality.base.shared.entities.Document;
+import one.modality.ecommerce.backoffice.operations.entities.document.DocumentI18nKeys;
 
-public final class OpenBookingCartRequest implements HasOperationCode,
+public final class OpenBookingCartRequest implements HasOperationCode, HasI18nKey,
         HasOperationExecutor<OpenBookingCartRequest, Void> {
 
     private final static String OPERATION_CODE = "OpenBookingCart";
@@ -35,6 +37,11 @@ public final class OpenBookingCartRequest implements HasOperationCode,
     @Override
     public Object getOperationCode() {
         return OPERATION_CODE;
+    }
+
+    @Override
+    public Object getI18nKey() {
+        return DocumentI18nKeys.OpenBookingCart;
     }
 
     @Override

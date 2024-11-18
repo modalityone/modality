@@ -10,6 +10,7 @@ module modality.crm.backoffice.operations.mail {
     requires modality.base.client.mainframe.fx;
     requires modality.base.shared.entities;
     requires webfx.platform.async;
+    requires webfx.stack.i18n;
     requires webfx.stack.ui.operation;
 
     // Exported packages

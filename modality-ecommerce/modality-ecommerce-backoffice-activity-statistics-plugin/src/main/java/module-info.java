@@ -9,6 +9,7 @@ module modality.ecommerce.backoffice.activity.statistics.plugin {
     requires javafx.base;
     requires javafx.controls;
     requires javafx.graphics;
+    requires modality.base.backoffice.activity.home.plugin;
     requires modality.base.backoffice.mainframe.fx;
     requires modality.base.client.activity.organizationdependent;
     requires modality.base.client.gantt.fx;
@@ -26,6 +27,7 @@ module modality.ecommerce.backoffice.activity.statistics.plugin {
     requires webfx.extras.time.window;
     requires webfx.extras.util.control;
     requires webfx.platform.windowhistory;
+    requires webfx.stack.i18n;
     requires webfx.stack.orm.domainmodel.activity;
     requires webfx.stack.orm.dql;
     requires webfx.stack.orm.reactive.entities;

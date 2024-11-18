@@ -1,12 +1,14 @@
 package one.modality.hotel.backoffice.operations.entities.resourceconfiguration;
 
 import dev.webfx.platform.async.AsyncFunction;
+import dev.webfx.stack.i18n.HasI18nKey;
+import dev.webfx.stack.i18n.I18nKeys;
 import dev.webfx.stack.ui.operation.HasOperationCode;
 import dev.webfx.stack.ui.operation.HasOperationExecutor;
 import javafx.scene.layout.Pane;
 import one.modality.base.shared.entities.ResourceConfiguration;
 
-public final class EditResourceConfigurationPropertiesRequest implements HasOperationCode,
+public final class EditResourceConfigurationPropertiesRequest implements HasOperationCode, HasI18nKey,
         HasOperationExecutor<EditResourceConfigurationPropertiesRequest, Void> {
 
     private final static String OPERATION_CODE = "EditResourceConfigurationProperties";
@@ -30,6 +32,11 @@ public final class EditResourceConfigurationPropertiesRequest implements HasOper
     @Override
     public Object getOperationCode() {
         return OPERATION_CODE;
+    }
+
+    @Override
+    public Object getI18nKey() {
+        return I18nKeys.appendEllipsis(ResourceConfigurationI18nKeys.EditRoomProperties);
     }
 
     @Override

@@ -1,6 +1,7 @@
 package one.modality.event.frontoffice.activities.videos;
 
 import dev.webfx.platform.windowhistory.spi.BrowsingHistory;
+import dev.webfx.stack.i18n.HasI18nKey;
 import dev.webfx.stack.orm.domainmodel.activity.viewdomain.impl.ViewDomainActivityContextFinal;
 import dev.webfx.stack.routing.router.auth.authz.RouteRequest;
 import dev.webfx.stack.routing.uirouter.UiRoute;
@@ -37,7 +38,7 @@ public final class VideosRouting {
         }
     }
 
-    public static final class RouteToVideosRequest extends RoutePushRequest implements HasOperationCode {
+    public static final class RouteToVideosRequest extends RoutePushRequest implements HasOperationCode, HasI18nKey {
 
         public RouteToVideosRequest(BrowsingHistory browsingHistory) {
             super(getPath(), browsingHistory);
@@ -46,6 +47,11 @@ public final class VideosRouting {
         @Override
         public Object getOperationCode() {
             return OPERATION_CODE;
+        }
+
+        @Override
+        public Object getI18nKey() {
+            return VideosI18nKeys.VideosMenu;
         }
     }
 

@@ -1,6 +1,7 @@
 package one.modality.event.backoffice.activities.recurringevents;
 
 import dev.webfx.platform.windowhistory.spi.BrowsingHistory;
+import dev.webfx.stack.i18n.HasI18nKey;
 import dev.webfx.stack.orm.domainmodel.activity.viewdomain.impl.ViewDomainActivityContextFinal;
 import dev.webfx.stack.routing.router.auth.authz.RouteRequest;
 import dev.webfx.stack.routing.uirouter.UiRoute;
@@ -34,7 +35,7 @@ public final class RecurringEventsRouting {
         }
     }
 
-    public static final class RouteToRecurringEventsRequest extends RoutePushRequest implements HasOperationCode {
+    public static final class RouteToRecurringEventsRequest extends RoutePushRequest implements HasOperationCode, HasI18nKey {
 
         public RouteToRecurringEventsRequest(BrowsingHistory browsingHistory) {
             super(getPath(), browsingHistory);
@@ -43,6 +44,11 @@ public final class RecurringEventsRouting {
         @Override
         public Object getOperationCode() {
             return OPERATION_CODE;
+        }
+
+        @Override
+        public Object getI18nKey() {
+            return RecurringEventsI18nKeys.RecurringEvents;
         }
     }
 

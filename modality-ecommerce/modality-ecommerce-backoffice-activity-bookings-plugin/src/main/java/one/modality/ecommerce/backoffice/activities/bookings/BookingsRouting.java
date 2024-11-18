@@ -1,6 +1,7 @@
 package one.modality.ecommerce.backoffice.activities.bookings;
 
 import dev.webfx.platform.windowhistory.spi.BrowsingHistory;
+import dev.webfx.stack.i18n.HasI18nKey;
 import dev.webfx.stack.orm.domainmodel.activity.viewdomain.impl.ViewDomainActivityContextFinal;
 import dev.webfx.stack.routing.router.auth.authz.RouteRequest;
 import dev.webfx.stack.routing.router.util.PathBuilder;
@@ -11,6 +12,7 @@ import dev.webfx.stack.routing.uirouter.operations.RoutePushRequest;
 import dev.webfx.stack.routing.uirouter.operations.RouteRequestEmitter;
 import dev.webfx.stack.ui.operation.HasOperationCode;
 import one.modality.base.client.util.routing.ModalityRoutingUtil;
+import one.modality.base.backoffice.activities.home.HomeI18nKeys;
 
 import java.time.LocalDate;
 
@@ -58,7 +60,7 @@ public final class BookingsRouting {
         }
     }
 
-    public static final class RouteToBookingsRequest extends RoutePushRequest implements HasOperationCode {
+    public static final class RouteToBookingsRequest extends RoutePushRequest implements HasOperationCode, HasI18nKey {
 
         public RouteToBookingsRequest(Object eventId, BrowsingHistory history) {
             super(getEventBookingsPath(eventId), history);
@@ -69,6 +71,10 @@ public final class BookingsRouting {
             return OPERATION_CODE;
         }
 
+        @Override
+        public Object getI18nKey() {
+            return HomeI18nKeys.BookingsAndSearch;
+        }
     }
 
     public static final class RouteToBookingsRequestEmitter implements RouteRequestEmitter {

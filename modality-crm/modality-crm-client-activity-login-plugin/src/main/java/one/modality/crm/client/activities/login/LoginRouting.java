@@ -1,6 +1,7 @@
 package one.modality.crm.client.activities.login;
 
 import dev.webfx.platform.windowhistory.spi.BrowsingHistory;
+import dev.webfx.stack.i18n.HasI18nKey;
 import dev.webfx.stack.orm.domainmodel.activity.viewdomain.impl.ViewDomainActivityContextFinal;
 import dev.webfx.stack.routing.router.auth.authz.RouteRequest;
 import dev.webfx.stack.routing.uirouter.ProvidedLoginUiRoute;
@@ -39,7 +40,7 @@ public final class LoginRouting {
         }
     }
 
-    public static class RouteToLoginRequest extends RoutePushRequest implements HasOperationCode, LogoutOnlyActionTuner {
+    public static class RouteToLoginRequest extends RoutePushRequest implements HasOperationCode, HasI18nKey, LogoutOnlyActionTuner {
 
         public RouteToLoginRequest(BrowsingHistory browsingHistory) {
             super(getPath(), browsingHistory);
@@ -48,6 +49,11 @@ public final class LoginRouting {
         @Override
         public Object getOperationCode() {
             return OPERATION_CODE;
+        }
+
+        @Override
+        public Object getI18nKey() {
+            return LoginI18nKeys.LoginMenu;
         }
     }
 

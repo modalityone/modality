@@ -1,6 +1,7 @@
 package one.modality.base.backoffice.activities.home;
 
 import dev.webfx.platform.windowhistory.spi.BrowsingHistory;
+import dev.webfx.stack.i18n.HasI18nKey;
 import dev.webfx.stack.orm.domainmodel.activity.viewdomain.impl.ViewDomainActivityContextFinal;
 import dev.webfx.stack.routing.router.auth.authz.RouteRequest;
 import dev.webfx.stack.routing.router.util.PathBuilder;
@@ -38,7 +39,7 @@ public final class HomeRouting {
         }
     }
 
-    public static final class RouteToHomeRequest extends RoutePushRequest implements HasOperationCode {
+    public static final class RouteToHomeRequest extends RoutePushRequest implements HasOperationCode, HasI18nKey {
 
         public RouteToHomeRequest(BrowsingHistory history) {
             super(getPath(), history);
@@ -47,6 +48,11 @@ public final class HomeRouting {
         @Override
         public Object getOperationCode() {
             return OPERATION_CODE;
+        }
+
+        @Override
+        public Object getI18nKey() {
+            return HomeI18nKeys.Home;
         }
 
     }

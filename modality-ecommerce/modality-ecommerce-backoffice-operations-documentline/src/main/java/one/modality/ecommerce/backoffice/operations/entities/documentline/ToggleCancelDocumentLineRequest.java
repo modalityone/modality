@@ -1,11 +1,15 @@
 package one.modality.ecommerce.backoffice.operations.entities.documentline;
 
 import dev.webfx.platform.async.AsyncFunction;
+import dev.webfx.stack.i18n.HasI18nKey;
+import dev.webfx.stack.i18n.I18nKeys;
 import javafx.scene.layout.Pane;
 import one.modality.base.client.mainframe.fx.FXMainFrameDialogArea;
 import one.modality.base.shared.entities.DocumentLine;
+import one.modality.ecommerce.backoffice.operations.entities.document.DocumentI18nKeys;
 
-public final class ToggleCancelDocumentLineRequest extends AbstractSetDocumentLineFieldsRequest<ToggleCancelDocumentLineRequest> {
+public final class ToggleCancelDocumentLineRequest extends AbstractSetDocumentLineFieldsRequest<ToggleCancelDocumentLineRequest>
+    implements HasI18nKey {
 
     private final static String OPERATION_CODE = "ToggleCancelDocumentLine";
 
@@ -20,6 +24,11 @@ public final class ToggleCancelDocumentLineRequest extends AbstractSetDocumentLi
     @Override
     public Object getOperationCode() {
         return OPERATION_CODE;
+    }
+
+    @Override
+    public Object getI18nKey() {
+        return I18nKeys.appendEllipsis(DocumentI18nKeys.ToggleCancel);
     }
 
     @Override

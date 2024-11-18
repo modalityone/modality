@@ -9,6 +9,7 @@ module modality.catering.backoffice.activity.kitchen.plugin {
     requires javafx.base;
     requires javafx.controls;
     requires javafx.graphics;
+    requires modality.base.backoffice.activity.home.plugin;
     requires modality.base.client.activity;
     requires modality.base.client.gantt.fx;
     requires modality.base.client.time.theme;
