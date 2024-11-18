@@ -1,9 +1,15 @@
 package one.modality.base.shared.entities.markers;
 
+import dev.webfx.extras.player.metadata.HasDuration;
+import dev.webfx.extras.player.metadata.HasTitle;
+import javafx.util.Duration;
+
 /**
  * @author Bruno Salmon
  */
-public interface HasMediaInfo extends HasLocalDateTime {
+public interface HasMediaInfo extends HasLocalDateTime,
+    // WebFX Extras MediaMetadata tags for direct compatibility with Player API
+    HasTitle, HasDuration {
 
     void setTitle(String title);
 
@@ -24,4 +30,14 @@ public interface HasMediaInfo extends HasLocalDateTime {
     void setLang(String lang);
 
     String getLang();
+
+    @Override
+    default Duration getDuration() {
+        Long durationMillis = getDurationMillis();
+        return durationMillis != null ? Duration.millis(durationMillis) : null;
+    }
+
+    default void setDuration(Duration duration) {
+        setDurationMillis(duration != null ? (long) duration.toMillis() : null);
+    }
 }

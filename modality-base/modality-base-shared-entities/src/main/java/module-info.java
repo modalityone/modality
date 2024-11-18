@@ -6,7 +6,9 @@
 module modality.base.shared.entities {
 
     // Direct dependencies modules
+    requires javafx.base;
     requires modality.base.shared.domainmodel;
+    requires webfx.extras.player;
     requires webfx.platform.util;
     requires webfx.stack.db.submit;
     requires webfx.stack.orm.domainmodel;
