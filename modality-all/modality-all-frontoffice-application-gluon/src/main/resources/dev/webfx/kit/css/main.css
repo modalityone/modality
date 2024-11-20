@@ -27,6 +27,12 @@
 
 @font-face {
     font-family: 'Poppins';
+    font-style: normal;
+    src: url('webfx-css:fonts/poppins/Poppins-Regular.otf');
+}
+
+@font-face {
+    font-family: 'Poppins';
     font-weight: bold;
     src: url('webfx-css:fonts/poppins/Poppins-Bold.otf');
 }
@@ -568,6 +574,28 @@ Text, Label, Button, TextField {
 
 .scroll-pane > .viewport {
    -fx-background-color: transparent;
+}
+
+/*===== modality-frontoffice-mainframe-javafx@main.css from modality-base-frontoffice-mainframe-activity =====*/
+
+CollapsePane.menu-bar.non-mobile {
+    -fx-background-color: white;
+    -fx-border-width: 0 0 1px 0 ;
+    -fx-border-color: lightgray;
+}
+
+.menu-bar Button {
+    -fx-background-color: white; /* removes old-style button gradient */
+    -fx-font-family: "Poppins";
+}
+
+.main-menu-bar Button {
+    -fx-text-fill: black;
+}
+
+.user-menu-bar Button {
+    -fx-font-size: 12px;
+    -fx-text-fill: #838788;
 }
 
 /*===== modality-event-client-recurringevents-javafx@main.css from modality-event-client-recurringevents =====*/

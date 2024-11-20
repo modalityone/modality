@@ -7,7 +7,6 @@ module modality.all.server.application.vertx {
 
     // Direct dependencies modules
     requires javafx.base;
-    requires javafx.graphics;
     requires modality.all.server.application;
     requires modality.ecommerce.document.service.server;
     requires modality.ecommerce.payment.server;

@@ -439,11 +439,6 @@
     <!--===============================< webfx-extras-panes >===============================-->
     <source path="dev/webfx/extras/panes"/>
     <source path="dev/webfx/extras/panes/transitions"/>
-    <!--==============================< webfx-extras-player >===============================-->
-    <source path="dev/webfx/extras/player"/>
-    <source path="dev/webfx/extras/player/impl"/>
-    <source path="dev/webfx/extras/player/metadata"/>
-    <source path="dev/webfx/extras/player/multi"/>
     <!--=========================< webfx-extras-styles-bootstrap >==========================-->
     <source path="dev/webfx/extras/styles/bootstrap"/>
     <!--=======================< webfx-extras-styles-materialdesign >=======================-->

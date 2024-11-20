@@ -31,7 +31,7 @@ public final class AudioRecordingsRouting {
 
         public static UiRoute<?> uiRoute() {
             return UiRoute.create(AudioRecordingsRouting.getPath()
-                    , true
+                    , false
                     , AudioRecordingsActivity::new
                     , ViewDomainActivityContextFinal::new
             );
@@ -51,7 +51,7 @@ public final class AudioRecordingsRouting {
 
         @Override
         public Object getI18nKey() {
-            return AudioRecordingsI18nKeys.Recordings;
+            return AudioRecordingsI18nKeys.AudioRecordingsMenu;
         }
     }
 

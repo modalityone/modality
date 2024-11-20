@@ -53,6 +53,7 @@ fx-svgpath svg path:not([fill])[stroke] { /* if the application code set the str
 :root {
     --fx-border-color-focus: #0096D6;
     --fx-textfield-background: white;
+    --fx-button-background: linear-gradient(180deg, white, #e0e0e0);
 }
 
 ::placeholder {
@@ -60,7 +61,7 @@ fx-svgpath svg path:not([fill])[stroke] { /* if the application code set the str
 }
 
 fx-button > fx-background {
-    background: linear-gradient(180deg, white, #e0e0e0);
+    background: var(--fx-button-background);
     border-radius: var(--fx-border-radius);
 }
 
@@ -99,7 +100,7 @@ input[type="text"], input[type="password"] {
 
 /* Cross for the tab close button */
 .tab-close-button {
-    background-image: url( "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' stroke='%23444' stroke-width='2' stroke-linejoin='round' viewBox=\'0 0 16 16\'%3E%3Cpath d=\'M 4,4 L 12,12 Z M 4,12 L 12,4 Z\'/%3E%3C/svg%3E");
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' stroke='%23444' stroke-width='2' stroke-linejoin='round' viewBox=\'0 0 16 16\'%3E%3Cpath d=\'M 4,4 L 12,12 Z M 4,12 L 12,4 Z\'/%3E%3C/svg%3E");
 }
 
 /*===== webfx-kit-javafxweb-web@main.css from webfx-kit-javafxweb-peers-gwt-j2cl =====*/
@@ -774,29 +775,12 @@ fx-homepane fx-tile * {
 
 /*===== modality-client-web@main.css from modality-base-client-application =====*/
 
+@import url('https://fonts.googleapis.com/css2?family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap');
+
 @font-face {
     font-family: "Montserrat";
     src: url("./fonts/montserrat/Montserrat-VF.woff2") format("woff2");
     font-weight: 100 900;
-}
-
-/* latin-ext */
-@font-face {
-  font-family: 'Poppins';
-  font-style: normal;
-  font-weight: 700;
-  font-display: swap;
-  src: url(https://fonts.gstatic.com/s/poppins/v21/pxiByp8kv8JHgFVrLCz7Z1JlFd2JQEl8qw.woff2) format('woff2');
-  unicode-range: U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C0, U+2113, U+2C60-2C7F, U+A720-A7FF;
-}
-/* latin */
-@font-face {
-  font-family: 'Poppins';
-  font-style: normal;
-  font-weight: 700;
-  font-display: swap;
-  src: url(https://fonts.gstatic.com/s/poppins/v21/pxiByp8kv8JHgFVrLCz7Z1xlFd2JQEk.woff2) format('woff2');
-  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
 }
 
 /* Applying Montserrat as default font for Modality */
