@@ -8,6 +8,7 @@ import dev.webfx.extras.util.control.ControlUtil;
 import dev.webfx.kit.launcher.WebFxKitLauncher;
 import dev.webfx.kit.util.properties.FXProperties;
 import dev.webfx.kit.util.properties.ObservableLists;
+import dev.webfx.platform.conf.Config;
 import dev.webfx.platform.conf.SourcesConfig;
 import dev.webfx.platform.console.Console;
 import dev.webfx.platform.useragent.UserAgent;
@@ -15,6 +16,7 @@ import dev.webfx.platform.util.Arrays;
 import dev.webfx.platform.util.collection.Collections;
 import dev.webfx.stack.i18n.operations.ChangeLanguageRequestEmitter;
 import dev.webfx.stack.routing.uirouter.UiRouter;
+import dev.webfx.stack.session.state.client.fx.FXLoggedIn;
 import dev.webfx.stack.ui.action.Action;
 import dev.webfx.stack.ui.action.ActionBinder;
 import dev.webfx.stack.ui.action.ActionGroup;
@@ -35,8 +37,6 @@ import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
 import javafx.scene.paint.Paint;
 import javafx.scene.shape.SVGPath;
-import javafx.scene.text.Font;
-import javafx.scene.text.FontWeight;
 import one.modality.base.client.application.ModalityClientMainFrameActivity;
 import one.modality.base.client.application.RoutingActions;
 import one.modality.base.client.mainframe.fx.FXMainFrameDialogArea;
@@ -51,12 +51,13 @@ import java.util.Objects;
 
 public final class ModalityFrontOfficeMainFrameActivity extends ModalityClientMainFrameActivity {
 
-    private static final double MAX_PAGE_WIDTH = 1200; // Similar value to website
-    private static final double WEB_MENU_HEIGHT = 96;
+    private static final double MAX_PAGE_WIDTH = 1440;
+    private static final double WEB_MAIN_MENU_HEIGHT = 100;
+    private static final double WEB_USER_MENU_HEIGHT = 52;
 
-    private final static String[] mainMenuOperationCodes =
-        SourcesConfig.getSourcesRootConfig().childConfigAt("modality.base.frontoffice.application")
-            .getString("mainMenuOperationCodes").split(",");
+    private final static Config FRONT_OFFICE_CONFIG = SourcesConfig.getSourcesRootConfig().childConfigAt("modality.base.frontoffice.application");
+    private final static String[] MAIN_MENU_OPERATION_CODES = FRONT_OFFICE_CONFIG.getString("mainMenuOperationCodes").split(",");
+    private final static String[] USER_MENU_OPERATION_CODES = FRONT_OFFICE_CONFIG.getString("userMenuOperationCodes").split(",");
 
     private final BooleanProperty mobileLayoutProperty =
         FXProperties.newBooleanProperty(UserAgent.isNative(), this::onMobileLayoutChange);
@@ -119,7 +120,7 @@ public final class ModalityFrontOfficeMainFrameActivity extends ModalityClientMa
                 boolean up = mouseY < lastMouseY[0];
                 if (up && mouseY < mainFrameContainer.getHeight() / 3)
                     overlayWebMenuBar.setCollapsed(false);
-                else if (!up && mouseY > WEB_MENU_HEIGHT)
+                else if (!up && mouseY > WEB_MAIN_MENU_HEIGHT)
                     overlayWebMenuBar.setCollapsed(true);
             }
             lastMouseY[0] = mouseY;
@@ -155,20 +156,30 @@ public final class ModalityFrontOfficeMainFrameActivity extends ModalityClientMa
             mountTransitionPane.setReverse(uiRouter.getHistory().isGoingBackward());
             ScrollPane scrollPane = mountNode == null ? null : (ScrollPane) mountNode.getProperties().get("embedding-scrollpane");
             if (scrollPane == null && mountNode != null) {
-                CollapsePane topButtonBar = createMainMenuButtonBar(false);
-                VBox vBox = new VBox(topButtonBar, mountNode);
-                vBox.setMaxWidth(MAX_PAGE_WIDTH);
+                CollapsePane mainMenuButtonBar = createMainMenuButtonBar(false);
+                CollapsePane userMenuButtonBar = createUserMenuButtonBar();
+                userMenuButtonBar.collapsedProperty().bind(FXLoggedIn.loggedInProperty().not());
+                VBox vBox = new VBox(
+                    mainMenuButtonBar,
+                    userMenuButtonBar,
+                    mountNode
+                );
+                vBox.setAlignment(Pos.CENTER);
+                //vBox.setBackground(Background.fill(Color.PINK));
+                vBox.setMaxWidth(Double.MAX_VALUE);
                 if (mountNode instanceof Region) {
+                    Region mountRegion = (Region) mountNode;
+                    mountRegion.setMaxWidth(MAX_PAGE_WIDTH);
                     FXProperties.runOnPropertiesChange(() -> {
-                        ((Region) mountNode).setMinHeight(mountTransitionPane.getMinHeight() - topButtonBar.getHeight());
-                    }, mountTransitionPane.minHeightProperty(), topButtonBar.heightProperty());
+                        mountRegion.setMinHeight(mountTransitionPane.getMinHeight() - mainMenuButtonBar.getHeight());
+                    }, mountTransitionPane.minHeightProperty(), mainMenuButtonBar.heightProperty());
                 }
                 BorderPane borderPane = new BorderPane(vBox);
                 ScrollPane finalScrollPane = scrollPane = ControlUtil.createVerticalScrollPane(borderPane);
                 mountNode.getProperties().put("embedding-scrollpane", scrollPane);
                 double[] lastScrollPaneContentHeight = { 0 };
                 FXProperties.runOnPropertyChange((o, oldValue, newValue) -> {
-                    insideButtonBar = topButtonBar;
+                    insideButtonBar = mainMenuButtonBar;
                     if (mountTransitionPane.isTransiting())
                         return;
                     // Visibility management:
@@ -283,24 +294,43 @@ public final class ModalityFrontOfficeMainFrameActivity extends ModalityClientMa
         );
     }
 
+    private CollapsePane createUserMenuButtonBar() {
+        return createMenuButtonBar(USER_MENU_OPERATION_CODES, true, false);
+    }
+
     private CollapsePane createMainMenuButtonBar(boolean mobileLayout) {
-        Button[] buttons = RoutingActions.filterRoutingActions(this, this, mainMenuOperationCodes)
-            .stream().map(action -> createMainMenuButton(action, mobileLayout))
+        return createMenuButtonBar(MAIN_MENU_OPERATION_CODES, false, mobileLayout);
+    }
+
+    private CollapsePane createMenuButtonBar(String[] menuOperationCodes, boolean userMenu, boolean mobileLayout) {
+        Button[] buttons = RoutingActions.filterRoutingActions(this, this, menuOperationCodes)
+            .stream().map(action -> createMenuButton(action, userMenu, mobileLayout))
             .toArray(Button[]::new);
-        Node buttonBar;
+        Region buttonBar;
         if (mobileLayout) {
             scaledMobileButtons = Arrays.map(buttons, ModalityFrontOfficeMainFrameActivity::scaleButton, ScalePane[]::new);
             buttonBar = new ColumnsPane(scaledMobileButtons);
         } else {
-            HBox hBox = new HBox(10, buttons);
-            hBox.setAlignment(Pos.CENTER_RIGHT);
-            hBox.setMaxWidth(MAX_PAGE_WIDTH);
-            hBox.setPrefHeight(WEB_MENU_HEIGHT);
-            hBox.setBackground(Background.fill(Color.WHITE));
-            buttonBar = hBox;
+            HBox hBox = new HBox(20, buttons);
+            //hBox.setBackground(Background.fill(Color.PURPLE));
+            hBox.setMaxWidth(MAX_PAGE_WIDTH); // to fit like the mount node
+            if (userMenu) {
+                hBox.setAlignment(Pos.CENTER_RIGHT);
+                buttonBar = hBox;
+                buttonBar.setPrefHeight(WEB_USER_MENU_HEIGHT);
+            } else {
+                hBox.setAlignment(Pos.BOTTOM_RIGHT);
+                hBox.setMaxHeight(Region.USE_PREF_SIZE);
+                buttonBar = new MonoPane(hBox);
+                buttonBar.setMinHeight(WEB_MAIN_MENU_HEIGHT);
+                buttonBar.setPrefHeight(WEB_MAIN_MENU_HEIGHT);
+                buttonBar.setMaxHeight(WEB_MAIN_MENU_HEIGHT);
+            }
         }
-        buttonBar.getStyleClass().setAll("button-bar"); // Style class used in Modality.css to make buttons square (remove round corners)
+        buttonBar.getStyleClass().setAll("button-bar"); // to make buttons square in CSS (remove round corners)
         CollapsePane collapsePane = new CollapsePane(buttonBar);
+        collapsePane.getStyleClass().setAll("menu-bar", userMenu ? "user-menu-bar" : "main-menu-bar", mobileLayout ? "mobile" : "non-mobile");
+        collapsePane.setMaxWidth(Double.MAX_VALUE); // necessary to make the (CSS) border fill the whole page width
         if (mobileLayout) {
             collapsePane.setEffect(new DropShadow());
             collapsePane.setClipEnabled(false);
@@ -315,16 +345,11 @@ public final class ModalityFrontOfficeMainFrameActivity extends ModalityClientMa
         return collapsePane;
     }
 
-    private Button createMainMenuButton(Action routeAction, boolean mobileLayout) {
+    private Button createMenuButton(Action routeAction, boolean userMenu, boolean mobileLayout) {
         Button button = ActionBinder.newActionButton(routeAction);
-        //button.visibleProperty().bind(button.disabledProperty().not());
         button.setCursor(Cursor.HAND);
-        button.setContentDisplay(ContentDisplay.TOP);
-        button.setGraphicTextGap(0);
-        // Temporarily hardcoded style. TODO: move to CSS
-        if (!mobileLayout)
-            button.setTextFill(Color.BLACK);
-        button.setBackground(Background.fill(Color.WHITE));
+        button.setContentDisplay(userMenu ? ContentDisplay.LEFT : ContentDisplay.TOP);
+        button.setGraphicTextGap(mobileLayout ? 0 : 8);
         FXProperties.runNowAndOnPropertyChange(graphic -> {
             if (graphic instanceof SVGPath) {
                 SVGPath svgPath = (SVGPath) graphic;
@@ -336,10 +361,7 @@ public final class ModalityFrontOfficeMainFrameActivity extends ModalityClientMa
                     svgColorProperty.bind(button.textFillProperty());
             }
         }, button.graphicProperty());
-        int fontSize = mobileLayout ? 6 : 13;
-        button.setFont(Font.font("Montserrat", FontWeight.BOLD, fontSize));
-        button.setStyle("-fx-font-family: Montserrat; -fx-font-weight: bold; -fx-font-size: " + (fontSize) + "px; -fx-background-color: white; -fx-background-radius: 0");
-        button.setPadding(new Insets(5));
+        button.setPadding(mobileLayout ? new Insets(5) : Insets.EMPTY);
         return button;
     }
 

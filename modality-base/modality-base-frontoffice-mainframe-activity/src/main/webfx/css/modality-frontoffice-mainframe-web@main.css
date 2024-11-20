@@ -1,5 +1,29 @@
-/* We dont want border for the buttons in the front-office button bar */
+fx-collapsepane.menu-bar > fx-background {
+    background-color: white;
+}
 
-.button-bar fx-button > fx-border {
+fx-collapsepane.menu-bar > fx-border {
+    border-style: solid;
+    border-width: 0 0 1px 0;
+    border-color: lightgray;
+    border-radius: 0;
+}
+
+.menu-bar fx-button {
+    --fx-button-background: white; /* removes old-style button gradient */
+    font-family: "Poppins", sans-serif;
+}
+
+.menu-bar fx-button > fx-border {
     border: none;
+}
+
+.main-menu-bar fx-button {
+    color: black;
+}
+
+.user-menu-bar fx-button {
+    font-size: 12px;
+    color: #838788;
+    --fx-svg-path-fill: #838788
 }

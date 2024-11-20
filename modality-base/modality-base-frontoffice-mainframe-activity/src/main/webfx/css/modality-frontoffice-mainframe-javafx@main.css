@@ -1,0 +1,19 @@
+CollapsePane.menu-bar.non-mobile {
+    -fx-background-color: white;
+    -fx-border-width: 0 0 1px 0 ;
+    -fx-border-color: lightgray;
+}
+
+.menu-bar Button {
+    -fx-background-color: white; /* removes old-style button gradient */
+    -fx-font-family: "Poppins";
+}
+
+.main-menu-bar Button {
+    -fx-text-fill: black;
+}
+
+.user-menu-bar Button {
+    -fx-font-size: 12px;
+    -fx-text-fill: #838788;
+}
