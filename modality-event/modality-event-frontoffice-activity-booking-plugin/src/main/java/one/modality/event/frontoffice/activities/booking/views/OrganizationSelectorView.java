@@ -1,7 +1,7 @@
 package one.modality.event.frontoffice.activities.booking.views;
 
 import dev.webfx.extras.panes.FlipPane;
-import dev.webfx.extras.panes.RatioPane;
+import dev.webfx.extras.panes.AspectRatioPane;
 import dev.webfx.extras.panes.ScaleMode;
 import dev.webfx.extras.panes.ScalePane;
 import dev.webfx.extras.util.layout.LayoutUtil;
@@ -60,7 +60,7 @@ public final class OrganizationSelectorView {
     private final FlipPane flipPane = new FlipPane(true);
     private final MapView organizationMapView = new StaticMapView(10);
     private MapView worldMapView;
-    private final RatioPane presentationPane = new RatioPane(16d / 9);
+    private final AspectRatioPane presentationPane = new AspectRatioPane(16d / 9);
     private WebView presentationVideoView; // new WebView() can raise "Not on FX application thread" if this is the first page loaded
     private final Hyperlink websiteLink = GeneralUtility.createHyperlink(BookingI18nKeys.localCentreWebsite, Color.WHITE);
     private final Hyperlink addressLink = GeneralUtility.createHyperlink(BookingI18nKeys.localCentreAddress, Color.WHITE);
