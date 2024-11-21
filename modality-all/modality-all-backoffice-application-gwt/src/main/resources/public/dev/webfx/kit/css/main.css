@@ -708,7 +708,9 @@ tr.selected, .grid-row.selected {
 }
 /*===== webfx-stack-authn-login-ui-portal-web@main.css from webfx-stack-authn-login-ui-portal =====*/
 
-
+:root {
+    --webfx-login-portal-background-image: none;
+}
 
 /* Montserrat password dots are tiny! So we use another font for passwords, but we don't want that font for the placeholder!
    So we apply that font only once the user started typing the password. This is done using :not([value=""]) CSS
@@ -726,7 +728,7 @@ input[type="password"]:not([value=""]) {
 }
 
 .login {
-    background-image: var(--login-bg-image); /* Specify the path to your image */
+    background-image: var(--webfx-login-portal-background-image); /* Specify the path to your image */
     background-repeat: no-repeat;               /* Prevents the image from repeating */
     background-size: cover;                     /* Scales the image to cover the area */
     background-position: center;                /* Centers the image */
@@ -760,10 +762,11 @@ input[type="password"]:not([value=""]) {
 
 .transparent-input > fx-background{
     background-color: transparent;
-    }
+}
+
 .transparent-input > fx-border{
     border-style: none;
-    }
+}
 
 
 /*===== modality-backoffice-home-web@main.css from modality-base-backoffice-activity-home-plugin =====*/

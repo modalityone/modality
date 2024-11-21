@@ -59,6 +59,12 @@
 
         <dependency>
             <groupId>one.modality</groupId>
+            <artifactId>modality-crm-client-authn-fx</artifactId>
+            <version>1.0.0-SNAPSHOT</version>
+        </dependency>
+
+        <dependency>
+            <groupId>one.modality</groupId>
             <artifactId>modality-event-client-mediaview</artifactId>
             <version>1.0.0-SNAPSHOT</version>
         </dependency>
@@ -84,6 +90,12 @@
         <dependency>
             <groupId>dev.webfx</groupId>
             <artifactId>webfx-extras-util-control</artifactId>
+            <version>0.1.0-SNAPSHOT</version>
+        </dependency>
+
+        <dependency>
+            <groupId>dev.webfx</groupId>
+            <artifactId>webfx-extras-util-layout</artifactId>
             <version>0.1.0-SNAPSHOT</version>
         </dependency>
 
@@ -134,6 +146,12 @@
         <dependency>
             <groupId>dev.webfx</groupId>
             <artifactId>webfx-stack-i18n</artifactId>
+            <version>0.1.0-SNAPSHOT</version>
+        </dependency>
+
+        <dependency>
+            <groupId>dev.webfx</groupId>
+            <artifactId>webfx-stack-i18n-controls</artifactId>
             <version>0.1.0-SNAPSHOT</version>
         </dependency>
 

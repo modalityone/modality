@@ -522,27 +522,24 @@ HtmlText, HtmlTextEditor {
 
 /*===== webfx-stack-authn-login-ui-portal-javafx@main.css from webfx-stack-authn-login-ui-portal =====*/
 
+* {
+    -webfx-login-portal-background-image: none; /* Specify the path to your image */
+}
+
 .login {
-     -fx-background-image: url("webfx-css:/loginportal/images/login-background-image.png"); /* Specify the path to your image */
-     -fx-background-repeat: no-repeat;               /* Prevents the image from repeating */
-     -fx-background-size: cover;                     /* Scales the image to cover the area */
-     -fx-background-position: center;
+    -fx-background-image: none; /*-webfx-login-portal-background-image; not working*/
+    -fx-background-repeat: no-repeat; /* Prevents the image from repeating */
+    -fx-background-size: cover; /* Scales the image to cover the area */
+    -fx-background-position: center;
 }
 
 .login .background {
-     -fx-background-image: none;
-     -fx-background-color: rgba(255, 255, 255, 0.7);
+    -fx-background-image: none;
+    -fx-background-color: rgba(255, 255, 255, 0.7);
     -fx-background-radius: 20px;
     -fx-border-color: lightgray;
     -fx-border-radius: 20px;
     -fx-effect: dropshadow(gaussian, lightgray, 10, 0, 0, 0);
-}
-
-.login-child {
-    -fx-min-width: 586px;
-    -fx-max-width: 586px;
-    -fx-min-height: 506px;
-    -fx-max-height: 506px;
 }
 
 /*===== modality-client-javafx@main.css from modality-base-client-css =====*/
@@ -584,18 +581,31 @@ CollapsePane.menu-bar.non-mobile {
     -fx-border-color: lightgray;
 }
 
+.menu-bar {
+    -fx-font-family: "Poppins";
+}
+
 .menu-bar Button {
     -fx-background-color: white; /* removes old-style button gradient */
-    -fx-font-family: "Poppins";
 }
 
 .main-menu-bar Button {
     -fx-text-fill: black;
 }
 
-.user-menu-bar Button {
+.user-menu-bar Label, .user-menu-bar Button {
     -fx-font-size: 12px;
     -fx-text-fill: #838788;
+}
+
+.main-menu-bar Label.brand {
+    -fx-font-size: 16px;
+    -fx-font-weight: bold;
+    -fx-text-fill: #0096D6;
+}
+
+.main-menu-bar Label.brand SVGPath {
+    -fx-fill: #0096D6;
 }
 
 /*===== modality-event-client-recurringevents-javafx@main.css from modality-event-client-recurringevents =====*/

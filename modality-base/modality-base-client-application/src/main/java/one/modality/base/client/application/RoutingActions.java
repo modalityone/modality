@@ -3,7 +3,6 @@ package one.modality.base.client.application;
 import dev.webfx.platform.windowhistory.spi.BrowsingHistory;
 import dev.webfx.stack.routing.router.auth.authz.RouteRequest;
 import dev.webfx.stack.routing.uirouter.activity.uiroute.UiRouteActivityContext;
-import dev.webfx.stack.routing.uirouter.operations.RoutePushRequest;
 import dev.webfx.stack.routing.uirouter.operations.RouteRequestEmitter;
 import dev.webfx.stack.ui.action.Action;
 import dev.webfx.stack.ui.operation.HasOperationCode;
@@ -59,8 +58,10 @@ public final class RoutingActions {
     public static Action getRouteEmitterAction(RouteRequestEmitter routeRequestEmitter, UiRouteActivityContext context, OperationActionFactoryMixin mixin) {
         return mixin.newOperationAction(() -> {
             RouteRequest routeRequest = routeRequestEmitter.instantiateRouteRequest(context);
+            /* Commented as this prevents the whole history to work in the browser (after refactoring this class)
+               but there was probably a good reason to do this for some specific cases TODO investigate which cases
             if (routeRequest instanceof RoutePushRequest)
-                ((RoutePushRequest) routeRequest).setReplace(true);
+                ((RoutePushRequest) routeRequest).setReplace(true);*/
             return routeRequest;
         });
     }

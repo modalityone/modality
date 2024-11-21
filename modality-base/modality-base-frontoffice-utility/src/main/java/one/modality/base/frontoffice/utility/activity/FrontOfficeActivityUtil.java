@@ -49,9 +49,15 @@ public final class FrontOfficeActivityUtil {
     }
 */
     public static <R extends Region> R restrictToMaxPageWidth(R region, boolean withPadding) {
-        region.setMaxWidth(MAX_PAGE_WIDTH);
         if (withPadding)
-            region.setPadding(createLeftRightPageInsets(0, 0));
+            return restrictToMaxPageWidth(region, 0, 0);
+        return restrictToMaxPageWidth(region, -1, -1);
+    }
+
+    public static <R extends Region> R restrictToMaxPageWidth(R region, double topPadding, double bottomPadding) {
+        region.setMaxWidth(MAX_PAGE_WIDTH);
+        if (topPadding >= 0 && bottomPadding >= 0)
+            region.setPadding(createLeftRightPageInsets(topPadding, bottomPadding));
         return region;
     }
 

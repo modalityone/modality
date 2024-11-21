@@ -636,7 +636,9 @@ tr.selected, .grid-row.selected {
 }
 /*===== webfx-stack-authn-login-ui-portal-web@main.css from webfx-stack-authn-login-ui-portal =====*/
 
-
+:root {
+    --webfx-login-portal-background-image: none;
+}
 
 /* Montserrat password dots are tiny! So we use another font for passwords, but we don't want that font for the placeholder!
    So we apply that font only once the user started typing the password. This is done using :not([value=""]) CSS
@@ -654,7 +656,7 @@ input[type="password"]:not([value=""]) {
 }
 
 .login {
-    background-image: var(--login-bg-image); /* Specify the path to your image */
+    background-image: var(--webfx-login-portal-background-image); /* Specify the path to your image */
     background-repeat: no-repeat;               /* Prevents the image from repeating */
     background-size: cover;                     /* Scales the image to cover the area */
     background-position: center;                /* Centers the image */
@@ -688,10 +690,11 @@ input[type="password"]:not([value=""]) {
 
 .transparent-input > fx-background{
     background-color: transparent;
-    }
+}
+
 .transparent-input > fx-border{
     border-style: none;
-    }
+}
 
 
 /*===== modality-client-web@main.css from modality-base-client-css =====*/
@@ -744,9 +747,12 @@ fx-collapsepane.menu-bar > fx-border {
     border-radius: 0;
 }
 
+.menu-bar {
+    font-family: "Poppins", sans-serif;
+}
+
 .menu-bar fx-button {
     --fx-button-background: white; /* removes old-style button gradient */
-    font-family: "Poppins", sans-serif;
 }
 
 .menu-bar fx-button > fx-border {
@@ -757,7 +763,16 @@ fx-collapsepane.menu-bar > fx-border {
     color: black;
 }
 
-.user-menu-bar fx-button {
+.main-menu-bar fx-label.brand {
+    font-family: "Roboto", sans-serif;
+    font-size: 14px;
+    font-weight: 500;
+    color: #0096D6;
+    white-space: pre-line;
+    line-height: 1.2;
+}
+
+.user-menu-bar fx-label, .user-menu-bar fx-button {
     font-size: 12px;
     color: #838788;
     --fx-svg-path-fill: #838788
