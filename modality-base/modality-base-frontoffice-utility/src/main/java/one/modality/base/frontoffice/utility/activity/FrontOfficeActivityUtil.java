@@ -1,22 +1,17 @@
 package one.modality.base.frontoffice.utility.activity;
 
-import dev.webfx.extras.panes.TransitionPane;
-import dev.webfx.extras.util.control.ControlUtil;
 import javafx.geometry.Insets;
-import javafx.scene.control.ScrollPane;
-import javafx.scene.layout.Background;
-import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.Region;
-import javafx.scene.paint.Color;
 
 /**
  * @author Bruno Salmon
  */
 public final class FrontOfficeActivityUtil {
 
-    public static final double MAX_PAGE_WIDTH = 1200; // Similar value to website
+    public static final double MAX_PAGE_WIDTH = 1440 - 2 * 160;
     public static final double LEFT_RIGHT_PAGE_INSETS = 20;
 
+/*
     public static ScrollPane createActivityPageScrollPane(Region pageContainer, boolean hasVideoPlayers) {
         return createActivityPageScrollPane(pageContainer, hasVideoPlayers, true);
     }
@@ -51,6 +46,13 @@ public final class FrontOfficeActivityUtil {
 
     public static Insets createLeftRightPageInsets(double topBottom) {
         return createLeftRightPageInsets(topBottom, topBottom);
+    }
+*/
+    public static <R extends Region> R restrictToMaxPageWidth(R region, boolean withPadding) {
+        region.setMaxWidth(MAX_PAGE_WIDTH);
+        if (withPadding)
+            region.setPadding(createLeftRightPageInsets(0, 0));
+        return region;
     }
 
     public static Insets createLeftRightPageInsets(double top, double bottom) {

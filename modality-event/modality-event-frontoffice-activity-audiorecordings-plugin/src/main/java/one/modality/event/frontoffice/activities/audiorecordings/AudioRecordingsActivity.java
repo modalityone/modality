@@ -14,6 +14,7 @@ import javafx.geometry.Insets;
 import javafx.scene.Node;
 import javafx.scene.control.Label;
 import javafx.scene.layout.VBox;
+import one.modality.base.frontoffice.utility.activity.FrontOfficeActivityUtil;
 import one.modality.base.shared.entities.Event;
 import one.modality.base.shared.entities.KnownItemFamily;
 import one.modality.crm.shared.services.authn.fx.FXUserPersonId;
@@ -94,7 +95,7 @@ final class AudioRecordingsActivity extends ViewDomainActivityBase {
         // *************************************************************************************************************
 
         pageContainer.setPadding(new Insets(PAGE_TOP_BOTTOM_PADDING, 0, PAGE_TOP_BOTTOM_PADDING, 0));
-        return pageContainer;
+        return FrontOfficeActivityUtil.restrictToMaxPageWidth(pageContainer, true);
         //return FrontOfficeActivityUtil.createActivityPageScrollPane(pageContainer, false);
     }
 

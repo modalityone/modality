@@ -13,8 +13,6 @@ module modality.base.frontoffice.utility {
     requires modality.base.client.mainframe.fx;
     requires modality.base.frontoffice.mainframe.fx;
     requires modality.base.shared.entities;
-    requires webfx.extras.panes;
-    requires webfx.extras.util.control;
     requires webfx.extras.util.scene;
     requires webfx.kit.util;
     requires webfx.platform.browser;
