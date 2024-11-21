@@ -7,10 +7,12 @@ module modality.crm.client.activity.login.plugin {
 
     // Direct dependencies modules
     requires javafx.graphics;
+    requires webfx.platform.util;
     requires webfx.platform.windowhistory;
     requires webfx.stack.authn.login.ui;
     requires webfx.stack.i18n;
     requires webfx.stack.orm.domainmodel.activity;
+    requires webfx.stack.routing.activity;
     requires webfx.stack.routing.router.client;
     requires webfx.stack.routing.uirouter;
     requires webfx.stack.ui.action.tuner;

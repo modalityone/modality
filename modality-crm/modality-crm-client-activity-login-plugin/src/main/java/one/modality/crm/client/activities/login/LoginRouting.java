@@ -1,8 +1,10 @@
 package one.modality.crm.client.activities.login;
 
+import dev.webfx.platform.util.function.Factory;
 import dev.webfx.platform.windowhistory.spi.BrowsingHistory;
 import dev.webfx.stack.i18n.HasI18nKey;
 import dev.webfx.stack.orm.domainmodel.activity.viewdomain.impl.ViewDomainActivityContextFinal;
+import dev.webfx.stack.routing.activity.Activity;
 import dev.webfx.stack.routing.router.auth.authz.RouteRequest;
 import dev.webfx.stack.routing.uirouter.ProvidedLoginUiRoute;
 import dev.webfx.stack.routing.uirouter.UiRoute;
@@ -17,6 +19,8 @@ import dev.webfx.stack.ui.operation.HasOperationCode;
  * @author Bruno Salmon
  */
 public final class LoginRouting {
+
+    public static Factory<Activity<ViewDomainActivityContextFinal>> LOGIN_ACTIVITY_FACTORY = LoginActivity::new;
 
     private static final String PATH = "/login";
     private final static String OPERATION_CODE = "RouteToLogin";
@@ -34,7 +38,7 @@ public final class LoginRouting {
         public static UiRoute<?> uiRoute() {
             return UiRoute.create(LoginRouting.getPath()
                     , true
-                    , LoginActivity::new
+                    , LOGIN_ACTIVITY_FACTORY
                     , ViewDomainActivityContextFinal::new
             );
         }
