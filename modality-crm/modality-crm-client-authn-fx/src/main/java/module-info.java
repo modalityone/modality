@@ -12,6 +12,7 @@ module modality.crm.client.authn.fx {
     requires webfx.kit.util;
     requires webfx.platform.console;
     requires webfx.platform.uischeduler;
+    requires webfx.platform.util;
     requires webfx.stack.authn;
     requires webfx.stack.orm.datasourcemodel.service;
     requires webfx.stack.orm.domainmodel;
