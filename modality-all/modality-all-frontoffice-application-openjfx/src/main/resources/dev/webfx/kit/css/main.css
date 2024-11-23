@@ -545,16 +545,17 @@ HtmlText, HtmlTextEditor {
 /*===== modality-client-javafx@main.css from modality-base-client-css =====*/
 
 * {
-    -webfx-switch-selected-background-color: #0096D6;
+    /* Overriding some WebFX Extras CSS variables  */
+    -webfx-switch-selected-background-color: -brand-main-background-color;
     -webfx-visualgrid-selection-color: #BBBBBB;
 }
 
+/* Not sure if it's the right place for this CSS rules */
 .event-button Button {
     -fx-background-radius: 4;
     -fx-pref-height:36px;
     -fx-max-height:36px;
     -fx-alignment: center;
- /*  -fx-font-family: "Google Sans", Roboto, Arial;*/
     -fx-font-weight: bolder;
 }
 
@@ -573,6 +574,12 @@ Text, Label, Button, TextField {
    -fx-background-color: transparent;
 }
 
+/*===== modality-client-brand-javafx@main.css from modality-base-client-brand =====*/
+
+* {
+    -brand-main-color: #0096D6;
+    -brand-main-background-color: #0096D6;
+}
 /*===== modality-frontoffice-mainframe-javafx@main.css from modality-base-frontoffice-mainframe-activity =====*/
 
 CollapsePane.menu-bar.non-mobile {
@@ -601,11 +608,11 @@ CollapsePane.menu-bar.non-mobile {
 .main-menu-bar Label.brand {
     -fx-font-size: 16px;
     -fx-font-weight: bold;
-    -fx-text-fill: #0096D6;
+    -fx-text-fill: -brand-main-color;
 }
 
 .main-menu-bar Label.brand SVGPath {
-    -fx-fill: #0096D6;
+    -fx-fill: -brand-main-color;
 }
 
 /*===== modality-event-client-recurringevents-javafx@main.css from modality-event-client-recurringevents =====*/
@@ -667,7 +674,7 @@ CollapsePane.menu-bar.non-mobile {
 .event-date-cell.date-selected,
 .event-date-cell.date-already-booked {
     -fx-border-color: none;
-    -fx-background-color: #F5761A;
+    -fx-background-color: -brand-main-color;
 }
 
 .event-date-cell.date-selected Text {

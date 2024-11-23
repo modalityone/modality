@@ -30,6 +30,7 @@ import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 import javafx.scene.text.FontWeight;
 import javafx.scene.text.TextAlignment;
+import one.modality.base.client.brand.Brand;
 import one.modality.base.client.tile.Tab;
 import one.modality.base.client.tile.TabsBar;
 import one.modality.base.frontoffice.utility.activity.FrontOfficeActivityUtil;
@@ -59,7 +60,7 @@ final class BookingActivity extends ViewDomainActivityBase implements ButtonFact
 
     @Override
     public Node buildUi() {
-        Label headerLabel = GeneralUtility.createLabel(BookingI18nKeys.eventsHeader, StyleUtility.MAIN_BRAND_COLOR);
+        Label headerLabel = GeneralUtility.createLabel(BookingI18nKeys.eventsHeader, Brand.getBrandMainColor());
         headerLabel.setTextAlignment(TextAlignment.CENTER);
 
         String headerImageUrl = SourcesConfig.getSourcesRootConfig().childConfigAt("modality.event.frontoffice.activity.booking").getString("headerImageUrl");

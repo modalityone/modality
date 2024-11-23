@@ -10,6 +10,7 @@ module modality.base.backoffice.mainframe.activity {
     requires modality.base.backoffice.mainframe.fx;
     requires modality.base.backoffice.mainframe.headernode;
     requires modality.base.client.application;
+    requires modality.base.client.brand;
     requires modality.base.client.gantt.fx;
     requires modality.base.client.mainframe.fx;
     requires modality.base.client.profile.fx;
@@ -23,7 +24,6 @@ module modality.base.backoffice.mainframe.activity {
     requires webfx.kit.launcher;
     requires webfx.kit.util;
     requires webfx.platform.conf;
-    requires webfx.platform.resource;
     requires webfx.platform.scheduler;
     requires webfx.platform.uischeduler;
     requires webfx.platform.util;
@@ -35,8 +35,5 @@ module modality.base.backoffice.mainframe.activity {
 
     // Exported packages
     exports one.modality.base.backoffice.activities.mainframe;
-
-    // Resources packages
-    opens one.modality.base.backoffice.activities.mainframe;
 
 }

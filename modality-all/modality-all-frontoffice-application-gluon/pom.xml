@@ -381,6 +381,7 @@
                         <list>images/svg/color/[^/]+$</list>
                         <list>images/svg/mono/[^/]+$</list>
                         <list>javafx/scene/control/skin/checkbox/[^/]+$</list>
+                        <list>one/modality/base/client/brand/[^/]+$</list>
                         <list>one/modality/base/client/images/[^/]+$</list>
                         <list>one/modality/base/frontoffice/activities/account/images/[^/]+$</list>
                         <list>one/modality/base/shared/domainmodel/[^/]+$</list>

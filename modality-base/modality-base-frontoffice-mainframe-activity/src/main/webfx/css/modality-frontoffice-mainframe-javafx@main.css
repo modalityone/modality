@@ -24,9 +24,9 @@ CollapsePane.menu-bar.non-mobile {
 .main-menu-bar Label.brand {
     -fx-font-size: 16px;
     -fx-font-weight: bold;
-    -fx-text-fill: #0096D6;
+    -fx-text-fill: -brand-main-color;
 }
 
 .main-menu-bar Label.brand SVGPath {
-    -fx-fill: #0096D6;
+    -fx-fill: -brand-main-color;
 }

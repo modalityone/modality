@@ -1,13 +1,14 @@
 * {
-    -webfx-switch-selected-background-color: #0096D6;
+    /* Overriding some WebFX Extras CSS variables  */
+    -webfx-switch-selected-background-color: -brand-main-background-color;
     -webfx-visualgrid-selection-color: #BBBBBB;
 }
 
+/* Not sure if it's the right place for this CSS rules */
 .event-button Button {
     -fx-background-radius: 4;
     -fx-pref-height:36px;
     -fx-max-height:36px;
     -fx-alignment: center;
- /*  -fx-font-family: "Google Sans", Roboto, Arial;*/
     -fx-font-weight: bolder;
 }

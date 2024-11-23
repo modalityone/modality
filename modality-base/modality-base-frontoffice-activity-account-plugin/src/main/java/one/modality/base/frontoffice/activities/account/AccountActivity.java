@@ -24,6 +24,7 @@ import javafx.scene.layout.VBox;
 import javafx.scene.text.FontWeight;
 import javafx.scene.text.TextAlignment;
 import javafx.stage.Screen;
+import one.modality.base.client.brand.Brand;
 import one.modality.base.frontoffice.utility.tyler.GeneralUtility;
 import one.modality.base.frontoffice.utility.tyler.StyleUtility;
 import one.modality.base.shared.entities.Document;
@@ -47,7 +48,7 @@ final class AccountActivity extends ViewDomainActivityBase implements OperationA
 
     @Override
     public Node buildUi() {
-        Label upcomingBookingsLabel = GeneralUtility.createLabel(AccountI18nKeys.YourUpcomingBookings, StyleUtility.MAIN_BRAND_COLOR);
+        Label upcomingBookingsLabel = GeneralUtility.createLabel(AccountI18nKeys.YourUpcomingBookings, Brand.getBrandMainColor());
         upcomingBookingsLabel.setContentDisplay(ContentDisplay.TOP);
         upcomingBookingsLabel.setTextAlignment(TextAlignment.CENTER);
         upcomingBookingsLabel.setPadding(new Insets(25, 0, 40, 0));
@@ -55,7 +56,7 @@ final class AccountActivity extends ViewDomainActivityBase implements OperationA
         //VBox.setMargin(upcomingBookingsLabel, new Insets(0, 0, 10, 0));
         VBox upcomingBookingsContainer = new VBox(10);
 
-        Label pastBookingsLabel = GeneralUtility.createLabel(AccountI18nKeys.YourPastBookings, StyleUtility.MAIN_BRAND_COLOR);
+        Label pastBookingsLabel = GeneralUtility.createLabel(AccountI18nKeys.YourPastBookings, Brand.getBrandMainColor());
         pastBookingsLabel.setContentDisplay(ContentDisplay.TOP);
         pastBookingsLabel.setTextAlignment(TextAlignment.CENTER);
         pastBookingsLabel.setPadding(new Insets(25, 0, 40, 0));

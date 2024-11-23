@@ -25,6 +25,7 @@ import javafx.scene.layout.*;
 import javafx.scene.text.Font;
 import javafx.scene.text.TextAlignment;
 import javafx.stage.Screen;
+import one.modality.base.client.brand.Brand;
 import one.modality.base.client.icons.SvgIcons;
 import one.modality.base.frontoffice.utility.tyler.GeneralUtility;
 import one.modality.base.frontoffice.utility.tyler.StyleUtility;
@@ -145,7 +146,7 @@ final class StepBBookEventSlide extends StepSlide {
 
         VBox orangePane = new VBox(gridPane); // For any reason, using MonoPane makes height grows when width grows
         orangePane.setAlignment(Pos.CENTER);
-        orangePane.setBackground(Background.fill(StyleUtility.MAIN_BRAND_COLOR));
+        orangePane.setBackground(Background.fill(Brand.getBrandMainColor()));
         orangePane.setMaxWidth(Double.MAX_VALUE);
 
         Region digitsTransitionPane = digitsSlideController.getContainer();

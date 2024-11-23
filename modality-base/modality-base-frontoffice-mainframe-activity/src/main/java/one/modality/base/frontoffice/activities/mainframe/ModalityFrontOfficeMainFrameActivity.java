@@ -43,13 +43,14 @@ import javafx.scene.paint.Paint;
 import javafx.scene.shape.SVGPath;
 import one.modality.base.client.application.ModalityClientMainFrameActivity;
 import one.modality.base.client.application.RoutingActions;
+import one.modality.base.client.brand.Brand;
+import one.modality.base.client.brand.BrandI18nKeys;
 import one.modality.base.client.mainframe.fx.FXMainFrameDialogArea;
 import one.modality.base.client.mainframe.fx.FXMainFrameOverlayArea;
 import one.modality.base.client.mainframe.fx.FXMainFrameTransiting;
 import one.modality.base.frontoffice.mainframe.fx.FXBackgroundNode;
 import one.modality.base.frontoffice.mainframe.fx.FXCollapseFooter;
 import one.modality.base.frontoffice.utility.activity.FrontOfficeActivityUtil;
-import one.modality.base.frontoffice.utility.tyler.StyleUtility;
 import one.modality.crm.shared.services.authn.fx.FXUserName;
 
 import java.util.List;
@@ -269,7 +270,7 @@ public final class ModalityFrontOfficeMainFrameActivity extends ModalityClientMa
         // Fullscreen button
         ModalityFullscreenButton.setupModalityFullscreenButton();
         // Players color (actually only Wistia supports it)
-        Players.setGlobalPlayerColor(StyleUtility.MAIN_BRAND_COLOR);
+        Players.setGlobalPlayerColor(Brand.getBrandMainColor());
     }
 
     private void updateDialogArea() {
@@ -351,7 +352,7 @@ public final class ModalityFrontOfficeMainFrameActivity extends ModalityClientMa
                 buttonBar = hBox;
                 buttonBar.setPrefHeight(WEB_USER_MENU_HEIGHT);
             } else {
-                Label brandLabel = I18nControls.newLabel(MainFrameI18nKeys.brand);
+                Label brandLabel = I18nControls.newLabel(BrandI18nKeys.frontOfficeBrandNameAndLogo);
                 brandLabel.setGraphicTextGap(20);
                 brandLabel.getStyleClass().setAll("brand");
                 hBox.getChildren().add(0, brandLabel);

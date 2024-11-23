@@ -17,6 +17,7 @@ import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
 import javafx.scene.text.FontWeight;
 import javafx.scene.text.Text;
+import one.modality.base.client.brand.Brand;
 import one.modality.base.frontoffice.utility.tyler.GeneralUtility;
 import one.modality.base.frontoffice.utility.tyler.StyleUtility;
 import one.modality.base.frontoffice.utility.tyler.TextUtility;
@@ -40,7 +41,7 @@ public final class BookingView {
 
     private final Document booking;
 
-    private final Label eventNameLabel = GeneralUtility.createLabel(StyleUtility.MAIN_BRAND_COLOR);
+    private final Label eventNameLabel = GeneralUtility.createLabel(Brand.getBrandMainColor());
     private final Text eventCentreLocationText = TextUtility.createText(StyleUtility.ELEMENT_GRAY_COLOR);
     private final Text eventCountryLocationText = TextUtility.createText(StyleUtility.ELEMENT_GRAY_COLOR);
     private final Label personLabel = new Label();

@@ -12,6 +12,7 @@ import javafx.scene.paint.Color;
 import javafx.scene.text.FontWeight;
 import javafx.scene.text.Text;
 import javafx.stage.Screen;
+import one.modality.base.client.brand.Brand;
 import one.modality.base.frontoffice.utility.tyler.GeneralUtility;
 import one.modality.base.frontoffice.utility.tyler.StyleUtility;
 import one.modality.base.frontoffice.utility.tyler.TextUtility;
@@ -30,7 +31,7 @@ final class OrangeFrame {
                 bottom
         );
 
-        orangeFrame.setBackground(Background.fill(StyleUtility.MAIN_BRAND_COLOR));
+        orangeFrame.setBackground(Background.fill(Brand.getBrandMainColor()));
         orangeFrame.setAlignment(Pos.CENTER);
 
         FXProperties.runOnDoublePropertyChange(width -> {

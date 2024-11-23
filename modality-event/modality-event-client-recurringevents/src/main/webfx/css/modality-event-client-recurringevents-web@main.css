@@ -1,4 +1,4 @@
-* {
+:root {
     --fx-event-description-text-color: #444;
 }
 
@@ -47,7 +47,7 @@
 
 .event-date-cell.date-selected > fx-background,
 .event-date-cell.date-already-booked > fx-background {
-    background-color: #F5761A;
+    background-color: var(--brand-main-color);
 }
 
 .event-date-cell.date-selected > fx-border,

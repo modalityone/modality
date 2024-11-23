@@ -610,6 +610,12 @@ HtmlText, HtmlTextEditor {
     -fx-effect: dropshadow(gaussian, lightgray, 10, 0, 0, 0);
 }
 
+/*===== modality-client-brand-javafx@main.css from modality-base-client-brand =====*/
+
+* {
+    -brand-main-color: #0096D6;
+    -brand-main-background-color: #0096D6;
+}
 /*===== modality-backoffice-mainframe-javafx@main.css from modality-base-backoffice-mainframe-activity =====*/
 
 .button.main-frame-header-button {
@@ -637,16 +643,17 @@ Text, Label, Button, TextField {
 /*===== modality-client-javafx@main.css from modality-base-client-css =====*/
 
 * {
-    -webfx-switch-selected-background-color: #0096D6;
+    /* Overriding some WebFX Extras CSS variables  */
+    -webfx-switch-selected-background-color: -brand-main-background-color;
     -webfx-visualgrid-selection-color: #BBBBBB;
 }
 
+/* Not sure if it's the right place for this CSS rules */
 .event-button Button {
     -fx-background-radius: 4;
     -fx-pref-height:36px;
     -fx-max-height:36px;
     -fx-alignment: center;
- /*  -fx-font-family: "Google Sans", Roboto, Arial;*/
     -fx-font-weight: bolder;
 }
 
@@ -709,7 +716,7 @@ Text, Label, Button, TextField {
 .event-date-cell.date-selected,
 .event-date-cell.date-already-booked {
     -fx-border-color: none;
-    -fx-background-color: #F5761A;
+    -fx-background-color: -brand-main-color;
 }
 
 .event-date-cell.date-selected Text {

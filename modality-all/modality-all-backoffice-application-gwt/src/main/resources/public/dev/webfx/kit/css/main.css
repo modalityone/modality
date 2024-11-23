@@ -776,6 +776,12 @@ fx-homepane fx-tile * {
     font-size: 18px;
 }
 
+/*===== modality-client-brand-web@main.css from modality-base-client-brand =====*/
+
+:root {
+    --brand-main-color: #0096D6;
+    --brand-main-background-color: #0096D6;
+}
 /*===== modality-client-web@main.css from modality-base-client-application =====*/
 
 @import url('https://fonts.googleapis.com/css2?family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap');
@@ -797,10 +803,12 @@ body, textarea /* because textarea has explicit default monospace font */ {
 /*===== modality-client-web@main.css from modality-base-client-css =====*/
 
 :root {
-    --webfx-switch-selected-background-color: #0096D6;
+    /* Overriding some WebFX Extras CSS variables  */
+    --webfx-switch-selected-background-color: --brand-main-background-color;
     --webfx-visualgrid-selection-color: #BBBBBB;
 }
 
+/* Not sure if it's the right place for this CSS rules */
 .event-button {
     border-radius: 4px;
     height: 35px;
@@ -815,7 +823,7 @@ body, textarea /* because textarea has explicit default monospace font */ {
 
 /*===== modality-event-client-recurringevents-web@main.css from modality-event-client-recurringevents =====*/
 
-* {
+:root {
     --fx-event-description-text-color: #444;
 }
 
@@ -864,7 +872,7 @@ body, textarea /* because textarea has explicit default monospace font */ {
 
 .event-date-cell.date-selected > fx-background,
 .event-date-cell.date-already-booked > fx-background {
-    background-color: #F5761A;
+    background-color: var(--brand-main-color);
 }
 
 .event-date-cell.date-selected > fx-border,

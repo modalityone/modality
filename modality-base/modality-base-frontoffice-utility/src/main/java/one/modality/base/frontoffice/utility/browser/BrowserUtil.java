@@ -20,10 +20,10 @@ import javafx.scene.layout.Border;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 import javafx.scene.web.WebView;
+import one.modality.base.client.brand.Brand;
 import one.modality.base.client.mainframe.fx.FXMainFrameDialogArea;
 import one.modality.base.frontoffice.mainframe.fx.FXBackgroundNode;
 import one.modality.base.frontoffice.utility.tyler.GeneralUtility;
-import one.modality.base.frontoffice.utility.tyler.StyleUtility;
 
 /**
  * @author Bruno Salmon
@@ -74,7 +74,7 @@ public final class BrowserUtil {
         Hyperlink copyLink = GeneralUtility.createHyperlink(BrowserI18nKeys.copyLink, Color.WHITE, 21);
         VBox vBox = new VBox(30, insideAppLink, outsideAppLink, copyLink);
         vBox.setBorder(Border.stroke(Color.WHITE));
-        vBox.setBackground(Background.fill(StyleUtility.MAIN_BLUE_COLOR));
+        vBox.setBackground(Background.fill(Brand.getBrandMainBackgroundColor()));
         vBox.setAlignment(Pos.CENTER);
         DialogCallback dialogCallback = DialogUtil.showModalNodeInGoldLayout(vBox, FXMainFrameDialogArea.getDialogArea());
         vBox.setPadding(new Insets(50));

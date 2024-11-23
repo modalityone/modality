@@ -172,8 +172,6 @@
     <public path="" includes="one/modality/base/backoffice/ganttcanvas/images/s32/"/>
     <!--==================< modality-base-backoffice-mainframe-activity >===================-->
     <source path="one/modality/base/backoffice/activities/mainframe"/>
-    <resource path="one/modality/base/backoffice/activities/mainframe"/>
-    <public path="" includes="one/modality/base/backoffice/activities/mainframe/"/>
     <!--=====================< modality-base-backoffice-mainframe-fx >======================-->
     <source path="one/modality/base/backoffice/mainframe/fx"/>
     <!--=================< modality-base-backoffice-mainframe-headernode >==================-->
@@ -203,6 +201,10 @@
     <public path="" includes="images/buddhas/"/>
     <resource path="one/modality/base/client/images"/>
     <public path="" includes="one/modality/base/client/images/"/>
+    <!--===========================< modality-base-client-brand >===========================-->
+    <source path="one/modality/base/client/brand"/>
+    <resource path="one/modality/base/client/brand"/>
+    <public path="" includes="one/modality/base/client/brand/"/>
     <!--===========================< modality-base-client-conf >============================-->
     <source path="one/modality/base/client/conf"/>
     <!--=========================< modality-base-client-entities >==========================-->

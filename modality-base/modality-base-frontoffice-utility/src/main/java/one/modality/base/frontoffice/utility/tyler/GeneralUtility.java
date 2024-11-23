@@ -22,6 +22,7 @@ import javafx.scene.text.Font;
 import javafx.scene.text.FontWeight;
 import javafx.scene.text.Text;
 import javafx.util.Duration;
+import one.modality.base.client.brand.Brand;
 import one.modality.base.frontoffice.utility.tyler.fx.FXApp;
 
 import java.util.Objects;
@@ -91,7 +92,7 @@ public class GeneralUtility {
         Rectangle b = createCheckBoxRaw();
 
         FXProperties.runNowAndOnPropertyChange(value ->
-            b.setFill((isReverse != value) ? StyleUtility.MAIN_BRAND_COLOR : Color.WHITE)
+            b.setFill((isReverse != value) ? Brand.getBrandMainColor() : Color.WHITE)
         , property);
 
         if (!isDisabled) b.setOnMouseClicked(e -> property.set(isRadio ? !isReverse : !property.get()));
@@ -103,7 +104,7 @@ public class GeneralUtility {
         Rectangle b = createCheckBoxRaw();
 
         FXProperties.runNowAndOnPropertyChange(value ->
-                b.setFill(Objects.equals(value, label) ? StyleUtility.MAIN_BRAND_COLOR : Color.WHITE)
+                b.setFill(Objects.equals(value, label) ? Brand.getBrandMainColor() : Color.WHITE)
             , selectedProperty);
 
         b.setOnMouseClicked(e -> { selectedProperty.set(selectedProperty.get().equals(label) ? "" : label); });
@@ -220,7 +221,7 @@ public class GeneralUtility {
 
     public static Region createOrangeLineSeparator() {
         Region line = new Region();
-        line.setBackground(Background.fill(StyleUtility.MAIN_BRAND_COLOR));
+        line.setBackground(Background.fill(Brand.getBrandMainColor()));
         line.setMinHeight(1);
         line.setPrefWidth(Double.MAX_VALUE);
         return line;

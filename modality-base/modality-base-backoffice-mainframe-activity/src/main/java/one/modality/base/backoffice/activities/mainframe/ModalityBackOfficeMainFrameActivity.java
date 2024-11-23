@@ -12,7 +12,6 @@ import dev.webfx.kit.launcher.WebFxKitLauncher;
 import dev.webfx.kit.util.properties.FXProperties;
 import dev.webfx.kit.util.properties.ObservableLists;
 import dev.webfx.platform.conf.SourcesConfig;
-import dev.webfx.platform.resource.Resource;
 import dev.webfx.platform.scheduler.Scheduled;
 import dev.webfx.platform.uischeduler.UiScheduler;
 import dev.webfx.platform.util.Arrays;
@@ -32,19 +31,17 @@ import javafx.geometry.Pos;
 import javafx.geometry.VPos;
 import javafx.scene.Node;
 import javafx.scene.control.ProgressIndicator;
-import javafx.scene.image.ImageView;
 import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Circle;
 import javafx.scene.shape.Shape;
-import javafx.scene.text.Font;
-import javafx.scene.text.FontWeight;
 import javafx.scene.text.Text;
 import javafx.util.Duration;
 import one.modality.base.backoffice.ganttcanvas.MainFrameGanttCanvas;
 import one.modality.base.backoffice.mainframe.fx.FXMainFrameHeaderTabs;
 import one.modality.base.backoffice.mainframe.headernode.MainFrameHeaderNodeProvider;
 import one.modality.base.client.application.ModalityClientMainFrameActivity;
+import one.modality.base.client.brand.Brand;
 import one.modality.base.client.gantt.fx.interstice.FXGanttInterstice;
 import one.modality.base.client.mainframe.fx.FXMainFrameDialogArea;
 import one.modality.base.client.profile.fx.FXProfile;
@@ -229,17 +226,7 @@ public final class ModalityBackOfficeMainFrameActivity extends ModalityClientMai
 
     @Override
     protected Node createBrandNode() {
-        ImageView logo = new ImageView(Resource.toUrl("modality-logo.png", getClass()));
-        Text modality = new Text("modality");
-        Text one = new Text("one");
-        modality.setFont(Font.font("Montserrat", FontWeight.NORMAL, 18));
-        one.setFont(Font.font("Montserrat", FontWeight.BOLD, 18));
-        modality.setFill(Color.web("4D4D4D"));
-        one.setFill(Color.web("1589BF"));
-        HBox brand = new HBox(logo, modality, one);
-        HBox.setMargin(logo, new Insets(0, 3, 0, 0)); // 3px gap between logo and text
-        brand.setAlignment(Pos.CENTER);
-        return brand;
+        return Brand.createModalityBackOfficeBrandNode();
     }
 
     @Override

@@ -16,7 +16,7 @@ import javafx.scene.shape.SVGPath;
 import javafx.scene.shape.StrokeLineCap;
 import javafx.scene.shape.StrokeLineJoin;
 import javafx.util.Duration;
-import one.modality.base.frontoffice.utility.tyler.StyleUtility;
+import one.modality.base.client.brand.Brand;
 import one.modality.base.frontoffice.utility.tyler.TextUtility;
 
 /**
@@ -47,26 +47,26 @@ public final class MediaButtons {
 
     public static Pane createPlayButton() {
         return embedButton(new StackPane(
-            new Circle(16, StyleUtility.MAIN_BRAND_COLOR),
+            new Circle(16, Brand.getBrandMainColor()),
             translateX(createSVGButton(PLAY_TRIANGLE_PATH_15, null, Color.WHITE), 1) // Needs to be translated a bit to look centered with SVG
         ));
     }
 
     public static Pane createPauseButton() {
         return embedButton(new StackPane(
-            new Circle(16, StyleUtility.MAIN_BRAND_COLOR),
+            new Circle(16, Brand.getBrandMainColor()),
             createSVGButton(PAUSE_SIGN_PATH_15, null, Color.WHITE)));
     }
 
     public static Pane createFullscreenButton() {
         return embedButton(new StackPane(
-            new Circle(16, StyleUtility.MAIN_BRAND_COLOR),
+            new Circle(16, Brand.getBrandMainColor()),
             createSVGButton(FULLSCREEN_PATH_16, null, Color.WHITE)));
     }
 
     public static void animateFullscreenButton(Pane fullscreenButton) {
         StackPane stackPane = (StackPane) ((ScalePane) fullscreenButton).getContent();
-        Circle fadingCircle = new Circle(16, 16, 16, StyleUtility.MAIN_BRAND_COLOR);
+        Circle fadingCircle = new Circle(16, 16, 16, Brand.getBrandMainColor());
         fadingCircle.setManaged(false);
         stackPane.getChildren().add(0, fadingCircle);
         Timeline timeline = new Timeline();

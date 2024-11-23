@@ -17,6 +17,7 @@ import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
 import javafx.scene.text.FontWeight;
 import javafx.scene.text.Text;
+import one.modality.base.client.brand.Brand;
 import one.modality.base.frontoffice.utility.tyler.GeneralUtility;
 import one.modality.base.frontoffice.utility.tyler.StyleUtility;
 import one.modality.base.frontoffice.utility.tyler.TextUtility;
@@ -31,7 +32,7 @@ public final class EventView {
 
     private final ImageView eventImageView = new ImageView();
     private final ScalePane eventImageScalePane = new ScalePane(eventImageView);
-    private final Label eventNameLabel = GeneralUtility.createLabel(StyleUtility.MAIN_BRAND_COLOR);
+    private final Label eventNameLabel = GeneralUtility.createLabel(Brand.getBrandMainColor());
     private final Label eventDescriptionLabel = GeneralUtility.createLabel(Color.BLACK);
     private final Text eventDateText = TextUtility.createText(Color.BLACK);
     private final Text eventCentreLocationText = TextUtility.createText(StyleUtility.ELEMENT_GRAY_COLOR);
@@ -78,7 +79,7 @@ public final class EventView {
             TextUtility.setTextFont(eventCountryLocationText, StyleUtility.TEXT_FAMILY, FontWeight.MEDIUM, fontFactor * 8);
             CornerRadii radii = new CornerRadii(4 * fontFactor);
             Background redBackground = new Background(new BackgroundFill(StyleUtility.IMPORTANT_RED_COLOR, radii, null));
-            Background blueBackground = new Background(new BackgroundFill(StyleUtility.MAIN_BLUE_COLOR, radii, null));
+            Background blueBackground = new Background(new BackgroundFill(Brand.getBrandMainBackgroundColor(), radii, null));
             comingSoonButton.setBackground(redBackground);
             closedButton.setBackground(redBackground);
             bookButton.setBackground(blueBackground);

@@ -55,7 +55,7 @@
 .event-date-cell.date-selected,
 .event-date-cell.date-already-booked {
     -fx-border-color: none;
-    -fx-background-color: #F5761A;
+    -fx-background-color: -brand-main-color;
 }
 
 .event-date-cell.date-selected Text {

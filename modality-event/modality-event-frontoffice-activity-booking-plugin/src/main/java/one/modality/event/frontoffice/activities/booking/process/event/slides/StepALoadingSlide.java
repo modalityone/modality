@@ -8,7 +8,7 @@ import javafx.scene.layout.Priority;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.SVGPath;
-import one.modality.base.frontoffice.utility.tyler.StyleUtility;
+import one.modality.base.client.brand.Brand;
 import one.modality.event.frontoffice.activities.booking.process.event.BookEventActivity;
 
 final class StepALoadingSlide extends StepSlide {
@@ -28,7 +28,7 @@ final class StepALoadingSlide extends StepSlide {
         GoldenRatioPane goldenRatioPane = new GoldenRatioPane(svgPath);
         VBox.setVgrow(goldenRatioPane, Priority.ALWAYS);
         mainVbox.getChildren().setAll(goldenRatioPane);
-        mainVbox.setBackground(Background.fill(StyleUtility.MAIN_BRAND_COLOR));
+        mainVbox.setBackground(Background.fill(Brand.getBrandMainColor()));
         mainVbox.setPadding(Insets.EMPTY); // Removing extra bottom padding
     }
 }
