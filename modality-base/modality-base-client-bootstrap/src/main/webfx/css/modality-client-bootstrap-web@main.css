@@ -27,7 +27,7 @@
     --bootstrap-green3: #449d44 ;
     --bootstrap-green4: #398439 ;
     --bootstrap-green5: #255625 ;
-     -bootstrap-green6: #41BA4D ;
+    --bootstrap-green6: #41BA4D ;
 
     --bootstrap-orange1: #f0ad4e ;
     --bootstrap-orange2: #eea236 ;
@@ -36,7 +36,7 @@
     --bootstrap-orange5: #985f0d ;
     --bootstrap-orange6: #8a6d3b ;
 
-    --bootstrap-red1: #d9534f ;
+    --bootstrap-red1: #FF0404 ;
     --bootstrap-red2: #d43f3a ;
     --bootstrap-red3: #c9302c ;
     --bootstrap-red4: #ac2925 ;
@@ -47,4 +47,30 @@
 .disabled:hover {
     cursor: not-allowed;
  }
+
+.btn-black {
+    color: var(--bootstrap-white);
+    --fx-svg-path-fill: var(--bootstrap-white);
+}
+
+.btn-black > fx-background {
+    background: black;
+}
+
+.btn-black > fx-border {
+    border-color: black;
+}
+
+.btn-black:hover:not(.disabled){
+    color: var(--bootstrap-white);
+    --fx-svg-path-fill: var(--bootstrap-white);
+}
+
+.btn-black:hover:not(.disabled)> fx-background {
+    background-color: var(--bootstrap-grey7);
+}
+
+.btn-black:hover:not(.disabled)> fx-border {
+    border-color: var(--bootstrap-grey7);
+}
 

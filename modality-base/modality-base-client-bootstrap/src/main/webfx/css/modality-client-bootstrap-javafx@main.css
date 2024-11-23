@@ -36,7 +36,7 @@
     -bootstrap-orange5: #985f0d ;
     -bootstrap-orange6: #8a6d3b ;
 
-    -bootstrap-red1: #d9534f ;
+    -bootstrap-red1: #FF0404 ;
     -bootstrap-red2: #d43f3a ;
     -bootstrap-red3: #c9302c ;
     -bootstrap-red4: #ac2925 ;
@@ -59,3 +59,17 @@
     -fx-line-spacing: 20px;
     -fx-text-alignment: center;    /* Aligns text within its container */
     }
+
+.btn-black {
+    -fx-text-fill: white;
+    -fx-fill: white;
+    -fx-background-color: black;
+    -fx-border-color: black;
+}
+
+.btn-black:hover {
+    -fx-text-fill: white;
+    -fx-fill: white;
+    -fx-background-color: -bootstrap-grey7;
+    -fx-border-color: -bootstrap-grey7;
+}

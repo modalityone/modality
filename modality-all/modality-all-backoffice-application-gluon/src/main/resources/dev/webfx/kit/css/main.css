@@ -42,11 +42,17 @@
     src: url('webfx-css:fonts/montserrat/Montserrat-Italic.ttf');
 }
 
+
 @font-face {
-    font-family: 'Montserrat';
-    font-weight: bold;
-    font-style: italic;
-    src: url('webfx-css:fonts/montserrat/Montserrat-BoldItalic.ttf');
+    font-family: 'Poppins';
+    font-weight: normal;
+    src: url('webfx-css:fonts/poppins/Poppins-Regular.ttf');
+}
+
+@font-face {
+    font-family: 'Poppins';
+    font-weight: 600;
+    src: url('webfx-css:fonts/poppins/Poppins-SemiBold.ttf');
 }
 
 @font-face {
@@ -58,20 +64,26 @@
 @font-face {
     font-family: 'Poppins';
     font-weight: bold;
-    src: url('webfx-css:fonts/poppins/Poppins-Bold.otf');
+    src: url('webfx-css:fonts/poppins/Poppins-Bold.ttf');
 }
 
 @font-face {
     font-family: 'Poppins';
     font-style: italic;
-    src: url('webfx-css:fonts/poppins/Poppins-Italic.otf');
+    src: url('webfx-css:fonts/poppins/Poppins-Italic.ttf');
+}
+
+@font-face {
+    font-family: 'Poppins';
+    font-style: light;
+    src: url('webfx-css:fonts/poppins/Poppins-Light.otf');
 }
 
 @font-face {
     font-family: 'Poppins';
     font-weight: bold;
     font-style: italic;
-    src: url('webfx-css:fonts/poppins/Poppins-BoldItalic.otf');
+    src: url('webfx-css:fonts/poppins/Poppins-BoldItalic.ttf');
 }
 
 

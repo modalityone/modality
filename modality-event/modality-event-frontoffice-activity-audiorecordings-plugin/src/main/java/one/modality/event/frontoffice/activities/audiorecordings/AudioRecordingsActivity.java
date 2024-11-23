@@ -1,5 +1,6 @@
 package one.modality.event.frontoffice.activities.audiorecordings;
 
+import dev.webfx.extras.panes.ColumnsPane;
 import dev.webfx.extras.styles.bootstrap.Bootstrap;
 import dev.webfx.kit.util.properties.FXProperties;
 import dev.webfx.kit.util.properties.ObservableLists;
@@ -11,39 +12,36 @@ import javafx.application.Platform;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.geometry.Insets;
+import javafx.scene.Cursor;
 import javafx.scene.Node;
+import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.layout.VBox;
-import one.modality.base.frontoffice.utility.activity.FrontOfficeActivityUtil;
+import one.modality.base.shared.entities.DocumentLine;
 import one.modality.base.shared.entities.Event;
 import one.modality.base.shared.entities.KnownItemFamily;
 import one.modality.crm.shared.services.authn.fx.FXUserPersonId;
-
-import java.util.Comparator;
-import java.util.List;
-import java.util.Map;
-import java.util.TreeMap;
-import java.util.stream.Collectors;
+import one.modality.event.frontoffice.medias.EventThumbnailView;
 
 final class AudioRecordingsActivity extends ViewDomainActivityBase {
 
     private static final double PAGE_TOP_BOTTOM_PADDING = 100;
+    private static final int BOX_WIDTH = 263;
 
     // Holding an observable list of events with audio recordings booked by the user (changes on login & logout)
-    private final ObservableList<Event> eventsWithBookedAudios = FXCollections.observableArrayList();
+    private final ObservableList<DocumentLine> eventsWithBookedAudios = FXCollections.observableArrayList();
 
     @Override
     protected void startLogic() {
         // Creating our own entity store to hold the loaded data without interfering with other activities
         EntityStore entityStore = EntityStore.create(getDataSourceModel()); // Activity datasource model is available at this point
-        // Loading the list of events with videos booked by the user and put it into bookedVideoEvents
         FXProperties.runNowAndOnPropertyChange(userPersonId -> {
             eventsWithBookedAudios.clear();
             if (userPersonId != null) {
-                entityStore.<Event>executeQuery(
-                    "select name,label.(de,en,es,fr,pt), shortDescription, audioExpirationDate, startDate, endDate" +
-                    " from Event e where exists(select DocumentLine where !cancelled and item.family.code=? and document.(event=e and person=? and price_balance<=0))" +
-                    " order by startDate desc",
+                entityStore.<DocumentLine>executeQuery(
+                   "select document.event.(name,label.(de,en,es,fr,pt), shortDescription, audioExpirationDate, startDate, endDate), item.code" +
+                    " from DocumentLine dl where !cancelled and item.family.code=? and dl.document.(person=? and price_balance<=0)" +
+                    " order by document.event.startDate desc",
                         new Object[]{ KnownItemFamily.AUDIO_RECORDING.getCode(), userPersonId })
                     .onFailure(Console::log)
                     .onSuccess(events -> Platform.runLater(() -> eventsWithBookedAudios.setAll(events)));
@@ -60,43 +58,36 @@ final class AudioRecordingsActivity extends ViewDomainActivityBase {
 
         Label headerLabel = Bootstrap.h2(Bootstrap.strong(I18nControls.newLabel(AudioRecordingsI18nKeys.AudioRecordingsHeader)));
         Label checkoutLabel = I18nControls.newLabel(AudioRecordingsI18nKeys.CheckoutAudioRecordings);
-        VBox perYearEventsWithBookedAudiosVBox = new VBox();
+
+        ColumnsPane columnsPane = new ColumnsPane(20, 50);
+        columnsPane.setFixedColumnWidth(BOX_WIDTH);
+        columnsPane.getStyleClass().add("media-library");
+        columnsPane.setPadding(new Insets(50,0,0,0));
+        // Showing a thumbnail in the columns pane for each event with videos
+        ObservableLists.bindConverted(columnsPane.getChildren(), eventsWithBookedAudios, dl -> {
+            EventThumbnailView eventTbView = new EventThumbnailView(dl.getDocument().getEvent(),dl.getItem().getCode());
+            VBox container = eventTbView.getView();
+            Button actionButton = eventTbView.getActionButton();
+            actionButton.setCursor(Cursor.HAND);
+            actionButton.setOnAction(e -> showEventAudioWall(dl.getDocument().getEvent(),dl.getItem().getCode()));
+            return container;
+        });
 
         VBox pageContainer = new VBox(
             headerLabel,
             checkoutLabel,
-            perYearEventsWithBookedAudiosVBox
+            columnsPane
         );
-
-
-        // *************************************************************************************************************
-        // *********************************** Reacting to parameter changes *******************************************
-        // *************************************************************************************************************
-
-        // Populating perYearEventsWithBookedAudiosVBox from eventsWithBookedAudios = flat list of events (not yet grouped by year)
-        ObservableLists.runNowAndOnListChange(change -> {
-            // Grouping events per year
-            Map<Integer, List<Event>> perYearGroups = eventsWithBookedAudios.stream().collect(Collectors.groupingBy(e -> e.getStartDate().getYear()));
-            // Using a TreeMap to sort the groups by keys (= years) in reverse order (latest years listed first)
-            TreeMap<Integer, List<Event>> perYearEvents = new TreeMap<>(Comparator.reverseOrder());
-            perYearEvents.putAll(perYearGroups);
-            perYearEventsWithBookedAudiosVBox.getChildren().clear();
-            // final population of perYearEventsWithBookedAudiosVBox
-            perYearEvents.forEach((year, events) -> perYearEventsWithBookedAudiosVBox.getChildren().add(
-                // Passing the year, the events of the year (with booked audio recordings), and the history (for ability
-                // to route to EventAudioPlaylistActivity when clicking on an event)
-                new EventsOfYearView(year, events, getHistory()).getView()
-            ));
-        }, eventsWithBookedAudios);
-
 
         // *************************************************************************************************************
         // ************************************* Building final container **********************************************
         // *************************************************************************************************************
 
         pageContainer.setPadding(new Insets(PAGE_TOP_BOTTOM_PADDING, 0, PAGE_TOP_BOTTOM_PADDING, 0));
-        return FrontOfficeActivityUtil.restrictToMaxPageWidth(pageContainer, true);
-        //return FrontOfficeActivityUtil.createActivityPageScrollPane(pageContainer, false);
+        return pageContainer;
     }
 
+    private void showEventAudioWall(Event event,String itemCode) {
+        getHistory().push(EventAudioPlaylistRouting.getEventRecordingsPlaylistPath(event,itemCode));
+    }
 }

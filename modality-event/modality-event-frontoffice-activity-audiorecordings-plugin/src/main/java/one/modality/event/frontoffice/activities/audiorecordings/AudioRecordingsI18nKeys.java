@@ -3,11 +3,15 @@ package one.modality.event.frontoffice.activities.audiorecordings;
 
 public interface AudioRecordingsI18nKeys {
 
-    String AudioRecordingsMenu = "AudioRecordingsMenu";
+    String Recordings = "Recordings";
     String AudioRecordingsHeader = "AudioRecordingsHeader";
     String CheckoutAudioRecordings = "CheckoutAudioRecordings";
     String AudioRecordingNotYetPublished = "AudioRecordingNotYetPublished";
     String NoAudioRecordingForThisEvent = "NoAudioRecordingForThisEvent";
-    String Recordings = "Recordings";
+    String AvailableUntil = "AvailableUntil";
+    String Play = "Play";
+    String Download = "Download";
+    String ListOfTracks = "ListOfTracks";
+    String ContentExpired = "ContentExpired";
 
 }

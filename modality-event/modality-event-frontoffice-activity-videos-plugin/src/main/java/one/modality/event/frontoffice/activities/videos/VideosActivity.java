@@ -14,6 +14,7 @@ import javafx.collections.ObservableList;
 import javafx.geometry.Insets;
 import javafx.scene.Cursor;
 import javafx.scene.Node;
+import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.layout.VBox;
 import one.modality.base.frontoffice.utility.activity.FrontOfficeActivityUtil;
@@ -29,7 +30,7 @@ import one.modality.event.frontoffice.medias.EventThumbnailView;
 final class VideosActivity extends ViewDomainActivityBase {
 
     private static final double PAGE_TOP_BOTTOM_PADDING = 100;
-    private static final int BOX_WIDTH = 450;
+    private static final int BOX_WIDTH = 263;
 
     // Holding an observable list of events with videos booked by the user (changes on login & logout)
     private final ObservableList<Event> eventsWithBookedVideos = FXCollections.observableArrayList();
@@ -56,16 +57,18 @@ final class VideosActivity extends ViewDomainActivityBase {
     @Override
     public Node buildUi() {
         Label headerLabel = Bootstrap.h2(Bootstrap.strong(I18nControls.newLabel(VideosI18nKeys.VideosHeader)));
-        VBox.setMargin(headerLabel, new Insets(0,0,50,0));
+        VBox.setMargin(headerLabel, new Insets(0,0,0,0));
 
         ColumnsPane columnsPane = new ColumnsPane(20, 50);
         columnsPane.setFixedColumnWidth(BOX_WIDTH);
-
+        columnsPane.getStyleClass().add("media-library");
         // Showing a thumbnail in the columns pane for each event with videos
         ObservableLists.bindConverted(columnsPane.getChildren(), eventsWithBookedVideos, event -> {
-            VBox container = new EventThumbnailView(event).getView();
-            container.setCursor(Cursor.HAND);
-            container.setOnMouseClicked(e -> showEventVideosWall(event));
+            EventThumbnailView eventTbView = new EventThumbnailView(event);
+            VBox container = eventTbView.getView();
+            Button actionButton = eventTbView.getActionButton();
+            actionButton.setCursor(Cursor.HAND);
+            actionButton.setOnAction(e -> showEventVideosWall(event));
             return container;
         });
 
