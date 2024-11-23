@@ -1,0 +1,24 @@
+@font-face {
+    font-family: 'Roboto';
+    font-weight: bold;
+    src: url('webfx-css:fonts/roboto/Roboto-Bold.ttf');
+}
+
+@font-face {
+    font-family: 'Roboto';
+    font-style: italic;
+    src: url('webfx-css:fonts/roboto/Roboto-Italic.ttf');
+}
+
+@font-face {
+    font-family: 'Roboto';
+    font-style: light;
+    src: url('webfx-css:fonts/roboto/Roboto-Light.ttf');
+}
+
+@font-face {
+    font-family: 'Roboto';
+    font-weight: bold;
+    font-style: italic;
+    src: url('webfx-css:fonts/roboto/Roboto-BoldItalic.ttf');
+}

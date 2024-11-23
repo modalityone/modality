@@ -782,30 +782,24 @@ fx-homepane fx-tile * {
     --brand-main-color: #0096D6;
     --brand-main-background-color: #0096D6;
 }
-/*===== modality-client-web@main.css from modality-base-client-application =====*/
+/*===== modality-client-css-web@main.css from modality-base-client-css =====*/
 
-@import url('https://fonts.googleapis.com/css2?family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap');
+:root {
+    --montserrat-font-family: "Montserrat";
+    --roboto-font-family: "Roboto";
+    --poppins-font-family: "Poppins";
+    --vollkorn-font-family: "Vollkorn SC";
 
-@font-face {
-    font-family: "Montserrat";
-    src: url("./fonts/montserrat/Montserrat-VF.woff2") format("woff2");
-    font-weight: 100 900;
+    /* Overriding some WebFX Extras CSS variables  */
+    --webfx-switch-selected-background-color: var(--brand-main-background-color);
+    --webfx-visualgrid-selection-color: #BBBBBB;
 }
 
 /* Applying Montserrat as default font for Modality */
 body, textarea /* because textarea has explicit default monospace font */ {
-    font-family: Montserrat, serif;
+    font-family: var(--montserrat-font-family), serif;
     font-size: 13px;
     -webkit-font-smoothing: antialiased;
-}
-
-
-/*===== modality-client-web@main.css from modality-base-client-css =====*/
-
-:root {
-    /* Overriding some WebFX Extras CSS variables  */
-    --webfx-switch-selected-background-color: --brand-main-background-color;
-    --webfx-visualgrid-selection-color: #BBBBBB;
 }
 
 /* Not sure if it's the right place for this CSS rules */

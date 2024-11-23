@@ -11,6 +11,7 @@ module modality.base.frontoffice.utility {
     requires javafx.graphics;
     requires javafx.web;
     requires modality.base.client.brand;
+    requires modality.base.client.css;
     requires modality.base.client.mainframe.fx;
     requires modality.base.frontoffice.mainframe.fx;
     requires modality.base.shared.entities;

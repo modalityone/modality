@@ -5,7 +5,7 @@ CollapsePane.menu-bar.non-mobile {
 }
 
 .menu-bar {
-    -fx-font-family: "Poppins";
+    -fx-font-family: -poppins-font-family;
 }
 
 .menu-bar Button {

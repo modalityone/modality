@@ -1,6 +1,30 @@
 /* @font-face rules listed first, otherwise they are ignored (OpenJFX bug) */
 
 @font-face {
+    font-family: 'Roboto';
+    font-weight: bold;
+    src: url('webfx-css:fonts/roboto/Roboto-Bold.ttf');
+}
+
+@font-face {
+    font-family: 'Roboto';
+    font-style: italic;
+    src: url('webfx-css:fonts/roboto/Roboto-Italic.ttf');
+}
+
+@font-face {
+    font-family: 'Roboto';
+    font-style: light;
+    src: url('webfx-css:fonts/roboto/Roboto-Light.ttf');
+}
+
+@font-face {
+    font-family: 'Roboto';
+    font-weight: bold;
+    font-style: italic;
+    src: url('webfx-css:fonts/roboto/Roboto-BoldItalic.ttf');
+}
+@font-face {
     font-family: 'Montserrat';
     font-style: normal;
     src: url('webfx-css:fonts/montserrat/Montserrat-Regular.ttf');
@@ -49,32 +73,6 @@
     font-style: italic;
     src: url('webfx-css:fonts/poppins/Poppins-BoldItalic.otf');
 }
-
-@font-face {
-    font-family: 'Roboto';
-    font-weight: bold;
-    src: url('webfx-css:fonts/roboto/Roboto-Bold.ttf');
-}
-
-@font-face {
-    font-family: 'Roboto';
-    font-style: italic;
-    src: url('webfx-css:fonts/roboto/Roboto-Italic.ttf');
-}
-
-@font-face {
-    font-family: 'Roboto';
-    font-style: light;
-    src: url('webfx-css:fonts/roboto/Roboto-Light.ttf');
-}
-
-@font-face {
-    font-family: 'Roboto';
-    font-weight: bold;
-    font-style: italic;
-    src: url('webfx-css:fonts/roboto/Roboto-BoldItalic.ttf');
-}
-
 
 
 /*===== webfx-extras-bootstrap-javafx@main.css from webfx-extras-styles-bootstrap =====*/
@@ -625,27 +623,34 @@ HtmlText, HtmlTextEditor {
 .button.main-frame-header-button:hover {
     -fx-background-color: radial-gradient(center 50% 50%, radius 50%, #BBB 99%, transparent 100%);
 }
-/*===== modality-client-javafx@main.css from modality-base-client-application =====*/
+/*===== modality-client-css-import-font-roboto-javafx@main.css from modality-base-client-css =====*/
 
-Text, Label, Button, TextField {
-    -fx-font-family: 'Montserrat';
-}
+/*===== modality-client-css-import-font-monserrat-javafx@main.css from modality-base-client-css =====*/
 
-.scroll-pane {
-   -fx-background-color: transparent;
-   -fx-padding: 0;
-}
-
-.scroll-pane > .viewport {
-   -fx-background-color: transparent;
-}
-
-/*===== modality-client-javafx@main.css from modality-base-client-css =====*/
+/*===== modality-client-css-javafx@main.css from modality-base-client-css =====*/
 
 * {
+    -montserrat-font-family: "Montserrat";
+    -roboto-font-family: "Roboto";
+    -poppins-font-family: "Poppins";
+    -vollkorn-font-family: "Roboto"; /* for now */
+
     /* Overriding some WebFX Extras CSS variables  */
     -webfx-switch-selected-background-color: -brand-main-background-color;
     -webfx-visualgrid-selection-color: #BBBBBB;
+}
+
+Text, Label, Button, TextField {
+    -fx-font-family: -montserrat-font-family;
+}
+
+.scroll-pane {
+    -fx-background-color: transparent;
+    -fx-padding: 0;
+}
+
+.scroll-pane > .viewport {
+    -fx-background-color: transparent;
 }
 
 /* Not sure if it's the right place for this CSS rules */
@@ -656,6 +661,8 @@ Text, Label, Button, TextField {
     -fx-alignment: center;
     -fx-font-weight: bolder;
 }
+
+/*===== modality-client-css-import-font-poppins-javafx@main.css from modality-base-client-css =====*/
 
 /*===== modality-event-client-recurringevents-javafx@main.css from modality-event-client-recurringevents =====*/
 

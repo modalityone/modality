@@ -29,6 +29,7 @@ import javafx.scene.text.Text;
 import javafx.stage.Screen;
 import javafx.util.Duration;
 import one.modality.base.client.brand.Brand;
+import one.modality.base.client.css.Fonts;
 import one.modality.base.frontoffice.utility.tyler.GeneralUtility;
 import one.modality.base.frontoffice.utility.tyler.StyleUtility;
 import one.modality.base.frontoffice.utility.tyler.TextUtility;
@@ -137,9 +138,9 @@ public abstract class MediaInfoView {
             double fontFactor = GeneralUtility.computeFontFactor(width);
             if (fontFactor != this.fontFactor) {
                 this.fontFactor = fontFactor;
-                GeneralUtility.setLabeledFont(  titleLabel, StyleUtility.TEXT_FAMILY,  FontWeight.SEMI_BOLD, fontFactor * StyleUtility.MAIN_TEXT_SIZE);
-                TextUtility.setTextFont(          dateText, StyleUtility.TEXT_FAMILY,  FontWeight.NORMAL,    fontFactor * StyleUtility.SUB_TEXT_SIZE);
-                GeneralUtility.setLabeledFont(excerptLabel, StyleUtility.TEXT_FAMILY,  FontWeight.NORMAL,    fontFactor * StyleUtility.MEDIUM_TEXT_SIZE);
+                GeneralUtility.setLabeledFont(  titleLabel, Fonts.MONTSERRAT_TEXT_FAMILY,  FontWeight.SEMI_BOLD, fontFactor * StyleUtility.MAIN_TEXT_SIZE);
+                TextUtility.setTextFont(          dateText, Fonts.MONTSERRAT_TEXT_FAMILY,  FontWeight.NORMAL, fontFactor * StyleUtility.SUB_TEXT_SIZE);
+                GeneralUtility.setLabeledFont(excerptLabel, Fonts.MONTSERRAT_TEXT_FAMILY,  FontWeight.NORMAL, fontFactor * StyleUtility.MEDIUM_TEXT_SIZE);
                 TextUtility.setTextFont(   elapsedTimeText, StyleUtility.CLOCK_FAMILY, FontWeight.NORMAL,    fontFactor * StyleUtility.SUB_TEXT_SIZE);
             }
             double imageRatio;

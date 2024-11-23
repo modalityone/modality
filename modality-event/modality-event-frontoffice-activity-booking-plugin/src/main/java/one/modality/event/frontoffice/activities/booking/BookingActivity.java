@@ -31,11 +31,11 @@ import javafx.scene.paint.Color;
 import javafx.scene.text.FontWeight;
 import javafx.scene.text.TextAlignment;
 import one.modality.base.client.brand.Brand;
+import one.modality.base.client.css.Fonts;
 import one.modality.base.client.tile.Tab;
 import one.modality.base.client.tile.TabsBar;
 import one.modality.base.frontoffice.utility.activity.FrontOfficeActivityUtil;
 import one.modality.base.frontoffice.utility.tyler.GeneralUtility;
-import one.modality.base.frontoffice.utility.tyler.StyleUtility;
 import one.modality.base.shared.entities.Event;
 import one.modality.crm.backoffice.organization.fx.FXOrganizationId;
 import one.modality.event.frontoffice.activities.booking.views.EventView;
@@ -96,9 +96,9 @@ final class BookingActivity extends ViewDomainActivityBase implements ButtonFact
 
         FXProperties.runOnDoublePropertyChange(width -> {
             double fontFactor = GeneralUtility.computeFontFactor(width);
-            GeneralUtility.setLabeledFont(headerLabel, StyleUtility.TEXT_FAMILY, FontWeight.BOLD, fontFactor * 21);
-            GeneralUtility.setLabeledFont(internationalEventsLabel, StyleUtility.TEXT_FAMILY, FontWeight.BOLD, fontFactor * 16);
-            GeneralUtility.setLabeledFont(localEventsLabel, StyleUtility.TEXT_FAMILY, FontWeight.BOLD, fontFactor * 16);
+            GeneralUtility.setLabeledFont(headerLabel, Fonts.MONTSERRAT_TEXT_FAMILY, FontWeight.BOLD, fontFactor * 21);
+            GeneralUtility.setLabeledFont(internationalEventsLabel, Fonts.MONTSERRAT_TEXT_FAMILY, FontWeight.BOLD, fontFactor * 16);
+            GeneralUtility.setLabeledFont(localEventsLabel, Fonts.MONTSERRAT_TEXT_FAMILY, FontWeight.BOLD, fontFactor * 16);
         }, pageContainer.widthProperty());
 
         localEvents.addListener((InvalidationListener) observable -> {

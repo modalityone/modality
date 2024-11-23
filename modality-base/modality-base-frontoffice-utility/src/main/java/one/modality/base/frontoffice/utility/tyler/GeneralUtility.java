@@ -23,6 +23,7 @@ import javafx.scene.text.FontWeight;
 import javafx.scene.text.Text;
 import javafx.util.Duration;
 import one.modality.base.client.brand.Brand;
+import one.modality.base.client.css.Fonts;
 import one.modality.base.frontoffice.utility.tyler.fx.FXApp;
 
 import java.util.Objects;
@@ -158,7 +159,7 @@ public class GeneralUtility {
 
         FXProperties.runNowAndOnDoublePropertyChange(fontRatio -> {
             b.setBackground(new Background(new BackgroundFill(color, new CornerRadii(radius * fontRatio), null)));
-            setLabeledFont(b, StyleUtility.TEXT_FAMILY, FontWeight.findByWeight(500), fontSize * fontRatio);
+            setLabeledFont(b, Fonts.MONTSERRAT_TEXT_FAMILY, FontWeight.findByWeight(500), fontSize * fontRatio);
         }, FXApp.fontRatio);
 
         return b;
@@ -189,7 +190,7 @@ public class GeneralUtility {
 
     public static <T extends Labeled> T setupLabeled(T labeled, String i18nKey, Color color, FontWeight fontWeight, double fontSize) {
         FXProperties.runNowAndOnDoublePropertyChange(fontRatio ->
-            setLabeledFont(labeled, StyleUtility.TEXT_FAMILY, fontWeight, fontSize * fontRatio), FXApp.fontRatio
+            setLabeledFont(labeled, Fonts.MONTSERRAT_TEXT_FAMILY, fontWeight, fontSize * fontRatio), FXApp.fontRatio
         );
         return setupLabeled(labeled, i18nKey, color);
     }

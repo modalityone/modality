@@ -33,11 +33,11 @@ import javafx.scene.paint.Color;
 import javafx.scene.shape.SVGPath;
 import javafx.scene.text.FontWeight;
 import javafx.scene.web.WebView;
+import one.modality.base.client.css.Fonts;
 import one.modality.base.client.i18n.ModalityI18nKeys;
 import one.modality.base.client.mainframe.fx.FXMainFrameDialogArea;
 import one.modality.base.frontoffice.utility.browser.BrowserUtil;
 import one.modality.base.frontoffice.utility.tyler.GeneralUtility;
-import one.modality.base.frontoffice.utility.tyler.StyleUtility;
 import one.modality.base.shared.entities.Organization;
 import one.modality.crm.backoffice.organization.fx.FXOrganization;
 import one.modality.crm.backoffice.organization.fx.FXOrganizationId;
@@ -126,10 +126,10 @@ public final class OrganizationSelectorView {
                         w = width - x;
                         contactBox.setAlignment(Pos.CENTER_LEFT);
                         double fontFactor = GeneralUtility.computeFontFactor(w);
-                        GeneralUtility.setLabeledFont(websiteLink, StyleUtility.TEXT_FAMILY, FontWeight.NORMAL, fontFactor * 16);
-                        GeneralUtility.setLabeledFont(addressLink, StyleUtility.TEXT_FAMILY, FontWeight.NORMAL, fontFactor * 16);
-                        GeneralUtility.setLabeledFont(phoneLink, StyleUtility.TEXT_FAMILY, FontWeight.NORMAL, fontFactor * 16);
-                        GeneralUtility.setLabeledFont(emailLink, StyleUtility.TEXT_FAMILY, FontWeight.NORMAL, fontFactor * 16);
+                        GeneralUtility.setLabeledFont(websiteLink, Fonts.MONTSERRAT_TEXT_FAMILY, FontWeight.NORMAL, fontFactor * 16);
+                        GeneralUtility.setLabeledFont(addressLink, Fonts.MONTSERRAT_TEXT_FAMILY, FontWeight.NORMAL, fontFactor * 16);
+                        GeneralUtility.setLabeledFont(phoneLink, Fonts.MONTSERRAT_TEXT_FAMILY, FontWeight.NORMAL, fontFactor * 16);
+                        GeneralUtility.setLabeledFont(emailLink, Fonts.MONTSERRAT_TEXT_FAMILY, FontWeight.NORMAL, fontFactor * 16);
                     } else
                         contactBox.setAlignment(Pos.CENTER);
                     if (presentationPane.isVisible()) {

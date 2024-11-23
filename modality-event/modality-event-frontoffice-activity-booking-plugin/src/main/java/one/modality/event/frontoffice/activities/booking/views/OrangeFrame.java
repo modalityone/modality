@@ -13,6 +13,7 @@ import javafx.scene.text.FontWeight;
 import javafx.scene.text.Text;
 import javafx.stage.Screen;
 import one.modality.base.client.brand.Brand;
+import one.modality.base.client.css.Fonts;
 import one.modality.base.frontoffice.utility.tyler.GeneralUtility;
 import one.modality.base.frontoffice.utility.tyler.StyleUtility;
 import one.modality.base.frontoffice.utility.tyler.TextUtility;
@@ -36,9 +37,9 @@ final class OrangeFrame {
 
         FXProperties.runOnDoublePropertyChange(width -> {
             double fontFactor = GeneralUtility.computeFontFactor(width);
-            TextUtility.setTextFont(headerText, StyleUtility.TEXT_FAMILY, FontWeight.BOLD, fontFactor * StyleUtility.MAIN_TEXT_SIZE);
+            TextUtility.setTextFont(headerText, Fonts.MONTSERRAT_TEXT_FAMILY, FontWeight.BOLD, fontFactor * StyleUtility.MAIN_TEXT_SIZE);
             if (bottom instanceof Labeled)
-                GeneralUtility.setLabeledFont((Labeled) bottom, StyleUtility.TEXT_FAMILY, FontWeight.BOLD, fontFactor * StyleUtility.MAIN_TEXT_SIZE);
+                GeneralUtility.setLabeledFont((Labeled) bottom, Fonts.MONTSERRAT_TEXT_FAMILY, FontWeight.BOLD, fontFactor * StyleUtility.MAIN_TEXT_SIZE);
             double space = Math.min(35, width * 0.03);
             orangeFrame.setSpacing(space);
             orangeFrame.setPadding(new Insets(space));

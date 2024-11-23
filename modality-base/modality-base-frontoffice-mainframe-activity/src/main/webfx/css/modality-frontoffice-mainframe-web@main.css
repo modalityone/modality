@@ -10,7 +10,7 @@ fx-collapsepane.menu-bar > fx-border {
 }
 
 .menu-bar {
-    font-family: "Poppins", sans-serif;
+    font-family: var(--poppins-font-family), sans-serif;
 }
 
 .menu-bar fx-button {
@@ -26,12 +26,12 @@ fx-collapsepane.menu-bar > fx-border {
 }
 
 .main-menu-bar fx-label.brand {
-    font-family: "Roboto", sans-serif;
+    font-family: var(--roboto-font-family), sans-serif;
     font-size: 14px;
     font-weight: 500;
-    color: #0096D6;
-    white-space: pre-line;
+    color: var(--brand-main-color);
     line-height: 1.2;
+    --fx-svg-path-fill: var(--brand-main-color);
 }
 
 .user-menu-bar fx-label, .user-menu-bar fx-button {

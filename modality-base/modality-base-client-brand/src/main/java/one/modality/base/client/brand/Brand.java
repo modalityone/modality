@@ -17,6 +17,8 @@ import dev.webfx.platform.resource.Resource;
  */
 public class Brand {
 
+    //TODO: update application code to stop using these methods from Java and rely only on CSS and i18n
+
     public static final Color BRAND_MAIN_COLOR = Color.web("#0096D6"); // Orange
 
     public static final Color BRAND_MAIN_BACKGROUND_COLOR = Color.web("#0096D6"); // Blue

@@ -114,6 +114,8 @@
     <public path="" includes="one/modality/base/client/brand/"/>
     <!--===========================< modality-base-client-conf >============================-->
     <source path="one/modality/base/client/conf"/>
+    <!--============================< modality-base-client-css >============================-->
+    <source path="one/modality/base/client/css"/>
     <!--=========================< modality-base-client-entities >==========================-->
     <source path="one/modality/base/client/entities/util"/>
     <source path="one/modality/base/client/entities/util/filters"/>

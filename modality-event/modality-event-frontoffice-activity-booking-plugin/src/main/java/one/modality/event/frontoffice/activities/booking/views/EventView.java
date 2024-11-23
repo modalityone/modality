@@ -18,6 +18,7 @@ import javafx.scene.paint.Color;
 import javafx.scene.text.FontWeight;
 import javafx.scene.text.Text;
 import one.modality.base.client.brand.Brand;
+import one.modality.base.client.css.Fonts;
 import one.modality.base.frontoffice.utility.tyler.GeneralUtility;
 import one.modality.base.frontoffice.utility.tyler.StyleUtility;
 import one.modality.base.frontoffice.utility.tyler.TextUtility;
@@ -69,14 +70,14 @@ public final class EventView {
 
         FXProperties.runOnDoublePropertyChange(width -> {
             double fontFactor = GeneralUtility.computeFontFactor(width);
-            GeneralUtility.setLabeledFont(eventNameLabel, StyleUtility.TEXT_FAMILY, FontWeight.SEMI_BOLD, fontFactor * StyleUtility.MEDIUM_TEXT_SIZE);
-            GeneralUtility.setLabeledFont(eventDescriptionLabel, StyleUtility.TEXT_FAMILY, FontWeight.NORMAL, fontFactor * 10);
-            GeneralUtility.setLabeledFont(comingSoonButton, StyleUtility.TEXT_FAMILY, FontWeight.NORMAL, fontFactor * 11);
-            GeneralUtility.setLabeledFont(bookButton, StyleUtility.TEXT_FAMILY, FontWeight.NORMAL, fontFactor * 11);
-            GeneralUtility.setLabeledFont(closedButton, StyleUtility.TEXT_FAMILY, FontWeight.NORMAL, fontFactor * 11);
-            TextUtility.setTextFont(eventDateText, StyleUtility.TEXT_FAMILY, FontWeight.NORMAL, fontFactor * 10);
-            TextUtility.setTextFont(eventCentreLocationText, StyleUtility.TEXT_FAMILY, FontWeight.NORMAL, fontFactor * 8);
-            TextUtility.setTextFont(eventCountryLocationText, StyleUtility.TEXT_FAMILY, FontWeight.MEDIUM, fontFactor * 8);
+            GeneralUtility.setLabeledFont(eventNameLabel, Fonts.MONTSERRAT_TEXT_FAMILY, FontWeight.SEMI_BOLD, fontFactor * StyleUtility.MEDIUM_TEXT_SIZE);
+            GeneralUtility.setLabeledFont(eventDescriptionLabel, Fonts.MONTSERRAT_TEXT_FAMILY, FontWeight.NORMAL, fontFactor * 10);
+            GeneralUtility.setLabeledFont(comingSoonButton, Fonts.MONTSERRAT_TEXT_FAMILY, FontWeight.NORMAL, fontFactor * 11);
+            GeneralUtility.setLabeledFont(bookButton, Fonts.MONTSERRAT_TEXT_FAMILY, FontWeight.NORMAL, fontFactor * 11);
+            GeneralUtility.setLabeledFont(closedButton, Fonts.MONTSERRAT_TEXT_FAMILY, FontWeight.NORMAL, fontFactor * 11);
+            TextUtility.setTextFont(eventDateText, Fonts.MONTSERRAT_TEXT_FAMILY, FontWeight.NORMAL, fontFactor * 10);
+            TextUtility.setTextFont(eventCentreLocationText, Fonts.MONTSERRAT_TEXT_FAMILY, FontWeight.NORMAL, fontFactor * 8);
+            TextUtility.setTextFont(eventCountryLocationText, Fonts.MONTSERRAT_TEXT_FAMILY, FontWeight.MEDIUM, fontFactor * 8);
             CornerRadii radii = new CornerRadii(4 * fontFactor);
             Background redBackground = new Background(new BackgroundFill(StyleUtility.IMPORTANT_RED_COLOR, radii, null));
             Background blueBackground = new Background(new BackgroundFill(Brand.getBrandMainBackgroundColor(), radii, null));

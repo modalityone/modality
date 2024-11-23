@@ -7,6 +7,7 @@ import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
 import javafx.scene.text.FontWeight;
 import javafx.scene.text.Text;
+import one.modality.base.client.css.Fonts;
 import one.modality.base.frontoffice.utility.tyler.fx.FXApp;
 
 import java.util.function.Function;
@@ -21,7 +22,7 @@ public class TextUtility {
         Text text = createText(content, color);
 
         FXProperties.runNowAndOnDoublePropertyChange(fontRatio ->
-            setTextFont(text, StyleUtility.TEXT_FAMILY, FontWeight.findByWeight(500), size * fontRatio), FXApp.fontRatio
+            setTextFont(text, Fonts.MONTSERRAT_TEXT_FAMILY, FontWeight.findByWeight(500), size * fontRatio), FXApp.fontRatio
         );
 
         return text;
@@ -41,7 +42,7 @@ public class TextUtility {
 
     public static Text createText(String i18nKey, Color color, double size) {
         Text text = createText(i18nKey, color);
-        setTextFont(text, StyleUtility.TEXT_FAMILY, FontWeight.findByWeight(500), size);
+        setTextFont(text, Fonts.MONTSERRAT_TEXT_FAMILY, FontWeight.findByWeight(500), size);
         return text;
     }
 
@@ -83,7 +84,7 @@ public class TextUtility {
     }
 
     public static Text weight(Text text, FontWeight weight) {
-        setTextFont(text, StyleUtility.TEXT_FAMILY, weight, text.getFont().getSize());
+        setTextFont(text, Fonts.MONTSERRAT_TEXT_FAMILY, weight, text.getFont().getSize());
         return text;
     }
 

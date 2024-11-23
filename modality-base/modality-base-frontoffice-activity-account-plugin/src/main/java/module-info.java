@@ -10,6 +10,7 @@ module modality.base.frontoffice.activity.account.plugin {
     requires javafx.controls;
     requires javafx.graphics;
     requires modality.base.client.brand;
+    requires modality.base.client.css;
     requires modality.base.client.mainframe.fx;
     requires modality.base.frontoffice.utility;
     requires modality.base.shared.entities;

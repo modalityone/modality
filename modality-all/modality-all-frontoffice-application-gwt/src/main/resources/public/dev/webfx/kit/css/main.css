@@ -697,12 +697,30 @@ input[type="password"]:not([value=""]) {
 }
 
 
-/*===== modality-client-web@main.css from modality-base-client-css =====*/
+/*===== modality-client-brand-web@main.css from modality-base-client-brand =====*/
 
 :root {
+    --brand-main-color: #0096D6;
+    --brand-main-background-color: #0096D6;
+}
+/*===== modality-client-css-web@main.css from modality-base-client-css =====*/
+
+:root {
+    --montserrat-font-family: "Montserrat";
+    --roboto-font-family: "Roboto";
+    --poppins-font-family: "Poppins";
+    --vollkorn-font-family: "Vollkorn SC";
+
     /* Overriding some WebFX Extras CSS variables  */
-    --webfx-switch-selected-background-color: --brand-main-background-color;
+    --webfx-switch-selected-background-color: var(--brand-main-background-color);
     --webfx-visualgrid-selection-color: #BBBBBB;
+}
+
+/* Applying Montserrat as default font for Modality */
+body, textarea /* because textarea has explicit default monospace font */ {
+    font-family: var(--montserrat-font-family), serif;
+    font-size: 13px;
+    -webkit-font-smoothing: antialiased;
 }
 
 /* Not sure if it's the right place for this CSS rules */
@@ -718,30 +736,6 @@ input[type="password"]:not([value=""]) {
     border: none;
 }
 
-/*===== modality-client-web@main.css from modality-base-client-application =====*/
-
-@import url('https://fonts.googleapis.com/css2?family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap');
-
-@font-face {
-    font-family: "Montserrat";
-    src: url("./fonts/montserrat/Montserrat-VF.woff2") format("woff2");
-    font-weight: 100 900;
-}
-
-/* Applying Montserrat as default font for Modality */
-body, textarea /* because textarea has explicit default monospace font */ {
-    font-family: Montserrat, serif;
-    font-size: 13px;
-    -webkit-font-smoothing: antialiased;
-}
-
-
-/*===== modality-client-brand-web@main.css from modality-base-client-brand =====*/
-
-:root {
-    --brand-main-color: #0096D6;
-    --brand-main-background-color: #0096D6;
-}
 /*===== modality-frontoffice-mainframe-web@main.css from modality-base-frontoffice-mainframe-activity =====*/
 
 fx-collapsepane.menu-bar > fx-background {
@@ -756,7 +750,7 @@ fx-collapsepane.menu-bar > fx-border {
 }
 
 .menu-bar {
-    font-family: "Poppins", sans-serif;
+    font-family: var(--poppins-font-family), sans-serif;
 }
 
 .menu-bar fx-button {
@@ -772,12 +766,12 @@ fx-collapsepane.menu-bar > fx-border {
 }
 
 .main-menu-bar fx-label.brand {
-    font-family: "Roboto", sans-serif;
+    font-family: var(--roboto-font-family), sans-serif;
     font-size: 14px;
     font-weight: 500;
-    color: #0096D6;
-    white-space: pre-line;
+    color: var(--brand-main-color);
     line-height: 1.2;
+    --fx-svg-path-fill: var(--brand-main-color);
 }
 
 .user-menu-bar fx-label, .user-menu-bar fx-button {

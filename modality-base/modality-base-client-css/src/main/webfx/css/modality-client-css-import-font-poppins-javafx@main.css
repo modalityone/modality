@@ -1,0 +1,24 @@
+@font-face {
+    font-family: 'Poppins';
+    font-style: normal;
+    src: url('webfx-css:fonts/poppins/Poppins-Regular.otf');
+}
+
+@font-face {
+    font-family: 'Poppins';
+    font-weight: bold;
+    src: url('webfx-css:fonts/poppins/Poppins-Bold.otf');
+}
+
+@font-face {
+    font-family: 'Poppins';
+    font-style: italic;
+    src: url('webfx-css:fonts/poppins/Poppins-Italic.otf');
+}
+
+@font-face {
+    font-family: 'Poppins';
+    font-weight: bold;
+    font-style: italic;
+    src: url('webfx-css:fonts/poppins/Poppins-BoldItalic.otf');
+}
