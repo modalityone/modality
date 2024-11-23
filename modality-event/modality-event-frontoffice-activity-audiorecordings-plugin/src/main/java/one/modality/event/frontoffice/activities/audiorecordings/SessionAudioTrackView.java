@@ -23,7 +23,6 @@ import one.modality.base.shared.entities.ScheduledItem;
 import one.modality.base.shared.entities.Timeline;
 
 import java.time.LocalDate;
-import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
@@ -41,8 +40,7 @@ final class SessionAudioTrackView {
     private final BorderPane container = new BorderPane();
     public static final int MAX_WIDTH=750;
     private static final int BUTTON_WIDTH=130;
-    private static final int DESCRIPTION_WIDTH=450;
-    private int index;
+    private final int index;
 
     public SessionAudioTrackView(ScheduledItem scheduledAudioItem, List<Media> publishedMedias, JavaFXMediaAudioPlayer audioPlayer, int index) {
         this.scheduledAudioItem = scheduledAudioItem;
@@ -118,14 +116,6 @@ final class SessionAudioTrackView {
             downloadButton.setOnAction(event -> downloadFile(firstMedia.getUrl()));
             playButton.setMinWidth(BUTTON_WIDTH);
             downloadButton.setMinWidth(BUTTON_WIDTH);
-            String url = firstMedia.getUrl();
-            AudioMedia audioMedia = new AudioMedia();
-            audioMedia.setAudioUrl(url);
-            audioMedia.setTitle(scheduledAudioItem.getParent().getName());
-            audioMedia.setDate(LocalDateTime.of(date, startTime));
-            audioMedia.setDurationMillis(firstMedia.getDurationMillis());
-            AudioRecordingMediaInfoView mediaView = new AudioRecordingMediaInfoView();
-            mediaView.setMediaInfo(audioMedia);
             HBox buttonHBox = new HBox(playButton,downloadButton);
             buttonHBox.setSpacing(10);
             container.setRight(buttonHBox);
