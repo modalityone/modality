@@ -1,0 +1,6 @@
+.media-library .h3 {
+    -fx-font-family: "Poppins";
+    -fx-font-size: 16px;
+    -fx-font-weight: 600;
+    -fx-text-alignment: left; /* Aligns text */
+}

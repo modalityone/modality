@@ -1,13 +1,23 @@
 package one.modality.event.frontoffice.activities.audiorecordings;
 
+import dev.webfx.extras.media.metadata.MediaMetadataBuilder;
+import dev.webfx.extras.panes.MonoPane;
+import dev.webfx.extras.player.audio.javafxmedia.JavaFXMediaAudioPlayer;
 import dev.webfx.extras.styles.bootstrap.Bootstrap;
+import dev.webfx.platform.blob.spi.BlobProvider;
 import dev.webfx.stack.i18n.controls.I18nControls;
 import dev.webfx.stack.orm.entity.Entities;
 import javafx.geometry.Insets;
-import javafx.geometry.Orientation;
+import javafx.geometry.Pos;
+import javafx.scene.control.Button;
 import javafx.scene.control.Label;
-import javafx.scene.control.Separator;
+import javafx.scene.layout.BorderPane;
+import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
+import javafx.scene.paint.Color;
+import javafx.scene.shape.SVGPath;
+import one.modality.base.client.bootstrap.ModalityStyle;
+import one.modality.base.client.icons.SvgIcons;
 import one.modality.base.shared.entities.Media;
 import one.modality.base.shared.entities.ScheduledItem;
 import one.modality.base.shared.entities.Timeline;
@@ -26,56 +36,113 @@ final class SessionAudioTrackView {
 
     private final ScheduledItem scheduledAudioItem;
     private final List<Media> publishedMedias;
+    private final JavaFXMediaAudioPlayer audioPlayer;
 
-    private final VBox container = new VBox();
+    private final BorderPane container = new BorderPane();
+    public static final int MAX_WIDTH=750;
+    private static final int BUTTON_WIDTH=130;
+    private static final int DESCRIPTION_WIDTH=450;
+    private int index;
 
-    public SessionAudioTrackView(ScheduledItem scheduledAudioItem, List<Media> publishedMedias) {
+    public SessionAudioTrackView(ScheduledItem scheduledAudioItem, List<Media> publishedMedias, JavaFXMediaAudioPlayer audioPlayer, int index) {
         this.scheduledAudioItem = scheduledAudioItem;
+        this.audioPlayer = audioPlayer;
+        this.index = index;
         this.publishedMedias = publishedMedias.stream()
             .filter(media -> media.getScheduledItem() != null && Entities.sameId(scheduledAudioItem, media.getScheduledItem()))
             .collect(Collectors.toList());
         buildUi();
     }
 
-    VBox getView() {
+    BorderPane getView() {
         return container;
     }
 
     private void buildUi() {
+        SVGPath favoritePath = SvgIcons.createFavoritePath();
+        favoritePath.setScaleX(0.5);
+        favoritePath.setScaleY(0.5);
+        favoritePath.setFill(Color.TRANSPARENT);
+        favoritePath.setStroke(Color.BLACK);
+
+        MonoPane favoriteMonoPane = new MonoPane(favoritePath);
+        container.setLeft(favoriteMonoPane);
+        container.setMaxWidth(MAX_WIDTH);
         String title = scheduledAudioItem.getParent().getName();
+        Label titleLabel = Bootstrap.h3(new Label(index + ". " + title));
         Timeline timeline = scheduledAudioItem.getParent().getTimeline();
         LocalDate date = scheduledAudioItem.getDate();
         LocalTime startTime = timeline.getStartTime();
+        Long durationMillis;
 
-        Label dateLabel = Bootstrap.strong(new Label(
-            date.format(DateTimeFormatter.ofPattern("dd MMMM yyyy")) + " - " + startTime.format(DateTimeFormatter.ofPattern("HH:mm"))));
-        Label titleLabel = new Label(title);
-        container.getChildren().addAll(
-            dateLabel,
-            titleLabel
-        );
+        Label dateLabel = new Label(
+            date.format(DateTimeFormatter.ofPattern("dd MMMM yyyy")) + " - " + startTime.format(DateTimeFormatter.ofPattern("HH:mm")));
+        dateLabel.getStyleClass().add(ModalityStyle.TEXT_COMMENT);
+        if(publishedMedias.size()>0) {
+            durationMillis = publishedMedias.get(0).getDurationMillis();
+            dateLabel.setText(formatDuration(durationMillis) + " • " + dateLabel.getText());
+        } else {
+            durationMillis = 0L;
+        }
+
+        VBox descriptionVBox = new VBox(titleLabel,dateLabel);
+        titleLabel.getStyleClass().add("description");
+        container.setCenter(descriptionVBox);
+        container.getStyleClass().addAll("audio-library", "bottom-border");
+        BorderPane.setMargin(favoriteMonoPane, new Insets(0, 20, 0, 0));
+        BorderPane.setMargin(descriptionVBox, new Insets(0, 50, 0, 0));
+        BorderPane.setAlignment(descriptionVBox, Pos.CENTER_LEFT);
         //Here we should have only one media for audio
         if (publishedMedias.isEmpty()) {
             Label noMediaLabel = I18nControls.newLabel(AudioRecordingsI18nKeys.AudioRecordingNotYetPublished);
-            noMediaLabel.getStyleClass().add(Bootstrap.TEXT_WARNING);
-            container.getChildren().add(noMediaLabel);
+            noMediaLabel.getStyleClass().add(ModalityStyle.TEXT_COMMENT);
+            container.setRight(noMediaLabel);
         } else {
+            Button playButton = Bootstrap.dangerButton(I18nControls.newButton(AudioRecordingsI18nKeys.Play));
             Media firstMedia = publishedMedias.get(0);
+            playButton.setOnAction(e->{
+                dev.webfx.extras.player.Media oldMedia = audioPlayer.getMedia();
+                if(oldMedia!=null) {
+                    ((Button )oldMedia.getUserData()).setDisable(false);
+                }
+                dev.webfx.extras.player.Media media = audioPlayer.acceptMedia(firstMedia.getUrl(),new MediaMetadataBuilder().setTitle(title).setDurationMillis(durationMillis).build());
+                media.setUserData(playButton);
+                audioPlayer.resetToInitialState();
+                audioPlayer.setMedia(media);
+                playButton.setDisable(true);
+                audioPlayer.play();
+            });
+            Button downloadButton = ModalityStyle.blackButton(I18nControls.newButton(AudioRecordingsI18nKeys.Download));
+            playButton.setGraphicTextGap(10);
+            downloadButton.setGraphicTextGap(10);
+            downloadButton.setOnAction(event -> downloadFile(firstMedia.getUrl()));
+            playButton.setMinWidth(BUTTON_WIDTH);
+            downloadButton.setMinWidth(BUTTON_WIDTH);
             String url = firstMedia.getUrl();
             AudioMedia audioMedia = new AudioMedia();
             audioMedia.setAudioUrl(url);
-            audioMedia.setTitle(title);
+            audioMedia.setTitle(scheduledAudioItem.getParent().getName());
             audioMedia.setDate(LocalDateTime.of(date, startTime));
             audioMedia.setDurationMillis(firstMedia.getDurationMillis());
             AudioRecordingMediaInfoView mediaView = new AudioRecordingMediaInfoView();
             mediaView.setMediaInfo(audioMedia);
-            container.getChildren().add(mediaView.getView());
-
+            HBox buttonHBox = new HBox(playButton,downloadButton);
+            buttonHBox.setSpacing(10);
+            container.setRight(buttonHBox);
         }
-        Separator separator = new Separator(Orientation.HORIZONTAL);
-        separator.setMaxWidth(800);
-        separator.setPadding(new Insets(40, 0, 0, 0));
-        container.getChildren().add(separator);
+    }
+
+    public static String formatDuration(long durationMillis) {
+        // Calculate hours, minutes, and seconds
+        long hours = durationMillis / (1000 * 60 * 60); // Calculate hours
+        long minutes = (durationMillis / (1000 * 60)) % 60; // Calculate minutes
+        long seconds = (durationMillis / 1000) % 60; // Calculate seconds
+        // Return formatted string
+        return (hours < 10 ? "0" : "") + hours + ":" + (minutes < 10 ? "0" : "") + minutes + ":" + (seconds < 10 ? "0" : "") + seconds;
+    }
+
+    private void downloadFile(String fileUrl) {
+        BlobProvider.get().downloadUrl(fileUrl);
     }
 
 }

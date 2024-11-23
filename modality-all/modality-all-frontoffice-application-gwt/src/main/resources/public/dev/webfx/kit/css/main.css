@@ -535,6 +535,50 @@ fx-textfield.material > fx-border {
 fx-textfield.material > fx-background {
     background: none;
 }
+/*===== webfx-extra-player-audio-javafxmedia-web@main.css from webfx-extras-player-audio-javafxmedia =====*/
+
+.audio-player > fx-background {
+     background-color: #838788;  /* Background color */
+     border-radius: 30px;
+}
+
+.audio-player .h4 {
+    font-family: "Poppins", sans-serif;
+    font-weight: 600;
+    font-size: 13px;
+    text-align: left;
+    color: white;
+}
+
+/* Customizing the progress bar for podcasts */
+.audio-player progress {
+    border: none;
+    background-color: lightgray;
+    border-radius: 10px; /* Adjust the value for more or less rounding */
+    overflow: hidden;/* For FireFox */
+}
+
+.audio-player progress::-webkit-progress-bar { /* For Chrome & Safari */
+    background-color: lightgray;
+    border-radius: 10px;
+}
+
+.audio-player progress::-webkit-progress-value { /* For Chrome & Safari */
+    background-color: #0096D6;
+     border-radius: 10px;
+}
+
+.audio-player progress::-moz-progress-bar { /* For FireFox */
+    background-color: #0096D6;
+     border-radius: 10px;
+}
+
+
+.audio-player .time {
+    font-family: "Poppins", sans-serif;
+    color: white;
+    font-size: 13px;
+}
 /*===== webfx-extras-visual-grid-web@main.css from webfx-extras-visual-grid-peers-gwt-j2cl =====*/
 
 :root {
@@ -720,30 +764,74 @@ input[type="password"]:not([value=""]) {
     font-weight: 100 900;
 }
 
-/* latin-ext */
+/* Light */
 @font-face {
   font-family: 'Poppins';
   font-style: normal;
-  font-weight: 700;
+  font-weight: 300; /* Light weight */
   font-display: swap;
-  src: url(https://fonts.gstatic.com/s/poppins/v21/pxiByp8kv8JHgFVrLCz7Z1JlFd2JQEl8qw.woff2) format('woff2');
-  unicode-range: U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C0, U+2113, U+2C60-2C7F, U+A720-A7FF;
+  src: url("./fonts/poppins/Poppins-Light.ttf") format('truetype');
 }
-/* latin */
+
+/* Regular */
 @font-face {
   font-family: 'Poppins';
   font-style: normal;
-  font-weight: 700;
+  font-weight: 400; /* Regular weight */
   font-display: swap;
-  src: url(https://fonts.gstatic.com/s/poppins/v21/pxiByp8kv8JHgFVrLCz7Z1xlFd2JQEk.woff2) format('woff2');
-  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+  src: url("./fonts/poppins/Poppins-Regular.ttf") format('truetype');
 }
+
+/* Bold */
+@font-face {
+  font-family: 'Poppins';
+  font-style: normal;
+  font-weight: 700; /* Bold weight */
+  font-display: swap;
+  src: url("./fonts/poppins/Poppins-Bold.ttf") format('truetype');
+}
+
+/* Light Italic */
+@font-face {
+  font-family: 'Poppins';
+  font-style: italic;
+  font-weight: 300; /* Light Italic */
+  font-display: swap;
+  src: url("./fonts/poppins/Poppins-LightItalic.ttf") format('truetype');
+}
+
+/* Italic */
+@font-face {
+  font-family: 'Poppins';
+  font-style: italic;
+  font-weight: 400; /* Regular Italic */
+  font-display: swap;
+  src: url("./fonts/poppins/Poppins-Italic.ttf") format('truetype');
+}
+
+/* Bold Italic */
+@font-face {
+  font-family: 'Poppins';
+  font-style: italic;
+  font-weight: 700; /* Bold Italic */
+  font-display: swap;
+  src: url("./fonts/poppins/Poppins-BoldItalic.ttf") format('truetype');
+}
+
+
 
 /* Applying Montserrat as default font for Modality */
 body, textarea /* because textarea has explicit default monospace font */ {
     font-family: Montserrat, serif;
     font-size: 13px;
     -webkit-font-smoothing: antialiased;
+}
+
+h2 {
+    font-family: Poppins;
+    font-style: bold;
+    font-weight: 700;
+    font-size: 40px;
 }
 
 
@@ -753,6 +841,127 @@ body, textarea /* because textarea has explicit default monospace font */ {
 
 .button-bar fx-button > fx-border {
     border: none;
+}
+/*===== modality-client-bootstrap-web@main.css from modality-base-client-bootstrap =====*/
+
+/* Bootstrap style */
+:root {
+    --bootstrap-white: #fff ;
+
+    --bootstrap-grey1: #e6e6e6 ;
+    --bootstrap-grey2: #d4d4d4 ;
+    --bootstrap-grey3: #ccc ;
+    --bootstrap-grey4: #adadad ;
+    --bootstrap-grey5: #8c8c8c ;
+    --bootstrap-grey6: #777777 ;
+    --bootstrap-grey7: #333 ;
+
+    --bootstrap-blue1: #5bc0de ;
+    --bootstrap-blue2: #46b8da ;
+    --bootstrap-blue3: #31b0d5 ;
+    --bootstrap-blue4: #269abc ;
+    --bootstrap-blue5: #0096D6; /* New base blue */
+    --bootstrap-blue6: #0478e6;
+    --bootstrap-blue7: #1b6d85 ;
+    --bootstrap-blue8: #0088d6 ;
+    --bootstrap-blue9: #204d74 ;
+    --bootstrap-blue10: #122b40 ;
+    --bootstrap-blue11: #31708f ;
+
+    --bootstrap-green1: #5cb85c ;
+    --bootstrap-green2: #4cae4c ;
+    --bootstrap-green3: #449d44 ;
+    --bootstrap-green4: #398439 ;
+    --bootstrap-green5: #255625 ;
+    --bootstrap-green6: #41BA4D ;
+
+    --bootstrap-orange1: #f0ad4e ;
+    --bootstrap-orange2: #eea236 ;
+    --bootstrap-orange3: #ec971f ;
+    --bootstrap-orange4: #d58512 ;
+    --bootstrap-orange5: #985f0d ;
+    --bootstrap-orange6: #8a6d3b ;
+
+    --bootstrap-red1: #FF0404 ;
+    --bootstrap-red2: #d43f3a ;
+    --bootstrap-red3: #c9302c ;
+    --bootstrap-red4: #ac2925 ;
+    --bootstrap-red5: #761c19 ;
+    --bootstrap-red6: #a94442 ;
+}
+
+.disabled:hover {
+    cursor: not-allowed;
+ }
+
+.btn-black {
+    color: var(--bootstrap-white);
+    --fx-svg-path-fill: var(--bootstrap-white);
+}
+
+.btn-black > fx-background {
+    background: black;
+}
+
+.btn-black > fx-border {
+    border-color: black;
+}
+
+.btn-black:hover:not(.disabled){
+    color: var(--bootstrap-white);
+    --fx-svg-path-fill: var(--bootstrap-white);
+}
+
+.btn-black:hover:not(.disabled)> fx-background {
+    background-color: var(--bootstrap-grey7);
+}
+
+.btn-black:hover:not(.disabled)> fx-border {
+    border-color: var(--bootstrap-grey7);
+}
+
+
+/*===== modality-event-frontoffice-activities-audiorecordings-web@main.css from modality-event-frontoffice-activity-audiorecordings-plugin =====*/
+
+.audio-library .h3 {
+    font-family: "Poppins", sans-serif;
+    font-weight: 400; /* Semibold equivalent */
+    font-size: 15px;
+    text-align: left; /* Aligns text */
+}
+
+.audio-library .comment {
+    font-family: "Poppins", sans-serif;
+    font-weight: 300; /* Light equivalent */
+    font-size: 10px;
+    color: #838788; /* Text color equivalent to -fx-text-fill */
+    text-align: left; /* Aligns text */
+}
+
+.audio-library .description > fx-children > fx-text {
+    min-width: 410px;
+    max-width: 410px;
+    overflow: hidden; /* Hide overflowed text */
+    text-overflow: ellipsis;
+}
+
+.list-tracks-title {
+    font-family: "Poppins", sans-serif;
+    font-weight: bold;
+    font-size: 24px;
+    color: #4A4748; /* Text color equivalent to -fx-text-fill */
+    text-align: left; /* Aligns text */
+}
+
+.bottom-border {
+    margin-top: 20px;
+    border-color:     transparent transparent #e6e6e6 transparent;
+    border-width: 0 0 1px 0; /* Border width translated to px */
+    border-style: solid;
+}
+
+.bottom-border > fx-children {
+    margin-top: -10px;
 }
 /*===== modality-event-client-recurringevents-web@main.css from modality-event-client-recurringevents =====*/
 

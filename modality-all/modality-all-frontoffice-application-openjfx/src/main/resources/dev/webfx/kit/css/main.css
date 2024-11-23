@@ -18,30 +18,42 @@
     src: url('webfx-css:fonts/montserrat/Montserrat-Italic.ttf');
 }
 
+
 @font-face {
-    font-family: 'Montserrat';
-    font-weight: bold;
-    font-style: italic;
-    src: url('webfx-css:fonts/montserrat/Montserrat-BoldItalic.ttf');
+    font-family: 'Poppins';
+    font-weight: normal;
+    src: url('webfx-css:fonts/poppins/Poppins-Regular.ttf');
+}
+
+@font-face {
+    font-family: 'Poppins';
+    font-weight: 600;
+    src: url('webfx-css:fonts/poppins/Poppins-SemiBold.ttf');
 }
 
 @font-face {
     font-family: 'Poppins';
     font-weight: bold;
-    src: url('webfx-css:fonts/poppins/Poppins-Bold.otf');
+    src: url('webfx-css:fonts/poppins/Poppins-Bold.ttf');
 }
 
 @font-face {
     font-family: 'Poppins';
     font-style: italic;
-    src: url('webfx-css:fonts/poppins/Poppins-Italic.otf');
+    src: url('webfx-css:fonts/poppins/Poppins-Italic.ttf');
+}
+
+@font-face {
+    font-family: 'Poppins';
+    font-style: light;
+    src: url('webfx-css:fonts/poppins/Poppins-Light.otf');
 }
 
 @font-face {
     font-family: 'Poppins';
     font-weight: bold;
     font-style: italic;
-    src: url('webfx-css:fonts/poppins/Poppins-BoldItalic.otf');
+    src: url('webfx-css:fonts/poppins/Poppins-BoldItalic.ttf');
 }
 
 @font-face {
@@ -442,6 +454,37 @@
      -fx-background-insets: 0, 0, 0;
 }
 
+/*===== webfx-extra-player-audio-javafxmedia-javafx@main.css from webfx-extras-player-audio-javafxmedia =====*/
+
+.audio-player {
+    -fx-background-color: #838788; /* Background color */
+     -fx-background-radius: 30;
+}
+
+.audio-player h4 {
+    -fx-font-family: "Poppins";
+    -fx-font-weight: bold;
+    -fx-font-size: 13px;
+    -fx-text-alignment: left;
+     -fx-text-fill: white;
+}
+
+
+.audio-player .progress-bar {
+    -fx-accent: #0096D6; /* Progress fill color */
+    -fx-background-color: #E0E0E0; /* Background color */
+    -fx-background-radius: 15; /* Rounded background */
+    -fx-border-radius: 15; /* Rounded border */
+    -fx-padding: 2; /* Padding around progress */
+}
+
+.audio-player .time {
+    -fx-font-family: "Poppins";
+    -fx-text-fill: white;
+    -fx-font-size: 13px;
+}
+
+
 /*===== webfx-extras-visual-grid-javafx@main.css from webfx-extras-visual-grid-peers-openjfx =====*/
 
 VisualGrid {
@@ -568,6 +611,128 @@ Text, Label, Button, TextField {
 
 .scroll-pane > .viewport {
    -fx-background-color: transparent;
+}
+
+/*===== modality-client-bootstrap-javafx@main.css from modality-base-client-bootstrap =====*/
+
+/* Bootstrap style */
+* {
+    -bootstrap-white: #fff ;
+    
+    -bootstrap-grey1: #e6e6e6 ;
+    -bootstrap-grey2: #d4d4d4 ;
+    -bootstrap-grey3: #ccc ;
+    -bootstrap-grey4: #adadad ;
+    -bootstrap-grey5: #8c8c8c ;
+    -bootstrap-grey6: #777777 ;
+    -bootstrap-grey7: #333 ;
+
+    -bootstrap-blue1: #88c9ff; /* Lightest shade */
+    -bootstrap-blue2: #70c0ff;
+    -bootstrap-blue3: #58b7ff;
+    -bootstrap-blue4: #40afff;
+    -bootstrap-blue5: #0096D6; /* New base blue */
+    -bootstrap-blue6: #0478e6; /* Darker shade */
+    -bootstrap-blue7: #0361cc;
+    -bootstrap-blue8: #0088d6;
+    -bootstrap-blue9: #204d74;
+    -bootstrap-blue10: #003682; /* Darkest shade */
+    -bootstrap-blue11: #00285b;
+
+    -bootstrap-green1: #5cb85c ;
+    -bootstrap-green2: #4cae4c ;
+    -bootstrap-green3: #449d44 ;
+    -bootstrap-green4: #398439 ;
+    -bootstrap-green5: #255625 ;
+    -bootstrap-green6: #41BA4D ;
+
+    -bootstrap-orange1: #f0ad4e ;
+    -bootstrap-orange2: #eea236 ;
+    -bootstrap-orange3: #ec971f ;
+    -bootstrap-orange4: #d58512 ;
+    -bootstrap-orange5: #985f0d ;
+    -bootstrap-orange6: #8a6d3b ;
+
+    -bootstrap-red1: #FF0404 ;
+    -bootstrap-red2: #d43f3a ;
+    -bootstrap-red3: #c9302c ;
+    -bootstrap-red4: #ac2925 ;
+    -bootstrap-red5: #761c19 ;
+    -bootstrap-red6: #a94442 ;
+}
+
+.h1 {
+    -fx-font-family: "Roboto";
+    -fx-font-size: 34px;
+    -fx-font-weight: normal;
+    -fx-line-spacing: 6px; /* Line height in JavaFX is set through line-spacing */
+    -fx-text-alignment: left;
+}
+
+.h2 {
+    -fx-font-family: "Poppins";
+    -fx-font-size: 40px;
+    -fx-font-weight: bold;         /* 'bold' is equivalent to 700 weight */
+    -fx-line-spacing: 20px;
+    -fx-text-alignment: center;    /* Aligns text within its container */
+    }
+
+.btn-black {
+    -fx-text-fill: white;
+    -fx-fill: white;
+    -fx-background-color: black;
+    -fx-border-color: black;
+}
+
+.btn-black:hover {
+    -fx-text-fill: white;
+    -fx-fill: white;
+    -fx-background-color: -bootstrap-grey7;
+    -fx-border-color: -bootstrap-grey7;
+}
+/*===== modality-event-frontoffice-activities-audiorecordings-javafx@main.css from modality-event-frontoffice-activity-audiorecordings-plugin =====*/
+
+.audio-library .h3 {
+    -fx-font-family: "Poppins";
+    -fx-font-weight: semibold;
+    -fx-font-size: 15px;
+    -fx-text-alignment: left; /* Aligns text */
+}
+
+.audio-library .comment {
+    -fx-font-family: "Poppins";
+    -fx-font-weight: light;
+    -fx-font-size: 10px;
+    -fx-text-fill: #838788;
+    -fx-text-alignment: left; /* Aligns text */
+}
+
+.audio-library .description {
+    -fx-min-width: 450;
+    -fx-max-width: 450;
+}
+
+.list-tracks-title {
+    -fx-font-family: "Poppins";
+    -fx-font-weight: bold;
+    -fx-font-size: 24px;
+    -fx-text-fill: #4A4748;
+    -fx-text-alignment: left;
+}
+
+.bottom-border {
+    -fx-padding: 0 0 20 -50;
+    -fx-border-color: transparent transparent #4A4748 transparent; -fx-border-width: 0 0 0.2 0;
+}
+
+
+/*===== modality-event-frontoffice-activities-videos-javafx@main.css from modality-event-frontoffice-activity-videos-plugin =====*/
+
+.media-library .h3 {
+    -fx-font-family: "Poppins";
+    -fx-font-size: 16px;
+    -fx-font-weight: 600;
+    -fx-text-alignment: left; /* Aligns text */
 }
 
 /*===== modality-event-client-recurringevents-javafx@main.css from modality-event-client-recurringevents =====*/

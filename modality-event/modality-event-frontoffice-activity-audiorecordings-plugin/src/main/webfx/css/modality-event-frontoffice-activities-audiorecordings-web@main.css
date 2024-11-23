@@ -1,0 +1,40 @@
+.audio-library .h3 {
+    font-family: "Poppins", sans-serif;
+    font-weight: 400; /* Semibold equivalent */
+    font-size: 15px;
+    text-align: left; /* Aligns text */
+}
+
+.audio-library .comment {
+    font-family: "Poppins", sans-serif;
+    font-weight: 300; /* Light equivalent */
+    font-size: 10px;
+    color: #838788; /* Text color equivalent to -fx-text-fill */
+    text-align: left; /* Aligns text */
+}
+
+.audio-library .description > fx-children > fx-text {
+    min-width: 410px;
+    max-width: 410px;
+    overflow: hidden; /* Hide overflowed text */
+    text-overflow: ellipsis;
+}
+
+.list-tracks-title {
+    font-family: "Poppins", sans-serif;
+    font-weight: bold;
+    font-size: 24px;
+    color: #4A4748; /* Text color equivalent to -fx-text-fill */
+    text-align: left; /* Aligns text */
+}
+
+.bottom-border {
+    margin-top: 20px;
+    border-color:     transparent transparent #e6e6e6 transparent;
+    border-width: 0 0 1px 0; /* Border width translated to px */
+    border-style: solid;
+}
+
+.bottom-border > fx-children {
+    margin-top: -10px;
+}

@@ -6,13 +6,17 @@ module modality.event.frontoffice.activity.audiorecordings.plugin {
     requires javafx.base;
     requires javafx.controls;
     requires javafx.graphics;
+    requires modality.base.client.bootstrap;
     requires modality.base.client.icons;
     requires modality.base.client.util;
     requires modality.base.shared.entities;
     requires modality.crm.client.authn.fx;
     requires modality.event.client.mediaview;
     requires modality.event.frontoffice.medias;
+    requires webfx.extras.media.metadata;
     requires webfx.extras.panes;
+    requires webfx.extras.player;
+    requires webfx.extras.player.audio.javafxmedia;
     requires webfx.extras.styles.bootstrap;
     requires webfx.extras.util.control;
     requires webfx.kit.util;
@@ -20,6 +24,8 @@ module modality.event.frontoffice.activity.audiorecordings.plugin {
     requires webfx.platform.console;
     requires webfx.platform.util;
     requires webfx.platform.windowhistory;
+    requires webfx.stack.cloud.image;
+    requires webfx.stack.cloud.image.client;
     requires webfx.stack.i18n;
     requires webfx.stack.i18n.controls;
     requires webfx.stack.orm.domainmodel.activity;

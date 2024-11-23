@@ -8,5 +8,10 @@ public interface AudioRecordingsI18nKeys {
     String CheckoutAudioRecordings = "CheckoutAudioRecordings";
     String AudioRecordingNotYetPublished = "AudioRecordingNotYetPublished";
     String NoAudioRecordingForThisEvent = "NoAudioRecordingForThisEvent";
+    String AvailableUntil = "AvailableUntil";
+    String Play = "Play";
+    String Download = "Download";
+    String ListOfTracks = "ListOfTracks";
+    String ContentExpired = "ContentExpired";
 
 }

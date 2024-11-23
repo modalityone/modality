@@ -72,7 +72,7 @@ final class EventsOfYearView {
     }
 
     private void showRecordingsForEvent(Event event) {
-        history.push(EventAudioPlaylistRouting.getEventRecordingsPlaylistPath(event));
+        history.push(EventAudioPlaylistRouting.getEventRecordingsPlaylistPath(event,null));
     }
 
 }
