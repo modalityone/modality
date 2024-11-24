@@ -34,7 +34,7 @@ import one.modality.base.client.brand.Brand;
 import one.modality.base.client.css.Fonts;
 import one.modality.base.client.tile.Tab;
 import one.modality.base.client.tile.TabsBar;
-import one.modality.base.frontoffice.utility.activity.FrontOfficeActivityUtil;
+import one.modality.base.frontoffice.utility.page.FOPageUtil;
 import one.modality.base.frontoffice.utility.tyler.GeneralUtility;
 import one.modality.base.shared.entities.Event;
 import one.modality.crm.backoffice.organization.fx.FXOrganizationId;
@@ -73,6 +73,7 @@ final class BookingActivity extends ViewDomainActivityBase implements ButtonFact
         Node localCenterDisplay = organizationSelectorView.getView();
 
         Label localEventsLabel = GeneralUtility.createLabel(BookingI18nKeys.localEvents, Color.BLACK);
+        localEventsLabel.setVisible(false); // Using it for spacing only for now
 
         double mobileStatusBarHeight = OperatingSystem.isMobile() && UserAgent.isNative() ? 15 : 0;
         VBox.setMargin(headerLabel, new Insets(5 + mobileStatusBarHeight, 0, 5, 0));
@@ -85,8 +86,10 @@ final class BookingActivity extends ViewDomainActivityBase implements ButtonFact
         VBox pageContainer = new VBox(
             headerLabel,
             headerImageScalePane,
+            /* Commented for now as international events will appear on the home page
             internationalEventsLabel,
             internationalEventsContainer,
+            */
             localEventsLabel,
             localCenterDisplay,
             localEventTypeTabsPane,
@@ -125,7 +128,7 @@ final class BookingActivity extends ViewDomainActivityBase implements ButtonFact
             entitiesToObjectsMapper = new ObservableEntitiesToObjectsMapper<>(localEventsOfSelectedType, factory, (Event e, IndividualEntityToObjectMapper<Event, Node> m) -> m.onEntityChangedOrReplaced(e), (Event e1, IndividualEntityToObjectMapper<Event, Node> m1) -> m1.onEntityRemoved(e1));
         ObservableLists.bindConverted(localEventsContainer.getChildren(), entitiesToObjectsMapper.getMappedObjects(), IndividualEntityToObjectMapper::getMappedObject);
 
-        return FrontOfficeActivityUtil.restrictToMaxPageWidth(pageContainer, false);
+        return FOPageUtil.restrictToMaxPageWidthAndApplyPageTopBottomPadding(pageContainer);
         //return FrontOfficeActivityUtil.createActivityPageScrollPane(pageContainer, true);
     }
 

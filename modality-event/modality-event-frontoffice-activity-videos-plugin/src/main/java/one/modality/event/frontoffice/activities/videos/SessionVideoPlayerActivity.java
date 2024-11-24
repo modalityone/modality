@@ -1,7 +1,5 @@
 package one.modality.event.frontoffice.activities.videos;
 
-import dev.webfx.extras.panes.CenteredPane;
-import dev.webfx.extras.panes.MonoPane;
 import dev.webfx.extras.player.StartOptionsBuilder;
 import dev.webfx.extras.player.multi.MultiPlayer;
 import dev.webfx.extras.player.multi.all.AllPlayers;
@@ -17,13 +15,12 @@ import dev.webfx.stack.orm.entity.EntityStoreQuery;
 import javafx.application.Platform;
 import javafx.beans.property.ObjectProperty;
 import javafx.beans.property.SimpleObjectProperty;
-import javafx.geometry.Insets;
+import javafx.geometry.Pos;
 import javafx.scene.Node;
 import javafx.scene.control.Label;
 import javafx.scene.layout.VBox;
 import javafx.scene.text.TextAlignment;
-import one.modality.base.client.icons.SvgIcons;
-import one.modality.base.frontoffice.utility.activity.FrontOfficeActivityUtil;
+import one.modality.base.frontoffice.utility.page.FOPageUtil;
 import one.modality.base.shared.entities.Media;
 import one.modality.base.shared.entities.ScheduledItem;
 import one.modality.crm.shared.services.authn.fx.FXUserPersonId;
@@ -35,8 +32,6 @@ import java.util.List;
  * @author Bruno Salmon
  */
 final class SessionVideoPlayerActivity extends ViewDomainActivityBase {
-
-    private static final double PAGE_TOP_BOTTOM_PADDING = 100;
 
     private final ObjectProperty<Object> scheduledVideoItemIdProperty = new SimpleObjectProperty<>();
 
@@ -85,7 +80,7 @@ final class SessionVideoPlayerActivity extends ViewDomainActivityBase {
         super.onResume();
         // Restarting the session video player (if relevant) when reentering this activity. This will also ensure that
         // any possible previous playing player (ex: podcast) will be paused if/when the session video player restarts.
-        updateSessionTitleAndVideoPlayerState();
+        //updateSessionTitleAndVideoPlayerState();
     }
 
     @Override
@@ -95,16 +90,9 @@ final class SessionVideoPlayerActivity extends ViewDomainActivityBase {
         // ********************************* Building the static part of the UI ****************************************
         // *************************************************************************************************************
 
-        // Back arrow for backward navigation
-        MonoPane backArrow = SvgIcons.createButtonPane(SvgIcons.createBackArrow(), getHistory()::goBack);
-
         // Session title
         sessionTitleLabel.setWrapText(true);
         sessionTitleLabel.setTextAlignment(TextAlignment.CENTER);
-
-        CenteredPane backArrowAndTitlePane = new CenteredPane();
-        backArrowAndTitlePane.setLeft(backArrow);
-        backArrowAndTitlePane.setCenter(sessionTitleLabel);
 
         sessionVideoPlayer.setStartOptions(new StartOptionsBuilder()
             .setAutoplay(true)
@@ -113,9 +101,10 @@ final class SessionVideoPlayerActivity extends ViewDomainActivityBase {
         Node videoView = sessionVideoPlayer.getMediaView();
 
         VBox pageContainer = new VBox(40,
-            backArrowAndTitlePane,
+            sessionTitleLabel,
             videoView
         );
+        pageContainer.setAlignment(Pos.CENTER);
 
 
         // *************************************************************************************************************
@@ -130,8 +119,7 @@ final class SessionVideoPlayerActivity extends ViewDomainActivityBase {
         // ************************************* Building final container **********************************************
         // *************************************************************************************************************
 
-        pageContainer.setPadding(new Insets(PAGE_TOP_BOTTOM_PADDING, 0, PAGE_TOP_BOTTOM_PADDING, 0));
-        return FrontOfficeActivityUtil.restrictToMaxPageWidth(pageContainer, true);
+        return FOPageUtil.restrictToMaxPageWidthAndApplyPageLeftTopRightBottomPadding(pageContainer);
         //return FrontOfficeActivityUtil.createActivityPageScrollPane(pageContainer, true);
     }
 

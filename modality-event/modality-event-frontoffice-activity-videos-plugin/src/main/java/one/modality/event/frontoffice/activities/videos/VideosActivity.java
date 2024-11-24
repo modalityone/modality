@@ -17,7 +17,7 @@ import javafx.scene.Node;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.layout.VBox;
-import one.modality.base.frontoffice.utility.activity.FrontOfficeActivityUtil;
+import one.modality.base.frontoffice.utility.page.FOPageUtil;
 import one.modality.base.shared.entities.Event;
 import one.modality.base.shared.entities.KnownItemFamily;
 import one.modality.crm.shared.services.authn.fx.FXUserPersonId;
@@ -29,8 +29,7 @@ import one.modality.event.frontoffice.medias.EventThumbnailView;
  */
 final class VideosActivity extends ViewDomainActivityBase {
 
-    private static final double PAGE_TOP_BOTTOM_PADDING = 100;
-    private static final int BOX_WIDTH = 263;
+    private static final double BOX_WIDTH = 263;
 
     // Holding an observable list of events with videos booked by the user (changes on login & logout)
     private final ObservableList<Event> eventsWithBookedVideos = FXCollections.observableArrayList();
@@ -57,7 +56,7 @@ final class VideosActivity extends ViewDomainActivityBase {
     @Override
     public Node buildUi() {
         Label headerLabel = Bootstrap.h2(Bootstrap.strong(I18nControls.newLabel(VideosI18nKeys.VideosHeader)));
-        VBox.setMargin(headerLabel, new Insets(0,0,0,0));
+        VBox.setMargin(headerLabel, new Insets(0,0,50,0));
 
         ColumnsPane columnsPane = new ColumnsPane(20, 50);
         columnsPane.setFixedColumnWidth(BOX_WIDTH);
@@ -77,9 +76,7 @@ final class VideosActivity extends ViewDomainActivityBase {
             columnsPane
         );
 
-        pageContainer.setPadding(new Insets(PAGE_TOP_BOTTOM_PADDING, 0, PAGE_TOP_BOTTOM_PADDING, 0));
-
-        return FrontOfficeActivityUtil.restrictToMaxPageWidth(pageContainer, true);
+        return FOPageUtil.restrictToMaxPageWidthAndApplyPageLeftTopRightBottomPadding(pageContainer);
         //return FrontOfficeActivityUtil.createActivityPageScrollPane(pageContainer, false);
     }
 

@@ -3,6 +3,7 @@ package one.modality.event.frontoffice.medias;
 import dev.webfx.extras.panes.MonoPane;
 import dev.webfx.extras.styles.bootstrap.Bootstrap;
 import dev.webfx.platform.console.Console;
+import dev.webfx.platform.util.Strings;
 import dev.webfx.stack.cloud.image.CloudImageService;
 import dev.webfx.stack.cloud.image.impl.client.ClientImageService;
 import dev.webfx.stack.i18n.controls.I18nControls;
@@ -29,17 +30,19 @@ import one.modality.base.shared.entities.Event;
  */
 public final class EventThumbnailView {
 
+    private static final double WIDTH = 263;
+
     private final Event event;
     private String imageItemCode;
     private final VBox container = new VBox();
     private final CloudImageService cloudImageService = new ClientImageService();
     private Button actionButton;
-    private static final int WIDTH=263;
 
     public EventThumbnailView(Event event) {
         this.event = event;
         buildUi();
     }
+
     public EventThumbnailView(Event event, String itemCode) {
         this.event = event;
         this.imageItemCode = itemCode;
@@ -63,15 +66,16 @@ public final class EventThumbnailView {
 
         String isoCode = extractISOCode(imageItemCode);
 
-        Label eventLabel = Bootstrap.h3(I18nControls.newLabel(new I18nSubKey("expression: i18n(this, '"+isoCode+"')", event)));
+        Label eventLabel = Bootstrap.h3(I18nControls.newLabel(new I18nSubKey("expression: i18n(this, '" + isoCode + "')", event)));
         eventLabel.setWrapText(true);
-        VBox.setMargin(eventLabel, new Insets(10,0,0,0));
-        Text shortDescriptionText = new Text(event.getShortDescription());
+        VBox.setMargin(eventLabel, new Insets(10, 0, 0, 0));
+        String shortDescription = event.getShortDescription();
+        Text shortDescriptionText = new Text(shortDescription);
         //For now if the text if too long, we just do a substring.
         //In the future we can replace by a CollapsePan with a read more link
         int maxStringLength = 230;
-        if(shortDescriptionText.getText().length()> maxStringLength) {
-            shortDescriptionText.setText(shortDescriptionText.getText().substring(0,maxStringLength-5) + " [ . . . ]");
+        if (Strings.length(shortDescription) > maxStringLength) {
+            shortDescriptionText.setText(shortDescription.substring(0, maxStringLength - 5) + " [ . . . ]");
         }
         TextFlow textFlow = new TextFlow(shortDescriptionText);
         textFlow.setStyle("-fx-line-spacing: 5px;");
@@ -82,14 +86,14 @@ public final class EventThumbnailView {
             truncateToFiveLines(shortDescriptionText, textFlow);
         });
 
-        VBox.setMargin(textFlow, new Insets(20,0,0,0));
+        VBox.setMargin(textFlow, new Insets(20, 0, 0, 0));
 
         StackPane thumbailStackPane = new StackPane();
         thumbailStackPane.setPrefHeight(WIDTH);
         ImageView imageView = new ImageView();
         thumbailStackPane.getChildren().add(imageView);
-        Label availabilityLabel = Bootstrap.textSuccess( I18nControls.newLabel("Available"));
-        availabilityLabel.setPadding(new Insets(5,15,5,15));
+        Label availabilityLabel = Bootstrap.textSuccess(I18nControls.newLabel("Available"));
+        availabilityLabel.setPadding(new Insets(5, 15, 5, 15));
         availabilityLabel.setBackground(new Background(
             new BackgroundFill(Color.LIGHTGRAY, CornerRadii.EMPTY, new Insets(0))
         ));
@@ -115,11 +119,11 @@ public final class EventThumbnailView {
         // Italian audio recording: audio-it
         // Greek audio recording: audio-el
         Object imageTag;
-        if(isoCode==null ||isoCode.equals("en")) {
+        if (isoCode == null || isoCode.equals("en")) {
             //We do add .jpg even if the image is not jpg, because for some reason, if we don't put an extension file, cloudinary doesn't always find the image, but it works when adding .jpg.
             imageTag = event.getId().getPrimaryKey() + "-cover.jpg";
         } else {
-            imageTag = event.getId().getPrimaryKey() + "-cover-"+isoCode+".jpg";
+            imageTag = event.getId().getPrimaryKey() + "-cover-" + isoCode + ".jpg";
         }
         String pictureId = String.valueOf(imageTag);
 
@@ -131,13 +135,12 @@ public final class EventThumbnailView {
                     thumbailStackPane.setBackground(null);
                     //First, we need to get the zoom factor of the screen
                     double zoomFactor = Screen.getPrimary().getOutputScaleX();
-                    String url = cloudImageService.url(pictureId, (int) (WIDTH*zoomFactor), -1);
+                    String url = cloudImageService.url(pictureId, (int) (WIDTH * zoomFactor), -1);
                     imageView.setFitWidth(WIDTH);
                     imageView.setPreserveRatio(true);
                     Image imageToDisplay = new Image(url, true);
                     imageView.setImage(imageToDisplay);
-                }
-                else {
+                } else {
                     //TODO: change in case it's a video instead of an audio
                     SVGPath audioCoverPath = SvgIcons.createAudioCoverPath();
                     thumbailStackPane.setBackground(new Background(
@@ -145,13 +148,13 @@ public final class EventThumbnailView {
                     ));
                     MonoPane audioCoverPictureMonoPane = new MonoPane(audioCoverPath);
                     thumbailStackPane.getChildren().add(audioCoverPictureMonoPane);
-                    StackPane.setAlignment(audioCoverPictureMonoPane,Pos.CENTER);
+                    StackPane.setAlignment(audioCoverPictureMonoPane, Pos.CENTER);
                 }
             }));
 
         actionButton = Bootstrap.primaryButton(I18nControls.newButton("View"));
         actionButton.setPrefWidth(150);
-        VBox.setMargin(actionButton,new Insets(30,0,0,0));
+        VBox.setMargin(actionButton, new Insets(30, 0, 0, 0));
         container.getChildren().addAll(
             thumbailStackPane,
             eventLabel,
@@ -159,6 +162,7 @@ public final class EventThumbnailView {
             actionButton
         );
     }
+
     private void truncateToFiveLines(Text text, TextFlow textFlow) {
 //        String content = text.getText();
 //        if (content.isEmpty()) return;
@@ -210,7 +214,7 @@ public final class EventThumbnailView {
     }
 
     public static String extractISOCode(String itemCode) {
-        if(itemCode==null) return null;
+        if (itemCode == null) return null;
         String[] parts = itemCode.split("-");
         return parts.length > 1 ? parts[1] : null; // Return the second part (ISO 639-1 code)
     }

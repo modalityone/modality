@@ -42,17 +42,11 @@
     src: url('webfx-css:fonts/montserrat/Montserrat-Italic.ttf');
 }
 
-
 @font-face {
-    font-family: 'Poppins';
-    font-weight: normal;
-    src: url('webfx-css:fonts/poppins/Poppins-Regular.ttf');
-}
-
-@font-face {
-    font-family: 'Poppins';
-    font-weight: 600;
-    src: url('webfx-css:fonts/poppins/Poppins-SemiBold.ttf');
+    font-family: 'Montserrat';
+    font-weight: bold;
+    font-style: italic;
+    src: url('webfx-css:fonts/montserrat/Montserrat-BoldItalic.ttf');
 }
 
 @font-face {
@@ -64,26 +58,20 @@
 @font-face {
     font-family: 'Poppins';
     font-weight: bold;
-    src: url('webfx-css:fonts/poppins/Poppins-Bold.ttf');
+    src: url('webfx-css:fonts/poppins/Poppins-Bold.otf');
 }
 
 @font-face {
     font-family: 'Poppins';
     font-style: italic;
-    src: url('webfx-css:fonts/poppins/Poppins-Italic.ttf');
-}
-
-@font-face {
-    font-family: 'Poppins';
-    font-style: light;
-    src: url('webfx-css:fonts/poppins/Poppins-Light.otf');
+    src: url('webfx-css:fonts/poppins/Poppins-Italic.otf');
 }
 
 @font-face {
     font-family: 'Poppins';
     font-weight: bold;
     font-style: italic;
-    src: url('webfx-css:fonts/poppins/Poppins-BoldItalic.ttf');
+    src: url('webfx-css:fonts/poppins/Poppins-BoldItalic.otf');
 }
 
 
@@ -714,7 +702,7 @@ CollapsePane.menu-bar.non-mobile {
 }
 
 .h1 {
-    -fx-font-family: "Roboto";
+    -fx-font-family: -roboto-font-family;
     -fx-font-size: 34px;
     -fx-font-weight: normal;
     -fx-line-spacing: 6px; /* Line height in JavaFX is set through line-spacing */
@@ -722,7 +710,7 @@ CollapsePane.menu-bar.non-mobile {
 }
 
 .h2 {
-    -fx-font-family: "Poppins";
+    -fx-font-family: -poppins-font-family;
     -fx-font-size: 40px;
     -fx-font-weight: bold;         /* 'bold' is equivalent to 700 weight */
     -fx-line-spacing: 20px;

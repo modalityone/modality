@@ -17,6 +17,7 @@ import javafx.scene.Node;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.layout.VBox;
+import one.modality.base.frontoffice.utility.page.FOPageUtil;
 import one.modality.base.shared.entities.DocumentLine;
 import one.modality.base.shared.entities.Event;
 import one.modality.base.shared.entities.KnownItemFamily;
@@ -25,7 +26,6 @@ import one.modality.event.frontoffice.medias.EventThumbnailView;
 
 final class AudioRecordingsActivity extends ViewDomainActivityBase {
 
-    private static final double PAGE_TOP_BOTTOM_PADDING = 100;
     private static final int BOX_WIDTH = 263;
 
     // Holding an observable list of events with audio recordings booked by the user (changes on login & logout)
@@ -63,15 +63,26 @@ final class AudioRecordingsActivity extends ViewDomainActivityBase {
         columnsPane.setFixedColumnWidth(BOX_WIDTH);
         columnsPane.getStyleClass().add("media-library");
         columnsPane.setPadding(new Insets(50,0,0,0));
+
+        // *************************************************************************************************************
+        // *********************************** Reacting to parameter changes *******************************************
+        // *************************************************************************************************************
+
         // Showing a thumbnail in the columns pane for each event with videos
         ObservableLists.bindConverted(columnsPane.getChildren(), eventsWithBookedAudios, dl -> {
-            EventThumbnailView eventTbView = new EventThumbnailView(dl.getDocument().getEvent(),dl.getItem().getCode());
+            Event event = dl.getDocument().getEvent();
+            String itemCode = dl.getItem().getCode();
+            EventThumbnailView eventTbView = new EventThumbnailView(event, itemCode);
             VBox container = eventTbView.getView();
             Button actionButton = eventTbView.getActionButton();
             actionButton.setCursor(Cursor.HAND);
-            actionButton.setOnAction(e -> showEventAudioWall(dl.getDocument().getEvent(),dl.getItem().getCode()));
+            actionButton.setOnAction(e -> showEventAudioWall(event, itemCode));
             return container;
         });
+
+        // *************************************************************************************************************
+        // ************************************* Building final container **********************************************
+        // *************************************************************************************************************
 
         VBox pageContainer = new VBox(
             headerLabel,
@@ -79,12 +90,7 @@ final class AudioRecordingsActivity extends ViewDomainActivityBase {
             columnsPane
         );
 
-        // *************************************************************************************************************
-        // ************************************* Building final container **********************************************
-        // *************************************************************************************************************
-
-        pageContainer.setPadding(new Insets(PAGE_TOP_BOTTOM_PADDING, 0, PAGE_TOP_BOTTOM_PADDING, 0));
-        return pageContainer;
+        return FOPageUtil.restrictToMaxPageWidthAndApplyPageLeftTopRightBottomPadding(pageContainer);
     }
 
     private void showEventAudioWall(Event event,String itemCode) {

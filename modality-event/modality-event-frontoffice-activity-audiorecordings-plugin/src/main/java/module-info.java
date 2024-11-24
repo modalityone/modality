@@ -12,7 +12,6 @@ module modality.event.frontoffice.activity.audiorecordings.plugin {
     requires modality.base.frontoffice.utility;
     requires modality.base.shared.entities;
     requires modality.crm.client.authn.fx;
-    requires modality.event.client.mediaview;
     requires modality.event.frontoffice.medias;
     requires webfx.extras.media.metadata;
     requires webfx.extras.panes;

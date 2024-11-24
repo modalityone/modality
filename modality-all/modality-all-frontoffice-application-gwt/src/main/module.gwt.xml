@@ -108,6 +108,8 @@
     <public path="" includes="images/buddhas/"/>
     <resource path="one/modality/base/client/images"/>
     <public path="" includes="one/modality/base/client/images/"/>
+    <!--=========================< modality-base-client-bootstrap >=========================-->
+    <source path="one/modality/base/client/bootstrap"/>
     <!--===========================< modality-base-client-brand >===========================-->
     <source path="one/modality/base/client/brand"/>
     <resource path="one/modality/base/client/brand"/>
@@ -205,8 +207,8 @@
     <!--=====================< modality-base-frontoffice-mainframe-fx >=====================-->
     <source path="one/modality/base/frontoffice/mainframe/fx"/>
     <!--=======================< modality-base-frontoffice-utility >========================-->
-    <source path="one/modality/base/frontoffice/utility/activity"/>
     <source path="one/modality/base/frontoffice/utility/browser"/>
+    <source path="one/modality/base/frontoffice/utility/page"/>
     <source path="one/modality/base/frontoffice/utility/tyler"/>
     <source path="one/modality/base/frontoffice/utility/tyler/entities"/>
     <source path="one/modality/base/frontoffice/utility/tyler/fx"/>

@@ -50,7 +50,7 @@ import one.modality.base.client.mainframe.fx.FXMainFrameOverlayArea;
 import one.modality.base.client.mainframe.fx.FXMainFrameTransiting;
 import one.modality.base.frontoffice.mainframe.fx.FXBackgroundNode;
 import one.modality.base.frontoffice.mainframe.fx.FXCollapseFooter;
-import one.modality.base.frontoffice.utility.activity.FrontOfficeActivityUtil;
+import one.modality.base.frontoffice.utility.page.FOPageUtil;
 import one.modality.crm.shared.services.authn.fx.FXUserName;
 
 import java.util.List;
@@ -342,7 +342,7 @@ public final class ModalityFrontOfficeMainFrameActivity extends ModalityClientMa
             buttonBar = new ColumnsPane(scaledMobileButtons);
         } else {
             HBox hBox = new HBox(23, buttons);
-            FrontOfficeActivityUtil.restrictToMaxPageWidth(hBox, true);  // to fit like the mount node
+            FOPageUtil.restrictToMaxPageWidthAndApplyPageLeftRightPadding(hBox);  // to fit like the mount node
             if (userMenu) {
                 Label usernameLabel = new Label();
                 usernameLabel.textProperty().bind(FXUserName.userNameProperty());

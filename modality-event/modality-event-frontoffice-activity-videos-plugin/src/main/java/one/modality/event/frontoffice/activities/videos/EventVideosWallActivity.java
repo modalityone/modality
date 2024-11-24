@@ -1,8 +1,6 @@
 package one.modality.event.frontoffice.activities.videos;
 
-import dev.webfx.extras.panes.CenteredPane;
 import dev.webfx.extras.panes.CollapsePane;
-import dev.webfx.extras.panes.MonoPane;
 import dev.webfx.extras.player.StartOptionsBuilder;
 import dev.webfx.extras.player.multi.MultiPlayer;
 import dev.webfx.extras.player.multi.all.AllPlayers;
@@ -33,8 +31,7 @@ import javafx.scene.control.Label;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.scene.text.TextAlignment;
-import one.modality.base.client.icons.SvgIcons;
-import one.modality.base.frontoffice.utility.activity.FrontOfficeActivityUtil;
+import one.modality.base.frontoffice.utility.page.FOPageUtil;
 import one.modality.base.shared.entities.Event;
 import one.modality.base.shared.entities.KnownItemFamily;
 import one.modality.base.shared.entities.ScheduledItem;
@@ -52,7 +49,6 @@ import java.util.stream.Collectors;
 final class EventVideosWallActivity extends ViewDomainActivityBase {
 
     static final String VIDEO_SCHEDULED_ITEM_DYNAMIC_BOOLEAN_FIELD_HAS_PUBLISHED_MEDIAS = "hasPublishedMedias";
-    private static final double PAGE_TOP_BOTTOM_PADDING = 100;
 
     private final ObjectProperty<Object> pathEventIdProperty = new SimpleObjectProperty<>();
 
@@ -113,9 +109,7 @@ final class EventVideosWallActivity extends ViewDomainActivityBase {
         // ********************************* Building the static part of the UI ****************************************
         // *************************************************************************************************************
 
-        // Back arrow and event title
-        MonoPane backArrow = SvgIcons.createButtonPane(SvgIcons.createBackArrow(), getHistory()::goBack);
-
+        // Event title
         Label eventLabel = Bootstrap.h2(Bootstrap.strong(I18nControls.newLabel(new I18nSubKey("expression: i18n(this)", eventProperty), eventProperty)));
         eventLabel.setWrapText(true);
         eventLabel.setTextAlignment(TextAlignment.CENTER);
@@ -125,15 +119,11 @@ final class EventVideosWallActivity extends ViewDomainActivityBase {
         eventDescriptionLabel.setTextAlignment(TextAlignment.CENTER);
         eventDescriptionLabel.managedProperty().bind(FXProperties.compute(eventDescriptionLabel.textProperty(), Strings::isNotEmpty));
 
-        VBox titleVBox = new VBox(
+        VBox titleVBox = new VBox(20,
             eventLabel,
             eventDescriptionLabel
         );
         titleVBox.setAlignment(Pos.CENTER);
-
-        CenteredPane backArrowAndTitlePane = new CenteredPane();
-        backArrowAndTitlePane.setLeft(backArrow);
-        backArrowAndTitlePane.setCenter(titleVBox);
 
         // Livestream box
         Label livestreamLabel = Bootstrap.h4(Bootstrap.strong(I18nControls.newLabel(VideosI18nKeys.LivestreamTitle)));
@@ -159,7 +149,7 @@ final class EventVideosWallActivity extends ViewDomainActivityBase {
 
         // Assembling all together in the page container
         VBox pageContainer = new VBox(50,
-            backArrowAndTitlePane,
+            titleVBox,
             livestreamVBox,
             dayVideosWallVBox
         );
@@ -210,8 +200,7 @@ final class EventVideosWallActivity extends ViewDomainActivityBase {
         // ************************************* Building final container **********************************************
         // *************************************************************************************************************
 
-        pageContainer.setPadding(new Insets(PAGE_TOP_BOTTOM_PADDING, 0, PAGE_TOP_BOTTOM_PADDING, 0));
-        return FrontOfficeActivityUtil.restrictToMaxPageWidth(pageContainer, true);
+        return FOPageUtil.restrictToMaxPageWidthAndApplyPageLeftTopRightBottomPadding(pageContainer);
         //return FrontOfficeActivityUtil.createActivityPageScrollPane(pageContainer, true);
     }
 

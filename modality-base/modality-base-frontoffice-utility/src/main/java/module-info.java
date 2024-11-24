@@ -28,8 +28,8 @@ module modality.base.frontoffice.utility {
     requires webfx.stack.ui.dialog;
 
     // Exported packages
-    exports one.modality.base.frontoffice.utility.activity;
     exports one.modality.base.frontoffice.utility.browser;
+    exports one.modality.base.frontoffice.utility.page;
     exports one.modality.base.frontoffice.utility.tyler;
     exports one.modality.base.frontoffice.utility.tyler.entities;
     exports one.modality.base.frontoffice.utility.tyler.fx;

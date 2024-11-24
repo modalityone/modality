@@ -10,6 +10,7 @@ module modality.event.frontoffice.medias {
     requires webfx.extras.panes;
     requires webfx.extras.styles.bootstrap;
     requires webfx.platform.console;
+    requires webfx.platform.util;
     requires webfx.stack.cloud.image;
     requires webfx.stack.cloud.image.client;
     requires webfx.stack.i18n;

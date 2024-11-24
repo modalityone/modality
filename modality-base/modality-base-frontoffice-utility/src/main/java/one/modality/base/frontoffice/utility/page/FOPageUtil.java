@@ -1,4 +1,4 @@
-package one.modality.base.frontoffice.utility.activity;
+package one.modality.base.frontoffice.utility.page;
 
 import javafx.geometry.Insets;
 import javafx.scene.layout.Region;
@@ -6,12 +6,48 @@ import javafx.scene.layout.Region;
 /**
  * @author Bruno Salmon
  */
-public final class FrontOfficeActivityUtil {
+public final class FOPageUtil {
 
     public static final double MAX_PAGE_WIDTH = 1440 - 2 * 160;
     public static final double LEFT_RIGHT_PAGE_INSETS = 20;
+    public static final double TOP_PAGE_INSETS = 88;
+    public static final double BOTTOM_PAGE_INSETS = 160;
 
-/*
+    public static <R extends Region> R restrictToMaxPageWidth(R region) {
+        region.setMaxWidth(MAX_PAGE_WIDTH);
+        return region;
+    }
+
+    public static <R extends Region> R restrictToMaxPageWidthAndApplyPageLeftRightPadding(R region) {
+        region.setPadding(createLeftRightPageInsets(0, 0));
+        return restrictToMaxPageWidth(region);
+    }
+
+    public static <R extends Region> R restrictToMaxPageWidthAndApplyPageLeftTopRightBottomPadding(R region) {
+        region.setPadding(createLeftRightPageInsets(TOP_PAGE_INSETS, BOTTOM_PAGE_INSETS));
+        return restrictToMaxPageWidth(region);
+    }
+
+    public static <R extends Region> R restrictToMaxPageWidthAndApplyPageTopBottomPadding(R region) {
+        region.setPadding(createTopBottomPageInsets());
+        return restrictToMaxPageWidth(region);
+    }
+
+    public static Insets createLeftRightPageInsets(double top, double bottom) {
+        return new Insets(top, LEFT_RIGHT_PAGE_INSETS, bottom, LEFT_RIGHT_PAGE_INSETS);
+    }
+
+    public static Insets createTopBottomPageInsets() {
+        return new Insets(TOP_PAGE_INSETS, 0, BOTTOM_PAGE_INSETS, 0);
+    }
+
+    public static <R extends Region> R applyTopBottomPagePadding(R region) {
+        region.setPadding(createTopBottomPageInsets());
+        return region;
+    }
+
+    /*
+    Old code that I keep to remember the videos player management (not yet managed in new code)
     public static ScrollPane createActivityPageScrollPane(Region pageContainer, boolean hasVideoPlayers) {
         return createActivityPageScrollPane(pageContainer, hasVideoPlayers, true);
     }
@@ -48,20 +84,4 @@ public final class FrontOfficeActivityUtil {
         return createLeftRightPageInsets(topBottom, topBottom);
     }
 */
-    public static <R extends Region> R restrictToMaxPageWidth(R region, boolean withPadding) {
-        if (withPadding)
-            return restrictToMaxPageWidth(region, 0, 0);
-        return restrictToMaxPageWidth(region, -1, -1);
-    }
-
-    public static <R extends Region> R restrictToMaxPageWidth(R region, double topPadding, double bottomPadding) {
-        region.setMaxWidth(MAX_PAGE_WIDTH);
-        if (topPadding >= 0 && bottomPadding >= 0)
-            region.setPadding(createLeftRightPageInsets(topPadding, bottomPadding));
-        return region;
-    }
-
-    public static Insets createLeftRightPageInsets(double top, double bottom) {
-        return new Insets(top, LEFT_RIGHT_PAGE_INSETS, bottom, LEFT_RIGHT_PAGE_INSETS);
-    }
 }
