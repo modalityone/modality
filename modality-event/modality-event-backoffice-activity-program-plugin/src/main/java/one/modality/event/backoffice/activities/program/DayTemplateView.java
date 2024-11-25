@@ -41,7 +41,7 @@ final class DayTemplateView {
 
     private final DatePicker datePicker = new DatePicker(new DatePickerOptions()
         .setMultipleSelectionAllowed(true)
-        .setPastDatesSelectionAllowed(false)
+        .setPastDatesSelectionAllowed(true) // temporarily changed for 25/11 presentation. TODO Go back to false and investigate why past dates are not visually showing
         .setApplyBorderStyle(false)
         .setApplyMaxSize(false)
         .setSortSelectedDates(true)
