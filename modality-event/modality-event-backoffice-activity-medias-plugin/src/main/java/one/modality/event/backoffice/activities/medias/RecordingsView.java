@@ -19,7 +19,6 @@ import dev.webfx.stack.orm.entity.EntityStore;
 import dev.webfx.stack.orm.entity.EntityStoreQuery;
 import dev.webfx.stack.orm.entity.UpdateStore;
 import javafx.application.Platform;
-import javafx.beans.InvalidationListener;
 import javafx.beans.binding.BooleanExpression;
 import javafx.beans.property.*;
 import javafx.collections.FXCollections;
@@ -237,7 +236,7 @@ public class RecordingsView {
                         Label percentageLabel = new Label();
                         IntegerProperty percentageProperty = new SimpleIntegerProperty() {
                             @Override
-                            public void addListener(InvalidationListener listener) {
+                            protected void invalidated() {
                                 percentageLabel.setText(get() + "%");
                             }
                         };
