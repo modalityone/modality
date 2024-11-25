@@ -396,8 +396,12 @@ public final class ModalityFrontOfficeMainFrameActivity extends ModalityClientMa
                 ObjectProperty<Paint> svgColorProperty = hasStroke ? svgPath.strokeProperty() : svgPath.fillProperty();
                 if (mobileLayout) {
                     button.textFillProperty().bind(svgColorProperty);
-                } else
+                } else {
+                    /* Commented as this was making the Books stroke to null (icon was appearing black)
                     svgColorProperty.bind(button.textFillProperty());
+                    */
+                    svgColorProperty.set(Color.BLACK); // menu items color hard-code for now
+                }
             }
         }, button.graphicProperty());
         button.setPadding(mobileLayout ? new Insets(5) : Insets.EMPTY);
