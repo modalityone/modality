@@ -1,6 +1,5 @@
 package one.modality.base.client.operationactionsloading;
 
-import dev.webfx.platform.console.Console;
 import dev.webfx.platform.util.Strings;
 import dev.webfx.stack.i18n.HasI18nKey;
 import dev.webfx.stack.i18n.spi.HasDictionaryMessageKey;
@@ -47,7 +46,7 @@ final class ModalityOperationI18nKey implements HasDictionaryMessageKey, HasEnti
             // uniqueness of ModalityOperationI18nKey because equals() & hashCode() depends only on the
             // operation id.
             Object i18nKey = ((HasI18nKey) operationRequest).getI18nKey();
-            Console.log("👉👉👉👉👉 Applying software i18nKey = " + i18nKey);
+            //Console.log("Applying software i18nKey = " + i18nKey);
             setDictionaryMessageKey(i18nKey);
         }
     }
