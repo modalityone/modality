@@ -1,6 +1,7 @@
 package one.modality.event.client.mediaview;
 
 import dev.webfx.extras.imagestore.ImageStore;
+import dev.webfx.extras.panes.LayoutPane;
 import dev.webfx.extras.panes.MonoPane;
 import dev.webfx.extras.player.Media;
 import dev.webfx.extras.player.Player;
@@ -75,7 +76,9 @@ public abstract class MediaInfoView {
     protected final Pane favoritePane = new MonoPane(favoriteSvgPath);
     private Timeline imageFadeTimeline;
     private boolean timelineShowImage;
-    protected Pane mediaPane = new Pane(videoContainer, imageView, dateText, titleLabel, excerptLabel, backwardButton, pauseButton, playButton, forwardButton, progressBar, elapsedTimeText, favoritePane) {
+    private double lastComputeLayoutWidth;
+
+    protected Pane mediaPane = new LayoutPane(videoContainer, imageView, dateText, titleLabel, excerptLabel, backwardButton, pauseButton, playButton, forwardButton, progressBar, elapsedTimeText, favoritePane) {
         private double fontFactor;
         private double leftX, imageY, imageWidth, imageHeight, rightX, rightWidth, dateY, dateHeight, titleY, titleHeight, excerptY, excerptHeight, buttonY, buttonSize, favoriteY, favoriteHeight;
         private HPos titleHPos, favoriteHPos;
@@ -94,34 +97,34 @@ public abstract class MediaInfoView {
         }
 
         @Override
-        protected void layoutChildren() {
-            computeLayout(getWidth());
+        protected void layoutChildren(double width, double height) {
+            computeLayout(width);
             imageView.setFitWidth(isAudio ? imageWidth : 0);
             imageView.setFitHeight(imageHeight);
-            layoutInArea(imageView, leftX, imageY, imageWidth, imageHeight, 0, HPos.CENTER, VPos.CENTER);
-            layoutInArea(dateText, rightX, dateY, rightWidth, dateHeight, 0, HPos.LEFT, VPos.TOP);
-            layoutInArea(titleLabel, rightX, titleY, rightWidth, titleHeight, 0, titleHPos, VPos.TOP);
-            layoutInArea(excerptLabel, rightX, excerptY, rightWidth, excerptHeight, 0, HPos.LEFT, VPos.TOP);
-            layoutInArea(favoritePane, rightX, favoriteY, rightWidth, favoriteHeight, 0, favoriteHPos, VPos.TOP);
+            layoutInArea(imageView, leftX, imageY, imageWidth, imageHeight, HPos.CENTER, VPos.CENTER);
+            layoutInArea(dateText, rightX, dateY, rightWidth, dateHeight, HPos.LEFT, VPos.TOP);
+            layoutInArea(titleLabel, rightX, titleY, rightWidth, titleHeight, titleHPos, VPos.TOP);
+            layoutInArea(excerptLabel, rightX, excerptY, rightWidth, excerptHeight, HPos.LEFT, VPos.TOP);
+            layoutInArea(favoritePane, rightX, favoriteY, rightWidth, favoriteHeight, favoriteHPos, VPos.TOP);
             if (isVideo) {
-                layoutInArea(videoContainer, leftX, imageY, imageWidth, imageHeight, 0, HPos.CENTER, VPos.CENTER);
-                layoutInArea(playButton, rightX, buttonY, buttonSize, buttonSize, 0, HPos.LEFT, VPos.TOP);
-                layoutInArea(pauseButton, rightX, buttonY, buttonSize, buttonSize, 0, HPos.LEFT, VPos.TOP);
-                layoutInArea(elapsedTimeText, rightX + buttonSize + 20, buttonY, rightWidth, buttonSize, 0, HPos.LEFT, VPos.CENTER);
+                layoutInArea(videoContainer, leftX, imageY, imageWidth, imageHeight, HPos.CENTER, VPos.CENTER);
+                layoutInArea(playButton, rightX, buttonY, buttonSize, buttonSize, HPos.LEFT, VPos.TOP);
+                layoutInArea(pauseButton, rightX, buttonY, buttonSize, buttonSize, HPos.LEFT, VPos.TOP);
+                layoutInArea(elapsedTimeText, rightX + buttonSize + 20, buttonY, rightWidth, buttonSize, HPos.LEFT, VPos.CENTER);
             } else {
                 imageClip.setWidth(imageWidth);
                 imageClip.setHeight(imageHeight);
                 double arcWidthHeight = imageWidth / 4;
                 imageClip.setArcWidth(arcWidthHeight);
                 imageClip.setArcHeight(arcWidthHeight);
-                layoutInArea(backwardButton, rightX, buttonY, buttonSize, buttonSize, 0, HPos.LEFT, VPos.TOP);
-                layoutInArea(playButton, rightX + buttonSize + 5, buttonY, buttonSize, buttonSize, 0, HPos.LEFT, VPos.TOP);
-                layoutInArea(pauseButton, rightX + buttonSize + 5, buttonY, buttonSize, buttonSize, 0, HPos.LEFT, VPos.TOP);
-                layoutInArea(forwardButton, rightX + 2 * (buttonSize + 5), buttonY, buttonSize, buttonSize, 0, HPos.LEFT, VPos.TOP);
+                layoutInArea(backwardButton, rightX, buttonY, buttonSize, buttonSize, HPos.LEFT, VPos.TOP);
+                layoutInArea(playButton, rightX + buttonSize + 5, buttonY, buttonSize, buttonSize, HPos.LEFT, VPos.TOP);
+                layoutInArea(pauseButton, rightX + buttonSize + 5, buttonY, buttonSize, buttonSize, HPos.LEFT, VPos.TOP);
+                layoutInArea(forwardButton, rightX + 2 * (buttonSize + 5), buttonY, buttonSize, buttonSize, HPos.LEFT, VPos.TOP);
                 double progressBarX = rightX + 3 * (buttonSize + 5), progressBarHeight = 10, progressBarY = buttonY + buttonSize / 2 - progressBarHeight / 2;
                 progressBar.setPrefWidth(getWidth() - progressBarX);
-                layoutInArea(progressBar, progressBarX, progressBarY, progressBar.getPrefWidth(), progressBarHeight, 0, HPos.LEFT, VPos.CENTER);
-                layoutInArea(elapsedTimeText, progressBarX, buttonY + buttonSize, rightWidth, buttonSize, 0, HPos.LEFT, VPos.TOP);
+                layoutInArea(progressBar, progressBarX, progressBarY, progressBar.getPrefWidth(), progressBarHeight, HPos.LEFT, VPos.CENTER);
+                layoutInArea(elapsedTimeText, progressBarX, buttonY + buttonSize, rightWidth, buttonSize, HPos.LEFT, VPos.TOP);
             }
         }
 
@@ -132,6 +135,8 @@ public abstract class MediaInfoView {
         }
 
         private void computeLayout(double width) {
+            if (width == lastComputeLayoutWidth)
+                return;
             if (width == -1)
                 width = getWidth();
             /* Updating fonts if necessary (required before layout) */
@@ -185,6 +190,7 @@ public abstract class MediaInfoView {
                 /*Buttons:*/    buttonY = excerptY + excerptHeight + (isAudio ? 30 : 20);    buttonSize = 32;
                 /*Favorite:*/ favoriteY = buttonY + buttonSize + (isAudio ? 30 : 20);    favoriteHeight = 32;
             }
+            lastComputeLayoutWidth = width;
         }
     };
 
@@ -209,6 +215,7 @@ public abstract class MediaInfoView {
     public void setMediaInfo(HasMediaInfo mediaInfo) {
         if (mediaInfo == this.mediaInfo)
             return;
+        lastComputeLayoutWidth = 0;
         this.mediaInfo = mediaInfo;
         isAudio = (mediaInfo instanceof HasAudioUrl) && ((HasAudioUrl) mediaInfo).getAudioUrl() != null;
         isWistiaVideo = !isAudio && (mediaInfo instanceof HasWistiaVideoId && ((HasWistiaVideoId) mediaInfo).getWistiaVideoId() != null);
@@ -375,7 +382,8 @@ public abstract class MediaInfoView {
     private void updateElapsedTimeAndProgressBar(Duration elapsed) {
         if (isAudio) {
             updateText(elapsedTimeText, formatDuration(elapsed) + " / " + formatDuration(mediaDuration));
-            progressBar.setProgress(elapsed.toMillis() / mediaDuration.toMillis());
+            if (mediaDuration != null)
+                progressBar.setProgress(elapsed.toMillis() / mediaDuration.toMillis());
         } else
             updateText(elapsedTimeText, formatDuration(mediaDuration));
     }
