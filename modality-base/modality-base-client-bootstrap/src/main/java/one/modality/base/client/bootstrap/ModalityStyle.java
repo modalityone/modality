@@ -7,6 +7,7 @@ import javafx.scene.Node;
 public interface ModalityStyle {
 
     String BTN_BLACK = "btn-black";
+    String BTN_WHITE = "btn-white";
     String TEXT_COMMENT = "comment";
 
     static <N extends Node> N blackButton(N button) {

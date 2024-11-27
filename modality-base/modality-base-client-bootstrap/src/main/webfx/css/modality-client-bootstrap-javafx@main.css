@@ -41,7 +41,7 @@
     -bootstrap-red3: #c9302c ;
     -bootstrap-red4: #ac2925 ;
     -bootstrap-red5: #761c19 ;
-    -bootstrap-red6: #a94442 ;
+    -bootstrap-red6: #FF0404 ;
 }
 
 .h1 {
@@ -72,4 +72,18 @@
     -fx-fill: white;
     -fx-background-color: -bootstrap-grey7;
     -fx-border-color: -bootstrap-grey7;
+}
+
+.btn-white {
+    -fx-text-fill: black;
+    -fx-fill: black;
+    -fx-background-color: white;
+    -fx-border-color: black;
+}
+
+.btn-white:hover {
+    -fx-text-fill: black;
+    -fx-fill: black;
+    -fx-background-color: -bootstrap-grey1;
+    -fx-border-color: black;
 }

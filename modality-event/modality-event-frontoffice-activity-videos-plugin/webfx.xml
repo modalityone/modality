@@ -15,6 +15,7 @@
         <provider interface="dev.webfx.stack.routing.uirouter.operations.RouteRequestEmitter">one.modality.event.frontoffice.activities.videos.VideosRouting$RouteToVideosRequestEmitter</provider>
         <provider interface="dev.webfx.stack.routing.uirouter.UiRoute">one.modality.event.frontoffice.activities.videos.EventVideosWallRouting$EventVideosWallUiRoute</provider>
         <provider interface="dev.webfx.stack.routing.uirouter.UiRoute">one.modality.event.frontoffice.activities.videos.SessionVideoPlayerRouting$VideOfSessionUiRoute</provider>
+        <provider interface="dev.webfx.stack.routing.uirouter.UiRoute">one.modality.event.frontoffice.activities.videos.LivestreamPlayerRouting$VideOfSessionUiRoute</provider>
     </providers>
 
     <i18n javaKeysClass="one.modality.event.frontoffice.activities.videos.VideosI18nKeys"/>
