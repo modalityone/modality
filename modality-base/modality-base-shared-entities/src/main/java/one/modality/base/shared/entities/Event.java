@@ -77,6 +77,14 @@ public interface Event extends Entity,
         setFieldValue("vodExpirationDate", vodExpirationDate);
     }
 
+    default Integer getVodProcessingTimeMinutes() {
+        return getIntegerFieldValue("vodProcesssingTimeMinutes");
+    }
+
+    default void setVodProcessingTimeMinutes(Integer minutes) {
+        setFieldValue("vodProcesssingTimeMinutes",minutes);
+    }
+
     default LocalDateTime getVodExpirationDate() {
         return getLocalDateTimeFieldValue("vodExpirationDate");
     }
