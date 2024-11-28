@@ -1,13 +1,13 @@
 .audio-library .h3 {
     -fx-font-family: "Poppins";
-    -fx-font-weight: semibold;
+    -fx-font-weight: semi-bold;
     -fx-font-size: 15px;
     -fx-text-alignment: left; /* Aligns text */
 }
 
 .audio-library .comment {
     -fx-font-family: "Poppins";
-    -fx-font-weight: light;
+    -fx-font-weight: 300; /* light */
     -fx-font-size: 10px;
     -fx-text-fill: #838788;
     -fx-text-alignment: left; /* Aligns text */

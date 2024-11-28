@@ -57,6 +57,12 @@
 
 @font-face {
     font-family: 'Poppins';
+    font-style: medium;
+    src: url('webfx-css:fonts/poppins/Poppins-Medium.ttf');
+}
+
+@font-face {
+    font-family: 'Poppins';
     font-weight: bold;
     src: url('webfx-css:fonts/poppins/Poppins-Bold.ttf');
 }
@@ -72,6 +78,18 @@
     font-weight: bold;
     font-style: italic;
     src: url('webfx-css:fonts/poppins/Poppins-BoldItalic.ttf');
+}
+
+@font-face {
+    font-family: 'Poppins';
+    font-weight: light;
+    src: url('webfx-css:fonts/poppins/Poppins-Light.ttf');
+}
+
+@font-face {
+    font-family: 'Poppins';
+    font-weight: semi-bold;
+    src: url('webfx-css:fonts/poppins/Poppins-SemiBold.ttf');
 }
 
 
@@ -706,7 +724,7 @@ CollapsePane.menu-bar.lang-menu-bar {
     -bootstrap-red3: #c9302c ;
     -bootstrap-red4: #ac2925 ;
     -bootstrap-red5: #761c19 ;
-    -bootstrap-red6: #a94442 ;
+    -bootstrap-red6: #FF0404 ;
 }
 
 .h1 {
@@ -738,18 +756,32 @@ CollapsePane.menu-bar.lang-menu-bar {
     -fx-background-color: -bootstrap-grey7;
     -fx-border-color: -bootstrap-grey7;
 }
+
+.btn-white {
+    -fx-text-fill: black;
+    -fx-fill: black;
+    -fx-background-color: white;
+    -fx-border-color: black;
+}
+
+.btn-white:hover {
+    -fx-text-fill: black;
+    -fx-fill: black;
+    -fx-background-color: -bootstrap-grey1;
+    -fx-border-color: black;
+}
 /*===== modality-event-frontoffice-activities-audiorecordings-javafx@main.css from modality-event-frontoffice-activity-audiorecordings-plugin =====*/
 
 .audio-library .h3 {
     -fx-font-family: "Poppins";
-    -fx-font-weight: semibold;
+    -fx-font-weight: semi-bold;
     -fx-font-size: 15px;
     -fx-text-alignment: left; /* Aligns text */
 }
 
 .audio-library .comment {
     -fx-font-family: "Poppins";
-    -fx-font-weight: light;
+    -fx-font-weight: 300; /* light */
     -fx-font-size: 10px;
     -fx-text-fill: #838788;
     -fx-text-alignment: left; /* Aligns text */
@@ -776,12 +808,33 @@ CollapsePane.menu-bar.lang-menu-bar {
 
 /*===== modality-event-frontoffice-activities-videos-javafx@main.css from modality-event-frontoffice-activity-videos-plugin =====*/
 
-.media-library .h3 {
+.livestream .h3 {
     -fx-font-family: "Poppins";
-    -fx-font-size: 16px;
-    -fx-font-weight: 600;
+    -fx-font-size: 24px;
+    -fx-font-weight: bold;
     -fx-text-alignment: left; /* Aligns text */
 }
+
+.livestream .h4 {
+    -fx-font-family: "Poppins";
+    -fx-font-size: 16px;
+    -fx-font-weight: semi-bold;
+    -fx-text-alignment: left; /* Aligns text */
+}
+
+.livestream {
+    -fx-font-weight: medium;
+}
+
+.livestream .small{
+    -fx-font-weight: light;
+}
+
+.livestream .text-info {
+    -fx-font-color: black;
+    -fx-font-weight: normal;
+}
+
 
 /*===== modality-event-client-recurringevents-javafx@main.css from modality-event-client-recurringevents =====*/
 

@@ -877,7 +877,7 @@ fx-collapsepane.menu-bar.lang-menu-bar > fx-border {
     --bootstrap-red3: #c9302c ;
     --bootstrap-red4: #ac2925 ;
     --bootstrap-red5: #761c19 ;
-    --bootstrap-red6: #a94442 ;
+    --bootstrap-red6: #FF0404 ;
 }
 
 .disabled:hover {
@@ -908,6 +908,32 @@ fx-collapsepane.menu-bar.lang-menu-bar > fx-border {
 
 .btn-black:hover:not(.disabled)> fx-border {
     border-color: var(--bootstrap-grey7);
+}
+
+btn-white {
+    color: var(--bootstrap-white);
+    --fx-svg-path-fill: var(--bootstrap-white);
+}
+
+.btn-white > fx-background {
+    background: white;
+}
+
+.btn-white > fx-border {
+    border-color: black;
+}
+
+.btn-white:hover:not(.disabled){
+    color: var(--bootstrap-black);
+    --fx-svg-path-fill: var(--bootstrap-black);
+}
+
+.btn-white:hover:not(.disabled)> fx-background {
+    background-color: var(--bootstrap-grey1);
+}
+
+.btn-white:hover:not(.disabled)> fx-border {
+    border-color: var(--bootstrap-grey1);
 }
 
 
@@ -953,6 +979,36 @@ fx-collapsepane.menu-bar.lang-menu-bar > fx-border {
 .bottom-border > fx-children {
     margin-top: -10px;
 }
+/*===== modality-event-frontoffice-activities-videos-web@main.css from modality-event-frontoffice-activity-videos-plugin =====*/
+
+.livestream h3 {
+     font-family: "Poppins", sans-serif;
+     font-size: 24px;
+     font-weight: bold;
+     text-align: left; /* Aligns text */
+ }
+
+ .livestream h4 {
+    font-family: "Poppins", sans-serif;
+    font-size: 24px;
+    font-weight: semi-bold;
+    text-align: left; /* Aligns text */
+ }
+
+ .livestream {
+     font-weight: 500; /* 'medium' weight equivalent in CSS */
+ }
+
+.livestream .small{
+    font-weight: 300;
+}
+
+ .livestream .text-info {
+     font-weight: normal;
+     color: black;
+ }
+
+
 /*===== modality-event-client-recurringevents-web@main.css from modality-event-client-recurringevents =====*/
 
 :root {
