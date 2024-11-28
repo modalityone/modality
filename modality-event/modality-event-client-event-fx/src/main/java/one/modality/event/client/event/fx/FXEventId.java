@@ -8,7 +8,6 @@ import dev.webfx.stack.orm.entity.Entities;
 import dev.webfx.stack.orm.entity.EntityId;
 import dev.webfx.stack.orm.entity.EntityStore;
 import dev.webfx.stack.session.Session;
-import dev.webfx.stack.session.SessionService;
 import dev.webfx.stack.session.state.client.fx.FXSession;
 import javafx.beans.property.ObjectProperty;
 import one.modality.base.shared.context.ModalityContext;
@@ -29,7 +28,7 @@ public final class FXEventId {
         Session session = FXSession.getSession();
         if (session != null) {
             session.put(SESSION_FX_EVENT_ID_KEY, Entities.getPrimaryKey(eventId));
-            SessionService.getSessionStore().put(session);
+            session.store();
         }
         // Also updating the FXLoginContext
         Object loginContext = FXLoginContext.getLoginContext();
