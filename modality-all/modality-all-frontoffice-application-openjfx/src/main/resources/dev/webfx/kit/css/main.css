@@ -52,26 +52,26 @@
 @font-face {
     font-family: 'Poppins';
     font-style: normal;
-    src: url('webfx-css:fonts/poppins/Poppins-Regular.otf');
+    src: url('webfx-css:fonts/poppins/Poppins-Regular.ttf');
 }
 
 @font-face {
     font-family: 'Poppins';
     font-weight: bold;
-    src: url('webfx-css:fonts/poppins/Poppins-Bold.otf');
+    src: url('webfx-css:fonts/poppins/Poppins-Bold.ttf');
 }
 
 @font-face {
     font-family: 'Poppins';
     font-style: italic;
-    src: url('webfx-css:fonts/poppins/Poppins-Italic.otf');
+    src: url('webfx-css:fonts/poppins/Poppins-Italic.ttf');
 }
 
 @font-face {
     font-family: 'Poppins';
     font-weight: bold;
     font-style: italic;
-    src: url('webfx-css:fonts/poppins/Poppins-BoldItalic.otf');
+    src: url('webfx-css:fonts/poppins/Poppins-BoldItalic.ttf');
 }
 
 
@@ -626,8 +626,16 @@ CollapsePane.menu-bar.non-mobile {
     -fx-border-color: lightgray;
 }
 
+CollapsePane.menu-bar.lang-menu-bar {
+    -fx-border-width: 0;
+}
+
 .menu-bar {
     -fx-font-family: -poppins-font-family;
+}
+
+.lang-menu-bar .selected Text {
+    -fx-fill: white;
 }
 
 .menu-bar Button {

@@ -35,9 +35,6 @@ module modality.base.client.application {
     exports one.modality.base.client.application;
 
     // Resources packages
-    opens dev.webfx.kit.css.fonts.montserrat;
-    opens dev.webfx.kit.css.fonts.poppins;
-    opens dev.webfx.kit.css.fonts.roboto;
     opens images.buddhas;
     opens one.modality.base.client.images;
 
