@@ -331,15 +331,14 @@ public final class ModalityFrontOfficeMainFrameActivity extends ModalityClientMa
 
     private CollapsePane createLanguageMenuBar() {
         Insets languageButtonPadding = new Insets(0, 9, 0, 9);
-        SegmentedButton<String> languageSegmentedBar = new SegmentedButton<>(
+        SegmentedButton<Object> languageSegmentedBar = new SegmentedButton<>(
             Arrays.map(LANGUAGES, lang -> {
                 MonoPane languageButton = new MonoPane(new Text(lang.toUpperCase()));
                 languageButton.setPadding(languageButtonPadding);
                 return new ButtonSegment<>(languageButton, lang);
             }, ButtonSegment[]::new)
         );
-        languageSegmentedBar.setState(I18n.getLanguage().toString());
-        I18n.languageProperty().bind(languageSegmentedBar.stateProperty());
+        languageSegmentedBar.stateProperty().bindBidirectional(I18n.languageProperty());
         HBox languageBar = languageSegmentedBar.getView();
         languageBar.setMaxHeight(LANG_BAR_MENU_HEIGHT);
         languageBar.getStyleClass().setAll("button-bar");
