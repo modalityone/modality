@@ -1,6 +1,27 @@
-.media-library .h3 {
+.livestream .h3 {
     -fx-font-family: "Poppins";
-    -fx-font-size: 16px;
-    -fx-font-weight: 600;
+    -fx-font-size: 24px;
+    -fx-font-weight: bold;
     -fx-text-alignment: left; /* Aligns text */
 }
+
+.livestream .h4 {
+    -fx-font-family: "Poppins";
+    -fx-font-size: 16px;
+    -fx-font-weight: semi-bold;
+    -fx-text-alignment: left; /* Aligns text */
+}
+
+.livestream {
+    -fx-font-weight: medium;
+}
+
+.livestream .small{
+    -fx-font-weight: light;
+}
+
+.livestream .text-info {
+    -fx-font-color: black;
+    -fx-font-weight: normal;
+}
+

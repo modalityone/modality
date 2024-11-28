@@ -1,17 +1,17 @@
 package one.modality.event.frontoffice.activities.videos;
 
-import dev.webfx.extras.panes.CollapsePane;
-import dev.webfx.extras.player.StartOptionsBuilder;
-import dev.webfx.extras.player.multi.MultiPlayer;
-import dev.webfx.extras.player.multi.all.AllPlayers;
+import dev.webfx.extras.panes.*;
 import dev.webfx.extras.styles.bootstrap.Bootstrap;
+import dev.webfx.extras.util.control.ControlUtil;
 import dev.webfx.kit.util.properties.FXProperties;
 import dev.webfx.kit.util.properties.ObservableLists;
 import dev.webfx.platform.console.Console;
 import dev.webfx.platform.util.Numbers;
 import dev.webfx.platform.util.Strings;
 import dev.webfx.platform.util.collection.Collections;
-import dev.webfx.platform.util.time.Times;
+import dev.webfx.stack.cloud.image.CloudImageService;
+import dev.webfx.stack.cloud.image.impl.client.ClientImageService;
+import dev.webfx.stack.i18n.I18n;
 import dev.webfx.stack.i18n.controls.I18nControls;
 import dev.webfx.stack.i18n.spi.impl.I18nSubKey;
 import dev.webfx.stack.orm.domainmodel.activity.viewdomain.impl.ViewDomainActivityBase;
@@ -19,25 +19,37 @@ import dev.webfx.stack.orm.entity.EntityId;
 import dev.webfx.stack.orm.entity.EntityStore;
 import dev.webfx.stack.orm.entity.EntityStoreQuery;
 import javafx.application.Platform;
-import javafx.beans.property.BooleanProperty;
-import javafx.beans.property.ObjectProperty;
-import javafx.beans.property.SimpleObjectProperty;
+import javafx.beans.property.*;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Node;
+import javafx.scene.control.Button;
 import javafx.scene.control.Label;
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
+import javafx.scene.layout.Background;
+import javafx.scene.layout.BackgroundFill;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
+import javafx.scene.paint.Color;
+import javafx.scene.shape.SVGPath;
 import javafx.scene.text.TextAlignment;
+import javafx.stage.Screen;
+import one.modality.base.client.bootstrap.ModalityStyle;
+import one.modality.base.client.icons.SvgIcons;
 import one.modality.base.frontoffice.utility.page.FOPageUtil;
 import one.modality.base.shared.entities.Event;
 import one.modality.base.shared.entities.KnownItemFamily;
 import one.modality.base.shared.entities.ScheduledItem;
 import one.modality.crm.shared.services.authn.fx.FXUserPersonId;
+import one.modality.event.frontoffice.activities.audiorecordings.AudioRecordingsI18nKeys;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
@@ -55,8 +67,21 @@ final class EventVideosWallActivity extends ViewDomainActivityBase {
     private final ObjectProperty<Event> eventProperty = new SimpleObjectProperty<>();
     private final ObservableList<ScheduledItem> videoScheduledItems = FXCollections.observableArrayList();
 
-    private final VBox livestreamVBox = new VBox(20);
-    private final MultiPlayer livestreamVideoPlayer = AllPlayers.createAllVideoPlayer();
+    private final CollapsePane daysCollapsePane = new CollapsePane();
+    private final ColumnsPane daysColumnPane = new ColumnsPane();
+
+    private Label videoExpirationLabel;
+    private final CloudImageService cloudImageService = new ClientImageService();
+
+    private static final int IMAGE_HEIGHT=188;
+    private static final int DAY_BUTTON_WIDTH=150;
+
+    private final ObjectProperty<LocalDate> currentDaySelectedProperty = new SimpleObjectProperty<>();
+    private final HashMap<LocalDate,Button> correspondanceDateButton = new HashMap<>();
+
+    // Creating an intermediate observable list of DayVideosWallView, each element being a view for 1 day with all its videos
+    private final ObservableList<VideosDayScheduleView> videosDayScheduleViews = FXCollections.observableArrayList(); // will be populated below
+    private Button selectAllDaysButton;
 
     @Override
     protected void updateModelFromContextParameters() {
@@ -75,11 +100,11 @@ final class EventVideosWallActivity extends ViewDomainActivityBase {
                 eventProperty.set(null);
             } else {
                 entityStore.executeQueryBatch(
-                        new EntityStoreQuery("select name, label.(de,en,es,fr,pt), shortDescription, audioExpirationDate, startDate, endDate, livestreamUrl, vodExpirationDate" +
+                        new EntityStoreQuery("select name, label.(de,en,es,fr,pt), shortDescription, audioExpirationDate, startDate, endDate, livestreamUrl, vodExpirationDate,vodProcessingTimeMinutes" +
                                              " from Event" +
                                              " where id=? limit 1",
                             new Object[]{eventId}),
-                        new EntityStoreQuery("select date, expirationDate, event, vodDelayed, parent.(name, timeline.(startTime, endTime), item.imageUrl)," +
+                        new EntityStoreQuery("select date, expirationDate, event, vodDelayed, comment, parent.(name, date,timeline.(startTime, endTime), item.imageUrl)," +
                                              " exists(select Media where scheduledItem=si and published) as " + VIDEO_SCHEDULED_ITEM_DYNAMIC_BOOLEAN_FIELD_HAS_PUBLISHED_MEDIAS +
                                              " from ScheduledItem si" +
                                              " where item.family.code=? and online and exists(select Attendance where scheduledItem=si and documentLine.(!cancelled and document.(event= ? and person=? and price_balance<=0)))" +
@@ -97,9 +122,6 @@ final class EventVideosWallActivity extends ViewDomainActivityBase {
     @Override
     public void onResume() {
         super.onResume();
-        // Restarting the livestream video player (if relevant) when reentering this activity. This will also ensure that
-        // any possible previous playing player (ex: podcast) will be paused if/when the livestream video player restarts.
-        updateLivestreamVideoPlayerStateAndVisibility();
     }
 
     @Override
@@ -108,93 +130,170 @@ final class EventVideosWallActivity extends ViewDomainActivityBase {
         // *************************************************************************************************************
         // ********************************* Building the static part of the UI ****************************************
         // *************************************************************************************************************
+        HBox headerHBox = new HBox();
+        headerHBox.setSpacing(50);
+        headerHBox.setPadding(new Insets(0,20,0,20));
+        headerHBox.setMaxWidth(1024);
+        MonoPane imageMonoPane = new MonoPane();
+        ImageView imageView = new ImageView();
 
-        // Event title
+        headerHBox.getChildren().add(imageMonoPane);
         Label eventLabel = Bootstrap.h2(Bootstrap.strong(I18nControls.newLabel(new I18nSubKey("expression: i18n(this)", eventProperty), eventProperty)));
+
         eventLabel.setWrapText(true);
         eventLabel.setTextAlignment(TextAlignment.CENTER);
-
+        eventLabel.setPadding(new Insets(0,0,12,0));
         Label eventDescriptionLabel = I18nControls.newLabel(new I18nSubKey("expression: shortDescription", eventProperty), eventProperty);
         eventDescriptionLabel.setWrapText(true);
-        eventDescriptionLabel.setTextAlignment(TextAlignment.CENTER);
+        eventDescriptionLabel.setTextAlignment(TextAlignment.LEFT);
         eventDescriptionLabel.managedProperty().bind(FXProperties.compute(eventDescriptionLabel.textProperty(), Strings::isNotEmpty));
+        eventDescriptionLabel.setMaxHeight(60);
+        videoExpirationLabel = I18nControls.newLabel(AudioRecordingsI18nKeys.AvailableUntil);
+        videoExpirationLabel.setPadding(new Insets(30,0,0,0));
+        VBox titleVBox = new VBox(eventLabel, eventDescriptionLabel, videoExpirationLabel);
 
-        VBox titleVBox = new VBox(20,
-            eventLabel,
-            eventDescriptionLabel
-        );
-        titleVBox.setAlignment(Pos.CENTER);
+        headerHBox.getChildren().add(titleVBox);
 
         // Livestream box
         Label livestreamLabel = Bootstrap.h4(Bootstrap.strong(I18nControls.newLabel(VideosI18nKeys.LivestreamTitle)));
         livestreamLabel.setWrapText(true);
 
-        livestreamVideoPlayer.setStartOptions(new StartOptionsBuilder()
-            .setAutoplay(true)
-            .setAspectRatioTo16by9() // should be read from metadata but hardcoded for now
-            .build());
-        Node livestreamVideoView = livestreamVideoPlayer.getMediaView();
 
-        livestreamVBox.getChildren().setAll(
-            livestreamLabel,
-            livestreamVideoView
-        );
+        Node loadingContentIndicator = new GoldenRatioPane(ControlUtil.createProgressIndicator(100));
+        MonoPane pageContainer = new MonoPane();
 
-        // VBox showing all days and their videos (each node = container with day label + all videos of that day)
-        VBox dayVideosWallVBox = new VBox(30); // Will be populated later (see reacting code below)
-
-        Label pastVideoLabel = Bootstrap.h4(Bootstrap.strong(I18nControls.newLabel(VideosI18nKeys.PastRecordings)));
         Label noContentLabel = Bootstrap.h3(Bootstrap.textWarning(I18nControls.newLabel(VideosI18nKeys.NoVideosForThisEvent)));
         noContentLabel.setPadding(new Insets(150, 0, 100, 0));
 
-        // Assembling all together in the page container
-        VBox pageContainer = new VBox(50,
-            titleVBox,
-            livestreamVBox,
-            dayVideosWallVBox
-        );
+        //We display this box only if the current Date is in the list of date in the video Scheduled Item list
+        VBox currentDayScheduleVBox = new VBox(30); // Will be populated later (see reacting code below)
+        Label scheduleForTodayTitleLabel = Bootstrap.strong(Bootstrap.textPrimary(Bootstrap.h3(I18nControls.newLabel(VideosI18nKeys.ScheduleForSpecificDate,LocalDate.now().format(DateTimeFormatter.ofPattern("EEEE MMMM d"))))));
+        scheduleForTodayTitleLabel.setPadding(new Insets(100,0,0,0));
+        currentDayScheduleVBox.getChildren().add(scheduleForTodayTitleLabel);
+        currentDayScheduleVBox.setVisible(false);
+        currentDayScheduleVBox.setManaged(false);
 
+        Label scheduleTitleLabel = Bootstrap.h3(I18nControls.newLabel(VideosI18nKeys.FestivalSchedule));
+        Label scheduleSubTitleLabel = I18nControls.newLabel(VideosI18nKeys.SelectTheDayBelow);
+        VBox scheduleTitleVBox = new VBox(5,scheduleTitleLabel,scheduleSubTitleLabel);
+        scheduleTitleVBox.setAlignment(Pos.CENTER);
+        scheduleTitleVBox.setPadding(new Insets(100,0,0,0));
+
+
+        daysColumnPane.setHgap(10);
+        daysColumnPane.setVgap(15);
+        daysColumnPane.setMaxColumnCount(8);
+        daysColumnPane.setMinColumnWidth(DAY_BUTTON_WIDTH);
+        daysColumnPane.setMinWidth(1100);
+
+        VBox videoScheduleVBox = new VBox(30); // Will be populated later (see reacting code below)
+        GrowingPane scheduleContainerGrowingPane = new GrowingPane(videoScheduleVBox);
+
+        VBox loadedContentVBox = new VBox(40,
+            headerHBox,
+            currentDayScheduleVBox,
+            scheduleTitleVBox,
+            daysColumnPane,
+            scheduleContainerGrowingPane
+        );
+        daysCollapsePane.setPrefWidth(loadedContentVBox.getPrefWidth());
+        loadedContentVBox.setAlignment(Pos.TOP_CENTER);
+        loadedContentVBox.getStyleClass().add("livestream");
+
+        selectAllDaysButton = Bootstrap.primaryButton(I18nControls.newButton(VideosI18nKeys.ViewAllDays));
+        selectAllDaysButton.setMinWidth(DAY_BUTTON_WIDTH);
+        selectAllDaysButton.setOnAction(e-> {
+            currentDaySelectedProperty.set(null);
+            handleVideoChanges();
+        });
 
         // *************************************************************************************************************
         // *********************************** Reacting to parameter changes *******************************************
         // *************************************************************************************************************
 
-        // Showing / hiding the livestream box (in dependence of the event)
-        FXProperties.runNowAndOnPropertyChange(this::updateLivestreamVideoPlayerStateAndVisibility, eventProperty);
+        ObservableLists.runNowAndOnListOrPropertiesChange(change -> {
+            // We display the loading indicator while the data is loading
+            if (eventProperty.get() == null) { // this indicates that the data has not finished loaded
+                pageContainer.setContent(loadingContentIndicator);
+                // TODO display something else (ex: next online events to book) when the user is not logged in, or registered
+            } else { // otherwise we display loadedContentVBox and set the content of audioTracksVBox
+                pageContainer.setContent(loadedContentVBox);
+                Object imageTag;
 
-        // Creating an intermediate observable list of DayVideosWallView, each element being a view for 1 day with all its videos
-        ObservableList<DayVideosWallView> dayVideosWallViews = FXCollections.observableArrayList(); // will be populated below
+                if(I18n.getLanguage()==null ||"en".equals(I18n.getLanguage().toString())) {
+                    //We do add .jpg even if the image is not jpg, because for some reason, if we don't put an extension file, cloudinary doesn't always find the image, but it works when adding .jpg.
+                    imageTag = eventProperty.get().getId().getPrimaryKey() + "-cover.jpg";
+                } else {
+                    imageTag = eventProperty.get().getId().getPrimaryKey() + "-cover-"+ I18n.getLanguage().toString()+".jpg";
+                }
 
-        // Creating a global chevron to collapse or expand all video days all together
-        BooleanProperty collapsedAllProperty = FXProperties.newBooleanProperty(collapsed ->
-                dayVideosWallViews.forEach(view -> view.setCollapsed(collapsed))
-        );
-        Node globalChevron = CollapsePane.armChevron(CollapsePane.createBlackChevron(), collapsedAllProperty);
-        HBox pastVideoLabelAndChevronLine = new HBox(30, pastVideoLabel, globalChevron);
-        pastVideoLabelAndChevronLine.setAlignment(Pos.CENTER_LEFT); // so pastVideoLabel & globalChevron are vertically aligned
+                String pictureId = String.valueOf(imageTag);
+
+                cloudImageService.exists(pictureId)
+                    .onFailure(Console::log)
+                    .onSuccess(exists -> Platform.runLater(() -> {
+                        Console.log("exists: " + exists);
+                        if (exists) {
+                            imageMonoPane.setBackground(null);
+                            //First, we need to get the zoom factor of the screen
+                            double zoomFactor = Screen.getPrimary().getOutputScaleX();
+                            String url = cloudImageService.url(pictureId, -1, (int) (IMAGE_HEIGHT*zoomFactor));
+                            imageView.setFitHeight(IMAGE_HEIGHT);
+                            imageView.setPreserveRatio(true);
+                            Image imageToDisplay = new Image(url, true);
+                            imageView.setImage(imageToDisplay);
+                            imageMonoPane.getChildren().setAll(imageView);
+                        }
+                        else {
+                            SVGPath videoCoverPath = SvgIcons.createVideoIconPath();
+                            imageMonoPane.setBackground(new Background(
+                                new BackgroundFill(Color.LIGHTGRAY, null, null)
+                            ));
+                            imageMonoPane.getChildren().setAll(videoCoverPath);
+                            imageMonoPane.setAlignment(Pos.CENTER);
+                        }
+                    }));
+                if(eventProperty.get().getAudioExpirationDate()!=null) {
+                    if(LocalDateTime.now().isBefore(eventProperty.get().getVodExpirationDate()))
+                        I18nControls.bindI18nProperties(videoExpirationLabel,VideosI18nKeys.VideoAvailableUntil,eventProperty.get().getVodExpirationDate().format(DateTimeFormatter.ofPattern("d MMMM, yyyy ' - ' HH:mm")));
+                    else
+                        I18nControls.bindI18nProperties(videoExpirationLabel,VideosI18nKeys.VideoExpiredSince,eventProperty.get().getVodExpirationDate().format(DateTimeFormatter.ofPattern("d MMMM, yyyy ' - ' HH:mm")));
+                    videoExpirationLabel.setVisible(true);
+                }
+                else {
+                    videoExpirationLabel.setVisible(false);
+                }
+            }
+            LocalDate currentDate = LocalDate.now();
+            Map<LocalDate, List<ScheduledItem>> perDayGroups =
+                videoScheduledItems.stream()
+                    .filter(item -> item.getDate().equals(currentDate)) // Filter for the target day
+                    .collect(Collectors.groupingBy(ScheduledItem::getDate));
+            new TreeMap<>(perDayGroups) // The purpose of using a TreeMap is to sort the groups by keys (= days)
+                .forEach((day, dayScheduledVideos) -> {
+                    currentDayScheduleVBox.setVisible(true);
+                    currentDayScheduleVBox.setManaged(true);
+                        // Passing the day, the videos of that day, and the history (for backward navigation)
+                    currentDayScheduleVBox.getChildren().setAll(new VideosDayScheduleView(day, dayScheduledVideos, getHistory(),true).getView());
+                    });
+
+        }, videoScheduledItems,eventProperty);
 
         // Populating dayVideosWallViews from videoScheduledItems = flat list of all videos of the event (not yet grouped by day)
-        ObservableLists.runNowAndOnListChange(change -> {
-            // Grouping videos per day
-            Map<LocalDate, List<ScheduledItem>> perDayGroups =
-                videoScheduledItems.stream().collect(Collectors.groupingBy(ScheduledItem::getDate));
-            dayVideosWallViews.clear();
-            new TreeMap<>(perDayGroups) // The purpose of using a TreeMap is to sort the groups by keys (= days)
-                .forEach((day, dayScheduledVideos) -> dayVideosWallViews.add(
-                    // Passing the day, the videos of that day, and the history (for backward navigation)
-                    new DayVideosWallView(day, dayScheduledVideos, getHistory())
-                ));
+        ObservableLists.runNowAndOnListOrPropertiesChange(change -> {
+            handleVideoChanges();
         }, videoScheduledItems);
 
         // Now that we have dayVideosWallViews populated, we can populate the final VBox showing all days and their videos
         ObservableLists.runNowAndOnListChange(change -> {
-            if (dayVideosWallViews.isEmpty()) {
-                dayVideosWallVBox.getChildren().setAll(noContentLabel);
+            if (videosDayScheduleViews.isEmpty()) {
+                videoScheduleVBox.getChildren().setAll(noContentLabel);
             } else {
-                dayVideosWallVBox.getChildren().setAll(pastVideoLabelAndChevronLine);
-                dayVideosWallVBox.getChildren().addAll(Collections.map(dayVideosWallViews, DayVideosWallView::getView));
+                videoScheduleVBox.getChildren().setAll(Collections.map(videosDayScheduleViews, VideosDayScheduleView::getView));
             }
-        }, dayVideosWallViews);
+        }, videosDayScheduleViews);
+
+        FXProperties.runNowAndOnPropertyChange(this::updateDaysButtonStyle,currentDaySelectedProperty);
 
         // *************************************************************************************************************
         // ************************************* Building final container **********************************************
@@ -204,26 +303,50 @@ final class EventVideosWallActivity extends ViewDomainActivityBase {
         //return FrontOfficeActivityUtil.createActivityPageScrollPane(pageContainer, true);
     }
 
-    private void updateLivestreamVideoPlayerStateAndVisibility() {
-        Event event = eventProperty.get();
-        //If the event has a GlobalLiveStreamLink, and the event is not finished, we display the livestream screen.
-        //TODO see how to we manage the timezone of the user.
-        String eventLivestreamUrl = event == null || Times.isPast(event.getEndDate()) ? null : event.getLivestreamUrl();
-        boolean showLivestream = Strings.isNotEmpty(eventLivestreamUrl);
-        if (showLivestream) {
-            livestreamVideoPlayer.setMedia(livestreamVideoPlayer.acceptMedia(eventLivestreamUrl));
-            livestreamVideoPlayer.play(); // Will display and start the video (silent if before or after session)
-            // The livestream player (Castr) doesn't support notification (unfortunately), so we don't wait onPlay()
-            // to be called, we just inform right now that the livestream player is now playing, which will stop
-            // any possible previous player (such as podcasts) immediately.
-            //MediaPlayers.setPlayingPlayer(livestreamVideoPlayer);
-        } else {
-            // If there is no livestream, we pause the player (will actually stop it because pause is not supported)
-            //MediaPlayers.pausePlayer(livestreamVideoPlayer); // ensures we silent the possible previous playing livestream
-            livestreamVideoPlayer.pause();
-        }
-        livestreamVBox.setVisible(showLivestream);
-        livestreamVBox.setManaged(showLivestream);
+
+    private void handleVideoChanges() {
+        // Grouping videos per day
+        Map<LocalDate, List<ScheduledItem>> perDayGroups =
+            videoScheduledItems.stream().collect(Collectors.groupingBy(ScheduledItem::getDate));
+        videosDayScheduleViews.clear();
+        daysColumnPane.getChildren().clear();
+        DateTimeFormatter dateFormatter = DateTimeFormatter.ofPattern("EEE, MMMM d");
+
+        correspondanceDateButton.clear();
+        correspondanceDateButton.put(null,selectAllDaysButton);
+        final boolean[] isFirst = {true};
+        new TreeMap<>(perDayGroups) // The purpose of using a TreeMap is to sort the groups by keys (= days)
+            .forEach((day, dayScheduledVideos) -> {
+                videosDayScheduleViews.add(
+                        // Passing the day, the videos of that day, and the history (for backward navigation)
+                        new VideosDayScheduleView(day, dayScheduledVideos, getHistory(),isFirst[0]));
+
+                Button dateButton;
+                dateButton = Bootstrap.primaryButton(new Button(day.format(dateFormatter)));
+                dateButton.setMinWidth(DAY_BUTTON_WIDTH);
+                correspondanceDateButton.put(day,dateButton);
+                dateButton.setOnAction(e-> {
+                    videosDayScheduleViews.clear();
+                    videosDayScheduleViews.add(new VideosDayScheduleView(day, dayScheduledVideos, getHistory(),true));
+                    currentDaySelectedProperty.set(day);
+                });
+                daysColumnPane.getChildren().add(dateButton);
+                isFirst[0] = false;
+            });
+        daysColumnPane.getChildren().add(selectAllDaysButton);
     }
 
+    private void updateDaysButtonStyle() {
+        LocalDate selectedDate = currentDaySelectedProperty.get();
+        for (Map.Entry<LocalDate, Button> entry : correspondanceDateButton.entrySet()) {
+            Button currentButton = entry.getValue();
+            if (entry.getKey() == null && selectedDate == null) {
+                currentButton.getStyleClass().setAll("button", Bootstrap.BTN, Bootstrap.BTN_PRIMARY);
+            } else if (entry.getKey()!= null &&  entry.getKey().equals(selectedDate)) {
+                currentButton.getStyleClass().setAll("button", Bootstrap.BTN, Bootstrap.BTN_PRIMARY);
+            } else {
+                currentButton.getStyleClass().setAll("button", Bootstrap.BTN, ModalityStyle.BTN_WHITE);
+            }
+        }
+    }
 }

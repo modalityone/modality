@@ -212,7 +212,7 @@ final class DayTemplateModel {
                     addAudioScheduledItemsForDate(date, teachingScheduledItem, updateStore);
                 }
                 if (templateTimeline.isVideoOffered()) {
-                    addVideoScheduledItemsForDate(date, teachingScheduledItem);
+                    addVideoScheduledItemsForDate(date, teachingScheduledItem,updateStore);
                 }
             }
         });
@@ -230,8 +230,8 @@ final class DayTemplateModel {
         });
     }
 
-    void addVideoScheduledItemsForDate(LocalDate date, ScheduledItem parentTeachingScheduledItem) {
-        ScheduledItem videoScheduledItem = getUpdateStore().insertEntity(ScheduledItem.class);
+    void addVideoScheduledItemsForDate(LocalDate date, ScheduledItem parentTeachingScheduledItem, UpdateStore currentUpdateStore) {
+        ScheduledItem videoScheduledItem = currentUpdateStore.insertEntity(ScheduledItem.class);
         videoScheduledItem.setEvent(getEvent());
         videoScheduledItem.setSite(getSite());
         videoScheduledItem.setItem(getVideoItem());

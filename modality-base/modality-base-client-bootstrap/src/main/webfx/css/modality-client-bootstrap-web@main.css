@@ -41,7 +41,7 @@
     --bootstrap-red3: #c9302c ;
     --bootstrap-red4: #ac2925 ;
     --bootstrap-red5: #761c19 ;
-    --bootstrap-red6: #a94442 ;
+    --bootstrap-red6: #FF0404 ;
 }
 
 .disabled:hover {
@@ -72,5 +72,31 @@
 
 .btn-black:hover:not(.disabled)> fx-border {
     border-color: var(--bootstrap-grey7);
+}
+
+btn-white {
+    color: var(--bootstrap-white);
+    --fx-svg-path-fill: var(--bootstrap-white);
+}
+
+.btn-white > fx-background {
+    background: white;
+}
+
+.btn-white > fx-border {
+    border-color: black;
+}
+
+.btn-white:hover:not(.disabled){
+    color: var(--bootstrap-black);
+    --fx-svg-path-fill: var(--bootstrap-black);
+}
+
+.btn-white:hover:not(.disabled)> fx-background {
+    background-color: var(--bootstrap-grey1);
+}
+
+.btn-white:hover:not(.disabled)> fx-border {
+    border-color: var(--bootstrap-grey1);
 }
 

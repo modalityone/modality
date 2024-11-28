@@ -231,7 +231,7 @@ final class ProgramModel {
                 })
                 .onSuccess(x -> Platform.runLater(() -> {
                     OperationUtil.turnOffButtonsWaitMode(buttons);
-                    resetModelAndUiToInitial();
+                    //resetModelAndUiToInitial();
                 })),
             buttons
         );

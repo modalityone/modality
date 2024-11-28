@@ -1,6 +1,5 @@
 package one.modality.event.frontoffice.activities.audiorecordings;
 
-import dev.webfx.extras.panes.CenteredPane;
 import dev.webfx.extras.panes.GoldenRatioPane;
 import dev.webfx.extras.panes.MonoPane;
 import dev.webfx.extras.player.audio.javafxmedia.JavaFXMediaAudioPlayer;
@@ -152,9 +151,6 @@ final class EventAudioPlaylistActivity extends ViewDomainActivityBase {
         VBox titleVBox = new VBox(eventLabel, eventDescriptionLabel,audioExpirationLabel);
 
         headerHBox.getChildren().add(titleVBox);
-
-        CenteredPane backArrowAndTitlePane = new CenteredPane();
-        backArrowAndTitlePane.setCenter(headerHBox);
 
         VBox audioTracksVBox = new VBox(20);
         audioTracksVBox.setMaxWidth(SessionAudioTrackView.MAX_WIDTH);
