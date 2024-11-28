@@ -201,8 +201,8 @@ public final class ModalityFrontOfficeMainFrameActivity extends ModalityClientMa
                     Region mountRegion = (Region) mountNode;
                     //mountRegion.setMaxWidth(FrontOfficeActivityUtil.MAX_PAGE_WIDTH);
                     FXProperties.runOnPropertiesChange(() -> {
-                        mountRegion.setMinHeight(mountTransitionPane.getMinHeight() - mainMenuButtonBar.getHeight());
-                    }, mountTransitionPane.minHeightProperty(), mainMenuButtonBar.heightProperty());
+                        mountRegion.setMinHeight(mountTransitionPane.getMinHeight() - mainMenuButtonBar.getHeight() - languageMenuBar.getHeight());
+                    }, mountTransitionPane.minHeightProperty(), mainMenuButtonBar.heightProperty(), languageMenuBar.heightProperty());
                 }
                 BorderPane borderPane = new BorderPane(vBox);
                 ScrollPane finalScrollPane = scrollPane = ControlUtil.createVerticalScrollPane(borderPane);
