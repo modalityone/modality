@@ -15,6 +15,7 @@ import dev.webfx.platform.console.Console;
 import dev.webfx.platform.useragent.UserAgent;
 import dev.webfx.platform.util.Arrays;
 import dev.webfx.platform.util.collection.Collections;
+import dev.webfx.stack.i18n.I18n;
 import dev.webfx.stack.i18n.controls.I18nControls;
 import dev.webfx.stack.i18n.operations.ChangeLanguageRequestEmitter;
 import dev.webfx.stack.routing.uirouter.UiRouter;
@@ -41,6 +42,7 @@ import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
 import javafx.scene.paint.Paint;
 import javafx.scene.shape.SVGPath;
+import javafx.scene.text.Text;
 import one.modality.base.client.application.ModalityClientMainFrameActivity;
 import one.modality.base.client.application.RoutingActions;
 import one.modality.base.client.brand.Brand;
@@ -58,10 +60,13 @@ import java.util.Objects;
 
 public final class ModalityFrontOfficeMainFrameActivity extends ModalityClientMainFrameActivity {
 
+    private static final double LANG_MENU_HEIGHT = 52;
+    private static final double LANG_BAR_MENU_HEIGHT = 29;
     private static final double WEB_MAIN_MENU_HEIGHT = 100;
     private static final double WEB_USER_MENU_HEIGHT = 52;
 
     private final static Config FRONT_OFFICE_CONFIG = SourcesConfig.getSourcesRootConfig().childConfigAt("modality.base.frontoffice.application");
+    private final static String[] LANGUAGES = FRONT_OFFICE_CONFIG.getString("languages").split(",");
     private final static String[] MAIN_MENU_OPERATION_CODES = FRONT_OFFICE_CONFIG.getString("mainMenuOperationCodes").split(",");
     private final static String[] USER_MENU_OPERATION_CODES = FRONT_OFFICE_CONFIG.getString("userMenuOperationCodes").split(",");
 
@@ -72,7 +77,7 @@ public final class ModalityFrontOfficeMainFrameActivity extends ModalityClientMa
     private Node backgroundNode; // can be used to hold a WebView, and prevent iFrame reload in the web version
     private final TransitionPane mountTransitionPane = new TransitionPane();
     private CollapsePane overlayMainMenuBar;
-    private CollapsePane mountMainMenuButtonBar;
+    private CollapsePane mountMainMenuButtonBar; // 1 instance per mount node
     private CollapsePane mobileMenuBar;
     private ScalePane[] scaledMobileButtons;
     private Pane dialogArea;
@@ -103,7 +108,7 @@ public final class ModalityFrontOfficeMainFrameActivity extends ModalityClientMa
                     layoutInArea(mobileMenuBar, 0, height - footerHeight, width, footerHeight);
                 } else if (mountMainMenuButtonBar != null) {
                     Point2D p = mountMainMenuButtonBar.localToScene(0, 0);
-                    layoutInArea(overlayMainMenuBar, p.getX(), 0, mountMainMenuButtonBar.getWidth(), mountMainMenuButtonBar.getHeight());
+                    layoutInArea(overlayMainMenuBar, p.getX(), p.getY() < 0 ? 0 : p.getY(), mountMainMenuButtonBar.getWidth(), mountMainMenuButtonBar.getHeight());
                 }
                 double mountNodeY = headerHeight;
                 double mountNodeHeight = height - headerHeight - footerHeight;
@@ -180,12 +185,11 @@ public final class ModalityFrontOfficeMainFrameActivity extends ModalityClientMa
             mountTransitionPane.setReverse(uiRouter.getHistory().isGoingBackward());
             ScrollPane scrollPane = mountNode == null ? null : (ScrollPane) mountNode.getProperties().get("embedding-scrollpane");
             if (scrollPane == null && mountNode != null) {
+                CollapsePane languageMenuBar = createLanguageMenuBar();
                 CollapsePane mainMenuButtonBar = createMainMenuButtonBar(false);
                 CollapsePane userMenuButtonBar = createUserMenuButtonBar();
-                userMenuButtonBar.setAnimate(false);
-                userMenuButtonBar.collapsedProperty().bind(FXLoggedIn.loggedInProperty().not());
-                userMenuButtonBar.setAnimate(true);
                 VBox vBox = new VBox(
+                    languageMenuBar,
                     mainMenuButtonBar,
                     userMenuButtonBar,
                     mountNode
@@ -204,15 +208,16 @@ public final class ModalityFrontOfficeMainFrameActivity extends ModalityClientMa
                 ScrollPane finalScrollPane = scrollPane = ControlUtil.createVerticalScrollPane(borderPane);
                 mountNode.getProperties().put("embedding-scrollpane", scrollPane);
                 double[] lastScrollPaneContentHeight = { 0 };
-                FXProperties.runOnPropertyChange((o, oldValue, newValue) -> {
+                FXProperties.runOnPropertyChange((o, oldVvalue, newVvalue) -> {
                     mountMainMenuButtonBar = mainMenuButtonBar;
                     if (mountTransitionPane.isTransiting())
                         return;
                     // Visibility management:
-                    if (oldValue.doubleValue() == 0 || newValue.doubleValue() == 0) { // Making the overlay web menu bar invisible when reaching the top
+                    double vTopOffset = ControlUtil.computeScrollPaneVTopOffset(finalScrollPane);
+                    if (vTopOffset <= languageMenuBar.getHeight()) { // Making the overlay web menu bar invisible when reaching the top
                         overlayMainMenuBar.setAnimate(false); // because there is already a web menu on top of that page
                         overlayMainMenuBar.collapse();
-                    } else if (ControlUtil.computeScrollPaneVTopOffset(finalScrollPane) > finalScrollPane.getHeight()) {
+                    } else if (vTopOffset > mountNode.getLayoutY()) {
                         overlayMainMenuBar.setVisible(true);
                         overlayMainMenuBar.setAnimate(true); // Making it visible when the top one is no more in the view
                     }
@@ -227,7 +232,7 @@ public final class ModalityFrontOfficeMainFrameActivity extends ModalityClientMa
                         overlayMainMenuBar.collapse();
                     // otherwise (we assume the scroll position comes from the user) if the user is scrolling up
                     else {
-                        overlayMainMenuBar.setCollapsed(newValue.doubleValue() > oldValue.doubleValue());
+                        overlayMainMenuBar.setCollapsed(newVvalue.doubleValue() > oldVvalue.doubleValue());
                     }
                     lastScrollPaneContentHeight[0] = borderPane.getHeight();
                 }, scrollPane.vvalueProperty());
@@ -324,12 +329,44 @@ public final class ModalityFrontOfficeMainFrameActivity extends ModalityClientMa
         );
     }
 
-    private CollapsePane createUserMenuButtonBar() {
-        return createMenuButtonBar(USER_MENU_OPERATION_CODES, true, false);
+    private CollapsePane createLanguageMenuBar() {
+        Insets languageButtonPadding = new Insets(0, 9, 0, 9);
+        SegmentedButton<String> languageSegmentedBar = new SegmentedButton<>(
+            Arrays.map(LANGUAGES, lang -> {
+                MonoPane languageButton = new MonoPane(new Text(lang.toUpperCase()));
+                languageButton.setPadding(languageButtonPadding);
+                return new ButtonSegment<>(languageButton, lang);
+            }, ButtonSegment[]::new)
+        );
+        languageSegmentedBar.setState(I18n.getLanguage().toString());
+        I18n.languageProperty().bind(languageSegmentedBar.stateProperty());
+        HBox languageBar = languageSegmentedBar.getView();
+        languageBar.setMaxHeight(LANG_BAR_MENU_HEIGHT);
+        languageBar.getStyleClass().setAll("button-bar");
+        MonoPane languageSection = new MonoPane(languageBar);
+        languageSection.setAlignment(Pos.BOTTOM_LEFT);
+        languageSection.setMinHeight(LANG_MENU_HEIGHT);
+        languageSection.setPrefHeight(LANG_MENU_HEIGHT);
+        languageSection.setMaxHeight(LANG_MENU_HEIGHT);
+        FOPageUtil.restrictToMaxPageWidthAndApplyPageLeftRightPadding(languageSection);  // to fit like the mount node
+        CollapsePane collapsePane = new CollapsePane(languageSection);
+        collapsePane.setAnimate(false);
+        collapsePane.collapsedProperty().bind(FXLoggedIn.loggedInProperty());
+        collapsePane.setAnimate(true);
+        collapsePane.getStyleClass().setAll("menu-bar", "lang-menu-bar", "non-mobile");
+        return collapsePane;
     }
 
     private CollapsePane createMainMenuButtonBar(boolean mobileLayout) {
         return createMenuButtonBar(MAIN_MENU_OPERATION_CODES, false, mobileLayout);
+    }
+
+    private CollapsePane createUserMenuButtonBar() {
+        CollapsePane userMenuButtonBar = createMenuButtonBar(USER_MENU_OPERATION_CODES, true, false);
+        userMenuButtonBar.setAnimate(false);
+        userMenuButtonBar.collapsedProperty().bind(FXLoggedIn.loggedInProperty().not());
+        userMenuButtonBar.setAnimate(true);
+        return userMenuButtonBar;
     }
 
     private CollapsePane createMenuButtonBar(String[] menuOperationCodes, boolean userMenu, boolean mobileLayout) {

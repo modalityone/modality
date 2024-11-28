@@ -5,8 +5,11 @@ import dev.webfx.extras.util.layout.LayoutUtil;
 import dev.webfx.kit.util.properties.FXProperties;
 import dev.webfx.platform.util.collection.Collections;
 import dev.webfx.stack.authn.logout.client.operation.LogoutRequest;
+import dev.webfx.stack.i18n.I18n;
 import dev.webfx.stack.orm.domainmodel.activity.viewdomain.impl.ViewDomainActivityBase;
+import dev.webfx.stack.session.Session;
 import dev.webfx.stack.session.state.client.fx.FXLoggedIn;
+import dev.webfx.stack.session.state.client.fx.FXSession;
 import dev.webfx.stack.ui.action.Action;
 import dev.webfx.stack.ui.action.ActionBinder;
 import dev.webfx.stack.ui.operation.action.OperationActionFactoryMixin;
@@ -29,6 +32,24 @@ import one.modality.base.client.profile.fx.FXProfile;
 public class ModalityClientMainFrameActivity extends ViewDomainActivityBase
         implements ModalityButtonFactoryMixin
         , OperationActionFactoryMixin {
+
+    { // I18n language storage management (using user session which is based on LocalStorage for now)
+        // TODO Move this feature into WebFX Stack
+        // Restoring the user language stored from the session
+        FXProperties.runNowAndOnPropertyChange(session -> {
+            Object lang = session.get("lang");
+            if (lang != null)
+                I18n.setLanguage(lang);
+        }, FXSession.sessionProperty());
+        // Saving the user language into the session
+        FXProperties.runOnPropertyChange(lang -> {
+            Session session = FXSession.getSession();
+            if (session != null) {
+                session.put("lang", lang);
+                session.store();
+            }
+        }, I18n.languageProperty());
+    }
 
     @Override
     public Node buildUi() {
