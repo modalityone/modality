@@ -9,9 +9,18 @@ fx-collapsepane.menu-bar > fx-border {
     border-radius: 0;
 }
 
+fx-collapsepane.menu-bar.lang-menu-bar > fx-border {
+    border: none;
+}
+
 .menu-bar {
     font-family: var(--poppins-font-family), sans-serif;
 }
+
+.lang-menu-bar .selected fx-text {
+    color: white;
+}
+
 
 .menu-bar fx-button {
     --fx-button-background: white; /* removes old-style button gradient */

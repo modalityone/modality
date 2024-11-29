@@ -4,8 +4,16 @@ CollapsePane.menu-bar.non-mobile {
     -fx-border-color: lightgray;
 }
 
+CollapsePane.menu-bar.lang-menu-bar {
+    -fx-border-width: 0;
+}
+
 .menu-bar {
     -fx-font-family: -poppins-font-family;
+}
+
+.lang-menu-bar .selected Text {
+    -fx-fill: white;
 }
 
 .menu-bar Button {

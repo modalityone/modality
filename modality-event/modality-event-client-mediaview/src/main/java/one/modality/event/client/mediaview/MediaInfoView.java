@@ -135,7 +135,8 @@ public abstract class MediaInfoView {
         }
 
         private void computeLayout(double width) {
-            if (width == lastComputeLayoutWidth)
+            boolean videoTransition = mediaInfo instanceof Video && (imageFadeTimeline != null || imageView.getOpacity() < 1);
+            if (width == lastComputeLayoutWidth && !videoTransition)
                 return;
             if (width == -1)
                 width = getWidth();
@@ -153,7 +154,7 @@ public abstract class MediaInfoView {
                 imageRatio = image == null || image.getWidth() == 0 ? 1 : image.getWidth() / image.getHeight();
             } else {
                 imageRatio = 16d / 9;
-                if (mediaInfo instanceof Video && (imageFadeTimeline != null || imageView.getOpacity() < 1)) {
+                if (videoTransition) {
                     Video video = (Video) mediaInfo;
                     Integer videoWidth = video.getWidth();
                     Integer videoHeight = video.getHeight();
@@ -374,6 +375,7 @@ public abstract class MediaInfoView {
         imageFadeTimeline = Animations.animateProperty(imageView.opacityProperty(), requestedImageOpacity, Duration.seconds(1), Interpolator.EASE_BOTH, true);
         imageFadeTimeline.setOnFinished(e -> {
             imageFadeTimeline = null;
+            lastComputeLayoutWidth = 0;
             mediaPane.requestLayout();
         });
         mediaPane.requestLayout();
