@@ -154,11 +154,6 @@ final class EventVideosWallActivity extends ViewDomainActivityBase {
 
         headerHBox.getChildren().add(titleVBox);
 
-        // Livestream box
-        Label livestreamLabel = Bootstrap.h4(Bootstrap.strong(I18nControls.newLabel(VideosI18nKeys.LivestreamTitle)));
-        livestreamLabel.setWrapText(true);
-
-
         Node loadingContentIndicator = new GoldenRatioPane(ControlUtil.createProgressIndicator(100));
         MonoPane pageContainer = new MonoPane();
 
@@ -168,8 +163,9 @@ final class EventVideosWallActivity extends ViewDomainActivityBase {
         //We display this box only if the current Date is in the list of date in the video Scheduled Item list
         VBox currentDayScheduleVBox = new VBox(30); // Will be populated later (see reacting code below)
         Label scheduleForTodayTitleLabel = Bootstrap.strong(Bootstrap.textPrimary(Bootstrap.h3(I18nControls.newLabel(VideosI18nKeys.ScheduleForSpecificDate,LocalDate.now().format(DateTimeFormatter.ofPattern("EEEE MMMM d"))))));
-        scheduleForTodayTitleLabel.setPadding(new Insets(100,0,0,0));
+        scheduleForTodayTitleLabel.setPadding(new Insets(100,0,40,0));
         currentDayScheduleVBox.getChildren().add(scheduleForTodayTitleLabel);
+        currentDayScheduleVBox.setAlignment(Pos.CENTER);
         currentDayScheduleVBox.setVisible(false);
         currentDayScheduleVBox.setManaged(false);
 
@@ -178,7 +174,6 @@ final class EventVideosWallActivity extends ViewDomainActivityBase {
         VBox scheduleTitleVBox = new VBox(5,scheduleTitleLabel,scheduleSubTitleLabel);
         scheduleTitleVBox.setAlignment(Pos.CENTER);
         scheduleTitleVBox.setPadding(new Insets(100,0,0,0));
-
 
         daysColumnPane.setHgap(10);
         daysColumnPane.setVgap(15);
@@ -196,6 +191,8 @@ final class EventVideosWallActivity extends ViewDomainActivityBase {
             daysColumnPane,
             scheduleContainerGrowingPane
         );
+        loadedContentVBox.setAlignment(Pos.CENTER);
+
         daysCollapsePane.setPrefWidth(loadedContentVBox.getPrefWidth());
         loadedContentVBox.setAlignment(Pos.TOP_CENTER);
         loadedContentVBox.getStyleClass().add("livestream");
@@ -212,6 +209,8 @@ final class EventVideosWallActivity extends ViewDomainActivityBase {
         // *************************************************************************************************************
 
         ObservableLists.runNowAndOnListOrPropertiesChange(change -> {
+            currentDayScheduleVBox.setVisible(false);
+            currentDayScheduleVBox.setManaged(false);
             // We display the loading indicator while the data is loading
             if (eventProperty.get() == null) { // this indicates that the data has not finished loaded
                 pageContainer.setContent(loadingContentIndicator);
@@ -273,8 +272,8 @@ final class EventVideosWallActivity extends ViewDomainActivityBase {
                 .forEach((day, dayScheduledVideos) -> {
                     currentDayScheduleVBox.setVisible(true);
                     currentDayScheduleVBox.setManaged(true);
-                        // Passing the day, the videos of that day, and the history (for backward navigation)
-                    currentDayScheduleVBox.getChildren().setAll(new VideosDayScheduleView(day, dayScheduledVideos, getHistory(),true).getView());
+                    // Passing the day, the videos of that day, and the history (for backward navigation)
+                    currentDayScheduleVBox.getChildren().setAll(scheduleForTodayTitleLabel, new VideosDayScheduleView(day, dayScheduledVideos, getHistory(),true).getView());
                     });
 
         }, videoScheduledItems,eventProperty);
