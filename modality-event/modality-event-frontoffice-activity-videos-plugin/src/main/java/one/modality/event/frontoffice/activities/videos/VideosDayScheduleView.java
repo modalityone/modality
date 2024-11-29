@@ -82,7 +82,6 @@ final class VideosDayScheduleView {
             VideoSchedulePopulator populator = new VideoSchedulePopulator(currentRow);
             populator.populateVideoRow(s);
         });
-
         gridPaneContainer.setAlignment(Pos.CENTER);
     }
 
@@ -213,14 +212,22 @@ final class VideosDayScheduleView {
             //The session has not started yet
             if (LocalDateTime.now().isBefore(sessionStart)) {
                 Duration duration = Duration.between(LocalDateTime.now(),sessionStart);
+
                 //We display the countdown 3 hours before the session
                 if(duration.getSeconds()>0 && duration.getSeconds()< 3600*3) {
                     // Format the output as HH:mm:ss
                     I18nControls.bindI18nProperties(statusLabel,I18nKeys.upperCase(VideosI18nKeys.StartingIn),formatDuration(duration));
                     scheduleRefreshUI(1,currentVideo);
-                    hideActionButton();
+                    //We display the play button 30 minutes before the session
+                    if(duration.getSeconds()< 60*30) {
+                        actionButton.setOnAction(e -> browsingHistory.push(LivestreamPlayerRouting.getLivestreamPath(currentVideo.getEventId())));
+                        actionButton.setVisible(true);
+                    } else {
+                        hideActionButton();
+                    }
                     return;
                 }
+
                 else {
                     I18nControls.bindI18nProperties(statusLabel,I18nKeys.upperCase(VideosI18nKeys.OnTime));
                     scheduleRefreshUI(60,currentVideo);
@@ -231,7 +238,7 @@ final class VideosDayScheduleView {
 
                 //The live is currently playing
             if (LocalDateTime.now().isAfter(sessionStart) && LocalDateTime.now().isBefore(sessionEnd)) {
-                actionButton.setOnAction(e -> browsingHistory.push(LivestreamPlayerRouting.getLivestreamPath(currentVideo.getEvent())));
+                actionButton.setOnAction(e -> browsingHistory.push(LivestreamPlayerRouting.getLivestreamPath(currentVideo.getEventId())));
                 actionButton.setVisible(true);
                 Duration duration = Duration.between(sessionEnd, LocalDateTime.now());
                 if (duration.getSeconds() > 0)
@@ -256,7 +263,7 @@ final class VideosDayScheduleView {
             //The recording of the video has been published
             if (Booleans.isTrue(currentVideo.getFieldValue(EventVideosWallActivity.VIDEO_SCHEDULED_ITEM_DYNAMIC_BOOLEAN_FIELD_HAS_PUBLISHED_MEDIAS))) {
                 I18nControls.bindI18nProperties(statusLabel,I18nKeys.upperCase(VideosI18nKeys.Available));
-                actionButton.setOnAction(e -> browsingHistory.push(LivestreamPlayerRouting.getLivestreamPath(currentVideo.getEvent())));
+                actionButton.setOnAction(e -> browsingHistory.push(SessionVideoPlayerRouting.getVideoOfSessionPath(currentVideo.getId())));
                 actionButton.setVisible(true);
                 if (expirationDate != null) {
                     //We schedule a refresh so the UI is updated when the expirationDate is reached
@@ -272,6 +279,7 @@ final class VideosDayScheduleView {
                 if (currentVideo.isVodDelayed()) {
                     I18nControls.bindI18nProperties(statusLabel,I18nKeys.upperCase(VideosI18nKeys.VideoDelayed));
                     hideActionButton();
+                    scheduleRefreshUI(60,currentVideo);
                     return;
                 }
 
@@ -282,6 +290,7 @@ final class VideosDayScheduleView {
                     if (LocalDateTime.now().isAfter(sessionEnd.plusMinutes(vodProcessingTimeMinute))) {
                         I18nControls.bindI18nProperties(statusLabel,I18nKeys.upperCase(VideosI18nKeys.VideoDelayed));
                         hideActionButton();
+                        scheduleRefreshUI(60,currentVideo);
                         return;
                     }
 
@@ -301,7 +310,6 @@ final class VideosDayScheduleView {
                 //If we want to refresh more than 1 minutes, we add a second to make sure the calculation has time to proceed before the refresh
                 refreshTime = refreshTime + 1000;
             }
-
             UiScheduler.scheduleDelay(refreshTime, () -> computeStatusLabelAndWatchButton(si));
             }
 
@@ -322,8 +330,9 @@ final class VideosDayScheduleView {
     private static String formatDuration(Duration duration) {
         if (duration == null)
             return "xx:xx";
-        int minutes = (int) duration.toMinutes();
+        int hours = (int) duration.toHours();
+        int minutes = ((int) duration.toMinutes()) % 60;
         int seconds = ((int) duration.toSeconds()) % 60;
-        return (minutes < 10 ? "0" : "") + minutes + ":" + (seconds < 10 ? "0" : "") + seconds;
+        return (hours < 10 ? "0" : "") +  hours + ":" + (minutes < 10 ? "0" : "") + minutes + ":" + (seconds < 10 ? "0" : "") + seconds;
     }
 }

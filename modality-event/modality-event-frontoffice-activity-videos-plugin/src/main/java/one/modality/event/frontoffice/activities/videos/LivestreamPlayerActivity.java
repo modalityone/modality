@@ -5,10 +5,13 @@ import dev.webfx.extras.player.multi.MultiPlayer;
 import dev.webfx.extras.player.multi.all.AllPlayers;
 import dev.webfx.extras.styles.bootstrap.Bootstrap;
 import dev.webfx.kit.util.properties.FXProperties;
+import dev.webfx.platform.console.Console;
 import dev.webfx.platform.util.Numbers;
 import dev.webfx.stack.orm.domainmodel.activity.viewdomain.impl.ViewDomainActivityBase;
 import dev.webfx.stack.orm.entity.EntityId;
 import dev.webfx.stack.orm.entity.EntityStore;
+import dev.webfx.stack.orm.entity.EntityStoreQuery;
+import javafx.application.Platform;
 import javafx.beans.property.ObjectProperty;
 import javafx.beans.property.SimpleObjectProperty;
 import javafx.geometry.Pos;
@@ -17,6 +20,7 @@ import javafx.scene.control.Label;
 import javafx.scene.layout.VBox;
 import javafx.scene.text.TextAlignment;
 import one.modality.base.frontoffice.utility.page.FOPageUtil;
+import one.modality.base.shared.entities.Event;
 import one.modality.crm.shared.services.authn.fx.FXUserPersonId;
 
 /**
@@ -28,10 +32,10 @@ final class LivestreamPlayerActivity extends ViewDomainActivityBase {
 
     private final Label sessionTitleLabel = Bootstrap.h2(Bootstrap.strong(new Label()));
     private final MultiPlayer sessionVideoPlayer = AllPlayers.createAllVideoPlayer();
-
+    private final SimpleObjectProperty<String> livestreamUrlProperty = new SimpleObjectProperty<String>();
     @Override
     protected void updateModelFromContextParameters() {
-        eventIdProperty.set(Numbers.toInteger(getParameter(LivestreamPlayerRouting.EVENT_ID_PARAMETER_TOKEN)));
+        eventIdProperty.set(Numbers.toInteger(getParameter(LivestreamPlayerRouting.EVENT_ID_PARAMETER_NAME)));
     }
 
     @Override
@@ -41,22 +45,18 @@ final class LivestreamPlayerActivity extends ViewDomainActivityBase {
         FXProperties.runNowAndOnPropertiesChange(() -> {
             Object eventId = eventIdProperty.get();
             EntityId userPersonId = FXUserPersonId.getUserPersonId();
+                //TODO add the verification to check if the person is registered for this event and has pay.
+                entityStore.executeQuery(
+                        new EntityStoreQuery("select name,livestreamUrl" +
+                                             " from event" +
+                                             " where id=?", // and exists(select Attendance where document.(person=? and price_balance<=0)))",
+                            new Object[]{eventId}))//, userPersonId}))
+                    .onFailure(Console::log)
+                    .onSuccess(entity -> Platform.runLater(() -> {
+                        if(!entity.isEmpty())
+                        livestreamUrlProperty.set(((Event) entity.get(0)).getLivestreamUrl());
+                    }));
 
-//                entityStore.executeQueryBatch(
-//                        new EntityStoreQuery("select parent.name" +
-//                                             " from event" +
-//                                             " where id=? and exists(select Attendance where scheduledItem=si and documentLine.(!cancelled and document.(person=? and price_balance<=0)))",
-//                            new Object[]{scheduledVideoItemId, userPersonId}),
-//                        new EntityStoreQuery("select url" +
-//                                             " from Media" +
-//                                             " where scheduledItem.(id=? and online) and published",
-//                            new Object[]{scheduledVideoItemId}))
-//                    .onFailure(Console::log)
-//                    .onSuccess(entityLists -> Platform.runLater(() -> {
-//                        Collections.setAll(publishedMedias, entityLists[1]);
-//                        scheduledVideoItemProperty.set((ScheduledItem) Collections.first(entityLists[0]));  // Will update UI
-//                    }));
-//
         }, eventIdProperty, FXUserPersonId.userPersonIdProperty());
     }
 
@@ -97,7 +97,7 @@ final class LivestreamPlayerActivity extends ViewDomainActivityBase {
         // *************************************************************************************************************
 
         // Auto starting the video for each requested session
-        FXProperties.runNowAndOnPropertyChange(this::updateSessionTitleAndVideoPlayerState, eventIdProperty);
+        FXProperties.runOnPropertyChange(this::updateSessionTitleAndVideoPlayerState, livestreamUrlProperty);
 
 
         // *************************************************************************************************************
@@ -109,14 +109,11 @@ final class LivestreamPlayerActivity extends ViewDomainActivityBase {
     }
 
     private void updateSessionTitleAndVideoPlayerState() {
-//        ScheduledItem scheduledVideoItem = scheduledVideoItemProperty.get();
-//        Media firstMedia = Collections.first(publishedMedias);
-//        if (scheduledVideoItem != null && firstMedia != null) { // may not yet be loaded on first call
-//            String title = scheduledVideoItem.getParent().getName();
-//            String url = firstMedia.getUrl();
-//            sessionTitleLabel.setText(title);
-//            sessionVideoPlayer.setMedia(sessionVideoPlayer.acceptMedia(url));
-//            sessionVideoPlayer.play();
-//        }
+            //TODO: change the title
+            String title = "Livestream";
+            String url = livestreamUrlProperty.get();
+            sessionTitleLabel.setText(title);
+            sessionVideoPlayer.setMedia(sessionVideoPlayer.acceptMedia(url));
+            sessionVideoPlayer.play();
     }
 }

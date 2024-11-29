@@ -21,6 +21,7 @@ module modality.event.frontoffice.activity.videos.plugin {
     requires webfx.extras.util.control;
     requires webfx.kit.util;
     requires webfx.platform.console;
+    requires webfx.platform.uischeduler;
     requires webfx.platform.util;
     requires webfx.platform.util.time;
     requires webfx.platform.windowhistory;
@@ -33,13 +34,12 @@ module modality.event.frontoffice.activity.videos.plugin {
     requires webfx.stack.routing.router.client;
     requires webfx.stack.routing.uirouter;
     requires webfx.stack.ui.operation;
-    requires webfx.platform.uischeduler;
 
     // Exported packages
     exports one.modality.event.frontoffice.activities.videos;
 
     // Provided services
-    provides dev.webfx.stack.routing.uirouter.UiRoute with one.modality.event.frontoffice.activities.videos.VideosRouting.VideosUiRoute, one.modality.event.frontoffice.activities.videos.EventVideosWallRouting.EventVideosWallUiRoute, one.modality.event.frontoffice.activities.videos.SessionVideoPlayerRouting.VideOfSessionUiRoute;
+    provides dev.webfx.stack.routing.uirouter.UiRoute with one.modality.event.frontoffice.activities.videos.VideosRouting.VideosUiRoute, one.modality.event.frontoffice.activities.videos.EventVideosWallRouting.EventVideosWallUiRoute, one.modality.event.frontoffice.activities.videos.SessionVideoPlayerRouting.VideOfSessionUiRoute, one.modality.event.frontoffice.activities.videos.LivestreamPlayerRouting.LivestreamUiRoute;
     provides dev.webfx.stack.routing.uirouter.operations.RouteRequestEmitter with one.modality.event.frontoffice.activities.videos.VideosRouting.RouteToVideosRequestEmitter;
 
 }
