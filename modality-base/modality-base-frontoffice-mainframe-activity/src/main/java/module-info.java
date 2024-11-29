@@ -22,7 +22,6 @@ module modality.base.frontoffice.mainframe.activity {
     requires webfx.kit.util;
     requires webfx.platform.conf;
     requires webfx.platform.console;
-    requires webfx.platform.storage;
     requires webfx.platform.useragent;
     requires webfx.platform.util;
     requires webfx.stack.i18n;
