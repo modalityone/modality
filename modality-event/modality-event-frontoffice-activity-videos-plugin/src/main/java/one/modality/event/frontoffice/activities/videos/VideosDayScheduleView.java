@@ -227,7 +227,6 @@ final class VideosDayScheduleView {
                     }
                     return;
                 }
-
                 else {
                     I18nControls.bindI18nProperties(statusLabel,I18nKeys.upperCase(VideosI18nKeys.OnTime));
                     scheduleRefreshUI(60,currentVideo);
@@ -238,9 +237,10 @@ final class VideosDayScheduleView {
 
                 //The live is currently playing
             if (LocalDateTime.now().isAfter(sessionStart) && LocalDateTime.now().isBefore(sessionEnd)) {
+                I18nControls.bindI18nProperties(statusLabel,I18nKeys.upperCase(VideosI18nKeys.LiveNow));
                 actionButton.setOnAction(e -> browsingHistory.push(LivestreamPlayerRouting.getLivestreamPath(currentVideo.getEventId())));
                 actionButton.setVisible(true);
-                Duration duration = Duration.between(sessionEnd, LocalDateTime.now());
+                Duration duration = Duration.between(LocalDateTime.now(),sessionEnd);
                 if (duration.getSeconds() > 0)
                     scheduleRefreshUI(duration.getSeconds(),currentVideo);
                 return;
@@ -272,7 +272,7 @@ final class VideosDayScheduleView {
                         scheduleRefreshUI(duration.getSeconds(),currentVideo);
                     }
                 }
-                    return;
+                return;
             }
 
                 //case of the video delayed: the video is delayed
@@ -297,9 +297,9 @@ final class VideosDayScheduleView {
                     I18nControls.bindI18nProperties(statusLabel,I18nKeys.upperCase(VideosI18nKeys.RecordingSoonAvailable));
                     hideActionButton();
 
-                    Duration duration = Duration.between(sessionEnd.plusMinutes(vodProcessingTimeMinute), LocalDateTime.now());
-                    if (duration.getSeconds() > 0)
-                        scheduleRefreshUI(duration.getSeconds(),currentVideo);
+                    //Duration duration = Duration.between(sessionEnd.plusMinutes(vodProcessingTimeMinute), LocalDateTime.now());
+//                    if (duration.getSeconds() > 0)
+                        scheduleRefreshUI(60,currentVideo);
                     return;
                 }
         }
