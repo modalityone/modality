@@ -50,8 +50,10 @@ final class ProgramModel {
 
     private final List<DayTemplate> initialWorkingDayTemplates = new ArrayList<>();
     private final ObservableList<DayTemplate> currentDayTemplates = new OptimizedObservableListWrapper<>();
-    private final ObservableList<DayTemplateModel> dayTemplateModels = FXCollections.observableArrayList(); {
-        ObservableLists.bindConverted(dayTemplateModels, currentDayTemplates, dayTemplate -> new DayTemplateModel(dayTemplate,   this));
+    private final ObservableList<DayTemplateModel> dayTemplateModels = FXCollections.observableArrayList();
+
+    {
+        ObservableLists.bindConverted(dayTemplateModels, currentDayTemplates, dayTemplate -> new DayTemplateModel(dayTemplate, this));
     }
 
     private final ModalityValidationSupport validationSupport = new ModalityValidationSupport();
@@ -125,10 +127,10 @@ final class ProgramModel {
                 // Index 0: day templates
                 new EntityStoreQuery("select name, event.(livestreamUrl,vodExpirationDate,audioExpirationDate), dates from DayTemplate si where event=? order by name", new Object[]{selectedEvent}),
                 // Index 1: program site (singleton list)
-                new EntityStoreQuery("select name from Site where event=? and main limit 1", new Object[]{ selectedEvent }),
+                new EntityStoreQuery("select name from Site where event=? and main limit 1", new Object[]{selectedEvent}),
                 // Index 2: items for this program item family + audio recording + video
                 new EntityStoreQuery("select name,family.code from Item where organization=? and family.code in (?,?,?)",
-                    new Object[]{ selectedEvent.getOrganization(), programItemFamily.getCode(), KnownItemFamily.AUDIO_RECORDING.getCode(), KnownItemFamily.VIDEO.getCode() })
+                    new Object[]{selectedEvent.getOrganization(), programItemFamily.getCode(), KnownItemFamily.AUDIO_RECORDING.getCode(), KnownItemFamily.VIDEO.getCode()})
             )
             .onFailure(Console::log)
             .onSuccess(entityLists -> Platform.runLater(() -> {
@@ -151,8 +153,8 @@ final class ProgramModel {
         validationSupport.reset();
         validationSupportInitialised = false;
         updateStore.cancelChanges();
-        programGeneratedProperty.setValue(false);
         currentDayTemplates.setAll(initialWorkingDayTemplates);
+        programGeneratedProperty.setValue(false); // A priori value. May be set to true in the following loop.
         dayTemplateModels.forEach(DayTemplateModel::resetModelAndUiToInitial);
     }
 
@@ -194,19 +196,19 @@ final class ProgramModel {
 
         //Here we look for the teachings, audio and video scheduled Item related to this timeline and delete them
         entityStore.<ScheduledItem>executeQuery(
-                new EntityStoreQuery("select id, item.family.code from ScheduledItem si where event=? order by name", new Object[]{ getLoadedEvent() }))
+                new EntityStoreQuery("select id, item.family.code from ScheduledItem si where event=? order by name", new Object[]{getLoadedEvent()}))
             .onFailure(Console::log)
             .onSuccess(scheduledItems -> Platform.runLater(() -> {
                 //First we delete all the audios and videos scheduledItem
                 scheduledItems.forEach(currentScheduledItem -> {
                     String scheduledItemFamilyCode = currentScheduledItem.getItem().getFamily().getCode();
-                    if(scheduledItemFamilyCode.equals(KnownItemFamily.AUDIO_RECORDING.getCode()) || scheduledItemFamilyCode.equals(KnownItemFamily.VIDEO.getCode()))
+                    if (scheduledItemFamilyCode.equals(KnownItemFamily.AUDIO_RECORDING.getCode()) || scheduledItemFamilyCode.equals(KnownItemFamily.VIDEO.getCode()))
                         localUpdateStore.deleteEntity(currentScheduledItem);
                 });
 
                 scheduledItems.forEach(currentScheduledItem -> {
                     String code = currentScheduledItem.getItem().getFamily().getCode();
-                    if(code.equals(KnownItemFamily.TEACHING.getCode()))
+                    if (code.equals(KnownItemFamily.TEACHING.getCode()))
                         localUpdateStore.deleteEntity(currentScheduledItem);
                 });
 
@@ -220,18 +222,18 @@ final class ProgramModel {
     void submitUpdateStoreChanges(UpdateStore updateStore, Labeled... buttons) {
         OperationUtil.turnOnButtonsWaitModeDuringExecution(
             updateStore.submitChanges()
-                .onFailure(x-> {
-                    DialogContent dialog = DialogContent.createConfirmationDialog("Error","Operation failed", x.getMessage());
+                .onFailure(x -> {
+                    DialogContent dialog = DialogContent.createConfirmationDialog("Error", "Operation failed", x.getMessage());
                     dialog.setOk();
-                    Platform.runLater(()-> {
+                    Platform.runLater(() -> {
                         DialogBuilderUtil.showModalNodeInGoldLayout(dialog, FXMainFrameDialogArea.getDialogArea());
-                        dialog.getPrimaryButton().setOnAction(a->dialog.getDialogCallback().closeDialog());
+                        dialog.getPrimaryButton().setOnAction(a -> dialog.getDialogCallback().closeDialog());
                     });
                     Console.log(x);
                 })
                 .onSuccess(x -> Platform.runLater(() -> {
                     OperationUtil.turnOffButtonsWaitMode(buttons);
-                    //resetModelAndUiToInitial();
+                    resetModelAndUiToInitial();
                 })),
             buttons
         );

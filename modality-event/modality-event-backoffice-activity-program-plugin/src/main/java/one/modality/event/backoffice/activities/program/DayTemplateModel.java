@@ -102,7 +102,7 @@ final class DayTemplateModel {
         dayTemplateTimelineModels.forEach(DayTemplateTimelineModel::resetModelAndUiToInitial);
         //Here we test if the scheduled item have already been generated, ie if at least one of the workingTemplateTimelines got an eventTimeLine not null
         boolean hasEventTimeline = currentTemplateTimelines.stream()
-            .anyMatch(timeline -> timeline.getEventTimeline() != null);
+            .anyMatch(timeline -> timeline.getEventTimelineId() != null);
         if (hasEventTimeline)
             programModel.setProgramGenerated();
         syncUiFromModel();
