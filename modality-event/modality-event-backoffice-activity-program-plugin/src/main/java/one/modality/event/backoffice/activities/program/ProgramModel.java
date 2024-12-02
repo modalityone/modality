@@ -231,10 +231,7 @@ final class ProgramModel {
                     });
                     Console.log(x);
                 })
-                .onSuccess(x -> Platform.runLater(() -> {
-                    OperationUtil.turnOffButtonsWaitMode(buttons);
-                    resetModelAndUiToInitial();
-                })),
+                .onSuccess(x -> Platform.runLater(this::resetModelAndUiToInitial)),
             buttons
         );
     }
