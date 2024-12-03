@@ -16,8 +16,6 @@ import dev.webfx.stack.orm.entity.EntityStore;
 import dev.webfx.stack.orm.entity.EntityStoreQuery;
 import dev.webfx.stack.orm.entity.UpdateStore;
 import javafx.application.Platform;
-import javafx.beans.InvalidationListener;
-import javafx.beans.Observable;
 import javafx.beans.binding.BooleanExpression;
 import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.SimpleBooleanProperty;
@@ -44,11 +42,11 @@ import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeParseException;
+import java.util.Objects;
 import java.util.stream.Collectors;
 
 
 public class VideoView {
-    private final MediasActivity activity;
     private final BooleanProperty activeProperty = new SimpleBooleanProperty();
     private final DataSourceModel dataSourceModel = DataSourceModelService.getDefaultDataSourceModel();
     private final EntityStore entityStore = EntityStore.create(dataSourceModel);
@@ -60,18 +58,16 @@ public class VideoView {
     private final ObservableList<Media> recordingsMediasReadFromDatabase = FXCollections.observableArrayList();
     private TextField contentExpirationDateTextField;
     private TextField contentExpirationTimeTextField;
-    private TextField videoAvailableAfterTextField;
     private TextField livestreamGlobalLinkTextField;
     private final DateTimeFormatter dateFormatter = DateTimeFormatter.ofPattern("dd-MM-yyyy");
     private final DateTimeFormatter timeFormatter = DateTimeFormatter.ofPattern("HH:mm");
     private Event currentEditedEvent;
-    private ScrollPane mainContainer;
-    private BorderPane mainFrame;
+    private final ScrollPane mainContainer;
+    private final BorderPane mainFrame;
     ObservableList<BooleanExpression> listOfUpdateStoresHasChangedProperty = FXCollections.observableArrayList();
     // Create the BooleanBinding that represents the AND condition of all properties
 
-    public VideoView(MediasActivity activity) {
-        this.activity = activity;
+    public VideoView() {
         mainFrame = new BorderPane();
         mainFrame.setPadding(new Insets(0,0,30,0));
         mainContainer = ControlUtil.createVerticalScrollPane(mainFrame);
@@ -125,13 +121,13 @@ public class VideoView {
         masterSettings.getChildren().add(liveStreamGlobalComment);
 
         livestreamGlobalLinkTextField = new TextField();
-        livestreamGlobalLinkTextField.setPromptText("Ex: srt://uk.castr.io:9998?pkt_size=1316&streamid=#!::r=live_14831a60190211efb48523dddcde7908,password=a4be1ab3,m=publish");
+        livestreamGlobalLinkTextField.setPromptText("Ex: https://player.castr.com/live_14831a60190211efb48523dddcde7908");
         validationSupport.addUrlOrEmptyValidation(livestreamGlobalLinkTextField,livestreamGlobalLinkTextField,MediasI18nKeys.MalformedUrl);
         if(currentEvent.getLivestreamUrl()!=null) {
             livestreamGlobalLinkTextField.setText(currentEvent.getLivestreamUrl());
         }
         livestreamGlobalLinkTextField.textProperty().addListener(observable -> {
-            if(livestreamGlobalLinkTextField.getText()=="") {
+            if(Objects.equals(livestreamGlobalLinkTextField.getText(), "")) {
                 currentEvent.setLivestreamUrl(null);
             } else {
                 currentEvent.setLivestreamUrl(livestreamGlobalLinkTextField.getText());
@@ -171,18 +167,8 @@ public class VideoView {
         VBox.setMargin(contentExpirationTimeTextField, new Insets(10, 0, 10, 0));
         masterSettings.getChildren().add(contentExpirationTimeTextField);
 
-        contentExpirationTimeTextField.textProperty().addListener(new InvalidationListener() {
-            @Override
-            public void invalidated(Observable observable) {
-                updateVodExpirationDate(currentEvent);
-            }
-        });
-        contentExpirationDateTextField.textProperty().addListener(new InvalidationListener() {
-            @Override
-            public void invalidated(Observable observable) {
-                updateVodExpirationDate(currentEvent);
-            }
-        });
+        contentExpirationTimeTextField.textProperty().addListener(observable -> updateVodExpirationDate(currentEvent));
+        contentExpirationDateTextField.textProperty().addListener(observable -> updateVodExpirationDate(currentEvent));
 
         Label vodAvailableAfterLive = I18nControls.newLabel(MediasI18nKeys.VODAvailableAfter);
         vodAvailableAfterLive.getStyleClass().add(Bootstrap.TEXT_SECONDARY);
@@ -194,7 +180,7 @@ public class VideoView {
         vodAvailableAfterLiveComment.getStyleClass().add(Bootstrap.SMALL);
         masterSettings.getChildren().add(vodAvailableAfterLiveComment);
 
-        videoAvailableAfterTextField = new TextField();
+        TextField videoAvailableAfterTextField = new TextField();
         videoAvailableAfterTextField.setPromptText("Format: 90");
        // validationSupport.addIntegerValidation(videoAvailableAfterTextField, videoAvailableAfterTextField,I18n.getI18nText("ValidationIntegerIncorrect"));
         VBox.setMargin(videoAvailableAfterTextField, new Insets(10, 0, 30, 0));
@@ -203,7 +189,7 @@ public class VideoView {
 
 
         //SAVE BUTTON
-        Button saveButton = Bootstrap.successButton(I18nControls.newButton(ModalityI18nKeys.Save));
+        Button saveButton = Bootstrap.largeSuccessButton(I18nControls.newButton(ModalityI18nKeys.Save));
         saveButton.disableProperty().bind(updateStore.hasChangesProperty().not());
         addUpdateStoreHasChangesProperty(updateStore.hasChangesProperty());
 
@@ -260,14 +246,14 @@ public class VideoView {
         entityStore.executeQueryBatch(
                 new EntityStoreQuery("select distinct name,family.code from Item where organization=? and family.code = ? order by name",
                     new Object[] { currentEditedEvent.getOrganization(),KnownItem.VIDEO.getCode() }),
-                new EntityStoreQuery("select name, parent, date, event, site, expirationDate,available, vodDelayed, item, item.code, parent.name, parent.timeline.startTime, parent.timeline.endTime from ScheduledItem where parent.event= ? and item.code = ? and parent.item.family.code = ? order by date",
+                new EntityStoreQuery("select name, parent, date, event, site, expirationDate,available, vodDelayed, published, item, item.code, parent.name, parent.timeline.startTime, parent.timeline.endTime from ScheduledItem where parent.event= ? and item.code = ? and parent.item.family.code = ? order by date",
                     new Object[] { currentEditedEvent,KnownItem.VIDEO.getCode(),KnownItemFamily.TEACHING.getCode() }),
-                new EntityStoreQuery("select url, scheduledItem.item, scheduledItem.date, scheduledItem.vodDelayed, published, scheduledItem.item.code from Media where scheduledItem.event= ? and scheduledItem.item.code = ?",
+                new EntityStoreQuery("select url, scheduledItem.item, scheduledItem.date, scheduledItem.vodDelayed, scheduledItem.published, scheduledItem.item.code from Media where scheduledItem.event= ? and scheduledItem.item.code = ?",
                     new Object[] { currentEditedEvent,KnownItem.VIDEO.getCode() })
             ).onFailure(Console::log)
             .onSuccess(entityList -> Platform.runLater(() -> {
                 //TODO: when we know which Item we use for VOD, we change the code bellow
-                EntityList<Item> VODItems = entityList[0];
+               // EntityList<Item> VODItems = entityList[0];
                 EntityList<ScheduledItem> videoSIList = entityList[1];
                 EntityList<Media> mediaList = entityList[2];
 
@@ -291,7 +277,7 @@ public class VideoView {
         activeProperty.set(b);
     }
 
-    private final SlaveEditor<Event> eventDetailsSlaveEditor = new ModalitySlaveEditor<Event>() {
+    private final SlaveEditor<Event> eventDetailsSlaveEditor = new ModalitySlaveEditor<>() {
         /**
          * This method is called by the master controller when we change the event we're editing
          *
@@ -315,7 +301,7 @@ public class VideoView {
                 return false;
             }
             return listOfUpdateStoresHasChangedProperty.stream()
-                .anyMatch(booleanExpression -> booleanExpression.getValue());
+                .anyMatch(BooleanExpression::getValue);
         }
     };
 

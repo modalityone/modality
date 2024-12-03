@@ -172,6 +172,8 @@
     <public path="" includes="images/svg/mono/"/>
     <!--=======================< modality-base-client-mainframe-fx >========================-->
     <source path="one/modality/base/client/mainframe/fx"/>
+    <!--=========================< modality-base-client-messaging >=========================-->
+    <source path="one/modality/base/client/messaging"/>
     <!--==============< modality-base-client-operationactionsloading-plugin >===============-->
     <source path="one/modality/base/client/operationactionsloading"/>
     <!--=====================< modality-base-client-presentationmodel >=====================-->
@@ -452,6 +454,8 @@
     <source path="dev/webfx/platform/ast/spi/formatter"/>
     <source path="dev/webfx/platform/ast/spi/parser"/>
     <source path="dev/webfx/platform/ast/spi/parser/impl/properties"/>
+    <!--=======================< webfx-platform-ast-factory-generic >=======================-->
+    <source path="dev/webfx/platform/ast/spi/factory/impl/generic"/>
     <!--=========================< webfx-platform-ast-factory-gwt >=========================-->
     <source path="dev/webfx/platform/ast/spi/factory/impl/gwt"/>
     <!--=========================< webfx-platform-ast-json-plugin >=========================-->

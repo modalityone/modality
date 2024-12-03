@@ -8,6 +8,7 @@ module modality.event.frontoffice.activity.videos.plugin {
     requires javafx.graphics;
     requires modality.base.client.bootstrap;
     requires modality.base.client.icons;
+    requires modality.base.client.messaging;
     requires modality.base.client.util;
     requires modality.base.frontoffice.utility;
     requires modality.base.shared.entities;
@@ -20,6 +21,7 @@ module modality.event.frontoffice.activity.videos.plugin {
     requires webfx.extras.styles.bootstrap;
     requires webfx.extras.util.control;
     requires webfx.kit.util;
+    requires webfx.platform.ast.factory.generic;
     requires webfx.platform.console;
     requires webfx.platform.uischeduler;
     requires webfx.platform.util;
@@ -29,6 +31,7 @@ module modality.event.frontoffice.activity.videos.plugin {
     requires webfx.stack.cloud.image.client;
     requires webfx.stack.i18n;
     requires webfx.stack.i18n.controls;
+    requires webfx.stack.orm.domainmodel;
     requires webfx.stack.orm.domainmodel.activity;
     requires webfx.stack.orm.entity;
     requires webfx.stack.routing.router.client;

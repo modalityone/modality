@@ -192,9 +192,9 @@ public class RecordingsView {
 
         entityStore.executeQueryBatch(
                 new EntityStoreQuery("select distinct name from Item where organization=? and family.code = ? and not deprecated order by name", new Object[]{currentEditedEvent.getOrganization(), KnownItemFamily.AUDIO_RECORDING.getCode()}),
-                new EntityStoreQuery("select name, date, parent, item.code, parent.timeline.startTime, parent.name, parent.timeline.endTime,parent.timeline.audioOffered, event, site, expirationDate, available from ScheduledItem where parent.event= ? and item.family.code = ? and parent.item.family.code = ? order by date",
+                new EntityStoreQuery("select name, date, parent, item.code, parent.timeline.startTime, published, parent.name, parent.timeline.endTime,parent.timeline.audioOffered, event, site, expirationDate, available from ScheduledItem where parent.event= ? and item.family.code = ? and parent.item.family.code = ? order by date",
                     new Object[]{currentEditedEvent, KnownItemFamily.AUDIO_RECORDING.getCode(), KnownItemFamily.TEACHING.getCode()}),
-                new EntityStoreQuery("select url, scheduledItem.parent, scheduledItem.item, scheduledItem.item.code ,scheduledItem.date, published, durationMillis from Media where scheduledItem.event= ? and scheduledItem.item.family.code = ?", new Object[]{currentEditedEvent, KnownItemFamily.AUDIO_RECORDING.getCode()}))
+                new EntityStoreQuery("select url, scheduledItem.parent, scheduledItem.item, scheduledItem.item.code ,scheduledItem.date, scheduledItem.published, durationMillis from Media where scheduledItem.event= ? and scheduledItem.item.family.code = ?", new Object[]{currentEditedEvent, KnownItemFamily.AUDIO_RECORDING.getCode()}))
             .onFailure(Console::log)
             .onSuccess(entityList -> Platform.runLater(() -> {
                 EntityList<Item> itemList = entityList[0];

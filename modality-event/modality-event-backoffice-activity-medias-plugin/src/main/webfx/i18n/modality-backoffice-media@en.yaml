@@ -47,3 +47,9 @@ PublishAll: "Publish all:"
 ExactDuration: "Exact Duration (in sec.)"
 RetrieveDuration: "Retrieve duration"
 DurationShouldBeAtLeast60s: "Duration should be at least 60s. Important: the duration should be the real duration fo the teaching, otherwise the player for the user will have unexpected behaviour"
+Upload:
+  text: "Upload"
+  graphic:
+    fill: "#FFFFFF"
+    svgPath: "M9.6875 15.75V5.05312L6.275 8.46562L4.4375 6.5625L11 0L17.5625 6.5625L15.725 8.46562L12.3125 5.05312V15.75H9.6875ZM3.125 21C2.40312 21 1.78537 20.7432 1.27175 20.2296C0.758125 19.7159 0.500875 19.0977 0.5 18.375V14.4375H3.125V18.375H18.875V14.4375H21.5V18.375C21.5 19.0969 21.2432 19.7151 20.7296 20.2296C20.2159 20.7441 19.5978 21.0009 18.875 21H3.125Z"
+

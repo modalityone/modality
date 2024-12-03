@@ -1,12 +1,17 @@
 package one.modality.event.frontoffice.activities.videos;
 
 import dev.webfx.extras.styles.bootstrap.Bootstrap;
+import dev.webfx.platform.ast.spi.factory.impl.generic.MapAstObject;
+import dev.webfx.platform.console.Console;
 import dev.webfx.platform.uischeduler.UiScheduler;
-import dev.webfx.platform.util.Booleans;
 import dev.webfx.platform.util.time.Times;
 import dev.webfx.platform.windowhistory.spi.BrowsingHistory;
 import dev.webfx.stack.i18n.I18nKeys;
 import dev.webfx.stack.i18n.controls.I18nControls;
+import dev.webfx.stack.orm.domainmodel.DataSourceModel;
+import dev.webfx.stack.orm.entity.EntityStore;
+import dev.webfx.stack.orm.entity.EntityStoreQuery;
+import javafx.application.Platform;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.geometry.VPos;
@@ -18,7 +23,9 @@ import javafx.scene.layout.ColumnConstraints;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.Region;
 import javafx.scene.layout.VBox;
+import one.modality.base.client.messaging.ModalityMessaging;
 import one.modality.base.shared.entities.ScheduledItem;
+import one.modality.crm.shared.services.authn.fx.FXUserPersonId;
 
 import java.time.Duration;
 import java.time.LocalDate;
@@ -36,13 +43,17 @@ final class VideosDayScheduleView {
     private final BrowsingHistory browsingHistory;
 
     private final GridPane gridPaneContainer = new GridPane();
+    private final DataSourceModel dataSourceModel;
 
-    public VideosDayScheduleView(LocalDate day, List<ScheduledItem> dayScheduledVideos, BrowsingHistory browsingHistory, boolean displayHeader) {
+    public VideosDayScheduleView(LocalDate day, List<ScheduledItem> dayScheduledVideos, BrowsingHistory browsingHistory, boolean displayHeader, DataSourceModel dataSourceModel) {
         this.day = day;
         this.dayScheduledVideos = dayScheduledVideos;
         this.browsingHistory = browsingHistory;
+        this.dataSourceModel = dataSourceModel;
         buildUi(displayHeader);
     }
+
+
 
     Region getView() {
         return gridPaneContainer;
@@ -78,9 +89,10 @@ final class VideosDayScheduleView {
         gridPaneContainer.setAlignment(Pos.TOP_LEFT);
 
         // Use the inner class to populate the grid
-        dayScheduledVideos.forEach((s)-> {
-            VideoSchedulePopulator populator = new VideoSchedulePopulator(currentRow);
-            populator.populateVideoRow(s);
+        dayScheduledVideos.forEach((s) -> {
+            VideoSchedulePopulator populator = new VideoSchedulePopulator(currentRow,s);
+            ModalityMessaging.addFrontOfficeMessageBodyHandler(e->populator.updateVODButton(e));
+            populator.populateVideoRow();
         });
         gridPaneContainer.setAlignment(Pos.CENTER);
     }
@@ -122,45 +134,46 @@ final class VideosDayScheduleView {
     }
 
 
-
     // Inner class to handle populating video schedule rows
     private class VideoSchedulePopulator {
 
         private final int[] currentRow;
         private final Label statusLabel = I18nControls.newLabel(I18nKeys.upperCase(VideosI18nKeys.OnTime));
         private final Button actionButton = Bootstrap.dangerButton(I18nControls.newButton(VideosI18nKeys.Watch));
+        private ScheduledItem scheduledItem;
 
-        public VideoSchedulePopulator(int[] currentRow) {
+        public VideoSchedulePopulator(int[] currentRow, ScheduledItem s) {
             this.currentRow = currentRow;
             actionButton.setGraphicTextGap(10);
             actionButton.setCursor(Cursor.HAND);
             actionButton.setMinWidth(110);
             statusLabel.setWrapText(true);
-            statusLabel.setPadding(new Insets(0,10,0,0));
+            statusLabel.setPadding(new Insets(0, 10, 0, 0));
+            scheduledItem = s;
         }
 
-        public void populateVideoRow(ScheduledItem currentVideoScheduledItem) {
+        public void populateVideoRow() {
             //we initialise statusLabel and actionButton
-            computeStatusLabelAndWatchButton(currentVideoScheduledItem);
+            computeStatusLabelAndWatchButton();
 
-            if(statusLabel!=null) {
+            if (statusLabel != null) {
                 gridPaneContainer.add(statusLabel, 1, currentRow[0]);
                 GridPane.setValignment(statusLabel, VPos.TOP);
             }
             // Name label
-            Label nameLabel = new Label(currentVideoScheduledItem.getParent().getName());
+            Label nameLabel = new Label(scheduledItem.getParent().getName());
             nameLabel.setWrapText(true);
             nameLabel.setPadding(new Insets(0, 10, 0, 0));
 
             // Handle expiration date
-            if (currentVideoScheduledItem.getExpirationDate() != null) {
-                String key = currentVideoScheduledItem.getExpirationDate().isAfter(LocalDateTime.now())
+            if (scheduledItem.getExpirationDate() != null) {
+                String key = scheduledItem.getExpirationDate().isAfter(LocalDateTime.now())
                     ? VideosI18nKeys.VideoAvailableUntil
                     : VideosI18nKeys.VideoExpiredOn;
 
                 Label expirationDateLabel = Bootstrap.small(Bootstrap.textDanger(I18nControls.newLabel(
                     key,
-                    currentVideoScheduledItem.getExpirationDate().format(DateTimeFormatter.ofPattern("d MMMM, uuuu ' - ' HH:mm"))
+                    scheduledItem.getExpirationDate().format(DateTimeFormatter.ofPattern("d MMMM, uuuu ' - ' HH:mm"))
                 )));
                 expirationDateLabel.setWrapText(true);
 
@@ -175,14 +188,14 @@ final class VideosDayScheduleView {
 
             // Time label
             Label timeLabel = new Label(
-                currentVideoScheduledItem.getParent().getTimeline().getStartTime().format(DateTimeFormatter.ofPattern("HH:mm")) + " - " +
-                    currentVideoScheduledItem.getParent().getTimeline().getEndTime().format(DateTimeFormatter.ofPattern("HH:mm"))
+                scheduledItem.getParent().getTimeline().getStartTime().format(DateTimeFormatter.ofPattern("HH:mm")) + " - " +
+                    scheduledItem.getParent().getTimeline().getEndTime().format(DateTimeFormatter.ofPattern("HH:mm"))
             );
             gridPaneContainer.add(timeLabel, 3, currentRow[0]);
             GridPane.setValignment(timeLabel, VPos.TOP);
 
             // Remarks label
-            Label remarkLabel = new Label(currentVideoScheduledItem.getComment());
+            Label remarkLabel = new Label(scheduledItem.getComment());
             remarkLabel.getStyleClass().add(Bootstrap.TEXT_INFO);
             remarkLabel.setWrapText(true);
             remarkLabel.setPadding(new Insets(0, 10, 0, 0));
@@ -191,10 +204,8 @@ final class VideosDayScheduleView {
             GridPane.setValignment(remarkLabel, VPos.TOP);
 
             // Button
-            if (actionButton != null) {
-                gridPaneContainer.add(actionButton, 5, currentRow[0]);
-                GridPane.setValignment(actionButton, VPos.TOP);
-            }
+            gridPaneContainer.add(actionButton, 5, currentRow[0]);
+            GridPane.setValignment(actionButton, VPos.TOP);
 
             // Separator
             Separator sessionSeparator = new Separator();
@@ -203,136 +214,156 @@ final class VideosDayScheduleView {
             currentRow[0] = currentRow[0] + 2;
         }
 
-        private void computeStatusLabelAndWatchButton(ScheduledItem currentVideo) {
+        private void computeStatusLabelAndWatchButton() {
 
             //THE STATE
-            LocalDateTime sessionStart = currentVideo.getDate().atTime(currentVideo.getParent().getTimeline().getStartTime());
-            LocalDateTime sessionEnd = currentVideo.getDate().atTime(currentVideo.getParent().getTimeline().getEndTime());
+            LocalDateTime sessionStart = scheduledItem.getDate().atTime(scheduledItem.getParent().getTimeline().getStartTime());
+            LocalDateTime sessionEnd = scheduledItem.getDate().atTime(scheduledItem.getParent().getTimeline().getEndTime());
+
+            // For now, we manage the case when the livestream link is unique for the whole event, which is the case with Castr, which is the platform we generally use
+            // TODO: manage the case when the livestream link is not global but per session, which happens on platform like youtube, etc.
+
+            //The live is currently playing, we display this 2 minutes before the beginning
+            if (LocalDateTime.now().isAfter(sessionStart.minusMinutes(2)) && LocalDateTime.now().isBefore(sessionEnd)) {
+                I18nControls.bindI18nProperties(statusLabel, I18nKeys.upperCase(VideosI18nKeys.LiveNow));
+                actionButton.setOnAction(e -> browsingHistory.push(LivestreamPlayerRouting.getLivestreamPath(scheduledItem.getEventId())));
+                actionButton.setVisible(true);
+                Duration duration = Duration.between(LocalDateTime.now(), sessionEnd);
+                if (duration.getSeconds() > 0)
+                    scheduleRefreshUI(duration.getSeconds());
+                return;
+            }
 
             //The session has not started yet
             if (LocalDateTime.now().isBefore(sessionStart)) {
-                Duration duration = Duration.between(LocalDateTime.now(),sessionStart);
+                Duration duration = Duration.between(LocalDateTime.now(), sessionStart);
 
                 //We display the countdown 3 hours before the session
-                if(duration.getSeconds()>0 && duration.getSeconds()< 3600*3) {
-                    // Format the output as HH:mm:ss
-                    I18nControls.bindI18nProperties(statusLabel,I18nKeys.upperCase(VideosI18nKeys.StartingIn),formatDuration(duration));
-                    scheduleRefreshUI(1,currentVideo);
+                if (duration.getSeconds() > 0 && duration.getSeconds() < 3600 * 3) {
+                    I18nControls.bindI18nProperties(statusLabel, I18nKeys.upperCase(VideosI18nKeys.StartingIn), formatDuration(duration));
+                    //We refresh every second
+                    scheduleRefreshUI(1);
                     //We display the play button 30 minutes before the session
-                    if(duration.getSeconds()< 60*30) {
-                        actionButton.setOnAction(e -> browsingHistory.push(LivestreamPlayerRouting.getLivestreamPath(currentVideo.getEventId())));
+                    if (duration.getSeconds() < 60 * 30) {
+                        actionButton.setOnAction(e -> browsingHistory.push(LivestreamPlayerRouting.getLivestreamPath(scheduledItem.getEventId())));
                         actionButton.setVisible(true);
                     } else {
                         hideActionButton();
                     }
-                    return;
-                }
-                else {
-                    I18nControls.bindI18nProperties(statusLabel,I18nKeys.upperCase(VideosI18nKeys.OnTime));
-                    scheduleRefreshUI(60,currentVideo);
+                } else {
+                    I18nControls.bindI18nProperties(statusLabel, I18nKeys.upperCase(VideosI18nKeys.OnTime));
+                    scheduleRefreshUI(60);
                     hideActionButton();
-                    return;
                 }
-            }
-
-                //The live is currently playing
-            if (LocalDateTime.now().isAfter(sessionStart) && LocalDateTime.now().isBefore(sessionEnd)) {
-                I18nControls.bindI18nProperties(statusLabel,I18nKeys.upperCase(VideosI18nKeys.LiveNow));
-                actionButton.setOnAction(e -> browsingHistory.push(LivestreamPlayerRouting.getLivestreamPath(currentVideo.getEventId())));
-                actionButton.setVisible(true);
-                Duration duration = Duration.between(LocalDateTime.now(),sessionEnd);
-                if (duration.getSeconds() > 0)
-                    scheduleRefreshUI(duration.getSeconds(),currentVideo);
                 return;
             }
 
             //Case of the video expired
-            LocalDateTime expirationDate = currentVideo.getEvent().getVodExpirationDate();
+            LocalDateTime expirationDate = scheduledItem.getEvent().getVodExpirationDate();
             //We look if the current video is expired
-            if (currentVideo.getExpirationDate() != null) {
-                expirationDate = currentVideo.getExpirationDate();
+            if (scheduledItem.getExpirationDate() != null) {
+                expirationDate = scheduledItem.getExpirationDate();
             }
             if (expirationDate != null && Times.isPast(expirationDate)) {
                 //TODO: when we know how we will manage the timezone, we adapt to take into account the different timezone
                 //TODO: when a push notification is sent we have to update this also.
-                I18nControls.bindI18nProperties(statusLabel,I18nKeys.upperCase(VideosI18nKeys.Expired));
+                I18nControls.bindI18nProperties(statusLabel, I18nKeys.upperCase(VideosI18nKeys.Expired));
                 hideActionButton();
                 return;
             }
 
             //The recording of the video has been published
-            if (Booleans.isTrue(currentVideo.getFieldValue(EventVideosWallActivity.VIDEO_SCHEDULED_ITEM_DYNAMIC_BOOLEAN_FIELD_HAS_PUBLISHED_MEDIAS))) {
-                I18nControls.bindI18nProperties(statusLabel,I18nKeys.upperCase(VideosI18nKeys.Available));
-                actionButton.setOnAction(e -> browsingHistory.push(SessionVideoPlayerRouting.getVideoOfSessionPath(currentVideo.getId())));
+            if (scheduledItem.isPublished()) {
+                I18nControls.bindI18nProperties(statusLabel, I18nKeys.upperCase(VideosI18nKeys.Available));
+                actionButton.setOnAction(e -> browsingHistory.push(SessionVideoPlayerRouting.getVideoOfSessionPath(scheduledItem.getId())));
                 actionButton.setVisible(true);
                 if (expirationDate != null) {
                     //We schedule a refresh so the UI is updated when the expirationDate is reached
                     Duration duration = Duration.between(LocalDateTime.now(), expirationDate);
                     if (duration.getSeconds() > 0) {
-                        scheduleRefreshUI(duration.getSeconds(),currentVideo);
+                        scheduleRefreshUI(duration.getSeconds());
                     }
                 }
                 return;
             }
 
-                //case of the video delayed: the video is delayed
-                if (currentVideo.isVodDelayed()) {
-                    I18nControls.bindI18nProperties(statusLabel,I18nKeys.upperCase(VideosI18nKeys.VideoDelayed));
+            //case of the video delayed: the video is delayed
+            if (scheduledItem.isVodDelayed()) {
+                I18nControls.bindI18nProperties(statusLabel, I18nKeys.upperCase(VideosI18nKeys.VideoDelayed));
+                hideActionButton();
+                scheduleRefreshUI(60);
+                return;
+            }
+
+            //The live has ended, we're waiting for the video to be published
+            if (!scheduledItem.isPublished()) {
+                //The default value of the processing time if this parameter has not been entered
+                int vodProcessingTimeMinute = getVodProcessingTimeMinute(scheduledItem);
+                if (LocalDateTime.now().isAfter(sessionEnd.plusMinutes(vodProcessingTimeMinute))) {
+                    I18nControls.bindI18nProperties(statusLabel, I18nKeys.upperCase(VideosI18nKeys.VideoDelayed));
                     hideActionButton();
-                    scheduleRefreshUI(60,currentVideo);
+                    //A push notification will tell us when the video recording will be available
                     return;
                 }
 
-                //The live has ended, we're waiting for the video to be published
-                if (Booleans.isNotTrue(currentVideo.getFieldValue(EventVideosWallActivity.VIDEO_SCHEDULED_ITEM_DYNAMIC_BOOLEAN_FIELD_HAS_PUBLISHED_MEDIAS))) {
-                    //The default value of the processing time if this parameter has not been entered
-                    int vodProcessingTimeMinute = getVodProcessingTimeMinute(currentVideo);
-                    if (LocalDateTime.now().isAfter(sessionEnd.plusMinutes(vodProcessingTimeMinute))) {
-                        I18nControls.bindI18nProperties(statusLabel,I18nKeys.upperCase(VideosI18nKeys.VideoDelayed));
-                        hideActionButton();
-                        scheduleRefreshUI(60,currentVideo);
-                        return;
-                    }
-
-                    I18nControls.bindI18nProperties(statusLabel,I18nKeys.upperCase(VideosI18nKeys.RecordingSoonAvailable));
-                    hideActionButton();
-
-                    //Duration duration = Duration.between(sessionEnd.plusMinutes(vodProcessingTimeMinute), LocalDateTime.now());
-//                    if (duration.getSeconds() > 0)
-                        scheduleRefreshUI(60,currentVideo);
-                    return;
-                }
+                I18nControls.bindI18nProperties(statusLabel, I18nKeys.upperCase(VideosI18nKeys.RecordingSoonAvailable));
+                hideActionButton();
+                //A push notification will tell us when the video recording will be available
+            }
         }
 
-        private void scheduleRefreshUI(long i,ScheduledItem si) {
-            long refreshTime = i*1000;
-            if(i>59) {
+        private void scheduleRefreshUI(long i) {
+            long refreshTime = i * 1000;
+            if (i > 59) {
                 //If we want to refresh more than 1 minutes, we add a second to make sure the calculation has time to proceed before the refresh
                 refreshTime = refreshTime + 1000;
             }
-            UiScheduler.scheduleDelay(refreshTime, () -> computeStatusLabelAndWatchButton(si));
-            }
+            UiScheduler.scheduleDelay(refreshTime, () -> computeStatusLabelAndWatchButton());
+        }
+
+        private void updateVODButton(Object e) {
+            MapAstObject message = (MapAstObject) e;
+            int updatedScheduledItemId = ((Short) message.get("id")).intValue();
+            String messageType = message.get("messageType");
+            boolean published = message.get("parameter");
+           if(Integer.valueOf(scheduledItem.getPrimaryKey().toString())==updatedScheduledItemId && "VIDEO_STATE_CHANGED".equals(messageType)) {
+                //Here we need to reload the datas from the database to display the button
+               EntityStore entityStore = EntityStore.create(dataSourceModel);
+               entityStore.executeQuery(
+                       new EntityStoreQuery("select date, expirationDate, event, vodDelayed, published, comment, parent.(name, date,timeline.(startTime, endTime), item.imageUrl)," +
+                           " exists(select Media where scheduledItem=si) as " + EventVideosWallActivity.VIDEO_SCHEDULED_ITEM_DYNAMIC_BOOLEAN_FIELD_HAS_PUBLISHED_MEDIAS +
+                           " from ScheduledItem si where si.id=?" + "and online and exists(select Attendance where scheduledItem=si and documentLine.(!cancelled and document.(event= ? and person=? and price_balance<=0)))" +
+                           " order by date, parent.timeline.startTime",
+                           new Object[]{updatedScheduledItemId, scheduledItem.getEvent(), FXUserPersonId.getUserPersonId()}))
+                   .onFailure(Console::log)
+                   .onSuccess(entityList ->
+                       Platform.runLater(() -> {
+                           ScheduledItem si = (ScheduledItem) entityList.get(0);
+                           scheduledItem = si;
+                           computeStatusLabelAndWatchButton();
+                   }));
+           }
+        }
 
         private void hideActionButton() {
-            if(actionButton!=null) {
-                actionButton.setVisible(false);
-                actionButton.setOnAction(null);
-            }
+            actionButton.setVisible(false);
+            actionButton.setOnAction(null);
         }
 
         private int getVodProcessingTimeMinute(ScheduledItem currentVideo) {
             int vodProcessingTimeMinute = 60;
-            if(currentVideo.getEvent().getVodProcessingTimeMinutes()!=null)
+            if (currentVideo.getEvent().getVodProcessingTimeMinutes() != null)
                 vodProcessingTimeMinute = currentVideo.getEvent().getVodProcessingTimeMinutes();
             return vodProcessingTimeMinute;
         }
     }
+
     private static String formatDuration(Duration duration) {
         if (duration == null)
             return "xx:xx";
         int hours = (int) duration.toHours();
         int minutes = ((int) duration.toMinutes()) % 60;
         int seconds = ((int) duration.toSeconds()) % 60;
-        return (hours < 10 ? "0" : "") +  hours + ":" + (minutes < 10 ? "0" : "") + minutes + ":" + (seconds < 10 ? "0" : "") + seconds;
+        return (hours < 10 ? "0" : "") + hours + ":" + (minutes < 10 ? "0" : "") + minutes + ":" + (seconds < 10 ? "0" : "") + seconds;
     }
 }
