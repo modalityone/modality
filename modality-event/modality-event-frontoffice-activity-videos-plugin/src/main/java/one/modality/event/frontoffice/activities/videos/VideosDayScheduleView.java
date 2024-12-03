@@ -1,7 +1,7 @@
 package one.modality.event.frontoffice.activities.videos;
 
 import dev.webfx.extras.styles.bootstrap.Bootstrap;
-import dev.webfx.platform.ast.spi.factory.impl.generic.MapAstObject;
+import dev.webfx.platform.ast.ReadOnlyAstObject;
 import dev.webfx.platform.console.Console;
 import dev.webfx.platform.uischeduler.UiScheduler;
 import dev.webfx.platform.util.time.Times;
@@ -322,10 +322,9 @@ final class VideosDayScheduleView {
         }
 
         private void updateVODButton(Object e) {
-            MapAstObject message = (MapAstObject) e;
+            ReadOnlyAstObject message = (ReadOnlyAstObject) e;
             int updatedScheduledItemId = ((Short) message.get("id")).intValue();
             String messageType = message.get("messageType");
-            boolean published = message.get("parameter");
            if(Integer.valueOf(scheduledItem.getPrimaryKey().toString())==updatedScheduledItemId && "VIDEO_STATE_CHANGED".equals(messageType)) {
                 //Here we need to reload the datas from the database to display the button
                EntityStore entityStore = EntityStore.create(dataSourceModel);
