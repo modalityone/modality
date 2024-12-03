@@ -1,13 +1,13 @@
 // File managed by WebFX (DO NOT EDIT MANUALLY)
 package one.modality.base.backoffice.activities.home;
 
-public interface HomeI18nKeys {
+public interface BackOfficeHomeI18nKeys {
 
     String Home = "Home";
     String Kitchen = "Kitchen";
     String UserAccount = "UserAccount";
     String Reception = "Reception";
-    String Medias = "Medias";
+    String TranslationAndRecordings = "TranslationAndRecordings";
     String Cafe = "Cafe";
     String BookingsAndSearch = "BookingsAndSearch";
     String Admin = "Admin";
@@ -24,7 +24,6 @@ public interface HomeI18nKeys {
     String HumanResources = "HumanResources";
     String Accommodation = "Accommodation";
     String Extras = "Extras";
-    String TranslationAndRecordings = "TranslationAndRecordings";
     String RecurringClasses = "RecurringClasses";
     String EventsPlanner = "EventsPlanner";
 

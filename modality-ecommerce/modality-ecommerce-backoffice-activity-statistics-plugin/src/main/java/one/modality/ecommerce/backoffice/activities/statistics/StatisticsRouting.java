@@ -11,7 +11,7 @@ import dev.webfx.stack.routing.uirouter.impl.UiRouteImpl;
 import dev.webfx.stack.routing.uirouter.operations.RoutePushRequest;
 import dev.webfx.stack.routing.uirouter.operations.RouteRequestEmitter;
 import dev.webfx.stack.ui.operation.HasOperationCode;
-import one.modality.base.backoffice.activities.home.HomeI18nKeys;
+import one.modality.base.backoffice.activities.home.BackOfficeHomeI18nKeys;
 import one.modality.base.client.util.routing.ModalityRoutingUtil;
 
 /**
@@ -59,7 +59,7 @@ public final class StatisticsRouting {
 
         @Override
         public Object getI18nKey() {
-            return HomeI18nKeys.FinancesAndStats;
+            return BackOfficeHomeI18nKeys.FinancesAndStats;
         }
     }
 

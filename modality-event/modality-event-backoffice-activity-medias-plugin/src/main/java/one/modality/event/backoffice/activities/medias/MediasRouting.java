@@ -1,6 +1,7 @@
 package one.modality.event.backoffice.activities.medias;
 
 import dev.webfx.platform.windowhistory.spi.BrowsingHistory;
+import dev.webfx.stack.i18n.HasI18nKey;
 import dev.webfx.stack.orm.domainmodel.activity.viewdomain.impl.ViewDomainActivityContextFinal;
 import dev.webfx.stack.routing.router.auth.authz.RouteRequest;
 import dev.webfx.stack.routing.uirouter.UiRoute;
@@ -9,6 +10,7 @@ import dev.webfx.stack.routing.uirouter.impl.UiRouteImpl;
 import dev.webfx.stack.routing.uirouter.operations.RoutePushRequest;
 import dev.webfx.stack.routing.uirouter.operations.RouteRequestEmitter;
 import dev.webfx.stack.ui.operation.HasOperationCode;
+import one.modality.base.backoffice.activities.home.BackOfficeHomeI18nKeys;
 
 public final class MediasRouting {
 
@@ -34,7 +36,7 @@ public final class MediasRouting {
         }
     }
 
-    public static final class RouteToMediasRequest extends RoutePushRequest implements HasOperationCode {
+    public static final class RouteToMediasRequest extends RoutePushRequest implements HasOperationCode, HasI18nKey {
 
         public RouteToMediasRequest(BrowsingHistory browsingHistory) {
             super(getPath(), browsingHistory);
@@ -43,6 +45,11 @@ public final class MediasRouting {
         @Override
         public Object getOperationCode() {
             return OPERATION_CODE;
+        }
+
+        @Override
+        public Object getI18nKey() {
+            return BackOfficeHomeI18nKeys.TranslationAndRecordings;
         }
     }
 

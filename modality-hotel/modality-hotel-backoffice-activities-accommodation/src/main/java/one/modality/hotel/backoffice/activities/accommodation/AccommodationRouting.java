@@ -11,7 +11,7 @@ import dev.webfx.stack.routing.uirouter.impl.UiRouteImpl;
 import dev.webfx.stack.routing.uirouter.operations.RoutePushRequest;
 import dev.webfx.stack.routing.uirouter.operations.RouteRequestEmitter;
 import dev.webfx.stack.ui.operation.HasOperationCode;
-import one.modality.base.backoffice.activities.home.HomeI18nKeys;
+import one.modality.base.backoffice.activities.home.BackOfficeHomeI18nKeys;
 
 /**
  * @author Bruno Salmon
@@ -53,7 +53,7 @@ public final class AccommodationRouting {
 
         @Override
         public Object getI18nKey() {
-            return HomeI18nKeys.Accommodation;
+            return BackOfficeHomeI18nKeys.Accommodation;
         }
     }
 

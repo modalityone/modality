@@ -4,8 +4,8 @@
     <description>The back-office Home page that displays activities as browsable tiles (only the authorized ones are displayed).</description>
 
     <providers>
-        <provider interface="dev.webfx.stack.routing.uirouter.UiRoute">one.modality.base.backoffice.activities.home.HomeRouting$HomeUiRoute</provider>
-        <provider interface="dev.webfx.stack.routing.uirouter.operations.RouteRequestEmitter">one.modality.base.backoffice.activities.home.HomeRouting$RouteToHomeRequestEmitter</provider>
+        <provider interface="dev.webfx.stack.routing.uirouter.UiRoute">one.modality.base.backoffice.activities.home.BackOfficeHomeRouting$HomeUiRoute</provider>
+        <provider interface="dev.webfx.stack.routing.uirouter.operations.RouteRequestEmitter">one.modality.base.backoffice.activities.home.BackOfficeHomeRouting$RouteToHomeRequestEmitter</provider>
     </providers>
 
     <exported-packages>
@@ -18,6 +18,6 @@
         </used-by-source-modules>
     </dependencies>
 
-    <i18n javaKeysClass="one.modality.base.backoffice.activities.home.HomeI18nKeys"/>
+    <i18n javaKeysClass="one.modality.base.backoffice.activities.home.BackOfficeHomeI18nKeys"/>
 
 </project>

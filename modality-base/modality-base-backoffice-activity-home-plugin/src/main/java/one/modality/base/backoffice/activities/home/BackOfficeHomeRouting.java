@@ -15,7 +15,7 @@ import dev.webfx.stack.ui.operation.HasOperationCode;
 /**
  * @author Bruno Salmon
  */
-public final class HomeRouting {
+public final class BackOfficeHomeRouting {
 
     private final static String PATH = "/home";
     private final static String OPERATION_CODE = "RouteToHome";
@@ -31,9 +31,9 @@ public final class HomeRouting {
         }
 
         public static UiRoute<?> uiRoute() {
-            return UiRoute.createRegex(PathBuilder.toRegexPath(HomeRouting.getPath())
+            return UiRoute.createRegex(PathBuilder.toRegexPath(BackOfficeHomeRouting.getPath())
                     , true
-                    , HomeActivity::new
+                    , BackOfficeHomeActivity::new
                     , ViewDomainActivityContextFinal::new
             );
         }
@@ -52,7 +52,7 @@ public final class HomeRouting {
 
         @Override
         public Object getI18nKey() {
-            return HomeI18nKeys.Home;
+            return BackOfficeHomeI18nKeys.Home;
         }
 
     }

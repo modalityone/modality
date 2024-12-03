@@ -27,7 +27,7 @@ import java.util.Collection;
 /**
  * @author Bruno Salmon
  */
-final class HomeActivity extends ViewDomainActivityBase
+final class BackOfficeHomeActivity extends ViewDomainActivityBase
         implements UiRouteActivityContextMixin<ViewDomainActivityContextFinal>,
         ModalityButtonFactoryMixin,
         OperationActionFactoryMixin {

@@ -6,6 +6,7 @@ module modality.event.backoffice.activity.program.plugin {
     requires javafx.base;
     requires javafx.controls;
     requires javafx.graphics;
+    requires modality.base.backoffice.activity.home.plugin;
     requires modality.base.backoffice.mainframe.fx;
     requires modality.base.client.icons;
     requires modality.base.client.mainframe.fx;

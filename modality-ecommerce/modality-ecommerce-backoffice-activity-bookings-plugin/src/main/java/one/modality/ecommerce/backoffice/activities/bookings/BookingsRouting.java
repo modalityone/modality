@@ -12,7 +12,7 @@ import dev.webfx.stack.routing.uirouter.operations.RoutePushRequest;
 import dev.webfx.stack.routing.uirouter.operations.RouteRequestEmitter;
 import dev.webfx.stack.ui.operation.HasOperationCode;
 import one.modality.base.client.util.routing.ModalityRoutingUtil;
-import one.modality.base.backoffice.activities.home.HomeI18nKeys;
+import one.modality.base.backoffice.activities.home.BackOfficeHomeI18nKeys;
 
 import java.time.LocalDate;
 
@@ -73,7 +73,7 @@ public final class BookingsRouting {
 
         @Override
         public Object getI18nKey() {
-            return HomeI18nKeys.BookingsAndSearch;
+            return BackOfficeHomeI18nKeys.BookingsAndSearch;
         }
     }
 
