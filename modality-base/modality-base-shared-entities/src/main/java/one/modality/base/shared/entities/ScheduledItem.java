@@ -30,6 +30,18 @@ public interface ScheduledItem extends Entity,
         return getForeignEntity("parent");
     }
 
+    default void setBookableScheduledItem(Object bookableScheduledItem) {
+        setForeignField("bookableScheduledItem", bookableScheduledItem);
+    }
+
+    default EntityId getBookableScheduledItemId() {
+        return getForeignEntityId("bookableScheduledItem");
+    }
+
+    default ScheduledItem getBookableScheduledItem() {
+        return getForeignEntity("bookableScheduledItem");
+    }
+
     default void setTimeLine(Object timeline) {
         setForeignField("timeline", timeline);
     }
