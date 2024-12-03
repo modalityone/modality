@@ -9,13 +9,16 @@ module modality.event.backoffice.activity.medias.plugin {
     requires javafx.media;
     requires modality.base.backoffice.activity.home.plugin;
     requires modality.base.backoffice.mainframe.fx;
+    requires modality.base.client.cloudinary;
     requires modality.base.client.i18n;
     requires modality.base.client.icons;
+    requires modality.base.client.messaging;
     requires modality.base.client.tile;
     requires modality.base.client.util;
     requires modality.base.client.validation;
     requires modality.base.shared.entities;
     requires modality.event.client.event.fx;
+    requires webfx.extras.filepicker;
     requires webfx.extras.panes;
     requires webfx.extras.styles.bootstrap;
     requires webfx.extras.switches;
@@ -24,7 +27,9 @@ module modality.event.backoffice.activity.medias.plugin {
     requires webfx.extras.util.masterslave;
     requires webfx.extras.webtext;
     requires webfx.kit.util;
+    requires webfx.platform.ast;
     requires webfx.platform.console;
+    requires webfx.platform.file;
     requires webfx.platform.util;
     requires webfx.platform.windowhistory;
     requires webfx.stack.i18n;

@@ -60,7 +60,7 @@ import java.util.stream.Collectors;
  */
 final class EventVideosWallActivity extends ViewDomainActivityBase {
 
-    static final String VIDEO_SCHEDULED_ITEM_DYNAMIC_BOOLEAN_FIELD_HAS_PUBLISHED_MEDIAS = "hasPublishedMedias";
+    public static final String VIDEO_SCHEDULED_ITEM_DYNAMIC_BOOLEAN_FIELD_HAS_PUBLISHED_MEDIAS = "hasPublishedMedias";
 
     private final ObjectProperty<Object> pathEventIdProperty = new SimpleObjectProperty<>();
 
@@ -104,8 +104,8 @@ final class EventVideosWallActivity extends ViewDomainActivityBase {
                                              " from Event" +
                                              " where id=? limit 1",
                             new Object[]{eventId}),
-                        new EntityStoreQuery("select date, expirationDate, event, vodDelayed, comment, parent.(name, date,timeline.(startTime, endTime), item.imageUrl)," +
-                                             " exists(select Media where scheduledItem=si and published) as " + VIDEO_SCHEDULED_ITEM_DYNAMIC_BOOLEAN_FIELD_HAS_PUBLISHED_MEDIAS +
+                        new EntityStoreQuery("select date, expirationDate, event, vodDelayed, published, comment, parent.(name, date,timeline.(startTime, endTime), item.imageUrl)," +
+                                             " exists(select Media where scheduledItem=si) as " + VIDEO_SCHEDULED_ITEM_DYNAMIC_BOOLEAN_FIELD_HAS_PUBLISHED_MEDIAS +
                                              " from ScheduledItem si" +
                                              " where item.family.code=? and online and exists(select Attendance where scheduledItem=si and documentLine.(!cancelled and document.(event= ? and person=? and price_balance<=0)))" +
                                              " order by date, parent.timeline.startTime",
@@ -273,7 +273,7 @@ final class EventVideosWallActivity extends ViewDomainActivityBase {
                     currentDayScheduleVBox.setVisible(true);
                     currentDayScheduleVBox.setManaged(true);
                     // Passing the day, the videos of that day, and the history (for backward navigation)
-                    currentDayScheduleVBox.getChildren().setAll(scheduleForTodayTitleLabel, new VideosDayScheduleView(day, dayScheduledVideos, getHistory(),true).getView());
+                    currentDayScheduleVBox.getChildren().setAll(scheduleForTodayTitleLabel, new VideosDayScheduleView(day, dayScheduledVideos, getHistory(),true,getDataSourceModel()).getView());
                     });
 
         }, videoScheduledItems,eventProperty);
@@ -318,7 +318,7 @@ final class EventVideosWallActivity extends ViewDomainActivityBase {
             .forEach((day, dayScheduledVideos) -> {
                 videosDayScheduleViews.add(
                         // Passing the day, the videos of that day, and the history (for backward navigation)
-                        new VideosDayScheduleView(day, dayScheduledVideos, getHistory(),isFirst[0]));
+                        new VideosDayScheduleView(day, dayScheduledVideos, getHistory(),isFirst[0], getDataSourceModel()));
 
                 Button dateButton;
                 dateButton = Bootstrap.primaryButton(new Button(day.format(dateFormatter)));
@@ -326,7 +326,7 @@ final class EventVideosWallActivity extends ViewDomainActivityBase {
                 correspondanceDateButton.put(day,dateButton);
                 dateButton.setOnAction(e-> {
                     videosDayScheduleViews.clear();
-                    videosDayScheduleViews.add(new VideosDayScheduleView(day, dayScheduledVideos, getHistory(),true));
+                    videosDayScheduleViews.add(new VideosDayScheduleView(day, dayScheduledVideos, getHistory(),true, getDataSourceModel()));
                     currentDaySelectedProperty.set(day);
                 });
                 daysColumnPane.getChildren().add(dateButton);

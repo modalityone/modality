@@ -15,7 +15,7 @@ final class MediasActivity extends ViewDomainActivityBase implements ButtonFacto
 
     private final RecordingsView recordingsView = new RecordingsView(this);
     private final LiveStreamingView liveStreamingView = new LiveStreamingView(this);
-    private final VideoView VideoView = new VideoView(this);
+    private final VideoView VideoView = new VideoView();
 
     private final BorderPane container = new BorderPane();
     private final TabsBar<Node> headerTabsBar = new TabsBar<>(this, this::changeTabSelection);

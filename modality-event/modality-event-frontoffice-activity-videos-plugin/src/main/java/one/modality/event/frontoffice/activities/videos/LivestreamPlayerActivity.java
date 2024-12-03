@@ -8,7 +8,6 @@ import dev.webfx.kit.util.properties.FXProperties;
 import dev.webfx.platform.console.Console;
 import dev.webfx.platform.util.Numbers;
 import dev.webfx.stack.orm.domainmodel.activity.viewdomain.impl.ViewDomainActivityBase;
-import dev.webfx.stack.orm.entity.EntityId;
 import dev.webfx.stack.orm.entity.EntityStore;
 import dev.webfx.stack.orm.entity.EntityStoreQuery;
 import javafx.application.Platform;
@@ -32,7 +31,7 @@ final class LivestreamPlayerActivity extends ViewDomainActivityBase {
 
     private final Label sessionTitleLabel = Bootstrap.h2(Bootstrap.strong(new Label()));
     private final MultiPlayer sessionVideoPlayer = AllPlayers.createAllVideoPlayer();
-    private final SimpleObjectProperty<String> livestreamUrlProperty = new SimpleObjectProperty<String>();
+    private final SimpleObjectProperty<String> livestreamUrlProperty = new SimpleObjectProperty<>();
     @Override
     protected void updateModelFromContextParameters() {
         eventIdProperty.set(Numbers.toInteger(getParameter(LivestreamPlayerRouting.EVENT_ID_PARAMETER_NAME)));
@@ -44,7 +43,7 @@ final class LivestreamPlayerActivity extends ViewDomainActivityBase {
         EntityStore entityStore = EntityStore.create(getDataSourceModel()); // Activity datasource model is available at this point
         FXProperties.runNowAndOnPropertiesChange(() -> {
             Object eventId = eventIdProperty.get();
-            EntityId userPersonId = FXUserPersonId.getUserPersonId();
+           // EntityId userPersonId = FXUserPersonId.getUserPersonId();
                 //TODO add the verification to check if the person is registered for this event and has pay.
                 entityStore.executeQuery(
                         new EntityStoreQuery("select name,livestreamUrl" +
@@ -54,7 +53,7 @@ final class LivestreamPlayerActivity extends ViewDomainActivityBase {
                     .onFailure(Console::log)
                     .onSuccess(entity -> Platform.runLater(() -> {
                         if(!entity.isEmpty())
-                        livestreamUrlProperty.set(((Event) entity.get(0)).getLivestreamUrl());
+                            livestreamUrlProperty.set(((Event) entity.get(0)).getLivestreamUrl());
                     }));
 
         }, eventIdProperty, FXUserPersonId.userPersonIdProperty());

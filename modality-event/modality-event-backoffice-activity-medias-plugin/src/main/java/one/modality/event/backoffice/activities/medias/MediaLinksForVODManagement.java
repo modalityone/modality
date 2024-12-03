@@ -6,9 +6,13 @@ import dev.webfx.extras.switches.Switch;
 import dev.webfx.extras.theme.text.TextTheme;
 import dev.webfx.kit.util.properties.FXProperties;
 import dev.webfx.kit.util.properties.ObservableLists;
+import dev.webfx.platform.ast.AST;
+import dev.webfx.platform.ast.AstObject;
 import dev.webfx.platform.console.Console;
+import dev.webfx.platform.util.tuples.Pair;
 import dev.webfx.stack.i18n.I18n;
 import dev.webfx.stack.i18n.controls.I18nControls;
+import dev.webfx.stack.orm.entity.EntityId;
 import dev.webfx.stack.orm.entity.EntityStore;
 import dev.webfx.stack.orm.entity.UpdateStore;
 import javafx.application.Platform;
@@ -28,13 +32,16 @@ import javafx.scene.paint.Color;
 import javafx.scene.shape.SVGPath;
 import one.modality.base.client.i18n.ModalityI18nKeys;
 import one.modality.base.client.icons.SvgIcons;
+import one.modality.base.client.messaging.ModalityMessaging;
 import one.modality.base.shared.entities.*;
 
+import java.net.URL;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeParseException;
+import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -162,9 +169,10 @@ public class MediaLinksForVODManagement extends MediaLinksManagement {
 
                 noLinkLabel.visibleProperty().bind(Bindings.isEmpty(mediaList));
 
+                Switch publishedSwitch = new Switch();
                 // Bind the children of mediasListVBox to mediaList
                 ObservableLists.bindConverted(mediasListVBox.getChildren(), mediaList, media -> {
-                    HBox mediaNode = drawMediaLinkContainer(media, mediaList, localUpdateStore);
+                    HBox mediaNode = drawMediaLinkContainer(media, mediaList, localUpdateStore,publishedSwitch);
                     mediaNode.setUserData(media);// Set user data for removal reference
                     return mediaNode;
                 });
@@ -217,10 +225,12 @@ public class MediaLinksForVODManagement extends MediaLinksManagement {
                 HBox.setHgrow(spacer, Priority.ALWAYS);
 
                 Label publishedLabel = I18nControls.newLabel(MediasI18nKeys.VODPublished);
-                Switch publishedSwitch = new Switch();
+
+                publishedSwitch.setSelected(workingCurrentVideoScheduledItem.isPublished());
                 publishedSwitch.selectedProperty().addListener(observable -> {
                     //Here we update all the media
-                    mediaList.forEach(media -> media.setPublished(publishedSwitch.isSelected()));
+                    workingCurrentVideoScheduledItem.setPublished(publishedSwitch.selectedProperty().get());
+                    //We remove the published value if delay is selected
                     if (publishedSwitch.selectedProperty().get())
                         publicationDelayedSwitch.selectedProperty().setValue(false);
                 });
@@ -233,9 +243,15 @@ public class MediaLinksForVODManagement extends MediaLinksManagement {
                         publishedSwitch.selectedProperty().setValue(false);
                 });
 
-
                 HBox VODPublisheddHBox = new HBox(10, publishedLabel, publishedSwitch);
                 VODPublisheddHBox.visibleProperty().bind(Bindings.isEmpty(mediaList).not());
+                // Add a listener to mediaList to handle empty state
+                mediaList.addListener((ListChangeListener<Object>) change -> {
+                    if (mediaList.isEmpty()) {
+                        workingCurrentVideoScheduledItem.setPublished(false);
+                        publishedSwitch.setSelected(false); // Ensure the switch reflects the updated value
+                    }
+                });
 
                 HBox publicationInfoHBox = new HBox(VODPublicationDelayeddHBox, spacer, VODPublisheddHBox);
                 publicationInfoHBox.setMaxWidth(URL_TEXT_FIELD_WITH);
@@ -252,9 +268,7 @@ public class MediaLinksForVODManagement extends MediaLinksManagement {
                 commentTextField.setMaxWidth(URL_TEXT_FIELD_WITH);
                 if (workingCurrentVideoScheduledItem.getComment() != null)
                     commentTextField.setText(workingCurrentVideoScheduledItem.getComment());
-                commentTextField.textProperty().addListener(observable -> {
-                    workingCurrentVideoScheduledItem.setComment(commentTextField.getText());
-                });
+                commentTextField.textProperty().addListener(observable -> workingCurrentVideoScheduledItem.setComment(commentTextField.getText()));
 
                 HBox customContentAvailableUntilHBox = new HBox();
                 customContentAvailableUntilHBox.setPadding(new Insets(20, 0, 0, 0));
@@ -305,7 +319,7 @@ public class MediaLinksForVODManagement extends MediaLinksManagement {
                         // Combine the date and time to create LocalDateTime
                         LocalDateTime availableUntil = LocalDateTime.of(date, time);
                         workingCurrentVideoScheduledItem.setExpirationDate(availableUntil);
-                    } catch (DateTimeParseException e) {
+                    } catch (DateTimeParseException ignored) {
                     }
                 });
 
@@ -316,7 +330,7 @@ public class MediaLinksForVODManagement extends MediaLinksManagement {
                         // Combine the date and time to create LocalDateTime
                         LocalDateTime availableUntil = LocalDateTime.of(date, time);
                         workingCurrentVideoScheduledItem.setExpirationDate(availableUntil);
-                    } catch (DateTimeParseException e) {
+                    } catch (DateTimeParseException ignored) {
                     }
                 });
 
@@ -351,10 +365,29 @@ public class MediaLinksForVODManagement extends MediaLinksManagement {
                     }
 
                     if (validationSupport.isValid()) {
+                        //First we look which scheduledItem have been updated and we put in a list, with the published status that will be used
+                        //to notify the frond end that those sheduledItem have been published or unpublished
+                        List<Pair<ScheduledItem, Boolean>> siListUpdated = new ArrayList<>();
+                        if(localUpdateStore.getEntityChanges().getInsertedUpdatedEntityResult()!=null) {
+                            for (EntityId entity : localUpdateStore.getEntityChanges().getInsertedUpdatedEntityResult().getEntityIds()) {
+                                if("ScheduledItem".equals(entity.getDomainClass().getName())) {
+                                    ScheduledItem si = localUpdateStore.getEntity(entity);
+                                    siListUpdated.add(new Pair<>(si,si.isPublished()));
+                                }
+                            }
+                        }
                         localUpdateStore.submitChanges()
                             .onFailure(Console::log)
                             .onSuccess(x -> {
                                 Console.log(x);
+                                //if the media has been published, we notify the front office client
+                                for (Pair<ScheduledItem,Boolean> currentPair : siListUpdated) {
+                                    AstObject message = AST.createObject();
+                                    message.set("messageType","VIDEO_STATE_CHANGED");
+                                    message.set("id",currentPair.get1().getPrimaryKey());
+                                    message.set("parameter",currentPair.get2());
+                                    ModalityMessaging.publishFrontOfficeMessage(message);
+                                }
                                 Platform.runLater(this::resetUpdateStoreAndOtherComponents);
                             });
                     }
@@ -377,7 +410,7 @@ public class MediaLinksForVODManagement extends MediaLinksManagement {
             return container;
         }
 
-        private HBox drawMediaLinkContainer(Media currentMedia, ObservableList<Media> mediaList, UpdateStore localUpdateStore) {
+        private HBox drawMediaLinkContainer(Media currentMedia, ObservableList<Media> mediaList, UpdateStore localUpdateStore,Switch publishSwitch) {
             HBox hBoxToReturn = new HBox();
             hBoxToReturn.setSpacing(20);
 
@@ -390,7 +423,13 @@ public class MediaLinksForVODManagement extends MediaLinksManagement {
             validationSupport.addUrlValidation(linkTextField, linkTextField, I18n.getI18nText(MediasI18nKeys.MalformedUrl));
 
             // We update the value of the media according to the text field
-            linkTextField.textProperty().addListener(observable -> currentMedia.setUrl(linkTextField.getText()));
+            linkTextField.textProperty().addListener((observable, oldValue, newValue) -> {
+                assert currentMedia != null : "media should be not null";
+                currentMedia.setUrl(newValue); // Update the URL of the current media
+                // Mark as not published if URL is invalid
+                currentMedia.getScheduledItem().setPublished(isValidURL(newValue));
+                publishSwitch.setSelected(isValidURL(newValue));
+            });
 
             hBoxToReturn.getChildren().add(linkTextField);
 
@@ -404,6 +443,15 @@ public class MediaLinksForVODManagement extends MediaLinksManagement {
             hBoxToReturn.getChildren().add(removeButton);
 
             return hBoxToReturn;
+        }
+
+        public boolean isValidURL(String url) {
+            try {
+                new URL(url); // Try creating a URL object
+                return true;  // If no exception, it's a valid URL
+            } catch (Exception e) {
+                return false; // If exception, it's not a valid URL
+            }
         }
     }
 }

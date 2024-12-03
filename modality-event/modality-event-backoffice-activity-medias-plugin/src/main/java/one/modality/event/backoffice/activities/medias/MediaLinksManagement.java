@@ -74,7 +74,7 @@ public abstract class MediaLinksManagement {
 
     private void reinitialiseRecordingsMediasReadFromDatabase() {
         entityStore.<Media>executeQuery(
-                new EntityStoreQuery("select url, scheduledItem.parent, scheduledItem.name, scheduledItem.parent.name, scheduledItem.item, scheduledItem.date, published, scheduledItem.item.code from Media where scheduledItem.event= ? and scheduledItem.item.code = ?", new Object[]{FXEvent.getEvent(), currentItemCode}))
+                new EntityStoreQuery("select url, scheduledItem.parent, scheduledItem.name, scheduledItem.parent.name, scheduledItem.item, scheduledItem.date, scheduledItem.published, scheduledItem.item.code from Media where scheduledItem.event= ? and scheduledItem.item.code = ?", new Object[]{FXEvent.getEvent(), currentItemCode}))
             .onFailure(Console::log)
             .onSuccess(mediasList -> Platform.runLater(() -> {
                 recordingsMediasReadFromDatabase.setAll(mediasList);
@@ -160,7 +160,6 @@ public abstract class MediaLinksManagement {
             Media mediaToBeUpdatedOnSaveButton = null;
 
             for (ScheduledItem currentScheduledItem : filteredListForCurrentDay) {
-
                 /* Here we create the line for each teaching **/
                 HBox currentLine = new HBox();
                 currentLine.setPadding(new Insets(20, 20, 20, 40));
@@ -209,7 +208,7 @@ public abstract class MediaLinksManagement {
                 if (!mediaList.isEmpty()) {
                     currentMedia.add(mediaList.get(0));
                     publishedInfo.setVisible(true);
-                    publishedSwitch.setSelected(currentMedia.get(0).isPublished());
+                    publishedSwitch.setSelected(currentMedia.get(0).getScheduledItem().isPublished());
                     linkTextField.setText(currentMedia.get(0).getUrl());
                     if (currentMedia.get(0).getDurationMillis() != null) {
                         durationTextField.setText(String.valueOf(currentMedia.get(0).getDurationMillis() / 1000));
@@ -266,7 +265,10 @@ public abstract class MediaLinksManagement {
 
 
                 //currentMedia is necessarily not empty here.
-                FXProperties.runOnPropertyChange(published -> currentMedia.get(0).setPublished(published), publishedSwitch.selectedProperty());
+                FXProperties.runOnPropertyChange(published -> {
+                    ScheduledItem scheduledItem = updateStore.updateEntity(currentMedia.get(0).getScheduledItem());
+                    scheduledItem.setPublished(published);
+                }, publishedSwitch.selectedProperty());
                 Region anotherSpacer = new Region();
                 HBox.setHgrow(anotherSpacer, Priority.ALWAYS);
 

@@ -39,5 +39,6 @@ public interface MediasI18nKeys {
     String ExactDuration = "ExactDuration";
     String RetrieveDuration = "RetrieveDuration";
     String DurationShouldBeAtLeast60s = "DurationShouldBeAtLeast60s";
+    String Upload = "Upload";
 
 }

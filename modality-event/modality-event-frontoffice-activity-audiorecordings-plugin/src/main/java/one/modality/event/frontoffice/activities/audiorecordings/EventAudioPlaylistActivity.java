@@ -103,14 +103,14 @@ final class EventAudioPlaylistActivity extends ViewDomainActivityBase {
                                              " from Event" +
                                              " where id=? limit 1",
                             new Object[]{eventId}),
-                        new EntityStoreQuery("select date, parent.(name, timeline.(startTime, endTime)), event" +
+                        new EntityStoreQuery("select date, parent.(name, timeline.(startTime, endTime)), published, event" +
                                              " from ScheduledItem si" +
                                              " where event=? and item.family.code=? and item.code=? and exists(select Attendance where scheduledItem=si and documentLine.(!cancelled and document.(person=? and price_balance<=0)))" +
                                              " order by date",
                             new Object[]{eventId, KnownItemFamily.AUDIO_RECORDING.getCode(), pathItemCodeProperty.get(), userPersonId}),
-                        new EntityStoreQuery("select url, scheduledItem.(date, event), published, durationMillis" +
+                        new EntityStoreQuery("select url, scheduledItem.(date, event), scheduledItem.published, durationMillis" +
                                              " from Media" +
-                                             " where scheduledItem.(event=? and item.code=? and online) and published",
+                                             " where scheduledItem.(event=? and item.code=? and online) and scheduledItem.published",
                             new Object[]{eventId, pathItemCodeProperty.get()}))
                     .onFailure(Console::log)
                     .onSuccess(entityLists -> Platform.runLater(() -> {
