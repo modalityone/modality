@@ -78,4 +78,12 @@ public interface ScheduledItem extends Entity,
         return getBooleanFieldValue("vodDelayed");
     }
 
+    default void setPublished(Boolean published) {
+        setFieldValue("published", published);
+    }
+
+    default Boolean isPublished() {
+        return getBooleanFieldValue("published");
+    }
+
 }

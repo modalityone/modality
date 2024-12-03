@@ -53,14 +53,6 @@ public interface Media extends Entity {
         return getBooleanFieldValue("multilang");
     }
 
-    default void setPublished(Boolean published) {
-        setFieldValue("published", published);
-    }
-
-    default Boolean isPublished() {
-        return getBooleanFieldValue("published");
-    }
-
     default void setOrd(Integer ord) {
         setFieldValue("ord", ord);
     }
