@@ -32,6 +32,7 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
+import java.util.Objects;
 
 /**
  * @author Bruno Salmon
@@ -52,7 +53,6 @@ final class VideosDayScheduleView {
         this.dataSourceModel = dataSourceModel;
         buildUi(displayHeader);
     }
-
 
 
     Region getView() {
@@ -90,8 +90,8 @@ final class VideosDayScheduleView {
 
         // Use the inner class to populate the grid
         dayScheduledVideos.forEach((s) -> {
-            VideoSchedulePopulator populator = new VideoSchedulePopulator(currentRow,s);
-            ModalityMessaging.addFrontOfficeMessageBodyHandler(e->populator.updateVODButton(e));
+            VideoSchedulePopulator populator = new VideoSchedulePopulator(currentRow, s);
+            ModalityMessaging.addFrontOfficeMessageBodyHandler(e -> populator.updateVODButton(e));
             populator.populateVideoRow();
         });
         gridPaneContainer.setAlignment(Pos.CENTER);
@@ -189,7 +189,7 @@ final class VideosDayScheduleView {
             // Time label
             Label timeLabel = new Label(
                 scheduledItem.getParent().getTimeline().getStartTime().format(DateTimeFormatter.ofPattern("HH:mm")) + " - " +
-                    scheduledItem.getParent().getTimeline().getEndTime().format(DateTimeFormatter.ofPattern("HH:mm"))
+                scheduledItem.getParent().getTimeline().getEndTime().format(DateTimeFormatter.ofPattern("HH:mm"))
             );
             gridPaneContainer.add(timeLabel, 3, currentRow[0]);
             GridPane.setValignment(timeLabel, VPos.TOP);
@@ -323,25 +323,25 @@ final class VideosDayScheduleView {
 
         private void updateVODButton(Object e) {
             ReadOnlyAstObject message = (ReadOnlyAstObject) e;
-            int updatedScheduledItemId = ((Short) message.get("id")).intValue();
+            Object updatedScheduledItemId = message.get("id");
             String messageType = message.get("messageType");
-           if(Integer.valueOf(scheduledItem.getPrimaryKey().toString())==updatedScheduledItemId && "VIDEO_STATE_CHANGED".equals(messageType)) {
+            if (Objects.equals(scheduledItem.getPrimaryKey(), updatedScheduledItemId) && "VIDEO_STATE_CHANGED".equals(messageType)) {
                 //Here we need to reload the datas from the database to display the button
-               EntityStore entityStore = EntityStore.create(dataSourceModel);
-               entityStore.executeQuery(
-                       new EntityStoreQuery("select date, expirationDate, event, vodDelayed, published, comment, parent.(name, date,timeline.(startTime, endTime), item.imageUrl)," +
-                           " exists(select Media where scheduledItem=si) as " + EventVideosWallActivity.VIDEO_SCHEDULED_ITEM_DYNAMIC_BOOLEAN_FIELD_HAS_PUBLISHED_MEDIAS +
-                           " from ScheduledItem si where si.id=?" + "and online and exists(select Attendance where scheduledItem=si and documentLine.(!cancelled and document.(event= ? and person=? and price_balance<=0)))" +
-                           " order by date, parent.timeline.startTime",
-                           new Object[]{updatedScheduledItemId, scheduledItem.getEvent(), FXUserPersonId.getUserPersonId()}))
-                   .onFailure(Console::log)
-                   .onSuccess(entityList ->
-                       Platform.runLater(() -> {
-                           ScheduledItem si = (ScheduledItem) entityList.get(0);
-                           scheduledItem = si;
-                           computeStatusLabelAndWatchButton();
-                   }));
-           }
+                EntityStore entityStore = EntityStore.create(dataSourceModel);
+                entityStore.executeQuery(
+                        new EntityStoreQuery("select date, expirationDate, event, vodDelayed, published, comment, parent.(name, date,timeline.(startTime, endTime), item.imageUrl)," +
+                                             " exists(select Media where scheduledItem=si) as " + EventVideosWallActivity.VIDEO_SCHEDULED_ITEM_DYNAMIC_BOOLEAN_FIELD_HAS_PUBLISHED_MEDIAS +
+                                             " from ScheduledItem si where si.id=?" + "and online and exists(select Attendance where scheduledItem=si and documentLine.(!cancelled and document.(event= ? and person=? and price_balance<=0)))" +
+                                             " order by date, parent.timeline.startTime",
+                            new Object[]{updatedScheduledItemId, scheduledItem.getEvent(), FXUserPersonId.getUserPersonId()}))
+                    .onFailure(Console::log)
+                    .onSuccess(entityList ->
+                        Platform.runLater(() -> {
+                            ScheduledItem si = (ScheduledItem) entityList.get(0);
+                            scheduledItem = si;
+                            computeStatusLabelAndWatchButton();
+                        }));
+            }
         }
 
         private void hideActionButton() {
