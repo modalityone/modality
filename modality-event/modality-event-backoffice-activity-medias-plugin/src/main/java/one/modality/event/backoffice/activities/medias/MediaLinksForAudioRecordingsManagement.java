@@ -7,6 +7,7 @@ import dev.webfx.extras.switches.Switch;
 import dev.webfx.extras.theme.shape.ShapeTheme;
 import dev.webfx.platform.console.Console;
 import dev.webfx.platform.file.File;
+import dev.webfx.platform.uischeduler.UiScheduler;
 import dev.webfx.stack.i18n.controls.I18nControls;
 import dev.webfx.stack.orm.entity.EntityStore;
 import dev.webfx.stack.orm.entity.UpdateStore;
@@ -178,14 +179,9 @@ public class MediaLinksForAudioRecordingsManagement extends MediaLinksManagement
                             Console.log(ev);
                             Platform.runLater(()->indicator.setVisible(false));
                         })
-                    .onSuccess(evt-> Platform.runLater(() -> {
+                    .onSuccess(evt-> UiScheduler.scheduleDelay(2000, () -> {
                         //We wait for 2 second (if we don't wait, the picture doesn't change below, probably because
                         //cloudinary server didn't have enough time to delete the old/proceed the old and new picture
-                        try {
-                            Thread.sleep(2000);
-                        } catch (InterruptedException ex) {
-                            throw new RuntimeException(ex);
-                        }
                         ref.trashImage.setVisible(true);
                         Image image = modalityCloudinary.getImage(eventId, (int) (imageView.getFitWidth() * zoomFactor), -1);
                         imageView.setImage(image);

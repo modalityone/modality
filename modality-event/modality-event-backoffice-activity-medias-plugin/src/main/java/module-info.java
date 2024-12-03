@@ -30,7 +30,6 @@ module modality.event.backoffice.activity.medias.plugin {
     requires webfx.platform.ast;
     requires webfx.platform.console;
     requires webfx.platform.file;
-    requires webfx.platform.util;
     requires webfx.platform.windowhistory;
     requires webfx.stack.i18n;
     requires webfx.stack.i18n.controls;
@@ -42,6 +41,7 @@ module modality.event.backoffice.activity.medias.plugin {
     requires webfx.stack.routing.uirouter;
     requires webfx.stack.ui.controls;
     requires webfx.stack.ui.operation;
+    requires webfx.platform.uischeduler;
 
     // Exported packages
     exports one.modality.event.backoffice.activities.medias;
