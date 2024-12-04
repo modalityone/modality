@@ -341,10 +341,9 @@ public final class ModalityBackOfficeMainFrameActivity extends ModalityClientMai
         Text pendingCountText = createStatusText(null);
         ProgressIndicator pendingIndicator = ControlUtil.createProgressIndicator(16);
         Timeline[] pendingFadeTimeline = { new Timeline() };
-        FXProperties.runNowAndOnPropertyChange(() -> UiScheduler.runInUiThread(() -> {
-            int pendingCalls = PendingBusCall.pendingCallsCountProperty().getValue();
-            pendingCountText.setText("" + pendingCalls);
-            if (pendingCalls > 0) {
+        PendingBusCall.addPendingCallsCountHandler(pendingCallsCount -> UiScheduler.runInUiThread(() -> {
+            pendingCountText.setText("" + pendingCallsCount);
+            if (pendingCallsCount > 0) {
                 pendingIndicator.setProgress(ProgressIndicator.INDETERMINATE_PROGRESS);
                 pendingFadeTimeline[0].stop();
                 pendingIndicator.setOpacity(1);
@@ -352,7 +351,7 @@ public final class ModalityBackOfficeMainFrameActivity extends ModalityClientMai
                 pendingFadeTimeline[0] = Animations.animateProperty(pendingIndicator.opacityProperty(), 0, Duration.seconds(2));
                 pendingFadeTimeline[0].setOnFinished(e -> pendingIndicator.setProgress(0));
             }
-        }), PendingBusCall.pendingCallsCountProperty());
+        }));
         StackPane pendingPane = new StackPane(pendingIndicator, pendingCountText);
         statusBar.getChildren().addAll(LayoutUtil.createHSpace(10), pendingText, pendingPane);
 
