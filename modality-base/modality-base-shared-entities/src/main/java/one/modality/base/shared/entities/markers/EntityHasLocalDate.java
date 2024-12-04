@@ -9,14 +9,15 @@ import java.time.LocalDate;
  */
 public interface EntityHasLocalDate extends Entity, HasLocalDate {
 
+    String date = "date";
+
     @Override
-    default void setDate(LocalDate date) {
-        setFieldValue("date", date);
+    default void setDate(LocalDate value) {
+        setFieldValue(date, value);
     }
 
     @Override
     default LocalDate getDate() {
-        return getLocalDateFieldValue("date");
+        return getLocalDateFieldValue(date);
     }
-
 }

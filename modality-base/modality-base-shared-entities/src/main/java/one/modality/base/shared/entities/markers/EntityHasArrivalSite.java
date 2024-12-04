@@ -9,20 +9,20 @@ import dev.webfx.stack.orm.entity.EntityId;
  */
 public interface EntityHasArrivalSite extends Entity, HasArrivalSite {
 
+    String arrivalSite = "arrivalSite";
+
     @Override
-    default void setArrivalSite(Object arrivalSite) {
-        setForeignField("arrivalSite", arrivalSite);
+    default void setArrivalSite(Object value) {
+        setForeignField(arrivalSite, value);
     }
 
     @Override
     default EntityId getArrivalSiteId() {
-        return getForeignEntityId("arrivalSite");
+        return getForeignEntityId(arrivalSite);
     }
 
     @Override
     default Site getArrivalSite() {
-        return getForeignEntity("arrivalSite");
+        return getForeignEntity(arrivalSite);
     }
-
-
 }

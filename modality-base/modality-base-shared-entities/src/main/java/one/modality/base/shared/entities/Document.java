@@ -10,109 +10,120 @@ import one.modality.base.shared.entities.markers.EntityHasPersonalDetailsCopy;
  * @author Bruno Salmon
  */
 public interface Document extends
-        EntityHasEvent,
-        EntityHasCancelled,
-        EntityHasPerson,
-        EntityHasPersonalDetailsCopy {
+    EntityHasEvent,
+    EntityHasCancelled,
+    EntityHasPerson,
+    EntityHasPersonalDetailsCopy {
+    String ref = "ref";
+    String cart = "cart";
+    String priceNet = "price_net";
+    String priceDeposit = "price_deposit";
+    String priceMinDeposit = "price_minDeposit";
+    String confirmed = "confirmed";
+    String arrived = "arrived";
+    String read = "read";
+    String willPay = "willPay";
+    String passReady = "passReady";
+    String flagged = "flagged";
+    String personFacilityFee = "person_facilityFee";
 
-    default void setRef(Integer ref) {
-        setFieldValue("ref", ref);
+    default void setRef(Integer value) {
+        setFieldValue(ref, value);
     }
 
     default Integer getRef() {
-        return getIntegerFieldValue("ref");
+        return getIntegerFieldValue(ref);
     }
 
-    default void setCart(Object cart) {
-        setForeignField("cart", cart);
+    default void setCart(Object value) {
+        setForeignField(cart, value);
     }
 
     default EntityId getCartId() {
-        return getForeignEntityId("cart");
+        return getForeignEntityId(cart);
     }
 
     default Cart getCart() {
-        return getForeignEntity("cart");
+        return getForeignEntity(cart);
     }
 
-    default void setPriceNet(Integer priceNet) {
-        setFieldValue("price_net", priceNet);
+    default void setPriceNet(Integer value) {
+        setFieldValue(priceNet, value);
     }
 
     default Integer getPriceNet() {
-        return getIntegerFieldValue("price_net");
+        return getIntegerFieldValue(priceNet);
     }
 
-    default void setPriceDeposit(Integer priceDeposit) {
-        setFieldValue("price_deposit", priceDeposit);
+    default void setPriceDeposit(Integer value) {
+        setFieldValue(priceDeposit, value);
     }
 
     default Integer getPriceDeposit() {
-        return getIntegerFieldValue("price_deposit");
+        return getIntegerFieldValue(priceDeposit);
     }
 
-    default void setPriceMinDeposit(Integer priceMinDeposit) {
-        setFieldValue("price_minDeposit", priceMinDeposit);
+    default void setPriceMinDeposit(Integer value) {
+        setFieldValue(priceMinDeposit, value);
     }
 
     default Integer getPriceMinDeposit() {
-        return getIntegerFieldValue("price_minDeposit");
+        return getIntegerFieldValue(priceMinDeposit);
     }
 
-    default void setConfirmed(Boolean confirmed) {
-        setFieldValue("confirmed", confirmed);
+    default void setConfirmed(Boolean value) {
+        setFieldValue(confirmed, value);
     }
 
     default Boolean isConfirmed() {
-        return getBooleanFieldValue("confirmed");
+        return getBooleanFieldValue(confirmed);
     }
 
-    default void setArrived(Boolean arrived) {
-        setFieldValue("arrived", arrived);
+    default void setArrived(Boolean value) {
+        setFieldValue(arrived, value);
     }
 
     default Boolean isArrived() {
-        return getBooleanFieldValue("arrived");
+        return getBooleanFieldValue(arrived);
     }
 
-    default void setRead(Boolean read) {
-        setFieldValue("read", read);
+    default void setRead(Boolean value) {
+        setFieldValue(read, value);
     }
 
     default Boolean isRead() {
-        return getBooleanFieldValue("read");
+        return getBooleanFieldValue(read);
     }
 
-    default void setWillPay(Boolean willPay) {
-        setFieldValue("willPay", willPay);
+    default void setWillPay(Boolean value) {
+        setFieldValue(willPay, value);
     }
 
     default Boolean isWillPay() {
-        return getBooleanFieldValue("willPay");
+        return getBooleanFieldValue(willPay);
     }
 
-    default void setPassReady(Boolean passReady) {
-        setFieldValue("passReady", passReady);
+    default void setPassReady(Boolean value) {
+        setFieldValue(passReady, value);
     }
 
     default Boolean isPassReady() {
-        return getBooleanFieldValue("passReady");
+        return getBooleanFieldValue(passReady);
     }
 
-    default void setFlagged(Boolean flagged) {
-        setFieldValue("flagged", flagged);
+    default void setFlagged(Boolean value) {
+        setFieldValue(flagged, value);
     }
 
     default Boolean isFlagged() {
-        return getBooleanFieldValue("flagged");
+        return getBooleanFieldValue(flagged);
     }
 
-    default void setPersonFacilityFee(Boolean personFacilityFee) {
-        setFieldValue("person_facilityFee", personFacilityFee);
+    default void setPersonFacilityFee(Boolean value) {
+        setFieldValue(personFacilityFee, value);
     }
 
     default Boolean isPersonFacilityFee() {
-        return getBooleanFieldValue("person_facilityFee");
+        return getBooleanFieldValue(personFacilityFee);
     }
-
 }

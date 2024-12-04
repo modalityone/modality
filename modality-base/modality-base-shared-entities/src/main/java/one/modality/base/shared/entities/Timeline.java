@@ -15,44 +15,48 @@ public interface Timeline extends Entity,
     EntityHasEvent,
     EntityHasStartAndEndTime {
 
-    default void setDayTemplate(Object dayTemplate) {
-        setForeignField("dayTemplate", dayTemplate);
+    String dayTemplate = "dayTemplate";
+    String audioOffered = "audioOffered";
+    String videoOffered = "videoOffered";
+    String eventTimeline = "eventTimeline";
+
+    default void setDayTemplate(Object value) {
+        setForeignField(dayTemplate, value);
     }
 
     default EntityId getDayTemplateId() {
-        return getForeignEntityId("dayTemplate");
+        return getForeignEntityId(dayTemplate);
     }
 
     default DayTemplate getDayTemplate() {
-        return getForeignEntity("dayTemplate");
+        return getForeignEntity(dayTemplate);
     }
 
-    default void setAudioOffered(Boolean audioOffered) {
-        setFieldValue("audioOffered", audioOffered);
+    default void setAudioOffered(Boolean value) {
+        setFieldValue(audioOffered, value);
     }
 
     default Boolean isAudioOffered() {
-        return getBooleanFieldValue("audioOffered");
+        return getBooleanFieldValue(audioOffered);
     }
 
-    default void setVideoOffered(Boolean videoOffered) {
-        setFieldValue("videoOffered", videoOffered);
+    default void setVideoOffered(Boolean value) {
+        setFieldValue(videoOffered, value);
     }
 
     default Boolean isVideoOffered() {
-        return getBooleanFieldValue("videoOffered");
+        return getBooleanFieldValue(videoOffered);
     }
 
-    default void setEventTimeline(Object eventTimeline) {
-        setForeignField("eventTimeline", eventTimeline);
+    default void setEventTimeline(Object value) {
+        setForeignField(eventTimeline, value);
     }
 
     default EntityId getEventTimelineId() {
-        return getForeignEntityId("eventTimeline");
+        return getForeignEntityId(eventTimeline);
     }
 
     default Timeline getEventTimeline() {
-        return getForeignEntity("eventTimeline");
+        return getForeignEntity(eventTimeline);
     }
-
 }

@@ -7,13 +7,15 @@ import dev.webfx.stack.orm.entity.Entity;
  */
 public interface EntityHasName extends Entity, HasName {
 
+    String name = "name";
+
     @Override
-    default void setName(String name) {
-        setFieldValue("name", name);
+    default void setName(String value) {
+        setFieldValue(name, value);
     }
 
     @Override
     default String getName() {
-        return getStringFieldValue("name");
+        return getStringFieldValue(name);
     }
 }

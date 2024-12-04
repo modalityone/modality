@@ -1,65 +1,74 @@
 package one.modality.base.shared.entities;
 
 import dev.webfx.stack.orm.entity.EntityId;
-import one.modality.base.shared.entities.markers.*;
+import one.modality.base.shared.entities.markers.EntityHasCountry;
+import one.modality.base.shared.entities.markers.EntityHasIcon;
+import one.modality.base.shared.entities.markers.EntityHasLabel;
+import one.modality.base.shared.entities.markers.EntityHasName;
 
 /**
  * @author Bruno Salmon
  */
 public interface Organization extends
-        EntityHasName,
-        EntityHasLabel,
-        EntityHasIcon,
-        EntityHasCountry {
+    EntityHasName,
+    EntityHasLabel,
+    EntityHasIcon,
+    EntityHasCountry {
 
-    default void setClosed(boolean closed) { setFieldValue("closed", closed); }
+    String closed = "closed";
+    String type = "type";
+    String kdmCenter = "kdmCenter";
+    String latitude = "latitude";
+    String longitude = "longitude";
+    String importIssue = "importIssue";
 
-    default void setType(Object type) {
-        setForeignField("type", type);
+    default void setClosed(boolean value) { setFieldValue(closed, value); }
+
+    default void setType(Object value) {
+        setForeignField(type, value);
     }
 
     default EntityId getTypeId() {
-        return getForeignEntityId("type");
+        return getForeignEntityId(type);
     }
 
     default OrganizationType getType() {
-        return getForeignEntity("type");
+        return getForeignEntity(type);
     }
 
-    default void setKdmCenter(Object kdmCenter) {
-        setForeignField("kdmCenter", kdmCenter);
+    default void setKdmCenter(Object value) {
+        setForeignField(kdmCenter, value);
     }
 
     default EntityId getKdmCenterId() {
-        return getForeignEntityId("kdmCenter");
+        return getForeignEntityId(kdmCenter);
     }
 
     default KdmCenter getKdmCenter() {
-        return getForeignEntity("kdmCenter");
+        return getForeignEntity(kdmCenter);
     }
 
     default Float getLatitude() {
-        return getFloatFieldValue("latitude");
+        return getFloatFieldValue(latitude);
     }
 
-    default void setLatitude(Float latitude) {
-        setFieldValue("latitude", latitude);
+    default void setLatitude(Float value) {
+        setFieldValue(latitude, value);
     }
 
     default Float getLongitude() {
-        return getFloatFieldValue("longitude");
+        return getFloatFieldValue(longitude);
     }
 
-    default void setLongitude(Float longitude) {
-        setFieldValue("longitude", longitude);
+    default void setLongitude(Float value) {
+        setFieldValue(longitude, value);
     }
 
-    default void setImportIssue(String importIssue) {
-        setFieldValue("importIssue", importIssue);
+    default void setImportIssue(String value) {
+        setFieldValue(importIssue, value);
     }
 
     default String getImportIssue() {
-        return getStringFieldValue("importIssue");
+        return getStringFieldValue(importIssue);
     }
-
 }

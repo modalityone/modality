@@ -9,19 +9,22 @@ import one.modality.base.shared.entities.Country;
  */
 public interface EntityHasCountry extends Entity, HasCountry {
 
+    // Replace string literals with static constants
+    String country = "country";
+
     @Override
-    default void setCountry(Object country) {
-        setForeignField("country", country);
+    default void setCountry(Object value) { // Use consistent parameter naming
+        setForeignField(country, value);
     }
 
     @Override
     default EntityId getCountryId() {
-        return getForeignEntityId("country");
+        return getForeignEntityId(country);
     }
 
     @Override
     default Country getCountry() {
-        return getForeignEntity("country");
+        return getForeignEntity(country);
     }
 
 }

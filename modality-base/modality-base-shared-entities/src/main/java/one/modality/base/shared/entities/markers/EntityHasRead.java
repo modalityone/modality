@@ -7,14 +7,15 @@ import dev.webfx.stack.orm.entity.Entity;
  */
 public interface EntityHasRead extends Entity, HasRead {
 
+    String read = "read";
+
     @Override
-    default void setRead(Boolean read) {
-        setFieldValue("read", read);
+    default void setRead(Boolean value) {
+        setFieldValue(read, value);
     }
 
     @Override
     default Boolean isRead() {
-        return getBooleanFieldValue("read");
+        return getBooleanFieldValue(read);
     }
-
 }

@@ -10,127 +10,140 @@ import java.time.LocalDateTime;
  * @author Bruno Salmon
  */
 public interface MoneyTransfer extends
-        EntityHasDocument,
-        EntityHasIcon {
+    EntityHasDocument,
+    EntityHasIcon {
 
-    default void setAmount(Integer amount) {
-        setFieldValue("amount", amount);
+    String amount = "amount";
+    String method = "method";
+    String parent = "parent";
+    String spread = "spread";
+    String date = "date";
+    String pending = "pending";
+    String successful = "successful";
+    String fromMoneyAccount = "fromMoneyAccount";
+    String toMoneyAccount = "toMoneyAccount";
+    String transactionRef = "transactionRef";
+    String status = "status";
+    String gatewayResponse = "gatewayResponse";
+    String comment = "comment";
+
+    default void setAmount(Integer value) {
+        setFieldValue(amount, value);
     }
 
     default Integer getAmount() {
-        return getIntegerFieldValue("amount");
+        return getIntegerFieldValue(amount);
     }
 
-    default void setMethod(Object method) {
-        setForeignField("method", method);
+    default void setMethod(Object value) {
+        setForeignField(method, value);
     }
 
     default EntityId getMethodId() {
-        return getForeignEntityId("method");
+        return getForeignEntityId(method);
     }
 
     default Method getMethod() {
-        return getForeignEntity("method");
+        return getForeignEntity(method);
     }
 
-    default void setParent(Object parent) {
-        setForeignField("parent", parent);
+    default void setParent(Object value) {
+        setForeignField(parent, value);
     }
 
     default EntityId getParentId() {
-        return getForeignEntityId("parent");
+        return getForeignEntityId(parent);
     }
 
     default MoneyTransfer getParent() {
-        return getForeignEntity("parent");
+        return getForeignEntity(parent);
     }
 
-    default void setSpread(Boolean spread) {
-        setFieldValue("spread", spread);
+    default void setSpread(Boolean value) {
+        setFieldValue(spread, value);
     }
 
     default Boolean isSpread() {
-        return getBooleanFieldValue("spread");
+        return getBooleanFieldValue(spread);
     }
 
-    default void setDate(LocalDateTime date) {
-        setFieldValue("date", date);
+    default void setDate(LocalDateTime value) {
+        setFieldValue(date, value);
     }
 
     default LocalDateTime getDate() {
-        return getLocalDateTimeFieldValue("date");
+        return getLocalDateTimeFieldValue(date);
     }
 
-    default void setPending(Boolean pending) {
-        setFieldValue("pending", pending);
+    default void setPending(Boolean value) {
+        setFieldValue(pending, value);
     }
 
     default Boolean isPending() {
-        return getBooleanFieldValue("pending");
+        return getBooleanFieldValue(pending);
     }
 
-    default void setSuccessful(Boolean successful) {
-        setFieldValue("successful", successful);
+    default void setSuccessful(Boolean value) {
+        setFieldValue(successful, value);
     }
 
     default Boolean isSuccessful() {
-        return getBooleanFieldValue("successful");
+        return getBooleanFieldValue(successful);
     }
 
-    default void setFromMoneyAccount(Object parent) {
-        setForeignField("fromMoneyAccount", parent);
+    default void setFromMoneyAccount(Object value) {
+        setForeignField(fromMoneyAccount, value);
     }
 
     default EntityId getFromMoneyAccountId() {
-        return getForeignEntityId("fromMoneyAccount");
+        return getForeignEntityId(fromMoneyAccount);
     }
 
     default MoneyAccount getFromMoneyAccount() {
-        return getForeignEntity("fromMoneyAccount");
+        return getForeignEntity(fromMoneyAccount);
     }
 
-    default void setToMoneyAccount(Object parent) {
-        setForeignField("toMoneyAccount", parent);
+    default void setToMoneyAccount(Object value) {
+        setForeignField(toMoneyAccount, value);
     }
 
     default EntityId getToMoneyAccountId() {
-        return getForeignEntityId("toMoneyAccount");
+        return getForeignEntityId(toMoneyAccount);
     }
 
     default MoneyAccount getToMoneyAccount() {
-        return getForeignEntity("toMoneyAccount");
+        return getForeignEntity(toMoneyAccount);
     }
 
-    default void setTransactionRef(String transactionRef) {
-        setFieldValue("transactionRef", transactionRef);
+    default void setTransactionRef(String value) {
+        setFieldValue(transactionRef, value);
     }
 
     default String getTransactionRef() {
-        return getStringFieldValue("transactionRef");
+        return getStringFieldValue(transactionRef);
     }
 
-    default void setStatus(String status) {
-        setFieldValue("status", status);
+    default void setStatus(String value) {
+        setFieldValue(status, value);
     }
 
     default String getStatus() {
-        return getStringFieldValue("status");
+        return getStringFieldValue(status);
     }
 
-    default void setGatewayResponse(String gatewayResponse) {
-        setFieldValue("gatewayResponse", gatewayResponse);
+    default void setGatewayResponse(String value) {
+        setFieldValue(gatewayResponse, value);
     }
 
     default String getGatewayResponse() {
-        return getStringFieldValue("gatewayResponse");
+        return getStringFieldValue(gatewayResponse);
     }
 
-    default void setComment(String comment) {
-        setFieldValue("comment", comment);
+    default void setComment(String value) {
+        setFieldValue(comment, value);
     }
 
     default String getComment() {
-        return getStringFieldValue("comment");
+        return getStringFieldValue(comment);
     }
-
 }

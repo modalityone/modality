@@ -5,69 +5,76 @@ import dev.webfx.stack.orm.entity.Entity;
 import java.time.LocalDate;
 
 public interface Book extends Entity {
+    String lang = "lang";
+    String title = "title";
+    String description = "description";
+    String publishDate = "publishDate";
+    String imageUrl = "imageUrl";
+    String orderUrl = "orderUrl";
+    String freeUrl = "freeUrl";
+    String ord = "ord";
 
-    default void setLang(String lang) {
-        setFieldValue("lang", lang);
+    default void setLang(String value) {
+        setFieldValue(lang, value);
     }
 
     default String getLang() {
-        return getStringFieldValue("lang");
+        return getStringFieldValue(lang);
     }
 
-    default void setTitle(String title) {
-        setFieldValue("title", title);
+    default void setTitle(String value) {
+        setFieldValue(title, value);
     }
 
     default String getTitle() {
-        return getStringFieldValue("title");
+        return getStringFieldValue(title);
     }
 
-    default void setDescription(String description) {
-        setFieldValue("description", description);
+    default void setDescription(String value) {
+        setFieldValue(description, value);
     }
 
     default String getDescription() {
-        return getStringFieldValue("description");
+        return getStringFieldValue(description);
     }
 
-    default void setPublishDate(LocalDate publishDate) {
-        setFieldValue("publishDate", publishDate);
+    default void setPublishDate(LocalDate value) {
+        setFieldValue(publishDate, value);
     }
 
     default LocalDate getPublishDate() {
-        return getLocalDateFieldValue("publishDate");
+        return getLocalDateFieldValue(publishDate);
     }
 
-    default void setImageUrl(String imageUrl) {
-        setFieldValue("imageUrl", imageUrl);
+    default void setImageUrl(String value) {
+        setFieldValue(imageUrl, value);
     }
 
     default String getImageUrl() {
-        return getStringFieldValue("imageUrl");
+        return getStringFieldValue(imageUrl);
     }
 
-    default void setOrderUrl(String orderUrl) {
-        setFieldValue("orderUrl", orderUrl);
+    default void setOrderUrl(String value) {
+        setFieldValue(orderUrl, value);
     }
 
     default String getOrderUrl() {
-        return getStringFieldValue("orderUrl");
+        return getStringFieldValue(orderUrl);
     }
 
-    default void setFreeUrl(String url) {
-        setFieldValue("freeUrl", url);
+    default void setFreeUrl(String value) {
+        setFieldValue(freeUrl, value);
     }
 
     default String getFreeUrl() {
-        return getStringFieldValue("freeUrl");
+        return getStringFieldValue(freeUrl);
     }
 
-    default void setOrd(Integer ord) {
-        setFieldValue("ord", ord);
+    default void setOrd(Integer value) {
+        setFieldValue(ord, value);
     }
 
     default Integer getOrd() {
-        return getIntegerFieldValue("ord");
+        return getIntegerFieldValue(ord);
     }
-
 }

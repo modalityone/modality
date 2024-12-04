@@ -9,14 +9,15 @@ import java.time.LocalTime;
  */
 public interface EntityHasEndTime extends Entity, HasEndTime {
 
+    String endTime = "endTime";
+
     @Override
     default LocalTime getEndTime() {
-        return (LocalTime) getFieldValue("endTime");
+        return (LocalTime) getFieldValue(endTime);
     }
 
     @Override
-    default void setEndTime(LocalTime endTime) {
-        setFieldValue("endTime", endTime);
+    default void setEndTime(LocalTime value) {
+        setFieldValue(endTime, value);
     }
-
 }

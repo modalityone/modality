@@ -7,14 +7,16 @@ import dev.webfx.stack.orm.entity.Entity;
  */
 public interface EntityHasWistiaVideoId extends Entity, HasWistiaVideoId {
 
+    String wistiaVideoId = "wistiaVideoId";
+
     @Override
-    default void setWistiaVideoId(String wistiaVideoId) {
-        setFieldValue("wistiaVideoId", wistiaVideoId);
+    default void setWistiaVideoId(String value) {
+        setFieldValue(wistiaVideoId, value);
     }
 
     @Override
     default String getWistiaVideoId() {
-        return getStringFieldValue("wistiaVideoId");
+        return getStringFieldValue(wistiaVideoId);
     }
 
 }

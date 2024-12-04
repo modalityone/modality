@@ -9,19 +9,20 @@ import one.modality.base.shared.entities.Channel;
  */
 public interface EntityHasChannel extends Entity, HasChannel {
 
+    String channel = "channel";
+
     @Override
-    default void setChannel(Object channel) {
-        setForeignField("channel", channel);
+    default void setChannel(Object value) {
+        setForeignField(channel, value);
     }
 
     @Override
     default EntityId getChannelId() {
-        return getForeignEntityId("channel");
+        return getForeignEntityId(channel);
     }
 
     @Override
     default Channel getChannel() {
-        return getForeignEntity("channel");
+        return getForeignEntity(channel);
     }
-
 }

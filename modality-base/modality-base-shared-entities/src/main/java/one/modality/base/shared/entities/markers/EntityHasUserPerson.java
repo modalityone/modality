@@ -9,19 +9,20 @@ import one.modality.base.shared.entities.Person;
  */
 public interface EntityHasUserPerson extends Entity, HasUserPerson {
 
+    String userPerson = "userPerson";
+
     @Override
-    default void setUserPerson(Object person) {
-        setForeignField("userPerson", person);
+    default void setUserPerson(Object value) {
+        setForeignField(userPerson, value);
     }
 
     @Override
     default EntityId getUserPersonId() {
-        return getForeignEntityId("userPerson");
+        return getForeignEntityId(userPerson);
     }
 
     @Override
     default Person getUserPerson() {
-        return getForeignEntity("userPerson");
+        return getForeignEntity(userPerson);
     }
-
 }

@@ -9,19 +9,20 @@ import one.modality.base.shared.entities.ResourceConfiguration;
  */
 public interface EntityHasResourceConfiguration extends Entity, HasResourceConfiguration {
 
+    String resourceConfiguration = "resourceConfiguration";
+
     @Override
-    default void setResourceConfiguration(Object resourceConfiguration) {
-        setForeignField("resourceConfiguration", resourceConfiguration);
+    default void setResourceConfiguration(Object value) {
+        setForeignField(resourceConfiguration, value);
     }
 
     @Override
     default EntityId getResourceConfigurationId() {
-        return getForeignEntityId("resourceConfiguration");
+        return getForeignEntityId(resourceConfiguration);
     }
 
     @Override
     default ResourceConfiguration getResourceConfiguration() {
-        return getForeignEntity("resourceConfiguration");
+        return getForeignEntity(resourceConfiguration);
     }
-
 }

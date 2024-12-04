@@ -10,20 +10,22 @@ import java.time.LocalDate;
  */
 public interface SiteItemFamily extends EntityHasSite, EntityHasItemFamily {
 
-    default void setScheduledEndDate(LocalDate date) {
-        setFieldValue("scheduledEndDate", date);
+    String scheduledEndDate = "scheduledEndDate";
+    String autoRelease = "autoRelease";
+
+    default void setScheduledEndDate(LocalDate value) {
+        setFieldValue(scheduledEndDate, value);
     }
 
     default LocalDate getScheduledEndDate() {
-        return getLocalDateFieldValue("scheduledEndDate");
+        return getLocalDateFieldValue(scheduledEndDate);
     }
 
-    default void setAutoRelease(Boolean autoRelease) {
-        setFieldValue("autoRelease", autoRelease);
+    default void setAutoRelease(Boolean value) {
+        setFieldValue(autoRelease, value);
     }
 
     default Boolean isAutoRelease() {
-        return getBooleanFieldValue("autoRelease");
+        return getBooleanFieldValue(autoRelease);
     }
-
 }
