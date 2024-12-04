@@ -289,4 +289,8 @@ public interface Rate extends
     default void setFacilityFeeDiscount(Integer value) {
         setFieldValue(facilityFee_discount, value);
     }
+
+    default Integer getFacilityFeeDiscount() {
+        return getIntegerFieldValue(facilityFee_discount);
+    }
 }
