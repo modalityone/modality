@@ -888,6 +888,9 @@
     <!--========================< webfx-stack-orm-entity-controls >=========================-->
     <source path="dev/webfx/stack/orm/entity/controls/entity/selector"/>
     <source path="dev/webfx/stack/orm/entity/controls/entity/sheet"/>
+    <!--========================< webfx-stack-orm-entity-messaging >========================-->
+    <source path="dev/webfx/stack/orm/entity/messaging"/>
+    <source path="dev/webfx/stack/orm/entity/messaging/serial"/>
     <!--===========================< webfx-stack-orm-expression >===========================-->
     <source path="dev/webfx/stack/orm/expression"/>
     <source path="dev/webfx/stack/orm/expression/builder"/>

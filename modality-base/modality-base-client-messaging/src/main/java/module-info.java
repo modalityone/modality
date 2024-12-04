@@ -3,9 +3,7 @@
 module modality.base.client.messaging {
 
     // Direct dependencies modules
-    requires webfx.platform.async;
-    requires webfx.stack.com.bus;
-    requires webfx.stack.session.state.client.fx;
+    requires transitive webfx.stack.orm.entity.messaging;
 
     // Exported packages
     exports one.modality.base.client.messaging;

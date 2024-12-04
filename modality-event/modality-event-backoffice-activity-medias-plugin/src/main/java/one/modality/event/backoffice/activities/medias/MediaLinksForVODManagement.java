@@ -6,16 +6,14 @@ import dev.webfx.extras.switches.Switch;
 import dev.webfx.extras.theme.text.TextTheme;
 import dev.webfx.kit.util.properties.FXProperties;
 import dev.webfx.kit.util.properties.ObservableLists;
-import dev.webfx.platform.ast.AST;
-import dev.webfx.platform.ast.AstObject;
 import dev.webfx.platform.console.Console;
-import dev.webfx.platform.util.tuples.Pair;
 import dev.webfx.stack.i18n.I18n;
 import dev.webfx.stack.i18n.controls.I18nControls;
-import dev.webfx.stack.orm.entity.EntityId;
 import dev.webfx.stack.orm.entity.EntityStore;
 import dev.webfx.stack.orm.entity.UpdateStore;
 import dev.webfx.stack.orm.entity.binding.EntityBindings;
+import dev.webfx.stack.orm.entity.result.EntityChanges;
+import dev.webfx.stack.orm.entity.result.EntityChangesBuilder;
 import javafx.application.Platform;
 import javafx.beans.binding.Bindings;
 import javafx.collections.FXCollections;
@@ -42,7 +40,6 @@ import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeParseException;
-import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -366,29 +363,17 @@ public class MediaLinksForVODManagement extends MediaLinksManagement {
                     }
 
                     if (validationSupport.isValid()) {
-                        //First we look which scheduledItem have been updated and we put in a list, with the published status that will be used
-                        //to notify the frond end that those sheduledItem have been published or unpublished
-                        List<Pair<ScheduledItem, Boolean>> siListUpdated = new ArrayList<>();
-                        if(localUpdateStore.getEntityChanges().getInsertedUpdatedEntityResult()!=null) {
-                            for (EntityId entity : localUpdateStore.getEntityChanges().getInsertedUpdatedEntityResult().getEntityIds()) {
-                                if("ScheduledItem".equals(entity.getDomainClass().getName())) {
-                                    ScheduledItem si = localUpdateStore.getEntity(entity);
-                                    siListUpdated.add(new Pair<>(si,si.isPublished()));
-                                }
-                            }
-                        }
+                        // Capturing the changes made on ScheduledItems.published fields, as they need to be notified to
+                        // the front-office clients (if submit is successful)
+                        EntityChanges changesForFrontOffice = EntityChangesBuilder.create()
+                            .addFilteredEntityChanges(localUpdateStore.getEntityChanges(), ScheduledItem.class, ScheduledItem.published)
+                            .build();
                         localUpdateStore.submitChanges()
                             .onFailure(Console::log)
                             .onSuccess(x -> {
                                 Console.log(x);
-                                //if the media has been published, we notify the front office client
-                                for (Pair<ScheduledItem,Boolean> currentPair : siListUpdated) {
-                                    AstObject message = AST.createObject();
-                                    message.set("messageType","VIDEO_STATE_CHANGED");
-                                    message.set("id",currentPair.get1().getPrimaryKey());
-                                    message.set("parameter",currentPair.get2());
-                                    ModalityMessaging.publishFrontOfficeMessage(message);
-                                }
+                                // Notifying the front-office clients for the possible changes made on ScheduledItems.published
+                                ModalityMessaging.getFrontOfficeEntityMessaging().publishEntityChanges(changesForFrontOffice);
                                 Platform.runLater(this::resetUpdateStoreAndOtherComponents);
                             });
                     }

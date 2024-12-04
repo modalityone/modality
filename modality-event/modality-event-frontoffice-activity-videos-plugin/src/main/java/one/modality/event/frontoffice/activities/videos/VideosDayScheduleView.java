@@ -91,7 +91,9 @@ final class VideosDayScheduleView {
         // Use the inner class to populate the grid
         dayScheduledVideos.forEach((s) -> {
             VideoSchedulePopulator populator = new VideoSchedulePopulator(currentRow, s);
-            ModalityMessaging.addFrontOfficeMessageBodyHandler(e -> populator.updateVODButton(e));
+            // Old code: ModalityMessaging.addFrontOfficeMessageBodyHandler(e -> populator.updateVODButton(e));
+            // New code (not yet working):
+            ModalityMessaging.getFrontOfficeEntityMessaging().listenEntityChanges(s.getStore());
             populator.populateVideoRow();
         });
         gridPaneContainer.setAlignment(Pos.CENTER);
