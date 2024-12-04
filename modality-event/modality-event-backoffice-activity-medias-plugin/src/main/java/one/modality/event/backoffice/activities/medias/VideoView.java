@@ -246,7 +246,7 @@ public class VideoView {
         entityStore.executeQueryBatch(
                 new EntityStoreQuery("select distinct name,family.code from Item where organization=? and family.code = ? order by name",
                     new Object[] { currentEditedEvent.getOrganization(),KnownItem.VIDEO.getCode() }),
-                new EntityStoreQuery("select name, parent, date, event, site, expirationDate,available, vodDelayed, published, item, item.code, parent.name, parent.timeline.startTime, parent.timeline.endTime from ScheduledItem where parent.event= ? and item.code = ? and parent.item.family.code = ? order by date",
+                new EntityStoreQuery("select name, programScheduledItem, date, event, site, expirationDate,available, vodDelayed, published, item, item.code, programScheduledItem.name, programScheduledItem.timeline.startTime, programScheduledItem.timeline.endTime from ScheduledItem where programScheduledItem.event= ? and item.code = ? and programScheduledItem.item.family.code = ? order by date",
                     new Object[] { currentEditedEvent,KnownItem.VIDEO.getCode(),KnownItemFamily.TEACHING.getCode() }),
                 new EntityStoreQuery("select url, scheduledItem.item, scheduledItem.date, scheduledItem.vodDelayed, scheduledItem.published, scheduledItem.item.code from Media where scheduledItem.event= ? and scheduledItem.item.code = ?",
                     new Object[] { currentEditedEvent,KnownItem.VIDEO.getCode() })

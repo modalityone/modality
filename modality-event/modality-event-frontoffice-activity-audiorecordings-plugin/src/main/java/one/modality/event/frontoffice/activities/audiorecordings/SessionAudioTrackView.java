@@ -66,9 +66,9 @@ final class SessionAudioTrackView {
         MonoPane favoriteMonoPane = new MonoPane(favoritePath);
         container.setLeft(favoriteMonoPane);
         container.setMaxWidth(MAX_WIDTH);
-        String title = scheduledAudioItem.getParent().getName();
+        String title = scheduledAudioItem.getProgramScheduledItem().getName();
         Label titleLabel = Bootstrap.h3(new Label(index + ". " + title));
-        Timeline timeline = scheduledAudioItem.getParent().getTimeline();
+        Timeline timeline = scheduledAudioItem.getProgramScheduledItem().getTimeline();
         LocalDate date = scheduledAudioItem.getDate();
         LocalTime startTime = timeline.getStartTime();
         Long durationMillis;

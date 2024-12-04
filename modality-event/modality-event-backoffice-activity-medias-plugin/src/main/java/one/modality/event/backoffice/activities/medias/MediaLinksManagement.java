@@ -74,7 +74,7 @@ public abstract class MediaLinksManagement {
 
     private void reinitialiseRecordingsMediasReadFromDatabase() {
         entityStore.<Media>executeQuery(
-                new EntityStoreQuery("select url, scheduledItem.parent, scheduledItem.name, scheduledItem.parent.name, scheduledItem.item, scheduledItem.date, scheduledItem.published, scheduledItem.item.code from Media where scheduledItem.event= ? and scheduledItem.item.code = ?", new Object[]{FXEvent.getEvent(), currentItemCode}))
+                new EntityStoreQuery("select url, scheduledItem.programScheduledItem, scheduledItem.name, scheduledItem.programScheduledItem.name, scheduledItem.item, scheduledItem.date, scheduledItem.published, scheduledItem.item.code from Media where scheduledItem.event= ? and scheduledItem.item.code = ?", new Object[]{FXEvent.getEvent(), currentItemCode}))
             .onFailure(Console::log)
             .onSuccess(mediasList -> Platform.runLater(() -> {
                 recordingsMediasReadFromDatabase.setAll(mediasList);
@@ -164,10 +164,10 @@ public abstract class MediaLinksManagement {
                 HBox currentLine = new HBox();
                 currentLine.setPadding(new Insets(20, 20, 20, 40));
 
-                String name = currentScheduledItem.getParent().getName();
+                String name = currentScheduledItem.getProgramScheduledItem().getName();
                 if (name == null) name = "Unknown";
                 Label teachingTitle = new Label(name);
-                Label startTimeLabel = new Label(currentScheduledItem.getParent().getTimeline().getStartTime().format(TIME_FORMATTER) + " - " + currentScheduledItem.getParent().getTimeline().getEndTime().format(TIME_FORMATTER));
+                Label startTimeLabel = new Label(currentScheduledItem.getProgramScheduledItem().getTimeline().getStartTime().format(TIME_FORMATTER) + " - " + currentScheduledItem.getProgramScheduledItem().getTimeline().getEndTime().format(TIME_FORMATTER));
                 teachingTitle.getStyleClass().add(Bootstrap.STRONG);
                 startTimeLabel.getStyleClass().add(Bootstrap.STRONG);
                 VBox teachingDetailsVBox = new VBox(teachingTitle, startTimeLabel);

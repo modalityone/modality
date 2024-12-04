@@ -225,7 +225,7 @@ final class DayTemplateModel {
             audioScheduledItem.setEvent(getEvent());
             audioScheduledItem.setSite(getSite());
             audioScheduledItem.setDate(date);
-            audioScheduledItem.setParent(parentTeachingScheduledItem);
+            audioScheduledItem.setProgramScheduledItem(parentTeachingScheduledItem);
             audioScheduledItem.setItem(languageItem);
         });
     }
@@ -236,6 +236,6 @@ final class DayTemplateModel {
         videoScheduledItem.setSite(getSite());
         videoScheduledItem.setItem(getVideoItem());
         videoScheduledItem.setDate(date);
-        videoScheduledItem.setParent(parentTeachingScheduledItem);
+        videoScheduledItem.setProgramScheduledItem(parentTeachingScheduledItem);
     }
 }

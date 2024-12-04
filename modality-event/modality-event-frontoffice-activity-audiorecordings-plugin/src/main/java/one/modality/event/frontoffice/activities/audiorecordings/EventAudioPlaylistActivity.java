@@ -77,7 +77,7 @@ final class EventAudioPlaylistActivity extends ViewDomainActivityBase {
     private final List<Media> publishedMedias = new ArrayList<>(); // No need to be observable (reacting to scheduledAudioItems is enough)
 
     private Label audioExpirationLabel;
-    private StringProperty dateFormattedProperty = new SimpleStringProperty();
+    private final StringProperty dateFormattedProperty = new SimpleStringProperty();
 
     @Override
     protected void updateModelFromContextParameters() {
@@ -103,7 +103,7 @@ final class EventAudioPlaylistActivity extends ViewDomainActivityBase {
                                              " from Event" +
                                              " where id=? limit 1",
                             new Object[]{eventId}),
-                        new EntityStoreQuery("select date, parent.(name, timeline.(startTime, endTime)), published, event" +
+                        new EntityStoreQuery("select date, programScheduledItem.(name, timeline.(startTime, endTime)), published, event" +
                                              " from ScheduledItem si" +
                                              " where event=? and item.family.code=? and item.code=? and exists(select Attendance where scheduledItem=si and documentLine.(!cancelled and document.(person=? and price_balance<=0)))" +
                                              " order by date",
@@ -196,7 +196,6 @@ final class EventAudioPlaylistActivity extends ViewDomainActivityBase {
                 cloudImageService.exists(pictureId)
                     .onFailure(Console::log)
                     .onSuccess(exists -> Platform.runLater(() -> {
-                        Console.log("exists: " + exists);
                         if (exists) {
                             imageMonoPane.setBackground(null);
                             //First, we need to get the zoom factor of the screen

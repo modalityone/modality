@@ -58,13 +58,13 @@ final class SessionVideoPlayerActivity extends ViewDomainActivityBase {
                 scheduledVideoItemProperty.set(null); // Will update UI
             } else {
                 entityStore.executeQueryBatch(
-                        new EntityStoreQuery("select parent.name" +
+                        new EntityStoreQuery("select programScheduledItem.name" +
                                              " from ScheduledItem si" +
-                                             " where id=? and exists(select Attendance where scheduledItem=si and documentLine.(!cancelled and document.(person=? and price_balance<=0)))",
+                                             " where id=? and published and exists(select Attendance where scheduledItem=si and documentLine.(!cancelled and document.(person=? and price_balance<=0)))",
                             new Object[]{scheduledVideoItemId, userPersonId}),
                         new EntityStoreQuery("select url" +
                                              " from Media" +
-                                             " where scheduledItem.(id=? and online) and published",
+                                             " where scheduledItem.(id=? and online)",
                             new Object[]{scheduledVideoItemId}))
                     .onFailure(Console::log)
                     .onSuccess(entityLists -> Platform.runLater(() -> {
@@ -127,7 +127,7 @@ final class SessionVideoPlayerActivity extends ViewDomainActivityBase {
         ScheduledItem scheduledVideoItem = scheduledVideoItemProperty.get();
         Media firstMedia = Collections.first(publishedMedias);
         if (scheduledVideoItem != null && firstMedia != null) { // may not yet be loaded on first call
-            String title = scheduledVideoItem.getParent().getName();
+            String title = scheduledVideoItem.getProgramScheduledItem().getName();
             String url = firstMedia.getUrl();
             sessionTitleLabel.setText(title);
             sessionVideoPlayer.setMedia(sessionVideoPlayer.acceptMedia(url));

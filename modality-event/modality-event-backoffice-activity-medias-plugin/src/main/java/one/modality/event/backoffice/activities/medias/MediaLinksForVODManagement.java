@@ -101,7 +101,7 @@ public class MediaLinksForVODManagement extends MediaLinksManagement {
             /* The content with the list of the teachings per day and the links **/
             List<ScheduledItem> filteredListForCurrentDay = scheduledItemsReadFromDatabase.stream()
                 .filter(item -> item.getDate().equals(currentDate)) // Filter by date
-                .sorted(Comparator.comparing(item -> item.getParent().getTimeline().getStartTime())) // Sort by start date
+                .sorted(Comparator.comparing(item -> item.getProgramScheduledItem().getTimeline().getStartTime())) // Sort by start date
                 .collect(Collectors.toList());
 
             for (ScheduledItem currentVideoScheduledItem : filteredListForCurrentDay) {
@@ -126,10 +126,10 @@ public class MediaLinksForVODManagement extends MediaLinksManagement {
                 HBox.setHgrow(firstSpacer, Priority.ALWAYS);
                 firstLine.getChildren().addAll(teachingInfoVBox, firstSpacer);
 
-                String name = workingCurrentVideoScheduledItem.getParent().getName();
+                String name = workingCurrentVideoScheduledItem.getProgramScheduledItem().getName();
                 if (name == null) name = "Unknown";
                 Label teachingTitle = new Label(name);
-                Timeline timeline = workingCurrentVideoScheduledItem.getParent().getTimeline();
+                Timeline timeline = workingCurrentVideoScheduledItem.getProgramScheduledItem().getTimeline();
                 Label startTimeLabel = new Label(timeline.getStartTime().format(MediaLinksManagement.TIME_FORMATTER) + " - " + timeline.getEndTime().format(MediaLinksManagement.TIME_FORMATTER));
                 teachingTitle.getStyleClass().add(Bootstrap.STRONG);
                 startTimeLabel.getStyleClass().add(Bootstrap.STRONG);

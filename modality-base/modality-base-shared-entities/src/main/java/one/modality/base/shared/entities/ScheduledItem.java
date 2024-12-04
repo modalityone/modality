@@ -18,16 +18,16 @@ public interface ScheduledItem extends Entity,
     EntityHasSiteAndItem,
     EntityHasStartAndEndTime {
 
-    default void setParent(Object parent) {
-        setForeignField("parent", parent);
+    default void setProgramScheduledItem(Object programScheduledItem) {
+        setForeignField("programScheduledItem", programScheduledItem);
     }
 
-    default EntityId getParentId() {
-        return getForeignEntityId("parent");
+    default EntityId getProgramScheduledItemId() {
+        return getForeignEntityId("programScheduledItem");
     }
 
-    default ScheduledItem getParent() {
-        return getForeignEntity("parent");
+    default ScheduledItem getProgramScheduledItem() {
+        return getForeignEntity("programScheduledItem");
     }
 
     default void setBookableScheduledItem(Object bookableScheduledItem) {

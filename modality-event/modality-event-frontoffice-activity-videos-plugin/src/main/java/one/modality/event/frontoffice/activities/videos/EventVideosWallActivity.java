@@ -104,11 +104,11 @@ final class EventVideosWallActivity extends ViewDomainActivityBase {
                                              " from Event" +
                                              " where id=? limit 1",
                             new Object[]{eventId}),
-                        new EntityStoreQuery("select date, expirationDate, event, vodDelayed, published, comment, parent.(name, date,timeline.(startTime, endTime), item.imageUrl)," +
+                        new EntityStoreQuery("select date, expirationDate, event, vodDelayed, published, comment, programScheduledItem.(name, date,timeline.(startTime, endTime), item.imageUrl)," +
                                              " exists(select Media where scheduledItem=si) as " + VIDEO_SCHEDULED_ITEM_DYNAMIC_BOOLEAN_FIELD_HAS_PUBLISHED_MEDIAS +
                                              " from ScheduledItem si" +
                                              " where item.family.code=? and online and exists(select Attendance where scheduledItem=si and documentLine.(!cancelled and document.(event= ? and person=? and price_balance<=0)))" +
-                                             " order by date, parent.timeline.startTime",
+                                             " order by date, programScheduledItem.timeline.startTime",
                             new Object[]{KnownItemFamily.VIDEO.getCode(), eventId, userPersonId}))
                     .onFailure(Console::log)
                     .onSuccess(entityLists -> Platform.runLater(() -> {
