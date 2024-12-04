@@ -161,7 +161,7 @@ final class VideosDayScheduleView {
                 GridPane.setValignment(statusLabel, VPos.TOP);
             }
             // Name label
-            Label nameLabel = new Label(scheduledItem.getParent().getName());
+            Label nameLabel = new Label(scheduledItem.getProgramScheduledItem().getName());
             nameLabel.setWrapText(true);
             nameLabel.setPadding(new Insets(0, 10, 0, 0));
 
@@ -188,8 +188,8 @@ final class VideosDayScheduleView {
 
             // Time label
             Label timeLabel = new Label(
-                scheduledItem.getParent().getTimeline().getStartTime().format(DateTimeFormatter.ofPattern("HH:mm")) + " - " +
-                scheduledItem.getParent().getTimeline().getEndTime().format(DateTimeFormatter.ofPattern("HH:mm"))
+                scheduledItem.getProgramScheduledItem().getTimeline().getStartTime().format(DateTimeFormatter.ofPattern("HH:mm")) + " - " +
+                scheduledItem.getProgramScheduledItem().getTimeline().getEndTime().format(DateTimeFormatter.ofPattern("HH:mm"))
             );
             gridPaneContainer.add(timeLabel, 3, currentRow[0]);
             GridPane.setValignment(timeLabel, VPos.TOP);
@@ -217,8 +217,8 @@ final class VideosDayScheduleView {
         private void computeStatusLabelAndWatchButton() {
 
             //THE STATE
-            LocalDateTime sessionStart = scheduledItem.getDate().atTime(scheduledItem.getParent().getTimeline().getStartTime());
-            LocalDateTime sessionEnd = scheduledItem.getDate().atTime(scheduledItem.getParent().getTimeline().getEndTime());
+            LocalDateTime sessionStart = scheduledItem.getDate().atTime(scheduledItem.getProgramScheduledItem().getTimeline().getStartTime());
+            LocalDateTime sessionEnd = scheduledItem.getDate().atTime(scheduledItem.getProgramScheduledItem().getTimeline().getEndTime());
 
             // For now, we manage the case when the livestream link is unique for the whole event, which is the case with Castr, which is the platform we generally use
             // TODO: manage the case when the livestream link is not global but per session, which happens on platform like youtube, etc.
