@@ -11,6 +11,7 @@ import dev.webfx.kit.util.properties.ObservableLists;
 import dev.webfx.stack.i18n.controls.I18nControls;
 import dev.webfx.stack.i18n.spi.impl.I18nSubKey;
 import dev.webfx.stack.orm.entity.UpdateStore;
+import dev.webfx.stack.orm.entity.binding.EntityBindings;
 import javafx.beans.binding.BooleanBinding;
 import javafx.beans.binding.BooleanExpression;
 import javafx.beans.property.BooleanProperty;
@@ -20,12 +21,13 @@ import javafx.collections.ObservableList;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Node;
+import javafx.scene.control.Button;
 import javafx.scene.control.Label;
-import javafx.scene.control.*;
-import javafx.scene.layout.*;
+import javafx.scene.layout.HBox;
+import javafx.scene.layout.VBox;
 import one.modality.base.client.util.dialog.ModalityDialog;
 import one.modality.base.client.util.masterslave.ModalitySlaveEditor;
-import one.modality.base.shared.entities.*;
+import one.modality.base.shared.entities.Event;
 import one.modality.event.client.event.fx.FXEvent;
 
 /**
@@ -94,7 +96,7 @@ final class ProgramView extends ModalitySlaveEditor<Event> {
         saveButton.setOnAction(e -> programModel.saveChanges(saveButton, cancelButton));
 
         UpdateStore updateStore = programModel.getUpdateStore();
-        BooleanExpression hasChangesProperty = updateStore.hasChangesProperty();
+        BooleanExpression hasChangesProperty = EntityBindings.hasChangesProperty(updateStore);
         BooleanBinding hasNoChangesProperty = hasChangesProperty.not();
         saveButton.disableProperty().bind(hasNoChangesProperty);
         cancelButton.disableProperty().bind(hasNoChangesProperty);

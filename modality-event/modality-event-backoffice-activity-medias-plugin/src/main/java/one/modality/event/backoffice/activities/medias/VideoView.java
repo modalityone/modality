@@ -15,6 +15,7 @@ import dev.webfx.stack.orm.entity.EntityList;
 import dev.webfx.stack.orm.entity.EntityStore;
 import dev.webfx.stack.orm.entity.EntityStoreQuery;
 import dev.webfx.stack.orm.entity.UpdateStore;
+import dev.webfx.stack.orm.entity.binding.EntityBindings;
 import javafx.application.Platform;
 import javafx.beans.binding.BooleanExpression;
 import javafx.beans.property.BooleanProperty;
@@ -190,8 +191,9 @@ public class VideoView {
 
         //SAVE BUTTON
         Button saveButton = Bootstrap.largeSuccessButton(I18nControls.newButton(ModalityI18nKeys.Save));
-        saveButton.disableProperty().bind(updateStore.hasChangesProperty().not());
-        addUpdateStoreHasChangesProperty(updateStore.hasChangesProperty());
+        BooleanExpression hasChangesProperty = EntityBindings.hasChangesProperty(updateStore);
+        saveButton.disableProperty().bind(hasChangesProperty.not());
+        addUpdateStoreHasChangesProperty(hasChangesProperty);
 
         saveButton.setOnAction(e -> {
             if (!validationSupportInitialised[0]) {

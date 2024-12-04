@@ -6,7 +6,6 @@
 module modality.base.shared.domainmodel {
 
     // Direct dependencies modules
-    requires javafx.base;
     requires webfx.extras.type;
     requires webfx.platform.ast;
     requires webfx.platform.ast.json.plugin;

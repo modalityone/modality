@@ -15,6 +15,7 @@ import dev.webfx.stack.i18n.controls.I18nControls;
 import dev.webfx.stack.orm.entity.EntityId;
 import dev.webfx.stack.orm.entity.EntityStore;
 import dev.webfx.stack.orm.entity.UpdateStore;
+import dev.webfx.stack.orm.entity.binding.EntityBindings;
 import javafx.application.Platform;
 import javafx.beans.binding.Bindings;
 import javafx.collections.FXCollections;
@@ -108,7 +109,7 @@ public class MediaLinksForVODManagement extends MediaLinksManagement {
                 UpdateStore localUpdateStore = UpdateStore.createAbove(entityStore);
                 //We add in the parentView the updateStore.hasChangedProperty so we know if we can or not change the edited event without forgetting the current local changes
                 //made here
-                parentVideoView.addUpdateStoreHasChangesProperty(localUpdateStore.hasChangesProperty());
+                parentVideoView.addUpdateStoreHasChangesProperty(EntityBindings.hasChangesProperty(localUpdateStore));
 
                 ScheduledItem workingCurrentVideoScheduledItem = localUpdateStore.updateEntity(currentVideoScheduledItem);
                 //First of all, we read the Video ScheduledItems linked to the teachings
@@ -135,7 +136,7 @@ public class MediaLinksForVODManagement extends MediaLinksManagement {
                 startTimeLabel.getStyleClass().add(Bootstrap.STRONG);
 
                 Button saveButton = Bootstrap.largeSuccessButton(I18nControls.newButton(ModalityI18nKeys.Save));
-                saveButton.disableProperty().bind(localUpdateStore.hasChangesProperty().not());
+                saveButton.disableProperty().bind(EntityBindings.hasChangesProperty(localUpdateStore).not());
 
                 HBox saveButtonContainer = new HBox(saveButton);
                 saveButtonContainer.setAlignment(Pos.CENTER_RIGHT);

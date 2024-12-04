@@ -18,6 +18,7 @@ import dev.webfx.stack.orm.entity.EntityList;
 import dev.webfx.stack.orm.entity.EntityStore;
 import dev.webfx.stack.orm.entity.EntityStoreQuery;
 import dev.webfx.stack.orm.entity.UpdateStore;
+import dev.webfx.stack.orm.entity.binding.EntityBindings;
 import javafx.application.Platform;
 import javafx.beans.binding.BooleanExpression;
 import javafx.beans.property.*;
@@ -160,8 +161,9 @@ public class RecordingsView {
         //SAVE BUTTON
         Button saveButton = Bootstrap.successButton(I18nControls.newButton(ModalityI18nKeys.Save));
         VBox.setMargin(saveButton, new Insets(20, 0, 0, 0));
-        addUpdateStoreHasChangesProperty(updateStore.hasChangesProperty());
-        saveButton.disableProperty().bind(updateStore.hasChangesProperty().not());
+        BooleanExpression hasChangesProperty = EntityBindings.hasChangesProperty(updateStore);
+        addUpdateStoreHasChangesProperty(hasChangesProperty);
+        saveButton.disableProperty().bind(hasChangesProperty.not());
         saveButton.setOnAction(e -> {
             if (!validationSupportInitialised[0]) {
                 FXProperties.runNowAndOnPropertyChange(dictionary -> {

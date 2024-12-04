@@ -33,6 +33,7 @@ module modality.event.backoffice.activity.program.plugin {
     requires webfx.stack.orm.domainmodel.activity;
     requires webfx.stack.orm.dql;
     requires webfx.stack.orm.entity;
+    requires webfx.stack.orm.entity.binding;
     requires webfx.stack.orm.entity.controls;
     requires webfx.stack.routing.router.client;
     requires webfx.stack.routing.uirouter;

@@ -36,8 +36,8 @@ import javafx.scene.paint.Color;
 import javafx.scene.shape.SVGPath;
 import one.modality.base.client.activity.ModalityButtonFactoryMixin;
 import one.modality.base.client.i18n.ModalityI18nKeys;
+import one.modality.base.client.util.converters.Converters;
 import one.modality.base.client.validation.ModalityValidationSupport;
-import one.modality.base.shared.domainmodel.formatters.DateFormatter;
 import one.modality.base.shared.domainmodel.functions.AbcNames;
 import one.modality.base.shared.entities.Country;
 import one.modality.base.shared.entities.Organization;
@@ -128,7 +128,7 @@ public class PersonalDetailsPanel implements ModalityButtonFactoryMixin {
         adultRadioButton.setToggleGroup(ageGroup);
         ageBox = new HBox(20, adultRadioButton, childRadioButton);
         birthDatePicker = LayoutUtil.setMaxWidthToInfinite(new DatePicker());
-        birthDatePicker.setConverter(DateFormatter.SINGLETON.toStringConverter());
+        birthDatePicker.setConverter(Converters.dateFormatterStringConverter());
         emailTextField = newMaterialTextField(CrmI18nKeys.Email);
         phoneTextField = newMaterialTextField(CrmI18nKeys.Phone);
         streetTextField = newMaterialTextField(CrmI18nKeys.Street);

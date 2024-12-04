@@ -30,6 +30,7 @@ import dev.webfx.stack.orm.domainmodel.DataSourceModel;
 import dev.webfx.stack.orm.dql.DqlStatement;
 import dev.webfx.stack.orm.entity.EntityStore;
 import dev.webfx.stack.orm.entity.UpdateStore;
+import dev.webfx.stack.orm.entity.binding.EntityBindings;
 import dev.webfx.stack.orm.entity.controls.entity.selector.EntityButtonSelector;
 import dev.webfx.stack.orm.reactive.mapping.entities_to_visual.ReactiveVisualMapper;
 import dev.webfx.stack.ui.dialog.DialogCallback;
@@ -275,7 +276,7 @@ final class ManageRecurringEventView {
          */
         updateStoreOrPictureHasChanged = new BooleanBinding() {
             {
-                super.bind(updateStore.hasChangesProperty(), isCloudPictureToBeUploaded, isCloudPictureToBeDeleted);
+                super.bind(EntityBindings.hasChangesProperty(updateStore), isCloudPictureToBeUploaded, isCloudPictureToBeDeleted);
             }
 
             @Override
@@ -284,7 +285,6 @@ final class ManageRecurringEventView {
             }
         };
 
-        updateStore.hasChangesProperty().addListener(observable -> updateStore.hasChangesProperty().getValue());
         //Now we bind the different element (FXEvent, Visual Mapper, and MasterSlaveController)
         eventVisualMapper.requestedSelectedEntityProperty().bindBidirectional(FXEvent.eventProperty());
         masterSlaveEventLinker.masterProperty().bindBidirectional(eventVisualMapper.selectedEntityProperty());

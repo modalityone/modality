@@ -11,6 +11,7 @@ import dev.webfx.stack.i18n.controls.I18nControls;
 import dev.webfx.stack.orm.entity.EntityStore;
 import dev.webfx.stack.orm.entity.EntityStoreQuery;
 import dev.webfx.stack.orm.entity.UpdateStore;
+import dev.webfx.stack.orm.entity.binding.EntityBindings;
 import dev.webfx.stack.ui.operation.OperationUtil;
 import javafx.application.Platform;
 import javafx.beans.InvalidationListener;
@@ -295,7 +296,7 @@ public abstract class MediaLinksManagement {
 
         protected HBox buildLastLine() {
             Button saveButton = Bootstrap.largeSuccessButton(I18nControls.newButton(ModalityI18nKeys.Save));
-            saveButton.disableProperty().bind(updateStore.hasChangesProperty().not());
+            saveButton.disableProperty().bind(EntityBindings.hasChangesProperty(updateStore).not());
             saveButton.setOnAction(e -> {
                 if (!validationSupportInitialised[0]) {
                     FXProperties.runNowAndOnPropertyChange(dictionary -> {

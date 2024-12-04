@@ -183,6 +183,7 @@
     <!--===========================< modality-base-client-tile >============================-->
     <source path="one/modality/base/client/tile"/>
     <!--===========================< modality-base-client-util >============================-->
+    <source path="one/modality/base/client/util/converters"/>
     <source path="one/modality/base/client/util/dialog"/>
     <source path="one/modality/base/client/util/functions"/>
     <source path="one/modality/base/client/util/log"/>
@@ -454,8 +455,6 @@
     <source path="dev/webfx/platform/ast/spi/formatter"/>
     <source path="dev/webfx/platform/ast/spi/parser"/>
     <source path="dev/webfx/platform/ast/spi/parser/impl/properties"/>
-    <!--=======================< webfx-platform-ast-factory-generic >=======================-->
-    <source path="dev/webfx/platform/ast/spi/factory/impl/generic"/>
     <!--=========================< webfx-platform-ast-factory-gwt >=========================-->
     <source path="dev/webfx/platform/ast/spi/factory/impl/gwt"/>
     <!--=========================< webfx-platform-ast-json-plugin >=========================-->

@@ -11,6 +11,7 @@ import dev.webfx.platform.uischeduler.UiScheduler;
 import dev.webfx.stack.i18n.controls.I18nControls;
 import dev.webfx.stack.orm.entity.EntityStore;
 import dev.webfx.stack.orm.entity.UpdateStore;
+import dev.webfx.stack.orm.entity.binding.EntityBindings;
 import javafx.application.Platform;
 import javafx.beans.InvalidationListener;
 import javafx.collections.FXCollections;
@@ -195,7 +196,7 @@ public class MediaLinksForAudioRecordingsManagement extends MediaLinksManagement
         Region spacer = new Region();
         HBox.setHgrow(spacer, Priority.ALWAYS);
         Button saveButton = Bootstrap.successButton(I18nControls.newButton(ModalityI18nKeys.Save));
-        saveButton.disableProperty().bind(localUpdateStore.hasChangesProperty().not());
+        saveButton.disableProperty().bind(EntityBindings.hasChangesProperty(localUpdateStore).not());
         HBox publishAllHBox = new HBox(publishAllLabel, publishAllSwitch, spacer, saveButton);
         publishAllHBox.setSpacing(10);
         publishAllHBox.setPadding(new Insets(0, 0, 30, 0));
@@ -223,7 +224,7 @@ public class MediaLinksForAudioRecordingsManagement extends MediaLinksManagement
         }
 
         protected BorderPane drawPanel() {
-            parentRecordingView.addUpdateStoreHasChangesProperty(updateStore.hasChangesProperty());
+            parentRecordingView.addUpdateStoreHasChangesProperty(EntityBindings.hasChangesProperty(updateStore));
             return super.drawPanel();
         }
     }
