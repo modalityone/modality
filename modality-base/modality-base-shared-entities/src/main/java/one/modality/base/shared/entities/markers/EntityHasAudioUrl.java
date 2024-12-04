@@ -7,14 +7,15 @@ import dev.webfx.stack.orm.entity.Entity;
  */
 public interface EntityHasAudioUrl extends Entity, HasAudioUrl {
 
+    String audioUrl = "audioUrl";
+
     @Override
-    default void setAudioUrl(String audioUrl) {
-        setFieldValue("audioUrl", audioUrl);
+    default void setAudioUrl(String value) {
+        setFieldValue(audioUrl, value);
     }
 
     @Override
     default String getAudioUrl() {
-        return getStringFieldValue("audioUrl");
+        return getStringFieldValue(audioUrl);
     }
-
 }

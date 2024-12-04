@@ -9,19 +9,21 @@ import dev.webfx.stack.orm.entity.EntityId;
  */
 public interface EntityHasParent<P extends Entity> extends Entity, HasParent<P> {
 
+    String parent = "parent";
+
     @Override
-    default void setParent(Object parent) {
-        setForeignField("parent", parent);
+    default void setParent(Object value) {
+        setForeignField(parent, value);
     }
 
     @Override
     default EntityId getParentId() {
-        return getForeignEntityId("parent");
+        return getForeignEntityId(parent);
     }
 
     @Override
     default P getParent() {
-        return getForeignEntity("parent");
+        return getForeignEntity(parent);
     }
 
     default Object getFieldValueOrParent(Object domainFieldId) {

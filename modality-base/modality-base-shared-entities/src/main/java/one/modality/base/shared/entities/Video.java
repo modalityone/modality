@@ -7,49 +7,53 @@ import one.modality.base.shared.entities.markers.EntityHasWistiaVideoId;
 import one.modality.base.shared.entities.markers.EntityHasYoutubeVideoId;
 
 public interface Video extends EntityHasMediaInfo, EntityHasWistiaVideoId, EntityHasYoutubeVideoId, EntityHasTeacher {
+    String news = "news";
+    String width = "width";
+    String height = "height";
+    String mediaId = "mediaId";
+    String ord = "ord";
 
-    default void setNews(Object news) {
-        setForeignField("news", news);
+    default void setNews(Object value) {
+        setForeignField(news, value);
     }
 
     default EntityId getNewsId() {
-        return getForeignEntityId("news");
+        return getForeignEntityId(news);
     }
 
     default News getNews() {
-        return getForeignEntity("news");
+        return getForeignEntity(news);
     }
-    
-    default void setWidth(Integer width) {
-        setFieldValue("width", width);
+
+    default void setWidth(Integer value) {
+        setFieldValue(width, value);
     }
 
     default Integer getWidth() {
-        return getIntegerFieldValue("width");
+        return getIntegerFieldValue(width);
     }
 
-    default void setHeight(Integer height) {
-        setFieldValue("height", height);
+    default void setHeight(Integer value) {
+        setFieldValue(height, value);
     }
 
     default Integer getHeight() {
-        return getIntegerFieldValue("height");
+        return getIntegerFieldValue(height);
     }
 
-    default void setMediaId(String mediaId) {
-        setFieldValue("mediaId", mediaId);
+    default void setMediaId(String value) {
+        setFieldValue(mediaId, value);
     }
 
     default String getMediaId() {
-        return getStringFieldValue("mediaId");
+        return getStringFieldValue(mediaId);
     }
 
-    default void setOrd(Integer ord) {
-        setFieldValue("ord", ord);
+    default void setOrd(Integer value) {
+        setFieldValue(ord, value);
     }
 
     default Integer getOrd() {
-        return getIntegerFieldValue("ord");
+        return getIntegerFieldValue(ord);
     }
-
 }

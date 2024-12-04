@@ -8,80 +8,88 @@ import one.modality.base.shared.entities.markers.EntityHasName;
  * @author Bruno Salmon
  */
 public interface Country extends
-        EntityHasName,
-        EntityHasLabel,
-        EntityHasIcon {
+    EntityHasName,
+    EntityHasLabel,
+    EntityHasIcon {
+    String geonameid = "geonameid";
+    String isoAlpha2 = "iso_alpha2";
+    String fipsCode = "fipsCode";
+    String latitude = "latitude";
+    String longitude = "longitude";
+    String north = "north";
+    String south = "south";
+    String west = "west";
+    String east = "east";
 
-    default void setGeonameid(Integer geonameid) {
-        setFieldValue("geonameid", geonameid);
+    default void setGeonameid(Integer value) {
+        setFieldValue(geonameid, value);
     }
 
     default Integer getGeonameid() {
-        return getIntegerFieldValue("geonameid");
+        return getIntegerFieldValue(geonameid);
     }
 
-    default void setIsoAlpha2(String isoAlpha2) {
-        setFieldValue("iso_alpha2", isoAlpha2);
+    default void setIsoAlpha2(String value) {
+        setFieldValue(isoAlpha2, value);
     }
 
     default String getIsoAlpha2() {
-        return getStringFieldValue("iso_alpha2");
+        return getStringFieldValue(isoAlpha2);
     }
 
-    default void setFipsCode(String fipsCode) {
-        setFieldValue("fipsCode", fipsCode);
+    default void setFipsCode(String value) {
+        setFieldValue(fipsCode, value);
     }
 
     default String getFipsCode() {
-        return getStringFieldValue("fipsCode");
+        return getStringFieldValue(fipsCode);
     }
 
     default Float getLatitude() {
-        return getFloatFieldValue("latitude");
+        return getFloatFieldValue(latitude);
     }
 
-    default void setLatitude(Float latitude) {
-        setFieldValue("latitude", latitude);
+    default void setLatitude(Float value) {
+        setFieldValue(latitude, value);
     }
 
     default Float getLongitude() {
-        return getFloatFieldValue("longitude");
+        return getFloatFieldValue(longitude);
     }
 
-    default void setLongitude(Float longitude) {
-        setFieldValue("longitude", longitude);
+    default void setLongitude(Float value) {
+        setFieldValue(longitude, value);
     }
 
     default Float getNorth() {
-        return getFloatFieldValue("north");
+        return getFloatFieldValue(north);
     }
 
-    default void setNorth(Float north) {
-        setFieldValue("north", north);
+    default void setNorth(Float value) {
+        setFieldValue(north, value);
     }
 
     default Float getSouth() {
-        return getFloatFieldValue("south");
+        return getFloatFieldValue(south);
     }
 
-    default void setSouth(Float south) {
-        setFieldValue("south", south);
+    default void setSouth(Float value) {
+        setFieldValue(south, value);
     }
 
     default Float getWest() {
-        return getFloatFieldValue("west");
+        return getFloatFieldValue(west);
     }
 
-    default void setWest(Float west) {
-        setFieldValue("west", west);
+    default void setWest(Float value) {
+        setFieldValue(west, value);
     }
 
     default Float getEast() {
-        return getFloatFieldValue("east");
+        return getFloatFieldValue(east);
     }
 
-    default void setEast(Float east) {
-        setFieldValue("east", east);
+    default void setEast(Float value) {
+        setFieldValue(east, value);
     }
-
 }

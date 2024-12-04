@@ -7,14 +7,16 @@ import dev.webfx.stack.orm.entity.Entity;
  */
 public interface EntityHasYoutubeVideoId extends Entity, HasYoutubeVideoId {
 
+    String youtubeVideoId = "youtubeVideoId";
+
     @Override
-    default void setYoutubeVideoId(String wistiaVideoId) {
-        setFieldValue("youtubeVideoId", wistiaVideoId);
+    default void setYoutubeVideoId(String value) {
+        setFieldValue(youtubeVideoId, value);
     }
 
     @Override
     default String getYoutubeVideoId() {
-        return getStringFieldValue("youtubeVideoId");
+        return getStringFieldValue(youtubeVideoId);
     }
 
 }

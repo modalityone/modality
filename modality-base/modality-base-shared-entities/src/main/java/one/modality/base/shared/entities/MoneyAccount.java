@@ -7,53 +7,57 @@ import one.modality.base.shared.entities.markers.EntityHasName;
 import one.modality.base.shared.entities.markers.EntityHasOrganization;
 
 public interface MoneyAccount extends
-        EntityHasOrganization,
-        EntityHasEvent,
-        EntityHasIcon,
-        EntityHasName {
+    EntityHasOrganization,
+    EntityHasEvent,
+    EntityHasIcon,
+    EntityHasName {
 
-    default void setCurrency(Object currency) {
-        setForeignField("currency", currency);
+    String currency = "currency";
+    String type = "type";
+    String closed = "closed";
+    String gatewayCompany = "gatewayCompany";
+
+    default void setCurrency(Object value) {
+        setForeignField(currency, value);
     }
 
     default EntityId getCurrencyId() {
-        return getForeignEntityId("currency");
+        return getForeignEntityId(currency);
     }
 
     default Currency getCurrency() {
-        return getForeignEntity("currency");
+        return getForeignEntity(currency);
     }
 
-    default void setType(Object type) {
-        setForeignField("type", type);
+    default void setType(Object value) {
+        setForeignField(type, value);
     }
 
     default EntityId getTypeId() {
-        return getForeignEntityId("type");
+        return getForeignEntityId(type);
     }
 
     default MoneyAccountType getType() {
-        return getForeignEntity("type");
+        return getForeignEntity(type);
     }
 
-    default void setClosed(Boolean closed) {
-        setFieldValue("closed", closed);
+    default void setClosed(Boolean value) {
+        setFieldValue(closed, value);
     }
 
     default Boolean isClosed() {
-        return getBooleanFieldValue("closed");
+        return getBooleanFieldValue(closed);
     }
 
-    default void setGatewayCompany(Object parent) {
-        setForeignField("gatewayCompany", parent);
+    default void setGatewayCompany(Object value) {
+        setForeignField(gatewayCompany, value);
     }
 
     default EntityId getGatewayCompanyId() {
-        return getForeignEntityId("gatewayCompany");
+        return getForeignEntityId(gatewayCompany);
     }
 
     default GatewayCompany getGatewayCompany() {
-        return getForeignEntity("gatewayCompany");
+        return getForeignEntity(gatewayCompany);
     }
-
 }

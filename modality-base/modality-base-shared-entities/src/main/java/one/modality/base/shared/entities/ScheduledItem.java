@@ -18,84 +18,92 @@ public interface ScheduledItem extends Entity,
     EntityHasSiteAndItem,
     EntityHasStartAndEndTime {
 
-    default void setProgramScheduledItem(Object programScheduledItem) {
-        setForeignField("programScheduledItem", programScheduledItem);
+    String programScheduledItem = "programScheduledItem";
+    String bookableScheduledItem = "bookableScheduledItem";
+    String timeline = "timeline";
+    String expirationDate = "expirationDate";
+    String comment = "comment";
+    String commentLabel = "commentLabel";
+    String vodDelayed = "vodDelayed";
+    String published = "published";
+
+    default void setProgramScheduledItem(Object value) {
+        setForeignField(programScheduledItem, value);
     }
 
     default EntityId getProgramScheduledItemId() {
-        return getForeignEntityId("programScheduledItem");
+        return getForeignEntityId(programScheduledItem);
     }
 
     default ScheduledItem getProgramScheduledItem() {
-        return getForeignEntity("programScheduledItem");
+        return getForeignEntity(programScheduledItem);
     }
 
-    default void setBookableScheduledItem(Object bookableScheduledItem) {
-        setForeignField("bookableScheduledItem", bookableScheduledItem);
+    default void setBookableScheduledItem(Object value) {
+        setForeignField(bookableScheduledItem, value);
     }
 
     default EntityId getBookableScheduledItemId() {
-        return getForeignEntityId("bookableScheduledItem");
+        return getForeignEntityId(bookableScheduledItem);
     }
 
     default ScheduledItem getBookableScheduledItem() {
-        return getForeignEntity("bookableScheduledItem");
+        return getForeignEntity(bookableScheduledItem);
     }
 
-    default void setTimeLine(Object timeline) {
-        setForeignField("timeline", timeline);
+    default void setTimeLine(Object value) {
+        setForeignField(timeline, value);
     }
 
     default EntityId getTimelineId() {
-        return getForeignEntityId("timeline");
+        return getForeignEntityId(timeline);
     }
 
     default Timeline getTimeline() {
-        return getForeignEntity("timeline");
+        return getForeignEntity(timeline);
     }
 
-    default void setExpirationDate(LocalDateTime expirationDate) {
-        setFieldValue("expirationDate", expirationDate);
+    default void setExpirationDate(LocalDateTime value) {
+        setFieldValue(expirationDate, value);
     }
 
     default LocalDateTime getExpirationDate() {
-        return getLocalDateTimeFieldValue("expirationDate");
+        return getLocalDateTimeFieldValue(expirationDate);
     }
 
-    default void setComment(String comment) {
-        setFieldValue("comment", comment);
+    default void setComment(String value) {
+        setFieldValue(comment, value);
     }
 
     default String getComment() {
-        return getStringFieldValue("comment");
+        return getStringFieldValue(comment);
     }
 
-    default void setCommentLabel(Object label) {
-        setForeignField("commentLabel", label);
+    default void setCommentLabel(Object value) {
+        setForeignField(commentLabel, value);
     }
 
     default EntityId getCommentLabelId() {
-        return getForeignEntityId("commentLabel");
+        return getForeignEntityId(commentLabel);
     }
 
     default Label getCommentLabel() {
-        return getForeignEntity("commentLabel");
+        return getForeignEntity(commentLabel);
     }
 
-    default void setVodDelayed(Boolean vodDelayed) {
-        setFieldValue("vodDelayed", vodDelayed);
+    default void setVodDelayed(Boolean value) {
+        setFieldValue(vodDelayed, value);
     }
 
     default Boolean isVodDelayed() {
-        return getBooleanFieldValue("vodDelayed");
+        return getBooleanFieldValue(vodDelayed);
     }
 
-    default void setPublished(Boolean published) {
-        setFieldValue("published", published);
+    default void setPublished(Boolean value) {
+        setFieldValue(published, value);
     }
 
     default Boolean isPublished() {
-        return getBooleanFieldValue("published");
+        return getBooleanFieldValue(published);
     }
-
 }

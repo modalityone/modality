@@ -5,21 +5,22 @@ import one.modality.base.shared.entities.markers.EntityHasMediaInfo;
 import one.modality.base.shared.entities.markers.EntityHasTopic;
 
 public interface News extends EntityHasChannel, EntityHasMediaInfo, EntityHasTopic {
+    String channelNewsId = "channelNewsId";
+    String linkUrl = "linkUrl";
 
-    default void setChannelNewsId(Integer channelNewsId) {
-        setFieldValue("channelNewsId", channelNewsId);
+    default void setChannelNewsId(Integer value) {
+        setFieldValue(channelNewsId, value);
     }
 
     default Integer getChannelNewsId() {
-        return getIntegerFieldValue("channelNewsId");
+        return getIntegerFieldValue(channelNewsId);
     }
 
-    default void setLinkUrl(String linkUrl) {
-        setFieldValue("linkUrl", linkUrl);
+    default void setLinkUrl(String value) {
+        setFieldValue(linkUrl, value);
     }
 
     default String getLinkUrl() {
-        return getStringFieldValue("linkUrl");
+        return getStringFieldValue(linkUrl);
     }
-
 }

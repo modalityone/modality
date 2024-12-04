@@ -10,16 +10,13 @@ import java.time.LocalDate;
  * @author Bruno Salmon
  */
 public interface Person extends Entity, EntityHasPersonalDetails, EntityHasEvent {
+    String birthDate = "birthdate";
 
-    default Object getBirthDateField() { return "birthdate";}
-
-    default void setBirthDate(LocalDate birthDate) {
-        setFieldValue(getBirthDateField(), birthDate);
+    default void setBirthDate(LocalDate value) {
+        setFieldValue(birthDate, value);
     }
 
     default LocalDate getBirthDate() {
-        return getLocalDateFieldValue(getBirthDateField());
+        return getLocalDateFieldValue(birthDate);
     }
-
-
 }
