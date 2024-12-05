@@ -14,7 +14,7 @@
 
 @font-face {
     font-family: 'Roboto';
-    font-style: light;
+    font-weight: 300; /* light */
     src: url('webfx-css:fonts/roboto/Roboto-Light.ttf');
 }
 
@@ -50,6 +50,24 @@
 }
 
 @font-face {
+    font-family: 'Vollkorn SC';
+    font-weight: bold;
+    src: url('webfx-css:fonts/vollkornsc/VollkornSC-Bold.ttf');
+}
+
+@font-face {
+    font-family: 'Vollkorn SC';
+    font-style: normal;
+    src: url('webfx-css:fonts/vollkornsc/VollkornSC-Regular.ttf');
+}
+
+@font-face {
+    font-family: 'Vollkorn SC';
+    font-weight: 600; /* semi-bold */
+    src: url('webfx-css:fonts/vollkornsc/VollkornSC-SemiBold.ttf');
+}
+
+@font-face {
     font-family: 'Poppins';
     font-style: normal;
     src: url('webfx-css:fonts/poppins/Poppins-Regular.ttf');
@@ -82,13 +100,13 @@
 
 @font-face {
     font-family: 'Poppins';
-    font-weight: light;
+    font-weight: 300; /* light */
     src: url('webfx-css:fonts/poppins/Poppins-Light.ttf');
 }
 
 @font-face {
     font-family: 'Poppins';
-    font-weight: semi-bold;
+    font-weight: 600; /* semi-bold */
     src: url('webfx-css:fonts/poppins/Poppins-SemiBold.ttf');
 }
 
@@ -645,13 +663,15 @@ HtmlText, HtmlTextEditor {
 
 /*===== modality-client-css-import-font-monserrat-javafx@main.css from modality-base-client-css =====*/
 
+/*===== modality-client-css-import-font-vollkornsc-javafx@main.css from modality-base-client-css =====*/
+
 /*===== modality-client-css-javafx@main.css from modality-base-client-css =====*/
 
 * {
     -montserrat-font-family: "Montserrat";
     -roboto-font-family: "Roboto";
     -poppins-font-family: "Poppins";
-    -vollkorn-font-family: "Roboto"; /* for now */
+    -vollkorn-font-family: "Vollkorn SC";
 
     /* Overriding some WebFX Extras CSS variables  */
     -webfx-switch-selected-background-color: -brand-main-background-color;
@@ -659,7 +679,7 @@ HtmlText, HtmlTextEditor {
 }
 
 Text, Label, Button, TextField {
-    -fx-font-family: -montserrat-font-family;
+    -fx-font-family: "Montserrat"; /* -montserrat-font-family; */
 }
 
 .scroll-pane {

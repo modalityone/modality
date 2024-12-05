@@ -2,7 +2,7 @@
     -montserrat-font-family: "Montserrat";
     -roboto-font-family: "Roboto";
     -poppins-font-family: "Poppins";
-    -vollkorn-font-family: "Roboto"; /* for now */
+    -vollkorn-font-family: "Vollkorn SC";
 
     /* Overriding some WebFX Extras CSS variables  */
     -webfx-switch-selected-background-color: -brand-main-background-color;
@@ -10,7 +10,7 @@
 }
 
 Text, Label, Button, TextField {
-    -fx-font-family: -montserrat-font-family;
+    -fx-font-family: "Montserrat"; /* -montserrat-font-family; */
 }
 
 .scroll-pane {

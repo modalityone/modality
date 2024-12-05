@@ -14,7 +14,7 @@
 
 @font-face {
     font-family: 'Roboto';
-    font-style: light;
+    font-weight: 300; /* light */
     src: url('webfx-css:fonts/roboto/Roboto-Light.ttf');
 }
 
@@ -50,6 +50,24 @@
 }
 
 @font-face {
+    font-family: 'Vollkorn SC';
+    font-weight: bold;
+    src: url('webfx-css:fonts/vollkornsc/VollkornSC-Bold.ttf');
+}
+
+@font-face {
+    font-family: 'Vollkorn SC';
+    font-style: normal;
+    src: url('webfx-css:fonts/vollkornsc/VollkornSC-Regular.ttf');
+}
+
+@font-face {
+    font-family: 'Vollkorn SC';
+    font-weight: 600; /* semi-bold */
+    src: url('webfx-css:fonts/vollkornsc/VollkornSC-SemiBold.ttf');
+}
+
+@font-face {
     font-family: 'Poppins';
     font-style: normal;
     src: url('webfx-css:fonts/poppins/Poppins-Regular.ttf');
@@ -82,13 +100,13 @@
 
 @font-face {
     font-family: 'Poppins';
-    font-weight: light;
+    font-weight: 300; /* light */
     src: url('webfx-css:fonts/poppins/Poppins-Light.ttf');
 }
 
 @font-face {
     font-family: 'Poppins';
-    font-weight: semi-bold;
+    font-weight: 600; /* semi-bold */
     src: url('webfx-css:fonts/poppins/Poppins-SemiBold.ttf');
 }
 
@@ -599,13 +617,15 @@ HtmlText, HtmlTextEditor {
 
 /*===== modality-client-css-import-font-monserrat-javafx@main.css from modality-base-client-css =====*/
 
+/*===== modality-client-css-import-font-vollkornsc-javafx@main.css from modality-base-client-css =====*/
+
 /*===== modality-client-css-javafx@main.css from modality-base-client-css =====*/
 
 * {
     -montserrat-font-family: "Montserrat";
     -roboto-font-family: "Roboto";
     -poppins-font-family: "Poppins";
-    -vollkorn-font-family: "Roboto"; /* for now */
+    -vollkorn-font-family: "Vollkorn SC";
 
     /* Overriding some WebFX Extras CSS variables  */
     -webfx-switch-selected-background-color: -brand-main-background-color;
@@ -613,7 +633,7 @@ HtmlText, HtmlTextEditor {
 }
 
 Text, Label, Button, TextField {
-    -fx-font-family: -montserrat-font-family;
+    -fx-font-family: "Montserrat"; /* -montserrat-font-family; */
 }
 
 .scroll-pane {
@@ -728,7 +748,7 @@ CollapsePane.menu-bar.lang-menu-bar {
 }
 
 .h1 {
-    -fx-font-family: -roboto-font-family;
+    -fx-font-family: "Roboto"; /*-roboto-font-family */
     -fx-font-size: 34px;
     -fx-font-weight: normal;
     -fx-line-spacing: 6px; /* Line height in JavaFX is set through line-spacing */
@@ -736,7 +756,7 @@ CollapsePane.menu-bar.lang-menu-bar {
 }
 
 .h2 {
-    -fx-font-family: -poppins-font-family;
+    -fx-font-family: "Poppins"; /* -poppins-font-family; */
     -fx-font-size: 40px;
     -fx-font-weight: bold;         /* 'bold' is equivalent to 700 weight */
     -fx-line-spacing: 20px;
@@ -774,7 +794,7 @@ CollapsePane.menu-bar.lang-menu-bar {
 
 .audio-library .h3 {
     -fx-font-family: "Poppins";
-    -fx-font-weight: semi-bold;
+    -fx-font-weight: 600; /* semi-bold */
     -fx-font-size: 15px;
     -fx-text-alignment: left; /* Aligns text */
 }
@@ -818,16 +838,16 @@ CollapsePane.menu-bar.lang-menu-bar {
 .livestream .h4 {
     -fx-font-family: "Poppins";
     -fx-font-size: 16px;
-    -fx-font-weight: semi-bold;
+    -fx-font-weight: 600; /* semi-bold */
     -fx-text-alignment: left; /* Aligns text */
 }
 
 .livestream {
-    -fx-font-weight: medium;
+    -fx-font-weight: 500; /*medium */
 }
 
 .livestream .small{
-    -fx-font-weight: light;
+    -fx-font-weight: 300; /* light */
 }
 
 .livestream .text-info {

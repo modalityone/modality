@@ -8,16 +8,16 @@
 .livestream .h4 {
     -fx-font-family: "Poppins";
     -fx-font-size: 16px;
-    -fx-font-weight: semi-bold;
+    -fx-font-weight: 600; /* semi-bold */
     -fx-text-alignment: left; /* Aligns text */
 }
 
 .livestream {
-    -fx-font-weight: medium;
+    -fx-font-weight: 500; /*medium */
 }
 
 .livestream .small{
-    -fx-font-weight: light;
+    -fx-font-weight: 300; /* light */
 }
 
 .livestream .text-info {

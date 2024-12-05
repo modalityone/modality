@@ -1,6 +1,6 @@
 .audio-library .h3 {
     -fx-font-family: "Poppins";
-    -fx-font-weight: semi-bold;
+    -fx-font-weight: 600; /* semi-bold */
     -fx-font-size: 15px;
     -fx-text-alignment: left; /* Aligns text */
 }

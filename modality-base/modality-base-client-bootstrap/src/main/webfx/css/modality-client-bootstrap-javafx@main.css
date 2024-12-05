@@ -45,7 +45,7 @@
 }
 
 .h1 {
-    -fx-font-family: -roboto-font-family;
+    -fx-font-family: "Roboto"; /*-roboto-font-family */
     -fx-font-size: 34px;
     -fx-font-weight: normal;
     -fx-line-spacing: 6px; /* Line height in JavaFX is set through line-spacing */
@@ -53,7 +53,7 @@
 }
 
 .h2 {
-    -fx-font-family: -poppins-font-family;
+    -fx-font-family: "Poppins"; /* -poppins-font-family; */
     -fx-font-size: 40px;
     -fx-font-weight: bold;         /* 'bold' is equivalent to 700 weight */
     -fx-line-spacing: 20px;

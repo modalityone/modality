@@ -12,7 +12,7 @@
 
 @font-face {
     font-family: 'Roboto';
-    font-style: light;
+    font-weight: 300; /* light */
     src: url('webfx-css:fonts/roboto/Roboto-Light.ttf');
 }
 
