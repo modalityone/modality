@@ -2,6 +2,9 @@
 
 module modality.base.client.css {
 
+    // Direct dependencies modules
+    requires webfx.platform.boot;
+
     // Exported packages
     exports one.modality.base.client.css;
 
@@ -9,5 +12,8 @@ module modality.base.client.css {
     opens dev.webfx.kit.css.fonts.montserrat;
     opens dev.webfx.kit.css.fonts.poppins;
     opens dev.webfx.kit.css.fonts.roboto;
+
+    // Provided services
+    provides dev.webfx.platform.boot.spi.ApplicationJob with one.modality.base.client.css.CssModuleDevLoaderJob;
 
 }

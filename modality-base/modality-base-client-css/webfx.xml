@@ -25,4 +25,8 @@
         </head>
     </html>
 
+    <providers>
+        <provider interface="dev.webfx.platform.boot.spi.ApplicationJob">one.modality.base.client.css.CssModuleDevLoaderJob</provider>
+    </providers>
+
 </project>
