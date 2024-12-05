@@ -353,6 +353,7 @@
                         <list>dev/webfx/kit/css/fonts/password/[^/]+$</list>
                         <list>dev/webfx/kit/css/fonts/poppins/[^/]+$</list>
                         <list>dev/webfx/kit/css/fonts/roboto/[^/]+$</list>
+                        <list>dev/webfx/kit/css/fonts/vollkornsc/[^/]+$</list>
                         <list>dev/webfx/platform/conf/[^/]+$</list>
                         <list>dev/webfx/platform/meta/exe/[^/]+$</list>
                         <list>dev/webfx/stack/i18n/[^/]+$</list>

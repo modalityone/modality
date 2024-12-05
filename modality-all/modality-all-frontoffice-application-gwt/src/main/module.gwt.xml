@@ -118,6 +118,8 @@
     <public path="" includes="dev/webfx/kit/css/fonts/poppins/"/>
     <resource path="dev/webfx/kit/css/fonts/roboto"/>
     <public path="" includes="dev/webfx/kit/css/fonts/roboto/"/>
+    <resource path="dev/webfx/kit/css/fonts/vollkornsc"/>
+    <public path="" includes="dev/webfx/kit/css/fonts/vollkornsc/"/>
     <!--=========================< modality-base-client-entities >==========================-->
     <source path="one/modality/base/client/entities/util"/>
     <source path="one/modality/base/client/entities/util/filters"/>

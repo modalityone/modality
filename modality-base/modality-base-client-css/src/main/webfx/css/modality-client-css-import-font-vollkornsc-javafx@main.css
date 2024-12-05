@@ -1,0 +1,17 @@
+@font-face {
+    font-family: 'Vollkorn SC';
+    font-weight: bold;
+    src: url('webfx-css:fonts/vollkornsc/VollkornSC-Bold.ttf');
+}
+
+@font-face {
+    font-family: 'Vollkorn SC';
+    font-style: normal;
+    src: url('webfx-css:fonts/vollkornsc/VollkornSC-Regular.ttf');
+}
+
+@font-face {
+    font-family: 'Vollkorn SC';
+    font-weight: 600; /* semi-bold */
+    src: url('webfx-css:fonts/vollkornsc/VollkornSC-SemiBold.ttf');
+}
