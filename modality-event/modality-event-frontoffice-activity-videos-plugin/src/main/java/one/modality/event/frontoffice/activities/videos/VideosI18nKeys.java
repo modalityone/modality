@@ -13,7 +13,7 @@ public interface VideosI18nKeys {
     String LivestreamTitle = "LivestreamTitle";
     String PastRecordings = "PastRecordings";
     String Expired = "Expired";
-    String FestivalSchedule = "FestivalSchedule";
+    String EventSchedule = "EventSchedule";
     String SelectTheDayBelow = "SelectTheDayBelow";
     String Date = "Date";
     String Status = "Status";
@@ -31,5 +31,6 @@ public interface VideosI18nKeys {
     String LiveNow = "LiveNow";
     String RecordingSoonAvailable = "RecordingSoonAvailable";
     String StartingIn = "StartingIn";
+    String WatchAgain = "WatchAgain";
 
 }

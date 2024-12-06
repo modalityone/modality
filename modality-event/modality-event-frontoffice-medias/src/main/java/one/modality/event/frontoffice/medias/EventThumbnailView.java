@@ -25,6 +25,8 @@ import javafx.stage.Screen;
 import one.modality.base.client.icons.SvgIcons;
 import one.modality.base.shared.entities.Event;
 
+import java.time.LocalDateTime;
+
 /**
  * @author Bruno Salmon
  */
@@ -54,7 +56,6 @@ public final class EventThumbnailView {
     }
 
     //TODO:
-    // - see the label we display according to  the event state (expired or not)
     // - See cursor hand on button with bootstrap
     // - Change the language, and the cover also
     // - short description as a label
@@ -92,12 +93,24 @@ public final class EventThumbnailView {
         thumbailStackPane.setPrefHeight(WIDTH);
         ImageView imageView = new ImageView();
         thumbailStackPane.getChildren().add(imageView);
-        Label availabilityLabel = Bootstrap.textSuccess(I18nControls.newLabel("Available"));
+        Label availabilityLabel = new Label();
+
+        if (imageItemCode != null) {
+            if (imageItemCode.contains("video"))
+                if (event.getVodExpirationDate() != null && LocalDateTime.now().isAfter(event.getVodExpirationDate()))
+                    availabilityLabel = Bootstrap.textDanger(I18nControls.newLabel("Expired"));
+                else
+                    availabilityLabel = Bootstrap.textSuccess(I18nControls.newLabel("Available"));
+            if (imageItemCode.contains("audio"))
+                if (event.getAudioExpirationDate() != null && LocalDateTime.now().isAfter(event.getAudioExpirationDate()))
+                    availabilityLabel = Bootstrap.textDanger(I18nControls.newLabel("Expired"));
+                else
+                    availabilityLabel = Bootstrap.textSuccess(I18nControls.newLabel("Available"));
+        }
         availabilityLabel.setPadding(new Insets(5, 15, 5, 15));
         availabilityLabel.setBackground(new Background(
             new BackgroundFill(Color.LIGHTGRAY, CornerRadii.EMPTY, new Insets(0))
         ));
-
         thumbailStackPane.getChildren().add(availabilityLabel);
         thumbailStackPane.setAlignment(Pos.TOP_LEFT);
 

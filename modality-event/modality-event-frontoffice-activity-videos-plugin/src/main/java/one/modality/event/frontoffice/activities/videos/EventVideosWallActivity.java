@@ -19,7 +19,8 @@ import dev.webfx.stack.orm.entity.EntityId;
 import dev.webfx.stack.orm.entity.EntityStore;
 import dev.webfx.stack.orm.entity.EntityStoreQuery;
 import javafx.application.Platform;
-import javafx.beans.property.*;
+import javafx.beans.property.ObjectProperty;
+import javafx.beans.property.SimpleObjectProperty;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.geometry.Insets;
@@ -40,9 +41,9 @@ import javafx.stage.Screen;
 import one.modality.base.client.bootstrap.ModalityStyle;
 import one.modality.base.client.icons.SvgIcons;
 import one.modality.base.frontoffice.utility.page.FOPageUtil;
+import one.modality.base.shared.entities.Attendance;
 import one.modality.base.shared.entities.Event;
 import one.modality.base.shared.entities.KnownItemFamily;
-import one.modality.base.shared.entities.ScheduledItem;
 import one.modality.crm.shared.services.authn.fx.FXUserPersonId;
 import one.modality.event.frontoffice.activities.audiorecordings.AudioRecordingsI18nKeys;
 
@@ -60,12 +61,12 @@ import java.util.stream.Collectors;
  */
 final class EventVideosWallActivity extends ViewDomainActivityBase {
 
-    public static final String VIDEO_SCHEDULED_ITEM_DYNAMIC_BOOLEAN_FIELD_HAS_PUBLISHED_MEDIAS = "hasPublishedMedias";
+    public static final String VIDEO_ATTENDANCE_DYNAMIC_BOOLEAN_FIELD_ATTENDED = "attended";
 
     private final ObjectProperty<Object> pathEventIdProperty = new SimpleObjectProperty<>();
 
     private final ObjectProperty<Event> eventProperty = new SimpleObjectProperty<>();
-    private final ObservableList<ScheduledItem> videoScheduledItems = FXCollections.observableArrayList();
+    private final ObservableList<Attendance> attendances = FXCollections.observableArrayList();
 
     private final CollapsePane daysCollapsePane = new CollapsePane();
     private final ColumnsPane daysColumnPane = new ColumnsPane();
@@ -73,15 +74,17 @@ final class EventVideosWallActivity extends ViewDomainActivityBase {
     private Label videoExpirationLabel;
     private final CloudImageService cloudImageService = new ClientImageService();
 
-    private static final int IMAGE_HEIGHT=188;
-    private static final int DAY_BUTTON_WIDTH=150;
+    private static final int IMAGE_HEIGHT = 240;
+    private static final int DAY_BUTTON_WIDTH = 150;
+    private static final int DAY_COLUMN_PANE_MAX_WIDTH = 1100;
 
     private final ObjectProperty<LocalDate> currentDaySelectedProperty = new SimpleObjectProperty<>();
-    private final HashMap<LocalDate,Button> correspondanceDateButton = new HashMap<>();
+    private final HashMap<LocalDate, Button> correspondenceDateButton = new HashMap<>();
 
     // Creating an intermediate observable list of DayVideosWallView, each element being a view for 1 day with all its videos
     private final ObservableList<VideosDayScheduleView> videosDayScheduleViews = FXCollections.observableArrayList(); // will be populated below
     private Button selectAllDaysButton;
+    private EntityStore entityStore;
 
     @Override
     protected void updateModelFromContextParameters() {
@@ -90,29 +93,28 @@ final class EventVideosWallActivity extends ViewDomainActivityBase {
 
     @Override
     protected void startLogic() {
+        entityStore = EntityStore.create(getDataSourceModel());
         // Creating our own entity store to hold the loaded data without interfering with other activities
-        EntityStore entityStore = EntityStore.create(getDataSourceModel()); // Activity datasource model is available at this point
         FXProperties.runNowAndOnPropertiesChange(() -> {
             Object eventId = pathEventIdProperty.get();
             EntityId userPersonId = FXUserPersonId.getUserPersonId();
             if (eventId == null || userPersonId == null) {
-                videoScheduledItems.clear();
+                attendances.clear();
                 eventProperty.set(null);
             } else {
                 entityStore.executeQueryBatch(
                         new EntityStoreQuery("select name, label.(de,en,es,fr,pt), shortDescription, audioExpirationDate, startDate, endDate, livestreamUrl, vodExpirationDate,vodProcessingTimeMinutes" +
-                                             " from Event" +
-                                             " where id=? limit 1",
+                            " from Event" +
+                            " where id=? limit 1",
                             new Object[]{eventId}),
-                        new EntityStoreQuery("select date, expirationDate, event, vodDelayed, published, comment, programScheduledItem.(name, date,timeline.(startTime, endTime), item.imageUrl)," +
-                                             " exists(select Media where scheduledItem=si) as " + VIDEO_SCHEDULED_ITEM_DYNAMIC_BOOLEAN_FIELD_HAS_PUBLISHED_MEDIAS +
-                                             " from ScheduledItem si" +
-                                             " where item.family.code=? and online and exists(select Attendance where scheduledItem=si and documentLine.(!cancelled and document.(event= ? and person=? and price_balance<=0)))" +
-                                             " order by date, programScheduledItem.timeline.startTime",
+                        new EntityStoreQuery("select date, attended, scheduledItem.(date, expirationDate, event, vodDelayed, published, comment, programScheduledItem.(name, date,timeline.(startTime, endTime), item.imageUrl))" +
+                            " from Attendance" +
+                            " where scheduledItem.(item.family.code=? and online) and documentLine.(!cancelled and document.(event= ? and person=? and price_balance<=0))" +
+                            " order by scheduledItem.date, scheduledItem.programScheduledItem.timeline.startTime",
                             new Object[]{KnownItemFamily.VIDEO.getCode(), eventId, userPersonId}))
                     .onFailure(Console::log)
                     .onSuccess(entityLists -> Platform.runLater(() -> {
-                        videoScheduledItems.setAll(entityLists[1]);
+                        attendances.setAll(entityLists[1]);
                         eventProperty.set((Event) Collections.first(entityLists[0]));
                     }));
             }
@@ -132,7 +134,7 @@ final class EventVideosWallActivity extends ViewDomainActivityBase {
         // *************************************************************************************************************
         HBox headerHBox = new HBox();
         headerHBox.setSpacing(50);
-        headerHBox.setPadding(new Insets(0,20,0,20));
+        headerHBox.setPadding(new Insets(0, 20, 0, 20));
         headerHBox.setMaxWidth(1024);
         MonoPane imageMonoPane = new MonoPane();
         ImageView imageView = new ImageView();
@@ -142,14 +144,14 @@ final class EventVideosWallActivity extends ViewDomainActivityBase {
 
         eventLabel.setWrapText(true);
         eventLabel.setTextAlignment(TextAlignment.CENTER);
-        eventLabel.setPadding(new Insets(0,0,12,0));
+        eventLabel.setPadding(new Insets(0, 0, 12, 0));
         Label eventDescriptionLabel = I18nControls.newLabel(new I18nSubKey("expression: shortDescription", eventProperty), eventProperty);
         eventDescriptionLabel.setWrapText(true);
         eventDescriptionLabel.setTextAlignment(TextAlignment.LEFT);
         eventDescriptionLabel.managedProperty().bind(FXProperties.compute(eventDescriptionLabel.textProperty(), Strings::isNotEmpty));
         eventDescriptionLabel.setMaxHeight(60);
         videoExpirationLabel = I18nControls.newLabel(AudioRecordingsI18nKeys.AvailableUntil);
-        videoExpirationLabel.setPadding(new Insets(30,0,0,0));
+        videoExpirationLabel.setPadding(new Insets(30, 0, 0, 0));
         VBox titleVBox = new VBox(eventLabel, eventDescriptionLabel, videoExpirationLabel);
 
         headerHBox.getChildren().add(titleVBox);
@@ -162,24 +164,25 @@ final class EventVideosWallActivity extends ViewDomainActivityBase {
 
         //We display this box only if the current Date is in the list of date in the video Scheduled Item list
         VBox currentDayScheduleVBox = new VBox(30); // Will be populated later (see reacting code below)
-        Label scheduleForTodayTitleLabel = Bootstrap.strong(Bootstrap.textPrimary(Bootstrap.h3(I18nControls.newLabel(VideosI18nKeys.ScheduleForSpecificDate,LocalDate.now().format(DateTimeFormatter.ofPattern("EEEE MMMM d"))))));
-        scheduleForTodayTitleLabel.setPadding(new Insets(100,0,40,0));
+        Label scheduleForTodayTitleLabel = Bootstrap.strong(Bootstrap.textPrimary(Bootstrap.h3(I18nControls.newLabel(VideosI18nKeys.ScheduleForSpecificDate, LocalDate.now().format(DateTimeFormatter.ofPattern("EEEE MMMM d"))))));
+        scheduleForTodayTitleLabel.setPadding(new Insets(100, 0, 40, 0));
         currentDayScheduleVBox.getChildren().add(scheduleForTodayTitleLabel);
         currentDayScheduleVBox.setAlignment(Pos.CENTER);
         currentDayScheduleVBox.setVisible(false);
         currentDayScheduleVBox.setManaged(false);
 
-        Label scheduleTitleLabel = Bootstrap.h3(I18nControls.newLabel(VideosI18nKeys.FestivalSchedule));
+        Label scheduleTitleLabel = Bootstrap.h3(I18nControls.newLabel(VideosI18nKeys.EventSchedule));
         Label scheduleSubTitleLabel = I18nControls.newLabel(VideosI18nKeys.SelectTheDayBelow);
-        VBox scheduleTitleVBox = new VBox(5,scheduleTitleLabel,scheduleSubTitleLabel);
+        VBox scheduleTitleVBox = new VBox(5, scheduleTitleLabel, scheduleSubTitleLabel);
         scheduleTitleVBox.setAlignment(Pos.CENTER);
-        scheduleTitleVBox.setPadding(new Insets(100,0,0,0));
+        scheduleTitleVBox.setPadding(new Insets(100, 0, 0, 0));
 
-        daysColumnPane.setHgap(10);
+        daysColumnPane.setHgap(7);
         daysColumnPane.setVgap(15);
         daysColumnPane.setMaxColumnCount(8);
         daysColumnPane.setMinColumnWidth(DAY_BUTTON_WIDTH);
-        daysColumnPane.setMinWidth(1100);
+        daysColumnPane.setMinWidth(DAY_COLUMN_PANE_MAX_WIDTH);
+        daysColumnPane.setPadding(new Insets(0,0,30,0));
 
         VBox videoScheduleVBox = new VBox(30); // Will be populated later (see reacting code below)
         GrowingPane scheduleContainerGrowingPane = new GrowingPane(videoScheduleVBox);
@@ -199,11 +202,12 @@ final class EventVideosWallActivity extends ViewDomainActivityBase {
 
         selectAllDaysButton = Bootstrap.primaryButton(I18nControls.newButton(VideosI18nKeys.ViewAllDays));
         selectAllDaysButton.setMinWidth(DAY_BUTTON_WIDTH);
-        selectAllDaysButton.setOnAction(e-> {
+        selectAllDaysButton.setOnAction(e -> {
             currentDaySelectedProperty.set(null);
             handleVideoChanges();
         });
 
+        // *************************************************************************************************************
         // *************************************************************************************************************
         // *********************************** Reacting to parameter changes *******************************************
         // *************************************************************************************************************
@@ -219,11 +223,11 @@ final class EventVideosWallActivity extends ViewDomainActivityBase {
                 pageContainer.setContent(loadedContentVBox);
                 Object imageTag;
 
-                if(I18n.getLanguage()==null ||"en".equals(I18n.getLanguage().toString())) {
+                if (I18n.getLanguage() == null || "en".equals(I18n.getLanguage().toString())) {
                     //We do add .jpg even if the image is not jpg, because for some reason, if we don't put an extension file, cloudinary doesn't always find the image, but it works when adding .jpg.
                     imageTag = eventProperty.get().getId().getPrimaryKey() + "-cover.jpg";
                 } else {
-                    imageTag = eventProperty.get().getId().getPrimaryKey() + "-cover-"+ I18n.getLanguage().toString()+".jpg";
+                    imageTag = eventProperty.get().getId().getPrimaryKey() + "-cover-" + I18n.getLanguage().toString() + ".jpg";
                 }
 
                 String pictureId = String.valueOf(imageTag);
@@ -236,14 +240,13 @@ final class EventVideosWallActivity extends ViewDomainActivityBase {
                             imageMonoPane.setBackground(null);
                             //First, we need to get the zoom factor of the screen
                             double zoomFactor = Screen.getPrimary().getOutputScaleX();
-                            String url = cloudImageService.url(pictureId, -1, (int) (IMAGE_HEIGHT*zoomFactor));
+                            String url = cloudImageService.url(pictureId, -1, (int) (IMAGE_HEIGHT * zoomFactor));
                             imageView.setFitHeight(IMAGE_HEIGHT);
                             imageView.setPreserveRatio(true);
                             Image imageToDisplay = new Image(url, true);
                             imageView.setImage(imageToDisplay);
                             imageMonoPane.getChildren().setAll(imageView);
-                        }
-                        else {
+                        } else {
                             SVGPath videoCoverPath = SvgIcons.createVideoIconPath();
                             imageMonoPane.setBackground(new Background(
                                 new BackgroundFill(Color.LIGHTGRAY, null, null)
@@ -252,36 +255,33 @@ final class EventVideosWallActivity extends ViewDomainActivityBase {
                             imageMonoPane.setAlignment(Pos.CENTER);
                         }
                     }));
-                if(eventProperty.get().getAudioExpirationDate()!=null) {
-                    if(LocalDateTime.now().isBefore(eventProperty.get().getVodExpirationDate()))
-                        I18nControls.bindI18nProperties(videoExpirationLabel,VideosI18nKeys.VideoAvailableUntil,eventProperty.get().getVodExpirationDate().format(DateTimeFormatter.ofPattern("d MMMM, yyyy ' - ' HH:mm")));
+                if (eventProperty.get().getVodExpirationDate() != null) {
+                    if (LocalDateTime.now().isBefore(eventProperty.get().getVodExpirationDate()))
+                        I18nControls.bindI18nProperties(videoExpirationLabel, VideosI18nKeys.VideoAvailableUntil, eventProperty.get().getVodExpirationDate().format(DateTimeFormatter.ofPattern("d MMMM, yyyy ' - ' HH:mm")));
                     else
-                        I18nControls.bindI18nProperties(videoExpirationLabel,VideosI18nKeys.VideoExpiredSince,eventProperty.get().getVodExpirationDate().format(DateTimeFormatter.ofPattern("d MMMM, yyyy ' - ' HH:mm")));
+                        I18nControls.bindI18nProperties(videoExpirationLabel, VideosI18nKeys.VideoExpiredSince, eventProperty.get().getVodExpirationDate().format(DateTimeFormatter.ofPattern("d MMMM, yyyy ' - ' HH:mm")));
                     videoExpirationLabel.setVisible(true);
-                }
-                else {
+                } else {
                     videoExpirationLabel.setVisible(false);
                 }
             }
             LocalDate currentDate = LocalDate.now();
-            Map<LocalDate, List<ScheduledItem>> perDayGroups =
-                videoScheduledItems.stream()
+            Map<LocalDate, List<Attendance>> perDayGroups =
+                attendances.stream()
                     .filter(item -> item.getDate().equals(currentDate)) // Filter for the target day
-                    .collect(Collectors.groupingBy(ScheduledItem::getDate));
+                    .collect(Collectors.groupingBy(Attendance::getDate));
             new TreeMap<>(perDayGroups) // The purpose of using a TreeMap is to sort the groups by keys (= days)
                 .forEach((day, dayScheduledVideos) -> {
                     currentDayScheduleVBox.setVisible(true);
                     currentDayScheduleVBox.setManaged(true);
                     // Passing the day, the videos of that day, and the history (for backward navigation)
-                    currentDayScheduleVBox.getChildren().setAll(scheduleForTodayTitleLabel, new VideosDayScheduleView(day, dayScheduledVideos, getHistory(),true,getDataSourceModel()).getView());
-                    });
+                    currentDayScheduleVBox.getChildren().setAll(scheduleForTodayTitleLabel, new VideosDayScheduleView(day, dayScheduledVideos, getHistory(), true, entityStore).getView());
+                });
 
-        }, videoScheduledItems,eventProperty);
+        }, attendances, eventProperty);
 
         // Populating dayVideosWallViews from videoScheduledItems = flat list of all videos of the event (not yet grouped by day)
-        ObservableLists.runNowAndOnListOrPropertiesChange(change -> {
-            handleVideoChanges();
-        }, videoScheduledItems);
+        ObservableLists.runNowAndOnListOrPropertiesChange(change -> handleVideoChanges(), attendances);
 
         // Now that we have dayVideosWallViews populated, we can populate the final VBox showing all days and their videos
         ObservableLists.runNowAndOnListChange(change -> {
@@ -292,7 +292,7 @@ final class EventVideosWallActivity extends ViewDomainActivityBase {
             }
         }, videosDayScheduleViews);
 
-        FXProperties.runNowAndOnPropertyChange(this::updateDaysButtonStyle,currentDaySelectedProperty);
+        FXProperties.runNowAndOnPropertyChange(this::updateDaysButtonStyle, currentDaySelectedProperty);
 
         // *************************************************************************************************************
         // ************************************* Building final container **********************************************
@@ -305,43 +305,56 @@ final class EventVideosWallActivity extends ViewDomainActivityBase {
 
     private void handleVideoChanges() {
         // Grouping videos per day
-        Map<LocalDate, List<ScheduledItem>> perDayGroups =
-            videoScheduledItems.stream().collect(Collectors.groupingBy(ScheduledItem::getDate));
+        Map<LocalDate, List<Attendance>> perDayGroups =
+            attendances.stream().collect(Collectors.groupingBy(Attendance::getDate));
         videosDayScheduleViews.clear();
         daysColumnPane.getChildren().clear();
         DateTimeFormatter dateFormatter = DateTimeFormatter.ofPattern("EEE, MMMM d");
 
-        correspondanceDateButton.clear();
-        correspondanceDateButton.put(null,selectAllDaysButton);
+        correspondenceDateButton.clear();
+        correspondenceDateButton.put(null, selectAllDaysButton);
         final boolean[] isFirst = {true};
+        final LocalDate[] firstDay = {null};
         new TreeMap<>(perDayGroups) // The purpose of using a TreeMap is to sort the groups by keys (= days)
-            .forEach((day, dayScheduledVideos) -> {
+            .forEach((day, attendance) -> {
                 videosDayScheduleViews.add(
-                        // Passing the day, the videos of that day, and the history (for backward navigation)
-                        new VideosDayScheduleView(day, dayScheduledVideos, getHistory(),isFirst[0], getDataSourceModel()));
-
+                    // Passing the day, the videos of that day, and the history (for backward navigation)
+                    new VideosDayScheduleView(day, attendance, getHistory(), isFirst[0], entityStore));
+                if(firstDay[0] ==null) firstDay[0] = day;
                 Button dateButton;
                 dateButton = Bootstrap.primaryButton(new Button(day.format(dateFormatter)));
                 dateButton.setMinWidth(DAY_BUTTON_WIDTH);
-                correspondanceDateButton.put(day,dateButton);
-                dateButton.setOnAction(e-> {
+                correspondenceDateButton.put(day, dateButton);
+                dateButton.setOnAction(e -> {
                     videosDayScheduleViews.clear();
-                    videosDayScheduleViews.add(new VideosDayScheduleView(day, dayScheduledVideos, getHistory(),true, getDataSourceModel()));
+                    videosDayScheduleViews.add(new VideosDayScheduleView(day, attendance, getHistory(), true, entityStore));
                     currentDaySelectedProperty.set(day);
                 });
                 daysColumnPane.getChildren().add(dateButton);
                 isFirst[0] = false;
             });
         daysColumnPane.getChildren().add(selectAllDaysButton);
+        currentDaySelectedProperty.setValue(firstDay[0]);
+
+        //Here we resize daysColumnPane
+        int numberOfChild = daysColumnPane.getChildren().size();
+        int theoricColumnPaneWith = (int) ((DAY_BUTTON_WIDTH+daysColumnPane.getHgap()) * (numberOfChild));
+        if(theoricColumnPaneWith< DAY_COLUMN_PANE_MAX_WIDTH) {
+            daysColumnPane.setMaxWidth(theoricColumnPaneWith);
+            daysColumnPane.setMinWidth(theoricColumnPaneWith);
+        } else {
+            daysColumnPane.setMaxWidth(DAY_COLUMN_PANE_MAX_WIDTH);
+            daysColumnPane.setMinWidth(DAY_COLUMN_PANE_MAX_WIDTH);
+        }
     }
 
     private void updateDaysButtonStyle() {
         LocalDate selectedDate = currentDaySelectedProperty.get();
-        for (Map.Entry<LocalDate, Button> entry : correspondanceDateButton.entrySet()) {
+        for (Map.Entry<LocalDate, Button> entry : correspondenceDateButton.entrySet()) {
             Button currentButton = entry.getValue();
             if (entry.getKey() == null && selectedDate == null) {
                 currentButton.getStyleClass().setAll("button", Bootstrap.BTN, Bootstrap.BTN_PRIMARY);
-            } else if (entry.getKey()!= null &&  entry.getKey().equals(selectedDate)) {
+            } else if (entry.getKey() != null && entry.getKey().equals(selectedDate)) {
                 currentButton.getStyleClass().setAll("button", Bootstrap.BTN, Bootstrap.BTN_PRIMARY);
             } else {
                 currentButton.getStyleClass().setAll("button", Bootstrap.BTN, ModalityStyle.BTN_WHITE);

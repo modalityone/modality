@@ -22,7 +22,7 @@ PastRecordings: "Video recordings of past teachings and meditations"
 Expired:
   text: "Expired"
   textFill: "#FF0404"
-FestivalSchedule: "Festival schedule"
+EventSchedule: "Event schedule"
 SelectTheDayBelow: "Select the day below"
 Date: "Date"
 Status: "Status"
@@ -56,3 +56,4 @@ RecordingSoonAvailable:
 StartingIn:
   text: "Starting in {0}"
   textFill: "#0096D6"
+WatchAgain: "Watch again"
