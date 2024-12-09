@@ -2,12 +2,16 @@ package one.modality.crm.server.authn.gateway;
 
 import dev.webfx.platform.async.Future;
 import dev.webfx.platform.console.Console;
-import dev.webfx.stack.authn.PasswordUpdate;
+import dev.webfx.platform.util.Strings;
+import dev.webfx.stack.authn.InitiateAccountCreationCredentials;
+import dev.webfx.stack.authn.UpdatePasswordCredentials;
 import dev.webfx.stack.authn.UserClaims;
 import dev.webfx.stack.authn.UsernamePasswordCredentials;
 import dev.webfx.stack.authn.logout.server.LogoutPush;
 import dev.webfx.stack.authn.server.gateway.spi.ServerAuthenticationGatewayProvider;
 import dev.webfx.stack.hash.md5.Md5;
+import dev.webfx.stack.mail.MailMessage;
+import dev.webfx.stack.mail.MailService;
 import dev.webfx.stack.orm.datasourcemodel.service.DataSourceModelService;
 import dev.webfx.stack.orm.domainmodel.DataSourceModel;
 import dev.webfx.stack.orm.domainmodel.HasDataSourceModel;
@@ -18,6 +22,8 @@ import dev.webfx.stack.orm.entity.UpdateStore;
 import dev.webfx.stack.push.server.PushServerService;
 import dev.webfx.stack.session.state.StateAccessor;
 import dev.webfx.stack.session.state.ThreadLocalStateHolder;
+import one.modality.base.server.mail.ModalityMailMessage;
+import one.modality.base.shared.context.ModalityContext;
 import one.modality.base.shared.entities.Person;
 import one.modality.crm.shared.services.authn.ModalityUserPrincipal;
 
@@ -28,6 +34,10 @@ import java.util.Objects;
  * @author Bruno Salmon
  */
 public final class ModalityUsernamePasswordAuthenticationGatewayProvider implements ServerAuthenticationGatewayProvider, HasDataSourceModel {
+
+    private static final String CREATE_ACCOUNT_ACTIVITY_PATH_PREFIX = "/create-account";
+    private static final String CREATE_ACCOUNT_ACTIVITY_PATH_FULL = CREATE_ACCOUNT_ACTIVITY_PATH_PREFIX + "/:token";
+    private static final String HASH_PATH = "/#";
 
     private final DataSourceModel dataSourceModel;
 
@@ -46,11 +56,16 @@ public final class ModalityUsernamePasswordAuthenticationGatewayProvider impleme
 
     @Override
     public boolean acceptsUserCredentials(Object userCredentials) {
-        return userCredentials instanceof UsernamePasswordCredentials;
+        return userCredentials instanceof UsernamePasswordCredentials
+            || userCredentials instanceof InitiateAccountCreationCredentials
+            ;
     }
 
     @Override
     public Future<Void> authenticate(Object userCredentials) {
+        if (userCredentials instanceof InitiateAccountCreationCredentials) {
+            return sendAccountCreationLink((InitiateAccountCreationCredentials) userCredentials);
+        }
         if (!acceptsUserCredentials(userCredentials))
             return Future.failedFuture(getClass().getSimpleName() + " requires a " + UsernamePasswordCredentials.class.getSimpleName() + " argument");
         String runId = ThreadLocalStateHolder.getRunId();
@@ -74,6 +89,20 @@ public final class ModalityUsernamePasswordAuthenticationGatewayProvider impleme
                 ModalityUserPrincipal modalityUserPrincipal = new ModalityUserPrincipal(personId, accountId);
                 return PushServerService.pushState(StateAccessor.createUserIdState(modalityUserPrincipal), runId);
             });
+    }
+
+    private Future<Void> sendAccountCreationLink(InitiateAccountCreationCredentials creationCredentials) {
+        String clientOrigin = creationCredentials.getClientOrigin();
+        if (!clientOrigin.startsWith("http")) {
+            clientOrigin = (clientOrigin.contains(":80") ? "http" : "https") + clientOrigin.substring(clientOrigin.indexOf("://"));
+        }
+        String token = creationCredentials.getEmail(); // Uuid.randomUuid();
+        String lang = Strings.toSafeString(creationCredentials.getLanguage());
+        String link = clientOrigin + withHashPrefix(CREATE_ACCOUNT_ACTIVITY_PATH_FULL.replace(":token", token).replace(":lang", lang));
+        Object context = creationCredentials.getContext();
+        ModalityContext modalityContext = context instanceof ModalityContext ? (ModalityContext) context
+            : new ModalityContext(1 /* default organizationId if no context is provided */, null, null, null);
+        return MailService.sendMail(new ModalityMailMessage(MailMessage.create(null, creationCredentials.getEmail(), "Create account", "<a href='" + link + "'>Create account</a>"), modalityContext));
     }
 
     private String encryptPassword(String username, String password) {
@@ -123,14 +152,14 @@ public final class ModalityUsernamePasswordAuthenticationGatewayProvider impleme
 
     @Override
     public boolean acceptsUpdateCredentialsArgument(Object updateCredentialsArgument) {
-        return updateCredentialsArgument instanceof PasswordUpdate;
+        return updateCredentialsArgument instanceof UpdatePasswordCredentials;
     }
 
     @Override
     public Future<?> updateCredentials(Object updateCredentialsArgument) {
         if (!acceptsUpdateCredentialsArgument(updateCredentialsArgument))
-            return Future.failedFuture(getClass().getSimpleName() + ".updateCredentials() requires a " + PasswordUpdate.class.getSimpleName() + " argument");
-        PasswordUpdate passwordUpdate = (PasswordUpdate) updateCredentialsArgument;
+            return Future.failedFuture(getClass().getSimpleName() + ".updateCredentials() requires a " + UpdatePasswordCredentials.class.getSimpleName() + " argument");
+        UpdatePasswordCredentials passwordUpdate = (UpdatePasswordCredentials) updateCredentialsArgument;
         // 1) We first check that the passed old password matches with the one in database
         return queryModalityUserPerson("frontendAccount.(username,password)")
             .compose(userPerson -> {
@@ -152,4 +181,9 @@ public final class ModalityUsernamePasswordAuthenticationGatewayProvider impleme
     public Future<Void> logout() {
         return LogoutPush.pushLogoutMessageToClient();
     }
+
+    private static String withHashPrefix(String path) {
+        return path.startsWith(HASH_PATH) ? path : HASH_PATH + path;
+    }
+
 }
