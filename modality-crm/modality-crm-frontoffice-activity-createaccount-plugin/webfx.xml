@@ -8,10 +8,10 @@
 
     <dependencies>
         <used-by-source-modules/>
-        <plugin-module>modality-crm-frontoffice-activity-createaccount-plugin</plugin-module>
-
-        <plugin-module>modality-crm-client-min-plugin</plugin-module>
-
     </dependencies>
+
+    <providers>
+        <provider interface="dev.webfx.stack.routing.uirouter.UiRoute">one.modality.crm.frontoffice.activities.createaccount.CreateAccountRouting$CreateAccountUiRoute</provider>
+    </providers>
 
 </project>

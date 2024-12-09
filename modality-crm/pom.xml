@@ -34,6 +34,7 @@
         <module>modality-crm-client-min-plugin</module>
         <module>modality-crm-client-personaldetails</module>
         <module>modality-crm-client-profile-plugin</module>
+        <module>modality-crm-frontoffice-activity-createaccount-plugin</module>
         <module>modality-crm-frontoffice-max-plugin</module>
         <module>modality-crm-frontoffice-min-plugin</module>
         <module>modality-crm-server-authn-gateway-magiclink-plugin</module>

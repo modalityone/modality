@@ -8,6 +8,7 @@
 
     <dependencies>
         <used-by-source-modules/>
+        <plugin-module>modality-crm-frontoffice-min-plugin</plugin-module>
 
         <plugin-module>modality-crm-client-max-plugin</plugin-module>
 
