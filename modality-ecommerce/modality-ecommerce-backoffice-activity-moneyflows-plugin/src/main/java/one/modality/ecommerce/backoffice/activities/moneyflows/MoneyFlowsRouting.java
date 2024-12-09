@@ -25,7 +25,7 @@ public final class MoneyFlowsRouting {
         return ANY_PATH;
     }
 
-    public static String getOrganizationIncomePath(Object organizationId) {
+    public static String getOrganizationMoneyFlowsPath(Object organizationId) {
         return organizationId == null ? "/money-flows" : ModalityRoutingUtil.interpolateOrganizationIdInPath(organizationId, ORGANIZATION_PATH);
     }
 
@@ -47,7 +47,7 @@ public final class MoneyFlowsRouting {
     public static final class RouteToMoneyFlowsRequest extends RoutePushRequest implements HasOperationCode {
 
         public RouteToMoneyFlowsRequest(Object organizationId, BrowsingHistory history) {
-            super(getOrganizationIncomePath(organizationId), history);
+            super(getOrganizationMoneyFlowsPath(organizationId), history);
         }
 
         @Override
