@@ -60,24 +60,24 @@ public class ModalityMagicLinkAuthenticationGatewayProvider implements ServerAut
 
     @Override
     public boolean acceptsUserCredentials(Object userCredentials) {
-        return userCredentials instanceof MagicLinkRequest
+        return userCredentials instanceof SendMagicLinkCredentials
                || userCredentials instanceof MagicLinkCredentials
-               || userCredentials instanceof MagicLinkRenewalRequest
+               || userCredentials instanceof RenewMagicLinkCredentials
             ;
     }
 
     @Override
     public Future<?> authenticate(Object userCredentials) {
-        if (userCredentials instanceof MagicLinkRequest)
-            return createAndSendMagicLink((MagicLinkRequest) userCredentials);
-        if (userCredentials instanceof MagicLinkRenewalRequest)
-            return renewAndSendMagicLink((MagicLinkRenewalRequest) userCredentials);
+        if (userCredentials instanceof SendMagicLinkCredentials)
+            return createAndSendMagicLink((SendMagicLinkCredentials) userCredentials);
+        if (userCredentials instanceof RenewMagicLinkCredentials)
+            return renewAndSendMagicLink((RenewMagicLinkCredentials) userCredentials);
         if (userCredentials instanceof MagicLinkCredentials)
             return authenticateWithMagicLink((MagicLinkCredentials) userCredentials);
-        return Future.failedFuture(getClass().getSimpleName() + ".authenticate() requires a " + MagicLinkRequest.class.getSimpleName() + ", " + MagicLinkRenewalRequest.class.getSimpleName() + " or " + MagicLinkCredentials.class.getSimpleName() + " argument");
+        return Future.failedFuture(getClass().getSimpleName() + ".authenticate() requires a " + SendMagicLinkCredentials.class.getSimpleName() + ", " + RenewMagicLinkCredentials.class.getSimpleName() + " or " + MagicLinkCredentials.class.getSimpleName() + " argument");
     }
 
-    private Future<Void> createAndSendMagicLink(MagicLinkRequest request) {
+    private Future<Void> createAndSendMagicLink(SendMagicLinkCredentials request) {
         return storeAndSendMagicLink(
             ThreadLocalStateHolder.getRunId(), // runId = this runId (runId of the session where the request originates)
             Strings.toSafeString(request.getLanguage()), // lang
@@ -88,7 +88,7 @@ public class ModalityMagicLinkAuthenticationGatewayProvider implements ServerAut
         );
     }
 
-    private Future<Void> renewAndSendMagicLink(MagicLinkRenewalRequest request) {
+    private Future<Void> renewAndSendMagicLink(RenewMagicLinkCredentials request) {
         return EntityStore.create(dataSourceModel)
             .<MagicLink>executeQuery("select loginRunId, lang, link, email, requestedPath from MagicLink where token=? order by id desc limit 1", request.getPreviousToken())
             .map(Collections::first)
@@ -123,10 +123,10 @@ public class ModalityMagicLinkAuthenticationGatewayProvider implements ServerAut
         magicLink.setLink(link);
         magicLink.setEmail(email);
         magicLink.setRequestedPath(requestedPath);
-        ModalityContext modalityContext = context instanceof ModalityContext ? (ModalityContext) context
-            : new ModalityContext(1 /* default organizationId if no context is provided */, null, null, null);
         return updateStore.submitChanges()
             .compose(ignoredBatch -> {
+                ModalityContext modalityContext = context instanceof ModalityContext ? (ModalityContext) context
+                    : new ModalityContext(1 /* default organizationId if no context is provided */, null, null, null);
                 modalityContext.setMagicLinkId(magicLink.getPrimaryKey());
                 return MailService.sendMail(new ModalityMailMessage(MailMessage.create(null, magicLink.getEmail(), "Magic link", magicLink.getLink()), modalityContext));
             });
@@ -208,15 +208,15 @@ public class ModalityMagicLinkAuthenticationGatewayProvider implements ServerAut
 
     @Override
     public boolean acceptsUpdateCredentialsArgument(Object updateCredentialsArgument) {
-        return updateCredentialsArgument instanceof MagicLinkPasswordUpdate;
+        return updateCredentialsArgument instanceof UpdatePasswordMagicLinkCredentials;
     }
 
     @Override
     public Future<?> updateCredentials(Object updateCredentialsArgument) {
-        if (!(updateCredentialsArgument instanceof MagicLinkPasswordUpdate)) {
-            return Future.failedFuture(getClass().getSimpleName() + ".updateCredentials() requires a " + MagicLinkPasswordUpdate.class.getSimpleName() + " argument");
+        if (!(updateCredentialsArgument instanceof UpdatePasswordMagicLinkCredentials)) {
+            return Future.failedFuture(getClass().getSimpleName() + ".updateCredentials() requires a " + UpdatePasswordMagicLinkCredentials.class.getSimpleName() + " argument");
         }
-        MagicLinkPasswordUpdate update = (MagicLinkPasswordUpdate) updateCredentialsArgument;
+        UpdatePasswordMagicLinkCredentials update = (UpdatePasswordMagicLinkCredentials) updateCredentialsArgument;
         String usageRunId = ThreadLocalStateHolder.getRunId();
         // 1) Loading the email for the magic link normally associated with this magic link app userId from the database
         // This will be used to identify the account we need to change the password for.
@@ -238,10 +238,13 @@ public class ModalityMagicLinkAuthenticationGatewayProvider implements ServerAut
                         // 5) Pushing the userId to the original client from which the magic link request was made.
                         // The original client is identified by runId. Pushing the userId will cause a login, and
                         // subsequently a push of the authorizations.
-                        PasswordUpdate passwordUpdate = new PasswordUpdate(userPerson.evaluate("frontendAccount.password"), update.getNewPassword());
+                        UpdatePasswordCredentials updatePasswordCredentials = new UpdatePasswordCredentials(
+                            userPerson.evaluate("frontendAccount.password"), // old password
+                            update.getNewPassword() // new password
+                        );
                         Promise<Void> promise = Promise.promise();
                         ThreadLocalStateHolder.runAsUser(targetUserId,
-                            () -> promise.handle(AuthenticationService.updateCredentials(passwordUpdate).mapEmpty())
+                            () -> promise.handle(AuthenticationService.updateCredentials(updatePasswordCredentials).mapEmpty())
                         );
                         return promise.future();
                     });
