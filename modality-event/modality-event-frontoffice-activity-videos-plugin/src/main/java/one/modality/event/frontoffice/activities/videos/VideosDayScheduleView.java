@@ -8,10 +8,12 @@ import dev.webfx.platform.util.time.Times;
 import dev.webfx.platform.windowhistory.spi.BrowsingHistory;
 import dev.webfx.stack.i18n.I18nKeys;
 import dev.webfx.stack.i18n.controls.I18nControls;
-import dev.webfx.stack.orm.domainmodel.DataSourceModel;
 import dev.webfx.stack.orm.entity.EntityStore;
 import dev.webfx.stack.orm.entity.EntityStoreQuery;
+import dev.webfx.stack.orm.entity.UpdateStore;
+import dev.webfx.stack.orm.entity.binding.EntityBindings;
 import javafx.application.Platform;
+import javafx.beans.property.BooleanProperty;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.geometry.VPos;
@@ -24,6 +26,7 @@ import javafx.scene.layout.GridPane;
 import javafx.scene.layout.Region;
 import javafx.scene.layout.VBox;
 import one.modality.base.client.messaging.ModalityMessaging;
+import one.modality.base.shared.entities.Attendance;
 import one.modality.base.shared.entities.ScheduledItem;
 import one.modality.crm.shared.services.authn.fx.FXUserPersonId;
 
@@ -40,17 +43,17 @@ import java.util.Objects;
 final class VideosDayScheduleView {
 
     private final LocalDate day;
-    private final List<ScheduledItem> dayScheduledVideos;
+    private final List<Attendance> dayScheduledVideos;
     private final BrowsingHistory browsingHistory;
 
     private final GridPane gridPaneContainer = new GridPane();
-    private final DataSourceModel dataSourceModel;
+    private final EntityStore entityStore;
 
-    public VideosDayScheduleView(LocalDate day, List<ScheduledItem> dayScheduledVideos, BrowsingHistory browsingHistory, boolean displayHeader, DataSourceModel dataSourceModel) {
+    public VideosDayScheduleView(LocalDate day, List<Attendance> dayScheduledVideos, BrowsingHistory browsingHistory, boolean displayHeader, EntityStore entityStore) {
         this.day = day;
         this.dayScheduledVideos = dayScheduledVideos;
         this.browsingHistory = browsingHistory;
-        this.dataSourceModel = dataSourceModel;
+        this.entityStore = entityStore;
         buildUi(displayHeader);
     }
 
@@ -83,6 +86,7 @@ final class VideosDayScheduleView {
         }
 
         Label dateLabel = new Label(day.format(DateTimeFormatter.ofPattern("dd MMMM yyyy")));
+        dateLabel.setWrapText(true);
         GridPane.setValignment(dateLabel, VPos.TOP);
 
         gridPaneContainer.add(dateLabel, 0, currentRow[0]);
@@ -143,15 +147,29 @@ final class VideosDayScheduleView {
         private final Label statusLabel = I18nControls.newLabel(I18nKeys.upperCase(VideosI18nKeys.OnTime));
         private final Button actionButton = Bootstrap.dangerButton(I18nControls.newButton(VideosI18nKeys.Watch));
         private ScheduledItem scheduledItem;
+        private Attendance attendance;
+        private final UpdateStore updateStore;
+        private BooleanProperty scheduledItemPublishedProperty;
+        private BooleanProperty attendanceIsAttendedProperty;
 
-        public VideoSchedulePopulator(int[] currentRow, ScheduledItem s) {
+        public VideoSchedulePopulator(int[] currentRow, Attendance a) {
             this.currentRow = currentRow;
             actionButton.setGraphicTextGap(10);
             actionButton.setCursor(Cursor.HAND);
-            actionButton.setMinWidth(110);
+            actionButton.setMinWidth(130);
             statusLabel.setWrapText(true);
             statusLabel.setPadding(new Insets(0, 10, 0, 0));
-            scheduledItem = s;
+            scheduledItem = a.getScheduledItem();
+            updateStore = UpdateStore.createAbove(entityStore);
+            attendance = updateStore.updateEntity(a);
+            attendanceIsAttendedProperty = EntityBindings.getBooleanFieldProperty(attendance,Attendance.attended);
+            scheduledItemPublishedProperty = EntityBindings.getBooleanFieldProperty(scheduledItem,ScheduledItem.published);
+            attendanceIsAttendedProperty.addListener(e->
+                UiScheduler.scheduleDelay(3000, ()->{
+                    if(attendanceIsAttendedProperty.get()) {
+                    I18nControls.bindI18nProperties(actionButton,VideosI18nKeys.WatchAgain);
+            }}));
+            scheduledItemPublishedProperty.addListener(e-> Platform.runLater(()->computeStatusLabelAndWatchButton()));
         }
 
         public void populateVideoRow() {
@@ -228,7 +246,13 @@ final class VideosDayScheduleView {
             //The live is currently playing, we display this 2 minutes before the beginning
             if (LocalDateTime.now().isAfter(sessionStart.minusMinutes(2)) && LocalDateTime.now().isBefore(sessionEnd)) {
                 I18nControls.bindI18nProperties(statusLabel, I18nKeys.upperCase(VideosI18nKeys.LiveNow));
-                actionButton.setOnAction(e -> browsingHistory.push(LivestreamPlayerRouting.getLivestreamPath(scheduledItem.getEventId())));
+                actionButton.setOnAction(e -> {
+                    browsingHistory.push(LivestreamPlayerRouting.getLivestreamPath(scheduledItem.getEventId()));
+                    attendance.setAttended(true);
+                    updateStore.submitChanges()
+                        .onFailure(Console::log)
+                        .onSuccess(Console::log);
+                });
                 actionButton.setVisible(true);
                 Duration duration = Duration.between(LocalDateTime.now(), sessionEnd);
                 if (duration.getSeconds() > 0)
@@ -249,6 +273,10 @@ final class VideosDayScheduleView {
                     if (duration.getSeconds() < 60 * 30) {
                         actionButton.setOnAction(e -> browsingHistory.push(LivestreamPlayerRouting.getLivestreamPath(scheduledItem.getEventId())));
                         actionButton.setVisible(true);
+                        attendance.setAttended(true);
+                        updateStore.submitChanges()
+                            .onFailure(Console::log)
+                            .onSuccess(Console::log);
                     } else {
                         hideActionButton();
                     }
@@ -277,7 +305,13 @@ final class VideosDayScheduleView {
             //The recording of the video has been published
             if (scheduledItem.isPublished()) {
                 I18nControls.bindI18nProperties(statusLabel, I18nKeys.upperCase(VideosI18nKeys.Available));
-                actionButton.setOnAction(e -> browsingHistory.push(SessionVideoPlayerRouting.getVideoOfSessionPath(scheduledItem.getId())));
+                actionButton.setOnAction(e -> {
+                    browsingHistory.push(SessionVideoPlayerRouting.getVideoOfSessionPath(scheduledItem.getId()));
+                    attendance.setAttended(true);
+                    updateStore.submitChanges()
+                        .onFailure(Console::log)
+                        .onSuccess(Console::log);
+                });
                 actionButton.setVisible(true);
                 if (expirationDate != null) {
                     //We schedule a refresh so the UI is updated when the expirationDate is reached
@@ -329,10 +363,9 @@ final class VideosDayScheduleView {
             String messageType = message.get("messageType");
             if (Objects.equals(scheduledItem.getPrimaryKey(), updatedScheduledItemId) && "VIDEO_STATE_CHANGED".equals(messageType)) {
                 //Here we need to reload the datas from the database to display the button
-                EntityStore entityStore = EntityStore.create(dataSourceModel);
                 entityStore.executeQuery(
                         new EntityStoreQuery("select date, expirationDate, event, vodDelayed, published, comment, parent.(name, date,timeline.(startTime, endTime), item.imageUrl)," +
-                                             " exists(select Media where scheduledItem=si) as " + EventVideosWallActivity.VIDEO_SCHEDULED_ITEM_DYNAMIC_BOOLEAN_FIELD_HAS_PUBLISHED_MEDIAS +
+                                             " exists(select Media where scheduledItem=si) as " + EventVideosWallActivity.VIDEO_ATTENDANCE_DYNAMIC_BOOLEAN_FIELD_ATTENDED +
                                              " from ScheduledItem si where si.id=?" + "and online and exists(select Attendance where scheduledItem=si and documentLine.(!cancelled and document.(event= ? and person=? and price_balance<=0)))" +
                                              " order by date, parent.timeline.startTime",
                             new Object[]{updatedScheduledItemId, scheduledItem.getEvent(), FXUserPersonId.getUserPersonId()}))

@@ -19,6 +19,7 @@ import javafx.scene.control.Label;
 import javafx.scene.layout.VBox;
 import one.modality.base.frontoffice.utility.page.FOPageUtil;
 import one.modality.base.shared.entities.Event;
+import one.modality.base.shared.entities.KnownItem;
 import one.modality.base.shared.entities.KnownItemFamily;
 import one.modality.crm.shared.services.authn.fx.FXUserPersonId;
 import one.modality.event.frontoffice.medias.EventThumbnailView;
@@ -63,7 +64,7 @@ final class VideosActivity extends ViewDomainActivityBase {
         columnsPane.getStyleClass().add("media-library");
         // Showing a thumbnail in the columns pane for each event with videos
         ObservableLists.bindConverted(columnsPane.getChildren(), eventsWithBookedVideos, event -> {
-            EventThumbnailView eventTbView = new EventThumbnailView(event);
+            EventThumbnailView eventTbView = new EventThumbnailView(event, KnownItem.VIDEO.getCode());
             VBox container = eventTbView.getView();
             Button actionButton = eventTbView.getActionButton();
             actionButton.setCursor(Cursor.HAND);

@@ -297,6 +297,8 @@ public class MediaLinksForVODManagement extends MediaLinksManagement {
                 availableUntilDateTextField.setMaxWidth(100);
                 if (workingCurrentVideoScheduledItem.getExpirationDate() != null)
                     availableUntilDateTextField.setText(workingCurrentVideoScheduledItem.getExpirationDate().format(DATE_FORMATTER));
+
+
                 HBox.setMargin(availableUntilDateTextField, new Insets(0, 15, 0, 25));
                 rightHBox.getChildren().add(availableUntilDateTextField);
                 validationSupport.addDateValidation(availableUntilDateTextField, DATE_FORMAT, availableUntilDateTextField, I18n.getI18nText("ValidationDateFormatIncorrect"));
@@ -336,6 +338,15 @@ public class MediaLinksForVODManagement extends MediaLinksManagement {
                 customExpirationDateSwitch.selectedProperty().addListener(observable -> {
                     if (!customExpirationDateSwitch.selectedProperty().get()) {
                         workingCurrentVideoScheduledItem.setExpirationDate(null);
+                    } else {
+                        try {
+                            LocalDate date = LocalDate.parse(availableUntilDateTextField.getText(), DATE_FORMATTER);
+                            LocalTime time = LocalTime.parse(availableUntilTimeTextField.getText(), TIME_FORMATTER);
+                            // Combine the date and time to create LocalDateTime
+                            LocalDateTime availableUntil = LocalDateTime.of(date, time);
+                            workingCurrentVideoScheduledItem.setExpirationDate(availableUntil);
+                        } catch (DateTimeParseException ignored) {
+                        }
                     }
                 });
 
