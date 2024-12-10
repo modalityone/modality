@@ -2,10 +2,7 @@ package one.modality.crm.server.authn.gateway;
 
 import dev.webfx.platform.async.Future;
 import dev.webfx.platform.console.Console;
-import dev.webfx.stack.authn.InitiateAccountCreationCredentials;
-import dev.webfx.stack.authn.UpdatePasswordCredentials;
-import dev.webfx.stack.authn.UserClaims;
-import dev.webfx.stack.authn.AuthenticateWithUsernamePasswordCredentials;
+import dev.webfx.stack.authn.*;
 import dev.webfx.stack.authn.logout.server.LogoutPush;
 import dev.webfx.stack.authn.server.gateway.spi.ServerAuthenticationGatewayProvider;
 import dev.webfx.stack.hash.md5.Md5;
@@ -19,6 +16,7 @@ import dev.webfx.stack.orm.entity.UpdateStore;
 import dev.webfx.stack.push.server.PushServerService;
 import dev.webfx.stack.session.state.StateAccessor;
 import dev.webfx.stack.session.state.ThreadLocalStateHolder;
+import one.modality.base.shared.entities.MagicLink;
 import one.modality.base.shared.entities.Person;
 import one.modality.crm.server.authn.gateway.shared.LoginLinkService;
 import one.modality.crm.shared.services.authn.ModalityUserPrincipal;
@@ -57,18 +55,22 @@ public final class ModalityUsernamePasswordAuthenticationGatewayProvider impleme
     public boolean acceptsUserCredentials(Object userCredentials) {
         return userCredentials instanceof AuthenticateWithUsernamePasswordCredentials
                || userCredentials instanceof InitiateAccountCreationCredentials
+               || userCredentials instanceof ContinueAccountCreationCredentials
             ;
     }
 
     @Override
-    public Future<Void> authenticate(Object userCredentials) {
-        if (userCredentials instanceof InitiateAccountCreationCredentials) {
-            return sendAccountCreationLink((InitiateAccountCreationCredentials) userCredentials);
+    public Future<?> authenticate(Object credentials) {
+        if (credentials instanceof InitiateAccountCreationCredentials) {
+            return sendAccountCreationLink((InitiateAccountCreationCredentials) credentials);
         }
-        if (!acceptsUserCredentials(userCredentials))
+        if (credentials instanceof ContinueAccountCreationCredentials) {
+            return continueAccountCreationLink((ContinueAccountCreationCredentials) credentials);
+        }
+        if (!acceptsUserCredentials(credentials))
             return Future.failedFuture(getClass().getSimpleName() + " requires a " + AuthenticateWithUsernamePasswordCredentials.class.getSimpleName() + " argument");
         String runId = ThreadLocalStateHolder.getRunId();
-        AuthenticateWithUsernamePasswordCredentials authenticateWithUsernamePasswordCredentials = (AuthenticateWithUsernamePasswordCredentials) userCredentials;
+        AuthenticateWithUsernamePasswordCredentials authenticateWithUsernamePasswordCredentials = (AuthenticateWithUsernamePasswordCredentials) credentials;
         String username = authenticateWithUsernamePasswordCredentials.getUsername();
         String password = authenticateWithUsernamePasswordCredentials.getPassword();
         if (username == null || password == null)
@@ -90,15 +92,20 @@ public final class ModalityUsernamePasswordAuthenticationGatewayProvider impleme
             });
     }
 
-    private Future<Void> sendAccountCreationLink(InitiateAccountCreationCredentials creationCredentials) {
+    private Future<Void> sendAccountCreationLink(InitiateAccountCreationCredentials credentials) {
         return LoginLinkService.storeAndSendLoginLink(
-            creationCredentials,
+            credentials,
             CREATE_ACCOUNT_ACTIVITY_PATH_FULL,
             CREATE_ACCOUNT_LINK_MAIL_FROM,
             CREATE_ACCOUNT_LINK_MAIL_SUBJECT,
             CREATE_ACCOUNT_LINK_MAIL_BODY,
             dataSourceModel
         );
+    }
+
+    private Future<String> continueAccountCreationLink(ContinueAccountCreationCredentials credentials) {
+        return LoginLinkService.loadLoginLinkFromTokenAndMarkAsUsed(credentials.getToken(), dataSourceModel)
+            .map(MagicLink::getEmail);
     }
 
     private String encryptPassword(String username, String password) {
