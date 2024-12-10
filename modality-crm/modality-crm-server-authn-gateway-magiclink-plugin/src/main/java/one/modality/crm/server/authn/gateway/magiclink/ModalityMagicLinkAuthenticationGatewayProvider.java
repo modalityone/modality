@@ -17,6 +17,7 @@ import dev.webfx.stack.session.state.ThreadLocalStateHolder;
 import one.modality.base.shared.entities.MagicLink;
 import one.modality.crm.server.authn.gateway.shared.ActivityHashUtil;
 import one.modality.crm.server.authn.gateway.shared.LoginLinkService;
+import one.modality.crm.shared.services.authn.ModalityAuthenticationI18nKeys;
 import one.modality.crm.shared.services.authn.ModalityGuestPrincipal;
 import one.modality.crm.shared.services.authn.ModalityUserPrincipal;
 
@@ -63,7 +64,7 @@ public class ModalityMagicLinkAuthenticationGatewayProvider implements ServerAut
             return renewAndSendMagicLink((RenewMagicLinkCredentials) userCredentials);
         if (userCredentials instanceof AuthenticateWithMagicLinkCredentials)
             return authenticateWithMagicLink((AuthenticateWithMagicLinkCredentials) userCredentials);
-        return Future.failedFuture(getClass().getSimpleName() + ".authenticate() requires a " + SendMagicLinkCredentials.class.getSimpleName() + ", " + RenewMagicLinkCredentials.class.getSimpleName() + " or " + AuthenticateWithMagicLinkCredentials.class.getSimpleName() + " argument");
+        return Future.failedFuture("%s.authenticate() requires a %s, %s or %s argument".formatted(getClass().getSimpleName(), SendMagicLinkCredentials.class.getSimpleName(), RenewMagicLinkCredentials.class.getSimpleName(), AuthenticateWithMagicLinkCredentials.class.getSimpleName()));
     }
 
     private Future<Void> createAndSendMagicLink(SendMagicLinkCredentials request) {
@@ -83,7 +84,7 @@ public class ModalityMagicLinkAuthenticationGatewayProvider implements ServerAut
             .map(Collections::first)
             .compose(magicLink -> {
                 if (magicLink == null)
-                    return Future.failedFuture("Magic link token not found");
+                    return Future.failedFuture("[%s] Magic link token not found".formatted(ModalityAuthenticationI18nKeys.LoginLinkUnrecognisedError));
                 String link = magicLink.getLink();
                 String clientOrigin = ActivityHashUtil.withoutHashSuffix(link.substring(0, link.indexOf(MAGIC_LINK_ACTIVITY_PATH_PREFIX)));
                 return LoginLinkService.storeAndSendLoginLink(
@@ -148,12 +149,12 @@ public class ModalityMagicLinkAuthenticationGatewayProvider implements ServerAut
 
     @Override
     public Future<?> verifyAuthenticated() {
-        return Future.failedFuture(getClass().getSimpleName() + ".verifyAuthenticated() is not supported");
+        return Future.failedFuture("%s.verifyAuthenticated() is not supported".formatted(getClass().getSimpleName()));
     }
 
     @Override
     public Future<UserClaims> getUserClaims() {
-        return Future.failedFuture(getClass().getSimpleName() + ".getUserClaims() is not supported");
+        return Future.failedFuture("%s.getUserClaims() is not supported".formatted(getClass().getSimpleName()));
     }
 
     @Override
@@ -163,10 +164,9 @@ public class ModalityMagicLinkAuthenticationGatewayProvider implements ServerAut
 
     @Override
     public Future<?> updateCredentials(Object updateCredentialsArgument) {
-        if (!(updateCredentialsArgument instanceof UpdatePasswordFromMagicLinkCredentials)) {
-            return Future.failedFuture(getClass().getSimpleName() + ".updateCredentials() requires a " + UpdatePasswordFromMagicLinkCredentials.class.getSimpleName() + " argument");
+        if (!(updateCredentialsArgument instanceof UpdatePasswordFromMagicLinkCredentials update)) {
+            return Future.failedFuture("%s.updateCredentials() requires a %s argument".formatted(getClass().getSimpleName(), UpdatePasswordFromMagicLinkCredentials.class.getSimpleName()));
         }
-        UpdatePasswordFromMagicLinkCredentials update = (UpdatePasswordFromMagicLinkCredentials) updateCredentialsArgument;
         String usageRunId = ThreadLocalStateHolder.getRunId();
         // 1) Loading the email for the magic link normally associated with this magic link app userId from the database
         // This will be used to identify the account we need to change the password for.
@@ -174,13 +174,13 @@ public class ModalityMagicLinkAuthenticationGatewayProvider implements ServerAut
             .<MagicLink>executeQuery("select email from MagicLink where usageRunId=? limit 1", usageRunId)
             .compose(magicLinks -> {
                 if (magicLinks.isEmpty())
-                    return Future.failedFuture("Magic link not found!");
+                    return Future.failedFuture("[%s] Magic link not found!".formatted(ModalityAuthenticationI18nKeys.LoginLinkUnrecognisedError));
                 MagicLink magicLink = magicLinks.get(0);
                 // 3) Reading the user person
                 return LoginLinkService.loadUserPersonFromLoginLink(magicLink)
                     .compose(userPerson -> {
                         if (userPerson == null)
-                            return Future.failedFuture("This is not a registered user");
+                            return Future.failedFuture("[%s] No such user account".formatted(ModalityAuthenticationI18nKeys.AuthnNoSuchUserAccountError));
                         // 4) Preparing the userId = ModalityUserPrincipal for registered users, ModalityGuestPrincipal for unregistered users
                         ModalityUserPrincipal targetUserId = new ModalityUserPrincipal(userPerson.getPrimaryKey(), userPerson.getForeignEntity("frontendAccount").getPrimaryKey());
                         // 5) Pushing the userId to the original client from which the magic link request was made.

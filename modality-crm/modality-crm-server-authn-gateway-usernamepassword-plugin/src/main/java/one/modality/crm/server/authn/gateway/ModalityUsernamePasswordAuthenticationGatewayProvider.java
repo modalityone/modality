@@ -2,6 +2,7 @@ package one.modality.crm.server.authn.gateway;
 
 import dev.webfx.platform.async.Future;
 import dev.webfx.platform.console.Console;
+import dev.webfx.platform.util.Strings;
 import dev.webfx.stack.authn.*;
 import dev.webfx.stack.authn.logout.server.LogoutPush;
 import dev.webfx.stack.authn.server.gateway.spi.ServerAuthenticationGatewayProvider;
@@ -18,6 +19,7 @@ import dev.webfx.stack.session.state.StateAccessor;
 import dev.webfx.stack.session.state.ThreadLocalStateHolder;
 import one.modality.base.shared.entities.Person;
 import one.modality.crm.server.authn.gateway.shared.LoginLinkService;
+import one.modality.crm.shared.services.authn.ModalityAuthenticationI18nKeys;
 import one.modality.crm.shared.services.authn.ModalityUserPrincipal;
 
 import java.util.Objects;
@@ -67,13 +69,13 @@ public final class ModalityUsernamePasswordAuthenticationGatewayProvider impleme
             return continueAccountCreationLink((ContinueAccountCreationCredentials) credentials);
         }
         if (!acceptsUserCredentials(credentials))
-            return Future.failedFuture(getClass().getSimpleName() + " requires a " + AuthenticateWithUsernamePasswordCredentials.class.getSimpleName() + " argument");
+            return Future.failedFuture("[%s] requires a %s argument".formatted(getClass().getSimpleName(), AuthenticateWithUsernamePasswordCredentials.class.getSimpleName()));
         String runId = ThreadLocalStateHolder.getRunId();
         AuthenticateWithUsernamePasswordCredentials authenticateWithUsernamePasswordCredentials = (AuthenticateWithUsernamePasswordCredentials) credentials;
         String username = authenticateWithUsernamePasswordCredentials.getUsername();
         String password = authenticateWithUsernamePasswordCredentials.getPassword();
-        if (username == null || password == null)
-            return Future.failedFuture("Username and password must be non-null");
+        if (Strings.isEmpty(username) || Strings.isEmpty(password))
+            return Future.failedFuture("[%s] Username and password must not be empty".formatted(ModalityAuthenticationI18nKeys.AuthnUserOrPasswordEmptyError));
         username = username.trim(); // Ignoring leading and tailing spaces in username
         if (username.contains("@")) // If username is an email address, it shouldn't be case-sensitive
             username = username.toLowerCase(); // emails are stored in lowercase in the database
@@ -82,7 +84,7 @@ public final class ModalityUsernamePasswordAuthenticationGatewayProvider impleme
             .<Person>executeQuery("select id,frontendAccount.id from Person where frontendAccount.(corporation=? and username=? and password=?) order by id limit 1", 1, username, encryptedPassword)
             .compose(persons -> {
                 if (persons.size() != 1)
-                    return Future.failedFuture("Wrong user or password");
+                    return Future.failedFuture("[%s] Wrong user or password".formatted(ModalityAuthenticationI18nKeys.AuthnWrongUserOrPasswordError));
                 Person userPerson = persons.get(0);
                 Object personId = userPerson.getPrimaryKey();
                 Object accountId = Entities.getPrimaryKey(userPerson.getForeignEntityId("frontendAccount"));
@@ -108,7 +110,7 @@ public final class ModalityUsernamePasswordAuthenticationGatewayProvider impleme
                 .compose(userPerson -> {
                     String email = magicLink.getEmail();
                     if (userPerson != null)
-                        return Future.succeededFuture("There is already an account associated with " + email);
+                        return Future.succeededFuture("[%s] There is already an account associated with %s".formatted(ModalityAuthenticationI18nKeys.CreateAccountAlreadyExistsError, email));
                     return Future.succeededFuture(email);
                 })
             );
@@ -116,8 +118,7 @@ public final class ModalityUsernamePasswordAuthenticationGatewayProvider impleme
 
     private String encryptPassword(String username, String password) {
         String toEncrypt = username + ":" + Md5.hash(password);
-        String encrypted = Md5.hash(toEncrypt);
-        return encrypted;
+        return Md5.hash(toEncrypt); // encrypted
     }
 
     @Override
@@ -129,7 +130,7 @@ public final class ModalityUsernamePasswordAuthenticationGatewayProvider impleme
     @Override
     public Future<?> verifyAuthenticated() {
         Object userId = ThreadLocalStateHolder.getUserId();
-        Console.log("👮👮👮👮👮 Checking userId=" + userId);
+        Console.log("👮👮👮👮👮 Checking userId=[%s]".formatted(userId));
         return queryModalityUserPerson("id")
             .map(ignoredQueryResult -> userId);
     }
@@ -147,14 +148,13 @@ public final class ModalityUsernamePasswordAuthenticationGatewayProvider impleme
 
     private Future<Person> queryModalityUserPerson(String fields) {
         Object userId = ThreadLocalStateHolder.getUserId();
-        if (!(userId instanceof ModalityUserPrincipal))
-            return Future.failedFuture("This userId object is not recognized by Modality");
-        ModalityUserPrincipal modalityUserPrincipal = (ModalityUserPrincipal) userId;
+        if (!(userId instanceof ModalityUserPrincipal modalityUserPrincipal))
+            return Future.failedFuture("[%s] This userId object is not recognized by Modality".formatted(ModalityAuthenticationI18nKeys.AuthnUnrecognizedUserIdError));
         return EntityStore.create(dataSourceModel)
             .<Person>executeQuery("select " + fields + " from Person where id=? and frontendAccount=?", modalityUserPrincipal.getUserPersonId(), modalityUserPrincipal.getUserAccountId())
             .compose(persons -> {
                 if (persons.size() != 1)
-                    return Future.failedFuture("No such user in Modality database");
+                    return Future.failedFuture("[%s] No such user account".formatted(ModalityAuthenticationI18nKeys.AuthnNoSuchUserAccountError));
                 return Future.succeededFuture(persons.get(0));
             });
     }
@@ -176,7 +176,7 @@ public final class ModalityUsernamePasswordAuthenticationGatewayProvider impleme
                 String username = frontendAccount.getStringFieldValue("username");
                 String dbPassword = frontendAccount.getStringFieldValue("password");
                 if (!Objects.equals(dbPassword, passwordUpdate.getOldPassword()))
-                    return Future.failedFuture("The old password doesn't match");
+                    return Future.failedFuture("[%s] The old password is not matching".formatted(ModalityAuthenticationI18nKeys.AuthnOldPasswordNotMatchingError));
                 String encryptedPassword = encryptPassword(username, passwordUpdate.getNewPassword());
                 // 2) We update the password in the database
                 UpdateStore updateStore = UpdateStore.createAbove(frontendAccount.getStore());

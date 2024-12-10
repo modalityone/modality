@@ -15,6 +15,7 @@ import one.modality.base.server.mail.ModalityMailMessage;
 import one.modality.base.shared.context.ModalityContext;
 import one.modality.base.shared.entities.MagicLink;
 import one.modality.base.shared.entities.Person;
+import one.modality.crm.shared.services.authn.ModalityAuthenticationI18nKeys;
 
 import java.time.Clock;
 import java.time.Duration;
@@ -95,14 +96,14 @@ public final class LoginLinkService {
             .compose(magicLinks -> {
                 MagicLink magicLink = Collections.first(magicLinks);
                 if (magicLink == null)
-                    return Future.failedFuture("Magic link not found (token: " + token + ")");
+                    return Future.failedFuture("[%s] Login link not found (token: %s)".formatted(ModalityAuthenticationI18nKeys.LoginLinkUnrecognisedError, token));
                 // 2) Checking the magic link is still valid (not already used and not expired)
                 if (!SKIP_LINK_VALIDITY_CHECK) {
                     if (magicLink.getUsageDate() != null)
-                        return Future.failedFuture("Magic link already used (token: " + token + ")");
+                        return Future.failedFuture("[%s] Login link already used (token: %s)".formatted(ModalityAuthenticationI18nKeys.LoginLinkAlreadyUsedError, token));
                     LocalDateTime now = now();
                     if (magicLink.getCreationDate() == null || now.isAfter(magicLink.getCreationDate().plus(LINK_EXPIRATION_DURATION))) {
-                        return Future.failedFuture("Magic link expired (token: " + token + ")");
+                        return Future.failedFuture("[%s] Login link expired (token: %s)".formatted(ModalityAuthenticationI18nKeys.LoginLinkExpiredError, token));
                     }
                 }
                 return Future.succeededFuture(magicLink);
