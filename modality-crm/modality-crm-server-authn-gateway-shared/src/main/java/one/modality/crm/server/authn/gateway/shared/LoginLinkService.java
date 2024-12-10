@@ -14,6 +14,7 @@ import dev.webfx.stack.session.state.ThreadLocalStateHolder;
 import one.modality.base.server.mail.ModalityMailMessage;
 import one.modality.base.shared.context.ModalityContext;
 import one.modality.base.shared.entities.MagicLink;
+import one.modality.base.shared.entities.Person;
 
 import java.time.Clock;
 import java.time.Duration;
@@ -124,6 +125,13 @@ public final class LoginLinkService {
             .compose( magicLink -> markLoginLinkAsUsed(magicLink, usageRunId)
                 .map(ignored -> magicLink)
             );
+    }
+
+    public static Future<Person> loadUserPersonFromLoginLink(MagicLink magicLink) {
+        return magicLink.getStore()
+            .<Person>executeQuery("select frontendAccount from Person p where frontendAccount.username=? order by p.id limit 1", magicLink.getEmail())
+            .map(Collections::first);
+
     }
 
     private static LocalDateTime now() {

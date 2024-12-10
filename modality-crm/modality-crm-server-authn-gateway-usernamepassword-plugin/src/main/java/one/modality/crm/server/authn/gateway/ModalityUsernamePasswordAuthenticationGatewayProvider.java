@@ -16,7 +16,6 @@ import dev.webfx.stack.orm.entity.UpdateStore;
 import dev.webfx.stack.push.server.PushServerService;
 import dev.webfx.stack.session.state.StateAccessor;
 import dev.webfx.stack.session.state.ThreadLocalStateHolder;
-import one.modality.base.shared.entities.MagicLink;
 import one.modality.base.shared.entities.Person;
 import one.modality.crm.server.authn.gateway.shared.LoginLinkService;
 import one.modality.crm.shared.services.authn.ModalityUserPrincipal;
@@ -105,7 +104,14 @@ public final class ModalityUsernamePasswordAuthenticationGatewayProvider impleme
 
     private Future<String> continueAccountCreationLink(ContinueAccountCreationCredentials credentials) {
         return LoginLinkService.loadLoginLinkFromTokenAndMarkAsUsed(credentials.getToken(), dataSourceModel)
-            .map(MagicLink::getEmail);
+            .compose(magicLink -> LoginLinkService.loadUserPersonFromLoginLink(magicLink)
+                .compose(userPerson -> {
+                    String email = magicLink.getEmail();
+                    if (userPerson != null)
+                        return Future.succeededFuture("There is already an account associated with " + email);
+                    return Future.succeededFuture(email);
+                })
+            );
     }
 
     private String encryptPassword(String username, String password) {
@@ -125,18 +131,18 @@ public final class ModalityUsernamePasswordAuthenticationGatewayProvider impleme
         Object userId = ThreadLocalStateHolder.getUserId();
         Console.log("👮👮👮👮👮 Checking userId=" + userId);
         return queryModalityUserPerson("id")
-                .map(ignoredQueryResult -> userId);
+            .map(ignoredQueryResult -> userId);
     }
 
     @Override
     public Future<UserClaims> getUserClaims() {
         return queryModalityUserPerson("frontendAccount.username,email,phone")
-                .map(userPerson -> {
-                    String username = userPerson.evaluate("frontendAccount.username");
-                    String email = userPerson.getEmail();
-                    String phone = userPerson.getPhone();
-                    return new UserClaims(username, email, phone, null);
-                });
+            .map(userPerson -> {
+                String username = userPerson.evaluate("frontendAccount.username");
+                String email = userPerson.getEmail();
+                String phone = userPerson.getPhone();
+                return new UserClaims(username, email, phone, null);
+            });
     }
 
     private Future<Person> queryModalityUserPerson(String fields) {

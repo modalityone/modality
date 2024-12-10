@@ -15,7 +15,6 @@ import dev.webfx.stack.push.server.PushServerService;
 import dev.webfx.stack.session.state.StateAccessor;
 import dev.webfx.stack.session.state.ThreadLocalStateHolder;
 import one.modality.base.shared.entities.MagicLink;
-import one.modality.base.shared.entities.Person;
 import one.modality.crm.server.authn.gateway.shared.ActivityHashUtil;
 import one.modality.crm.server.authn.gateway.shared.LoginLinkService;
 import one.modality.crm.shared.services.authn.ModalityGuestPrincipal;
@@ -110,13 +109,11 @@ public class ModalityMagicLinkAuthenticationGatewayProvider implements ServerAut
             .compose(magicLink -> {
                 // 2) The magic link is valid, so we memorise its usage date, and also check if the request comes from
                 // a registered or unregistered user (with or without an account)
-                return magicLink.getStore()
-                    .<Person>executeQuery("select frontendAccount from Person p where frontendAccount.username=? order by p.id limit 1", magicLink.getEmail())
-                    .compose(persons -> {
+                return LoginLinkService.loadUserPersonFromLoginLink(magicLink)
+                    .compose(userPerson -> {
                         // 3) Preparing the userId = ModalityUserPrincipal for registered users, ModalityGuestPrincipal for unregistered users
                         Object userId;
-                        if (!persons.isEmpty()) {
-                            Person userPerson = persons.get(0);
+                        if (userPerson != null) {
                             userId = new ModalityUserPrincipal(userPerson.getPrimaryKey(), userPerson.getForeignEntity("frontendAccount").getPrimaryKey());
                         } else {
                             userId = new ModalityGuestPrincipal(magicLink.getEmail());
@@ -179,14 +176,12 @@ public class ModalityMagicLinkAuthenticationGatewayProvider implements ServerAut
                 if (magicLinks.isEmpty())
                     return Future.failedFuture("Magic link not found!");
                 MagicLink magicLink = magicLinks.get(0);
-                // 3) Reading the
-                return magicLink.getStore()
-                    .<Person>executeQuery("select frontendAccount.password from Person p where frontendAccount.username=? order by p.id limit 1", magicLink.getEmail())
-                    .compose(persons -> {
-                        if (persons.isEmpty())
+                // 3) Reading the user person
+                return LoginLinkService.loadUserPersonFromLoginLink(magicLink)
+                    .compose(userPerson -> {
+                        if (userPerson == null)
                             return Future.failedFuture("This is not a registered user");
                         // 4) Preparing the userId = ModalityUserPrincipal for registered users, ModalityGuestPrincipal for unregistered users
-                        Person userPerson = persons.get(0);
                         ModalityUserPrincipal targetUserId = new ModalityUserPrincipal(userPerson.getPrimaryKey(), userPerson.getForeignEntity("frontendAccount").getPrimaryKey());
                         // 5) Pushing the userId to the original client from which the magic link request was made.
                         // The original client is identified by runId. Pushing the userId will cause a login, and
