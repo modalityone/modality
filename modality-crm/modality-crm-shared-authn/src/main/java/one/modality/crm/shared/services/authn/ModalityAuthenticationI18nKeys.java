@@ -3,16 +3,17 @@ package one.modality.crm.shared.services.authn;
 
 public interface ModalityAuthenticationI18nKeys {
 
-    String EmailAccountAlreadyExistError = "EmailAccountAlreadyExistError";
-    String EmailTokenAlreadyUsedError = "EmailTokenAlreadyUsedError";
-    String EmailTokenExpiredError = "EmailTokenExpiredError";
-    String EmailTokenUnexpectedError = "EmailTokenUnexpectedError";
-    String EmailTokenUnrecognizedError = "EmailTokenUnrecognizedError";
-    String MagicLinkUnrecognisedError = "MagicLinkUnrecognisedError";
-    String MagicLinkAlreadyUsedError = "MagicLinkAlreadyUsedError";
-    String MagicLinkExpiredError = "MagicLinkExpiredError";
+    String AuthnNoSuchUserAccountError = "AuthnNoSuchUserAccountError";
+    String AuthnUserOrPasswordEmptyError = "AuthnUserOrPasswordEmptyError";
+    String AuthnWrongUserOrPasswordError = "AuthnWrongUserOrPasswordError";
+    String AuthnOldPasswordNotMatchingError = "AuthnOldPasswordNotMatchingError";
+    String AuthnUnrecognizedUserIdError = "AuthnUnrecognizedUserIdError";
+    String LoginLinkUnrecognisedError = "LoginLinkUnrecognisedError";
+    String LoginLinkAlreadyUsedError = "LoginLinkAlreadyUsedError";
+    String LoginLinkExpiredError = "LoginLinkExpiredError";
     String MagicLinkPushError = "MagicLinkPushError";
     String MagicLinkBusClosedError = "MagicLinkBusClosedError";
     String MagicLinkUnexpectedError = "MagicLinkUnexpectedError";
+    String CreateAccountAlreadyExistsError = "CreateAccountAlreadyExistsError";
 
 }
