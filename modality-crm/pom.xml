@@ -38,6 +38,7 @@
         <module>modality-crm-frontoffice-max-plugin</module>
         <module>modality-crm-frontoffice-min-plugin</module>
         <module>modality-crm-server-authn-gateway-magiclink-plugin</module>
+        <module>modality-crm-server-authn-gateway-shared</module>
         <module>modality-crm-server-authn-gateway-usernamepassword-plugin</module>
         <module>modality-crm-server-authz-required-plugin</module>
         <module>modality-crm-server-max-plugin</module>
