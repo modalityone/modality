@@ -122,7 +122,7 @@ public final class LoginLinkService {
 
     public static Future<MagicLink> loadLoginLinkFromTokenAndMarkAsUsed(String token, DataSourceModel dataSourceModel) {
         String usageRunId = ThreadLocalStateHolder.getRunId();
-        return loadLoginLinkFromToken(token, dataSourceModel)
+        return loadLoginLinkFromToken(token, true, dataSourceModel)
             .compose( magicLink -> markLoginLinkAsUsed(magicLink, usageRunId)
                 .map(ignored -> magicLink)
             );
