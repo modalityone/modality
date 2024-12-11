@@ -14,7 +14,6 @@
     <providers>
         <provider interface="dev.webfx.stack.routing.uirouter.UiRoute">one.modality.base.frontoffice.activities.alerts.AlertsRouting$AlertsUiRoute</provider>
         <provider interface="dev.webfx.stack.routing.uirouter.operations.RouteRequestEmitter">one.modality.base.frontoffice.activities.alerts.AlertsRouting$RouteToAlertsRequestEmitter</provider>
-
     </providers>
 
 </project>
