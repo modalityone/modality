@@ -89,7 +89,7 @@ public final class LoginLinkService {
             });
     }
 
-    public static Future<MagicLink> loadLoginLinkFromToken(String token, DataSourceModel dataSourceModel) {
+    public static Future<MagicLink> loadLoginLinkFromToken(String token, boolean checkValidity, DataSourceModel dataSourceModel) {
         // 1) Checking the existence of the magic link in the database, and if so, loading it with required info
         return EntityStore.create(dataSourceModel)
             .<MagicLink>executeQuery("select loginRunId,email,creationDate,usageDate,requestedPath from MagicLink where token=? limit 1", token)
@@ -98,7 +98,7 @@ public final class LoginLinkService {
                 if (magicLink == null)
                     return Future.failedFuture("[%s] Login link not found (token: %s)".formatted(ModalityAuthenticationI18nKeys.LoginLinkUnrecognisedError, token));
                 // 2) Checking the magic link is still valid (not already used and not expired)
-                if (!SKIP_LINK_VALIDITY_CHECK) {
+                if (checkValidity && !SKIP_LINK_VALIDITY_CHECK) {
                     if (magicLink.getUsageDate() != null)
                         return Future.failedFuture("[%s] Login link already used (token: %s)".formatted(ModalityAuthenticationI18nKeys.LoginLinkAlreadyUsedError, token));
                     LocalDateTime now = now();

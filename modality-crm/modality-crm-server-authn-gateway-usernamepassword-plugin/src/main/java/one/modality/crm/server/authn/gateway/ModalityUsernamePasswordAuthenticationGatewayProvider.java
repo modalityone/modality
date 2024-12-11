@@ -17,6 +17,7 @@ import dev.webfx.stack.orm.entity.UpdateStore;
 import dev.webfx.stack.push.server.PushServerService;
 import dev.webfx.stack.session.state.StateAccessor;
 import dev.webfx.stack.session.state.ThreadLocalStateHolder;
+import one.modality.base.shared.entities.FrontendAccount;
 import one.modality.base.shared.entities.Person;
 import one.modality.crm.server.authn.gateway.shared.LoginLinkService;
 import one.modality.crm.shared.services.authn.ModalityAuthenticationI18nKeys;
@@ -57,23 +58,31 @@ public final class ModalityUsernamePasswordAuthenticationGatewayProvider impleme
         return userCredentials instanceof AuthenticateWithUsernamePasswordCredentials
                || userCredentials instanceof InitiateAccountCreationCredentials
                || userCredentials instanceof ContinueAccountCreationCredentials
+               || userCredentials instanceof FinaliseAccountCreationCredentials
             ;
     }
 
     @Override
     public Future<?> authenticate(Object credentials) {
-        if (credentials instanceof InitiateAccountCreationCredentials) {
-            return sendAccountCreationLink((InitiateAccountCreationCredentials) credentials);
+        if (credentials instanceof AuthenticateWithUsernamePasswordCredentials cred) {
+            return authenticateWithUsernamePassword(cred);
         }
-        if (credentials instanceof ContinueAccountCreationCredentials) {
-            return continueAccountCreationLink((ContinueAccountCreationCredentials) credentials);
+        if (credentials instanceof InitiateAccountCreationCredentials cred) {
+            return sendAccountCreationLink(cred);
         }
-        if (!acceptsUserCredentials(credentials))
-            return Future.failedFuture("[%s] requires a %s argument".formatted(getClass().getSimpleName(), AuthenticateWithUsernamePasswordCredentials.class.getSimpleName()));
+        if (credentials instanceof ContinueAccountCreationCredentials cred) {
+            return continueAccountCreationLink(cred);
+        }
+        if (credentials instanceof FinaliseAccountCreationCredentials cred) {
+            return finaliseAccountCreationLink(cred);
+        }
+        return Future.failedFuture("[%s] requires a %s argument".formatted(getClass().getSimpleName(), AuthenticateWithUsernamePasswordCredentials.class.getSimpleName()));
+    }
+
+    private Future<Void> authenticateWithUsernamePassword(AuthenticateWithUsernamePasswordCredentials credentials) {
         String runId = ThreadLocalStateHolder.getRunId();
-        AuthenticateWithUsernamePasswordCredentials authenticateWithUsernamePasswordCredentials = (AuthenticateWithUsernamePasswordCredentials) credentials;
-        String username = authenticateWithUsernamePasswordCredentials.getUsername();
-        String password = authenticateWithUsernamePasswordCredentials.getPassword();
+        String username = credentials.getUsername();
+        String password = credentials.getPassword();
         if (Strings.isEmpty(username) || Strings.isEmpty(password))
             return Future.failedFuture("[%s] Username and password must not be empty".formatted(ModalityAuthenticationI18nKeys.AuthnUserOrPasswordEmptyError));
         username = username.trim(); // Ignoring leading and tailing spaces in username
@@ -114,6 +123,19 @@ public final class ModalityUsernamePasswordAuthenticationGatewayProvider impleme
                     return Future.succeededFuture(email);
                 })
             );
+    }
+
+    private Future<Object> finaliseAccountCreationLink(FinaliseAccountCreationCredentials credentials) {
+        return LoginLinkService.loadLoginLinkFromToken(credentials.getToken(), false, dataSourceModel)
+            .compose(magicLink -> {
+                UpdateStore updateStore = UpdateStore.create(dataSourceModel);
+                FrontendAccount fa = updateStore.insertEntity(FrontendAccount.class);
+                fa.setUsername(magicLink.getEmail());
+                fa.setPassword(encryptPassword(magicLink.getEmail(), credentials.getPassword()));
+                fa.setCorporation(1);
+                return updateStore.submitChanges()
+                    .map(ignored -> fa.getPrimaryKey());
+            });
     }
 
     private String encryptPassword(String username, String password) {

@@ -106,7 +106,7 @@ public class ModalityMagicLinkAuthenticationGatewayProvider implements ServerAut
     private Future<String> authenticateWithMagicLink(AuthenticateWithMagicLinkCredentials credentials) {
         String usageRunId = ThreadLocalStateHolder.getRunId();
         // 1) Checking the existence of the magic link in the database, and if so, loading it with required info
-        return LoginLinkService.loadLoginLinkFromToken(credentials.getToken(), dataSourceModel)
+        return LoginLinkService.loadLoginLinkFromToken(credentials.getToken(), true, dataSourceModel)
             .compose(magicLink -> {
                 // 2) The magic link is valid, so we memorise its usage date, and also check if the request comes from
                 // a registered or unregistered user (with or without an account)
