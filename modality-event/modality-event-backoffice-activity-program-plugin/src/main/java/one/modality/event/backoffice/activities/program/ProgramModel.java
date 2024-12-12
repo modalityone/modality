@@ -24,7 +24,7 @@ import javafx.collections.ObservableList;
 import javafx.scene.control.Button;
 import javafx.scene.control.Labeled;
 import one.modality.base.client.mainframe.fx.FXMainFrameDialogArea;
-import one.modality.base.client.validation.ModalityValidationSupport;
+import dev.webfx.stack.ui.validation.ValidationSupport;
 import one.modality.base.shared.entities.*;
 
 import java.util.ArrayList;
@@ -56,7 +56,7 @@ final class ProgramModel {
         ObservableLists.bindConverted(dayTemplateModels, currentDayTemplates, dayTemplate -> new DayTemplateModel(dayTemplate, this));
     }
 
-    private final ModalityValidationSupport validationSupport = new ModalityValidationSupport();
+    private final ValidationSupport validationSupport = new ValidationSupport();
     private boolean validationSupportInitialised;
 
     ProgramModel(KnownItemFamily programItemFamily, DataSourceModel dataSourceModel) {
@@ -117,7 +117,7 @@ final class ProgramModel {
         return dayTemplateModels;
     }
 
-    ModalityValidationSupport getValidationSupport() {
+    ValidationSupport getValidationSupport() {
         return validationSupport;
     }
 

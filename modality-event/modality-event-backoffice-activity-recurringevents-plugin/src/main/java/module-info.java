@@ -13,7 +13,6 @@ module modality.event.backoffice.activity.recurringevents.plugin {
     requires modality.base.client.mainframe.fx;
     requires modality.base.client.tile;
     requires modality.base.client.util;
-    requires modality.base.client.validation;
     requires modality.base.shared.entities;
     requires modality.crm.backoffice.organization.fx;
     requires modality.event.client.event.fx;
@@ -52,6 +51,7 @@ module modality.event.backoffice.activity.recurringevents.plugin {
     requires webfx.stack.ui.controls;
     requires webfx.stack.ui.dialog;
     requires webfx.stack.ui.operation;
+    requires webfx.stack.ui.validation;
 
     // Exported packages
     exports one.modality.event.backoffice.activities.recurringevents;

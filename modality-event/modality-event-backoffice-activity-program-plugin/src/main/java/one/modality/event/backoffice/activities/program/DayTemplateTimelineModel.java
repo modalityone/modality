@@ -1,6 +1,6 @@
 package one.modality.event.backoffice.activities.program;
 
-import one.modality.base.client.validation.ModalityValidationSupport;
+import dev.webfx.stack.ui.validation.ValidationSupport;
 import one.modality.base.shared.entities.Timeline;
 
 /**
@@ -23,7 +23,7 @@ final class DayTemplateTimelineModel {
         return timeline;
     }
 
-    ModalityValidationSupport getValidationSupport() {
+    ValidationSupport getValidationSupport() {
         return dayTemplateModel.getValidationSupport();
     }
 

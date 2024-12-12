@@ -8,7 +8,7 @@ import dev.webfx.stack.orm.entity.UpdateStore;
 import javafx.application.Platform;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
-import one.modality.base.client.validation.ModalityValidationSupport;
+import dev.webfx.stack.ui.validation.ValidationSupport;
 import one.modality.base.shared.entities.*;
 
 import java.time.LocalDate;
@@ -66,7 +66,7 @@ final class DayTemplateModel {
         return dayTemplate.getEvent();
     }
 
-    ModalityValidationSupport getValidationSupport() {
+    ValidationSupport getValidationSupport() {
         return programModel.getValidationSupport();
     }
 

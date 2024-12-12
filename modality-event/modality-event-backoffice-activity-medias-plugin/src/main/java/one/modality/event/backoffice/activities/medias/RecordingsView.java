@@ -34,7 +34,7 @@ import javafx.scene.control.*;
 import javafx.scene.layout.*;
 import one.modality.base.client.i18n.ModalityI18nKeys;
 import one.modality.base.client.util.masterslave.ModalitySlaveEditor;
-import one.modality.base.client.validation.ModalityValidationSupport;
+import dev.webfx.stack.ui.validation.ValidationSupport;
 import one.modality.base.shared.entities.*;
 import one.modality.base.shared.entities.markers.EntityHasLocalDate;
 import one.modality.event.client.event.fx.FXEvent;
@@ -55,7 +55,7 @@ public class RecordingsView {
     private final DataSourceModel dataSourceModel = DataSourceModelService.getDefaultDataSourceModel();
     private final EntityStore entityStore = EntityStore.create(dataSourceModel);
     private final UpdateStore updateStore = UpdateStore.createAbove(entityStore);
-    private final ModalityValidationSupport validationSupport = new ModalityValidationSupport();
+    private final ValidationSupport validationSupport = new ValidationSupport();
     private final boolean[] validationSupportInitialised = {false};
     private final MediasActivity activity;
     private Switch contentAvailableOfflineSwitch;

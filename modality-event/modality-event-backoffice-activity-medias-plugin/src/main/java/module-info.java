@@ -15,7 +15,6 @@ module modality.event.backoffice.activity.medias.plugin {
     requires modality.base.client.messaging;
     requires modality.base.client.tile;
     requires modality.base.client.util;
-    requires modality.base.client.validation;
     requires modality.base.shared.entities;
     requires modality.event.client.event.fx;
     requires webfx.extras.filepicker;
@@ -43,6 +42,7 @@ module modality.event.backoffice.activity.medias.plugin {
     requires webfx.stack.routing.uirouter;
     requires webfx.stack.ui.controls;
     requires webfx.stack.ui.operation;
+    requires webfx.stack.ui.validation;
 
     // Exported packages
     exports one.modality.event.backoffice.activities.medias;

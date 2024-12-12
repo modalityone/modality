@@ -22,7 +22,7 @@ import javafx.scene.layout.GridPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import one.modality.base.client.i18n.ModalityI18nKeys;
-import one.modality.base.client.validation.ModalityValidationSupport;
+import dev.webfx.stack.ui.validation.ValidationSupport;
 import one.modality.base.shared.entities.FrontendAccount;
 import one.modality.base.shared.entities.Person;
 import one.modality.crm.client.i18n.CrmI18nKeys;
@@ -36,7 +36,7 @@ public class ModalitySignupUiLoginGatewayProvider extends UiLoginGatewayProvider
     private final DataSourceModel dataSourceModel = DataSourceModelService.getDefaultDataSourceModel();
     private final EntityStore entityStore = EntityStore.create(dataSourceModel);
     private final UpdateStore updateStore = UpdateStore.createAbove(entityStore);
-    private final ModalityValidationSupport validationSupport = new ModalityValidationSupport();
+    private final ValidationSupport validationSupport = new ValidationSupport();
     private boolean validationSupportInitialised = false;
     private TextField emailInput;
     private PasswordField passwordInput;

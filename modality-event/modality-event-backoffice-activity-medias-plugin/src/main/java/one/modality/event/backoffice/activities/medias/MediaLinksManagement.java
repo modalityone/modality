@@ -34,7 +34,7 @@ import javafx.scene.shape.SVGPath;
 import javafx.util.Duration;
 import one.modality.base.client.i18n.ModalityI18nKeys;
 import one.modality.base.client.icons.SvgIcons;
-import one.modality.base.client.validation.ModalityValidationSupport;
+import dev.webfx.stack.ui.validation.ValidationSupport;
 import one.modality.base.shared.entities.Media;
 import one.modality.base.shared.entities.MediaType;
 import one.modality.base.shared.entities.ScheduledItem;
@@ -125,7 +125,7 @@ public abstract class MediaLinksManagement {
 
         protected final LocalDate currentDate;
         protected final UpdateStore updateStore = UpdateStore.createAbove(entityStore);
-        final ModalityValidationSupport validationSupport = new ModalityValidationSupport();
+        final ValidationSupport validationSupport = new ValidationSupport();
         final boolean[] validationSupportInitialised = {false};
         final IntegerProperty percentageProperty = new SimpleIntegerProperty();
         final StringProperty cssProperty = new SimpleStringProperty();

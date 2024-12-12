@@ -23,7 +23,7 @@ import javafx.scene.paint.Color;
 import javafx.scene.shape.SVGPath;
 import one.modality.base.client.icons.SvgIcons;
 import one.modality.base.client.mainframe.fx.FXMainFrameDialogArea;
-import one.modality.base.client.validation.ModalityValidationSupport;
+import dev.webfx.stack.ui.validation.ValidationSupport;
 import one.modality.base.shared.entities.Item;
 import one.modality.base.shared.entities.Timeline;
 import one.modality.crm.backoffice.organization.fx.FXOrganization;
@@ -70,7 +70,7 @@ final class DayTemplateTimelineView implements ButtonFactoryMixin {
     }
 
 
-    private ModalityValidationSupport getValidationSupport() {
+    private ValidationSupport getValidationSupport() {
         return dayTemplateTimelineModel.getValidationSupport();
     }
 

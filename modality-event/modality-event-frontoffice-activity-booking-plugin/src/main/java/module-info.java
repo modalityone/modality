@@ -18,7 +18,6 @@ module modality.event.frontoffice.activity.booking.plugin {
     requires modality.base.client.mainframe.fx;
     requires modality.base.client.tile;
     requires modality.base.client.util;
-    requires modality.base.client.validation;
     requires modality.base.frontoffice.mainframe.fx;
     requires modality.base.frontoffice.utility;
     requires modality.base.shared.entities;
@@ -66,6 +65,7 @@ module modality.event.frontoffice.activity.booking.plugin {
     requires webfx.stack.routing.uirouter;
     requires webfx.stack.ui.controls;
     requires webfx.stack.ui.operation;
+    requires webfx.stack.ui.validation;
 
     // Exported packages
     exports one.modality.event.frontoffice.activities.booking;

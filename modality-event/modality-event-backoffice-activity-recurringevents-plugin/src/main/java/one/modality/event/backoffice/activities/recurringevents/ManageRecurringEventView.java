@@ -70,7 +70,7 @@ import one.modality.base.client.icons.SvgIcons;
 import one.modality.base.client.mainframe.fx.FXMainFrameDialogArea;
 import one.modality.base.client.util.dialog.ModalityDialog;
 import one.modality.base.client.util.masterslave.ModalitySlaveEditor;
-import one.modality.base.client.validation.ModalityValidationSupport;
+import dev.webfx.stack.ui.validation.ValidationSupport;
 import one.modality.base.shared.entities.*;
 import one.modality.base.shared.entities.markers.EntityHasLocalDate;
 import one.modality.crm.backoffice.organization.fx.FXOrganization;
@@ -141,7 +141,7 @@ final class ManageRecurringEventView {
     private Site eventSite;
     private Item recurringItem;
     private final UpdateStore updateStore = UpdateStore.createAbove(entityStore);
-    private final ModalityValidationSupport validationSupport = new ModalityValidationSupport();
+    private final ValidationSupport validationSupport = new ValidationSupport();
     private boolean validationSupportInitialised = false;
     private final BooleanExpression isWorkingScheduledItemEmpty = ObservableLists.isEmpty(workingScheduledItems);
     private final BooleanProperty isPictureDisplayed = new SimpleBooleanProperty(false);

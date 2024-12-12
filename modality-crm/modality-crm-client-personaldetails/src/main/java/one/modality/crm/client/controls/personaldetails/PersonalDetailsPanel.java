@@ -37,7 +37,7 @@ import javafx.scene.shape.SVGPath;
 import one.modality.base.client.activity.ModalityButtonFactoryMixin;
 import one.modality.base.client.i18n.ModalityI18nKeys;
 import one.modality.base.client.util.converters.Converters;
-import one.modality.base.client.validation.ModalityValidationSupport;
+import dev.webfx.stack.ui.validation.ValidationSupport;
 import one.modality.base.shared.domainmodel.functions.AbcNames;
 import one.modality.base.shared.entities.Country;
 import one.modality.base.shared.entities.Organization;
@@ -89,7 +89,7 @@ public class PersonalDetailsPanel implements ModalityButtonFactoryMixin {
     private Runnable previousSceneCancelAccelerator;
     private Runnable closeHook;
     private boolean validationEnabled;
-    protected final ModalityValidationSupport validationSupport = new ModalityValidationSupport();
+    protected final ValidationSupport validationSupport = new ValidationSupport();
     private boolean validationSupportInitialised;
 
     public PersonalDetailsPanel(EntityHasPersonalDetails entity, ButtonSelectorParameters buttonSelectorParameters) {

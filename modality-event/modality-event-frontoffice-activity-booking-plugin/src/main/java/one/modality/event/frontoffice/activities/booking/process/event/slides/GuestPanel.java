@@ -20,7 +20,7 @@ import javafx.scene.effect.DropShadow;
 import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
 import one.modality.base.client.i18n.ModalityI18nKeys;
-import one.modality.base.client.validation.ModalityValidationSupport;
+import dev.webfx.stack.ui.validation.ValidationSupport;
 import one.modality.crm.client.i18n.CrmI18nKeys;
 import one.modality.event.frontoffice.activities.booking.BookingI18nKeys;
 
@@ -35,7 +35,7 @@ final class GuestPanel implements MaterialFactoryMixin {
     private final TextField lastNameTextField = newMaterialTextField(CrmI18nKeys.LastName);
     private final TextField emailTextField = newMaterialTextField(CrmI18nKeys.Email);
     private final Button guestSubmitButton = Bootstrap.largeButton(I18nControls.newButton(ModalityI18nKeys.Submit));
-    private final ModalityValidationSupport validationSupport = new ModalityValidationSupport();
+    private final ValidationSupport validationSupport = new ValidationSupport();
 
     public GuestPanel() {
         Label guestDetailsLabel = Bootstrap.textPrimary(Bootstrap.strong(I18nControls.newLabel(BookingI18nKeys.GuestDetails)));
