@@ -1,6 +1,9 @@
 package one.modality.base.backoffice.activities.home;
 
 import dev.webfx.extras.theme.luminance.LuminanceTheme;
+import dev.webfx.kit.util.properties.FXProperties;
+import dev.webfx.kit.util.properties.Unregisterable;
+import dev.webfx.platform.conf.Config;
 import dev.webfx.platform.conf.SourcesConfig;
 import dev.webfx.platform.util.Strings;
 import dev.webfx.stack.orm.domainmodel.activity.viewdomain.impl.ViewDomainActivityBase;
@@ -21,6 +24,7 @@ import javafx.scene.layout.Pane;
 import one.modality.base.client.activity.ModalityButtonFactoryMixin;
 import one.modality.base.client.application.RoutingActions;
 import one.modality.base.client.tile.Tile;
+import one.modality.crm.backoffice.organization.fx.FXOrganization;
 
 import java.util.Collection;
 
@@ -32,25 +36,33 @@ final class BackOfficeHomeActivity extends ViewDomainActivityBase
         ModalityButtonFactoryMixin,
         OperationActionFactoryMixin {
 
-    private final static String[] sortedPossibleHomeRoutingOperations =
-            SourcesConfig.getSourcesRootConfig().childConfigAt("modality.base.backoffice.home")
-                    .getString("homeRoutingOperations").split(",");
+    private final static Config HOME_CONFIG = SourcesConfig.getSourcesRootConfig().childConfigAt("modality.base.backoffice.home");
+
+    private Unregisterable homeTilesBinding;
 
     @Override
     public Node buildUi() {
         HomePane homePane = new HomePane();
         LuminanceTheme.createPrimaryPanelFacet(homePane).style();
-        return ActionBinder.bindChildrenToVisibleActions(homePane, homeRoutingActions(), this::createHomeTile);
+        FXProperties.runNowAndOnPropertyChange(organization -> {
+            if (organization != null) {
+                String organizationTypeCode = organization.evaluate("type.code");
+                String homeOperations = organizationTypeCode == null ? null : HOME_CONFIG.getString(organizationTypeCode.toLowerCase() + "HomeOperations");
+                if (homeOperations == null)
+                    homeOperations = HOME_CONFIG.getString("defaultHomeOperations");
+                Collection<Action> homeActions = RoutingActions.filterRoutingActions(this::operationCodeToAction, homeOperations.split(","));
+                if (homeTilesBinding != null)
+                    homeTilesBinding.unregister();
+                homeTilesBinding = ActionBinder.bindChildrenToVisibleActions(homePane, homeActions, this::createHomeTile);
+            }
+        }, FXOrganization.organizationProperty());
+        return homePane;
     }
 
     private Tile createHomeTile(Action action) {
         return new Tile(action)
                 .setAdaptativeFontSize(true)
                 .setShadowed(true);
-    }
-
-    private Collection<Action> homeRoutingActions() {
-        return RoutingActions.filterRoutingActions(this::operationCodeToAction, sortedPossibleHomeRoutingOperations);
     }
 
     private Action operationCodeToAction(String operationCode) {
@@ -67,12 +79,16 @@ final class BackOfficeHomeActivity extends ViewDomainActivityBase
 
     static class HomePane extends Pane {
 
+        @Override
         protected void layoutChildren() {
+            ObservableList<Node> children = getChildren();
+            int n = getChildren().size();
+            if (n == 0)
+                return;
             double width = getWidth(), height = getHeight();
             double hMargins = width * 0.08, vMargins = height * 0.155;
             width -= 2 * hMargins;
             height -= 2 * vMargins;
-            int n = getChildren().size();
             int q = (int) Math.sqrt(n);
             int p = n / q;
             if (p * q < n) {
@@ -85,7 +101,6 @@ final class BackOfficeHomeActivity extends ViewDomainActivityBase
             Insets margin = new Insets(0, gap, gap, 0);
             double wp = (width ) / p;
             double hp = (height ) / q;
-            ObservableList<Node> children = getChildren();
             for (int i = 0; i < n; i++) {
                 Node child = children.get(i);
                 int col = i % p, row = i / p;

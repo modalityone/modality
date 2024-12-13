@@ -109,7 +109,7 @@ final class ModalityClientProfilePanel {
         }), I18n.dictionaryProperty());
 
         EntityButtonSelector<Organization> organizationSelector = new EntityButtonSelector<>(
-                "{class: 'Organization', alias: 'o', where: 'exists(select Event where organization=o)'}",
+                "{class: 'Organization', alias: 'o', where: 'exists(select Event where organization=o)', fields: '" + FXOrganization.EXPECTED_FIELDS + "'}",
                 buttonFactoryMixin, vBox, DataSourceModelService.getDefaultDataSourceModel()
         );
         // Doing a bidirectional binding with FXOrganization

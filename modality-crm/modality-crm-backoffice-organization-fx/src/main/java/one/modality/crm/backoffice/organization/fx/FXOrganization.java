@@ -15,7 +15,7 @@ import java.util.Objects;
  */
 public final class FXOrganization {
 
-    public static final String EXPECTED_FIELDS = "name,type,country";
+    public static final String EXPECTED_FIELDS = "name,type.(code,name),country";
 
     private final static ObjectProperty<Organization> organizationProperty = FXProperties.newObjectProperty(() ->
             FXOrganizationId.setOrganizationId(getOrganizationId()));

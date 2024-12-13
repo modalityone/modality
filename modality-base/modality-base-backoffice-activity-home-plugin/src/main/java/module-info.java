@@ -12,7 +12,10 @@ module modality.base.backoffice.activity.home.plugin {
     requires modality.base.client.activity;
     requires modality.base.client.application;
     requires modality.base.client.tile;
+    requires modality.crm.backoffice.organization.fx;
+    requires webfx.extras.panes;
     requires webfx.extras.theme;
+    requires webfx.kit.util;
     requires webfx.platform.conf;
     requires webfx.platform.util;
     requires webfx.platform.windowhistory;
