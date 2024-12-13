@@ -207,27 +207,6 @@
 
         <dependency>
             <groupId>one.modality</groupId>
-            <artifactId>modality-base-client-validation</artifactId>
-            <version>1.0.0-SNAPSHOT</version>
-            <classifier>sources</classifier>
-        </dependency>
-
-        <dependency>
-            <groupId>one.modality</groupId>
-            <artifactId>modality-base-frontoffice-activity-account-plugin</artifactId>
-            <version>1.0.0-SNAPSHOT</version>
-            <classifier>sources</classifier>
-        </dependency>
-
-        <dependency>
-            <groupId>one.modality</groupId>
-            <artifactId>modality-base-frontoffice-activity-alerts-plugin</artifactId>
-            <version>1.0.0-SNAPSHOT</version>
-            <classifier>sources</classifier>
-        </dependency>
-
-        <dependency>
-            <groupId>one.modality</groupId>
             <artifactId>modality-base-frontoffice-application</artifactId>
             <version>1.0.0-SNAPSHOT</version>
             <classifier>sources</classifier>
@@ -306,13 +285,6 @@
         <dependency>
             <groupId>one.modality</groupId>
             <artifactId>modality-crm-client-i18n</artifactId>
-            <version>1.0.0-SNAPSHOT</version>
-            <classifier>sources</classifier>
-        </dependency>
-
-        <dependency>
-            <groupId>one.modality</groupId>
-            <artifactId>modality-crm-client-personaldetails</artifactId>
             <version>1.0.0-SNAPSHOT</version>
             <classifier>sources</classifier>
         </dependency>

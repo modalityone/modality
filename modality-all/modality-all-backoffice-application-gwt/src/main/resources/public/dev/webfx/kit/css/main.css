@@ -528,13 +528,67 @@ iframe {
 
 /*===== webfx-extras-material-web@main.css from webfx-extras-styles-materialdesign =====*/
 
+:root {
+    /* Colors shared by different Material components */
+    --webfx-material-input-text-fill: #1e1e1e;
+    --webfx-material-idle-text-fill: #6d6d6d;
+    --webfx-material-disabled-fill: #8a8a8a;
+    --webfx-material-invalid-fill: #ff1744;
+    --webfx-material-focused-fill: #0596FF;
 
-fx-textfield.material > fx-border {
+    /* CSS variables applied to specific material components with default values (will be redefined on focus, disabled & invalid) */
+    --webfx-material-background-color: white;
+    --webfx-material-label-fill: var(--webfx-material-idle-text-fill);
+    --webfx-material-line-fill: var(--webfx-material-idle-text-fill);
+    --webfx-material-line-border-style: solid;
+    --webfx-material-focused-line-fill: var(--webfx-material-focused-fill);
+}
+
+/* Applying CSS variables to material components */
+
+.material > fx-border {
     border: none;
 }
 
-fx-textfield.material > fx-background {
-    background: none;
+.material > fx-background {
+    background-color: var(--webfx-material-background-color);
+    border-radius: 0;
+}
+
+.material-label {
+    color: var(--webfx-material-label-fill);
+}
+
+.material-line > fx-border { /* is actually a JavaFX Region */
+    /* Using a border (not background) because there is a dotted style for the disabled state */
+    border-color: var(--webfx-material-line-fill);
+    border-style: var(--webfx-material-line-border-style);
+    border-width: 0;
+    border-bottom-width: 1px;
+}
+
+.material-focused-line > fx-background { /* is actually a JavaFX Region */
+    /* Using a background is enough (no need for a border) */
+    background-color: var(--webfx-material-focused-line-fill);
+}
+
+/* Changing CSS variables values in dependence of material state */
+
+.material-focused * {
+    --webfx-material-label-fill: var(--webfx-material-focused-fill);
+}
+
+.material-disabled * {
+    --webfx-material-label-fill: var(--webfx-material-disabled-fill);
+    --webfx-material-line-fill: var(--webfx-material-disabled-fill);
+    --webfx-material-line-border-style: dotted;
+    --webfx-material-focused-line-fill: var(--webfx-material-disabled-fill);
+}
+
+.material-invalid * {
+    --webfx-material-label-fill: var(--webfx-material-invalid-fill);
+    --webfx-material-line-fill: var(--webfx-material-invalid-fill);
+    --webfx-material-focused-line-fill: var(--webfx-material-invalid-fill);
 }
 /*===== webfx-extras-switches-web@main.css from webfx-extras-switches =====*/
 
@@ -705,6 +759,12 @@ tr.selected, .grid-row.selected {
 /* Hiding the warning message from CKEditor 4.22.1 */
 .cke_notifications_area {
     display: none;
+}
+/*===== webfx-stack-password-web@main.css from webfx-stack-authn-login-ui-gateway-password-plugin =====*/
+
+/* We don't want the default white background for WebFX Extras material text fields in the login window */
+.login * {
+    --webfx-material-background-color: transparent;
 }
 /*===== webfx-stack-authn-login-ui-portal-web@main.css from webfx-stack-authn-login-ui-portal =====*/
 

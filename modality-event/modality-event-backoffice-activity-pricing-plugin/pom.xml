@@ -7,27 +7,13 @@
 
     <parent>
         <groupId>one.modality</groupId>
-        <artifactId>modality-base</artifactId>
+        <artifactId>modality-event</artifactId>
         <version>1.0.0-SNAPSHOT</version>
     </parent>
 
-    <artifactId>modality-base-client-validation</artifactId>
-
-    <description>Modality implementation of client validation support.</description>
+    <artifactId>modality-event-backoffice-activity-pricing-plugin</artifactId>
 
     <dependencies>
-
-        <dependency>
-            <groupId>org.openjfx</groupId>
-            <artifactId>javafx-base</artifactId>
-            <scope>provided</scope>
-        </dependency>
-
-        <dependency>
-            <groupId>org.openjfx</groupId>
-            <artifactId>javafx-controls</artifactId>
-            <scope>provided</scope>
-        </dependency>
 
         <dependency>
             <groupId>org.openjfx</groupId>
@@ -36,41 +22,9 @@
         </dependency>
 
         <dependency>
-            <groupId>dev.webfx</groupId>
-            <artifactId>webfx-extras-imagestore</artifactId>
-            <version>0.1.0-SNAPSHOT</version>
-        </dependency>
-
-        <dependency>
-            <groupId>dev.webfx</groupId>
-            <artifactId>webfx-extras-util-background</artifactId>
-            <version>0.1.0-SNAPSHOT</version>
-        </dependency>
-
-        <dependency>
-            <groupId>dev.webfx</groupId>
-            <artifactId>webfx-extras-util-border</artifactId>
-            <version>0.1.0-SNAPSHOT</version>
-        </dependency>
-
-        <dependency>
-            <groupId>dev.webfx</groupId>
-            <artifactId>webfx-extras-util-scene</artifactId>
-            <version>0.1.0-SNAPSHOT</version>
-        </dependency>
-
-        <dependency>
-            <groupId>dev.webfx</groupId>
-            <artifactId>webfx-kit-util</artifactId>
-            <version>0.1.0-SNAPSHOT</version>
-        </dependency>
-
-        <dependency>
-            <groupId>dev.webfx</groupId>
-            <artifactId>webfx-platform-javabase-emul-j2cl</artifactId>
-            <version>0.1.0-SNAPSHOT</version>
-            <scope>runtime</scope>
-            <optional>true</optional>
+            <groupId>one.modality</groupId>
+            <artifactId>modality-base-client-util</artifactId>
+            <version>1.0.0-SNAPSHOT</version>
         </dependency>
 
         <dependency>
@@ -83,19 +37,43 @@
 
         <dependency>
             <groupId>dev.webfx</groupId>
-            <artifactId>webfx-platform-uischeduler</artifactId>
+            <artifactId>webfx-platform-windowhistory</artifactId>
             <version>0.1.0-SNAPSHOT</version>
         </dependency>
 
         <dependency>
             <groupId>dev.webfx</groupId>
-            <artifactId>webfx-platform-util</artifactId>
+            <artifactId>webfx-stack-i18n</artifactId>
             <version>0.1.0-SNAPSHOT</version>
         </dependency>
 
         <dependency>
             <groupId>dev.webfx</groupId>
-            <artifactId>webfx-stack-ui-validation</artifactId>
+            <artifactId>webfx-stack-orm-domainmodel-activity</artifactId>
+            <version>0.1.0-SNAPSHOT</version>
+        </dependency>
+
+        <dependency>
+            <groupId>dev.webfx</groupId>
+            <artifactId>webfx-stack-routing-router</artifactId>
+            <version>0.1.0-SNAPSHOT</version>
+        </dependency>
+
+        <dependency>
+            <groupId>dev.webfx</groupId>
+            <artifactId>webfx-stack-routing-router-client</artifactId>
+            <version>0.1.0-SNAPSHOT</version>
+        </dependency>
+
+        <dependency>
+            <groupId>dev.webfx</groupId>
+            <artifactId>webfx-stack-routing-uirouter</artifactId>
+            <version>0.1.0-SNAPSHOT</version>
+        </dependency>
+
+        <dependency>
+            <groupId>dev.webfx</groupId>
+            <artifactId>webfx-stack-ui-operation</artifactId>
             <version>0.1.0-SNAPSHOT</version>
         </dependency>
 

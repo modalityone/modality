@@ -384,7 +384,6 @@
                         <list>javafx/scene/control/skin/checkbox/[^/]+$</list>
                         <list>one/modality/base/client/brand/[^/]+$</list>
                         <list>one/modality/base/client/images/[^/]+$</list>
-                        <list>one/modality/base/frontoffice/activities/account/images/[^/]+$</list>
                         <list>one/modality/base/shared/domainmodel/[^/]+$</list>
                         <list>one/modality/event/frontoffice/activities/booking/map/[^/]+$</list>
                     </resourcesList>
