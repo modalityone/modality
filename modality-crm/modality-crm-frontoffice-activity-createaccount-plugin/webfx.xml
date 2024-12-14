@@ -14,4 +14,6 @@
         <provider interface="dev.webfx.stack.routing.uirouter.UiRoute">one.modality.crm.frontoffice.activities.createaccount.CreateAccountRouting$CreateAccountUiRoute</provider>
     </providers>
 
+    <i18n javaKeysClass="one.modality.crm.frontoffice.activities.createaccount.CreateAccountI18nKeys"/>
+
 </project>

@@ -11,7 +11,7 @@ import dev.webfx.stack.routing.uirouter.impl.UiRouteImpl;
 public final class CreateAccountRouting {
 
     private final static String PATH = "/create-account/:token";
-
+    static final String PATH_TOKEN_PARAMETER_NAME = "token";
     public static String getPath() {
         return PATH;
     }

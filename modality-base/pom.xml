@@ -57,6 +57,7 @@
         <module>modality-base-client-tile</module>
         <module>modality-base-client-time-theme</module>
         <module>modality-base-client-util</module>
+        <module>modality-base-client-validation</module>
         <module>modality-base-frontoffice-activity-account-plugin</module>
         <module>modality-base-frontoffice-activity-alerts-plugin</module>
         <module>modality-base-frontoffice-application</module>
