@@ -1,0 +1,10 @@
+/* We don't want the default white background for WebFX Extras material text fields in the login window */
+.user-account * {
+    --webfx-material-background-color: transparent;
+    --webfx-material-idle-text-fill: black;
+}
+
+.user-account .material-label {
+     font-weight: bold;
+     font-size: 14px;
+}

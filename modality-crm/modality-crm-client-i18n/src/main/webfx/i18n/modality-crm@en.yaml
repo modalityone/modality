@@ -45,3 +45,8 @@ Street:
   text: "Street"
   prompt: "Your street address (optional)"
 Centre: "Centre"
+Password: "Password"
+RepeatPassword: "Password (again)"
+Lay: "Lay"
+Ordained: "Ordained"
+LayName: "Lay Name (for ordained people)"

@@ -26,5 +26,10 @@ public interface CrmI18nKeys {
     String Postcode = "Postcode";
     String Street = "Street";
     String Centre = "Centre";
+    String Password = "Password";
+    String RepeatPassword = "RepeatPassword";
+    String Lay = "Lay";
+    String Ordained = "Ordained";
+    String LayName = "LayName";
 
 }

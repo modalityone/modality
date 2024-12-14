@@ -21,5 +21,4 @@ public interface Triggers {
                 .setDataSourceId(store.getDataSourceId())
                 .build();
     }
-
 }
