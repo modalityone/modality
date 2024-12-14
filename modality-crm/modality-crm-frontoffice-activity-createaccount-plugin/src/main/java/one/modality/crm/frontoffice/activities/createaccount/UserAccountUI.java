@@ -372,7 +372,7 @@ public class UserAccountUI implements ModalityButtonFactoryMixin {
         actionButton.disableProperty().bind(EntityBindings.hasChangesProperty(updateStore).not());
         actionButton.setOnAction(e -> {
             if (validateForm()) {
-            AuthenticationService.authenticate(new FinaliseAccountCreationCredentials(token, passwordField.getText().stripTrailing()))
+            AuthenticationService.authenticate(new FinaliseAccountCreationCredentials(token, passwordField.getText().trim()))
                 .onFailure(failure -> {
                     Console.log("Error while creating account:" + failure);
                     Platform.runLater(()->transformPaneToAccountCreationError(CreateAccountI18nKeys.CreatingAccountError));
