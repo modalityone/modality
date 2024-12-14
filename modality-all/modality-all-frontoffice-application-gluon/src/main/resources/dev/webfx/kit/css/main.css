@@ -217,6 +217,10 @@
     -fx-border-color: -bootstrap-blue9;
 }
 
+.text-secondary {
+    -fx-text-fill: -bootstrap-grey6;
+}
+
 .btn-secondary {
     -fx-text-fill: -bootstrap-white;
     -fx-fill: -bootstrap-white;
@@ -476,10 +480,66 @@
 
 /*===== webfx-extras-material-javafx@main.css from webfx-extras-styles-materialdesign =====*/
 
+* {
+     /* Colors shared by different Material components */
+     -webfx-material-input-text-fill: #1e1e1e;
+     -webfx-material-idle-text-fill: #6d6d6d;
+     -webfx-material-disabled-fill: #8a8a8a;
+     -webfx-material-invalid-fill: #ff1744;
+     -webfx-material-focused-fill: #0596FF;
 
+     /* CSS variables applied to specific material components with default values (will be redefined on focus, disabled & invalid) */
+     -webfx-material-background-color: white;
+     -webfx-material-label-fill: -webfx-material-idle-text-fill;
+     -webfx-material-line-fill: -webfx-material-idle-text-fill;
+     -webfx-material-line-border-style: solid;
+     -webfx-material-focused-line-fill: -webfx-material-focused-fill;
+}
+
+/* Applying CSS variables to material components */
 .material {
-     -fx-background-color: white , white , white;
+     /* Material background */
+     -fx-background-color: -webfx-material-background-color , -webfx-material-background-color , -webfx-material-background-color;
      -fx-background-insets: 0, 0, 0;
+}
+
+.material-label { /* is actually a JavaFX Text */
+     -fx-fill: -webfx-material-label-fill;
+}
+
+.material-line { /* is actually a JavaFX Region */
+     /* Using a border (not background) because there is a dotted style for the disabled state */
+     -fx-border-color: -webfx-material-line-fill;
+     -fx-border-style: solid; /* -webfx-material-line-border-style; not working with OpenJFX) */
+     -fx-border-width: 1px;
+}
+
+.material-focused-line { /* is actually a JavaFX Region */
+     /* Using a background is enough (no need for a border) */
+     -fx-background-color: -webfx-material-focused-line-fill;
+}
+
+/* Changing CSS variables values in dependence of material state */
+
+.material-focused * {
+     -webfx-material-label-fill: -webfx-material-focused-fill;
+}
+
+.material-disabled * {
+     -webfx-material-label-fill: -webfx-material-disabled-fill;
+     -webfx-material-line-fill: -webfx-material-disabled-fill;
+     -webfx-material-line-border-style: dotted;
+     -webfx-material-focused-line-fill: -webfx-material-disabled-fill;
+}
+
+.material-disabled .material-line { /* workaround because -webfx-material-line-border-style is not working with OpenJFX */
+     -fx-border-style: dotted;
+}
+
+.material-invalid * {
+     -webfx-material-label-fill: -webfx-material-invalid-fill;
+     -webfx-material-line-fill: -webfx-material-invalid-fill;
+     -webfx-material-focused-line-fill: -webfx-material-invalid-fill;
 }
 
 /*===== webfx-extra-player-audio-javafxmedia-javafx@main.css from webfx-extras-player-audio-javafxmedia =====*/
@@ -585,6 +645,12 @@ HtmlText, HtmlTextEditor {
     -fx-skin: "dev.webfx.kit.mapper.peers.javafxcontrols.openjfx.skin.FxControlPeerSkin";
 }
 
+/*===== webfx-stack-password-javafx@main.css from webfx-stack-authn-login-ui-gateway-password-plugin =====*/
+
+/* We don't want the default white background for WebFX Extras material text fields in the login window */
+.login * {
+    -webfx-material-background-color: transparent;
+}
 /*===== webfx-stack-authn-login-ui-portal-javafx@main.css from webfx-stack-authn-login-ui-portal =====*/
 
 * {
@@ -607,6 +673,10 @@ HtmlText, HtmlTextEditor {
     -fx-effect: dropshadow(gaussian, lightgray, 10, 0, 0, 0);
 }
 
+.login .h2 {
+    -fx-font-family: 'Poppins', sans-serif;
+    -fx-line-spacing: 0;
+}
 /*===== modality-client-brand-javafx@main.css from modality-base-client-brand =====*/
 
 * {
@@ -828,6 +898,11 @@ CollapsePane.menu-bar.lang-menu-bar {
 
 /*===== modality-event-frontoffice-activities-videos-javafx@main.css from modality-event-frontoffice-activity-videos-plugin =====*/
 
+.livestream .h2 {
+    -fx-line-spacing: 0px;
+}
+
+
 .livestream .h3 {
     -fx-font-family: "Poppins";
     -fx-font-size: 24px;
@@ -936,3 +1011,16 @@ CollapsePane.menu-bar.lang-menu-bar {
 }
 /*===== modality-frontoffice-booking-javafx@main.css from modality-event-frontoffice-activity-booking-plugin =====*/
 
+
+/*===== one-modality-crm-frontoffice-activities-createaccount-javafx@main.css from modality-crm-frontoffice-activity-createaccount-plugin =====*/
+
+/* We don't want the default white background for WebFX Extras material text fields in the login window */
+.user-account * {
+    -webfx-material-background-color: transparent;
+    -webfx-material-idle-text-fill: black;
+}
+
+.user-account Text.material-label {
+     -fx-font-weight: 900;
+     -fx-font-size: 14px;
+}

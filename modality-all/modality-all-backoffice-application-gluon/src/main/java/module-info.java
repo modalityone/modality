@@ -9,6 +9,8 @@ module modality.all.backoffice.application.gluon {
     requires javafx.media;
     requires javafx.web;
     requires modality.all.backoffice.application;
+    requires modality.crm.client.activity.login.plugin;
+    requires modality.crm.client.activity.magiclink.plugin;
     requires modality.ecommerce.document.service.buscall;
     requires modality.ecommerce.document.service.remote;
     requires modality.ecommerce.payment.buscall;
