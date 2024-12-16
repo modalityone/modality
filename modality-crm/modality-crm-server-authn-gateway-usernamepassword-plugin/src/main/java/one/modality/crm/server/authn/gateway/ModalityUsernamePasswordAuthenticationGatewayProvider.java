@@ -11,7 +11,6 @@ import dev.webfx.stack.orm.datasourcemodel.service.DataSourceModelService;
 import dev.webfx.stack.orm.domainmodel.DataSourceModel;
 import dev.webfx.stack.orm.domainmodel.HasDataSourceModel;
 import dev.webfx.stack.orm.entity.Entities;
-import dev.webfx.stack.orm.entity.Entity;
 import dev.webfx.stack.orm.entity.EntityStore;
 import dev.webfx.stack.orm.entity.UpdateStore;
 import dev.webfx.stack.push.server.PushServerService;
@@ -232,16 +231,17 @@ public final class ModalityUsernamePasswordAuthenticationGatewayProvider impleme
         // 1) We first check that the passed old password matches with the one in database
         return queryModalityUserPerson("frontendAccount.(username,password)")
             .compose(userPerson -> {
-                Entity frontendAccount = userPerson.getForeignEntity("frontendAccount");
-                String username = frontendAccount.getStringFieldValue("username");
-                String dbPassword = frontendAccount.getStringFieldValue("password");
-                if (!Objects.equals(dbPassword, passwordUpdate.getOldPassword()))
+                FrontendAccount frontendAccount = userPerson.getFrontendAccount();
+                String username = frontendAccount.getUsername();
+                String dbPassword = frontendAccount.getPassword();
+                String oldEncryptedPassword = encryptPassword(username, passwordUpdate.getOldPassword());
+                if (!Objects.equals(dbPassword, oldEncryptedPassword))
                     return Future.failedFuture("[%s] The old password is not matching".formatted(ModalityAuthenticationI18nKeys.AuthnOldPasswordNotMatchingError));
-                String encryptedPassword = encryptPassword(username, passwordUpdate.getNewPassword());
+                String newEncryptedPassword = encryptPassword(username, passwordUpdate.getNewPassword());
                 // 2) We update the password in the database
                 UpdateStore updateStore = UpdateStore.createAbove(frontendAccount.getStore());
-                Entity ufa = updateStore.updateEntity(frontendAccount);
-                ufa.setFieldValue("password", encryptedPassword);
+                FrontendAccount ufa = updateStore.updateEntity(frontendAccount);
+                ufa.setPassword(newEncryptedPassword);
                 return updateStore.submitChanges();
             });
     }
