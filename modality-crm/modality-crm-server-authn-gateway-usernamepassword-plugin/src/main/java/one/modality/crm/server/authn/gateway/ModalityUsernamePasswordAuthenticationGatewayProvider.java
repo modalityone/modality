@@ -110,7 +110,7 @@ public final class ModalityUsernamePasswordAuthenticationGatewayProvider impleme
                 Person userPerson = persons.get(0);
                 FrontendAccount fa = userPerson.getFrontendAccount();
                 String encryptedPassword = encryptPassword(password, fa.getSalt());
-                if (Objects.equals(encryptedPassword, fa.getPassword()))
+                if (!Objects.equals(encryptedPassword, fa.getPassword()))
                     return Future.failedFuture("[%s] Wrong user or password".formatted(ModalityAuthenticationI18nKeys.AuthnWrongUserOrPasswordError));
                 Object personId = userPerson.getPrimaryKey();
                 Object accountId = Entities.getPrimaryKey(userPerson.getForeignEntityId("frontendAccount"));
