@@ -102,13 +102,16 @@ public final class ModalityUsernamePasswordAuthenticationGatewayProvider impleme
         username = username.trim(); // Ignoring leading and tailing spaces in username
         if (username.contains("@")) // If username is an email address, it shouldn't be case-sensitive
             username = username.toLowerCase(); // emails are stored in lowercase in the database
-        String encryptedPassword = encryptPassword(username, password);
         return EntityStore.create(dataSourceModel)
-            .<Person>executeQuery("select id,frontendAccount.id from Person where frontendAccount.(corporation=? and username=? and password=?) order by id limit 1", 1, username, encryptedPassword)
+            .<Person>executeQuery("select id,frontendAccount.(password, salt) from Person where frontendAccount.(corporation=? and username=?) order by id limit 1", 1, username)
             .compose(persons -> {
                 if (persons.size() != 1)
                     return Future.failedFuture("[%s] Wrong user or password".formatted(ModalityAuthenticationI18nKeys.AuthnWrongUserOrPasswordError));
                 Person userPerson = persons.get(0);
+                FrontendAccount fa = userPerson.getFrontendAccount();
+                String encryptedPassword = encryptPassword(password, fa.getSalt());
+                if (Objects.equals(encryptedPassword, fa.getPassword()))
+                    return Future.failedFuture("[%s] Wrong user or password".formatted(ModalityAuthenticationI18nKeys.AuthnWrongUserOrPasswordError));
                 Object personId = userPerson.getPrimaryKey();
                 Object accountId = Entities.getPrimaryKey(userPerson.getForeignEntityId("frontendAccount"));
                 ModalityUserPrincipal modalityUserPrincipal = new ModalityUserPrincipal(personId, accountId);
@@ -144,8 +147,11 @@ public final class ModalityUsernamePasswordAuthenticationGatewayProvider impleme
             .compose(magicLink -> {
                 UpdateStore updateStore = UpdateStore.create(dataSourceModel);
                 FrontendAccount fa = updateStore.insertEntity(FrontendAccount.class);
-                fa.setUsername(magicLink.getEmail());
-                fa.setPassword(encryptPassword(magicLink.getEmail(), credentials.getPassword()));
+                String email = magicLink.getEmail();
+                String salt = email; // like KBS2 for now
+                fa.setUsername(email);
+                fa.setSalt(salt);
+                fa.setPassword(encryptPassword(credentials.getPassword(), salt));
                 fa.setCorporation(1);
                 return updateStore.submitChanges()
                     .map(ignored -> fa.getPrimaryKey());
@@ -175,8 +181,9 @@ public final class ModalityUsernamePasswordAuthenticationGatewayProvider impleme
                 }));
     }
 
-    private String encryptPassword(String username, String password) {
-        String toEncrypt = username + ":" + Md5.hash(password);
+    private String encryptPassword(String password, String salt) {
+        // KBS2 way of encrypting the password
+        String toEncrypt = salt + ":" + Md5.hash(password);
         return Md5.hash(toEncrypt); // encrypted
     }
 
@@ -229,19 +236,19 @@ public final class ModalityUsernamePasswordAuthenticationGatewayProvider impleme
             return Future.failedFuture(getClass().getSimpleName() + ".updateCredentials() requires a " + UpdatePasswordCredentials.class.getSimpleName() + " argument");
         UpdatePasswordCredentials passwordUpdate = (UpdatePasswordCredentials) updateCredentialsArgument;
         // 1) We first check that the passed old password matches with the one in database
-        return queryModalityUserPerson("frontendAccount.(username,password)")
+        return queryModalityUserPerson("frontendAccount.(username, password, salt)")
             .compose(userPerson -> {
-                FrontendAccount frontendAccount = userPerson.getFrontendAccount();
-                String username = frontendAccount.getUsername();
-                String dbPassword = frontendAccount.getPassword();
-                String oldEncryptedPassword = encryptPassword(username, passwordUpdate.getOldPassword());
-                if (!Objects.equals(dbPassword, oldEncryptedPassword))
+                FrontendAccount fa = userPerson.getFrontendAccount();
+                String oldEncryptedDbPassword = fa.getPassword();
+                String salt = fa.getSalt();
+                String oldEncryptedUserPassword = encryptPassword(passwordUpdate.getOldPassword(), salt);
+                if (!Objects.equals(oldEncryptedDbPassword, oldEncryptedUserPassword))
                     return Future.failedFuture("[%s] The old password is not matching".formatted(ModalityAuthenticationI18nKeys.AuthnOldPasswordNotMatchingError));
-                String newEncryptedPassword = encryptPassword(username, passwordUpdate.getNewPassword());
+                String newEncryptedUserPassword = encryptPassword(passwordUpdate.getNewPassword(), salt);
                 // 2) We update the password in the database
-                UpdateStore updateStore = UpdateStore.createAbove(frontendAccount.getStore());
-                FrontendAccount ufa = updateStore.updateEntity(frontendAccount);
-                ufa.setPassword(newEncryptedPassword);
+                UpdateStore updateStore = UpdateStore.createAbove(fa.getStore());
+                FrontendAccount ufa = updateStore.updateEntity(fa);
+                ufa.setPassword(newEncryptedUserPassword);
                 return updateStore.submitChanges();
             });
     }
