@@ -117,7 +117,7 @@ public final class LoginLinkService {
     public static Future<MagicLink> loadLoginLinkFromToken(String token, boolean checkValidity, DataSourceModel dataSourceModel) {
         // 1) Checking the existence of the magic link in the database, and if so, loading it with required info
         return EntityStore.create(dataSourceModel)
-            .<MagicLink>executeQuery("select loginRunId,email,creationDate,usageDate,requestedPath from MagicLink where token=? limit 1", token)
+            .<MagicLink>executeQuery("select loginRunId,email,creationDate,usageDate,requestedPath,oldEmail from MagicLink where token=? limit 1", token)
             .compose(magicLinks -> {
                 MagicLink magicLink = Collections.first(magicLinks);
                 if (magicLink == null)
