@@ -159,17 +159,19 @@ public final class ModalityUsernamePasswordAuthenticationGatewayProvider impleme
     }
 
     private Future<Void> sendEmailUpdateLink(InitiateEmailUpdateCredentials credentials) {
+        String runId = ThreadLocalStateHolder.getRunId(); // capturing runId (before async call)
         return getUserClaims() // to get the old email (the passed credential contains the new email)
             .compose(userClaims -> LoginLinkService.storeAndSendLoginLink(
-                credentials, // contains the new email (the one to send the link to)
-                userClaims.getEmail(), // current email for this account (= old email)
-                UPDATE_EMAIL_ACTIVITY_PATH_FULL,
-                UPDATE_EMAIL_LINK_MAIL_FROM,
-                UPDATE_EMAIL_LINK_MAIL_SUBJECT,
-                UPDATE_EMAIL_LINK_MAIL_BODY,
-                dataSourceModel
-        )
-        );
+                    runId,
+                    credentials, // contains the new email (the one to send the link to)
+                    userClaims.getEmail(), // current email for this account (= old email)
+                    UPDATE_EMAIL_ACTIVITY_PATH_FULL,
+                    UPDATE_EMAIL_LINK_MAIL_FROM,
+                    UPDATE_EMAIL_LINK_MAIL_SUBJECT,
+                    UPDATE_EMAIL_LINK_MAIL_BODY,
+                    dataSourceModel
+                )
+            );
     }
 
     private Future<Void> finaliseEmailUpdate(FinaliseEmailUpdateCredentials credentials) {

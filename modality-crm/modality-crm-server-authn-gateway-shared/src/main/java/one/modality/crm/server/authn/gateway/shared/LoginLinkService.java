@@ -38,6 +38,7 @@ public final class LoginLinkService {
         String body,
         DataSourceModel dataSourceModel) {
         return storeAndSendLoginLink(
+            null,
             request,
             null,
             activityPath,
@@ -49,6 +50,7 @@ public final class LoginLinkService {
     }
 
     public static Future<Void> storeAndSendLoginLink(
+        String loginRunId,
         AlternativeLoginActionCredentials request,
         String oldEmail,
         String activityPath,
@@ -57,7 +59,7 @@ public final class LoginLinkService {
         String body,
         DataSourceModel dataSourceModel) {
         return storeAndSendLoginLink(
-            null,
+            loginRunId,
             Strings.toSafeString(request.getLanguage()), // lang
             request.getClientOrigin(), // client origin
             request.getRequestedPath(),
