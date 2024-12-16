@@ -1,6 +1,7 @@
 package one.modality.crm.server.authn.gateway.shared;
 
 import dev.webfx.platform.async.Future;
+import dev.webfx.platform.util.Objects;
 import dev.webfx.platform.util.Strings;
 import dev.webfx.platform.util.collection.Collections;
 import dev.webfx.platform.util.uuid.Uuid;
@@ -37,11 +38,31 @@ public final class LoginLinkService {
         String body,
         DataSourceModel dataSourceModel) {
         return storeAndSendLoginLink(
+            request,
+            null,
+            activityPath,
+            from,
+            subject,
+            body,
+            dataSourceModel
+        );
+    }
+
+    public static Future<Void> storeAndSendLoginLink(
+        AlternativeLoginActionCredentials request,
+        String oldEmail,
+        String activityPath,
+        String from,
+        String subject,
+        String body,
+        DataSourceModel dataSourceModel) {
+        return storeAndSendLoginLink(
             null,
             Strings.toSafeString(request.getLanguage()), // lang
             request.getClientOrigin(), // client origin
             request.getRequestedPath(),
             request.getEmail(),
+            oldEmail,
             request.getContext(),
             activityPath,
             from,
@@ -57,6 +78,7 @@ public final class LoginLinkService {
         String clientOrigin,
         String requestedPath,
         String email,
+        String oldEmail,
         Object context,
         String activityPath,
         String from,
@@ -78,6 +100,7 @@ public final class LoginLinkService {
         magicLink.setLang(lang);
         magicLink.setLink(link);
         magicLink.setEmail(email);
+        magicLink.setOldEmail(oldEmail);
         magicLink.setRequestedPath(requestedPath);
         return updateStore.submitChanges()
             .compose(ignoredBatch -> {
@@ -129,8 +152,9 @@ public final class LoginLinkService {
     }
 
     public static Future<Person> loadUserPersonFromLoginLink(MagicLink magicLink) {
+        String email = Objects.coalesce(magicLink.getOldEmail(), magicLink.getEmail());
         return magicLink.getStore()
-            .<Person>executeQuery("select frontendAccount from Person p where frontendAccount.username=? order by p.id limit 1", magicLink.getEmail())
+            .<Person>executeQuery("select frontendAccount from Person p where frontendAccount.username=? order by p.id limit 1", email)
             .map(Collections::first);
     }
 

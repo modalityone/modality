@@ -94,6 +94,7 @@ public class ModalityMagicLinkAuthenticationGatewayProvider implements ServerAut
                     magicLink.getRequestedPath(),
                     magicLink.getEmail(),
                     null,
+                    null,
                     MAGIC_LINK_ACTIVITY_PATH_FULL,
                     MAGIC_LINK_MAIL_FROM,
                     MAGIC_LINK_MAIL_SUBJECT,

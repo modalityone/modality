@@ -14,6 +14,7 @@ public interface MagicLink extends Entity {
     String loginRunId = "loginRunId";
     String token = "token";
     String email = "email";
+    String oldEmail = "oldEmail";
     String lang = "lang";
     String link = "link";
     String requestedPath = "requestedPath";
@@ -64,6 +65,14 @@ public interface MagicLink extends Entity {
 
     default String getEmail() {
         return getStringFieldValue(email);
+    }
+
+    default void setOldEmail(String value) {
+        setFieldValue(oldEmail, value);
+    }
+
+    default String getOldEmail() {
+        return getStringFieldValue(oldEmail);
     }
 
     default void setLang(String value) {
