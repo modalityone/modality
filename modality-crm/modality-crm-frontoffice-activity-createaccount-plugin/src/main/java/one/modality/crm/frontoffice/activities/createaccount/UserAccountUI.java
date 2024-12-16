@@ -55,7 +55,6 @@ public class UserAccountUI implements ModalityButtonFactoryMixin {
     private final BooleanProperty genderManagedProperty = new SimpleBooleanProperty(true);
     private final BooleanProperty ordainedManagedProperty = new SimpleBooleanProperty(true);
     private final BooleanProperty phoneManagedProperty = new SimpleBooleanProperty(true);
-    private final BooleanProperty streetManagedProperty = new SimpleBooleanProperty(true);
     private final BooleanProperty postCodeManagedProperty = new SimpleBooleanProperty(true);
     private final BooleanProperty cityNameManagedProperty = new SimpleBooleanProperty(true);
     private final BooleanProperty countryManagedProperty = new SimpleBooleanProperty(true);
@@ -68,7 +67,6 @@ public class UserAccountUI implements ModalityButtonFactoryMixin {
     public static final boolean EDITION_MODE = true;
     private Button actionButton;
     private BrowsingHistory browsingHistory;
-    private String token;
     private final ValidationSupport validationSupport = new ValidationSupport();
     private boolean validationSupportInitialised = false;
     private CheckBox termAndConditionReadCheckBox;
@@ -94,8 +92,6 @@ public class UserAccountUI implements ModalityButtonFactoryMixin {
 
     public void initialiseUI(Person pers, String token) {
         person = pers;
-        this.token = token;
-
         VBox fieldsListVBox = new VBox(15);
         fieldsListVBox.setPadding(new Insets(50, 0, 50, 0));
         int FIELDS_MAX_WIDTH = 370;
@@ -433,10 +429,6 @@ public class UserAccountUI implements ModalityButtonFactoryMixin {
         }
     }
 
-    private void resetValidationSupport() {
-        validationSupport.reset();
-        validationSupportInitialised = false;
-    }
 
     /**
      * We validate the form
