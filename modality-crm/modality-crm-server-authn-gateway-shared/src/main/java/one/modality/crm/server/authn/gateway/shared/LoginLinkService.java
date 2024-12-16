@@ -132,7 +132,6 @@ public final class LoginLinkService {
         return magicLink.getStore()
             .<Person>executeQuery("select frontendAccount from Person p where frontendAccount.username=? order by p.id limit 1", magicLink.getEmail())
             .map(Collections::first);
-
     }
 
     private static LocalDateTime now() {

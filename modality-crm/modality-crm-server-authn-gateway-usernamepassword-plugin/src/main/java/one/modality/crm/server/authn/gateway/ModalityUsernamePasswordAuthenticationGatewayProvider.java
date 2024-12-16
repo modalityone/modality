@@ -38,6 +38,13 @@ public final class ModalityUsernamePasswordAuthenticationGatewayProvider impleme
     private static final String CREATE_ACCOUNT_LINK_MAIL_SUBJECT = "Create account";
     private static final String CREATE_ACCOUNT_LINK_MAIL_BODY = "[loginLink]";
 
+    private static final String UPDATE_EMAIL_ACTIVITY_PATH_PREFIX = "/user-profile/email-update";
+    private static final String UPDATE_EMAIL_ACTIVITY_PATH_FULL = UPDATE_EMAIL_ACTIVITY_PATH_PREFIX + "/:token";
+
+    private static final String UPDATE_EMAIL_LINK_MAIL_FROM = null;
+    private static final String UPDATE_EMAIL_LINK_MAIL_SUBJECT = "Update email";
+    private static final String UPDATE_EMAIL_LINK_MAIL_BODY = "[loginLink]";
+
     private final DataSourceModel dataSourceModel;
 
     public ModalityUsernamePasswordAuthenticationGatewayProvider() {
@@ -59,6 +66,8 @@ public final class ModalityUsernamePasswordAuthenticationGatewayProvider impleme
                || userCredentials instanceof InitiateAccountCreationCredentials
                || userCredentials instanceof ContinueAccountCreationCredentials
                || userCredentials instanceof FinaliseAccountCreationCredentials
+               || userCredentials instanceof InitiateEmailUpdateCredentials
+               || userCredentials instanceof FinaliseEmailUpdateCredentials
             ;
     }
 
@@ -71,10 +80,16 @@ public final class ModalityUsernamePasswordAuthenticationGatewayProvider impleme
             return sendAccountCreationLink(cred);
         }
         if (credentials instanceof ContinueAccountCreationCredentials cred) {
-            return continueAccountCreationLink(cred);
+            return continueAccountCreation(cred);
         }
         if (credentials instanceof FinaliseAccountCreationCredentials cred) {
-            return finaliseAccountCreationLink(cred);
+            return finaliseAccountCreation(cred);
+        }
+        if (credentials instanceof InitiateEmailUpdateCredentials cred) {
+            return sendEmailUpdateLink(cred);
+        }
+        if (credentials instanceof FinaliseEmailUpdateCredentials cred) {
+            return finaliseEmailUpdate(cred);
         }
         return Future.failedFuture("[%s] requires a %s argument".formatted(getClass().getSimpleName(), AuthenticateWithUsernamePasswordCredentials.class.getSimpleName()));
     }
@@ -113,7 +128,7 @@ public final class ModalityUsernamePasswordAuthenticationGatewayProvider impleme
         );
     }
 
-    private Future<String> continueAccountCreationLink(ContinueAccountCreationCredentials credentials) {
+    private Future<String> continueAccountCreation(ContinueAccountCreationCredentials credentials) {
         return LoginLinkService.loadLoginLinkFromTokenAndMarkAsUsed(credentials.getToken(), dataSourceModel)
             .compose(magicLink -> LoginLinkService.loadUserPersonFromLoginLink(magicLink)
                 .compose(userPerson -> {
@@ -125,7 +140,7 @@ public final class ModalityUsernamePasswordAuthenticationGatewayProvider impleme
             );
     }
 
-    private Future<Object> finaliseAccountCreationLink(FinaliseAccountCreationCredentials credentials) {
+    private Future<Object> finaliseAccountCreation(FinaliseAccountCreationCredentials credentials) {
         return LoginLinkService.loadLoginLinkFromToken(credentials.getToken(), false, dataSourceModel)
             .compose(magicLink -> {
                 UpdateStore updateStore = UpdateStore.create(dataSourceModel);
@@ -136,6 +151,29 @@ public final class ModalityUsernamePasswordAuthenticationGatewayProvider impleme
                 return updateStore.submitChanges()
                     .map(ignored -> fa.getPrimaryKey());
             });
+    }
+
+    private Future<Void> sendEmailUpdateLink(InitiateEmailUpdateCredentials credentials) {
+        return LoginLinkService.storeAndSendLoginLink(
+            credentials,
+            UPDATE_EMAIL_ACTIVITY_PATH_FULL,
+            UPDATE_EMAIL_LINK_MAIL_FROM,
+            UPDATE_EMAIL_LINK_MAIL_SUBJECT,
+            UPDATE_EMAIL_LINK_MAIL_BODY,
+            dataSourceModel
+        );
+    }
+
+    private Future<Void> finaliseEmailUpdate(FinaliseEmailUpdateCredentials credentials) {
+        return LoginLinkService.loadLoginLinkFromTokenAndMarkAsUsed(credentials.getToken(), dataSourceModel)
+            .compose(magicLink -> LoginLinkService.loadUserPersonFromLoginLink(magicLink)
+                .compose(userPerson -> {
+                    UpdateStore updateStore = UpdateStore.create(dataSourceModel);
+                    updateStore.updateEntity(userPerson.getFrontendAccount()).setUsername(magicLink.getEmail());
+                    updateStore.updateEntity(userPerson).setEmail(magicLink.getEmail());
+                    return updateStore.submitChanges()
+                        .map(ignored -> null);
+                }));
     }
 
     private String encryptPassword(String username, String password) {
