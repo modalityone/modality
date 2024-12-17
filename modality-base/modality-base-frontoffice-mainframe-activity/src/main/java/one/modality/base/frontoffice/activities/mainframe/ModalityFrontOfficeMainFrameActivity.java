@@ -17,12 +17,10 @@ import dev.webfx.platform.util.Arrays;
 import dev.webfx.platform.util.collection.Collections;
 import dev.webfx.stack.i18n.I18n;
 import dev.webfx.stack.i18n.controls.I18nControls;
-import dev.webfx.stack.i18n.operations.ChangeLanguageRequestEmitter;
 import dev.webfx.stack.routing.uirouter.UiRouter;
 import dev.webfx.stack.session.state.client.fx.FXLoggedIn;
 import dev.webfx.stack.ui.action.Action;
 import dev.webfx.stack.ui.action.ActionBinder;
-import dev.webfx.stack.ui.action.ActionGroup;
 import javafx.beans.InvalidationListener;
 import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.ObjectProperty;
@@ -267,8 +265,6 @@ public final class ModalityFrontOfficeMainFrameActivity extends ModalityClientMa
             Arrays.forEach(scaledMobileButtons, scaledButton -> scaledButton.setPrefHeight(footerHeight));
         }, mainFrameContainer.widthProperty(), mainFrameContainer.heightProperty());
 
-        setUpContextMenu(mainFrameContainer, this::contextMenuActionGroup);
-
         setupPlayersGlobalConfiguration();
 
         mainFrameContainer.setOnMouseClicked(e -> {
@@ -328,14 +324,6 @@ public final class ModalityFrontOfficeMainFrameActivity extends ModalityClientMa
         while (firstOverlayChildIndex < mainFrameChildren.size())
             mainFrameChildren.remove(firstOverlayChildIndex);
         mainFrameChildren.addAll(firstOverlayChildIndex, overlayChildren);
-    }
-
-    private ActionGroup contextMenuActionGroup() {
-        return newActionGroup(
-            ChangeLanguageRequestEmitter.getProvidedEmitters().stream()
-                .map(emitter -> newOperationAction(emitter::emitLanguageRequest))
-                .toArray(Action[]::new)
-        );
     }
 
     private CollapsePane createLanguageMenuBar() {
