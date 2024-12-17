@@ -3,9 +3,7 @@
 module modality.crm.frontoffice.activity.userprofile.plugin {
 
     // Direct dependencies modules
-    requires javafx.base;
     requires javafx.controls;
-    requires javafx.graphics;
     requires modality.base.shared.entities;
     requires modality.crm.client.activity.magiclink.plugin;
     requires modality.crm.client.authn.fx;
@@ -14,7 +12,6 @@ module modality.crm.frontoffice.activity.userprofile.plugin {
     requires webfx.extras.styles.bootstrap;
     requires webfx.extras.styles.materialdesign;
     requires webfx.kit.util;
-    requires webfx.platform.console;
     requires webfx.platform.uischeduler;
     requires webfx.platform.windowhistory;
     requires webfx.platform.windowlocation;
@@ -30,6 +27,9 @@ module modality.crm.frontoffice.activity.userprofile.plugin {
     requires webfx.stack.ui.controls;
     requires webfx.stack.ui.operation;
     requires webfx.stack.ui.validation;
+    requires webfx.stack.orm.entity;
+    requires webfx.platform.console;
+    requires modality.base.client.mainframe.fx;
 
     // Exported packages
     exports one.modality.crm.frontoffice.activities.userprofile;

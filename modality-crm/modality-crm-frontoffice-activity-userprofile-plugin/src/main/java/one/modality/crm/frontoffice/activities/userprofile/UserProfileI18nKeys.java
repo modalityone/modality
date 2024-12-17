@@ -10,6 +10,7 @@ public interface UserProfileI18nKeys {
     String ChangeEmailAddress = "ChangeEmailAddress";
     String NewEmailAddress = "NewEmailAddress";
     String CurrentPassword = "CurrentPassword";
+    String UpdatePasswordDesc = "UpdatePasswordDesc";
     String NewPassword = "NewPassword";
     String NewPasswordAgain = "NewPasswordAgain";
     String ChangeEmailTitleForButton = "ChangeEmailTitleForButton";
@@ -25,5 +26,7 @@ public interface UserProfileI18nKeys {
     String ErrorWhileUpdatingEmail = "ErrorWhileUpdatingEmail";
     String EmailUpdatedWithSuccess = "EmailUpdatedWithSuccess";
     String CurrentEmail = "CurrentEmail";
+    String Confirm = "Confirm";
+    String CloseWindow = "CloseWindow";
 
 }

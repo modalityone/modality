@@ -81,10 +81,17 @@ public class UserAccountUI implements ModalityButtonFactoryMixin {
         MonoPane monopane = new MonoPane(progressIndicator);
         BorderPane.setMargin(monopane,new Insets(200,0,200,0));
         container.setCenter(monopane);
+        if(editModeProperty.get()==EDITION_MODE) {
+            passwordManagedProperty.setValue(false);
+            termAndConditionManagedProperty.setValue(false);
+        }
     }
 
     private void createTitle() {
-        Label title = Bootstrap.h2Primary(I18nControls.newLabel(PasswordI18nKeys.CreateAccountTitle));
+        Label title;
+        if(editModeProperty.get()==CREATION_MODE)
+            title = Bootstrap.h2Primary(I18nControls.newLabel(PasswordI18nKeys.CreateAccountTitle));
+        else title = Bootstrap.h2Primary(I18nControls.newLabel(PasswordI18nKeys.EditUserAccount));
         title.setPadding(new Insets(40, 0, 0, 0));
         BorderPane.setAlignment(title, Pos.CENTER);
         container.setTop(title);
@@ -111,12 +118,7 @@ public class UserAccountUI implements ModalityButtonFactoryMixin {
         fieldsListVBox.getChildren().add(emailTextField);
         emailTextField.managedProperty().bind(emailManagedProperty);
         emailTextField.visibleProperty().bind(emailManagedProperty);
-        emailTextField.textProperty().addListener((observable, oldValue, newValue) -> {
-            person.setEmail(newValue);
-           // person.getFrontendAccount().setUsername(newValue);
-            //We need to change the password since the password hash is dependant of the username
-           // person.getFrontendAccount().setPassword(encryptPassword(newValue, person.getFrontendAccount().getPassword()));
-        });
+        emailTextField.textProperty().addListener((observable, oldValue, newValue) -> person.setEmail(newValue));
 
         passwordField = newMaterialPasswordField(CrmI18nKeys.Password);
         formatTextFieldLabel(passwordField);
@@ -127,6 +129,8 @@ public class UserAccountUI implements ModalityButtonFactoryMixin {
         Label passwordStrength = Bootstrap.small(Bootstrap.textSecondary(I18nControls.newLabel(CreateAccountI18nKeys.PasswordStrength)));
         passwordStrength.setWrapText(true);
         fieldsListVBox.getChildren().add(passwordStrength);
+        passwordStrength.managedProperty().bind(passwordManagedProperty);
+        passwordStrength.visibleProperty().bind(passwordManagedProperty);
 
         repeatPasswordField = newMaterialPasswordField(CrmI18nKeys.RepeatPassword);
         formatTextFieldLabel(repeatPasswordField);
@@ -184,6 +188,7 @@ public class UserAccountUI implements ModalityButtonFactoryMixin {
             }
         });
         optionMale.setSelected(null != person.isMale() && person.isMale());
+        optionFemale.setSelected(null != person.isMale()&& !person.isMale());
         //optionFemale.setSelected(!person.isMale());
         HBox maleFemaleHBox = new HBox(20, optionMale, optionFemale);
         maleFemaleHBox.setPadding(new Insets(10, 0, 0, 0));
@@ -366,29 +371,52 @@ public class UserAccountUI implements ModalityButtonFactoryMixin {
         }
 
         actionButton.disableProperty().bind(EntityBindings.hasChangesProperty(updateStore).not());
-        actionButton.setOnAction(e -> {
-            if (validateForm()) {
-            AuthenticationService.authenticate(new FinaliseAccountCreationCredentials(token, passwordField.getText().trim()))
-                .onFailure(failure -> {
-                    Console.log("Error while creating account:" + failure);
-                    Platform.runLater(()->transformPaneToAccountCreationError(CreateAccountI18nKeys.CreatingAccountError));
-                })
-                .onSuccess(faPk -> {
-                    person.setFrontendAccount(faPk);
-                    updateStore.submitChanges()
+        if(editModeProperty.get()==CREATION_MODE) {
+            actionButton.setOnAction(e -> {
+                if (validateForm()) {
+                    AuthenticationService.authenticate(new FinaliseAccountCreationCredentials(token, passwordField.getText().trim()))
                         .onFailure(failure -> {
                             Console.log("Error while creating account:" + failure);
-                            Platform.runLater(()->transformPaneToAccountCreationError(CreateAccountI18nKeys.CreatingPersonAssociatedToAccountError));
+                            Platform.runLater(() -> transformPaneToAccountCreationError(CreateAccountI18nKeys.CreatingAccountError));
                         })
-                        .onSuccess(success -> {
-                            Console.log("Account created with success");
-                            Platform.runLater(this::transformPaneToAccountCreatedWithSuccess);
+                        .onSuccess(faPk -> {
+                            person.setFrontendAccount(faPk);
+                            updateStore.submitChanges()
+                                .onFailure(failure -> {
+                                    Console.log("Error while creating account:" + failure);
+                                    Platform.runLater(() -> transformPaneToAccountCreationError(CreateAccountI18nKeys.CreatingPersonAssociatedToAccountError));
+                                })
+                                .onSuccess(success -> {
+                                    Console.log("Account created with success");
+                                    Platform.runLater(this::transformPaneToAccountCreatedWithSuccess);
+                                });
                         });
-                });
-        }});
+                }
+            });
+        } else {
+            //Here we're editing an existing user
+            actionButton.setOnAction(e-> {
+                updateStore.submitChanges().
+                    onFailure(failure -> {
+                        Console.log("Error while updating account:" + failure);
+                        Platform.runLater(() -> transformPaneToAccountCreationError(CreateAccountI18nKeys.CreatingPersonAssociatedToAccountError));
+                    })
+                    .onSuccess(success -> {
+                        Console.log("Account updated with success");
+                        Platform.runLater(this::transformPaneToAccountCreatedWithSuccess);
+                    });
+                //TODO
+            });
+        }
         BorderPane.setAlignment(actionButton, Pos.CENTER);
         container.setBottom(actionButton);
         BorderPane.setMargin(actionButton, new Insets(0, 0, 40, 0));
+
+        if(editModeProperty.get()==EDITION_MODE) {
+            //In Edit Mode, we prevent to change the firstName and lastName
+            firstNameTextField.setDisable(true);
+            lastNameTextField.setDisable(true);
+        }
 
     }
 
