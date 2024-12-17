@@ -277,6 +277,20 @@
 
         <dependency>
             <groupId>one.modality</groupId>
+            <artifactId>modality-crm-client-activity-login-plugin</artifactId>
+            <version>1.0.0-SNAPSHOT</version>
+            <classifier>sources</classifier>
+        </dependency>
+
+        <dependency>
+            <groupId>one.modality</groupId>
+            <artifactId>modality-crm-client-activity-magiclink-plugin</artifactId>
+            <version>1.0.0-SNAPSHOT</version>
+            <classifier>sources</classifier>
+        </dependency>
+
+        <dependency>
+            <groupId>one.modality</groupId>
             <artifactId>modality-crm-client-authn-fx</artifactId>
             <version>1.0.0-SNAPSHOT</version>
             <classifier>sources</classifier>
@@ -285,6 +299,13 @@
         <dependency>
             <groupId>one.modality</groupId>
             <artifactId>modality-crm-client-i18n</artifactId>
+            <version>1.0.0-SNAPSHOT</version>
+            <classifier>sources</classifier>
+        </dependency>
+
+        <dependency>
+            <groupId>one.modality</groupId>
+            <artifactId>modality-crm-frontoffice-activity-createaccount-plugin</artifactId>
             <version>1.0.0-SNAPSHOT</version>
             <classifier>sources</classifier>
         </dependency>

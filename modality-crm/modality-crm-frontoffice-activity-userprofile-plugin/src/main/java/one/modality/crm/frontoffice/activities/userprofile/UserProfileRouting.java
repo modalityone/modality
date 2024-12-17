@@ -4,6 +4,7 @@ import dev.webfx.platform.windowhistory.spi.BrowsingHistory;
 import dev.webfx.stack.i18n.HasI18nKey;
 import dev.webfx.stack.orm.domainmodel.activity.viewdomain.impl.ViewDomainActivityContextFinal;
 import dev.webfx.stack.routing.router.auth.authz.RouteRequest;
+import dev.webfx.stack.routing.router.util.PathBuilder;
 import dev.webfx.stack.routing.uirouter.UiRoute;
 import dev.webfx.stack.routing.uirouter.activity.uiroute.UiRouteActivityContext;
 import dev.webfx.stack.routing.uirouter.impl.UiRouteImpl;
@@ -13,21 +14,26 @@ import dev.webfx.stack.ui.operation.HasOperationCode;
 
 public class UserProfileRouting {
 
+    private final static String ANY_PATH = "/user-profile(/email-update/:token)?";
     private final static String PATH = "/user-profile";
     private final static String OPERATION_CODE = "RouteToUserProfile";
+
+    public static String getAnyPath() {
+        return ANY_PATH;
+    }
 
     public static String getPath() {
         return PATH;
     }
 
-    public static class UserProfileUiRoute extends UiRouteImpl {
+    public static class UserProfileUiRoute extends UiRouteImpl<ViewDomainActivityContextFinal> {
 
         public UserProfileUiRoute() {
             super(uiRoute());
         }
 
-        public static UiRoute<?> uiRoute() {
-            return UiRoute.create(UserProfileRouting.getPath()
+        public static UiRoute<ViewDomainActivityContextFinal> uiRoute() {
+            return UiRoute.createRegex(PathBuilder.toRegexPath(UserProfileRouting.getAnyPath())
                     , true
                     , UserProfileActivity::new
                     , ViewDomainActivityContextFinal::new

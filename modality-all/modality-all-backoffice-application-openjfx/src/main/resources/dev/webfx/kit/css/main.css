@@ -217,6 +217,10 @@
     -fx-border-color: -bootstrap-blue9;
 }
 
+.text-secondary {
+    -fx-text-fill: -bootstrap-grey6;
+}
+
 .btn-secondary {
     -fx-text-fill: -bootstrap-white;
     -fx-fill: -bootstrap-white;
@@ -506,7 +510,7 @@
 .material-line { /* is actually a JavaFX Region */
      /* Using a border (not background) because there is a dotted style for the disabled state */
      -fx-border-color: -webfx-material-line-fill;
-     -fx-border-style: solid; /* -webfx-material-line-border-style; not working with OpenJFX)
+     -fx-border-style: solid; /* -webfx-material-line-border-style; not working with OpenJFX) */
      -fx-border-width: 1px;
 }
 
@@ -706,6 +710,10 @@ HtmlText, HtmlTextEditor {
     -fx-effect: dropshadow(gaussian, lightgray, 10, 0, 0, 0);
 }
 
+.login .h2 {
+    -fx-font-family: 'Poppins', sans-serif;
+    -fx-line-spacing: 0;
+}
 /*===== modality-client-brand-javafx@main.css from modality-base-client-brand =====*/
 
 * {
@@ -972,3 +980,16 @@ Text, Label, Button, TextField {
     -fx-font-size: 9px;
 }
 
+
+/*===== one-modality-crm-frontoffice-activities-createaccount-javafx@main.css from modality-crm-frontoffice-activity-createaccount-plugin =====*/
+
+/* We don't want the default white background for WebFX Extras material text fields in the login window */
+.user-account * {
+    -webfx-material-background-color: transparent;
+    -webfx-material-idle-text-fill: black;
+}
+
+.user-account Text.material-label {
+     -fx-font-weight: 900;
+     -fx-font-size: 14px;
+}

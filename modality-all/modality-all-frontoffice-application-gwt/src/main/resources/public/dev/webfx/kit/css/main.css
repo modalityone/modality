@@ -768,7 +768,7 @@ input[type="password"]:not([value=""]) {
 }
 
 .login input {
-     font-size: 20px;
+     font-size: 13px;
        }
 
 .login-child {
@@ -782,6 +782,7 @@ input[type="password"]:not([value=""]) {
 
 .login .h2 {
     font-family: 'Poppins', sans-serif; /* Sets the font to Poppins, with a fallback to sans-serif */
+    line-height: 0.5;
 }
 
 .login .or {
@@ -1154,3 +1155,16 @@ btn-white {
 }
 /*===== modality-frontoffice-booking-web@main.css from modality-event-frontoffice-activity-booking-plugin =====*/
 
+
+/*===== one-modality-crm-frontoffice-activities-createaccount-web@main.css from modality-crm-frontoffice-activity-createaccount-plugin =====*/
+
+/* We don't want the default white background for WebFX Extras material text fields in the login window */
+.user-account * {
+    --webfx-material-background-color: transparent;
+    --webfx-material-idle-text-fill: black;
+}
+
+.user-account .material-label {
+     font-weight: bold;
+     font-size: 14px;
+}
