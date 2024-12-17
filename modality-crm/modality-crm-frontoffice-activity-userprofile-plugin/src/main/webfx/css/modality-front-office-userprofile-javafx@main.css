@@ -1,0 +1,9 @@
+.user-profile-modal-window {
+    -fx-padding: 60 60 60 60;
+    -fx-background-image: none;
+    -fx-background-color: rgba(255, 255, 255,1);
+    -fx-background-radius: 20px;
+    -fx-border-color: lightgray;
+    -fx-border-radius: 20px;
+    -fx-effect: dropshadow(gaussian, lightgray, 10, 0, 0, 0);
+}

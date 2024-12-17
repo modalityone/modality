@@ -17,8 +17,11 @@ import dev.webfx.stack.ui.operation.OperationUtil;
 import dev.webfx.stack.ui.validation.ValidationSupport;
 import javafx.application.Platform;
 import javafx.geometry.Insets;
+import javafx.geometry.Pos;
 import javafx.scene.control.*;
+import javafx.scene.layout.Background;
 import javafx.scene.layout.VBox;
+import javafx.scene.paint.Color;
 import one.modality.base.shared.entities.Person;
 import one.modality.crm.shared.services.authn.fx.FXUserPerson;
 
@@ -106,6 +109,8 @@ public class ChangeEmailUI implements MaterialFactoryMixin {
         container.getChildren().setAll(title, currentEmailAddress, emailTextField, passwordField, infoMessage, actionButton, backHyperlink);
         int MAX_WIDTH = 486;
         container.setMaxWidth(MAX_WIDTH);
+        container.setBackground(Background.fill(Color.WHITE));
+        container.setAlignment(Pos.CENTER);
         container.setSpacing(20);
     }
 
