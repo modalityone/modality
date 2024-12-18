@@ -35,13 +35,13 @@
 
         <dependency>
             <groupId>one.modality</groupId>
-            <artifactId>modality-base-shared-entities</artifactId>
+            <artifactId>modality-base-client-mainframe-fx</artifactId>
             <version>1.0.0-SNAPSHOT</version>
         </dependency>
 
         <dependency>
             <groupId>one.modality</groupId>
-            <artifactId>modality-crm-client-activity-magiclink-plugin</artifactId>
+            <artifactId>modality-base-shared-entities</artifactId>
             <version>1.0.0-SNAPSHOT</version>
         </dependency>
 
@@ -72,6 +72,12 @@
         <dependency>
             <groupId>dev.webfx</groupId>
             <artifactId>webfx-extras-styles-materialdesign</artifactId>
+            <version>0.1.0-SNAPSHOT</version>
+        </dependency>
+
+        <dependency>
+            <groupId>dev.webfx</groupId>
+            <artifactId>webfx-extras-util-animation</artifactId>
             <version>0.1.0-SNAPSHOT</version>
         </dependency>
 
@@ -151,6 +157,12 @@
 
         <dependency>
             <groupId>dev.webfx</groupId>
+            <artifactId>webfx-stack-orm-entity</artifactId>
+            <version>0.1.0-SNAPSHOT</version>
+        </dependency>
+
+        <dependency>
+            <groupId>dev.webfx</groupId>
             <artifactId>webfx-stack-routing-router</artifactId>
             <version>0.1.0-SNAPSHOT</version>
         </dependency>
@@ -170,6 +182,12 @@
         <dependency>
             <groupId>dev.webfx</groupId>
             <artifactId>webfx-stack-ui-controls</artifactId>
+            <version>0.1.0-SNAPSHOT</version>
+        </dependency>
+
+        <dependency>
+            <groupId>dev.webfx</groupId>
+            <artifactId>webfx-stack-ui-dialog</artifactId>
             <version>0.1.0-SNAPSHOT</version>
         </dependency>
 

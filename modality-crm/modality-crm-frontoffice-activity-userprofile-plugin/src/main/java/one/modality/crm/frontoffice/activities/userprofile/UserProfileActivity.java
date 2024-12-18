@@ -35,7 +35,7 @@ final class UserProfileActivity extends ViewDomainActivityBase {
     private final Hyperlink changePersonalInformation = I18nControls.newHyperlink(UserProfileI18nKeys.ChangePersonalInformation);
     private final TransitionPane transitionPane = new TransitionPane();
     private final ChangeEmailUI changeEmailUI = new ChangeEmailUI(this);
-    private final ChangePasswordUI changePasswordUI = new ChangePasswordUI(this);
+    private final ChangePasswordUI changePasswordUI = new ChangePasswordUI();
     private final StringProperty tokenProperty = new SimpleStringProperty();
     private final UserProfileMessageUI messagePane = new UserProfileMessageUI(this);
     private final UserAccountUI accountUI = new UserAccountUI();

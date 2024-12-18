@@ -443,8 +443,8 @@ public class UserAccountUI implements ModalityButtonFactoryMixin {
             FXProperties.runNowAndOnPropertyChange(dictionary -> {
                 if (dictionary != null) {
                     validationSupport.reset();
-                    validationSupport.addPasswordStrengthValidation(passwordField, passwordField, I18n.getI18nText(CreateAccountI18nKeys.PasswordStrength));
-                    validationSupport.addPasswordMatchValidation(passwordField, repeatPasswordField, repeatPasswordField, I18n.getI18nText(CreateAccountI18nKeys.PasswordNotMatchingError));
+                    validationSupport.addPasswordStrengthValidation(passwordField, I18n.getI18nText(CreateAccountI18nKeys.PasswordStrength));
+                    validationSupport.addPasswordMatchValidation(passwordField, repeatPasswordField, I18n.getI18nText(CreateAccountI18nKeys.PasswordNotMatchingError));
                     validationSupport.addRequiredInput(firstNameTextField);
                     validationSupport.addRequiredInput(lastNameTextField);
                     validationSupport.addRequiredInput(postCodeTextField);
