@@ -19,6 +19,7 @@ public interface Rate extends
     String minDay = "minDay";
     String maxDay = "maxDay";
     String perDay = "perDay";
+    String perPerson = "perPerson";
     String price = "price";
     String age1_max = "age1_max";
     String age1_price = "age1_price";
@@ -86,7 +87,15 @@ public interface Rate extends
         return getBooleanFieldValue(perDay);
     }
 
-    default void setPrice(Integer value) {
+    default void setPerPerson(Boolean value) {
+        setFieldValue(perPerson, value);
+    }
+
+    default Boolean isPerPerson() {
+        return getBooleanFieldValue(perPerson);
+    }
+
+    default void setPrice(Object value) {
         setFieldValue(price, value);
     }
 

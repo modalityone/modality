@@ -32,22 +32,23 @@ import java.util.stream.Collectors;
 public class ServerDocumentServiceProvider implements DocumentServiceProvider {
 
     private final static String POLICY_SCHEDULED_ITEMS_QUERY_BASE = "select site.name,item.(name,code,family.code),date,startTime,timeline.startTime from ScheduledItem";
-    private final static String POLICY_RATES_QUERY_BASE = "select site,item,price,perDay,perPerson,facilityFee_price from Rate";
+    private final static String POLICY_RATES_QUERY_BASE = "select site,item,price,perDay,perPerson,facilityFee_price,startDate,endDate from Rate";
 
     @Override
     public Future<PolicyAggregate> loadPolicy(LoadPolicyArgument argument) {
         // Managing the case of recurring event only for now
+        Object eventPk = argument.getEventPk();
         return QueryService.executeQueryBatch(
                 new Batch<>(new QueryArgument[]{
                     new QueryArgumentBuilder()
                         .setStatement(POLICY_SCHEDULED_ITEMS_QUERY_BASE + " where event = ?")
-                        .setParameters(argument.getEventPk())
+                        .setParameters(eventPk)
                         .setLanguage("DQL")
                         .setDataSourceId(DataSourceModelService.getDefaultDataSourceId())
                         .build(),
                     new QueryArgumentBuilder()
-                        .setStatement(POLICY_RATES_QUERY_BASE + " where site = (select venue from Event where id = ?)")
-                        .setParameters(argument.getEventPk())
+                        .setStatement(POLICY_RATES_QUERY_BASE + " where site.event = ? or site = (select venue from Event where id = ?)")
+                        .setParameters(eventPk, eventPk)
                         .setLanguage("DQL")
                         .setDataSourceId(DataSourceModelService.getDefaultDataSourceId())
                         .build()
