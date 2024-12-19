@@ -6,6 +6,7 @@ import dev.webfx.extras.switches.Switch;
 import dev.webfx.extras.theme.text.TextTheme;
 import dev.webfx.kit.util.properties.FXProperties;
 import dev.webfx.platform.console.Console;
+import dev.webfx.platform.uischeduler.UiScheduler;
 import dev.webfx.stack.i18n.I18n;
 import dev.webfx.stack.i18n.controls.I18nControls;
 import dev.webfx.stack.orm.entity.EntityStore;
@@ -91,7 +92,7 @@ public abstract class MediaLinksManagement {
         // Calculate the number of media for this day and language
         long numberOfScheduledItemLinkedToMediaForThisDay = recordingsMediasReadFromDatabase.stream()
             .filter(media -> media.getScheduledItem().getDate().equals(date) &&
-                media.getScheduledItem().getItem().getCode().equals(currentItemCode))
+                             media.getScheduledItem().getItem().getCode().equals(currentItemCode))
             .map(Media::getScheduledItem)
             .filter(item -> item.getDate().equals(date))  // Récupère le ScheduledItem associé à chaque Media
             .distinct()                    // Supprime les doublons si nécessaire (facultatif)
@@ -126,7 +127,6 @@ public abstract class MediaLinksManagement {
         protected final LocalDate currentDate;
         protected final UpdateStore updateStore = UpdateStore.createAbove(entityStore);
         final ValidationSupport validationSupport = new ValidationSupport();
-        final boolean[] validationSupportInitialised = {false};
         final IntegerProperty percentageProperty = new SimpleIntegerProperty();
         final StringProperty cssProperty = new SimpleStringProperty();
         List<ScheduledItem> filteredListForCurrentDay;
@@ -158,8 +158,6 @@ public abstract class MediaLinksManagement {
             Separator separator = new Separator();
             centerVBox.getChildren().add(separator);
 
-            Media mediaToBeUpdatedOnSaveButton = null;
-
             for (ScheduledItem currentScheduledItem : filteredListForCurrentDay) {
                 /* Here we create the line for each teaching **/
                 HBox currentLine = new HBox();
@@ -184,8 +182,7 @@ public abstract class MediaLinksManagement {
                 TextField linkTextField = new TextField();
                 linkTextField.setPromptText(I18n.getI18nText("Link"));
                 linkTextField.setPrefWidth(500);
-                //  validationSupport.addUrlOrEmptyValidation(linkTextField, linkTextField, "UrlIsMalformed");
-                validationSupport.addUrlOrEmptyValidation(linkTextField, linkTextField, I18n.getI18nText( MediasI18nKeys.MalformedUrl));
+                validationSupport.addUrlOrEmptyValidation(linkTextField, I18n.getI18nText(MediasI18nKeys.MalformedUrl));
 
                 Label durationLabel = I18nControls.newLabel(MediasI18nKeys.ExactDuration);
                 TextField durationTextField = new TextField();
@@ -214,12 +211,11 @@ public abstract class MediaLinksManagement {
                     if (currentMedia.get(0).getDurationMillis() != null) {
                         durationTextField.setText(String.valueOf(currentMedia.get(0).getDurationMillis() / 1000));
                     }
-                    mediaToBeUpdatedOnSaveButton = currentMedia.get(0);
                 }
 
                 FXProperties.runOnPropertyChange(durationText ->
-                    currentMedia.get(0).setDurationMillis(Long.parseLong(durationText) * 1000)
-                , durationTextField.textProperty());
+                        currentMedia.get(0).setDurationMillis(Long.parseLong(durationText) * 1000)
+                    , durationTextField.textProperty());
                 FXProperties.runOnPropertyChange(linkText -> {
                     //If there is a change and the mediaList for this teaching is empty, we create the Recording Scheduled Item and the Media associated
                     if (mediaList.isEmpty()) {
@@ -243,7 +239,6 @@ public abstract class MediaLinksManagement {
                         secondLine.setManaged(false);
                     }
                 }, linkTextField.textProperty());
-
 
                 retrieveDurationButton.setOnAction(e -> {
                     if (!currentMedia.isEmpty()) {
@@ -298,25 +293,13 @@ public abstract class MediaLinksManagement {
             Button saveButton = Bootstrap.largeSuccessButton(I18nControls.newButton(ModalityI18nKeys.Save));
             saveButton.disableProperty().bind(EntityBindings.hasChangesProperty(updateStore).not());
             saveButton.setOnAction(e -> {
-                if (!validationSupportInitialised[0]) {
-                    FXProperties.runNowAndOnPropertyChange(dictionary -> {
-                        if (dictionary != null) {
-                            validationSupport.reset();
-                        }
-                    }, I18n.dictionaryProperty());
-                    validationSupportInitialised[0] = true;
-                }
-
                 if (validationSupport.isValid()) {
                     OperationUtil.turnOnButtonsWaitModeDuringExecution(
                         updateStore.submitChanges()
                             .onFailure(Console::log)
-                            .onSuccess(x -> {
-                                Platform.runLater(() -> {
-                                    resetUpdateStoreAndOtherComponents();
-                                    OperationUtil.turnOffButtonsWaitMode(saveButton);
-                                });
-                            }), saveButton);
+                            .onSuccess(x ->
+                                UiScheduler.runInUiThread(this::resetUpdateStoreAndOtherComponents))
+                        , saveButton);
                 }
             });
             HBox hBoxToReturn = new HBox(saveButton);
@@ -381,6 +364,4 @@ public abstract class MediaLinksManagement {
                 map(updateStore::updateEntity).collect(Collectors.toList()));
         }
     }
-
-
 }

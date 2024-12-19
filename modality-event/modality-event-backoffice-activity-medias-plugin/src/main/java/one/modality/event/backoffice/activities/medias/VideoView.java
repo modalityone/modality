@@ -5,7 +5,6 @@ import dev.webfx.extras.theme.text.TextTheme;
 import dev.webfx.extras.util.control.ControlUtil;
 import dev.webfx.extras.util.masterslave.MasterSlaveLinker;
 import dev.webfx.extras.util.masterslave.SlaveEditor;
-import dev.webfx.kit.util.properties.FXProperties;
 import dev.webfx.platform.console.Console;
 import dev.webfx.stack.i18n.I18n;
 import dev.webfx.stack.i18n.controls.I18nControls;
@@ -16,6 +15,7 @@ import dev.webfx.stack.orm.entity.EntityStore;
 import dev.webfx.stack.orm.entity.EntityStoreQuery;
 import dev.webfx.stack.orm.entity.UpdateStore;
 import dev.webfx.stack.orm.entity.binding.EntityBindings;
+import dev.webfx.stack.ui.validation.ValidationSupport;
 import javafx.application.Platform;
 import javafx.beans.binding.BooleanExpression;
 import javafx.beans.property.BooleanProperty;
@@ -33,7 +33,6 @@ import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import one.modality.base.client.i18n.ModalityI18nKeys;
 import one.modality.base.client.util.masterslave.ModalitySlaveEditor;
-import dev.webfx.stack.ui.validation.ValidationSupport;
 import one.modality.base.shared.entities.*;
 import one.modality.base.shared.entities.markers.EntityHasLocalDate;
 import one.modality.event.client.event.fx.FXEvent;
@@ -53,7 +52,6 @@ public class VideoView {
     private final EntityStore entityStore = EntityStore.create(dataSourceModel);
     private final UpdateStore updateStore = UpdateStore.createAbove(entityStore);
     private final ValidationSupport validationSupport = new ValidationSupport();
-    private final boolean[] validationSupportInitialised = {false};
     private final ObservableList<LocalDate> teachingsDates = FXCollections.observableArrayList();
     private final ObservableList<ScheduledItem> vodScheduledItemsReadFromDatabase = FXCollections.observableArrayList();
     private final ObservableList<Media> recordingsMediasReadFromDatabase = FXCollections.observableArrayList();
@@ -70,7 +68,7 @@ public class VideoView {
 
     public VideoView() {
         mainFrame = new BorderPane();
-        mainFrame.setPadding(new Insets(0,0,30,0));
+        mainFrame.setPadding(new Insets(0, 0, 30, 0));
         mainContainer = ControlUtil.createVerticalScrollPane(mainFrame);
     }
 
@@ -106,14 +104,14 @@ public class VideoView {
 
         Label masterLabel = I18nControls.newLabel(MediasI18nKeys.MasterSettings);
         masterLabel.getStyleClass().add(Bootstrap.STRONG);
-        masterLabel.setPadding(new Insets(20,0,0,0));
+        masterLabel.setPadding(new Insets(20, 0, 0, 0));
         masterSettings.getChildren().add(masterLabel);
 
         Event currentEvent = updateStore.updateEntity(FXEvent.getEvent());
 
         Label liveStreamGlobalLink = I18nControls.newLabel(MediasI18nKeys.LiveStreamGlobalLink);
         liveStreamGlobalLink.getStyleClass().add(Bootstrap.TEXT_SECONDARY);
-        liveStreamGlobalLink.setPadding(new Insets(15,0,0,0));
+        liveStreamGlobalLink.setPadding(new Insets(15, 0, 0, 0));
         masterSettings.getChildren().add(liveStreamGlobalLink);
 
         Label liveStreamGlobalComment = I18nControls.newLabel(MediasI18nKeys.LiveStreamGlobalLinkComment);
@@ -123,12 +121,12 @@ public class VideoView {
 
         livestreamGlobalLinkTextField = new TextField();
         livestreamGlobalLinkTextField.setPromptText("Ex: https://player.castr.com/live_14831a60190211efb48523dddcde7908");
-        validationSupport.addUrlOrEmptyValidation(livestreamGlobalLinkTextField,livestreamGlobalLinkTextField,MediasI18nKeys.MalformedUrl);
-        if(currentEvent.getLivestreamUrl()!=null) {
+        validationSupport.addUrlOrEmptyValidation(livestreamGlobalLinkTextField, MediasI18nKeys.MalformedUrl);
+        if (currentEvent.getLivestreamUrl() != null) {
             livestreamGlobalLinkTextField.setText(currentEvent.getLivestreamUrl());
         }
         livestreamGlobalLinkTextField.textProperty().addListener(observable -> {
-            if(Objects.equals(livestreamGlobalLinkTextField.getText(), "")) {
+            if (Objects.equals(livestreamGlobalLinkTextField.getText(), "")) {
                 currentEvent.setLivestreamUrl(null);
             } else {
                 currentEvent.setLivestreamUrl(livestreamGlobalLinkTextField.getText());
@@ -140,29 +138,29 @@ public class VideoView {
 
         Label availableUntilLabel = I18nControls.newLabel(MediasI18nKeys.AvailableUntil);
         availableUntilLabel.getStyleClass().add(Bootstrap.TEXT_SECONDARY);
-        availableUntilLabel.setPadding(new Insets(15,0,0,0));
+        availableUntilLabel.setPadding(new Insets(15, 0, 0, 0));
         masterSettings.getChildren().add(availableUntilLabel);
 
         Label availableUntilCommentLabel = I18nControls.newLabel(MediasI18nKeys.AvailableUntilComment);
         availableUntilCommentLabel.getStyleClass().add(Bootstrap.TEXT_SECONDARY);
         availableUntilCommentLabel.getStyleClass().add(Bootstrap.SMALL);
-        availableUntilCommentLabel.setPadding(new Insets(0,0,10,0));
+        availableUntilCommentLabel.setPadding(new Insets(0, 0, 10, 0));
 
         masterSettings.getChildren().add(availableUntilCommentLabel);
 
         contentExpirationDateTextField = new TextField();
         contentExpirationDateTextField.setPromptText("Format: 25-09-2025");
-        if(currentEvent.getVodExpirationDate()!=null) {
+        if (currentEvent.getVodExpirationDate() != null) {
             contentExpirationDateTextField.setText(currentEvent.getVodExpirationDate().format(dateFormatter));
         }
-        validationSupport.addDateValidation(contentExpirationDateTextField, "dd-MM-yyyy", contentExpirationDateTextField,I18n.getI18nText("ValidationTimeFormatIncorrect"));
+        validationSupport.addDateValidation(contentExpirationDateTextField, "dd-MM-yyyy", contentExpirationDateTextField, I18n.getI18nText("ValidationTimeFormatIncorrect"));
 
         masterSettings.getChildren().add(contentExpirationDateTextField);
 
         contentExpirationTimeTextField = new TextField();
         contentExpirationTimeTextField.setPromptText("Format: 14:25");
-        validationSupport.addDateValidation(contentExpirationTimeTextField, "HH:mm", contentExpirationTimeTextField,I18n.getI18nText("ValidationTimeFormatIncorrect"));
-        if(currentEvent.getVodExpirationDate()!=null) {
+        validationSupport.addDateValidation(contentExpirationTimeTextField, "HH:mm", contentExpirationTimeTextField, I18n.getI18nText("ValidationTimeFormatIncorrect"));
+        if (currentEvent.getVodExpirationDate() != null) {
             contentExpirationTimeTextField.setText(currentEvent.getVodExpirationDate().format(timeFormatter));
         }
         VBox.setMargin(contentExpirationTimeTextField, new Insets(10, 0, 10, 0));
@@ -173,7 +171,7 @@ public class VideoView {
 
         Label vodAvailableAfterLive = I18nControls.newLabel(MediasI18nKeys.VODAvailableAfter);
         vodAvailableAfterLive.getStyleClass().add(Bootstrap.TEXT_SECONDARY);
-        vodAvailableAfterLive.setPadding(new Insets(15,0,0,0));
+        vodAvailableAfterLive.setPadding(new Insets(15, 0, 0, 0));
         masterSettings.getChildren().add(vodAvailableAfterLive);
 
         Label vodAvailableAfterLiveComment = I18nControls.newLabel(MediasI18nKeys.VODAvailableAfterComment);
@@ -183,10 +181,9 @@ public class VideoView {
 
         TextField videoAvailableAfterTextField = new TextField();
         videoAvailableAfterTextField.setPromptText("Format: 90");
-       // validationSupport.addIntegerValidation(videoAvailableAfterTextField, videoAvailableAfterTextField,I18n.getI18nText("ValidationIntegerIncorrect"));
+        // validationSupport.addIntegerValidation(videoAvailableAfterTextField, I18n.getI18nText("ValidationIntegerIncorrect"));
         VBox.setMargin(videoAvailableAfterTextField, new Insets(10, 0, 30, 0));
         masterSettings.getChildren().add(videoAvailableAfterTextField);
-
 
 
         //SAVE BUTTON
@@ -196,15 +193,6 @@ public class VideoView {
         addUpdateStoreHasChangesProperty(hasChangesProperty);
 
         saveButton.setOnAction(e -> {
-            if (!validationSupportInitialised[0]) {
-                FXProperties.runNowAndOnPropertyChange(dictionary -> {
-                    if (dictionary != null) {
-                        validationSupport.reset();
-                    }
-                }, I18n.dictionaryProperty());
-                validationSupportInitialised[0] = true;
-            }
-
             if (validationSupport.isValid()) {
                 updateStore.submitChanges()
                     .onFailure(Console::log)
@@ -222,14 +210,14 @@ public class VideoView {
         // Layout container (HBox)
         Separator VSeparator = new Separator();
         VSeparator.setOrientation(Orientation.VERTICAL);
-      //  VSeparator.setPadding(new Insets(30));
+        //  VSeparator.setPadding(new Insets(30));
         HBox mainLayout = new HBox(60, masterSettings, VSeparator, individualSettingsHBox);
 
         mainFrame.setCenter(mainLayout);
         individualSettingsHBox.setMaxWidth(800);
 
-        BorderPane.setAlignment(mainFrame,Pos.CENTER);
-        BorderPane.setAlignment(mainLayout,Pos.CENTER);
+        BorderPane.setAlignment(mainFrame, Pos.CENTER);
+        BorderPane.setAlignment(mainLayout, Pos.CENTER);
     }
 
     private void updateVodExpirationDate(Event currentEvent) {
@@ -243,19 +231,20 @@ public class VideoView {
             // Handle the error or leave empty if ignoring invalid input
         }
     }
+
     private BorderPane buildIndividualLinksContainer() {
         BorderPane container = new BorderPane();
         entityStore.executeQueryBatch(
                 new EntityStoreQuery("select distinct name,family.code from Item where organization=? and family.code = ? order by name",
-                    new Object[] { currentEditedEvent.getOrganization(),KnownItem.VIDEO.getCode() }),
+                    new Object[]{currentEditedEvent.getOrganization(), KnownItem.VIDEO.getCode()}),
                 new EntityStoreQuery("select name, programScheduledItem, date, event, site, expirationDate,available, vodDelayed, published, item, item.code, programScheduledItem.name, programScheduledItem.timeline.startTime, programScheduledItem.timeline.endTime from ScheduledItem where programScheduledItem.event= ? and item.code = ? and programScheduledItem.item.family.code = ? order by date",
-                    new Object[] { currentEditedEvent,KnownItem.VIDEO.getCode(),KnownItemFamily.TEACHING.getCode() }),
+                    new Object[]{currentEditedEvent, KnownItem.VIDEO.getCode(), KnownItemFamily.TEACHING.getCode()}),
                 new EntityStoreQuery("select url, scheduledItem.item, scheduledItem.date, scheduledItem.vodDelayed, scheduledItem.published, scheduledItem.item.code from Media where scheduledItem.event= ? and scheduledItem.item.code = ?",
-                    new Object[] { currentEditedEvent,KnownItem.VIDEO.getCode() })
+                    new Object[]{currentEditedEvent, KnownItem.VIDEO.getCode()})
             ).onFailure(Console::log)
             .onSuccess(entityList -> Platform.runLater(() -> {
                 //TODO: when we know which Item we use for VOD, we change the code bellow
-               // EntityList<Item> VODItems = entityList[0];
+                // EntityList<Item> VODItems = entityList[0];
                 EntityList<ScheduledItem> videoSIList = entityList[1];
                 EntityList<Media> mediaList = entityList[2];
 
@@ -266,7 +255,7 @@ public class VideoView {
 
                 // Instantiate the MediaLinksForVODManagement with data
                 MediaLinksForVODManagement languageLinkManagement = new MediaLinksForVODManagement(
-                    entityStore, teachingsDates, vodScheduledItemsReadFromDatabase, recordingsMediasReadFromDatabase,this);
+                    entityStore, teachingsDates, vodScheduledItemsReadFromDatabase, recordingsMediasReadFromDatabase, this);
 
                 // Now that the data is ready, update the container
                 container.setCenter(languageLinkManagement.getContainer());
@@ -275,6 +264,7 @@ public class VideoView {
         // Return the placeholder container, which will be updated later
         return container;
     }
+
     public void setActive(boolean b) {
         activeProperty.set(b);
     }
@@ -316,7 +306,6 @@ public class VideoView {
         e.onExpressionLoaded("organization,vodExpirationDate,livestreamUrl")
             .onSuccess(ignored -> Platform.runLater(this::drawContainer))
             .onFailure((Console::log));
-
     }
 
     //This parameter will allow us to manage the interaction and behaviour of the Panel that display the details of an event and the event selected

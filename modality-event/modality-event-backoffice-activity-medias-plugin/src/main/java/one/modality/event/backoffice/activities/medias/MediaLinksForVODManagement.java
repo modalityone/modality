@@ -4,7 +4,6 @@ import dev.webfx.extras.panes.MonoPane;
 import dev.webfx.extras.styles.bootstrap.Bootstrap;
 import dev.webfx.extras.switches.Switch;
 import dev.webfx.extras.theme.text.TextTheme;
-import dev.webfx.kit.util.properties.FXProperties;
 import dev.webfx.kit.util.properties.ObservableLists;
 import dev.webfx.platform.console.Console;
 import dev.webfx.stack.i18n.I18n;
@@ -364,15 +363,6 @@ public class MediaLinksForVODManagement extends MediaLinksManagement {
 
                 //The action on the save button
                 saveButton.setOnAction(e -> {
-                    if (!validationSupportInitialised[0]) {
-                        FXProperties.runNowAndOnPropertyChange(dictionary -> {
-                            if (dictionary != null) {
-                                validationSupport.reset();
-                            }
-                        }, I18n.dictionaryProperty());
-                        validationSupportInitialised[0] = true;
-                    }
-
                     if (validationSupport.isValid()) {
                         // Capturing the changes made on ScheduledItems.published fields, as they need to be notified to
                         // the front-office clients (if submit is successful)
