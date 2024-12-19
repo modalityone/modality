@@ -2,10 +2,8 @@ package one.modality.crm.client.activities.login;
 
 import dev.webfx.platform.util.function.Factory;
 import dev.webfx.platform.windowhistory.spi.BrowsingHistory;
-import dev.webfx.stack.authn.login.ui.spi.impl.gateway.password.PasswordUiLoginGatewayProvider;
+import dev.webfx.stack.authn.login.ui.spi.impl.gateway.password.PasswordUiLoginGateway;
 import dev.webfx.stack.i18n.HasI18nKey;
-import dev.webfx.stack.orm.datasourcemodel.service.DataSourceModelService;
-import dev.webfx.stack.orm.domainmodel.DataSourceModel;
 import dev.webfx.stack.orm.domainmodel.activity.viewdomain.impl.ViewDomainActivityContextFinal;
 import dev.webfx.stack.routing.activity.Activity;
 import dev.webfx.stack.routing.router.auth.authz.RouteRequest;
@@ -73,8 +71,7 @@ public final class LoginRouting {
     }
 
     static {
-        DataSourceModel defaultDataSourceModel = DataSourceModelService.getDefaultDataSourceModel();
-        PasswordUiLoginGatewayProvider.setCreateAccountEmailConsumer((s) -> {s.toString();});
+        PasswordUiLoginGateway.setCreateAccountEmailConsumer((s) -> {s.toString();});
     }
 
 }

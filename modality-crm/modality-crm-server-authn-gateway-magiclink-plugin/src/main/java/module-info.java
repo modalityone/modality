@@ -22,6 +22,6 @@ module modality.crm.server.authn.gateway.magiclink.plugin {
     exports one.modality.crm.server.authn.gateway.magiclink;
 
     // Provided services
-    provides dev.webfx.stack.authn.server.gateway.spi.ServerAuthenticationGatewayProvider with one.modality.crm.server.authn.gateway.magiclink.ModalityMagicLinkAuthenticationGatewayProvider;
+    provides dev.webfx.stack.authn.server.gateway.spi.ServerAuthenticationGateway with one.modality.crm.server.authn.gateway.magiclink.ModalityMagicLinkAuthenticationGateway;
 
 }

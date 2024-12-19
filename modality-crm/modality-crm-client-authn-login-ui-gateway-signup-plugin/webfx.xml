@@ -11,7 +11,7 @@
     </dependencies>
 
     <providers>
-        <provider interface="dev.webfx.stack.authn.login.ui.spi.impl.gateway.UiLoginGatewayProvider">one.modality.crm.client.authn.login.ui.gateway.signup.ModalitySignupUiLoginGatewayProvider</provider>
+        <provider interface="dev.webfx.stack.authn.login.ui.spi.impl.gateway.UiLoginGateway">one.modality.crm.client.authn.login.ui.gateway.signup.ModalitySignupUiLoginGateway</provider>
     </providers>
 
 </project>

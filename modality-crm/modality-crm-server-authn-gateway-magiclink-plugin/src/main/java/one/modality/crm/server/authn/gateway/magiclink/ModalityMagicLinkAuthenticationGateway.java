@@ -6,7 +6,7 @@ import dev.webfx.platform.console.Console;
 import dev.webfx.platform.util.collection.Collections;
 import dev.webfx.stack.authn.*;
 import dev.webfx.stack.authn.logout.server.LogoutPush;
-import dev.webfx.stack.authn.server.gateway.spi.ServerAuthenticationGatewayProvider;
+import dev.webfx.stack.authn.server.gateway.spi.ServerAuthenticationGateway;
 import dev.webfx.stack.orm.datasourcemodel.service.DataSourceModelService;
 import dev.webfx.stack.orm.domainmodel.DataSourceModel;
 import dev.webfx.stack.orm.domainmodel.HasDataSourceModel;
@@ -24,7 +24,7 @@ import one.modality.crm.shared.services.authn.ModalityUserPrincipal;
 /**
  * @author Bruno Salmon
  */
-public class ModalityMagicLinkAuthenticationGatewayProvider implements ServerAuthenticationGatewayProvider, HasDataSourceModel {
+public class ModalityMagicLinkAuthenticationGateway implements ServerAuthenticationGateway, HasDataSourceModel {
 
     private static final String MAGIC_LINK_ACTIVITY_PATH_PREFIX = "/magic-link";
     private static final String MAGIC_LINK_ACTIVITY_PATH_FULL = MAGIC_LINK_ACTIVITY_PATH_PREFIX + "/:token";
@@ -35,11 +35,11 @@ public class ModalityMagicLinkAuthenticationGatewayProvider implements ServerAut
 
     private final DataSourceModel dataSourceModel;
 
-    public ModalityMagicLinkAuthenticationGatewayProvider() {
+    public ModalityMagicLinkAuthenticationGateway() {
         this(DataSourceModelService.getDefaultDataSourceModel());
     }
 
-    public ModalityMagicLinkAuthenticationGatewayProvider(DataSourceModel dataSourceModel) {
+    public ModalityMagicLinkAuthenticationGateway(DataSourceModel dataSourceModel) {
         this.dataSourceModel = dataSourceModel;
     }
 

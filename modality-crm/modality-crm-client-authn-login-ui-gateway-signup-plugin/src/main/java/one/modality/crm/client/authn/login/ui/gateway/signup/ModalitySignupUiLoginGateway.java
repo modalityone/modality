@@ -2,7 +2,7 @@ package one.modality.crm.client.authn.login.ui.gateway.signup;
 
 import dev.webfx.extras.styles.bootstrap.Bootstrap;
 import dev.webfx.kit.util.properties.FXProperties;
-import dev.webfx.stack.authn.login.ui.spi.impl.gateway.UiLoginGatewayProviderBase;
+import dev.webfx.stack.authn.login.ui.spi.impl.gateway.UiLoginGatewayBase;
 import dev.webfx.stack.authn.login.ui.spi.impl.gateway.UiLoginPortalCallback;
 import dev.webfx.stack.hash.md5.Md5;
 import dev.webfx.stack.i18n.I18n;
@@ -31,7 +31,7 @@ import one.modality.crm.shared.services.authn.ModalityUserPrincipal;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 
-public class ModalitySignupUiLoginGatewayProvider extends UiLoginGatewayProviderBase {
+public class ModalitySignupUiLoginGateway extends UiLoginGatewayBase {
 
     private final DataSourceModel dataSourceModel = DataSourceModelService.getDefaultDataSourceModel();
     private final EntityStore entityStore = EntityStore.create(dataSourceModel);
@@ -53,7 +53,7 @@ public class ModalitySignupUiLoginGatewayProvider extends UiLoginGatewayProvider
     private Label genderLabel;
     private Label errorMessage;
 
-    public ModalitySignupUiLoginGatewayProvider() {
+    public ModalitySignupUiLoginGateway() {
         super("ModalitySignup");
     }
 

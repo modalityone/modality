@@ -26,6 +26,6 @@ module modality.crm.client.authn.login.ui.gateway.signup.plugin {
     exports one.modality.crm.client.authn.login.ui.gateway.signup;
 
     // Provided services
-    provides dev.webfx.stack.authn.login.ui.spi.impl.gateway.UiLoginGatewayProvider with one.modality.crm.client.authn.login.ui.gateway.signup.ModalitySignupUiLoginGatewayProvider;
+    provides dev.webfx.stack.authn.login.ui.spi.impl.gateway.UiLoginGateway with one.modality.crm.client.authn.login.ui.gateway.signup.ModalitySignupUiLoginGateway;
 
 }

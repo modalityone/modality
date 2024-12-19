@@ -5,7 +5,7 @@ import dev.webfx.platform.console.Console;
 import dev.webfx.platform.util.Strings;
 import dev.webfx.stack.authn.*;
 import dev.webfx.stack.authn.logout.server.LogoutPush;
-import dev.webfx.stack.authn.server.gateway.spi.ServerAuthenticationGatewayProvider;
+import dev.webfx.stack.authn.server.gateway.spi.ServerAuthenticationGateway;
 import dev.webfx.stack.hash.md5.Md5;
 import dev.webfx.stack.orm.datasourcemodel.service.DataSourceModelService;
 import dev.webfx.stack.orm.domainmodel.DataSourceModel;
@@ -28,7 +28,7 @@ import java.util.Objects;
 /**
  * @author Bruno Salmon
  */
-public final class ModalityUsernamePasswordAuthenticationGatewayProvider implements ServerAuthenticationGatewayProvider, HasDataSourceModel {
+public final class ModalityUsernamePasswordAuthenticationGateway implements ServerAuthenticationGateway, HasDataSourceModel {
 
     private static final String CREATE_ACCOUNT_ACTIVITY_PATH_PREFIX = "/create-account";
     private static final String CREATE_ACCOUNT_ACTIVITY_PATH_FULL = CREATE_ACCOUNT_ACTIVITY_PATH_PREFIX + "/:token";
@@ -46,11 +46,11 @@ public final class ModalityUsernamePasswordAuthenticationGatewayProvider impleme
 
     private final DataSourceModel dataSourceModel;
 
-    public ModalityUsernamePasswordAuthenticationGatewayProvider() {
+    public ModalityUsernamePasswordAuthenticationGateway() {
         this(DataSourceModelService.getDefaultDataSourceModel());
     }
 
-    public ModalityUsernamePasswordAuthenticationGatewayProvider(DataSourceModel dataSourceModel) {
+    public ModalityUsernamePasswordAuthenticationGateway(DataSourceModel dataSourceModel) {
         this.dataSourceModel = dataSourceModel;
     }
 
