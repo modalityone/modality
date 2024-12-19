@@ -48,16 +48,17 @@ final class UserProfileActivity extends ViewDomainActivityBase {
 
         accountUI.startLogic(updateStore, UserAccountUI.EDITION_MODE, getHistory());
         //We load the data of the person
-        FXProperties.runNowAndOnPropertyChange(person -> {
+        FXProperties.runNowAndOnPropertyChange(userPerson -> {
+            if (userPerson != null) {
                 entityStore.<Person>executeQuery(
                         "select organization, country, postCode,cityName, firstName, lastName, male, ordained, email, phone, layName from Person where id=?", FXUserPerson.getUserPerson())
                     .onFailure(Console::log)
                     .onSuccess(currentPersonList -> Platform.runLater(() -> {
                         Person currentPerson = updateStore.updateEntity(currentPersonList.get(0));
-                        accountUI.initialiseUI(currentPerson,null);
+                        accountUI.initialiseUI(currentPerson, null);
                     }));
             }
-            , FXUserPerson.userPersonProperty());
+        }, FXUserPerson.userPersonProperty());
     }
 
     @Override
