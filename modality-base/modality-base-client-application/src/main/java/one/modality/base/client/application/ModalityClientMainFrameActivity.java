@@ -37,9 +37,11 @@ public class ModalityClientMainFrameActivity extends ViewDomainActivityBase
         // TODO Move this feature into WebFX Stack
         // Restoring the user language stored from the session
         FXProperties.runNowAndOnPropertyChange(session -> {
-            Object lang = session.get("lang");
-            if (lang != null)
-                I18n.setLanguage(lang);
+            if (session != null) { // The session may be null first time the user launches the application
+                Object lang = session.get("lang");
+                if (lang != null)
+                    I18n.setLanguage(lang);
+            }
         }, FXSession.sessionProperty());
         // Saving the user language into the session
         FXProperties.runOnPropertyChange(lang -> {
