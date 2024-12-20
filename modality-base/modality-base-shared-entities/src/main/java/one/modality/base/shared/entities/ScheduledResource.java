@@ -8,43 +8,46 @@ import one.modality.base.shared.entities.markers.EntityHasLocalDate;
  * @author Bruno Salmon
  */
 public interface ScheduledResource extends Entity,
-        EntityHasLocalDate {
+    EntityHasLocalDate {
 
-    default void setResourceConfiguration(Object event) {
-        setForeignField("configuration", event);
+    String configuration = "configuration";
+    String available = "available";
+    String online = "online";
+    String max = "max";
+
+    default void setResourceConfiguration(Object value) {
+        setForeignField(configuration, value);
     }
 
     default EntityId getResourceConfigurationId() {
-        return getForeignEntityId("configuration");
+        return getForeignEntityId(configuration);
     }
 
     default ResourceConfiguration getResourceConfiguration() {
-        return getForeignEntity("configuration");
+        return getForeignEntity(configuration);
     }
 
-    default void setAvailable(Boolean online) {
-        setFieldValue("available", online);
+    default void setAvailable(Boolean value) {
+        setFieldValue(available, value);
     }
 
     default Boolean isAvailable() {
-        return getBooleanFieldValue("available");
+        return getBooleanFieldValue(available);
     }
 
-    default void setOnline(Boolean online) {
-        setFieldValue("online", online);
+    default void setOnline(Boolean value) {
+        setFieldValue(online, value);
     }
 
     default Boolean isOnline() {
-        return getBooleanFieldValue("online");
+        return getBooleanFieldValue(online);
     }
 
-    default void setMax(Integer max) {
-        setFieldValue("max", max);
+    default void setMax(Integer value) {
+        setFieldValue(max, value);
     }
 
     default Integer getMax() {
-        return getIntegerFieldValue("max");
+        return getIntegerFieldValue(max);
     }
-
-
 }

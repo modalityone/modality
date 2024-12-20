@@ -2,14 +2,16 @@ package one.modality.base.frontoffice.activities.account;
 
 import dev.webfx.extras.util.control.ControlUtil;
 import dev.webfx.kit.util.properties.FXProperties;
+import dev.webfx.platform.util.collection.Collections;
 import dev.webfx.stack.authn.logout.client.operation.LogoutRequest;
-import dev.webfx.stack.cache.client.LocalStorageCache;
 import dev.webfx.stack.orm.domainmodel.activity.viewdomain.impl.ViewDomainActivityBase;
 import dev.webfx.stack.orm.dql.DqlStatement;
 import dev.webfx.stack.orm.reactive.entities.dql_to_entities.ReactiveEntitiesMapper;
 import dev.webfx.stack.ui.action.ActionBinder;
 import dev.webfx.stack.ui.operation.action.OperationActionFactoryMixin;
 import javafx.beans.InvalidationListener;
+import javafx.beans.property.ObjectProperty;
+import javafx.beans.property.SimpleObjectProperty;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.geometry.Insets;
@@ -18,12 +20,13 @@ import javafx.scene.Node;
 import javafx.scene.control.ContentDisplay;
 import javafx.scene.control.Hyperlink;
 import javafx.scene.control.Label;
-import javafx.scene.layout.*;
-import javafx.scene.paint.Color;
+import javafx.scene.layout.VBox;
 import javafx.scene.text.FontWeight;
 import javafx.scene.text.TextAlignment;
-import one.modality.base.frontoffice.utility.GeneralUtility;
-import one.modality.base.frontoffice.utility.StyleUtility;
+import javafx.stage.Screen;
+import one.modality.base.client.brand.Brand;
+import one.modality.base.client.css.Fonts;
+import one.modality.base.frontoffice.utility.tyler.GeneralUtility;
 import one.modality.base.shared.entities.Document;
 import one.modality.crm.shared.services.authn.fx.FXModalityUserPrincipal;
 
@@ -39,13 +42,13 @@ import static dev.webfx.stack.orm.dql.DqlStatement.where;
  */
 final class AccountActivity extends ViewDomainActivityBase implements OperationActionFactoryMixin {
 
-    private static final double MAX_PAGE_WIDTH = 1200; // Similar value to website
-
-    private final ObservableList<Document> bookings = FXCollections.observableArrayList();
+    private final ObservableList<Document> upcomingBookingsFeed = FXCollections.observableArrayList();
+    private final ObservableList<Document> pastBookingsFeed = FXCollections.observableArrayList();
+    private final ObjectProperty<LocalDate> loadPastEventsBeforeDateProperty = new SimpleObjectProperty<>();
 
     @Override
     public Node buildUi() {
-        Label upcomingBookingsLabel = GeneralUtility.createLabel("YourUpcomingBookings", StyleUtility.MAIN_ORANGE_COLOR);
+        Label upcomingBookingsLabel = GeneralUtility.createLabel(AccountI18nKeys.YourUpcomingBookings, Brand.getBrandMainColor());
         upcomingBookingsLabel.setContentDisplay(ContentDisplay.TOP);
         upcomingBookingsLabel.setTextAlignment(TextAlignment.CENTER);
         upcomingBookingsLabel.setPadding(new Insets(25, 0, 40, 0));
@@ -53,7 +56,7 @@ final class AccountActivity extends ViewDomainActivityBase implements OperationA
         //VBox.setMargin(upcomingBookingsLabel, new Insets(0, 0, 10, 0));
         VBox upcomingBookingsContainer = new VBox(10);
 
-        Label pastBookingsLabel = GeneralUtility.createLabel("YourPastBookings", StyleUtility.MAIN_ORANGE_COLOR);
+        Label pastBookingsLabel = GeneralUtility.createLabel(AccountI18nKeys.YourPastBookings, Brand.getBrandMainColor());
         pastBookingsLabel.setContentDisplay(ContentDisplay.TOP);
         pastBookingsLabel.setTextAlignment(TextAlignment.CENTER);
         pastBookingsLabel.setPadding(new Insets(25, 0, 40, 0));
@@ -61,22 +64,25 @@ final class AccountActivity extends ViewDomainActivityBase implements OperationA
         //VBox.setMargin(pastBookingsLabel, new Insets(10, 0, 10, 0));
         VBox pastBookingsContainer = new VBox(10);
 
-        bookings.addListener((InvalidationListener) observable -> {
-            upcomingBookingsContainer.getChildren().clear();
-            pastBookingsContainer.getChildren().clear();
-            bookings.stream().collect(Collectors.groupingBy(Document::getEvent, LinkedHashMap::new, Collectors.toList())) // Using LinkedHashMap to keep the sort
+        upcomingBookingsFeed.addListener((InvalidationListener) observable -> {
+            upcomingBookingsFeed.stream().collect(Collectors.groupingBy(Document::getEvent, LinkedHashMap::new, Collectors.toList())) // Using LinkedHashMap to keep the sort
                 .forEach((event, eventBookings) -> {
                     EventBookingsView eventBookingsView = new EventBookingsView(event, eventBookings);
-                    if (LocalDate.now().isBefore(event.getEndDate()))
-                        upcomingBookingsContainer.getChildren().add(0, eventBookingsView.getView()); // inverting order => chronological order
-                    else
-                        pastBookingsContainer.getChildren().add(eventBookingsView.getView()); // keeping order => inverted chronological order (most recent booking first)
+                    upcomingBookingsContainer.getChildren().add(0, eventBookingsView.getView()); // inverting order => chronological order
                 });
         });
 
-        Hyperlink logoutLink = ActionBinder.bindButtonToAction(new Hyperlink(), newOperationAction(LogoutRequest::new));
+        pastBookingsFeed.addListener((InvalidationListener) observable -> {
+            pastBookingsFeed.stream().collect(Collectors.groupingBy(Document::getEvent, LinkedHashMap::new, Collectors.toList())) // Using LinkedHashMap to keep the sort
+                .forEach((event, eventBookings) -> {
+                    EventBookingsView eventBookingsView = new EventBookingsView(event, eventBookings);
+                    pastBookingsContainer.getChildren().add(eventBookingsView.getView());
+                });
+        });
+
+        Hyperlink logoutLink = ActionBinder.newActionHyperlink(newOperationAction(LogoutRequest::new));
         VBox.setMargin(logoutLink, new Insets(50));
-        VBox vBox = new VBox(
+        VBox pageContainer = new VBox(
             upcomingBookingsLabel,
             upcomingBookingsContainer,
             pastBookingsLabel,
@@ -84,31 +90,60 @@ final class AccountActivity extends ViewDomainActivityBase implements OperationA
             //GeneralUtility.createOrangeLineSeparator(),
             logoutLink
         );
-        vBox.setAlignment(Pos.TOP_CENTER);
-        vBox.setMaxWidth(MAX_PAGE_WIDTH);
-        vBox.setBackground(Background.fill(Color.WHITE));
-        vBox.setPadding(new Insets(20));
+        pageContainer.setAlignment(Pos.TOP_CENTER);
 
-        FXProperties.runOnPropertiesChange(() -> {
-            double width = vBox.getWidth();
+        FXProperties.runOnDoublePropertyChange(width -> {
             double fontFactor = GeneralUtility.computeFontFactor(width);
-            GeneralUtility.setLabeledFont(upcomingBookingsLabel, StyleUtility.TEXT_FAMILY, FontWeight.BOLD, fontFactor * 16);
-            GeneralUtility.setLabeledFont(pastBookingsLabel,     StyleUtility.TEXT_FAMILY, FontWeight.BOLD, fontFactor * 16);
-            GeneralUtility.setLabeledFont(logoutLink,            StyleUtility.TEXT_FAMILY, FontWeight.BOLD, fontFactor * 16);
-        }, vBox.widthProperty());
+            GeneralUtility.setLabeledFont(upcomingBookingsLabel, Fonts.MONTSERRAT_TEXT_FAMILY, FontWeight.BOLD, fontFactor * 16);
+            GeneralUtility.setLabeledFont(pastBookingsLabel, Fonts.MONTSERRAT_TEXT_FAMILY, FontWeight.BOLD, fontFactor * 16);
+            GeneralUtility.setLabeledFont(logoutLink, Fonts.MONTSERRAT_TEXT_FAMILY, FontWeight.BOLD, fontFactor * 16);
+        }, pageContainer.widthProperty());
 
-        return ControlUtil.createVerticalScrollPane(new BorderPane(vBox));
+
+        // Lazy loading when the user scrolls down
+        ControlUtil.onScrollPaneAncestorSet(pageContainer, scrollPane -> {
+            double lazyLoadingBottomSpace = Screen.getPrimary().getVisualBounds().getHeight();
+            pageContainer.setPadding(new Insets(0, 0, lazyLoadingBottomSpace, 0));
+            FXProperties.runOnPropertiesChange(() -> {
+                if (ControlUtil.computeScrollPaneVBottomOffset(scrollPane) > pageContainer.getHeight() - lazyLoadingBottomSpace) {
+                    Document lastBooking = Collections.last(pastBookingsFeed);
+                    if (lastBooking == null)
+                        pageContainer.setPadding(Insets.EMPTY);
+                    else {
+                        LocalDate startDate = lastBooking.getEvent().getStartDate();
+                        FXProperties.setIfNotEquals(loadPastEventsBeforeDateProperty, startDate);
+                    }
+                }
+            }, scrollPane.vvalueProperty(), pageContainer.heightProperty());
+        });
+
+        return pageContainer;
+        //return FrontOfficeActivityUtil.createActivityPageScrollPane(pageContainer, false);
     }
 
     @Override
     protected void startLogic() {
+        // Upcoming bookings
         ReactiveEntitiesMapper.<Document>createReactiveChain(this)
             .always("{class: 'Document', alias: 'd', orderBy: 'event.startDate desc, ref desc'}")
             .always(DqlStatement.fields(BookingView.BOOKING_REQUIRED_FIELDS))
+            .always(DqlStatement.where("event.endDate >= now()"))
             .always(DqlStatement.where("!cancelled or price_deposit>0"))
             .ifNotNullOtherwiseEmpty(FXModalityUserPrincipal.modalityUserPrincipalProperty(), mup -> where("person.frontendAccount=?", mup.getUserAccountId()))
-            .storeEntitiesInto(bookings)
-            .setResultCacheEntry(LocalStorageCache.get().getCacheEntry("cache-account-bookings"))
+            .storeEntitiesInto(upcomingBookingsFeed)
+            //.setResultCacheEntry(LocalStorageCache.get().getCacheEntry("cache-account-upcomingBookings"))
+            .start();
+
+        // Past bookings
+        ReactiveEntitiesMapper.<Document>createReactiveChain(this)
+            .always("{class: 'Document', alias: 'd', orderBy: 'event.startDate desc, ref desc', limit: 5}")
+            .always(DqlStatement.fields(BookingView.BOOKING_REQUIRED_FIELDS))
+            .always(DqlStatement.where("event.endDate < now()"))
+            .always(DqlStatement.where("!cancelled or price_deposit>0"))
+            .ifNotNullOtherwiseEmpty(FXModalityUserPrincipal.modalityUserPrincipalProperty(), mup -> where("person.frontendAccount=?", mup.getUserAccountId()))
+            .ifNotNull(loadPastEventsBeforeDateProperty, date -> DqlStatement.where("event.startDate < ?", date))
+            .storeEntitiesInto(pastBookingsFeed)
+            //.setResultCacheEntry(LocalStorageCache.get().getCacheEntry("cache-account-pastBookings"))
             .start();
     }
 

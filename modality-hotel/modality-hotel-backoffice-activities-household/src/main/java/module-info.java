@@ -9,6 +9,8 @@ module modality.hotel.backoffice.activities.household {
     requires javafx.base;
     requires javafx.controls;
     requires javafx.graphics;
+    requires modality.base.backoffice.activity.home.plugin;
+    requires modality.base.backoffice.mainframe.fx;
     requires modality.base.client.activity.organizationdependent;
     requires modality.base.client.gantt.fx;
     requires modality.base.shared.entities;
@@ -18,8 +20,10 @@ module modality.hotel.backoffice.activities.household {
     requires webfx.extras.time.layout;
     requires webfx.extras.time.layout.gantt;
     requires webfx.extras.time.window;
+    requires webfx.kit.util;
     requires webfx.platform.windowhistory;
     requires webfx.stack.cache.client;
+    requires webfx.stack.i18n;
     requires webfx.stack.orm.domainmodel.activity;
     requires webfx.stack.orm.dql;
     requires webfx.stack.orm.reactive.entities;
@@ -31,11 +35,9 @@ module modality.hotel.backoffice.activities.household {
 
     // Exported packages
     exports one.modality.hotel.backoffice.activities.household;
-    exports one.modality.hotel.backoffice.activities.household.routing;
-    exports one.modality.hotel.backoffice.operations.routes.household;
 
     // Provided services
-    provides dev.webfx.stack.routing.uirouter.UiRoute with one.modality.hotel.backoffice.activities.household.HouseholdUiRoute;
-    provides dev.webfx.stack.routing.uirouter.operations.RouteRequestEmitter with one.modality.hotel.backoffice.activities.household.RouteToHouseholdRequestEmitter;
+    provides dev.webfx.stack.routing.uirouter.UiRoute with one.modality.hotel.backoffice.activities.household.HouseholdRouting.HouseholdUiRoute;
+    provides dev.webfx.stack.routing.uirouter.operations.RouteRequestEmitter with one.modality.hotel.backoffice.activities.household.HouseholdRouting.RouteToHouseholdRequestEmitter;
 
 }

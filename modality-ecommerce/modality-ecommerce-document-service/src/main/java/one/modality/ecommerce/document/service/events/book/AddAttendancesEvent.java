@@ -16,4 +16,10 @@ public final class AddAttendancesEvent extends AbstractAttendancesEvent {
         super(documentPrimaryKey, documentLinePrimaryKey, attendancesPrimaryKeys, scheduledItemsPrimaryKeys);
     }
 
+    @Override
+    protected Attendance createAttendance(Object attendancePrimaryKey) {
+        if (isForSubmit())
+            return updateStore.insertEntity(Attendance.class, attendancePrimaryKey);
+        return super.createAttendance(attendancePrimaryKey);
+    }
 }

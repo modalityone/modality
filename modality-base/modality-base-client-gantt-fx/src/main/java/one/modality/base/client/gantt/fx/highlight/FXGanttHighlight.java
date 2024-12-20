@@ -16,12 +16,7 @@ import java.util.Objects;
  */
 public class FXGanttHighlight {
 
-    private final static ObjectProperty<LocalDate> ganttHighlightedDayProperty = new SimpleObjectProperty<>() {
-        @Override
-        protected void invalidated() {
-            //System.out.println(get());
-        }
-    };
+    private final static ObjectProperty<LocalDate> ganttHighlightedDayProperty = new SimpleObjectProperty<>();
 
 
     public static ObjectProperty<LocalDate> ganttHighlightedDayProperty() {

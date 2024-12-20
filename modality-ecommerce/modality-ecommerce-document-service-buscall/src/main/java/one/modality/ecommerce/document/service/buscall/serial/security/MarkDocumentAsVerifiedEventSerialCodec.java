@@ -1,13 +1,13 @@
 package one.modality.ecommerce.document.service.buscall.serial.security;
 
 import dev.webfx.platform.ast.ReadOnlyAstObject;
-import one.modality.ecommerce.document.service.buscall.serial.AbstractSetDocumentFieldsEventSerialCodec;
+import one.modality.ecommerce.document.service.buscall.serial.AbstractDocumentEventSerialCodec;
 import one.modality.ecommerce.document.service.events.security.MarkDocumentAsVerifiedEvent;
 
 /**
  * @author Bruno Salmon
  */
-public final class MarkDocumentAsVerifiedEventSerialCodec extends AbstractSetDocumentFieldsEventSerialCodec<MarkDocumentAsVerifiedEvent> {
+public final class MarkDocumentAsVerifiedEventSerialCodec extends AbstractDocumentEventSerialCodec<MarkDocumentAsVerifiedEvent> {
 
     private static final String CODEC_ID = "MarkDocumentAsVerifiedEvent";
 
@@ -18,7 +18,7 @@ public final class MarkDocumentAsVerifiedEventSerialCodec extends AbstractSetDoc
     @Override
     public MarkDocumentAsVerifiedEvent decode(ReadOnlyAstObject serial) {
         return postDecode(new MarkDocumentAsVerifiedEvent(
-                decodeDocumentPrimaryKey(serial)
+            decodeDocumentPrimaryKey(serial)
         ), serial);
     }
 }

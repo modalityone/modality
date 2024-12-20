@@ -1,20 +1,18 @@
 package one.modality.base.client.application;
 
+import dev.webfx.platform.windowhistory.spi.BrowsingHistory;
 import dev.webfx.stack.routing.router.auth.authz.RouteRequest;
 import dev.webfx.stack.routing.uirouter.activity.uiroute.UiRouteActivityContext;
-import dev.webfx.stack.routing.uirouter.operations.RoutePushRequest;
 import dev.webfx.stack.routing.uirouter.operations.RouteRequestEmitter;
 import dev.webfx.stack.ui.action.Action;
-import dev.webfx.stack.ui.action.ActionBuilder;
 import dev.webfx.stack.ui.operation.HasOperationCode;
+import dev.webfx.stack.ui.operation.action.OperationAction;
 import dev.webfx.stack.ui.operation.action.OperationActionFactoryMixin;
-import javafx.beans.property.SimpleBooleanProperty;
+import javafx.beans.value.ObservableValue;
 
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.Objects;
-import java.util.Optional;
+import java.util.*;
 import java.util.function.Function;
+import java.util.function.Supplier;
 import java.util.stream.Collectors;
 
 /**
@@ -22,9 +20,20 @@ import java.util.stream.Collectors;
  */
 public final class RoutingActions {
 
-    private final static Collection<RouteRequestEmitter> providedEmitters = RouteRequestEmitter.getProvidedEmitters();
+    private final static Map<Object /* operationCode */, RouteRequestEmitter> PROVIDED_OPERATION_CODE_EMITTERS = new HashMap<>();
 
-    private final static Action invisibleVoidAction = new ActionBuilder().setVisibleProperty(new SimpleBooleanProperty(false)).build();
+    public static RouteRequestEmitter findRouteRequestEmitterWithOperationCode(String operationCode, UiRouteActivityContext context) {
+        // Initial population
+        if (PROVIDED_OPERATION_CODE_EMITTERS.isEmpty()) {
+            RouteRequestEmitter.getProvidedEmitters().forEach(emitter -> {
+                RouteRequest routeRequest = emitter.instantiateRouteRequest(context);
+                if (routeRequest instanceof HasOperationCode) {
+                    PROVIDED_OPERATION_CODE_EMITTERS.put(((HasOperationCode) routeRequest).getOperationCode(), emitter);
+                }
+            });
+        }
+        return PROVIDED_OPERATION_CODE_EMITTERS.get(operationCode);
+    }
 
     public static Collection<Action> filterRoutingActions(UiRouteActivityContext context, OperationActionFactoryMixin mixin, String... sortedPossibleRoutingOperations) {
         return filterRoutingActions(code -> routeOperationCodeToAction(code, context, mixin), sortedPossibleRoutingOperations);
@@ -32,35 +41,41 @@ public final class RoutingActions {
 
     public static Collection<Action> filterRoutingActions(Function<String, Action> operationCodeToActionFunction, String... sortedPossibleRoutingOperations) {
         return Arrays.stream(sortedPossibleRoutingOperations)
-                .map(operationCodeToActionFunction::apply)
-                .filter(Objects::nonNull)
-                .collect(Collectors.toList());
+            .map(operationCodeToActionFunction)
+            .filter(Objects::nonNull)
+            .collect(Collectors.toList());
     }
 
     public static Action routeOperationCodeToAction(String operationCode, UiRouteActivityContext context, OperationActionFactoryMixin mixin) {
-        Optional<RouteRequestEmitter> routeRequestEmitter = providedEmitters.stream()
-                .filter(emitter -> hasRequestOperationCode(emitter.instantiateRouteRequest(context), operationCode))
-                .findFirst();
-        return routeRequestEmitter.isEmpty() ? invisibleVoidAction : mixin.newOperationAction(() -> routeRequestEmitter.get().instantiateRouteRequest(context));
+        RouteRequestEmitter routeRequestEmitter = findRouteRequestEmitterWithOperationCode(operationCode, context);
+        if (routeRequestEmitter != null)
+            return getRouteEmitterAction(routeRequestEmitter, context, mixin);
+        // Maybe an unregistered route (such as RouteToConsole if the console activity plugin was not added), or the
+        // code refers to an operation that is not a route (ex: Logout).
+        return mixin.getOperationActionRegistry().getOrWaitOperationAction(operationCode);
     }
 
     public static Action getRouteEmitterAction(RouteRequestEmitter routeRequestEmitter, UiRouteActivityContext context, OperationActionFactoryMixin mixin) {
         return mixin.newOperationAction(() -> {
             RouteRequest routeRequest = routeRequestEmitter.instantiateRouteRequest(context);
+            /* Commented as this prevents the whole history to work in the browser (after refactoring this class)
+               but there was probably a good reason to do this for some specific cases TODO investigate which cases
             if (routeRequest instanceof RoutePushRequest)
-                ((RoutePushRequest) routeRequest).setReplace(true);
+                ((RoutePushRequest) routeRequest).setReplace(true);*/
             return routeRequest;
         });
     }
 
-    public static RouteRequestEmitter findRouteRequestEmitter(String operationCode, UiRouteActivityContext context) {
-        return RouteRequestEmitter.getProvidedEmitters().stream()
-                .filter(emitter -> hasRequestOperationCode(emitter.instantiateRouteRequest(context), operationCode))
-                .findFirst().orElse(null);
+    public static <Rq> OperationAction<Rq, ?> newRoutingAction(Function<BrowsingHistory, Rq> routeRequestFactory, Supplier<BrowsingHistory> historySupplier, OperationActionFactoryMixin mixin, ObservableValue<?>... graphicalDependencies) {
+        return mixin.newOperationAction(e -> routeRequestFactory.apply(historySupplier.get()), graphicalDependencies);
     }
 
-    private static boolean hasRequestOperationCode(Object request, Object operationCode) {
-        return request instanceof HasOperationCode && operationCode.equals(((HasOperationCode) request).getOperationCode());
+    public static <Rq> OperationAction<Rq, ?> newRoutingAction(Function<BrowsingHistory, Rq> routeRequestFactory, UiRouteActivityContext context, OperationActionFactoryMixin mixin, ObservableValue<?>... graphicalDependencies) {
+        return newRoutingAction(routeRequestFactory, context::getHistory, mixin, graphicalDependencies);
+    }
+
+    public static <Rq, M extends UiRouteActivityContext & OperationActionFactoryMixin> OperationAction<Rq, ?> newRoutingAction(Function<BrowsingHistory, Rq> routeRequestFactory, M mixin, ObservableValue<?>... graphicalDependencies) {
+        return newRoutingAction(routeRequestFactory, mixin, mixin, graphicalDependencies);
     }
 
 }

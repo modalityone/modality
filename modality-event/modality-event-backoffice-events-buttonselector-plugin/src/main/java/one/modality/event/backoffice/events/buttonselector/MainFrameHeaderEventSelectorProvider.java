@@ -1,6 +1,5 @@
 package one.modality.event.backoffice.events.buttonselector;
 
-import dev.webfx.kit.util.properties.FXProperties;
 import dev.webfx.stack.orm.domainmodel.DataSourceModel;
 import dev.webfx.stack.orm.entity.EntityStore;
 import dev.webfx.stack.orm.entity.controls.entity.selector.EntityButtonSelector;
@@ -8,9 +7,8 @@ import dev.webfx.stack.ui.controls.button.ButtonFactoryMixin;
 import javafx.scene.Node;
 import javafx.scene.control.Button;
 import javafx.scene.layout.Pane;
+import one.modality.base.backoffice.mainframe.fx.FXEventSelector;
 import one.modality.base.backoffice.mainframe.headernode.MainFrameHeaderNodeProvider;
-import one.modality.base.client.gantt.fx.visibility.FXGanttVisibility;
-import one.modality.base.client.gantt.fx.visibility.GanttVisibility;
 import one.modality.base.shared.entities.Event;
 import one.modality.crm.backoffice.organization.fx.FXOrganization;
 import one.modality.event.client.event.fx.FXEvent;
@@ -45,7 +43,7 @@ public class MainFrameHeaderEventSelectorProvider implements MainFrameHeaderNode
             // Doing a bidirectional binding with FXEvent (taking the initial value from FXEvent)
             eventSelector.selectedItemProperty().bindBidirectional(FXEvent.eventProperty()); // <= FXEvent value applied first
             Button eventButton = eventSelector.getButton();
-            eventButton.visibleProperty().bind(FXProperties.compute(FXGanttVisibility.ganttVisibilityProperty(), value -> value == GanttVisibility.EVENTS));
+            eventButton.visibleProperty().bind(FXEventSelector.eventSelectorVisibleProperty());
             eventButton.managedProperty().bind(eventButton.visibleProperty());
         }
         return eventSelector.getButton();

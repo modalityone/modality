@@ -2,6 +2,7 @@ package one.modality.hotel.backoffice.activities.accommodation;
 
 import dev.webfx.extras.theme.FontDef;
 import dev.webfx.extras.theme.text.TextTheme;
+import dev.webfx.kit.util.properties.FXProperties;
 import dev.webfx.platform.console.Console;
 import dev.webfx.platform.util.Strings;
 import dev.webfx.stack.orm.datasourcemodel.service.DataSourceModelService;
@@ -197,9 +198,9 @@ public class CreateAnnualSchedulePane extends VBox {
                 .onSuccess(latestScheduledItems -> {
                     UpdateStore updateStore = UpdateStore.createAbove(selectedItems.iterator().next().getStore());
                     AnnualScheduleDatabaseWriter writer = new AnnualScheduleDatabaseWriter(site, fromDate, toDate, selectedItems, latestScheduledItems, resourceConfigurationLoader);
-                    writer.percentageCompleteProperty().addListener(((observableValue, oldValue, newValue) -> {
-                        System.out.println(newValue + "% complete.");
-                    }));
+                    FXProperties.runOnPropertyChange(percent ->
+                        System.out.println(percent + "% complete.")
+                    , writer.percentageCompleteProperty());
                     writer.saveToUpdateStore(updateStore);
                 });
     }

@@ -26,7 +26,12 @@ public final class I18nFunction extends Function {
 
     @Override
     public Object evaluate(Object argument, DomainReader domainReader) {
-        Object result;
+        Object result = null, language = null;
+        if (argument instanceof Object[]) {
+            Object[] arguments = (Object[]) argument;
+            argument = arguments[0];
+            language = arguments[1];
+        }
         if (argument instanceof EntityId)
             argument = domainReader.getDomainObjectFromId(argument, null);
         Label label = null;
@@ -35,7 +40,10 @@ public final class I18nFunction extends Function {
         else if (argument instanceof HasLabel)
             label = ((HasLabel) argument).getLabel();
         if (label != null) {
-            result = domainReader.getDomainFieldValue(label, I18n.getLanguage());
+            if (language != null)
+                result = domainReader.getDomainFieldValue(label, language);
+            if (result == null)
+                result = domainReader.getDomainFieldValue(label, I18n.getLanguage());
             if (result == null)
                 result = domainReader.getDomainFieldValue(label, I18n.getDefaultLanguage());
         } else {

@@ -7,7 +7,10 @@ import dev.webfx.stack.orm.entity.Entity;
  */
 public interface EntityHasIcon extends Entity, HasIcon {
 
-    @Override
-    default String getIcon() { return evaluate("icon"); }
+    String icon = "icon";
 
+    @Override
+    default String getIcon() {
+        return evaluate(icon);
+    }
 }

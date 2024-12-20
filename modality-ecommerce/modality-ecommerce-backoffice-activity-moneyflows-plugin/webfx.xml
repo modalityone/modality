@@ -8,8 +8,8 @@
     </exported-packages>
 
     <providers>
-        <provider interface="dev.webfx.stack.routing.uirouter.UiRoute">one.modality.ecommerce.backoffice.activities.moneyflows.MoneyFlowsUiRoute</provider>
-        <provider interface="dev.webfx.stack.routing.uirouter.operations.RouteRequestEmitter">one.modality.ecommerce.backoffice.activities.moneyflows.RouteToMoneyFlowsRequestEmitter</provider>
+        <provider interface="dev.webfx.stack.routing.uirouter.UiRoute">one.modality.ecommerce.backoffice.activities.moneyflows.MoneyFlowsRouting$MoneyFlowsUiRoute</provider>
+        <provider interface="dev.webfx.stack.routing.uirouter.operations.RouteRequestEmitter">one.modality.ecommerce.backoffice.activities.moneyflows.MoneyFlowsRouting$RouteToMoneyFlowsRequestEmitter</provider>
     </providers>
 
     <dependencies>

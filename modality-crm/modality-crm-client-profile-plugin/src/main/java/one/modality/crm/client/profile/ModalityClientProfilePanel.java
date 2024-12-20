@@ -96,7 +96,7 @@ final class ModalityClientProfilePanel {
         Button langButton = new Button();
         List<ChangeLanguageRequest> langRequests = ChangeLanguageRequestEmitter.getProvidedEmitters().stream()
                 .map(ChangeLanguageRequestEmitter::emitLanguageRequest).collect(Collectors.toList());
-        FXProperties.runNowAndOnPropertiesChange(() -> Platform.runLater(() -> {
+        FXProperties.runNowAndOnPropertyChange(() -> Platform.runLater(() -> {
             ChangeLanguageRequest currentLanguageRequest = Collections.findFirst(langRequests, req -> req.getLanguage().equals(I18n.getLanguage()));
             ActionBinder.bindButtonToAction(langButton, actionFactory.newOperationAction(() -> currentLanguageRequest));
             langButton.setOnAction(e -> {
@@ -109,7 +109,7 @@ final class ModalityClientProfilePanel {
         }), I18n.dictionaryProperty());
 
         EntityButtonSelector<Organization> organizationSelector = new EntityButtonSelector<>(
-                "{class: 'Organization', alias: 'o', where: 'exists(select Event where organization=o)'}",
+                "{class: 'Organization', alias: 'o', where: 'exists(select Event where organization=o)', fields: '" + FXOrganization.EXPECTED_FIELDS + "'}",
                 buttonFactoryMixin, vBox, DataSourceModelService.getDefaultDataSourceModel()
         );
         // Doing a bidirectional binding with FXOrganization
@@ -119,28 +119,22 @@ final class ModalityClientProfilePanel {
         Switch compactModeSwitch = new Switch();
         HBox compactModeHBox = new HBox(new Label("Compact mode"), LayoutUtil.createHGrowable(), compactModeSwitch);
         compactModeSwitch.setSelected(FXLayoutMode.isCompactMode());
-        FXProperties.runOnPropertiesChange(() -> {
-            FXLayoutMode.setCompactMode(compactModeSwitch.isSelected());
-        }, compactModeSwitch.selectedProperty());
+        FXProperties.runOnPropertyChange(FXLayoutMode::setCompactMode, compactModeSwitch.selectedProperty());
 
         // Dark mode
         Switch darkModeSwitch = new Switch();
         HBox darkModeHBox = new HBox(new Label("Dark mode"), LayoutUtil.createHGrowable(), darkModeSwitch);
         darkModeSwitch.setSelected(FXLuminanceMode.isDarkMode());
-        FXProperties.runOnPropertiesChange(() -> {
-            FXLuminanceMode.setDarkMode(darkModeSwitch.isSelected());
-        }, darkModeSwitch.selectedProperty());
+        FXProperties.runOnPropertyChange(FXLuminanceMode::setDarkMode, darkModeSwitch.selectedProperty());
 
         // Colorful palette
         Switch paletteModeSwitch = new Switch();
         HBox paletteModeHBox = new HBox(new Label("Colorful palette"), LayoutUtil.createHGrowable(), paletteModeSwitch);
         paletteModeSwitch.setSelected(FXPaletteMode.isVariedPalette());
-        FXProperties.runOnPropertiesChange(() -> {
-            FXPaletteMode.setVariedPalette(paletteModeSwitch.isSelected());
-        }, paletteModeSwitch.selectedProperty());
+        FXProperties.runOnPropertyChange(FXPaletteMode::setVariedPalette, paletteModeSwitch.selectedProperty());
 
         // Logout button
-        Button logoutButton = ActionBinder.bindButtonToAction(new Button(), actionFactory.newOperationAction(LogoutRequest::new));
+        Button logoutButton = ActionBinder.newActionButton(actionFactory.newOperationAction(LogoutRequest::new));
 
         vBox.getChildren().setAll(
                 identityLink,

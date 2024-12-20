@@ -20,13 +20,6 @@ public abstract class AbstractDocumentEvent extends AbstractSourceEvent {
         this.documentPrimaryKey = Entities.getPrimaryKey(document);
     }
 
-    public Document getDocument() {
-        if (document == null && entityStore != null) {
-            document = entityStore.getEntity(Document.class, documentPrimaryKey);
-        }
-        return document;
-    }
-
     public Object getDocumentPrimaryKey() {
         return documentPrimaryKey;
     }
@@ -34,4 +27,28 @@ public abstract class AbstractDocumentEvent extends AbstractSourceEvent {
     public void setDocumentPrimaryKey(Object documentPrimaryKey) { // Used to refactor new primary keys once inserted on server
         this.documentPrimaryKey = documentPrimaryKey;
     }
+
+    public Document getDocument() {
+        if (document == null && entityStore != null) {
+            createDocument();
+            replayEventOnDocument();
+        }
+        return document;
+    }
+
+    protected void createDocument() {
+        if (isForSubmit())
+            document = updateStore.updateEntity(Document.class, documentPrimaryKey);
+        else
+            document = entityStore.getOrCreateEntity(Document.class, documentPrimaryKey);
+    }
+
+    @Override
+    public void replayEvent() {
+        getDocument();
+    }
+
+    public void replayEventOnDocument() {
+    }
+
 }

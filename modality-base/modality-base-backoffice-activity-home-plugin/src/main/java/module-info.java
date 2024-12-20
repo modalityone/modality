@@ -12,10 +12,13 @@ module modality.base.backoffice.activity.home.plugin {
     requires modality.base.client.activity;
     requires modality.base.client.application;
     requires modality.base.client.tile;
+    requires modality.crm.backoffice.organization.fx;
     requires webfx.extras.theme;
+    requires webfx.kit.util;
     requires webfx.platform.conf;
     requires webfx.platform.util;
     requires webfx.platform.windowhistory;
+    requires webfx.stack.i18n;
     requires webfx.stack.orm.domainmodel.activity;
     requires webfx.stack.routing.router;
     requires webfx.stack.routing.router.client;
@@ -26,11 +29,9 @@ module modality.base.backoffice.activity.home.plugin {
 
     // Exported packages
     exports one.modality.base.backoffice.activities.home;
-    exports one.modality.base.backoffice.activities.home.routing;
-    exports one.modality.base.backoffice.operations.routes.home;
 
     // Provided services
-    provides dev.webfx.stack.routing.uirouter.UiRoute with one.modality.base.backoffice.activities.home.HomeUiRoute;
-    provides dev.webfx.stack.routing.uirouter.operations.RouteRequestEmitter with one.modality.base.backoffice.activities.home.RouteToHomeRequestEmitter;
+    provides dev.webfx.stack.routing.uirouter.UiRoute with one.modality.base.backoffice.activities.home.BackOfficeHomeRouting.HomeUiRoute;
+    provides dev.webfx.stack.routing.uirouter.operations.RouteRequestEmitter with one.modality.base.backoffice.activities.home.BackOfficeHomeRouting.RouteToHomeRequestEmitter;
 
 }

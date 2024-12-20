@@ -57,7 +57,7 @@ final class RecurringEventAttendanceView {
     private final RecurringEventsActivity activity;
     private final BooleanProperty activeProperty = new SimpleBooleanProperty();
     private final VisualGrid eventTable = new VisualGrid();
-    private final ColumnsPane attendancePane = new ColumnsPane();
+    private final ColumnsPane attendancePane = new ColumnsPane(20, 20);
     private ReactiveObjectsMapper<ScheduledItem, Node> scheduledItemObjectMapper;
 
     RecurringEventAttendanceView(RecurringEventsActivity activity) {
@@ -65,13 +65,11 @@ final class RecurringEventAttendanceView {
     }
 
     Node buildContainer() {
-        Label currentEventLabel = Bootstrap.h3(I18nControls.bindI18nProperties(new Label(),"CurrentClasses"));
+        Label currentEventLabel = Bootstrap.h3(I18nControls.newLabel(RecurringEventsI18nKeys.CurrentClasses));
         currentEventLabel.setPadding(new Insets(0, 0, 20, 0));
         TextTheme.createSecondaryTextFacet(currentEventLabel).style();
 
         attendancePane.setMinColumnWidth(300);
-        attendancePane.setHgap(20);
-        attendancePane.setVgap(20);
         attendancePane.setPadding(new Insets(60, 0, 0, 0));
         attendancePane.setId("attendanceFlowPane");
         eventTable.setFullHeight(true);
@@ -127,7 +125,7 @@ final class RecurringEventAttendanceView {
             boxesContainer.setCenter(linesGrid);
             BorderPane.setAlignment(linesGrid, Pos.TOP_CENTER);
 
-            Label totalCountLabel = I18nControls.bindI18nProperties(new Label(),"Total {0}", linesGrid.rowCountProperty());
+            Label totalCountLabel = I18nControls.newLabel("Total {0}" /* ??? */, linesGrid.rowCountProperty());
             totalCountLabel.setPadding(new Insets(5,0,0,0));
             totalCountLabel.getStyleClass().add("booking-total-count");
             boxesContainer.setBottom(totalCountLabel);

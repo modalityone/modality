@@ -37,6 +37,9 @@
         <module>modality-base-client-activity-console-plugin</module>
         <module>modality-base-client-activity-organizationdependent</module>
         <module>modality-base-client-application</module>
+        <module>modality-base-client-bootstrap</module>
+        <module>modality-base-client-brand</module>
+        <module>modality-base-client-cloudinary</module>
         <module>modality-base-client-conf</module>
         <module>modality-base-client-css</module>
         <module>modality-base-client-entities</module>
@@ -45,6 +48,7 @@
         <module>modality-base-client-icons</module>
         <module>modality-base-client-mainframe-fx</module>
         <module>modality-base-client-max-plugin</module>
+        <module>modality-base-client-messaging</module>
         <module>modality-base-client-min-plugin</module>
         <module>modality-base-client-navigationarrows-java-plugin</module>
         <module>modality-base-client-operationactionsloading-plugin</module>
@@ -53,7 +57,6 @@
         <module>modality-base-client-tile</module>
         <module>modality-base-client-time-theme</module>
         <module>modality-base-client-util</module>
-        <module>modality-base-client-validation</module>
         <module>modality-base-frontoffice-activity-account-plugin</module>
         <module>modality-base-frontoffice-activity-alerts-plugin</module>
         <module>modality-base-frontoffice-application</module>

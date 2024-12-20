@@ -8,10 +8,11 @@ module modality.event.backoffice.activity.recurringevents.plugin {
     requires javafx.graphics;
     requires modality.base.backoffice.mainframe.fx;
     requires modality.base.client.gantt.fx;
+    requires modality.base.client.i18n;
     requires modality.base.client.icons;
     requires modality.base.client.mainframe.fx;
     requires modality.base.client.tile;
-    requires modality.base.client.validation;
+    requires modality.base.client.util;
     requires modality.base.shared.entities;
     requires modality.crm.backoffice.organization.fx;
     requires modality.event.client.event.fx;
@@ -41,6 +42,7 @@ module modality.event.backoffice.activity.recurringevents.plugin {
     requires webfx.stack.orm.domainmodel.activity;
     requires webfx.stack.orm.dql;
     requires webfx.stack.orm.entity;
+    requires webfx.stack.orm.entity.binding;
     requires webfx.stack.orm.entity.controls;
     requires webfx.stack.orm.reactive.entities;
     requires webfx.stack.orm.reactive.visual;
@@ -49,14 +51,13 @@ module modality.event.backoffice.activity.recurringevents.plugin {
     requires webfx.stack.ui.controls;
     requires webfx.stack.ui.dialog;
     requires webfx.stack.ui.operation;
+    requires webfx.stack.ui.validation;
 
     // Exported packages
     exports one.modality.event.backoffice.activities.recurringevents;
-    exports one.modality.event.backoffice.activities.recurringevents.routing;
-    exports one.modality.event.backoffice.operations.routes.recurringevents;
 
     // Provided services
-    provides dev.webfx.stack.routing.uirouter.UiRoute with one.modality.event.backoffice.activities.recurringevents.BookingUiRoute;
-    provides dev.webfx.stack.routing.uirouter.operations.RouteRequestEmitter with one.modality.event.backoffice.activities.recurringevents.RouteToRecurringEventsRequestEmitter;
+    provides dev.webfx.stack.routing.uirouter.UiRoute with one.modality.event.backoffice.activities.recurringevents.RecurringEventsRouting.RecurringEventsUiRoute;
+    provides dev.webfx.stack.routing.uirouter.operations.RouteRequestEmitter with one.modality.event.backoffice.activities.recurringevents.RecurringEventsRouting.RouteToRecurringEventsRequestEmitter;
 
 }

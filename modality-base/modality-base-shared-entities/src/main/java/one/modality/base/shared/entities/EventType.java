@@ -10,29 +10,31 @@ import one.modality.base.shared.entities.markers.EntityHasOrganization;
  * @author Bruno Salmon
  */
 public interface EventType extends Entity,
-        EntityHasName,
-        EntityHasLabel,
-        EntityHasOrganization {
+    EntityHasName,
+    EntityHasLabel,
+    EntityHasOrganization {
 
-    default void setRecurringItem(Object recurringItem) {
-        setForeignField("recurringItem", recurringItem);
+    String recurringItem = "recurringItem";
+    String ord = "ord";
+
+    default void setRecurringItem(Object value) {
+        setForeignField(recurringItem, value);
     }
 
     default EntityId getRecurringItemId() {
-        return getForeignEntityId("recurringItem");
+        return getForeignEntityId(recurringItem);
     }
 
     default Item getRecurringItem() {
-        return getForeignEntity("recurringItem");
+        return getForeignEntity(recurringItem);
     }
 
 
-    default void setOrd(Integer ord) {
-        setFieldValue("ord", ord);
+    default void setOrd(Integer value) {
+        setFieldValue(ord, value);
     }
 
     default Integer getOrd() {
-        return getIntegerFieldValue("ord");
+        return getIntegerFieldValue(ord);
     }
-
 }

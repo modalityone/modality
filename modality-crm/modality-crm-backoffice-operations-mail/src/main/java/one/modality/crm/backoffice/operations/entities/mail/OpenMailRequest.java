@@ -1,13 +1,15 @@
 package one.modality.crm.backoffice.operations.entities.mail;
 
 import dev.webfx.platform.async.AsyncFunction;
+import dev.webfx.stack.i18n.HasI18nKey;
+import dev.webfx.stack.i18n.I18nKeys;
 import dev.webfx.stack.ui.operation.HasOperationCode;
 import dev.webfx.stack.ui.operation.HasOperationExecutor;
 import javafx.scene.layout.Pane;
 import one.modality.base.client.mainframe.fx.FXMainFrameDialogArea;
 import one.modality.base.shared.entities.Mail;
 
-public final class OpenMailRequest implements HasOperationCode,
+public final class OpenMailRequest implements HasOperationCode, HasI18nKey,
         HasOperationExecutor<OpenMailRequest, Void> {
 
     private final static String OPERATION_CODE = "OpenMail";
@@ -35,6 +37,11 @@ public final class OpenMailRequest implements HasOperationCode,
     @Override
     public Object getOperationCode() {
         return OPERATION_CODE;
+    }
+
+    @Override
+    public Object getI18nKey() {
+        return I18nKeys.appendEllipsis(MailI18nKeys.OpenMail);
     }
 
     @Override

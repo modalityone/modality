@@ -6,6 +6,7 @@
 module modality.all.backoffice.application.gluon {
 
     // Direct dependencies modules
+    requires javafx.media;
     requires javafx.web;
     requires modality.all.backoffice.application;
     requires modality.ecommerce.document.service.buscall;
@@ -18,6 +19,7 @@ module modality.all.backoffice.application.gluon {
     requires webfx.extras.webtext.peers.openjfx;
     requires webfx.kit.javafxgraphics.openjfx;
     requires webfx.platform.ast.factory.generic;
+    requires webfx.platform.audio.gluon;
     requires webfx.platform.blob.java;
     requires webfx.platform.boot.java;
     requires webfx.platform.console.java;
@@ -34,6 +36,7 @@ module modality.all.backoffice.application.gluon {
     requires webfx.platform.windowhistory.java;
     requires webfx.platform.windowlocation.java;
     requires webfx.stack.authn.buscall;
+    requires webfx.stack.authn.login.ui.gateway.password.plugin;
     requires webfx.stack.authn.login.ui.portal;
     requires webfx.stack.authn.remote;
     requires webfx.stack.com.bus.json.client;

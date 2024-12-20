@@ -1,5 +1,8 @@
 package one.modality.base.client.application;
 
+import dev.webfx.platform.boot.ApplicationBooter;
+import dev.webfx.platform.util.Arrays;
+import dev.webfx.platform.util.Objects;
 import dev.webfx.platform.util.function.Factory;
 import dev.webfx.stack.orm.domainmodel.activity.viewdomain.ViewDomainActivityContext;
 import dev.webfx.stack.orm.domainmodel.activity.viewdomain.ViewDomainActivityContextMixin;
@@ -24,7 +27,7 @@ public abstract class ModalityClientStarterActivity
     }
 
     public ModalityClientStarterActivity(String defaultInitialHistoryPath, Factory<Activity<ViewDomainActivityContextFinal>> containerActivityFactory) {
-        this.defaultInitialHistoryPath = defaultInitialHistoryPath;
+        this.defaultInitialHistoryPath = Objects.coalesce(Arrays.first(ApplicationBooter.getMainArgs()), defaultInitialHistoryPath);
         this.containerActivityFactory = containerActivityFactory;
     }
 

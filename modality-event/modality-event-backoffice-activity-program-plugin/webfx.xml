@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project>
+
+    <exported-packages>
+        <source-packages/>
+        <resource-packages/>
+    </exported-packages>
+
+    <dependencies>
+        <used-by-source-modules/>
+    </dependencies>
+
+    <providers>
+        <provider interface="dev.webfx.stack.routing.uirouter.UiRoute">one.modality.event.backoffice.activities.program.ProgramRouting$ProgramUiRoute</provider>
+        <provider interface="dev.webfx.stack.routing.uirouter.operations.RouteRequestEmitter">one.modality.event.backoffice.activities.program.ProgramRouting$RouteToProgramRequestEmitter</provider>
+    </providers>
+
+    <i18n javaKeysClass="one.modality.event.backoffice.activities.program.ProgramI18nKeys"/>
+
+</project>

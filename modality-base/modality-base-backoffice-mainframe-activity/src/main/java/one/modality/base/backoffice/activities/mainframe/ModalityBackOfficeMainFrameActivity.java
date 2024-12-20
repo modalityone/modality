@@ -6,10 +6,12 @@ import dev.webfx.extras.theme.layout.FXLayoutMode;
 import dev.webfx.extras.theme.luminance.LuminanceTheme;
 import dev.webfx.extras.theme.text.TextTheme;
 import dev.webfx.extras.util.animation.Animations;
+import dev.webfx.extras.util.control.ControlUtil;
+import dev.webfx.extras.util.layout.LayoutUtil;
 import dev.webfx.kit.launcher.WebFxKitLauncher;
 import dev.webfx.kit.util.properties.FXProperties;
+import dev.webfx.kit.util.properties.ObservableLists;
 import dev.webfx.platform.conf.SourcesConfig;
-import dev.webfx.platform.resource.Resource;
 import dev.webfx.platform.scheduler.Scheduled;
 import dev.webfx.platform.uischeduler.UiScheduler;
 import dev.webfx.platform.util.Arrays;
@@ -21,7 +23,6 @@ import dev.webfx.stack.com.bus.spi.impl.client.NetworkBus;
 import dev.webfx.stack.i18n.I18n;
 import dev.webfx.stack.session.state.client.fx.FXConnected;
 import javafx.animation.Timeline;
-import javafx.beans.InvalidationListener;
 import javafx.collections.ListChangeListener;
 import javafx.collections.ObservableList;
 import javafx.geometry.HPos;
@@ -30,24 +31,21 @@ import javafx.geometry.Pos;
 import javafx.geometry.VPos;
 import javafx.scene.Node;
 import javafx.scene.control.ProgressIndicator;
-import javafx.scene.image.ImageView;
 import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Circle;
-import javafx.scene.shape.Rectangle;
 import javafx.scene.shape.Shape;
-import javafx.scene.text.Font;
-import javafx.scene.text.FontWeight;
 import javafx.scene.text.Text;
 import javafx.util.Duration;
 import one.modality.base.backoffice.ganttcanvas.MainFrameGanttCanvas;
-import one.modality.base.backoffice.mainframe.headernode.MainFrameHeaderNodeProvider;
 import one.modality.base.backoffice.mainframe.fx.FXMainFrameHeaderTabs;
-import one.modality.base.client.tile.Tab;
+import one.modality.base.backoffice.mainframe.headernode.MainFrameHeaderNodeProvider;
 import one.modality.base.client.application.ModalityClientMainFrameActivity;
+import one.modality.base.client.brand.Brand;
 import one.modality.base.client.gantt.fx.interstice.FXGanttInterstice;
 import one.modality.base.client.mainframe.fx.FXMainFrameDialogArea;
 import one.modality.base.client.profile.fx.FXProfile;
+import one.modality.base.client.tile.Tab;
 
 import java.util.Comparator;
 import java.util.function.Consumer;
@@ -55,9 +53,9 @@ import java.util.function.Consumer;
 /**
  * @author Bruno Salmon
  */
-public class ModalityBackOfficeMainFrameActivity extends ModalityClientMainFrameActivity {
+public final class ModalityBackOfficeMainFrameActivity extends ModalityClientMainFrameActivity {
 
-    protected Pane mainFrame;
+    private Pane mainFrame;
     private Region mainFrameHeader;
     private Region mainFrameFooter;
     private final Region ganttCanvasContainer = MainFrameGanttCanvas.getCanvasContainer();
@@ -86,7 +84,7 @@ public class ModalityBackOfficeMainFrameActivity extends ModalityClientMainFrame
                     onProfileLayout(); // for profile panel animation management
                 }
                 if (ganttCanvasContainer.isVisible()) {
-                    nodeHeight = ganttCanvasContainer.prefHeight(width) + (FXGanttInterstice.isGanttIntersticeRequired() ? breathingPadding.getBottom() : 0);
+                    nodeHeight = ganttCanvasContainer.prefHeight(width) + (FXGanttInterstice.isGanttIntersticeVisible() ? breathingPadding.getBottom() : 0);
                     layoutInArea(ganttCanvasContainer, 0, nodeY, width, nodeHeight, 0, breathingPadding, HPos.CENTER, VPos.TOP);
                 }
                 Node mountNode = getMountNode();
@@ -206,7 +204,7 @@ public class ModalityBackOfficeMainFrameActivity extends ModalityClientMainFrame
             dialogArea = (Pane) properties.get(arbitraryKey);
             if (dialogArea == null) {
                 properties.put(arbitraryKey, dialogArea = new Pane());
-                dialogArea.getChildren().addListener((InvalidationListener) observable -> showHideDialogArea());
+                ObservableLists.runOnListChange(this::showHideDialogArea, dialogArea.getChildren());
             } else
                 showHideDialogArea();
         }
@@ -228,17 +226,7 @@ public class ModalityBackOfficeMainFrameActivity extends ModalityClientMainFrame
 
     @Override
     protected Node createBrandNode() {
-        ImageView logo = new ImageView(Resource.toUrl("modality-logo.png", getClass()));
-        Text modality = new Text("modality");
-        Text one = new Text("one");
-        modality.setFont(Font.font("Montserrat", FontWeight.NORMAL, 18));
-        one.setFont(Font.font("Montserrat", FontWeight.BOLD, 18));
-        modality.setFill(Color.web("4D4D4D"));
-        one.setFill(Color.web("1589BF"));
-        HBox brand = new HBox(logo, modality, one);
-        HBox.setMargin(logo, new Insets(0, 3, 0, 0)); // 3px gap between logo and text
-        brand.setAlignment(Pos.CENTER);
-        return brand;
+        return Brand.createModalityBackOfficeBrandNode();
     }
 
     @Override
@@ -287,11 +275,8 @@ public class ModalityBackOfficeMainFrameActivity extends ModalityClientMainFrame
                     boolean animate = isGanttCanvasShowing == capturedWasGanttCanvasShowingBeforeTabsChange;
                     // We animate prefHeightProperty to show the tabs (when new height > 0) or hide them (when new height = 0)
                     Timeline timeline = Animations.animateProperty(clipPane.prefHeightProperty(), newHeight, animate);
-                    if (timeline == null)
-                        headerTabsBar.getChildren().setAll(tabs);
-                    else
-                        // At the end of the animation, we clear the bar if the new screen has no bars
-                        timeline.setOnFinished(e -> headerTabsBar.getChildren().setAll(tabs));
+                    // At the end of the animation, we clear the bar if the new screen has no bars
+                    Animations.setOrCallOnTimelineFinished(timeline, e -> headerTabsBar.getChildren().setAll(tabs));
                 };
                 // For other cases, we will animate the height transition and need for that to give the new height
                 if (tabs.isEmpty()) { // Case where we transition from a screen with tabs to a screen with no tabs (but with gantt canvas)
@@ -325,9 +310,9 @@ public class ModalityBackOfficeMainFrameActivity extends ModalityClientMainFrame
     protected Region createMainFrameFooter() {
         Text connectionText = createStatusText("Connection");
         Shape connectionLed = new Circle(8);
-        FXProperties.runNowAndOnPropertiesChange(() -> {
-            connectionLed.setFill(FXConnected.isConnected() ? CONNECTED_COLOR : DISCONNECTED_COLOR);
-        }, FXConnected.connectedProperty());
+        FXProperties.runNowAndOnPropertyChange(connected ->
+            connectionLed.setFill(connected ? CONNECTED_COLOR : DISCONNECTED_COLOR), FXConnected.connectedProperty()
+        );
         HBox statusBar = new HBox(10, connectionText, connectionLed);
         Bus bus = BusService.bus();
         if (bus instanceof NetworkBus) { // Actually always true
@@ -349,17 +334,16 @@ public class ModalityBackOfficeMainFrameActivity extends ModalityClientMainFrame
                 noIncomingTrafficScheduled[0].cancel();
                 noIncomingTrafficScheduled[0] = UiScheduler.scheduleDelay(TRAFFIC_MILLIS, () -> incomingTrafficLed.setFill(NO_TRAFFIC_COLOR));
             });
-            statusBar.getChildren().addAll(new Rectangle(10, 0), trafficText, outgoingTrafficLed, incomingTrafficLed);
+            statusBar.getChildren().addAll(LayoutUtil.createHSpace(10), trafficText, outgoingTrafficLed, incomingTrafficLed);
         }
         // Pending operations
         Text pendingText = createStatusText("PendingCalls");
         Text pendingCountText = createStatusText(null);
-        ProgressIndicator pendingIndicator = new ProgressIndicator();
+        ProgressIndicator pendingIndicator = ControlUtil.createProgressIndicator(16);
         Timeline[] pendingFadeTimeline = { new Timeline() };
-        FXProperties.runNowAndOnPropertiesChange(() -> UiScheduler.runInUiThread(() -> {
-            int pendingCalls = PendingBusCall.pendingCallsCountProperty().getValue();
-            pendingCountText.setText("" + pendingCalls);
-            if (pendingCalls > 0) {
+        PendingBusCall.addPendingCallsCountHandler(pendingCallsCount -> UiScheduler.runInUiThread(() -> {
+            pendingCountText.setText("" + pendingCallsCount);
+            if (pendingCallsCount > 0) {
                 pendingIndicator.setProgress(ProgressIndicator.INDETERMINATE_PROGRESS);
                 pendingFadeTimeline[0].stop();
                 pendingIndicator.setOpacity(1);
@@ -367,17 +351,15 @@ public class ModalityBackOfficeMainFrameActivity extends ModalityClientMainFrame
                 pendingFadeTimeline[0] = Animations.animateProperty(pendingIndicator.opacityProperty(), 0, Duration.seconds(2));
                 pendingFadeTimeline[0].setOnFinished(e -> pendingIndicator.setProgress(0));
             }
-        }), PendingBusCall.pendingCallsCountProperty());
+        }));
         StackPane pendingPane = new StackPane(pendingIndicator, pendingCountText);
-        pendingPane.setPrefSize(16, 16);
-        statusBar.getChildren().addAll(new Rectangle(10, 0), pendingText, pendingPane);
+        statusBar.getChildren().addAll(LayoutUtil.createHSpace(10), pendingText, pendingPane);
 
         statusBar.setAlignment(Pos.CENTER);
         // Considering the bottom of the safe area, in particular for OS like iPadOS with a bar at the bottom
-        FXProperties.runOnPropertiesChange(() -> {
-            Insets sai = WebFxKitLauncher.getSafeAreaInsets();
-            statusBar.setPadding(new Insets(Math.max(5, sai.getTop()), Math.max(5, sai.getRight()), Math.max(5, sai.getBottom()), Math.max(5, sai.getLeft())));
-        }, WebFxKitLauncher.safeAreaInsetsProperty());
+        FXProperties.runNowAndOnPropertyChange(sai ->
+            statusBar.setPadding(new Insets(Math.max(5, sai.getTop()), Math.max(5, sai.getRight()), Math.max(5, sai.getBottom()), Math.max(5, sai.getLeft()))), WebFxKitLauncher.safeAreaInsetsProperty()
+        );
         LuminanceTheme.createApplicationFrameFacet(statusBar).style();
         return statusBar;
     }

@@ -11,6 +11,7 @@ import javafx.scene.control.Label;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.VBox;
 import javafx.scene.text.TextAlignment;
+import one.modality.event.frontoffice.activities.booking.BookingI18nKeys;
 import one.modality.event.frontoffice.activities.booking.process.event.BookEventActivity;
 
 final class StepCThankYouSlide extends StepSlide {
@@ -28,16 +29,16 @@ final class StepCThankYouSlide extends StepSlide {
         ScalePane headerImageScalePane = new ScalePane(headerImageView);
         headerImageScalePane.setPadding(new Insets(30,0,50,0));
 
-        Label bookingConfirmedLabel = Bootstrap.textSuccess(Bootstrap.h3(I18nControls.bindI18nProperties(new Label(), "BookingSubmitted")));
+        Label bookingConfirmedLabel = Bootstrap.textSuccess(Bootstrap.h3(I18nControls.newLabel(BookingI18nKeys.BookingSubmitted)));
         bookingConfirmedLabel.setContentDisplay(ContentDisplay.TOP);
         bookingConfirmedLabel.setGraphicTextGap(10);
 
-        Label thankYouLabel = Bootstrap.textSecondary(Bootstrap.h4(I18nControls.bindI18nProperties(new Label(), "ThankYouForBooking")));
+        Label thankYouLabel = Bootstrap.textSecondary(Bootstrap.h4(I18nControls.newLabel(BookingI18nKeys.ThankYouForBooking)));
         thankYouLabel.setWrapText(true);
         thankYouLabel.setTextAlignment(TextAlignment.CENTER);
         VBox.setMargin(thankYouLabel, new Insets(20,0,50,0));
 
-        Label bookingNumber = I18nControls.bindI18nProperties(new Label(), "BookingNumber", getWorkingBookingProperties().bookingReferenceProperty());
+        Label bookingNumber = I18nControls.newLabel(BookingI18nKeys.BookingNumber0, getWorkingBookingProperties().bookingReferenceProperty());
         bookingNumber.setWrapText(true);
         bookingNumber.setTextAlignment(TextAlignment.CENTER);
 

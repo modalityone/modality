@@ -7,6 +7,7 @@ module modality.base.client.icons {
 
     // Direct dependencies modules
     requires javafx.graphics;
+    requires webfx.extras.panes;
 
     // Exported packages
     exports one.modality.base.client.icons;

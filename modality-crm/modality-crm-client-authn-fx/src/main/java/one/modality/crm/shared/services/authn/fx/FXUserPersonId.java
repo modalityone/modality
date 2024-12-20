@@ -6,7 +6,6 @@ import dev.webfx.stack.orm.entity.EntityId;
 import javafx.beans.property.ObjectProperty;
 import javafx.beans.property.SimpleObjectProperty;
 import one.modality.base.shared.entities.Person;
-import one.modality.crm.shared.services.authn.ModalityUserPrincipal;
 
 /**
  * @author Bruno Salmon
@@ -16,8 +15,7 @@ public final class FXUserPersonId {
     private final static ObjectProperty<EntityId> userPersonIdProperty = new SimpleObjectProperty<>();
 
     static {
-        FXProperties.runNowAndOnPropertiesChange(() -> {
-            ModalityUserPrincipal modalityUserPrincipal = FXModalityUserPrincipal.getModalityUserPrincipal();
+        FXProperties.runNowAndOnPropertyChange(modalityUserPrincipal -> {
             if (modalityUserPrincipal == null)
                 setUserPersonId(null);
             else {

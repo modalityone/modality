@@ -4,13 +4,13 @@ import dev.webfx.stack.orm.domainmodel.activity.viewdomain.impl.ViewDomainActivi
 import dev.webfx.stack.ui.controls.button.ButtonFactoryMixin;
 import javafx.scene.Node;
 import javafx.scene.layout.BorderPane;
+import one.modality.base.backoffice.mainframe.fx.FXEventSelector;
 import one.modality.base.backoffice.mainframe.fx.FXMainFrameHeaderTabs;
 import one.modality.base.client.gantt.fx.visibility.FXGanttVisibility;
-import one.modality.base.client.gantt.fx.visibility.GanttVisibility;
 import one.modality.base.client.tile.Tab;
 import one.modality.base.client.tile.TabsBar;
 
-public final class RecurringEventsActivity extends ViewDomainActivityBase implements ButtonFactoryMixin {
+final class RecurringEventsActivity extends ViewDomainActivityBase implements ButtonFactoryMixin {
 
     private final ManageRecurringEventView manageRecurringEventView = new ManageRecurringEventView(this);
     private final RecurringEventAttendanceView recurringEventAttendanceView = new RecurringEventAttendanceView(this);
@@ -20,8 +20,8 @@ public final class RecurringEventsActivity extends ViewDomainActivityBase implem
     @Override
     public Node buildUi() {
         headerTabsBar.setTabs(
-                headerTabsBar.createTab("Manage classes", this::buildManageRecurringEventView),
-                headerTabsBar.createTab("Attendance", this::buildRecurringEventAttendanceView)
+            headerTabsBar.createTab("Manage classes", this::buildManageRecurringEventView),
+            headerTabsBar.createTab("Attendance", this::buildRecurringEventAttendanceView)
         );
 
         return container;
@@ -38,13 +38,15 @@ public final class RecurringEventsActivity extends ViewDomainActivityBase implem
     public void onResume() {
         super.onResume();
         FXMainFrameHeaderTabs.setHeaderTabs(headerTabsBar.getTabs());
-        FXGanttVisibility.setGanttVisibility(GanttVisibility.EVENTS);
+        FXGanttVisibility.showEvents();
+        FXEventSelector.showEventSelector();
     }
 
     @Override
     public void onPause() {
-        FXMainFrameHeaderTabs.clearHeaderTabs();
-        FXGanttVisibility.setGanttVisibility(GanttVisibility.HIDDEN);
+        FXMainFrameHeaderTabs.resetToDefault();
+        FXGanttVisibility.resetToDefault();
+        FXEventSelector.resetToDefault();
         super.onPause();
     }
 

@@ -11,20 +11,25 @@ module modality.event.frontoffice.activity.booking.plugin {
     requires javafx.graphics;
     requires javafx.web;
     requires jdk.jsobject;
+    requires modality.base.client.brand;
+    requires modality.base.client.css;
+    requires modality.base.client.i18n;
     requires modality.base.client.icons;
     requires modality.base.client.mainframe.fx;
     requires modality.base.client.tile;
     requires modality.base.client.util;
-    requires modality.base.client.validation;
     requires modality.base.frontoffice.mainframe.fx;
     requires modality.base.frontoffice.utility;
     requires modality.base.shared.entities;
     requires modality.crm.backoffice.organization.fx;
     requires modality.crm.client.authn.fx;
+    requires modality.crm.client.i18n;
+    requires modality.ecommerce.client.i18n;
     requires modality.ecommerce.document.service;
     requires modality.ecommerce.payment;
     requires modality.ecommerce.payment.client;
     requires modality.event.client.event.fx;
+    requires modality.event.client.recurringevents;
     requires webfx.extras.imagestore;
     requires webfx.extras.panes;
     requires webfx.extras.styles.bootstrap;
@@ -37,7 +42,6 @@ module modality.event.frontoffice.activity.booking.plugin {
     requires webfx.kit.launcher;
     requires webfx.kit.util;
     requires webfx.platform.async;
-    requires webfx.platform.browser;
     requires webfx.platform.conf;
     requires webfx.platform.console;
     requires webfx.platform.os;
@@ -45,7 +49,6 @@ module modality.event.frontoffice.activity.booking.plugin {
     requires webfx.platform.uischeduler;
     requires webfx.platform.useragent;
     requires webfx.platform.util;
-    requires webfx.platform.util.time;
     requires webfx.platform.windowhistory;
     requires webfx.stack.cache.client;
     requires webfx.stack.cloud.image;
@@ -61,27 +64,24 @@ module modality.event.frontoffice.activity.booking.plugin {
     requires webfx.stack.routing.router.client;
     requires webfx.stack.routing.uirouter;
     requires webfx.stack.ui.controls;
-    requires webfx.stack.ui.dialog;
     requires webfx.stack.ui.operation;
+    requires webfx.stack.ui.validation;
 
     // Exported packages
     exports one.modality.event.frontoffice.activities.booking;
-    exports one.modality.event.frontoffice.activities.booking.browser;
     exports one.modality.event.frontoffice.activities.booking.fx;
     exports one.modality.event.frontoffice.activities.booking.map;
     exports one.modality.event.frontoffice.activities.booking.process;
     exports one.modality.event.frontoffice.activities.booking.process.account;
     exports one.modality.event.frontoffice.activities.booking.process.event;
     exports one.modality.event.frontoffice.activities.booking.process.event.slides;
-    exports one.modality.event.frontoffice.activities.booking.routing;
     exports one.modality.event.frontoffice.activities.booking.views;
-    exports one.modality.event.frontoffice.operations.routes.booking;
 
     // Resources packages
     opens one.modality.event.frontoffice.activities.booking.map;
 
     // Provided services
-    provides dev.webfx.stack.routing.uirouter.UiRoute with one.modality.event.frontoffice.activities.booking.BookingUiRoute, one.modality.event.frontoffice.activities.booking.process.event.BookEventUiRoute;
-    provides dev.webfx.stack.routing.uirouter.operations.RouteRequestEmitter with one.modality.event.frontoffice.activities.booking.RouteToBookingRequestEmitter;
+    provides dev.webfx.stack.routing.uirouter.UiRoute with one.modality.event.frontoffice.activities.booking.BookingRouting.BookingUiRoute, one.modality.event.frontoffice.activities.booking.process.event.BookEventRouting.BookEventUiRoute;
+    provides dev.webfx.stack.routing.uirouter.operations.RouteRequestEmitter with one.modality.event.frontoffice.activities.booking.BookingRouting.RouteToBookingRequestEmitter;
 
 }

@@ -53,6 +53,7 @@ fx-svgpath svg path:not([fill])[stroke] { /* if the application code set the str
 :root {
     --fx-border-color-focus: #0096D6;
     --fx-textfield-background: white;
+    --fx-button-background: linear-gradient(180deg, white, #e0e0e0);
 }
 
 ::placeholder {
@@ -60,7 +61,7 @@ fx-svgpath svg path:not([fill])[stroke] { /* if the application code set the str
 }
 
 fx-button > fx-background {
-    background: linear-gradient(180deg, white, #e0e0e0);
+    background: var(--fx-button-background);
     border-radius: var(--fx-border-radius);
 }
 
@@ -99,7 +100,7 @@ input[type="text"], input[type="password"] {
 
 /* Cross for the tab close button */
 .tab-close-button {
-    background-image: url( "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' stroke='%23444' stroke-width='2' stroke-linejoin='round' viewBox=\'0 0 16 16\'%3E%3Cpath d=\'M 4,4 L 12,12 Z M 4,12 L 12,4 Z\'/%3E%3C/svg%3E");
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' stroke='%23444' stroke-width='2' stroke-linejoin='round' viewBox=\'0 0 16 16\'%3E%3Cpath d=\'M 4,4 L 12,12 Z M 4,12 L 12,4 Z\'/%3E%3C/svg%3E");
 }
 
 /*===== webfx-kit-javafxweb-web@main.css from webfx-kit-javafxweb-peers-gwt-j2cl =====*/
@@ -182,7 +183,7 @@ iframe {
     border-radius: 4px;
 }
 
-.btn:hover {
+.btn:hover:not(.disabled) {
     color: var(--bootstrap-grey7);
     --fx-svg-path-fill: var(--bootstrap-grey7);
 }
@@ -200,7 +201,7 @@ iframe {
     border-color: var(--bootstrap-grey3);
 }
 
-.btn-default:hover {
+.btn-default:hover:not(.disabled) {
     color: var(--bootstrap-grey7);
     --fx-svg-path-fill: var(--bootstrap-grey7);
 }
@@ -226,16 +227,16 @@ iframe {
     border-color: var(--bootstrap-blue6);
 }
 
-.btn-primary:hover {
+.btn-primary:hover:not(.disabled) {
     color: var(--bootstrap-white);
     --fx-svg-path-fill: var(--bootstrap-white);
 }
 
-.btn-primary:hover > fx-background {
+.btn-primary:hover:not(.disabled) > fx-background {
     background-color: var(--bootstrap-blue8);
 }
 
-.btn-primary:hover > fx-border {
+.btn-primary:hover:not(.disabled) > fx-border {
     border-color: var(--bootstrap-blue9);
 }
 
@@ -252,16 +253,16 @@ iframe {
     border-color: var(--bootstrap-grey5);
 }
 
-.btn-secondary:hover {
+.btn-secondary:hover:not(.disabled){
     color: var(--bootstrap-white);
     --fx-svg-path-fill: var(--bootstrap-white);
 }
 
-.btn-secondary:hover > fx-background {
+.btn-secondary:hover:not(.disabled)> fx-background {
     background-color: var(--bootstrap-grey5);
 }
 
-.btn-secondary:hover > fx-border {
+.btn-secondary:hover:not(.disabled)> fx-border {
     border-color: var(--bootstrap-grey6);
 }
 
@@ -278,16 +279,16 @@ iframe {
     border-color: var(--bootstrap-green2);
 }
 
-.btn-success:hover {
+.btn-success:hover:not(.disabled){
     color: var(--bootstrap-white);
     --fx-svg-path-fill: var(--bootstrap-white);
 }
 
-.btn-success:hover > fx-background {
+.btn-success:hover:not(.disabled)> fx-background {
     background-color: var(--bootstrap-green3);
 }
 
-.btn-success:hover > fx-border {
+.btn-success:hover:not(.disabled)> fx-border {
     border-color: var(--bootstrap-green4);
 }
 
@@ -305,16 +306,16 @@ iframe {
     border-color: var(--bootstrap-blue2);
 }
 
-.btn-info:hover {
+.btn-info:hover:not(.disabled){
     color: var(--bootstrap-white);
     --fx-svg-path-fill: var(--bootstrap-white);
 }
 
-.btn-info:hover > fx-background {
+.btn-info:hover:not(.disabled)> fx-background {
     background-color: var(--bootstrap-blue3);
 }
 
-.btn-info:hover > fx-border {
+.btn-info:hover:not(.disabled)> fx-border {
     border-color: var(--bootstrap-blue4);
 }
 
@@ -331,16 +332,16 @@ iframe {
     border-color: var(--bootstrap-orange2);
 }
 
-.btn-warning:hover {
+.btn-warning:hover:not(.disabled){
     color: var(--bootstrap-white);
     --fx-svg-path-fill: var(--bootstrap-white);
 }
 
-.btn-warning:hover > fx-background {
+.btn-warning:hover:not(.disabled)> fx-background {
     background-color: var(--bootstrap-orange3);
 }
 
-.btn-warning:hover > fx-border {
+.btn-warning:hover:not(.disabled)> fx-border {
     border-color: var(--bootstrap-orange4);
 }
 
@@ -357,16 +358,16 @@ iframe {
     border-color: var(--bootstrap-red2);
 }
 
-.btn-danger:hover {
+.btn-danger:hover:not(.disabled){
     color: var(--bootstrap-white);
     --fx-svg-path-fill: var(--bootstrap-white);
 }
 
-.btn-danger:hover > fx-background {
+.btn-danger:hover:not(.disabled)> fx-background {
     background-color: var(--bootstrap-red3);
 }
 
-.btn-danger:hover > fx-border {
+.btn-danger:hover:not(.disabled)> fx-border {
     border-color: var(--bootstrap-red4);
 }
 
@@ -527,13 +528,111 @@ iframe {
 
 /*===== webfx-extras-material-web@main.css from webfx-extras-styles-materialdesign =====*/
 
+:root {
+    /* Colors shared by different Material components */
+    --webfx-material-input-text-fill: #1e1e1e;
+    --webfx-material-idle-text-fill: #6d6d6d;
+    --webfx-material-disabled-fill: #8a8a8a;
+    --webfx-material-invalid-fill: #ff1744;
+    --webfx-material-focused-fill: #0596FF;
 
-fx-textfield.material > fx-border {
+    /* CSS variables applied to specific material components with default values (will be redefined on focus, disabled & invalid) */
+    --webfx-material-background-color: white;
+    --webfx-material-label-fill: var(--webfx-material-idle-text-fill);
+    --webfx-material-line-fill: var(--webfx-material-idle-text-fill);
+    --webfx-material-line-border-style: solid;
+    --webfx-material-focused-line-fill: var(--webfx-material-focused-fill);
+}
+
+/* Applying CSS variables to material components */
+
+.material > fx-border {
     border: none;
 }
 
-fx-textfield.material > fx-background {
-    background: none;
+.material > fx-background {
+    background-color: var(--webfx-material-background-color);
+    border-radius: 0;
+}
+
+.material-label {
+    color: var(--webfx-material-label-fill);
+}
+
+.material-line > fx-border { /* is actually a JavaFX Region */
+    /* Using a border (not background) because there is a dotted style for the disabled state */
+    border-color: var(--webfx-material-line-fill);
+    border-style: var(--webfx-material-line-border-style);
+    border-width: 0;
+    border-bottom-width: 1px;
+}
+
+.material-focused-line > fx-background { /* is actually a JavaFX Region */
+    /* Using a background is enough (no need for a border) */
+    background-color: var(--webfx-material-focused-line-fill);
+}
+
+/* Changing CSS variables values in dependence of material state */
+
+.material-focused * {
+    --webfx-material-label-fill: var(--webfx-material-focused-fill);
+}
+
+.material-disabled * {
+    --webfx-material-label-fill: var(--webfx-material-disabled-fill);
+    --webfx-material-line-fill: var(--webfx-material-disabled-fill);
+    --webfx-material-line-border-style: dotted;
+    --webfx-material-focused-line-fill: var(--webfx-material-disabled-fill);
+}
+
+.material-invalid * {
+    --webfx-material-label-fill: var(--webfx-material-invalid-fill);
+    --webfx-material-line-fill: var(--webfx-material-invalid-fill);
+    --webfx-material-focused-line-fill: var(--webfx-material-invalid-fill);
+}
+/*===== webfx-extra-player-audio-javafxmedia-web@main.css from webfx-extras-player-audio-javafxmedia =====*/
+
+.audio-player > fx-background {
+     background-color: #838788;  /* Background color */
+     border-radius: 30px;
+}
+
+.audio-player .h4 {
+    font-family: "Poppins", sans-serif;
+    font-weight: 600;
+    font-size: 13px;
+    text-align: left;
+    color: white;
+}
+
+/* Customizing the progress bar for podcasts */
+.audio-player progress {
+    border: none;
+    background-color: lightgray;
+    border-radius: 10px; /* Adjust the value for more or less rounding */
+    overflow: hidden;/* For FireFox */
+}
+
+.audio-player progress::-webkit-progress-bar { /* For Chrome & Safari */
+    background-color: lightgray;
+    border-radius: 10px;
+}
+
+.audio-player progress::-webkit-progress-value { /* For Chrome & Safari */
+    background-color: #0096D6;
+     border-radius: 10px;
+}
+
+.audio-player progress::-moz-progress-bar { /* For FireFox */
+    background-color: #0096D6;
+     border-radius: 10px;
+}
+
+
+.audio-player .time {
+    font-family: "Poppins", sans-serif;
+    color: white;
+    font-size: 13px;
 }
 /*===== webfx-extras-visual-grid-web@main.css from webfx-extras-visual-grid-peers-gwt-j2cl =====*/
 
@@ -633,31 +732,16 @@ tr.selected, .grid-row.selected {
 .cke_notifications_area {
     display: none;
 }
+/*===== webfx-stack-password-web@main.css from webfx-stack-authn-login-ui-gateway-password-plugin =====*/
+
+/* We don't want the default white background for WebFX Extras material text fields in the login window */
+.login * {
+    --webfx-material-background-color: transparent;
+}
 /*===== webfx-stack-authn-login-ui-portal-web@main.css from webfx-stack-authn-login-ui-portal =====*/
 
-.login * {
-    font-size: 18px;
-}
-
-.login fx-button {
-    cursor: pointer;
-}
-
-.login fx-button > fx-background {
-    background: #0096D6FF;
-    border-radius: 15px;
-}
-
-.login fx-button > fx-border {
-    --fx-border-color: transparent;
-}
-
-.login fx-button .text {
-    color: white;
-}
-
-.login fx-button fx-svgpath {
-    --fx-svg-path-fill: white;
+:root {
+    --webfx-login-portal-background-image: none;
 }
 
 /* Montserrat password dots are tiny! So we use another font for passwords, but we don't want that font for the placeholder!
@@ -675,6 +759,32 @@ input[type="password"]:not([value=""]) {
     font-weight: 100 900;
 }
 
+.login {
+    background-image: var(--webfx-login-portal-background-image); /* Specify the path to your image */
+    background-repeat: no-repeat;               /* Prevents the image from repeating */
+    background-size: cover;                     /* Scales the image to cover the area */
+    background-position: center;                /* Centers the image */
+    --fx-border-radius: 21px;
+}
+
+.login input {
+     font-size: 13px;
+       }
+
+.login-child {
+    background-color: rgba(255, 255, 255, 0.8);
+    border-radius: 21px;
+   /* border: 1px solid lightgray;*/
+   /* box-shadow: 0px 0px 10px lightgray;*/
+    width: 586px; /* Sets the fixed width */
+    height: 506px; /* Sets the fixed height */
+}
+
+.login .h2 {
+    font-family: 'Poppins', sans-serif; /* Sets the font to Poppins, with a fallback to sans-serif */
+    line-height: 0.5;
+}
+
 .login .or {
     color: #888;
 }
@@ -683,24 +793,42 @@ input[type="password"]:not([value=""]) {
     background-color: lightgray;
 }
 
-.login .background > fx-background {
-    background-color: white;
-    border-radius: 20px;
+.transparent-input > fx-background{
+    background-color: transparent;
 }
 
-.login .fx-border > fx-border {
-    --fx-border-color: lightgray;
-    --fx-border-radius: 20px;
-    box-shadow: lightgray 0 0 10px;
+.transparent-input > fx-border{
+    border-style: none;
 }
 
-/*===== modality-client-web@main.css from modality-base-client-css =====*/
+
+/*===== modality-client-brand-web@main.css from modality-base-client-brand =====*/
 
 :root {
-    --webfx-switch-selected-background-color: #0096D6;
+    --brand-main-color: #0096D6;
+    --brand-main-background-color: #0096D6;
+}
+/*===== modality-client-css-web@main.css from modality-base-client-css =====*/
+
+:root {
+    --montserrat-font-family: "Montserrat";
+    --roboto-font-family: "Roboto";
+    --poppins-font-family: "Poppins";
+    --vollkorn-font-family: "Vollkorn SC";
+
+    /* Overriding some WebFX Extras CSS variables  */
+    --webfx-switch-selected-background-color: var(--brand-main-background-color);
     --webfx-visualgrid-selection-color: #BBBBBB;
 }
 
+/* Applying Montserrat as default font for Modality */
+body, textarea /* because textarea has explicit default monospace font */ {
+    font-family: var(--montserrat-font-family), serif;
+    font-size: 13px;
+    -webkit-font-smoothing: antialiased;
+}
+
+/* Not sure if it's the right place for this CSS rules */
 .event-button {
     border-radius: 4px;
     height: 35px;
@@ -713,32 +841,238 @@ input[type="password"]:not([value=""]) {
     border: none;
 }
 
-/*===== modality-client-web@main.css from modality-base-client-application =====*/
-
-@font-face {
-    font-family: "Montserrat";
-    src: url("./fonts/montserrat/Montserrat-VF.woff2") format("woff2");
-    font-weight: 100 900;
-}
-
-/* Applying Montserrat as default font for Modality */
-body, textarea /* because textarea has explicit default monospace font */ {
-    font-family: Montserrat, serif;
-    font-size: 13px;
-    -webkit-font-smoothing: antialiased;
-}
-
-
 /*===== modality-frontoffice-mainframe-web@main.css from modality-base-frontoffice-mainframe-activity =====*/
 
-/* We dont want border for the buttons in the front-office button bar */
+fx-collapsepane.menu-bar > fx-background {
+    background-color: white;
+}
 
-.button-bar fx-button > fx-border {
+fx-collapsepane.menu-bar > fx-border {
+    border-style: solid;
+    border-width: 0 0 1px 0;
+    border-color: lightgray;
+    border-radius: 0;
+}
+
+fx-collapsepane.menu-bar.lang-menu-bar > fx-border {
     border: none;
 }
-/*===== modality-frontoffice-booking-web@main.css from modality-event-frontoffice-activity-booking-plugin =====*/
 
-* {
+.menu-bar {
+    font-family: var(--poppins-font-family), sans-serif;
+}
+
+.lang-menu-bar .selected fx-text {
+    color: white;
+}
+
+
+.menu-bar fx-button {
+    --fx-button-background: white; /* removes old-style button gradient */
+}
+
+.menu-bar fx-button > fx-border {
+    border: none;
+}
+
+.main-menu-bar fx-button {
+    color: black;
+}
+
+.main-menu-bar fx-label.brand {
+    font-family: var(--roboto-font-family), sans-serif;
+    font-size: 14px;
+    font-weight: 500;
+    color: var(--brand-main-color);
+    line-height: 1.2;
+    --fx-svg-path-fill: var(--brand-main-color);
+}
+
+.user-menu-bar fx-label, .user-menu-bar fx-button {
+    font-size: 12px;
+    color: #838788;
+    --fx-svg-path-fill: #838788
+}
+/*===== modality-client-bootstrap-web@main.css from modality-base-client-bootstrap =====*/
+
+/* Bootstrap style */
+:root {
+    --bootstrap-white: #fff ;
+
+    --bootstrap-grey1: #e6e6e6 ;
+    --bootstrap-grey2: #d4d4d4 ;
+    --bootstrap-grey3: #ccc ;
+    --bootstrap-grey4: #adadad ;
+    --bootstrap-grey5: #8c8c8c ;
+    --bootstrap-grey6: #777777 ;
+    --bootstrap-grey7: #333 ;
+
+    --bootstrap-blue1: #5bc0de ;
+    --bootstrap-blue2: #46b8da ;
+    --bootstrap-blue3: #31b0d5 ;
+    --bootstrap-blue4: #269abc ;
+    --bootstrap-blue5: #0096D6; /* New base blue */
+    --bootstrap-blue6: #0478e6;
+    --bootstrap-blue7: #1b6d85 ;
+    --bootstrap-blue8: #0088d6 ;
+    --bootstrap-blue9: #204d74 ;
+    --bootstrap-blue10: #122b40 ;
+    --bootstrap-blue11: #31708f ;
+
+    --bootstrap-green1: #5cb85c ;
+    --bootstrap-green2: #4cae4c ;
+    --bootstrap-green3: #449d44 ;
+    --bootstrap-green4: #398439 ;
+    --bootstrap-green5: #255625 ;
+    --bootstrap-green6: #41BA4D ;
+
+    --bootstrap-orange1: #f0ad4e ;
+    --bootstrap-orange2: #eea236 ;
+    --bootstrap-orange3: #ec971f ;
+    --bootstrap-orange4: #d58512 ;
+    --bootstrap-orange5: #985f0d ;
+    --bootstrap-orange6: #8a6d3b ;
+
+    --bootstrap-red1: #FF0404 ;
+    --bootstrap-red2: #d43f3a ;
+    --bootstrap-red3: #c9302c ;
+    --bootstrap-red4: #ac2925 ;
+    --bootstrap-red5: #761c19 ;
+    --bootstrap-red6: #FF0404 ;
+}
+
+.disabled:hover {
+    cursor: not-allowed;
+ }
+
+.btn-black {
+    color: var(--bootstrap-white);
+    --fx-svg-path-fill: var(--bootstrap-white);
+}
+
+.btn-black > fx-background {
+    background: black;
+}
+
+.btn-black > fx-border {
+    border-color: black;
+}
+
+.btn-black:hover:not(.disabled){
+    color: var(--bootstrap-white);
+    --fx-svg-path-fill: var(--bootstrap-white);
+}
+
+.btn-black:hover:not(.disabled)> fx-background {
+    background-color: var(--bootstrap-grey7);
+}
+
+.btn-black:hover:not(.disabled)> fx-border {
+    border-color: var(--bootstrap-grey7);
+}
+
+btn-white {
+    color: var(--bootstrap-white);
+    --fx-svg-path-fill: var(--bootstrap-white);
+}
+
+.btn-white > fx-background {
+    background: white;
+}
+
+.btn-white > fx-border {
+    border-color: black;
+}
+
+.btn-white:hover:not(.disabled){
+    color: var(--bootstrap-black);
+    --fx-svg-path-fill: var(--bootstrap-black);
+}
+
+.btn-white:hover:not(.disabled)> fx-background {
+    background-color: var(--bootstrap-grey1);
+}
+
+.btn-white:hover:not(.disabled)> fx-border {
+    border-color: var(--bootstrap-grey1);
+}
+
+
+/*===== modality-event-frontoffice-activities-audiorecordings-web@main.css from modality-event-frontoffice-activity-audiorecordings-plugin =====*/
+
+.audio-library .h3 {
+    font-family: "Poppins", sans-serif;
+    font-weight: 400; /* Semibold equivalent */
+    font-size: 15px;
+    text-align: left; /* Aligns text */
+}
+
+.audio-library .comment {
+    font-family: "Poppins", sans-serif;
+    font-weight: 300; /* Light equivalent */
+    font-size: 10px;
+    color: #838788; /* Text color equivalent to -fx-text-fill */
+    text-align: left; /* Aligns text */
+}
+
+.audio-library .description > fx-children > fx-text {
+    min-width: 410px;
+    max-width: 410px;
+    overflow: hidden; /* Hide overflowed text */
+    text-overflow: ellipsis;
+}
+
+.list-tracks-title {
+    font-family: "Poppins", sans-serif;
+    font-weight: bold;
+    font-size: 24px;
+    color: #4A4748; /* Text color equivalent to -fx-text-fill */
+    text-align: left; /* Aligns text */
+}
+
+.bottom-border {
+    margin-top: 20px;
+    border-color:     transparent transparent #e6e6e6 transparent;
+    border-width: 0 0 1px 0; /* Border width translated to px */
+    border-style: solid;
+}
+
+.bottom-border > fx-children {
+    margin-top: -10px;
+}
+/*===== modality-event-frontoffice-activities-videos-web@main.css from modality-event-frontoffice-activity-videos-plugin =====*/
+
+.livestream h3 {
+     font-family: "Poppins", sans-serif;
+     font-size: 24px;
+     font-weight: bold;
+     text-align: left; /* Aligns text */
+ }
+
+ .livestream h4 {
+    font-family: "Poppins", sans-serif;
+    font-size: 24px;
+    font-weight: 600; /* semi-bold */
+    text-align: left; /* Aligns text */
+ }
+
+ .livestream {
+     font-weight: 500; /* 'medium' weight equivalent in CSS */
+ }
+
+.livestream .small{
+    font-weight: 300;
+}
+
+ .livestream .text-info {
+     font-weight: normal;
+     color: black;
+ }
+
+
+/*===== modality-event-client-recurringevents-web@main.css from modality-event-client-recurringevents =====*/
+
+:root {
     --fx-event-description-text-color: #444;
 }
 
@@ -787,7 +1121,7 @@ body, textarea /* because textarea has explicit default monospace font */ {
 
 .event-date-cell.date-selected > fx-background,
 .event-date-cell.date-already-booked > fx-background {
-    background-color: #F5761A;
+    background-color: var(--brand-main-color);
 }
 
 .event-date-cell.date-selected > fx-border,
@@ -819,3 +1153,5 @@ body, textarea /* because textarea has explicit default monospace font */ {
 .line-total span {
     font-weight: bolder;
 }
+/*===== modality-frontoffice-booking-web@main.css from modality-event-frontoffice-activity-booking-plugin =====*/
+

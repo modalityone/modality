@@ -7,13 +7,15 @@ import dev.webfx.stack.orm.entity.Entity;
  */
 public interface EntityHasCode extends Entity, HasCode {
 
+    String code = "code";
+
     @Override
-    default void setCode(String code) {
-        setFieldValue("code", code);
+    default void setCode(String value) {
+        setFieldValue(code, value);
     }
 
     @Override
     default String getCode() {
-        return getStringFieldValue("code");
+        return getStringFieldValue(code);
     }
 }

@@ -9,6 +9,7 @@ import dev.webfx.extras.visual.controls.grid.VisualGrid;
 import dev.webfx.extras.visual.impl.VisualResultImpl;
 import dev.webfx.kit.util.properties.FXProperties;
 import dev.webfx.platform.console.Console;
+import dev.webfx.stack.i18n.controls.I18nControls;
 import dev.webfx.stack.orm.datasourcemodel.service.DataSourceModelService;
 import dev.webfx.stack.orm.domainmodel.DataSourceModel;
 import dev.webfx.stack.orm.dql.DqlStatement;
@@ -38,6 +39,7 @@ import javafx.scene.layout.GridPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Region;
 import javafx.scene.layout.VBox;
+import one.modality.base.client.i18n.ModalityI18nKeys;
 import one.modality.base.shared.entities.*;
 import one.modality.base.shared.entities.markers.EntityHasLocalDate;
 import one.modality.crm.backoffice.organization.fx.FXOrganizationId;
@@ -81,10 +83,6 @@ public class AlterRoomPane extends VBox {
     private TextField toDateField;
     private VisualGrid table;
 
-    private final Button createButton;
-    private final Button updateButton;
-    private final Button deleteButton;
-    private final Button deleteRoomButton;
     private final Button saveButton;
     private final Button cancelButton;
     private final Label statusLabel;
@@ -101,22 +99,22 @@ public class AlterRoomPane extends VBox {
             int rowIndex = resourceConfigurations.indexOf(todayResourceConfiguration);
             table.setVisualSelection(VisualSelection.createBuilder().addSelectedRow(rowIndex).build());
         });
-        selectedResourceConfigurationProperty.addListener((observable, oldValue, newValue) -> displayDetails(newValue));
+        FXProperties.runOnPropertyChange(this::displayDetails, selectedResourceConfigurationProperty);
         HBox detailsRow = new HBox(createHeadingLabel("Details"), createDetailsGrid());
         Label availabilityLabel = createHeadingLabel("Availability");
 
         table = new VisualGrid();
-        createButton = new Button("Create");
+        Button createButton = I18nControls.newButton(ModalityI18nKeys.Create);
         createButton.setOnAction(e -> create());
-        updateButton = new Button("Update");
+        Button updateButton = I18nControls.newButton(ModalityI18nKeys.Update);
         updateButton.setOnAction(e -> update());
-        deleteButton = new Button("Delete");
+        Button deleteButton = I18nControls.newButton(ModalityI18nKeys.Delete);
         deleteButton.setOnAction(e -> confirmDelete());
-        deleteRoomButton = new Button("Delete room");
-        saveButton = new Button("Save");
+        Button deleteRoomButton = new Button("Delete room"); // ???
+        saveButton = I18nControls.newButton(ModalityI18nKeys.Save);
         saveButton.setOnAction(e -> confirmSave());
         saveButton.setVisible(false);
-        cancelButton = new Button("Cancel");
+        cancelButton = I18nControls.newButton(ModalityI18nKeys.Cancel);
         cancelButton.setOnAction(e -> cancel());
         cancelButton.setVisible(false);
 
@@ -129,34 +127,34 @@ public class AlterRoomPane extends VBox {
 
     private GridPane createDetailsGrid() {
         roomNameTextField = new TextField();
-        roomNameTextField.textProperty().addListener((observable, oldValue, newValue) -> {
+        FXProperties.runOnPropertyChange(roomName -> {
             if (selectedResourceConfigurationProperty.get() != null) {
-                selectedResourceConfigurationProperty.get().setName(newValue);
+                selectedResourceConfigurationProperty.get().setName(roomName);
             }
-        });
+        }, roomNameTextField.textProperty());
         bedsInRoomButtonSelector = createBedsInRoomButtonSelector();
-        bedsInRoomButtonSelector.selectedItemProperty().addListener((observable, oldValue, newValue) -> {
-            if (selectedResourceConfigurationProperty.get() != null && newValue != null) {
-                selectedResourceConfigurationProperty.get().setMax(newValue);
+        FXProperties.runOnPropertyChange(bedsInRoom -> {
+            if (selectedResourceConfigurationProperty.get() != null && bedsInRoom != null) {
+                selectedResourceConfigurationProperty.get().setMax(bedsInRoom);
             }
-        });
+        }, bedsInRoomButtonSelector.selectedItemProperty());
         GridPane eligibilityForBookingGrid = createEligibilityForBookingGrid();
         fromDateField = new TextField();
         fromDateField.setPromptText("e.g. 15-01-22");
-        fromDateField.textProperty().addListener((observable, oldValue, newValue) -> {
+        FXProperties.runOnPropertyChange(fromDate -> {
             if (selectedResourceConfigurationProperty.get() != null) {
-                LocalDate startDate = dateFromText(newValue);
+                LocalDate startDate = dateFromText(fromDate);
                 selectedResourceConfigurationProperty.get().setStartDate(startDate);
             }
-        });
+        }, fromDateField.textProperty());
         toDateField = new TextField();
         toDateField.setPromptText("e.g. 16-01-22");
-        toDateField.textProperty().addListener((observable, oldValue, newValue) -> {
+        FXProperties.runOnPropertyChange(toDate -> {
             if (selectedResourceConfigurationProperty.get() != null) {
-                LocalDate endDate = dateFromText(newValue);
+                LocalDate endDate = dateFromText(toDate);
                 selectedResourceConfigurationProperty.get().setEndDate(endDate);
             }
-        });
+        }, toDateField.textProperty());
 
         detailsGridPane = new GridPane();
         detailsGridPane.add(createLabel("Product"), 0, 0);
@@ -190,10 +188,10 @@ public class AlterRoomPane extends VBox {
             {
                 setSearchEnabled(false);
                 setShowMode(ShowMode.DROP_DOWN);
-                bedsGrid.visualSelectionProperty().addListener((observable, oldValue, newValue) -> {
-                    setSelectedItem(newValue.getSelectedRow() + 1);
+                FXProperties.runOnPropertyChange(bedsSelection -> {
+                    setSelectedItem(bedsSelection.getSelectedRow() + 1);
                     closeDialog();
-                });
+                }, bedsGrid.visualSelectionProperty());
             }
 
             @Override

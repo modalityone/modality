@@ -1,11 +1,11 @@
 package one.modality.crm.backoffice.organization.fx;
 
+import dev.webfx.kit.util.properties.FXProperties;
 import dev.webfx.stack.orm.datasourcemodel.service.DataSourceModelService;
 import dev.webfx.stack.orm.entity.Entities;
 import dev.webfx.stack.orm.entity.EntityId;
 import dev.webfx.stack.orm.entity.EntityStore;
 import javafx.beans.property.ObjectProperty;
-import javafx.beans.property.SimpleObjectProperty;
 import one.modality.base.shared.entities.Organization;
 
 import java.util.Objects;
@@ -15,14 +15,10 @@ import java.util.Objects;
  */
 public final class FXOrganization {
 
-    public static final String EXPECTED_FIELDS = "name,type,country";
+    public static final String EXPECTED_FIELDS = "name,type.(code,name),country";
 
-    private final static ObjectProperty<Organization> organizationProperty = new SimpleObjectProperty<>() {
-        @Override
-        protected void invalidated() {
-            FXOrganizationId.setOrganizationId(getOrganizationId());
-        }
-    };
+    private final static ObjectProperty<Organization> organizationProperty = FXProperties.newObjectProperty(() ->
+            FXOrganizationId.setOrganizationId(getOrganizationId()));
 
     static {
         FXOrganizationId.init();

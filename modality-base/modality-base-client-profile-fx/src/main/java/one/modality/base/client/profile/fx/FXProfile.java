@@ -37,19 +37,15 @@ public final class FXProfile {
     }
 
     private final static Set<Scene> LISTENED_SCENES = new HashSet<>();
-    private final static ObjectProperty<Node> profilePanelProperty = new SimpleObjectProperty<>() {
-        @Override
-        protected void invalidated() {
-            SceneUtil.onSceneReady(get(), scene -> {
-                if (!LISTENED_SCENES.contains(scene)) {
-                    scene.focusOwnerProperty().addListener(observable -> hideProfilePanelIfNodeOutsideProfile(scene.getFocusOwner()));
-                    // TODO: implement scene.addEventFilter() in WebFX Kit.
-                    scene.getRoot().addEventFilter(MouseEvent.MOUSE_CLICKED, me -> hideProfilePanelIfNodeOutsideProfile(me.getPickResult().getIntersectedNode()));
-                    LISTENED_SCENES.add(scene);
-                }
-            });
+    private final static ObjectProperty<Node> profilePanelProperty = FXProperties.newObjectProperty(profilePanel ->
+        SceneUtil.onSceneReady(profilePanel, scene -> {
+        if (!LISTENED_SCENES.contains(scene)) {
+            scene.focusOwnerProperty().addListener(observable -> hideProfilePanelIfNodeOutsideProfile(scene.getFocusOwner()));
+            // TODO: implement scene.addEventFilter() in WebFX Kit.
+            scene.getRoot().addEventFilter(MouseEvent.MOUSE_CLICKED, me -> hideProfilePanelIfNodeOutsideProfile(me.getPickResult().getIntersectedNode()));
+            LISTENED_SCENES.add(scene);
         }
-    };
+    }));
 
     private static void hideProfilePanelIfNodeOutsideProfile(Node node) {
         if (node != null && getProfilePanel() != null) {

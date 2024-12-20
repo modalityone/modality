@@ -32,15 +32,7 @@ public abstract class AbstractAttendancesEvent extends AbstractDocumentLineEvent
     public Attendance[] getAttendances() {
         if (attendances == null && entityStore != null) {
             attendances = new Attendance[attendancesPrimaryKeys.length];
-            DocumentLine documentLine = getDocumentLine();
-            for (int i = 0; i < attendancesPrimaryKeys.length; i++) {
-                Attendance attendance = entityStore.getOrCreateEntity(Attendance.class, attendancesPrimaryKeys[i]);
-                attendance.setDocumentLine(documentLine);
-                if (scheduledItemsPrimaryKeys != null) { // RemoveAttendancesEvent doesn't memorise scheduledItemsPrimaryKeys
-                    attendance.setScheduledItem(entityStore.getEntity(ScheduledItem.class, scheduledItemsPrimaryKeys[i]));
-                }
-                attendances[i] = attendance;
-            }
+            replayEventOnAttendances();
         }
         return attendances;
     }
@@ -51,6 +43,31 @@ public abstract class AbstractAttendancesEvent extends AbstractDocumentLineEvent
 
     public Object[] getScheduledItemsPrimaryKeys() {
         return scheduledItemsPrimaryKeys;
+    }
+
+    @Override
+    public void replayEvent() {
+        getAttendances();
+    }
+
+    protected void replayEventOnAttendances() {
+        DocumentLine documentLine = getDocumentLine();
+        for (int i = 0; i < attendancesPrimaryKeys.length; i++) {
+            Attendance attendance = createAttendance(attendancesPrimaryKeys[i]);
+            attendance.setDocumentLine(documentLine);
+            if (scheduledItemsPrimaryKeys != null) { // RemoveAttendancesEvent doesn't memorise scheduledItemsPrimaryKeys
+                attendance.setScheduledItem(isForSubmit() ? scheduledItemsPrimaryKeys[i] : entityStore.getOrCreateEntity(ScheduledItem.class, scheduledItemsPrimaryKeys[i]));
+            }
+            attendances[i] = attendance;
+        }
+    }
+
+    protected Attendance createAttendance(Object attendancePrimaryKey) {
+        if (isForSubmit()) {
+            return updateStore.updateEntity(Attendance.class, attendancePrimaryKey);
+        } else {
+            return entityStore.getOrCreateEntity(Attendance.class, attendancePrimaryKey);
+        }
     }
 
 }

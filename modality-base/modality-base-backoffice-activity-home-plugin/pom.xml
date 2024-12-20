@@ -54,8 +54,20 @@
         </dependency>
 
         <dependency>
+            <groupId>one.modality</groupId>
+            <artifactId>modality-crm-backoffice-organization-fx</artifactId>
+            <version>1.0.0-SNAPSHOT</version>
+        </dependency>
+
+        <dependency>
             <groupId>dev.webfx</groupId>
             <artifactId>webfx-extras-theme</artifactId>
+            <version>0.1.0-SNAPSHOT</version>
+        </dependency>
+
+        <dependency>
+            <groupId>dev.webfx</groupId>
+            <artifactId>webfx-kit-util</artifactId>
             <version>0.1.0-SNAPSHOT</version>
         </dependency>
 
@@ -82,6 +94,12 @@
         <dependency>
             <groupId>dev.webfx</groupId>
             <artifactId>webfx-platform-windowhistory</artifactId>
+            <version>0.1.0-SNAPSHOT</version>
+        </dependency>
+
+        <dependency>
+            <groupId>dev.webfx</groupId>
+            <artifactId>webfx-stack-i18n</artifactId>
             <version>0.1.0-SNAPSHOT</version>
         </dependency>
 

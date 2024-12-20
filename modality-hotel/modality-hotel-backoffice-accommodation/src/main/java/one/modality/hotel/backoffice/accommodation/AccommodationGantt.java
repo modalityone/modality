@@ -138,7 +138,7 @@ public abstract class AccommodationGantt<B extends AccommodationBlock> {
         });
 
         // Redrawing the canvas when Gantt selected object changes because the guest color may depend on selected event
-        FXProperties.runOnPropertiesChange(barsDrawer::markDrawAreaAsDirty, FXGanttSelection.ganttSelectedObjectProperty());
+        FXProperties.runOnPropertyChange(barsDrawer::markDrawAreaAsDirty, FXGanttSelection.ganttSelectedObjectProperty());
 
         // We disable the time window horizontal scroll on mouse wheel over this canvas, because we want the mouse wheel
         // to control the vertical scroll (via ScrollPane) instead.

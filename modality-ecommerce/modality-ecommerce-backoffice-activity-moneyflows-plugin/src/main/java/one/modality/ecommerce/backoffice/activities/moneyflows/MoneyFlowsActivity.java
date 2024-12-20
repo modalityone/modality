@@ -47,7 +47,7 @@ import static dev.webfx.stack.orm.dql.DqlStatement.where;
 /**
  * @author Bruno Salmon
  */
-public class MoneyFlowsActivity extends OrganizationDependentViewDomainActivity implements ConventionalUiBuilderMixin, OperationActionFactoryMixin {
+final class MoneyFlowsActivity extends OrganizationDependentViewDomainActivity implements ConventionalUiBuilderMixin, OperationActionFactoryMixin {
 
     private static final DataFormat dndDataFormat = DataFormat.PLAIN_TEXT; // Using standard plain text format to ensure drag & drop works between applications
 

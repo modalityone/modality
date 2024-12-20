@@ -23,7 +23,8 @@ public abstract class AbstractDocumentLineEvent extends AbstractDocumentEvent {
 
     public DocumentLine getDocumentLine() {
         if (documentLine == null && entityStore != null) {
-            documentLine = entityStore.getEntity(DocumentLine.class, documentLinePrimaryKey);
+            createDocumentLine();
+            replayEventOnDocumentLine();
         }
         return documentLine;
     }
@@ -34,5 +35,21 @@ public abstract class AbstractDocumentLineEvent extends AbstractDocumentEvent {
 
     public void setDocumentLinePrimaryKey(Object documentLinePrimaryKey) { // Used to refactor new primary keys once inserted on server
         this.documentLinePrimaryKey = documentLinePrimaryKey;
+    }
+
+    protected void createDocumentLine() {
+        if (isForSubmit())
+            documentLine = updateStore.updateEntity(DocumentLine.class, documentLinePrimaryKey);
+        else
+            documentLine = entityStore.getOrCreateEntity(DocumentLine.class, documentLinePrimaryKey);
+    }
+
+    @Override
+    public void replayEvent() {
+        getDocumentLine();
+    }
+
+    public void replayEventOnDocumentLine() {
+        documentLine.setDocument(getDocument());
     }
 }

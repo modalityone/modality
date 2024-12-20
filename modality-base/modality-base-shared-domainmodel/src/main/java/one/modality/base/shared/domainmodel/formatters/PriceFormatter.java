@@ -48,7 +48,7 @@ public class PriceFormatter implements ValueFormatter, ValueParser {
     public Object parseValue(Object value) {
         if (value == null || "".equals(value))
             return null;
-        return (int) (Numbers.toFloat(value) * 100);
+        return Numbers.toShortestNumber(Numbers.toFloat(value) * 100);
     }
 
     public static String formatWithoutCurrency(Object value) {

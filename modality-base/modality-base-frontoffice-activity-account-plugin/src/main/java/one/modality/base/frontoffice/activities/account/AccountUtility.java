@@ -15,11 +15,11 @@ import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.scene.shape.Circle;
 import javafx.scene.text.Text;
-import one.modality.base.frontoffice.fx.FXAccount;
-import one.modality.base.frontoffice.states.PersonPM;
-import one.modality.base.frontoffice.utility.GeneralUtility;
-import one.modality.base.frontoffice.utility.StyleUtility;
-import one.modality.base.frontoffice.utility.TextUtility;
+import one.modality.base.frontoffice.utility.tyler.fx.FXAccount;
+import one.modality.base.frontoffice.utility.tyler.states.PersonPM;
+import one.modality.base.frontoffice.utility.tyler.GeneralUtility;
+import one.modality.base.frontoffice.utility.tyler.StyleUtility;
+import one.modality.base.frontoffice.utility.tyler.TextUtility;
 import one.modality.base.shared.entities.Country;
 
 public final class AccountUtility {
@@ -103,7 +103,7 @@ public final class AccountUtility {
                 GeneralUtility.createSplitRow(language, practitioner, 50, 10),
                 GeneralUtility.createSplitRow(idType, idNumber, 50, 10),
                 GeneralUtility.createSpace(20),
-                GeneralUtility.bindI18N(TextUtility.getMainText("", StyleUtility.BLACK), "Address"),
+                GeneralUtility.bindI18N(TextUtility.getMainText("", StyleUtility.BLACK), "Address"), // ???
                 GeneralUtility.createSplitRow(addressCountry, addressZip, 50, 10),
                 GeneralUtility.createSplitRow(addressState, addressCity, 50, 10),
                 GeneralUtility.createSplitRow(addressStreet, addressNumber, 75, 10),
@@ -111,15 +111,15 @@ public final class AccountUtility {
                 GeneralUtility.createSpace(10),
                 GeneralUtility.createSplitRow(
 
-                        GeneralUtility.bindI18N(TextUtility.getMainText("", StyleUtility.BLACK), "Billing Address"),
-                        GeneralUtility.createCheckBoxDirect(personPM.ADDRESS_BILLING_SAME, false, false, "Same as the billing address", false),
+                        GeneralUtility.bindI18N(TextUtility.getMainText("", StyleUtility.BLACK), "Billing Address"), // ???
+                        GeneralUtility.createCheckBoxDirect(personPM.ADDRESS_BILLING_SAME, false, false, "Same as the billing address", false), // ???
                         30, 10
                 ),
                 GeneralUtility.createSpace(20),
-                GeneralUtility.bindI18N(TextUtility.getMainText("", StyleUtility.BLACK), "Diet"),
+                GeneralUtility.bindI18N(TextUtility.getMainText("", StyleUtility.BLACK), "Diet"), // ???
                 diet,
                 GeneralUtility.createSpace(20),
-                GeneralUtility.bindI18N(TextUtility.getMainText("", StyleUtility.BLACK), "Special needs"),
+                GeneralUtility.bindI18N(TextUtility.getMainText("", StyleUtility.BLACK), "Special needs"), // ???
                 GeneralUtility.createSplitRow(needsWheelchair, needsHearing, 50, 0),
                 GeneralUtility.createSplitRow(needsSight, needsMobility, 50, 0)
         );

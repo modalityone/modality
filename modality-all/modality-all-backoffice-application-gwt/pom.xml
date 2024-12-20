@@ -42,6 +42,13 @@
 
         <dependency>
             <groupId>dev.webfx</groupId>
+            <artifactId>webfx-kit-javafxmedia-emul</artifactId>
+            <version>0.1.0-SNAPSHOT</version>
+            <classifier>sources</classifier>
+        </dependency>
+
+        <dependency>
+            <groupId>dev.webfx</groupId>
             <artifactId>webfx-kit-javafxweb-emul</artifactId>
             <version>0.1.0-SNAPSHOT</version>
             <classifier>sources</classifier>
@@ -186,6 +193,20 @@
 
         <dependency>
             <groupId>one.modality</groupId>
+            <artifactId>modality-base-client-brand</artifactId>
+            <version>1.0.0-SNAPSHOT</version>
+            <classifier>sources</classifier>
+        </dependency>
+
+        <dependency>
+            <groupId>one.modality</groupId>
+            <artifactId>modality-base-client-cloudinary</artifactId>
+            <version>1.0.0-SNAPSHOT</version>
+            <classifier>sources</classifier>
+        </dependency>
+
+        <dependency>
+            <groupId>one.modality</groupId>
             <artifactId>modality-base-client-conf</artifactId>
             <version>1.0.0-SNAPSHOT</version>
             <classifier>sources</classifier>
@@ -242,6 +263,13 @@
 
         <dependency>
             <groupId>one.modality</groupId>
+            <artifactId>modality-base-client-messaging</artifactId>
+            <version>1.0.0-SNAPSHOT</version>
+            <classifier>sources</classifier>
+        </dependency>
+
+        <dependency>
+            <groupId>one.modality</groupId>
             <artifactId>modality-base-client-min-plugin</artifactId>
             <version>1.0.0-SNAPSHOT</version>
             <classifier>sources</classifier>
@@ -291,13 +319,6 @@
 
         <dependency>
             <groupId>one.modality</groupId>
-            <artifactId>modality-base-client-validation</artifactId>
-            <version>1.0.0-SNAPSHOT</version>
-            <classifier>sources</classifier>
-        </dependency>
-
-        <dependency>
-            <groupId>one.modality</groupId>
             <artifactId>modality-base-shared-context</artifactId>
             <version>1.0.0-SNAPSHOT</version>
             <classifier>sources</classifier>
@@ -340,6 +361,13 @@
 
         <dependency>
             <groupId>one.modality</groupId>
+            <artifactId>modality-catering-client-i18n</artifactId>
+            <version>1.0.0-SNAPSHOT</version>
+            <classifier>sources</classifier>
+        </dependency>
+
+        <dependency>
+            <groupId>one.modality</groupId>
             <artifactId>modality-crm-backoffice-bookingdetailspanel</artifactId>
             <version>1.0.0-SNAPSHOT</version>
             <classifier>sources</classifier>
@@ -362,6 +390,13 @@
         <dependency>
             <groupId>one.modality</groupId>
             <artifactId>modality-crm-client-authn-fx</artifactId>
+            <version>1.0.0-SNAPSHOT</version>
+            <classifier>sources</classifier>
+        </dependency>
+
+        <dependency>
+            <groupId>one.modality</groupId>
+            <artifactId>modality-crm-client-i18n</artifactId>
             <version>1.0.0-SNAPSHOT</version>
             <classifier>sources</classifier>
         </dependency>
@@ -445,6 +480,20 @@
 
         <dependency>
             <groupId>one.modality</groupId>
+            <artifactId>modality-ecommerce-client-i18n</artifactId>
+            <version>1.0.0-SNAPSHOT</version>
+            <classifier>sources</classifier>
+        </dependency>
+
+        <dependency>
+            <groupId>one.modality</groupId>
+            <artifactId>modality-ecommerce-client-min-plugin</artifactId>
+            <version>1.0.0-SNAPSHOT</version>
+            <classifier>sources</classifier>
+        </dependency>
+
+        <dependency>
+            <groupId>one.modality</groupId>
             <artifactId>modality-ecommerce-document-service</artifactId>
             <version>1.0.0-SNAPSHOT</version>
             <classifier>sources</classifier>
@@ -481,6 +530,27 @@
         <dependency>
             <groupId>one.modality</groupId>
             <artifactId>modality-ecommerce-payment-remote</artifactId>
+            <version>1.0.0-SNAPSHOT</version>
+            <classifier>sources</classifier>
+        </dependency>
+
+        <dependency>
+            <groupId>one.modality</groupId>
+            <artifactId>modality-event-backoffice-activity-medias-plugin</artifactId>
+            <version>1.0.0-SNAPSHOT</version>
+            <classifier>sources</classifier>
+        </dependency>
+
+        <dependency>
+            <groupId>one.modality</groupId>
+            <artifactId>modality-event-backoffice-activity-pricing-plugin</artifactId>
+            <version>1.0.0-SNAPSHOT</version>
+            <classifier>sources</classifier>
+        </dependency>
+
+        <dependency>
+            <groupId>one.modality</groupId>
+            <artifactId>modality-event-backoffice-activity-program-plugin</artifactId>
             <version>1.0.0-SNAPSHOT</version>
             <classifier>sources</classifier>
         </dependency>
@@ -537,6 +607,13 @@
         <dependency>
             <groupId>one.modality</groupId>
             <artifactId>modality-event-client-event-fx</artifactId>
+            <version>1.0.0-SNAPSHOT</version>
+            <classifier>sources</classifier>
+        </dependency>
+
+        <dependency>
+            <groupId>one.modality</groupId>
+            <artifactId>modality-event-client-recurringevents</artifactId>
             <version>1.0.0-SNAPSHOT</version>
             <classifier>sources</classifier>
         </dependency>
@@ -673,6 +750,13 @@
         <dependency>
             <groupId>dev.webfx</groupId>
             <artifactId>webfx-extras-layer</artifactId>
+            <version>0.1.0-SNAPSHOT</version>
+            <classifier>sources</classifier>
+        </dependency>
+
+        <dependency>
+            <groupId>dev.webfx</groupId>
+            <artifactId>webfx-extras-media-metadata</artifactId>
             <version>0.1.0-SNAPSHOT</version>
             <classifier>sources</classifier>
         </dependency>
@@ -981,6 +1065,20 @@
         <dependency>
             <groupId>dev.webfx</groupId>
             <artifactId>webfx-kit-javafxgraphics-registry-gwt-j2cl</artifactId>
+            <version>0.1.0-SNAPSHOT</version>
+            <classifier>sources</classifier>
+        </dependency>
+
+        <dependency>
+            <groupId>dev.webfx</groupId>
+            <artifactId>webfx-kit-javafxmedia-peers-gwt-j2cl</artifactId>
+            <version>0.1.0-SNAPSHOT</version>
+            <classifier>sources</classifier>
+        </dependency>
+
+        <dependency>
+            <groupId>dev.webfx</groupId>
+            <artifactId>webfx-kit-javafxmedia-registry-gwt-j2cl</artifactId>
             <version>0.1.0-SNAPSHOT</version>
             <classifier>sources</classifier>
         </dependency>
@@ -1386,6 +1484,20 @@
 
         <dependency>
             <groupId>dev.webfx</groupId>
+            <artifactId>webfx-stack-authn-login-ui-gateway-magiclink-plugin</artifactId>
+            <version>0.1.0-SNAPSHOT</version>
+            <classifier>sources</classifier>
+        </dependency>
+
+        <dependency>
+            <groupId>dev.webfx</groupId>
+            <artifactId>webfx-stack-authn-login-ui-gateway-password-plugin</artifactId>
+            <version>0.1.0-SNAPSHOT</version>
+            <classifier>sources</classifier>
+        </dependency>
+
+        <dependency>
+            <groupId>dev.webfx</groupId>
             <artifactId>webfx-stack-authn-login-ui-portal</artifactId>
             <version>0.1.0-SNAPSHOT</version>
             <classifier>sources</classifier>
@@ -1694,7 +1806,21 @@
 
         <dependency>
             <groupId>dev.webfx</groupId>
+            <artifactId>webfx-stack-orm-entity-binding</artifactId>
+            <version>0.1.0-SNAPSHOT</version>
+            <classifier>sources</classifier>
+        </dependency>
+
+        <dependency>
+            <groupId>dev.webfx</groupId>
             <artifactId>webfx-stack-orm-entity-controls</artifactId>
+            <version>0.1.0-SNAPSHOT</version>
+            <classifier>sources</classifier>
+        </dependency>
+
+        <dependency>
+            <groupId>dev.webfx</groupId>
+            <artifactId>webfx-stack-orm-entity-messaging</artifactId>
             <version>0.1.0-SNAPSHOT</version>
             <classifier>sources</classifier>
         </dependency>
@@ -1821,6 +1947,13 @@
         <dependency>
             <groupId>dev.webfx</groupId>
             <artifactId>webfx-stack-ui-action</artifactId>
+            <version>0.1.0-SNAPSHOT</version>
+            <classifier>sources</classifier>
+        </dependency>
+
+        <dependency>
+            <groupId>dev.webfx</groupId>
+            <artifactId>webfx-stack-ui-action-tuner</artifactId>
             <version>0.1.0-SNAPSHOT</version>
             <classifier>sources</classifier>
         </dependency>

@@ -3,9 +3,8 @@
 module modality.crm.server.authn.gateway.magiclink.plugin {
 
     // Direct dependencies modules
-    requires modality.base.server.mail;
-    requires modality.base.shared.context;
     requires modality.base.shared.entities;
+    requires modality.crm.server.authn.gateway.shared;
     requires modality.crm.shared.authn;
     requires webfx.platform.async;
     requires webfx.platform.console;
@@ -13,7 +12,6 @@ module modality.crm.server.authn.gateway.magiclink.plugin {
     requires webfx.stack.authn;
     requires webfx.stack.authn.logout.server;
     requires webfx.stack.authn.server.gateway;
-    requires webfx.stack.mail;
     requires webfx.stack.orm.datasourcemodel.service;
     requires webfx.stack.orm.domainmodel;
     requires webfx.stack.orm.entity;
@@ -24,6 +22,6 @@ module modality.crm.server.authn.gateway.magiclink.plugin {
     exports one.modality.crm.server.authn.gateway.magiclink;
 
     // Provided services
-    provides dev.webfx.stack.authn.server.gateway.spi.ServerAuthenticationGatewayProvider with one.modality.crm.server.authn.gateway.magiclink.ModalityMagicLinkAuthenticationGatewayProvider;
+    provides dev.webfx.stack.authn.server.gateway.spi.ServerAuthenticationGateway with one.modality.crm.server.authn.gateway.magiclink.ModalityMagicLinkAuthenticationGateway;
 
 }

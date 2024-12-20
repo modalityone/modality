@@ -9,7 +9,7 @@ import one.modality.crm.shared.services.authn.fx.FXUserPerson;
 /**
  * @author Bruno Salmon
  */
-public class CheckoutAccountActivity extends ViewDomainActivityBase {
+final class CheckoutAccountActivity extends ViewDomainActivityBase {
 
     private Person lastUserPerson;
 

@@ -4,8 +4,8 @@
     <description>The Kitchen activity that displays the meals figures for the selected month.</description>
 
     <providers>
-        <provider interface="dev.webfx.stack.routing.uirouter.UiRoute">one.modality.catering.backoffice.activities.kitchen.KitchenUiRoute</provider>
-        <provider interface="dev.webfx.stack.routing.uirouter.operations.RouteRequestEmitter">one.modality.catering.backoffice.activities.kitchen.RouteToKitchenRequestEmitter</provider>
+        <provider interface="dev.webfx.stack.routing.uirouter.UiRoute">one.modality.catering.backoffice.activities.kitchen.KitchenRouting$KitchenUiRoute</provider>
+        <provider interface="dev.webfx.stack.routing.uirouter.operations.RouteRequestEmitter">one.modality.catering.backoffice.activities.kitchen.KitchenRouting$RouteToKitchenRequestEmitter</provider>
     </providers>
 
     <exported-packages>

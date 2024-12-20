@@ -9,6 +9,8 @@ module modality.ecommerce.backoffice.activity.bookings.plugin {
     requires javafx.base;
     requires javafx.controls;
     requires javafx.graphics;
+    requires modality.base.backoffice.activity.home.plugin;
+    requires modality.base.backoffice.mainframe.fx;
     requires modality.base.backoffice.masterslave;
     requires modality.base.backoffice.operations.generic;
     requires modality.base.client.entities;
@@ -26,6 +28,7 @@ module modality.ecommerce.backoffice.activity.bookings.plugin {
     requires webfx.extras.visual.grid;
     requires webfx.platform.windowhistory;
     requires webfx.stack.cache.client;
+    requires webfx.stack.i18n;
     requires webfx.stack.orm.domainmodel.activity;
     requires webfx.stack.orm.dql;
     requires webfx.stack.orm.expression;
@@ -40,11 +43,9 @@ module modality.ecommerce.backoffice.activity.bookings.plugin {
 
     // Exported packages
     exports one.modality.ecommerce.backoffice.activities.bookings;
-    exports one.modality.ecommerce.backoffice.activities.bookings.routing;
-    exports one.modality.ecommerce.backoffice.operations.routes.bookings;
 
     // Provided services
-    provides dev.webfx.stack.routing.uirouter.UiRoute with one.modality.ecommerce.backoffice.activities.bookings.BookingsUiRoute;
-    provides dev.webfx.stack.routing.uirouter.operations.RouteRequestEmitter with one.modality.ecommerce.backoffice.activities.bookings.RouteToBookingsRequestEmitter;
+    provides dev.webfx.stack.routing.uirouter.UiRoute with one.modality.ecommerce.backoffice.activities.bookings.BookingsRouting.BookingsUiRoute;
+    provides dev.webfx.stack.routing.uirouter.operations.RouteRequestEmitter with one.modality.ecommerce.backoffice.activities.bookings.BookingsRouting.RouteToBookingsRequestEmitter;
 
 }

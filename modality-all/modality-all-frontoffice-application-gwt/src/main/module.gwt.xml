@@ -68,12 +68,18 @@
     <source path="javafx/scene/text"/>
     <source path="javafx/scene/transform"/>
     <source path="javafx/stage"/>
+    <!--===========================< webfx-kit-javafxmedia-emul >===========================-->
+    <source path="dev/webfx/kit/mapper/peers/javafxmedia"/>
+    <source path="dev/webfx/kit/mapper/peers/javafxmedia/spi"/>
+    <source path="javafx/scene/media"/>
     <!--============================< webfx-kit-javafxweb-emul >============================-->
     <source path="javafx/scene/web"/>
     <!--================================< elemental2-core >=================================-->
     <inherits name="elemental2.core.Core"/>
     <!--=================================< elemental2-dom >=================================-->
     <inherits name="elemental2.dom.Dom"/>
+    <!--================================< elemental2-media >================================-->
+    <inherits name="elemental2.media.Media"/>
     <!--===============================< elemental2-promise >===============================-->
     <inherits name="elemental2.promise.Promise"/>
     <!--=================================< elemental2-svg >=================================-->
@@ -92,14 +98,28 @@
     <source path="one/modality/base/client/activity/themes"/>
     <!--========================< modality-base-client-application >========================-->
     <source path="one/modality/base/client/application"/>
-    <resource path="dev/webfx/kit/css/fonts/montserrat"/>
-    <public path="" includes="dev/webfx/kit/css/fonts/montserrat/"/>
     <resource path="images/buddhas"/>
     <public path="" includes="images/buddhas/"/>
     <resource path="one/modality/base/client/images"/>
     <public path="" includes="one/modality/base/client/images/"/>
+    <!--=========================< modality-base-client-bootstrap >=========================-->
+    <source path="one/modality/base/client/bootstrap"/>
+    <!--===========================< modality-base-client-brand >===========================-->
+    <source path="one/modality/base/client/brand"/>
+    <resource path="one/modality/base/client/brand"/>
+    <public path="" includes="one/modality/base/client/brand/"/>
     <!--===========================< modality-base-client-conf >============================-->
     <source path="one/modality/base/client/conf"/>
+    <!--============================< modality-base-client-css >============================-->
+    <source path="one/modality/base/client/css"/>
+    <resource path="dev/webfx/kit/css/fonts/montserrat"/>
+    <public path="" includes="dev/webfx/kit/css/fonts/montserrat/"/>
+    <resource path="dev/webfx/kit/css/fonts/poppins"/>
+    <public path="" includes="dev/webfx/kit/css/fonts/poppins/"/>
+    <resource path="dev/webfx/kit/css/fonts/roboto"/>
+    <public path="" includes="dev/webfx/kit/css/fonts/roboto/"/>
+    <resource path="dev/webfx/kit/css/fonts/vollkornsc"/>
+    <public path="" includes="dev/webfx/kit/css/fonts/vollkornsc/"/>
     <!--=========================< modality-base-client-entities >==========================-->
     <source path="one/modality/base/client/entities/util"/>
     <source path="one/modality/base/client/entities/util/filters"/>
@@ -154,6 +174,8 @@
     <public path="" includes="images/svg/mono/"/>
     <!--=======================< modality-base-client-mainframe-fx >========================-->
     <source path="one/modality/base/client/mainframe/fx"/>
+    <!--=========================< modality-base-client-messaging >=========================-->
+    <source path="one/modality/base/client/messaging"/>
     <!--==============< modality-base-client-operationactionsloading-plugin >===============-->
     <source path="one/modality/base/client/operationactionsloading"/>
     <!--=====================< modality-base-client-presentationmodel >=====================-->
@@ -163,25 +185,12 @@
     <!--===========================< modality-base-client-tile >============================-->
     <source path="one/modality/base/client/tile"/>
     <!--===========================< modality-base-client-util >============================-->
+    <source path="one/modality/base/client/util/converters"/>
+    <source path="one/modality/base/client/util/dialog"/>
     <source path="one/modality/base/client/util/functions"/>
     <source path="one/modality/base/client/util/log"/>
+    <source path="one/modality/base/client/util/masterslave"/>
     <source path="one/modality/base/client/util/routing"/>
-    <!--========================< modality-base-client-validation >=========================-->
-    <source path="one/modality/base/client/validation"/>
-    <!--===============< modality-base-frontoffice-activity-account-plugin >================-->
-    <source path="one/modality/base/frontoffice/activities/account"/>
-    <source path="one/modality/base/frontoffice/activities/account/friendsfamily"/>
-    <source path="one/modality/base/frontoffice/activities/account/friendsfamily/edit"/>
-    <source path="one/modality/base/frontoffice/activities/account/personalinfo"/>
-    <source path="one/modality/base/frontoffice/activities/account/routing"/>
-    <source path="one/modality/base/frontoffice/activities/account/settings"/>
-    <source path="one/modality/base/frontoffice/operations/routes/account"/>
-    <resource path="one/modality/base/frontoffice/activities/account/images"/>
-    <public path="" includes="one/modality/base/frontoffice/activities/account/images/"/>
-    <!--================< modality-base-frontoffice-activity-alerts-plugin >================-->
-    <source path="one/modality/base/frontoffice/activities/alerts"/>
-    <source path="one/modality/base/frontoffice/activities/alerts/routing"/>
-    <source path="one/modality/base/frontoffice/operations/routes/alerts"/>
     <!--=====================< modality-base-frontoffice-application >======================-->
     <source path="one/modality/base/frontoffice/application"/>
     <!--==================< modality-base-frontoffice-mainframe-activity >==================-->
@@ -189,10 +198,12 @@
     <!--=====================< modality-base-frontoffice-mainframe-fx >=====================-->
     <source path="one/modality/base/frontoffice/mainframe/fx"/>
     <!--=======================< modality-base-frontoffice-utility >========================-->
-    <source path="one/modality/base/frontoffice/entities"/>
-    <source path="one/modality/base/frontoffice/fx"/>
-    <source path="one/modality/base/frontoffice/states"/>
-    <source path="one/modality/base/frontoffice/utility"/>
+    <source path="one/modality/base/frontoffice/utility/browser"/>
+    <source path="one/modality/base/frontoffice/utility/page"/>
+    <source path="one/modality/base/frontoffice/utility/tyler"/>
+    <source path="one/modality/base/frontoffice/utility/tyler/entities"/>
+    <source path="one/modality/base/frontoffice/utility/tyler/fx"/>
+    <source path="one/modality/base/frontoffice/utility/tyler/states"/>
     <!--==========================< modality-base-shared-context >==========================-->
     <source path="one/modality/base/shared/context"/>
     <source path="one/modality/base/shared/context/serial"/>
@@ -215,11 +226,13 @@
     <source path="one/modality/crm/backoffice/organization/fx/impl"/>
     <!--==========================< modality-crm-client-authn-fx >==========================-->
     <source path="one/modality/crm/shared/services/authn/fx"/>
-    <!--======================< modality-crm-client-personaldetails >=======================-->
-    <source path="one/modality/crm/client/controls/personaldetails"/>
+    <!--============================< modality-crm-client-i18n >============================-->
+    <source path="one/modality/crm/client/i18n"/>
     <!--===========================< modality-crm-shared-authn >============================-->
     <source path="one/modality/crm/shared/services/authn"/>
     <source path="one/modality/crm/shared/services/authn/serial"/>
+    <!--=========================< modality-ecommerce-client-i18n >=========================-->
+    <source path="one/modality/ecommerce/client/i18n"/>
     <!--======================< modality-ecommerce-document-service >=======================-->
     <source path="one/modality/ecommerce/document/service"/>
     <source path="one/modality/ecommerce/document/service/events"/>
@@ -256,20 +269,29 @@
     <source path="one/modality/ecommerce/payment/spi/impl/remote"/>
     <!--=========================< modality-event-client-event-fx >=========================-->
     <source path="one/modality/event/client/event/fx"/>
+    <!--========================< modality-event-client-mediaview >=========================-->
+    <source path="one/modality/event/client/mediaview"/>
+    <!--=====================< modality-event-client-recurringevents >======================-->
+    <source path="one/modality/event/client/recurringevents"/>
+    <!--===========< modality-event-frontoffice-activity-audiorecordings-plugin >===========-->
+    <source path="one/modality/event/frontoffice/activities/audiorecordings"/>
     <!--===============< modality-event-frontoffice-activity-booking-plugin >===============-->
     <source path="one/modality/event/frontoffice/activities/booking"/>
-    <source path="one/modality/event/frontoffice/activities/booking/browser"/>
     <source path="one/modality/event/frontoffice/activities/booking/fx"/>
     <source path="one/modality/event/frontoffice/activities/booking/map"/>
     <source path="one/modality/event/frontoffice/activities/booking/process"/>
     <source path="one/modality/event/frontoffice/activities/booking/process/account"/>
     <source path="one/modality/event/frontoffice/activities/booking/process/event"/>
     <source path="one/modality/event/frontoffice/activities/booking/process/event/slides"/>
-    <source path="one/modality/event/frontoffice/activities/booking/routing"/>
     <source path="one/modality/event/frontoffice/activities/booking/views"/>
-    <source path="one/modality/event/frontoffice/operations/routes/booking"/>
     <resource path="one/modality/event/frontoffice/activities/booking/map"/>
     <public path="" includes="one/modality/event/frontoffice/activities/booking/map/"/>
+    <!--===============< modality-event-frontoffice-activity-library-plugin >===============-->
+    <source path="one/modality/event/frontoffice/activities/library"/>
+    <!--===============< modality-event-frontoffice-activity-videos-plugin >================-->
+    <source path="one/modality/event/frontoffice/activities/videos"/>
+    <!--=======================< modality-event-frontoffice-medias >========================-->
+    <source path="one/modality/event/frontoffice/medias"/>
     <!--===============================< webfx-extras-cell >================================-->
     <source path="dev/webfx/extras/cell/collator"/>
     <source path="dev/webfx/extras/cell/renderer"/>
@@ -278,9 +300,30 @@
     <source path="dev/webfx/extras/imagestore"/>
     <!--===============================< webfx-extras-label >===============================-->
     <source path="dev/webfx/extras/label"/>
+    <!--==========================< webfx-extras-media-metadata >===========================-->
+    <source path="dev/webfx/extras/media/metadata"/>
     <!--===============================< webfx-extras-panes >===============================-->
     <source path="dev/webfx/extras/panes"/>
     <source path="dev/webfx/extras/panes/transitions"/>
+    <!--==============================< webfx-extras-player >===============================-->
+    <source path="dev/webfx/extras/player"/>
+    <source path="dev/webfx/extras/player/impl"/>
+    <source path="dev/webfx/extras/player/multi"/>
+    <!--=====================< webfx-extras-player-audio-javafxmedia >======================-->
+    <source path="dev/webfx/extras/player/audio/javafxmedia"/>
+    <!--=========================< webfx-extras-player-multi-all >==========================-->
+    <source path="dev/webfx/extras/player/multi/all"/>
+    <!--===========================< webfx-extras-player-video >============================-->
+    <source path="dev/webfx/extras/player/video"/>
+    <source path="dev/webfx/extras/player/video/impl"/>
+    <!--=========================< webfx-extras-player-video-web >==========================-->
+    <source path="dev/webfx/extras/player/video/web"/>
+    <!--======================< webfx-extras-player-video-web-castr >=======================-->
+    <source path="dev/webfx/extras/player/video/web/castr"/>
+    <!--======================< webfx-extras-player-video-web-wistia >======================-->
+    <source path="dev/webfx/extras/player/video/web/wistia"/>
+    <!--=====================< webfx-extras-player-video-web-youtube >======================-->
+    <source path="dev/webfx/extras/player/video/web/youtube"/>
     <!--=========================< webfx-extras-styles-bootstrap >==========================-->
     <source path="dev/webfx/extras/styles/bootstrap"/>
     <!--=======================< webfx-extras-styles-materialdesign >=======================-->
@@ -313,6 +356,8 @@
     <source path="dev/webfx/extras/util/control"/>
     <!--============================< webfx-extras-util-layout >============================-->
     <source path="dev/webfx/extras/util/layout"/>
+    <!--=========================< webfx-extras-util-masterslave >==========================-->
+    <source path="dev/webfx/extras/util/masterslave"/>
     <!--============================< webfx-extras-util-paint >=============================-->
     <source path="dev/webfx/extras/util/paint"/>
     <!--============================< webfx-extras-util-scene >=============================-->
@@ -366,6 +411,10 @@
     <source path="dev/webfx/kit/mapper/peers/javafxgraphics/gwtj2cl/util"/>
     <!--===================< webfx-kit-javafxgraphics-registry-gwt-j2cl >===================-->
     <source path="dev/webfx/kit/registry/javafxgraphics"/>
+    <!--======================< webfx-kit-javafxmedia-peers-gwt-j2cl >======================-->
+    <source path="dev/webfx/kit/mapper/peers/javafxmedia/spi/gwtj2cl"/>
+    <!--====================< webfx-kit-javafxmedia-registry-gwt-j2cl >=====================-->
+    <source path="dev/webfx/kit/registry/javafxmedia"/>
     <!--=========================< webfx-kit-javafxweb-enginepeer >=========================-->
     <source path="dev/webfx/kit/mapper/peers/javafxweb/engine"/>
     <!--=========================< webfx-kit-javafxweb-peers-base >=========================-->
@@ -539,6 +588,10 @@
     <source path="dev/webfx/stack/authn/login/ui/spi"/>
     <!--=======================< webfx-stack-authn-login-ui-gateway >=======================-->
     <source path="dev/webfx/stack/authn/login/ui/spi/impl/gateway"/>
+    <!--==============< webfx-stack-authn-login-ui-gateway-magiclink-plugin >===============-->
+    <source path="dev/webfx/stack/authn/login/ui/spi/impl/gateway/magiclink"/>
+    <!--===============< webfx-stack-authn-login-ui-gateway-password-plugin >===============-->
+    <source path="dev/webfx/stack/authn/login/ui/spi/impl/gateway/password"/>
     <!--=======================< webfx-stack-authn-login-ui-portal >========================-->
     <source path="dev/webfx/stack/authn/login/ui/spi/impl/portal"/>
     <resource path="dev/webfx/kit/css/fonts/password"/>
@@ -686,9 +739,14 @@
     <source path="dev/webfx/stack/orm/entity/query_result_to_entities"/>
     <source path="dev/webfx/stack/orm/entity/result"/>
     <source path="dev/webfx/stack/orm/entity/result/impl"/>
+    <!--=========================< webfx-stack-orm-entity-binding >=========================-->
+    <source path="dev/webfx/stack/orm/entity/binding"/>
     <!--========================< webfx-stack-orm-entity-controls >=========================-->
     <source path="dev/webfx/stack/orm/entity/controls/entity/selector"/>
     <source path="dev/webfx/stack/orm/entity/controls/entity/sheet"/>
+    <!--========================< webfx-stack-orm-entity-messaging >========================-->
+    <source path="dev/webfx/stack/orm/entity/messaging"/>
+    <source path="dev/webfx/stack/orm/entity/messaging/serial"/>
     <!--===========================< webfx-stack-orm-expression >===========================-->
     <source path="dev/webfx/stack/orm/expression"/>
     <source path="dev/webfx/stack/orm/expression/builder"/>
@@ -769,6 +827,9 @@
     <!--=============================< webfx-stack-ui-action >==============================-->
     <source path="dev/webfx/stack/ui/action"/>
     <source path="dev/webfx/stack/ui/action/impl"/>
+    <!--==========================< webfx-stack-ui-action-tuner >===========================-->
+    <source path="dev/webfx/stack/ui/action/tuner"/>
+    <source path="dev/webfx/stack/ui/action/tuner/logout"/>
     <!--============================< webfx-stack-ui-controls >=============================-->
     <source path="dev/webfx/stack/ui/controls"/>
     <source path="dev/webfx/stack/ui/controls/alert"/>
@@ -794,6 +855,7 @@
     <!--========================< webfx-stack-ui-operation-action >=========================-->
     <source path="dev/webfx/stack/ui/operation/action"/>
     <!--===========================< webfx-stack-ui-validation >============================-->
+    <source path="dev/webfx/stack/ui/validation"/>
     <source path="dev/webfx/stack/ui/validation/controlsfx/control/decoration"/>
     <source path="dev/webfx/stack/ui/validation/controlsfx/impl"/>
     <source path="dev/webfx/stack/ui/validation/controlsfx/impl/skin"/>

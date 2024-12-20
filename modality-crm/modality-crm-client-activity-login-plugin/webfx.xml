@@ -13,7 +13,10 @@
     </dependencies>
 
     <providers>
-        <provider interface="dev.webfx.stack.routing.uirouter.UiRoute">one.modality.crm.client.activities.login.LoginUiRoute</provider>
+        <provider interface="dev.webfx.stack.routing.uirouter.UiRoute">one.modality.crm.client.activities.login.LoginRouting$LoginUiRoute</provider>
+        <provider interface="dev.webfx.stack.routing.uirouter.operations.RouteRequestEmitter">one.modality.crm.client.activities.login.LoginRouting$RouteToLoginRequestEmitter</provider>
     </providers>
+
+    <i18n javaKeysClass="one.modality.crm.client.activities.login.LoginI18nKeys"/>
 
 </project>

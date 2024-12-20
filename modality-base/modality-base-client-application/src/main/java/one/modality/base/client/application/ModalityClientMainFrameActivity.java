@@ -5,8 +5,11 @@ import dev.webfx.extras.util.layout.LayoutUtil;
 import dev.webfx.kit.util.properties.FXProperties;
 import dev.webfx.platform.util.collection.Collections;
 import dev.webfx.stack.authn.logout.client.operation.LogoutRequest;
+import dev.webfx.stack.i18n.I18n;
 import dev.webfx.stack.orm.domainmodel.activity.viewdomain.impl.ViewDomainActivityBase;
+import dev.webfx.stack.session.Session;
 import dev.webfx.stack.session.state.client.fx.FXLoggedIn;
+import dev.webfx.stack.session.state.client.fx.FXSession;
 import dev.webfx.stack.ui.action.Action;
 import dev.webfx.stack.ui.action.ActionBinder;
 import dev.webfx.stack.ui.operation.action.OperationActionFactoryMixin;
@@ -29,6 +32,26 @@ import one.modality.base.client.profile.fx.FXProfile;
 public class ModalityClientMainFrameActivity extends ViewDomainActivityBase
         implements ModalityButtonFactoryMixin
         , OperationActionFactoryMixin {
+
+    { // I18n language storage management (using user session which is based on LocalStorage for now)
+        // TODO Move this feature into WebFX Stack
+        // Restoring the user language stored from the session
+        FXProperties.runNowAndOnPropertyChange(session -> {
+            if (session != null) { // The session may be null first time the user launches the application
+                Object lang = session.get("lang");
+                if (lang != null)
+                    I18n.setLanguage(lang);
+            }
+        }, FXSession.sessionProperty());
+        // Saving the user language into the session
+        FXProperties.runOnPropertyChange(lang -> {
+            Session session = FXSession.getSession();
+            if (session != null) {
+                session.put("lang", lang);
+                session.store();
+            }
+        }, I18n.languageProperty());
+    }
 
     @Override
     public Node buildUi() {
@@ -60,11 +83,11 @@ public class ModalityClientMainFrameActivity extends ViewDomainActivityBase
                 double x = 5, y = 3, w, h = height - 6;
                 layoutInArea(homeButton, x, y, w = homeButton.prefWidth(h), h, 0, HPos.LEFT, VPos.CENTER);
                 if (backButton.isManaged())
-                    layoutInArea(backButton, x += w + 8, y, w = backButton.prefWidth(h), h, 0, HPos.LEFT, VPos.CENTER);
+                    layoutInArea(backButton, x += w + 5, y, w = backButton.prefWidth(h), h, 0, HPos.LEFT, VPos.CENTER);
                 if (forwardButton.isManaged())
                     layoutInArea(forwardButton, x += w + 3, y, w = forwardButton.prefWidth(h), h, 0, HPos.LEFT, VPos.CENTER);
                 if (brandNode != null)
-                    layoutInArea(brandNode, x += w + 8, y, w = brandNode.prefWidth(h), h, 0, Insets.EMPTY, false, false, HPos.LEFT, VPos.CENTER);
+                    layoutInArea(brandNode, x += w + 12, y, w = brandNode.prefWidth(h), h, 0, Insets.EMPTY, false, false, HPos.LEFT, VPos.CENTER);
                 layoutInArea(headerCenterItem, x += w + 5, y, w = Math.max(width - 2 * x, headerCenterItem.prefWidth(h)), h, 0, Insets.EMPTY, false, false, HPos.CENTER, VPos.CENTER);
                 Node profileButton = FXProfile.getProfileButton();
                 if (profileButton != null && profileButton.isManaged())
@@ -115,6 +138,7 @@ public class ModalityClientMainFrameActivity extends ViewDomainActivityBase
     public Button newButton() {
         Button button = ModalityButtonFactoryMixin.super.newButton();
         button.setPadding(new Insets(5));
+        button.getStyleClass().add("main-frame-header-button");
         return button;
     }
 

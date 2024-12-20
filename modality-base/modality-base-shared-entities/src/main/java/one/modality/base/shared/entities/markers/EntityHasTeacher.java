@@ -9,19 +9,21 @@ import one.modality.base.shared.entities.Teacher;
  */
 public interface EntityHasTeacher extends Entity, HasTeacher {
 
+    String teacher = "teacher";
+
     @Override
-    default void setTeacher(Object teacher) {
-        setForeignField("teacher", teacher);
+    default void setTeacher(Object value) {
+        setForeignField(teacher, value);
     }
 
     @Override
     default EntityId getTeacherId() {
-        return getForeignEntityId("teacher");
+        return getForeignEntityId(teacher);
     }
 
     @Override
     default Teacher getTeacher() {
-        return getForeignEntity("teacher");
+        return getForeignEntity(teacher);
     }
 
 }

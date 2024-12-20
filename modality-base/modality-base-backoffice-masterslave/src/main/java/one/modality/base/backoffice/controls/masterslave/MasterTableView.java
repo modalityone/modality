@@ -23,7 +23,8 @@ public final class MasterTableView implements UiBuilder {
         if (pm instanceof HasLimitProperty) {
             masterLimitCheckBox = mixin.newCheckBox("LimitTo100");
             masterLimitCheckBox.setSelected(true);
-            FXProperties.runNowAndOnPropertiesChange(() -> ((HasLimitProperty) pm).limitProperty().setValue(masterLimitCheckBox.isSelected() ? 30 : -1), masterLimitCheckBox.selectedProperty());
+            FXProperties.runNowAndOnPropertyChange(selected ->
+                ((HasLimitProperty) pm).limitProperty().setValue(selected ? 30 : -1), masterLimitCheckBox.selectedProperty());
         }
     }
 

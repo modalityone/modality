@@ -27,6 +27,8 @@
         <module>modality-ecommerce-backoffice-operations-documentline</module>
         <module>modality-ecommerce-backoffice-operations-moneyflow</module>
         <module>modality-ecommerce-backoffice-operations-moneytransfer</module>
+        <module>modality-ecommerce-client-i18n</module>
+        <module>modality-ecommerce-client-min-plugin</module>
         <module>modality-ecommerce-document-service</module>
         <module>modality-ecommerce-document-service-buscall</module>
         <module>modality-ecommerce-document-service-remote</module>

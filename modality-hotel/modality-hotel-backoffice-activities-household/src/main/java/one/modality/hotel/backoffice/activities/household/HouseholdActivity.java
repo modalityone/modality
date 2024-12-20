@@ -2,9 +2,9 @@ package one.modality.hotel.backoffice.activities.household;
 
 import dev.webfx.stack.ui.operation.action.OperationActionFactoryMixin;
 import javafx.scene.Node;
+import one.modality.base.backoffice.mainframe.fx.FXEventSelector;
 import one.modality.base.client.activity.organizationdependent.OrganizationDependentViewDomainActivity;
 import one.modality.base.client.gantt.fx.visibility.FXGanttVisibility;
-import one.modality.base.client.gantt.fx.visibility.GanttVisibility;
 import one.modality.hotel.backoffice.accommodation.AccommodationBorderPane;
 import one.modality.hotel.backoffice.accommodation.AccommodationPresentationModel;
 import one.modality.hotel.backoffice.accommodation.TodayAccommodationStatus;
@@ -28,12 +28,14 @@ final class HouseholdActivity extends OrganizationDependentViewDomainActivity im
     @Override
     public void onResume() {
         super.onResume();
-        FXGanttVisibility.setGanttVisibility(GanttVisibility.EVENTS);
+        FXGanttVisibility.showEvents();
+        FXEventSelector.showEventSelector();
     }
 
     @Override
     public void onPause() {
-        FXGanttVisibility.setGanttVisibility(GanttVisibility.HIDDEN);
+        FXGanttVisibility.resetToDefault();
+        FXEventSelector.resetToDefault();
         super.onPause();
     }
 

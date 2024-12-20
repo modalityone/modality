@@ -4,19 +4,20 @@ import dev.webfx.extras.panes.TransitionPane;
 import dev.webfx.extras.panes.transitions.CircleTransition;
 import dev.webfx.extras.util.control.ControlUtil;
 import dev.webfx.extras.webtext.HtmlText;
+import dev.webfx.kit.util.properties.FXProperties;
 import dev.webfx.platform.uischeduler.UiScheduler;
-import javafx.beans.InvalidationListener;
-import javafx.beans.Observable;
 import javafx.beans.property.ReadOnlyBooleanProperty;
 import javafx.beans.property.ReadOnlyObjectProperty;
+import javafx.scene.control.Labeled;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.layout.Region;
 import javafx.scene.text.Font;
 import one.modality.base.client.mainframe.fx.FXMainFrameTransiting;
 import one.modality.base.shared.entities.Event;
+import one.modality.ecommerce.payment.CancelPaymentResult;
 import one.modality.ecommerce.payment.client.WebPaymentForm;
+import one.modality.event.client.recurringevents.RecurringEventSchedule;
 import one.modality.event.frontoffice.activities.booking.process.event.BookEventActivity;
-import one.modality.event.frontoffice.activities.booking.process.event.RecurringEventSchedule;
 
 public final class LettersSlideController {
 
@@ -72,14 +73,10 @@ public final class LettersSlideController {
     }
 
     private void displaySlideOnTransitionComplete(StepSlide slide, ReadOnlyBooleanProperty transitingProperty) {
-        transitingProperty.addListener(new InvalidationListener() {
-            @Override
-            public void invalidated(Observable observable) {
-                //Console.log("transition changed (assuming finished)");
-                transitingProperty.removeListener(this);
-                displaySlide(slide);
-            }
-        });
+        FXProperties.runOrUnregisterOnPropertyChange((thisListener, oldValue, newValue) -> {
+            thisListener.unregister();
+            displaySlide(slide);
+        }, transitingProperty);
     }
 
     private void displayLoadingSlide() {
@@ -108,17 +105,29 @@ public final class LettersSlideController {
         stepBBookEventSlide.displayPaymentSlide(webPaymentForm);
     }
 
-    public void displayCancellationSlide() {
-        stepBBookEventSlide.displayCancellationSlide();
-        bookEventActivity.onReachingEndSlide();
+    public void displayPendingPaymentSlide() {
+        stepBBookEventSlide.displayPendingPaymentSlide();
+    }
+
+    public void displayFailedPaymentSlide() {
+        stepBBookEventSlide.displayFailedPaymentSlide();
+    }
+
+    public void displayCancellationSlide(CancelPaymentResult cancelPaymentResult) {
+        stepBBookEventSlide.displayCancellationSlide(cancelPaymentResult);
+        //bookEventActivity.onReachingEndSlide(); // Commented as this resets FXEvent() and prevents button to work in cancellation slide
     }
 
     public RecurringEventSchedule getRecurringEventSchedule() {
         return stepBBookEventSlide.getRecurringEventSchedule();
     }
 
-    public HtmlText bindI18nEventExpression(HtmlText text, String eventExpression) {
-        return stepBBookEventSlide.bindI18nEventExpression(text, eventExpression);
+    public <T extends Labeled> T bindI18nEventExpression(T text, String eventExpression, Object... args) {
+        return stepBBookEventSlide.bindI18nEventExpression(text, eventExpression, args);
+    }
+
+    public HtmlText bindI18nEventExpression(HtmlText text, String eventExpression, Object... args) {
+        return stepBBookEventSlide.bindI18nEventExpression(text, eventExpression, args);
     }
 
 }

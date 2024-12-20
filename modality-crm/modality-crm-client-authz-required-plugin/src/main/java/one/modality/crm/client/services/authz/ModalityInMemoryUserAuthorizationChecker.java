@@ -17,6 +17,7 @@ import dev.webfx.stack.orm.entity.query_result_to_entities.QueryResultToEntities
 import dev.webfx.stack.routing.router.auth.authz.RoutingAuthorizationRuleParser;
 import dev.webfx.stack.session.state.LogoutUserId;
 import dev.webfx.stack.session.state.client.fx.FXAuthorizationsChanged;
+import dev.webfx.stack.session.state.client.fx.FXAuthorizationsReceived;
 import dev.webfx.stack.session.state.client.fx.FXUserId;
 import one.modality.base.client.conf.ModalityClientConfig;
 import one.modality.crm.shared.services.authn.fx.FXModalityUserPrincipal;
@@ -66,8 +67,11 @@ final class ModalityInMemoryUserAuthorizationChecker extends InMemoryUserAuthori
     }
 
     void onAuthorizationPush(Object pushObject) {
-        // May happen that it's the same input as last time, and there is no need to recompute everything and fire an event
+        // May happen that it's the same input as last time, and there is no need to recompute everything
         if (Objects.equals(pushObject, lastPushObject) && lastPublicOrGuestOperationsWithGrantRoute == publicOrGuestOperationsWithGrantRoute) {
+            // However, we need to fire the event, otherwise the requested page won't be displayed after second login from same user
+            if (!FXAuthorizationsReceived.isAuthorizationsReceived())
+                FXAuthorizationsChanged.fireAuthorizationsChanged();
             return;
         }
         lastPushObject = pushObject;

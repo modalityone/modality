@@ -74,17 +74,25 @@ public final class AddDocumentEvent extends AbstractDocumentEvent {
     }
 
     @Override
-    public Document getDocument() {
-        if (document == null && entityStore != null) {
-            document = entityStore.createEntity(Document.class, getDocumentPrimaryKey());
-            document.setEvent(entityStore.getEntity(Event.class, eventPrimaryKey));
-            if (personPrimaryKey != null) {
-                document.setPerson(entityStore.getOrCreateEntity(Person.class, personPrimaryKey));
-            }
-            document.setFirstName(firstName);
-            document.setLastName(lastName);
-            document.setEmail(email);
+    protected void createDocument() {
+        if (isForSubmit()) {
+            document = updateStore.insertEntity(Document.class, getDocumentPrimaryKey());
+            document.setFieldValue("activity", 12); // GP Class TODO: remove activity from DB
+        } else {
+            super.createDocument();
         }
-        return super.getDocument();
+    }
+
+    @Override
+    public void replayEventOnDocument() {
+        super.replayEventOnDocument();
+        document.setEvent(isForSubmit() ? getEventPrimaryKey() : entityStore.getOrCreateEntity(Event.class, getEventPrimaryKey()));
+        Object personPrimaryKey = getPersonPrimaryKey();
+        if (personPrimaryKey != null) {
+            document.setPerson(isForSubmit() ? personPrimaryKey : entityStore.getOrCreateEntity(Person.class, personPrimaryKey));
+        }
+        document.setFirstName(firstName);
+        document.setLastName(lastName);
+        document.setEmail(email);
     }
 }

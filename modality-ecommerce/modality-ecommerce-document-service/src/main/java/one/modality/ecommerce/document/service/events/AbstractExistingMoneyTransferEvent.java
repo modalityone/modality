@@ -25,16 +25,6 @@ public class AbstractExistingMoneyTransferEvent extends AbstractMoneyTransferEve
         successful = moneyTransfer.isSuccessful();
     }
 
-    public MoneyTransfer getMoneyTransfer() {
-        if (moneyTransfer == null && entityStore != null) {
-            moneyTransfer = super.getMoneyTransfer();
-            moneyTransfer.setAmount(getAmount());
-            moneyTransfer.setPending(isPending());
-            moneyTransfer.setSuccessful(isSuccessful());
-        }
-        return moneyTransfer;
-    }
-
     public int getAmount() {
         return amount;
     }
@@ -47,4 +37,11 @@ public class AbstractExistingMoneyTransferEvent extends AbstractMoneyTransferEve
         return successful;
     }
 
+    @Override
+    protected void replayEventOnMoneyTransfer() {
+        super.replayEventOnMoneyTransfer();
+        moneyTransfer.setAmount(getAmount());
+        moneyTransfer.setPending(isPending());
+        moneyTransfer.setSuccessful(isSuccessful());
+    }
 }

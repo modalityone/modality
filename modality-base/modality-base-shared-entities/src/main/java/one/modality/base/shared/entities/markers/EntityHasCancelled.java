@@ -7,14 +7,15 @@ import dev.webfx.stack.orm.entity.Entity;
  */
 public interface EntityHasCancelled extends Entity, HasCancelled {
 
+    String cancelled = "cancelled";
+
     @Override
-    default void setCancelled(Boolean cancelled) {
-        setFieldValue("cancelled", cancelled);
+    default void setCancelled(Boolean value) {
+        setFieldValue(cancelled, value);
     }
 
     @Override
     default Boolean isCancelled() {
-        return getBooleanFieldValue("cancelled");
+        return getBooleanFieldValue(cancelled);
     }
-
 }

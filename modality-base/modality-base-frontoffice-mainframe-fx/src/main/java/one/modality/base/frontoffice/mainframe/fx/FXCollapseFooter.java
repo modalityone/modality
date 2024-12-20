@@ -22,5 +22,8 @@ public final class FXCollapseFooter {
         collapseFooterProperty.set(collapseFooter);
     }
 
+    public static void resetToDefault() {
+        setCollapseFooter(false);
+    }
 
 }

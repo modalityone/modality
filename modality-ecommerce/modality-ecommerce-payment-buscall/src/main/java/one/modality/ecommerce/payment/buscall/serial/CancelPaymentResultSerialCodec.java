@@ -11,6 +11,7 @@ import one.modality.ecommerce.payment.CancelPaymentResult;
 public final class CancelPaymentResultSerialCodec extends SerialCodecBase<CancelPaymentResult> {
 
     private static final String CODEC_ID = "CancelPaymentResult";
+    private static final String BOOKING_CANCELLED_KEY = "bookingCancelled";
 
     public CancelPaymentResultSerialCodec() {
         super(CancelPaymentResult.class, CODEC_ID);
@@ -18,11 +19,13 @@ public final class CancelPaymentResultSerialCodec extends SerialCodecBase<Cancel
 
     @Override
     public void encode(CancelPaymentResult arg, AstObject serial) {
+        encodeBoolean(serial, BOOKING_CANCELLED_KEY, arg.isBookingCancelled());
     }
 
     @Override
     public CancelPaymentResult decode(ReadOnlyAstObject serial) {
         return new CancelPaymentResult(
+            decodeBoolean(serial, BOOKING_CANCELLED_KEY)
         );
     }
 }

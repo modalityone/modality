@@ -5,7 +5,8 @@ import javafx.scene.Node;
 import javafx.scene.layout.VBox;
 import javafx.scene.text.Text;
 
-public class AlertsActivity extends ViewDomainActivityBase {
+final class AlertsActivity extends ViewDomainActivityBase {
+
     @Override
     public Node buildUi() {
         VBox page = new VBox();

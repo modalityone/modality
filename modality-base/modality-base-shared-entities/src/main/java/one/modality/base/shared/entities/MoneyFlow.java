@@ -5,59 +5,64 @@ import one.modality.base.shared.entities.markers.EntityHasIcon;
 import one.modality.base.shared.entities.markers.EntityHasOrganization;
 
 public interface MoneyFlow extends
-        EntityHasIcon,
-        EntityHasOrganization {
+    EntityHasIcon,
+    EntityHasOrganization {
 
-    default void setFromMoneyAccount(Object fromMoneyAccount) {
-        setForeignField("fromMoneyAccount", fromMoneyAccount);
+    String fromMoneyAccount = "fromMoneyAccount";
+    String toMoneyAccount = "toMoneyAccount";
+    String method = "method";
+    String negativeAmount = "negativeAmount";
+    String positiveAmount = "positiveAmount";
+
+    default void setFromMoneyAccount(Object value) {
+        setForeignField(fromMoneyAccount, value);
     }
 
     default EntityId getFromMoneyAccountId() {
-        return getForeignEntityId("fromMoneyAccount");
+        return getForeignEntityId(fromMoneyAccount);
     }
 
     default MoneyAccount getFromMoneyAccount() {
-        return getForeignEntity("fromMoneyAccount");
+        return getForeignEntity(fromMoneyAccount);
     }
 
-    default void setToMoneyAccount(Object toMoneyAccount) {
-        setForeignField("toMoneyAccount", toMoneyAccount);
+    default void setToMoneyAccount(Object value) {
+        setForeignField(toMoneyAccount, value);
     }
 
     default EntityId getToMoneyAccountId() {
-        return getForeignEntityId("toMoneyAccount");
+        return getForeignEntityId(toMoneyAccount);
     }
 
     default MoneyAccount getToMoneyAccount() {
-        return getForeignEntity("toMoneyAccount");
+        return getForeignEntity(toMoneyAccount);
     }
 
-    default void setMethod(Object method) {
-        setForeignField("method", method);
+    default void setMethod(Object value) {
+        setForeignField(method, value);
     }
 
     default EntityId getMethodId() {
-        return getForeignEntityId("method");
+        return getForeignEntityId(method);
     }
 
     default Method getMethod() {
-        return getForeignEntity("method");
+        return getForeignEntity(method);
     }
 
-    default void setNegativeAccount(Boolean negativeAmount) {
-        setFieldValue("negativeAmount", negativeAmount);
+    default void setNegativeAccount(Boolean value) {
+        setFieldValue(negativeAmount, value);
     }
 
     default Boolean isNegativeAmount() {
-        return getBooleanFieldValue("negativeAmount");
+        return getBooleanFieldValue(negativeAmount);
     }
 
-    default void setPostiveAccount(Boolean positiveAmount) {
-        setFieldValue("positiveAmount", positiveAmount);
+    default void setPostiveAccount(Boolean value) {
+        setFieldValue(positiveAmount, value);
     }
 
     default Boolean isPositiveAmount() {
-        return getBooleanFieldValue("positiveAmount");
+        return getBooleanFieldValue(positiveAmount);
     }
-
 }

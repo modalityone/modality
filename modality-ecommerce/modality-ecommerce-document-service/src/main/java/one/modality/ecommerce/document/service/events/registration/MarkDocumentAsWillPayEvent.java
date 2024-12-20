@@ -1,28 +1,32 @@
 package one.modality.ecommerce.document.service.events.registration;
 
 import one.modality.base.shared.entities.Document;
-import one.modality.ecommerce.document.service.events.AbstractSetDocumentFieldsEvent;
+import one.modality.ecommerce.document.service.events.AbstractDocumentEvent;
 
 /**
  * @author Bruno Salmon
  */
-public class MarkDocumentAsWillPayEvent extends AbstractSetDocumentFieldsEvent {
+public class MarkDocumentAsWillPayEvent extends AbstractDocumentEvent {
 
-    private static final Object[] FIELD_IDS = { "willPay" };
+    private final boolean willPay;
 
-    public MarkDocumentAsWillPayEvent(Object documentPrimaryKey, boolean read) {
-        super(documentPrimaryKey, FIELD_IDS, read);
+    public MarkDocumentAsWillPayEvent(Object documentPrimaryKey, boolean willPay) {
+        super(documentPrimaryKey);
+        this.willPay = willPay;
     }
 
-    public MarkDocumentAsWillPayEvent(Document document, boolean read) {
-        super(document, FIELD_IDS, read);
+    public MarkDocumentAsWillPayEvent(Document document, boolean willPay) {
+        super(document);
+        this.willPay = willPay;
     }
 
     public boolean isWillPay() {
-        return isWillPay(getFieldValues());
+        return willPay;
     }
 
-    public static boolean isWillPay(Object[] fieldValues) {
-        return (boolean) fieldValues[0];
+    @Override
+    public void replayEventOnDocument() {
+        super.replayEventOnDocument();
+        document.setWillPay(willPay);
     }
 }

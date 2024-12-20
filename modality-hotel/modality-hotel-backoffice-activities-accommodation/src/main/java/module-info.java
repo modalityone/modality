@@ -9,9 +9,11 @@ module modality.hotel.backoffice.activities.accommodation {
     requires javafx.base;
     requires javafx.controls;
     requires javafx.graphics;
+    requires modality.base.backoffice.activity.home.plugin;
     requires modality.base.backoffice.mainframe.fx;
     requires modality.base.client.activity.organizationdependent;
     requires modality.base.client.gantt.fx;
+    requires modality.base.client.i18n;
     requires modality.base.client.mainframe.fx;
     requires modality.base.client.tile;
     requires modality.base.shared.domainmodel;
@@ -30,6 +32,8 @@ module modality.hotel.backoffice.activities.accommodation {
     requires webfx.platform.console;
     requires webfx.platform.util;
     requires webfx.platform.windowhistory;
+    requires webfx.stack.i18n;
+    requires webfx.stack.i18n.controls;
     requires webfx.stack.orm.datasourcemodel.service;
     requires webfx.stack.orm.domainmodel;
     requires webfx.stack.orm.domainmodel.activity;
@@ -49,11 +53,9 @@ module modality.hotel.backoffice.activities.accommodation {
 
     // Exported packages
     exports one.modality.hotel.backoffice.activities.accommodation;
-    exports one.modality.hotel.backoffice.activities.accommodation.routing;
-    exports one.modality.hotel.backoffice.operations.routes.accommodation;
 
     // Provided services
-    provides dev.webfx.stack.routing.uirouter.UiRoute with one.modality.hotel.backoffice.activities.accommodation.AccommodationUiRoute;
-    provides dev.webfx.stack.routing.uirouter.operations.RouteRequestEmitter with one.modality.hotel.backoffice.activities.accommodation.RouteToAccommodationRequestEmitter;
+    provides dev.webfx.stack.routing.uirouter.UiRoute with one.modality.hotel.backoffice.activities.accommodation.AccommodationRouting.AccommodationUiRoute;
+    provides dev.webfx.stack.routing.uirouter.operations.RouteRequestEmitter with one.modality.hotel.backoffice.activities.accommodation.AccommodationRouting.RouteToAccommodationRequestEmitter;
 
 }

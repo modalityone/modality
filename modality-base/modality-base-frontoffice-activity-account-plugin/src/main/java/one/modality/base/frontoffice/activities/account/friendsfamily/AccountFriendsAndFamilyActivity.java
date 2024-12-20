@@ -14,14 +14,15 @@ import javafx.scene.control.Separator;
 import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
 import one.modality.base.frontoffice.activities.account.AccountUtility;
-import one.modality.base.frontoffice.fx.FXAccount;
+import one.modality.base.frontoffice.utility.tyler.fx.FXAccount;
 import one.modality.base.frontoffice.operations.routes.account.RouteToEditAccountFriendsAndFamilyRequest;
-import one.modality.base.frontoffice.states.PersonPM;
-import one.modality.base.frontoffice.utility.GeneralUtility;
-import one.modality.base.frontoffice.utility.StyleUtility;
-import one.modality.base.frontoffice.utility.TextUtility;
+import one.modality.base.frontoffice.utility.tyler.states.PersonPM;
+import one.modality.base.frontoffice.utility.tyler.GeneralUtility;
+import one.modality.base.frontoffice.utility.tyler.StyleUtility;
+import one.modality.base.frontoffice.utility.tyler.TextUtility;
 
-public class AccountFriendsAndFamilyActivity extends ViewDomainActivityBase implements ButtonFactoryMixin, OperationActionFactoryMixin {
+final class AccountFriendsAndFamilyActivity extends ViewDomainActivityBase implements ButtonFactoryMixin, OperationActionFactoryMixin {
+
     VBox container = new VBox();
     Button deleteMember;
 
@@ -97,8 +98,4 @@ public class AccountFriendsAndFamilyActivity extends ViewDomainActivityBase impl
         return GeneralUtility.bindButtonWithPopup(deleteMember, ControlUtil.createVerticalScrollPane(container), new VBox(), 200);
     }
 
-    @Override
-    public void onResume() {
-        super.onResume();
-    }
 }

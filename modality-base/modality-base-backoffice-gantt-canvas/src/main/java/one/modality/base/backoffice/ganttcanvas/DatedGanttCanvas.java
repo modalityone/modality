@@ -112,10 +112,10 @@ public final class DatedGanttCanvas implements TimeWindow<LocalDate> {
                 // 2) when the gantt visibility changes (ex: with/without events) => impact layers visibility
                 FXGanttVisibility.ganttVisibilityProperty()
         );
-        FXProperties.runOnPropertiesChange(this::markCanvasAsDirty, FXGanttHighlight.ganttHighlightedDayProperty());
+        FXProperties.runOnPropertyChange(this::markCanvasAsDirty, FXGanttHighlight.ganttHighlightedDayProperty());
 
         // Updating i18n texts when necessary
-        FXProperties.runNowAndOnPropertiesChange(this::updateI18nTexts, I18n.dictionaryProperty());
+        FXProperties.runNowAndOnPropertyChange(this::updateI18nTexts, I18n.dictionaryProperty());
 
         FXGanttHighlight.addDayHighlight(daysLayer, globalCanvasDrawer);
 
@@ -252,10 +252,10 @@ public final class DatedGanttCanvas implements TimeWindow<LocalDate> {
         collapsePaneContainer.setManaged(isVisible);
 
         // Setting layers visibility
-        globalLayout.getLayers().forEach(l -> l.setVisible(FXGanttVisibility.showEvents()));
+        globalLayout.getLayers().forEach(l -> l.setVisible(FXGanttVisibility.isShowEvents()));
         yearsLayer.setVisible(isVisible && weekWidth <= 20);
-        monthsLayer.setVisible(FXGanttVisibility.showMonths() && monthWidth > 15);
-        if (!FXGanttVisibility.showDays()) {
+        monthsLayer.setVisible(FXGanttVisibility.isShowingMonths() && monthWidth > 15);
+        if (!FXGanttVisibility.isShowingDays()) {
             weeksLayer.setVisible(false);
             daysLayer.setVisible(false);
         } else {
@@ -295,7 +295,7 @@ public final class DatedGanttCanvas implements TimeWindow<LocalDate> {
             daysLayer.setChildFixedHeight(dayHeight);
             y += dayHeight + vSpacing;
         }
-        if (FXGanttVisibility.showEvents()) {
+        if (FXGanttVisibility.isShowEvents()) {
             ObservableList<TimeLayout<?, LocalDate>> layers = globalLayout.getLayers();
             for (int i = 4; i < layers.size(); i++) {
                 TimeLayout<?, LocalDate> layer = layers.get(i);

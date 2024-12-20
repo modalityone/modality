@@ -13,8 +13,10 @@
     </dependencies>
 
     <providers>
-        <provider interface="dev.webfx.stack.routing.uirouter.UiRoute">one.modality.event.backoffice.activities.recurringevents.BookingUiRoute</provider>
-        <provider interface="dev.webfx.stack.routing.uirouter.operations.RouteRequestEmitter">one.modality.event.backoffice.activities.recurringevents.RouteToRecurringEventsRequestEmitter</provider>
+        <provider interface="dev.webfx.stack.routing.uirouter.UiRoute">one.modality.event.backoffice.activities.recurringevents.RecurringEventsRouting$RecurringEventsUiRoute</provider>
+        <provider interface="dev.webfx.stack.routing.uirouter.operations.RouteRequestEmitter">one.modality.event.backoffice.activities.recurringevents.RecurringEventsRouting$RouteToRecurringEventsRequestEmitter</provider>
     </providers>
+
+    <i18n javaKeysClass="one.modality.event.backoffice.activities.recurringevents.RecurringEventsI18nKeys"/>
 
 </project>

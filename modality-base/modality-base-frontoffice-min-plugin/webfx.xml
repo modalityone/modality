@@ -14,8 +14,10 @@
 
         <plugin-module>modality-base-client-min-plugin</plugin-module>
 
+<!--
         <plugin-module>modality-base-frontoffice-activity-account-plugin</plugin-module>
         <plugin-module>modality-base-frontoffice-activity-alerts-plugin</plugin-module>
+-->
 
     </dependencies>
 

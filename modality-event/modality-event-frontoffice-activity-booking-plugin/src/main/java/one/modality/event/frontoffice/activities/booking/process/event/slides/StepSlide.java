@@ -1,6 +1,9 @@
 package one.modality.event.frontoffice.activities.booking.process.event.slides;
 
 import dev.webfx.extras.styles.bootstrap.Bootstrap;
+import dev.webfx.extras.webtext.HtmlText;
+import dev.webfx.platform.console.Console;
+import dev.webfx.platform.uischeduler.UiScheduler;
 import dev.webfx.stack.i18n.controls.I18nControls;
 import dev.webfx.stack.orm.dql.DqlStatement;
 import dev.webfx.stack.orm.entity.controls.entity.selector.EntityButtonSelector;
@@ -9,6 +12,7 @@ import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Node;
 import javafx.scene.control.Button;
+import javafx.scene.control.Labeled;
 import javafx.scene.layout.Background;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Region;
@@ -17,14 +21,24 @@ import javafx.scene.paint.Color;
 import javafx.scene.text.Text;
 import javafx.stage.Screen;
 import one.modality.base.client.mainframe.fx.FXMainFrameDialogArea;
-import one.modality.base.frontoffice.utility.TextUtility;
+import one.modality.base.frontoffice.utility.tyler.TextUtility;
 import one.modality.base.shared.entities.Event;
 import one.modality.base.shared.entities.Person;
+import one.modality.base.shared.entities.markers.HasPersonalDetails;
+import one.modality.crm.client.i18n.CrmI18nKeys;
 import one.modality.crm.shared.services.authn.fx.FXModalityUserPrincipal;
+import one.modality.crm.shared.services.authn.fx.FXUserPerson;
+import one.modality.ecommerce.document.service.DocumentAggregate;
+import one.modality.ecommerce.payment.CancelPaymentResult;
+import one.modality.ecommerce.payment.PaymentService;
+import one.modality.ecommerce.payment.client.ClientPaymentUtil;
 import one.modality.ecommerce.payment.client.WebPaymentForm;
-import one.modality.event.frontoffice.activities.booking.fx.FXPersonToBook;
+import one.modality.event.client.recurringevents.FXPersonToBook;
+import one.modality.event.client.recurringevents.RecurringEventSchedule;
+import one.modality.event.client.recurringevents.WorkingBooking;
+import one.modality.event.frontoffice.activities.booking.BookingI18nKeys;
+import one.modality.event.frontoffice.activities.booking.fx.FXGuestToBook;
 import one.modality.event.frontoffice.activities.booking.process.event.BookEventActivity;
-import one.modality.event.frontoffice.activities.booking.process.event.RecurringEventSchedule;
 import one.modality.event.frontoffice.activities.booking.process.event.WorkingBookingProperties;
 
 import java.util.function.Supplier;
@@ -64,6 +78,14 @@ abstract class StepSlide implements Supplier<Node> {
         return getBookEventActivity().getWorkingBookingProperties();
     }
 
+    WorkingBooking getWorkingBooking() {
+        return getWorkingBookingProperties().getWorkingBooking();
+    }
+
+    DocumentAggregate getDocumentAggregate() {
+        return getWorkingBookingProperties().getDocumentAggregate();
+    }
+
     Event getEvent() {
         return getWorkingBookingProperties().getEvent();
     }
@@ -80,8 +102,16 @@ abstract class StepSlide implements Supplier<Node> {
         getBookEventActivity().displayPaymentSlide(webPaymentForm);
     }
 
-    void displayCancellationSlide() {
-        getBookEventActivity().displayCancellationSlide();
+    void displayPendingPaymentSlide() {
+        getBookEventActivity().displayPendingPaymentSlide();
+    }
+
+    void displayFailedPaymentSlide() {
+        getBookEventActivity().displayFailedPaymentSlide();
+    }
+
+    void displayCancellationSlide(CancelPaymentResult cancelPaymentResult) {
+        getBookEventActivity().displayCancellationSlide(cancelPaymentResult);
     }
 
     void displayErrorMessage(String message) {
@@ -90,6 +120,55 @@ abstract class StepSlide implements Supplier<Node> {
 
     void displayThankYouSlide() {
         getBookEventActivity().displayThankYouSlide();
+    }
+
+    void initiateNewPaymentAndDisplayPaymentSlide() {
+        WorkingBookingProperties workingBookingProperties = getWorkingBookingProperties();
+        Object documentPrimaryKey = workingBookingProperties.getWorkingBooking().getDocumentPrimaryKey();
+        turnOnWaitMode();
+        PaymentService.initiatePayment(
+                ClientPaymentUtil.createInitiatePaymentArgument(workingBookingProperties.getBalance(), documentPrimaryKey)
+            )
+            .onFailure(paymentResult -> UiScheduler.runInUiThread(() -> {
+                turnOffWaitMode();
+                displayErrorMessage(BookingI18nKeys.ErrorWhileInitiatingPayment);
+                Console.log(paymentResult);
+            }))
+            .onSuccess(paymentResult -> UiScheduler.runInUiThread(() -> {
+                turnOffWaitMode();
+                HasPersonalDetails buyerDetails = FXUserPerson.getUserPerson();
+                if (buyerDetails == null)
+                    buyerDetails = FXGuestToBook.getGuestToBook();
+                WebPaymentForm webPaymentForm = new WebPaymentForm(paymentResult, buyerDetails);
+                displayPaymentSlide(webPaymentForm);
+            }));
+    }
+
+    void cancelOrUncancelBookingAndDisplayNextSlide(boolean cancel) {
+        WorkingBooking workingBooking = getWorkingBookingProperties().getWorkingBooking();
+        if (cancel)
+            workingBooking.cancelBooking();
+        else
+            workingBooking.uncancelBooking();
+        turnOnWaitMode();
+        workingBooking.submitChanges(cancel ? "Cancelled booking" : "Uncancelled booking")
+            .onFailure(ex -> UiScheduler.runInUiThread(() -> {
+                turnOffWaitMode();
+                displayErrorMessage(ex.getMessage());
+            }))
+            .onSuccess(ignored -> {
+                if (cancel)
+                    displayCancellationSlide(new CancelPaymentResult(true));
+                else
+                    getBookEventActivity().loadBookingWithSamePolicy(false)
+                        .onComplete(ar -> UiScheduler.runInUiThread(this::turnOffWaitMode));
+            });
+    }
+
+    void turnOnWaitMode() {
+    }
+
+    void turnOffWaitMode() {
     }
 
     RecurringEventSchedule getRecurringEventSchedule() {
@@ -107,10 +186,10 @@ abstract class StepSlide implements Supplier<Node> {
     }
 
     Button createPersonToBookButton() {
-        Text personPrefixText = TextUtility.createText("PersonToBook:", Color.GRAY);
+        Text personPrefixText = TextUtility.createText(CrmI18nKeys.PersonToBook + ":", Color.GRAY);
         EntityButtonSelector<Person> personSelector = new EntityButtonSelector<Person>(
-                "{class: 'Person', alias: 'p', columns: [{expression: `[genderIcon,firstName,lastName]`}], orderBy: 'id'}",
-                getBookEventActivity(), FXMainFrameDialogArea::getDialogArea, getBookEventActivity().getDataSourceModel()
+            "{class: 'Person', alias: 'p', columns: [{expression: `[genderIcon,firstName,lastName]`}], orderBy: 'id'}",
+            getBookEventActivity(), FXMainFrameDialogArea::getDialogArea, getBookEventActivity().getDataSourceModel()
         ) { // Overriding the button content to add the "Teacher" prefix text
             @Override
             protected Node getOrCreateButtonContentFromSelectedItem() {
@@ -126,5 +205,14 @@ abstract class StepSlide implements Supplier<Node> {
         personButton.managedProperty().bind(FXModalityUserPrincipal.loggedInProperty());
         return personButton;
     }
+
+    public <T extends Labeled> T bindI18nEventExpression(T text, String eventExpression, Object... args) {
+        return getBookEventActivity().bindI18nEventExpression(text, eventExpression, args);
+    }
+
+    public HtmlText bindI18nEventExpression(HtmlText text, String eventExpression, Object... args) {
+        return getBookEventActivity().bindI18nEventExpression(text, eventExpression, args);
+    }
+
 
 }

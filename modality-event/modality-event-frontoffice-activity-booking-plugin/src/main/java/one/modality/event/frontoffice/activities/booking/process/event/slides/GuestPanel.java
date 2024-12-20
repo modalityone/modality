@@ -5,6 +5,7 @@ import dev.webfx.extras.util.animation.Animations;
 import dev.webfx.extras.util.layout.LayoutUtil;
 import dev.webfx.extras.util.scene.SceneUtil;
 import dev.webfx.platform.uischeduler.UiScheduler;
+import dev.webfx.stack.i18n.I18n;
 import dev.webfx.stack.i18n.controls.I18nControls;
 import dev.webfx.stack.ui.controls.MaterialFactoryMixin;
 import dev.webfx.stack.ui.controls.dialog.GridPaneBuilder;
@@ -19,7 +20,10 @@ import javafx.scene.control.TextField;
 import javafx.scene.effect.DropShadow;
 import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
-import one.modality.base.client.validation.ModalityValidationSupport;
+import one.modality.base.client.i18n.ModalityI18nKeys;
+import dev.webfx.stack.ui.validation.ValidationSupport;
+import one.modality.crm.client.i18n.CrmI18nKeys;
+import one.modality.event.frontoffice.activities.booking.BookingI18nKeys;
 
 /**
  * @author Bruno Salmon
@@ -28,14 +32,14 @@ final class GuestPanel implements MaterialFactoryMixin {
 
     private final BorderPane container = new BorderPane();
     private final VBox guestTopVBox = new VBox(10);
-    private final TextField firstNameTextField = newMaterialTextField("FirstName");
-    private final TextField lastNameTextField = newMaterialTextField("LastName");
-    private final TextField emailTextField = newMaterialTextField("Email");
-    private final Button guestSubmitButton = Bootstrap.largeButton(I18nControls.bindI18nProperties(new Button(), "Submit"));
-    private final ModalityValidationSupport validationSupport = new ModalityValidationSupport();
+    private final TextField firstNameTextField = newMaterialTextField(CrmI18nKeys.FirstName);
+    private final TextField lastNameTextField = newMaterialTextField(CrmI18nKeys.LastName);
+    private final TextField emailTextField = newMaterialTextField(CrmI18nKeys.Email);
+    private final Button guestSubmitButton = Bootstrap.largeButton(I18nControls.newButton(ModalityI18nKeys.Submit));
+    private final ValidationSupport validationSupport = new ValidationSupport();
 
     public GuestPanel() {
-        Label guestDetailsLabel = Bootstrap.textPrimary(Bootstrap.strong(I18nControls.bindI18nProperties(new Label(), "GuestDetails")));
+        Label guestDetailsLabel = Bootstrap.textPrimary(Bootstrap.strong(I18nControls.newLabel(BookingI18nKeys.GuestDetails)));
         guestTopVBox.getChildren().add(guestDetailsLabel);
         guestTopVBox.setAlignment(Pos.TOP_CENTER);
         BorderPane.setMargin(guestTopVBox, new Insets(0, 0, 20,0));
@@ -55,9 +59,9 @@ final class GuestPanel implements MaterialFactoryMixin {
         guestGridPane.setEffect(new DropShadow(10, Color.gray(0.8)));
         guestGridPane.getStyleClass().add("login"); // in order to have same style as login (especially font size)
         container.setCenter(guestGridPane);
-        validationSupport.addRequiredInput(firstNameTextField, "FirstName");
-        validationSupport.addRequiredInput(lastNameTextField, "LastName");
-        validationSupport.addEmailValidation(emailTextField, emailTextField, "Email");
+        validationSupport.addRequiredInput(firstNameTextField, I18n.i18nTextProperty(CrmI18nKeys.FirstName));
+        validationSupport.addRequiredInput(lastNameTextField, I18n.i18nTextProperty(CrmI18nKeys.LastName));
+        validationSupport.addEmailValidation(emailTextField, emailTextField, I18n.i18nTextProperty(CrmI18nKeys.FirstName));
     }
 
     public void addTopNode(Node topNode) {
@@ -89,7 +93,7 @@ final class GuestPanel implements MaterialFactoryMixin {
     }
 
     public void turnOffButtonWaitMode() {
-        StepSlide.turnOffButtonWaitMode(guestSubmitButton, "Submit");
+        StepSlide.turnOffButtonWaitMode(guestSubmitButton, ModalityI18nKeys.Submit);
     }
 
     public Node getContainer() {

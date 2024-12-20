@@ -1,0 +1,7 @@
+.user-profile-modal-window {
+    background-image: none;
+    background-color: rgba(255, 255, 255, 1); /* Add alpha for transparency */
+    border: 1px solid lightgray; /* Combine border-color and border width */
+    border-radius: 20px;
+    box-shadow: 0px 0px 10px lightgray; /* Corrected drop shadow syntax */
+}

@@ -6,6 +6,7 @@
 module modality.all.backoffice.application.openjfx {
 
     // Direct dependencies modules
+    requires javafx.media;
     requires javafx.web;
     requires modality.all.backoffice.application;
     requires modality.ecommerce.document.service.buscall;
@@ -34,6 +35,7 @@ module modality.all.backoffice.application.openjfx {
     requires webfx.platform.windowhistory.java;
     requires webfx.platform.windowlocation.java;
     requires webfx.stack.authn.buscall;
+    requires webfx.stack.authn.login.ui.gateway.password.plugin;
     requires webfx.stack.authn.login.ui.portal;
     requires webfx.stack.authn.remote;
     requires webfx.stack.com.bus.json.client;

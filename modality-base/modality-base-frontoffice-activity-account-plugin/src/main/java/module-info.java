@@ -9,11 +9,14 @@ module modality.base.frontoffice.activity.account.plugin {
     requires javafx.base;
     requires javafx.controls;
     requires javafx.graphics;
+    requires modality.base.client.brand;
+    requires modality.base.client.css;
     requires modality.base.client.mainframe.fx;
     requires modality.base.frontoffice.utility;
     requires modality.base.shared.entities;
     requires modality.crm.client.authn.fx;
     requires modality.crm.client.personaldetails;
+    requires modality.ecommerce.client.i18n;
     requires webfx.extras.panes;
     requires webfx.extras.styles.bootstrap;
     requires webfx.extras.util.control;
@@ -22,7 +25,6 @@ module modality.base.frontoffice.activity.account.plugin {
     requires webfx.platform.util;
     requires webfx.platform.windowhistory;
     requires webfx.stack.authn.logout.client;
-    requires webfx.stack.cache.client;
     requires webfx.stack.i18n;
     requires webfx.stack.i18n.controls;
     requires webfx.stack.orm.domainmodel.activity;

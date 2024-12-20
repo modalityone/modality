@@ -18,6 +18,9 @@
     <packaging>pom</packaging>
 
     <modules>
+        <module>modality-event-backoffice-activity-medias-plugin</module>
+        <module>modality-event-backoffice-activity-pricing-plugin</module>
+        <module>modality-event-backoffice-activity-program-plugin</module>
         <module>modality-event-backoffice-activity-recurringevents-plugin</module>
         <module>modality-event-backoffice-events-buttonselector-plugin</module>
         <module>modality-event-backoffice-events-ganttcanvas-plugin</module>
@@ -26,10 +29,15 @@
         <module>modality-event-backoffice-min-plugin</module>
         <module>modality-event-client-activity-eventdependent</module>
         <module>modality-event-client-event-fx</module>
+        <module>modality-event-client-mediaview</module>
         <module>modality-event-client-recurringevents</module>
         <module>modality-event-client-theme</module>
+        <module>modality-event-frontoffice-activity-audiorecordings-plugin</module>
         <module>modality-event-frontoffice-activity-booking-plugin</module>
+        <module>modality-event-frontoffice-activity-library-plugin</module>
+        <module>modality-event-frontoffice-activity-videos-plugin</module>
         <module>modality-event-frontoffice-max-plugin</module>
+        <module>modality-event-frontoffice-medias</module>
         <module>modality-event-frontoffice-min-plugin</module>
         <module>modality-event-server-max-plugin</module>
         <module>modality-event-server-min-plugin</module>

@@ -8,8 +8,8 @@
     </exported-packages>
 
     <providers>
-        <provider interface="dev.webfx.stack.routing.uirouter.UiRoute">one.modality.hotel.backoffice.activities.household.HouseholdUiRoute</provider>
-        <provider interface="dev.webfx.stack.routing.uirouter.operations.RouteRequestEmitter">one.modality.hotel.backoffice.activities.household.RouteToHouseholdRequestEmitter</provider>
+        <provider interface="dev.webfx.stack.routing.uirouter.UiRoute">one.modality.hotel.backoffice.activities.household.HouseholdRouting$HouseholdUiRoute</provider>
+        <provider interface="dev.webfx.stack.routing.uirouter.operations.RouteRequestEmitter">one.modality.hotel.backoffice.activities.household.HouseholdRouting$RouteToHouseholdRequestEmitter</provider>
     </providers>
 
     <dependencies>

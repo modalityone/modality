@@ -11,8 +11,7 @@ import one.modality.base.shared.entities.Person;
 import one.modality.crm.client.controls.personaldetails.PersonalDetailsPanel;
 import one.modality.crm.shared.services.authn.fx.FXUserPerson;
 
-public class AccountPersonalInformationActivity extends ViewDomainActivityBase implements ButtonFactoryMixin, MaterialFactoryMixin {
-
+final class AccountPersonalInformationActivity extends ViewDomainActivityBase implements ButtonFactoryMixin, MaterialFactoryMixin {
 
     @Override
     public Node buildUi() {

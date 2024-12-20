@@ -17,12 +17,15 @@ import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
 import javafx.scene.text.FontWeight;
 import javafx.scene.text.Text;
-import one.modality.base.frontoffice.utility.GeneralUtility;
-import one.modality.base.frontoffice.utility.StyleUtility;
-import one.modality.base.frontoffice.utility.TextUtility;
+import one.modality.base.client.brand.Brand;
+import one.modality.base.client.css.Fonts;
+import one.modality.base.frontoffice.utility.tyler.GeneralUtility;
+import one.modality.base.frontoffice.utility.tyler.StyleUtility;
+import one.modality.base.frontoffice.utility.tyler.TextUtility;
 import one.modality.base.shared.entities.Document;
 import one.modality.base.shared.entities.Event;
 import one.modality.base.shared.entities.formatters.EventPriceFormatter;
+import one.modality.ecommerce.client.i18n.EcommerceI18nKeys;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -39,16 +42,16 @@ public final class BookingView {
 
     private final Document booking;
 
-    private final Label eventNameLabel = GeneralUtility.createLabel(StyleUtility.MAIN_ORANGE_COLOR);
+    private final Label eventNameLabel = GeneralUtility.createLabel(Brand.getBrandMainColor());
     private final Text eventCentreLocationText = TextUtility.createText(StyleUtility.ELEMENT_GRAY_COLOR);
     private final Text eventCountryLocationText = TextUtility.createText(StyleUtility.ELEMENT_GRAY_COLOR);
     private final Label personLabel = new Label();
     private final Label statusLabel = new Label();
-    private final Text totalPriceLabel = I18n.bindI18nProperties(new Text(), "Total");
+    private final Text totalPriceLabel = I18n.newText(EcommerceI18nKeys.Total);
     private final Text totalPriceValue = new Text();
-    private final Text remainingPriceLabel = I18n.bindI18nProperties(new Text(), "Remaining amount");
+    private final Text remainingPriceLabel = I18n.newText(EcommerceI18nKeys.RemainingAmount);
     private final Text remainingPriceValue = new Text();
-    private final Text paidPriceLabel = I18n.bindI18nProperties(new Text(), "Paid");
+    private final Text paidPriceLabel = I18n.newText(EcommerceI18nKeys.Paid);
     private final Text paidPriceValue = new Text();
     private final List<Button> buttons = new ArrayList<>();
 
@@ -151,9 +154,9 @@ public final class BookingView {
             row1Y = insets.getTop();
             width -= left + insets.getRight();
             double fontFactor = GeneralUtility.computeFontFactor(width);
-            GeneralUtility.setLabeledFont(eventNameLabel, StyleUtility.TEXT_FAMILY, FontWeight.SEMI_BOLD, fontFactor * 11);
-            GeneralUtility.setLabeledFont(statusLabel,    StyleUtility.TEXT_FAMILY, FontWeight.NORMAL, fontFactor * 11);
-            GeneralUtility.setLabeledFont(personLabel,    StyleUtility.TEXT_FAMILY, FontWeight.NORMAL, fontFactor * 9);
+            GeneralUtility.setLabeledFont(eventNameLabel, Fonts.MONTSERRAT_TEXT_FAMILY, FontWeight.SEMI_BOLD, fontFactor * 11);
+            GeneralUtility.setLabeledFont(statusLabel,    Fonts.MONTSERRAT_TEXT_FAMILY, FontWeight.NORMAL, fontFactor * 11);
+            GeneralUtility.setLabeledFont(personLabel,    Fonts.MONTSERRAT_TEXT_FAMILY, FontWeight.NORMAL, fontFactor * 9);
             Font smallFont = personLabel.getFont();
             eventCentreLocationText.setFont(smallFont);
             eventCountryLocationText.setFont(smallFont);
@@ -208,7 +211,7 @@ public final class BookingView {
     }
 
     private Button createPaymentButton() {
-        return Bootstrap.dangerButton(I18nControls.bindI18nProperties(new Button(), "Pay", EventPriceFormatter.formatWithCurrency(booking.getPriceNet() - booking.getPriceDeposit(), booking.getEvent())));
+        return Bootstrap.dangerButton(I18nControls.newButton(EcommerceI18nKeys.Pay, EventPriceFormatter.formatWithCurrency(booking.getPriceNet() - booking.getPriceDeposit(), booking.getEvent())));
     }
 
     public Node getView() {

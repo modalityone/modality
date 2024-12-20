@@ -1,8 +1,10 @@
 one.modality.base.shared.entities.impl.AttendanceImpl$ProvidedFactory
+one.modality.base.shared.entities.impl.BookImpl$ProvidedFactory
 one.modality.base.shared.entities.impl.CartImpl$ProvidedFactory
 one.modality.base.shared.entities.impl.ChannelImpl$ProvidedFactory
 one.modality.base.shared.entities.impl.CountryImpl$ProvidedFactory
 one.modality.base.shared.entities.impl.CurrencyImpl$ProvidedFactory
+one.modality.base.shared.entities.impl.DayTemplateImpl$ProvidedFactory
 one.modality.base.shared.entities.impl.DocumentImpl$ProvidedFactory
 one.modality.base.shared.entities.impl.DocumentLineImpl$ProvidedFactory
 one.modality.base.shared.entities.impl.EventImpl$ProvidedFactory
@@ -19,6 +21,7 @@ one.modality.base.shared.entities.impl.KdmCenterImpl$ProvidedFactory
 one.modality.base.shared.entities.impl.LabelImpl$ProvidedFactory
 one.modality.base.shared.entities.impl.MailImpl$ProvidedFactory
 one.modality.base.shared.entities.impl.MagicLinkImpl$ProvidedFactory
+one.modality.base.shared.entities.impl.MediaImpl$ProvidedFactory
 one.modality.base.shared.entities.impl.MethodImpl$ProvidedFactory
 one.modality.base.shared.entities.impl.MoneyTransferImpl$ProvidedFactory
 one.modality.base.shared.entities.impl.MoneyAccountImpl$ProvidedFactory

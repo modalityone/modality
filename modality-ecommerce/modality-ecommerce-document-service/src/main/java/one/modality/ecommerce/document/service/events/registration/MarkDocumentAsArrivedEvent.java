@@ -1,21 +1,24 @@
 package one.modality.ecommerce.document.service.events.registration;
 
 import one.modality.base.shared.entities.Document;
-import one.modality.ecommerce.document.service.events.AbstractSetDocumentFieldsEvent;
+import one.modality.ecommerce.document.service.events.AbstractDocumentEvent;
 
 /**
  * @author Bruno Salmon
  */
-public class MarkDocumentAsArrivedEvent extends AbstractSetDocumentFieldsEvent {
+public class MarkDocumentAsArrivedEvent extends AbstractDocumentEvent {
 
-    private static final Object[] FIELD_IDS = { "arrived", "read" };
+    private final boolean arrived;
+    private final boolean read;
 
     public MarkDocumentAsArrivedEvent(Object documentPrimaryKey, boolean arrived) {
         this(documentPrimaryKey, arrived, false);
     }
 
     public MarkDocumentAsArrivedEvent(Object documentPrimaryKey, boolean arrived, boolean read) {
-        super(documentPrimaryKey, FIELD_IDS, arrived, read);
+        super(documentPrimaryKey);
+        this.arrived = arrived;
+        this.read = read;
     }
 
     public MarkDocumentAsArrivedEvent(Document document, boolean arrived) {
@@ -23,22 +26,23 @@ public class MarkDocumentAsArrivedEvent extends AbstractSetDocumentFieldsEvent {
     }
 
     public MarkDocumentAsArrivedEvent(Document document, boolean arrived, boolean read) {
-        super(document, FIELD_IDS, arrived, read);
+        super(document);
+        this.arrived = arrived;
+        this.read = read;
     }
 
     public boolean isArrived() {
-        return isArrived(getFieldValues());
+        return arrived;
     }
 
     public boolean isRead() {
-        return isRead(getFieldValues());
+        return read;
     }
 
-    public static boolean isArrived(Object[] fieldValues) {
-        return (boolean) fieldValues[0];
-    }
-
-    public static boolean isRead(Object[] fieldValues) {
-        return (boolean) fieldValues[1];
+    @Override
+    public void replayEventOnDocument() {
+        super.replayEventOnDocument();
+        document.setArrived(arrived);
+        document.setRead(read);
     }
 }

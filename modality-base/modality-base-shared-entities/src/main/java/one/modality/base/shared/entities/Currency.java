@@ -8,16 +8,16 @@ import one.modality.base.shared.entities.markers.EntityHasName;
  * @author Bruno Salmon
  */
 public interface Currency extends
-        EntityHasCode,
-        EntityHasName,
-        EntityHasIcon {
+    EntityHasCode,
+    EntityHasName,
+    EntityHasIcon {
+    String symbol = "symbol";
 
-    default void setSymbol(String symbol) {
-        setFieldValue("symbol", symbol);
+    default void setSymbol(String value) {
+        setFieldValue(symbol, value);
     }
 
     default String getSymbol() {
-        return getStringFieldValue("symbol");
+        return getStringFieldValue(symbol);
     }
-
 }

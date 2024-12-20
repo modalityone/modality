@@ -1,0 +1,42 @@
+@font-face {
+    font-family: 'Poppins';
+    font-style: normal;
+    src: url('webfx-css:fonts/poppins/Poppins-Regular.ttf');
+}
+
+@font-face {
+    font-family: 'Poppins';
+    font-style: medium;
+    src: url('webfx-css:fonts/poppins/Poppins-Medium.ttf');
+}
+
+@font-face {
+    font-family: 'Poppins';
+    font-weight: bold;
+    src: url('webfx-css:fonts/poppins/Poppins-Bold.ttf');
+}
+
+@font-face {
+    font-family: 'Poppins';
+    font-style: italic;
+    src: url('webfx-css:fonts/poppins/Poppins-Italic.ttf');
+}
+
+@font-face {
+    font-family: 'Poppins';
+    font-weight: bold;
+    font-style: italic;
+    src: url('webfx-css:fonts/poppins/Poppins-BoldItalic.ttf');
+}
+
+@font-face {
+    font-family: 'Poppins';
+    font-weight: 300; /* light */
+    src: url('webfx-css:fonts/poppins/Poppins-Light.ttf');
+}
+
+@font-face {
+    font-family: 'Poppins';
+    font-weight: 600; /* semi-bold */
+    src: url('webfx-css:fonts/poppins/Poppins-SemiBold.ttf');
+}

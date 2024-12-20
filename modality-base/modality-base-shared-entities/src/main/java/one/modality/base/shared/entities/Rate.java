@@ -10,255 +10,296 @@ import java.time.LocalDate;
  * @author Bruno Salmon
  */
 public interface Rate extends
-        EntityHasIcon,
-        EntityHasSiteAndItem,
-        EntityHasArrivalSiteAndItem {
+    EntityHasIcon,
+    EntityHasSiteAndItem,
+    EntityHasArrivalSiteAndItem {
 
-    default void setStartDate(LocalDate startDate) {
-        setFieldValue("startDate", startDate);
+    String startDate = "startDate";
+    String endDate = "endDate";
+    String minDay = "minDay";
+    String maxDay = "maxDay";
+    String perDay = "perDay";
+    String perPerson = "perPerson";
+    String price = "price";
+    String age1_max = "age1_max";
+    String age1_price = "age1_price";
+    String age1_discount = "age1_discount";
+    String age2_max = "age2_max";
+    String age2_price = "age2_price";
+    String age2_discount = "age2_discount";
+    String age3_max = "age3_max";
+    String age3_price = "age3_price";
+    String age3_discount = "age3_discount";
+    String workingVisit_price = "workingVisit_price";
+    String workingVisit_discount = "workingVisit_discount";
+    String guest_price = "guest_price";
+    String guest_discount = "guest_discount";
+    String resident_price = "resident_price";
+    String resident_discount = "resident_discount";
+    String resident2_price = "resident2_price";
+    String resident2_discount = "resident2_discount";
+    String discovery_price = "discovery_price";
+    String discovery_discount = "discovery_discount";
+    String discoveryReduced_price = "discoveryReduced_price";
+    String discoveryReduced_discount = "discoveryReduced_discount";
+    String unemployed_price = "unemployed_price";
+    String unemployed_discount = "unemployed_discount";
+    String facilityFee_price = "facilityFee_price";
+    String facilityFee_discount = "facilityFee_discount";
+
+    default void setStartDate(LocalDate value) {
+        setFieldValue(startDate, value);
     }
 
     default LocalDate getStartDate() {
-        return getLocalDateFieldValue("startDate");
+        return getLocalDateFieldValue(startDate);
     }
 
-    default void setEndDate(LocalDate endDate) {
-        setFieldValue("endDate", endDate);
+    default void setEndDate(LocalDate value) {
+        setFieldValue(endDate, value);
     }
 
     default LocalDate getEndDate() {
-        return getLocalDateFieldValue("endDate");
+        return getLocalDateFieldValue(endDate);
     }
 
-    default void setMinDay(Integer minDay) {
-        setFieldValue("minDay", minDay);
+    default void setMinDay(Integer value) {
+        setFieldValue(minDay, value);
     }
 
     default Integer getMinDay() {
-        return getIntegerFieldValue("minDay");
+        return getIntegerFieldValue(minDay);
     }
 
-    default void setMaxDay(Integer maxDay) {
-        setFieldValue("maxDay", maxDay);
+    default void setMaxDay(Integer value) {
+        setFieldValue(maxDay, value);
     }
 
     default Integer getMaxDay() {
-        return getIntegerFieldValue("maxDay");
+        return getIntegerFieldValue(maxDay);
     }
 
-    default void setPerDay(Boolean perDay) {
-        setFieldValue("perDay", perDay);
+    default void setPerDay(Boolean value) {
+        setFieldValue(perDay, value);
     }
 
     default Boolean isPerDay() {
-        return getBooleanFieldValue("perDay");
+        return getBooleanFieldValue(perDay);
     }
 
-    default void setPrice(Integer price) {
-        setFieldValue("price", price);
+    default void setPerPerson(Boolean value) {
+        setFieldValue(perPerson, value);
+    }
+
+    default Boolean isPerPerson() {
+        return getBooleanFieldValue(perPerson);
+    }
+
+    default void setPrice(Object value) {
+        setFieldValue(price, value);
     }
 
     default Integer getPrice() {
-        return getIntegerFieldValue("price");
+        return getIntegerFieldValue(price);
     }
 
-    default void setAge1Max(Integer age1Max) {
-        setFieldValue("age1_max", age1Max);
+    default void setAge1Max(Integer value) {
+        setFieldValue(age1_max, value);
     }
 
     default Integer getAge1Max() {
-        return getIntegerFieldValue("age1_max");
+        return getIntegerFieldValue(age1_max);
     }
 
-    default void setAge1Price(Integer price) {
-        setFieldValue("age1_price", price);
+    default void setAge1Price(Integer value) {
+        setFieldValue(age1_price, value);
     }
 
     default Integer getAge1Price() {
-        return getIntegerFieldValue("age1_price");
+        return getIntegerFieldValue(age1_price);
     }
 
-    default void setAge1Discount(Integer discount) {
-        setFieldValue("age1_discount", discount);
+    default void setAge1Discount(Integer value) {
+        setFieldValue(age1_discount, value);
     }
 
     default Integer getAge1Discount() {
-        return getIntegerFieldValue("age1_discount");
+        return getIntegerFieldValue(age1_discount);
     }
 
-    default void setAge2Max(Integer age2Max) {
-        setFieldValue("age2_max", age2Max);
+    default void setAge2Max(Integer value) {
+        setFieldValue(age2_max, value);
     }
 
     default Integer getAge2Max() {
-        return getIntegerFieldValue("age2_max");
+        return getIntegerFieldValue(age2_max);
     }
 
-    default void setAge2Price(Integer price) {
-        setFieldValue("age2_price", price);
+    default void setAge2Price(Integer value) {
+        setFieldValue(age2_price, value);
     }
 
     default Integer getAge2Price() {
-        return getIntegerFieldValue("age2_price");
+        return getIntegerFieldValue(age2_price);
     }
 
-    default void setAge2Discount(Integer discount) {
-        setFieldValue("age2_discount", discount);
+    default void setAge2Discount(Integer value) {
+        setFieldValue(age2_discount, value);
     }
 
     default Integer getAge2Discount() {
-        return getIntegerFieldValue("age2_discount");
+        return getIntegerFieldValue(age2_discount);
     }
 
-    default void setAge3Max(Integer age3Max) {
-        setFieldValue("age3_max", age3Max);
+    default void setAge3Max(Integer value) {
+        setFieldValue(age3_max, value);
     }
 
     default Integer getAge3Max() {
-        return getIntegerFieldValue("age3_max");
+        return getIntegerFieldValue(age3_max);
     }
 
-    default void setAge3Price(Integer price) {
-        setFieldValue("age3_price", price);
+    default void setAge3Price(Integer value) {
+        setFieldValue(age3_price, value);
     }
 
     default Integer getAge3Price() {
-        return getIntegerFieldValue("age3_price");
+        return getIntegerFieldValue(age3_price);
     }
 
-    default void setAge3Discount(Integer discount) {
-        setFieldValue("age3_discount", discount);
+    default void setAge3Discount(Integer value) {
+        setFieldValue(age3_discount, value);
     }
 
     default Integer getAge3Discount() {
-        return getIntegerFieldValue("age3_discount");
+        return getIntegerFieldValue(age3_discount);
     }
 
-    default void setWorkingVisitPrice(Integer price) {
-        setFieldValue("workingVisit_price", price);
+    default void setWorkingVisitPrice(Integer value) {
+        setFieldValue(workingVisit_price, value);
     }
 
     default Integer getWorkingVisitPrice() {
-        return getIntegerFieldValue("workingVisit_price");
+        return getIntegerFieldValue(workingVisit_price);
     }
 
-    default void setWorkingVisitDiscount(Integer discount) {
-        setFieldValue("workingVisit_discount", discount);
+    default void setWorkingVisitDiscount(Integer value) {
+        setFieldValue(workingVisit_discount, value);
     }
 
     default Integer getWorkingVisitDiscount() {
-        return getIntegerFieldValue("workingVisit_discount");
+        return getIntegerFieldValue(workingVisit_discount);
     }
 
-    default void setGuestPrice(Integer price) {
-        setFieldValue("guest_price", price);
+    default void setGuestPrice(Integer value) {
+        setFieldValue(guest_price, value);
     }
 
     default Integer getGuestPrice() {
-        return getIntegerFieldValue("guest_price");
+        return getIntegerFieldValue(guest_price);
     }
 
-    default void setGuestDiscount(Integer discount) {
-        setFieldValue("guest_discount", discount);
+    default void setGuestDiscount(Integer value) {
+        setFieldValue(guest_discount, value);
     }
 
     default Integer getGuestDiscount() {
-        return getIntegerFieldValue("guest_discount");
+        return getIntegerFieldValue(guest_discount);
     }
 
-    default void setResidentPrice(Integer price) {
-        setFieldValue("resident_price", price);
+    default void setResidentPrice(Integer value) {
+        setFieldValue(resident_price, value);
     }
 
     default Integer getResidentPrice() {
-        return getIntegerFieldValue("resident_price");
+        return getIntegerFieldValue(resident_price);
     }
 
-    default void setResidentDiscount(Integer discount) {
-        setFieldValue("resident_discount", discount);
+    default void setResidentDiscount(Integer value) {
+        setFieldValue(resident_discount, value);
     }
 
     default Integer getResidentDiscount() {
-        return getIntegerFieldValue("resident_discount");
+        return getIntegerFieldValue(resident_discount);
     }
 
-    default void setResident2Price(Integer price) {
-        setFieldValue("resident2_price", price);
+    default void setResident2Price(Integer value) {
+        setFieldValue(resident2_price, value);
     }
 
     default Integer getResident2Price() {
-        return getIntegerFieldValue("resident2_price");
+        return getIntegerFieldValue(resident2_price);
     }
 
-    default void setResident2Discount(Integer discount) {
-        setFieldValue("resident2_discount", discount);
+    default void setResident2Discount(Integer value) {
+        setFieldValue(resident2_discount, value);
     }
 
     default Integer getResident2Discount() {
-        return getIntegerFieldValue("resident2_discount");
+        return getIntegerFieldValue(resident2_discount);
     }
 
-    default void setDiscoveryPrice(Integer price) {
-        setFieldValue("discovery_price", price);
+    default void setDiscoveryPrice(Integer value) {
+        setFieldValue(discovery_price, value);
     }
 
     default Integer getDiscoveryPrice() {
-        return getIntegerFieldValue("discovery_price");
+        return getIntegerFieldValue(discovery_price);
     }
 
-    default void setDiscoveryDiscount(Integer discount) {
-        setFieldValue("discovery_discount", discount);
+    default void setDiscoveryDiscount(Integer value) {
+        setFieldValue(discovery_discount, value);
     }
 
     default Integer getDiscoveryDiscount() {
-        return getIntegerFieldValue("discovery_discount");
+        return getIntegerFieldValue(discovery_discount);
     }
 
-    default void setDiscoveryReducedPrice(Integer price) {
-        setFieldValue("discoveryReduced_price", price);
+    default void setDiscoveryReducedPrice(Integer value) {
+        setFieldValue(discoveryReduced_price, value);
     }
 
     default Integer getDiscoveryReducedPrice() {
-        return getIntegerFieldValue("discoveryReduced_price");
+        return getIntegerFieldValue(discoveryReduced_price);
     }
 
-    default void setDiscoveryReducedDiscount(Integer discount) {
-        setFieldValue("discoveryReduced_discount", discount);
+    default void setDiscoveryReducedDiscount(Integer value) {
+        setFieldValue(discoveryReduced_discount, value);
     }
 
     default Integer getDiscoveryReducedDiscount() {
-        return getIntegerFieldValue("discoveryReduced_discount");
+        return getIntegerFieldValue(discoveryReduced_discount);
     }
 
-    default void setUnemployedPrice(Integer price) {
-        setFieldValue("unemployed_price", price);
+    default void setUnemployedPrice(Integer value) {
+        setFieldValue(unemployed_price, value);
     }
 
     default Integer getUnemployedPrice() {
-        return getIntegerFieldValue("unemployed_price");
+        return getIntegerFieldValue(unemployed_price);
     }
 
-    default void setUnemployedDiscount(Integer discount) {
-        setFieldValue("unemployed_discount", discount);
+    default void setUnemployedDiscount(Integer value) {
+        setFieldValue(unemployed_discount, value);
     }
 
     default Integer getUnemployedDiscount() {
-        return getIntegerFieldValue("unemployed_discount");
+        return getIntegerFieldValue(unemployed_discount);
     }
 
-    default void setFacilityFeePrice(Integer price) {
-        setFieldValue("facilityFee_price", price);
+    default void setFacilityFeePrice(Integer value) {
+        setFieldValue(facilityFee_price, value);
     }
 
     default Integer getFacilityFeePrice() {
-        return getIntegerFieldValue("facilityFee_price");
+        return getIntegerFieldValue(facilityFee_price);
     }
 
-    default void setFacilityFeeDiscount(Integer discount) {
-        setFieldValue("facilityFee_discount", discount);
+    default void setFacilityFeeDiscount(Integer value) {
+        setFieldValue(facilityFee_discount, value);
     }
 
     default Integer getFacilityFeeDiscount() {
-        return getIntegerFieldValue("facilityFee_discount");
+        return getIntegerFieldValue(facilityFee_discount);
     }
 }

@@ -35,14 +35,18 @@ public final class AddDocumentLineEvent extends AbstractDocumentLineEvent {
     }
 
     @Override
-    public DocumentLine getDocumentLine() {
-        if (documentLine == null && entityStore != null) {
-            documentLine = entityStore.createEntity(DocumentLine.class, getDocumentLinePrimaryKey());
-            documentLine.setDocument(getDocument());
-            documentLine.setSite(entityStore.getEntity(Site.class, sitePrimaryKey)); // Should be found from PolicyAggregate
-            documentLine.setItem(entityStore.getEntity(Item.class, itemPrimaryKey)); // Should be found from PolicyAggregate
-            return documentLine;
+    protected void createDocumentLine() {
+        if (isForSubmit()) {
+            documentLine = updateStore.insertEntity(DocumentLine.class, getDocumentLinePrimaryKey());
+        } else {
+            super.createDocumentLine();
         }
-        return super.getDocumentLine();
+    }
+
+    @Override
+    public void replayEventOnDocumentLine() {
+        super.replayEventOnDocumentLine();
+        documentLine.setSite(isForSubmit() ? sitePrimaryKey : entityStore.getEntity(Site.class, sitePrimaryKey)); // Should be found from PolicyAggregate
+        documentLine.setItem(isForSubmit() ? itemPrimaryKey : entityStore.getEntity(Item.class, itemPrimaryKey)); // Should be found from PolicyAggregate
     }
 }

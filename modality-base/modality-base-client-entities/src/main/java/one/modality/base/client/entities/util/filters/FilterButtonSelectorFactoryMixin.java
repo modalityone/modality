@@ -54,9 +54,11 @@ public interface FilterButtonSelectorFactoryMixin extends ButtonFactoryMixin, Ha
         Predicate<Filter> predicate;
         if ("income".equals(activityName) && "DocumentLine".equals(domainClassId)) {
             predicate = filter -> "Family".equals(filter.getName());
-        } else switch (domainClassId) {
-            case "DocumentLine": predicate = filter -> "Family, site and item".equals(filter.getName()); break;
-            default:             predicate = filter -> "".equals(filter.getName()); break;
+        } else {
+            switch (domainClassId) {
+                case "DocumentLine": predicate = filter -> "Family, site and item".equals(filter.getName()); break;
+                default:             predicate = filter -> "".equals(filter.getName()); break;
+            }
         }
         return createGroupFilterButtonSelector(activityName, domainClassId, predicate, parent);
     }

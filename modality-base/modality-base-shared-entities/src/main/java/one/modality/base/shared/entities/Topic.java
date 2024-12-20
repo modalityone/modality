@@ -7,16 +7,16 @@ import one.modality.base.shared.entities.markers.EntityHasName;
  * @author Bruno Salmon
  */
 public interface Topic extends
-        EntityHasName,
-        EntityHasLabel {
+    EntityHasName,
+    EntityHasLabel {
 
-    default void setChannelTopicId(String channelNewsId) {
-        setFieldValue("channelTopicId", channelNewsId);
+    String channelTopicId = "channelTopicId";
+
+    default void setChannelTopicId(String value) {
+        setFieldValue(channelTopicId, value);
     }
 
     default String getChannelTopicId() {
-        return getStringFieldValue("channelTopicId");
+        return getStringFieldValue(channelTopicId);
     }
-
-
 }

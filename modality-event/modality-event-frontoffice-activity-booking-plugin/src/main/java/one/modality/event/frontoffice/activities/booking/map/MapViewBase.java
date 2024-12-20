@@ -1,9 +1,9 @@
 package one.modality.event.frontoffice.activities.booking.map;
 
+import dev.webfx.kit.util.properties.FXProperties;
 import dev.webfx.stack.orm.entity.Entity;
 import javafx.beans.InvalidationListener;
 import javafx.beans.property.ObjectProperty;
-import javafx.beans.property.SimpleObjectProperty;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.scene.Node;
@@ -16,12 +16,7 @@ public abstract class MapViewBase implements MapView {
     protected MapPoint mapCenter;
     private Node mapNode;
 
-    private final ObjectProperty<Entity> placeEntityProperty = new SimpleObjectProperty<>() {
-        @Override
-        protected void invalidated() {
-            updateMapPosition();
-        }
-    };
+    private final ObjectProperty<Entity> placeEntityProperty = FXProperties.newObjectProperty(this::updateMapPosition);
 
     protected final ObservableList<MapMarker> markers = FXCollections.observableArrayList();
 

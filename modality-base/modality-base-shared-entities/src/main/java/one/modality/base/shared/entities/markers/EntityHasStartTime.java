@@ -2,7 +2,6 @@ package one.modality.base.shared.entities.markers;
 
 import dev.webfx.stack.orm.entity.Entity;
 
-import java.time.LocalDate;
 import java.time.LocalTime;
 
 /**
@@ -10,14 +9,16 @@ import java.time.LocalTime;
  */
 public interface EntityHasStartTime extends Entity, HasStartTime {
 
+    String startTime = "startTime";
+
     @Override
     default LocalTime getStartTime() {
-        return (LocalTime) getFieldValue("startTime");
+        return (LocalTime) getFieldValue(startTime);
     }
 
     @Override
-    default void setStartTime(LocalTime startTime) {
-        setFieldValue("startTime", startTime);
+    default void setStartTime(LocalTime value) {
+        setFieldValue(startTime, value);
     }
 
 }

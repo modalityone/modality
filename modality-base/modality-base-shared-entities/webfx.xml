@@ -9,10 +9,12 @@
 
     <providers>
         <provider interface="dev.webfx.stack.orm.entity.EntityFactoryProvider">one.modality.base.shared.entities.impl.AttendanceImpl$ProvidedFactory</provider>
+        <provider interface="dev.webfx.stack.orm.entity.EntityFactoryProvider">one.modality.base.shared.entities.impl.BookImpl$ProvidedFactory</provider>
         <provider interface="dev.webfx.stack.orm.entity.EntityFactoryProvider">one.modality.base.shared.entities.impl.CartImpl$ProvidedFactory</provider>
         <provider interface="dev.webfx.stack.orm.entity.EntityFactoryProvider">one.modality.base.shared.entities.impl.ChannelImpl$ProvidedFactory</provider>
         <provider interface="dev.webfx.stack.orm.entity.EntityFactoryProvider">one.modality.base.shared.entities.impl.CountryImpl$ProvidedFactory</provider>
         <provider interface="dev.webfx.stack.orm.entity.EntityFactoryProvider">one.modality.base.shared.entities.impl.CurrencyImpl$ProvidedFactory</provider>
+        <provider interface="dev.webfx.stack.orm.entity.EntityFactoryProvider">one.modality.base.shared.entities.impl.DayTemplateImpl$ProvidedFactory</provider>
         <provider interface="dev.webfx.stack.orm.entity.EntityFactoryProvider">one.modality.base.shared.entities.impl.DocumentImpl$ProvidedFactory</provider>
         <provider interface="dev.webfx.stack.orm.entity.EntityFactoryProvider">one.modality.base.shared.entities.impl.DocumentLineImpl$ProvidedFactory</provider>
         <provider interface="dev.webfx.stack.orm.entity.EntityFactoryProvider">one.modality.base.shared.entities.impl.EventImpl$ProvidedFactory</provider>
@@ -29,6 +31,7 @@
         <provider interface="dev.webfx.stack.orm.entity.EntityFactoryProvider">one.modality.base.shared.entities.impl.LabelImpl$ProvidedFactory</provider>
         <provider interface="dev.webfx.stack.orm.entity.EntityFactoryProvider">one.modality.base.shared.entities.impl.MailImpl$ProvidedFactory</provider>
         <provider interface="dev.webfx.stack.orm.entity.EntityFactoryProvider">one.modality.base.shared.entities.impl.MagicLinkImpl$ProvidedFactory</provider>
+        <provider interface="dev.webfx.stack.orm.entity.EntityFactoryProvider">one.modality.base.shared.entities.impl.MediaImpl$ProvidedFactory</provider>
         <provider interface="dev.webfx.stack.orm.entity.EntityFactoryProvider">one.modality.base.shared.entities.impl.MethodImpl$ProvidedFactory</provider>
         <provider interface="dev.webfx.stack.orm.entity.EntityFactoryProvider">one.modality.base.shared.entities.impl.MoneyTransferImpl$ProvidedFactory</provider>
         <provider interface="dev.webfx.stack.orm.entity.EntityFactoryProvider">one.modality.base.shared.entities.impl.MoneyAccountImpl$ProvidedFactory</provider>

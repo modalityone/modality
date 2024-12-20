@@ -1,7 +1,7 @@
 package one.modality.event.frontoffice.activities.booking.views;
 
 import dev.webfx.extras.panes.FlipPane;
-import dev.webfx.extras.panes.RatioPane;
+import dev.webfx.extras.panes.AspectRatioPane;
 import dev.webfx.extras.panes.ScaleMode;
 import dev.webfx.extras.panes.ScalePane;
 import dev.webfx.extras.util.layout.LayoutUtil;
@@ -33,14 +33,15 @@ import javafx.scene.paint.Color;
 import javafx.scene.shape.SVGPath;
 import javafx.scene.text.FontWeight;
 import javafx.scene.web.WebView;
+import one.modality.base.client.css.Fonts;
+import one.modality.base.client.i18n.ModalityI18nKeys;
 import one.modality.base.client.mainframe.fx.FXMainFrameDialogArea;
-import one.modality.base.frontoffice.utility.GeneralUtility;
-import one.modality.base.frontoffice.utility.StyleUtility;
-import one.modality.base.shared.entities.Country;
+import one.modality.base.frontoffice.utility.browser.BrowserUtil;
+import one.modality.base.frontoffice.utility.tyler.GeneralUtility;
 import one.modality.base.shared.entities.Organization;
 import one.modality.crm.backoffice.organization.fx.FXOrganization;
 import one.modality.crm.backoffice.organization.fx.FXOrganizationId;
-import one.modality.event.frontoffice.activities.booking.browser.BrowserUtil;
+import one.modality.event.frontoffice.activities.booking.BookingI18nKeys;
 import one.modality.event.frontoffice.activities.booking.fx.FXCountry;
 import one.modality.event.frontoffice.activities.booking.fx.FXOrganizations;
 import one.modality.event.frontoffice.activities.booking.map.DynamicMapView;
@@ -59,12 +60,12 @@ public final class OrganizationSelectorView {
     private final FlipPane flipPane = new FlipPane(true);
     private final MapView organizationMapView = new StaticMapView(10);
     private MapView worldMapView;
-    private final RatioPane presentationPane = new RatioPane(16d/9);
-    private final WebView presentationVideoView = new WebView();
-    private final Hyperlink websiteLink = GeneralUtility.createHyperlink("localCentreWebsite", Color.WHITE);
-    private final Hyperlink addressLink = GeneralUtility.createHyperlink("localCentreAddress", Color.WHITE);
-    private final Hyperlink phoneLink   = GeneralUtility.createHyperlink("localCentrePhone",   Color.WHITE);
-    private final Hyperlink emailLink   = GeneralUtility.createHyperlink("localCentreEmail",   Color.WHITE);
+    private final AspectRatioPane presentationPane = new AspectRatioPane(16d / 9);
+    private WebView presentationVideoView; // new WebView() can raise "Not on FX application thread" if this is the first page loaded
+    private final Hyperlink websiteLink = GeneralUtility.createHyperlink(BookingI18nKeys.localCentreWebsite, Color.WHITE);
+    private final Hyperlink addressLink = GeneralUtility.createHyperlink(BookingI18nKeys.localCentreAddress, Color.WHITE);
+    private final Hyperlink phoneLink = GeneralUtility.createHyperlink(BookingI18nKeys.localCentrePhone, Color.WHITE);
+    private final Hyperlink emailLink = GeneralUtility.createHyperlink(BookingI18nKeys.localCentreEmail, Color.WHITE);
 
     public OrganizationSelectorView(ButtonFactoryMixin factoryMixin, ViewDomainActivityBase activityBase) {
         this.factoryMixin = factoryMixin;
@@ -73,7 +74,7 @@ public final class OrganizationSelectorView {
         LayoutUtil.setAllUnmanagedWhenInvisible(presentationPane, websiteLink, addressLink, phoneLink, emailLink);
 
         organizationMapView.placeEntityProperty().bind(FXOrganization.organizationProperty());
-        FXProperties.runNowAndOnPropertiesChange(e -> updateFromOrganization(), FXOrganization.organizationProperty());
+        FXProperties.runNowAndOnPropertyChange(this::updateFromOrganization, FXOrganization.organizationProperty());
     }
 
     public Node getView() {
@@ -90,7 +91,7 @@ public final class OrganizationSelectorView {
         if (WebFxKitLauncher.supportsSvgImageFormat())
             organizationJson = organizationJson.replace("}", ", columns: [{expression: '[image(`images/s16/organizations/svg/` + (type=2 ? `kmc` : type=3 ? `kbc` : type=4 ? `branch` : `generic`) + `.svg`),name]'}] }");
         EntityButtonSelector<Organization> organizationButtonSelector = new EntityButtonSelector<>(
-                organizationJson, factoryMixin, FXMainFrameDialogArea::getDialogArea, activityBase.getDataSourceModel()
+            organizationJson, factoryMixin, FXMainFrameDialogArea::getDialogArea, activityBase.getDataSourceModel()
         );
         organizationButtonSelector.selectedItemProperty().bindBidirectional(FXOrganization.organizationProperty());
         Button organizationButton = organizationButtonSelector.getButton();
@@ -99,47 +100,47 @@ public final class OrganizationSelectorView {
         organizationButtonScalePane.setMaxScale(2.5);
 
         VBox contactBox = GeneralUtility.createVList(10, 0,
-                websiteLink,
-                addressLink,
-                phoneLink,
-                emailLink
+            websiteLink,
+            addressLink,
+            phoneLink,
+            emailLink
         );
 
-        Hyperlink changeLocation = GeneralUtility.createHyperlink("Change your location", Color.WHITE);
+        Hyperlink changeLocation = GeneralUtility.createHyperlink(BookingI18nKeys.ChangeYourLocation, Color.WHITE);
         GeneralUtility.onNodeClickedWithoutScroll(event -> flipToBackWordMap(), changeLocation);
 
         Node organizationMapNode = organizationMapView.getMapNode();
         return OrangeFrame.createOrangeFrame(
-                "yourLocalCentre",
-                new Pane(organizationButtonScalePane, organizationMapNode, presentationPane, contactBox) {
-                    @Override
-                    protected void layoutChildren() {
-                        double width = getWidth(), height = getHeight(), x = 0, y = 0, w = width, h = organizationButtonScalePane.prefHeight(width);
-                        layoutInArea(organizationButtonScalePane, x, y, w, h, 0, HPos.CENTER, VPos.CENTER);
-                        double space = Math.min(35, width * 0.03);
-                        y += h + space;
-                        if (organizationMapNode.isVisible()) {
-                            w = width / 2;
-                            layoutInArea(organizationMapNode, x, y, w, height - y, 0, HPos.CENTER, VPos.TOP);
-                            x = w + space;
-                            w = width - x;
-                            contactBox.setAlignment(Pos.CENTER_LEFT);
-                            double fontFactor = GeneralUtility.computeFontFactor(w);
-                            GeneralUtility.setLabeledFont(websiteLink, StyleUtility.TEXT_FAMILY, FontWeight.NORMAL, fontFactor * 16);
-                            GeneralUtility.setLabeledFont(addressLink, StyleUtility.TEXT_FAMILY, FontWeight.NORMAL, fontFactor * 16);
-                            GeneralUtility.setLabeledFont(phoneLink,   StyleUtility.TEXT_FAMILY, FontWeight.NORMAL, fontFactor * 16);
-                            GeneralUtility.setLabeledFont(emailLink,   StyleUtility.TEXT_FAMILY, FontWeight.NORMAL, fontFactor * 16);
-                        } else
-                            contactBox.setAlignment(Pos.CENTER);
-                        if (presentationPane.isVisible()) {
-                            h = presentationPane.prefHeight(w);
-                            layoutInArea(presentationPane, x, y, w, h, 0, HPos.CENTER, VPos.TOP);
-                            y += h + 10;
-                        }
-                        layoutInArea(contactBox, x, y, w, height - y, 0, HPos.CENTER, VPos.CENTER);
+            BookingI18nKeys.yourLocalCentre,
+            new Pane(organizationButtonScalePane, organizationMapNode, presentationPane, contactBox) {
+                @Override
+                protected void layoutChildren() {
+                    double width = getWidth(), height = getHeight(), x = 0, y = 0, w = width, h = organizationButtonScalePane.prefHeight(width);
+                    layoutInArea(organizationButtonScalePane, x, y, w, h, 0, HPos.CENTER, VPos.CENTER);
+                    double space = Math.min(35, width * 0.03);
+                    y += h + space;
+                    if (organizationMapNode.isVisible()) {
+                        w = width / 2;
+                        layoutInArea(organizationMapNode, x, y, w, height - y, 0, HPos.CENTER, VPos.TOP);
+                        x = w + space;
+                        w = width - x;
+                        contactBox.setAlignment(Pos.CENTER_LEFT);
+                        double fontFactor = GeneralUtility.computeFontFactor(w);
+                        GeneralUtility.setLabeledFont(websiteLink, Fonts.MONTSERRAT_TEXT_FAMILY, FontWeight.NORMAL, fontFactor * 16);
+                        GeneralUtility.setLabeledFont(addressLink, Fonts.MONTSERRAT_TEXT_FAMILY, FontWeight.NORMAL, fontFactor * 16);
+                        GeneralUtility.setLabeledFont(phoneLink, Fonts.MONTSERRAT_TEXT_FAMILY, FontWeight.NORMAL, fontFactor * 16);
+                        GeneralUtility.setLabeledFont(emailLink, Fonts.MONTSERRAT_TEXT_FAMILY, FontWeight.NORMAL, fontFactor * 16);
+                    } else
+                        contactBox.setAlignment(Pos.CENTER);
+                    if (presentationPane.isVisible()) {
+                        h = presentationPane.prefHeight(w);
+                        layoutInArea(presentationPane, x, y, w, h, 0, HPos.CENTER, VPos.TOP);
+                        y += h + 10;
                     }
-                },
-                changeLocation);
+                    layoutInArea(contactBox, x, y, w, height - y, 0, HPos.CENTER, VPos.CENTER);
+                }
+            },
+            changeLocation);
     }
 
     public void onResume() {
@@ -157,91 +158,93 @@ public final class OrganizationSelectorView {
         Organization organization = FXOrganization.getOrganization();
         if (organization != null) {
             organization.onExpressionLoaded("domainName,latitude,longitude,street,cityName,postCode,country.(name,iso_alpha2,latitude,longitude,north,south,east,west),phone,email")
-                    .onSuccess(ignored -> Platform.runLater(() -> {
-                        Integer organizationId = Numbers.toInteger(organization.getPrimaryKey());
-                        String imageLink = // Temporarily hardcoded
-                                // Manjushri KMC
-                                organizationId == 151 ? "/images/organizations/ManjushriKMC.png"
-                                        // KMC France
-                                        : organizationId == 2 ? "/images/organizations/KMCFrance.png"
-                                        : null;
-                        String videoLink = // Temporarily hardcoded
-                                // Manjushri KMC
-                                organizationId == 151 ? "https://fast.wistia.net/embed/iframe/z3pqhk7lhs?playerColor=EE7130" // "https://www.youtube.com/embed/jwptdnO_f-I?rel=0"
-                                        // KMC France
-                                        : organizationId == 2 ? "https://www.youtube.com/embed/alIoC9_oD5w?rel=0"
-                                        : null;
-                        presentationPane.setVisible(imageLink != null || videoLink != null);
-                        if (videoLink == null)
-                            presentationVideoView.getEngine().load(null); // Unloading possible previous video (stops the video if playing)
-                        if (imageLink != null) {
-                            ImageView imageView = new ImageView(new Image(imageLink, true));
-                            ScalePane scalePane = new ScalePane(ScaleMode.BEST_ZOOM, imageView);
-                            presentationPane.setContent(scalePane);
-                            if (videoLink != null) {
-                                SVGPath playSvgPath = new SVGPath();
-                                playSvgPath.setContent(PLAY_VIDEO_TRIANGLE_SVG);
-                                playSvgPath.setFill(Color.WHITE);
-                                StackPane stackPane = new StackPane();
-                                stackPane.setCursor(Cursor.HAND);
-                                presentationPane.setContent(stackPane);
-                                boolean isGluon = UserAgent.isNative();
-                                if (!isGluon) { // ex: desktop JRE & browser
+                .onSuccess(ignored -> Platform.runLater(() -> {
+                    Integer organizationId = Numbers.toInteger(organization.getPrimaryKey());
+                    String imageLink = // Temporarily hardcoded
+                        // Manjushri KMC
+                        organizationId == 151 ? "/images/organizations/ManjushriKMC.png"
+                            // KMC France
+                            : organizationId == 2 ? "/images/organizations/KMCFrance.png"
+                            : null;
+                    String videoLink = // Temporarily hardcoded
+                        // Manjushri KMC
+                        organizationId == 151 ? "https://fast.wistia.net/embed/iframe/z3pqhk7lhs?playerColor=EE7130" // "https://www.youtube.com/embed/jwptdnO_f-I?rel=0"
+                            // KMC France
+                            : organizationId == 2 ? "https://www.youtube.com/embed/alIoC9_oD5w?rel=0"
+                            : null;
+                    presentationPane.setVisible(imageLink != null || videoLink != null);
+                    if (presentationVideoView == null)
+                        presentationVideoView = new WebView();
+                    if (videoLink == null)
+                        presentationVideoView.getEngine().load(null); // Unloading possible previous video (stops the video if playing)
+                    if (imageLink != null) {
+                        ImageView imageView = new ImageView(new Image(imageLink, true));
+                        ScalePane scalePane = new ScalePane(ScaleMode.BEST_ZOOM, imageView);
+                        presentationPane.setContent(scalePane);
+                        if (videoLink != null) {
+                            SVGPath playSvgPath = new SVGPath();
+                            playSvgPath.setContent(PLAY_VIDEO_TRIANGLE_SVG);
+                            playSvgPath.setFill(Color.WHITE);
+                            StackPane stackPane = new StackPane();
+                            stackPane.setCursor(Cursor.HAND);
+                            presentationPane.setContent(stackPane);
+                            boolean isGluon = UserAgent.isNative();
+                            if (!isGluon) { // ex: desktop JRE & browser
+                                presentationVideoView.getEngine().load(videoLink);
+                                stackPane.getChildren().setAll(presentationVideoView, scalePane, playSvgPath);
+                                scalePane.setMouseTransparent(true);
+                                playSvgPath.setMouseTransparent(true);
+                                scalePane.setVisible(true);
+                                playSvgPath.setVisible(true);
+                                SceneUtil.runOnceFocusIsInside(presentationVideoView, false, () -> {
+                                    scalePane.setVisible(false);
+                                    playSvgPath.setVisible(false);
+                                });
+                            } else { // ex: mobile app
+                                stackPane.getChildren().setAll(scalePane, playSvgPath);
+                                GeneralUtility.onNodeClickedWithoutScroll(e -> {
                                     presentationVideoView.getEngine().load(videoLink);
-                                    stackPane.getChildren().setAll(presentationVideoView, scalePane, playSvgPath);
-                                    scalePane.setMouseTransparent(true);
-                                    playSvgPath.setMouseTransparent(true);
-                                    scalePane.setVisible(true);
-                                    playSvgPath.setVisible(true);
-                                    SceneUtil.runOnceFocusIsInside(presentationVideoView, false, () -> {
-                                        scalePane.setVisible(false);
-                                        playSvgPath.setVisible(false);
-                                    });
-                                } else { // ex: mobile app
-                                    stackPane.getChildren().setAll(scalePane, playSvgPath);
-                                    GeneralUtility.onNodeClickedWithoutScroll(e -> {
-                                        presentationVideoView.getEngine().load(videoLink);
-                                        presentationPane.setContent(presentationVideoView);
-                                    }, stackPane);
-                                }
+                                    presentationPane.setContent(presentationVideoView);
+                                }, stackPane);
                             }
-                        } else if (videoLink != null) {
-                            presentationVideoView.getEngine().load(videoLink);
-                            presentationPane.setContent(presentationVideoView);
                         }
-                        String domainName = organization.getStringFieldValue("domainName");
-                        websiteLink.setVisible(domainName != null);
-                        FXProperties.setEvenIfBound(websiteLink.textProperty(), domainName);
+                    } else if (videoLink != null) {
+                        presentationVideoView.getEngine().load(videoLink);
+                        presentationPane.setContent(presentationVideoView);
+                    }
+                    String domainName = organization.getStringFieldValue("domainName");
+                    websiteLink.setVisible(domainName != null);
+                    FXProperties.setEvenIfBound(websiteLink.textProperty(), domainName);
+                    GeneralUtility.onNodeClickedWithoutScroll(e2 ->
+                        BrowserUtil.chooseHowToOpenWebsite("https://" + domainName), websiteLink);
+                    FXProperties.setEvenIfBound(addressLink.textProperty(), organization.evaluate("street + ' - ' + cityName + ' ' + postCode + ' - ' + country.name "));
+                    Float latitude = organization.getLatitude();
+                    Float longitude = organization.getLongitude();
+                    if (latitude == null || longitude == null) {
+                        GeneralUtility.onNodeClickedWithoutScroll(null, addressLink);
+                        organizationMapView.setMapCenter(null);
+                        organizationMapView.getMarkers().clear();
+                        organizationMapView.getMapNode().setVisible(false);
+                    } else {
                         GeneralUtility.onNodeClickedWithoutScroll(e2 ->
-                                BrowserUtil.chooseHowToOpenWebsite("https://" + domainName), websiteLink);
-                        FXProperties.setEvenIfBound(addressLink.textProperty(), (String) organization.evaluate("street + ' - ' + cityName + ' ' + postCode + ' - ' + country.name "));
-                        Float latitude = organization.getLatitude();
-                        Float longitude = organization.getLongitude();
-                        if (latitude == null || longitude == null) {
-                            GeneralUtility.onNodeClickedWithoutScroll(null, addressLink);
-                            organizationMapView.setMapCenter(null);
-                            organizationMapView.getMarkers().clear();
-                            organizationMapView.getMapNode().setVisible(false);
-                        } else {
-                            GeneralUtility.onNodeClickedWithoutScroll(e2 ->
-                                    BrowserUtil.openExternalBrowser("https://google.com/maps/search/kadampa/@" + latitude + "," + longitude + ",12z")
-                                    , addressLink);
-                            organizationMapView.setMapCenter(latitude, longitude);
-                            organizationMapView.getMarkers().setAll(new MapMarker(organization));
-                            organizationMapView.getMapNode().setVisible(true);
-                        }
-                        String phone = organization.getStringFieldValue("phone");
-                        phoneLink.setVisible(phone != null);
-                        FXProperties.setEvenIfBound(phoneLink.textProperty(), phone);
-                        GeneralUtility.onNodeClickedWithoutScroll(e2 ->
-                                BrowserUtil.openExternalBrowser("tel:" + phone), phoneLink);
-                        String email = organization.getStringFieldValue("email");
-                        emailLink.setVisible(email != null);
-                        FXProperties.setEvenIfBound(emailLink.textProperty(), email);
-                        GeneralUtility.onNodeClickedWithoutScroll(e2 ->
-                                BrowserUtil.openExternalBrowser("mailto:" + email), emailLink);
-                        FXCountry.setCountry(organization.getCountry());
-                    }));
+                                BrowserUtil.openExternalBrowser("https://google.com/maps/search/kadampa/@" + latitude + "," + longitude + ",12z")
+                            , addressLink);
+                        organizationMapView.setMapCenter(latitude, longitude);
+                        organizationMapView.getMarkers().setAll(new MapMarker(organization));
+                        organizationMapView.getMapNode().setVisible(true);
+                    }
+                    String phone = organization.getStringFieldValue("phone");
+                    phoneLink.setVisible(phone != null);
+                    FXProperties.setEvenIfBound(phoneLink.textProperty(), phone);
+                    GeneralUtility.onNodeClickedWithoutScroll(e2 ->
+                        BrowserUtil.openExternalBrowser("tel:" + phone), phoneLink);
+                    String email = organization.getStringFieldValue("email");
+                    emailLink.setVisible(email != null);
+                    FXProperties.setEvenIfBound(emailLink.textProperty(), email);
+                    GeneralUtility.onNodeClickedWithoutScroll(e2 ->
+                        BrowserUtil.openExternalBrowser("mailto:" + email), emailLink);
+                    FXCountry.setCountry(organization.getCountry());
+                }));
         }
     }
 
@@ -249,11 +252,10 @@ public final class OrganizationSelectorView {
         worldMapView = new DynamicMapView();
         worldMapView.placeEntityProperty().bind(FXCountry.countryProperty());
 
-        Hyperlink backLink = GeneralUtility.createHyperlink("Back", Color.WHITE);
+        Hyperlink backLink = GeneralUtility.createHyperlink(ModalityI18nKeys.Back, Color.WHITE);
         GeneralUtility.onNodeClickedWithoutScroll(event -> flipToFrontOrganization(), backLink);
 
-        FXProperties.runNowAndOnPropertiesChange(() -> {
-            Country country = FXCountry.getCountry();
+        FXProperties.runNowAndOnPropertyChange(country -> {
             if (country != null) {
                 Float latitude = country.getLatitude();
                 Float longitude = country.getLongitude();
@@ -264,21 +266,21 @@ public final class OrganizationSelectorView {
         }, FXCountry.countryProperty());
 
         ObservableLists.runNowAndOnListChange(x -> recreateOrganizationMarkers(worldMapView)
-                , FXOrganizations.organizations());
+            , FXOrganizations.organizations());
 
         return OrangeFrame.createOrangeFrame(
-                "findYourLocalCentre",
-                worldMapView.getMapNode(),
-                backLink
+            BookingI18nKeys.findYourLocalCentre,
+            worldMapView.getMapNode(),
+            backLink
         );
     }
 
     private void recreateOrganizationMarkers(MapView mapView) {
         mapView.getMarkers().setAll(
-                FXOrganizations.organizations().stream()
-                        .filter(o -> o.getLatitude() != null && o.getLongitude() != null)
-                        .map(this::createOrganizationMarker)
-                        .collect(Collectors.toList()));
+            FXOrganizations.organizations().stream()
+                .filter(o -> o.getLatitude() != null && o.getLongitude() != null)
+                .map(this::createOrganizationMarker)
+                .collect(Collectors.toList()));
     }
 
     private MapMarker createOrganizationMarker(Organization o) {

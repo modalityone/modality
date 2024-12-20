@@ -1,6 +1,7 @@
 package one.modality.ecommerce.document.service.events;
 
 import dev.webfx.stack.orm.entity.EntityStore;
+import dev.webfx.stack.orm.entity.UpdateStore;
 
 /**
  * @author Bruno Salmon
@@ -11,6 +12,7 @@ public abstract class AbstractSourceEvent {
     //private String comment;
 
     protected EntityStore entityStore;
+    protected UpdateStore updateStore;
 
     public AbstractSourceEvent() {
         //this(LocalDateTime.now());
@@ -38,5 +40,12 @@ public abstract class AbstractSourceEvent {
 
     public void setEntityStore(EntityStore entityStore) {
         this.entityStore = entityStore;
+        updateStore = entityStore instanceof UpdateStore ? (UpdateStore) entityStore : null;
     }
+
+    protected boolean isForSubmit() {
+        return updateStore != null;
+    }
+
+    public abstract void replayEvent();
 }

@@ -8,11 +8,13 @@ module modality.base.backoffice.operations.generic {
     // Direct dependencies modules
     requires javafx.controls;
     requires javafx.graphics;
+    requires modality.base.client.i18n;
     requires modality.base.client.mainframe.fx;
     requires modality.base.shared.entities;
     requires webfx.extras.type;
     requires webfx.platform.async;
     requires webfx.platform.uischeduler;
+    requires webfx.stack.i18n;
     requires webfx.stack.orm.domainmodel;
     requires webfx.stack.orm.entity;
     requires webfx.stack.orm.entity.controls;

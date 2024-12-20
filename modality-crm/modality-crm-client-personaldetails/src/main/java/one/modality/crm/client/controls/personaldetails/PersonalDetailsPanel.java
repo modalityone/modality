@@ -1,9 +1,9 @@
 package one.modality.crm.client.controls.personaldetails;
 
-import dev.webfx.extras.styles.materialdesign.textfield.MaterialTextFieldPane;
 import dev.webfx.extras.panes.FlexColumnPane;
 import dev.webfx.extras.panes.MonoPane;
 import dev.webfx.extras.panes.ScalableBorderPane;
+import dev.webfx.extras.styles.materialdesign.textfield.MaterialTextFieldPane;
 import dev.webfx.extras.util.control.ControlUtil;
 import dev.webfx.extras.util.layout.LayoutUtil;
 import dev.webfx.extras.util.scene.SceneUtil;
@@ -24,7 +24,6 @@ import dev.webfx.stack.ui.dialog.DialogCallback;
 import dev.webfx.stack.ui.dialog.DialogUtil;
 import javafx.application.Platform;
 import javafx.beans.property.BooleanProperty;
-import javafx.beans.property.SimpleBooleanProperty;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Cursor;
@@ -36,13 +35,15 @@ import javafx.scene.layout.Pane;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.SVGPath;
 import one.modality.base.client.activity.ModalityButtonFactoryMixin;
-import one.modality.base.client.validation.ModalityValidationSupport;
-import one.modality.base.shared.domainmodel.formatters.DateFormatter;
+import one.modality.base.client.i18n.ModalityI18nKeys;
+import one.modality.base.client.util.converters.Converters;
+import dev.webfx.stack.ui.validation.ValidationSupport;
 import one.modality.base.shared.domainmodel.functions.AbcNames;
 import one.modality.base.shared.entities.Country;
 import one.modality.base.shared.entities.Organization;
 import one.modality.base.shared.entities.Person;
 import one.modality.base.shared.entities.markers.EntityHasPersonalDetails;
+import one.modality.crm.client.i18n.CrmI18nKeys;
 
 import java.time.LocalDate;
 
@@ -66,28 +67,29 @@ public class PersonalDetailsPanel implements ModalityButtonFactoryMixin {
     private UpdateStore updateStore;
     private final ButtonSelectorParameters parameters;
 
-    private final BooleanProperty editableProperty = new SimpleBooleanProperty(false) {
-        @Override
-        protected void invalidated() {
-            boolean editable = get();
-            if (editable) {
-                if (updateStore == null)
-                    updateStore = UpdateStore.createAbove(entity.getStore());
-                updatingEntity = updateStore.updateEntity(entity);
-            }
-            updateUiEditable();
+    private final BooleanProperty editableProperty = FXProperties.newBooleanProperty(editable -> {
+        if (editable) {
+            if (updateStore == null)
+                updateStore = UpdateStore.createAbove(entity.getStore());
+            updatingEntity = updateStore.updateEntity(entity);
         }
-    };
+        updateUiEditable();
+    });
 
-    private final Hyperlink updateLink = newHyperlink("Update", e -> setEditable(true));
-    private final Hyperlink saveLink = newHyperlink("Save", e -> save());
-    private final Hyperlink cancelLink = newHyperlink("Cancel", e -> cancel()); { cancelLink.setContentDisplay(ContentDisplay.TEXT_ONLY); }
-    private final Hyperlink closeLink = newHyperlink("Close", e -> close());
+    private final Hyperlink updateLink = newHyperlink(ModalityI18nKeys.Update, e -> setEditable(true));
+    private final Hyperlink saveLink = newHyperlink(ModalityI18nKeys.Save, e -> save());
+    private final Hyperlink cancelLink = newHyperlink(ModalityI18nKeys.Cancel, e -> cancel());
+
+    {
+        cancelLink.setContentDisplay(ContentDisplay.TEXT_ONLY);
+    }
+
+    private final Hyperlink closeLink = newHyperlink("Close" /* ? */, e -> close());
     private final MonoPane switchButton;
     private Runnable previousSceneCancelAccelerator;
     private Runnable closeHook;
     private boolean validationEnabled;
-    protected final ModalityValidationSupport validationSupport = new ModalityValidationSupport();
+    protected final ValidationSupport validationSupport = new ValidationSupport();
     private boolean validationSupportInitialised;
 
     public PersonalDetailsPanel(EntityHasPersonalDetails entity, ButtonSelectorParameters buttonSelectorParameters) {
@@ -101,7 +103,7 @@ public class PersonalDetailsPanel implements ModalityButtonFactoryMixin {
         if (buttonSelectorParameters.getDropParent() == null)
             buttonSelectorParameters.setDropParent(container);
         buttonSelectorParameters.checkValid();
-        Label topLabel = I18nControls.bindI18nProperties(new Label(), "YourPersonalDetails");
+        Label topLabel = I18nControls.newLabel(CrmI18nKeys.YourPersonalDetails);
         SVGPath switchIcon = new SVGPath();
         switchIcon.setContent("M 2.2857143,10.285714 H 0 V 16 H 5.7142857 V 13.714286 H 2.2857143 Z M 0,5.7142857 H 2.2857143 V 2.2857143 H 5.7142857 V 0 H 0 Z M 13.714286,13.714286 H 10.285714 V 16 H 16 V 10.285714 H 13.714286 Z M 10.285714,0 v 2.2857143 h 3.428572 V 5.7142857 H 16 V 0 Z");
         switchIcon.setFill(Color.GRAY);
@@ -111,37 +113,37 @@ public class PersonalDetailsPanel implements ModalityButtonFactoryMixin {
         top.setAlignment(Pos.CENTER);
         BorderPane.setMargin(top, new Insets(15, 15, 0, 15));
         container.setTop(top);
-        firstNameTextField = newMaterialTextField("FirstName");
-        lastNameTextField = newMaterialTextField("LastName");
-        maleRadioButton = newRadioButton("Male");
-        femaleRadioButton = newRadioButton("Female");
+        firstNameTextField = newMaterialTextField(CrmI18nKeys.FirstName);
+        lastNameTextField = newMaterialTextField(CrmI18nKeys.LastName);
+        maleRadioButton = newRadioButton(CrmI18nKeys.Male);
+        femaleRadioButton = newRadioButton(CrmI18nKeys.Female);
         ToggleGroup genderGroup = new ToggleGroup();
         maleRadioButton.setToggleGroup(genderGroup);
         femaleRadioButton.setToggleGroup(genderGroup);
         genderBox = new HBox(20, maleRadioButton, femaleRadioButton);
-        adultRadioButton = newRadioButton("Adult");
-        childRadioButton = newRadioButton("Child");
+        adultRadioButton = newRadioButton(CrmI18nKeys.Adult);
+        childRadioButton = newRadioButton(CrmI18nKeys.Child);
         ToggleGroup ageGroup = new ToggleGroup();
         childRadioButton.setToggleGroup(ageGroup);
         adultRadioButton.setToggleGroup(ageGroup);
         ageBox = new HBox(20, adultRadioButton, childRadioButton);
         birthDatePicker = LayoutUtil.setMaxWidthToInfinite(new DatePicker());
-        birthDatePicker.setConverter(DateFormatter.SINGLETON.toStringConverter());
-        emailTextField = newMaterialTextField("Email");
-        phoneTextField = newMaterialTextField("Phone");
-        streetTextField = newMaterialTextField("Street");
-        postCodeTextField = newMaterialTextField("Postcode");
-        cityNameTextField = newMaterialTextField("City");
+        birthDatePicker.setConverter(Converters.dateFormatterStringConverter());
+        emailTextField = newMaterialTextField(CrmI18nKeys.Email);
+        phoneTextField = newMaterialTextField(CrmI18nKeys.Phone);
+        streetTextField = newMaterialTextField(CrmI18nKeys.Street);
+        postCodeTextField = newMaterialTextField(CrmI18nKeys.Postcode);
+        cityNameTextField = newMaterialTextField(CrmI18nKeys.City);
         String countryJson = "{class: 'Country', orderBy: 'name'}";
         if (WebFxKitLauncher.supportsSvgImageFormat())
             countryJson = "{class: 'Country', orderBy: 'name', columns: [{expression: '[image(`images/s16/countries/svg/` + iso_alpha2 + `.svg`),name]'}] }";
         countrySelector = createEntityButtonSelector(countryJson, dataSourceModel, buttonSelectorParameters);
-        countryButton = countrySelector.toMaterialButton("Country");
+        countryButton = countrySelector.toMaterialButton(CrmI18nKeys.Country);
         String organizationJson = "{class: 'Organization', alias: 'o', where: '!closed and name!=`ISC`', orderBy: 'country.name,name'}";
         if (WebFxKitLauncher.supportsSvgImageFormat())
             organizationJson = "{class: 'Organization', alias: 'o', where: '!closed and name!=`ISC`', orderBy: 'country.name,name', columns: [{expression: '[image(`images/s16/organizations/svg/` + (type=2 ? `kmc` : type=3 ? `kbc` : type=4 ? `branch` : `generic`) + `.svg`),name]'}] }";
         organizationSelector = createEntityButtonSelector(organizationJson, dataSourceModel, buttonSelectorParameters);
-        organizationButton = organizationSelector.toMaterialButton("Centre");
+        organizationButton = organizationSelector.toMaterialButton(CrmI18nKeys.Centre);
         SceneUtil.onSceneReady(getContainer(), scene -> {
             previousSceneCancelAccelerator = SceneUtil.getCancelAccelerator(scene);
             SceneUtil.setCancelAccelerator(scene, this::onCancelAccelerator);
@@ -198,11 +200,11 @@ public class PersonalDetailsPanel implements ModalityButtonFactoryMixin {
             syncModelFromUi(updatingEntity);
             if (updateStore.hasChanges()) {
                 updateStore.submitChanges()
-                        .onFailure(dev.webfx.platform.console.Console::log)
-                        .onSuccess(submitResultBatch -> {
-                            syncModelFromUi(entity);
-                            setEditable(false);
-                        });
+                    .onFailure(dev.webfx.platform.console.Console::log)
+                    .onSuccess(submitResultBatch -> {
+                        syncModelFromUi(entity);
+                        setEditable(false);
+                    });
             }
         }
     }
@@ -309,18 +311,18 @@ public class PersonalDetailsPanel implements ModalityButtonFactoryMixin {
 
     protected Node[] materialChildren() {
         return Arrays.nonNulls(Node[]::new,
-                firstNameTextField,
-                lastNameTextField,
-                newMaterialRegion(genderBox, "Gender"),
-                newMaterialRegion(ageBox, "Age"),
-                childRadioButton.isSelected() ? newMaterialRegion(birthDatePicker, "BirthDate") : null,
-                emailTextField,
-                phoneTextField,
-                streetTextField,
-                postCodeTextField,
-                cityNameTextField,
-                countryButton,
-                organizationButton
+            firstNameTextField,
+            lastNameTextField,
+            newMaterialRegion(genderBox, CrmI18nKeys.Gender),
+            newMaterialRegion(ageBox, CrmI18nKeys.Age),
+            childRadioButton.isSelected() ? newMaterialRegion(birthDatePicker, CrmI18nKeys.BirthDate) : null,
+            emailTextField,
+            phoneTextField,
+            streetTextField,
+            postCodeTextField,
+            cityNameTextField,
+            countryButton,
+            organizationButton
         );
     }
 /*

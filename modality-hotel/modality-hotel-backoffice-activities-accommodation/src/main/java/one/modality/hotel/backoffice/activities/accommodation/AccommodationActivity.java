@@ -4,11 +4,11 @@ import dev.webfx.stack.ui.operation.action.OperationActionFactoryMixin;
 import javafx.scene.Node;
 import javafx.scene.control.CheckBox;
 import javafx.scene.layout.BorderPane;
-import one.modality.base.client.tile.TabsBar;
+import one.modality.base.backoffice.mainframe.fx.FXEventSelector;
+import one.modality.base.backoffice.mainframe.fx.FXMainFrameHeaderTabs;
 import one.modality.base.client.activity.organizationdependent.OrganizationDependentViewDomainActivity;
 import one.modality.base.client.gantt.fx.visibility.FXGanttVisibility;
-import one.modality.base.client.gantt.fx.visibility.GanttVisibility;
-import one.modality.base.backoffice.mainframe.fx.FXMainFrameHeaderTabs;
+import one.modality.base.client.tile.TabsBar;
 import one.modality.hotel.backoffice.accommodation.AccommodationBorderPane;
 import one.modality.hotel.backoffice.accommodation.AccommodationPresentationModel;
 import one.modality.hotel.backoffice.accommodation.TodayAccommodationStatus;
@@ -61,13 +61,15 @@ final class AccommodationActivity extends OrganizationDependentViewDomainActivit
     public void onResume() {
         super.onResume();
         FXMainFrameHeaderTabs.setHeaderTabs(headerTabsBar.getTabs());
-        FXGanttVisibility.setGanttVisibility(GanttVisibility.EVENTS);
+        FXGanttVisibility.showEvents();
+        FXEventSelector.showEventSelector();
     }
 
     @Override
     public void onPause() {
-        FXMainFrameHeaderTabs.clearHeaderTabs();
-        FXGanttVisibility.setGanttVisibility(GanttVisibility.HIDDEN);
+        FXMainFrameHeaderTabs.resetToDefault();
+        FXGanttVisibility.resetToDefault();
+        FXEventSelector.resetToDefault();
         super.onPause();
     }
 

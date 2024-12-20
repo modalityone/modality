@@ -1,12 +1,13 @@
 package one.modality.ecommerce.document.service;
 
-import dev.webfx.platform.console.Console;
 import dev.webfx.platform.util.collection.Collections;
 import dev.webfx.stack.orm.entity.EntityStore;
 import one.modality.base.shared.entities.*;
-import one.modality.ecommerce.document.service.events.*;
-import one.modality.ecommerce.document.service.events.book.*;
-import one.modality.ecommerce.document.service.events.gateway.UpdateMoneyTransferEvent;
+import one.modality.ecommerce.document.service.events.AbstractDocumentEvent;
+import one.modality.ecommerce.document.service.events.book.AddAttendancesEvent;
+import one.modality.ecommerce.document.service.events.book.AddDocumentLineEvent;
+import one.modality.ecommerce.document.service.events.book.AddMoneyTransferEvent;
+import one.modality.ecommerce.document.service.events.book.RemoveAttendancesEvent;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -80,13 +81,7 @@ public final class DocumentAggregate {
         existingMoneyTransfersCount = moneyTransfers.size();
         newDocumentEvents.forEach(e -> {
             e.setEntityStore(entityStore);
-            if (e instanceof AddDocumentEvent) {
-                AddDocumentEvent ade = (AddDocumentEvent) e;
-                if (documentLines.isEmpty() && attendances.isEmpty()) {
-                    document = ade.getDocument();
-                } else
-                    throw new IllegalArgumentException("There should be only one AddDocumentEvent");
-            } else if (e instanceof AddDocumentLineEvent) {
+            if (e instanceof AddDocumentLineEvent) {
                 documentLines.add(((AddDocumentLineEvent) e).getDocumentLine());
             } else if (e instanceof AddAttendancesEvent) {
                 attendances.addAll(Arrays.asList(((AddAttendancesEvent) e).getAttendances()));
@@ -94,12 +89,15 @@ public final class DocumentAggregate {
                 attendances.removeAll(Arrays.asList(((RemoveAttendancesEvent) e).getAttendances()));
             } else if (e instanceof AddMoneyTransferEvent) {
                 moneyTransfers.add(((AddMoneyTransferEvent) e).getMoneyTransfer());
-            } else if (e instanceof UpdateMoneyTransferEvent) {
-                ((UpdateMoneyTransferEvent) e).getMoneyTransfer(); // This should be enough to update the money transfer
-            } else {
-                Console.log("⚠️ DocumentAggregate doesn't recognize this event: " + e.getClass());
+            } else { // Ex: AddDocumentEvent, CancelDocumentEvent, UpdateMoneyTransferEvent, etc...
+                e.replayEvent();
+                //Console.log("⚠️ DocumentAggregate doesn't recognize this event: " + e.getClass());
             }
+            if (document == null)
+                document = e.getDocument();
         });
+        if (document == null)
+            document = entityStore.createEntity(Document.class);
     }
 
     public DocumentAggregate getPreviousVersion() {

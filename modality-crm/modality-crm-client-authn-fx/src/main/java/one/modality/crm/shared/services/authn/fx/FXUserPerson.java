@@ -19,17 +19,19 @@ public final class FXUserPerson {
     private final static ObjectProperty<Person> userPersonProperty = new SimpleObjectProperty<>();
 
     static {
-        FXProperties.runNowAndOnPropertiesChange(() -> {
-            EntityId userPersonId = FXUserPersonId.getUserPersonId();
-            if (userPersonId == null)
-                setUserPerson(null);
-            else {
-                DataSourceModel dataSourceModel = DataSourceModelService.getDefaultDataSourceModel();
-                EntityStore.create(dataSourceModel).<Person>executeQuery("select firstName,lastName,male,ordained,email,phone,street,postCode,cityName,country,organization from Person where id=?", userPersonId)
-                        .onFailure(Console::log)
-                        .onSuccess(persons -> UiScheduler.runInUiThread(() -> setUserPerson(persons.get(0))));
-            }
-        }, FXUserPersonId.userPersonIdProperty());
+        FXProperties.runNowAndOnPropertyChange(FXUserPerson::reloadUserPerson, FXUserPersonId.userPersonIdProperty());
+    }
+
+    public static void reloadUserPerson() {
+        EntityId userPersonId = FXUserPersonId.getUserPersonId();
+        if (userPersonId == null)
+            setUserPerson(null);
+        else {
+            DataSourceModel dataSourceModel = DataSourceModelService.getDefaultDataSourceModel();
+            EntityStore.create(dataSourceModel).<Person>executeQuery("select firstName,lastName,male,ordained,email,phone,street,postCode,cityName,country,organization from Person where id=?", userPersonId)
+                .onFailure(Console::log)
+                .onSuccess(persons -> UiScheduler.runInUiThread(() -> setUserPerson(persons.get(0))));
+        }
     }
 
     public static Person getUserPerson() {

@@ -19,12 +19,8 @@ public final class FXModalityUserPrincipal {
 
     private final static BooleanProperty loggedInProperty = new SimpleBooleanProperty();
 
-    private final static ObjectProperty<ModalityUserPrincipal> modalityUserPrincipalProperty = new SimpleObjectProperty<>() {
-        @Override
-        protected void invalidated() {
-            Console.log("modalityUserPrincipal = " + get());
-        }
-    };
+    private final static ObjectProperty<ModalityUserPrincipal> modalityUserPrincipalProperty = FXProperties.newObjectProperty(mup ->
+            Console.log("modalityUserPrincipal = " + mup));
 
     public static ReadOnlyBooleanProperty loggedInProperty() {
         return loggedInProperty;
@@ -48,6 +44,8 @@ public final class FXModalityUserPrincipal {
     }
 
     static {
+        // TODO: see if we can optimize this code to not systematically use FXUserClaims (which causes a server call)
+        //  if userId is already present
         FXProperties.runNowAndOnPropertiesChange(() -> {
             Object userId = FXUserId.getUserId();
             ModalityUserPrincipal modalityUserPrincipal = null;

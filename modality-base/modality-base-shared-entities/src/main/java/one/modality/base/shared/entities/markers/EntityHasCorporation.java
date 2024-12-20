@@ -9,19 +9,20 @@ import one.modality.base.shared.entities.Organization;
  */
 public interface EntityHasCorporation extends Entity, HasCorporation {
 
+    String corporation = "corporation";
+
     @Override
-    default void setCorporation(Object corporation) {
-        setForeignField("corporation", corporation);
+    default void setCorporation(Object value) {
+        setForeignField(corporation, value);
     }
 
     @Override
     default EntityId getCorporationId() {
-        return getForeignEntityId("corporation");
+        return getForeignEntityId(corporation);
     }
 
     @Override
     default Organization getCorporation() {
-        return getForeignEntity("corporation");
+        return getForeignEntity(corporation);
     }
-
 }

@@ -19,6 +19,11 @@
 
         <dependency>
             <groupId>org.openjfx</groupId>
+            <artifactId>javafx-media</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>org.openjfx</groupId>
             <artifactId>javafx-web</artifactId>
         </dependency>
 
@@ -207,6 +212,12 @@
         <dependency>
             <groupId>dev.webfx</groupId>
             <artifactId>webfx-stack-authn-buscall</artifactId>
+            <version>0.1.0-SNAPSHOT</version>
+        </dependency>
+
+        <dependency>
+            <groupId>dev.webfx</groupId>
+            <artifactId>webfx-stack-authn-login-ui-gateway-password-plugin</artifactId>
             <version>0.1.0-SNAPSHOT</version>
         </dependency>
 

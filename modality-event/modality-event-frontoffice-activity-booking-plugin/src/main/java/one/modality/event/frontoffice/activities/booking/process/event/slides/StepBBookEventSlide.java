@@ -6,6 +6,7 @@ import dev.webfx.extras.webtext.HtmlText;
 import dev.webfx.kit.util.properties.FXProperties;
 import dev.webfx.platform.console.Console;
 import dev.webfx.platform.uischeduler.UiScheduler;
+import dev.webfx.platform.util.Arrays;
 import dev.webfx.stack.cloud.image.CloudImageService;
 import dev.webfx.stack.cloud.image.impl.client.ClientImageService;
 import dev.webfx.stack.i18n.I18n;
@@ -24,14 +25,16 @@ import javafx.scene.layout.*;
 import javafx.scene.text.Font;
 import javafx.scene.text.TextAlignment;
 import javafx.stage.Screen;
+import one.modality.base.client.brand.Brand;
 import one.modality.base.client.icons.SvgIcons;
-import one.modality.base.frontoffice.utility.GeneralUtility;
-import one.modality.base.frontoffice.utility.StyleUtility;
+import one.modality.base.frontoffice.utility.tyler.GeneralUtility;
+import one.modality.base.frontoffice.utility.tyler.StyleUtility;
 import one.modality.base.shared.entities.Event;
+import one.modality.ecommerce.payment.CancelPaymentResult;
 import one.modality.ecommerce.payment.client.WebPaymentForm;
 import one.modality.event.client.event.fx.FXEvent;
 import one.modality.event.frontoffice.activities.booking.process.event.BookEventActivity;
-import one.modality.event.frontoffice.activities.booking.process.event.RecurringEventSchedule;
+import one.modality.event.client.recurringevents.RecurringEventSchedule;
 
 final class StepBBookEventSlide extends StepSlide {
 
@@ -62,7 +65,7 @@ final class StepBBookEventSlide extends StepSlide {
             digitsSlideController.displayFirstSlide();
         workingBookingLoaded = false;
         eventDescriptionLoadedProperty.set(false);
-        event.onExpressionLoaded("name, shortDescription, description, venue.(name, label, address), organization.country")
+        event.onExpressionLoaded("name, label, shortDescription, description, venue.(name, label, address), organization.country")
             .onFailure(ex -> displayErrorMessage(ex.getMessage()))
             .onSuccess(x -> UiScheduler.runInUiThread(this::onEventDescriptionLoaded));
 
@@ -143,7 +146,7 @@ final class StepBBookEventSlide extends StepSlide {
 
         VBox orangePane = new VBox(gridPane); // For any reason, using MonoPane makes height grows when width grows
         orangePane.setAlignment(Pos.CENTER);
-        orangePane.setBackground(Background.fill(StyleUtility.MAIN_ORANGE_COLOR));
+        orangePane.setBackground(Background.fill(Brand.getBrandMainColor()));
         orangePane.setMaxWidth(Double.MAX_VALUE);
 
         Region digitsTransitionPane = digitsSlideController.getContainer();
@@ -151,8 +154,7 @@ final class StepBBookEventSlide extends StepSlide {
         mainVbox.setPadding(Insets.EMPTY);
         mainVbox.getChildren().setAll(orangePane, digitsTransitionPane);
 
-        FXProperties.runOnPropertiesChange(() -> {
-            double width = mainVbox.getWidth();
+        FXProperties.runOnDoublePropertyChange(width -> {
             double maxPageWidth = Math.min(MAX_PAGE_WIDTH, 0.90 * width);
             double orangeVerticalGap = maxPageWidth * 0.1;
             orangePane.setPadding(new Insets(orangeVerticalGap, 0, orangeVerticalGap, 0));
@@ -168,39 +170,57 @@ final class StepBBookEventSlide extends StepSlide {
         }, mainVbox.widthProperty());
     }
 
+    @Override
     void displayCheckoutSlide() {
         digitsSlideController.displayCheckoutSlide();
     }
 
+    @Override
     void displayErrorMessage(String message) {
         digitsSlideController.displayErrorMessage(message);
     }
 
+    @Override
     void displayPaymentSlide(WebPaymentForm webPaymentForm) {
         digitsSlideController.displayPaymentSlide(webPaymentForm);
     }
 
-    void displayCancellationSlide() {
-        digitsSlideController.displayCancellationSlide();
+    @Override
+    void displayPendingPaymentSlide() {
+        digitsSlideController.displayPendingPaymentSlide();
     }
 
+    @Override
+    void displayFailedPaymentSlide() {
+        digitsSlideController.displayFailedPaymentSlide();
+    }
+
+    @Override
+    void displayCancellationSlide(CancelPaymentResult cancelPaymentResult) {
+        digitsSlideController.displayCancellationSlide(cancelPaymentResult);
+    }
+
+    @Override
     RecurringEventSchedule getRecurringEventSchedule() {
         return digitsSlideController.getRecurringEventSchedule();
     }
 
-    void bindI18nEventExpression(Property<String> textProperty, String eventExpression) {
+    @Override
+    public <L extends Labeled> L bindI18nEventExpression(L text, String eventExpression, Object... args) {
+        bindI18nEventExpression(text.textProperty(), eventExpression, args);
+        return text;
+    }
+
+    @Override
+    public HtmlText bindI18nEventExpression(HtmlText text, String eventExpression, Object... args) {
+        bindI18nEventExpression(text.textProperty(), eventExpression, args);
+        return text;
+    }
+
+    private void bindI18nEventExpression(Property<String> textProperty, String eventExpression, Object... args) {
+        Object[] additionalArgs = { FXEvent.lastNonNullEventProperty(), eventDescriptionLoadedProperty };
+        Object[] allArgs = Arrays.concat(Object[]::new, args, additionalArgs);
         I18n.bindI18nTextProperty(textProperty, new I18nSubKey("expression: " + eventExpression,
-            FXEvent.lastNonNullEventProperty()), FXEvent.lastNonNullEventProperty(), eventDescriptionLoadedProperty);
+            FXEvent.lastNonNullEventProperty()), allArgs);
     }
-
-    <L extends Labeled> L bindI18nEventExpression(L text, String eventExpression) {
-        bindI18nEventExpression(text.textProperty(), eventExpression);
-        return text;
-    }
-
-    HtmlText bindI18nEventExpression(HtmlText text, String eventExpression) {
-        bindI18nEventExpression(text.textProperty(), eventExpression);
-        return text;
-    }
-
 }

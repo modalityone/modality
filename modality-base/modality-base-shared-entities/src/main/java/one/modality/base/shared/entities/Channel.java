@@ -4,15 +4,15 @@ import one.modality.base.shared.entities.markers.EntityHasName;
 import one.modality.base.shared.entities.markers.EntityHasOrganization;
 
 public interface Channel extends
-        EntityHasOrganization,
-        EntityHasName {
+    EntityHasOrganization,
+    EntityHasName {
+    String fetchUrl = "fetchUrl";
 
-    default void setFetchUrl(String fetchUrl) {
-        setFieldValue("fetchUrl", fetchUrl);
+    default void setFetchUrl(String value) {
+        setFieldValue(fetchUrl, value);
     }
 
     default String getFetchUrl() {
-        return getStringFieldValue("fetchUrl");
+        return getStringFieldValue(fetchUrl);
     }
-
 }

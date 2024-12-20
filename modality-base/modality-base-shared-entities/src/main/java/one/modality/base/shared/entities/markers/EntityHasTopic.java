@@ -9,19 +9,21 @@ import one.modality.base.shared.entities.Topic;
  */
 public interface EntityHasTopic extends Entity, HasTopic {
 
+    String topic = "topic";
+
     @Override
-    default void setTopic(Object channel) {
-        setForeignField("topic", channel);
+    default void setTopic(Object value) {
+        setForeignField(topic, value);
     }
 
     @Override
     default EntityId getTopicId() {
-        return getForeignEntityId("topic");
+        return getForeignEntityId(topic);
     }
 
     @Override
     default Topic getTopic() {
-        return getForeignEntity("topic");
+        return getForeignEntity(topic);
     }
 
 }

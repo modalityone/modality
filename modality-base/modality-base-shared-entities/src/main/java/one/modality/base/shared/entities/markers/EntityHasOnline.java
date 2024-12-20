@@ -7,14 +7,15 @@ import dev.webfx.stack.orm.entity.Entity;
  */
 public interface EntityHasOnline extends Entity, HasOnline {
 
+    String online = "online";
+
     @Override
-    default void setOnline(Boolean online) {
-        setFieldValue("online", online);
+    default void setOnline(Boolean value) {
+        setFieldValue(online, value);
     }
 
     @Override
     default Boolean isOnline() {
-        return getBooleanFieldValue("online");
+        return getBooleanFieldValue(online);
     }
-
 }

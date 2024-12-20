@@ -9,117 +9,131 @@ import one.modality.base.shared.entities.markers.HasName;
 import java.time.LocalDate;
 
 public interface ResourceConfiguration extends Entity,
-        EntityHasSiteAndItem,
-        EntityHasOnline,
-        HasName {
+    EntityHasSiteAndItem,
+    EntityHasOnline,
+    HasName {
 
-    default void setResource(Object site) {
-        setForeignField("resource", site);
+    String resource = "resource";
+    String name = "name";
+    String endDate = "endDate";
+    String startDate = "startDate";
+    String lastCleaningDate = "lastCleaningDate";
+    String allowsMale = "allowsMale";
+    String allowsFemale = "allowsFemale";
+    String allowsGuest = "allowsGuest";
+    String allowsSpecialGuest = "allowsSpecialGuest";
+    String allowsVolunteer = "allowsVolunteer";
+    String allowsResident = "allowsResident";
+    String allowsResidentFamily = "allowsResidentFamily";
+    String max = "max";
+
+    default void setResource(Object value) {
+        setForeignField(resource, value);
     }
 
     default EntityId getResourceId() {
-        return getForeignEntityId("resource");
+        return getForeignEntityId(resource);
     }
 
     default Resource getResource() {
-        return getForeignEntity("resource");
+        return getForeignEntity(resource);
     }
 
     @Override
     default String getName() {
-        return (String) evaluate("name");
+        return (String) evaluate(name);
     }
 
     @Override
-    default void setName(String name) {
-        setExpressionValue(parseExpression("name"), name);
+    default void setName(String value) {
+        setExpressionValue(parseExpression(name), value);
     }
 
-    default void setEndDate(LocalDate endDate) {
-        setFieldValue("endDate", endDate);
+    default void setEndDate(LocalDate value) {
+        setFieldValue(endDate, value);
     }
 
     default LocalDate getStartDate() {
-        return getLocalDateFieldValue("startDate");
+        return getLocalDateFieldValue(startDate);
     }
 
-    default void setStartDate(LocalDate startDate) {
-        setFieldValue("startDate", startDate);
+    default void setStartDate(LocalDate value) {
+        setFieldValue(startDate, value);
     }
 
     default LocalDate getEndDate() {
-        return getLocalDateFieldValue("endDate");
+        return getLocalDateFieldValue(endDate);
     }
 
-    default void setLastCleaningDate(LocalDate endDate) {
-        setFieldValue("lastCleaningDate", endDate);
+    default void setLastCleaningDate(LocalDate value) {
+        setFieldValue(lastCleaningDate, value);
     }
 
     default LocalDate getLastCleaningDate() {
-        return getLocalDateFieldValue("lastCleaningDate");
+        return getLocalDateFieldValue(lastCleaningDate);
     }
 
     default Boolean allowsMale() {
-        return getBooleanFieldValue("allowsMale");
+        return getBooleanFieldValue(allowsMale);
     }
 
-    default void setAllowsMale(Boolean allowsMale) {
-        setFieldValue("allowsMale", allowsMale);
+    default void setAllowsMale(Boolean value) {
+        setFieldValue(allowsMale, value);
     }
 
     default Boolean allowsFemale() {
-        return getBooleanFieldValue("allowsFemale");
+        return getBooleanFieldValue(allowsFemale);
     }
 
-    default void setAllowsFemale(Boolean allowsFemale) {
-        setFieldValue("allowsFemale", allowsFemale);
+    default void setAllowsFemale(Boolean value) {
+        setFieldValue(allowsFemale, value);
     }
 
     default Boolean allowsGuest() {
-        return getBooleanFieldValue("allowsGuest");
+        return getBooleanFieldValue(allowsGuest);
     }
 
-    default void setAllowsGuest(Boolean allowsGuest) {
-        setFieldValue("allowsGuest", allowsGuest);
+    default void setAllowsGuest(Boolean value) {
+        setFieldValue(allowsGuest, value);
     }
 
     default Boolean allowsSpecialGuest() {
-        return getBooleanFieldValue("allowsSpecialGuest");
+        return getBooleanFieldValue(allowsSpecialGuest);
     }
 
-    default void setAllowsSpecialGuest(Boolean allowsSpecialGuest) {
-        setFieldValue("allowsSpecialGuest", allowsSpecialGuest);
+    default void setAllowsSpecialGuest(Boolean value) {
+        setFieldValue(allowsSpecialGuest, value);
     }
 
     default Boolean allowsVolunteer() {
-        return getBooleanFieldValue("allowsVolunteer");
+        return getBooleanFieldValue(allowsVolunteer);
     }
 
-    default void setAllowsVolunteer(Boolean allowsVolunteer) {
-        setFieldValue("allowsVolunteer", allowsVolunteer);
+    default void setAllowsVolunteer(Boolean value) {
+        setFieldValue(allowsVolunteer, value);
     }
 
     default Boolean allowsResident() {
-        return getBooleanFieldValue("allowsResident");
+        return getBooleanFieldValue(allowsResident);
     }
 
-    default void setAllowsResident(Boolean allowsResident) {
-        setFieldValue("allowsResident", allowsResident);
+    default void setAllowsResident(Boolean value) {
+        setFieldValue(allowsResident, value);
     }
 
     default Boolean allowsResidentFamily() {
-        return getBooleanFieldValue("allowsResidentFamily");
+        return getBooleanFieldValue(allowsResidentFamily);
     }
 
-    default void setAllowsResidentFamily(Boolean allowsResidentFamily) {
-        setFieldValue("allowsResidentFamily", allowsResidentFamily);
+    default void setAllowsResidentFamily(Boolean value) {
+        setFieldValue(allowsResidentFamily, value);
     }
 
     default Integer getMax() {
-        return getIntegerFieldValue("max");
+        return getIntegerFieldValue(max);
     }
 
-    default void setMax(int max) {
-        setFieldValue("max", max);
+    default void setMax(int value) {
+        setFieldValue(max, value);
     }
 }

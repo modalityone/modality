@@ -9,53 +9,57 @@ import one.modality.base.shared.entities.markers.EntityHasUserPerson;
  * @author Bruno Salmon
  */
 public interface History extends Entity, EntityHasDocument, EntityHasUserPerson {
+    String username = "username";
+    String comment = "comment";
+    String changes = "changes";
+    String mail = "mail";
+    String moneyTransfer = "moneyTransfer";
 
-    default void setUsername(String username) {
-        setFieldValue("username", username);
+    default void setUsername(String value) {
+        setFieldValue(username, value);
     }
 
     default String getUsername() {
-        return getStringFieldValue("username");
+        return getStringFieldValue(username);
     }
 
-    default void setComment(String comment) {
-        setFieldValue("comment", comment);
+    default void setComment(String value) {
+        setFieldValue(comment, value);
     }
 
     default String getComment() {
-        return getStringFieldValue("comment");
+        return getStringFieldValue(comment);
     }
 
-    default void setChanges(String changes) {
-        setFieldValue("changes", changes);
+    default void setChanges(String value) {
+        setFieldValue(changes, value);
     }
 
     default String getChanges() {
-        return getStringFieldValue("changes");
+        return getStringFieldValue(changes);
     }
 
-    default void setMail(Object mail) {
-        setForeignField("mail", mail);
+    default void setMail(Object value) {
+        setForeignField(mail, value);
     }
 
     default EntityId getMailId() {
-        return getForeignEntityId("mail");
+        return getForeignEntityId(mail);
     }
 
     default Mail getMail() {
-        return getForeignEntity("mail");
+        return getForeignEntity(mail);
     }
 
-    default void setMoneyTransfer(Object document) {
-        setForeignField("moneyTransfer", document);
+    default void setMoneyTransfer(Object value) {
+        setForeignField(moneyTransfer, value);
     }
 
     default EntityId getMoneyTransferId() {
-        return getForeignEntityId("moneyTransfer");
+        return getForeignEntityId(moneyTransfer);
     }
 
     default Document getMoneyTransfer() {
-        return getForeignEntity("moneyTransfer");
+        return getForeignEntity(moneyTransfer);
     }
-
 }

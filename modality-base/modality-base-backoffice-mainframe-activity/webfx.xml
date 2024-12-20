@@ -12,4 +12,6 @@
         </used-by-source-modules>
     </dependencies>
 
+    <i18n javaKeysClass="one.modality.base.backoffice.activities.mainframe.ModalityBackOfficeMainFrameI18nKeys"/>
+
 </project>

@@ -9,15 +9,15 @@ module modality.crm.client.activity.unauthorized.plugin {
     requires javafx.graphics;
     requires webfx.extras.panes;
     requires webfx.kit.util;
+    requires webfx.platform.uischeduler;
     requires webfx.stack.orm.domainmodel.activity;
     requires webfx.stack.routing.uirouter;
     requires webfx.stack.session.state.client.fx;
-    requires webfx.platform.uischeduler;
 
     // Exported packages
     exports one.modality.crm.client.activities.unauthorized;
 
     // Provided services
-    provides dev.webfx.stack.routing.uirouter.UiRoute with one.modality.crm.client.activities.unauthorized.UnauthorizedUiRoute;
+    provides dev.webfx.stack.routing.uirouter.UiRoute with one.modality.crm.client.activities.unauthorized.UnauthorizedRouting.UnauthorizedUiRoute;
 
 }

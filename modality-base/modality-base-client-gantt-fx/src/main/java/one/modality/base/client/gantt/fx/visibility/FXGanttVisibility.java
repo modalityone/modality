@@ -30,16 +30,32 @@ public final class FXGanttVisibility {
         return !isHidden();
     }
 
-    public static boolean showMonths() {
+    public static boolean isShowingMonths() {
         return getGanttVisibility().ordinal() >= GanttVisibility.MONTHS.ordinal();
     }
 
-    public static boolean showDays() {
+    public static boolean isShowingDays() {
         return getGanttVisibility().ordinal() >= GanttVisibility.DAYS.ordinal();
     }
 
-    public static boolean showEvents() {
+    public static boolean isShowEvents() {
         return getGanttVisibility().ordinal() >= GanttVisibility.EVENTS.ordinal();
+    }
+
+    public static void showMonths() {
+        setGanttVisibility(GanttVisibility.MONTHS);
+    }
+
+    public static void showDays() {
+        setGanttVisibility(GanttVisibility.DAYS);
+    }
+
+    public static void showEvents() {
+        setGanttVisibility(GanttVisibility.EVENTS);
+    }
+
+    public static void resetToDefault() {
+        setGanttVisibility(GanttVisibility.HIDDEN);
     }
 
 }

@@ -12,7 +12,9 @@ module modality.ecommerce.payment.client {
     requires modality.base.shared.entities;
     requires modality.ecommerce.payment;
     requires webfx.extras.panes;
+    requires webfx.extras.util.control;
     requires webfx.extras.webview.pane;
+    requires webfx.kit.util;
     requires webfx.platform.async;
     requires webfx.platform.browser;
     requires webfx.platform.conf;

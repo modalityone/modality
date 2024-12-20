@@ -17,13 +17,17 @@ module modality.base.client.application {
     requires webfx.extras.util.scene;
     requires webfx.kit.util;
     requires webfx.kit.util.scene;
+    requires webfx.platform.boot;
     requires transitive webfx.platform.util;
+    requires webfx.platform.windowhistory;
     requires webfx.stack.authn.logout.client;
+    requires webfx.stack.i18n;
     requires webfx.stack.orm.datasourcemodel.service;
     requires transitive webfx.stack.orm.domainmodel.activity;
     requires transitive webfx.stack.routing.activity;
     requires webfx.stack.routing.router.client;
     requires webfx.stack.routing.uirouter;
+    requires webfx.stack.session;
     requires webfx.stack.session.state.client.fx;
     requires webfx.stack.ui.action;
     requires webfx.stack.ui.operation;
@@ -33,7 +37,6 @@ module modality.base.client.application {
     exports one.modality.base.client.application;
 
     // Resources packages
-    opens dev.webfx.kit.css.fonts.montserrat;
     opens images.buddhas;
     opens one.modality.base.client.images;
 

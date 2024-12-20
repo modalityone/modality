@@ -3,9 +3,12 @@ package one.modality.ecommerce.document.service.util;
 import dev.webfx.platform.util.Arrays;
 import one.modality.base.shared.entities.Attendance;
 import one.modality.base.shared.entities.DocumentLine;
-import one.modality.ecommerce.document.service.events.*;
+import one.modality.ecommerce.document.service.events.AbstractAttendancesEvent;
+import one.modality.ecommerce.document.service.events.AbstractDocumentEvent;
+import one.modality.ecommerce.document.service.events.AbstractDocumentLineEvent;
 import one.modality.ecommerce.document.service.events.book.AddAttendancesEvent;
 import one.modality.ecommerce.document.service.events.book.AddDocumentLineEvent;
+import one.modality.ecommerce.document.service.events.book.ApplyFacilityFeeDocumentEvent;
 import one.modality.ecommerce.document.service.events.book.RemoveAttendancesEvent;
 import one.modality.ecommerce.document.service.events.registration.documentline.RemoveDocumentLineEvent;
 
@@ -31,7 +34,10 @@ public final class DocumentEvents {
             return simplifyRemoveDocumentLineEvent((RemoveDocumentLineEvent) e, documentEvents);
         }
         if (e instanceof RemoveAttendancesEvent) {
-            return simplifyAttendancesRemoval((RemoveAttendancesEvent) e, documentEvents);
+            return simplifyRemoveAttendancesEvent((RemoveAttendancesEvent) e, documentEvents);
+        }
+        if (e instanceof ApplyFacilityFeeDocumentEvent) {
+            return simplifyApplyFacilityFeeDocumentEvent((ApplyFacilityFeeDocumentEvent) e, documentEvents);
         }
         return e;
     }
@@ -56,7 +62,7 @@ public final class DocumentEvents {
         return rdle;
     }
 
-    private static AbstractDocumentEvent simplifyAttendancesRemoval(RemoveAttendancesEvent rae, List<AbstractDocumentEvent> documentEvents) {
+    private static AbstractDocumentEvent simplifyRemoveAttendancesEvent(RemoveAttendancesEvent rae, List<AbstractDocumentEvent> documentEvents) {
         Attendance[] removedAttendances = rae.getAttendances();
         Attendance[] reducedRemovedAttendances = removedAttendances;
         // Since we remove these attendances, we can simplify the changes by removing them from other attendances events
@@ -79,13 +85,13 @@ public final class DocumentEvents {
                     documentEvents.set(i, aae);
                 }
                 // In both cases, if the event was AddAttendancesEvent, because we removed some attendances from start
-                // at this point, there is no need anymore to keep them anymore in the passed removeAttendancesEvent
+                // at this point, there is no need anymore to keep them anymore in RemoveAttendancesEvent
                 if (remainingAttendances.length < eventAttendances.length && aae instanceof AddAttendancesEvent) {
                     reducedRemovedAttendances = Arrays.filter(reducedRemovedAttendances, a -> !Arrays.contains(eventAttendances, a), Attendance[]::new);
                 }
             }
         }
-        // If at the end of this simplification there is no more attendances to keep in the passed RemoveAttendancesEvent
+        // If at the end of this simplification there is no more attendances to keep in RemoveAttendancesEvent
         if (reducedRemovedAttendances.length == 0) {
             return null; // we return null to indicate that it's not necessary anymore to add it in the document changes
         }
@@ -94,6 +100,17 @@ public final class DocumentEvents {
             rae = new RemoveAttendancesEvent(reducedRemovedAttendances);
         }
         return rae;
+    }
+
+    private static AbstractDocumentEvent simplifyApplyFacilityFeeDocumentEvent(ApplyFacilityFeeDocumentEvent affde, List<AbstractDocumentEvent> documentEvents) {
+        // This new event will override all previous events of the same type, so we can get rid of those
+        documentEvents.removeIf(e -> e instanceof ApplyFacilityFeeDocumentEvent);
+        // Note: ideally, we should check if this final event changes or not the initial document and skip it if it
+        // doesn't. Ex: if applyFacilityFee = true on first event, and then applyFacilityFee = false on second event and
+        // the initial document didn't have facility applied, then we should remove both events (no need to keep the
+        // second event applyFacilityFee = false as it finally doesn't change the initial document). However, we can't
+        // do that simplification because we don't have access to the initial document here. TODO: improve this.
+        return affde;
     }
     
 }

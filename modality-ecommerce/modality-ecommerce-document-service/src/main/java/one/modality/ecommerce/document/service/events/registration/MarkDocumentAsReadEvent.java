@@ -1,28 +1,32 @@
 package one.modality.ecommerce.document.service.events.registration;
 
 import one.modality.base.shared.entities.Document;
-import one.modality.ecommerce.document.service.events.AbstractSetDocumentFieldsEvent;
+import one.modality.ecommerce.document.service.events.AbstractDocumentEvent;
 
 /**
  * @author Bruno Salmon
  */
-public class MarkDocumentAsReadEvent extends AbstractSetDocumentFieldsEvent {
+public class MarkDocumentAsReadEvent extends AbstractDocumentEvent {
 
-    private static final Object[] FIELD_IDS = { "read" };
+    private final boolean read;
 
     public MarkDocumentAsReadEvent(Object documentPrimaryKey, boolean read) {
-        super(documentPrimaryKey, FIELD_IDS, read);
+        super(documentPrimaryKey);
+        this.read = read;
     }
 
     public MarkDocumentAsReadEvent(Document document, boolean read) {
-        super(document, FIELD_IDS, read);
+        super(document);
+        this.read = read;
     }
 
     public boolean isRead() {
-        return isRead(getFieldValues());
+        return read;
     }
 
-    public static boolean isRead(Object[] fieldValues) {
-        return (boolean) fieldValues[0];
+    @Override
+    public void replayEventOnDocument() {
+        super.replayEventOnDocument();
+        document.setRead(read);
     }
 }
