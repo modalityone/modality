@@ -1,19 +1,28 @@
 package one.modality.event.backoffice.activities.pricing;
 
+import dev.webfx.extras.styles.bootstrap.Bootstrap;
 import dev.webfx.extras.time.TimeUtil;
 import dev.webfx.kit.util.properties.FXProperties;
+import dev.webfx.platform.console.Console;
 import dev.webfx.platform.util.Numbers;
 import dev.webfx.platform.util.collection.Collections;
 import dev.webfx.platform.util.time.Times;
-import dev.webfx.stack.orm.entity.Entities;
+import dev.webfx.stack.i18n.controls.I18nControls;
 import dev.webfx.stack.orm.entity.UpdateStore;
+import dev.webfx.stack.orm.entity.binding.EntityBindings;
+import dev.webfx.stack.ui.operation.OperationUtil;
+import javafx.beans.binding.BooleanBinding;
 import javafx.geometry.HPos;
 import javafx.geometry.Pos;
 import javafx.scene.Node;
+import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
 import javafx.scene.layout.GridPane;
+import javafx.scene.layout.HBox;
+import javafx.scene.layout.VBox;
 import javafx.scene.text.Text;
+import one.modality.base.client.i18n.ModalityI18nKeys;
 import one.modality.base.shared.domainmodel.formatters.PriceFormatter;
 import one.modality.base.shared.entities.Event;
 import one.modality.base.shared.entities.Rate;
@@ -27,24 +36,29 @@ import java.util.List;
 /**
  * @author Bruno Salmon
  */
-final class TeachingsPricing implements AbstractPricing {
+final class TeachingsPricing implements ItemFamilyPricing {
 
     private final PolicyAggregate eventPolicy;
     private final UpdateStore updateStore;
     private final List<LocalDate> teachingDates;
     private final List<Rate> rates;
     private final List<TextField> rateFields;
+    private final Button saveButton = Bootstrap.successButton(I18nControls.newButton(ModalityI18nKeys.Save));
+    private final Button cancelButton = Bootstrap.secondaryButton(I18nControls.newButton(ModalityI18nKeys.Cancel));
 
-    public TeachingsPricing(PolicyAggregate eventPolicy, UpdateStore updateStore) {
+    public TeachingsPricing(PolicyAggregate eventPolicy) {
         this.eventPolicy = eventPolicy;
-        this.updateStore = updateStore;
+        this.updateStore = UpdateStore.createAbove(eventPolicy.getEntityStore());
+        BooleanBinding hasNoChanges = EntityBindings.hasChangesProperty(updateStore).not();
+        saveButton.disableProperty().bind(hasNoChanges);
+        cancelButton.disableProperty().bind(hasNoChanges);
         Event event = eventPolicy.getEvent();
         teachingDates = TimeUtil.generateLocalDates(event.getStartDate(), event.getEndDate());
         int size = teachingDates.size();
         rates = new ArrayList<>(size);
         rateFields = new ArrayList<>(size);
-        // TODO: move this sort on server side
-        Entities.orderBy(eventPolicy.getRates(), Rate.site, Rate.item, Rate.perDay + " desc", Rate.startDate, Rate.endDate, Rate.price);
+        // Following line commented as order by is now already done on the server side (see PolicyAggregate)
+        //Entities.orderBy(eventPolicy.getRates(), Rate.site, Rate.item, Rate.perDay + " desc", Rate.startDate, Rate.endDate, Rate.price);
         resetInitialRates();
     }
 
@@ -66,9 +80,8 @@ final class TeachingsPricing implements AbstractPricing {
     }
 
     @Override
-    public void onChangesCancelled() {
-        resetInitialRates();
-        syncRatesUiFromModel();
+    public boolean hasChanges() {
+        return updateStore.hasChanges();
     }
 
     @Override
@@ -94,7 +107,25 @@ final class TeachingsPricing implements AbstractPricing {
         rateFields.forEach(rateField ->
             FXProperties.runOnPropertyChange(this::syncRatesModelFromUi, rateField.textProperty())
         );
-        return gridPane;
+
+        saveButton.setOnAction(e -> OperationUtil.turnOnButtonsWaitModeDuringExecution(
+            updateStore.submitChanges()
+                .onFailure(Console::log)
+            , saveButton));
+
+        cancelButton.setOnAction(e -> {
+            updateStore.cancelChanges();
+            resetInitialRates();
+            syncRatesUiFromModel();
+        });
+
+        HBox buttonBar = new HBox(10, saveButton, cancelButton);
+        buttonBar.setAlignment(Pos.CENTER_RIGHT);
+
+        return new VBox(
+            gridPane,
+            buttonBar
+        );
     }
 
     private void syncRatesUiFromModel() {

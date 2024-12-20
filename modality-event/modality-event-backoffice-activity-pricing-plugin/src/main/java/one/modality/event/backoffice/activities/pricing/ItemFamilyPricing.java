@@ -5,12 +5,12 @@ import javafx.scene.Node;
 /**
  * @author Bruno Salmon
  */
-interface AbstractPricing {
+interface ItemFamilyPricing {
+
+    boolean hasChanges();
 
     Node getHeaderNode();
 
     Node getContentNode();
-
-    void onChangesCancelled();
 
 }
