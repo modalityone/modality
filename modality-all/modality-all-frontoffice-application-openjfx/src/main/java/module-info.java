@@ -9,9 +9,6 @@ module modality.all.frontoffice.application.openjfx {
     requires javafx.media;
     requires javafx.web;
     requires modality.all.frontoffice.application;
-    requires modality.crm.client.activity.login.plugin;
-    requires modality.crm.client.activity.magiclink.plugin;
-    requires modality.crm.frontoffice.activity.createaccount.plugin;
     requires modality.ecommerce.document.service.buscall;
     requires modality.ecommerce.document.service.remote;
     requires modality.ecommerce.payment.buscall;
