@@ -1,7 +1,6 @@
 package one.modality.crm.client.authn.login.ui.gateway.signup;
 
 import dev.webfx.extras.styles.bootstrap.Bootstrap;
-import dev.webfx.kit.util.properties.FXProperties;
 import dev.webfx.stack.authn.login.ui.spi.impl.gateway.UiLoginGatewayBase;
 import dev.webfx.stack.authn.login.ui.spi.impl.gateway.UiLoginPortalCallback;
 import dev.webfx.stack.hash.md5.Md5;
@@ -12,8 +11,10 @@ import dev.webfx.stack.orm.domainmodel.DataSourceModel;
 import dev.webfx.stack.orm.entity.EntityStore;
 import dev.webfx.stack.orm.entity.UpdateStore;
 import dev.webfx.stack.session.state.client.fx.FXUserId;
+import dev.webfx.stack.ui.validation.ValidationSupport;
 import javafx.application.Platform;
 import javafx.beans.binding.Bindings;
+import javafx.beans.property.SimpleStringProperty;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Node;
@@ -22,7 +23,6 @@ import javafx.scene.layout.GridPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import one.modality.base.client.i18n.ModalityI18nKeys;
-import dev.webfx.stack.ui.validation.ValidationSupport;
 import one.modality.base.shared.entities.FrontendAccount;
 import one.modality.base.shared.entities.Person;
 import one.modality.crm.client.i18n.CrmI18nKeys;
@@ -37,7 +37,6 @@ public class ModalitySignupUiLoginGateway extends UiLoginGatewayBase {
     private final EntityStore entityStore = EntityStore.create(dataSourceModel);
     private final UpdateStore updateStore = UpdateStore.createAbove(entityStore);
     private final ValidationSupport validationSupport = new ValidationSupport();
-    private boolean validationSupportInitialised = false;
     private TextField emailInput;
     private PasswordField passwordInput;
     private TextField firstNameInput;
@@ -103,7 +102,7 @@ public class ModalitySignupUiLoginGateway extends UiLoginGatewayBase {
         HBox genderBox = new HBox(10, maleRadio, femaleRadio);
         grid.add(genderBox, 0, 5, 2, 1);
 
-        passwordLabel = I18nControls.newLabel("Password");  // ???
+        passwordLabel = I18nControls.newLabel(CrmI18nKeys.Password);
         grid.add(passwordLabel, 0, 6);
         passwordInput = new PasswordField();
 
@@ -113,52 +112,50 @@ public class ModalitySignupUiLoginGateway extends UiLoginGatewayBase {
         saveButton.setOnAction(event -> {
             errorMessage.setText("");
             errorMessage.setVisible(false);
-            if(validateForm())
-            {
+            if (validateForm()) {
                 String username = emailInput.getText();
                 String password = passwordInput.getText();
                 FrontendAccount frontendAccount = updateStore.insertEntity(FrontendAccount.class);
                 frontendAccount.setUsername(emailInput.getText());
-                frontendAccount.setPassword(Md5.hash(username +":" + Md5.hash(password)));
-                frontendAccount.setFieldValue("corporation",1);
-                frontendAccount.setFieldValue("lang",I18n.getLanguage());
+                frontendAccount.setPassword(Md5.hash(username + ":" + Md5.hash(password)));
+                frontendAccount.setFieldValue("corporation", 1);
+                frontendAccount.setFieldValue("lang", I18n.getLanguage());
                 Person person = updateStore.insertEntity(Person.class);
                 person.setBirthDate(LocalDate.parse(birthdayInput.getText(), DateTimeFormatter.ofPattern(datePattern)));
                 person.setEmail(username);
                 person.setMale(maleRadio.isSelected());
-                person.setOrdained(firstNameInput.getText().toUpperCase().contains("KELSANG")||lastNameInput.getText().toUpperCase().contains("KELSANG")
-                                   ||firstNameInput.getText().toUpperCase().contains("GYATSO")||lastNameInput.getText().toUpperCase().contains("GYATSO"));
+                person.setOrdained(firstNameInput.getText().toUpperCase().contains("KELSANG") || lastNameInput.getText().toUpperCase().contains("KELSANG")
+                                   || firstNameInput.getText().toUpperCase().contains("GYATSO") || lastNameInput.getText().toUpperCase().contains("GYATSO"));
 
                 person.setFirstName(firstNameInput.getText());
                 person.setLastName(lastNameInput.getText());
-                person.setForeignField("frontendAccount",frontendAccount);
+                person.setFrontendAccount(frontendAccount);
 
-            updateStore.submitChanges()
-                        .onFailure(exception-> Platform.runLater(() -> {
-                            if(exception.getMessage().contains("ERROR: duplicate key value violates unique constraint \"frontend_account_corporation_id_username\"")) {
-                                errorMessage.setText("Your email is already registered in the database. Try to reset the password to access your account");
-                                errorMessage.setVisible(true);
-                            }
-                            else {
-                                errorMessage.setText("An error has occurred during the creation. Please try later");
-                                errorMessage.setVisible(true);
-                            }
-                            System.out.println(exception.getMessage());
-                            updateStore.cancelChanges();
-                        }))
-                        .onSuccess(result -> Platform.runLater(() -> {
-                            System.out.println("insert done");
-                            //We log the user in
-                            FXUserId.setUserId(new ModalityUserPrincipal(frontendAccount.getPrimaryKey(), person.getPrimaryKey()));
-                        }));
+                updateStore.submitChanges()
+                    .onFailure(exception -> Platform.runLater(() -> {
+                        if (exception.getMessage().contains("ERROR: duplicate key value violates unique constraint \"frontend_account_corporation_id_username\"")) {
+                            errorMessage.setText("Your email is already registered in the database. Try to reset the password to access your account");
+                            errorMessage.setVisible(true);
+                        } else {
+                            errorMessage.setText("An error has occurred during the creation. Please try later");
+                            errorMessage.setVisible(true);
+                        }
+                        System.out.println(exception.getMessage());
+                        updateStore.cancelChanges();
+                    }))
+                    .onSuccess(result -> Platform.runLater(() -> {
+                        System.out.println("insert done");
+                        //We log the user in
+                        FXUserId.setUserId(new ModalityUserPrincipal(frontendAccount.getPrimaryKey(), person.getPrimaryKey()));
+                    }));
             }
         });
 
         errorMessage = new Label();
-        errorMessage.setPadding(new Insets(30,0,0,0));
+        errorMessage.setPadding(new Insets(30, 0, 0, 0));
         errorMessage.setVisible(false);
         errorMessage.setStyle("-fx-text-fill: red;");
-        VBox mainVBox = new VBox(grid,saveButton,errorMessage);
+        VBox mainVBox = new VBox(grid, saveButton, errorMessage);
         mainVBox.setAlignment(Pos.CENTER);
         return mainVBox;
 
@@ -166,37 +163,29 @@ public class ModalitySignupUiLoginGateway extends UiLoginGatewayBase {
 
 
     private void initFormValidation() {
-        if(!validationSupportInitialised) {
-            FXProperties.runNowAndOnPropertyChange(dictionary -> {
-                if (dictionary != null) {
-                    validationSupport.reset();
-                    validationSupport.addEmailValidation(emailInput,emailLabel,"Email format incorrect");
-                    validationSupport.addNonEmptyValidation(firstNameInput,firstNameLabel,"First Name required");
-                    validationSupport.addNonEmptyValidation(lastNameInput,lastNameLabel,"Last Name required");
-                    validationSupport.addPasswordValidation(passwordInput,passwordLabel,"Password must be at least 8 characters long");
-                    // Add validation for gender selection
-                    validationSupport.addValidationRule(
-                            Bindings.createBooleanBinding(
-                                    () -> genderGroup.getSelectedToggle() != null,
-                                    genderGroup.selectedToggleProperty()
-                            ),
-                            genderLabel,
-                            "Please select a gender"
-                    );
-                    int legalAge = 18;
-                    validationSupport.addNonEmptyValidation(birthdayInput,birthdayLabel,"Please enter your Birth Date");
-                    validationSupport.addLegalAgeValidation(birthdayInput,datePattern,legalAge,birthdayLabel,"You must be at least " + legalAge + " to register");
-                }
-            }, I18n.dictionaryProperty());
-            validationSupportInitialised = true;
+        if (validationSupport.isEmpty()) {
+            //TODO: move this to i18n
+            validationSupport.addEmailValidation(emailInput, emailLabel, new SimpleStringProperty("Email format incorrect"));
+            validationSupport.addNonEmptyValidation(firstNameInput, firstNameLabel, new SimpleStringProperty("First Name required"));
+            validationSupport.addNonEmptyValidation(lastNameInput, lastNameLabel, new SimpleStringProperty("Last Name required"));
+            validationSupport.addPasswordValidation(passwordInput, passwordLabel, new SimpleStringProperty("Password must be at least 8 characters long"));
+            // Add validation for gender selection
+            validationSupport.addValidationRule(
+                Bindings.createBooleanBinding(
+                    () -> genderGroup.getSelectedToggle() != null,
+                    genderGroup.selectedToggleProperty()
+                ),
+                genderLabel,
+                new SimpleStringProperty("Please select a gender")
+            );
+            int legalAge = 18;
+            validationSupport.addNonEmptyValidation(birthdayInput, birthdayLabel, new SimpleStringProperty("Please enter your Birth Date"));
+            validationSupport.addLegalAgeValidation(birthdayInput, datePattern, legalAge, birthdayLabel, new SimpleStringProperty("You must be at least 18 to register"));
         }
     }
 
     public boolean validateForm() {
-        if (!validationSupportInitialised) {
-            initFormValidation();
-            validationSupportInitialised = true;
-        }
+        initFormValidation();
         return validationSupport.isValid();
     }
 }

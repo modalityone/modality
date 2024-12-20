@@ -121,7 +121,7 @@ public class VideoView {
 
         livestreamGlobalLinkTextField = new TextField();
         livestreamGlobalLinkTextField.setPromptText("Ex: https://player.castr.com/live_14831a60190211efb48523dddcde7908");
-        validationSupport.addUrlOrEmptyValidation(livestreamGlobalLinkTextField, MediasI18nKeys.MalformedUrl);
+        validationSupport.addUrlOrEmptyValidation(livestreamGlobalLinkTextField, I18n.i18nTextProperty(MediasI18nKeys.MalformedUrl));
         if (currentEvent.getLivestreamUrl() != null) {
             livestreamGlobalLinkTextField.setText(currentEvent.getLivestreamUrl());
         }
@@ -153,13 +153,13 @@ public class VideoView {
         if (currentEvent.getVodExpirationDate() != null) {
             contentExpirationDateTextField.setText(currentEvent.getVodExpirationDate().format(dateFormatter));
         }
-        validationSupport.addDateValidation(contentExpirationDateTextField, "dd-MM-yyyy", contentExpirationDateTextField, I18n.getI18nText("ValidationTimeFormatIncorrect"));
+        validationSupport.addDateValidation(contentExpirationDateTextField, "dd-MM-yyyy", contentExpirationDateTextField, I18n.i18nTextProperty("ValidationTimeFormatIncorrect")); // ???
 
         masterSettings.getChildren().add(contentExpirationDateTextField);
 
         contentExpirationTimeTextField = new TextField();
         contentExpirationTimeTextField.setPromptText("Format: 14:25");
-        validationSupport.addDateValidation(contentExpirationTimeTextField, "HH:mm", contentExpirationTimeTextField, I18n.getI18nText("ValidationTimeFormatIncorrect"));
+        validationSupport.addDateValidation(contentExpirationTimeTextField, "HH:mm", contentExpirationTimeTextField, I18n.i18nTextProperty("ValidationTimeFormatIncorrect")); // ???
         if (currentEvent.getVodExpirationDate() != null) {
             contentExpirationTimeTextField.setText(currentEvent.getVodExpirationDate().format(timeFormatter));
         }

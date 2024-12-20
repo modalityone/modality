@@ -142,7 +142,6 @@ final class ManageRecurringEventView {
     private Item recurringItem;
     private final UpdateStore updateStore = UpdateStore.createAbove(entityStore);
     private final ValidationSupport validationSupport = new ValidationSupport();
-    private boolean validationSupportInitialised = false;
     private final BooleanExpression isWorkingScheduledItemEmpty = ObservableLists.isEmpty(workingScheduledItems);
     private final BooleanProperty isPictureDisplayed = new SimpleBooleanProperty(false);
     private final BooleanProperty isEventDeletable = new SimpleBooleanProperty(true);
@@ -233,18 +232,12 @@ final class ManageRecurringEventView {
      * This method is used to initialise the parameters for the form validation
      */
     private void initFormValidation() {
-        if (!validationSupportInitialised) {
-            FXProperties.runNowAndOnPropertyChange(dictionary -> {
-                if (dictionary != null) {
-                    validationSupport.reset();
-                    validationSupport.addRequiredInput(nameOfEventTextField);
-                    validationSupport.addValidationRule(FXProperties.compute(timeOfTheEventTextField.textProperty(), s1 -> isLocalTimeTextValid(timeOfTheEventTextField.getText())), timeOfTheEventTextField, I18n.getI18nText("ValidationTimeFormatIncorrect"));
-                    validationSupport.addValidationRule(FXProperties.compute(durationTextField.textProperty(), s -> isIntegerValid(durationTextField.getText())), durationTextField, I18n.getI18nText("ValidationDurationIncorrect"));
-                    validationSupport.addValidationRule(isWorkingScheduledItemEmpty.not(), datesOfTheEventLabel, I18n.getI18nText(RecurringEventsI18nKeys.ValidationSelectOneDate));
-                    validationSupport.addValidationRule(FXProperties.compute(externalLinkTextField.textProperty(), s1 -> isValidUrl(externalLinkTextField.getText())), externalLinkTextField, I18n.getI18nText("ValidationUrlIncorrect"));
-                }
-            }, I18n.dictionaryProperty());
-            validationSupportInitialised = true;
+        if (validationSupport.isEmpty()) {
+            validationSupport.addRequiredInput(nameOfEventTextField);
+            validationSupport.addValidationRule(FXProperties.compute(timeOfTheEventTextField.textProperty(), s1 -> isLocalTimeTextValid(timeOfTheEventTextField.getText())), timeOfTheEventTextField, I18n.i18nTextProperty("ValidationTimeFormatIncorrect")); // ???
+            validationSupport.addValidationRule(FXProperties.compute(durationTextField.textProperty(), s -> isIntegerValid(durationTextField.getText())), durationTextField, I18n.i18nTextProperty("ValidationDurationIncorrect")); // ???
+            validationSupport.addValidationRule(isWorkingScheduledItemEmpty.not(), datesOfTheEventLabel, I18n.i18nTextProperty(RecurringEventsI18nKeys.ValidationSelectOneDate));
+            validationSupport.addValidationRule(FXProperties.compute(externalLinkTextField.textProperty(), s1 -> isValidUrl(externalLinkTextField.getText())), externalLinkTextField, I18n.i18nTextProperty("ValidationUrlIncorrect")); // ???
         }
     }
 
@@ -442,7 +435,6 @@ final class ManageRecurringEventView {
         isCloudPictureToBeDeleted.setValue(false);
         isCloudPictureToBeUploaded.setValue(false);
         cloudPictureFileToUpload = null;
-        validationSupportInitialised = false;
         defaultStartTime = null;
         defaultEndTime = null;
         areWeDeleting = false;
@@ -501,10 +493,7 @@ final class ManageRecurringEventView {
      * @return true if all the validation is success, false otherwise
      */
     public boolean validateForm() {
-        if (!validationSupportInitialised) {
-            initFormValidation();
-            validationSupportInitialised = true;
-        }
+        initFormValidation();
         return validationSupport.isValid();
     }
 

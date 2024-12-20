@@ -300,7 +300,7 @@ public class MediaLinksForVODManagement extends MediaLinksManagement {
 
                 HBox.setMargin(availableUntilDateTextField, new Insets(0, 15, 0, 25));
                 rightHBox.getChildren().add(availableUntilDateTextField);
-                validationSupport.addDateValidation(availableUntilDateTextField, DATE_FORMAT, availableUntilDateTextField, I18n.getI18nText("ValidationDateFormatIncorrect"));
+                validationSupport.addDateValidation(availableUntilDateTextField, DATE_FORMAT, availableUntilDateTextField, I18n.i18nTextProperty("ValidationDateFormatIncorrect")); // ???
 
                 TextField availableUntilTimeTextField = new TextField();
                 availableUntilTimeTextField.setPromptText("18:25");
@@ -309,7 +309,7 @@ public class MediaLinksForVODManagement extends MediaLinksManagement {
 
                 availableUntilTimeTextField.setMaxWidth(50);
                 rightHBox.getChildren().add(availableUntilTimeTextField);
-                validationSupport.addDateValidation(availableUntilTimeTextField, TIME_FORMAT, availableUntilTimeTextField, I18n.getI18nText("ValidationTimeFormatIncorrect"));
+                validationSupport.addDateValidation(availableUntilTimeTextField, TIME_FORMAT, availableUntilTimeTextField, I18n.i18nTextProperty("ValidationTimeFormatIncorrect")); // ???
 
                 availableUntilDateTextField.textProperty().addListener(observable -> {
                     try {
@@ -402,12 +402,12 @@ public class MediaLinksForVODManagement extends MediaLinksManagement {
             hBoxToReturn.setSpacing(20);
 
             TextField linkTextField = new TextField();
-            linkTextField.setPromptText(I18n.getI18nText(MediasI18nKeys.EnterLinkHere));
+            linkTextField.promptTextProperty().bind(I18n.i18nTextProperty(MediasI18nKeys.EnterLinkHere));
             linkTextField.setMinWidth(URL_TEXT_FIELD_WITH);
             if (currentMedia != null) {
                 linkTextField.setText(currentMedia.getUrl());
             }
-            validationSupport.addUrlValidation(linkTextField, linkTextField, I18n.getI18nText(MediasI18nKeys.MalformedUrl));
+            validationSupport.addUrlValidation(linkTextField, linkTextField, I18n.i18nTextProperty(MediasI18nKeys.MalformedUrl));
 
             // We update the value of the media according to the text field
             linkTextField.textProperty().addListener((observable, oldValue, newValue) -> {

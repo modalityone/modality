@@ -167,14 +167,9 @@ public class ChangePasswordUI implements MaterialFactoryMixin {
      */
     private void initFormValidation() {
         if (validationSupport.isEmpty()) {
-            FXProperties.runNowAndOnPropertyChange(dictionary -> {
-                if (dictionary != null) {
-                    validationSupport.clear();
-                    validationSupport.addRequiredInput(passwordField);
-                    validationSupport.addPasswordStrengthValidation(newPasswordField, I18n.getI18nText(CreateAccountI18nKeys.PasswordStrength));
-                    validationSupport.addPasswordMatchValidation(newPasswordField, newPasswordRepeatedField, I18n.getI18nText(CreateAccountI18nKeys.PasswordNotMatchingError));
-                }
-            }, I18n.dictionaryProperty());
+            validationSupport.addRequiredInput(passwordField);
+            validationSupport.addPasswordStrengthValidation(newPasswordField, I18n.i18nTextProperty(CreateAccountI18nKeys.PasswordStrength));
+            validationSupport.addPasswordMatchValidation(newPasswordField, newPasswordRepeatedField, I18n.i18nTextProperty(CreateAccountI18nKeys.PasswordNotMatchingError));
         }
     }
 

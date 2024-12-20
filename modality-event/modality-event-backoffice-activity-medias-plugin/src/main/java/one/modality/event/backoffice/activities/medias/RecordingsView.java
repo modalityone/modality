@@ -56,9 +56,6 @@ public class RecordingsView {
     private final EntityStore entityStore = EntityStore.create(dataSourceModel);
     private final UpdateStore updateStore = UpdateStore.createAbove(entityStore);
     private final ValidationSupport validationSupport = new ValidationSupport();
-    private final boolean[] validationSupportInitialised = {false};
-    private final MediasActivity activity;
-    private Switch contentAvailableOfflineSwitch;
     private TextField contentExpirationDate;
     private final ObservableList<Item> workingItems = FXCollections.observableArrayList();
     private final Map<String, MediaLinksManagement> correspondenceBetweenLanguageAndLanguageLinkManagement = new HashMap<>();
@@ -68,12 +65,11 @@ public class RecordingsView {
     private final BooleanProperty activeProperty = new SimpleBooleanProperty();
     private final DateTimeFormatter dateFormatter = DateTimeFormatter.ofPattern("dd-MM-yyyy");
     ObservableList<BooleanExpression> listOfUpdateStoresHasChangedProperty = FXCollections.observableArrayList();
-    private ScrollPane mainContainer;
-    private BorderPane mainFrame;
+    private final ScrollPane mainContainer;
+    private final BorderPane mainFrame;
     String lastLanguageSelected = "";
 
-    public RecordingsView(MediasActivity activity) {
-        this.activity = activity;
+    public RecordingsView() {
         mainFrame = new BorderPane();
         mainFrame.setPadding(new Insets(0, 0, 30, 0));
         mainContainer = ControlUtil.createVerticalScrollPane(mainFrame);
@@ -126,7 +122,7 @@ public class RecordingsView {
         Event event = updateStore.updateEntity(currentEditedEvent);
         contentExpirationDate = new TextField();
         contentExpirationDate.setPromptText("Format: 25-09-2028");
-        validationSupport.addDateOrEmptyValidation(contentExpirationDate, "dd-MM-yyyy", contentExpirationDate, I18n.getI18nText("ValidationTimeFormatIncorrect")); // ???
+        validationSupport.addDateOrEmptyValidation(contentExpirationDate, "dd-MM-yyyy", contentExpirationDate, I18n.i18nTextProperty("ValidationTimeFormatIncorrect")); // ???
         //TODO how to load the expiration date in the event
         if (event.getAudioExpirationDate() != null) {
             contentExpirationDate.setText(event.getAudioExpirationDate().format(dateFormatter));
@@ -146,7 +142,7 @@ public class RecordingsView {
 
         masterSettings.getChildren().add(contentExpirationDate);
 
-        contentAvailableOfflineSwitch = new Switch();
+        Switch contentAvailableOfflineSwitch = new Switch();
 
         Label availableOfflineLabel = I18nControls.newLabel(MediasI18nKeys.AvailableOffline);
         availableOfflineLabel.setPadding(new Insets(0, 0, 0, 10));
@@ -165,15 +161,6 @@ public class RecordingsView {
         addUpdateStoreHasChangesProperty(hasChangesProperty);
         saveButton.disableProperty().bind(hasChangesProperty.not());
         saveButton.setOnAction(e -> {
-            if (!validationSupportInitialised[0]) {
-                FXProperties.runNowAndOnPropertyChange(dictionary -> {
-                    if (dictionary != null) {
-                        validationSupport.reset();
-                    }
-                }, I18n.dictionaryProperty());
-                validationSupportInitialised[0] = true;
-            }
-
             if (validationSupport.isValid()) {
                 updateStore.submitChanges()
                     .onFailure(Console::log)
@@ -202,7 +189,7 @@ public class RecordingsView {
                 EntityList<Item> itemList = entityList[0];
                 EntityList<ScheduledItem> siList = entityList[1];
                 EntityList<Media> mediaList = entityList[2];
-                if (siList.size() == 0) {
+                if (siList.isEmpty()) {
                     Console.log("No recording offered for this event");
                 } else {
                     //We have two lists of scheduled items, the teachings and the recordings (we suppose that for each recording ScheduledItem, we have a media associated in the database

@@ -1,11 +1,9 @@
 package one.modality.event.backoffice.activities.program;
 
 import dev.webfx.extras.util.OptimizedObservableListWrapper;
-import dev.webfx.kit.util.properties.FXProperties;
 import dev.webfx.kit.util.properties.ObservableLists;
 import dev.webfx.platform.console.Console;
 import dev.webfx.platform.util.collection.Collections;
-import dev.webfx.stack.i18n.I18n;
 import dev.webfx.stack.orm.domainmodel.DataSourceModel;
 import dev.webfx.stack.orm.entity.EntityList;
 import dev.webfx.stack.orm.entity.EntityStore;
@@ -14,6 +12,7 @@ import dev.webfx.stack.orm.entity.UpdateStore;
 import dev.webfx.stack.ui.controls.dialog.DialogBuilderUtil;
 import dev.webfx.stack.ui.controls.dialog.DialogContent;
 import dev.webfx.stack.ui.operation.OperationUtil;
+import dev.webfx.stack.ui.validation.ValidationSupport;
 import javafx.application.Platform;
 import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.ObjectProperty;
@@ -24,7 +23,6 @@ import javafx.collections.ObservableList;
 import javafx.scene.control.Button;
 import javafx.scene.control.Labeled;
 import one.modality.base.client.mainframe.fx.FXMainFrameDialogArea;
-import dev.webfx.stack.ui.validation.ValidationSupport;
 import one.modality.base.shared.entities.*;
 
 import java.util.ArrayList;
@@ -57,16 +55,11 @@ final class ProgramModel {
     }
 
     private final ValidationSupport validationSupport = new ValidationSupport();
-    private boolean validationSupportInitialised;
 
     ProgramModel(KnownItemFamily programItemFamily, DataSourceModel dataSourceModel) {
         this.programItemFamily = programItemFamily;
         entityStore = EntityStore.create(dataSourceModel);
         updateStore = UpdateStore.createAbove(entityStore);
-        FXProperties.runNowAndOnPropertyChange(dictionary -> {
-            if (dictionary != null && validationSupportInitialised)
-                resetValidation();
-        }, I18n.dictionaryProperty());
     }
 
     EntityStore getEntityStore() {
@@ -150,8 +143,7 @@ final class ProgramModel {
     }
 
     private void resetModelAndUiToInitial() {
-        validationSupport.reset();
-        validationSupportInitialised = false;
+        validationSupport.clear();
         updateStore.cancelChanges();
         currentDayTemplates.setAll(initialWorkingDayTemplates);
         programGeneratedProperty.setValue(false); // A priori value. May be set to true in the following loop.
@@ -242,14 +234,13 @@ final class ProgramModel {
     }
 
     private void checkValidationInitialized() {
-        if (!validationSupportInitialised) {
+        if (validationSupport.isEmpty()) {
             resetValidation();
-            validationSupportInitialised = true;
         }
     }
 
     private void resetValidation() {
-        validationSupport.reset();
+        validationSupport.clear();
         dayTemplateModels.forEach(DayTemplateModel::initFormValidation);
     }
 

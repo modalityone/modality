@@ -160,14 +160,14 @@ final class DayTemplateTimelineView implements ButtonFactoryMixin {
         getValidationSupport().addValidationRule(FXProperties.compute(itemSelector.selectedItemProperty(),
             s1 -> itemSelector.getSelectedItem() != null),
             itemButton,
-            I18n.getI18nText(ProgramI18nKeys.ItemSelectedShouldntBeNull));
+            I18n.i18nTextProperty(ProgramI18nKeys.ItemSelectedShouldntBeNull));
 
         fromTextField.setPromptText("8:46");
         fromTextField.setAlignment(Pos.CENTER);
         getValidationSupport().addValidationRule(FXProperties.compute(fromTextField.textProperty(),
             s1 -> isLocalTimeTextValid(fromTextField.getText())),
             fromTextField,
-            I18n.getI18nText("ValidationTimeFormatIncorrect")); // Declared in Recurring activity!
+            I18n.i18nTextProperty("ValidationTimeFormatIncorrect")); // Declared in Recurring activity!
 
         syncStartTimeUiFromModel();
         FXProperties.runOnPropertyChange(this::syncStartTimeModelFromUi, fromTextField.textProperty());
@@ -180,7 +180,7 @@ final class DayTemplateTimelineView implements ButtonFactoryMixin {
         getValidationSupport().addValidationRule(FXProperties.compute(untilTextField.textProperty(),
             s1 -> isLocalTimeTextValid(untilTextField.getText())),
             untilTextField,
-            I18n.getI18nText("ValidationTimeFormatIncorrect")); // Declared in Recurring activity!
+            I18n.i18nTextProperty("ValidationTimeFormatIncorrect")); // Declared in Recurring activity!
 
         syncEndTimeUiFromModel();
         FXProperties.runOnPropertyChange(this::syncEndTimeModelFromUi, untilTextField.textProperty());

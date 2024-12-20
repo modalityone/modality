@@ -5,6 +5,7 @@ import dev.webfx.extras.util.animation.Animations;
 import dev.webfx.extras.util.layout.LayoutUtil;
 import dev.webfx.extras.util.scene.SceneUtil;
 import dev.webfx.platform.uischeduler.UiScheduler;
+import dev.webfx.stack.i18n.I18n;
 import dev.webfx.stack.i18n.controls.I18nControls;
 import dev.webfx.stack.ui.controls.MaterialFactoryMixin;
 import dev.webfx.stack.ui.controls.dialog.GridPaneBuilder;
@@ -58,9 +59,9 @@ final class GuestPanel implements MaterialFactoryMixin {
         guestGridPane.setEffect(new DropShadow(10, Color.gray(0.8)));
         guestGridPane.getStyleClass().add("login"); // in order to have same style as login (especially font size)
         container.setCenter(guestGridPane);
-        validationSupport.addRequiredInput(firstNameTextField, "FirstName");
-        validationSupport.addRequiredInput(lastNameTextField, "LastName");
-        validationSupport.addEmailValidation(emailTextField, emailTextField, "Email");
+        validationSupport.addRequiredInput(firstNameTextField, I18n.i18nTextProperty(CrmI18nKeys.FirstName));
+        validationSupport.addRequiredInput(lastNameTextField, I18n.i18nTextProperty(CrmI18nKeys.LastName));
+        validationSupport.addEmailValidation(emailTextField, emailTextField, I18n.i18nTextProperty(CrmI18nKeys.FirstName));
     }
 
     public void addTopNode(Node topNode) {

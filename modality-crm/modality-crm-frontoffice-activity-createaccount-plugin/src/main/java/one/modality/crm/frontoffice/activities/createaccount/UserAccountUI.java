@@ -6,7 +6,6 @@ import dev.webfx.extras.styles.bootstrap.Bootstrap;
 import dev.webfx.extras.styles.materialdesign.textfield.MaterialTextFieldPane;
 import dev.webfx.extras.styles.materialdesign.util.MaterialUtil;
 import dev.webfx.kit.launcher.WebFxKitLauncher;
-import dev.webfx.kit.util.properties.FXProperties;
 import dev.webfx.platform.console.Console;
 import dev.webfx.platform.windowhistory.spi.BrowsingHistory;
 import dev.webfx.stack.authn.AuthenticationService;
@@ -68,7 +67,6 @@ public class UserAccountUI implements ModalityButtonFactoryMixin {
     private Button actionButton;
     private BrowsingHistory browsingHistory;
     private final ValidationSupport validationSupport = new ValidationSupport();
-    private boolean validationSupportInitialised = false;
     private CheckBox termAndConditionReadCheckBox;
 
     public void startLogic(UpdateStore uptStore, boolean mode, BrowsingHistory browsingHistory) {
@@ -439,21 +437,14 @@ public class UserAccountUI implements ModalityButtonFactoryMixin {
      * This method is used to initialise the parameters for the form validation
      */
     private void initFormValidation() {
-        if (!validationSupportInitialised) {
-            FXProperties.runNowAndOnPropertyChange(dictionary -> {
-                if (dictionary != null) {
-                    validationSupport.reset();
-                    validationSupport.addPasswordStrengthValidation(passwordField, I18n.getI18nText(CreateAccountI18nKeys.PasswordStrength));
-                    validationSupport.addPasswordMatchValidation(passwordField, repeatPasswordField, I18n.getI18nText(CreateAccountI18nKeys.PasswordNotMatchingError));
-                    validationSupport.addRequiredInput(firstNameTextField);
-                    validationSupport.addRequiredInput(lastNameTextField);
-                    validationSupport.addRequiredInput(postCodeTextField);
-                    validationSupport.addRequiredInput(countrySelector.selectedItemProperty(), countrySelector.getButton(),I18n.getI18nText(CreateAccountI18nKeys.CountryRequired));
-                    validationSupport.addValidationRule(termAndConditionReadCheckBox.selectedProperty(), termAndConditionReadCheckBox,I18n.getI18nText(CreateAccountI18nKeys.TermsAndCondsRequired));
-
-                }
-            }, I18n.dictionaryProperty());
-            validationSupportInitialised = true;
+        if (validationSupport.isEmpty()) {
+            validationSupport.addPasswordStrengthValidation(passwordField, I18n.i18nTextProperty(CreateAccountI18nKeys.PasswordStrength));
+            validationSupport.addPasswordMatchValidation(passwordField, repeatPasswordField, I18n.i18nTextProperty(CreateAccountI18nKeys.PasswordNotMatchingError));
+            validationSupport.addRequiredInput(firstNameTextField);
+            validationSupport.addRequiredInput(lastNameTextField);
+            validationSupport.addRequiredInput(postCodeTextField);
+            validationSupport.addRequiredInput(countrySelector.selectedItemProperty(), countrySelector.getButton(),I18n.i18nTextProperty(CreateAccountI18nKeys.CountryRequired));
+            validationSupport.addValidationRule(termAndConditionReadCheckBox.selectedProperty(), termAndConditionReadCheckBox,I18n.i18nTextProperty(CreateAccountI18nKeys.TermsAndCondsRequired));
         }
     }
 
@@ -464,10 +455,7 @@ public class UserAccountUI implements ModalityButtonFactoryMixin {
      * @return true if all the validation is success, false otherwise
      */
     public boolean validateForm() {
-        if (!validationSupportInitialised) {
-            initFormValidation();
-            validationSupportInitialised = true;
-        }
+        initFormValidation();
         return validationSupport.isValid();
     }
 

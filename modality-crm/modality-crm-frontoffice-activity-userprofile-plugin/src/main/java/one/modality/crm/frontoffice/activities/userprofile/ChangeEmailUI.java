@@ -32,7 +32,6 @@ public class ChangeEmailUI implements MaterialFactoryMixin {
     protected PasswordField passwordField;
     protected VBox container = new VBox();
     private final ValidationSupport validationSupport = new ValidationSupport();
-    private boolean validationSupportInitialised = false;
     private Person currentUser;
     protected Label infoMessage = Bootstrap.textDanger(new Label());
     private final UserProfileActivity parentActivity;
@@ -128,16 +127,10 @@ public class ChangeEmailUI implements MaterialFactoryMixin {
      * This method is used to initialise the parameters for the form validation
      */
     private void initFormValidation() {
-        if (!validationSupportInitialised) {
-            FXProperties.runNowAndOnPropertyChange(dictionary -> {
-                if (dictionary != null) {
-                    validationSupport.reset();
-                    validationSupport.addEmailValidation(emailTextField, emailTextField, I18n.getI18nText(PasswordI18nKeys.InvalidEmail));
-                    validationSupport.addEmailNotEqualValidation(emailTextField, emailAddress, emailTextField, I18n.getI18nText(UserProfileI18nKeys.EmailNotDifferentError));
-                    validationSupport.addRequiredInput(passwordField);
-                }
-            }, I18n.dictionaryProperty());
-            validationSupportInitialised = true;
+        if (validationSupport.isEmpty()) {
+            validationSupport.addEmailValidation(emailTextField, emailTextField, I18n.i18nTextProperty(PasswordI18nKeys.InvalidEmail));
+            validationSupport.addEmailNotEqualValidation(emailTextField, emailAddress, emailTextField, I18n.i18nTextProperty(UserProfileI18nKeys.EmailNotDifferentError));
+            validationSupport.addRequiredInput(passwordField);
         }
     }
 
@@ -147,10 +140,7 @@ public class ChangeEmailUI implements MaterialFactoryMixin {
      * @return true if all the validation is success, false otherwise
      */
     public boolean validateForm() {
-        if (!validationSupportInitialised) {
-            initFormValidation();
-            validationSupportInitialised = true;
-        }
+        initFormValidation();
         return validationSupport.isValid();
     }
 

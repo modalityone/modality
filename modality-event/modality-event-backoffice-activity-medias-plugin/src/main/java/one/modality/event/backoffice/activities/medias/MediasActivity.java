@@ -13,7 +13,7 @@ import one.modality.base.client.tile.TabsBar;
  */
 final class MediasActivity extends ViewDomainActivityBase implements ButtonFactoryMixin {
 
-    private final RecordingsView recordingsView = new RecordingsView(this);
+    private final RecordingsView recordingsView = new RecordingsView();
     private final LiveStreamingView liveStreamingView = new LiveStreamingView(this);
     private final VideoView VideoView = new VideoView();
 
