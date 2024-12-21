@@ -72,7 +72,7 @@ public final class GwtEntryPoint implements ApplicationBooterProvider, EntryPoin
         register(dev.webfx.stack.session.spi.SessionServiceProvider.class, dev.webfx.stack.session.spi.impl.client.ClientSessionServiceProvider::new);
         register(javafx.application.Application.class, one.modality.base.backoffice.application.ModalityBackOfficeApplication::new);
         register(one.modality.base.backoffice.ganttcanvas.spi.MainFrameGanttCanvasProvider.class, one.modality.event.backoffice.events.ganttcanvas.spi.impl.event.MainFrameEventsGanttCanvasProvider::new);
-        register(one.modality.base.backoffice.mainframe.headernode.MainFrameHeaderNodeProvider.class, one.modality.crm.backoffice.organization.fx.impl.MainFrameHeaderOrganizationSelectorProvider::new, one.modality.event.backoffice.events.buttonselector.MainFrameHeaderEventSelectorProvider::new);
+        register(one.modality.base.backoffice.mainframe.headernode.MainFrameHeaderNodeProvider.class, one.modality.crm.backoffice.organization.fx.impl.MainFrameHeaderOrganizationSelectorProvider::new, one.modality.event.backoffice.events.eventcreator.MainFrameHeaderEventCreatorProvider::new, one.modality.event.backoffice.events.eventselector.MainFrameHeaderEventSelectorProvider::new);
         register(one.modality.ecommerce.document.service.spi.DocumentServiceProvider.class, one.modality.ecommerce.document.service.spi.impl.remote.RemoteDocumentServiceProvider::new);
         register(one.modality.ecommerce.payment.spi.PaymentServiceProvider.class, one.modality.ecommerce.payment.spi.impl.remote.RemotePaymentServiceProvider::new);
     }

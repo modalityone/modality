@@ -54,18 +54,23 @@ fx-svgpath svg path:not([fill])[stroke] { /* if the application code set the str
     --fx-border-color-focus: #0096D6;
     --fx-textfield-background: white;
     --fx-button-background: linear-gradient(180deg, white, #e0e0e0);
+    --fx-togglebutton-selected-background: linear-gradient(180deg, #f0f0f0, #d0d0d0);
 }
 
 ::placeholder {
     color: #888;
 }
 
-fx-button > fx-background {
+fx-button > fx-background, fx-togglebutton > fx-background {
     background: var(--fx-button-background);
     border-radius: var(--fx-border-radius);
 }
 
-fx-button > fx-border, fx-textfield > fx-border, textarea {
+fx-togglebutton.selected > fx-background {
+    background: var(--fx-togglebutton-selected-background);
+}
+
+fx-button > fx-border, fx-togglebutton > fx-border, fx-textfield > fx-border, textarea {
     border-color: var(--fx-border-color);
     border-style: var(--fx-border-style);
     border-width: var(--fx-border-width);
@@ -166,9 +171,9 @@ iframe {
     text-align: center;
     /*cursor: default;*/
     /*background-insets: 0, 0, -1, 0;*/
-    /*padding: 6px 12px 6px 12px;*/
+    /*padding: 6px 12px 6px 12px;*/ /* hardcoded for web support */
     font-size: 14px;
-    min-width: 80px;
+    /*min-width: 80px;*/ /* hardcoded for web support */
 }
 
 .btn > fx-background {
@@ -372,7 +377,7 @@ iframe {
 }
 
 .btn-lg {
-    /*padding: 10px 16px 10px 16px;*/
+    /*padding: 10px 16px 10px 16px;*/ /* hardcoded for web support */
     font-size: 18px;
 }
 
@@ -381,7 +386,7 @@ iframe {
 }
 
 .btn-sm {
-    /*padding: 5px 10px 5px 10px;*/
+    /*padding: 5px 10px 5px 10px;*/ /* hardcoded for web support */
     font-size: 12px;
 }
 
@@ -390,7 +395,7 @@ iframe {
 }
 
 .btn-xs {
-    /*padding: 1px 5px 1px 5px;*/
+    /*padding: 1px 5px 1px 5px;*/ /* hardcoded for web support */
     font-size: 12px;
 }
 

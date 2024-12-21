@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project>
+
+    <description>A button in the back-office header to allow managers to create events.</description>
+
+    <exported-packages>
+        <source-packages/>
+    </exported-packages>
+
+    <dependencies>
+        <used-by-source-modules/>
+    </dependencies>
+
+    <providers>
+        <provider interface="one.modality.base.backoffice.mainframe.headernode.MainFrameHeaderNodeProvider">one.modality.event.backoffice.events.eventcreator.MainFrameHeaderEventCreatorProvider</provider>
+    </providers>
+
+    <i18n javaKeysClass="one.modality.event.backoffice.events.eventcreator.EventCreatorI18nKeys"/>
+
+</project>

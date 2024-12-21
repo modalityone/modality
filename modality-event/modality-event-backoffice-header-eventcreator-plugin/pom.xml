@@ -11,9 +11,9 @@
         <version>1.0.0-SNAPSHOT</version>
     </parent>
 
-    <artifactId>modality-event-backoffice-events-buttonselector-plugin</artifactId>
+    <artifactId>modality-event-backoffice-header-eventcreator-plugin</artifactId>
 
-    <description>A JavaFX property holder of the current Event viewed by the user in the back-office.</description>
+    <description>A button in the back-office header to allow managers to create events.</description>
 
     <dependencies>
 
@@ -43,7 +43,13 @@
 
         <dependency>
             <groupId>one.modality</groupId>
-            <artifactId>modality-base-shared-entities</artifactId>
+            <artifactId>modality-base-client-i18n</artifactId>
+            <version>1.0.0-SNAPSHOT</version>
+        </dependency>
+
+        <dependency>
+            <groupId>one.modality</groupId>
+            <artifactId>modality-base-client-mainframe-fx</artifactId>
             <version>1.0.0-SNAPSHOT</version>
         </dependency>
 
@@ -54,9 +60,21 @@
         </dependency>
 
         <dependency>
-            <groupId>one.modality</groupId>
-            <artifactId>modality-event-client-event-fx</artifactId>
-            <version>1.0.0-SNAPSHOT</version>
+            <groupId>dev.webfx</groupId>
+            <artifactId>webfx-extras-styles-bootstrap</artifactId>
+            <version>0.1.0-SNAPSHOT</version>
+        </dependency>
+
+        <dependency>
+            <groupId>dev.webfx</groupId>
+            <artifactId>webfx-extras-styles-materialdesign</artifactId>
+            <version>0.1.0-SNAPSHOT</version>
+        </dependency>
+
+        <dependency>
+            <groupId>dev.webfx</groupId>
+            <artifactId>webfx-kit-util</artifactId>
+            <version>0.1.0-SNAPSHOT</version>
         </dependency>
 
         <dependency>
@@ -69,13 +87,25 @@
 
         <dependency>
             <groupId>dev.webfx</groupId>
-            <artifactId>webfx-stack-orm-domainmodel</artifactId>
+            <artifactId>webfx-platform-util</artifactId>
             <version>0.1.0-SNAPSHOT</version>
         </dependency>
 
         <dependency>
             <groupId>dev.webfx</groupId>
-            <artifactId>webfx-stack-orm-dql</artifactId>
+            <artifactId>webfx-stack-i18n</artifactId>
+            <version>0.1.0-SNAPSHOT</version>
+        </dependency>
+
+        <dependency>
+            <groupId>dev.webfx</groupId>
+            <artifactId>webfx-stack-i18n-controls</artifactId>
+            <version>0.1.0-SNAPSHOT</version>
+        </dependency>
+
+        <dependency>
+            <groupId>dev.webfx</groupId>
+            <artifactId>webfx-stack-orm-domainmodel</artifactId>
             <version>0.1.0-SNAPSHOT</version>
         </dependency>
 
@@ -87,13 +117,19 @@
 
         <dependency>
             <groupId>dev.webfx</groupId>
-            <artifactId>webfx-stack-orm-entity-controls</artifactId>
+            <artifactId>webfx-stack-ui-controls</artifactId>
             <version>0.1.0-SNAPSHOT</version>
         </dependency>
 
         <dependency>
             <groupId>dev.webfx</groupId>
-            <artifactId>webfx-stack-ui-controls</artifactId>
+            <artifactId>webfx-stack-ui-dialog</artifactId>
+            <version>0.1.0-SNAPSHOT</version>
+        </dependency>
+
+        <dependency>
+            <groupId>dev.webfx</groupId>
+            <artifactId>webfx-stack-ui-validation</artifactId>
             <version>0.1.0-SNAPSHOT</version>
         </dependency>
 
