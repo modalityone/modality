@@ -321,18 +321,12 @@
     <!--====================< modality-crm-backoffice-organization-fx >=====================-->
     <source path="one/modality/crm/backoffice/organization/fx"/>
     <source path="one/modality/crm/backoffice/organization/fx/impl"/>
-    <!--===================< modality-crm-client-activity-login-plugin >====================-->
-    <source path="one/modality/crm/client/activities/login"/>
-    <!--=================< modality-crm-client-activity-magiclink-plugin >==================-->
-    <source path="one/modality/crm/activities/magiclink"/>
     <!--==========================< modality-crm-client-authn-fx >==========================-->
     <source path="one/modality/crm/shared/services/authn/fx"/>
     <!--============================< modality-crm-client-i18n >============================-->
     <source path="one/modality/crm/client/i18n"/>
     <!--======================< modality-crm-client-personaldetails >=======================-->
     <source path="one/modality/crm/client/controls/personaldetails"/>
-    <!--=============< modality-crm-frontoffice-activity-createaccount-plugin >=============-->
-    <source path="one/modality/crm/frontoffice/activities/createaccount"/>
     <!--===========================< modality-crm-shared-authn >============================-->
     <source path="one/modality/crm/shared/services/authn"/>
     <source path="one/modality/crm/shared/services/authn/serial"/>
@@ -397,13 +391,15 @@
     <source path="one/modality/event/backoffice/activities/program"/>
     <!--===========< modality-event-backoffice-activity-recurringevents-plugin >============-->
     <source path="one/modality/event/backoffice/activities/recurringevents"/>
-    <!--=============< modality-event-backoffice-events-buttonselector-plugin >=============-->
-    <source path="one/modality/event/backoffice/events/buttonselector"/>
     <!--==============< modality-event-backoffice-events-ganttcanvas-plugin >===============-->
     <source path="one/modality/event/backoffice/events/ganttcanvas"/>
     <source path="one/modality/event/backoffice/events/ganttcanvas/spi/impl/event"/>
     <!--======================< modality-event-backoffice-events-pm >=======================-->
     <source path="one/modality/event/backoffice/events/pm"/>
+    <!--==============< modality-event-backoffice-header-eventcreator-plugin >==============-->
+    <source path="one/modality/event/backoffice/events/eventcreator"/>
+    <!--=============< modality-event-backoffice-header-eventselector-plugin >==============-->
+    <source path="one/modality/event/backoffice/events/eventselector"/>
     <!--=================< modality-event-client-activity-eventdependent >==================-->
     <source path="one/modality/event/client/activity/eventdependent"/>
     <!--=========================< modality-event-client-event-fx >=========================-->

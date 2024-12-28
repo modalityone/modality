@@ -3,7 +3,7 @@
 /**
  * A JavaFX property holder of the current Event viewed by the user in the back-office.
  */
-module modality.event.backoffice.events.buttonselector.plugin {
+module modality.event.backoffice.header.eventselector.plugin {
 
     // Direct dependencies modules
     requires javafx.controls;
@@ -20,9 +20,9 @@ module modality.event.backoffice.events.buttonselector.plugin {
     requires webfx.stack.ui.controls;
 
     // Exported packages
-    exports one.modality.event.backoffice.events.buttonselector;
+    exports one.modality.event.backoffice.events.eventselector;
 
     // Provided services
-    provides one.modality.base.backoffice.mainframe.headernode.MainFrameHeaderNodeProvider with one.modality.event.backoffice.events.buttonselector.MainFrameHeaderEventSelectorProvider;
+    provides one.modality.base.backoffice.mainframe.headernode.MainFrameHeaderNodeProvider with one.modality.event.backoffice.events.eventselector.MainFrameHeaderEventSelectorProvider;
 
 }

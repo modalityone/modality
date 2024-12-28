@@ -47,7 +47,9 @@ public class ServerDocumentServiceProvider implements DocumentServiceProvider {
                         .setDataSourceId(DataSourceModelService.getDefaultDataSourceId())
                         .build(),
                     new QueryArgumentBuilder()
-                        .setStatement(POLICY_RATES_QUERY_BASE + " where site.event = ? or site = (select venue from Event where id = ?)")
+                        .setStatement(POLICY_RATES_QUERY_BASE + " where site.event = ? or site = (select venue from Event where id = ?) " +
+                                      // Note: TeachingsPricing relies on the following order to work properly
+                                      "order by site,item,perDay desc,startDate,endDate,price")
                         .setParameters(eventPk, eventPk)
                         .setLanguage("DQL")
                         .setDataSourceId(DataSourceModelService.getDefaultDataSourceId())

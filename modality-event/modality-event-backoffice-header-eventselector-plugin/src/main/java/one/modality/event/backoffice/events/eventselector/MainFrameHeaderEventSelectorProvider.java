@@ -1,4 +1,4 @@
-package one.modality.event.backoffice.events.buttonselector;
+package one.modality.event.backoffice.events.eventselector;
 
 import dev.webfx.stack.orm.domainmodel.DataSourceModel;
 import dev.webfx.stack.orm.entity.EntityStore;
