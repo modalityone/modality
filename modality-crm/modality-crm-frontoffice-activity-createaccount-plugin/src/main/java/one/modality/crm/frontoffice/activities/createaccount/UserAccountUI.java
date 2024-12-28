@@ -480,7 +480,7 @@ public class UserAccountUI implements ModalityButtonFactoryMixin {
         MaterialUtil.getMaterialTextField(textField).setAnimateLabel(false);
     }
 
-    protected static <T extends Entity> EntityButtonSelector<T> createEntityButtonSelector(Object jsonOrClass, DataSourceModel dataSourceModel, ButtonSelectorParameters buttonSelectorParameters) {
+    public static <T extends Entity> EntityButtonSelector<T> createEntityButtonSelector(Object jsonOrClass, DataSourceModel dataSourceModel, ButtonSelectorParameters buttonSelectorParameters) {
         return new EntityButtonSelector<>(jsonOrClass, dataSourceModel, buttonSelectorParameters) {
             @Override
             protected void setSearchParameters(String search, EntityStore store) {
