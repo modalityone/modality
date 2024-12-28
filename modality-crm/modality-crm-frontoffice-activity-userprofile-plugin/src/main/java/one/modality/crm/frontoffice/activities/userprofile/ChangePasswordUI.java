@@ -1,8 +1,6 @@
 package one.modality.crm.frontoffice.activities.userprofile;
 
 import dev.webfx.extras.panes.ScalePane;
-import dev.webfx.extras.panes.TransitionPane;
-import dev.webfx.extras.panes.transitions.FadeTransition;
 import dev.webfx.extras.styles.bootstrap.Bootstrap;
 import dev.webfx.extras.styles.materialdesign.util.MaterialUtil;
 import dev.webfx.extras.util.animation.Animations;
@@ -31,17 +29,14 @@ import one.modality.crm.shared.services.authn.fx.FXUserPerson;
 
 public class ChangePasswordUI implements MaterialFactoryMixin {
 
-    private static final double DIALOG_WIDTH = 586;
-    private static final double DIALOG_HEIGHT = 506;
-
     private final PasswordField passwordField;
     private final PasswordField newPasswordField;
     private final PasswordField newPasswordRepeatedField;
     private final VBox changePasswordVBox = new VBox();
-    private final VBox messageVBox = new VBox();
-    private final TransitionPane transitionPane = new TransitionPane(changePasswordVBox);
-    private final ScalePane container = new ScalePane(transitionPane);
+    private final ScalePane container = new ScalePane(changePasswordVBox);
     private final ValidationSupport validationSupport = new ValidationSupport();
+    private final Button actionButton;
+    private final Button closeButton;
     private Person currentUser;
     private final Label infoMessage = Bootstrap.textDanger(new Label());
     private final Label resultMessage = Bootstrap.textDanger(new Label());
@@ -49,7 +44,6 @@ public class ChangePasswordUI implements MaterialFactoryMixin {
     private DialogCallback callback;
 
     public ChangePasswordUI() {
-        transitionPane.setTransition(new FadeTransition());
         Label title = Bootstrap.textPrimary(Bootstrap.h2(I18nControls.newLabel(UserProfileI18nKeys.ChangePassword)));
         title.setPadding(new Insets(0, 0, 50, 0));
 
@@ -65,11 +59,23 @@ public class ChangePasswordUI implements MaterialFactoryMixin {
         newPasswordRepeatedField = newMaterialPasswordField(UserProfileI18nKeys.NewPasswordAgain);
         MaterialUtil.getMaterialTextField(newPasswordRepeatedField).setAnimateLabel(false);
 
-        Button actionButton = Bootstrap.largePrimaryButton(I18nControls.newButton(UserProfileI18nKeys.Confirm));
+        actionButton = Bootstrap.largePrimaryButton(I18nControls.newButton(UserProfileI18nKeys.Confirm));
+        closeButton = Bootstrap.largePrimaryButton(I18nControls.newButton(UserProfileI18nKeys.Close));
+        closeButton.setOnAction(evt -> {
+            callback.closeDialog();
+            resetToInitialState();
+        });
+        //We display the close button only when the confirm button is not visible
+        closeButton.setVisible(false);
+        closeButton.setManaged(false);
+
+        passwordField.disableProperty().bind(closeButton.visibleProperty());
+        newPasswordField.disableProperty().bind(closeButton.visibleProperty());
+        newPasswordRepeatedField.disableProperty().bind(closeButton.visibleProperty());
 
         FXProperties.runNowAndOnPropertyChange(user -> {
             //We reload in case we changed the email address recently
-            FXUserPerson.reloadUserPerson();
+            //FXUserPerson.reloadUserPerson();
             currentUser = FXUserPerson.getUserPerson();
             if (currentUser != null)
                 emailAddress = currentUser.getEmail();
@@ -96,12 +102,17 @@ public class ChangePasswordUI implements MaterialFactoryMixin {
                                 AuthenticationService.updateCredentials(updatePasswordCredentials)
                                     .onComplete(ar -> UiScheduler.runInUiThread(() -> OperationUtil.turnOffButtonsWaitMode(actionButton)))
                                     .onFailure(failure -> UiScheduler.runInUiThread(() -> {
-                                        showResultMessage(failure.getMessage(), Bootstrap.TEXT_DANGER);
-                                        transitionPane.transitToContent(messageVBox);
+                                        //  showResultMessage(failure.getMessage(), Bootstrap.TEXT_DANGER);
+                                        showInfoMessage(failure.getMessage(), Bootstrap.TEXT_DANGER);
+                                        displayCloseButton();
+
+                                        // transitionPane.transitToContent(messageVBox);
                                     }))
                                     .onSuccess(s -> UiScheduler.runInUiThread(() -> {
                                         showResultMessage(UserProfileI18nKeys.PasswordSuccessfullyChanged, Bootstrap.TEXT_SUCCESS);
-                                        transitionPane.transitToContent(messageVBox);
+                                        showInfoMessage(UserProfileI18nKeys.PasswordSuccessfullyChanged, Bootstrap.TEXT_SUCCESS);
+                                        displayCloseButton();
+                                        // transitionPane.transitToContent(messageVBox);
                                     }));
                             });
                         });
@@ -113,13 +124,8 @@ public class ChangePasswordUI implements MaterialFactoryMixin {
         infoMessage.setWrapText(true);
         resultMessage.setWrapText(true);
 
-        changePasswordVBox.getChildren().setAll(title, description, passwordField, newPasswordField, newPasswordRepeatedField, infoMessage, actionButton);
+        changePasswordVBox.getChildren().setAll(title, description, passwordField, newPasswordField, newPasswordRepeatedField, infoMessage, actionButton,closeButton);
         setupModalVBox(changePasswordVBox);
-
-        Button closeButton = Bootstrap.largePrimaryButton(I18nControls.newButton(UserProfileI18nKeys.CloseWindow));
-
-        messageVBox.getChildren().setAll(resultMessage, closeButton);
-        setupModalVBox(messageVBox);
 
         closeButton.setOnAction(evt -> {
             callback.closeDialog();
@@ -130,11 +136,18 @@ public class ChangePasswordUI implements MaterialFactoryMixin {
         container.setOnMouseClicked(Event::consume);
     }
 
-    private static void setupModalVBox(VBox vBox) {
-        vBox.setPrefSize(DIALOG_WIDTH, DIALOG_HEIGHT);
+    private void displayCloseButton() {
+        closeButton.setVisible(true);
+        closeButton.setManaged(true);
+        actionButton.setVisible(false);
+        actionButton.setManaged(false);
+    }
+
+    public static void setupModalVBox(VBox vBox) {
+        vBox.setPrefWidth(UserProfileActivity.MODAL_WINDOWS_MAX_WIDTH);
         vBox.setSpacing(20);
+        vBox.setAlignment(Pos.TOP_CENTER);
         vBox.setPadding(new Insets(60));
-        vBox.setAlignment(Pos.CENTER);
         vBox.getStyleClass().add("user-profile-modal-window");
     }
 
@@ -143,12 +156,15 @@ public class ChangePasswordUI implements MaterialFactoryMixin {
     }
 
     public void resetToInitialState() {
-        transitionPane.transitToContent(changePasswordVBox);
         passwordField.setText("");
         newPasswordField.setText("");
         newPasswordRepeatedField.setText("");
         showResultMessage("", "");
         showInfoMessage("", "");
+        closeButton.setVisible(false);
+        closeButton.setManaged(false);
+        actionButton.setVisible(true);
+        actionButton.setManaged(true);
     }
 
     public void showResultMessage(String errorMessageKey, String cssClass) {
