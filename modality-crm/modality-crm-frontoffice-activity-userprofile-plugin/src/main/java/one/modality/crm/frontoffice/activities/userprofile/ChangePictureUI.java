@@ -4,6 +4,7 @@ import dev.webfx.extras.canvas.blob.CanvasBlob;
 import dev.webfx.extras.filepicker.FilePicker;
 import dev.webfx.extras.panes.ScalePane;
 import dev.webfx.extras.styles.bootstrap.Bootstrap;
+import dev.webfx.kit.util.properties.FXProperties;
 import dev.webfx.platform.console.Console;
 import dev.webfx.platform.file.File;
 import dev.webfx.platform.uischeduler.UiScheduler;
@@ -26,6 +27,7 @@ import javafx.scene.control.Label;
 import javafx.scene.control.Slider;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
+import javafx.scene.image.WritableImage;
 import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Circle;
@@ -48,7 +50,7 @@ public class ChangePictureUI {
     protected Label infoMessage = Bootstrap.textDanger(new Label());
     private final UserProfileActivity parentActivity;
     private DialogCallback callback;
-    private final int MAX_PICTURE_WIDTH = 240;
+    private final int MAX_PICTURE_SIZE = 240;
     //Those two boolean property are used to know if we have to delete the picture, upload a new one, or if we are currently processing
     // (because we do the processing when we press the confirm button and not when we upload the picture)
     private final BooleanProperty isPictureToBeDeleted = new SimpleBooleanProperty(false);
@@ -64,20 +66,22 @@ public class ChangePictureUI {
         changePictureVBox.setPadding(new Insets(15, 0, 0, 0));
 
         StackPane imageStackPane = new StackPane();
-        imageStackPane.setMaxWidth(MAX_PICTURE_WIDTH);
+        imageStackPane.setMaxWidth(MAX_PICTURE_SIZE);
         String noPictureImage = "images/large/no-picture.png";
         ImageView noPictureImageView = new ImageView(new Image(noPictureImage));
         noPictureImageView.setPreserveRatio(true);
-        noPictureImageView.setFitHeight(MAX_PICTURE_WIDTH);
+        noPictureImageView.setFitHeight(MAX_PICTURE_SIZE);
+
         imageView = new ImageView();
-        imageView.setPreserveRatio(true);
-        imageView.setFitHeight(MAX_PICTURE_WIDTH);
+        //imageView.setPreserveRatio(true);
+        imageView.setFitHeight(MAX_PICTURE_SIZE);
+        imageView.setFitWidth(MAX_PICTURE_SIZE);
         imageStackPane.getChildren().addAll(noPictureImageView, imageView);
         imageStackPane.setAlignment(Pos.CENTER);
 
-        Circle clip = new Circle(MAX_PICTURE_WIDTH / 2.0);
-        clip.setCenterX(MAX_PICTURE_WIDTH / 2.0);
-        clip.setCenterY(MAX_PICTURE_WIDTH / 2.0);
+        Circle clip = new Circle(MAX_PICTURE_SIZE / 2.0);
+        clip.setCenterX(MAX_PICTURE_SIZE / 2.0);
+        clip.setCenterY(MAX_PICTURE_SIZE / 2.0);
         imageStackPane.setClip(clip);
 
         // Variables to track mouse position
@@ -85,7 +89,8 @@ public class ChangePictureUI {
         final double[] mouseAnchorY = new double[1];
         final double[] initialTranslateX = new double[1];
         final double[] initialTranslateY = new double[1];
-
+        double initialXImagePosition = imageView.getTranslateX();
+        double initialYImagePosition = imageView.getTranslateY();
 // Add mouse press event to set anchors
         imageView.setOnMousePressed(event -> {
             mouseAnchorX[0] = event.getSceneX();
@@ -96,12 +101,10 @@ public class ChangePictureUI {
 
 // Add mouse drag event to move the ImageView
         imageView.setOnMouseDragged(event -> {
-            deltaX = event.getSceneX() - mouseAnchorX[0];
-            deltaY = event.getSceneY() - mouseAnchorY[0];
-            imageView.setTranslateX(initialTranslateX[0] + deltaX);
-            imageView.setTranslateY(initialTranslateY[0] + deltaY);
-            deltaX = initialTranslateX[0] + deltaX;
-            deltaY = initialTranslateY[0] + deltaY;
+            deltaX = event.getSceneX() - mouseAnchorX[0]+initialTranslateX[0];
+            deltaY = event.getSceneY() - mouseAnchorY[0]+initialTranslateY[0];
+            imageView.setTranslateX(deltaX);
+            imageView.setTranslateY(deltaY);
         });
 
         infoMessage.setVisible(false);
@@ -135,13 +138,15 @@ public class ChangePictureUI {
         filePicker.getSelectedFiles().addListener((InvalidationListener) obs -> {
             ObservableList<File> fileList = filePicker.getSelectedFiles();
             cloudPictureFileToUpload = fileList.get(0);
-            Image imageToDisplay = new Image(cloudPictureFileToUpload.getObjectURL());
-            setImage(imageToDisplay);
-
-            isPictureToBeDeleted.setValue(true);
-            //and upload the new one
-            isPictureToBeUploaded.setValue(true);
-            // }
+            Image imageToDisplay = new Image(cloudPictureFileToUpload.getObjectURL(),true);
+            FXProperties.runOnPropertiesChange(property -> {
+                if(imageToDisplay.progressProperty().get()==1) {
+                    setImage(imageToDisplay);
+                    isPictureToBeDeleted.setValue(true);
+                    //and upload the new one
+                    isPictureToBeUploaded.setValue(true);
+                }
+            },imageToDisplay.progressProperty());
         });
 
 
@@ -165,29 +170,54 @@ public class ChangePictureUI {
             isCurrentlyProcessing.setValue(true);
             // Create a Canvas to draw the original image
             Image originalImage = imageView.getImage();
-            double canvasWidth = originalImage.getWidth() / zoomFactor;
-            double canvasHeight = originalImage.getHeight() / zoomFactor;
+            Image resultImageToUpload = originalImage;
+            double imageWidth = originalImage.getWidth();
+            double imageHeight = originalImage.getHeight();
+            if(imageWidth!=imageHeight) {
+                //First, in case the image is not squared, we make a square one by adding transparent bg in the missing part
+                double newWidth = Math.max(imageWidth,imageHeight);
+                double newHeight = Math.max(imageWidth,imageHeight);
+                WritableImage paddedImage = new WritableImage((int) newWidth, (int) newHeight);
+                resultImageToUpload = paddedImage;
+                // Draw the original image onto the new image with transparency
+                Canvas canvas = new Canvas(newWidth, newHeight);
+                GraphicsContext gc = canvas.getGraphicsContext2D();
+
+                // Fill the background with transparent color
+                gc.setFill(Color.TRANSPARENT);
+                gc.fillRect(0, 0, newWidth, newHeight);
+
+                // Draw the original image centered in the new image
+                double x = (newWidth - originalImage.getWidth()) / 2;
+                double y = (newHeight - originalImage.getHeight()) / 2; // Center vertically
+                gc.drawImage(originalImage, x, y);
+                // Snapshot the canvas into the WritableImage
+                canvas.snapshot(null, paddedImage);
+            }
+
+            imageWidth = resultImageToUpload.getWidth();
+            imageHeight = resultImageToUpload.getHeight();
+            double scalingPercentage =  Math.max(resultImageToUpload.getWidth() / MAX_PICTURE_SIZE, resultImageToUpload.getHeight()/ MAX_PICTURE_SIZE);
+
+            double canvasWidth = MAX_PICTURE_SIZE;
+            double canvasHeight = MAX_PICTURE_SIZE;;
 
 
             Canvas canvas = new Canvas(canvasWidth, canvasHeight);
             GraphicsContext gc = canvas.getGraphicsContext2D();
 
-            double scalingPercentage =  originalImage.getWidth() / MAX_PICTURE_WIDTH;
-            double imageWidth = originalImage.getWidth();
-            double imageHeight = originalImage.getHeight();
 
             // Calculate the scaled width and height of the image
             double scaledWidth = imageWidth / zoomFactor;
             double scaledHeight = imageHeight / zoomFactor;
-
+           // scalingPercentage = 1;
             // Calculate offsets to center the image on the canvas
             double xOffset = (imageWidth  - scaledWidth ) / 2 - deltaX*scalingPercentage/zoomFactor;
             double yOffset = (imageHeight  - scaledHeight ) / 2 - deltaY*scalingPercentage/zoomFactor;
-            //230
             // Clear the canvas
             gc.clearRect(0, 0, canvas.getWidth(), canvas.getHeight());
             // Draw the image scaled and centered
-            gc.drawImage(originalImage, xOffset, yOffset, scaledWidth, scaledHeight, 0, 0, scaledWidth, scaledHeight);
+            gc.drawImage(resultImageToUpload, xOffset, yOffset, scaledWidth, scaledHeight, 0, 0, canvasWidth, canvasHeight);
             CanvasBlob.createCanvasBlob(canvas)
                 .onFailure(Console::log)
                 .onSuccess(blob -> {
@@ -206,7 +236,7 @@ public class ChangePictureUI {
         actionHBox.setAlignment(Pos.CENTER);
         actionHBox.setPadding(new Insets(40, 0, 0, 0));
         changePictureVBox.getChildren().setAll(imageStackPane, zoomSliderPane, infoMessage, actionHBox);
-        changePictureVBox.setMaxWidth(MAX_PICTURE_WIDTH);
+        changePictureVBox.setMaxWidth(MAX_PICTURE_SIZE);
         changePictureVBox.setBackground(Background.fill(Color.WHITE));
         changePictureVBox.setAlignment(Pos.CENTER);
         changePictureVBox.setSpacing(20);
@@ -248,35 +278,6 @@ public class ChangePictureUI {
     public ScalePane getView() {
         return container;
     }
-
-    //TODO: implement the visible content saving
-
-    /**
-     * public void saveVisibleContent(ImageView imageView, Circle clip, File outputFile) {
-     * // Create SnapshotParameters
-     * SnapshotParameters params = new SnapshotParameters();
-     * params.setFill(Color.TRANSPARENT); // Set transparent background if needed
-     * <p>
-     * // Set the viewport matching the circular clip
-     * params.setViewport(new javafx.geometry.Rectangle2D(
-     * clip.getCenterX() - clip.getRadius(),
-     * clip.getCenterY() - clip.getRadius(),
-     * clip.getRadius() * 2,
-     * clip.getRadius() * 2
-     * ));
-     * <p>
-     * // Take the snapshot
-     * WritableImage snapshot = imageView.snapshot(params, null);
-     * <p>
-     * // Save the snapshot to a file
-     * try {
-     * ImageIO.write(javafx.embed.swing.SwingFXUtils.fromFXImage(snapshot, null), "png", outputFile);
-     * } catch (IOException e) {
-     * e.printStackTrace();
-     * }
-     * }
-     */
-
 
     public void setDialogCallback(DialogCallback callback) {
         this.callback = callback;
@@ -322,8 +323,10 @@ public class ChangePictureUI {
     public void setImage(Image imageToDisplay) {
         imageView.setImage(imageToDisplay);
         imageView.setPreserveRatio(true);
-        imageView.setFitHeight(MAX_PICTURE_WIDTH);
-        imageView.setFitWidth(MAX_PICTURE_WIDTH);
+        if(imageToDisplay.getWidth()>imageToDisplay.getHeight())
+            imageView.setFitWidth(MAX_PICTURE_SIZE);
+        else
+            imageView.setFitHeight(MAX_PICTURE_SIZE);
 
         // Reset zoom
         zoomSlider.setValue(1.0);
