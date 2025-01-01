@@ -39,12 +39,12 @@ import javafx.scene.shape.SVGPath;
 import javafx.scene.text.TextAlignment;
 import javafx.stage.Screen;
 import one.modality.base.client.bootstrap.ModalityStyle;
+import one.modality.base.client.cloudinary.ModalityCloudinary;
 import one.modality.base.client.icons.SvgIcons;
 import one.modality.base.frontoffice.utility.page.FOPageUtil;
 import one.modality.base.shared.entities.Attendance;
 import one.modality.base.shared.entities.Event;
 import one.modality.base.shared.entities.KnownItemFamily;
-import one.modality.crm.frontoffice.activities.userprofile.CloudinaryImageTag;
 import one.modality.crm.shared.services.authn.fx.FXUserPersonId;
 import one.modality.event.frontoffice.activities.audiorecordings.AudioRecordingsI18nKeys;
 
@@ -223,7 +223,7 @@ final class EventVideosWallActivity extends ViewDomainActivityBase {
                 // TODO display something else (ex: next online events to book) when the user is not logged in, or registered
             } else { // otherwise we display loadedContentVBox and set the content of audioTracksVBox
                 pageContainer.setContent(loadedContentVBox);
-                Object imageTag = CloudinaryImageTag.getEventCoverImageTag(eventProperty.get().getId().getPrimaryKey(),I18n.getLanguage().toString());
+                Object imageTag = ModalityCloudinary.getEventCoverImageTag(eventProperty.get().getId().getPrimaryKey(),I18n.getLanguage().toString());
                 String pictureId = String.valueOf(imageTag);
                 cloudImageService.exists(pictureId)
                     .onFailure(Console::log)

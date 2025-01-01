@@ -4,13 +4,7 @@ VideosMenu:
     fill: "#838788"
     fillRule: "evenodd"
     clipRule: "evenodd"
-Available:
-  textFill: "#41BA4D"
-Unavailable:
-  textFill: "#FF0404"
 VideoDelayed:
-  textFill: "#FF0404"
-Expired:
   textFill: "#FF0404"
 Watch:
   graphic:
