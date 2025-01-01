@@ -8,6 +8,7 @@ import dev.webfx.stack.cloud.image.CloudImageService;
 import dev.webfx.stack.cloud.image.impl.client.ClientImageService;
 import dev.webfx.stack.i18n.controls.I18nControls;
 import dev.webfx.stack.i18n.spi.impl.I18nSubKey;
+import dev.webfx.stack.orm.entity.Entities;
 import javafx.application.Platform;
 import javafx.beans.binding.BooleanBinding;
 import javafx.geometry.Insets;
@@ -169,7 +170,7 @@ public final class EventThumbnailView {
         // Italian audio recording: audio-it
         // Greek audio recording: audio-el
         Object imageTag;
-        imageTag = ModalityCloudinary.getEventCoverImageTag(event.getId().getPrimaryKey(), isoCode);
+        imageTag = ModalityCloudinary.getEventCoverImageTag(Entities.getPrimaryKey(event), isoCode);
         String pictureId = String.valueOf(imageTag);
 
         cloudImageService.exists(pictureId)
