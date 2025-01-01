@@ -29,7 +29,7 @@
 
         <dependency>
             <groupId>dev.webfx</groupId>
-            <artifactId>webfx-platform-file</artifactId>
+            <artifactId>webfx-platform-blob</artifactId>
             <version>0.1.0-SNAPSHOT</version>
         </dependency>
 

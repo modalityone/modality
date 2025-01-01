@@ -1,7 +1,7 @@
 package one.modality.base.client.cloudinary;
 
 import dev.webfx.platform.async.Future;
-import dev.webfx.platform.file.File;
+import dev.webfx.platform.blob.Blob;
 import dev.webfx.stack.cloud.image.CloudImageService;
 import dev.webfx.stack.cloud.image.impl.client.ClientImageService;
 
@@ -12,11 +12,9 @@ public final class ModalityCloudinary {
         this.prefix = prefix;
     }
 
-    private CloudinaryPrefix prefix;
+    private final CloudinaryPrefix prefix;
     private final CloudImageService cloudImageService = new ClientImageService();
     private String language;
-
-    private final int cloudinaryKey = 0;
 
     public enum CloudinaryPrefix {
         RECURRING_EVENT,
@@ -29,13 +27,13 @@ public final class ModalityCloudinary {
         return cloudImageService.delete(pictureId, true);
     }
 
-    public Future<Void> uploadCloudPicture(int key, File fileToUpload) {
+    public Future<Void> uploadCloudPicture(int key, Blob fileToUpload) {
             String pictureId = computeCloudinaryId(key);
             return cloudImageService.upload(fileToUpload, pictureId, true);
     }
 
-    public javafx.scene.image.Image getImage(int eventId, int size, int i) {
-        String url =  cloudImageService.url(computeCloudinaryId(eventId), size, -1) + ".jpg";
+    public javafx.scene.image.Image getImage(int eventId, int width, int height) {
+        String url =  cloudImageService.url(computeCloudinaryId(eventId), width, height);
         return new javafx.scene.image.Image(url, true);
     }
 
@@ -44,25 +42,27 @@ public final class ModalityCloudinary {
         return cloudImageService.exists(pictureId);
     }
 
-    private String computeCloudinaryId(int key) {
-        String toReturn = "";
-        switch (prefix) {
-            case AUDIO_COVER:
-                if(language.equals("en"))
-                    return  key + "-cover";
-                else
-                    return key + "-cover-" + language;
-            case RECURRING_EVENT:
-                return String.valueOf(key);
-            case LIVESTREAM_COVER:
-                return key + "-cover";
-        }
-        return toReturn;
+    private String computeCloudinaryId(Object id) {
+        return switch (prefix) {
+            case AUDIO_COVER, LIVESTREAM_COVER -> getEventCoverImageTag(id, language);
+            case RECURRING_EVENT -> getEventImageTag(id);
+        };
     }
 
+    public static String getPersonImageTag(Object personId) {
+        return "persons/person-" + personId;
+    }
+
+    public static String getEventImageTag(Object eventId) {
+        return "events/event-" + eventId;
+    }
+
+    public static String getEventCoverImageTag(Object eventId, Object I18nLanguage) {
+        if (I18nLanguage == null || "en".equals(I18nLanguage.toString())) {
+            return "events/event-" + eventId + "-cover";
+        } else return "events/event-" + eventId + "-cover-" + I18nLanguage.toString();
+    }
     public void setLanguage(String code) {
         language = code;
     }
-
-
 }

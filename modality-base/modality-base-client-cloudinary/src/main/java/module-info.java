@@ -5,7 +5,7 @@ module modality.base.client.cloudinary {
     // Direct dependencies modules
     requires javafx.graphics;
     requires webfx.platform.async;
-    requires webfx.platform.file;
+    requires webfx.platform.blob;
     requires webfx.stack.cloud.image;
     requires webfx.stack.cloud.image.client;
 
