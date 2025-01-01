@@ -35,6 +35,8 @@ public interface Event extends Entity,
     String shortDescription = "shortDescription";
     String externalLink = "externalLink";
     String venue = "venue";
+    String teachingsDayTicket = "teachingsDayTicket";
+    String audioRecordingsDayTicket = "audioRecordingsDayTicket";
 
     default void setState(Object value) {
         setFieldValue(state, Strings.stringValue(value));
@@ -185,4 +187,21 @@ public interface Event extends Entity,
     default Site getVenue() {
         return getForeignEntity(venue);
     }
+
+    default void setTeachingsDayTicket(Boolean value) {
+        setFieldValue(teachingsDayTicket, value);
+    }
+
+    default Boolean isTeachingsDayTicket() {
+        return getBooleanFieldValue(teachingsDayTicket);
+    }
+
+    default void setAudioRecordingsDayTicket(Boolean value) {
+        setFieldValue(audioRecordingsDayTicket, value);
+    }
+
+    default Boolean isAudioRecordingsDayTicket() {
+        return getBooleanFieldValue(audioRecordingsDayTicket);
+    }
+
 }
