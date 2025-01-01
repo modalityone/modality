@@ -1,8 +1,0 @@
-.event-creator-dialog {
-    -fx-font-family: Montserrat, sans-serif;
-    -fx-font-size: 24px;
-}
-
-.event-creator-dialog ToggleButton {
-    -fx-cursor: hand;
-}
