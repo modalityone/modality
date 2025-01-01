@@ -153,13 +153,13 @@ public class VideoView {
         if (currentEvent.getVodExpirationDate() != null) {
             contentExpirationDateTextField.setText(currentEvent.getVodExpirationDate().format(dateFormatter));
         }
-        validationSupport.addDateValidation(contentExpirationDateTextField, "dd-MM-yyyy", contentExpirationDateTextField, I18n.i18nTextProperty("ValidationTimeFormatIncorrect")); // ???
+        validationSupport.addDateOrEmptyValidation(contentExpirationDateTextField, "dd-MM-yyyy", contentExpirationDateTextField, I18n.i18nTextProperty("ValidationTimeFormatIncorrect")); // ???
 
         masterSettings.getChildren().add(contentExpirationDateTextField);
 
         contentExpirationTimeTextField = new TextField();
         contentExpirationTimeTextField.setPromptText("Format: 14:25");
-        validationSupport.addDateValidation(contentExpirationTimeTextField, "HH:mm", contentExpirationTimeTextField, I18n.i18nTextProperty("ValidationTimeFormatIncorrect")); // ???
+        validationSupport.addDateOrEmptyValidation(contentExpirationTimeTextField, "HH:mm", contentExpirationTimeTextField, I18n.i18nTextProperty("ValidationTimeFormatIncorrect")); // ???
         if (currentEvent.getVodExpirationDate() != null) {
             contentExpirationTimeTextField.setText(currentEvent.getVodExpirationDate().format(timeFormatter));
         }
@@ -228,7 +228,8 @@ public class VideoView {
             LocalDateTime availableUntil = LocalDateTime.of(date, time);
             currentEvent.setVodExpirationDate(availableUntil);
         } catch (DateTimeParseException e) {
-            // Handle the error or leave empty if ignoring invalid input
+            if(Objects.equals(contentExpirationDateTextField.getText(), "") && Objects.equals(contentExpirationTimeTextField.getText(), ""))
+                currentEvent.setVodExpirationDate(null);
         }
     }
 

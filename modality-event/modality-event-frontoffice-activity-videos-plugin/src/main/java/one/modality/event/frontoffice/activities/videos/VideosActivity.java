@@ -64,7 +64,7 @@ final class VideosActivity extends ViewDomainActivityBase {
         columnsPane.getStyleClass().add("media-library");
         // Showing a thumbnail in the columns pane for each event with videos
         ObservableLists.bindConverted(columnsPane.getChildren(), eventsWithBookedVideos, event -> {
-            EventThumbnailView eventTbView = new EventThumbnailView(event, KnownItem.VIDEO.getCode());
+            EventThumbnailView eventTbView = new EventThumbnailView(event, KnownItem.VIDEO.getCode(), EventThumbnailView.ItemType.ITEM_TYPE_VIDEO,true);
             VBox container = eventTbView.getView();
             Button actionButton = eventTbView.getActionButton();
             actionButton.setCursor(Cursor.HAND);

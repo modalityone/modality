@@ -8,8 +8,8 @@ import dev.webfx.stack.cloud.image.CloudImageService;
 import dev.webfx.stack.cloud.image.impl.client.ClientImageService;
 import dev.webfx.stack.i18n.controls.I18nControls;
 import dev.webfx.stack.i18n.spi.impl.I18nSubKey;
-import dev.webfx.stack.orm.entity.EntityId;
 import javafx.application.Platform;
+import javafx.beans.binding.BooleanBinding;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.control.Button;
@@ -22,6 +22,7 @@ import javafx.scene.shape.SVGPath;
 import javafx.scene.text.Text;
 import javafx.scene.text.TextFlow;
 import javafx.stage.Screen;
+import one.modality.base.client.cloudinary.ModalityCloudinary;
 import one.modality.base.client.icons.SvgIcons;
 import one.modality.base.shared.entities.Event;
 
@@ -40,14 +41,42 @@ public final class EventThumbnailView {
     private final CloudImageService cloudImageService = new ClientImageService();
     private Button actionButton;
 
-    public EventThumbnailView(Event event) {
+    public enum ItemType {
+        ITEM_TYPE_AUDIO,
+        ITEM_TYPE_VIDEO
+    }
+
+    private enum AvailabilityType {
+        AVAILABLE(MediasI18nKeys.Available),
+        EXPIRED(MediasI18nKeys.Expired),
+        UNPUBLISHED(MediasI18nKeys.Unpublished);
+
+        private final String key;
+
+        AvailabilityType(String initialText) {
+            this.key = initialText;
+        }
+
+        public String getKey() {
+            return this.key;
+        }
+    }
+
+    private final ItemType itemType;
+    private AvailabilityType availabilityType;
+    private boolean isPublished = false;
+
+    public EventThumbnailView(Event event, ItemType itemType) {
         this.event = event;
+        this.itemType = itemType;
         buildUi();
     }
 
-    public EventThumbnailView(Event event, String itemCode) {
+    public EventThumbnailView(Event event, String itemCode, ItemType itemType, boolean isPublished) {
         this.event = event;
         this.imageItemCode = itemCode;
+        this.itemType = itemType;
+        this.isPublished = isPublished;
         buildUi();
     }
 
@@ -83,9 +112,7 @@ public final class EventThumbnailView {
         shortDescriptionText.setStyle("-fx-font-size: 12px;"); // Adjust font size as needed
 
         // Add listener to handle text truncation after layout
-        textFlow.layoutBoundsProperty().addListener((observable, oldValue, newValue) -> {
-            truncateToFiveLines(shortDescriptionText, textFlow);
-        });
+        textFlow.layoutBoundsProperty().addListener((observable, oldValue, newValue) -> truncateToFiveLines(shortDescriptionText, textFlow));
 
         VBox.setMargin(textFlow, new Insets(20, 0, 0, 0));
 
@@ -93,30 +120,40 @@ public final class EventThumbnailView {
         thumbailStackPane.setPrefHeight(WIDTH);
         ImageView imageView = new ImageView();
         thumbailStackPane.getChildren().add(imageView);
+
         Label availabilityLabel = new Label();
 
-        if (imageItemCode != null) {
-            if (imageItemCode.contains("video"))
-                if (event.getVodExpirationDate() != null && LocalDateTime.now().isAfter(event.getVodExpirationDate()))
-                    availabilityLabel = Bootstrap.textDanger(I18nControls.newLabel("Expired"));
+        if (isPublished) {
+            if (itemType == ItemType.ITEM_TYPE_VIDEO)
+                //If the vodExpirationDate is set to null, it means the event is livestreamOnly
+                if (event.getVodExpirationDate() == null || LocalDateTime.now().isAfter(event.getVodExpirationDate()))
+                    availabilityType = AvailabilityType.EXPIRED;
                 else
-                    availabilityLabel = Bootstrap.textSuccess(I18nControls.newLabel("Available"));
-            if (imageItemCode.contains("audio"))
+                    availabilityType = AvailabilityType.AVAILABLE;
+            if (itemType == ItemType.ITEM_TYPE_AUDIO)
                 if (event.getAudioExpirationDate() != null && LocalDateTime.now().isAfter(event.getAudioExpirationDate()))
-                    availabilityLabel = Bootstrap.textDanger(I18nControls.newLabel("Expired"));
+                    availabilityType = AvailabilityType.EXPIRED;
+                    //                else if(true)
+                    //                    availabilityLabel = Bootstrap.textDanger(I18nControls.newLabel("NotPublished"));
                 else
-                    availabilityLabel = Bootstrap.textSuccess(I18nControls.newLabel("Available"));
-        }
+                    availabilityType = AvailabilityType.AVAILABLE;
+        } else
+            availabilityType = AvailabilityType.UNPUBLISHED;
+
+        I18nControls.bindI18nProperties(availabilityLabel, availabilityType.getKey());
+
+
         availabilityLabel.setPadding(new Insets(5, 15, 5, 15));
         availabilityLabel.setBackground(new Background(
-            new BackgroundFill(Color.LIGHTGRAY, CornerRadii.EMPTY, new Insets(0))
+            new BackgroundFill(Color.LIGHTGRAY, new CornerRadii(7, 0, 7, 0, false) // Top-left and bottom-right corners rounded
+                , new Insets(0))
         ));
         thumbailStackPane.getChildren().add(availabilityLabel);
         thumbailStackPane.setAlignment(Pos.TOP_LEFT);
 
         imageView.setImage(null);
 
-        EntityId id = event.getId();
+        event.getId();
         //Here we're looking inb cloudinary if the picture for the cover exist
         //The item code list is as following:
         // Video : video | note: just one for all languages
@@ -132,12 +169,7 @@ public final class EventThumbnailView {
         // Italian audio recording: audio-it
         // Greek audio recording: audio-el
         Object imageTag;
-        if (isoCode == null || isoCode.equals("en")) {
-            //We do add .jpg even if the image is not jpg, because for some reason, if we don't put an extension file, cloudinary doesn't always find the image, but it works when adding .jpg.
-            imageTag = event.getId().getPrimaryKey() + "-cover.jpg";
-        } else {
-            imageTag = event.getId().getPrimaryKey() + "-cover-" + isoCode + ".jpg";
-        }
+        imageTag = ModalityCloudinary.getEventCoverImageTag(event.getId().getPrimaryKey(), isoCode);
         String pictureId = String.valueOf(imageTag);
 
         cloudImageService.exists(pictureId)
@@ -167,6 +199,13 @@ public final class EventThumbnailView {
 
         actionButton = Bootstrap.primaryButton(I18nControls.newButton("View"));
         actionButton.setPrefWidth(150);
+        //We display the view button only if the content is available
+        actionButton.visibleProperty().bind(new BooleanBinding() {
+            @Override
+            protected boolean computeValue() {
+                return availabilityType == AvailabilityType.AVAILABLE;
+            }
+        });
         VBox.setMargin(actionButton, new Insets(30, 0, 0, 0));
         container.getChildren().addAll(
             thumbailStackPane,
@@ -177,53 +216,11 @@ public final class EventThumbnailView {
     }
 
     private void truncateToFiveLines(Text text, TextFlow textFlow) {
-//        String content = text.getText();
-//        if (content.isEmpty()) return;
-//
-//        // Get the height of the TextFlow
-//        double textFlowHeight = textFlow.getBoundsInParent().getHeight();
-//        double maxHeight = text.getFont().getSize() * 8; // Approximately 5 lines (with some margin)
-//
-//        // If height exceeds limit, start truncating
-//        if (textFlowHeight > maxHeight) {
-//            // Binary search to find the right amount of text
-//            int start = 0;
-//            int end = content.length();
-//            String truncated = content;
-//
-//            while (start < end) {
-//                int mid = (start + end) / 2;
-//                String testText = content.substring(0, mid) + "...";
-//                text.setText(testText);
-//
-//                // Wait for layout to update
-//                textFlow.layout();
-//
-//                if (textFlow.getBoundsInParent().getHeight() <= maxHeight) {
-//                    truncated = testText;
-//                    start = mid + 1;
-//                } else {
-//                    end = mid - 1;
-//                }
-//            }
-//
-//            // Find the last complete line
-//            int lastNewline = truncated.lastIndexOf('\n');
-//            if (lastNewline != -1) {
-//                // Remove incomplete last line and add ellipsis
-//                truncated = truncated.substring(0, lastNewline) + "\n...";
-//            }
-//
-//            text.setText(truncated);
-//        }
+        //TODO implement if needed
     }
 
     public Button getActionButton() {
         return actionButton;
-    }
-
-    public void setActionButton(Button actionButton) {
-        this.actionButton = actionButton;
     }
 
     public static String extractISOCode(String itemCode) {

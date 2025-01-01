@@ -39,7 +39,8 @@ final class AudioRecordingsActivity extends ViewDomainActivityBase {
             eventsWithBookedAudios.clear();
             if (userPersonId != null) {
                 entityStore.<DocumentLine>executeQuery(
-                   "select document.event.(name,label.(de,en,es,fr,pt), shortDescription, audioExpirationDate, startDate, endDate), item.code" +
+                   "select document.event.(name,label.(de,en,es,fr,pt), shortDescription, audioExpirationDate, startDate, endDate), item.code, " +
+                       " (exists(select Media where scheduledItem.(event=dl.document.event and item=dl.item))) and published as published " +
                     " from DocumentLine dl where !cancelled and item.family.code=? and dl.document.(person=? and price_balance<=0)" +
                     " order by document.event.startDate desc",
                         new Object[]{ KnownItemFamily.AUDIO_RECORDING.getCode(), userPersonId })
@@ -72,7 +73,8 @@ final class AudioRecordingsActivity extends ViewDomainActivityBase {
         ObservableLists.bindConverted(columnsPane.getChildren(), eventsWithBookedAudios, dl -> {
             Event event = dl.getDocument().getEvent();
             String itemCode = dl.getItem().getCode();
-            EventThumbnailView eventTbView = new EventThumbnailView(event, itemCode);
+            boolean published = dl.getBooleanFieldValue("published");
+            EventThumbnailView eventTbView = new EventThumbnailView(event, itemCode, EventThumbnailView.ItemType.ITEM_TYPE_AUDIO, published);
             VBox container = eventTbView.getView();
             Button actionButton = eventTbView.getActionButton();
             actionButton.setCursor(Cursor.HAND);

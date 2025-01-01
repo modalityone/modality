@@ -49,6 +49,7 @@ import javafx.scene.shape.SVGPath;
 import javafx.scene.text.TextAlignment;
 import javafx.stage.Screen;
 import one.modality.base.client.activity.ModalityButtonFactoryMixin;
+import one.modality.base.client.cloudinary.ModalityCloudinary;
 import one.modality.base.client.icons.SvgIcons;
 import one.modality.base.client.mainframe.fx.FXMainFrameDialogArea;
 import one.modality.base.client.util.converters.Converters;
@@ -601,7 +602,7 @@ final class UserProfileActivity extends ViewDomainActivityBase implements Modali
     }
 
     public void loadProfilePictureIfExist() {
-        Object imageTag = CloudinaryImageTag.getPersonImageTag(currentPerson.getId().getPrimaryKey());
+        Object imageTag = ModalityCloudinary.getPersonImageTag(currentPerson.getId().getPrimaryKey());
         doesCloudPictureExist(imageTag)
             .onFailure(ex -> {
                 Console.log(ex);
@@ -620,7 +621,7 @@ final class UserProfileActivity extends ViewDomainActivityBase implements Modali
                     double zoomFactor = Screen.getPrimary().getOutputScaleX();
                     String url = cloudImageService.url(String.valueOf(imageTag), (int) (imageView.getFitWidth() * zoomFactor), -1);
                     Image imageToDisplay = new Image(url, true);
-                    imageView.setImage(new Image(noPictureImage));
+                  //  imageView.setImage(new Image(noPictureImage));
                     setImage(imageToDisplay);
                     //   isPictureDisplayed.setValue(true);
                 }

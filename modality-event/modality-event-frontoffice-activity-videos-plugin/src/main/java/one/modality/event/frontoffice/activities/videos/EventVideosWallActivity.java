@@ -39,6 +39,7 @@ import javafx.scene.shape.SVGPath;
 import javafx.scene.text.TextAlignment;
 import javafx.stage.Screen;
 import one.modality.base.client.bootstrap.ModalityStyle;
+import one.modality.base.client.cloudinary.ModalityCloudinary;
 import one.modality.base.client.icons.SvgIcons;
 import one.modality.base.frontoffice.utility.page.FOPageUtil;
 import one.modality.base.shared.entities.Attendance;
@@ -126,6 +127,7 @@ final class EventVideosWallActivity extends ViewDomainActivityBase {
         super.onResume();
     }
 
+
     @Override
     public Node buildUi() { // Reminder: called only once (rebuild = bad UX) => UI is reacting to parameter changes
 
@@ -204,7 +206,7 @@ final class EventVideosWallActivity extends ViewDomainActivityBase {
         selectAllDaysButton.setMinWidth(DAY_BUTTON_WIDTH);
         selectAllDaysButton.setOnAction(e -> {
             currentDaySelectedProperty.set(null);
-            handleVideoChanges();
+            handleVideoChanges(false);
         });
 
         // *************************************************************************************************************
@@ -221,17 +223,8 @@ final class EventVideosWallActivity extends ViewDomainActivityBase {
                 // TODO display something else (ex: next online events to book) when the user is not logged in, or registered
             } else { // otherwise we display loadedContentVBox and set the content of audioTracksVBox
                 pageContainer.setContent(loadedContentVBox);
-                Object imageTag;
-
-                if (I18n.getLanguage() == null || "en".equals(I18n.getLanguage().toString())) {
-                    //We do add .jpg even if the image is not jpg, because for some reason, if we don't put an extension file, cloudinary doesn't always find the image, but it works when adding .jpg.
-                    imageTag = eventProperty.get().getId().getPrimaryKey() + "-cover.jpg";
-                } else {
-                    imageTag = eventProperty.get().getId().getPrimaryKey() + "-cover-" + I18n.getLanguage().toString() + ".jpg";
-                }
-
+                Object imageTag = ModalityCloudinary.getEventCoverImageTag(eventProperty.get().getId().getPrimaryKey(),I18n.getLanguage().toString());
                 String pictureId = String.valueOf(imageTag);
-
                 cloudImageService.exists(pictureId)
                     .onFailure(Console::log)
                     .onSuccess(exists -> Platform.runLater(() -> {
@@ -281,7 +274,7 @@ final class EventVideosWallActivity extends ViewDomainActivityBase {
         }, attendances, eventProperty);
 
         // Populating dayVideosWallViews from videoScheduledItems = flat list of all videos of the event (not yet grouped by day)
-        ObservableLists.runNowAndOnListOrPropertiesChange(change -> handleVideoChanges(), attendances);
+        ObservableLists.runNowAndOnListOrPropertiesChange(change -> handleVideoChanges(true), attendances);
 
         // Now that we have dayVideosWallViews populated, we can populate the final VBox showing all days and their videos
         ObservableLists.runNowAndOnListChange(change -> {
@@ -292,7 +285,7 @@ final class EventVideosWallActivity extends ViewDomainActivityBase {
             }
         }, videosDayScheduleViews);
 
-        FXProperties.runNowAndOnPropertyChange(this::updateDaysButtonStyle, currentDaySelectedProperty);
+        FXProperties.runOnPropertyChange(this::updateDaysButtonStyle, currentDaySelectedProperty);
 
         // *************************************************************************************************************
         // ************************************* Building final container **********************************************
@@ -303,7 +296,7 @@ final class EventVideosWallActivity extends ViewDomainActivityBase {
     }
 
 
-    private void handleVideoChanges() {
+    private void handleVideoChanges(boolean initialLoading) {
         // Grouping videos per day
         Map<LocalDate, List<Attendance>> perDayGroups =
             attendances.stream().collect(Collectors.groupingBy(Attendance::getDate));
@@ -315,6 +308,8 @@ final class EventVideosWallActivity extends ViewDomainActivityBase {
         correspondenceDateButton.put(null, selectAllDaysButton);
         final boolean[] isFirst = {true};
         final LocalDate[] firstDay = {null};
+
+        Map<LocalDate, Button> dayButtonMap = new HashMap<>();
         new TreeMap<>(perDayGroups) // The purpose of using a TreeMap is to sort the groups by keys (= days)
             .forEach((day, attendance) -> {
                 videosDayScheduleViews.add(
@@ -325,6 +320,8 @@ final class EventVideosWallActivity extends ViewDomainActivityBase {
                 dateButton = Bootstrap.primaryButton(new Button(day.format(dateFormatter)));
                 dateButton.setMinWidth(DAY_BUTTON_WIDTH);
                 correspondenceDateButton.put(day, dateButton);
+                dayButtonMap.put(day, dateButton);
+
                 dateButton.setOnAction(e -> {
                     videosDayScheduleViews.clear();
                     videosDayScheduleViews.add(new VideosDayScheduleView(day, attendance, getHistory(), true, entityStore));
@@ -333,8 +330,15 @@ final class EventVideosWallActivity extends ViewDomainActivityBase {
                 daysColumnPane.getChildren().add(dateButton);
                 isFirst[0] = false;
             });
+
+        if (initialLoading && !dayButtonMap.isEmpty()) {
+            LocalDate firstDayOfList = new TreeMap<>(perDayGroups).firstKey(); // Get the first day
+            Button firstDayButton = dayButtonMap.get(firstDayOfList); // Retrieve the button for the first day
+            if (firstDayButton != null) {
+                firstDayButton.fire(); // Simulate a button click to initially display the videos of the first day only
+            }
+        }
         daysColumnPane.getChildren().add(selectAllDaysButton);
-        currentDaySelectedProperty.setValue(firstDay[0]);
 
         //Here we resize daysColumnPane
         int numberOfChild = daysColumnPane.getChildren().size();

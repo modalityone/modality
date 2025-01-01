@@ -32,6 +32,7 @@ import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Circle;
 import javafx.scene.shape.SVGPath;
+import one.modality.base.client.cloudinary.ModalityCloudinary;
 import one.modality.base.client.icons.SvgIcons;
 
 import java.util.Objects;
@@ -57,6 +58,8 @@ public class ChangePictureUI {
     private final BooleanProperty isPictureToBeUploaded = new SimpleBooleanProperty(false);
     //This boolean property is used to bound the confirm button to the fact that we are currently processing, together with the fact that we have a picture to upload or delete
     private final BooleanProperty isCurrentlyProcessing = new SimpleBooleanProperty(false);
+    private final BooleanProperty zoomPropertyChanged = new SimpleBooleanProperty(false);
+
     private final Button saveButton;
 
 
@@ -115,6 +118,7 @@ public class ChangePictureUI {
             zoomFactor = newVal.doubleValue();
             imageView.setScaleX(zoomFactor);
             imageView.setScaleY(zoomFactor);
+            zoomPropertyChanged.setValue(true);
         });
         SVGPath zoomOutIcon = SvgIcons.createZoomInOutPath();
         SVGPath zoomInIcon = SvgIcons.createZoomInOutPath();
@@ -132,6 +136,7 @@ public class ChangePictureUI {
         Hyperlink addPictureLink = Bootstrap.strong(Bootstrap.textPrimary(I18nControls.newHyperlink(UserProfileI18nKeys.UploadPicture)));
 
         FilePicker filePicker = FilePicker.create();
+        filePicker.getAcceptedExtensions().addAll("image/*");
         filePicker.setGraphic(addPictureLink);
         filePicker.getSelectedFiles().addListener((InvalidationListener) obs -> {
             ObservableList<File> fileList = filePicker.getSelectedFiles();
@@ -161,7 +166,7 @@ public class ChangePictureUI {
 
         //We bind the disable property of the save button to the fact that we have a picture to upload or delete, and also if the picture is currently being processed
         //(because it is bind, the turn on/turn off can't change the state of the button)
-        saveButton.disableProperty().bind((isPictureToBeUploaded.not().and(isPictureToBeDeleted.not())).or(isCurrentlyProcessing));
+        saveButton.disableProperty().bind((isPictureToBeUploaded.not().and(isPictureToBeDeleted.not().and(zoomPropertyChanged.not())).or(isCurrentlyProcessing)));
 
         saveButton.setOnAction(e -> {
             OperationUtil.turnOnButtonsWaitMode(saveButton);
@@ -169,57 +174,63 @@ public class ChangePictureUI {
             // Create a Canvas to draw the original image
             Image originalImage = imageView.getImage();
             Image resultImageToUpload = originalImage;
-            double imageWidth = originalImage.getWidth();
-            double imageHeight = originalImage.getHeight();
-            if (imageWidth != imageHeight) {
-                //First, in case the image is not squared, we make a square one by adding transparent bg in the missing part
-                double newWidth = Math.max(imageWidth, imageHeight);
-                double newHeight = Math.max(imageWidth, imageHeight);
-                WritableImage paddedImage = new WritableImage((int) newWidth, (int) newHeight);
-                resultImageToUpload = paddedImage;
-                // Draw the original image onto the new image with transparency
-                Canvas canvas = new Canvas(newWidth, newHeight);
+            if (originalImage != null) {
+                double imageWidth = originalImage.getWidth();
+                double imageHeight = originalImage.getHeight();
+                if (imageWidth != imageHeight) {
+                    //First, in case the image is not squared, we make a square one by adding transparent bg in the missing part
+                    double newWidth = Math.max(imageWidth, imageHeight);
+                    double newHeight = Math.max(imageWidth, imageHeight);
+                    WritableImage paddedImage = new WritableImage((int) newWidth, (int) newHeight);
+                    resultImageToUpload = paddedImage;
+                    // Draw the original image onto the new image with transparency
+                    Canvas canvas = new Canvas(newWidth, newHeight);
+                    GraphicsContext gc = canvas.getGraphicsContext2D();
+
+                    // Fill the background with transparent color
+                    gc.setFill(Color.TRANSPARENT);
+                    gc.fillRect(0, 0, newWidth, newHeight);
+
+                    // Draw the original image centered in the new image
+                    double x = (newWidth - originalImage.getWidth()) / 2;
+                    double y = (newHeight - originalImage.getHeight()) / 2; // Center vertically
+                    gc.drawImage(originalImage, x, y);
+                    // Snapshot the canvas into the WritableImage
+                    canvas.snapshot(null, paddedImage);
+                }
+
+                imageWidth = resultImageToUpload.getWidth();
+                imageHeight = resultImageToUpload.getHeight();
+                double scalingPercentage = Math.max(resultImageToUpload.getWidth() / MAX_PICTURE_SIZE, resultImageToUpload.getHeight() / MAX_PICTURE_SIZE);
+
+                double canvasWidth = MAX_PICTURE_SIZE * 2;
+                double canvasHeight = MAX_PICTURE_SIZE * 2;
+                Canvas canvas = new Canvas(canvasWidth, canvasHeight);
                 GraphicsContext gc = canvas.getGraphicsContext2D();
 
-                // Fill the background with transparent color
-                gc.setFill(Color.TRANSPARENT);
-                gc.fillRect(0, 0, newWidth, newHeight);
-
-                // Draw the original image centered in the new image
-                double x = (newWidth - originalImage.getWidth()) / 2;
-                double y = (newHeight - originalImage.getHeight()) / 2; // Center vertically
-                gc.drawImage(originalImage, x, y);
-                // Snapshot the canvas into the WritableImage
-                canvas.snapshot(null, paddedImage);
+                // Calculate the scaled width and height of the image
+                double scaledWidth = imageWidth / zoomFactor;
+                double scaledHeight = imageHeight / zoomFactor;
+                // scalingPercentage = 1;
+                // Calculate offsets to center the image on the canvas
+                double xOffset = (imageWidth - scaledWidth) / 2 - deltaX * scalingPercentage / zoomFactor;
+                double yOffset = (imageHeight - scaledHeight) / 2 - deltaY * scalingPercentage / zoomFactor;
+                // Clear the canvas
+                gc.clearRect(0, 0, canvas.getWidth(), canvas.getHeight());
+                // Draw the image scaled and centered
+                gc.drawImage(resultImageToUpload, xOffset, yOffset, scaledWidth, scaledHeight, 0, 0, canvasWidth, canvasHeight);
+                CanvasBlob.createCanvasBlob(canvas)
+                    .onFailure(Console::log)
+                    .onSuccess(blob -> {
+                        cloudPictureFileToUpload = (File) blob;
+                        Object imageTag = ModalityCloudinary.getPersonImageTag(parentActivity.getCurrentPerson().getId().getPrimaryKey());
+                        deleteIfNeededAndUploadIfNeededCloudPicture(imageTag);
+                    });
+            } else {
+                //Here we choose to remove the picture
+                Object imageTag = ModalityCloudinary.getPersonImageTag(parentActivity.getCurrentPerson().getId().getPrimaryKey());
+                deleteIfNeededAndUploadIfNeededCloudPicture(imageTag);
             }
-
-            imageWidth = resultImageToUpload.getWidth();
-            imageHeight = resultImageToUpload.getHeight();
-            double scalingPercentage = Math.max(resultImageToUpload.getWidth() / MAX_PICTURE_SIZE, resultImageToUpload.getHeight() / MAX_PICTURE_SIZE);
-
-            double canvasWidth = MAX_PICTURE_SIZE*2;
-            double canvasHeight = MAX_PICTURE_SIZE*2;
-            Canvas canvas = new Canvas(canvasWidth, canvasHeight);
-            GraphicsContext gc = canvas.getGraphicsContext2D();
-
-            // Calculate the scaled width and height of the image
-            double scaledWidth = imageWidth / zoomFactor;
-            double scaledHeight = imageHeight / zoomFactor;
-            // scalingPercentage = 1;
-            // Calculate offsets to center the image on the canvas
-            double xOffset = (imageWidth - scaledWidth) / 2 - deltaX * scalingPercentage / zoomFactor;
-            double yOffset = (imageHeight - scaledHeight) / 2 - deltaY * scalingPercentage / zoomFactor;
-            // Clear the canvas
-            gc.clearRect(0, 0, canvas.getWidth(), canvas.getHeight());
-            // Draw the image scaled and centered
-            gc.drawImage(resultImageToUpload, xOffset, yOffset, scaledWidth, scaledHeight, 0, 0, canvasWidth, canvasHeight);
-            CanvasBlob.createCanvasBlob(canvas)
-                .onFailure(Console::log)
-                .onSuccess(blob -> {
-                    cloudPictureFileToUpload = (File) blob;
-                    Object imageTag = CloudinaryImageTag.getPersonImageTag(parentActivity.getCurrentPerson().getId().getPrimaryKey());
-                    deleteIfNeededAndUploadIfNeededCloudPicture(imageTag);
-                });
         });
 
         Hyperlink cancel = Bootstrap.textSecondary(I18nControls.newHyperlink(UserProfileI18nKeys.Cancel));
@@ -347,7 +358,7 @@ public class ChangePictureUI {
     public void setImage(Image imageToDisplay) {
         imageView.setImage(imageToDisplay);
         imageView.setPreserveRatio(true);
-        if (imageToDisplay.getWidth() > imageToDisplay.getHeight())
+        if (imageToDisplay != null && imageToDisplay.getWidth() > imageToDisplay.getHeight())
             imageView.setFitWidth(MAX_PICTURE_SIZE);
         else
             imageView.setFitHeight(MAX_PICTURE_SIZE);

@@ -1,0 +1,8 @@
+Available:
+  textFill: "#41BA4D"
+Unavailable:
+  textFill: "#FF0404"
+Expired:
+  textFill: "#FF0404"
+Unpublished:
+  textFill: "#FF0404"

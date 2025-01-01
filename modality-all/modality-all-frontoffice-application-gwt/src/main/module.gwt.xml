@@ -486,11 +486,6 @@
     <!--=========================< webfx-platform-fetch-gwt-j2cl >==========================-->
     <source path="dev/webfx/platform/fetch/spi/impl/gwtj2cl"/>
     <source path="dev/webfx/platform/streams/spi/impl/gwtj2cl"/>
-    <!--==============================< webfx-platform-file >===============================-->
-    <source path="dev/webfx/platform/file"/>
-    <source path="dev/webfx/platform/file/spi"/>
-    <!--==========================< webfx-platform-file-gwt-j2cl >==========================-->
-    <source path="dev/webfx/platform/file/spi/impl/gwtj2cl"/>
     <!--========================< webfx-platform-javabase-emul-gwt >========================-->
     <super-source includes="java/io/" path=""/>
     <super-source includes="java/lang/ref/" path=""/>

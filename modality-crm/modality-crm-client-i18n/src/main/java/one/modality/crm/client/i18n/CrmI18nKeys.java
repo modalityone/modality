@@ -3,33 +3,33 @@ package one.modality.crm.client.i18n;
 
 public interface CrmI18nKeys {
 
-    String ref = "ref";
-    String PersonToBook = "PersonToBook";
-    String YourPersonalDetails = "YourPersonalDetails";
-    String FirstName = "FirstName";
-    String LastName = "LastName";
-    String Gender = "Gender";
+    String LayName = "LayName";
+    String Email = "Email";
+    String Address = "Address";
+    String Lay = "Lay";
     String Male = "Male";
-    String Female = "Female";
-    String Age = "Age";
-    String Adult = "Adult";
-    String Child = "Child";
-    String BirthDate = "BirthDate";
+    String PersonToBook = "PersonToBook";
+    String Gender = "Gender";
+    String YourPersonalDetails = "YourPersonalDetails";
     String Carer1 = "Carer1";
     String Carer2 = "Carer2";
-    String Email = "Email";
+    String ref = "ref";
     String Phone = "Phone";
-    String Address = "Address";
-    String Country = "Country";
-    String State = "State";
-    String City = "City";
-    String Postcode = "Postcode";
+    String Adult = "Adult";
+    String Female = "Female";
     String Street = "Street";
-    String Centre = "Centre";
+    String Child = "Child";
+    String Age = "Age";
     String Password = "Password";
     String RepeatPassword = "RepeatPassword";
-    String Lay = "Lay";
+    String FirstName = "FirstName";
+    String City = "City";
+    String Centre = "Centre";
+    String Postcode = "Postcode";
     String Ordained = "Ordained";
-    String LayName = "LayName";
+    String State = "State";
+    String Country = "Country";
+    String LastName = "LastName";
+    String BirthDate = "BirthDate";
 
 }

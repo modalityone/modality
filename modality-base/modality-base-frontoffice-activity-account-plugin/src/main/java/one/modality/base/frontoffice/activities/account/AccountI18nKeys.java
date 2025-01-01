@@ -3,26 +3,26 @@ package one.modality.base.frontoffice.activities.account;
 
 public interface AccountI18nKeys {
 
+    String SupportMessages = "SupportMessages";
     String Account = "Account";
-    String YourUpcomingBookings = "YourUpcomingBookings";
-    String YourPastBookings = "YourPastBookings";
     String BookingStatusPaymentRequired = "BookingStatusPaymentRequired";
+    String Help = "Help";
+    String Messages = "Messages";
+    String YourPastBookings = "YourPastBookings";
+    String BookingStatusInProgress = "BookingStatusInProgress";
+    String Legal = "Legal";
+    String YourWalletPayments = "YourWalletPayments";
     String BookingStatusActionRequired = "BookingStatusActionRequired";
     String BookingStatusCancelled = "BookingStatusCancelled";
-    String BookingStatusInProgress = "BookingStatusInProgress";
-    String BookingStatusConfirmed = "BookingStatusConfirmed";
-    String BookingStatusComplete = "BookingStatusComplete";
-    String AddFamilyOrFriends = "AddFamilyOrFriends";
-    String EditYourPersonalInformation = "EditYourPersonalInformation";
-    String FamilyOrFriends = "FamilyOrFriends";
-    String Help = "Help";
-    String Legal = "Legal";
-    String Messages = "Messages";
     String PersonalInformation = "PersonalInformation";
-    String PrivacyNotice = "PrivacyNotice";
-    String Settings = "Settings";
-    String SupportMessages = "SupportMessages";
     String WalletPayments = "WalletPayments";
-    String YourWalletPayments = "YourWalletPayments";
+    String AddFamilyOrFriends = "AddFamilyOrFriends";
+    String BookingStatusConfirmed = "BookingStatusConfirmed";
+    String PrivacyNotice = "PrivacyNotice";
+    String YourUpcomingBookings = "YourUpcomingBookings";
+    String FamilyOrFriends = "FamilyOrFriends";
+    String BookingStatusComplete = "BookingStatusComplete";
+    String EditYourPersonalInformation = "EditYourPersonalInformation";
+    String Settings = "Settings";
 
 }
