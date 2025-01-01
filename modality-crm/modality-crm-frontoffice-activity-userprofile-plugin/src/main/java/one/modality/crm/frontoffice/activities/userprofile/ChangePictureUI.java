@@ -32,6 +32,7 @@ import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Circle;
 import javafx.scene.shape.SVGPath;
+import one.modality.base.client.cloudinary.ModalityCloudinary;
 import one.modality.base.client.icons.SvgIcons;
 
 import java.util.Objects;
@@ -222,12 +223,12 @@ public class ChangePictureUI {
                     .onFailure(Console::log)
                     .onSuccess(blob -> {
                         cloudPictureFileToUpload = (File) blob;
-                        Object imageTag = CloudinaryImageTag.getPersonImageTag(parentActivity.getCurrentPerson().getId().getPrimaryKey());
+                        Object imageTag = ModalityCloudinary.getPersonImageTag(parentActivity.getCurrentPerson().getId().getPrimaryKey());
                         deleteIfNeededAndUploadIfNeededCloudPicture(imageTag);
                     });
             } else {
                 //Here we choose to remove the picture
-                Object imageTag = CloudinaryImageTag.getPersonImageTag(parentActivity.getCurrentPerson().getId().getPrimaryKey());
+                Object imageTag = ModalityCloudinary.getPersonImageTag(parentActivity.getCurrentPerson().getId().getPrimaryKey());
                 deleteIfNeededAndUploadIfNeededCloudPicture(imageTag);
             }
         });
