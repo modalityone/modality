@@ -7,6 +7,7 @@ module modality.crm.frontoffice.activity.userprofile.plugin {
     requires javafx.controls;
     requires javafx.graphics;
     requires modality.base.client.activity;
+    requires modality.base.client.cloudinary;
     requires modality.base.client.icons;
     requires modality.base.client.mainframe.fx;
     requires modality.base.client.util;
