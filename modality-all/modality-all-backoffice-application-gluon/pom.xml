@@ -363,6 +363,7 @@
                         <list>dev/webfx/stack/i18n/[^/]+$</list>
                         <list>dev/webfx/stack/ui/validation/controlsfx/images/[^/]+$</list>
                         <list>images/buddhas/[^/]+$</list>
+                        <list>images/large/[^/]+$</list>
                         <list>images/s16/[^/]+$</list>
                         <list>images/s16/actions/[^/]+$</list>
                         <list>images/s16/continents/[^/]+$</list>

@@ -130,6 +130,8 @@
     <source path="one/modality/base/client/services/i18n"/>
     <!--===========================< modality-base-client-icons >===========================-->
     <source path="one/modality/base/client/icons"/>
+    <resource path="images/large"/>
+    <public path="" includes="images/large/"/>
     <resource path="images/s16"/>
     <public path="" includes="images/s16/"/>
     <resource path="images/s16/actions"/>
