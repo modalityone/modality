@@ -39,6 +39,7 @@ import java.util.Objects;
 
 public class ChangePictureUI {
 
+    static final long CLOUDINARY_RELOAD_DELAY = 10000;
     private final VBox changePictureVBox = new VBox();
     private final Slider zoomSlider;
     private final ImageView imageView;
@@ -337,7 +338,9 @@ public class ChangePictureUI {
                     callback.closeDialog();
                 })
                 .onComplete(event -> {
-                    UiScheduler.scheduleDelay(1000, parentActivity::loadProfilePictureIfExist);
+                    Platform.runLater(parentActivity::showProgressIndicator);
+                    //We wait for some time before reloading the image so cloudinary has the time to process it (it can take up to 10 seconds)
+                    UiScheduler.scheduleDelay(CLOUDINARY_RELOAD_DELAY, parentActivity::loadProfilePictureIfExist);
                     Platform.runLater(() -> OperationUtil.turnOffButtonsWaitMode(saveButton));
                     isCurrentlyProcessing.setValue(false);
                     reinitialize();

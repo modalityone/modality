@@ -31,6 +31,7 @@ import dev.webfx.stack.orm.entity.controls.entity.selector.EntityButtonSelector;
 import dev.webfx.stack.ui.dialog.DialogCallback;
 import dev.webfx.stack.ui.dialog.DialogUtil;
 import dev.webfx.stack.ui.validation.ValidationSupport;
+import javafx.animation.Interpolator;
 import javafx.application.Platform;
 import javafx.beans.InvalidationListener;
 import javafx.beans.property.SimpleStringProperty;
@@ -48,6 +49,7 @@ import javafx.scene.shape.Circle;
 import javafx.scene.shape.SVGPath;
 import javafx.scene.text.TextAlignment;
 import javafx.stage.Screen;
+import javafx.util.Duration;
 import one.modality.base.client.activity.ModalityButtonFactoryMixin;
 import one.modality.base.client.cloudinary.ModalityCloudinary;
 import one.modality.base.client.icons.SvgIcons;
@@ -65,6 +67,7 @@ import java.time.YearMonth;
 import java.util.Objects;
 
 import static one.modality.crm.frontoffice.activities.createaccount.UserAccountUI.createEntityButtonSelector;
+import static one.modality.crm.frontoffice.activities.userprofile.ChangePictureUI.CLOUDINARY_RELOAD_DELAY;
 
 final class UserProfileActivity extends ViewDomainActivityBase implements ModalityButtonFactoryMixin {
 
@@ -105,6 +108,7 @@ final class UserProfileActivity extends ViewDomainActivityBase implements Modali
     private final String noPictureImage = "images/large/no-picture.png";
     private final ValidationSupport validationSupport = new ValidationSupport();
     public static final int MODAL_WINDOWS_MAX_WIDTH = 500;
+    private StackPane picturePane;
 
 
     protected void startLogic() {
@@ -130,7 +134,7 @@ final class UserProfileActivity extends ViewDomainActivityBase implements Modali
         container.getChildren().add(titleLabel);
 
         HBox pictureAndNameHBox = new HBox();
-        StackPane picturePane = new StackPane();
+        picturePane = new StackPane();
         picturePane.setAlignment(Pos.CENTER);
         picturePane.setMinSize(150, 150);
         imageView = new ImageView(noPictureImage);
@@ -621,9 +625,7 @@ final class UserProfileActivity extends ViewDomainActivityBase implements Modali
                     double zoomFactor = Screen.getPrimary().getOutputScaleX();
                     String url = cloudImageService.url(String.valueOf(imageTag), (int) (imageView.getFitWidth() * zoomFactor), -1);
                     Image imageToDisplay = new Image(url, true);
-                  //  imageView.setImage(new Image(noPictureImage));
                     setImage(imageToDisplay);
-                    //   isPictureDisplayed.setValue(true);
                 }
             }));
     }
@@ -668,4 +670,34 @@ final class UserProfileActivity extends ViewDomainActivityBase implements Modali
     public void removeUserProfilePicture() {
         setImage(new Image(noPictureImage));
     }
+
+
+    // Method to show a progress indicator for 10 seconds
+    public void showProgressIndicator() {
+        ProgressIndicator progressIndicator = new ProgressIndicator(0);
+        progressIndicator.setMaxSize(50, 50); // Set size for the progress indicator
+        picturePane.getChildren().add(progressIndicator); // Add to the stack pane
+        StackPane.setAlignment(progressIndicator, Pos.CENTER); // Center it on the image
+
+        // Simulate progress updates
+        Animations.animateProperty(progressIndicator.progressProperty(), 1, Duration.millis(CLOUDINARY_RELOAD_DELAY), Interpolator.LINEAR)
+            .setOnFinished(e -> removeProgressIndicator());
+        /*new Thread(() -> {
+            for (int i = 0; i <= CLOUDINARY_RELOAD_DELAY/1000; i++) {
+                final double progress = (double) i / (CLOUDINARY_RELOAD_DELAY/1000.0);
+                try {
+                    Thread.sleep(CLOUDINARY_RELOAD_DELAY/10); // Simulate work
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+                javafx.application.Platform.runLater(() -> progressIndicator.setProgress(progress));
+            }
+        }).start();*/
+    }
+
+    // Method to remove the progress indicator
+    public void removeProgressIndicator() {
+        picturePane.getChildren().removeIf(node -> node instanceof ProgressIndicator);
+    }
+
 }
