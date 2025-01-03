@@ -10,6 +10,7 @@ import dev.webfx.extras.styles.materialdesign.util.MaterialUtil;
 import dev.webfx.extras.time.pickers.DatePicker;
 import dev.webfx.extras.time.pickers.DatePickerOptions;
 import dev.webfx.extras.util.animation.Animations;
+import dev.webfx.extras.util.control.ControlUtil;
 import dev.webfx.kit.launcher.WebFxKitLauncher;
 import dev.webfx.kit.util.properties.FXProperties;
 import dev.webfx.platform.async.Future;
@@ -674,25 +675,14 @@ final class UserProfileActivity extends ViewDomainActivityBase implements Modali
 
     // Method to show a progress indicator for 10 seconds
     public void showProgressIndicator() {
-        ProgressIndicator progressIndicator = new ProgressIndicator(0);
-        progressIndicator.setMaxSize(50, 50); // Set size for the progress indicator
+        ProgressIndicator progressIndicator = ControlUtil.createProgressIndicator(50); // Set size for the progress indicator
+        progressIndicator.setProgress(0);
         picturePane.getChildren().add(progressIndicator); // Add to the stack pane
         StackPane.setAlignment(progressIndicator, Pos.CENTER); // Center it on the image
 
         // Simulate progress updates
         Animations.animateProperty(progressIndicator.progressProperty(), 1, Duration.millis(CLOUDINARY_RELOAD_DELAY), Interpolator.LINEAR)
             .setOnFinished(e -> removeProgressIndicator());
-        /*new Thread(() -> {
-            for (int i = 0; i <= CLOUDINARY_RELOAD_DELAY/1000; i++) {
-                final double progress = (double) i / (CLOUDINARY_RELOAD_DELAY/1000.0);
-                try {
-                    Thread.sleep(CLOUDINARY_RELOAD_DELAY/10); // Simulate work
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
-                }
-                javafx.application.Platform.runLater(() -> progressIndicator.setProgress(progress));
-            }
-        }).start();*/
     }
 
     // Method to remove the progress indicator
