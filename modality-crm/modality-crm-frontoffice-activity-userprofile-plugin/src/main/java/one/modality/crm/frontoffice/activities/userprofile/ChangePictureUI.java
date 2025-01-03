@@ -146,7 +146,7 @@ public class ChangePictureUI {
             FXProperties.runOnPropertiesChange(property -> {
                 if (imageToDisplay.progressProperty().get() == 1) {
                     setImage(imageToDisplay);
-                    isPictureToBeDeleted.setValue(true);
+                    isPictureToBeDeleted.setValue(false);
                     //and upload the new one
                     isPictureToBeUploaded.setValue(true);
                 }

@@ -22,6 +22,7 @@ module modality.crm.frontoffice.activity.userprofile.plugin {
     requires webfx.extras.styles.materialdesign;
     requires webfx.extras.time.pickers;
     requires webfx.extras.util.animation;
+    requires webfx.extras.util.control;
     requires webfx.kit.launcher;
     requires webfx.kit.util;
     requires webfx.platform.async;
