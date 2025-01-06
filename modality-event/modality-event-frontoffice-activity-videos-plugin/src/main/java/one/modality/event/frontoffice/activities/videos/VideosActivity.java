@@ -24,6 +24,8 @@ import one.modality.base.shared.entities.ScheduledItem;
 import one.modality.crm.shared.services.authn.fx.FXUserPersonId;
 import one.modality.event.frontoffice.medias.EventThumbnailView;
 
+import java.util.stream.Collectors;
+
 /**
  * @author David Hello
  * @author Bruno Salmon
@@ -59,7 +61,7 @@ final class VideosActivity extends ViewDomainActivityBase {
                         scheduledItems.stream()
                             .map(ScheduledItem::getEvent)  // Extract events from scheduled items
                             .distinct()
-                            .toList())));
+                            .collect(Collectors.toList()))));
             }
         }, FXUserPersonId.userPersonIdProperty());
     }
