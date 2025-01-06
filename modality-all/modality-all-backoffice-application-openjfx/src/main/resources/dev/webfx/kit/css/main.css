@@ -605,6 +605,7 @@ Switch.webfx-switch Circle.knob {
     -webfx-time-pickers-border-color: -webfx-time-pickers-gray-color;
     -webfx-time-pickers-date-background-color: -webfx-time-pickers-gray-color;
     -webfx-time-pickers-selected-date-background-color: -webfx-time-pickers-blue2-color;
+    -webfx-time-pickers-unselectable-date-background-color: -webfx-time-pickers-gray-color;
 }
 
 .webfx-datepicker.border {
@@ -614,6 +615,11 @@ Switch.webfx-switch Circle.knob {
 
 .webfx-datepicker .date-selected {
     -fx-background-color: -webfx-time-pickers-selected-date-background-color;
+    -fx-background-radius: 10px;
+}
+
+.webfx-datepicker .date-unselectable {
+    -fx-background-color: -webfx-time-pickers-unselectable-date-background-color;
     -fx-background-radius: 10px;
 }
 
