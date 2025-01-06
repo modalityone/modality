@@ -182,7 +182,7 @@ public abstract class MediaLinksManagement {
                 TextField linkTextField = new TextField();
                 linkTextField.setPromptText(I18n.getI18nText("Link"));
                 linkTextField.setPrefWidth(500);
-               // validationSupport.addUrlOrEmptyValidation(linkTextField, I18n.i18nTextProperty(MediasI18nKeys.MalformedUrl));
+                validationSupport.addUrlOrEmptyValidation(linkTextField, I18n.i18nTextProperty(MediasI18nKeys.MalformedUrl));
 
                 Label overrideNameLabel = new Label("Override Name");
                 Switch overrideNameSwitch = new Switch();
