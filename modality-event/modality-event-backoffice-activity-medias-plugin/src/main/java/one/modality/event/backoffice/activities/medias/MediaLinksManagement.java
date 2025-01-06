@@ -92,7 +92,7 @@ public abstract class MediaLinksManagement {
         // Calculate the number of media for this day and language
         long numberOfScheduledItemLinkedToMediaForThisDay = recordingsMediasReadFromDatabase.stream()
             .filter(media -> media.getScheduledItem().getDate().equals(date) &&
-                             media.getScheduledItem().getItem().getCode().equals(currentItemCode))
+                media.getScheduledItem().getItem().getCode().equals(currentItemCode))
             .map(Media::getScheduledItem)
             .filter(item -> item.getDate().equals(date))  // Récupère le ScheduledItem associé à chaque Media
             .distinct()                    // Supprime les doublons si nécessaire (facultatif)
@@ -162,7 +162,7 @@ public abstract class MediaLinksManagement {
                 /* Here we create the line for each teaching **/
                 HBox currentLine = new HBox();
                 currentLine.setPadding(new Insets(20, 20, 20, 40));
-
+                ScheduledItem currentEditedScheduledItem = updateStore.updateEntity(currentScheduledItem);
                 String name = currentScheduledItem.getProgramScheduledItem().getName();
                 if (name == null) name = "Unknown";
                 Label teachingTitle = new Label(name);
@@ -182,7 +182,50 @@ public abstract class MediaLinksManagement {
                 TextField linkTextField = new TextField();
                 linkTextField.setPromptText(I18n.getI18nText("Link"));
                 linkTextField.setPrefWidth(500);
-              //  validationSupport.addUrlOrEmptyValidation(linkTextField, I18n.i18nTextProperty(MediasI18nKeys.MalformedUrl));
+               // validationSupport.addUrlOrEmptyValidation(linkTextField, I18n.i18nTextProperty(MediasI18nKeys.MalformedUrl));
+
+                Label overrideNameLabel = new Label("Override Name");
+                Switch overrideNameSwitch = new Switch();
+                HBox nameHBox = new HBox(overrideNameLabel, overrideNameSwitch);
+                nameHBox.setAlignment(Pos.CENTER);
+                nameHBox.setSpacing(5);
+                nameHBox.setVisible(false);
+
+                TextField nameTextField = new TextField();
+                nameTextField.setPromptText(I18n.getI18nText("Name"));
+                if (currentScheduledItem.getName() == null) {
+                    nameTextField.setPromptText(I18n.getI18nText(currentEditedScheduledItem.getProgramScheduledItem().getName()));
+                } else {
+                    overrideNameSwitch.setSelected(true);
+                    nameTextField.setText(currentEditedScheduledItem.getName());
+                }
+                nameTextField.setPrefWidth(500);
+
+                // Bind the properties of the TextField to the Switch
+                nameTextField.editableProperty().bind(overrideNameSwitch.selectedProperty());
+                nameTextField.disableProperty().bind(overrideNameSwitch.selectedProperty().not());
+
+                // Clear the TextField's value when the Switch is turned off
+                overrideNameSwitch.selectedProperty().addListener((observable, oldValue, newValue) -> {
+                    if (!newValue) {
+                        nameTextField.clear();
+                    } else {
+                        nameTextField.setPromptText(I18n.getI18nText(currentEditedScheduledItem.getProgramScheduledItem().getName()));
+                    }
+                });
+
+                nameTextField.textProperty().addListener((observable, oldValue, newValue) -> {
+                    if(newValue.isEmpty()) {
+                        currentEditedScheduledItem.setName(null);
+                    } else {
+                        currentEditedScheduledItem.setName(nameTextField.getText());
+                    }
+                });
+
+                HBox secondLine = new HBox(overrideNameLabel, overrideNameSwitch, nameTextField);
+                secondLine.setAlignment(Pos.CENTER_RIGHT);
+                secondLine.setSpacing(10);
+                secondLine.setPadding(new Insets(0, 20, 30, 0));
 
                 Label durationLabel = I18nControls.newLabel(MediasI18nKeys.ExactDuration);
                 TextField durationTextField = new TextField();
@@ -191,14 +234,14 @@ public abstract class MediaLinksManagement {
                 validationSupport.addMinimumDurationValidation(durationTextField, durationTextField, I18n.i18nTextProperty(MediasI18nKeys.DurationShouldBeAtLeast60s));
 
                 Button retrieveDurationButton = Bootstrap.primaryButton(I18nControls.newButton(MediasI18nKeys.RetrieveDuration));
-                HBox secondLine = new HBox(durationLabel, durationTextField, retrieveDurationButton);
-                secondLine.setAlignment(Pos.CENTER_RIGHT);
-                secondLine.setSpacing(10);
-                secondLine.setPadding(new Insets(0, 20, 30, 0));
+                HBox thirdLine = new HBox(durationLabel, durationTextField, retrieveDurationButton);
+                thirdLine.setAlignment(Pos.CENTER_RIGHT);
+                thirdLine.setSpacing(10);
+                thirdLine.setPadding(new Insets(0, 20, 30, 0));
 
                 //We look if there is an existing media for this teaching
                 List<Media> mediaList = workingMedias.stream()
-                    .filter(media -> media.getScheduledItem().equals(currentScheduledItem))
+                    .filter(media -> media.getScheduledItem().equals(currentEditedScheduledItem))
                     .collect(Collectors.toList());
 
                 //We create an ArrayList of Media that will contain only one element instead of a Media to be able to use it in lambda expression
@@ -228,16 +271,16 @@ public abstract class MediaLinksManagement {
                     }
                     currentMedia.get(0).setUrl(linkText);
                     publishedInfo.setVisible(true);
-                    secondLine.setVisible(true);
-                    secondLine.setManaged(true);
+                    thirdLine.setVisible(true);
+                    thirdLine.setManaged(true);
                     //If the new value is empty, we delete the media
                     if (linkText.isEmpty() && !mediaList.isEmpty()) {
                         updateStore.deleteEntity(currentMedia.get(0));
                         mediaList.remove(currentMedia.get(0));
                         currentMedia.clear();
                         publishedInfo.setVisible(false);
-                        secondLine.setVisible(false);
-                        secondLine.setManaged(false);
+                        thirdLine.setVisible(false);
+                        thirdLine.setManaged(false);
                     }
                 }, linkTextField.textProperty());
 
@@ -273,8 +316,7 @@ public abstract class MediaLinksManagement {
                 currentLine.getChildren().setAll(teachingDetailsVBox, anotherSpacer, publishedInfo, linkTextField);
                 currentLine.setAlignment(Pos.CENTER_LEFT);
 
-                centerVBox.getChildren().add(currentLine);
-                centerVBox.getChildren().add(secondLine);
+                centerVBox.getChildren().addAll(currentLine, secondLine, thirdLine);
             }
 
             //TODO: review this to

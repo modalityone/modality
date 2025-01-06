@@ -66,7 +66,9 @@ final class SessionAudioTrackView {
         MonoPane favoriteMonoPane = new MonoPane(favoritePath);
         container.setLeft(favoriteMonoPane);
         container.setMaxWidth(MAX_WIDTH);
-        String title = scheduledAudioItem.getProgramScheduledItem().getName();
+        String title = scheduledAudioItem.getName();
+        if(title == null)
+            title = scheduledAudioItem.getProgramScheduledItem().getName();
         Label titleLabel = Bootstrap.h3(new Label(index + ". " + title));
         Timeline timeline = scheduledAudioItem.getProgramScheduledItem().getTimeline();
         LocalDate date = scheduledAudioItem.getDate();
@@ -98,12 +100,13 @@ final class SessionAudioTrackView {
         } else {
             Button playButton = Bootstrap.dangerButton(I18nControls.newButton(AudioRecordingsI18nKeys.Play));
             Media firstMedia = publishedMedias.get(0);
+            String finalTitle = title;
             playButton.setOnAction(e->{
                 dev.webfx.extras.player.Media oldMedia = audioPlayer.getMedia();
                 if(oldMedia!=null) {
                     ((Button )oldMedia.getUserData()).setDisable(false);
                 }
-                dev.webfx.extras.player.Media media = audioPlayer.acceptMedia(firstMedia.getUrl(),new MediaMetadataBuilder().setTitle(title).setDurationMillis(durationMillis).build());
+                dev.webfx.extras.player.Media media = audioPlayer.acceptMedia(firstMedia.getUrl(),new MediaMetadataBuilder().setTitle(finalTitle).setDurationMillis(durationMillis).build());
                 media.setUserData(playButton);
                 audioPlayer.resetToInitialState();
                 audioPlayer.setMedia(media);
