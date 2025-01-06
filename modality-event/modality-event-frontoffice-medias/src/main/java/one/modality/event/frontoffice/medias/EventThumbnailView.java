@@ -28,6 +28,7 @@ import one.modality.base.client.icons.SvgIcons;
 import one.modality.base.shared.entities.Event;
 
 import java.time.LocalDateTime;
+import java.time.LocalTime;
 
 /**
  * @author Bruno Salmon
@@ -126,8 +127,11 @@ public final class EventThumbnailView {
 
         if (isPublished) {
             if (itemType == ItemType.ITEM_TYPE_VIDEO)
-                //If the vodExpirationDate is set to null, it means the event is livestreamOnly
-                if (event.getVodExpirationDate() == null || LocalDateTime.now().isAfter(event.getVodExpirationDate()))
+                //If the vodExpirationDate is set to null, it means the event is livestream Only
+                if (event.getVodExpirationDate() != null && LocalDateTime.now().isAfter(event.getVodExpirationDate()))
+                    availabilityType = AvailabilityType.EXPIRED;
+                //Case of the livestream only, we expired it when the event is finished
+                else if (event.getVodExpirationDate() == null && LocalDateTime.now().isAfter(LocalDateTime.of(event.getEndDate(), LocalTime.of(23, 59, 59))))
                     availabilityType = AvailabilityType.EXPIRED;
                 else
                     availabilityType = AvailabilityType.AVAILABLE;
@@ -198,7 +202,7 @@ public final class EventThumbnailView {
                 }
             }));
 
-        actionButton = Bootstrap.primaryButton(I18nControls.newButton("View"));
+        actionButton = Bootstrap.primaryButton(I18nControls.newButton(MediasI18nKeys.View));
         actionButton.setPrefWidth(150);
         //We display the view button only if the content is available
         actionButton.visibleProperty().bind(new BooleanBinding() {

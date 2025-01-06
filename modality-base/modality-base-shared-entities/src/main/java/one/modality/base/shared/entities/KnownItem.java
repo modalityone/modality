@@ -5,6 +5,7 @@ package one.modality.base.shared.entities;
  */
 public enum KnownItem {
     VIDEO("video"),
+    AUDIO_RECORDING_ENGLISH("audio-en"),
     UNKNOWN(null);
 
     private final String code;
@@ -21,6 +22,7 @@ public enum KnownItem {
         if (code != null) {
             switch (code) {
                 case "video" : return VIDEO;
+                case "audio-en" : return VIDEO;
             }
         }
         return UNKNOWN;

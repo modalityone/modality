@@ -7,5 +7,6 @@ public interface MediasI18nKeys {
     String Unavailable = "Unavailable";
     String Expired = "Expired";
     String Unpublished = "Unpublished";
+    String View = "View";
 
 }

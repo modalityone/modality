@@ -40,11 +40,9 @@ import javafx.scene.paint.Color;
 import javafx.scene.shape.SVGPath;
 import javafx.scene.text.TextAlignment;
 import javafx.stage.Screen;
+import one.modality.base.client.cloudinary.ModalityCloudinary;
 import one.modality.base.client.icons.SvgIcons;
-import one.modality.base.shared.entities.Event;
-import one.modality.base.shared.entities.KnownItemFamily;
-import one.modality.base.shared.entities.Media;
-import one.modality.base.shared.entities.ScheduledItem;
+import one.modality.base.shared.entities.*;
 import one.modality.crm.shared.services.authn.fx.FXUserPersonId;
 
 import java.time.LocalDateTime;
@@ -99,23 +97,34 @@ final class EventAudioPlaylistActivity extends ViewDomainActivityBase {
                 eventProperty.set(null); // will update i18n bindings
             } else {
                 entityStore.executeQueryBatch(
+                        //1st: the event
                         new EntityStoreQuery("select name, label.(de,en,es,fr,pt), shortDescription, audioExpirationDate, startDate, endDate, livestreamUrl, vodExpirationDate" +
                                              " from Event" +
                                              " where id=? limit 1",
                             new Object[]{eventId}),
+                        //2nd: we look for the scheduledItem having a bookableScheduledItem which is a audio type (case of festival)
                         new EntityStoreQuery("select date, programScheduledItem.(name, timeline.(startTime, endTime)), published, event" +
                                              " from ScheduledItem si" +
-                                             " where event=? and item.family.code=? and item.code=? and exists(select Attendance where scheduledItem=si and documentLine.(!cancelled and document.(person=? and price_balance<=0)))" +
+                                             " where event=? and bookableScheduledItem.item.family.code=? and item.code=? and exists(select Attendance where scheduledItem=si.bookableScheduledItem and documentLine.(!cancelled and document.(person=? and price_balance<=0)))" +
                                              " order by date",
                             new Object[]{eventId, KnownItemFamily.AUDIO_RECORDING.getCode(), pathItemCodeProperty.get(), userPersonId}),
+                        //3: we look for the scheduledItem of audio type having a bookableScheduledItem which is a teaching type (case of STTP)
+                        // TODO: for now we take only the English audio recording scheduledItem in that case. We should take the language default of the organization instead
+                        new EntityStoreQuery("select date, programScheduledItem.(name, timeline.(startTime, endTime)), published, event" +
+                            " from ScheduledItem si" +
+                            " where event=? and bookableScheduledItem.item.family.code=? and item.code=? and exists(select Attendance where scheduledItem=si.bookableScheduledItem and documentLine.(!cancelled and document.(person=? and price_balance<=0)))" +
+                            " order by date",
+                            new Object[]{eventId, KnownItemFamily.TEACHING.getCode(), KnownItem.AUDIO_RECORDING_ENGLISH.getCode(), userPersonId}),
+                        //4 : the medias
                         new EntityStoreQuery("select url, scheduledItem.(date, event), scheduledItem.published, durationMillis" +
                                              " from Media" +
-                                             " where scheduledItem.(event=? and item.code=? and online) and scheduledItem.published",
-                            new Object[]{eventId, pathItemCodeProperty.get()}))
+                                             " where scheduledItem.(event=? and (item.code=? or item.code=?) and online) and scheduledItem.published",
+                            new Object[]{eventId, pathItemCodeProperty.get(), KnownItem.AUDIO_RECORDING_ENGLISH.getCode()}))
                     .onFailure(Console::log)
                     .onSuccess(entityLists -> Platform.runLater(() -> {
-                        Collections.setAll(publishedMedias, entityLists[2]);
-                        scheduledAudioItems.setAll(entityLists[1]); // will trigger UI update
+                        Collections.setAll(publishedMedias, entityLists[3]);
+                        scheduledAudioItems.setAll(entityLists[1]);
+                        scheduledAudioItems.addAll(entityLists[2]);// will trigger UI update
                         eventProperty.set((Event) Collections.first(entityLists[0])); // will update i18n bindings
                     }));
             }
@@ -184,13 +193,8 @@ final class EventAudioPlaylistActivity extends ViewDomainActivityBase {
                 // TODO display something else (ex: next online events to book) when the user is not logged in, or registered
             } else { // otherwise we display loadedContentVBox and set the content of audioTracksVBox
                 pageContainer.setContent(loadedContentVBox);
-                Object imageTag;
-                if(pathItemCodeProperty.get()==null ||"en".equals(extractLang(pathItemCodeProperty.get()))) {
-                    //We do add .jpg even if the image is not jpg, because for some reason, if we don't put an extension file, cloudinary doesn't always find the image, but it works when adding .jpg.
-                    imageTag = eventProperty.get().getId().getPrimaryKey() + "-cover.jpg";
-                } else {
-                    imageTag = eventProperty.get().getId().getPrimaryKey() + "-cover-"+ extractLang(pathItemCodeProperty.get())+".jpg";
-                }
+                Object imageTag = ModalityCloudinary.getEventCoverImageTag(eventProperty.get().getId().getPrimaryKey().toString(),extractLang(pathItemCodeProperty.get()));
+
                 String pictureId = String.valueOf(imageTag);
 
                 cloudImageService.exists(pictureId)
@@ -223,7 +227,7 @@ final class EventAudioPlaylistActivity extends ViewDomainActivityBase {
                 else {
                     audioExpirationLabel.setVisible(false);
                 }
-                if(eventProperty.get().getAudioExpirationDate().isAfter(LocalDateTime.now())) {
+                if(eventProperty.get().getAudioExpirationDate() == null || eventProperty.get().getAudioExpirationDate().isAfter(LocalDateTime.now())) {
                     // Does this event have audio recordings, and did the person booked and paid for them?
                     if (!scheduledAudioItems.isEmpty()) { // yes => we show them as a list of playable tracks
                         audioTracksVBox.getChildren().setAll(

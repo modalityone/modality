@@ -42,9 +42,7 @@ import one.modality.base.client.bootstrap.ModalityStyle;
 import one.modality.base.client.cloudinary.ModalityCloudinary;
 import one.modality.base.client.icons.SvgIcons;
 import one.modality.base.frontoffice.utility.page.FOPageUtil;
-import one.modality.base.shared.entities.Attendance;
-import one.modality.base.shared.entities.Event;
-import one.modality.base.shared.entities.KnownItemFamily;
+import one.modality.base.shared.entities.*;
 import one.modality.crm.shared.services.authn.fx.FXUserPersonId;
 import one.modality.event.frontoffice.activities.audiorecordings.AudioRecordingsI18nKeys;
 
@@ -67,7 +65,7 @@ final class EventVideosWallActivity extends ViewDomainActivityBase {
     private final ObjectProperty<Object> pathEventIdProperty = new SimpleObjectProperty<>();
 
     private final ObjectProperty<Event> eventProperty = new SimpleObjectProperty<>();
-    private final ObservableList<Attendance> attendances = FXCollections.observableArrayList();
+    private final ObservableList<ScheduledItem> scheduledItems = FXCollections.observableArrayList();
 
     private final CollapsePane daysCollapsePane = new CollapsePane();
     private final ColumnsPane daysColumnPane = new ColumnsPane();
@@ -100,7 +98,7 @@ final class EventVideosWallActivity extends ViewDomainActivityBase {
             Object eventId = pathEventIdProperty.get();
             EntityId userPersonId = FXUserPersonId.getUserPersonId();
             if (eventId == null || userPersonId == null) {
-                attendances.clear();
+                scheduledItems.clear();
                 eventProperty.set(null);
             } else {
                 entityStore.executeQueryBatch(
@@ -108,14 +106,20 @@ final class EventVideosWallActivity extends ViewDomainActivityBase {
                             " from Event" +
                             " where id=? limit 1",
                             new Object[]{eventId}),
-                        new EntityStoreQuery("select date, attended, scheduledItem.(date, expirationDate, event, vodDelayed, published, comment, programScheduledItem.(name, date,timeline.(startTime, endTime), item.imageUrl))" +
-                            " from Attendance" +
-                            " where scheduledItem.(item.family.code=? and online) and documentLine.(!cancelled and document.(event= ? and person=? and price_balance<=0))" +
-                            " order by scheduledItem.date, scheduledItem.programScheduledItem.timeline.startTime",
-                            new Object[]{KnownItemFamily.VIDEO.getCode(), eventId, userPersonId}))
+//                        new EntityStoreQuery("select date, attended, scheduledItem.(date, expirationDate, event, vodDelayed, published, comment, programScheduledItem.(name, date,timeline.(startTime, endTime), item.imageUrl))" +
+//                            " from Attendance" +
+//                            " where scheduledItem.(item.family.code=? and online) and documentLine.(!cancelled and document.(event= ? and person=? and price_balance<=0))" +
+//                            " order by scheduledItem.date, scheduledItem.programScheduledItem.timeline.startTime",
+//                            new Object[]{KnownItemFamily.VIDEO.getCode(), eventId, userPersonId}),
+
+                        new EntityStoreQuery("select date, programScheduledItem.(name, timeline.(startTime, endTime)), published, event, vodDelayed " +
+                            " from ScheduledItem si " +
+                            " where event=? and bookableScheduledItem.item.family.code=? and item.code=? and exists(select Attendance where scheduledItem=si.bookableScheduledItem and documentLine.(!cancelled and document.(person=? and price_balance<=0)))" +
+                           " order by date, programScheduledItem.timeline.startTime",
+                            new Object[]{eventId, KnownItemFamily.TEACHING.getCode(), KnownItem.VIDEO.getCode(), userPersonId}))
                     .onFailure(Console::log)
                     .onSuccess(entityLists -> Platform.runLater(() -> {
-                        attendances.setAll(entityLists[1]);
+                        scheduledItems.setAll(entityLists[1]);
                         eventProperty.set((Event) Collections.first(entityLists[0]));
                     }));
             }
@@ -259,10 +263,10 @@ final class EventVideosWallActivity extends ViewDomainActivityBase {
                 }
             }
             LocalDate currentDate = LocalDate.now();
-            Map<LocalDate, List<Attendance>> perDayGroups =
-                attendances.stream()
+            Map<LocalDate, List<ScheduledItem>> perDayGroups =
+                scheduledItems.stream()
                     .filter(item -> item.getDate().equals(currentDate)) // Filter for the target day
-                    .collect(Collectors.groupingBy(Attendance::getDate));
+                    .collect(Collectors.groupingBy(ScheduledItem::getDate));
             new TreeMap<>(perDayGroups) // The purpose of using a TreeMap is to sort the groups by keys (= days)
                 .forEach((day, dayScheduledVideos) -> {
                     currentDayScheduleVBox.setVisible(true);
@@ -271,10 +275,10 @@ final class EventVideosWallActivity extends ViewDomainActivityBase {
                     currentDayScheduleVBox.getChildren().setAll(scheduleForTodayTitleLabel, new VideosDayScheduleView(day, dayScheduledVideos, getHistory(), true, entityStore).getView());
                 });
 
-        }, attendances, eventProperty);
+        }, scheduledItems, eventProperty);
 
         // Populating dayVideosWallViews from videoScheduledItems = flat list of all videos of the event (not yet grouped by day)
-        ObservableLists.runNowAndOnListOrPropertiesChange(change -> handleVideoChanges(true), attendances);
+        ObservableLists.runNowAndOnListOrPropertiesChange(change -> handleVideoChanges(true), scheduledItems);
 
         // Now that we have dayVideosWallViews populated, we can populate the final VBox showing all days and their videos
         ObservableLists.runNowAndOnListChange(change -> {
@@ -298,8 +302,8 @@ final class EventVideosWallActivity extends ViewDomainActivityBase {
 
     private void handleVideoChanges(boolean initialLoading) {
         // Grouping videos per day
-        Map<LocalDate, List<Attendance>> perDayGroups =
-            attendances.stream().collect(Collectors.groupingBy(Attendance::getDate));
+        Map<LocalDate, List<ScheduledItem>> perDayGroups =
+            scheduledItems.stream().collect(Collectors.groupingBy(ScheduledItem::getDate));
         videosDayScheduleViews.clear();
         daysColumnPane.getChildren().clear();
         DateTimeFormatter dateFormatter = DateTimeFormatter.ofPattern("EEE, MMMM d");

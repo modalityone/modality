@@ -14,6 +14,7 @@ import dev.webfx.stack.orm.entity.UpdateStore;
 import dev.webfx.stack.orm.entity.binding.EntityBindings;
 import javafx.application.Platform;
 import javafx.beans.property.BooleanProperty;
+import javafx.beans.property.SimpleBooleanProperty;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.geometry.VPos;
@@ -43,13 +44,13 @@ import java.util.Objects;
 final class VideosDayScheduleView {
 
     private final LocalDate day;
-    private final List<Attendance> dayScheduledVideos;
+    private final List<ScheduledItem> dayScheduledVideos;
     private final BrowsingHistory browsingHistory;
 
     private final GridPane gridPaneContainer = new GridPane();
     private final EntityStore entityStore;
 
-    public VideosDayScheduleView(LocalDate day, List<Attendance> dayScheduledVideos, BrowsingHistory browsingHistory, boolean displayHeader, EntityStore entityStore) {
+    public VideosDayScheduleView(LocalDate day, List<ScheduledItem> dayScheduledVideos, BrowsingHistory browsingHistory, boolean displayHeader, EntityStore entityStore) {
         this.day = day;
         this.dayScheduledVideos = dayScheduledVideos;
         this.browsingHistory = browsingHistory;
@@ -152,17 +153,17 @@ final class VideosDayScheduleView {
         private BooleanProperty scheduledItemPublishedProperty;
         private BooleanProperty attendanceIsAttendedProperty;
 
-        public VideoSchedulePopulator(int[] currentRow, Attendance a) {
+        public VideoSchedulePopulator(int[] currentRow, ScheduledItem s) {
             this.currentRow = currentRow;
             actionButton.setGraphicTextGap(10);
             actionButton.setCursor(Cursor.HAND);
             actionButton.setMinWidth(130);
             statusLabel.setWrapText(true);
             statusLabel.setPadding(new Insets(0, 10, 0, 0));
-            scheduledItem = a.getScheduledItem();
+            scheduledItem = s;
             updateStore = UpdateStore.createAbove(entityStore);
-            attendance = updateStore.updateEntity(a);
-            attendanceIsAttendedProperty = EntityBindings.getBooleanFieldProperty(attendance,Attendance.attended);
+           //attendance = updateStore.updateEntity(a);
+            attendanceIsAttendedProperty = new SimpleBooleanProperty(false);//EntityBindings.getBooleanFieldProperty(attendance,Attendance.attended);
             scheduledItemPublishedProperty = EntityBindings.getBooleanFieldProperty(scheduledItem,ScheduledItem.published);
             attendanceIsAttendedProperty.addListener(e->
                 UiScheduler.scheduleDelay(3000, ()->{

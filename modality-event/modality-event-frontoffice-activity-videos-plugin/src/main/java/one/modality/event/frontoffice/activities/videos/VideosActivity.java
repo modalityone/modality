@@ -20,7 +20,7 @@ import javafx.scene.layout.VBox;
 import one.modality.base.frontoffice.utility.page.FOPageUtil;
 import one.modality.base.shared.entities.Event;
 import one.modality.base.shared.entities.KnownItem;
-import one.modality.base.shared.entities.KnownItemFamily;
+import one.modality.base.shared.entities.ScheduledItem;
 import one.modality.crm.shared.services.authn.fx.FXUserPersonId;
 import one.modality.event.frontoffice.medias.EventThumbnailView;
 
@@ -43,13 +43,23 @@ final class VideosActivity extends ViewDomainActivityBase {
         FXProperties.runNowAndOnPropertyChange(userPersonId -> {
             eventsWithBookedVideos.clear();
             if (userPersonId != null) {
-                entityStore.<Event>executeQuery(
-                    "select name, label.(de,en,es,fr,pt), shortDescription, audioExpirationDate, startDate, endDate, livestreamUrl, vodExpirationDate" +
-                    " from Event e" +
-                    " where exists(select DocumentLine where !cancelled and document.(event=e and person=? and price_balance<=0) and item.family.code=?)",
-                        userPersonId, KnownItemFamily.VIDEO.getCode())
+//                entityStore.<Event>executeQuery(
+//                    "select name, label.(de,en,es,fr,pt), shortDescription, audioExpirationDate, startDate, endDate, livestreamUrl, vodExpirationDate" +
+//                    " from Event e" +
+//                    " where exists(select Attendance where !documentLine.cancelled and documentLine.document.(event=e and person=? and price_balance<=0) and scheduledItem.item.family.code=?)",
+//                        userPersonId, KnownItemFamily.VIDEO.getCode())
+                //2nd: we look for the scheduledItem having a bookableScheduledItem which is a audio type (case of festival)
+                entityStore.<ScheduledItem> executeQuery("select event.(name, label.(de,en,es,fr,pt), shortDescription, audioExpirationDate, startDate, endDate, livestreamUrl, vodExpirationDate)" +
+                    " from ScheduledItem si" +
+                    " where item.code=? and exists(select Attendance where scheduledItem=si.bookableScheduledItem and documentLine.(!cancelled and document.(person=? and price_balance<=0)))" +
+                    " order by date",
+                    new Object[]{KnownItem.VIDEO.getCode(), userPersonId})
                     .onFailure(Console::log)
-                    .onSuccess(events -> Platform.runLater(() -> eventsWithBookedVideos.setAll(events)));
+                    .onSuccess(scheduledItems -> Platform.runLater(() ->eventsWithBookedVideos.setAll(
+                        scheduledItems.stream()
+                            .map(ScheduledItem::getEvent)  // Extract events from scheduled items
+                            .distinct()
+                            .toList())));
             }
         }, FXUserPersonId.userPersonIdProperty());
     }
