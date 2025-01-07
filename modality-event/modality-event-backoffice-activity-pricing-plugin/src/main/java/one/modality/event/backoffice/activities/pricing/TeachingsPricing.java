@@ -155,20 +155,10 @@ final class TeachingsPricing implements ItemFamilyPricing {
                 if (rate != null) {
                     Collections.swap(policyRates, ++lastUsedPolicyRateIndex, policyRates.indexOf(rate));
                     rate = updateStore.updateEntity(rate);
-                    rate.setStartDate(date);
                 }
             }
             if (rate == null) {
                 rate = updateStore.insertEntity(Rate.class);
-                rate.setStartDate(date);
-                rate.setPerDay(true);
-                rate.setPerPerson(true);
-                rate.setAge1Max(7);
-                rate.setAge1Price(0);
-                rate.setAge2Max(15);
-                rate.setAge2Discount(50);
-                rate.setResidentPrice(0);
-                rate.setResident2Discount(50);
                 // TODO: cutoff dates
                 if (lastUpdatedRate != null) { // Assuming it's always true...
                     rate.setSite(lastUpdatedRate.getSite());
@@ -176,7 +166,16 @@ final class TeachingsPricing implements ItemFamilyPricing {
                 }
             }
             rate.setPrice(price);
+            rate.setStartDate(date);
             rate.setEndDate(date);
+            rate.setPerDay(true);
+            rate.setPerPerson(true);
+            rate.setAge1Max(7);
+            rate.setAge1Price(0);
+            rate.setAge2Max(15);
+            rate.setAge2Discount(50);
+            rate.setResidentPrice(0);
+            rate.setResident2Discount(50);
             lastUpdatedRate = rate;
         }
         // Deleting remaining daily teaching rates (i.e. those not reused)
