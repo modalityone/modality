@@ -80,7 +80,7 @@ final class UserProfileActivity extends ViewDomainActivityBase implements Modali
     private final ChangePasswordUI changePasswordUI = new ChangePasswordUI();
     private final ChangePictureUI changePictureUI = new ChangePictureUI(this);
     private final StringProperty tokenProperty = new SimpleStringProperty();
-    private final UserProfileMessageUI messagePane = new UserProfileMessageUI(this);
+    private final UserProfileMessageUI messagePane = new UserProfileMessageUI();
     private final UserAccountUI accountUI = new UserAccountUI();
     private EntityStore entityStore;
     private UpdateStore updateStore;
