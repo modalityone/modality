@@ -10,6 +10,7 @@ public interface ItemFamily extends
         EntityHasName,
         EntityHasLabel,
         EntityHasIcon,
+        EntityHasOrd,
         HasItemFamilyType {
 
     @Override
