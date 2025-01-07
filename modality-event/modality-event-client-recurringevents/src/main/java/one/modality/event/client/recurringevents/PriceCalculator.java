@@ -49,23 +49,24 @@ public class PriceCalculator {
         DocumentAggregate documentAggregate = getDocumentAggregate();
         if (documentAggregate == null)
             return 0;
-        return calculateLinePrice(documentAggregate.getLineAttendances(line));
+        return calculateLinePrice(line, documentAggregate.getLineAttendances(line));
     }
 
-    public int calculateLinePrice(List<Attendance> attendances) {
-        if (attendances == null || attendances.isEmpty())
-            return 0;
+    private int calculateLinePrice(DocumentLine line, List<Attendance> attendances) {
         DocumentAggregate documentAggregate = getDocumentAggregate();
         if (documentAggregate == null)
             return 0;
         // 1) Calculating the price consisting of applying the cheapest (if multiple) daily rate on each attendance
-        int dailyRatePrice = attendances.stream()
-            .mapToInt(this::calculateAttendancePrice)
-            .sum();
-        if (ignoreDiscounts)
+        int dailyRatePrice;
+        if (attendances == null || attendances.isEmpty())
+            dailyRatePrice = 0;
+        else
+            dailyRatePrice = attendances.stream()
+                .mapToInt(this::calculateAttendancePrice)
+                .sum();
+        if (ignoreDiscounts && dailyRatePrice > 0)
             return dailyRatePrice;
         // 2) Calculating the price consisting of applying the cheapest (if multiple) fixed rate
-        DocumentLine line = attendances.get(0).getDocumentLine();
         int fixedRatePrice = documentAggregate.getPolicyAggregate()
             .getSiteItemFixedRatesStream(line.getSite(), line.getItem())
             .filter(this::isRateApplicable)
