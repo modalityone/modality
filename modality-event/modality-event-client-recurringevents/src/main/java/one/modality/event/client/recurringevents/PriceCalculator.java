@@ -74,9 +74,12 @@ public class PriceCalculator {
             .min()
             .orElse(0);
         // 3) Returning the cheapest price
-        if (fixedRatePrice > 0 && fixedRatePrice < dailyRatePrice) // Typically a discount over a whole series of GP classes
+        if (fixedRatePrice > 0 && // if a fixed rate was set
+            (dailyRatePrice == 0 || // and no daily rate was set
+             fixedRatePrice < dailyRatePrice) // or is cheaper (ex: discount over a whole series of GP classes)
+        ) // then we return the fixed rate price
             return fixedRatePrice;
-        return dailyRatePrice;
+        return dailyRatePrice; // otherwise the daily rate price
     }
 
     private boolean isRateApplicable(Rate rate) {
