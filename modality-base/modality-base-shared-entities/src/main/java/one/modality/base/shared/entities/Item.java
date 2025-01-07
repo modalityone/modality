@@ -11,6 +11,7 @@ public interface Item extends
     EntityHasName,
     EntityHasLabel,
     EntityHasIcon,
+    EntityHasOrd,
     HasItemFamilyType {
 
     //// Domain fields
