@@ -25,7 +25,7 @@ import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
-public class RecurringEventSchedule {
+public class RecurringEventSchedule implements BookableDatesUi {
 
     private final ColumnsPane columnsPane = new ColumnsPane();
     private final ObservableList<ScheduledItem> scheduledItemsList = FXCollections.observableArrayList();
@@ -73,6 +73,7 @@ public class RecurringEventSchedule {
         }, selectedDates);
     }
 
+    @Override
     public void setScheduledItems(List<ScheduledItem> scheduledItems, boolean reapplyClickedDates) {
         scheduledItems.sort(Comparator.comparing(ScheduledItem::getDate));
         scheduledItemsList.setAll(scheduledItems);
@@ -126,16 +127,18 @@ public class RecurringEventSchedule {
             selectedDates.add(date);
     }
 
+    @Override
     public void removeClickedDate(LocalDate date) {
         clickedDates.remove(date);
         selectedDates.remove(date);
     }
 
-
+    @Override
     public void clearClickedDates() {
         clickedDates.clear();
     }
 
+    @Override
     public void addSelectedDates(List<LocalDate> dates) {
         scheduledItemsList.stream()
                 .map(ScheduledItem::getDate)
@@ -150,6 +153,7 @@ public class RecurringEventSchedule {
                 .forEach(this::addClickedDate);
     }
 
+    @Override
     public ObservableList<LocalDate> getSelectedDates() {
         return selectedDates;
     }
@@ -169,6 +173,7 @@ public class RecurringEventSchedule {
         }
     }
 
+    @Override
     public ObservableList<ScheduledItem> getSelectedScheduledItem() {
         return FXCollections.observableList(scheduledItemsList.stream()
                 .filter(item -> selectedDates.contains(item.getDate()))

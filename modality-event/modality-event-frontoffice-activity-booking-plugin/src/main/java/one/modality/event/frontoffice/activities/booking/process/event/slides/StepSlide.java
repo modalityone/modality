@@ -33,8 +33,8 @@ import one.modality.ecommerce.payment.CancelPaymentResult;
 import one.modality.ecommerce.payment.PaymentService;
 import one.modality.ecommerce.payment.client.ClientPaymentUtil;
 import one.modality.ecommerce.payment.client.WebPaymentForm;
+import one.modality.event.client.recurringevents.BookableDatesUi;
 import one.modality.event.client.recurringevents.FXPersonToBook;
-import one.modality.event.client.recurringevents.RecurringEventSchedule;
 import one.modality.event.client.recurringevents.WorkingBooking;
 import one.modality.event.frontoffice.activities.booking.BookingI18nKeys;
 import one.modality.event.frontoffice.activities.booking.fx.FXGuestToBook;
@@ -171,8 +171,8 @@ abstract class StepSlide implements Supplier<Node> {
     void turnOffWaitMode() {
     }
 
-    RecurringEventSchedule getRecurringEventSchedule() {
-        return getBookEventActivity().getRecurringEventSchedule();
+    BookableDatesUi getBookableDatesUi() {
+        return getBookEventActivity().getBookableDatesUi();
     }
 
     static void turnOnButtonWaitMode(Button... buttons) {

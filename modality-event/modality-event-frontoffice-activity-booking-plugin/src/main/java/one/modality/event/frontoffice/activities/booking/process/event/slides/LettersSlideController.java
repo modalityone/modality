@@ -16,7 +16,7 @@ import one.modality.base.client.mainframe.fx.FXMainFrameTransiting;
 import one.modality.base.shared.entities.Event;
 import one.modality.ecommerce.payment.CancelPaymentResult;
 import one.modality.ecommerce.payment.client.WebPaymentForm;
-import one.modality.event.client.recurringevents.RecurringEventSchedule;
+import one.modality.event.client.recurringevents.BookableDatesUi;
 import one.modality.event.frontoffice.activities.booking.process.event.BookEventActivity;
 
 public final class LettersSlideController {
@@ -118,8 +118,8 @@ public final class LettersSlideController {
         //bookEventActivity.onReachingEndSlide(); // Commented as this resets FXEvent() and prevents button to work in cancellation slide
     }
 
-    public RecurringEventSchedule getRecurringEventSchedule() {
-        return stepBBookEventSlide.getRecurringEventSchedule();
+    public BookableDatesUi getBookableDatesUi() {
+        return stepBBookEventSlide.getBookableDatesUi();
     }
 
     public <T extends Labeled> T bindI18nEventExpression(T text, String eventExpression, Object... args) {

@@ -5,9 +5,9 @@ import dev.webfx.platform.uischeduler.UiScheduler;
 import javafx.scene.layout.Region;
 import one.modality.ecommerce.payment.CancelPaymentResult;
 import one.modality.ecommerce.payment.client.WebPaymentForm;
+import one.modality.event.client.recurringevents.BookableDatesUi;
 import one.modality.event.client.recurringevents.FXPersonToBook;
 import one.modality.event.frontoffice.activities.booking.process.event.BookEventActivity;
-import one.modality.event.client.recurringevents.RecurringEventSchedule;
 
 final class DigitsSlideController {
 
@@ -60,8 +60,8 @@ final class DigitsSlideController {
         displaySlide(step1BookDatesSlide);
     }
 
-    RecurringEventSchedule getRecurringEventSchedule() {
-        return step1BookDatesSlide.getRecurringEventSchedule();
+    BookableDatesUi getBookableDateUi() {
+        return step1BookDatesSlide.getBookableDatesUi();
     }
 
     private void displaySlide(StepSlide slide) {

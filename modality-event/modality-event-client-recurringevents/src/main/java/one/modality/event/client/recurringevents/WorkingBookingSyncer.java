@@ -12,8 +12,8 @@ import java.util.List;
  */
 public final class WorkingBookingSyncer {
 
-    public static void syncWorkingBookingFromEventSchedule(WorkingBooking workingBooking, RecurringEventSchedule recurringEventSchedule, boolean addOnly) {
-        syncWorkingBookingFromSelectedScheduledItems(workingBooking, recurringEventSchedule.getSelectedScheduledItem(), addOnly);
+    public static void syncWorkingBookingFromEventSchedule(WorkingBooking workingBooking, BookableDatesUi bookableDatesUi, boolean addOnly) {
+        syncWorkingBookingFromSelectedScheduledItems(workingBooking, bookableDatesUi.getSelectedScheduledItem(), addOnly);
     }
 
     public static void syncWorkingBookingFromSelectedScheduledItems(WorkingBooking workingBooking, List<ScheduledItem> scheduledItems, boolean addOnly) {
@@ -22,11 +22,11 @@ public final class WorkingBookingSyncer {
         workingBooking.bookScheduledItems(scheduledItems, addOnly); // We re-apply the selected items to the booking
     }
 
-    public static void syncEventScheduleFromWorkingBooking(WorkingBooking workingBooking, RecurringEventSchedule recurringEventSchedule) {
+    public static void syncEventScheduleFromWorkingBooking(WorkingBooking workingBooking, BookableDatesUi bookableDatesUi) {
         List<Attendance> attendanceAdded = workingBooking.getAttendanceAdded();
         List<LocalDate> datesAdded = Collections.map(attendanceAdded, Attendance::getDate);
-        recurringEventSchedule.setScheduledItems(workingBooking.getScheduledItemsOnEvent(), true);
-        recurringEventSchedule.addSelectedDates(datesAdded);
+        bookableDatesUi.setScheduledItems(workingBooking.getScheduledItemsOnEvent(), true);
+        bookableDatesUi.addSelectedDates(datesAdded);
     }
 
 /* Same API but with WorkingBookingProperties
