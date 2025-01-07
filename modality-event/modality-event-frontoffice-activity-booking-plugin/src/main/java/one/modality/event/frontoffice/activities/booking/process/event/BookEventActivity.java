@@ -28,10 +28,7 @@ import one.modality.ecommerce.payment.CancelPaymentResult;
 import one.modality.ecommerce.payment.client.WebPaymentForm;
 import one.modality.event.client.event.fx.FXEvent;
 import one.modality.event.client.event.fx.FXEventId;
-import one.modality.event.client.recurringevents.FXPersonToBook;
-import one.modality.event.client.recurringevents.RecurringEventSchedule;
-import one.modality.event.client.recurringevents.WorkingBooking;
-import one.modality.event.client.recurringevents.WorkingBookingSyncer;
+import one.modality.event.client.recurringevents.*;
 import one.modality.event.frontoffice.activities.booking.process.account.CheckoutAccountRouting;
 import one.modality.event.frontoffice.activities.booking.process.event.slides.LettersSlideController;
 
@@ -107,7 +104,7 @@ public final class BookEventActivity extends ViewDomainActivityBase implements B
     public void onReachingEndSlide() {
         FXEventId.setEventId(null); // This is to ensure that next time the user books an event in this same session, we
         FXCollapseFooter.setCollapseFooter(false);
-        getRecurringEventSchedule().clearClickedDates();
+        getBookableDatesUi().clearClickedDates();
     }
 
     @Override
@@ -127,7 +124,7 @@ public final class BookEventActivity extends ViewDomainActivityBase implements B
         // TODO: if eventId doesn't exist in the database, FXEvent.getEvent() stays null and nothing happens (stuck on loading page)
 
         lettersSlideController.onEventChanged(event);
-        getRecurringEventSchedule().clearClickedDates(); // clearing possible clicked dates from previous event (if some dates are common)
+        getBookableDatesUi().clearClickedDates(); // clearing possible clicked dates from previous event (if some dates are common)
 
         // Note: It's better to use FXUserPersonId rather than FXUserPerson in case of a page reload in the browser
         // (or redirection to this page from a website) because the retrieval of FXUserPersonId is immediate in case
@@ -177,11 +174,11 @@ public final class BookEventActivity extends ViewDomainActivityBase implements B
     }
 
     void syncWorkingBookingFromEventSchedule() {
-        WorkingBookingSyncer.syncWorkingBookingFromEventSchedule(workingBookingProperties.getWorkingBooking(), getRecurringEventSchedule(), true);
+        WorkingBookingSyncer.syncWorkingBookingFromEventSchedule(workingBookingProperties.getWorkingBooking(), getBookableDatesUi(), true);
     }
 
     public void syncEventScheduleFromWorkingBooking() {
-        WorkingBookingSyncer.syncEventScheduleFromWorkingBooking(workingBookingProperties.getWorkingBooking(), getRecurringEventSchedule());
+        WorkingBookingSyncer.syncEventScheduleFromWorkingBooking(workingBookingProperties.getWorkingBooking(), getBookableDatesUi());
     }
 
     public void displayBookSlide() {
@@ -218,8 +215,8 @@ public final class BookEventActivity extends ViewDomainActivityBase implements B
         FXCollapseFooter.setCollapseFooter(false);
     }
 
-    public RecurringEventSchedule getRecurringEventSchedule() {
-        return lettersSlideController.getRecurringEventSchedule();
+    public BookableDatesUi getBookableDatesUi() {
+        return lettersSlideController.getBookableDatesUi();
     }
 
     public <T extends Labeled> T bindI18nEventExpression(T text, String eventExpression, Object... args) {

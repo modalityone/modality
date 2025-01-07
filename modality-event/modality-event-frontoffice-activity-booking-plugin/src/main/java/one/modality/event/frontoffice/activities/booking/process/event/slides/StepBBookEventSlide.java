@@ -33,8 +33,8 @@ import one.modality.base.shared.entities.Event;
 import one.modality.ecommerce.payment.CancelPaymentResult;
 import one.modality.ecommerce.payment.client.WebPaymentForm;
 import one.modality.event.client.event.fx.FXEvent;
+import one.modality.event.client.recurringevents.BookableDatesUi;
 import one.modality.event.frontoffice.activities.booking.process.event.BookEventActivity;
-import one.modality.event.client.recurringevents.RecurringEventSchedule;
 
 final class StepBBookEventSlide extends StepSlide {
 
@@ -201,8 +201,8 @@ final class StepBBookEventSlide extends StepSlide {
     }
 
     @Override
-    RecurringEventSchedule getRecurringEventSchedule() {
-        return digitsSlideController.getRecurringEventSchedule();
+    BookableDatesUi getBookableDatesUi() {
+        return digitsSlideController.getBookableDateUi();
     }
 
     @Override

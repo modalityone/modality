@@ -24,6 +24,7 @@ import javafx.scene.text.Text;
 import javafx.scene.text.TextAlignment;
 import one.modality.base.shared.entities.ScheduledItem;
 import one.modality.base.shared.entities.formatters.EventPriceFormatter;
+import one.modality.event.client.recurringevents.BookableDatesUi;
 import one.modality.event.frontoffice.activities.booking.BookingI18nKeys;
 import one.modality.event.frontoffice.activities.booking.process.event.BookEventActivity;
 import one.modality.event.client.recurringevents.RecurringEventSchedule;
@@ -189,7 +190,7 @@ final class Step1BookDatesSlide extends StepSlide {
         selectAllClassesHyperlink.setOnAction((event -> recurringEventSchedule.addClickedDates(allSelectableDates)));
     }
 
-    RecurringEventSchedule getRecurringEventSchedule() {
+    BookableDatesUi getBookableDatesUi() {
         return recurringEventSchedule;
     }
 
