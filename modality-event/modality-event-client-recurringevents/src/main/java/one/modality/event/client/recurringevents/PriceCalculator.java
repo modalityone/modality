@@ -1,6 +1,7 @@
 package one.modality.event.client.recurringevents;
 
 import dev.webfx.platform.util.Booleans;
+import dev.webfx.platform.util.collection.Collections;
 import one.modality.base.shared.entities.*;
 import one.modality.ecommerce.document.service.DocumentAggregate;
 
@@ -49,10 +50,17 @@ public class PriceCalculator {
         DocumentAggregate documentAggregate = getDocumentAggregate();
         if (documentAggregate == null)
             return 0;
-        return calculateLinePrice(line, documentAggregate.getLineAttendances(line));
+        return calculateLinePrice(line.getSite(), line.getItem(), documentAggregate.getLineAttendances(line));
     }
 
-    private int calculateLinePrice(DocumentLine line, List<Attendance> attendances) {
+    public int calculateLinePrice(List<Attendance> attendances) {
+        if (Collections.isEmpty(attendances))
+            return 0;
+        DocumentLine line = attendances.get(0).getDocumentLine();
+        return calculateLinePrice(line.getSite(), line.getItem(), attendances);
+    }
+
+    public int calculateLinePrice(Site site, Item item, List<Attendance> attendances) {
         DocumentAggregate documentAggregate = getDocumentAggregate();
         if (documentAggregate == null)
             return 0;
@@ -62,13 +70,14 @@ public class PriceCalculator {
             dailyRatePrice = 0;
         else
             dailyRatePrice = attendances.stream()
-                .mapToInt(this::calculateAttendancePrice)
+                //.mapToInt(this::calculateAttendancePrice) // assumes Attendance DocumentLine is set
+                .mapToInt(attendance -> calculateAttendancePrice(site, item)) // works even if DocumentLine is not set
                 .sum();
         if (ignoreDiscounts && dailyRatePrice > 0)
             return dailyRatePrice;
         // 2) Calculating the price consisting of applying the cheapest (if multiple) fixed rate
         int fixedRatePrice = documentAggregate.getPolicyAggregate()
-            .getSiteItemFixedRatesStream(line.getSite(), line.getItem())
+            .getSiteItemFixedRatesStream(site, item)
             .filter(this::isRateApplicable)
             .mapToInt(this::getCheapestApplicableRatePrice)
             .min()
@@ -101,12 +110,18 @@ public class PriceCalculator {
     }
 
     public int calculateAttendancePrice(Attendance attendance) {
+        DocumentLine line = attendance.getDocumentLine();
+        return calculateAttendancePrice(line);
+    }
+
+    public int calculateAttendancePrice(DocumentLine line) {
+        return calculateAttendancePrice(line.getSite(), line.getItem());
+    }
+
+    public int calculateAttendancePrice(Site site, Item item) {
         DocumentAggregate documentAggregate = getDocumentAggregate();
         if (documentAggregate == null)
             return 0;
-        DocumentLine documentLine = attendance.getDocumentLine();
-        Site site = documentLine.getSite();
-        Item item = documentLine.getItem();
         return documentAggregate.getPolicyAggregate()
             .getSiteItemDailyRatesStream(site, item)
             .filter(this::isRateApplicable)
