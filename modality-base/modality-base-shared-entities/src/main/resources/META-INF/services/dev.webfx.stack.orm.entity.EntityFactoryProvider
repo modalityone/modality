@@ -18,6 +18,7 @@ one.modality.base.shared.entities.impl.ImageImpl$ProvidedFactory
 one.modality.base.shared.entities.impl.ItemFamilyImpl$ProvidedFactory
 one.modality.base.shared.entities.impl.ItemImpl$ProvidedFactory
 one.modality.base.shared.entities.impl.KdmCenterImpl$ProvidedFactory
+one.modality.base.shared.entities.impl.LanguageImpl$ProvidedFactory
 one.modality.base.shared.entities.impl.LabelImpl$ProvidedFactory
 one.modality.base.shared.entities.impl.MailImpl$ProvidedFactory
 one.modality.base.shared.entities.impl.MagicLinkImpl$ProvidedFactory

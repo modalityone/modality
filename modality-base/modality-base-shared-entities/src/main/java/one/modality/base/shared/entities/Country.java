@@ -1,5 +1,6 @@
 package one.modality.base.shared.entities;
 
+import dev.webfx.stack.orm.entity.EntityId;
 import one.modality.base.shared.entities.markers.EntityHasIcon;
 import one.modality.base.shared.entities.markers.EntityHasLabel;
 import one.modality.base.shared.entities.markers.EntityHasName;
@@ -20,6 +21,7 @@ public interface Country extends
     String south = "south";
     String west = "west";
     String east = "east";
+    String mainLanguage = "mainLanguage";
 
     default void setGeonameid(Integer value) {
         setFieldValue(geonameid, value);
@@ -92,4 +94,17 @@ public interface Country extends
     default void setEast(Float value) {
         setFieldValue(east, value);
     }
+
+    default void setMainLanguage(Object value) {
+        setForeignField(mainLanguage, value);
+    }
+
+    default EntityId getMainLanguageId() {
+        return getForeignEntityId(mainLanguage);
+    }
+
+    default Language getMainLanguage() {
+        return getForeignEntity(mainLanguage);
+    }
+
 }
