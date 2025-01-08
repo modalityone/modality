@@ -37,6 +37,8 @@ public interface Event extends Entity,
     String venue = "venue";
     String teachingsDayTicket = "teachingsDayTicket";
     String audioRecordingsDayTicket = "audioRecordingsDayTicket";
+    String recurringWithAudio = "recurringWithAudio";
+    String recurringWithVideo = "recurringWithVideo";
 
     default void setState(Object value) {
         setFieldValue(state, Strings.stringValue(value));
@@ -203,5 +205,22 @@ public interface Event extends Entity,
     default Boolean isAudioRecordingsDayTicket() {
         return getBooleanFieldValue(audioRecordingsDayTicket);
     }
+
+    default void setRecurringWithAudio(Boolean value) {
+        setFieldValue(recurringWithAudio, value);
+    }
+
+    default Boolean isRecurringWithAudio() {
+        return getBooleanFieldValue(recurringWithAudio);
+    }
+
+    default void setRecurringWithVideo(Boolean value) {
+        setFieldValue(recurringWithVideo, value);
+    }
+
+    default Boolean isRecurringWithVideo() {
+        return getBooleanFieldValue(recurringWithVideo);
+    }
+
 
 }
