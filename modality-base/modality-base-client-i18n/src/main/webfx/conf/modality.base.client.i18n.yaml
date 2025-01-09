@@ -1,0 +1,5 @@
+# Example of forward
+#ModalityI18nKeyForwards:
+#  RecurringEvents:
+#    entity: FXOrganization
+#    expression: "id=1 ? '[STTP]' : '[GPClasses]'"

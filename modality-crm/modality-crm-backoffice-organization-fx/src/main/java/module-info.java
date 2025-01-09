@@ -10,6 +10,7 @@ module modality.crm.backoffice.organization.fx {
     requires javafx.controls;
     requires javafx.graphics;
     requires modality.base.backoffice.mainframe.headernode;
+    requires modality.base.client.i18n;
     requires modality.base.shared.context;
     requires transitive modality.base.shared.entities;
     requires webfx.kit.util;

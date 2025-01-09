@@ -7,6 +7,9 @@ module modality.base.client.i18n {
 
     // Direct dependencies modules
     requires javafx.base;
+    requires webfx.platform.ast;
+    requires webfx.platform.conf;
+    requires webfx.platform.console;
     requires webfx.stack.i18n;
     requires webfx.stack.i18n.ast;
     requires webfx.stack.orm.entity;
