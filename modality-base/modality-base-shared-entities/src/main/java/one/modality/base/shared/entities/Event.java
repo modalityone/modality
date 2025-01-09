@@ -25,7 +25,7 @@ public interface Event extends Entity,
     String endDate = "endDate";
     String openingDate = "openingDate";
     String vodExpirationDate = "vodExpirationDate";
-    String vodProcessingTimeMinutes = "vodProcesssingTimeMinutes";
+    String vodProcessingTimeMinutes = "vodProcessingTimeMinutes";
     String audioExpirationDate = "audioExpirationDate";
     String livestreamUrl = "livestreamUrl";
     String live = "live";
