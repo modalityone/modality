@@ -21,13 +21,13 @@ public interface GwtEmbedResourcesBundle extends ClientBundle {
     @Source("dev/webfx/stack/i18n/en.json")
     TextResource r4();
 
-    @Source("dev/webfx/stack/i18n/fr.properties")
+    @Source("dev/webfx/stack/i18n/es.properties")
     TextResource r5();
 
-    @Source("dev/webfx/stack/i18n/pt.properties")
+    @Source("dev/webfx/stack/i18n/fr.properties")
     TextResource r6();
 
-    @Source("dev/webfx/stack/i18n/sp.properties")
+    @Source("dev/webfx/stack/i18n/pt.properties")
     TextResource r7();
 
     @Source("dev/webfx/stack/i18n/vi.properties")
@@ -47,9 +47,9 @@ public interface GwtEmbedResourcesBundle extends ClientBundle {
             registerResource("dev/webfx/platform/meta/exe/exe.properties", R.r2());
             registerResource("dev/webfx/stack/i18n/de.properties", R.r3());
             registerResource("dev/webfx/stack/i18n/en.json", R.r4());
-            registerResource("dev/webfx/stack/i18n/fr.properties", R.r5());
-            registerResource("dev/webfx/stack/i18n/pt.properties", R.r6());
-            registerResource("dev/webfx/stack/i18n/sp.properties", R.r7());
+            registerResource("dev/webfx/stack/i18n/es.properties", R.r5());
+            registerResource("dev/webfx/stack/i18n/fr.properties", R.r6());
+            registerResource("dev/webfx/stack/i18n/pt.properties", R.r7());
             registerResource("dev/webfx/stack/i18n/vi.properties", R.r8());
             registerResource("dev/webfx/stack/i18n/zh.properties", R.r9());
             registerResource("one/modality/base/shared/domainmodel/DomainModelSnapshot.json", R.r10());

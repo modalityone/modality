@@ -606,6 +606,7 @@ Switch.webfx-switch Circle.knob {
     -webfx-time-pickers-date-background-color: -webfx-time-pickers-gray-color;
     -webfx-time-pickers-selected-date-background-color: -webfx-time-pickers-blue2-color;
     -webfx-time-pickers-unselectable-date-background-color: -webfx-time-pickers-gray-color;
+    -webfx-time-pickers-background-color: #FFFFFF;
 }
 
 .webfx-datepicker.border {
@@ -635,6 +636,10 @@ Switch.webfx-switch Circle.knob {
 .webfx-datepicker .month {
     -fx-text-fill: -webfx-time-pickers-month-color;
     -fx-font-size: 14px;
+}
+
+.webfx-datepicker .background {
+    -fx-background-color: -webfx-time-pickers-background-color;
 }
 
 /*===== webfx-extras-visual-charts-javafx@main.css from webfx-extras-visual-charts-peers-openjfx =====*/
@@ -1015,5 +1020,9 @@ Text, Label, Button, TextField {
 .booking-total-count {
     -fx-text-fill: #FF0404;
     -fx-font-size: 9px;
+}
+
+.recurring-event .webfx-datepicker .background {
+    -fx-background-color: none;
 }
 
