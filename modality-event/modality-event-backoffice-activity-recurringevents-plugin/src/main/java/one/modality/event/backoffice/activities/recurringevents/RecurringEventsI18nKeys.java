@@ -40,7 +40,6 @@ public interface RecurringEventsI18nKeys {
     String EditEventInformation0 = "EditEventInformation0";
     String AddEventInformationButton = "AddEventInformationButton";
     String CancelButton = "CancelButton";
-    String SaveDraftButton = "SaveDraftButton";
     String UpdateEventButton = "UpdateEventButton";
     String TypeOfEvent = "TypeOfEvent";
     String TotalAttendees = "TotalAttendees";
@@ -57,8 +56,5 @@ public interface RecurringEventsI18nKeys {
     String Advertised = "Advertised";
     String AudioCorrespondanceProgram = "AudioCorrespondanceProgram";
     String VideoCorrespondanceProgram = "VideoCorrespondanceProgram";
-    String GPClasses = "GPClasses";
-    String SaveDraft = "SaveDraft";
-    String DiscardButton = "DiscardButton";
 
 }
