@@ -41,7 +41,7 @@ public class ServerDocumentServiceProvider implements DocumentServiceProvider {
         return QueryService.executeQueryBatch(
                 new Batch<>(new QueryArgument[]{
                     new QueryArgumentBuilder()
-                        .setStatement(POLICY_SCHEDULED_ITEMS_QUERY_BASE + " where event = ?")
+                        .setStatement(POLICY_SCHEDULED_ITEMS_QUERY_BASE + " where event = ? and bookableScheduledItem=id")
                         .setParameters(eventPk)
                         .setLanguage("DQL")
                         .setDataSourceId(DataSourceModelService.getDefaultDataSourceId())

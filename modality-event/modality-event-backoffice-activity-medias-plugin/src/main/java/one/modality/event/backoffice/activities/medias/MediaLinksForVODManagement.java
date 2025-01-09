@@ -127,8 +127,18 @@ public class MediaLinksForVODManagement extends MediaLinksManagement {
                 if (name == null) name = "Unknown";
                 Label teachingTitle = new Label(name);
                 Timeline timeline = workingCurrentVideoScheduledItem.getProgramScheduledItem().getTimeline();
-                Label startTimeLabel = new Label(timeline.getStartTime().format(MediaLinksManagement.TIME_FORMATTER) + " - " + timeline.getEndTime().format(MediaLinksManagement.TIME_FORMATTER));
-                teachingTitle.getStyleClass().add(Bootstrap.STRONG);
+                String startTime = "";
+                String endTime = "";
+                if(timeline!= null) {
+                    //Case of Festivals
+                    startTime = timeline.getStartTime().format(TIME_FORMATTER);
+                    endTime = timeline.getEndTime().format(TIME_FORMATTER);
+                } else {
+                    //Case of recurring events
+                    startTime = workingCurrentVideoScheduledItem.getProgramScheduledItem().getStartTime().format(TIME_FORMATTER);
+                    endTime = workingCurrentVideoScheduledItem.getProgramScheduledItem().getEndTime().format(TIME_FORMATTER);
+                }
+                Label startTimeLabel = new Label(startTime + " - " + endTime);                teachingTitle.getStyleClass().add(Bootstrap.STRONG);
                 startTimeLabel.getStyleClass().add(Bootstrap.STRONG);
 
                 Button saveButton = Bootstrap.largeSuccessButton(I18nControls.newButton(ModalityI18nKeys.Save));

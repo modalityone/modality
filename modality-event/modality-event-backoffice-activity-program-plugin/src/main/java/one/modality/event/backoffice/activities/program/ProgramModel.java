@@ -132,7 +132,7 @@ final class ProgramModel {
                 // Index 1: program site (singleton list)
                 new EntityStoreQuery("select name from Site where event=? and main limit 1", new Object[]{selectedEvent}),
                 // Index 2: items for this program item family + audio recording + video
-                new EntityStoreQuery("select name,family.code from Item where organization=? and family.code in (?,?,?)",
+                new EntityStoreQuery("select name,family.code, deprecated from Item where organization=? and family.code in (?,?,?)",
                     new Object[]{selectedEvent.getOrganization(), programItemFamily.getCode(), KnownItemFamily.AUDIO_RECORDING.getCode(), KnownItemFamily.VIDEO.getCode()}),
                 // Index 3: bookableScheduledItem for this event (teachings + optional audio), created during the event setup.
                 new EntityStoreQuery("select item, date from ScheduledItem si where event=? and bookableScheduledItem=si", new Object[]{selectedEvent}),
@@ -148,7 +148,7 @@ final class ProgramModel {
 
                 programSite = Collections.first(sites);
                 //TODO: for now, we look for all language available. Change this to a list of language that is setup as the event creation.
-                languageAudioItems = Collections.filter(items, item -> KnownItemFamily.AUDIO_RECORDING.getCode().equals(item.getFamily().getCode()));
+                languageAudioItems = Collections.filter(items, item -> KnownItemFamily.AUDIO_RECORDING.getCode().equals(item.getFamily().getCode()) && !item.isDeprecated());
                 videoItem = Collections.findFirst(items, item -> KnownItemFamily.VIDEO.getCode().equals(item.getFamily().getCode()));
                 teachingsBookableScheduledItems = Collections.filter(bookableScheduledItems, scheduledItem -> KnownItemFamily.TEACHING.getCode().equals(scheduledItem.getItem().getFamily().getCode()));
                 audioRecordingsBookableScheduledItems = Collections.filter(bookableScheduledItems, scheduledItem -> KnownItemFamily.AUDIO_RECORDING.getCode().equals(scheduledItem.getItem().getFamily().getCode()));

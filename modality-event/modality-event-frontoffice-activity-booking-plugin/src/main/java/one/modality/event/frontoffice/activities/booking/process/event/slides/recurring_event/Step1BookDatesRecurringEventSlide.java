@@ -1,4 +1,4 @@
-package one.modality.event.frontoffice.activities.booking.process.event.slides;
+package one.modality.event.frontoffice.activities.booking.process.event.slides.recurring_event;
 
 import dev.webfx.extras.panes.ScaleMode;
 import dev.webfx.extras.panes.ScalePane;
@@ -25,29 +25,30 @@ import javafx.scene.text.TextAlignment;
 import one.modality.base.shared.entities.ScheduledItem;
 import one.modality.base.shared.entities.formatters.EventPriceFormatter;
 import one.modality.event.client.recurringevents.BookableDatesUi;
+import one.modality.event.client.recurringevents.RecurringEventSchedule;
 import one.modality.event.frontoffice.activities.booking.BookingI18nKeys;
 import one.modality.event.frontoffice.activities.booking.process.event.BookEventActivity;
-import one.modality.event.client.recurringevents.RecurringEventSchedule;
 import one.modality.event.frontoffice.activities.booking.process.event.WorkingBookingProperties;
+import one.modality.event.frontoffice.activities.booking.process.event.slides.AbstractStep1Slide;
 
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 
-final class Step1BookDatesSlide extends StepSlide {
+public final class Step1BookDatesRecurringEventSlide extends AbstractStep1Slide {
 
     private final HtmlText eventDescription = new HtmlText();
     private final RecurringEventSchedule recurringEventSchedule = new RecurringEventSchedule();
     private final BooleanProperty noDatesBookedProperty = new SimpleBooleanProperty();
     private final Hyperlink selectAllClassesHyperlink = I18nControls.bindI18nTextProperty(new Hyperlink(), BookingI18nKeys.SelectAllClasses);
 
-    Step1BookDatesSlide(BookEventActivity bookEventActivity) {
+    public Step1BookDatesRecurringEventSlide(BookEventActivity bookEventActivity) {
         super(bookEventActivity);
         noDatesBookedProperty.bind(ObservableLists.isEmpty(recurringEventSchedule.getSelectedDates()));
     }
 
     @Override
-    void buildSlideUi() {
+    public void buildSlideUi() {
         bindI18nEventExpression(eventDescription, "description");
         VBox.setMargin(eventDescription, new Insets(20, 0, 0, 0));
         eventDescription.fontProperty().bind(getBookEventActivity().mediumFontProperty());
@@ -124,7 +125,7 @@ final class Step1BookDatesSlide extends StepSlide {
         }
     }
 
-    void onWorkingBookingLoaded() {
+    public void onWorkingBookingLoaded() {
         WorkingBookingProperties workingBookingProperties = getWorkingBookingProperties();
 
         List<ScheduledItem> scheduledItemsOnEvent = workingBookingProperties.getScheduledItemsOnEvent();
@@ -190,8 +191,9 @@ final class Step1BookDatesSlide extends StepSlide {
         selectAllClassesHyperlink.setOnAction((event -> recurringEventSchedule.addClickedDates(allSelectableDates)));
     }
 
-    BookableDatesUi getBookableDatesUi() {
+    public BookableDatesUi getBookableDatesUi() {
         return recurringEventSchedule;
     }
+
 
 }

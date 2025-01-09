@@ -61,7 +61,8 @@ public class ServerPaymentServiceProvider implements PaymentServiceProvider {
                         return gatewayNotFoundFailedFuture(gatewayName);
                     // Step 3: Loading the relevant payment gateway parameters
                     Event event = moneyTransfer.getDocument().getEvent();
-                    boolean live = event.getState().compareTo(EventState.OPEN) >= 0 /* KBS3 way */ || event.isLive() /* KBS2 way */;
+                    EventState state = event.getState();
+                    boolean live = state != null && state.compareTo(EventState.OPEN) >= 0 /* KBS3 way */ || event.isLive() /* KBS2 way */;
                     return loadPaymentGatewayParameters(moneyTransfer, live)
                             .compose(parameters -> {
                                 // Step 4: Calling the payment gateway with all the data collected

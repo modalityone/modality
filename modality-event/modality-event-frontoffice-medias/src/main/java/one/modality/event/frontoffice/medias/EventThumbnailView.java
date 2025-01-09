@@ -2,6 +2,7 @@ package one.modality.event.frontoffice.medias;
 
 import dev.webfx.extras.panes.MonoPane;
 import dev.webfx.extras.styles.bootstrap.Bootstrap;
+import dev.webfx.extras.webtext.HtmlText;
 import dev.webfx.platform.console.Console;
 import dev.webfx.platform.util.Strings;
 import dev.webfx.stack.cloud.image.CloudImageService;
@@ -95,46 +96,47 @@ public final class EventThumbnailView {
 
     private void buildUi() {
         container.setPrefWidth(WIDTH);
-
         String isoCode = extractISOCode(imageItemCode);
 
         Label eventLabel = Bootstrap.h3(I18nControls.newLabel(new I18nSubKey("expression: i18n(this, '" + isoCode + "')", event)));
         eventLabel.setWrapText(true);
         VBox.setMargin(eventLabel, new Insets(10, 0, 0, 0));
-        String shortDescription = event.getShortDescription();
-        Text shortDescriptionText = new Text(shortDescription);
+        String shortDescription = "";
+        if(event.getShortDescription()!=null)
+            shortDescription = event.getShortDescription();
+        String shortDescriptionText = new String(shortDescription);
         //For now if the text if too long, we just do a substring.
         //In the future we can replace by a CollapsePan with a read more link
         int maxStringLength = 230;
         if (Strings.length(shortDescription) > maxStringLength) {
-            shortDescriptionText.setText(shortDescription.substring(0, maxStringLength - 5) + " [ . . . ]");
+            shortDescriptionText = (shortDescription.substring(0, maxStringLength - 5) + " [ . . . ]");
         }
-        TextFlow textFlow = new TextFlow(shortDescriptionText);
-        textFlow.setStyle("-fx-line-spacing: 5px;");
-        shortDescriptionText.setStyle("-fx-font-size: 12px;"); // Adjust font size as needed
+        HtmlText shortHTMLDescription = new HtmlText(shortDescriptionText);
+        shortHTMLDescription.getStyleClass().add("short-description");
 
-        // Add listener to handle text truncation after layout
-        textFlow.layoutBoundsProperty().addListener((observable, oldValue, newValue) -> truncateToFiveLines(shortDescriptionText, textFlow));
-
-        VBox.setMargin(textFlow, new Insets(20, 0, 0, 0));
 
         StackPane thumbailStackPane = new StackPane();
+        thumbailStackPane.setAlignment(Pos.BOTTOM_CENTER);
         thumbailStackPane.setPrefHeight(WIDTH);
         ImageView imageView = new ImageView();
+        imageView.setFitHeight(WIDTH);
+        imageView.setFitWidth(WIDTH);
+        imageView.setPreserveRatio(true);
         thumbailStackPane.getChildren().add(imageView);
 
         Label availabilityLabel = new Label();
 
         if (isPublished) {
-            if (itemType == ItemType.ITEM_TYPE_VIDEO)
+            if (itemType == ItemType.ITEM_TYPE_VIDEO) {
                 //If the vodExpirationDate is set to null, it means the event is livestream Only
                 if (event.getVodExpirationDate() != null && LocalDateTime.now().isAfter(event.getVodExpirationDate()))
                     availabilityType = AvailabilityType.EXPIRED;
-                //Case of the livestream only, we expired it when the event is finished
+                    //Case of the livestream only, we expired it when the event is finished
                 else if (event.getVodExpirationDate() == null && LocalDateTime.now().isAfter(LocalDateTime.of(event.getEndDate(), LocalTime.of(23, 59, 59))))
                     availabilityType = AvailabilityType.EXPIRED;
                 else
                     availabilityType = AvailabilityType.AVAILABLE;
+            }
             if (itemType == ItemType.ITEM_TYPE_AUDIO)
                 if (event.getAudioExpirationDate() != null && LocalDateTime.now().isAfter(event.getAudioExpirationDate()))
                     availabilityType = AvailabilityType.EXPIRED;
@@ -215,7 +217,7 @@ public final class EventThumbnailView {
         container.getChildren().addAll(
             thumbailStackPane,
             eventLabel,
-            textFlow,
+            shortHTMLDescription,
             actionButton
         );
     }

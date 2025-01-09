@@ -5,6 +5,7 @@ import dev.webfx.extras.panes.MonoPane;
 import dev.webfx.extras.player.audio.javafxmedia.JavaFXMediaAudioPlayer;
 import dev.webfx.extras.styles.bootstrap.Bootstrap;
 import dev.webfx.extras.util.control.ControlUtil;
+import dev.webfx.extras.webtext.HtmlText;
 import dev.webfx.kit.util.properties.FXProperties;
 import dev.webfx.kit.util.properties.ObservableLists;
 import dev.webfx.platform.console.Console;
@@ -13,6 +14,7 @@ import dev.webfx.platform.util.Strings;
 import dev.webfx.platform.util.collection.Collections;
 import dev.webfx.stack.cloud.image.CloudImageService;
 import dev.webfx.stack.cloud.image.impl.client.ClientImageService;
+import dev.webfx.stack.i18n.I18n;
 import dev.webfx.stack.i18n.controls.I18nControls;
 import dev.webfx.stack.i18n.spi.impl.I18nSubKey;
 import dev.webfx.stack.orm.domainmodel.activity.viewdomain.impl.ViewDomainActivityBase;
@@ -150,14 +152,13 @@ final class EventAudioPlaylistActivity extends ViewDomainActivityBase {
         eventLabel.setWrapText(true);
         eventLabel.setTextAlignment(TextAlignment.CENTER);
         eventLabel.setPadding(new Insets(0,0,12,0));
-        Label eventDescriptionLabel = I18nControls.newLabel(new I18nSubKey("expression: shortDescription", eventProperty), eventProperty);
-        eventDescriptionLabel.setWrapText(true);
-        eventDescriptionLabel.setTextAlignment(TextAlignment.LEFT);
-        eventDescriptionLabel.managedProperty().bind(FXProperties.compute(eventDescriptionLabel.textProperty(), Strings::isNotEmpty));
-        eventDescriptionLabel.setMaxHeight(60);
+        HtmlText eventDescriptionHTMLText = new HtmlText();
+        I18n.bindI18nTextProperty(eventDescriptionHTMLText.textProperty(), new I18nSubKey("expression: shortDescription", eventProperty), eventProperty);
+        eventDescriptionHTMLText.managedProperty().bind(FXProperties.compute(eventDescriptionHTMLText.textProperty(), Strings::isNotEmpty));
+        eventDescriptionHTMLText.setMaxHeight(60);
         audioExpirationLabel = Bootstrap.textSuccess(I18nControls.newLabel(AudioRecordingsI18nKeys.AvailableUntil,dateFormattedProperty));
         audioExpirationLabel.setPadding(new Insets(30,0,0,0));
-        VBox titleVBox = new VBox(eventLabel, eventDescriptionLabel,audioExpirationLabel);
+        VBox titleVBox = new VBox(eventLabel, eventDescriptionHTMLText,audioExpirationLabel);
 
         headerHBox.getChildren().add(titleVBox);
 

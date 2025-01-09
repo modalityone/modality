@@ -124,7 +124,8 @@ public final class BookEventActivity extends ViewDomainActivityBase implements B
         // TODO: if eventId doesn't exist in the database, FXEvent.getEvent() stays null and nothing happens (stuck on loading page)
 
         lettersSlideController.onEventChanged(event);
-        getBookableDatesUi().clearClickedDates(); // clearing possible clicked dates from previous event (if some dates are common)
+        if (getBookableDatesUi() != null)
+            getBookableDatesUi().clearClickedDates(); // clearing possible clicked dates from previous event (if some dates are common)
 
         // Note: It's better to use FXUserPersonId rather than FXUserPerson in case of a page reload in the browser
         // (or redirection to this page from a website) because the retrieval of FXUserPersonId is immediate in case

@@ -19,6 +19,7 @@ import dev.webfx.stack.orm.entity.EntityStore;
 import dev.webfx.stack.orm.entity.EntityStoreQuery;
 import dev.webfx.stack.orm.entity.UpdateStore;
 import dev.webfx.stack.orm.entity.binding.EntityBindings;
+import dev.webfx.stack.ui.validation.ValidationSupport;
 import javafx.application.Platform;
 import javafx.beans.binding.BooleanExpression;
 import javafx.beans.property.*;
@@ -34,7 +35,6 @@ import javafx.scene.control.*;
 import javafx.scene.layout.*;
 import one.modality.base.client.i18n.ModalityI18nKeys;
 import one.modality.base.client.util.masterslave.ModalitySlaveEditor;
-import dev.webfx.stack.ui.validation.ValidationSupport;
 import one.modality.base.shared.entities.*;
 import one.modality.base.shared.entities.markers.EntityHasLocalDate;
 import one.modality.event.client.event.fx.FXEvent;
@@ -44,8 +44,10 @@ import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeParseException;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.TreeSet;
 import java.util.stream.Collectors;
 
 
@@ -180,13 +182,14 @@ public class RecordingsView {
         masterSettings.getChildren().add(languageLabel);
 
         entityStore.executeQueryBatch(
-                new EntityStoreQuery("select distinct name from Item where organization=? and family.code = ? and not deprecated order by name", new Object[]{currentEditedEvent.getOrganization(), KnownItemFamily.AUDIO_RECORDING.getCode()}),
-                new EntityStoreQuery("select name, date, programScheduledItem, item.code, programScheduledItem.timeline.startTime, published, programScheduledItem.name, programScheduledItem.timeline.endTime,programScheduledItem.timeline.audioOffered, event, site, expirationDate, available from ScheduledItem where programScheduledItem.event= ? and item.family.code = ? and programScheduledItem.item.family.code = ? order by date",
+                new EntityStoreQuery("select distinct item.name, item.code from ScheduledItem  where programScheduledItem.event= ? and item.family.code = ? and programScheduledItem.item.family.code = ? order by item.name",
+                    new Object[]{currentEditedEvent, KnownItemFamily.AUDIO_RECORDING.getCode(), KnownItemFamily.TEACHING.getCode()}),
+                new EntityStoreQuery("select name, date, programScheduledItem.(startTime, endTime), item.code, programScheduledItem.timeline.startTime, published, programScheduledItem.name, programScheduledItem.timeline.endTime,programScheduledItem.timeline.audioOffered, event, site, expirationDate, available from ScheduledItem where programScheduledItem.event= ? and item.family.code = ? and programScheduledItem.item.family.code = ? order by date",
                     new Object[]{currentEditedEvent, KnownItemFamily.AUDIO_RECORDING.getCode(), KnownItemFamily.TEACHING.getCode()}),
                 new EntityStoreQuery("select url, scheduledItem.programScheduledItem, scheduledItem.item, scheduledItem.item.code ,scheduledItem.date, scheduledItem.published, durationMillis from Media where scheduledItem.event= ? and scheduledItem.item.family.code = ?", new Object[]{currentEditedEvent, KnownItemFamily.AUDIO_RECORDING.getCode()}))
             .onFailure(Console::log)
             .onSuccess(entityList -> Platform.runLater(() -> {
-                EntityList<Item> itemList = entityList[0];
+                EntityList<ScheduledItem> itemList = entityList[0];
                 EntityList<ScheduledItem> siList = entityList[1];
                 EntityList<Media> mediaList = entityList[2];
                 if (siList.isEmpty()) {
@@ -196,11 +199,15 @@ public class RecordingsView {
                     audioScheduledItemsReadFromDatabase.setAll(siList);
                     recordingsMediasReadFromDatabase.setAll(mediaList);
                     teachingsDates.setAll(siList.stream().map(EntityHasLocalDate::getDate).distinct().collect(Collectors.toList()));
-                    workingItems.setAll(itemList);
+                    workingItems.setAll(itemList.stream()
+                        .map(ScheduledItem::getItem) // Map ScheduledItem to Item
+                        .collect(Collectors.toCollection(() ->
+                            new TreeSet<>(Comparator.comparing(Item::getCode)))) // Ensure distinct items by code
+                    );
 
                     VBox languageListVBox = new VBox();
                     languageListVBox.setSpacing(10);
-                    itemList.forEach(currentItem -> {
+                    workingItems.forEach(currentItem -> {
                         HBox currentLanguageHBox = new HBox();
                         Label currentLanguageLabel = new Label(currentItem.getName());
                         MediaLinksManagement newLanguageLinksManagement = correspondenceBetweenLanguageAndLanguageLinkManagement.get(currentItem.getName());

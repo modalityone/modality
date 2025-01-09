@@ -46,8 +46,8 @@ public class MediaLinksForAudioRecordingsManagement extends MediaLinksManagement
     private ImageView imageView;
     private final ModalityCloudinary modalityCloudinary = new ModalityCloudinary(ModalityCloudinary.CloudinaryPrefix.AUDIO_COVER);
 
-    public MediaLinksForAudioRecordingsManagement(Item language, EntityStore entityStore, ObservableList<LocalDate> teachingsDates, ObservableList<ScheduledItem> teachingsScheduledItemsReadFromDatabase, ObservableList<Media> recordingsMediasReadFromDatabase, RecordingsView recordingsView) {
-        super(language.getCode(), entityStore, teachingsDates, teachingsScheduledItemsReadFromDatabase, recordingsMediasReadFromDatabase);
+    public MediaLinksForAudioRecordingsManagement(Item language, EntityStore entityStore, ObservableList<LocalDate> teachingsDates, ObservableList<ScheduledItem> audioScheduledItemsReadFromDatabase, ObservableList<Media> recordingsMediasReadFromDatabase, RecordingsView recordingsView) {
+        super(language.getCode(), entityStore, teachingsDates, audioScheduledItemsReadFromDatabase, recordingsMediasReadFromDatabase);
         languageItem = language;
         parentRecordingView = recordingsView;
         //Language code is 'audio-en", audio-fr", "audio-es", ...

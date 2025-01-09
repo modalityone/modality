@@ -28,13 +28,13 @@ import dev.webfx.stack.i18n.controls.I18nControls;
 import dev.webfx.stack.orm.datasourcemodel.service.DataSourceModelService;
 import dev.webfx.stack.orm.domainmodel.DataSourceModel;
 import dev.webfx.stack.orm.dql.DqlStatement;
-import dev.webfx.stack.orm.entity.EntityStore;
-import dev.webfx.stack.orm.entity.UpdateStore;
+import dev.webfx.stack.orm.entity.*;
 import dev.webfx.stack.orm.entity.binding.EntityBindings;
 import dev.webfx.stack.orm.entity.controls.entity.selector.EntityButtonSelector;
 import dev.webfx.stack.orm.reactive.mapping.entities_to_visual.ReactiveVisualMapper;
 import dev.webfx.stack.ui.dialog.DialogCallback;
 import dev.webfx.stack.ui.dialog.DialogUtil;
+import dev.webfx.stack.ui.validation.ValidationSupport;
 import javafx.application.Platform;
 import javafx.beans.InvalidationListener;
 import javafx.beans.binding.Bindings;
@@ -70,7 +70,6 @@ import one.modality.base.client.icons.SvgIcons;
 import one.modality.base.client.mainframe.fx.FXMainFrameDialogArea;
 import one.modality.base.client.util.dialog.ModalityDialog;
 import one.modality.base.client.util.masterslave.ModalitySlaveEditor;
-import dev.webfx.stack.ui.validation.ValidationSupport;
 import one.modality.base.shared.entities.*;
 import one.modality.base.shared.entities.markers.EntityHasLocalDate;
 import one.modality.crm.backoffice.organization.fx.FXOrganization;
@@ -98,7 +97,7 @@ final class ManageRecurringEventView {
 
     private static final String EVENT_COLUMNS = "[" +
         "{expression: 'state', label: 'Status', renderer: 'eventStateRenderer'}," +
-        "{expression: 'advertised', label: 'Advertised'},"+
+        "{expression: 'advertised', label: 'Advertised'}," +
         "{expression: 'name', label: 'Name'}," +
         "{expression: 'type', label: 'TypeOfEvent'}," +
         "{expression: 'venue.name', label: 'Location'}," +
@@ -114,8 +113,12 @@ final class ManageRecurringEventView {
     private final TextField timeOfTheEventTextField = I18nControls.bindI18nProperties(new TextField(), RecurringEventsI18nKeys.TimeOfTheEvent);
     private final DataSourceModel dataSourceModel = DataSourceModelService.getDefaultDataSourceModel();
     private final EntityStore entityStore = EntityStore.create(dataSourceModel);
-    private List<ScheduledItem> scheduledItemsReadFromDatabase = new ArrayList<>();
-    private final ObservableList<ScheduledItem> workingScheduledItems = FXCollections.observableArrayList();
+    private List<ScheduledItem> teachingsScheduledItemsReadFromDatabase = new ArrayList<>();
+    private List<ScheduledItem> audioScheduledItemsReadFromDatabase = new ArrayList<>();
+    private List<ScheduledItem> videoScheduledItemsReadFromDatabase = new ArrayList<>();
+    private final ObservableList<ScheduledItem> teachingsWorkingScheduledItems = FXCollections.observableArrayList();
+    private final ObservableList<ScheduledItem> audioWorkingScheduledItems = FXCollections.observableArrayList();
+    private final ObservableList<ScheduledItem> videoWorkingScheduledItems = FXCollections.observableArrayList();
     private final TextField durationTextField = I18nControls.bindI18nProperties(new TextField(), RecurringEventsI18nKeys.Duration);
     private final TextField bookingOpeningDateTextField = new TextField();
     private final TextField bookingOpeningTimeTextField = new TextField();
@@ -124,6 +127,8 @@ final class ManageRecurringEventView {
     private Label titleEventDetailsLabel;
     private Switch advertisedSwitch;
     private Switch registrationOpenSwitch;
+    private Switch audioCorrespondanceProgramSwitch;
+    private Switch videoCorrespondanceProgramSwitch;
     private Label siteLabel;
     private Button saveButton;
     private Button cancelButton;
@@ -140,9 +145,11 @@ final class ManageRecurringEventView {
     private Event currentObservedEvent;
     private Site eventSite;
     private Item recurringItem;
+    private int videoItemId=0;
+    private int audioItemId=0;
     private final UpdateStore updateStore = UpdateStore.createAbove(entityStore);
     private final ValidationSupport validationSupport = new ValidationSupport();
-    private final BooleanExpression isWorkingScheduledItemEmpty = ObservableLists.isEmpty(workingScheduledItems);
+    private final BooleanExpression isTeachingsWorkingScheduledItemEmpty = ObservableLists.isEmpty(teachingsWorkingScheduledItems);
     private final BooleanProperty isPictureDisplayed = new SimpleBooleanProperty(false);
     private final BooleanProperty isEventDeletable = new SimpleBooleanProperty(true);
     private EventState previousEventState;
@@ -176,8 +183,8 @@ final class ManageRecurringEventView {
             LocalTime startTime = LocalTime.parse(timeOfTheEventTextField.getText());
             int duration = Integer.parseInt(durationTextField.getText());
             LocalTime endTime = startTime.plusMinutes(duration);
-            for (int i = 0; i < workingScheduledItems.size(); i++) {
-                ScheduledItem si = workingScheduledItems.get(i);
+            for (int i = 0; i < teachingsWorkingScheduledItems.size(); i++) {
+                ScheduledItem si = teachingsWorkingScheduledItems.get(i);
                 //If the scheduledItem has attendance, we don't change the time.
                 if (si.getFieldValue("attendance") == null) {
                     BorderPane currentBorderPane = (BorderPane) calendarPane.getRecurringEventsVBox().getChildren().get(i);
@@ -236,7 +243,7 @@ final class ManageRecurringEventView {
             validationSupport.addRequiredInput(nameOfEventTextField);
             validationSupport.addValidationRule(FXProperties.compute(timeOfTheEventTextField.textProperty(), s1 -> isLocalTimeTextValid(timeOfTheEventTextField.getText())), timeOfTheEventTextField, I18n.i18nTextProperty("ValidationTimeFormatIncorrect")); // ???
             validationSupport.addValidationRule(FXProperties.compute(durationTextField.textProperty(), s -> isIntegerValid(durationTextField.getText())), durationTextField, I18n.i18nTextProperty("ValidationDurationIncorrect")); // ???
-            validationSupport.addValidationRule(isWorkingScheduledItemEmpty.not(), datesOfTheEventLabel, I18n.i18nTextProperty(RecurringEventsI18nKeys.ValidationSelectOneDate));
+            validationSupport.addValidationRule(isTeachingsWorkingScheduledItemEmpty.not(), datesOfTheEventLabel, I18n.i18nTextProperty(RecurringEventsI18nKeys.ValidationSelectOneDate));
             validationSupport.addValidationRule(FXProperties.compute(externalLinkTextField.textProperty(), s1 -> isValidUrl(externalLinkTextField.getText())), externalLinkTextField, I18n.i18nTextProperty("ValidationUrlIncorrect")); // ???
         }
     }
@@ -252,7 +259,7 @@ final class ManageRecurringEventView {
         RecurringEventRenderers.registerRenderers();
 
         eventVisualMapper = ReactiveVisualMapper.<Event>createPushReactiveChain(activity)
-            .always("{class: 'Event', alias: 'e', fields: '(select site.name from Timeline where event=e limit 1) as location'}")
+            .always("{class: 'Event', alias: 'e', fields: 'type.recurringItem, recurringWithAudio, recurringWithVideo, (select site.name from Timeline where event=e limit 1) as location'}")
             .always(FXOrganization.organizationProperty(), o -> DqlStatement.where("organization=?", o))
             .always(DqlStatement.where("type.recurringItem!=null and kbs3"))
             .setEntityColumns(EVENT_COLUMNS)
@@ -274,7 +281,9 @@ final class ManageRecurringEventView {
 
             @Override
             protected boolean computeValue() {
-                return updateStore.hasChanges() || isCloudPictureToBeUploaded.getValue() || isCloudPictureToBeDeleted.getValue();
+                boolean value = updateStore.hasChanges() || isCloudPictureToBeUploaded.getValue() || isCloudPictureToBeDeleted.getValue();
+                Console.log("value = " + value);
+                return value;
             }
         };
 
@@ -292,6 +301,7 @@ final class ManageRecurringEventView {
     private void displayEventDetails(Event e) {
         //Console.log("Display Event Called");
         currentSelectedEvent = e;
+
         //Event e can be null if for example we select on the gantt graph an event that is not a recurring event
         if (e == null) {
             eventDetailsVBox.setVisible(false);
@@ -306,18 +316,38 @@ final class ManageRecurringEventView {
 
         currentMode.set(EDIT_MODE);
         //We execute the query in batch, otherwise we can have synchronisation problem between the different threads
-        entityStore.<ScheduledItem>executeQuery(
-                "select item,date,startTime, site, endTime, event.(openingDate, shortDescription, description, state, advertised, kbs3, type.recurringItem, externalLink, venue.name), (select id from Attendance where scheduledItem=si limit 1) as attendance from ScheduledItem si where event=?", e)
+        entityStore.executeQueryBatch(
+                // Index 0: the  scheduledItem
+                new EntityStoreQuery("select item,date,startTime, site, programScheduledItem, bookableScheduledItem, endTime, event.(openingDate, shortDescription, description, state, advertised, kbs3, type.recurringItem, externalLink, venue.name), (select id from Attendance " +
+                    " where scheduledItem=si limit 1) as attendance " +
+                    " from ScheduledItem si where event=?", new Object[]{e}),
+                //Index 1: the video Item (we should have exactly 1)
+                new EntityStoreQuery("select Item where family=? and organization=?", new Object[]{KnownItemFamily.VIDEO.getPrimaryKey(),FXOrganization.getOrganization()}),
+                //Index 2: the audio Item (we should have exactly one that has the same language as the default language of the organization)
+                new EntityStoreQuery("select Item where family=? and organization=? and language=organization.language", new Object[]{KnownItemFamily.AUDIO_RECORDING.getPrimaryKey(),FXOrganization.getOrganization()}))
             .onFailure(Console::log)
-            .onSuccess(scheduledItems -> Platform.runLater(() -> {
+            .onSuccess(entityLists -> Platform.runLater(() -> {
+                EntityList<ScheduledItem> scheduledItems = entityLists[0];
+                EntityList<Item> videoItems = entityLists[1];
+                EntityList<Item> audioItems = entityLists[2];
+                if(!videoItems.isEmpty()) videoItemId = Short.toUnsignedInt((short) videoItems.get(0).getId().getPrimaryKey());
+                if(!audioItems.isEmpty()) audioItemId = Short.toUnsignedInt((short)  audioItems.get(0).getId().getPrimaryKey());
                 // we test if the selectedEvent==e, because, if a user click very fast from en event to another, there
                 // can be a sync pb between the result of the request from the database and the code executed
                 if (currentSelectedEvent == e) {
                     DatePicker datePicker = calendarPane.getDatePicker();
                     // We take the selected date from the database, and transform the result in a list of LocalDate,
                     // that we pass to the datePicker, so they appear selected in the calendar
-                    scheduledItemsReadFromDatabase = scheduledItems;
-                    List<LocalDate> bookedDates = scheduledItemsReadFromDatabase.stream().map(EntityHasLocalDate::getDate).collect(Collectors.toList());
+                    teachingsScheduledItemsReadFromDatabase = scheduledItems.stream()
+                        .filter(item -> KnownItemFamily.TEACHING.getCode().equals(item.getItem().getFamily().getCode())) // Adjust the getter methods as needed
+                        .collect(Collectors.toList());
+                    audioScheduledItemsReadFromDatabase = scheduledItems.stream()
+                        .filter(item -> KnownItemFamily.AUDIO_RECORDING.getCode().equals(item.getItem().getFamily().getCode())) // Adjust the getter methods as needed
+                        .collect(Collectors.toList());
+                    videoScheduledItemsReadFromDatabase = scheduledItems.stream()
+                        .filter(item -> KnownItemFamily.VIDEO.getCode().equals(item.getItem().getFamily().getCode())) // Adjust the getter methods as needed
+                        .collect(Collectors.toList());
+                    List<LocalDate> bookedDates = teachingsScheduledItemsReadFromDatabase.stream().map(EntityHasLocalDate::getDate).collect(Collectors.toList());
                     datePicker.setSelectedDates(bookedDates);
 
                     Function<LocalDate, Boolean> isDateBooked = localDate -> {
@@ -355,12 +385,14 @@ final class ManageRecurringEventView {
                         .entrySet().stream()
                         .max(Comparator.comparingLong(Map.Entry::getValue))
                         .map(Map.Entry::getKey);
-
-                    ScheduledItem firstScheduledItem = scheduledItemsReadFromDatabase.get(0);
-                    LocalTime startTime = firstScheduledItem.getStartTime();
-                    LocalTime endTime = firstScheduledItem.getEndTime();
-                    String duration = startTime == null || endTime == null ? "" : String.valueOf(ChronoUnit.MINUTES.between(startTime, endTime));
-                    durationTextField.setText(duration);
+                    String duration = "";
+                    if (!teachingsScheduledItemsReadFromDatabase.isEmpty()) {
+                        ScheduledItem firstScheduledItem = teachingsScheduledItemsReadFromDatabase.get(0);
+                        LocalTime startTime = firstScheduledItem.getStartTime();
+                        LocalTime endTime = firstScheduledItem.getEndTime();
+                        duration = startTime == null || endTime == null ? "" : String.valueOf(ChronoUnit.MINUTES.between(startTime, endTime));
+                        durationTextField.setText(duration);
+                    }
                     //We initialise the value of defaultStartTime after the setText on durationTextField, otherwise the listener called in durationTextField will overide the value we want to set
                     if (mostFrequentStartTime.isPresent()) {
                         defaultStartTime = mostFrequentStartTime.get();
@@ -391,13 +423,17 @@ final class ManageRecurringEventView {
                     //We add the event and timeline to the updateStore, so they will be modified when changed
                     currentEditedEvent = updateStore.updateEntity(e);
 
-                    workingScheduledItems.setAll(scheduledItemsReadFromDatabase.stream().map(updateStore::updateEntity).collect(Collectors.toList()));
-                    sortWorkingScheduledItemsByDate();
+                    teachingsWorkingScheduledItems.setAll(teachingsScheduledItemsReadFromDatabase.stream().map(updateStore::updateEntity).collect(Collectors.toList()));
+                    audioWorkingScheduledItems.setAll(audioScheduledItemsReadFromDatabase.stream().map(updateStore::updateEntity).collect(Collectors.toList()));
+                    videoWorkingScheduledItems.setAll(videoScheduledItemsReadFromDatabase.stream().map(updateStore::updateEntity).collect(Collectors.toList()));
+
+                    sortTeachingWorkingScheduledItemsByDate();
                     ScheduledItem si = null;
-                    if (!workingScheduledItems.isEmpty()) si = workingScheduledItems.get(0);
+                    if (!teachingsWorkingScheduledItems.isEmpty()) si = teachingsWorkingScheduledItems.get(0);
                     if (si != null) eventSite = si.getSite();
+                    else eventSite = currentEditedEvent.getVenue();
                     //In case the scheduledItem has no startTime and endTime, we position this value from the timeline
-                    workingScheduledItems.forEach(scheduledItem -> {
+                    teachingsWorkingScheduledItems.forEach(scheduledItem -> {
                         if (scheduledItem.getStartTime() == null) {
                             scheduledItem.setStartTime(defaultStartTime);
                             scheduledItem.setEndTime(defaultEndTime);
@@ -414,6 +450,9 @@ final class ManageRecurringEventView {
                     else isAdvertised = currentEditedEvent.isAdvertised();
                     advertisedSwitch.setSelected(isAdvertised);
                     registrationOpenSwitch.setSelected(currentEditedEvent.getState() == EventState.OPEN);
+                    audioCorrespondanceProgramSwitch.setSelected(currentEditedEvent.isRecurringWithAudio() != null && currentEditedEvent.isRecurringWithAudio());
+                    videoCorrespondanceProgramSwitch.setSelected(currentEditedEvent.isRecurringWithVideo() != null && currentEditedEvent.isRecurringWithAudio());
+
                     //We try to load the image from cloudinary if it exists
                     loadEventImageIfExists();
                 }
@@ -438,7 +477,7 @@ final class ManageRecurringEventView {
         defaultStartTime = null;
         defaultEndTime = null;
         areWeDeleting = false;
-        workingScheduledItems.clear();
+        teachingsWorkingScheduledItems.clear();
         // We reset the datePicker, otherwise it will keep the settings of the previous event
         DatePicker datePicker = calendarPane.getDatePicker();
         datePicker.clearSelection();
@@ -540,6 +579,7 @@ final class ManageRecurringEventView {
      */
     public Node buildContainer() {
         BorderPane mainFrame = new BorderPane();
+        mainFrame.getStyleClass().add("recurring-event");
         //Displaying The title of the frame
         Label title = I18nControls.newLabel(RecurringEventsI18nKeys.EventTitle);
         title.setPadding(new Insets(30));
@@ -568,6 +608,7 @@ final class ManageRecurringEventView {
             entityStore.executeQuery("select recurringItem, organization from EventType where recurringItem!=null and organization=?", FXOrganization.getOrganization())
                 .onFailure(Console::log)
                 .onSuccess(e -> Platform.runLater(() -> {
+                    //TODO: if there is several type of recurring EventType for an organization, create an UI that allow to select which one we choose.
                     EventType eventType = (EventType) e.get(0);
                     recurringItem = eventType.getRecurringItem();
                     currentEditedEvent.setOrganization(eventType.getOrganization());
@@ -605,8 +646,7 @@ final class ManageRecurringEventView {
                                 site.setFieldValue("hideDates", true);
                                 site.setFieldValue("forceSoldout", false);
                                 site.setFieldValue("main", true);
-                                //TODO to change the hardCodedValue (3 is for teachings)
-                                site.setFieldValue("itemFamily", 3);
+                                site.setFieldValue("itemFamily", KnownItemFamily.TEACHING.getPrimaryKey());
                                 //We had in the database the site now (otherwise too complicated to manage with the actual components)
                                 updateStoreForSite.submitChanges().onSuccess((batch -> Platform.runLater(() -> {
                                         Object newSiteId = batch.getArray()[0].getGeneratedKeys()[0];
@@ -634,7 +674,7 @@ final class ManageRecurringEventView {
                                     .map(Site::getName)
                                     .collect(Collectors.toList());
                                 if (searchTextField.getText() != null && searchTextField.getText().length() > 2 && !siteNames.contains(searchTextField.getText())) {
-                                    System.out.println("We add : " + searchTextField.getText());
+                                    Console.log("We add : " + searchTextField.getText());
                                     addSitePane.setVisible(true);
                                     addSitePane.setManaged(true);
                                 } else {
@@ -648,7 +688,7 @@ final class ManageRecurringEventView {
                     siteSelector.selectedItemProperty().addListener(observable -> {
                         eventSite = siteSelector.getSelectedItem();
                         currentEditedEvent.setVenue(eventSite);
-                        workingScheduledItems.forEach(si -> si.setSite(eventSite));
+                        teachingsWorkingScheduledItems.forEach(si -> si.setSite(eventSite));
                     });
                     locationHBox.getChildren().setAll(siteLabel, siteSelector.getButton());
                 }));
@@ -669,7 +709,7 @@ final class ManageRecurringEventView {
                 ModalityDialog.showConfirmationDialog(RecurringEventsI18nKeys.DeleteConfirmation, () -> {
                     areWeDeleting = true;
                     updateStore.cancelChanges();
-                    scheduledItemsReadFromDatabase.forEach(updateStore::deleteEntity);
+                    teachingsScheduledItemsReadFromDatabase.forEach(updateStore::deleteEntity);
                     updateStore.deleteEntity(currentEditedEvent);
                     updateStore.submitChanges()
                         .onFailure(x -> Platform.runLater(() -> {
@@ -864,16 +904,13 @@ final class ManageRecurringEventView {
 
         Label advertisedLabel = I18nControls.newLabel(RecurringEventsI18nKeys.Advertised);
         advertisedLabel.setPadding(new Insets(0, 20, 0, 0));
-        advertisedLabel.setPrefWidth(labelWidth);
+        advertisedLabel.setPrefWidth(labelWidth + 50);
         advertisedSwitch = new Switch();
         advertisedSwitch.selectedProperty().addListener(obs -> currentEditedEvent.setAdvertised(advertisedSwitch.selectedProperty().get()));
-        HBox line5 = new HBox(advertisedLabel, advertisedSwitch);
-        line5.setPadding(new Insets(20, 0, 0, 0));
-        line5.setAlignment(Pos.CENTER_LEFT);
 
         Label publishLabel = I18nControls.newLabel(RecurringEventsI18nKeys.Published);
-        publishLabel.setPadding(new Insets(0, 20, 0, 0));
-        publishLabel.setPrefWidth(labelWidth);
+        publishLabel.setPadding(new Insets(0, 20, 0, 40));
+        publishLabel.setPrefWidth(labelWidth + 60);
         registrationOpenSwitch = new Switch();
         registrationOpenSwitch.selectedProperty().addListener(obs -> {
             if (registrationOpenSwitch.selectedProperty().get()) {
@@ -886,7 +923,23 @@ final class ManageRecurringEventView {
                 }
             }
         });
-        HBox line6 = new HBox(publishLabel, registrationOpenSwitch);
+
+        HBox line5 = new HBox(advertisedLabel, advertisedSwitch, publishLabel, registrationOpenSwitch);
+        line5.setPadding(new Insets(20, 0, 0, 0));
+        line5.setAlignment(Pos.CENTER_LEFT);
+
+        Label audioCorrespondanceProgramLabel = I18nControls.newLabel(RecurringEventsI18nKeys.AudioCorrespondanceProgram);
+        audioCorrespondanceProgramLabel.setPadding(new Insets(0, 20, 0, 0));
+        audioCorrespondanceProgramLabel.setPrefWidth(labelWidth + 50);
+        audioCorrespondanceProgramSwitch = new Switch();
+        audioCorrespondanceProgramSwitch.selectedProperty().addListener(obs -> currentEditedEvent.setRecurringWithAudio(audioCorrespondanceProgramSwitch.selectedProperty().get()));
+
+        Label videoCorrespondanceProgramLabel = I18nControls.newLabel(RecurringEventsI18nKeys.VideoCorrespondanceProgram);
+        videoCorrespondanceProgramLabel.setPadding(new Insets(0, 20, 0, 40));
+        videoCorrespondanceProgramLabel.setPrefWidth(labelWidth + 60);
+        videoCorrespondanceProgramSwitch = new Switch();
+        videoCorrespondanceProgramSwitch.selectedProperty().addListener(obs -> currentEditedEvent.setRecurringWithVideo(videoCorrespondanceProgramSwitch.selectedProperty().get()));
+        HBox line6 = new HBox(audioCorrespondanceProgramLabel, audioCorrespondanceProgramSwitch, videoCorrespondanceProgramLabel, videoCorrespondanceProgramSwitch);
         line6.setPadding(new Insets(20, 0, 0, 0));
         line6.setAlignment(Pos.CENTER_LEFT);
 
@@ -921,6 +974,7 @@ final class ManageRecurringEventView {
                     previousEventState = EventState.DRAFT;
                     currentEditedEvent.setState(EventState.DRAFT);
                 }
+                synchroniseAudioVideoScheduledItemLists();
                 submitUpdateStoreChanges();
                 //If we add a new Event, put the selection on this event.
                 // if(currentMode.get()== ADD_MODE) eventVisualMapper.setSelectedEntity(currentEditedEvent);
@@ -950,10 +1004,87 @@ final class ManageRecurringEventView {
         return ControlUtil.createVerticalScrollPaneWithPadding(10, mainFrame);
     }
 
+    private void synchroniseAudioVideoScheduledItemLists() {
+        //We synchronise the audios and videos scheduled Item with the teachings ScheduledItem in the program
+        teachingsWorkingScheduledItems.forEach(teachingScheduledItem -> {
+            //First the audio
+            if (currentEditedEvent.isRecurringWithAudio() != null && currentEditedEvent.isRecurringWithAudio()) {
+                //Here we synchronise the audio
+                //1st case, we find an audioScheduledItem whose teachingScheduledItem is the current teaching ScheduledItem or the date is the same
+                if (audioWorkingScheduledItems.stream().anyMatch(currentAudioScheduledItem -> currentAudioScheduledItem.getProgramScheduledItem().equals(teachingScheduledItem) || currentAudioScheduledItem.getDate().equals(teachingScheduledItem.getDate()))) {
+                    ScheduledItem audioScheduledItem = audioWorkingScheduledItems.stream().filter(currentAudioScheduledItem -> currentAudioScheduledItem.getDate().equals(teachingScheduledItem.getDate())).findFirst().get();
+                    //We define the link to the teachingScheduledItem again in case the teaching scheduleItem has been deleted or recreated, as long it is the same date, we know it refers to the teachings ScheduledItem
+                    audioScheduledItem.setProgramScheduledItem(teachingScheduledItem);
+                    audioScheduledItem.setBookableScheduledItem(teachingScheduledItem);
+                } else {
+                    //we need to create one
+                    ScheduledItem audioScheduledItem = updateStore.insertEntity(ScheduledItem.class);
+                    audioScheduledItem.setDate(teachingScheduledItem.getDate());
+                    audioScheduledItem.setSite(teachingScheduledItem.getSite());
+                    audioScheduledItem.setEvent(teachingScheduledItem.getEvent());
+                    audioScheduledItem.setItem(audioItemId); // For now hardcoded, 851 is the audio_en for NKT
+                    audioScheduledItem.setBookableScheduledItem(teachingScheduledItem);
+                    audioScheduledItem.setProgramScheduledItem(teachingScheduledItem);
+                    audioWorkingScheduledItems.add(audioScheduledItem);
+                }
+            }
+            //Then the video
+            if (currentEditedEvent.isRecurringWithVideo() != null && currentEditedEvent.isRecurringWithVideo()) {
+                //1st case, we find an videocheduledItem whose teachingScheduledItem is the current teaching ScheduledItem or the date is the same
+                if (videoWorkingScheduledItems.stream().anyMatch(currentVideoScheduledItem -> currentVideoScheduledItem.getProgramScheduledItem().equals(teachingScheduledItem) || currentVideoScheduledItem.getDate().equals(teachingScheduledItem.getDate()))) {
+                    ScheduledItem videoScheduledItem = videoWorkingScheduledItems.stream().filter(currentVideoScheduledItem -> currentVideoScheduledItem.getDate().equals(teachingScheduledItem.getDate())).findFirst().get();
+                    //We define the link to the teachingScheduledItem again in case the teaching scheduleItem has been deleted or recreated, as long it is the same date, we know it refers to the teachings ScheduledItem
+                    videoScheduledItem.setProgramScheduledItem(teachingScheduledItem);
+                    videoScheduledItem.setBookableScheduledItem(teachingScheduledItem);
+                } else {
+                    //we need to create one
+                    ScheduledItem videoScheduledItem = updateStore.insertEntity(ScheduledItem.class);
+                    videoScheduledItem.setDate(teachingScheduledItem.getDate());
+                    videoScheduledItem.setSite(teachingScheduledItem.getSite());
+                    videoScheduledItem.setEvent(teachingScheduledItem.getEvent());
+                    videoScheduledItem.setItem(videoItemId); // For now hardcoded, 1165 is the video for NKT
+                    videoScheduledItem.setBookableScheduledItem(teachingScheduledItem);
+                    videoScheduledItem.setProgramScheduledItem(teachingScheduledItem);
+                    videoWorkingScheduledItems.add(videoScheduledItem);
+                }
+            }
+        });
+
+        //Then we delete the one that are not in the program
+        //First audio
+        if (currentEditedEvent.isRecurringWithAudio() != null && currentEditedEvent.isRecurringWithAudio()) {
+            audioWorkingScheduledItems.forEach(audioScheduledItem -> {
+                if (teachingsWorkingScheduledItems.stream().noneMatch(currentTeachingScheduledItem -> audioScheduledItem.getDate().equals(currentTeachingScheduledItem.getDate()))) {
+                    updateStore.deleteEntity(audioScheduledItem);
+                }
+            });
+        }
+        //then video
+        if (currentEditedEvent.isRecurringWithVideo() != null && currentEditedEvent.isRecurringWithVideo()) {
+            videoWorkingScheduledItems.forEach(videoScheduledItem -> {
+                if (teachingsWorkingScheduledItems.stream().noneMatch(currentTeachingScheduledItem -> videoScheduledItem.getDate().equals(currentTeachingScheduledItem.getDate()))) {
+                    updateStore.deleteEntity(videoScheduledItem);
+                }
+            });
+        }
+
+        //Case where the recurringEvent has no audio associated
+        if (currentEditedEvent.isRecurringWithAudio() == null || !currentEditedEvent.isRecurringWithAudio()) {
+            audioWorkingScheduledItems.forEach(updateStore::deleteEntity);
+            audioWorkingScheduledItems.clear();
+        }
+        //Case where the recurringEvent has no video associated
+        if (currentEditedEvent.isRecurringWithVideo() == null || !currentEditedEvent.isRecurringWithVideo()) {
+            videoWorkingScheduledItems.forEach(updateStore::deleteEntity);
+            videoWorkingScheduledItems.clear();
+        }
+    }
+
     private void submitUpdateStoreChanges() {
         updateStore.submitChanges()
             .onFailure(Console::log)
             .onSuccess(x -> Platform.runLater(() -> {
+                Console.log("Submit successful");
                 Object imageTag = currentEditedEvent.getId().getPrimaryKey();
                 deleteCloudPictureIfNecessary(imageTag);
                 uploadCloudPictureIfNecessary(imageTag);
@@ -961,7 +1092,7 @@ final class ManageRecurringEventView {
                 isCloudPictureToBeUploaded.setValue(false);
                 cloudPictureFileToUpload = null;
                 eventVisualMapper.requestSelectedEntity(currentEditedEvent);
-                displayEventDetails(currentEditedEvent);
+                // displayEventDetails(currentEditedEvent);
             }));
     }
 
@@ -969,8 +1100,8 @@ final class ManageRecurringEventView {
      * This method is used to sort the list workingScheduledItems by Date
      * This method is used to sort the list workingScheduledItems by Date
      */
-    private void sortWorkingScheduledItemsByDate() {
-        workingScheduledItems.sort(Comparator.comparing(EntityHasLocalDate::getDate));
+    private void sortTeachingWorkingScheduledItemsByDate() {
+        teachingsWorkingScheduledItems.sort(Comparator.comparing(EntityHasLocalDate::getDate));
     }
 
     /**
@@ -985,7 +1116,7 @@ final class ManageRecurringEventView {
         ScrollPane recurringEventsScrollPane = new ScrollPane();
         DatePicker datePicker = new DatePicker(new DatePickerOptions()
             .setMultipleSelectionAllowed(true)
-            .setPastDatesSelectionAllowed(false)
+            .setPastDatesSelectionAllowed(true)
             .setApplyBorderStyle(false)
             .setApplyMaxSize(false)
             .setSortSelectedDates(true)
@@ -996,14 +1127,14 @@ final class ManageRecurringEventView {
             TextTheme.createSecondaryTextFacet(daySelected).style();
             setMaxWidth(500);
             setMinWidth(500);
-            workingScheduledItems.addListener((ListChangeListener<ScheduledItem>) change -> {
+            teachingsWorkingScheduledItems.addListener((ListChangeListener<ScheduledItem>) change -> {
                 // We call the listener only when the object has been loaded and not during the construction
                 // ie when currentEditedEvent=currentSelectedEvent
                 // isWorkingScheduledItemEmpty.set(workingScheduledItems.isEmpty());
                 if (currentEditedEvent != null && (currentEditedEvent == currentObservedEvent)) {
                     recurringEventsVBox.getChildren().clear();
-                    List<LocalDate> dates = workingScheduledItems.stream().map(EntityHasLocalDate::getDate).collect(Collectors.toList());
-                    if (isWorkingScheduledItemEmpty.not().getValue()) {
+                    List<LocalDate> dates = teachingsWorkingScheduledItems.stream().map(EntityHasLocalDate::getDate).collect(Collectors.toList());
+                    if (isTeachingsWorkingScheduledItemEmpty.not().getValue()) {
                         if (!Collections.min(dates).equals(currentEditedEvent.getStartDate()))
                             currentEditedEvent.setStartDate(Collections.min(dates));
                         if (!Collections.max(dates).equals(currentEditedEvent.getEndDate()))
@@ -1036,23 +1167,25 @@ final class ManageRecurringEventView {
                         if (change.wasAdded()) {
                             LocalDate date = change.getAddedSubList().get(0);
                             //Here we haven't found it in the scheduledItemsReadFromDatabase, so we create it.
-                            ScheduledItem scheduledItem = updateStore.insertEntity(ScheduledItem.class);
-                            scheduledItem.setDate(date);
-                            scheduledItem.setSite(eventSite);
-                            scheduledItem.setEvent(currentEditedEvent);
-                            scheduledItem.setItem(recurringItem);
-                            scheduledItem.setStartTime(defaultStartTime);
-                            scheduledItem.setEndTime(defaultEndTime);
-                            workingScheduledItems.add(scheduledItem);
-                            sortWorkingScheduledItemsByDate();
+                            ScheduledItem teachingScheduledItem = updateStore.insertEntity(ScheduledItem.class);
+                            teachingScheduledItem.setDate(date);
+                            teachingScheduledItem.setSite(eventSite);
+                            teachingScheduledItem.setEvent(currentEditedEvent);
+                            teachingScheduledItem.setItem(recurringItem);
+                            teachingScheduledItem.setStartTime(defaultStartTime);
+                            teachingScheduledItem.setEndTime(defaultEndTime);
+                            //We set up the name of the scheduledItem to the name of the event. This name will be used for the audios and videos linked scheduledItem if there are
+                            teachingScheduledItem.setName(currentEditedEvent.getName());
+                            teachingsWorkingScheduledItems.add(teachingScheduledItem);
+                            sortTeachingWorkingScheduledItemsByDate();
                         }
                         if (change.wasRemoved()) {
                             //We remove from the updateStore and the ScheduledItem
                             LocalDate date = change.getRemoved().get(0);
-                            for (ScheduledItem currentScheduledItem : workingScheduledItems) {
+                            for (ScheduledItem currentScheduledItem : teachingsWorkingScheduledItems) {
                                 if (currentScheduledItem.getDate().equals(date)) {
                                     updateStore.deleteEntity(currentScheduledItem);
-                                    workingScheduledItems.remove(currentScheduledItem);
+                                    teachingsWorkingScheduledItems.remove(currentScheduledItem);
                                     break;
                                 }
                             }
@@ -1069,7 +1202,7 @@ final class ManageRecurringEventView {
             //We bind the workingScheduledItems and children of the recurringEventsVBox
             //so when the workingScheduledItems is updated, we call the drawScheduledItem method
             //the is used to display date and start time of a scheduledItm
-            ObservableLists.bindConverted(recurringEventsVBox.getChildren(), workingScheduledItems, this::drawScheduledItem);
+            ObservableLists.bindConverted(recurringEventsVBox.getChildren(), teachingsWorkingScheduledItems, this::drawScheduledItem);
         }
         //TODO, we replace the listener added in the function bellow by a class Listener qui parcours la liste des workingScheduledItems,
         // et récupère le textField Correspondant dans la récurringEventsVBox (même indice i), puis on travaille avec cet élément.

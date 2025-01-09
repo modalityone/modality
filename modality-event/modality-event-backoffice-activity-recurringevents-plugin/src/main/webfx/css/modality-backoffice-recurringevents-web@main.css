@@ -16,3 +16,7 @@
     color: #FF0404;
     font-size: 9px;
 }
+
+.webfx-datepicker .background {
+    background-color: transparent;
+}

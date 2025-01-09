@@ -8,9 +8,11 @@ import dev.webfx.kit.util.properties.FXProperties;
 import dev.webfx.kit.util.properties.ObservableLists;
 import dev.webfx.platform.console.Console;
 import dev.webfx.platform.uischeduler.UiScheduler;
+import dev.webfx.platform.util.Numbers;
 import dev.webfx.platform.windowhistory.WindowHistory;
 import dev.webfx.stack.i18n.I18n;
 import dev.webfx.stack.i18n.controls.I18nControls;
+import dev.webfx.stack.orm.entity.Entities;
 import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.ObjectProperty;
 import javafx.beans.property.SimpleBooleanProperty;
@@ -27,14 +29,14 @@ import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
 import one.modality.base.client.i18n.ModalityI18nKeys;
 import one.modality.base.client.icons.SvgIcons;
-import one.modality.base.shared.entities.*;
+import one.modality.base.shared.entities.Attendance;
+import one.modality.base.shared.entities.Document;
+import one.modality.base.shared.entities.Item;
+import one.modality.base.shared.entities.ScheduledItem;
 import one.modality.base.shared.entities.formatters.EventPriceFormatter;
 import one.modality.ecommerce.client.i18n.EcommerceI18nKeys;
 import one.modality.ecommerce.document.service.DocumentAggregate;
-import one.modality.event.client.recurringevents.FXPersonToBook;
-import one.modality.event.client.recurringevents.RecurringEventsI18nKeys;
-import one.modality.event.client.recurringevents.WorkingBooking;
-import one.modality.event.client.recurringevents.WorkingBookingHistoryHelper;
+import one.modality.event.client.recurringevents.*;
 import one.modality.event.frontoffice.activities.booking.BookingI18nKeys;
 import one.modality.event.frontoffice.activities.booking.fx.FXGuestToBook;
 import one.modality.event.frontoffice.activities.booking.process.account.CheckoutAccountRouting;
@@ -54,6 +56,8 @@ final class Step2CheckoutSlide extends StepSlide {
     private final GuestPanel guestPanel = new GuestPanel();
     private final Button submitButton = Bootstrap.largeSuccessButton(I18nControls.newButton(ModalityI18nKeys.Submit));
     private final BooleanProperty step1PersonToBookWasShownProperty = new SimpleBooleanProperty();
+    private boolean bookAsGuestAllowed = true;
+    private boolean displayOnlySummary = false;
 
     public Step2CheckoutSlide(BookEventActivity bookEventActivity) {
         super(bookEventActivity);
@@ -71,7 +75,7 @@ final class Step2CheckoutSlide extends StepSlide {
     }
 
     @Override
-    void buildSlideUi() { // Called only once
+    public void buildSlideUi() { // Called only once
         mainVbox.setMaxWidth(MAX_SLIDE_WIDTH);
 
         ColumnConstraints c1 = new ColumnConstraints();
@@ -93,12 +97,16 @@ final class Step2CheckoutSlide extends StepSlide {
 
         // Adding the container that will display the CheckoutAccountActivity (and eventually the login page before)
         BorderPane signInContainer = new BorderPane();
+        MonoPane signInContent = new MonoPane();
         Label loginLabel = Bootstrap.textPrimary(Bootstrap.strong(I18nControls.newLabel(BookingI18nKeys.LoginBeforeBooking)));
         Hyperlink orGuestLink = Bootstrap.textPrimary(I18nControls.newHyperlink(BookingI18nKeys.OrBookAsGuest));
-        VBox signIntopVBox = new VBox(10, loginLabel, orGuestLink);
+        VBox signIntopVBox = new VBox(10, loginLabel);
+        if (bookAsGuestAllowed)
+            signIntopVBox.getChildren().add(orGuestLink);
         signIntopVBox.setAlignment(Pos.TOP_CENTER);
         BorderPane.setMargin(signIntopVBox, new Insets(0, 0, 20, 0));
         signInContainer.setTop(signIntopVBox);
+        signInContainer.setCenter(signInContent);
 
         guestPanel.setOnSubmit(event -> {
             Document document = getWorkingBooking().getLastestDocumentAggregate().getDocument();
@@ -126,14 +134,19 @@ final class Step2CheckoutSlide extends StepSlide {
         });
 
         CheckBox facilityFeeCheckBox = I18nControls.newCheckBox(BookingI18nKeys.FacilityFee);
+        facilityFeeCheckBox.setVisible(false);
+        facilityFeeCheckBox.setManaged(false);
         VBox.setMargin(facilityFeeCheckBox, new Insets(50, 0, 50, 0));
         Document document = getWorkingBooking().getLastestDocumentAggregate().getDocument();
-        facilityFeeCheckBox.setSelected(document.isPersonFacilityFee());
-        facilityFeeCheckBox.setOnAction(e -> {
-            getWorkingBooking().applyFacilityFeeRate(facilityFeeCheckBox.isSelected());
-            rebuildSummaryGridPane();
-        });
-
+        if (document.isPersonFacilityFee() != null) {
+            facilityFeeCheckBox.setSelected(document.isPersonFacilityFee());
+            facilityFeeCheckBox.setOnAction(e -> {
+                getWorkingBooking().applyFacilityFeeRate(facilityFeeCheckBox.isSelected());
+                rebuildSummaryGridPane();
+            });
+            facilityFeeCheckBox.setVisible(true);
+            facilityFeeCheckBox.setManaged(true);
+        }
         submitButton.setOnAction(event -> submit());
         // The submit button is disabled if there is nothing to pay and no new changes on the booking
         submitButton.disableProperty().bind(FXProperties.combine(
@@ -149,11 +162,11 @@ final class Step2CheckoutSlide extends StepSlide {
             flipPane
         );
 
-        signInContainer.centerProperty().bind(checkoutAccountMountNodeProperty); // managed by sub-router
+        signInContent.contentProperty().bind(checkoutAccountMountNodeProperty); // managed by sub-router
 
         FXProperties.runNowAndOnPropertyChange(personToBook -> {
             boolean loggedIn = personToBook != null; // Means that the user is logged in with an account in Modality
-            if (!loggedIn && signInContainer.getCenter() == null) {
+            if (!loggedIn && signInContent.getContent() == null) {
                 WindowHistory.getProvider().push(CheckoutAccountRouting.getPath());
             }
             flipPane.setVisible(!loggedIn);
@@ -191,9 +204,9 @@ final class Step2CheckoutSlide extends StepSlide {
             addExistingTotalLine();
         }
 
+
         // SECOND PART: WHAT WE BOOK AT THIS STEP
         noDiscountTotalPrice += addAttendanceRows(documentAggregate.getNewAttendancesStream(), false);
-
         // THIRD PART: DISCOUNT, IF ANY
         int total = workingBookingProperties.getTotal();
         if (total < noDiscountTotalPrice) {
@@ -205,8 +218,14 @@ final class Step2CheckoutSlide extends StepSlide {
             );
         }
 
-
         addNewTotalLine();
+    }
+
+    private void addSummaryLine(int price) {
+        Label nameLabel = new Label(getWorkingBooking().getEvent().getName());
+        Label priceLabel = new Label(EventPriceFormatter.formatWithCurrency(price, getWorkingBooking().getEvent()));
+
+        addRow(nameLabel, priceLabel, null);
     }
 
     private int addAttendanceRows(Stream<Attendance> attendanceStream, boolean existing) {
@@ -214,55 +233,70 @@ final class Step2CheckoutSlide extends StepSlide {
         WorkingBooking workingBooking = getWorkingBooking();
 
         int[] totalPrice = {0};
+        int eventId = Numbers.toInteger(Entities.getPrimaryKey(getEvent().getType()));
+        if (eventId == KnownEventType.RECURRING_EVENT.getTypeId()) {
+            attendanceStream.forEach(a -> {
+                ScheduledItem scheduledItem = a.getScheduledItem();
+                LocalDate date = scheduledItem.getDate();
+                Item item = scheduledItem.getItem();
+                String dateFormatted = I18n.getI18nText(RecurringEventsI18nKeys.DateFormatted1, I18n.getI18nText(date.getMonth().name()), date.getDayOfMonth());
+                Label name = new Label(item.getName() + " - " + dateFormatted + (existing ? " (already booked)" : ""));
+                int dailyRatePrice = workingBookingProperties.getDailyRatePrice();
+                totalPrice[0] += dailyRatePrice;
+                Label price = new Label(EventPriceFormatter.formatWithCurrency(dailyRatePrice, getEvent()));
 
-        attendanceStream.forEach(a -> {
-            ScheduledItem scheduledItem = a.getScheduledItem();
-            LocalDate date = scheduledItem.getDate();
-            Item item = scheduledItem.getItem();
-            String dateFormatted = I18n.getI18nText(RecurringEventsI18nKeys.DateFormatted1, I18n.getI18nText(date.getMonth().name()), date.getDayOfMonth());
-            Label name = new Label(item.getName() + " - " + dateFormatted + (existing ? " (already booked)" : ""));
-            int dailyRatePrice = workingBookingProperties.getDailyRatePrice();
-            totalPrice[0] += dailyRatePrice;
-            Label price = new Label(EventPriceFormatter.formatWithCurrency(dailyRatePrice, getEvent()));
+                Hyperlink trashOption = new Hyperlink();
+                trashOption.setGraphic(SvgIcons.setSVGPathFill(SvgIcons.createTrashSVGPath(), Color.RED));
+                trashOption.setOnAction(event -> {
+                    workingBooking.removeAttendance(a);
+                    if (!existing) {
+                        getBookableDatesUi().removeClickedDate(date);
+                    }
+                    rebuildSummaryGridPane();
+                });
 
-            Hyperlink trashOption = new Hyperlink();
-            trashOption.setGraphic(SvgIcons.setSVGPathFill(SvgIcons.createTrashSVGPath(), Color.RED));
-            trashOption.setOnAction(event -> {
-                workingBooking.removeAttendance(a);
-                if (!existing) {
-                    getBookableDatesUi().removeClickedDate(date);
+                if (existing) {
+                    trashOption.disableProperty().bind(FXProperties.compute(workingBookingProperties.previousBalanceProperty(), previousBalance ->
+                        previousBalance.intValue() <= 0 || date.isBefore(LocalDate.now())
+                    ));
                 }
-                rebuildSummaryGridPane();
+                addRow(name, price, trashOption);
+                GridPane.setHalignment(trashOption, HPos.CENTER);
             });
+        }
 
-            if (existing) {
-                trashOption.disableProperty().bind(FXProperties.compute(workingBookingProperties.previousBalanceProperty(), previousBalance ->
-                    previousBalance.intValue() <= 0 || date.isBefore(LocalDate.now())
-                ));
-            }
+        if (eventId == KnownEventType.STTP.getTypeId()) {
+            workingBookingProperties.updateAll();
+            Label name = new Label(getEvent().getName() + (existing ? " - (already booked)" : ""));
+            //TODO; calculate the price with the PriceCalculatorMethod using the list of attendance
+            int price = workingBookingProperties.getTotal();
+            Label priceLabel = new Label(EventPriceFormatter.formatWithCurrency(price, getEvent()));
+            addRow(name, priceLabel, null);
+            totalPrice[0] += price;
+        }
 
-            addRow(name, price, trashOption);
-            GridPane.setHalignment(trashOption, HPos.CENTER);
-        });
+            return totalPrice[0];
+    }
 
-        return totalPrice[0];
+    private RecurringEventSchedule getRecurringEventSchedule() {
+        return null;
     }
 
     private void addExistingTotalLine() {
         WorkingBookingProperties workingBookingProperties = getWorkingBookingProperties();
         addTotalLine(
-            "TotalOnPreviousBooking", workingBookingProperties.formattedPreviousTotalProperty(),
-            "Deposit", workingBookingProperties.formattedDepositProperty(),
-            "BalanceOnPreviousBooking", workingBookingProperties.formattedPreviousBalanceProperty()
+            BookingI18nKeys.TotalOnPreviousBooking, workingBookingProperties.formattedPreviousTotalProperty(),
+            BookingI18nKeys.Deposit, workingBookingProperties.formattedDepositProperty(),
+            BookingI18nKeys.BalanceOnPreviousBooking, workingBookingProperties.formattedPreviousBalanceProperty()
         );
     }
 
     private void addNewTotalLine() {
         WorkingBookingProperties workingBookingProperties = getWorkingBookingProperties();
         addTotalLine(
-            "TotalPrice", workingBookingProperties.formattedTotalProperty(),
-            "Deposit", workingBookingProperties.formattedDepositProperty(),
-            "GeneralBalance", workingBookingProperties.formattedBalanceProperty()
+            BookingI18nKeys.TotalPrice, workingBookingProperties.formattedTotalProperty(),
+            BookingI18nKeys.Deposit, workingBookingProperties.formattedDepositProperty(),
+            BookingI18nKeys.GeneralBalance, workingBookingProperties.formattedBalanceProperty()
         );
     }
 
@@ -271,7 +305,8 @@ final class Step2CheckoutSlide extends StepSlide {
         GridPane.setMargin(node1, new Insets(0, 0, rowIndex == 0 ? 20 : 0, 20));
         summaryGridPane.add(node1, 0, rowIndex);
         summaryGridPane.add(node2, 1, rowIndex);
-        summaryGridPane.add(node3, 2, rowIndex);
+        if (node3 != null)
+            summaryGridPane.add(node3, 2, rowIndex);
         GridPane.setHalignment(node2, HPos.RIGHT); // price column
     }
 
@@ -330,4 +365,19 @@ final class Step2CheckoutSlide extends StepSlide {
         }
     }
 
+    public boolean isBookAsGuestAllowed() {
+        return bookAsGuestAllowed;
+    }
+
+    public void setBookAsGuestAllowed(boolean bookAsGuestAllowed) {
+        this.bookAsGuestAllowed = bookAsGuestAllowed;
+    }
+
+    public boolean isDisplayOnlySummary() {
+        return displayOnlySummary;
+    }
+
+    public void setDisplayOnlySummary(boolean displayOnlySummary) {
+        this.displayOnlySummary = displayOnlySummary;
+    }
 }

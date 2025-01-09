@@ -14,6 +14,7 @@ import dev.webfx.stack.orm.entity.EntityStoreQuery;
 import dev.webfx.stack.orm.entity.UpdateStore;
 import dev.webfx.stack.orm.entity.binding.EntityBindings;
 import dev.webfx.stack.ui.operation.OperationUtil;
+import dev.webfx.stack.ui.validation.ValidationSupport;
 import javafx.application.Platform;
 import javafx.beans.InvalidationListener;
 import javafx.beans.property.IntegerProperty;
@@ -35,10 +36,10 @@ import javafx.scene.shape.SVGPath;
 import javafx.util.Duration;
 import one.modality.base.client.i18n.ModalityI18nKeys;
 import one.modality.base.client.icons.SvgIcons;
-import dev.webfx.stack.ui.validation.ValidationSupport;
 import one.modality.base.shared.entities.Media;
 import one.modality.base.shared.entities.MediaType;
 import one.modality.base.shared.entities.ScheduledItem;
+import one.modality.base.shared.entities.Timeline;
 import one.modality.event.client.event.fx.FXEvent;
 
 import java.time.LocalDate;
@@ -166,7 +167,20 @@ public abstract class MediaLinksManagement {
                 String name = currentScheduledItem.getProgramScheduledItem().getName();
                 if (name == null) name = "Unknown";
                 Label teachingTitle = new Label(name);
-                Label startTimeLabel = new Label(currentScheduledItem.getProgramScheduledItem().getTimeline().getStartTime().format(TIME_FORMATTER) + " - " + currentScheduledItem.getProgramScheduledItem().getTimeline().getEndTime().format(TIME_FORMATTER));
+                Timeline timeline = currentScheduledItem.getProgramScheduledItem().getTimeline();
+                String startTime = "";
+                String endTime = "";
+                if(timeline!= null) {
+                    //Case of Festivals
+                    startTime = timeline.getStartTime().format(TIME_FORMATTER);
+                    endTime = timeline.getEndTime().format(TIME_FORMATTER);
+                } else {
+                    //Case of recurring events
+                    startTime = currentScheduledItem.getProgramScheduledItem().getStartTime().format(TIME_FORMATTER);
+                    endTime = currentScheduledItem.getProgramScheduledItem().getEndTime().format(TIME_FORMATTER);
+                }
+                Label startTimeLabel = new Label(startTime + " - " + endTime);
+
                 teachingTitle.getStyleClass().add(Bootstrap.STRONG);
                 startTimeLabel.getStyleClass().add(Bootstrap.STRONG);
                 VBox teachingDetailsVBox = new VBox(teachingTitle, startTimeLabel);

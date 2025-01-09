@@ -26,6 +26,7 @@ import javafx.scene.text.Font;
 import javafx.scene.text.TextAlignment;
 import javafx.stage.Screen;
 import one.modality.base.client.brand.Brand;
+import one.modality.base.client.cloudinary.ModalityCloudinary;
 import one.modality.base.client.icons.SvgIcons;
 import one.modality.base.frontoffice.utility.tyler.GeneralUtility;
 import one.modality.base.frontoffice.utility.tyler.StyleUtility;
@@ -70,7 +71,7 @@ final class StepBBookEventSlide extends StepSlide {
             .onSuccess(x -> UiScheduler.runInUiThread(this::onEventDescriptionLoaded));
 
         imageView.setImage(null);
-        Object imageTag = event.getId().getPrimaryKey();
+        Object imageTag =  ModalityCloudinary.getEventImageTag(event.getId().getPrimaryKey());
         String pictureId = String.valueOf(imageTag);
         cloudImageService.exists(pictureId)
             .onFailure(Console::log)
@@ -171,7 +172,7 @@ final class StepBBookEventSlide extends StepSlide {
     }
 
     @Override
-    void displayCheckoutSlide() {
+    protected void displayCheckoutSlide() {
         digitsSlideController.displayCheckoutSlide();
     }
 

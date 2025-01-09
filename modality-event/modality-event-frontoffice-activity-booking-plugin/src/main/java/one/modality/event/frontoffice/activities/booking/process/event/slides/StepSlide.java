@@ -43,12 +43,12 @@ import one.modality.event.frontoffice.activities.booking.process.event.WorkingBo
 
 import java.util.function.Supplier;
 
-abstract class StepSlide implements Supplier<Node> {
+public abstract class StepSlide implements Supplier<Node> {
 
     private final BookEventActivity bookEventActivity;
     protected final VBox mainVbox = new VBox();
 
-    StepSlide(BookEventActivity bookEventActivity) {
+    protected StepSlide(BookEventActivity bookEventActivity) {
         this.bookEventActivity = bookEventActivity;
         mainVbox.setAlignment(Pos.TOP_CENTER);
         // Setting a good bottom margin (1/3 screen height), so bottom elements are not stuck at the booking of the screen
@@ -64,17 +64,17 @@ abstract class StepSlide implements Supplier<Node> {
         return mainVbox;
     }
 
-    abstract void buildSlideUi();
+    protected abstract void buildSlideUi();
 
     void reset() {
         mainVbox.getChildren().clear();
     }
 
-    BookEventActivity getBookEventActivity() {
+    protected BookEventActivity getBookEventActivity() {
         return bookEventActivity;
     }
 
-    WorkingBookingProperties getWorkingBookingProperties() {
+    protected WorkingBookingProperties getWorkingBookingProperties() {
         return getBookEventActivity().getWorkingBookingProperties();
     }
 
@@ -86,7 +86,7 @@ abstract class StepSlide implements Supplier<Node> {
         return getWorkingBookingProperties().getDocumentAggregate();
     }
 
-    Event getEvent() {
+    protected Event getEvent() {
         return getWorkingBookingProperties().getEvent();
     }
 
@@ -94,7 +94,7 @@ abstract class StepSlide implements Supplier<Node> {
         getBookEventActivity().displayBookSlide();
     }
 
-    void displayCheckoutSlide() {
+    protected void displayCheckoutSlide() {
         getBookEventActivity().displayCheckoutSlide();
     }
 
@@ -185,7 +185,7 @@ abstract class StepSlide implements Supplier<Node> {
         I18nControls.bindI18nGraphicProperty(button, i18nKey);
     }
 
-    Button createPersonToBookButton() {
+    protected Button createPersonToBookButton() {
         Text personPrefixText = TextUtility.createText(CrmI18nKeys.PersonToBook + ":", Color.GRAY);
         EntityButtonSelector<Person> personSelector = new EntityButtonSelector<Person>(
             "{class: 'Person', alias: 'p', columns: [{expression: `[genderIcon,firstName,lastName]`}], orderBy: 'id'}",

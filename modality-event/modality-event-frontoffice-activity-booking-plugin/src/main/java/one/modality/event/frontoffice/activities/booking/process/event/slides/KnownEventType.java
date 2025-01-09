@@ -6,14 +6,14 @@ package one.modality.event.frontoffice.activities.booking.process.event.slides;
  *
  * @author Bruno Salmon
  */
-public enum EventType {
+public enum KnownEventType {
 
     RECURRING_EVENT(47),
     STTP(48);
 
     private final int typeId;
 
-    EventType(int typeId) {
+    KnownEventType(int typeId) {
         this.typeId = typeId;
     }
 

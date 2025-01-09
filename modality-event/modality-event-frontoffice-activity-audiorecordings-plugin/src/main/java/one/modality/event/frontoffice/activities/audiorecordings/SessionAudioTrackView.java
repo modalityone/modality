@@ -23,7 +23,6 @@ import one.modality.base.shared.entities.ScheduledItem;
 import one.modality.base.shared.entities.Timeline;
 
 import java.time.LocalDate;
-import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -72,11 +71,15 @@ final class SessionAudioTrackView {
         Label titleLabel = Bootstrap.h3(new Label(index + ". " + title));
         Timeline timeline = scheduledAudioItem.getProgramScheduledItem().getTimeline();
         LocalDate date = scheduledAudioItem.getDate();
-        LocalTime startTime = timeline.getStartTime();
+        String startTime = "";
+        if(timeline!= null) {
+            //Case fo festivals, when null it's a recurring event, and we don't need to display the time
+            startTime = " - " + timeline.getStartTime().format(DateTimeFormatter.ofPattern("HH:mm"));
+        }
         Long durationMillis;
 
         Label dateLabel = new Label(
-            date.format(DateTimeFormatter.ofPattern("dd MMMM yyyy")) + " - " + startTime.format(DateTimeFormatter.ofPattern("HH:mm")));
+            date.format(DateTimeFormatter.ofPattern("dd MMMM yyyy")) + startTime);
         dateLabel.getStyleClass().add(ModalityStyle.TEXT_COMMENT);
         if(publishedMedias.size()>0) {
             durationMillis = publishedMedias.get(0).getDurationMillis();

@@ -11,6 +11,7 @@ module modality.event.frontoffice.medias {
     requires modality.base.shared.entities;
     requires webfx.extras.panes;
     requires webfx.extras.styles.bootstrap;
+    requires webfx.extras.webtext;
     requires webfx.platform.console;
     requires webfx.platform.util;
     requires webfx.stack.cloud.image;

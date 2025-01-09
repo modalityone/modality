@@ -55,6 +55,11 @@ public interface BookingI18nKeys {
     String localCentrePhone = "localCentrePhone";
     String localCentreEmail = "localCentreEmail";
     String Square = "Square";
+    String BalanceOnPreviousBooking = "BalanceOnPreviousBooking";
+    String GeneralBalance = "GeneralBalance";
+    String Deposit = "Deposit";
+    String TotalOnPreviousBooking = "TotalOnPreviousBooking";
+    String TotalPrice = "TotalPrice";
     String InternationalEvents = "InternationalEvents";
 
 }
