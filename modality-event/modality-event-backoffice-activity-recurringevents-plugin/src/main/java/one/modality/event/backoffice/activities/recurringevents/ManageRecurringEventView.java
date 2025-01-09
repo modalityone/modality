@@ -145,8 +145,8 @@ final class ManageRecurringEventView {
     private Event currentObservedEvent;
     private Site eventSite;
     private Item recurringItem;
-    private int videoItemId=0;
-    private int audioItemId=0;
+    private Object videoItemId;
+    private Object audioItemId;
     private final UpdateStore updateStore = UpdateStore.createAbove(entityStore);
     private final ValidationSupport validationSupport = new ValidationSupport();
     private final BooleanExpression isTeachingsWorkingScheduledItemEmpty = ObservableLists.isEmpty(teachingsWorkingScheduledItems);
@@ -330,8 +330,8 @@ final class ManageRecurringEventView {
                 EntityList<ScheduledItem> scheduledItems = entityLists[0];
                 EntityList<Item> videoItems = entityLists[1];
                 EntityList<Item> audioItems = entityLists[2];
-                if(!videoItems.isEmpty()) videoItemId = Short.toUnsignedInt((short) videoItems.get(0).getId().getPrimaryKey());
-                if(!audioItems.isEmpty()) audioItemId = Short.toUnsignedInt((short)  audioItems.get(0).getId().getPrimaryKey());
+                if(!videoItems.isEmpty()) videoItemId = Entities.getPrimaryKey(videoItems.get(0));
+                if(!audioItems.isEmpty()) audioItemId = Entities.getPrimaryKey(audioItems.get(0));
                 // we test if the selectedEvent==e, because, if a user click very fast from en event to another, there
                 // can be a sync pb between the result of the request from the database and the code executed
                 if (currentSelectedEvent == e) {
