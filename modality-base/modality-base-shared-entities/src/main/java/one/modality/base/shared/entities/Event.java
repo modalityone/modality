@@ -40,6 +40,10 @@ public interface Event extends Entity,
     String recurringWithAudio = "recurringWithAudio";
     String recurringWithVideo = "recurringWithVideo";
     String language = "language";
+    String repeatable = "repeatable";
+    String repeatedEvent = "repeatedEvent";
+    String repeatAudio = "repeatAudio";
+    String repeatVideo = "repeatVideo";
 
     default void setState(Object value) {
         setFieldValue(state, Strings.stringValue(value));
@@ -233,6 +237,42 @@ public interface Event extends Entity,
 
     default Language getLanguage() {
         return getForeignEntity(language);
+    }
+
+    default void setRepeatedEvent(Object value) {
+        setForeignField(repeatedEvent, value);
+    }
+
+    default void setRepeatable(Boolean value) {
+        setFieldValue(repeatable, value);
+    }
+
+    default Boolean isRepeatable() {
+        return getBooleanFieldValue(repeatable);
+    }
+
+    default EntityId getRepeatedEventId() {
+        return getForeignEntityId(repeatedEvent);
+    }
+
+    default Event getRepeatedEvent() {
+        return getForeignEntity(repeatedEvent);
+    }
+
+    default void setRepeatAudio(Boolean value) {
+        setFieldValue(repeatAudio, value);
+    }
+
+    default Boolean isRepeatAudio() {
+        return getBooleanFieldValue(repeatAudio);
+    }
+
+    default void setRepeatVideo(Boolean value) {
+        setFieldValue(repeatVideo, value);
+    }
+
+    default Boolean isRepeatVideo() {
+        return getBooleanFieldValue(repeatVideo);
     }
 
 }
