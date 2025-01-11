@@ -8,6 +8,7 @@ import dev.webfx.platform.console.Console;
 import dev.webfx.platform.util.Numbers;
 import dev.webfx.platform.util.collection.Collections;
 import dev.webfx.stack.i18n.controls.I18nControls;
+import dev.webfx.stack.i18n.spi.impl.I18nSubKey;
 import dev.webfx.stack.orm.entity.EntityId;
 import dev.webfx.stack.orm.entity.EntityStore;
 import dev.webfx.stack.orm.entity.EntityStoreQuery;
@@ -51,7 +52,7 @@ final class SessionVideoPlayerActivity extends AbstractVideoPlayerActivity {
                 scheduledVideoItemProperty.set(null); // Will update UI
             } else {
                 entityStore.executeQueryBatch(
-                        new EntityStoreQuery("select name, expirationDate, comment, date, startTime, endTime, programScheduledItem.(name, startTime, endTime, timeline.(startTime, endTime)), event.(name, shortDescription, vodExpirationDate, type.recurringItem)" +
+                        new EntityStoreQuery("select name, expirationDate, comment, date, startTime, endTime, programScheduledItem.(name, startTime, endTime, timeline.(startTime, endTime)), event.(name, shortDescription, vodExpirationDate, type.recurringItem, label)" +
                             " from ScheduledItem si" +
                             " where id=? and published and exists(select Attendance where scheduledItem=si.bookableScheduledItem and documentLine.(!cancelled and document.(person=? and price_balance<=0)))",
                             new Object[]{scheduledVideoItemId, userPersonId}),
@@ -101,7 +102,7 @@ final class SessionVideoPlayerActivity extends AbstractVideoPlayerActivity {
             }
 
             String url = firstMedia.getUrl();
-            eventLabel.setText(scheduledVideoItem.getEvent().getName());
+            I18nControls.bindI18nProperties(eventLabel, new I18nSubKey("expression: i18n(this)", scheduledVideoItem.getEvent()));
             eventDescriptionHtmlText.setText(scheduledVideoItem.getEvent().getShortDescription());
             LocalDateTime startTime;
             if (scheduledVideoItem.getEvent().getType().getRecurringItem() != null) {
