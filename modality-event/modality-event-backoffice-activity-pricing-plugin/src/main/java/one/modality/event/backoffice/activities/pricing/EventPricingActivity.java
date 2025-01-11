@@ -62,7 +62,9 @@ final class EventPricingActivity extends ViewDomainActivityBase {
 
     @Override
     protected void startLogic() {
-        FXEvent.eventProperty().bindBidirectional(masterSlaveLinker.masterProperty());
+        // Note: although it's a bidirectional binding, the order is important because the left property is initialised
+        // to the value of the right property (we don't want to erase FXEvent).
+        masterSlaveLinker.masterProperty().bindBidirectional(FXEvent.eventProperty());
     }
 
     @Override
@@ -73,7 +75,10 @@ final class EventPricingActivity extends ViewDomainActivityBase {
             if (eventPolicy == null)
                 pricings.clear();
             else {
-                Collections.setAll(pricings, new TeachingsPricing(eventPolicy));
+                Collections.setAll(pricings,
+                    new TeachingsPricing(eventPolicy),
+                    new AudioRecordingPricing(eventPolicy)
+                );
                 sectionContainers.getChildren().setAll(Collections.map(pricings, this::createCollapsablePricingSection));
             }
         }, eventPolicyProperty);
