@@ -32,6 +32,8 @@ import dev.webfx.stack.orm.entity.*;
 import dev.webfx.stack.orm.entity.binding.EntityBindings;
 import dev.webfx.stack.orm.entity.controls.entity.selector.EntityButtonSelector;
 import dev.webfx.stack.orm.reactive.mapping.entities_to_visual.ReactiveVisualMapper;
+import dev.webfx.stack.ui.controls.dialog.DialogBuilderUtil;
+import dev.webfx.stack.ui.controls.dialog.DialogContent;
 import dev.webfx.stack.ui.dialog.DialogCallback;
 import dev.webfx.stack.ui.dialog.DialogUtil;
 import dev.webfx.stack.ui.validation.ValidationSupport;
@@ -976,8 +978,6 @@ final class ManageRecurringEventView {
                 }
                 synchroniseAudioVideoScheduledItemLists();
                 submitUpdateStoreChanges();
-                //If we add a new Event, put the selection on this event.
-                // if(currentMode.get()== ADD_MODE) eventVisualMapper.setSelectedEntity(currentEditedEvent);
             }
         });
 
@@ -1082,7 +1082,15 @@ final class ManageRecurringEventView {
 
     private void submitUpdateStoreChanges() {
         updateStore.submitChanges()
-            .onFailure(Console::log)
+            .onFailure(x -> {
+            DialogContent dialog = DialogContent.createConfirmationDialog("Error", "Operation failed", x.getMessage());
+            dialog.setOk();
+            Platform.runLater(() -> {
+                DialogBuilderUtil.showModalNodeInGoldLayout(dialog, FXMainFrameDialogArea.getDialogArea());
+                dialog.getPrimaryButton().setOnAction(a -> dialog.getDialogCallback().closeDialog());
+            });
+            Console.log(x);
+        })
             .onSuccess(x -> Platform.runLater(() -> {
                 Console.log("Submit successful");
                 Object imageTag = currentEditedEvent.getId().getPrimaryKey();
