@@ -83,7 +83,8 @@ final class VideosDayScheduleView {
         if (displayHeader) {
             addHeaderRow(currentRow);
         } else {
-            addInvisibleSeparator(currentRow);
+            if (dayScheduledVideos.get(0).getEvent().getType().getRecurringItem() == null)
+                addInvisibleSeparator(currentRow);
         }
 
         Label dateLabel = new Label(day.format(DateTimeFormatter.ofPattern("dd MMMM yyyy")));
@@ -162,15 +163,16 @@ final class VideosDayScheduleView {
             statusLabel.setPadding(new Insets(0, 10, 0, 0));
             scheduledItem = s;
             updateStore = UpdateStore.createAbove(entityStore);
-           //attendance = updateStore.updateEntity(a);
+            //attendance = updateStore.updateEntity(a);
             attendanceIsAttendedProperty = new SimpleBooleanProperty(false);//EntityBindings.getBooleanFieldProperty(attendance,Attendance.attended);
-            scheduledItemPublishedProperty = EntityBindings.getBooleanFieldProperty(scheduledItem,ScheduledItem.published);
-            attendanceIsAttendedProperty.addListener(e->
-                UiScheduler.scheduleDelay(3000, ()->{
-                    if(attendanceIsAttendedProperty.get()) {
-                    I18nControls.bindI18nProperties(actionButton,VideosI18nKeys.WatchAgain);
-            }}));
-            scheduledItemPublishedProperty.addListener(e-> Platform.runLater(()->computeStatusLabelAndWatchButton()));
+            scheduledItemPublishedProperty = EntityBindings.getBooleanFieldProperty(scheduledItem, ScheduledItem.published);
+            attendanceIsAttendedProperty.addListener(e ->
+                UiScheduler.scheduleDelay(3000, () -> {
+                    if (attendanceIsAttendedProperty.get()) {
+                        I18nControls.bindI18nProperties(actionButton, VideosI18nKeys.WatchAgain);
+                    }
+                }));
+            scheduledItemPublishedProperty.addListener(e -> Platform.runLater(() -> computeStatusLabelAndWatchButton()));
         }
 
         public void populateVideoRow() {
@@ -182,7 +184,12 @@ final class VideosDayScheduleView {
                 GridPane.setValignment(statusLabel, VPos.TOP);
             }
             // Name label
-            Label nameLabel = new Label(scheduledItem.getProgramScheduledItem().getName());
+            //If the name of the video scheduledItem has been overwritten, we use it, otherwise, we use the name of the programScheduledItem
+            String name = scheduledItem.getProgramScheduledItem().getName();
+            if (scheduledItem.getName() != null && !scheduledItem.getName().isBlank()) {
+                name = scheduledItem.getName();
+            }
+            Label nameLabel = new Label(name);
             nameLabel.setWrapText(true);
             nameLabel.setPadding(new Insets(0, 10, 0, 0));
 
@@ -208,10 +215,18 @@ final class VideosDayScheduleView {
             }
 
             // Time label
-            Label timeLabel = new Label(
-                scheduledItem.getProgramScheduledItem().getTimeline().getStartTime().format(DateTimeFormatter.ofPattern("HH:mm")) + " - " +
-                scheduledItem.getProgramScheduledItem().getTimeline().getEndTime().format(DateTimeFormatter.ofPattern("HH:mm"))
-            );
+            Label timeLabel;
+            if (scheduledItem.getEvent().isRecurringWithVideo()) {
+                timeLabel = new Label(
+                    scheduledItem.getProgramScheduledItem().getStartTime().format(DateTimeFormatter.ofPattern("HH:mm")) + " - " +
+                        scheduledItem.getProgramScheduledItem().getEndTime().format(DateTimeFormatter.ofPattern("HH:mm"))
+                );
+            } else {
+                timeLabel = new Label(
+                    scheduledItem.getProgramScheduledItem().getTimeline().getStartTime().format(DateTimeFormatter.ofPattern("HH:mm")) + " - " +
+                        scheduledItem.getProgramScheduledItem().getTimeline().getEndTime().format(DateTimeFormatter.ofPattern("HH:mm"))
+                );
+            }
             gridPaneContainer.add(timeLabel, 3, currentRow[0]);
             GridPane.setValignment(timeLabel, VPos.TOP);
 
@@ -230,7 +245,11 @@ final class VideosDayScheduleView {
 
             // Separator
             Separator sessionSeparator = new Separator();
-            sessionSeparator.setPadding(new Insets(35, 0, 15, 0));
+            if (scheduledItem.getEvent().getType().getRecurringItem() == null) {
+                sessionSeparator.setPadding(new Insets(35, 0, 15, 0));
+            } else {
+                sessionSeparator.setPadding(new Insets(15, 0, 0, 0));
+            }
             gridPaneContainer.add(sessionSeparator, 1, currentRow[0] + 1, 5, 1);
             currentRow[0] = currentRow[0] + 2;
         }
@@ -238,9 +257,15 @@ final class VideosDayScheduleView {
         private void computeStatusLabelAndWatchButton() {
 
             //THE STATE
-            LocalDateTime sessionStart = scheduledItem.getDate().atTime(scheduledItem.getProgramScheduledItem().getTimeline().getStartTime());
-            LocalDateTime sessionEnd = scheduledItem.getDate().atTime(scheduledItem.getProgramScheduledItem().getTimeline().getEndTime());
-
+            LocalDateTime sessionStart = null;
+            LocalDateTime sessionEnd = null;
+            if (scheduledItem.getEvent().isRecurringWithVideo()) {
+                sessionStart = scheduledItem.getDate().atTime(scheduledItem.getProgramScheduledItem().getStartTime());
+                sessionEnd = scheduledItem.getDate().atTime(scheduledItem.getProgramScheduledItem().getStartTime());
+            } else {
+                sessionStart = scheduledItem.getDate().atTime(scheduledItem.getProgramScheduledItem().getTimeline().getStartTime());
+                sessionEnd = scheduledItem.getDate().atTime(scheduledItem.getProgramScheduledItem().getTimeline().getEndTime());
+            }
             // For now, we manage the case when the livestream link is unique for the whole event, which is the case with Castr, which is the platform we generally use
             // TODO: manage the case when the livestream link is not global but per session, which happens on platform like youtube, etc.
 
@@ -308,7 +333,7 @@ final class VideosDayScheduleView {
                 I18nControls.bindI18nProperties(statusLabel, I18nKeys.upperCase(VideosI18nKeys.Available));
                 actionButton.setOnAction(e -> {
                     browsingHistory.push(SessionVideoPlayerRouting.getVideoOfSessionPath(scheduledItem.getId()));
-                    attendance.setAttended(true);
+                    // attendance.setAttended(true);
                     updateStore.submitChanges()
                         .onFailure(Console::log)
                         .onSuccess(Console::log);
@@ -364,11 +389,24 @@ final class VideosDayScheduleView {
             String messageType = message.get("messageType");
             if (Objects.equals(scheduledItem.getPrimaryKey(), updatedScheduledItemId) && "VIDEO_STATE_CHANGED".equals(messageType)) {
                 //Here we need to reload the datas from the database to display the button
+                String dqlQuery;
+                if (scheduledItem.getEvent().isRecurringWithVideo()) {
+                    //case sttp, GP, etc.
+                    dqlQuery = "select date, expirationDate, event, vodDelayed, published, comment, programScheduledItem.(name, date,startTime, endTime, item.imageUrl)," +
+                        " exists(select Media where scheduledItem=si) as " + EventVideosWallActivity.VIDEO_ATTENDANCE_DYNAMIC_BOOLEAN_FIELD_ATTENDED +
+                        " from ScheduledItem si where si.id=?" + "and online and exists(select Attendance where scheduledItem=si and documentLine.(!cancelled and document.(event= ? and person=? and price_balance<=0)))" +
+                        " order by date, programScheduledItem.date";
+                } else {
+                    //Case festival, etc.
+                    dqlQuery = "select date, expirationDate, event, vodDelayed, published, comment, programScheduledItem.(name, date,timeline.(startTime, endTime), item.imageUrl)," +
+                        " exists(select Media where scheduledItem=si) as " + EventVideosWallActivity.VIDEO_ATTENDANCE_DYNAMIC_BOOLEAN_FIELD_ATTENDED +
+                        " from ScheduledItem si where si.id=?" + "and online and exists(select Attendance where scheduledItem=si and documentLine.(!cancelled and document.(event= ? and person=? and price_balance<=0)))" +
+                        " order by date, programScheduledItem.timeline.startTime";
+                }
+
+
                 entityStore.executeQuery(
-                        new EntityStoreQuery("select date, expirationDate, event, vodDelayed, published, comment, parent.(name, date,timeline.(startTime, endTime), item.imageUrl)," +
-                                             " exists(select Media where scheduledItem=si) as " + EventVideosWallActivity.VIDEO_ATTENDANCE_DYNAMIC_BOOLEAN_FIELD_ATTENDED +
-                                             " from ScheduledItem si where si.id=?" + "and online and exists(select Attendance where scheduledItem=si and documentLine.(!cancelled and document.(event= ? and person=? and price_balance<=0)))" +
-                                             " order by date, parent.timeline.startTime",
+                        new EntityStoreQuery(dqlQuery,
                             new Object[]{updatedScheduledItemId, scheduledItem.getEvent(), FXUserPersonId.getUserPersonId()}))
                     .onFailure(Console::log)
                     .onSuccess(entityList ->

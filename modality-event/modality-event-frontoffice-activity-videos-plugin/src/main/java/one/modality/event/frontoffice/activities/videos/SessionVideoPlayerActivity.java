@@ -51,9 +51,9 @@ final class SessionVideoPlayerActivity extends AbstractVideoPlayerActivity {
                 scheduledVideoItemProperty.set(null); // Will update UI
             } else {
                 entityStore.executeQueryBatch(
-                        new EntityStoreQuery("select expirationDate, comment, date, startTime, endTime, programScheduledItem.timeline.(startTime, endTime), programScheduledItem.name, event.name, event.shortDescription, event.vodExpirationDate" +
+                        new EntityStoreQuery("select name, expirationDate, comment, date, startTime, endTime, programScheduledItem.(name, startTime, endTime, timeline.(startTime, endTime)), event.(name, shortDescription, vodExpirationDate, type.recurringItem)" +
                             " from ScheduledItem si" +
-                            " where id=? and published and exists(select Attendance where scheduledItem=si and documentLine.(!cancelled and document.(person=? and price_balance<=0)))",
+                            " where id=? and published and exists(select Attendance where scheduledItem=si.bookableScheduledItem and documentLine.(!cancelled and document.(person=? and price_balance<=0)))",
                             new Object[]{scheduledVideoItemId, userPersonId}),
                         new EntityStoreQuery("select url" +
                             " from Media" +
@@ -95,10 +95,20 @@ final class SessionVideoPlayerActivity extends AbstractVideoPlayerActivity {
         Media firstMedia = Collections.first(publishedMedias);
         if (scheduledVideoItem != null && firstMedia != null) { // may not yet be loaded on first call
             String title = scheduledVideoItem.getProgramScheduledItem().getName();
+            //If the name of the video scheduledItem has been overwritten, we use it, otherwise, we use the name of the programScheduledItem
+            if (scheduledVideoItem.getName() != null && !scheduledVideoItem.getName().isBlank()) {
+                title = scheduledVideoItem.getName();
+            }
+
             String url = firstMedia.getUrl();
             eventLabel.setText(scheduledVideoItem.getEvent().getName());
             eventDescriptionHtmlText.setText(scheduledVideoItem.getEvent().getShortDescription());
-            LocalDateTime startTime = LocalDateTime.of(scheduledVideoItem.getDate(), scheduledVideoItem.getProgramScheduledItem().getTimeline().getStartTime());
+            LocalDateTime startTime;
+            if (scheduledVideoItem.getEvent().getType().getRecurringItem() != null) {
+                startTime = LocalDateTime.of(scheduledVideoItem.getDate(), scheduledVideoItem.getProgramScheduledItem().getStartTime());
+            } else {
+                startTime = LocalDateTime.of(scheduledVideoItem.getDate(), scheduledVideoItem.getProgramScheduledItem().getTimeline().getStartTime());
+            }
             if (startTime != null)
                 sessionTitleLabel.setText(title + " (" + startTime.format(DateTimeFormatter.ofPattern("d MMMM, yyyy ' - ' HH:mm")) + ")");
             else {
