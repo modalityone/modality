@@ -67,6 +67,7 @@ import javafx.scene.shape.Line;
 import javafx.scene.shape.SVGPath;
 import javafx.scene.text.Text;
 import javafx.stage.Screen;
+import one.modality.base.client.cloudinary.ModalityCloudinary;
 import one.modality.base.client.i18n.ModalityI18nKeys;
 import one.modality.base.client.icons.SvgIcons;
 import one.modality.base.client.mainframe.fx.FXMainFrameDialogArea;
@@ -504,7 +505,7 @@ final class ManageRecurringEventView {
     }
 
     private void loadEventImageIfExists() {
-        Object imageTag = currentEditedEvent.getId().getPrimaryKey();
+        Object imageTag = ModalityCloudinary.getEventImageTag(Entities.getPrimaryKey(currentEditedEvent));
         doesCloudPictureExist(imageTag)
             .onFailure(ex -> {
                 Console.log(ex);
@@ -733,7 +734,7 @@ final class ManageRecurringEventView {
                             BorderPane.setAlignment(okErrorButton, Pos.CENTER);
                         }))
                         .onSuccess(x -> Platform.runLater(() -> {
-                            Object imageTag = currentEditedEvent.getId().getPrimaryKey();
+                            Object imageTag = ModalityCloudinary.getEventImageTag(Entities.getPrimaryKey(currentEditedEvent));
                             deleteCloudPictureIfNecessary(imageTag);
                             uploadCloudPictureIfNecessary(imageTag);
                         }));
@@ -1023,7 +1024,7 @@ final class ManageRecurringEventView {
                     audioScheduledItem.setDate(teachingScheduledItem.getDate());
                     audioScheduledItem.setSite(teachingScheduledItem.getSite());
                     audioScheduledItem.setEvent(teachingScheduledItem.getEvent());
-                    audioScheduledItem.setItem(audioItemId); // For now hardcoded, 851 is the audio_en for NKT
+                    audioScheduledItem.setItem(audioItemId);
                     audioScheduledItem.setBookableScheduledItem(teachingScheduledItem);
                     audioScheduledItem.setProgramScheduledItem(teachingScheduledItem);
                     audioWorkingScheduledItems.add(audioScheduledItem);
@@ -1031,7 +1032,7 @@ final class ManageRecurringEventView {
             }
             //Then the video
             if (currentEditedEvent.isRecurringWithVideo() != null && currentEditedEvent.isRecurringWithVideo()) {
-                //1st case, we find an videocheduledItem whose teachingScheduledItem is the current teaching ScheduledItem or the date is the same
+                //1st case, we find an videoScheduledItem whose teachingScheduledItem is the current teaching ScheduledItem or the date is the same
                 if (videoWorkingScheduledItems.stream().anyMatch(currentVideoScheduledItem -> currentVideoScheduledItem.getProgramScheduledItem().equals(teachingScheduledItem) || currentVideoScheduledItem.getDate().equals(teachingScheduledItem.getDate()))) {
                     ScheduledItem videoScheduledItem = videoWorkingScheduledItems.stream().filter(currentVideoScheduledItem -> currentVideoScheduledItem.getDate().equals(teachingScheduledItem.getDate())).findFirst().get();
                     //We define the link to the teachingScheduledItem again in case the teaching scheduleItem has been deleted or recreated, as long it is the same date, we know it refers to the teachings ScheduledItem
@@ -1043,7 +1044,7 @@ final class ManageRecurringEventView {
                     videoScheduledItem.setDate(teachingScheduledItem.getDate());
                     videoScheduledItem.setSite(teachingScheduledItem.getSite());
                     videoScheduledItem.setEvent(teachingScheduledItem.getEvent());
-                    videoScheduledItem.setItem(videoItemId); // For now hardcoded, 1165 is the video for NKT
+                    videoScheduledItem.setItem(videoItemId);
                     videoScheduledItem.setBookableScheduledItem(teachingScheduledItem);
                     videoScheduledItem.setProgramScheduledItem(teachingScheduledItem);
                     videoWorkingScheduledItems.add(videoScheduledItem);
@@ -1094,7 +1095,7 @@ final class ManageRecurringEventView {
         })
             .onSuccess(x -> Platform.runLater(() -> {
                 Console.log("Submit successful");
-                Object imageTag = currentEditedEvent.getId().getPrimaryKey();
+                Object imageTag = ModalityCloudinary.getEventImageTag(Entities.getPrimaryKey(currentEditedEvent));
                 deleteCloudPictureIfNecessary(imageTag);
                 uploadCloudPictureIfNecessary(imageTag);
                 isCloudPictureToBeDeleted.setValue(false);
