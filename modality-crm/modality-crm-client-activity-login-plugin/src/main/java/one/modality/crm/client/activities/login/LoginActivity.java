@@ -7,10 +7,14 @@ import javafx.scene.Node;
 /**
  * @author Bruno Salmon
  */
-final class LoginActivity extends ViewDomainActivityBase {
+public final class LoginActivity extends ViewDomainActivityBase {
 
     @Override
     public Node buildUi() {
+        return buildDefaultUi();
+    }
+
+    public static Node buildDefaultUi() {
         return LoginUiService.createLoginUI();
     }
 
