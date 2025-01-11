@@ -21,6 +21,7 @@ public interface Organization extends
     String latitude = "latitude";
     String longitude = "longitude";
     String importIssue = "importIssue";
+    String language = "language";
 
     default void setClosed(boolean value) { setFieldValue(closed, value); }
 
@@ -71,4 +72,17 @@ public interface Organization extends
     default String getImportIssue() {
         return getStringFieldValue(importIssue);
     }
+
+    default void setLanguage(Object value) {
+        setForeignField(language, value);
+    }
+
+    default EntityId getLanguageId() {
+        return getForeignEntityId(language);
+    }
+
+    default Language getLanguage() {
+        return getForeignEntity(language);
+    }
+
 }

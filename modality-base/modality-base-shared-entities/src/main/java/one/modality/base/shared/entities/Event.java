@@ -39,7 +39,6 @@ public interface Event extends Entity,
     String audioRecordingsDayTicket = "audioRecordingsDayTicket";
     String recurringWithAudio = "recurringWithAudio";
     String recurringWithVideo = "recurringWithVideo";
-    String language = "language";
     String repeatable = "repeatable";
     String repeatedEvent = "repeatedEvent";
     String repeatAudio = "repeatAudio";
@@ -225,18 +224,6 @@ public interface Event extends Entity,
 
     default Boolean isRecurringWithVideo() {
         return getBooleanFieldValue(recurringWithVideo);
-    }
-
-    default void setLanguage(Object value) {
-        setForeignField(language, value);
-    }
-
-    default EntityId getLanguageId() {
-        return getForeignEntityId(language);
-    }
-
-    default Language getLanguage() {
-        return getForeignEntity(language);
     }
 
     default void setRepeatedEvent(Object value) {
