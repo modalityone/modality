@@ -102,7 +102,7 @@ public final class EventThumbnailView {
         eventLabel.setWrapText(true);
         VBox.setMargin(eventLabel, new Insets(10, 0, 0, 0));
         String shortDescription = "";
-        if(event.getShortDescription()!=null)
+        if (event.getShortDescription() != null)
             shortDescription = event.getShortDescription();
         String shortDescriptionText = new String(shortDescription);
         //For now if the text if too long, we just do a substring.
@@ -134,7 +134,10 @@ public final class EventThumbnailView {
                     //Case of the livestream only, we expired it when the event is finished
                 else if (event.getVodExpirationDate() == null && LocalDateTime.now().isAfter(LocalDateTime.of(event.getEndDate(), LocalTime.of(23, 59, 59))))
                     availabilityType = AvailabilityType.EXPIRED;
-                else
+                else if (event.getVodExpirationDate() == null && event.getLivestreamUrl() == null) {
+                    //If the vodExpirationDate is set to null, it means the event is livestream Only, we check if we have a livestream url defined
+                    availabilityType = AvailabilityType.UNPUBLISHED;
+                } else
                     availabilityType = AvailabilityType.AVAILABLE;
             }
             if (itemType == ItemType.ITEM_TYPE_AUDIO)
