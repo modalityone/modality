@@ -33,20 +33,17 @@ public interface GwtEmbedResourcesBundle extends ClientBundle {
     @Source("dev/webfx/stack/i18n/pt.properties")
     TextResource r8();
 
-    @Source("dev/webfx/stack/i18n/sp.properties")
+    @Source("dev/webfx/stack/i18n/vi.properties")
     TextResource r9();
 
-    @Source("dev/webfx/stack/i18n/vi.properties")
+    @Source("dev/webfx/stack/i18n/zh.properties")
     TextResource r10();
 
-    @Source("dev/webfx/stack/i18n/zh.properties")
+    @Source("one/modality/base/shared/domainmodel/DomainModelSnapshot.json")
     TextResource r11();
 
-    @Source("one/modality/base/shared/domainmodel/DomainModelSnapshot.json")
-    TextResource r12();
-
     @Source("one/modality/event/frontoffice/activities/booking/map/DynamicMapView.js")
-    TextResource r13();
+    TextResource r12();
 
 
 
@@ -60,11 +57,10 @@ public interface GwtEmbedResourcesBundle extends ClientBundle {
             registerResource("dev/webfx/stack/i18n/es.properties", R.r6());
             registerResource("dev/webfx/stack/i18n/fr.properties", R.r7());
             registerResource("dev/webfx/stack/i18n/pt.properties", R.r8());
-            registerResource("dev/webfx/stack/i18n/sp.properties", R.r9());
-            registerResource("dev/webfx/stack/i18n/vi.properties", R.r10());
-            registerResource("dev/webfx/stack/i18n/zh.properties", R.r11());
-            registerResource("one/modality/base/shared/domainmodel/DomainModelSnapshot.json", R.r12());
-            registerResource("one/modality/event/frontoffice/activities/booking/map/DynamicMapView.js", R.r13());
+            registerResource("dev/webfx/stack/i18n/vi.properties", R.r9());
+            registerResource("dev/webfx/stack/i18n/zh.properties", R.r10());
+            registerResource("one/modality/base/shared/domainmodel/DomainModelSnapshot.json", R.r11());
+            registerResource("one/modality/event/frontoffice/activities/booking/map/DynamicMapView.js", R.r12());
 
         }
     }

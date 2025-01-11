@@ -908,6 +908,7 @@ CollapsePane.menu-bar.lang-menu-bar {
     -fx-text-alignment: left; /* Aligns text */
 }
 
+
 .audio-library .description {
     -fx-min-width: 450;
     -fx-max-width: 450;
@@ -925,6 +926,8 @@ CollapsePane.menu-bar.lang-menu-bar {
     -fx-padding: 0 0 20 -50;
     -fx-border-color: transparent transparent #4A4748 transparent; -fx-border-width: 0 0 0.2 0;
 }
+
+
 
 
 /*===== modality-event-frontoffice-activities-videos-javafx@main.css from modality-event-frontoffice-activity-videos-plugin =====*/

@@ -287,6 +287,8 @@
     <source path="one/modality/event/frontoffice/activities/booking/process/account"/>
     <source path="one/modality/event/frontoffice/activities/booking/process/event"/>
     <source path="one/modality/event/frontoffice/activities/booking/process/event/slides"/>
+    <source path="one/modality/event/frontoffice/activities/booking/process/event/slides/recurring_event"/>
+    <source path="one/modality/event/frontoffice/activities/booking/process/event/slides/sttp"/>
     <source path="one/modality/event/frontoffice/activities/booking/views"/>
     <resource path="one/modality/event/frontoffice/activities/booking/map"/>
     <public path="" includes="one/modality/event/frontoffice/activities/booking/map/"/>
