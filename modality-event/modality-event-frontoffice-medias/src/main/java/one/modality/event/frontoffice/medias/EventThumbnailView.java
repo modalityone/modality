@@ -167,17 +167,6 @@ public final class EventThumbnailView {
         //Here we're looking inb cloudinary if the picture for the cover exist
         //The item code list is as following:
         // Video : video | note: just one for all languages
-        //TODO change in the production databases
-        // English audio recording: audio-en
-        // French audio recording: audio-fr
-        // Spanish audio recording: audio-es
-        // German audio recording: audio-de
-        // Portuguese audio recording: audio-pt
-        // Cantonese audio recording: audio-zh-yue
-        // Mandarin audio recording: audio-zh
-        // Vietnamese audio recording: audio-vi
-        // Italian audio recording: audio-it
-        // Greek audio recording: audio-el
         Object imageTag;
         imageTag = ModalityCloudinary.getEventCoverImageTag(Entities.getPrimaryKey(event), isoCode);
         String pictureId = String.valueOf(imageTag);
