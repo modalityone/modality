@@ -59,8 +59,8 @@ public final class ModalityCloudinary {
 
     public static String getEventCoverImageTag(Object eventId, Object I18nLanguage) {
         if (I18nLanguage == null || "en".equals(I18nLanguage.toString())) {
-            return "events/event-" + eventId + "-cover";
-        } else return "events/event-" + eventId + "-cover-" + I18nLanguage.toString();
+            return "events-cover/event-" + eventId + "-cover";
+        } else return "events-cover/event-" + eventId + "-cover-" + I18nLanguage;
     }
     public void setLanguage(String code) {
         language = code;
