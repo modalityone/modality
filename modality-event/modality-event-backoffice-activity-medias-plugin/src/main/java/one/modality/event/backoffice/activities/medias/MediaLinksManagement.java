@@ -200,10 +200,6 @@ public abstract class MediaLinksManagement {
 
                 Label overrideNameLabel = new Label("Override Name");
                 Switch overrideNameSwitch = new Switch();
-                HBox nameHBox = new HBox(overrideNameLabel, overrideNameSwitch);
-                nameHBox.setAlignment(Pos.CENTER);
-                nameHBox.setSpacing(5);
-                nameHBox.setVisible(false);
 
                 TextField nameTextField = new TextField();
                 nameTextField.setPromptText(I18n.getI18nText("Name"));
