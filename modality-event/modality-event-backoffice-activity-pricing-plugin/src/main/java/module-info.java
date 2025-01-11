@@ -11,6 +11,7 @@ module modality.event.backoffice.activity.pricing.plugin {
     requires modality.base.client.util;
     requires modality.base.shared.domainmodel;
     requires modality.base.shared.entities;
+    requires modality.crm.backoffice.organization.fx;
     requires modality.ecommerce.document.service;
     requires modality.event.client.event.fx;
     requires webfx.extras.panes;
@@ -25,9 +26,12 @@ module modality.event.backoffice.activity.pricing.plugin {
     requires webfx.platform.windowhistory;
     requires webfx.stack.i18n;
     requires webfx.stack.i18n.controls;
+    requires webfx.stack.orm.datasourcemodel.service;
     requires webfx.stack.orm.domainmodel.activity;
+    requires webfx.stack.orm.dql;
     requires webfx.stack.orm.entity;
     requires webfx.stack.orm.entity.binding;
+    requires webfx.stack.orm.reactive.entities;
     requires webfx.stack.routing.router;
     requires webfx.stack.routing.router.client;
     requires webfx.stack.routing.uirouter;
