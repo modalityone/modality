@@ -1,5 +1,6 @@
 package one.modality.base.client.services.i18n;
 
+import dev.webfx.platform.ast.AST;
 import dev.webfx.platform.ast.ReadOnlyAstObject;
 import dev.webfx.platform.conf.ConfigLoader;
 import dev.webfx.platform.console.Console;
@@ -34,8 +35,8 @@ import java.util.function.Supplier;
 public final class ModalityI18nProvider extends AstI18nProvider {
 
     // Loading possible i18n keys forwards from configuration (empty in Modality but might be overridden in final app).
-    private static final ReadOnlyAstObject I18N_KEY_FORWARDS = ConfigLoader.getRootConfig()
-        .childConfigAt("modality.base.client.i18n").getObject("ModalityI18nKeyForwards");
+    private static final ReadOnlyAstObject I18N_KEY_FORWARDS = AST.lookupObject(ConfigLoader.getRootConfig(),
+        "modality.base.client.i18n.ModalityI18nKeyForwards");
 
     //
     private static final Map<String/* ex: "FXOrganization" */, Supplier<Entity> /* ex: FXOrganization.getOrganization() */>
