@@ -816,6 +816,7 @@ final class ManageRecurringEventView {
         ShapeTheme.createPrimaryShapeFacet(uploadSVGPath).style();
         uploadButton.setGraphic(uploadSVGPath);
         FilePicker filePicker = FilePicker.create();
+        filePicker.getAcceptedExtensions().addAll("image/*");
         filePicker.setGraphic(uploadButton);
         filePicker.getSelectedFiles().addListener((InvalidationListener) obs -> {
             ObservableList<File> fileList = filePicker.getSelectedFiles();

@@ -148,6 +148,7 @@ public class MediaLinksForAudioRecordingsManagement extends MediaLinksManagement
         topContent.getChildren().add(thumbailStackPane);
 
         FilePicker filePicker = FilePicker.create();
+        filePicker.getAcceptedExtensions().addAll("image/*");
         Button uploadButton = Bootstrap.primaryButton(I18nControls.newButton(MediasI18nKeys.Upload));
         uploadButton.setMinWidth(200);
         filePicker.setGraphic(uploadButton);
