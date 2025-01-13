@@ -31,6 +31,7 @@ import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
+import javafx.geometry.VPos;
 import javafx.scene.Node;
 import javafx.scene.control.Label;
 import javafx.scene.image.Image;
@@ -160,6 +161,7 @@ final class EventAudioPlaylistActivity extends ViewDomainActivityBase {
         audioExpirationLabel = Bootstrap.textSuccess(I18nControls.newLabel(AudioRecordingsI18nKeys.AvailableUntil,dateFormattedProperty));
         audioExpirationLabel.setPadding(new Insets(30,0,0,0));
         VBox titleVBox = new VBox(eventLabel, eventDescriptionHTMLText,audioExpirationLabel);
+        titleVBox.setMinWidth(200);
 
         headerHBox.getChildren().add(titleVBox);
 
@@ -182,7 +184,7 @@ final class EventAudioPlaylistActivity extends ViewDomainActivityBase {
         Node loadingContentIndicator = new GoldenRatioPane(ControlUtil.createProgressIndicator(100));
 
         ScalePane pageContainer = new ScalePane();
-
+        pageContainer.setVAlignment(VPos.TOP);
 
         // *************************************************************************************************************
         // *********************************** Reacting to parameter changes *******************************************
