@@ -17,11 +17,11 @@ import dev.webfx.platform.resource.Resource;
  */
 public class Brand {
 
+    // Design hesitating between blue #0096D6 and orange #F6782E
+    private static final Color BRAND_MAIN_COLOR = Color.web("#F6782E"); // Blue
+    private static final Color BRAND_MAIN_BACKGROUND_COLOR = Color.web("#F6782E"); // Blue
+
     //TODO: update application code to stop using these methods from Java and rely only on CSS and i18n
-
-    public static final Color BRAND_MAIN_COLOR = Color.web("#0096D6"); // Orange
-
-    public static final Color BRAND_MAIN_BACKGROUND_COLOR = Color.web("#0096D6"); // Blue
 
     public static Color getBrandMainColor() {
         return BRAND_MAIN_COLOR; // Orange
@@ -44,6 +44,5 @@ public class Brand {
         brand.setAlignment(Pos.CENTER);
         return brand;
     }
-
 
 }
