@@ -7,7 +7,7 @@ public enum KnownItemFamily {
     // Note: primary keys are temporarily hardcoded (should be configurable)
     TEACHING("teach", 3),
     TRANSLATION("transl", 8),
-    VIDEO("video", 34),
+    VIDEO("video", 29),
     ACCOMMODATION("acco", 1),
     MEALS("meals", 2),
     DIET("diet", 14),
