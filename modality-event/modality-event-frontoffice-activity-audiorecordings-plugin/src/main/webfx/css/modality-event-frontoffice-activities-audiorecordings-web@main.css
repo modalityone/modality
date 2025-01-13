@@ -14,7 +14,7 @@
 }
 
 .audio-library .description > fx-children > fx-text {
-    min-width: 410px;
+    pref-width: 410px;
     max-width: 410px;
     overflow: hidden; /* Hide overflowed text */
     text-overflow: ellipsis;

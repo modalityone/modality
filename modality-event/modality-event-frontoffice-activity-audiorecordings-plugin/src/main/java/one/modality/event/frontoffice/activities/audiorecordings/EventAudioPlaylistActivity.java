@@ -2,6 +2,7 @@ package one.modality.event.frontoffice.activities.audiorecordings;
 
 import dev.webfx.extras.panes.GoldenRatioPane;
 import dev.webfx.extras.panes.MonoPane;
+import dev.webfx.extras.panes.ScalePane;
 import dev.webfx.extras.player.audio.javafxmedia.JavaFXMediaAudioPlayer;
 import dev.webfx.extras.styles.bootstrap.Bootstrap;
 import dev.webfx.extras.util.control.ControlUtil;
@@ -180,7 +181,7 @@ final class EventAudioPlaylistActivity extends ViewDomainActivityBase {
 
         Node loadingContentIndicator = new GoldenRatioPane(ControlUtil.createProgressIndicator(100));
 
-        MonoPane pageContainer = new MonoPane();
+        ScalePane pageContainer = new ScalePane();
 
 
         // *************************************************************************************************************

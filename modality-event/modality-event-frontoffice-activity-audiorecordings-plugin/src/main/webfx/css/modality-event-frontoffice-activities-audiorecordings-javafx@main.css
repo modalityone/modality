@@ -15,7 +15,7 @@
 
 
 .audio-library .description {
-    -fx-min-width: 450;
+    -fx-pref-width: 450;
     -fx-max-width: 450;
 }
 
