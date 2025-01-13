@@ -109,7 +109,7 @@ public final class LoginLinkService {
                 ModalityContext modalityContext = context instanceof ModalityContext ? (ModalityContext) context
                     : new ModalityContext(1 /* default organizationId if no context is provided */, null, null, null);
                 modalityContext.setMagicLinkId(magicLink.getPrimaryKey());
-                String finalBody = body.replaceAll("[loginLink]", magicLink.getLink());
+                String finalBody = body.replaceAll("\\[loginLink\\]", magicLink.getLink());
                 return MailService.sendMail(new ModalityMailMessage(MailMessage.create(from, magicLink.getEmail(), subject, finalBody), modalityContext));
             });
     }
