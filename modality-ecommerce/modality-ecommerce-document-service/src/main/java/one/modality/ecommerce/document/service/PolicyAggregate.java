@@ -75,8 +75,16 @@ public final class PolicyAggregate {
         return getFamilyScheduledItemsStream(familyCode).collect(Collectors.toList());
     }
 
+    public List<ScheduledItem> getFamilyScheduledItems(ItemFamily itemFamily) {
+        return getFamilyScheduledItems(itemFamily.getCode());
+    }
+
+    public List<ScheduledItem> getFamilyScheduledItems(KnownItemFamily knownItemFamily) {
+        return getFamilyScheduledItems(knownItemFamily.getCode());
+    }
+
     public List<ScheduledItem> getTeachingScheduledItems() {
-        return getFamilyScheduledItems(KnownItemFamily.TEACHING.getCode());
+        return getFamilyScheduledItems(KnownItemFamily.TEACHING);
     }
 
     public List<Rate> getRates() {

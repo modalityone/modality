@@ -29,6 +29,7 @@ import one.modality.ecommerce.document.service.PolicyAggregate;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import java.util.stream.Collectors;
 
 /**
@@ -36,10 +37,11 @@ import java.util.stream.Collectors;
  */
 abstract class AbstractItemFamilyPricing implements ItemFamilyPricing {
 
-    private final KnownItemFamily knownItemFamily;
+    //private final KnownItemFamily knownItemFamily;
     private final Object itemFamilyI18nKey;
     private final PolicyAggregate eventPolicy;
     private final UpdateStore updateStore;
+    private final SiteItem siteItem; // The one used to display prices
     private final List<LocalDate> itemDates;
     private final List<Rate> rates;
     private final List<TextField> rateFields;
@@ -47,18 +49,20 @@ abstract class AbstractItemFamilyPricing implements ItemFamilyPricing {
     private final Button cancelButton = Bootstrap.secondaryButton(I18nControls.newButton(ModalityI18nKeys.Cancel));
 
     public AbstractItemFamilyPricing(KnownItemFamily knownItemFamily, Object itemFamilyI18nKey, PolicyAggregate eventPolicy) {
-        this.knownItemFamily = knownItemFamily;
+        //this.knownItemFamily = knownItemFamily;
         this.itemFamilyI18nKey = itemFamilyI18nKey;
         this.eventPolicy = eventPolicy;
         this.updateStore = UpdateStore.createAbove(eventPolicy.getEntityStore());
         EntityBindings.disableNodesWhenUpdateStoreHasNoChanges(updateStore, saveButton, cancelButton);
-        List<ScheduledItem> scheduledItems = eventPolicy.getFamilyScheduledItems(knownItemFamily.getCode());
-        List<Item> items = scheduledItems.stream().map(ScheduledItem::getItem).distinct().collect(Collectors.toList());
+        List<ScheduledItem> scheduledItems = eventPolicy.getFamilyScheduledItems(knownItemFamily);
+        List<SiteItem> siteItems = scheduledItems.stream().map(SiteItem::new).distinct().collect(Collectors.toList());
+        siteItem = Collections.first(siteItems);
+
         Event event = eventPolicy.getEvent();
         itemDates = TimeUtil.generateLocalDates(event.getStartDate(), event.getEndDate());
-        int size = itemDates.size();
-        rates = new ArrayList<>(size);
-        rateFields = new ArrayList<>(size);
+        int datesCount = itemDates.size();
+        rates = new ArrayList<>(datesCount);
+        rateFields = new ArrayList<>(datesCount);
         // Following line commented as order by is now already done on the server side (see PolicyAggregate)
         //Entities.orderBy(eventPolicy.getRates(), Rate.site, Rate.item, Rate.perDay + " desc", Rate.startDate, Rate.endDate, Rate.price);
         resetInitialRates();
@@ -69,16 +73,16 @@ abstract class AbstractItemFamilyPricing implements ItemFamilyPricing {
         List<Rate> policyRates = eventPolicy.getRates();
         itemDates.forEach(date -> {
             Rate dateRate = Collections.findFirst(policyRates, rate -> rateMatchesItemFamilyPerDayAndDate(rate, date));
-            rates.add(dateRate);
+            rates.add(dateRate); // a null dateRate indicates that no rate has been defined so far for that date
         });
     }
 
     private boolean rateMatchesItemFamilyPerDayAndDate(Rate rate, LocalDate date) {
-        return rateMatchesItemFamilyPerDay(rate) && Times.isBetween(date, rate.getStartDate(), rate.getEndDate());
+        return rateMatchesSiteItemPerDay(rate) && Times.isBetween(date, rate.getStartDate(), rate.getEndDate());
     }
 
-    private boolean rateMatchesItemFamilyPerDay(Rate rate) {
-        return rate.getItem().getItemFamilyType() == knownItemFamily && rate.isPerDay();
+    private boolean rateMatchesSiteItemPerDay(Rate rate) {
+        return siteItem != null && Objects.equals(rate.getSite(), siteItem.getSite()) && Objects.equals(rate.getItem(), siteItem.getItem()) && rate.isPerDay();
     }
 
     @Override
@@ -162,9 +166,9 @@ abstract class AbstractItemFamilyPricing implements ItemFamilyPricing {
             if (rate == null) {
                 rate = updateStore.insertEntity(Rate.class);
                 // TODO: cutoff dates
-                if (lastUpdatedRate != null) { // Assuming it's always true...
-                    rate.setSite(lastUpdatedRate.getSite());
-                    rate.setItem(lastUpdatedRate.getItem());
+                if (siteItem != null) { // Assuming it's always true...
+                    rate.setSite(siteItem.getSite());
+                    rate.setItem(siteItem.getItem());
                 }
             }
             rate.setPrice(price);
@@ -183,7 +187,7 @@ abstract class AbstractItemFamilyPricing implements ItemFamilyPricing {
         // Deleting remaining daily teaching rates (i.e. those not reused)
         for (int i = lastUsedPolicyRateIndex + 1; i < policyRates.size(); i ++) {
             Rate rate = policyRates.get(i);
-            if (rateMatchesItemFamilyPerDay(rate))
+            if (rateMatchesSiteItemPerDay(rate))
                 updateStore.deleteEntity(rate);
         }
     }
