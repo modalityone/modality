@@ -101,7 +101,7 @@ public final class HistoryRecorder {
 
     private static void resolvePrimaryKeyField(Class<? extends Entity> entityClass, Supplier<Object> getter, Consumer<Object> setter, UpdateStore updateStore) {
         Object primaryKey = getter.get();
-        Entity entity = updateStore.getEntity(entityClass, primaryKey);
+        Entity entity = updateStore.getEntity(entityClass, primaryKey, true);
         if (entity != null) {
             setter.accept(entity.getPrimaryKey());
         }
