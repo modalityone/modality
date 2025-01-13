@@ -17,7 +17,7 @@ import javafx.beans.property.ReadOnlyObjectProperty;
 import javafx.scene.Node;
 import javafx.scene.control.Labeled;
 import javafx.scene.text.Font;
-import one.modality.base.frontoffice.mainframe.fx.FXCollapseFooter;
+import one.modality.base.frontoffice.mainframe.fx.FXCollapseMenu;
 import one.modality.base.shared.entities.Event;
 import one.modality.base.shared.entities.Person;
 import one.modality.crm.shared.services.authn.fx.FXUserPersonId;
@@ -62,7 +62,7 @@ public final class BookEventActivity extends ViewDomainActivityBase implements B
         if (eventId != null) { // eventId is null when sub-routing /booking/account (instead of /booking/event/:eventId)
             FXEventId.setEventId(EntityId.create(Event.class, Numbers.toShortestNumber(eventId)));
             // Initially hiding the footer (app menu), especially when coming form the website.
-            FXCollapseFooter.setCollapseFooter(true);
+            FXCollapseMenu.setCollapseMenu(true);
         }
     }
 
@@ -84,9 +84,8 @@ public final class BookEventActivity extends ViewDomainActivityBase implements B
 
     @Override
     public void onResume() {
-        // Initially hiding the footer (app menu) to not distract the user with other things (especially when coming
-        // form the website).
-        FXCollapseFooter.setCollapseFooter(true);
+        // Initially hiding the menu to not distract the user with other things (especially when coming form the website)
+        FXCollapseMenu.setCollapseMenu(true);
         super.onResume();
     }
 
@@ -96,14 +95,14 @@ public final class BookEventActivity extends ViewDomainActivityBase implements B
         // onResume() immediately after, so we need to check the user really left this activity.
         Platform.runLater(() -> { // we postpone the check to ensure the situation is now stable
             if (!isActive()) // final check to see if the user left
-                FXCollapseFooter.resetToDefault(); // showing footer in this case
+                FXCollapseMenu.resetToDefault(); // showing menu in this case
         });
         super.onPause();
     }
 
     public void onReachingEndSlide() {
         FXEventId.setEventId(null); // This is to ensure that next time the user books an event in this same session, we
-        FXCollapseFooter.setCollapseFooter(false);
+        FXCollapseMenu.setCollapseMenu(false);
         getBookableDatesUi().clearClickedDates();
     }
 
@@ -213,7 +212,7 @@ public final class BookEventActivity extends ViewDomainActivityBase implements B
 
     public void displayThankYouSlide() {
         lettersSlideController.displayThankYouSlide();
-        FXCollapseFooter.setCollapseFooter(false);
+        FXCollapseMenu.setCollapseMenu(false);
     }
 
     public BookableDatesUi getBookableDatesUi() {

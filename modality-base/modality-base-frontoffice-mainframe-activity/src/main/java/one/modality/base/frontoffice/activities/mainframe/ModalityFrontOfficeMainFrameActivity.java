@@ -50,7 +50,7 @@ import one.modality.base.client.mainframe.fx.FXMainFrameDialogArea;
 import one.modality.base.client.mainframe.fx.FXMainFrameOverlayArea;
 import one.modality.base.client.mainframe.fx.FXMainFrameTransiting;
 import one.modality.base.frontoffice.mainframe.fx.FXBackgroundNode;
-import one.modality.base.frontoffice.mainframe.fx.FXCollapseFooter;
+import one.modality.base.frontoffice.mainframe.fx.FXCollapseMenu;
 import one.modality.base.frontoffice.utility.page.FOPageUtil;
 import one.modality.crm.shared.services.authn.fx.FXUserName;
 
@@ -135,7 +135,7 @@ public final class ModalityFrontOfficeMainFrameActivity extends ModalityClientMa
         double[] lastMouseY = {0};
         mainFrameContainer.setOnMouseMoved(e -> {
             double mouseY = e.getY(), mouseX = e.getSceneX();
-            if (Math.abs(mouseY - lastMouseY[0]) > 5 && !FXCollapseFooter.isCollapseFooter()) {
+            if (Math.abs(mouseY - lastMouseY[0]) > 5 && !FXCollapseMenu.isCollapseMenu()) {
                 Node mountNode = getMountNode();
                 ScrollPane scrollPane = mountNode == null ? null : (ScrollPane) mountNode.getProperties().get("embedding-scrollpane");
                 boolean isPageOnTop = scrollPane == null || scrollPane.getVvalue() == 0;
@@ -216,7 +216,7 @@ public final class ModalityFrontOfficeMainFrameActivity extends ModalityClientMa
                 ScrollPane finalScrollPane = scrollPane = ControlUtil.createVerticalScrollPane(borderPane);
                 mountNode.getProperties().put("embedding-scrollpane", scrollPane);
                 double[] lastScrollPaneContentHeight = {0}, lastVTopOffset = {0};
-                FXProperties.runOnPropertyChange((o, oldVvalue, newVvalue) -> {
+                FXProperties.runOnPropertiesChange(() -> {
                     mountMainMenuButtonBar = mainMenuButtonBar;
                     if (mountTransitionPane.isTransiting())
                         return;
@@ -231,7 +231,7 @@ public final class ModalityFrontOfficeMainFrameActivity extends ModalityClientMa
                     }
                     // Collapse management:
                     // Collapsing the overlay menu if an activity explicitly asked to do so
-                    if (FXCollapseFooter.isCollapseFooter())
+                    if (FXCollapseMenu.isCollapseMenu())
                         overlayMenuBar.collapse();
                     // otherwise if the user scrolled a bit (at least 5 pixels)
                     else if (Math.abs(vTopOffset - lastVTopOffset[0]) > 5) {
@@ -241,7 +241,7 @@ public final class ModalityFrontOfficeMainFrameActivity extends ModalityClientMa
                         lastVTopOffset[0] = vTopOffset;
                     }
                     lastScrollPaneContentHeight[0] = borderPane.getHeight();
-                }, scrollPane.vvalueProperty());
+                }, scrollPane.vvalueProperty(), FXCollapseMenu.collapseMenuProperty());
             }
             // Transiting to the node (embedded in the scroll pane)
             mountTransitionPane.transitToContent(scrollPane);
@@ -347,7 +347,7 @@ public final class ModalityFrontOfficeMainFrameActivity extends ModalityClientMa
         FOPageUtil.restrictToMaxPageWidthAndApplyPageLeftRightPadding(languageSection);  // to fit like the mount node
         CollapsePane collapsePane = new CollapsePane(languageSection);
         collapsePane.setAnimate(false);
-        collapsePane.collapsedProperty().bind(FXLoggedIn.loggedInProperty());
+        collapsePane.collapsedProperty().bind(FXLoggedIn.loggedInProperty().or(FXCollapseMenu.collapseMenuProperty()));
         collapsePane.setAnimate(true);
         collapsePane.getStyleClass().setAll("menu-bar", "lang-menu-bar", "non-mobile");
         return collapsePane;
@@ -360,7 +360,7 @@ public final class ModalityFrontOfficeMainFrameActivity extends ModalityClientMa
     private CollapsePane createUserMenuButtonBar() {
         CollapsePane userMenuButtonBar = createMenuButtonBar(USER_MENU_OPERATION_CODES, true, false);
         userMenuButtonBar.setAnimate(false);
-        userMenuButtonBar.collapsedProperty().bind(FXLoggedIn.loggedInProperty().not());
+        userMenuButtonBar.collapsedProperty().bind(FXLoggedIn.loggedInProperty().not().or(FXCollapseMenu.collapseMenuProperty()));
         userMenuButtonBar.setAnimate(true);
         return userMenuButtonBar;
     }
@@ -402,10 +402,13 @@ public final class ModalityFrontOfficeMainFrameActivity extends ModalityClientMa
         CollapsePane collapsePane = new CollapsePane(buttonBar);
         collapsePane.getStyleClass().setAll("menu-bar", userMenu ? "user-menu-bar" : "main-menu-bar", mobileLayout ? "mobile" : "non-mobile");
         collapsePane.setMaxWidth(Double.MAX_VALUE); // necessary to make the (CSS) border fill the whole page width
+        // Binding collapsedProperty with FXCollapseMenu = general case (will be redefined for user menu to include login)
+        collapsePane.setAnimate(false);
+        collapsePane.collapsedProperty().bind(FXCollapseMenu.collapseMenuProperty()); // will be redefined in some cases
+        collapsePane.setAnimate(false);
         if (mobileLayout) {
             collapsePane.setEffect(new DropShadow());
             collapsePane.setClipEnabled(false);
-            collapsePane.collapsedProperty().bind(FXCollapseFooter.collapseFooterProperty());
             // Considering the bottom of the safe area, in particular for OS like iPadOS with a bar at the bottom
             FXProperties.runNowAndOnPropertyChange(sai -> {
                 double safeAreaBottom = sai.getBottom();
