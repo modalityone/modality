@@ -8,6 +8,7 @@ import javafx.beans.property.SimpleBooleanProperty;
 import javafx.scene.control.Hyperlink;
 import one.modality.base.shared.entities.ScheduledItem;
 import one.modality.event.client.recurringevents.BookableDatesUi;
+import one.modality.event.client.recurringevents.WorkingBooking;
 import one.modality.event.frontoffice.activities.booking.BookingI18nKeys;
 import one.modality.event.frontoffice.activities.booking.process.event.BookEventActivity;
 import one.modality.event.frontoffice.activities.booking.process.event.WorkingBookingProperties;
@@ -36,33 +37,40 @@ public final class Step1BookSttpSlide extends AbstractStep1Slide {
     public void onWorkingBookingLoaded() {
         WorkingBookingProperties workingBookingProperties = getWorkingBookingProperties();
 
-        List<ScheduledItem> scheduledItemsOnEvent = workingBookingProperties.getScheduledItemsOnEvent();
-        //We are looking all the scheduledItem for the event, and book all of them.
-        // Computing non-selectable and already booked dates for the purpose of styling the event schedule
-        List<LocalDate> nonSelectableDate = new ArrayList<>();
-        List<LocalDate> alreadyBookedDate = new ArrayList<>();
-        scheduledItemsOnEvent.forEach(si -> {
-            LocalDate localDate = si.getDate();
-            if (workingBookingProperties.getScheduledItemsAlreadyBooked().stream()
-                .map(ScheduledItem::getDate)
-                .anyMatch(date -> date.equals(localDate))) {
-                //Here there is already a date booked in this another booking
-                nonSelectableDate.add(localDate);
-                alreadyBookedDate.add(localDate);
-            } else if (localDate.isBefore(LocalDate.now())) {
-                //here the date is past
-                nonSelectableDate.add(localDate);
-            }
-        });
+        //We test if there is already a booking for that event.
+        WorkingBooking workingBooking = workingBookingProperties.getWorkingBooking();
+        if(!workingBooking.getScheduledItemsAlreadyBooked().isEmpty()) {
+            displayCheckoutSlide();
+        }
+        else {
+            List<ScheduledItem> scheduledItemsOnEvent = workingBookingProperties.getScheduledItemsOnEvent();
+            //We are looking all the scheduledItem for the event, and book all of them.
+            // Computing non-selectable and already booked dates for the purpose of styling the event schedule
+            List<LocalDate> nonSelectableDate = new ArrayList<>();
+            List<LocalDate> alreadyBookedDate = new ArrayList<>();
+            scheduledItemsOnEvent.forEach(si -> {
+                LocalDate localDate = si.getDate();
+                if (workingBookingProperties.getScheduledItemsAlreadyBooked().stream()
+                    .map(ScheduledItem::getDate)
+                    .anyMatch(date -> date.equals(localDate))) {
+                    //Here there is already a date booked in this another booking
+                    nonSelectableDate.add(localDate);
+                    alreadyBookedDate.add(localDate);
+                } else if (localDate.isBefore(LocalDate.now())) {
+                    //here the date is past
+                    nonSelectableDate.add(localDate);
+                }
+            });
 
 
-        // Synchronizing the event schedule from the working booking (will select the dates newly added in the working booking)
-        getBookEventActivity().syncEventScheduleFromWorkingBooking();
+            // Synchronizing the event schedule from the working booking (will select the dates newly added in the working booking)
+            getBookEventActivity().syncEventScheduleFromWorkingBooking();
 
-        // Arming the "Select all classes" hyperlink. We create a list of dates that will contain all the selectable
-        // dates = the ones that are not in the past, and not already booked
-        List<LocalDate> allSelectableDates = Collections.map(scheduledItemsOnEvent, ScheduledItem::getDate);
-        allSelectableDates.removeAll(nonSelectableDate);
+            // Arming the "Select all classes" hyperlink. We create a list of dates that will contain all the selectable
+            // dates = the ones that are not in the past, and not already booked
+            List<LocalDate> allSelectableDates = Collections.map(scheduledItemsOnEvent, ScheduledItem::getDate);
+            allSelectableDates.removeAll(nonSelectableDate);
+        }
         displayCheckoutSlide();
     }
 

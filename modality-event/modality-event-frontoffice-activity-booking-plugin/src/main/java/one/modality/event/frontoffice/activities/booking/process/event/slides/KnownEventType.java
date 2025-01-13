@@ -8,7 +8,7 @@ package one.modality.event.frontoffice.activities.booking.process.event.slides;
  */
 public enum KnownEventType {
 
-    RECURRING_EVENT(47),
+    GP_CLASSES(47),
     STTP(48);
 
     private final int typeId;

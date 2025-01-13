@@ -204,9 +204,12 @@ final class Step2CheckoutSlide extends StepSlide {
             addExistingTotalLine();
         }
 
+        int eventId = Numbers.toInteger(Entities.getPrimaryKey(getEvent().getType()));
 
-        // SECOND PART: WHAT WE BOOK AT THIS STEP
-        noDiscountTotalPrice += addAttendanceRows(documentAggregate.getNewAttendancesStream(), false);
+        if(eventId != KnownEventType.STTP.getTypeId() ||workingBooking.isNewBooking()) {
+            // SECOND PART: WHAT WE BOOK AT THIS STEP - we add this only if it's a new booking or if it's a GP (recurringEvent).
+            noDiscountTotalPrice += addAttendanceRows(documentAggregate.getNewAttendancesStream(), false);
+        }
         // THIRD PART: DISCOUNT, IF ANY
         int total = workingBookingProperties.getTotal();
         if (total < noDiscountTotalPrice) {
@@ -234,7 +237,7 @@ final class Step2CheckoutSlide extends StepSlide {
 
         int[] totalPrice = {0};
         int eventId = Numbers.toInteger(Entities.getPrimaryKey(getEvent().getType()));
-        if (eventId == KnownEventType.RECURRING_EVENT.getTypeId()) {
+        if (eventId == KnownEventType.GP_CLASSES.getTypeId()) {
             attendanceStream.forEach(a -> {
                 ScheduledItem scheduledItem = a.getScheduledItem();
                 LocalDate date = scheduledItem.getDate();
@@ -260,6 +263,7 @@ final class Step2CheckoutSlide extends StepSlide {
                         previousBalance.intValue() <= 0 || date.isBefore(LocalDate.now())
                     ));
                 }
+                
                 addRow(name, price, trashOption);
                 GridPane.setHalignment(trashOption, HPos.CENTER);
             });

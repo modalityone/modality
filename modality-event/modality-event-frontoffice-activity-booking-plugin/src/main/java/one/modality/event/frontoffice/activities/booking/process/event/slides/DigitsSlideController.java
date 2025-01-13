@@ -53,13 +53,13 @@ final class DigitsSlideController {
 
         Event currentEvent = FXEvent.getEvent();
         int typeId = Numbers.toInteger(Entities.getPrimaryKey(currentEvent.getType()));
-        if(typeId == KnownEventType.RECURRING_EVENT.getTypeId()) {
+        if(typeId == KnownEventType.GP_CLASSES.getTypeId()) {
             //TODO: when we will have different Step1 for different type of event, implement an abstract class in this package, and the different step 1 will inherit this abstract class
             step1Slide = new Step1BookDatesRecurringEventSlide(bookEventActivity);
         } else if(typeId == KnownEventType.STTP.getTypeId()) {
             step1Slide =  new Step1BookSttpSlide(bookEventActivity);;
-            step2CheckoutSlide.setBookAsGuestAllowed(false);
-            step2CheckoutSlide.setDisplayOnlySummary(true);
+           // step2CheckoutSlide.setBookAsGuestAllowed(false);
+           // step2CheckoutSlide.setDisplayOnlySummary(true);
         }
         else {
             step7ErrorSlide.setErrorMessage("Error: Unmanaged type of event");

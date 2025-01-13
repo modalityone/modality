@@ -195,10 +195,10 @@ final class ManageRecurringEventView {
                     currentScheduleItemStartTimeTextField.setPromptText(timeOfTheEventTextField.getText());
                     if (defaultStartTime == null) defaultStartTime = startTime;
                     if (defaultEndTime == null) defaultEndTime = endTime;
-                    if (defaultStartTime.equals(si.getStartTime())) {
-                        si.setStartTime(startTime);
-                        si.setEndTime(endTime);
-                    }
+                    // if (defaultStartTime.equals(si.getStartTime())) {
+                    si.setStartTime(startTime);
+                    si.setEndTime(endTime);
+                    // }
                 }
             }
             defaultStartTime = startTime;
@@ -325,16 +325,16 @@ final class ManageRecurringEventView {
                     " where scheduledItem=si limit 1) as attendance " +
                     " from ScheduledItem si where event=?", new Object[]{e}),
                 //Index 1: the video Item (we should have exactly 1)
-                new EntityStoreQuery("select Item where family=? and organization=?", new Object[]{KnownItemFamily.VIDEO.getPrimaryKey(),FXOrganization.getOrganization()}),
+                new EntityStoreQuery("select Item where family=? and organization=?", new Object[]{KnownItemFamily.VIDEO.getPrimaryKey(), FXOrganization.getOrganization()}),
                 //Index 2: the audio Item (we should have exactly one that has the same language as the default language of the organization)
-                new EntityStoreQuery("select Item where family=? and organization=? and language=organization.language", new Object[]{KnownItemFamily.AUDIO_RECORDING.getPrimaryKey(),FXOrganization.getOrganization()}))
+                new EntityStoreQuery("select Item where family=? and organization=? and language=organization.language", new Object[]{KnownItemFamily.AUDIO_RECORDING.getPrimaryKey(), FXOrganization.getOrganization()}))
             .onFailure(Console::log)
             .onSuccess(entityLists -> Platform.runLater(() -> {
                 EntityList<ScheduledItem> scheduledItems = entityLists[0];
                 EntityList<Item> videoItems = entityLists[1];
                 EntityList<Item> audioItems = entityLists[2];
-                if(!videoItems.isEmpty()) videoItemId = Entities.getPrimaryKey(videoItems.get(0));
-                if(!audioItems.isEmpty()) audioItemId = Entities.getPrimaryKey(audioItems.get(0));
+                if (!videoItems.isEmpty()) videoItemId = Entities.getPrimaryKey(videoItems.get(0));
+                if (!audioItems.isEmpty()) audioItemId = Entities.getPrimaryKey(audioItems.get(0));
                 // we test if the selectedEvent==e, because, if a user click very fast from en event to another, there
                 // can be a sync pb between the result of the request from the database and the code executed
                 if (currentSelectedEvent == e) {
@@ -1085,14 +1085,14 @@ final class ManageRecurringEventView {
     private void submitUpdateStoreChanges() {
         updateStore.submitChanges()
             .onFailure(x -> {
-            DialogContent dialog = DialogContent.createConfirmationDialog("Error", "Operation failed", x.getMessage());
-            dialog.setOk();
-            Platform.runLater(() -> {
-                DialogBuilderUtil.showModalNodeInGoldLayout(dialog, FXMainFrameDialogArea.getDialogArea());
-                dialog.getPrimaryButton().setOnAction(a -> dialog.getDialogCallback().closeDialog());
-            });
-            Console.log(x);
-        })
+                DialogContent dialog = DialogContent.createConfirmationDialog("Error", "Operation failed", x.getMessage());
+                dialog.setOk();
+                Platform.runLater(() -> {
+                    DialogBuilderUtil.showModalNodeInGoldLayout(dialog, FXMainFrameDialogArea.getDialogArea());
+                    dialog.getPrimaryButton().setOnAction(a -> dialog.getDialogCallback().closeDialog());
+                });
+                Console.log(x);
+            })
             .onSuccess(x -> Platform.runLater(() -> {
                 Console.log("Submit successful");
                 Object imageTag = ModalityCloudinary.getEventImageTag(Entities.getPrimaryKey(currentEditedEvent));
