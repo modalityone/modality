@@ -2,6 +2,7 @@ package one.modality.crm.server.authn.gateway;
 
 import dev.webfx.platform.async.Future;
 import dev.webfx.platform.console.Console;
+import dev.webfx.platform.resource.Resource;
 import dev.webfx.platform.util.Strings;
 import dev.webfx.stack.authn.*;
 import dev.webfx.stack.authn.logout.server.LogoutPush;
@@ -33,16 +34,17 @@ public final class ModalityUsernamePasswordAuthenticationGateway implements Serv
     private static final String CREATE_ACCOUNT_ACTIVITY_PATH_PREFIX = "/create-account";
     private static final String CREATE_ACCOUNT_ACTIVITY_PATH_FULL = CREATE_ACCOUNT_ACTIVITY_PATH_PREFIX + "/:token";
 
-    private static final String CREATE_ACCOUNT_LINK_MAIL_FROM = null;
-    private static final String CREATE_ACCOUNT_LINK_MAIL_SUBJECT = "Create account";
-    private static final String CREATE_ACCOUNT_LINK_MAIL_BODY = "[loginLink]";
+    // Temporarily hardcoded (to replace with database letters)
+    private static final String CREATE_ACCOUNT_LINK_MAIL_FROM = "kbs@kadampa.net";
+    private static final String CREATE_ACCOUNT_LINK_MAIL_SUBJECT = "Account creation - Kadampa Booking System";
+    private static final String CREATE_ACCOUNT_LINK_MAIL_BODY = Resource.getText(Resource.toUrl("AccountCreationMailBody.html", ModalityUsernamePasswordAuthenticationGateway.class));
 
     private static final String UPDATE_EMAIL_ACTIVITY_PATH_PREFIX = "/user-profile/email-update";
     private static final String UPDATE_EMAIL_ACTIVITY_PATH_FULL = UPDATE_EMAIL_ACTIVITY_PATH_PREFIX + "/:token";
 
-    private static final String UPDATE_EMAIL_LINK_MAIL_FROM = null;
-    private static final String UPDATE_EMAIL_LINK_MAIL_SUBJECT = "Update email";
-    private static final String UPDATE_EMAIL_LINK_MAIL_BODY = "[loginLink]";
+    private static final String UPDATE_EMAIL_LINK_MAIL_FROM = "kbs@kadampa.net";
+    private static final String UPDATE_EMAIL_LINK_MAIL_SUBJECT = "Account email change - Kadampa Booking System";
+    private static final String UPDATE_EMAIL_LINK_MAIL_BODY = Resource.getText(Resource.toUrl("AccountEmailUpdateMailBody.html", ModalityUsernamePasswordAuthenticationGateway.class));
 
     private final DataSourceModel dataSourceModel;
 

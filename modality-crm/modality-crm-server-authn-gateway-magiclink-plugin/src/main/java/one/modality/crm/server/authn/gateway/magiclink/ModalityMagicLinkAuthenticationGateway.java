@@ -3,6 +3,7 @@ package one.modality.crm.server.authn.gateway.magiclink;
 import dev.webfx.platform.async.Future;
 import dev.webfx.platform.async.Promise;
 import dev.webfx.platform.console.Console;
+import dev.webfx.platform.resource.Resource;
 import dev.webfx.platform.util.collection.Collections;
 import dev.webfx.stack.authn.*;
 import dev.webfx.stack.authn.logout.server.LogoutPush;
@@ -29,9 +30,10 @@ public class ModalityMagicLinkAuthenticationGateway implements ServerAuthenticat
     private static final String MAGIC_LINK_ACTIVITY_PATH_PREFIX = "/magic-link";
     private static final String MAGIC_LINK_ACTIVITY_PATH_FULL = MAGIC_LINK_ACTIVITY_PATH_PREFIX + "/:token";
 
-    private static final String MAGIC_LINK_MAIL_FROM = null;
-    private static final String MAGIC_LINK_MAIL_SUBJECT = "Magic Link";
-    private static final String MAGIC_LINK_MAIL_BODY = "[loginLink]";
+    // Temporarily hardcoded (to replace with database letters)
+    private static final String MAGIC_LINK_MAIL_FROM = "kbs@kadampa.net";
+    private static final String MAGIC_LINK_MAIL_SUBJECT = "Password recovery - Kadampa Booking System";
+    private static final String MAGIC_LINK_MAIL_BODY = Resource.getText(Resource.toUrl("MagicLinkMailBody.html", ModalityMagicLinkAuthenticationGateway.class));
 
     private final DataSourceModel dataSourceModel;
 
