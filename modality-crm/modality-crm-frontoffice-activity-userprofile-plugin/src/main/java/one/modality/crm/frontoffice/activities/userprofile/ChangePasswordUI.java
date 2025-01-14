@@ -13,6 +13,7 @@ import dev.webfx.stack.authn.UpdatePasswordCredentials;
 import dev.webfx.stack.i18n.I18n;
 import dev.webfx.stack.i18n.controls.I18nControls;
 import dev.webfx.stack.ui.controls.MaterialFactoryMixin;
+import dev.webfx.stack.ui.controls.button.ButtonFactory;
 import dev.webfx.stack.ui.dialog.DialogCallback;
 import dev.webfx.stack.ui.operation.OperationUtil;
 import dev.webfx.stack.ui.validation.ValidationSupport;
@@ -80,6 +81,7 @@ public class ChangePasswordUI implements MaterialFactoryMixin {
             if (currentUser != null)
                 emailAddress = currentUser.getEmail();
 
+            ButtonFactory.resetDefaultButton(actionButton);
             actionButton.setOnAction(e -> {
                 if (validateForm()) {
                     //First we check if the password entered is the correct
