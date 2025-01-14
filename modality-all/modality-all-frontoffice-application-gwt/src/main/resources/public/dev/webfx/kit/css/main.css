@@ -825,8 +825,10 @@ input[type="password"]:not([value=""]) {
 /*===== modality-client-brand-web@main.css from modality-base-client-brand =====*/
 
 :root {
-    --brand-main-color: #F6782E;
-    --brand-main-background-color: #F6782E;
+    --brand-orange-color: #F6782E;
+    --brand-blue-color: #0096D6;
+    --brand-main-color: var(--brand-orange-color);
+    --brand-main-background-color: var(--brand-orange-color);
 }
 /*===== modality-client-css-web@main.css from modality-base-client-css =====*/
 
@@ -903,9 +905,9 @@ fx-collapsepane.menu-bar.lang-menu-bar > fx-border {
     font-family: var(--roboto-font-family), sans-serif;
     font-size: 14px;
     font-weight: 500;
-    color: var(--brand-main-color);
+    color: var(--brand-blue-color);
     line-height: 1.2;
-    --fx-svg-path-fill: var(--brand-main-color);
+    --fx-svg-path-fill: var(--brand-blue-color);
 }
 
 .user-menu-bar fx-label, .user-menu-bar fx-button {

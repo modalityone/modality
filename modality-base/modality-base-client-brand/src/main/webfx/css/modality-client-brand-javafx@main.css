@@ -1,4 +1,6 @@
 * {
-    -brand-main-color: #F6782E;
-    -brand-main-background-color: #F6782E;
+    -brand-orange-color: #F6782E;
+    -brand-blue-color: #0096D6;
+    -brand-main-color: -brand-orange-color;
+    -brand-main-background-color: -brand-orange-color;
 }
