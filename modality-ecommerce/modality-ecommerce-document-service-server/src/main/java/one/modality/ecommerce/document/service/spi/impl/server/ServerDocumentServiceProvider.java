@@ -146,8 +146,8 @@ public class ServerDocumentServiceProvider implements DocumentServiceProvider {
         return HistoryRecorder.prepareDocumentHistoryBeforeSubmit(argument.getHistoryComment(), document, documentLine)
             .compose(history -> // At this point, history.getDocument() is never null (it has eventually been
                 submitChangesAndPrepareResult(updateStore, history.getDocument()) // resolved through DB reading)
-                    .onSuccess(ignored -> // Completing the history recording (changes column with resolved primary keys)
-                        HistoryRecorder.completeDocumentHistoryAfterSubmit(history, argument.getDocumentEvents())
+                    .compose(result -> // Completing the history recording (changes column with resolved primary keys)
+                        HistoryRecorder.completeDocumentHistoryAfterSubmit(result, history, argument.getDocumentEvents())
                     )
             );
     }
