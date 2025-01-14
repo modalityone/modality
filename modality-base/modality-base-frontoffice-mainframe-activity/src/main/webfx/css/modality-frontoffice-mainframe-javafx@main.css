@@ -32,9 +32,9 @@ CollapsePane.menu-bar.lang-menu-bar {
 .main-menu-bar Label.brand {
     -fx-font-size: 16px;
     -fx-font-weight: bold;
-    -fx-text-fill: -brand-main-color;
+    -fx-text-fill: -brand-blue-color;
 }
 
 .main-menu-bar Label.brand SVGPath {
-    -fx-fill: -brand-main-color;
+    -fx-fill: -brand-blue-color;
 }
