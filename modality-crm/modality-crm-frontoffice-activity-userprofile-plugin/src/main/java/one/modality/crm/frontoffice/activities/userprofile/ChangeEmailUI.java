@@ -24,9 +24,7 @@ import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.PasswordField;
 import javafx.scene.control.TextField;
-import javafx.scene.layout.Background;
 import javafx.scene.layout.VBox;
-import javafx.scene.paint.Color;
 import one.modality.base.shared.entities.Person;
 import one.modality.crm.shared.services.authn.fx.FXUserPerson;
 
@@ -114,7 +112,6 @@ public class ChangeEmailUI implements MaterialFactoryMixin {
         changeEmailVBox.setMaxWidth(UserProfileActivity.MODAL_WINDOWS_MAX_WIDTH);
         changeEmailVBox.setMaxHeight(UserProfileActivity.MODAL_WINDOWS_MAX_WIDTH+100);
 
-        changeEmailVBox.setBackground(Background.fill(Color.WHITE));
         changeEmailVBox.setSpacing(20);
         ChangePasswordUI.setupModalVBox(changeEmailVBox);
     }
