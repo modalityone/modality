@@ -127,7 +127,7 @@ final class UserProfileActivity extends ViewDomainActivityBase implements Modali
 
         container.setSpacing(20);
         container.getStyleClass().add("user-profile");
-        container.setPadding(new Insets(50, 0, 0, 0));
+        container.setPadding(new Insets(50, 20, 0, 20));
         container.setAlignment(Pos.TOP_CENTER);
         container.setMaxWidth(870);
         Label titleLabel = Bootstrap.h2Primary(I18nControls.newLabel(UserProfileI18nKeys.UserProfileTitle));
@@ -187,7 +187,7 @@ final class UserProfileActivity extends ViewDomainActivityBase implements Modali
 
         /* THE USER INFORMATION  */
         /* ********************* */
-        int FIELDS_MAX_WIDTH = 370;
+        int FIELDS_MAX_WIDTH = 345;
 
         ColumnsPane columnsPane = new ColumnsPane();
         columnsPane.setMaxColumnCount(2);
@@ -480,7 +480,10 @@ final class UserProfileActivity extends ViewDomainActivityBase implements Modali
 
         Label needHelp = Bootstrap.h3(Bootstrap.textSecondary(I18nControls.newLabel(UserProfileI18nKeys.NeedHelp)));
         needHelp.setPadding(new Insets(0, 0, 10, 0));
+        needHelp.setTextAlignment(TextAlignment.CENTER);
+        needHelp.setWrapText(true);
         Label emailUs = Bootstrap.strong(I18nControls.newLabel(UserProfileI18nKeys.EmailUs));
+        emailUs.setWrapText(true);
         emailUs.setTextAlignment(TextAlignment.CENTER);
         emailUs.setPadding(new Insets(0, 0, 50, 0));
         container.getChildren().addAll(needHelp, emailUs);
