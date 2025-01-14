@@ -27,6 +27,8 @@ import static one.modality.ecommerce.payment.server.gateway.impl.square.SquareRe
  */
 public final class SquarePaymentGateway implements PaymentGateway {
 
+    private static final boolean DEBUG_LOG = true;
+
     private static final String GATEWAY_NAME = "Square";
 
     private static final String SQUARE_LIVE_WEB_PAYMENTS_SDK_URL = "https://web.squarecdn.com/v1/square.js";
@@ -85,6 +87,9 @@ public final class SquarePaymentGateway implements PaymentGateway {
                 .replace("${square_appId}", appId)
                 .replace("${square_locationId}", locationId)
                 ;
+        if (DEBUG_LOG) {
+            Console.log("[Square][DEBUG] initiatePayment - template = " + template);
+        }
         SandboxCard[] sandboxCards = live ? null : SANDBOX_CARDS;
         if (seamless) {
             return Future.succeededFuture(GatewayInitiatePaymentResult.createEmbeddedContentInitiatePaymentResult(live, true, template, sandboxCards));
@@ -112,6 +117,9 @@ public final class SquarePaymentGateway implements PaymentGateway {
         String idempotencyKey = payload.getString("square_idempotencyKey");
         String sourceId = payload.getString("square_sourceId");
         String verificationToken = payload.getString("square_verificationToken");
+        if (DEBUG_LOG) {
+            Console.log("[Square][DEBUG] completePayment - payload = " + argument.getPayload() + ", amount = " + amount + ", currencyCode = " + currencyCode + ", locationId = " + locationId + ", idempotencyKey = " + idempotencyKey + ", sourceId = " + sourceId + ", verificationToken = " + verificationToken);
+        }
 
         PaymentsApi paymentsApi = client.getPaymentsApi();
         paymentsApi.createPaymentAsync(new CreatePaymentRequest.Builder(sourceId, idempotencyKey)
@@ -124,6 +132,9 @@ public final class SquarePaymentGateway implements PaymentGateway {
             // We generate the final result from the payment information, and also capture the http response body (stored in the database)
             promise.complete(generateResultFromSquarePayment(payment, result.getContext()));
         }).exceptionally(ex -> { // Can be a technical exception, or a failed payment (ex: card declined)
+            if (DEBUG_LOG) {
+                Console.log("[Square][DEBUG] completePayment - exception:", ex);
+            }
             // We extract the Square exception (most interesting part) if it is wrapped inside a Java exception
             if (ex.getCause() instanceof ApiException) {
                 ex = ex.getCause();
@@ -133,6 +144,9 @@ public final class SquarePaymentGateway implements PaymentGateway {
             if (ex instanceof ApiException) {
                 ApiException ae = (ApiException) ex;
                 Object data = ae.getData();
+                if (DEBUG_LOG) {
+                    Console.log("[Square][DEBUG] completePayment - data = " + data);
+                }
                 if (data instanceof Payment) {
                     // Same as for a successful payment, the difference will be the status that will indicate it's failed
                     promise.complete(generateResultFromSquarePayment((Payment) data, ae.getHttpContext()));
