@@ -53,7 +53,7 @@ final class AudioRecordingsActivity extends ViewDomainActivityBase {
                        // 1/ there is a ScheduledItem of audio family type whose bookableScheduledItem has been booked (KBS3 setup)
                        " exists (select ScheduledItem audioSi where item.family.code=? and exists(select Attendance where documentLine=dl and scheduledItem=audioSi.bookableScheduledItem))" +
                        // 2/ Or KBS3 / KBS2 setup (this allows to display the audios that have been booked in the pase with KBS2 events, event if we can't display them)
-                       " or item.family.code=?)" +
+                       " or item.family.code=?) and document.event.kbs3=true " +
                        " order by document.event.startDate desc",
                         new Object[]{ KnownItemFamily.AUDIO_RECORDING.getCode(), userPersonId, KnownItemFamily.AUDIO_RECORDING.getCode(), KnownItemFamily.AUDIO_RECORDING.getCode()})
                     .onFailure(Console::log)
