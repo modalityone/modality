@@ -5,6 +5,7 @@ import dev.webfx.platform.console.Console;
 import dev.webfx.stack.authn.UserClaims;
 import dev.webfx.stack.orm.datasourcemodel.service.DataSourceModelService;
 import dev.webfx.stack.orm.entity.EntityStore;
+import dev.webfx.stack.session.state.LogoutUserId;
 import dev.webfx.stack.session.state.client.fx.FXLoggedIn;
 import dev.webfx.stack.session.state.client.fx.FXUserClaims;
 import dev.webfx.stack.session.state.client.fx.FXUserId;
@@ -20,7 +21,7 @@ public final class FXModalityUserPrincipal {
     private final static BooleanProperty loggedInProperty = new SimpleBooleanProperty();
 
     private final static ObjectProperty<ModalityUserPrincipal> modalityUserPrincipalProperty = FXProperties.newObjectProperty(mup ->
-            Console.log("modalityUserPrincipal = " + mup));
+            Console.log("FXModalityUserPrincipal = " + mup));
 
     public static ReadOnlyBooleanProperty loggedInProperty() {
         return loggedInProperty;
@@ -51,7 +52,7 @@ public final class FXModalityUserPrincipal {
             ModalityUserPrincipal modalityUserPrincipal = null;
             if (userId instanceof ModalityUserPrincipal) // Happens when directly logging using Modality username/password
                 modalityUserPrincipal = (ModalityUserPrincipal) userId;
-            else { // User provisioning code: SSO login => ModalityUserPrincipal TODO: Move this provisioning code on server
+            else if (!LogoutUserId.isLogoutUserIdOrNull(userId)) { // User provisioning code: SSO login => ModalityUserPrincipal TODO: Move this provisioning code on server
                 // Checking UserClaims (when logging through SSO)
                 UserClaims userClaims = FXUserClaims.getUserClaims();
                 if (userClaims != null) { // Yes, the user logged-in through SSO
