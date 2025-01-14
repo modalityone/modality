@@ -57,7 +57,6 @@ final class Step2CheckoutSlide extends StepSlide {
     private final Button submitButton = Bootstrap.largeSuccessButton(I18nControls.newButton(ModalityI18nKeys.Submit));
     private final BooleanProperty step1PersonToBookWasShownProperty = new SimpleBooleanProperty();
     private boolean bookAsGuestAllowed = true;
-    private boolean displayOnlySummary = false;
 
     public Step2CheckoutSlide(BookEventActivity bookEventActivity) {
         super(bookEventActivity);
@@ -377,11 +376,4 @@ final class Step2CheckoutSlide extends StepSlide {
         this.bookAsGuestAllowed = bookAsGuestAllowed;
     }
 
-    public boolean isDisplayOnlySummary() {
-        return displayOnlySummary;
-    }
-
-    public void setDisplayOnlySummary(boolean displayOnlySummary) {
-        this.displayOnlySummary = displayOnlySummary;
-    }
 }

@@ -58,8 +58,7 @@ final class DigitsSlideController {
             step1Slide = new Step1BookDatesRecurringEventSlide(bookEventActivity);
         } else if(typeId == KnownEventType.STTP.getTypeId()) {
             step1Slide =  new Step1BookSttpSlide(bookEventActivity);;
-           // step2CheckoutSlide.setBookAsGuestAllowed(false);
-           // step2CheckoutSlide.setDisplayOnlySummary(true);
+            step2CheckoutSlide.setBookAsGuestAllowed(false);
         }
         else {
             step7ErrorSlide.setErrorMessage("Error: Unmanaged type of event");
