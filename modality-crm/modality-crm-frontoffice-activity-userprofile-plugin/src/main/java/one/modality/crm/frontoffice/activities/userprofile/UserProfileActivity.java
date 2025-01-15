@@ -464,7 +464,6 @@ final class UserProfileActivity extends ViewDomainActivityBase implements Modali
                         Platform.runLater(() -> {
                             infoMessage.setVisible(true);
                             I18nControls.bindI18nProperties(infoMessage, UserProfileI18nKeys.PersonalInformationUpdated);
-                            syncUIFromModel();
                             //Temporary, we force the reload. This is a temp fix while waiting the DynamicEntity.equals function behaviour to be fixed
                             FXUserPerson.reloadUserPerson();
                         });
