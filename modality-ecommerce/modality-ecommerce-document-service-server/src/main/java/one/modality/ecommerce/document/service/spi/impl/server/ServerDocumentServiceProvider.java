@@ -71,7 +71,7 @@ public class ServerDocumentServiceProvider implements DocumentServiceProvider {
     private Future<DocumentAggregate> loadLatestDocumentFromDatabase(LoadDocumentArgument argument) {
         Object[] parameters = {argument.getDocumentPrimaryKey()};
         EntityStoreQuery[] queries = {
-            new EntityStoreQuery("select event,person,person_firstName,person_lastName,person_email,person_facilityFee from Document where id=? order by id", parameters),
+            new EntityStoreQuery("select event,person,ref,person_firstName,person_lastName,person_email,person_facilityFee from Document where id=? order by id", parameters),
             new EntityStoreQuery("select document,site,item from DocumentLine where document=? and site!=null order by id", parameters),
             new EntityStoreQuery("select documentLine,scheduledItem from Attendance where documentLine.document=? order by id", parameters),
             new EntityStoreQuery("select document,amount,pending,successful from MoneyTransfer where document=? order by id", parameters)
