@@ -10,6 +10,8 @@ public class AbstractMoneyTransferEvent extends AbstractDocumentEvent {
     protected MoneyTransfer moneyTransfer;
     private Object moneyTransferPrimaryKey;
 
+    protected boolean playedOnMoneyTransfer;
+
     public AbstractMoneyTransferEvent(Object documentPrimaryKey, Object moneyTransferPrimaryKey) {
         super(documentPrimaryKey);
         this.moneyTransferPrimaryKey = moneyTransferPrimaryKey;
@@ -24,8 +26,9 @@ public class AbstractMoneyTransferEvent extends AbstractDocumentEvent {
     public MoneyTransfer getMoneyTransfer() {
         if (moneyTransfer == null && entityStore != null) {
             createMoneyTransfer();
-            replayEventOnMoneyTransfer();
         }
+        if (moneyTransfer != null && !playedOnMoneyTransfer)
+            replayEventOnMoneyTransfer();
         return moneyTransfer;
     }
 
@@ -46,5 +49,6 @@ public class AbstractMoneyTransferEvent extends AbstractDocumentEvent {
 
     protected void replayEventOnMoneyTransfer() {
         moneyTransfer.setDocument(getDocument());
+        playedOnMoneyTransfer = true;
     }
 }

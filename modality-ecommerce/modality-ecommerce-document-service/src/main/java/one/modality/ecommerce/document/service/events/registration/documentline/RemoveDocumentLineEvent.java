@@ -29,6 +29,7 @@ public final class RemoveDocumentLineEvent extends AbstractDocumentLineEvent {
     public void replayEventOnDocumentLine() {
         if (isForSubmit()) {
             updateStore.deleteEntity(DocumentLine.class, getDocumentLinePrimaryKey());
+            playedOnDocumentLine = true;
         } else
             super.replayEventOnDocumentLine();
     }
