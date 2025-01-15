@@ -48,4 +48,9 @@ public abstract class AbstractSourceEvent {
     }
 
     public abstract void replayEvent();
+
+    public abstract void setPlayed(boolean played);
+
+    public abstract boolean isPlayed();
+
 }

@@ -18,6 +18,7 @@ public final class RemoveMoneyTransferEvent extends AbstractMoneyTransferEvent {
 
     @Override
     public void replayEvent() {
+        setPlayed(false);
         if (isForSubmit()) {
             replayEventOnMoneyTransfer();
         } else {
@@ -29,6 +30,7 @@ public final class RemoveMoneyTransferEvent extends AbstractMoneyTransferEvent {
     protected void replayEventOnMoneyTransfer() {
         if (isForSubmit()) {
             updateStore.deleteEntity(MoneyTransfer.class, getMoneyTransferPrimaryKey());
+            playedOnMoneyTransfer = true;
         } else {
             super.replayEventOnMoneyTransfer();
         }

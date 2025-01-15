@@ -18,6 +18,7 @@ public final class AddDocumentEvent extends AbstractDocumentEvent {
     private String firstName;
     private String lastName;
     private String email;
+    // Generated information once stored in database
     private Integer ref;
 
     public AddDocumentEvent(Document document) {

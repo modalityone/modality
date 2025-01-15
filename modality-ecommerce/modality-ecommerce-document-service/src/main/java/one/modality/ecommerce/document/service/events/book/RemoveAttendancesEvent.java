@@ -18,6 +18,7 @@ public final class RemoveAttendancesEvent extends AbstractAttendancesEvent {
 
     @Override
     public void replayEvent() {
+        setPlayed(false);
         replayEventOnAttendances();
     }
 
@@ -29,5 +30,6 @@ public final class RemoveAttendancesEvent extends AbstractAttendancesEvent {
                 updateStore.deleteEntity(Attendance.class, attendancesPrimaryKey);
             }
         }
+        playedOnAttendances = true;
     }
 }

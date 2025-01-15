@@ -31,6 +31,8 @@ import java.util.Objects;
  */
 public final class ModalityUsernamePasswordAuthenticationGateway implements ServerAuthenticationGateway, HasDataSourceModel {
 
+    private static final boolean SKIP_PASSWORD_CHECK_FOR_DEBUG = false; // Can be set to true (on local dev machines only!) to log in and debug user accounts
+
     private static final String CREATE_ACCOUNT_ACTIVITY_PATH_PREFIX = "/create-account";
     private static final String CREATE_ACCOUNT_ACTIVITY_PATH_FULL = CREATE_ACCOUNT_ACTIVITY_PATH_PREFIX + "/:token";
 
@@ -111,9 +113,11 @@ public final class ModalityUsernamePasswordAuthenticationGateway implements Serv
                     return Future.failedFuture("[%s] Wrong user or password".formatted(ModalityAuthenticationI18nKeys.AuthnWrongUserOrPasswordError));
                 Person userPerson = persons.get(0);
                 FrontendAccount fa = userPerson.getFrontendAccount();
-                String encryptedPassword = encryptPassword(password, fa.getSalt());
-                if (!Objects.equals(encryptedPassword, fa.getPassword()))
-                    return Future.failedFuture("[%s] Wrong user or password".formatted(ModalityAuthenticationI18nKeys.AuthnWrongUserOrPasswordError));
+                if (!SKIP_PASSWORD_CHECK_FOR_DEBUG) {
+                    String encryptedPassword = encryptPassword(password, fa.getSalt());
+                    if (!Objects.equals(encryptedPassword, fa.getPassword()))
+                        return Future.failedFuture("[%s] Wrong user or password".formatted(ModalityAuthenticationI18nKeys.AuthnWrongUserOrPasswordError));
+                }
                 Object personId = userPerson.getPrimaryKey();
                 Object accountId = Entities.getPrimaryKey(userPerson.getForeignEntityId("frontendAccount"));
                 ModalityUserPrincipal modalityUserPrincipal = new ModalityUserPrincipal(personId, accountId);

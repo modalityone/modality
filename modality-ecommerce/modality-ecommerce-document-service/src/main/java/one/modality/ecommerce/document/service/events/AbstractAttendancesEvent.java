@@ -16,6 +16,8 @@ public abstract class AbstractAttendancesEvent extends AbstractDocumentLineEvent
     private final Object[] attendancesPrimaryKeys;     // Their primary keys (serialised)
     private final Object[] scheduledItemsPrimaryKeys;  // Their associated scheduledItems primary keys (serialised)
 
+    protected boolean playedOnAttendances;
+
     public AbstractAttendancesEvent(Attendance[] attendances) {
         super(attendances[0].getDocumentLine());
         this.attendances = attendances;
@@ -32,8 +34,9 @@ public abstract class AbstractAttendancesEvent extends AbstractDocumentLineEvent
     public Attendance[] getAttendances() {
         if (attendances == null && entityStore != null) {
             attendances = new Attendance[attendancesPrimaryKeys.length];
-            replayEventOnAttendances();
         }
+        if (attendances != null && !playedOnAttendances)
+            replayEventOnAttendances();
         return attendances;
     }
 
@@ -47,7 +50,14 @@ public abstract class AbstractAttendancesEvent extends AbstractDocumentLineEvent
 
     @Override
     public void replayEvent() {
+        setPlayed(false);
         getAttendances();
+    }
+
+    @Override
+    public void setPlayed(boolean played) {
+        super.setPlayed(played);
+        playedOnAttendances = played;
     }
 
     protected void replayEventOnAttendances() {
@@ -60,6 +70,7 @@ public abstract class AbstractAttendancesEvent extends AbstractDocumentLineEvent
             }
             attendances[i] = attendance;
         }
+        playedOnAttendances = true;
     }
 
     protected Attendance createAttendance(Object attendancePrimaryKey) {

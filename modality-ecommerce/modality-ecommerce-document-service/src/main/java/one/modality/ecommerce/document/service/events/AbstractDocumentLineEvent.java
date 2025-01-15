@@ -10,6 +10,8 @@ public abstract class AbstractDocumentLineEvent extends AbstractDocumentEvent {
     protected DocumentLine documentLine;   // Working entity on client-side only (not serialised)
     private Object documentLinePrimaryKey; // Its primary key (serialised)
 
+    protected boolean playedOnDocumentLine;
+
     public AbstractDocumentLineEvent(Object documentPrimaryKey, Object documentLinePrimaryKey) {
         super(documentPrimaryKey);
         this.documentLinePrimaryKey = documentLinePrimaryKey;
@@ -24,8 +26,9 @@ public abstract class AbstractDocumentLineEvent extends AbstractDocumentEvent {
     public DocumentLine getDocumentLine() {
         if (documentLine == null && entityStore != null) {
             createDocumentLine();
-            replayEventOnDocumentLine();
         }
+        if (documentLine != null && !playedOnDocumentLine)
+            replayEventOnDocumentLine();
         return documentLine;
     }
 
@@ -46,10 +49,18 @@ public abstract class AbstractDocumentLineEvent extends AbstractDocumentEvent {
 
     @Override
     public void replayEvent() {
+        setPlayed(false);
         getDocumentLine();
+    }
+
+    @Override
+    public void setPlayed(boolean played) {
+        super.setPlayed(played);
+        playedOnDocumentLine = played;
     }
 
     public void replayEventOnDocumentLine() {
         documentLine.setDocument(getDocument());
+        playedOnDocumentLine = true;
     }
 }
