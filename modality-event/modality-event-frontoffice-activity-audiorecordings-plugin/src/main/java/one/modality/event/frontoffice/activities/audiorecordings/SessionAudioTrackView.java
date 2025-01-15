@@ -63,7 +63,7 @@ final class SessionAudioTrackView {
         favoritePath.setStroke(Color.BLACK);
 
         MonoPane favoriteMonoPane = new MonoPane(favoritePath);
-        containerBorderPane.setLeft(favoriteMonoPane);
+        //containerBorderPane.setLeft(favoriteMonoPane);
         containerBorderPane.setMaxWidth(MAX_WIDTH);
         String title = scheduledAudioItem.getName();
         if(title == null)
