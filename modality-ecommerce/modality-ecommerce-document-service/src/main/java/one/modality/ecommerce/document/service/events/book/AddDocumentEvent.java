@@ -18,6 +18,7 @@ public final class AddDocumentEvent extends AbstractDocumentEvent {
     private String firstName;
     private String lastName;
     private String email;
+    private Integer ref;
 
     public AddDocumentEvent(Document document) {
         super(document);
@@ -26,15 +27,17 @@ public final class AddDocumentEvent extends AbstractDocumentEvent {
         firstName = document.getFirstName();
         lastName = document.getLastName();
         email = document.getEmail();
+        ref = document.getRef();
     }
 
-    public AddDocumentEvent(Object documentPrimaryKey, Object eventPrimaryKey, Object personPrimaryKey, String firstName, String lastName, String email) {
+    public AddDocumentEvent(Object documentPrimaryKey, Object eventPrimaryKey, Object personPrimaryKey, String firstName, String lastName, String email, Integer ref) {
         super(documentPrimaryKey);
         this.eventPrimaryKey = eventPrimaryKey;
         this.personPrimaryKey = personPrimaryKey;
         this.firstName = firstName;
         this.lastName = lastName;
         this.email = email;
+        this.ref = ref;
     }
 
     public Object getEventPrimaryKey() {
@@ -73,6 +76,14 @@ public final class AddDocumentEvent extends AbstractDocumentEvent {
         this.email = email;
     }
 
+    public Integer getRef() {
+        return ref;
+    }
+
+    public void setRef(Integer ref) {
+        this.ref = ref;
+    }
+
     @Override
     protected void createDocument() {
         if (isForSubmit()) {
@@ -94,5 +105,7 @@ public final class AddDocumentEvent extends AbstractDocumentEvent {
         document.setFirstName(firstName);
         document.setLastName(lastName);
         document.setEmail(email);
+        if (ref != null)
+            document.setRef(ref);
     }
 }
