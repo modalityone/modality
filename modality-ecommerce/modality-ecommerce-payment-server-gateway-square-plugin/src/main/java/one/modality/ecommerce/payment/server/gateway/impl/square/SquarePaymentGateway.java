@@ -72,7 +72,9 @@ public final class SquarePaymentGateway implements PaymentGateway {
     @Override
     public Future<GatewayInitiatePaymentResult> initiatePayment(GatewayInitiatePaymentArgument argument) {
         String appId = argument.getAccountParameter("app_id");
-        String locationId = argument.getAccountParameter("order.order.location_id");
+        String locationId = argument.getAccountParameter("location_id"); // KBS3
+        if (locationId == null)
+            locationId = argument.getAccountParameter("order.order.location_id"); // KBS2 (to remove later)
         boolean live = argument.isLive();
         // Our Square gateway script implementation supports seamless integration.
         boolean seamless = argument.isSeamlessIfSupported()
