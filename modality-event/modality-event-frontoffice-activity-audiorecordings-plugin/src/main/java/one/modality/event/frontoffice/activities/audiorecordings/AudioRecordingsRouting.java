@@ -31,7 +31,7 @@ public final class AudioRecordingsRouting {
 
         public static UiRoute<?> uiRoute() {
             return UiRoute.create(AudioRecordingsRouting.getPath()
-                    , true
+                    , false // Temporarily set to false (investigate why some users can't access)
                     , AudioRecordingsActivity::new
                     , ViewDomainActivityContextFinal::new
             );
