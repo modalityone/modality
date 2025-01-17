@@ -15,6 +15,7 @@ import dev.webfx.stack.orm.entity.EntityStore;
 import dev.webfx.stack.push.server.PushServerService;
 import dev.webfx.stack.session.state.StateAccessor;
 import dev.webfx.stack.session.state.ThreadLocalStateHolder;
+import one.modality.base.shared.entities.FrontendAccount;
 import one.modality.base.shared.entities.MagicLink;
 import one.modality.crm.server.authn.gateway.shared.ActivityHashUtil;
 import one.modality.crm.server.authn.gateway.shared.LoginLinkService;
@@ -34,6 +35,8 @@ public class ModalityMagicLinkAuthenticationGateway implements ServerAuthenticat
     private static final String MAGIC_LINK_MAIL_FROM = "kbs@kadampa.net";
     private static final String MAGIC_LINK_MAIL_SUBJECT = "Password recovery - Kadampa Booking System";
     private static final String MAGIC_LINK_MAIL_BODY = Resource.getText(Resource.toUrl("MagicLinkMailBody.html", ModalityMagicLinkAuthenticationGateway.class));
+    private static final String MAGIC_LINK_UNKNOWN_ACCOUNT_MAIL_SUBJECT = "Assistance with your Kadampa booking account";
+    private static final String MAGIC_LINK_UNKNOWN_ACCOUNT_MAIL_BODY = Resource.getText(Resource.toUrl("MagicLinkUnknownAccountMailBody.html", ModalityMagicLinkAuthenticationGateway.class));
 
     private final DataSourceModel dataSourceModel;
 
@@ -70,14 +73,22 @@ public class ModalityMagicLinkAuthenticationGateway implements ServerAuthenticat
     }
 
     private Future<Void> createAndSendMagicLink(SendMagicLinkCredentials request) {
-        return LoginLinkService.storeAndSendLoginLink(
-            request,
-            MAGIC_LINK_ACTIVITY_PATH_FULL,
-            MAGIC_LINK_MAIL_FROM,
-            MAGIC_LINK_MAIL_SUBJECT,
-            MAGIC_LINK_MAIL_BODY,
-            dataSourceModel
-        );
+        // We check that the requested account exists in the database. If it exists, we send a password recovery email.
+        // If it doesn't exist, we send a No account found email.
+        return EntityStore.create(dataSourceModel)
+            .<FrontendAccount>executeQuery("select FrontendAccount where corporation=? and username=? limit 1", 1, request.getEmail())
+            .compose(accounts -> {
+                    boolean exists = !accounts.isEmpty();
+                    return LoginLinkService.storeAndSendLoginLink(
+                        request,
+                        MAGIC_LINK_ACTIVITY_PATH_FULL,
+                        MAGIC_LINK_MAIL_FROM,
+                        exists ? MAGIC_LINK_MAIL_SUBJECT : MAGIC_LINK_UNKNOWN_ACCOUNT_MAIL_SUBJECT,
+                        exists ? MAGIC_LINK_MAIL_BODY : MAGIC_LINK_UNKNOWN_ACCOUNT_MAIL_BODY,
+                        dataSourceModel
+                    );
+                }
+            );
     }
 
     private Future<Void> renewAndSendMagicLink(RenewMagicLinkCredentials request) {
