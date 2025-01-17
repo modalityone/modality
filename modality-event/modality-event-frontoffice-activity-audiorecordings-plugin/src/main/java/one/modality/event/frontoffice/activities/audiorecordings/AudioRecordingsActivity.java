@@ -47,7 +47,7 @@ final class AudioRecordingsActivity extends ViewDomainActivityBase {
                        //We look if there are published audio ScheduledItem of type audio, whose bookableScheduledItem has  been booked
                        " (exists(select ScheduledItem where item.family.code=? and published and bookableScheduledItem.(event=dl.document.event and item=dl.item))) as published " +
                        //We check if the user has booked, not cancelled and paid the recordings
-                        " from DocumentLine dl where !cancelled  and dl.document.(person=? and price_balance<=0) " +
+                        " from DocumentLine dl where !cancelled  and dl.document.(person=? and confirmed and price_balance<=0) " +
                        //we check if :
                        " and ("+
                        // 1/ there is a ScheduledItem of audio family type whose bookableScheduledItem has been booked (KBS3 setup)

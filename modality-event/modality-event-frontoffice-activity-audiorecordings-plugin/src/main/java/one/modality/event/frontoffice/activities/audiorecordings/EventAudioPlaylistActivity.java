@@ -109,14 +109,14 @@ final class EventAudioPlaylistActivity extends ViewDomainActivityBase {
                         //2nd: we look for the scheduledItem having a bookableScheduledItem which is a audio type (case of festival)
                         new EntityStoreQuery("select date, programScheduledItem.(name, timeline.(startTime, endTime)), published, event" +
                                              " from ScheduledItem si" +
-                                             " where event=? and bookableScheduledItem.item.family.code=? and item.code=? and exists(select Attendance where scheduledItem=si.bookableScheduledItem and documentLine.(!cancelled and document.(person=? and price_balance<=0)))" +
+                                             " where event=? and bookableScheduledItem.item.family.code=? and item.code=? and exists(select Attendance where scheduledItem=si.bookableScheduledItem and documentLine.(!cancelled and document.(person=? and confirmed and price_balance<=0)))" +
                                              " order by date",
                             new Object[]{eventId, KnownItemFamily.AUDIO_RECORDING.getCode(), pathItemCodeProperty.get(), userPersonId}),
                         //3: we look for the scheduledItem of audio type having a bookableScheduledItem which is a teaching type (case of STTP)
                         // TODO: for now we take only the English audio recording scheduledItem in that case. We should take the language default of the organization instead
                         new EntityStoreQuery("select name, date, programScheduledItem.(name, timeline.(startTime, endTime)), published, event" +
                             " from ScheduledItem si" +
-                            " where event=? and bookableScheduledItem.item.family.code=? and item.code=? and exists(select Attendance where scheduledItem=si.bookableScheduledItem and documentLine.(!cancelled and document.(person=? and price_balance<=0)))" +
+                            " where event=? and bookableScheduledItem.item.family.code=? and item.code=? and exists(select Attendance where scheduledItem=si.bookableScheduledItem and documentLine.(!cancelled and document.(person=? and confirmed and price_balance<=0)))" +
                             " order by date",
                             new Object[]{eventId, KnownItemFamily.TEACHING.getCode(), KnownItem.AUDIO_RECORDING_ENGLISH.getCode(), userPersonId}),
                         //4 : the medias
