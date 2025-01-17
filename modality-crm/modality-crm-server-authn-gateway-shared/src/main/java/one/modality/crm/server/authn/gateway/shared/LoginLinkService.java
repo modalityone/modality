@@ -30,6 +30,7 @@ public final class LoginLinkService {
     private static final boolean SKIP_LINK_VALIDITY_CHECK = false; // Can be set to true when debugging the magic link client
     private static final Duration LINK_EXPIRATION_DURATION = Duration.ofMinutes(10);
 
+    // Designed to be used only from server front calls (not postponed by an async operation) in order to get the loginRunId
     public static Future<Void> storeAndSendLoginLink(
         AlternativeLoginActionCredentials request,
         String activityPath,
