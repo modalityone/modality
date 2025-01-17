@@ -13,14 +13,18 @@ public final class EventVideosWallRouting {
 
     static final String PATH_EVENT_ID_PARAMETER_NAME = "eventId";
     private static final String PATH_EVENT_ID_PARAMETER_TOKEN = ':' + PATH_EVENT_ID_PARAMETER_NAME;
-    private static final String PATH = "/videos/event/" + PATH_EVENT_ID_PARAMETER_TOKEN;
+    private static final String PATH_EVENT_WITH_RECORDINGS = "/videos/event/" + PATH_EVENT_ID_PARAMETER_TOKEN;
 
     public static String getPath() {
-        return PATH;
+        return PATH_EVENT_WITH_RECORDINGS;
     }
 
     public static String getEventVideosWallPath(Object eventId) {
-        return ModalityRoutingUtil.interpolateParamInPath(PATH_EVENT_ID_PARAMETER_TOKEN, Entities.getPrimaryKey(eventId), PATH);
+        return ModalityRoutingUtil.interpolateParamInPath(PATH_EVENT_ID_PARAMETER_TOKEN, Entities.getPrimaryKey(eventId), PATH_EVENT_WITH_RECORDINGS);
+    }
+
+    public static String getLivestreamOnlyPath(Object eventId) {
+        return ModalityRoutingUtil.interpolateParamInPath(PATH_EVENT_ID_PARAMETER_TOKEN, Entities.getPrimaryKey(eventId), PATH_EVENT_WITH_RECORDINGS);
     }
 
     public static final class EventVideosWallUiRoute extends UiRouteImpl {

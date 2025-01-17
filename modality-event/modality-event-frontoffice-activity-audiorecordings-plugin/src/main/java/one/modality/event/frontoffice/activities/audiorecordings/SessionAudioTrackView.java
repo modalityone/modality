@@ -23,7 +23,6 @@ import one.modality.base.shared.entities.ScheduledItem;
 import one.modality.base.shared.entities.Timeline;
 
 import java.time.LocalDate;
-import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -37,7 +36,7 @@ final class SessionAudioTrackView {
     private final List<Media> publishedMedias;
     private final JavaFXMediaAudioPlayer audioPlayer;
 
-    private final BorderPane container = new BorderPane();
+    private final BorderPane containerBorderPane = new BorderPane();
     public static final int MAX_WIDTH=750;
     private static final int BUTTON_WIDTH=130;
     private final int index;
@@ -53,7 +52,7 @@ final class SessionAudioTrackView {
     }
 
     BorderPane getView() {
-        return container;
+        return containerBorderPane;
     }
 
     private void buildUi() {
@@ -64,17 +63,23 @@ final class SessionAudioTrackView {
         favoritePath.setStroke(Color.BLACK);
 
         MonoPane favoriteMonoPane = new MonoPane(favoritePath);
-        container.setLeft(favoriteMonoPane);
-        container.setMaxWidth(MAX_WIDTH);
-        String title = scheduledAudioItem.getProgramScheduledItem().getName();
+        //containerBorderPane.setLeft(favoriteMonoPane);
+        containerBorderPane.setMaxWidth(MAX_WIDTH);
+        String title = scheduledAudioItem.getName();
+        if(title == null)
+            title = scheduledAudioItem.getProgramScheduledItem().getName();
         Label titleLabel = Bootstrap.h3(new Label(index + ". " + title));
         Timeline timeline = scheduledAudioItem.getProgramScheduledItem().getTimeline();
         LocalDate date = scheduledAudioItem.getDate();
-        LocalTime startTime = timeline.getStartTime();
+        String startTime = "";
+        if(timeline!= null) {
+            //Case fo festivals, when null it's a recurring event, and we don't need to display the time
+            startTime = " - " + timeline.getStartTime().format(DateTimeFormatter.ofPattern("HH:mm"));
+        }
         Long durationMillis;
 
         Label dateLabel = new Label(
-            date.format(DateTimeFormatter.ofPattern("dd MMMM yyyy")) + " - " + startTime.format(DateTimeFormatter.ofPattern("HH:mm")));
+            date.format(DateTimeFormatter.ofPattern("dd MMMM yyyy")) + startTime);
         dateLabel.getStyleClass().add(ModalityStyle.TEXT_COMMENT);
         if(publishedMedias.size()>0) {
             durationMillis = publishedMedias.get(0).getDurationMillis();
@@ -85,8 +90,8 @@ final class SessionAudioTrackView {
 
         VBox descriptionVBox = new VBox(titleLabel,dateLabel);
         titleLabel.getStyleClass().add("description");
-        container.setCenter(descriptionVBox);
-        container.getStyleClass().addAll("audio-library", "bottom-border");
+        containerBorderPane.setCenter(descriptionVBox);
+        containerBorderPane.getStyleClass().addAll("audio-library", "bottom-border");
         BorderPane.setMargin(favoriteMonoPane, new Insets(0, 20, 0, 0));
         BorderPane.setMargin(descriptionVBox, new Insets(0, 50, 0, 0));
         BorderPane.setAlignment(descriptionVBox, Pos.CENTER_LEFT);
@@ -94,16 +99,17 @@ final class SessionAudioTrackView {
         if (publishedMedias.isEmpty()) {
             Label noMediaLabel = I18nControls.newLabel(AudioRecordingsI18nKeys.AudioRecordingNotYetPublished);
             noMediaLabel.getStyleClass().add(ModalityStyle.TEXT_COMMENT);
-            container.setRight(noMediaLabel);
+            containerBorderPane.setRight(noMediaLabel);
         } else {
             Button playButton = Bootstrap.dangerButton(I18nControls.newButton(AudioRecordingsI18nKeys.Play));
             Media firstMedia = publishedMedias.get(0);
+            String finalTitle = title;
             playButton.setOnAction(e->{
                 dev.webfx.extras.player.Media oldMedia = audioPlayer.getMedia();
                 if(oldMedia!=null) {
                     ((Button )oldMedia.getUserData()).setDisable(false);
                 }
-                dev.webfx.extras.player.Media media = audioPlayer.acceptMedia(firstMedia.getUrl(),new MediaMetadataBuilder().setTitle(title).setDurationMillis(durationMillis).build());
+                dev.webfx.extras.player.Media media = audioPlayer.acceptMedia(firstMedia.getUrl(),new MediaMetadataBuilder().setTitle(finalTitle).setDurationMillis(durationMillis).build());
                 media.setUserData(playButton);
                 audioPlayer.resetToInitialState();
                 audioPlayer.setMedia(media);
@@ -118,7 +124,7 @@ final class SessionAudioTrackView {
             downloadButton.setMinWidth(BUTTON_WIDTH);
             HBox buttonHBox = new HBox(playButton,downloadButton);
             buttonHBox.setSpacing(10);
-            container.setRight(buttonHBox);
+            containerBorderPane.setRight(buttonHBox);
         }
     }
 

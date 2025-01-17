@@ -20,9 +20,11 @@ import javafx.scene.layout.VBox;
 import one.modality.base.frontoffice.utility.page.FOPageUtil;
 import one.modality.base.shared.entities.Event;
 import one.modality.base.shared.entities.KnownItem;
-import one.modality.base.shared.entities.KnownItemFamily;
+import one.modality.base.shared.entities.ScheduledItem;
 import one.modality.crm.shared.services.authn.fx.FXUserPersonId;
 import one.modality.event.frontoffice.medias.EventThumbnailView;
+
+import java.util.stream.Collectors;
 
 /**
  * @author David Hello
@@ -43,13 +45,23 @@ final class VideosActivity extends ViewDomainActivityBase {
         FXProperties.runNowAndOnPropertyChange(userPersonId -> {
             eventsWithBookedVideos.clear();
             if (userPersonId != null) {
-                entityStore.<Event>executeQuery(
-                    "select name, label.(de,en,es,fr,pt), shortDescription, audioExpirationDate, startDate, endDate, livestreamUrl, vodExpirationDate" +
-                    " from Event e" +
-                    " where exists(select DocumentLine where !cancelled and document.(event=e and person=? and price_balance<=0) and item.family.code=?)",
-                        userPersonId, KnownItemFamily.VIDEO.getCode())
+//                entityStore.<Event>executeQuery(
+//                    "select name, label.(de,en,es,fr,pt), shortDescription, audioExpirationDate, startDate, endDate, livestreamUrl, vodExpirationDate" +
+//                    " from Event e" +
+//                    " where exists(select Attendance where !documentLine.cancelled and documentLine.document.(event=e and person=? and price_balance<=0) and scheduledItem.item.family.code=?)",
+//                        userPersonId, KnownItemFamily.VIDEO.getCode())
+                //2nd: we look for the scheduledItem having a bookableScheduledItem which is a audio type (case of festival)
+                entityStore.<ScheduledItem>executeQuery("select event.(name, label.(de,en,es,fr,pt), shortDescription, audioExpirationDate, startDate, endDate, livestreamUrl, vodExpirationDate)" +
+                            " from ScheduledItem si" +
+                            " where item.code=? and exists(select Attendance where scheduledItem=si.bookableScheduledItem and documentLine.(!cancelled and document.(person=? and price_balance<=0)))" +
+                            " order by date",
+                        new Object[]{KnownItem.VIDEO.getCode(), userPersonId})
                     .onFailure(Console::log)
-                    .onSuccess(events -> Platform.runLater(() -> eventsWithBookedVideos.setAll(events)));
+                    .onSuccess(scheduledItems -> Platform.runLater(() -> eventsWithBookedVideos.setAll(
+                        scheduledItems.stream()
+                            .map(ScheduledItem::getEvent)  // Extract events from scheduled items
+                            .distinct()
+                            .collect(Collectors.toList()))));
             }
         }, FXUserPersonId.userPersonIdProperty());
     }
@@ -57,18 +69,22 @@ final class VideosActivity extends ViewDomainActivityBase {
     @Override
     public Node buildUi() {
         Label headerLabel = Bootstrap.h2(Bootstrap.strong(I18nControls.newLabel(VideosI18nKeys.VideosHeader)));
-        VBox.setMargin(headerLabel, new Insets(0,0,50,0));
+        VBox.setMargin(headerLabel, new Insets(0, 0, 50, 0));
 
         ColumnsPane columnsPane = new ColumnsPane(20, 50);
         columnsPane.setFixedColumnWidth(BOX_WIDTH);
         columnsPane.getStyleClass().add("media-library");
         // Showing a thumbnail in the columns pane for each event with videos
         ObservableLists.bindConverted(columnsPane.getChildren(), eventsWithBookedVideos, event -> {
-            EventThumbnailView eventTbView = new EventThumbnailView(event, KnownItem.VIDEO.getCode());
+            EventThumbnailView eventTbView = new EventThumbnailView(event, KnownItem.VIDEO.getCode(), EventThumbnailView.ItemType.ITEM_TYPE_VIDEO, true);
             VBox container = eventTbView.getView();
             Button actionButton = eventTbView.getActionButton();
             actionButton.setCursor(Cursor.HAND);
-            actionButton.setOnAction(e -> showEventVideosWall(event));
+            //1st case: Livestream only events (ie vodExpirationDate is null)
+            if (event.getVodExpirationDate() == null)
+                actionButton.setOnAction(e -> showLivestreamVideo(event));
+            else //2dn case: events with recordings
+                actionButton.setOnAction(e -> showEventVideosWall(event));
             return container;
         });
 
@@ -81,6 +97,9 @@ final class VideosActivity extends ViewDomainActivityBase {
         //return FrontOfficeActivityUtil.createActivityPageScrollPane(pageContainer, false);
     }
 
+    private void showLivestreamVideo(Event event) {
+        getHistory().push(LivestreamPlayerRouting.getLivestreamPath(event));
+    }
     private void showEventVideosWall(Event event) {
         getHistory().push(EventVideosWallRouting.getEventVideosWallPath(event));
     }

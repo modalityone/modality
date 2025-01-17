@@ -1,14 +1,7 @@
 Booking:
-  text: "Book Now"
   graphic:
     fill: "#838788"
     svgPath: "M 4.8 4 C 3.4 4 2.2 5.3 2.2 6.7 V 16.2 C 2.2 17.6 3.4 18.8 4.8 18.8 H 16.2 C 17.6 18.8 18.8 17.6 18.8 16.2 V 6.7 C 18.8 5.3 17.6 4 16.2 4 H 4.8 Z M 0 6.7 C 0 4.1 2.2 1.9 4.8 1.9 H 16.2 C 18.8 1.9 21 4.1 21 6.7 V 16.2 C 21 18.8 18.8 21 16.2 21 H 4.8 C 2.2 21 0 18.8 0 16.2 V 6.7 Z M 8.1 14.9 H 4.9 V 12.7 H 8.1 V 14.9 Z M 15.7 14.9 H 12.4 V 12.7 H 15.7 V 14.9 Z M 6.7 0 C 7.3 0 7.8 0.5 7.8 1.1 V 4.8 C 7.8 5.4 7.3 5.9 6.7 5.9 C 6.1 5.9 5.7 5.4 5.7 4.8 V 1.1 C 5.7 0.5 6.1 0 6.7 0 Z M 14.3 0 C 14.9 0 15.3 0.5 15.3 1.1 V 4.8 C 15.3 5.4 14.9 5.9 14.3 5.9 C 13.7 5.9 13.2 5.4 13.2 4.8 V 1.1 C 13.2 0.5 13.7 0 14.3 0 Z M 0 8.6 C 0 8 0.5 7.5 1.1 7.5 H 19.9 C 20.5 7.5 21 8 21 8.6 C 21 9.2 20.5 9.7 19.9 9.7 H 1.1 C 0.5 9.7 0 9.2 0 8.6 Z"
-eventsHeader: "YOUR NEXT MEANINGFUL EVENT IS HERE"
-internationalEvents: "International Events"
-localEvents: "Local Events"
-yourLocalCentre: "Your Local Dharma Centre"
-ChangeYourLocation: "Change your location"
-findYourLocalCentre: "Find your local Dharma Centre (click on its marker)"
 localCentreWebsite:
   graphic:
     fill: "white"
@@ -25,27 +18,10 @@ localCentreEmail:
   graphic:
     fill: "white"
     svgPath: "M11.8543 0H1.4543C0.739297 0 0.160797 0.5625 0.160797 1.25L0.154297 8.75C0.154297 9.4375 0.739297 10 1.4543 10H11.8543C12.5693 10 13.1543 9.4375 13.1543 8.75V1.25C13.1543 0.5625 12.5693 0 11.8543 0ZM11.2043 8.75H2.1043C1.7468 8.75 1.4543 8.46875 1.4543 8.125V2.5L5.9653 5.2125C6.3878 5.46875 6.9208 5.46875 7.3433 5.2125L11.8543 2.5V8.125C11.8543 8.46875 11.5618 8.75 11.2043 8.75ZM6.6543 4.375L1.4543 1.25H11.8543L6.6543 4.375Z"
-comingSoon: "Coming soon"
-bookNow: "Book now"
-closed: "Closed"
-at: "At"
-Schedule: "Schedule"
-SelectTheEvent: "Select the classes you wish to book"
-SelectAllClasses: "Select all classes"
-ProceedCheckout: "Proceed to checkout"
-PricePerClass0: "Price per class: {0}"
-AllClasses: "All classes"
-LoginBeforeBooking: "Please login before submitting your booking"
-OrBookAsGuest: "or book as a guest"
-GuestDetails: "Please enter your personal details below"
-OrBookUsingAccount: "or book as a returning user"
 Pay0:
-  text: "Pay: {0}"
   graphic:
     fill: "white"
     svgPath: "M1.9 12C1.3775 12 0.930367 11.8533 0.5586 11.5597C0.1862 11.2657 0 10.9125 0 10.5V1.5C0 1.0875 0.1862 0.7345 0.5586 0.441C0.930367 0.147 1.3775 0 1.9 0H17.1C17.6225 0 18.07 0.147 18.4424 0.441C18.8141 0.7345 19 1.0875 19 1.5V10.5C19 10.9125 18.8141 11.2657 18.4424 11.5597C18.07 11.8533 17.6225 12 17.1 12H1.9ZM1.9 6H17.1V3H1.9V6Z"
-TotalBookingPrice0: " | Total booking price: {0}"
-PaymentInformation0: "Please enter your payment information in the secure portal {0}, our payment provider. We do not store any credit card information."
 Square:
   text: "" # empty because the text is included in SVG path
   graphic:
@@ -55,34 +31,10 @@ Square:
     # with Square text
     svgPath: "M 78.2697,13.0136 C 78.2697,9.9139 80.2027,7.7482 82.9662,7.7482 85.6282,7.7482 87.4887,9.6706 87.4834,12.4276 A 6.9566,6.9566 0 0 1 87.4439,13.1449 L 87.4353,13.2271 H 79.7501 C 79.7853,15.4334 81.1132,16.8562 83.1508,16.8562 84.3186,16.8562 85.3304,16.3813 85.9997,15.5177 L 86.0605,15.4388 87.0788,16.346 87.0223,16.4143 C 86.3455,17.2394 85.1116,18.2236 83.0729,18.2236 80.2016,18.2236 78.2697,16.1304 78.2697,13.0136 Z M 82.9277,9.0974 C 81.2103,9.0974 79.9924,10.2277 79.8024,11.9879 H 85.9976 C 85.8759,10.5725 85.0113,9.0974 82.9277,9.0974 Z M 77.8577,8.1655 C 77.5236,7.9275 76.9974,7.7855 76.4487,7.7855 A 3.5908,3.5908 0 0 0 73.5998,9.2532 V 7.9723 H 72.1941 V 17.991 H 73.5998 V 12.6327 C 73.5998,10.2567 74.9352,9.1925 76.2576,9.1925 A 2.5993,2.5993 0 0 1 77.3795,9.4305 L 77.4745,9.4807 77.9196,8.2062 Z M 62.293,9.029 C 63.3294,8.2147 64.7362,7.7482 66.1505,7.7482 68.3846,7.7482 69.7177,8.8594 69.7135,10.723 V 17.9984 H 68.3067 V 16.8872 C 67.5968,17.7763 66.57,18.2268 65.2486,18.2268 63.0956,18.2268 61.7571,17.0494 61.7571,15.1559 61.7571,12.6934 64.0776,12.307 65.0661,12.1426 65.2272,12.116 65.3937,12.0904 65.5601,12.0647 H 65.5603 L 65.5663,12.0638 C 66.9168,11.8559 68.3109,11.6414 68.3109,10.4957 68.3109,9.1987 66.6276,9.0985 66.1121,9.0985 65.2016,9.0985 63.9154,9.3685 63.0412,10.1263 L 62.9612,10.1957 62.2268,9.0814 Z M 63.2248,15.0769 C 63.2248,16.6823 64.7362,16.8562 65.3863,16.8562 H 65.3873 C 66.8006,16.8562 68.3131,16.1027 68.3099,13.985 V 12.5354 C 67.6242,12.9685 66.6483,13.1377 65.7778,13.2886 L 65.7631,13.2912 65.3265,13.3691 C 63.9325,13.6274 63.2248,13.9604 63.2248,15.0769 Z M 58.239,7.9766 V 13.511 C 58.239,15.4484 56.9122,16.8552 55.0848,16.8552 53.567,16.8552 52.8284,15.9543 52.8284,14.1024 V 7.9766 H 51.4226 V 14.3895 C 51.4226,16.7911 52.728,18.2246 54.914,18.2246 56.276,18.2246 57.4459,17.6472 58.24,16.5915 V 17.9962 H 59.6458 V 7.9766 Z M 47.5395,9.4528 V 7.9766 H 48.9452 V 21.998 H 47.5395 V 16.52 C 46.7368,17.6205 45.5328,18.2225 44.1174,18.2225 41.4447,18.2225 39.5767,16.0824 39.5767,12.9923 39.5767,9.9022 41.4489,7.745 44.1174,7.745 45.5232,7.745 46.7272,8.3502 47.5395,9.4528 Z M 41.0583,12.9752 C 41.0583,15.8358 42.6967,16.8552 44.2305,16.8552 L 44.2337,16.8562 C 46.2415,16.8562 47.5395,15.3192 47.5395,12.9752 47.5395,10.6312 46.2394,9.1155 44.2305,9.1155 41.8919,9.1155 41.0583,11.1094 41.0583,12.9752 Z M 8.6662,13.9828 A 0.666,0.666 0 0 1 8.0054,13.3168 V 8.6544 A 0.666,0.666 0 0 1 8.6714,7.9852 H 13.3403 A 0.6673,0.6673 0 0 1 14.0063,8.6544 V 13.3157 A 0.667,0.667 0 0 1 13.3403,13.985 Z M 33.1959,10.0196 C 32.5149,9.8339 31.8702,9.6588 31.3696,9.4358 30.4431,9.0216 30.0119,8.4473 30.0119,7.6298 30.0119,6.0841 31.5062,5.3882 32.9942,5.3882 34.4084,5.3882 35.6434,5.9732 36.4728,7.0342 L 36.5293,7.1067 37.7248,6.1717 37.6672,6.0991 C 36.5646,4.6965 34.9315,3.9281 33.0667,3.9281 31.8254,3.9281 30.6875,4.2631 29.8646,4.8726 28.9381,5.5504 28.4492,6.5336 28.4492,7.7066 28.4492,10.4338 31.0173,11.0987 33.0817,11.6335 35.1706,12.1843 36.4504,12.6027 36.4504,14.1952 36.4504,15.7632 35.1823,16.7762 33.2204,16.7762 32.2502,16.7762 30.4538,16.519 29.3245,14.7941 L 29.2722,14.7129 28.0148,15.6234 28.0639,15.6971 C 29.1313,17.3131 30.9736,18.2407 33.1244,18.2407 36.0458,18.2407 38.0098,16.5915 38.0098,14.1387 38.0098,11.3314 35.3392,10.6045 33.1959,10.0196 Z M 3.6761,0 H 18.3239 A 3.6762,3.6762 0 0 1 22.0011,3.6761 V 18.3228 C 22.0011,20.3537 20.3547,22 18.3239,22 H 3.6761 C 1.6457,21.9994 0,20.3533 0,18.3228 V 3.6761 C 0,1.6458 1.6458,0 3.6761,0 Z M 16.8434,18.0005 C 17.4842,18.0005 18.0037,17.481 18.0037,16.8402 L 18.0005,5.1608 C 18.0005,4.52 17.481,4.0006 16.8402,4.0006 H 5.1619 A 1.1603,1.1603 0 0 0 4.0016,5.1619 V 16.8402 C 4.0016,17.481 4.5211,18.0005 5.1619,18.0005 Z"
 BookingSubmitted:
-  text: "Booking Submitted"
   graphic:
    # fill: "white"
     svgPath: "M17.2 23.6L12.85 19.25C12.4833 18.8833 12.0253 18.7087 11.476 18.726C10.9253 18.742 10.4667 18.9333 10.1 19.3C9.73333 19.6667 9.55 20.1333 9.55 20.7C9.55 21.2667 9.73333 21.7333 10.1 22.1L15.8 27.8C16.1667 28.1667 16.6333 28.35 17.2 28.35C17.7667 28.35 18.2333 28.1667 18.6 27.8L29.95 16.45C30.3167 16.0833 30.492 15.6247 30.476 15.074C30.4587 14.5247 30.2667 14.0667 29.9 13.7C29.5333 13.3333 29.0667 13.15 28.5 13.15C27.9333 13.15 27.4667 13.3333 27.1 13.7L17.2 23.6ZM20 40C17.2333 40 14.6333 39.4747 12.2 38.424C9.76667 37.3747 7.65 35.95 5.85 34.15C4.05 32.35 2.62533 30.2333 1.576 27.8C0.525334 25.3667 0 22.7667 0 20C0 17.2333 0.525334 14.6333 1.576 12.2C2.62533 9.76667 4.05 7.65 5.85 5.85C7.65 4.05 9.76667 2.62467 12.2 1.574C14.6333 0.524667 17.2333 0 20 0C22.7667 0 25.3667 0.524667 27.8 1.574C30.2333 2.62467 32.35 4.05 34.15 5.85C35.95 7.65 37.3747 9.76667 38.424 12.2C39.4747 14.6333 40 17.2333 40 20C40 22.7667 39.4747 25.3667 38.424 27.8C37.3747 30.2333 35.95 32.35 34.15 34.15C32.35 35.95 30.2333 37.3747 27.8 38.424C25.3667 39.4747 22.7667 40 20 40ZM20 36C24.4333 36 28.2087 34.442 31.326 31.326C34.442 28.2087 36 24.4333 36 20C36 15.5667 34.442 11.7913 31.326 8.674C28.2087 5.558 24.4333 4 20 4C15.5667 4 11.792 5.558 8.676 8.674C5.55867 11.7913 4 15.5667 4 20C4 24.4333 5.55867 28.2087 8.676 31.326C11.792 34.442 15.5667 36 20 36Z"
-ThankYouForBooking: "Thank you for your booking. You will receive an email with all the details as soon as your availability is confirmed."
-BookingNumber0: "Booking number {0}"
-PaymentCancelled: "Your payment has been cancelled, and all the un-paid options have been automatically removed from your booking. If you wish to book them again, you can do so by clicking on the button below."
-BookAgain: "Book again"
-PaymentAndBookingCancelled: "Your payment has been cancelled, as well as your booking. If you wish to un-cancel it, you can do so by clicking on the button below."
-UncancelBooking: "Uncancel your booking"
-PaymentFailed: "Failed payment"
-PaymentFailedMessage: "Your payment has failed. Please retry a payment, or cancel your booking."
 RetryPayment:
-  text: "Retry Payment"
   graphic:
     fill: "white"
     svgPath: "M1.9 12C1.3775 12 0.930367 11.8533 0.5586 11.5597C0.1862 11.2657 0 10.9125 0 10.5V1.5C0 1.0875 0.1862 0.7345 0.5586 0.441C0.930367 0.147 1.3775 0 1.9 0H17.1C17.6225 0 18.07 0.147 18.4424 0.441C18.8141 0.7345 19 1.0875 19 1.5V10.5C19 10.9125 18.8141 11.2657 18.4424 11.5597C18.07 11.8533 17.6225 12 17.1 12H1.9ZM1.9 6H17.1V3H1.9V6Z"
-CancelBooking: "Cancel booking"
-PaymentPending: "Pending payment"
-PaymentPendingMessage: "Your payment is in a pending state. The bank can take a few days to process the payment. As soon as more information from the bank, we'll update your booking state."
-ErrorWhileInsertingBooking: "An error has occurred while processing your registration. Please try again later."
-ErrorWhileInitiatingPayment: "An error has occurred during payment initialization. Your registration has been processed, but payment has not yet been made."
-ErrorWhileLoadingPaymentForm: "An error has occurred during connection to the payment platform. Your registration has been processed, but payment has not yet been made."
-ErrorWhileInitializingHTMLPaymentForm: "An error has occurred while creating the payment form. Your registration has been processed, but payment has not yet been made."
-ErrorPaymentGatewayFailure: "An error has occurred while verifying payment information through the payment gateway. Your registration has been processed, but payment is still required."
-ErrorPaymentModalityFailure: "A communication error has occurred between the payment gateway and our server. The payment request has not been processed. Your registration has been processed, but the payment has not yet been made."
-ErrorWhileCancelingTheBooking: "An error has occurred while canceling your booking. Please contact us at info@manjushri.org"
-CancelRegistration: "Cancel Booking"
-RegistrationCanceled: "Your booking has been cancelled"
-PreviousBookedDate: "History of the past booked date:"
-FacilityFee: "I'm a Manjushri KMC Member or Overnight Volunteer"

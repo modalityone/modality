@@ -54,18 +54,23 @@ fx-svgpath svg path:not([fill])[stroke] { /* if the application code set the str
     --fx-border-color-focus: #0096D6;
     --fx-textfield-background: white;
     --fx-button-background: linear-gradient(180deg, white, #e0e0e0);
+    --fx-togglebutton-selected-background: linear-gradient(180deg, #f0f0f0, #d0d0d0);
 }
 
 ::placeholder {
     color: #888;
 }
 
-fx-button > fx-background {
+fx-button > fx-background, fx-togglebutton > fx-background {
     background: var(--fx-button-background);
     border-radius: var(--fx-border-radius);
 }
 
-fx-button > fx-border, fx-textfield > fx-border, textarea {
+fx-togglebutton.selected > fx-background {
+    background: var(--fx-togglebutton-selected-background);
+}
+
+fx-button > fx-border, fx-togglebutton > fx-border, fx-textfield > fx-border, textarea {
     border-color: var(--fx-border-color);
     border-style: var(--fx-border-style);
     border-width: var(--fx-border-width);
@@ -155,6 +160,8 @@ iframe {
     --bootstrap-red4: #ac2925 ;
     --bootstrap-red5: #761c19 ;
     --bootstrap-red6: #a94442 ;
+
+    --bootstrap-font-size: 14px; /* default value for buttons */
 }
 
 /* Buttons */
@@ -166,9 +173,9 @@ iframe {
     text-align: center;
     /*cursor: default;*/
     /*background-insets: 0, 0, -1, 0;*/
-    /*padding: 6px 12px 6px 12px;*/
-    font-size: 14px;
-    min-width: 80px;
+    /*padding: 6px 12px 6px 12px;*/ /* hardcoded for web support */
+    font-size: var(--bootstrap-font-size);
+    /*min-width: 80px;*/ /* hardcoded for web support */
 }
 
 .btn > fx-background {
@@ -188,215 +195,228 @@ iframe {
     --fx-svg-path-fill: var(--bootstrap-grey7);
 }
 
-.btn-default {
+.btn-default, .btn.default, .default .btn {
     color: var(--bootstrap-grey7);
     --fx-svg-path-fill: var(--bootstrap-grey7);
 }
 
-.btn-default > fx-background {
+.btn-default > fx-background, .btn.default > fx-background, .default .btn > fx-background {
     background-color: var(--bootstrap-white);
 }
 
-.btn-default > fx-border {
+.btn-default > fx-border, .btn.default > fx-border, .default .btn > fx-border {
     border-color: var(--bootstrap-grey3);
 }
 
-.btn-default:hover:not(.disabled) {
+.btn-default:hover:not(.disabled), .btn.default:hover:not(.disabled), .default .btn:hover:not(.disabled) {
     color: var(--bootstrap-grey7);
     --fx-svg-path-fill: var(--bootstrap-grey7);
 }
 
-.btn-default:hover > fx-background {
+.btn-default:hover > fx-background, .btn.default:hover > fx-background, .default .btn:hover > fx-background {
     background-color: var(--bootstrap-grey1);
 }
 
-.btn-default:hover > fx-border {
+.btn-default:hover > fx-border, .btn.default:hover > fx-border, .default .btn:hover > fx-border {
     border-color: var(--bootstrap-grey5);
 }
 
-.btn-primary {
+.btn-primary, .btn.primary, .primary .btn {
     color: var(--bootstrap-white);
     --fx-svg-path-fill: var(--bootstrap-white);
 }
 
-.btn-primary > fx-background {
+.btn-primary > fx-background, .btn.primary > fx-background, .primary .btn > fx-background {
     background-color: var(--bootstrap-blue5);
 }
 
-.btn-primary > fx-border {
+.btn-primary > fx-border, .btn.primary > fx-border, .primary .btn > fx-border {
     border-color: var(--bootstrap-blue6);
 }
 
-.btn-primary:hover:not(.disabled) {
+.btn-primary:hover:not(.disabled), .btn.primary:hover:not(.disabled), .primary .btn:hover:not(.disabled) {
     color: var(--bootstrap-white);
     --fx-svg-path-fill: var(--bootstrap-white);
 }
 
-.btn-primary:hover:not(.disabled) > fx-background {
+.btn-primary:hover:not(.disabled) > fx-background, .btn.primary:hover:not(.disabled) > fx-background, .primary .btn:hover:not(.disabled) > fx-background {
     background-color: var(--bootstrap-blue8);
 }
 
-.btn-primary:hover:not(.disabled) > fx-border {
+.btn-primary:hover:not(.disabled) > fx-border, .btn.primary:hover:not(.disabled) > fx-border, .primary .btn:hover:not(.disabled) > fx-border {
     border-color: var(--bootstrap-blue9);
 }
 
-.btn-secondary {
+.btn-secondary, .btn.secondary, .secondary .btn {
     color: var(--bootstrap-white);
     --fx-svg-path-fill: var(--bootstrap-white);
 }
 
-.btn-secondary > fx-background {
+.btn-secondary > fx-background, .btn.secondary > fx-background, .secondary .btn > fx-background {
     background-color: var(--bootstrap-grey4);
 }
 
-.btn-secondary > fx-border {
+.btn-secondary > fx-border, .btn.secondary > fx-border, .secondary .btn > fx-border {
     border-color: var(--bootstrap-grey5);
 }
 
-.btn-secondary:hover:not(.disabled){
+.btn-secondary:hover:not(.disabled), .btn.secondary:hover:not(.disabled), .secondary .btn:hover:not(.disabled) {
     color: var(--bootstrap-white);
     --fx-svg-path-fill: var(--bootstrap-white);
 }
 
-.btn-secondary:hover:not(.disabled)> fx-background {
+.btn-secondary:hover:not(.disabled)> fx-background, .btn.secondary:hover:not(.disabled)> fx-background, .secondary .btn:hover:not(.disabled)> fx-background {
     background-color: var(--bootstrap-grey5);
 }
 
-.btn-secondary:hover:not(.disabled)> fx-border {
+.btn-secondary:hover:not(.disabled)> fx-border, .btn.secondary:hover:not(.disabled)> fx-border, .secondary .btn:hover:not(.disabled)> fx-border {
     border-color: var(--bootstrap-grey6);
 }
 
-.btn-success {
+.btn-success, .btn.success, .success .btn {
     color: var(--bootstrap-white);
     --fx-svg-path-fill: var(--bootstrap-white);
 }
 
-.btn-success > fx-background {
+.btn-success > fx-background, .btn.success > fx-background, .success .btn > fx-background {
     background-color: var(--bootstrap-green1);
 }
 
-.btn-success > fx-border {
+.btn-success > fx-border, .btn.success > fx-border, .success .btn > fx-border {
     border-color: var(--bootstrap-green2);
 }
 
-.btn-success:hover:not(.disabled){
+.btn-success:hover:not(.disabled), .btn.success:hover:not(.disabled), .success .btn:hover:not(.disabled) {
     color: var(--bootstrap-white);
     --fx-svg-path-fill: var(--bootstrap-white);
 }
 
-.btn-success:hover:not(.disabled)> fx-background {
+.btn-success:hover:not(.disabled)> fx-background, .btn.success:hover:not(.disabled)> fx-background, .success .btn:hover:not(.disabled)> fx-background {
     background-color: var(--bootstrap-green3);
 }
 
-.btn-success:hover:not(.disabled)> fx-border {
+.btn-success:hover:not(.disabled)> fx-border, .btn.success:hover:not(.disabled)> fx-border, .success .btn:hover:not(.disabled)> fx-border {
     border-color: var(--bootstrap-green4);
 }
 
-.btn-info {
+.btn-info, .btn.info, .info .btn {
     color: var(--bootstrap-white);
     --fx-svg-path-fill: var(--bootstrap-white);
 }
 
-.btn-info > fx-background {
+.btn-info > fx-background, .btn.info > fx-background, .info .btn > fx-background {
     background-color: var(--bootstrap-blue1);
     border-color: var(--bootstrap-blue2);
 }
 
-.btn-info > fx-border {
+.btn-info > fx-border, .btn.info > fx-border, .info .btn > fx-border {
     border-color: var(--bootstrap-blue2);
 }
 
-.btn-info:hover:not(.disabled){
+.btn-info:hover:not(.disabled), .btn.info:hover:not(.disabled), .info .btn:hover:not(.disabled) {
     color: var(--bootstrap-white);
     --fx-svg-path-fill: var(--bootstrap-white);
 }
 
-.btn-info:hover:not(.disabled)> fx-background {
+.btn-info:hover:not(.disabled)> fx-background, .btn.info:hover:not(.disabled)> fx-background, .info .btn:hover:not(.disabled)> fx-background {
     background-color: var(--bootstrap-blue3);
 }
 
-.btn-info:hover:not(.disabled)> fx-border {
+.btn-info:hover:not(.disabled)> fx-border, .btn.info:hover:not(.disabled)> fx-border, .info .btn:hover:not(.disabled)> fx-border {
     border-color: var(--bootstrap-blue4);
 }
 
-.btn-warning {
+.btn-warning, .btn.warning, .warning .btn {
     color: var(--bootstrap-white);
     --fx-svg-path-fill: var(--bootstrap-white);
 }
 
-.btn-warning > fx-background {
+.btn-warning > fx-background, .btn.warning > fx-background, .warning .btn > fx-background {
     background-color: var(--bootstrap-orange1);
 }
 
-.btn-warning > fx-border {
+.btn-warning > fx-border, .btn.warning > fx-border, .warning .btn > fx-border {
     border-color: var(--bootstrap-orange2);
 }
 
-.btn-warning:hover:not(.disabled){
+.btn-warning:hover:not(.disabled), .btn.warning:hover:not(.disabled), .warning .btn:hover:not(.disabled) {
     color: var(--bootstrap-white);
     --fx-svg-path-fill: var(--bootstrap-white);
 }
 
-.btn-warning:hover:not(.disabled)> fx-background {
+.btn-warning:hover:not(.disabled)> fx-background, .btn.warning:hover:not(.disabled)> fx-background, .warning .btn:hover:not(.disabled)> fx-background {
     background-color: var(--bootstrap-orange3);
 }
 
-.btn-warning:hover:not(.disabled)> fx-border {
+.btn-warning:hover:not(.disabled)> fx-border, .btn.warning:hover:not(.disabled)> fx-border, .warning .btn:hover:not(.disabled)> fx-border {
     border-color: var(--bootstrap-orange4);
 }
 
-.btn-danger {
+.btn-danger, .btn.danger, .danger .btn {
     color: var(--bootstrap-white);
     --fx-svg-path-fill: var(--bootstrap-white);
 }
 
-.btn-danger > fx-background {
+.btn-danger > fx-background, .btn.danger > fx-background, .danger .btn > fx-background {
     background: var(--bootstrap-red1);
 }
 
-.btn-danger > fx-border {
+.btn-danger > fx-border, .btn.danger > fx-border, .danger .btn > fx-border {
     border-color: var(--bootstrap-red2);
 }
 
-.btn-danger:hover:not(.disabled){
+.btn-danger:hover:not(.disabled), .btn.danger:hover:not(.disabled), .danger .btn:hover:not(.disabled) {
     color: var(--bootstrap-white);
     --fx-svg-path-fill: var(--bootstrap-white);
 }
 
-.btn-danger:hover:not(.disabled)> fx-background {
+.btn-danger:hover:not(.disabled)> fx-background, .btn.danger:hover:not(.disabled)> fx-background, .danger .btn:hover:not(.disabled)> fx-background {
     background-color: var(--bootstrap-red3);
 }
 
-.btn-danger:hover:not(.disabled)> fx-border {
+.btn-danger:hover:not(.disabled)> fx-border, .btn.danger:hover:not(.disabled)> fx-border, .danger .btn:hover:not(.disabled)> fx-border {
     border-color: var(--bootstrap-red4);
 }
 
-.btn-lg {
-    /*padding: 10px 16px 10px 16px;*/
-    font-size: 18px;
+.btn-lg, .btn.lg, .lg .btn {
+    /*padding: 10px 16px 10px 16px;*/ /* hardcoded for web support */
+    --bootstrap-font-size: 18px;
 }
 
-.btn-lg > fx-background, .btn-lg > fx-border {
+.btn-lg > fx-background, .btn-lg > fx-border, .btn.lg > fx-background, .btn.lg > fx-border, .lg .btn > fx-background, .lg .btn > fx-border {
     border-radius: 6px;
 }
 
-.btn-sm {
-    /*padding: 5px 10px 5px 10px;*/
-    font-size: 12px;
+.btn-sm, .btn.sm, .sm .btn {
+    /*padding: 5px 10px 5px 10px;*/ /* hardcoded for web support */
+    --bootstrap-font-size: 12px;
 }
 
-.btn-sm > fx-background, .btn-sm > fx-border {
+.btn-sm > fx-background, .btn-sm > fx-border, .btn.sm > fx-background, .btn.sm > fx-border, .sm .btn > fx-background, .sm .btn > fx-border {
     border-radius: 3px;
 }
 
-.btn-xs {
-    /*padding: 1px 5px 1px 5px;*/
-    font-size: 12px;
+.btn-xs, .btn.xs, .xs .btn {
+    /*padding: 1px 5px 1px 5px;*/ /* hardcoded for web support */
+    --bootstrap-font-size: 12px;
 }
 
-.btn-xs > fx-background, .btn-xs > fx-border {
+.btn-xs > fx-background, .btn-xs > fx-border, .btn.xs > fx-background, .btn.xs > fx-border, .xs .btn > fx-background, .xs .btn > fx-border {
     border-radius: 3px;
 }
+
+.lg .btn {
+    --bootstrap-font-size: 18px;
+}
+
+.sm .btn {
+    --bootstrap-font-size: 12px;
+}
+
+.xs .btn {
+    --bootstrap-font-size: 12px;
+}
+
 
 .btn-block {
     width: 100%;
@@ -475,53 +495,53 @@ iframe {
     font-size: 85%;
 }
 
-.text-left {
+.txt-left {
     text-align: left;
 }
 
-.text-right {
+.txt-right {
     text-align: right;
 }
 
-.text-center {
+.txt-center {
     text-align: center;
 }
 
-.text-justify {
+.txt-justify {
     text-align: justify;
 }
 
-.text-muted {
+.txt-muted {
     color: var(--bootstrap-grey6);
     --fx-svg-path-fill: var(--bootstrap-grey6);
 }
 
-.text-primary {
+.txt-primary, .txt.primary, .primary .txt {
     color: var(--bootstrap-blue5);
     --fx-svg-path-fill: var(--bootstrap-blue5);
 }
 
-.text-secondary {
+.txt-secondary, .txt.secondary, .secondary .txt {
     color: var(--bootstrap-grey5);
     --fx-svg-path-fill: var(--bootstrap-grey5);
 }
 
-.text-success {
+.txt-success, .txt.success, .success .txt {
     color: var(--bootstrap-green6);
     --fx-svg-path-fill: var(--bootstrap-green6);
 }
 
-.text-info {
+.txt-info, .txt.info,  .info .txt {
     color: var(--bootstrap-blue11);
     --fx-svg-path-fill: var(--bootstrap-blue11);
 }
 
-.text-warning {
+.txt-warning, .txt.warning, .warning .txt {
     color: var(--bootstrap-orange6);
     --fx-svg-path-fill: var(--bootstrap-orange6);
 }
 
-.text-danger {
+.txt-danger, .txt.danger, .danger .txt {
     color: var(--bootstrap-red6);
     --fx-svg-path-fill: var(--bootstrap-red6);
 }
@@ -805,8 +825,10 @@ input[type="password"]:not([value=""]) {
 /*===== modality-client-brand-web@main.css from modality-base-client-brand =====*/
 
 :root {
-    --brand-main-color: #0096D6;
-    --brand-main-background-color: #0096D6;
+    --brand-orange-color: #F6782E;
+    --brand-blue-color: #0096D6;
+    --brand-main-color: var(--brand-orange-color);
+    --brand-main-background-color: var(--brand-orange-color);
 }
 /*===== modality-client-css-web@main.css from modality-base-client-css =====*/
 
@@ -883,9 +905,9 @@ fx-collapsepane.menu-bar.lang-menu-bar > fx-border {
     font-family: var(--roboto-font-family), sans-serif;
     font-size: 14px;
     font-weight: 500;
-    color: var(--brand-main-color);
+    color: var(--brand-blue-color);
     line-height: 1.2;
-    --fx-svg-path-fill: var(--brand-main-color);
+    --fx-svg-path-fill: var(--brand-blue-color);
 }
 
 .user-menu-bar fx-label, .user-menu-bar fx-button {
@@ -1016,7 +1038,7 @@ btn-white {
 }
 
 .audio-library .description > fx-children > fx-text {
-    min-width: 410px;
+    pref-width: 410px;
     max-width: 410px;
     overflow: hidden; /* Hide overflowed text */
     text-overflow: ellipsis;
@@ -1032,6 +1054,8 @@ btn-white {
 
 .bottom-border {
     margin-top: 20px;
+    margin-left: 10px;
+    margin-right: 10px;
     border-color:     transparent transparent #e6e6e6 transparent;
     border-width: 0 0 1px 0; /* Border width translated to px */
     border-style: solid;

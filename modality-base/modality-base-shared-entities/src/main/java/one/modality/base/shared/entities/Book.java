@@ -1,10 +1,12 @@
 package one.modality.base.shared.entities;
 
 import dev.webfx.stack.orm.entity.Entity;
+import one.modality.base.shared.entities.markers.EntityHasOrd;
 
 import java.time.LocalDate;
 
-public interface Book extends Entity {
+public interface Book extends Entity,
+    EntityHasOrd {
     String lang = "lang";
     String title = "title";
     String description = "description";
@@ -12,7 +14,6 @@ public interface Book extends Entity {
     String imageUrl = "imageUrl";
     String orderUrl = "orderUrl";
     String freeUrl = "freeUrl";
-    String ord = "ord";
 
     default void setLang(String value) {
         setFieldValue(lang, value);
@@ -70,11 +71,4 @@ public interface Book extends Entity {
         return getStringFieldValue(freeUrl);
     }
 
-    default void setOrd(Integer value) {
-        setFieldValue(ord, value);
-    }
-
-    default Integer getOrd() {
-        return getIntegerFieldValue(ord);
-    }
 }

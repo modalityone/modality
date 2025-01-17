@@ -14,6 +14,7 @@ import dev.webfx.stack.orm.entity.EntityStoreQuery;
 import dev.webfx.stack.orm.entity.UpdateStore;
 import dev.webfx.stack.orm.entity.binding.EntityBindings;
 import dev.webfx.stack.ui.operation.OperationUtil;
+import dev.webfx.stack.ui.validation.ValidationSupport;
 import javafx.application.Platform;
 import javafx.beans.InvalidationListener;
 import javafx.beans.property.IntegerProperty;
@@ -35,10 +36,10 @@ import javafx.scene.shape.SVGPath;
 import javafx.util.Duration;
 import one.modality.base.client.i18n.ModalityI18nKeys;
 import one.modality.base.client.icons.SvgIcons;
-import dev.webfx.stack.ui.validation.ValidationSupport;
 import one.modality.base.shared.entities.Media;
 import one.modality.base.shared.entities.MediaType;
 import one.modality.base.shared.entities.ScheduledItem;
+import one.modality.base.shared.entities.Timeline;
 import one.modality.event.client.event.fx.FXEvent;
 
 import java.time.LocalDate;
@@ -92,7 +93,7 @@ public abstract class MediaLinksManagement {
         // Calculate the number of media for this day and language
         long numberOfScheduledItemLinkedToMediaForThisDay = recordingsMediasReadFromDatabase.stream()
             .filter(media -> media.getScheduledItem().getDate().equals(date) &&
-                             media.getScheduledItem().getItem().getCode().equals(currentItemCode))
+                media.getScheduledItem().getItem().getCode().equals(currentItemCode))
             .map(Media::getScheduledItem)
             .filter(item -> item.getDate().equals(date))  // Récupère le ScheduledItem associé à chaque Media
             .distinct()                    // Supprime les doublons si nécessaire (facultatif)
@@ -162,11 +163,24 @@ public abstract class MediaLinksManagement {
                 /* Here we create the line for each teaching **/
                 HBox currentLine = new HBox();
                 currentLine.setPadding(new Insets(20, 20, 20, 40));
-
+                ScheduledItem currentEditedScheduledItem = updateStore.updateEntity(currentScheduledItem);
                 String name = currentScheduledItem.getProgramScheduledItem().getName();
                 if (name == null) name = "Unknown";
                 Label teachingTitle = new Label(name);
-                Label startTimeLabel = new Label(currentScheduledItem.getProgramScheduledItem().getTimeline().getStartTime().format(TIME_FORMATTER) + " - " + currentScheduledItem.getProgramScheduledItem().getTimeline().getEndTime().format(TIME_FORMATTER));
+                Timeline timeline = currentScheduledItem.getProgramScheduledItem().getTimeline();
+                String startTime = "";
+                String endTime = "";
+                if(timeline!= null) {
+                    //Case of Festivals
+                    startTime = timeline.getStartTime().format(TIME_FORMATTER);
+                    endTime = timeline.getEndTime().format(TIME_FORMATTER);
+                } else {
+                    //Case of recurring events
+                    startTime = currentScheduledItem.getProgramScheduledItem().getStartTime().format(TIME_FORMATTER);
+                    endTime = currentScheduledItem.getProgramScheduledItem().getEndTime().format(TIME_FORMATTER);
+                }
+                Label startTimeLabel = new Label(startTime + " - " + endTime);
+
                 teachingTitle.getStyleClass().add(Bootstrap.STRONG);
                 startTimeLabel.getStyleClass().add(Bootstrap.STRONG);
                 VBox teachingDetailsVBox = new VBox(teachingTitle, startTimeLabel);
@@ -184,20 +198,60 @@ public abstract class MediaLinksManagement {
                 linkTextField.setPrefWidth(500);
                 validationSupport.addUrlOrEmptyValidation(linkTextField, I18n.i18nTextProperty(MediasI18nKeys.MalformedUrl));
 
-                Label durationLabel = I18nControls.newLabel(MediasI18nKeys.ExactDuration);
-                TextField durationTextField = new TextField();
-                durationTextField.setMaxWidth(100);
-                validationSupport.addMinimumDurationValidation(durationTextField, durationTextField, I18n.i18nTextProperty(MediasI18nKeys.DurationShouldBeAtLeast60s));
+                Label overrideNameLabel = new Label("Override Name");
+                Switch overrideNameSwitch = new Switch();
 
-                Button retrieveDurationButton = Bootstrap.primaryButton(I18nControls.newButton(MediasI18nKeys.RetrieveDuration));
-                HBox secondLine = new HBox(durationLabel, durationTextField, retrieveDurationButton);
+                TextField nameTextField = new TextField();
+                nameTextField.setPromptText(I18n.getI18nText("Name"));
+                if (currentScheduledItem.getName() == null) {
+                    nameTextField.setPromptText(I18n.getI18nText(currentEditedScheduledItem.getProgramScheduledItem().getName()));
+                } else {
+                    overrideNameSwitch.setSelected(true);
+                    nameTextField.setText(currentEditedScheduledItem.getName());
+                }
+                nameTextField.setPrefWidth(500);
+
+                // Bind the properties of the TextField to the Switch
+                nameTextField.editableProperty().bind(overrideNameSwitch.selectedProperty());
+                nameTextField.disableProperty().bind(overrideNameSwitch.selectedProperty().not());
+
+                // Clear the TextField's value when the Switch is turned off
+                overrideNameSwitch.selectedProperty().addListener((observable, oldValue, newValue) -> {
+                    if (!newValue) {
+                        nameTextField.clear();
+                    } else {
+                        nameTextField.setPromptText(I18n.getI18nText(currentEditedScheduledItem.getProgramScheduledItem().getName()));
+                    }
+                });
+
+                nameTextField.textProperty().addListener((observable, oldValue, newValue) -> {
+                    if(newValue.isEmpty()) {
+                        currentEditedScheduledItem.setName(null);
+                    } else {
+                        currentEditedScheduledItem.setName(nameTextField.getText());
+                    }
+                });
+
+                HBox secondLine = new HBox(overrideNameLabel, overrideNameSwitch, nameTextField);
                 secondLine.setAlignment(Pos.CENTER_RIGHT);
                 secondLine.setSpacing(10);
                 secondLine.setPadding(new Insets(0, 20, 30, 0));
 
+                Label durationLabel = I18nControls.newLabel(MediasI18nKeys.ExactDuration);
+                TextField durationTextField = new TextField();
+                durationTextField.setMaxWidth(100);
+                validationSupport.addRequiredInput(durationTextField);
+                validationSupport.addMinimumDurationValidation(durationTextField, durationTextField, I18n.i18nTextProperty(MediasI18nKeys.DurationShouldBeAtLeast60s));
+
+                Button retrieveDurationButton = Bootstrap.primaryButton(I18nControls.newButton(MediasI18nKeys.RetrieveDuration));
+                HBox thirdLine = new HBox(durationLabel, durationTextField, retrieveDurationButton);
+                thirdLine.setAlignment(Pos.CENTER_RIGHT);
+                thirdLine.setSpacing(10);
+                thirdLine.setPadding(new Insets(0, 20, 30, 0));
+
                 //We look if there is an existing media for this teaching
                 List<Media> mediaList = workingMedias.stream()
-                    .filter(media -> media.getScheduledItem().equals(currentScheduledItem))
+                    .filter(media -> media.getScheduledItem().equals(currentEditedScheduledItem))
                     .collect(Collectors.toList());
 
                 //We create an ArrayList of Media that will contain only one element instead of a Media to be able to use it in lambda expression
@@ -227,16 +281,16 @@ public abstract class MediaLinksManagement {
                     }
                     currentMedia.get(0).setUrl(linkText);
                     publishedInfo.setVisible(true);
-                    secondLine.setVisible(true);
-                    secondLine.setManaged(true);
+                    thirdLine.setVisible(true);
+                    thirdLine.setManaged(true);
                     //If the new value is empty, we delete the media
                     if (linkText.isEmpty() && !mediaList.isEmpty()) {
                         updateStore.deleteEntity(currentMedia.get(0));
                         mediaList.remove(currentMedia.get(0));
                         currentMedia.clear();
                         publishedInfo.setVisible(false);
-                        secondLine.setVisible(false);
-                        secondLine.setManaged(false);
+                        thirdLine.setVisible(false);
+                        thirdLine.setManaged(false);
                     }
                 }, linkTextField.textProperty());
 
@@ -272,8 +326,7 @@ public abstract class MediaLinksManagement {
                 currentLine.getChildren().setAll(teachingDetailsVBox, anotherSpacer, publishedInfo, linkTextField);
                 currentLine.setAlignment(Pos.CENTER_LEFT);
 
-                centerVBox.getChildren().add(currentLine);
-                centerVBox.getChildren().add(secondLine);
+                centerVBox.getChildren().addAll(currentLine, secondLine, thirdLine);
             }
 
             //TODO: review this to

@@ -32,9 +32,9 @@ import java.util.Collection;
  * @author Bruno Salmon
  */
 final class BackOfficeHomeActivity extends ViewDomainActivityBase
-        implements UiRouteActivityContextMixin<ViewDomainActivityContextFinal>,
-        ModalityButtonFactoryMixin,
-        OperationActionFactoryMixin {
+    implements UiRouteActivityContextMixin<ViewDomainActivityContextFinal>,
+    ModalityButtonFactoryMixin,
+    OperationActionFactoryMixin {
 
     private final static Config HOME_CONFIG = SourcesConfig.getSourcesRootConfig().childConfigAt("modality.base.backoffice.home");
 
@@ -61,13 +61,13 @@ final class BackOfficeHomeActivity extends ViewDomainActivityBase
 
     private Tile createHomeTile(Action action) {
         return new Tile(action)
-                .setAdaptativeFontSize(true)
-                .setShadowed(true);
+            .setAdaptativeFontSize(true)
+            .setShadowed(true);
     }
 
     private Action operationCodeToAction(String operationCode) {
         RouteRequestEmitter routeRequestEmitter = RoutingActions.findRouteRequestEmitterWithOperationCode(operationCode, this);
-        if (routeRequestEmitter == null) {
+        if (routeRequestEmitter == null) { // Building a gray tile for operation not yet implemented in Modality
             return new ActionBuilder()
                     .setI18nKey(Strings.removePrefix(operationCode, "RouteTo"))
                     .setDisabledProperty(new SimpleBooleanProperty(true))
@@ -99,8 +99,8 @@ final class BackOfficeHomeActivity extends ViewDomainActivityBase
             }
             double gap = 0.01 * width;
             Insets margin = new Insets(0, gap, gap, 0);
-            double wp = (width ) / p;
-            double hp = (height ) / q;
+            double wp = (width) / p;
+            double hp = (height) / q;
             for (int i = 0; i < n; i++) {
                 Node child = children.get(i);
                 int col = i % p, row = i / p;

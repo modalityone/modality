@@ -6,6 +6,7 @@ import dev.webfx.stack.orm.entity.Entities;
 import dev.webfx.stack.orm.entity.EntityId;
 import dev.webfx.stack.orm.entity.EntityStore;
 import javafx.beans.property.ObjectProperty;
+import one.modality.base.client.services.i18n.ModalityI18nProvider;
 import one.modality.base.shared.entities.Organization;
 
 import java.util.Objects;
@@ -15,13 +16,16 @@ import java.util.Objects;
  */
 public final class FXOrganization {
 
-    public static final String EXPECTED_FIELDS = "name,type.(code,name),country";
+    public static final String EXPECTED_FIELDS = "name,type.(code,name),country,language";
 
     private final static ObjectProperty<Organization> organizationProperty = FXProperties.newObjectProperty(() ->
             FXOrganizationId.setOrganizationId(getOrganizationId()));
 
     static {
         FXOrganizationId.init();
+        // Registering "FXOrganization" as possible entity holder for i18n key forwards in Modality (used by KBS to
+        // rename "Recurring events" to "STTP" or "GP Classes" depending on the selected organization).
+        ModalityI18nProvider.registerEntityHolder("FXOrganization", FXOrganization::getOrganization);
     }
 
     static EntityId getOrganizationId() {

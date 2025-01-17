@@ -3,24 +3,28 @@ package one.modality.crm.frontoffice.activities.createaccount;
 
 public interface CreateAccountI18nKeys {
 
-    String LoginDetails = "LoginDetails";
-    String PersonalDetails = "PersonalDetails";
-    String AddressInformation = "AddressInformation";
-    String FindAddress = "FindAddress";
-    String SelectKadampaCenter = "SelectKadampaCenter";
-    String NoAttendanceToAKadampaCenter = "NoAttendanceToAKadampaCenter";
-    String ReadTermAndCond = "ReadTermAndCond";
-    String AgreeTermAndCond = "AgreeTermAndCond";
     String Or = "Or";
-    String SaveChanges = "SaveChanges";
-    String AccountCreatedWithSuccess = "AccountCreatedWithSuccess";
-    String LoginTitle = "LoginTitle";
+    String AgreeTermAndCond = "AgreeTermAndCond";
     String CreateAccountButton = "CreateAccountButton";
-    String CreatingAccountError = "CreatingAccountError";
-    String CreatingPersonAssociatedToAccountError = "CreatingPersonAssociatedToAccountError";
-    String PasswordNotMatchingError = "PasswordNotMatchingError";
-    String PasswordStrength = "PasswordStrength";
+    String AddressInformation = "AddressInformation";
+    String NoAttendanceToAKadampaCenter = "NoAttendanceToAKadampaCenter";
+    String LoginTitle = "LoginTitle";
+    String AccountCreatedWithSuccess = "AccountCreatedWithSuccess";
+    String PersonalDetails = "PersonalDetails";
+    String ReadTermAndCond = "ReadTermAndCond";
+    String FindAddress = "FindAddress";
+    String LoginDetails = "LoginDetails";
     String CountryRequired = "CountryRequired";
+    String SelectKadampaCenter = "SelectKadampaCenter";
+    String SaveChanges = "SaveChanges";
     String TermsAndCondsRequired = "TermsAndCondsRequired";
+    String CreatingPersonAssociatedToAccountError = "CreatingPersonAssociatedToAccountError";
+    String PasswordStrength = "PasswordStrength";
+    String CreatingAccountError = "CreatingAccountError";
+    String PasswordNotMatchingError = "PasswordNotMatchingError";
+    String textFill = "textFill";
+    String graphic = "graphic";
+    String fill = "fill";
+    String svgPath = "svgPath";
 
 }

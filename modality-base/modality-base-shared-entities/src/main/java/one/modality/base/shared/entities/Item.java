@@ -11,15 +11,16 @@ public interface Item extends
     EntityHasName,
     EntityHasLabel,
     EntityHasIcon,
+    EntityHasOrd,
     HasItemFamilyType {
 
     //// Domain fields
     String family = "family";
-    String ord = "ord";
     String rateAliasItem = "rateAliasItem";
     String share_mate = "share_mate";
     String deprecated = "deprecated";
     String imageUrl = "imageUrl";
+    String language = "language";
 
     default void setFamily(Object value) {
         setForeignField(family, value);
@@ -31,14 +32,6 @@ public interface Item extends
 
     default ItemFamily getFamily() {
         return getForeignEntity(family);
-    }
-
-    default void setOrd(Integer value) {
-        setFieldValue(ord, value);
-    }
-
-    default Integer getOrd() {
-        return getIntegerFieldValue(ord);
     }
 
     default void setRateAliasItem(Object value) {
@@ -75,6 +68,18 @@ public interface Item extends
 
     default String getImageUrl() {
         return getStringFieldValue(imageUrl);
+    }
+
+    default void setLanguage(Object value) {
+        setForeignField(language, value);
+    }
+
+    default EntityId getLanguageId() {
+        return getForeignEntityId(language);
+    }
+
+    default Language getLanguage() {
+        return getForeignEntity(language);
     }
 
 

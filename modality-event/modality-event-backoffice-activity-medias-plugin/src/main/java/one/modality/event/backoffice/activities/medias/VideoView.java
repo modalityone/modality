@@ -153,13 +153,13 @@ public class VideoView {
         if (currentEvent.getVodExpirationDate() != null) {
             contentExpirationDateTextField.setText(currentEvent.getVodExpirationDate().format(dateFormatter));
         }
-        validationSupport.addDateValidation(contentExpirationDateTextField, "dd-MM-yyyy", contentExpirationDateTextField, I18n.i18nTextProperty("ValidationTimeFormatIncorrect")); // ???
+        validationSupport.addDateOrEmptyValidation(contentExpirationDateTextField, "dd-MM-yyyy", contentExpirationDateTextField, I18n.i18nTextProperty("ValidationTimeFormatIncorrect")); // ???
 
         masterSettings.getChildren().add(contentExpirationDateTextField);
 
         contentExpirationTimeTextField = new TextField();
         contentExpirationTimeTextField.setPromptText("Format: 14:25");
-        validationSupport.addDateValidation(contentExpirationTimeTextField, "HH:mm", contentExpirationTimeTextField, I18n.i18nTextProperty("ValidationTimeFormatIncorrect")); // ???
+        validationSupport.addDateOrEmptyValidation(contentExpirationTimeTextField, "HH:mm", contentExpirationTimeTextField, I18n.i18nTextProperty("ValidationTimeFormatIncorrect")); // ???
         if (currentEvent.getVodExpirationDate() != null) {
             contentExpirationTimeTextField.setText(currentEvent.getVodExpirationDate().format(timeFormatter));
         }
@@ -228,7 +228,8 @@ public class VideoView {
             LocalDateTime availableUntil = LocalDateTime.of(date, time);
             currentEvent.setVodExpirationDate(availableUntil);
         } catch (DateTimeParseException e) {
-            // Handle the error or leave empty if ignoring invalid input
+            if(Objects.equals(contentExpirationDateTextField.getText(), "") && Objects.equals(contentExpirationTimeTextField.getText(), ""))
+                currentEvent.setVodExpirationDate(null);
         }
     }
 
@@ -237,7 +238,7 @@ public class VideoView {
         entityStore.executeQueryBatch(
                 new EntityStoreQuery("select distinct name,family.code from Item where organization=? and family.code = ? order by name",
                     new Object[]{currentEditedEvent.getOrganization(), KnownItem.VIDEO.getCode()}),
-                new EntityStoreQuery("select name, programScheduledItem, date, event, site, expirationDate,available, vodDelayed, published, item, item.code, programScheduledItem.name, programScheduledItem.timeline.startTime, programScheduledItem.timeline.endTime from ScheduledItem where programScheduledItem.event= ? and item.code = ? and programScheduledItem.item.family.code = ? order by date",
+                new EntityStoreQuery("select name, programScheduledItem.(startTime, endTime), date, event, site, expirationDate,available, vodDelayed, published, item, item.code, programScheduledItem.name, programScheduledItem.timeline.startTime, programScheduledItem.timeline.endTime from ScheduledItem where programScheduledItem.event= ? and item.code = ? and programScheduledItem.item.family.code = ? order by date",
                     new Object[]{currentEditedEvent, KnownItem.VIDEO.getCode(), KnownItemFamily.TEACHING.getCode()}),
                 new EntityStoreQuery("select url, scheduledItem.item, scheduledItem.date, scheduledItem.vodDelayed, scheduledItem.published, scheduledItem.item.code from Media where scheduledItem.event= ? and scheduledItem.item.code = ?",
                     new Object[]{currentEditedEvent, KnownItem.VIDEO.getCode()})

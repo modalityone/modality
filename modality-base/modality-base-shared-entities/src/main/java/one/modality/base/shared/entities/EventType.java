@@ -4,6 +4,7 @@ import dev.webfx.stack.orm.entity.Entity;
 import dev.webfx.stack.orm.entity.EntityId;
 import one.modality.base.shared.entities.markers.EntityHasLabel;
 import one.modality.base.shared.entities.markers.EntityHasName;
+import one.modality.base.shared.entities.markers.EntityHasOrd;
 import one.modality.base.shared.entities.markers.EntityHasOrganization;
 
 /**
@@ -12,7 +13,8 @@ import one.modality.base.shared.entities.markers.EntityHasOrganization;
 public interface EventType extends Entity,
     EntityHasName,
     EntityHasLabel,
-    EntityHasOrganization {
+    EntityHasOrganization,
+    EntityHasOrd {
 
     String recurringItem = "recurringItem";
     String ord = "ord";

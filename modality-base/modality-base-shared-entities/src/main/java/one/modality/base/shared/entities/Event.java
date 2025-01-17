@@ -25,7 +25,7 @@ public interface Event extends Entity,
     String endDate = "endDate";
     String openingDate = "openingDate";
     String vodExpirationDate = "vodExpirationDate";
-    String vodProcessingTimeMinutes = "vodProcesssingTimeMinutes";
+    String vodProcessingTimeMinutes = "vodProcessingTimeMinutes";
     String audioExpirationDate = "audioExpirationDate";
     String livestreamUrl = "livestreamUrl";
     String live = "live";
@@ -35,6 +35,14 @@ public interface Event extends Entity,
     String shortDescription = "shortDescription";
     String externalLink = "externalLink";
     String venue = "venue";
+    String teachingsDayTicket = "teachingsDayTicket";
+    String audioRecordingsDayTicket = "audioRecordingsDayTicket";
+    String recurringWithAudio = "recurringWithAudio";
+    String recurringWithVideo = "recurringWithVideo";
+    String repeatable = "repeatable";
+    String repeatedEvent = "repeatedEvent";
+    String repeatAudio = "repeatAudio";
+    String repeatVideo = "repeatVideo";
 
     default void setState(Object value) {
         setFieldValue(state, Strings.stringValue(value));
@@ -185,4 +193,73 @@ public interface Event extends Entity,
     default Site getVenue() {
         return getForeignEntity(venue);
     }
+
+    default void setTeachingsDayTicket(Boolean value) {
+        setFieldValue(teachingsDayTicket, value);
+    }
+
+    default Boolean isTeachingsDayTicket() {
+        return getBooleanFieldValue(teachingsDayTicket);
+    }
+
+    default void setAudioRecordingsDayTicket(Boolean value) {
+        setFieldValue(audioRecordingsDayTicket, value);
+    }
+
+    default Boolean isAudioRecordingsDayTicket() {
+        return getBooleanFieldValue(audioRecordingsDayTicket);
+    }
+
+    default void setRecurringWithAudio(Boolean value) {
+        setFieldValue(recurringWithAudio, value);
+    }
+
+    default Boolean isRecurringWithAudio() {
+        return getBooleanFieldValue(recurringWithAudio);
+    }
+
+    default void setRecurringWithVideo(Boolean value) {
+        setFieldValue(recurringWithVideo, value);
+    }
+
+    default Boolean isRecurringWithVideo() {
+        return getBooleanFieldValue(recurringWithVideo);
+    }
+
+    default void setRepeatedEvent(Object value) {
+        setForeignField(repeatedEvent, value);
+    }
+
+    default void setRepeatable(Boolean value) {
+        setFieldValue(repeatable, value);
+    }
+
+    default Boolean isRepeatable() {
+        return getBooleanFieldValue(repeatable);
+    }
+
+    default EntityId getRepeatedEventId() {
+        return getForeignEntityId(repeatedEvent);
+    }
+
+    default Event getRepeatedEvent() {
+        return getForeignEntity(repeatedEvent);
+    }
+
+    default void setRepeatAudio(Boolean value) {
+        setFieldValue(repeatAudio, value);
+    }
+
+    default Boolean isRepeatAudio() {
+        return getBooleanFieldValue(repeatAudio);
+    }
+
+    default void setRepeatVideo(Boolean value) {
+        setFieldValue(repeatVideo, value);
+    }
+
+    default Boolean isRepeatVideo() {
+        return getBooleanFieldValue(repeatVideo);
+    }
+
 }

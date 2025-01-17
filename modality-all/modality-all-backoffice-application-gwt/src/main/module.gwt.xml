@@ -230,6 +230,8 @@
     <source path="one/modality/base/client/services/i18n"/>
     <!--===========================< modality-base-client-icons >===========================-->
     <source path="one/modality/base/client/icons"/>
+    <resource path="images/large"/>
+    <public path="" includes="images/large/"/>
     <resource path="images/s16"/>
     <public path="" includes="images/s16/"/>
     <resource path="images/s16/actions"/>
@@ -391,13 +393,13 @@
     <source path="one/modality/event/backoffice/activities/program"/>
     <!--===========< modality-event-backoffice-activity-recurringevents-plugin >============-->
     <source path="one/modality/event/backoffice/activities/recurringevents"/>
-    <!--=============< modality-event-backoffice-events-buttonselector-plugin >=============-->
-    <source path="one/modality/event/backoffice/events/buttonselector"/>
     <!--==============< modality-event-backoffice-events-ganttcanvas-plugin >===============-->
     <source path="one/modality/event/backoffice/events/ganttcanvas"/>
     <source path="one/modality/event/backoffice/events/ganttcanvas/spi/impl/event"/>
     <!--======================< modality-event-backoffice-events-pm >=======================-->
     <source path="one/modality/event/backoffice/events/pm"/>
+    <!--=============< modality-event-backoffice-header-eventselector-plugin >==============-->
+    <source path="one/modality/event/backoffice/events/eventselector"/>
     <!--=================< modality-event-client-activity-eventdependent >==================-->
     <source path="one/modality/event/client/activity/eventdependent"/>
     <!--=========================< modality-event-client-event-fx >=========================-->

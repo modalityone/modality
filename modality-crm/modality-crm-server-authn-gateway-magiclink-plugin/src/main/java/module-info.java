@@ -8,6 +8,7 @@ module modality.crm.server.authn.gateway.magiclink.plugin {
     requires modality.crm.shared.authn;
     requires webfx.platform.async;
     requires webfx.platform.console;
+    requires webfx.platform.resource;
     requires webfx.platform.util;
     requires webfx.stack.authn;
     requires webfx.stack.authn.logout.server;
@@ -20,6 +21,9 @@ module modality.crm.server.authn.gateway.magiclink.plugin {
 
     // Exported packages
     exports one.modality.crm.server.authn.gateway.magiclink;
+
+    // Resources packages
+    opens one.modality.crm.server.authn.gateway.magiclink;
 
     // Provided services
     provides dev.webfx.stack.authn.server.gateway.spi.ServerAuthenticationGateway with one.modality.crm.server.authn.gateway.magiclink.ModalityMagicLinkAuthenticationGateway;

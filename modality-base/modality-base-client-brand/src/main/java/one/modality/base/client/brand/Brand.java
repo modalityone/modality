@@ -17,18 +17,28 @@ import dev.webfx.platform.resource.Resource;
  */
 public class Brand {
 
+    // Design hesitating between blue #0096D6 and orange #F6782E
+    private static final Color BLUE_COLOR = Color.web("#0096D6");
+    private static final Color ORANGE_COLOR = Color.web("#F6782E");
+    private static final Color BRAND_MAIN_COLOR = ORANGE_COLOR;
+    private static final Color BRAND_MAIN_BACKGROUND_COLOR = ORANGE_COLOR;
+
     //TODO: update application code to stop using these methods from Java and rely only on CSS and i18n
 
-    public static final Color BRAND_MAIN_COLOR = Color.web("#0096D6"); // Orange
+    public static Color getBlueColor() {
+        return BLUE_COLOR;
+    }
 
-    public static final Color BRAND_MAIN_BACKGROUND_COLOR = Color.web("#0096D6"); // Blue
+    public static Color getOrangeColor() {
+        return ORANGE_COLOR;
+    }
 
     public static Color getBrandMainColor() {
-        return BRAND_MAIN_COLOR; // Orange
+        return BRAND_MAIN_COLOR;
     }
 
     public static Color getBrandMainBackgroundColor() {
-        return BRAND_MAIN_BACKGROUND_COLOR; // Blue
+        return BRAND_MAIN_BACKGROUND_COLOR;
     }
 
     public static Node createModalityBackOfficeBrandNode() {
@@ -44,6 +54,5 @@ public class Brand {
         brand.setAlignment(Pos.CENTER);
         return brand;
     }
-
 
 }

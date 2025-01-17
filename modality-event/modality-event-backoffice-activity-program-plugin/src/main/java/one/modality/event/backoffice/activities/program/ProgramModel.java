@@ -44,6 +44,8 @@ final class ProgramModel {
     private Site programSite;
     private List<Item> languageAudioItems;
     private Item videoItem;
+    private List<ScheduledItem> teachingsBookableScheduledItems;
+    private List<ScheduledItem> audioRecordingsBookableScheduledItems;
     private final BooleanProperty programGeneratedProperty = new SimpleBooleanProperty();
 
     private final List<DayTemplate> initialWorkingDayTemplates = new ArrayList<>();
@@ -90,6 +92,14 @@ final class ProgramModel {
         return languageAudioItems;
     }
 
+    List<ScheduledItem> getTeachingsBookableScheduledItems() {
+        return teachingsBookableScheduledItems;
+    }
+
+    List<ScheduledItem> getAudioRecordingsBookableScheduledItems() {
+        return audioRecordingsBookableScheduledItems;
+    }
+
     Item getVideoItem() {
         return videoItem;
     }
@@ -122,19 +132,27 @@ final class ProgramModel {
                 // Index 1: program site (singleton list)
                 new EntityStoreQuery("select name from Site where event=? and main limit 1", new Object[]{selectedEvent}),
                 // Index 2: items for this program item family + audio recording + video
-                new EntityStoreQuery("select name,family.code from Item where organization=? and family.code in (?,?,?)",
-                    new Object[]{selectedEvent.getOrganization(), programItemFamily.getCode(), KnownItemFamily.AUDIO_RECORDING.getCode(), KnownItemFamily.VIDEO.getCode()})
-            )
+                new EntityStoreQuery("select name,family.code, deprecated from Item where organization=? and family.code in (?,?,?)",
+                    new Object[]{selectedEvent.getOrganization(), programItemFamily.getCode(), KnownItemFamily.AUDIO_RECORDING.getCode(), KnownItemFamily.VIDEO.getCode()}),
+                // Index 3: bookableScheduledItem for this event (teachings + optional audio), created during the event setup.
+                new EntityStoreQuery("select item, date from ScheduledItem si where event=? and bookableScheduledItem=si", new Object[]{selectedEvent}),
+                // Index 4: we load some fields from the Event table that are not yet loaded. We don't need to look for the result, the result will be loaded automatically in selectedEvent because it has the same id.
+                new EntityStoreQuery("select teachingsDayTicket, audioRecordingsDayTicket from Event where id=?", new Object[]{selectedEvent}))
             .onFailure(Console::log)
             .onSuccess(entityLists -> Platform.runLater(() -> {
                 // Extracting the different entity lists from the query batch result
                 EntityList<DayTemplate> dayTemplates = entityLists[0];
                 EntityList<Site> sites = entityLists[1];
                 EntityList<Item> items = entityLists[2];
+                EntityList<ScheduledItem> bookableScheduledItems = entityLists[3];
 
                 programSite = Collections.first(sites);
-                languageAudioItems = Collections.filter(items, item -> KnownItemFamily.AUDIO_RECORDING.getCode().equals(item.getFamily().getCode()));
+                //TODO: for now, we look for all language available. Change this to a list of language that is setup as the event creation.
+                languageAudioItems = Collections.filter(items, item -> KnownItemFamily.AUDIO_RECORDING.getCode().equals(item.getFamily().getCode()) && !item.isDeprecated());
                 videoItem = Collections.findFirst(items, item -> KnownItemFamily.VIDEO.getCode().equals(item.getFamily().getCode()));
+                teachingsBookableScheduledItems = Collections.filter(bookableScheduledItems, scheduledItem -> KnownItemFamily.TEACHING.getCode().equals(scheduledItem.getItem().getFamily().getCode()));
+                audioRecordingsBookableScheduledItems = Collections.filter(bookableScheduledItems, scheduledItem -> KnownItemFamily.AUDIO_RECORDING.getCode().equals(scheduledItem.getItem().getFamily().getCode()));
+
                 Collections.setAll(initialWorkingDayTemplates, dayTemplates.stream().map(updateStore::updateEntity).collect(Collectors.toList()));
                 setLoadedEvent(entityStore.copyEntity(selectedEvent));
 

@@ -14,7 +14,7 @@
 }
 
 .audio-library .description > fx-children > fx-text {
-    min-width: 410px;
+    pref-width: 410px;
     max-width: 410px;
     overflow: hidden; /* Hide overflowed text */
     text-overflow: ellipsis;
@@ -30,6 +30,8 @@
 
 .bottom-border {
     margin-top: 20px;
+    margin-left: 10px;
+    margin-right: 10px;
     border-color:     transparent transparent #e6e6e6 transparent;
     border-width: 0 0 1px 0; /* Border width translated to px */
     border-style: solid;

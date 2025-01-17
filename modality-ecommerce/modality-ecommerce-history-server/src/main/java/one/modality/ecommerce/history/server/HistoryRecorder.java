@@ -12,7 +12,10 @@ import dev.webfx.stack.session.state.ThreadLocalStateHolder;
 import one.modality.base.shared.domainmodel.formatters.PriceFormatter;
 import one.modality.base.shared.entities.*;
 import one.modality.crm.shared.services.authn.ModalityUserPrincipal;
-import one.modality.ecommerce.document.service.events.*;
+import one.modality.ecommerce.document.service.events.AbstractAttendancesEvent;
+import one.modality.ecommerce.document.service.events.AbstractDocumentEvent;
+import one.modality.ecommerce.document.service.events.AbstractDocumentLineEvent;
+import one.modality.ecommerce.document.service.events.AbstractMoneyTransferEvent;
 
 import java.util.function.Consumer;
 import java.util.function.Supplier;
@@ -69,13 +72,13 @@ public final class HistoryRecorder {
                 });
     }
 
-    public static void completeDocumentHistoryAfterSubmit(History history, AbstractDocumentEvent... documentEvents) {
+    public static <T> Future<T> completeDocumentHistoryAfterSubmit(T result, History history, AbstractDocumentEvent... documentEvents) {
         // Completing the history recording by saving the changes (new primary keys can now be resolved)
         UpdateStore updateStore = (UpdateStore) history.getStore();
         History h = updateStore.updateEntity(history); // weird API?
         resolveDocumentEventsPrimaryKeys(documentEvents, updateStore);
         h.setChanges(AST.formatArray(SerialCodecManager.encodeJavaArrayToAstArray(documentEvents), "json"));
-        updateStore.submitChanges();
+        return updateStore.submitChanges().map(ignored -> result);
     }
 
     private static void resolveDocumentEventsPrimaryKeys(AbstractDocumentEvent[] documentEvents, UpdateStore updateStore) {
@@ -101,7 +104,7 @@ public final class HistoryRecorder {
 
     private static void resolvePrimaryKeyField(Class<? extends Entity> entityClass, Supplier<Object> getter, Consumer<Object> setter, UpdateStore updateStore) {
         Object primaryKey = getter.get();
-        Entity entity = updateStore.getEntity(entityClass, primaryKey);
+        Entity entity = updateStore.getEntity(entityClass, primaryKey, true);
         if (entity != null) {
             setter.accept(entity.getPrimaryKey());
         }

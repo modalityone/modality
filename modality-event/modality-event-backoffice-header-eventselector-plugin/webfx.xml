@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project>
+
+    <description>A JavaFX property holder of the current Event viewed by the user in the back-office.</description>
+
+    <exported-packages>
+        <source-packages/>
+    </exported-packages>
+
+    <dependencies>
+        <used-by-source-modules/>
+    </dependencies>
+
+    <providers>
+        <provider interface="one.modality.base.backoffice.mainframe.headernode.MainFrameHeaderNodeProvider">one.modality.event.backoffice.events.eventselector.MainFrameHeaderEventSelectorProvider</provider>
+    </providers>
+
+</project>

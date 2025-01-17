@@ -157,6 +157,8 @@
     -bootstrap-red4: #ac2925 ;
     -bootstrap-red5: #761c19 ;
     -bootstrap-red6: #a94442 ;
+
+    /*-bootstrap-font-size: 14px;*/ /* default value for buttons */
 }
 
 /* Buttons */
@@ -169,11 +171,12 @@
     -fx-border-width: 1px;
     -fx-border-style: solid;
     -fx-background-insets: 0, 0, -1, 0;
-    -fx-padding: 6px 12px 6px 12px;
+    /*-fx-padding: 6px 12px 6px 12px;*/ /* hardcoded for web support */
+    /*-fx-font-size: -bootstrap-font-size;*/
     -fx-font-size: 14px;
     -fx-border-radius: 4px;
     -fx-background-radius: 4px;
-    /*-fx-min-width: 80px;*/
+    /*-fx-min-width: 80px;*/ /* hardcoded for web support */
 }
 
 .btn:hover {
@@ -181,52 +184,53 @@
     -fx-fill: -bootstrap-grey7;
 }
 
-.btn-default {
+.btn-default, .btn.default, .default .btn {
     -fx-text-fill: -bootstrap-grey7;
     -fx-fill: -bootstrap-grey7;
     -fx-background-color: -bootstrap-white;
     -fx-border-color: -bootstrap-grey3;
 }
 
-.btn-default:hover {
+.btn-default:hover, .btn.default:hover, .default .btn:hover {
     -fx-text-fill: -bootstrap-grey7;
     -fx-fill: -bootstrap-grey7;
     -fx-background-color: -bootstrap-grey1;
     -fx-border-color: -bootstrap-grey5;
 }
 
-.btn-primary {
+.btn-primary, .btn.primary, .primary .btn {
     -fx-text-fill: -bootstrap-white;
     -fx-fill: -bootstrap-white;
     -fx-background-color: -bootstrap-blue5;
     -fx-border-color: -bootstrap-blue6;
 }
 
-.btn-primary .svg-path {
+.btn-primary .svg-path, .btn .svg-path {
     -fx-fill: inherit;  /* Inherit the fill color from the parent (btn-primary) */
 }
 
-.btn-primary .progress-indicator {
+.btn-primary .progress-indicator, .btn .progress-indicator {
     -fx-accent: -bootstrap-white;
 }
 
-.btn-primary:hover {
+.btn-primary:hover, .btn.primary:hover, .primary .btn:hover {
     -fx-text-fill: -bootstrap-white;
     -fx-fill: -bootstrap-white;
     -fx-background-color: -bootstrap-blue8;
     -fx-border-color: -bootstrap-blue9;
 }
 
-.text-secondary {
+.txt-secondary, .txt.secondary, .secondary .txt {
     -fx-text-fill: -bootstrap-grey6;
 }
 
-.btn-secondary {
+.btn-secondary, .btn.secondary, .secondary .btn {
     -fx-text-fill: -bootstrap-white;
     -fx-fill: -bootstrap-white;
     -fx-background-color: -bootstrap-grey4;
     -fx-border-color: -bootstrap-grey5;
 }
+
 .btn-secondary .svg-path {
     -fx-fill: inherit;  /* Inherit the fill color from the parent (btn-primary) */
 }
@@ -235,14 +239,14 @@
     -fx-accent: -bootstrap-white;
 }
 
-.btn-secondary:hover {
+.btn-secondary:hover, .btn.secondary:hover, .secondary .btn:hover {
     -fx-text-fill: -bootstrap-white;
     -fx-fill: -bootstrap-white;
     -fx-background-color: -bootstrap-grey5;
     -fx-border-color: -bootstrap-grey6;
 }
 
-.btn-success {
+.btn-success, .btn.success, .success .btn {
     -fx-text-fill: -bootstrap-white;
     -fx-fill: -bootstrap-white;
     -fx-background-color: -bootstrap-green1;
@@ -257,14 +261,14 @@
     -fx-accent: -bootstrap-white;
 }
 
-.btn-success:hover {
+.btn-success:hover, .btn.success:hover, .success .btn:hover {
     -fx-text-fill: -bootstrap-white;
     -fx-fill: -bootstrap-white;
     -fx-background-color: -bootstrap-green3;
     -fx-border-color: -bootstrap-green4;
 }
 
-.btn-info {
+.btn-info,  .btn.info, .info .btn {
     -fx-text-fill: -bootstrap-white;
     -fx-fill: -bootstrap-white;
     -fx-background-color: -bootstrap-blue1;
@@ -279,14 +283,14 @@
     -fx-fill: inherit;  /* Inherit the fill color from the parent (btn-primary) */
 }
 
-.btn-info:hover {
+.btn-info:hover, .btn.info:hover, .info .btn:hover {
     -fx-text-fill: -bootstrap-white;
     -fx-fill: -bootstrap-white;
     -fx-background-color: -bootstrap-blue3;
     -fx-border-color: -bootstrap-blue4; 
 }
 
-.btn-warning {
+.btn-warning, .btn.warning, .warning .btn {
     -fx-text-fill: -bootstrap-white;
     -fx-fill: -bootstrap-white;
     -fx-background-color: -bootstrap-orange1;
@@ -302,7 +306,7 @@
 }
 
 
-.btn-warning:hover {
+.btn-warning:hover, .btn.warning:hover, .warning .btn:hover {
     -fx-text-fill: -bootstrap-white;
     -fx-fill: -bootstrap-white;
     -fx-background-color: -bootstrap-orange3;
@@ -310,7 +314,7 @@
 }
 
 
-.btn-danger {
+.btn-danger, .btn.danger, .danger .btn {
     -fx-text-fill: -bootstrap-white;
     -fx-fill: -bootstrap-white;
     -fx-background-color: -bootstrap-red1;
@@ -325,32 +329,59 @@
     -fx-accent: -bootstrap-white;
 }
 
-.btn-danger:hover {
+.btn-danger:hover, .btn.danger:hover, .danger .btn:hover {
     -fx-text-fill: -bootstrap-white;
     -fx-fill: -bootstrap-white;
     -fx-background-color: -bootstrap-red3;
     -fx-border-color: -bootstrap-red4;
 }
 
+.lg, .btn-lg, .btn.lg {
+    /*-bootstrap-font-size: 18px;*/
+    -fx-font-size: 18px; /* overriding because OpenJFX CSS variable are globals only */
+}
+
 .btn-lg {
-    -fx-padding: 10px 16px 10px 16px;
-    -fx-font-size: 18px;
+    /*-fx-padding: 10px 16px 10px 16px;*/ /* hardcoded for web support */
     -fx-border-radius: 6px;
     -fx-background-radius: 6px;
 }
 
+.sm, .btn-sm, .btn.sm {
+    /*-bootstrap-font-size: 12px;*/
+    -fx-font-size: 12px; /* overriding because OpenJFX CSS variable are globals only */
+}
+
 .btn-sm {
-    -fx-padding: 5px 10px 5px 10px;
-    -fx-font-size: 12px;
+    /*-fx-padding: 5px 10px 5px 10px;*/ /* hardcoded for web support */
     -fx-border-radius: 3px;
     -fx-background-radius: 3px;
 }
 
+.xs, .btn-xs, .btn.xs {
+    /*-bootstrap-font-size: 12px;*/
+    -fx-font-size: 12px; /* overriding because OpenJFX CSS variable are globals only */
+}
+
 .btn-xs {
-    -fx-padding: 1px 5px 1px 5px;
-    -fx-font-size: 12px;
+    /*-fx-padding: 1px 5px 1px 5px;*/ /* hardcoded for web support */
     -fx-border-radius: 3px;
     -fx-background-radius: 3px;
+}
+
+.lg .btn {
+    /*-bootstrap-font-size: 18px;*/
+    -fx-font-size: 18px; /* overriding because OpenJFX CSS variable are globals only */
+}
+
+.sm .btn {
+    /*-bootstrap-font-size: 12px;*/
+    -fx-font-size: 12px; /* overriding because OpenJFX CSS variable are globals only */
+}
+
+.xs .btn {
+    /*-bootstrap-font-size: 12px;*/
+    -fx-font-size: 12px; /* overriding because OpenJFX CSS variable are globals only */
 }
 
 .btn-block {
@@ -432,48 +463,48 @@
     -fx-font-size: 85%;
 }
 
-.text-left {
+.txt-left {
     -fx-text-alignment: left;
 }
 
-.text-right {
+.txt-right {
     -fx-text-alignment: right;
 }
 
-.text-center {
+.txt-center {
     -fx-text-alignment: center;
 }
 
-.text-justify {
+.txt-justify {
     -fx-text-alignment: justify;
 }
 
-.text-muted {
+.txt-muted {
     -fx-text-fill: -bootstrap-grey6;
     -fx-fill: -bootstrap-grey6;
 }
 
-.text-primary {
+.txt-primary, .txt.primary, .primary .txt {
     -fx-text-fill: -bootstrap-blue5;
     -fx-fill: -bootstrap-blue5;
 }
 
-.text-success {
+.txt-success, .txt.success, .success .txt {
     -fx-text-fill: -bootstrap-green6;
     -fx-fill: -bootstrap-green6;
 }
 
-.text-info {
+.txt-info, .txt.info, .info .txt {
     -fx-text-fill: -bootstrap-blue11;
     -fx-fill: -bootstrap-blue11;
 }
 
-.text-warning {
+.txt-warning, .txt.warning, .warning .txt {
     -fx-text-fill: -bootstrap-orange6;
     -fx-fill: -bootstrap-orange6;
 }
 
-.text-danger {
+.txt-danger, .txt.danger, .danger .txt {
     -fx-text-fill: -bootstrap-red6;
     -fx-fill: -bootstrap-red6;
 }
@@ -680,8 +711,10 @@ HtmlText, HtmlTextEditor {
 /*===== modality-client-brand-javafx@main.css from modality-base-client-brand =====*/
 
 * {
-    -brand-main-color: #0096D6;
-    -brand-main-background-color: #0096D6;
+    -brand-orange-color: #F6782E;
+    -brand-blue-color: #0096D6;
+    -brand-main-color: -brand-orange-color;
+    -brand-main-background-color: -brand-orange-color;
 }
 /*===== modality-client-css-import-font-roboto-javafx@main.css from modality-base-client-css =====*/
 
@@ -762,11 +795,11 @@ CollapsePane.menu-bar.lang-menu-bar {
 .main-menu-bar Label.brand {
     -fx-font-size: 16px;
     -fx-font-weight: bold;
-    -fx-text-fill: -brand-main-color;
+    -fx-text-fill: -brand-blue-color;
 }
 
 .main-menu-bar Label.brand SVGPath {
-    -fx-fill: -brand-main-color;
+    -fx-fill: -brand-blue-color;
 }
 
 /*===== modality-client-bootstrap-javafx@main.css from modality-base-client-bootstrap =====*/
@@ -877,8 +910,9 @@ CollapsePane.menu-bar.lang-menu-bar {
     -fx-text-alignment: left; /* Aligns text */
 }
 
+
 .audio-library .description {
-    -fx-min-width: 450;
+    -fx-pref-width: 450;
     -fx-max-width: 450;
 }
 
@@ -891,9 +925,11 @@ CollapsePane.menu-bar.lang-menu-bar {
 }
 
 .bottom-border {
-    -fx-padding: 0 0 20 -50;
+    -fx-padding: 0 10 20 -50;
     -fx-border-color: transparent transparent #4A4748 transparent; -fx-border-width: 0 0 0.2 0;
 }
+
+
 
 
 /*===== modality-event-frontoffice-activities-videos-javafx@main.css from modality-event-frontoffice-activity-videos-plugin =====*/

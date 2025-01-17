@@ -2,19 +2,25 @@ package one.modality.event.frontoffice.activities.booking.process.event.slides;
 
 import dev.webfx.extras.panes.TransitionPane;
 import dev.webfx.platform.uischeduler.UiScheduler;
+import dev.webfx.platform.util.Numbers;
+import dev.webfx.stack.orm.entity.Entities;
 import javafx.scene.layout.Region;
+import one.modality.base.shared.entities.Event;
 import one.modality.ecommerce.payment.CancelPaymentResult;
 import one.modality.ecommerce.payment.client.WebPaymentForm;
+import one.modality.event.client.event.fx.FXEvent;
+import one.modality.event.client.recurringevents.BookableDatesUi;
 import one.modality.event.client.recurringevents.FXPersonToBook;
 import one.modality.event.frontoffice.activities.booking.process.event.BookEventActivity;
-import one.modality.event.client.recurringevents.RecurringEventSchedule;
+import one.modality.event.frontoffice.activities.booking.process.event.slides.recurring_event.Step1BookDatesRecurringEventSlide;
+import one.modality.event.frontoffice.activities.booking.process.event.slides.sttp.Step1BookSttpSlide;
 
 final class DigitsSlideController {
 
     private final BookEventActivity bookEventActivity;
     private final TransitionPane transitionPane = new TransitionPane();
-    private final Step1BookDatesSlide step1BookDatesSlide;
-    private final Step2CheckoutSlide step2CheckoutSlide;
+    private AbstractStep1Slide step1Slide;
+    private Step2CheckoutSlide step2CheckoutSlide;
     private final Step3PaymentSlide step3PaymentSlide;
     private final Step4PendingPaymentSlide step4PendingPaymentSlide;
     private final Step5FailedPaymentSlide step5FailedPaymentSlide;
@@ -24,8 +30,7 @@ final class DigitsSlideController {
 
     public DigitsSlideController(BookEventActivity bookEventActivity) {
         this.bookEventActivity   = bookEventActivity;
-        step1BookDatesSlide      = new Step1BookDatesSlide(bookEventActivity);
-        step2CheckoutSlide       = new Step2CheckoutSlide(bookEventActivity);
+
         step3PaymentSlide        = new Step3PaymentSlide(bookEventActivity);
         step4PendingPaymentSlide = new Step4PendingPaymentSlide(bookEventActivity);
         step5FailedPaymentSlide  = new Step5FailedPaymentSlide(bookEventActivity);
@@ -41,31 +46,47 @@ final class DigitsSlideController {
     }
 
     void onWorkingBookingLoaded() {
-        step1BookDatesSlide.onWorkingBookingLoaded();
-
         // TODO: avoid rebuilding the whole UI for these remaining slides
         step3PaymentSlide.reset();
         step7ErrorSlide.reset();
+        step2CheckoutSlide = new Step2CheckoutSlide(bookEventActivity);
+
+        Event currentEvent = FXEvent.getEvent();
+        int typeId = Numbers.toInteger(Entities.getPrimaryKey(currentEvent.getType()));
+        if(typeId == KnownEventType.GP_CLASSES.getTypeId()) {
+            //TODO: when we will have different Step1 for different type of event, implement an abstract class in this package, and the different step 1 will inherit this abstract class
+            step1Slide = new Step1BookDatesRecurringEventSlide(bookEventActivity);
+        } else if(typeId == KnownEventType.STTP.getTypeId()) {
+            step1Slide =  new Step1BookSttpSlide(bookEventActivity);;
+            step2CheckoutSlide.setBookAsGuestAllowed(false);
+        }
+        else {
+            step7ErrorSlide.setErrorMessage("Error: Unmanaged type of event");
+            displaySlide(step7ErrorSlide);
+        }
+        step1Slide.onWorkingBookingLoaded();
 
         if (displayedSlide != step2CheckoutSlide) {
             displayFirstSlide();
-            // Sub-routing node binding (displaying the possible sub-routing account node in the appropriate place in step3)
-            step2CheckoutSlide.accountMountNodeProperty().bind(bookEventActivity.mountNodeProperty());
         } else {
             displayCheckoutSlide();
         }
+
+        // Sub-routing node binding (displaying the possible sub-routing account node in the appropriate place in step2)
+        step2CheckoutSlide.accountMountNodeProperty().bind(bookEventActivity.mountNodeProperty());
     }
 
     void displayFirstSlide() {
-        displaySlide(step1BookDatesSlide);
+        displaySlide(step1Slide);
     }
 
-    RecurringEventSchedule getRecurringEventSchedule() {
-        return step1BookDatesSlide.getRecurringEventSchedule();
+    BookableDatesUi getBookableDateUi() {
+        if(step1Slide==null) return null;
+        return step1Slide.getBookableDatesUi();
     }
 
     private void displaySlide(StepSlide slide) {
-        boolean animate = slide != step1BookDatesSlide || displayedSlide == step5FailedPaymentSlide || displayedSlide == step6CancellationSlide;
+        boolean animate = slide != step1Slide || displayedSlide == step5FailedPaymentSlide || displayedSlide == step6CancellationSlide;
         displayedSlide = slide;
         UiScheduler.runInUiThread((() -> {
             if (animate)
@@ -76,7 +97,7 @@ final class DigitsSlideController {
     }
 
     void displayCheckoutSlide() {
-        if (displayedSlide == step1BookDatesSlide) {
+        if (displayedSlide == step1Slide) {
             step2CheckoutSlide.setStep1PersonToBookWasShown(FXPersonToBook.getPersonToBook() != null);
         }
         step2CheckoutSlide.reset(); // ensures the summary is updated

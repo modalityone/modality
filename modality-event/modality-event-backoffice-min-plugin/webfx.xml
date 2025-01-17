@@ -12,7 +12,7 @@
         <plugin-module>modality-event-backoffice-activity-pricing-plugin</plugin-module>
 
         <!-- This will add the event button selector in the main frame header -->
-        <plugin-module>modality-event-backoffice-events-buttonselector-plugin</plugin-module>
+        <plugin-module>modality-event-backoffice-header-eventselector-plugin</plugin-module>
         <!-- This will register the Events Gantt Canvas as the main frame Gantt Canvas -->
         <plugin-module>modality-event-backoffice-events-ganttcanvas-plugin</plugin-module>
 

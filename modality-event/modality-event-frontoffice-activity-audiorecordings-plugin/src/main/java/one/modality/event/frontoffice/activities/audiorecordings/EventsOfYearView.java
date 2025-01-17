@@ -47,7 +47,7 @@ final class EventsOfYearView {
         columnsPane.setAlignment(Pos.TOP_LEFT);
 
         columnsPane.getChildren().setAll(Collections.map(events, event -> {
-            VBox eventView = new EventThumbnailView(event).getView();
+            VBox eventView = new EventThumbnailView(event, EventThumbnailView.ItemType.ITEM_TYPE_AUDIO).getView();
             eventView.setMaxWidth(BOX_WIDTH);
             eventView.setMinHeight(100);
             eventView.setCursor(Cursor.HAND);

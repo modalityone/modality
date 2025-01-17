@@ -147,6 +147,9 @@ final class DayTemplateModel {
     }
 
     ScheduledItem addTeachingsScheduledItemsForDateAndTimeline(LocalDate date, String name, Timeline timeline, UpdateStore currentUpdateStore) {
+        //If we use dayTicket for this event, we need to create a new ScheduledItem, and link it the bookableScheduledItem of type teaching that has been
+        //created beforehand, when the event has been set up. We look for a bookable scheduledItem with the same family type for the same event on the same day.
+        //See document in the doc directory for more info.
         ScheduledItem teachingScheduledItem = currentUpdateStore.insertEntity(ScheduledItem.class);
         teachingScheduledItem.setEvent(getEvent());
         teachingScheduledItem.setSite(getSite());
@@ -154,6 +157,16 @@ final class DayTemplateModel {
         teachingScheduledItem.setName(name);
         teachingScheduledItem.setTimeLine(timeline);
         teachingScheduledItem.setItem(timeline.getItem());
+        if(getEvent().isTeachingsDayTicket()) {
+            //Here we're in a case of teachingDayTicket, so we need to link the teachingScheduledItem to the bookable teaching scheduledItem
+            List<ScheduledItem> bookableScheduledItems = programModel.getTeachingsBookableScheduledItems();
+            ScheduledItem bookableScheduleItem =  bookableScheduledItems.stream()
+                .filter(scheduledItem -> scheduledItem.getDate().equals(date)) // Check if the date matches
+                .findFirst() // Get the first match, if any
+                .orElse(null); //
+            teachingScheduledItem.setBookableScheduledItem(bookableScheduleItem);
+        }
+
         return teachingScheduledItem;
     }
 
@@ -227,6 +240,25 @@ final class DayTemplateModel {
             audioScheduledItem.setDate(date);
             audioScheduledItem.setProgramScheduledItem(parentTeachingScheduledItem);
             audioScheduledItem.setItem(languageItem);
+            if(getEvent().isAudioRecordingsDayTicket()) {
+                //Here we're in a case of audioRecordingsDayTicket (case of the Festivals), so we need to link the teachingScheduledItem to the bookable teaching scheduledItem
+                List<ScheduledItem> bookableScheduledItems = programModel.getAudioRecordingsBookableScheduledItems();
+                ScheduledItem bookableScheduleItem =  bookableScheduledItems.stream()
+                    .filter(scheduledItem -> scheduledItem.getDate().equals(date)) // Check if the date matches
+                    .filter(scheduledItem -> scheduledItem.getItem().equals(languageItem))
+                    .findFirst() // Get the first match, if any
+                    .orElse(null); //
+                audioScheduledItem.setBookableScheduledItem(bookableScheduleItem);
+            } else if(getEvent().isTeachingsDayTicket()) {
+                //Here we're in a case of teachingDayTicket but no audioRecordingsDayTicket (case of STTP). We need to link the audioScheduledItem to the bookable teaching scheduledItem
+                //See in the doc directory for more explanation
+                List<ScheduledItem> bookableScheduledItems = programModel.getTeachingsBookableScheduledItems();
+                ScheduledItem bookableScheduleItem =  bookableScheduledItems.stream()
+                    .filter(scheduledItem -> scheduledItem.getDate().equals(date)) // Check if the date matches
+                    .findFirst() // Get the first match, if any
+                    .orElse(null); //
+                audioScheduledItem.setBookableScheduledItem(bookableScheduleItem);
+            }
         });
     }
 
@@ -237,5 +269,19 @@ final class DayTemplateModel {
         videoScheduledItem.setItem(getVideoItem());
         videoScheduledItem.setDate(date);
         videoScheduledItem.setProgramScheduledItem(parentTeachingScheduledItem);
+        if(getEvent().isTeachingsDayTicket()) {
+            //Here we're in a case of teachingDayTicket. We need to link the videoScheduledItem to the bookable teaching scheduledItem
+            //See in the doc directory for more explanation
+            List<ScheduledItem> bookableScheduledItems = programModel.getTeachingsBookableScheduledItems();
+            ScheduledItem bookableScheduleItem =  bookableScheduledItems.stream()
+                .filter(scheduledItem -> scheduledItem.getDate().equals(date)) // Check if the date matches
+                .findFirst() // Get the first match, if any
+                .orElse(null); //
+            videoScheduledItem.setBookableScheduledItem(bookableScheduleItem);
+        }
+    }
+
+    ProgramModel getProgramModel() {
+        return programModel;
     }
 }

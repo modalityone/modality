@@ -23,7 +23,7 @@ final class StepCThankYouSlide extends StepSlide {
     }
 
     @Override
-    void buildSlideUi() {
+    public void buildSlideUi() {
         String headerImageUrl = SourcesConfig.getSourcesRootConfig().childConfigAt("modality.event.frontoffice.activity.bookevent").getString("headerImageUrl");
         ImageView headerImageView = ImageStore.createImageView(headerImageUrl);
         ScalePane headerImageScalePane = new ScalePane(headerImageView);

@@ -127,8 +127,18 @@ public class MediaLinksForVODManagement extends MediaLinksManagement {
                 if (name == null) name = "Unknown";
                 Label teachingTitle = new Label(name);
                 Timeline timeline = workingCurrentVideoScheduledItem.getProgramScheduledItem().getTimeline();
-                Label startTimeLabel = new Label(timeline.getStartTime().format(MediaLinksManagement.TIME_FORMATTER) + " - " + timeline.getEndTime().format(MediaLinksManagement.TIME_FORMATTER));
-                teachingTitle.getStyleClass().add(Bootstrap.STRONG);
+                String startTime = "";
+                String endTime = "";
+                if(timeline!= null) {
+                    //Case of Festivals
+                    startTime = timeline.getStartTime().format(TIME_FORMATTER);
+                    endTime = timeline.getEndTime().format(TIME_FORMATTER);
+                } else {
+                    //Case of recurring events
+                    startTime = workingCurrentVideoScheduledItem.getProgramScheduledItem().getStartTime().format(TIME_FORMATTER);
+                    endTime = workingCurrentVideoScheduledItem.getProgramScheduledItem().getEndTime().format(TIME_FORMATTER);
+                }
+                Label startTimeLabel = new Label(startTime + " - " + endTime);                teachingTitle.getStyleClass().add(Bootstrap.STRONG);
                 startTimeLabel.getStyleClass().add(Bootstrap.STRONG);
 
                 Button saveButton = Bootstrap.largeSuccessButton(I18nControls.newButton(ModalityI18nKeys.Save));
@@ -255,8 +265,48 @@ public class MediaLinksForVODManagement extends MediaLinksManagement {
                 publicationInfoHBox.setPadding(new Insets(20, 0, 0, 0));
                 currentVBox.getChildren().add(publicationInfoHBox);
 
+                Label overrideNameLabel = new Label("Override Name");
+                Switch overrideNameSwitch = new Switch();
+
+                TextField nameTextField = new TextField();
+                nameTextField.setPromptText(I18n.getI18nText("Name"));
+                if (workingCurrentVideoScheduledItem.getName() == null) {
+                    nameTextField.setPromptText(I18n.getI18nText(workingCurrentVideoScheduledItem.getProgramScheduledItem().getName()));
+                } else {
+                    overrideNameSwitch.setSelected(true);
+                    nameTextField.setText(workingCurrentVideoScheduledItem.getName());
+                }
+                nameTextField.setPrefWidth(435);
+
+                // Bind the properties of the TextField to the Switch
+                nameTextField.editableProperty().bind(overrideNameSwitch.selectedProperty());
+                nameTextField.disableProperty().bind(overrideNameSwitch.selectedProperty().not());
+
+                // Clear the TextField's value when the Switch is turned off
+                overrideNameSwitch.selectedProperty().addListener((observable, oldValue, newValue) -> {
+                    if (!newValue) {
+                        nameTextField.clear();
+                    } else {
+                        nameTextField.setPromptText(I18n.getI18nText(workingCurrentVideoScheduledItem.getProgramScheduledItem().getName()));
+                    }
+                });
+
+                nameTextField.textProperty().addListener((observable, oldValue, newValue) -> {
+                    if(newValue.isEmpty()) {
+                        workingCurrentVideoScheduledItem.setName(null);
+                    } else {
+                        workingCurrentVideoScheduledItem.setName(nameTextField.getText());
+                    }
+                });
+
+                HBox overrideLine = new HBox(overrideNameLabel, overrideNameSwitch, nameTextField);
+                overrideLine.setSpacing(10);
+                overrideLine.setAlignment(Pos.CENTER_LEFT);
+                overrideLine.setPadding(new Insets(20, 0, 0, 0));
+                currentVBox.getChildren().add(overrideLine);
+
                 Label commentLabel = I18nControls.newLabel(MediasI18nKeys.VODComment);
-                commentLabel.setPadding(new Insets(20, 0, 0, 0));
+                commentLabel.setPadding(new Insets(10, 0, 0, 0));
                 currentVBox.getChildren().add(commentLabel);
 
                 TextField commentTextField = new TextField();

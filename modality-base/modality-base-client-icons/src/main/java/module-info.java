@@ -13,6 +13,7 @@ module modality.base.client.icons {
     exports one.modality.base.client.icons;
 
     // Resources packages
+    opens images.large;
     opens images.s16;
     opens images.s16.actions;
     opens images.s16.continents;

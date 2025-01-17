@@ -108,6 +108,8 @@
     <source path="one/modality/base/client/brand"/>
     <resource path="one/modality/base/client/brand"/>
     <public path="" includes="one/modality/base/client/brand/"/>
+    <!--========================< modality-base-client-cloudinary >=========================-->
+    <source path="one/modality/base/client/cloudinary"/>
     <!--===========================< modality-base-client-conf >============================-->
     <source path="one/modality/base/client/conf"/>
     <!--============================< modality-base-client-css >============================-->
@@ -130,6 +132,8 @@
     <source path="one/modality/base/client/services/i18n"/>
     <!--===========================< modality-base-client-icons >===========================-->
     <source path="one/modality/base/client/icons"/>
+    <resource path="images/large"/>
+    <public path="" includes="images/large/"/>
     <resource path="images/s16"/>
     <public path="" includes="images/s16/"/>
     <resource path="images/s16/actions"/>
@@ -283,6 +287,8 @@
     <source path="one/modality/event/frontoffice/activities/booking/process/account"/>
     <source path="one/modality/event/frontoffice/activities/booking/process/event"/>
     <source path="one/modality/event/frontoffice/activities/booking/process/event/slides"/>
+    <source path="one/modality/event/frontoffice/activities/booking/process/event/slides/recurring_event"/>
+    <source path="one/modality/event/frontoffice/activities/booking/process/event/slides/sttp"/>
     <source path="one/modality/event/frontoffice/activities/booking/views"/>
     <resource path="one/modality/event/frontoffice/activities/booking/map"/>
     <public path="" includes="one/modality/event/frontoffice/activities/booking/map/"/>
@@ -484,11 +490,6 @@
     <!--=========================< webfx-platform-fetch-gwt-j2cl >==========================-->
     <source path="dev/webfx/platform/fetch/spi/impl/gwtj2cl"/>
     <source path="dev/webfx/platform/streams/spi/impl/gwtj2cl"/>
-    <!--==============================< webfx-platform-file >===============================-->
-    <source path="dev/webfx/platform/file"/>
-    <source path="dev/webfx/platform/file/spi"/>
-    <!--==========================< webfx-platform-file-gwt-j2cl >==========================-->
-    <source path="dev/webfx/platform/file/spi/impl/gwtj2cl"/>
     <!--========================< webfx-platform-javabase-emul-gwt >========================-->
     <super-source includes="java/io/" path=""/>
     <super-source includes="java/lang/ref/" path=""/>

@@ -43,7 +43,7 @@ final class Step3PaymentSlide extends StepSlide {
     }
 
     @Override
-    void buildSlideUi() {
+    public void buildSlideUi() {
         mainVbox.setMaxWidth(MAX_SLIDE_WIDTH);
         mainVbox.setAlignment(Pos.CENTER_LEFT);
 

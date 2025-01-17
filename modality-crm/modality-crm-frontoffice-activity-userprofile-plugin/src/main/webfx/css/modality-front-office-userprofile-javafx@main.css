@@ -6,3 +6,8 @@
     -fx-border-radius: 20px;
     -fx-effect: dropshadow(gaussian, lightgray, 10, 0, 0, 0);
 }
+
+.user-profile .material-label { /* is actually a JavaFX Text */
+     -fx-fill: #000000;
+     -fx-font-weight: 800;
+}

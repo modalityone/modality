@@ -17,7 +17,7 @@ import javafx.beans.property.ReadOnlyObjectProperty;
 import javafx.scene.Node;
 import javafx.scene.control.Labeled;
 import javafx.scene.text.Font;
-import one.modality.base.frontoffice.mainframe.fx.FXCollapseFooter;
+import one.modality.base.frontoffice.mainframe.fx.FXCollapseMenu;
 import one.modality.base.shared.entities.Event;
 import one.modality.base.shared.entities.Person;
 import one.modality.crm.shared.services.authn.fx.FXUserPersonId;
@@ -28,10 +28,7 @@ import one.modality.ecommerce.payment.CancelPaymentResult;
 import one.modality.ecommerce.payment.client.WebPaymentForm;
 import one.modality.event.client.event.fx.FXEvent;
 import one.modality.event.client.event.fx.FXEventId;
-import one.modality.event.client.recurringevents.FXPersonToBook;
-import one.modality.event.client.recurringevents.RecurringEventSchedule;
-import one.modality.event.client.recurringevents.WorkingBooking;
-import one.modality.event.client.recurringevents.WorkingBookingSyncer;
+import one.modality.event.client.recurringevents.*;
 import one.modality.event.frontoffice.activities.booking.process.account.CheckoutAccountRouting;
 import one.modality.event.frontoffice.activities.booking.process.event.slides.LettersSlideController;
 
@@ -65,7 +62,7 @@ public final class BookEventActivity extends ViewDomainActivityBase implements B
         if (eventId != null) { // eventId is null when sub-routing /booking/account (instead of /booking/event/:eventId)
             FXEventId.setEventId(EntityId.create(Event.class, Numbers.toShortestNumber(eventId)));
             // Initially hiding the footer (app menu), especially when coming form the website.
-            FXCollapseFooter.setCollapseFooter(true);
+            FXCollapseMenu.setCollapseMenu(true);
         }
     }
 
@@ -87,9 +84,8 @@ public final class BookEventActivity extends ViewDomainActivityBase implements B
 
     @Override
     public void onResume() {
-        // Initially hiding the footer (app menu) to not distract the user with other things (especially when coming
-        // form the website).
-        FXCollapseFooter.setCollapseFooter(true);
+        // Initially hiding the menu to not distract the user with other things (especially when coming form the website)
+        FXCollapseMenu.setCollapseMenu(true);
         super.onResume();
     }
 
@@ -99,15 +95,15 @@ public final class BookEventActivity extends ViewDomainActivityBase implements B
         // onResume() immediately after, so we need to check the user really left this activity.
         Platform.runLater(() -> { // we postpone the check to ensure the situation is now stable
             if (!isActive()) // final check to see if the user left
-                FXCollapseFooter.resetToDefault(); // showing footer in this case
+                FXCollapseMenu.resetToDefault(); // showing menu in this case
         });
         super.onPause();
     }
 
     public void onReachingEndSlide() {
         FXEventId.setEventId(null); // This is to ensure that next time the user books an event in this same session, we
-        FXCollapseFooter.setCollapseFooter(false);
-        getRecurringEventSchedule().clearClickedDates();
+        FXCollapseMenu.setCollapseMenu(false);
+        getBookableDatesUi().clearClickedDates();
     }
 
     @Override
@@ -127,7 +123,8 @@ public final class BookEventActivity extends ViewDomainActivityBase implements B
         // TODO: if eventId doesn't exist in the database, FXEvent.getEvent() stays null and nothing happens (stuck on loading page)
 
         lettersSlideController.onEventChanged(event);
-        getRecurringEventSchedule().clearClickedDates(); // clearing possible clicked dates from previous event (if some dates are common)
+        if (getBookableDatesUi() != null)
+            getBookableDatesUi().clearClickedDates(); // clearing possible clicked dates from previous event (if some dates are common)
 
         // Note: It's better to use FXUserPersonId rather than FXUserPerson in case of a page reload in the browser
         // (or redirection to this page from a website) because the retrieval of FXUserPersonId is immediate in case
@@ -177,11 +174,11 @@ public final class BookEventActivity extends ViewDomainActivityBase implements B
     }
 
     void syncWorkingBookingFromEventSchedule() {
-        WorkingBookingSyncer.syncWorkingBookingFromEventSchedule(workingBookingProperties.getWorkingBooking(), getRecurringEventSchedule(), true);
+        WorkingBookingSyncer.syncWorkingBookingFromEventSchedule(workingBookingProperties.getWorkingBooking(), getBookableDatesUi(), true);
     }
 
     public void syncEventScheduleFromWorkingBooking() {
-        WorkingBookingSyncer.syncEventScheduleFromWorkingBooking(workingBookingProperties.getWorkingBooking(), getRecurringEventSchedule());
+        WorkingBookingSyncer.syncEventScheduleFromWorkingBooking(workingBookingProperties.getWorkingBooking(), getBookableDatesUi());
     }
 
     public void displayBookSlide() {
@@ -215,11 +212,11 @@ public final class BookEventActivity extends ViewDomainActivityBase implements B
 
     public void displayThankYouSlide() {
         lettersSlideController.displayThankYouSlide();
-        FXCollapseFooter.setCollapseFooter(false);
+        FXCollapseMenu.setCollapseMenu(false);
     }
 
-    public RecurringEventSchedule getRecurringEventSchedule() {
-        return lettersSlideController.getRecurringEventSchedule();
+    public BookableDatesUi getBookableDatesUi() {
+        return lettersSlideController.getBookableDatesUi();
     }
 
     public <T extends Labeled> T bindI18nEventExpression(T text, String eventExpression, Object... args) {

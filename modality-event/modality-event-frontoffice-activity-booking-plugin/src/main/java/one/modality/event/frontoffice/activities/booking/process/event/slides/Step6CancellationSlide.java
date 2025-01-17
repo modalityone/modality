@@ -25,7 +25,7 @@ final class Step6CancellationSlide extends StepSlide {
     }
 
     @Override
-    void buildSlideUi() {
+    public void buildSlideUi() {
         mainVbox.setSpacing(10);
         mainVbox.setMaxWidth(MAX_SLIDE_WIDTH);
 

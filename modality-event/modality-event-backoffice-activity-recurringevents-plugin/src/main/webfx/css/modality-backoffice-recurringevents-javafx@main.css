@@ -17,3 +17,7 @@
     -fx-font-size: 9px;
 }
 
+.recurring-event .webfx-datepicker .background {
+    -fx-background-color: none;
+}
+

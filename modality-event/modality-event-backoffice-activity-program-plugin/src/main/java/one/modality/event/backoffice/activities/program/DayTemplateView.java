@@ -64,6 +64,12 @@ final class DayTemplateView {
         initFormValidation();
         LocalDate eventStartDate = getDayTemplate().getEvent().getStartDate();
         datePicker.setDisplayedYearMonth(YearMonth.of(eventStartDate.getYear(), eventStartDate.getMonth()));
+        if (dayTemplateModel.getProgramModel().getLoadedEvent().isTeachingsDayTicket())
+            //If we're in dayTicket mode, we allow only the date of the dayTicket to be selectable
+            datePicker.setIsDateSelectableFunction(date ->
+                dayTemplateModel.getProgramModel().getTeachingsBookableScheduledItems().stream()
+                    .anyMatch(item -> item.getDate().equals(date))
+            );
     }
 
     BorderPane getPanel() {

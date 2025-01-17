@@ -1,6 +1,7 @@
 package one.modality.event.client.recurringevents;
 
 import dev.webfx.platform.util.Booleans;
+import dev.webfx.platform.util.collection.Collections;
 import one.modality.base.shared.entities.*;
 import one.modality.ecommerce.document.service.DocumentAggregate;
 
@@ -49,33 +50,45 @@ public class PriceCalculator {
         DocumentAggregate documentAggregate = getDocumentAggregate();
         if (documentAggregate == null)
             return 0;
-        return calculateLinePrice(documentAggregate.getLineAttendances(line));
+        return calculateLinePrice(line.getSite(), line.getItem(), documentAggregate.getLineAttendances(line));
     }
 
     public int calculateLinePrice(List<Attendance> attendances) {
-        if (attendances == null || attendances.isEmpty())
+        if (Collections.isEmpty(attendances))
             return 0;
+        DocumentLine line = attendances.get(0).getDocumentLine();
+        return calculateLinePrice(line.getSite(), line.getItem(), attendances);
+    }
+
+    public int calculateLinePrice(Site site, Item item, List<Attendance> attendances) {
         DocumentAggregate documentAggregate = getDocumentAggregate();
         if (documentAggregate == null)
             return 0;
         // 1) Calculating the price consisting of applying the cheapest (if multiple) daily rate on each attendance
-        int dailyRatePrice = attendances.stream()
-            .mapToInt(this::calculateAttendancePrice)
-            .sum();
-        if (ignoreDiscounts)
+        int dailyRatePrice;
+        if (attendances == null || attendances.isEmpty())
+            dailyRatePrice = 0;
+        else
+            dailyRatePrice = attendances.stream()
+                //.mapToInt(this::calculateAttendancePrice) // assumes Attendance DocumentLine is set
+                .mapToInt(attendance -> calculateAttendancePrice(site, item)) // works even if DocumentLine is not set
+                .sum();
+        if (ignoreDiscounts && dailyRatePrice > 0)
             return dailyRatePrice;
         // 2) Calculating the price consisting of applying the cheapest (if multiple) fixed rate
-        DocumentLine line = attendances.get(0).getDocumentLine();
         int fixedRatePrice = documentAggregate.getPolicyAggregate()
-            .getSiteItemFixedRatesStream(line.getSite(), line.getItem())
+            .getSiteItemFixedRatesStream(site, item)
             .filter(this::isRateApplicable)
             .mapToInt(this::getCheapestApplicableRatePrice)
             .min()
             .orElse(0);
         // 3) Returning the cheapest price
-        if (fixedRatePrice > 0 && fixedRatePrice < dailyRatePrice) // Typically a discount over a whole series of GP classes
+        if (fixedRatePrice > 0 && // if a fixed rate was set
+            (dailyRatePrice == 0 || // and no daily rate was set
+             fixedRatePrice < dailyRatePrice) // or is cheaper (ex: discount over a whole series of GP classes)
+        ) // then we return the fixed rate price
             return fixedRatePrice;
-        return dailyRatePrice;
+        return dailyRatePrice; // otherwise the daily rate price
     }
 
     private boolean isRateApplicable(Rate rate) {
@@ -97,12 +110,18 @@ public class PriceCalculator {
     }
 
     public int calculateAttendancePrice(Attendance attendance) {
+        DocumentLine line = attendance.getDocumentLine();
+        return calculateAttendancePrice(line);
+    }
+
+    public int calculateAttendancePrice(DocumentLine line) {
+        return calculateAttendancePrice(line.getSite(), line.getItem());
+    }
+
+    public int calculateAttendancePrice(Site site, Item item) {
         DocumentAggregate documentAggregate = getDocumentAggregate();
         if (documentAggregate == null)
             return 0;
-        DocumentLine documentLine = attendance.getDocumentLine();
-        Site site = documentLine.getSite();
-        Item item = documentLine.getItem();
         return documentAggregate.getPolicyAggregate()
             .getSiteItemDailyRatesStream(site, item)
             .filter(this::isRateApplicable)

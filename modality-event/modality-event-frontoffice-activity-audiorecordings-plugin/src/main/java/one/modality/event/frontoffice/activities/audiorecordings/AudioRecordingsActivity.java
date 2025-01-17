@@ -38,17 +38,29 @@ final class AudioRecordingsActivity extends ViewDomainActivityBase {
         FXProperties.runNowAndOnPropertyChange(userPersonId -> {
             eventsWithBookedAudios.clear();
             if (userPersonId != null) {
+                //Here there is different cases:
+                // 1) the events where we buy the recordings throw a audioRecordingsDayTicket (case of the Festival)
+                // 2) the events where the audios are linked to a teachingDayTicket (case of STTP)
+                // See in backoffice ProgramActivity doc directory for more information
                 entityStore.<DocumentLine>executeQuery(
-                   "select document.event.(name,label.(de,en,es,fr,pt), shortDescription, audioExpirationDate, startDate, endDate), item.code" +
-                    " from DocumentLine dl where !cancelled and item.family.code=? and dl.document.(person=? and price_balance<=0)" +
-                    " order by document.event.startDate desc",
-                        new Object[]{ KnownItemFamily.AUDIO_RECORDING.getCode(), userPersonId })
+                   "select document.event.(name,label.(de,en,es,fr,pt), shortDescription, audioExpirationDate, startDate, endDate), item.code, item.family.code, " +
+                       //We look if there are published audio ScheduledItem of type audio, whose bookableScheduledItem has  been booked
+                       " (exists(select ScheduledItem where item.family.code=? and published and bookableScheduledItem.(event=dl.document.event and item=dl.item))) as published " +
+                       //We check if the user has booked, not cancelled and paid the recordings
+                        " from DocumentLine dl where !cancelled  and dl.document.(person=? and confirmed and price_balance<=0) " +
+                       //we check if :
+                       " and ("+
+                       // 1/ there is a ScheduledItem of audio family type whose bookableScheduledItem has been booked (KBS3 setup)
+                       " exists (select ScheduledItem audioSi where item.family.code=? and exists(select Attendance where documentLine=dl and scheduledItem=audioSi.bookableScheduledItem))" +
+                       // 2/ Or KBS3 / KBS2 setup (this allows to display the audios that have been booked in the pase with KBS2 events, event if we can't display them)
+                       " or item.family.code=?) and document.event.kbs3=true " +
+                       " order by document.event.startDate desc",
+                        new Object[]{ KnownItemFamily.AUDIO_RECORDING.getCode(), userPersonId, KnownItemFamily.AUDIO_RECORDING.getCode(), KnownItemFamily.AUDIO_RECORDING.getCode()})
                     .onFailure(Console::log)
                     .onSuccess(events -> Platform.runLater(() -> eventsWithBookedAudios.setAll(events)));
             }
         }, FXUserPersonId.userPersonIdProperty());
     }
-
     @Override
     public Node buildUi() { // Reminder: called only once (rebuild = bad UX) => UI is reacting to parameter changes
 
@@ -72,11 +84,19 @@ final class AudioRecordingsActivity extends ViewDomainActivityBase {
         ObservableLists.bindConverted(columnsPane.getChildren(), eventsWithBookedAudios, dl -> {
             Event event = dl.getDocument().getEvent();
             String itemCode = dl.getItem().getCode();
-            EventThumbnailView eventTbView = new EventThumbnailView(event, itemCode);
+            //If itemCode
+            if(itemCode == null) {
+                /// If the itemCode is null, we take the family
+                /// For the case of STTP (the attendance is linked to a teaching bookable scheduledItem), the family is teach
+                itemCode = dl.getItem().getFamily().getCode();
+            }
+            boolean published = dl.getBooleanFieldValue("published");
+            EventThumbnailView eventTbView = new EventThumbnailView(event, itemCode, EventThumbnailView.ItemType.ITEM_TYPE_AUDIO, published);
             VBox container = eventTbView.getView();
             Button actionButton = eventTbView.getActionButton();
             actionButton.setCursor(Cursor.HAND);
-            actionButton.setOnAction(e -> showEventAudioWall(event, itemCode));
+            String finalItemCode = itemCode;
+            actionButton.setOnAction(e -> showEventAudioWall(event, finalItemCode));
             return container;
         });
 

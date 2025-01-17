@@ -68,7 +68,7 @@ final class BookingActivity extends ViewDomainActivityBase implements ButtonFact
         ScalePane headerImageScalePane = new ScalePane(headerImageView);
         headerImageScalePane.setMaxHeight(300);
 
-        Label internationalEventsLabel = GeneralUtility.createLabel(BookingI18nKeys.internationalEvents, Color.BLACK);
+        Label internationalEventsLabel = GeneralUtility.createLabel(BookingI18nKeys.InternationalEvents, Color.BLACK);
 
         Node localCenterDisplay = organizationSelectorView.getView();
 

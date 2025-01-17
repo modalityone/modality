@@ -41,7 +41,7 @@ public class ServerDocumentServiceProvider implements DocumentServiceProvider {
         return QueryService.executeQueryBatch(
                 new Batch<>(new QueryArgument[]{
                     new QueryArgumentBuilder()
-                        .setStatement(POLICY_SCHEDULED_ITEMS_QUERY_BASE + " where event = ?")
+                        .setStatement(POLICY_SCHEDULED_ITEMS_QUERY_BASE + " where event = ? and bookableScheduledItem=id")
                         .setParameters(eventPk)
                         .setLanguage("DQL")
                         .setDataSourceId(DataSourceModelService.getDefaultDataSourceId())
@@ -71,7 +71,7 @@ public class ServerDocumentServiceProvider implements DocumentServiceProvider {
     private Future<DocumentAggregate> loadLatestDocumentFromDatabase(LoadDocumentArgument argument) {
         Object[] parameters = {argument.getDocumentPrimaryKey()};
         EntityStoreQuery[] queries = {
-            new EntityStoreQuery("select event,person,person_firstName,person_lastName,person_email,person_facilityFee from Document where id=? order by id", parameters),
+            new EntityStoreQuery("select event,person,ref,person_firstName,person_lastName,person_email,person_facilityFee from Document where id=? order by id", parameters),
             new EntityStoreQuery("select document,site,item from DocumentLine where document=? and site!=null order by id", parameters),
             new EntityStoreQuery("select documentLine,scheduledItem from Attendance where documentLine.document=? order by id", parameters),
             new EntityStoreQuery("select document,amount,pending,successful from MoneyTransfer where document=? order by id", parameters)
@@ -146,8 +146,8 @@ public class ServerDocumentServiceProvider implements DocumentServiceProvider {
         return HistoryRecorder.prepareDocumentHistoryBeforeSubmit(argument.getHistoryComment(), document, documentLine)
             .compose(history -> // At this point, history.getDocument() is never null (it has eventually been
                 submitChangesAndPrepareResult(updateStore, history.getDocument()) // resolved through DB reading)
-                    .onSuccess(ignored -> // Completing the history recording (changes column with resolved primary keys)
-                        HistoryRecorder.completeDocumentHistoryAfterSubmit(history, argument.getDocumentEvents())
+                    .compose(result -> // Completing the history recording (changes column with resolved primary keys)
+                        HistoryRecorder.completeDocumentHistoryAfterSubmit(result, history, argument.getDocumentEvents())
                     )
             );
     }

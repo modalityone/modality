@@ -43,5 +43,6 @@ public class CancelDocumentEvent extends AbstractDocumentEvent {
     public void replayEventOnDocument() {
         document.setCancelled(cancelled);
         document.setRead(read);
+        super.replayEventOnDocument(); // to set playedOnDocument = true
     }
 }

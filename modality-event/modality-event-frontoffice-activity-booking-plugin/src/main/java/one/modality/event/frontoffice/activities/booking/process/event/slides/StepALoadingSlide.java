@@ -20,7 +20,7 @@ final class StepALoadingSlide extends StepSlide {
     }
 
     @Override
-    void buildSlideUi() {
+    public void buildSlideUi() {
         SVGPath svgPath = new SVGPath();
         svgPath.setContent(LOGO);
         svgPath.setFill(Color.WHITE);
