@@ -73,8 +73,10 @@ public class ModalityMagicLinkAuthenticationGateway implements ServerAuthenticat
     }
 
     private Future<Void> createAndSendMagicLink(SendMagicLinkCredentials request) {
-        // We check that the requested account exists in the database. If it exists, we send a password recovery email.
-        // If it doesn't exist, we send a No account found email.
+        // We check that the requested account exists in the database. If it exists, we send a "Password recovery" email
+        // as requested. But if it doesn't exist, we send an "Unknown account" email instead. For this later case, we
+        // still create a login link in the database for history purpose, even though it's not technically necessary as
+        // the "Unknown account" email doesn't propose any further action.
         String loginRunId = ThreadLocalStateHolder.getRunId(); // Capturing the loginRunId before async operation
         return EntityStore.create(dataSourceModel)
             .<FrontendAccount>executeQuery("select FrontendAccount where corporation=? and username=? limit 1", 1, request.getEmail())
