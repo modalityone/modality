@@ -14,10 +14,7 @@ import dev.webfx.stack.i18n.I18n;
 import dev.webfx.stack.i18n.controls.I18nControls;
 import dev.webfx.stack.orm.datasourcemodel.service.DataSourceModelService;
 import dev.webfx.stack.orm.domainmodel.DataSourceModel;
-import dev.webfx.stack.orm.entity.EntityList;
-import dev.webfx.stack.orm.entity.EntityStore;
-import dev.webfx.stack.orm.entity.EntityStoreQuery;
-import dev.webfx.stack.orm.entity.UpdateStore;
+import dev.webfx.stack.orm.entity.*;
 import dev.webfx.stack.orm.entity.binding.EntityBindings;
 import dev.webfx.stack.ui.validation.ValidationSupport;
 import javafx.application.Platform;
@@ -101,6 +98,12 @@ public class RecordingsView {
         BorderPane.setAlignment(title, Pos.CENTER);
         mainFrame.setTop(title);
 
+        if(currentEditedEvent.getRepeatedEvent()!=null && currentEditedEvent.isRepeatAudio()) {
+            Label seeRepeatableEventLabel = I18nControls.newLabel(MediasI18nKeys.AudioConfigurationDoneInRepeatableEvent, currentEditedEvent.getRepeatedEvent().getName(), Entities.getPrimaryKey(currentEditedEvent.getRepeatedEventId()).toString());
+            seeRepeatableEventLabel.setPadding(new Insets(200,0,0,0));
+            mainFrame.setCenter(seeRepeatableEventLabel);
+            return;
+        }
         /////////////////
         VBox masterSettings = new VBox();
         masterSettings.setPadding(new Insets(20));
@@ -339,7 +342,7 @@ public class RecordingsView {
     }
 
     private void displayEventDetails(Event e) {
-        e.onExpressionLoaded("organization,audioExpirationDate")
+        e.onExpressionLoaded("organization,audioExpirationDate, repeatedEvent, repeatAudio, repeatVideo")
             .onSuccess(ignored -> Platform.runLater(this::drawContainer))
             .onFailure((Console::log));
 
