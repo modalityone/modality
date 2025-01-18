@@ -17,6 +17,7 @@ module modality.event.backoffice.activity.pricing.plugin {
     requires webfx.extras.panes;
     requires webfx.extras.styles.bootstrap;
     requires webfx.extras.time;
+    requires webfx.extras.util.control;
     requires webfx.extras.util.masterslave;
     requires webfx.kit.util;
     requires webfx.platform.console;
