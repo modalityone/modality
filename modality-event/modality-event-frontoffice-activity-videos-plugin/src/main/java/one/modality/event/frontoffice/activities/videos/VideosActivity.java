@@ -53,7 +53,7 @@ final class VideosActivity extends ViewDomainActivityBase {
                 //2nd: we look for the scheduledItem having a bookableScheduledItem which is a audio type (case of festival)
                 entityStore.<ScheduledItem>executeQuery("select event.(name, label.(de,en,es,fr,pt), shortDescription, audioExpirationDate, startDate, endDate, livestreamUrl, vodExpirationDate)" +
                             " from ScheduledItem si" +
-                            " where item.code=? and exists(select Attendance where scheduledItem=si.bookableScheduledItem and documentLine.(!cancelled and document.(person=? and price_balance<=0)))" +
+                            " where item.code=? and exists(select Attendance where scheduledItem=si.bookableScheduledItem and documentLine.(!cancelled and document.(person=? and confirmed and price_balance<=0)))" +
                             " order by date",
                         new Object[]{KnownItem.VIDEO.getCode(), userPersonId})
                     .onFailure(Console::log)

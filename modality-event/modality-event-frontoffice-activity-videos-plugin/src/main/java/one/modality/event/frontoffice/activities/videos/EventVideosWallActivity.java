@@ -3,11 +3,11 @@ package one.modality.event.frontoffice.activities.videos;
 import dev.webfx.extras.panes.*;
 import dev.webfx.extras.styles.bootstrap.Bootstrap;
 import dev.webfx.extras.util.control.ControlUtil;
+import dev.webfx.extras.webtext.HtmlText;
 import dev.webfx.kit.util.properties.FXProperties;
 import dev.webfx.kit.util.properties.ObservableLists;
 import dev.webfx.platform.console.Console;
 import dev.webfx.platform.util.Numbers;
-import dev.webfx.platform.util.Strings;
 import dev.webfx.platform.util.collection.Collections;
 import dev.webfx.stack.cloud.image.CloudImageService;
 import dev.webfx.stack.cloud.image.impl.client.ClientImageService;
@@ -25,6 +25,7 @@ import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
+import javafx.geometry.VPos;
 import javafx.scene.Node;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
@@ -110,10 +111,10 @@ final class EventVideosWallActivity extends ViewDomainActivityBase {
                             " from Event" +
                             " where id=? limit 1",
                             new Object[]{eventId}),
-                        // In this code: programScheduledItem.timeline..startTime, the double . means we do a left join, that allow null value (if the type of event is recurring, the timeline of the programScheduledItem is null
-                        new EntityStoreQuery("select name, date, programScheduledItem.(name, startTime, endTime, timeline.(startTime, endTime)), published, event, vodDelayed " +
+                        // In this code: programScheduledItem.timeline.startTime, the double . means we do a left join, that allow null value (if the type of event is recurring, the timeline of the programScheduledItem is null
+                        new EntityStoreQuery("select name, date, programScheduledItem.(name, startTime, endTime, timeline.(startTime, endTime)), published, event, vodDelayed, expirationDate, comment " +
                             " from ScheduledItem si " +
-                            " where event=? and bookableScheduledItem.item.family.code=? and item.code=? and exists(select Attendance where scheduledItem=si.bookableScheduledItem and documentLine.(!cancelled and document.(person=? and price_balance<=0)))" +
+                            " where event=? and bookableScheduledItem.item.family.code=? and item.code=? and exists(select Attendance where scheduledItem=si.bookableScheduledItem and documentLine.(!cancelled and document.(person=? and confirmed and price_balance<=0)))" +
                             " order by date, programScheduledItem.timeline..startTime",
                             new Object[]{eventId, KnownItemFamily.TEACHING.getCode(), KnownItem.VIDEO.getCode(), userPersonId}))
                     .onFailure(Console::log)
@@ -153,14 +154,15 @@ final class EventVideosWallActivity extends ViewDomainActivityBase {
         eventLabel.setWrapText(true);
         eventLabel.setTextAlignment(TextAlignment.CENTER);
         eventLabel.setPadding(new Insets(0, 0, 12, 0));
-        Label eventDescriptionLabel = I18nControls.newLabel(new I18nSubKey("expression: shortDescription", eventProperty), eventProperty);
-        eventDescriptionLabel.setWrapText(true);
-        eventDescriptionLabel.setTextAlignment(TextAlignment.LEFT);
-        eventDescriptionLabel.managedProperty().bind(FXProperties.compute(eventDescriptionLabel.textProperty(), Strings::isNotEmpty));
-        eventDescriptionLabel.setMaxHeight(60);
+        HtmlText eventDescriptionHtmlText = new HtmlText();
+        I18n.bindI18nTextProperty(eventDescriptionHtmlText.textProperty(),new I18nSubKey("expression: i18n(shortDescription)", eventProperty),eventProperty);
+
+//        eventDescriptionHtmlText.setWrapText(true);
+//        eventDescriptionHtmlText.setTextAlignment(TextAlignment.LEFT);
+        eventDescriptionHtmlText.setMaxHeight(60);
         videoExpirationLabel = I18nControls.newLabel(AudioRecordingsI18nKeys.AvailableUntil);
         videoExpirationLabel.setPadding(new Insets(30, 0, 0, 0));
-        VBox titleVBox = new VBox(eventLabel, eventDescriptionLabel, videoExpirationLabel);
+        VBox titleVBox = new VBox(eventLabel, eventDescriptionHtmlText, videoExpirationLabel);
 
         headerHBox.getChildren().add(titleVBox);
 
@@ -194,13 +196,15 @@ final class EventVideosWallActivity extends ViewDomainActivityBase {
 
 
         VBox videoScheduleVBox = new VBox(30); // Will be populated later (see reacting code below)
-        GrowingPane scheduleContainerGrowingPane = new GrowingPane(videoScheduleVBox);
+        ScalePane scalePane = new ScalePane(videoScheduleVBox);
+        scalePane.setVAlignment(VPos.TOP);
+        GrowingPane scheduleContainerGrowingPane = new GrowingPane(scalePane);
 
         VBox loadedContentVBox = new VBox(40,
             headerHBox,
             currentDayScheduleVBox,
             scheduleTitleVBox,
-            daysColumnPane,
+         //   daysColumnPane,
             scheduleContainerGrowingPane
         );
         loadedContentVBox.setAlignment(Pos.CENTER);

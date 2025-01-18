@@ -1,5 +1,6 @@
 package one.modality.event.frontoffice.activities.videos;
 
+import dev.webfx.extras.panes.MonoPane;
 import dev.webfx.extras.styles.bootstrap.Bootstrap;
 import dev.webfx.platform.ast.ReadOnlyAstObject;
 import dev.webfx.platform.console.Console;
@@ -17,13 +18,11 @@ import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.SimpleBooleanProperty;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
-import javafx.geometry.VPos;
 import javafx.scene.Cursor;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.Separator;
-import javafx.scene.layout.ColumnConstraints;
-import javafx.scene.layout.GridPane;
+import javafx.scene.layout.HBox;
 import javafx.scene.layout.Region;
 import javafx.scene.layout.VBox;
 import one.modality.base.client.messaging.ModalityMessaging;
@@ -47,7 +46,25 @@ final class VideosDayScheduleView {
     private final List<ScheduledItem> dayScheduledVideos;
     private final BrowsingHistory browsingHistory;
 
-    private final GridPane gridPaneContainer = new GridPane();
+    private final MonoPane dateMonoPane = new MonoPane();
+    private final MonoPane statusMonoPane = new MonoPane();
+    private final VBox nameVBox = new VBox();
+    private final VBox timeVBox = new VBox();
+    private final MonoPane remarkMonoPane = new MonoPane();
+    private final MonoPane actionButtonMonoPane = new MonoPane();
+    private final MonoPane remarkHeaderMonoPane = new MonoPane();
+    private final Separator separator1 = new Separator();
+    private final Separator separator2 = new Separator();
+    private final HBox mainLine = new HBox();
+    private final VBox mainVBox = new VBox();
+    private final int DATE_PREF_SIZE = 150;
+    private final int STATUS_PREF_SIZE = 150;
+    private final int NAME_PREF_SIZE = 250;
+    private final int TIME_PREF_SIZE = 150;
+    private final int REMARK_PREF_SIZE = 300;
+    private final int BUTTON_PREF_SIZE = 300;
+
+
     private final EntityStore entityStore;
 
     public VideosDayScheduleView(LocalDate day, List<ScheduledItem> dayScheduledVideos, BrowsingHistory browsingHistory, boolean displayHeader, EntityStore entityStore) {
@@ -60,23 +77,35 @@ final class VideosDayScheduleView {
 
 
     Region getView() {
-        return gridPaneContainer;
+        return mainVBox;
     }
 
     private void buildUi(boolean displayHeader) {
-        ColumnConstraints columnDate = new ColumnConstraints();
-        columnDate.setPercentWidth(12);
-        ColumnConstraints columnStatus = new ColumnConstraints();
-        columnStatus.setPercentWidth(12);
-        ColumnConstraints columnName = new ColumnConstraints();
-        columnName.setPercentWidth(26);
-        ColumnConstraints columnTimeZone = new ColumnConstraints();
-        columnTimeZone.setPercentWidth(10);
-        ColumnConstraints columnRemarks = new ColumnConstraints();
-        columnRemarks.setPercentWidth(25);
-        ColumnConstraints columnButton = new ColumnConstraints();
-        columnButton.setPercentWidth(10);
-        gridPaneContainer.getColumnConstraints().addAll(columnDate, columnStatus, columnName, columnTimeZone, columnRemarks, columnButton);
+
+     //   dateMonoPane.setMinWidth(40);
+        dateMonoPane.setPrefWidth(DATE_PREF_SIZE);
+        dateMonoPane.setMaxWidth(DATE_PREF_SIZE);
+
+        statusMonoPane.setMinWidth(40);
+        statusMonoPane.setPrefWidth(STATUS_PREF_SIZE);
+        statusMonoPane.setMaxWidth(STATUS_PREF_SIZE);
+
+        nameVBox.setMinWidth(40);
+        nameVBox.setPrefWidth(NAME_PREF_SIZE);
+        nameVBox.setMaxWidth(NAME_PREF_SIZE);
+
+        timeVBox.setMinWidth(40);
+        timeVBox.setPrefWidth(TIME_PREF_SIZE);
+        timeVBox.setMaxWidth(TIME_PREF_SIZE);
+
+        remarkMonoPane.setMinWidth(40);
+        remarkMonoPane.setPrefWidth(REMARK_PREF_SIZE);
+        remarkMonoPane.setMaxWidth(REMARK_PREF_SIZE);
+
+        actionButtonMonoPane.setMinWidth(40);
+        actionButtonMonoPane.setPrefWidth(BUTTON_PREF_SIZE);
+        actionButtonMonoPane.setMaxWidth(50);
+
 
         final int[] currentRow = {0};
 
@@ -89,10 +118,15 @@ final class VideosDayScheduleView {
 
         Label dateLabel = new Label(day.format(DateTimeFormatter.ofPattern("dd MMMM yyyy")));
         dateLabel.setWrapText(true);
-        GridPane.setValignment(dateLabel, VPos.TOP);
 
-        gridPaneContainer.add(dateLabel, 0, currentRow[0]);
-        gridPaneContainer.setAlignment(Pos.TOP_LEFT);
+        dateMonoPane.setContent(dateLabel);
+
+        // Add a listener to the width property of the HBox
+        mainVBox.widthProperty().addListener((obs, oldWidth, newWidth) -> {
+                remarkHeaderMonoPane.setVisible(newWidth.doubleValue() >1000);
+                remarkMonoPane.setManaged(newWidth.doubleValue() >1000);
+        });
+
 
         // Use the inner class to populate the grid
         dayScheduledVideos.forEach((s) -> {
@@ -102,7 +136,7 @@ final class VideosDayScheduleView {
             ModalityMessaging.getFrontOfficeEntityMessaging().listenEntityChanges(s.getStore());
             populator.populateVideoRow();
         });
-        gridPaneContainer.setAlignment(Pos.CENTER);
+        mainVBox.setAlignment(Pos.CENTER);
     }
 
     private void addHeaderRow(final int[] currentRow) {
@@ -113,32 +147,36 @@ final class VideosDayScheduleView {
         Label gmtTimeHeaderLabel = Bootstrap.small(Bootstrap.textPrimary(I18nControls.newLabel(VideosI18nKeys.GMTZoneUK)));
         Label remarksHeaderLabel = Bootstrap.h4(Bootstrap.textPrimary(I18nControls.newLabel(VideosI18nKeys.Remarks)));
 
+        MonoPane dateMonoPane = new MonoPane(dateHeaderLabel);
+        dateMonoPane.setMinWidth(DATE_PREF_SIZE);
+        dateMonoPane.setAlignment(Pos.CENTER_LEFT);
+
+        MonoPane statusMonoPane = new MonoPane(statusHeaderLabel);
+        statusMonoPane.setMinWidth(STATUS_PREF_SIZE);
+        statusMonoPane.setAlignment(Pos.CENTER_LEFT);
+
+        MonoPane nameMonoPane = new MonoPane(nameHeaderLabel);
+        nameMonoPane.setMinWidth(NAME_PREF_SIZE);
+        nameMonoPane.setAlignment(Pos.CENTER_LEFT);
+
         VBox timeVBox = new VBox(timeZoneHeaderLabel, gmtTimeHeaderLabel);
-        gridPaneContainer.add(dateHeaderLabel, 0, currentRow[0]);
-        gridPaneContainer.add(statusHeaderLabel, 1, currentRow[0]);
-        gridPaneContainer.add(nameHeaderLabel, 2, currentRow[0]);
-        gridPaneContainer.add(timeVBox, 3, currentRow[0]);
-        gridPaneContainer.add(remarksHeaderLabel, 4, currentRow[0]);
-        GridPane.setValignment(dateHeaderLabel, VPos.TOP);
-        GridPane.setValignment(statusHeaderLabel, VPos.TOP);
-        GridPane.setValignment(nameHeaderLabel, VPos.TOP);
-        GridPane.setValignment(timeVBox, VPos.TOP);
-        GridPane.setValignment(remarksHeaderLabel, VPos.TOP);
+        timeVBox.setMinWidth(TIME_PREF_SIZE);
+        timeVBox.setAlignment(Pos.CENTER_LEFT);
 
-        currentRow[0]++;
+        remarkHeaderMonoPane.setContent(remarksHeaderLabel);
+        remarkHeaderMonoPane.setMinWidth(100);
+        remarkHeaderMonoPane.setAlignment(Pos.CENTER_LEFT);
 
-        Separator separator = new Separator();
-        separator.setPadding(new Insets(5, 0, 15, 0));
-        gridPaneContainer.add(separator, 0, currentRow[0], 6, 1);
-        currentRow[0]++;
+        separator1.setPadding(new Insets(5, 0, 15, 0));
+
+        HBox line = new HBox(5,dateMonoPane, statusMonoPane, nameMonoPane, timeVBox,remarkHeaderMonoPane);
+        mainVBox.getChildren().addAll(line,separator1);
     }
 
     private void addInvisibleSeparator(final int[] currentRow) {
-        Separator separator2 = new Separator();
         separator2.setVisible(false);
         separator2.setPadding(new Insets(20, 0, 20, 0));
-        gridPaneContainer.add(separator2, 0, currentRow[0], 6, 1);
-        currentRow[0]++;
+        mainVBox.getChildren().add(separator2);
     }
 
 
@@ -180,8 +218,7 @@ final class VideosDayScheduleView {
             computeStatusLabelAndWatchButton();
 
             if (statusLabel != null) {
-                gridPaneContainer.add(statusLabel, 1, currentRow[0]);
-                GridPane.setValignment(statusLabel, VPos.TOP);
+                statusMonoPane.setContent(statusLabel);
             }
             // Name label
             //If the name of the video scheduledItem has been overwritten, we use it, otherwise, we use the name of the programScheduledItem
@@ -205,15 +242,12 @@ final class VideosDayScheduleView {
                 )));
                 expirationDateLabel.setWrapText(true);
 
-                VBox nameVBox = new VBox(5, nameLabel, expirationDateLabel);
                 nameVBox.setAlignment(Pos.TOP_LEFT);
-                gridPaneContainer.add(nameVBox, 2, currentRow[0]);
-                GridPane.setValignment(nameVBox, VPos.TOP);
+                nameVBox.getChildren().addAll(nameLabel, expirationDateLabel);
             } else {
-                gridPaneContainer.add(nameLabel, 2, currentRow[0]);
-                GridPane.setValignment(nameLabel, VPos.TOP);
+                nameVBox.getChildren().add(nameLabel);
             }
-
+            nameVBox.setAlignment(Pos.CENTER_LEFT);
             // Time label
             Label timeLabel;
             if (scheduledItem.getEvent().isRecurringWithVideo()) {
@@ -227,21 +261,21 @@ final class VideosDayScheduleView {
                         scheduledItem.getProgramScheduledItem().getTimeline().getEndTime().format(DateTimeFormatter.ofPattern("HH:mm"))
                 );
             }
-            gridPaneContainer.add(timeLabel, 3, currentRow[0]);
-            GridPane.setValignment(timeLabel, VPos.TOP);
+            timeVBox.setAlignment(Pos.CENTER_LEFT);
+            timeVBox.getChildren().add(timeLabel);
 
             // Remarks label
             Label remarkLabel = new Label(scheduledItem.getComment());
             remarkLabel.getStyleClass().add(Bootstrap.TEXT_INFO);
             remarkLabel.setWrapText(true);
             remarkLabel.setPadding(new Insets(0, 10, 0, 0));
-
-            gridPaneContainer.add(remarkLabel, 4, currentRow[0]);
-            GridPane.setValignment(remarkLabel, VPos.TOP);
+            remarkMonoPane.setAlignment(Pos.CENTER_LEFT);
+            remarkMonoPane.setContent(remarkLabel);
 
             // Button
-            gridPaneContainer.add(actionButton, 5, currentRow[0]);
-            GridPane.setValignment(actionButton, VPos.TOP);
+            actionButtonMonoPane.setContent(actionButton);
+            mainLine.setAlignment(Pos.CENTER_LEFT);
+            mainLine.getChildren().addAll(dateMonoPane,statusMonoPane,nameVBox,timeVBox,remarkMonoPane,actionButtonMonoPane);
 
             // Separator
             Separator sessionSeparator = new Separator();
@@ -250,8 +284,7 @@ final class VideosDayScheduleView {
             } else {
                 sessionSeparator.setPadding(new Insets(15, 0, 0, 0));
             }
-            gridPaneContainer.add(sessionSeparator, 1, currentRow[0] + 1, 5, 1);
-            currentRow[0] = currentRow[0] + 2;
+            mainVBox.getChildren().addAll(mainLine,sessionSeparator);
         }
 
         private void computeStatusLabelAndWatchButton() {
