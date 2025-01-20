@@ -167,16 +167,16 @@ final class VideosDayScheduleView {
         remarkHeaderMonoPane.setMinWidth(100);
         remarkHeaderMonoPane.setAlignment(Pos.CENTER_LEFT);
 
-        separator1.setPadding(new Insets(5, 0, 15, 0));
+        separator1.setPadding(new Insets(5, 0, 25, 0));
 
         HBox line = new HBox(5,dateMonoPane, statusMonoPane, nameMonoPane, timeVBox,remarkHeaderMonoPane);
         mainVBox.getChildren().addAll(line,separator1);
     }
 
     private void addInvisibleSeparator(final int[] currentRow) {
-        separator2.setVisible(false);
-        separator2.setPadding(new Insets(20, 0, 20, 0));
-        mainVBox.getChildren().add(separator2);
+        //separator2.setVisible(false);
+       // separator2.setPadding(new Insets(20, 0, 20, 0));
+        //mainVBox.getChildren().add(separator2);
     }
 
 
@@ -282,7 +282,7 @@ final class VideosDayScheduleView {
             if (scheduledItem.getEvent().getType().getRecurringItem() == null) {
                 sessionSeparator.setPadding(new Insets(35, 0, 15, 0));
             } else {
-                sessionSeparator.setPadding(new Insets(15, 0, 0, 0));
+                sessionSeparator.setPadding(new Insets(0, 0, 0, 0));
             }
             mainVBox.getChildren().addAll(mainLine,sessionSeparator);
         }

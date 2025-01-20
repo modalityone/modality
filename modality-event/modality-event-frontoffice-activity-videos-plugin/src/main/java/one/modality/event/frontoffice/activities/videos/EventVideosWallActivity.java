@@ -201,7 +201,7 @@ final class EventVideosWallActivity extends ViewDomainActivityBase {
         daysColumnPane.setPadding(new Insets(0, 0, 30, 0));
 
 
-        VBox videoScheduleVBox = new VBox(30); // Will be populated later (see reacting code below)
+        VBox videoScheduleVBox = new VBox(20); // Will be populated later (see reacting code below)
         ScalePane scalePane = new ScalePane(videoScheduleVBox);
         scalePane.setVAlignment(VPos.TOP);
         GrowingPane scheduleContainerGrowingPane = new GrowingPane(scalePane);
