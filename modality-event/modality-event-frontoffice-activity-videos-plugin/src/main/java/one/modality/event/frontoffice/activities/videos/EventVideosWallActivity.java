@@ -304,7 +304,8 @@ final class EventVideosWallActivity extends ViewDomainActivityBase {
                     currentDayScheduleVBox.setVisible(true);
                     currentDayScheduleVBox.setManaged(true);
                     // Passing the day, the videos of that day, and the history (for backward navigation)
-                    currentDayScheduleVBox.getChildren().setAll(scheduleForTodayTitleLabel, new VideosDayScheduleView(day, dayScheduledVideos, getHistory(), true, entityStore).getView());
+                    ScalePane currentScalePane = new ScalePane(new VideosDayScheduleView(day, dayScheduledVideos, getHistory(), true, entityStore).getView());
+                    currentDayScheduleVBox.getChildren().setAll(scheduleForTodayTitleLabel, currentScalePane);
                 });
 
         }, scheduledItems, eventProperty);
