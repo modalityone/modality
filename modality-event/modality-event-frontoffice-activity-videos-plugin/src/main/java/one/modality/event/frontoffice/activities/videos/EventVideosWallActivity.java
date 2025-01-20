@@ -8,7 +8,6 @@ import dev.webfx.kit.util.properties.FXProperties;
 import dev.webfx.kit.util.properties.ObservableLists;
 import dev.webfx.platform.console.Console;
 import dev.webfx.platform.util.Numbers;
-import dev.webfx.platform.util.Strings;
 import dev.webfx.platform.util.collection.Collections;
 import dev.webfx.stack.cloud.image.CloudImageService;
 import dev.webfx.stack.cloud.image.impl.client.ClientImageService;
@@ -27,6 +26,7 @@ import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
+import javafx.geometry.VPos;
 import javafx.scene.Node;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
@@ -160,13 +160,15 @@ final class EventVideosWallActivity extends ViewDomainActivityBase {
         eventLabel.setWrapText(true);
         eventLabel.setTextAlignment(TextAlignment.CENTER);
         eventLabel.setPadding(new Insets(0, 0, 12, 0));
-        HtmlText eventDescriptionHTMLText = new HtmlText();
-        I18n.bindI18nTextProperty(eventDescriptionHTMLText.textProperty(), new I18nSubKey("expression: shortDescription", eventProperty), eventProperty);
-        eventDescriptionHTMLText.managedProperty().bind(FXProperties.compute(eventDescriptionHTMLText.textProperty(), Strings::isNotEmpty));
-        eventDescriptionHTMLText.setMaxHeight(60);
+        HtmlText eventDescriptionHtmlText = new HtmlText();
+        I18n.bindI18nTextProperty(eventDescriptionHtmlText.textProperty(),new I18nSubKey("expression: i18n(shortDescription)", eventProperty),eventProperty);
+
+//        eventDescriptionHtmlText.setWrapText(true);
+//        eventDescriptionHtmlText.setTextAlignment(TextAlignment.LEFT);
+        eventDescriptionHtmlText.setMaxHeight(60);
         videoExpirationLabel = I18nControls.newLabel(AudioRecordingsI18nKeys.AvailableUntil);
         videoExpirationLabel.setPadding(new Insets(30, 0, 0, 0));
-        VBox titleVBox = new VBox(eventLabel, eventDescriptionHTMLText, videoExpirationLabel);
+        VBox titleVBox = new VBox(eventLabel, eventDescriptionHtmlText, videoExpirationLabel);
 
         headerHBox.getChildren().add(titleVBox);
 
@@ -200,13 +202,15 @@ final class EventVideosWallActivity extends ViewDomainActivityBase {
 
 
         VBox videoScheduleVBox = new VBox(30); // Will be populated later (see reacting code below)
-        GrowingPane scheduleContainerGrowingPane = new GrowingPane(videoScheduleVBox);
+        ScalePane scalePane = new ScalePane(videoScheduleVBox);
+        scalePane.setVAlignment(VPos.TOP);
+        GrowingPane scheduleContainerGrowingPane = new GrowingPane(scalePane);
 
         VBox loadedContentVBox = new VBox(40,
             headerHBox,
             currentDayScheduleVBox,
             scheduleTitleVBox,
-            daysColumnPane,
+         //   daysColumnPane,
             scheduleContainerGrowingPane
         );
         loadedContentVBox.setAlignment(Pos.CENTER);
