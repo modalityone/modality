@@ -10,10 +10,7 @@ import dev.webfx.stack.i18n.I18n;
 import dev.webfx.stack.i18n.controls.I18nControls;
 import dev.webfx.stack.orm.datasourcemodel.service.DataSourceModelService;
 import dev.webfx.stack.orm.domainmodel.DataSourceModel;
-import dev.webfx.stack.orm.entity.EntityList;
-import dev.webfx.stack.orm.entity.EntityStore;
-import dev.webfx.stack.orm.entity.EntityStoreQuery;
-import dev.webfx.stack.orm.entity.UpdateStore;
+import dev.webfx.stack.orm.entity.*;
 import dev.webfx.stack.orm.entity.binding.EntityBindings;
 import dev.webfx.stack.ui.validation.ValidationSupport;
 import javafx.application.Platform;
@@ -97,6 +94,7 @@ public class VideoView {
         title.getStyleClass().add(Bootstrap.H2);
         BorderPane.setAlignment(title, Pos.CENTER);
         mainFrame.setTop(title);
+
 
         /////////////////
         VBox masterSettings = new VBox();
@@ -203,9 +201,18 @@ public class VideoView {
 
         masterSettings.getChildren().add(saveButton);
 
-        BorderPane individualSettingsHBox = buildIndividualLinksContainer();
-        individualSettingsHBox.setPadding(new Insets(20));
-        individualSettingsHBox.setMinWidth(1000);
+
+        BorderPane individualSettingsHBox;
+        if(currentEditedEvent.getRepeatedEvent()!=null && currentEditedEvent.isRepeatVideo()) {
+            Label seeRepeatableEventLabel = I18nControls.newLabel(MediasI18nKeys.VideoConfigurationDoneInRepeatableEvent, currentEditedEvent.getRepeatedEvent().getName(), Entities.getPrimaryKey(currentEditedEvent.getRepeatedEventId()).toString());
+            seeRepeatableEventLabel.setPadding(new Insets(200,0,0,0));
+            individualSettingsHBox = new BorderPane();
+            individualSettingsHBox.setCenter(seeRepeatableEventLabel);
+        } else {
+            individualSettingsHBox = buildIndividualLinksContainer();
+            individualSettingsHBox.setPadding(new Insets(20));
+            individualSettingsHBox.setMinWidth(1000);
+        }
 
         // Layout container (HBox)
         Separator VSeparator = new Separator();

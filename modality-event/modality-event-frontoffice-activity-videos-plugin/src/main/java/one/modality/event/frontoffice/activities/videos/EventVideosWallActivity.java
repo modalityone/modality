@@ -3,6 +3,7 @@ package one.modality.event.frontoffice.activities.videos;
 import dev.webfx.extras.panes.*;
 import dev.webfx.extras.styles.bootstrap.Bootstrap;
 import dev.webfx.extras.util.control.ControlUtil;
+import dev.webfx.extras.webtext.HtmlText;
 import dev.webfx.kit.util.properties.FXProperties;
 import dev.webfx.kit.util.properties.ObservableLists;
 import dev.webfx.platform.console.Console;
@@ -15,6 +16,7 @@ import dev.webfx.stack.i18n.I18n;
 import dev.webfx.stack.i18n.controls.I18nControls;
 import dev.webfx.stack.i18n.spi.impl.I18nSubKey;
 import dev.webfx.stack.orm.domainmodel.activity.viewdomain.impl.ViewDomainActivityBase;
+import dev.webfx.stack.orm.entity.Entities;
 import dev.webfx.stack.orm.entity.EntityId;
 import dev.webfx.stack.orm.entity.EntityStore;
 import dev.webfx.stack.orm.entity.EntityStoreQuery;
@@ -105,24 +107,29 @@ final class EventVideosWallActivity extends ViewDomainActivityBase {
                 scheduledItems.clear();
                 eventProperty.set(null);
             } else {
-                entityStore.executeQueryBatch(
-                        new EntityStoreQuery("select name, label.(de,en,es,fr,pt), type.recurringItem, shortDescription, recurringWithVideo, audioExpirationDate, startDate, endDate, livestreamUrl, vodExpirationDate,vodProcessingTimeMinutes" +
-                            " from Event" +
-                            " where id=? limit 1",
-                            new Object[]{eventId}),
+                entityStore.executeQuery(new EntityStoreQuery("select name, label.(de,en,es,fr,pt), shortDescription, audioExpirationDate, startDate, endDate, livestreamUrl, vodExpirationDate, repeatVideo, recurringWithVideo, repeatedEvent" +
+                        " from Event" +
+                        " where id=? limit 1",
+                        new Object[]{eventId}))
+                    .onFailure(Console::log)
+                    .onSuccess(event -> {
+                        Event currentEvent = (Event) event.get(0);
+                        Object eventIdContainingVideos =  Entities.getPrimaryKey(currentEvent);
+                        if(currentEvent.getRepeatedEventId()!=null) {
+                            eventIdContainingVideos = Entities.getPrimaryKey(currentEvent.getRepeatedEventId());
+                        }
                         // In this code: programScheduledItem.timeline..startTime, the double . means we do a left join, that allow null value (if the type of event is recurring, the timeline of the programScheduledItem is null
-                        new EntityStoreQuery("select name, date, programScheduledItem.(name, startTime, endTime, timeline.(startTime, endTime)), published, event, vodDelayed " +
+                        entityStore.executeQueryBatch(new EntityStoreQuery("select name, date, programScheduledItem.(name, startTime, endTime, timeline.(startTime, endTime)), published, event.(name, type, livestreamUrl, recurringWithVideo), vodDelayed " +
                             " from ScheduledItem si " +
-                            " where event=? and bookableScheduledItem.item.family.code=? and item.code=? and exists(select Attendance where scheduledItem=si.bookableScheduledItem and documentLine.(!cancelled and document.(person=? and price_balance<=0)))" +
+                            " where event=? and bookableScheduledItem.item.family.code=? and item.code=? and exists(select Attendance where scheduledItem=si.bookableScheduledItem and documentLine.(!cancelled and document.(person=? and event=? and confirmed and price_balance<=0)))" +
                             " order by date, programScheduledItem.timeline..startTime",
-                            new Object[]{eventId, KnownItemFamily.TEACHING.getCode(), KnownItem.VIDEO.getCode(), userPersonId}))
+                            new Object[]{eventIdContainingVideos, KnownItemFamily.TEACHING.getCode(), KnownItem.VIDEO.getCode(), userPersonId,currentEvent}))
                     .onFailure(Console::log)
                     .onSuccess(entityLists -> Platform.runLater(() -> {
-                        Event currentEvent = (Event) Collections.first(entityLists[0]);
-                        scheduledItems.setAll(entityLists[1]);
+                        scheduledItems.setAll(entityLists[0]);
                         eventProperty.set(currentEvent);
                     }));
-            }
+            });}
         }, pathEventIdProperty, FXUserPersonId.userPersonIdProperty());
     }
 
@@ -153,14 +160,13 @@ final class EventVideosWallActivity extends ViewDomainActivityBase {
         eventLabel.setWrapText(true);
         eventLabel.setTextAlignment(TextAlignment.CENTER);
         eventLabel.setPadding(new Insets(0, 0, 12, 0));
-        Label eventDescriptionLabel = I18nControls.newLabel(new I18nSubKey("expression: shortDescription", eventProperty), eventProperty);
-        eventDescriptionLabel.setWrapText(true);
-        eventDescriptionLabel.setTextAlignment(TextAlignment.LEFT);
-        eventDescriptionLabel.managedProperty().bind(FXProperties.compute(eventDescriptionLabel.textProperty(), Strings::isNotEmpty));
-        eventDescriptionLabel.setMaxHeight(60);
+        HtmlText eventDescriptionHTMLText = new HtmlText();
+        I18n.bindI18nTextProperty(eventDescriptionHTMLText.textProperty(), new I18nSubKey("expression: shortDescription", eventProperty), eventProperty);
+        eventDescriptionHTMLText.managedProperty().bind(FXProperties.compute(eventDescriptionHTMLText.textProperty(), Strings::isNotEmpty));
+        eventDescriptionHTMLText.setMaxHeight(60);
         videoExpirationLabel = I18nControls.newLabel(AudioRecordingsI18nKeys.AvailableUntil);
         videoExpirationLabel.setPadding(new Insets(30, 0, 0, 0));
-        VBox titleVBox = new VBox(eventLabel, eventDescriptionLabel, videoExpirationLabel);
+        VBox titleVBox = new VBox(eventLabel, eventDescriptionHTMLText, videoExpirationLabel);
 
         headerHBox.getChildren().add(titleVBox);
 
@@ -230,7 +236,10 @@ final class EventVideosWallActivity extends ViewDomainActivityBase {
                 // TODO display something else (ex: next online events to book) when the user is not logged in, or registered
             } else { // otherwise we display loadedContentVBox and set the content of audioTracksVBox
                 pageContainer.setContent(loadedContentVBox);
-                Object imageTag = ModalityCloudinary.getEventCoverImageTag(eventProperty.get().getId().getPrimaryKey(), I18n.getLanguage().toString());
+                Object imageTag = ModalityCloudinary.getEventCoverImageTag(Entities.getPrimaryKey(eventProperty.get()), I18n.getLanguage().toString());
+                if(eventProperty.get().getRepeatedEvent()!=null)
+                    imageTag = ModalityCloudinary.getEventCoverImageTag(Entities.getPrimaryKey(eventProperty.get().getRepeatedEvent()), I18n.getLanguage().toString());
+
                 String pictureId = String.valueOf(imageTag);
                 cloudImageService.exists(pictureId)
                     .onFailure(Console::log)

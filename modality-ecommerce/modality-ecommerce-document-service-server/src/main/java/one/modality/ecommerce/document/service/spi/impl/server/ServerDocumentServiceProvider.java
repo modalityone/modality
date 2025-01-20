@@ -41,15 +41,15 @@ public class ServerDocumentServiceProvider implements DocumentServiceProvider {
         return QueryService.executeQueryBatch(
                 new Batch<>(new QueryArgument[]{
                     new QueryArgumentBuilder()
-                        .setStatement(POLICY_SCHEDULED_ITEMS_QUERY_BASE + " where event = ? and bookableScheduledItem=id " +
+                        .setStatement(POLICY_SCHEDULED_ITEMS_QUERY_BASE + " where event = (select coalesce(repeatedEvent, id) from Event where id=?) and bookableScheduledItem=id " +
                                       "order by site,item,date")
                         .setParameters(eventPk)
                         .setLanguage("DQL")
                         .setDataSourceId(DataSourceModelService.getDefaultDataSourceId())
                         .build(),
                     new QueryArgumentBuilder()
-                        .setStatement(POLICY_RATES_QUERY_BASE + " where site.event = ? or site = (select venue from Event where id = ?) " +
-                                      // Note: AbstractItemFamilyPricing relies on the following order to work properly
+                        .setStatement(POLICY_RATES_QUERY_BASE + " where site.event = (select coalesce(repeatedEvent, id) from Event where id=?) or site = (select coalesce(repeatedEvent.venue, venue) from Event where id = ?) " +
+                                      // Note: TeachingsPricing relies on the following order to work properly
                                       "order by site,item,perDay desc,startDate,endDate,price")
                         .setParameters(eventPk, eventPk)
                         .setLanguage("DQL")
