@@ -95,12 +95,7 @@ public class VideoView {
         BorderPane.setAlignment(title, Pos.CENTER);
         mainFrame.setTop(title);
 
-        if(currentEditedEvent.getRepeatedEvent()!=null && currentEditedEvent.isRepeatVideo()) {
-            Label seeRepeatableEventLabel = I18nControls.newLabel(MediasI18nKeys.VideoConfigurationDoneInRepeatableEvent, currentEditedEvent.getRepeatedEvent().getName(), Entities.getPrimaryKey(currentEditedEvent.getRepeatedEventId()).toString());
-            seeRepeatableEventLabel.setPadding(new Insets(200,0,0,0));
-            mainFrame.setCenter(seeRepeatableEventLabel);
-            return;
-        }
+
         /////////////////
         VBox masterSettings = new VBox();
         masterSettings.setPadding(new Insets(20));
@@ -206,9 +201,18 @@ public class VideoView {
 
         masterSettings.getChildren().add(saveButton);
 
-        BorderPane individualSettingsHBox = buildIndividualLinksContainer();
-        individualSettingsHBox.setPadding(new Insets(20));
-        individualSettingsHBox.setMinWidth(1000);
+
+        BorderPane individualSettingsHBox;
+        if(currentEditedEvent.getRepeatedEvent()!=null && currentEditedEvent.isRepeatVideo()) {
+            Label seeRepeatableEventLabel = I18nControls.newLabel(MediasI18nKeys.VideoConfigurationDoneInRepeatableEvent, currentEditedEvent.getRepeatedEvent().getName(), Entities.getPrimaryKey(currentEditedEvent.getRepeatedEventId()).toString());
+            seeRepeatableEventLabel.setPadding(new Insets(200,0,0,0));
+            individualSettingsHBox = new BorderPane();
+            individualSettingsHBox.setCenter(seeRepeatableEventLabel);
+        } else {
+            individualSettingsHBox = buildIndividualLinksContainer();
+            individualSettingsHBox.setPadding(new Insets(20));
+            individualSettingsHBox.setMinWidth(1000);
+        }
 
         // Layout container (HBox)
         Separator VSeparator = new Separator();

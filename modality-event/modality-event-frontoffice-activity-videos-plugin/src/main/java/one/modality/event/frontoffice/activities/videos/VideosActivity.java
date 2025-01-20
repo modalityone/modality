@@ -18,9 +18,7 @@ import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.layout.VBox;
 import one.modality.base.frontoffice.utility.page.FOPageUtil;
-import one.modality.base.shared.entities.Event;
-import one.modality.base.shared.entities.KnownItem;
-import one.modality.base.shared.entities.ScheduledItem;
+import one.modality.base.shared.entities.*;
 import one.modality.crm.shared.services.authn.fx.FXUserPersonId;
 import one.modality.event.frontoffice.medias.EventThumbnailView;
 
@@ -35,7 +33,7 @@ final class VideosActivity extends ViewDomainActivityBase {
     private static final double BOX_WIDTH = 263;
 
     // Holding an observable list of events with videos booked by the user (changes on login & logout)
-    private final ObservableList<Event> eventsWithBookedVideos = FXCollections.observableArrayList();
+    private final ObservableList<Event> documentLinesWithBookedVideos = FXCollections.observableArrayList();
 
     @Override
     protected void startLogic() {
@@ -43,7 +41,7 @@ final class VideosActivity extends ViewDomainActivityBase {
         EntityStore entityStore = EntityStore.create(getDataSourceModel()); // Activity datasource model is available at this point
         // Loading the list of events with videos booked by the user and put it into eventsWithBookedVideos
         FXProperties.runNowAndOnPropertyChange(userPersonId -> {
-            eventsWithBookedVideos.clear();
+            documentLinesWithBookedVideos.clear();
             if (userPersonId != null) {
 //                entityStore.<Event>executeQuery(
 //                    "select name, label.(de,en,es,fr,pt), shortDescription, audioExpirationDate, startDate, endDate, livestreamUrl, vodExpirationDate" +
@@ -51,15 +49,25 @@ final class VideosActivity extends ViewDomainActivityBase {
 //                    " where exists(select Attendance where !documentLine.cancelled and documentLine.document.(event=e and person=? and price_balance<=0) and scheduledItem.item.family.code=?)",
 //                        userPersonId, KnownItemFamily.VIDEO.getCode())
                 //2nd: we look for the scheduledItem having a bookableScheduledItem which is a audio type (case of festival)
-                entityStore.<ScheduledItem>executeQuery("select event.(name, label.(de,en,es,fr,pt), shortDescription, audioExpirationDate, startDate, endDate, livestreamUrl, vodExpirationDate)" +
-                            " from ScheduledItem si" +
-                            " where item.code=? and exists(select Attendance where scheduledItem=si.bookableScheduledItem and documentLine.(!cancelled and document.(person=? and price_balance<=0)))" +
-                            " order by date",
-                        new Object[]{KnownItem.VIDEO.getCode(), userPersonId})
+                entityStore.<DocumentLine>executeQuery(
+                        "select document.event.(name,label.(de,en,es,fr,pt), shortDescription, vodExpirationDate, startDate, endDate, repeatedEvent), item.code, item.family.code, " +
+                            //We look if there are published audio ScheduledItem of type video, whose bookableScheduledItem has  been booked
+                            " (exists(select ScheduledItem where item.family.code=? and bookableScheduledItem.(event=coalesce(dl.document.event.repeatedEvent, dl.document.event) and item=dl.item))) as published " +
+                            //We check if the user has booked, not cancelled and paid the recordings
+                            " from DocumentLine dl where !cancelled  and dl.document.(person=? and confirmed and price_balance<=0) " +
+                            " and dl.document.event.(repeatedEvent = null or repeatVideo)" +
+                            //we check if :
+                            " and ("+
+                            // 1/ there is a ScheduledItem of video family type whose bookableScheduledItem has been booked (KBS3 setup)
+                            " exists (select ScheduledItem videoSI where item.family.code=? and exists(select Attendance where documentLine=dl and scheduledItem=videoSI.bookableScheduledItem))" +
+                            // 2/ Or KBS3 / KBS2 setup (this allows to display the audios that have been booked in the past with KBS2 events, event if we can't display them)
+                            " or item.family.code=?) and document.event.kbs3=true " +
+                            " order by document.event.startDate desc",
+                        new Object[]{ KnownItemFamily.VIDEO.getCode(), userPersonId, KnownItemFamily.VIDEO.getCode(), KnownItemFamily.VIDEO.getCode()})
                     .onFailure(Console::log)
-                    .onSuccess(scheduledItems -> Platform.runLater(() -> eventsWithBookedVideos.setAll(
-                        scheduledItems.stream()
-                            .map(ScheduledItem::getEvent)  // Extract events from scheduled items
+                    .onSuccess(documentLines -> Platform.runLater(() -> documentLinesWithBookedVideos.setAll(
+                        documentLines.stream()
+                            .map(documentLine -> documentLine.getDocument().getEvent())  // Extract events from DocumentLine
                             .distinct()
                             .collect(Collectors.toList()))));
             }
@@ -75,7 +83,7 @@ final class VideosActivity extends ViewDomainActivityBase {
         columnsPane.setFixedColumnWidth(BOX_WIDTH);
         columnsPane.getStyleClass().add("media-library");
         // Showing a thumbnail in the columns pane for each event with videos
-        ObservableLists.bindConverted(columnsPane.getChildren(), eventsWithBookedVideos, event -> {
+        ObservableLists.bindConverted(columnsPane.getChildren(), documentLinesWithBookedVideos, event -> {
             EventThumbnailView eventTbView = new EventThumbnailView(event, KnownItem.VIDEO.getCode(), EventThumbnailView.ItemType.ITEM_TYPE_VIDEO, true);
             VBox container = eventTbView.getView();
             Button actionButton = eventTbView.getActionButton();

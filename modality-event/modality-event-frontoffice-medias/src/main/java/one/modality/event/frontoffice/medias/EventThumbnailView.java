@@ -169,6 +169,9 @@ public final class EventThumbnailView {
         // Video : video | note: just one for all languages
         Object imageTag;
         imageTag = ModalityCloudinary.getEventCoverImageTag(Entities.getPrimaryKey(event), isoCode);
+        if(event.getRepeatedEvent()!=null)
+            imageTag = ModalityCloudinary.getEventCoverImageTag(Entities.getPrimaryKey(event.getRepeatedEvent()),isoCode);
+
         String pictureId = String.valueOf(imageTag);
 
         cloudImageService.exists(pictureId)

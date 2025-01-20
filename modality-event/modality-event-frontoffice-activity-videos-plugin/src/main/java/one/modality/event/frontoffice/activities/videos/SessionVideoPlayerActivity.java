@@ -51,10 +51,11 @@ final class SessionVideoPlayerActivity extends AbstractVideoPlayerActivity {
                 publishedMedias.clear();
                 scheduledVideoItemProperty.set(null); // Will update UI
             } else {
+                //TODO: change the request so it manages the repeatedEvent
                 entityStore.executeQueryBatch(
                         new EntityStoreQuery("select name, expirationDate, comment, date, startTime, endTime, programScheduledItem.(name, startTime, endTime, timeline.(startTime, endTime)), event.(name, shortDescription, vodExpirationDate, type.recurringItem, label)" +
                             " from ScheduledItem si" +
-                            " where id=? and published and exists(select Attendance where scheduledItem=si.bookableScheduledItem and documentLine.(!cancelled and document.(person=? and price_balance<=0)))",
+                            " where id=? and published and exists(select Attendance where scheduledItem=si.bookableScheduledItem and documentLine.(!cancelled and document.(person=? and confirmed and price_balance<=0)))",
                             new Object[]{scheduledVideoItemId, userPersonId}),
                         new EntityStoreQuery("select url" +
                             " from Media" +
