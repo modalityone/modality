@@ -294,7 +294,7 @@ final class VideosDayScheduleView {
             LocalDateTime sessionEnd = null;
             if (scheduledItem.getEvent().isRecurringWithVideo()) {
                 sessionStart = scheduledItem.getDate().atTime(scheduledItem.getProgramScheduledItem().getStartTime());
-                sessionEnd = scheduledItem.getDate().atTime(scheduledItem.getProgramScheduledItem().getStartTime());
+                sessionEnd = scheduledItem.getDate().atTime(scheduledItem.getProgramScheduledItem().getEndTime());
             } else {
                 sessionStart = scheduledItem.getDate().atTime(scheduledItem.getProgramScheduledItem().getTimeline().getStartTime());
                 sessionEnd = scheduledItem.getDate().atTime(scheduledItem.getProgramScheduledItem().getTimeline().getEndTime());
