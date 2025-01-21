@@ -119,7 +119,7 @@ final class EventVideosWallActivity extends ViewDomainActivityBase {
                             eventIdContainingVideos = Entities.getPrimaryKey(currentEvent.getRepeatedEventId());
                         }
                         // In this code: programScheduledItem.timeline..startTime, the double . means we do a left join, that allow null value (if the type of event is recurring, the timeline of the programScheduledItem is null
-                        entityStore.executeQueryBatch(new EntityStoreQuery("select name, date, programScheduledItem.(name, startTime, endTime, timeline.(startTime, endTime)), published, event.(name, type, livestreamUrl, recurringWithVideo), vodDelayed " +
+                        entityStore.executeQueryBatch(new EntityStoreQuery("select name, date, expirationDate, programScheduledItem.(name, startTime, endTime, timeline.(startTime, endTime)), published, event.(name, type, livestreamUrl, recurringWithVideo), vodDelayed " +
                             " from ScheduledItem si " +
                             " where event=? and bookableScheduledItem.item.family.code=? and item.code=? and exists(select Attendance where scheduledItem=si.bookableScheduledItem and documentLine.(!cancelled and document.(person=? and event=? and confirmed and price_balance<=0)))" +
                             " order by date, programScheduledItem.timeline..startTime",
