@@ -8,6 +8,7 @@ import dev.webfx.kit.util.properties.FXProperties;
 import dev.webfx.kit.util.properties.ObservableLists;
 import dev.webfx.platform.console.Console;
 import dev.webfx.platform.uischeduler.UiScheduler;
+import dev.webfx.platform.util.Booleans;
 import dev.webfx.platform.util.Numbers;
 import dev.webfx.platform.windowhistory.WindowHistory;
 import dev.webfx.stack.i18n.I18n;
@@ -132,20 +133,16 @@ final class Step2CheckoutSlide extends StepSlide {
             guestPanel.onHiding();
         });
 
+        // Facility fee checkbox for GP Classes TODO: remove this for STTP
         CheckBox facilityFeeCheckBox = I18nControls.newCheckBox(BookingI18nKeys.FacilityFee);
-        facilityFeeCheckBox.setVisible(false);
-        facilityFeeCheckBox.setManaged(false);
         VBox.setMargin(facilityFeeCheckBox, new Insets(50, 0, 50, 0));
         Document document = getWorkingBooking().getLastestDocumentAggregate().getDocument();
-        if (document.isPersonFacilityFee() != null) {
-            facilityFeeCheckBox.setSelected(document.isPersonFacilityFee());
-            facilityFeeCheckBox.setOnAction(e -> {
-                getWorkingBooking().applyFacilityFeeRate(facilityFeeCheckBox.isSelected());
-                rebuildSummaryGridPane();
-            });
-            facilityFeeCheckBox.setVisible(true);
-            facilityFeeCheckBox.setManaged(true);
-        }
+        facilityFeeCheckBox.setSelected(Booleans.isTrue(document.isPersonFacilityFee()));
+        facilityFeeCheckBox.setOnAction(e -> {
+            getWorkingBooking().applyFacilityFeeRate(facilityFeeCheckBox.isSelected());
+            rebuildSummaryGridPane();
+        });
+
         submitButton.setOnAction(event -> submit());
         // The submit button is disabled if there is nothing to pay and no new changes on the booking
         submitButton.disableProperty().bind(FXProperties.combine(
