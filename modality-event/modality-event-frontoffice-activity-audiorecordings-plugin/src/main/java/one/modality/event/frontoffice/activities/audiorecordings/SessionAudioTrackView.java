@@ -69,6 +69,7 @@ final class SessionAudioTrackView {
         if(title == null)
             title = scheduledAudioItem.getProgramScheduledItem().getName();
         Label titleLabel = Bootstrap.h3(new Label(index + ". " + title));
+        titleLabel.setWrapText(true);
         Timeline timeline = scheduledAudioItem.getProgramScheduledItem().getTimeline();
         LocalDate date = scheduledAudioItem.getDate();
         String startTime = "";
@@ -81,7 +82,7 @@ final class SessionAudioTrackView {
         Label dateLabel = new Label(
             date.format(DateTimeFormatter.ofPattern("dd MMMM yyyy")) + startTime);
         dateLabel.getStyleClass().add(ModalityStyle.TEXT_COMMENT);
-        if(publishedMedias.size()>0) {
+        if(!publishedMedias.isEmpty()) {
             durationMillis = publishedMedias.get(0).getDurationMillis();
             dateLabel.setText(formatDuration(durationMillis) + " • " + dateLabel.getText());
         } else {
