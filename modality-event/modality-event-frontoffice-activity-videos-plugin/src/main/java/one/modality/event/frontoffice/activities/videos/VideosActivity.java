@@ -9,16 +9,22 @@ import dev.webfx.stack.i18n.controls.I18nControls;
 import dev.webfx.stack.orm.domainmodel.activity.viewdomain.impl.ViewDomainActivityBase;
 import dev.webfx.stack.orm.entity.EntityStore;
 import javafx.application.Platform;
+import javafx.beans.binding.BooleanExpression;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.geometry.Insets;
+import javafx.geometry.Pos;
 import javafx.scene.Cursor;
 import javafx.scene.Node;
 import javafx.scene.control.Button;
+import javafx.scene.control.ContentDisplay;
 import javafx.scene.control.Label;
 import javafx.scene.layout.VBox;
 import one.modality.base.frontoffice.utility.page.FOPageUtil;
-import one.modality.base.shared.entities.*;
+import one.modality.base.shared.entities.DocumentLine;
+import one.modality.base.shared.entities.Event;
+import one.modality.base.shared.entities.KnownItem;
+import one.modality.base.shared.entities.KnownItemFamily;
 import one.modality.crm.shared.services.authn.fx.FXUserPersonId;
 import one.modality.event.frontoffice.medias.EventThumbnailView;
 
@@ -96,9 +102,26 @@ final class VideosActivity extends ViewDomainActivityBase {
             return container;
         });
 
+        VBox noContentVBox = new VBox(30);
+        Label noContentTitleLabel = Bootstrap.h3(I18nControls.newLabel(VideosI18nKeys.NoVideoInYourLibrary));
+        noContentTitleLabel.setContentDisplay(ContentDisplay.TOP);
+        noContentTitleLabel.setGraphicTextGap(20);
+        Label noContentText = (I18nControls.newLabel(VideosI18nKeys.YourNextLiveStreamEventWillAppearHere));
+
+        noContentVBox.setAlignment(Pos.TOP_CENTER);
+        noContentVBox.getChildren().addAll(noContentTitleLabel,noContentText);
+        BooleanExpression displayNoContentBinding = ObservableLists.isEmpty(columnsPane.getChildren());
+        noContentVBox.managedProperty().bind(displayNoContentBinding);
+        noContentVBox.visibleProperty().bind(displayNoContentBinding);
+        headerLabel.managedProperty().bind(noContentVBox.managedProperty().not());
+        headerLabel.visibleProperty().bind(noContentVBox.visibleProperty().not());
+
+        noContentTitleLabel.setPadding(new Insets(75,0,0,0));
+
         VBox pageContainer = new VBox(
             headerLabel,
-            columnsPane
+            columnsPane,
+            noContentVBox
         );
 
         return FOPageUtil.restrictToMaxPageWidthAndApplyPageLeftTopRightBottomPadding(pageContainer);

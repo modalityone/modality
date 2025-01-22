@@ -10,12 +10,15 @@ import dev.webfx.stack.i18n.controls.I18nControls;
 import dev.webfx.stack.orm.domainmodel.activity.viewdomain.impl.ViewDomainActivityBase;
 import dev.webfx.stack.orm.entity.EntityStore;
 import javafx.application.Platform;
+import javafx.beans.binding.BooleanExpression;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.geometry.Insets;
+import javafx.geometry.Pos;
 import javafx.scene.Cursor;
 import javafx.scene.Node;
 import javafx.scene.control.Button;
+import javafx.scene.control.ContentDisplay;
 import javafx.scene.control.Label;
 import javafx.scene.layout.VBox;
 import one.modality.base.frontoffice.utility.page.FOPageUtil;
@@ -105,11 +108,29 @@ final class AudioRecordingsActivity extends ViewDomainActivityBase {
         // *************************************************************************************************************
         // ************************************* Building final container **********************************************
         // *************************************************************************************************************
+        VBox noContentVBox = new VBox(30);
+        Label noContentTitleLabel = Bootstrap.h3(I18nControls.newLabel(AudioRecordingsI18nKeys.NoAudioRecordingInYourLibrary));
+        noContentTitleLabel.setContentDisplay(ContentDisplay.TOP);
+        noContentTitleLabel.setGraphicTextGap(20);
+        Label noContentText = (I18nControls.newLabel(AudioRecordingsI18nKeys.YourPurchasedRecordingsWillAppearHere));
+
+        noContentVBox.setAlignment(Pos.TOP_CENTER);
+        noContentVBox.getChildren().addAll(noContentTitleLabel,noContentText);
+        BooleanExpression displayNoContentBinding = ObservableLists.isEmpty(columnsPane.getChildren());
+        noContentVBox.managedProperty().bind(displayNoContentBinding);
+        noContentVBox.visibleProperty().bind(displayNoContentBinding);
+        headerLabel.managedProperty().bind(noContentVBox.managedProperty().not());
+        checkoutLabel.managedProperty().bind(noContentVBox.managedProperty().not());
+        headerLabel.visibleProperty().bind(noContentVBox.visibleProperty().not());
+        checkoutLabel.visibleProperty().bind(noContentVBox.visibleProperty().not());
+
+        noContentTitleLabel.setPadding(new Insets(75,0,0,0));
 
         VBox pageContainer = new VBox(
             headerLabel,
             checkoutLabel,
-            columnsPane
+            columnsPane,
+            noContentVBox
         );
 
         return FOPageUtil.restrictToMaxPageWidthAndApplyPageLeftTopRightBottomPadding(pageContainer);

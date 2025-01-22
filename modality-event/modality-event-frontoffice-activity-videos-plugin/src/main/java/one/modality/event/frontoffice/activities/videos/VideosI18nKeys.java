@@ -33,6 +33,8 @@ public interface VideosI18nKeys {
     String VideoAvailableUntil = "VideoAvailableUntil";
     String PastRecordings = "PastRecordings";
     String LiveAnnoucementsTitle = "LiveAnnoucementsTitle";
+    String NoVideoInYourLibrary = "NoVideoInYourLibrary";
+    String YourNextLiveStreamEventWillAppearHere = "YourNextLiveStreamEventWillAppearHere";
     String LiveAnnoucements = "LiveAnnoucements";
 
 }
