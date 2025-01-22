@@ -1,6 +1,7 @@
 package one.modality.event.frontoffice.activities.videos;
 
 import dev.webfx.extras.panes.MonoPane;
+import dev.webfx.extras.panes.ScalePane;
 import dev.webfx.extras.player.multi.MultiPlayer;
 import dev.webfx.extras.player.multi.all.AllPlayers;
 import dev.webfx.extras.styles.bootstrap.Bootstrap;
@@ -17,6 +18,7 @@ import javafx.beans.property.ObjectProperty;
 import javafx.beans.property.SimpleObjectProperty;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
+import javafx.geometry.VPos;
 import javafx.scene.Node;
 import javafx.scene.control.Label;
 import javafx.scene.image.Image;
@@ -127,8 +129,9 @@ abstract class AbstractVideoPlayerActivity extends ViewDomainActivityBase {
         // *************************************************************************************************************
         // ************************************* Building final container **********************************************
         // *************************************************************************************************************
-
-        return FOPageUtil.restrictToMaxPageWidthAndApplyPageLeftTopRightBottomPadding(pageContainer);
+        ScalePane scalePane = new ScalePane(pageContainer);
+        scalePane.setVAlignment(VPos.TOP);
+        return FOPageUtil.restrictToMaxPageWidthAndApplyPageLeftTopRightBottomPadding(scalePane);
         //return FrontOfficeActivityUtil.createActivityPageScrollPane(pageContainer, true);
     }
 
