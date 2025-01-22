@@ -9,11 +9,25 @@ import one.modality.base.shared.entities.markers.EntityHasLocalDateTime;
  */
 public interface MediaConsumption extends Entity,
     EntityHasLocalDateTime {
+    String scheduledItem = "scheduledItem";
     String media = "media";
     String attendance = "attendance";
     String played = "played";
     String downloaded = "downloaded";
+    String livestreamed = "livestreamed";
     String durationMillis = "durationMillis";
+
+    default void setScheduledItem(Object value) {
+        setForeignField(scheduledItem, value);
+    }
+
+    default EntityId getScheduledItemId() {
+        return getForeignEntityId(scheduledItem);
+    }
+
+    default ScheduledItem getScheduledItem() {
+        return getForeignEntity(scheduledItem);
+    }
 
     default void setMedia(Object value) {
         setForeignField(media, value);
@@ -53,6 +67,14 @@ public interface MediaConsumption extends Entity,
 
     default Boolean isDownloaded() {
         return getBooleanFieldValue(downloaded);
+    }
+
+    default void setLivestreamed(Boolean value) {
+        setFieldValue(livestreamed, value);
+    }
+
+    default Boolean isLivestreamed() {
+        return getBooleanFieldValue(livestreamed);
     }
 
     default void setDurationMillis(Long value) {
