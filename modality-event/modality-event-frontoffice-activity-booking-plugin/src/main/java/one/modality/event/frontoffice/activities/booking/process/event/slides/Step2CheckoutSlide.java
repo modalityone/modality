@@ -8,6 +8,7 @@ import dev.webfx.kit.util.properties.FXProperties;
 import dev.webfx.kit.util.properties.ObservableLists;
 import dev.webfx.platform.console.Console;
 import dev.webfx.platform.uischeduler.UiScheduler;
+import dev.webfx.platform.util.Booleans;
 import dev.webfx.platform.util.Numbers;
 import dev.webfx.platform.windowhistory.WindowHistory;
 import dev.webfx.stack.i18n.I18n;
@@ -36,7 +37,10 @@ import one.modality.base.shared.entities.ScheduledItem;
 import one.modality.base.shared.entities.formatters.EventPriceFormatter;
 import one.modality.ecommerce.client.i18n.EcommerceI18nKeys;
 import one.modality.ecommerce.document.service.DocumentAggregate;
-import one.modality.event.client.recurringevents.*;
+import one.modality.event.client.recurringevents.FXPersonToBook;
+import one.modality.event.client.recurringevents.RecurringEventsI18nKeys;
+import one.modality.event.client.recurringevents.WorkingBooking;
+import one.modality.event.client.recurringevents.WorkingBookingHistoryHelper;
 import one.modality.event.frontoffice.activities.booking.BookingI18nKeys;
 import one.modality.event.frontoffice.activities.booking.fx.FXGuestToBook;
 import one.modality.event.frontoffice.activities.booking.process.account.CheckoutAccountRouting;
@@ -132,20 +136,19 @@ final class Step2CheckoutSlide extends StepSlide {
             guestPanel.onHiding();
         });
 
+        // Facility fee checkbox for events with facility fees rates
+        boolean hasFacilityFees = getWorkingBooking().getPolicyAggregate().hasFacilityFees();
         CheckBox facilityFeeCheckBox = I18nControls.newCheckBox(BookingI18nKeys.FacilityFee);
-        facilityFeeCheckBox.setVisible(false);
-        facilityFeeCheckBox.setManaged(false);
+        facilityFeeCheckBox.setVisible(hasFacilityFees);
+        facilityFeeCheckBox.setManaged(hasFacilityFees);
         VBox.setMargin(facilityFeeCheckBox, new Insets(50, 0, 50, 0));
         Document document = getWorkingBooking().getLastestDocumentAggregate().getDocument();
-        if (document.isPersonFacilityFee() != null) {
-            facilityFeeCheckBox.setSelected(document.isPersonFacilityFee());
-            facilityFeeCheckBox.setOnAction(e -> {
-                getWorkingBooking().applyFacilityFeeRate(facilityFeeCheckBox.isSelected());
-                rebuildSummaryGridPane();
-            });
-            facilityFeeCheckBox.setVisible(true);
-            facilityFeeCheckBox.setManaged(true);
-        }
+        facilityFeeCheckBox.setSelected(Booleans.isTrue(document.isPersonFacilityFee()));
+        facilityFeeCheckBox.setOnAction(e -> {
+            getWorkingBooking().applyFacilityFeeRate(facilityFeeCheckBox.isSelected());
+            rebuildSummaryGridPane();
+        });
+
         submitButton.setOnAction(event -> submit());
         // The submit button is disabled if there is nothing to pay and no new changes on the booking
         submitButton.disableProperty().bind(FXProperties.combine(
@@ -203,9 +206,9 @@ final class Step2CheckoutSlide extends StepSlide {
             addExistingTotalLine();
         }
 
-        int eventId = Numbers.toInteger(Entities.getPrimaryKey(getEvent().getType()));
-
-        if(eventId != KnownEventType.STTP.getTypeId() ||workingBooking.isNewBooking()) {
+        Object eventTypeId = Entities.getPrimaryKey(getEvent().getType());
+        boolean isSTTP = Numbers.identicalObjectsOrNumberValues(eventTypeId, KnownEventType.STTP.getTypeId());
+        if (!isSTTP || workingBooking.isNewBooking()) {
             // SECOND PART: WHAT WE BOOK AT THIS STEP - we add this only if it's a new booking or if it's a GP (recurringEvent).
             noDiscountTotalPrice += addAttendanceRows(documentAggregate.getNewAttendancesStream(), false);
         }
@@ -223,20 +226,13 @@ final class Step2CheckoutSlide extends StepSlide {
         addNewTotalLine();
     }
 
-    private void addSummaryLine(int price) {
-        Label nameLabel = new Label(getWorkingBooking().getEvent().getName());
-        Label priceLabel = new Label(EventPriceFormatter.formatWithCurrency(price, getWorkingBooking().getEvent()));
-
-        addRow(nameLabel, priceLabel, null);
-    }
-
     private int addAttendanceRows(Stream<Attendance> attendanceStream, boolean existing) {
         WorkingBookingProperties workingBookingProperties = getWorkingBookingProperties();
         WorkingBooking workingBooking = getWorkingBooking();
 
         int[] totalPrice = {0};
-        int eventId = Numbers.toInteger(Entities.getPrimaryKey(getEvent().getType()));
-        if (eventId == KnownEventType.GP_CLASSES.getTypeId()) {
+        Object eventTypeId = Entities.getPrimaryKey(getEvent().getType());
+        if (Numbers.identicalObjectsOrNumberValues(eventTypeId, KnownEventType.GP_CLASSES.getTypeId())) {
             attendanceStream.forEach(a -> {
                 ScheduledItem scheduledItem = a.getScheduledItem();
                 LocalDate date = scheduledItem.getDate();
@@ -262,13 +258,13 @@ final class Step2CheckoutSlide extends StepSlide {
                         previousBalance.intValue() <= 0 || date.isBefore(LocalDate.now())
                     ));
                 }
-                
+
                 addRow(name, price, trashOption);
                 GridPane.setHalignment(trashOption, HPos.CENTER);
             });
         }
 
-        if (eventId == KnownEventType.STTP.getTypeId()) {
+        if (Numbers.identicalObjectsOrNumberValues(eventTypeId, KnownEventType.STTP.getTypeId())) {
             workingBookingProperties.updateAll();
             Label name = new Label(getEvent().getName() + (existing ? " - (already booked)" : ""));
             //TODO; calculate the price with the PriceCalculatorMethod using the list of attendance
@@ -278,11 +274,7 @@ final class Step2CheckoutSlide extends StepSlide {
             totalPrice[0] += price;
         }
 
-            return totalPrice[0];
-    }
-
-    private RecurringEventSchedule getRecurringEventSchedule() {
-        return null;
+        return totalPrice[0];
     }
 
     private void addExistingTotalLine() {
@@ -366,10 +358,6 @@ final class Step2CheckoutSlide extends StepSlide {
                     }
                 }));
         }
-    }
-
-    public boolean isBookAsGuestAllowed() {
-        return bookAsGuestAllowed;
     }
 
     public void setBookAsGuestAllowed(boolean bookAsGuestAllowed) {

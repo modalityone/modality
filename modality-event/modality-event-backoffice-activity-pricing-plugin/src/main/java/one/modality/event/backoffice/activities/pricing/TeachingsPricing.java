@@ -9,6 +9,6 @@ import one.modality.ecommerce.document.service.PolicyAggregate;
 final class TeachingsPricing extends AbstractItemFamilyPricing {
 
     public TeachingsPricing(PolicyAggregate eventPolicy) {
-        super(KnownItemFamily.TEACHING, EventPricingI18nKeys.Teachings, eventPolicy, false);
+        super(KnownItemFamily.TEACHING, EventPricingI18nKeys.Teachings, eventPolicy, true);
     }
 }

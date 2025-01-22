@@ -23,7 +23,7 @@ final class AudioRecordingPricing extends AbstractItemFamilyPricing {
         ReactiveEntitiesMapper.<Item>createReactiveChain()
             .setDataSourceModel(DataSourceModelService.getDefaultDataSourceModel())
             //.setStore(EntityStore.create(DataSourceModelService.getDefaultDataSourceModel()))
-            .always("{class: 'Item', fields: 'code,name', orderBy: 'id'}")
+            .always("{class: 'Item', fields: 'code,name', orderBy: 'ord,id'}")
             .always(DqlStatement.where("!deprecated and family.code = ?", KnownItemFamily.AUDIO_RECORDING.getCode()))
             .always(FXOrganization.organizationProperty(), lang -> DqlStatement.where("organization = ?", lang))
             .storeEntitiesInto(ORGANIZATION_RECORDING_ITEMS)
@@ -31,7 +31,7 @@ final class AudioRecordingPricing extends AbstractItemFamilyPricing {
     }
 
     public AudioRecordingPricing(PolicyAggregate eventPolicy) {
-        super(KnownItemFamily.AUDIO_RECORDING, EventPricingI18nKeys.AudioRecordings, eventPolicy, true);
+        super(KnownItemFamily.AUDIO_RECORDING, EventPricingI18nKeys.AudioRecordings, eventPolicy, false);
         Site venue = eventPolicy.getEvent().getVenue();
         ObservableLists.bindConverted(availableSiteItems, ORGANIZATION_RECORDING_ITEMS, item -> new SiteItem(venue, item));
     }

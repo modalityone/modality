@@ -138,6 +138,10 @@ public final class PolicyAggregate {
                 .collect(Collectors.toList());
     }
 
+    public boolean hasFacilityFees() {
+        return getRatesStream().anyMatch(rate -> rate.getFacilityFeePrice() != null || rate.getFacilityFeeDiscount() != null);
+    }
+
     // The following methods are meant to be used for serialization, not for application code
 
     public String getRatesQueryBase() {
