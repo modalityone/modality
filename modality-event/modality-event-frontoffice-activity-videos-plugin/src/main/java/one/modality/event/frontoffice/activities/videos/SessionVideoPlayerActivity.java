@@ -12,13 +12,12 @@ import dev.webfx.stack.i18n.spi.impl.I18nSubKey;
 import dev.webfx.stack.orm.entity.EntityId;
 import dev.webfx.stack.orm.entity.EntityStore;
 import dev.webfx.stack.orm.entity.EntityStoreQuery;
+import dev.webfx.stack.orm.entity.UpdateStore;
 import javafx.application.Platform;
 import javafx.geometry.Insets;
 import javafx.scene.Node;
 import javafx.scene.control.Label;
-import one.modality.base.shared.entities.Event;
-import one.modality.base.shared.entities.Media;
-import one.modality.base.shared.entities.ScheduledItem;
+import one.modality.base.shared.entities.*;
 import one.modality.crm.shared.services.authn.fx.FXUserPersonId;
 import one.modality.event.frontoffice.activities.audiorecordings.AudioRecordingsI18nKeys;
 
@@ -32,6 +31,7 @@ final class SessionVideoPlayerActivity extends AbstractVideoPlayerActivity {
 
 
     private Label videoExpirationLabel;
+
 
     @Override
     public void onResume() {
@@ -53,10 +53,11 @@ final class SessionVideoPlayerActivity extends AbstractVideoPlayerActivity {
             } else {
                 //TODO: change the request so it manages the repeatedEvent
                 entityStore.executeQueryBatch(
-                        new EntityStoreQuery("select name, expirationDate, comment, date, startTime, endTime, programScheduledItem.(name, startTime, endTime, timeline.(startTime, endTime)), event.(name, shortDescription, vodExpirationDate, type.recurringItem, label)" +
+                        new EntityStoreQuery("select name, expirationDate, comment, date, startTime, endTime, programScheduledItem.(name, startTime, endTime, timeline.(startTime, endTime)), event.(name, shortDescription, vodExpirationDate, type.recurringItem, label), " +
+                            " (select id from Attendance where scheduledItem=si.bookableScheduledItem and documentLine.document.person=? limit 1) as attendanceId " +
                             " from ScheduledItem si" +
                             " where id=? and published and exists(select Attendance where scheduledItem=si.bookableScheduledItem and documentLine.(!cancelled and document.(person=? and confirmed and price_balance<=0)))",
-                            new Object[]{scheduledVideoItemId, userPersonId}),
+                            new Object[]{userPersonId,scheduledVideoItemId, userPersonId}),
                         new EntityStoreQuery("select url" +
                             " from Media" +
                             " where scheduledItem.(id=? and online)",
@@ -64,7 +65,16 @@ final class SessionVideoPlayerActivity extends AbstractVideoPlayerActivity {
                     .onFailure(Console::log)
                     .onSuccess(entityLists -> Platform.runLater(() -> {
                         Collections.setAll(publishedMedias, entityLists[1]);
-                        scheduledVideoItemProperty.set((ScheduledItem) Collections.first(entityLists[0]));  // Will update UI
+                        scheduledVideoItemProperty.set((ScheduledItem) Collections.first(entityLists[0]));
+                        Object attendanceId = scheduledVideoItemProperty.get().getFieldValue("attendanceId");
+                        UpdateStore updateStore = UpdateStore.createAbove(scheduledVideoItemProperty.get().getEvent().getStore());
+                        publishedMedias.forEach(media -> {
+                            MediaConsumption mediaConsumption = updateStore.insertEntity(MediaConsumption.class);
+                            mediaConsumption.setAttendance(attendanceId);
+                            mediaConsumption.setPlayed(true);
+                            mediaConsumption.setMedia(media);
+                        });
+                        updateStore.submitChanges();
                     }));
             }
         }, scheduledVideoItemIdProperty, FXUserPersonId.userPersonIdProperty());

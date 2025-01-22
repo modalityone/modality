@@ -114,25 +114,27 @@ final class EventVideosWallActivity extends ViewDomainActivityBase {
                     .onFailure(Console::log)
                     .onSuccess(event -> {
                         Event currentEvent = (Event) event.get(0);
-                        Object eventIdContainingVideos =  Entities.getPrimaryKey(currentEvent);
-                        if(currentEvent.getRepeatedEventId()!=null) {
+                        Object eventIdContainingVideos = Entities.getPrimaryKey(currentEvent);
+                        if (currentEvent.getRepeatedEventId() != null) {
                             eventIdContainingVideos = Entities.getPrimaryKey(currentEvent.getRepeatedEventId());
                         }
                         // In this code: programScheduledItem.timeline..startTime, the double . means we do a left join, that allow null value (if the type of event is recurring, the timeline of the programScheduledItem is null
-                        entityStore.executeQueryBatch(new EntityStoreQuery("select name, date, expirationDate, programScheduledItem.(name, startTime, endTime, timeline.(startTime, endTime)), published, event.(name, type, livestreamUrl, recurringWithVideo), vodDelayed " +
-                            " from ScheduledItem si " +
-                            " where event=? and bookableScheduledItem.item.family.code=? and item.code=? and exists(select Attendance where scheduledItem=si.bookableScheduledItem and documentLine.(!cancelled and document.(person=? and event=? and confirmed and price_balance<=0)))" +
-                            " order by date, programScheduledItem.timeline..startTime",
-                            new Object[]{eventIdContainingVideos, KnownItemFamily.TEACHING.getCode(), KnownItem.VIDEO.getCode(), userPersonId,currentEvent}))
-                    .onFailure(Console::log)
-                    .onSuccess(entityLists -> Platform.runLater(() -> {
-                        scheduledItems.setAll(entityLists[0]);
-                        eventProperty.set(currentEvent);
-                    }));
-            });}
+                        entityStore.executeQueryBatch(new EntityStoreQuery("select name, date, expirationDate, programScheduledItem.(name, startTime, endTime, timeline.(startTime, endTime)), published, event.(name, type, livestreamUrl, recurringWithVideo), vodDelayed, " +
+                                " (exists(select MediaConsumption where media.scheduledItem=si and attendance.documentLine.document.person=?) as attended), " +
+                                " (select id from Attendance where scheduledItem=si.bookableScheduledItem and documentLine.document.person=? limit 1) as attendanceId " +
+                                " from ScheduledItem si " +
+                                " where event=? and bookableScheduledItem.item.family.code=? and item.code=? and exists(select Attendance a where scheduledItem=si.bookableScheduledItem and documentLine.(!cancelled and document.(person=? and event=? and confirmed and price_balance<=0)))" +
+                                " order by date, programScheduledItem.timeline..startTime",
+                                new Object[]{userPersonId, userPersonId, eventIdContainingVideos, KnownItemFamily.TEACHING.getCode(), KnownItem.VIDEO.getCode(), userPersonId, currentEvent}))
+                            .onFailure(Console::log)
+                            .onSuccess(entityLists -> Platform.runLater(() -> {
+                                scheduledItems.setAll(entityLists[0]);
+                                eventProperty.set(currentEvent);
+                            }));
+                    });
+            }
         }, pathEventIdProperty, FXUserPersonId.userPersonIdProperty());
     }
-
 
     @Override
     public void onResume() {
@@ -161,7 +163,7 @@ final class EventVideosWallActivity extends ViewDomainActivityBase {
         eventLabel.setTextAlignment(TextAlignment.CENTER);
         eventLabel.setPadding(new Insets(0, 0, 12, 0));
         HtmlText eventDescriptionHtmlText = new HtmlText();
-        I18n.bindI18nTextProperty(eventDescriptionHtmlText.textProperty(),new I18nSubKey("expression: i18n(shortDescription)", eventProperty),eventProperty);
+        I18n.bindI18nTextProperty(eventDescriptionHtmlText.textProperty(), new I18nSubKey("expression: i18n(shortDescription)", eventProperty), eventProperty);
 
 //        eventDescriptionHtmlText.setWrapText(true);
 //        eventDescriptionHtmlText.setTextAlignment(TextAlignment.LEFT);
@@ -210,7 +212,7 @@ final class EventVideosWallActivity extends ViewDomainActivityBase {
             headerHBox,
             currentDayScheduleVBox,
             scheduleTitleVBox,
-         //   daysColumnPane,
+            //   daysColumnPane,
             scheduleContainerGrowingPane
         );
         loadedContentVBox.setAlignment(Pos.CENTER);
@@ -241,7 +243,7 @@ final class EventVideosWallActivity extends ViewDomainActivityBase {
             } else { // otherwise we display loadedContentVBox and set the content of audioTracksVBox
                 pageContainer.setContent(loadedContentVBox);
                 Object imageTag = ModalityCloudinary.getEventCoverImageTag(Entities.getPrimaryKey(eventProperty.get()), I18n.getLanguage().toString());
-                if(eventProperty.get().getRepeatedEvent()!=null)
+                if (eventProperty.get().getRepeatedEvent() != null)
                     imageTag = ModalityCloudinary.getEventCoverImageTag(Entities.getPrimaryKey(eventProperty.get().getRepeatedEvent()), I18n.getLanguage().toString());
 
                 String pictureId = String.valueOf(imageTag);
@@ -348,10 +350,10 @@ final class EventVideosWallActivity extends ViewDomainActivityBase {
 
         Map<LocalDate, Button> dayButtonMap = new HashMap<>();
         new TreeMap<>(perDayGroups) // The purpose of using a TreeMap is to sort the groups by keys (= days)
-            .forEach((day, attendance) -> {
+            .forEach((day, scheduledItem) -> {
                 videosDayScheduleViews.add(
                     // Passing the day, the videos of that day, and the history (for backward navigation)
-                    new VideosDayScheduleView(day, attendance, getHistory(), isFirst[0], entityStore));
+                    new VideosDayScheduleView(day, scheduledItem, getHistory(), isFirst[0], entityStore));
                 if (firstDay[0] == null) firstDay[0] = day;
                 Button dateButton;
                 dateButton = Bootstrap.primaryButton(new Button(day.format(dateFormatter)));
@@ -361,7 +363,7 @@ final class EventVideosWallActivity extends ViewDomainActivityBase {
 
                 dateButton.setOnAction(e -> {
                     videosDayScheduleViews.clear();
-                    videosDayScheduleViews.add(new VideosDayScheduleView(day, attendance, getHistory(), true, entityStore));
+                    videosDayScheduleViews.add(new VideosDayScheduleView(day, scheduledItem, getHistory(), true, entityStore));
                     currentDaySelectedProperty.set(day);
                 });
                 daysColumnPane.getChildren().add(dateButton);

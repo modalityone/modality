@@ -15,7 +15,6 @@ import dev.webfx.stack.orm.entity.UpdateStore;
 import dev.webfx.stack.orm.entity.binding.EntityBindings;
 import javafx.application.Platform;
 import javafx.beans.property.BooleanProperty;
-import javafx.beans.property.SimpleBooleanProperty;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Cursor;
@@ -104,7 +103,7 @@ final class VideosDayScheduleView {
 
         actionButtonMonoPane.setMinWidth(40);
         actionButtonMonoPane.setPrefWidth(BUTTON_PREF_SIZE);
-        actionButtonMonoPane.setMaxWidth(50);
+        actionButtonMonoPane.setMaxWidth(80);
 
 
         final int[] currentRow = {0};
@@ -185,7 +184,7 @@ final class VideosDayScheduleView {
 
         private final int[] currentRow;
         private final Label statusLabel = I18nControls.newLabel(I18nKeys.upperCase(VideosI18nKeys.OnTime));
-        private final Button actionButton = Bootstrap.dangerButton(I18nControls.newButton(VideosI18nKeys.Watch));
+        private Button actionButton = Bootstrap.dangerButton(I18nControls.newButton(VideosI18nKeys.Watch));
         private ScheduledItem scheduledItem;
         private Attendance attendance;
         private final UpdateStore updateStore;
@@ -196,18 +195,25 @@ final class VideosDayScheduleView {
             this.currentRow = currentRow;
             actionButton.setGraphicTextGap(10);
             actionButton.setCursor(Cursor.HAND);
-            actionButton.setMinWidth(130);
+            actionButton.setMinWidth(150);
             statusLabel.setWrapText(true);
             statusLabel.setPadding(new Insets(0, 10, 0, 0));
             scheduledItem = s;
             updateStore = UpdateStore.createAbove(entityStore);
             //attendance = updateStore.updateEntity(a);
-            attendanceIsAttendedProperty = new SimpleBooleanProperty(false);//EntityBindings.getBooleanFieldProperty(attendance,Attendance.attended);
+            attendanceIsAttendedProperty = EntityBindings.getBooleanFieldProperty(scheduledItem,"attended");
             scheduledItemPublishedProperty = EntityBindings.getBooleanFieldProperty(scheduledItem, ScheduledItem.published);
+            if (attendanceIsAttendedProperty.get()) {
+                I18nControls.bindI18nProperties(actionButton, VideosI18nKeys.WatchAgain);
+                actionButton.getStyleClass().clear();
+                Bootstrap.secondaryButton(actionButton);
+            }
             attendanceIsAttendedProperty.addListener(e ->
                 UiScheduler.scheduleDelay(3000, () -> {
                     if (attendanceIsAttendedProperty.get()) {
                         I18nControls.bindI18nProperties(actionButton, VideosI18nKeys.WatchAgain);
+                        actionButton.getStyleClass().clear();
+                        Bootstrap.secondaryButton(actionButton);
                     }
                 }));
             scheduledItemPublishedProperty.addListener(e -> Platform.runLater(() -> computeStatusLabelAndWatchButton()));
@@ -366,7 +372,7 @@ final class VideosDayScheduleView {
                 I18nControls.bindI18nProperties(statusLabel, I18nKeys.upperCase(VideosI18nKeys.Available));
                 actionButton.setOnAction(e -> {
                     browsingHistory.push(SessionVideoPlayerRouting.getVideoOfSessionPath(scheduledItem.getId()));
-                    // attendance.setAttended(true);
+                   // attendance.setAttended(true);
                     updateStore.submitChanges()
                         .onFailure(Console::log)
                         .onSuccess(Console::log);
