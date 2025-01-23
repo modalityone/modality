@@ -281,6 +281,7 @@ public abstract class MediaLinksManagement {
                     }
                     currentMedia.get(0).setUrl(linkText);
                     publishedInfo.setVisible(true);
+                    publishedSwitch.setSelected(true);
                     thirdLine.setVisible(true);
                     thirdLine.setManaged(true);
                     //If the new value is empty, we delete the media
