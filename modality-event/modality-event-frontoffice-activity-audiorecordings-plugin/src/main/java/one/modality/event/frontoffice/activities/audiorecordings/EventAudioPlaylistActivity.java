@@ -32,7 +32,6 @@ import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
-import javafx.geometry.VPos;
 import javafx.scene.Node;
 import javafx.scene.control.Label;
 import javafx.scene.image.Image;
@@ -197,8 +196,7 @@ final class EventAudioPlaylistActivity extends ViewDomainActivityBase {
 
         Node loadingContentIndicator = new GoldenRatioPane(ControlUtil.createProgressIndicator(100));
 
-        ScalePane pageContainer = new ScalePane();
-        pageContainer.setVAlignment(VPos.TOP);
+        MonoPane pageContainer = new MonoPane();
 
         // *************************************************************************************************************
         // *********************************** Reacting to parameter changes *******************************************
@@ -210,7 +208,7 @@ final class EventAudioPlaylistActivity extends ViewDomainActivityBase {
                 pageContainer.setContent(loadingContentIndicator);
                 // TODO display something else (ex: next online events to book) when the user is not logged in, or registered
             } else { // otherwise we display loadedContentVBox and set the content of audioTracksVBox
-                pageContainer.setContent(loadedContentVBox);
+                pageContainer.setContent(new ScalePane(loadedContentVBox));
                 Object imageTag = ModalityCloudinary.getEventCoverImageTag(eventProperty.get().getId().getPrimaryKey().toString(), extractLang(pathItemCodeProperty.get()));
                 if(eventProperty.get().getRepeatedEvent()!=null)
                     imageTag = ModalityCloudinary.getEventCoverImageTag(eventProperty.get().getRepeatedEvent().getId().getPrimaryKey().toString(), extractLang(pathItemCodeProperty.get()));
