@@ -910,11 +910,6 @@ CollapsePane.menu-bar.lang-menu-bar {
     -fx-text-alignment: left; /* Aligns text */
 }
 
-.audio-library .description {
-    -fx-pref-width: 450;
-    -fx-max-width: 450;
-}
-
 .list-tracks-title {
     -fx-font-family: "Poppins";
     -fx-font-weight: bold;
@@ -924,7 +919,6 @@ CollapsePane.menu-bar.lang-menu-bar {
 }
 
 .bottom-border {
-    -fx-padding: 0 10 20 -50;
     -fx-border-color: transparent transparent #4A4748 transparent; -fx-border-width: 0 0 0.2 0;
 }
 

@@ -47,6 +47,7 @@ import javafx.scene.text.TextAlignment;
 import javafx.stage.Screen;
 import one.modality.base.client.cloudinary.ModalityCloudinary;
 import one.modality.base.client.icons.SvgIcons;
+import one.modality.base.frontoffice.utility.page.FOPageUtil;
 import one.modality.base.shared.entities.*;
 import one.modality.crm.shared.services.authn.fx.FXUserPersonId;
 
@@ -62,7 +63,6 @@ import java.util.stream.IntStream;
  */
 final class EventAudioPlaylistActivity extends ViewDomainActivityBase {
 
-    private static final double PAGE_TOP_BOTTOM_PADDING = 100;
     private static final double IMAGE_HEIGHT = 188;
 
     private final ObjectProperty<Object> pathEventIdProperty = new SimpleObjectProperty<>() {
@@ -281,8 +281,7 @@ final class EventAudioPlaylistActivity extends ViewDomainActivityBase {
         // *************************************************************************************************************
 
         // Setting a max width for big desktop screens
-        pageContainer.setPadding(new Insets(PAGE_TOP_BOTTOM_PADDING, 0, PAGE_TOP_BOTTOM_PADDING, 0));
-        return pageContainer;
+        return FOPageUtil.restrictToMaxPageWidthAndApplyPageLeftTopRightBottomPadding(pageContainer);
     }
 
     private String extractLang(String itemCode) {
