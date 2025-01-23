@@ -82,6 +82,7 @@ final class LivestreamPlayerActivity extends AbstractVideoPlayerActivity {
                         }
                         //2nd case: the remaining scheduledItem of the days have not started yet. We schedule the MediaConsumption insertion
                         // (in case the user doesn't refresh the page until the next video. If the next video is an another day, we have refreshed the startLogic after 14h in the constructor)
+                        //TODO: not tested for now because no event to test
                         todayScheduledItemsList.forEach(currentScheduledItem -> {
                             LocalDateTime scheduledItemStart = currentScheduledItem.getDate().atTime(currentScheduledItem.getProgramScheduledItem().getStartTime());
                             if (LocalDateTime.now().isBefore(scheduledItemStart)) {

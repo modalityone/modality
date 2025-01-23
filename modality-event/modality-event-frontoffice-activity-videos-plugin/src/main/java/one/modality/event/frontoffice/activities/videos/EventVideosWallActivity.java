@@ -268,7 +268,7 @@ final class EventVideosWallActivity extends ViewDomainActivityBase {
                     }));
                 if (eventProperty.get().getVodExpirationDate() != null) {
                     if (LocalDateTime.now().isBefore(eventProperty.get().getVodExpirationDate()))
-                        I18nControls.bindI18nProperties(videoExpirationLabel, VideosI18nKeys.VideoAvailableUntil, eventProperty.get().getVodExpirationDate().format(DateTimeFormatter.ofPattern("d MMMM, yyyy ' - ' HH:mm")));
+                        I18nControls.bindI18nProperties(videoExpirationLabel, VideosI18nKeys.EventAvailableUntil, eventProperty.get().getVodExpirationDate().format(DateTimeFormatter.ofPattern("d MMMM, yyyy ' - ' HH:mm")));
                     else
                         I18nControls.bindI18nProperties(videoExpirationLabel, VideosI18nKeys.VideoExpiredSince, eventProperty.get().getVodExpirationDate().format(DateTimeFormatter.ofPattern("d MMMM, yyyy ' - ' HH:mm")));
                     videoExpirationLabel.setVisible(true);

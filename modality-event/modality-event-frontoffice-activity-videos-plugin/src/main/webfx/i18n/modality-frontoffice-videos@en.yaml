@@ -12,6 +12,8 @@ Watch:
     fill: "#FFFFFF"
 VideoAvailableUntil:
   textFill: "#41BA4D"
+EventAvailableUntil:
+  textFill: "#41BA4D"
 VideoExpiredSince:
   textFill: "#FF0404"
 OnTime:
