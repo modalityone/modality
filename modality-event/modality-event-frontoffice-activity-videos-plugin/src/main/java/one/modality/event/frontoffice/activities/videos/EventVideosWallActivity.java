@@ -26,7 +26,6 @@ import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
-import javafx.geometry.VPos;
 import javafx.scene.Node;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
@@ -200,16 +199,13 @@ final class EventVideosWallActivity extends ViewDomainActivityBase {
 
 
         VBox videoScheduleVBox = new VBox(20); // Will be populated later (see reacting code below)
-        ScalePane scalePane = new ScalePane(videoScheduleVBox);
-        scalePane.setVAlignment(VPos.TOP);
-        GrowingPane scheduleContainerGrowingPane = new GrowingPane(scalePane);
 
         VBox loadedContentVBox = new VBox(40,
             headerHBox,
             currentDayScheduleVBox,
             scheduleTitleVBox,
             //   daysColumnPane,
-            scheduleContainerGrowingPane
+            new ScalePane(videoScheduleVBox)
         );
         loadedContentVBox.setAlignment(Pos.CENTER);
 
