@@ -255,8 +255,8 @@ final class EventAudioPlaylistActivity extends ViewDomainActivityBase {
                                         scheduledAudioItems.get(index),
                                         publishedMedias,
                                         audioPlayer,
-                                        index + 1 //The index is used to be display in the title, to number the different tracks
-                                    ).getView()
+                                        index + 1, //The index is used to be display in the title, to number the different tracks
+                                        scheduledAudioItems.size()).getView()
                                 )
                                 .collect(Collectors.toList()) // Collect the result as a List<Node>
                         );
