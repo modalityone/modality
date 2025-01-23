@@ -17,7 +17,10 @@ import javafx.application.Platform;
 import javafx.geometry.Insets;
 import javafx.scene.Node;
 import javafx.scene.control.Label;
-import one.modality.base.shared.entities.*;
+import one.modality.base.shared.entities.Event;
+import one.modality.base.shared.entities.Media;
+import one.modality.base.shared.entities.MediaConsumption;
+import one.modality.base.shared.entities.ScheduledItem;
 import one.modality.crm.shared.services.authn.fx.FXUserPersonId;
 import one.modality.event.frontoffice.activities.audiorecordings.AudioRecordingsI18nKeys;
 
@@ -45,6 +48,7 @@ final class SessionVideoPlayerActivity extends AbstractVideoPlayerActivity {
         // Creating our own entity store to hold the loaded data without interfering with other activities
         EntityStore entityStore = EntityStore.create(getDataSourceModel()); // Activity datasource model is available at this point
         FXProperties.runNowAndOnPropertiesChange(() -> {
+            displayProgressIndicator();
             Object scheduledVideoItemId = scheduledVideoItemIdProperty.get();
             EntityId userPersonId = FXUserPersonId.getUserPersonId();
             if (scheduledVideoItemId == null || userPersonId == null) {
@@ -68,17 +72,20 @@ final class SessionVideoPlayerActivity extends AbstractVideoPlayerActivity {
                         scheduledVideoItemProperty.set((ScheduledItem) Collections.first(entityLists[0]));
                         Object attendanceId = scheduledVideoItemProperty.get().getFieldValue("attendanceId");
                         UpdateStore updateStore = UpdateStore.createAbove(scheduledVideoItemProperty.get().getEvent().getStore());
+                        hideProgressIndicator();
                         publishedMedias.forEach(media -> {
                             MediaConsumption mediaConsumption = updateStore.insertEntity(MediaConsumption.class);
                             mediaConsumption.setAttendance(attendanceId);
                             mediaConsumption.setPlayed(true);
                             mediaConsumption.setMedia(media);
+                            mediaConsumption.setScheduledItem(scheduledVideoItemProperty.get());
                         });
                         updateStore.submitChanges();
                     }));
             }
         }, scheduledVideoItemIdProperty, FXUserPersonId.userPersonIdProperty());
     }
+
 
     public Node buildUi() {
         Node node = super.buildUi();
@@ -87,7 +94,6 @@ final class SessionVideoPlayerActivity extends AbstractVideoPlayerActivity {
         titleVBox.getChildren().add(videoExpirationLabel);
 
         sessionDescriptionVBox.setPadding(new Insets(100, 20, 0, 20));
-
 
         // *************************************************************************************************************
         // *********************************** Reacting to parameter changes *******************************************

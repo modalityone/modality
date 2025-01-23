@@ -129,8 +129,8 @@ final class AudioRecordingsActivity extends ViewDomainActivityBase {
         VBox pageContainer = new VBox(
             headerLabel,
             checkoutLabel,
-            columnsPane,
-            noContentVBox
+            noContentVBox,
+            columnsPane
         );
 
         return FOPageUtil.restrictToMaxPageWidthAndApplyPageLeftTopRightBottomPadding(pageContainer);

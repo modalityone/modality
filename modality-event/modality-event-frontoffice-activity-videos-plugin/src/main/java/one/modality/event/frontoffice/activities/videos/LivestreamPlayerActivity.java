@@ -5,10 +5,10 @@ import dev.webfx.extras.player.multi.MultiPlayer;
 import dev.webfx.extras.player.multi.all.AllPlayers;
 import dev.webfx.kit.util.properties.FXProperties;
 import dev.webfx.platform.console.Console;
+import dev.webfx.platform.scheduler.Scheduler;
 import dev.webfx.platform.util.Numbers;
 import dev.webfx.stack.i18n.controls.I18nControls;
-import dev.webfx.stack.orm.entity.EntityStore;
-import dev.webfx.stack.orm.entity.EntityStoreQuery;
+import dev.webfx.stack.orm.entity.*;
 import javafx.application.Platform;
 import javafx.beans.property.ObjectProperty;
 import javafx.beans.property.SimpleObjectProperty;
@@ -17,8 +17,12 @@ import javafx.geometry.Pos;
 import javafx.scene.Node;
 import javafx.scene.control.Label;
 import javafx.scene.layout.VBox;
-import one.modality.base.shared.entities.Event;
+import one.modality.base.shared.entities.*;
 import one.modality.crm.shared.services.authn.fx.FXUserPersonId;
+
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.temporal.ChronoUnit;
 
 /**
  * @author Bruno Salmon
@@ -29,6 +33,12 @@ final class LivestreamPlayerActivity extends AbstractVideoPlayerActivity {
     private final MultiPlayer sessionVideoPlayer = AllPlayers.createAllVideoPlayer();
     private final SimpleObjectProperty<String> livestreamUrlProperty = new SimpleObjectProperty<>();
     private Event currentEvent;
+    private EntityList<ScheduledItem> todayScheduledItemsList;
+
+    public LivestreamPlayerActivity() {
+        //We relaunch every 14 hours the request (in case the user never close the page, and to make sure the coherence of MediaConsumption is ok)
+        Scheduler.schedulePeriodic(1000 * 3600 * 14, this::startLogic);
+    }
 
     @Override
     protected void updateModelFromContextParameters() {
@@ -41,18 +51,51 @@ final class LivestreamPlayerActivity extends AbstractVideoPlayerActivity {
         EntityStore entityStore = EntityStore.create(getDataSourceModel()); // Activity datasource model is available at this point
         FXProperties.runNowAndOnPropertiesChange(() -> {
             Object eventId = eventIdProperty.get();
-            // EntityId userPersonId = FXUserPersonId.getUserPersonId();
-            //TODO add the verification to check if the person is registered for this event and has pay.
-            entityStore.executeQuery(
-                    new EntityStoreQuery("select name, shortDescription, livestreamUrl" +
-                        " from event" +
-                        " where id=?", // and exists(select Attendance where document.(person=? and price_balance<=0)))",
-                        new Object[]{eventId}))//, userPersonId}))
+            EntityId userPersonId = FXUserPersonId.getUserPersonId();
+            entityStore.<ScheduledItem>executeQuery(
+                    new EntityStoreQuery("select event.(name, shortDescription, livestreamUrl), date, programScheduledItem.(startTime, endTime), " +
+                        " (select id from Attendance where scheduledItem=si.bookableScheduledItem and documentLine.document.person=? limit 1) as attendanceId " +
+                        " from ScheduledItem si" +
+                        " where si.event.id=? and exists(select Attendance a where documentLine.(!cancelled and document.(person=? and confirmed and price_balance<=0)) and exists(select ScheduledItem where bookableScheduledItem=a.scheduledItem and item.family.code=?)) "
+                        + " and si.item.code=?"
+                        + " and si.date=? and si.programScheduledItem.endTime>?",
+                        new Object[]{userPersonId, eventId, userPersonId, KnownItemFamily.VIDEO.getCode(), KnownItem.VIDEO.getCode(), LocalDate.now(), LocalDateTime.now()}))
                 .onFailure(Console::log)
-                .onSuccess(entity -> Platform.runLater(() -> {
-                    if (!entity.isEmpty()) {
-                        currentEvent = (Event) entity.get(0);
+                .onSuccess(scheduledItemList -> Platform.runLater(() -> {
+                    if (!scheduledItemList.isEmpty()) {
+                        todayScheduledItemsList = scheduledItemList;
+                        currentEvent = ((ScheduledItem) todayScheduledItemsList.get(0)).getEvent();
+                        UpdateStore updateStore = UpdateStore.createAbove(currentEvent.getStore());
                         livestreamUrlProperty.set(currentEvent.getLivestreamUrl());
+                        //Here we update the MediaConsumption table.
+                        //1st case: the scheduledItem has started yet but not finished
+                        ScheduledItem firstScheduledItem = (ScheduledItem) todayScheduledItemsList.get(0);
+                        LocalDateTime firstScheduledItemStart = firstScheduledItem.getDate().atTime(firstScheduledItem.getProgramScheduledItem().getStartTime());
+                        LocalDateTime firstScheduledItemEnd = firstScheduledItem.getDate().atTime(firstScheduledItem.getProgramScheduledItem().getEndTime());
+                        Object attendanceId = firstScheduledItem.getFieldValue("attendanceId");
+                        if (LocalDateTime.now().isAfter(firstScheduledItemStart) && LocalDateTime.now().isBefore(firstScheduledItemEnd)) {
+                            MediaConsumption mediaConsumption = updateStore.insertEntity(MediaConsumption.class);
+                            mediaConsumption.setAttendance(attendanceId);
+                            mediaConsumption.setLivestreamed(true);
+                            mediaConsumption.setScheduledItem(firstScheduledItem);
+                            updateStore.submitChanges();
+                        }
+                        //2nd case: the remaining scheduledItem of the days have not started yet. We schedule the MediaConsumption insertion
+                        // (in case the user doesn't refresh the page until the next video. If the next video is an another day, we have refreshed the startLogic after 14h in the constructor)
+                        todayScheduledItemsList.forEach(currentScheduledItem -> {
+                            LocalDateTime scheduledItemStart = currentScheduledItem.getDate().atTime(currentScheduledItem.getProgramScheduledItem().getStartTime());
+                            if (LocalDateTime.now().isBefore(scheduledItemStart)) {
+                                long startInMs = ChronoUnit.MILLIS.between(scheduledItemStart, LocalDateTime.now());
+                                Object currentAttendanceId = currentScheduledItem.getFieldValue("attendanceId");
+                                Scheduler.scheduleDelay(startInMs, () -> {
+                                    MediaConsumption mediaConsumption = updateStore.insertEntity(MediaConsumption.class);
+                                    mediaConsumption.setAttendance(currentAttendanceId);
+                                    mediaConsumption.setLivestreamed(true);
+                                    mediaConsumption.setScheduledItem(currentScheduledItem);
+                                    updateStore.submitChanges();
+                                });
+                            }
+                        });
                     }
                 }));
 
@@ -70,13 +113,13 @@ final class LivestreamPlayerActivity extends AbstractVideoPlayerActivity {
         Label liveMessageLabel = I18nControls.newLabel(VideosI18nKeys.LiveAnnoucements);
         liveMessageLabel.setWrapText(true);
         liveMessageLabel.setAlignment(Pos.CENTER);
-        liveMessageVBox.getChildren().addAll(liveMessageTitleLabel,liveMessageLabel);
+        liveMessageVBox.getChildren().addAll(liveMessageTitleLabel, liveMessageLabel);
 
         sessionDescriptionVBox.setPadding(new Insets(0, 20, 0, 20));
         sessionCommentLabel.managedProperty().bind(sessionCommentLabel.textProperty().isNotEmpty());
 
         //We add it after the headerHBox
-        pageContainer.getChildren().add(pageContainer.getChildren().indexOf(headerHBox)+1,liveMessageVBox);
+        pageContainer.getChildren().add(pageContainer.getChildren().indexOf(headerHBox) + 1, liveMessageVBox);
         Node videoView = sessionVideoPlayer.getMediaView();
         playersVBoxContainer.getChildren().add(videoView);
 
@@ -101,7 +144,7 @@ final class LivestreamPlayerActivity extends AbstractVideoPlayerActivity {
     @Override
     protected void syncHeader() {
         String title = "Livestream";
-        if(currentEvent!= null) {
+        if (currentEvent != null) {
             eventLabel.setText(currentEvent.getName());
             eventDescriptionHtmlText.setText(currentEvent.getShortDescription());
             if (currentEvent != null)

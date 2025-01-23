@@ -2,16 +2,11 @@ package one.modality.event.frontoffice.activities.videos;
 
 import dev.webfx.extras.panes.MonoPane;
 import dev.webfx.extras.styles.bootstrap.Bootstrap;
-import dev.webfx.platform.ast.ReadOnlyAstObject;
-import dev.webfx.platform.console.Console;
 import dev.webfx.platform.uischeduler.UiScheduler;
 import dev.webfx.platform.util.time.Times;
 import dev.webfx.platform.windowhistory.spi.BrowsingHistory;
 import dev.webfx.stack.i18n.I18nKeys;
 import dev.webfx.stack.i18n.controls.I18nControls;
-import dev.webfx.stack.orm.entity.EntityStore;
-import dev.webfx.stack.orm.entity.EntityStoreQuery;
-import dev.webfx.stack.orm.entity.UpdateStore;
 import dev.webfx.stack.orm.entity.binding.EntityBindings;
 import javafx.application.Platform;
 import javafx.beans.property.BooleanProperty;
@@ -25,16 +20,13 @@ import javafx.scene.layout.HBox;
 import javafx.scene.layout.Region;
 import javafx.scene.layout.VBox;
 import one.modality.base.client.messaging.ModalityMessaging;
-import one.modality.base.shared.entities.Attendance;
 import one.modality.base.shared.entities.ScheduledItem;
-import one.modality.crm.shared.services.authn.fx.FXUserPersonId;
 
 import java.time.Duration;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
-import java.util.Objects;
 
 /**
  * @author Bruno Salmon
@@ -53,24 +45,18 @@ final class VideosDayScheduleView {
     private final MonoPane actionButtonMonoPane = new MonoPane();
     private final MonoPane remarkHeaderMonoPane = new MonoPane();
     private final Separator separator1 = new Separator();
-    private final Separator separator2 = new Separator();
     private final HBox mainLine = new HBox();
     private final VBox mainVBox = new VBox();
     private final int DATE_PREF_SIZE = 150;
     private final int STATUS_PREF_SIZE = 150;
     private final int NAME_PREF_SIZE = 250;
     private final int TIME_PREF_SIZE = 150;
-    private final int REMARK_PREF_SIZE = 300;
-    private final int BUTTON_PREF_SIZE = 300;
 
 
-    private final EntityStore entityStore;
-
-    public VideosDayScheduleView(LocalDate day, List<ScheduledItem> dayScheduledVideos, BrowsingHistory browsingHistory, boolean displayHeader, EntityStore entityStore) {
+    public VideosDayScheduleView(LocalDate day, List<ScheduledItem> dayScheduledVideos, BrowsingHistory browsingHistory, boolean displayHeader) {
         this.day = day;
         this.dayScheduledVideos = dayScheduledVideos;
         this.browsingHistory = browsingHistory;
-        this.entityStore = entityStore;
         buildUi(displayHeader);
     }
 
@@ -81,7 +67,7 @@ final class VideosDayScheduleView {
 
     private void buildUi(boolean displayHeader) {
 
-     //   dateMonoPane.setMinWidth(40);
+        //   dateMonoPane.setMinWidth(40);
         dateMonoPane.setPrefWidth(DATE_PREF_SIZE);
         dateMonoPane.setMaxWidth(DATE_PREF_SIZE);
 
@@ -98,21 +84,21 @@ final class VideosDayScheduleView {
         timeVBox.setMaxWidth(TIME_PREF_SIZE);
 
         remarkMonoPane.setMinWidth(40);
+        int REMARK_PREF_SIZE = 300;
         remarkMonoPane.setPrefWidth(REMARK_PREF_SIZE);
         remarkMonoPane.setMaxWidth(REMARK_PREF_SIZE);
 
         actionButtonMonoPane.setMinWidth(40);
+        int BUTTON_PREF_SIZE = 300;
         actionButtonMonoPane.setPrefWidth(BUTTON_PREF_SIZE);
         actionButtonMonoPane.setMaxWidth(80);
 
 
-        final int[] currentRow = {0};
-
         if (displayHeader) {
-            addHeaderRow(currentRow);
+            addHeaderRow();
         } else {
             if (dayScheduledVideos.get(0).getEvent().getType().getRecurringItem() == null)
-                addInvisibleSeparator(currentRow);
+                addInvisibleSeparator();
         }
 
         Label dateLabel = new Label(day.format(DateTimeFormatter.ofPattern("dd MMMM yyyy")));
@@ -122,14 +108,14 @@ final class VideosDayScheduleView {
 
         // Add a listener to the width property of the HBox
         mainVBox.widthProperty().addListener((obs, oldWidth, newWidth) -> {
-                remarkHeaderMonoPane.setVisible(newWidth.doubleValue() >1000);
-                remarkMonoPane.setManaged(newWidth.doubleValue() >1000);
+            remarkHeaderMonoPane.setVisible(newWidth.doubleValue() > 1000);
+            remarkMonoPane.setManaged(newWidth.doubleValue() > 1000);
         });
 
 
         // Use the inner class to populate the grid
         dayScheduledVideos.forEach((s) -> {
-            VideoSchedulePopulator populator = new VideoSchedulePopulator(currentRow, s);
+            VideoSchedulePopulator populator = new VideoSchedulePopulator(s);
             // Old code: ModalityMessaging.addFrontOfficeMessageBodyHandler(e -> populator.updateVODButton(e));
             // New code (not yet working):
             ModalityMessaging.getFrontOfficeEntityMessaging().listenEntityChanges(s.getStore());
@@ -138,7 +124,7 @@ final class VideosDayScheduleView {
         mainVBox.setAlignment(Pos.CENTER);
     }
 
-    private void addHeaderRow(final int[] currentRow) {
+    private void addHeaderRow() {
         Label dateHeaderLabel = Bootstrap.h4(Bootstrap.textPrimary(I18nControls.newLabel(VideosI18nKeys.Date)));
         Label statusHeaderLabel = Bootstrap.h4(Bootstrap.textPrimary(I18nControls.newLabel(VideosI18nKeys.Status)));
         Label nameHeaderLabel = Bootstrap.h4(Bootstrap.textPrimary(I18nControls.newLabel(VideosI18nKeys.Name)));
@@ -168,13 +154,13 @@ final class VideosDayScheduleView {
 
         separator1.setPadding(new Insets(5, 0, 25, 0));
 
-        HBox line = new HBox(5,dateMonoPane, statusMonoPane, nameMonoPane, timeVBox,remarkHeaderMonoPane);
-        mainVBox.getChildren().addAll(line,separator1);
+        HBox line = new HBox(5, dateMonoPane, statusMonoPane, nameMonoPane, timeVBox, remarkHeaderMonoPane);
+        mainVBox.getChildren().addAll(line, separator1);
     }
 
-    private void addInvisibleSeparator(final int[] currentRow) {
+    private void addInvisibleSeparator() {
         //separator2.setVisible(false);
-       // separator2.setPadding(new Insets(20, 0, 20, 0));
+        // separator2.setPadding(new Insets(20, 0, 20, 0));
         //mainVBox.getChildren().add(separator2);
     }
 
@@ -182,31 +168,22 @@ final class VideosDayScheduleView {
     // Inner class to handle populating video schedule rows
     private class VideoSchedulePopulator {
 
-        private final int[] currentRow;
         private final Label statusLabel = I18nControls.newLabel(I18nKeys.upperCase(VideosI18nKeys.OnTime));
-        private Button actionButton = Bootstrap.dangerButton(I18nControls.newButton(VideosI18nKeys.Watch));
-        private ScheduledItem scheduledItem;
-        private Attendance attendance;
-        private final UpdateStore updateStore;
-        private BooleanProperty scheduledItemPublishedProperty;
-        private BooleanProperty attendanceIsAttendedProperty;
+        private final Button actionButton = Bootstrap.dangerButton(I18nControls.newButton(VideosI18nKeys.Watch));
+        private final ScheduledItem scheduledItem;
+        private final BooleanProperty attendanceIsAttendedProperty;
 
-        public VideoSchedulePopulator(int[] currentRow, ScheduledItem s) {
-            this.currentRow = currentRow;
+        public VideoSchedulePopulator(ScheduledItem s) {
             actionButton.setGraphicTextGap(10);
             actionButton.setCursor(Cursor.HAND);
             actionButton.setMinWidth(150);
             statusLabel.setWrapText(true);
             statusLabel.setPadding(new Insets(0, 10, 0, 0));
             scheduledItem = s;
-            updateStore = UpdateStore.createAbove(entityStore);
-            //attendance = updateStore.updateEntity(a);
-            attendanceIsAttendedProperty = EntityBindings.getBooleanFieldProperty(scheduledItem,"attended");
-            scheduledItemPublishedProperty = EntityBindings.getBooleanFieldProperty(scheduledItem, ScheduledItem.published);
+            attendanceIsAttendedProperty = EntityBindings.getBooleanFieldProperty(scheduledItem, "attended");
+            BooleanProperty scheduledItemPublishedProperty = EntityBindings.getBooleanFieldProperty(scheduledItem, ScheduledItem.published);
             if (attendanceIsAttendedProperty.get()) {
-                I18nControls.bindI18nProperties(actionButton, VideosI18nKeys.WatchAgain);
-                actionButton.getStyleClass().clear();
-                Bootstrap.secondaryButton(actionButton);
+                transformButtonFromPlayToPlayAgain(actionButton);
             }
             attendanceIsAttendedProperty.addListener(e ->
                 UiScheduler.scheduleDelay(3000, () -> {
@@ -216,7 +193,13 @@ final class VideosDayScheduleView {
                         Bootstrap.secondaryButton(actionButton);
                     }
                 }));
-            scheduledItemPublishedProperty.addListener(e -> Platform.runLater(() -> computeStatusLabelAndWatchButton()));
+            scheduledItemPublishedProperty.addListener(e -> Platform.runLater(this::computeStatusLabelAndWatchButton));
+        }
+
+        private void transformButtonFromPlayToPlayAgain(Button actionButton) {
+            I18nControls.bindI18nProperties(actionButton, VideosI18nKeys.WatchAgain);
+            actionButton.getStyleClass().clear();
+            Bootstrap.secondaryButton(actionButton);
         }
 
         public void populateVideoRow() {
@@ -281,7 +264,7 @@ final class VideosDayScheduleView {
             // Button
             actionButtonMonoPane.setContent(actionButton);
             mainLine.setAlignment(Pos.CENTER_LEFT);
-            mainLine.getChildren().addAll(dateMonoPane,statusMonoPane,nameVBox,timeVBox,remarkMonoPane,actionButtonMonoPane);
+            mainLine.getChildren().addAll(dateMonoPane, statusMonoPane, nameVBox, timeVBox, remarkMonoPane, actionButtonMonoPane);
 
             // Separator
             Separator sessionSeparator = new Separator();
@@ -290,14 +273,14 @@ final class VideosDayScheduleView {
             } else {
                 sessionSeparator.setPadding(new Insets(0, 0, 0, 0));
             }
-            mainVBox.getChildren().addAll(mainLine,sessionSeparator);
+            mainVBox.getChildren().addAll(mainLine, sessionSeparator);
         }
 
         private void computeStatusLabelAndWatchButton() {
 
             //THE STATE
-            LocalDateTime sessionStart = null;
-            LocalDateTime sessionEnd = null;
+            LocalDateTime sessionStart;
+            LocalDateTime sessionEnd;
             if (scheduledItem.getEvent().isRecurringWithVideo()) {
                 sessionStart = scheduledItem.getDate().atTime(scheduledItem.getProgramScheduledItem().getStartTime());
                 sessionEnd = scheduledItem.getDate().atTime(scheduledItem.getProgramScheduledItem().getEndTime());
@@ -311,13 +294,7 @@ final class VideosDayScheduleView {
             //The live is currently playing, we display this 2 minutes before the beginning
             if (LocalDateTime.now().isAfter(sessionStart.minusMinutes(2)) && LocalDateTime.now().isBefore(sessionEnd)) {
                 I18nControls.bindI18nProperties(statusLabel, I18nKeys.upperCase(VideosI18nKeys.LiveNow));
-                actionButton.setOnAction(e -> {
-                    browsingHistory.push(LivestreamPlayerRouting.getLivestreamPath(scheduledItem.getEventId()));
-                    attendance.setAttended(true);
-                    updateStore.submitChanges()
-                        .onFailure(Console::log)
-                        .onSuccess(Console::log);
-                });
+                actionButton.setOnAction(e -> browsingHistory.push(LivestreamPlayerRouting.getLivestreamPath(scheduledItem.getEventId())));
                 actionButton.setVisible(true);
                 Duration duration = Duration.between(LocalDateTime.now(), sessionEnd);
                 if (duration.getSeconds() > 0)
@@ -338,10 +315,6 @@ final class VideosDayScheduleView {
                     if (duration.getSeconds() < 60 * 30) {
                         actionButton.setOnAction(e -> browsingHistory.push(LivestreamPlayerRouting.getLivestreamPath(scheduledItem.getEventId())));
                         actionButton.setVisible(true);
-                        attendance.setAttended(true);
-                        updateStore.submitChanges()
-                            .onFailure(Console::log)
-                            .onSuccess(Console::log);
                     } else {
                         hideActionButton();
                     }
@@ -372,10 +345,7 @@ final class VideosDayScheduleView {
                 I18nControls.bindI18nProperties(statusLabel, I18nKeys.upperCase(VideosI18nKeys.Available));
                 actionButton.setOnAction(e -> {
                     browsingHistory.push(SessionVideoPlayerRouting.getVideoOfSessionPath(scheduledItem.getId()));
-                   // attendance.setAttended(true);
-                    updateStore.submitChanges()
-                        .onFailure(Console::log)
-                        .onSuccess(Console::log);
+                    transformButtonFromPlayToPlayAgain(actionButton);
                 });
                 actionButton.setVisible(true);
                 if (expirationDate != null) {
@@ -419,43 +389,9 @@ final class VideosDayScheduleView {
                 //If we want to refresh more than 1 minutes, we add a second to make sure the calculation has time to proceed before the refresh
                 refreshTime = refreshTime + 1000;
             }
-            UiScheduler.scheduleDelay(refreshTime, () -> computeStatusLabelAndWatchButton());
+            UiScheduler.scheduleDelay(refreshTime, this::computeStatusLabelAndWatchButton);
         }
 
-        private void updateVODButton(Object e) {
-            ReadOnlyAstObject message = (ReadOnlyAstObject) e;
-            Object updatedScheduledItemId = message.get("id");
-            String messageType = message.get("messageType");
-            if (Objects.equals(scheduledItem.getPrimaryKey(), updatedScheduledItemId) && "VIDEO_STATE_CHANGED".equals(messageType)) {
-                //Here we need to reload the datas from the database to display the button
-                String dqlQuery;
-                if (scheduledItem.getEvent().isRecurringWithVideo()) {
-                    //case sttp, GP, etc.
-                    dqlQuery = "select date, expirationDate, event, vodDelayed, published, comment, programScheduledItem.(name, date,startTime, endTime, item.imageUrl)," +
-                        " exists(select Media where scheduledItem=si) as " + EventVideosWallActivity.VIDEO_ATTENDANCE_DYNAMIC_BOOLEAN_FIELD_ATTENDED +
-                        " from ScheduledItem si where si.id=?" + "and online and exists(select Attendance where scheduledItem=si and documentLine.(!cancelled and document.(event= ? and person=? and price_balance<=0)))" +
-                        " order by date, programScheduledItem.date";
-                } else {
-                    //Case festival, etc.
-                    dqlQuery = "select date, expirationDate, event, vodDelayed, published, comment, programScheduledItem.(name, date,timeline.(startTime, endTime), item.imageUrl)," +
-                        " exists(select Media where scheduledItem=si) as " + EventVideosWallActivity.VIDEO_ATTENDANCE_DYNAMIC_BOOLEAN_FIELD_ATTENDED +
-                        " from ScheduledItem si where si.id=?" + "and online and exists(select Attendance where scheduledItem=si and documentLine.(!cancelled and document.(event= ? and person=? and price_balance<=0)))" +
-                        " order by date, programScheduledItem.timeline.startTime";
-                }
-
-
-                entityStore.executeQuery(
-                        new EntityStoreQuery(dqlQuery,
-                            new Object[]{updatedScheduledItemId, scheduledItem.getEvent(), FXUserPersonId.getUserPersonId()}))
-                    .onFailure(Console::log)
-                    .onSuccess(entityList ->
-                        Platform.runLater(() -> {
-                            ScheduledItem si = (ScheduledItem) entityList.get(0);
-                            scheduledItem = si;
-                            computeStatusLabelAndWatchButton();
-                        }));
-            }
-        }
 
         private void hideActionButton() {
             actionButton.setVisible(false);

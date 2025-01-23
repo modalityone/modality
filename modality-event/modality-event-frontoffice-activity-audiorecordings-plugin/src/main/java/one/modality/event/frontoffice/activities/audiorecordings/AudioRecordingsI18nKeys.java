@@ -14,6 +14,7 @@ public interface AudioRecordingsI18nKeys {
     String AvailableUntil = "AvailableUntil";
     String Play = "Play";
     String NoAudioRecordingInYourLibrary = "NoAudioRecordingInYourLibrary";
+    String PlayAgain = "PlayAgain";
     String YourPurchasedRecordingsWillAppearHere = "YourPurchasedRecordingsWillAppearHere";
 
 }

@@ -65,8 +65,6 @@ import java.util.stream.Collectors;
  */
 final class EventVideosWallActivity extends ViewDomainActivityBase {
 
-    public static final String VIDEO_ATTENDANCE_DYNAMIC_BOOLEAN_FIELD_ATTENDED = "attended";
-
     private final ObjectProperty<Object> pathEventIdProperty = new SimpleObjectProperty<>();
 
     private final ObjectProperty<Event> eventProperty = new SimpleObjectProperty<>();
@@ -120,7 +118,7 @@ final class EventVideosWallActivity extends ViewDomainActivityBase {
                         }
                         // In this code: programScheduledItem.timeline..startTime, the double . means we do a left join, that allow null value (if the type of event is recurring, the timeline of the programScheduledItem is null
                         entityStore.executeQueryBatch(new EntityStoreQuery("select name, date, expirationDate, programScheduledItem.(name, startTime, endTime, timeline.(startTime, endTime)), published, event.(name, type, livestreamUrl, recurringWithVideo), vodDelayed, " +
-                                " (exists(select MediaConsumption where media.scheduledItem=si and attendance.documentLine.document.person=?) as attended), " +
+                                " (exists(select MediaConsumption where scheduledItem=si and attendance.documentLine.document.person=?) as attended), " +
                                 " (select id from Attendance where scheduledItem=si.bookableScheduledItem and documentLine.document.person=? limit 1) as attendanceId " +
                                 " from ScheduledItem si " +
                                 " where event=? and bookableScheduledItem.item.family.code=? and item.code=? and exists(select Attendance a where scheduledItem=si.bookableScheduledItem and documentLine.(!cancelled and document.(person=? and event=? and confirmed and price_balance<=0)))" +
@@ -165,8 +163,6 @@ final class EventVideosWallActivity extends ViewDomainActivityBase {
         HtmlText eventDescriptionHtmlText = new HtmlText();
         I18n.bindI18nTextProperty(eventDescriptionHtmlText.textProperty(), new I18nSubKey("expression: i18n(shortDescription)", eventProperty), eventProperty);
 
-//        eventDescriptionHtmlText.setWrapText(true);
-//        eventDescriptionHtmlText.setTextAlignment(TextAlignment.LEFT);
         eventDescriptionHtmlText.setMaxHeight(60);
         videoExpirationLabel = I18nControls.newLabel(AudioRecordingsI18nKeys.AvailableUntil);
         videoExpirationLabel.setPadding(new Insets(30, 0, 0, 0));
@@ -306,7 +302,7 @@ final class EventVideosWallActivity extends ViewDomainActivityBase {
                     currentDayScheduleVBox.setVisible(true);
                     currentDayScheduleVBox.setManaged(true);
                     // Passing the day, the videos of that day, and the history (for backward navigation)
-                    ScalePane currentScalePane = new ScalePane(new VideosDayScheduleView(day, dayScheduledVideos, getHistory(), true, entityStore).getView());
+                    ScalePane currentScalePane = new ScalePane(new VideosDayScheduleView(day, dayScheduledVideos, getHistory(), true).getView());
                     currentDayScheduleVBox.getChildren().setAll(scheduleForTodayTitleLabel, currentScalePane);
                 });
 
@@ -353,7 +349,7 @@ final class EventVideosWallActivity extends ViewDomainActivityBase {
             .forEach((day, scheduledItem) -> {
                 videosDayScheduleViews.add(
                     // Passing the day, the videos of that day, and the history (for backward navigation)
-                    new VideosDayScheduleView(day, scheduledItem, getHistory(), isFirst[0], entityStore));
+                    new VideosDayScheduleView(day, scheduledItem, getHistory(), isFirst[0]));
                 if (firstDay[0] == null) firstDay[0] = day;
                 Button dateButton;
                 dateButton = Bootstrap.primaryButton(new Button(day.format(dateFormatter)));
@@ -363,7 +359,7 @@ final class EventVideosWallActivity extends ViewDomainActivityBase {
 
                 dateButton.setOnAction(e -> {
                     videosDayScheduleViews.clear();
-                    videosDayScheduleViews.add(new VideosDayScheduleView(day, scheduledItem, getHistory(), true, entityStore));
+                    videosDayScheduleViews.add(new VideosDayScheduleView(day, scheduledItem, getHistory(), true));
                     currentDaySelectedProperty.set(day);
                 });
                 daysColumnPane.getChildren().add(dateButton);

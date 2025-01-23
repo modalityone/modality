@@ -23,8 +23,8 @@ module modality.event.frontoffice.activity.videos.plugin {
     requires webfx.extras.util.control;
     requires webfx.extras.webtext;
     requires webfx.kit.util;
-    requires webfx.platform.ast;
     requires webfx.platform.console;
+    requires webfx.platform.scheduler;
     requires webfx.platform.uischeduler;
     requires webfx.platform.util;
     requires webfx.platform.util.time;

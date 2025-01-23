@@ -21,6 +21,7 @@ import javafx.geometry.Pos;
 import javafx.geometry.VPos;
 import javafx.scene.Node;
 import javafx.scene.control.Label;
+import javafx.scene.control.ProgressIndicator;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.Background;
@@ -64,6 +65,8 @@ abstract class AbstractVideoPlayerActivity extends ViewDomainActivityBase {
     protected VBox pageContainer;
     protected HBox headerHBox;
     protected VBox sessionDescriptionVBox;
+    protected ProgressIndicator progressIndicator = new ProgressIndicator(50);
+
 
 
     @Override
@@ -113,7 +116,9 @@ abstract class AbstractVideoPlayerActivity extends ViewDomainActivityBase {
         sessionTitleLabel.setTextAlignment(TextAlignment.CENTER);
         sessionCommentLabel.setWrapText(true);
 
-        sessionDescriptionVBox.getChildren().addAll(sessionTitleLabel, sessionCommentLabel);
+        progressIndicator.setVisible(false);
+        progressIndicator.setManaged(false);
+        sessionDescriptionVBox.getChildren().addAll(progressIndicator,sessionTitleLabel, sessionCommentLabel);
 
         playersVBoxContainer = new VBox(30);
 
@@ -142,8 +147,24 @@ abstract class AbstractVideoPlayerActivity extends ViewDomainActivityBase {
 
     protected abstract void syncHeader();
 
+    protected void displayProgressIndicator() {
+        changeProgressIndicatorState(true);
+
+    }
+    protected void hideProgressIndicator() {
+        changeProgressIndicatorState(false);
+    }
+
+    private void changeProgressIndicatorState(boolean b) {
+        if(headerHBox!=null) headerHBox.setVisible(!b);
+        sessionTitleLabel.setVisible(!b);
+        sessionCommentLabel.setVisible(!b);
+        if(progressIndicator!=null) progressIndicator.setVisible(b);
+        if(progressIndicator!=null) progressIndicator.setManaged(b);
+    }
+
     protected void updatePicture(Event event) {
-        Object imageTag = ModalityCloudinary.getEventCoverImageTag(event.getPrimaryKey().toString(),I18n.getLanguage());
+        Object imageTag = ModalityCloudinary.getEventCoverImageTag(event.getPrimaryKey().toString(), I18n.getLanguage());
         String pictureId = String.valueOf(imageTag);
 
         cloudImageService.exists(pictureId)
