@@ -910,7 +910,6 @@ CollapsePane.menu-bar.lang-menu-bar {
     -fx-text-alignment: left; /* Aligns text */
 }
 
-
 .audio-library .description {
     -fx-pref-width: 450;
     -fx-max-width: 450;

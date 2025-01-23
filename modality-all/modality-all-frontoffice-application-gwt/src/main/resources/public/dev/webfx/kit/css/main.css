@@ -1038,10 +1038,8 @@ btn-white {
 }
 
 .audio-library .description > fx-children > fx-text {
-    pref-width: 410px;
-    max-width: 410px;
-    overflow: hidden; /* Hide overflowed text */
-    text-overflow: ellipsis;
+    padding-left: 20px;
+    text-indent:-20px;
 }
 
 .list-tracks-title {
