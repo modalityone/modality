@@ -43,13 +43,15 @@ final class SessionAudioTrackView {
     public static final int MAX_WIDTH = 750;
     private static final int BUTTON_WIDTH = 130;
     private final int index;
+    private final int totalNumberOfTracks;
     private final UpdateStore updateStore;
     private MediaConsumption mediaConsumption;
 
-    public SessionAudioTrackView(ScheduledItem scheduledAudioItem, List<Media> publishedMedias, JavaFXMediaAudioPlayer audioPlayer, int index) {
+    public SessionAudioTrackView(ScheduledItem scheduledAudioItem, List<Media> publishedMedias, JavaFXMediaAudioPlayer audioPlayer, int index, int totalNb) {
         this.scheduledAudioItem = scheduledAudioItem;
         this.audioPlayer = audioPlayer;
         this.index = index;
+        this.totalNumberOfTracks = totalNb;
         this.publishedMedias = publishedMedias.stream()
             .filter(media -> media.getScheduledItem() != null && Entities.sameId(scheduledAudioItem, media.getScheduledItem()))
             .collect(Collectors.toList());
@@ -75,7 +77,8 @@ final class SessionAudioTrackView {
         String title = scheduledAudioItem.getName();
         if (title == null)
             title = scheduledAudioItem.getProgramScheduledItem().getName();
-        Label titleLabel = Bootstrap.h3(new Label(index + ". " + title));
+        String indexToString = formatIndex(index,totalNumberOfTracks);
+        Label titleLabel = Bootstrap.h3(new Label(indexToString + ". " + title));
         titleLabel.setWrapText(true);
         Timeline timeline = scheduledAudioItem.getProgramScheduledItem().getTimeline();
         LocalDate date = scheduledAudioItem.getDate();
@@ -175,6 +178,12 @@ final class SessionAudioTrackView {
             buttonHBox.setSpacing(10);
             containerBorderPane.setRight(buttonHBox);
         }
+    }
+
+    private String formatIndex(int index, int totalNumberOfTracks) {
+        if(totalNumberOfTracks < 10) return "" + index;
+        if((totalNumberOfTracks < 100) && (index < 10)) return "0" + index;
+        return "" + index;
     }
 
     private void transformButtonFromPlayToPlayAgain(Button playButton) {
