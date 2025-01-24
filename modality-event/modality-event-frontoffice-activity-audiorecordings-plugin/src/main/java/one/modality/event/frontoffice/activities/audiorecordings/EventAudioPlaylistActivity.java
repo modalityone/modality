@@ -156,8 +156,6 @@ final class EventAudioPlaylistActivity extends ViewDomainActivityBase {
         // *************************************************************************************************************
         HBox headerHBox = new HBox();
         headerHBox.setSpacing(50);
-        headerHBox.setPadding(new Insets(0, 20, 0, 20));
-        headerHBox.setMaxWidth(1024);
         MonoPane imageMonoPane = new MonoPane();
         ImageView imageView = new ImageView();
 
@@ -179,8 +177,6 @@ final class EventAudioPlaylistActivity extends ViewDomainActivityBase {
         headerHBox.getChildren().add(titleVBox);
 
         VBox audioTracksVBox = new VBox(20);
-        audioTracksVBox.setMaxWidth(SessionAudioTrackView.MAX_WIDTH);
-
 
         Label listOfTrackLabel = I18nControls.newLabel(AudioRecordingsI18nKeys.ListOfTracks);
         listOfTrackLabel.getStyleClass().add("list-tracks-title");
@@ -192,6 +188,7 @@ final class EventAudioPlaylistActivity extends ViewDomainActivityBase {
             listOfTrackLabel,
             audioTracksVBox
         );
+        loadedContentVBox.setMaxWidth(SessionAudioTrackView.MAX_WIDTH);
         loadedContentVBox.setAlignment(Pos.CENTER);
 
         Node loadingContentIndicator = new GoldenRatioPane(ControlUtil.createProgressIndicator(100));

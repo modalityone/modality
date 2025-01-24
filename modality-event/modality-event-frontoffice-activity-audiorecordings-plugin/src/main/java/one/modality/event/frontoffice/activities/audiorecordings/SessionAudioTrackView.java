@@ -35,13 +35,14 @@ import java.util.stream.Collectors;
  */
 final class SessionAudioTrackView {
 
+    static final double MAX_WIDTH = 750;
+    private static final double BUTTON_WIDTH = 130;
+
     private final ScheduledItem scheduledAudioItem;
     private final List<Media> publishedMedias;
     private final JavaFXMediaAudioPlayer audioPlayer;
 
     private final BorderPane containerBorderPane = new BorderPane();
-    public static final int MAX_WIDTH = 750;
-    private static final int BUTTON_WIDTH = 130;
     private final int index;
     private final int totalNumberOfTracks;
     private final UpdateStore updateStore;
@@ -104,7 +105,7 @@ final class SessionAudioTrackView {
         containerBorderPane.setCenter(descriptionVBox);
         containerBorderPane.getStyleClass().addAll("audio-library", "bottom-border");
         BorderPane.setMargin(favoriteMonoPane, new Insets(0, 20, 0, 0));
-        BorderPane.setMargin(descriptionVBox, new Insets(0, 50, 0, 0));
+        BorderPane.setMargin(descriptionVBox, new Insets(0, 30, 0, 0));
         BorderPane.setAlignment(descriptionVBox, Pos.CENTER_LEFT);
         //Here we should have only one media for audio
         if (publishedMedias.isEmpty()) {
