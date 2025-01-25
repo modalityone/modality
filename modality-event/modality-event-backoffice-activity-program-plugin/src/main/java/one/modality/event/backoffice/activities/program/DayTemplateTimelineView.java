@@ -1,5 +1,6 @@
 package one.modality.event.backoffice.activities.program;
 
+import dev.webfx.extras.panes.HorizontalBiasLayoutPane;
 import dev.webfx.extras.panes.MonoPane;
 import dev.webfx.extras.theme.shape.ShapeTheme;
 import dev.webfx.kit.util.properties.FXProperties;
@@ -10,20 +11,17 @@ import dev.webfx.stack.orm.dql.DqlStatement;
 import dev.webfx.stack.orm.entity.controls.entity.selector.ButtonSelector;
 import dev.webfx.stack.orm.entity.controls.entity.selector.EntityButtonSelector;
 import dev.webfx.stack.ui.controls.button.ButtonFactoryMixin;
-import javafx.geometry.HPos;
+import dev.webfx.stack.ui.validation.ValidationSupport;
 import javafx.geometry.Pos;
-import javafx.geometry.VPos;
 import javafx.scene.Node;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
-import javafx.scene.layout.Pane;
 import javafx.scene.layout.Region;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.SVGPath;
 import one.modality.base.client.icons.SvgIcons;
 import one.modality.base.client.mainframe.fx.FXMainFrameDialogArea;
-import dev.webfx.stack.ui.validation.ValidationSupport;
 import one.modality.base.shared.entities.Item;
 import one.modality.base.shared.entities.Timeline;
 import one.modality.crm.backoffice.organization.fx.FXOrganization;
@@ -192,24 +190,23 @@ final class DayTemplateTimelineView implements ButtonFactoryMixin {
         MonoPane trashButton = SvgIcons.createButtonPane(SvgIcons.createTrashSVGPath(), dayTemplateTimelineModel::removeTemplateTimeLine);
         ShapeTheme.createSecondaryShapeFacet(trashButton).style(); // Make it gray
 
-        return new Pane(itemButton, fromTextField, toLabel, untilTextField, nameTextField, audioToggleButton, videoToggleButton, trashButton) {
+        return new HorizontalBiasLayoutPane(itemButton, fromTextField, toLabel, untilTextField, nameTextField, audioToggleButton, videoToggleButton, trashButton) {
             private static final double FROM_WIDTH = 60, TO_WIDTH = 20, UNTIL_WIDTH = 60, AUDIO_WIDTH = 21, VIDEO_WIDTH = 24, TRASH_WIDTH = 20;
             private static final double HGAP = 5, TOTAL_HGAP = HGAP * 9;
             @Override
-            protected void layoutChildren() {
-                double width = getWidth(), height = getHeight();
+            protected void layoutChildren(double width, double height) {
                 double remainingWidth = Math.max(0, width - (FROM_WIDTH + TO_WIDTH + UNTIL_WIDTH + AUDIO_WIDTH + VIDEO_WIDTH + TRASH_WIDTH + TOTAL_HGAP));
                 double itemWidth = Math.max(100, remainingWidth * 0.4);
                 double nameWidth = remainingWidth - itemWidth;
                 double x = 0;
-                layoutInArea(itemButton   ,  x +=              0 * HGAP, 0, itemWidth,  height, 0, HPos.LEFT,   VPos.CENTER);
-                layoutInArea(fromTextField,  x += itemWidth  + 2 * HGAP, 0, FROM_WIDTH,  height, 0, HPos.CENTER, VPos.CENTER);
-                layoutInArea(toLabel,        x += FROM_WIDTH + 1 * HGAP   , 0, TO_WIDTH,    height, 0, HPos.CENTER, VPos.CENTER);
-                layoutInArea(untilTextField, x += TO_WIDTH + 1 * HGAP   , 0, UNTIL_WIDTH, height, 0, HPos.CENTER, VPos.CENTER);
-                layoutInArea(nameTextField,  x += UNTIL_WIDTH + 2 * HGAP, 0, nameWidth,  height, 0, HPos.LEFT,   VPos.CENTER);
-                layoutInArea(audioToggleButton,  x += nameWidth + 1 * HGAP, 0, AUDIO_WIDTH, height, 0, HPos.CENTER, VPos.CENTER);
-                layoutInArea(videoToggleButton,  x += AUDIO_WIDTH + 1 * HGAP, 0, VIDEO_WIDTH, height, 0, HPos.CENTER, VPos.CENTER);
-                layoutInArea(trashButton, x += VIDEO_WIDTH + 1 * HGAP, 0, TRASH_WIDTH, height, 0, HPos.CENTER, VPos.CENTER);
+                layoutInArea(itemButton   ,  x +=              0 * HGAP, 0, itemWidth,  height, Pos.CENTER_LEFT);
+                layoutInArea(fromTextField,  x += itemWidth  + 2 * HGAP, 0, FROM_WIDTH,  height, Pos.CENTER);
+                layoutInArea(toLabel,        x += FROM_WIDTH + 1 * HGAP   , 0, TO_WIDTH,    height, Pos.CENTER);
+                layoutInArea(untilTextField, x += TO_WIDTH + 1 * HGAP   , 0, UNTIL_WIDTH, height, Pos.CENTER);
+                layoutInArea(nameTextField,  x += UNTIL_WIDTH + 2 * HGAP, 0, nameWidth,  height, Pos.CENTER_LEFT);
+                layoutInArea(audioToggleButton,  x += nameWidth + 1 * HGAP, 0, AUDIO_WIDTH, height, Pos.CENTER);
+                layoutInArea(videoToggleButton,  x += AUDIO_WIDTH + 1 * HGAP, 0, VIDEO_WIDTH, height, Pos.CENTER);
+                layoutInArea(trashButton, x += VIDEO_WIDTH + 1 * HGAP, 0, TRASH_WIDTH, height, Pos.CENTER);
             }
         };
     }

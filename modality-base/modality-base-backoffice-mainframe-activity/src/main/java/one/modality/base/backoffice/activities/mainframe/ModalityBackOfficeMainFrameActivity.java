@@ -1,6 +1,7 @@
 package one.modality.base.backoffice.activities.mainframe;
 
 import dev.webfx.extras.canvas.pane.CanvasPane;
+import dev.webfx.extras.panes.LayoutPane;
 import dev.webfx.extras.panes.MonoClipPane;
 import dev.webfx.extras.theme.layout.FXLayoutMode;
 import dev.webfx.extras.theme.luminance.LuminanceTheme;
@@ -66,21 +67,20 @@ public final class ModalityBackOfficeMainFrameActivity extends ModalityClientMai
 
     @Override
     public Node buildUi() {
-        mainFrame = new Pane() { // Children are set later in updateMountNode()
+        mainFrame = new LayoutPane() { // Children are set later in updateMountNode()
             @Override
-            protected void layoutChildren() {
-                double width = getWidth(), height = getHeight();
+            protected void layoutChildren(double width, double height) {
                 double headerHeight = mainFrameHeader.prefHeight(width);
                 double footerHeight = mainFrameFooter.prefHeight(width);
-                layoutInArea(mainFrameHeader, 0, 0, width, headerHeight, 0, HPos.CENTER, VPos.TOP);
-                layoutInArea(mainFrameFooter, 0, height - footerHeight, width, footerHeight, 0, HPos.CENTER, VPos.BOTTOM);
+                layoutInArea(mainFrameHeader, 0, 0, width, headerHeight, Pos.TOP_CENTER);
+                layoutInArea(mainFrameFooter, 0, height - footerHeight, width, footerHeight, Pos.BOTTOM_CENTER);
                 double nodeY = FXLayoutMode.isCompactMode() ? 0 : headerHeight; // Note: breathingPadding is passed as margin in layoutInArea() calls
                 double nodeHeight = 0;
                 if (dialogArea != null) {
                     layoutInArea(dialogArea, 0, nodeY, width, height - nodeY - footerHeight, 0, breathingPadding, HPos.CENTER, VPos.TOP);
                 }
                 if (profilePanel != null) {
-                    layoutInArea(profilePanel, width - profilePanel.prefWidth(-1) - 10, headerHeight + 10, profilePanel.prefWidth(-1), profilePanel.prefHeight(-1), 0, HPos.RIGHT, VPos.TOP);
+                    layoutInArea(profilePanel, width - profilePanel.prefWidth(-1) - 10, headerHeight + 10, profilePanel.prefWidth(-1), profilePanel.prefHeight(-1), Pos.TOP_RIGHT);
                     onProfileLayout(); // for profile panel animation management
                 }
                 if (ganttCanvasContainer.isVisible()) {
