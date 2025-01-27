@@ -1,7 +1,7 @@
 package one.modality.event.client.mediaview;
 
 import dev.webfx.extras.imagestore.ImageStore;
-import dev.webfx.extras.panes.HorizontalBiasLayoutPane;
+import dev.webfx.extras.panes.HPane;
 import dev.webfx.extras.panes.MonoPane;
 import dev.webfx.extras.player.Media;
 import dev.webfx.extras.player.Player;
@@ -77,7 +77,7 @@ public abstract class MediaInfoView {
     private boolean timelineShowImage;
     private double lastComputeLayoutWidth;
 
-    protected Pane mediaPane = new HorizontalBiasLayoutPane(videoContainer, imageView, dateText, titleLabel, excerptLabel, backwardButton, pauseButton, playButton, forwardButton, progressBar, elapsedTimeText, favoritePane) {
+    protected Pane mediaPane = new HPane(videoContainer, imageView, dateText, titleLabel, excerptLabel, backwardButton, pauseButton, playButton, forwardButton, progressBar, elapsedTimeText, favoritePane) {
         private double fontFactor;
         private double leftX, imageY, imageWidth, imageHeight, rightX, rightWidth, dateY, dateHeight, titleY, titleHeight, excerptY, excerptHeight, buttonY, buttonSize, favoriteY, favoriteHeight;
         private HPos titleHPos, favoriteHPos;

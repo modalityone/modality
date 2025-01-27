@@ -1,6 +1,6 @@
 package one.modality.event.backoffice.activities.program;
 
-import dev.webfx.extras.panes.HorizontalBiasLayoutPane;
+import dev.webfx.extras.panes.HPane;
 import dev.webfx.extras.panes.MonoPane;
 import dev.webfx.extras.theme.shape.ShapeTheme;
 import dev.webfx.kit.util.properties.FXProperties;
@@ -190,7 +190,7 @@ final class DayTemplateTimelineView implements ButtonFactoryMixin {
         MonoPane trashButton = SvgIcons.createButtonPane(SvgIcons.createTrashSVGPath(), dayTemplateTimelineModel::removeTemplateTimeLine);
         ShapeTheme.createSecondaryShapeFacet(trashButton).style(); // Make it gray
 
-        return new HorizontalBiasLayoutPane(itemButton, fromTextField, toLabel, untilTextField, nameTextField, audioToggleButton, videoToggleButton, trashButton) {
+        return new HPane(itemButton, fromTextField, toLabel, untilTextField, nameTextField, audioToggleButton, videoToggleButton, trashButton) {
             private static final double FROM_WIDTH = 60, TO_WIDTH = 20, UNTIL_WIDTH = 60, AUDIO_WIDTH = 21, VIDEO_WIDTH = 24, TRASH_WIDTH = 20;
             private static final double HGAP = 5, TOTAL_HGAP = HGAP * 9;
             @Override
