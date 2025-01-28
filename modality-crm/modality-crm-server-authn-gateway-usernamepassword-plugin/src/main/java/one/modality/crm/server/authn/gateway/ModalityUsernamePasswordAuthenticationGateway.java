@@ -110,7 +110,7 @@ public final class ModalityUsernamePasswordAuthenticationGateway implements Serv
         if (username.contains("@")) // If username is an email address, it shouldn't be case-sensitive
             username = username.toLowerCase(); // emails are stored in lowercase in the database
         return EntityStore.create(dataSourceModel)
-            .<Person>executeQuery("select id,frontendAccount.(password, salt) from Person where frontendAccount.(corporation=? and username=? and backoffice=?) order by id limit 1", 1, username, backoffice)
+            .<Person>executeQuery("select id,frontendAccount.(password, salt) from Person where frontendAccount.(corporation=? and username=? and !disabled and backoffice=?) order by id limit 1", 1, username, backoffice)
             .compose(persons -> {
                 if (persons.size() != 1)
                     return Future.failedFuture("[%s] Wrong user or password".formatted(ModalityAuthenticationI18nKeys.AuthnWrongUserOrPasswordError));
@@ -234,7 +234,7 @@ public final class ModalityUsernamePasswordAuthenticationGateway implements Serv
         if (!(userId instanceof ModalityUserPrincipal modalityUserPrincipal))
             return Future.failedFuture("[%s] This userId object is not recognized by Modality".formatted(ModalityAuthenticationI18nKeys.AuthnUnrecognizedUserIdError));
         return EntityStore.create(dataSourceModel)
-            .<Person>executeQuery("select " + fields + " from Person where id=? and frontendAccount.(id=? and backoffice=?)", modalityUserPrincipal.getUserPersonId(), modalityUserPrincipal.getUserAccountId(), backoffice)
+            .<Person>executeQuery("select " + fields + " from Person where id=? and frontendAccount.(id=? and !disabled and backoffice=?)", modalityUserPrincipal.getUserPersonId(), modalityUserPrincipal.getUserAccountId(), backoffice)
             .compose(persons -> {
                 if (persons.size() != 1)
                     return Future.failedFuture("[%s] No such user account".formatted(ModalityAuthenticationI18nKeys.AuthnNoSuchUserAccountError));
