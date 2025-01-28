@@ -98,7 +98,10 @@ public final class ModalityUsernamePasswordAuthenticationGateway implements Serv
     }
 
     private Future<Void> authenticateWithUsernamePassword(AuthenticateWithUsernamePasswordCredentials credentials) {
+        // Capturing the required client state info from thread local (before it will be wiped out by the async call)
         String runId = ThreadLocalStateHolder.getRunId();
+        boolean backoffice = ThreadLocalStateHolder.isBackoffice();
+        // Capturing the parameters from the credentials
         String username = credentials.getUsername();
         String password = credentials.getPassword();
         if (Strings.isEmpty(username) || Strings.isEmpty(password))
@@ -107,7 +110,7 @@ public final class ModalityUsernamePasswordAuthenticationGateway implements Serv
         if (username.contains("@")) // If username is an email address, it shouldn't be case-sensitive
             username = username.toLowerCase(); // emails are stored in lowercase in the database
         return EntityStore.create(dataSourceModel)
-            .<Person>executeQuery("select id,frontendAccount.(password, salt) from Person where frontendAccount.(corporation=? and username=?) order by id limit 1", 1, username)
+            .<Person>executeQuery("select id,frontendAccount.(password, salt) from Person where frontendAccount.(corporation=? and username=? and backoffice=?) order by id limit 1", 1, username, backoffice)
             .compose(persons -> {
                 if (persons.size() != 1)
                     return Future.failedFuture("[%s] Wrong user or password".formatted(ModalityAuthenticationI18nKeys.AuthnWrongUserOrPasswordError));
@@ -165,7 +168,8 @@ public final class ModalityUsernamePasswordAuthenticationGateway implements Serv
     }
 
     private Future<Void> sendEmailUpdateLink(InitiateEmailUpdateCredentials credentials) {
-        String runId = ThreadLocalStateHolder.getRunId(); // capturing runId (before async call)
+        // Capturing the required client state info from thread local (before it will be wiped out by the async call)
+        String runId = ThreadLocalStateHolder.getRunId();
         return getUserClaims() // to get the old email (the passed credential contains the new email)
             .compose(userClaims -> LoginLinkService.storeAndSendLoginLink(
                     runId,
@@ -224,11 +228,13 @@ public final class ModalityUsernamePasswordAuthenticationGateway implements Serv
     }
 
     private Future<Person> queryModalityUserPerson(String fields) {
+        // Capturing the required client state info from thread local (before it will be wiped out by the async call)
         Object userId = ThreadLocalStateHolder.getUserId();
+        boolean backoffice = ThreadLocalStateHolder.isBackoffice();
         if (!(userId instanceof ModalityUserPrincipal modalityUserPrincipal))
             return Future.failedFuture("[%s] This userId object is not recognized by Modality".formatted(ModalityAuthenticationI18nKeys.AuthnUnrecognizedUserIdError));
         return EntityStore.create(dataSourceModel)
-            .<Person>executeQuery("select " + fields + " from Person where id=? and frontendAccount=?", modalityUserPrincipal.getUserPersonId(), modalityUserPrincipal.getUserAccountId())
+            .<Person>executeQuery("select " + fields + " from Person where id=? and frontendAccount.(id=? and backoffice=?)", modalityUserPrincipal.getUserPersonId(), modalityUserPrincipal.getUserAccountId(), backoffice)
             .compose(persons -> {
                 if (persons.size() != 1)
                     return Future.failedFuture("[%s] No such user account".formatted(ModalityAuthenticationI18nKeys.AuthnNoSuchUserAccountError));
