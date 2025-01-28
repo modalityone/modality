@@ -5,6 +5,7 @@ import dev.webfx.platform.boot.spi.ApplicationModuleBooter;
 import dev.webfx.platform.conf.Config;
 import dev.webfx.platform.conf.ConfigLoader;
 import dev.webfx.platform.console.Console;
+import dev.webfx.platform.meta.Meta;
 import dev.webfx.platform.scheduler.Scheduler;
 import dev.webfx.stack.authz.client.factory.AuthorizationFactory;
 import dev.webfx.stack.cache.client.LocalStorageCache;
@@ -20,7 +21,6 @@ import dev.webfx.stack.ui.operation.action.OperationAction;
 import dev.webfx.stack.ui.operation.action.OperationActionFactoryMixin;
 import dev.webfx.stack.ui.operation.action.OperationActionRegistry;
 import javafx.scene.control.ProgressIndicator;
-import one.modality.base.client.conf.ModalityClientConfig;
 
 import java.util.List;
 
@@ -56,7 +56,7 @@ public final class ModalityClientOperationActionsLoader implements ApplicationMo
         EntityStore.create(DataSourceModelService.getDefaultDataSourceModel())
                 .executeCachedQuery(
                         LocalStorageCache.get().getCacheEntry("cache-clientOperations"), this::registerOperations,
-                        "select code,i18nCode,public from Operation where " + (ModalityClientConfig.isBackOffice() ? "backoffice" : "frontoffice"))
+                        "select code,i18nCode,public from Operation where " + (Meta.isBackoffice() ? "backoffice" : "frontoffice"))
                 .onSuccess(this::registerOperations)
                 .onFailure(cause -> {
                     Console.log("Failed loading operations", cause);
