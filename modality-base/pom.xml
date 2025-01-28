@@ -40,7 +40,6 @@
         <module>modality-base-client-bootstrap</module>
         <module>modality-base-client-brand</module>
         <module>modality-base-client-cloudinary</module>
-        <module>modality-base-client-conf</module>
         <module>modality-base-client-css</module>
         <module>modality-base-client-entities</module>
         <module>modality-base-client-gantt-fx</module>
