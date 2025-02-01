@@ -38,7 +38,7 @@ public final class EventPricingRouting {
 
         public static UiRoute<?> uiRoute() {
             return UiRoute.createRegex(PathBuilder.toRegexPath(EventPricingRouting.getAnyPath())
-                    , false
+                    , true
                     , EventPricingActivity::new
                     , ViewDomainActivityContextFinal::new
             );
