@@ -67,7 +67,7 @@ public class ModalitySignupUiLoginGateway extends UiLoginGatewayBase {
         grid.setPadding(new Insets(20, 20, 20, 20));
         grid.setVgap(8);
         grid.setHgap(10);
-        emailLabel = I18nControls.newLabel("Email");  // ???
+        emailLabel = I18nControls.newLabel(CrmI18nKeys.Email);
         grid.add(emailLabel, 0, 0);
         emailInput = new TextField();
         grid.add(emailInput, 0, 1);
