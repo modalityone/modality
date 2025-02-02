@@ -734,6 +734,7 @@ HtmlText, HtmlTextEditor {
 
 * {
     -webfx-login-portal-background-image: none; /* Specify the path to your image */
+    -webfx-login-portal-title-color: #0096D6;
 }
 
 .login {
@@ -752,9 +753,11 @@ HtmlText, HtmlTextEditor {
     -fx-effect: dropshadow(gaussian, lightgray, 10, 0, 0, 0);
 }
 
-.login .h2 {
+.login .h2 { /* Login word on top */
     -fx-font-family: 'Poppins', sans-serif;
+    -fx-font-weight: bold;
     -fx-line-spacing: 0;
+    -fx-text-fill: -webfx-login-portal-title-color;
 }
 /*===== modality-client-brand-javafx@main.css from modality-base-client-brand =====*/
 
