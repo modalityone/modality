@@ -31,7 +31,7 @@ import java.util.Objects;
  */
 public final class ModalityUsernamePasswordAuthenticationGateway implements ServerAuthenticationGateway, HasDataSourceModel {
 
-    private static final boolean SKIP_PASSWORD_CHECK_FOR_DEBUG = true; // Can be set to true (on local dev machines only!) to log in and debug user accounts
+    private static final boolean SKIP_PASSWORD_CHECK_FOR_DEBUG = false; // Can be set to true (on local dev machines only!) to log in and debug user accounts
 
     private static final String CREATE_ACCOUNT_ACTIVITY_PATH_PREFIX = "/create-account";
     private static final String CREATE_ACCOUNT_ACTIVITY_PATH_FULL = CREATE_ACCOUNT_ACTIVITY_PATH_PREFIX + "/:token";
