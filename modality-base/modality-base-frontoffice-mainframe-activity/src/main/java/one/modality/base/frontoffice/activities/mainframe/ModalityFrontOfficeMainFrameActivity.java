@@ -387,6 +387,7 @@ public final class ModalityFrontOfficeMainFrameActivity extends ModalityClientMa
             } else {
                 Label brandLabel = I18nControls.newLabel(BrandI18nKeys.frontOfficeBrandNameAndLogo);
                 brandLabel.setGraphicTextGap(20);
+                //brandLabel.graphicTextGapProperty().bind(mainFrameContainer.widthProperty().divide(100));
                 brandLabel.getStyleClass().setAll("brand");
                 hBox.getChildren().add(0, brandLabel);
                 hBox.getChildren().add(1, LayoutUtil.createHGrowable());
