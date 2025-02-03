@@ -102,39 +102,42 @@ final class Step2CheckoutSlide extends StepSlide {
         BorderPane signInContainer = new BorderPane();
         MonoPane signInContent = new MonoPane();
         Label loginLabel = Bootstrap.textPrimary(Bootstrap.strong(I18nControls.newLabel(BookingI18nKeys.LoginBeforeBooking)));
-        Hyperlink orGuestLink = Bootstrap.textPrimary(I18nControls.newHyperlink(BookingI18nKeys.OrBookAsGuest));
         VBox signIntopVBox = new VBox(10, loginLabel);
-        if (bookAsGuestAllowed)
-            signIntopVBox.getChildren().add(orGuestLink);
         signIntopVBox.setAlignment(Pos.TOP_CENTER);
         BorderPane.setMargin(signIntopVBox, new Insets(0, 0, 20, 0));
         signInContainer.setTop(signIntopVBox);
         signInContainer.setCenter(signInContent);
 
-        guestPanel.setOnSubmit(event -> {
-            Document document = getWorkingBooking().getLastestDocumentAggregate().getDocument();
-            document.setFirstName(guestPanel.getFirstName());
-            document.setLastName(guestPanel.getLastName());
-            document.setEmail(guestPanel.getEmail());
-            document.setCountry(getEvent().getOrganization().getCountry());
-            FXGuestToBook.setGuestToBook(document);
-            submit();
-        });
-
         FlipPane flipPane = new FlipPane();
         flipPane.setAlignment(Pos.TOP_CENTER);
         flipPane.setFront(signInContainer);
-        flipPane.setBack(guestPanel.getContainer());
-        orGuestLink.setOnAction(e -> {
-            flipPane.flipToBack();
-            guestPanel.onShowing();
-        });
-        Hyperlink orAccountLink = Bootstrap.textPrimary(I18nControls.newHyperlink(BookingI18nKeys.OrBookUsingAccount));
-        guestPanel.addTopNode(orAccountLink);
-        orAccountLink.setOnAction(e -> {
-            flipPane.flipToFront();
-            guestPanel.onHiding();
-        });
+
+        // TODO: make this reactive with a property (as this setting depends on the event, and this same UI is reused)
+        if (bookAsGuestAllowed) {
+            Hyperlink orGuestLink = Bootstrap.textPrimary(I18nControls.newHyperlink(BookingI18nKeys.OrBookAsGuest));
+            orGuestLink.setOnAction(e -> {
+                flipPane.flipToBack();
+                guestPanel.onShowing();
+            });
+            signIntopVBox.getChildren().add(orGuestLink);
+
+            flipPane.setBack(guestPanel.getContainer());
+            Hyperlink orAccountLink = Bootstrap.textPrimary(I18nControls.newHyperlink(BookingI18nKeys.OrBookUsingAccount));
+            orAccountLink.setOnAction(e -> {
+                flipPane.flipToFront();
+                guestPanel.onHiding();
+            });
+            guestPanel.addTopNode(orAccountLink);
+            guestPanel.setOnSubmit(event -> {
+                Document document = getWorkingBooking().getLastestDocumentAggregate().getDocument();
+                document.setFirstName(guestPanel.getFirstName());
+                document.setLastName(guestPanel.getLastName());
+                document.setEmail(guestPanel.getEmail());
+                document.setCountry(getEvent().getOrganization().getCountry());
+                FXGuestToBook.setGuestToBook(document);
+                submit();
+            });
+        }
 
         // Facility fee checkbox for events with facility fees rates
         boolean hasFacilityFees = getWorkingBooking().getPolicyAggregate().hasFacilityFees();

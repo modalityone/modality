@@ -28,6 +28,7 @@ import javafx.stage.Screen;
 import one.modality.base.client.brand.Brand;
 import one.modality.base.client.cloudinary.ModalityCloudinary;
 import one.modality.base.client.icons.SvgIcons;
+import one.modality.base.frontoffice.utility.page.FOPageUtil;
 import one.modality.base.frontoffice.utility.tyler.GeneralUtility;
 import one.modality.base.frontoffice.utility.tyler.StyleUtility;
 import one.modality.base.shared.entities.Event;
@@ -39,7 +40,7 @@ import one.modality.event.frontoffice.activities.booking.process.event.BookEvent
 
 final class StepBBookEventSlide extends StepSlide {
 
-    private static final double MAX_PAGE_WIDTH = 1200;
+    private static final double MAX_PAGE_WIDTH = FOPageUtil.MAX_PAGE_WIDTH;
     private static final double MIN_FONT_SIZE = 12;
     private static final double MAX_FONT_SIZE = 16;
 
