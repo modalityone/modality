@@ -258,8 +258,14 @@ public final class ModalityUsernamePasswordAuthenticationGateway implements Serv
                 FrontendAccount fa = userPerson.getFrontendAccount();
                 String oldEncryptedDbPassword = fa.getPassword();
                 String salt = fa.getSalt();
-                String oldEncryptedUserPassword = encryptPassword(passwordUpdate.getOldPassword(), salt);
-                if (!Objects.equals(oldEncryptedDbPassword, oldEncryptedUserPassword))
+                // Note in case of resetting the password from a magic link, the old password is not requested from the
+                // user but is loaded again from the database (by the MagicLink gateway) and is therefore already
+                // encrypted. Otherwise (when the password reset originates from the user profile), the old password is
+                // request from the user and is clear (not encrypted yet).
+                String oldPassword = passwordUpdate.getOldPassword();
+                String oldEncryptedUserPassword = encryptPassword(oldPassword, salt);
+                if (!Objects.equals(oldEncryptedDbPassword, oldEncryptedUserPassword) // when old password is clear
+                    && !Objects.equals(oldEncryptedDbPassword, oldPassword)) // when old password is encrypted (magic link)
                     return Future.failedFuture("[%s] The old password is not matching".formatted(ModalityAuthenticationI18nKeys.AuthnOldPasswordNotMatchingError));
                 String newEncryptedUserPassword = encryptPassword(passwordUpdate.getNewPassword(), salt);
                 // 2) We update the password in the database
