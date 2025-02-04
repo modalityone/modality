@@ -11,6 +11,8 @@ public interface FrontendAccount extends Entity, EntityHasCorporation {
     String password = "password";
     String lang = "lang";
     String salt = "salt";
+    String disabled = "disabled";
+    String backoffice = "backoffice";
 
     default void setUsername(String value) {
         setFieldValue(username, value);
@@ -43,4 +45,21 @@ public interface FrontendAccount extends Entity, EntityHasCorporation {
     default String getLang() {
         return getStringFieldValue(lang);
     }
+
+    default void setDisabled(Boolean value) {
+        setFieldValue(disabled, value);
+    }
+
+    default Boolean isDisabled() {
+        return getBooleanFieldValue(disabled);
+    }
+
+    default void setBackoffice(Boolean value) {
+        setFieldValue(backoffice, value);
+    }
+
+    default Boolean isBackoffice() {
+        return getBooleanFieldValue(backoffice);
+    }
+
 }

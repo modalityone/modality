@@ -19,7 +19,8 @@ public final class FOPageUtil {
     }
 
     public static <R extends Region> R restrictToMaxPageWidthAndApplyPageLeftRightPadding(R region) {
-        region.setPadding(createLeftRightPageInsets(0, 0));
+        Insets padding = region.getPadding();
+        region.setPadding(createLeftRightPageInsets(padding.getTop(), padding.getBottom()));
         return restrictToMaxPageWidth(region);
     }
 

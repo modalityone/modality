@@ -157,7 +157,9 @@ public final class LoginLinkService {
     public static Future<Person> loadUserPersonFromLoginLink(MagicLink magicLink) {
         String email = Objects.coalesce(magicLink.getOldEmail(), magicLink.getEmail());
         return magicLink.getStore()
-            .<Person>executeQuery("select frontendAccount from Person p where frontendAccount.username=? order by p.id limit 1", email)
+            // In most cases, only the frontendAccount id is needed, but when resetting the password from the magic link,
+            // the old password (encrypted) is also needed.
+            .<Person>executeQuery("select frontendAccount.password from Person p where frontendAccount.username=? order by p.id limit 1", email)
             .map(Collections::first);
     }
 

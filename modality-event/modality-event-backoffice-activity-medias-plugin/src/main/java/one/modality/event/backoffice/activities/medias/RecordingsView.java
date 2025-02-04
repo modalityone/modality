@@ -14,10 +14,7 @@ import dev.webfx.stack.i18n.I18n;
 import dev.webfx.stack.i18n.controls.I18nControls;
 import dev.webfx.stack.orm.datasourcemodel.service.DataSourceModelService;
 import dev.webfx.stack.orm.domainmodel.DataSourceModel;
-import dev.webfx.stack.orm.entity.EntityList;
-import dev.webfx.stack.orm.entity.EntityStore;
-import dev.webfx.stack.orm.entity.EntityStoreQuery;
-import dev.webfx.stack.orm.entity.UpdateStore;
+import dev.webfx.stack.orm.entity.*;
 import dev.webfx.stack.orm.entity.binding.EntityBindings;
 import dev.webfx.stack.ui.validation.ValidationSupport;
 import javafx.application.Platform;
@@ -172,96 +169,96 @@ public class RecordingsView {
         });
 
         masterSettings.getChildren().add(saveButton);
-
-
-        /* The language section */
-        /* **********************/
-        Label languageLabel = I18nControls.newLabel(MediasI18nKeys.SelectLanguage);
-        languageLabel.getStyleClass().add(Bootstrap.STRONG);
-        languageLabel.setPadding(new Insets(30, 0, 10, 0));
-        masterSettings.getChildren().add(languageLabel);
-
-        entityStore.executeQueryBatch(
-                new EntityStoreQuery("select distinct item.name, item.code from ScheduledItem  where programScheduledItem.event= ? and item.family.code = ? and programScheduledItem.item.family.code = ? order by item.name",
-                    new Object[]{currentEditedEvent, KnownItemFamily.AUDIO_RECORDING.getCode(), KnownItemFamily.TEACHING.getCode()}),
-                new EntityStoreQuery("select name, date, programScheduledItem.(startTime, endTime), item.code, programScheduledItem.timeline.startTime, published, programScheduledItem.name, programScheduledItem.timeline.endTime,programScheduledItem.timeline.audioOffered, event, site, expirationDate, available from ScheduledItem where programScheduledItem.event= ? and item.family.code = ? and programScheduledItem.item.family.code = ? order by date",
-                    new Object[]{currentEditedEvent, KnownItemFamily.AUDIO_RECORDING.getCode(), KnownItemFamily.TEACHING.getCode()}),
-                new EntityStoreQuery("select url, scheduledItem.programScheduledItem, scheduledItem.item, scheduledItem.item.code ,scheduledItem.date, scheduledItem.published, durationMillis from Media where scheduledItem.event= ? and scheduledItem.item.family.code = ?", new Object[]{currentEditedEvent, KnownItemFamily.AUDIO_RECORDING.getCode()}))
-            .onFailure(Console::log)
-            .onSuccess(entityList -> Platform.runLater(() -> {
-                EntityList<ScheduledItem> itemList = entityList[0];
-                EntityList<ScheduledItem> siList = entityList[1];
-                EntityList<Media> mediaList = entityList[2];
-                if (siList.isEmpty()) {
-                    Console.log("No recording offered for this event");
-                } else {
-                    //We have two lists of scheduled items, the teachings and the recordings (we suppose that for each recording ScheduledItem, we have a media associated in the database
-                    audioScheduledItemsReadFromDatabase.setAll(siList);
-                    recordingsMediasReadFromDatabase.setAll(mediaList);
-                    teachingsDates.setAll(siList.stream().map(EntityHasLocalDate::getDate).distinct().collect(Collectors.toList()));
-                    workingItems.setAll(itemList.stream()
-                        .map(ScheduledItem::getItem) // Map ScheduledItem to Item
-                        .collect(Collectors.toCollection(() ->
-                            new TreeSet<>(Comparator.comparing(Item::getCode)))) // Ensure distinct items by code
-                    );
-
-                    VBox languageListVBox = new VBox();
-                    languageListVBox.setSpacing(10);
-                    workingItems.forEach(currentItem -> {
-                        HBox currentLanguageHBox = new HBox();
-                        Label currentLanguageLabel = new Label(currentItem.getName());
-                        MediaLinksManagement newLanguageLinksManagement = correspondenceBetweenLanguageAndLanguageLinkManagement.get(currentItem.getName());
-                        TextTheme.createPrimaryTextFacet(currentLanguageLabel).style();
-                        currentLanguageHBox.getChildren().add(currentLanguageLabel);
-                        currentLanguageLabel.setOnMouseClicked(e -> {
-                            MediaLinksManagement oldLanguage = correspondenceBetweenLanguageAndLanguageLinkManagement.get(lastLanguageSelected);
-                            lastLanguageSelected = currentItem.getName();
-                            if (oldLanguage != null) oldLanguage.setVisible(false);
-                            newLanguageLinksManagement.setVisible(true);
-                        });
-                        currentLanguageLabel.setCursor(Cursor.HAND);
-
-                        Region spacer = new Region();
-                        HBox.setHgrow(spacer, Priority.ALWAYS);
-                        currentLanguageHBox.getChildren().add(spacer);
-
-                        //Here we display the percentage of what has been entered.
-                        // To do this, we filter the list of scheduledItem per language and date, and we do the same for the media,
-                        // and we compare the number
-                        StringProperty cssProperty = new SimpleStringProperty();
-                        Label percentageLabel = new Label();
-                        IntegerProperty percentageProperty = new SimpleIntegerProperty() {
-                            @Override
-                            protected void invalidated() {
-                                percentageLabel.setText(get() + "%");
-                            }
-                        };
-                        percentageLabel.setPadding(new Insets(0, 0, 0, 40));
-                        currentLanguageHBox.getChildren().add(percentageLabel);
-
-                        FXProperties.runOnPropertyChange((obs, oldClass, newClass) -> {
-                            percentageLabel.getStyleClass().removeAll(oldClass); // Remove the old class
-                            percentageLabel.getStyleClass().add(newClass);       // Add the new class
-                        }, cssProperty);
-
-                        ObservableLists.runOnListChange(() -> updatePercentageProperty(percentageProperty, cssProperty, currentItem)
-                        , newLanguageLinksManagement.getRecordingsMediasReadFromDatabase());
-                        //We call it manually the first time
-                        updatePercentageProperty(percentageProperty, cssProperty, currentItem);
-                        languageListVBox.getChildren().add(currentLanguageHBox);
-                    });
-
-                    masterSettings.getChildren().add(languageListVBox);
-                }
-            }));
-
-
         // Main Section (Recordings Section)
         VBox recordingsSection = new VBox(10);
         recordingsSection.setPadding(new Insets(20));
+        if (currentEditedEvent.getRepeatedEvent() != null && currentEditedEvent.isRepeatAudio()) {
+            Label seeRepeatableEventLabel = I18nControls.newLabel(MediasI18nKeys.AudioConfigurationDoneInRepeatableEvent, currentEditedEvent.getRepeatedEvent().getName(), Entities.getPrimaryKey(currentEditedEvent.getRepeatedEventId()).toString());
+            seeRepeatableEventLabel.setPadding(new Insets(200, 0, 0, 0));
+            recordingsSection.getChildren().add(seeRepeatableEventLabel);
+        } else {
+            /* The language section */
+            /* **********************/
+            Label languageLabel = I18nControls.newLabel(MediasI18nKeys.SelectLanguage);
+            languageLabel.getStyleClass().add(Bootstrap.STRONG);
+            languageLabel.setPadding(new Insets(30, 0, 10, 0));
+            masterSettings.getChildren().add(languageLabel);
 
-        ObservableLists.bindConverted(recordingsSection.getChildren(), workingItems, this::drawLanguageBox);
+            entityStore.executeQueryBatch(
+                    new EntityStoreQuery("select distinct item.name, item.code from ScheduledItem  where programScheduledItem.event= ? and item.family.code = ? and programScheduledItem.item.family.code = ? order by item.name",
+                        new Object[]{currentEditedEvent, KnownItemFamily.AUDIO_RECORDING.getCode(), KnownItemFamily.TEACHING.getCode()}),
+                    new EntityStoreQuery("select name, date, programScheduledItem.(startTime, endTime), item.code, programScheduledItem.timeline.startTime, published, programScheduledItem.name, programScheduledItem.timeline.endTime,programScheduledItem.timeline.audioOffered, event, site, expirationDate, available from ScheduledItem where programScheduledItem.event= ? and item.family.code = ? and programScheduledItem.item.family.code = ? order by date",
+                        new Object[]{currentEditedEvent, KnownItemFamily.AUDIO_RECORDING.getCode(), KnownItemFamily.TEACHING.getCode()}),
+                    new EntityStoreQuery("select url, scheduledItem.programScheduledItem, scheduledItem.item, scheduledItem.item.code ,scheduledItem.date, scheduledItem.published, durationMillis from Media where scheduledItem.event= ? and scheduledItem.item.family.code = ?", new Object[]{currentEditedEvent, KnownItemFamily.AUDIO_RECORDING.getCode()}))
+                .onFailure(Console::log)
+                .onSuccess(entityList -> Platform.runLater(() -> {
+                    EntityList<ScheduledItem> itemList = entityList[0];
+                    EntityList<ScheduledItem> siList = entityList[1];
+                    EntityList<Media> mediaList = entityList[2];
+                    if (siList.isEmpty()) {
+                        Console.log("No recording offered for this event");
+                    } else {
+                        //We have two lists of scheduled items, the teachings and the recordings (we suppose that for each recording ScheduledItem, we have a media associated in the database
+                        audioScheduledItemsReadFromDatabase.setAll(siList);
+                        recordingsMediasReadFromDatabase.setAll(mediaList);
+                        teachingsDates.setAll(siList.stream().map(EntityHasLocalDate::getDate).distinct().collect(Collectors.toList()));
+                        workingItems.setAll(itemList.stream()
+                            .map(ScheduledItem::getItem) // Map ScheduledItem to Item
+                            .collect(Collectors.toCollection(() ->
+                                new TreeSet<>(Comparator.comparing(Item::getCode)))) // Ensure distinct items by code
+                        );
 
+                        VBox languageListVBox = new VBox();
+                        languageListVBox.setSpacing(10);
+                        workingItems.forEach(currentItem -> {
+                            HBox currentLanguageHBox = new HBox();
+                            Label currentLanguageLabel = new Label(currentItem.getName());
+                            MediaLinksManagement newLanguageLinksManagement = correspondenceBetweenLanguageAndLanguageLinkManagement.get(currentItem.getName());
+                            TextTheme.createPrimaryTextFacet(currentLanguageLabel).style();
+                            currentLanguageHBox.getChildren().add(currentLanguageLabel);
+                            currentLanguageLabel.setOnMouseClicked(e -> {
+                                MediaLinksManagement oldLanguage = correspondenceBetweenLanguageAndLanguageLinkManagement.get(lastLanguageSelected);
+                                lastLanguageSelected = currentItem.getName();
+                                if (oldLanguage != null) oldLanguage.setVisible(false);
+                                newLanguageLinksManagement.setVisible(true);
+                            });
+                            currentLanguageLabel.setCursor(Cursor.HAND);
+
+                            Region spacer = new Region();
+                            HBox.setHgrow(spacer, Priority.ALWAYS);
+                            currentLanguageHBox.getChildren().add(spacer);
+
+                            //Here we display the percentage of what has been entered.
+                            // To do this, we filter the list of scheduledItem per language and date, and we do the same for the media,
+                            // and we compare the number
+                            StringProperty cssProperty = new SimpleStringProperty();
+                            Label percentageLabel = new Label();
+                            IntegerProperty percentageProperty = new SimpleIntegerProperty() {
+                                @Override
+                                protected void invalidated() {
+                                    percentageLabel.setText(get() + "%");
+                                }
+                            };
+                            percentageLabel.setPadding(new Insets(0, 0, 0, 40));
+                            currentLanguageHBox.getChildren().add(percentageLabel);
+
+                            FXProperties.runOnPropertyChange((obs, oldClass, newClass) -> {
+                                percentageLabel.getStyleClass().removeAll(oldClass); // Remove the old class
+                                percentageLabel.getStyleClass().add(newClass);       // Add the new class
+                            }, cssProperty);
+
+                            ObservableLists.runOnListChange(() -> updatePercentageProperty(percentageProperty, cssProperty, currentItem)
+                                , newLanguageLinksManagement.getRecordingsMediasReadFromDatabase());
+                            //We call it manually the first time
+                            updatePercentageProperty(percentageProperty, cssProperty, currentItem);
+                            languageListVBox.getChildren().add(currentLanguageHBox);
+                        });
+
+                        masterSettings.getChildren().add(languageListVBox);
+                    }
+                }));
+            ObservableLists.bindConverted(recordingsSection.getChildren(), workingItems, this::drawLanguageBox);
+        }
         // Layout container (HBox)
         Separator VSeparator = new Separator();
         VSeparator.setOrientation(Orientation.VERTICAL);
@@ -339,7 +336,7 @@ public class RecordingsView {
     }
 
     private void displayEventDetails(Event e) {
-        e.onExpressionLoaded("organization,audioExpirationDate")
+        e.onExpressionLoaded("organization,audioExpirationDate, repeatedEvent, repeatAudio, repeatVideo")
             .onSuccess(ignored -> Platform.runLater(this::drawContainer))
             .onFailure((Console::log));
 

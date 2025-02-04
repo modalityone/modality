@@ -1,7 +1,7 @@
 package one.modality.event.client.mediaview;
 
 import dev.webfx.extras.imagestore.ImageStore;
-import dev.webfx.extras.panes.LayoutPane;
+import dev.webfx.extras.panes.HPane;
 import dev.webfx.extras.panes.MonoPane;
 import dev.webfx.extras.player.Media;
 import dev.webfx.extras.player.Player;
@@ -14,7 +14,6 @@ import dev.webfx.platform.util.Objects;
 import javafx.animation.Interpolator;
 import javafx.animation.Timeline;
 import javafx.geometry.HPos;
-import javafx.geometry.Orientation;
 import javafx.geometry.VPos;
 import javafx.scene.Node;
 import javafx.scene.control.Label;
@@ -78,23 +77,11 @@ public abstract class MediaInfoView {
     private boolean timelineShowImage;
     private double lastComputeLayoutWidth;
 
-    protected Pane mediaPane = new LayoutPane(videoContainer, imageView, dateText, titleLabel, excerptLabel, backwardButton, pauseButton, playButton, forwardButton, progressBar, elapsedTimeText, favoritePane) {
+    protected Pane mediaPane = new HPane(videoContainer, imageView, dateText, titleLabel, excerptLabel, backwardButton, pauseButton, playButton, forwardButton, progressBar, elapsedTimeText, favoritePane) {
         private double fontFactor;
         private double leftX, imageY, imageWidth, imageHeight, rightX, rightWidth, dateY, dateHeight, titleY, titleHeight, excerptY, excerptHeight, buttonY, buttonSize, favoriteY, favoriteHeight;
         private HPos titleHPos, favoriteHPos;
         private double wideVideoVSpace;
-        {
-            // Not necessary but may speed up min & max computations in parent container
-            setMinWidth(0);
-            setMaxWidth(Double.MAX_VALUE);
-            setMinHeight(0);
-            setMaxHeight(Double.MAX_VALUE);
-        }
-
-        @Override
-        public Orientation getContentBias() {
-            return Orientation.HORIZONTAL; // To indicate that the height of this pane depends on its width
-        }
 
         @Override
         protected void layoutChildren(double width, double height) {

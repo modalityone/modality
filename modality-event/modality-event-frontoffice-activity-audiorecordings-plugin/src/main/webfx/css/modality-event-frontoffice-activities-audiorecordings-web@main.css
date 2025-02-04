@@ -14,10 +14,8 @@
 }
 
 .audio-library .description > fx-children > fx-text {
-    pref-width: 410px;
-    max-width: 410px;
-    overflow: hidden; /* Hide overflowed text */
-    text-overflow: ellipsis;
+    padding-left: 20px;
+    text-indent:-20px;
 }
 
 .list-tracks-title {
@@ -29,14 +27,7 @@
 }
 
 .bottom-border {
-    margin-top: 20px;
-    margin-left: 10px;
-    margin-right: 10px;
     border-color:     transparent transparent #e6e6e6 transparent;
     border-width: 0 0 1px 0; /* Border width translated to px */
     border-style: solid;
-}
-
-.bottom-border > fx-children {
-    margin-top: -10px;
 }

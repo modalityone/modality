@@ -1,9 +1,6 @@
 package one.modality.event.frontoffice.activities.booking.views;
 
-import dev.webfx.extras.panes.FlipPane;
-import dev.webfx.extras.panes.AspectRatioPane;
-import dev.webfx.extras.panes.ScaleMode;
-import dev.webfx.extras.panes.ScalePane;
+import dev.webfx.extras.panes.*;
 import dev.webfx.extras.util.layout.LayoutUtil;
 import dev.webfx.extras.util.scene.SceneUtil;
 import dev.webfx.kit.launcher.WebFxKitLauncher;
@@ -16,16 +13,13 @@ import dev.webfx.stack.orm.entity.Entities;
 import dev.webfx.stack.orm.entity.controls.entity.selector.EntityButtonSelector;
 import dev.webfx.stack.ui.controls.button.ButtonFactoryMixin;
 import javafx.application.Platform;
-import javafx.geometry.HPos;
 import javafx.geometry.Pos;
-import javafx.geometry.VPos;
 import javafx.scene.Cursor;
 import javafx.scene.Node;
 import javafx.scene.control.Button;
 import javafx.scene.control.Hyperlink;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
-import javafx.scene.layout.Pane;
 import javafx.scene.layout.Region;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
@@ -112,16 +106,16 @@ public final class OrganizationSelectorView {
         Node organizationMapNode = organizationMapView.getMapNode();
         return OrangeFrame.createOrangeFrame(
             BookingI18nKeys.yourLocalCentre,
-            new Pane(organizationButtonScalePane, organizationMapNode, presentationPane, contactBox) {
+            new LayoutPane(organizationButtonScalePane, organizationMapNode, presentationPane, contactBox) {
                 @Override
-                protected void layoutChildren() {
-                    double width = getWidth(), height = getHeight(), x = 0, y = 0, w = width, h = organizationButtonScalePane.prefHeight(width);
-                    layoutInArea(organizationButtonScalePane, x, y, w, h, 0, HPos.CENTER, VPos.CENTER);
+                protected void layoutChildren(double width, double height) {
+                    double x = 0, y = 0, w = width, h = organizationButtonScalePane.prefHeight(width);
+                    layoutInArea(organizationButtonScalePane, x, y, w, h, Pos.CENTER);
                     double space = Math.min(35, width * 0.03);
                     y += h + space;
                     if (organizationMapNode.isVisible()) {
                         w = width / 2;
-                        layoutInArea(organizationMapNode, x, y, w, height - y, 0, HPos.CENTER, VPos.TOP);
+                        layoutInArea(organizationMapNode, x, y, w, height - y, Pos.TOP_CENTER);
                         x = w + space;
                         w = width - x;
                         contactBox.setAlignment(Pos.CENTER_LEFT);
@@ -134,10 +128,10 @@ public final class OrganizationSelectorView {
                         contactBox.setAlignment(Pos.CENTER);
                     if (presentationPane.isVisible()) {
                         h = presentationPane.prefHeight(w);
-                        layoutInArea(presentationPane, x, y, w, h, 0, HPos.CENTER, VPos.TOP);
+                        layoutInArea(presentationPane, x, y, w, h, Pos.TOP_CENTER);
                         y += h + 10;
                     }
-                    layoutInArea(contactBox, x, y, w, height - y, 0, HPos.CENTER, VPos.CENTER);
+                    layoutInArea(contactBox, x, y, w, height - y, Pos.CENTER);
                 }
             },
             changeLocation);

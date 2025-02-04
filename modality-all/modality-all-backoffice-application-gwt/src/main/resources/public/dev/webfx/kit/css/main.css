@@ -801,6 +801,7 @@ tr.selected, .grid-row.selected {
 
 :root {
     --webfx-login-portal-background-image: none;
+    --webfx-login-portal-title-color: #0096D6;
 }
 
 /* Montserrat password dots are tiny! So we use another font for passwords, but we don't want that font for the placeholder!
@@ -828,7 +829,7 @@ input[type="password"]:not([value=""]) {
 
 .login input {
      font-size: 13px;
-       }
+}
 
 .login-child {
     background-color: rgba(255, 255, 255, 0.8);
@@ -839,9 +840,11 @@ input[type="password"]:not([value=""]) {
     height: 506px; /* Sets the fixed height */
 }
 
-.login .h2 {
+.login .h2 { /* Login word on top */
     font-family: 'Poppins', sans-serif; /* Sets the font to Poppins, with a fallback to sans-serif */
+    font-weight: bold;
     line-height: 0.5;
+    color: var(--webfx-login-portal-title-color);
 }
 
 .login .or {
@@ -852,11 +855,11 @@ input[type="password"]:not([value=""]) {
     background-color: lightgray;
 }
 
-.transparent-input > fx-background{
+.transparent-input > fx-background {
     background-color: transparent;
 }
 
-.transparent-input > fx-border{
+.transparent-input > fx-border {
     border-style: none;
 }
 

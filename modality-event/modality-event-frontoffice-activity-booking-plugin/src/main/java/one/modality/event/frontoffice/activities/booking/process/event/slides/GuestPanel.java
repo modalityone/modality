@@ -35,7 +35,7 @@ final class GuestPanel implements MaterialFactoryMixin {
     private final TextField firstNameTextField = newMaterialTextField(CrmI18nKeys.FirstName);
     private final TextField lastNameTextField = newMaterialTextField(CrmI18nKeys.LastName);
     private final TextField emailTextField = newMaterialTextField(CrmI18nKeys.Email);
-    private final Button guestSubmitButton = Bootstrap.largeButton(I18nControls.newButton(ModalityI18nKeys.Submit));
+    private final Button guestSubmitButton = Bootstrap.largeSuccessButton(I18nControls.newButton(ModalityI18nKeys.Submit));
     private final ValidationSupport validationSupport = new ValidationSupport();
 
     public GuestPanel() {

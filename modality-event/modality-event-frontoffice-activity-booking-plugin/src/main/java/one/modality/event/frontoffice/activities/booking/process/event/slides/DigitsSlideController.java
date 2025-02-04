@@ -52,19 +52,19 @@ final class DigitsSlideController {
         step2CheckoutSlide = new Step2CheckoutSlide(bookEventActivity);
 
         Event currentEvent = FXEvent.getEvent();
-        int typeId = Numbers.toInteger(Entities.getPrimaryKey(currentEvent.getType()));
-        if(typeId == KnownEventType.GP_CLASSES.getTypeId()) {
+        Object typeId = Entities.getPrimaryKey(currentEvent.getType());
+        if (Numbers.identicalObjectsOrNumberValues(typeId, KnownEventType.GP_CLASSES.getTypeId())) { // GP Classes
             //TODO: when we will have different Step1 for different type of event, implement an abstract class in this package, and the different step 1 will inherit this abstract class
             step1Slide = new Step1BookDatesRecurringEventSlide(bookEventActivity);
-        } else if(typeId == KnownEventType.STTP.getTypeId()) {
-            step1Slide =  new Step1BookSttpSlide(bookEventActivity);;
+        } else if (Numbers.identicalObjectsOrNumberValues(typeId, KnownEventType.STTP.getTypeId())) { // STTP
+            step1Slide =  new Step1BookSttpSlide(bookEventActivity);
             step2CheckoutSlide.setBookAsGuestAllowed(false);
-        }
-        else {
+        } else {
             step7ErrorSlide.setErrorMessage("Error: Unmanaged type of event");
             displaySlide(step7ErrorSlide);
         }
-        step1Slide.onWorkingBookingLoaded();
+        if (step1Slide != null)
+            step1Slide.onWorkingBookingLoaded();
 
         if (displayedSlide != step2CheckoutSlide) {
             displayFirstSlide();

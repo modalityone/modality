@@ -1,6 +1,7 @@
 package one.modality.crm.client.services.authz;
 
 import dev.webfx.platform.console.Console;
+import dev.webfx.platform.meta.Meta;
 import dev.webfx.platform.util.Strings;
 import dev.webfx.stack.authz.client.operation.OperationAuthorizationRuleParser;
 import dev.webfx.stack.authz.client.spi.impl.inmemory.InMemoryUserAuthorizationChecker;
@@ -19,7 +20,6 @@ import dev.webfx.stack.session.state.LogoutUserId;
 import dev.webfx.stack.session.state.client.fx.FXAuthorizationsChanged;
 import dev.webfx.stack.session.state.client.fx.FXAuthorizationsReceived;
 import dev.webfx.stack.session.state.client.fx.FXUserId;
-import one.modality.base.client.conf.ModalityClientConfig;
 import one.modality.crm.shared.services.authn.fx.FXModalityUserPrincipal;
 
 import java.util.List;
@@ -56,7 +56,7 @@ final class ModalityInMemoryUserAuthorizationChecker extends InMemoryUserAuthori
         EntityStore.create(dataSourceModel)
                 .executeCachedQuery(
                         LocalStorageCache.get().getCacheEntry("cache-authz-operations"), this::onPublicOrGuestOperationsWithGrantRouteChanged,
-                        "select grantRoute,guest,public from Operation where grantRoute!=null and (public or guest) and " + (ModalityClientConfig.isBackOffice() ? "backoffice" : "frontoffice"))
+                        "select grantRoute,guest,public from Operation where grantRoute!=null and (public or guest) and " + (Meta.isBackoffice() ? "backoffice" : "frontoffice"))
                 .onFailure(Console::log)
                 .onSuccess(this::onPublicOrGuestOperationsWithGrantRouteChanged);
     }

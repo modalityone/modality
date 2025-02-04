@@ -1,5 +1,6 @@
 package one.modality.event.backoffice.activities.pricing;
 
+import dev.webfx.kit.util.properties.ObservableLists;
 import dev.webfx.stack.orm.datasourcemodel.service.DataSourceModelService;
 import dev.webfx.stack.orm.dql.DqlStatement;
 import dev.webfx.stack.orm.reactive.entities.dql_to_entities.ReactiveEntitiesMapper;
@@ -7,6 +8,8 @@ import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import one.modality.base.shared.entities.Item;
 import one.modality.base.shared.entities.KnownItemFamily;
+import one.modality.base.shared.entities.Site;
+import one.modality.base.shared.entities.SiteItem;
 import one.modality.crm.backoffice.organization.fx.FXOrganization;
 import one.modality.ecommerce.document.service.PolicyAggregate;
 
@@ -20,7 +23,7 @@ final class AudioRecordingPricing extends AbstractItemFamilyPricing {
         ReactiveEntitiesMapper.<Item>createReactiveChain()
             .setDataSourceModel(DataSourceModelService.getDefaultDataSourceModel())
             //.setStore(EntityStore.create(DataSourceModelService.getDefaultDataSourceModel()))
-            .always("{class: 'Item', fields: 'code,name', orderBy: 'id'}")
+            .always("{class: 'Item', fields: 'code,name', orderBy: 'ord,id'}")
             .always(DqlStatement.where("!deprecated and family.code = ?", KnownItemFamily.AUDIO_RECORDING.getCode()))
             .always(FXOrganization.organizationProperty(), lang -> DqlStatement.where("organization = ?", lang))
             .storeEntitiesInto(ORGANIZATION_RECORDING_ITEMS)
@@ -28,7 +31,9 @@ final class AudioRecordingPricing extends AbstractItemFamilyPricing {
     }
 
     public AudioRecordingPricing(PolicyAggregate eventPolicy) {
-        super(KnownItemFamily.AUDIO_RECORDING, EventPricingI18nKeys.AudioRecordings, eventPolicy);
+        super(KnownItemFamily.AUDIO_RECORDING, EventPricingI18nKeys.AudioRecordings, eventPolicy, false);
+        Site venue = eventPolicy.getEvent().getVenue();
+        ObservableLists.bindConverted(availableSiteItems, ORGANIZATION_RECORDING_ITEMS, item -> new SiteItem(venue, item));
     }
 
 }

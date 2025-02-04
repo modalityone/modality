@@ -2,14 +2,12 @@ package one.modality.event.frontoffice.activities.booking.process.event.slides;
 
 import dev.webfx.extras.panes.TransitionPane;
 import dev.webfx.extras.panes.transitions.CircleTransition;
-import dev.webfx.extras.util.control.ControlUtil;
 import dev.webfx.extras.webtext.HtmlText;
 import dev.webfx.kit.util.properties.FXProperties;
 import dev.webfx.platform.uischeduler.UiScheduler;
 import javafx.beans.property.ReadOnlyBooleanProperty;
 import javafx.beans.property.ReadOnlyObjectProperty;
 import javafx.scene.control.Labeled;
-import javafx.scene.control.ScrollPane;
 import javafx.scene.layout.Region;
 import javafx.scene.text.Font;
 import one.modality.base.client.mainframe.fx.FXMainFrameTransiting;
@@ -23,7 +21,6 @@ public final class LettersSlideController {
 
     private final BookEventActivity bookEventActivity;
     private final TransitionPane transitionPane = new TransitionPane();
-    private final ScrollPane scrollPane = ControlUtil.createVerticalScrollPane(transitionPane);
     private final StepALoadingSlide stepALoadingSlide;
     private final StepBBookEventSlide stepBBookEventSlide;
     private final StepCThankYouSlide stepCThankYouSlide;
@@ -40,7 +37,7 @@ public final class LettersSlideController {
     }
 
     public Region getContainer() {
-        return scrollPane;
+        return transitionPane;
     }
 
     public void onEventChanged(Event event) {
@@ -66,7 +63,9 @@ public final class LettersSlideController {
             displaySlideOnTransitionComplete(slide, FXMainFrameTransiting.transitingProperty());
         } else {
             UiScheduler.runInUiThread((() -> {
-                slide.mainVbox.minHeightProperty().bind(scrollPane.heightProperty());
+                // Ensuring the slide is always at least as high as the transition pane. This will for example stretch
+                // the loading slide so it fills the whole screen vertically.
+                slide.mainVbox.minHeightProperty().bind(transitionPane.heightProperty());
                 transitionPane.transitToContent(slide.get());
             }));
         }

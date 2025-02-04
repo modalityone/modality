@@ -686,6 +686,7 @@ HtmlText, HtmlTextEditor {
 
 * {
     -webfx-login-portal-background-image: none; /* Specify the path to your image */
+    -webfx-login-portal-title-color: #0096D6;
 }
 
 .login {
@@ -704,9 +705,11 @@ HtmlText, HtmlTextEditor {
     -fx-effect: dropshadow(gaussian, lightgray, 10, 0, 0, 0);
 }
 
-.login .h2 {
+.login .h2 { /* Login word on top */
     -fx-font-family: 'Poppins', sans-serif;
+    -fx-font-weight: bold;
     -fx-line-spacing: 0;
+    -fx-text-fill: -webfx-login-portal-title-color;
 }
 /*===== modality-client-brand-javafx@main.css from modality-base-client-brand =====*/
 
@@ -910,12 +913,6 @@ CollapsePane.menu-bar.lang-menu-bar {
     -fx-text-alignment: left; /* Aligns text */
 }
 
-
-.audio-library .description {
-    -fx-pref-width: 450;
-    -fx-max-width: 450;
-}
-
 .list-tracks-title {
     -fx-font-family: "Poppins";
     -fx-font-weight: bold;
@@ -925,7 +922,6 @@ CollapsePane.menu-bar.lang-menu-bar {
 }
 
 .bottom-border {
-    -fx-padding: 0 10 20 -50;
     -fx-border-color: transparent transparent #4A4748 transparent; -fx-border-width: 0 0 0.2 0;
 }
 
