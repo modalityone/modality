@@ -34,7 +34,6 @@ public class ChangeEmailUI implements MaterialFactoryMixin {
     protected PasswordField passwordField;
     protected TextField emailField;
     private final VBox changeEmailVBox = new VBox();
-    private final VBox messageVBox = new VBox();
     private final TransitionPane transitionPane = new TransitionPane(changeEmailVBox);
     protected ScalePane container = new ScalePane(transitionPane);
     private final ValidationSupport validationSupport = new ValidationSupport();
@@ -55,7 +54,8 @@ public class ChangeEmailUI implements MaterialFactoryMixin {
 
         emailField = newMaterialTextField(UserProfileI18nKeys.NewEmailAddress);
         MaterialUtil.getMaterialTextField(emailField).setAnimateLabel(false);
-
+        emailField.getProperties().put("webfx-input-type", "email");
+        emailField.getProperties().put("webfx-input-autocomplete", "email");
 
         infoMessage.setVisible(false);
         infoMessage.setWrapText(true);

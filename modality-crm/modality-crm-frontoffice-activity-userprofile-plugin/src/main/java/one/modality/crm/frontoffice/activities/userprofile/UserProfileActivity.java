@@ -204,6 +204,8 @@ final class UserProfileActivity extends ViewDomainActivityBase implements Modali
 
         StackPane emailPane = new StackPane();
         emailTextField = newMaterialTextField(CrmI18nKeys.Email);
+        emailTextField.getProperties().put("webfx-input-type", "email");
+        emailTextField.getProperties().put("webfx-input-autocomplete", "email");
         formatTextFieldLabel(emailTextField);
         emailTextField.setDisable(true);
         emailPane.getChildren().add(emailTextField);
@@ -350,8 +352,7 @@ final class UserProfileActivity extends ViewDomainActivityBase implements Modali
         firstColumn.getChildren().add(layOrdainedHBox);
 
         layNameTextField = newMaterialTextField(CrmI18nKeys.LayName);
-        layNameTextField.getStyleClass().clear();
-        layNameTextField.getStyleClass().add("transparent-input");
+        layNameTextField.getStyleClass().setAll("transparent-input");
         formatTextFieldLabel(layNameTextField);
         firstColumn.getChildren().add(layNameTextField);
         layNameTextField.textProperty().addListener((observable, oldValue, newValue) -> currentPerson.setLayName(newValue));
@@ -360,8 +361,9 @@ final class UserProfileActivity extends ViewDomainActivityBase implements Modali
         layNameTextField.managedProperty().bind(optionOrdained.selectedProperty());
 
         phoneTextField = newMaterialTextField(CrmI18nKeys.Phone);
-        phoneTextField.getStyleClass().clear();
-        phoneTextField.getStyleClass().add("transparent-input");
+        phoneTextField.getProperties().put("webfx-input-type", "tel");
+        phoneTextField.getProperties().put("webfx-input-autocomplete", "tel");
+        phoneTextField.getStyleClass().setAll("transparent-input");
         formatTextFieldLabel(phoneTextField);
         firstColumn.getChildren().add(phoneTextField);
         phoneTextField.textProperty().addListener((observable, oldValue, newValue) -> currentPerson.setPhone(newValue));

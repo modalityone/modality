@@ -39,6 +39,8 @@ final class GuestPanel implements MaterialFactoryMixin {
     private final ValidationSupport validationSupport = new ValidationSupport();
 
     public GuestPanel() {
+        emailTextField.getProperties().put("webfx-input-type", "email");
+        emailTextField.getProperties().put("webfx-input-autocomplete", "email");
         Label guestDetailsLabel = Bootstrap.textPrimary(Bootstrap.strong(I18nControls.newLabel(BookingI18nKeys.GuestDetails)));
         guestTopVBox.getChildren().add(guestDetailsLabel);
         guestTopVBox.setAlignment(Pos.TOP_CENTER);

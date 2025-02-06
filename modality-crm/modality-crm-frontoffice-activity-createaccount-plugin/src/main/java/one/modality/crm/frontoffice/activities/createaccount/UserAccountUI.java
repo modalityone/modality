@@ -110,6 +110,8 @@ public class UserAccountUI implements ModalityButtonFactoryMixin {
         fieldsListVBox.getChildren().add(loginInfoLabel);
 
         emailTextField = newMaterialTextField(CrmI18nKeys.Email);
+        emailTextField.getProperties().put("webfx-input-type", "email");
+        emailTextField.getProperties().put("webfx-input-autocomplete", "email");
         formatTextFieldLabel(emailTextField);
         emailTextField.setDisable(true);
         emailTextField.setText(person.getEmail());
@@ -236,6 +238,8 @@ public class UserAccountUI implements ModalityButtonFactoryMixin {
 
 
         phoneTextField = newMaterialTextField(CrmI18nKeys.Phone);
+        phoneTextField.getProperties().put("webfx-input-type", "tel");
+        phoneTextField.getProperties().put("webfx-input-autocomplete", "tel");
         phoneTextField.setText(person.getPhone());
         phoneTextField.getStyleClass().clear();
         phoneTextField.getStyleClass().add("transparent-input");
