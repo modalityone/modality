@@ -2,6 +2,7 @@ package one.modality.crm.client.authn.login.ui.gateway.signup;
 
 import dev.webfx.extras.styles.bootstrap.Bootstrap;
 import dev.webfx.extras.util.control.Controls;
+import dev.webfx.extras.util.control.HtmlInputAutocomplete;
 import dev.webfx.stack.authn.login.ui.spi.impl.gateway.UiLoginGatewayBase;
 import dev.webfx.stack.authn.login.ui.spi.impl.gateway.UiLoginPortalCallback;
 import dev.webfx.stack.hash.md5.Md5;
@@ -107,6 +108,7 @@ public class ModalitySignupUiLoginGateway extends UiLoginGatewayBase {
         passwordLabel = I18nControls.newLabel(CrmI18nKeys.Password);
         grid.add(passwordLabel, 0, 6);
         passwordInput = new PasswordField();
+        Controls.setHtmlInputAutocomplete(passwordInput, HtmlInputAutocomplete.NEW_PASSWORD);
 
         grid.add(passwordInput, 0, 7);
 

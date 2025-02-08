@@ -6,6 +6,7 @@ import dev.webfx.extras.styles.bootstrap.Bootstrap;
 import dev.webfx.extras.styles.materialdesign.textfield.MaterialTextFieldPane;
 import dev.webfx.extras.styles.materialdesign.util.MaterialUtil;
 import dev.webfx.extras.util.control.Controls;
+import dev.webfx.extras.util.control.HtmlInputAutocomplete;
 import dev.webfx.extras.util.layout.Layouts;
 import dev.webfx.kit.launcher.WebFxKitLauncher;
 import dev.webfx.platform.console.Console;
@@ -120,6 +121,7 @@ public class UserAccountUI implements ModalityButtonFactoryMixin {
         emailTextField.textProperty().addListener((observable, oldValue, newValue) -> person.setEmail(newValue));
 
         passwordField = newMaterialPasswordField(CrmI18nKeys.Password);
+        Controls.setHtmlInputAutocomplete(passwordField, HtmlInputAutocomplete.NEW_PASSWORD);
         formatTextFieldLabel(passwordField);
         fieldsListVBox.getChildren().add(passwordField);
         Layouts.bindManagedAndVisiblePropertiesTo(passwordManagedProperty, passwordField);
@@ -130,6 +132,7 @@ public class UserAccountUI implements ModalityButtonFactoryMixin {
         Layouts.bindManagedAndVisiblePropertiesTo(passwordManagedProperty, passwordStrength);
 
         repeatPasswordField = newMaterialPasswordField(CrmI18nKeys.RepeatPassword);
+        Controls.setHtmlInputAutocomplete(repeatPasswordField, HtmlInputAutocomplete.NEW_PASSWORD);
         formatTextFieldLabel(repeatPasswordField);
         fieldsListVBox.getChildren().add(repeatPasswordField);
         Layouts.bindManagedAndVisiblePropertiesTo(passwordManagedProperty, repeatPasswordField);

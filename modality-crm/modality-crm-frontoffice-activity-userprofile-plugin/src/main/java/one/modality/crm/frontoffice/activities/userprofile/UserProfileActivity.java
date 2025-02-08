@@ -219,8 +219,7 @@ final class UserProfileActivity extends ViewDomainActivityBase implements Modali
         passwordField.setText("*******");
         passwordField.setDisable(true);
         formatTextFieldLabel(passwordField);
-        passwordPane.getChildren().add(passwordField);
-        passwordPane.getChildren().add(changeUserPassword);
+        passwordPane.getChildren().addAll(passwordField, changeUserPassword);
         StackPane.setAlignment(changeUserPassword, Pos.BOTTOM_RIGHT);
         StackPane.setMargin(changeUserPassword, new Insets(0, 0, 3, 0));
         firstColumn.getChildren().add(passwordPane);
