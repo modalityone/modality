@@ -1,6 +1,7 @@
 package one.modality.event.frontoffice.activities.booking.process.event.slides;
 
 import dev.webfx.extras.styles.bootstrap.Bootstrap;
+import dev.webfx.extras.util.layout.Layouts;
 import dev.webfx.extras.webtext.HtmlText;
 import dev.webfx.platform.console.Console;
 import dev.webfx.platform.uischeduler.UiScheduler;
@@ -201,8 +202,7 @@ public abstract class StepSlide implements Supplier<Node> {
         personButton.setMinWidth(300);
         personButton.setMaxWidth(Region.USE_PREF_SIZE);
         VBox.setMargin(personButton, new Insets(20, 0, 20, 0));
-        personButton.visibleProperty().bind(FXModalityUserPrincipal.loggedInProperty());
-        personButton.managedProperty().bind(FXModalityUserPrincipal.loggedInProperty());
+        Layouts.bindManagedAndVisiblePropertiesTo(FXModalityUserPrincipal.loggedInProperty(), personButton);
         return personButton;
     }
 

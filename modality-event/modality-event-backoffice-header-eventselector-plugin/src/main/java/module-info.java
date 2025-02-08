@@ -13,6 +13,7 @@ module modality.event.backoffice.header.eventselector.plugin {
     requires modality.base.shared.entities;
     requires modality.crm.backoffice.organization.fx;
     requires modality.event.client.event.fx;
+    requires webfx.extras.util.layout;
     requires webfx.stack.orm.domainmodel;
     requires webfx.stack.orm.dql;
     requires webfx.stack.orm.entity;

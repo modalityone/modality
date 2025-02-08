@@ -21,6 +21,7 @@ module modality.event.frontoffice.activity.videos.plugin {
     requires webfx.extras.player.multi.all;
     requires webfx.extras.styles.bootstrap;
     requires webfx.extras.util.control;
+    requires webfx.extras.util.layout;
     requires webfx.extras.webtext;
     requires webfx.kit.util;
     requires webfx.platform.console;

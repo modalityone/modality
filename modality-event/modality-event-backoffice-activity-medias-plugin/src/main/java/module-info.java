@@ -23,6 +23,7 @@ module modality.event.backoffice.activity.medias.plugin {
     requires webfx.extras.switches;
     requires webfx.extras.theme;
     requires webfx.extras.util.control;
+    requires webfx.extras.util.layout;
     requires webfx.extras.util.masterslave;
     requires webfx.extras.webtext;
     requires webfx.kit.util;

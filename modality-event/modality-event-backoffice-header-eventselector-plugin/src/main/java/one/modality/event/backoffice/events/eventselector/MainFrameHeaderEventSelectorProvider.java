@@ -1,5 +1,6 @@
 package one.modality.event.backoffice.events.eventselector;
 
+import dev.webfx.extras.util.layout.Layouts;
 import dev.webfx.stack.orm.domainmodel.DataSourceModel;
 import dev.webfx.stack.orm.entity.EntityStore;
 import dev.webfx.stack.orm.entity.controls.entity.selector.EntityButtonSelector;
@@ -42,9 +43,8 @@ public class MainFrameHeaderEventSelectorProvider implements MainFrameHeaderNode
             eventSelector.setVisualNullEntity(nullEvent);
             // Doing a bidirectional binding with FXEvent (taking the initial value from FXEvent)
             eventSelector.selectedItemProperty().bindBidirectional(FXEvent.eventProperty()); // <= FXEvent value applied first
-            Button eventButton = eventSelector.getButton();
-            eventButton.visibleProperty().bind(FXEventSelector.eventSelectorVisibleProperty());
-            eventButton.managedProperty().bind(eventButton.visibleProperty());
+            Button button = eventSelector.getButton();
+            Layouts.bindManagedAndVisiblePropertiesTo(FXEventSelector.eventSelectorVisibleProperty(), button);
         }
         return eventSelector.getButton();
     }

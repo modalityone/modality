@@ -4,6 +4,7 @@ import dev.webfx.extras.panes.ColumnsPane;
 import dev.webfx.extras.panes.FlipPane;
 import dev.webfx.extras.panes.MonoPane;
 import dev.webfx.extras.styles.bootstrap.Bootstrap;
+import dev.webfx.extras.util.layout.Layouts;
 import dev.webfx.kit.util.properties.FXProperties;
 import dev.webfx.kit.util.properties.ObservableLists;
 import dev.webfx.platform.console.Console;
@@ -90,8 +91,7 @@ final class Step2CheckoutSlide extends StepSlide {
 
         Button personToBookButton = createPersonToBookButton();
         MonoPane personToBookMonoPane = new MonoPane(personToBookButton);
-        personToBookMonoPane.visibleProperty().bind(step1PersonToBookWasShownProperty.not());
-        personToBookMonoPane.managedProperty().bind(step1PersonToBookWasShownProperty.not());
+        Layouts.bindManagedAndVisiblePropertiesTo(step1PersonToBookWasShownProperty.not(), personToBookMonoPane);
         VBox.setMargin(personToBookMonoPane, new Insets(20, 0, 20, 0));
 
         // Adding the container that will display the CheckoutAccountActivity (and eventually the login page before)

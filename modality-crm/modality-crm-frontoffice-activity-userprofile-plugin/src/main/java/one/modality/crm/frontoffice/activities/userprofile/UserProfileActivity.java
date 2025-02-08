@@ -11,6 +11,7 @@ import dev.webfx.extras.time.pickers.DatePicker;
 import dev.webfx.extras.time.pickers.DatePickerOptions;
 import dev.webfx.extras.util.animation.Animations;
 import dev.webfx.extras.util.control.Controls;
+import dev.webfx.extras.util.layout.Layouts;
 import dev.webfx.kit.launcher.WebFxKitLauncher;
 import dev.webfx.kit.util.properties.FXProperties;
 import dev.webfx.platform.async.Future;
@@ -356,8 +357,7 @@ final class UserProfileActivity extends ViewDomainActivityBase implements Modali
         firstColumn.getChildren().add(layNameTextField);
         layNameTextField.textProperty().addListener((observable, oldValue, newValue) -> currentPerson.setLayName(newValue));
         layNameTextField.setDisable(true);
-        layNameTextField.visibleProperty().bind(optionOrdained.selectedProperty());
-        layNameTextField.managedProperty().bind(optionOrdained.selectedProperty());
+        Layouts.bindManagedAndVisiblePropertiesTo(optionOrdained.selectedProperty(), layNameTextField);
 
         phoneTextField = newMaterialTextField(CrmI18nKeys.Phone);
         Controls.setHtmlInputTypeAndAutocompleteToTel(phoneTextField);

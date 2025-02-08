@@ -2,6 +2,7 @@ package one.modality.event.frontoffice.activities.audiorecordings;
 
 import dev.webfx.extras.panes.ColumnsPane;
 import dev.webfx.extras.styles.bootstrap.Bootstrap;
+import dev.webfx.extras.util.layout.Layouts;
 import dev.webfx.kit.util.properties.FXProperties;
 import dev.webfx.kit.util.properties.ObservableLists;
 import dev.webfx.platform.console.Console;
@@ -117,12 +118,9 @@ final class AudioRecordingsActivity extends ViewDomainActivityBase {
         noContentVBox.setAlignment(Pos.TOP_CENTER);
         noContentVBox.getChildren().addAll(noContentTitleLabel,noContentText);
         BooleanExpression displayNoContentBinding = ObservableLists.isEmpty(columnsPane.getChildren());
-        noContentVBox.managedProperty().bind(displayNoContentBinding);
-        noContentVBox.visibleProperty().bind(displayNoContentBinding);
-        headerLabel.managedProperty().bind(noContentVBox.managedProperty().not());
-        checkoutLabel.managedProperty().bind(noContentVBox.managedProperty().not());
-        headerLabel.visibleProperty().bind(noContentVBox.visibleProperty().not());
-        checkoutLabel.visibleProperty().bind(noContentVBox.visibleProperty().not());
+        Layouts.bindManagedAndVisiblePropertiesTo(displayNoContentBinding, noContentVBox);
+        Layouts.bindManagedAndVisiblePropertiesTo(displayNoContentBinding.not(), headerLabel);
+        Layouts.bindManagedAndVisiblePropertiesTo(displayNoContentBinding.not(), checkoutLabel);
 
         noContentTitleLabel.setPadding(new Insets(75,0,0,0));
 

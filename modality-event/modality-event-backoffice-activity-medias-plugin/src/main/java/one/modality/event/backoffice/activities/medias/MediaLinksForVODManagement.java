@@ -4,6 +4,7 @@ import dev.webfx.extras.panes.MonoPane;
 import dev.webfx.extras.styles.bootstrap.Bootstrap;
 import dev.webfx.extras.switches.Switch;
 import dev.webfx.extras.theme.text.TextTheme;
+import dev.webfx.extras.util.layout.Layouts;
 import dev.webfx.kit.util.properties.ObservableLists;
 import dev.webfx.platform.console.Console;
 import dev.webfx.stack.i18n.I18n;
@@ -335,8 +336,7 @@ public class MediaLinksForVODManagement extends MediaLinksManagement {
 
                 HBox rightHBox = new HBox();
                 rightHBox.setAlignment(Pos.CENTER_RIGHT);
-                rightHBox.visibleProperty().bind(customExpirationDateSwitch.selectedProperty());
-                rightHBox.managedProperty().bind(customExpirationDateSwitch.selectedProperty());
+                Layouts.bindManagedAndVisiblePropertiesTo(customExpirationDateSwitch.selectedProperty(), rightHBox);
 
                 Label contentAvailableUntilLabel = I18nControls.newLabel(MediasI18nKeys.AvailableUntil);
                 rightHBox.getChildren().add(contentAvailableUntilLabel);
