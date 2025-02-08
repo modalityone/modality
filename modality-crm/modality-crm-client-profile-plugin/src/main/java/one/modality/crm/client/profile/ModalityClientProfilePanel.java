@@ -4,7 +4,7 @@ import dev.webfx.extras.switches.Switch;
 import dev.webfx.extras.theme.layout.FXLayoutMode;
 import dev.webfx.extras.theme.luminance.FXLuminanceMode;
 import dev.webfx.extras.theme.palette.FXPaletteMode;
-import dev.webfx.extras.util.layout.LayoutUtil;
+import dev.webfx.extras.util.layout.Layouts;
 import dev.webfx.extras.visual.controls.grid.VisualGrid;
 import dev.webfx.kit.util.properties.FXProperties;
 import dev.webfx.platform.util.collection.Collections;
@@ -117,19 +117,19 @@ final class ModalityClientProfilePanel {
 
         // Compact mode
         Switch compactModeSwitch = new Switch();
-        HBox compactModeHBox = new HBox(new Label("Compact mode"), LayoutUtil.createHGrowable(), compactModeSwitch);
+        HBox compactModeHBox = new HBox(new Label("Compact mode"), Layouts.createHGrowable(), compactModeSwitch);
         compactModeSwitch.setSelected(FXLayoutMode.isCompactMode());
         FXProperties.runOnPropertyChange(FXLayoutMode::setCompactMode, compactModeSwitch.selectedProperty());
 
         // Dark mode
         Switch darkModeSwitch = new Switch();
-        HBox darkModeHBox = new HBox(new Label("Dark mode"), LayoutUtil.createHGrowable(), darkModeSwitch);
+        HBox darkModeHBox = new HBox(new Label("Dark mode"), Layouts.createHGrowable(), darkModeSwitch);
         darkModeSwitch.setSelected(FXLuminanceMode.isDarkMode());
         FXProperties.runOnPropertyChange(FXLuminanceMode::setDarkMode, darkModeSwitch.selectedProperty());
 
         // Colorful palette
         Switch paletteModeSwitch = new Switch();
-        HBox paletteModeHBox = new HBox(new Label("Colorful palette"), LayoutUtil.createHGrowable(), paletteModeSwitch);
+        HBox paletteModeHBox = new HBox(new Label("Colorful palette"), Layouts.createHGrowable(), paletteModeSwitch);
         paletteModeSwitch.setSelected(FXPaletteMode.isVariedPalette());
         FXProperties.runOnPropertyChange(FXPaletteMode::setVariedPalette, paletteModeSwitch.selectedProperty());
 

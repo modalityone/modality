@@ -13,8 +13,8 @@ import one.modality.base.shared.entities.Filter;
 import dev.webfx.stack.orm.entity.controls.entity.selector.EntityButtonSelector;
 import dev.webfx.extras.util.scene.SceneUtil;
 
-import static dev.webfx.extras.util.layout.LayoutUtil.setHGrowable;
-import static dev.webfx.extras.util.layout.LayoutUtil.setMaxHeightToInfinite;
+import static dev.webfx.extras.util.layout.Layouts.setHGrowable;
+import static dev.webfx.extras.util.layout.Layouts.setMaxHeightToInfinite;
 
 public final class FilterSearchBar {
 

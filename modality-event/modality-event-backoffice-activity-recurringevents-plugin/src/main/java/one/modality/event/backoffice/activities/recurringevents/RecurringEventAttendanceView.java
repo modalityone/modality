@@ -4,7 +4,7 @@ import dev.webfx.extras.panes.ColumnsPane;
 import dev.webfx.extras.styles.bootstrap.Bootstrap;
 import dev.webfx.extras.theme.text.TextTheme;
 import dev.webfx.extras.util.control.Controls;
-import dev.webfx.extras.util.layout.LayoutUtil;
+import dev.webfx.extras.util.layout.Layouts;
 import dev.webfx.extras.visual.controls.grid.SkinnedVisualGrid;
 import dev.webfx.extras.visual.controls.grid.VisualGrid;
 import dev.webfx.stack.i18n.controls.I18nControls;
@@ -117,7 +117,7 @@ final class RecurringEventAttendanceView {
             dateLabel.setBackground(Background.fill(Color.rgb(0, 150, 214)));
             dateLabel.setAlignment(Pos.CENTER);
             dateLabel.setFont(Font.font(null, FontWeight.BOLD, 16));
-            boxesContainer.setTop(LayoutUtil.setMaxWidthToInfinite(dateLabel));
+            boxesContainer.setTop(Layouts.setMaxWidthToInfinite(dateLabel));
 
             VisualGrid linesGrid = new SkinnedVisualGrid();
             linesGrid.setHeaderVisible(false);

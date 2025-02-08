@@ -5,7 +5,7 @@ import dev.webfx.extras.panes.transitions.CircleTransition;
 import dev.webfx.extras.panes.transitions.FadeTransition;
 import dev.webfx.extras.player.Players;
 import dev.webfx.extras.util.control.Controls;
-import dev.webfx.extras.util.layout.LayoutUtil;
+import dev.webfx.extras.util.layout.Layouts;
 import dev.webfx.kit.launcher.WebFxKitLauncher;
 import dev.webfx.kit.util.properties.FXProperties;
 import dev.webfx.kit.util.properties.ObservableLists;
@@ -380,7 +380,7 @@ public final class ModalityFrontOfficeMainFrameActivity extends ModalityClientMa
                 Label usernameLabel = new Label();
                 usernameLabel.textProperty().bind(FXUserName.userNameProperty());
                 hBox.getChildren().add(0, usernameLabel);
-                hBox.getChildren().add(1, LayoutUtil.createHGrowable());
+                hBox.getChildren().add(1, Layouts.createHGrowable());
                 hBox.setAlignment(Pos.CENTER_RIGHT);
                 buttonBar = hBox;
                 buttonBar.setPrefHeight(WEB_USER_MENU_HEIGHT);
@@ -390,7 +390,7 @@ public final class ModalityFrontOfficeMainFrameActivity extends ModalityClientMa
                 //brandLabel.graphicTextGapProperty().bind(mainFrameContainer.widthProperty().divide(100));
                 brandLabel.getStyleClass().setAll("brand");
                 hBox.getChildren().add(0, brandLabel);
-                hBox.getChildren().add(1, LayoutUtil.createHGrowable());
+                hBox.getChildren().add(1, Layouts.createHGrowable());
                 hBox.setAlignment(Pos.BOTTOM_RIGHT);
                 hBox.setMaxHeight(Region.USE_PREF_SIZE);
                 buttonBar = new MonoPane(hBox);

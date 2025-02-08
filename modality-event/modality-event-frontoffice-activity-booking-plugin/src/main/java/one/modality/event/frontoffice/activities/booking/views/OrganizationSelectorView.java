@@ -1,7 +1,7 @@
 package one.modality.event.frontoffice.activities.booking.views;
 
 import dev.webfx.extras.panes.*;
-import dev.webfx.extras.util.layout.LayoutUtil;
+import dev.webfx.extras.util.layout.Layouts;
 import dev.webfx.extras.util.scene.SceneUtil;
 import dev.webfx.kit.launcher.WebFxKitLauncher;
 import dev.webfx.kit.util.properties.FXProperties;
@@ -65,7 +65,7 @@ public final class OrganizationSelectorView {
         this.factoryMixin = factoryMixin;
         this.activityBase = activityBase;
 
-        LayoutUtil.setAllUnmanagedWhenInvisible(presentationPane, websiteLink, addressLink, phoneLink, emailLink);
+        Layouts.setAllUnmanagedWhenInvisible(presentationPane, websiteLink, addressLink, phoneLink, emailLink);
 
         organizationMapView.placeEntityProperty().bind(FXOrganization.organizationProperty());
         FXProperties.runNowAndOnPropertyChange(this::updateFromOrganization, FXOrganization.organizationProperty());

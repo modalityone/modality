@@ -4,7 +4,7 @@ package one.modality.event.backoffice.activities.program;
 import dev.webfx.extras.panes.ColumnsPane;
 import dev.webfx.extras.styles.bootstrap.Bootstrap;
 import dev.webfx.extras.theme.text.TextTheme;
-import dev.webfx.extras.util.layout.LayoutUtil;
+import dev.webfx.extras.util.layout.Layouts;
 import dev.webfx.extras.util.masterslave.MasterSlaveLinker;
 import dev.webfx.kit.util.properties.FXProperties;
 import dev.webfx.kit.util.properties.ObservableLists;
@@ -86,7 +86,7 @@ final class ProgramView extends ModalitySlaveEditor<Event> {
         addTemplateButton.setGraphicTextGap(10);
         addTemplateButton.setOnAction(e -> programModel.addNewDayTemplate());
 
-        HBox topLine = new HBox(subtitle, LayoutUtil.createHGrowable(), addTemplateButton);
+        HBox topLine = new HBox(subtitle, Layouts.createHGrowable(), addTemplateButton);
 
         // Building the bottom line
         Button cancelButton = Bootstrap.largeSecondaryButton(I18nControls.newButton(ProgramI18nKeys.CancelProgram));
@@ -110,7 +110,7 @@ final class ProgramView extends ModalitySlaveEditor<Event> {
         BooleanProperty programGeneratedProperty = programModel.programGeneratedProperty();
         generateProgramButton.visibleProperty().bind(programGeneratedProperty.not());
         deleteProgramButton.visibleProperty().bind(programGeneratedProperty);
-        LayoutUtil.setAllUnmanagedWhenInvisible(generateProgramButton, deleteProgramButton);
+        Layouts.setAllUnmanagedWhenInvisible(generateProgramButton, deleteProgramButton);
 
         HBox bottomLine = new HBox(cancelButton, saveButton, generateProgramButton, deleteProgramButton);
 

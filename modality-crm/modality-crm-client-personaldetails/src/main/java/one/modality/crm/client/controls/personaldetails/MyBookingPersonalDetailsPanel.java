@@ -1,7 +1,7 @@
 package one.modality.crm.client.controls.personaldetails;
 
 import dev.webfx.extras.styles.materialdesign.textfield.MaterialTextFieldPane;
-import dev.webfx.extras.util.layout.LayoutUtil;
+import dev.webfx.extras.util.layout.Layouts;
 import dev.webfx.kit.util.properties.FXProperties;
 import dev.webfx.platform.util.Arrays;
 import dev.webfx.stack.orm.dql.DqlStatement;
@@ -62,7 +62,7 @@ public final class MyBookingPersonalDetailsPanel extends BookingPersonalDetailsP
     protected Node[] materialChildren() {
         boolean isChild = childRadioButton.isSelected();
         return Arrays.nonNulls(Node[]::new,
-             personButton != null ? LayoutUtil.setUnmanagedWhenInvisible(personButton) : null,
+             personButton != null ? Layouts.setUnmanagedWhenInvisible(personButton) : null,
                 firstNameTextField,
                 lastNameTextField,
                 newMaterialRegion(genderBox, CrmI18nKeys.Gender),

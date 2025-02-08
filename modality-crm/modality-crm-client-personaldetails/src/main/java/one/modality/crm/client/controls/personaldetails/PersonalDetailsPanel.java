@@ -5,7 +5,7 @@ import dev.webfx.extras.panes.MonoPane;
 import dev.webfx.extras.panes.ScalableBorderPane;
 import dev.webfx.extras.styles.materialdesign.textfield.MaterialTextFieldPane;
 import dev.webfx.extras.util.control.Controls;
-import dev.webfx.extras.util.layout.LayoutUtil;
+import dev.webfx.extras.util.layout.Layouts;
 import dev.webfx.extras.util.scene.SceneUtil;
 import dev.webfx.kit.launcher.WebFxKitLauncher;
 import dev.webfx.kit.util.properties.FXProperties;
@@ -109,7 +109,7 @@ public class PersonalDetailsPanel implements ModalityButtonFactoryMixin {
         switchIcon.setFill(Color.GRAY);
         switchButton = new MonoPane(switchIcon);
         switchButton.setCursor(Cursor.HAND);
-        HBox top = new HBox(10, topLabel, LayoutUtil.createHGrowable(), updateLink, closeLink, saveLink, cancelLink, switchButton);
+        HBox top = new HBox(10, topLabel, Layouts.createHGrowable(), updateLink, closeLink, saveLink, cancelLink, switchButton);
         top.setAlignment(Pos.CENTER);
         BorderPane.setMargin(top, new Insets(15, 15, 0, 15));
         container.setTop(top);
@@ -127,7 +127,7 @@ public class PersonalDetailsPanel implements ModalityButtonFactoryMixin {
         childRadioButton.setToggleGroup(ageGroup);
         adultRadioButton.setToggleGroup(ageGroup);
         ageBox = new HBox(20, adultRadioButton, childRadioButton);
-        birthDatePicker = LayoutUtil.setMaxWidthToInfinite(new DatePicker());
+        birthDatePicker = Layouts.setMaxWidthToInfinite(new DatePicker());
         birthDatePicker.setConverter(Converters.dateFormatterStringConverter());
         emailTextField = newMaterialTextField(CrmI18nKeys.Email);
         Controls.setHtmlInputTypeAndAutocompleteToEmail(emailTextField);

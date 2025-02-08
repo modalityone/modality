@@ -7,7 +7,7 @@ import dev.webfx.extras.theme.Facet;
 import dev.webfx.extras.theme.FontDef;
 import dev.webfx.extras.theme.luminance.LuminanceTheme;
 import dev.webfx.extras.theme.text.TextTheme;
-import dev.webfx.extras.util.layout.LayoutUtil;
+import dev.webfx.extras.util.layout.Layouts;
 import dev.webfx.extras.webtext.HtmlText;
 import dev.webfx.kit.util.properties.FXProperties;
 import dev.webfx.stack.ui.action.Action;
@@ -85,8 +85,8 @@ public class Tile extends MonoPane {
                 .setFontProperty(useHtml ? htmlText.fontProperty() : text.fontProperty())
                 .style();
         setMinHeight(0);
-        LayoutUtil.setMaxWidthToInfinite(this);
-        LayoutUtil.setMaxHeightToInfinite(this);
+        Layouts.setMaxWidthToInfinite(this);
+        Layouts.setMaxHeightToInfinite(this);
         setOnMouseClicked(e -> fireAction());
         setOnMouseEntered(e -> onHover(true));
         setOnMouseExited(e -> onHover(false));

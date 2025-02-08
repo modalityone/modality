@@ -8,7 +8,7 @@ import dev.webfx.extras.theme.luminance.LuminanceTheme;
 import dev.webfx.extras.theme.text.TextTheme;
 import dev.webfx.extras.util.animation.Animations;
 import dev.webfx.extras.util.control.Controls;
-import dev.webfx.extras.util.layout.LayoutUtil;
+import dev.webfx.extras.util.layout.Layouts;
 import dev.webfx.kit.launcher.WebFxKitLauncher;
 import dev.webfx.kit.util.properties.FXProperties;
 import dev.webfx.kit.util.properties.ObservableLists;
@@ -334,7 +334,7 @@ public final class ModalityBackOfficeMainFrameActivity extends ModalityClientMai
                 noIncomingTrafficScheduled[0].cancel();
                 noIncomingTrafficScheduled[0] = UiScheduler.scheduleDelay(TRAFFIC_MILLIS, () -> incomingTrafficLed.setFill(NO_TRAFFIC_COLOR));
             });
-            statusBar.getChildren().addAll(LayoutUtil.createHSpace(10), trafficText, outgoingTrafficLed, incomingTrafficLed);
+            statusBar.getChildren().addAll(Layouts.createHSpace(10), trafficText, outgoingTrafficLed, incomingTrafficLed);
         }
         // Pending operations
         Text pendingText = createStatusText("PendingCalls");
@@ -353,7 +353,7 @@ public final class ModalityBackOfficeMainFrameActivity extends ModalityClientMai
             }
         }));
         StackPane pendingPane = new StackPane(pendingIndicator, pendingCountText);
-        statusBar.getChildren().addAll(LayoutUtil.createHSpace(10), pendingText, pendingPane);
+        statusBar.getChildren().addAll(Layouts.createHSpace(10), pendingText, pendingPane);
 
         statusBar.setAlignment(Pos.CENTER);
         // Considering the bottom of the safe area, in particular for OS like iPadOS with a bar at the bottom
