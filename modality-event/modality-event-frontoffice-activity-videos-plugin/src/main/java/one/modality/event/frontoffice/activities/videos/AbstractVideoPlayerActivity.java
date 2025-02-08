@@ -2,8 +2,6 @@ package one.modality.event.frontoffice.activities.videos;
 
 import dev.webfx.extras.panes.MonoPane;
 import dev.webfx.extras.panes.ScalePane;
-import dev.webfx.extras.player.multi.MultiPlayer;
-import dev.webfx.extras.player.multi.all.AllPlayers;
 import dev.webfx.extras.styles.bootstrap.Bootstrap;
 import dev.webfx.extras.webtext.HtmlText;
 import dev.webfx.platform.console.Console;
@@ -47,8 +45,6 @@ abstract class AbstractVideoPlayerActivity extends ViewDomainActivityBase {
 
     protected final Label sessionTitleLabel = Bootstrap.h4(Bootstrap.strong(new Label()));
     protected final Label sessionCommentLabel = new Label();
-    private List<MultiPlayer> sessionVideoPlayers;
-    private final MultiPlayer sessionVideoPlayer = AllPlayers.createAllVideoPlayer();
     protected HtmlText eventDescriptionHtmlText = new HtmlText();
     protected Label eventLabel = Bootstrap.h2(Bootstrap.strong(new Label()));
     private final CloudImageService cloudImageService = new ClientImageService();
