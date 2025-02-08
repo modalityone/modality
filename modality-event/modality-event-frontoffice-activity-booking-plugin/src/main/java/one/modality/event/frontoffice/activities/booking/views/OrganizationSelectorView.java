@@ -65,7 +65,7 @@ public final class OrganizationSelectorView {
         this.factoryMixin = factoryMixin;
         this.activityBase = activityBase;
 
-        Layouts.setAllUnmanagedWhenInvisible(presentationPane, websiteLink, addressLink, phoneLink, emailLink);
+        Layouts.bindAllManagedToVisibleProperty(presentationPane, websiteLink, addressLink, phoneLink, emailLink);
 
         organizationMapView.placeEntityProperty().bind(FXOrganization.organizationProperty());
         FXProperties.runNowAndOnPropertyChange(this::updateFromOrganization, FXOrganization.organizationProperty());

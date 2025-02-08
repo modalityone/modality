@@ -62,7 +62,7 @@ public final class MyBookingPersonalDetailsPanel extends BookingPersonalDetailsP
     protected Node[] materialChildren() {
         boolean isChild = childRadioButton.isSelected();
         return Arrays.nonNulls(Node[]::new,
-             personButton != null ? Layouts.setUnmanagedWhenInvisible(personButton) : null,
+             personButton != null ? Layouts.bindManagedToVisibleProperty(personButton) : null,
                 firstNameTextField,
                 lastNameTextField,
                 newMaterialRegion(genderBox, CrmI18nKeys.Gender),

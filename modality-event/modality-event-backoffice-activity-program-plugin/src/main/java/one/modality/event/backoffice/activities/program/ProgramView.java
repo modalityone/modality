@@ -110,7 +110,7 @@ final class ProgramView extends ModalitySlaveEditor<Event> {
         BooleanProperty programGeneratedProperty = programModel.programGeneratedProperty();
         generateProgramButton.visibleProperty().bind(programGeneratedProperty.not());
         deleteProgramButton.visibleProperty().bind(programGeneratedProperty);
-        Layouts.setAllUnmanagedWhenInvisible(generateProgramButton, deleteProgramButton);
+        Layouts.bindAllManagedToVisibleProperty(generateProgramButton, deleteProgramButton);
 
         HBox bottomLine = new HBox(cancelButton, saveButton, generateProgramButton, deleteProgramButton);
 
