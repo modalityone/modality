@@ -205,11 +205,9 @@ final class UserProfileActivity extends ViewDomainActivityBase implements Modali
 
         StackPane emailPane = new StackPane();
         emailTextField = newMaterialTextField(CrmI18nKeys.Email);
-        Controls.setHtmlInputTypeAndAutocompleteToEmail(emailTextField);
         formatTextFieldLabel(emailTextField);
         emailTextField.setDisable(true);
-        emailPane.getChildren().add(emailTextField);
-        emailPane.getChildren().add(changeUserEmail);
+        emailPane.getChildren().addAll(emailTextField, changeUserEmail);
         StackPane.setAlignment(changeUserEmail, Pos.BOTTOM_RIGHT);
         StackPane.setMargin(changeUserEmail, new Insets(0, 0, 3, 0));
         firstColumn.getChildren().add(emailPane);
