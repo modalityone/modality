@@ -118,7 +118,8 @@ public final class ModalityUsernamePasswordAuthenticationGateway implements Serv
                 FrontendAccount fa = userPerson.getFrontendAccount();
                 if (!SKIP_PASSWORD_CHECK_FOR_DEBUG) {
                     String encryptedPassword = encryptPassword(password, fa.getSalt());
-                    if (!Objects.equals(encryptedPassword, fa.getPassword()))
+                    if (!Objects.equals(encryptedPassword, fa.getPassword()) // Normal check
+                        && !Objects.equals(password, fa.getPassword())) // Additional possibility = when staff enters the encrypted password to login into a user account
                         return Future.failedFuture("[%s] Wrong user or password".formatted(ModalityAuthenticationI18nKeys.AuthnWrongUserOrPasswordError));
                 }
                 Object personId = userPerson.getPrimaryKey();
