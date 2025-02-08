@@ -5,6 +5,7 @@ import dev.webfx.extras.panes.TransitionPane;
 import dev.webfx.extras.styles.bootstrap.Bootstrap;
 import dev.webfx.extras.styles.materialdesign.util.MaterialUtil;
 import dev.webfx.extras.util.animation.Animations;
+import dev.webfx.extras.util.control.ControlUtil;
 import dev.webfx.kit.util.properties.FXProperties;
 import dev.webfx.platform.uischeduler.UiScheduler;
 import dev.webfx.platform.windowlocation.WindowLocation;
@@ -54,8 +55,7 @@ public class ChangeEmailUI implements MaterialFactoryMixin {
 
         emailField = newMaterialTextField(UserProfileI18nKeys.NewEmailAddress);
         MaterialUtil.getMaterialTextField(emailField).setAnimateLabel(false);
-        emailField.getProperties().put("webfx-input-type", "email");
-        emailField.getProperties().put("webfx-input-autocomplete", "email");
+        ControlUtil.setHtmlInputTypeAndAutocompleteToEmail(emailField);
 
         infoMessage.setVisible(false);
         infoMessage.setWrapText(true);

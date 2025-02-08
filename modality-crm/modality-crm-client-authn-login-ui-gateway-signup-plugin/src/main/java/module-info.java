@@ -11,6 +11,7 @@ module modality.crm.client.authn.login.ui.gateway.signup.plugin {
     requires modality.crm.client.i18n;
     requires modality.crm.shared.authn;
     requires webfx.extras.styles.bootstrap;
+    requires webfx.extras.util.control;
     requires webfx.stack.authn.login.ui.gateway;
     requires webfx.stack.hash.md5;
     requires webfx.stack.i18n;

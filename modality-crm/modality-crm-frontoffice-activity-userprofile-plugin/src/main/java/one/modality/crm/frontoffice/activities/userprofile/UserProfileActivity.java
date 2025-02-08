@@ -204,8 +204,7 @@ final class UserProfileActivity extends ViewDomainActivityBase implements Modali
 
         StackPane emailPane = new StackPane();
         emailTextField = newMaterialTextField(CrmI18nKeys.Email);
-        emailTextField.getProperties().put("webfx-input-type", "email");
-        emailTextField.getProperties().put("webfx-input-autocomplete", "email");
+        ControlUtil.setHtmlInputTypeAndAutocompleteToEmail(emailTextField);
         formatTextFieldLabel(emailTextField);
         emailTextField.setDisable(true);
         emailPane.getChildren().add(emailTextField);
@@ -361,8 +360,7 @@ final class UserProfileActivity extends ViewDomainActivityBase implements Modali
         layNameTextField.managedProperty().bind(optionOrdained.selectedProperty());
 
         phoneTextField = newMaterialTextField(CrmI18nKeys.Phone);
-        phoneTextField.getProperties().put("webfx-input-type", "tel");
-        phoneTextField.getProperties().put("webfx-input-autocomplete", "tel");
+        ControlUtil.setHtmlInputTypeAndAutocompleteToTel(phoneTextField);
         phoneTextField.getStyleClass().setAll("transparent-input");
         formatTextFieldLabel(phoneTextField);
         firstColumn.getChildren().add(phoneTextField);

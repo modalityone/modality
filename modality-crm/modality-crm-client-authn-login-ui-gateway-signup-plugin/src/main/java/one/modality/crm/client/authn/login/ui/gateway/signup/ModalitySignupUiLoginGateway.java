@@ -1,6 +1,7 @@
 package one.modality.crm.client.authn.login.ui.gateway.signup;
 
 import dev.webfx.extras.styles.bootstrap.Bootstrap;
+import dev.webfx.extras.util.control.ControlUtil;
 import dev.webfx.stack.authn.login.ui.spi.impl.gateway.UiLoginGatewayBase;
 import dev.webfx.stack.authn.login.ui.spi.impl.gateway.UiLoginPortalCallback;
 import dev.webfx.stack.hash.md5.Md5;
@@ -71,8 +72,7 @@ public class ModalitySignupUiLoginGateway extends UiLoginGatewayBase {
         grid.add(emailLabel, 0, 0);
         emailInput = new TextField();
         grid.add(emailInput, 0, 1);
-        emailInput.getProperties().put("webfx-input-type", "email");
-        emailInput.getProperties().put("webfx-input-autocomplete", "email");
+        ControlUtil.setHtmlInputTypeAndAutocompleteToEmail(emailInput);
 
         firstNameLabel = I18nControls.newLabel(CrmI18nKeys.FirstName);
         grid.add(firstNameLabel, 1, 0);

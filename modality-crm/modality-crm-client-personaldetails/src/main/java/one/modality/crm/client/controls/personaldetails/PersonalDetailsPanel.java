@@ -130,11 +130,9 @@ public class PersonalDetailsPanel implements ModalityButtonFactoryMixin {
         birthDatePicker = LayoutUtil.setMaxWidthToInfinite(new DatePicker());
         birthDatePicker.setConverter(Converters.dateFormatterStringConverter());
         emailTextField = newMaterialTextField(CrmI18nKeys.Email);
-        emailTextField.getProperties().put("webfx-input-type", "email");
-        emailTextField.getProperties().put("webfx-input-autocomplete", "email");
+        ControlUtil.setHtmlInputTypeAndAutocompleteToEmail(emailTextField);
         phoneTextField = newMaterialTextField(CrmI18nKeys.Phone);
-        phoneTextField.getProperties().put("webfx-input-type", "tel");
-        phoneTextField.getProperties().put("webfx-input-autocomplete", "tel");
+        ControlUtil.setHtmlInputTypeAndAutocompleteToTel(phoneTextField);
         streetTextField = newMaterialTextField(CrmI18nKeys.Street);
         postCodeTextField = newMaterialTextField(CrmI18nKeys.Postcode);
         cityNameTextField = newMaterialTextField(CrmI18nKeys.City);

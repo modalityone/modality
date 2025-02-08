@@ -16,6 +16,7 @@ module modality.crm.frontoffice.activity.createaccount.plugin {
     requires webfx.extras.panes;
     requires webfx.extras.styles.bootstrap;
     requires webfx.extras.styles.materialdesign;
+    requires webfx.extras.util.control;
     requires webfx.kit.launcher;
     requires webfx.kit.util;
     requires webfx.platform.console;
