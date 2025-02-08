@@ -6,9 +6,7 @@ import dev.webfx.extras.player.multi.MultiPlayer;
 import dev.webfx.extras.player.multi.all.AllPlayers;
 import dev.webfx.extras.styles.bootstrap.Bootstrap;
 import dev.webfx.extras.webtext.HtmlText;
-import dev.webfx.kit.util.properties.FXProperties;
 import dev.webfx.platform.console.Console;
-import dev.webfx.platform.util.Strings;
 import dev.webfx.stack.cloud.image.CloudImageService;
 import dev.webfx.stack.cloud.image.impl.client.ClientImageService;
 import dev.webfx.stack.i18n.I18n;
@@ -102,7 +100,7 @@ abstract class AbstractVideoPlayerActivity extends ViewDomainActivityBase {
         eventLabel.setTextAlignment(TextAlignment.CENTER);
         eventLabel.setPadding(new Insets(0, 0, 12, 0));
 
-        eventDescriptionHtmlText.managedProperty().bind(FXProperties.compute(eventDescriptionHtmlText.textProperty(), Strings::isNotEmpty));
+        eventDescriptionHtmlText.managedProperty().bind(eventDescriptionHtmlText.textProperty().isNotEmpty());
         eventDescriptionHtmlText.setMaxHeight(60);
         titleVBox = new VBox(eventLabel, eventDescriptionHtmlText);
 

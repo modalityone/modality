@@ -11,7 +11,6 @@ import dev.webfx.kit.util.properties.FXProperties;
 import dev.webfx.kit.util.properties.ObservableLists;
 import dev.webfx.platform.console.Console;
 import dev.webfx.platform.util.Numbers;
-import dev.webfx.platform.util.Strings;
 import dev.webfx.platform.util.collection.Collections;
 import dev.webfx.stack.cloud.image.CloudImageService;
 import dev.webfx.stack.cloud.image.impl.client.ClientImageService;
@@ -167,7 +166,7 @@ final class EventAudioPlaylistActivity extends ViewDomainActivityBase {
         eventLabel.setPadding(new Insets(0, 0, 12, 0));
         HtmlText eventDescriptionHTMLText = new HtmlText();
         I18n.bindI18nTextProperty(eventDescriptionHTMLText.textProperty(), new I18nSubKey("expression: shortDescription", eventProperty), eventProperty);
-        eventDescriptionHTMLText.managedProperty().bind(FXProperties.compute(eventDescriptionHTMLText.textProperty(), Strings::isNotEmpty));
+        eventDescriptionHTMLText.managedProperty().bind(eventDescriptionHTMLText.textProperty().isNotEmpty());
         eventDescriptionHTMLText.setMaxHeight(60);
         audioExpirationLabel = Bootstrap.textSuccess(I18nControls.newLabel(AudioRecordingsI18nKeys.AvailableUntil, dateFormattedProperty));
         audioExpirationLabel.setPadding(new Insets(30, 0, 0, 0));
