@@ -2,7 +2,7 @@ package one.modality.ecommerce.backoffice.activities.bookings;
 
 import dev.webfx.extras.time.TimeUtil;
 import dev.webfx.extras.time.YearWeek;
-import dev.webfx.extras.util.control.ControlUtil;
+import dev.webfx.extras.util.control.Controls;
 import dev.webfx.extras.visual.controls.grid.VisualGrid;
 import dev.webfx.stack.cache.client.LocalStorageCache;
 import dev.webfx.stack.orm.reactive.mapping.entities_to_visual.ReactiveVisualMapper;
@@ -79,7 +79,7 @@ final class BookingsActivity extends EventDependentViewDomainActivity implements
 
         // We set up a context menu on the master view
         Node masterView = groupMasterSlaveView.getMasterView();
-        setUpContextMenu(ControlUtil.lookupChild(masterView, n -> n instanceof VisualGrid), () -> newActionGroup(
+        setUpContextMenu(Controls.lookupChild(masterView, n -> n instanceof VisualGrid), () -> newActionGroup(
                 newSnapshotActionGroup(),
                 newSelectedDocumentOperationAction(SendLetterRequest::new),
                 newSeparatorActionGroup("Registration",

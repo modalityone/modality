@@ -2,7 +2,7 @@ package one.modality.event.backoffice.activities.pricing;
 
 
 import dev.webfx.extras.panes.CollapsePane;
-import dev.webfx.extras.util.control.ControlUtil;
+import dev.webfx.extras.util.control.Controls;
 import dev.webfx.extras.util.masterslave.MasterSlaveLinker;
 import dev.webfx.kit.util.properties.FXProperties;
 import dev.webfx.platform.uischeduler.UiScheduler;
@@ -88,7 +88,7 @@ final class EventPricingActivity extends ViewDomainActivityBase {
             sectionContainers
         );
         container.setAlignment(Pos.TOP_CENTER);
-        return ControlUtil.createVerticalScrollPane(container);
+        return Controls.createVerticalScrollPane(container);
     }
 
     private Node createCollapsablePricingSection(ItemFamilyPricing pricing) {

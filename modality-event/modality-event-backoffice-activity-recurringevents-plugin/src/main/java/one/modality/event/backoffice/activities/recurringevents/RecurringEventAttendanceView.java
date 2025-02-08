@@ -3,7 +3,7 @@ package one.modality.event.backoffice.activities.recurringevents;
 import dev.webfx.extras.panes.ColumnsPane;
 import dev.webfx.extras.styles.bootstrap.Bootstrap;
 import dev.webfx.extras.theme.text.TextTheme;
-import dev.webfx.extras.util.control.ControlUtil;
+import dev.webfx.extras.util.control.Controls;
 import dev.webfx.extras.util.layout.LayoutUtil;
 import dev.webfx.extras.visual.controls.grid.SkinnedVisualGrid;
 import dev.webfx.extras.visual.controls.grid.VisualGrid;
@@ -75,7 +75,7 @@ final class RecurringEventAttendanceView {
         eventTable.setFullHeight(true);
 
         VBox mainVBox = new VBox(currentEventLabel, eventTable, attendancePane);
-        return ControlUtil.createVerticalScrollPaneWithPadding(10, new BorderPane(mainVBox));
+        return Controls.createVerticalScrollPaneWithPadding(10, new BorderPane(mainVBox));
     }
 
     void setActive(boolean active) {

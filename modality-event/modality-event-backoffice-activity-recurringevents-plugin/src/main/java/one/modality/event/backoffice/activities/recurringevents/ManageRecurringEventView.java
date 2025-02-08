@@ -10,7 +10,7 @@ import dev.webfx.extras.theme.shape.ShapeTheme;
 import dev.webfx.extras.theme.text.TextTheme;
 import dev.webfx.extras.time.pickers.DatePicker;
 import dev.webfx.extras.time.pickers.DatePickerOptions;
-import dev.webfx.extras.util.control.ControlUtil;
+import dev.webfx.extras.util.control.Controls;
 import dev.webfx.extras.util.masterslave.MasterSlaveLinker;
 import dev.webfx.extras.util.masterslave.SlaveEditor;
 import dev.webfx.extras.visual.controls.grid.VisualGrid;
@@ -1003,7 +1003,7 @@ final class ManageRecurringEventView {
 
         initFormValidation();
 
-        return ControlUtil.createVerticalScrollPaneWithPadding(10, mainFrame);
+        return Controls.createVerticalScrollPaneWithPadding(10, mainFrame);
     }
 
     private void synchroniseAudioVideoScheduledItemLists() {

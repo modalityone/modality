@@ -1,6 +1,6 @@
 package one.modality.base.frontoffice.activities.account;
 
-import dev.webfx.extras.util.control.ControlUtil;
+import dev.webfx.extras.util.control.Controls;
 import dev.webfx.kit.util.properties.FXProperties;
 import dev.webfx.platform.util.collection.Collections;
 import dev.webfx.stack.authn.logout.client.operation.LogoutRequest;
@@ -101,11 +101,11 @@ final class AccountActivity extends ViewDomainActivityBase implements OperationA
 
 
         // Lazy loading when the user scrolls down
-        ControlUtil.onScrollPaneAncestorSet(pageContainer, scrollPane -> {
+        Controls.onScrollPaneAncestorSet(pageContainer, scrollPane -> {
             double lazyLoadingBottomSpace = Screen.getPrimary().getVisualBounds().getHeight();
             pageContainer.setPadding(new Insets(0, 0, lazyLoadingBottomSpace, 0));
             FXProperties.runOnPropertiesChange(() -> {
-                if (ControlUtil.computeScrollPaneVBottomOffset(scrollPane) > pageContainer.getHeight() - lazyLoadingBottomSpace) {
+                if (Controls.computeScrollPaneVBottomOffset(scrollPane) > pageContainer.getHeight() - lazyLoadingBottomSpace) {
                     Document lastBooking = Collections.last(pastBookingsFeed);
                     if (lastBooking == null)
                         pageContainer.setPadding(Insets.EMPTY);

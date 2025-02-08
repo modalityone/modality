@@ -7,7 +7,7 @@ import dev.webfx.extras.theme.layout.FXLayoutMode;
 import dev.webfx.extras.theme.luminance.LuminanceTheme;
 import dev.webfx.extras.theme.text.TextTheme;
 import dev.webfx.extras.util.animation.Animations;
-import dev.webfx.extras.util.control.ControlUtil;
+import dev.webfx.extras.util.control.Controls;
 import dev.webfx.extras.util.layout.LayoutUtil;
 import dev.webfx.kit.launcher.WebFxKitLauncher;
 import dev.webfx.kit.util.properties.FXProperties;
@@ -339,7 +339,7 @@ public final class ModalityBackOfficeMainFrameActivity extends ModalityClientMai
         // Pending operations
         Text pendingText = createStatusText("PendingCalls");
         Text pendingCountText = createStatusText(null);
-        ProgressIndicator pendingIndicator = ControlUtil.createProgressIndicator(16);
+        ProgressIndicator pendingIndicator = Controls.createProgressIndicator(16);
         Timeline[] pendingFadeTimeline = { new Timeline() };
         PendingBusCall.addPendingCallsCountHandler(pendingCallsCount -> UiScheduler.runInUiThread(() -> {
             pendingCountText.setText("" + pendingCallsCount);

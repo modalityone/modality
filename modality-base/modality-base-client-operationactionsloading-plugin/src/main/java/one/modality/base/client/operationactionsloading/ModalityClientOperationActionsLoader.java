@@ -1,6 +1,6 @@
 package one.modality.base.client.operationactionsloading;
 
-import dev.webfx.extras.util.control.ControlUtil;
+import dev.webfx.extras.util.control.Controls;
 import dev.webfx.platform.boot.spi.ApplicationModuleBooter;
 import dev.webfx.platform.conf.Config;
 import dev.webfx.platform.conf.ConfigLoader;
@@ -127,7 +127,7 @@ public final class ModalityClientOperationActionsLoader implements ApplicationMo
                 return null;
             }
             // Don't inline this variable, otherwise the WebFX CLI won't detect the dependency to javafx-controls
-            ProgressIndicator progressIndicator = ControlUtil.createProgressIndicator(16);
+            ProgressIndicator progressIndicator = Controls.createProgressIndicator(16);
             return progressIndicator;
         });
 

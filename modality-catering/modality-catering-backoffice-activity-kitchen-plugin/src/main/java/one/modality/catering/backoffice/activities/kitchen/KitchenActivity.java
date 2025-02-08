@@ -7,7 +7,7 @@ import dev.webfx.extras.time.TimeUtil;
 import dev.webfx.extras.time.layout.calendar.CalendarLayout;
 import dev.webfx.extras.time.layout.node.TimeGridPane;
 import dev.webfx.extras.time.layout.node.TimePane;
-import dev.webfx.extras.util.control.ControlUtil;
+import dev.webfx.extras.util.control.Controls;
 import dev.webfx.extras.util.layout.LayoutUtil;
 import dev.webfx.kit.launcher.WebFxKitLauncher;
 import dev.webfx.kit.util.properties.FXProperties;
@@ -78,7 +78,7 @@ final class KitchenActivity extends ViewDomainActivityBase
         LuminanceTheme.createPrimaryPanelFacet(daysOfMonthPane).style();
 
         // Building the container
-        ScrollPane verticalScrollPane = ControlUtil.createVerticalScrollPane(daysOfMonthPane);
+        ScrollPane verticalScrollPane = Controls.createVerticalScrollPane(daysOfMonthPane);
         verticalScrollPane.setFitToWidth(true);
 
         BorderPane container = new BorderPane();

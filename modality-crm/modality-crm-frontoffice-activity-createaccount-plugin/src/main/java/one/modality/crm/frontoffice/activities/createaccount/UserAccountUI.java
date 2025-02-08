@@ -5,7 +5,7 @@ import dev.webfx.extras.panes.MonoPane;
 import dev.webfx.extras.styles.bootstrap.Bootstrap;
 import dev.webfx.extras.styles.materialdesign.textfield.MaterialTextFieldPane;
 import dev.webfx.extras.styles.materialdesign.util.MaterialUtil;
-import dev.webfx.extras.util.control.ControlUtil;
+import dev.webfx.extras.util.control.Controls;
 import dev.webfx.kit.launcher.WebFxKitLauncher;
 import dev.webfx.platform.console.Console;
 import dev.webfx.platform.windowhistory.spi.BrowsingHistory;
@@ -111,7 +111,7 @@ public class UserAccountUI implements ModalityButtonFactoryMixin {
         fieldsListVBox.getChildren().add(loginInfoLabel);
 
         emailTextField = newMaterialTextField(CrmI18nKeys.Email);
-        ControlUtil.setHtmlInputTypeAndAutocompleteToEmail(emailTextField);
+        Controls.setHtmlInputTypeAndAutocompleteToEmail(emailTextField);
         formatTextFieldLabel(emailTextField);
         emailTextField.setDisable(true);
         emailTextField.setText(person.getEmail());
@@ -238,7 +238,7 @@ public class UserAccountUI implements ModalityButtonFactoryMixin {
 
 
         phoneTextField = newMaterialTextField(CrmI18nKeys.Phone);
-        ControlUtil.setHtmlInputTypeAndAutocompleteToTel(phoneTextField);
+        Controls.setHtmlInputTypeAndAutocompleteToTel(phoneTextField);
         phoneTextField.setText(person.getPhone());
         phoneTextField.getStyleClass().setAll("transparent-input");
         formatTextFieldLabel(phoneTextField);

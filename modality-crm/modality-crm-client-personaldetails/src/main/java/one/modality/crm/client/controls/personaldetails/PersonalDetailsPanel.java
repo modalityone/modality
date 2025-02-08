@@ -4,7 +4,7 @@ import dev.webfx.extras.panes.FlexColumnPane;
 import dev.webfx.extras.panes.MonoPane;
 import dev.webfx.extras.panes.ScalableBorderPane;
 import dev.webfx.extras.styles.materialdesign.textfield.MaterialTextFieldPane;
-import dev.webfx.extras.util.control.ControlUtil;
+import dev.webfx.extras.util.control.Controls;
 import dev.webfx.extras.util.layout.LayoutUtil;
 import dev.webfx.extras.util.scene.SceneUtil;
 import dev.webfx.kit.launcher.WebFxKitLauncher;
@@ -130,9 +130,9 @@ public class PersonalDetailsPanel implements ModalityButtonFactoryMixin {
         birthDatePicker = LayoutUtil.setMaxWidthToInfinite(new DatePicker());
         birthDatePicker.setConverter(Converters.dateFormatterStringConverter());
         emailTextField = newMaterialTextField(CrmI18nKeys.Email);
-        ControlUtil.setHtmlInputTypeAndAutocompleteToEmail(emailTextField);
+        Controls.setHtmlInputTypeAndAutocompleteToEmail(emailTextField);
         phoneTextField = newMaterialTextField(CrmI18nKeys.Phone);
-        ControlUtil.setHtmlInputTypeAndAutocompleteToTel(phoneTextField);
+        Controls.setHtmlInputTypeAndAutocompleteToTel(phoneTextField);
         streetTextField = newMaterialTextField(CrmI18nKeys.Street);
         postCodeTextField = newMaterialTextField(CrmI18nKeys.Postcode);
         cityNameTextField = newMaterialTextField(CrmI18nKeys.City);
@@ -493,7 +493,7 @@ public class PersonalDetailsPanel implements ModalityButtonFactoryMixin {
 
     protected static void editPersonalDetails(PersonalDetailsPanel details, Pane parent, Runnable closeHook) {
         BorderPane detailsContainer = details.getContainer();
-        ScrollPane scrollPane = ControlUtil.createScalableVerticalScrollPane(detailsContainer, true);
+        ScrollPane scrollPane = Controls.createScalableVerticalScrollPane(detailsContainer, true);
         DialogCallback dialogCallback = DialogUtil.showModalNodeInGoldLayout(scrollPane, parent, 0.95, 0.95);
         scrollPane.setMaxSize(10000, 1000); // Undoing max size = pref size
         details.setCloseHook(dialogCallback::closeDialog);

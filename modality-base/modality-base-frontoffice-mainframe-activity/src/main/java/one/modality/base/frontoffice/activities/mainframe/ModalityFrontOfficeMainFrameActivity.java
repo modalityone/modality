@@ -4,7 +4,7 @@ import dev.webfx.extras.panes.*;
 import dev.webfx.extras.panes.transitions.CircleTransition;
 import dev.webfx.extras.panes.transitions.FadeTransition;
 import dev.webfx.extras.player.Players;
-import dev.webfx.extras.util.control.ControlUtil;
+import dev.webfx.extras.util.control.Controls;
 import dev.webfx.extras.util.layout.LayoutUtil;
 import dev.webfx.kit.launcher.WebFxKitLauncher;
 import dev.webfx.kit.util.properties.FXProperties;
@@ -213,7 +213,7 @@ public final class ModalityFrontOfficeMainFrameActivity extends ModalityClientMa
                         , mountTransitionPane.minHeightProperty(), mainMenuButtonBar.heightProperty(), languageMenuBar.heightProperty());
                 }
                 BorderPane borderPane = new BorderPane(vBox);
-                ScrollPane finalScrollPane = scrollPane = ControlUtil.createVerticalScrollPane(borderPane);
+                ScrollPane finalScrollPane = scrollPane = Controls.createVerticalScrollPane(borderPane);
                 mountNode.getProperties().put("embedding-scrollpane", scrollPane);
                 double[] lastScrollPaneContentHeight = {0}, lastVTopOffset = {0};
                 FXProperties.runOnPropertiesChange(() -> {
@@ -221,7 +221,7 @@ public final class ModalityFrontOfficeMainFrameActivity extends ModalityClientMa
                     if (mountTransitionPane.isTransiting())
                         return;
                     // Visibility management:
-                    double vTopOffset = ControlUtil.computeScrollPaneVTopOffset(finalScrollPane);
+                    double vTopOffset = Controls.computeScrollPaneVTopOffset(finalScrollPane);
                     if (vTopOffset <= languageMenuBar.getHeight()) { // Making the overlay menu bar invisible when reaching the top
                         overlayMenuBar.setAnimate(false); // because there is already a web menu on top of that page
                         overlayMenuBar.collapse();

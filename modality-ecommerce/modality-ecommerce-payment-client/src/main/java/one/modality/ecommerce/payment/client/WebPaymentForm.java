@@ -2,7 +2,7 @@ package one.modality.ecommerce.payment.client;
 
 import dev.webfx.extras.panes.FlexPane;
 import dev.webfx.extras.panes.MonoPane;
-import dev.webfx.extras.util.control.ControlUtil;
+import dev.webfx.extras.util.control.Controls;
 import dev.webfx.extras.webview.pane.LoadOptions;
 import dev.webfx.extras.webview.pane.WebViewPane;
 import dev.webfx.kit.util.properties.FXProperties;
@@ -180,7 +180,7 @@ public class WebPaymentForm {
     }
 
     private ProgressIndicator createProgressIndicator() {
-        return ControlUtil.createProgressIndicator(32);
+        return Controls.createProgressIndicator(32);
     }
 
     private void showVerificationProcessOverlay() {

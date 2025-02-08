@@ -2,7 +2,7 @@ package one.modality.event.frontoffice.activities.videos;
 
 import dev.webfx.extras.panes.*;
 import dev.webfx.extras.styles.bootstrap.Bootstrap;
-import dev.webfx.extras.util.control.ControlUtil;
+import dev.webfx.extras.util.control.Controls;
 import dev.webfx.extras.webtext.HtmlText;
 import dev.webfx.kit.util.properties.FXProperties;
 import dev.webfx.kit.util.properties.ObservableLists;
@@ -169,7 +169,7 @@ final class EventVideosWallActivity extends ViewDomainActivityBase {
 
         headerHBox.getChildren().add(titleVBox);
 
-        Node loadingContentIndicator = new GoldenRatioPane(ControlUtil.createProgressIndicator(100));
+        Node loadingContentIndicator = new GoldenRatioPane(Controls.createProgressIndicator(100));
         MonoPane pageContainer = new MonoPane();
 
         Label noContentLabel = Bootstrap.h3(Bootstrap.textWarning(I18nControls.newLabel(VideosI18nKeys.NoVideosForThisEvent)));

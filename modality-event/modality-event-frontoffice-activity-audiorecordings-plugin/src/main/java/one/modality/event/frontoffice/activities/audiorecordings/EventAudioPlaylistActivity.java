@@ -5,7 +5,7 @@ import dev.webfx.extras.panes.MonoPane;
 import dev.webfx.extras.panes.ScalePane;
 import dev.webfx.extras.player.audio.javafxmedia.JavaFXMediaAudioPlayer;
 import dev.webfx.extras.styles.bootstrap.Bootstrap;
-import dev.webfx.extras.util.control.ControlUtil;
+import dev.webfx.extras.util.control.Controls;
 import dev.webfx.extras.webtext.HtmlText;
 import dev.webfx.kit.util.properties.FXProperties;
 import dev.webfx.kit.util.properties.ObservableLists;
@@ -191,7 +191,7 @@ final class EventAudioPlaylistActivity extends ViewDomainActivityBase {
         loadedContentVBox.setMaxWidth(SessionAudioTrackView.MAX_WIDTH);
         loadedContentVBox.setAlignment(Pos.CENTER);
 
-        Node loadingContentIndicator = new GoldenRatioPane(ControlUtil.createProgressIndicator(100));
+        Node loadingContentIndicator = new GoldenRatioPane(Controls.createProgressIndicator(100));
 
         MonoPane pageContainer = new MonoPane();
 

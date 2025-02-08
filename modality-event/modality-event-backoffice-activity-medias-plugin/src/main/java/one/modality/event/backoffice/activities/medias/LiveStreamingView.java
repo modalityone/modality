@@ -4,7 +4,7 @@ import dev.webfx.extras.panes.MonoPane;
 import dev.webfx.extras.styles.bootstrap.Bootstrap;
 import dev.webfx.extras.switches.Switch;
 import dev.webfx.extras.theme.text.TextTheme;
-import dev.webfx.extras.util.control.ControlUtil;
+import dev.webfx.extras.util.control.Controls;
 import dev.webfx.extras.webtext.HtmlTextEditor;
 import dev.webfx.stack.i18n.I18n;
 import dev.webfx.stack.i18n.controls.I18nControls;
@@ -135,7 +135,7 @@ public class LiveStreamingView {
         mainFrame.setCenter(mainVBox);
         BorderPane.setAlignment(mainVBox,Pos.CENTER);
 
-        return ControlUtil.createVerticalScrollPaneWithPadding(10, mainFrame);
+        return Controls.createVerticalScrollPaneWithPadding(10, mainFrame);
     }
 
     public void setActive(boolean b) {

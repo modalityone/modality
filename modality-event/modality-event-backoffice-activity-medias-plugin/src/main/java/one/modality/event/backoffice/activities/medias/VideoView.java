@@ -2,7 +2,7 @@ package one.modality.event.backoffice.activities.medias;
 
 import dev.webfx.extras.styles.bootstrap.Bootstrap;
 import dev.webfx.extras.theme.text.TextTheme;
-import dev.webfx.extras.util.control.ControlUtil;
+import dev.webfx.extras.util.control.Controls;
 import dev.webfx.extras.util.masterslave.MasterSlaveLinker;
 import dev.webfx.extras.util.masterslave.SlaveEditor;
 import dev.webfx.platform.console.Console;
@@ -66,7 +66,7 @@ public class VideoView {
     public VideoView() {
         mainFrame = new BorderPane();
         mainFrame.setPadding(new Insets(0, 0, 30, 0));
-        mainContainer = ControlUtil.createVerticalScrollPane(mainFrame);
+        mainContainer = Controls.createVerticalScrollPane(mainFrame);
     }
 
 

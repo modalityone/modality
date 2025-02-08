@@ -10,7 +10,7 @@ import dev.webfx.extras.styles.materialdesign.util.MaterialUtil;
 import dev.webfx.extras.time.pickers.DatePicker;
 import dev.webfx.extras.time.pickers.DatePickerOptions;
 import dev.webfx.extras.util.animation.Animations;
-import dev.webfx.extras.util.control.ControlUtil;
+import dev.webfx.extras.util.control.Controls;
 import dev.webfx.kit.launcher.WebFxKitLauncher;
 import dev.webfx.kit.util.properties.FXProperties;
 import dev.webfx.platform.async.Future;
@@ -204,7 +204,7 @@ final class UserProfileActivity extends ViewDomainActivityBase implements Modali
 
         StackPane emailPane = new StackPane();
         emailTextField = newMaterialTextField(CrmI18nKeys.Email);
-        ControlUtil.setHtmlInputTypeAndAutocompleteToEmail(emailTextField);
+        Controls.setHtmlInputTypeAndAutocompleteToEmail(emailTextField);
         formatTextFieldLabel(emailTextField);
         emailTextField.setDisable(true);
         emailPane.getChildren().add(emailTextField);
@@ -360,7 +360,7 @@ final class UserProfileActivity extends ViewDomainActivityBase implements Modali
         layNameTextField.managedProperty().bind(optionOrdained.selectedProperty());
 
         phoneTextField = newMaterialTextField(CrmI18nKeys.Phone);
-        ControlUtil.setHtmlInputTypeAndAutocompleteToTel(phoneTextField);
+        Controls.setHtmlInputTypeAndAutocompleteToTel(phoneTextField);
         phoneTextField.getStyleClass().setAll("transparent-input");
         formatTextFieldLabel(phoneTextField);
         firstColumn.getChildren().add(phoneTextField);
@@ -678,7 +678,7 @@ final class UserProfileActivity extends ViewDomainActivityBase implements Modali
 
     // Method to show a progress indicator for 10 seconds
     public void showProgressIndicator() {
-        ProgressIndicator progressIndicator = ControlUtil.createProgressIndicator(50); // Set size for the progress indicator
+        ProgressIndicator progressIndicator = Controls.createProgressIndicator(50); // Set size for the progress indicator
         progressIndicator.setProgress(0);
         picturePane.getChildren().add(progressIndicator); // Add to the stack pane
         StackPane.setAlignment(progressIndicator, Pos.CENTER); // Center it on the image
