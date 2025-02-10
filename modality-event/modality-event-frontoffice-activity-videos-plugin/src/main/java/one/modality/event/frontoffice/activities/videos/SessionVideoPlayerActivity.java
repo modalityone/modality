@@ -25,6 +25,7 @@ import one.modality.crm.shared.services.authn.fx.FXUserPersonId;
 import one.modality.event.frontoffice.activities.audiorecordings.AudioRecordingsI18nKeys;
 
 import java.time.LocalDateTime;
+import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
 
 /**
@@ -32,9 +33,7 @@ import java.time.format.DateTimeFormatter;
  */
 final class SessionVideoPlayerActivity extends AbstractVideoPlayerActivity {
 
-
     private Label videoExpirationLabel;
-
 
     @Override
     public void onResume() {
@@ -112,32 +111,28 @@ final class SessionVideoPlayerActivity extends AbstractVideoPlayerActivity {
         ScheduledItem scheduledVideoItem = scheduledVideoItemProperty.get();
         Media firstMedia = Collections.first(publishedMedias);
         if (scheduledVideoItem != null && firstMedia != null) { // may not yet be loaded on first call
-            String title = scheduledVideoItem.getProgramScheduledItem().getName();
+            ScheduledItem programScheduledItem = scheduledVideoItem.getProgramScheduledItem();
+            String title = programScheduledItem.getName();
             //If the name of the video scheduledItem has been overwritten, we use it, otherwise, we use the name of the programScheduledItem
             if (scheduledVideoItem.getName() != null && !scheduledVideoItem.getName().isBlank()) {
                 title = scheduledVideoItem.getName();
             }
 
-            String url = firstMedia.getUrl();
             I18nControls.bindI18nProperties(eventLabel, new I18nSubKey("expression: i18n(this)", scheduledVideoItem.getEvent()));
             eventDescriptionHtmlText.setText(scheduledVideoItem.getEvent().getShortDescription());
-            LocalDateTime startTime;
-            if (scheduledVideoItem.getEvent().getType().getRecurringItem() != null) {
-                startTime = LocalDateTime.of(scheduledVideoItem.getDate(), scheduledVideoItem.getProgramScheduledItem().getStartTime());
+            LocalTime startTime = programScheduledItem.getStartTime(); // set for recurring events
+            if (startTime == null) // happens with non-recurring events
+                startTime = programScheduledItem.getTimeline().getStartTime();
+            String timeInfo;
+            if (startTime != null) {
+                LocalDateTime dayAndStartTime = LocalDateTime.of(scheduledVideoItem.getDate(), startTime);
+                timeInfo = dayAndStartTime.format(DateTimeFormatter.ofPattern("d MMMM, yyyy ' - ' HH:mm"));
             } else {
-                startTime = LocalDateTime.of(scheduledVideoItem.getDate(), scheduledVideoItem.getProgramScheduledItem().getTimeline().getStartTime());
+                timeInfo = scheduledVideoItem.getDate().format(DateTimeFormatter.ofPattern("d MMMM, yyyy"));
             }
-            if (startTime != null)
-                sessionTitleLabel.setText(title + " (" + startTime.format(DateTimeFormatter.ofPattern("d MMMM, yyyy ' - ' HH:mm")) + ")");
-            else {
-                sessionTitleLabel.setText(title + " (" + scheduledVideoItem.getDate().format(DateTimeFormatter.ofPattern("d MMMM, yyyy")) + ")");
-            }
+            sessionTitleLabel.setText(title + " (" + timeInfo + ")");
             sessionCommentLabel.setText(scheduledVideoItem.getComment());
-            if (scheduledVideoItem.getComment() != null) {
-                sessionCommentLabel.setManaged(true);
-            } else {
-                sessionCommentLabel.setManaged(false);
-            }
+            sessionCommentLabel.setManaged(scheduledVideoItem.getComment() != null);
             Event event = scheduledVideoItem.getEvent();
             updatePicture(event);
 
@@ -146,10 +141,9 @@ final class SessionVideoPlayerActivity extends AbstractVideoPlayerActivity {
             if (expirationDate == null)
                 expirationDate = scheduledVideoItem.getEvent().getVodExpirationDate();
             if (expirationDate != null) {
-                if (LocalDateTime.now().isBefore(expirationDate))
-                    I18nControls.bindI18nProperties(videoExpirationLabel, VideosI18nKeys.VideoAvailableUntil, expirationDate.format(DateTimeFormatter.ofPattern("d MMMM, yyyy ' - ' HH:mm")));
-                else
-                    I18nControls.bindI18nProperties(videoExpirationLabel, VideosI18nKeys.VideoExpiredSince, expirationDate.format(DateTimeFormatter.ofPattern("d MMMM, yyyy ' - ' HH:mm")));
+                LocalDateTime nowInEventTimezone = Event.nowInEventTimezone();
+                boolean available = nowInEventTimezone.isBefore(expirationDate);
+                I18nControls.bindI18nProperties(videoExpirationLabel, available ? VideosI18nKeys.VideoAvailableUntil : VideosI18nKeys.VideoExpiredSince, expirationDate.format(DateTimeFormatter.ofPattern("d MMMM, yyyy ' - ' HH:mm")));
                 videoExpirationLabel.setVisible(true);
             } else {
                 videoExpirationLabel.setVisible(false);
@@ -172,7 +166,7 @@ final class SessionVideoPlayerActivity extends AbstractVideoPlayerActivity {
                 .build());
             Node videoView = currentVideoPlayer.getMediaView();
             playersVBoxContainer.getChildren().add(videoView);
-            currentVideoPlayer.play();
+            currentVideoPlayer.displayVideo();
             // we autoplay only the first video
             autoPlay = false;
         }

@@ -20,6 +20,7 @@ import javafx.scene.layout.HBox;
 import javafx.scene.layout.Region;
 import javafx.scene.layout.VBox;
 import one.modality.base.client.messaging.ModalityMessaging;
+import one.modality.base.shared.entities.Event;
 import one.modality.base.shared.entities.ScheduledItem;
 
 import java.time.Duration;
@@ -219,15 +220,15 @@ final class VideosDayScheduleView {
             nameLabel.setWrapText(true);
             nameLabel.setPadding(new Insets(0, 10, 0, 0));
 
-            // Handle expiration date
-            if (scheduledItem.getExpirationDate() != null) {
-                String key = scheduledItem.getExpirationDate().isAfter(LocalDateTime.now())
-                    ? VideosI18nKeys.VideoAvailableUntil
-                    : VideosI18nKeys.VideoExpiredOn;
+            LocalDateTime nowInEventTimezone = Event.nowInEventTimezone();
 
+            // Handle expiration date
+            LocalDateTime expirationDate = scheduledItem.getExpirationDate();
+            if (expirationDate != null) {
+                boolean available = expirationDate.isAfter(nowInEventTimezone);
                 Label expirationDateLabel = Bootstrap.small(Bootstrap.textDanger(I18nControls.newLabel(
-                    key,
-                    scheduledItem.getExpirationDate().format(DateTimeFormatter.ofPattern("d MMMM, uuuu ' - ' HH:mm"))
+                    available ? VideosI18nKeys.VideoAvailableUntil: VideosI18nKeys.VideoExpiredOn,
+                    expirationDate.format(DateTimeFormatter.ofPattern("d MMMM, uuuu ' - ' HH:mm"))
                 )));
                 expirationDateLabel.setWrapText(true);
 
@@ -292,19 +293,20 @@ final class VideosDayScheduleView {
             // TODO: manage the case when the livestream link is not global but per session, which happens on platform like youtube, etc.
 
             //The live is currently playing, we display this 2 minutes before the beginning
-            if (LocalDateTime.now().isAfter(sessionStart.minusMinutes(2)) && LocalDateTime.now().isBefore(sessionEnd)) {
+            LocalDateTime nowInEventTimezone = Event.nowInEventTimezone();
+            if (Times.isBetween(nowInEventTimezone, sessionStart.minusMinutes(2), sessionEnd)) {
                 I18nControls.bindI18nProperties(statusLabel, I18nKeys.upperCase(VideosI18nKeys.LiveNow));
                 actionButton.setOnAction(e -> browsingHistory.push(LivestreamPlayerRouting.getLivestreamPath(scheduledItem.getEventId())));
                 actionButton.setVisible(true);
-                Duration duration = Duration.between(LocalDateTime.now(), sessionEnd);
+                Duration duration = Duration.between(nowInEventTimezone, sessionEnd);
                 if (duration.getSeconds() > 0)
                     scheduleRefreshUI(duration.getSeconds());
                 return;
             }
 
             //The session has not started yet
-            if (LocalDateTime.now().isBefore(sessionStart)) {
-                Duration duration = Duration.between(LocalDateTime.now(), sessionStart);
+            if (nowInEventTimezone.isBefore(sessionStart)) {
+                Duration duration = Duration.between(nowInEventTimezone, sessionStart);
 
                 //We display the countdown 3 hours before the session
                 if (duration.getSeconds() > 0 && duration.getSeconds() < 3600 * 3) {
@@ -332,7 +334,7 @@ final class VideosDayScheduleView {
             if (scheduledItem.getExpirationDate() != null) {
                 expirationDate = scheduledItem.getExpirationDate();
             }
-            if (expirationDate != null && Times.isPast(expirationDate)) {
+            if (expirationDate != null && Times.isPast(expirationDate, Event.getEventClock())) {
                 //TODO: when we know how we will manage the timezone, we adapt to take into account the different timezone
                 //TODO: when a push notification is sent we have to update this also.
                 I18nControls.bindI18nProperties(statusLabel, I18nKeys.upperCase(VideosI18nKeys.Expired));
@@ -350,7 +352,7 @@ final class VideosDayScheduleView {
                 actionButton.setVisible(true);
                 if (expirationDate != null) {
                     //We schedule a refresh so the UI is updated when the expirationDate is reached
-                    Duration duration = Duration.between(LocalDateTime.now(), expirationDate);
+                    Duration duration = Duration.between(nowInEventTimezone, expirationDate);
                     if (duration.getSeconds() > 0) {
                         scheduleRefreshUI(duration.getSeconds());
                     }
@@ -370,7 +372,7 @@ final class VideosDayScheduleView {
             if (!scheduledItem.isPublished()) {
                 //The default value of the processing time if this parameter has not been entered
                 int vodProcessingTimeMinute = getVodProcessingTimeMinute(scheduledItem);
-                if (LocalDateTime.now().isAfter(sessionEnd.plusMinutes(vodProcessingTimeMinute))) {
+                if (nowInEventTimezone.isAfter(sessionEnd.plusMinutes(vodProcessingTimeMinute))) {
                     I18nControls.bindI18nProperties(statusLabel, I18nKeys.upperCase(VideosI18nKeys.VideoDelayed));
                     hideActionButton();
                     //A push notification will tell us when the video recording will be available
@@ -383,13 +385,13 @@ final class VideosDayScheduleView {
             }
         }
 
-        private void scheduleRefreshUI(long i) {
-            long refreshTime = i * 1000;
-            if (i > 59) {
+        private void scheduleRefreshUI(long delaySeconds) {
+            long delayMillis = delaySeconds * 1000;
+            if (delaySeconds > 59) {
                 //If we want to refresh more than 1 minutes, we add a second to make sure the calculation has time to proceed before the refresh
-                refreshTime = refreshTime + 1000;
+                delayMillis = delayMillis + 1000;
             }
-            UiScheduler.scheduleDelay(refreshTime, this::computeStatusLabelAndWatchButton);
+            UiScheduler.scheduleDelay(delayMillis, this::computeStatusLabelAndWatchButton);
         }
 
 

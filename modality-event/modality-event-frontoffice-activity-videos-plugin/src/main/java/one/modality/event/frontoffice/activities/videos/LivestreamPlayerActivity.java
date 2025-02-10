@@ -7,6 +7,7 @@ import dev.webfx.kit.util.properties.FXProperties;
 import dev.webfx.platform.console.Console;
 import dev.webfx.platform.scheduler.Scheduler;
 import dev.webfx.platform.util.Numbers;
+import dev.webfx.platform.util.time.Times;
 import dev.webfx.stack.i18n.controls.I18nControls;
 import dev.webfx.stack.orm.entity.*;
 import javafx.application.Platform;
@@ -51,6 +52,8 @@ final class LivestreamPlayerActivity extends AbstractVideoPlayerActivity {
         EntityStore entityStore = EntityStore.create(getDataSourceModel()); // Activity datasource model is available at this point
         FXProperties.runNowAndOnPropertiesChange(() -> {
             Object eventId = eventIdProperty.get();
+            LocalDateTime nowInEventTimezone = Event.nowInEventTimezone();
+            LocalDate todayInEventTimezone = Event.todayInEventTimezone();
             EntityId userPersonId = FXUserPersonId.getUserPersonId();
             entityStore.<ScheduledItem>executeQuery(
                     new EntityStoreQuery("select event.(name, shortDescription, livestreamUrl), date, programScheduledItem.(startTime, endTime), " +
@@ -58,22 +61,24 @@ final class LivestreamPlayerActivity extends AbstractVideoPlayerActivity {
                         " from ScheduledItem si" +
                         " where si.event.id=? and exists(select Attendance a where documentLine.(!cancelled and document.(person=? and confirmed and price_balance<=0)) and exists(select ScheduledItem where bookableScheduledItem=a.scheduledItem and item.family.code=?)) "
                         + " and si.item.code=?"
-                        + " and si.date=? and si.programScheduledItem.endTime>?",
-                        new Object[]{userPersonId, eventId, userPersonId, KnownItemFamily.VIDEO.getCode(), KnownItem.VIDEO.getCode(), LocalDate.now(), LocalDateTime.now()}))
+                        + " and si.date=?"
+                        + " and si.programScheduledItem.endTime>?",
+                        new Object[]{userPersonId, eventId, userPersonId, KnownItemFamily.VIDEO.getCode(), KnownItem.VIDEO.getCode(), todayInEventTimezone, nowInEventTimezone.plusMinutes(30)}))
                 .onFailure(Console::log)
                 .onSuccess(scheduledItemList -> Platform.runLater(() -> {
                     if (!scheduledItemList.isEmpty()) {
                         todayScheduledItemsList = scheduledItemList;
-                        currentEvent = ((ScheduledItem) todayScheduledItemsList.get(0)).getEvent();
+                        ScheduledItem firstScheduledItem = todayScheduledItemsList.get(0);
+                        currentEvent = firstScheduledItem.getEvent();
                         UpdateStore updateStore = UpdateStore.createAbove(currentEvent.getStore());
                         livestreamUrlProperty.set(currentEvent.getLivestreamUrl());
                         //Here we update the MediaConsumption table.
                         //1st case: the scheduledItem has started yet but not finished
-                        ScheduledItem firstScheduledItem = (ScheduledItem) todayScheduledItemsList.get(0);
-                        LocalDateTime firstScheduledItemStart = firstScheduledItem.getDate().atTime(firstScheduledItem.getProgramScheduledItem().getStartTime());
-                        LocalDateTime firstScheduledItemEnd = firstScheduledItem.getDate().atTime(firstScheduledItem.getProgramScheduledItem().getEndTime());
+                        ScheduledItem programScheduledItem = firstScheduledItem.getProgramScheduledItem();
+                        LocalDateTime firstScheduledItemStart = firstScheduledItem.getDate().atTime(programScheduledItem.getStartTime());
+                        LocalDateTime firstScheduledItemEnd = firstScheduledItem.getDate().atTime(programScheduledItem.getEndTime());
                         Object attendanceId = firstScheduledItem.getFieldValue("attendanceId");
-                        if (LocalDateTime.now().isAfter(firstScheduledItemStart) && LocalDateTime.now().isBefore(firstScheduledItemEnd)) {
+                        if (Times.isBetween(nowInEventTimezone, firstScheduledItemStart, firstScheduledItemEnd)) {
                             MediaConsumption mediaConsumption = updateStore.insertEntity(MediaConsumption.class);
                             mediaConsumption.setAttendance(attendanceId);
                             mediaConsumption.setLivestreamed(true);
@@ -85,8 +90,8 @@ final class LivestreamPlayerActivity extends AbstractVideoPlayerActivity {
                         //TODO: not tested for now because no event to test
                         todayScheduledItemsList.forEach(currentScheduledItem -> {
                             LocalDateTime scheduledItemStart = currentScheduledItem.getDate().atTime(currentScheduledItem.getProgramScheduledItem().getStartTime());
-                            if (LocalDateTime.now().isBefore(scheduledItemStart)) {
-                                long startInMs = ChronoUnit.MILLIS.between(scheduledItemStart, LocalDateTime.now());
+                            if (nowInEventTimezone.isBefore(scheduledItemStart)) {
+                                long startInMs = ChronoUnit.MILLIS.between(scheduledItemStart, nowInEventTimezone);
                                 Object currentAttendanceId = currentScheduledItem.getFieldValue("attendanceId");
                                 Scheduler.scheduleDelay(startInMs, () -> {
                                     MediaConsumption mediaConsumption = updateStore.insertEntity(MediaConsumption.class);
@@ -144,7 +149,6 @@ final class LivestreamPlayerActivity extends AbstractVideoPlayerActivity {
 
     @Override
     protected void syncHeader() {
-        String title = "Livestream";
         if (currentEvent != null) {
             eventLabel.setText(currentEvent.getName());
             eventDescriptionHtmlText.setText(currentEvent.getShortDescription());
