@@ -115,8 +115,8 @@ final class LivestreamPlayerActivity extends AbstractVideoPlayerActivity {
         //VBox to display the live message
         VBox liveMessageVBox = new VBox(20);
         liveMessageVBox.setAlignment(Pos.CENTER);
-        Label liveMessageTitleLabel = I18nControls.newLabel(VideosI18nKeys.LiveAnnoucementsTitle);
-        Label liveMessageLabel = I18nControls.newLabel(VideosI18nKeys.LiveAnnoucements);
+        Label liveMessageTitleLabel = I18nControls.newLabel(VideosI18nKeys.LiveAnnouncementsTitle);
+        Label liveMessageLabel = I18nControls.newLabel(VideosI18nKeys.LiveAnnouncements);
         liveMessageLabel.setWrapText(true);
         liveMessageLabel.setAlignment(Pos.CENTER);
         liveMessageVBox.getChildren().addAll(liveMessageTitleLabel, liveMessageLabel);
