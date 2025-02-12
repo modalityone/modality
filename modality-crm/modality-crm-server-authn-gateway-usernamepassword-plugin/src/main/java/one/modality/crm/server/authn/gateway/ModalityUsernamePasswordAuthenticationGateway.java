@@ -31,8 +31,6 @@ import java.util.Objects;
  */
 public final class ModalityUsernamePasswordAuthenticationGateway implements ServerAuthenticationGateway, HasDataSourceModel {
 
-    private static final boolean SKIP_PASSWORD_CHECK_FOR_DEBUG = false; // Can be set to true (on local dev machines only!) to log in and debug user accounts
-
     private static final String CREATE_ACCOUNT_ACTIVITY_PATH_PREFIX = "/create-account";
     private static final String CREATE_ACCOUNT_ACTIVITY_PATH_FULL = CREATE_ACCOUNT_ACTIVITY_PATH_PREFIX + "/:token";
 
@@ -116,17 +114,26 @@ public final class ModalityUsernamePasswordAuthenticationGateway implements Serv
                     return Future.failedFuture("[%s] Wrong user or password".formatted(ModalityAuthenticationI18nKeys.AuthnWrongUserOrPasswordError));
                 Person userPerson = persons.get(0);
                 FrontendAccount fa = userPerson.getFrontendAccount();
-                if (!SKIP_PASSWORD_CHECK_FOR_DEBUG) {
-                    String encryptedPassword = encryptPassword(password, fa.getSalt());
-                    if (!Objects.equals(encryptedPassword, fa.getPassword()) // Normal check
-                        && !Objects.equals(password, fa.getPassword())) // Additional possibility = when staff enters the encrypted password to login into a user account
-                        return Future.failedFuture("[%s] Wrong user or password".formatted(ModalityAuthenticationI18nKeys.AuthnWrongUserOrPasswordError));
-                }
+                if (!isTypedPasswordCorrect(password, fa.getPassword(), fa.getSalt()))
+                    return Future.failedFuture("[%s] Wrong user or password".formatted(ModalityAuthenticationI18nKeys.AuthnWrongUserOrPasswordError));
                 Object personId = userPerson.getPrimaryKey();
                 Object accountId = Entities.getPrimaryKey(userPerson.getForeignEntityId("frontendAccount"));
                 ModalityUserPrincipal modalityUserPrincipal = new ModalityUserPrincipal(personId, accountId);
                 return PushServerService.pushState(StateAccessor.createUserIdState(modalityUserPrincipal), runId);
             });
+    }
+
+    private boolean isTypedPasswordCorrect(String typedPassword, String storedEncryptedPassword, String salt) {
+        // The typed password is not encrypted, so we encrypt it in order to compare it with the stored one
+        String typedEncryptedPassword = encryptPassword(typedPassword, salt);
+        // If both encrypted password are equals (the typed one and the stored one), then the password is correct
+        if (Objects.equals(typedEncryptedPassword, storedEncryptedPassword))
+            return true;
+        // Alternative possibility is to type the encrypted password (only the staff can know it from the back-office)
+        // This allows the support team to log in as a specific user to check what he sees in the front-office.
+        if (Objects.equals(typedPassword, storedEncryptedPassword))
+            return true;
+        return false;
     }
 
     private Future<Void> sendAccountCreationLink(InitiateAccountCreationCredentials credentials) {
@@ -186,9 +193,11 @@ public final class ModalityUsernamePasswordAuthenticationGateway implements Serv
     }
 
     private Future<Void> finaliseEmailUpdate(FinaliseEmailUpdateCredentials credentials) {
+        // We check the validity of the token, and if valid, we load the user person
         return LoginLinkService.loadLoginLinkFromTokenAndMarkAsUsed(credentials.getToken(), dataSourceModel)
             .compose(magicLink -> LoginLinkService.loadUserPersonFromLoginLink(magicLink)
                 .compose(userPerson -> {
+                    // We change the email in both the account username, and the user person
                     UpdateStore updateStore = UpdateStore.create(dataSourceModel);
                     updateStore.updateEntity(userPerson.getFrontendAccount()).setUsername(magicLink.getEmail());
                     updateStore.updateEntity(userPerson).setEmail(magicLink.getEmail());
@@ -256,23 +265,20 @@ public final class ModalityUsernamePasswordAuthenticationGateway implements Serv
         // 1) We first check that the passed old password matches with the one in database
         return queryModalityUserPerson("frontendAccount.(username, password, salt)")
             .compose(userPerson -> {
-                FrontendAccount fa = userPerson.getFrontendAccount();
-                String oldEncryptedDbPassword = fa.getPassword();
-                String salt = fa.getSalt();
-                // Note in case of resetting the password from a magic link, the old password is not requested from the
-                // user but is loaded again from the database (by the MagicLink gateway) and is therefore already
-                // encrypted. Otherwise (when the password reset originates from the user profile), the old password is
-                // request from the user and is clear (not encrypted yet).
                 String oldPassword = passwordUpdate.getOldPassword();
-                String oldEncryptedUserPassword = encryptPassword(oldPassword, salt);
-                if (!Objects.equals(oldEncryptedDbPassword, oldEncryptedUserPassword) // when old password is clear
-                    && !Objects.equals(oldEncryptedDbPassword, oldPassword)) // when old password is encrypted (magic link)
+                // Note: in case of resetting the password from a magic link, the old password is not typed by the user
+                // but loaded again from the database (by the MagicLink gateway) and is therefore already encrypted.
+                // Otherwise (when the password reset originates from the user profile), the old password is typed in
+                // clear by the user.
+                FrontendAccount fa = userPerson.getFrontendAccount();
+                // isTypedPasswordCorrect() is handling both case (oldPassword in clear or already encrypted)
+                if (!isTypedPasswordCorrect(oldPassword, fa.getPassword(), fa.getSalt()))
                     return Future.failedFuture("[%s] The old password is not matching".formatted(ModalityAuthenticationI18nKeys.AuthnOldPasswordNotMatchingError));
-                String newEncryptedUserPassword = encryptPassword(passwordUpdate.getNewPassword(), salt);
                 // 2) We update the password in the database
+                String storedEncryptedPassword = encryptPassword(passwordUpdate.getNewPassword(), fa.getSalt());
                 UpdateStore updateStore = UpdateStore.createAbove(fa.getStore());
                 FrontendAccount ufa = updateStore.updateEntity(fa);
-                ufa.setPassword(newEncryptedUserPassword);
+                ufa.setPassword(storedEncryptedPassword);
                 return updateStore.submitChanges();
             });
     }
