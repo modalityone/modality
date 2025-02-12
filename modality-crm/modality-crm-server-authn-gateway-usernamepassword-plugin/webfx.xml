@@ -13,7 +13,7 @@
     </dependencies>
 
     <providers>
-        <provider interface="dev.webfx.stack.authn.server.gateway.spi.ServerAuthenticationGateway">one.modality.crm.server.authn.gateway.ModalityUsernamePasswordAuthenticationGateway</provider>
+        <provider interface="dev.webfx.stack.authn.server.gateway.spi.ServerAuthenticationGateway">one.modality.crm.server.authn.gateway.ModalityPasswordAuthenticationGateway</provider>
     </providers>
 
 </project>

@@ -29,7 +29,7 @@ import java.util.Objects;
 /**
  * @author Bruno Salmon
  */
-public final class ModalityUsernamePasswordAuthenticationGateway implements ServerAuthenticationGateway, HasDataSourceModel {
+public final class ModalityPasswordAuthenticationGateway implements ServerAuthenticationGateway, HasDataSourceModel {
 
     private static final String CREATE_ACCOUNT_ACTIVITY_PATH_PREFIX = "/create-account";
     private static final String CREATE_ACCOUNT_ACTIVITY_PATH_FULL = CREATE_ACCOUNT_ACTIVITY_PATH_PREFIX + "/:token";
@@ -37,22 +37,22 @@ public final class ModalityUsernamePasswordAuthenticationGateway implements Serv
     // Temporarily hardcoded (to replace with database letters)
     private static final String CREATE_ACCOUNT_LINK_MAIL_FROM = "kbs@kadampa.net";
     private static final String CREATE_ACCOUNT_LINK_MAIL_SUBJECT = "Account creation - Kadampa Booking System";
-    private static final String CREATE_ACCOUNT_LINK_MAIL_BODY = Resource.getText(Resource.toUrl("AccountCreationMailBody.html", ModalityUsernamePasswordAuthenticationGateway.class));
+    private static final String CREATE_ACCOUNT_LINK_MAIL_BODY = Resource.getText(Resource.toUrl("AccountCreationMailBody.html", ModalityPasswordAuthenticationGateway.class));
 
     private static final String UPDATE_EMAIL_ACTIVITY_PATH_PREFIX = "/user-profile/email-update";
     private static final String UPDATE_EMAIL_ACTIVITY_PATH_FULL = UPDATE_EMAIL_ACTIVITY_PATH_PREFIX + "/:token";
 
     private static final String UPDATE_EMAIL_LINK_MAIL_FROM = "kbs@kadampa.net";
     private static final String UPDATE_EMAIL_LINK_MAIL_SUBJECT = "Account email change - Kadampa Booking System";
-    private static final String UPDATE_EMAIL_LINK_MAIL_BODY = Resource.getText(Resource.toUrl("AccountEmailUpdateMailBody.html", ModalityUsernamePasswordAuthenticationGateway.class));
+    private static final String UPDATE_EMAIL_LINK_MAIL_BODY = Resource.getText(Resource.toUrl("AccountEmailUpdateMailBody.html", ModalityPasswordAuthenticationGateway.class));
 
     private final DataSourceModel dataSourceModel;
 
-    public ModalityUsernamePasswordAuthenticationGateway() {
+    public ModalityPasswordAuthenticationGateway() {
         this(DataSourceModelService.getDefaultDataSourceModel());
     }
 
-    public ModalityUsernamePasswordAuthenticationGateway(DataSourceModel dataSourceModel) {
+    public ModalityPasswordAuthenticationGateway(DataSourceModel dataSourceModel) {
         this.dataSourceModel = dataSourceModel;
     }
 
