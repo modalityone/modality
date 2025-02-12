@@ -22,6 +22,7 @@ import one.modality.base.shared.entities.Person;
 import one.modality.crm.server.authn.gateway.shared.LoginLinkService;
 import one.modality.crm.shared.services.authn.ModalityAuthenticationI18nKeys;
 import one.modality.crm.shared.services.authn.ModalityUserPrincipal;
+import one.modality.crm.server.authn.gateway.magiclink.ModalityMagicLinkAuthenticationGateway;
 
 import java.util.Objects;
 
@@ -35,16 +36,20 @@ public final class ModalityPasswordAuthenticationGateway implements ServerAuthen
     private static final String CREATE_ACCOUNT_ACTIVITY_PATH_FULL = CREATE_ACCOUNT_ACTIVITY_PATH_PREFIX + "/:token";
 
     // Temporarily hardcoded (to replace with database letters)
-    private static final String CREATE_ACCOUNT_LINK_MAIL_FROM = "kbs@kadampa.net";
-    private static final String CREATE_ACCOUNT_LINK_MAIL_SUBJECT = "Account creation - Kadampa Booking System";
-    private static final String CREATE_ACCOUNT_LINK_MAIL_BODY = Resource.getText(Resource.toUrl("AccountCreationMailBody.html", ModalityPasswordAuthenticationGateway.class));
+    private static final String CREATE_ACCOUNT_MAIL_FROM = "kbs@kadampa.net";
+    private static final String CREATE_ACCOUNT_MAIL_SUBJECT = "Account creation - Kadampa Booking System";
+    private static final String CREATE_ACCOUNT_MAIL_BODY = Resource.getText(Resource.toUrl("AccountCreationMailBody.html", ModalityPasswordAuthenticationGateway.class));
+
+    private static final String CREATE_ACCOUNT_ALREADY_EXISTS_MAIL_FROM = "kbs@kadampa.net";
+    private static final String CREATE_ACCOUNT_ALREADY_EXISTS_MAIL_SUBJECT = "Account already exists - Kadampa Booking System";
+    private static final String CREATE_ACCOUNT_ALREADY_EXISTS_MAIL_BODY = Resource.getText(Resource.toUrl("AccountCreationAlreadyExistsMailBody.html", ModalityPasswordAuthenticationGateway.class));
 
     private static final String UPDATE_EMAIL_ACTIVITY_PATH_PREFIX = "/user-profile/email-update";
     private static final String UPDATE_EMAIL_ACTIVITY_PATH_FULL = UPDATE_EMAIL_ACTIVITY_PATH_PREFIX + "/:token";
 
-    private static final String UPDATE_EMAIL_LINK_MAIL_FROM = "kbs@kadampa.net";
-    private static final String UPDATE_EMAIL_LINK_MAIL_SUBJECT = "Account email change - Kadampa Booking System";
-    private static final String UPDATE_EMAIL_LINK_MAIL_BODY = Resource.getText(Resource.toUrl("AccountEmailUpdateMailBody.html", ModalityPasswordAuthenticationGateway.class));
+    private static final String UPDATE_EMAIL_MAIL_FROM = "kbs@kadampa.net";
+    private static final String UPDATE_EMAIL_MAIL_SUBJECT = "Account email change - Kadampa Booking System";
+    private static final String UPDATE_EMAIL_MAIL_BODY = Resource.getText(Resource.toUrl("AccountEmailUpdateMailBody.html", ModalityPasswordAuthenticationGateway.class));
 
     private final DataSourceModel dataSourceModel;
 
@@ -126,25 +131,38 @@ public final class ModalityPasswordAuthenticationGateway implements ServerAuthen
     private boolean isTypedPasswordCorrect(String typedPassword, String storedEncryptedPassword, String salt) {
         // The typed password is not encrypted, so we encrypt it in order to compare it with the stored one
         String typedEncryptedPassword = encryptPassword(typedPassword, salt);
-        // If both encrypted password are equals (the typed one and the stored one), then the password is correct
+        // If both encrypted passwords are equals (the typed one and the stored one), then the password is correct
         if (Objects.equals(typedEncryptedPassword, storedEncryptedPassword))
             return true;
         // Alternative possibility is to type the encrypted password (only the staff can know it from the back-office)
-        // This allows the support team to log in as a specific user to check what he sees in the front-office.
+        // This allows the support team to log in as a specific user to check what he or she sees in the front-office.
         if (Objects.equals(typedPassword, storedEncryptedPassword))
             return true;
+        // Otherwise, the password is incorrect
         return false;
     }
 
     private Future<Void> sendAccountCreationLink(InitiateAccountCreationCredentials credentials) {
-        return LoginLinkService.storeAndSendLoginLink(
-            credentials,
-            CREATE_ACCOUNT_ACTIVITY_PATH_FULL,
-            CREATE_ACCOUNT_LINK_MAIL_FROM,
-            CREATE_ACCOUNT_LINK_MAIL_SUBJECT,
-            CREATE_ACCOUNT_LINK_MAIL_BODY,
-            dataSourceModel
-        );
+        // We check that the requested account doesn't exist in the database. If it doesn't exist, we send an
+        // "Account creation" email as requested. But if it exists, we send an "Account already exists" email instead.
+        // For this later case, we still create a login link that will actually act as a magic link.
+        String loginRunId = ThreadLocalStateHolder.getRunId(); // Capturing the loginRunId before async operation
+        return EntityStore.create(dataSourceModel)
+            .<FrontendAccount>executeQuery("select FrontendAccount where corporation=? and username=? limit 1", 1, credentials.getEmail())
+            .compose(accounts -> {
+                    boolean doesntExists = accounts.isEmpty();
+                    return LoginLinkService.storeAndSendLoginLink(
+                        loginRunId,
+                        credentials,
+                        null,
+                        doesntExists ? CREATE_ACCOUNT_ACTIVITY_PATH_FULL : ModalityMagicLinkAuthenticationGateway.MAGIC_LINK_ACTIVITY_PATH_FULL,
+                        doesntExists ? CREATE_ACCOUNT_MAIL_FROM : CREATE_ACCOUNT_ALREADY_EXISTS_MAIL_FROM,
+                        doesntExists ? CREATE_ACCOUNT_MAIL_SUBJECT : CREATE_ACCOUNT_ALREADY_EXISTS_MAIL_SUBJECT,
+                        doesntExists ? CREATE_ACCOUNT_MAIL_BODY : CREATE_ACCOUNT_ALREADY_EXISTS_MAIL_BODY,
+                        dataSourceModel
+                    );
+                }
+            );
     }
 
     private Future<String> continueAccountCreation(ContinueAccountCreationCredentials credentials) {
@@ -184,9 +202,9 @@ public final class ModalityPasswordAuthenticationGateway implements ServerAuthen
                     credentials, // contains the new email (the one to send the link to)
                     userClaims.getEmail(), // current email for this account (= old email)
                     UPDATE_EMAIL_ACTIVITY_PATH_FULL,
-                    UPDATE_EMAIL_LINK_MAIL_FROM,
-                    UPDATE_EMAIL_LINK_MAIL_SUBJECT,
-                    UPDATE_EMAIL_LINK_MAIL_BODY,
+                UPDATE_EMAIL_MAIL_FROM,
+                UPDATE_EMAIL_MAIL_SUBJECT,
+                UPDATE_EMAIL_MAIL_BODY,
                     dataSourceModel
                 )
             );
