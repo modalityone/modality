@@ -51,11 +51,11 @@ public class MediaLinksForVODManagement extends MediaLinksManagement {
     private static final String DATE_FORMAT = "dd-MM-yyyy";
     private static final DateTimeFormatter DATE_FORMATTER = DateTimeFormatter.ofPattern(DATE_FORMAT);
 
-    private final VideoView parentVideoView;
+    private final VideoTabView parentVideoTabView;
 
-    public MediaLinksForVODManagement(EntityStore entityStore, List<LocalDate> teachingsDates, ObservableList<ScheduledItem> scheduledItemsReadFromDatabase, ObservableList<Media> recordingsMediasReadFromDatabase, VideoView videoView) {
+    public MediaLinksForVODManagement(EntityStore entityStore, List<LocalDate> teachingsDates, ObservableList<ScheduledItem> scheduledItemsReadFromDatabase, ObservableList<Media> recordingsMediasReadFromDatabase, VideoTabView videoTabView) {
         super(KnownItem.VIDEO.getCode(), entityStore, teachingsDates, scheduledItemsReadFromDatabase, recordingsMediasReadFromDatabase);
-        parentVideoView = videoView;
+        parentVideoTabView = videoTabView;
         mainContainer.setMinWidth(800);
         VBox teachingDatesVBox = new VBox();
         teachingDatesVBox.setSpacing(30);
@@ -106,7 +106,7 @@ public class MediaLinksForVODManagement extends MediaLinksManagement {
                 UpdateStore localUpdateStore = UpdateStore.createAbove(entityStore);
                 //We add in the parentView the updateStore.hasChangedProperty so we know if we can or not change the edited event without forgetting the current local changes
                 //made here
-                parentVideoView.addUpdateStoreHasChangesProperty(EntityBindings.hasChangesProperty(localUpdateStore));
+                parentVideoTabView.addUpdateStoreHasChangesProperty(EntityBindings.hasChangesProperty(localUpdateStore));
 
                 ScheduledItem workingCurrentVideoScheduledItem = localUpdateStore.updateEntity(currentVideoScheduledItem);
                 //First of all, we read the Video ScheduledItems linked to the teachings

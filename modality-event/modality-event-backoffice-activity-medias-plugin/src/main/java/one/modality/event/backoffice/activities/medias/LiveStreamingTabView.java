@@ -8,13 +8,8 @@ import dev.webfx.extras.util.control.Controls;
 import dev.webfx.extras.webtext.HtmlTextEditor;
 import dev.webfx.stack.i18n.I18n;
 import dev.webfx.stack.i18n.controls.I18nControls;
-import dev.webfx.stack.orm.datasourcemodel.service.DataSourceModelService;
-import dev.webfx.stack.orm.domainmodel.DataSourceModel;
-import dev.webfx.stack.orm.entity.EntityStore;
 import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.SimpleBooleanProperty;
-import javafx.collections.FXCollections;
-import javafx.collections.ObservableList;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Node;
@@ -23,32 +18,13 @@ import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
 import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
-import one.modality.base.shared.entities.Event;
-import one.modality.base.shared.entities.Media;
-import one.modality.base.shared.entities.ScheduledItem;
-
-import java.time.LocalDate;
 
 import static dev.webfx.extras.webtext.HtmlTextEditor.Mode.BASIC;
 
 
-public class LiveStreamingView {
+final class LiveStreamingTabView {
 
-    private final MediasActivity activity;
     private final BooleanProperty activeProperty = new SimpleBooleanProperty();
-    private final DataSourceModel dataSourceModel = DataSourceModelService.getDefaultDataSourceModel();
-    private final EntityStore entityStore = EntityStore.create(dataSourceModel);
-    private final ObservableList<LocalDate> teachingsDates = FXCollections.observableArrayList();
-    private final ObservableList<ScheduledItem> teachingsScheduledItemsReadFromDatabase = FXCollections.observableArrayList();
-    private final ObservableList<Media> recordingsMediasReadFromDatabase = FXCollections.observableArrayList();
-    private Event currentEditedEvent;
-    public LiveStreamingView(MediasActivity activity) {
-        this.activity = activity;
-    }
-
-
-    public void startLogic() {
-    }
 
     public Node buildContainer() {
         BorderPane mainFrame = new BorderPane();
@@ -128,7 +104,6 @@ public class LiveStreamingView {
         TextField globalLinkTextField = new TextField();
         globalLinkTextField.setMinWidth(600);
         globalLinkLine.getChildren().add(globalLinkTextField);
-
 
         mainVBox.getChildren().addAll(globalLinkLine);
 

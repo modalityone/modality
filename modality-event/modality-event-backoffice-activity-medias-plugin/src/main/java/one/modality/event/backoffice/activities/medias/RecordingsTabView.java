@@ -48,7 +48,7 @@ import java.util.TreeSet;
 import java.util.stream.Collectors;
 
 
-public class RecordingsView {
+final class RecordingsTabView {
 
     private Event currentEditedEvent;
     private final DataSourceModel dataSourceModel = DataSourceModelService.getDefaultDataSourceModel();
@@ -68,7 +68,7 @@ public class RecordingsView {
     private final BorderPane mainFrame;
     String lastLanguageSelected = "";
 
-    public RecordingsView() {
+    public RecordingsTabView() {
         mainFrame = new BorderPane();
         mainFrame.setPadding(new Insets(0, 0, 30, 0));
         mainContainer = Controls.createVerticalScrollPane(mainFrame);
@@ -336,10 +336,10 @@ public class RecordingsView {
     }
 
     private void displayEventDetails(Event e) {
-        e.onExpressionLoaded("organization,audioExpirationDate, repeatedEvent, repeatAudio, repeatVideo")
-            .onSuccess(ignored -> Platform.runLater(this::drawContainer))
-            .onFailure((Console::log));
-
+        if (e != null)
+            e.onExpressionLoaded("organization,audioExpirationDate, repeatedEvent, repeatAudio, repeatVideo")
+                .onSuccess(ignored -> Platform.runLater(this::drawContainer))
+                .onFailure((Console::log));
     }
 
     //This parameter will allow us to manage the interaction and behaviour of the Panel that display the details of an event and the event selected

@@ -25,6 +25,7 @@ module modality.event.backoffice.activity.medias.plugin {
     requires webfx.extras.util.control;
     requires webfx.extras.util.layout;
     requires webfx.extras.util.masterslave;
+    requires webfx.extras.visual.grid;
     requires webfx.extras.webtext;
     requires webfx.kit.util;
     requires webfx.platform.console;
@@ -39,6 +40,7 @@ module modality.event.backoffice.activity.medias.plugin {
     requires webfx.stack.orm.domainmodel.activity;
     requires webfx.stack.orm.entity;
     requires webfx.stack.orm.entity.binding;
+    requires webfx.stack.orm.reactive.visual;
     requires webfx.stack.routing.router.client;
     requires webfx.stack.routing.uirouter;
     requires webfx.stack.ui.controls;

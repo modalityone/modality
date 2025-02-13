@@ -41,15 +41,15 @@ import java.util.stream.Collectors;
 public class MediaLinksForAudioRecordingsManagement extends MediaLinksManagement {
 
     private final ObservableList<Media> workingMediasForCurrentLanguage = FXCollections.observableArrayList();
-    private final RecordingsView parentRecordingView;
+    private final RecordingsTabView parentRecordingView;
     private final Item languageItem;
     private ImageView imageView;
     private final ModalityCloudinary modalityCloudinary = new ModalityCloudinary(ModalityCloudinary.CloudinaryPrefix.AUDIO_COVER);
 
-    public MediaLinksForAudioRecordingsManagement(Item language, EntityStore entityStore, ObservableList<LocalDate> teachingsDates, ObservableList<ScheduledItem> audioScheduledItemsReadFromDatabase, ObservableList<Media> recordingsMediasReadFromDatabase, RecordingsView recordingsView) {
+    public MediaLinksForAudioRecordingsManagement(Item language, EntityStore entityStore, ObservableList<LocalDate> teachingsDates, ObservableList<ScheduledItem> audioScheduledItemsReadFromDatabase, ObservableList<Media> recordingsMediasReadFromDatabase, RecordingsTabView recordingsTabView) {
         super(language.getCode(), entityStore, teachingsDates, audioScheduledItemsReadFromDatabase, recordingsMediasReadFromDatabase);
         languageItem = language;
-        parentRecordingView = recordingsView;
+        parentRecordingView = recordingsTabView;
         //Language code is 'audio-en", audio-fr", "audio-es", ...
         String languageCode= language.getCode().split("-")[1];
         modalityCloudinary.setLanguage(languageCode);
