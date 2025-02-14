@@ -48,7 +48,6 @@ import one.modality.base.shared.entities.KnownItem;
 import one.modality.base.shared.entities.KnownItemFamily;
 import one.modality.base.shared.entities.ScheduledItem;
 import one.modality.crm.shared.services.authn.fx.FXUserPersonId;
-import one.modality.event.frontoffice.activities.audiorecordings.AudioRecordingsI18nKeys;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -164,7 +163,7 @@ final class EventVideosWallActivity extends ViewDomainActivityBase {
         I18n.bindI18nTextProperty(eventDescriptionHtmlText.textProperty(), new I18nSubKey("expression: i18n(shortDescription)", eventProperty), eventProperty);
 
         eventDescriptionHtmlText.setMaxHeight(60);
-        videoExpirationLabel = I18nControls.newLabel(AudioRecordingsI18nKeys.AvailableUntil);
+        videoExpirationLabel = I18nControls.newLabel(VideosI18nKeys.EventAvailableUntil);
         videoExpirationLabel.setPadding(new Insets(30, 0, 0, 0));
         VBox titleVBox = new VBox(eventLabel, eventDescriptionHtmlText, videoExpirationLabel);
 

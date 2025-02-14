@@ -1,7 +1,7 @@
 package one.modality.event.frontoffice.activities.videos;
 
+import dev.webfx.extras.player.Player;
 import dev.webfx.extras.player.StartOptionsBuilder;
-import dev.webfx.extras.player.multi.MultiPlayer;
 import dev.webfx.extras.player.multi.all.AllPlayers;
 import dev.webfx.kit.util.properties.FXProperties;
 import dev.webfx.platform.console.Console;
@@ -12,17 +12,15 @@ import dev.webfx.stack.i18n.spi.impl.I18nSubKey;
 import dev.webfx.stack.orm.entity.EntityId;
 import dev.webfx.stack.orm.entity.EntityStore;
 import dev.webfx.stack.orm.entity.EntityStoreQuery;
-import dev.webfx.stack.orm.entity.UpdateStore;
 import javafx.application.Platform;
 import javafx.geometry.Insets;
 import javafx.scene.Node;
 import javafx.scene.control.Label;
 import one.modality.base.shared.entities.Event;
 import one.modality.base.shared.entities.Media;
-import one.modality.base.shared.entities.MediaConsumption;
 import one.modality.base.shared.entities.ScheduledItem;
 import one.modality.crm.shared.services.authn.fx.FXUserPersonId;
-import one.modality.event.frontoffice.activities.audiorecordings.AudioRecordingsI18nKeys;
+import one.modality.event.frontoffice.medias.MediaConsumptionRecorder;
 
 import java.time.LocalDateTime;
 import java.time.LocalTime;
@@ -34,14 +32,6 @@ import java.time.format.DateTimeFormatter;
 final class SessionVideoPlayerActivity extends AbstractVideoPlayerActivity {
 
     private Label videoExpirationLabel;
-
-    @Override
-    public void onResume() {
-        super.onResume();
-        // Restarting the session video player (if relevant) when reentering this activity. This will also ensure that
-        // any possible previous playing player (ex: podcast) will be paused if/when the session video player restarts.
-        //updateSessionTitleAndVideoPlayerState();
-    }
 
     protected void startLogic() {
         // Creating our own entity store to hold the loaded data without interfering with other activities
@@ -67,28 +57,17 @@ final class SessionVideoPlayerActivity extends AbstractVideoPlayerActivity {
                             new Object[]{scheduledVideoItemId}))
                     .onFailure(Console::log)
                     .onSuccess(entityLists -> Platform.runLater(() -> {
+                        ScheduledItem scheduledVideoItem = (ScheduledItem) Collections.first(entityLists[0]);
                         Collections.setAll(publishedMedias, entityLists[1]);
-                        scheduledVideoItemProperty.set((ScheduledItem) Collections.first(entityLists[0]));
-                        Object attendanceId = scheduledVideoItemProperty.get().getFieldValue("attendanceId");
-                        UpdateStore updateStore = UpdateStore.createAbove(scheduledVideoItemProperty.get().getEvent().getStore());
-                        hideProgressIndicator();
-                        publishedMedias.forEach(media -> {
-                            MediaConsumption mediaConsumption = updateStore.insertEntity(MediaConsumption.class);
-                            mediaConsumption.setAttendance(attendanceId);
-                            mediaConsumption.setPlayed(true);
-                            mediaConsumption.setMedia(media);
-                            mediaConsumption.setScheduledItem(scheduledVideoItemProperty.get());
-                        });
-                        updateStore.submitChanges();
+                        scheduledVideoItemProperty.set(scheduledVideoItem);
                     }));
             }
         }, scheduledVideoItemIdProperty, FXUserPersonId.userPersonIdProperty());
     }
 
-
     public Node buildUi() {
         Node node = super.buildUi();
-        videoExpirationLabel = I18nControls.newLabel(AudioRecordingsI18nKeys.AvailableUntil);
+        videoExpirationLabel = I18nControls.newLabel(VideosI18nKeys.EventAvailableUntil);
         videoExpirationLabel.setPadding(new Insets(30, 0, 0, 0));
         titleVBox.getChildren().add(videoExpirationLabel);
 
@@ -98,14 +77,13 @@ final class SessionVideoPlayerActivity extends AbstractVideoPlayerActivity {
         // *********************************** Reacting to parameter changes *******************************************
         // *************************************************************************************************************
         // Auto starting the video for each requested session
-        FXProperties.runNowAndOnPropertyChange(this::updateSessionTitleAndVideoPlayerState, scheduledVideoItemProperty);
+        FXProperties.runNowAndOnPropertyChange(this::updateSessionTitleAndVideoPlayerContent, scheduledVideoItemProperty);
         return node;
     }
 
     protected void updateModelFromContextParameters() {
         scheduledVideoItemIdProperty.set(Numbers.toInteger(getParameter(SessionVideoPlayerRouting.SCHEDULED_VIDEO_ITEM_ID_PARAMETER_NAME)));
     }
-
 
     protected void syncHeader() {
         ScheduledItem scheduledVideoItem = scheduledVideoItemProperty.get();
@@ -155,18 +133,19 @@ final class SessionVideoPlayerActivity extends AbstractVideoPlayerActivity {
     protected void syncPlayerContent() {
         // Create a Player for each Media, and initialize it.
         boolean autoPlay = true;
-
         playersVBoxContainer.getChildren().clear();
-        for (Media mediaEntity : publishedMedias) {
-            MultiPlayer currentVideoPlayer = AllPlayers.createAllVideoPlayer();
-            currentVideoPlayer.setMedia(currentVideoPlayer.acceptMedia(mediaEntity.getUrl()));
-            currentVideoPlayer.setStartOptions(new StartOptionsBuilder()
+        for (Media media : publishedMedias) {
+            Player videoPlayer = AllPlayers.createAllVideoPlayer();
+            videoPlayer.setMedia(videoPlayer.acceptMedia(media.getUrl()));
+            videoPlayer.setStartOptions(new StartOptionsBuilder()
                 .setAutoplay(autoPlay)
                 .setAspectRatioTo16by9() // should be read from metadata but hardcoded for now
                 .build());
-            Node videoView = currentVideoPlayer.getMediaView();
+            Node videoView = videoPlayer.getMediaView();
             playersVBoxContainer.getChildren().add(videoView);
-            currentVideoPlayer.displayVideo();
+            videoPlayer.displayVideo();
+            new MediaConsumptionRecorder(videoPlayer, false, scheduledVideoItemProperty::get, () -> media)
+                .start();
             // we autoplay only the first video
             autoPlay = false;
         }
