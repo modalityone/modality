@@ -2,13 +2,16 @@ package one.modality.event.frontoffice.activities.audiorecordings;
 
 import dev.webfx.extras.media.metadata.MediaMetadataBuilder;
 import dev.webfx.extras.panes.MonoPane;
+import dev.webfx.extras.player.audio.javafxmedia.AudioMediaView;
 import dev.webfx.extras.player.audio.javafxmedia.JavaFXMediaAudioPlayer;
 import dev.webfx.extras.styles.bootstrap.Bootstrap;
 import dev.webfx.platform.blob.spi.BlobProvider;
 import dev.webfx.platform.shutdown.Shutdown;
+import dev.webfx.platform.uischeduler.UiScheduler;
 import dev.webfx.stack.i18n.controls.I18nControls;
 import dev.webfx.stack.orm.entity.Entities;
 import dev.webfx.stack.orm.entity.UpdateStore;
+import dev.webfx.stack.ui.operation.OperationUtil;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.control.Button;
@@ -95,7 +98,7 @@ final class SessionAudioTrackView {
         dateLabel.getStyleClass().add(ModalityStyle.TEXT_COMMENT);
         if (!publishedMedias.isEmpty()) {
             durationMillis = publishedMedias.get(0).getDurationMillis();
-            dateLabel.setText(formatDuration(durationMillis) + " • " + dateLabel.getText());
+            dateLabel.setText(AudioMediaView.formatDuration(durationMillis) + " • " + dateLabel.getText());
         } else {
             durationMillis = 0L;
         }
@@ -164,20 +167,25 @@ final class SessionAudioTrackView {
             playButton.setGraphicTextGap(10);
             downloadButton.setGraphicTextGap(10);
             downloadButton.setOnAction(event -> {
+                // 1) We download the file. Note: there is no way to track the progress of the download...
                 downloadFile(firstMedia.getUrl());
-                Object attendanceId = scheduledAudioItem.getFieldValue("attendanceId");
+                // 2) We record this action using MediaConsumption
                 mediaConsumption = updateStore.insertEntity(MediaConsumption.class);
-                mediaConsumption.setAttendance(attendanceId);
                 mediaConsumption.setDownloaded(true);
                 mediaConsumption.setMedia(firstMedia);
                 mediaConsumption.setScheduledItem(scheduledAudioItem);
+                // The attendance was loaded as a dynamic fields called attendanceId (see EventAudioPlaylistActivity)
+                mediaConsumption.setAttendance(scheduledAudioItem.getFieldValue("attendanceId"));
                 updateStore.submitChanges();
+                // 3) Sometimes (especially on mobiles) the system can take a few seconds before showing there is a
+                // download in progress, giving the impression that nothing happens, and making the user pressing
+                // the button several times. To prevent this, we disable the download button for 5s.
+                OperationUtil.turnOnButtonsWaitMode(downloadButton);
+                UiScheduler.scheduleDelay(5000, () -> OperationUtil.turnOffButtonsWaitMode(downloadButton));
             });
             playButton.setMinWidth(BUTTON_WIDTH);
             downloadButton.setMinWidth(BUTTON_WIDTH);
-            HBox buttonHBox = new HBox(playButton, downloadButton);
-            buttonHBox.setSpacing(10);
-            containerBorderPane.setRight(buttonHBox);
+            containerBorderPane.setRight(new HBox(10, playButton, downloadButton));
         }
     }
 
@@ -191,15 +199,6 @@ final class SessionAudioTrackView {
         playButton.getStyleClass().remove(Bootstrap.DANGER);
         Bootstrap.secondaryButton(playButton);
         I18nControls.bindI18nProperties(playButton, AudioRecordingsI18nKeys.PlayAgain);
-    }
-
-    public static String formatDuration(long durationMillis) {
-        // Calculate hours, minutes, and seconds
-        long hours = durationMillis / (1000 * 60 * 60); // Calculate hours
-        long minutes = (durationMillis / (1000 * 60)) % 60; // Calculate minutes
-        long seconds = (durationMillis / 1000) % 60; // Calculate seconds
-        // Return formatted string
-        return (hours < 10 ? "0" : "") + hours + ":" + (minutes < 10 ? "0" : "") + minutes + ":" + (seconds < 10 ? "0" : "") + seconds;
     }
 
     private void downloadFile(String fileUrl) {
