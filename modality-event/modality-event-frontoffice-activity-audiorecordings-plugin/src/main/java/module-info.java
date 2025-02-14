@@ -25,7 +25,6 @@ module modality.event.frontoffice.activity.audiorecordings.plugin {
     requires webfx.kit.util;
     requires webfx.platform.blob;
     requires webfx.platform.console;
-    requires webfx.platform.shutdown;
     requires webfx.platform.uischeduler;
     requires webfx.platform.util;
     requires webfx.platform.windowhistory;

@@ -3,6 +3,7 @@ package one.modality.event.frontoffice.activities.audiorecordings;
 import dev.webfx.extras.panes.GoldenRatioPane;
 import dev.webfx.extras.panes.MonoPane;
 import dev.webfx.extras.panes.ScalePane;
+import dev.webfx.extras.player.Player;
 import dev.webfx.extras.player.audio.javafxmedia.JavaFXMediaAudioPlayer;
 import dev.webfx.extras.styles.bootstrap.Bootstrap;
 import dev.webfx.extras.util.control.Controls;
@@ -178,7 +179,7 @@ final class EventAudioPlaylistActivity extends ViewDomainActivityBase {
 
         Label listOfTrackLabel = I18nControls.newLabel(AudioRecordingsI18nKeys.ListOfTracks);
         listOfTrackLabel.getStyleClass().add("list-tracks-title");
-        JavaFXMediaAudioPlayer audioPlayer = new JavaFXMediaAudioPlayer();
+        Player audioPlayer = new JavaFXMediaAudioPlayer();
 
         VBox loadedContentVBox = new VBox(40,
             headerHBox,

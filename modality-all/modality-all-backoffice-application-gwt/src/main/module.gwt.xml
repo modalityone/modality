@@ -703,6 +703,7 @@
     <source path="dev/webfx/platform/util"/>
     <source path="dev/webfx/platform/util/collection"/>
     <source path="dev/webfx/platform/util/function"/>
+    <source path="dev/webfx/platform/util/stopwatch"/>
     <source path="dev/webfx/platform/util/tuples"/>
     <source path="dev/webfx/platform/util/uuid"/>
     <!--============================< webfx-platform-util-http >============================-->
