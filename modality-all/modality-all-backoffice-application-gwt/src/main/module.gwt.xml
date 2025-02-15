@@ -703,6 +703,7 @@
     <source path="dev/webfx/platform/util"/>
     <source path="dev/webfx/platform/util/collection"/>
     <source path="dev/webfx/platform/util/function"/>
+    <source path="dev/webfx/platform/util/stopwatch"/>
     <source path="dev/webfx/platform/util/tuples"/>
     <source path="dev/webfx/platform/util/uuid"/>
     <!--============================< webfx-platform-util-http >============================-->
@@ -787,8 +788,8 @@
     <!--===========================< webfx-stack-com-websocket >============================-->
     <source path="dev/webfx/stack/com/websocket"/>
     <source path="dev/webfx/stack/com/websocket/spi"/>
-    <!--=======================< webfx-stack-com-websocket-gwt-j2cl >=======================-->
-    <source path="dev/webfx/stack/com/websocket/spi/impl/gwtj2cl"/>
+    <!--===================< webfx-stack-com-websocket-gwt-j2cl-sockjs >====================-->
+    <source path="dev/webfx/stack/com/websocket/spi/impl/gwtj2cl/sockjs"/>
     <!--============================< webfx-stack-db-datascope >============================-->
     <source path="dev/webfx/stack/db/datascope"/>
     <source path="dev/webfx/stack/db/datascope/aggregate"/>

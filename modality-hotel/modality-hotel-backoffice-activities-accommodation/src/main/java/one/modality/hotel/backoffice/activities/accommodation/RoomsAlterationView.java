@@ -2,7 +2,7 @@ package one.modality.hotel.backoffice.activities.accommodation;
 
 import dev.webfx.extras.theme.Facet;
 import dev.webfx.extras.theme.luminance.LuminanceFacetCategory;
-import dev.webfx.extras.util.control.ControlUtil;
+import dev.webfx.extras.util.control.Controls;
 import dev.webfx.kit.util.properties.FXProperties;
 import dev.webfx.stack.ui.controls.button.ButtonFactoryMixin;
 import dev.webfx.stack.ui.controls.dialog.DialogBuilderUtil;
@@ -62,7 +62,7 @@ public class RoomsAlterationView {
         resourceConfigurationLoader.getResourceConfigurations().addListener((ListChangeListener<? super ResourceConfiguration>) change -> addRoomNodes(roomListPane));
         FXProperties.runNowAndOnPropertyChange(() -> addRoomNodes(roomListPane), roomTypeProperty);
 
-        scrollPane = ControlUtil.createVerticalScrollPane(roomListPane);
+        scrollPane = Controls.createVerticalScrollPane(roomListPane);
         return scrollPane;
     }
 

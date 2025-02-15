@@ -2,7 +2,7 @@ package one.modality.event.backoffice.activities.medias;
 
 import dev.webfx.extras.styles.bootstrap.Bootstrap;
 import dev.webfx.extras.theme.text.TextTheme;
-import dev.webfx.extras.util.control.ControlUtil;
+import dev.webfx.extras.util.control.Controls;
 import dev.webfx.extras.util.masterslave.MasterSlaveLinker;
 import dev.webfx.extras.util.masterslave.SlaveEditor;
 import dev.webfx.platform.console.Console;
@@ -43,7 +43,8 @@ import java.util.Objects;
 import java.util.stream.Collectors;
 
 
-public class VideoView {
+final class VideoTabView {
+
     private final BooleanProperty activeProperty = new SimpleBooleanProperty();
     private final DataSourceModel dataSourceModel = DataSourceModelService.getDefaultDataSourceModel();
     private final EntityStore entityStore = EntityStore.create(dataSourceModel);
@@ -60,15 +61,14 @@ public class VideoView {
     private Event currentEditedEvent;
     private final ScrollPane mainContainer;
     private final BorderPane mainFrame;
-    ObservableList<BooleanExpression> listOfUpdateStoresHasChangedProperty = FXCollections.observableArrayList();
+    private final ObservableList<BooleanExpression> listOfUpdateStoresHasChangedProperty = FXCollections.observableArrayList();
     // Create the BooleanBinding that represents the AND condition of all properties
 
-    public VideoView() {
+    public VideoTabView() {
         mainFrame = new BorderPane();
         mainFrame.setPadding(new Insets(0, 0, 30, 0));
-        mainContainer = ControlUtil.createVerticalScrollPane(mainFrame);
+        mainContainer = Controls.createVerticalScrollPane(mainFrame);
     }
-
 
     public void startLogic() {
         //we initialise the current Edited event to the current event. This will be update later when we change the event selected with the masterSlaveEventLinker
@@ -311,9 +311,10 @@ public class VideoView {
     }
 
     private void displayEventDetails(Event e) {
-        e.onExpressionLoaded("organization,vodExpirationDate,livestreamUrl")
-            .onSuccess(ignored -> Platform.runLater(this::drawContainer))
-            .onFailure((Console::log));
+        if (e != null)
+            e.onExpressionLoaded("organization,vodExpirationDate,livestreamUrl")
+                .onSuccess(ignored -> Platform.runLater(this::drawContainer))
+                .onFailure((Console::log));
     }
 
     //This parameter will allow us to manage the interaction and behaviour of the Panel that display the details of an event and the event selected

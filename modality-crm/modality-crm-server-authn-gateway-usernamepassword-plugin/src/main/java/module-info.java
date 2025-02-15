@@ -7,6 +7,7 @@ module modality.crm.server.authn.gateway.usernamepassword.plugin {
 
     // Direct dependencies modules
     requires modality.base.shared.entities;
+    requires modality.crm.server.authn.gateway.magiclink.plugin;
     requires modality.crm.server.authn.gateway.shared;
     requires modality.crm.shared.authn;
     requires webfx.platform.async;
@@ -30,6 +31,6 @@ module modality.crm.server.authn.gateway.usernamepassword.plugin {
     opens one.modality.crm.server.authn.gateway;
 
     // Provided services
-    provides dev.webfx.stack.authn.server.gateway.spi.ServerAuthenticationGateway with one.modality.crm.server.authn.gateway.ModalityUsernamePasswordAuthenticationGateway;
+    provides dev.webfx.stack.authn.server.gateway.spi.ServerAuthenticationGateway with one.modality.crm.server.authn.gateway.ModalityPasswordAuthenticationGateway;
 
 }

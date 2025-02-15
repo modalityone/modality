@@ -2,7 +2,8 @@ package one.modality.event.frontoffice.activities.videos;
 
 import dev.webfx.extras.panes.*;
 import dev.webfx.extras.styles.bootstrap.Bootstrap;
-import dev.webfx.extras.util.control.ControlUtil;
+import dev.webfx.extras.util.control.Controls;
+import dev.webfx.extras.util.layout.Layouts;
 import dev.webfx.extras.webtext.HtmlText;
 import dev.webfx.kit.util.properties.FXProperties;
 import dev.webfx.kit.util.properties.ObservableLists;
@@ -18,7 +19,6 @@ import dev.webfx.stack.orm.domainmodel.activity.viewdomain.impl.ViewDomainActivi
 import dev.webfx.stack.orm.entity.Entities;
 import dev.webfx.stack.orm.entity.EntityId;
 import dev.webfx.stack.orm.entity.EntityStore;
-import dev.webfx.stack.orm.entity.EntityStoreQuery;
 import javafx.application.Platform;
 import javafx.beans.property.ObjectProperty;
 import javafx.beans.property.SimpleObjectProperty;
@@ -48,7 +48,6 @@ import one.modality.base.shared.entities.KnownItem;
 import one.modality.base.shared.entities.KnownItemFamily;
 import one.modality.base.shared.entities.ScheduledItem;
 import one.modality.crm.shared.services.authn.fx.FXUserPersonId;
-import one.modality.event.frontoffice.activities.audiorecordings.AudioRecordingsI18nKeys;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -104,28 +103,29 @@ final class EventVideosWallActivity extends ViewDomainActivityBase {
                 scheduledItems.clear();
                 eventProperty.set(null);
             } else {
-                entityStore.executeQuery(new EntityStoreQuery("select name, label.(de,en,es,fr,pt), shortDescription, audioExpirationDate, startDate, endDate, livestreamUrl, vodExpirationDate, repeatVideo, recurringWithVideo, repeatedEvent" +
-                        " from Event" +
-                        " where id=? limit 1",
-                        new Object[]{eventId}))
+                entityStore.<Event>executeQuery("select name, label.(de,en,es,fr,pt), shortDescription, audioExpirationDate, startDate, endDate, livestreamUrl, vodExpirationDate, repeatVideo, recurringWithVideo, repeatedEvent" +
+                        " from Event where id=? limit 1", eventId)
                     .onFailure(Console::log)
-                    .onSuccess(event -> {
-                        Event currentEvent = (Event) event.get(0);
+                    .onSuccess(events -> {
+                        Event currentEvent = events.get(0);
                         Object eventIdContainingVideos = Entities.getPrimaryKey(currentEvent);
                         if (currentEvent.getRepeatedEventId() != null) {
                             eventIdContainingVideos = Entities.getPrimaryKey(currentEvent.getRepeatedEventId());
                         }
                         // In this code: programScheduledItem.timeline..startTime, the double . means we do a left join, that allow null value (if the type of event is recurring, the timeline of the programScheduledItem is null
-                        entityStore.executeQueryBatch(new EntityStoreQuery("select name, date, expirationDate, programScheduledItem.(name, startTime, endTime, timeline.(startTime, endTime)), published, event.(name, type, livestreamUrl, recurringWithVideo), vodDelayed, " +
+                        entityStore.<ScheduledItem>executeQuery("select name, date, expirationDate, programScheduledItem.(name, startTime, endTime, timeline.(startTime, endTime)), published, event.(name, type, livestreamUrl, recurringWithVideo), vodDelayed, " +
                                 " (exists(select MediaConsumption where scheduledItem=si and attendance.documentLine.document.person=?) as attended), " +
                                 " (select id from Attendance where scheduledItem=si.bookableScheduledItem and documentLine.document.person=? limit 1) as attendanceId " +
                                 " from ScheduledItem si " +
-                                " where event=? and bookableScheduledItem.item.family.code=? and item.code=? and exists(select Attendance a where scheduledItem=si.bookableScheduledItem and documentLine.(!cancelled and document.(person=? and event=? and confirmed and price_balance<=0)))" +
+                                " where event=?" +
+                                " and bookableScheduledItem.item.family.code=?" +
+                                " and item.code=?" +
+                                " and exists(select Attendance a where scheduledItem=si.bookableScheduledItem and documentLine.(!cancelled and document.(person=? and event=? and confirmed and price_balance<=0)))" +
                                 " order by date, programScheduledItem.timeline..startTime",
-                                new Object[]{userPersonId, userPersonId, eventIdContainingVideos, KnownItemFamily.TEACHING.getCode(), KnownItem.VIDEO.getCode(), userPersonId, currentEvent}))
+                                userPersonId, userPersonId, eventIdContainingVideos, KnownItemFamily.TEACHING.getCode(), KnownItem.VIDEO.getCode(), userPersonId, currentEvent)
                             .onFailure(Console::log)
-                            .onSuccess(entityLists -> Platform.runLater(() -> {
-                                scheduledItems.setAll(entityLists[0]);
+                            .onSuccess(scheduledItemList -> Platform.runLater(() -> {
+                                scheduledItems.setAll(scheduledItemList);
                                 eventProperty.set(currentEvent);
                             }));
                     });
@@ -163,13 +163,13 @@ final class EventVideosWallActivity extends ViewDomainActivityBase {
         I18n.bindI18nTextProperty(eventDescriptionHtmlText.textProperty(), new I18nSubKey("expression: i18n(shortDescription)", eventProperty), eventProperty);
 
         eventDescriptionHtmlText.setMaxHeight(60);
-        videoExpirationLabel = I18nControls.newLabel(AudioRecordingsI18nKeys.AvailableUntil);
+        videoExpirationLabel = I18nControls.newLabel(VideosI18nKeys.EventAvailableUntil);
         videoExpirationLabel.setPadding(new Insets(30, 0, 0, 0));
         VBox titleVBox = new VBox(eventLabel, eventDescriptionHtmlText, videoExpirationLabel);
 
         headerHBox.getChildren().add(titleVBox);
 
-        Node loadingContentIndicator = new GoldenRatioPane(ControlUtil.createProgressIndicator(100));
+        Node loadingContentIndicator = new GoldenRatioPane(Controls.createProgressIndicator(100));
         MonoPane pageContainer = new MonoPane();
 
         Label noContentLabel = Bootstrap.h3(Bootstrap.textWarning(I18nControls.newLabel(VideosI18nKeys.NoVideosForThisEvent)));
@@ -177,12 +177,10 @@ final class EventVideosWallActivity extends ViewDomainActivityBase {
 
         //We display this box only if the current Date is in the list of date in the video Scheduled Item list
         VBox currentDayScheduleVBox = new VBox(30); // Will be populated later (see reacting code below)
-        Label scheduleForTodayTitleLabel = Bootstrap.strong(Bootstrap.textPrimary(Bootstrap.h3(I18nControls.newLabel(VideosI18nKeys.ScheduleForSpecificDate, LocalDate.now().format(DateTimeFormatter.ofPattern("EEEE MMMM d"))))));
+        Label scheduleForTodayTitleLabel = Bootstrap.strong(Bootstrap.textPrimary(Bootstrap.h3(new Label())));
         scheduleForTodayTitleLabel.setPadding(new Insets(100, 0, 40, 0));
         currentDayScheduleVBox.getChildren().add(scheduleForTodayTitleLabel);
         currentDayScheduleVBox.setAlignment(Pos.CENTER);
-        currentDayScheduleVBox.setVisible(false);
-        currentDayScheduleVBox.setManaged(false);
 
         Label scheduleTitleLabel = Bootstrap.h3(I18nControls.newLabel(VideosI18nKeys.EventSchedule));
         scheduleSubTitleLabel = I18nControls.newLabel(VideosI18nKeys.SelectTheDayBelow);
@@ -196,7 +194,6 @@ final class EventVideosWallActivity extends ViewDomainActivityBase {
         daysColumnPane.setMinColumnWidth(DAY_BUTTON_WIDTH);
         daysColumnPane.setMinWidth(DAY_COLUMN_PANE_MAX_WIDTH);
         daysColumnPane.setPadding(new Insets(0, 0, 30, 0));
-
 
         VBox videoScheduleVBox = new VBox(20); // Will be populated later (see reacting code below)
 
@@ -226,17 +223,17 @@ final class EventVideosWallActivity extends ViewDomainActivityBase {
         // *************************************************************************************************************
 
         ObservableLists.runNowAndOnListOrPropertiesChange(change -> {
-            currentDayScheduleVBox.setVisible(false);
-            currentDayScheduleVBox.setManaged(false);
+            Layouts.setManagedAndVisibleProperties(currentDayScheduleVBox, false);
             // We display the loading indicator while the data is loading
-            if (eventProperty.get() == null) { // this indicates that the data has not finished loaded
+            Event event = eventProperty.get();
+            if (event == null) { // this indicates that the data has not finished loaded
                 pageContainer.setContent(loadingContentIndicator);
                 // TODO display something else (ex: next online events to book) when the user is not logged in, or registered
             } else { // otherwise we display loadedContentVBox and set the content of audioTracksVBox
                 pageContainer.setContent(loadedContentVBox);
-                Object imageTag = ModalityCloudinary.getEventCoverImageTag(Entities.getPrimaryKey(eventProperty.get()), I18n.getLanguage().toString());
-                if (eventProperty.get().getRepeatedEvent() != null)
-                    imageTag = ModalityCloudinary.getEventCoverImageTag(Entities.getPrimaryKey(eventProperty.get().getRepeatedEvent()), I18n.getLanguage().toString());
+                Object imageTag = ModalityCloudinary.getEventCoverImageTag(Entities.getPrimaryKey(event), I18n.getLanguage());
+                if (event.getRepeatedEvent() != null)
+                    imageTag = ModalityCloudinary.getEventCoverImageTag(Entities.getPrimaryKey(event.getRepeatedEvent()), I18n.getLanguage());
 
                 String pictureId = String.valueOf(imageTag);
                 cloudImageService.exists(pictureId)
@@ -262,41 +259,34 @@ final class EventVideosWallActivity extends ViewDomainActivityBase {
                             imageMonoPane.setAlignment(Pos.CENTER);
                         }
                     }));
-                if (eventProperty.get().getVodExpirationDate() != null) {
-                    if (LocalDateTime.now().isBefore(eventProperty.get().getVodExpirationDate()))
-                        I18nControls.bindI18nProperties(videoExpirationLabel, VideosI18nKeys.EventAvailableUntil, eventProperty.get().getVodExpirationDate().format(DateTimeFormatter.ofPattern("d MMMM, yyyy ' - ' HH:mm")));
-                    else
-                        I18nControls.bindI18nProperties(videoExpirationLabel, VideosI18nKeys.VideoExpiredSince, eventProperty.get().getVodExpirationDate().format(DateTimeFormatter.ofPattern("d MMMM, yyyy ' - ' HH:mm")));
+                if (event.getVodExpirationDate() != null) {
+                    LocalDateTime nowInEventTimezone = Event.nowInEventTimezone();
+                    boolean available = nowInEventTimezone.isBefore(event.getVodExpirationDate());
+                    I18nControls.bindI18nProperties(videoExpirationLabel, available ? VideosI18nKeys.EventAvailableUntil : VideosI18nKeys.VideoExpiredSince, event.getVodExpirationDate().format(DateTimeFormatter.ofPattern("d MMMM, yyyy ' - ' HH:mm")));
                     videoExpirationLabel.setVisible(true);
                 } else {
                     videoExpirationLabel.setVisible(false);
                 }
             }
-            LocalDate currentDate = LocalDate.now();
+
+            LocalDate todayInEventTimezone = Event.todayInEventTimezone();
+            I18nControls.bindI18nProperties(scheduleForTodayTitleLabel, VideosI18nKeys.ScheduleForSpecificDate, todayInEventTimezone.format(DateTimeFormatter.ofPattern("EEEE MMMM d")));
 
             //If it's a recurring event, we don't display the daysColumnPane because it's one video per day
-            if (!scheduledItems.isEmpty() && scheduledItems.get(0).getEvent().isRecurringWithVideo()) {
-
-                daysColumnPane.setVisible(false);
-                daysColumnPane.setManaged(false);
-                scheduleSubTitleLabel.setVisible(false);
-                scheduleSubTitleLabel.setManaged(false);
+            boolean isRecurring = !scheduledItems.isEmpty() && scheduledItems.get(0).getEvent().isRecurringWithVideo();
+            Layouts.setManagedAndVisibleProperties(daysColumnPane, !isRecurring);
+            Layouts.setManagedAndVisibleProperties(scheduleSubTitleLabel, !isRecurring);
+            if (isRecurring) {
                 selectAllDaysButton.fire();
-            } else {
-                daysColumnPane.setVisible(true);
-                daysColumnPane.setManaged(true);
-                scheduleSubTitleLabel.setVisible(true);
-                scheduleSubTitleLabel.setManaged(true);
             }
 
             Map<LocalDate, List<ScheduledItem>> perDayGroups =
                 scheduledItems.stream()
-                    .filter(item -> item.getDate().equals(currentDate)) // Filter for the target day
+                    .filter(item -> item.getDate().equals(todayInEventTimezone)) // Filter for the target day
                     .collect(Collectors.groupingBy(ScheduledItem::getDate));
             new TreeMap<>(perDayGroups) // The purpose of using a TreeMap is to sort the groups by keys (= days)
                 .forEach((day, dayScheduledVideos) -> {
-                    currentDayScheduleVBox.setVisible(true);
-                    currentDayScheduleVBox.setManaged(true);
+                    Layouts.setManagedAndVisibleProperties(currentDayScheduleVBox, true);
                     // Passing the day, the videos of that day, and the history (for backward navigation)
                     ScalePane currentScalePane = new ScalePane(new VideosDayScheduleView(day, dayScheduledVideos, getHistory(), true).getView());
                     currentDayScheduleVBox.getChildren().setAll(scheduleForTodayTitleLabel, currentScalePane);
@@ -373,14 +363,10 @@ final class EventVideosWallActivity extends ViewDomainActivityBase {
 
         //Here we resize daysColumnPane
         int numberOfChild = daysColumnPane.getChildren().size();
-        int theoricColumnPaneWith = (int) ((DAY_BUTTON_WIDTH + daysColumnPane.getHgap()) * (numberOfChild));
-        if (theoricColumnPaneWith < DAY_COLUMN_PANE_MAX_WIDTH) {
-            daysColumnPane.setMaxWidth(theoricColumnPaneWith);
-            daysColumnPane.setMinWidth(theoricColumnPaneWith);
-        } else {
-            daysColumnPane.setMaxWidth(DAY_COLUMN_PANE_MAX_WIDTH);
-            daysColumnPane.setMinWidth(DAY_COLUMN_PANE_MAX_WIDTH);
-        }
+        double theoreticalColumnPaneWith = (DAY_BUTTON_WIDTH + daysColumnPane.getHgap()) * (numberOfChild);
+        double columnPaneWidth = Math.min(theoreticalColumnPaneWith, DAY_COLUMN_PANE_MAX_WIDTH);
+        daysColumnPane.setMaxWidth(columnPaneWidth);
+        daysColumnPane.setMinWidth(columnPaneWidth);
     }
 
     private void updateDaysButtonStyle() {

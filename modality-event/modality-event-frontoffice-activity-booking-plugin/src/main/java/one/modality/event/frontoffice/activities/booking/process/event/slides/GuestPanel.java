@@ -2,7 +2,8 @@ package one.modality.event.frontoffice.activities.booking.process.event.slides;
 
 import dev.webfx.extras.styles.bootstrap.Bootstrap;
 import dev.webfx.extras.util.animation.Animations;
-import dev.webfx.extras.util.layout.LayoutUtil;
+import dev.webfx.extras.util.control.Controls;
+import dev.webfx.extras.util.layout.Layouts;
 import dev.webfx.extras.util.scene.SceneUtil;
 import dev.webfx.platform.uischeduler.UiScheduler;
 import dev.webfx.stack.i18n.I18n;
@@ -39,12 +40,13 @@ final class GuestPanel implements MaterialFactoryMixin {
     private final ValidationSupport validationSupport = new ValidationSupport();
 
     public GuestPanel() {
+        Controls.setHtmlInputTypeAndAutocompleteToEmail(emailTextField);
         Label guestDetailsLabel = Bootstrap.textPrimary(Bootstrap.strong(I18nControls.newLabel(BookingI18nKeys.GuestDetails)));
         guestTopVBox.getChildren().add(guestDetailsLabel);
         guestTopVBox.setAlignment(Pos.TOP_CENTER);
         BorderPane.setMargin(guestTopVBox, new Insets(0, 0, 20,0));
         container.setTop(guestTopVBox);
-        LayoutUtil.setMaxWidthToInfinite(guestSubmitButton);
+        Layouts.setMaxWidthToInfinite(guestSubmitButton);
         GridPane.setMargin(guestSubmitButton, new Insets(40, 0, 0, 0));
         GridPane guestGridPane = new GridPaneBuilder()
                 .addNodeFillingRow(firstNameTextField)

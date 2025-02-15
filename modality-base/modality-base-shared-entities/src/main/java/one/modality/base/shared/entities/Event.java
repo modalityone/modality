@@ -5,6 +5,7 @@ import dev.webfx.stack.orm.entity.Entity;
 import dev.webfx.stack.orm.entity.EntityId;
 import one.modality.base.shared.entities.markers.*;
 
+import java.time.Clock;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 
@@ -260,6 +261,19 @@ public interface Event extends Entity,
 
     default Boolean isRepeatVideo() {
         return getBooleanFieldValue(repeatVideo);
+    }
+
+    // temporary static method (will be non-static once managed in the event)
+    static Clock getEventClock() {
+        return Clock.systemUTC();
+    }
+
+    static LocalDateTime nowInEventTimezone() {
+        return LocalDateTime.now(getEventClock());
+    }
+
+    static LocalDate todayInEventTimezone() {
+        return LocalDate.now(getEventClock());
     }
 
 }

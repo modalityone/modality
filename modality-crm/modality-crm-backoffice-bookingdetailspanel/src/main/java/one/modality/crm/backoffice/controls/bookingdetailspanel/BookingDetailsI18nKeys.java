@@ -3,14 +3,15 @@ package one.modality.crm.backoffice.controls.bookingdetailspanel;
 
 public interface BookingDetailsI18nKeys {
 
-    String PersonalDetails = "PersonalDetails";
     String Options = "Options";
-    String Payments = "Payments";
-    String Comments = "Comments";
-    String Cart = "Cart";
     String MultipleBookings = "MultipleBookings";
-    String Family = "Family";
+    String Comments = "Comments";
     String Mails = "Mails";
+    String Payments = "Payments";
+    String Family = "Family";
+    String PersonalDetails = "PersonalDetails";
+    String Medias = "Medias";
     String History = "History";
+    String Cart = "Cart";
 
 }

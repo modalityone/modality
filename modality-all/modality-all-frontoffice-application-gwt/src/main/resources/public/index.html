@@ -103,7 +103,7 @@
         <!-- Vollkorn -->
         <link href="https://fonts.googleapis.com/css2?family=Vollkorn+SC:wght@400;600;700;900&amp;display=swap" rel="stylesheet"></link>
         <link rel="stylesheet" type="text/css" href="dev/webfx/kit/mapper/peers/javafxcontrols/gwt/html/perfect-scrollbar.css"></link>
-        <link rel="stylesheet" href="dev/webfx/kit/css/main.css"></link>
+        <link rel="stylesheet" href="dev/webfx/kit/css/main.css?v=${maven.build.timestamp}"></link>
 
     </head>
     <body>
@@ -118,9 +118,9 @@
                </td>
            </tr>
        </table>
-        <script type="text/javascript" charset="utf-8" src="dev/webfx/stack/com/websocket/spi/impl/gwt/sockjs.min.js"></script>
+        <script type="text/javascript" charset="utf-8" src="dev/webfx/stack/com/websocket/spi/impl/gwtj2cl/sockjs/sockjs.min.js"></script>
 <!-- Commented as the quick start creates websocket connection resets on AWS
-       <script type="text/javascript" charset="utf-8" src="dev/webfx/stack/com/websocket/spi/impl/gwt/sockjs-quickstart.js"/>
+       <script type="text/javascript" charset="utf-8" src="dev/webfx/stack/com/websocket/spi/impl/gwtj2cl/sockjs/sockjs-quickstart.js"/>
 -->
         <script type="text/javascript" charset="utf-8" src="emul/java/util/regex/xregexp.js"></script>
         <script type="text/javascript" charset="utf-8" src="modality_all_frontoffice_application_gwt.nocache.js"></script>

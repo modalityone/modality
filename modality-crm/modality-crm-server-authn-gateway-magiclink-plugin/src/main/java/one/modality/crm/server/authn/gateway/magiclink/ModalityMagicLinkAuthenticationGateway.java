@@ -29,7 +29,9 @@ import one.modality.crm.shared.services.authn.ModalityUserPrincipal;
 public class ModalityMagicLinkAuthenticationGateway implements ServerAuthenticationGateway, HasDataSourceModel {
 
     private static final String MAGIC_LINK_ACTIVITY_PATH_PREFIX = "/magic-link";
-    private static final String MAGIC_LINK_ACTIVITY_PATH_FULL = MAGIC_LINK_ACTIVITY_PATH_PREFIX + "/:token";
+    public static final String MAGIC_LINK_ACTIVITY_PATH_FULL = MAGIC_LINK_ACTIVITY_PATH_PREFIX + "/:token";
+    // 👆 public because used by ModalityPasswordAuthenticationGateway in case a user requests an account creation
+    // on an existing account. In this case, ModalityPasswordAuthenticationGateway emails him a magic link.
 
     // Temporarily hardcoded (to replace with database letters)
     private static final String MAGIC_LINK_MAIL_FROM = "kbs@kadampa.net";

@@ -10,9 +10,13 @@ module modality.event.frontoffice.medias {
     requires modality.base.client.icons;
     requires modality.base.shared.entities;
     requires webfx.extras.panes;
+    requires webfx.extras.player;
     requires webfx.extras.styles.bootstrap;
     requires webfx.extras.webtext;
+    requires webfx.kit.util;
     requires webfx.platform.console;
+    requires webfx.platform.scheduler;
+    requires webfx.platform.shutdown;
     requires webfx.platform.util;
     requires webfx.stack.cloud.image;
     requires webfx.stack.cloud.image.client;

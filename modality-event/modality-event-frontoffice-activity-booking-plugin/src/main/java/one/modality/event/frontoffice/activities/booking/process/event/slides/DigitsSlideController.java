@@ -2,10 +2,10 @@ package one.modality.event.frontoffice.activities.booking.process.event.slides;
 
 import dev.webfx.extras.panes.TransitionPane;
 import dev.webfx.platform.uischeduler.UiScheduler;
-import dev.webfx.platform.util.Numbers;
 import dev.webfx.stack.orm.entity.Entities;
 import javafx.scene.layout.Region;
 import one.modality.base.shared.entities.Event;
+import one.modality.base.shared.entities.EventType;
 import one.modality.ecommerce.payment.CancelPaymentResult;
 import one.modality.ecommerce.payment.client.WebPaymentForm;
 import one.modality.event.client.event.fx.FXEvent;
@@ -52,11 +52,11 @@ final class DigitsSlideController {
         step2CheckoutSlide = new Step2CheckoutSlide(bookEventActivity);
 
         Event currentEvent = FXEvent.getEvent();
-        Object typeId = Entities.getPrimaryKey(currentEvent.getType());
-        if (Numbers.identicalObjectsOrNumberValues(typeId, KnownEventType.GP_CLASSES.getTypeId())) { // GP Classes
+        EventType type = currentEvent.getType();
+        if (Entities.samePrimaryKey(type, KnownEventType.GP_CLASSES.getTypeId())) { // GP Classes
             //TODO: when we will have different Step1 for different type of event, implement an abstract class in this package, and the different step 1 will inherit this abstract class
             step1Slide = new Step1BookDatesRecurringEventSlide(bookEventActivity);
-        } else if (Numbers.identicalObjectsOrNumberValues(typeId, KnownEventType.STTP.getTypeId())) { // STTP
+        } else if (Entities.samePrimaryKey(type, KnownEventType.STTP.getTypeId())) { // STTP
             step1Slide =  new Step1BookSttpSlide(bookEventActivity);
             step2CheckoutSlide.setBookAsGuestAllowed(false);
         } else {

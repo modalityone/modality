@@ -3,15 +3,16 @@ package one.modality.event.frontoffice.activities.audiorecordings;
 import dev.webfx.extras.panes.GoldenRatioPane;
 import dev.webfx.extras.panes.MonoPane;
 import dev.webfx.extras.panes.ScalePane;
+import dev.webfx.extras.player.Player;
 import dev.webfx.extras.player.audio.javafxmedia.JavaFXMediaAudioPlayer;
 import dev.webfx.extras.styles.bootstrap.Bootstrap;
-import dev.webfx.extras.util.control.ControlUtil;
+import dev.webfx.extras.util.control.Controls;
 import dev.webfx.extras.webtext.HtmlText;
 import dev.webfx.kit.util.properties.FXProperties;
 import dev.webfx.kit.util.properties.ObservableLists;
 import dev.webfx.platform.console.Console;
 import dev.webfx.platform.util.Numbers;
-import dev.webfx.platform.util.Strings;
+import dev.webfx.platform.util.Objects;
 import dev.webfx.platform.util.collection.Collections;
 import dev.webfx.stack.cloud.image.CloudImageService;
 import dev.webfx.stack.cloud.image.impl.client.ClientImageService;
@@ -67,7 +68,7 @@ final class EventAudioPlaylistActivity extends ViewDomainActivityBase {
     private final ObjectProperty<Object> pathEventIdProperty = new SimpleObjectProperty<>() {
         @Override
         protected void invalidated() {
-            Console.log("eventId = " + get());
+            Console.log("EventAudioPlaylistActivity.eventId = " + get());
         }
     };
     private final StringProperty pathItemCodeProperty = new SimpleStringProperty();
@@ -100,13 +101,11 @@ final class EventAudioPlaylistActivity extends ViewDomainActivityBase {
                 scheduledAudioItems.clear(); // will trigger UI update
                 eventProperty.set(null); // will update i18n bindings
             } else {
-                entityStore.executeQuery(new EntityStoreQuery("select name, label.(de,en,es,fr,pt), shortDescription, audioExpirationDate, startDate, endDate, livestreamUrl, vodExpirationDate, repeatAudio, repeatedEvent" +
-                        " from Event" +
-                        " where id=? limit 1",
-                        new Object[]{eventId}))
+                entityStore.<Event>executeQuery("select name, label.(de,en,es,fr,pt), shortDescription, audioExpirationDate, startDate, endDate, livestreamUrl, vodExpirationDate, repeatAudio, repeatedEvent" +
+                        " from Event where id=? limit 1", eventId)
                     .onFailure(Console::log)
-                    .onSuccess(event -> {
-                        Event currentEvent = (Event) event.get(0);
+                    .onSuccess(events -> {
+                        Event currentEvent = events.get(0);
                         Object eventIdContainingAudios =  Entities.getPrimaryKey(currentEvent);
                         if(currentEvent.getRepeatedEventId()!=null) {
                             eventIdContainingAudios = Entities.getPrimaryKey(currentEvent.getRepeatedEventId());
@@ -167,7 +166,7 @@ final class EventAudioPlaylistActivity extends ViewDomainActivityBase {
         eventLabel.setPadding(new Insets(0, 0, 12, 0));
         HtmlText eventDescriptionHTMLText = new HtmlText();
         I18n.bindI18nTextProperty(eventDescriptionHTMLText.textProperty(), new I18nSubKey("expression: shortDescription", eventProperty), eventProperty);
-        eventDescriptionHTMLText.managedProperty().bind(FXProperties.compute(eventDescriptionHTMLText.textProperty(), Strings::isNotEmpty));
+        eventDescriptionHTMLText.managedProperty().bind(eventDescriptionHTMLText.textProperty().isNotEmpty());
         eventDescriptionHTMLText.setMaxHeight(60);
         audioExpirationLabel = Bootstrap.textSuccess(I18nControls.newLabel(AudioRecordingsI18nKeys.AvailableUntil, dateFormattedProperty));
         audioExpirationLabel.setPadding(new Insets(30, 0, 0, 0));
@@ -180,7 +179,7 @@ final class EventAudioPlaylistActivity extends ViewDomainActivityBase {
 
         Label listOfTrackLabel = I18nControls.newLabel(AudioRecordingsI18nKeys.ListOfTracks);
         listOfTrackLabel.getStyleClass().add("list-tracks-title");
-        JavaFXMediaAudioPlayer audioPlayer = new JavaFXMediaAudioPlayer();
+        Player audioPlayer = new JavaFXMediaAudioPlayer();
 
         VBox loadedContentVBox = new VBox(40,
             headerHBox,
@@ -191,7 +190,7 @@ final class EventAudioPlaylistActivity extends ViewDomainActivityBase {
         loadedContentVBox.setMaxWidth(SessionAudioTrackView.MAX_WIDTH);
         loadedContentVBox.setAlignment(Pos.CENTER);
 
-        Node loadingContentIndicator = new GoldenRatioPane(ControlUtil.createProgressIndicator(100));
+        Node loadingContentIndicator = new GoldenRatioPane(Controls.createProgressIndicator(100));
 
         MonoPane pageContainer = new MonoPane();
 
@@ -201,15 +200,14 @@ final class EventAudioPlaylistActivity extends ViewDomainActivityBase {
 
         ObservableLists.runNowAndOnListOrPropertiesChange(change -> {
             // We display the loading indicator while the data is loading
-            if (eventProperty.get() == null) { // this indicates that the data has not finished loaded
+            Event event = eventProperty.get();
+            if (event == null) { // this indicates that the data has not finished loaded
                 pageContainer.setContent(loadingContentIndicator);
                 // TODO display something else (ex: next online events to book) when the user is not logged in, or registered
             } else { // otherwise we display loadedContentVBox and set the content of audioTracksVBox
                 pageContainer.setContent(new ScalePane(loadedContentVBox));
-                Object imageTag = ModalityCloudinary.getEventCoverImageTag(eventProperty.get().getId().getPrimaryKey().toString(), extractLang(pathItemCodeProperty.get()));
-                if(eventProperty.get().getRepeatedEvent()!=null)
-                    imageTag = ModalityCloudinary.getEventCoverImageTag(eventProperty.get().getRepeatedEvent().getId().getPrimaryKey().toString(), extractLang(pathItemCodeProperty.get()));
-
+                String lang = extractLang(pathItemCodeProperty.get());
+                Object imageTag = ModalityCloudinary.getEventCoverImageTag(Entities.getPrimaryKey(Objects.coalesce(event.getRepeatedEvent(), event)), lang);
                 String pictureId = String.valueOf(imageTag);
 
                 cloudImageService.exists(pictureId)
@@ -234,13 +232,16 @@ final class EventAudioPlaylistActivity extends ViewDomainActivityBase {
                             imageMonoPane.setAlignment(Pos.CENTER);
                         }
                     }));
-                if (eventProperty.get().getAudioExpirationDate() != null) {
-                    dateFormattedProperty.set(eventProperty.get().getAudioExpirationDate().format(DateTimeFormatter.ofPattern("d MMMM, yyyy")));
+                LocalDateTime audioExpirationDate = event.getAudioExpirationDate();
+                if (audioExpirationDate != null) {
+                    dateFormattedProperty.set(audioExpirationDate.format(DateTimeFormatter.ofPattern("d MMMM, yyyy")));
                     audioExpirationLabel.setVisible(true);
                 } else {
                     audioExpirationLabel.setVisible(false);
                 }
-                if (eventProperty.get().getAudioExpirationDate() == null || eventProperty.get().getAudioExpirationDate().isAfter(LocalDateTime.now())) {
+
+                LocalDateTime nowInEventTimezone = Event.nowInEventTimezone();
+                if (audioExpirationDate == null || audioExpirationDate.isAfter(nowInEventTimezone)) {
                     // Does this event have audio recordings, and did the person booked and paid for them?
                     if (!scheduledAudioItems.isEmpty()) { // yes => we show them as a list of playable tracks
                         audioTracksVBox.getChildren().setAll(

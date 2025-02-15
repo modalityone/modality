@@ -5,6 +5,9 @@ import dev.webfx.extras.panes.MonoPane;
 import dev.webfx.extras.styles.bootstrap.Bootstrap;
 import dev.webfx.extras.styles.materialdesign.textfield.MaterialTextFieldPane;
 import dev.webfx.extras.styles.materialdesign.util.MaterialUtil;
+import dev.webfx.extras.util.control.Controls;
+import dev.webfx.extras.util.control.HtmlInputAutocomplete;
+import dev.webfx.extras.util.layout.Layouts;
 import dev.webfx.kit.launcher.WebFxKitLauncher;
 import dev.webfx.platform.console.Console;
 import dev.webfx.platform.windowhistory.spi.BrowsingHistory;
@@ -105,53 +108,47 @@ public class UserAccountUI implements ModalityButtonFactoryMixin {
         //******* LOGIN DETAILS ********//
         Label loginInfoLabel = Bootstrap.small(Bootstrap.textSecondary(I18nControls.newLabel(CreateAccountI18nKeys.LoginDetails)));
         loginInfoLabel.setPadding(new Insets(0,0,10,0));
-        loginInfoLabel.managedProperty().bind(emailManagedProperty.or(passwordManagedProperty));
-        loginInfoLabel.visibleProperty().bind(emailManagedProperty.or(passwordManagedProperty));
+        Layouts.bindManagedAndVisiblePropertiesTo(emailManagedProperty.or(passwordManagedProperty), loginInfoLabel);
         fieldsListVBox.getChildren().add(loginInfoLabel);
 
         emailTextField = newMaterialTextField(CrmI18nKeys.Email);
+        Controls.setHtmlInputTypeAndAutocompleteToEmail(emailTextField);
         formatTextFieldLabel(emailTextField);
         emailTextField.setDisable(true);
         emailTextField.setText(person.getEmail());
         fieldsListVBox.getChildren().add(emailTextField);
-        emailTextField.managedProperty().bind(emailManagedProperty);
-        emailTextField.visibleProperty().bind(emailManagedProperty);
+        Layouts.bindManagedAndVisiblePropertiesTo(emailManagedProperty, emailTextField);
         emailTextField.textProperty().addListener((observable, oldValue, newValue) -> person.setEmail(newValue));
 
         passwordField = newMaterialPasswordField(CrmI18nKeys.Password);
+        Controls.setHtmlInputAutocomplete(passwordField, HtmlInputAutocomplete.NEW_PASSWORD);
         formatTextFieldLabel(passwordField);
         fieldsListVBox.getChildren().add(passwordField);
-        passwordField.managedProperty().bind(passwordManagedProperty);
-        passwordField.visibleProperty().bind(passwordManagedProperty);
+        Layouts.bindManagedAndVisiblePropertiesTo(passwordManagedProperty, passwordField);
 
         Label passwordStrength = Bootstrap.small(Bootstrap.textSecondary(I18nControls.newLabel(CreateAccountI18nKeys.PasswordStrength)));
         passwordStrength.setWrapText(true);
         fieldsListVBox.getChildren().add(passwordStrength);
-        passwordStrength.managedProperty().bind(passwordManagedProperty);
-        passwordStrength.visibleProperty().bind(passwordManagedProperty);
+        Layouts.bindManagedAndVisiblePropertiesTo(passwordManagedProperty, passwordStrength);
 
         repeatPasswordField = newMaterialPasswordField(CrmI18nKeys.RepeatPassword);
+        Controls.setHtmlInputAutocomplete(repeatPasswordField, HtmlInputAutocomplete.NEW_PASSWORD);
         formatTextFieldLabel(repeatPasswordField);
         fieldsListVBox.getChildren().add(repeatPasswordField);
-        repeatPasswordField.managedProperty().bind(passwordManagedProperty);
-        repeatPasswordField.visibleProperty().bind(passwordManagedProperty);
-
-
+        Layouts.bindManagedAndVisiblePropertiesTo(passwordManagedProperty, repeatPasswordField);
 
 
         //******* PERSONAL DETAILS ********//
         Label personnalDetailsLabel = Bootstrap.small(Bootstrap.textSecondary(I18nControls.newLabel(CreateAccountI18nKeys.PersonalDetails)));
         personnalDetailsLabel.setPadding(new Insets(40, 0, 10, 0));
-        personnalDetailsLabel.managedProperty().bind(nameManagedProperty.or(genderManagedProperty).or(ordainedManagedProperty).or(phoneManagedProperty));
-        personnalDetailsLabel.visibleProperty().bind(nameManagedProperty.or(genderManagedProperty).or(ordainedManagedProperty).or(phoneManagedProperty));
+        Layouts.bindManagedAndVisiblePropertiesTo(nameManagedProperty.or(genderManagedProperty).or(ordainedManagedProperty).or(phoneManagedProperty), personnalDetailsLabel);
         fieldsListVBox.getChildren().add(personnalDetailsLabel);
 
         firstNameTextField = newMaterialTextField(CrmI18nKeys.FirstName);
         firstNameTextField.setText(person.getFirstName());
         formatTextFieldLabel(firstNameTextField);
         fieldsListVBox.getChildren().add(firstNameTextField);
-        firstNameTextField.managedProperty().bind(nameManagedProperty);
-        firstNameTextField.visibleProperty().bind(nameManagedProperty);
+        Layouts.bindManagedAndVisiblePropertiesTo(nameManagedProperty, firstNameTextField);
         firstNameTextField.textProperty().addListener((observable, oldValue, newValue) -> person.setFirstName(newValue));
 
 
@@ -159,8 +156,7 @@ public class UserAccountUI implements ModalityButtonFactoryMixin {
         lastNameTextField.setText(person.getLastName());
         formatTextFieldLabel(lastNameTextField);
         fieldsListVBox.getChildren().add(lastNameTextField);
-        lastNameTextField.managedProperty().bind(nameManagedProperty);
-        lastNameTextField.visibleProperty().bind(nameManagedProperty);
+        Layouts.bindManagedAndVisiblePropertiesTo(nameManagedProperty, lastNameTextField);
         lastNameTextField.textProperty().addListener((observable, oldValue, newValue) -> person.setLastName(newValue));
 
 
@@ -192,8 +188,7 @@ public class UserAccountUI implements ModalityButtonFactoryMixin {
         maleFemaleHBox.setPadding(new Insets(10, 0, 0, 0));
         maleFemaleHBox.setPrefWidth(FIELDS_MAX_WIDTH);
         fieldsListVBox.getChildren().add(maleFemaleHBox);
-        maleFemaleHBox.managedProperty().bind(genderManagedProperty);
-        maleFemaleHBox.visibleProperty().bind(genderManagedProperty);
+        Layouts.bindManagedAndVisiblePropertiesTo(genderManagedProperty, maleFemaleHBox);
 
         //Lay/Ordained option
         ToggleGroup layOrdainedToggleGroup = new ToggleGroup();
@@ -221,27 +216,24 @@ public class UserAccountUI implements ModalityButtonFactoryMixin {
         layOrdainedHBox.setPadding(new Insets(10, 0, 0, 0));
         layOrdainedHBox.setPrefWidth(FIELDS_MAX_WIDTH);
         fieldsListVBox.getChildren().add(layOrdainedHBox);
-        layOrdainedHBox.managedProperty().bind(ordainedManagedProperty);
-        layOrdainedHBox.visibleProperty().bind(ordainedManagedProperty);
+        Layouts.bindManagedAndVisiblePropertiesTo(ordainedManagedProperty, layOrdainedHBox);
 
         layNameTextField = newMaterialTextField(CrmI18nKeys.LayName);
         layNameTextField.setText(person.getLayName());
         layNameTextField.getStyleClass().clear();
         layNameTextField.getStyleClass().add("transparent-input");
         formatTextFieldLabel(layNameTextField);
-        layNameTextField.managedProperty().bind(optionOrdained.selectedProperty().and(ordainedManagedProperty));
-        layNameTextField.visibleProperty().bind(optionOrdained.selectedProperty().and(ordainedManagedProperty));
+        Layouts.bindManagedAndVisiblePropertiesTo(optionOrdained.selectedProperty().and(ordainedManagedProperty), layNameTextField);
         fieldsListVBox.getChildren().add(layNameTextField);
         layNameTextField.textProperty().addListener((observable, oldValue, newValue) -> person.setLayName(newValue));
 
 
         phoneTextField = newMaterialTextField(CrmI18nKeys.Phone);
+        Controls.setHtmlInputTypeAndAutocompleteToTel(phoneTextField);
         phoneTextField.setText(person.getPhone());
-        phoneTextField.getStyleClass().clear();
-        phoneTextField.getStyleClass().add("transparent-input");
+        phoneTextField.getStyleClass().setAll("transparent-input");
         formatTextFieldLabel(phoneTextField);
-        phoneTextField.managedProperty().bind(phoneManagedProperty);
-        phoneTextField.visibleProperty().bind(phoneManagedProperty);
+        Layouts.bindManagedAndVisiblePropertiesTo(phoneManagedProperty, phoneTextField);
         fieldsListVBox.getChildren().add(phoneTextField);
         phoneTextField.textProperty().addListener((observable, oldValue, newValue) -> person.setPhone(newValue));
 
@@ -250,8 +242,7 @@ public class UserAccountUI implements ModalityButtonFactoryMixin {
         Label addressInformationLabel = Bootstrap.small(Bootstrap.textSecondary(I18nControls.newLabel(CreateAccountI18nKeys.AddressInformation)));
         addressInformationLabel.setPadding(new Insets(40, 0, 10, 0));
         fieldsListVBox.getChildren().add(addressInformationLabel);
-        addressInformationLabel.managedProperty().bind(postCodeManagedProperty.or(cityNameManagedProperty).or(countryManagedProperty));
-        addressInformationLabel.visibleProperty().bind(postCodeManagedProperty.or(cityNameManagedProperty).or(countryManagedProperty));
+        Layouts.bindManagedAndVisiblePropertiesTo(postCodeManagedProperty.or(cityNameManagedProperty).or(countryManagedProperty), addressInformationLabel);
 
         postCodeTextField = newMaterialTextField(CrmI18nKeys.Postcode);
         postCodeTextField.setText(person.getPostCode());
@@ -261,16 +252,14 @@ public class UserAccountUI implements ModalityButtonFactoryMixin {
 //        HBox.setHgrow(spacer, Priority.ALWAYS);
 //        HBox postCodeHBox = new HBox(30,postCodeTextField,spacer);//TODO: implement the functionality for findAddressButton);
 //        postCodeHBox.setAlignment(Pos.BOTTOM_LEFT);
-        postCodeTextField.managedProperty().bind(postCodeManagedProperty);
-        postCodeTextField.visibleProperty().bind(postCodeManagedProperty);
+        Layouts.bindManagedAndVisiblePropertiesTo(postCodeManagedProperty, postCodeTextField);
         fieldsListVBox.getChildren().add(postCodeTextField);
         postCodeTextField.textProperty().addListener((observable, oldValue, newValue) -> person.setPostCode(newValue));
 
         cityNameTextField = newMaterialTextField(CrmI18nKeys.City);
         cityNameTextField.setText(person.getCityName());
         formatTextFieldLabel(cityNameTextField);
-        cityNameTextField.managedProperty().bind(cityNameManagedProperty);
-        cityNameTextField.visibleProperty().bind(cityNameManagedProperty);
+        Layouts.bindManagedAndVisiblePropertiesTo(cityNameManagedProperty, cityNameTextField);
         fieldsListVBox.getChildren().add(cityNameTextField);
         cityNameTextField.textProperty().addListener((observable, oldValue, newValue) -> person.setCityName(newValue));
 
@@ -283,8 +272,7 @@ public class UserAccountUI implements ModalityButtonFactoryMixin {
         countrySelector.setSelectedItem(person.getCountry());
         MaterialTextFieldPane countryButton = countrySelector.toMaterialButton(CrmI18nKeys.Country);
         //countryButton.getMaterialTextField().focusLabelFillProperty().setValue(Color.BLACK);
-        countryButton.managedProperty().bind(countryManagedProperty);
-        countryButton.visibleProperty().bind(countryManagedProperty);
+        Layouts.bindManagedAndVisiblePropertiesTo(countryManagedProperty, countryButton);
         countryButton.getMaterialTextField().setAnimateLabel(false);
 
         //TODO: see how to put  the select bg color transparent
@@ -295,8 +283,7 @@ public class UserAccountUI implements ModalityButtonFactoryMixin {
         //******* KADAMPA CENTER ********//
         Label kadampaCenterLabel = Bootstrap.small(Bootstrap.textSecondary(I18nControls.newLabel(CreateAccountI18nKeys.SelectKadampaCenter)));
         kadampaCenterLabel.setPadding(new Insets(40, 0, 0, 0));
-        kadampaCenterLabel.managedProperty().bind(kadampaCenterManagedProperty);
-        kadampaCenterLabel.visibleProperty().bind(kadampaCenterManagedProperty);
+        Layouts.bindManagedAndVisiblePropertiesTo(kadampaCenterManagedProperty, kadampaCenterLabel);
         fieldsListVBox.getChildren().add(kadampaCenterLabel);
 
         String organizationJson = "{class: 'Organization', alias: 'o', where: '!closed and name!=`ISC`', orderBy: 'country.name,name'}";
@@ -317,14 +304,11 @@ public class UserAccountUI implements ModalityButtonFactoryMixin {
         optionNoKadampaCenter.setSelected(editModeProperty.get() && person.getOrganization() == null);
         //TODO: Add a listener to the organizationButton to detect selection changes
         fieldsListVBox.getChildren().add(optionNoKadampaCenter);
-        organizationButton.managedProperty().bind(kadampaCenterManagedProperty);
-        organizationButton.visibleProperty().bind(kadampaCenterManagedProperty);
+        Layouts.bindManagedAndVisiblePropertiesTo(kadampaCenterManagedProperty, organizationButton);
         organizationButton.getMaterialTextField().setAnimateLabel(false);
 
-        orLabel.managedProperty().bind(kadampaCenterManagedProperty);
-        orLabel.visibleProperty().bind(kadampaCenterManagedProperty);
-        optionNoKadampaCenter.managedProperty().bind(kadampaCenterManagedProperty);
-        optionNoKadampaCenter.visibleProperty().bind(kadampaCenterManagedProperty);
+        Layouts.bindManagedAndVisiblePropertiesTo(kadampaCenterManagedProperty, orLabel);
+        Layouts.bindManagedAndVisiblePropertiesTo(kadampaCenterManagedProperty, optionNoKadampaCenter);
         optionNoKadampaCenter.setSelected(null == organizationSelector.getSelectedItem() || null ==person.getCountry());
         //If the select box is checked, we empty the kadampa center info
         optionNoKadampaCenter.selectedProperty().addListener((observable, oldValue, newValue) -> {
@@ -340,13 +324,11 @@ public class UserAccountUI implements ModalityButtonFactoryMixin {
         //******* TERM & COND ********//
         Label termAndCondLabel = Bootstrap.small(Bootstrap.textPrimary(I18nControls.newLabel(CreateAccountI18nKeys.ReadTermAndCond)));
         termAndCondLabel.setPadding(new Insets(40, 0, 0, 0));
-        termAndCondLabel.managedProperty().bind(termAndConditionManagedProperty);
-        termAndCondLabel.visibleProperty().bind(termAndConditionManagedProperty);
+        Layouts.bindManagedAndVisiblePropertiesTo(termAndConditionManagedProperty, termAndCondLabel);
         fieldsListVBox.getChildren().add(termAndCondLabel);
 
         termAndConditionReadCheckBox = I18nControls.newCheckBox(CreateAccountI18nKeys.AgreeTermAndCond);
-        termAndConditionReadCheckBox.managedProperty().bind(termAndConditionManagedProperty);
-        termAndConditionReadCheckBox.visibleProperty().bind(termAndConditionManagedProperty);
+        Layouts.bindManagedAndVisiblePropertiesTo(termAndConditionManagedProperty, termAndConditionReadCheckBox);
         fieldsListVBox.getChildren().add(termAndConditionReadCheckBox);
 
         container.setCenter(fieldsListVBox);

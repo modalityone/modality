@@ -5,6 +5,8 @@ import dev.webfx.extras.panes.TransitionPane;
 import dev.webfx.extras.styles.bootstrap.Bootstrap;
 import dev.webfx.extras.styles.materialdesign.util.MaterialUtil;
 import dev.webfx.extras.util.animation.Animations;
+import dev.webfx.extras.util.control.Controls;
+import dev.webfx.extras.util.control.HtmlInputAutocomplete;
 import dev.webfx.kit.util.properties.FXProperties;
 import dev.webfx.platform.uischeduler.UiScheduler;
 import dev.webfx.platform.windowlocation.WindowLocation;
@@ -34,7 +36,6 @@ public class ChangeEmailUI implements MaterialFactoryMixin {
     protected PasswordField passwordField;
     protected TextField emailField;
     private final VBox changeEmailVBox = new VBox();
-    private final VBox messageVBox = new VBox();
     private final TransitionPane transitionPane = new TransitionPane(changeEmailVBox);
     protected ScalePane container = new ScalePane(transitionPane);
     private final ValidationSupport validationSupport = new ValidationSupport();
@@ -51,11 +52,12 @@ public class ChangeEmailUI implements MaterialFactoryMixin {
         title.setPadding(new Insets(0, 0, 100, 0));
 
         passwordField = newMaterialPasswordField(UserProfileI18nKeys.CurrentPassword);
+        Controls.setHtmlInputAutocomplete(passwordField, HtmlInputAutocomplete.CURRENT_PASSWORD);
         MaterialUtil.getMaterialTextField(passwordField).setAnimateLabel(false);
 
         emailField = newMaterialTextField(UserProfileI18nKeys.NewEmailAddress);
         MaterialUtil.getMaterialTextField(emailField).setAnimateLabel(false);
-
+        Controls.setHtmlInputTypeAndAutocompleteToEmail(emailField);
 
         infoMessage.setVisible(false);
         infoMessage.setWrapText(true);

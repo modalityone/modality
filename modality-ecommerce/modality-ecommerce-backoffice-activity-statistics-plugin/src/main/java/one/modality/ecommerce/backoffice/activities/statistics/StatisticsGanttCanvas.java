@@ -10,7 +10,7 @@ import dev.webfx.extras.time.layout.canvas.LocalDateCanvasDrawer;
 import dev.webfx.extras.time.layout.canvas.TimeCanvasUtil;
 import dev.webfx.extras.time.layout.gantt.LocalDateGanttLayout;
 import dev.webfx.extras.time.layout.gantt.canvas.ParentsCanvasDrawer;
-import dev.webfx.extras.util.control.ControlUtil;
+import dev.webfx.extras.util.control.Controls;
 import dev.webfx.stack.orm.reactive.entities.dql_to_entities.ReactiveEntitiesMapper;
 import javafx.scene.Node;
 import javafx.scene.canvas.GraphicsContext;
@@ -118,7 +118,7 @@ final class StatisticsGanttCanvas {
         VirtualCanvasPane roomsAndBarsPane = TimeCanvasUtil.createTimeVirtualCanvasPane(barsLayout, barsDrawer,
                 scrollPane.viewportBoundsProperty(), scrollPane.vvalueProperty());
         // We finally set up the scrollPane for vertical scrolling only (no horizontal scrollbar, etc...), and return it
-        ControlUtil.setupVerticalScrollPane(scrollPane, roomsAndBarsPane);
+        Controls.setupVerticalScrollPane(scrollPane, roomsAndBarsPane);
         return scrollPane;
     }
 

@@ -20,11 +20,12 @@ module modality.event.frontoffice.activity.audiorecordings.plugin {
     requires webfx.extras.player.audio.javafxmedia;
     requires webfx.extras.styles.bootstrap;
     requires webfx.extras.util.control;
+    requires webfx.extras.util.layout;
     requires webfx.extras.webtext;
     requires webfx.kit.util;
     requires webfx.platform.blob;
     requires webfx.platform.console;
-    requires webfx.platform.shutdown;
+    requires webfx.platform.uischeduler;
     requires webfx.platform.util;
     requires webfx.platform.windowhistory;
     requires webfx.stack.cloud.image;

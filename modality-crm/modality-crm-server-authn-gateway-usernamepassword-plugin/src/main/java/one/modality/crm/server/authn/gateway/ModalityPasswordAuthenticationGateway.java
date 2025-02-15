@@ -22,6 +22,7 @@ import one.modality.base.shared.entities.Person;
 import one.modality.crm.server.authn.gateway.shared.LoginLinkService;
 import one.modality.crm.shared.services.authn.ModalityAuthenticationI18nKeys;
 import one.modality.crm.shared.services.authn.ModalityUserPrincipal;
+import one.modality.crm.server.authn.gateway.magiclink.ModalityMagicLinkAuthenticationGateway;
 
 import java.util.Objects;
 
@@ -29,32 +30,34 @@ import java.util.Objects;
 /**
  * @author Bruno Salmon
  */
-public final class ModalityUsernamePasswordAuthenticationGateway implements ServerAuthenticationGateway, HasDataSourceModel {
-
-    private static final boolean SKIP_PASSWORD_CHECK_FOR_DEBUG = false; // Can be set to true (on local dev machines only!) to log in and debug user accounts
+public final class ModalityPasswordAuthenticationGateway implements ServerAuthenticationGateway, HasDataSourceModel {
 
     private static final String CREATE_ACCOUNT_ACTIVITY_PATH_PREFIX = "/create-account";
     private static final String CREATE_ACCOUNT_ACTIVITY_PATH_FULL = CREATE_ACCOUNT_ACTIVITY_PATH_PREFIX + "/:token";
 
     // Temporarily hardcoded (to replace with database letters)
-    private static final String CREATE_ACCOUNT_LINK_MAIL_FROM = "kbs@kadampa.net";
-    private static final String CREATE_ACCOUNT_LINK_MAIL_SUBJECT = "Account creation - Kadampa Booking System";
-    private static final String CREATE_ACCOUNT_LINK_MAIL_BODY = Resource.getText(Resource.toUrl("AccountCreationMailBody.html", ModalityUsernamePasswordAuthenticationGateway.class));
+    private static final String CREATE_ACCOUNT_MAIL_FROM = "kbs@kadampa.net";
+    private static final String CREATE_ACCOUNT_MAIL_SUBJECT = "Account creation - Kadampa Booking System";
+    private static final String CREATE_ACCOUNT_MAIL_BODY = Resource.getText(Resource.toUrl("AccountCreationMailBody.html", ModalityPasswordAuthenticationGateway.class));
+
+    private static final String CREATE_ACCOUNT_ALREADY_EXISTS_MAIL_FROM = "kbs@kadampa.net";
+    private static final String CREATE_ACCOUNT_ALREADY_EXISTS_MAIL_SUBJECT = "Account already exists - Kadampa Booking System";
+    private static final String CREATE_ACCOUNT_ALREADY_EXISTS_MAIL_BODY = Resource.getText(Resource.toUrl("AccountCreationAlreadyExistsMailBody.html", ModalityPasswordAuthenticationGateway.class));
 
     private static final String UPDATE_EMAIL_ACTIVITY_PATH_PREFIX = "/user-profile/email-update";
     private static final String UPDATE_EMAIL_ACTIVITY_PATH_FULL = UPDATE_EMAIL_ACTIVITY_PATH_PREFIX + "/:token";
 
-    private static final String UPDATE_EMAIL_LINK_MAIL_FROM = "kbs@kadampa.net";
-    private static final String UPDATE_EMAIL_LINK_MAIL_SUBJECT = "Account email change - Kadampa Booking System";
-    private static final String UPDATE_EMAIL_LINK_MAIL_BODY = Resource.getText(Resource.toUrl("AccountEmailUpdateMailBody.html", ModalityUsernamePasswordAuthenticationGateway.class));
+    private static final String UPDATE_EMAIL_MAIL_FROM = "kbs@kadampa.net";
+    private static final String UPDATE_EMAIL_MAIL_SUBJECT = "Account email change - Kadampa Booking System";
+    private static final String UPDATE_EMAIL_MAIL_BODY = Resource.getText(Resource.toUrl("AccountEmailUpdateMailBody.html", ModalityPasswordAuthenticationGateway.class));
 
     private final DataSourceModel dataSourceModel;
 
-    public ModalityUsernamePasswordAuthenticationGateway() {
+    public ModalityPasswordAuthenticationGateway() {
         this(DataSourceModelService.getDefaultDataSourceModel());
     }
 
-    public ModalityUsernamePasswordAuthenticationGateway(DataSourceModel dataSourceModel) {
+    public ModalityPasswordAuthenticationGateway(DataSourceModel dataSourceModel) {
         this.dataSourceModel = dataSourceModel;
     }
 
@@ -116,11 +119,8 @@ public final class ModalityUsernamePasswordAuthenticationGateway implements Serv
                     return Future.failedFuture("[%s] Wrong user or password".formatted(ModalityAuthenticationI18nKeys.AuthnWrongUserOrPasswordError));
                 Person userPerson = persons.get(0);
                 FrontendAccount fa = userPerson.getFrontendAccount();
-                if (!SKIP_PASSWORD_CHECK_FOR_DEBUG) {
-                    String encryptedPassword = encryptPassword(password, fa.getSalt());
-                    if (!Objects.equals(encryptedPassword, fa.getPassword()))
-                        return Future.failedFuture("[%s] Wrong user or password".formatted(ModalityAuthenticationI18nKeys.AuthnWrongUserOrPasswordError));
-                }
+                if (!isTypedPasswordCorrect(password, fa.getPassword(), fa.getSalt()))
+                    return Future.failedFuture("[%s] Wrong user or password".formatted(ModalityAuthenticationI18nKeys.AuthnWrongUserOrPasswordError));
                 Object personId = userPerson.getPrimaryKey();
                 Object accountId = Entities.getPrimaryKey(userPerson.getForeignEntityId("frontendAccount"));
                 ModalityUserPrincipal modalityUserPrincipal = new ModalityUserPrincipal(personId, accountId);
@@ -128,15 +128,41 @@ public final class ModalityUsernamePasswordAuthenticationGateway implements Serv
             });
     }
 
+    private boolean isTypedPasswordCorrect(String typedPassword, String storedEncryptedPassword, String salt) {
+        // The typed password is not encrypted, so we encrypt it in order to compare it with the stored one
+        String typedEncryptedPassword = encryptPassword(typedPassword, salt);
+        // If both encrypted passwords are equals (the typed one and the stored one), then the password is correct
+        if (Objects.equals(typedEncryptedPassword, storedEncryptedPassword))
+            return true;
+        // Alternative possibility is to type the encrypted password (only the staff can know it from the back-office)
+        // This allows the support team to log in as a specific user to check what he or she sees in the front-office.
+        if (Objects.equals(typedPassword, storedEncryptedPassword))
+            return true;
+        // Otherwise, the password is incorrect
+        return false;
+    }
+
     private Future<Void> sendAccountCreationLink(InitiateAccountCreationCredentials credentials) {
-        return LoginLinkService.storeAndSendLoginLink(
-            credentials,
-            CREATE_ACCOUNT_ACTIVITY_PATH_FULL,
-            CREATE_ACCOUNT_LINK_MAIL_FROM,
-            CREATE_ACCOUNT_LINK_MAIL_SUBJECT,
-            CREATE_ACCOUNT_LINK_MAIL_BODY,
-            dataSourceModel
-        );
+        // We check that the requested account doesn't exist in the database. If it doesn't exist, we send an
+        // "Account creation" email as requested. But if it exists, we send an "Account already exists" email instead.
+        // For this later case, we still create a login link that will actually act as a magic link.
+        String loginRunId = ThreadLocalStateHolder.getRunId(); // Capturing the loginRunId before async operation
+        return EntityStore.create(dataSourceModel)
+            .<FrontendAccount>executeQuery("select FrontendAccount where corporation=? and username=? limit 1", 1, credentials.getEmail())
+            .compose(accounts -> {
+                    boolean doesntExists = accounts.isEmpty();
+                    return LoginLinkService.storeAndSendLoginLink(
+                        loginRunId,
+                        credentials,
+                        null,
+                        doesntExists ? CREATE_ACCOUNT_ACTIVITY_PATH_FULL : ModalityMagicLinkAuthenticationGateway.MAGIC_LINK_ACTIVITY_PATH_FULL,
+                        doesntExists ? CREATE_ACCOUNT_MAIL_FROM : CREATE_ACCOUNT_ALREADY_EXISTS_MAIL_FROM,
+                        doesntExists ? CREATE_ACCOUNT_MAIL_SUBJECT : CREATE_ACCOUNT_ALREADY_EXISTS_MAIL_SUBJECT,
+                        doesntExists ? CREATE_ACCOUNT_MAIL_BODY : CREATE_ACCOUNT_ALREADY_EXISTS_MAIL_BODY,
+                        dataSourceModel
+                    );
+                }
+            );
     }
 
     private Future<String> continueAccountCreation(ContinueAccountCreationCredentials credentials) {
@@ -176,18 +202,20 @@ public final class ModalityUsernamePasswordAuthenticationGateway implements Serv
                     credentials, // contains the new email (the one to send the link to)
                     userClaims.getEmail(), // current email for this account (= old email)
                     UPDATE_EMAIL_ACTIVITY_PATH_FULL,
-                    UPDATE_EMAIL_LINK_MAIL_FROM,
-                    UPDATE_EMAIL_LINK_MAIL_SUBJECT,
-                    UPDATE_EMAIL_LINK_MAIL_BODY,
+                UPDATE_EMAIL_MAIL_FROM,
+                UPDATE_EMAIL_MAIL_SUBJECT,
+                UPDATE_EMAIL_MAIL_BODY,
                     dataSourceModel
                 )
             );
     }
 
     private Future<Void> finaliseEmailUpdate(FinaliseEmailUpdateCredentials credentials) {
+        // We check the validity of the token, and if valid, we load the user person
         return LoginLinkService.loadLoginLinkFromTokenAndMarkAsUsed(credentials.getToken(), dataSourceModel)
             .compose(magicLink -> LoginLinkService.loadUserPersonFromLoginLink(magicLink)
                 .compose(userPerson -> {
+                    // We change the email in both the account username, and the user person
                     UpdateStore updateStore = UpdateStore.create(dataSourceModel);
                     updateStore.updateEntity(userPerson.getFrontendAccount()).setUsername(magicLink.getEmail());
                     updateStore.updateEntity(userPerson).setEmail(magicLink.getEmail());
@@ -255,23 +283,20 @@ public final class ModalityUsernamePasswordAuthenticationGateway implements Serv
         // 1) We first check that the passed old password matches with the one in database
         return queryModalityUserPerson("frontendAccount.(username, password, salt)")
             .compose(userPerson -> {
-                FrontendAccount fa = userPerson.getFrontendAccount();
-                String oldEncryptedDbPassword = fa.getPassword();
-                String salt = fa.getSalt();
-                // Note in case of resetting the password from a magic link, the old password is not requested from the
-                // user but is loaded again from the database (by the MagicLink gateway) and is therefore already
-                // encrypted. Otherwise (when the password reset originates from the user profile), the old password is
-                // request from the user and is clear (not encrypted yet).
                 String oldPassword = passwordUpdate.getOldPassword();
-                String oldEncryptedUserPassword = encryptPassword(oldPassword, salt);
-                if (!Objects.equals(oldEncryptedDbPassword, oldEncryptedUserPassword) // when old password is clear
-                    && !Objects.equals(oldEncryptedDbPassword, oldPassword)) // when old password is encrypted (magic link)
+                // Note: in case of resetting the password from a magic link, the old password is not typed by the user
+                // but loaded again from the database (by the MagicLink gateway) and is therefore already encrypted.
+                // Otherwise (when the password reset originates from the user profile), the old password is typed in
+                // clear by the user.
+                FrontendAccount fa = userPerson.getFrontendAccount();
+                // isTypedPasswordCorrect() is handling both case (oldPassword in clear or already encrypted)
+                if (!isTypedPasswordCorrect(oldPassword, fa.getPassword(), fa.getSalt()))
                     return Future.failedFuture("[%s] The old password is not matching".formatted(ModalityAuthenticationI18nKeys.AuthnOldPasswordNotMatchingError));
-                String newEncryptedUserPassword = encryptPassword(passwordUpdate.getNewPassword(), salt);
                 // 2) We update the password in the database
+                String storedEncryptedPassword = encryptPassword(passwordUpdate.getNewPassword(), fa.getSalt());
                 UpdateStore updateStore = UpdateStore.createAbove(fa.getStore());
                 FrontendAccount ufa = updateStore.updateEntity(fa);
-                ufa.setPassword(newEncryptedUserPassword);
+                ufa.setPassword(storedEncryptedPassword);
                 return updateStore.submitChanges();
             });
     }

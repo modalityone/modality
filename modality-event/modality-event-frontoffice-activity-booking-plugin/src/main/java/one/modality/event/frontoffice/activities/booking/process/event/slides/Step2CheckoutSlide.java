@@ -4,12 +4,12 @@ import dev.webfx.extras.panes.ColumnsPane;
 import dev.webfx.extras.panes.FlipPane;
 import dev.webfx.extras.panes.MonoPane;
 import dev.webfx.extras.styles.bootstrap.Bootstrap;
+import dev.webfx.extras.util.layout.Layouts;
 import dev.webfx.kit.util.properties.FXProperties;
 import dev.webfx.kit.util.properties.ObservableLists;
 import dev.webfx.platform.console.Console;
 import dev.webfx.platform.uischeduler.UiScheduler;
 import dev.webfx.platform.util.Booleans;
-import dev.webfx.platform.util.Numbers;
 import dev.webfx.platform.windowhistory.WindowHistory;
 import dev.webfx.stack.i18n.I18n;
 import dev.webfx.stack.i18n.controls.I18nControls;
@@ -30,10 +30,7 @@ import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
 import one.modality.base.client.i18n.ModalityI18nKeys;
 import one.modality.base.client.icons.SvgIcons;
-import one.modality.base.shared.entities.Attendance;
-import one.modality.base.shared.entities.Document;
-import one.modality.base.shared.entities.Item;
-import one.modality.base.shared.entities.ScheduledItem;
+import one.modality.base.shared.entities.*;
 import one.modality.base.shared.entities.formatters.EventPriceFormatter;
 import one.modality.ecommerce.client.i18n.EcommerceI18nKeys;
 import one.modality.ecommerce.document.service.DocumentAggregate;
@@ -94,8 +91,7 @@ final class Step2CheckoutSlide extends StepSlide {
 
         Button personToBookButton = createPersonToBookButton();
         MonoPane personToBookMonoPane = new MonoPane(personToBookButton);
-        personToBookMonoPane.visibleProperty().bind(step1PersonToBookWasShownProperty.not());
-        personToBookMonoPane.managedProperty().bind(step1PersonToBookWasShownProperty.not());
+        Layouts.bindManagedAndVisiblePropertiesTo(step1PersonToBookWasShownProperty.not(), personToBookMonoPane);
         VBox.setMargin(personToBookMonoPane, new Insets(20, 0, 20, 0));
 
         // Adding the container that will display the CheckoutAccountActivity (and eventually the login page before)
@@ -209,8 +205,8 @@ final class Step2CheckoutSlide extends StepSlide {
             addExistingTotalLine();
         }
 
-        Object eventTypeId = Entities.getPrimaryKey(getEvent().getType());
-        boolean isSTTP = Numbers.identicalObjectsOrNumberValues(eventTypeId, KnownEventType.STTP.getTypeId());
+        Object eventType = getEvent().getType();
+        boolean isSTTP = Entities.samePrimaryKey(eventType, KnownEventType.STTP.getTypeId());
         if (!isSTTP || workingBooking.isNewBooking()) {
             // SECOND PART: WHAT WE BOOK AT THIS STEP - we add this only if it's a new booking or if it's a GP (recurringEvent).
             noDiscountTotalPrice += addAttendanceRows(documentAggregate.getNewAttendancesStream(), false);
@@ -234,8 +230,8 @@ final class Step2CheckoutSlide extends StepSlide {
         WorkingBooking workingBooking = getWorkingBooking();
 
         int[] totalPrice = {0};
-        Object eventTypeId = Entities.getPrimaryKey(getEvent().getType());
-        if (Numbers.identicalObjectsOrNumberValues(eventTypeId, KnownEventType.GP_CLASSES.getTypeId())) {
+        EventType eventType = getEvent().getType();
+        if (Entities.samePrimaryKey(eventType, KnownEventType.GP_CLASSES.getTypeId())) {
             attendanceStream.forEach(a -> {
                 ScheduledItem scheduledItem = a.getScheduledItem();
                 LocalDate date = scheduledItem.getDate();
@@ -267,7 +263,7 @@ final class Step2CheckoutSlide extends StepSlide {
             });
         }
 
-        if (Numbers.identicalObjectsOrNumberValues(eventTypeId, KnownEventType.STTP.getTypeId())) {
+        if (Entities.samePrimaryKey(eventType, KnownEventType.STTP.getTypeId())) {
             workingBookingProperties.updateAll();
             Label name = new Label(getEvent().getName() + (existing ? " - (already booked)" : ""));
             //TODO; calculate the price with the PriceCalculatorMethod using the list of attendance

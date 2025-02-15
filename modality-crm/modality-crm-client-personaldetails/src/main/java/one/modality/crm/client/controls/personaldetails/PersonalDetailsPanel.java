@@ -4,8 +4,8 @@ import dev.webfx.extras.panes.FlexColumnPane;
 import dev.webfx.extras.panes.MonoPane;
 import dev.webfx.extras.panes.ScalableBorderPane;
 import dev.webfx.extras.styles.materialdesign.textfield.MaterialTextFieldPane;
-import dev.webfx.extras.util.control.ControlUtil;
-import dev.webfx.extras.util.layout.LayoutUtil;
+import dev.webfx.extras.util.control.Controls;
+import dev.webfx.extras.util.layout.Layouts;
 import dev.webfx.extras.util.scene.SceneUtil;
 import dev.webfx.kit.launcher.WebFxKitLauncher;
 import dev.webfx.kit.util.properties.FXProperties;
@@ -109,7 +109,7 @@ public class PersonalDetailsPanel implements ModalityButtonFactoryMixin {
         switchIcon.setFill(Color.GRAY);
         switchButton = new MonoPane(switchIcon);
         switchButton.setCursor(Cursor.HAND);
-        HBox top = new HBox(10, topLabel, LayoutUtil.createHGrowable(), updateLink, closeLink, saveLink, cancelLink, switchButton);
+        HBox top = new HBox(10, topLabel, Layouts.createHGrowable(), updateLink, closeLink, saveLink, cancelLink, switchButton);
         top.setAlignment(Pos.CENTER);
         BorderPane.setMargin(top, new Insets(15, 15, 0, 15));
         container.setTop(top);
@@ -127,10 +127,12 @@ public class PersonalDetailsPanel implements ModalityButtonFactoryMixin {
         childRadioButton.setToggleGroup(ageGroup);
         adultRadioButton.setToggleGroup(ageGroup);
         ageBox = new HBox(20, adultRadioButton, childRadioButton);
-        birthDatePicker = LayoutUtil.setMaxWidthToInfinite(new DatePicker());
+        birthDatePicker = Layouts.setMaxWidthToInfinite(new DatePicker());
         birthDatePicker.setConverter(Converters.dateFormatterStringConverter());
         emailTextField = newMaterialTextField(CrmI18nKeys.Email);
+        Controls.setHtmlInputTypeAndAutocompleteToEmail(emailTextField);
         phoneTextField = newMaterialTextField(CrmI18nKeys.Phone);
+        Controls.setHtmlInputTypeAndAutocompleteToTel(phoneTextField);
         streetTextField = newMaterialTextField(CrmI18nKeys.Street);
         postCodeTextField = newMaterialTextField(CrmI18nKeys.Postcode);
         cityNameTextField = newMaterialTextField(CrmI18nKeys.City);
@@ -491,7 +493,7 @@ public class PersonalDetailsPanel implements ModalityButtonFactoryMixin {
 
     protected static void editPersonalDetails(PersonalDetailsPanel details, Pane parent, Runnable closeHook) {
         BorderPane detailsContainer = details.getContainer();
-        ScrollPane scrollPane = ControlUtil.createScalableVerticalScrollPane(detailsContainer, true);
+        ScrollPane scrollPane = Controls.createScalableVerticalScrollPane(detailsContainer, true);
         DialogCallback dialogCallback = DialogUtil.showModalNodeInGoldLayout(scrollPane, parent, 0.95, 0.95);
         scrollPane.setMaxSize(10000, 1000); // Undoing max size = pref size
         details.setCloseHook(dialogCallback::closeDialog);

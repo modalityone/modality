@@ -12,7 +12,6 @@
 
         <plugin-module>modality-event-frontoffice-min-plugin</plugin-module>
 
-        <plugin-module>modality-event-frontoffice-activity-library-plugin</plugin-module>
         <plugin-module>modality-event-frontoffice-activity-audiorecordings-plugin</plugin-module>
         <plugin-module>modality-event-frontoffice-activity-videos-plugin</plugin-module>
 

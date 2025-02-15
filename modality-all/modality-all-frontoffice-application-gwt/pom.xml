@@ -389,13 +389,6 @@
 
         <dependency>
             <groupId>one.modality</groupId>
-            <artifactId>modality-event-frontoffice-activity-library-plugin</artifactId>
-            <version>1.0.0-SNAPSHOT</version>
-            <classifier>sources</classifier>
-        </dependency>
-
-        <dependency>
-            <groupId>one.modality</groupId>
             <artifactId>modality-event-frontoffice-activity-videos-plugin</artifactId>
             <version>1.0.0-SNAPSHOT</version>
             <classifier>sources</classifier>
@@ -1304,7 +1297,7 @@
 
         <dependency>
             <groupId>dev.webfx</groupId>
-            <artifactId>webfx-stack-com-websocket-gwt-j2cl</artifactId>
+            <artifactId>webfx-stack-com-websocket-gwt-j2cl-sockjs</artifactId>
             <version>0.1.0-SNAPSHOT</version>
             <classifier>sources</classifier>
         </dependency>

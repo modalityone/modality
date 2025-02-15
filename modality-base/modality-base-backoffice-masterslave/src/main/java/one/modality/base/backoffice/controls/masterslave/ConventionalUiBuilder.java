@@ -14,7 +14,7 @@ import dev.webfx.stack.orm.reactive.mapping.entities_to_visual.conventions.HasMa
 import dev.webfx.stack.ui.controls.ControlFactoryMixin;
 import dev.webfx.stack.orm.entity.Entity;
 
-import static dev.webfx.extras.util.layout.LayoutUtil.setHGrowable;
+import static dev.webfx.extras.util.layout.Layouts.setHGrowable;
 
 public class ConventionalUiBuilder implements UiBuilder {
 

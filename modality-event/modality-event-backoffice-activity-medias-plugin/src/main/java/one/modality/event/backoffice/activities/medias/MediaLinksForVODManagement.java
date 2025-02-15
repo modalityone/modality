@@ -4,6 +4,7 @@ import dev.webfx.extras.panes.MonoPane;
 import dev.webfx.extras.styles.bootstrap.Bootstrap;
 import dev.webfx.extras.switches.Switch;
 import dev.webfx.extras.theme.text.TextTheme;
+import dev.webfx.extras.util.layout.Layouts;
 import dev.webfx.kit.util.properties.ObservableLists;
 import dev.webfx.platform.console.Console;
 import dev.webfx.stack.i18n.I18n;
@@ -50,11 +51,11 @@ public class MediaLinksForVODManagement extends MediaLinksManagement {
     private static final String DATE_FORMAT = "dd-MM-yyyy";
     private static final DateTimeFormatter DATE_FORMATTER = DateTimeFormatter.ofPattern(DATE_FORMAT);
 
-    private final VideoView parentVideoView;
+    private final VideoTabView parentVideoTabView;
 
-    public MediaLinksForVODManagement(EntityStore entityStore, List<LocalDate> teachingsDates, ObservableList<ScheduledItem> scheduledItemsReadFromDatabase, ObservableList<Media> recordingsMediasReadFromDatabase, VideoView videoView) {
+    public MediaLinksForVODManagement(EntityStore entityStore, List<LocalDate> teachingsDates, ObservableList<ScheduledItem> scheduledItemsReadFromDatabase, ObservableList<Media> recordingsMediasReadFromDatabase, VideoTabView videoTabView) {
         super(KnownItem.VIDEO.getCode(), entityStore, teachingsDates, scheduledItemsReadFromDatabase, recordingsMediasReadFromDatabase);
-        parentVideoView = videoView;
+        parentVideoTabView = videoTabView;
         mainContainer.setMinWidth(800);
         VBox teachingDatesVBox = new VBox();
         teachingDatesVBox.setSpacing(30);
@@ -105,7 +106,7 @@ public class MediaLinksForVODManagement extends MediaLinksManagement {
                 UpdateStore localUpdateStore = UpdateStore.createAbove(entityStore);
                 //We add in the parentView the updateStore.hasChangedProperty so we know if we can or not change the edited event without forgetting the current local changes
                 //made here
-                parentVideoView.addUpdateStoreHasChangesProperty(EntityBindings.hasChangesProperty(localUpdateStore));
+                parentVideoTabView.addUpdateStoreHasChangesProperty(EntityBindings.hasChangesProperty(localUpdateStore));
 
                 ScheduledItem workingCurrentVideoScheduledItem = localUpdateStore.updateEntity(currentVideoScheduledItem);
                 //First of all, we read the Video ScheduledItems linked to the teachings
@@ -335,8 +336,7 @@ public class MediaLinksForVODManagement extends MediaLinksManagement {
 
                 HBox rightHBox = new HBox();
                 rightHBox.setAlignment(Pos.CENTER_RIGHT);
-                rightHBox.visibleProperty().bind(customExpirationDateSwitch.selectedProperty());
-                rightHBox.managedProperty().bind(customExpirationDateSwitch.selectedProperty());
+                Layouts.bindManagedAndVisiblePropertiesTo(customExpirationDateSwitch.selectedProperty(), rightHBox);
 
                 Label contentAvailableUntilLabel = I18nControls.newLabel(MediasI18nKeys.AvailableUntil);
                 rightHBox.getChildren().add(contentAvailableUntilLabel);

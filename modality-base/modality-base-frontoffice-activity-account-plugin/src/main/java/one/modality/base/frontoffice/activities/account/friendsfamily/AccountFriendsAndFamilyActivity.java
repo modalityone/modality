@@ -1,6 +1,6 @@
 package one.modality.base.frontoffice.activities.account.friendsfamily;
 
-import dev.webfx.extras.util.control.ControlUtil;
+import dev.webfx.extras.util.control.Controls;
 import dev.webfx.stack.i18n.I18n;
 import dev.webfx.stack.orm.domainmodel.activity.viewdomain.impl.ViewDomainActivityBase;
 import dev.webfx.stack.ui.controls.button.ButtonFactoryMixin;
@@ -95,7 +95,7 @@ final class AccountFriendsAndFamilyActivity extends ViewDomainActivityBase imple
 
         container.setBackground(new Background(new BackgroundFill(Color.WHITE, null, null)));
 
-        return GeneralUtility.bindButtonWithPopup(deleteMember, ControlUtil.createVerticalScrollPane(container), new VBox(), 200);
+        return GeneralUtility.bindButtonWithPopup(deleteMember, Controls.createVerticalScrollPane(container), new VBox(), 200);
     }
 
 }

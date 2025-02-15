@@ -7,8 +7,8 @@ import dev.webfx.extras.time.TimeUtil;
 import dev.webfx.extras.time.layout.calendar.CalendarLayout;
 import dev.webfx.extras.time.layout.node.TimeGridPane;
 import dev.webfx.extras.time.layout.node.TimePane;
-import dev.webfx.extras.util.control.ControlUtil;
-import dev.webfx.extras.util.layout.LayoutUtil;
+import dev.webfx.extras.util.control.Controls;
+import dev.webfx.extras.util.layout.Layouts;
 import dev.webfx.kit.launcher.WebFxKitLauncher;
 import dev.webfx.kit.util.properties.FXProperties;
 import dev.webfx.platform.uischeduler.UiScheduler;
@@ -78,7 +78,7 @@ final class KitchenActivity extends ViewDomainActivityBase
         LuminanceTheme.createPrimaryPanelFacet(daysOfMonthPane).style();
 
         // Building the container
-        ScrollPane verticalScrollPane = ControlUtil.createVerticalScrollPane(daysOfMonthPane);
+        ScrollPane verticalScrollPane = Controls.createVerticalScrollPane(daysOfMonthPane);
         verticalScrollPane.setFitToWidth(true);
 
         BorderPane container = new BorderPane();
@@ -152,7 +152,7 @@ final class KitchenActivity extends ViewDomainActivityBase
                 noDataLabel.setWrapText(true);
                 keyPane.getChildren().setAll(noDataLabel);
             } else {
-                keyPane.getChildren().setAll(LayoutUtil.createHGrowable(), mealsSelectionPane, LayoutUtil.createHGrowable(), dietaryOptionKeyPanel, LayoutUtil.createHGrowable());
+                keyPane.getChildren().setAll(Layouts.createHGrowable(), mealsSelectionPane, Layouts.createHGrowable(), dietaryOptionKeyPanel, Layouts.createHGrowable());
                 dietaryOptionKeyPanel.populate(dietaryOptionSvgs);
             }
             mealsSelectionPane.setDisplayedMealNames(displayedMealNames);

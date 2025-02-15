@@ -1,7 +1,7 @@
 package one.modality.base.client.application;
 
 import dev.webfx.extras.theme.luminance.LuminanceTheme;
-import dev.webfx.extras.util.layout.LayoutUtil;
+import dev.webfx.extras.util.layout.Layouts;
 import dev.webfx.kit.util.properties.FXProperties;
 import dev.webfx.platform.util.collection.Collections;
 import dev.webfx.stack.authn.logout.client.operation.LogoutRequest;
@@ -147,7 +147,7 @@ public class ModalityClientMainFrameActivity extends ViewDomainActivityBase
     }
 
     protected Node createMainFrameHeaderCenterItem() {
-        return LayoutUtil.createHSpace(0);
+        return Layouts.createHSpace(0);
     }
 
     protected Region createHeaderTabsBar() {

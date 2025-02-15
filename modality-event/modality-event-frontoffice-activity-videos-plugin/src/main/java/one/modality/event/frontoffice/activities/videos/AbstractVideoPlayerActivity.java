@@ -2,13 +2,11 @@ package one.modality.event.frontoffice.activities.videos;
 
 import dev.webfx.extras.panes.MonoPane;
 import dev.webfx.extras.panes.ScalePane;
-import dev.webfx.extras.player.multi.MultiPlayer;
-import dev.webfx.extras.player.multi.all.AllPlayers;
 import dev.webfx.extras.styles.bootstrap.Bootstrap;
+import dev.webfx.extras.util.control.Controls;
+import dev.webfx.extras.util.layout.Layouts;
 import dev.webfx.extras.webtext.HtmlText;
-import dev.webfx.kit.util.properties.FXProperties;
 import dev.webfx.platform.console.Console;
-import dev.webfx.platform.util.Strings;
 import dev.webfx.stack.cloud.image.CloudImageService;
 import dev.webfx.stack.cloud.image.impl.client.ClientImageService;
 import dev.webfx.stack.i18n.I18n;
@@ -47,14 +45,13 @@ import java.util.List;
  */
 abstract class AbstractVideoPlayerActivity extends ViewDomainActivityBase {
 
+    private static final double IMAGE_HEIGHT = 240;
+
     protected final Label sessionTitleLabel = Bootstrap.h4(Bootstrap.strong(new Label()));
     protected final Label sessionCommentLabel = new Label();
-    private List<MultiPlayer> sessionVideoPlayers;
-    private final MultiPlayer sessionVideoPlayer = AllPlayers.createAllVideoPlayer();
     protected HtmlText eventDescriptionHtmlText = new HtmlText();
     protected Label eventLabel = Bootstrap.h2(Bootstrap.strong(new Label()));
     private final CloudImageService cloudImageService = new ClientImageService();
-    private static final int IMAGE_HEIGHT = 240;
     private MonoPane imageMonoPane;
     private ImageView imageView;
     protected VBox playersVBoxContainer;
@@ -65,9 +62,7 @@ abstract class AbstractVideoPlayerActivity extends ViewDomainActivityBase {
     protected VBox pageContainer;
     protected HBox headerHBox;
     protected VBox sessionDescriptionVBox;
-    protected ProgressIndicator progressIndicator = new ProgressIndicator(50);
-
-
+    protected ProgressIndicator progressIndicator = Controls.createProgressIndicator(50);
 
     @Override
     protected abstract void updateModelFromContextParameters();
@@ -82,7 +77,6 @@ abstract class AbstractVideoPlayerActivity extends ViewDomainActivityBase {
         // any possible previous playing player (ex: podcast) will be paused if/when the session video player restarts.
         //updateSessionTitleAndVideoPlayerState();
     }
-
 
     @Override
     public Node buildUi() { // Reminder: called only once (rebuild = bad UX) => UI is reacting to parameter changes
@@ -102,7 +96,7 @@ abstract class AbstractVideoPlayerActivity extends ViewDomainActivityBase {
         eventLabel.setTextAlignment(TextAlignment.CENTER);
         eventLabel.setPadding(new Insets(0, 0, 12, 0));
 
-        eventDescriptionHtmlText.managedProperty().bind(FXProperties.compute(eventDescriptionHtmlText.textProperty(), Strings::isNotEmpty));
+        eventDescriptionHtmlText.managedProperty().bind(eventDescriptionHtmlText.textProperty().isNotEmpty());
         eventDescriptionHtmlText.setMaxHeight(60);
         titleVBox = new VBox(eventLabel, eventDescriptionHtmlText);
 
@@ -118,7 +112,7 @@ abstract class AbstractVideoPlayerActivity extends ViewDomainActivityBase {
 
         progressIndicator.setVisible(false);
         progressIndicator.setManaged(false);
-        sessionDescriptionVBox.getChildren().addAll(progressIndicator,sessionTitleLabel, sessionCommentLabel);
+        sessionDescriptionVBox.getChildren().addAll(progressIndicator, sessionTitleLabel, sessionCommentLabel);
 
         playersVBoxContainer = new VBox(30);
 
@@ -137,10 +131,9 @@ abstract class AbstractVideoPlayerActivity extends ViewDomainActivityBase {
         ScalePane scalePane = new ScalePane(pageContainer);
         scalePane.setVAlignment(VPos.TOP);
         return FOPageUtil.restrictToMaxPageWidthAndApplyPageLeftTopRightBottomPadding(scalePane);
-        //return FrontOfficeActivityUtil.createActivityPageScrollPane(pageContainer, true);
     }
 
-    protected void updateSessionTitleAndVideoPlayerState() {
+    protected void updateSessionTitleAndVideoPlayerContent() {
         syncHeader();
         syncPlayerContent();
     }
@@ -149,18 +142,19 @@ abstract class AbstractVideoPlayerActivity extends ViewDomainActivityBase {
 
     protected void displayProgressIndicator() {
         changeProgressIndicatorState(true);
-
     }
+
     protected void hideProgressIndicator() {
         changeProgressIndicatorState(false);
     }
 
-    private void changeProgressIndicatorState(boolean b) {
-        if(headerHBox!=null) headerHBox.setVisible(!b);
-        sessionTitleLabel.setVisible(!b);
-        sessionCommentLabel.setVisible(!b);
-        if(progressIndicator!=null) progressIndicator.setVisible(b);
-        if(progressIndicator!=null) progressIndicator.setManaged(b);
+    private void changeProgressIndicatorState(boolean inProgress) {
+        if (headerHBox != null)
+            headerHBox.setVisible(!inProgress);
+        sessionTitleLabel.setVisible(!inProgress);
+        sessionCommentLabel.setVisible(!inProgress);
+        if (progressIndicator != null)
+            Layouts.setManagedAndVisibleProperties(progressIndicator, inProgress);
     }
 
     protected void updatePicture(Event event) {

@@ -1,6 +1,6 @@
 package one.modality.base.frontoffice.activities.account.personalinfo;
 
-import dev.webfx.extras.util.control.ControlUtil;
+import dev.webfx.extras.util.control.Controls;
 import dev.webfx.stack.orm.domainmodel.activity.viewdomain.impl.ViewDomainActivityBase;
 import dev.webfx.stack.orm.entity.controls.entity.selector.ButtonSelectorParameters;
 import dev.webfx.stack.ui.controls.MaterialFactoryMixin;
@@ -18,6 +18,6 @@ final class AccountPersonalInformationActivity extends ViewDomainActivityBase im
         Person person = FXUserPerson.getUserPerson();
         PersonalDetailsPanel details = new PersonalDetailsPanel(person, new ButtonSelectorParameters().setButtonFactory(this).setDialogParentGetter(FXMainFrameDialogArea::getDialogArea));
         details.setValidationEnabled(true);
-        return ControlUtil.createScalableVerticalScrollPane(details.getContainer(), true);
+        return Controls.createScalableVerticalScrollPane(details.getContainer(), true);
     }
 }

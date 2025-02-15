@@ -3,7 +3,7 @@ package one.modality.ecommerce.backoffice.operations.entities.moneytransfer;
 import dev.webfx.platform.async.Future;
 import dev.webfx.stack.ui.dialog.DialogCallback;
 import dev.webfx.stack.ui.dialog.DialogUtil;
-import dev.webfx.extras.util.layout.LayoutUtil;
+import dev.webfx.extras.util.layout.Layouts;
 import javafx.application.Platform;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
@@ -27,9 +27,9 @@ final class AddNewPaymentExecutor {
         // Note: quickly implemented for the 19/12/2022 demo
         WebView webView = new WebView();
         StackPane stackPane = new StackPane(webView);
-        LayoutUtil.setMinSize(stackPane, 500);
-        LayoutUtil.setPrefSize(stackPane, 500);
-        LayoutUtil.setMaxSizeToInfinite(stackPane);
+        Layouts.setMinSize(stackPane, 500);
+        Layouts.setPrefSize(stackPane, 500);
+        Layouts.setMaxSizeToInfinite(stackPane);
         BorderPane borderPane = new BorderPane(stackPane);
         int amount = document.getPriceNet() - document.getPriceDeposit();
         PaymentService.initiatePayment(new InitiatePaymentArgument(amount, document.getPrimaryKey(), false, false))
@@ -39,7 +39,7 @@ final class AddNewPaymentExecutor {
                     webView.getEngine().loadContent(htmlContent);
                 }));
         Button cancelButton = new Button("Cancel");
-        LayoutUtil.setMaxWidthToInfinite(cancelButton);
+        Layouts.setMaxWidthToInfinite(cancelButton);
         borderPane.setBottom(cancelButton);
         DialogCallback dialogCallback = DialogUtil.showModalNodeInGoldLayout(borderPane, parentContainer);
         cancelButton.setOnAction(e -> dialogCallback.closeDialog());

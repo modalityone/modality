@@ -21,8 +21,6 @@ import javafx.scene.image.ImageView;
 import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.SVGPath;
-import javafx.scene.text.Text;
-import javafx.scene.text.TextFlow;
 import javafx.stage.Screen;
 import one.modality.base.client.cloudinary.ModalityCloudinary;
 import one.modality.base.client.icons.SvgIcons;
@@ -101,19 +99,16 @@ public final class EventThumbnailView {
         Label eventLabel = Bootstrap.h3(I18nControls.newLabel(new I18nSubKey("expression: i18n(this, '" + isoCode + "')", event)));
         eventLabel.setWrapText(true);
         VBox.setMargin(eventLabel, new Insets(10, 0, 0, 0));
-        String shortDescription = "";
-        if (event.getShortDescription() != null)
-            shortDescription = event.getShortDescription();
-        String shortDescriptionText = new String(shortDescription);
+        String shortDescription = Strings.toSafeString(event.getShortDescription());
+        String shortDescriptionText = shortDescription;
         //For now if the text if too long, we just do a substring.
         //In the future we can replace by a CollapsePan with a read more link
         int maxStringLength = 230;
         if (Strings.length(shortDescription) > maxStringLength) {
-            shortDescriptionText = (shortDescription.substring(0, maxStringLength - 5) + " [ . . . ]");
+            shortDescriptionText = shortDescription.substring(0, maxStringLength - 5) + " [ . . . ]";
         }
         HtmlText shortHTMLDescription = new HtmlText(shortDescriptionText);
         shortHTMLDescription.getStyleClass().add("short-description");
-
 
         StackPane thumbailStackPane = new StackPane();
         thumbailStackPane.setAlignment(Pos.BOTTOM_CENTER);
@@ -127,26 +122,26 @@ public final class EventThumbnailView {
         Label availabilityLabel = new Label();
 
         if (isPublished) {
+            LocalDateTime nowInEventTimezone = Event.nowInEventTimezone();
             if (itemType == ItemType.ITEM_TYPE_VIDEO) {
                 //If the vodExpirationDate is set to null, it means the event is livestream Only
-                if (event.getVodExpirationDate() != null && LocalDateTime.now().isAfter(event.getVodExpirationDate()))
+                LocalDateTime vodExpirationDate = event.getVodExpirationDate();
+                if (vodExpirationDate != null && nowInEventTimezone.isAfter(vodExpirationDate))
                     availabilityType = AvailabilityType.EXPIRED;
                     //Case of the livestream only, we expired it when the event is finished
-                else if (event.getVodExpirationDate() == null && LocalDateTime.now().isAfter(LocalDateTime.of(event.getEndDate(), LocalTime.of(23, 59, 59))))
+                else if (vodExpirationDate == null && nowInEventTimezone.isAfter(LocalDateTime.of(event.getEndDate(), LocalTime.of(23, 59, 59))))
                     availabilityType = AvailabilityType.EXPIRED;
-                else if (event.getVodExpirationDate() == null && event.getLivestreamUrl() == null) {
+                else if (vodExpirationDate == null && event.getLivestreamUrl() == null) {
                     //If the vodExpirationDate is set to null, it means the event is livestream Only, we check if we have a livestream url defined
                     availabilityType = AvailabilityType.UNPUBLISHED;
                 } else
                     availabilityType = AvailabilityType.AVAILABLE;
             }
-            if (itemType == ItemType.ITEM_TYPE_AUDIO)
-                if (event.getAudioExpirationDate() != null && LocalDateTime.now().isAfter(event.getAudioExpirationDate()))
-                    availabilityType = AvailabilityType.EXPIRED;
-                    //                else if(true)
-                    //                    availabilityLabel = Bootstrap.textDanger(I18nControls.newLabel("NotPublished"));
-                else
-                    availabilityType = AvailabilityType.AVAILABLE;
+            if (itemType == ItemType.ITEM_TYPE_AUDIO) {
+                LocalDateTime audioExpirationDate = event.getAudioExpirationDate();
+                boolean expired = audioExpirationDate != null && nowInEventTimezone.isAfter(audioExpirationDate);
+                availabilityType = expired ? AvailabilityType.EXPIRED : AvailabilityType.AVAILABLE;
+            }
         } else
             availabilityType = AvailabilityType.UNPUBLISHED;
 
@@ -215,10 +210,6 @@ public final class EventThumbnailView {
             shortHTMLDescription,
             actionButton
         );
-    }
-
-    private void truncateToFiveLines(Text text, TextFlow textFlow) {
-        //TODO implement if needed
     }
 
     public Button getActionButton() {
