@@ -63,8 +63,6 @@
         <module>modality-ecommerce</module>
         <module>modality-event</module>
         <module>modality-hotel</module>
-        <module>modality-restaurant</module>
-        <module>modality-shop</module>
     </modules>
 
 </project>
