@@ -641,8 +641,8 @@
     <!--===========================< webfx-stack-com-websocket >============================-->
     <source path="dev/webfx/stack/com/websocket"/>
     <source path="dev/webfx/stack/com/websocket/spi"/>
-    <!--=======================< webfx-stack-com-websocket-gwt-j2cl >=======================-->
-    <source path="dev/webfx/stack/com/websocket/spi/impl/gwtj2cl"/>
+    <!--===================< webfx-stack-com-websocket-gwt-j2cl-sockjs >====================-->
+    <source path="dev/webfx/stack/com/websocket/spi/impl/gwtj2cl/sockjs"/>
     <!--============================< webfx-stack-db-datascope >============================-->
     <source path="dev/webfx/stack/db/datascope"/>
     <source path="dev/webfx/stack/db/datascope/aggregate"/>

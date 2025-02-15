@@ -1304,7 +1304,7 @@
 
         <dependency>
             <groupId>dev.webfx</groupId>
-            <artifactId>webfx-stack-com-websocket-gwt-j2cl</artifactId>
+            <artifactId>webfx-stack-com-websocket-gwt-j2cl-sockjs</artifactId>
             <version>0.1.0-SNAPSHOT</version>
             <classifier>sources</classifier>
         </dependency>
