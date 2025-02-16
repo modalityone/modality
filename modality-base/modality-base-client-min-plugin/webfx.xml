@@ -14,6 +14,7 @@
         <plugin-module>modality-base-client-i18n</plugin-module>
         <plugin-module>modality-base-client-css</plugin-module>
         <plugin-module>modality-base-client-operationactionsloading-plugin</plugin-module>
+        <plugin-module>modality-base-client-time</plugin-module> <!-- to ensure time renderers are registered -->
 
         <!-- Commented as they seem to be required implementation modules (not plugin modules). To remove if ok.
         <plugin-module>webfx-stack-push-client-simple</plugin-module>

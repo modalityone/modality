@@ -122,7 +122,7 @@ final class ManageRecurringEventView {
     private final ObservableList<ScheduledItem> teachingsWorkingScheduledItems = FXCollections.observableArrayList();
     private final ObservableList<ScheduledItem> audioWorkingScheduledItems = FXCollections.observableArrayList();
     private final ObservableList<ScheduledItem> videoWorkingScheduledItems = FXCollections.observableArrayList();
-    private final TextField durationTextField = I18nControls.bindI18nProperties(new TextField(), RecurringEventsI18nKeys.Duration);
+    private final TextField durationTextField = I18nControls.bindI18nProperties(new TextField(), RecurringEventsI18nKeys.RecurringEventDuration);
     private final TextField bookingOpeningDateTextField = new TextField();
     private final TextField bookingOpeningTimeTextField = new TextField();
     private final TextField externalLinkTextField = I18nControls.bindI18nProperties(new TextField(), RecurringEventsI18nKeys.ExternalLink);
@@ -882,7 +882,7 @@ final class ManageRecurringEventView {
         timeOfTheEventTextField.textProperty().addListener(changeOnStartTimeOrDurationListener);
 
 
-        Label durationLabel = I18nControls.newLabel(RecurringEventsI18nKeys.Duration);
+        Label durationLabel = I18nControls.newLabel(RecurringEventsI18nKeys.RecurringEventDuration);
         durationLabel.setPadding(new Insets(0, 50, 0, 50));
         durationTextField.setMaxWidth(40);
         durationTextField.textProperty().addListener(changeOnStartTimeOrDurationListener);

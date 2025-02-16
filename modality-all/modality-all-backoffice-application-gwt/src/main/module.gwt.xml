@@ -284,6 +284,8 @@
     <source path="one/modality/base/client/profile/fx"/>
     <!--===========================< modality-base-client-tile >============================-->
     <source path="one/modality/base/client/tile"/>
+    <!--===========================< modality-base-client-time >============================-->
+    <source path="one/modality/base/client/time"/>
     <!--========================< modality-base-client-time-theme >=========================-->
     <source path="one/modality/base/client/time/theme"/>
     <!--===========================< modality-base-client-util >============================-->
