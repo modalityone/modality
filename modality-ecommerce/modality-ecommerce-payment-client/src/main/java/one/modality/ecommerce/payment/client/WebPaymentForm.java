@@ -67,7 +67,7 @@ public class WebPaymentForm {
         this.buyerPersonalDetails = buyerPersonalDetails;
         // If the user closes the window while he hasn't cancelled or completed the payment, we consider this as a
         // user cancellation
-        Shutdown.addShutdownHook(() -> {
+        Shutdown.addShutdownHook(e -> {
             if (!paymentCancelled && !paymentCompleted) {
                 cancelPayment(false); // false indicates it's not an explicit user cancellation
             }
