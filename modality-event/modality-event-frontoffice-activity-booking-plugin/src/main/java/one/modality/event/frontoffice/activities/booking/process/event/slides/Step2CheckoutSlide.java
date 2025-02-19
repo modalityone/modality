@@ -13,7 +13,6 @@ import dev.webfx.platform.util.Booleans;
 import dev.webfx.platform.windowhistory.WindowHistory;
 import dev.webfx.stack.i18n.I18n;
 import dev.webfx.stack.i18n.controls.I18nControls;
-import dev.webfx.stack.orm.entity.Entities;
 import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.ObjectProperty;
 import javafx.beans.property.SimpleBooleanProperty;
@@ -30,7 +29,10 @@ import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
 import one.modality.base.client.i18n.ModalityI18nKeys;
 import one.modality.base.client.icons.SvgIcons;
-import one.modality.base.shared.entities.*;
+import one.modality.base.shared.entities.Attendance;
+import one.modality.base.shared.entities.Document;
+import one.modality.base.shared.entities.Item;
+import one.modality.base.shared.entities.ScheduledItem;
 import one.modality.base.shared.entities.formatters.EventPriceFormatter;
 import one.modality.ecommerce.client.i18n.EcommerceI18nKeys;
 import one.modality.ecommerce.document.service.DocumentAggregate;
@@ -58,11 +60,20 @@ final class Step2CheckoutSlide extends StepSlide {
     private final Button submitButton = Bootstrap.largeSuccessButton(I18nControls.newButton(ModalityI18nKeys.Submit));
     private final BooleanProperty step1PersonToBookWasShownProperty = new SimpleBooleanProperty();
     private boolean bookAsGuestAllowed = true;
+    private boolean partialEventAllowed = true;
 
     public Step2CheckoutSlide(BookEventActivity bookEventActivity) {
         super(bookEventActivity);
         summaryGridPane.setMaxWidth(10000); // Workaround for a bug in GridPane layout OpenJFX implementation. Indeed,
         // the default value Double.MAX is causing infinite loop with TransitionPane
+    }
+
+    public void setBookAsGuestAllowed(boolean bookAsGuestAllowed) {
+        this.bookAsGuestAllowed = bookAsGuestAllowed;
+    }
+
+    public void setPartialEventAllowed(boolean partialEventAllowed) {
+        this.partialEventAllowed = partialEventAllowed;
     }
 
     // Exposing accountMountNodeProperty for the sub-routing binding (done in SlideController)
@@ -193,7 +204,7 @@ final class Step2CheckoutSlide extends StepSlide {
 
         summaryGridPane.getChildren().clear();
         addRow(
-            Bootstrap.textPrimary(Bootstrap.strong(I18nControls.newLabel("Summary"))), // ???
+            Bootstrap.textPrimary(Bootstrap.strong(I18nControls.newLabel(BookingI18nKeys.Summary))),
             Bootstrap.textPrimary(Bootstrap.strong(I18nControls.newLabel(EcommerceI18nKeys.Price))),
             new Label()
         );
@@ -205,9 +216,8 @@ final class Step2CheckoutSlide extends StepSlide {
             addExistingTotalLine();
         }
 
-        Object eventType = getEvent().getType();
-        boolean isSTTP = Entities.samePrimaryKey(eventType, KnownEventType.STTP.getTypeId());
-        if (!isSTTP || workingBooking.isNewBooking()) {
+        boolean isRecurring = getEvent().isRecurring();
+        if (isRecurring || workingBooking.isNewBooking()) {
             // SECOND PART: WHAT WE BOOK AT THIS STEP - we add this only if it's a new booking or if it's a GP (recurringEvent).
             noDiscountTotalPrice += addAttendanceRows(documentAggregate.getNewAttendancesStream(), false);
         }
@@ -230,8 +240,7 @@ final class Step2CheckoutSlide extends StepSlide {
         WorkingBooking workingBooking = getWorkingBooking();
 
         int[] totalPrice = {0};
-        EventType eventType = getEvent().getType();
-        if (Entities.samePrimaryKey(eventType, KnownEventType.GP_CLASSES.getTypeId())) {
+        if (partialEventAllowed) { // Ex: GP
             attendanceStream.forEach(a -> {
                 ScheduledItem scheduledItem = a.getScheduledItem();
                 LocalDate date = scheduledItem.getDate();
@@ -261,9 +270,7 @@ final class Step2CheckoutSlide extends StepSlide {
                 addRow(name, price, trashOption);
                 GridPane.setHalignment(trashOption, HPos.CENTER);
             });
-        }
-
-        if (Entities.samePrimaryKey(eventType, KnownEventType.STTP.getTypeId())) {
+        } else { // Ex: STTP
             workingBookingProperties.updateAll();
             Label name = new Label(getEvent().getName() + (existing ? " - (already booked)" : ""));
             //TODO; calculate the price with the PriceCalculatorMethod using the list of attendance
@@ -358,9 +365,4 @@ final class Step2CheckoutSlide extends StepSlide {
                 }));
         }
     }
-
-    public void setBookAsGuestAllowed(boolean bookAsGuestAllowed) {
-        this.bookAsGuestAllowed = bookAsGuestAllowed;
-    }
-
 }

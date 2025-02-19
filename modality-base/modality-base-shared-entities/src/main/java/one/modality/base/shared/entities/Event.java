@@ -263,6 +263,11 @@ public interface Event extends Entity,
         return getBooleanFieldValue(repeatVideo);
     }
 
+    default Boolean isRecurring() {
+        EventType type = getType();
+        return type == null ? null : type.isRecurring();
+    }
+
     // temporary static method (will be non-static once managed in the event)
     static Clock getEventClock() {
         return Clock.systemUTC();

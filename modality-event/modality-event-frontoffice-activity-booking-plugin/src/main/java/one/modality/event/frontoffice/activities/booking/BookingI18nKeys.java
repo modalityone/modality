@@ -60,6 +60,7 @@ public interface BookingI18nKeys {
     String Deposit = "Deposit";
     String TotalOnPreviousBooking = "TotalOnPreviousBooking";
     String TotalPrice = "TotalPrice";
+    String Summary = "Summary";
     String InternationalEvents = "InternationalEvents";
 
 }

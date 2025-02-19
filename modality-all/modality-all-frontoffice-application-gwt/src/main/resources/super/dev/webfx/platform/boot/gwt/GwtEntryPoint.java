@@ -72,5 +72,6 @@ public final class GwtEntryPoint implements ApplicationBooterProvider, EntryPoin
         register(javafx.application.Application.class, one.modality.base.frontoffice.application.ModalityFrontOfficeApplication::new);
         register(one.modality.ecommerce.document.service.spi.DocumentServiceProvider.class, one.modality.ecommerce.document.service.spi.impl.remote.RemoteDocumentServiceProvider::new);
         register(one.modality.ecommerce.payment.spi.PaymentServiceProvider.class, one.modality.ecommerce.payment.spi.impl.remote.RemotePaymentServiceProvider::new);
+        register(one.modality.event.frontoffice.activities.booking.process.event.BookingFormProvider.class, one.modality.event.frontoffice.bookingforms.recurringevent.RecurringEventBookingFormProvider::new);
     }
 }

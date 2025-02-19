@@ -47,6 +47,7 @@ module modality.event.frontoffice.activity.booking.plugin {
     requires webfx.platform.console;
     requires webfx.platform.os;
     requires webfx.platform.resource;
+    requires webfx.platform.service;
     requires webfx.platform.uischeduler;
     requires webfx.platform.useragent;
     requires webfx.platform.util;
@@ -76,12 +77,13 @@ module modality.event.frontoffice.activity.booking.plugin {
     exports one.modality.event.frontoffice.activities.booking.process.account;
     exports one.modality.event.frontoffice.activities.booking.process.event;
     exports one.modality.event.frontoffice.activities.booking.process.event.slides;
-    exports one.modality.event.frontoffice.activities.booking.process.event.slides.recurring_event;
-    exports one.modality.event.frontoffice.activities.booking.process.event.slides.sttp;
     exports one.modality.event.frontoffice.activities.booking.views;
 
     // Resources packages
     opens one.modality.event.frontoffice.activities.booking.map;
+
+    // Used services
+    uses one.modality.event.frontoffice.activities.booking.process.event.BookingFormProvider;
 
     // Provided services
     provides dev.webfx.stack.routing.uirouter.UiRoute with one.modality.event.frontoffice.activities.booking.BookingRouting.BookingUiRoute, one.modality.event.frontoffice.activities.booking.process.event.BookEventRouting.BookEventUiRoute;
