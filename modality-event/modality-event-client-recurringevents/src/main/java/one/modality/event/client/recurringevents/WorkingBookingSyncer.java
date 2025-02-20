@@ -13,7 +13,8 @@ import java.util.List;
 public final class WorkingBookingSyncer {
 
     public static void syncWorkingBookingFromEventSchedule(WorkingBooking workingBooking, BookableDatesUi bookableDatesUi, boolean addOnly) {
-        syncWorkingBookingFromSelectedScheduledItems(workingBooking, bookableDatesUi.getSelectedScheduledItem(), addOnly);
+        if (bookableDatesUi != null)
+            syncWorkingBookingFromSelectedScheduledItems(workingBooking, bookableDatesUi.getSelectedScheduledItem(), addOnly);
     }
 
     public static void syncWorkingBookingFromSelectedScheduledItems(WorkingBooking workingBooking, List<ScheduledItem> scheduledItems, boolean addOnly) {

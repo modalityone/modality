@@ -118,7 +118,9 @@ public final class BookEventActivity extends ViewDomainActivityBase implements B
     public void onReachingEndSlide() {
         FXEventId.setEventId(null); // This is to ensure that next time the user books an event in this same session, we
         FXCollapseMenu.setCollapseMenu(false);
-        getBookableDatesUi().clearClickedDates();
+        BookableDatesUi bookableDatesUi = getBookableDatesUi();
+        if (bookableDatesUi != null)
+            bookableDatesUi.clearClickedDates();
     }
 
     @Override
