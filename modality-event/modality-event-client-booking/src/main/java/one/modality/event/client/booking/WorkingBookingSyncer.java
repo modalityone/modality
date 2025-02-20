@@ -1,8 +1,9 @@
-package one.modality.event.client.recurringevents;
+package one.modality.event.client.booking;
 
 import dev.webfx.platform.util.collection.Collections;
 import one.modality.base.shared.entities.Attendance;
 import one.modality.base.shared.entities.ScheduledItem;
+import one.modality.ecommerce.client.workingbooking.WorkingBooking;
 
 import java.time.LocalDate;
 import java.util.List;

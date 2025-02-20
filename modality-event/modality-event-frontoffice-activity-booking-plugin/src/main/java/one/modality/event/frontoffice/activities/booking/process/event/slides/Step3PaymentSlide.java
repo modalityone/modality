@@ -19,7 +19,7 @@ import one.modality.ecommerce.client.i18n.EcommerceI18nKeys;
 import one.modality.ecommerce.payment.client.WebPaymentForm;
 import one.modality.event.frontoffice.activities.booking.BookingI18nKeys;
 import one.modality.event.frontoffice.activities.booking.process.event.BookEventActivity;
-import one.modality.event.frontoffice.activities.booking.process.event.WorkingBookingProperties;
+import one.modality.ecommerce.client.workingbooking.WorkingBookingProperties;
 
 final class Step3PaymentSlide extends StepSlide {
 

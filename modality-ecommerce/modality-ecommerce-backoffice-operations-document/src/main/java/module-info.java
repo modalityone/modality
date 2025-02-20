@@ -14,7 +14,9 @@ module modality.ecommerce.backoffice.operations.document {
     requires modality.base.client.mainframe.fx;
     requires modality.base.shared.entities;
     requires modality.crm.client.personaldetails;
+    requires modality.ecommerce.client.workingbooking;
     requires modality.ecommerce.document.service;
+    requires modality.event.client.booking;
     requires modality.event.client.recurringevents;
     requires webfx.kit.launcher;
     requires webfx.platform.async;

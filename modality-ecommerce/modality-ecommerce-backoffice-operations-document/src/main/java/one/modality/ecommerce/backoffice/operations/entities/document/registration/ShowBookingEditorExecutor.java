@@ -18,9 +18,9 @@ import one.modality.ecommerce.document.service.DocumentAggregate;
 import one.modality.ecommerce.document.service.DocumentService;
 import one.modality.ecommerce.document.service.PolicyAggregate;
 import one.modality.event.client.recurringevents.RecurringEventSchedule;
-import one.modality.event.client.recurringevents.WorkingBooking;
-import one.modality.event.client.recurringevents.WorkingBookingHistoryHelper;
-import one.modality.event.client.recurringevents.WorkingBookingSyncer;
+import one.modality.ecommerce.client.workingbooking.WorkingBooking;
+import one.modality.ecommerce.client.workingbooking.WorkingBookingHistoryHelper;
+import one.modality.event.client.booking.WorkingBookingSyncer;
 
 import java.time.LocalDate;
 import java.util.stream.Collectors;

@@ -1,4 +1,4 @@
-package one.modality.event.client.recurringevents;
+package one.modality.ecommerce.client.workingbooking;
 
 import dev.webfx.platform.util.time.Times;
 import one.modality.base.shared.entities.Attendance;

@@ -26,9 +26,11 @@ module modality.event.frontoffice.activity.booking.plugin {
     requires modality.crm.client.authn.fx;
     requires modality.crm.client.i18n;
     requires modality.ecommerce.client.i18n;
+    requires modality.ecommerce.client.workingbooking;
     requires modality.ecommerce.document.service;
     requires modality.ecommerce.payment;
     requires modality.ecommerce.payment.client;
+    requires modality.event.client.booking;
     requires modality.event.client.event.fx;
     requires modality.event.client.recurringevents;
     requires webfx.extras.imagestore;

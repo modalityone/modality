@@ -1,4 +1,4 @@
-package one.modality.event.client.recurringevents;
+package one.modality.ecommerce.client.workingbooking;
 
 import dev.webfx.platform.util.Booleans;
 import dev.webfx.platform.util.collection.Collections;

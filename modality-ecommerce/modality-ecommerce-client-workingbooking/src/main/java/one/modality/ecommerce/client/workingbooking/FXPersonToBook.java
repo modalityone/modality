@@ -1,4 +1,4 @@
-package one.modality.event.client.recurringevents;
+package one.modality.ecommerce.client.workingbooking;
 
 import dev.webfx.kit.util.properties.FXProperties;
 import javafx.beans.property.ObjectProperty;

@@ -17,6 +17,7 @@ import javafx.scene.text.Font;
 import javafx.scene.text.Text;
 import one.modality.base.shared.entities.ScheduledItem;
 import one.modality.base.shared.entities.Timeline;
+import one.modality.event.client.booking.BookableDatesUi;
 
 import java.time.LocalDate;
 import java.time.LocalTime;

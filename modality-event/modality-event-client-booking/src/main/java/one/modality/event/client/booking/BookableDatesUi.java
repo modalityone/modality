@@ -1,4 +1,4 @@
-package one.modality.event.client.recurringevents;
+package one.modality.event.client.booking;
 
 import javafx.collections.ObservableList;
 import one.modality.base.shared.entities.ScheduledItem;
@@ -8,7 +8,6 @@ import java.util.List;
 
 /**
  * Generic interface for any UI component in an event booking form allowing the user to select the dates to book.
- * TODO: move this interface to an more generic level
  *
  * @author Bruno Salmon
  */

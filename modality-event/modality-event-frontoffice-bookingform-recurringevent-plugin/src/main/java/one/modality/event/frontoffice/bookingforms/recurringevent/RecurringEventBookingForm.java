@@ -25,12 +25,12 @@ import javafx.scene.text.TextAlignment;
 import one.modality.base.shared.entities.Event;
 import one.modality.base.shared.entities.ScheduledItem;
 import one.modality.base.shared.entities.formatters.EventPriceFormatter;
-import one.modality.event.client.recurringevents.BookableDatesUi;
+import one.modality.event.client.booking.BookableDatesUi;
 import one.modality.event.client.recurringevents.RecurringEventSchedule;
 import one.modality.event.frontoffice.activities.booking.BookingI18nKeys;
 import one.modality.event.frontoffice.activities.booking.process.event.BookEventActivity;
 import one.modality.event.frontoffice.activities.booking.process.event.BookingForm;
-import one.modality.event.frontoffice.activities.booking.process.event.WorkingBookingProperties;
+import one.modality.ecommerce.client.workingbooking.WorkingBookingProperties;
 
 import java.time.LocalDate;
 import java.util.ArrayList;
