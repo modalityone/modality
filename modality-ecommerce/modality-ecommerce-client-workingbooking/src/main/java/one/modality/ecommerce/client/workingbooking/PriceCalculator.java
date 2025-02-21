@@ -41,10 +41,17 @@ public class PriceCalculator {
         DocumentAggregate documentAggregate = getDocumentAggregate();
         if (documentAggregate == null)
             return 0;
+        // TODO: consider ignoreDiscounts flag in KBS2 price algorithm
+        return Kbs2PriceAlgorithm.computeBookingPrice(getDocumentAggregate(), false);
+        /* Old commented code (now using KBS2 price algorithm instead
         return documentAggregate.getDocumentLinesStream()
             .mapToInt(this::calculateLinePrice)
             .sum();
+         */
     }
+
+    // The remaining methods are not based on kbs2 price algorithm, they are simpler and meant to be used for simple
+    // events with no complex pricing rules, and that needs to display the details for each day (ex: GP classes).
 
     public int calculateLinePrice(DocumentLine line) {
         DocumentAggregate documentAggregate = getDocumentAggregate();
