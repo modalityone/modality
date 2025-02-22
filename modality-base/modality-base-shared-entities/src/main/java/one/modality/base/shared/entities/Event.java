@@ -268,6 +268,11 @@ public interface Event extends Entity,
         return type == null ? null : type.isRecurring();
     }
 
+    default Boolean isOnlineEvent() { // Temporary method while in-person and online events are separated
+        String name = getName();
+        return name == null ? null : name.toLowerCase().contains("online");
+    }
+
     // temporary static method (will be non-static once managed in the event)
     static Clock getEventClock() {
         return Clock.systemUTC();
