@@ -40,6 +40,10 @@ public class ModalityServerMailServiceProvider implements MailServiceProvider {
                 mail.setMagicLink(modalityContext.getMagicLinkId());
             }
         }
+        // Temporarily hardcoding the account to be used for sending mails, because otherwise, if the organization is
+        // set to a centre where no mail account is configured, the database will raise this constraint error:
+        // null value in column "account_id" violates not-null constraint (23502)
+        mail.setAccount(27); // Hardcoded value for kbs@kadampa.net account, because so far only LoginLinkService is sending mails in KBS3
         return updateStore.submitChanges().map(ignored -> null);
     }
 }
