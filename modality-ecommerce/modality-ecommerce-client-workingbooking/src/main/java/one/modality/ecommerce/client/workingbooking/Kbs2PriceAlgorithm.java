@@ -16,7 +16,11 @@ import java.util.stream.Collectors;
 public final class Kbs2PriceAlgorithm {
 
     public static int computeBookingPrice(DocumentAggregate documentAggregate, boolean update) {
-        return computeBookingBill(documentAggregate, update).getPrice();
+        return computeBookingBill(documentAggregate, update).getInvoiced();
+    }
+
+    public static int computeBookingMinDeposit(DocumentAggregate documentAggregate, boolean update) {
+        return computeBookingBill(documentAggregate, update).getMinDeposit();
     }
 
     private static Bill computeBookingBill(DocumentAggregate documentAggregate, boolean update) {
@@ -48,6 +52,7 @@ public final class Kbs2PriceAlgorithm {
         private final boolean update;
 
         private int price = -1;
+        private int minDeposit = -1;
 
         Bill(DocumentAggregate workingBooking, Collection<Block> blocks, boolean update) {
             this.documentAggregate = workingBooking;
@@ -60,24 +65,32 @@ public final class Kbs2PriceAlgorithm {
             return documentAggregate;
         }
 
-        public int getPrice() {
+        public int getInvoiced() {
             if (price == -1)
-                computeBillPrice();
+                price = computeBillPrice(false);
             return price;
         }
 
-        private void computeBillPrice() {
-            price = 0;
+        public int getMinDeposit() {
+            if (minDeposit == -1)
+                minDeposit = computeBillPrice(true);
+            return minDeposit;
+        }
+
+        private int computeBillPrice(boolean minDeposit) {
+            int price = 0;
             for (Block block : blocks)
-                price += block.computeBlockPrice(this);
+                price += block.computeBlockPrice(this, minDeposit);
     /* from KBS2
           // adding price of cancelled document lines if any
             if (bill.document.cancelledDocumentLines)
                 for (i = 0; i < bill.document.cancelledDocumentLines.length; i++)
                     price += bill.document.cancelledDocumentLines[i].price_net;
     */
-            if (update)
+            if (update && !minDeposit) {
                 documentAggregate.getDocument().setPriceNet(price);
+            }
+            return price;
         }
     }
 
@@ -127,7 +140,7 @@ public final class Kbs2PriceAlgorithm {
             });
         }
 
-        int computeBlockPrice(Bill bill) {
+        int computeBlockPrice(Bill bill, boolean minDeposit) {
             int price = 0;
             List<BlockAttendance> bas = blockAttendances;
             int blockLength = bas.size();
@@ -170,7 +183,7 @@ public final class Kbs2PriceAlgorithm {
                         }
                         var quantity = 1; //rate.perPerson && dl.share_owner && dl.capacity ? dl.capacity.capacity : 1;
                         int ratePrice = getRatePrice(rate, documentAggregate) * quantity;
-                        int minDay = dev.webfx.platform.util.Objects.coalesce(rate.getMinDay(), 1);
+                        int minDay = Objects.coalesce(rate.getMinDay(), 1);
                         int maxDay = rate.isPerDay() ? 1 : Objects.coalesce(rate.getMaxDay(), 10000);
                         // Ignoring rates whose minDay is not honored
                         if (blockLength < minDay) {
@@ -195,7 +208,7 @@ public final class Kbs2PriceAlgorithm {
                         /* Commented in KBS3
                         if (rate.id === 27510 && remainingDays === maxDay) // £120 rate with 22 remaining days
                             dailyPrice = ratePrice / (maxDay + 1);*/ // Changing the daily price comparison to £180 / 23 to make it the cheapest
-                        PriceMemo memo = new PriceMemo(dailyPrice, ratePrice, consumableDays);
+                        PriceMemo memo = new PriceMemo(rate, dailyPrice, ratePrice, consumableDays);
                         if (cheapest == null)
                             cheapest = memo;
                         else if (dailyPrice < cheapest.dailyPrice) {
@@ -219,7 +232,12 @@ public final class Kbs2PriceAlgorithm {
                         remainingPrice -= ba.price;
                     }
                     // updating the block price
-                    price += cheapest.price;
+                    double deltaPrice = cheapest.price;
+                    if (minDeposit) {
+                        int minDepositPercent = Objects.coalesce(cheapest.rate.getMinDeposit(), 25);
+                        deltaPrice = deltaPrice * minDepositPercent / 100;
+                    }
+                    price += deltaPrice;
                     // marking progress
                     consumedDays += cheapest.consumableDays;
                     remainingDays -= cheapest.consumableDays;
@@ -285,11 +303,13 @@ public final class Kbs2PriceAlgorithm {
         }
 
         private static final class PriceMemo {
+            final Rate rate;
             final int dailyPrice;
             final int price;
             final int consumableDays;
 
-            PriceMemo(int dailyPrice, int price, int consumableDays) {
+            PriceMemo(Rate rate, int dailyPrice, int price, int consumableDays) {
+                this.rate = rate;
                 this.dailyPrice = dailyPrice;
                 this.price = price;
                 this.consumableDays = consumableDays;

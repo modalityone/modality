@@ -33,6 +33,15 @@ public class WorkingBookingProperties {
         }
     };
 
+    // Min deposit (of the latest booking)
+    private final StringProperty formattedMinDepositProperty = new SimpleStringProperty();
+    private final IntegerProperty minDepositProperty = new SimpleIntegerProperty(-1) {
+        @Override
+        protected void invalidated() {
+            setFormattedMinDeposit(EventPriceFormatter.formatWithCurrency(getMinDepositProperty(), getEvent()));
+        }
+    };
+
     // Balance (of the latest booking)
     private final StringProperty formattedBalanceProperty = new SimpleStringProperty();
     private final IntegerProperty balanceProperty = new SimpleIntegerProperty(-1) {
@@ -108,6 +117,7 @@ public class WorkingBookingProperties {
     public void updateAll() {
         updateDeposit();
         updateTotal();
+        updateMinDeposit();
         updateBalance();
         updatePreviousTotal();
         updatePreviousBalance();
@@ -181,6 +191,41 @@ public class WorkingBookingProperties {
 
     public String getFormattedTotal() {
         return formattedTotalProperty.getValue();
+    }
+
+
+    // Min deposit
+
+    public int getMinDepositProperty() {
+        return minDepositProperty.get();
+    }
+
+    public ReadOnlyIntegerProperty minDepositProperty() {
+        return minDepositProperty;
+    }
+
+    private void setMinDeposit(int value) {
+        minDepositProperty.set(value);
+    }
+
+    public int calculateMinDeposit() {
+        return getLatestBookingPriceCalculator().calculateMinDeposit();
+    }
+
+    public void updateMinDeposit() {
+        setMinDeposit(calculateMinDeposit());
+    }
+
+    public StringProperty formattedMinDepositProperty() {
+        return formattedMinDepositProperty;
+    }
+
+    private void setFormattedMinDeposit(String formattedValue) {
+        formattedMinDepositProperty.set(formattedValue);
+    }
+
+    public String getFormattedMinDeposit() {
+        return formattedMinDepositProperty.getValue();
     }
 
 

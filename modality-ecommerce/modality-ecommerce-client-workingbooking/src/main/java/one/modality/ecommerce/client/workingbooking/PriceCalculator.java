@@ -50,6 +50,14 @@ public class PriceCalculator {
          */
     }
 
+    public int calculateMinDeposit() {
+        DocumentAggregate documentAggregate = getDocumentAggregate();
+        if (documentAggregate == null)
+            return 0;
+        // TODO: consider ignoreDiscounts flag in KBS2 price algorithm
+        return Kbs2PriceAlgorithm.computeBookingMinDeposit(getDocumentAggregate(), false);
+    }
+
     // The remaining methods are not based on kbs2 price algorithm, they are simpler and meant to be used for simple
     // events with no complex pricing rules, and that needs to display the details for each day (ex: GP classes).
 
