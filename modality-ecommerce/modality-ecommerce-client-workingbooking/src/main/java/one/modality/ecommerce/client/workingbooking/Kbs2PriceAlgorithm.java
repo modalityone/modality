@@ -1,5 +1,6 @@
 package one.modality.ecommerce.client.workingbooking;
 
+import dev.webfx.platform.util.Booleans;
 import dev.webfx.platform.util.Objects;
 import dev.webfx.platform.util.collection.Collections;
 import one.modality.base.shared.entities.*;
@@ -269,26 +270,31 @@ public final class Kbs2PriceAlgorithm {
 
         private int getRatePrice(Rate rate, DocumentAggregate documentAggregate) {
             int price = rate.getPrice();
-            /* Commented in KBS3 for now
             Document document = documentAggregate.getDocument();
             Person person = document.getPerson();
-            Integer age =  document.getAge() || document.person && document.person.age;
-            var unemployed = document.person_unemployed || document.person && document.person.unemployed;
-            var facilityFee = document.person_facilityFee || document.person && document.person.facilityFee;
-            var workingVisit = document.person_workingVisit || document.person && document.person.workingVisit;
+            Integer age =  document.getAge();
+            if (age == null && person != null)
+                age = person.getAge();
+            boolean unemployed = Booleans.isTrue(document.isUnemployed());
+            if (person != null && Booleans.isTrue(person.isUnemployed()))
+                unemployed = true;
+            boolean facilityFee = Booleans.isTrue(document.isPersonFacilityFee());
+            if (person != null && Booleans.isTrue(person.isFacilityFee()))
+                facilityFee = true;
+            /*var workingVisit = document.person_workingVisit || document.person && document.person.workingVisit;
             var guest = document.person_guest || document.person && document.person.guest;
             var resident = document.person_resident || document.person && document.person.resident;
             var resident2 = document.person_resident2 || document.person && document.person.resident2;
             var discoveryReduced = document.person_discoveryReduced || document.person && document.person.discoveryReduced;
-            var discovery = document.person_discovery || document.person && document.person.discovery;
-            if (age != null || age == 0) {
-                if (rate.age1_max && age <= rate.age1_max)
-                    price = (rate.age1_price || rate.age1_price === 0) ? rate.age1_price : price * (100 - rate.age1_discount) / 100;
-                else if (rate.age2_max && age <= rate.age2_max)
-                    price = (rate.age2_price || rate.age2_price === 0) ? rate.age2_price : price * (100 - rate.age2_discount) / 100;
-                else if (rate.age3_max && age <= rate.age3_max)
-                    price = (rate.age3_price || rate.age3_price === 0) ? rate.age3_price : price * (100 - rate.age3_discount) / 100;
-            } else if (workingVisit && (rate.workingVisit_price || rate.workingVisit_discount))
+            var discovery = document.person_discovery || document.person && document.person.discovery;*/
+            if (age != null) {
+                if (rate.getAge1Max() != null && age <= rate.getAge1Max())
+                    price = rate.getAge1Price() != null ? rate.getAge1Price() : price * (100 - rate.getAge1Discount()) / 100;
+                else if (rate.getAge2Max() != null && age <= rate.getAge2Max())
+                    price = rate.getAge2Price() != null ? rate.getAge2Price() : price * (100 - rate.getAge2Discount()) / 100;
+                else if (rate.getAge3Max() != null && age <= rate.getAge3Max())
+                    price = rate.getAge3Price() !=null ? rate.getAge3Price() : price * (100 - rate.getAge3Discount()) / 100;
+            } /*else if (workingVisit && (rate.workingVisit_price || rate.workingVisit_discount))
                 price = (rate.workingVisit_price || rate.workingVisit_price === 0) ? rate.workingVisit_price : price * (100 - rate.workingVisit_discount) / 100;
             else if (guest && (rate.guest_price || rate.guest_discount))
                 price = (rate.guest_price || rate.guest_price === 0) ? rate.guest_price : price * (100 - rate.guest_discount) / 100;
@@ -299,11 +305,11 @@ public final class Kbs2PriceAlgorithm {
             else if (discoveryReduced && (rate.discoveryReduced_price || rate.discoveryReduced_discount))
                 price = (rate.discoveryReduced_price || rate.discoveryReduced_price === 0) ? rate.discoveryReduced_price : price * (100 - rate.discoveryReduced_discount) / 100;
             else if (discovery && (rate.discovery_price || rate.discovery_discount))
-                price = (rate.discovery_price || rate.discovery_price === 0) ? rate.discovery_price : price * (100 - rate.discovery_discount) / 100;
-            else if (unemployed && (rate.unemployed_price || rate.unemployed_discount))
-                price = (rate.unemployed_price || rate.unemployed_price === 0) ? rate.unemployed_price : price * (100 - rate.unemployed_discount) / 100;
-            else if (facilityFee && (rate.facilityFee_price || rate.facilityFee_discount))
-                price = (rate.facilityFee_price || rate.facilityFee_price === 0) ? rate.facilityFee_price : price * (100 - rate.facilityFee_discount) / 100;*/
+                price = (rate.discovery_price || rate.discovery_price === 0) ? rate.discovery_price : price * (100 - rate.discovery_discount) / 100;*/
+            else if (unemployed && (rate.getUnemployedPrice() != null || rate.getUnemployedDiscount() != null))
+                price = rate.getUnemployedPrice() != null ? rate.getUnemployedPrice() : price * (100 - rate.getUnemployedDiscount()) / 100;
+            else if (facilityFee && (rate.getFacilityFeePrice() != null || rate.getFacilityFeeDiscount() != null))
+                price = rate.getFacilityFeePrice() != null ? rate.getFacilityFeePrice() : price * (100 - rate.getFacilityFeeDiscount()) / 100;
             return price;
         }
 
