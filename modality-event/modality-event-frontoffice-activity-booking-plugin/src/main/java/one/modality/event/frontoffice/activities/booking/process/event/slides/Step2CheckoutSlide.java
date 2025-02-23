@@ -230,6 +230,8 @@ final class Step2CheckoutSlide extends StepSlide {
                 price,
                 new Label()
             );
+        } else { // Invisible row - to always keep the same number of rows and prevent a vertical shift when (un)ticking the facility fee
+            addRow(new Label(), new Label(), new Label());
         }
 
         addNewTotalLine();
@@ -271,7 +273,7 @@ final class Step2CheckoutSlide extends StepSlide {
                 GridPane.setHalignment(trashOption, HPos.CENTER);
             });
         } else { // Ex: STTP
-            workingBookingProperties.updateAll();
+            //workingBookingProperties.updateAll();
             Label name = new Label(getEvent().getName() + (existing ? " - (already booked)" : ""));
             //TODO; calculate the price with the PriceCalculatorMethod using the list of attendance
             int price = workingBookingProperties.getTotal();

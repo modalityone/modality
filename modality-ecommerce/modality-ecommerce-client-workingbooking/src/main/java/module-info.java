@@ -9,6 +9,8 @@ module modality.ecommerce.client.workingbooking {
     requires modality.ecommerce.document.service;
     requires webfx.kit.util;
     requires webfx.platform.async;
+    requires webfx.platform.scheduler;
+    requires webfx.platform.uischeduler;
     requires webfx.platform.util;
     requires webfx.platform.util.time;
     requires webfx.stack.orm.entity;

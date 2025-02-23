@@ -1,5 +1,8 @@
 package one.modality.ecommerce.client.workingbooking;
 
+import dev.webfx.kit.util.properties.ObservableLists;
+import dev.webfx.platform.scheduler.Scheduled;
+import dev.webfx.platform.uischeduler.UiScheduler;
 import javafx.beans.property.*;
 import one.modality.base.shared.entities.Event;
 import one.modality.base.shared.entities.ScheduledItem;
@@ -11,9 +14,13 @@ import java.util.List;
 
 public class WorkingBookingProperties {
 
+    // These fields are constant once set, but not declared final because they are not set in the constructor, they are
+    // set later in the setWorkingBooking() method (called only once).
     private WorkingBooking workingBooking;
     private PriceCalculator previousBookingPriceCalculator;
     private PriceCalculator latestBookingPriceCalculator;
+
+    private Scheduled updateAllScheduled;
 
     // Deposit (of both the latest booking and previous booking)
     private final StringProperty formattedDepositProperty = new SimpleStringProperty();
@@ -82,7 +89,9 @@ public class WorkingBookingProperties {
         if (initialDocumentAggregate != null) {
             setBookingReference(initialDocumentAggregate.getDocument().getRef());
         }
-        updateAll();
+        updateAll(); // Updated all price properties
+        // And listening to further changes to automatically keep these properties updated
+        ObservableLists.runOnListChange(c -> scheduleUpdateAll(), workingBooking.getDocumentChanges());
     }
 
     public WorkingBooking getWorkingBooking() {
@@ -121,6 +130,15 @@ public class WorkingBookingProperties {
         updateBalance();
         updatePreviousTotal();
         updatePreviousBalance();
+    }
+
+    private void scheduleUpdateAll() {
+        if (updateAllScheduled == null) {
+            updateAllScheduled = UiScheduler.scheduleDeferred(() -> {
+                updateAll();
+                updateAllScheduled = null;
+            });
+        }
     }
 
 
@@ -361,6 +379,8 @@ public class WorkingBookingProperties {
     public int getDailyRatePrice() {
         return workingBooking.getDailyRatePrice();
     }
+
+    // TODO: there should be a separate workingBooking for the different cases, including for the whole event
 
     public int getWholeEventPrice() {
         return workingBooking.getWholeEventPrice();
