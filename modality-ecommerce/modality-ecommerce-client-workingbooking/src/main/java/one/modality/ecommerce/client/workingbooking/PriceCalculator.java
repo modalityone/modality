@@ -16,7 +16,7 @@ import java.util.function.Supplier;
 public class PriceCalculator {
 
     private final Supplier<DocumentAggregate> documentAggregateSupplier;
-    private boolean ignoreDiscounts;
+    private boolean ignoreLongStayDiscounts;
 
     public PriceCalculator(Supplier<DocumentAggregate> documentAggregateSupplier) {
         this.documentAggregateSupplier = documentAggregateSupplier;
@@ -30,10 +30,10 @@ public class PriceCalculator {
         return documentAggregateSupplier.get();
     }
 
-    public int calculateNoDiscountTotalPrice() {
-        ignoreDiscounts = true;
+    public int calculateNoLongStayDiscountTotalPrice() {
+        ignoreLongStayDiscounts = true;
         int price = calculateTotalPrice();
-        ignoreDiscounts = false;
+        ignoreLongStayDiscounts = false;
         return price;
     }
 
@@ -41,8 +41,7 @@ public class PriceCalculator {
         DocumentAggregate documentAggregate = getDocumentAggregate();
         if (documentAggregate == null)
             return 0;
-        // TODO: consider ignoreDiscounts flag in KBS2 price algorithm
-        return Kbs2PriceAlgorithm.computeBookingPrice(getDocumentAggregate(), false);
+        return Kbs2PriceAlgorithm.computeBookingPrice(getDocumentAggregate(), ignoreLongStayDiscounts, false);
         /* Old commented code (now using KBS2 price algorithm instead
         return documentAggregate.getDocumentLinesStream()
             .mapToInt(this::calculateLinePrice)
@@ -55,7 +54,7 @@ public class PriceCalculator {
         if (documentAggregate == null)
             return 0;
         // TODO: consider ignoreDiscounts flag in KBS2 price algorithm
-        return Kbs2PriceAlgorithm.computeBookingMinDeposit(getDocumentAggregate(), false);
+        return Kbs2PriceAlgorithm.computeBookingMinDeposit(getDocumentAggregate(), ignoreLongStayDiscounts, false);
     }
 
     // The remaining methods are not based on kbs2 price algorithm, they are simpler and meant to be used for simple
@@ -88,7 +87,7 @@ public class PriceCalculator {
                 //.mapToInt(this::calculateAttendancePrice) // assumes Attendance DocumentLine is set
                 .mapToInt(attendance -> calculateAttendancePrice(site, item)) // works even if DocumentLine is not set
                 .sum();
-        if (ignoreDiscounts && dailyRatePrice > 0)
+        if (ignoreLongStayDiscounts && dailyRatePrice > 0)
             return dailyRatePrice;
         // 2) Calculating the price consisting of applying the cheapest (if multiple) fixed rate
         int fixedRatePrice = documentAggregate.getPolicyAggregate()
@@ -114,7 +113,7 @@ public class PriceCalculator {
     private int getCheapestApplicableRatePrice(Rate rate) {
         int price = rate.getPrice();
         DocumentAggregate documentAggregate = getDocumentAggregate();
-        if (documentAggregate != null && !ignoreDiscounts) {
+        if (documentAggregate != null && !ignoreLongStayDiscounts) {
             if (Booleans.isTrue(documentAggregate.getDocument().isPersonFacilityFee())) {
                 Integer facilityFeePrice = rate.getFacilityFeePrice();
                 if (facilityFeePrice != null && facilityFeePrice < price)

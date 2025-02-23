@@ -15,15 +15,15 @@ import java.util.stream.Collectors;
  */
 public final class Kbs2PriceAlgorithm {
 
-    public static int computeBookingPrice(DocumentAggregate documentAggregate, boolean update) {
-        return computeBookingBill(documentAggregate, update).getInvoiced();
+    public static int computeBookingPrice(DocumentAggregate documentAggregate, boolean ignoreLongStayDiscount, boolean update) {
+        return computeBookingBill(documentAggregate, ignoreLongStayDiscount, update).getInvoiced();
     }
 
-    public static int computeBookingMinDeposit(DocumentAggregate documentAggregate, boolean update) {
-        return computeBookingBill(documentAggregate, update).getMinDeposit();
+    public static int computeBookingMinDeposit(DocumentAggregate documentAggregate, boolean ignoreLongStayDiscount, boolean update) {
+        return computeBookingBill(documentAggregate, ignoreLongStayDiscount, update).getMinDeposit();
     }
 
-    private static Bill computeBookingBill(DocumentAggregate documentAggregate, boolean update) {
+    private static Bill computeBookingBill(DocumentAggregate documentAggregate, boolean ignoreLongStayDiscount, boolean update) {
         Map<SiteItem, Block> hash = new HashMap<>();
         documentAggregate.getDocumentLinesStream().forEach(line -> {
             Site site = line.getSite();
@@ -41,7 +41,7 @@ public final class Kbs2PriceAlgorithm {
             });
         });
         Collection<Block> blocks = hash.values();
-        return new Bill(documentAggregate, blocks, update);
+        return new Bill(documentAggregate, blocks, ignoreLongStayDiscount, update);
     }
 
     private static final class Bill {
@@ -49,14 +49,16 @@ public final class Kbs2PriceAlgorithm {
         //private final WorkingBooking workingBooking;
         private final DocumentAggregate documentAggregate;
         private final Collection<Block> blocks;
+        private final boolean ignoreLongStayDiscount;
         private final boolean update;
 
         private int price = -1;
         private int minDeposit = -1;
 
-        Bill(DocumentAggregate workingBooking, Collection<Block> blocks, boolean update) {
+        Bill(DocumentAggregate workingBooking, Collection<Block> blocks, boolean ignoreLongStayDiscount, boolean update) {
             this.documentAggregate = workingBooking;
             this.blocks = blocks;
+            this.ignoreLongStayDiscount = ignoreLongStayDiscount;
             this.update = update;
             blocks.forEach(Block::sortBlockAttendances);
         }
@@ -157,7 +159,7 @@ public final class Kbs2PriceAlgorithm {
                 }
             }
     */
-            LocalDate firstDay = dev.webfx.platform.util.collection.Collections.first(bas).getDate();
+            LocalDate firstDay = Collections.first(bas).getDate();
             LocalDate lastDay = Collections.last(bas).getDate();
             DocumentAggregate documentAggregate = bill.getDocumentAggregate();
             PolicyAggregate policyAggregate = documentAggregate.getPolicyAggregate();
@@ -173,6 +175,9 @@ public final class Kbs2PriceAlgorithm {
                     PriceMemo cheapest = null;
                     PriceMemo second = null;
                     for (Rate rate : rates) {
+                        // Ignoring rates for long stay discounts (if requested)
+                        if (bill.ignoreLongStayDiscount && !rate.isPerDay()) // assuming that a rate not per day is a long stay discount TODO: check this more carefully
+                            continue;
                         // Ignoring rates that are not in the range of dates
                         LocalDate startDate = rate.getStartDate();
                         LocalDate endDate = rate.getEndDate();
@@ -199,8 +204,8 @@ public final class Kbs2PriceAlgorithm {
                                 maxDay = minDay; // that applies over that period
                             }
                         }
-                        var consumableDays = Math.min(remainingDays, maxDay);
-                        var dailyPrice = ratePrice / consumableDays;
+                        int consumableDays = Math.min(remainingDays, maxDay);
+                        int dailyPrice = ratePrice / consumableDays;
                         // Ugly workaround for Online January retreat 2021 because this price algorithm is not always correct.
                         // Ex: 1 week (actually 8 days): £70, 2 weeks (actually 15 days): £120, 3 weeks (actually 22 days): £180
                         // => For the 3 weeks case, this price algorithm computes £190 instead of £180 because it considers
@@ -232,7 +237,7 @@ public final class Kbs2PriceAlgorithm {
                         remainingPrice -= ba.price;
                     }
                     // updating the block price
-                    double deltaPrice = cheapest.price;
+                    int deltaPrice = cheapest.price;
                     if (minDeposit) {
                         int minDepositPercent = Objects.coalesce(cheapest.rate.getMinDeposit(), 25);
                         deltaPrice = deltaPrice * minDepositPercent / 100;

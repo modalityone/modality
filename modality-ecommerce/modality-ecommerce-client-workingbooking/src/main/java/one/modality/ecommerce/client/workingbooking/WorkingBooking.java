@@ -270,7 +270,7 @@ public class WorkingBooking {
     public int getWholeEventNoDiscountPrice() {
         WorkingBooking workingBooking = createWholeEventWorkingBooking(getPolicyAggregate());
         PriceCalculator priceCalculator = new PriceCalculator(workingBooking.getLastestDocumentAggregate());
-        return priceCalculator.calculateNoDiscountTotalPrice();
+        return priceCalculator.calculateNoLongStayDiscountTotalPrice();
     }
 
     public static WorkingBooking createWholeEventWorkingBooking(PolicyAggregate policyAggregate) {
