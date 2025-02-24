@@ -19,7 +19,6 @@ import one.modality.base.shared.domainmodel.formatters.DateFormatter;
 import one.modality.base.shared.domainmodel.formatters.DateTimeFormatter;
 import one.modality.base.shared.domainmodel.formatters.PriceFormatter;
 import one.modality.base.shared.domainmodel.functions.AbcNames;
-import one.modality.base.shared.domainmodel.functions.DateIntervalFormat;
 
 /**
  * @author Bruno Salmon
@@ -52,7 +51,6 @@ final class DomainModelSnapshotLoader {
             // Registering functions
             new AbcNames().register();
             new AbcNames("alphaSearch").register();
-            new DateIntervalFormat().register();
             new Function("interpret_brackets", PrimType.STRING).register();
             new Function("compute_dates").register();
             new InlineFunction("searchMatchesDocument", "d", new Type[]{new DomainClassType("Document")}, "d..ref=?searchInteger or d..person_abcNames like ?abcSearchLike or d..person_email like ?searchEmailLike", domainModel.getClass("Document"), domainModel.getParserDomainModelReader()).register();

@@ -10,5 +10,6 @@ public class ClientFunctionsRegisteringApplicationJob implements ApplicationJob 
     @Override
     public void onInit() {
         new I18nFunction().register();
+        new DateIntervalFormat().register();
     }
 }

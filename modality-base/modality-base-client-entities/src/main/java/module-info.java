@@ -11,12 +11,14 @@ module modality.base.client.entities {
     requires javafx.graphics;
     requires modality.base.client.presentationmodel;
     requires modality.base.shared.entities;
+    requires webfx.extras.time.format;
     requires webfx.extras.type;
     requires webfx.extras.util.layout;
     requires webfx.extras.util.scene;
     requires webfx.kit.util;
     requires webfx.platform.boot;
     requires webfx.platform.util;
+    requires webfx.platform.util.time;
     requires webfx.stack.i18n;
     requires webfx.stack.orm.domainmodel;
     requires webfx.stack.orm.dql;
