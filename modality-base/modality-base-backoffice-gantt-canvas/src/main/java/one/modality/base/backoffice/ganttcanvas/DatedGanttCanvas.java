@@ -11,6 +11,7 @@ import dev.webfx.extras.theme.layout.FXLayoutMode;
 import dev.webfx.extras.theme.luminance.FXLuminanceMode;
 import dev.webfx.extras.theme.text.TextTheme;
 import dev.webfx.extras.time.YearWeek;
+import dev.webfx.extras.time.format.TimeFormat;
 import dev.webfx.extras.time.layout.MultiLayerLocalDateLayout;
 import dev.webfx.extras.time.layout.TimeLayout;
 import dev.webfx.extras.time.layout.canvas.MultiLayerLocalDateCanvasDrawer;
@@ -192,10 +193,10 @@ public final class DatedGanttCanvas implements TimeWindow<LocalDate> {
 
     private void updateI18nTexts() {
         for (int i = 0; i < 12; i++)
-            i18nMonths[i] = I18n.getI18nText(Month.of(i + 1).toString());
-        i18nWeek = I18n.getI18nText("WEEK");
+            i18nMonths[i] = TimeFormat.getMonthName(Month.of(i + 1));
+        i18nWeek = I18n.getI18nText("Week");
         for (int i = 0; i < 7; i++)
-            i18nDaysOfWeek[i] = I18n.getI18nText(DayOfWeek.of(i + 1).toString());
+            i18nDaysOfWeek[i] = TimeFormat.getDayOfWeekName(DayOfWeek.of(i + 1));
         markCanvasAsDirty();
     }
 
