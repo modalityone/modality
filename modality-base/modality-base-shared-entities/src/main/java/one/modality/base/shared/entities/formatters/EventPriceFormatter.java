@@ -27,7 +27,7 @@ public class EventPriceFormatter extends PriceFormatter {
         // Temporary hardcoded
         if ("EUR".equals(getEventCurrencyCode(event)))
             return " €";
-        return "£";
+        return "£ ";
     }
 
     public static String formatWithCurrency(Object value, Event event) {
