@@ -26,18 +26,23 @@ public final class PolicyAggregate {
     private final QueryResult scheduledItemsQueryResult;
     private final String ratesQueryBase;
     private final QueryResult ratesQueryResult;
+    private final String bookablePeriodsQueryBase;
+    private final QueryResult bookablePeriodsQueryResult;
 
     // Fields intended for application code
     private Event event;
     private EntityStore entityStore;
     private EntityList<ScheduledItem> scheduledItems;
     private EntityList<Rate> rates;
+    private EntityList<BookablePeriod> bookablePeriods;
 
-    public PolicyAggregate(String scheduledItemsQueryBase, QueryResult scheduledItemsQueryResult, String ratesQueryBase, QueryResult ratesQueryResult) {
+    public PolicyAggregate(String scheduledItemsQueryBase, QueryResult scheduledItemsQueryResult, String ratesQueryBase, QueryResult ratesQueryResult, String bookablePeriodsQueryBase, QueryResult bookablePeriodsQueryResult) {
         this.scheduledItemsQueryBase = scheduledItemsQueryBase;
         this.scheduledItemsQueryResult = scheduledItemsQueryResult;
         this.ratesQueryBase = ratesQueryBase;
         this.ratesQueryResult = ratesQueryResult;
+        this.bookablePeriodsQueryBase = bookablePeriodsQueryBase;
+        this.bookablePeriodsQueryResult = bookablePeriodsQueryResult;
     }
 
     public void rebuildEntities(Event event) {
@@ -48,6 +53,16 @@ public final class PolicyAggregate {
         scheduledItems = QueryResultToEntitiesMapper.mapQueryResultToEntities(scheduledItemsQueryResult, queryMapping, entityStore, "scheduledItems");
         queryMapping = dataSourceModel.parseAndCompileSelect(ratesQueryBase).getQueryMapping();
         rates = QueryResultToEntitiesMapper.mapQueryResultToEntities(ratesQueryResult, queryMapping, entityStore, "rates");
+        queryMapping = dataSourceModel.parseAndCompileSelect(bookablePeriodsQueryBase).getQueryMapping();
+        bookablePeriods = QueryResultToEntitiesMapper.mapQueryResultToEntities(bookablePeriodsQueryResult, queryMapping, entityStore, "bookablePeriods");
+        if (bookablePeriods.isEmpty()) {
+            BookablePeriod wholeEventPeriod = entityStore.createEntity(BookablePeriod.class);
+            wholeEventPeriod.setEvent(event);
+            wholeEventPeriod.setStartScheduledItem(Collections.first(scheduledItems)); // Check if ok
+            wholeEventPeriod.setEndScheduledItem(Collections.last(scheduledItems)); // Check if ok
+            wholeEventPeriod.setFieldValue("i18nKey", "WholeEvent"); // Will be recognized by I18nFunction
+            bookablePeriods.add(wholeEventPeriod);
+        }
     }
 
     public EntityStore getEntityStore() {
@@ -142,6 +157,10 @@ public final class PolicyAggregate {
         return getRatesStream().anyMatch(rate -> rate.getFacilityFeePrice() != null || rate.getFacilityFeeDiscount() != null);
     }
 
+    public List<BookablePeriod> getBookablePeriods() {
+        return bookablePeriods;
+    }
+
     // The following methods are meant to be used for serialization, not for application code
 
     public String getRatesQueryBase() {
@@ -158,6 +177,14 @@ public final class PolicyAggregate {
 
     public QueryResult getScheduledItemsQueryResult() {
         return scheduledItemsQueryResult;
+    }
+
+    public String getBookablePeriodsQueryBase() {
+        return bookablePeriodsQueryBase;
+    }
+
+    public QueryResult getBookablePeriodsQueryResult() {
+        return bookablePeriodsQueryResult;
     }
 
 }
