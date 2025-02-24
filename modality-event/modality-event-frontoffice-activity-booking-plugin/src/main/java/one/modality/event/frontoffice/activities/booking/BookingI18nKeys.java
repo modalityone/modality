@@ -8,8 +8,8 @@ public interface BookingI18nKeys {
     String ProceedCheckout = "ProceedCheckout";
     String ErrorPaymentGatewayFailure = "ErrorPaymentGatewayFailure";
     String RegistrationCanceled = "RegistrationCanceled";
-    String PaymentAndBookingCancelled = "PaymentAndBookingCancelled";
     String Pay0 = "Pay0";
+    String PaymentAndBookingCancelled = "PaymentAndBookingCancelled";
     String SelectAllClasses = "SelectAllClasses";
     String localEvents = "localEvents";
     String OrBookUsingAccount = "OrBookUsingAccount";
@@ -30,13 +30,14 @@ public interface BookingI18nKeys {
     String ErrorWhileCancelingTheBooking = "ErrorWhileCancelingTheBooking";
     String PaymentFailed = "PaymentFailed";
     String OrBookAsGuest = "OrBookAsGuest";
-    String PaymentPending = "PaymentPending";
     String PricePerClass0 = "PricePerClass0";
+    String PaymentPending = "PaymentPending";
     String yourLocalCentre = "yourLocalCentre";
     String ErrorPaymentModalityFailure = "ErrorPaymentModalityFailure";
     String GuestDetails = "GuestDetails";
     String ThankYouForBooking = "ThankYouForBooking";
     String ChangeYourLocation = "ChangeYourLocation";
+    String wholeEvent = "wholeEvent";
     String at = "at";
     String comingSoon = "comingSoon";
     String eventsHeader = "eventsHeader";
@@ -44,8 +45,8 @@ public interface BookingI18nKeys {
     String bookNow = "bookNow";
     String BookingNumber0 = "BookingNumber0";
     String AllClasses = "AllClasses";
-    String ErrorWhileInitializingHTMLPaymentForm = "ErrorWhileInitializingHTMLPaymentForm";
     String UncancelBooking = "UncancelBooking";
+    String ErrorWhileInitializingHTMLPaymentForm = "ErrorWhileInitializingHTMLPaymentForm";
     String closed = "closed";
     String LoginBeforeBooking = "LoginBeforeBooking";
     String RetryPayment = "RetryPayment";
