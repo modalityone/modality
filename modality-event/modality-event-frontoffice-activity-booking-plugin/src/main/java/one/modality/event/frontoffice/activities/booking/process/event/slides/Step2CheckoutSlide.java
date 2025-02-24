@@ -231,7 +231,7 @@ final class Step2CheckoutSlide extends StepSlide {
                 new Label()
             );
         } else { // Invisible row - to always keep the same number of rows and prevent a vertical shift when (un)ticking the facility fee
-            addRow(new Label(), new Label(), new Label());
+            addRow(new Label(" "), new Label(), new Label()); // Note: the " " is for the web version (otherwise its height is 0 as opposed to OpenJFX) TODO: correct this in webfx
         }
 
         addNewTotalLine();
