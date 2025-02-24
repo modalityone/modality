@@ -51,6 +51,10 @@ public class ModalityClientMainFrameActivity extends ViewDomainActivityBase
                 session.store();
             }
         }, I18n.languageProperty());
+        // This is to ensure LogoutRequest is registered in OperationActionRegistry (especially in front-office where
+        // it is not explicitly called by just referred via operation code from configuration), so that the Logout
+        // action can be displayed once the user is logged in (via authorization mechanism).
+        newOperationAction(LogoutRequest::new);
     }
 
     @Override
