@@ -1,4 +1,5 @@
 one.modality.base.shared.entities.impl.AttendanceImpl$ProvidedFactory
+one.modality.base.shared.entities.impl.BookablePeriodImpl$ProvidedFactory
 one.modality.base.shared.entities.impl.BookImpl$ProvidedFactory
 one.modality.base.shared.entities.impl.CartImpl$ProvidedFactory
 one.modality.base.shared.entities.impl.ChannelImpl$ProvidedFactory
