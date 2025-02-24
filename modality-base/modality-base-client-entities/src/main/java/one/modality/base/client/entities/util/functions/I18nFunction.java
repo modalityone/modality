@@ -12,7 +12,7 @@ import one.modality.base.shared.entities.markers.HasName;
 
 /**
  * i18n() function that can be used in expressions. Special cases are handled depending on the passed argument:
- * - if an entity (or EntityId) is passed, it will try to find the translation in the associated label, or name otherwise
+ * - if an entity (or EntityId) is passed, it will try to find the translation in the associated label, or i18nKey, or name otherwise
  * - if a label is passed, it will return the translation in the current i18n language.
  * - in other cases, it will call I18n.getI18nText() with the passed argument
  *
@@ -47,7 +47,10 @@ public final class I18nFunction extends Function {
             if (result == null)
                 result = domainReader.getDomainFieldValue(label, I18n.getDefaultLanguage());
         } else {
-            result = I18n.getI18nText(argument);
+            Object i18nKey = domainReader.getDomainFieldValue(argument, "i18nKey");
+            if (i18nKey == null)
+                i18nKey = argument;
+            result = I18n.getI18nText(i18nKey);
         }
         if (result == null && argument instanceof HasName)
             result = ((HasName) argument).getName();
