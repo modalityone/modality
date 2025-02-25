@@ -32,10 +32,10 @@ module modality.event.frontoffice.activity.booking.plugin {
     requires modality.ecommerce.payment.client;
     requires modality.event.client.booking;
     requires modality.event.client.event.fx;
-    requires modality.event.client.recurringevents;
     requires webfx.extras.imagestore;
     requires webfx.extras.panes;
     requires webfx.extras.styles.bootstrap;
+    requires webfx.extras.time.format;
     requires webfx.extras.util.animation;
     requires webfx.extras.util.control;
     requires webfx.extras.util.layout;

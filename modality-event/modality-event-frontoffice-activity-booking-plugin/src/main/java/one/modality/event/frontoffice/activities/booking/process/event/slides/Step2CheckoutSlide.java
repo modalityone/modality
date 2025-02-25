@@ -4,6 +4,7 @@ import dev.webfx.extras.panes.ColumnsPane;
 import dev.webfx.extras.panes.FlipPane;
 import dev.webfx.extras.panes.MonoPane;
 import dev.webfx.extras.styles.bootstrap.Bootstrap;
+import dev.webfx.extras.time.format.TimeFormat;
 import dev.webfx.extras.util.layout.Layouts;
 import dev.webfx.kit.util.properties.FXProperties;
 import dev.webfx.kit.util.properties.ObservableLists;
@@ -11,8 +12,9 @@ import dev.webfx.platform.console.Console;
 import dev.webfx.platform.uischeduler.UiScheduler;
 import dev.webfx.platform.util.Booleans;
 import dev.webfx.platform.windowhistory.WindowHistory;
-import dev.webfx.stack.i18n.I18n;
+import dev.webfx.stack.i18n.I18nKeys;
 import dev.webfx.stack.i18n.controls.I18nControls;
+import dev.webfx.stack.i18n.spi.impl.I18nSubKey;
 import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.ObjectProperty;
 import javafx.beans.property.SimpleBooleanProperty;
@@ -35,16 +37,15 @@ import one.modality.base.shared.entities.Item;
 import one.modality.base.shared.entities.ScheduledItem;
 import one.modality.base.shared.entities.formatters.EventPriceFormatter;
 import one.modality.ecommerce.client.i18n.EcommerceI18nKeys;
-import one.modality.ecommerce.document.service.DocumentAggregate;
 import one.modality.ecommerce.client.workingbooking.FXPersonToBook;
-import one.modality.event.client.recurringevents.RecurringEventsI18nKeys;
 import one.modality.ecommerce.client.workingbooking.WorkingBooking;
 import one.modality.ecommerce.client.workingbooking.WorkingBookingHistoryHelper;
+import one.modality.ecommerce.client.workingbooking.WorkingBookingProperties;
+import one.modality.ecommerce.document.service.DocumentAggregate;
 import one.modality.event.frontoffice.activities.booking.BookingI18nKeys;
 import one.modality.event.frontoffice.activities.booking.fx.FXGuestToBook;
 import one.modality.event.frontoffice.activities.booking.process.account.CheckoutAccountRouting;
 import one.modality.event.frontoffice.activities.booking.process.event.BookEventActivity;
-import one.modality.ecommerce.client.workingbooking.WorkingBookingProperties;
 
 import java.time.LocalDate;
 import java.util.stream.Stream;
@@ -247,8 +248,7 @@ final class Step2CheckoutSlide extends StepSlide {
                 ScheduledItem scheduledItem = a.getScheduledItem();
                 LocalDate date = scheduledItem.getDate();
                 Item item = scheduledItem.getItem();
-                String dateFormatted = I18n.getI18nText(RecurringEventsI18nKeys.DateFormatted1, I18n.getI18nText(date.getMonth().name()), date.getDayOfMonth());
-                Label name = new Label(item.getName() + " - " + dateFormatted + (existing ? " (already booked)" : ""));
+                Label scheduledItemLabel = I18nControls.newLabel(new I18nSubKey("expression: i18n(this) + ' - {0}' " + (existing ? " + ' ([" + BookingI18nKeys.alreadyBooked + "])'" : ""), item), TimeFormat.dayAndMonthProperty(date));
                 int dailyRatePrice = workingBookingProperties.getDailyRatePrice();
                 totalPrice[0] += dailyRatePrice;
                 Label price = new Label(EventPriceFormatter.formatWithCurrency(dailyRatePrice, getEvent()));
@@ -269,7 +269,7 @@ final class Step2CheckoutSlide extends StepSlide {
                     ));
                 }
 
-                addRow(name, price, trashOption);
+                addRow(scheduledItemLabel, price, trashOption);
                 GridPane.setHalignment(trashOption, HPos.CENTER);
             });
         } else { // Ex: STTP
@@ -289,7 +289,7 @@ final class Step2CheckoutSlide extends StepSlide {
         WorkingBookingProperties workingBookingProperties = getWorkingBookingProperties();
         addTotalLine(
             BookingI18nKeys.TotalOnPreviousBooking, workingBookingProperties.formattedPreviousTotalProperty(),
-            BookingI18nKeys.Deposit, workingBookingProperties.formattedDepositProperty(),
+            EcommerceI18nKeys.Deposit, workingBookingProperties.formattedDepositProperty(),
             BookingI18nKeys.BalanceOnPreviousBooking, workingBookingProperties.formattedPreviousBalanceProperty()
         );
     }
@@ -297,9 +297,9 @@ final class Step2CheckoutSlide extends StepSlide {
     private void addNewTotalLine() {
         WorkingBookingProperties workingBookingProperties = getWorkingBookingProperties();
         addTotalLine(
-            BookingI18nKeys.TotalPrice, workingBookingProperties.formattedTotalProperty(),
-            BookingI18nKeys.Deposit, workingBookingProperties.formattedDepositProperty(),
-            BookingI18nKeys.GeneralBalance, workingBookingProperties.formattedBalanceProperty()
+            EcommerceI18nKeys.TotalPrice, workingBookingProperties.formattedTotalProperty(),
+            EcommerceI18nKeys.Deposit, workingBookingProperties.formattedDepositProperty(),
+            EcommerceI18nKeys.Balance, workingBookingProperties.formattedBalanceProperty()
         );
     }
 
@@ -314,9 +314,9 @@ final class Step2CheckoutSlide extends StepSlide {
     }
 
     private void addTotalLine(String col1I18n, Object col1Amount, String col2I18n, Object col2Amount, String col3I18n, Object col3Amount) {
-        Label col1Label = I18nControls.newLabel(col1I18n, col1Amount);
-        Label col2Label = I18nControls.newLabel(col2I18n, col2Amount);
-        Label col3Label = I18nControls.newLabel(col3I18n, col3Amount);
+        Label col1Label = I18nControls.newLabel(I18nKeys.embedInString("[0] {0}", I18nKeys.appendColons(col1I18n)), col1Amount);
+        Label col2Label = I18nControls.newLabel(I18nKeys.embedInString("[0] {0}", I18nKeys.appendColons(col2I18n)), col2Amount);
+        Label col3Label = I18nControls.newLabel(I18nKeys.embedInString("[0] {0}", I18nKeys.appendColons(col3I18n)), col3Amount);
         ColumnsPane totalPane = new ColumnsPane(col1Label, col2Label, col3Label);
         totalPane.setMaxWidth(Double.MAX_VALUE);
         totalPane.setPadding(new Insets(7));
