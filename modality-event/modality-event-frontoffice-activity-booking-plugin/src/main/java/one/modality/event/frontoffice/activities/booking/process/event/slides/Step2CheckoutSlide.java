@@ -248,7 +248,7 @@ final class Step2CheckoutSlide extends StepSlide {
                 ScheduledItem scheduledItem = a.getScheduledItem();
                 LocalDate date = scheduledItem.getDate();
                 Item item = scheduledItem.getItem();
-                Label scheduledItemLabel = I18nControls.newLabel(new I18nSubKey("expression: i18n(this) + ' - {0}' " + (existing ? " + ' ([" + BookingI18nKeys.alreadyBooked + "])'" : ""), item), TimeFormat.dayAndMonthProperty(date));
+                Label scheduledItemLabel = I18nControls.newLabel(new I18nSubKey("expression: i18n(this) + ' - {0}' " + (existing ? " + ' ([" + BookingI18nKeys.alreadyBooked + "])'" : ""), item), TimeFormat.formatDayMonthProperty(date));
                 int dailyRatePrice = workingBookingProperties.getDailyRatePrice();
                 totalPrice[0] += dailyRatePrice;
                 Label price = new Label(EventPriceFormatter.formatWithCurrency(dailyRatePrice, getEvent()));

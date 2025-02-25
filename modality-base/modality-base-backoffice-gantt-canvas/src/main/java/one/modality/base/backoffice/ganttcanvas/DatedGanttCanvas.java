@@ -193,10 +193,10 @@ public final class DatedGanttCanvas implements TimeWindow<LocalDate> {
 
     private void updateI18nTexts() {
         for (int i = 0; i < 12; i++)
-            i18nMonths[i] = TimeFormat.getMonthName(Month.of(i + 1));
+            i18nMonths[i] = TimeFormat.formatMonth(Month.of(i + 1));
         i18nWeek = I18n.getI18nText("Week");
         for (int i = 0; i < 7; i++)
-            i18nDaysOfWeek[i] = TimeFormat.getDayOfWeekName(DayOfWeek.of(i + 1));
+            i18nDaysOfWeek[i] = TimeFormat.formatDayOfWeek(DayOfWeek.of(i + 1));
         markCanvasAsDirty();
     }
 

@@ -32,7 +32,7 @@ public final class DateIntervalFormat extends Function {
 
             int day1 = date1.getDayOfMonth();
             Month month1 = date1.getMonth();
-            String month1Name = TimeFormat.getMonthName(month1);
+            String month1Name = TimeFormat.formatMonth(month1);
             int day2 = date2.getDayOfMonth();
             Month month2 = date2.getMonth();
             int year2 = date2.getYear();
@@ -43,7 +43,7 @@ public final class DateIntervalFormat extends Function {
                     sb.append('-').append(day2);
                 sb.append(' ').append(month1Name);
             } else
-                sb.append(day1).append(' ').append(month1Name).append(" - ").append(day2).append(' ').append(TimeFormat.getMonthName(month2));
+                sb.append(day1).append(' ').append(month1Name).append(" - ").append(day2).append(' ').append(TimeFormat.formatMonth(month2));
             if (year2 != LocalDate.now().getYear())
                 sb.append(' ').append(year2);
             return sb.toString();
