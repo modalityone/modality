@@ -14,7 +14,7 @@ import one.modality.base.client.mainframe.fx.FXMainFrameTransiting;
 import one.modality.base.shared.entities.Event;
 import one.modality.ecommerce.payment.CancelPaymentResult;
 import one.modality.ecommerce.payment.client.WebPaymentForm;
-import one.modality.event.client.recurringevents.BookableDatesUi;
+import one.modality.event.client.booking.BookableDatesUi;
 import one.modality.event.frontoffice.activities.booking.process.event.BookEventActivity;
 
 public final class LettersSlideController {

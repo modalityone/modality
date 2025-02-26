@@ -9,6 +9,7 @@
 
     <providers>
         <provider interface="dev.webfx.stack.orm.entity.EntityFactoryProvider">one.modality.base.shared.entities.impl.AttendanceImpl$ProvidedFactory</provider>
+        <provider interface="dev.webfx.stack.orm.entity.EntityFactoryProvider">one.modality.base.shared.entities.impl.BookablePeriodImpl$ProvidedFactory</provider>
         <provider interface="dev.webfx.stack.orm.entity.EntityFactoryProvider">one.modality.base.shared.entities.impl.BookImpl$ProvidedFactory</provider>
         <provider interface="dev.webfx.stack.orm.entity.EntityFactoryProvider">one.modality.base.shared.entities.impl.CartImpl$ProvidedFactory</provider>
         <provider interface="dev.webfx.stack.orm.entity.EntityFactoryProvider">one.modality.base.shared.entities.impl.ChannelImpl$ProvidedFactory</provider>

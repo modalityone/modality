@@ -73,17 +73,18 @@ import static one.modality.crm.frontoffice.activities.userprofile.ChangePictureU
 
 final class UserProfileActivity extends ViewDomainActivityBase implements ModalityButtonFactoryMixin {
 
+    public static final double MODAL_WINDOWS_MAX_WIDTH = 500;
+
     private final VBox container = new VBox();
     private final Hyperlink changeUserEmail = I18nControls.newHyperlink(UserProfileI18nKeys.ChangeEmail);
     private final Hyperlink changeUserPassword = I18nControls.newHyperlink(UserProfileI18nKeys.ChangePassword);
     private final TransitionPane transitionPane = new TransitionPane();
-    private final ChangeEmailUI changeEmailUI = new ChangeEmailUI(this);
+    private final ChangeEmailUI changeEmailUI = new ChangeEmailUI();
     private final ChangePasswordUI changePasswordUI = new ChangePasswordUI();
     private final ChangePictureUI changePictureUI = new ChangePictureUI(this);
     private final StringProperty tokenProperty = new SimpleStringProperty();
     private final UserProfileMessageUI messagePane = new UserProfileMessageUI();
     private final UserAccountUI accountUI = new UserAccountUI();
-    private EntityStore entityStore;
     private UpdateStore updateStore;
     private Person currentPerson;
     private Label nameLabel;
@@ -94,14 +95,13 @@ final class UserProfileActivity extends ViewDomainActivityBase implements Modali
     private TextField phoneTextField;
     private TextField postCodeTextField;
     private TextField cityNameTextField;
-    protected EntityButtonSelector countrySelector;
+    private EntityButtonSelector countrySelector;
     private RadioButton optionMale;
     private RadioButton optionFemale;
     private RadioButton optionLay;
     private RadioButton optionOrdained;
     private ButtonSelector<Organization> organizationSelector;
     private RadioButton optionNoKadampaCenter;
-    private Button saveButton;
     private Label infoMessage;
     private DatePicker birthDatePicker;
     private MonoPane pickupDateMonoPane;
@@ -109,16 +109,12 @@ final class UserProfileActivity extends ViewDomainActivityBase implements Modali
     private ImageView imageView;
     private final String noPictureImage = "images/large/no-picture.png";
     private final ValidationSupport validationSupport = new ValidationSupport();
-    public static final int MODAL_WINDOWS_MAX_WIDTH = 500;
     private StackPane picturePane;
 
-
     protected void startLogic() {
-        entityStore = EntityStore.create(getDataSourceModel());
+        EntityStore entityStore = EntityStore.create(getDataSourceModel());
         updateStore = UpdateStore.createAbove(entityStore);
-
         accountUI.startLogic(updateStore, UserAccountUI.EDITION_MODE, getHistory());
-       
     }
 
     @Override
@@ -443,7 +439,7 @@ final class UserProfileActivity extends ViewDomainActivityBase implements Modali
         infoMessage.setPadding(new Insets(20, 0, 20, 0));
         container.getChildren().add(infoMessage);
 
-        saveButton = Bootstrap.largePrimaryButton(I18nControls.newButton(CreateAccountI18nKeys.SaveChanges));
+        Button saveButton = Bootstrap.largePrimaryButton(I18nControls.newButton(CreateAccountI18nKeys.SaveChanges));
         saveButton.disableProperty().bind(EntityBindings.hasChangesProperty(updateStore).not());
         //Here we're editing an existing user
         saveButton.setOnAction(e -> {
@@ -492,7 +488,6 @@ final class UserProfileActivity extends ViewDomainActivityBase implements Modali
                 callback.closeDialog();
                 changeEmailUI.resetToInitialState();
             });
-            changeEmailUI.setDialogCallback(callback);
             Animations.fadeIn(changeEmailUI.getView());
         });
 

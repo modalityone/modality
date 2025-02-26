@@ -37,7 +37,7 @@ import one.modality.base.client.icons.SvgIcons;
 
 import java.util.Objects;
 
-public class ChangePictureUI {
+final class ChangePictureUI {
 
     static final long CLOUDINARY_RELOAD_DELAY = 10000;
     private final VBox changePictureVBox = new VBox();
@@ -48,8 +48,7 @@ public class ChangePictureUI {
     private double zoomFactor = 1;
     private dev.webfx.platform.file.File cloudPictureFileToUpload;
     private Object recentlyUploadedCloudPictureId;
-    protected ScalePane container = new ScalePane(changePictureVBox);
-    protected Label infoMessage = Bootstrap.textDanger(new Label());
+    private final ScalePane container = new ScalePane(changePictureVBox);
     private final UserProfileActivity parentActivity;
     private DialogCallback callback;
     private final int MAX_PICTURE_SIZE = 240;
@@ -109,6 +108,7 @@ public class ChangePictureUI {
             imageView.setTranslateY(deltaY);
         });
 
+        Label infoMessage = Bootstrap.textDanger(new Label());
         infoMessage.setVisible(false);
         infoMessage.setWrapText(true);
 

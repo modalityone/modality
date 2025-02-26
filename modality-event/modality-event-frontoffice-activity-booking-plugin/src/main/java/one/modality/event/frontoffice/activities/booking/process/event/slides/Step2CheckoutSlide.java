@@ -4,6 +4,7 @@ import dev.webfx.extras.panes.ColumnsPane;
 import dev.webfx.extras.panes.FlipPane;
 import dev.webfx.extras.panes.MonoPane;
 import dev.webfx.extras.styles.bootstrap.Bootstrap;
+import dev.webfx.extras.time.format.TimeFormat;
 import dev.webfx.extras.util.layout.Layouts;
 import dev.webfx.kit.util.properties.FXProperties;
 import dev.webfx.kit.util.properties.ObservableLists;
@@ -11,9 +12,9 @@ import dev.webfx.platform.console.Console;
 import dev.webfx.platform.uischeduler.UiScheduler;
 import dev.webfx.platform.util.Booleans;
 import dev.webfx.platform.windowhistory.WindowHistory;
-import dev.webfx.stack.i18n.I18n;
+import dev.webfx.stack.i18n.I18nKeys;
 import dev.webfx.stack.i18n.controls.I18nControls;
-import dev.webfx.stack.orm.entity.Entities;
+import dev.webfx.stack.i18n.spi.impl.I18nSubKey;
 import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.ObjectProperty;
 import javafx.beans.property.SimpleBooleanProperty;
@@ -30,19 +31,21 @@ import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
 import one.modality.base.client.i18n.ModalityI18nKeys;
 import one.modality.base.client.icons.SvgIcons;
-import one.modality.base.shared.entities.*;
+import one.modality.base.shared.entities.Attendance;
+import one.modality.base.shared.entities.Document;
+import one.modality.base.shared.entities.Item;
+import one.modality.base.shared.entities.ScheduledItem;
 import one.modality.base.shared.entities.formatters.EventPriceFormatter;
 import one.modality.ecommerce.client.i18n.EcommerceI18nKeys;
+import one.modality.ecommerce.client.workingbooking.FXPersonToBook;
+import one.modality.ecommerce.client.workingbooking.WorkingBooking;
+import one.modality.ecommerce.client.workingbooking.WorkingBookingHistoryHelper;
+import one.modality.ecommerce.client.workingbooking.WorkingBookingProperties;
 import one.modality.ecommerce.document.service.DocumentAggregate;
-import one.modality.event.client.recurringevents.FXPersonToBook;
-import one.modality.event.client.recurringevents.RecurringEventsI18nKeys;
-import one.modality.event.client.recurringevents.WorkingBooking;
-import one.modality.event.client.recurringevents.WorkingBookingHistoryHelper;
 import one.modality.event.frontoffice.activities.booking.BookingI18nKeys;
 import one.modality.event.frontoffice.activities.booking.fx.FXGuestToBook;
 import one.modality.event.frontoffice.activities.booking.process.account.CheckoutAccountRouting;
 import one.modality.event.frontoffice.activities.booking.process.event.BookEventActivity;
-import one.modality.event.frontoffice.activities.booking.process.event.WorkingBookingProperties;
 
 import java.time.LocalDate;
 import java.util.stream.Stream;
@@ -58,11 +61,20 @@ final class Step2CheckoutSlide extends StepSlide {
     private final Button submitButton = Bootstrap.largeSuccessButton(I18nControls.newButton(ModalityI18nKeys.Submit));
     private final BooleanProperty step1PersonToBookWasShownProperty = new SimpleBooleanProperty();
     private boolean bookAsGuestAllowed = true;
+    private boolean partialEventAllowed = true;
 
     public Step2CheckoutSlide(BookEventActivity bookEventActivity) {
         super(bookEventActivity);
         summaryGridPane.setMaxWidth(10000); // Workaround for a bug in GridPane layout OpenJFX implementation. Indeed,
         // the default value Double.MAX is causing infinite loop with TransitionPane
+    }
+
+    public void setBookAsGuestAllowed(boolean bookAsGuestAllowed) {
+        this.bookAsGuestAllowed = bookAsGuestAllowed;
+    }
+
+    public void setPartialEventAllowed(boolean partialEventAllowed) {
+        this.partialEventAllowed = partialEventAllowed;
     }
 
     // Exposing accountMountNodeProperty for the sub-routing binding (done in SlideController)
@@ -193,7 +205,7 @@ final class Step2CheckoutSlide extends StepSlide {
 
         summaryGridPane.getChildren().clear();
         addRow(
-            Bootstrap.textPrimary(Bootstrap.strong(I18nControls.newLabel("Summary"))), // ???
+            Bootstrap.textPrimary(Bootstrap.strong(I18nControls.newLabel(BookingI18nKeys.Summary))),
             Bootstrap.textPrimary(Bootstrap.strong(I18nControls.newLabel(EcommerceI18nKeys.Price))),
             new Label()
         );
@@ -205,9 +217,8 @@ final class Step2CheckoutSlide extends StepSlide {
             addExistingTotalLine();
         }
 
-        Object eventType = getEvent().getType();
-        boolean isSTTP = Entities.samePrimaryKey(eventType, KnownEventType.STTP.getTypeId());
-        if (!isSTTP || workingBooking.isNewBooking()) {
+        boolean isRecurring = getEvent().isRecurring();
+        if (isRecurring || workingBooking.isNewBooking()) {
             // SECOND PART: WHAT WE BOOK AT THIS STEP - we add this only if it's a new booking or if it's a GP (recurringEvent).
             noDiscountTotalPrice += addAttendanceRows(documentAggregate.getNewAttendancesStream(), false);
         }
@@ -220,6 +231,8 @@ final class Step2CheckoutSlide extends StepSlide {
                 price,
                 new Label()
             );
+        } else { // Invisible row - to always keep the same number of rows and prevent a vertical shift when (un)ticking the facility fee
+            addRow(new Label(" "), new Label(), new Label()); // Note: the " " is for the web version (otherwise its height is 0 as opposed to OpenJFX) TODO: correct this in webfx
         }
 
         addNewTotalLine();
@@ -230,14 +243,12 @@ final class Step2CheckoutSlide extends StepSlide {
         WorkingBooking workingBooking = getWorkingBooking();
 
         int[] totalPrice = {0};
-        EventType eventType = getEvent().getType();
-        if (Entities.samePrimaryKey(eventType, KnownEventType.GP_CLASSES.getTypeId())) {
+        if (partialEventAllowed) { // Ex: GP
             attendanceStream.forEach(a -> {
                 ScheduledItem scheduledItem = a.getScheduledItem();
                 LocalDate date = scheduledItem.getDate();
                 Item item = scheduledItem.getItem();
-                String dateFormatted = I18n.getI18nText(RecurringEventsI18nKeys.DateFormatted1, I18n.getI18nText(date.getMonth().name()), date.getDayOfMonth());
-                Label name = new Label(item.getName() + " - " + dateFormatted + (existing ? " (already booked)" : ""));
+                Label scheduledItemLabel = I18nControls.newLabel(new I18nSubKey("expression: i18n(this) + ' - {0}' " + (existing ? " + ' ([" + BookingI18nKeys.alreadyBooked + "])'" : ""), item), TimeFormat.formatDayMonthProperty(date));
                 int dailyRatePrice = workingBookingProperties.getDailyRatePrice();
                 totalPrice[0] += dailyRatePrice;
                 Label price = new Label(EventPriceFormatter.formatWithCurrency(dailyRatePrice, getEvent()));
@@ -258,13 +269,11 @@ final class Step2CheckoutSlide extends StepSlide {
                     ));
                 }
 
-                addRow(name, price, trashOption);
+                addRow(scheduledItemLabel, price, trashOption);
                 GridPane.setHalignment(trashOption, HPos.CENTER);
             });
-        }
-
-        if (Entities.samePrimaryKey(eventType, KnownEventType.STTP.getTypeId())) {
-            workingBookingProperties.updateAll();
+        } else { // Ex: STTP
+            //workingBookingProperties.updateAll();
             Label name = new Label(getEvent().getName() + (existing ? " - (already booked)" : ""));
             //TODO; calculate the price with the PriceCalculatorMethod using the list of attendance
             int price = workingBookingProperties.getTotal();
@@ -280,7 +289,7 @@ final class Step2CheckoutSlide extends StepSlide {
         WorkingBookingProperties workingBookingProperties = getWorkingBookingProperties();
         addTotalLine(
             BookingI18nKeys.TotalOnPreviousBooking, workingBookingProperties.formattedPreviousTotalProperty(),
-            BookingI18nKeys.Deposit, workingBookingProperties.formattedDepositProperty(),
+            EcommerceI18nKeys.Deposit, workingBookingProperties.formattedDepositProperty(),
             BookingI18nKeys.BalanceOnPreviousBooking, workingBookingProperties.formattedPreviousBalanceProperty()
         );
     }
@@ -288,9 +297,9 @@ final class Step2CheckoutSlide extends StepSlide {
     private void addNewTotalLine() {
         WorkingBookingProperties workingBookingProperties = getWorkingBookingProperties();
         addTotalLine(
-            BookingI18nKeys.TotalPrice, workingBookingProperties.formattedTotalProperty(),
-            BookingI18nKeys.Deposit, workingBookingProperties.formattedDepositProperty(),
-            BookingI18nKeys.GeneralBalance, workingBookingProperties.formattedBalanceProperty()
+            EcommerceI18nKeys.TotalPrice, workingBookingProperties.formattedTotalProperty(),
+            EcommerceI18nKeys.Deposit, workingBookingProperties.formattedDepositProperty(),
+            EcommerceI18nKeys.Balance, workingBookingProperties.formattedBalanceProperty()
         );
     }
 
@@ -305,9 +314,9 @@ final class Step2CheckoutSlide extends StepSlide {
     }
 
     private void addTotalLine(String col1I18n, Object col1Amount, String col2I18n, Object col2Amount, String col3I18n, Object col3Amount) {
-        Label col1Label = I18nControls.newLabel(col1I18n, col1Amount);
-        Label col2Label = I18nControls.newLabel(col2I18n, col2Amount);
-        Label col3Label = I18nControls.newLabel(col3I18n, col3Amount);
+        Label col1Label = I18nControls.newLabel(I18nKeys.embedInString("[0] {0}", I18nKeys.appendColons(col1I18n)), col1Amount);
+        Label col2Label = I18nControls.newLabel(I18nKeys.embedInString("[0] {0}", I18nKeys.appendColons(col2I18n)), col2Amount);
+        Label col3Label = I18nControls.newLabel(I18nKeys.embedInString("[0] {0}", I18nKeys.appendColons(col3I18n)), col3Amount);
         ColumnsPane totalPane = new ColumnsPane(col1Label, col2Label, col3Label);
         totalPane.setMaxWidth(Double.MAX_VALUE);
         totalPane.setPadding(new Insets(7));
@@ -358,9 +367,4 @@ final class Step2CheckoutSlide extends StepSlide {
                 }));
         }
     }
-
-    public void setBookAsGuestAllowed(boolean bookAsGuestAllowed) {
-        this.bookAsGuestAllowed = bookAsGuestAllowed;
-    }
-
 }

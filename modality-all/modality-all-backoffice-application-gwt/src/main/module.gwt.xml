@@ -353,6 +353,8 @@
     <source path="one/modality/ecommerce/backoffice/operations/entities/moneytransfer"/>
     <!--=========================< modality-ecommerce-client-i18n >=========================-->
     <source path="one/modality/ecommerce/client/i18n"/>
+    <!--====================< modality-ecommerce-client-workingbooking >====================-->
+    <source path="one/modality/ecommerce/client/workingbooking"/>
     <!--======================< modality-ecommerce-document-service >=======================-->
     <source path="one/modality/ecommerce/document/service"/>
     <source path="one/modality/ecommerce/document/service/events"/>
@@ -402,6 +404,8 @@
     <source path="one/modality/event/backoffice/events/eventselector"/>
     <!--=================< modality-event-client-activity-eventdependent >==================-->
     <source path="one/modality/event/client/activity/eventdependent"/>
+    <!--=========================< modality-event-client-booking >==========================-->
+    <source path="one/modality/event/client/booking"/>
     <!--=========================< modality-event-client-event-fx >=========================-->
     <source path="one/modality/event/client/event/fx"/>
     <!--=====================< modality-event-client-recurringevents >======================-->

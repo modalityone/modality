@@ -21,6 +21,7 @@ public interface Rate extends
     String perDay = "perDay";
     String perPerson = "perPerson";
     String price = "price";
+    String minDeposit = "minDeposit";
     String age1_max = "age1_max";
     String age1_price = "age1_price";
     String age1_discount = "age1_discount";
@@ -101,6 +102,14 @@ public interface Rate extends
 
     default Integer getPrice() {
         return getIntegerFieldValue(price);
+    }
+
+    default void setMinDeposit(Object value) {
+        setFieldValue(minDeposit, value);
+    }
+
+    default Integer getMinDeposit() {
+        return getIntegerFieldValue(minDeposit);
     }
 
     default void setAge1Max(Integer value) {
