@@ -20,7 +20,7 @@ public final class EventLifeCycle {
         if (isPastEvent(event))
             return false;
         LocalDateTime openingDate = event.getOpeningDate();
-        if (openingDate != null && Times.isFuture(openingDate.minusHours(2), Event.getEventClock()))
+        if (openingDate != null && Times.isFuture(openingDate.minusHours(1), Event.getEventClock()))
             return false;
         if (isKbs3Event(event)) {
             EventState state = event.getState();
