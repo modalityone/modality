@@ -26,6 +26,8 @@ public final class I18nFunction extends Function {
 
     @Override
     public Object evaluate(Object argument, DomainReader domainReader) {
+        if (argument == null)
+            return null;
         Object result = null, language = null;
         if (argument instanceof Object[]) {
             Object[] arguments = (Object[]) argument;
