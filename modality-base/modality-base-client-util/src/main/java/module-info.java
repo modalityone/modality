@@ -16,6 +16,7 @@ module modality.base.client.util {
     requires webfx.extras.styles.bootstrap;
     requires webfx.extras.type;
     requires webfx.extras.util.masterslave;
+    requires webfx.platform.async;
     requires webfx.platform.console;
     requires webfx.platform.util;
     requires webfx.stack.i18n;
@@ -23,6 +24,7 @@ module modality.base.client.util {
     requires webfx.stack.orm.entity;
     requires webfx.stack.orm.expression;
     requires webfx.stack.ui.dialog;
+    requires webfx.stack.ui.operation;
 
     // Exported packages
     exports one.modality.base.client.util.converters;
