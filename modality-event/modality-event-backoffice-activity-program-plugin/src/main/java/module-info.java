@@ -23,6 +23,7 @@ module modality.event.backoffice.activity.program.plugin {
     requires webfx.extras.util.layout;
     requires webfx.extras.util.masterslave;
     requires webfx.kit.util;
+    requires webfx.platform.async;
     requires webfx.platform.console;
     requires webfx.platform.util;
     requires webfx.platform.windowhistory;

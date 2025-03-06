@@ -102,10 +102,10 @@ final class ProgramView extends ModalitySlaveEditor<Event> {
         cancelButton.disableProperty().bind(hasNoChangesProperty);
 
         Button generateProgramButton = Bootstrap.largePrimaryButton(I18nControls.newButton(ProgramI18nKeys.GenerateProgram));
-        generateProgramButton.setOnAction(e -> ModalityDialog.showConfirmationDialog(ProgramI18nKeys.ProgramGenerationConfirmation, () -> programModel.generateProgram(generateProgramButton)));
+        generateProgramButton.setOnAction(e -> ModalityDialog.showConfirmationDialog(ProgramI18nKeys.ProgramGenerationConfirmation, programModel::generateProgram));
 
         Button deleteProgramButton = Bootstrap.largePrimaryButton(I18nControls.newButton(ProgramI18nKeys.DeleteProgram));
-        deleteProgramButton.setOnAction(e -> ModalityDialog.showConfirmationDialog(ProgramI18nKeys.DeleteProgramConfirmation, () -> programModel.deleteProgram(deleteProgramButton)));
+        deleteProgramButton.setOnAction(e -> ModalityDialog.showConfirmationDialog(ProgramI18nKeys.DeleteProgramConfirmation, programModel::deleteProgram));
 
         BooleanProperty programGeneratedProperty = programModel.programGeneratedProperty();
         generateProgramButton.visibleProperty().bind(programGeneratedProperty.not());

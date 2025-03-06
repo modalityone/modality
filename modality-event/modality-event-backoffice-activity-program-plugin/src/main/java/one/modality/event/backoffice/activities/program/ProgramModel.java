@@ -2,6 +2,7 @@ package one.modality.event.backoffice.activities.program;
 
 import dev.webfx.extras.util.OptimizedObservableListWrapper;
 import dev.webfx.kit.util.properties.ObservableLists;
+import dev.webfx.platform.async.Future;
 import dev.webfx.platform.console.Console;
 import dev.webfx.platform.util.collection.Collections;
 import dev.webfx.stack.orm.domainmodel.DataSourceModel;
@@ -21,7 +22,6 @@ import javafx.beans.property.SimpleObjectProperty;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.scene.control.Button;
-import javafx.scene.control.Labeled;
 import one.modality.base.client.mainframe.fx.FXMainFrameDialogArea;
 import one.modality.base.shared.entities.*;
 
@@ -51,7 +51,6 @@ final class ProgramModel {
     private final List<DayTemplate> initialWorkingDayTemplates = new ArrayList<>();
     private final ObservableList<DayTemplate> currentDayTemplates = new OptimizedObservableListWrapper<>();
     private final ObservableList<DayTemplateModel> dayTemplateModels = FXCollections.observableArrayList();
-
     {
         ObservableLists.bindConverted(dayTemplateModels, currentDayTemplates, dayTemplate -> new DayTemplateModel(dayTemplate, this));
     }
@@ -181,19 +180,21 @@ final class ProgramModel {
         updateStore.deleteEntity(dayTemplate);
     }
 
-    void generateProgram(Button generateProgramButton) {
+    Future<?> generateProgram() {
         UpdateStore localUpdateStore = UpdateStore.createAbove(entityStore);
         List<Timeline> newlyCreatedEventTimelines = new ArrayList<>();
         //Here, we take all the template timelines, and create the event timelines needed
         //We create an event timeline for all template timelines having distinct element on {item, startTime, endTime}
         dayTemplateModels.forEach(dayTemplateView ->
             dayTemplateView.generateProgram(newlyCreatedEventTimelines, localUpdateStore));
-        submitUpdateStoreChanges(localUpdateStore, generateProgramButton);
+        return submitUpdateStoreChanges(localUpdateStore);
     }
 
     void saveChanges(Button saveButton, Button cancelButton) {
         if (validateForm()) {
-            submitUpdateStoreChanges(updateStore, saveButton, cancelButton);
+            OperationUtil.turnOnButtonsWaitModeDuringExecution(
+                submitUpdateStoreChanges(updateStore),
+                saveButton, cancelButton);
         }
     }
 
@@ -201,49 +202,45 @@ final class ProgramModel {
         resetModelAndUiToInitial();
     }
 
-    void deleteProgram(Button deleteProgramButton) {
+    Future<?> deleteProgram() {
         UpdateStore localUpdateStore = UpdateStore.createAbove(entityStore);
 
         //Here we look for the teachings, audio and video scheduled Item related to this timeline and delete them
-        entityStore.<ScheduledItem>executeQuery(
-                new EntityStoreQuery("select id, item.family.code from ScheduledItem si where event=? order by name", new Object[]{getLoadedEvent()}))
-            .onFailure(Console::log)
-            .onSuccess(scheduledItems -> Platform.runLater(() -> {
-                //First we delete all the audios and videos scheduledItem
-                scheduledItems.forEach(currentScheduledItem -> {
-                    String scheduledItemFamilyCode = currentScheduledItem.getItem().getFamily().getCode();
-                    if (scheduledItemFamilyCode.equals(KnownItemFamily.AUDIO_RECORDING.getCode()) || scheduledItemFamilyCode.equals(KnownItemFamily.VIDEO.getCode()))
-                        localUpdateStore.deleteEntity(currentScheduledItem);
-                });
+        return entityStore.<ScheduledItem>executeQuery(
+            "select id, item.family.code from ScheduledItem si where event=? order by name", getLoadedEvent()
+        ).compose(scheduledItems -> {
+            //First we delete all the audios and videos scheduledItem
+            scheduledItems.forEach(currentScheduledItem -> {
+                String scheduledItemFamilyCode = currentScheduledItem.getItem().getFamily().getCode();
+                if (scheduledItemFamilyCode.equals(KnownItemFamily.AUDIO_RECORDING.getCode()) || scheduledItemFamilyCode.equals(KnownItemFamily.VIDEO.getCode()))
+                    localUpdateStore.deleteEntity(currentScheduledItem);
+            });
 
-                scheduledItems.forEach(currentScheduledItem -> {
-                    String code = currentScheduledItem.getItem().getFamily().getCode();
-                    if (code.equals(KnownItemFamily.TEACHING.getCode()))
-                        localUpdateStore.deleteEntity(currentScheduledItem);
-                });
+            scheduledItems.forEach(currentScheduledItem -> {
+                String code = currentScheduledItem.getItem().getFamily().getCode();
+                if (code.equals(KnownItemFamily.TEACHING.getCode()))
+                    localUpdateStore.deleteEntity(currentScheduledItem);
+            });
 
-                //then we put the reference to the event timeline to null on the template timeline
-                dayTemplateModels.forEach(dayTemplateView -> dayTemplateView.deleteTimelines(localUpdateStore));
-                submitUpdateStoreChanges(localUpdateStore, deleteProgramButton);
-            }));
+            //then we put the reference to the event timeline to null on the template timeline
+            dayTemplateModels.forEach(dayTemplateView -> dayTemplateView.deleteTimelines(localUpdateStore));
+            return submitUpdateStoreChanges(localUpdateStore);
+        });
     }
 
 
-    void submitUpdateStoreChanges(UpdateStore updateStore, Labeled... buttons) {
-        OperationUtil.turnOnButtonsWaitModeDuringExecution(
-            updateStore.submitChanges()
-                .onFailure(x -> {
-                    DialogContent dialog = DialogContent.createConfirmationDialog("Error", "Operation failed", x.getMessage());
-                    dialog.setOk();
-                    Platform.runLater(() -> {
-                        DialogBuilderUtil.showModalNodeInGoldLayout(dialog, FXMainFrameDialogArea.getDialogArea());
-                        dialog.getPrimaryButton().setOnAction(a -> dialog.getDialogCallback().closeDialog());
-                    });
-                    Console.log(x);
-                })
-                .onSuccess(x -> Platform.runLater(this::resetModelAndUiToInitial)),
-            buttons
-        );
+    Future<?> submitUpdateStoreChanges(UpdateStore updateStore) {
+        return updateStore.submitChanges()
+            .onFailure(x -> {
+                DialogContent dialog = DialogContent.createConfirmationDialog("Error", "Operation failed", x.getMessage());
+                dialog.setOk();
+                Platform.runLater(() -> {
+                    DialogBuilderUtil.showModalNodeInGoldLayout(dialog, FXMainFrameDialogArea.getDialogArea());
+                    dialog.getPrimaryButton().setOnAction(a -> dialog.getDialogCallback().closeDialog());
+                });
+                Console.log(x);
+            })
+            .onSuccess(x -> Platform.runLater(this::resetModelAndUiToInitial));
     }
 
     private boolean validateForm() {
