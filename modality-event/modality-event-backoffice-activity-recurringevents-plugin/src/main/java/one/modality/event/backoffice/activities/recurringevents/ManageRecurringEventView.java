@@ -460,12 +460,16 @@ final class ManageRecurringEventView {
                     //We try to load the image from cloudinary if it exists
                     loadEventImageIfExists();
                 }
-                saveButton.disableProperty().bind(updateStoreOrPictureHasChanged.not());
-                cancelButton.disableProperty().bind(updateStoreOrPictureHasChanged.not());
-                trashImage.visibleProperty().bind(isPictureDisplayed);
-                deleteButton.disableProperty().bind(isEventDeletable.not());
                 currentObservedEvent = currentEditedEvent;
+                bindButtons();
             }));
+    }
+
+    private void bindButtons() {
+        saveButton.disableProperty().bind(updateStoreOrPictureHasChanged.not());
+        cancelButton.disableProperty().bind(updateStoreOrPictureHasChanged.not());
+        trashImage.visibleProperty().bind(isPictureDisplayed);
+        deleteButton.disableProperty().bind(isEventDeletable.not());
     }
 
     /**
@@ -1084,6 +1088,9 @@ final class ManageRecurringEventView {
     }
 
     private void submitUpdateStoreChanges() {
+        // Unbinding buttons, so they can be displayed as disabled during the process
+        saveButton.disableProperty().unbind();
+        cancelButton.disableProperty().unbind();
         OperationUtil.turnOnButtonsWaitModeDuringExecution(
             updateStore.submitChanges()
                 .onFailure(x -> {
@@ -1105,6 +1112,8 @@ final class ManageRecurringEventView {
                     eventVisualMapper.requestSelectedEntity(currentEditedEvent);
                     // displayEventDetails(currentEditedEvent);
                 }))
+                // Reestablishing buttons binding
+                .onComplete(ar -> Platform.runLater(this::bindButtons))
             , saveButton, cancelButton);
     }
 
