@@ -36,6 +36,7 @@ import dev.webfx.stack.ui.controls.dialog.DialogBuilderUtil;
 import dev.webfx.stack.ui.controls.dialog.DialogContent;
 import dev.webfx.stack.ui.dialog.DialogCallback;
 import dev.webfx.stack.ui.dialog.DialogUtil;
+import dev.webfx.stack.ui.operation.OperationUtil;
 import dev.webfx.stack.ui.validation.ValidationSupport;
 import javafx.application.Platform;
 import javafx.beans.InvalidationListener;
@@ -714,7 +715,7 @@ final class ManageRecurringEventView {
                     updateStore.cancelChanges();
                     teachingsScheduledItemsReadFromDatabase.forEach(updateStore::deleteEntity);
                     updateStore.deleteEntity(currentEditedEvent);
-                    updateStore.submitChanges()
+                    return updateStore.submitChanges()
                         .onFailure(x -> Platform.runLater(() -> {
                             areWeDeleting = false;
                             Text infoText = I18n.newText(RecurringEventsI18nKeys.ErrorWhileDeletingEvent);
@@ -1083,31 +1084,31 @@ final class ManageRecurringEventView {
     }
 
     private void submitUpdateStoreChanges() {
-        updateStore.submitChanges()
-            .onFailure(x -> {
-                DialogContent dialog = DialogContent.createConfirmationDialog("Error", "Operation failed", x.getMessage());
-                dialog.setOk();
-                Platform.runLater(() -> {
-                    DialogBuilderUtil.showModalNodeInGoldLayout(dialog, FXMainFrameDialogArea.getDialogArea());
-                    dialog.getPrimaryButton().setOnAction(a -> dialog.getDialogCallback().closeDialog());
-                });
-                Console.log(x);
-            })
-            .onSuccess(x -> Platform.runLater(() -> {
-                Console.log("Submit successful");
-                Object imageTag = ModalityCloudinary.getEventImageTag(Entities.getPrimaryKey(currentEditedEvent));
-                deleteCloudPictureIfNecessary(imageTag);
-                uploadCloudPictureIfNecessary(imageTag);
-                isCloudPictureToBeDeleted.setValue(false);
-                isCloudPictureToBeUploaded.setValue(false);
-                cloudPictureFileToUpload = null;
-                eventVisualMapper.requestSelectedEntity(currentEditedEvent);
-                // displayEventDetails(currentEditedEvent);
-            }));
+        OperationUtil.turnOnButtonsWaitModeDuringExecution(
+            updateStore.submitChanges()
+                .onFailure(x -> {
+                    DialogContent dialog = DialogContent.createConfirmationDialog("Error", "Operation failed", x.getMessage());
+                    dialog.setOk();
+                    Platform.runLater(() -> {
+                        DialogBuilderUtil.showModalNodeInGoldLayout(dialog, FXMainFrameDialogArea.getDialogArea());
+                        dialog.getPrimaryButton().setOnAction(a -> dialog.getDialogCallback().closeDialog());
+                    });
+                    Console.log(x);
+                })
+                .onSuccess(x -> Platform.runLater(() -> {
+                    Object imageTag = ModalityCloudinary.getEventImageTag(Entities.getPrimaryKey(currentEditedEvent));
+                    deleteCloudPictureIfNecessary(imageTag);
+                    uploadCloudPictureIfNecessary(imageTag);
+                    isCloudPictureToBeDeleted.setValue(false);
+                    isCloudPictureToBeUploaded.setValue(false);
+                    cloudPictureFileToUpload = null;
+                    eventVisualMapper.requestSelectedEntity(currentEditedEvent);
+                    // displayEventDetails(currentEditedEvent);
+                }))
+            , saveButton, cancelButton);
     }
 
     /**
-     * This method is used to sort the list workingScheduledItems by Date
      * This method is used to sort the list workingScheduledItems by Date
      */
     private void sortTeachingWorkingScheduledItemsByDate() {
