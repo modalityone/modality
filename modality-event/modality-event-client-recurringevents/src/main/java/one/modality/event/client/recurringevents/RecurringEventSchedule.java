@@ -227,7 +227,7 @@ public class RecurringEventSchedule implements BookableDatesUi {
                     startTime = timeline.getStartTime();
             }
             if (startTime != null) {
-                hourText.setText(I18n.getI18nText(RecurringEventsI18nKeys.AtTime0, startTime.toString()));
+                I18n.bindI18nProperties(hourText, RecurringEventsI18nKeys.AtTime1, startTime.toString());
             }
             scheduledItemBoxes.put(date, this);
             containerVBox.setOnMouseClicked(event -> {
