@@ -1,7 +1,7 @@
 package one.modality.event.client.recurringevents;
 
 import dev.webfx.extras.panes.ColumnsPane;
-import dev.webfx.extras.time.format.TimeFormat;
+import dev.webfx.extras.time.format.LocalizedTimeFormat;
 import dev.webfx.kit.util.properties.FXProperties;
 import dev.webfx.kit.util.properties.ObservableLists;
 import dev.webfx.platform.util.collection.HashList;
@@ -22,6 +22,7 @@ import one.modality.event.client.booking.BookableDatesUi;
 
 import java.time.LocalDate;
 import java.time.LocalTime;
+import java.time.format.FormatStyle;
 import java.util.*;
 import java.util.function.Consumer;
 import java.util.function.Function;
@@ -212,7 +213,7 @@ public class RecurringEventSchedule implements BookableDatesUi {
             dayAndCommentHBox.setSpacing(10);
             dayAndCommentHBox.setAlignment(Pos.CENTER);
             LocalDate date = scheduledItem.getDate();
-            dayText.textProperty().bind(TimeFormat.formatDayMonthProperty(date));
+            dayText.textProperty().bind(LocalizedTimeFormat.formatMonthDayProperty(date, FormatStyle.FULL));
             dayText.fontProperty().bind(dayFontProperty);
             /* Commented for now as it's not used and returns an empty label that however shift the date (not centered anymore)
             Node comment = computeNodeForExistingBookedDateFunction.apply(date);

@@ -346,8 +346,6 @@
     <source path="dev/webfx/extras/theme/text"/>
     <!--============================< webfx-extras-time-format >============================-->
     <source path="dev/webfx/extras/time/format"/>
-    <source path="dev/webfx/extras/time/format/spi"/>
-    <source path="dev/webfx/extras/time/format/spi/impl"/>
     <!--===============================< webfx-extras-type >================================-->
     <source path="dev/webfx/extras/type"/>
     <!--===============================< webfx-extras-util >================================-->
@@ -460,6 +458,7 @@
     <!--==============================< webfx-platform-async >==============================-->
     <source path="dev/webfx/platform/async"/>
     <source path="dev/webfx/platform/async/impl"/>
+    <source path="dev/webfx/platform/async/util"/>
     <!--==============================< webfx-platform-blob >===============================-->
     <source path="dev/webfx/platform/blob"/>
     <source path="dev/webfx/platform/blob/spi"/>
@@ -700,8 +699,6 @@
     <source path="dev/webfx/stack/i18n/spi/impl/ast"/>
     <!--===========================< webfx-stack-i18n-controls >============================-->
     <source path="dev/webfx/stack/i18n/controls"/>
-    <!--==========================< webfx-stack-i18n-time-plugin >==========================-->
-    <source path="dev/webfx/stack/i18n/time"/>
     <!--====================< webfx-stack-orm-datasourcemodel-service >=====================-->
     <source path="dev/webfx/stack/orm/datasourcemodel/service"/>
     <source path="dev/webfx/stack/orm/datasourcemodel/service/spi"/>

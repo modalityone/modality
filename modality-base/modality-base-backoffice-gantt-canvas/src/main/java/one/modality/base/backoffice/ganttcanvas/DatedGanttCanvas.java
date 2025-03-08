@@ -11,7 +11,7 @@ import dev.webfx.extras.theme.layout.FXLayoutMode;
 import dev.webfx.extras.theme.luminance.FXLuminanceMode;
 import dev.webfx.extras.theme.text.TextTheme;
 import dev.webfx.extras.time.YearWeek;
-import dev.webfx.extras.time.format.TimeFormat;
+import dev.webfx.extras.time.format.LocalizedTimeFormat;
 import dev.webfx.extras.time.layout.MultiLayerLocalDateLayout;
 import dev.webfx.extras.time.layout.TimeLayout;
 import dev.webfx.extras.time.layout.canvas.MultiLayerLocalDateCanvasDrawer;
@@ -51,6 +51,7 @@ import one.modality.base.client.gantt.fx.visibility.FXGanttVisibility;
 import one.modality.base.client.time.theme.TimeTheme;
 
 import java.time.*;
+import java.time.format.TextStyle;
 import java.time.temporal.ChronoUnit;
 
 /**
@@ -116,7 +117,7 @@ public final class DatedGanttCanvas implements TimeWindow<LocalDate> {
         FXProperties.runOnPropertyChange(this::markCanvasAsDirty, FXGanttHighlight.ganttHighlightedDayProperty());
 
         // Updating i18n texts when necessary
-        FXProperties.runNowAndOnPropertyChange(this::updateI18nTexts, I18n.dictionaryProperty());
+        FXProperties.runNowAndOnPropertyChange(this::updateI18nTexts, LocalizedTimeFormat.localeProperty());
 
         FXGanttHighlight.addDayHighlight(daysLayer, globalCanvasDrawer);
 
@@ -193,10 +194,10 @@ public final class DatedGanttCanvas implements TimeWindow<LocalDate> {
 
     private void updateI18nTexts() {
         for (int i = 0; i < 12; i++)
-            i18nMonths[i] = TimeFormat.formatMonth(Month.of(i + 1));
+            i18nMonths[i] = LocalizedTimeFormat.formatMonth(Month.of(i + 1), TextStyle.FULL);
         i18nWeek = I18n.getI18nText("Week");
         for (int i = 0; i < 7; i++)
-            i18nDaysOfWeek[i] = TimeFormat.formatDayOfWeek(DayOfWeek.of(i + 1));
+            i18nDaysOfWeek[i] = LocalizedTimeFormat.formatDayOfWeek(DayOfWeek.of(i + 1), TextStyle.FULL);
         markCanvasAsDirty();
     }
 

@@ -4,7 +4,7 @@ import dev.webfx.extras.panes.ColumnsPane;
 import dev.webfx.extras.panes.FlipPane;
 import dev.webfx.extras.panes.MonoPane;
 import dev.webfx.extras.styles.bootstrap.Bootstrap;
-import dev.webfx.extras.time.format.TimeFormat;
+import dev.webfx.extras.time.format.LocalizedTimeFormat;
 import dev.webfx.extras.util.layout.Layouts;
 import dev.webfx.kit.util.properties.FXProperties;
 import dev.webfx.kit.util.properties.ObservableLists;
@@ -48,6 +48,7 @@ import one.modality.event.frontoffice.activities.booking.process.account.Checkou
 import one.modality.event.frontoffice.activities.booking.process.event.BookEventActivity;
 
 import java.time.LocalDate;
+import java.time.format.FormatStyle;
 import java.util.stream.Stream;
 
 final class Step2CheckoutSlide extends StepSlide {
@@ -248,7 +249,7 @@ final class Step2CheckoutSlide extends StepSlide {
                 ScheduledItem scheduledItem = a.getScheduledItem();
                 LocalDate date = scheduledItem.getDate();
                 Item item = scheduledItem.getItem();
-                Label scheduledItemLabel = I18nControls.newLabel(new I18nSubKey("expression: i18n(this) + ' - {0}' " + (existing ? " + ' ([" + BookingI18nKeys.alreadyBooked + "])'" : ""), item), TimeFormat.formatDayMonthProperty(date));
+                Label scheduledItemLabel = I18nControls.newLabel(new I18nSubKey("expression: i18n(this) + ' - {0}' " + (existing ? " + ' ([" + BookingI18nKeys.alreadyBooked + "])'" : ""), item), LocalizedTimeFormat.formatMonthDayProperty(date, FormatStyle.FULL));
                 int dailyRatePrice = workingBookingProperties.getDailyRatePrice();
                 totalPrice[0] += dailyRatePrice;
                 Label price = new Label(EventPriceFormatter.formatWithCurrency(dailyRatePrice, getEvent()));

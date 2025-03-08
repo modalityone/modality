@@ -13,6 +13,7 @@ module modality.base.client.application {
     requires modality.base.client.icons;
     requires modality.base.client.profile.fx;
     requires webfx.extras.theme;
+    requires webfx.extras.time.format;
     requires webfx.extras.util.layout;
     requires webfx.extras.util.scene;
     requires webfx.kit.util;
