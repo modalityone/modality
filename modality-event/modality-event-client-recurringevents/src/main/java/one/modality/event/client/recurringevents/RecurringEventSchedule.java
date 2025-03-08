@@ -213,7 +213,7 @@ public class RecurringEventSchedule implements BookableDatesUi {
             dayAndCommentHBox.setSpacing(10);
             dayAndCommentHBox.setAlignment(Pos.CENTER);
             LocalDate date = scheduledItem.getDate();
-            dayText.textProperty().bind(LocalizedTimeFormat.formatMonthDayProperty(date, FormatStyle.FULL));
+            dayText.textProperty().bind(LocalizedTimeFormat.formatMonthDayProperty(date, FormatStyle.LONG));
             dayText.fontProperty().bind(dayFontProperty);
             /* Commented for now as it's not used and returns an empty label that however shift the date (not centered anymore)
             Node comment = computeNodeForExistingBookedDateFunction.apply(date);
