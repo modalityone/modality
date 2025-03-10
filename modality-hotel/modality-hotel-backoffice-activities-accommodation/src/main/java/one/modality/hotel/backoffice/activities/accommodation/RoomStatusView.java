@@ -3,6 +3,7 @@ package one.modality.hotel.backoffice.activities.accommodation;
 import dev.webfx.extras.theme.FontDef;
 import dev.webfx.extras.theme.luminance.LuminanceTheme;
 import dev.webfx.extras.theme.text.TextTheme;
+import dev.webfx.extras.time.format.LocalizedTime;
 import dev.webfx.kit.util.properties.FXProperties;
 import dev.webfx.stack.orm.reactive.entities.dql_to_entities.ReactiveEntitiesMapper;
 import dev.webfx.stack.routing.activity.impl.elementals.activeproperty.HasActiveProperty;
@@ -20,6 +21,7 @@ import javafx.scene.control.Label;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.layout.*;
 import javafx.scene.text.FontWeight;
+import one.modality.base.client.time.BackOfficeTimeFormats;
 import one.modality.base.shared.domainmodel.formatters.PriceFormatter;
 import one.modality.base.shared.entities.Item;
 import one.modality.base.shared.entities.Rate;
@@ -38,7 +40,6 @@ import static dev.webfx.stack.orm.dql.DqlStatement.where;
 
 public class RoomStatusView {
 
-    private static final DateTimeFormatter DATE_FORMATTER = DateTimeFormatter.ofPattern("dd-MM-yy");
     private static final FontDef TOP_ROW_FONT = FontDef.font(FontWeight.BOLD, 15);
     private static final FontDef RATE_FONT = FontDef.font(FontWeight.NORMAL, 12);
 
@@ -47,6 +48,7 @@ public class RoomStatusView {
     private final ObservableList<Rate> rates = FXCollections.observableArrayList();
     private final ObjectProperty<LocalDate> fromProperty = new SimpleObjectProperty<>();
     public ObjectProperty<LocalDate> fromProperty() { return fromProperty;}
+    private final DateTimeFormatter dateFormatter = LocalizedTime.dateFormatter(BackOfficeTimeFormats.ROOM_STATUS_DATE_FORMAT);
 
     private final ObjectProperty<LocalDate> toProperty = new SimpleObjectProperty<>();
     public ObjectProperty<LocalDate> toProperty() { return toProperty; }
@@ -178,8 +180,8 @@ public class RoomStatusView {
         return label;
     }
 
-    private static String formatDate(LocalDate date) {
-        return DATE_FORMATTER.format(date);
+    private String formatDate(LocalDate date) {
+        return dateFormatter.format(date);
     }
 
     private static String priceToString(int price) {
@@ -189,8 +191,8 @@ public class RoomStatusView {
     private HBox createTopRow() {
         Label topLeftLabel = new Label("Room status - period view");
 
-        String fromDateString = DATE_FORMATTER.format(fromProperty.get());
-        String toDateString = DATE_FORMATTER.format(toProperty.get());
+        String fromDateString = dateFormatter.format(fromProperty.get());
+        String toDateString = dateFormatter.format(toProperty.get());
         Label topRightLabel = new Label("From " + fromDateString + " to " + toDateString);
         TextTheme.createSecondaryTextFacet(topLeftLabel)
                 .requestedFont(TOP_ROW_FONT)

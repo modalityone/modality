@@ -8,6 +8,7 @@ import dev.webfx.extras.switches.Switch;
 import dev.webfx.extras.theme.Facet;
 import dev.webfx.extras.theme.shape.ShapeTheme;
 import dev.webfx.extras.theme.text.TextTheme;
+import dev.webfx.extras.time.format.LocalizedTime;
 import dev.webfx.extras.time.pickers.DatePicker;
 import dev.webfx.extras.time.pickers.DatePickerOptions;
 import dev.webfx.extras.util.control.Controls;
@@ -93,6 +94,7 @@ import java.util.stream.Collectors;
 
 import static dev.webfx.extras.webtext.HtmlTextEditor.Mode.BASIC;
 import static dev.webfx.extras.webtext.HtmlTextEditor.Mode.STANDARD;
+import static one.modality.base.client.time.BackOfficeTimeFormats.*;
 
 /**
  * @author David Hello
@@ -418,8 +420,8 @@ final class ManageRecurringEventView {
                     //We read and format the opening date value
                     LocalDateTime openingDate = e.getOpeningDate();
                     if (openingDate != null) {
-                        DateTimeFormatter dateFormatter = DateTimeFormatter.ofPattern("dd-MM-yyyy");
-                        DateTimeFormatter timeFormatter = DateTimeFormatter.ofPattern("HH:mm");
+                        DateTimeFormatter dateFormatter = LocalizedTime.dateFormatter(RECURRING_EVENT_OPENING_DATE_FORMAT);
+                        DateTimeFormatter timeFormatter = LocalizedTime.timeFormatter(RECURRING_EVENT_OPENING_TIME_FORMAT);
                         bookingOpeningDateTextField.setText(openingDate.format(dateFormatter));
                         bookingOpeningTimeTextField.setText(openingDate.format(timeFormatter));
                     }
@@ -1234,7 +1236,8 @@ final class ManageRecurringEventView {
          */
         private BorderPane drawScheduledItem(ScheduledItem scheduledItem) {
             LocalDate date = scheduledItem.getDate();
-            Text dateText = new Text(date.format(DateTimeFormatter.ofPattern("MMM dd")));
+            Text dateText = new Text();
+            dateText.textProperty().bind(LocalizedTime.formatMonthDayProperty(date, RECURRING_EVENT_SCHEDULED_ITEM_DATE_FORMAT));
 
             SVGPath trashDate = SvgIcons.createTrashSVGPath();
             Facet facet = ShapeTheme.createSecondaryShapeFacet(trashDate).style();
@@ -1268,9 +1271,9 @@ final class ManageRecurringEventView {
             if (scheduledItem.getStartTime() == null) {
                 currentScheduleItemStartTime.setPromptText("HH:mm");
             } else if (scheduledItem.getStartTime().equals(defaultStartTime)) {
-                currentScheduleItemStartTime.setPromptText(scheduledItem.getStartTime().format(DateTimeFormatter.ofPattern("HH:mm")));
+                currentScheduleItemStartTime.setPromptText(LocalizedTime.formatLocalTime(scheduledItem.getStartTime(), RECURRING_EVENT_SCHEDULED_ITEM_TIME_FORMAT));
             } else {
-                currentScheduleItemStartTime.setText(scheduledItem.getStartTime().format(DateTimeFormatter.ofPattern("HH:mm")));
+                currentScheduleItemStartTime.setText(LocalizedTime.formatLocalTime(scheduledItem.getStartTime(), RECURRING_EVENT_SCHEDULED_ITEM_TIME_FORMAT));
             }
             BorderPane currentLineBorderPane = new BorderPane();
             BorderPane.setMargin(dateText, new Insets(0, 20, 0, 10));

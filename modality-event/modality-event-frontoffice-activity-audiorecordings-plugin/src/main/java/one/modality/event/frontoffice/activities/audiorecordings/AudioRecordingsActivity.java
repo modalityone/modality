@@ -52,10 +52,10 @@ final class AudioRecordingsActivity extends ViewDomainActivityBase {
                        //We look if there are published audio ScheduledItem of type audio, whose bookableScheduledItem has  been booked
                        " (exists(select ScheduledItem where item.family.code=? and published and bookableScheduledItem.(event=coalesce(dl.document.event.repeatedEvent, dl.document.event) and item=dl.item))) as published " +
                        //We check if the user has booked, not cancelled and paid the recordings
-                       " from DocumentLine dl where !cancelled  and dl.document.(person=? and confirmed and price_balance<=0) " +
+                       " from DocumentLine dl where !cancelled and dl.document.(person=? and confirmed and price_balance<=0) " +
                        " and dl.document.event.(repeatedEvent = null or repeatAudio)" +
                        //we check if :
-                       " and ("+
+                       " and (" +
                        // 1/ there is a ScheduledItem of audio family type whose bookableScheduledItem has been booked (KBS3 setup)
                        " exists (select ScheduledItem audioSi where item.family.code=? and exists(select Attendance where documentLine=dl and scheduledItem=audioSi.bookableScheduledItem))" +
                        // 2/ Or KBS3 / KBS2 setup (this allows to display the audios that have been booked in the past with KBS2 events, event if we can't display them)
@@ -67,6 +67,7 @@ final class AudioRecordingsActivity extends ViewDomainActivityBase {
             }
         }, FXUserPersonId.userPersonIdProperty());
     }
+
     @Override
     public Node buildUi() { // Reminder: called only once (rebuild = bad UX) => UI is reacting to parameter changes
 

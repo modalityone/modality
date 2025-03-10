@@ -6,6 +6,7 @@ import dev.webfx.extras.panes.ScalePane;
 import dev.webfx.extras.player.Player;
 import dev.webfx.extras.player.audio.javafxmedia.JavaFXMediaAudioPlayer;
 import dev.webfx.extras.styles.bootstrap.Bootstrap;
+import dev.webfx.extras.time.format.LocalizedTime;
 import dev.webfx.extras.util.control.Controls;
 import dev.webfx.extras.webtext.HtmlText;
 import dev.webfx.kit.util.properties.FXProperties;
@@ -47,12 +48,12 @@ import javafx.scene.text.TextAlignment;
 import javafx.stage.Screen;
 import one.modality.base.client.cloudinary.ModalityCloudinary;
 import one.modality.base.client.icons.SvgIcons;
+import one.modality.base.client.time.FrontOfficeTimeFormats;
 import one.modality.base.frontoffice.utility.page.FOPageUtil;
 import one.modality.base.shared.entities.*;
 import one.modality.crm.shared.services.authn.fx.FXUserPersonId;
 
 import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -234,9 +235,10 @@ final class EventAudioPlaylistActivity extends ViewDomainActivityBase {
                     }));
                 LocalDateTime audioExpirationDate = event.getAudioExpirationDate();
                 if (audioExpirationDate != null) {
-                    dateFormattedProperty.set(audioExpirationDate.format(DateTimeFormatter.ofPattern("d MMMM, yyyy")));
+                    dateFormattedProperty.bind(LocalizedTime.formatLocalDateProperty(audioExpirationDate, FrontOfficeTimeFormats.AUDIO_PLAYLIST_DATE_FORMAT));
                     audioExpirationLabel.setVisible(true);
                 } else {
+                    FXProperties.setEvenIfBound(dateFormattedProperty, null);
                     audioExpirationLabel.setVisible(false);
                 }
 

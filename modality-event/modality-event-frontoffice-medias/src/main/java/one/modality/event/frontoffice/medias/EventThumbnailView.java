@@ -27,7 +27,6 @@ import one.modality.base.client.icons.SvgIcons;
 import one.modality.base.shared.entities.Event;
 
 import java.time.LocalDateTime;
-import java.time.LocalTime;
 
 /**
  * @author Bruno Salmon
@@ -129,7 +128,7 @@ public final class EventThumbnailView {
                 if (vodExpirationDate != null && nowInEventTimezone.isAfter(vodExpirationDate))
                     availabilityType = AvailabilityType.EXPIRED;
                     //Case of the livestream only, we expired it when the event is finished
-                else if (vodExpirationDate == null && nowInEventTimezone.isAfter(LocalDateTime.of(event.getEndDate(), LocalTime.of(23, 59, 59))))
+                else if (vodExpirationDate == null && nowInEventTimezone.isAfter(event.getEndDate().atTime(23, 59, 59)))
                     availabilityType = AvailabilityType.EXPIRED;
                 else if (vodExpirationDate == null && event.getLivestreamUrl() == null) {
                     //If the vodExpirationDate is set to null, it means the event is livestream Only, we check if we have a livestream url defined

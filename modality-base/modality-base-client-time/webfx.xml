@@ -14,7 +14,4 @@
         <provider interface="dev.webfx.platform.boot.spi.ApplicationJob">one.modality.base.client.time.TimeRenderersRegistererJob</provider>
     </providers>
 
-    <i18n javaKeysClass="one.modality.base.client.time.TimeI18nKeys"/>
-
-
 </project>

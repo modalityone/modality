@@ -2,12 +2,14 @@ package one.modality.hotel.backoffice.activities.accommodation;
 
 import dev.webfx.extras.theme.FontDef;
 import dev.webfx.extras.theme.text.TextTheme;
+import dev.webfx.extras.time.format.LocalizedTime;
 import javafx.geometry.Pos;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.VBox;
 import javafx.scene.text.FontWeight;
+import one.modality.base.client.time.BackOfficeTimeFormats;
 
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
@@ -15,12 +17,11 @@ import java.time.format.DateTimeParseException;
 
 public class RoomStatusDateSelectionPane extends VBox {
 
-    private static final DateTimeFormatter DATE_FORMATTER = DateTimeFormatter.ofPattern("dd-MM-uu");
-
     private static final FontDef SELECT_PERIOD_FONT = FontDef.font(FontWeight.BOLD, 15);
 
     private final TextField fromTextField;
     private final TextField toTextField;
+    private final DateTimeFormatter dateFormatter = LocalizedTime.dateFormatter(BackOfficeTimeFormats.ROOM_STATUS_DATE_FORMAT);
 
     public RoomStatusDateSelectionPane() {
         setAlignment(Pos.CENTER);
@@ -30,7 +31,7 @@ public class RoomStatusDateSelectionPane extends VBox {
                 .requestedFont(SELECT_PERIOD_FONT)
                 .style();
 
-        String todayDateText = DATE_FORMATTER.format(LocalDate.now());
+        String todayDateText = dateFormatter.format(LocalDate.now());
 
         GridPane fromToGridPane = new GridPane();
         Label fromLabel = new Label("From");
@@ -54,7 +55,7 @@ public class RoomStatusDateSelectionPane extends VBox {
     public LocalDate getFrom() {
         String text = fromTextField.getText();
         try {
-            return LocalDate.parse(text, DATE_FORMATTER);
+            return LocalDate.parse(text, dateFormatter);
         } catch (DateTimeParseException e) {
             return LocalDate.parse("2022-01-01");
         }
@@ -63,7 +64,7 @@ public class RoomStatusDateSelectionPane extends VBox {
     public LocalDate getTo() {
         String text = toTextField.getText();
         try {
-            return LocalDate.parse(text, DATE_FORMATTER);
+            return LocalDate.parse(text, dateFormatter);
         } catch (DateTimeParseException e) {
             return LocalDate.now().atStartOfDay().toLocalDate();
         }

@@ -10,6 +10,7 @@ module modality.base.client.entities {
     requires javafx.controls;
     requires javafx.graphics;
     requires modality.base.client.presentationmodel;
+    requires modality.base.client.time;
     requires modality.base.shared.entities;
     requires webfx.extras.time.format;
     requires webfx.extras.type;

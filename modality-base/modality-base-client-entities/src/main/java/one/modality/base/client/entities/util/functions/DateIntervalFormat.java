@@ -1,15 +1,15 @@
 package one.modality.base.client.entities.util.functions;
 
-import dev.webfx.extras.time.format.LocalizedTimeFormat;
+import dev.webfx.extras.time.format.LocalizedTime;
 import dev.webfx.extras.type.PrimType;
 import dev.webfx.extras.type.Type;
 import dev.webfx.platform.util.time.Times;
 import dev.webfx.stack.orm.expression.lci.DomainReader;
 import dev.webfx.stack.orm.expression.terms.function.Function;
+import one.modality.base.client.time.BackOfficeTimeFormats;
 
 import java.time.LocalDate;
 import java.time.Month;
-import java.time.format.TextStyle;
 
 /**
  * @author Bruno Salmon
@@ -33,7 +33,7 @@ public final class DateIntervalFormat extends Function {
 
             int day1 = date1.getDayOfMonth();
             Month month1 = date1.getMonth();
-            String month1Name = LocalizedTimeFormat.formatMonth(month1, TextStyle.FULL);
+            String month1Name = LocalizedTime.formatMonth(month1, BackOfficeTimeFormats.DATE_INTERVAL_MONTH_FORMAT);
             int day2 = date2.getDayOfMonth();
             Month month2 = date2.getMonth();
             int year2 = date2.getYear();
@@ -44,7 +44,7 @@ public final class DateIntervalFormat extends Function {
                     sb.append('-').append(day2);
                 sb.append(' ').append(month1Name);
             } else
-                sb.append(day1).append(' ').append(month1Name).append(" - ").append(day2).append(' ').append(LocalizedTimeFormat.formatMonth(month2, TextStyle.FULL));
+                sb.append(day1).append(' ').append(month1Name).append(" - ").append(day2).append(' ').append(LocalizedTime.formatMonth(month2, BackOfficeTimeFormats.DATE_INTERVAL_MONTH_FORMAT));
             if (year2 != LocalDate.now().getYear())
                 sb.append(' ').append(year2);
             return sb.toString();

@@ -13,6 +13,7 @@ module modality.event.backoffice.activity.recurringevents.plugin {
     requires modality.base.client.icons;
     requires modality.base.client.mainframe.fx;
     requires modality.base.client.tile;
+    requires modality.base.client.time;
     requires modality.base.client.util;
     requires modality.base.shared.entities;
     requires modality.crm.backoffice.organization.fx;
@@ -23,6 +24,7 @@ module modality.event.backoffice.activity.recurringevents.plugin {
     requires webfx.extras.styles.bootstrap;
     requires webfx.extras.switches;
     requires webfx.extras.theme;
+    requires webfx.extras.time.format;
     requires webfx.extras.time.pickers;
     requires webfx.extras.util.control;
     requires webfx.extras.util.layout;

@@ -1,6 +1,7 @@
 package one.modality.crm.client.authn.login.ui.gateway.signup;
 
 import dev.webfx.extras.styles.bootstrap.Bootstrap;
+import dev.webfx.extras.time.format.LocalizedTime;
 import dev.webfx.extras.util.control.Controls;
 import dev.webfx.extras.util.control.HtmlInputAutocomplete;
 import dev.webfx.stack.authn.login.ui.spi.impl.gateway.UiLoginGatewayBase;
@@ -25,13 +26,11 @@ import javafx.scene.layout.GridPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import one.modality.base.client.i18n.ModalityI18nKeys;
+import one.modality.base.client.time.FrontOfficeTimeFormats;
 import one.modality.base.shared.entities.FrontendAccount;
 import one.modality.base.shared.entities.Person;
 import one.modality.crm.client.i18n.CrmI18nKeys;
 import one.modality.crm.shared.services.authn.ModalityUserPrincipal;
-
-import java.time.LocalDate;
-import java.time.format.DateTimeFormatter;
 
 public class ModalitySignupUiLoginGateway extends UiLoginGatewayBase {
 
@@ -49,7 +48,6 @@ public class ModalitySignupUiLoginGateway extends UiLoginGatewayBase {
     private Label firstNameLabel;
     private Label lastNameLabel;
     private Label passwordLabel;
-    private final String datePattern = "dd/MM/yyyy";
     private ToggleGroup genderGroup;
     private Label genderLabel;
     private Label errorMessage;
@@ -125,7 +123,7 @@ public class ModalitySignupUiLoginGateway extends UiLoginGatewayBase {
                 frontendAccount.setFieldValue("corporation", 1);
                 frontendAccount.setFieldValue("lang", I18n.getLanguage());
                 Person person = updateStore.insertEntity(Person.class);
-                person.setBirthDate(LocalDate.parse(birthdayInput.getText(), DateTimeFormatter.ofPattern(datePattern)));
+                person.setBirthDate(LocalizedTime.parseLocalDate(birthdayInput.getText(), FrontOfficeTimeFormats.BIRTH_DATE_FORMAT));
                 person.setEmail(username);
                 person.setMale(maleRadio.isSelected());
                 person.setOrdained(firstNameInput.getText().toUpperCase().contains("KELSANG") || lastNameInput.getText().toUpperCase().contains("KELSANG")
@@ -184,7 +182,7 @@ public class ModalitySignupUiLoginGateway extends UiLoginGatewayBase {
             );
             int legalAge = 18;
             validationSupport.addNonEmptyValidation(birthdayInput, birthdayLabel, new SimpleStringProperty("Please enter your Birth Date"));
-            validationSupport.addLegalAgeValidation(birthdayInput, datePattern, legalAge, birthdayLabel, new SimpleStringProperty("You must be at least 18 to register"));
+            validationSupport.addLegalAgeValidation(birthdayInput, LocalizedTime.dateTimeFormatter(FrontOfficeTimeFormats.BIRTH_DATE_FORMAT), legalAge, birthdayLabel, new SimpleStringProperty("You must be at least 18 to register"));
         }
     }
 

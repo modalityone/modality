@@ -7,10 +7,12 @@ module modality.crm.client.authn.login.ui.gateway.signup.plugin {
     requires javafx.controls;
     requires javafx.graphics;
     requires modality.base.client.i18n;
+    requires modality.base.client.time;
     requires modality.base.shared.entities;
     requires modality.crm.client.i18n;
     requires modality.crm.shared.authn;
     requires webfx.extras.styles.bootstrap;
+    requires webfx.extras.time.format;
     requires webfx.extras.util.control;
     requires webfx.stack.authn.login.ui.gateway;
     requires webfx.stack.hash.md5;

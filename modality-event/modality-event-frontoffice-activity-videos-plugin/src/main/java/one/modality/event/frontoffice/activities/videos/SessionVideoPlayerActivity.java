@@ -3,6 +3,7 @@ package one.modality.event.frontoffice.activities.videos;
 import dev.webfx.extras.player.Player;
 import dev.webfx.extras.player.StartOptionsBuilder;
 import dev.webfx.extras.player.multi.all.AllPlayers;
+import dev.webfx.extras.time.format.LocalizedTime;
 import dev.webfx.kit.util.properties.FXProperties;
 import dev.webfx.platform.console.Console;
 import dev.webfx.platform.util.Numbers;
@@ -16,6 +17,7 @@ import javafx.application.Platform;
 import javafx.geometry.Insets;
 import javafx.scene.Node;
 import javafx.scene.control.Label;
+import one.modality.base.client.time.FrontOfficeTimeFormats;
 import one.modality.base.shared.entities.Event;
 import one.modality.base.shared.entities.Media;
 import one.modality.base.shared.entities.ScheduledItem;
@@ -24,7 +26,6 @@ import one.modality.event.frontoffice.medias.MediaConsumptionRecorder;
 
 import java.time.LocalDateTime;
 import java.time.LocalTime;
-import java.time.format.DateTimeFormatter;
 
 /**
  * @author Bruno Salmon
@@ -101,14 +102,8 @@ final class SessionVideoPlayerActivity extends AbstractVideoPlayerActivity {
             LocalTime startTime = programScheduledItem.getStartTime(); // set for recurring events
             if (startTime == null) // happens with non-recurring events
                 startTime = programScheduledItem.getTimeline().getStartTime();
-            String timeInfo;
-            if (startTime != null) {
-                LocalDateTime dayAndStartTime = LocalDateTime.of(scheduledVideoItem.getDate(), startTime);
-                timeInfo = dayAndStartTime.format(DateTimeFormatter.ofPattern("d MMMM, yyyy ' - ' HH:mm"));
-            } else {
-                timeInfo = scheduledVideoItem.getDate().format(DateTimeFormatter.ofPattern("d MMMM, yyyy"));
-            }
-            sessionTitleLabel.setText(title + " (" + timeInfo + ")");
+            I18nControls.bindI18nTextProperty(sessionTitleLabel, "{0} ({1})", title,
+                LocalizedTime.formatLocalDateTimeProperty(scheduledVideoItem.getDate(), startTime, FrontOfficeTimeFormats.VIDEO_PLAYER_DATE_TIME_FORMAT));
             sessionCommentLabel.setText(scheduledVideoItem.getComment());
             sessionCommentLabel.setManaged(scheduledVideoItem.getComment() != null);
             Event event = scheduledVideoItem.getEvent();
@@ -121,7 +116,8 @@ final class SessionVideoPlayerActivity extends AbstractVideoPlayerActivity {
             if (expirationDate != null) {
                 LocalDateTime nowInEventTimezone = Event.nowInEventTimezone();
                 boolean available = nowInEventTimezone.isBefore(expirationDate);
-                I18nControls.bindI18nProperties(videoExpirationLabel, available ? VideosI18nKeys.VideoAvailableUntil : VideosI18nKeys.VideoExpiredSince, expirationDate.format(DateTimeFormatter.ofPattern("d MMMM, yyyy ' - ' HH:mm")));
+                I18nControls.bindI18nProperties(videoExpirationLabel, available ? VideosI18nKeys.VideoAvailableUntil : VideosI18nKeys.VideoExpiredSince,
+                    LocalizedTime.formatLocalDateTime(expirationDate, FrontOfficeTimeFormats.VIDEO_PLAYER_DATE_TIME_FORMAT));
                 videoExpirationLabel.setVisible(true);
             } else {
                 videoExpirationLabel.setVisible(false);

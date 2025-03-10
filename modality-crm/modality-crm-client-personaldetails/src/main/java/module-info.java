@@ -11,13 +11,14 @@ module modality.crm.client.personaldetails {
     requires javafx.graphics;
     requires modality.base.client.activity;
     requires modality.base.client.i18n;
-    requires modality.base.client.util;
+    requires modality.base.client.time;
     requires modality.base.shared.domainmodel;
     requires modality.base.shared.entities;
     requires modality.crm.client.authn.fx;
     requires modality.crm.client.i18n;
     requires webfx.extras.panes;
     requires webfx.extras.styles.materialdesign;
+    requires webfx.extras.time.format;
     requires webfx.extras.util.control;
     requires webfx.extras.util.layout;
     requires webfx.extras.util.scene;

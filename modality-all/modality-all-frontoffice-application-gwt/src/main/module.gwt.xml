@@ -189,7 +189,6 @@
     <!--===========================< modality-base-client-time >============================-->
     <source path="one/modality/base/client/time"/>
     <!--===========================< modality-base-client-util >============================-->
-    <source path="one/modality/base/client/util/converters"/>
     <source path="one/modality/base/client/util/dialog"/>
     <source path="one/modality/base/client/util/functions"/>
     <source path="one/modality/base/client/util/log"/>

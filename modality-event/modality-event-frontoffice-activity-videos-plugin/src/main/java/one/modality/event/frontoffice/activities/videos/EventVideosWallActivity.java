@@ -2,6 +2,7 @@ package one.modality.event.frontoffice.activities.videos;
 
 import dev.webfx.extras.panes.*;
 import dev.webfx.extras.styles.bootstrap.Bootstrap;
+import dev.webfx.extras.time.format.LocalizedTime;
 import dev.webfx.extras.util.control.Controls;
 import dev.webfx.extras.util.layout.Layouts;
 import dev.webfx.extras.webtext.HtmlText;
@@ -42,6 +43,7 @@ import javafx.stage.Screen;
 import one.modality.base.client.bootstrap.ModalityStyle;
 import one.modality.base.client.cloudinary.ModalityCloudinary;
 import one.modality.base.client.icons.SvgIcons;
+import one.modality.base.client.time.FrontOfficeTimeFormats;
 import one.modality.base.frontoffice.utility.page.FOPageUtil;
 import one.modality.base.shared.entities.Event;
 import one.modality.base.shared.entities.KnownItem;
@@ -51,7 +53,6 @@ import one.modality.crm.shared.services.authn.fx.FXUserPersonId;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -262,7 +263,8 @@ final class EventVideosWallActivity extends ViewDomainActivityBase {
                 if (event.getVodExpirationDate() != null) {
                     LocalDateTime nowInEventTimezone = Event.nowInEventTimezone();
                     boolean available = nowInEventTimezone.isBefore(event.getVodExpirationDate());
-                    I18nControls.bindI18nProperties(videoExpirationLabel, available ? VideosI18nKeys.EventAvailableUntil : VideosI18nKeys.VideoExpiredSince, event.getVodExpirationDate().format(DateTimeFormatter.ofPattern("d MMMM, yyyy ' - ' HH:mm")));
+                    I18nControls.bindI18nProperties(videoExpirationLabel, available ? VideosI18nKeys.EventAvailableUntil : VideosI18nKeys.VideoExpiredSince,
+                        LocalizedTime.formatLocalDateTimeProperty(event.getVodExpirationDate(), FrontOfficeTimeFormats.VOD_EXPIRATION_DATE_FORMAT));
                     videoExpirationLabel.setVisible(true);
                 } else {
                     videoExpirationLabel.setVisible(false);
@@ -270,7 +272,8 @@ final class EventVideosWallActivity extends ViewDomainActivityBase {
             }
 
             LocalDate todayInEventTimezone = Event.todayInEventTimezone();
-            I18nControls.bindI18nProperties(scheduleForTodayTitleLabel, VideosI18nKeys.ScheduleForSpecificDate, todayInEventTimezone.format(DateTimeFormatter.ofPattern("EEEE MMMM d")));
+            I18nControls.bindI18nProperties(scheduleForTodayTitleLabel, VideosI18nKeys.ScheduleForSpecificDate,
+                LocalizedTime.formatMonthDay(todayInEventTimezone, FrontOfficeTimeFormats.VOD_TODAY_MONTH_DAY_FORMAT));
 
             //If it's a recurring event, we don't display the daysColumnPane because it's one video per day
             boolean isRecurring = !scheduledItems.isEmpty() && scheduledItems.get(0).getEvent().isRecurringWithVideo();
@@ -323,7 +326,6 @@ final class EventVideosWallActivity extends ViewDomainActivityBase {
             scheduledItems.stream().collect(Collectors.groupingBy(ScheduledItem::getDate));
         videosDayScheduleViews.clear();
         daysColumnPane.getChildren().clear();
-        DateTimeFormatter dateFormatter = DateTimeFormatter.ofPattern("EEE, MMMM d");
 
         correspondenceDateButton.clear();
         correspondenceDateButton.put(null, selectAllDaysButton);
@@ -338,7 +340,8 @@ final class EventVideosWallActivity extends ViewDomainActivityBase {
                     new VideosDayScheduleView(day, scheduledItem, getHistory(), isFirst[0]));
                 if (firstDay[0] == null) firstDay[0] = day;
                 Button dateButton;
-                dateButton = Bootstrap.primaryButton(new Button(day.format(dateFormatter)));
+                dateButton = Bootstrap.primaryButton(new Button());
+                dateButton.textProperty().bind(LocalizedTime.formatMonthDayProperty(day, FrontOfficeTimeFormats.VOD_BUTTON_DATE_FORMAT));
                 dateButton.setMinWidth(DAY_BUTTON_WIDTH);
                 correspondenceDateButton.put(day, dateButton);
                 dayButtonMap.put(day, dateButton);

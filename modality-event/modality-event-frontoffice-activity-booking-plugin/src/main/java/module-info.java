@@ -18,6 +18,7 @@ module modality.event.frontoffice.activity.booking.plugin {
     requires modality.base.client.icons;
     requires modality.base.client.mainframe.fx;
     requires modality.base.client.tile;
+    requires modality.base.client.time;
     requires modality.base.client.util;
     requires modality.base.frontoffice.mainframe.fx;
     requires modality.base.frontoffice.utility;

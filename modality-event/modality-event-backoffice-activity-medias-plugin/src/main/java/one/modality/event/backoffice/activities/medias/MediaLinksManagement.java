@@ -4,6 +4,7 @@ import dev.webfx.extras.panes.MonoPane;
 import dev.webfx.extras.styles.bootstrap.Bootstrap;
 import dev.webfx.extras.switches.Switch;
 import dev.webfx.extras.theme.text.TextTheme;
+import dev.webfx.extras.time.format.LocalizedTime;
 import dev.webfx.kit.util.properties.FXProperties;
 import dev.webfx.platform.console.Console;
 import dev.webfx.platform.uischeduler.UiScheduler;
@@ -36,6 +37,7 @@ import javafx.scene.shape.SVGPath;
 import javafx.util.Duration;
 import one.modality.base.client.i18n.ModalityI18nKeys;
 import one.modality.base.client.icons.SvgIcons;
+import one.modality.base.client.time.BackOfficeTimeFormats;
 import one.modality.base.shared.entities.Media;
 import one.modality.base.shared.entities.MediaType;
 import one.modality.base.shared.entities.ScheduledItem;
@@ -43,16 +45,12 @@ import one.modality.base.shared.entities.Timeline;
 import one.modality.event.client.event.fx.FXEvent;
 
 import java.time.LocalDate;
-import java.time.format.DateTimeFormatter;
+import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
 public abstract class MediaLinksManagement {
-
-    protected static final String TIME_FORMAT = "HH:mm";
-    protected static final DateTimeFormatter DATE_FORMATTER_TO_DISPLAY_CURRENT_DAY = DateTimeFormatter.ofPattern("d MMMM, yyyy");
-    protected static final DateTimeFormatter TIME_FORMATTER = DateTimeFormatter.ofPattern(TIME_FORMAT);
 
     protected EntityStore entityStore;
     protected List<LocalDate> teachingsDates;
@@ -79,9 +77,9 @@ public abstract class MediaLinksManagement {
         entityStore.<Media>executeQuery(
                 new EntityStoreQuery("select url, scheduledItem.programScheduledItem, scheduledItem.name, scheduledItem.programScheduledItem.name, scheduledItem.item, scheduledItem.date, scheduledItem.published, scheduledItem.item.code from Media where scheduledItem.event= ? and scheduledItem.item.code = ?", new Object[]{FXEvent.getEvent(), currentItemCode}))
             .onFailure(Console::log)
-            .onSuccess(mediasList -> Platform.runLater(() -> {
-                recordingsMediasReadFromDatabase.setAll(mediasList);
-            }));
+            .onSuccess(mediasList -> Platform.runLater(() ->
+                recordingsMediasReadFromDatabase.setAll(mediasList)
+            ));
     }
 
     public void updatePercentageProperty(LocalDate date, IntegerProperty percentageProperty, StringProperty cssProperty) {
@@ -133,9 +131,12 @@ public abstract class MediaLinksManagement {
         List<ScheduledItem> filteredListForCurrentDay;
         final ObservableList<Media> workingMedias = FXCollections.observableArrayList();
 
-
         protected MediaLinksPerDateManagement(LocalDate date) {
             currentDate = date;
+        }
+
+        private static String formatLocalTime(LocalTime time) {
+            return LocalizedTime.formatLocalTime(time, BackOfficeTimeFormats.MEDIA_TIME_FORMAT);
         }
 
         protected BorderPane drawPanel() {
@@ -168,16 +169,16 @@ public abstract class MediaLinksManagement {
                 if (name == null) name = "Unknown";
                 Label teachingTitle = new Label(name);
                 Timeline timeline = currentScheduledItem.getProgramScheduledItem().getTimeline();
-                String startTime = "";
-                String endTime = "";
+                String startTime;
+                String endTime;
                 if(timeline!= null) {
                     //Case of Festivals
-                    startTime = timeline.getStartTime().format(TIME_FORMATTER);
-                    endTime = timeline.getEndTime().format(TIME_FORMATTER);
+                    startTime = formatLocalTime(timeline.getStartTime());
+                    endTime = formatLocalTime(timeline.getStartTime());
                 } else {
                     //Case of recurring events
-                    startTime = currentScheduledItem.getProgramScheduledItem().getStartTime().format(TIME_FORMATTER);
-                    endTime = currentScheduledItem.getProgramScheduledItem().getEndTime().format(TIME_FORMATTER);
+                    startTime = formatLocalTime(currentScheduledItem.getProgramScheduledItem().getStartTime());
+                    endTime = formatLocalTime(currentScheduledItem.getProgramScheduledItem().getEndTime());
                 }
                 Label startTimeLabel = new Label(startTime + " - " + endTime);
 
@@ -367,7 +368,8 @@ public abstract class MediaLinksManagement {
             hBoxToReturn.setAlignment(Pos.CENTER_LEFT);
             hBoxToReturn.setPadding(new Insets(10, 20, 10, 20));
 
-            Label dateLabel = new Label(currentDate.format(DATE_FORMATTER_TO_DISPLAY_CURRENT_DAY));
+            Label dateLabel = new Label();
+            dateLabel.textProperty().bind(LocalizedTime.formatLocalDateProperty(currentDate, BackOfficeTimeFormats.MEDIA_DATE_LONG_FORMAT));
             TextTheme.createPrimaryTextFacet(dateLabel).style();
             hBoxToReturn.getChildren().add(dateLabel);
 

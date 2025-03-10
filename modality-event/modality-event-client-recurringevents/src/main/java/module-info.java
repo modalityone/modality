@@ -5,6 +5,7 @@ module modality.event.client.recurringevents {
     // Direct dependencies modules
     requires javafx.base;
     requires javafx.graphics;
+    requires modality.base.client.time;
     requires modality.base.shared.entities;
     requires modality.event.client.booking;
     requires webfx.extras.panes;

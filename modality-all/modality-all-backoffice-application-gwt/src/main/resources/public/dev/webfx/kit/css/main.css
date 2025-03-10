@@ -678,8 +678,12 @@ fx-switch.webfx-switch fx-circle.knob {
     font-size: 14px;
 }
 
-.webfx-datepicker .background {
+.webfx-datepicker.background, .webfx-datepicker .background {
     background-color: var(--webfx-time-pickers-background-color);
+}
+
+.webfx-datepicker.background {
+    border-radius: 10px;
 }
 /*===== webfx-extras-filepicker-web@main.css from webfx-extras-filepicker-gwt-j2cl =====*/
 

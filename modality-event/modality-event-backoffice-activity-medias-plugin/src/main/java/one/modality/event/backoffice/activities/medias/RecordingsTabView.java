@@ -3,6 +3,7 @@ package one.modality.event.backoffice.activities.medias;
 import dev.webfx.extras.styles.bootstrap.Bootstrap;
 import dev.webfx.extras.switches.Switch;
 import dev.webfx.extras.theme.text.TextTheme;
+import dev.webfx.extras.time.format.LocalizedTime;
 import dev.webfx.extras.util.control.Controls;
 import dev.webfx.extras.util.masterslave.MasterSlaveLinker;
 import dev.webfx.extras.util.masterslave.SlaveEditor;
@@ -27,18 +28,17 @@ import javafx.geometry.Orientation;
 import javafx.geometry.Pos;
 import javafx.scene.Cursor;
 import javafx.scene.Node;
-import javafx.scene.control.Label;
 import javafx.scene.control.*;
+import javafx.scene.control.Label;
 import javafx.scene.layout.*;
 import one.modality.base.client.i18n.ModalityI18nKeys;
+import one.modality.base.client.time.BackOfficeTimeFormats;
 import one.modality.base.client.util.masterslave.ModalitySlaveEditor;
 import one.modality.base.shared.entities.*;
 import one.modality.base.shared.entities.markers.EntityHasLocalDate;
 import one.modality.event.client.event.fx.FXEvent;
 
 import java.time.LocalDate;
-import java.time.LocalDateTime;
-import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeParseException;
 import java.util.Comparator;
@@ -62,7 +62,6 @@ final class RecordingsTabView {
     private final ObservableList<ScheduledItem> audioScheduledItemsReadFromDatabase = FXCollections.observableArrayList();
     private final ObservableList<Media> recordingsMediasReadFromDatabase = FXCollections.observableArrayList();
     private final BooleanProperty activeProperty = new SimpleBooleanProperty();
-    private final DateTimeFormatter dateFormatter = DateTimeFormatter.ofPattern("dd-MM-yyyy");
     ObservableList<BooleanExpression> listOfUpdateStoresHasChangedProperty = FXCollections.observableArrayList();
     private final ScrollPane mainContainer;
     private final BorderPane mainFrame;
@@ -119,9 +118,10 @@ final class RecordingsTabView {
 
         masterSettings.getChildren().add(availableUntilCommentLabel);
         Event event = updateStore.updateEntity(currentEditedEvent);
+        DateTimeFormatter dateFormatter = LocalizedTime.dateFormatter(BackOfficeTimeFormats.MEDIA_DATE_FORMAT);
         contentExpirationDate = new TextField();
-        contentExpirationDate.setPromptText("Format: 25-09-2028");
-        validationSupport.addDateOrEmptyValidation(contentExpirationDate, "dd-MM-yyyy", contentExpirationDate, I18n.i18nTextProperty("ValidationTimeFormatIncorrect")); // ???
+        contentExpirationDate.setPromptText("Format: " + LocalDate.of(2028, 9, 25).format(dateFormatter));
+        validationSupport.addDateOrEmptyValidation(contentExpirationDate, dateFormatter, contentExpirationDate, I18n.i18nTextProperty("ValidationTimeFormatIncorrect")); // ???
         //TODO how to load the expiration date in the event
         if (event.getAudioExpirationDate() != null) {
             contentExpirationDate.setText(event.getAudioExpirationDate().format(dateFormatter));
@@ -132,8 +132,7 @@ final class RecordingsTabView {
                     event.setAudioExpirationDate(null);
                 }
                 LocalDate date = LocalDate.parse(contentExpirationDate.getText(), dateFormatter);
-                LocalDateTime dateTime = LocalDateTime.of(date, LocalTime.of(0, 0));
-                event.setAudioExpirationDate(dateTime);
+                event.setAudioExpirationDate(date.atTime(0, 0));
             } catch (DateTimeParseException e) {
             }
         });

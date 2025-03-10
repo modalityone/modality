@@ -36,7 +36,7 @@ public final class Kbs2PriceAlgorithm {
             List<Attendance> lineAttendances = documentAggregate.getLineAttendances(line);
             lineAttendances.forEach(attendance -> {
                 //LocalDate date = attendance.getDate(); // is null
-                LocalDate date = attendance.getScheduledItem().getDate();
+                LocalDate date = attendance.getScheduledItem().getDate(); // running this on a KBS2 event will produce a NPE (should we do something about it?)
                 BlockAttendance blockAttendance = new BlockAttendance(line, date);
                 block.addBlockAttendance(blockAttendance);
             });

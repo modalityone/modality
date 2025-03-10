@@ -1,7 +1,7 @@
 package one.modality.event.client.recurringevents;
 
 import dev.webfx.extras.panes.ColumnsPane;
-import dev.webfx.extras.time.format.LocalizedTimeFormat;
+import dev.webfx.extras.time.format.LocalizedTime;
 import dev.webfx.kit.util.properties.FXProperties;
 import dev.webfx.kit.util.properties.ObservableLists;
 import dev.webfx.platform.util.collection.HashList;
@@ -16,13 +16,13 @@ import javafx.scene.layout.Pane;
 import javafx.scene.layout.VBox;
 import javafx.scene.text.Font;
 import javafx.scene.text.Text;
+import one.modality.base.client.time.FrontOfficeTimeFormats;
 import one.modality.base.shared.entities.ScheduledItem;
 import one.modality.base.shared.entities.Timeline;
 import one.modality.event.client.booking.BookableDatesUi;
 
 import java.time.LocalDate;
 import java.time.LocalTime;
-import java.time.format.FormatStyle;
 import java.util.*;
 import java.util.function.Consumer;
 import java.util.function.Function;
@@ -213,7 +213,7 @@ public class RecurringEventSchedule implements BookableDatesUi {
             dayAndCommentHBox.setSpacing(10);
             dayAndCommentHBox.setAlignment(Pos.CENTER);
             LocalDate date = scheduledItem.getDate();
-            dayText.textProperty().bind(LocalizedTimeFormat.formatMonthDayProperty(date, FormatStyle.LONG));
+            dayText.textProperty().bind(LocalizedTime.formatMonthDayProperty(date, FrontOfficeTimeFormats.RECURRING_EVENT_SCHEDULE_MONTH_DAY_FORMAT));
             dayText.fontProperty().bind(dayFontProperty);
             /* Commented for now as it's not used and returns an empty label that however shift the date (not centered anymore)
             Node comment = computeNodeForExistingBookedDateFunction.apply(date);
@@ -227,7 +227,8 @@ public class RecurringEventSchedule implements BookableDatesUi {
                     startTime = timeline.getStartTime();
             }
             if (startTime != null) {
-                I18n.bindI18nProperties(hourText, RecurringEventsI18nKeys.AtTime1, LocalizedTimeFormat.formatLocalTimeProperty(startTime, FormatStyle.SHORT));
+                I18n.bindI18nProperties(hourText, RecurringEventsI18nKeys.AtTime1,
+                    LocalizedTime.formatLocalTimeProperty(startTime, FrontOfficeTimeFormats.RECURRING_EVENT_SCHEDULE_TIME_FORMAT));
             }
             scheduledItemBoxes.put(date, this);
             containerVBox.setOnMouseClicked(event -> {

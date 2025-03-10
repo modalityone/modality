@@ -5,10 +5,11 @@ import dev.webfx.extras.panes.MonoPane;
 import dev.webfx.extras.panes.ScalePane;
 import dev.webfx.extras.panes.TransitionPane;
 import dev.webfx.extras.styles.bootstrap.Bootstrap;
+import dev.webfx.extras.styles.materialdesign.textfield.MaterialTextField;
 import dev.webfx.extras.styles.materialdesign.textfield.MaterialTextFieldPane;
 import dev.webfx.extras.styles.materialdesign.util.MaterialUtil;
-import dev.webfx.extras.time.pickers.DatePicker;
-import dev.webfx.extras.time.pickers.DatePickerOptions;
+import dev.webfx.extras.time.format.LocalizedTime;
+import dev.webfx.extras.time.pickers.DateField;
 import dev.webfx.extras.util.animation.Animations;
 import dev.webfx.extras.util.control.Controls;
 import dev.webfx.extras.util.layout.Layouts;
@@ -21,6 +22,7 @@ import dev.webfx.stack.authn.FinaliseEmailUpdateCredentials;
 import dev.webfx.stack.cloud.image.CloudImageService;
 import dev.webfx.stack.cloud.image.impl.client.ClientImageService;
 import dev.webfx.stack.i18n.I18n;
+import dev.webfx.stack.i18n.I18nKeys;
 import dev.webfx.stack.i18n.controls.I18nControls;
 import dev.webfx.stack.orm.datasourcemodel.service.DataSourceModelService;
 import dev.webfx.stack.orm.domainmodel.activity.viewdomain.impl.ViewDomainActivityBase;
@@ -35,11 +37,9 @@ import dev.webfx.stack.ui.dialog.DialogUtil;
 import dev.webfx.stack.ui.validation.ValidationSupport;
 import javafx.animation.Interpolator;
 import javafx.application.Platform;
-import javafx.beans.InvalidationListener;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.property.StringProperty;
 import javafx.geometry.Insets;
-import javafx.geometry.Point2D;
 import javafx.geometry.Pos;
 import javafx.scene.Node;
 import javafx.scene.control.*;
@@ -56,7 +56,8 @@ import one.modality.base.client.activity.ModalityButtonFactoryMixin;
 import one.modality.base.client.cloudinary.ModalityCloudinary;
 import one.modality.base.client.icons.SvgIcons;
 import one.modality.base.client.mainframe.fx.FXMainFrameDialogArea;
-import one.modality.base.client.util.converters.Converters;
+import one.modality.base.client.time.FrontOfficeTimeFormats;
+import one.modality.base.shared.entities.Country;
 import one.modality.base.shared.entities.Organization;
 import one.modality.base.shared.entities.Person;
 import one.modality.crm.client.i18n.CrmI18nKeys;
@@ -64,8 +65,6 @@ import one.modality.crm.frontoffice.activities.createaccount.CreateAccountI18nKe
 import one.modality.crm.frontoffice.activities.createaccount.UserAccountUI;
 import one.modality.crm.shared.services.authn.fx.FXUserPerson;
 
-import java.time.LocalDate;
-import java.time.YearMonth;
 import java.util.Objects;
 
 import static one.modality.crm.frontoffice.activities.createaccount.UserAccountUI.createEntityButtonSelector;
@@ -73,7 +72,7 @@ import static one.modality.crm.frontoffice.activities.userprofile.ChangePictureU
 
 final class UserProfileActivity extends ViewDomainActivityBase implements ModalityButtonFactoryMixin {
 
-    public static final double MODAL_WINDOWS_MAX_WIDTH = 500;
+    static final double MODAL_WINDOWS_MAX_WIDTH = 500;
 
     private final VBox container = new VBox();
     private final Hyperlink changeUserEmail = I18nControls.newHyperlink(UserProfileI18nKeys.ChangeEmail);
@@ -90,21 +89,19 @@ final class UserProfileActivity extends ViewDomainActivityBase implements Modali
     private Label nameLabel;
     private Label emailLabel;
     private TextField emailTextField;
-    private TextField birthDateTextField;
+    private DateField birthDateField;
     private TextField layNameTextField;
     private TextField phoneTextField;
     private TextField postCodeTextField;
     private TextField cityNameTextField;
-    private EntityButtonSelector countrySelector;
+    private EntityButtonSelector<Country> countrySelector;
     private RadioButton optionMale;
     private RadioButton optionFemale;
     private RadioButton optionLay;
     private RadioButton optionOrdained;
     private ButtonSelector<Organization> organizationSelector;
-    private RadioButton optionNoKadampaCenter;
+    private RadioButton noOrganizationRadioButton;
     private Label infoMessage;
-    private DatePicker birthDatePicker;
-    private MonoPane pickupDateMonoPane;
     private final CloudImageService cloudImageService = new ClientImageService();
     private ImageView imageView;
     private final String noPictureImage = "images/large/no-picture.png";
@@ -156,9 +153,7 @@ final class UserProfileActivity extends ViewDomainActivityBase implements Modali
         pickupImageMonoPane.setOnMouseClicked(ev -> {
             ScalePane changePictureUIView = changePictureUI.getView();
             DialogCallback callback = DialogUtil.showModalNodeInGoldLayout(changePictureUIView, FXMainFrameDialogArea.getDialogArea());
-            FXMainFrameDialogArea.getDialogArea().setOnMouseClicked(e -> {
-                callback.closeDialog();
-            });
+            FXMainFrameDialogArea.getDialogArea().setOnMouseClicked(e -> callback.closeDialog());
             changePictureUI.setDialogCallback(callback);
             Animations.fadeIn(changePictureUI.getView());
         });
@@ -224,65 +219,20 @@ final class UserProfileActivity extends ViewDomainActivityBase implements Modali
         personnalDetailsLabel.setPadding(new Insets(40, 0, 10, 0));
         firstColumn.getChildren().add(personnalDetailsLabel);
 
-        Label birthDateLabel = Bootstrap.small(new Label(CrmI18nKeys.BirthDate));
-        firstColumn.getChildren().add(birthDateLabel);
-        birthDateLabel.getStyleClass().add("material-label");
+        birthDateField = new DateField(container); // the date picker will be added as a child to container when shown
+        TextField birthDateTextField = birthDateField.getTextField();
+        MaterialUtil.makeMaterial(birthDateTextField);
+        MaterialTextField materialTextField = MaterialUtil.getMaterialTextField(birthDateTextField);
+        materialTextField.setAnimateLabel(false);
+        I18n.bindI18nTextProperty(materialTextField.labelTextProperty(), CrmI18nKeys.BirthDate);
+        birthDateField.dateTimeFormatterProperty().bind(LocalizedTime.dateFormatterProperty(FrontOfficeTimeFormats.BIRTH_DATE_FORMAT));
+        I18n.bindI18nTextProperty(birthDateTextField.promptTextProperty(),  I18nKeys.embedInString(I18nKeys.appendColons(UserProfileI18nKeys.DateOfBirthFormat)) + " {0}",
+            LocalizedTime.inferLocalDatePatternProperty(birthDateField.dateTimeFormatterProperty()));
+        birthDateField.getDatePicker().getView().setTranslateY(10); // To add a breathing area between the
 
-        HBox birthDateHBox = new HBox(10);
-        birthDateHBox.setAlignment(Pos.TOP_LEFT);
-        birthDateTextField = new TextField();
-        I18n.bindI18nTextProperty(birthDateTextField.promptTextProperty(), UserProfileI18nKeys.DateOfBirthFormat);
-        birthDateTextField.textProperty().addListener((observable, oldValue, newValue) -> {
-            LocalDate dateOfBirth = Converters.convertTextFieldValueToLocalDate(newValue);
-            if (dateOfBirth != null) {
-                birthDatePicker.setSelectedDate(dateOfBirth);
-                birthDatePicker.setDisplayedYearMonth(YearMonth.of(dateOfBirth.getYear(), dateOfBirth.getMonth()));
-                currentPerson.setBirthDate(dateOfBirth);
-            }
-        });
-        birthDateHBox.getChildren().add(birthDateTextField);
-        pickupDateMonoPane = new MonoPane(SvgIcons.createCalendarPath());
-        birthDatePicker = new DatePicker(new DatePickerOptions().setApplyBorderStyle(true).setApplyMaxSize(false));
-        birthDateHBox.getChildren().add(pickupDateMonoPane);
-        birthDateHBox.setAlignment(Pos.CENTER_LEFT);
-        mainStackPane.getChildren().add(birthDatePicker.getView());
-        birthDatePicker.getView().setVisible(false);
-        birthDatePicker.getView().setManaged(false);
-        birthDatePicker.getView().resize(250, 0);
+        StackPane.setMargin(birthDateField.getView(), new Insets(0, 0, 0, 0));
 
-        StackPane.setMargin(birthDatePicker.getView(), new Insets(0, 0, 0, 0));
-
-        pickupDateMonoPane.setOnMouseClicked(e -> {
-            if (birthDatePicker.getView().isVisible()) {
-                birthDatePicker.getView().setVisible(false);
-                return;
-            }
-
-            FXProperties.runNowAndOnPropertiesChange(() -> {
-                // Get the scene position of the HBox
-                Point2D birthDateTextFieldPoint = birthDateTextField.localToScene(0, 0);
-                double sceneX = birthDateTextFieldPoint.getX();
-                double sceneY = birthDateTextFieldPoint.getY();
-
-                // Convert the scene position to the root container's local coordinates
-                Point2D mainStackPanePoint = mainStackPane.sceneToLocal(sceneX, sceneY);
-                double rootX = mainStackPanePoint.getX();
-                double rootY = mainStackPanePoint.getY();
-
-                birthDatePicker.getView().relocate(rootX, rootY + birthDateHBox.getHeight());
-            }, birthDateTextField.layoutXProperty(), birthDateTextField.layoutYProperty(), mainStackPane.widthProperty(), mainStackPane.heightProperty());
-
-            birthDatePicker.getView().setVisible(true);
-            birthDatePicker.getSelectedDates().addListener((InvalidationListener) observable -> {
-                if (!birthDatePicker.getSelectedDates().isEmpty()) {
-                    LocalDate dateOfBirth = LocalDate.of(birthDatePicker.getSelectedDates().get(0).getYear(), birthDatePicker.getSelectedDates().get(0).getMonth(), birthDatePicker.getSelectedDates().get(0).getDayOfMonth());
-                    birthDateTextField.setText(Converters.convertLocalDateToTextFieldValue(dateOfBirth));
-                    birthDatePicker.getView().setVisible(false);
-                }
-            });
-        });
-
-        firstColumn.getChildren().add(birthDateHBox);
+        firstColumn.getChildren().add(birthDateField.getView());
 
         //Male/Female option
         ToggleGroup maleFemaleToggleGroup = new ToggleGroup();
@@ -413,21 +363,21 @@ final class UserProfileActivity extends ViewDomainActivityBase implements Modali
 
 
         // Create RadioButtons
-        optionNoKadampaCenter = I18nControls.newRadioButton(CreateAccountI18nKeys.NoAttendanceToAKadampaCenter);
+        noOrganizationRadioButton = I18nControls.newRadioButton(CreateAccountI18nKeys.NoAttendanceToAKadampaCenter);
         //TODO: Add a listener to the organizationButton to detect selection changes
-        secondColumn.getChildren().add(optionNoKadampaCenter);
+        secondColumn.getChildren().add(noOrganizationRadioButton);
         organizationButton.getMaterialTextField().setAnimateLabel(false);
 
-        optionNoKadampaCenter.setSelected(null == organizationSelector.getSelectedItem());
+        noOrganizationRadioButton.setSelected(organizationSelector.getSelectedItem() == null);
         //If the select box is checked, we empty the kadampa center info
-        optionNoKadampaCenter.selectedProperty().addListener((observable, oldValue, newValue) -> {
+        noOrganizationRadioButton.selectedProperty().addListener((observable, oldValue, newValue) -> {
             if (newValue) {
                 organizationSelector.setSelectedItem(null);
             }
         });
         organizationSelector.selectedItemProperty().addListener((observable, oldValue, newValue) -> {
             currentPerson.setOrganization(newValue);
-            if (newValue != null) optionNoKadampaCenter.setSelected(false);
+            if (newValue != null) noOrganizationRadioButton.setSelected(false);
         });
 
         columnsPane.getChildren().addAll(firstColumn, secondColumn);
@@ -548,7 +498,7 @@ final class UserProfileActivity extends ViewDomainActivityBase implements Modali
                             });
                             messagePane.setDialogCallback(callback);
                             Animations.fadeIn(messagePane.getView());
-                            //TODO: ckeck with Bruno why it's not working: We reload the user person to update the email address
+                            //TODO: check with Bruno why it's not working: We reload the user person to update the email address
                             FXUserPerson.reloadUserPerson();
                             //currentPerson = updateStore.updateEntity(FXUserPerson.getUserPerson());
                             //reloadData();
@@ -575,22 +525,12 @@ final class UserProfileActivity extends ViewDomainActivityBase implements Modali
         cityNameTextField.setText(currentPerson.getCityName());
         countrySelector.setSelectedItem(currentPerson.getCountry());
         organizationSelector.setSelectedItem(currentPerson.getOrganization());
-        optionNoKadampaCenter.setSelected(currentPerson.getOrganization() == null);
+        noOrganizationRadioButton.setSelected(currentPerson.getOrganization() == null);
+        birthDateField.dateProperty().bindBidirectional(EntityBindings.getLocalDateFieldProperty(currentPerson, Person.birthDate));
         if (currentPerson.getBirthDate() != null) {
-            birthDateTextField.setText(Converters.convertLocalDateToTextFieldValue(currentPerson.getBirthDate()));
-            birthDatePicker.setSelectedDate(currentPerson.getBirthDate());
-            birthDateTextField.setDisable(true);
-            pickupDateMonoPane.setVisible(false);
+            birthDateField.getTextField().setDisable(true);
         }
         loadProfilePictureIfExist();
-    }
-
-    public VBox getContainer() {
-        return container;
-    }
-
-    public TransitionPane getTransitionPane() {
-        return transitionPane;
     }
 
     protected void updateModelFromContextParameters() {
@@ -649,7 +589,7 @@ final class UserProfileActivity extends ViewDomainActivityBase implements Modali
 
     private void initFormValidation() {
         if (validationSupport.isEmpty()) {
-            validationSupport.addDateOrEmptyValidation(birthDateTextField, "dd/MM/yyyy", birthDateTextField, I18n.i18nTextProperty(UserProfileI18nKeys.DateOfBirthIncorrectFormat));
+            validationSupport.addDateOrEmptyValidation(birthDateField.getTextField(), birthDateField.getDateTimeFormatter(), birthDateField.getTextField(), I18n.i18nTextProperty(UserProfileI18nKeys.DateOfBirthIncorrectFormat));
         }
     }
 

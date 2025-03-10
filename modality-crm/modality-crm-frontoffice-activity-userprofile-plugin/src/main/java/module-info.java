@@ -10,7 +10,7 @@ module modality.crm.frontoffice.activity.userprofile.plugin {
     requires modality.base.client.cloudinary;
     requires modality.base.client.icons;
     requires modality.base.client.mainframe.fx;
-    requires modality.base.client.util;
+    requires modality.base.client.time;
     requires modality.base.shared.entities;
     requires modality.crm.client.authn.fx;
     requires modality.crm.client.i18n;
@@ -20,6 +20,7 @@ module modality.crm.frontoffice.activity.userprofile.plugin {
     requires webfx.extras.panes;
     requires webfx.extras.styles.bootstrap;
     requires webfx.extras.styles.materialdesign;
+    requires webfx.extras.time.format;
     requires webfx.extras.time.pickers;
     requires webfx.extras.util.animation;
     requires webfx.extras.util.control;

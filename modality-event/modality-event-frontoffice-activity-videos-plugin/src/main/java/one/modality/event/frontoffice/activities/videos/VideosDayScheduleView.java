@@ -2,6 +2,7 @@ package one.modality.event.frontoffice.activities.videos;
 
 import dev.webfx.extras.panes.MonoPane;
 import dev.webfx.extras.styles.bootstrap.Bootstrap;
+import dev.webfx.extras.time.format.LocalizedTime;
 import dev.webfx.platform.uischeduler.UiScheduler;
 import dev.webfx.platform.util.time.Times;
 import dev.webfx.platform.windowhistory.spi.BrowsingHistory;
@@ -20,13 +21,16 @@ import javafx.scene.layout.HBox;
 import javafx.scene.layout.Region;
 import javafx.scene.layout.VBox;
 import one.modality.base.client.messaging.ModalityMessaging;
+import one.modality.base.client.time.FrontOfficeTimeFormats;
 import one.modality.base.shared.entities.Event;
 import one.modality.base.shared.entities.ScheduledItem;
+import one.modality.base.shared.entities.Timeline;
+import one.modality.base.shared.entities.markers.HasEndTime;
+import one.modality.base.shared.entities.markers.HasStartTime;
 
 import java.time.Duration;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
 import java.util.List;
 
 /**
@@ -98,11 +102,12 @@ final class VideosDayScheduleView {
         if (displayHeader) {
             addHeaderRow();
         } else {
-            if (dayScheduledVideos.get(0).getEvent().getType().getRecurringItem() == null)
+            if (!dayScheduledVideos.get(0).getEvent().isRecurring())
                 addInvisibleSeparator();
         }
 
-        Label dateLabel = new Label(day.format(DateTimeFormatter.ofPattern("dd MMMM yyyy")));
+        Label dateLabel = new Label();
+        dateLabel.textProperty().bind(LocalizedTime.formatLocalDateProperty(day, FrontOfficeTimeFormats.VIDEO_DAY_DATE_FORMAT));
         dateLabel.setWrapText(true);
 
         dateMonoPane.setContent(dateLabel);
@@ -212,7 +217,8 @@ final class VideosDayScheduleView {
             }
             // Name label
             //If the name of the video scheduledItem has been overwritten, we use it, otherwise, we use the name of the programScheduledItem
-            String name = scheduledItem.getProgramScheduledItem().getName();
+            ScheduledItem programScheduledItem = scheduledItem.getProgramScheduledItem();
+            String name = programScheduledItem.getName();
             if (scheduledItem.getName() != null && !scheduledItem.getName().isBlank()) {
                 name = scheduledItem.getName();
             }
@@ -228,7 +234,7 @@ final class VideosDayScheduleView {
                 boolean available = expirationDate.isAfter(nowInEventTimezone);
                 Label expirationDateLabel = Bootstrap.small(Bootstrap.textDanger(I18nControls.newLabel(
                     available ? VideosI18nKeys.VideoAvailableUntil: VideosI18nKeys.VideoExpiredOn,
-                    expirationDate.format(DateTimeFormatter.ofPattern("d MMMM, uuuu ' - ' HH:mm"))
+                    LocalizedTime.formatLocalDateTime(expirationDate, FrontOfficeTimeFormats.VOD_EXPIRATION_DATE_FORMAT)
                 )));
                 expirationDateLabel.setWrapText(true);
 
@@ -239,18 +245,19 @@ final class VideosDayScheduleView {
             }
             nameVBox.setAlignment(Pos.CENTER_LEFT);
             // Time label
-            Label timeLabel;
+            HasStartTime startTimeHolder;
+            HasEndTime endTimeHolder;
             if (scheduledItem.getEvent().isRecurringWithVideo()) {
-                timeLabel = new Label(
-                    scheduledItem.getProgramScheduledItem().getStartTime().format(DateTimeFormatter.ofPattern("HH:mm")) + " - " +
-                        scheduledItem.getProgramScheduledItem().getEndTime().format(DateTimeFormatter.ofPattern("HH:mm"))
-                );
+                startTimeHolder = programScheduledItem;
+                endTimeHolder = programScheduledItem;
             } else {
-                timeLabel = new Label(
-                    scheduledItem.getProgramScheduledItem().getTimeline().getStartTime().format(DateTimeFormatter.ofPattern("HH:mm")) + " - " +
-                        scheduledItem.getProgramScheduledItem().getTimeline().getEndTime().format(DateTimeFormatter.ofPattern("HH:mm"))
-                );
+                Timeline timeline = programScheduledItem.getTimeline();
+                startTimeHolder = timeline;
+                endTimeHolder = timeline;
             }
+            Label timeLabel = I18nControls.newLabel("{0} - {1}",
+                LocalizedTime.formatLocalTime(startTimeHolder.getStartTime(), FrontOfficeTimeFormats.VIDEO_DAY_TIME_FORMAT),
+                LocalizedTime.formatLocalTime(endTimeHolder.getEndTime(), FrontOfficeTimeFormats.VIDEO_DAY_TIME_FORMAT));
             timeVBox.setAlignment(Pos.CENTER_LEFT);
             timeVBox.getChildren().add(timeLabel);
 

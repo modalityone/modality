@@ -4,7 +4,7 @@ import dev.webfx.extras.panes.ColumnsPane;
 import dev.webfx.extras.panes.FlipPane;
 import dev.webfx.extras.panes.MonoPane;
 import dev.webfx.extras.styles.bootstrap.Bootstrap;
-import dev.webfx.extras.time.format.LocalizedTimeFormat;
+import dev.webfx.extras.time.format.LocalizedTime;
 import dev.webfx.extras.util.layout.Layouts;
 import dev.webfx.kit.util.properties.FXProperties;
 import dev.webfx.kit.util.properties.ObservableLists;
@@ -31,6 +31,7 @@ import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
 import one.modality.base.client.i18n.ModalityI18nKeys;
 import one.modality.base.client.icons.SvgIcons;
+import one.modality.base.client.time.FrontOfficeTimeFormats;
 import one.modality.base.shared.entities.Attendance;
 import one.modality.base.shared.entities.Document;
 import one.modality.base.shared.entities.Item;
@@ -48,7 +49,6 @@ import one.modality.event.frontoffice.activities.booking.process.account.Checkou
 import one.modality.event.frontoffice.activities.booking.process.event.BookEventActivity;
 
 import java.time.LocalDate;
-import java.time.format.FormatStyle;
 import java.util.stream.Stream;
 
 final class Step2CheckoutSlide extends StepSlide {
@@ -249,7 +249,9 @@ final class Step2CheckoutSlide extends StepSlide {
                 ScheduledItem scheduledItem = a.getScheduledItem();
                 LocalDate date = scheduledItem.getDate();
                 Item item = scheduledItem.getItem();
-                Label scheduledItemLabel = I18nControls.newLabel(new I18nSubKey("expression: i18n(this) + ' - {0}' " + (existing ? " + ' ([" + BookingI18nKeys.alreadyBooked + "])'" : ""), item), LocalizedTimeFormat.formatMonthDayProperty(date, FormatStyle.FULL));
+                Label scheduledItemLabel = I18nControls.newLabel(
+                    new I18nSubKey("expression: i18n(this) + ' - {0}' " + (existing ? " + ' ([" + BookingI18nKeys.alreadyBooked + "])'" : ""), item),
+                    LocalizedTime.formatMonthDayProperty(date, FrontOfficeTimeFormats.BOOKING_CHECKOUT_DATE_FORMAT));
                 int dailyRatePrice = workingBookingProperties.getDailyRatePrice();
                 totalPrice[0] += dailyRatePrice;
                 Label price = new Label(EventPriceFormatter.formatWithCurrency(dailyRatePrice, getEvent()));

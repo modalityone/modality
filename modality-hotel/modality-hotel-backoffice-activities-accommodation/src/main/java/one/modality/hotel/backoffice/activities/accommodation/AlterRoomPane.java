@@ -1,5 +1,6 @@
 package one.modality.hotel.backoffice.activities.accommodation;
 
+import dev.webfx.extras.time.format.LocalizedTime;
 import dev.webfx.extras.type.PrimType;
 import dev.webfx.extras.visual.VisualColumn;
 import dev.webfx.extras.visual.VisualResult;
@@ -40,6 +41,7 @@ import javafx.scene.layout.HBox;
 import javafx.scene.layout.Region;
 import javafx.scene.layout.VBox;
 import one.modality.base.client.i18n.ModalityI18nKeys;
+import one.modality.base.client.time.BackOfficeTimeFormats;
 import one.modality.base.shared.entities.*;
 import one.modality.base.shared.entities.markers.EntityHasLocalDate;
 import one.modality.crm.backoffice.organization.fx.FXOrganizationId;
@@ -58,13 +60,12 @@ import static dev.webfx.stack.orm.dql.DqlStatement.where;
 
 public class AlterRoomPane extends VBox {
 
-    private static final DateTimeFormatter DATE_FORMATTER = DateTimeFormatter.ofPattern("dd-MM-uu");
-
     private final AccommodationPresentationModel pm;
     private final ObjectProperty<ResourceConfiguration> resourceConfigurationProperty = new SimpleObjectProperty<>();
     public ObjectProperty<ResourceConfiguration> resourceConfigurationProperty() { return resourceConfigurationProperty; }
     private final ObjectProperty<ResourceConfiguration> selectedResourceConfigurationProperty = new SimpleObjectProperty<>();
     private final ObservableList<ResourceConfiguration> resourceConfigurations = FXCollections.observableArrayList();
+    private final DateTimeFormatter dateFormatter = LocalizedTime.dateFormatter(BackOfficeTimeFormats.ALTER_ROOM_DATE_FORMAT);
 
     private final ButtonFactoryMixin mixin;
     private ObservableValue<Boolean> activeProperty;
@@ -170,9 +171,9 @@ public class AlterRoomPane extends VBox {
         return detailsGridPane;
     }
 
-    private static LocalDate dateFromText(String text) {
+    private LocalDate dateFromText(String text) {
         try {
-            return LocalDate.parse(text, DATE_FORMATTER);
+            return LocalDate.parse(text, dateFormatter);
         } catch (DateTimeParseException | NullPointerException e) {
             return null;
         }
@@ -278,8 +279,8 @@ public class AlterRoomPane extends VBox {
         allowsFemaleCheckBox.setSelected(rc.allowsFemale());
         allowsMaleCheckBox.setSelected(rc.allowsMale());
 
-        fromDateField.setText(rc.getStartDate() != null ? DATE_FORMATTER.format(rc.getStartDate()) : null);
-        toDateField.setText(rc.getEndDate() != null ? DATE_FORMATTER.format(rc.getEndDate()) : null);
+        fromDateField.setText(rc.getStartDate() != null ? dateFormatter.format(rc.getStartDate()) : null);
+        toDateField.setText(rc.getEndDate() != null ? dateFormatter.format(rc.getEndDate()) : null);
     }
 
     private void createProductComboBox() {
