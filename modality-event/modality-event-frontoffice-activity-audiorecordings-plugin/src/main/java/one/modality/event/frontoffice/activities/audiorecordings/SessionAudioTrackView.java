@@ -88,6 +88,7 @@ final class SessionAudioTrackView {
         long durationMillis;
         if (!publishedMedias.isEmpty()) {
             durationMillis = publishedMedias.get(0).getDurationMillis();
+            dateLabel.textProperty().unbind();
             dateLabel.setText(AudioMediaView.formatDuration(durationMillis) + " • " + dateLabel.getText());
         } else {
             durationMillis = 0;
