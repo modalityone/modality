@@ -39,7 +39,6 @@ import javafx.scene.control.Label;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.Background;
-import javafx.scene.layout.BackgroundFill;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
@@ -226,9 +225,7 @@ final class EventAudioPlaylistActivity extends ViewDomainActivityBase {
                             imageMonoPane.getChildren().setAll(imageView);
                         } else {
                             SVGPath audioCoverPath = SvgIcons.createAudioCoverPath();
-                            imageMonoPane.setBackground(new Background(
-                                new BackgroundFill(Color.LIGHTGRAY, null, null)
-                            ));
+                            imageMonoPane.setBackground(Background.fill(Color.LIGHTGRAY));
                             imageMonoPane.getChildren().setAll(audioCoverPath);
                             imageMonoPane.setAlignment(Pos.CENTER);
                         }

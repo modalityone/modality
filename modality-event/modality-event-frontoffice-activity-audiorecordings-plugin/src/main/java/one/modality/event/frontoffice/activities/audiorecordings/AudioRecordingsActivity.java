@@ -92,7 +92,7 @@ final class AudioRecordingsActivity extends ViewDomainActivityBase {
             Event event = dl.getDocument().getEvent();
             String itemCode = dl.getItem().getCode();
             //If itemCode
-            if(itemCode == null) {
+            if (itemCode == null) {
                 /// If the itemCode is null, we take the family
                 /// For the case of STTP (the attendance is linked to a teaching bookable scheduledItem), the family is teach
                 itemCode = dl.getItem().getFamily().getCode();
