@@ -1,5 +1,6 @@
 package one.modality.base.client.time;
 
+import java.time.format.DateTimeFormatter;
 import java.time.format.FormatStyle;
 
 /**
@@ -66,8 +67,8 @@ public interface FrontOfficeTimeFormats {
     Ex TIME:
     */
 
-    //DateTimeFormatter BIRTH_DATE_FORMAT = DateTimeFormatter.ofPattern("dd/MM/yyyy");
-    FormatStyle BIRTH_DATE_FORMAT = FormatStyle.SHORT;
+    DateTimeFormatter BIRTH_DATE_FORMAT = DateTimeFormatter.ofPattern("dd/MM/yyyy");
+    //FormatStyle BIRTH_DATE_FORMAT = FormatStyle.SHORT;
     FormatStyle MEDIA_INFO_DATE_FORMAT = FormatStyle.LONG;
     FormatStyle RECURRING_EVENT_SCHEDULE_MONTH_DAY_FORMAT = FormatStyle.LONG;
     FormatStyle RECURRING_EVENT_SCHEDULE_TIME_FORMAT = FormatStyle.SHORT;
