@@ -64,6 +64,10 @@ import java.util.stream.Collectors;
  */
 final class EventVideosWallActivity extends ViewDomainActivityBase {
 
+    private static final double IMAGE_HEIGHT = 240;
+    private static final double DAY_BUTTON_WIDTH = 150;
+    private static final double DAY_COLUMN_PANE_MAX_WIDTH = 1100;
+
     private final ObjectProperty<Object> pathEventIdProperty = new SimpleObjectProperty<>();
 
     private final ObjectProperty<Event> eventProperty = new SimpleObjectProperty<>();
@@ -74,10 +78,6 @@ final class EventVideosWallActivity extends ViewDomainActivityBase {
 
     private Label videoExpirationLabel;
     private final CloudImageService cloudImageService = new ClientImageService();
-
-    private static final int IMAGE_HEIGHT = 240;
-    private static final int DAY_BUTTON_WIDTH = 150;
-    private static final int DAY_COLUMN_PANE_MAX_WIDTH = 1100;
 
     private final ObjectProperty<LocalDate> currentDaySelectedProperty = new SimpleObjectProperty<>();
     private final HashMap<LocalDate, Button> correspondenceDateButton = new HashMap<>();
@@ -164,7 +164,7 @@ final class EventVideosWallActivity extends ViewDomainActivityBase {
         I18n.bindI18nTextProperty(eventDescriptionHtmlText.textProperty(), new I18nSubKey("expression: i18n(shortDescription)", eventProperty), eventProperty);
 
         eventDescriptionHtmlText.setMaxHeight(60);
-        videoExpirationLabel = I18nControls.newLabel(VideosI18nKeys.EventAvailableUntil);
+        videoExpirationLabel = I18nControls.newLabel(VideosI18nKeys.EventAvailableUntil1);
         videoExpirationLabel.setPadding(new Insets(30, 0, 0, 0));
         VBox titleVBox = new VBox(eventLabel, eventDescriptionHtmlText, videoExpirationLabel);
 
@@ -263,8 +263,8 @@ final class EventVideosWallActivity extends ViewDomainActivityBase {
                 if (event.getVodExpirationDate() != null) {
                     LocalDateTime nowInEventTimezone = Event.nowInEventTimezone();
                     boolean available = nowInEventTimezone.isBefore(event.getVodExpirationDate());
-                    I18nControls.bindI18nProperties(videoExpirationLabel, available ? VideosI18nKeys.EventAvailableUntil : VideosI18nKeys.VideoExpiredSince,
-                        LocalizedTime.formatLocalDateTimeProperty(event.getVodExpirationDate(), FrontOfficeTimeFormats.VOD_EXPIRATION_DATE_FORMAT));
+                    I18nControls.bindI18nProperties(videoExpirationLabel, available ? VideosI18nKeys.EventAvailableUntil1 : VideosI18nKeys.VideoExpiredSince1,
+                        LocalizedTime.formatLocalDateTimeProperty(event.getVodExpirationDate(), FrontOfficeTimeFormats.VOD_EXPIRATION_DATE_TIME_FORMAT));
                     videoExpirationLabel.setVisible(true);
                 } else {
                     videoExpirationLabel.setVisible(false);
@@ -272,7 +272,7 @@ final class EventVideosWallActivity extends ViewDomainActivityBase {
             }
 
             LocalDate todayInEventTimezone = Event.todayInEventTimezone();
-            I18nControls.bindI18nProperties(scheduleForTodayTitleLabel, VideosI18nKeys.ScheduleForSpecificDate,
+            I18nControls.bindI18nProperties(scheduleForTodayTitleLabel, VideosI18nKeys.ScheduleForSpecificDate1,
                 LocalizedTime.formatMonthDay(todayInEventTimezone, FrontOfficeTimeFormats.VOD_TODAY_MONTH_DAY_FORMAT));
 
             //If it's a recurring event, we don't display the daysColumnPane because it's one video per day

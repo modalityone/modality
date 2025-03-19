@@ -227,7 +227,7 @@ final class UserProfileActivity extends ViewDomainActivityBase implements Modali
         I18n.bindI18nTextProperty(materialTextField.labelTextProperty(), CrmI18nKeys.BirthDate);
         birthDateField.dateTimeFormatterProperty().bind(LocalizedTime.dateFormatterProperty(FrontOfficeTimeFormats.BIRTH_DATE_FORMAT));
         I18n.bindI18nTextProperty(birthDateTextField.promptTextProperty(),  I18nKeys.embedInString(I18nKeys.appendColons(UserProfileI18nKeys.DateOfBirthFormat)) + " {0}",
-            LocalizedTime.inferLocalDatePatternProperty(birthDateField.dateTimeFormatterProperty()));
+            LocalizedTime.inferLocalDatePatternProperty(birthDateField.dateTimeFormatterProperty(), true));
         birthDateField.getDatePicker().getView().setTranslateY(10); // To add a breathing area between the
 
         StackPane.setMargin(birthDateField.getView(), new Insets(0, 0, 0, 0));

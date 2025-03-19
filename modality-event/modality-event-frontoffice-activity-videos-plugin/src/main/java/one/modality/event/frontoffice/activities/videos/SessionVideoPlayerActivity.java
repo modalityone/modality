@@ -68,7 +68,7 @@ final class SessionVideoPlayerActivity extends AbstractVideoPlayerActivity {
 
     public Node buildUi() {
         Node node = super.buildUi();
-        videoExpirationLabel = I18nControls.newLabel(VideosI18nKeys.EventAvailableUntil);
+        videoExpirationLabel = I18nControls.newLabel(VideosI18nKeys.EventAvailableUntil1);
         videoExpirationLabel.setPadding(new Insets(30, 0, 0, 0));
         titleVBox.getChildren().add(videoExpirationLabel);
 
@@ -116,7 +116,7 @@ final class SessionVideoPlayerActivity extends AbstractVideoPlayerActivity {
             if (expirationDate != null) {
                 LocalDateTime nowInEventTimezone = Event.nowInEventTimezone();
                 boolean available = nowInEventTimezone.isBefore(expirationDate);
-                I18nControls.bindI18nProperties(videoExpirationLabel, available ? VideosI18nKeys.VideoAvailableUntil : VideosI18nKeys.VideoExpiredSince,
+                I18nControls.bindI18nProperties(videoExpirationLabel, available ? VideosI18nKeys.VideoAvailableUntil1 : VideosI18nKeys.VideoExpiredSince1,
                     LocalizedTime.formatLocalDateTime(expirationDate, FrontOfficeTimeFormats.VIDEO_PLAYER_DATE_TIME_FORMAT));
                 videoExpirationLabel.setVisible(true);
             } else {

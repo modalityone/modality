@@ -1,5 +1,7 @@
 package one.modality.base.client.time;
 
+import dev.webfx.extras.time.format.DateTimeFormatStyle;
+
 import java.time.format.DateTimeFormatter;
 import java.time.format.FormatStyle;
 
@@ -75,11 +77,11 @@ public interface FrontOfficeTimeFormats {
     FormatStyle AUDIO_PLAYLIST_DATE_FORMAT = FormatStyle.LONG;
     FormatStyle AUDIO_TRACK_DATE_TIME_FORMAT = FormatStyle.LONG;
     FormatStyle BOOKING_CHECKOUT_DATE_FORMAT = FormatStyle.FULL;
-    FormatStyle VOD_EXPIRATION_DATE_FORMAT = FormatStyle.LONG;
+    DateTimeFormatStyle VOD_EXPIRATION_DATE_TIME_FORMAT = new DateTimeFormatStyle(FormatStyle.LONG, DateTimeFormatter.ofPattern("HH:mm"));
     FormatStyle VOD_TODAY_MONTH_DAY_FORMAT = FormatStyle.FULL;
     FormatStyle VOD_BUTTON_DATE_FORMAT = FormatStyle.LONG;
     FormatStyle VIDEO_PLAYER_DATE_TIME_FORMAT = FormatStyle.LONG;
     FormatStyle VIDEO_DAY_DATE_FORMAT = FormatStyle.LONG;
-    FormatStyle VIDEO_DAY_TIME_FORMAT = FormatStyle.SHORT;
-
+    //FormatStyle VIDEO_DAY_TIME_FORMAT = FormatStyle.SHORT; // still too long on the web - ex: 7.00 in the afternoon
+    DateTimeFormatter VIDEO_DAY_TIME_FORMAT = DateTimeFormatter.ofPattern("HH:mm");
 }

@@ -57,14 +57,12 @@ final class VideosDayScheduleView {
     private final int NAME_PREF_SIZE = 250;
     private final int TIME_PREF_SIZE = 150;
 
-
     public VideosDayScheduleView(LocalDate day, List<ScheduledItem> dayScheduledVideos, BrowsingHistory browsingHistory, boolean displayHeader) {
         this.day = day;
         this.dayScheduledVideos = dayScheduledVideos;
         this.browsingHistory = browsingHistory;
         buildUi(displayHeader);
     }
-
 
     Region getView() {
         return mainVBox;
@@ -233,8 +231,8 @@ final class VideosDayScheduleView {
             if (expirationDate != null) {
                 boolean available = expirationDate.isAfter(nowInEventTimezone);
                 Label expirationDateLabel = Bootstrap.small(Bootstrap.textDanger(I18nControls.newLabel(
-                    available ? VideosI18nKeys.VideoAvailableUntil: VideosI18nKeys.VideoExpiredOn,
-                    LocalizedTime.formatLocalDateTime(expirationDate, FrontOfficeTimeFormats.VOD_EXPIRATION_DATE_FORMAT)
+                    available ? VideosI18nKeys.VideoAvailableUntil1 : VideosI18nKeys.VideoExpiredOn1,
+                    LocalizedTime.formatLocalDateTime(expirationDate, FrontOfficeTimeFormats.VOD_EXPIRATION_DATE_TIME_FORMAT)
                 )));
                 expirationDateLabel.setWrapText(true);
 
@@ -317,7 +315,7 @@ final class VideosDayScheduleView {
 
                 //We display the countdown 3 hours before the session
                 if (duration.getSeconds() > 0 && duration.getSeconds() < 3600 * 3) {
-                    I18nControls.bindI18nProperties(statusLabel, I18nKeys.upperCase(VideosI18nKeys.StartingIn), formatDuration(duration));
+                    I18nControls.bindI18nProperties(statusLabel, I18nKeys.upperCase(VideosI18nKeys.StartingIn1), formatDuration(duration));
                     //We refresh every second
                     scheduleRefreshUI(1);
                     //We display the play button 30 minutes before the session

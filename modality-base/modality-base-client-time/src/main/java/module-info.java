@@ -5,6 +5,7 @@ module modality.base.client.time {
     // Direct dependencies modules
     requires javafx.graphics;
     requires webfx.extras.cell;
+    requires webfx.extras.time.format;
     requires webfx.platform.boot;
     requires webfx.platform.util;
 
