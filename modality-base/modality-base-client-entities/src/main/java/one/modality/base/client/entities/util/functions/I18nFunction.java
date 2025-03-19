@@ -3,6 +3,7 @@ package one.modality.base.client.entities.util.functions;
 import dev.webfx.extras.type.PrimType;
 import dev.webfx.extras.type.Type;
 import dev.webfx.stack.i18n.I18n;
+import dev.webfx.stack.orm.entity.Entity;
 import dev.webfx.stack.orm.entity.EntityId;
 import dev.webfx.stack.orm.expression.lci.DomainReader;
 import dev.webfx.stack.orm.expression.terms.function.Function;
@@ -48,7 +49,7 @@ public final class I18nFunction extends Function {
                 result = domainReader.getDomainFieldValue(label, I18n.getLanguage());
             if (result == null)
                 result = domainReader.getDomainFieldValue(label, I18n.getDefaultLanguage());
-        } else {
+        } else if (argument instanceof Entity) {
             Object i18nKey = domainReader.getDomainFieldValue(argument, "i18nKey");
             if (i18nKey == null)
                 i18nKey = argument;

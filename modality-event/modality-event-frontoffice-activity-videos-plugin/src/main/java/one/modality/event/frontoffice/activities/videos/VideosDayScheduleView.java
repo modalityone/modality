@@ -102,7 +102,7 @@ final class VideosDayScheduleView {
         if (displayHeader) {
             addHeaderRow();
         } else {
-            if (!dayScheduledVideos.get(0).getEvent().isRecurring())
+            if (!Boolean.TRUE.equals(dayScheduledVideos.get(0).getEvent().isRecurring())) // isRecurring() may return null if type is not set
                 addInvisibleSeparator();
         }
 

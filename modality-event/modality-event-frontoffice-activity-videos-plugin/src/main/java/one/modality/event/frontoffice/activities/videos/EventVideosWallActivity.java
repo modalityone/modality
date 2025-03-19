@@ -114,7 +114,7 @@ final class EventVideosWallActivity extends ViewDomainActivityBase {
                             eventIdContainingVideos = Entities.getPrimaryKey(currentEvent.getRepeatedEventId());
                         }
                         // In this code: programScheduledItem.timeline..startTime, the double . means we do a left join, that allow null value (if the type of event is recurring, the timeline of the programScheduledItem is null
-                        entityStore.<ScheduledItem>executeQuery("select name, date, expirationDate, programScheduledItem.(name, startTime, endTime, timeline.(startTime, endTime)), published, event.(name, type, livestreamUrl, recurringWithVideo), vodDelayed, " +
+                        entityStore.<ScheduledItem>executeQuery("select name, date, expirationDate, programScheduledItem.(name, startTime, endTime, timeline.(startTime, endTime)), published, event.(name, type.recurringItem, livestreamUrl, recurringWithVideo), vodDelayed, " +
                                 " (exists(select MediaConsumption where scheduledItem=si and attendance.documentLine.document.person=?) as attended), " +
                                 " (select id from Attendance where scheduledItem=si.bookableScheduledItem and documentLine.document.person=? limit 1) as attendanceId " +
                                 " from ScheduledItem si " +
@@ -334,10 +334,10 @@ final class EventVideosWallActivity extends ViewDomainActivityBase {
 
         Map<LocalDate, Button> dayButtonMap = new HashMap<>();
         new TreeMap<>(perDayGroups) // The purpose of using a TreeMap is to sort the groups by keys (= days)
-            .forEach((day, scheduledItem) -> {
+            .forEach((day, scheduledItems) -> {
                 videosDayScheduleViews.add(
                     // Passing the day, the videos of that day, and the history (for backward navigation)
-                    new VideosDayScheduleView(day, scheduledItem, getHistory(), isFirst[0]));
+                    new VideosDayScheduleView(day, scheduledItems, getHistory(), isFirst[0]));
                 if (firstDay[0] == null) firstDay[0] = day;
                 Button dateButton;
                 dateButton = Bootstrap.primaryButton(new Button());
@@ -348,7 +348,7 @@ final class EventVideosWallActivity extends ViewDomainActivityBase {
 
                 dateButton.setOnAction(e -> {
                     videosDayScheduleViews.clear();
-                    videosDayScheduleViews.add(new VideosDayScheduleView(day, scheduledItem, getHistory(), true));
+                    videosDayScheduleViews.add(new VideosDayScheduleView(day, scheduledItems, getHistory(), true));
                     currentDaySelectedProperty.set(day);
                 });
                 daysColumnPane.getChildren().add(dateButton);
