@@ -10,7 +10,12 @@ import java.time.format.FormatStyle;
 public interface FrontOfficeTimeFormats {
 
     /*
-    Accepted format classes for LocalTime, LocalTime, LocalDateTime & MonthDay are FormatStyle or DateTimeFormatter.
+    Accepted format classes for LocalTime, LocalTime, LocalDateTime & MonthDay are:
+      - FormatStyle
+      - String (pattern)
+      - DateTimeFormatter
+      - LocalizedTime
+      - LocalizedDateTimeFormat
     Accepted format class for DayOfWeek, Month & MonthYear is TextStyle only.
 
     TextStyle.FULL & TextStyle.FULL_STANDALONE -> Full text, typically the full description
