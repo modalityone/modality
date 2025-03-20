@@ -77,7 +77,7 @@ public interface FrontOfficeTimeFormats {
     //FormatStyle BIRTH_DATE_FORMAT = FormatStyle.SHORT;
     FormatStyle MEDIA_INFO_DATE_FORMAT = FormatStyle.LONG;
     FormatStyle RECURRING_EVENT_SCHEDULE_MONTH_DAY_FORMAT = FormatStyle.LONG;
-    FormatStyle RECURRING_EVENT_SCHEDULE_TIME_FORMAT = FormatStyle.SHORT;
+    String RECURRING_EVENT_SCHEDULE_TIME_FORMAT = "HH:mm";
     FormatStyle AUDIO_PLAYLIST_DATE_FORMAT = FormatStyle.LONG;
     FormatStyle AUDIO_TRACK_DATE_TIME_FORMAT = FormatStyle.LONG;
     FormatStyle BOOKING_CHECKOUT_DATE_FORMAT = FormatStyle.FULL;
