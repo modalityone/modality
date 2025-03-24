@@ -9,8 +9,6 @@ import dev.webfx.stack.i18n.I18n;
 import dev.webfx.stack.i18n.controls.I18nControls;
 import dev.webfx.stack.ui.controls.button.ButtonFactory;
 import javafx.beans.binding.Bindings;
-import javafx.beans.property.BooleanProperty;
-import javafx.beans.property.SimpleBooleanProperty;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Node;
@@ -25,12 +23,12 @@ import javafx.scene.text.TextAlignment;
 import one.modality.base.shared.entities.Event;
 import one.modality.base.shared.entities.ScheduledItem;
 import one.modality.base.shared.entities.formatters.EventPriceFormatter;
+import one.modality.ecommerce.client.workingbooking.WorkingBookingProperties;
 import one.modality.event.client.booking.BookableDatesUi;
 import one.modality.event.client.recurringevents.RecurringEventSchedule;
 import one.modality.event.frontoffice.activities.booking.BookingI18nKeys;
 import one.modality.event.frontoffice.activities.booking.process.event.BookEventActivity;
 import one.modality.event.frontoffice.activities.booking.process.event.BookingForm;
-import one.modality.ecommerce.client.workingbooking.WorkingBookingProperties;
 
 import java.time.LocalDate;
 import java.util.ArrayList;
@@ -45,8 +43,8 @@ final class RecurringEventBookingForm implements BookingForm {
     private final BookEventActivity bookEventActivity;
     private final HtmlText eventDescription = new HtmlText();
     private final RecurringEventSchedule recurringEventSchedule = new RecurringEventSchedule();
-    private final BooleanProperty noDatesBookedProperty = new SimpleBooleanProperty();
     private final Hyperlink selectAllClassesHyperlink = I18nControls.bindI18nTextProperty(new Hyperlink(), BookingI18nKeys.SelectAllClasses);
+    private List<LocalDate> allSelectableDates;
 
     RecurringEventBookingForm(Event event, BookEventActivity bookEventActivity) {
         this.event = event;
@@ -107,8 +105,8 @@ final class RecurringEventBookingForm implements BookingForm {
         checkoutScalePane.setMaxWidth(Double.MAX_VALUE);
 
         checkoutButton.disableProperty().bind(Bindings.createBooleanBinding(
-            () -> workingBookingProperties.getBalance() <= 0 && noDatesBookedProperty.get(),
-            workingBookingProperties.balanceProperty(), noDatesBookedProperty));
+            () -> workingBookingProperties.getBalance() <= 0 && !Collections.containsAny(recurringEventSchedule.getSelectedDates(), allSelectableDates),
+            workingBookingProperties.balanceProperty(), recurringEventSchedule.getSelectedDates()));
         checkoutButton.setOnAction((event -> bookEventActivity.displayCheckoutSlide()));
         VBox.setMargin(checkoutScalePane, new Insets(20, 0, 20, 0)); // in addition to VBox bottom margin 80
 
@@ -207,7 +205,7 @@ final class RecurringEventBookingForm implements BookingForm {
 
         // Arming the "Select all classes" hyperlink. We create a list of dates that will contain all the selectable
         // dates = the ones that are not in the past, and not already booked
-        List<LocalDate> allSelectableDates = Collections.map(scheduledItemsOnEvent, ScheduledItem::getDate);
+        allSelectableDates = Collections.map(scheduledItemsOnEvent, ScheduledItem::getDate);
         allSelectableDates.removeAll(nonSelectableDate);
         selectAllClassesHyperlink.setOnAction((event -> recurringEventSchedule.addClickedDates(allSelectableDates)));
     }
