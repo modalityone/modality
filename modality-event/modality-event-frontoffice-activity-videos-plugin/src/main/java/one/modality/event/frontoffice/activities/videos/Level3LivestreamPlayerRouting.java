@@ -9,7 +9,7 @@ import one.modality.base.client.util.routing.ModalityRoutingUtil;
 /**
  * @author Bruno Salmon
  */
-public final class LivestreamPlayerRouting {
+public final class Level3LivestreamPlayerRouting {
 
     static final String EVENT_ID_PARAMETER_NAME = "eventId";
     private static final String EVENT_ID_PARAMETER_TOKEN = ':' + EVENT_ID_PARAMETER_NAME;
@@ -31,9 +31,9 @@ public final class LivestreamPlayerRouting {
         }
 
         public static UiRoute<?> uiRoute() {
-            return UiRoute.create(LivestreamPlayerRouting.getPath()
+            return UiRoute.create(Level3LivestreamPlayerRouting.getPath()
                 , true
-                , LivestreamPlayerActivity::new
+                , Level3LivestreamPlayerActivity::new
                 , ViewDomainActivityContextFinal::new
             );
         }

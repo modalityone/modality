@@ -33,9 +33,11 @@ import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
 
 /**
+ * This activity displays the video player for the current livestream session of the event.
+ *
  * @author Bruno Salmon
  */
-final class LivestreamPlayerActivity extends AbstractVideoPlayerActivity {
+final class Level3LivestreamPlayerActivity extends AbstractVideoPlayerActivity {
 
     private final ObjectProperty<Object> eventIdProperty = new SimpleObjectProperty<>();
     private Event currentEvent;
@@ -44,7 +46,7 @@ final class LivestreamPlayerActivity extends AbstractVideoPlayerActivity {
     private final Player livestreamPlayer = AllPlayers.createAllVideoPlayer();
     private MediaConsumptionRecorder mediaConsumptionRecorder;
 
-    public LivestreamPlayerActivity() {
+    public Level3LivestreamPlayerActivity() {
         //We relaunch every 14 hours the request (in case the user never close the page, and to make sure the coherence of MediaConsumption is ok)
         Scheduler.schedulePeriodic(14 * 3600 * 1000, this::startLogic);
         FXProperties.runOnPropertyChange(videoScheduledItem -> {
@@ -57,7 +59,7 @@ final class LivestreamPlayerActivity extends AbstractVideoPlayerActivity {
 
     @Override
     protected void updateModelFromContextParameters() {
-        eventIdProperty.set(Numbers.toInteger(getParameter(LivestreamPlayerRouting.EVENT_ID_PARAMETER_NAME)));
+        eventIdProperty.set(Numbers.toInteger(getParameter(Level3LivestreamPlayerRouting.EVENT_ID_PARAMETER_NAME)));
     }
 
     @Override

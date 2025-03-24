@@ -9,7 +9,7 @@ import one.modality.base.client.util.routing.ModalityRoutingUtil;
 /**
  * @author Bruno Salmon
  */
-public final class SessionVideoPlayerRouting {
+public final class Level3SessionVideoPlayerRouting {
 
     static final String SCHEDULED_VIDEO_ITEM_ID_PARAMETER_NAME = "scheduledVideoItemId";
     private static final String SCHEDULED_VIDEO_ITEM_ID_PARAMETER_TOKEN = ':' + SCHEDULED_VIDEO_ITEM_ID_PARAMETER_NAME;
@@ -30,9 +30,9 @@ public final class SessionVideoPlayerRouting {
         }
 
         public static UiRoute<?> uiRoute() {
-            return UiRoute.create(SessionVideoPlayerRouting.getPath()
+            return UiRoute.create(Level3SessionVideoPlayerRouting.getPath()
                 , true
-                , SessionVideoPlayerActivity::new
+                , Level3SessionVideoPlayerActivity::new
                 , ViewDomainActivityContextFinal::new
             );
         }

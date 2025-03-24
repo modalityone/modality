@@ -32,10 +32,14 @@ import one.modality.event.frontoffice.medias.EventThumbnailView;
 import java.util.stream.Collectors;
 
 /**
+ * This is the first activity displayed when people click on the Livestream menu. It displays the list of all video
+ * series booked by the user over all events. There is typically only one video series per event, represented by a
+ * single DocumentLine. For each event, we display a thumbnail and a description of the event.
+ *
  * @author David Hello
  * @author Bruno Salmon
  */
-final class VideosActivity extends ViewDomainActivityBase {
+final class Level1EventsWithVideoActivity extends ViewDomainActivityBase {
 
     private static final double BOX_WIDTH = 263;
 
@@ -50,12 +54,7 @@ final class VideosActivity extends ViewDomainActivityBase {
         FXProperties.runNowAndOnPropertyChange(userPersonId -> {
             documentLinesWithBookedVideos.clear();
             if (userPersonId != null) {
-//                entityStore.<Event>executeQuery(
-//                    "select name, label.(de,en,es,fr,pt), shortDescription, audioExpirationDate, startDate, endDate, livestreamUrl, vodExpirationDate" +
-//                    " from Event e" +
-//                    " where exists(select Attendance where !documentLine.cancelled and documentLine.document.(event=e and person=? and price_balance<=0) and scheduledItem.item.family.code=?)",
-//                        userPersonId, KnownItemFamily.VIDEO.getCode())
-                //2nd: we look for the scheduledItem having a bookableScheduledItem which is a audio type (case of festival)
+                // we look for the scheduledItem having a bookableScheduledItem which is an audio type (case of festival)
                 entityStore.<DocumentLine>executeQuery(
                         "select document.event.(name,label.(de,en,es,fr,pt), shortDescription, vodExpirationDate, startDate, endDate, repeatedEvent), item.code, item.family.code, " +
                             //We look if there are published audio ScheduledItem of type video, whose bookableScheduledItem has  been booked
@@ -128,10 +127,10 @@ final class VideosActivity extends ViewDomainActivityBase {
     }
 
     private void showLivestreamVideo(Event event) {
-        getHistory().push(LivestreamPlayerRouting.getLivestreamPath(event));
+        getHistory().push(Level3LivestreamPlayerRouting.getLivestreamPath(event));
     }
     private void showEventVideosWall(Event event) {
-        getHistory().push(EventVideosWallRouting.getEventVideosWallPath(event));
+        getHistory().push(Level2EventDaysWithVideoRouting.getEventVideosWallPath(event));
     }
 
 }

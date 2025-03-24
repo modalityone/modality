@@ -34,9 +34,18 @@ import java.time.LocalDateTime;
 import java.util.List;
 
 /**
+ *
+ *
  * @author Bruno Salmon
  */
-final class VideosDayScheduleView {
+final class Level2EventDayScheduleView {
+
+    private static final double DATE_PREF_SIZE = 150;
+    private static final double STATUS_PREF_SIZE = 150;
+    private static final double NAME_PREF_SIZE = 250;
+    private static final double TIME_PREF_SIZE = 150;
+    private static final double REMARK_PREF_SIZE = 300;
+    private static final double BUTTON_PREF_SIZE = 300;
 
     private final LocalDate day;
     private final List<ScheduledItem> dayScheduledVideos;
@@ -52,12 +61,8 @@ final class VideosDayScheduleView {
     private final Separator separator1 = new Separator();
     private final HBox mainLine = new HBox();
     private final VBox mainVBox = new VBox();
-    private final int DATE_PREF_SIZE = 150;
-    private final int STATUS_PREF_SIZE = 150;
-    private final int NAME_PREF_SIZE = 250;
-    private final int TIME_PREF_SIZE = 150;
 
-    public VideosDayScheduleView(LocalDate day, List<ScheduledItem> dayScheduledVideos, BrowsingHistory browsingHistory, boolean displayHeader) {
+    public Level2EventDayScheduleView(LocalDate day, List<ScheduledItem> dayScheduledVideos, BrowsingHistory browsingHistory, boolean displayHeader) {
         this.day = day;
         this.dayScheduledVideos = dayScheduledVideos;
         this.browsingHistory = browsingHistory;
@@ -87,12 +92,10 @@ final class VideosDayScheduleView {
         timeVBox.setMaxWidth(TIME_PREF_SIZE);
 
         remarkMonoPane.setMinWidth(40);
-        int REMARK_PREF_SIZE = 300;
         remarkMonoPane.setPrefWidth(REMARK_PREF_SIZE);
         remarkMonoPane.setMaxWidth(REMARK_PREF_SIZE);
 
         actionButtonMonoPane.setMinWidth(40);
-        int BUTTON_PREF_SIZE = 300;
         actionButtonMonoPane.setPrefWidth(BUTTON_PREF_SIZE);
         actionButtonMonoPane.setMaxWidth(80);
 
@@ -301,7 +304,7 @@ final class VideosDayScheduleView {
             LocalDateTime nowInEventTimezone = Event.nowInEventTimezone();
             if (Times.isBetween(nowInEventTimezone, sessionStart.minusMinutes(2), sessionEnd)) {
                 I18nControls.bindI18nProperties(statusLabel, I18nKeys.upperCase(VideosI18nKeys.LiveNow));
-                actionButton.setOnAction(e -> browsingHistory.push(LivestreamPlayerRouting.getLivestreamPath(scheduledItem.getEventId())));
+                actionButton.setOnAction(e -> browsingHistory.push(Level3LivestreamPlayerRouting.getLivestreamPath(scheduledItem.getEventId())));
                 actionButton.setVisible(true);
                 Duration duration = Duration.between(nowInEventTimezone, sessionEnd);
                 if (duration.getSeconds() > 0)
@@ -320,7 +323,7 @@ final class VideosDayScheduleView {
                     scheduleRefreshUI(1);
                     //We display the play button 30 minutes before the session
                     if (duration.getSeconds() < 60 * 30) {
-                        actionButton.setOnAction(e -> browsingHistory.push(LivestreamPlayerRouting.getLivestreamPath(scheduledItem.getEventId())));
+                        actionButton.setOnAction(e -> browsingHistory.push(Level3LivestreamPlayerRouting.getLivestreamPath(scheduledItem.getEventId())));
                         actionButton.setVisible(true);
                     } else {
                         hideActionButton();
@@ -351,7 +354,7 @@ final class VideosDayScheduleView {
             if (scheduledItem.isPublished()) {
                 I18nControls.bindI18nProperties(statusLabel, I18nKeys.upperCase(VideosI18nKeys.Available));
                 actionButton.setOnAction(e -> {
-                    browsingHistory.push(SessionVideoPlayerRouting.getVideoOfSessionPath(scheduledItem.getId()));
+                    browsingHistory.push(Level3SessionVideoPlayerRouting.getVideoOfSessionPath(scheduledItem.getId()));
                     transformButtonFromPlayToPlayAgain(actionButton);
                 });
                 actionButton.setVisible(true);

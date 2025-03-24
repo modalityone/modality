@@ -60,13 +60,16 @@ import java.util.TreeMap;
 import java.util.stream.Collectors;
 
 /**
+ * This is the second activity from the Livestream menu (after VideosActivity) when people click on a specific event.
+ * So it displays a table of all days with videos of the event with the following columns: date, status, name, UK time &
+ * remarks, and the last column displays a button to watch the video when applicable.
+ *
  * @author Bruno Salmon
  */
-final class EventVideosWallActivity extends ViewDomainActivityBase {
+final class Level2EventDaysWithVideoActivity extends ViewDomainActivityBase {
 
     private static final double IMAGE_HEIGHT = 240;
     private static final double DAY_BUTTON_WIDTH = 150;
-    private static final double DAY_COLUMN_PANE_MAX_WIDTH = 1100;
 
     private final ObjectProperty<Object> pathEventIdProperty = new SimpleObjectProperty<>();
 
@@ -74,7 +77,6 @@ final class EventVideosWallActivity extends ViewDomainActivityBase {
     private final ObservableList<ScheduledItem> scheduledItems = FXCollections.observableArrayList();
 
     private final CollapsePane daysCollapsePane = new CollapsePane();
-    private final ColumnsPane daysColumnPane = new ColumnsPane();
 
     private Label videoExpirationLabel;
     private final CloudImageService cloudImageService = new ClientImageService();
@@ -83,14 +85,14 @@ final class EventVideosWallActivity extends ViewDomainActivityBase {
     private final HashMap<LocalDate, Button> correspondenceDateButton = new HashMap<>();
 
     // Creating an intermediate observable list of DayVideosWallView, each element being a view for 1 day with all its videos
-    private final ObservableList<VideosDayScheduleView> videosDayScheduleViews = FXCollections.observableArrayList(); // will be populated below
+    private final ObservableList<Level2EventDayScheduleView> videosDayScheduleViews = FXCollections.observableArrayList(); // will be populated below
     private Button selectAllDaysButton;
     private EntityStore entityStore;
     private Label scheduleSubTitleLabel;
 
     @Override
     protected void updateModelFromContextParameters() {
-        pathEventIdProperty.set(Numbers.toInteger(getParameter(EventVideosWallRouting.PATH_EVENT_ID_PARAMETER_NAME)));
+        pathEventIdProperty.set(Numbers.toInteger(getParameter(Level2EventDaysWithVideoRouting.PATH_EVENT_ID_PARAMETER_NAME)));
     }
 
     @Override
@@ -113,7 +115,9 @@ final class EventVideosWallActivity extends ViewDomainActivityBase {
                         if (currentEvent.getRepeatedEventId() != null) {
                             eventIdContainingVideos = Entities.getPrimaryKey(currentEvent.getRepeatedEventId());
                         }
-                        // In this code: programScheduledItem.timeline..startTime, the double . means we do a left join, that allow null value (if the type of event is recurring, the timeline of the programScheduledItem is null
+                        // We load all video scheduled items booked by the user for the event (booking must be confirmed
+                        // and paid). They will be grouped by day in the UI.
+                        // Note: double dots such as programScheduledItem.timeline..startTime means we do a left join, that allow null value (if the type of event is recurring, the timeline of the programScheduledItem is null
                         entityStore.<ScheduledItem>executeQuery("select name, date, expirationDate, programScheduledItem.(name, startTime, endTime, timeline.(startTime, endTime)), published, event.(name, type.recurringItem, livestreamUrl, recurringWithVideo), vodDelayed, " +
                                 " (exists(select MediaConsumption where scheduledItem=si and attendance.documentLine.document.person=?) as attended), " +
                                 " (select id from Attendance where scheduledItem=si.bookableScheduledItem and documentLine.document.person=? limit 1) as attendanceId " +
@@ -133,12 +137,6 @@ final class EventVideosWallActivity extends ViewDomainActivityBase {
             }
         }, pathEventIdProperty, FXUserPersonId.userPersonIdProperty());
     }
-
-    @Override
-    public void onResume() {
-        super.onResume();
-    }
-
 
     @Override
     public Node buildUi() { // Reminder: called only once (rebuild = bad UX) => UI is reacting to parameter changes
@@ -189,20 +187,12 @@ final class EventVideosWallActivity extends ViewDomainActivityBase {
         scheduleTitleVBox.setAlignment(Pos.CENTER);
         scheduleTitleVBox.setPadding(new Insets(100, 0, 0, 0));
 
-        daysColumnPane.setHgap(7);
-        daysColumnPane.setVgap(15);
-        daysColumnPane.setMaxColumnCount(8);
-        daysColumnPane.setMinColumnWidth(DAY_BUTTON_WIDTH);
-        daysColumnPane.setMinWidth(DAY_COLUMN_PANE_MAX_WIDTH);
-        daysColumnPane.setPadding(new Insets(0, 0, 30, 0));
-
         VBox videoScheduleVBox = new VBox(20); // Will be populated later (see reacting code below)
 
         VBox loadedContentVBox = new VBox(40,
             headerHBox,
             currentDayScheduleVBox,
             scheduleTitleVBox,
-            //   daysColumnPane,
             new ScalePane(videoScheduleVBox)
         );
         loadedContentVBox.setAlignment(Pos.CENTER);
@@ -218,7 +208,6 @@ final class EventVideosWallActivity extends ViewDomainActivityBase {
             handleVideoChanges(false);
         });
 
-        // *************************************************************************************************************
         // *************************************************************************************************************
         // *********************************** Reacting to parameter changes *******************************************
         // *************************************************************************************************************
@@ -277,7 +266,6 @@ final class EventVideosWallActivity extends ViewDomainActivityBase {
 
             //If it's a recurring event, we don't display the daysColumnPane because it's one video per day
             boolean isRecurring = !scheduledItems.isEmpty() && scheduledItems.get(0).getEvent().isRecurringWithVideo();
-            Layouts.setManagedAndVisibleProperties(daysColumnPane, !isRecurring);
             Layouts.setManagedAndVisibleProperties(scheduleSubTitleLabel, !isRecurring);
             if (isRecurring) {
                 selectAllDaysButton.fire();
@@ -291,7 +279,7 @@ final class EventVideosWallActivity extends ViewDomainActivityBase {
                 .forEach((day, dayScheduledVideos) -> {
                     Layouts.setManagedAndVisibleProperties(currentDayScheduleVBox, true);
                     // Passing the day, the videos of that day, and the history (for backward navigation)
-                    ScalePane currentScalePane = new ScalePane(new VideosDayScheduleView(day, dayScheduledVideos, getHistory(), true).getView());
+                    ScalePane currentScalePane = new ScalePane(new Level2EventDayScheduleView(day, dayScheduledVideos, getHistory(), true).getView());
                     currentDayScheduleVBox.getChildren().setAll(scheduleForTodayTitleLabel, currentScalePane);
                 });
 
@@ -305,7 +293,7 @@ final class EventVideosWallActivity extends ViewDomainActivityBase {
             if (videosDayScheduleViews.isEmpty()) {
                 videoScheduleVBox.getChildren().setAll(noContentLabel);
             } else {
-                videoScheduleVBox.getChildren().setAll(Collections.map(videosDayScheduleViews, VideosDayScheduleView::getView));
+                videoScheduleVBox.getChildren().setAll(Collections.map(videosDayScheduleViews, Level2EventDayScheduleView::getView));
             }
         }, videosDayScheduleViews);
 
@@ -316,7 +304,6 @@ final class EventVideosWallActivity extends ViewDomainActivityBase {
         // *************************************************************************************************************
 
         return FOPageUtil.restrictToMaxPageWidthAndApplyPageLeftTopRightBottomPadding(pageContainer);
-        //return FrontOfficeActivityUtil.createActivityPageScrollPane(pageContainer, true);
     }
 
 
@@ -325,7 +312,6 @@ final class EventVideosWallActivity extends ViewDomainActivityBase {
         Map<LocalDate, List<ScheduledItem>> perDayGroups =
             scheduledItems.stream().collect(Collectors.groupingBy(ScheduledItem::getDate));
         videosDayScheduleViews.clear();
-        daysColumnPane.getChildren().clear();
 
         correspondenceDateButton.clear();
         correspondenceDateButton.put(null, selectAllDaysButton);
@@ -337,7 +323,7 @@ final class EventVideosWallActivity extends ViewDomainActivityBase {
             .forEach((day, scheduledItems) -> {
                 videosDayScheduleViews.add(
                     // Passing the day, the videos of that day, and the history (for backward navigation)
-                    new VideosDayScheduleView(day, scheduledItems, getHistory(), isFirst[0]));
+                    new Level2EventDayScheduleView(day, scheduledItems, getHistory(), isFirst[0]));
                 if (firstDay[0] == null) firstDay[0] = day;
                 Button dateButton;
                 dateButton = Bootstrap.primaryButton(new Button());
@@ -348,10 +334,9 @@ final class EventVideosWallActivity extends ViewDomainActivityBase {
 
                 dateButton.setOnAction(e -> {
                     videosDayScheduleViews.clear();
-                    videosDayScheduleViews.add(new VideosDayScheduleView(day, scheduledItems, getHistory(), true));
+                    videosDayScheduleViews.add(new Level2EventDayScheduleView(day, scheduledItems, getHistory(), true));
                     currentDaySelectedProperty.set(day);
                 });
-                daysColumnPane.getChildren().add(dateButton);
                 isFirst[0] = false;
             });
 
@@ -362,14 +347,6 @@ final class EventVideosWallActivity extends ViewDomainActivityBase {
                 firstDayButton.fire(); // Simulate a button click to initially display the videos of the first day only
             }
         }
-        daysColumnPane.getChildren().add(selectAllDaysButton);
-
-        //Here we resize daysColumnPane
-        int numberOfChild = daysColumnPane.getChildren().size();
-        double theoreticalColumnPaneWith = (DAY_BUTTON_WIDTH + daysColumnPane.getHgap()) * (numberOfChild);
-        double columnPaneWidth = Math.min(theoreticalColumnPaneWith, DAY_COLUMN_PANE_MAX_WIDTH);
-        daysColumnPane.setMaxWidth(columnPaneWidth);
-        daysColumnPane.setMinWidth(columnPaneWidth);
     }
 
     private void updateDaysButtonStyle() {

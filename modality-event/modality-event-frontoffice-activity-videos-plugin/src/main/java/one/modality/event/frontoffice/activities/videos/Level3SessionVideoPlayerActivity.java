@@ -28,9 +28,11 @@ import java.time.LocalDateTime;
 import java.time.LocalTime;
 
 /**
+ * This activity displays a video player for a given session selected by the user (VOD).
+ *
  * @author Bruno Salmon
  */
-final class SessionVideoPlayerActivity extends AbstractVideoPlayerActivity {
+final class Level3SessionVideoPlayerActivity extends AbstractVideoPlayerActivity {
 
     private Label videoExpirationLabel;
 
@@ -83,7 +85,7 @@ final class SessionVideoPlayerActivity extends AbstractVideoPlayerActivity {
     }
 
     protected void updateModelFromContextParameters() {
-        scheduledVideoItemIdProperty.set(Numbers.toInteger(getParameter(SessionVideoPlayerRouting.SCHEDULED_VIDEO_ITEM_ID_PARAMETER_NAME)));
+        scheduledVideoItemIdProperty.set(Numbers.toInteger(getParameter(Level3SessionVideoPlayerRouting.SCHEDULED_VIDEO_ITEM_ID_PARAMETER_NAME)));
     }
 
     protected void syncHeader() {
