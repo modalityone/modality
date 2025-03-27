@@ -14,12 +14,9 @@ module modality.event.frontoffice.medias {
     requires webfx.extras.styles.bootstrap;
     requires webfx.extras.webtext;
     requires webfx.kit.util;
-    requires webfx.platform.console;
     requires webfx.platform.scheduler;
     requires webfx.platform.shutdown;
     requires webfx.platform.util;
-    requires webfx.stack.cloud.image;
-    requires webfx.stack.cloud.image.client;
     requires webfx.stack.i18n;
     requires webfx.stack.i18n.controls;
     requires webfx.stack.orm.entity;

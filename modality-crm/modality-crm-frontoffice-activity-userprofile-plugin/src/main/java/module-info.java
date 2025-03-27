@@ -27,7 +27,6 @@ module modality.crm.frontoffice.activity.userprofile.plugin {
     requires webfx.extras.util.layout;
     requires webfx.kit.launcher;
     requires webfx.kit.util;
-    requires webfx.platform.async;
     requires webfx.platform.console;
     requires webfx.platform.file;
     requires webfx.platform.uischeduler;
@@ -35,8 +34,6 @@ module modality.crm.frontoffice.activity.userprofile.plugin {
     requires webfx.platform.windowlocation;
     requires webfx.stack.authn;
     requires webfx.stack.authn.login.ui;
-    requires webfx.stack.cloud.image;
-    requires webfx.stack.cloud.image.client;
     requires webfx.stack.i18n;
     requires webfx.stack.i18n.controls;
     requires webfx.stack.orm.datasourcemodel.service;

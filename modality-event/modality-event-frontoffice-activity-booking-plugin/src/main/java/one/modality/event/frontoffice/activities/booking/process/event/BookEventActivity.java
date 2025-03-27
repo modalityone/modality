@@ -72,7 +72,9 @@ public final class BookEventActivity extends ViewDomainActivityBase implements B
 
     @Override
     public Node buildUi() {
-        return lettersSlideController.getContainer();
+        Region activityContainer = lettersSlideController.getContainer();
+        activityContainer.getStyleClass().add("book-event-activity");
+        return activityContainer;
     }
 
     @Override

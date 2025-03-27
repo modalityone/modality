@@ -151,8 +151,7 @@ final class Step2CheckoutSlide extends StepSlide {
         // Facility fee checkbox for events with facility fees rates
         boolean hasFacilityFees = getWorkingBooking().getPolicyAggregate().hasFacilityFees();
         CheckBox facilityFeeCheckBox = I18nControls.newCheckBox(BookingI18nKeys.FacilityFee);
-        facilityFeeCheckBox.setVisible(hasFacilityFees);
-        facilityFeeCheckBox.setManaged(hasFacilityFees);
+        Layouts.setManagedAndVisibleProperties(facilityFeeCheckBox, hasFacilityFees);
         VBox.setMargin(facilityFeeCheckBox, new Insets(50, 0, 50, 0));
         Document document = getWorkingBooking().getLastestDocumentAggregate().getDocument();
         facilityFeeCheckBox.setSelected(Booleans.isTrue(document.isPersonFacilityFee()));

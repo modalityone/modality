@@ -14,7 +14,6 @@ final class Step1BookingFormSlide extends StepSlide {
     private final ObjectProperty<BookingForm> bookingFormProperty = new SimpleObjectProperty<>() {
         @Override
         protected void invalidated() {
-            super.invalidated();
             Node bookingFormUi = get().buildUi();
             if (bookingFormUi != null)
                 mainVbox.getChildren().setAll(bookingFormUi);

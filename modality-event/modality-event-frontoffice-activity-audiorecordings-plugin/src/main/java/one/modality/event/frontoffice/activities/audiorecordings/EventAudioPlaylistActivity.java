@@ -13,10 +13,7 @@ import dev.webfx.kit.util.properties.FXProperties;
 import dev.webfx.kit.util.properties.ObservableLists;
 import dev.webfx.platform.console.Console;
 import dev.webfx.platform.util.Numbers;
-import dev.webfx.platform.util.Objects;
 import dev.webfx.platform.util.collection.Collections;
-import dev.webfx.stack.cloud.image.CloudImageService;
-import dev.webfx.stack.cloud.image.impl.client.ClientImageService;
 import dev.webfx.stack.i18n.I18n;
 import dev.webfx.stack.i18n.controls.I18nControls;
 import dev.webfx.stack.i18n.spi.impl.I18nSubKey;
@@ -36,15 +33,10 @@ import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Node;
 import javafx.scene.control.Label;
-import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
-import javafx.scene.layout.Background;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
-import javafx.scene.paint.Color;
-import javafx.scene.shape.SVGPath;
 import javafx.scene.text.TextAlignment;
-import javafx.stage.Screen;
 import one.modality.base.client.cloudinary.ModalityCloudinary;
 import one.modality.base.client.icons.SvgIcons;
 import one.modality.base.client.time.FrontOfficeTimeFormats;
@@ -73,7 +65,7 @@ final class EventAudioPlaylistActivity extends ViewDomainActivityBase {
     };
     private final StringProperty pathItemCodeProperty = new SimpleStringProperty();
 
-    private final CloudImageService cloudImageService = new ClientImageService();
+    //private final CloudImageService cloudImageService = new ClientImageService();
 
     private final ObjectProperty<Event> eventProperty = new SimpleObjectProperty<>();
     private final ObservableList<ScheduledItem> scheduledAudioItems = FXCollections.observableArrayList();
@@ -207,29 +199,8 @@ final class EventAudioPlaylistActivity extends ViewDomainActivityBase {
             } else { // otherwise we display loadedContentVBox and set the content of audioTracksVBox
                 pageContainer.setContent(new ScalePane(loadedContentVBox));
                 String lang = extractLang(pathItemCodeProperty.get());
-                Object imageTag = ModalityCloudinary.getEventCoverImageTag(Entities.getPrimaryKey(Objects.coalesce(event.getRepeatedEvent(), event)), lang);
-                String pictureId = String.valueOf(imageTag);
-
-                cloudImageService.exists(pictureId)
-                    .onFailure(Console::log)
-                    .onSuccess(exists -> Platform.runLater(() -> {
-                        if (exists) {
-                            imageMonoPane.setBackground(null);
-                            //First, we need to get the zoom factor of the screen
-                            double zoomFactor = Screen.getPrimary().getOutputScaleX();
-                            String url = cloudImageService.url(pictureId, -1, (int) (IMAGE_HEIGHT * zoomFactor));
-                            imageView.setFitHeight(IMAGE_HEIGHT);
-                            imageView.setPreserveRatio(true);
-                            Image imageToDisplay = new Image(url, true);
-                            imageView.setImage(imageToDisplay);
-                            imageMonoPane.getChildren().setAll(imageView);
-                        } else {
-                            SVGPath audioCoverPath = SvgIcons.createAudioCoverPath();
-                            imageMonoPane.setBackground(Background.fill(Color.LIGHTGRAY));
-                            imageMonoPane.getChildren().setAll(audioCoverPath);
-                            imageMonoPane.setAlignment(Pos.CENTER);
-                        }
-                    }));
+                String cloudImagePath = ModalityCloudinary.eventCoverImagePath(event, lang);
+                ModalityCloudinary.loadImage(cloudImagePath, imageMonoPane, -1, IMAGE_HEIGHT, SvgIcons::createAudioCoverPath);
                 LocalDateTime audioExpirationDate = event.getAudioExpirationDate();
                 if (audioExpirationDate != null) {
                     dateFormattedProperty.bind(LocalizedTime.formatLocalDateProperty(audioExpirationDate, FrontOfficeTimeFormats.AUDIO_PLAYLIST_DATE_FORMAT));

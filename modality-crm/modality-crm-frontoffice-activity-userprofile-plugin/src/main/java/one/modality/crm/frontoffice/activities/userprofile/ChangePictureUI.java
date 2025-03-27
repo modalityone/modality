@@ -40,6 +40,7 @@ import java.util.Objects;
 final class ChangePictureUI {
 
     static final long CLOUDINARY_RELOAD_DELAY = 10000;
+
     private final VBox changePictureVBox = new VBox();
     private final Slider zoomSlider;
     private final ImageView imageView;
@@ -88,10 +89,10 @@ final class ChangePictureUI {
         imageStackPane.setClip(clip);
 
         // Variables to track mouse position
-        final double[] mouseAnchorX = new double[1];
-        final double[] mouseAnchorY = new double[1];
-        final double[] initialTranslateX = new double[1];
-        final double[] initialTranslateY = new double[1];
+        double[] mouseAnchorX = new double[1];
+        double[] mouseAnchorY = new double[1];
+        double[] initialTranslateX = new double[1];
+        double[] initialTranslateY = new double[1];
         // Add mouse press event to set anchors
         imageView.setOnMousePressed(event -> {
             mouseAnchorX[0] = event.getSceneX();
@@ -224,13 +225,13 @@ final class ChangePictureUI {
                     .onFailure(Console::log)
                     .onSuccess(blob -> {
                         cloudPictureFileToUpload = (File) blob;
-                        Object imageTag = ModalityCloudinary.getPersonImageTag(parentActivity.getCurrentPerson().getId().getPrimaryKey());
-                        deleteIfNeededAndUploadIfNeededCloudPicture(imageTag);
+                        String cloudImagePath = ModalityCloudinary.personImagePath(parentActivity.getCurrentPerson());
+                        deleteIfNeededAndUploadIfNeededCloudPicture(cloudImagePath);
                     });
             } else {
                 //Here we choose to remove the picture
-                Object imageTag = ModalityCloudinary.getPersonImageTag(parentActivity.getCurrentPerson().getId().getPrimaryKey());
-                deleteIfNeededAndUploadIfNeededCloudPicture(imageTag);
+                String cloudImagePath = ModalityCloudinary.personImagePath(parentActivity.getCurrentPerson());
+                deleteIfNeededAndUploadIfNeededCloudPicture(cloudImagePath);
             }
         });
 
@@ -254,20 +255,19 @@ final class ChangePictureUI {
     }
 
 
-    private void deleteIfNeededAndUploadIfNeededCloudPicture(Object imageTag) {
+    private void deleteIfNeededAndUploadIfNeededCloudPicture(String cloudImagePath) {
         //We delete the pictures, and all the cached picture in cloudinary that can have been transformed, related
-        //to this assets, then upload the new picture
+        //to these assets, then upload the new picture
         if (isPictureToBeDeleted.getValue()) {
-            String pictureId = String.valueOf(imageTag);
-            parentActivity.getCloudImageService().delete(pictureId, true)
+            ModalityCloudinary.deleteImage(cloudImagePath)
                 .onFailure(fail -> Console.log("Error while deleting the picture: " + fail.getMessage()))
                 .onSuccess(ok -> {
-                    if (Objects.equals(pictureId, recentlyUploadedCloudPictureId))
+                    if (Objects.equals(cloudImagePath, recentlyUploadedCloudPictureId))
                         recentlyUploadedCloudPictureId = null;
                 })
                 .onComplete(ar -> {
                     if (isPictureToBeUploaded.getValue())
-                        uploadCloudPictureIfNeeded(imageTag);
+                        uploadCloudPictureIfNeeded(cloudImagePath);
                         //Here is we don't upload a new picture, it means we want to only delete the picture
                     else {
                         parentActivity.removeUserProfilePicture();
@@ -278,7 +278,7 @@ final class ChangePictureUI {
                     }
                 });
         } else {
-            uploadCloudPictureIfNeeded(imageTag);
+            uploadCloudPictureIfNeeded(cloudImagePath);
         }
     }
 
@@ -328,13 +328,12 @@ final class ChangePictureUI {
         imageView.setScaleY(1.0);
     }
 
-    public void uploadCloudPictureIfNeeded(Object personId) {
-        String pictureId = String.valueOf(personId);
+    public void uploadCloudPictureIfNeeded(String cloudImagePath) {
         if (isPictureToBeUploaded.get()) {
-            parentActivity.getCloudImageService().upload(cloudPictureFileToUpload, pictureId, true)
+            ModalityCloudinary.uploadImage(cloudImagePath, cloudPictureFileToUpload)
                 .onFailure(Console::log)
                 .onSuccess(ok -> {
-                    recentlyUploadedCloudPictureId = pictureId;
+                    recentlyUploadedCloudPictureId = cloudImagePath;
                     callback.closeDialog();
                 })
                 .onComplete(event -> {

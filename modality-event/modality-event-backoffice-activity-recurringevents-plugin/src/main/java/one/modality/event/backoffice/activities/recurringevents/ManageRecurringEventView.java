@@ -19,11 +19,8 @@ import dev.webfx.extras.webtext.HtmlText;
 import dev.webfx.extras.webtext.HtmlTextEditor;
 import dev.webfx.kit.util.properties.FXProperties;
 import dev.webfx.kit.util.properties.ObservableLists;
-import dev.webfx.platform.async.Future;
 import dev.webfx.platform.console.Console;
 import dev.webfx.platform.file.File;
-import dev.webfx.stack.cloud.image.CloudImageService;
-import dev.webfx.stack.cloud.image.impl.client.ClientImageService;
 import dev.webfx.stack.i18n.I18n;
 import dev.webfx.stack.i18n.controls.I18nControls;
 import dev.webfx.stack.orm.datasourcemodel.service.DataSourceModelService;
@@ -68,7 +65,6 @@ import javafx.scene.paint.Color;
 import javafx.scene.shape.Line;
 import javafx.scene.shape.SVGPath;
 import javafx.scene.text.Text;
-import javafx.stage.Screen;
 import one.modality.base.client.cloudinary.ModalityCloudinary;
 import one.modality.base.client.i18n.ModalityI18nKeys;
 import one.modality.base.client.icons.SvgIcons;
@@ -101,6 +97,9 @@ import static one.modality.base.client.time.BackOfficeTimeFormats.*;
  */
 final class ManageRecurringEventView {
 
+    private static final double EVENT_IMAGE_WIDTH = 200;
+    private static final double EVENT_IMAGE_HEIGHT = 200;
+
     private static final String EVENT_COLUMNS = "[" +
         "{expression: 'state', label: 'Status', renderer: 'eventStateRenderer'}," +
         "{expression: 'advertised', label: 'Advertised'}," +
@@ -129,6 +128,7 @@ final class ManageRecurringEventView {
     private final TextField bookingOpeningDateTextField = new TextField();
     private final TextField bookingOpeningTimeTextField = new TextField();
     private final TextField externalLinkTextField = I18nControls.bindI18nProperties(new TextField(), RecurringEventsI18nKeys.ExternalLink);
+    private final MonoPane eventImageContainer = new MonoPane();
     private Label datesOfTheEventLabel;
     private Label titleEventDetailsLabel;
     private Switch advertisedSwitch;
@@ -141,7 +141,6 @@ final class ManageRecurringEventView {
     private Button deleteButton;
     private VBox eventDetailsVBox;
     private HBox locationHBox;
-    private ImageView imageView;
     private SVGPath trashImage;
     private ListChangeListener<LocalDate> onChangeDateListener;
     private EventCalendarPane calendarPane;
@@ -172,7 +171,6 @@ final class ManageRecurringEventView {
         }
     };
     private EntityButtonSelector<Site> siteSelector;
-    private final CloudImageService cloudImageService = new ClientImageService();
     private File cloudPictureFileToUpload;
     private final BooleanProperty isCloudPictureToBeDeleted = new SimpleBooleanProperty(false);
     private final BooleanProperty isCloudPictureToBeUploaded = new SimpleBooleanProperty(false);
@@ -494,7 +492,7 @@ final class ManageRecurringEventView {
         datePicker.setDisplayedYearMonth(YearMonth.now());
         //datesPicker.updateDatesBackground();
         updateStore.cancelChanges();
-        imageView.setImage(null);
+        eventImageContainer.setContent(null);
         isPictureDisplayed.setValue(false);
     }
 
@@ -512,27 +510,11 @@ final class ManageRecurringEventView {
     }
 
     private void loadEventImageIfExists() {
-        Object imageTag = ModalityCloudinary.getEventImageTag(Entities.getPrimaryKey(currentEditedEvent));
-        doesCloudPictureExist(imageTag)
-            .onFailure(ex -> {
-                Console.log(ex);
-                imageView.setImage(null);
-                isPictureDisplayed.setValue(false);
-            })
-            .onSuccess(exists -> Platform.runLater(() -> {
-                //Console.log("exists: " + exists);
-                if (!exists) {
-                    imageView.setImage(null);
-                    isPictureDisplayed.setValue(false);
-                } else {
-                    //First, we need to get the zoom factor of the screen
-                    double zoomFactor = Screen.getPrimary().getOutputScaleX();
-                    String url = cloudImageService.url(String.valueOf(imageTag), (int) (imageView.getFitWidth() * zoomFactor), -1);
-                    Image imageToDisplay = new Image(url, true);
-                    imageView.setImage(imageToDisplay);
-                    isPictureDisplayed.setValue(true);
-                }
-            }));
+        String cloudImagePath = ModalityCloudinary.eventImagePath(currentEditedEvent);
+        if (Objects.equals(cloudImagePath, recentlyUploadedCloudPictureId))
+            return;
+        ModalityCloudinary.loadImage(cloudImagePath, eventImageContainer, EVENT_IMAGE_WIDTH, EVENT_IMAGE_HEIGHT, () -> null)
+                .onComplete(ar -> isPictureDisplayed.setValue(eventImageContainer.getContent() != null));
     }
 
 
@@ -546,39 +528,30 @@ final class ManageRecurringEventView {
         return validationSupport.isValid();
     }
 
-    public void uploadCloudPictureIfNecessary(Object eventId) {
+    public void uploadCloudPictureIfNecessary(String cloudImagePath) {
         if (isCloudPictureToBeUploaded.getValue()) {
-            String pictureId = String.valueOf(eventId);
-            cloudImageService.upload(cloudPictureFileToUpload, pictureId, true)
+            ModalityCloudinary.uploadImage(cloudImagePath, cloudPictureFileToUpload)
                 .onFailure(Console::log)
                 .onSuccess(ok -> {
                     isCloudPictureToBeUploaded.set(false);
-                    recentlyUploadedCloudPictureId = pictureId;
+                    recentlyUploadedCloudPictureId = cloudImagePath;
                     loadEventImageIfExists();
                 });
         }
     }
 
-    public void deleteCloudPictureIfNecessary(Object eventId) {
+    public void deleteCloudPictureIfNecessary(String cloudImagePath) {
         if (isCloudPictureToBeDeleted.getValue()) {
             //We delete the pictures, and all the cached picture in cloudinary that can have been transformed, related
             //to this assets
-            String pictureId = String.valueOf(eventId);
-            cloudImageService.delete(pictureId, true)
+            ModalityCloudinary.deleteImage(cloudImagePath)
                 .onFailure(Console::log)
                 .onSuccess(ok -> {
                     isCloudPictureToBeDeleted.set(false);
-                    if (Objects.equals(pictureId, recentlyUploadedCloudPictureId))
+                    if (Objects.equals(cloudImagePath, recentlyUploadedCloudPictureId))
                         recentlyUploadedCloudPictureId = null;
                 });
         }
-    }
-
-    private Future<Boolean> doesCloudPictureExist(Object eventId) {
-        String pictureId = String.valueOf(eventId);
-        if (Objects.equals(pictureId, recentlyUploadedCloudPictureId))
-            return Future.succeededFuture(true);
-        return cloudImageService.exists(pictureId);
     }
 
 
@@ -741,9 +714,9 @@ final class ManageRecurringEventView {
                             BorderPane.setAlignment(okErrorButton, Pos.CENTER);
                         }))
                         .onSuccess(x -> Platform.runLater(() -> {
-                            Object imageTag = ModalityCloudinary.getEventImageTag(Entities.getPrimaryKey(currentEditedEvent));
-                            deleteCloudPictureIfNecessary(imageTag);
-                            uploadCloudPictureIfNecessary(imageTag);
+                            String cloudImagePath = ModalityCloudinary.eventImagePath(currentEditedEvent);
+                            deleteCloudPictureIfNecessary(cloudImagePath);
+                            uploadCloudPictureIfNecessary(cloudImagePath);
                         }));
                 });
             }
@@ -831,7 +804,7 @@ final class ManageRecurringEventView {
             cloudPictureFileToUpload = fileList.get(0);
             Image imageToDisplay = new Image(cloudPictureFileToUpload.getObjectURL());
             isCloudPictureToBeUploaded.setValue(true);
-            imageView.setImage(imageToDisplay);
+            eventImageContainer.setContent(new ImageView(imageToDisplay));
             isPictureDisplayed.setValue(true);
         });
 
@@ -846,13 +819,8 @@ final class ManageRecurringEventView {
         HBox imageAndTrashVBox = new HBox();
         imageAndTrashVBox.setSpacing(2);
         StackPane imageStackPane = new StackPane();
-        imageView = new ImageView();
-        imageView.setPreserveRatio(true);
-        imageView.setFitWidth(200);
-        imageView.setFitHeight(200);
-        imageStackPane.setMaxSize(200, 200);
+        imageStackPane.setMaxSize(EVENT_IMAGE_WIDTH, EVENT_IMAGE_HEIGHT);
         imageStackPane.setMinHeight(100);
-        //  imageStackPane.setPrefSize(200,210);
         imageStackPane.setAlignment(Pos.CENTER);
         Label emptyPictureLabel = Bootstrap.small(I18nControls.newLabel(RecurringEventsI18nKeys.NoPictureSelected));
         TextTheme.createSecondaryTextFacet(emptyPictureLabel).style();
@@ -860,15 +828,13 @@ final class ManageRecurringEventView {
         trashImage = SvgIcons.armButton(SvgIcons.createTrashSVGPath(), () -> {
             isCloudPictureToBeDeleted.setValue(true);
             isCloudPictureToBeUploaded.setValue(false);
-            imageView.setImage(null);
+            eventImageContainer.setContent(null);
             isPictureDisplayed.setValue(false);
         });
         ShapeTheme.createSecondaryShapeFacet(trashImage).style(); // Make it gray
 
-        imageStackPane.getChildren().setAll(imageView, emptyPictureLabel);
+        imageStackPane.getChildren().setAll(emptyPictureLabel, eventImageContainer);
         StackPane.setAlignment(emptyPictureLabel, Pos.CENTER);
-        imageView.toFront();
-        emptyPictureLabel.toBack();
         imageAndTrashVBox.getChildren().setAll(imageStackPane, trashImage);
         imageAndTrashVBox.setAlignment(Pos.BOTTOM_CENTER);
         line4InLeftPanel.getChildren().setAll(uploadTextVBox, uploadButtonVBox, imageAndTrashVBox);
@@ -1105,9 +1071,9 @@ final class ManageRecurringEventView {
                     Console.log(x);
                 })
                 .onSuccess(x -> Platform.runLater(() -> {
-                    Object imageTag = ModalityCloudinary.getEventImageTag(Entities.getPrimaryKey(currentEditedEvent));
-                    deleteCloudPictureIfNecessary(imageTag);
-                    uploadCloudPictureIfNecessary(imageTag);
+                    String cloudImagePath = ModalityCloudinary.eventImagePath(currentEditedEvent);
+                    deleteCloudPictureIfNecessary(cloudImagePath);
+                    uploadCloudPictureIfNecessary(cloudImagePath);
                     isCloudPictureToBeDeleted.setValue(false);
                     isCloudPictureToBeUploaded.setValue(false);
                     cloudPictureFileToUpload = null;

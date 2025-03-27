@@ -15,12 +15,9 @@ import dev.webfx.extras.util.control.Controls;
 import dev.webfx.extras.util.layout.Layouts;
 import dev.webfx.kit.launcher.WebFxKitLauncher;
 import dev.webfx.kit.util.properties.FXProperties;
-import dev.webfx.platform.async.Future;
 import dev.webfx.platform.console.Console;
 import dev.webfx.stack.authn.AuthenticationService;
 import dev.webfx.stack.authn.FinaliseEmailUpdateCredentials;
-import dev.webfx.stack.cloud.image.CloudImageService;
-import dev.webfx.stack.cloud.image.impl.client.ClientImageService;
 import dev.webfx.stack.i18n.I18n;
 import dev.webfx.stack.i18n.I18nKeys;
 import dev.webfx.stack.i18n.controls.I18nControls;
@@ -50,7 +47,6 @@ import javafx.scene.paint.Color;
 import javafx.scene.shape.Circle;
 import javafx.scene.shape.SVGPath;
 import javafx.scene.text.TextAlignment;
-import javafx.stage.Screen;
 import javafx.util.Duration;
 import one.modality.base.client.activity.ModalityButtonFactoryMixin;
 import one.modality.base.client.cloudinary.ModalityCloudinary;
@@ -73,6 +69,8 @@ import static one.modality.crm.frontoffice.activities.userprofile.ChangePictureU
 final class UserProfileActivity extends ViewDomainActivityBase implements ModalityButtonFactoryMixin {
 
     static final double MODAL_WINDOWS_MAX_WIDTH = 500;
+    private static final double PROFILE_IMAGE_SIZE = 150;
+    private static final String NO_PICTURE_IMAGE = "images/large/no-picture.png";
 
     private final VBox container = new VBox();
     private final Hyperlink changeUserEmail = I18nControls.newHyperlink(UserProfileI18nKeys.ChangeEmail);
@@ -84,6 +82,7 @@ final class UserProfileActivity extends ViewDomainActivityBase implements Modali
     private final StringProperty tokenProperty = new SimpleStringProperty();
     private final UserProfileMessageUI messagePane = new UserProfileMessageUI();
     private final UserAccountUI accountUI = new UserAccountUI();
+    private final MonoPane pictureImageContainer = new MonoPane();
     private UpdateStore updateStore;
     private Person currentPerson;
     private Label nameLabel;
@@ -102,9 +101,6 @@ final class UserProfileActivity extends ViewDomainActivityBase implements Modali
     private ButtonSelector<Organization> organizationSelector;
     private RadioButton noOrganizationRadioButton;
     private Label infoMessage;
-    private final CloudImageService cloudImageService = new ClientImageService();
-    private ImageView imageView;
-    private final String noPictureImage = "images/large/no-picture.png";
     private final ValidationSupport validationSupport = new ValidationSupport();
     private StackPane picturePane;
 
@@ -131,20 +127,15 @@ final class UserProfileActivity extends ViewDomainActivityBase implements Modali
         HBox pictureAndNameHBox = new HBox();
         picturePane = new StackPane();
         picturePane.setAlignment(Pos.CENTER);
-        picturePane.setMinSize(150, 150);
-        imageView = new ImageView(noPictureImage);
-        imageView.setFitWidth(150);
-        imageView.setFitHeight(150);
-        imageView.setPreserveRatio(true);
-        MonoPane imageContainerMonoPane = new MonoPane(imageView);
-        imageContainerMonoPane.setMinSize(150, 150);
+        picturePane.setMinSize(PROFILE_IMAGE_SIZE, PROFILE_IMAGE_SIZE);
+        pictureImageContainer.setMinSize(PROFILE_IMAGE_SIZE, PROFILE_IMAGE_SIZE);
         // Set a circular clip on the StackPane
         Circle clip = new Circle(75); // Radius of the circle
         clip.setCenterX(75); // Center X (adjust if needed)
         clip.setCenterY(75); // Center Y (adjust if needed)
-        imageContainerMonoPane.setClip(clip);
+        pictureImageContainer.setClip(clip);
 
-        picturePane.getChildren().add(imageContainerMonoPane);
+        picturePane.getChildren().add(pictureImageContainer);
         SVGPath pickupImageSvgPath = SvgIcons.createPickupPicture();
         MonoPane pickupImageMonoPane = new MonoPane(pickupImageSvgPath);
         pickupImageMonoPane.setMinSize(30, 30);
@@ -542,50 +533,20 @@ final class UserProfileActivity extends ViewDomainActivityBase implements Modali
     }
 
     public void loadProfilePictureIfExist() {
-        Object imageTag = ModalityCloudinary.getPersonImageTag(currentPerson.getId().getPrimaryKey());
-        doesCloudPictureExist(imageTag)
-            .onFailure(ex -> {
-                Console.log(ex);
-                imageView.setImage(new Image(noPictureImage));
-
-                changePictureUI.setImage(new Image(noPictureImage));
-                //   isPictureDisplayed.setValue(false);
-            })
-            .onSuccess(exists -> Platform.runLater(() -> {
-                //Console.log("exists: " + exists);
-                if (!exists) {
-                    setImage(new Image(noPictureImage));
-                    //     isPictureDisplayed.setValue(false);
-                } else {
-                    //First, we need to get the zoom factor of the screen
-                    double zoomFactor = Screen.getPrimary().getOutputScaleX();
-                    String url = cloudImageService.url(String.valueOf(imageTag), (int) (imageView.getFitWidth() * zoomFactor), -1);
-                    Image imageToDisplay = new Image(url, true);
-                    setImage(imageToDisplay);
-                }
-            }));
+        String cloudImagePath = ModalityCloudinary.personImagePath(currentPerson);
+        if (Objects.equals(cloudImagePath, changePictureUI.getRecentlyUploadedCloudPictureId()))
+            return;
+        ModalityCloudinary.loadImage(cloudImagePath, pictureImageContainer, PROFILE_IMAGE_SIZE, PROFILE_IMAGE_SIZE, () -> new ImageView(NO_PICTURE_IMAGE))
+                .onSuccess(imageView -> setImage(imageView.getImage()));
     }
 
     private void setImage(Image newImage) {
-        imageView.setImage(newImage);
         changePictureUI.setImage(newImage);
-    }
-
-    private Future<Boolean> doesCloudPictureExist(Object eventId) {
-        String pictureId = String.valueOf(eventId);
-        if (Objects.equals(pictureId, changePictureUI.getRecentlyUploadedCloudPictureId()))
-            return Future.succeededFuture(true);
-        return cloudImageService.exists(pictureId);
     }
 
     public Person getCurrentPerson() {
         return currentPerson;
     }
-
-    public CloudImageService getCloudImageService() {
-        return cloudImageService;
-    }
-
 
     private void initFormValidation() {
         if (validationSupport.isEmpty()) {
@@ -604,7 +565,7 @@ final class UserProfileActivity extends ViewDomainActivityBase implements Modali
     }
 
     public void removeUserProfilePicture() {
-        setImage(new Image(noPictureImage));
+        setImage(new Image(NO_PICTURE_IMAGE));
     }
 
 

@@ -70,7 +70,7 @@ final class Level3SessionVideoPlayerActivity extends AbstractVideoPlayerActivity
 
     public Node buildUi() {
         Node node = super.buildUi();
-        videoExpirationLabel = I18nControls.newLabel(VideosI18nKeys.EventAvailableUntil1);
+        videoExpirationLabel = new Label();
         videoExpirationLabel.setPadding(new Insets(30, 0, 0, 0));
         titleVBox.getChildren().add(videoExpirationLabel);
 

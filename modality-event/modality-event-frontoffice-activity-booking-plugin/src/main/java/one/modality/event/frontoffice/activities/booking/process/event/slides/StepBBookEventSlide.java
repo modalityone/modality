@@ -1,17 +1,14 @@
 package one.modality.event.frontoffice.activities.booking.process.event.slides;
 
+import dev.webfx.extras.panes.MonoPane;
 import dev.webfx.extras.panes.ScaleMode;
 import dev.webfx.extras.panes.ScalePane;
 import dev.webfx.extras.webtext.HtmlText;
 import dev.webfx.kit.util.properties.FXProperties;
-import dev.webfx.platform.console.Console;
 import dev.webfx.platform.uischeduler.UiScheduler;
 import dev.webfx.platform.util.Arrays;
-import dev.webfx.stack.cloud.image.CloudImageService;
-import dev.webfx.stack.cloud.image.impl.client.ClientImageService;
 import dev.webfx.stack.i18n.I18n;
 import dev.webfx.stack.i18n.spi.impl.I18nSubKey;
-import javafx.application.Platform;
 import javafx.beans.property.*;
 import javafx.geometry.HPos;
 import javafx.geometry.Insets;
@@ -19,12 +16,9 @@ import javafx.geometry.Pos;
 import javafx.geometry.VPos;
 import javafx.scene.control.Label;
 import javafx.scene.control.Labeled;
-import javafx.scene.image.Image;
-import javafx.scene.image.ImageView;
 import javafx.scene.layout.*;
 import javafx.scene.text.Font;
 import javafx.scene.text.TextAlignment;
-import javafx.stage.Screen;
 import one.modality.base.client.brand.Brand;
 import one.modality.base.client.cloudinary.ModalityCloudinary;
 import one.modality.base.client.icons.SvgIcons;
@@ -34,8 +28,8 @@ import one.modality.base.frontoffice.utility.tyler.StyleUtility;
 import one.modality.base.shared.entities.Event;
 import one.modality.ecommerce.payment.CancelPaymentResult;
 import one.modality.ecommerce.payment.client.WebPaymentForm;
-import one.modality.event.client.event.fx.FXEvent;
 import one.modality.event.client.booking.BookableDatesUi;
+import one.modality.event.client.event.fx.FXEvent;
 import one.modality.event.frontoffice.activities.booking.process.event.BookEventActivity;
 
 final class StepBBookEventSlide extends StepSlide {
@@ -44,9 +38,8 @@ final class StepBBookEventSlide extends StepSlide {
     private static final double MIN_FONT_SIZE = 12;
     private static final double MAX_FONT_SIZE = 16;
 
-    private final CloudImageService cloudImageService = new ClientImageService();
-    private final ImageView imageView = new ImageView();
     private final BooleanProperty eventDescriptionLoadedProperty = new SimpleBooleanProperty();
+    private final MonoPane eventImageContainer = new MonoPane();
     private final HtmlText eventShortDescriptionHtmlText = bindI18nEventExpression(new HtmlText(), "'<center>' + shortDescription + '</center>'");
     private final ObjectProperty<Font> mediumFontProperty = new SimpleObjectProperty<>(Font.font(StyleUtility.MEDIUM_TEXT_SIZE));
     private final ObjectProperty<Font> subFontProperty = new SimpleObjectProperty<>(Font.font(StyleUtility.SUB_TEXT_SIZE));
@@ -71,21 +64,9 @@ final class StepBBookEventSlide extends StepSlide {
             .onFailure(ex -> displayErrorMessage(ex.getMessage()))
             .onSuccess(x -> UiScheduler.runInUiThread(this::onEventDescriptionLoaded));
 
-        imageView.setImage(null);
-        Object imageTag =  ModalityCloudinary.getEventImageTag(event.getId().getPrimaryKey());
-        String pictureId = String.valueOf(imageTag);
-        cloudImageService.exists(pictureId)
-            .onFailure(Console::log)
-            .onSuccess(exists -> Platform.runLater(() -> {
-                Console.log("exists: " + exists);
-                if (exists) {
-                    //First, we need to get the zoom factor of the screen
-                    double zoomFactor = Screen.getPrimary().getOutputScaleX();
-                    String url = cloudImageService.url(String.valueOf(imageTag), (int) (imageView.getFitWidth() * zoomFactor), -1);
-                    Image imageToDisplay = new Image(url, true);
-                    imageView.setImage(imageToDisplay);
-                }
-            }));
+        eventImageContainer.setContent(null);
+        String cloudImagePath =  ModalityCloudinary.eventImagePath(event);
+        ModalityCloudinary.loadImage(cloudImagePath, eventImageContainer, -1, -1, null);
     }
 
     void onWorkingBookingLoaded() {
@@ -122,7 +103,7 @@ final class StepBBookEventSlide extends StepSlide {
         eventShortDescriptionHtmlText.getStyleClass().add("event-title");
         eventShortDescriptionHtmlText.setFocusTraversable(false);
 
-        ScalePane imageScalePane = new ScalePane(ScaleMode.BEST_FIT, imageView);
+        ScalePane imageScalePane = new ScalePane(ScaleMode.BEST_FIT, eventImageContainer);
         imageScalePane.setCanGrow(false);
 
         VBox eventShortTextBox = new VBox(

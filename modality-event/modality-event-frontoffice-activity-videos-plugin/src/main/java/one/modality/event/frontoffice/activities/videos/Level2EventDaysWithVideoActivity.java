@@ -1,6 +1,7 @@
 package one.modality.event.frontoffice.activities.videos;
 
-import dev.webfx.extras.panes.*;
+import dev.webfx.extras.panes.GoldenRatioPane;
+import dev.webfx.extras.panes.MonoPane;
 import dev.webfx.extras.styles.bootstrap.Bootstrap;
 import dev.webfx.extras.time.format.LocalizedTime;
 import dev.webfx.extras.util.control.Controls;
@@ -10,9 +11,8 @@ import dev.webfx.kit.util.properties.FXProperties;
 import dev.webfx.kit.util.properties.ObservableLists;
 import dev.webfx.platform.console.Console;
 import dev.webfx.platform.util.Numbers;
+import dev.webfx.platform.util.Objects;
 import dev.webfx.platform.util.collection.Collections;
-import dev.webfx.stack.cloud.image.CloudImageService;
-import dev.webfx.stack.cloud.image.impl.client.ClientImageService;
 import dev.webfx.stack.i18n.I18n;
 import dev.webfx.stack.i18n.controls.I18nControls;
 import dev.webfx.stack.i18n.spi.impl.I18nSubKey;
@@ -30,16 +30,10 @@ import javafx.geometry.Pos;
 import javafx.scene.Node;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
-import javafx.scene.image.Image;
-import javafx.scene.image.ImageView;
-import javafx.scene.layout.Background;
-import javafx.scene.layout.BackgroundFill;
 import javafx.scene.layout.HBox;
+import javafx.scene.layout.Region;
 import javafx.scene.layout.VBox;
-import javafx.scene.paint.Color;
-import javafx.scene.shape.SVGPath;
 import javafx.scene.text.TextAlignment;
-import javafx.stage.Screen;
 import one.modality.base.client.bootstrap.ModalityStyle;
 import one.modality.base.client.cloudinary.ModalityCloudinary;
 import one.modality.base.client.icons.SvgIcons;
@@ -76,16 +70,13 @@ final class Level2EventDaysWithVideoActivity extends ViewDomainActivityBase {
     private final ObjectProperty<Event> eventProperty = new SimpleObjectProperty<>();
     private final ObservableList<ScheduledItem> scheduledItems = FXCollections.observableArrayList();
 
-    private final CollapsePane daysCollapsePane = new CollapsePane();
-
-    private Label videoExpirationLabel;
-    private final CloudImageService cloudImageService = new ClientImageService();
-
     private final ObjectProperty<LocalDate> currentDaySelectedProperty = new SimpleObjectProperty<>();
     private final HashMap<LocalDate, Button> correspondenceDateButton = new HashMap<>();
 
     // Creating an intermediate observable list of DayVideosWallView, each element being a view for 1 day with all its videos
     private final ObservableList<Level2EventDayScheduleView> videosDayScheduleViews = FXCollections.observableArrayList(); // will be populated below
+
+    private Label videoExpirationLabel;
     private Button selectAllDaysButton;
     private EntityStore entityStore;
     private Label scheduleSubTitleLabel;
@@ -144,14 +135,7 @@ final class Level2EventDaysWithVideoActivity extends ViewDomainActivityBase {
         // *************************************************************************************************************
         // ********************************* Building the static part of the UI ****************************************
         // *************************************************************************************************************
-        HBox headerHBox = new HBox();
-        headerHBox.setSpacing(50);
-        headerHBox.setPadding(new Insets(0, 20, 0, 20));
-        headerHBox.setMaxWidth(1024);
         MonoPane imageMonoPane = new MonoPane();
-        ImageView imageView = new ImageView();
-
-        headerHBox.getChildren().add(imageMonoPane);
 
         Label eventLabel = Bootstrap.h2(Bootstrap.strong(I18nControls.newLabel(new I18nSubKey("expression: i18n(this)", eventProperty), eventProperty)));
 
@@ -162,17 +146,16 @@ final class Level2EventDaysWithVideoActivity extends ViewDomainActivityBase {
         I18n.bindI18nTextProperty(eventDescriptionHtmlText.textProperty(), new I18nSubKey("expression: i18n(shortDescription)", eventProperty), eventProperty);
 
         eventDescriptionHtmlText.setMaxHeight(60);
-        videoExpirationLabel = I18nControls.newLabel(VideosI18nKeys.EventAvailableUntil1);
+        videoExpirationLabel = new Label();
         videoExpirationLabel.setPadding(new Insets(30, 0, 0, 0));
         VBox titleVBox = new VBox(eventLabel, eventDescriptionHtmlText, videoExpirationLabel);
 
-        headerHBox.getChildren().add(titleVBox);
+        HBox headerHBox = new HBox(50, imageMonoPane, titleVBox);
+        headerHBox.setPadding(new Insets(0, 20, 0, 20));
+        headerHBox.setMaxWidth(1024);
 
         Node loadingContentIndicator = new GoldenRatioPane(Controls.createProgressIndicator(100));
         MonoPane pageContainer = new MonoPane();
-
-        Label noContentLabel = Bootstrap.h3(Bootstrap.textWarning(I18nControls.newLabel(VideosI18nKeys.NoVideosForThisEvent)));
-        noContentLabel.setPadding(new Insets(150, 0, 100, 0));
 
         //We display this box only if the current Date is in the list of date in the video Scheduled Item list
         VBox currentDayScheduleVBox = new VBox(30); // Will be populated later (see reacting code below)
@@ -193,11 +176,8 @@ final class Level2EventDaysWithVideoActivity extends ViewDomainActivityBase {
             headerHBox,
             currentDayScheduleVBox,
             scheduleTitleVBox,
-            new ScalePane(videoScheduleVBox)
+            videoScheduleVBox
         );
-        loadedContentVBox.setAlignment(Pos.CENTER);
-
-        daysCollapsePane.setPrefWidth(loadedContentVBox.getPrefWidth());
         loadedContentVBox.setAlignment(Pos.TOP_CENTER);
         loadedContentVBox.getStyleClass().add("livestream");
 
@@ -221,39 +201,14 @@ final class Level2EventDaysWithVideoActivity extends ViewDomainActivityBase {
                 // TODO display something else (ex: next online events to book) when the user is not logged in, or registered
             } else { // otherwise we display loadedContentVBox and set the content of audioTracksVBox
                 pageContainer.setContent(loadedContentVBox);
-                Object imageTag = ModalityCloudinary.getEventCoverImageTag(Entities.getPrimaryKey(event), I18n.getLanguage());
-                if (event.getRepeatedEvent() != null)
-                    imageTag = ModalityCloudinary.getEventCoverImageTag(Entities.getPrimaryKey(event.getRepeatedEvent()), I18n.getLanguage());
-
-                String pictureId = String.valueOf(imageTag);
-                cloudImageService.exists(pictureId)
-                    .onFailure(Console::log)
-                    .onSuccess(exists -> Platform.runLater(() -> {
-                        Console.log("exists: " + exists);
-                        if (exists) {
-                            imageMonoPane.setBackground(null);
-                            //First, we need to get the zoom factor of the screen
-                            double zoomFactor = Screen.getPrimary().getOutputScaleX();
-                            String url = cloudImageService.url(pictureId, -1, (int) (IMAGE_HEIGHT * zoomFactor));
-                            imageView.setFitHeight(IMAGE_HEIGHT);
-                            imageView.setPreserveRatio(true);
-                            Image imageToDisplay = new Image(url, true);
-                            imageView.setImage(imageToDisplay);
-                            imageMonoPane.getChildren().setAll(imageView);
-                        } else {
-                            SVGPath videoCoverPath = SvgIcons.createVideoIconPath();
-                            imageMonoPane.setBackground(new Background(
-                                new BackgroundFill(Color.LIGHTGRAY, null, null)
-                            ));
-                            imageMonoPane.getChildren().setAll(videoCoverPath);
-                            imageMonoPane.setAlignment(Pos.CENTER);
-                        }
-                    }));
-                if (event.getVodExpirationDate() != null) {
+                String imagePath = ModalityCloudinary.eventCoverImagePath(event, I18n.getLanguage());
+                ModalityCloudinary.loadImage(imagePath, imageMonoPane, -1, IMAGE_HEIGHT, SvgIcons::createVideoIconPath);
+                LocalDateTime vodExpirationDate = event.getVodExpirationDate();
+                if (vodExpirationDate != null) {
                     LocalDateTime nowInEventTimezone = Event.nowInEventTimezone();
-                    boolean available = nowInEventTimezone.isBefore(event.getVodExpirationDate());
+                    boolean available = nowInEventTimezone.isBefore(vodExpirationDate);
                     I18nControls.bindI18nProperties(videoExpirationLabel, available ? VideosI18nKeys.EventAvailableUntil1 : VideosI18nKeys.VideoExpiredSince1,
-                        LocalizedTime.formatLocalDateTimeProperty(event.getVodExpirationDate(), FrontOfficeTimeFormats.VOD_EXPIRATION_DATE_TIME_FORMAT));
+                        LocalizedTime.formatLocalDateTimeProperty(vodExpirationDate, FrontOfficeTimeFormats.VOD_EXPIRATION_DATE_TIME_FORMAT));
                     videoExpirationLabel.setVisible(true);
                 } else {
                     videoExpirationLabel.setVisible(false);
@@ -279,8 +234,8 @@ final class Level2EventDaysWithVideoActivity extends ViewDomainActivityBase {
                 .forEach((day, dayScheduledVideos) -> {
                     Layouts.setManagedAndVisibleProperties(currentDayScheduleVBox, true);
                     // Passing the day, the videos of that day, and the history (for backward navigation)
-                    ScalePane currentScalePane = new ScalePane(new Level2EventDayScheduleView(day, dayScheduledVideos, getHistory(), true).getView());
-                    currentDayScheduleVBox.getChildren().setAll(scheduleForTodayTitleLabel, currentScalePane);
+                    Region dayView = new Level2EventDayScheduleView(day, dayScheduledVideos, getHistory(), true).getView();
+                    currentDayScheduleVBox.getChildren().setAll(scheduleForTodayTitleLabel, dayView);
                 });
 
         }, scheduledItems, eventProperty);
@@ -291,6 +246,8 @@ final class Level2EventDaysWithVideoActivity extends ViewDomainActivityBase {
         // Now that we have dayVideosWallViews populated, we can populate the final VBox showing all days and their videos
         ObservableLists.runNowAndOnListChange(change -> {
             if (videosDayScheduleViews.isEmpty()) {
+                Label noContentLabel = Bootstrap.h3(Bootstrap.textWarning(I18nControls.newLabel(VideosI18nKeys.NoVideosForThisEvent)));
+                noContentLabel.setPadding(new Insets(150, 0, 100, 0));
                 videoScheduleVBox.getChildren().setAll(noContentLabel);
             } else {
                 videoScheduleVBox.getChildren().setAll(Collections.map(videosDayScheduleViews, Level2EventDayScheduleView::getView));
@@ -353,13 +310,8 @@ final class Level2EventDaysWithVideoActivity extends ViewDomainActivityBase {
         LocalDate selectedDate = currentDaySelectedProperty.get();
         for (Map.Entry<LocalDate, Button> entry : correspondenceDateButton.entrySet()) {
             Button currentButton = entry.getValue();
-            if (entry.getKey() == null && selectedDate == null) {
-                currentButton.getStyleClass().setAll("button", Bootstrap.BTN, Bootstrap.BTN_PRIMARY);
-            } else if (entry.getKey() != null && entry.getKey().equals(selectedDate)) {
-                currentButton.getStyleClass().setAll("button", Bootstrap.BTN, Bootstrap.BTN_PRIMARY);
-            } else {
-                currentButton.getStyleClass().setAll("button", Bootstrap.BTN, ModalityStyle.BTN_WHITE);
-            }
+            boolean primary = Objects.areEquals(entry.getKey(), selectedDate);
+            currentButton.getStyleClass().setAll(Bootstrap.BTN, primary ? Bootstrap.BTN_PRIMARY : ModalityStyle.BTN_WHITE);
         }
     }
 }

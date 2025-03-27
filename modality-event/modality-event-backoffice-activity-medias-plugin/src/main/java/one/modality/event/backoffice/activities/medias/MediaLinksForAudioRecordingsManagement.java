@@ -5,6 +5,7 @@ import dev.webfx.extras.panes.MonoPane;
 import dev.webfx.extras.styles.bootstrap.Bootstrap;
 import dev.webfx.extras.switches.Switch;
 import dev.webfx.extras.theme.shape.ShapeTheme;
+import dev.webfx.extras.util.control.Controls;
 import dev.webfx.platform.console.Console;
 import dev.webfx.platform.file.File;
 import dev.webfx.platform.uischeduler.UiScheduler;
@@ -21,38 +22,38 @@ import javafx.geometry.Pos;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.ProgressIndicator;
-import javafx.scene.image.Image;
-import javafx.scene.image.ImageView;
 import javafx.scene.layout.*;
-import javafx.scene.paint.Color;
 import javafx.scene.shape.SVGPath;
-import javafx.stage.Screen;
 import one.modality.base.client.cloudinary.ModalityCloudinary;
 import one.modality.base.client.i18n.ModalityI18nKeys;
 import one.modality.base.client.icons.SvgIcons;
 import one.modality.base.shared.entities.Item;
 import one.modality.base.shared.entities.Media;
 import one.modality.base.shared.entities.ScheduledItem;
-import one.modality.event.client.event.fx.FXEvent;
+import one.modality.event.client.event.fx.FXEventId;
 
 import java.time.LocalDate;
 import java.util.stream.Collectors;
 
 public class MediaLinksForAudioRecordingsManagement extends MediaLinksManagement {
 
+    private static final double IMAGE_SIZE = 272;
+
     private final ObservableList<Media> workingMediasForCurrentLanguage = FXCollections.observableArrayList();
     private final RecordingsTabView parentRecordingView;
     private final Item languageItem;
-    private ImageView imageView;
-    private final ModalityCloudinary modalityCloudinary = new ModalityCloudinary(ModalityCloudinary.CloudinaryPrefix.AUDIO_COVER);
+    private final String cloudImagePath;
+    private final MonoPane audioCoverPictureContainer = new MonoPane();
+    private final ProgressIndicator indicator = Controls.createProgressIndicator(150);
+    private final SVGPath trashImage = SvgIcons.createTrashSVGPath();
 
-    public MediaLinksForAudioRecordingsManagement(Item language, EntityStore entityStore, ObservableList<LocalDate> teachingsDates, ObservableList<ScheduledItem> audioScheduledItemsReadFromDatabase, ObservableList<Media> recordingsMediasReadFromDatabase, RecordingsTabView recordingsTabView) {
-        super(language.getCode(), entityStore, teachingsDates, audioScheduledItemsReadFromDatabase, recordingsMediasReadFromDatabase);
-        languageItem = language;
+    public MediaLinksForAudioRecordingsManagement(Item languageItem, EntityStore entityStore, ObservableList<LocalDate> teachingsDates, ObservableList<ScheduledItem> audioScheduledItemsReadFromDatabase, ObservableList<Media> recordingsMediasReadFromDatabase, RecordingsTabView recordingsTabView) {
+        super(languageItem.getCode(), entityStore, teachingsDates, audioScheduledItemsReadFromDatabase, recordingsMediasReadFromDatabase);
+        this.languageItem = languageItem;
         parentRecordingView = recordingsTabView;
         //Language code is 'audio-en", audio-fr", "audio-es", ...
-        String languageCode= language.getCode().split("-")[1];
-        modalityCloudinary.setLanguage(languageCode);
+        String languageCode = languageItem.getCode().split("-")[1];
+        cloudImagePath = ModalityCloudinary.eventCoverImagePath(FXEventId.getEventId(), languageCode);
         buildContainer();
     }
 
@@ -78,72 +79,30 @@ public class MediaLinksForAudioRecordingsManagement extends MediaLinksManagement
             }
         });
 
-        int eventId;
-        eventId = Integer.parseInt(FXEvent.getEvent().getPrimaryKey().toString());
-
         //TODO: Here we add the possibility to upload a cover in cloudinary
         //We look if the image for this cover is existing in cloudinary
-        int IMAGE_SIZE = 272;
-        StackPane thumbailStackPane = new StackPane();
-        thumbailStackPane.setMaxHeight(IMAGE_SIZE);
-        thumbailStackPane.setMaxWidth(IMAGE_SIZE);
-        thumbailStackPane.setPadding(new Insets(0,0,25,0));
 
-        SVGPath audioCoverPath = SvgIcons.createAudioCoverPath();
-        MonoPane audioCoverPictureMonoPane = new MonoPane(audioCoverPath);
-        audioCoverPictureMonoPane.setBackground(new Background(
-            new BackgroundFill(Color.LIGHTGRAY, null, null)
-        ));
+        SvgIcons.armButton(trashImage, () ->
+            ModalityCloudinary.deleteImage(cloudImagePath)
+                .onFailure(Console::log)
+                .onSuccess(e -> Platform.runLater(() -> {
+                    audioCoverPictureContainer.setContent(null);
+                    trashImage.setVisible(false);
+                }))
+        );
+        trashImage.setVisible(false);
+        ShapeTheme.createSecondaryShapeFacet(trashImage).style();
+        MonoPane trashImageMonoPane = new MonoPane(trashImage);
+        trashImageMonoPane.setPadding(new Insets(0, 10, 10, 0));
 
-        thumbailStackPane.getChildren().add(audioCoverPictureMonoPane);
-        audioCoverPictureMonoPane.setMinWidth(IMAGE_SIZE);
-        audioCoverPictureMonoPane.setMinHeight(IMAGE_SIZE);
+        loadAudioCoverPicture();
 
-        imageView = new ImageView();
-        imageView.setPreserveRatio(true);
-        imageView.setFitWidth(IMAGE_SIZE);
-        imageView.setFitHeight(IMAGE_SIZE);
-        imageView.setImage(null);
-        thumbailStackPane.getChildren().add(imageView);
-
-
-        ProgressIndicator indicator = new ProgressIndicator();
-        indicator.setPrefSize(150,150);
-        thumbailStackPane.getChildren().add(indicator);
-        StackPane.setAlignment(indicator,Pos.CENTER);
         indicator.setVisible(false);
-
-        var ref = new Object() {
-            SVGPath trashImage = SvgIcons.createTrashSVGPath();
-        };
-        ref.trashImage = SvgIcons.armButton(SvgIcons.createTrashSVGPath(), () -> modalityCloudinary.deleteCloudPicture(eventId)
-            .onFailure(Console::log)
-            .onSuccess(e-> Platform.runLater(()-> {
-                imageView.setImage(null);
-                ref.trashImage.setVisible(false);
-            })));
-        ref.trashImage.setVisible(false);
-        ShapeTheme.createSecondaryShapeFacet(ref.trashImage).style();
-        MonoPane trashImageMonoPane = new MonoPane(ref.trashImage);
-        thumbailStackPane.getChildren().add(trashImageMonoPane);
-        trashImageMonoPane.setPadding(new Insets(0,10,10,0));
-        StackPane.setAlignment(trashImageMonoPane,Pos.BOTTOM_RIGHT);
-
-        double zoomFactor = Screen.getPrimary().getOutputScaleX();
-        modalityCloudinary.doesCloudPictureExist(eventId)
-            .onFailure(Console::log)
-            .onSuccess(exist-> {
-                if(exist) {
-                    Image image = modalityCloudinary.getImage(eventId, (int) (imageView.getFitWidth() * zoomFactor), -1);
-                    imageView.setImage(image);
-                    ref.trashImage.setVisible(true);
-                    indicator.setVisible(false);
-                }
-                else {
-                    ref.trashImage.setVisible(false);
-                    indicator.setVisible(false);
-                }
-            });
+        StackPane thumbailStackPane = new StackPane(audioCoverPictureContainer, trashImageMonoPane, indicator);
+        thumbailStackPane.setMaxSize(IMAGE_SIZE, IMAGE_SIZE);
+        thumbailStackPane.setPadding(new Insets(0, 0, 25, 0));
+        StackPane.setAlignment(trashImageMonoPane, Pos.BOTTOM_RIGHT);
+        audioCoverPictureContainer.setMaxSize(IMAGE_SIZE, IMAGE_SIZE);
 
         topContent.getChildren().add(thumbailStackPane);
 
@@ -152,44 +111,27 @@ public class MediaLinksForAudioRecordingsManagement extends MediaLinksManagement
         Button uploadButton = Bootstrap.primaryButton(I18nControls.newButton(MediasI18nKeys.Upload));
         uploadButton.setMinWidth(200);
         filePicker.setGraphic(uploadButton);
-        StackPane.setAlignment(filePicker.getGraphic(),Pos.CENTER_LEFT);
-        ((StackPane) filePicker.getView()).setPadding(new Insets(0,0,40,0));
+        StackPane.setAlignment(filePicker.getGraphic(), Pos.CENTER_LEFT);
+        ((Region) filePicker.getView()).setPadding(new Insets(0, 0, 40, 0));
 
         filePicker.getSelectedFiles().addListener((InvalidationListener) obs -> {
             ObservableList<File> fileList = filePicker.getSelectedFiles();
             indicator.setVisible(true);
             File fileToUpload = fileList.get(0);
-            modalityCloudinary.deleteCloudPicture(eventId)
-                .onFailure(e-> {
-                    Console.log(e);
-                    //We wait for 1 second (if we don't wait, the picture doesn't change below, probably because
+            ModalityCloudinary.deleteImage(cloudImagePath)
+                .onComplete(ar -> {
+                    if (ar.failed())
+                        Console.log(ar.cause());
+                    //We wait for 2 second (if we don't wait, the picture doesn't change below, probably because
                     //cloudinary server didn't have enough time to delete the old/proceed the old and new picture
-                    modalityCloudinary.uploadCloudPicture(eventId,fileToUpload)
-                        .onFailure(ev->{
-                            Console.log(ev);
-                            Platform.runLater(()->indicator.setVisible(false));
-                        })
-                        .onSuccess(ev-> Platform.runLater(() -> {
-                            ref.trashImage.setVisible(true);
-                            Image image = modalityCloudinary.getImage(eventId, (int) (imageView.getFitWidth() * zoomFactor), -1);
-                            imageView.setImage(image);
-                            indicator.setVisible(false);
-                        }));
-                })
-                    .onSuccess(e-> modalityCloudinary.uploadCloudPicture(eventId,fileToUpload)
-                        .onFailure(ev->{
-                            Console.log(ev);
-                            Platform.runLater(()->indicator.setVisible(false));
-                        })
-                    .onSuccess(evt-> UiScheduler.scheduleDelay(2000, () -> {
-                        //We wait for 2 second (if we don't wait, the picture doesn't change below, probably because
-                        //cloudinary server didn't have enough time to delete the old/proceed the old and new picture
-                        ref.trashImage.setVisible(true);
-                        Image image = modalityCloudinary.getImage(eventId, (int) (imageView.getFitWidth() * zoomFactor), -1);
-                        imageView.setImage(image);
-                        indicator.setVisible(false);
-                    })));
-
+                    UiScheduler.scheduleDelay(ar.failed() ? 0 : 2000, () ->
+                        ModalityCloudinary.uploadImage(cloudImagePath, fileToUpload)
+                            .onFailure(ex -> {
+                                Console.log(ex);
+                                Platform.runLater(() -> indicator.setVisible(false));
+                            })
+                            .onSuccess(v -> loadAudioCoverPicture()));
+                });
         });
 
         topContent.getChildren().add(filePicker.getView());
@@ -211,6 +153,14 @@ public class MediaLinksForAudioRecordingsManagement extends MediaLinksManagement
         teachingDatesVBox.setSpacing(30);
         mainContainer.setCenter(teachingDatesVBox);
         teachingsDates.forEach(date -> teachingDatesVBox.getChildren().add(computeTeachingDateLine(date)));
+    }
+
+    private void loadAudioCoverPicture() {
+        ModalityCloudinary.loadImage(cloudImagePath, audioCoverPictureContainer, IMAGE_SIZE, IMAGE_SIZE, SvgIcons::createAudioCoverPath)
+            .onComplete(ar -> {
+                trashImage.setVisible(ar.succeeded());
+                indicator.setVisible(false);
+            });
     }
 
     protected BorderPane computeTeachingDateLine(LocalDate date) {
