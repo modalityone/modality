@@ -44,7 +44,7 @@ module modality.event.frontoffice.activity.videos.plugin {
     exports one.modality.event.frontoffice.activities.videos;
 
     // Provided services
-    provides dev.webfx.stack.routing.uirouter.UiRoute with one.modality.event.frontoffice.activities.videos.Level1EventsWithVideoRouting.VideosUiRoute, one.modality.event.frontoffice.activities.videos.Level2EventDaysWithVideoRouting.EventVideosWallUiRoute, one.modality.event.frontoffice.activities.videos.Level3SessionVideoPlayerRouting.VideOfSessionUiRoute, one.modality.event.frontoffice.activities.videos.Level3LivestreamPlayerRouting.LivestreamUiRoute;
-    provides dev.webfx.stack.routing.uirouter.operations.RouteRequestEmitter with one.modality.event.frontoffice.activities.videos.Level1EventsWithVideoRouting.RouteToVideosRequestEmitter;
+    provides dev.webfx.stack.routing.uirouter.UiRoute with one.modality.event.frontoffice.activities.videos.Page1EventsWithVideoRouting.VideosUiRoute, one.modality.event.frontoffice.activities.videos.Page2EventDaysWithVideoRouting.EventVideosWallUiRoute, one.modality.event.frontoffice.activities.videos.Page4SessionVideoPlayerRouting.VideOfSessionUiRoute, one.modality.event.frontoffice.activities.videos.Page3LivestreamPlayerRouting.LivestreamUiRoute;
+    provides dev.webfx.stack.routing.uirouter.operations.RouteRequestEmitter with one.modality.event.frontoffice.activities.videos.Page1EventsWithVideoRouting.RouteToVideosRequestEmitter;
 
 }

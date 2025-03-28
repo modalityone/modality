@@ -20,7 +20,7 @@ import one.modality.base.shared.entities.Event;
 import java.time.LocalDateTime;
 
 /**
- * @author Bruno Salmon
+ * @author David Hello
  */
 public final class EventThumbnailView {
 

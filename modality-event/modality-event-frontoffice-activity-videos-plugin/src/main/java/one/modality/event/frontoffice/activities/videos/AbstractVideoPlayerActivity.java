@@ -30,7 +30,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * @author Bruno Salmon
+ * @author David Hello
  */
 abstract class AbstractVideoPlayerActivity extends ViewDomainActivityBase {
 

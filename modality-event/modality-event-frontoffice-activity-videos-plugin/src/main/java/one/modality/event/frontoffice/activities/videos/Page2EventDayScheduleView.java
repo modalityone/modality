@@ -34,11 +34,9 @@ import java.time.LocalDateTime;
 import java.util.List;
 
 /**
- *
- *
- * @author Bruno Salmon
+ * @author David Hello
  */
-final class Level2EventDayScheduleView {
+final class Page2EventDayScheduleView {
 
     private static final double DATE_PREF_SIZE = 150;
     private static final double STATUS_PREF_SIZE = 150;
@@ -62,7 +60,7 @@ final class Level2EventDayScheduleView {
     private final HBox mainLine = new HBox();
     private final VBox mainVBox = new VBox();
 
-    public Level2EventDayScheduleView(LocalDate day, List<ScheduledItem> dayScheduledVideos, BrowsingHistory browsingHistory, boolean displayHeader) {
+    public Page2EventDayScheduleView(LocalDate day, List<ScheduledItem> dayScheduledVideos, BrowsingHistory browsingHistory, boolean displayHeader) {
         this.day = day;
         this.dayScheduledVideos = dayScheduledVideos;
         this.browsingHistory = browsingHistory;
@@ -304,7 +302,7 @@ final class Level2EventDayScheduleView {
             LocalDateTime nowInEventTimezone = Event.nowInEventTimezone();
             if (Times.isBetween(nowInEventTimezone, sessionStart.minusMinutes(2), sessionEnd)) {
                 I18nControls.bindI18nProperties(statusLabel, I18nKeys.upperCase(VideosI18nKeys.LiveNow));
-                actionButton.setOnAction(e -> browsingHistory.push(Level3LivestreamPlayerRouting.getLivestreamPath(scheduledItem.getEventId())));
+                actionButton.setOnAction(e -> browsingHistory.push(Page3LivestreamPlayerRouting.getLivestreamPath(scheduledItem.getEventId())));
                 actionButton.setVisible(true);
                 Duration duration = Duration.between(nowInEventTimezone, sessionEnd);
                 if (duration.getSeconds() > 0)
@@ -323,7 +321,7 @@ final class Level2EventDayScheduleView {
                     scheduleRefreshUI(1);
                     //We display the play button 30 minutes before the session
                     if (duration.getSeconds() < 60 * 30) {
-                        actionButton.setOnAction(e -> browsingHistory.push(Level3LivestreamPlayerRouting.getLivestreamPath(scheduledItem.getEventId())));
+                        actionButton.setOnAction(e -> browsingHistory.push(Page3LivestreamPlayerRouting.getLivestreamPath(scheduledItem.getEventId())));
                         actionButton.setVisible(true);
                     } else {
                         hideActionButton();
@@ -354,7 +352,7 @@ final class Level2EventDayScheduleView {
             if (scheduledItem.isPublished()) {
                 I18nControls.bindI18nProperties(statusLabel, I18nKeys.upperCase(VideosI18nKeys.Available));
                 actionButton.setOnAction(e -> {
-                    browsingHistory.push(Level3SessionVideoPlayerRouting.getVideoOfSessionPath(scheduledItem.getId()));
+                    browsingHistory.push(Page4SessionVideoPlayerRouting.getVideoOfSessionPath(scheduledItem.getId()));
                     transformButtonFromPlayToPlayAgain(actionButton);
                 });
                 actionButton.setVisible(true);

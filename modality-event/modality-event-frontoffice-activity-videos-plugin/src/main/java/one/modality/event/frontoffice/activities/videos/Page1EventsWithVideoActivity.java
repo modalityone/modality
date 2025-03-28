@@ -39,7 +39,7 @@ import java.util.stream.Collectors;
  * @author David Hello
  * @author Bruno Salmon
  */
-final class Level1EventsWithVideoActivity extends ViewDomainActivityBase {
+final class Page1EventsWithVideoActivity extends ViewDomainActivityBase {
 
     private static final double BOX_WIDTH = 263;
 
@@ -90,16 +90,17 @@ final class Level1EventsWithVideoActivity extends ViewDomainActivityBase {
         columnsPane.getStyleClass().add("media-library");
         // Showing a thumbnail in the columns pane for each event with videos
         ObservableLists.bindConverted(columnsPane.getChildren(), documentLinesWithBookedVideos, event -> {
-            EventThumbnailView eventTbView = new EventThumbnailView(event, KnownItem.VIDEO.getCode(), EventThumbnailView.ItemType.ITEM_TYPE_VIDEO, true);
-            VBox container = eventTbView.getView();
-            Button actionButton = eventTbView.getActionButton();
+            EventThumbnailView thumbnail = new EventThumbnailView(event, KnownItem.VIDEO.getCode(), EventThumbnailView.ItemType.ITEM_TYPE_VIDEO, true);
+            Button actionButton = thumbnail.getActionButton();
             actionButton.setCursor(Cursor.HAND);
-            //1st case: Livestream only events (ie vodExpirationDate is null)
-            if (event.getVodExpirationDate() == null)
-                actionButton.setOnAction(e -> showLivestreamVideo(event));
-            else //2dn case: events with recordings
-                actionButton.setOnAction(e -> showEventVideosWall(event));
-            return container;
+            actionButton.setOnAction(e -> {
+                //1st case: Livestream only events (ie vodExpirationDate is null)
+                if (event.getVodExpirationDate() == null)
+                    showLivestreamVideo(event);
+                else //2dn case: events with recordings
+                    showEventVideosWall(event);
+            });
+            return thumbnail.getView();
         });
 
         VBox noContentVBox = new VBox(30);
@@ -123,14 +124,13 @@ final class Level1EventsWithVideoActivity extends ViewDomainActivityBase {
         );
 
         return FOPageUtil.restrictToMaxPageWidthAndApplyPageLeftTopRightBottomPadding(pageContainer);
-        //return FrontOfficeActivityUtil.createActivityPageScrollPane(pageContainer, false);
     }
 
     private void showLivestreamVideo(Event event) {
-        getHistory().push(Level3LivestreamPlayerRouting.getLivestreamPath(event));
+        getHistory().push(Page3LivestreamPlayerRouting.getLivestreamPath(event));
     }
     private void showEventVideosWall(Event event) {
-        getHistory().push(Level2EventDaysWithVideoRouting.getEventVideosWallPath(event));
+        getHistory().push(Page2EventDaysWithVideoRouting.getEventVideosWallPath(event));
     }
 
 }

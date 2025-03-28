@@ -9,7 +9,7 @@ import one.modality.base.client.util.routing.ModalityRoutingUtil;
 /**
  * @author Bruno Salmon
  */
-public final class Level2EventDaysWithVideoRouting {
+public final class Page2EventDaysWithVideoRouting {
 
     static final String PATH_EVENT_ID_PARAMETER_NAME = "eventId";
     private static final String PATH_EVENT_ID_PARAMETER_TOKEN = ':' + PATH_EVENT_ID_PARAMETER_NAME;
@@ -34,9 +34,9 @@ public final class Level2EventDaysWithVideoRouting {
         }
 
         public static UiRoute<?> uiRoute() {
-            return UiRoute.create(Level2EventDaysWithVideoRouting.getPath()
+            return UiRoute.create(Page2EventDaysWithVideoRouting.getPath()
                 , true
-                , Level2EventDaysWithVideoActivity::new
+                , Page2EventDaysWithVideoActivity::new
                 , ViewDomainActivityContextFinal::new
             );
         }

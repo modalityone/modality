@@ -14,7 +14,7 @@ import dev.webfx.stack.ui.operation.HasOperationCode;
 /**
  * @author Bruno Salmon
  */
-public final class Level1EventsWithVideoRouting {
+public final class Page1EventsWithVideoRouting {
 
     private final static String PATH = "/videos";
     private final static String OPERATION_CODE = "RouteToVideos";
@@ -30,9 +30,9 @@ public final class Level1EventsWithVideoRouting {
         }
 
         public static UiRoute<?> uiRoute() {
-            return UiRoute.create(Level1EventsWithVideoRouting.getPath()
+            return UiRoute.create(Page1EventsWithVideoRouting.getPath()
                     , true
-                    , Level1EventsWithVideoActivity::new
+                    , Page1EventsWithVideoActivity::new
                     , ViewDomainActivityContextFinal::new
             );
         }
