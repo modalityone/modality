@@ -15,7 +15,6 @@ module modality.crm.frontoffice.activity.userprofile.plugin {
     requires modality.crm.client.authn.fx;
     requires modality.crm.client.i18n;
     requires modality.crm.frontoffice.activity.createaccount.plugin;
-    requires webfx.extras.canvas.blob;
     requires webfx.extras.filepicker;
     requires webfx.extras.panes;
     requires webfx.extras.styles.bootstrap;
@@ -27,6 +26,7 @@ module modality.crm.frontoffice.activity.userprofile.plugin {
     requires webfx.extras.util.layout;
     requires webfx.kit.launcher;
     requires webfx.kit.util;
+    requires webfx.platform.blob;
     requires webfx.platform.console;
     requires webfx.platform.file;
     requires webfx.platform.uischeduler;

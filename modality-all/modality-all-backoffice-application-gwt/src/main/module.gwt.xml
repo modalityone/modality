@@ -426,6 +426,11 @@
     <source path="dev/webfx/extras/canvas/impl"/>
     <!--============================< webfx-extras-canvas-bar >=============================-->
     <source path="dev/webfx/extras/canvas/bar"/>
+    <!--============================< webfx-extras-canvas-blob >============================-->
+    <source path="dev/webfx/extras/canvas/blob"/>
+    <source path="dev/webfx/extras/canvas/blob/spi"/>
+    <!--=======================< webfx-extras-canvas-blob-gwt-j2cl >========================-->
+    <source path="dev/webfx/extras/canvas/blob/spi/impl/gwt"/>
     <!--===========================< webfx-extras-canvas-layer >============================-->
     <source path="dev/webfx/extras/canvas/layer"/>
     <source path="dev/webfx/extras/canvas/layer/interact"/>

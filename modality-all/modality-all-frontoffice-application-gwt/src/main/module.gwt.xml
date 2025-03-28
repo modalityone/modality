@@ -299,6 +299,11 @@
     <source path="one/modality/event/frontoffice/bookingforms/recurringevent"/>
     <!--=======================< modality-event-frontoffice-medias >========================-->
     <source path="one/modality/event/frontoffice/medias"/>
+    <!--============================< webfx-extras-canvas-blob >============================-->
+    <source path="dev/webfx/extras/canvas/blob"/>
+    <source path="dev/webfx/extras/canvas/blob/spi"/>
+    <!--=======================< webfx-extras-canvas-blob-gwt-j2cl >========================-->
+    <source path="dev/webfx/extras/canvas/blob/spi/impl/gwt"/>
     <!--===============================< webfx-extras-cell >================================-->
     <source path="dev/webfx/extras/cell/collator"/>
     <source path="dev/webfx/extras/cell/renderer"/>

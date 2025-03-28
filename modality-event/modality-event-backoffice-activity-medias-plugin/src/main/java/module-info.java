@@ -31,7 +31,6 @@ module modality.event.backoffice.activity.medias.plugin {
     requires webfx.extras.webtext;
     requires webfx.kit.util;
     requires webfx.platform.console;
-    requires webfx.platform.file;
     requires webfx.platform.uischeduler;
     requires webfx.platform.util;
     requires webfx.platform.windowhistory;

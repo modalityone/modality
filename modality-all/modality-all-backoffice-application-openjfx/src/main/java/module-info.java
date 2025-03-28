@@ -13,6 +13,7 @@ module modality.all.backoffice.application.openjfx {
     requires modality.ecommerce.document.service.remote;
     requires modality.ecommerce.payment.buscall;
     requires modality.ecommerce.payment.remote;
+    requires webfx.extras.canvas.blob.openjfx;
     requires webfx.extras.filepicker.openjfx;
     requires webfx.extras.visual.charts.peers.openjfx;
     requires webfx.extras.visual.grid.peers.openjfx;

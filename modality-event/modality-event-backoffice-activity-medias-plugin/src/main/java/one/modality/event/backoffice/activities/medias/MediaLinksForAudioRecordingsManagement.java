@@ -6,15 +6,13 @@ import dev.webfx.extras.styles.bootstrap.Bootstrap;
 import dev.webfx.extras.switches.Switch;
 import dev.webfx.extras.theme.shape.ShapeTheme;
 import dev.webfx.extras.util.control.Controls;
+import dev.webfx.kit.util.properties.FXProperties;
 import dev.webfx.platform.console.Console;
-import dev.webfx.platform.file.File;
-import dev.webfx.platform.uischeduler.UiScheduler;
 import dev.webfx.stack.i18n.controls.I18nControls;
 import dev.webfx.stack.orm.entity.EntityStore;
 import dev.webfx.stack.orm.entity.UpdateStore;
 import dev.webfx.stack.orm.entity.binding.EntityBindings;
 import javafx.application.Platform;
-import javafx.beans.InvalidationListener;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.geometry.Insets;
@@ -42,9 +40,9 @@ public class MediaLinksForAudioRecordingsManagement extends MediaLinksManagement
     private final ObservableList<Media> workingMediasForCurrentLanguage = FXCollections.observableArrayList();
     private final RecordingsTabView parentRecordingView;
     private final Item languageItem;
-    private final String cloudImagePath;
-    private final MonoPane audioCoverPictureContainer = new MonoPane();
-    private final ProgressIndicator indicator = Controls.createProgressIndicator(150);
+    private final String eventCoverCloudImagePath;
+    private final MonoPane eventCoverImageContainer = new MonoPane();
+    private final ProgressIndicator replaceProgressIndicator = Controls.createProgressIndicator(150);
     private final SVGPath trashImage = SvgIcons.createTrashSVGPath();
 
     public MediaLinksForAudioRecordingsManagement(Item languageItem, EntityStore entityStore, ObservableList<LocalDate> teachingsDates, ObservableList<ScheduledItem> audioScheduledItemsReadFromDatabase, ObservableList<Media> recordingsMediasReadFromDatabase, RecordingsTabView recordingsTabView) {
@@ -53,7 +51,7 @@ public class MediaLinksForAudioRecordingsManagement extends MediaLinksManagement
         parentRecordingView = recordingsTabView;
         //Language code is 'audio-en", audio-fr", "audio-es", ...
         String languageCode = languageItem.getCode().split("-")[1];
-        cloudImagePath = ModalityCloudinary.eventCoverImagePath(FXEventId.getEventId(), languageCode);
+        eventCoverCloudImagePath = ModalityCloudinary.eventCoverImagePath(FXEventId.getEventId(), languageCode);
         buildContainer();
     }
 
@@ -83,10 +81,10 @@ public class MediaLinksForAudioRecordingsManagement extends MediaLinksManagement
         //We look if the image for this cover is existing in cloudinary
 
         SvgIcons.armButton(trashImage, () ->
-            ModalityCloudinary.deleteImage(cloudImagePath)
+            ModalityCloudinary.deleteImage(eventCoverCloudImagePath)
                 .onFailure(Console::log)
                 .onSuccess(e -> Platform.runLater(() -> {
-                    audioCoverPictureContainer.setContent(null);
+                    eventCoverImageContainer.setContent(null);
                     trashImage.setVisible(false);
                 }))
         );
@@ -97,12 +95,12 @@ public class MediaLinksForAudioRecordingsManagement extends MediaLinksManagement
 
         loadAudioCoverPicture();
 
-        indicator.setVisible(false);
-        StackPane thumbailStackPane = new StackPane(audioCoverPictureContainer, trashImageMonoPane, indicator);
+        replaceProgressIndicator.setVisible(false);
+        StackPane thumbailStackPane = new StackPane(eventCoverImageContainer, trashImageMonoPane, replaceProgressIndicator);
         thumbailStackPane.setMaxSize(IMAGE_SIZE, IMAGE_SIZE);
         thumbailStackPane.setPadding(new Insets(0, 0, 25, 0));
         StackPane.setAlignment(trashImageMonoPane, Pos.BOTTOM_RIGHT);
-        audioCoverPictureContainer.setMaxSize(IMAGE_SIZE, IMAGE_SIZE);
+        eventCoverImageContainer.setMaxSize(IMAGE_SIZE, IMAGE_SIZE);
 
         topContent.getChildren().add(thumbailStackPane);
 
@@ -114,25 +112,16 @@ public class MediaLinksForAudioRecordingsManagement extends MediaLinksManagement
         StackPane.setAlignment(filePicker.getGraphic(), Pos.CENTER_LEFT);
         ((Region) filePicker.getView()).setPadding(new Insets(0, 0, 40, 0));
 
-        filePicker.getSelectedFiles().addListener((InvalidationListener) obs -> {
-            ObservableList<File> fileList = filePicker.getSelectedFiles();
-            indicator.setVisible(true);
-            File fileToUpload = fileList.get(0);
-            ModalityCloudinary.deleteImage(cloudImagePath)
+        FXProperties.runOnPropertyChange(fileToUpload -> {
+            replaceProgressIndicator.setVisible(true);
+            ModalityCloudinary.replaceImage(eventCoverCloudImagePath, fileToUpload)
                 .onComplete(ar -> {
                     if (ar.failed())
-                        Console.log(ar.cause());
-                    //We wait for 2 second (if we don't wait, the picture doesn't change below, probably because
-                    //cloudinary server didn't have enough time to delete the old/proceed the old and new picture
-                    UiScheduler.scheduleDelay(ar.failed() ? 0 : 2000, () ->
-                        ModalityCloudinary.uploadImage(cloudImagePath, fileToUpload)
-                            .onFailure(ex -> {
-                                Console.log(ex);
-                                Platform.runLater(() -> indicator.setVisible(false));
-                            })
-                            .onSuccess(v -> loadAudioCoverPicture()));
+                        Platform.runLater(() -> replaceProgressIndicator.setVisible(false));
+                    else
+                        loadAudioCoverPicture();
                 });
-        });
+        }, filePicker.selectedFileProperty());
 
         topContent.getChildren().add(filePicker.getView());
 
@@ -156,10 +145,10 @@ public class MediaLinksForAudioRecordingsManagement extends MediaLinksManagement
     }
 
     private void loadAudioCoverPicture() {
-        ModalityCloudinary.loadImage(cloudImagePath, audioCoverPictureContainer, IMAGE_SIZE, IMAGE_SIZE, SvgIcons::createAudioCoverPath)
+        ModalityCloudinary.loadImage(eventCoverCloudImagePath, eventCoverImageContainer, IMAGE_SIZE, IMAGE_SIZE, SvgIcons::createAudioCoverPath)
             .onComplete(ar -> {
                 trashImage.setVisible(ar.succeeded());
-                indicator.setVisible(false);
+                replaceProgressIndicator.setVisible(false);
             });
     }
 
