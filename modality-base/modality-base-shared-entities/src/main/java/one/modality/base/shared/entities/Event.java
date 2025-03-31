@@ -8,6 +8,7 @@ import one.modality.base.shared.entities.markers.*;
 import java.time.Clock;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.ZoneId;
 
 /**
  * @author Bruno Salmon
@@ -273,9 +274,11 @@ public interface Event extends Entity,
         return name == null ? null : name.toLowerCase().contains("online");
     }
 
+    Clock UK_CLOCK = Clock.system(ZoneId.of("Europe/London"));
+
     // temporary static method (will be non-static once managed in the event)
     static Clock getEventClock() {
-        return Clock.systemUTC();
+        return UK_CLOCK;
     }
 
     static LocalDateTime nowInEventTimezone() {
