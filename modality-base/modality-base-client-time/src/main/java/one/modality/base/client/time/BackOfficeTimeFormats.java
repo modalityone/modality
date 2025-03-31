@@ -73,8 +73,8 @@ public interface BackOfficeTimeFormats {
     */
 
     TextStyle DATE_INTERVAL_MONTH_FORMAT = TextStyle.FULL;
-    FormatStyle MEDIA_DATE_FORMAT = FormatStyle.SHORT;
-    FormatStyle MEDIA_TIME_FORMAT = FormatStyle.SHORT;
+    String MEDIA_DATE_FORMAT = "dd/MM/yyyy";
+    String MEDIA_TIME_FORMAT = "HH:mm";
     FormatStyle MEDIA_DATE_LONG_FORMAT = FormatStyle.LONG;
     FormatStyle PROGRAM_DAY_TEMPLATE_MONTH_DAY_FORMAT = FormatStyle.LONG;
     FormatStyle RECURRING_EVENT_OPENING_DATE_FORMAT = FormatStyle.SHORT;
