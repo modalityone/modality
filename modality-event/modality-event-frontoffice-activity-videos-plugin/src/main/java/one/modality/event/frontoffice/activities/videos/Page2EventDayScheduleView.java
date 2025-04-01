@@ -25,6 +25,7 @@ import one.modality.base.client.time.FrontOfficeTimeFormats;
 import one.modality.base.shared.entities.Event;
 import one.modality.base.shared.entities.ScheduledItem;
 import one.modality.base.shared.entities.Timeline;
+import one.modality.base.shared.entities.markers.EntityHasStartAndEndTime;
 import one.modality.base.shared.entities.markers.HasEndTime;
 import one.modality.base.shared.entities.markers.HasStartTime;
 
@@ -288,13 +289,17 @@ final class Page2EventDayScheduleView {
             //THE STATE
             LocalDateTime sessionStart;
             LocalDateTime sessionEnd;
-            if (scheduledItem.getEvent().isRecurringWithVideo()) {
-                sessionStart = scheduledItem.getDate().atTime(scheduledItem.getProgramScheduledItem().getStartTime());
-                sessionEnd = scheduledItem.getDate().atTime(scheduledItem.getProgramScheduledItem().getEndTime());
+            LocalDate sessionDate = scheduledItem.getDate();
+            ScheduledItem programScheduledItem = scheduledItem.getProgramScheduledItem();
+            EntityHasStartAndEndTime startAndEndTimeHolder;
+            Event event = scheduledItem.getEvent();
+            if (event.isRecurringWithVideo()) {
+                startAndEndTimeHolder = programScheduledItem;
             } else {
-                sessionStart = scheduledItem.getDate().atTime(scheduledItem.getProgramScheduledItem().getTimeline().getStartTime());
-                sessionEnd = scheduledItem.getDate().atTime(scheduledItem.getProgramScheduledItem().getTimeline().getEndTime());
+                startAndEndTimeHolder = programScheduledItem.getTimeline();
             }
+            sessionStart = sessionDate.atTime(startAndEndTimeHolder.getStartTime());
+            sessionEnd = sessionDate.atTime(startAndEndTimeHolder.getEndTime());
             // For now, we manage the case when the livestream link is unique for the whole event, which is the case with Castr, which is the platform we generally use
             // TODO: manage the case when the livestream link is not global but per session, which happens on platform like youtube, etc.
 
@@ -335,7 +340,7 @@ final class Page2EventDayScheduleView {
             }
 
             //Case of the video expired
-            LocalDateTime expirationDate = scheduledItem.getEvent().getVodExpirationDate();
+            LocalDateTime expirationDate = event.getVodExpirationDate();
             //We look if the current video is expired
             if (scheduledItem.getExpirationDate() != null) {
                 expirationDate = scheduledItem.getExpirationDate();

@@ -77,7 +77,7 @@ final class Page2EventDaysWithVideoActivity extends ViewDomainActivityBase {
 
     private final Label videoExpirationLabel = new Label();
     private final Button selectAllDaysButton = Bootstrap.primaryButton(I18nControls.newButton(VideosI18nKeys.ViewAllDays));
-    private final Label scheduleSubTitleLabel = I18nControls.newLabel(VideosI18nKeys.SelectTheDayBelow);
+    private final Label selectTheDayBelowLabel = I18nControls.newLabel(VideosI18nKeys.SelectTheDayBelow);
     private EntityStore entityStore;
 
     @Override
@@ -153,23 +153,23 @@ final class Page2EventDaysWithVideoActivity extends ViewDomainActivityBase {
         headerHBox.setMaxWidth(1024);
 
         //We display this box only if the current Date is in the list of date in the video Scheduled Item list
-        VBox currentDayScheduleVBox = new VBox(30); // Will be populated later (see reacting code below)
-        currentDayScheduleVBox.setAlignment(Pos.CENTER);
-        Label scheduleForTodayTitleLabel = Bootstrap.strong(Bootstrap.textPrimary(Bootstrap.h3(new Label())));
-        scheduleForTodayTitleLabel.setPadding(new Insets(100, 0, 40, 0));
+        VBox todayVideosVBox = new VBox(30); // Will be populated later (see reacting code below)
+        todayVideosVBox.setAlignment(Pos.CENTER);
+        Label todayVideosLabel = Bootstrap.strong(Bootstrap.textPrimary(Bootstrap.h3(new Label())));
+        todayVideosLabel.setPadding(new Insets(100, 0, 40, 0));
 
-        Label scheduleTitleLabel = Bootstrap.h3(I18nControls.newLabel(VideosI18nKeys.EventSchedule));
-        VBox scheduleTitleVBox = new VBox(5, scheduleTitleLabel, scheduleSubTitleLabel);
-        scheduleTitleVBox.setAlignment(Pos.CENTER);
-        scheduleTitleVBox.setPadding(new Insets(100, 0, 0, 0));
+        Label eventScheduleLabel = Bootstrap.h3(I18nControls.newLabel(VideosI18nKeys.EventSchedule));
+        VBox selectTheDayBelowVBox = new VBox(5, eventScheduleLabel, selectTheDayBelowLabel);
+        selectTheDayBelowVBox.setAlignment(Pos.CENTER);
+        selectTheDayBelowVBox.setPadding(new Insets(100, 0, 0, 0));
 
-        VBox videoScheduleVBox = new VBox(20); // Will be populated later (see reacting code below)
+        VBox selectedVideosVBox = new VBox(20); // Will be populated later (see reacting code below)
 
         VBox loadedContentVBox = new VBox(40,
-            headerHBox,
-            currentDayScheduleVBox,
-            scheduleTitleVBox,
-            videoScheduleVBox
+            headerHBox, // contains the event image and the event title
+            todayVideosVBox, // contains the videos for today (if any)
+            selectTheDayBelowVBox, // contains the title of the schedule and the select the day below label (will be hidden if not applicable)
+            selectedVideosVBox // contains the videos for the selected day (or all days)
         );
         loadedContentVBox.setAlignment(Pos.TOP_CENTER);
         loadedContentVBox.getStyleClass().add("livestream");
@@ -184,6 +184,7 @@ final class Page2EventDaysWithVideoActivity extends ViewDomainActivityBase {
         // *********************************** Reacting to parameter changes *******************************************
         // *************************************************************************************************************
 
+        // Reacting to data loading (initially or when the event changes or on login/logout)
         ObservableLists.runNowAndOnListOrPropertiesChange(change -> {
             // We display the loading indicator while the data is loading
             Event event = eventProperty.get();
@@ -196,6 +197,7 @@ final class Page2EventDaysWithVideoActivity extends ViewDomainActivityBase {
             // Loading the event image in the header
             String eventCloudImagePath = ModalityCloudinary.eventCoverImagePath(event, I18n.getLanguage());
             ModalityCloudinary.loadImage(eventCloudImagePath, eventImageContainer, -1, IMAGE_HEIGHT, SvgIcons::createVideoIconPath);
+
             // Updating the expiration date in the header
             LocalDateTime vodExpirationDate = event.getVodExpirationDate();
             if (vodExpirationDate == null) {
@@ -211,24 +213,20 @@ final class Page2EventDaysWithVideoActivity extends ViewDomainActivityBase {
             // There are 2 modes of visualization: one with multiple videos per day (ex: Festivals), and one for with one video per day (ex: recurring events like STTP)
             Event eventContainingVideos = Objects.coalesce(event.getRepeatedEvent(), event);
             boolean singleVideosPerDay = eventContainingVideos.isRecurringWithVideo();
+            LocalDate todayInEventTimezone = Event.todayInEventTimezone();
 
-            // In single video per day mode, we don't display the videos for today and automatically select all days
+            // In single video per day mode (ex: STTP), we don't display the "Select the day below" label, because we automatically show all videos
+            Layouts.setManagedAndVisibleProperties(selectTheDayBelowLabel, !singleVideosPerDay);
             if (singleVideosPerDay) {
-                Layouts.setManagedAndVisibleProperties(scheduleSubTitleLabel, false);
-                Layouts.setManagedAndVisibleProperties(currentDayScheduleVBox, true);
-                selectAllDaysButton.fire();
-            } else { // otherwise in multiple videos per day mode, we display the videos for today and let the user select the day
-                Layouts.setManagedAndVisibleProperties(scheduleSubTitleLabel, true);
-                LocalDate todayInEventTimezone = Event.todayInEventTimezone();
-                I18nControls.bindI18nProperties(scheduleForTodayTitleLabel, VideosI18nKeys.ScheduleForSpecificDate1,
-                    LocalizedTime.formatMonthDay(todayInEventTimezone, FrontOfficeTimeFormats.VOD_TODAY_MONTH_DAY_FORMAT));
-
-                // Populating the current day videos
-                Layouts.setManagedAndVisibleProperties(currentDayScheduleVBox, true);
-                List<ScheduledItem> todayVideoItems = Collections.filter(videoScheduledItems, item -> item.getDate().equals(todayInEventTimezone));
-                Region todayView = new Page2EventDayScheduleView(todayInEventTimezone, todayVideoItems, getHistory(), true).getView();
-                currentDayScheduleVBox.getChildren().setAll(scheduleForTodayTitleLabel, todayView);
+                selectAllDaysButton.fire(); // Automatically selecting all days to show all videos
             }
+
+            // Populating the videos for today
+            I18nControls.bindI18nProperties(todayVideosLabel, VideosI18nKeys.ScheduleForSpecificDate1,
+                LocalizedTime.formatMonthDay(todayInEventTimezone, FrontOfficeTimeFormats.VOD_TODAY_MONTH_DAY_FORMAT));
+            List<ScheduledItem> todayVideoItems = Collections.filter(videoScheduledItems, item -> item.getDate().equals(todayInEventTimezone));
+            Region todayView = new Page2EventDayScheduleView(todayInEventTimezone, todayVideoItems, getHistory(), true).getView();
+            todayVideosVBox.getChildren().setAll(todayVideosLabel, todayView);
 
         }, videoScheduledItems, eventProperty);
 
@@ -241,9 +239,9 @@ final class Page2EventDaysWithVideoActivity extends ViewDomainActivityBase {
             if (scheduleViewsForSelectedDay.isEmpty()) {
                 Label noContentLabel = Bootstrap.h3(Bootstrap.textWarning(I18nControls.newLabel(VideosI18nKeys.NoVideosForThisEvent)));
                 noContentLabel.setPadding(new Insets(150, 0, 100, 0));
-                videoScheduleVBox.getChildren().setAll(noContentLabel);
+                selectedVideosVBox.getChildren().setAll(noContentLabel);
             } else {
-                videoScheduleVBox.getChildren().setAll(Collections.map(scheduleViewsForSelectedDay, Page2EventDayScheduleView::getView));
+                selectedVideosVBox.getChildren().setAll(Collections.map(scheduleViewsForSelectedDay, Page2EventDayScheduleView::getView));
             }
         }, scheduleViewsForSelectedDay);
 
