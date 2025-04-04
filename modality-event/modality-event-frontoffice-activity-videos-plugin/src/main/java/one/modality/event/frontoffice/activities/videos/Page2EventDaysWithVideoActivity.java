@@ -1,16 +1,23 @@
 package one.modality.event.frontoffice.activities.videos;
 
+import dev.webfx.extras.cell.renderer.ValueRenderer;
 import dev.webfx.extras.panes.GoldenRatioPane;
 import dev.webfx.extras.panes.MonoPane;
 import dev.webfx.extras.styles.bootstrap.Bootstrap;
 import dev.webfx.extras.time.format.LocalizedTime;
 import dev.webfx.extras.util.control.Controls;
 import dev.webfx.extras.util.layout.Layouts;
+import dev.webfx.extras.visual.VisualColumnBuilder;
+import dev.webfx.extras.visual.VisualResultBuilder;
+import dev.webfx.extras.visual.VisualStyle;
+import dev.webfx.extras.visual.controls.grid.SkinnedVisualGrid;
+import dev.webfx.extras.visual.controls.grid.VisualGrid;
 import dev.webfx.extras.webtext.HtmlText;
 import dev.webfx.kit.util.properties.FXProperties;
 import dev.webfx.kit.util.properties.ObservableLists;
 import dev.webfx.platform.console.Console;
 import dev.webfx.platform.util.Objects;
+import dev.webfx.platform.util.Strings;
 import dev.webfx.platform.util.collection.Collections;
 import dev.webfx.stack.i18n.I18n;
 import dev.webfx.stack.i18n.controls.I18nControls;
@@ -31,6 +38,7 @@ import javafx.scene.control.Label;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Region;
 import javafx.scene.layout.VBox;
+import javafx.scene.text.Text;
 import javafx.scene.text.TextAlignment;
 import one.modality.base.client.bootstrap.ModalityStyle;
 import one.modality.base.client.cloudinary.ModalityCloudinary;
@@ -41,10 +49,12 @@ import one.modality.base.shared.entities.Event;
 import one.modality.base.shared.entities.KnownItem;
 import one.modality.base.shared.entities.KnownItemFamily;
 import one.modality.base.shared.entities.ScheduledItem;
+import one.modality.base.shared.entities.markers.EntityHasStartAndEndTime;
 import one.modality.crm.shared.services.authn.fx.FXUserPersonId;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.LocalTime;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -60,6 +70,8 @@ import java.util.stream.Collectors;
  * @author Bruno Salmon
  */
 final class Page2EventDaysWithVideoActivity extends ViewDomainActivityBase {
+
+    private static final boolean USE_VISUAL_GRID = true;
 
     private static final double IMAGE_HEIGHT = 240;
     private static final double DAY_BUTTON_WIDTH = 150;
@@ -79,6 +91,8 @@ final class Page2EventDaysWithVideoActivity extends ViewDomainActivityBase {
     private final Button selectAllDaysButton = Bootstrap.primaryButton(I18nControls.newButton(VideosI18nKeys.ViewAllDays));
     private final Label selectTheDayBelowLabel = I18nControls.newLabel(VideosI18nKeys.SelectTheDayBelow);
     private EntityStore entityStore;
+
+    private final VBox selectedVideosVBox = new VBox(20);
 
     @Override
     protected void updateModelFromContextParameters() {
@@ -163,11 +177,9 @@ final class Page2EventDaysWithVideoActivity extends ViewDomainActivityBase {
         selectTheDayBelowVBox.setAlignment(Pos.CENTER);
         selectTheDayBelowVBox.setPadding(new Insets(100, 0, 0, 0));
 
-        VBox selectedVideosVBox = new VBox(20); // Will be populated later (see reacting code below)
-
         VBox loadedContentVBox = new VBox(40,
             headerHBox, // contains the event image and the event title
-            todayVideosVBox, // contains the videos for today (if any)
+            //todayVideosVBox, // contains the videos for today (if any)
             selectTheDayBelowVBox, // contains the title of the schedule and the select the day below label (will be hidden if not applicable)
             selectedVideosVBox // contains the videos for the selected day (or all days)
         );
@@ -254,8 +266,58 @@ final class Page2EventDaysWithVideoActivity extends ViewDomainActivityBase {
         return FOPageUtil.restrictToMaxPageWidthAndApplyPageLeftTopRightBottomPadding(pageContainer);
     }
 
+    private void refreshVideosTable() {
+        VisualGrid videoTable = new SkinnedVisualGrid();
+        ValueRenderer dateRenderer = (date, context) -> {
+            Text text = new Text();
+            text.textProperty().bind(LocalizedTime.formatMonthDayProperty((LocalDate) date, FrontOfficeTimeFormats.VOD_TODAY_MONTH_DAY_FORMAT));
+            return text;
+        };
+        ValueRenderer nameRenderer = (name, context) -> {
+            Label label = new Label(name.toString());
+            label.setWrapText(true);
+            label.getStyleClass().add("ellipsis");
+            return label;
+        };
+        ValueRenderer timeRangeRenderer = (timeRange, context) -> {
+            LocalTime[] times = (LocalTime[]) timeRange;
+            Text text = new Text();
+            text.textProperty().bind(LocalizedTime.formatLocalTimeRangeProperty(times[0], times[1], FrontOfficeTimeFormats.VIDEO_DAY_TIME_FORMAT));
+            return text;
+        };
+        ValueRenderer statusRenderer = (value, context) -> {
+            return Bootstrap.textSuccess(I18n.newText(VideosI18nKeys.OnTime));
+        };
+        ValueRenderer buttonRenderer = (value, context) -> {
+            return Bootstrap.dangerButton(I18nControls.newButton(VideosI18nKeys.Watch));
+        };
+        VisualResultBuilder rsb = VisualResultBuilder.create(videoScheduledItems.size(),
+            VisualColumnBuilder.create("Date").setValueRenderer(dateRenderer).build(),
+            VisualColumnBuilder.create("Status").setValueRenderer(statusRenderer).setStyle(VisualStyle.CENTER_STYLE).build(),
+            VisualColumnBuilder.create("Name").setValueRenderer(nameRenderer).build(),
+            VisualColumnBuilder.create("UK time").setValueRenderer(timeRangeRenderer).setStyle(VisualStyle.CENTER_STYLE).build(),
+            VisualColumnBuilder.create().setValueRenderer(buttonRenderer).setStyle(VisualStyle.CENTER_STYLE).build()
+        );
+        for (int i = 0; i < videoScheduledItems.size(); i++) {
+            ScheduledItem video = videoScheduledItems.get(i);
+            rsb.setValue(i, 0, video.getDate());
+            rsb.setValue(i, 1, null);
+            rsb.setValue(i, 2, Strings.isBlank(video.getName()) ? video.getProgramScheduledItem().getName() : video.getName());
+            EntityHasStartAndEndTime startEndHolder = video.getEvent().isRecurringWithVideo() ? video.getProgramScheduledItem() : video;
+            rsb.setValue(i, 3, new LocalTime[] {startEndHolder.getStartTime(), startEndHolder.getEndTime()});
+            rsb.setValue(i, 4, null);
+        }
+        videoTable.setVisualResult(rsb.build());
+        videoTable.setFullHeight(true);
+        videoTable.setHeaderVisible(true);
+        selectedVideosVBox.getChildren().setAll(videoTable);
+    }
 
     private void showSelectedVideos(boolean initialLoading) {
+        if (USE_VISUAL_GRID) {
+            refreshVideosTable();
+            return;
+        }
         scheduleViewsForSelectedDay.clear();
         correspondenceDateButton.clear();
         correspondenceDateButton.put(null, selectAllDaysButton);

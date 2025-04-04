@@ -16,6 +16,7 @@ module modality.event.frontoffice.activity.videos.plugin {
     requires modality.base.shared.entities;
     requires modality.crm.client.authn.fx;
     requires modality.event.frontoffice.medias;
+    requires webfx.extras.cell;
     requires webfx.extras.panes;
     requires webfx.extras.player;
     requires webfx.extras.player.multi.all;
@@ -23,6 +24,8 @@ module modality.event.frontoffice.activity.videos.plugin {
     requires webfx.extras.time.format;
     requires webfx.extras.util.control;
     requires webfx.extras.util.layout;
+    requires webfx.extras.visual;
+    requires webfx.extras.visual.grid;
     requires webfx.extras.webtext;
     requires webfx.kit.util;
     requires webfx.platform.console;
