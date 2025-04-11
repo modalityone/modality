@@ -121,9 +121,9 @@
     <resource path="dev/webfx/kit/css/fonts/vollkornsc"/>
     <public path="" includes="dev/webfx/kit/css/fonts/vollkornsc/"/>
     <!--=========================< modality-base-client-entities >==========================-->
-    <source path="one/modality/base/client/entities/util"/>
-    <source path="one/modality/base/client/entities/util/filters"/>
-    <source path="one/modality/base/client/entities/util/functions"/>
+    <source path="one/modality/base/client/entities"/>
+    <source path="one/modality/base/client/entities/filters"/>
+    <source path="one/modality/base/client/entities/functions"/>
     <!--===========================< modality-base-client-i18n >============================-->
     <source path="one/modality/base/client/i18n"/>
     <source path="one/modality/base/client/operations/i18n"/>
@@ -186,8 +186,9 @@
     <source path="one/modality/base/client/profile/fx"/>
     <!--===========================< modality-base-client-tile >============================-->
     <source path="one/modality/base/client/tile"/>
+    <!--===========================< modality-base-client-time >============================-->
+    <source path="one/modality/base/client/time"/>
     <!--===========================< modality-base-client-util >============================-->
-    <source path="one/modality/base/client/util/converters"/>
     <source path="one/modality/base/client/util/dialog"/>
     <source path="one/modality/base/client/util/functions"/>
     <source path="one/modality/base/client/util/log"/>
@@ -235,6 +236,8 @@
     <source path="one/modality/crm/shared/services/authn/serial"/>
     <!--=========================< modality-ecommerce-client-i18n >=========================-->
     <source path="one/modality/ecommerce/client/i18n"/>
+    <!--====================< modality-ecommerce-client-workingbooking >====================-->
+    <source path="one/modality/ecommerce/client/workingbooking"/>
     <!--======================< modality-ecommerce-document-service >=======================-->
     <source path="one/modality/ecommerce/document/service"/>
     <source path="one/modality/ecommerce/document/service/events"/>
@@ -269,6 +272,8 @@
     <source path="one/modality/ecommerce/payment/client"/>
     <!--=======================< modality-ecommerce-payment-remote >========================-->
     <source path="one/modality/ecommerce/payment/spi/impl/remote"/>
+    <!--=========================< modality-event-client-booking >==========================-->
+    <source path="one/modality/event/client/booking"/>
     <!--=========================< modality-event-client-event-fx >=========================-->
     <source path="one/modality/event/client/event/fx"/>
     <!--========================< modality-event-client-mediaview >=========================-->
@@ -285,15 +290,20 @@
     <source path="one/modality/event/frontoffice/activities/booking/process/account"/>
     <source path="one/modality/event/frontoffice/activities/booking/process/event"/>
     <source path="one/modality/event/frontoffice/activities/booking/process/event/slides"/>
-    <source path="one/modality/event/frontoffice/activities/booking/process/event/slides/recurring_event"/>
-    <source path="one/modality/event/frontoffice/activities/booking/process/event/slides/sttp"/>
     <source path="one/modality/event/frontoffice/activities/booking/views"/>
     <resource path="one/modality/event/frontoffice/activities/booking/map"/>
     <public path="" includes="one/modality/event/frontoffice/activities/booking/map/"/>
     <!--===============< modality-event-frontoffice-activity-videos-plugin >================-->
     <source path="one/modality/event/frontoffice/activities/videos"/>
+    <!--==========< modality-event-frontoffice-bookingform-recurringevent-plugin >==========-->
+    <source path="one/modality/event/frontoffice/bookingforms/recurringevent"/>
     <!--=======================< modality-event-frontoffice-medias >========================-->
     <source path="one/modality/event/frontoffice/medias"/>
+    <!--============================< webfx-extras-canvas-blob >============================-->
+    <source path="dev/webfx/extras/canvas/blob"/>
+    <source path="dev/webfx/extras/canvas/blob/spi"/>
+    <!--=======================< webfx-extras-canvas-blob-gwt-j2cl >========================-->
+    <source path="dev/webfx/extras/canvas/blob/spi/impl/gwt"/>
     <!--===============================< webfx-extras-cell >================================-->
     <source path="dev/webfx/extras/cell/collator"/>
     <source path="dev/webfx/extras/cell/renderer"/>
@@ -340,8 +350,6 @@
     <source path="dev/webfx/extras/theme/text"/>
     <!--============================< webfx-extras-time-format >============================-->
     <source path="dev/webfx/extras/time/format"/>
-    <source path="dev/webfx/extras/time/format/spi"/>
-    <source path="dev/webfx/extras/time/format/spi/impl"/>
     <!--===============================< webfx-extras-type >================================-->
     <source path="dev/webfx/extras/type"/>
     <!--===============================< webfx-extras-util >================================-->
@@ -454,6 +462,7 @@
     <!--==============================< webfx-platform-async >==============================-->
     <source path="dev/webfx/platform/async"/>
     <source path="dev/webfx/platform/async/impl"/>
+    <source path="dev/webfx/platform/async/util"/>
     <!--==============================< webfx-platform-blob >===============================-->
     <source path="dev/webfx/platform/blob"/>
     <source path="dev/webfx/platform/blob/spi"/>
@@ -694,8 +703,6 @@
     <source path="dev/webfx/stack/i18n/spi/impl/ast"/>
     <!--===========================< webfx-stack-i18n-controls >============================-->
     <source path="dev/webfx/stack/i18n/controls"/>
-    <!--==========================< webfx-stack-i18n-time-plugin >==========================-->
-    <source path="dev/webfx/stack/i18n/time"/>
     <!--====================< webfx-stack-orm-datasourcemodel-service >=====================-->
     <source path="dev/webfx/stack/orm/datasourcemodel/service"/>
     <source path="dev/webfx/stack/orm/datasourcemodel/service/spi"/>

@@ -37,7 +37,7 @@ final class MediaConsumptionTabView {
                 'date',
                 {expression: 'action', textAlign: 'center'},
                 'mediaInfo',
-                'durationMillis'
+                {expression: 'durationMillis', label: 'Duration', renderer: 'durationMillisRenderer', prefWidth: 70}
                 ]""")
             .ifTrue(limitCheckbox.selectedProperty(), DqlStatement.limit("100"))
             .bindActivePropertyTo(activeProperty)

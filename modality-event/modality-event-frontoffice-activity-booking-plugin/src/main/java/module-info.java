@@ -18,6 +18,7 @@ module modality.event.frontoffice.activity.booking.plugin {
     requires modality.base.client.icons;
     requires modality.base.client.mainframe.fx;
     requires modality.base.client.tile;
+    requires modality.base.client.time;
     requires modality.base.client.util;
     requires modality.base.frontoffice.mainframe.fx;
     requires modality.base.frontoffice.utility;
@@ -26,14 +27,16 @@ module modality.event.frontoffice.activity.booking.plugin {
     requires modality.crm.client.authn.fx;
     requires modality.crm.client.i18n;
     requires modality.ecommerce.client.i18n;
+    requires modality.ecommerce.client.workingbooking;
     requires modality.ecommerce.document.service;
     requires modality.ecommerce.payment;
     requires modality.ecommerce.payment.client;
+    requires modality.event.client.booking;
     requires modality.event.client.event.fx;
-    requires modality.event.client.recurringevents;
     requires webfx.extras.imagestore;
     requires webfx.extras.panes;
     requires webfx.extras.styles.bootstrap;
+    requires webfx.extras.time.format;
     requires webfx.extras.util.animation;
     requires webfx.extras.util.control;
     requires webfx.extras.util.layout;
@@ -47,13 +50,12 @@ module modality.event.frontoffice.activity.booking.plugin {
     requires webfx.platform.console;
     requires webfx.platform.os;
     requires webfx.platform.resource;
+    requires webfx.platform.service;
     requires webfx.platform.uischeduler;
     requires webfx.platform.useragent;
     requires webfx.platform.util;
     requires webfx.platform.windowhistory;
     requires webfx.stack.cache.client;
-    requires webfx.stack.cloud.image;
-    requires webfx.stack.cloud.image.client;
     requires webfx.stack.i18n;
     requires webfx.stack.i18n.controls;
     requires webfx.stack.orm.datasourcemodel.service;
@@ -76,12 +78,13 @@ module modality.event.frontoffice.activity.booking.plugin {
     exports one.modality.event.frontoffice.activities.booking.process.account;
     exports one.modality.event.frontoffice.activities.booking.process.event;
     exports one.modality.event.frontoffice.activities.booking.process.event.slides;
-    exports one.modality.event.frontoffice.activities.booking.process.event.slides.recurring_event;
-    exports one.modality.event.frontoffice.activities.booking.process.event.slides.sttp;
     exports one.modality.event.frontoffice.activities.booking.views;
 
     // Resources packages
     opens one.modality.event.frontoffice.activities.booking.map;
+
+    // Used services
+    uses one.modality.event.frontoffice.activities.booking.process.event.BookingFormProvider;
 
     // Provided services
     provides dev.webfx.stack.routing.uirouter.UiRoute with one.modality.event.frontoffice.activities.booking.BookingRouting.BookingUiRoute, one.modality.event.frontoffice.activities.booking.process.event.BookEventRouting.BookEventUiRoute;

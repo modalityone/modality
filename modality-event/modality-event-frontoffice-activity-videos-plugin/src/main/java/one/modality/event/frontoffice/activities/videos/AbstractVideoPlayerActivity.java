@@ -6,12 +6,8 @@ import dev.webfx.extras.styles.bootstrap.Bootstrap;
 import dev.webfx.extras.util.control.Controls;
 import dev.webfx.extras.util.layout.Layouts;
 import dev.webfx.extras.webtext.HtmlText;
-import dev.webfx.platform.console.Console;
-import dev.webfx.stack.cloud.image.CloudImageService;
-import dev.webfx.stack.cloud.image.impl.client.ClientImageService;
 import dev.webfx.stack.i18n.I18n;
 import dev.webfx.stack.orm.domainmodel.activity.viewdomain.impl.ViewDomainActivityBase;
-import javafx.application.Platform;
 import javafx.beans.property.ObjectProperty;
 import javafx.beans.property.SimpleObjectProperty;
 import javafx.geometry.Insets;
@@ -20,16 +16,9 @@ import javafx.geometry.VPos;
 import javafx.scene.Node;
 import javafx.scene.control.Label;
 import javafx.scene.control.ProgressIndicator;
-import javafx.scene.image.Image;
-import javafx.scene.image.ImageView;
-import javafx.scene.layout.Background;
-import javafx.scene.layout.BackgroundFill;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
-import javafx.scene.paint.Color;
-import javafx.scene.shape.SVGPath;
 import javafx.scene.text.TextAlignment;
-import javafx.stage.Screen;
 import one.modality.base.client.cloudinary.ModalityCloudinary;
 import one.modality.base.client.icons.SvgIcons;
 import one.modality.base.frontoffice.utility.page.FOPageUtil;
@@ -41,7 +30,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * @author Bruno Salmon
+ * @author David Hello
  */
 abstract class AbstractVideoPlayerActivity extends ViewDomainActivityBase {
 
@@ -51,9 +40,7 @@ abstract class AbstractVideoPlayerActivity extends ViewDomainActivityBase {
     protected final Label sessionCommentLabel = new Label();
     protected HtmlText eventDescriptionHtmlText = new HtmlText();
     protected Label eventLabel = Bootstrap.h2(Bootstrap.strong(new Label()));
-    private final CloudImageService cloudImageService = new ClientImageService();
     private MonoPane imageMonoPane;
-    private ImageView imageView;
     protected VBox playersVBoxContainer;
     protected final ObjectProperty<Object> scheduledVideoItemIdProperty = new SimpleObjectProperty<>();
     protected final ObjectProperty<ScheduledItem> scheduledVideoItemProperty = new SimpleObjectProperty<>();
@@ -63,20 +50,6 @@ abstract class AbstractVideoPlayerActivity extends ViewDomainActivityBase {
     protected HBox headerHBox;
     protected VBox sessionDescriptionVBox;
     protected ProgressIndicator progressIndicator = Controls.createProgressIndicator(50);
-
-    @Override
-    protected abstract void updateModelFromContextParameters();
-
-    @Override
-    protected abstract void startLogic();
-
-    @Override
-    public void onResume() {
-        super.onResume();
-        // Restarting the session video player (if relevant) when reentering this activity. This will also ensure that
-        // any possible previous playing player (ex: podcast) will be paused if/when the session video player restarts.
-        //updateSessionTitleAndVideoPlayerState();
-    }
 
     @Override
     public Node buildUi() { // Reminder: called only once (rebuild = bad UX) => UI is reacting to parameter changes
@@ -89,7 +62,6 @@ abstract class AbstractVideoPlayerActivity extends ViewDomainActivityBase {
         headerHBox.setSpacing(50);
         headerHBox.setPadding(new Insets(0, 20, 0, 20));
         imageMonoPane = new MonoPane();
-        imageView = new ImageView();
 
         headerHBox.getChildren().add(imageMonoPane);
         eventLabel.setWrapText(true);
@@ -158,32 +130,8 @@ abstract class AbstractVideoPlayerActivity extends ViewDomainActivityBase {
     }
 
     protected void updatePicture(Event event) {
-        Object imageTag = ModalityCloudinary.getEventCoverImageTag(event.getPrimaryKey().toString(), I18n.getLanguage());
-        String pictureId = String.valueOf(imageTag);
-
-        cloudImageService.exists(pictureId)
-            .onFailure(Console::log)
-            .onSuccess(exists -> Platform.runLater(() -> {
-                Console.log("exists: " + exists);
-                if (exists) {
-                    imageMonoPane.setBackground(null);
-                    //First, we need to get the zoom factor of the screen
-                    double zoomFactor = Screen.getPrimary().getOutputScaleX();
-                    String imageUrl = cloudImageService.url(pictureId, -1, (int) (IMAGE_HEIGHT * zoomFactor));
-                    imageView.setFitHeight(IMAGE_HEIGHT);
-                    imageView.setPreserveRatio(true);
-                    Image imageToDisplay = new Image(imageUrl, true);
-                    imageView.setImage(imageToDisplay);
-                    imageMonoPane.getChildren().setAll(imageView);
-                } else {
-                    SVGPath videoCoverPath = SvgIcons.createVideoIconPath();
-                    imageMonoPane.setBackground(new Background(
-                        new BackgroundFill(Color.LIGHTGRAY, null, null)
-                    ));
-                    imageMonoPane.getChildren().setAll(videoCoverPath);
-                    imageMonoPane.setAlignment(Pos.CENTER);
-                }
-            }));
+        String cloudImagePath = ModalityCloudinary.eventCoverImagePath(event, I18n.getLanguage());
+        ModalityCloudinary.loadImage(cloudImagePath, imageMonoPane, -1, IMAGE_HEIGHT, SvgIcons::createVideoIconPath);
     }
 
     protected abstract void syncPlayerContent();

@@ -1,6 +1,6 @@
 package one.modality.base.backoffice.controls.masterslave;
 
-import one.modality.base.client.entities.util.filters.FilterButtonSelectorFactoryMixin;
+import one.modality.base.client.entities.filters.FilterButtonSelectorFactoryMixin;
 import dev.webfx.stack.orm.reactive.mapping.entities_to_visual.conventions.HasGroupVisualResultProperty;
 import dev.webfx.stack.orm.reactive.mapping.entities_to_visual.conventions.HasMasterVisualResultProperty;
 import dev.webfx.stack.orm.reactive.dql.statement.conventions.HasSelectedMasterProperty;

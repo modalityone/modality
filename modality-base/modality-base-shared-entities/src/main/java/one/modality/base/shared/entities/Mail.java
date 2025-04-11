@@ -15,6 +15,7 @@ public interface Mail extends Entity, EntityHasDocument, EntityHasOrganization {
     String content = "content";
     String out = "out";
     String magicLink = "magicLink";
+    String account = "account";
 
     default void setFromName(String value) {
         setFieldValue(fromName, value);
@@ -67,4 +68,18 @@ public interface Mail extends Entity, EntityHasDocument, EntityHasOrganization {
     default Organization getMagicLink() {
         return getForeignEntity(magicLink);
     }
+
+    default void setAccount(Object value) {
+        setForeignField(account, value);
+    }
+
+    default EntityId getAccountId() {
+        return getForeignEntityId(account);
+    }
+
+    /* MailAccount entity is not yet declared
+    default MailAccount getAccount() {
+        return getForeignEntity(account);
+    }*/
+
 }

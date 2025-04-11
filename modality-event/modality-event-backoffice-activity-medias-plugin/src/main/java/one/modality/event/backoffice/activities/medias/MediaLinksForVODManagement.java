@@ -4,6 +4,7 @@ import dev.webfx.extras.panes.MonoPane;
 import dev.webfx.extras.styles.bootstrap.Bootstrap;
 import dev.webfx.extras.switches.Switch;
 import dev.webfx.extras.theme.text.TextTheme;
+import dev.webfx.extras.time.format.LocalizedTime;
 import dev.webfx.extras.util.layout.Layouts;
 import dev.webfx.kit.util.properties.ObservableLists;
 import dev.webfx.platform.console.Console;
@@ -32,7 +33,10 @@ import javafx.scene.shape.SVGPath;
 import one.modality.base.client.i18n.ModalityI18nKeys;
 import one.modality.base.client.icons.SvgIcons;
 import one.modality.base.client.messaging.ModalityMessaging;
+import one.modality.base.client.time.BackOfficeTimeFormats;
 import one.modality.base.shared.entities.*;
+import one.modality.base.shared.entities.markers.HasEndTime;
+import one.modality.base.shared.entities.markers.HasStartTime;
 
 import java.net.URL;
 import java.time.LocalDate;
@@ -47,9 +51,6 @@ import java.util.stream.Collectors;
 public class MediaLinksForVODManagement extends MediaLinksManagement {
 
     private static final int URL_TEXT_FIELD_WITH = 600;
-
-    private static final String DATE_FORMAT = "dd-MM-yyyy";
-    private static final DateTimeFormatter DATE_FORMATTER = DateTimeFormatter.ofPattern(DATE_FORMAT);
 
     private final VideoTabView parentVideoTabView;
 
@@ -128,18 +129,22 @@ public class MediaLinksForVODManagement extends MediaLinksManagement {
                 if (name == null) name = "Unknown";
                 Label teachingTitle = new Label(name);
                 Timeline timeline = workingCurrentVideoScheduledItem.getProgramScheduledItem().getTimeline();
-                String startTime = "";
-                String endTime = "";
-                if(timeline!= null) {
+                HasStartTime startTimeHolder;
+                HasEndTime endTimeHolder;
+                if (timeline!= null) {
                     //Case of Festivals
-                    startTime = timeline.getStartTime().format(TIME_FORMATTER);
-                    endTime = timeline.getEndTime().format(TIME_FORMATTER);
+                    startTimeHolder = timeline;
+                    endTimeHolder = timeline;
                 } else {
                     //Case of recurring events
-                    startTime = workingCurrentVideoScheduledItem.getProgramScheduledItem().getStartTime().format(TIME_FORMATTER);
-                    endTime = workingCurrentVideoScheduledItem.getProgramScheduledItem().getEndTime().format(TIME_FORMATTER);
+                    startTimeHolder = workingCurrentVideoScheduledItem.getProgramScheduledItem();
+                    endTimeHolder = workingCurrentVideoScheduledItem.getProgramScheduledItem();
                 }
-                Label startTimeLabel = new Label(startTime + " - " + endTime);                teachingTitle.getStyleClass().add(Bootstrap.STRONG);
+                Label startTimeLabel = I18nControls.newLabel("{0} - {1}",
+                    LocalizedTime.formatLocalTimeProperty(startTimeHolder.getStartTime(), BackOfficeTimeFormats.MEDIA_TIME_FORMAT),
+                    LocalizedTime.formatLocalTimeProperty(endTimeHolder.getEndTime(), BackOfficeTimeFormats.MEDIA_TIME_FORMAT)
+                );
+                teachingTitle.getStyleClass().add(Bootstrap.STRONG);
                 startTimeLabel.getStyleClass().add(Bootstrap.STRONG);
 
                 Button saveButton = Bootstrap.largeSuccessButton(I18nControls.newButton(ModalityI18nKeys.Save));
@@ -341,44 +346,45 @@ public class MediaLinksForVODManagement extends MediaLinksManagement {
                 Label contentAvailableUntilLabel = I18nControls.newLabel(MediasI18nKeys.AvailableUntil);
                 rightHBox.getChildren().add(contentAvailableUntilLabel);
 
+                DateTimeFormatter dateFormatter = LocalizedTime.dateFormatter(BackOfficeTimeFormats.MEDIA_DATE_FORMAT);
+                DateTimeFormatter timeFormatter = LocalizedTime.timeFormatter(BackOfficeTimeFormats.MEDIA_TIME_FORMAT);
+
                 TextField availableUntilDateTextField = new TextField();
-                availableUntilDateTextField.setPromptText("25-10-2027");
+                availableUntilDateTextField.setPromptText(LocalDate.of(2027, 10, 25).format(dateFormatter));
                 availableUntilDateTextField.setMaxWidth(100);
                 if (workingCurrentVideoScheduledItem.getExpirationDate() != null)
-                    availableUntilDateTextField.setText(workingCurrentVideoScheduledItem.getExpirationDate().format(DATE_FORMATTER));
+                    availableUntilDateTextField.setText(workingCurrentVideoScheduledItem.getExpirationDate().format(dateFormatter));
 
 
                 HBox.setMargin(availableUntilDateTextField, new Insets(0, 15, 0, 25));
                 rightHBox.getChildren().add(availableUntilDateTextField);
-                validationSupport.addDateValidation(availableUntilDateTextField, DATE_FORMAT, availableUntilDateTextField, I18n.i18nTextProperty("ValidationDateFormatIncorrect")); // ???
+                validationSupport.addDateValidation(availableUntilDateTextField, dateFormatter, availableUntilDateTextField, I18n.i18nTextProperty("ValidationDateFormatIncorrect")); // ???
 
                 TextField availableUntilTimeTextField = new TextField();
                 availableUntilTimeTextField.setPromptText("18:25");
                 if (workingCurrentVideoScheduledItem.getExpirationDate() != null)
-                    availableUntilTimeTextField.setText(workingCurrentVideoScheduledItem.getExpirationDate().format(MediaLinksManagement.TIME_FORMATTER));
+                    availableUntilTimeTextField.setText(workingCurrentVideoScheduledItem.getExpirationDate().format(timeFormatter));
 
                 availableUntilTimeTextField.setMaxWidth(50);
                 rightHBox.getChildren().add(availableUntilTimeTextField);
-                validationSupport.addDateValidation(availableUntilTimeTextField, TIME_FORMAT, availableUntilTimeTextField, I18n.i18nTextProperty("ValidationTimeFormatIncorrect")); // ???
+                validationSupport.addDateValidation(availableUntilTimeTextField, timeFormatter, availableUntilTimeTextField, I18n.i18nTextProperty("ValidationTimeFormatIncorrect")); // ???
 
                 availableUntilDateTextField.textProperty().addListener(observable -> {
                     try {
-                        LocalDate date = LocalDate.parse(availableUntilDateTextField.getText(), DATE_FORMATTER);
-                        LocalTime time = LocalTime.parse(availableUntilTimeTextField.getText(), MediaLinksManagement.TIME_FORMATTER);
+                        LocalDate date = LocalDate.parse(availableUntilDateTextField.getText(), dateFormatter);
+                        LocalTime time = LocalTime.parse(availableUntilTimeTextField.getText(), timeFormatter);
                         // Combine the date and time to create LocalDateTime
-                        LocalDateTime availableUntil = LocalDateTime.of(date, time);
-                        workingCurrentVideoScheduledItem.setExpirationDate(availableUntil);
+                        workingCurrentVideoScheduledItem.setExpirationDate(LocalDateTime.of(date, time));
                     } catch (DateTimeParseException ignored) {
                     }
                 });
 
                 availableUntilTimeTextField.textProperty().addListener(observable -> {
                     try {
-                        LocalDate date = LocalDate.parse(availableUntilDateTextField.getText(), DATE_FORMATTER);
-                        LocalTime time = LocalTime.parse(availableUntilTimeTextField.getText(), TIME_FORMATTER);
+                        LocalDate date = LocalDate.parse(availableUntilDateTextField.getText(), dateFormatter);
+                        LocalTime time = LocalTime.parse(availableUntilTimeTextField.getText(), timeFormatter);
                         // Combine the date and time to create LocalDateTime
-                        LocalDateTime availableUntil = LocalDateTime.of(date, time);
-                        workingCurrentVideoScheduledItem.setExpirationDate(availableUntil);
+                        workingCurrentVideoScheduledItem.setExpirationDate(LocalDateTime.of(date, time));
                     } catch (DateTimeParseException ignored) {
                     }
                 });
@@ -389,19 +395,16 @@ public class MediaLinksForVODManagement extends MediaLinksManagement {
                         workingCurrentVideoScheduledItem.setExpirationDate(null);
                     } else {
                         try {
-                            LocalDate date = LocalDate.parse(availableUntilDateTextField.getText(), DATE_FORMATTER);
-                            LocalTime time = LocalTime.parse(availableUntilTimeTextField.getText(), TIME_FORMATTER);
+                            LocalDate date = LocalDate.parse(availableUntilDateTextField.getText(), dateFormatter);
+                            LocalTime time = LocalTime.parse(availableUntilTimeTextField.getText(), timeFormatter);
                             // Combine the date and time to create LocalDateTime
-                            LocalDateTime availableUntil = LocalDateTime.of(date, time);
-                            workingCurrentVideoScheduledItem.setExpirationDate(availableUntil);
+                            workingCurrentVideoScheduledItem.setExpirationDate(LocalDateTime.of(date, time));
                         } catch (DateTimeParseException ignored) {
                         }
                     }
                 });
 
-
                 currentVBox.getChildren().add(customContentAvailableUntilHBox);
-
 
                 currentVBox.setSpacing(10);
                 centerVBox.getChildren().add(currentVBox);

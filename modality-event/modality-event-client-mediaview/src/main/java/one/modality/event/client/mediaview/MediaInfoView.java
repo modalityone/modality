@@ -7,6 +7,7 @@ import dev.webfx.extras.player.Media;
 import dev.webfx.extras.player.Player;
 import dev.webfx.extras.player.Status;
 import dev.webfx.extras.player.multi.all.AllPlayers;
+import dev.webfx.extras.time.format.LocalizedTime;
 import dev.webfx.extras.util.animation.Animations;
 import dev.webfx.kit.util.properties.FXProperties;
 import dev.webfx.kit.util.properties.Unregisterable;
@@ -30,6 +31,7 @@ import javafx.stage.Screen;
 import javafx.util.Duration;
 import one.modality.base.client.brand.Brand;
 import one.modality.base.client.css.Fonts;
+import one.modality.base.client.time.FrontOfficeTimeFormats;
 import one.modality.base.frontoffice.utility.tyler.GeneralUtility;
 import one.modality.base.frontoffice.utility.tyler.StyleUtility;
 import one.modality.base.frontoffice.utility.tyler.TextUtility;
@@ -38,8 +40,6 @@ import one.modality.base.shared.entities.markers.HasAudioUrl;
 import one.modality.base.shared.entities.markers.HasMediaInfo;
 import one.modality.base.shared.entities.markers.HasWistiaVideoId;
 import one.modality.base.shared.entities.markers.HasYoutubeVideoId;
-
-import java.time.format.DateTimeFormatter;
 
 public abstract class MediaInfoView {
 
@@ -214,7 +214,7 @@ public abstract class MediaInfoView {
         // Updating all fields and UI from the podcast
         imageView.setPreserveRatio(true);
         imageView.setClip(isAudio ? imageClip : null);
-        updateText(dateText, mediaInfo.getDate() == null ? null : DateTimeFormatter.ofPattern("d MMMM yyyy").format(mediaInfo.getDate()));
+        updateText(dateText, mediaInfo.getDate() == null ? null : LocalizedTime.formatLocalDate(mediaInfo.getDate(), FrontOfficeTimeFormats.MEDIA_INFO_DATE_FORMAT));
         updateLabel(titleLabel, mediaInfo.getTitle());
         updateLabel(excerptLabel, mediaInfo.getExcerpt());
         image = ImageStore.getOrCreateImage(mediaInfo.getImageUrl());

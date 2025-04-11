@@ -10,13 +10,17 @@ module modality.base.client.entities {
     requires javafx.controls;
     requires javafx.graphics;
     requires modality.base.client.presentationmodel;
+    requires modality.base.client.time;
     requires modality.base.shared.entities;
+    requires webfx.extras.cell;
+    requires webfx.extras.time.format;
     requires webfx.extras.type;
     requires webfx.extras.util.layout;
     requires webfx.extras.util.scene;
     requires webfx.kit.util;
     requires webfx.platform.boot;
     requires webfx.platform.util;
+    requires webfx.platform.util.time;
     requires webfx.stack.i18n;
     requires webfx.stack.orm.domainmodel;
     requires webfx.stack.orm.dql;
@@ -27,11 +31,11 @@ module modality.base.client.entities {
     requires webfx.stack.ui.controls;
 
     // Exported packages
-    exports one.modality.base.client.entities.util;
-    exports one.modality.base.client.entities.util.filters;
-    exports one.modality.base.client.entities.util.functions;
+    exports one.modality.base.client.entities;
+    exports one.modality.base.client.entities.filters;
+    exports one.modality.base.client.entities.functions;
 
     // Provided services
-    provides dev.webfx.platform.boot.spi.ApplicationJob with one.modality.base.client.entities.util.functions.ClientFunctionsRegisteringApplicationJob;
+    provides dev.webfx.platform.boot.spi.ApplicationJob with one.modality.base.client.entities.ClientEntitiesAdditionalRegisteringJob;
 
 }

@@ -3,43 +3,33 @@ package one.modality.event.frontoffice.medias;
 import dev.webfx.extras.panes.MonoPane;
 import dev.webfx.extras.styles.bootstrap.Bootstrap;
 import dev.webfx.extras.webtext.HtmlText;
-import dev.webfx.platform.console.Console;
 import dev.webfx.platform.util.Strings;
-import dev.webfx.stack.cloud.image.CloudImageService;
-import dev.webfx.stack.cloud.image.impl.client.ClientImageService;
 import dev.webfx.stack.i18n.controls.I18nControls;
 import dev.webfx.stack.i18n.spi.impl.I18nSubKey;
-import dev.webfx.stack.orm.entity.Entities;
-import javafx.application.Platform;
 import javafx.beans.binding.BooleanBinding;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
-import javafx.scene.image.Image;
-import javafx.scene.image.ImageView;
 import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
-import javafx.scene.shape.SVGPath;
-import javafx.stage.Screen;
 import one.modality.base.client.cloudinary.ModalityCloudinary;
 import one.modality.base.client.icons.SvgIcons;
 import one.modality.base.shared.entities.Event;
 
 import java.time.LocalDateTime;
-import java.time.LocalTime;
 
 /**
- * @author Bruno Salmon
+ * @author David Hello
  */
 public final class EventThumbnailView {
 
-    private static final double WIDTH = 263;
+    private static final double CONTAINER_WIDTH = 263;
+    private static final double CONTAINER_HEIGHT = 263;
 
     private final Event event;
     private String imageItemCode;
     private final VBox container = new VBox();
-    private final CloudImageService cloudImageService = new ClientImageService();
     private Button actionButton;
 
     public enum ItemType {
@@ -93,10 +83,10 @@ public final class EventThumbnailView {
     // - tester avec plusieurs événements
 
     private void buildUi() {
-        container.setPrefWidth(WIDTH);
-        String isoCode = extractISOCode(imageItemCode);
+        container.setPrefWidth(CONTAINER_WIDTH);
+        String language = extractLanguageISOCode(imageItemCode);
 
-        Label eventLabel = Bootstrap.h3(I18nControls.newLabel(new I18nSubKey("expression: i18n(this, '" + isoCode + "')", event)));
+        Label eventLabel = Bootstrap.h3(I18nControls.newLabel(new I18nSubKey("expression: i18n(this, '" + language + "')", event)));
         eventLabel.setWrapText(true);
         VBox.setMargin(eventLabel, new Insets(10, 0, 0, 0));
         String shortDescription = Strings.toSafeString(event.getShortDescription());
@@ -110,17 +100,7 @@ public final class EventThumbnailView {
         HtmlText shortHTMLDescription = new HtmlText(shortDescriptionText);
         shortHTMLDescription.getStyleClass().add("short-description");
 
-        StackPane thumbailStackPane = new StackPane();
-        thumbailStackPane.setAlignment(Pos.BOTTOM_CENTER);
-        thumbailStackPane.setPrefHeight(WIDTH);
-        ImageView imageView = new ImageView();
-        imageView.setFitHeight(WIDTH);
-        imageView.setFitWidth(WIDTH);
-        imageView.setPreserveRatio(true);
-        thumbailStackPane.getChildren().add(imageView);
-
         Label availabilityLabel = new Label();
-
         if (isPublished) {
             LocalDateTime nowInEventTimezone = Event.nowInEventTimezone();
             if (itemType == ItemType.ITEM_TYPE_VIDEO) {
@@ -129,7 +109,7 @@ public final class EventThumbnailView {
                 if (vodExpirationDate != null && nowInEventTimezone.isAfter(vodExpirationDate))
                     availabilityType = AvailabilityType.EXPIRED;
                     //Case of the livestream only, we expired it when the event is finished
-                else if (vodExpirationDate == null && nowInEventTimezone.isAfter(LocalDateTime.of(event.getEndDate(), LocalTime.of(23, 59, 59))))
+                else if (vodExpirationDate == null && nowInEventTimezone.isAfter(event.getEndDate().atTime(23, 59, 59)))
                     availabilityType = AvailabilityType.EXPIRED;
                 else if (vodExpirationDate == null && event.getLivestreamUrl() == null) {
                     //If the vodExpirationDate is set to null, it means the event is livestream Only, we check if we have a livestream url defined
@@ -147,52 +127,20 @@ public final class EventThumbnailView {
 
         I18nControls.bindI18nProperties(availabilityLabel, availabilityType.getKey());
 
-
         availabilityLabel.setPadding(new Insets(5, 15, 5, 15));
         availabilityLabel.setBackground(new Background(
             new BackgroundFill(Color.LIGHTGRAY, new CornerRadii(7, 0, 7, 0, false) // Top-left and bottom-right corners rounded
                 , new Insets(0))
         ));
-        thumbailStackPane.getChildren().add(availabilityLabel);
-        thumbailStackPane.setAlignment(Pos.TOP_LEFT);
 
-        imageView.setImage(null);
+        MonoPane imageContainer = new MonoPane();
+        String imagePath = ModalityCloudinary.eventCoverImagePath(event, language);
+        ModalityCloudinary.loadImage(imagePath, imageContainer, CONTAINER_WIDTH, CONTAINER_HEIGHT, SvgIcons::createAudioCoverPath);
 
-        event.getId();
-        //Here we're looking inb cloudinary if the picture for the cover exist
-        //The item code list is as following:
-        // Video : video | note: just one for all languages
-        Object imageTag;
-        imageTag = ModalityCloudinary.getEventCoverImageTag(Entities.getPrimaryKey(event), isoCode);
-        if(event.getRepeatedEvent()!=null)
-            imageTag = ModalityCloudinary.getEventCoverImageTag(Entities.getPrimaryKey(event.getRepeatedEvent()),isoCode);
-
-        String pictureId = String.valueOf(imageTag);
-
-        cloudImageService.exists(pictureId)
-            .onFailure(Console::log)
-            .onSuccess(exists -> Platform.runLater(() -> {
-                Console.log("exists: " + exists);
-                if (exists) {
-                    thumbailStackPane.setBackground(null);
-                    //First, we need to get the zoom factor of the screen
-                    double zoomFactor = Screen.getPrimary().getOutputScaleX();
-                    String url = cloudImageService.url(pictureId, (int) (WIDTH * zoomFactor), -1);
-                    imageView.setFitWidth(WIDTH);
-                    imageView.setPreserveRatio(true);
-                    Image imageToDisplay = new Image(url, true);
-                    imageView.setImage(imageToDisplay);
-                } else {
-                    //TODO: change in case it's a video instead of an audio
-                    SVGPath audioCoverPath = SvgIcons.createAudioCoverPath();
-                    thumbailStackPane.setBackground(new Background(
-                        new BackgroundFill(Color.LIGHTGRAY, null, null)
-                    ));
-                    MonoPane audioCoverPictureMonoPane = new MonoPane(audioCoverPath);
-                    thumbailStackPane.getChildren().add(audioCoverPictureMonoPane);
-                    StackPane.setAlignment(audioCoverPictureMonoPane, Pos.CENTER);
-                }
-            }));
+        StackPane thumbnailStackPane = new StackPane(imageContainer, availabilityLabel);
+        StackPane.setAlignment(availabilityLabel, Pos.TOP_LEFT);
+        thumbnailStackPane.setPrefSize(CONTAINER_WIDTH, CONTAINER_HEIGHT);
+        imageContainer.setMaxSize(CONTAINER_WIDTH, CONTAINER_HEIGHT); // required so that it fills the stack pane
 
         actionButton = Bootstrap.primaryButton(I18nControls.newButton(MediasI18nKeys.View));
         actionButton.setPrefWidth(150);
@@ -205,7 +153,7 @@ public final class EventThumbnailView {
         });
         VBox.setMargin(actionButton, new Insets(30, 0, 0, 0));
         container.getChildren().addAll(
-            thumbailStackPane,
+            thumbnailStackPane,
             eventLabel,
             shortHTMLDescription,
             actionButton
@@ -216,7 +164,7 @@ public final class EventThumbnailView {
         return actionButton;
     }
 
-    public static String extractISOCode(String itemCode) {
+    public static String extractLanguageISOCode(String itemCode) {
         if (itemCode == null) return null;
         String[] parts = itemCode.split("-");
         return parts.length > 1 ? parts[1] : null; // Return the second part (ISO 639-1 code)

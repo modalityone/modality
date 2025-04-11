@@ -108,10 +108,115 @@ input, input[type="text"], input[type="password"] { /* is input rule not enough?
     background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' stroke='%23444' stroke-width='2' stroke-linejoin='round' viewBox=\'0 0 16 16\'%3E%3Cpath d=\'M 4,4 L 12,12 Z M 4,12 L 12,4 Z\'/%3E%3C/svg%3E");
 }
 
+/* Ellipsis management for wrapped text inside a label with restricted height */
+
+fx-label.ellipsis {
+    overflow: hidden;
+}
+
+fx-label.ellipsis fx-text {
+    /*text-overflow: ellipsis;*/
+    display: -webkit-box;
+    -webkit-box-orient: vertical;
+    /* -webkit-line-clamp will be set in JS by HtmlTextPeer */
+}
+
 /*===== webfx-kit-javafxweb-web@main.css from webfx-kit-javafxweb-peers-gwt-j2cl =====*/
 
 iframe {
     border: none;
+}
+
+/*===== webfx-extras-visual-grid-web@main.css from webfx-extras-visual-grid =====*/
+
+:root {
+    --webfx-visualgrid-border-color: #D3D3D3;
+    --webfx-visualgrid-row-height: 28px;
+    --webfx-visualgrid-selection-color: #AED6F1;
+}
+
+th, td {
+    border: 1px solid var(--webfx-visualgrid-border-color);
+    border-top-width: 0;
+}
+
+table {
+    width: 100%;
+    border: none;
+    border-collapse: collapse;
+    cursor: pointer;
+}
+
+thead {
+    border: none;
+    height: var(--webfx-visualgrid-row-height);
+    position: sticky;
+    top: 1px;
+    z-index: 2; /* header must be above body when scrolling */
+}
+
+thead th {
+    border-right-width: thin;
+    border-right-style: solid;
+    border-right-color: var(--webfx-visualgrid-border-color);
+    height: var(--webfx-visualgrid-row-height);
+    font-weight: bold;
+    text-align: center;
+    overflow: hidden;
+}
+
+tbody td {
+    border-bottom-color: var(--webfx-visualgrid-border-color);
+}
+
+tbody tr {
+    height: var(--webfx-visualgrid-row-height);
+}
+
+thead th, tbody td {
+    padding: 0 5px 0 5px;
+    max-width: 0;
+    overflow: hidden;
+}
+
+th:before { /* this rule is to prevent body appearing in 1px line above header when scrolling */
+    content: '';
+    position: absolute;
+    width: 100%;
+    left: 0;
+    top: -1px;
+    border-top: 1px solid var(--webfx-visualgrid-border-color);
+}
+
+
+/***********************************
+ *** Table header and row colors ***
+ ***********************************/
+
+/*** Table header gray gradient ***/
+
+thead tr {
+    background: linear-gradient( 180deg, white, lightgray 100%);
+}
+
+th, tbody, td {
+    background-color: transparent;
+}
+
+.grid-head, .grid-body, .grid-col, .grid-row {
+    overflow: hidden;
+}
+
+.grid-head, .grid-row {
+    border-bottom: 1px solid var(--webfx-visualgrid-border-color);
+}
+
+.grid-col {
+    border-right: 1px solid var(--webfx-visualgrid-border-color);
+}
+
+tr.selected, .grid-row.selected {
+    background: var(--webfx-visualgrid-selection-color)
 }
 
 /*===== webfx-extras-bootstrap-web@main.css from webfx-extras-styles-bootstrap =====*/
@@ -678,8 +783,12 @@ fx-switch.webfx-switch fx-circle.knob {
     font-size: 14px;
 }
 
-.webfx-datepicker .background {
+.webfx-datepicker.background, .webfx-datepicker .background {
     background-color: var(--webfx-time-pickers-background-color);
+}
+
+.webfx-datepicker.background {
+    border-radius: 10px;
 }
 /*===== webfx-extras-filepicker-web@main.css from webfx-extras-filepicker-gwt-j2cl =====*/
 
@@ -691,98 +800,6 @@ fx-switch.webfx-switch fx-circle.knob {
 
 .file-picker fx-button > fx-border {
     border: none;
-}
-
-/*===== webfx-extras-visual-grid-web@main.css from webfx-extras-visual-grid-peers-gwt-j2cl =====*/
-
-:root {
-    --webfx-visualgrid-border-color: #D3D3D3;
-    --webfx-visualgrid-row-height: 28px;
-    --webfx-visualgrid-selection-color: #AED6F1;
-}
-
-th, td {
-    border: 1px solid var(--webfx-visualgrid-border-color);
-    border-top-width: 0;
-}
-
-table {
-    width: 100%;
-    border: none;
-    border-collapse: collapse;
-    cursor: pointer;
-}
-
-thead {
-    border: none;
-    height: var(--webfx-visualgrid-row-height);
-    position: sticky;
-    top: 1px;
-    z-index: 2; /* header must be above body when scrolling */
-}
-
-thead th {
-    border-right-width: thin;
-    border-right-style: solid;
-    border-right-color: var(--webfx-visualgrid-border-color);
-    height: var(--webfx-visualgrid-row-height);
-    font-weight: bold;
-    text-align: center;
-    overflow: hidden;
-}
-
-tbody td {
-    border-bottom-color: var(--webfx-visualgrid-border-color);
-}
-
-tbody tr {
-    height: var(--webfx-visualgrid-row-height);
-}
-
-thead th, tbody td {
-    padding: 0 5px 0 5px;
-    max-width: 0;
-    overflow: hidden;
-}
-
-th:before { /* this rule is to prevent body appearing in 1px line above header when scrolling */
-    content: '';
-    position: absolute;
-    width: 100%;
-    left: 0;
-    top: -1px;
-    border-top: 1px solid var(--webfx-visualgrid-border-color);
-}
-
-
-/***********************************
- *** Table header and row colors ***
- ***********************************/
-
-/*** Table header gray gradient ***/
-
-thead tr {
-    background: linear-gradient( 180deg, white, lightgray 100%);
-}
-
-th, tbody, td {
-    background-color: transparent;
-}
-
-.grid-head, .grid-body, .grid-col, .grid-row {
-    overflow: hidden;
-}
-
-.grid-head, .grid-row {
-    border-bottom: 1px solid var(--webfx-visualgrid-border-color);
-}
-
-.grid-col {
-    border-right: 1px solid var(--webfx-visualgrid-border-color);
-}
-
-tr.selected, .grid-row.selected {
-    background: var(--webfx-visualgrid-selection-color)
 }
 
 /*===== webfx-extras-ckeditor-web@main.css from webfx-extras-webtext-peers-gwt-j2cl =====*/

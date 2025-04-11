@@ -1,5 +1,7 @@
 package one.modality.event.frontoffice.activities.booking.process.event;
 
+import dev.webfx.extras.styles.bootstrap.Bootstrap;
+import dev.webfx.extras.util.layout.Layouts;
 import dev.webfx.extras.webtext.HtmlText;
 import dev.webfx.kit.util.properties.FXProperties;
 import dev.webfx.platform.async.Future;
@@ -8,27 +10,44 @@ import dev.webfx.platform.uischeduler.UiScheduler;
 import dev.webfx.platform.util.Numbers;
 import dev.webfx.stack.orm.domainmodel.activity.viewdomain.impl.ViewDomainActivityBase;
 import dev.webfx.stack.orm.domainmodel.activity.viewdomain.impl.ViewDomainActivityContextFinal;
+import dev.webfx.stack.orm.dql.DqlStatement;
 import dev.webfx.stack.orm.entity.Entities;
 import dev.webfx.stack.orm.entity.EntityId;
+import dev.webfx.stack.orm.entity.controls.entity.selector.EntityButtonSelector;
 import dev.webfx.stack.routing.uirouter.UiRouter;
 import dev.webfx.stack.ui.controls.button.ButtonFactoryMixin;
 import javafx.application.Platform;
 import javafx.beans.property.ReadOnlyObjectProperty;
+import javafx.geometry.Insets;
 import javafx.scene.Node;
+import javafx.scene.control.Button;
 import javafx.scene.control.Labeled;
+import javafx.scene.layout.HBox;
+import javafx.scene.layout.Region;
+import javafx.scene.layout.VBox;
+import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
+import javafx.scene.text.Text;
+import one.modality.base.client.mainframe.fx.FXMainFrameDialogArea;
 import one.modality.base.frontoffice.mainframe.fx.FXCollapseMenu;
+import one.modality.base.frontoffice.utility.tyler.TextUtility;
 import one.modality.base.shared.entities.Event;
 import one.modality.base.shared.entities.Person;
+import one.modality.crm.client.i18n.CrmI18nKeys;
+import one.modality.crm.shared.services.authn.fx.FXModalityUserPrincipal;
 import one.modality.crm.shared.services.authn.fx.FXUserPersonId;
+import one.modality.ecommerce.client.workingbooking.FXPersonToBook;
+import one.modality.ecommerce.client.workingbooking.WorkingBooking;
+import one.modality.ecommerce.client.workingbooking.WorkingBookingProperties;
 import one.modality.ecommerce.document.service.DocumentAggregate;
 import one.modality.ecommerce.document.service.DocumentService;
 import one.modality.ecommerce.document.service.PolicyAggregate;
 import one.modality.ecommerce.payment.CancelPaymentResult;
 import one.modality.ecommerce.payment.client.WebPaymentForm;
+import one.modality.event.client.booking.BookableDatesUi;
+import one.modality.event.client.booking.WorkingBookingSyncer;
 import one.modality.event.client.event.fx.FXEvent;
 import one.modality.event.client.event.fx.FXEventId;
-import one.modality.event.client.recurringevents.*;
 import one.modality.event.frontoffice.activities.booking.process.account.CheckoutAccountRouting;
 import one.modality.event.frontoffice.activities.booking.process.event.slides.LettersSlideController;
 
@@ -53,7 +72,9 @@ public final class BookEventActivity extends ViewDomainActivityBase implements B
 
     @Override
     public Node buildUi() {
-        return lettersSlideController.getContainer();
+        Region activityContainer = lettersSlideController.getContainer();
+        activityContainer.getStyleClass().add("book-event-activity");
+        return activityContainer;
     }
 
     @Override
@@ -103,7 +124,9 @@ public final class BookEventActivity extends ViewDomainActivityBase implements B
     public void onReachingEndSlide() {
         FXEventId.setEventId(null); // This is to ensure that next time the user books an event in this same session, we
         FXCollapseMenu.setCollapseMenu(false);
-        getBookableDatesUi().clearClickedDates();
+        BookableDatesUi bookableDatesUi = getBookableDatesUi();
+        if (bookableDatesUi != null)
+            bookableDatesUi.clearClickedDates();
     }
 
     @Override
@@ -218,6 +241,27 @@ public final class BookEventActivity extends ViewDomainActivityBase implements B
     public BookableDatesUi getBookableDatesUi() {
         return lettersSlideController.getBookableDatesUi();
     }
+
+    public Button createPersonToBookButton() {
+        Text personPrefixText = TextUtility.createText(CrmI18nKeys.PersonToBook + ":", Color.GRAY);
+        EntityButtonSelector<Person> personSelector = new EntityButtonSelector<Person>(
+            "{class: 'Person', alias: 'p', columns: [{expression: `[genderIcon,firstName,lastName]`}], orderBy: 'id'}",
+            this, FXMainFrameDialogArea::getDialogArea, getDataSourceModel()
+        ) { // Overriding the button content to add the "Teacher" prefix text
+            @Override
+            protected Node getOrCreateButtonContentFromSelectedItem() {
+                return new HBox(10, personPrefixText, super.getOrCreateButtonContentFromSelectedItem());
+            }
+        }.ifNotNullOtherwiseEmpty(FXModalityUserPrincipal.modalityUserPrincipalProperty(), mup -> DqlStatement.where("frontendAccount=?", mup.getUserAccountId()));
+        personSelector.selectedItemProperty().bindBidirectional(FXPersonToBook.personToBookProperty());
+        Button personButton = Bootstrap.largeButton(personSelector.getButton());
+        personButton.setMinWidth(300);
+        personButton.setMaxWidth(Region.USE_PREF_SIZE);
+        VBox.setMargin(personButton, new Insets(20, 0, 20, 0));
+        Layouts.bindManagedAndVisiblePropertiesTo(FXModalityUserPrincipal.loggedInProperty(), personButton);
+        return personButton;
+    }
+
 
     public <T extends Labeled> T bindI18nEventExpression(T text, String eventExpression, Object... args) {
         return lettersSlideController.bindI18nEventExpression(text, eventExpression, args);

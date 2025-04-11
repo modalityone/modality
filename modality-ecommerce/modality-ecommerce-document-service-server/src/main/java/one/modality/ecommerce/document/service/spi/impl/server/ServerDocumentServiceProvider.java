@@ -32,33 +32,44 @@ import java.util.stream.Collectors;
 public class ServerDocumentServiceProvider implements DocumentServiceProvider {
 
     private final static String POLICY_SCHEDULED_ITEMS_QUERY_BASE = "select site.name,item.(name,code,family.code),date,startTime,timeline.startTime from ScheduledItem";
-    private final static String POLICY_RATES_QUERY_BASE = "select site,item,price,perDay,perPerson,facilityFee_price,startDate,endDate,age1_max,age1_price,age1_discount,age2_max,age2_price,age2_discount,resident_price,resident_discount,resident2_price,resident2_discount from Rate";
+    private final static String POLICY_RATES_QUERY_BASE = "select site,item,price,perDay,perPerson,facilityFee_price,startDate,endDate,minDeposit,age1_max,age1_price,age1_discount,age2_max,age2_price,age2_discount,resident_price,resident_discount,resident2_price,resident2_discount from Rate";
+    private final static String POLICY_BOOKABLE_PERIODS_QUERY_BASE = "select startScheduledItem,endScheduledItem,name,label from BookablePeriod";
 
     @Override
     public Future<PolicyAggregate> loadPolicy(LoadPolicyArgument argument) {
         // Managing the case of recurring event only for now
         Object eventPk = argument.getEventPk();
+        Object dataSourceId = DataSourceModelService.getDefaultDataSourceId();
+        String language = "DQL";
         return QueryService.executeQueryBatch(
                 new Batch<>(new QueryArgument[]{
                     new QueryArgumentBuilder() // Loading scheduled items (of this event or of the repeated event if set)
                         .setStatement(POLICY_SCHEDULED_ITEMS_QUERY_BASE + " where event = (select coalesce(repeatedEvent, id) from Event where id=?) and bookableScheduledItem=id " +
                                       "order by site,item,date")
                         .setParameters(eventPk)
-                        .setLanguage("DQL")
-                        .setDataSourceId(DataSourceModelService.getDefaultDataSourceId())
+                        .setLanguage(language)
+                        .setDataSourceId(dataSourceId)
                         .build(),
                     new QueryArgumentBuilder() // Loading rates (of this event or of the repeated event if set)
                         .setStatement(POLICY_RATES_QUERY_BASE + " where site.event = (select coalesce(repeatedEvent, id) from Event where id=?) or site = (select coalesce(repeatedEvent.venue, venue) from Event where id = ?) " +
                                       // Note: TeachingsPricing relies on the following order to work properly
                                       "order by site,item,perDay desc,startDate,endDate,price")
                         .setParameters(eventPk, eventPk)
-                        .setLanguage("DQL")
-                        .setDataSourceId(DataSourceModelService.getDefaultDataSourceId())
+                        .setLanguage(language)
+                        .setDataSourceId(dataSourceId)
+                        .build(),
+                    new QueryArgumentBuilder() // Loading bookable periods (of this event or of the repeated event if set)
+                        .setStatement(POLICY_BOOKABLE_PERIODS_QUERY_BASE + " where event = (select coalesce(repeatedEvent, id) from Event where id=?)" +
+                                      "order by startScheduledItem.date,endScheduledItem.date")
+                        .setParameters(eventPk)
+                        .setLanguage(language)
+                        .setDataSourceId(dataSourceId)
                         .build()
                 }))
             .map(batch -> new PolicyAggregate(
                 POLICY_SCHEDULED_ITEMS_QUERY_BASE, batch.get(0),
-                POLICY_RATES_QUERY_BASE, batch.get(1)));
+                POLICY_RATES_QUERY_BASE, batch.get(1),
+                POLICY_BOOKABLE_PERIODS_QUERY_BASE, batch.get(2)));
     }
 
     @Override

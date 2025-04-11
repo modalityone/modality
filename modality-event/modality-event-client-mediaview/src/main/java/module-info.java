@@ -8,12 +8,14 @@ module modality.event.client.mediaview {
     requires javafx.graphics;
     requires modality.base.client.brand;
     requires modality.base.client.css;
+    requires modality.base.client.time;
     requires modality.base.frontoffice.utility;
     requires modality.base.shared.entities;
     requires webfx.extras.imagestore;
     requires webfx.extras.panes;
     requires webfx.extras.player;
     requires webfx.extras.player.multi.all;
+    requires webfx.extras.time.format;
     requires webfx.extras.util.animation;
     requires webfx.kit.util;
     requires webfx.platform.util;

@@ -16,6 +16,7 @@ module modality.hotel.backoffice.activities.accommodation {
     requires modality.base.client.i18n;
     requires modality.base.client.mainframe.fx;
     requires modality.base.client.tile;
+    requires modality.base.client.time;
     requires modality.base.shared.domainmodel;
     requires modality.base.shared.entities;
     requires modality.crm.backoffice.organization.fx;
@@ -23,6 +24,7 @@ module modality.hotel.backoffice.activities.accommodation {
     requires modality.hotel.backoffice.icons;
     requires webfx.extras.geometry;
     requires webfx.extras.theme;
+    requires webfx.extras.time.format;
     requires webfx.extras.time.layout;
     requires webfx.extras.type;
     requires webfx.extras.util.control;

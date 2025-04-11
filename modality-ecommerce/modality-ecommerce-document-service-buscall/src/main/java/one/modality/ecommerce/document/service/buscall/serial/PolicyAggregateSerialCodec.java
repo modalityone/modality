@@ -15,6 +15,8 @@ public final class PolicyAggregateSerialCodec extends SerialCodecBase<PolicyAggr
     private static final String SCHEDULED_ITEMS_QUERY_RESULT_KEY = "siqr";
     private static final String RATES_QUERY_BASE_KEY = "rqb";
     private static final String RATES_QUERY_RESULT_KEY = "rqr";
+    private static final String BOOKABLE_PERIODS_QUERY_BASE_KEY = "bpqb";
+    private static final String BOOKABLE_PERIODS_QUERY_RESULT_KEY = "bpqr";
 
 
     public PolicyAggregateSerialCodec() {
@@ -23,18 +25,22 @@ public final class PolicyAggregateSerialCodec extends SerialCodecBase<PolicyAggr
 
     @Override
     public void encode(PolicyAggregate pa, AstObject serial) {
-        encodeString(serial, SCHEDULED_ITEMS_QUERY_BASE_KEY,   pa.getScheduledItemsQueryBase());
-        encodeObject(serial, SCHEDULED_ITEMS_QUERY_RESULT_KEY, pa.getScheduledItemsQueryResult());
-        encodeString(serial, RATES_QUERY_BASE_KEY,             pa.getRatesQueryBase());
-        encodeObject(serial, RATES_QUERY_RESULT_KEY,           pa.getRatesQueryResult());
+        encodeString(serial, SCHEDULED_ITEMS_QUERY_BASE_KEY,    pa.getScheduledItemsQueryBase());
+        encodeObject(serial, SCHEDULED_ITEMS_QUERY_RESULT_KEY,  pa.getScheduledItemsQueryResult());
+        encodeString(serial, RATES_QUERY_BASE_KEY,              pa.getRatesQueryBase());
+        encodeObject(serial, RATES_QUERY_RESULT_KEY,            pa.getRatesQueryResult());
+        encodeString(serial, BOOKABLE_PERIODS_QUERY_BASE_KEY,   pa.getBookablePeriodsQueryBase());
+        encodeObject(serial, BOOKABLE_PERIODS_QUERY_RESULT_KEY, pa.getBookablePeriodsQueryResult());
     }
 
     @Override
     public PolicyAggregate decode(ReadOnlyAstObject serial) {
         return new PolicyAggregate(
-                decodeString(serial, SCHEDULED_ITEMS_QUERY_BASE_KEY),
-                decodeObject(serial, SCHEDULED_ITEMS_QUERY_RESULT_KEY),
-                decodeString(serial, RATES_QUERY_BASE_KEY),
-                decodeObject(serial, RATES_QUERY_RESULT_KEY));
+            decodeString(serial, SCHEDULED_ITEMS_QUERY_BASE_KEY),
+            decodeObject(serial, SCHEDULED_ITEMS_QUERY_RESULT_KEY),
+            decodeString(serial, RATES_QUERY_BASE_KEY),
+            decodeObject(serial, RATES_QUERY_RESULT_KEY),
+            decodeString(serial, BOOKABLE_PERIODS_QUERY_BASE_KEY),
+            decodeObject(serial, BOOKABLE_PERIODS_QUERY_RESULT_KEY));
     }
 }

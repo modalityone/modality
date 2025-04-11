@@ -8,6 +8,7 @@ import dev.webfx.extras.switches.Switch;
 import dev.webfx.extras.theme.Facet;
 import dev.webfx.extras.theme.shape.ShapeTheme;
 import dev.webfx.extras.theme.text.TextTheme;
+import dev.webfx.extras.time.format.LocalizedTime;
 import dev.webfx.extras.time.pickers.DatePicker;
 import dev.webfx.extras.time.pickers.DatePickerOptions;
 import dev.webfx.extras.util.control.Controls;
@@ -18,11 +19,8 @@ import dev.webfx.extras.webtext.HtmlText;
 import dev.webfx.extras.webtext.HtmlTextEditor;
 import dev.webfx.kit.util.properties.FXProperties;
 import dev.webfx.kit.util.properties.ObservableLists;
-import dev.webfx.platform.async.Future;
 import dev.webfx.platform.console.Console;
 import dev.webfx.platform.file.File;
-import dev.webfx.stack.cloud.image.CloudImageService;
-import dev.webfx.stack.cloud.image.impl.client.ClientImageService;
 import dev.webfx.stack.i18n.I18n;
 import dev.webfx.stack.i18n.controls.I18nControls;
 import dev.webfx.stack.orm.datasourcemodel.service.DataSourceModelService;
@@ -36,6 +34,7 @@ import dev.webfx.stack.ui.controls.dialog.DialogBuilderUtil;
 import dev.webfx.stack.ui.controls.dialog.DialogContent;
 import dev.webfx.stack.ui.dialog.DialogCallback;
 import dev.webfx.stack.ui.dialog.DialogUtil;
+import dev.webfx.stack.ui.operation.OperationUtil;
 import dev.webfx.stack.ui.validation.ValidationSupport;
 import javafx.application.Platform;
 import javafx.beans.InvalidationListener;
@@ -66,7 +65,6 @@ import javafx.scene.paint.Color;
 import javafx.scene.shape.Line;
 import javafx.scene.shape.SVGPath;
 import javafx.scene.text.Text;
-import javafx.stage.Screen;
 import one.modality.base.client.cloudinary.ModalityCloudinary;
 import one.modality.base.client.i18n.ModalityI18nKeys;
 import one.modality.base.client.icons.SvgIcons;
@@ -92,11 +90,15 @@ import java.util.stream.Collectors;
 
 import static dev.webfx.extras.webtext.HtmlTextEditor.Mode.BASIC;
 import static dev.webfx.extras.webtext.HtmlTextEditor.Mode.STANDARD;
+import static one.modality.base.client.time.BackOfficeTimeFormats.*;
 
 /**
  * @author David Hello
  */
 final class ManageRecurringEventView {
+
+    private static final double EVENT_IMAGE_WIDTH = 200;
+    private static final double EVENT_IMAGE_HEIGHT = 200;
 
     private static final String EVENT_COLUMNS = "[" +
         "{expression: 'state', label: 'Status', renderer: 'eventStateRenderer'}," +
@@ -122,10 +124,11 @@ final class ManageRecurringEventView {
     private final ObservableList<ScheduledItem> teachingsWorkingScheduledItems = FXCollections.observableArrayList();
     private final ObservableList<ScheduledItem> audioWorkingScheduledItems = FXCollections.observableArrayList();
     private final ObservableList<ScheduledItem> videoWorkingScheduledItems = FXCollections.observableArrayList();
-    private final TextField durationTextField = I18nControls.bindI18nProperties(new TextField(), RecurringEventsI18nKeys.Duration);
+    private final TextField durationTextField = I18nControls.bindI18nProperties(new TextField(), RecurringEventsI18nKeys.RecurringEventDuration);
     private final TextField bookingOpeningDateTextField = new TextField();
     private final TextField bookingOpeningTimeTextField = new TextField();
     private final TextField externalLinkTextField = I18nControls.bindI18nProperties(new TextField(), RecurringEventsI18nKeys.ExternalLink);
+    private final MonoPane eventImageContainer = new MonoPane();
     private Label datesOfTheEventLabel;
     private Label titleEventDetailsLabel;
     private Switch advertisedSwitch;
@@ -138,7 +141,6 @@ final class ManageRecurringEventView {
     private Button deleteButton;
     private VBox eventDetailsVBox;
     private HBox locationHBox;
-    private ImageView imageView;
     private SVGPath trashImage;
     private ListChangeListener<LocalDate> onChangeDateListener;
     private EventCalendarPane calendarPane;
@@ -169,7 +171,6 @@ final class ManageRecurringEventView {
         }
     };
     private EntityButtonSelector<Site> siteSelector;
-    private final CloudImageService cloudImageService = new ClientImageService();
     private File cloudPictureFileToUpload;
     private final BooleanProperty isCloudPictureToBeDeleted = new SimpleBooleanProperty(false);
     private final BooleanProperty isCloudPictureToBeUploaded = new SimpleBooleanProperty(false);
@@ -417,8 +418,8 @@ final class ManageRecurringEventView {
                     //We read and format the opening date value
                     LocalDateTime openingDate = e.getOpeningDate();
                     if (openingDate != null) {
-                        DateTimeFormatter dateFormatter = DateTimeFormatter.ofPattern("dd-MM-yyyy");
-                        DateTimeFormatter timeFormatter = DateTimeFormatter.ofPattern("HH:mm");
+                        DateTimeFormatter dateFormatter = LocalizedTime.dateFormatter(RECURRING_EVENT_OPENING_DATE_FORMAT);
+                        DateTimeFormatter timeFormatter = LocalizedTime.timeFormatter(RECURRING_EVENT_OPENING_TIME_FORMAT);
                         bookingOpeningDateTextField.setText(openingDate.format(dateFormatter));
                         bookingOpeningTimeTextField.setText(openingDate.format(timeFormatter));
                     }
@@ -459,12 +460,16 @@ final class ManageRecurringEventView {
                     //We try to load the image from cloudinary if it exists
                     loadEventImageIfExists();
                 }
-                saveButton.disableProperty().bind(updateStoreOrPictureHasChanged.not());
-                cancelButton.disableProperty().bind(updateStoreOrPictureHasChanged.not());
-                trashImage.visibleProperty().bind(isPictureDisplayed);
-                deleteButton.disableProperty().bind(isEventDeletable.not());
                 currentObservedEvent = currentEditedEvent;
+                bindButtons();
             }));
+    }
+
+    private void bindButtons() {
+        saveButton.disableProperty().bind(updateStoreOrPictureHasChanged.not());
+        cancelButton.disableProperty().bind(updateStoreOrPictureHasChanged.not());
+        trashImage.visibleProperty().bind(isPictureDisplayed);
+        deleteButton.disableProperty().bind(isEventDeletable.not());
     }
 
     /**
@@ -487,7 +492,7 @@ final class ManageRecurringEventView {
         datePicker.setDisplayedYearMonth(YearMonth.now());
         //datesPicker.updateDatesBackground();
         updateStore.cancelChanges();
-        imageView.setImage(null);
+        eventImageContainer.setContent(null);
         isPictureDisplayed.setValue(false);
     }
 
@@ -505,27 +510,11 @@ final class ManageRecurringEventView {
     }
 
     private void loadEventImageIfExists() {
-        Object imageTag = ModalityCloudinary.getEventImageTag(Entities.getPrimaryKey(currentEditedEvent));
-        doesCloudPictureExist(imageTag)
-            .onFailure(ex -> {
-                Console.log(ex);
-                imageView.setImage(null);
-                isPictureDisplayed.setValue(false);
-            })
-            .onSuccess(exists -> Platform.runLater(() -> {
-                //Console.log("exists: " + exists);
-                if (!exists) {
-                    imageView.setImage(null);
-                    isPictureDisplayed.setValue(false);
-                } else {
-                    //First, we need to get the zoom factor of the screen
-                    double zoomFactor = Screen.getPrimary().getOutputScaleX();
-                    String url = cloudImageService.url(String.valueOf(imageTag), (int) (imageView.getFitWidth() * zoomFactor), -1);
-                    Image imageToDisplay = new Image(url, true);
-                    imageView.setImage(imageToDisplay);
-                    isPictureDisplayed.setValue(true);
-                }
-            }));
+        String cloudImagePath = ModalityCloudinary.eventImagePath(currentEditedEvent);
+        if (Objects.equals(cloudImagePath, recentlyUploadedCloudPictureId))
+            return;
+        ModalityCloudinary.loadImage(cloudImagePath, eventImageContainer, EVENT_IMAGE_WIDTH, EVENT_IMAGE_HEIGHT, () -> null)
+                .onComplete(ar -> isPictureDisplayed.setValue(eventImageContainer.getContent() != null));
     }
 
 
@@ -539,39 +528,30 @@ final class ManageRecurringEventView {
         return validationSupport.isValid();
     }
 
-    public void uploadCloudPictureIfNecessary(Object eventId) {
+    public void uploadCloudPictureIfNecessary(String cloudImagePath) {
         if (isCloudPictureToBeUploaded.getValue()) {
-            String pictureId = String.valueOf(eventId);
-            cloudImageService.upload(cloudPictureFileToUpload, pictureId, true)
+            ModalityCloudinary.uploadImage(cloudImagePath, cloudPictureFileToUpload)
                 .onFailure(Console::log)
                 .onSuccess(ok -> {
                     isCloudPictureToBeUploaded.set(false);
-                    recentlyUploadedCloudPictureId = pictureId;
+                    recentlyUploadedCloudPictureId = cloudImagePath;
                     loadEventImageIfExists();
                 });
         }
     }
 
-    public void deleteCloudPictureIfNecessary(Object eventId) {
+    public void deleteCloudPictureIfNecessary(String cloudImagePath) {
         if (isCloudPictureToBeDeleted.getValue()) {
             //We delete the pictures, and all the cached picture in cloudinary that can have been transformed, related
             //to this assets
-            String pictureId = String.valueOf(eventId);
-            cloudImageService.delete(pictureId, true)
+            ModalityCloudinary.deleteImage(cloudImagePath)
                 .onFailure(Console::log)
                 .onSuccess(ok -> {
                     isCloudPictureToBeDeleted.set(false);
-                    if (Objects.equals(pictureId, recentlyUploadedCloudPictureId))
+                    if (Objects.equals(cloudImagePath, recentlyUploadedCloudPictureId))
                         recentlyUploadedCloudPictureId = null;
                 });
         }
-    }
-
-    private Future<Boolean> doesCloudPictureExist(Object eventId) {
-        String pictureId = String.valueOf(eventId);
-        if (Objects.equals(pictureId, recentlyUploadedCloudPictureId))
-            return Future.succeededFuture(true);
-        return cloudImageService.exists(pictureId);
     }
 
 
@@ -714,7 +694,7 @@ final class ManageRecurringEventView {
                     updateStore.cancelChanges();
                     teachingsScheduledItemsReadFromDatabase.forEach(updateStore::deleteEntity);
                     updateStore.deleteEntity(currentEditedEvent);
-                    updateStore.submitChanges()
+                    return updateStore.submitChanges()
                         .onFailure(x -> Platform.runLater(() -> {
                             areWeDeleting = false;
                             Text infoText = I18n.newText(RecurringEventsI18nKeys.ErrorWhileDeletingEvent);
@@ -734,9 +714,9 @@ final class ManageRecurringEventView {
                             BorderPane.setAlignment(okErrorButton, Pos.CENTER);
                         }))
                         .onSuccess(x -> Platform.runLater(() -> {
-                            Object imageTag = ModalityCloudinary.getEventImageTag(Entities.getPrimaryKey(currentEditedEvent));
-                            deleteCloudPictureIfNecessary(imageTag);
-                            uploadCloudPictureIfNecessary(imageTag);
+                            String cloudImagePath = ModalityCloudinary.eventImagePath(currentEditedEvent);
+                            deleteCloudPictureIfNecessary(cloudImagePath);
+                            uploadCloudPictureIfNecessary(cloudImagePath);
                         }));
                 });
             }
@@ -824,7 +804,7 @@ final class ManageRecurringEventView {
             cloudPictureFileToUpload = fileList.get(0);
             Image imageToDisplay = new Image(cloudPictureFileToUpload.getObjectURL());
             isCloudPictureToBeUploaded.setValue(true);
-            imageView.setImage(imageToDisplay);
+            eventImageContainer.setContent(new ImageView(imageToDisplay));
             isPictureDisplayed.setValue(true);
         });
 
@@ -839,13 +819,8 @@ final class ManageRecurringEventView {
         HBox imageAndTrashVBox = new HBox();
         imageAndTrashVBox.setSpacing(2);
         StackPane imageStackPane = new StackPane();
-        imageView = new ImageView();
-        imageView.setPreserveRatio(true);
-        imageView.setFitWidth(200);
-        imageView.setFitHeight(200);
-        imageStackPane.setMaxSize(200, 200);
+        imageStackPane.setMaxSize(EVENT_IMAGE_WIDTH, EVENT_IMAGE_HEIGHT);
         imageStackPane.setMinHeight(100);
-        //  imageStackPane.setPrefSize(200,210);
         imageStackPane.setAlignment(Pos.CENTER);
         Label emptyPictureLabel = Bootstrap.small(I18nControls.newLabel(RecurringEventsI18nKeys.NoPictureSelected));
         TextTheme.createSecondaryTextFacet(emptyPictureLabel).style();
@@ -853,15 +828,13 @@ final class ManageRecurringEventView {
         trashImage = SvgIcons.armButton(SvgIcons.createTrashSVGPath(), () -> {
             isCloudPictureToBeDeleted.setValue(true);
             isCloudPictureToBeUploaded.setValue(false);
-            imageView.setImage(null);
+            eventImageContainer.setContent(null);
             isPictureDisplayed.setValue(false);
         });
         ShapeTheme.createSecondaryShapeFacet(trashImage).style(); // Make it gray
 
-        imageStackPane.getChildren().setAll(imageView, emptyPictureLabel);
+        imageStackPane.getChildren().setAll(emptyPictureLabel, eventImageContainer);
         StackPane.setAlignment(emptyPictureLabel, Pos.CENTER);
-        imageView.toFront();
-        emptyPictureLabel.toBack();
         imageAndTrashVBox.getChildren().setAll(imageStackPane, trashImage);
         imageAndTrashVBox.setAlignment(Pos.BOTTOM_CENTER);
         line4InLeftPanel.getChildren().setAll(uploadTextVBox, uploadButtonVBox, imageAndTrashVBox);
@@ -882,7 +855,7 @@ final class ManageRecurringEventView {
         timeOfTheEventTextField.textProperty().addListener(changeOnStartTimeOrDurationListener);
 
 
-        Label durationLabel = I18nControls.newLabel(RecurringEventsI18nKeys.Duration);
+        Label durationLabel = I18nControls.newLabel(RecurringEventsI18nKeys.RecurringEventDuration);
         durationLabel.setPadding(new Insets(0, 50, 0, 50));
         durationTextField.setMaxWidth(40);
         durationTextField.textProperty().addListener(changeOnStartTimeOrDurationListener);
@@ -1083,31 +1056,36 @@ final class ManageRecurringEventView {
     }
 
     private void submitUpdateStoreChanges() {
-        updateStore.submitChanges()
-            .onFailure(x -> {
-                DialogContent dialog = DialogContent.createConfirmationDialog("Error", "Operation failed", x.getMessage());
-                dialog.setOk();
-                Platform.runLater(() -> {
-                    DialogBuilderUtil.showModalNodeInGoldLayout(dialog, FXMainFrameDialogArea.getDialogArea());
-                    dialog.getPrimaryButton().setOnAction(a -> dialog.getDialogCallback().closeDialog());
-                });
-                Console.log(x);
-            })
-            .onSuccess(x -> Platform.runLater(() -> {
-                Console.log("Submit successful");
-                Object imageTag = ModalityCloudinary.getEventImageTag(Entities.getPrimaryKey(currentEditedEvent));
-                deleteCloudPictureIfNecessary(imageTag);
-                uploadCloudPictureIfNecessary(imageTag);
-                isCloudPictureToBeDeleted.setValue(false);
-                isCloudPictureToBeUploaded.setValue(false);
-                cloudPictureFileToUpload = null;
-                eventVisualMapper.requestSelectedEntity(currentEditedEvent);
-                // displayEventDetails(currentEditedEvent);
-            }));
+        // Unbinding buttons, so they can be displayed as disabled during the process
+        saveButton.disableProperty().unbind();
+        cancelButton.disableProperty().unbind();
+        OperationUtil.turnOnButtonsWaitModeDuringExecution(
+            updateStore.submitChanges()
+                .onFailure(x -> {
+                    DialogContent dialog = DialogContent.createConfirmationDialog("Error", "Operation failed", x.getMessage());
+                    dialog.setOk();
+                    Platform.runLater(() -> {
+                        DialogBuilderUtil.showModalNodeInGoldLayout(dialog, FXMainFrameDialogArea.getDialogArea());
+                        dialog.getPrimaryButton().setOnAction(a -> dialog.getDialogCallback().closeDialog());
+                    });
+                    Console.log(x);
+                })
+                .onSuccess(x -> Platform.runLater(() -> {
+                    String cloudImagePath = ModalityCloudinary.eventImagePath(currentEditedEvent);
+                    deleteCloudPictureIfNecessary(cloudImagePath);
+                    uploadCloudPictureIfNecessary(cloudImagePath);
+                    isCloudPictureToBeDeleted.setValue(false);
+                    isCloudPictureToBeUploaded.setValue(false);
+                    cloudPictureFileToUpload = null;
+                    eventVisualMapper.requestSelectedEntity(currentEditedEvent);
+                    // displayEventDetails(currentEditedEvent);
+                }))
+                // Reestablishing buttons binding
+                .onComplete(ar -> Platform.runLater(this::bindButtons))
+            , saveButton, cancelButton);
     }
 
     /**
-     * This method is used to sort the list workingScheduledItems by Date
      * This method is used to sort the list workingScheduledItems by Date
      */
     private void sortTeachingWorkingScheduledItemsByDate() {
@@ -1224,7 +1202,8 @@ final class ManageRecurringEventView {
          */
         private BorderPane drawScheduledItem(ScheduledItem scheduledItem) {
             LocalDate date = scheduledItem.getDate();
-            Text dateText = new Text(date.format(DateTimeFormatter.ofPattern("MMM dd")));
+            Text dateText = new Text();
+            dateText.textProperty().bind(LocalizedTime.formatMonthDayProperty(date, RECURRING_EVENT_SCHEDULED_ITEM_DATE_FORMAT));
 
             SVGPath trashDate = SvgIcons.createTrashSVGPath();
             Facet facet = ShapeTheme.createSecondaryShapeFacet(trashDate).style();
@@ -1258,9 +1237,9 @@ final class ManageRecurringEventView {
             if (scheduledItem.getStartTime() == null) {
                 currentScheduleItemStartTime.setPromptText("HH:mm");
             } else if (scheduledItem.getStartTime().equals(defaultStartTime)) {
-                currentScheduleItemStartTime.setPromptText(scheduledItem.getStartTime().format(DateTimeFormatter.ofPattern("HH:mm")));
+                currentScheduleItemStartTime.setPromptText(LocalizedTime.formatLocalTime(scheduledItem.getStartTime(), RECURRING_EVENT_SCHEDULED_ITEM_TIME_FORMAT));
             } else {
-                currentScheduleItemStartTime.setText(scheduledItem.getStartTime().format(DateTimeFormatter.ofPattern("HH:mm")));
+                currentScheduleItemStartTime.setText(LocalizedTime.formatLocalTime(scheduledItem.getStartTime(), RECURRING_EVENT_SCHEDULED_ITEM_TIME_FORMAT));
             }
             BorderPane currentLineBorderPane = new BorderPane();
             BorderPane.setMargin(dateText, new Insets(0, 20, 0, 10));

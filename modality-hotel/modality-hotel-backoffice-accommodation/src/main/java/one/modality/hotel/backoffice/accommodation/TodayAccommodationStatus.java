@@ -1,5 +1,6 @@
 package one.modality.hotel.backoffice.accommodation;
 
+import dev.webfx.extras.time.format.LocalizedTime;
 import dev.webfx.kit.util.properties.FXProperties;
 import dev.webfx.kit.util.properties.ObservableLists;
 import javafx.collections.ObservableList;
@@ -9,9 +10,9 @@ import javafx.scene.control.Label;
 import javafx.scene.layout.ColumnConstraints;
 import javafx.scene.layout.GridPane;
 import one.modality.base.client.gantt.fx.today.FXToday;
+import one.modality.base.client.time.BackOfficeTimeFormats;
 import one.modality.base.shared.entities.ScheduledResource;
 
-import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -19,8 +20,6 @@ import java.util.List;
  * @author Bruno Salmon
  */
 public final class TodayAccommodationStatus {
-
-    private static final DateTimeFormatter DATE_FORMATTER = DateTimeFormatter.ofPattern("dd.MM.yy");
 
     private final TodayScheduledResourceLoader todayScheduledResourceLoader;
 
@@ -98,7 +97,7 @@ public final class TodayAccommodationStatus {
     }
 
     private static String formatToday() {
-        return DATE_FORMATTER.format(FXToday.getToday());
+        return LocalizedTime.formatLocalDate(FXToday.getToday(), BackOfficeTimeFormats.ACCOMMODATION_STATUS_DATE_FORMAT);
     }
 
     private static void updateColumnWidths(GridPane statusBar) {

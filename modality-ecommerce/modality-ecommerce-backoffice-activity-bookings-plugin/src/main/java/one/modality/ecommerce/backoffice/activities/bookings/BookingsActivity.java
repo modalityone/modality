@@ -17,7 +17,7 @@ import one.modality.base.backoffice.mainframe.fx.FXEventSelector;
 import one.modality.base.backoffice.operations.entities.generic.AddNewSnapshotRequest;
 import one.modality.base.backoffice.operations.entities.generic.CopyAllRequest;
 import one.modality.base.backoffice.operations.entities.generic.CopySelectionRequest;
-import one.modality.base.client.entities.util.filters.FilterSearchBar;
+import one.modality.base.client.entities.filters.FilterSearchBar;
 import one.modality.base.client.gantt.fx.interstice.FXGanttInterstice;
 import one.modality.base.client.gantt.fx.selection.FXGanttSelection;
 import one.modality.base.client.gantt.fx.visibility.FXGanttVisibility;

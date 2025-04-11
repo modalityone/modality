@@ -1,6 +1,7 @@
 package one.modality.base.client.application;
 
 import dev.webfx.extras.theme.luminance.LuminanceTheme;
+import dev.webfx.extras.time.format.LocalizedTime;
 import dev.webfx.extras.util.layout.Layouts;
 import dev.webfx.kit.util.properties.FXProperties;
 import dev.webfx.platform.util.collection.Collections;
@@ -25,6 +26,8 @@ import javafx.scene.layout.Region;
 import javafx.scene.layout.VBox;
 import one.modality.base.client.activity.ModalityButtonFactoryMixin;
 import one.modality.base.client.profile.fx.FXProfile;
+
+import java.util.Locale;
 
 /**
  * @author Bruno Salmon
@@ -51,6 +54,13 @@ public class ModalityClientMainFrameActivity extends ViewDomainActivityBase
                 session.store();
             }
         }, I18n.languageProperty());
+        // Binding the local property to i18n language for LocalizedTimeFormat
+        LocalizedTime.localeProperty().bind(FXProperties.compute(I18n.languageProperty(),
+            lang -> new Locale(lang.toString())));
+        // This is to ensure LogoutRequest is registered in OperationActionRegistry (especially in front-office where
+        // it is not explicitly called by just referred via operation code from configuration), so that the Logout
+        // action can be displayed once the user is logged in (via authorization mechanism).
+        newOperationAction(LogoutRequest::new);
     }
 
     @Override

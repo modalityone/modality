@@ -2,6 +2,7 @@ package one.modality.hotel.backoffice.activities.accommodation;
 
 import dev.webfx.extras.theme.FontDef;
 import dev.webfx.extras.theme.text.TextTheme;
+import dev.webfx.extras.time.format.LocalizedTime;
 import dev.webfx.kit.util.properties.FXProperties;
 import dev.webfx.platform.console.Console;
 import dev.webfx.platform.util.Strings;
@@ -22,7 +23,11 @@ import javafx.scene.layout.GridPane;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.VBox;
 import javafx.scene.text.FontWeight;
-import one.modality.base.shared.entities.*;
+import one.modality.base.client.time.BackOfficeTimeFormats;
+import one.modality.base.shared.entities.Item;
+import one.modality.base.shared.entities.ResourceConfiguration;
+import one.modality.base.shared.entities.ScheduledItem;
+import one.modality.base.shared.entities.Site;
 import one.modality.base.shared.entities.markers.EntityHasName;
 import one.modality.crm.backoffice.organization.fx.FXOrganizationId;
 import one.modality.hotel.backoffice.accommodation.ResourceConfigurationLoader;
@@ -30,18 +35,20 @@ import one.modality.hotel.backoffice.accommodation.ResourceConfigurationLoader;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeParseException;
-import java.util.*;
+import java.util.Comparator;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 public class CreateAnnualSchedulePane extends VBox {
-
-    private static final DateTimeFormatter DATE_FORMATTER = DateTimeFormatter.ofPattern("dd-MM-uu");
 
     private final ResourceConfigurationLoader resourceConfigurationLoader;
     private final Pane parent;
     private final TextField toDateTextField;
     private final TextField fromDateTextField;
     private final VBox selectedItemsPane = new VBox(new Label("Loading items. Please wait."));
+    private final DateTimeFormatter dateFormatter = LocalizedTime.dateFormatter(BackOfficeTimeFormats.ANNUAL_SCHEDULE_DATE_FORMAT);
 
     private Map<CheckBox, Item> comboBoxItems;
     private Site site;
@@ -70,9 +77,9 @@ public class CreateAnnualSchedulePane extends VBox {
 
     private void setToDateUsingFromDate() {
         try {
-            LocalDate fromDate = LocalDate.parse(fromDateTextField.getText(), DATE_FORMATTER);
+            LocalDate fromDate = LocalDate.parse(fromDateTextField.getText(), dateFormatter);
             LocalDate toDate = fromDate.plusYears(1).minusDays(1);
-            String toDateText = DATE_FORMATTER.format(toDate);
+            String toDateText = dateFormatter.format(toDate);
             toDateTextField.setText(toDateText);
         } catch (DateTimeParseException | NullPointerException e) {
             // If the user has not entered a valid date then do nothing
@@ -124,8 +131,8 @@ public class CreateAnnualSchedulePane extends VBox {
             return;
         }
 
-        String fromDateString = DATE_FORMATTER.format(fromDate);
-        String toDateString = DATE_FORMATTER.format(toDate);
+        String fromDateString = dateFormatter.format(fromDate);
+        String toDateString = dateFormatter.format(toDate);
         String commaSeparatedItemNames = selectedItems.stream()
                 .map(EntityHasName::getName)
                 .sorted()
@@ -162,7 +169,7 @@ public class CreateAnnualSchedulePane extends VBox {
 
     private LocalDate parseDate(String text) {
         try {
-            return LocalDate.parse(text, DATE_FORMATTER);
+            return LocalDate.parse(text, dateFormatter);
         } catch (DateTimeParseException | NullPointerException e) {
             String msg = "Unable to parse date: '" + text + "'.\n\nAnnual schedule not created.";
             showMsg(msg);

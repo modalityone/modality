@@ -13,10 +13,10 @@
  }
 
  .livestream {
-     font-weight: 500; /* 'medium' weight equivalent in CSS */
+     font-weight: 600; /* 'medium' weight equivalent in CSS - 500 in OpenJFX  */
  }
 
-.livestream .small{
+.livestream .small {
     font-weight: 300;
 }
 

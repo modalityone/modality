@@ -2,9 +2,11 @@ package one.modality.event.backoffice.activities.medias;
 
 import dev.webfx.extras.styles.bootstrap.Bootstrap;
 import dev.webfx.extras.theme.text.TextTheme;
+import dev.webfx.extras.time.format.LocalizedTime;
 import dev.webfx.extras.util.control.Controls;
 import dev.webfx.extras.util.masterslave.MasterSlaveLinker;
 import dev.webfx.extras.util.masterslave.SlaveEditor;
+import dev.webfx.kit.util.properties.FXProperties;
 import dev.webfx.platform.console.Console;
 import dev.webfx.stack.i18n.I18n;
 import dev.webfx.stack.i18n.controls.I18nControls;
@@ -23,12 +25,13 @@ import javafx.geometry.Insets;
 import javafx.geometry.Orientation;
 import javafx.geometry.Pos;
 import javafx.scene.Node;
-import javafx.scene.control.Label;
 import javafx.scene.control.*;
+import javafx.scene.control.Label;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import one.modality.base.client.i18n.ModalityI18nKeys;
+import one.modality.base.client.time.BackOfficeTimeFormats;
 import one.modality.base.client.util.masterslave.ModalitySlaveEditor;
 import one.modality.base.shared.entities.*;
 import one.modality.base.shared.entities.markers.EntityHasLocalDate;
@@ -56,8 +59,6 @@ final class VideoTabView {
     private TextField contentExpirationDateTextField;
     private TextField contentExpirationTimeTextField;
     private TextField livestreamGlobalLinkTextField;
-    private final DateTimeFormatter dateFormatter = DateTimeFormatter.ofPattern("dd-MM-yyyy");
-    private final DateTimeFormatter timeFormatter = DateTimeFormatter.ofPattern("HH:mm");
     private Event currentEditedEvent;
     private final ScrollPane mainContainer;
     private final BorderPane mainFrame;
@@ -146,26 +147,28 @@ final class VideoTabView {
 
         masterSettings.getChildren().add(availableUntilCommentLabel);
 
+        DateTimeFormatter dateFormatter = LocalizedTime.dateFormatter(BackOfficeTimeFormats.MEDIA_DATE_FORMAT);
         contentExpirationDateTextField = new TextField();
-        contentExpirationDateTextField.setPromptText("Format: 25-09-2025");
+        contentExpirationDateTextField.setPromptText("Format: " + LocalDate.of(2025, 9, 25).format(dateFormatter));
         if (currentEvent.getVodExpirationDate() != null) {
             contentExpirationDateTextField.setText(currentEvent.getVodExpirationDate().format(dateFormatter));
         }
-        validationSupport.addDateOrEmptyValidation(contentExpirationDateTextField, "dd-MM-yyyy", contentExpirationDateTextField, I18n.i18nTextProperty("ValidationTimeFormatIncorrect")); // ???
+        validationSupport.addDateOrEmptyValidation(contentExpirationDateTextField, dateFormatter, contentExpirationDateTextField, I18n.i18nTextProperty("ValidationTimeFormatIncorrect")); // ???
 
         masterSettings.getChildren().add(contentExpirationDateTextField);
 
+        DateTimeFormatter timeFormatter = LocalizedTime.timeFormatter(BackOfficeTimeFormats.MEDIA_TIME_FORMAT);
         contentExpirationTimeTextField = new TextField();
-        contentExpirationTimeTextField.setPromptText("Format: 14:25");
-        validationSupport.addDateOrEmptyValidation(contentExpirationTimeTextField, "HH:mm", contentExpirationTimeTextField, I18n.i18nTextProperty("ValidationTimeFormatIncorrect")); // ???
+        contentExpirationTimeTextField.setPromptText("Format: " + LocalTime.of(14, 25).format(timeFormatter));
+        validationSupport.addDateOrEmptyValidation(contentExpirationTimeTextField, timeFormatter, contentExpirationTimeTextField, I18n.i18nTextProperty("ValidationTimeFormatIncorrect")); // ???
         if (currentEvent.getVodExpirationDate() != null) {
             contentExpirationTimeTextField.setText(currentEvent.getVodExpirationDate().format(timeFormatter));
         }
         VBox.setMargin(contentExpirationTimeTextField, new Insets(10, 0, 10, 0));
         masterSettings.getChildren().add(contentExpirationTimeTextField);
 
-        contentExpirationTimeTextField.textProperty().addListener(observable -> updateVodExpirationDate(currentEvent));
-        contentExpirationDateTextField.textProperty().addListener(observable -> updateVodExpirationDate(currentEvent));
+        FXProperties.runOnPropertiesChange(() -> updateVodExpirationDate(currentEvent, dateFormatter, timeFormatter)
+        , contentExpirationTimeTextField.textProperty(), contentExpirationDateTextField.textProperty());
 
         Label vodAvailableAfterLive = I18nControls.newLabel(MediasI18nKeys.VODAvailableAfter);
         vodAvailableAfterLive.getStyleClass().add(Bootstrap.TEXT_SECONDARY);
@@ -227,13 +230,12 @@ final class VideoTabView {
         BorderPane.setAlignment(mainLayout, Pos.CENTER);
     }
 
-    private void updateVodExpirationDate(Event currentEvent) {
+    private void updateVodExpirationDate(Event currentEvent, DateTimeFormatter dateFormatter, DateTimeFormatter timeFormatter) {
         try {
             LocalDate date = LocalDate.parse(contentExpirationDateTextField.getText(), dateFormatter);
             LocalTime time = LocalTime.parse(contentExpirationTimeTextField.getText(), timeFormatter);
             // Combine the date and time to create LocalDateTime
-            LocalDateTime availableUntil = LocalDateTime.of(date, time);
-            currentEvent.setVodExpirationDate(availableUntil);
+            currentEvent.setVodExpirationDate(LocalDateTime.of(date, time));
         } catch (DateTimeParseException e) {
             if(Objects.equals(contentExpirationDateTextField.getText(), "") && Objects.equals(contentExpirationTimeTextField.getText(), ""))
                 currentEvent.setVodExpirationDate(null);

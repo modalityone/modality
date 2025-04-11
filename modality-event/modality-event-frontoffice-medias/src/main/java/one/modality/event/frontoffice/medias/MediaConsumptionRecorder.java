@@ -7,6 +7,7 @@ import dev.webfx.extras.player.multi.MultiPlayer;
 import dev.webfx.kit.util.properties.FXProperties;
 import dev.webfx.platform.scheduler.Scheduler;
 import dev.webfx.platform.shutdown.Shutdown;
+import dev.webfx.platform.shutdown.ShutdownEvent;
 import dev.webfx.platform.util.stopwatch.StopWatch;
 import dev.webfx.stack.orm.entity.Entities;
 import dev.webfx.stack.orm.entity.UpdateStore;
@@ -14,6 +15,7 @@ import one.modality.base.shared.entities.Media;
 import one.modality.base.shared.entities.MediaConsumption;
 import one.modality.base.shared.entities.ScheduledItem;
 
+import java.util.function.Consumer;
 import java.util.function.Supplier;
 
 /**
@@ -29,6 +31,7 @@ public class MediaConsumptionRecorder {
     private MediaConsumption playingMediaConsumption;
     // StopWatch that will be running only while player is playing in order to record the user playing duration
     private final StopWatch playingStopWatch = StopWatch.createSystemMillisStopWatch();
+    private Consumer<ShutdownEvent> shutdownHook;
 
     private MediaConsumptionRecorder(ScheduledItem scheduledItem, Media media) { // for download
         scheduledItemSupplier = () -> scheduledItem;
@@ -105,12 +108,19 @@ public class MediaConsumptionRecorder {
         else {
             playingStopWatch.reset();
             playingStopWatch.on();
-            Shutdown.addShutdownHook(this::recordPlayingMediaConsumptionDuration);
+            // We ignore tracks played less than 5s, so we postpone the storage
             Scheduler.scheduleDelay(5000, () -> {
-                if (playingMediaConsumption == mediaConsumption) {
-                    if (Players.isMaybePlaying(player))
+                if (playingMediaConsumption == mediaConsumption) { // double-check if the user didn't play another track in the meantime
+                    if (Players.isMaybePlaying(player)) { // and that the player is still playing (pr maybe playing)
+                        // The track has been played more than 5s, so we can now store the media consumption
                         updateStore.submitChanges();
-                    else
+                        // For the duration record, in addition to the player listener set up in start(), we install
+                        // a shutdown hook in case the user closes the app (which also cause the track to stop).
+                        if (shutdownHook == null) {
+                            shutdownHook = Shutdown.addShutdownHook(e ->
+                                recordPlayingMediaConsumptionDuration());
+                        }
+                    } else
                         playingMediaConsumption = null;
                 }
             });
@@ -122,9 +132,9 @@ public class MediaConsumptionRecorder {
             playingMediaConsumption.setDurationMillis(playingStopWatch.getStopWatchElapsedTime());
             UpdateStore updateStore = (UpdateStore) playingMediaConsumption.getStore();
             updateStore.submitChanges();
+            Shutdown.removeShutdownHook(shutdownHook);
+            shutdownHook = null;
             playingMediaConsumption = null;
-            if (!Shutdown.isShuttingDown())
-                Shutdown.removeShutdownHook(this::recordPlayingMediaConsumptionDuration);
         }
     }
 

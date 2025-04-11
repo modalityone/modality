@@ -12,7 +12,6 @@ module modality.base.shared.domainmodel {
     requires webfx.platform.async;
     requires webfx.platform.resource;
     requires webfx.platform.util;
-    requires webfx.platform.util.time;
     requires webfx.stack.com.serial;
     requires webfx.stack.db.query;
     requires webfx.stack.orm.datasourcemodel.service;

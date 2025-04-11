@@ -79,7 +79,7 @@ abstract class AbstractItemFamilyPricing implements ItemFamilyPricing {
         initialScheduledItems = eventPolicy.getFamilyScheduledItems(knownItemFamily);
         initialSelectedSiteItems = initialScheduledItems.stream().map(SiteItem::new).distinct().collect(Collectors.toList());
 
-        Event event = eventPolicy.getEvent();
+        Event event = getEvent();
         List<LocalDate> itemDates = TimeUtil.generateLocalDates(event.getStartDate(), event.getEndDate());
         dateUIs = Collections.map(itemDates, DateUI::new);
 
@@ -91,6 +91,10 @@ abstract class AbstractItemFamilyPricing implements ItemFamilyPricing {
 
         // In case the availableSiteItems have been loaded already, we need to reinitialize the checkboxes to tell which
         availableSiteItemUIs.forEach(SiteItemUI::initCheckBoxState); // ones are selected (from initialSelectedSiteItems)
+    }
+
+    protected Event getEvent() {
+        return eventPolicy.getEvent();
     }
 
     private void resetToInitialValues() {
@@ -255,12 +259,9 @@ abstract class AbstractItemFamilyPricing implements ItemFamilyPricing {
     protected void completeRate(Rate rate) {
         rate.setPerDay(true);
         rate.setPerPerson(true);
-        rate.setAge1Max(7);
-        rate.setAge1Price(0);
-        rate.setAge2Max(15);
-        rate.setAge2Discount(50);
-        rate.setResidentPrice(0);
-        rate.setResident2Discount(50);
+        // Hardcoded 100% min deposit for online events (to change this when in-person and online events are merged)
+        if (getEvent().isOnlineEvent())
+            rate.setMinDeposit(100);
     }
 
     // Class containing the UI elements associated to a date (checkbox, text and rate text field)

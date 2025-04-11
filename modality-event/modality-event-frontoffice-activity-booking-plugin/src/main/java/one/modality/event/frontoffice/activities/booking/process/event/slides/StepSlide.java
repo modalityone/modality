@@ -1,13 +1,9 @@
 package one.modality.event.frontoffice.activities.booking.process.event.slides;
 
-import dev.webfx.extras.styles.bootstrap.Bootstrap;
-import dev.webfx.extras.util.layout.Layouts;
 import dev.webfx.extras.webtext.HtmlText;
 import dev.webfx.platform.console.Console;
 import dev.webfx.platform.uischeduler.UiScheduler;
 import dev.webfx.stack.i18n.controls.I18nControls;
-import dev.webfx.stack.orm.dql.DqlStatement;
-import dev.webfx.stack.orm.entity.controls.entity.selector.EntityButtonSelector;
 import dev.webfx.stack.ui.operation.OperationUtil;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
@@ -15,32 +11,23 @@ import javafx.scene.Node;
 import javafx.scene.control.Button;
 import javafx.scene.control.Labeled;
 import javafx.scene.layout.Background;
-import javafx.scene.layout.HBox;
-import javafx.scene.layout.Region;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
-import javafx.scene.text.Text;
 import javafx.stage.Screen;
-import one.modality.base.client.mainframe.fx.FXMainFrameDialogArea;
-import one.modality.base.frontoffice.utility.tyler.TextUtility;
 import one.modality.base.shared.entities.Event;
-import one.modality.base.shared.entities.Person;
 import one.modality.base.shared.entities.markers.HasPersonalDetails;
-import one.modality.crm.client.i18n.CrmI18nKeys;
-import one.modality.crm.shared.services.authn.fx.FXModalityUserPrincipal;
 import one.modality.crm.shared.services.authn.fx.FXUserPerson;
 import one.modality.ecommerce.document.service.DocumentAggregate;
 import one.modality.ecommerce.payment.CancelPaymentResult;
 import one.modality.ecommerce.payment.PaymentService;
 import one.modality.ecommerce.payment.client.ClientPaymentUtil;
 import one.modality.ecommerce.payment.client.WebPaymentForm;
-import one.modality.event.client.recurringevents.BookableDatesUi;
-import one.modality.event.client.recurringevents.FXPersonToBook;
-import one.modality.event.client.recurringevents.WorkingBooking;
+import one.modality.event.client.booking.BookableDatesUi;
+import one.modality.ecommerce.client.workingbooking.WorkingBooking;
 import one.modality.event.frontoffice.activities.booking.BookingI18nKeys;
 import one.modality.event.frontoffice.activities.booking.fx.FXGuestToBook;
 import one.modality.event.frontoffice.activities.booking.process.event.BookEventActivity;
-import one.modality.event.frontoffice.activities.booking.process.event.WorkingBookingProperties;
+import one.modality.ecommerce.client.workingbooking.WorkingBookingProperties;
 
 import java.util.function.Supplier;
 
@@ -187,23 +174,7 @@ public abstract class StepSlide implements Supplier<Node> {
     }
 
     protected Button createPersonToBookButton() {
-        Text personPrefixText = TextUtility.createText(CrmI18nKeys.PersonToBook + ":", Color.GRAY);
-        EntityButtonSelector<Person> personSelector = new EntityButtonSelector<Person>(
-            "{class: 'Person', alias: 'p', columns: [{expression: `[genderIcon,firstName,lastName]`}], orderBy: 'id'}",
-            getBookEventActivity(), FXMainFrameDialogArea::getDialogArea, getBookEventActivity().getDataSourceModel()
-        ) { // Overriding the button content to add the "Teacher" prefix text
-            @Override
-            protected Node getOrCreateButtonContentFromSelectedItem() {
-                return new HBox(10, personPrefixText, super.getOrCreateButtonContentFromSelectedItem());
-            }
-        }.ifNotNullOtherwiseEmpty(FXModalityUserPrincipal.modalityUserPrincipalProperty(), mup -> DqlStatement.where("frontendAccount=?", mup.getUserAccountId()));
-        personSelector.selectedItemProperty().bindBidirectional(FXPersonToBook.personToBookProperty());
-        Button personButton = Bootstrap.largeButton(personSelector.getButton());
-        personButton.setMinWidth(300);
-        personButton.setMaxWidth(Region.USE_PREF_SIZE);
-        VBox.setMargin(personButton, new Insets(20, 0, 20, 0));
-        Layouts.bindManagedAndVisiblePropertiesTo(FXModalityUserPrincipal.loggedInProperty(), personButton);
-        return personButton;
+        return bookEventActivity.createPersonToBookButton();
     }
 
     public <T extends Labeled> T bindI18nEventExpression(T text, String eventExpression, Object... args) {

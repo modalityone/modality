@@ -13,6 +13,7 @@ module modality.all.frontoffice.application.openjfx {
     requires modality.ecommerce.document.service.remote;
     requires modality.ecommerce.payment.buscall;
     requires modality.ecommerce.payment.remote;
+    requires webfx.extras.canvas.blob.openjfx;
     requires webfx.extras.visual.grid.peers.openjfx;
     requires webfx.extras.webtext.peers.openjfx;
     requires webfx.kit.javafxgraphics.openjfx;
@@ -23,6 +24,7 @@ module modality.all.frontoffice.application.openjfx {
     requires webfx.platform.boot.java;
     requires webfx.platform.console.java;
     requires webfx.platform.fetch.java;
+    requires webfx.platform.file.java;
     requires webfx.platform.os.java;
     requires webfx.platform.resource.java;
     requires webfx.platform.scheduler.java;

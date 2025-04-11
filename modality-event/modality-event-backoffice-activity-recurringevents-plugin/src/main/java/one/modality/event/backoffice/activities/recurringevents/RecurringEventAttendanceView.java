@@ -3,6 +3,7 @@ package one.modality.event.backoffice.activities.recurringevents;
 import dev.webfx.extras.panes.ColumnsPane;
 import dev.webfx.extras.styles.bootstrap.Bootstrap;
 import dev.webfx.extras.theme.text.TextTheme;
+import dev.webfx.extras.time.format.LocalizedTime;
 import dev.webfx.extras.util.control.Controls;
 import dev.webfx.extras.util.layout.Layouts;
 import dev.webfx.extras.visual.controls.grid.SkinnedVisualGrid;
@@ -29,13 +30,12 @@ import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
 import javafx.scene.text.FontWeight;
 import one.modality.base.client.gantt.fx.selection.FXGanttSelection;
+import one.modality.base.client.time.BackOfficeTimeFormats;
 import one.modality.base.shared.entities.DocumentLine;
 import one.modality.base.shared.entities.Event;
 import one.modality.base.shared.entities.ScheduledItem;
 import one.modality.crm.backoffice.organization.fx.FXOrganization;
 import one.modality.event.client.event.fx.FXEvent;
-
-import java.time.format.DateTimeFormatter;
 
 import static dev.webfx.stack.orm.dql.DqlStatement.where;
 
@@ -148,7 +148,7 @@ final class RecurringEventAttendanceView {
 
         public void onEntityChangedOrReplaced(ScheduledItem scheduledItem) {
             scheduledItemObjectProperty.set(scheduledItem);
-            dateLabel.setText(scheduledItem.getDate().format(DateTimeFormatter.ofPattern("MMMM dd")));
+            dateLabel.textProperty().bind(LocalizedTime.formatMonthDayProperty(scheduledItem.getDate(), BackOfficeTimeFormats.RECURRING_EVENT_ATTENDANCE_DATE_FORMAT));
         }
 
         @Override

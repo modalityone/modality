@@ -14,6 +14,7 @@ module modality.event.backoffice.activity.medias.plugin {
     requires modality.base.client.icons;
     requires modality.base.client.messaging;
     requires modality.base.client.tile;
+    requires modality.base.client.time;
     requires modality.base.client.util;
     requires modality.base.shared.entities;
     requires modality.event.client.event.fx;
@@ -22,6 +23,7 @@ module modality.event.backoffice.activity.medias.plugin {
     requires webfx.extras.styles.bootstrap;
     requires webfx.extras.switches;
     requires webfx.extras.theme;
+    requires webfx.extras.time.format;
     requires webfx.extras.util.control;
     requires webfx.extras.util.layout;
     requires webfx.extras.util.masterslave;
@@ -29,7 +31,6 @@ module modality.event.backoffice.activity.medias.plugin {
     requires webfx.extras.webtext;
     requires webfx.kit.util;
     requires webfx.platform.console;
-    requires webfx.platform.file;
     requires webfx.platform.uischeduler;
     requires webfx.platform.util;
     requires webfx.platform.windowhistory;

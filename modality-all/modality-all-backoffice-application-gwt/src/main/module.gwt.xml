@@ -212,9 +212,9 @@
     <resource path="dev/webfx/kit/css/fonts/vollkornsc"/>
     <public path="" includes="dev/webfx/kit/css/fonts/vollkornsc/"/>
     <!--=========================< modality-base-client-entities >==========================-->
-    <source path="one/modality/base/client/entities/util"/>
-    <source path="one/modality/base/client/entities/util/filters"/>
-    <source path="one/modality/base/client/entities/util/functions"/>
+    <source path="one/modality/base/client/entities"/>
+    <source path="one/modality/base/client/entities/filters"/>
+    <source path="one/modality/base/client/entities/functions"/>
     <!--=========================< modality-base-client-gantt-fx >==========================-->
     <source path="one/modality/base/client/gantt/fx/highlight"/>
     <source path="one/modality/base/client/gantt/fx/interstice"/>
@@ -284,10 +284,11 @@
     <source path="one/modality/base/client/profile/fx"/>
     <!--===========================< modality-base-client-tile >============================-->
     <source path="one/modality/base/client/tile"/>
+    <!--===========================< modality-base-client-time >============================-->
+    <source path="one/modality/base/client/time"/>
     <!--========================< modality-base-client-time-theme >=========================-->
     <source path="one/modality/base/client/time/theme"/>
     <!--===========================< modality-base-client-util >============================-->
-    <source path="one/modality/base/client/util/converters"/>
     <source path="one/modality/base/client/util/dialog"/>
     <source path="one/modality/base/client/util/functions"/>
     <source path="one/modality/base/client/util/log"/>
@@ -351,6 +352,8 @@
     <source path="one/modality/ecommerce/backoffice/operations/entities/moneytransfer"/>
     <!--=========================< modality-ecommerce-client-i18n >=========================-->
     <source path="one/modality/ecommerce/client/i18n"/>
+    <!--====================< modality-ecommerce-client-workingbooking >====================-->
+    <source path="one/modality/ecommerce/client/workingbooking"/>
     <!--======================< modality-ecommerce-document-service >=======================-->
     <source path="one/modality/ecommerce/document/service"/>
     <source path="one/modality/ecommerce/document/service/events"/>
@@ -400,6 +403,8 @@
     <source path="one/modality/event/backoffice/events/eventselector"/>
     <!--=================< modality-event-client-activity-eventdependent >==================-->
     <source path="one/modality/event/client/activity/eventdependent"/>
+    <!--=========================< modality-event-client-booking >==========================-->
+    <source path="one/modality/event/client/booking"/>
     <!--=========================< modality-event-client-event-fx >=========================-->
     <source path="one/modality/event/client/event/fx"/>
     <!--=====================< modality-event-client-recurringevents >======================-->
@@ -421,6 +426,11 @@
     <source path="dev/webfx/extras/canvas/impl"/>
     <!--============================< webfx-extras-canvas-bar >=============================-->
     <source path="dev/webfx/extras/canvas/bar"/>
+    <!--============================< webfx-extras-canvas-blob >============================-->
+    <source path="dev/webfx/extras/canvas/blob"/>
+    <source path="dev/webfx/extras/canvas/blob/spi"/>
+    <!--=======================< webfx-extras-canvas-blob-gwt-j2cl >========================-->
+    <source path="dev/webfx/extras/canvas/blob/spi/impl/gwt"/>
     <!--===========================< webfx-extras-canvas-layer >============================-->
     <source path="dev/webfx/extras/canvas/layer"/>
     <source path="dev/webfx/extras/canvas/layer/interact"/>
@@ -468,8 +478,6 @@
     <source path="dev/webfx/extras/time"/>
     <!--============================< webfx-extras-time-format >============================-->
     <source path="dev/webfx/extras/time/format"/>
-    <source path="dev/webfx/extras/time/format/spi"/>
-    <source path="dev/webfx/extras/time/format/spi/impl"/>
     <!--============================< webfx-extras-time-layout >============================-->
     <source path="dev/webfx/extras/time/layout"/>
     <source path="dev/webfx/extras/time/layout/bar"/>
@@ -603,6 +611,7 @@
     <!--==============================< webfx-platform-async >==============================-->
     <source path="dev/webfx/platform/async"/>
     <source path="dev/webfx/platform/async/impl"/>
+    <source path="dev/webfx/platform/async/util"/>
     <!--==============================< webfx-platform-blob >===============================-->
     <source path="dev/webfx/platform/blob"/>
     <source path="dev/webfx/platform/blob/spi"/>
@@ -843,8 +852,6 @@
     <source path="dev/webfx/stack/i18n/spi/impl/ast"/>
     <!--===========================< webfx-stack-i18n-controls >============================-->
     <source path="dev/webfx/stack/i18n/controls"/>
-    <!--==========================< webfx-stack-i18n-time-plugin >==========================-->
-    <source path="dev/webfx/stack/i18n/time"/>
     <!--====================< webfx-stack-orm-datasourcemodel-service >=====================-->
     <source path="dev/webfx/stack/orm/datasourcemodel/service"/>
     <source path="dev/webfx/stack/orm/datasourcemodel/service/spi"/>

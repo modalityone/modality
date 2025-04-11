@@ -54,6 +54,7 @@
         <module>modality-base-client-presentationmodel</module>
         <module>modality-base-client-profile-fx</module>
         <module>modality-base-client-tile</module>
+        <module>modality-base-client-time</module>
         <module>modality-base-client-time-theme</module>
         <module>modality-base-client-util</module>
         <module>modality-base-frontoffice-activity-account-plugin</module>

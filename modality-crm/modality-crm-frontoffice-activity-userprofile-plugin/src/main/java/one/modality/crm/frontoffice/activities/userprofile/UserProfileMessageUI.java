@@ -12,11 +12,11 @@ import javafx.scene.layout.Background;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 
-public class UserProfileMessageUI {
+final class UserProfileMessageUI {
 
-    protected VBox container = new VBox();
-    protected Label title = Bootstrap.textPrimary(Bootstrap.h2(new Label()));
-    protected Label infoMessage = Bootstrap.textDanger(new Label());
+    private final VBox container = new VBox();
+    private final Label title = Bootstrap.textPrimary(Bootstrap.h2(new Label()));
+    private final Label infoMessage = Bootstrap.textDanger(new Label());
     private DialogCallback callback;
 
 

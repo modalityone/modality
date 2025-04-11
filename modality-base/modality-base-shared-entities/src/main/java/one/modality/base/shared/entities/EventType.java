@@ -39,4 +39,12 @@ public interface EventType extends Entity,
     default Integer getOrd() {
         return getIntegerFieldValue(ord);
     }
+
+    default Boolean isRecurring() {
+        if (getRecurringItemId() != null)
+            return true;
+        if (isFieldLoaded(recurringItem))
+            return false;
+        return null;
+    }
 }

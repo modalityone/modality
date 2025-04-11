@@ -30,7 +30,7 @@ import one.modality.base.shared.entities.Person;
 import one.modality.crm.frontoffice.activities.createaccount.CreateAccountI18nKeys;
 import one.modality.crm.shared.services.authn.fx.FXUserPerson;
 
-public class ChangePasswordUI implements MaterialFactoryMixin {
+final class ChangePasswordUI implements MaterialFactoryMixin {
 
     private final PasswordField passwordField;
     private final PasswordField newPasswordField;

@@ -73,7 +73,7 @@ Modality is in early-stage development. We intend to release a functioning MVP b
 
 
 ## Powered by WebFX
-[WebFX](https://webfx.dev) provides a unique JavaFX to JavaScript transpiler, powered by GWT, which generates pure JS that runs directly in the browser without a plugin.
+[WebFX](https://github.com/webfx-project/webfx) provides a unique JavaFX to JavaScript transpiler, powered by GWT, which generates pure JS that runs directly in the browser without a plugin.
 
 
 ## Documentation

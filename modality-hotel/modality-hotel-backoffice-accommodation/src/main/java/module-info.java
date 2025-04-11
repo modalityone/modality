@@ -11,6 +11,7 @@ module modality.hotel.backoffice.accommodation {
     requires javafx.graphics;
     requires modality.base.client.activity.organizationdependent;
     requires modality.base.client.gantt.fx;
+    requires modality.base.client.time;
     requires modality.base.shared.entities;
     requires modality.crm.backoffice.organization.fx;
     requires modality.event.client.theme;
@@ -19,6 +20,7 @@ module modality.hotel.backoffice.accommodation {
     requires webfx.extras.canvas.pane;
     requires webfx.extras.geometry;
     requires webfx.extras.theme;
+    requires webfx.extras.time.format;
     requires webfx.extras.time.layout;
     requires transitive webfx.extras.time.layout.gantt;
     requires webfx.extras.time.window;

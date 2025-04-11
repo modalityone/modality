@@ -5,6 +5,7 @@ import dev.webfx.extras.panes.MonoPane;
 import dev.webfx.extras.player.Player;
 import dev.webfx.extras.player.audio.javafxmedia.AudioMediaView;
 import dev.webfx.extras.styles.bootstrap.Bootstrap;
+import dev.webfx.extras.time.format.LocalizedTime;
 import dev.webfx.platform.blob.spi.BlobProvider;
 import dev.webfx.platform.uischeduler.UiScheduler;
 import dev.webfx.platform.util.Booleans;
@@ -23,13 +24,14 @@ import javafx.scene.paint.Color;
 import javafx.scene.shape.SVGPath;
 import one.modality.base.client.bootstrap.ModalityStyle;
 import one.modality.base.client.icons.SvgIcons;
+import one.modality.base.client.time.FrontOfficeTimeFormats;
 import one.modality.base.shared.entities.Media;
 import one.modality.base.shared.entities.ScheduledItem;
 import one.modality.base.shared.entities.Timeline;
 import one.modality.event.frontoffice.medias.MediaConsumptionRecorder;
 
 import java.time.LocalDate;
-import java.time.format.DateTimeFormatter;
+import java.time.LocalTime;
 import java.util.List;
 
 /**
@@ -79,16 +81,14 @@ final class SessionAudioTrackView {
         titleLabel.setWrapText(true);
         LocalDate date = scheduledAudioItem.getDate();
         Timeline timeline = scheduledAudioItem.getProgramScheduledItem().getTimeline();
-        String startTime = "";
-        if (timeline != null) {
-            //Case fo festivals, when null it's a recurring event, and we don't need to display the time
-            startTime = " - " + timeline.getStartTime().format(DateTimeFormatter.ofPattern("HH:mm"));
-        }
-        Label dateLabel = new Label(date.format(DateTimeFormatter.ofPattern("dd MMMM yyyy")) + startTime);
+        LocalTime startTime = timeline == null ? null : timeline.getStartTime();
+        Label dateLabel = new Label();
+        dateLabel.textProperty().bind(LocalizedTime.formatLocalDateTimeProperty(date, startTime, FrontOfficeTimeFormats.AUDIO_TRACK_DATE_TIME_FORMAT));
         dateLabel.getStyleClass().add(ModalityStyle.TEXT_COMMENT);
         long durationMillis;
         if (!publishedMedias.isEmpty()) {
             durationMillis = publishedMedias.get(0).getDurationMillis();
+            dateLabel.textProperty().unbind();
             dateLabel.setText(AudioMediaView.formatDuration(durationMillis) + " • " + dateLabel.getText());
         } else {
             durationMillis = 0;
