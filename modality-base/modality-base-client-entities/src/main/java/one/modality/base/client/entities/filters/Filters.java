@@ -1,4 +1,4 @@
-package one.modality.base.client.entities.util.filters;
+package one.modality.base.client.entities.filters;
 
 import one.modality.base.shared.entities.Filter;
 import dev.webfx.stack.orm.dql.DqlClause;

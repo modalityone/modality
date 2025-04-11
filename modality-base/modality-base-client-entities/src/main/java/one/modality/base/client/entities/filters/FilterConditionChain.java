@@ -1,4 +1,4 @@
-package one.modality.base.client.entities.util.filters;
+package one.modality.base.client.entities.filters;
 
 import dev.webfx.stack.orm.reactive.dql.statement.conventions.HasConditionDqlStatementProperty;
 import dev.webfx.stack.orm.entity.controls.entity.selector.EntityButtonSelector;

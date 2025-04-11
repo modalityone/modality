@@ -1,4 +1,4 @@
-package one.modality.base.client.entities.util.filters;
+package one.modality.base.client.entities.filters;
 
 import javafx.beans.property.Property;
 import javafx.scene.layout.Pane;

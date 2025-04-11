@@ -12,6 +12,7 @@ module modality.base.client.entities {
     requires modality.base.client.presentationmodel;
     requires modality.base.client.time;
     requires modality.base.shared.entities;
+    requires webfx.extras.cell;
     requires webfx.extras.time.format;
     requires webfx.extras.type;
     requires webfx.extras.util.layout;
@@ -30,11 +31,11 @@ module modality.base.client.entities {
     requires webfx.stack.ui.controls;
 
     // Exported packages
-    exports one.modality.base.client.entities.util;
-    exports one.modality.base.client.entities.util.filters;
-    exports one.modality.base.client.entities.util.functions;
+    exports one.modality.base.client.entities;
+    exports one.modality.base.client.entities.filters;
+    exports one.modality.base.client.entities.functions;
 
     // Provided services
-    provides dev.webfx.platform.boot.spi.ApplicationJob with one.modality.base.client.entities.util.functions.ClientFunctionsRegisteringApplicationJob;
+    provides dev.webfx.platform.boot.spi.ApplicationJob with one.modality.base.client.entities.ClientEntitiesAdditionalRegisteringJob;
 
 }

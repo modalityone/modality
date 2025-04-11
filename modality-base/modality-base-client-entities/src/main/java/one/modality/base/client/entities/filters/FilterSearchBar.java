@@ -1,4 +1,4 @@
-package one.modality.base.client.entities.util.filters;
+package one.modality.base.client.entities.filters;
 
 import javafx.collections.ObservableList;
 import javafx.scene.Node;

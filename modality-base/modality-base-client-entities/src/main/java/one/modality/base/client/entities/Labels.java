@@ -1,10 +1,10 @@
-package one.modality.base.client.entities.util;
+package one.modality.base.client.entities;
 
 import dev.webfx.kit.util.properties.FXProperties;
 import javafx.beans.property.Property;
 import javafx.beans.property.SimpleObjectProperty;
 import javafx.scene.control.Labeled;
-import one.modality.base.client.entities.util.functions.I18nFunction;
+import one.modality.base.client.entities.functions.I18nFunction;
 import one.modality.base.shared.entities.Label;
 import one.modality.base.shared.entities.impl.LabelImpl;
 import one.modality.base.shared.entities.markers.HasItem;

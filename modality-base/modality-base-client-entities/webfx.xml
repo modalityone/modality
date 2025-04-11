@@ -8,7 +8,7 @@
     </exported-packages>
 
     <providers>
-        <provider interface="dev.webfx.platform.boot.spi.ApplicationJob">one.modality.base.client.entities.util.functions.ClientFunctionsRegisteringApplicationJob</provider>
+        <provider interface="dev.webfx.platform.boot.spi.ApplicationJob">one.modality.base.client.entities.ClientEntitiesAdditionalRegisteringJob</provider>
     </providers>
 
     <dependencies>
