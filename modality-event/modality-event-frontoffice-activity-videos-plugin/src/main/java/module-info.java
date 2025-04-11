@@ -39,6 +39,8 @@ module modality.event.frontoffice.activity.videos.plugin {
     requires webfx.stack.orm.domainmodel.activity;
     requires webfx.stack.orm.entity;
     requires webfx.stack.orm.entity.binding;
+    requires webfx.stack.orm.reactive.entities;
+    requires webfx.stack.orm.reactive.visual;
     requires webfx.stack.routing.router.client;
     requires webfx.stack.routing.uirouter;
     requires webfx.stack.ui.operation;
