@@ -12,7 +12,6 @@ module modality.base.client.entities {
     requires modality.base.client.presentationmodel;
     requires modality.base.client.time;
     requires modality.base.shared.entities;
-    requires webfx.extras.cell;
     requires webfx.extras.time.format;
     requires webfx.extras.type;
     requires webfx.extras.util.layout;
