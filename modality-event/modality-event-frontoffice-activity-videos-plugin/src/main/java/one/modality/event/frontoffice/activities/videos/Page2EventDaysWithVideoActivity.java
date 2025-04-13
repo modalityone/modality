@@ -133,14 +133,13 @@ final class Page2EventDaysWithVideoActivity extends ViewDomainActivityBase {
                     });
             }
         }, pathEventIdProperty, FXUserPersonId.userPersonIdProperty());
-        VideoColumnsRenderers.registerRenderers();
+        VideoColumnsFormattersAndRenderers.registerRenderers(getHistory());
         videoColumns = VisualEntityColumnFactory.get().fromJsonArray("""
                 [
-                {expression: 'date', label: 'Date', format: 'none', renderer: 'videoDate'},
-                {expression: 'this', label: 'Status', renderer: 'videoStatus', textAlign: 'center'},
+                {expression: 'date', label: 'Date', format: 'videoDate'},
+                {expression: '[coalesce(startTime, programScheduledItem.startTime), coalesce(endTime, programScheduledItem.endTime)]', label: 'UK time', format: 'videoTimeRange', textAlign: 'center'},
                 {expression: 'coalesce(name, programScheduledItem.name)', label: 'Name', renderer: 'ellipsisLabel'},
-                {expression: '[coalesce(startTime, programScheduledItem.startTime), coalesce(endTime, programScheduledItem.endTime)]', label: 'UK time', renderer: 'videoTimeRange', textAlign: 'center'},
-                {expression: 'this', renderer: 'videoWatchButton', textAlign: 'center'}
+                {expression: 'this', label: 'Status', renderer: 'videoStatus', textAlign: 'center'}
                 ]""", getDomainModel(), "ScheduledItem");
     }
 

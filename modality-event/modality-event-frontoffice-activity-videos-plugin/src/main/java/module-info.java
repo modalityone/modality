@@ -22,6 +22,7 @@ module modality.event.frontoffice.activity.videos.plugin {
     requires webfx.extras.player.multi.all;
     requires webfx.extras.styles.bootstrap;
     requires webfx.extras.time.format;
+    requires webfx.extras.type;
     requires webfx.extras.util.control;
     requires webfx.extras.util.layout;
     requires webfx.extras.visual;
@@ -36,6 +37,7 @@ module modality.event.frontoffice.activity.videos.plugin {
     requires webfx.platform.windowhistory;
     requires webfx.stack.i18n;
     requires webfx.stack.i18n.controls;
+    requires webfx.stack.orm.domainmodel;
     requires webfx.stack.orm.domainmodel.activity;
     requires webfx.stack.orm.entity;
     requires webfx.stack.orm.entity.binding;
