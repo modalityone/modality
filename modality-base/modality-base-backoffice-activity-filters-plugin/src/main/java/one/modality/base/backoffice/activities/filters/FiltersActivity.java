@@ -3,7 +3,6 @@ package one.modality.base.backoffice.activities.filters;
 import dev.webfx.extras.cell.renderer.TextRenderer;
 import dev.webfx.extras.visual.VisualColumn;
 import dev.webfx.extras.visual.VisualResultBuilder;
-import dev.webfx.extras.visual.controls.grid.SkinnedVisualGrid;
 import dev.webfx.extras.visual.controls.grid.VisualGrid;
 import dev.webfx.kit.util.properties.FXProperties;
 import dev.webfx.stack.orm.domainmodel.DomainClass;
@@ -60,7 +59,7 @@ final class FiltersActivity extends ViewDomainActivityBase implements OperationA
         ButtonSelector<DomainClass> classSelector = new ButtonSelector<>(this, container) {
             private final List<DomainClass> allClasses = getDomainModel().getAllClasses();
             private List<DomainClass> searchedClasses;
-            private final VisualGrid dialogVisualGrid = new SkinnedVisualGrid(); // Better rendering in desktop JavaFX (but might be slower in web version)
+            private final VisualGrid dialogVisualGrid = VisualGrid.createVisualGridWithTableSkin();
             {
                 dialogVisualGrid.setHeaderVisible(false);
                 dialogVisualGrid.setCursor(Cursor.HAND);

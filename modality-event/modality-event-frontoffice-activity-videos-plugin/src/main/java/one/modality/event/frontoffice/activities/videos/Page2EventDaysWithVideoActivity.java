@@ -7,7 +7,6 @@ import dev.webfx.extras.time.format.LocalizedTime;
 import dev.webfx.extras.util.control.Controls;
 import dev.webfx.extras.util.layout.Layouts;
 import dev.webfx.extras.visual.VisualResult;
-import dev.webfx.extras.visual.controls.grid.SkinnedVisualGrid;
 import dev.webfx.extras.visual.controls.grid.VisualGrid;
 import dev.webfx.extras.webtext.HtmlText;
 import dev.webfx.kit.util.properties.FXProperties;
@@ -273,7 +272,7 @@ final class Page2EventDaysWithVideoActivity extends ViewDomainActivityBase {
     }
 
     private void refreshVideosTable() {
-        VisualGrid videoTable = new SkinnedVisualGrid();
+        VisualGrid videoTable = VisualGrid.createVisualGridWithResponsiveSkin(600);
         videoTable.setRowHeight(48);
         videoTable.setCellMargin(new Insets(5, 10, 5, 10));
         videoTable.setFullHeight(true);

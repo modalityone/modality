@@ -6,7 +6,6 @@ import dev.webfx.extras.theme.text.TextTheme;
 import dev.webfx.extras.time.format.LocalizedTime;
 import dev.webfx.extras.util.control.Controls;
 import dev.webfx.extras.util.layout.Layouts;
-import dev.webfx.extras.visual.controls.grid.SkinnedVisualGrid;
 import dev.webfx.extras.visual.controls.grid.VisualGrid;
 import dev.webfx.stack.i18n.controls.I18nControls;
 import dev.webfx.stack.orm.dql.DqlStatement;
@@ -119,7 +118,7 @@ final class RecurringEventAttendanceView {
             dateLabel.setFont(Font.font(null, FontWeight.BOLD, 16));
             boxesContainer.setTop(Layouts.setMaxWidthToInfinite(dateLabel));
 
-            VisualGrid linesGrid = new SkinnedVisualGrid();
+            VisualGrid linesGrid = VisualGrid.createVisualGridWithTableSkin();
             linesGrid.setHeaderVisible(false);
             linesGrid.setFullHeight(true);
             boxesContainer.setCenter(linesGrid);
