@@ -28,6 +28,7 @@ import javafx.beans.property.ObjectProperty;
 import javafx.beans.property.SimpleObjectProperty;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
+import javafx.collections.transformation.SortedList;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Node;
@@ -276,7 +277,8 @@ final class Page2EventDaysWithVideoActivity extends ViewDomainActivityBase {
         videoTable.setCellMargin(new Insets(5, 10, 5, 10));
         videoTable.setFullHeight(true);
         videoTable.setHeaderVisible(true);
-        VisualResult rs = EntitiesToVisualResultMapper.mapEntitiesToVisualResult(videoScheduledItems, videoColumns);
+        SortedList<ScheduledItem> videoScheduledItemsExpiredLast = videoScheduledItems.sorted((v1, v2) -> Boolean.compare(VideoState.isVideoExpired(v1), VideoState.isVideoExpired(v2)));
+        VisualResult rs = EntitiesToVisualResultMapper.mapEntitiesToVisualResult(videoScheduledItemsExpiredLast, videoColumns);
         videoTable.setVisualResult(rs);
         selectedVideosVBox.getChildren().setAll(videoTable);
     }
