@@ -2,6 +2,8 @@ package one.modality.event.frontoffice.activities.videos;
 
 import dev.webfx.extras.panes.GoldenRatioPane;
 import dev.webfx.extras.panes.MonoPane;
+import dev.webfx.extras.responsive.ApplicableResponsiveLayout;
+import dev.webfx.extras.responsive.ResponsiveLayout;
 import dev.webfx.extras.styles.bootstrap.Bootstrap;
 import dev.webfx.extras.time.format.LocalizedTime;
 import dev.webfx.extras.util.control.Controls;
@@ -26,6 +28,7 @@ import dev.webfx.stack.orm.reactive.mapping.entities_to_visual.VisualEntityColum
 import javafx.application.Platform;
 import javafx.beans.property.ObjectProperty;
 import javafx.beans.property.SimpleObjectProperty;
+import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.collections.transformation.SortedList;
@@ -139,7 +142,7 @@ final class Page2EventDaysWithVideoActivity extends ViewDomainActivityBase {
                 [
                 {expression: 'date', label: 'Date', format: 'videoDate'},
                 {expression: '[coalesce(startTime, programScheduledItem.startTime), coalesce(endTime, programScheduledItem.endTime)]', label: 'UK time', format: 'videoTimeRange', textAlign: 'center'},
-                {expression: 'coalesce(name, programScheduledItem.name)', label: 'Name', renderer: 'ellipsisLabel'},
+                {expression: 'coalesce(name, programScheduledItem.name)', label: 'Name', renderer: 'ellipsisLabel', minWidth: 200},
                 {expression: 'this', label: 'Status', renderer: 'videoStatus', textAlign: 'center'}
                 ]""", getDomainModel(), "ScheduledItem");
     }
@@ -167,9 +170,39 @@ final class Page2EventDaysWithVideoActivity extends ViewDomainActivityBase {
         videoExpirationLabel.setPadding(new Insets(30, 0, 0, 0));
         VBox titleVBox = new VBox(eventLabel, eventDescriptionHtmlText, videoExpirationLabel);
 
-        HBox headerHBox = new HBox(50, eventImageContainer, titleVBox);
-        headerHBox.setPadding(new Insets(0, 20, 0, 20));
-        headerHBox.setMaxWidth(1024);
+        MonoPane headerContainer = new MonoPane();
+        headerContainer.setPadding(new Insets(0, 20, 0, 20));
+        ResponsiveLayout horizontalLayout = new ApplicableResponsiveLayout() {
+
+            @Override
+            public boolean isResponsiveApplicable() {
+                double width = headerContainer.getWidth() - eventImageContainer.getWidth() - 50;
+                double prefHeight = titleVBox.prefHeight(width);
+                double height = eventImageContainer.getHeight();
+                Console.log("titleVBox.prefHeight(" + width + ") = " + prefHeight + ", imageHeight=" + height);
+                return prefHeight < height;
+            }
+
+            @Override
+            public ObservableValue[] getResponsiveDependencies() {
+                return new ObservableValue[] { eventImageContainer.widthProperty(), eventImageContainer.heightProperty() };
+            }
+
+            @Override
+            public void applyResponsiveLayout() {
+                headerContainer.setContent(new HBox(50, eventImageContainer, titleVBox));
+            }
+        };
+        ResponsiveLayout verticalLayout = new ResponsiveLayout() {
+            @Override
+            public void applyResponsiveLayout() {
+                VBox vBox = new VBox(50, eventImageContainer, titleVBox);
+                vBox.setAlignment(Pos.CENTER);
+                headerContainer.setContent(vBox);
+            }
+        };
+        ResponsiveLayout.startResponsiveDesign(headerContainer.widthProperty(), horizontalLayout, verticalLayout);
+
 
         //We display this box only if the current Date is in the list of date in the video Scheduled Item list
         VBox todayVideosVBox = new VBox(30); // Will be populated later (see reacting code below)
@@ -183,10 +216,10 @@ final class Page2EventDaysWithVideoActivity extends ViewDomainActivityBase {
         selectTheDayBelowVBox.setPadding(new Insets(100, 0, 0, 0));
 
         VBox loadedContentVBox = new VBox(40,
-            headerHBox, // contains the event image and the event title
-            //todayVideosVBox, // contains the videos for today (if any)
-            selectTheDayBelowVBox, // contains the title of the schedule and the select the day below label (will be hidden if not applicable)
-            selectedVideosVBox // contains the videos for the selected day (or all days)
+                headerContainer, // contains the event image and the event title
+                //todayVideosVBox, // contains the videos for today (if any)
+                //selectTheDayBelowVBox, // contains the title of the schedule and the select the day below label (will be hidden if not applicable)
+                selectedVideosVBox // contains the videos for the selected day (or all days)
         );
         loadedContentVBox.setAlignment(Pos.TOP_CENTER);
         loadedContentVBox.getStyleClass().add("livestream");
@@ -272,7 +305,7 @@ final class Page2EventDaysWithVideoActivity extends ViewDomainActivityBase {
     }
 
     private void refreshVideosTable() {
-        VisualGrid videoTable = VisualGrid.createVisualGridWithResponsiveSkin(600);
+        VisualGrid videoTable = VisualGrid.createVisualGridWithResponsiveSkin();
         videoTable.setRowHeight(48);
         videoTable.setCellMargin(new Insets(5, 10, 5, 10));
         videoTable.setFullHeight(true);
