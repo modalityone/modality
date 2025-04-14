@@ -3,7 +3,7 @@ package one.modality.event.frontoffice.activities.videos;
 import dev.webfx.extras.panes.GoldenRatioPane;
 import dev.webfx.extras.panes.MonoPane;
 import dev.webfx.extras.responsive.ApplicableResponsiveLayout;
-import dev.webfx.extras.responsive.ResponsiveLayout;
+import dev.webfx.extras.responsive.ResponsiveDesign;
 import dev.webfx.extras.styles.bootstrap.Bootstrap;
 import dev.webfx.extras.time.format.LocalizedTime;
 import dev.webfx.extras.util.control.Controls;
@@ -170,39 +170,34 @@ final class Page2EventDaysWithVideoActivity extends ViewDomainActivityBase {
         videoExpirationLabel.setPadding(new Insets(30, 0, 0, 0));
         VBox titleVBox = new VBox(eventLabel, eventDescriptionHtmlText, videoExpirationLabel);
 
-        MonoPane headerContainer = new MonoPane();
-        headerContainer.setPadding(new Insets(0, 20, 0, 20));
-        ResponsiveLayout horizontalLayout = new ApplicableResponsiveLayout() {
+        MonoPane responsiveHeader = new MonoPane();
+        ResponsiveDesign.startResponsiveDesign(responsiveHeader,
+                // Horizontal layout (for desktops) - as far as TitleVBox is not higher than the image
+                new ApplicableResponsiveLayout() {
+                    @Override
+                    public boolean isResponsiveLayoutApplicable() {
+                        double titleVBoxWidth = responsiveHeader.getWidth() - eventImageContainer.getWidth() - 50 /* HBox spacing */;
+                        return titleVBox.prefHeight(titleVBoxWidth) <= IMAGE_HEIGHT && eventImageContainer.getWidth() > 0;
+                    }
 
-            @Override
-            public boolean isResponsiveApplicable() {
-                double width = headerContainer.getWidth() - eventImageContainer.getWidth() - 50;
-                double prefHeight = titleVBox.prefHeight(width);
-                double height = eventImageContainer.getHeight();
-                Console.log("titleVBox.prefHeight(" + width + ") = " + prefHeight + ", imageHeight=" + height);
-                return prefHeight < height;
-            }
+                    @Override
+                    public ObservableValue<?>[] getResponsiveDependencies() {
+                        return new ObservableValue[] { eventImageContainer.widthProperty() };
+                    }
 
-            @Override
-            public ObservableValue[] getResponsiveDependencies() {
-                return new ObservableValue[] { eventImageContainer.widthProperty(), eventImageContainer.heightProperty() };
-            }
-
-            @Override
-            public void applyResponsiveLayout() {
-                headerContainer.setContent(new HBox(50, eventImageContainer, titleVBox));
-            }
-        };
-        ResponsiveLayout verticalLayout = new ResponsiveLayout() {
-            @Override
-            public void applyResponsiveLayout() {
-                VBox vBox = new VBox(50, eventImageContainer, titleVBox);
-                vBox.setAlignment(Pos.CENTER);
-                headerContainer.setContent(vBox);
-            }
-        };
-        ResponsiveLayout.startResponsiveDesign(headerContainer.widthProperty(), horizontalLayout, verticalLayout);
-
+                    @Override
+                    public void applyResponsiveLayout() {
+                        responsiveHeader.setContent(new HBox(50, eventImageContainer, titleVBox));
+                    }
+                },
+                // Vertical layout (for mobiles) - when TitleVBox is too high
+                () -> {
+                    VBox vBox = new VBox(10, eventImageContainer, titleVBox);
+                    vBox.setAlignment(Pos.CENTER);
+                    VBox.setMargin(titleVBox, new Insets(5, 10, 5, 10)); // Same as cell padding => vertically aligned with cells content
+                    responsiveHeader.setContent(vBox);
+                }
+        );
 
         //We display this box only if the current Date is in the list of date in the video Scheduled Item list
         VBox todayVideosVBox = new VBox(30); // Will be populated later (see reacting code below)
@@ -216,7 +211,7 @@ final class Page2EventDaysWithVideoActivity extends ViewDomainActivityBase {
         selectTheDayBelowVBox.setPadding(new Insets(100, 0, 0, 0));
 
         VBox loadedContentVBox = new VBox(40,
-                headerContainer, // contains the event image and the event title
+                responsiveHeader, // contains the event image and the event title
                 //todayVideosVBox, // contains the videos for today (if any)
                 //selectTheDayBelowVBox, // contains the title of the schedule and the select the day below label (will be hidden if not applicable)
                 selectedVideosVBox // contains the videos for the selected day (or all days)
@@ -280,8 +275,9 @@ final class Page2EventDaysWithVideoActivity extends ViewDomainActivityBase {
 
         }, videoScheduledItems, eventProperty);
 
-        // Populating dayVideosWallViews from videoScheduledItems = flat list of all videos of the event (not yet grouped by day)
-        ObservableLists.runNowAndOnListOrPropertiesChange(change -> showSelectedVideos(true)
+        // Showing selected videos once they are loaded
+        ObservableLists.runNowAndOnListOrPropertiesChange(change ->
+                        showSelectedVideos(true)
             , videoScheduledItems);
 
         // Now that we have dayVideosWallViews populated, we can populate the final VBox showing all days and their videos
@@ -310,7 +306,9 @@ final class Page2EventDaysWithVideoActivity extends ViewDomainActivityBase {
         videoTable.setCellMargin(new Insets(5, 10, 5, 10));
         videoTable.setFullHeight(true);
         videoTable.setHeaderVisible(true);
-        SortedList<ScheduledItem> videoScheduledItemsExpiredLast = videoScheduledItems.sorted((v1, v2) -> Boolean.compare(VideoState.isVideoExpired(v1), VideoState.isVideoExpired(v2)));
+        // Moving expired videos at the end of the list
+        SortedList<ScheduledItem> videoScheduledItemsExpiredLast = videoScheduledItems.sorted((v1, v2) ->
+                Boolean.compare(VideoState.isVideoExpired(v1), VideoState.isVideoExpired(v2)));
         VisualResult rs = EntitiesToVisualResultMapper.mapEntitiesToVisualResult(videoScheduledItemsExpiredLast, videoColumns);
         videoTable.setVisualResult(rs);
         selectedVideosVBox.getChildren().setAll(videoTable);
