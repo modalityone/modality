@@ -2,7 +2,6 @@ package one.modality.event.frontoffice.activities.videos;
 
 import dev.webfx.extras.panes.GoldenRatioPane;
 import dev.webfx.extras.panes.MonoPane;
-import dev.webfx.extras.responsive.ApplicableResponsiveLayout;
 import dev.webfx.extras.responsive.ResponsiveDesign;
 import dev.webfx.extras.styles.bootstrap.Bootstrap;
 import dev.webfx.extras.time.format.LocalizedTime;
@@ -28,7 +27,6 @@ import dev.webfx.stack.orm.reactive.mapping.entities_to_visual.VisualEntityColum
 import javafx.application.Platform;
 import javafx.beans.property.ObjectProperty;
 import javafx.beans.property.SimpleObjectProperty;
-import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.collections.transformation.SortedList;
@@ -171,33 +169,20 @@ final class Page2EventDaysWithVideoActivity extends ViewDomainActivityBase {
         VBox titleVBox = new VBox(eventLabel, eventDescriptionHtmlText, videoExpirationLabel);
 
         MonoPane responsiveHeader = new MonoPane();
-        ResponsiveDesign.startResponsiveDesign(responsiveHeader,
-                // Horizontal layout (for desktops) - as far as TitleVBox is not higher than the image
-                new ApplicableResponsiveLayout() {
-                    @Override
-                    public boolean isResponsiveLayoutApplicable() {
-                        double titleVBoxWidth = responsiveHeader.getWidth() - eventImageContainer.getWidth() - 50 /* HBox spacing */;
-                        return titleVBox.prefHeight(titleVBoxWidth) <= IMAGE_HEIGHT && eventImageContainer.getWidth() > 0;
-                    }
-
-                    @Override
-                    public ObservableValue<?>[] getResponsiveDependencies() {
-                        return new ObservableValue[] { eventImageContainer.widthProperty() };
-                    }
-
-                    @Override
-                    public void applyResponsiveLayout() {
-                        responsiveHeader.setContent(new HBox(50, eventImageContainer, titleVBox));
-                    }
-                },
-                // Vertical layout (for mobiles) - when TitleVBox is too high
-                () -> {
+        new ResponsiveDesign(responsiveHeader)
+                // 1. Horizontal layout (for desktops) - as far as TitleVBox is not higher than the image
+                .addResponsiveLayout(/* applicability test: */ width -> {
+                        double titleVBoxWidth = width - eventImageContainer.getWidth() - 50 /* HBox spacing */;
+                        return titleVBox.prefHeight(titleVBoxWidth) <= IMAGE_HEIGHT && eventImageContainer.getWidth() > 0; // also image must be loaded
+                    }, /* apply method: */ () -> responsiveHeader.setContent(new HBox(50, eventImageContainer, titleVBox))
+                , /* test dependencies: */ eventImageContainer.widthProperty())
+                // 2. Vertical layout (for mobiles) - when TitleVBox is too high (always applicable if 1. is not)
+                .addResponsiveLayout(/* apply method: */ () -> {
                     VBox vBox = new VBox(10, eventImageContainer, titleVBox);
                     vBox.setAlignment(Pos.CENTER);
                     VBox.setMargin(titleVBox, new Insets(5, 10, 5, 10)); // Same as cell padding => vertically aligned with cells content
                     responsiveHeader.setContent(vBox);
-                }
-        );
+                }).start();
 
         //We display this box only if the current Date is in the list of date in the video Scheduled Item list
         VBox todayVideosVBox = new VBox(30); // Will be populated later (see reacting code below)
