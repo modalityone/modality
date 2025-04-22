@@ -16,7 +16,8 @@ public interface ScheduledItem extends Entity,
     EntityHasTeacher,
     EntityHasLocalDate,
     EntityHasSiteAndItem,
-    EntityHasStartAndEndTime {
+    EntityHasStartAndEndTime,
+    EntityHasCancelled {
 
     String programScheduledItem = "programScheduledItem";
     String bookableScheduledItem = "bookableScheduledItem";
