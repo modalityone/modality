@@ -149,9 +149,8 @@ final class Page2EventDaysWithVideoActivity extends ViewDomainActivityBase {
                                 // session is being played for the MediaConsumption management. To do this, we will set
                                 // scheduledVideoItemProperty with the scheduled item corresponding to the played session.
                                 LocalDate today = Event.todayInEventTimezone();
-                                List<ScheduledItem> todayVideoScheduledItems = videoScheduledItems.stream()
-                                    .filter(item -> item.getDate().isEqual(today))
-                                    .toList();
+                                List<ScheduledItem> todayVideoScheduledItems = Collections.filter(videoScheduledItems,
+                                    item -> item.getDate().isEqual(today));
                                 todayVideoScheduledItems.forEach(scheduledItem -> { // iterating today sessions
                                     ScheduledItem programScheduledItem = scheduledItem.getProgramScheduledItem();
                                     LocalDateTime scheduledItemStart = scheduledItem.getDate().atTime(programScheduledItem.getStartTime());
