@@ -2,12 +2,16 @@ package one.modality.event.frontoffice.activities.audiorecordings;
 
 import dev.webfx.extras.panes.GoldenRatioPane;
 import dev.webfx.extras.panes.MonoPane;
+import dev.webfx.extras.panes.ScaleMode;
 import dev.webfx.extras.panes.ScalePane;
 import dev.webfx.extras.player.Player;
 import dev.webfx.extras.player.audio.javafxmedia.JavaFXMediaAudioPlayer;
+import dev.webfx.extras.responsive.ResponsiveDesign;
 import dev.webfx.extras.styles.bootstrap.Bootstrap;
 import dev.webfx.extras.time.format.LocalizedTime;
 import dev.webfx.extras.util.control.Controls;
+import dev.webfx.extras.visual.VisualResult;
+import dev.webfx.extras.visual.controls.grid.VisualGrid;
 import dev.webfx.extras.webtext.HtmlText;
 import dev.webfx.kit.util.properties.FXProperties;
 import dev.webfx.kit.util.properties.ObservableLists;
@@ -22,6 +26,9 @@ import dev.webfx.stack.orm.entity.Entities;
 import dev.webfx.stack.orm.entity.EntityId;
 import dev.webfx.stack.orm.entity.EntityStore;
 import dev.webfx.stack.orm.entity.EntityStoreQuery;
+import dev.webfx.stack.orm.reactive.entities.entities_to_grid.EntityColumn;
+import dev.webfx.stack.orm.reactive.mapping.entities_to_visual.EntitiesToVisualResultMapper;
+import dev.webfx.stack.orm.reactive.mapping.entities_to_visual.VisualEntityColumnFactory;
 import javafx.application.Platform;
 import javafx.beans.property.ObjectProperty;
 import javafx.beans.property.SimpleObjectProperty;
@@ -33,8 +40,8 @@ import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Node;
 import javafx.scene.control.Label;
-import javafx.scene.image.ImageView;
 import javafx.scene.layout.HBox;
+import javafx.scene.layout.Region;
 import javafx.scene.layout.VBox;
 import javafx.scene.text.TextAlignment;
 import one.modality.base.client.cloudinary.ModalityCloudinary;
@@ -51,9 +58,12 @@ import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
 /**
+ * @author David Hello
  * @author Bruno Salmon
  */
 final class EventAudioPlaylistActivity extends ViewDomainActivityBase {
+
+    private static final boolean USE_VISUAL_GRID = true;
 
     private static final double IMAGE_HEIGHT = 188;
 
@@ -73,6 +83,7 @@ final class EventAudioPlaylistActivity extends ViewDomainActivityBase {
 
     private Label audioExpirationLabel;
     private final StringProperty dateFormattedProperty = new SimpleStringProperty();
+    private EntityColumn<ScheduledItem>[] audioColumns;
 
     @Override
     protected void updateModelFromContextParameters() {
@@ -103,7 +114,7 @@ final class EventAudioPlaylistActivity extends ViewDomainActivityBase {
                             eventIdContainingAudios = Entities.getPrimaryKey(currentEvent.getRepeatedEventId());
                         }
                         entityStore.executeQueryBatch(
-                                //Index 0: we look for the scheduledItem having a bookableScheduledItem which is a audio type (case of festival)
+                                //Index 0: we look for the scheduledItem having a bookableScheduledItem which is an audio type (case of festival)
                                 new EntityStoreQuery("select date, programScheduledItem.(name, timeline.(startTime, endTime)), published, event, " +
                                     " (select id from Attendance where scheduledItem=si.bookableScheduledItem and documentLine.document.person=? limit 1) as attendanceId, " +
                                     " (exists(select MediaConsumption where media.scheduledItem=si and attendance.documentLine.document.person=? and played) as alreadyPlayed), " +
@@ -111,7 +122,7 @@ final class EventAudioPlaylistActivity extends ViewDomainActivityBase {
                                     " from ScheduledItem si" +
                                     " where event=? and bookableScheduledItem.item.family.code=? and item.code=? and exists(select Attendance where scheduledItem=si.bookableScheduledItem and documentLine.(!cancelled and document.(person=? and event=? and confirmed and price_balance<=0)))" +
                                     " order by date",
-                                    new Object[]{userPersonId,userPersonId,userPersonId, eventIdContainingAudios, KnownItemFamily.AUDIO_RECORDING.getCode(), pathItemCodeProperty.get(), userPersonId,currentEvent}),
+                                    new Object[]{ userPersonId, userPersonId, userPersonId, eventIdContainingAudios, KnownItemFamily.AUDIO_RECORDING.getCode(), pathItemCodeProperty.get(), userPersonId,currentEvent }),
                                 //Index 1: we look for the scheduledItem of audio type having a bookableScheduledItem which is a teaching type (case of STTP)
                                 // TODO: for now we take only the English audio recording scheduledItem in that case. We should take the language default of the organization instead
                                 new EntityStoreQuery("select name, date, programScheduledItem.(name, timeline.(startTime, endTime)), published, event, " +
@@ -121,7 +132,7 @@ final class EventAudioPlaylistActivity extends ViewDomainActivityBase {
                                     " from ScheduledItem si" +
                                     " where event=? and bookableScheduledItem.item.family.code=? and item.code=? and exists(select Attendance where scheduledItem=si.bookableScheduledItem and documentLine.(!cancelled and document.(person=? and event=? and confirmed and price_balance<=0)))" +
                                     " order by date",
-                                    new Object[]{userPersonId,userPersonId,userPersonId, eventIdContainingAudios, KnownItemFamily.TEACHING.getCode(), KnownItem.AUDIO_RECORDING_ENGLISH.getCode(), userPersonId,currentEvent}),
+                                    new Object[]{ userPersonId, userPersonId, userPersonId, eventIdContainingAudios, KnownItemFamily.TEACHING.getCode(), KnownItem.AUDIO_RECORDING_ENGLISH.getCode(), userPersonId,currentEvent }),
                                 //Index 2: the medias
                                 new EntityStoreQuery("select url, scheduledItem.(date, event), scheduledItem.name, scheduledItem.published, durationMillis " +
                                     " from Media" +
@@ -137,6 +148,13 @@ final class EventAudioPlaylistActivity extends ViewDomainActivityBase {
                     });
             }
         }, pathEventIdProperty, pathItemCodeProperty, FXUserPersonId.userPersonIdProperty());
+
+        AudioColumnsRenderers.registerRenderers();
+        audioColumns = VisualEntityColumnFactory.get().fromJsonArray("""
+                [
+                {expression: 'this', renderer: 'audioName', minWidth: 200},
+                {expression: 'this', renderer: 'audioButtons', textAlign: 'center', hShrink: false}
+                ]""", getDomainModel(), "ScheduledItem");
     }
 
     @Override
@@ -145,15 +163,11 @@ final class EventAudioPlaylistActivity extends ViewDomainActivityBase {
         // *************************************************************************************************************
         // ********************************* Building the static part of the UI ****************************************
         // *************************************************************************************************************
-        HBox headerHBox = new HBox();
-        headerHBox.setSpacing(50);
         MonoPane imageMonoPane = new MonoPane();
-        ImageView imageView = new ImageView();
 
-        headerHBox.getChildren().add(imageMonoPane);
         Label eventLabel = Bootstrap.h2(Bootstrap.strong(I18nControls.newLabel(new I18nSubKey("expression: i18n(this)", eventProperty), eventProperty)));
-
         eventLabel.setWrapText(true);
+        eventLabel.setMinHeight(Region.USE_PREF_SIZE);
         eventLabel.setTextAlignment(TextAlignment.CENTER);
         eventLabel.setPadding(new Insets(0, 0, 12, 0));
         HtmlText eventDescriptionHTMLText = new HtmlText();
@@ -165,7 +179,21 @@ final class EventAudioPlaylistActivity extends ViewDomainActivityBase {
         VBox titleVBox = new VBox(eventLabel, eventDescriptionHTMLText, audioExpirationLabel);
         titleVBox.setMinWidth(200);
 
-        headerHBox.getChildren().add(titleVBox);
+        MonoPane responsiveHeader = new MonoPane();
+        new ResponsiveDesign(responsiveHeader)
+                // 1. Horizontal layout (for desktops) - as far as TitleVBox is not higher than the image
+                .addResponsiveLayout(/* applicability test: */ width -> {
+                            double titleVBoxWidth = width - imageMonoPane.getWidth() - 50 /* HBox spacing */;
+                            return titleVBox.prefHeight(titleVBoxWidth) <= IMAGE_HEIGHT && imageMonoPane.getWidth() > 0; // also image must be loaded
+                        }, /* apply method: */ () -> responsiveHeader.setContent(new HBox(50, imageMonoPane, titleVBox))
+                        , /* test dependencies: */ imageMonoPane.widthProperty())
+                // 2. Vertical layout (for mobiles) - when TitleVBox is too high (always applicable if 1. is not)
+                .addResponsiveLayout(/* apply method: */ () -> {
+                    VBox vBox = new VBox(10, imageMonoPane, titleVBox);
+                    vBox.setAlignment(Pos.CENTER);
+                    VBox.setMargin(titleVBox, new Insets(5, 10, 5, 10)); // Same as cell padding => vertically aligned with cell content
+                    responsiveHeader.setContent(vBox);
+                }).start();
 
         VBox audioTracksVBox = new VBox(20);
 
@@ -174,10 +202,10 @@ final class EventAudioPlaylistActivity extends ViewDomainActivityBase {
         Player audioPlayer = new JavaFXMediaAudioPlayer();
 
         VBox loadedContentVBox = new VBox(40,
-            headerHBox,
-            audioPlayer.getMediaView(),
-            listOfTrackLabel,
-            audioTracksVBox
+                responsiveHeader,
+                new ScalePane(ScaleMode.FIT_WIDTH, audioPlayer.getMediaView()),
+                listOfTrackLabel,
+                audioTracksVBox
         );
         loadedContentVBox.setMaxWidth(SessionAudioTrackView.MAX_WIDTH);
         loadedContentVBox.setAlignment(Pos.CENTER);
@@ -197,7 +225,7 @@ final class EventAudioPlaylistActivity extends ViewDomainActivityBase {
                 pageContainer.setContent(loadingContentIndicator);
                 // TODO display something else (ex: next online events to book) when the user is not logged in, or registered
             } else { // otherwise we display loadedContentVBox and set the content of audioTracksVBox
-                pageContainer.setContent(new ScalePane(loadedContentVBox));
+                pageContainer.setContent(loadedContentVBox);
                 String lang = extractLang(pathItemCodeProperty.get());
                 String cloudImagePath = ModalityCloudinary.eventCoverImagePath(event, lang);
                 ModalityCloudinary.loadImage(cloudImagePath, imageMonoPane, -1, IMAGE_HEIGHT, SvgIcons::createAudioCoverPath);
@@ -211,30 +239,43 @@ final class EventAudioPlaylistActivity extends ViewDomainActivityBase {
                 }
 
                 LocalDateTime nowInEventTimezone = Event.nowInEventTimezone();
+                String noContentI18nKey = null;
                 if (audioExpirationDate == null || audioExpirationDate.isAfter(nowInEventTimezone)) {
-                    // Does this event have audio recordings, and did the person booked and paid for them?
+                    // Does this event have audio recordings, and did the person book and pay for them?
                     if (!scheduledAudioItems.isEmpty()) { // yes => we show them as a list of playable tracks
-                        audioTracksVBox.getChildren().setAll(
-                            IntStream.range(0, scheduledAudioItems.size())
-                                .mapToObj(index ->
-                                    new SessionAudioTrackView(
-                                        scheduledAudioItems.get(index),
-                                        publishedMedias,
-                                        audioPlayer,
-                                        index + 1, //The index is used to be display in the title, to number the different tracks
-                                        scheduledAudioItems.size()).getView()
-                                )
-                                .collect(Collectors.toList()) // Collect the result as a List<Node>
-                        );
-
-                    } else { // no => we indicate that there is no recordings for that event
-                        Label noContentLabel = Bootstrap.h3(Bootstrap.textWarning(I18nControls.newLabel(AudioRecordingsI18nKeys.NoAudioRecordingForThisEvent)));
-                        noContentLabel.setPadding(new Insets(150, 0, 100, 0));
-                        audioTracksVBox.getChildren().setAll(noContentLabel);
-                        // TODO display another message when the event actually has audio recordings, but the user didn't book them
+                        if (USE_VISUAL_GRID) {
+                            AudioColumnsRenderers.setPublishedMedias(publishedMedias);
+                            AudioColumnsRenderers.setAudioPlayer(audioPlayer);
+                            VisualGrid videoTable = VisualGrid.createVisualGridWithResponsiveSkin();
+                            videoTable.setRowHeight(48);
+                            videoTable.setCellMargin(new Insets(5, 10, 5, 10));
+                            videoTable.setFullHeight(true);
+                            videoTable.setHeaderVisible(false);
+                            VisualResult rs = EntitiesToVisualResultMapper.mapEntitiesToVisualResult(scheduledAudioItems, audioColumns);
+                            videoTable.setVisualResult(rs);
+                            audioTracksVBox.getChildren().setAll(videoTable);
+                        } else {
+                            audioTracksVBox.getChildren().setAll(
+                                    IntStream.range(0, scheduledAudioItems.size())
+                                            .mapToObj(index ->
+                                                    new SessionAudioTrackView(
+                                                            scheduledAudioItems.get(index),
+                                                            publishedMedias,
+                                                            audioPlayer,
+                                                            index + 1, //The index is used to be display in the title, to number the different tracks
+                                                            scheduledAudioItems.size()).getView()
+                                            )
+                                            .collect(Collectors.toList()) // Collect the result as a List<Node>
+                            );
+                        }
+                    } else { // no => we indicate that there are no recordings for that event
+                        noContentI18nKey = AudioRecordingsI18nKeys.NoAudioRecordingForThisEvent;
                     }
                 } else {
-                    Label noContentLabel = Bootstrap.h3(Bootstrap.textWarning(I18nControls.newLabel(AudioRecordingsI18nKeys.ContentExpired)));
+                    noContentI18nKey = AudioRecordingsI18nKeys.ContentExpired;
+                }
+                if (noContentI18nKey != null) {
+                    Label noContentLabel = Bootstrap.h3(Bootstrap.textWarning(I18nControls.newLabel(noContentI18nKey)));
                     noContentLabel.setPadding(new Insets(150, 0, 100, 0));
                     audioTracksVBox.getChildren().setAll(noContentLabel);
                 }

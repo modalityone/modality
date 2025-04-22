@@ -29,6 +29,9 @@ import one.modality.base.shared.entities.KnownItemFamily;
 import one.modality.crm.shared.services.authn.fx.FXUserPersonId;
 import one.modality.event.frontoffice.medias.EventThumbnailView;
 
+/**
+ * @author David Hello
+ */
 final class AudioRecordingsActivity extends ViewDomainActivityBase {
 
     private static final int BOX_WIDTH = 263;
@@ -49,7 +52,7 @@ final class AudioRecordingsActivity extends ViewDomainActivityBase {
                 // See in backoffice ProgramActivity doc directory for more information
                 entityStore.<DocumentLine>executeQuery(
                    "select document.event.(name,label.(de,en,es,fr,pt), shortDescription, audioExpirationDate, startDate, endDate, repeatedEvent), item.code, item.family.code, " +
-                       //We look if there are published audio ScheduledItem of type audio, whose bookableScheduledItem has  been booked
+                       //We look if there are published audio ScheduledItem of type audio, whose bookableScheduledItem has been booked
                        " (exists(select ScheduledItem where item.family.code=? and published and bookableScheduledItem.(event=coalesce(dl.document.event.repeatedEvent, dl.document.event) and item=dl.item))) as published " +
                        //We check if the user has booked, not cancelled and paid the recordings
                        " from DocumentLine dl where !cancelled and dl.document.(person=? and confirmed and price_balance<=0) " +
@@ -58,7 +61,7 @@ final class AudioRecordingsActivity extends ViewDomainActivityBase {
                        " and (" +
                        // 1/ there is a ScheduledItem of audio family type whose bookableScheduledItem has been booked (KBS3 setup)
                        " exists (select ScheduledItem audioSi where item.family.code=? and exists(select Attendance where documentLine=dl and scheduledItem=audioSi.bookableScheduledItem))" +
-                       // 2/ Or KBS3 / KBS2 setup (this allows to display the audios that have been booked in the past with KBS2 events, event if we can't display them)
+                       // 2/ Or KBS3 / KBS2 setup (this allows displaying the audios that have been booked in the past with KBS2 events, event if we can't display them)
                        " or item.family.code=?) and document.event.kbs3=true " +
                        " order by document.event.startDate desc",
                         new Object[]{ KnownItemFamily.AUDIO_RECORDING.getCode(), userPersonId, KnownItemFamily.AUDIO_RECORDING.getCode(), KnownItemFamily.AUDIO_RECORDING.getCode()})
@@ -94,7 +97,7 @@ final class AudioRecordingsActivity extends ViewDomainActivityBase {
             //If itemCode
             if (itemCode == null) {
                 /// If the itemCode is null, we take the family
-                /// For the case of STTP (the attendance is linked to a teaching bookable scheduledItem), the family is teach
+                /// For the case of STTP (the attendance is linked to a teaching bookable scheduledItem), the family is "teach"
                 itemCode = dl.getItem().getFamily().getCode();
             }
             boolean published = Booleans.isTrue(dl.getBooleanFieldValue("published"));

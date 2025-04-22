@@ -119,7 +119,6 @@ VisualGrid {
 
 * {
     -webfx-visualgrid-border-color: #D3D3D3;
-    /*-webfx-visualgrid-row-height: 28px;*/
     -webfx-visualgrid-selection-color: #AED6F1;
 }
 
@@ -146,13 +145,6 @@ VisualGrid {
 
 .table-row-cell .table-cell {
     -fx-padding: 1.4mm 1.4mm 0.6mm 1.4mm;
-}
-
-.table-row-cell .text, .column-header .text, .grid .text, .grid Text { /* texts displayed in tables */
-   -fx-font-family: "Roboto"; /* embedded font to be sure it can correctly render bold and italic on all systems */
-   -fx-font-size: 13.5px;
-   -fx-font-smoothing-type: gray;
-   -fx-fill: rgba(0, 0, 0, 0.7);
 }
 
 .grid .scroll-pane {

@@ -35,7 +35,7 @@ import java.time.LocalTime;
 import java.util.List;
 
 /**
- * @author Bruno Salmon
+ * @author David Hello
  */
 final class SessionAudioTrackView {
 
