@@ -186,10 +186,10 @@ final class Page2EventDaysWithVideoActivity extends ViewDomainActivityBase {
         VideoColumnsFormattersAndRenderers.registerRenderers(getHistory());
         videoColumns = VisualEntityColumnFactory.get().fromJsonArray("""
             [
-            {expression: 'date', label: 'Date', format: 'videoDate'},
-            {expression: '[coalesce(startTime, programScheduledItem.startTime), coalesce(endTime, programScheduledItem.endTime)]', label: 'UK time', format: 'videoTimeRange', textAlign: 'center'},
+            {expression: 'date', label: 'Date', format: 'videoDate', hShrink: false},
+            {expression: '[coalesce(startTime, programScheduledItem.startTime), coalesce(endTime, programScheduledItem.endTime)]', label: 'UK time', format: 'videoTimeRange', textAlign: 'center', hShrink: false},
             {expression: 'coalesce(name, programScheduledItem.name)', label: 'Name', renderer: 'ellipsisLabel', minWidth: 200},
-            {expression: 'this', label: 'Status', renderer: 'videoStatus', textAlign: 'center'}
+            {expression: 'this', label: 'Status', renderer: 'videoStatus', textAlign: 'center', hShrink: false}
             ]""", getDomainModel(), "ScheduledItem");
     }
 
