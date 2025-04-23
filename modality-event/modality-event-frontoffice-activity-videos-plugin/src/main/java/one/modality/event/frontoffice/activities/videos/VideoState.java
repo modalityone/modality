@@ -6,6 +6,7 @@ import one.modality.base.shared.entities.Event;
 import one.modality.base.shared.entities.ScheduledItem;
 import one.modality.base.shared.entities.markers.HasEndTime;
 
+import java.time.Duration;
 import java.time.LocalDateTime;
 
 /**
@@ -41,5 +42,15 @@ final class VideoState {
 
     static boolean isVideoExpired(ScheduledItem scheduledItem) {
         return Objects.areEquals(getVideoStatusI18nKey(scheduledItem), VideosI18nKeys.Expired);
+    }
+
+    static String formatDuration(Duration duration) { // Not sure if it's the best place for this method, but ok for now
+        //TODO: use LocalizedTime instead
+        if (duration == null)
+            return "xx:xx";
+        int hours = (int) duration.toHours();
+        int minutes = ((int) duration.toMinutes()) % 60;
+        int seconds = ((int) duration.toSeconds()) % 60;
+        return (hours < 10 ? "0" : "") + hours + ":" + (minutes < 10 ? "0" : "") + minutes + ":" + (seconds < 10 ? "0" : "") + seconds;
     }
 }

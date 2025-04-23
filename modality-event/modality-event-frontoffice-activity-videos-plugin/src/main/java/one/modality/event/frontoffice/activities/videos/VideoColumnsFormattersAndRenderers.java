@@ -4,6 +4,7 @@ import dev.webfx.extras.cell.renderer.ValueRendererRegistry;
 import dev.webfx.extras.styles.bootstrap.Bootstrap;
 import dev.webfx.extras.time.format.LocalizedTime;
 import dev.webfx.extras.type.PrimType;
+import dev.webfx.extras.util.layout.Layouts;
 import dev.webfx.platform.uischeduler.UiScheduler;
 import dev.webfx.platform.util.time.Times;
 import dev.webfx.platform.windowhistory.spi.BrowsingHistory;
@@ -16,6 +17,7 @@ import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
+import javafx.scene.control.Labeled;
 import javafx.scene.layout.VBox;
 import one.modality.base.client.time.FrontOfficeTimeFormats;
 import one.modality.base.shared.entities.Event;
@@ -27,41 +29,49 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
 
+/**
+ * @author David Hello
+ */
 final class VideoColumnsFormattersAndRenderers {
 
-    private static BrowsingHistory BROWSING_HISTORY;
-
     static {
-        FormatterRegistry.registerFormatter("videoDate", PrimType.STRING, date -> LocalizedTime.formatMonthDayProperty((LocalDate) date, FrontOfficeTimeFormats.VOD_TODAY_MONTH_DAY_FORMAT));
+        // videoDate
+        FormatterRegistry.registerFormatter("videoDate", PrimType.STRING, date ->
+                LocalizedTime.formatMonthDayProperty((LocalDate) date, FrontOfficeTimeFormats.VOD_TODAY_MONTH_DAY_FORMAT));
+        // videoTimeRange
         FormatterRegistry.registerFormatter("videoTimeRange", PrimType.STRING, timeRange -> {
             Object[] times = (Object[]) timeRange;
             return LocalizedTime.formatLocalTimeRangeProperty((LocalTime) times[0], (LocalTime) times[1], FrontOfficeTimeFormats.VIDEO_DAY_TIME_FORMAT);
         });
+        // videoStatus
         ValueRendererRegistry.registerValueRenderer("videoStatus", (value, context) -> {
             ScheduledItem videoScheduledItem = (ScheduledItem) value;
             String i18nKey = VideoState.getVideoStatusI18nKey(videoScheduledItem);
-            VBox vBoxStatusAndButtonContainer = new VBox();
-            vBoxStatusAndButtonContainer.setPadding(new Insets(10));
-            vBoxStatusAndButtonContainer.setAlignment(Pos.CENTER);
             Button actionButton = Bootstrap.dangerButton(I18nControls.newButton(VideosI18nKeys.Watch));
             actionButton.setGraphicTextGap(10);
             Label statusLabel = I18nControls.newLabel(I18nKeys.upperCase(i18nKey));
-            Label availableUntilLabel =new Label();
-            //availableUntilLabel.setPadding(new Insets(10,0,10,0));
-            availableUntilLabel.setManaged(false);
-            availableUntilLabel.setVisible(false);
-            computeStatusLabelAndWatchButton(videoScheduledItem, statusLabel, availableUntilLabel, actionButton);
-            vBoxStatusAndButtonContainer.getChildren().setAll(actionButton,statusLabel,availableUntilLabel);
+            Label availableUntilLabel = new Label();
+            hideLabel(availableUntilLabel);
+            computeStatusLabelAndWatchButton(videoScheduledItem, statusLabel, availableUntilLabel, actionButton, context.getAppContext());
+            VBox vBoxStatusAndButtonContainer = new VBox(
+                    actionButton,
+                    statusLabel,
+                    availableUntilLabel
+            );
+            vBoxStatusAndButtonContainer.setPadding(new Insets(10));
+            vBoxStatusAndButtonContainer.setAlignment(Pos.CENTER);
             return vBoxStatusAndButtonContainer;
         });
     }
 
-    static void registerRenderers(BrowsingHistory browsingHistory) {
-        // Actually done (only once) in static initializer above
-        BROWSING_HISTORY = browsingHistory;
+    static void registerRenderers() {
+        // Actually done (only once) in the static initializer above
     }
 
-    private static void computeStatusLabelAndWatchButton(ScheduledItem scheduledItem, Label statusLabel, Label availableUntilLabel, Button actionButton) {
+    // PRIVATE API
+
+    private static void computeStatusLabelAndWatchButton(ScheduledItem scheduledItem, Label statusLabel, Label availableUntilLabel, Button actionButton, BrowsingHistory history) {
+        Runnable refresher = () -> computeStatusLabelAndWatchButton(scheduledItem, statusLabel, availableUntilLabel, actionButton, history);
         //THE STATE
         LocalDateTime sessionStart;
         LocalDateTime sessionEnd;
@@ -86,11 +96,10 @@ final class VideoColumnsFormattersAndRenderers {
         LocalDateTime nowInEventTimezone = Event.nowInEventTimezone();
         if (Times.isBetween(nowInEventTimezone, sessionStart.minusMinutes(2), sessionEnd)) {
             I18nControls.bindI18nProperties(statusLabel, I18nKeys.upperCase(VideosI18nKeys.LiveNow));
-          //  showButton(actionButton,e -> BROWSING_HISTORY.push(Page3LivestreamPlayerRouting.getLivestreamPath(scheduledItem.getEventId())));
             Duration duration = Duration.between(nowInEventTimezone, sessionEnd);
             if (duration.getSeconds() > 0) {
                 //Here the event is started but not finished
-                scheduleRefreshUI(duration.getSeconds(), scheduledItem, statusLabel, availableUntilLabel,actionButton);
+                scheduleRefreshUI(duration.getSeconds(), refresher);
             }
             return;
         }
@@ -101,9 +110,9 @@ final class VideoColumnsFormattersAndRenderers {
 
             //If we are less than 3 hours before the session
             if (duration.getSeconds() > 0 && duration.getSeconds() < 3600 * 3) {
-                I18nControls.bindI18nProperties(statusLabel, I18nKeys.upperCase(VideosI18nKeys.StartingIn1), formatDuration(duration));
+                I18nControls.bindI18nProperties(statusLabel, I18nKeys.upperCase(VideosI18nKeys.StartingIn1), VideoState.formatDuration(duration));
                 //We refresh every second
-                scheduleRefreshUI(1,scheduledItem,statusLabel,availableUntilLabel,actionButton);
+                scheduleRefreshUI(1, refresher);
                 //If we are less than 30 minutes before the session, we display the play button
                 if (duration.getSeconds() < 60 * 30) {
                   //  showButton(actionButton,e -> BROWSING_HISTORY.push(Page3LivestreamPlayerRouting.getLivestreamPath(scheduledItem.getEventId())));
@@ -112,7 +121,7 @@ final class VideoColumnsFormattersAndRenderers {
                 return;
             } else { //Here we are more than 3 hours before the session
                 I18nControls.bindI18nProperties(statusLabel, I18nKeys.upperCase(VideosI18nKeys.OnTime));
-                scheduleRefreshUI(60,scheduledItem,statusLabel,availableUntilLabel,actionButton);
+                scheduleRefreshUI(60, refresher);
                 hideButton(actionButton);
                 showLabel(statusLabel);
                 return;
@@ -120,7 +129,7 @@ final class VideoColumnsFormattersAndRenderers {
         }
 
         // 2ND CASE - LIVESTREAM IS FINISHED ------------------------//
-        // SubCase A : the video has expired
+        // SubCase A: the video has expired
         LocalDateTime expirationDate = event.getVodExpirationDate();
         //We look if the current video is expired
         if (scheduledItem.getExpirationDate() != null) {
@@ -135,16 +144,16 @@ final class VideoColumnsFormattersAndRenderers {
             return;
         }
 
-        // SubCase B :  The recording has been published (and not expired)
+        // SubCase B: The recording has been published (and not expired)
         if (scheduledItem.isPublished()) {
             I18nControls.bindI18nProperties(statusLabel, I18nKeys.upperCase(VideosI18nKeys.Available));
             showButton(actionButton,e -> {
-                BROWSING_HISTORY.push(Page4SessionVideoPlayerRouting.getVideoOfSessionPath(scheduledItem.getId()));
+                history.push(Page4SessionVideoPlayerRouting.getVideoOfSessionPath(scheduledItem.getId()));
                 transformButtonFromPlayToPlayAgain(actionButton);
             });
             if(scheduledItem.getExpirationDate()!=null) {
                 I18nControls.bindI18nProperties(availableUntilLabel, VideosI18nKeys.VideoAvailableUntil1,LocalizedTime.formatLocalDateTimeProperty(expirationDate,"dd MMM '-' HH.mm"));
-                showAvailableUntil(availableUntilLabel);
+                showLabel(availableUntilLabel);
             }
             hideLabel(statusLabel);
 
@@ -152,22 +161,22 @@ final class VideoColumnsFormattersAndRenderers {
                 //We schedule a refresh so the UI is updated when the expirationDate is reached
                 Duration duration = Duration.between(nowInEventTimezone, expirationDate);
                 if (duration.getSeconds() > 0) {
-                    scheduleRefreshUI(duration.getSeconds(),scheduledItem,statusLabel,availableUntilLabel,actionButton);
+                    scheduleRefreshUI(duration.getSeconds(), refresher);
                 }
             }
             return;
         }
 
-        // SubCase C : The recording has been delayed
+        // SubCase C: The recording has been delayed
         if (scheduledItem.isVodDelayed()) {
             I18nControls.bindI18nProperties(statusLabel, I18nKeys.upperCase(VideosI18nKeys.VideoDelayed));
             hideButton(actionButton);
             showLabel(statusLabel);
-            scheduleRefreshUI(60,scheduledItem,statusLabel,availableUntilLabel,actionButton);
+            scheduleRefreshUI(60, refresher);
             return;
         }
 
-        // SubCase D :  The live has ended, we're waiting for the video to be published
+        // SubCase D: The live has ended, we're waiting for the video to be published
         if (!scheduledItem.isPublished()) {
             //The default value of the processing time if this parameter has not been entered
             int vodProcessingTimeMinute = getVodProcessingTimeMinute(scheduledItem);
@@ -182,34 +191,26 @@ final class VideoColumnsFormattersAndRenderers {
             I18nControls.bindI18nProperties(statusLabel, I18nKeys.upperCase(VideosI18nKeys.RecordingSoonAvailable));
             hideButton(actionButton);
             showLabel(statusLabel);
-            //A push notification will tell us when the video recording will be available
+            //A push notification will tell us when the video recording is available
         }
     }
 
-    private static void showAvailableUntil(Label availableUntilLabel) {
-        availableUntilLabel.setVisible(true);
-        availableUntilLabel.setManaged(true);
+    private static void hideLabel(Labeled label) {
+        Layouts.setManagedAndVisibleProperties(label, false);
     }
 
+    private static void showLabel(Labeled label) {
+        Layouts.setManagedAndVisibleProperties(label, true);
+    }
 
-    private static void hideLabel(Label label) {
-        label.setVisible(false);
-        label.setManaged(false);
-    }
-    private static void showLabel(Label label) {
-        label.setVisible(true);
-        label.setManaged(true);
-    }
     private static void hideButton(Button button) {
-        button.setVisible(false);
+        hideLabel(button);
         button.setOnAction(null);
-        button.setManaged(false);
     }
 
     private static void showButton(Button button, EventHandler<ActionEvent> actionEvent) {
-        button.setVisible(true);
+        showLabel(button);
         button.setOnAction(actionEvent);
-        button.setManaged(true);
     }
 
     private static void transformButtonFromPlayToPlayAgain(Button actionButton) {
@@ -225,21 +226,12 @@ final class VideoColumnsFormattersAndRenderers {
         return vodProcessingTimeMinute;
     }
 
-    private static String formatDuration(Duration duration) {
-        if (duration == null)
-            return "xx:xx";
-        int hours = (int) duration.toHours();
-        int minutes = ((int) duration.toMinutes()) % 60;
-        int seconds = ((int) duration.toSeconds()) % 60;
-        return (hours < 10 ? "0" : "") + hours + ":" + (minutes < 10 ? "0" : "") + minutes + ":" + (seconds < 10 ? "0" : "") + seconds;
-    }
-
-    private static void scheduleRefreshUI(long delaySeconds, ScheduledItem scheduledItem, Label statusLabel, Label availableUntilLabel,Button actionButton) {
+    private static void scheduleRefreshUI(long delaySeconds, Runnable refresher) {
         long delayMillis = delaySeconds * 1000;
         if (delaySeconds > 59) {
-            //If we want to refresh more than 1 minutes, we add a second to make sure the calculation has time to proceed before the refresh
+            //If we want to refresh more than 1 minute, we add a second to make sure the calculation has time to proceed before the refresh
             delayMillis = delayMillis + 1000;
         }
-        UiScheduler.scheduleDelay(delayMillis, () -> computeStatusLabelAndWatchButton(scheduledItem, statusLabel, availableUntilLabel,actionButton));
+        UiScheduler.scheduleDelay(delayMillis, refresher);
     }
 }

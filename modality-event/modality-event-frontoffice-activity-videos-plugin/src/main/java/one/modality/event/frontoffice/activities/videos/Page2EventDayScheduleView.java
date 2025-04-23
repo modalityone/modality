@@ -102,7 +102,7 @@ final class Page2EventDayScheduleView {
         if (displayHeader) {
             addHeaderRow();
         } else {
-            if (!Boolean.TRUE.equals(dayScheduledVideos.get(0).getEvent().isRecurring())) // isRecurring() may return null if type is not set
+            if (!Boolean.TRUE.equals(dayScheduledVideos.get(0).getEvent().isRecurring())) // isRecurring() may return null if the type is not set
                 addInvisibleSeparator();
         }
 
@@ -166,7 +166,7 @@ final class Page2EventDayScheduleView {
 
     private void addInvisibleSeparator() {
         //separator2.setVisible(false);
-        // separator2.setPadding(new Insets(20, 0, 20, 0));
+        //separator2.setPadding(new Insets(20, 0, 20, 0));
         //mainVBox.getChildren().add(separator2);
     }
 
@@ -285,7 +285,6 @@ final class Page2EventDayScheduleView {
         }
 
         private void computeStatusLabelAndWatchButton() {
-
             //THE STATE
             LocalDateTime sessionStart;
             LocalDateTime sessionEnd;
@@ -321,7 +320,7 @@ final class Page2EventDayScheduleView {
 
                 //We display the countdown 3 hours before the session
                 if (duration.getSeconds() > 0 && duration.getSeconds() < 3600 * 3) {
-                    I18nControls.bindI18nProperties(statusLabel, I18nKeys.upperCase(VideosI18nKeys.StartingIn1), formatDuration(duration));
+                    I18nControls.bindI18nProperties(statusLabel, I18nKeys.upperCase(VideosI18nKeys.StartingIn1), VideoState.formatDuration(duration));
                     //We refresh every second
                     scheduleRefreshUI(1);
                     //We display the play button 30 minutes before the session
@@ -371,7 +370,7 @@ final class Page2EventDayScheduleView {
                 return;
             }
 
-            //case of the video delayed: the video is delayed
+            // in case the video delayed
             if (scheduledItem.isVodDelayed()) {
                 I18nControls.bindI18nProperties(statusLabel, I18nKeys.upperCase(VideosI18nKeys.VideoDelayed));
                 hideActionButton();
@@ -386,20 +385,20 @@ final class Page2EventDayScheduleView {
                 if (nowInEventTimezone.isAfter(sessionEnd.plusMinutes(vodProcessingTimeMinute))) {
                     I18nControls.bindI18nProperties(statusLabel, I18nKeys.upperCase(VideosI18nKeys.VideoDelayed));
                     hideActionButton();
-                    //A push notification will tell us when the video recording will be available
+                    //A push notification will tell us when the video recording is available
                     return;
                 }
 
                 I18nControls.bindI18nProperties(statusLabel, I18nKeys.upperCase(VideosI18nKeys.RecordingSoonAvailable));
                 hideActionButton();
-                //A push notification will tell us when the video recording will be available
+                //A push notification will tell us when the video recording is available
             }
         }
 
         private void scheduleRefreshUI(long delaySeconds) {
             long delayMillis = delaySeconds * 1000;
             if (delaySeconds > 59) {
-                //If we want to refresh more than 1 minutes, we add a second to make sure the calculation has time to proceed before the refresh
+                //If we want to refresh more than 1 minute, we add a second to make sure the calculation has time to proceed before the refresh
                 delayMillis = delayMillis + 1000;
             }
             UiScheduler.scheduleDelay(delayMillis, this::computeStatusLabelAndWatchButton);
@@ -419,12 +418,4 @@ final class Page2EventDayScheduleView {
         }
     }
 
-    private static String formatDuration(Duration duration) {
-        if (duration == null)
-            return "xx:xx";
-        int hours = (int) duration.toHours();
-        int minutes = ((int) duration.toMinutes()) % 60;
-        int seconds = ((int) duration.toSeconds()) % 60;
-        return (hours < 10 ? "0" : "") + hours + ":" + (minutes < 10 ? "0" : "") + minutes + ":" + (seconds < 10 ? "0" : "") + seconds;
-    }
 }

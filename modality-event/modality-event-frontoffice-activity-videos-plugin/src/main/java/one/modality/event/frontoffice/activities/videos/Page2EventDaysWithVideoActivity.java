@@ -80,7 +80,7 @@ final class Page2EventDaysWithVideoActivity extends ViewDomainActivityBase {
 
     private final ObjectProperty<Object> pathEventIdProperty = new SimpleObjectProperty<>(); // The event id from the path
     private final ObjectProperty<Event> eventProperty = new SimpleObjectProperty<>(); // The event loaded from the event id
-    private final ObservableList<ScheduledItem> videoScheduledItems = FXCollections.observableArrayList(); // The list of all videos of that event
+    private final ObservableList<ScheduledItem> videoScheduledItems = FXCollections.observableArrayList(); // The list of all videos for that event
 
 
     private final Label videoExpirationLabel = new Label();
@@ -129,7 +129,7 @@ final class Page2EventDaysWithVideoActivity extends ViewDomainActivityBase {
                         Event eventContainingVideos = Objects.coalesce(currentEvent.getRepeatedEvent(), currentEvent);
                         // We load all video scheduled items booked by the user for the event (booking must be confirmed
                         // and paid). They will be grouped by day in the UI.
-                        // Note: double dots such as programScheduledItem.timeline..startTime means we do a left join, that allow null value (if the type of event is recurring, the timeline of the programScheduledItem is null
+                        // Note: double dots such as programScheduledItem.timeline..startTime means we do a left join that allows null value (if the event is recurring, the timeline of the programScheduledItem is null)
                         entityStore.<ScheduledItem>executeQuery("select name, date, expirationDate, programScheduledItem.(name, startTime, endTime, timeline.(startTime, endTime)), published, event.(name, type.recurringItem, livestreamUrl, recurringWithVideo), vodDelayed, " +
                                     " (exists(select MediaConsumption where scheduledItem=si and attendance.documentLine.document.person=?) as attended), " +
                                     " (select id from Attendance where scheduledItem=si.bookableScheduledItem and documentLine.document.person=? limit 1) as attendanceId " +
@@ -183,7 +183,7 @@ final class Page2EventDaysWithVideoActivity extends ViewDomainActivityBase {
                     });
             }
         }, pathEventIdProperty, FXUserPersonId.userPersonIdProperty());
-        VideoColumnsFormattersAndRenderers.registerRenderers(getHistory());
+        VideoColumnsFormattersAndRenderers.registerRenderers();
         videoColumns = VisualEntityColumnFactory.get().fromJsonArray("""
             [
             {expression: 'date', label: 'Date', format: 'videoDate', hShrink: false},
@@ -228,7 +228,7 @@ final class Page2EventDaysWithVideoActivity extends ViewDomainActivityBase {
             .addResponsiveLayout(/* apply method: */ () -> {
                 VBox vBox = new VBox(10, eventImageContainer, titleVBox);
                 vBox.setAlignment(Pos.CENTER);
-                VBox.setMargin(titleVBox, new Insets(5, 10, 5, 10)); // Same as cell padding => vertically aligned with cells content
+                VBox.setMargin(titleVBox, new Insets(5, 10, 5, 10)); // Same as cell padding => vertically aligned with cell content
                 responsiveHeader.setContent(vBox);
             }).start();
 
@@ -321,8 +321,8 @@ final class Page2EventDaysWithVideoActivity extends ViewDomainActivityBase {
 
         FXProperties.runNowAndOnPropertyChange(this::displayHideLiveStreamBox, displayLivestreamVideoProperty);
 
-        //When the livestream collapse pane is collapsed, we pause the livestreamPlayer so the full screen orange pane
-        //in not displayed
+        //When the livestream collapse pane is collapsed, we pause the livestreamPlayer so the full-screen orange pane
+        //is not displayed
         FXProperties.runNowAndOnPropertyChange(()-> {
             if (livestreamCollapsePane.collapsedProperty().get())
                 livestreamPlayer.pause();
@@ -366,6 +366,7 @@ final class Page2EventDaysWithVideoActivity extends ViewDomainActivityBase {
         videoTable.setCellMargin(new Insets(5, 10, 5, 10));
         videoTable.setFullHeight(true);
         videoTable.setHeaderVisible(true);
+        videoTable.setAppContext(getHistory()); // Passing the history as appContext
         // Moving expired videos at the end of the list
         SortedList<ScheduledItem> videoScheduledItemsExpiredLast = videoScheduledItems.sorted((v1, v2) ->
             Boolean.compare(VideoState.isVideoExpired(v1), VideoState.isVideoExpired(v2)));
