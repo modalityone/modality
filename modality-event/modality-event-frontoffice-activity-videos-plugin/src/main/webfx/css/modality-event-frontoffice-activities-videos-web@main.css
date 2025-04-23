@@ -12,8 +12,8 @@
     text-align: left; /* Aligns text */
  }
 
- .livestream {
-     font-weight: 600; /* 'medium' weight equivalent in CSS - 500 in OpenJFX  */
+ .livestream .grid-head {
+    font-weight: 600;
  }
 
 .livestream .small {

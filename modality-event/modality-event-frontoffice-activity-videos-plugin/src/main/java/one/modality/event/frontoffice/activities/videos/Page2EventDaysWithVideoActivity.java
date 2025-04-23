@@ -46,6 +46,8 @@ import javafx.scene.layout.HBox;
 import javafx.scene.layout.Region;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
+import javafx.scene.text.Font;
+import javafx.scene.text.FontWeight;
 import javafx.scene.text.TextAlignment;
 import one.modality.base.client.cloudinary.ModalityCloudinary;
 import one.modality.base.client.icons.SvgIcons;
@@ -202,22 +204,30 @@ final class Page2EventDaysWithVideoActivity extends ViewDomainActivityBase {
 
         // Building the loaded content, starting with the header
         MonoPane eventImageContainer = new MonoPane();
-        Label eventLabel = Bootstrap.h2(Bootstrap.strong(I18nControls.newLabel(new I18nSubKey("expression: i18n(this)", eventProperty), eventProperty)));
+        Label eventLabel = Bootstrap.strong(I18nControls.newLabel(new I18nSubKey("expression: i18n(this)", eventProperty), eventProperty));
         eventLabel.setWrapText(true);
         eventLabel.setTextAlignment(TextAlignment.CENTER);
         eventLabel.setPadding(new Insets(0, 0, 12, 0));
-        HtmlText eventDescriptionHtmlText = new HtmlText();
-        I18n.bindI18nTextProperty(eventDescriptionHtmlText.textProperty(), new I18nSubKey("expression: i18n(shortDescription)", eventProperty), eventProperty);
 
-        eventDescriptionHtmlText.setMaxHeight(60);
+        HtmlText eventDescriptionHTMLText = new HtmlText();
+        I18n.bindI18nTextProperty(eventDescriptionHTMLText.textProperty(), new I18nSubKey("expression: shortDescription", eventProperty), eventProperty);
+        eventDescriptionHTMLText.managedProperty().bind(eventDescriptionHTMLText.textProperty().isNotEmpty());
+        eventDescriptionHTMLText.setMaxHeight(60);
+
+        videoExpirationLabel.setWrapText(true);
         videoExpirationLabel.setPadding(new Insets(30, 0, 0, 0));
-        VBox titleVBox = new VBox(eventLabel, eventDescriptionHtmlText, videoExpirationLabel);
+        VBox titleVBox = new VBox(eventLabel, eventDescriptionHTMLText, videoExpirationLabel);
 
         MonoPane responsiveHeader = new MonoPane();
         new ResponsiveDesign(responsiveHeader)
             // 1. Horizontal layout (for desktops) - as far as TitleVBox is not higher than the image
             .addResponsiveLayout(/* applicability test: */ width -> {
                     double titleVBoxWidth = width - eventImageContainer.getWidth() - 50 /* HBox spacing */;
+                    double fontSize = Double.min(30,titleVBoxWidth * 0.08);
+                    if(fontSize<15) fontSize = 15;
+                    //In JavaFx, the Css has priority on Font, that's why we do a setStyle after. In web, the Font has priority on Css
+                    eventLabel.setFont(Font.font("System", FontWeight.BOLD, fontSize));
+                    eventLabel.setStyle("font-size: " + fontSize);
                     return titleVBox.prefHeight(titleVBoxWidth) <= IMAGE_HEIGHT && eventImageContainer.getWidth() > 0; // also image must be loaded
                 }, /* apply method: */ () -> responsiveHeader.setContent(new HBox(50, eventImageContainer, titleVBox))
                 , /* test dependencies: */ eventImageContainer.widthProperty())

@@ -3,10 +3,12 @@ package one.modality.event.frontoffice.activities.audiorecordings;
 import dev.webfx.extras.cell.renderer.ValueRendererRegistry;
 import dev.webfx.extras.media.metadata.MediaMetadataBuilder;
 import dev.webfx.extras.player.Player;
+import dev.webfx.extras.player.audio.javafxmedia.AudioMediaView;
 import dev.webfx.extras.styles.bootstrap.Bootstrap;
+import dev.webfx.extras.time.format.LocalizedTime;
 import dev.webfx.platform.blob.spi.BlobProvider;
 import dev.webfx.platform.uischeduler.UiScheduler;
-import dev.webfx.platform.util.Numbers;
+import dev.webfx.platform.util.Booleans;
 import dev.webfx.platform.util.Objects;
 import dev.webfx.platform.util.collection.Collections;
 import dev.webfx.stack.i18n.controls.I18nControls;
@@ -15,13 +17,18 @@ import dev.webfx.stack.ui.operation.OperationUtil;
 import javafx.geometry.Pos;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
-import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Region;
+import javafx.scene.layout.VBox;
 import one.modality.base.client.bootstrap.ModalityStyle;
+import one.modality.base.client.time.FrontOfficeTimeFormats;
 import one.modality.base.shared.entities.Media;
 import one.modality.base.shared.entities.ScheduledItem;
+import one.modality.base.shared.entities.Timeline;
 import one.modality.event.frontoffice.medias.MediaConsumptionRecorder;
+
+import java.time.LocalDate;
+import java.time.LocalTime;
 
 /**
  * @author Bruno Salmon
@@ -31,15 +38,32 @@ final class AudioColumnsRenderers {
     static {
         ValueRendererRegistry.registerValueRenderer("audioName", (value, context) -> {
             ScheduledItem audio = (ScheduledItem) value;
-            Label label = new Label(getAudioName(audio));
-            label.setWrapText(true);
-            label.setMinHeight(Region.USE_PREF_SIZE);
-            BorderPane borderPane = new BorderPane();
-            borderPane.setLeft(ValueRendererRegistry.renderLabel(Numbers.twoDigits(context.getRowIndex() + 1) + ". ", true, true));
-            borderPane.setCenter(label);
-            BorderPane.setAlignment(borderPane.getLeft(), Pos.CENTER_LEFT);
-            BorderPane.setAlignment(borderPane.getCenter(), Pos.CENTER_LEFT);
-            return borderPane;
+            Label titleLabel = new Label(getAudioName(audio));
+            titleLabel.getStyleClass().add("description");
+            titleLabel.setWrapText(true);
+            titleLabel.setMinHeight(Region.USE_PREF_SIZE);
+            LocalDate date = audio.getDate();
+            Timeline timeline = audio.getProgramScheduledItem().getTimeline();
+            LocalTime startTime = timeline == null ? null : timeline.getStartTime();
+            Label dateLabel = new Label();
+            dateLabel.textProperty().bind(LocalizedTime.formatLocalDateTimeProperty(date, startTime, FrontOfficeTimeFormats.AUDIO_TRACK_DATE_TIME_FORMAT));
+            dateLabel.getStyleClass().add(ModalityStyle.TEXT_COMMENT);
+            long durationMillis;
+            AudioColumnsContext audioContext = context.getAppContext();
+            if (!audioContext.getPublishedMedias().isEmpty()) {
+                Media firstMedia = Collections.findFirst(audioContext.getPublishedMedias(), media -> Entities.sameId(audio, media.getScheduledItem()));
+                if (firstMedia != null) {
+                    durationMillis = firstMedia.getDurationMillis();
+                    dateLabel.textProperty().unbind();
+                    dateLabel.setText(AudioMediaView.formatDuration(durationMillis) + " • " + dateLabel.getText());
+                }
+            }
+            VBox vbox = new VBox();
+            vbox.getStyleClass().addAll("audio-library");
+            vbox.setAlignment(Pos.CENTER_LEFT);
+
+            vbox.getChildren().addAll(titleLabel,dateLabel);
+            return vbox;
         });
         ValueRendererRegistry.registerValueRenderer("audioButtons", (value, context) -> {
             ScheduledItem audio = (ScheduledItem) value;
@@ -48,13 +72,12 @@ final class AudioColumnsRenderers {
             if (firstMedia == null) {
                 Label noMediaLabel = I18nControls.newLabel(AudioRecordingsI18nKeys.AudioRecordingNotYetPublished);
                 noMediaLabel.getStyleClass().add(ModalityStyle.TEXT_COMMENT);
-                return noMediaLabel;
+                HBox hbox = new HBox(noMediaLabel);
+                hbox.setAlignment(Pos.CENTER);
+                hbox.getStyleClass().addAll("audio-library");
+                return hbox;
             }
-            Player audioPlayer = audioContext.getAudioPlayer();
-            HBox hBox = new HBox(10,
-                    createAudioButton(audio, firstMedia, audioPlayer, false), // Play button
-                    createAudioButton(audio, firstMedia, audioPlayer, true)   // Download button
-            );
+            HBox hBox = new HBox(10, createAudioButton(audio, firstMedia, audioContext.getAudioPlayer(), false), createAudioButton(audio, firstMedia, audioContext.getAudioPlayer(),true));
             hBox.setAlignment(Pos.CENTER_LEFT);
             return hBox;
         });
@@ -63,6 +86,8 @@ final class AudioColumnsRenderers {
     private static Button createAudioButton(ScheduledItem audio, Media firstMedia, Player audioPlayer, boolean download) {
         Button button = download ? ModalityStyle.blackButton(I18nControls.newButton(AudioRecordingsI18nKeys.Download))
                 : Bootstrap.dangerButton(I18nControls.newButton(AudioRecordingsI18nKeys.Play));
+        if (!download && Booleans.isTrue(audio.getFieldValue("alreadyPlayed")))
+            transformButtonFromPlayToPlayAgain(button);
         button.setGraphicTextGap(10);
         button.setMinWidth(130);
         button.setOnAction(event -> {
@@ -82,9 +107,9 @@ final class AudioColumnsRenderers {
                 playerMedia.setUserData(firstMedia); // used later to check which track the audio player is playing (see below)
                 audioPlayer.resetToInitialState();
                 audioPlayer.setMedia(playerMedia);
-                button.setDisable(true);
+                button.disableProperty().bind(audioPlayer.mediaProperty().isEqualTo(playerMedia));
                 audioPlayer.play();
-                // Starting MediaConsumption management
+                // Playing MediaConsumption management
                 new MediaConsumptionRecorder(audioPlayer, false, () -> audio, () -> firstMedia)
                         .start();
             }
@@ -102,5 +127,12 @@ final class AudioColumnsRenderers {
 
     static void registerRenderers() {
         // Actually done (only once) in the static initializer above
+    }
+
+
+    private static void transformButtonFromPlayToPlayAgain(Button playButton) {
+        playButton.getStyleClass().remove(Bootstrap.DANGER);
+        Bootstrap.secondaryButton(playButton);
+        I18nControls.bindI18nProperties(playButton, AudioRecordingsI18nKeys.PlayAgain);
     }
 }

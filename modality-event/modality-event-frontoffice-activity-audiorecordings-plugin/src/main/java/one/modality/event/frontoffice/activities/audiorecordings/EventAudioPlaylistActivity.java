@@ -43,6 +43,8 @@ import javafx.scene.control.Label;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Region;
 import javafx.scene.layout.VBox;
+import javafx.scene.text.Font;
+import javafx.scene.text.FontWeight;
 import javafx.scene.text.TextAlignment;
 import one.modality.base.client.cloudinary.ModalityCloudinary;
 import one.modality.base.client.icons.SvgIcons;
@@ -165,11 +167,12 @@ final class EventAudioPlaylistActivity extends ViewDomainActivityBase {
         // *************************************************************************************************************
         MonoPane imageMonoPane = new MonoPane();
 
-        Label eventLabel = Bootstrap.h2(Bootstrap.strong(I18nControls.newLabel(new I18nSubKey("expression: i18n(this)", eventProperty), eventProperty)));
+        Label eventLabel = Bootstrap.strong(I18nControls.newLabel(new I18nSubKey("expression: i18n(this)", eventProperty), eventProperty));
         eventLabel.setWrapText(true);
         eventLabel.setMinHeight(Region.USE_PREF_SIZE);
         eventLabel.setTextAlignment(TextAlignment.CENTER);
         eventLabel.setPadding(new Insets(0, 0, 12, 0));
+
         HtmlText eventDescriptionHTMLText = new HtmlText();
         I18n.bindI18nTextProperty(eventDescriptionHTMLText.textProperty(), new I18nSubKey("expression: shortDescription", eventProperty), eventProperty);
         eventDescriptionHTMLText.managedProperty().bind(eventDescriptionHTMLText.textProperty().isNotEmpty());
@@ -184,8 +187,16 @@ final class EventAudioPlaylistActivity extends ViewDomainActivityBase {
                 // 1. Horizontal layout (for desktops) - as far as TitleVBox is not higher than the image
                 .addResponsiveLayout(/* applicability test: */ width -> {
                             double titleVBoxWidth = width - imageMonoPane.getWidth() - 50 /* HBox spacing */;
+                            //Here we resize the font according to the size of the window
+                            double fontSize = Double.min(30,titleVBoxWidth * 0.08);
+                            if(fontSize<15) fontSize = 15;
+                            //In JavaFx, the Css has priority on Font, that's why we do a setStyle after. In web, the Font has priority on Css
+                            eventLabel.setFont(Font.font("System", FontWeight.BOLD, fontSize));
+                            eventLabel.setStyle("font-size: " + fontSize);
                             return titleVBox.prefHeight(titleVBoxWidth) <= IMAGE_HEIGHT && imageMonoPane.getWidth() > 0; // also image must be loaded
-                        }, /* apply method: */ () -> responsiveHeader.setContent(new HBox(50, imageMonoPane, titleVBox))
+                        }, /* apply method: */ () -> {
+                            responsiveHeader.setContent(new HBox(50, imageMonoPane, titleVBox));
+                    }
                         , /* test dependencies: */ imageMonoPane.widthProperty())
                 // 2. Vertical layout (for mobiles) - when TitleVBox is too high (always applicable if 1. is not)
                 .addResponsiveLayout(/* apply method: */ () -> {
@@ -198,6 +209,7 @@ final class EventAudioPlaylistActivity extends ViewDomainActivityBase {
         VBox audioTracksVBox = new VBox(20);
 
         Label listOfTrackLabel = I18nControls.newLabel(AudioRecordingsI18nKeys.ListOfTracks);
+        listOfTrackLabel.setPadding(new Insets(30,0,0,0));
         listOfTrackLabel.getStyleClass().add("list-tracks-title");
         Player audioPlayer = new JavaFXMediaAudioPlayer();
 

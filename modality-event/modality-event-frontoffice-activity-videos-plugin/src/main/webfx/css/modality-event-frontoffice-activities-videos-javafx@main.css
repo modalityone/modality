@@ -17,8 +17,8 @@
     -fx-text-alignment: left; /* Aligns text */
 }
 
-.livestream {
-    -fx-font-weight: 500; /*medium */
+.livestream .grid-head {
+    -fx-font-weight: 600; /*medium */
 }
 
 .livestream .small{
