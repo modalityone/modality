@@ -1,9 +1,6 @@
 package one.modality.event.frontoffice.activities.videos;
 
-import dev.webfx.extras.panes.CollapsePane;
-import dev.webfx.extras.panes.GoldenRatioPane;
-import dev.webfx.extras.panes.MonoPane;
-import dev.webfx.extras.panes.ScalePane;
+import dev.webfx.extras.panes.*;
 import dev.webfx.extras.player.Player;
 import dev.webfx.extras.player.StartOptionsBuilder;
 import dev.webfx.extras.player.multi.all.AllPlayers;
@@ -232,7 +229,7 @@ final class Page2EventDaysWithVideoActivity extends ViewDomainActivityBase {
                 responsiveHeader.setContent(vBox);
             }).start();
 
-        livestreamCollapsePane = new CollapsePane(new ScalePane(livestreamPlayer.getMediaView()));
+        livestreamCollapsePane = new CollapsePane(new ScalePane(ScaleMode.FIT_WIDTH, livestreamPlayer.getMediaView()));
 
         StackPane collapsePaneContainer = CollapsePane.decorateCollapsePane(livestreamCollapsePane, true);
         livestreamVBox.getChildren().add(new VBox(20, collapsePaneContainer));
