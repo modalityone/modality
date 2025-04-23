@@ -23,15 +23,10 @@ import one.modality.base.shared.entities.Media;
 import one.modality.base.shared.entities.ScheduledItem;
 import one.modality.event.frontoffice.medias.MediaConsumptionRecorder;
 
-import java.util.List;
-
 /**
  * @author Bruno Salmon
  */
 final class AudioColumnsRenderers {
-
-    private static List<Media> publishedMedias;
-    private static Player audioPlayer;
 
     static {
         ValueRendererRegistry.registerValueRenderer("audioName", (value, context) -> {
@@ -48,25 +43,30 @@ final class AudioColumnsRenderers {
         });
         ValueRendererRegistry.registerValueRenderer("audioButtons", (value, context) -> {
             ScheduledItem audio = (ScheduledItem) value;
-            Media firstMedia = Collections.findFirst(publishedMedias, media -> Entities.sameId(audio, media.getScheduledItem()));
+            AudioColumnsContext audioContext = context.getAppContext();
+            Media firstMedia = Collections.findFirst(audioContext.getPublishedMedias(), media -> Entities.sameId(audio, media.getScheduledItem()));
             if (firstMedia == null) {
                 Label noMediaLabel = I18nControls.newLabel(AudioRecordingsI18nKeys.AudioRecordingNotYetPublished);
                 noMediaLabel.getStyleClass().add(ModalityStyle.TEXT_COMMENT);
                 return noMediaLabel;
             }
-            HBox hBox = new HBox(10, createAudioButton(audio, firstMedia, false), createAudioButton(audio, firstMedia, true));
+            Player audioPlayer = audioContext.getAudioPlayer();
+            HBox hBox = new HBox(10,
+                    createAudioButton(audio, firstMedia, audioPlayer, false), // Play button
+                    createAudioButton(audio, firstMedia, audioPlayer, true)   // Download button
+            );
             hBox.setAlignment(Pos.CENTER_LEFT);
             return hBox;
         });
     }
 
-    private static Button createAudioButton(ScheduledItem audio, Media firstMedia, boolean download) {
+    private static Button createAudioButton(ScheduledItem audio, Media firstMedia, Player audioPlayer, boolean download) {
         Button button = download ? ModalityStyle.blackButton(I18nControls.newButton(AudioRecordingsI18nKeys.Download))
                 : Bootstrap.dangerButton(I18nControls.newButton(AudioRecordingsI18nKeys.Play));
         button.setGraphicTextGap(10);
         button.setMinWidth(130);
         button.setOnAction(event -> {
-            if (download) {
+            if (download) { // Download action
                 // 1) We download the file. Note: there is no way to track the progress of the download...
                 downloadFile(firstMedia.getUrl());
                 // 2) We record this action using MediaConsumptionRecorder
@@ -76,7 +76,7 @@ final class AudioColumnsRenderers {
                 // the button several times. To prevent this, we disable the download button for 5s.
                 OperationUtil.turnOnButtonsWaitMode(button);
                 UiScheduler.scheduleDelay(5000, () -> OperationUtil.turnOffButtonsWaitMode(button));
-            } else {
+            } else { // Play action
                 var playerMedia = audioPlayer.acceptMedia(firstMedia.getUrl(), new MediaMetadataBuilder()
                         .setTitle(getAudioName(audio)).setDurationMillis(firstMedia.getDurationMillis()).build());
                 playerMedia.setUserData(firstMedia); // used later to check which track the audio player is playing (see below)
@@ -84,7 +84,7 @@ final class AudioColumnsRenderers {
                 audioPlayer.setMedia(playerMedia);
                 button.setDisable(true);
                 audioPlayer.play();
-                // Playing MediaConsumption management
+                // Starting MediaConsumption management
                 new MediaConsumptionRecorder(audioPlayer, false, () -> audio, () -> firstMedia)
                         .start();
             }
@@ -102,13 +102,5 @@ final class AudioColumnsRenderers {
 
     static void registerRenderers() {
         // Actually done (only once) in the static initializer above
-    }
-
-    public static void setPublishedMedias(List<Media> publishedMedias) {
-        AudioColumnsRenderers.publishedMedias = publishedMedias;
-    }
-
-    public static void setAudioPlayer(Player audioPlayer) {
-        AudioColumnsRenderers.audioPlayer = audioPlayer;
     }
 }

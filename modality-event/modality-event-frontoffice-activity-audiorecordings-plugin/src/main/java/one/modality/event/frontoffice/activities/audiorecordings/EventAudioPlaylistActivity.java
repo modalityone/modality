@@ -244,16 +244,15 @@ final class EventAudioPlaylistActivity extends ViewDomainActivityBase {
                     // Does this event have audio recordings, and did the person book and pay for them?
                     if (!scheduledAudioItems.isEmpty()) { // yes => we show them as a list of playable tracks
                         if (USE_VISUAL_GRID) {
-                            AudioColumnsRenderers.setPublishedMedias(publishedMedias);
-                            AudioColumnsRenderers.setAudioPlayer(audioPlayer);
-                            VisualGrid videoTable = VisualGrid.createVisualGridWithResponsiveSkin();
-                            videoTable.setRowHeight(48);
-                            videoTable.setCellMargin(new Insets(5, 10, 5, 10));
-                            videoTable.setFullHeight(true);
-                            videoTable.setHeaderVisible(false);
+                            VisualGrid audioTable = VisualGrid.createVisualGridWithResponsiveSkin();
+                            audioTable.setRowHeight(48);
+                            audioTable.setCellMargin(new Insets(5, 10, 5, 10));
+                            audioTable.setFullHeight(true);
+                            audioTable.setHeaderVisible(false);
+                            audioTable.setAppContext(new AudioColumnsContext(publishedMedias, audioPlayer));
                             VisualResult rs = EntitiesToVisualResultMapper.mapEntitiesToVisualResult(scheduledAudioItems, audioColumns);
-                            videoTable.setVisualResult(rs);
-                            audioTracksVBox.getChildren().setAll(videoTable);
+                            audioTable.setVisualResult(rs);
+                            audioTracksVBox.getChildren().setAll(audioTable);
                         } else {
                             audioTracksVBox.getChildren().setAll(
                                     IntStream.range(0, scheduledAudioItems.size())
