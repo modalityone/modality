@@ -86,7 +86,7 @@ final class Page2EventDaysWithVideoActivity extends ViewDomainActivityBase {
     private EntityStore entityStore;
     private EntityColumn<ScheduledItem>[] videoColumns;
 
-    private final VBox selectedVideosVBox = new VBox(20);
+    private final VisualGrid videoGrid = VisualGrid.createVisualGridWithResponsiveSkin();
 
     private final SimpleObjectProperty<String> livestreamUrlProperty = new SimpleObjectProperty<>();
     private final Player livestreamPlayer = AllPlayers.createAllVideoPlayer();
@@ -124,7 +124,7 @@ final class Page2EventDaysWithVideoActivity extends ViewDomainActivityBase {
                     .onSuccess(events -> {
                         Event currentEvent = events.get(0);
                         Event eventContainingVideos = Objects.coalesce(currentEvent.getRepeatedEvent(), currentEvent);
-                        // We load all video scheduled items booked by the user for the event (booking must be confirmed
+                        // We load all video scheduledItems booked by the user for the event (booking must be confirmed
                         // and paid). They will be grouped by day in the UI.
                         // Note: double dots such as programScheduledItem.timeline..startTime means we do a left join that allows null value (if the event is recurring, the timeline of the programScheduledItem is null)
                         entityStore.<ScheduledItem>executeQuery("select name, date, expirationDate, programScheduledItem.(name, startTime, endTime, timeline.(startTime, endTime)), published, event.(name, type.recurringItem, livestreamUrl, recurringWithVideo), vodDelayed, " +
@@ -244,10 +244,17 @@ final class Page2EventDaysWithVideoActivity extends ViewDomainActivityBase {
         selectTheDayBelowVBox.setAlignment(Pos.CENTER);
         selectTheDayBelowVBox.setPadding(new Insets(100, 0, 0, 0));
 
+        videoGrid.setMinRowHeight(48);
+        videoGrid.setPrefRowHeight(Region.USE_COMPUTED_SIZE);
+        videoGrid.setCellMargin(new Insets(5, 10, 5, 10));
+        videoGrid.setFullHeight(true);
+        videoGrid.setHeaderVisible(true);
+        videoGrid.setAppContext(getHistory()); // Passing the history as appContext to the value renderers
+
         VBox loadedContentVBox = new VBox(40,
             responsiveHeader, // contains the event image and the event title
             livestreamVBox,
-            selectedVideosVBox // contains the videos for the selected day (or all days)
+            videoGrid // contains the videos for the selected day (or all days)
         );
         loadedContentVBox.setAlignment(Pos.TOP_CENTER);
         loadedContentVBox.getStyleClass().add("livestream");
@@ -358,17 +365,10 @@ final class Page2EventDaysWithVideoActivity extends ViewDomainActivityBase {
     }
 
     private void refreshVideosTable() {
-        VisualGrid videoTable = VisualGrid.createVisualGridWithResponsiveSkin();
-        videoTable.setRowHeight(48);
-        videoTable.setCellMargin(new Insets(5, 10, 5, 10));
-        videoTable.setFullHeight(true);
-        videoTable.setHeaderVisible(true);
-        videoTable.setAppContext(getHistory()); // Passing the history as appContext
         // Moving expired videos at the end of the list
         SortedList<ScheduledItem> videoScheduledItemsExpiredLast = videoScheduledItems.sorted((v1, v2) ->
             Boolean.compare(VideoState.isVideoExpired(v1), VideoState.isVideoExpired(v2)));
-        VisualResult rs = EntitiesToVisualResultMapper.mapEntitiesToVisualResult(videoScheduledItemsExpiredLast, videoColumns);
-        videoTable.setVisualResult(rs);
-        selectedVideosVBox.getChildren().setAll(videoTable);
+        VisualResult vr = EntitiesToVisualResultMapper.mapEntitiesToVisualResult(videoScheduledItemsExpiredLast, videoColumns);
+        videoGrid.setVisualResult(vr);
     }
 }
