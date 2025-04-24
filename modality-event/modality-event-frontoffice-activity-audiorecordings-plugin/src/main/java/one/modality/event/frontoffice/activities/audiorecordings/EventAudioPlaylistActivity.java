@@ -256,15 +256,15 @@ final class EventAudioPlaylistActivity extends ViewDomainActivityBase {
                     // Does this event have audio recordings, and did the person book and pay for them?
                     if (!scheduledAudioItems.isEmpty()) { // yes => we show them as a list of playable tracks
                         if (USE_VISUAL_GRID) {
-                            VisualGrid audioTable = VisualGrid.createVisualGridWithResponsiveSkin();
-                            audioTable.setRowHeight(48);
-                            audioTable.setCellMargin(new Insets(5, 10, 5, 10));
-                            audioTable.setFullHeight(true);
-                            audioTable.setHeaderVisible(false);
-                            audioTable.setAppContext(new AudioColumnsContext(publishedMedias, audioPlayer));
-                            VisualResult rs = EntitiesToVisualResultMapper.mapEntitiesToVisualResult(scheduledAudioItems, audioColumns);
-                            audioTable.setVisualResult(rs);
-                            audioTracksVBox.getChildren().setAll(audioTable);
+                            VisualGrid audioGrid = VisualGrid.createVisualGridWithResponsiveSkin();
+                            audioGrid.setPrefRowHeight(48);
+                            audioGrid.setCellMargin(new Insets(5, 10, 5, 10));
+                            audioGrid.setFullHeight(true);
+                            audioGrid.setHeaderVisible(false);
+                            audioGrid.setAppContext(new AudioColumnsContext(publishedMedias, audioPlayer));
+                            VisualResult vr = EntitiesToVisualResultMapper.mapEntitiesToVisualResult(scheduledAudioItems, audioColumns);
+                            audioGrid.setVisualResult(vr);
+                            audioTracksVBox.getChildren().setAll(audioGrid);
                         } else {
                             audioTracksVBox.getChildren().setAll(
                                     IntStream.range(0, scheduledAudioItems.size())
