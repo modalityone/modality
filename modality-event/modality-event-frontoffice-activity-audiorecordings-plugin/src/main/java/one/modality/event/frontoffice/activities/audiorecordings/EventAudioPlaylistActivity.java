@@ -44,7 +44,6 @@ import javafx.scene.layout.HBox;
 import javafx.scene.layout.Region;
 import javafx.scene.layout.VBox;
 import javafx.scene.text.Font;
-import javafx.scene.text.FontWeight;
 import javafx.scene.text.TextAlignment;
 import one.modality.base.client.cloudinary.ModalityCloudinary;
 import one.modality.base.client.icons.SvgIcons;
@@ -188,11 +187,10 @@ final class EventAudioPlaylistActivity extends ViewDomainActivityBase {
                 .addResponsiveLayout(/* applicability test: */ width -> {
                             double titleVBoxWidth = width - imageMonoPane.getWidth() - 50 /* HBox spacing */;
                             //Here we resize the font according to the size of the window
-                            double fontSize = Double.min(30,titleVBoxWidth * 0.08);
-                            if(fontSize<15) fontSize = 15;
-                            //In JavaFx, the Css has priority on Font, that's why we do a setStyle after. In web, the Font has priority on Css
-                            eventLabel.setFont(Font.font("System", FontWeight.BOLD, fontSize));
-                            eventLabel.setStyle("font-size: " + fontSize);
+                            double fontSize = Double.max(15, Double.min(30,titleVBoxWidth * 0.08));
+                            //In JavaFX, the CSS has priority on Font, that's why we do a setStyle after. In web, the Font has priority on CSS
+                            eventLabel.setFont(Font.font(fontSize));
+                            eventLabel.setStyle("-fx-font-size: " + fontSize);
                             return titleVBox.prefHeight(titleVBoxWidth) <= IMAGE_HEIGHT && imageMonoPane.getWidth() > 0; // also image must be loaded
                         }, /* apply method: */ () -> {
                             responsiveHeader.setContent(new HBox(50, imageMonoPane, titleVBox));
