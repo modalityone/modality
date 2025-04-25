@@ -118,7 +118,8 @@ VisualGrid {
 }
 
 * {
-    -webfx-visualgrid-border-color: #D3D3D3;
+    -webfx-visualgrid-row-border-color: #D3D3D3;
+    -webfx-visualgrid-col-border-color: #D3D3D3;
     -webfx-visualgrid-selection-color: #AED6F1;
 }
 
@@ -152,12 +153,12 @@ VisualGrid {
 }
 
 .grid-head, .grid-row {
-    -fx-border-color: -webfx-visualgrid-border-color;
+    -fx-border-color: -webfx-visualgrid-row-border-color;
     -fx-border-width: 0 0 1px 0;
 }
 
 .grid-col {
-    -fx-border-color: #D3D3D3;
+    -fx-border-color: -webfx-visualgrid-col-border-color;
     -fx-border-width: 0 1px 0 0;
 }
 
@@ -797,6 +798,11 @@ CollapsePane.menu-bar.lang-menu-bar {
     -fx-fill: -brand-blue-color;
 }
 
+/*===== modality-base-front-office-javafx@main.css from modality-base-frontoffice-application =====*/
+
+* {
+    -webfx-visualgrid-col-border-color: transparent;
+}
 /*===== modality-client-bootstrap-javafx@main.css from modality-base-client-bootstrap =====*/
 
 /* Bootstrap style */
@@ -914,7 +920,8 @@ CollapsePane.menu-bar.lang-menu-bar {
 }
 
 .bottom-border {
-    -fx-border-color: transparent transparent #4A4748 transparent; -fx-border-width: 0 0 0.2 0;
+    -fx-border-color: transparent transparent #4A4748 transparent;
+    -fx-border-width: 0 0 0.2 0;
 }
 
 
@@ -925,7 +932,6 @@ CollapsePane.menu-bar.lang-menu-bar {
 .livestream .h2 {
     -fx-line-spacing: 0px;
 }
-
 
 .livestream .h3 {
     -fx-font-family: "Poppins";
@@ -941,8 +947,8 @@ CollapsePane.menu-bar.lang-menu-bar {
     -fx-text-alignment: left; /* Aligns text */
 }
 
-.livestream {
-    -fx-font-weight: 500; /*medium */
+.livestream .grid-head {
+    -fx-font-weight: 600; /*medium */
 }
 
 .livestream .small{
@@ -952,6 +958,25 @@ CollapsePane.menu-bar.lang-menu-bar {
 .livestream .text-info {
     -fx-font-color: black;
     -fx-font-weight: normal;
+}
+
+/** styles when we're in a desktop view **/
+.livestream .grid-body .date {
+    -fx-font-weight: 600
+}
+
+.livestream .grid-body .time {
+}
+
+.livestream .grid-body .title {
+}
+
+/** styles when we're in a mobile view **/
+.livestream .grid-row .date {
+    -fx-font-weight: 600
+}
+
+.livestream .grid-row .title {
 }
 
 

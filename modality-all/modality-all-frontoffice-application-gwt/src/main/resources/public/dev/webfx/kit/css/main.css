@@ -47,6 +47,13 @@ fx-svgpath svg path:not([fill])[stroke] { /* if the application code set the str
     --fx-svg-path-fill: transparent; /* then the fill is transparent */
     fill: var(--fx-svg-path-fill);
 }
+
+/* The default JavaFX behaviour for Text wrapping is equivalent to HTML "break-word", which is not the default in HTML
+   (the default in HTML being "normal"). So we apply "break-word". */
+fx-text {
+    word-break: break-word;
+    overflow-wrap: break-word; /* fallback for better browser support */
+}
 /*===== webfx-kit-javafxcontrols-web@main.css from webfx-kit-javafxcontrols-peers-gwt-j2cl =====*/
 
 /***** Global variables *****/
@@ -130,13 +137,14 @@ iframe {
 /*===== webfx-extras-visual-grid-web@main.css from webfx-extras-visual-grid =====*/
 
 :root {
-    --webfx-visualgrid-border-color: #D3D3D3;
+    --webfx-visualgrid-row-border-color: #D3D3D3;
+    --webfx-visualgrid-col-border-color: #D3D3D3;
     --webfx-visualgrid-row-height: 28px;
     --webfx-visualgrid-selection-color: #AED6F1;
 }
 
 th, td {
-    border: 1px solid var(--webfx-visualgrid-border-color);
+    border: 1px solid var(--webfx-visualgrid-row-border-color);
     border-top-width: 0;
 }
 
@@ -158,7 +166,7 @@ thead {
 thead th {
     border-right-width: thin;
     border-right-style: solid;
-    border-right-color: var(--webfx-visualgrid-border-color);
+    border-right-color: var(--webfx-visualgrid-col-border-color);
     height: var(--webfx-visualgrid-row-height);
     font-weight: bold;
     text-align: center;
@@ -166,7 +174,7 @@ thead th {
 }
 
 tbody td {
-    border-bottom-color: var(--webfx-visualgrid-border-color);
+    border-bottom-color: var(--webfx-visualgrid-row-border-color);
 }
 
 tbody tr {
@@ -185,7 +193,7 @@ th:before { /* this rule is to prevent body appearing in 1px line above header w
     width: 100%;
     left: 0;
     top: -1px;
-    border-top: 1px solid var(--webfx-visualgrid-border-color);
+    border-top: 1px solid var(--webfx-visualgrid-row-border-color);
 }
 
 
@@ -203,16 +211,16 @@ th, tbody, td {
     background-color: transparent;
 }
 
-.grid-head, .grid-body, .grid-col, .grid-row {
+.grid-col, .grid-row {
     overflow: hidden;
 }
 
 .grid-head, .grid-row {
-    border-bottom: 1px solid var(--webfx-visualgrid-border-color);
+    border-bottom: 1px solid var(--webfx-visualgrid-row-border-color);
 }
 
 .grid-col {
-    border-right: 1px solid var(--webfx-visualgrid-border-color);
+    border-right: 1px solid var(--webfx-visualgrid-col-border-color);
 }
 
 tr.selected, .grid-row.selected {
@@ -931,6 +939,11 @@ fx-collapsepane.menu-bar.lang-menu-bar > fx-border {
     color: #838788;
     --fx-svg-path-fill: #838788
 }
+/*===== modality-base-front-office-web@main.css from modality-base-frontoffice-application =====*/
+
+:root {
+    --webfx-visualgrid-col-border-color: transparent;
+}
 /*===== modality-client-bootstrap-web@main.css from modality-base-client-bootstrap =====*/
 
 /* Bootstrap style */
@@ -1068,7 +1081,7 @@ btn-white {
 }
 
 .bottom-border {
-    border-color:     transparent transparent #e6e6e6 transparent;
+    border-color: transparent transparent #e6e6e6 transparent;
     border-width: 0 0 1px 0; /* Border width translated to px */
     border-style: solid;
 }
@@ -1082,26 +1095,48 @@ btn-white {
      text-align: left; /* Aligns text */
  }
 
- .livestream h4 {
+.livestream h4 {
     font-family: "Poppins", sans-serif;
     font-size: 24px;
     font-weight: 600; /* semi-bold */
     text-align: left; /* Aligns text */
- }
+}
 
- .livestream {
-     font-weight: 600; /* 'medium' weight equivalent in CSS - 500 in OpenJFX  */
- }
+.livestream .grid-head {
+    font-weight: 600;
+}
 
 .livestream .small {
     font-weight: 300;
 }
 
- .livestream .text-info {
+.livestream .text-info {
      font-weight: normal;
      color: black;
- }
+}
 
+
+/** styles when we're in a desktop view **/
+.livestream .grid-body .date {
+    font-weight: bold;
+}
+
+.livestream .grid-body .time {
+     font-weight: normal;
+}
+
+.livestream .grid-body .title {
+     font-style: italic;
+}
+
+/** styles when we're in a mobile view **/
+.livestream .grid-row .date {
+    font-weight: bold;
+}
+
+.livestream .grid-row .title {
+    font-style: italic;
+}
 
 /*===== modality-event-client-recurringevents-web@main.css from modality-event-client-recurringevents =====*/
 
