@@ -47,7 +47,6 @@ import javafx.scene.layout.Region;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
 import javafx.scene.text.Font;
-import javafx.scene.text.FontWeight;
 import javafx.scene.text.TextAlignment;
 import one.modality.base.client.cloudinary.ModalityCloudinary;
 import one.modality.base.client.icons.SvgIcons;
@@ -95,7 +94,6 @@ final class Page2EventDaysWithVideoActivity extends ViewDomainActivityBase {
     private MediaConsumptionRecorder mediaConsumptionRecorder;
     private final ObjectProperty<ScheduledItem> scheduledVideoItemProperty = new SimpleObjectProperty<>();
     private final BooleanProperty displayLivestreamVideoProperty = new SimpleBooleanProperty(false);
-    private final VBox livestreamVBox = new VBox(20);
     private CollapsePane livestreamCollapsePane;
 
     public Page2EventDaysWithVideoActivity() {
@@ -222,11 +220,10 @@ final class Page2EventDaysWithVideoActivity extends ViewDomainActivityBase {
             // 1. Horizontal layout (for desktops) - as far as TitleVBox is not higher than the image
             .addResponsiveLayout(/* applicability test: */ width -> {
                     double titleVBoxWidth = width - eventImageContainer.getWidth() - 50 /* HBox spacing */;
-                    double fontSize = Double.min(30,titleVBoxWidth * 0.08);
-                    if(fontSize<15) fontSize = 15;
-                    //In JavaFx, the Css has priority on Font, that's why we do a setStyle after. In web, the Font has priority on Css
-                    eventLabel.setFont(Font.font("System", FontWeight.BOLD, fontSize));
-                    eventLabel.setStyle("font-size: " + fontSize);
+                    double fontSize = Double.max(15, Double.min(30,titleVBoxWidth * 0.08));
+                    //In JavaFX, the CSS has priority on Font, that's why we do a setStyle after. In web, the Font has priority on Css
+                    eventLabel.setFont(Font.font(fontSize));
+                    eventLabel.setStyle("-fx-font-size: " + fontSize);
                     return titleVBox.prefHeight(titleVBoxWidth) <= IMAGE_HEIGHT && eventImageContainer.getWidth() > 0; // also image must be loaded
                 }, /* apply method: */ () -> responsiveHeader.setContent(new HBox(50, eventImageContainer, titleVBox))
                 , /* test dependencies: */ eventImageContainer.widthProperty())
@@ -240,8 +237,7 @@ final class Page2EventDaysWithVideoActivity extends ViewDomainActivityBase {
 
         livestreamCollapsePane = new CollapsePane(new ScalePane(ScaleMode.FIT_WIDTH, livestreamPlayer.getMediaView()));
 
-        StackPane collapsePaneContainer = CollapsePane.decorateCollapsePane(livestreamCollapsePane, true);
-        livestreamVBox.getChildren().add(new VBox(20, collapsePaneContainer));
+        StackPane decoratedLivestreamCollapsePane = CollapsePane.decorateCollapsePane(livestreamCollapsePane, true);
         //We display this box only if the current Date is in the list of date in the video Scheduled Item list
         VBox todayProgramVBox = new VBox(30); // Will be populated later (see reacting code below)
         todayProgramVBox.setAlignment(Pos.CENTER);
@@ -262,7 +258,7 @@ final class Page2EventDaysWithVideoActivity extends ViewDomainActivityBase {
 
         VBox loadedContentVBox = new VBox(40,
             responsiveHeader, // contains the event image and the event title
-            livestreamVBox,
+            decoratedLivestreamCollapsePane,
             videoGrid // contains the videos for the selected day (or all days)
         );
         loadedContentVBox.setAlignment(Pos.TOP_CENTER);

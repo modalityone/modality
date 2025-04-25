@@ -2,7 +2,6 @@
     -fx-line-spacing: 0px;
 }
 
-
 .livestream .h3 {
     -fx-font-family: "Poppins";
     -fx-font-size: 24px;
@@ -31,15 +30,14 @@
 }
 
 /** styles when we're in a desktop view **/
- .livestream .grid-body .date    {
+.livestream .grid-body .date {
     -fx-font-weight: 600
 }
 
- .livestream .grid-body .time   {
-
+.livestream .grid-body .time {
 }
 
-.livestream .grid-body .title     {
+.livestream .grid-body .title {
 }
 
 /** styles when we're in a mobile view **/
@@ -47,6 +45,6 @@
     -fx-font-weight: 600
 }
 
-.livestream .grid-row  .title {
+.livestream .grid-row .title {
 }
 

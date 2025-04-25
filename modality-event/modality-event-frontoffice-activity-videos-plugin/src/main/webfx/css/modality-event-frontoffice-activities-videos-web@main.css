@@ -5,45 +5,45 @@
      text-align: left; /* Aligns text */
  }
 
- .livestream h4 {
+.livestream h4 {
     font-family: "Poppins", sans-serif;
     font-size: 24px;
     font-weight: 600; /* semi-bold */
     text-align: left; /* Aligns text */
- }
+}
 
- .livestream .grid-head {
+.livestream .grid-head {
     font-weight: 600;
- }
+}
 
 .livestream .small {
     font-weight: 300;
 }
 
- .livestream .text-info {
+.livestream .text-info {
      font-weight: normal;
      color: black;
- }
+}
 
 
 /** styles when we're in a desktop view **/
- .livestream .grid-body .date    {
+.livestream .grid-body .date {
     font-weight: bold;
 }
 
- .livestream .grid-body .time    {
+.livestream .grid-body .time {
      font-weight: normal;
 }
 
- .livestream .grid-body .title   {
+.livestream .grid-body .title {
      font-style: italic;
 }
 
 /** styles when we're in a mobile view **/
-.livestream .grid-row  > fx-children .date {
+.livestream .grid-row .date {
     font-weight: bold;
 }
 
-.livestream .grid-row  > fx-children .title {
+.livestream .grid-row .title {
     font-style: italic;
 }
