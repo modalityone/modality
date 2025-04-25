@@ -25,3 +25,25 @@
      color: black;
  }
 
+
+/** styles when we're in a desktop view **/
+ .livestream .grid-body .date    {
+    font-weight: bold;
+}
+
+ .livestream .grid-body .time    {
+     font-weight: normal;
+}
+
+ .livestream .grid-body .title   {
+     font-style: italic;
+}
+
+/** styles when we're in a mobile view **/
+.livestream .grid-row  > fx-children .date {
+    font-weight: bold;
+}
+
+.livestream .grid-row  > fx-children .title {
+    font-style: italic;
+}

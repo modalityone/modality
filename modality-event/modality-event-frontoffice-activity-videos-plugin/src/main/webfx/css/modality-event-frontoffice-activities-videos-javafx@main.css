@@ -30,3 +30,23 @@
     -fx-font-weight: normal;
 }
 
+/** styles when we're in a desktop view **/
+ .livestream .grid-body .date    {
+    -fx-font-weight: 600
+}
+
+ .livestream .grid-body .time   {
+
+}
+
+.livestream .grid-body .title     {
+}
+
+/** styles when we're in a mobile view **/
+.livestream .grid-row .date {
+    -fx-font-weight: 600
+}
+
+.livestream .grid-row  .title {
+}
+

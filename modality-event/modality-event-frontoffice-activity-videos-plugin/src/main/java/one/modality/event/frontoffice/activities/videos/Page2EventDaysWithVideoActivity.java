@@ -165,7 +165,6 @@ final class Page2EventDaysWithVideoActivity extends ViewDomainActivityBase {
                                         displayLivestreamVideoProperty.set(false);
                                         long startMinus20MinutesInMs = ChronoUnit.MILLIS.between(nowInEventTimezone,scheduledItemStart.minusMinutes(20));
                                         UiScheduler.scheduleDelay(startMinus20MinutesInMs, () -> displayLivestreamVideoProperty.set(true));
-
                                     }
                                     //If we arrive in the middle of the session, we trigger the MediaConsumptionRecorder by setting the scheduledVideoItemProperty
                                     if (Times.isBetween(nowInEventTimezone, scheduledItemStart, scheduledItemEnd)) {
@@ -185,9 +184,9 @@ final class Page2EventDaysWithVideoActivity extends ViewDomainActivityBase {
         VideoColumnsFormattersAndRenderers.registerRenderers();
         videoColumns = VisualEntityColumnFactory.get().fromJsonArray("""
             [
-            {expression: 'date', label: 'Date', format: 'videoDate', hShrink: false},
-            {expression: '[coalesce(startTime, programScheduledItem.startTime), coalesce(endTime, programScheduledItem.endTime)]', label: 'UK time', format: 'videoTimeRange', textAlign: 'center', hShrink: false},
-            {expression: 'coalesce(name, programScheduledItem.name)', label: 'Name', renderer: 'ellipsisLabel', minWidth: 200},
+            {expression: 'date', label: 'Date', format: 'videoDate', hShrink: false, styleClass: 'date'},
+            {expression: '[coalesce(startTime, programScheduledItem.startTime), coalesce(endTime, programScheduledItem.endTime)]', label: 'UK time', format: 'videoTimeRange', textAlign: 'center', hShrink: false, styleClass: 'time'},
+            {expression: 'coalesce(name, programScheduledItem.name)', label: 'Name', renderer: 'ellipsisLabel', minWidth: 200,styleClass: 'title'},
             {expression: 'this', label: 'Status', renderer: 'videoStatus', textAlign: 'center', hShrink: false}
             ]""", getDomainModel(), "ScheduledItem");
     }
