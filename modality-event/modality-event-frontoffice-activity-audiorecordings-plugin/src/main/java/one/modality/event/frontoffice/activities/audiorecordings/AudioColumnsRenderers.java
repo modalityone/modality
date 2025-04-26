@@ -6,6 +6,8 @@ import dev.webfx.extras.player.Player;
 import dev.webfx.extras.player.audio.javafxmedia.AudioMediaView;
 import dev.webfx.extras.styles.bootstrap.Bootstrap;
 import dev.webfx.extras.time.format.LocalizedTime;
+import dev.webfx.kit.util.properties.FXProperties;
+import dev.webfx.kit.util.properties.Unregisterable;
 import dev.webfx.platform.blob.spi.BlobProvider;
 import dev.webfx.platform.uischeduler.UiScheduler;
 import dev.webfx.platform.util.Booleans;
@@ -14,6 +16,7 @@ import dev.webfx.platform.util.collection.Collections;
 import dev.webfx.stack.i18n.controls.I18nControls;
 import dev.webfx.stack.orm.entity.Entities;
 import dev.webfx.stack.ui.operation.OperationUtil;
+import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
@@ -35,13 +38,17 @@ import java.time.LocalTime;
  */
 final class AudioColumnsRenderers {
 
+    static void registerRenderers() {
+        // Actually done (only once) in the static initializer below
+    }
+
     static {
         ValueRendererRegistry.registerValueRenderer("audioName", (value, context) -> {
             ScheduledItem audio = (ScheduledItem) value;
-            Label titleLabel = new Label(getAudioName(audio));
-            titleLabel.getStyleClass().add("description");
-            titleLabel.setWrapText(true);
-            titleLabel.setMinHeight(Region.USE_PREF_SIZE);
+            Label nameLabel = new Label(getAudioName(audio));
+            nameLabel.getStyleClass().add("name");
+            nameLabel.setWrapText(true);
+            nameLabel.setMinHeight(Region.USE_PREF_SIZE);
             LocalDate date = audio.getDate();
             Timeline timeline = audio.getProgramScheduledItem().getTimeline();
             LocalTime startTime = timeline == null ? null : timeline.getStartTime();
@@ -50,46 +57,41 @@ final class AudioColumnsRenderers {
             dateLabel.getStyleClass().add(ModalityStyle.TEXT_COMMENT);
             long durationMillis;
             AudioColumnsContext audioContext = context.getAppContext();
-            if (!audioContext.getPublishedMedias().isEmpty()) {
-                Media firstMedia = Collections.findFirst(audioContext.getPublishedMedias(), media -> Entities.sameId(audio, media.getScheduledItem()));
+            if (!audioContext.publishedMedias().isEmpty()) {
+                Media firstMedia = Collections.findFirst(audioContext.publishedMedias(), media -> Entities.sameId(audio, media.getScheduledItem()));
                 if (firstMedia != null) {
                     durationMillis = firstMedia.getDurationMillis();
                     dateLabel.textProperty().unbind();
                     dateLabel.setText(AudioMediaView.formatDuration(durationMillis) + " • " + dateLabel.getText());
                 }
             }
-            VBox vbox = new VBox();
-            vbox.getStyleClass().addAll("audio-library");
-            vbox.setAlignment(Pos.CENTER_LEFT);
-
-            vbox.getChildren().addAll(titleLabel,dateLabel);
+            VBox vbox = new VBox(2, nameLabel, dateLabel);
+            vbox.setAlignment(Pos.BOTTOM_LEFT);
             return vbox;
         });
         ValueRendererRegistry.registerValueRenderer("audioButtons", (value, context) -> {
             ScheduledItem audio = (ScheduledItem) value;
             AudioColumnsContext audioContext = context.getAppContext();
-            Media firstMedia = Collections.findFirst(audioContext.getPublishedMedias(), media -> Entities.sameId(audio, media.getScheduledItem()));
+            Media firstMedia = Collections.findFirst(audioContext.publishedMedias(), media -> Entities.sameId(audio, media.getScheduledItem()));
             if (firstMedia == null) {
-                Label noMediaLabel = I18nControls.newLabel(AudioRecordingsI18nKeys.AudioRecordingNotYetPublished);
-                noMediaLabel.getStyleClass().add(ModalityStyle.TEXT_COMMENT);
-                HBox hbox = new HBox(noMediaLabel);
-                hbox.setAlignment(Pos.CENTER);
-                hbox.getStyleClass().addAll("audio-library");
-                return hbox;
+                Label notYetPublishedLabel = I18nControls.newLabel(AudioRecordingsI18nKeys.AudioRecordingNotYetPublished);
+                notYetPublishedLabel.getStyleClass().add(ModalityStyle.TEXT_COMMENT);
+                return notYetPublishedLabel;
             }
-            HBox hBox = new HBox(10, createAudioButton(audio, firstMedia, audioContext.getAudioPlayer(), false), createAudioButton(audio, firstMedia, audioContext.getAudioPlayer(),true));
-            hBox.setAlignment(Pos.CENTER_LEFT);
+            HBox hBox = new HBox(10, createAudioButton(audio, firstMedia, audioContext.audioPlayer(), false), createAudioButton(audio, firstMedia, audioContext.audioPlayer(),true));
+            hBox.setAlignment(Pos.CENTER);
+            hBox.setPadding(new Insets(0, 0, 10, 0));
             return hBox;
         });
     }
 
     private static Button createAudioButton(ScheduledItem audio, Media firstMedia, Player audioPlayer, boolean download) {
-        Button button = download ? ModalityStyle.blackButton(I18nControls.newButton(AudioRecordingsI18nKeys.Download))
-                : Bootstrap.dangerButton(I18nControls.newButton(AudioRecordingsI18nKeys.Play));
-        if (!download && Booleans.isTrue(audio.getFieldValue("alreadyPlayed")))
-            transformButtonFromPlayToPlayAgain(button);
+        Button button = new Button();
         button.setGraphicTextGap(10);
-        button.setMinWidth(130);
+        button.setMinWidth(150);
+        var playerMedia = download ? null : audioPlayer.acceptMedia(firstMedia.getUrl(), new MediaMetadataBuilder()
+            .setTitle(getAudioName(audio)).setDurationMillis(firstMedia.getDurationMillis()).build());
+        updateButton(button, audio, firstMedia, audioPlayer, download);
         button.setOnAction(event -> {
             if (download) { // Download action
                 // 1) We download the file. Note: there is no way to track the progress of the download...
@@ -97,18 +99,16 @@ final class AudioColumnsRenderers {
                 // 2) We record this action using MediaConsumptionRecorder
                 MediaConsumptionRecorder.recordDownloadMediaConsumption(audio, firstMedia);
                 // 3) Sometimes (especially on mobiles) the system can take a few seconds before showing there is a
-                // download in progress, giving the impression that nothing happens, and making the user pressing
+                // download in progress, giving the impression that nothing happens and making the user pressing
                 // the button several times. To prevent this, we disable the download button for 5s.
                 OperationUtil.turnOnButtonsWaitMode(button);
                 UiScheduler.scheduleDelay(5000, () -> OperationUtil.turnOffButtonsWaitMode(button));
-            } else { // Play action
-                var playerMedia = audioPlayer.acceptMedia(firstMedia.getUrl(), new MediaMetadataBuilder()
-                        .setTitle(getAudioName(audio)).setDurationMillis(firstMedia.getDurationMillis()).build());
-                playerMedia.setUserData(firstMedia); // used later to check which track the audio player is playing (see below)
+            } else if (!Objects.areEquals(audioPlayer.getMedia(), playerMedia)) { // Play action
                 audioPlayer.resetToInitialState();
                 audioPlayer.setMedia(playerMedia);
-                button.disableProperty().bind(audioPlayer.mediaProperty().isEqualTo(playerMedia));
                 audioPlayer.play();
+                updateButton(button, audio, firstMedia, audioPlayer, download);
+                playerMedia.setUserData(firstMedia); // used later to check which track the audio player is playing (see below)
                 // Playing MediaConsumption management
                 new MediaConsumptionRecorder(audioPlayer, false, () -> audio, () -> firstMedia)
                         .start();
@@ -125,14 +125,60 @@ final class AudioColumnsRenderers {
         BlobProvider.get().downloadUrl(fileUrl);
     }
 
-    static void registerRenderers() {
-        // Actually done (only once) in the static initializer above
+    private static final Unregisterable[] unregisterable = { null };
+
+    private static void updateButton(Button button, ScheduledItem audio, Media firstMedia, Player audioPlayer, boolean download) {
+        if (download) {
+            showButtonAsDownload(button);
+        } else if (isAudioPlayerPlayingMedia(audioPlayer, firstMedia)) {
+            showButtonAsPlaying(button);
+            if (unregisterable[0] != null)
+                unregisterable[0].unregister();
+            unregisterable[0] = FXProperties.runNowAndOnPropertiesChange(() -> {
+                if (!isAudioPlayerPlayingMedia(audioPlayer, firstMedia)) {
+                    showButtonAsPlayAgain(button);
+                    unregisterable[0].unregister();
+                }
+            }, audioPlayer.mediaProperty(), audioPlayer.statusProperty());
+        } else if (Booleans.isTrue(audio.getFieldValue("alreadyPlayed")))
+            showButtonAsPlayAgain(button);
+        else
+            showButtonAsPlay(button);
     }
 
-
-    private static void transformButtonFromPlayToPlayAgain(Button playButton) {
-        playButton.getStyleClass().remove(Bootstrap.DANGER);
-        Bootstrap.secondaryButton(playButton);
-        I18nControls.bindI18nProperties(playButton, AudioRecordingsI18nKeys.PlayAgain);
+    private static boolean isAudioPlayerPlayingMedia(Player audioPlayer, Media media) {
+        if (audioPlayer.getMedia() == null)
+            return false;
+        if (!Objects.areEquals(audioPlayer.getMedia().getSource(), media.getUrl()))
+            return false;
+        if (audioPlayer.getStatus() == null)
+            return true;
+        return switch (audioPlayer.getStatus()) {
+            case LOADING, READY, PLAYING, PAUSED -> true;
+            default -> false;
+        };
     }
+
+    private static void showButtonAsPlay(Button button) {
+        button.getStyleClass().removeAll(Bootstrap.SUCCESS, Bootstrap.SECONDARY);
+        Bootstrap.dangerButton(button);
+        I18nControls.bindI18nProperties(button, AudioRecordingsI18nKeys.Play);
+    }
+
+    private static void showButtonAsPlaying(Button button) {
+        button.getStyleClass().removeAll(Bootstrap.DANGER, Bootstrap.SECONDARY);
+        Bootstrap.successButton(button);
+        I18nControls.bindI18nProperties(button, AudioRecordingsI18nKeys.Playing);
+    }
+
+    private static void showButtonAsPlayAgain(Button button) {
+        button.getStyleClass().removeAll(Bootstrap.DANGER, Bootstrap.SUCCESS);
+        Bootstrap.secondaryButton(button);
+        I18nControls.bindI18nProperties(button, AudioRecordingsI18nKeys.PlayAgain);
+    }
+
+    private static void showButtonAsDownload(Button button) {
+        ModalityStyle.blackButton(I18nControls.bindI18nProperties(button, AudioRecordingsI18nKeys.Download));
+    }
+
 }

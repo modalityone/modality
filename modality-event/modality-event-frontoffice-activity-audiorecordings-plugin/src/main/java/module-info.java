@@ -47,6 +47,9 @@ module modality.event.frontoffice.activity.audiorecordings.plugin {
     // Exported packages
     exports one.modality.event.frontoffice.activities.audiorecordings;
 
+    // Resources packages
+    opens one.modality.event.frontoffice.activities.audiorecordings;
+
     // Provided services
     provides dev.webfx.stack.routing.uirouter.UiRoute with one.modality.event.frontoffice.activities.audiorecordings.AudioRecordingsRouting.AudioRecordingsUiRoute, one.modality.event.frontoffice.activities.audiorecordings.EventAudioPlaylistRouting.RecordingsOfEventUiRoute;
     provides dev.webfx.stack.routing.uirouter.operations.RouteRequestEmitter with one.modality.event.frontoffice.activities.audiorecordings.AudioRecordingsRouting.RouteToAudioRecordingsRequestEmitter;

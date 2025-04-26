@@ -10,6 +10,7 @@ import dev.webfx.extras.responsive.ResponsiveDesign;
 import dev.webfx.extras.styles.bootstrap.Bootstrap;
 import dev.webfx.extras.time.format.LocalizedTime;
 import dev.webfx.extras.util.control.Controls;
+import dev.webfx.extras.util.layout.Layouts;
 import dev.webfx.extras.visual.VisualResult;
 import dev.webfx.extras.visual.controls.grid.VisualGrid;
 import dev.webfx.extras.webtext.HtmlText;
@@ -44,6 +45,7 @@ import javafx.scene.layout.HBox;
 import javafx.scene.layout.Region;
 import javafx.scene.layout.VBox;
 import javafx.scene.text.Font;
+import javafx.scene.text.Text;
 import javafx.scene.text.TextAlignment;
 import one.modality.base.client.cloudinary.ModalityCloudinary;
 import one.modality.base.client.icons.SvgIcons;
@@ -55,8 +57,6 @@ import one.modality.crm.shared.services.authn.fx.FXUserPersonId;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.Collectors;
-import java.util.stream.IntStream;
 
 /**
  * @author David Hello
@@ -64,9 +64,8 @@ import java.util.stream.IntStream;
  */
 final class EventAudioPlaylistActivity extends ViewDomainActivityBase {
 
-    private static final boolean USE_VISUAL_GRID = true;
-
-    private static final double IMAGE_HEIGHT = 188;
+    private static final double MAX_WIDTH = 800;
+    private static final double IMAGE_HEIGHT = 200;
 
     private final ObjectProperty<Object> pathEventIdProperty = new SimpleObjectProperty<>() {
         @Override
@@ -76,13 +75,11 @@ final class EventAudioPlaylistActivity extends ViewDomainActivityBase {
     };
     private final StringProperty pathItemCodeProperty = new SimpleStringProperty();
 
-    //private final CloudImageService cloudImageService = new ClientImageService();
-
     private final ObjectProperty<Event> eventProperty = new SimpleObjectProperty<>();
     private final ObservableList<ScheduledItem> scheduledAudioItems = FXCollections.observableArrayList();
     private final List<Media> publishedMedias = new ArrayList<>(); // No need to be observable (reacting to scheduledAudioItems is enough)
 
-    private Label audioExpirationLabel;
+    private Label audioExpirationText;
     private final StringProperty dateFormattedProperty = new SimpleStringProperty();
     private EntityColumn<ScheduledItem>[] audioColumns;
 
@@ -110,8 +107,8 @@ final class EventAudioPlaylistActivity extends ViewDomainActivityBase {
                     .onFailure(Console::log)
                     .onSuccess(events -> {
                         Event currentEvent = events.get(0);
-                        Object eventIdContainingAudios =  Entities.getPrimaryKey(currentEvent);
-                        if(currentEvent.getRepeatedEventId()!=null) {
+                        Object eventIdContainingAudios = Entities.getPrimaryKey(currentEvent);
+                        if (currentEvent.getRepeatedEventId() != null) {
                             eventIdContainingAudios = Entities.getPrimaryKey(currentEvent.getRepeatedEventId());
                         }
                         entityStore.executeQueryBatch(
@@ -123,7 +120,7 @@ final class EventAudioPlaylistActivity extends ViewDomainActivityBase {
                                     " from ScheduledItem si" +
                                     " where event=? and bookableScheduledItem.item.family.code=? and item.code=? and exists(select Attendance where scheduledItem=si.bookableScheduledItem and documentLine.(!cancelled and document.(person=? and event=? and confirmed and price_balance<=0)))" +
                                     " order by date",
-                                    new Object[]{ userPersonId, userPersonId, userPersonId, eventIdContainingAudios, KnownItemFamily.AUDIO_RECORDING.getCode(), pathItemCodeProperty.get(), userPersonId,currentEvent }),
+                                    new Object[]{userPersonId, userPersonId, userPersonId, eventIdContainingAudios, KnownItemFamily.AUDIO_RECORDING.getCode(), pathItemCodeProperty.get(), userPersonId, currentEvent}),
                                 //Index 1: we look for the scheduledItem of audio type having a bookableScheduledItem which is a teaching type (case of STTP)
                                 // TODO: for now we take only the English audio recording scheduledItem in that case. We should take the language default of the organization instead
                                 new EntityStoreQuery("select name, date, programScheduledItem.(name, timeline.(startTime, endTime)), published, event, " +
@@ -133,7 +130,7 @@ final class EventAudioPlaylistActivity extends ViewDomainActivityBase {
                                     " from ScheduledItem si" +
                                     " where event=? and bookableScheduledItem.item.family.code=? and item.code=? and exists(select Attendance where scheduledItem=si.bookableScheduledItem and documentLine.(!cancelled and document.(person=? and event=? and confirmed and price_balance<=0)))" +
                                     " order by date",
-                                    new Object[]{ userPersonId, userPersonId, userPersonId, eventIdContainingAudios, KnownItemFamily.TEACHING.getCode(), KnownItem.AUDIO_RECORDING_ENGLISH.getCode(), userPersonId,currentEvent }),
+                                    new Object[]{userPersonId, userPersonId, userPersonId, eventIdContainingAudios, KnownItemFamily.TEACHING.getCode(), KnownItem.AUDIO_RECORDING_ENGLISH.getCode(), userPersonId, currentEvent}),
                                 //Index 2: the medias
                                 new EntityStoreQuery("select url, scheduledItem.(date, event), scheduledItem.name, scheduledItem.published, durationMillis " +
                                     " from Media" +
@@ -152,10 +149,10 @@ final class EventAudioPlaylistActivity extends ViewDomainActivityBase {
 
         AudioColumnsRenderers.registerRenderers();
         audioColumns = VisualEntityColumnFactory.get().fromJsonArray("""
-                [
-                {expression: 'this', renderer: 'audioName', minWidth: 200},
-                {expression: 'this', renderer: 'audioButtons', textAlign: 'center', hShrink: false}
-                ]""", getDomainModel(), "ScheduledItem");
+            [
+            {expression: 'this', renderer: 'audioName', minWidth: 300},
+            {expression: 'this', renderer: 'audioButtons', textAlign: 'right', hShrink: false}
+            ]""", getDomainModel(), "ScheduledItem");
     }
 
     @Override
@@ -170,54 +167,61 @@ final class EventAudioPlaylistActivity extends ViewDomainActivityBase {
         eventLabel.setWrapText(true);
         eventLabel.setMinHeight(Region.USE_PREF_SIZE);
         eventLabel.setTextAlignment(TextAlignment.CENTER);
-        eventLabel.setPadding(new Insets(0, 0, 12, 0));
 
         HtmlText eventDescriptionHTMLText = new HtmlText();
         I18n.bindI18nTextProperty(eventDescriptionHTMLText.textProperty(), new I18nSubKey("expression: shortDescription", eventProperty), eventProperty);
         eventDescriptionHTMLText.managedProperty().bind(eventDescriptionHTMLText.textProperty().isNotEmpty());
-        eventDescriptionHTMLText.setMaxHeight(60);
-        audioExpirationLabel = Bootstrap.textSuccess(I18nControls.newLabel(AudioRecordingsI18nKeys.AvailableUntil, dateFormattedProperty));
-        audioExpirationLabel.setPadding(new Insets(30, 0, 0, 0));
-        VBox titleVBox = new VBox(eventLabel, eventDescriptionHTMLText, audioExpirationLabel);
-        titleVBox.setMinWidth(200);
+
+        audioExpirationText = Bootstrap.textSuccess(I18nControls.newLabel(AudioRecordingsI18nKeys.AvailableUntil1, dateFormattedProperty));
+        audioExpirationText.managedProperty().bind(dateFormattedProperty.isNotEmpty());
+        Layouts.bindManagedToVisibleProperty(audioExpirationText);
+
+        VBox titleVBox = new VBox(eventLabel, eventDescriptionHTMLText, audioExpirationText);
+        VBox.setMargin(eventDescriptionHTMLText, new Insets(12, 0, 0, 0));
+        VBox.setMargin(audioExpirationText, new Insets(30, 0, 0, 0));
 
         MonoPane responsiveHeader = new MonoPane();
         new ResponsiveDesign(responsiveHeader)
-                // 1. Horizontal layout (for desktops) - as far as TitleVBox is not higher than the image
-                .addResponsiveLayout(/* applicability test: */ width -> {
-                            double titleVBoxWidth = width - imageMonoPane.getWidth() - 50 /* HBox spacing */;
-                            //Here we resize the font according to the size of the window
-                            double fontSize = Double.max(15, Double.min(30,titleVBoxWidth * 0.08));
-                            //In JavaFX, the CSS has priority on Font, that's why we do a setStyle after. In web, the Font has priority on CSS
-                            eventLabel.setFont(Font.font(fontSize));
-                            eventLabel.setStyle("-fx-font-size: " + fontSize);
-                            return titleVBox.prefHeight(titleVBoxWidth) <= IMAGE_HEIGHT && imageMonoPane.getWidth() > 0; // also image must be loaded
-                        }, /* apply method: */ () -> {
-                            responsiveHeader.setContent(new HBox(50, imageMonoPane, titleVBox));
-                    }
-                        , /* test dependencies: */ imageMonoPane.widthProperty())
-                // 2. Vertical layout (for mobiles) - when TitleVBox is too high (always applicable if 1. is not)
-                .addResponsiveLayout(/* apply method: */ () -> {
-                    VBox vBox = new VBox(10, imageMonoPane, titleVBox);
-                    vBox.setAlignment(Pos.CENTER);
-                    VBox.setMargin(titleVBox, new Insets(5, 10, 5, 10)); // Same as cell padding => vertically aligned with cell content
-                    responsiveHeader.setContent(vBox);
-                }).start();
+            // 1. Horizontal layout (for desktops) - as far as TitleVBox is not higher than the image
+            .addResponsiveLayout(/* applicability test: */ width -> {
+                double spacing = width * 0.05;
+                HBox.setMargin(titleVBox, new Insets(0, 0, 0, spacing));
+                    double titleVBoxWidth = width - imageMonoPane.getWidth() - spacing;
+                    //Here we resize the font according to the size of the window
+                    double fontSizeFactor = Double.max(0.75, Double.min(1, titleVBoxWidth * 0.0042));
+                    //System.out.println("fontSizeFactor = " + fontSizeFactor);
+                    //In JavaFX, the CSS has priority on Font, that's why we do a setStyle after. In web, the Font has priority on CSS
+                    eventLabel.setFont(Font.font(fontSizeFactor * 30));
+                    eventLabel.setStyle("-fx-font-size: " + fontSizeFactor * 30);
+                    eventDescriptionHTMLText.setFont(Font.font(fontSizeFactor * 18));
+                    return fontSizeFactor > 0.75;
+                }, /* apply method: */ () -> {
+                    responsiveHeader.setContent(new HBox(imageMonoPane, titleVBox));
+                }
+                , /* test dependencies: */ imageMonoPane.widthProperty())
+            // 2. Vertical layout (for mobiles) - when TitleVBox is too high (always applicable if 1. is not)
+            .addResponsiveLayout(/* apply method: */ () -> {
+                VBox vBox = new VBox(10, imageMonoPane, titleVBox);
+                vBox.setAlignment(Pos.CENTER);
+                VBox.setMargin(titleVBox, new Insets(15, 10, 5, 0)); // Same as cell margin => vertically aligned with cell content
+                responsiveHeader.setContent(vBox);
+            }).start();
 
-        VBox audioTracksVBox = new VBox(20);
+        MonoPane audioTracksContainer = new MonoPane();
 
-        Label listOfTrackLabel = I18nControls.newLabel(AudioRecordingsI18nKeys.ListOfTracks);
-        listOfTrackLabel.setPadding(new Insets(30,0,0,0));
+        Text listOfTrackLabel = I18n.newText(AudioRecordingsI18nKeys.ListOfTracks);
+        VBox.setMargin(listOfTrackLabel, new Insets(30, 0, 0, 0));
         listOfTrackLabel.getStyleClass().add("list-tracks-title");
+
         Player audioPlayer = new JavaFXMediaAudioPlayer();
 
         VBox loadedContentVBox = new VBox(40,
-                responsiveHeader,
-                new ScalePane(ScaleMode.FIT_WIDTH, audioPlayer.getMediaView()),
-                listOfTrackLabel,
-                audioTracksVBox
+            responsiveHeader,
+            new ScalePane(ScaleMode.FIT_WIDTH, audioPlayer.getMediaView()),
+            new ScalePane(listOfTrackLabel),
+            audioTracksContainer
         );
-        loadedContentVBox.setMaxWidth(SessionAudioTrackView.MAX_WIDTH);
+        //loadedContentVBox.setMaxWidth(MAX_WIDTH);
         loadedContentVBox.setAlignment(Pos.CENTER);
 
         Node loadingContentIndicator = new GoldenRatioPane(Controls.createProgressIndicator(100));
@@ -234,7 +238,7 @@ final class EventAudioPlaylistActivity extends ViewDomainActivityBase {
             if (event == null) { // this indicates that the data has not finished loaded
                 pageContainer.setContent(loadingContentIndicator);
                 // TODO display something else (ex: next online events to book) when the user is not logged in, or registered
-            } else { // otherwise we display loadedContentVBox and set the content of audioTracksVBox
+            } else { // otherwise we display loadedContentVBox and set the content of audioTracksContainer
                 pageContainer.setContent(loadedContentVBox);
                 String lang = extractLang(pathItemCodeProperty.get());
                 String cloudImagePath = ModalityCloudinary.eventCoverImagePath(event, lang);
@@ -242,10 +246,10 @@ final class EventAudioPlaylistActivity extends ViewDomainActivityBase {
                 LocalDateTime audioExpirationDate = event.getAudioExpirationDate();
                 if (audioExpirationDate != null) {
                     dateFormattedProperty.bind(LocalizedTime.formatLocalDateProperty(audioExpirationDate, FrontOfficeTimeFormats.AUDIO_PLAYLIST_DATE_FORMAT));
-                    audioExpirationLabel.setVisible(true);
+                    audioExpirationText.setVisible(true);
                 } else {
                     FXProperties.setEvenIfBound(dateFormattedProperty, null);
-                    audioExpirationLabel.setVisible(false);
+                    audioExpirationText.setVisible(false);
                 }
 
                 LocalDateTime nowInEventTimezone = Event.nowInEventTimezone();
@@ -253,30 +257,16 @@ final class EventAudioPlaylistActivity extends ViewDomainActivityBase {
                 if (audioExpirationDate == null || audioExpirationDate.isAfter(nowInEventTimezone)) {
                     // Does this event have audio recordings, and did the person book and pay for them?
                     if (!scheduledAudioItems.isEmpty()) { // yes => we show them as a list of playable tracks
-                        if (USE_VISUAL_GRID) {
-                            VisualGrid audioGrid = VisualGrid.createVisualGridWithResponsiveSkin();
-                            audioGrid.setPrefRowHeight(48);
-                            audioGrid.setCellMargin(new Insets(5, 10, 5, 10));
-                            audioGrid.setFullHeight(true);
-                            audioGrid.setHeaderVisible(false);
-                            audioGrid.setAppContext(new AudioColumnsContext(publishedMedias, audioPlayer));
-                            VisualResult vr = EntitiesToVisualResultMapper.mapEntitiesToVisualResult(scheduledAudioItems, audioColumns);
-                            audioGrid.setVisualResult(vr);
-                            audioTracksVBox.getChildren().setAll(audioGrid);
-                        } else {
-                            audioTracksVBox.getChildren().setAll(
-                                    IntStream.range(0, scheduledAudioItems.size())
-                                            .mapToObj(index ->
-                                                    new SessionAudioTrackView(
-                                                            scheduledAudioItems.get(index),
-                                                            publishedMedias,
-                                                            audioPlayer,
-                                                            index + 1, //The index is used to be display in the title, to number the different tracks
-                                                            scheduledAudioItems.size()).getView()
-                                            )
-                                            .collect(Collectors.toList()) // Collect the result as a List<Node>
-                            );
-                        }
+                        VisualGrid audioGrid = VisualGrid.createVisualGridWithResponsiveSkin();
+                        audioGrid.setMinRowHeight(48);
+                        audioGrid.setPrefRowHeight(Region.USE_COMPUTED_SIZE);
+                        audioGrid.setCellMargin(new Insets(15, 10, 5, 0));
+                        audioGrid.setFullHeight(true);
+                        audioGrid.setHeaderVisible(false);
+                        audioGrid.setAppContext(new AudioColumnsContext(publishedMedias, audioPlayer));
+                        VisualResult vr = EntitiesToVisualResultMapper.mapEntitiesToVisualResult(scheduledAudioItems, audioColumns);
+                        audioGrid.setVisualResult(vr);
+                        audioTracksContainer.setContent(audioGrid);
                     } else { // no => we indicate that there are no recordings for that event
                         noContentI18nKey = AudioRecordingsI18nKeys.NoAudioRecordingForThisEvent;
                     }
@@ -286,7 +276,7 @@ final class EventAudioPlaylistActivity extends ViewDomainActivityBase {
                 if (noContentI18nKey != null) {
                     Label noContentLabel = Bootstrap.h3(Bootstrap.textWarning(I18nControls.newLabel(noContentI18nKey)));
                     noContentLabel.setPadding(new Insets(150, 0, 100, 0));
-                    audioTracksVBox.getChildren().setAll(noContentLabel);
+                    audioTracksContainer.setContent(noContentLabel);
                 }
             }
         }, scheduledAudioItems, eventProperty);
@@ -296,6 +286,7 @@ final class EventAudioPlaylistActivity extends ViewDomainActivityBase {
         // ************************************* Building final container **********************************************
         // *************************************************************************************************************
 
+        pageContainer.getStyleClass().addAll("audio-library");
         // Setting a max width for big desktop screens
         return FOPageUtil.restrictToMaxPageWidthAndApplyPageLeftTopRightBottomPadding(pageContainer);
     }

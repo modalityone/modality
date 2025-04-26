@@ -1051,39 +1051,25 @@ btn-white {
 
 /*===== modality-event-frontoffice-activities-audiorecordings-web@main.css from modality-event-frontoffice-activity-audiorecordings-plugin =====*/
 
-.audio-library .h3 {
+.audio-library {
     font-family: "Poppins", sans-serif;
-    font-weight: 400; /* Semibold equivalent */
-    font-size: 15px;
-    text-align: left; /* Aligns text */
 }
-
-.audio-library .comment {
-    font-family: "Poppins", sans-serif;
-    font-weight: 300; /* Light equivalent */
-    font-size: 10px;
-    color: #838788; /* Text color equivalent to -fx-text-fill */
-    text-align: left; /* Aligns text */
-}
-
-/* Commented as this interferes with the JavaFX layout code
-.audio-library .description > fx-children > fx-text {
-    padding-left: 20px;
-    text-indent:-20px;
-}*/
 
 .list-tracks-title {
-    font-family: "Poppins", sans-serif;
     font-weight: bold;
     font-size: 24px;
     color: #4A4748; /* Text color equivalent to -fx-text-fill */
-    text-align: left; /* Aligns text */
 }
 
-.bottom-border {
-    border-color: transparent transparent #e6e6e6 transparent;
-    border-width: 0 0 1px 0; /* Border width translated to px */
-    border-style: solid;
+.audio-library .name, .audio-library .btn {
+    font-weight: 400; /* Semibold equivalent */
+    font-size: 16px;
+}
+
+.audio-library .comment {
+    font-weight: 300; /* Light equivalent */
+    font-size: 10px;
+    color: #838788; /* Text color equivalent to -fx-text-fill */
 }
 
 /*===== modality-event-frontoffice-activities-videos-web@main.css from modality-event-frontoffice-activity-videos-plugin =====*/

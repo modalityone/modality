@@ -134,6 +134,7 @@ final class AudioRecordingsActivity extends ViewDomainActivityBase {
             noContentVBox,
             columnsPane
         );
+        pageContainer.getStyleClass().addAll("audio-library");
 
         return FOPageUtil.restrictToMaxPageWidthAndApplyPageLeftTopRightBottomPadding(pageContainer);
     }

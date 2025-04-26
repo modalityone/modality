@@ -8,21 +8,6 @@ import java.util.List;
 /**
  * @author Bruno Salmon
  */
-final class AudioColumnsContext {
+record AudioColumnsContext(List<Media> publishedMedias, Player audioPlayer) {
 
-    private List<Media> publishedMedias;
-    private Player audioPlayer;
-
-    public AudioColumnsContext(List<Media> publishedMedias, Player audioPlayer) {
-        this.publishedMedias = publishedMedias;
-        this.audioPlayer = audioPlayer;
-    }
-
-    public List<Media> getPublishedMedias() {
-        return publishedMedias;
-    }
-
-    public Player getAudioPlayer() {
-        return audioPlayer;
-    }
 }

@@ -392,6 +392,7 @@
                         <list>one/modality/base/client/brand/[^/]+$</list>
                         <list>one/modality/base/client/images/[^/]+$</list>
                         <list>one/modality/base/shared/domainmodel/[^/]+$</list>
+                        <list>one/modality/event/frontoffice/activities/audiorecordings/[^/]+$</list>
                         <list>one/modality/event/frontoffice/activities/booking/map/[^/]+$</list>
                     </resourcesList>
                     <appIdentifier>one.modality.frontoffice</appIdentifier>
