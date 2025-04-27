@@ -28,9 +28,10 @@ public class MediaConsumptionRecorder {
     private final Player player;
     private final boolean download;
     private final boolean livestream;
-    private MediaConsumption playingMediaConsumption;
-    // StopWatch that will be running only while player is playing in order to record the user playing duration
+    // StopWatch that will be running only while the player is playing to record the user playing duration
     private final StopWatch playingStopWatch = StopWatch.createSystemMillisStopWatch();
+    private boolean started;
+    private MediaConsumption playingMediaConsumption;
     private Consumer<ShutdownEvent> shutdownHook;
 
     private MediaConsumptionRecorder(ScheduledItem scheduledItem, Media media) { // for download
@@ -49,7 +50,13 @@ public class MediaConsumptionRecorder {
         this.livestream = livestream;
     }
 
+    public Player getPlayer() {
+        return player;
+    }
+
     public void start() {
+        if (started)
+            return;
         if (download) {
             recordNewMediaConsumption();
         } else if (player != null) {
@@ -84,6 +91,7 @@ public class MediaConsumptionRecorder {
                 }
             }, player.getPlayerGroup().playingPlayerProperty(), player.statusProperty());
         }
+        started = true;
     }
 
     public void stop() {
@@ -108,11 +116,11 @@ public class MediaConsumptionRecorder {
         else {
             playingStopWatch.reset();
             playingStopWatch.on();
-            // We ignore tracks played less than 5s, so we postpone the storage
+            // We ignore tracks played less than 5 s, so we postpone the storage
             Scheduler.scheduleDelay(5000, () -> {
                 if (playingMediaConsumption == mediaConsumption) { // double-check if the user didn't play another track in the meantime
-                    if (Players.isMaybePlaying(player)) { // and that the player is still playing (pr maybe playing)
-                        // The track has been played more than 5s, so we can now store the media consumption
+                    if (Players.isMaybePlaying(player)) { // and that the player is still playing (or maybe playing).
+                        // The track has been played more than 5 s, so we can now store the media consumption
                         updateStore.submitChanges();
                         // For the duration record, in addition to the player listener set up in start(), we install
                         // a shutdown hook in case the user closes the app (which also cause the track to stop).
