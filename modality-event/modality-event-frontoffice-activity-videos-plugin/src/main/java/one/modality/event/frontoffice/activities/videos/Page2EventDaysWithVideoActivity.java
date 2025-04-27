@@ -186,7 +186,7 @@ final class Page2EventDaysWithVideoActivity extends ViewDomainActivityBase {
             LocalDateTime showLivestreamEnd = scheduledItemEnd.plusMinutes(30);
 
             //If we're 20 minutes before or 30 minutes after the teaching, we display the livestream window
-            if (Times.isBetween(nowInEventTimezone, showLivestreamStart, showLivestreamEnd)) {
+            if (Times.isBetween(nowInEventTimezone, showLivestreamStart, showLivestreamEnd) && !programScheduledItem.isCancelled()) {
                 watchVideoItemProperty.set(null); // Stopping possible VOD and showing livestream instead
                 videoCollapsePane.expand(); // Ensures the livestream player is showing
                 long showLivestreamEndDelayMillis = ChronoUnit.MILLIS.between(nowInEventTimezone, showLivestreamEnd);
