@@ -17,11 +17,12 @@ final class VideoState {
 
     static String getVideoStatusI18nKey(ScheduledItem scheduledItem) {
         // Video status lifecycle:
-        // 1. ON_TIME => 2. COUNTDOWN (=> 3. DELAYED) => 4. LIVE_NOW => 5. SOON_AVAILABLE (=> 6. DELAYED) => 7. AVAILABLE => 8. EXPIRED
+        // 1. ON_TIME (=> 2. CANCELLED) => 3. COUNTDOWN (=> 4. DELAYED) => 5. LIVE_NOW => 6. SOON_AVAILABLE (=> 7. DELAYED) => 8. AVAILABLE => 9. EXPIRED
 
         Event event = scheduledItem.getEvent();
         LocalDateTime expirationDate = Objects.coalesce(scheduledItem.getExpirationDate(), event.getVodExpirationDate());
-        EntityHasStartAndEndTime startAndEndTimeHolder = Objects.coalesce(scheduledItem.getProgramScheduledItem().getTimeline(), scheduledItem.getProgramScheduledItem());
+        ScheduledItem programScheduledItem = scheduledItem.getProgramScheduledItem();
+        EntityHasStartAndEndTime startAndEndTimeHolder = Objects.coalesce(programScheduledItem.getTimeline(), programScheduledItem);
         LocalDateTime sessionStart = scheduledItem.getDate().atTime(startAndEndTimeHolder.getStartTime());
         LocalDateTime sessionEnd = scheduledItem.getDate().atTime(startAndEndTimeHolder.getEndTime());
 
@@ -31,37 +32,41 @@ final class VideoState {
 
         LocalDateTime nowInEventTimezone = Event.nowInEventTimezone();
 
+        // 2. CANCELLED
+        if (programScheduledItem.isCancelled())
+            return VideosI18nKeys.VideoCancelled;
+
         // 1. ON_TIME
         if (nowInEventTimezone.isBefore(countDownStart)) { // More than 3 hours before the session
             return VideosI18nKeys.OnTime;
         }
 
-        // 2. COUNTDOWN
+        // 3. COUNTDOWN
         if (Times.isBetween(nowInEventTimezone, countDownStart, liveNowStart)) {
             return VideosI18nKeys.StartingIn1;
         }
 
-        // 3. DELAYED (eventually)
+        // 4. DELAYED (eventually)
         if (scheduledItem.isVodDelayed()) {
             return I18nKeys.upperCase(VideosI18nKeys.VideoDelayed);
         }
 
-        // 4. LIVE_NOW
+        // 5. LIVE_NOW
         if (Times.isBetween(nowInEventTimezone, liveNowStart, sessionEnd)) {
             return VideosI18nKeys.LiveNow;
         }
 
-        // 5. SOON_AVAILABLE
+        // 6. SOON_AVAILABLE
         if (!scheduledItem.isPublished() && nowInEventTimezone.isBefore(maxNormalProcessingEnd)) {
             return VideosI18nKeys.RecordingSoonAvailable;
         }
 
-        // 6. DELAYED (eventually) or 7. AVAILABLE_UNTIL
+        // 7. DELAYED (eventually) or 8. AVAILABLE_UNTIL
         if (expirationDate == null || Times.isFuture(expirationDate, Event.getEventClock())) {
             return scheduledItem.isPublished() ? VideosI18nKeys.Available : VideosI18nKeys.VideoDelayed;
         }
 
-        // 8. EXPIRED
+        // 9. EXPIRED
         return VideosI18nKeys.Expired;
     }
 

@@ -123,7 +123,7 @@ final class Page2EventDaysWithVideoActivity extends ViewDomainActivityBase {
                         // We load all video scheduledItems booked by the user for the event (booking must be confirmed
                         // and paid). They will be grouped by day in the UI.
                         // Note: double dots such as programScheduledItem.timeline..startTime means we do a left join that allows null value (if the event is recurring, the timeline of the programScheduledItem is null)
-                        entityStore.<ScheduledItem>executeQuery("select name, date, expirationDate, programScheduledItem.(name, startTime, endTime, timeline.(startTime, endTime)), published, event.(name, type.recurringItem, livestreamUrl, recurringWithVideo), vodDelayed, " +
+                        entityStore.<ScheduledItem>executeQuery("select name, date, expirationDate, programScheduledItem.(name, startTime, endTime, timeline.(startTime, endTime), cancelled), published, event.(name, type.recurringItem, livestreamUrl, recurringWithVideo), vodDelayed, " +
                                     " (exists(select MediaConsumption where scheduledItem=si and attendance.documentLine.document.person=?) as attended), " +
                                     " (select id from Attendance where scheduledItem=si.bookableScheduledItem and documentLine.document.person=? limit 1) as attendanceId " +
                                     " from ScheduledItem si " +

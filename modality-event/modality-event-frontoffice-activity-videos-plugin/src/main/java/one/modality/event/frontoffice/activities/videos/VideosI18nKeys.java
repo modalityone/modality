@@ -22,6 +22,7 @@ public interface VideosI18nKeys {
     String Status = "Status";
     String ViewAllDays = "ViewAllDays";
     String VideoExpiredSince1 = "VideoExpiredSince1";
+    String VideoCancelled = "VideoCancelled";
     String OnTime = "OnTime";
     String VideoDelayed = "VideoDelayed";
     String Expired = "Expired";
