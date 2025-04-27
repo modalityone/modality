@@ -2,6 +2,7 @@ package one.modality.event.frontoffice.activities.videos;
 
 import dev.webfx.extras.panes.*;
 import dev.webfx.extras.player.Player;
+import dev.webfx.extras.player.Players;
 import dev.webfx.extras.player.StartOptionsBuilder;
 import dev.webfx.extras.player.multi.all.AllPlayers;
 import dev.webfx.extras.responsive.ResponsiveDesign;
@@ -9,6 +10,7 @@ import dev.webfx.extras.styles.bootstrap.Bootstrap;
 import dev.webfx.extras.time.format.LocalizedTime;
 import dev.webfx.extras.util.control.Controls;
 import dev.webfx.extras.util.layout.Layouts;
+import dev.webfx.extras.util.scene.SceneUtil;
 import dev.webfx.extras.visual.VisualResult;
 import dev.webfx.extras.visual.controls.grid.VisualGrid;
 import dev.webfx.extras.webtext.HtmlText;
@@ -30,9 +32,7 @@ import dev.webfx.stack.orm.reactive.entities.entities_to_grid.EntityColumn;
 import dev.webfx.stack.orm.reactive.mapping.entities_to_visual.EntitiesToVisualResultMapper;
 import dev.webfx.stack.orm.reactive.mapping.entities_to_visual.VisualEntityColumnFactory;
 import javafx.application.Platform;
-import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.ObjectProperty;
-import javafx.beans.property.SimpleBooleanProperty;
 import javafx.beans.property.SimpleObjectProperty;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
@@ -52,16 +52,13 @@ import one.modality.base.client.cloudinary.ModalityCloudinary;
 import one.modality.base.client.icons.SvgIcons;
 import one.modality.base.client.time.FrontOfficeTimeFormats;
 import one.modality.base.frontoffice.utility.page.FOPageUtil;
-import one.modality.base.shared.entities.Event;
-import one.modality.base.shared.entities.KnownItem;
-import one.modality.base.shared.entities.KnownItemFamily;
-import one.modality.base.shared.entities.ScheduledItem;
+import one.modality.base.shared.entities.*;
 import one.modality.crm.shared.services.authn.fx.FXUserPersonId;
 import one.modality.event.frontoffice.medias.MediaConsumptionRecorder;
 
-import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -80,25 +77,24 @@ final class Page2EventDaysWithVideoActivity extends ViewDomainActivityBase {
     private final ObjectProperty<Event> eventProperty = new SimpleObjectProperty<>(); // The event loaded from the event id
     private final ObservableList<ScheduledItem> videoScheduledItems = FXCollections.observableArrayList(); // The list of all videos for that event
 
+    private final ObjectProperty<ScheduledItem> watchVideoItemProperty = new SimpleObjectProperty<>(); // the VOD to watch (null for livestream)
+    private final List<Media> watchMedias = new ArrayList<>(); // the medias of the VOD to watch
+
+    private final CollapsePane videoCollapsePane = new CollapsePane(); // contains the video player(s): 1 for livestream, 1 per media for VOD
+    private final List<MediaConsumptionRecorder> videoConsumptionRecorders = new ArrayList<>(); // the video consumption recorders (1 per player)
+    private Player lastVideoPlayingPlayer; // the last playing player from this activity
 
     private final Label videoExpirationLabel = new Label();
     private final Button selectAllDaysButton = Bootstrap.primaryButton(I18nControls.newButton(VideosI18nKeys.ViewAllDays));
     private final Label selectTheDayBelowLabel = I18nControls.newLabel(VideosI18nKeys.SelectTheDayBelow);
     private EntityStore entityStore;
     private EntityColumn<ScheduledItem>[] videoColumns;
-
     private final VisualGrid videoGrid = VisualGrid.createVisualGridWithResponsiveSkin();
-
-    private final SimpleObjectProperty<String> livestreamUrlProperty = new SimpleObjectProperty<>();
-    private final Player livestreamPlayer = AllPlayers.createAllVideoPlayer();
-    private MediaConsumptionRecorder mediaConsumptionRecorder;
-    private final ObjectProperty<ScheduledItem> scheduledVideoItemProperty = new SimpleObjectProperty<>();
-    private final BooleanProperty displayLivestreamVideoProperty = new SimpleBooleanProperty(false);
-    private CollapsePane livestreamCollapsePane;
 
     public Page2EventDaysWithVideoActivity() {
         //We relaunch every 14 hours the request (in case the user never close the page, and to make sure the coherence of MediaConsumption is ok)
         Scheduler.schedulePeriodic(14 * 3600 * 1000, this::startLogic);
+        videoCollapsePane.collapse(); // initially collapsed - might be automatically expanded by scheduleAutoLivestream()
     }
 
     @Override
@@ -108,18 +104,18 @@ final class Page2EventDaysWithVideoActivity extends ViewDomainActivityBase {
 
     @Override
     protected void startLogic() {
-        entityStore = EntityStore.create(getDataSourceModel());
         // Creating our own entity store to hold the loaded data without interfering with other activities
+        entityStore = EntityStore.create(getDataSourceModel());
+        // Initial data loading for the event specified in the path
         FXProperties.runNowAndOnPropertiesChange(() -> {
             Object eventId = pathEventIdProperty.get();
             EntityId userPersonId = FXUserPersonId.getUserPersonId();
-            LocalDateTime nowInEventTimezone = Event.nowInEventTimezone();
             if (eventId == null || userPersonId == null) {
                 videoScheduledItems.clear();
                 eventProperty.set(null);
             } else {
                 entityStore.<Event>executeQuery("select name, label.(de,en,es,fr,pt), shortDescription, audioExpirationDate, startDate, endDate, livestreamUrl, vodExpirationDate, repeatVideo, recurringWithVideo, repeatedEvent" +
-                        " from Event where id=? limit 1", eventId)
+                        " from Event where id=?", eventId)
                     .onFailure(Console::log)
                     .onSuccess(events -> {
                         Event currentEvent = events.get(0);
@@ -138,55 +134,77 @@ final class Page2EventDaysWithVideoActivity extends ViewDomainActivityBase {
                                     " order by date, programScheduledItem.timeline..startTime",
                                 userPersonId, userPersonId, eventContainingVideos, KnownItemFamily.TEACHING.getCode(), KnownItem.VIDEO.getCode(), userPersonId, currentEvent)
                             .onFailure(Console::log)
-                            .onSuccess(scheduledItemList -> Platform.runLater(() -> {
-                                videoScheduledItems.setAll(scheduledItemList);
+                            .onSuccess(scheduledItems -> Platform.runLater(() -> {
+                                videoScheduledItems.setAll(scheduledItems);
                                 eventProperty.set(currentEvent);
-                                livestreamUrlProperty.set(currentEvent.getLivestreamUrl());
-                                // The livestream url is always the same for the event, but we still need to determine which
-                                // session is being played for the MediaConsumption management. To do this, we will set
-                                // scheduledVideoItemProperty with the scheduled item corresponding to the played session.
-                                LocalDate today = Event.todayInEventTimezone();
-                                List<ScheduledItem> todayVideoScheduledItems = Collections.filter(videoScheduledItems,
-                                    item -> item.getDate().isEqual(today));
-                                todayVideoScheduledItems.forEach(scheduledItem -> { // iterating today sessions
-                                    ScheduledItem programScheduledItem = scheduledItem.getProgramScheduledItem();
-                                    LocalDateTime scheduledItemStart = scheduledItem.getDate().atTime(programScheduledItem.getStartTime());
-                                    LocalDateTime scheduledItemEnd = scheduledItem.getDate().atTime(programScheduledItem.getEndTime());
-
-                                    //If we're 20 minutes before or 30 minutes after the teaching, we display the livestream window
-                                    if (Times.isBetween(nowInEventTimezone, scheduledItemStart.minusMinutes(20), scheduledItemEnd.plusMinutes(30))) {
-                                        displayLivestreamVideoProperty.set(true);
-                                        long endPlus30MinutesInMs = ChronoUnit.MILLIS.between(nowInEventTimezone,scheduledItemEnd.plusMinutes(30));
-                                        UiScheduler.scheduleDelay(endPlus30MinutesInMs, () -> displayLivestreamVideoProperty.set(false));
-                                    }
-                                    if (nowInEventTimezone.isBefore(scheduledItemStart.minusMinutes(20))) {
-                                        displayLivestreamVideoProperty.set(false);
-                                        long startMinus20MinutesInMs = ChronoUnit.MILLIS.between(nowInEventTimezone,scheduledItemStart.minusMinutes(20));
-                                        UiScheduler.scheduleDelay(startMinus20MinutesInMs, () -> displayLivestreamVideoProperty.set(true));
-                                    }
-                                    //If we arrive in the middle of the session, we trigger the MediaConsumptionRecorder by setting the scheduledVideoItemProperty
-                                    if (Times.isBetween(nowInEventTimezone, scheduledItemStart, scheduledItemEnd)) {
-                                        scheduledVideoItemProperty.set(scheduledItem);
-                                    }
-                                    //If we arrive before the start of the session, we postpone the triggering of the MediaConsumptionRecorder by setting the scheduledVideoItemProperty
-                                    //at the start of the session
-                                    if (nowInEventTimezone.isBefore(scheduledItemStart)) {
-                                        long startInMs = ChronoUnit.MILLIS.between(nowInEventTimezone,scheduledItemStart);
-                                        UiScheduler.scheduleDelay(startInMs, () -> scheduledVideoItemProperty.set(scheduledItem));
-                                    }
-                                });
+                                populateVideos();
+                                scheduleAutoLivestream();
                             }));
                     });
             }
         }, pathEventIdProperty, FXUserPersonId.userPersonIdProperty());
+
+        // Later Media loading when the user wants to watch a specific video (this sets watchVideoItemProperty)
+        FXProperties.runOnPropertiesChange(() -> {
+            ScheduledItem watchVideoItem = watchVideoItemProperty.get();
+            EntityId userPersonId = FXUserPersonId.getUserPersonId();
+            if (watchVideoItem == null || userPersonId == null) {
+                watchMedias.clear();
+                populateVideos(); // livestream
+            } else {
+                entityStore.<Media>executeQuery("select url from Media where scheduledItem=?", watchVideoItem)
+                    .onFailure(Console::log)
+                    .onSuccess(mediaLists -> Platform.runLater(() -> {
+                        Collections.setAll(watchMedias, mediaLists);
+                        populateVideos(); // VOD
+                        videoCollapsePane.expand();
+                    }));
+            }
+        }, watchVideoItemProperty, FXUserPersonId.userPersonIdProperty());
+
         VideoColumnsFormattersAndRenderers.registerRenderers();
         videoColumns = VisualEntityColumnFactory.get().fromJsonArray("""
             [
             {expression: 'date', label: 'Date', format: 'videoDate', hShrink: false, styleClass: 'date'},
             {expression: '[coalesce(startTime, programScheduledItem.startTime), coalesce(endTime, programScheduledItem.endTime)]', label: 'UK time', format: 'videoTimeRange', textAlign: 'center', hShrink: false, styleClass: 'time'},
-            {expression: 'coalesce(name, programScheduledItem.name)', label: 'Name', renderer: 'ellipsisLabel', minWidth: 200,styleClass: 'title'},
-            {expression: 'this', label: 'Status', renderer: 'videoStatus', textAlign: 'center', hShrink: false}
+            {expression: 'coalesce(name, programScheduledItem.name)', label: 'Name', renderer: 'ellipsisLabel', minWidth: 200, styleClass: 'title'},
+            {expression: 'this', label: 'Status', renderer: 'videoStatus', textAlign: 'center', hShrink: false, styleClass: 'status'}
             ]""", getDomainModel(), "ScheduledItem");
+    }
+
+    private void scheduleAutoLivestream() {
+        LocalDateTime nowInEventTimezone = Event.nowInEventTimezone();
+        // The livestream url is always the same for the event, but we still need to determine which
+        // session is being played for the MediaConsumption management. To do this, we will set
+        // scheduledVideoItemProperty with the scheduled item corresponding to the played session.
+        for (ScheduledItem scheduledItem : videoScheduledItems) { // iterating video sessions
+            ScheduledItem programScheduledItem = scheduledItem.getProgramScheduledItem();
+            LocalDateTime scheduledItemStart = scheduledItem.getDate().atTime(programScheduledItem.getStartTime());
+            LocalDateTime scheduledItemEnd = scheduledItem.getDate().atTime(programScheduledItem.getEndTime());
+
+            LocalDateTime showLivestreamStart = scheduledItemStart.minusMinutes(30);
+            LocalDateTime showLivestreamEnd = scheduledItemEnd.plusMinutes(30);
+
+            //If we're 20 minutes before or 30 minutes after the teaching, we display the livestream window
+            if (Times.isBetween(nowInEventTimezone, showLivestreamStart, showLivestreamEnd)) {
+                watchVideoItemProperty.set(null); // Stopping possible VOD and showing livestream instead
+                videoCollapsePane.expand(); // Ensures the livestream player is showing
+                long showLivestreamEndDelayMillis = ChronoUnit.MILLIS.between(nowInEventTimezone, showLivestreamEnd);
+                UiScheduler.scheduleDelay(showLivestreamEndDelayMillis, this::scheduleAutoLivestream);
+                return;
+            } else if (nowInEventTimezone.isBefore(showLivestreamStart)) {
+                long showLivestreamStartDelayMillis = ChronoUnit.MILLIS.between(nowInEventTimezone, showLivestreamStart);
+                UiScheduler.scheduleDelay(showLivestreamStartDelayMillis, this::scheduleAutoLivestream);
+            }
+        }
+        // If we reach this point, it's because there is no livestream to show at the moment, so we collapse
+        // videoCollapsePane (unless the user switched to a VOD in the meantime)
+        if (isCollapsePaneContainingLivestream()) // livestream (not VOD)
+            videoCollapsePane.collapse();
+    }
+
+    private boolean isCollapsePaneContainingLivestream() {
+        return watchVideoItemProperty.get() == null;
     }
 
     @Override
@@ -195,7 +213,6 @@ final class Page2EventDaysWithVideoActivity extends ViewDomainActivityBase {
         // *************************************************************************************************************
         // ********************************* Building the static part of the UI ****************************************
         // *************************************************************************************************************
-        MonoPane pageContainer = new MonoPane(); // Will hold either the loading indicator or the loaded content
 
         Node loadingContentIndicator = new GoldenRatioPane(Controls.createProgressIndicator(100));
 
@@ -219,13 +236,18 @@ final class Page2EventDaysWithVideoActivity extends ViewDomainActivityBase {
         new ResponsiveDesign(responsiveHeader)
             // 1. Horizontal layout (for desktops) - as far as TitleVBox is not higher than the image
             .addResponsiveLayout(/* applicability test: */ width -> {
-                    double titleVBoxWidth = width - eventImageContainer.getWidth() - 50 /* HBox spacing */;
-                    double fontSize = Double.max(15, Double.min(30,titleVBoxWidth * 0.08));
-                    //In JavaFX, the CSS has priority on Font, that's why we do a setStyle after. In web, the Font has priority on Css
-                    eventLabel.setFont(Font.font(fontSize));
-                    eventLabel.setStyle("-fx-font-size: " + fontSize);
-                    return titleVBox.prefHeight(titleVBoxWidth) <= IMAGE_HEIGHT && eventImageContainer.getWidth() > 0; // also image must be loaded
-                }, /* apply method: */ () -> responsiveHeader.setContent(new HBox(50, eventImageContainer, titleVBox))
+                    double spacing = width * 0.05;
+                    HBox.setMargin(titleVBox, new Insets(0, 0, 0, spacing));
+                    double titleVBoxWidth = width - eventImageContainer.getWidth() - spacing;
+                    //Here we resize the font according to the size of the window
+                    double fontSizeFactor = Double.max(0.75, Double.min(1, titleVBoxWidth * 0.0042));
+                    System.out.println("fontSizeFactor = " + fontSizeFactor);
+                    //In JavaFX, the CSS has priority on Font, that's why we do a setStyle after. In web, the Font has priority on CSS
+                    eventLabel.setFont(Font.font(fontSizeFactor * 30));
+                    eventLabel.setStyle("-fx-font-size: " + fontSizeFactor * 30);
+                    eventDescriptionHTMLText.setFont(Font.font(fontSizeFactor * 18));
+                    return fontSizeFactor > 0.75;
+                }, /* apply method: */ () -> responsiveHeader.setContent(new HBox(eventImageContainer, titleVBox))
                 , /* test dependencies: */ eventImageContainer.widthProperty())
             // 2. Vertical layout (for mobiles) - when TitleVBox is too high (always applicable if 1. is not)
             .addResponsiveLayout(/* apply method: */ () -> {
@@ -235,9 +257,7 @@ final class Page2EventDaysWithVideoActivity extends ViewDomainActivityBase {
                 responsiveHeader.setContent(vBox);
             }).start();
 
-        livestreamCollapsePane = new CollapsePane(new ScalePane(ScaleMode.FIT_WIDTH, livestreamPlayer.getMediaView()));
-
-        StackPane decoratedLivestreamCollapsePane = CollapsePane.decorateCollapsePane(livestreamCollapsePane, true);
+        StackPane decoratedLivestreamCollapsePane = CollapsePane.decorateCollapsePane(videoCollapsePane, true);
         //We display this box only if the current Date is in the list of date in the video Scheduled Item list
         VBox todayProgramVBox = new VBox(30); // Will be populated later (see reacting code below)
         todayProgramVBox.setAlignment(Pos.CENTER);
@@ -254,7 +274,7 @@ final class Page2EventDaysWithVideoActivity extends ViewDomainActivityBase {
         videoGrid.setCellMargin(new Insets(5, 10, 5, 10));
         videoGrid.setFullHeight(true);
         videoGrid.setHeaderVisible(true);
-        videoGrid.setAppContext(getHistory()); // Passing the history as appContext to the value renderers
+        videoGrid.setAppContext(watchVideoItemProperty); // Passing watchVideoItemProperty as appContext to the value renderers
 
         VBox loadedContentVBox = new VBox(40,
             responsiveHeader, // contains the event image and the event title
@@ -262,7 +282,8 @@ final class Page2EventDaysWithVideoActivity extends ViewDomainActivityBase {
             videoGrid // contains the videos for the selected day (or all days)
         );
         loadedContentVBox.setAlignment(Pos.TOP_CENTER);
-        loadedContentVBox.getStyleClass().add("livestream");
+
+        MonoPane pageContainer = new MonoPane(); // Will hold either the loading indicator or the loaded content
 
         // *************************************************************************************************************
         // *********************************** Reacting to parameter changes *******************************************
@@ -298,7 +319,6 @@ final class Page2EventDaysWithVideoActivity extends ViewDomainActivityBase {
             Event eventContainingVideos = Objects.coalesce(event.getRepeatedEvent(), event);
             assert eventContainingVideos != null;
             boolean singleVideosPerDay = eventContainingVideos.isRecurringWithVideo();
-            LocalDate todayInEventTimezone = Event.todayInEventTimezone();
 
             // In single video per day mode (ex: STTP), we don't display the "Select the day below" label, because we automatically show all videos
             Layouts.setManagedAndVisibleProperties(selectTheDayBelowLabel, !singleVideosPerDay);
@@ -306,74 +326,96 @@ final class Page2EventDaysWithVideoActivity extends ViewDomainActivityBase {
                 selectAllDaysButton.fire(); // Automatically selecting all days to show all videos
             }
 
+            /* For NKT Festivals (not STTP)
             // Populating the videos for today
+            LocalDate todayInEventTimezone = Event.todayInEventTimezone();
             I18nControls.bindI18nProperties(todayVideosLabel, VideosI18nKeys.ScheduleForSpecificDate1,
                 LocalizedTime.formatMonthDay(todayInEventTimezone, FrontOfficeTimeFormats.VOD_TODAY_MONTH_DAY_FORMAT));
             List<ScheduledItem> todayVideoItems = Collections.filter(videoScheduledItems, item -> item.getDate().equals(todayInEventTimezone));
             Region todayView = new Page2EventDayScheduleView(todayInEventTimezone, todayVideoItems, getHistory(), true).getView();
-            todayProgramVBox.getChildren().setAll(todayVideosLabel, todayView);
+            todayProgramVBox.getChildren().setAll(todayVideosLabel, todayView);*/
 
         }, videoScheduledItems, eventProperty);
 
         // Showing selected videos once they are loaded
-        ObservableLists.runNowAndOnListOrPropertiesChange(change ->
-                refreshVideosTable()
-            , videoScheduledItems);
+        ObservableLists.runNowAndOnListOrPropertiesChange(change -> {
+            // Moving expired videos at the end of the list
+            SortedList<ScheduledItem> videoScheduledItemsExpiredLast = videoScheduledItems.sorted((v1, v2) ->
+                Boolean.compare(VideoState.isVideoExpired(v1), VideoState.isVideoExpired(v2)));
+            VisualResult vr = EntitiesToVisualResultMapper.mapEntitiesToVisualResult(videoScheduledItemsExpiredLast, videoColumns);
+            videoGrid.setVisualResult(vr);
+        }, videoScheduledItems);
 
-        FXProperties.runNowAndOnPropertyChange(this::syncPlayerContent, livestreamUrlProperty);
-        FXProperties.runOnPropertyChange(()->{
-            if (mediaConsumptionRecorder != null)
-                mediaConsumptionRecorder.stop();
-            mediaConsumptionRecorder = new MediaConsumptionRecorder(livestreamPlayer, true, scheduledVideoItemProperty::get, () -> null);
-            mediaConsumptionRecorder.start();
-        }, scheduledVideoItemProperty);
-
-        FXProperties.runNowAndOnPropertyChange(this::displayHideLiveStreamBox, displayLivestreamVideoProperty);
-
-        //When the livestream collapse pane is collapsed, we pause the livestreamPlayer so the full-screen orange pane
-        //is not displayed
-        FXProperties.runNowAndOnPropertyChange(()-> {
-            if (livestreamCollapsePane.collapsedProperty().get())
-                livestreamPlayer.pause();
-            else
-                livestreamPlayer.play();}, livestreamCollapsePane.collapsedProperty());
+        // When the livestream collapse pane is collapsed, we pause the livestreamPlayer so the full-screen orange button
+        // is not displayed
+        FXProperties.runNowAndOnPropertiesChange(() -> {
+            Player playingPlayer = Players.getGlobalPlayerGroup().getPlayingPlayer();
+            if (playingPlayer != null && SceneUtil.hasAncestor(playingPlayer.getMediaView(), videoCollapsePane)) {
+                lastVideoPlayingPlayer = playingPlayer;
+            }
+            if (lastVideoPlayingPlayer != null) {
+                if (videoCollapsePane.isCollapsed())
+                    lastVideoPlayingPlayer.pause();
+                else {
+                    MediaConsumptionRecorder videoConsumptionRecorder = Collections.findFirst(videoConsumptionRecorders, vcr -> vcr.getPlayer() == lastVideoPlayingPlayer);
+                    if (videoConsumptionRecorder != null) {
+                        videoConsumptionRecorder.start();
+                    }
+                    lastVideoPlayingPlayer.play();
+                }
+            }
+        }, videoCollapsePane.collapsedProperty(), Players.getGlobalPlayerGroup().playingPlayerProperty());
 
         // *************************************************************************************************************
         // ************************************* Building final container **********************************************
         // *************************************************************************************************************
 
+        pageContainer.getStyleClass().add("livestream");
         return FOPageUtil.restrictToMaxPageWidthAndApplyPageLeftTopRightBottomPadding(pageContainer);
     }
 
-    private void displayHideLiveStreamBox() {
-        if(displayLivestreamVideoProperty.get())
-           livestreamCollapsePane.expand();
-        else
-            livestreamCollapsePane.collapse();
-    }
-
-    private void syncPlayerContent() {
-        String livestreamUrl = livestreamUrlProperty.get();
-        if (livestreamUrl != null) {
-            boolean autoPlay = true;
-            livestreamPlayer.getMediaView().setVisible(true);
-            livestreamPlayer.setMedia(livestreamPlayer.acceptMedia(livestreamUrl));
-            livestreamPlayer.setStartOptions(new StartOptionsBuilder()
-                .setAutoplay(autoPlay)
-                .setAspectRatioTo16by9() // should be read from metadata but hardcoded for now
-                .build());
-            livestreamPlayer.play();
-        } else {
-            livestreamPlayer.setMedia(null);
-            livestreamPlayer.resetToInitialState();
+    private void populateVideos() {
+        // If some previous videos were consumed, we stop their consumption recorders
+        videoConsumptionRecorders.forEach(MediaConsumptionRecorder::stop);
+        videoConsumptionRecorders.clear();
+        Node videoContent = null;
+        boolean autoPlay = videoCollapsePane.isExpanded();
+        if (isCollapsePaneContainingLivestream()) { // Livestream
+            Event event = eventProperty.get();
+            String livestreamUrl = event.getLivestreamUrl();
+            if (livestreamUrl != null) {
+                videoContent = createVideoView(livestreamUrl, null, autoPlay);
+            }
+        } else { // VOD
+            // Creating a Player for each Media and initializing it.
+            VBox videoMediasVBox = new VBox(10);
+            for (Media media : watchMedias) {
+                Node videoView = createVideoView(media.getUrl(), media, autoPlay);
+                videoMediasVBox.getChildren().add(videoView);
+                // we autoplay only the first video
+                autoPlay = false;
+            }
+            videoContent = videoMediasVBox;
         }
+        videoCollapsePane.setContent(new ScalePane(ScaleMode.FIT_WIDTH, videoContent));
     }
 
-    private void refreshVideosTable() {
-        // Moving expired videos at the end of the list
-        SortedList<ScheduledItem> videoScheduledItemsExpiredLast = videoScheduledItems.sorted((v1, v2) ->
-            Boolean.compare(VideoState.isVideoExpired(v1), VideoState.isVideoExpired(v2)));
-        VisualResult vr = EntitiesToVisualResultMapper.mapEntitiesToVisualResult(videoScheduledItemsExpiredLast, videoColumns);
-        videoGrid.setVisualResult(vr);
+    private Node createVideoView(String url, Media media, boolean autoPlay) {
+        Player videoPlayer = AllPlayers.createAllVideoPlayer();
+        videoPlayer.setMedia(videoPlayer.acceptMedia(url));
+        videoPlayer.setStartOptions(new StartOptionsBuilder()
+            .setAutoplay(autoPlay)
+            .setAspectRatioTo16by9() // should be read from metadata but hardcoded for now
+            .build());
+        videoPlayer.displayVideo();
+        boolean livestream = media == null;
+        if (livestream)
+            lastVideoPlayingPlayer = videoPlayer;
+        MediaConsumptionRecorder videoConsumptionRecorder = new MediaConsumptionRecorder(videoPlayer, livestream, watchVideoItemProperty::get, () -> media);
+        videoConsumptionRecorders.add(videoConsumptionRecorder);
+        if (autoPlay)
+            videoConsumptionRecorder.start();
+        return videoPlayer.getMediaView();
     }
+
 }

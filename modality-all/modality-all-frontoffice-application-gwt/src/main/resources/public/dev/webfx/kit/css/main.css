@@ -1107,12 +1107,12 @@ btn-white {
     font-weight: bold;
 }
 
-.livestream .grid-body .time {
-     font-weight: normal;
+.livestream .grid-body .title {
+    font-weight: bold;
 }
 
-.livestream .grid-body .title {
-     font-style: italic;
+.livestream .grid-body .status, .livestream .btn {
+    font-weight: bold;
 }
 
 /** styles when we're in a mobile view **/
@@ -1121,7 +1121,11 @@ btn-white {
 }
 
 .livestream .grid-row .title {
-    font-style: italic;
+    font-weight: bold;
+}
+
+.livestream .grid-row .status {
+    font-weight: bold;
 }
 
 /*===== modality-event-client-recurringevents-web@main.css from modality-event-client-recurringevents =====*/
