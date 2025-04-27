@@ -27,6 +27,13 @@
 
 
 /** styles when we're in a desktop view **/
+
+.livestream .grid-head {
+    font-weight: 500; /* semi-bold */
+    font-size: 18px;
+    color: var(--brand-blue-color);
+}
+
 .livestream .grid-body .date {
     font-weight: bold;
 }
