@@ -21,7 +21,6 @@ import dev.webfx.platform.scheduler.Scheduler;
 import dev.webfx.platform.uischeduler.UiScheduler;
 import dev.webfx.platform.util.Objects;
 import dev.webfx.platform.util.collection.Collections;
-import dev.webfx.platform.util.time.Times;
 import dev.webfx.stack.i18n.I18n;
 import dev.webfx.stack.i18n.controls.I18nControls;
 import dev.webfx.stack.i18n.spi.impl.I18nSubKey;
@@ -57,7 +56,6 @@ import one.modality.crm.shared.services.authn.fx.FXUserPersonId;
 import one.modality.event.frontoffice.medias.MediaConsumptionRecorder;
 
 import java.time.LocalDateTime;
-import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -177,24 +175,17 @@ final class Page2EventDaysWithVideoActivity extends ViewDomainActivityBase {
         // The livestream url is always the same for the event, but we still need to determine which
         // session is being played for the MediaConsumption management. To do this, we will set
         // scheduledVideoItemProperty with the scheduled item corresponding to the played session.
-        for (ScheduledItem scheduledItem : videoScheduledItems) { // iterating video sessions
-            ScheduledItem programScheduledItem = scheduledItem.getProgramScheduledItem();
-            LocalDateTime scheduledItemStart = scheduledItem.getDate().atTime(programScheduledItem.getStartTime());
-            LocalDateTime scheduledItemEnd = scheduledItem.getDate().atTime(programScheduledItem.getEndTime());
-
-            LocalDateTime showLivestreamStart = scheduledItemStart.minusMinutes(30);
-            LocalDateTime showLivestreamEnd = scheduledItemEnd.plusMinutes(30);
+        for (ScheduledItem videoScheduledItem : videoScheduledItems) { // iterating video sessions
+            VideoTimes videoTimes = new VideoTimes(videoScheduledItem);
 
             //If we're 20 minutes before or 30 minutes after the teaching, we display the livestream window
-            if (Times.isBetween(nowInEventTimezone, showLivestreamStart, showLivestreamEnd) && !programScheduledItem.isCancelled()) {
+            if (videoTimes.isNowBetweenShowLivestreamStartAndShowLivestreamEnd() && !videoScheduledItem.getProgramScheduledItem().isCancelled()) {
                 watchVideoItemProperty.set(null); // Stopping possible VOD and showing livestream instead
                 videoCollapsePane.expand(); // Ensures the livestream player is showing
-                long showLivestreamEndDelayMillis = ChronoUnit.MILLIS.between(nowInEventTimezone, showLivestreamEnd);
-                UiScheduler.scheduleDelay(showLivestreamEndDelayMillis, this::scheduleAutoLivestream);
+                UiScheduler.scheduleDelay(videoTimes.durationMillisBetweenNowAndShowLivestreamEnd(), this::scheduleAutoLivestream);
                 return;
-            } else if (nowInEventTimezone.isBefore(showLivestreamStart)) {
-                long showLivestreamStartDelayMillis = ChronoUnit.MILLIS.between(nowInEventTimezone, showLivestreamStart);
-                UiScheduler.scheduleDelay(showLivestreamStartDelayMillis, this::scheduleAutoLivestream);
+            } else if (videoTimes.isNowBeforeShowLivestreamStart()) {
+                UiScheduler.scheduleDelay(videoTimes.durationMillisBetweenNowAndShowLivestreamStart(), this::scheduleAutoLivestream);
             }
         }
         // If we reach this point, it's because there is no livestream to show at the moment, so we collapse

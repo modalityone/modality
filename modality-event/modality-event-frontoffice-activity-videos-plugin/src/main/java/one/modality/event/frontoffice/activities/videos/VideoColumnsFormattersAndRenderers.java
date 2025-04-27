@@ -6,7 +6,6 @@ import dev.webfx.extras.time.format.LocalizedTime;
 import dev.webfx.extras.type.PrimType;
 import dev.webfx.extras.util.layout.Layouts;
 import dev.webfx.platform.uischeduler.UiScheduler;
-import dev.webfx.platform.util.Objects;
 import dev.webfx.stack.i18n.I18nKeys;
 import dev.webfx.stack.i18n.controls.I18nControls;
 import dev.webfx.stack.orm.domainmodel.formatter.FormatterRegistry;
@@ -22,7 +21,6 @@ import javafx.scene.layout.VBox;
 import one.modality.base.client.time.FrontOfficeTimeFormats;
 import one.modality.base.shared.entities.Event;
 import one.modality.base.shared.entities.ScheduledItem;
-import one.modality.base.shared.entities.markers.EntityHasStartAndEndTime;
 
 import java.time.Duration;
 import java.time.LocalDate;
@@ -71,37 +69,28 @@ final class VideoColumnsFormattersAndRenderers {
 
     // PRIVATE API
 
-    private static void computeStatusLabelAndWatchButton(ScheduledItem scheduledItem, Label statusLabel, Label availableUntilLabel, Button actionButton, ObjectProperty<ScheduledItem> watchVideoItemProperty) {
-        Runnable refresher = () -> computeStatusLabelAndWatchButton(scheduledItem, statusLabel, availableUntilLabel, actionButton, watchVideoItemProperty);
-
-        Event event = scheduledItem.getEvent();
-        LocalDateTime expirationDate = Objects.coalesce(scheduledItem.getExpirationDate(), event.getVodExpirationDate());
-        EntityHasStartAndEndTime startAndEndTimeHolder = Objects.coalesce(scheduledItem.getProgramScheduledItem().getTimeline(), scheduledItem.getProgramScheduledItem());
-        LocalDateTime sessionStart = scheduledItem.getDate().atTime(startAndEndTimeHolder.getStartTime());
-        LocalDateTime sessionEnd = scheduledItem.getDate().atTime(startAndEndTimeHolder.getEndTime());
-
-        LocalDateTime countDownStart = sessionStart.minusHours(3);
-
-        LocalDateTime nowInEventTimezone = Event.nowInEventTimezone();
+    private static void computeStatusLabelAndWatchButton(ScheduledItem videoScheduledItem, Label statusLabel, Label availableUntilLabel, Button actionButton, ObjectProperty<ScheduledItem> watchVideoItemProperty) {
+        Runnable refresher = () -> computeStatusLabelAndWatchButton(videoScheduledItem, statusLabel, availableUntilLabel, actionButton, watchVideoItemProperty);
 
         // Setting default visibilities for most cases (to be changed in specific cases)
         hideButton(actionButton);
         showLabel(statusLabel);
         hideLabel(availableUntilLabel);
 
-        String statusI18nKey = VideoState.getVideoStatusI18nKey(scheduledItem);
+        String statusI18nKey = VideoState.getVideoStatusI18nKey(videoScheduledItem);
         Object statusI18nArg = null;
+        VideoTimes videoTimes = new VideoTimes(videoScheduledItem);
 
         switch (statusI18nKey) {
             case VideosI18nKeys.OnTime:
-                scheduleRefreshUIAt(countDownStart, refresher);
+                scheduleRefreshUIAt(videoTimes.getCountdownStart(), refresher);
                 break;
             case VideosI18nKeys.StartingIn1:
-                statusI18nArg = VideoState.formatDuration(Duration.between(nowInEventTimezone, sessionStart));
+                statusI18nArg = formatDuration(videoTimes.durationBetweenNowAndSessionStart());
                 scheduleRefreshUI(1, refresher); //We refresh the countdown every second
                 break;
             case VideosI18nKeys.LiveNow:
-                scheduleRefreshUIAt(sessionEnd, refresher);
+                scheduleRefreshUIAt(videoTimes.getSessionEnd(), refresher);
                 break;
             case VideosI18nKeys.RecordingSoonAvailable:
             case VideosI18nKeys.VideoDelayed:
@@ -110,9 +99,10 @@ final class VideoColumnsFormattersAndRenderers {
             case VideosI18nKeys.Available:
                 hideLabel(statusLabel);
                 showButton(actionButton, e -> {
-                    watchVideoItemProperty.set(scheduledItem);
+                    watchVideoItemProperty.set(videoScheduledItem);
                     transformButtonFromPlayToPlayAgain(actionButton);
                 });
+                LocalDateTime expirationDate = videoTimes.getExpirationDate();
                 if (expirationDate != null) {
                     I18nControls.bindI18nProperties(availableUntilLabel, VideosI18nKeys.VideoAvailableUntil1, LocalizedTime.formatLocalDateTimeProperty(expirationDate, "dd MMM '-' HH.mm"));
                     showLabel(availableUntilLabel);
@@ -163,5 +153,15 @@ final class VideoColumnsFormattersAndRenderers {
             delayMillis = delayMillis + 1000;
         }
         UiScheduler.scheduleDelay(delayMillis, refresher);
+    }
+
+    static String formatDuration(Duration duration) { // Not sure if it's the best place for this method, but ok for now
+        //TODO: use LocalizedTime instead
+        if (duration == null)
+            return "xx:xx";
+        int hours = (int) duration.toHours();
+        int minutes = ((int) duration.toMinutes()) % 60;
+        int seconds = ((int) duration.toSeconds()) % 60;
+        return (hours < 10 ? "0" : "") + hours + ":" + (minutes < 10 ? "0" : "") + minutes + ":" + (seconds < 10 ? "0" : "") + seconds;
     }
 }
