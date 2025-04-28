@@ -913,6 +913,13 @@ CollapsePane.menu-bar.lang-menu-bar {
     -fx-font-size: 16px;
 }
 
+.audio-library .session-cancelled {
+    -fx-font-weight: 200;
+    -fx-font-size: 16px;
+    -fx-font-style: italic;
+    -fx-text-fill: -bootstrap-grey5;
+}
+
 .audio-library .cancelled {
     -fx-font-weight: bold;
     -fx-font-size: 13px;
@@ -977,6 +984,12 @@ CollapsePane.menu-bar.lang-menu-bar {
 
 .livestream .grid-body .name /* desktop Name col */, .livestream .grid-row .name /* mobile Name row */ {
     -fx-font-weight: bold;
+}
+
+.livestream .grid-body .session-cancelled /* desktop cancelled session */, .livestream .grid-row .session-cancelled /* mobile cancelled session */ {
+    -fx-font-weight: 200;
+    -fx-font-style: italic;
+    -fx-text-fill: -bootstrap-grey5;
 }
 
 .livestream .grid-body .status /* desktop Status col */, .livestream .grid-row .status /* mobile Status row */, .livestream .btn /* desktop and mobile buttons */ {

@@ -1068,6 +1068,13 @@ btn-white {
     font-size: 16px;
 }
 
+.audio-library .session-cancelled {
+    font-weight: 200;
+    font-size: 16px;
+    font-style: italic;
+    color: var(--bootstrap-grey5);
+}
+
 .audio-library .cancelled {
     font-weight: bold;
     font-size: 13px;
@@ -1129,6 +1136,12 @@ btn-white {
 
 .livestream .grid-body .name /* desktop Name col */, .livestream .grid-row .name /* mobile Name row */ {
     font-weight: bold;
+}
+
+.livestream .grid-body .session-cancelled /* desktop cancelled session */, .livestream .grid-row .session-cancelled /* mobile cancelled session */ {
+    font-weight: 400;
+    font-style: italic;
+    color: var(--bootstrap-grey5);
 }
 
 .livestream .grid-body .status /* desktop Status col */, .livestream .grid-row .status /* mobile Status row */, .livestream .btn /* desktop and mobile buttons */ {

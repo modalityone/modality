@@ -15,6 +15,13 @@
     font-size: 16px;
 }
 
+.audio-library .session-cancelled {
+    font-weight: 200;
+    font-size: 16px;
+    font-style: italic;
+    color: var(--bootstrap-grey5);
+}
+
 .audio-library .cancelled {
     font-weight: bold;
     font-size: 13px;

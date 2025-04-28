@@ -29,6 +29,7 @@ public interface VideosI18nKeys {
     String Date = "Date";
     String NoVideosForThisEvent = "NoVideosForThisEvent";
     String StartingIn1 = "StartingIn1";
+    String SessionCancelled = "SessionCancelled";
     String GMTZoneUK = "GMTZoneUK";
     String VideosHeader = "VideosHeader";
     String VideoAvailableUntil1 = "VideoAvailableUntil1";

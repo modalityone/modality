@@ -6,6 +6,7 @@ import dev.webfx.extras.time.format.LocalizedTime;
 import dev.webfx.extras.type.PrimType;
 import dev.webfx.extras.util.layout.Layouts;
 import dev.webfx.platform.uischeduler.UiScheduler;
+import dev.webfx.platform.util.Objects;
 import dev.webfx.stack.i18n.I18nKeys;
 import dev.webfx.stack.i18n.controls.I18nControls;
 import dev.webfx.stack.orm.domainmodel.formatter.FormatterRegistry;
@@ -47,6 +48,19 @@ final class VideoColumnsFormattersAndRenderers {
         FormatterRegistry.registerFormatter("videoTimeRange", PrimType.STRING, timeRange -> {
             Object[] times = (Object[]) timeRange;
             return LocalizedTime.formatLocalTimeRangeProperty((LocalTime) times[0], (LocalTime) times[1], FrontOfficeTimeFormats.VIDEO_DAY_TIME_FORMAT);
+        });
+        // videoName renderer
+        ValueRendererRegistry.registerValueRenderer("videoName", (value /* expecting ScheduledItem */, context) -> {
+            ScheduledItem video = (ScheduledItem) value; // value = 'this' = video ScheduledItem
+            Label nameLabel = new Label();
+            if (video.getProgramScheduledItem().isCancelled()) {
+                I18nControls.bindI18nProperties(nameLabel, VideosI18nKeys.SessionCancelled);
+                nameLabel.getStyleClass().add("session-cancelled");
+            } else {
+                nameLabel.setText(Objects.coalesce(video.getName(), video.getProgramScheduledItem().getName()));
+                nameLabel.getStyleClass().add("name");
+            }
+            return ValueRendererRegistry.renderLabeled(nameLabel, true, true);
         });
         // videoStatus renderer
         ValueRendererRegistry.registerValueRenderer("videoStatus", (value, context) -> {

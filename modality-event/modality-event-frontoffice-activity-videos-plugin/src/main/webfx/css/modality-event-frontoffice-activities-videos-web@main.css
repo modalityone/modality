@@ -47,6 +47,12 @@
     font-weight: bold;
 }
 
+.livestream .grid-body .session-cancelled /* desktop cancelled session */, .livestream .grid-row .session-cancelled /* mobile cancelled session */ {
+    font-weight: 400;
+    font-style: italic;
+    color: var(--bootstrap-grey5);
+}
+
 .livestream .grid-body .status /* desktop Status col */, .livestream .grid-row .status /* mobile Status row */, .livestream .btn /* desktop and mobile buttons */ {
     font-weight: bold;
 }

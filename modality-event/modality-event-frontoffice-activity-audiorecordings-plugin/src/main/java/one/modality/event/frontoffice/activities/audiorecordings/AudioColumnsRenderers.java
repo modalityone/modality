@@ -22,7 +22,6 @@ import javafx.geometry.Pos;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.layout.HBox;
-import javafx.scene.layout.Region;
 import javafx.scene.layout.VBox;
 import one.modality.base.client.bootstrap.ModalityStyle;
 import one.modality.base.client.time.FrontOfficeTimeFormats;
@@ -46,10 +45,15 @@ final class AudioColumnsRenderers {
     static {
         ValueRendererRegistry.registerValueRenderer("audioName", (value /* expecting ScheduledItem */, context /* expecting AudioColumnsContext */) -> {
             ScheduledItem audio = (ScheduledItem) value; // value = 'this' = audio ScheduledItem
-            Label nameLabel = new Label(getAudioName(audio));
-            nameLabel.getStyleClass().add("name");
-            nameLabel.setWrapText(true);
-            nameLabel.setMinHeight(Region.USE_PREF_SIZE);
+            Label nameLabel = new Label();
+            if (audio.getProgramScheduledItem().isCancelled()) {
+                I18nControls.bindI18nProperties(nameLabel, AudioRecordingsI18nKeys.SessionCancelled);
+                nameLabel.getStyleClass().add("session-cancelled");
+            } else {
+                nameLabel.setText(getAudioName(audio));
+                nameLabel.getStyleClass().add("name");
+            }
+            ValueRendererRegistry.renderLabeled(nameLabel, true, false);
             LocalDate date = audio.getDate();
             Timeline timeline = audio.getProgramScheduledItem().getTimeline();
             LocalTime startTime = timeline == null ? null : timeline.getStartTime();
@@ -72,8 +76,7 @@ final class AudioColumnsRenderers {
         });
         ValueRendererRegistry.registerValueRenderer("audioButtons", (value /* expecting ScheduledItem */, context /* expecting AudioColumnsContext */) -> {
             ScheduledItem audio = (ScheduledItem) value; // value = 'this' = audio ScheduledItem
-            ScheduledItem programScheduledItem = audio.getProgramScheduledItem();
-            if (programScheduledItem.isCancelled()) {
+            if (audio.getProgramScheduledItem().isCancelled()) {
                 Label cancelledLabel = I18nControls.newLabel(I18nKeys.upperCase(AudioRecordingsI18nKeys.AudioCancelled));
                 cancelledLabel.getStyleClass().add("cancelled");
                 return cancelledLabel;
