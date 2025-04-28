@@ -13,6 +13,7 @@ public interface AudioRecordingsI18nKeys {
     String AudioRecordingsHeader = "AudioRecordingsHeader";
     String NoAudioRecordingForThisEvent = "NoAudioRecordingForThisEvent";
     String Download = "Download";
+    String AudioCancelled = "AudioCancelled";
     String Play = "Play";
     String NoAudioRecordingInYourLibrary = "NoAudioRecordingInYourLibrary";
     String PlayAgain = "PlayAgain";

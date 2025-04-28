@@ -903,18 +903,26 @@ CollapsePane.menu-bar.lang-menu-bar {
 .list-tracks-title {
     -fx-font-weight: bold;
     -fx-font-size: 24px;
-    -fx-text-fill: #4A4748;
+    -fx-text-fill: -bootstrap-grey7;
 }
+
+/** styles for the video desktop table and mobile view **/
 
 .audio-library .name, .audio-library .btn {
     -fx-font-weight: 600; /* semi-bold */
     -fx-font-size: 16px;
 }
 
+.audio-library .cancelled {
+    -fx-font-weight: bold;
+    -fx-font-size: 13px;
+    -fx-text-fill: -bootstrap-grey5;
+}
+
 .audio-library .comment {
     -fx-font-weight: 300; /* light */
     -fx-font-size: 10px;
-    -fx-text-fill: #838788;
+    -fx-text-fill: -bootstrap-grey5;
 }
 
 /*===== modality-event-frontoffice-activities-videos-javafx@main.css from modality-event-frontoffice-activity-videos-plugin =====*/

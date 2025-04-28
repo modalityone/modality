@@ -13,6 +13,7 @@ import dev.webfx.platform.uischeduler.UiScheduler;
 import dev.webfx.platform.util.Booleans;
 import dev.webfx.platform.util.Objects;
 import dev.webfx.platform.util.collection.Collections;
+import dev.webfx.stack.i18n.I18nKeys;
 import dev.webfx.stack.i18n.controls.I18nControls;
 import dev.webfx.stack.orm.entity.Entities;
 import dev.webfx.stack.ui.operation.OperationUtil;
@@ -43,8 +44,8 @@ final class AudioColumnsRenderers {
     }
 
     static {
-        ValueRendererRegistry.registerValueRenderer("audioName", (value, context) -> {
-            ScheduledItem audio = (ScheduledItem) value;
+        ValueRendererRegistry.registerValueRenderer("audioName", (value /* expecting ScheduledItem */, context /* expecting AudioColumnsContext */) -> {
+            ScheduledItem audio = (ScheduledItem) value; // value = 'this' = audio ScheduledItem
             Label nameLabel = new Label(getAudioName(audio));
             nameLabel.getStyleClass().add("name");
             nameLabel.setWrapText(true);
@@ -69,13 +70,21 @@ final class AudioColumnsRenderers {
             vbox.setAlignment(Pos.BOTTOM_LEFT);
             return vbox;
         });
-        ValueRendererRegistry.registerValueRenderer("audioButtons", (value, context) -> {
-            ScheduledItem audio = (ScheduledItem) value;
+        ValueRendererRegistry.registerValueRenderer("audioButtons", (value /* expecting ScheduledItem */, context /* expecting AudioColumnsContext */) -> {
+            ScheduledItem audio = (ScheduledItem) value; // value = 'this' = audio ScheduledItem
+            ScheduledItem programScheduledItem = audio.getProgramScheduledItem();
+            if (programScheduledItem.isCancelled()) {
+                Label cancelledLabel = I18nControls.newLabel(I18nKeys.upperCase(AudioRecordingsI18nKeys.AudioCancelled));
+                cancelledLabel.getStyleClass().add("cancelled");
+                return cancelledLabel;
+            }
             AudioColumnsContext audioContext = context.getAppContext();
             Media firstMedia = Collections.findFirst(audioContext.publishedMedias(), media -> Entities.sameId(audio, media.getScheduledItem()));
             if (firstMedia == null) {
                 Label notYetPublishedLabel = I18nControls.newLabel(AudioRecordingsI18nKeys.AudioRecordingNotYetPublished);
                 notYetPublishedLabel.getStyleClass().add(ModalityStyle.TEXT_COMMENT);
+                notYetPublishedLabel.setMaxWidth(Double.MAX_VALUE);
+                notYetPublishedLabel.setAlignment(Pos.CENTER_RIGHT);
                 return notYetPublishedLabel;
             }
             HBox hBox = new HBox(10, createAudioButton(audio, firstMedia, audioContext.audioPlayer(), false), createAudioButton(audio, firstMedia, audioContext.audioPlayer(),true));

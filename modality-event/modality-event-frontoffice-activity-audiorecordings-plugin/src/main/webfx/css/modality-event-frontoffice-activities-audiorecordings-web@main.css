@@ -5,16 +5,24 @@
 .list-tracks-title {
     font-weight: bold;
     font-size: 24px;
-    color: #4A4748; /* Text color equivalent to -fx-text-fill */
+    color: var(--bootstrap-grey7)
 }
 
+/** styles for the video desktop table and mobile view **/
+
 .audio-library .name, .audio-library .btn {
-    font-weight: 400; /* Semibold equivalent */
+    font-weight: 400; /* Semibold equivalent - value 600 in JavaFX looks too bold in web */
     font-size: 16px;
+}
+
+.audio-library .cancelled {
+    font-weight: bold;
+    font-size: 13px;
+    color: var(--bootstrap-grey5);
 }
 
 .audio-library .comment {
     font-weight: 300; /* Light equivalent */
     font-size: 10px;
-    color: #838788; /* Text color equivalent to -fx-text-fill */
+    color: var(--bootstrap-grey5);
 }
