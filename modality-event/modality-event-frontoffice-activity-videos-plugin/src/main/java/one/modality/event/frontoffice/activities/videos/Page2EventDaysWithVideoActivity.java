@@ -165,7 +165,7 @@ final class Page2EventDaysWithVideoActivity extends ViewDomainActivityBase {
             [
             {expression: 'date', label: 'Date', format: 'videoDate', hShrink: false, styleClass: 'date'},
             {expression: '[coalesce(startTime, programScheduledItem.startTime), coalesce(endTime, programScheduledItem.endTime)]', label: 'UK time', format: 'videoTimeRange', textAlign: 'center', hShrink: false, styleClass: 'time'},
-            {expression: 'coalesce(name, programScheduledItem.name)', label: 'Name', renderer: 'ellipsisLabel', minWidth: 200, styleClass: 'title'},
+            {expression: 'coalesce(name, programScheduledItem.name)', label: 'Name', renderer: 'ellipsisLabel', minWidth: 200, styleClass: 'name'},
             {expression: 'this', label: 'Status', renderer: 'videoStatus', textAlign: 'center', hShrink: false, styleClass: 'status'}
             ]""", getDomainModel(), "ScheduledItem");
     }

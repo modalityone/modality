@@ -950,38 +950,30 @@ CollapsePane.menu-bar.lang-menu-bar {
     -fx-font-weight: normal;
 }
 
-/** styles when we're in a desktop view **/
+/** styles for the video desktop table and mobile view **/
 
-.livestream .grid-head Text {
+.livestream .grid-head Text /* desktop only */ {
     -fx-font-weight: 500;
     -fx-font-size: 18px;
     -fx-fill: -brand-blue-color;
 }
 
-.livestream .grid-body .date {
-    -fx-font-weight: 600; /* semi-bold */
+.livestream .grid-body .date /* desktop Date col */, .livestream .grid-row .date /* mobile Date row */ {
+    -fx-font-weight: bold;
 }
 
-.livestream .grid-body .time {
-    -fx-font-weight: 500;
+.livestream .grid-body .time Text /* desktop Time col */, .livestream .grid-row Text.time /* mobile Time row */ {
+    -fx-font-weight: 500; /* semi-bold */
+    -fx-fill: -bootstrap-grey5;
 }
 
-.livestream .grid-body .title {
-    -fx-font-weight: 500;
+.livestream .grid-body .name /* desktop Name col */, .livestream .grid-row .name /* mobile Name row */ {
+    -fx-font-weight: bold;
 }
 
-.livestream .grid-body .status {
-    -fx-font-weight: 600;
+.livestream .grid-body .status /* desktop Status col */, .livestream .grid-row .status /* mobile Status row */, .livestream .btn /* desktop and mobile buttons */ {
+    -fx-font-weight: bold;
 }
-
-/** styles when we're in a mobile view **/
-.livestream .grid-row .date {
-    -fx-font-weight: 600
-}
-
-.livestream .grid-row .title {
-}
-
 
 /*===== modality-event-client-recurringevents-javafx@main.css from modality-event-client-recurringevents =====*/
 
