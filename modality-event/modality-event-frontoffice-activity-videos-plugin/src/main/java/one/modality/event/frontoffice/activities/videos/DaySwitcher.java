@@ -154,6 +154,7 @@ public class DaySwitcher {
         dateList.forEach((LocalDate day) -> {
                 Button dateButton;
                 dateButton = Bootstrap.primaryButton(new Button(LocalizedTime.formatLocalDate(day,FrontOfficeTimeFormats.DAY_MONTH_DATE)));
+                dateButton.getStyleClass().setAll("button", Bootstrap.BTN, ModalityStyle.BTN_WHITE);
                 dateButton.setMinWidth(DAY_BUTTON_WIDTH);
                 correspondenceDateButton.put(day, dateButton);
                 dayButtonMap.put(day, dateButton);
@@ -181,15 +182,19 @@ public class DaySwitcher {
         LocalDate selectedDate = currentDateProperty.get();
         for (Map.Entry<LocalDate, Button> entry : correspondenceDateButton.entrySet()) {
             Button currentButton = entry.getValue();
-            //Platform.runLater(()-> {
-            if (selectedDate == null || !dateList.contains(selectedDate)) {
+            if(selectedDate == null) {
+                if(entry.getKey()==null)
+                    currentButton.getStyleClass().setAll("button", Bootstrap.BTN, Bootstrap.BTN_PRIMARY);
+                else
+                    currentButton.getStyleClass().setAll("button", Bootstrap.BTN, ModalityStyle.BTN_WHITE);
+            }
+            else if (!dateList.contains(selectedDate)) {
                 currentButton.getStyleClass().setAll("button", Bootstrap.BTN, Bootstrap.BTN_PRIMARY);
             } else if (entry.getKey() != null && entry.getKey().equals(selectedDate)) {
                 currentButton.getStyleClass().setAll("button", Bootstrap.BTN, Bootstrap.BTN_PRIMARY);
             } else {
                 currentButton.getStyleClass().setAll("button", Bootstrap.BTN, ModalityStyle.BTN_WHITE);
             }
-           // });
         }}
 
     public void setDay(LocalDate date) {
