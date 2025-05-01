@@ -31,19 +31,23 @@ import dev.webfx.stack.orm.reactive.entities.entities_to_grid.EntityColumn;
 import dev.webfx.stack.orm.reactive.mapping.entities_to_visual.EntitiesToVisualResultMapper;
 import dev.webfx.stack.orm.reactive.mapping.entities_to_visual.VisualEntityColumnFactory;
 import javafx.application.Platform;
+import javafx.beans.binding.Bindings;
+import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.ObjectProperty;
+import javafx.beans.property.SimpleBooleanProperty;
 import javafx.beans.property.SimpleObjectProperty;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.collections.transformation.SortedList;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
+import javafx.scene.Cursor;
 import javafx.scene.Node;
+import javafx.scene.control.Button;
+import javafx.scene.control.ContentDisplay;
+import javafx.scene.control.Hyperlink;
 import javafx.scene.control.Label;
-import javafx.scene.layout.HBox;
-import javafx.scene.layout.Region;
-import javafx.scene.layout.StackPane;
-import javafx.scene.layout.VBox;
+import javafx.scene.layout.*;
 import javafx.scene.text.Font;
 import javafx.scene.text.TextAlignment;
 import one.modality.base.client.cloudinary.ModalityCloudinary;
@@ -52,6 +56,7 @@ import one.modality.base.client.time.FrontOfficeTimeFormats;
 import one.modality.base.frontoffice.utility.page.FOPageUtil;
 import one.modality.base.shared.entities.*;
 import one.modality.crm.shared.services.authn.fx.FXUserPersonId;
+import one.modality.event.frontoffice.medias.EventThumbnailView;
 import one.modality.event.frontoffice.medias.MediaConsumptionRecorder;
 
 import java.time.LocalDate;
@@ -68,11 +73,17 @@ import java.util.stream.Collectors;
  * @author David Hello
  * @author Bruno Salmon
  */
-final class Page2EventDaysWithVideoActivity extends ViewDomainActivityBase {
+final class VideosActivity extends ViewDomainActivityBase {
 
     private static final double IMAGE_HEIGHT = 240;
     private static final int MIN_NUMBER_OF_SESSION_PER_DAY_BEFORE_DISPLAYING_DAILY_PROGRAM = 3;
     private final ObjectProperty<Object> pathEventIdProperty = new SimpleObjectProperty<>(); // The event id from the path
+
+    // Holding an observable list of events with videos booked by the user (changes on login & logout)
+    private final ObservableList<Event> eventsWithBookedVideos = FXCollections.observableArrayList();
+    // Holding a boolean property to know if the loading of the eventsWithBookedVideos is in progress
+    private final BooleanProperty eventsWithBookedVideosLoadingProperty = new SimpleBooleanProperty();
+
     private final ObjectProperty<Event> eventProperty = new SimpleObjectProperty<>(); // The event loaded from the event id
     private final ObservableList<ScheduledItem> videoScheduledItems = FXCollections.observableArrayList(); // The list of all videos for that event
     private final ObservableList<ScheduledItem> displayedVideoScheduledItems = FXCollections.observableArrayList(); // The list of all videos for that event
@@ -80,81 +91,112 @@ final class Page2EventDaysWithVideoActivity extends ViewDomainActivityBase {
     private final ObjectProperty<ScheduledItem> watchVideoItemProperty = new SimpleObjectProperty<>(); // the VOD to watch (null for livestream)
     private final List<Media> watchMedias = new ArrayList<>(); // the medias of the VOD to watch
 
-
     private final CollapsePane videoCollapsePane = new CollapsePane(); // contains the video player(s): 1 for livestream, 1 per media for VOD
     private final List<MediaConsumptionRecorder> videoConsumptionRecorders = new ArrayList<>(); // the video consumption recorders (1 per player)
     private Player lastVideoPlayingPlayer; // the last playing player from this activity
 
-
+    private final CollapsePane eventsSelectionPane = new CollapsePane();
     private final Label videoExpirationLabel = new Label();
     private final Label selectTheDayBelowLabel = I18nControls.newLabel(VideosI18nKeys.SelectTheDayBelow);
     private EntityStore entityStore;
     private EntityColumn<ScheduledItem>[] videoColumns;
     private final VisualGrid videoGrid = VisualGrid.createVisualGridWithResponsiveSkin();
-
+    private final GrowingPane growingVideoPane = new GrowingPane(videoGrid);
 
     private final ObjectProperty<LocalDate> currentDaySelectedProperty = new SimpleObjectProperty<>();
     private MonoPane pageContainer;
     private DaySwitcher daySwitcher;
 
-    public Page2EventDaysWithVideoActivity() {
+    public VideosActivity() {
         //We relaunch every 14 hours the request (in case the user never close the page, and to make sure the coherence of MediaConsumption is ok)
         Scheduler.schedulePeriodic(14 * 3600 * 1000, this::startLogic);
+        eventsSelectionPane.collapse(); // initially collapsed
         videoCollapsePane.collapse(); // initially collapsed - might be automatically expanded by scheduleAutoLivestream()
-    }
-
-    @Override
-    protected void updateModelFromContextParameters() {
-        pathEventIdProperty.set(getParameter(Page2EventDaysWithVideoRouting.PATH_EVENT_ID_PARAMETER_NAME));
     }
 
     @Override
     protected void startLogic() {
         // Creating our own entity store to hold the loaded data without interfering with other activities
         entityStore = EntityStore.create(getDataSourceModel());
-
-        // Initial data loading for the event specified in the path
-        FXProperties.runNowAndOnPropertiesChange(() -> {
-            Object eventId = pathEventIdProperty.get();
-            EntityId userPersonId = FXUserPersonId.getUserPersonId();
-            if (eventId == null || userPersonId == null) {
-                videoScheduledItems.clear();
-                eventProperty.set(null);
-            } else {
-                entityStore.<Event>executeQuery("select name, label.(de,en,es,fr,pt), shortDescription, shortDescriptionLabel, audioExpirationDate, startDate, endDate, livestreamUrl, vodExpirationDate, repeatVideo, recurringWithVideo, repeatedEvent" +
-                        " from Event where id=?", eventId)
+        // Loading the list of events with videos booked by the user and put it into eventsWithBookedVideos
+        FXProperties.runNowAndOnPropertyChange(userPersonId -> {
+            eventsWithBookedVideos.clear();
+            if (userPersonId != null) {
+                eventsWithBookedVideosLoadingProperty.set(true);
+                // we look for the scheduledItem having a bookableScheduledItem which is an audio type (case of festival)
+                entityStore.<DocumentLine>executeQuery(
+                        "select document.event.(name, label.(de,en,es,fr,pt), shortDescription, shortDescriptionLabel, audioExpirationDate, startDate, endDate, livestreamUrl, vodExpirationDate, repeatVideo, recurringWithVideo, repeatedEvent), item.code, item.family.code, " +
+                            //We look if there are published audio ScheduledItem of type video, whose bookableScheduledItem has  been booked
+                            " (exists(select ScheduledItem where item.family.code=? and bookableScheduledItem.(event=coalesce(dl.document.event.repeatedEvent, dl.document.event) and item=dl.item))) as published " +
+                            //We check if the user has booked, not cancelled and paid the recordings
+                            " from DocumentLine dl where !cancelled  and dl.document.(person=? and confirmed and price_balance<=0) " +
+                            " and dl.document.event.(repeatedEvent = null or repeatVideo)" +
+                            //we check if :
+                            " and (" +
+                            // 1/ there is a ScheduledItem of video family type whose bookableScheduledItem has been booked (KBS3 setup)
+                            " exists (select ScheduledItem videoSI where item.family.code=? and exists(select Attendance where documentLine=dl and scheduledItem=videoSI.bookableScheduledItem))" +
+                            // 2/ Or KBS3 / KBS2 setup (this allows to display the audios that have been booked in the past with KBS2 events, event if we can't display them)
+                            " or item.family.code=?)" +
+                            " order by document.event.startDate desc",
+                        KnownItemFamily.VIDEO.getCode(), userPersonId, KnownItemFamily.VIDEO.getCode(), KnownItemFamily.VIDEO.getCode())
                     .onFailure(Console::log)
-                    .onSuccess(events -> {
-                        Event currentEvent = events.get(0);
-                        Event eventContainingVideos = Objects.coalesce(currentEvent.getRepeatedEvent(), currentEvent);
-                        // We load all video scheduledItems booked by the user for the event (booking must be confirmed
-                        // and paid). They will be grouped by day in the UI.
-                        // Note: double dots such as programScheduledItem.timeline..startTime means we do a left join that allows null value (if the event is recurring, the timeline of the programScheduledItem is null)
-                        entityStore.<ScheduledItem>executeQuery("select name, date, expirationDate, programScheduledItem.(name, startTime, endTime, timeline.(startTime, endTime), cancelled), published, event.(name, type.recurringItem, livestreamUrl, recurringWithVideo), vodDelayed, " +
-                                    " (exists(select MediaConsumption where scheduledItem=si and attendance.documentLine.document.person=?) as attended), " +
-                                    " (select id from Attendance where scheduledItem=si.bookableScheduledItem and documentLine.document.person=? limit 1) as attendanceId " +
-                                    " from ScheduledItem si " +
-                                    " where event=?" +
-                                    " and bookableScheduledItem.item.family.code=?" +
-                                    " and item.code=?" +
-                                    " and exists(select Attendance a where scheduledItem=si.bookableScheduledItem and documentLine.(!cancelled and document.(person=? and event=? and confirmed and price_balance<=0)))" +
-                                    " order by date, programScheduledItem.timeline..startTime",
-                                userPersonId, userPersonId, eventContainingVideos, KnownItemFamily.TEACHING.getCode(), KnownItem.VIDEO.getCode(), userPersonId, currentEvent)
-                            .onFailure(Console::log)
-                            .onSuccess(scheduledItems -> Platform.runLater(() -> {
-                                videoScheduledItems.setAll(scheduledItems);
-                                eventProperty.set(currentEvent);
-                                populateVideos();
-                                scheduleAutoLivestream();
-                                LocalDate today = Event.todayInEventTimezone();
-                                //If we are during the event, we position the currentSelectedDay to today
-                                if(today.isAfter(currentEvent.getStartDate().minusDays(1))&&today.isBefore(currentEvent.getEndDate().plusDays(1))) {
-                                    daySwitcher.setDay(today);
-                                }
-                            }));
-                    });
+                    .onSuccess(documentLines -> Platform.runLater(() -> {
+                        eventsWithBookedVideos.setAll(
+                            documentLines.stream()
+                                .map(documentLine -> documentLine.getDocument().getEvent())  // Extract events from DocumentLine
+                                .distinct()
+                                .collect(Collectors.toList()));
+                        ColumnsPane columnsPane = new ColumnsPane(20, 50);
+                        for (Event event : eventsWithBookedVideos) {
+                            EventThumbnailView thumbnail = new EventThumbnailView(event, KnownItem.VIDEO.getCode(), EventThumbnailView.ItemType.ITEM_TYPE_VIDEO, true);
+                            Button actionButton = thumbnail.getActionButton();
+                            actionButton.setCursor(Cursor.HAND);
+                            actionButton.setOnAction(e -> {
+                                eventProperty.set(event);
+                                eventsSelectionPane.collapse();
+                            });
+                            columnsPane.getChildren().add(thumbnail.getView());
+                        }
+                        eventsSelectionPane.setContent(columnsPane);
+                        eventProperty.set(Collections.first(eventsWithBookedVideos));
+                        eventsWithBookedVideosLoadingProperty.set(false);
+                    }));
             }
-        }, pathEventIdProperty, FXUserPersonId.userPersonIdProperty());
+        }, FXUserPersonId.userPersonIdProperty());
+        // Initial data loading for the event specified in the path
+        FXProperties.runOnPropertiesChange(() -> {
+            Event event = eventProperty.get();
+            EntityId userPersonId = FXUserPersonId.getUserPersonId();
+            if (event == null || userPersonId == null) {
+                videoScheduledItems.clear();
+            } else {
+                Event eventContainingVideos = Objects.coalesce(event.getRepeatedEvent(), event);
+                // We load all video scheduledItems booked by the user for the event (booking must be confirmed
+                // and paid). They will be grouped by day in the UI.
+                // Note: double dots such as programScheduledItem.timeline..startTime means we do a left join that allows null value (if the event is recurring, the timeline of the programScheduledItem is null)
+                entityStore.<ScheduledItem>executeQuery("select name, date, expirationDate, programScheduledItem.(name, startTime, endTime, timeline.(startTime, endTime), cancelled), published, event.(name, type.recurringItem, livestreamUrl, recurringWithVideo), vodDelayed, " +
+                            " (exists(select MediaConsumption where scheduledItem=si and attendance.documentLine.document.person=?) as attended), " +
+                            " (select id from Attendance where scheduledItem=si.bookableScheduledItem and documentLine.document.person=? limit 1) as attendanceId " +
+                            " from ScheduledItem si " +
+                            " where event=?" +
+                            " and bookableScheduledItem.item.family.code=?" +
+                            " and item.code=?" +
+                            " and exists(select Attendance a where scheduledItem=si.bookableScheduledItem and documentLine.(!cancelled and document.(person=? and event=? and confirmed and price_balance<=0)))" +
+                            " order by date, programScheduledItem.timeline..startTime",
+                        userPersonId, userPersonId, eventContainingVideos, KnownItemFamily.TEACHING.getCode(), KnownItem.VIDEO.getCode(), userPersonId, event)
+                    .onFailure(Console::log)
+                    .onSuccess(scheduledItems -> Platform.runLater(() -> {
+                        videoScheduledItems.setAll(scheduledItems);
+                        populateVideos();
+                        scheduleAutoLivestream();
+                    }));
+                LocalDate today = Event.todayInEventTimezone();
+                //If we are during the event, we position the currentSelectedDay to today
+                if (today.isAfter(event.getStartDate().minusDays(1)) && today.isBefore(event.getEndDate().plusDays(1))) {
+                    daySwitcher.setDay(today);
+                }
+            }
+        }, eventProperty, FXUserPersonId.userPersonIdProperty());
 
         // Later Media loading when the user wants to watch a specific video (this sets watchVideoItemProperty)
         FXProperties.runOnPropertiesChange(() -> {
@@ -177,15 +219,14 @@ final class Page2EventDaysWithVideoActivity extends ViewDomainActivityBase {
         VideoColumnsFormattersAndRenderers.registerRenderers();
         videoColumns = VisualEntityColumnFactory.get().fromJsonArray("""
             [
-            {expression: 'date', label: 'Date', format: 'videoDate', hShrink: false, styleClass: 'date'},
-            {expression: '[coalesce(startTime, timeline.startTime, programScheduledItem.startTime, programScheduledItem.timeline.startTime), coalesce(endTime, timeline.endTime, programScheduledItem.endTime, programScheduledItem.timeline.endTime)]', label: 'UK time', format: 'videoTimeRange', textAlign: 'center', hShrink: false, styleClass: 'time'},
+            {expression: 'date', label: 'Date', format: 'videoDate', hShrink: false, styleClass: 'date', role: 'group'},
             {expression: 'this', label: 'Name', renderer: 'videoName', minWidth: 200, styleClass: 'name'},
+            {expression: '[coalesce(startTime, timeline.startTime, programScheduledItem.startTime, programScheduledItem.timeline.startTime), coalesce(endTime, timeline.endTime, programScheduledItem.endTime, programScheduledItem.timeline.endTime)]', label: 'UK time', format: 'videoTimeRange', textAlign: 'center', hShrink: false, styleClass: 'time'},
             {expression: 'this', label: 'Status', renderer: 'videoStatus', textAlign: 'center', hShrink: false, styleClass: 'status'}
             ]""", getDomainModel(), "ScheduledItem");
     }
 
     private void scheduleAutoLivestream() {
-        LocalDateTime nowInEventTimezone = Event.nowInEventTimezone();
         // The livestream url is always the same for the event, but we still need to determine which
         // session is being played for the MediaConsumption management. To do this, we will set
         // scheduledVideoItemProperty with the scheduled item corresponding to the played session.
@@ -222,6 +263,16 @@ final class Page2EventDaysWithVideoActivity extends ViewDomainActivityBase {
         Node loadingContentIndicator = new GoldenRatioPane(Controls.createProgressIndicator(100));
         pageContainer = new MonoPane(); // Will hold either the loading indicator or the loaded content
 
+        // We display an event selection section only if there are more than 1 event with videos booked by the user
+        Hyperlink selectEventLink = I18nControls.newHyperlink("Select another event");
+        selectEventLink.setOnAction(e -> eventsSelectionPane.expand());
+        VBox eventsSelectionVBox = new VBox(10, selectEventLink, eventsSelectionPane);
+        eventsSelectionVBox.setAlignment(Pos.CENTER);
+        eventsSelectionPane.setPadding(new Insets(50, 0, 200, 0));
+        // Making the section visible only if there are more than 1 event with videos
+        eventsSelectionVBox.visibleProperty().bind(Bindings.size(eventsWithBookedVideos).greaterThan(1));
+        Layouts.bindManagedToVisibleProperty(eventsSelectionVBox);
+
         // Building the loaded content, starting with the header
         MonoPane eventImageContainer = new MonoPane();
         Label eventLabel = Bootstrap.strong(I18nControls.newLabel(new I18nSubKey("expression: i18n(this)", eventProperty), eventProperty));
@@ -237,6 +288,7 @@ final class Page2EventDaysWithVideoActivity extends ViewDomainActivityBase {
         videoExpirationLabel.setWrapText(true);
         videoExpirationLabel.setPadding(new Insets(30, 0, 0, 0));
         VBox titleVBox = new VBox(eventLabel, eventDescriptionHTMLText, videoExpirationLabel);
+        HBox.setHgrow(titleVBox, Priority.ALWAYS); // Necessary for the web version TODO: should work without, so needs investigation and bug fix
 
         MonoPane responsiveHeader = new MonoPane();
         new ResponsiveDesign(responsiveHeader)
@@ -247,7 +299,6 @@ final class Page2EventDaysWithVideoActivity extends ViewDomainActivityBase {
                     double titleVBoxWidth = width - eventImageContainer.getWidth() - spacing;
                     //Here we resize the font according to the size of the window
                     double fontSizeFactor = Double.max(0.75, Double.min(1, titleVBoxWidth * 0.0042));
-                    System.out.println("fontSizeFactor = " + fontSizeFactor);
                     //In JavaFX, the CSS has priority on Font, that's why we do a setStyle after. In web, the Font has priority on CSS
                     eventLabel.setFont(Font.font(fontSizeFactor * 30));
                     eventLabel.setStyle("-fx-font-size: " + fontSizeFactor * 30);
@@ -263,12 +314,12 @@ final class Page2EventDaysWithVideoActivity extends ViewDomainActivityBase {
                 responsiveHeader.setContent(vBox);
             }).start();
 
-         daySwitcher = new DaySwitcher(videoScheduledItems.stream()
+        daySwitcher = new DaySwitcher(videoScheduledItems.stream()
             .map(ScheduledItem::getDate)
             .distinct()
             .sorted()
-            .collect(Collectors.toList()),currentDaySelectedProperty.get(),pageContainer,VideosI18nKeys.EventSchedule);
-         //We bind the currentDate of the daySwitcher to the currentDaySelected so the video appearing are linked to the day selected in the day switcher
+            .collect(Collectors.toList()), currentDaySelectedProperty.get(), pageContainer, VideosI18nKeys.EventSchedule);
+        //We bind the currentDate of the daySwitcher to the currentDaySelected so the video appearing are linked to the day selected in the day switcher
         currentDaySelectedProperty.bind(daySwitcher.currentDateProperty());
 
         //The monoPane that manage the program day selection
@@ -276,12 +327,16 @@ final class Page2EventDaysWithVideoActivity extends ViewDomainActivityBase {
         new ResponsiveDesign(responsiveDaySelectionMonoPane)
             // 1. Horizontal layout (for desktops)
             .addResponsiveLayout(/* applicability test: */ width -> {
-                    //If we are instance of ResponsiveLayout, we're in the laptop more, otherwise we're in the mobile mode
-                    return videoGrid.getSkin().getClass().getName().contains("Table");
-                }, /* apply method: */ () -> responsiveDaySelectionMonoPane.setContent(daySwitcher.getDesktopView()))
+                //If the grid skin is a table, we're in the desktop mode, otherwise we're in the mobile mode
+                return videoGrid.getSkin().getClass().getName().contains("Table");
+            }, /* apply method: */ () -> {
+                responsiveDaySelectionMonoPane.setContent(daySwitcher.getDesktopView());
+                growingVideoPane.reset();
+            })
             // 2. Vertical layout (for mobiles)
             .addResponsiveLayout(/* apply method: */ () -> {
                 responsiveDaySelectionMonoPane.setContent(daySwitcher.getMobileViewContainer());
+                growingVideoPane.reset();
             }).start();
 
 
@@ -296,8 +351,6 @@ final class Page2EventDaysWithVideoActivity extends ViewDomainActivityBase {
         VBox selectTheDayBelowVBox = new VBox(5, eventScheduleLabel, selectTheDayBelowLabel);
         selectTheDayBelowVBox.setAlignment(Pos.CENTER);
         selectTheDayBelowVBox.setPadding(new Insets(100, 0, 0, 0));
-        selectTheDayBelowVBox.setPadding(new Insets(100, 0, 0, 0));
-
 
         videoGrid.setMinRowHeight(48);
         videoGrid.setPrefRowHeight(Region.USE_COMPUTED_SIZE);
@@ -307,10 +360,11 @@ final class Page2EventDaysWithVideoActivity extends ViewDomainActivityBase {
         videoGrid.setAppContext(watchVideoItemProperty); // Passing watchVideoItemProperty as appContext to the value renderers
 
         VBox loadedContentVBox = new VBox(40,
+            //eventsSelectionVBox,
             responsiveHeader, // contains the event image and the event title
             decoratedLivestreamCollapsePane,
             responsiveDaySelectionMonoPane,
-            videoGrid // contains the videos for the selected day (or all days)
+            growingVideoPane // contains the videos for the selected day (or all days)
         );
         loadedContentVBox.setAlignment(Pos.TOP_CENTER);
 
@@ -322,12 +376,23 @@ final class Page2EventDaysWithVideoActivity extends ViewDomainActivityBase {
         // Reacting to data loading (initially or when the event changes or on login/logout)
         ObservableLists.runNowAndOnListOrPropertiesChange(change -> {
             // We display the loading indicator while the data is loading
-            Event event = eventProperty.get();
-            if (event == null) { // this indicates that the data has not finished loaded
+            if (eventsWithBookedVideosLoadingProperty.get()) { // this indicates that the data has not finished loaded
                 pageContainer.setContent(loadingContentIndicator); // TODO display something else (ex: next online events to book) when the user is not logged in, or registered
                 return;
             }
+            if (eventsWithBookedVideos.isEmpty()) {
+                Label noContentTitleLabel = Bootstrap.h3(I18nControls.newLabel(VideosI18nKeys.NoVideoInYourLibrary));
+                noContentTitleLabel.setContentDisplay(ContentDisplay.TOP);
+                noContentTitleLabel.setGraphicTextGap(20);
+                Label noContentText = I18nControls.newLabel(VideosI18nKeys.YourNextLiveStreamEventWillAppearHere);
+
+                VBox noContentVBox = new VBox(30, noContentTitleLabel, noContentText);
+                noContentVBox.setAlignment(Pos.TOP_CENTER);
+                pageContainer.setContent(noContentVBox);
+                return;
+            }
             // Otherwise we display loadedContentVBox and update its content
+            Event event = eventProperty.get();
             pageContainer.setContent(loadedContentVBox);
             // Loading the event image in the header
             String eventCloudImagePath = ModalityCloudinary.eventCoverImagePath(event, I18n.getLanguage());
@@ -351,42 +416,30 @@ final class Page2EventDaysWithVideoActivity extends ViewDomainActivityBase {
             // There are 2 modes of visualization: one with multiple videos per day (ex: Festivals), and one for with one video per day (ex: recurring events like STTP)
             Event eventContainingVideos = Objects.coalesce(event.getRepeatedEvent(), event);
             assert eventContainingVideos != null;
-            boolean singleVideosPerDay = eventContainingVideos.isRecurringWithVideo();
 
-            // In single video per day mode (ex: STTP), we don't display the "Select the day below" label, because we automatically show all videos
-            Layouts.setManagedAndVisibleProperties(selectTheDayBelowLabel, false);
-
-            //Here we check if we should display the list of the days so we can select to display the program just for one day.
-            if(videoScheduledItems.stream().collect(Collectors.groupingBy(ScheduledItem::getDate, Collectors.counting())).values().stream().anyMatch(count -> count > MIN_NUMBER_OF_SESSION_PER_DAY_BEFORE_DISPLAYING_DAILY_PROGRAM)) {
-                responsiveDaySelectionMonoPane.setVisible(true);
-                responsiveDaySelectionMonoPane.setManaged(true);
-
-            } else {
-                responsiveDaySelectionMonoPane.setVisible(false);
-                responsiveDaySelectionMonoPane.setManaged(false);
-            }
-
-
+            //Here we check if we should display the list of the days, so we can select to display the program just for one day.
+            boolean displayingDailyProgram = videoScheduledItems.stream().collect(Collectors.groupingBy(ScheduledItem::getDate, Collectors.counting())).values().stream().anyMatch(count -> count > MIN_NUMBER_OF_SESSION_PER_DAY_BEFORE_DISPLAYING_DAILY_PROGRAM);
+            Layouts.setManagedAndVisibleProperties(selectTheDayBelowLabel, displayingDailyProgram);
 
             // Showing selected videos for the currentSelected Day
             FXProperties.runNowAndOnPropertyChange(() -> {
-                if(currentDaySelectedProperty.get()==null)
-                    displayedVideoScheduledItems.setAll( videoScheduledItems);
+                if (currentDaySelectedProperty.get() == null)
+                    displayedVideoScheduledItems.setAll(videoScheduledItems);
                 else
-                    displayedVideoScheduledItems.setAll( videoScheduledItems.stream()
+                    displayedVideoScheduledItems.setAll(videoScheduledItems.stream()
                         .filter(item -> item.getDate().equals(currentDaySelectedProperty.get()))
                         .collect(Collectors.toList()));
             }, currentDaySelectedProperty);
 
-        }, videoScheduledItems, eventProperty);
+        }, videoScheduledItems, eventProperty, eventsWithBookedVideosLoadingProperty);
 
 
         ObservableLists.runNowAndOnListOrPropertiesChange(change ->
-            daySwitcher.populateDates(videoScheduledItems.stream()
-                .map(ScheduledItem::getDate)
-                .distinct()
-                .sorted()
-                .collect(Collectors.toList())),
+                daySwitcher.populateDates(videoScheduledItems.stream()
+                    .map(ScheduledItem::getDate)
+                    .distinct()
+                    .sorted()
+                    .collect(Collectors.toList())),
             videoScheduledItems);
 
         // Showing selected videos once they are loaded
@@ -418,10 +471,6 @@ final class Page2EventDaysWithVideoActivity extends ViewDomainActivityBase {
             }
         }, videoCollapsePane.collapsedProperty(), Players.getGlobalPlayerGroup().playingPlayerProperty());
 
-
-
-
-
         // *************************************************************************************************************
         // ************************************* Building final container **********************************************
         // *************************************************************************************************************
@@ -429,8 +478,6 @@ final class Page2EventDaysWithVideoActivity extends ViewDomainActivityBase {
         pageContainer.getStyleClass().add("livestream");
         return FOPageUtil.restrictToMaxPageWidthAndApplyPageLeftTopRightBottomPadding(pageContainer);
     }
-
-
 
     private void populateVideos() {
         // If some previous videos were consumed, we stop their consumption recorders

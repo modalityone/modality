@@ -34,6 +34,12 @@
     color: var(--brand-blue-color);
 }
 
+.livestream .grid-group {
+    background-color: var(--brand-blue-color);
+    font-weight: bold;
+    color: white;
+}
+
 .livestream .grid-body .date /* desktop Date col */, .livestream .grid-row .date /* mobile Date row */ {
     font-weight: bold;
 }

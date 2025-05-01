@@ -37,6 +37,15 @@
     -fx-fill: -brand-blue-color;
 }
 
+.livestream .grid-group {
+    -fx-background-color: -brand-blue-color;
+    -fx-font-weight: bold;
+}
+
+.livestream .grid-group Text {
+    -fx-fill: white;
+}
+
 .livestream .grid-body .date /* desktop Date col */, .livestream .grid-row .date /* mobile Date row */ {
     -fx-font-weight: bold;
 }

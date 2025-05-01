@@ -1,4 +1,1 @@
-one.modality.event.frontoffice.activities.videos.Page1EventsWithVideoRouting$VideosUiRoute
-one.modality.event.frontoffice.activities.videos.Page2EventDaysWithVideoRouting$EventVideosWallUiRoute
-one.modality.event.frontoffice.activities.videos.Page4SessionVideoPlayerRouting$VideOfSessionUiRoute
-one.modality.event.frontoffice.activities.videos.Page3LivestreamPlayerRouting$LivestreamUiRoute
+one.modality.event.frontoffice.activities.videos.VideosRouting$VideosUiRoute

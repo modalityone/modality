@@ -973,6 +973,15 @@ CollapsePane.menu-bar.lang-menu-bar {
     -fx-fill: -brand-blue-color;
 }
 
+.livestream .grid-group {
+    -fx-background-color: -brand-blue-color;
+    -fx-font-weight: bold;
+}
+
+.livestream .grid-group Text {
+    -fx-fill: white;
+}
+
 .livestream .grid-body .date /* desktop Date col */, .livestream .grid-row .date /* mobile Date row */ {
     -fx-font-weight: bold;
 }
@@ -994,6 +1003,11 @@ CollapsePane.menu-bar.lang-menu-bar {
 
 .livestream .grid-body .status /* desktop Status col */, .livestream .grid-row .status /* mobile Status row */, .livestream .btn /* desktop and mobile buttons */ {
     -fx-font-weight: bold;
+}
+
+.livestream .program-box {
+    -fx-background-color: lightgray;
+    -fx-background-radius: 25;
 }
 
 /*===== modality-event-client-recurringevents-javafx@main.css from modality-event-client-recurringevents =====*/

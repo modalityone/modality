@@ -10,7 +10,6 @@ module modality.event.frontoffice.activity.videos.plugin {
     requires modality.base.client.cloudinary;
     requires modality.base.client.icons;
     requires modality.base.client.time;
-    requires modality.base.client.util;
     requires modality.base.frontoffice.utility;
     requires modality.base.shared.entities;
     requires modality.crm.client.authn.fx;
@@ -51,7 +50,7 @@ module modality.event.frontoffice.activity.videos.plugin {
     exports one.modality.event.frontoffice.activities.videos;
 
     // Provided services
-    provides dev.webfx.stack.routing.uirouter.UiRoute with one.modality.event.frontoffice.activities.videos.Page1EventsWithVideoRouting.VideosUiRoute, one.modality.event.frontoffice.activities.videos.Page2EventDaysWithVideoRouting.EventVideosWallUiRoute, one.modality.event.frontoffice.activities.videos.Page4SessionVideoPlayerRouting.VideOfSessionUiRoute, one.modality.event.frontoffice.activities.videos.Page3LivestreamPlayerRouting.LivestreamUiRoute;
-    provides dev.webfx.stack.routing.uirouter.operations.RouteRequestEmitter with one.modality.event.frontoffice.activities.videos.Page1EventsWithVideoRouting.RouteToVideosRequestEmitter;
+    provides dev.webfx.stack.routing.uirouter.UiRoute with one.modality.event.frontoffice.activities.videos.VideosRouting.VideosUiRoute;
+    provides dev.webfx.stack.routing.uirouter.operations.RouteRequestEmitter with one.modality.event.frontoffice.activities.videos.VideosRouting.RouteToVideosRequestEmitter;
 
 }
