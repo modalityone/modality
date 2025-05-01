@@ -4,6 +4,7 @@ import dev.webfx.extras.panes.MonoPane;
 import dev.webfx.extras.styles.bootstrap.Bootstrap;
 import dev.webfx.extras.webtext.HtmlText;
 import dev.webfx.platform.util.Strings;
+import dev.webfx.stack.i18n.I18n;
 import dev.webfx.stack.i18n.controls.I18nControls;
 import dev.webfx.stack.i18n.spi.impl.I18nSubKey;
 import javafx.beans.binding.BooleanBinding;
@@ -84,9 +85,13 @@ public final class EventThumbnailView {
 
     private void buildUi() {
         container.setPrefWidth(CONTAINER_WIDTH);
-        String language = extractLanguageISOCode(imageItemCode);
+        String languageOfTheItem = extractLanguageISOCode(imageItemCode);
+        //Here we manage 2 cases:
+        //1. For Video, the item is the same for all languages, so we want display the title and description according to the language of the user
+        //2. For Audio, since we can order audios in different languages, we want to display the title and description according to the language of the item
+        I18nSubKey titleSubkey =  new I18nSubKey("expression: i18n(this, '" + languageOfTheItem + "')", event);
 
-        Label eventLabel = Bootstrap.h3(I18nControls.newLabel(new I18nSubKey("expression: i18n(this, '" + language + "')", event)));
+        Label eventLabel = Bootstrap.h3(I18nControls.newLabel(titleSubkey));
         eventLabel.setWrapText(true);
         VBox.setMargin(eventLabel, new Insets(10, 0, 0, 0));
         String shortDescription = Strings.toSafeString(event.getShortDescription());
@@ -98,6 +103,9 @@ public final class EventThumbnailView {
             shortDescriptionText = shortDescription.substring(0, maxStringLength - 5) + " [ . . . ]";
         }
         HtmlText shortHTMLDescription = new HtmlText(shortDescriptionText);
+        shortHTMLDescription = new HtmlText();
+        I18n.bindI18nTextProperty(shortHTMLDescription.textProperty(), new I18nSubKey("expression: i18n(shortDescriptionLabel,'"+languageOfTheItem+"')", event), event);
+
         shortHTMLDescription.getStyleClass().add("short-description");
 
         Label availabilityLabel = new Label();
@@ -134,8 +142,18 @@ public final class EventThumbnailView {
         ));
 
         MonoPane imageContainer = new MonoPane();
-        String imagePath = ModalityCloudinary.eventCoverImagePath(event, language);
-        ModalityCloudinary.loadImage(imagePath, imageContainer, CONTAINER_WIDTH, CONTAINER_HEIGHT, SvgIcons::createAudioCoverPath);
+        String imagePath;
+        if (itemType == ItemType.ITEM_TYPE_AUDIO) {
+             imagePath = ModalityCloudinary.eventCoverImagePath(event, languageOfTheItem);
+        }
+        else {
+            imagePath = ModalityCloudinary.eventCoverImagePath(event, I18n.getLanguage());
+        }
+        ModalityCloudinary.loadImage(imagePath, imageContainer, CONTAINER_WIDTH, CONTAINER_HEIGHT, SvgIcons::createAudioCoverPath)
+            .onFailure(error-> {
+                //If we can't find the picture of the cover for the selected language, we display the default image
+                ModalityCloudinary.loadImage(ModalityCloudinary.eventCoverImagePath(event, null), imageContainer, CONTAINER_WIDTH, CONTAINER_HEIGHT, SvgIcons::createAudioCoverPath);
+            });
 
         StackPane thumbnailStackPane = new StackPane(imageContainer, availabilityLabel);
         StackPane.setAlignment(availabilityLabel, Pos.TOP_LEFT);

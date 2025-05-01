@@ -56,7 +56,7 @@ final class Page1EventsWithVideoActivity extends ViewDomainActivityBase {
             if (userPersonId != null) {
                 // we look for the scheduledItem having a bookableScheduledItem which is an audio type (case of festival)
                 entityStore.<DocumentLine>executeQuery(
-                        "select document.event.(name,label.(de,en,es,fr,pt), shortDescription, vodExpirationDate, startDate, endDate, repeatedEvent), item.code, item.family.code, " +
+                        "select document.event.(name,label.(de,en,es,fr,pt), shortDescription, shortDescriptionLabel, vodExpirationDate, startDate, endDate, repeatedEvent), item.code, item.family.code, " +
                             //We look if there are published audio ScheduledItem of type video, whose bookableScheduledItem has  been booked
                             " (exists(select ScheduledItem where item.family.code=? and bookableScheduledItem.(event=coalesce(dl.document.event.repeatedEvent, dl.document.event) and item=dl.item))) as published " +
                             //We check if the user has booked, not cancelled and paid the recordings

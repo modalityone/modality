@@ -331,8 +331,11 @@ final class Page2EventDaysWithVideoActivity extends ViewDomainActivityBase {
             pageContainer.setContent(loadedContentVBox);
             // Loading the event image in the header
             String eventCloudImagePath = ModalityCloudinary.eventCoverImagePath(event, I18n.getLanguage());
-            ModalityCloudinary.loadImage(eventCloudImagePath, eventImageContainer, -1, IMAGE_HEIGHT, SvgIcons::createVideoIconPath);
-
+            ModalityCloudinary.loadImage(eventCloudImagePath, eventImageContainer, -1, IMAGE_HEIGHT, SvgIcons::createVideoIconPath)
+                .onFailure(error-> {
+                    //If we can't find the picture of the cover for the selected language, we display the default image
+                    ModalityCloudinary.loadImage(ModalityCloudinary.eventCoverImagePath(event, null), eventImageContainer, -1, IMAGE_HEIGHT, SvgIcons::createVideoIconPath);
+                });
             // Updating the expiration date in the header
             LocalDateTime vodExpirationDate = event.getVodExpirationDate();
             if (vodExpirationDate == null) {

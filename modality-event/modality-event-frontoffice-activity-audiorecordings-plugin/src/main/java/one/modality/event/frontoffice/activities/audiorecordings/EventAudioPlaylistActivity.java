@@ -112,7 +112,7 @@ final class EventAudioPlaylistActivity extends ViewDomainActivityBase {
                                     " (exists(select MediaConsumption where media.scheduledItem=si and attendance.documentLine.document.person=? and played) as alreadyPlayed), " +
                                     " (exists(select MediaConsumption where media.scheduledItem=si and attendance.documentLine.document.person=? and downloaded) as alreadyDownloaded) " +
                                     " from ScheduledItem si" +
-                                    " where event=? and bookableScheduledItem.item.family.code=? and item.code=? and exists(select Attendance where scheduledItem=si.bookableScheduledItem and documentLine.(!cancelled and document.(person=? and event=? and confirmed and price_balance<=0)))" +
+                                    " where event=? and bookableScheduledItem.item.family.code=? and item.code=? and programScheduledItem is not null and exists(select Attendance where scheduledItem=si.bookableScheduledItem and documentLine.(!cancelled and document.(person=? and event=? and confirmed and price_balance<=0)))" +
                                     " order by date",
                                     new Object[]{userPersonId, userPersonId, userPersonId, eventIdContainingAudios, KnownItemFamily.AUDIO_RECORDING.getCode(), pathItemCodeProperty.get(), userPersonId, currentEvent}),
                                 //Index 1: we look for the scheduledItem of audio type having a bookableScheduledItem which is a teaching type (case of STTP)
@@ -156,8 +156,9 @@ final class EventAudioPlaylistActivity extends ViewDomainActivityBase {
         // ********************************* Building the static part of the UI ****************************************
         // *************************************************************************************************************
         MonoPane imageMonoPane = new MonoPane();
-
-        Label eventLabel = Bootstrap.strong(I18nControls.newLabel(new I18nSubKey("expression: i18n(this)", eventProperty), eventProperty));
+        String itemCode = pathItemCodeProperty.get();
+        String languageAbr = itemCode.contains("-") ? itemCode.split("-")[1] : null;
+        Label eventLabel = Bootstrap.strong(I18nControls.newLabel(new I18nSubKey("expression: i18n(this,'"+languageAbr+"')", eventProperty), eventProperty));
         eventLabel.setWrapText(true);
         eventLabel.setMinHeight(Region.USE_PREF_SIZE);
         eventLabel.setTextAlignment(TextAlignment.CENTER);
@@ -216,7 +217,7 @@ final class EventAudioPlaylistActivity extends ViewDomainActivityBase {
             audioTracksContainer
         );
         //loadedContentVBox.setMaxWidth(MAX_WIDTH);
-        loadedContentVBox.setAlignment(Pos.CENTER);
+        loadedContentVBox.setAlignment(Pos.TOP_CENTER);
 
         Node loadingContentIndicator = new GoldenRatioPane(Controls.createProgressIndicator(100));
 
