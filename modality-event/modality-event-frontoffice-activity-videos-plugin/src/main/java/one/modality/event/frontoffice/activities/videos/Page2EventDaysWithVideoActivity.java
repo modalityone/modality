@@ -39,7 +39,6 @@ import javafx.collections.transformation.SortedList;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Node;
-import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Region;
@@ -55,9 +54,11 @@ import one.modality.base.shared.entities.*;
 import one.modality.crm.shared.services.authn.fx.FXUserPersonId;
 import one.modality.event.frontoffice.medias.MediaConsumptionRecorder;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  * This is the second activity from the Livestream menu (after VideosActivity) when people click on a specific event.
@@ -70,24 +71,31 @@ import java.util.List;
 final class Page2EventDaysWithVideoActivity extends ViewDomainActivityBase {
 
     private static final double IMAGE_HEIGHT = 240;
-
+    private static final int MIN_NUMBER_OF_SESSION_PER_DAY_BEFORE_DISPLAYING_DAILY_PROGRAM = 3;
     private final ObjectProperty<Object> pathEventIdProperty = new SimpleObjectProperty<>(); // The event id from the path
     private final ObjectProperty<Event> eventProperty = new SimpleObjectProperty<>(); // The event loaded from the event id
     private final ObservableList<ScheduledItem> videoScheduledItems = FXCollections.observableArrayList(); // The list of all videos for that event
+    private final ObservableList<ScheduledItem> displayedVideoScheduledItems = FXCollections.observableArrayList(); // The list of all videos for that event
 
     private final ObjectProperty<ScheduledItem> watchVideoItemProperty = new SimpleObjectProperty<>(); // the VOD to watch (null for livestream)
     private final List<Media> watchMedias = new ArrayList<>(); // the medias of the VOD to watch
+
 
     private final CollapsePane videoCollapsePane = new CollapsePane(); // contains the video player(s): 1 for livestream, 1 per media for VOD
     private final List<MediaConsumptionRecorder> videoConsumptionRecorders = new ArrayList<>(); // the video consumption recorders (1 per player)
     private Player lastVideoPlayingPlayer; // the last playing player from this activity
 
+
     private final Label videoExpirationLabel = new Label();
-    private final Button selectAllDaysButton = Bootstrap.primaryButton(I18nControls.newButton(VideosI18nKeys.ViewAllDays));
     private final Label selectTheDayBelowLabel = I18nControls.newLabel(VideosI18nKeys.SelectTheDayBelow);
     private EntityStore entityStore;
     private EntityColumn<ScheduledItem>[] videoColumns;
     private final VisualGrid videoGrid = VisualGrid.createVisualGridWithResponsiveSkin();
+
+
+    private final ObjectProperty<LocalDate> currentDaySelectedProperty = new SimpleObjectProperty<>();
+    private MonoPane pageContainer;
+    private DaySwitcher daySwitcher;
 
     public Page2EventDaysWithVideoActivity() {
         //We relaunch every 14 hours the request (in case the user never close the page, and to make sure the coherence of MediaConsumption is ok)
@@ -104,6 +112,7 @@ final class Page2EventDaysWithVideoActivity extends ViewDomainActivityBase {
     protected void startLogic() {
         // Creating our own entity store to hold the loaded data without interfering with other activities
         entityStore = EntityStore.create(getDataSourceModel());
+
         // Initial data loading for the event specified in the path
         FXProperties.runNowAndOnPropertiesChange(() -> {
             Object eventId = pathEventIdProperty.get();
@@ -112,7 +121,7 @@ final class Page2EventDaysWithVideoActivity extends ViewDomainActivityBase {
                 videoScheduledItems.clear();
                 eventProperty.set(null);
             } else {
-                entityStore.<Event>executeQuery("select name, label.(de,en,es,fr,pt), shortDescription, audioExpirationDate, startDate, endDate, livestreamUrl, vodExpirationDate, repeatVideo, recurringWithVideo, repeatedEvent" +
+                entityStore.<Event>executeQuery("select name, label.(de,en,es,fr,pt), shortDescription, shortDescriptionLabel, audioExpirationDate, startDate, endDate, livestreamUrl, vodExpirationDate, repeatVideo, recurringWithVideo, repeatedEvent" +
                         " from Event where id=?", eventId)
                     .onFailure(Console::log)
                     .onSuccess(events -> {
@@ -137,6 +146,11 @@ final class Page2EventDaysWithVideoActivity extends ViewDomainActivityBase {
                                 eventProperty.set(currentEvent);
                                 populateVideos();
                                 scheduleAutoLivestream();
+                                LocalDate today = Event.todayInEventTimezone();
+                                //If we are during the event, we position the currentSelectedDay to today
+                                if(today.isAfter(currentEvent.getStartDate().minusDays(1))&&today.isBefore(currentEvent.getEndDate().plusDays(1))) {
+                                    daySwitcher.setDay(today);
+                                }
                             }));
                     });
             }
@@ -164,7 +178,7 @@ final class Page2EventDaysWithVideoActivity extends ViewDomainActivityBase {
         videoColumns = VisualEntityColumnFactory.get().fromJsonArray("""
             [
             {expression: 'date', label: 'Date', format: 'videoDate', hShrink: false, styleClass: 'date'},
-            {expression: '[coalesce(startTime, programScheduledItem.startTime), coalesce(endTime, programScheduledItem.endTime)]', label: 'UK time', format: 'videoTimeRange', textAlign: 'center', hShrink: false, styleClass: 'time'},
+            {expression: '[coalesce(startTime, timeline.startTime, programScheduledItem.startTime, programScheduledItem.timeline.startTime), coalesce(endTime, timeline.endTime, programScheduledItem.endTime, programScheduledItem.timeline.endTime)]', label: 'UK time', format: 'videoTimeRange', textAlign: 'center', hShrink: false, styleClass: 'time'},
             {expression: 'this', label: 'Name', renderer: 'videoName', minWidth: 200, styleClass: 'name'},
             {expression: 'this', label: 'Status', renderer: 'videoStatus', textAlign: 'center', hShrink: false, styleClass: 'status'}
             ]""", getDomainModel(), "ScheduledItem");
@@ -206,6 +220,7 @@ final class Page2EventDaysWithVideoActivity extends ViewDomainActivityBase {
         // *************************************************************************************************************
 
         Node loadingContentIndicator = new GoldenRatioPane(Controls.createProgressIndicator(100));
+        pageContainer = new MonoPane(); // Will hold either the loading indicator or the loaded content
 
         // Building the loaded content, starting with the header
         MonoPane eventImageContainer = new MonoPane();
@@ -215,7 +230,7 @@ final class Page2EventDaysWithVideoActivity extends ViewDomainActivityBase {
         eventLabel.setPadding(new Insets(0, 0, 12, 0));
 
         HtmlText eventDescriptionHTMLText = new HtmlText();
-        I18n.bindI18nTextProperty(eventDescriptionHTMLText.textProperty(), new I18nSubKey("expression: shortDescription", eventProperty), eventProperty);
+        I18n.bindI18nTextProperty(eventDescriptionHTMLText.textProperty(), new I18nSubKey("expression: i18n(shortDescriptionLabel)", eventProperty), eventProperty);
         eventDescriptionHTMLText.managedProperty().bind(eventDescriptionHTMLText.textProperty().isNotEmpty());
         eventDescriptionHTMLText.setMaxHeight(60);
 
@@ -248,6 +263,28 @@ final class Page2EventDaysWithVideoActivity extends ViewDomainActivityBase {
                 responsiveHeader.setContent(vBox);
             }).start();
 
+         daySwitcher = new DaySwitcher(videoScheduledItems.stream()
+            .map(ScheduledItem::getDate)
+            .distinct()
+            .sorted()
+            .collect(Collectors.toList()),currentDaySelectedProperty.get(),pageContainer,VideosI18nKeys.EventSchedule);
+         //We bind the currentDate of the daySwitcher to the currentDaySelected so the video appearing are linked to the day selected in the day switcher
+        currentDaySelectedProperty.bind(daySwitcher.currentDateProperty());
+
+        //The monoPane that manage the program day selection
+        MonoPane responsiveDaySelectionMonoPane = new MonoPane();
+        new ResponsiveDesign(responsiveDaySelectionMonoPane)
+            // 1. Horizontal layout (for desktops)
+            .addResponsiveLayout(/* applicability test: */ width -> {
+                    //If we are instance of ResponsiveLayout, we're in the laptop more, otherwise we're in the mobile mode
+                    return videoGrid.getSkin().getClass().getName().contains("Table");
+                }, /* apply method: */ () -> responsiveDaySelectionMonoPane.setContent(daySwitcher.getDesktopView()))
+            // 2. Vertical layout (for mobiles)
+            .addResponsiveLayout(/* apply method: */ () -> {
+                responsiveDaySelectionMonoPane.setContent(daySwitcher.getMobileViewContainer());
+            }).start();
+
+
         StackPane decoratedLivestreamCollapsePane = CollapsePane.decorateCollapsePane(videoCollapsePane, true);
         //We display this box only if the current Date is in the list of date in the video Scheduled Item list
         VBox todayProgramVBox = new VBox(30); // Will be populated later (see reacting code below)
@@ -259,6 +296,8 @@ final class Page2EventDaysWithVideoActivity extends ViewDomainActivityBase {
         VBox selectTheDayBelowVBox = new VBox(5, eventScheduleLabel, selectTheDayBelowLabel);
         selectTheDayBelowVBox.setAlignment(Pos.CENTER);
         selectTheDayBelowVBox.setPadding(new Insets(100, 0, 0, 0));
+        selectTheDayBelowVBox.setPadding(new Insets(100, 0, 0, 0));
+
 
         videoGrid.setMinRowHeight(48);
         videoGrid.setPrefRowHeight(Region.USE_COMPUTED_SIZE);
@@ -270,11 +309,11 @@ final class Page2EventDaysWithVideoActivity extends ViewDomainActivityBase {
         VBox loadedContentVBox = new VBox(40,
             responsiveHeader, // contains the event image and the event title
             decoratedLivestreamCollapsePane,
+            responsiveDaySelectionMonoPane,
             videoGrid // contains the videos for the selected day (or all days)
         );
         loadedContentVBox.setAlignment(Pos.TOP_CENTER);
 
-        MonoPane pageContainer = new MonoPane(); // Will hold either the loading indicator or the loaded content
 
         // *************************************************************************************************************
         // *********************************** Reacting to parameter changes *******************************************
@@ -312,30 +351,49 @@ final class Page2EventDaysWithVideoActivity extends ViewDomainActivityBase {
             boolean singleVideosPerDay = eventContainingVideos.isRecurringWithVideo();
 
             // In single video per day mode (ex: STTP), we don't display the "Select the day below" label, because we automatically show all videos
-            Layouts.setManagedAndVisibleProperties(selectTheDayBelowLabel, !singleVideosPerDay);
-            if (singleVideosPerDay) {
-                selectAllDaysButton.fire(); // Automatically selecting all days to show all videos
+            Layouts.setManagedAndVisibleProperties(selectTheDayBelowLabel, false);
+
+            //Here we check if we should display the list of the days so we can select to display the program just for one day.
+            if(videoScheduledItems.stream().collect(Collectors.groupingBy(ScheduledItem::getDate, Collectors.counting())).values().stream().anyMatch(count -> count > MIN_NUMBER_OF_SESSION_PER_DAY_BEFORE_DISPLAYING_DAILY_PROGRAM)) {
+                responsiveDaySelectionMonoPane.setVisible(true);
+                responsiveDaySelectionMonoPane.setManaged(true);
+
+            } else {
+                responsiveDaySelectionMonoPane.setVisible(false);
+                responsiveDaySelectionMonoPane.setManaged(false);
             }
 
-            /* For NKT Festivals (not STTP)
-            // Populating the videos for today
-            LocalDate todayInEventTimezone = Event.todayInEventTimezone();
-            I18nControls.bindI18nProperties(todayVideosLabel, VideosI18nKeys.ScheduleForSpecificDate1,
-                LocalizedTime.formatMonthDay(todayInEventTimezone, FrontOfficeTimeFormats.VOD_TODAY_MONTH_DAY_FORMAT));
-            List<ScheduledItem> todayVideoItems = Collections.filter(videoScheduledItems, item -> item.getDate().equals(todayInEventTimezone));
-            Region todayView = new Page2EventDayScheduleView(todayInEventTimezone, todayVideoItems, getHistory(), true).getView();
-            todayProgramVBox.getChildren().setAll(todayVideosLabel, todayView);*/
+
+
+            // Showing selected videos for the currentSelected Day
+            FXProperties.runNowAndOnPropertyChange(() -> {
+                if(currentDaySelectedProperty.get()==null)
+                    displayedVideoScheduledItems.setAll( videoScheduledItems);
+                else
+                    displayedVideoScheduledItems.setAll( videoScheduledItems.stream()
+                        .filter(item -> item.getDate().equals(currentDaySelectedProperty.get()))
+                        .collect(Collectors.toList()));
+            }, currentDaySelectedProperty);
 
         }, videoScheduledItems, eventProperty);
+
+
+        ObservableLists.runNowAndOnListOrPropertiesChange(change ->
+            daySwitcher.populateDates(videoScheduledItems.stream()
+                .map(ScheduledItem::getDate)
+                .distinct()
+                .sorted()
+                .collect(Collectors.toList())),
+            videoScheduledItems);
 
         // Showing selected videos once they are loaded
         ObservableLists.runNowAndOnListOrPropertiesChange(change -> {
             // Moving expired videos at the end of the list
-            SortedList<ScheduledItem> videoScheduledItemsExpiredLast = videoScheduledItems.sorted((v1, v2) ->
+            SortedList<ScheduledItem> videoScheduledItemsExpiredLast = displayedVideoScheduledItems.sorted((v1, v2) ->
                 Boolean.compare(VideoState.isVideoExpired(v1), VideoState.isVideoExpired(v2)));
             VisualResult vr = EntitiesToVisualResultMapper.mapEntitiesToVisualResult(videoScheduledItemsExpiredLast, videoColumns);
             videoGrid.setVisualResult(vr);
-        }, videoScheduledItems);
+        }, displayedVideoScheduledItems);
 
         // When the livestream collapse pane is collapsed, we pause the livestreamPlayer so the full-screen orange button
         // is not displayed
@@ -357,6 +415,10 @@ final class Page2EventDaysWithVideoActivity extends ViewDomainActivityBase {
             }
         }, videoCollapsePane.collapsedProperty(), Players.getGlobalPlayerGroup().playingPlayerProperty());
 
+
+
+
+
         // *************************************************************************************************************
         // ************************************* Building final container **********************************************
         // *************************************************************************************************************
@@ -364,6 +426,8 @@ final class Page2EventDaysWithVideoActivity extends ViewDomainActivityBase {
         pageContainer.getStyleClass().add("livestream");
         return FOPageUtil.restrictToMaxPageWidthAndApplyPageLeftTopRightBottomPadding(pageContainer);
     }
+
+
 
     private void populateVideos() {
         // If some previous videos were consumed, we stop their consumption recorders

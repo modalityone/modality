@@ -65,11 +65,9 @@ final class Page1EventsWithVideoActivity extends ViewDomainActivityBase {
                             //we check if :
                             " and ("+
                             // 1/ there is a ScheduledItem of video family type whose bookableScheduledItem has been booked (KBS3 setup)
-                            " exists (select ScheduledItem videoSI where item.family.code=? and exists(select Attendance where documentLine=dl and scheduledItem=videoSI.bookableScheduledItem))" +
-                            // 2/ Or KBS3 / KBS2 setup (this allows to display the audios that have been booked in the past with KBS2 events, event if we can't display them)
-                            " or item.family.code=?) and document.event.kbs3=true " +
+                            " exists (select ScheduledItem videoSI where item.family.code=? and exists(select Attendance where documentLine=dl and scheduledItem=videoSI.bookableScheduledItem)))" +
                             " order by document.event.startDate desc",
-                        new Object[]{ KnownItemFamily.VIDEO.getCode(), userPersonId, KnownItemFamily.VIDEO.getCode(), KnownItemFamily.VIDEO.getCode()})
+                        new Object[]{ KnownItemFamily.VIDEO.getCode(), userPersonId, KnownItemFamily.VIDEO.getCode()})
                     .onFailure(Console::log)
                     .onSuccess(documentLines -> Platform.runLater(() -> documentLinesWithBookedVideos.setAll(
                         documentLines.stream()

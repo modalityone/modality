@@ -56,3 +56,8 @@
 .livestream .grid-body .status /* desktop Status col */, .livestream .grid-row .status /* mobile Status row */, .livestream .btn /* desktop and mobile buttons */ {
     font-weight: bold;
 }
+
+.livestream .program-box {
+    background-color: lightgray;
+    border-radius: 25px;
+}

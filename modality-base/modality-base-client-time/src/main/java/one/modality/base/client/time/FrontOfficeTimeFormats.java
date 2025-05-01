@@ -88,4 +88,5 @@ public interface FrontOfficeTimeFormats {
     FormatStyle VIDEO_DAY_DATE_FORMAT = FormatStyle.LONG;
     //FormatStyle VIDEO_DAY_TIME_FORMAT = FormatStyle.SHORT; // still too long on the web - ex: 7.00 in the afternoon
     String VIDEO_DAY_TIME_FORMAT = "HH:mm";
+    String DAY_MONTH_DATE = "EEE, MMMM d";
 }

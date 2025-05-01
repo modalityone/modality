@@ -3,8 +3,11 @@ package one.modality.base.client.icons;
 import dev.webfx.extras.panes.MonoPane;
 import javafx.scene.Cursor;
 import javafx.scene.Node;
+import javafx.scene.layout.StackPane;
+import javafx.scene.paint.Color;
 import javafx.scene.paint.Paint;
 import javafx.scene.shape.SVGPath;
+import javafx.scene.shape.StrokeLineCap;
 
 import java.util.function.Consumer;
 import java.util.function.Supplier;
@@ -193,6 +196,24 @@ public final class SvgIcons {
     public static SVGPath createCalendarPath() {
         String path = "M19 4h-1V3a1 1 0 0 0-2 0v1H8V3a1 1 0 0 0-2 0v1H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 16H5V9h14v11zM5 7V6h14v1H5z";
         return createSVGPath(path);
+    }
+
+    public static StackPane createBackArrow2() {
+        SVGPath circle = new SVGPath();
+        circle.setContent("M 27.67 5.33 A 21.33 21.33 0 1 0 27.67 48 A 21.33 21.33 0 1 0 27.67 5.33 Z");
+        circle.setFill(Color.web("#4A4748")); // Dark gray fill
+        circle.setStroke(null);
+
+        SVGPath arrow = new SVGPath();
+        arrow.setContent("M 27.11 16 L 13.78 26.67 L 27.11 37.33");
+        arrow.setFill(null);
+        arrow.setStroke(Color.WHITE);
+        arrow.setStrokeWidth(3); // Scaled down from 8 (also by 2/3)
+        arrow.setStrokeLineCap(StrokeLineCap.ROUND);
+        //arrow.setTranslateX(-2);
+        StackPane stack = new StackPane();
+        stack.getChildren().addAll(circle, arrow);
+        return stack;
     }
 }
 
