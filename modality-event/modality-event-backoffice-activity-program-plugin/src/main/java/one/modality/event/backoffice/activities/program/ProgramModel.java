@@ -127,7 +127,7 @@ final class ProgramModel {
         //We execute the query in batch, otherwise we can have synchronisation problem between the different threads
         entityStore.executeQueryBatch(
                 // Index 0: day templates
-                new EntityStoreQuery("select name, event.(livestreamUrl,vodExpirationDate,audioExpirationDate), dates from DayTemplate si where event=? order by name", new Object[]{selectedEvent}),
+                new EntityStoreQuery("select name, event.(livestreamUrl,vodExpirationDate,audioExpirationDate), dates from DayTemplate dt where event=? order by name", new Object[]{selectedEvent}),
                 // Index 1: program site (singleton list)
                 new EntityStoreQuery("select name from Site where event=? and main limit 1", new Object[]{selectedEvent}),
                 // Index 2: items for this program item family + audio recording + video

@@ -225,20 +225,20 @@ final class DayTemplateModel {
                     addAudioScheduledItemsForDate(date, teachingScheduledItem, updateStore);
                 }
                 if (templateTimeline.isVideoOffered()) {
-                    addVideoScheduledItemsForDate(date, teachingScheduledItem,updateStore);
+                    addVideoScheduledItemsForDate(date, teachingScheduledItem, updateStore);
                 }
             }
         });
     }
 
-    void addAudioScheduledItemsForDate(LocalDate date, ScheduledItem parentTeachingScheduledItem, UpdateStore currentUpdateStore) {
+    void addAudioScheduledItemsForDate(LocalDate date, ScheduledItem teachingScheduledItem,UpdateStore currentUpdateStore) {
         //Here we add for each language not deprecated the scheduledItemAssociated to the date and parent scheduledItem*
         programModel.getLanguageAudioItems().forEach(languageItem -> {
             ScheduledItem audioScheduledItem = currentUpdateStore.insertEntity(ScheduledItem.class);
             audioScheduledItem.setEvent(getEvent());
             audioScheduledItem.setSite(getSite());
             audioScheduledItem.setDate(date);
-            audioScheduledItem.setProgramScheduledItem(parentTeachingScheduledItem);
+            audioScheduledItem.setProgramScheduledItem(teachingScheduledItem);
             audioScheduledItem.setItem(languageItem);
             if(getEvent().isAudioRecordingsDayTicket()) {
                 //Here we're in a case of audioRecordingsDayTicket (case of the Festivals), so we need to link the teachingScheduledItem to the bookable teaching scheduledItem
@@ -262,13 +262,13 @@ final class DayTemplateModel {
         });
     }
 
-    void addVideoScheduledItemsForDate(LocalDate date, ScheduledItem parentTeachingScheduledItem, UpdateStore currentUpdateStore) {
+    void addVideoScheduledItemsForDate(LocalDate date,  ScheduledItem teachingScheduledItem, UpdateStore currentUpdateStore) {
         ScheduledItem videoScheduledItem = currentUpdateStore.insertEntity(ScheduledItem.class);
         videoScheduledItem.setEvent(getEvent());
         videoScheduledItem.setSite(getSite());
         videoScheduledItem.setItem(getVideoItem());
         videoScheduledItem.setDate(date);
-        videoScheduledItem.setProgramScheduledItem(parentTeachingScheduledItem);
+        videoScheduledItem.setProgramScheduledItem(teachingScheduledItem);
         if(getEvent().isTeachingsDayTicket()) {
             //Here we're in a case of teachingDayTicket. We need to link the videoScheduledItem to the bookable teaching scheduledItem
             //See in the doc directory for more explanation
