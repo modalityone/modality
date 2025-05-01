@@ -1006,8 +1006,8 @@ CollapsePane.menu-bar.lang-menu-bar {
 }
 
 .livestream .program-box {
-    -fx-background-color: lightgray;
-    -fx-background-radius: 25;
+    -fx-background-color: #f4f4f4;
+    -fx-background-radius: 30;
 }
 
 /*===== modality-event-client-recurringevents-javafx@main.css from modality-event-client-recurringevents =====*/

@@ -70,6 +70,6 @@
 }
 
 .livestream .program-box {
-    -fx-background-color: lightgray;
-    -fx-background-radius: 25;
+    -fx-background-color: #f4f4f4;
+    -fx-background-radius: 30;
 }
