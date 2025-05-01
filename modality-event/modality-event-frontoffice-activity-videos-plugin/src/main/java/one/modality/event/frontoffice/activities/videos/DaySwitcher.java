@@ -66,10 +66,14 @@ public class DaySwitcher {
             if(currentDateProperty.get()!=null) {
                 I18nControls.bindI18nProperties(dateLabel,LocalizedTime.formatLocalDate(currentDateProperty.get(),FrontOfficeTimeFormats.DAY_MONTH_DATE));
             }
-            int currentIndex = dateList.indexOf(currentDateProperty.get());
-            backArrowMonoPane.setVisible(currentIndex > 0);
-            forwardArrowMonoPane.setVisible(currentIndex < dateList.size() - 1);
-        }, currentDateProperty);
+            if(!dateList.isEmpty()) {
+                backArrowMonoPane.setVisible(!currentDateProperty.get().equals(dateList.get(0)));
+                forwardArrowMonoPane.setVisible(!currentDateProperty.get().equals(dateList.get(dateList.size() - 1)));
+            }
+            if(currentDateProperty.get()==null) {
+                backArrowMonoPane.setVisible(false);
+            }
+            }, currentDateProperty);
     }
 
 
