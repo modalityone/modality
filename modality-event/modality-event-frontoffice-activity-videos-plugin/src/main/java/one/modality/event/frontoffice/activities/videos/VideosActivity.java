@@ -38,7 +38,6 @@ import javafx.beans.property.SimpleBooleanProperty;
 import javafx.beans.property.SimpleObjectProperty;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
-import javafx.collections.transformation.SortedList;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Cursor;
@@ -75,9 +74,9 @@ import java.util.stream.Collectors;
  */
 final class VideosActivity extends ViewDomainActivityBase {
 
-    private static final double IMAGE_HEIGHT = 240;
     private static final int MIN_NUMBER_OF_SESSION_PER_DAY_BEFORE_DISPLAYING_DAILY_PROGRAM = 3;
-    private final ObjectProperty<Object> pathEventIdProperty = new SimpleObjectProperty<>(); // The event id from the path
+    private static final double IMAGE_HEIGHT = 240;
+    private static final double EVENT_THUMBNAIL_WIDTH = 263;
 
     // Holding an observable list of events with videos booked by the user (changes on login & logout)
     private final ObservableList<Event> eventsWithBookedVideos = FXCollections.observableArrayList();
@@ -99,16 +98,20 @@ final class VideosActivity extends ViewDomainActivityBase {
     private final Label videoExpirationLabel = new Label();
     private final Label selectTheDayBelowLabel = I18nControls.newLabel(VideosI18nKeys.SelectTheDayBelow);
     private EntityStore entityStore;
-    private EntityColumn<ScheduledItem>[] videoColumns;
     private final VisualGrid videoGrid = VisualGrid.createVisualGridWithResponsiveSkin();
     private final GrowingPane growingVideoPane = new GrowingPane(videoGrid);
 
-    private final ObjectProperty<LocalDate> currentDaySelectedProperty = new SimpleObjectProperty<>();
-    private MonoPane pageContainer;
+    private final ObjectProperty<LocalDate> selectedDayProperty = new SimpleObjectProperty<>();
+    private final MonoPane pageContainer = new MonoPane(); // Will hold either the loading indicator or the loaded content
+    private final MonoPane responsiveDaySelectionMonoPane = new MonoPane();
     private DaySwitcher daySwitcher;
 
+    private boolean displayingDailyProgram;
+    private EntityColumn<ScheduledItem>[] dailyProgramVideoColumns;
+    private EntityColumn<ScheduledItem>[] allProgramVideoColumns;
+
     public VideosActivity() {
-        //We relaunch every 14 hours the request (in case the user never close the page, and to make sure the coherence of MediaConsumption is ok)
+        //We relaunch the request every 14 hours (in case the user never closes the page, and to make sure the coherence of MediaConsumption is ok)
         Scheduler.schedulePeriodic(14 * 3600 * 1000, this::startLogic);
         eventsSelectionPane.collapse(); // initially collapsed
         videoCollapsePane.collapse(); // initially collapsed - might be automatically expanded by scheduleAutoLivestream()
@@ -141,23 +144,31 @@ final class VideosActivity extends ViewDomainActivityBase {
                         KnownItemFamily.VIDEO.getCode(), userPersonId, KnownItemFamily.VIDEO.getCode(), KnownItemFamily.VIDEO.getCode())
                     .onFailure(Console::log)
                     .onSuccess(documentLines -> Platform.runLater(() -> {
+                        // Extracting the events with videos from the document lines
                         eventsWithBookedVideos.setAll(
                             documentLines.stream()
                                 .map(documentLine -> documentLine.getDocument().getEvent())  // Extract events from DocumentLine
                                 .distinct()
                                 .collect(Collectors.toList()));
-                        ColumnsPane columnsPane = new ColumnsPane(20, 50);
-                        for (Event event : eventsWithBookedVideos) {
-                            EventThumbnailView thumbnail = new EventThumbnailView(event, KnownItem.VIDEO.getCode(), EventThumbnailView.ItemType.ITEM_TYPE_VIDEO, true);
-                            Button actionButton = thumbnail.getActionButton();
-                            actionButton.setCursor(Cursor.HAND);
-                            actionButton.setOnAction(e -> {
-                                eventProperty.set(event);
-                                eventsSelectionPane.collapse();
-                            });
-                            columnsPane.getChildren().add(thumbnail.getView());
+                        // If there are 2 events with videos or more, we populate the events selection pane
+                        if (eventsWithBookedVideos.size() < 2) {
+                            eventsSelectionPane.setContent(null);
+                        } else {
+                            ColumnsPane columnsPane = new ColumnsPane(20, 50);
+                            columnsPane.setFixedColumnWidth(EVENT_THUMBNAIL_WIDTH);
+                            columnsPane.getStyleClass().add("media-library");
+                            for (Event event : eventsWithBookedVideos) {
+                                EventThumbnailView thumbnail = new EventThumbnailView(event, KnownItem.VIDEO.getCode(), EventThumbnailView.ItemType.ITEM_TYPE_VIDEO, true);
+                                Button actionButton = thumbnail.getActionButton();
+                                actionButton.setCursor(Cursor.HAND);
+                                actionButton.setOnAction(e -> {
+                                    eventProperty.set(event);
+                                    eventsSelectionPane.collapse();
+                                });
+                                columnsPane.getChildren().add(thumbnail.getView());
+                            }
+                            eventsSelectionPane.setContent(columnsPane);
                         }
-                        eventsSelectionPane.setContent(columnsPane);
                         eventProperty.set(Collections.first(eventsWithBookedVideos));
                         eventsWithBookedVideosLoadingProperty.set(false);
                     }));
@@ -217,11 +228,21 @@ final class VideosActivity extends ViewDomainActivityBase {
         }, watchVideoItemProperty, FXUserPersonId.userPersonIdProperty());
 
         VideoColumnsFormattersAndRenderers.registerRenderers();
-        videoColumns = VisualEntityColumnFactory.get().fromJsonArray("""
+        // The columns (and groups) displayed for events with a daily program (such as Festivals)
+        dailyProgramVideoColumns = VisualEntityColumnFactory.get().fromJsonArray("""
             [
-            {expression: 'date', label: 'Date', format: 'videoDate', hShrink: false, styleClass: 'date', role: 'group'},
-            {expression: 'this', label: 'Name', renderer: 'videoName', minWidth: 200, styleClass: 'name'},
-            {expression: '[coalesce(startTime, timeline.startTime, programScheduledItem.startTime, programScheduledItem.timeline.startTime), coalesce(endTime, timeline.endTime, programScheduledItem.endTime, programScheduledItem.timeline.endTime)]', label: 'UK time', format: 'videoTimeRange', textAlign: 'center', hShrink: false, styleClass: 'time'},
+            {expression: 'date', format: 'videoDate', role: 'group'},
+            {expression: 'this', label: 'Session', renderer: 'videoName', minWidth: 200, styleClass: 'name'},
+            {expression: '[coalesce(startTime, timeline.startTime, programScheduledItem.startTime, programScheduledItem.timeline.startTime), coalesce(endTime, timeline.endTime, programScheduledItem.endTime, programScheduledItem.timeline.endTime)]', label: 'Time', format: 'videoTimeRange', textAlign: 'center', hShrink: false, styleClass: 'time'},
+            {expression: 'this', label: 'Status', renderer: 'videoStatus', textAlign: 'center', hShrink: false, styleClass: 'status'}
+            ]""", getDomainModel(), "ScheduledItem");
+        // The columns (and groups) displayed for recurring events with 1 or just a few sessions per day (such as STTP)
+        allProgramVideoColumns = VisualEntityColumnFactory.get().fromJsonArray("""
+            [
+            {expression: 'this', format: 'allProgramGroup', textAlign: 'center', styleClass: 'status', role: 'group'},
+            {expression: 'date', label: 'Date', format: 'videoDate', hShrink: false, styleClass: 'date'},
+            {expression: '[coalesce(startTime, timeline.startTime, programScheduledItem.startTime, programScheduledItem.timeline.startTime), coalesce(endTime, timeline.endTime, programScheduledItem.endTime, programScheduledItem.timeline.endTime)]', label: 'Time', format: 'videoTimeRange', textAlign: 'center', hShrink: false, styleClass: 'time'},
+            {expression: 'this', label: 'Session', renderer: 'videoName', minWidth: 200, styleClass: 'name'},
             {expression: 'this', label: 'Status', renderer: 'videoStatus', textAlign: 'center', hShrink: false, styleClass: 'status'}
             ]""", getDomainModel(), "ScheduledItem");
     }
@@ -261,7 +282,6 @@ final class VideosActivity extends ViewDomainActivityBase {
         // *************************************************************************************************************
 
         Node loadingContentIndicator = new GoldenRatioPane(Controls.createProgressIndicator(100));
-        pageContainer = new MonoPane(); // Will hold either the loading indicator or the loaded content
 
         // We display an event selection section only if there are more than 1 event with videos booked by the user
         Hyperlink selectEventLink = I18nControls.newHyperlink("Select another event");
@@ -318,12 +338,11 @@ final class VideosActivity extends ViewDomainActivityBase {
             .map(ScheduledItem::getDate)
             .distinct()
             .sorted()
-            .collect(Collectors.toList()), currentDaySelectedProperty.get(), pageContainer, VideosI18nKeys.EventSchedule);
+            .collect(Collectors.toList()), selectedDayProperty.get(), pageContainer, VideosI18nKeys.EventSchedule);
         //We bind the currentDate of the daySwitcher to the currentDaySelected so the video appearing are linked to the day selected in the day switcher
-        currentDaySelectedProperty.bind(daySwitcher.currentDateProperty());
+        selectedDayProperty.bind(daySwitcher.currentDateProperty());
 
         //The monoPane that manage the program day selection
-        MonoPane responsiveDaySelectionMonoPane = new MonoPane();
         new ResponsiveDesign(responsiveDaySelectionMonoPane)
             // 1. Horizontal layout (for desktops)
             .addResponsiveLayout(/* applicability test: */ width -> {
@@ -360,7 +379,7 @@ final class VideosActivity extends ViewDomainActivityBase {
         videoGrid.setAppContext(watchVideoItemProperty); // Passing watchVideoItemProperty as appContext to the value renderers
 
         VBox loadedContentVBox = new VBox(40,
-            //eventsSelectionVBox,
+            eventsSelectionVBox,
             responsiveHeader, // contains the event image and the event title
             decoratedLivestreamCollapsePane,
             responsiveDaySelectionMonoPane,
@@ -380,6 +399,7 @@ final class VideosActivity extends ViewDomainActivityBase {
                 pageContainer.setContent(loadingContentIndicator); // TODO display something else (ex: next online events to book) when the user is not logged in, or registered
                 return;
             }
+            // If the user didn't book any event with videos, we display "no content"
             if (eventsWithBookedVideos.isEmpty()) {
                 Label noContentTitleLabel = Bootstrap.h3(I18nControls.newLabel(VideosI18nKeys.NoVideoInYourLibrary));
                 noContentTitleLabel.setContentDisplay(ContentDisplay.TOP);
@@ -391,7 +411,7 @@ final class VideosActivity extends ViewDomainActivityBase {
                 pageContainer.setContent(noContentVBox);
                 return;
             }
-            // Otherwise we display loadedContentVBox and update its content
+            // Otherwise, we display the videos and the program (loadedContentVBox with updated content)
             Event event = eventProperty.get();
             pageContainer.setContent(loadedContentVBox);
             // Loading the event image in the header
@@ -409,7 +429,8 @@ final class VideosActivity extends ViewDomainActivityBase {
                 videoExpirationLabel.setVisible(true);
                 LocalDateTime nowInEventTimezone = Event.nowInEventTimezone();
                 boolean available = nowInEventTimezone.isBefore(vodExpirationDate);
-                I18nControls.bindI18nProperties(videoExpirationLabel, available ? VideosI18nKeys.EventAvailableUntil1 : VideosI18nKeys.VideoExpiredSince1,
+                I18nControls.bindI18nProperties(videoExpirationLabel,
+                    available ? VideosI18nKeys.EventAvailableUntil1 : VideosI18nKeys.VideoExpiredSince1,
                     LocalizedTime.formatLocalDateTimeProperty(vodExpirationDate, FrontOfficeTimeFormats.VOD_EXPIRATION_DATE_TIME_FORMAT));
             }
 
@@ -418,22 +439,22 @@ final class VideosActivity extends ViewDomainActivityBase {
             assert eventContainingVideos != null;
 
             //Here we check if we should display the list of the days, so we can select to display the program just for one day.
-            boolean displayingDailyProgram = videoScheduledItems.stream().collect(Collectors.groupingBy(ScheduledItem::getDate, Collectors.counting())).values().stream().anyMatch(count -> count > MIN_NUMBER_OF_SESSION_PER_DAY_BEFORE_DISPLAYING_DAILY_PROGRAM);
+            displayingDailyProgram = videoScheduledItems.stream().collect(Collectors.groupingBy(ScheduledItem::getDate, Collectors.counting())).values().stream().anyMatch(count -> count > MIN_NUMBER_OF_SESSION_PER_DAY_BEFORE_DISPLAYING_DAILY_PROGRAM);
             Layouts.setManagedAndVisibleProperties(selectTheDayBelowLabel, displayingDailyProgram);
+            Layouts.setManagedAndVisibleProperties(responsiveDaySelectionMonoPane, displayingDailyProgram);
 
             // Showing selected videos for the currentSelected Day
             FXProperties.runNowAndOnPropertyChange(() -> {
-                if (currentDaySelectedProperty.get() == null)
+                LocalDate selectedDay = selectedDayProperty.get();
+                if (selectedDay == null)
                     displayedVideoScheduledItems.setAll(videoScheduledItems);
                 else
-                    displayedVideoScheduledItems.setAll(videoScheduledItems.stream()
-                        .filter(item -> item.getDate().equals(currentDaySelectedProperty.get()))
-                        .collect(Collectors.toList()));
-            }, currentDaySelectedProperty);
+                    displayedVideoScheduledItems.setAll(Collections.filter(videoScheduledItems, item -> selectedDay.equals(item.getDate())));
+            }, selectedDayProperty);
 
         }, videoScheduledItems, eventProperty, eventsWithBookedVideosLoadingProperty);
 
-
+        // Updating the dates in daySwitch after the video sessions have been loaded
         ObservableLists.runNowAndOnListOrPropertiesChange(change ->
                 daySwitcher.populateDates(videoScheduledItems.stream()
                     .map(ScheduledItem::getDate)
@@ -444,10 +465,25 @@ final class VideosActivity extends ViewDomainActivityBase {
 
         // Showing selected videos once they are loaded
         ObservableLists.runNowAndOnListOrPropertiesChange(change -> {
-            // Moving expired videos at the end of the list
-            SortedList<ScheduledItem> videoScheduledItemsExpiredLast = displayedVideoScheduledItems.sorted((v1, v2) ->
-                Boolean.compare(VideoState.isVideoExpired(v1), VideoState.isVideoExpired(v2)));
-            VisualResult vr = EntitiesToVisualResultMapper.mapEntitiesToVisualResult(videoScheduledItemsExpiredLast, videoColumns);
+            VisualResult vr;
+            // Because we group video sessions in the table, it's important sessions are sorted by group
+            if (displayingDailyProgram) { // daily program (ex: Festivals) => group = date
+                // Sessions are already correctly sorted by the database query (by ascending date)
+                vr = EntitiesToVisualResultMapper.mapEntitiesToVisualResult(displayedVideoScheduledItems, dailyProgramVideoColumns);
+            } else { // all program (ex: STTP) => group = LiveNow, Today, Upcoming or Past
+                // Sorting sessions by group, but for Past session, we reverse the chronological order
+                List<ScheduledItem> sortedVideoScheduledItems = displayedVideoScheduledItems.sorted((v1, v2) -> {
+                    String group1 = VideoState.getAllProgramVideoGroupI18nKey(v1); // LiveNow, Today, Upcoming or Past
+                    String group2 = VideoState.getAllProgramVideoGroupI18nKey(v2); // LiveNow, Today, Upcoming or Past
+                    // Sorting Past sessions in chronological reverse order (most recent first)
+                    if ("Past".equals(group1) || "Past".equals(group2)) {
+                        return -v1.getDate().compareTo(v2.getDate());
+                    }
+                    // Otherwise sorting by group order (keeping the original sort in groups other than Past - i.e., ascending date)
+                    return Integer.compare(VideoState.getAllProgramVideoGroupOrder(group1), VideoState.getAllProgramVideoGroupOrder(group2));
+                });
+                vr = EntitiesToVisualResultMapper.mapEntitiesToVisualResult(sortedVideoScheduledItems, allProgramVideoColumns);
+            }
             videoGrid.setVisualResult(vr);
         }, displayedVideoScheduledItems);
 

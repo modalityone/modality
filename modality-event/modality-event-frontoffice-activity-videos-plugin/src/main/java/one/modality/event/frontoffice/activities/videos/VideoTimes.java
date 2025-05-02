@@ -94,6 +94,14 @@ final class VideoTimes {
         return expirationDate == null || Times.isFuture(expirationDate, Event.getEventClock());
     }
 
+    boolean isLiveToday() {
+        return liveNowStart.toLocalDate().equals(nowInEventTimezone.toLocalDate());
+    }
+
+    boolean isLiveUpcoming() {
+        return liveNowStart.isAfter(nowInEventTimezone);
+    }
+
     private static int getVodProcessingTimeMinute(ScheduledItem currentVideo) {
         int vodProcessingTimeMinute = 60;
         if (currentVideo.getEvent().getVodProcessingTimeMinutes() != null)

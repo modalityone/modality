@@ -7,6 +7,7 @@ import dev.webfx.extras.type.PrimType;
 import dev.webfx.extras.util.layout.Layouts;
 import dev.webfx.platform.uischeduler.UiScheduler;
 import dev.webfx.platform.util.Objects;
+import dev.webfx.stack.i18n.I18n;
 import dev.webfx.stack.i18n.I18nKeys;
 import dev.webfx.stack.i18n.controls.I18nControls;
 import dev.webfx.stack.orm.domainmodel.formatter.FormatterRegistry;
@@ -51,6 +52,9 @@ final class VideoColumnsFormattersAndRenderers {
             Object[] times = (Object[]) timeRange;
             return LocalizedTime.formatLocalTimeRangeProperty((LocalTime) times[0], (LocalTime) times[1], FrontOfficeTimeFormats.VIDEO_DAY_TIME_FORMAT);
         });
+        FormatterRegistry.registerFormatter("allProgramGroup", PrimType.STRING, scheduledItem ->
+            I18n.i18nTextProperty(VideoState.getAllProgramVideoGroupI18nKey((ScheduledItem) scheduledItem))
+        );
         // videoName renderer
         ValueRendererRegistry.registerValueRenderer("videoName", (value /* expecting ScheduledItem */, context) -> {
             ScheduledItem video = (ScheduledItem) value; // value = 'this' = video ScheduledItem
@@ -115,7 +119,7 @@ final class VideoColumnsFormattersAndRenderers {
                 break;
             case VideosI18nKeys.RecordingSoonAvailable:
             case VideosI18nKeys.VideoDelayed:
-                scheduleRefreshUI(60, refresher); // Will may be different in 1 min due to push notification
+                scheduleRefreshUI(60, refresher); // Maybe different in 1 min due to push notification
                 break;
             case VideosI18nKeys.Available:
                 hideLabel(statusLabel);

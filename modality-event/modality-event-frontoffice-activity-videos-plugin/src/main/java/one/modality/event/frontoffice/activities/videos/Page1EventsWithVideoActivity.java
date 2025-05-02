@@ -125,10 +125,10 @@ final class Page1EventsWithVideoActivity extends ViewDomainActivityBase {
     }
 
     private void showLivestreamVideo(Event event) {
-        getHistory().push(Page3LivestreamPlayerRouting.getLivestreamPath(event));
+        //getHistory().push(Page3LivestreamPlayerRouting.getLivestreamPath(event));
     }
     private void showEventVideosWall(Event event) {
-        getHistory().push(Page2EventDaysWithVideoRouting.getEventVideosWallPath(event));
+        //getHistory().push(Page2EventDaysWithVideoRouting.getEventVideosWallPath(event));
     }
 
 }

@@ -57,4 +57,31 @@ final class VideoState {
         return Objects.areEquals(getVideoStatusI18nKey(scheduledItem), VideosI18nKeys.Expired);
     }
 
+    static String getAllProgramVideoGroupI18nKey(ScheduledItem videoScheduledItem) {
+        VideoTimes videoTimes = new VideoTimes(videoScheduledItem);
+        if (videoTimes.isNowBetweenLiveNowStartAndSessionEnd()) {
+            return VideosI18nKeys.LiveNow;
+        }
+        if (videoTimes.isLiveToday()) {
+            return "Today";
+        }
+        if (videoTimes.isLiveUpcoming()) {
+            return "Upcoming";
+        }
+        if (videoTimes.isNowBeforeExpirationDate() && videoScheduledItem.isPublished())
+            return VideosI18nKeys.Available;
+        return "Past";
+    }
+
+    static int getAllProgramVideoGroupOrder(String groupI18nKey) {
+        switch (groupI18nKey) {
+            case "Today": return 0;
+            case VideosI18nKeys.Available: return 1;
+            case "Upcoming": return 2;
+            case "Past":
+            default:
+                return 3;
+        }
+    }
+
 }
