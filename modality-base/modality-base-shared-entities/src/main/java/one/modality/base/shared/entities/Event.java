@@ -296,11 +296,11 @@ public interface Event extends Entity,
     }
 
     static LocalDateTime nowInEventTimezone() {
-        return LocalDateTime.now(getEventClock()).plusDays(22);
+        return LocalDateTime.now(getEventClock());
     }
 
     static LocalDate todayInEventTimezone() {
-        return LocalDate.now(getEventClock()).plusDays(22);
+        return LocalDate.now(getEventClock());
     }
 
 }
