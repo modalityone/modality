@@ -1,52 +1,52 @@
 /* Bootstrap style */
 :root {
-    --bootstrap-white: #fff ;
+    --bootstrap-white: #fff;
 
-    --bootstrap-grey1: #e6e6e6 ;
-    --bootstrap-grey2: #d4d4d4 ;
-    --bootstrap-grey3: #ccc ;
-    --bootstrap-grey4: #adadad ;
-    --bootstrap-grey5: #8c8c8c ;
-    --bootstrap-grey6: #777777 ;
-    --bootstrap-grey7: #333 ;
+    --bootstrap-grey1: #e6e6e6;
+    --bootstrap-grey2: #d4d4d4;
+    --bootstrap-grey3: #ccc;
+    --bootstrap-grey4: #adadad;
+    --bootstrap-grey5: #8c8c8c;
+    --bootstrap-grey6: #777777;
+    --bootstrap-grey7: #333;
 
-    --bootstrap-blue1: #5bc0de ;
-    --bootstrap-blue2: #46b8da ;
-    --bootstrap-blue3: #31b0d5 ;
-    --bootstrap-blue4: #269abc ;
+    --bootstrap-blue1: #5bc0de;
+    --bootstrap-blue2: #46b8da;
+    --bootstrap-blue3: #31b0d5;
+    --bootstrap-blue4: #269abc;
     --bootstrap-blue5: #0096D6; /* New base blue */
     --bootstrap-blue6: #0478e6;
-    --bootstrap-blue7: #1b6d85 ;
-    --bootstrap-blue8: #0088d6 ;
-    --bootstrap-blue9: #204d74 ;
-    --bootstrap-blue10: #122b40 ;
-    --bootstrap-blue11: #31708f ;
+    --bootstrap-blue7: #1b6d85;
+    --bootstrap-blue8: #0088d6;
+    --bootstrap-blue9: #204d74;
+    --bootstrap-blue10: #122b40;
+    --bootstrap-blue11: #31708f;
 
-    --bootstrap-green1: #5cb85c ;
-    --bootstrap-green2: #4cae4c ;
-    --bootstrap-green3: #449d44 ;
-    --bootstrap-green4: #398439 ;
-    --bootstrap-green5: #255625 ;
-    --bootstrap-green6: #41BA4D ;
+    --bootstrap-green1: #5cb85c;
+    --bootstrap-green2: #4cae4c;
+    --bootstrap-green3: #449d44;
+    --bootstrap-green4: #398439;
+    --bootstrap-green5: #255625;
+    --bootstrap-green6: #41BA4D;
 
-    --bootstrap-orange1: #f0ad4e ;
-    --bootstrap-orange2: #eea236 ;
-    --bootstrap-orange3: #ec971f ;
-    --bootstrap-orange4: #d58512 ;
-    --bootstrap-orange5: #985f0d ;
-    --bootstrap-orange6: #8a6d3b ;
+    --bootstrap-orange1: #f0ad4e;
+    --bootstrap-orange2: #eea236;
+    --bootstrap-orange3: #ec971f;
+    --bootstrap-orange4: #d58512;
+    --bootstrap-orange5: #985f0d;
+    --bootstrap-orange6: #8a6d3b;
 
-    --bootstrap-red1: #FF0404 ;
-    --bootstrap-red2: #d43f3a ;
-    --bootstrap-red3: #c9302c ;
-    --bootstrap-red4: #ac2925 ;
-    --bootstrap-red5: #761c19 ;
-    --bootstrap-red6: #FF0404 ;
+    --bootstrap-red1: #FF0404;
+    --bootstrap-red2: #d43f3a;
+    --bootstrap-red3: #c9302c;
+    --bootstrap-red4: #ac2925;
+    --bootstrap-red5: #761c19;
+    --bootstrap-red6: #FF0404;
 }
 
 .disabled:hover {
     cursor: not-allowed;
- }
+}
 
 .btn-black {
     color: var(--bootstrap-white);
@@ -61,21 +61,20 @@
     border-color: black;
 }
 
-.btn-black:hover:not(.disabled){
+.btn-black:hover:not(.disabled) {
     color: var(--bootstrap-white);
     --fx-svg-path-fill: var(--bootstrap-white);
 }
 
-.btn-black:hover:not(.disabled)> fx-background {
+.btn-black:hover:not(.disabled) > fx-background {
     background-color: var(--bootstrap-grey7);
 }
 
-.btn-black:hover:not(.disabled)> fx-border {
+.btn-black:hover:not(.disabled) > fx-border {
     border-color: var(--bootstrap-grey7);
 }
 
-btn-white {
-    color: var(--bootstrap-white);
+.btn-white {
     --fx-svg-path-fill: var(--bootstrap-white);
 }
 
@@ -87,16 +86,13 @@ btn-white {
     border-color: black;
 }
 
-.btn-white:hover:not(.disabled){
-    color: var(--bootstrap-black);
-    --fx-svg-path-fill: var(--bootstrap-black);
+.btn-white:hover:not(.disabled) {
+    color: black;
+    --fx-svg-path-fill: black;
 }
 
-.btn-white:hover:not(.disabled)> fx-background {
+.btn-white:hover:not(.disabled) > fx-background {
     background-color: var(--bootstrap-grey1);
 }
 
-.btn-white:hover:not(.disabled)> fx-border {
-    border-color: var(--bootstrap-grey1);
-}
 
