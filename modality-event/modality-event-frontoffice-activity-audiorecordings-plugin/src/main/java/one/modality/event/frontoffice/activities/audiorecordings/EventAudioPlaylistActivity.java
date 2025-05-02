@@ -18,10 +18,10 @@ import dev.webfx.kit.util.properties.FXProperties;
 import dev.webfx.kit.util.properties.ObservableLists;
 import dev.webfx.platform.console.Console;
 import dev.webfx.platform.util.Numbers;
+import dev.webfx.platform.util.Objects;
 import dev.webfx.platform.util.collection.Collections;
 import dev.webfx.stack.i18n.I18n;
 import dev.webfx.stack.i18n.controls.I18nControls;
-import dev.webfx.stack.i18n.spi.impl.I18nSubKey;
 import dev.webfx.stack.orm.domainmodel.activity.viewdomain.impl.ViewDomainActivityBase;
 import dev.webfx.stack.orm.entity.Entities;
 import dev.webfx.stack.orm.entity.EntityId;
@@ -53,6 +53,7 @@ import one.modality.base.client.time.FrontOfficeTimeFormats;
 import one.modality.base.frontoffice.utility.page.FOPageUtil;
 import one.modality.base.shared.entities.*;
 import one.modality.crm.shared.services.authn.fx.FXUserPersonId;
+import one.modality.event.frontoffice.medias.MediaUtil;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -96,7 +97,7 @@ final class EventAudioPlaylistActivity extends ViewDomainActivityBase {
                 scheduledAudioItems.clear(); // will trigger UI update
                 eventProperty.set(null); // will update i18n bindings
             } else {
-                entityStore.<Event>executeQuery("select name, label.(de,en,es,fr,pt), shortDescription, audioExpirationDate, startDate, endDate, livestreamUrl, vodExpirationDate, repeatAudio, repeatedEvent" +
+                entityStore.<Event>executeQuery("select name, label.(de,en,es,fr,pt), shortDescription,shortDescriptionLabel, audioExpirationDate, startDate, endDate, livestreamUrl, vodExpirationDate, repeatAudio, repeatedEvent" +
                         " from Event where id=? limit 1", eventId)
                     .onFailure(Console::log)
                     .onSuccess(events -> {
@@ -156,15 +157,20 @@ final class EventAudioPlaylistActivity extends ViewDomainActivityBase {
         // ********************************* Building the static part of the UI ****************************************
         // *************************************************************************************************************
         MonoPane imageMonoPane = new MonoPane();
-        String itemCode = pathItemCodeProperty.get();
-        String languageAbr = itemCode.contains("-") ? itemCode.split("-")[1] : null;
-        Label eventLabel = Bootstrap.strong(I18nControls.newLabel(new I18nSubKey("expression: i18n(this,'"+languageAbr+"')", eventProperty), eventProperty));
+        Label eventLabel = Bootstrap.strong(new Label());
+        HtmlText eventDescriptionHTMLText = new HtmlText();
+
+        FXProperties.runOnPropertiesChange(() -> {
+            Event event = eventProperty.get();
+            String itemCode = pathItemCodeProperty.get();
+            String languageAbr = itemCode.contains("-") ? itemCode.split("-")[1] : null;
+            eventLabel.setText(MediaUtil.translate(event, languageAbr));
+            eventDescriptionHTMLText.setText(Objects.coalesce(MediaUtil.translate(event.getShortDescriptionLabel(), languageAbr), event.getShortDescription()));
+        }, eventProperty, pathItemCodeProperty);
         eventLabel.setWrapText(true);
         eventLabel.setMinHeight(Region.USE_PREF_SIZE);
         eventLabel.setTextAlignment(TextAlignment.CENTER);
 
-        HtmlText eventDescriptionHTMLText = new HtmlText();
-        I18n.bindI18nTextProperty(eventDescriptionHTMLText.textProperty(), new I18nSubKey("expression: shortDescription", eventProperty), eventProperty);
         eventDescriptionHTMLText.managedProperty().bind(eventDescriptionHTMLText.textProperty().isNotEmpty());
 
         audioExpirationText = Bootstrap.textSuccess(I18nControls.newLabel(AudioRecordingsI18nKeys.AvailableUntil1, dateFormattedProperty));

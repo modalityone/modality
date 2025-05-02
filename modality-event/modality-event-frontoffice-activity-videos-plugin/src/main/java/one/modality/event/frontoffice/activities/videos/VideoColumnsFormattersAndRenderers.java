@@ -11,7 +11,6 @@ import dev.webfx.stack.i18n.I18n;
 import dev.webfx.stack.i18n.I18nKeys;
 import dev.webfx.stack.i18n.controls.I18nControls;
 import dev.webfx.stack.orm.domainmodel.formatter.FormatterRegistry;
-import dev.webfx.stack.orm.entity.lciimpl.EntityDomainReader;
 import javafx.beans.property.ObjectProperty;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
@@ -21,10 +20,10 @@ import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.Labeled;
 import javafx.scene.layout.VBox;
-import one.modality.base.client.entities.functions.I18nFunction;
 import one.modality.base.client.time.FrontOfficeTimeFormats;
 import one.modality.base.shared.entities.Event;
 import one.modality.base.shared.entities.ScheduledItem;
+import one.modality.event.frontoffice.medias.MediaUtil;
 
 import java.time.Duration;
 import java.time.LocalDate;
@@ -64,7 +63,7 @@ final class VideoColumnsFormattersAndRenderers {
                 nameLabel.getStyleClass().add("session-cancelled");
             } else {
 
-                nameLabel.setText(Objects.coalesce(translate(video), translate(video.getProgramScheduledItem())));
+                nameLabel.setText(Objects.coalesce(MediaUtil.translate(video), MediaUtil.translate(video.getProgramScheduledItem())));
                 nameLabel.getStyleClass().add("name");
             }
             return ValueRendererRegistry.renderLabeled(nameLabel, true, true);
@@ -89,10 +88,6 @@ final class VideoColumnsFormattersAndRenderers {
     }
 
     // PRIVATE API
-
-    private static String translate(ScheduledItem video) {
-        return (String) new I18nFunction().evaluate(video, new EntityDomainReader(video.getStore()));
-    }
 
     private static void computeStatusLabelAndWatchButton(ScheduledItem videoScheduledItem, Label statusLabel, Label availableUntilLabel, Button actionButton, ObjectProperty<ScheduledItem> watchVideoItemProperty) {
         Runnable refresher = () -> computeStatusLabelAndWatchButton(videoScheduledItem, statusLabel, availableUntilLabel, actionButton, watchVideoItemProperty);
