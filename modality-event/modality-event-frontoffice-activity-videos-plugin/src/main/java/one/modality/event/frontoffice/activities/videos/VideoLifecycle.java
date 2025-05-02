@@ -13,7 +13,7 @@ import java.time.temporal.ChronoUnit;
 /**
  * @author Bruno Salmon
  */
-final class VideoTimes {
+final class VideoLifecycle {
 
     private final LocalDateTime sessionStart;
     private final LocalDateTime sessionEnd;
@@ -25,7 +25,7 @@ final class VideoTimes {
     private final LocalDateTime expirationDate;
     private final LocalDateTime nowInEventTimezone = Event.nowInEventTimezone();
 
-    VideoTimes(ScheduledItem videoScheduledItem) {
+    VideoLifecycle(ScheduledItem videoScheduledItem) {
         ScheduledItem programScheduledItem = videoScheduledItem.getProgramScheduledItem();
         EntityHasStartAndEndTime startAndEndTimeHolder = Objects.coalesce(programScheduledItem.getTimeline(), programScheduledItem);
         sessionStart = videoScheduledItem.getDate().atTime(startAndEndTimeHolder.getStartTime());

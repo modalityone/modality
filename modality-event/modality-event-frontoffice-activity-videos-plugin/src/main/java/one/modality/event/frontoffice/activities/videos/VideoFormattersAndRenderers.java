@@ -33,7 +33,7 @@ import java.time.LocalTime;
 /**
  * @author David Hello
  */
-final class VideoColumnsFormattersAndRenderers {
+final class VideoFormattersAndRenderers {
 
     static void registerRenderers() {
         // Actually done (only once) in the static initializer below
@@ -58,11 +58,10 @@ final class VideoColumnsFormattersAndRenderers {
         ValueRendererRegistry.registerValueRenderer("videoName", (value /* expecting ScheduledItem */, context) -> {
             ScheduledItem video = (ScheduledItem) value; // value = 'this' = video ScheduledItem
             Label nameLabel = new Label();
-            if (video.getProgramScheduledItem().isCancelled()) {
+            if (VideoState.isVideoCancelled(video)) {
                 I18nControls.bindI18nProperties(nameLabel, VideosI18nKeys.SessionCancelled);
                 nameLabel.getStyleClass().add("session-cancelled");
             } else {
-
                 nameLabel.setText(Objects.coalesce(MediaUtil.translate(video), MediaUtil.translate(video.getProgramScheduledItem())));
                 nameLabel.getStyleClass().add("name");
             }
@@ -99,18 +98,18 @@ final class VideoColumnsFormattersAndRenderers {
 
         String statusI18nKey = VideoState.getVideoStatusI18nKey(videoScheduledItem);
         Object statusI18nArg = null;
-        VideoTimes videoTimes = new VideoTimes(videoScheduledItem);
+        VideoLifecycle videoLifecycle = new VideoLifecycle(videoScheduledItem);
 
         switch (statusI18nKey) {
             case VideosI18nKeys.OnTime:
-                scheduleRefreshUIAt(videoTimes.getCountdownStart(), refresher);
+                scheduleRefreshUIAt(videoLifecycle.getCountdownStart(), refresher);
                 break;
             case VideosI18nKeys.StartingIn1:
-                statusI18nArg = formatDuration(videoTimes.durationBetweenNowAndSessionStart());
+                statusI18nArg = formatDuration(videoLifecycle.durationBetweenNowAndSessionStart());
                 scheduleRefreshUI(1, refresher); //We refresh the countdown every second
                 break;
             case VideosI18nKeys.LiveNow:
-                scheduleRefreshUIAt(videoTimes.getSessionEnd(), refresher);
+                scheduleRefreshUIAt(videoLifecycle.getSessionEnd(), refresher);
                 break;
             case VideosI18nKeys.RecordingSoonAvailable:
             case VideosI18nKeys.VideoDelayed:
@@ -122,7 +121,7 @@ final class VideoColumnsFormattersAndRenderers {
                     watchVideoItemProperty.set(videoScheduledItem);
                     transformButtonFromPlayToPlayAgain(actionButton);
                 });
-                LocalDateTime expirationDate = videoTimes.getExpirationDate();
+                LocalDateTime expirationDate = videoLifecycle.getExpirationDate();
                 if (expirationDate != null) {
                     I18nControls.bindI18nProperties(availableUntilLabel, VideosI18nKeys.VideoAvailableUntil1, LocalizedTime.formatLocalDateTimeProperty(expirationDate, "dd MMM '-' HH.mm"));
                     showLabel(availableUntilLabel);

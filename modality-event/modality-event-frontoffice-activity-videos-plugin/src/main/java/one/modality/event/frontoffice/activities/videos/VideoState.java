@@ -1,6 +1,5 @@
 package one.modality.event.frontoffice.activities.videos;
 
-import dev.webfx.platform.util.Objects;
 import dev.webfx.stack.i18n.I18nKeys;
 import one.modality.base.shared.entities.ScheduledItem;
 
@@ -9,23 +8,27 @@ import one.modality.base.shared.entities.ScheduledItem;
  */
 final class VideoState {
 
+    static boolean isVideoCancelled(ScheduledItem videoScheduledItem) {
+        return videoScheduledItem.getProgramScheduledItem().isCancelled();
+    }
+
     static String getVideoStatusI18nKey(ScheduledItem videoScheduledItem) {
         // Video status lifecycle:
         // 1. ON_TIME (=> 2. CANCELLED) => 3. COUNTDOWN (=> 4. DELAYED) => 5. LIVE_NOW => 6. SOON_AVAILABLE (=> 7. DELAYED) => 8. AVAILABLE => 9. EXPIRED
 
         // 2. CANCELLED
-        if (videoScheduledItem.getProgramScheduledItem().isCancelled())
+        if (isVideoCancelled(videoScheduledItem))
             return VideosI18nKeys.VideoCancelled;
 
-        VideoTimes videoTimes = new VideoTimes(videoScheduledItem);
+        VideoLifecycle videoLifecycle = new VideoLifecycle(videoScheduledItem);
 
         // 1. ON_TIME
-        if (videoTimes.isNowBeforeCountdownStart()) { // More than 3 hours before the session
+        if (videoLifecycle.isNowBeforeCountdownStart()) { // More than 3 hours before the session
             return VideosI18nKeys.OnTime;
         }
 
         // 3. COUNTDOWN
-        if (videoTimes.isNowBetweenCountdownStartAndLiveNowStart()) {
+        if (videoLifecycle.isNowBetweenCountdownStartAndLiveNowStart()) {
             return VideosI18nKeys.StartingIn1;
         }
 
@@ -35,17 +38,17 @@ final class VideoState {
         }
 
         // 5. LIVE_NOW
-        if (videoTimes.isNowBetweenLiveNowStartAndSessionEnd()) {
+        if (videoLifecycle.isNowBetweenLiveNowStartAndSessionEnd()) {
             return VideosI18nKeys.LiveNow;
         }
 
         // 6. SOON_AVAILABLE
-        if (!videoScheduledItem.isPublished() && videoTimes.isNowBeforeMaxNormalProcessingEnd()) {
+        if (!videoScheduledItem.isPublished() && videoLifecycle.isNowBeforeMaxNormalProcessingEnd()) {
             return VideosI18nKeys.RecordingSoonAvailable;
         }
 
         // 7. DELAYED (eventually) or 8. AVAILABLE_UNTIL
-        if (videoTimes.isNowBeforeExpirationDate()) {
+        if (videoLifecycle.isNowBeforeExpirationDate()) {
             return videoScheduledItem.isPublished() ? VideosI18nKeys.Available : VideosI18nKeys.VideoDelayed;
         }
 
@@ -53,22 +56,18 @@ final class VideoState {
         return VideosI18nKeys.Expired;
     }
 
-    static boolean isVideoExpired(ScheduledItem scheduledItem) {
-        return Objects.areEquals(getVideoStatusI18nKey(scheduledItem), VideosI18nKeys.Expired);
-    }
-
     static String getAllProgramVideoGroupI18nKey(ScheduledItem videoScheduledItem) {
-        VideoTimes videoTimes = new VideoTimes(videoScheduledItem);
-        if (videoTimes.isNowBetweenLiveNowStartAndSessionEnd()) {
+        VideoLifecycle videoLifecycle = new VideoLifecycle(videoScheduledItem);
+        if (videoLifecycle.isNowBetweenLiveNowStartAndSessionEnd()) {
             return VideosI18nKeys.LiveNow;
         }
-        if (videoTimes.isLiveToday()) {
+        if (videoLifecycle.isLiveToday()) {
             return "Today";
         }
-        if (videoTimes.isLiveUpcoming()) {
+        if (videoLifecycle.isLiveUpcoming()) {
             return "Upcoming";
         }
-        if (videoTimes.isNowBeforeExpirationDate() && videoScheduledItem.isPublished())
+        if (videoLifecycle.isNowBeforeExpirationDate() && videoScheduledItem.isPublished())
             return VideosI18nKeys.Available;
         return "Past";
     }

@@ -138,7 +138,7 @@ final class VideosActivity extends ViewDomainActivityBase {
                             " and (" +
                             // 1/ there is a ScheduledItem of video family type whose bookableScheduledItem has been booked (KBS3 setup)
                             " exists (select ScheduledItem videoSI where item.family.code=? and exists(select Attendance where documentLine=dl and scheduledItem=videoSI.bookableScheduledItem))" +
-                            // 2/ Or KBS3 / KBS2 setup (this allows to display the audios that have been booked in the past with KBS2 events, event if we can't display them)
+                            // 2/ Or KBS3 / KBS2 setup (this allows displaying the audios that have been booked in the past with KBS2 events, event if we can't display them)
                             " or item.family.code=?)" +
                             " order by document.event.startDate desc",
                         KnownItemFamily.VIDEO.getCode(), userPersonId, KnownItemFamily.VIDEO.getCode(), KnownItemFamily.VIDEO.getCode())
@@ -227,7 +227,7 @@ final class VideosActivity extends ViewDomainActivityBase {
             }
         }, watchVideoItemProperty, FXUserPersonId.userPersonIdProperty());
 
-        VideoColumnsFormattersAndRenderers.registerRenderers();
+        VideoFormattersAndRenderers.registerRenderers();
         // The columns (and groups) displayed for events with a daily program (such as Festivals)
         dailyProgramVideoColumns = VisualEntityColumnFactory.get().fromJsonArray("""
             [
@@ -252,16 +252,16 @@ final class VideosActivity extends ViewDomainActivityBase {
         // session is being played for the MediaConsumption management. To do this, we will set
         // scheduledVideoItemProperty with the scheduled item corresponding to the played session.
         for (ScheduledItem videoScheduledItem : videoScheduledItems) { // iterating video sessions
-            VideoTimes videoTimes = new VideoTimes(videoScheduledItem);
+            VideoLifecycle videoLifecycle = new VideoLifecycle(videoScheduledItem);
 
             //If we're 20 minutes before or 30 minutes after the teaching, we display the livestream window
-            if (videoTimes.isNowBetweenShowLivestreamStartAndShowLivestreamEnd() && !videoScheduledItem.getProgramScheduledItem().isCancelled()) {
+            if (videoLifecycle.isNowBetweenShowLivestreamStartAndShowLivestreamEnd() && !VideoState.isVideoCancelled(videoScheduledItem)) {
                 watchVideoItemProperty.set(null); // Stopping possible VOD and showing livestream instead
                 videoCollapsePane.expand(); // Ensures the livestream player is showing
-                UiScheduler.scheduleDelay(videoTimes.durationMillisBetweenNowAndShowLivestreamEnd(), this::scheduleAutoLivestream);
+                UiScheduler.scheduleDelay(videoLifecycle.durationMillisBetweenNowAndShowLivestreamEnd(), this::scheduleAutoLivestream);
                 return;
-            } else if (videoTimes.isNowBeforeShowLivestreamStart()) {
-                UiScheduler.scheduleDelay(videoTimes.durationMillisBetweenNowAndShowLivestreamStart(), this::scheduleAutoLivestream);
+            } else if (videoLifecycle.isNowBeforeShowLivestreamStart()) {
+                UiScheduler.scheduleDelay(videoLifecycle.durationMillisBetweenNowAndShowLivestreamStart(), this::scheduleAutoLivestream);
             }
         }
         // If we reach this point, it's because there is no livestream to show at the moment, so we collapse
@@ -301,8 +301,6 @@ final class VideosActivity extends ViewDomainActivityBase {
         eventLabel.setPadding(new Insets(0, 0, 12, 0));
 
         HtmlText eventDescriptionHTMLText = new HtmlText();
-       // I18n.bindI18nTextProperty(eventDescriptionHTMLText.textProperty(), new I18nSubKey("expression: shortDescription", eventProperty), eventProperty);
-
         I18n.bindI18nTextProperty(eventDescriptionHTMLText.textProperty(), new I18nSubKey("expression: coalesce(i18n(shortDescriptionLabel),shortDescription)", eventProperty), eventProperty);
         eventDescriptionHTMLText.managedProperty().bind(eventDescriptionHTMLText.textProperty().isNotEmpty());
         eventDescriptionHTMLText.setMaxHeight(60);
