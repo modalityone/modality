@@ -7,6 +7,7 @@ module modality.event.frontoffice.medias {
     requires javafx.controls;
     requires javafx.graphics;
     requires modality.base.client.cloudinary;
+    requires modality.base.client.entities;
     requires modality.base.client.icons;
     requires modality.base.shared.entities;
     requires webfx.extras.panes;

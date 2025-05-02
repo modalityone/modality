@@ -29,12 +29,19 @@ public final class I18nFunction extends Function {
     public Object evaluate(Object argument, DomainReader domainReader) {
         if (argument == null)
             return null;
-        Object result = null, language = null;
+        Object language = null;
         if (argument instanceof Object[]) {
             Object[] arguments = (Object[]) argument;
             argument = arguments[0];
             language = arguments[1];
         }
+        return evaluate(argument, language, domainReader);
+    }
+
+    public static Object evaluate(Object argument, Object language, DomainReader domainReader) {
+        if (argument == null)
+            return null;
+        Object result = null;
         if (argument instanceof EntityId)
             argument = domainReader.getDomainObjectFromId(argument, null);
         Label label = null;

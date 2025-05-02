@@ -230,7 +230,9 @@ final class Page2EventDaysWithVideoActivity extends ViewDomainActivityBase {
         eventLabel.setPadding(new Insets(0, 0, 12, 0));
 
         HtmlText eventDescriptionHTMLText = new HtmlText();
-        I18n.bindI18nTextProperty(eventDescriptionHTMLText.textProperty(), new I18nSubKey("expression: i18n(shortDescriptionLabel)", eventProperty), eventProperty);
+       // I18n.bindI18nTextProperty(eventDescriptionHTMLText.textProperty(), new I18nSubKey("expression: shortDescription", eventProperty), eventProperty);
+
+        I18n.bindI18nTextProperty(eventDescriptionHTMLText.textProperty(), new I18nSubKey("expression: coalesce(i18n(shortDescriptionLabel),shortDescription)", eventProperty), eventProperty);
         eventDescriptionHTMLText.managedProperty().bind(eventDescriptionHTMLText.textProperty().isNotEmpty());
         eventDescriptionHTMLText.setMaxHeight(60);
 

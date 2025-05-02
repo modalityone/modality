@@ -35,6 +35,7 @@ public interface Event extends Entity,
     String kbs3 = "kbs3";
     String description = "description";
     String shortDescription = "shortDescription";
+    String shortDescriptionLabel = "shortDescriptionLabel";
     String externalLink = "externalLink";
     String venue = "venue";
     String teachingsDayTicket = "teachingsDayTicket";
@@ -176,6 +177,19 @@ public interface Event extends Entity,
         return getStringFieldValue(shortDescription);
     }
 
+    default void setShortDescriptionLabel(Object value) {
+        setForeignField(shortDescriptionLabel, value);
+    }
+
+    default EntityId getShortDescriptionLabelId() {
+        return getForeignEntityId(shortDescriptionLabel);
+    }
+
+    default Label getShortDescriptionLabel() {
+        return getForeignEntity(shortDescriptionLabel);
+    }
+
+
     default void setExternalLink(String value) {
         setFieldValue(externalLink, value);
     }
@@ -282,11 +296,11 @@ public interface Event extends Entity,
     }
 
     static LocalDateTime nowInEventTimezone() {
-        return LocalDateTime.now(getEventClock());
+        return LocalDateTime.now(getEventClock()).plusDays(22);
     }
 
     static LocalDate todayInEventTimezone() {
-        return LocalDate.now(getEventClock());
+        return LocalDate.now(getEventClock()).plusDays(22);
     }
 
 }

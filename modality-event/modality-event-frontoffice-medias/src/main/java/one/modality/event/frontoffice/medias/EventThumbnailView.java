@@ -3,7 +3,6 @@ package one.modality.event.frontoffice.medias;
 import dev.webfx.extras.panes.MonoPane;
 import dev.webfx.extras.styles.bootstrap.Bootstrap;
 import dev.webfx.extras.webtext.HtmlText;
-import dev.webfx.platform.util.Strings;
 import dev.webfx.stack.i18n.I18n;
 import dev.webfx.stack.i18n.controls.I18nControls;
 import dev.webfx.stack.i18n.spi.impl.I18nSubKey;
@@ -29,7 +28,7 @@ public final class EventThumbnailView {
     private static final double CONTAINER_HEIGHT = 263;
 
     private final Event event;
-    private String imageItemCode;
+    private final String imageItemCode;
     private final VBox container = new VBox();
     private Button actionButton;
 
@@ -56,13 +55,7 @@ public final class EventThumbnailView {
 
     private final ItemType itemType;
     private AvailabilityType availabilityType;
-    private boolean isPublished = false;
-
-    public EventThumbnailView(Event event, ItemType itemType) {
-        this.event = event;
-        this.itemType = itemType;
-        buildUi();
-    }
+    private final boolean isPublished;
 
     public EventThumbnailView(Event event, String itemCode, ItemType itemType, boolean isPublished) {
         this.event = event;
@@ -94,17 +87,9 @@ public final class EventThumbnailView {
         Label eventLabel = Bootstrap.h3(I18nControls.newLabel(titleSubkey));
         eventLabel.setWrapText(true);
         VBox.setMargin(eventLabel, new Insets(10, 0, 0, 0));
-        String shortDescription = Strings.toSafeString(event.getShortDescription());
-        String shortDescriptionText = shortDescription;
-        //For now if the text if too long, we just do a substring.
-        //In the future we can replace by a CollapsePan with a read more link
-        int maxStringLength = 230;
-        if (Strings.length(shortDescription) > maxStringLength) {
-            shortDescriptionText = shortDescription.substring(0, maxStringLength - 5) + " [ . . . ]";
-        }
-        HtmlText shortHTMLDescription = new HtmlText(shortDescriptionText);
-        shortHTMLDescription = new HtmlText();
-        I18n.bindI18nTextProperty(shortHTMLDescription.textProperty(), new I18nSubKey("expression: i18n(shortDescriptionLabel,'"+languageOfTheItem+"')", event), event);
+
+        HtmlText shortHTMLDescription = new HtmlText();
+        I18n.bindI18nTextProperty(shortHTMLDescription.textProperty(), new I18nSubKey("expression: coalesce(i18n(shortDescriptionLabel,'"+languageOfTheItem+"'),shortDescription)", event), event);
 
         shortHTMLDescription.getStyleClass().add("short-description");
 
