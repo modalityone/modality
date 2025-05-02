@@ -135,7 +135,8 @@ public class DaySwitcher {
         dayButtonsColumnsPane.getChildren().clear();
         dateList.forEach((LocalDate day) -> {
             Button dateButton;
-            dateButton = Bootstrap.button(new Button(LocalizedTime.formatLocalDate(day, FrontOfficeTimeFormats.DAY_MONTH_DATE)));
+            dateButton = Bootstrap.button(new Button());
+            dateButton.textProperty().bind(LocalizedTime.formatLocalDateProperty(day, FrontOfficeTimeFormats.DAY_MONTH_DATE));
             dateButton.setMinWidth(DAY_BUTTON_WIDTH);
             correspondenceDateButton.put(day, dateButton);
             dateButton.setOnAction(e -> currentDateProperty.set(day));
