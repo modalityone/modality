@@ -35,9 +35,11 @@
 }
 
 .livestream .grid-group {
-    background-color: var(--brand-blue-color);
+    background-color: #f4f4f4;
     font-weight: bold;
-    color: white;
+    border-top: 1px solid var(--webfx-visualgrid-row-border-color);
+    border-bottom: 1px solid var(--webfx-visualgrid-row-border-color);
+    color: var(--bootstrap-grey5);
 }
 
 .livestream .grid-body .date /* desktop Date col */, .livestream .grid-row .date /* mobile Date row */ {

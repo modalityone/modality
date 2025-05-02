@@ -38,12 +38,14 @@
 }
 
 .livestream .grid-group {
-    -fx-background-color: -brand-blue-color;
+    -fx-background-color: #f4f4f4;
     -fx-font-weight: bold;
+    -fx-border-color: -webfx-visualgrid-row-border-color;
+    -fx-border-width: 0 0 1px 0;
 }
 
 .livestream .grid-group Text {
-    -fx-fill: white;
+    -fx-fill: -bootstrap-grey5;
 }
 
 .livestream .grid-body .date /* desktop Date col */, .livestream .grid-row .date /* mobile Date row */ {
