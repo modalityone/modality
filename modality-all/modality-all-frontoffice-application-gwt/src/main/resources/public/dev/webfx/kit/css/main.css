@@ -211,7 +211,12 @@ th, tbody, td {
     background-color: transparent;
 }
 
-.grid-col, .grid-row {
+
+/**************************
+*** VisualGridTableSkin ***
+**************************/
+
+.grid, .grid-col, .grid-row {
     overflow: hidden;
 }
 
