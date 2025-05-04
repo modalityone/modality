@@ -23,7 +23,7 @@ import javafx.scene.control.ProgressIndicator;
 import javafx.scene.layout.*;
 import javafx.scene.shape.SVGPath;
 import one.modality.base.client.cloudinary.ModalityCloudinary;
-import one.modality.base.client.i18n.ModalityI18nKeys;
+import one.modality.base.client.i18n.BaseI18nKeys;
 import one.modality.base.client.icons.SvgIcons;
 import one.modality.base.shared.entities.Item;
 import one.modality.base.shared.entities.Media;
@@ -127,7 +127,7 @@ public class MediaLinksForAudioRecordingsManagement extends MediaLinksManagement
 
         Region spacer = new Region();
         HBox.setHgrow(spacer, Priority.ALWAYS);
-        Button saveButton = Bootstrap.successButton(I18nControls.newButton(ModalityI18nKeys.Save));
+        Button saveButton = Bootstrap.successButton(I18nControls.newButton(BaseI18nKeys.Save));
         saveButton.disableProperty().bind(EntityBindings.hasChangesProperty(localUpdateStore).not());
         HBox publishAllHBox = new HBox(publishAllLabel, publishAllSwitch, spacer, saveButton);
         publishAllHBox.setSpacing(10);

@@ -25,7 +25,7 @@ import javafx.scene.control.*;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
-import one.modality.base.client.i18n.ModalityI18nKeys;
+import one.modality.base.client.i18n.BaseI18nKeys;
 import one.modality.base.client.time.FrontOfficeTimeFormats;
 import one.modality.base.shared.entities.FrontendAccount;
 import one.modality.base.shared.entities.Person;
@@ -110,7 +110,7 @@ public class ModalitySignupUiLoginGateway extends UiLoginGatewayBase {
 
         grid.add(passwordInput, 0, 7);
 
-        Button saveButton = Bootstrap.largeSuccessButton(I18nControls.newButton(ModalityI18nKeys.Save));
+        Button saveButton = Bootstrap.largeSuccessButton(I18nControls.newButton(BaseI18nKeys.Save));
         saveButton.setOnAction(event -> {
             errorMessage.setText("");
             errorMessage.setVisible(false);

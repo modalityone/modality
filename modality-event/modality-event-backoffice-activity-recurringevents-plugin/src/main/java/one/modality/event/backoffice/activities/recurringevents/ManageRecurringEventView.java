@@ -66,7 +66,7 @@ import javafx.scene.shape.Line;
 import javafx.scene.shape.SVGPath;
 import javafx.scene.text.Text;
 import one.modality.base.client.cloudinary.ModalityCloudinary;
-import one.modality.base.client.i18n.ModalityI18nKeys;
+import one.modality.base.client.i18n.BaseI18nKeys;
 import one.modality.base.client.icons.SvgIcons;
 import one.modality.base.client.mainframe.fx.FXMainFrameDialogArea;
 import one.modality.base.client.util.dialog.ModalityDialog;
@@ -706,7 +706,7 @@ final class ManageRecurringEventView {
                             errorDialog.setCenter(deleteErrorTest);
                             BorderPane.setAlignment(deleteErrorTest, Pos.CENTER);
                             BorderPane.setMargin(deleteErrorTest, new Insets(30, 0, 30, 0));
-                            Button okErrorButton = Bootstrap.largeDangerButton(I18nControls.newButton(ModalityI18nKeys.Ok));
+                            Button okErrorButton = Bootstrap.largeDangerButton(I18nControls.newButton(BaseI18nKeys.Ok));
 
                             DialogCallback errorMessageCallback = DialogUtil.showModalNodeInGoldLayout(errorDialog, FXMainFrameDialogArea.getDialogArea());
                             okErrorButton.setOnAction(m -> errorMessageCallback.closeDialog());
@@ -864,7 +864,7 @@ final class ManageRecurringEventView {
         HBox line1 = new HBox(timeOfEventLabel, timeOfTheEventTextField, durationLabel, durationTextField);
         line1.setAlignment(Pos.CENTER_LEFT);
         line1.setPadding(new Insets(0, 0, 20, 0));
-        datesOfTheEventLabel = I18nControls.newLabel(ModalityI18nKeys.Dates);
+        datesOfTheEventLabel = I18nControls.newLabel(BaseI18nKeys.Dates);
         datesOfTheEventLabel.setPadding(new Insets(0, 0, 5, 0));
         calendarPane = new EventCalendarPane();
         calendarPane.getDatePicker().getSelectedDates().addListener(onChangeDateListener);

@@ -206,7 +206,7 @@ final class UserProfileActivity extends ViewDomainActivityBase implements Modali
 
 
         //******* PERSONAL DETAILS ********//
-        Label personnalDetailsLabel = Bootstrap.small(Bootstrap.textSecondary(I18nControls.newLabel(CreateAccountI18nKeys.PersonalDetails)));
+        Label personnalDetailsLabel = Bootstrap.small(Bootstrap.textSecondary(I18nControls.newLabel(CrmI18nKeys.PersonalDetails)));
         personnalDetailsLabel.setPadding(new Insets(40, 0, 10, 0));
         firstColumn.getChildren().add(personnalDetailsLabel);
 

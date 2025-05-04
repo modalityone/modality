@@ -6,7 +6,7 @@ import dev.webfx.stack.ui.operation.HasOperationCode;
 import dev.webfx.stack.ui.operation.HasOperationExecutor;
 import dev.webfx.platform.async.AsyncFunction;
 import javafx.scene.layout.Pane;
-import one.modality.base.client.i18n.ModalityI18nKeys;
+import one.modality.base.client.i18n.BaseI18nKeys;
 import one.modality.base.shared.entities.MoneyFlow;
 
 public final class EditMoneyFlowRequest implements HasOperationCode, HasI18nKey,
@@ -29,7 +29,7 @@ public final class EditMoneyFlowRequest implements HasOperationCode, HasI18nKey,
 
     @Override
     public Object getI18nKey() {
-        return I18nKeys.appendEllipsis(ModalityI18nKeys.Edit);
+        return I18nKeys.appendEllipsis(BaseI18nKeys.Edit);
     }
 
     public MoneyFlow getMoneyFlow() { return moneyFlow; }

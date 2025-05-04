@@ -1,6 +1,7 @@
 package one.modality.event.frontoffice.activities.videos;
 
 import dev.webfx.stack.i18n.I18nKeys;
+import one.modality.base.client.i18n.BaseI18nKeys;
 import one.modality.base.shared.entities.ScheduledItem;
 
 /**
@@ -49,7 +50,7 @@ final class VideoState {
 
         // 7. DELAYED (eventually) or 8. AVAILABLE_UNTIL
         if (videoLifecycle.isNowBeforeExpirationDate()) {
-            return videoScheduledItem.isPublished() ? VideosI18nKeys.Available : VideosI18nKeys.VideoDelayed;
+            return videoScheduledItem.isPublished() ? BaseI18nKeys.Available : VideosI18nKeys.VideoDelayed;
         }
 
         // 9. EXPIRED
@@ -62,22 +63,22 @@ final class VideoState {
             return VideosI18nKeys.LiveNow;
         }
         if (videoLifecycle.isLiveToday()) {
-            return "Today";
+            return BaseI18nKeys.Today;
         }
         if (videoLifecycle.isLiveUpcoming()) {
-            return "Upcoming";
+            return BaseI18nKeys.Upcoming;
         }
         if (videoLifecycle.isNowBeforeExpirationDate() && videoScheduledItem.isPublished())
-            return VideosI18nKeys.Available;
-        return "Past";
+            return BaseI18nKeys.Available;
+        return BaseI18nKeys.Past;
     }
 
     static int getAllProgramVideoGroupOrder(String groupI18nKey) {
         switch (groupI18nKey) {
-            case "Today": return 0;
-            case VideosI18nKeys.Available: return 1;
-            case "Upcoming": return 2;
-            case "Past":
+            case BaseI18nKeys.Today: return 0;
+            case BaseI18nKeys.Available: return 1;
+            case BaseI18nKeys.Upcoming: return 2;
+            case BaseI18nKeys.Past:
             default:
                 return 3;
         }

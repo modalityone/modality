@@ -25,6 +25,7 @@ public interface CrmI18nKeys {
     String FirstName = "FirstName";
     String City = "City";
     String Centre = "Centre";
+    String PersonalDetails = "PersonalDetails";
     String Postcode = "Postcode";
     String Ordained = "Ordained";
     String State = "State";

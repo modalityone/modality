@@ -4,7 +4,7 @@ import dev.webfx.stack.i18n.HasI18nKey;
 import dev.webfx.stack.i18n.operations.ChangeLanguageRequest;
 import dev.webfx.stack.i18n.operations.ChangeLanguageRequestEmitterImpl;
 import dev.webfx.stack.ui.operation.HasOperationCode;
-import one.modality.base.client.i18n.ModalityI18nKeys;
+import one.modality.base.client.i18n.BaseI18nKeys;
 
 /**
  * @author Bruno Salmon
@@ -24,7 +24,7 @@ public final class ChangeLanguageToEnglishRequest extends ChangeLanguageRequest 
 
     @Override
     public Object getI18nKey() {
-        return ModalityI18nKeys.English;
+        return BaseI18nKeys.English;
     }
 
     public static final class ProvidedEmitter extends ChangeLanguageRequestEmitterImpl {

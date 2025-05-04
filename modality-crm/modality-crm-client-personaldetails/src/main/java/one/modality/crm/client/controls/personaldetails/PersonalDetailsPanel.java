@@ -36,7 +36,7 @@ import javafx.scene.layout.Pane;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.SVGPath;
 import one.modality.base.client.activity.ModalityButtonFactoryMixin;
-import one.modality.base.client.i18n.ModalityI18nKeys;
+import one.modality.base.client.i18n.BaseI18nKeys;
 import one.modality.base.client.time.FrontOfficeTimeFormats;
 import dev.webfx.stack.ui.validation.ValidationSupport;
 import one.modality.base.shared.domainmodel.functions.AbcNames;
@@ -77,9 +77,9 @@ public class PersonalDetailsPanel implements ModalityButtonFactoryMixin {
         updateUiEditable();
     });
 
-    private final Hyperlink updateLink = newHyperlink(ModalityI18nKeys.Update, e -> setEditable(true));
-    private final Hyperlink saveLink = newHyperlink(ModalityI18nKeys.Save, e -> save());
-    private final Hyperlink cancelLink = newHyperlink(ModalityI18nKeys.Cancel, e -> cancel());
+    private final Hyperlink updateLink = newHyperlink(BaseI18nKeys.Update, e -> setEditable(true));
+    private final Hyperlink saveLink = newHyperlink(BaseI18nKeys.Save, e -> save());
+    private final Hyperlink cancelLink = newHyperlink(BaseI18nKeys.Cancel, e -> cancel());
 
     {
         cancelLink.setContentDisplay(ContentDisplay.TEXT_ONLY);

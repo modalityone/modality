@@ -55,6 +55,7 @@ import one.modality.base.client.time.FrontOfficeTimeFormats;
 import one.modality.base.frontoffice.utility.page.FOPageUtil;
 import one.modality.base.shared.entities.*;
 import one.modality.crm.shared.services.authn.fx.FXUserPersonId;
+import one.modality.event.client.i18n.EventI18nKeys;
 import one.modality.event.frontoffice.medias.EventThumbnailView;
 import one.modality.event.frontoffice.medias.MediaConsumptionRecorder;
 
@@ -229,13 +230,12 @@ final class VideosActivity extends ViewDomainActivityBase {
 
         VideoFormattersAndRenderers.registerRenderers();
         // The columns (and groups) displayed for events with a daily program (such as Festivals)
-        dailyProgramVideoColumns = VisualEntityColumnFactory.get().fromJsonArray("""
-            [
-            {expression: 'date', format: 'videoDate', role: 'group'},
-            {expression: 'this', label: 'Session', renderer: 'videoName', minWidth: 200, styleClass: 'name'},
-            {expression: '[coalesce(startTime, timeline.startTime, programScheduledItem.startTime, programScheduledItem.timeline.startTime), coalesce(endTime, timeline.endTime, programScheduledItem.endTime, programScheduledItem.timeline.endTime)]', label: 'Time', format: 'videoTimeRange', textAlign: 'center', hShrink: false, styleClass: 'time'},
-            {expression: 'this', label: 'Status', renderer: 'videoStatus', textAlign: 'center', hShrink: false, styleClass: 'status'}
-            ]""", getDomainModel(), "ScheduledItem");
+        dailyProgramVideoColumns = VisualEntityColumnFactory.get().fromJsonArray("[" +
+            "{expression: 'date', format: 'videoDate', role: 'group'},\n" +
+            "{expression: 'this', label: '" + EventI18nKeys.Session + "', renderer: 'videoName', minWidth: 200, styleClass: 'name'},\n" +
+            "{expression: '[coalesce(startTime, timeline.startTime, programScheduledItem.startTime, programScheduledItem.timeline.startTime), coalesce(endTime, timeline.endTime, programScheduledItem.endTime, programScheduledItem.timeline.endTime)]', label: 'Time', format: 'videoTimeRange', textAlign: 'center', hShrink: false, styleClass: 'time'},\n" +
+            "{expression: 'this', label: 'Status', renderer: 'videoStatus', textAlign: 'center', hShrink: false, styleClass: 'status'}\n" +
+            "]", getDomainModel(), "ScheduledItem");
         // The columns (and groups) displayed for recurring events with 1 or just a few sessions per day (such as STTP)
         allProgramVideoColumns = VisualEntityColumnFactory.get().fromJsonArray("""
             [

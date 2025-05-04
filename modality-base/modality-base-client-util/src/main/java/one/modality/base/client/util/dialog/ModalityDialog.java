@@ -17,7 +17,7 @@ import javafx.scene.control.Labeled;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.text.Text;
-import one.modality.base.client.i18n.ModalityI18nKeys;
+import one.modality.base.client.i18n.BaseI18nKeys;
 import one.modality.base.client.mainframe.fx.FXMainFrameDialogArea;
 
 /**
@@ -49,7 +49,7 @@ public final class ModalityDialog {
     }
 
     public static void showConfirmationDialog(Object confirmationMessageI18nKey, AsyncFunction<DialogCallback, ?> onConfirmed, AsyncFunction<DialogCallback, ?> onCancelled) {
-        Text titleConfirmationText = I18n.newText(ModalityI18nKeys.AreYouSure);
+        Text titleConfirmationText = I18n.newText(BaseI18nKeys.AreYouSure);
         Bootstrap.textSuccess(Bootstrap.strong(Bootstrap.h3(titleConfirmationText)));
         BorderPane dialog = new BorderPane();
         dialog.setTop(titleConfirmationText);
@@ -58,8 +58,8 @@ public final class ModalityDialog {
         dialog.setCenter(confirmationText);
         BorderPane.setAlignment(confirmationText, Pos.CENTER);
         BorderPane.setMargin(confirmationText, new Insets(30, 0, 30, 0));
-        Button confirmButton = Bootstrap.largeDangerButton(I18nControls.newButton(ModalityI18nKeys.Confirm));
-        Button cancelButton = Bootstrap.largeSecondaryButton(I18nControls.newButton(ModalityI18nKeys.Cancel));
+        Button confirmButton = Bootstrap.largeDangerButton(I18nControls.newButton(BaseI18nKeys.Confirm));
+        Button cancelButton = Bootstrap.largeSecondaryButton(I18nControls.newButton(BaseI18nKeys.Cancel));
 
         HBox buttonsHBox = new HBox(cancelButton, confirmButton);
         buttonsHBox.setAlignment(Pos.CENTER);

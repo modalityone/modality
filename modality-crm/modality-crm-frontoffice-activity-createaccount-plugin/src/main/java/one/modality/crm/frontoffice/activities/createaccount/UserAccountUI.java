@@ -139,7 +139,7 @@ public class UserAccountUI implements ModalityButtonFactoryMixin {
 
 
         //******* PERSONAL DETAILS ********//
-        Label personnalDetailsLabel = Bootstrap.small(Bootstrap.textSecondary(I18nControls.newLabel(CreateAccountI18nKeys.PersonalDetails)));
+        Label personnalDetailsLabel = Bootstrap.small(Bootstrap.textSecondary(I18nControls.newLabel(CrmI18nKeys.PersonalDetails)));
         personnalDetailsLabel.setPadding(new Insets(40, 0, 10, 0));
         Layouts.bindManagedAndVisiblePropertiesTo(nameManagedProperty.or(genderManagedProperty).or(ordainedManagedProperty).or(phoneManagedProperty), personnalDetailsLabel);
         fieldsListVBox.getChildren().add(personnalDetailsLabel);

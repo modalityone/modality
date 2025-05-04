@@ -29,7 +29,7 @@ import javafx.scene.layout.GridPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.scene.text.Text;
-import one.modality.base.client.i18n.ModalityI18nKeys;
+import one.modality.base.client.i18n.BaseI18nKeys;
 import one.modality.base.shared.domainmodel.formatters.PriceFormatter;
 import one.modality.base.shared.entities.*;
 import one.modality.base.shared.entities.formatters.EventPriceFormatter;
@@ -67,8 +67,8 @@ abstract class AbstractItemFamilyPricing implements ItemFamilyPricing {
     private final List<ScheduledItem> initialScheduledItems;
 
     private boolean syncingUI;
-    private final Button saveButton = Bootstrap.successButton(I18nControls.newButton(ModalityI18nKeys.Save));
-    private final Button cancelButton = Bootstrap.secondaryButton(I18nControls.newButton(ModalityI18nKeys.Cancel));
+    private final Button saveButton = Bootstrap.successButton(I18nControls.newButton(BaseI18nKeys.Save));
+    private final Button cancelButton = Bootstrap.secondaryButton(I18nControls.newButton(BaseI18nKeys.Cancel));
 
     public AbstractItemFamilyPricing(KnownItemFamily knownItemFamily, Object itemFamilyI18nKey, PolicyAggregate eventPolicy, boolean everyday) {
         this.itemFamilyI18nKey = itemFamilyI18nKey;

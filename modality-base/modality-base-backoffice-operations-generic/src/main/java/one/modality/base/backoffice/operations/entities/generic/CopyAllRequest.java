@@ -3,7 +3,7 @@ package one.modality.base.backoffice.operations.entities.generic;
 import dev.webfx.stack.i18n.HasI18nKey;
 import dev.webfx.stack.orm.reactive.entities.entities_to_grid.EntityColumn;
 import dev.webfx.stack.orm.entity.Entity;
-import one.modality.base.client.i18n.ModalityI18nKeys;
+import one.modality.base.client.i18n.BaseI18nKeys;
 
 import java.util.Collection;
 
@@ -22,7 +22,7 @@ public final class CopyAllRequest extends CopyRequest implements HasI18nKey {
 
     @Override
     public Object getI18nKey() {
-        return ModalityI18nKeys.CopyAll;
+        return BaseI18nKeys.CopyAll;
     }
 
 }

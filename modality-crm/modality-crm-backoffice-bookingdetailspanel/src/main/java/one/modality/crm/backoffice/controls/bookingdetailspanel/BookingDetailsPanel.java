@@ -36,7 +36,7 @@ import javafx.scene.layout.*;
 import one.modality.base.backoffice.controls.masterslave.UiBuilder;
 import one.modality.base.backoffice.operations.entities.generic.CopyAllRequest;
 import one.modality.base.backoffice.operations.entities.generic.CopySelectionRequest;
-import one.modality.base.client.i18n.ModalityI18nKeys;
+import one.modality.base.client.i18n.BaseI18nKeys;
 import one.modality.base.client.mainframe.fx.FXMainFrameDialogArea;
 import one.modality.base.client.presentationmodel.HasSelectedDocumentProperty;
 import one.modality.base.shared.entities.Document;
@@ -46,6 +46,7 @@ import one.modality.base.shared.entities.MoneyTransfer;
 import one.modality.crm.backoffice.operations.entities.mail.ComposeNewMailRequest;
 import one.modality.crm.backoffice.operations.entities.mail.OpenMailRequest;
 import one.modality.crm.client.controls.personaldetails.BookingPersonalDetailsPanel;
+import one.modality.crm.client.i18n.CrmI18nKeys;
 import one.modality.ecommerce.backoffice.operations.entities.document.cart.OpenBookingCartRequest;
 import one.modality.ecommerce.backoffice.operations.entities.document.multiplebookings.CancelOtherMultipleBookingsRequest;
 import one.modality.ecommerce.backoffice.operations.entities.document.multiplebookings.GetBackCancelledMultipleBookingsDepositRequest;
@@ -126,7 +127,7 @@ public final class BookingDetailsPanel implements
         BorderPane.setMargin(flexButtonBar, new Insets(1, 0, 1, 0));
         container.setTop(flexButtonBar);
         container.setCenter(new TabPane(
-            createTab(BookingDetailsI18nKeys.PersonalDetails, buildPersonalDetailsView()),
+            createTab(CrmI18nKeys.PersonalDetails, buildPersonalDetailsView()),
             createFilterTab(BookingDetailsI18nKeys.Options, "{class: 'DocumentLine', columns: `site,item,dates,lockAllocation,resourceConfiguration,comment,price_isCustom,price_net,price_nonRefundable,price_minDeposit,price_deposit`, where: 'document=${selectedDocument}', orderBy: 'item.family.ord,site..ord,item.ord'}"),
             createFilterTab(BookingDetailsI18nKeys.Payments, "{class: 'MoneyTransfer', columns: `date,method,transactionRef,comment,amount,verified`, where: 'document=${selectedDocument}', orderBy: 'date,id'}"),
             createTab(BookingDetailsI18nKeys.Comments, buildCommentView()),
@@ -278,9 +279,9 @@ public final class BookingDetailsPanel implements
         titledPane.setCollapsible(false);
         titledPane.setMaxHeight(Double.MAX_VALUE);
         GridPane.setColumnIndex(titledPane, columnIndex++);
-        Hyperlink updateLink = I18nControls.bindI18nTextProperty(new Hyperlink(), ModalityI18nKeys.Update);
-        Hyperlink saveLink = I18nControls.bindI18nTextProperty(new Hyperlink(), ModalityI18nKeys.Save);
-        Hyperlink cancelLink = I18nControls.bindI18nTextProperty(new Hyperlink(), ModalityI18nKeys.Cancel);
+        Hyperlink updateLink = I18nControls.bindI18nTextProperty(new Hyperlink(), BaseI18nKeys.Update);
+        Hyperlink saveLink = I18nControls.bindI18nTextProperty(new Hyperlink(), BaseI18nKeys.Save);
+        Hyperlink cancelLink = I18nControls.bindI18nTextProperty(new Hyperlink(), BaseI18nKeys.Cancel);
         BooleanProperty editableProperty = FXProperties.newBooleanProperty(true, editable -> {
             updateLink.setManaged(!editable);
             updateLink.setVisible(!editable);
@@ -423,4 +424,3 @@ public final class BookingDetailsPanel implements
         return null;
     }
 }
-

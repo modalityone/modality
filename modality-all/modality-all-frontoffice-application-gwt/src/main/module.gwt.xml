@@ -274,6 +274,8 @@
     <source path="one/modality/event/client/booking"/>
     <!--=========================< modality-event-client-event-fx >=========================-->
     <source path="one/modality/event/client/event/fx"/>
+    <!--===========================< modality-event-client-i18n >===========================-->
+    <source path="one/modality/event/client/i18n"/>
     <!--========================< modality-event-client-mediaview >=========================-->
     <source path="one/modality/event/client/mediaview"/>
     <!--=====================< modality-event-client-recurringevents >======================-->

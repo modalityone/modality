@@ -7,7 +7,7 @@ import dev.webfx.stack.ui.operation.HasOperationExecutor;
 import dev.webfx.stack.orm.entity.EntityStore;
 import dev.webfx.platform.async.AsyncFunction;
 import javafx.scene.layout.Pane;
-import one.modality.base.client.i18n.ModalityI18nKeys;
+import one.modality.base.client.i18n.BaseI18nKeys;
 
 public final class AddNewFilterRequest implements HasOperationCode, HasI18nKey,
         HasOperationExecutor<AddNewFilterRequest, Void> {
@@ -29,7 +29,7 @@ public final class AddNewFilterRequest implements HasOperationCode, HasI18nKey,
 
     @Override
     public Object getI18nKey() {
-        return I18nKeys.appendEllipsis(ModalityI18nKeys.Add);
+        return I18nKeys.appendEllipsis(BaseI18nKeys.Add);
     }
 
     public EntityStore getEntityStore() {

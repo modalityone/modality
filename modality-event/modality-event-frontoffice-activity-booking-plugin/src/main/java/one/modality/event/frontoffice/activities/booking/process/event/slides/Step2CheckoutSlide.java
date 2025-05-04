@@ -29,7 +29,7 @@ import javafx.scene.control.Hyperlink;
 import javafx.scene.control.Label;
 import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
-import one.modality.base.client.i18n.ModalityI18nKeys;
+import one.modality.base.client.i18n.BaseI18nKeys;
 import one.modality.base.client.icons.SvgIcons;
 import one.modality.base.client.time.FrontOfficeTimeFormats;
 import one.modality.base.shared.entities.Attendance;
@@ -59,7 +59,7 @@ final class Step2CheckoutSlide extends StepSlide {
     // Node property that will be managed by the sub-router to mount the CheckoutAccountActivity (when routed)
     private final ObjectProperty<Node> checkoutAccountMountNodeProperty = new SimpleObjectProperty<>();
     private final GuestPanel guestPanel = new GuestPanel();
-    private final Button submitButton = Bootstrap.largeSuccessButton(I18nControls.newButton(ModalityI18nKeys.Submit));
+    private final Button submitButton = Bootstrap.largeSuccessButton(I18nControls.newButton(BaseI18nKeys.Submit));
     private final BooleanProperty step1PersonToBookWasShownProperty = new SimpleBooleanProperty();
     private boolean bookAsGuestAllowed = true;
     private boolean partialEventAllowed = true;
@@ -336,7 +336,7 @@ final class Step2CheckoutSlide extends StepSlide {
 
     @Override
     void turnOffWaitMode() {
-        turnOffButtonWaitMode(submitButton, ModalityI18nKeys.Submit);
+        turnOffButtonWaitMode(submitButton, BaseI18nKeys.Submit);
         guestPanel.turnOffButtonWaitMode();
     }
 

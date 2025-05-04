@@ -10,6 +10,7 @@ import dev.webfx.platform.util.Objects;
 import dev.webfx.stack.i18n.I18n;
 import dev.webfx.stack.i18n.I18nKeys;
 import dev.webfx.stack.i18n.controls.I18nControls;
+import one.modality.base.client.i18n.BaseI18nKeys;
 import dev.webfx.stack.orm.domainmodel.formatter.FormatterRegistry;
 import javafx.beans.property.ObjectProperty;
 import javafx.event.ActionEvent;
@@ -31,6 +32,7 @@ import java.time.LocalDateTime;
 import java.time.LocalTime;
 
 /**
+ * @author Bruno Salmon
  * @author David Hello
  */
 final class VideoFormattersAndRenderers {
@@ -115,7 +117,7 @@ final class VideoFormattersAndRenderers {
             case VideosI18nKeys.VideoDelayed:
                 scheduleRefreshUI(60, refresher); // Maybe different in 1 min due to push notification
                 break;
-            case VideosI18nKeys.Available:
+            case BaseI18nKeys.Available:
                 hideLabel(statusLabel);
                 showButton(actionButton, e -> {
                     watchVideoItemProperty.set(videoScheduledItem);

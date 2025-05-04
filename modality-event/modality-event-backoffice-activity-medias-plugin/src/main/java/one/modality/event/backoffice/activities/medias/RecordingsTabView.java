@@ -31,7 +31,7 @@ import javafx.scene.Node;
 import javafx.scene.control.*;
 import javafx.scene.control.Label;
 import javafx.scene.layout.*;
-import one.modality.base.client.i18n.ModalityI18nKeys;
+import one.modality.base.client.i18n.BaseI18nKeys;
 import one.modality.base.client.time.BackOfficeTimeFormats;
 import one.modality.base.client.util.masterslave.ModalitySlaveEditor;
 import one.modality.base.shared.entities.*;
@@ -153,7 +153,7 @@ final class RecordingsTabView {
         // masterSettings.getChildren().add(offlineManagementHBox);
 
         //SAVE BUTTON
-        Button saveButton = Bootstrap.successButton(I18nControls.newButton(ModalityI18nKeys.Save));
+        Button saveButton = Bootstrap.successButton(I18nControls.newButton(BaseI18nKeys.Save));
         VBox.setMargin(saveButton, new Insets(20, 0, 0, 0));
         BooleanExpression hasChangesProperty = EntityBindings.hasChangesProperty(updateStore);
         addUpdateStoreHasChangesProperty(hasChangesProperty);

@@ -28,7 +28,7 @@ import javafx.scene.shape.SVGPath;
 import javafx.scene.text.FontWeight;
 import javafx.scene.web.WebView;
 import one.modality.base.client.css.Fonts;
-import one.modality.base.client.i18n.ModalityI18nKeys;
+import one.modality.base.client.i18n.BaseI18nKeys;
 import one.modality.base.client.mainframe.fx.FXMainFrameDialogArea;
 import one.modality.base.frontoffice.utility.browser.BrowserUtil;
 import one.modality.base.frontoffice.utility.tyler.GeneralUtility;
@@ -246,7 +246,7 @@ public final class OrganizationSelectorView {
         worldMapView = new DynamicMapView();
         worldMapView.placeEntityProperty().bind(FXCountry.countryProperty());
 
-        Hyperlink backLink = GeneralUtility.createHyperlink(ModalityI18nKeys.Back, Color.WHITE);
+        Hyperlink backLink = GeneralUtility.createHyperlink(BaseI18nKeys.Back, Color.WHITE);
         GeneralUtility.onNodeClickedWithoutScroll(event -> flipToFrontOrganization(), backLink);
 
         FXProperties.runNowAndOnPropertyChange(country -> {

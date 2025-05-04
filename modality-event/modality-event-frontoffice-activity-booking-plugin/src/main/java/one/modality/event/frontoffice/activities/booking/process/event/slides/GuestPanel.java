@@ -21,7 +21,7 @@ import javafx.scene.control.TextField;
 import javafx.scene.effect.DropShadow;
 import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
-import one.modality.base.client.i18n.ModalityI18nKeys;
+import one.modality.base.client.i18n.BaseI18nKeys;
 import dev.webfx.stack.ui.validation.ValidationSupport;
 import one.modality.crm.client.i18n.CrmI18nKeys;
 import one.modality.event.frontoffice.activities.booking.BookingI18nKeys;
@@ -36,7 +36,7 @@ final class GuestPanel implements MaterialFactoryMixin {
     private final TextField firstNameTextField = newMaterialTextField(CrmI18nKeys.FirstName);
     private final TextField lastNameTextField = newMaterialTextField(CrmI18nKeys.LastName);
     private final TextField emailTextField = newMaterialTextField(CrmI18nKeys.Email);
-    private final Button guestSubmitButton = Bootstrap.largeSuccessButton(I18nControls.newButton(ModalityI18nKeys.Submit));
+    private final Button guestSubmitButton = Bootstrap.largeSuccessButton(I18nControls.newButton(BaseI18nKeys.Submit));
     private final ValidationSupport validationSupport = new ValidationSupport();
 
     public GuestPanel() {
@@ -95,7 +95,7 @@ final class GuestPanel implements MaterialFactoryMixin {
     }
 
     public void turnOffButtonWaitMode() {
-        StepSlide.turnOffButtonWaitMode(guestSubmitButton, ModalityI18nKeys.Submit);
+        StepSlide.turnOffButtonWaitMode(guestSubmitButton, BaseI18nKeys.Submit);
     }
 
     public Node getContainer() {

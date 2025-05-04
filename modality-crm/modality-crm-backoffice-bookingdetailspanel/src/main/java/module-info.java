@@ -16,6 +16,7 @@ module modality.crm.backoffice.bookingdetailspanel {
     requires modality.base.client.presentationmodel;
     requires modality.base.shared.entities;
     requires modality.crm.backoffice.operations.mail;
+    requires modality.crm.client.i18n;
     requires modality.crm.client.personaldetails;
     requires modality.ecommerce.backoffice.operations.document;
     requires modality.ecommerce.backoffice.operations.documentline;

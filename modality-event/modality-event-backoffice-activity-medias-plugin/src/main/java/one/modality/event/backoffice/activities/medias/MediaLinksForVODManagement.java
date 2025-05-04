@@ -30,7 +30,7 @@ import javafx.scene.control.TextField;
 import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.SVGPath;
-import one.modality.base.client.i18n.ModalityI18nKeys;
+import one.modality.base.client.i18n.BaseI18nKeys;
 import one.modality.base.client.icons.SvgIcons;
 import one.modality.base.client.messaging.ModalityMessaging;
 import one.modality.base.client.time.BackOfficeTimeFormats;
@@ -147,7 +147,7 @@ public class MediaLinksForVODManagement extends MediaLinksManagement {
                 teachingTitle.getStyleClass().add(Bootstrap.STRONG);
                 startTimeLabel.getStyleClass().add(Bootstrap.STRONG);
 
-                Button saveButton = Bootstrap.largeSuccessButton(I18nControls.newButton(ModalityI18nKeys.Save));
+                Button saveButton = Bootstrap.largeSuccessButton(I18nControls.newButton(BaseI18nKeys.Save));
                 saveButton.disableProperty().bind(EntityBindings.hasChangesProperty(localUpdateStore).not());
 
                 HBox saveButtonContainer = new HBox(saveButton);

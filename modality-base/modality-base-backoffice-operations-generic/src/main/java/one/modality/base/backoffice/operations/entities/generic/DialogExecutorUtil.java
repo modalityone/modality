@@ -11,7 +11,7 @@ import dev.webfx.stack.ui.exceptions.UserCancellationException;
 import dev.webfx.stack.ui.operation.OperationUtil;
 import javafx.scene.control.Button;
 import javafx.scene.layout.Pane;
-import one.modality.base.client.i18n.ModalityI18nKeys;
+import one.modality.base.client.i18n.BaseI18nKeys;
 
 import java.util.function.Supplier;
 
@@ -23,7 +23,7 @@ public final class DialogExecutorUtil {
     public static Future<Void> executeOnUserConfirmation(String confirmationText, Pane parentContainer, Supplier<Future<?>> executor) {
         Promise<Void> promise = Promise.promise();
         UiScheduler.runInUiThread(() -> {
-            DialogContent dialogContent = new DialogContent().setHeaderText(ModalityI18nKeys.AreYouSure).setContentText(confirmationText);
+            DialogContent dialogContent = new DialogContent().setHeaderText(BaseI18nKeys.AreYouSure).setContentText(confirmationText);
             boolean[] executing = { false };
             DialogBuilderUtil.showModalNodeInGoldLayout(dialogContent, parentContainer).addCloseHook(() -> {
                 if (!executing[0])

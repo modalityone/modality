@@ -10,7 +10,6 @@ public interface CreateAccountI18nKeys {
     String NoAttendanceToAKadampaCenter = "NoAttendanceToAKadampaCenter";
     String LoginTitle = "LoginTitle";
     String AccountCreatedWithSuccess = "AccountCreatedWithSuccess";
-    String PersonalDetails = "PersonalDetails";
     String ReadTermAndCond = "ReadTermAndCond";
     String FindAddress = "FindAddress";
     String LoginDetails = "LoginDetails";
@@ -22,9 +21,5 @@ public interface CreateAccountI18nKeys {
     String PasswordStrength = "PasswordStrength";
     String CreatingAccountError = "CreatingAccountError";
     String PasswordNotMatchingError = "PasswordNotMatchingError";
-    String textFill = "textFill";
-    String graphic = "graphic";
-    String fill = "fill";
-    String svgPath = "svgPath";
 
 }

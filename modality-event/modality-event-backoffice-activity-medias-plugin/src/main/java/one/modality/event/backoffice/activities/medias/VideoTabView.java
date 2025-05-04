@@ -30,7 +30,7 @@ import javafx.scene.control.Label;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
-import one.modality.base.client.i18n.ModalityI18nKeys;
+import one.modality.base.client.i18n.BaseI18nKeys;
 import one.modality.base.client.time.BackOfficeTimeFormats;
 import one.modality.base.client.util.masterslave.ModalitySlaveEditor;
 import one.modality.base.shared.entities.*;
@@ -188,7 +188,7 @@ final class VideoTabView {
 
 
         //SAVE BUTTON
-        Button saveButton = Bootstrap.largeSuccessButton(I18nControls.newButton(ModalityI18nKeys.Save));
+        Button saveButton = Bootstrap.largeSuccessButton(I18nControls.newButton(BaseI18nKeys.Save));
         BooleanExpression hasChangesProperty = EntityBindings.hasChangesProperty(updateStore);
         saveButton.disableProperty().bind(hasChangesProperty.not());
         addUpdateStoreHasChangesProperty(hasChangesProperty);

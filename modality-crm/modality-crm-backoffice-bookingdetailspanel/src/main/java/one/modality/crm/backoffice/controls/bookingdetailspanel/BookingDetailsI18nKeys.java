@@ -9,9 +9,9 @@ public interface BookingDetailsI18nKeys {
     String Mails = "Mails";
     String Payments = "Payments";
     String Family = "Family";
-    String PersonalDetails = "PersonalDetails";
     String Medias = "Medias";
     String History = "History";
     String Cart = "Cart";
+    String PersonalDetails = "PersonalDetails";
 
 }
