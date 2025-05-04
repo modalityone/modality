@@ -300,7 +300,7 @@ public interface Event extends Entity,
     }
 
     static LocalDate todayInEventTimezone() {
-        return LocalDate.now(getEventClock());
+        return nowInEventTimezone().toLocalDate();
     }
 
 }
