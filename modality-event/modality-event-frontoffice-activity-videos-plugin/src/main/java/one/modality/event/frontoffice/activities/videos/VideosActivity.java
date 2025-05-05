@@ -50,6 +50,7 @@ import javafx.scene.layout.*;
 import javafx.scene.text.Font;
 import javafx.scene.text.TextAlignment;
 import one.modality.base.client.cloudinary.ModalityCloudinary;
+import one.modality.base.client.i18n.BaseI18nKeys;
 import one.modality.base.client.icons.SvgIcons;
 import one.modality.base.client.time.FrontOfficeTimeFormats;
 import one.modality.base.frontoffice.utility.page.FOPageUtil;
@@ -66,9 +67,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 /**
- * This is the second activity from the Livestream menu (after VideosActivity) when people click on a specific event.
- * So it displays a table of all days with videos of the event with the following columns: date, status, name, UK time &
- * remarks, and the last column displays a button to watch the video when applicable.
+ * This is the activity for videos where people can watch the livestream and videos on demand.
  *
  * @author David Hello
  * @author Bruno Salmon
@@ -88,7 +87,7 @@ final class VideosActivity extends ViewDomainActivityBase {
     private final ObservableList<ScheduledItem> videoScheduledItems = FXCollections.observableArrayList(); // The list of all videos for that event
     private final ObservableList<ScheduledItem> displayedVideoScheduledItems = FXCollections.observableArrayList(); // The list of all videos for that event
 
-    private final ObjectProperty<ScheduledItem> watchVideoItemProperty = new SimpleObjectProperty<>(); // the VOD to watch (null for livestream)
+    private final ObjectProperty<ScheduledItem> watchingVideoItemProperty = new SimpleObjectProperty<>(); // the Livestream or VOD to watch
     private final List<Media> watchMedias = new ArrayList<>(); // the medias of the VOD to watch
 
     private final CollapsePane videoCollapsePane = new CollapsePane(); // contains the video player(s): 1 for livestream, 1 per media for VOD
@@ -212,13 +211,13 @@ final class VideosActivity extends ViewDomainActivityBase {
 
         // Later Media loading when the user wants to watch a specific video (this sets watchVideoItemProperty)
         FXProperties.runOnPropertiesChange(() -> {
-            ScheduledItem watchVideoItem = watchVideoItemProperty.get();
+            ScheduledItem watchingVideoItem = watchingVideoItemProperty.get();
             EntityId userPersonId = FXUserPersonId.getUserPersonId();
-            if (watchVideoItem == null || userPersonId == null) {
+            if (watchingVideoItem == null || userPersonId == null) {
                 watchMedias.clear();
                 populateVideos(); // livestream
-            } else {
-                entityStore.<Media>executeQuery("select url from Media where scheduledItem=?", watchVideoItem)
+            } else { // The VOD requires additional Media loading
+                entityStore.<Media>executeQuery("select url from Media where scheduledItem=?", watchingVideoItem)
                     .onFailure(Console::log)
                     .onSuccess(mediaLists -> Platform.runLater(() -> {
                         Collections.setAll(watchMedias, mediaLists);
@@ -226,7 +225,7 @@ final class VideosActivity extends ViewDomainActivityBase {
                         videoCollapsePane.expand();
                     }));
             }
-        }, watchVideoItemProperty, FXUserPersonId.userPersonIdProperty());
+        }, watchingVideoItemProperty, FXUserPersonId.userPersonIdProperty());
 
         VideoFormattersAndRenderers.registerRenderers();
         // The columns (and groups) displayed for events with a daily program (such as Festivals)
@@ -255,8 +254,8 @@ final class VideosActivity extends ViewDomainActivityBase {
             VideoLifecycle videoLifecycle = new VideoLifecycle(videoScheduledItem);
 
             //If we're 20 minutes before or 30 minutes after the teaching, we display the livestream window
-            if (videoLifecycle.isNowBetweenShowLivestreamStartAndShowLivestreamEnd() && !VideoState.isVideoCancelled(videoScheduledItem)) {
-                watchVideoItemProperty.set(null); // Stopping possible VOD and showing livestream instead
+            if (isTimeToShowVideoLivestream(videoLifecycle)) {
+                watchingVideoItemProperty.set(videoScheduledItem); // Stopping possible VOD and showing livestream instead
                 videoCollapsePane.expand(); // Ensures the livestream player is showing
                 UiScheduler.scheduleDelay(videoLifecycle.durationMillisBetweenNowAndShowLivestreamEnd(), this::scheduleAutoLivestream);
                 return;
@@ -266,12 +265,17 @@ final class VideosActivity extends ViewDomainActivityBase {
         }
         // If we reach this point, it's because there is no livestream to show at the moment, so we collapse
         // videoCollapsePane (unless the user switched to a VOD in the meantime)
-        if (isCollapsePaneContainingLivestream()) // livestream (not VOD)
+        if (isUserWatchingLivestream()) // livestream (not VOD)
             videoCollapsePane.collapse();
     }
 
-    private boolean isCollapsePaneContainingLivestream() {
-        return watchVideoItemProperty.get() == null;
+    private boolean isTimeToShowVideoLivestream(VideoLifecycle videoLifecycle) {
+        return !VideoState.isVideoCancelled(videoLifecycle.getVideoScheduledItem()) && videoLifecycle.isNowBetweenShowLivestreamStartAndShowLivestreamEnd();
+    }
+
+    private boolean isUserWatchingLivestream() {
+        ScheduledItem videoScheduledItem = watchingVideoItemProperty.get();
+        return videoScheduledItem != null && isTimeToShowVideoLivestream(new VideoLifecycle(videoScheduledItem));
     }
 
     @Override
@@ -376,7 +380,7 @@ final class VideosActivity extends ViewDomainActivityBase {
         videoGrid.setCellMargin(new Insets(5, 10, 5, 10));
         videoGrid.setFullHeight(true);
         videoGrid.setHeaderVisible(true);
-        videoGrid.setAppContext(watchVideoItemProperty); // Passing watchVideoItemProperty as appContext to the value renderers
+        videoGrid.setAppContext(watchingVideoItemProperty); // Passing watchingVideoItemProperty as appContext to the value renderers
 
         VBox loadedContentVBox = new VBox(40,
             eventsSelectionVBox,
@@ -467,16 +471,16 @@ final class VideosActivity extends ViewDomainActivityBase {
         ObservableLists.runNowAndOnListOrPropertiesChange(change -> {
             VisualResult vr;
             // Because we group video sessions in the table, it's important sessions are sorted by group
-            if (displayingDailyProgram) { // daily program (ex: Festivals) => group = date
+            if (displayingDailyProgram) { // daily-program (ex: Festivals) => group = date
                 // Sessions are already correctly sorted by the database query (by ascending date)
                 vr = EntitiesToVisualResultMapper.mapEntitiesToVisualResult(displayedVideoScheduledItems, dailyProgramVideoColumns);
-            } else { // all program (ex: STTP) => group = LiveNow, Today, Upcoming or Past
+            } else { // all-program (ex: STTP) => group = LiveNow, Today, Upcoming or Past
                 // Sorting sessions by group, but for Past session, we reverse the chronological order
                 List<ScheduledItem> sortedVideoScheduledItems = displayedVideoScheduledItems.sorted((v1, v2) -> {
                     String group1 = VideoState.getAllProgramVideoGroupI18nKey(v1); // LiveNow, Today, Upcoming or Past
                     String group2 = VideoState.getAllProgramVideoGroupI18nKey(v2); // LiveNow, Today, Upcoming or Past
-                    // Sorting Past sessions in chronological reverse order (most recent first)
-                    if ("Past".equals(group1) || "Past".equals(group2)) {
+                    // Sorting Past sessions in chronological reverse order (the most recent first)
+                    if (BaseI18nKeys.Past.equals(group1) || BaseI18nKeys.Past.equals(group2)) {
                         return -v1.getDate().compareTo(v2.getDate());
                     }
                     // Otherwise sorting by group order (keeping the original sort in groups other than Past - i.e., ascending date)
@@ -498,10 +502,10 @@ final class VideosActivity extends ViewDomainActivityBase {
                 if (videoCollapsePane.isCollapsed())
                     lastVideoPlayingPlayer.pause();
                 else {
-                    MediaConsumptionRecorder videoConsumptionRecorder = Collections.findFirst(videoConsumptionRecorders, vcr -> vcr.getPlayer() == lastVideoPlayingPlayer);
-                    if (videoConsumptionRecorder != null) {
+                    MediaConsumptionRecorder videoConsumptionRecorder = Collections.findFirst(videoConsumptionRecorders,
+                        vcr -> Players.sameSelectedPlayer(vcr.getPlayer(), lastVideoPlayingPlayer));
+                    if (videoConsumptionRecorder != null)
                         videoConsumptionRecorder.start();
-                    }
                     lastVideoPlayingPlayer.play();
                 }
             }
@@ -521,7 +525,7 @@ final class VideosActivity extends ViewDomainActivityBase {
         videoConsumptionRecorders.clear();
         Node videoContent = null;
         boolean autoPlay = videoCollapsePane.isExpanded();
-        if (isCollapsePaneContainingLivestream()) { // Livestream
+        if (isUserWatchingLivestream()) { // Livestream
             Event event = eventProperty.get();
             String livestreamUrl = event.getLivestreamUrl();
             if (livestreamUrl != null) {
@@ -552,7 +556,7 @@ final class VideosActivity extends ViewDomainActivityBase {
         boolean livestream = media == null;
         if (livestream)
             lastVideoPlayingPlayer = videoPlayer;
-        MediaConsumptionRecorder videoConsumptionRecorder = new MediaConsumptionRecorder(videoPlayer, livestream, watchVideoItemProperty::get, () -> media);
+        MediaConsumptionRecorder videoConsumptionRecorder = new MediaConsumptionRecorder(videoPlayer, livestream, watchingVideoItemProperty::get, () -> media);
         videoConsumptionRecorders.add(videoConsumptionRecorder);
         if (autoPlay)
             videoConsumptionRecorder.start();

@@ -15,6 +15,7 @@ import java.time.temporal.ChronoUnit;
  */
 final class VideoLifecycle {
 
+    private final ScheduledItem videoScheduledItem;
     private final LocalDateTime sessionStart;
     private final LocalDateTime sessionEnd;
     private final LocalDateTime showLivestreamStart;
@@ -26,6 +27,7 @@ final class VideoLifecycle {
     private final LocalDateTime nowInEventTimezone = Event.nowInEventTimezone();
 
     VideoLifecycle(ScheduledItem videoScheduledItem) {
+        this.videoScheduledItem = videoScheduledItem;
         ScheduledItem programScheduledItem = videoScheduledItem.getProgramScheduledItem();
         EntityHasStartAndEndTime startAndEndTimeHolder = Objects.coalesce(programScheduledItem.getTimeline(), programScheduledItem);
         sessionStart = videoScheduledItem.getDate().atTime(startAndEndTimeHolder.getStartTime());
@@ -42,12 +44,12 @@ final class VideoLifecycle {
         expirationDate = Objects.coalesce(videoScheduledItem.getExpirationDate(), videoScheduledItem.getEvent().getVodExpirationDate());
     }
 
-    public LocalDateTime getCountdownStart() {
-        return countdownStart;
+    public ScheduledItem getVideoScheduledItem() {
+        return videoScheduledItem;
     }
 
-    public LocalDateTime getSessionEnd() {
-        return sessionEnd;
+    public LocalDateTime getCountdownStart() {
+        return countdownStart;
     }
 
     public LocalDateTime getExpirationDate() {

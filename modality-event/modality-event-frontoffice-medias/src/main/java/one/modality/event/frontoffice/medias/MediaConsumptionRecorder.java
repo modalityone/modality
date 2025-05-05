@@ -3,7 +3,6 @@ package one.modality.event.frontoffice.medias;
 import dev.webfx.extras.player.Player;
 import dev.webfx.extras.player.Players;
 import dev.webfx.extras.player.Status;
-import dev.webfx.extras.player.multi.MultiPlayer;
 import dev.webfx.kit.util.properties.FXProperties;
 import dev.webfx.platform.scheduler.Scheduler;
 import dev.webfx.platform.shutdown.Shutdown;
@@ -64,10 +63,11 @@ public class MediaConsumptionRecorder {
                 ScheduledItem playerScheduledItem = scheduledItemSupplier.get();
                 Media playerMedia = mediaSupplier.get();
                 // Checking that the audio player is still the playing player
-                Player thisSelectablePlayer = player instanceof MultiPlayer ? ((MultiPlayer) player).getSelectedPlayer() : player;
+                Player thisSelectablePlayer = Players.getSelectedPlayer(player);
                 Player playingPlayer = player.getPlayerGroup().getPlayingPlayer();
                 if ((playingPlayer != null || playingMediaConsumption != null) // ignoring this case which happens before the player starts playing
-                    && playingPlayer != thisSelectablePlayer) { // Happens when the user started another player (ex: podcast, video, etc...)
+                    && !Players.sameSelectedPlayer(playingPlayer, thisSelectablePlayer) // Happens when the user started another player (ex: podcast, video, etc...)
+                    && !(playingPlayer == null && thisSelectablePlayer.getStatus() == Status.PAUSED)) { // Ignoring, however, when the player has simply been paused
                     playerScheduledItem = null;
                     playerMedia = null;
                 }
@@ -77,7 +77,7 @@ public class MediaConsumptionRecorder {
                     !Entities.sameId(playerMedia, playingMediaConsumption.getMedia()) ||
                     player.getStatus() == Status.STOPPED)) {
                     playingStopWatch.off();
-                    recordPlayingMediaConsumptionDuration();
+                    recordPlayingMediaConsumptionFinalDuration();
                 }
                 boolean isPlaying = Players.isMaybePlaying(player);
                 if (playingMediaConsumption == null && playerScheduledItem != null && isPlaying) {
@@ -126,7 +126,7 @@ public class MediaConsumptionRecorder {
                         // a shutdown hook in case the user closes the app (which also cause the track to stop).
                         if (shutdownHook == null) {
                             shutdownHook = Shutdown.addShutdownHook(e ->
-                                recordPlayingMediaConsumptionDuration());
+                                recordPlayingMediaConsumptionFinalDuration());
                         }
                     } else
                         playingMediaConsumption = null;
@@ -135,7 +135,7 @@ public class MediaConsumptionRecorder {
         }
     }
 
-    private void recordPlayingMediaConsumptionDuration() {
+    private void recordPlayingMediaConsumptionFinalDuration() {
         if (playingMediaConsumption != null && !playingMediaConsumption.isNew()) {
             playingMediaConsumption.setDurationMillis(playingStopWatch.getStopWatchElapsedTime());
             UpdateStore updateStore = (UpdateStore) playingMediaConsumption.getStore();

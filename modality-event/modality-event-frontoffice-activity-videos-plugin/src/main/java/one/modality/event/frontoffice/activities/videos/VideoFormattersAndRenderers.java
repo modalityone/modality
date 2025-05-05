@@ -90,8 +90,8 @@ final class VideoFormattersAndRenderers {
 
     // PRIVATE API
 
-    private static void computeStatusLabelAndWatchButton(ScheduledItem videoScheduledItem, Label statusLabel, Label availableUntilLabel, Button actionButton, ObjectProperty<ScheduledItem> watchVideoItemProperty) {
-        Runnable refresher = () -> computeStatusLabelAndWatchButton(videoScheduledItem, statusLabel, availableUntilLabel, actionButton, watchVideoItemProperty);
+    private static void computeStatusLabelAndWatchButton(ScheduledItem videoScheduledItem, Label statusLabel, Label availableUntilLabel, Button actionButton, ObjectProperty<ScheduledItem> watchingVideoItemProperty) {
+        Runnable refresher = () -> computeStatusLabelAndWatchButton(videoScheduledItem, statusLabel, availableUntilLabel, actionButton, watchingVideoItemProperty);
 
         // Setting default visibilities for most cases (to be changed in specific cases)
         hideButton(actionButton);
@@ -120,7 +120,7 @@ final class VideoFormattersAndRenderers {
             case BaseI18nKeys.Available:
                 hideLabel(statusLabel);
                 showButton(actionButton, e -> {
-                    watchVideoItemProperty.set(videoScheduledItem);
+                    watchingVideoItemProperty.set(videoScheduledItem);
                     transformButtonFromPlayToPlayAgain(actionButton);
                 });
                 LocalDateTime expirationDate = videoLifecycle.getExpirationDate();
