@@ -42,9 +42,7 @@ import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Cursor;
 import javafx.scene.Node;
-import javafx.scene.control.Button;
-import javafx.scene.control.ContentDisplay;
-import javafx.scene.control.Hyperlink;
+import javafx.scene.control.*;
 import javafx.scene.control.Label;
 import javafx.scene.layout.*;
 import javafx.scene.text.Font;
@@ -351,11 +349,12 @@ final class VideosActivity extends ViewDomainActivityBase {
             // 1. Horizontal layout (for desktops)
             .addResponsiveLayout(/* applicability test: */ width -> {
                 //If the grid skin is a table, we're in the desktop mode, otherwise we're in the mobile mode
-                return videoGrid.getSkin().getClass().getName().contains("Table");
+                Skin<?> videoGridSkin = videoGrid.getSkin();
+                return videoGridSkin != null && videoGridSkin.getClass().getName().contains("Table");
             }, /* apply method: */ () -> {
                 responsiveDaySelectionMonoPane.setContent(daySwitcher.getDesktopView());
                 growingVideoPane.reset();
-            })
+            }, /* test dependencies: */ videoGrid.skinProperty())
             // 2. Vertical layout (for mobiles)
             .addResponsiveLayout(/* apply method: */ () -> {
                 responsiveDaySelectionMonoPane.setContent(daySwitcher.getMobileViewContainer());
