@@ -5,10 +5,7 @@ import dev.webfx.stack.orm.entity.Entity;
 import dev.webfx.stack.orm.entity.EntityId;
 import one.modality.base.shared.entities.markers.*;
 
-import java.time.Clock;
-import java.time.LocalDate;
-import java.time.LocalDateTime;
-import java.time.ZoneId;
+import java.time.*;
 
 /**
  * @author Bruno Salmon
@@ -295,8 +292,10 @@ public interface Event extends Entity,
         return UK_CLOCK;
     }
 
+    //Duration DEBUG_LOCAL_DATETIME_DELTA = Duration.between(LocalDateTime.now(getEventClock()), LocalDateTime.of(2025, 5, 6, 8, 44, 50));
+
     static LocalDateTime nowInEventTimezone() {
-        return LocalDateTime.now(getEventClock());
+        return LocalDateTime.now(getEventClock())/*.plus(DEBUG_LOCAL_DATETIME_DELTA)*/;
     }
 
     static LocalDate todayInEventTimezone() {
