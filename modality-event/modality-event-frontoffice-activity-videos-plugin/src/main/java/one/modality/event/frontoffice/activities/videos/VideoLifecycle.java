@@ -74,6 +74,10 @@ final class VideoLifecycle {
         return Duration.between(nowInEventTimezone, sessionStart);
     }
 
+    Duration durationBetweenNowAndSessionEnd() {
+        return Duration.between(nowInEventTimezone, sessionEnd);
+    }
+
     long durationMillisBetweenNowAndShowLivestreamStart() {
         return ChronoUnit.MILLIS.between(nowInEventTimezone, showLivestreamStart);
     }

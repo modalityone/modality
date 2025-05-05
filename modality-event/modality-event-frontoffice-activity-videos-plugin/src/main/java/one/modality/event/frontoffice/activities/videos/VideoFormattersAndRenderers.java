@@ -10,7 +10,6 @@ import dev.webfx.platform.util.Objects;
 import dev.webfx.stack.i18n.I18n;
 import dev.webfx.stack.i18n.I18nKeys;
 import dev.webfx.stack.i18n.controls.I18nControls;
-import one.modality.base.client.i18n.BaseI18nKeys;
 import dev.webfx.stack.orm.domainmodel.formatter.FormatterRegistry;
 import javafx.beans.property.ObjectProperty;
 import javafx.event.ActionEvent;
@@ -21,6 +20,7 @@ import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.Labeled;
 import javafx.scene.layout.VBox;
+import one.modality.base.client.i18n.BaseI18nKeys;
 import one.modality.base.client.time.FrontOfficeTimeFormats;
 import one.modality.base.shared.entities.Event;
 import one.modality.base.shared.entities.ScheduledItem;
@@ -104,18 +104,18 @@ final class VideoFormattersAndRenderers {
 
         switch (statusI18nKey) {
             case VideosI18nKeys.OnTime:
-                scheduleRefreshUIAt(videoLifecycle.getCountdownStart(), refresher);
+                scheduleRefreshAt(videoLifecycle.getCountdownStart(), refresher);
                 break;
             case VideosI18nKeys.StartingIn1:
                 statusI18nArg = formatDuration(videoLifecycle.durationBetweenNowAndSessionStart());
-                scheduleRefreshUI(1, refresher); //We refresh the countdown every second
+                scheduleRefreshSeconds(1, refresher); //We refresh the countdown every second
                 break;
             case VideosI18nKeys.LiveNow:
-                scheduleRefreshUIAt(videoLifecycle.getSessionEnd(), refresher);
+                scheduleRefreshDuration(videoLifecycle.durationBetweenNowAndSessionEnd(), refresher);
                 break;
             case VideosI18nKeys.RecordingSoonAvailable:
             case VideosI18nKeys.VideoDelayed:
-                scheduleRefreshUI(60, refresher); // Maybe different in 1 min due to push notification
+                scheduleRefreshSeconds(60, refresher); // Maybe different in 1 min due to push notification
                 break;
             case BaseI18nKeys.Available:
                 hideLabel(statusLabel);
@@ -128,7 +128,7 @@ final class VideoFormattersAndRenderers {
                     I18nControls.bindI18nProperties(availableUntilLabel, VideosI18nKeys.VideoAvailableUntil1, LocalizedTime.formatLocalDateTimeProperty(expirationDate, "dd MMM '-' HH.mm"));
                     showLabel(availableUntilLabel);
                     //We schedule a refresh so the UI is updated when the expirationDate is reached
-                    scheduleRefreshUIAt(expirationDate, refresher);
+                    scheduleRefreshAt(expirationDate, refresher);
                 }
         }
 
@@ -159,21 +159,25 @@ final class VideoFormattersAndRenderers {
         Bootstrap.secondaryButton(actionButton);
     }
 
-    private static void scheduleRefreshUIAt(LocalDateTime scheduleDataTime, Runnable refresher) {
-        LocalDateTime nowInEventTimezone = Event.nowInEventTimezone();
-        Duration duration = Duration.between(nowInEventTimezone, scheduleDataTime);
-        if (duration.getSeconds() > 0) {
-            scheduleRefreshUI(duration.getSeconds(), refresher);
-        }
+    private static void scheduleRefreshAt(LocalDateTime scheduleDataTime, Runnable refresher) {
+        scheduleRefreshDuration(Duration.between(Event.nowInEventTimezone(), scheduleDataTime), refresher);
     }
 
-    private static void scheduleRefreshUI(long delaySeconds, Runnable refresher) {
-        long delayMillis = delaySeconds * 1000;
+    private static void scheduleRefreshDuration(Duration duration, Runnable refresher) {
+        scheduleRefreshMillis(duration.toMillis(), refresher);
+    }
+
+    private static void scheduleRefreshSeconds(long delaySeconds, Runnable refresher) {
         if (delaySeconds > 59) {
             //If we want to refresh more than 1 minute, we add a second to make sure the calculation has time to proceed before the refresh
-            delayMillis = delayMillis + 1000;
+            delaySeconds++;
         }
-        UiScheduler.scheduleDelay(delayMillis, refresher);
+        scheduleRefreshMillis(delaySeconds * 1000, refresher);
+    }
+
+    private static void scheduleRefreshMillis(long delayMillis, Runnable refresher) {
+        if (delayMillis > 0)
+            UiScheduler.scheduleDelay(delayMillis, refresher);
     }
 
     static String formatDuration(Duration duration) { // Not sure if it's the best place for this method, but ok for now
