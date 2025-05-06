@@ -59,8 +59,8 @@ final class VideoState {
 
     static String getAllProgramVideoGroupI18nKey(ScheduledItem videoScheduledItem) {
         VideoLifecycle videoLifecycle = new VideoLifecycle(videoScheduledItem);
-        if (videoLifecycle.isNowBetweenLiveNowStartAndSessionEnd()) {
-            return VideosI18nKeys.LiveNow;
+        if (videoScheduledItem.isPublished() && videoLifecycle.isNowBeforeExpirationDate()) {
+            return BaseI18nKeys.Available;
         }
         if (videoLifecycle.isLiveToday()) {
             return BaseI18nKeys.Today;
@@ -68,8 +68,6 @@ final class VideoState {
         if (videoLifecycle.isLiveUpcoming()) {
             return BaseI18nKeys.Upcoming;
         }
-        if (videoLifecycle.isNowBeforeExpirationDate() && videoScheduledItem.isPublished())
-            return BaseI18nKeys.Available;
         return BaseI18nKeys.Past;
     }
 
