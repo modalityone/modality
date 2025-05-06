@@ -9,11 +9,15 @@ import one.modality.base.shared.entities.markers.EntityHasOrganization;
 public interface Label extends
     EntityHasIcon,
     EntityHasOrganization {
-    String de = "de";
-    String en = "en";
-    String es = "es";
-    String fr = "fr";
-    String pt = "pt";
+    String de = "de"; // German
+    String en = "en"; // English
+    String es = "es"; // Spanish
+    String fr = "fr"; // French
+    String pt = "pt"; // Portuguese
+    String zh = "zh"; // Simplified Chinese (Mandarin)
+    String yue = "yue"; // Cantonese
+    String el = "el"; // Greek
+    String vi = "vi"; // Vietnamese
 
     default void setDe(String value) {
         setFieldValue(de, value);
@@ -54,4 +58,37 @@ public interface Label extends
     default String getPt() {
         return getStringFieldValue(pt);
     }
+
+    default void setZh(String value) {
+        setFieldValue(zh, value);
+    }
+
+    default String getZh() {
+        return getStringFieldValue(zh);
+    }
+
+    default void setYue(String value) {
+        setFieldValue(yue, value);
+    }
+
+    default String getYue() {
+        return getStringFieldValue(yue);
+    }
+
+    default void setEl(String value) {
+        setFieldValue(el, value);
+    }
+
+    default String getEl() {
+        return getStringFieldValue(el);
+    }
+
+    default void setVi(String value) {
+        setFieldValue(vi, value);
+    }
+
+    default String getVi() {
+        return getStringFieldValue(vi);
+    }
+
 }
