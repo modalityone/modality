@@ -76,7 +76,7 @@ final class VideoFormattersAndRenderers {
             actionButton.setGraphicTextGap(10);
             Label statusLabel = new Label();
             Label availableUntilLabel = new Label();
-            computeStatusLabelAndWatchButton(videoScheduledItem, statusLabel, availableUntilLabel, actionButton, context.getAppContext());
+            computeStatusLabelAndWatchButton(videoScheduledItem, statusLabel, availableUntilLabel, actionButton, context.getAppContext(), true);
             VBox vBoxStatusAndButtonContainer = new VBox(10,
                 actionButton,
                 statusLabel,
@@ -90,8 +90,12 @@ final class VideoFormattersAndRenderers {
 
     // PRIVATE API
 
-    private static void computeStatusLabelAndWatchButton(ScheduledItem videoScheduledItem, Label statusLabel, Label availableUntilLabel, Button actionButton, ObjectProperty<ScheduledItem> watchingVideoItemProperty) {
-        Runnable refresher = () -> computeStatusLabelAndWatchButton(videoScheduledItem, statusLabel, availableUntilLabel, actionButton, watchingVideoItemProperty);
+    private static void computeStatusLabelAndWatchButton(ScheduledItem videoScheduledItem, Label statusLabel, Label availableUntilLabel, Button actionButton, ObjectProperty<ScheduledItem> watchingVideoItemProperty, boolean initial) {
+        // Stopping refreshing labels and button once removed from the scene (due to responsive design)
+        if (!initial && statusLabel.getScene() != null)
+            return;
+
+        Runnable refresher = () -> computeStatusLabelAndWatchButton(videoScheduledItem, statusLabel, availableUntilLabel, actionButton, watchingVideoItemProperty, false);
 
         // Setting default visibilities for most cases (to be changed in specific cases)
         hideButton(actionButton);
