@@ -46,7 +46,6 @@ import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Circle;
 import javafx.scene.shape.SVGPath;
-import javafx.scene.text.TextAlignment;
 import javafx.util.Duration;
 import one.modality.base.client.activity.ModalityButtonFactoryMixin;
 import one.modality.base.client.cloudinary.ModalityCloudinary;
@@ -59,6 +58,7 @@ import one.modality.base.shared.entities.Person;
 import one.modality.crm.client.i18n.CrmI18nKeys;
 import one.modality.crm.frontoffice.activities.createaccount.CreateAccountI18nKeys;
 import one.modality.crm.frontoffice.activities.createaccount.UserAccountUI;
+import one.modality.crm.frontoffice.help.HelpPanel;
 import one.modality.crm.shared.services.authn.fx.FXUserPerson;
 
 import java.util.Objects;
@@ -66,6 +66,9 @@ import java.util.Objects;
 import static one.modality.crm.frontoffice.activities.createaccount.UserAccountUI.createEntityButtonSelector;
 import static one.modality.crm.frontoffice.activities.userprofile.ChangePictureUI.CLOUDINARY_RELOAD_DELAY;
 
+/**
+ * @author David Hello
+ */
 final class UserProfileActivity extends ViewDomainActivityBase implements ModalityButtonFactoryMixin {
 
     static final double MODAL_WINDOWS_MAX_WIDTH = 500;
@@ -398,7 +401,7 @@ final class UserProfileActivity extends ViewDomainActivityBase implements Modali
                         Platform.runLater(() -> {
                             infoMessage.setVisible(true);
                             I18nControls.bindI18nProperties(infoMessage, UserProfileI18nKeys.PersonalInformationUpdated);
-                            //Temporary, we force the reload. This is a temp fix while waiting the DynamicEntity.equals function behaviour to be fixed
+                            //Temporarily, we force the reload. This is a temp fix while waiting the DynamicEntity.equals function behaviour to be fixed
                             FXUserPerson.reloadUserPerson();
                         });
                     });
@@ -406,21 +409,9 @@ final class UserProfileActivity extends ViewDomainActivityBase implements Modali
 
         container.getChildren().add(saveButton);
 
-        SVGPath headPhoneSvgPath = SvgIcons.createHeadphonesPath();
-        MonoPane headPhoneMonoPane = new MonoPane(headPhoneSvgPath);
-        headPhoneMonoPane.setPadding(new Insets(100, 0, 10, 0));
-        container.getChildren().add(headPhoneMonoPane);
         transitionPane.transitToContent(mainStackPane);
 
-        Label needHelp = Bootstrap.h3(Bootstrap.textSecondary(I18nControls.newLabel(UserProfileI18nKeys.NeedHelp)));
-        needHelp.setPadding(new Insets(0, 0, 10, 0));
-        needHelp.setTextAlignment(TextAlignment.CENTER);
-        needHelp.setWrapText(true);
-        Label emailUs = Bootstrap.strong(I18nControls.newLabel(UserProfileI18nKeys.EmailUs));
-        emailUs.setWrapText(true);
-        emailUs.setTextAlignment(TextAlignment.CENTER);
-        emailUs.setPadding(new Insets(0, 0, 50, 0));
-        container.getChildren().addAll(needHelp, emailUs);
+        container.getChildren().add(HelpPanel.createHelpPanel(UserProfileI18nKeys.NeedHelp, "kbs@kadampa.net"));
 
         changeUserEmail.setOnAction(e -> {
             ScalePane userEmailUIView = changeEmailUI.getView();

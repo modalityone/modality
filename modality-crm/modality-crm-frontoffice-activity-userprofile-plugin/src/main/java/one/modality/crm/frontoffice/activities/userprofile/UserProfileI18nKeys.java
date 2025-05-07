@@ -27,7 +27,6 @@ public interface UserProfileI18nKeys {
     String ChangePasswordTitleForButton = "ChangePasswordTitleForButton";
     String EmailSentForEmailChange = "EmailSentForEmailChange";
     String Error = "Error";
-    String EmailUs = "EmailUs";
     String ErrorWhileUpdatingPersonalInformation = "ErrorWhileUpdatingPersonalInformation";
     String EmailNotDifferentError = "EmailNotDifferentError";
     String UpdatePasswordDesc = "UpdatePasswordDesc";
