@@ -229,6 +229,8 @@
     <source path="one/modality/crm/shared/services/authn/fx"/>
     <!--============================< modality-crm-client-i18n >============================-->
     <source path="one/modality/crm/client/i18n"/>
+    <!--=========================< modality-crm-frontoffice-help >==========================-->
+    <source path="one/modality/crm/frontoffice/help"/>
     <!--===========================< modality-crm-shared-authn >============================-->
     <source path="one/modality/crm/shared/services/authn"/>
     <source path="one/modality/crm/shared/services/authn/serial"/>

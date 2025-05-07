@@ -2,6 +2,8 @@ package one.modality.crm.frontoffice.help;
 
 import dev.webfx.extras.panes.MonoPane;
 import dev.webfx.extras.styles.bootstrap.Bootstrap;
+import dev.webfx.extras.webtext.HtmlText;
+import dev.webfx.stack.i18n.I18n;
 import dev.webfx.stack.i18n.controls.I18nControls;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
@@ -25,9 +27,9 @@ public final class HelpPanel {
         needHelp.setTextAlignment(TextAlignment.CENTER);
         needHelp.setWrapText(true);
 
-        Label emailUs = Bootstrap.strong(I18nControls.newLabel(HelpI18nKeys.EmailUs1, helpEmail));
-        emailUs.setTextAlignment(TextAlignment.CENTER);
-        emailUs.setWrapText(true);
+        // Using an HtmlText rather than a label so it can contain a clickable link for the email.
+        HtmlText emailUs = Bootstrap.strong(new HtmlText());
+        I18n.bindI18nTextProperty(emailUs.textProperty(), HelpI18nKeys.EmailUs1, helpEmail);
 
         VBox vBox = new VBox(30, headPhoneMonoPane, needHelp, emailUs);
         vBox.setPadding(new Insets(100, 0, 50, 0));

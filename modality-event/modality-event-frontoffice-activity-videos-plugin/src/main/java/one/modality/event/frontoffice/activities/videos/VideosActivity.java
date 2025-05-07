@@ -53,6 +53,7 @@ import one.modality.base.client.icons.SvgIcons;
 import one.modality.base.client.time.FrontOfficeTimeFormats;
 import one.modality.base.frontoffice.utility.page.FOPageUtil;
 import one.modality.base.shared.entities.*;
+import one.modality.crm.frontoffice.help.HelpPanel;
 import one.modality.crm.shared.services.authn.fx.FXUserPersonId;
 import one.modality.event.client.i18n.EventI18nKeys;
 import one.modality.event.frontoffice.medias.EventThumbnailView;
@@ -97,7 +98,6 @@ final class VideosActivity extends ViewDomainActivityBase {
     private final Label selectTheDayBelowLabel = I18nControls.newLabel(VideosI18nKeys.SelectTheDayBelow);
     private EntityStore entityStore;
     private final VisualGrid videoGrid = VisualGrid.createVisualGridWithResponsiveSkin();
-    private final GrowingPane growingVideoPane = new GrowingPane(videoGrid);
 
     private final ObjectProperty<LocalDate> selectedDayProperty = new SimpleObjectProperty<>();
     private final MonoPane pageContainer = new MonoPane(); // Will hold either the loading indicator or the loaded content
@@ -211,8 +211,8 @@ final class VideosActivity extends ViewDomainActivityBase {
         FXProperties.runOnPropertiesChange(() -> {
             ScheduledItem watchingVideoItem = watchingVideoItemProperty.get();
             EntityId userPersonId = FXUserPersonId.getUserPersonId();
-            if (watchingVideoItem == null || userPersonId == null) {
-                watchMedias.clear();
+            watchMedias.clear();
+            if (userPersonId == null || isUserWatchingLivestream()) {
                 populateVideos(); // livestream
             } else { // The VOD requires additional Media loading
                 entityStore.<Media>executeQuery("select url from Media where scheduledItem=?", watchingVideoItem)
@@ -353,12 +353,10 @@ final class VideosActivity extends ViewDomainActivityBase {
                 return videoGridSkin != null && videoGridSkin.getClass().getName().contains("Table");
             }, /* apply method: */ () -> {
                 responsiveDaySelectionMonoPane.setContent(daySwitcher.getDesktopView());
-                growingVideoPane.reset();
             }, /* test dependencies: */ videoGrid.skinProperty())
             // 2. Vertical layout (for mobiles)
             .addResponsiveLayout(/* apply method: */ () -> {
                 responsiveDaySelectionMonoPane.setContent(daySwitcher.getMobileViewContainer());
-                growingVideoPane.reset();
             }).start();
 
 
@@ -386,7 +384,8 @@ final class VideosActivity extends ViewDomainActivityBase {
             responsiveHeader, // contains the event image and the event title
             decoratedLivestreamCollapsePane,
             responsiveDaySelectionMonoPane,
-            growingVideoPane // contains the videos for the selected day (or all days)
+            videoGrid, // contains the videos for the selected day (or all days)
+            HelpPanel.createHelpPanel(VideosI18nKeys.VideosHelp, "kbs@kadampa.net") // set to livestream-support@kadampafestivals.org during festivals
         );
         loadedContentVBox.setAlignment(Pos.TOP_CENTER);
 

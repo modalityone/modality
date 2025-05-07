@@ -4,6 +4,7 @@ package one.modality.event.frontoffice.activities.videos;
 public interface VideosI18nKeys {
 
     String WatchAgain = "WatchAgain";
+    String LiveAnnouncementsTitle = "LiveAnnouncementsTitle";
     String RecordingSoonAvailable = "RecordingSoonAvailable";
     String EventAvailableUntil1 = "EventAvailableUntil1";
     String ScheduleForSpecificDate1 = "ScheduleForSpecificDate1";
@@ -12,21 +13,25 @@ public interface VideosI18nKeys {
     String Unavailable = "Unavailable";
     String LivestreamTitle = "LivestreamTitle";
     String Remarks = "Remarks";
+    String LiveAnnouncements = "LiveAnnouncements";
     String Watch = "Watch";
     String VideosMenu = "VideosMenu";
     String LiveNow = "LiveNow";
     String SelectTheDayBelow = "SelectTheDayBelow";
     String VideoNotYetPublished = "VideoNotYetPublished";
     String ViewAllDays = "ViewAllDays";
+    String NoVideoInYourLibrary = "NoVideoInYourLibrary";
     String VideoExpiredSince1 = "VideoExpiredSince1";
     String VideoCancelled = "VideoCancelled";
     String OnTime = "OnTime";
     String VideoDelayed = "VideoDelayed";
     String Expired = "Expired";
+    String VideosHelp = "VideosHelp";
     String NoVideosForThisEvent = "NoVideosForThisEvent";
     String StartingIn1 = "StartingIn1";
     String SessionCancelled = "SessionCancelled";
     String GMTZoneUK = "GMTZoneUK";
+    String YourNextLiveStreamEventWillAppearHere = "YourNextLiveStreamEventWillAppearHere";
     String VideosHeader = "VideosHeader";
     String VideoAvailableUntil1 = "VideoAvailableUntil1";
     String VideoExpiredOn1 = "VideoExpiredOn1";
@@ -35,9 +40,5 @@ public interface VideosI18nKeys {
     String EventAvailableUntil = "EventAvailableUntil";
     String VideoExpiredSince = "VideoExpiredSince";
     String StartingIn = "StartingIn";
-    String LiveAnnouncementsTitle = "LiveAnnouncementsTitle";
-    String NoVideoInYourLibrary = "NoVideoInYourLibrary";
-    String LiveAnnouncements = "LiveAnnouncements";
-    String YourNextLiveStreamEventWillAppearHere = "YourNextLiveStreamEventWillAppearHere";
 
 }

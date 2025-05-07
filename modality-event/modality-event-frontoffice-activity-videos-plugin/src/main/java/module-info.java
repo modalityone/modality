@@ -14,6 +14,7 @@ module modality.event.frontoffice.activity.videos.plugin {
     requires modality.base.frontoffice.utility;
     requires modality.base.shared.entities;
     requires modality.crm.client.authn.fx;
+    requires modality.crm.frontoffice.help;
     requires modality.event.client.i18n;
     requires modality.event.frontoffice.medias;
     requires webfx.extras.cell;

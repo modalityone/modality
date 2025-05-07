@@ -8,6 +8,8 @@ module modality.crm.frontoffice.help {
     requires modality.base.client.icons;
     requires webfx.extras.panes;
     requires webfx.extras.styles.bootstrap;
+    requires webfx.extras.webtext;
+    requires webfx.stack.i18n;
     requires webfx.stack.i18n.controls;
 
     // Exported packages
