@@ -11,7 +11,6 @@ import dev.webfx.stack.i18n.I18n;
 import dev.webfx.stack.i18n.I18nKeys;
 import dev.webfx.stack.i18n.controls.I18nControls;
 import dev.webfx.stack.orm.domainmodel.formatter.FormatterRegistry;
-import javafx.beans.property.ObjectProperty;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.geometry.Insets;
@@ -90,12 +89,12 @@ final class VideoFormattersAndRenderers {
 
     // PRIVATE API
 
-    private static void computeStatusLabelAndWatchButton(ScheduledItem videoScheduledItem, Label statusLabel, Label availableUntilLabel, Button actionButton, ObjectProperty<ScheduledItem> watchingVideoItemProperty, boolean initial) {
+    private static void computeStatusLabelAndWatchButton(ScheduledItem videoScheduledItem, Label statusLabel, Label availableUntilLabel, Button actionButton, VideosActivity videosActivity, boolean initial) {
         // Stopping refreshing labels and button once removed from the scene (due to responsive design)
-        if (!initial && statusLabel.getScene() != null)
+        if (!initial && statusLabel.getScene() == null)
             return;
 
-        Runnable refresher = () -> computeStatusLabelAndWatchButton(videoScheduledItem, statusLabel, availableUntilLabel, actionButton, watchingVideoItemProperty, false);
+        Runnable refresher = () -> computeStatusLabelAndWatchButton(videoScheduledItem, statusLabel, availableUntilLabel, actionButton, videosActivity, false);
 
         // Setting default visibilities for most cases (to be changed in specific cases)
         hideButton(actionButton);
@@ -124,7 +123,7 @@ final class VideoFormattersAndRenderers {
             case BaseI18nKeys.Available:
                 hideLabel(statusLabel);
                 showButton(actionButton, e -> {
-                    watchingVideoItemProperty.set(videoScheduledItem);
+                    videosActivity.setWatchingVideo(videoScheduledItem);
                     transformButtonFromPlayToPlayAgain(actionButton);
                 });
                 LocalDateTime expirationDate = videoLifecycle.getExpirationDate();

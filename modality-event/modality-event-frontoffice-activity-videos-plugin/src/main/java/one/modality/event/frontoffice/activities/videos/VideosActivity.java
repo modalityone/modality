@@ -40,6 +40,7 @@ import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
+import javafx.geometry.VPos;
 import javafx.scene.Cursor;
 import javafx.scene.Node;
 import javafx.scene.control.*;
@@ -276,6 +277,20 @@ final class VideosActivity extends ViewDomainActivityBase {
         return videoScheduledItem != null && isTimeToShowVideoLivestream(new VideoLifecycle(videoScheduledItem));
     }
 
+    // Called by the "Watch" button from the VideoFormattersAndRenderers
+    void setWatchingVideo(ScheduledItem watchingVideoItem) {
+        // If it's a different video from the one currently watched by the user, we set the watchingVideoItemProperty
+        // and this will trigger all necessary consequent events (loading of media, expanding videoCollapsePane and
+        // auto-scrolling to the video player).
+        if (!Objects.areEquals(watchingVideoItem, watchingVideoItemProperty.get())) {
+            watchingVideoItemProperty.set(watchingVideoItem);
+        } else // But if it's the same video, we trigger the necessary event to make it visible again:
+            if (videoCollapsePane.isCollapsed()) // if the video player is collapsed, we first expand it
+                videoCollapsePane.expand(); // the auto-scroll will happen after that - see in buildUi
+            else // if the video player is already expanded,
+                scrollToVideoPlayer(); // we scroll to the video player right now
+    }
+
     @Override
     public Node buildUi() { // Reminder: called only once (rebuild = bad UX) => UI is reacting to parameter changes
 
@@ -377,7 +392,7 @@ final class VideosActivity extends ViewDomainActivityBase {
         videoGrid.setCellMargin(new Insets(5, 10, 5, 10));
         videoGrid.setFullHeight(true);
         videoGrid.setHeaderVisible(true);
-        videoGrid.setAppContext(watchingVideoItemProperty); // Passing watchingVideoItemProperty as appContext to the value renderers
+        videoGrid.setAppContext(this); // Passing this VideosActivity as appContext to the value renderers
 
         VBox loadedContentVBox = new VBox(40,
             eventsSelectionVBox,
@@ -509,12 +524,27 @@ final class VideosActivity extends ViewDomainActivityBase {
             }
         }, videoCollapsePane.collapsedProperty(), Players.getGlobalPlayerGroup().playingPlayerProperty());
 
+        // Auto-scroll to the video player when it is expanded or watching a new video
+        FXProperties.runNowAndOnPropertiesChange(() -> {
+            if (videoCollapsePane.isExpanded()) { // auto-scroll only when expanded (might be automatically expanded before)
+                UiScheduler.scheduleDeferred(() -> // the transition may start just after collapsedProperty is set, so we defer the call
+                    // we wait for the possible transition to finish, and once finished, we scroll to the video player
+                    FXProperties.onPropertyEquals(videoCollapsePane.transitingProperty(), Boolean.FALSE, x ->
+                        scrollToVideoPlayer()));
+            }
+        }, videoCollapsePane.collapsedProperty(), watchingVideoItemProperty);
+
         // *************************************************************************************************************
         // ************************************* Building final container **********************************************
         // *************************************************************************************************************
 
         pageContainer.getStyleClass().add("livestream");
         return FOPageUtil.restrictToMaxPageWidthAndApplyPageLeftTopRightBottomPadding(pageContainer);
+    }
+
+    private void scrollToVideoPlayer() {
+        Controls.setVerticalScrollNodeWishedPosition(videoCollapsePane, VPos.CENTER);
+        SceneUtil.scrollNodeToBeVerticallyVisibleOnScene(videoCollapsePane, false, true);
     }
 
     private void populateVideos() {
@@ -558,7 +588,9 @@ final class VideosActivity extends ViewDomainActivityBase {
         videoConsumptionRecorders.add(videoConsumptionRecorder);
         if (autoPlay)
             videoConsumptionRecorder.start();
-        return videoPlayer.getMediaView();
+        // We embed the video player in a 16/9 aspect ratio pane, so its vertical size is immediately known, which is
+        // important for the correct computation of the auto-scroll position.
+        return new AspectRatioPane(16d/9, videoPlayer.getMediaView());
     }
 
 }
