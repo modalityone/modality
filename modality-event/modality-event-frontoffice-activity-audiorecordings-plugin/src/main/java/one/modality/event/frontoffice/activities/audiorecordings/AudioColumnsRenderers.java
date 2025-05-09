@@ -6,6 +6,7 @@ import dev.webfx.extras.player.Player;
 import dev.webfx.extras.player.audio.javafxmedia.AudioMediaView;
 import dev.webfx.extras.styles.bootstrap.Bootstrap;
 import dev.webfx.extras.time.format.LocalizedTime;
+import dev.webfx.extras.util.control.Controls;
 import dev.webfx.kit.util.properties.FXProperties;
 import dev.webfx.kit.util.properties.Unregisterable;
 import dev.webfx.platform.blob.spi.BlobProvider;
@@ -53,7 +54,7 @@ final class AudioColumnsRenderers {
                 nameLabel.setText(getAudioName(audio));
                 nameLabel.getStyleClass().add("name");
             }
-            ValueRendererRegistry.renderLabeled(nameLabel, true, false);
+            Controls.setupTextWrapping(nameLabel, true, false);
             LocalDate date = audio.getDate();
             Timeline timeline = audio.getProgramScheduledItem().getTimeline();
             LocalTime startTime = timeline == null ? null : timeline.getStartTime();

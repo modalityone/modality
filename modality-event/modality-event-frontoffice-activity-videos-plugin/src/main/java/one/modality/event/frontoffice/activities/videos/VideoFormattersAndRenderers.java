@@ -4,6 +4,7 @@ import dev.webfx.extras.cell.renderer.ValueRendererRegistry;
 import dev.webfx.extras.styles.bootstrap.Bootstrap;
 import dev.webfx.extras.time.format.LocalizedTime;
 import dev.webfx.extras.type.PrimType;
+import dev.webfx.extras.util.control.Controls;
 import dev.webfx.extras.util.layout.Layouts;
 import dev.webfx.platform.uischeduler.UiScheduler;
 import dev.webfx.platform.util.Objects;
@@ -66,7 +67,7 @@ final class VideoFormattersAndRenderers {
                 nameLabel.setText(Objects.coalesce(MediaUtil.translate(video), MediaUtil.translate(video.getProgramScheduledItem())));
                 nameLabel.getStyleClass().add("name");
             }
-            return ValueRendererRegistry.renderLabeled(nameLabel, true, true);
+            return Controls.setupTextWrapping(nameLabel, true, true);
         });
         // videoStatus renderer
         ValueRendererRegistry.registerValueRenderer("videoStatus", (value, context) -> {
