@@ -56,7 +56,6 @@
     <packaging>pom</packaging>
 
     <modules>
-        <module>modality-all</module>
         <module>modality-base</module>
         <module>modality-catering</module>
         <module>modality-crm</module>
