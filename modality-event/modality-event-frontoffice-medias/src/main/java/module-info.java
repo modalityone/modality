@@ -13,6 +13,7 @@ module modality.event.frontoffice.medias {
     requires webfx.extras.panes;
     requires webfx.extras.player;
     requires webfx.extras.styles.bootstrap;
+    requires webfx.extras.util.control;
     requires webfx.extras.webtext;
     requires webfx.kit.util;
     requires webfx.platform.scheduler;

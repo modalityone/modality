@@ -2,6 +2,7 @@ package one.modality.event.frontoffice.medias;
 
 import dev.webfx.extras.panes.MonoPane;
 import dev.webfx.extras.styles.bootstrap.Bootstrap;
+import dev.webfx.extras.util.control.Controls;
 import dev.webfx.extras.webtext.HtmlText;
 import dev.webfx.stack.i18n.I18n;
 import dev.webfx.stack.i18n.controls.I18nControls;
@@ -80,12 +81,12 @@ public final class EventThumbnailView {
         container.setPrefWidth(CONTAINER_WIDTH);
         String languageOfTheItem = extractLanguageISOCode(imageItemCode);
         //Here we manage 2 cases:
-        //1. For Video, the item is the same for all languages, so we want display the title and description according to the language of the user
+        //1. For Video, the item is the same for all languages, so we want to display the title and description according to the language of user
         //2. For Audio, since we can order audios in different languages, we want to display the title and description according to the language of the item
         I18nSubKey titleSubkey =  new I18nSubKey("expression: i18n(this, '" + languageOfTheItem + "')", event);
 
         Label eventLabel = Bootstrap.h3(I18nControls.newLabel(titleSubkey));
-        eventLabel.setWrapText(true);
+        Controls.setupTextWrapping(eventLabel, true, false);
         VBox.setMargin(eventLabel, new Insets(10, 0, 0, 0));
 
         HtmlText shortHTMLDescription = new HtmlText();
