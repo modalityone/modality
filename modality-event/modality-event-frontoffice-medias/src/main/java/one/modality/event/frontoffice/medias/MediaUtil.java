@@ -11,7 +11,8 @@ public class MediaUtil {
     }
 
     public static String translate(Entity entity, Object language) {
-        if(entity==null) return null;
-        return (String) I18nFunction.evaluate(entity, language, new EntityDomainReader(entity.getStore()));
+        if (entity == null)
+            return null;
+        return (String) I18nFunction.evaluate(entity, language, new EntityDomainReader<>(entity.getStore()));
     }
 }

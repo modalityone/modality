@@ -58,9 +58,8 @@ public final class I18nFunction extends Function {
                 result = domainReader.getDomainFieldValue(label, I18n.getDefaultLanguage());
         } else if (argument instanceof Entity) {
             Object i18nKey = domainReader.getDomainFieldValue(argument, "i18nKey");
-            if (i18nKey == null)
-                i18nKey = argument;
-            result = I18n.getI18nText(i18nKey);
+            if (i18nKey != null)
+               result = I18n.getI18nText(i18nKey);
         }
         if (result == null && argument instanceof HasName)
             result = ((HasName) argument).getName();
