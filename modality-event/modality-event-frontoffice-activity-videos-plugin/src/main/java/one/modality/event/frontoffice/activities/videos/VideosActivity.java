@@ -274,7 +274,7 @@ final class VideosActivity extends ViewDomainActivityBase {
 
     private boolean isUserWatchingLivestream() {
         ScheduledItem videoScheduledItem = watchingVideoItemProperty.get();
-        return videoScheduledItem != null && isTimeToShowVideoLivestream(new VideoLifecycle(videoScheduledItem));
+        return videoScheduledItem == null || isTimeToShowVideoLivestream(new VideoLifecycle(videoScheduledItem));
     }
 
     // Called by the "Watch" button from the VideoFormattersAndRenderers
