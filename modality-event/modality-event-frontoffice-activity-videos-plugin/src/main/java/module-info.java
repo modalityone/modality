@@ -10,6 +10,7 @@ module modality.event.frontoffice.activity.videos.plugin {
     requires modality.base.client.cloudinary;
     requires modality.base.client.i18n;
     requires modality.base.client.icons;
+    requires modality.base.client.messaging;
     requires modality.base.client.time;
     requires modality.base.frontoffice.utility;
     requires modality.base.shared.entities;
@@ -43,6 +44,7 @@ module modality.event.frontoffice.activity.videos.plugin {
     requires webfx.stack.orm.domainmodel;
     requires webfx.stack.orm.domainmodel.activity;
     requires webfx.stack.orm.entity;
+    requires webfx.stack.orm.entity.binding;
     requires webfx.stack.orm.reactive.entities;
     requires webfx.stack.orm.reactive.visual;
     requires webfx.stack.routing.router.client;
