@@ -347,7 +347,8 @@ public final class ModalityFrontOfficeMainFrameActivity extends ModalityClientMa
         FOPageUtil.restrictToMaxPageWidthAndApplyPageLeftRightPadding(languageSection);  // to fit like the mount node
         CollapsePane collapsePane = new CollapsePane(languageSection);
         collapsePane.setAnimate(false);
-        collapsePane.collapsedProperty().bind(FXLoggedIn.loggedInProperty().or(FXCollapseMenu.collapseMenuProperty()));
+        //Temporary, while the user language change is not implemented in the settings
+        //collapsePane.collapsedProperty().bind(FXLoggedIn.loggedInProperty().or(FXCollapseMenu.collapseMenuProperty()));
         collapsePane.setAnimate(true);
         collapsePane.getStyleClass().setAll("menu-bar", "lang-menu-bar", "non-mobile");
         return collapsePane;
