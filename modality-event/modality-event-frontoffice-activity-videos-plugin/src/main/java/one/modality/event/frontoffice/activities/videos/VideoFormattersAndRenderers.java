@@ -6,6 +6,7 @@ import dev.webfx.extras.time.format.LocalizedTime;
 import dev.webfx.extras.type.PrimType;
 import dev.webfx.extras.util.control.Controls;
 import dev.webfx.extras.util.layout.Layouts;
+import dev.webfx.kit.util.properties.FXProperties;
 import dev.webfx.platform.uischeduler.UiScheduler;
 import dev.webfx.platform.util.Objects;
 import dev.webfx.stack.i18n.I18n;
@@ -113,9 +114,21 @@ final class VideoFormattersAndRenderers {
             case VideosI18nKeys.StartingIn1:
                 statusI18nArg = formatDuration(videoLifecycle.durationBetweenNowAndSessionStart());
                 scheduleRefreshSeconds(1, refresher); //We refresh the countdown every second
+                //In case a user clicked on a previous recorded video, we need to display a button so he can go back to the livestream
+                FXProperties.runOnPropertiesChange(()->{
+                    if(!videosActivity.getWatchingVideoItemProperty().get().equals(videoScheduledItem)) {
+                        showButton(actionButton, e -> videosActivity.setWatchingVideo(videoScheduledItem));
+                    }  else hideButton(actionButton);
+                },videosActivity.getWatchingVideoItemProperty());
                 break;
             case VideosI18nKeys.LiveNow:
                 scheduleRefreshDuration(videoLifecycle.durationBetweenNowAndSessionEnd(), refresher);
+                //In case a user clicked on a previous recorded video, we need to display a button so he can go back to the livestream
+                FXProperties.runNowAndOnPropertiesChange(()->{
+                    if(!videosActivity.getWatchingVideoItemProperty().get().equals(videoScheduledItem)) {
+                        showButton(actionButton, e -> videosActivity.setWatchingVideo(videoScheduledItem));
+                    }  else hideButton(actionButton);
+                },videosActivity.getWatchingVideoItemProperty());
                 break;
             case VideosI18nKeys.RecordingSoonAvailable:
             case VideosI18nKeys.VideoDelayed:

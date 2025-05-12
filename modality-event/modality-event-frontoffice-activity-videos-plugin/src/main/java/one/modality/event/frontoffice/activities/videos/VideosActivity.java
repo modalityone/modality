@@ -137,7 +137,7 @@ final class VideosActivity extends ViewDomainActivityBase {
                             " and (" +
                             // 1/ there is a ScheduledItem of video family type whose bookableScheduledItem has been booked (KBS3 setup)
                             " exists (select ScheduledItem videoSI where item.family.code=? and exists(select Attendance where documentLine=dl and scheduledItem=videoSI.bookableScheduledItem))" +
-                            // 2/ Or KBS3 / KBS2 setup (this allows displaying the audios that have been booked in the past with KBS2 events, event if we can't display them)
+                            // 2/ Or KBS3 / KBS2 setup (this allows displaying the videos that have been booked in the past with KBS2 events, event if we can't display them)
                             " or item.family.code=?)" +
                             " order by document.event.startDate desc",
                         KnownItemFamily.VIDEO.getCode(), userPersonId, KnownItemFamily.VIDEO.getCode(), KnownItemFamily.VIDEO.getCode())
@@ -291,6 +291,10 @@ final class VideosActivity extends ViewDomainActivityBase {
                 scrollToVideoPlayer(); // we scroll to the video player right now
     }
 
+    ObjectProperty<ScheduledItem> getWatchingVideoItemProperty() {
+        return watchingVideoItemProperty;
+    }
+
     @Override
     public Node buildUi() { // Reminder: called only once (rebuild = bad UX) => UI is reacting to parameter changes
 
@@ -366,13 +370,9 @@ final class VideosActivity extends ViewDomainActivityBase {
                 //If the grid skin is a table, we're in the desktop mode, otherwise we're in the mobile mode
                 Skin<?> videoGridSkin = videoGrid.getSkin();
                 return videoGridSkin != null && videoGridSkin.getClass().getName().contains("Table");
-            }, /* apply method: */ () -> {
-                responsiveDaySelectionMonoPane.setContent(daySwitcher.getDesktopView());
-            }, /* test dependencies: */ videoGrid.skinProperty())
+            }, /* apply method: */ () -> responsiveDaySelectionMonoPane.setContent(daySwitcher.getDesktopView()), /* test dependencies: */ videoGrid.skinProperty())
             // 2. Vertical layout (for mobiles)
-            .addResponsiveLayout(/* apply method: */ () -> {
-                responsiveDaySelectionMonoPane.setContent(daySwitcher.getMobileViewContainer());
-            }).start();
+            .addResponsiveLayout(/* apply method: */ () -> responsiveDaySelectionMonoPane.setContent(daySwitcher.getMobileViewContainer())).start();
 
 
         StackPane decoratedLivestreamCollapsePane = CollapsePane.decorateCollapsePane(videoCollapsePane, true);
