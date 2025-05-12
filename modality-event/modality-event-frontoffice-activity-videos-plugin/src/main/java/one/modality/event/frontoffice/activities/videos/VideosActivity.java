@@ -555,7 +555,7 @@ final class VideosActivity extends ViewDomainActivityBase {
         boolean autoPlay = videoCollapsePane.isExpanded();
         if (isUserWatchingLivestream()) { // Livestream
             Event event = eventProperty.get();
-            String livestreamUrl = event.getLivestreamUrl();
+            String livestreamUrl = event == null ? null : event.getLivestreamUrl();
             if (livestreamUrl != null) {
                 videoContent = createVideoView(livestreamUrl, null, autoPlay);
             }

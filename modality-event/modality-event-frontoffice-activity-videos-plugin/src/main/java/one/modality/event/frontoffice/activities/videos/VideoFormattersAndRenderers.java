@@ -13,6 +13,9 @@ import dev.webfx.stack.i18n.I18n;
 import dev.webfx.stack.i18n.I18nKeys;
 import dev.webfx.stack.i18n.controls.I18nControls;
 import dev.webfx.stack.orm.domainmodel.formatter.FormatterRegistry;
+import dev.webfx.stack.orm.entity.binding.EntityBindings;
+import javafx.application.Platform;
+import javafx.beans.property.BooleanProperty;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.geometry.Insets;
@@ -22,6 +25,7 @@ import javafx.scene.control.Label;
 import javafx.scene.control.Labeled;
 import javafx.scene.layout.VBox;
 import one.modality.base.client.i18n.BaseI18nKeys;
+import one.modality.base.client.messaging.ModalityMessaging;
 import one.modality.base.client.time.FrontOfficeTimeFormats;
 import one.modality.base.shared.entities.Event;
 import one.modality.base.shared.entities.ScheduledItem;
@@ -73,6 +77,7 @@ final class VideoFormattersAndRenderers {
         // videoStatus renderer
         ValueRendererRegistry.registerValueRenderer("videoStatus", (value, context) -> {
             ScheduledItem videoScheduledItem = (ScheduledItem) value;
+
             Button actionButton = Bootstrap.dangerButton(I18nControls.newButton(VideosI18nKeys.Watch));
             actionButton.setGraphicTextGap(10);
             Label statusLabel = new Label();
@@ -83,10 +88,15 @@ final class VideoFormattersAndRenderers {
                 statusLabel,
                 availableUntilLabel
             );
+            //If the publishedProperty change, we Update the button
+            ModalityMessaging.getFrontOfficeEntityMessaging().listenEntityChanges(videoScheduledItem.getStore());
+            BooleanProperty isPublishedProperty = EntityBindings.getBooleanFieldProperty(videoScheduledItem,ScheduledItem.published);
+            FXProperties.runOnPropertyChange(()-> Platform.runLater(()->computeStatusLabelAndWatchButton(videoScheduledItem, statusLabel, availableUntilLabel, actionButton, context.getAppContext(), false)), isPublishedProperty);
             vBoxStatusAndButtonContainer.setPadding(new Insets(10));
             vBoxStatusAndButtonContainer.setAlignment(Pos.CENTER);
             return vBoxStatusAndButtonContainer;
         });
+
     }
 
     // PRIVATE API
