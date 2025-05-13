@@ -2,6 +2,7 @@ package one.modality.event.client.lifecycle;
 
 import dev.webfx.platform.util.Booleans;
 import dev.webfx.platform.util.time.Times;
+import dev.webfx.stack.i18n.I18n;
 import one.modality.base.shared.entities.Event;
 import one.modality.base.shared.entities.EventState;
 
@@ -42,6 +43,9 @@ public final class EventLifeCycle {
         String url = event.evaluate("bookingFormUrl");
         if (url != null)
             url = url.replace("{host}", "kadampabookings.org");
+        Object language = I18n.getLanguage();
+        if (language instanceof String)
+            url = url + "&lang=" + language;
         return url;
     }
 
