@@ -291,7 +291,12 @@ final class VideosActivity extends ViewDomainActivityBase {
                 scrollToVideoPlayer(); // we scroll to the video player right now
     }
 
-    ObjectProperty<ScheduledItem> getWatchingVideoItemProperty() {
+    ScheduledItem getWatchingVideoItem() {
+        return watchingVideoItemProperty.get();
+    }
+
+
+    ObjectProperty<ScheduledItem> watchingVideoItemProperty() {
         return watchingVideoItemProperty;
     }
 

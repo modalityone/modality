@@ -116,6 +116,7 @@ final class VideoFormattersAndRenderers {
         String statusI18nKey = VideoState.getVideoStatusI18nKey(videoScheduledItem);
         Object statusI18nArg = null;
         VideoLifecycle videoLifecycle = new VideoLifecycle(videoScheduledItem);
+        boolean hideOrShowLivestreamButton = false;
 
         switch (statusI18nKey) {
             case VideosI18nKeys.OnTime:
@@ -123,22 +124,12 @@ final class VideoFormattersAndRenderers {
                 break;
             case VideosI18nKeys.StartingIn1:
                 statusI18nArg = formatDuration(videoLifecycle.durationBetweenNowAndSessionStart());
-                scheduleRefreshSeconds(1, refresher); //We refresh the countdown every second
-                //In case a user clicked on a previous recorded video, we need to display a button so he can go back to the livestream
-                FXProperties.runOnPropertiesChange(()->{
-                    if(!videosActivity.getWatchingVideoItemProperty().get().equals(videoScheduledItem)) {
-                        showButton(actionButton, e -> videosActivity.setWatchingVideo(videoScheduledItem));
-                    }  else hideButton(actionButton);
-                },videosActivity.getWatchingVideoItemProperty());
+                scheduleRefreshSeconds(1, refresher); // We refresh the countdown every second
+                hideOrShowLivestreamButton = true;
                 break;
             case VideosI18nKeys.LiveNow:
                 scheduleRefreshDuration(videoLifecycle.durationBetweenNowAndSessionEnd(), refresher);
-                //In case a user clicked on a previous recorded video, we need to display a button so he can go back to the livestream
-                FXProperties.runNowAndOnPropertiesChange(()->{
-                    if(!videosActivity.getWatchingVideoItemProperty().get().equals(videoScheduledItem)) {
-                        showButton(actionButton, e -> videosActivity.setWatchingVideo(videoScheduledItem));
-                    }  else hideButton(actionButton);
-                },videosActivity.getWatchingVideoItemProperty());
+                hideOrShowLivestreamButton = true;
                 break;
             case VideosI18nKeys.RecordingSoonAvailable:
             case VideosI18nKeys.VideoDelayed:
@@ -154,9 +145,21 @@ final class VideoFormattersAndRenderers {
                 if (expirationDate != null) {
                     I18nControls.bindI18nProperties(availableUntilLabel, VideosI18nKeys.VideoAvailableUntil1, LocalizedTime.formatLocalDateTimeProperty(expirationDate, "dd MMM '-' HH.mm"));
                     showLabel(availableUntilLabel);
-                    //We schedule a refresh so the UI is updated when the expirationDate is reached
+                    // We schedule a refresh so the UI is updated when the expirationDate is reached
                     scheduleRefreshAt(expirationDate, refresher);
                 }
+        }
+        if (hideOrShowLivestreamButton) {
+            // In case a user clicked on a previous recorded video, we need to display a button so he can go back to the livestream
+            if (Objects.areEquals(videoScheduledItem, videosActivity.getWatchingVideoItem()))
+                hideButton(actionButton);
+            else
+                showButton(actionButton, e -> videosActivity.setWatchingVideo(videoScheduledItem));
+            // We may also need to update the button again when the user changes the watching video
+            if (!actionButton.getProperties().containsKey("watchingVideoItemPropertyListener")) { // we install that listener only once
+                actionButton.getProperties().put("watchingVideoItemPropertyListener",
+                    FXProperties.runOnPropertyChange(refresher, videosActivity.watchingVideoItemProperty()));
+            }
         }
 
         I18nControls.bindI18nProperties(statusLabel, I18nKeys.upperCase(statusI18nKey), statusI18nArg);
