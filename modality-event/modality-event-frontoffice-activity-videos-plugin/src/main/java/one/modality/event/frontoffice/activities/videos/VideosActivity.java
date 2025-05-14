@@ -210,19 +210,12 @@ final class VideosActivity extends ViewDomainActivityBase {
 
         // Later Media loading when the user wants to watch a specific video (this sets watchVideoItemProperty)
         FXProperties.runOnPropertiesChange(() -> {
-            ScheduledItem watchingVideoItem = watchingVideoItemProperty.get();
             EntityId userPersonId = FXUserPersonId.getUserPersonId();
             watchMedias.clear();
             if (userPersonId == null || isUserWatchingLivestream()) {
                 populateVideos(); // livestream
             } else { // The VOD requires additional Media loading
-                entityStore.<Media>executeQuery("select url from Media where scheduledItem=?", watchingVideoItem)
-                    .onFailure(Console::log)
-                    .onSuccess(mediaLists -> Platform.runLater(() -> {
-                        Collections.setAll(watchMedias, mediaLists);
-                        populateVideos(); // VOD
-                        videoCollapsePane.expand();
-                    }));
+                loadMediaAndWatch();
             }
         }, watchingVideoItemProperty, FXUserPersonId.userPersonIdProperty());
 
@@ -268,13 +261,23 @@ final class VideosActivity extends ViewDomainActivityBase {
             videoCollapsePane.collapse();
     }
 
+    private void loadMediaAndWatch() {
+        entityStore.<Media>executeQuery("select url from Media where scheduledItem=?", getWatchingVideoItem())
+            .onFailure(Console::log)
+            .onSuccess(mediaLists -> Platform.runLater(() -> {
+                Collections.setAll(watchMedias, mediaLists);
+                populateVideos(); // VOD
+                videoCollapsePane.expand();
+            }));
+    }
+
     private boolean isTimeToShowVideoLivestream(VideoLifecycle videoLifecycle) {
         return !VideoState.isVideoCancelled(videoLifecycle.getVideoScheduledItem()) && videoLifecycle.isNowBetweenShowLivestreamStartAndShowLivestreamEnd();
     }
 
     private boolean isUserWatchingLivestream() {
         ScheduledItem videoScheduledItem = watchingVideoItemProperty.get();
-        return videoScheduledItem == null || isTimeToShowVideoLivestream(new VideoLifecycle(videoScheduledItem));
+        return videoScheduledItem == null || !videoScheduledItem.isPublished() && isTimeToShowVideoLivestream(new VideoLifecycle(videoScheduledItem));
     }
 
     // Called by the "Watch" button from the VideoFormattersAndRenderers
@@ -284,11 +287,14 @@ final class VideosActivity extends ViewDomainActivityBase {
         // auto-scrolling to the video player).
         if (!Objects.areEquals(watchingVideoItem, watchingVideoItemProperty.get())) {
             watchingVideoItemProperty.set(watchingVideoItem);
-        } else // But if it's the same video, we trigger the necessary event to make it visible again:
-            if (videoCollapsePane.isCollapsed()) // if the video player is collapsed, we first expand it
+        } else { // But if it's the same video, we trigger the necessary event to make it visible again:
+            if (watchingVideoItem.isPublished() && watchMedias.isEmpty()) {
+                loadMediaAndWatch();
+            } else if (videoCollapsePane.isCollapsed()) // if the video player is collapsed, we first expand it
                 videoCollapsePane.expand(); // the auto-scroll will happen after that - see in buildUi
             else // if the video player is already expanded,
                 scrollToVideoPlayer(); // we scroll to the video player right now
+        }
     }
 
     ScheduledItem getWatchingVideoItem() {
