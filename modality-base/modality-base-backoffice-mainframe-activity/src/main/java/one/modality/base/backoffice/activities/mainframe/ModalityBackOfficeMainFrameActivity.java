@@ -204,6 +204,7 @@ public final class ModalityBackOfficeMainFrameActivity extends ModalityClientMai
             dialogArea = (Pane) properties.get(arbitraryKey);
             if (dialogArea == null) {
                 properties.put(arbitraryKey, dialogArea = new Pane());
+                dialogArea.getStyleClass().add("modality-dialog-area");
                 ObservableLists.runOnListChange(this::showHideDialogArea, dialogArea.getChildren());
             } else
                 showHideDialogArea();
