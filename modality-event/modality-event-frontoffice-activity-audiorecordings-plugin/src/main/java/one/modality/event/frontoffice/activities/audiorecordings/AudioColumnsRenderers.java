@@ -89,16 +89,23 @@ final class AudioColumnsRenderers {
                 notYetPublishedLabel.setAlignment(Pos.CENTER_RIGHT);
                 return notYetPublishedLabel;
             }
-            // Using a flow pane, so that buttons are laid out vertically on mobiles if they don't fit in the width
-            FlowPane flowPane = new FlowPane(10, 10,
-                createAudioButton(audio, firstMedia, activity.getAudioPlayer(), false), // Play button
-                createAudioButton(audio, firstMedia, activity.getAudioPlayer(),true));  // Download button
+            Button playButtonButton = createAudioButton(audio, firstMedia, activity.getAudioPlayer(), false);
+            Button downloadButton = createAudioButton(audio, firstMedia, activity.getAudioPlayer(), true);
+            // Using a flow pane for the button, so that buttons are laid out vertically if they don't fit in the width
+            // (typically on mobiles).
+            FlowPane buttonBar = new FlowPane(10, 10, playButtonButton, downloadButton);
+            // We want a different alignment on desktops and mobiles. On desktops, the audio grid displays its content
+            // in a table, and the button bar is displayed horizontally in the last column. In this case, we want a
+            // right alignment (to be aligned with the possible "Not yet published" labels - also right aligned - in
+            // the other rows). On mobiles, the grid displays its content vertically, and it looks better if the button
+            // bar is centered. This is true whether the buttons are laid out horizontally (when the screen is wide
+            // enough), or vertically (on narrow screens).
             FXProperties.runNowAndOnPropertyChange(skin -> {
                 boolean isDesktopSkin = skin != null && skin.getClass().getName().contains("Table");
-                flowPane.setAlignment(isDesktopSkin ? Pos.CENTER_RIGHT : Pos.CENTER);
+                buttonBar.setAlignment(isDesktopSkin ? Pos.CENTER_RIGHT : Pos.CENTER);
             }, activity.getAudioGrid().skinProperty());
-            flowPane.setPadding(new Insets(0, 0, 10, 0));
-            return flowPane;
+            buttonBar.setPadding(new Insets(0, 0, 10, 0));
+            return buttonBar;
         });
     }
 
