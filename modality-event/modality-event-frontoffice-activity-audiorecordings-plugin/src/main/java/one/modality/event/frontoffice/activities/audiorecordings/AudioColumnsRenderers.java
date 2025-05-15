@@ -62,14 +62,12 @@ final class AudioColumnsRenderers {
             dateLabel.textProperty().bind(LocalizedTime.formatLocalDateTimeProperty(date, startTime, FrontOfficeTimeFormats.AUDIO_TRACK_DATE_TIME_FORMAT));
             dateLabel.getStyleClass().add(ModalityStyle.TEXT_COMMENT);
             long durationMillis;
-            AudioColumnsContext audioContext = context.getAppContext();
-            if (!audioContext.publishedMedias().isEmpty()) {
-                Media firstMedia = Collections.findFirst(audioContext.publishedMedias(), media -> Entities.sameId(audio, media.getScheduledItem()));
-                if (firstMedia != null) {
-                    durationMillis = firstMedia.getDurationMillis();
-                    dateLabel.textProperty().unbind();
-                    dateLabel.setText(AudioMediaView.formatDuration(durationMillis) + " • " + dateLabel.getText());
-                }
+            EventAudioPlaylistActivity activity = context.getAppContext();
+            Media firstMedia = Collections.findFirst(activity.getPublishedMedias(), media -> Entities.sameId(audio, media.getScheduledItem()));
+            if (firstMedia != null) {
+                durationMillis = firstMedia.getDurationMillis();
+                FXProperties.setEvenIfBound(dateLabel.textProperty(),
+                    AudioMediaView.formatDuration(durationMillis) + " • " + dateLabel.getText());
             }
             VBox vbox = new VBox(2, nameLabel, dateLabel);
             vbox.setAlignment(Pos.BOTTOM_LEFT);
@@ -82,8 +80,8 @@ final class AudioColumnsRenderers {
                 cancelledLabel.getStyleClass().add("cancelled");
                 return cancelledLabel;
             }
-            AudioColumnsContext audioContext = context.getAppContext();
-            Media firstMedia = Collections.findFirst(audioContext.publishedMedias(), media -> Entities.sameId(audio, media.getScheduledItem()));
+            EventAudioPlaylistActivity activity = context.getAppContext();
+            Media firstMedia = Collections.findFirst(activity.getPublishedMedias(), media -> Entities.sameId(audio, media.getScheduledItem()));
             if (firstMedia == null) {
                 Label notYetPublishedLabel = I18nControls.newLabel(AudioRecordingsI18nKeys.AudioRecordingNotYetPublished);
                 notYetPublishedLabel.getStyleClass().add(ModalityStyle.TEXT_COMMENT);
@@ -93,9 +91,12 @@ final class AudioColumnsRenderers {
             }
             // Using a flow pane, so that buttons are laid out vertically on mobiles if they don't fit in the width
             FlowPane flowPane = new FlowPane(10, 10,
-                createAudioButton(audio, firstMedia, audioContext.audioPlayer(), false), // Play button
-                createAudioButton(audio, firstMedia, audioContext.audioPlayer(),true));  // Download button
-            flowPane.setAlignment(Pos.CENTER_RIGHT);
+                createAudioButton(audio, firstMedia, activity.getAudioPlayer(), false), // Play button
+                createAudioButton(audio, firstMedia, activity.getAudioPlayer(),true));  // Download button
+            FXProperties.runNowAndOnPropertyChange(skin -> {
+                boolean isDesktopSkin = skin != null && skin.getClass().getName().contains("Table");
+                flowPane.setAlignment(isDesktopSkin ? Pos.CENTER_RIGHT : Pos.CENTER);
+            }, activity.getAudioGrid().skinProperty());
             flowPane.setPadding(new Insets(0, 0, 10, 0));
             return flowPane;
         });

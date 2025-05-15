@@ -78,6 +78,9 @@ final class EventAudioPlaylistActivity extends ViewDomainActivityBase {
     private final StringProperty dateFormattedProperty = new SimpleStringProperty();
     private EntityColumn<ScheduledItem>[] audioColumns;
 
+    private final Player audioPlayer = new JavaFXMediaAudioPlayer();
+    private final VisualGrid audioGrid = VisualGrid.createVisualGridWithResponsiveSkin();
+
     @Override
     protected void updateModelFromContextParameters() {
         pathEventIdProperty.set(Numbers.toInteger(getParameter(EventAudioPlaylistRouting.PATH_EVENT_ID_PARAMETER_NAME)));
@@ -214,8 +217,6 @@ final class EventAudioPlaylistActivity extends ViewDomainActivityBase {
         VBox.setMargin(listOfTrackLabel, new Insets(30, 0, 0, 0));
         listOfTrackLabel.getStyleClass().add("list-tracks-title");
 
-        Player audioPlayer = new JavaFXMediaAudioPlayer();
-
         VBox loadedContentVBox = new VBox(40,
             responsiveHeader,
             new ScalePane(ScaleMode.FIT_WIDTH, audioPlayer.getMediaView()),
@@ -224,6 +225,13 @@ final class EventAudioPlaylistActivity extends ViewDomainActivityBase {
         );
         //loadedContentVBox.setMaxWidth(MAX_WIDTH);
         loadedContentVBox.setAlignment(Pos.TOP_CENTER);
+
+        audioGrid.setMinRowHeight(48);
+        audioGrid.setPrefRowHeight(Region.USE_COMPUTED_SIZE);
+        audioGrid.setCellMargin(new Insets(15, 10, 5, 0));
+        audioGrid.setFullHeight(true);
+        audioGrid.setHeaderVisible(false);
+        audioGrid.setAppContext(EventAudioPlaylistActivity.this); // passing the activity to AudioColumnsRenderers
 
         Node loadingContentIndicator = new GoldenRatioPane(Controls.createProgressIndicator(100));
 
@@ -258,13 +266,6 @@ final class EventAudioPlaylistActivity extends ViewDomainActivityBase {
                 if (audioExpirationDate == null || audioExpirationDate.isAfter(nowInEventTimezone)) {
                     // Does this event have audio recordings, and did the person book and pay for them?
                     if (!scheduledAudioItems.isEmpty()) { // yes => we show them as a list of playable tracks
-                        VisualGrid audioGrid = VisualGrid.createVisualGridWithResponsiveSkin();
-                        audioGrid.setMinRowHeight(48);
-                        audioGrid.setPrefRowHeight(Region.USE_COMPUTED_SIZE);
-                        audioGrid.setCellMargin(new Insets(15, 10, 5, 0));
-                        audioGrid.setFullHeight(true);
-                        audioGrid.setHeaderVisible(false);
-                        audioGrid.setAppContext(new AudioColumnsContext(publishedMedias, audioPlayer));
                         VisualResult vr = EntitiesToVisualResultMapper.mapEntitiesToVisualResult(scheduledAudioItems, audioColumns);
                         audioGrid.setVisualResult(vr);
                         audioTracksContainer.setContent(audioGrid);
@@ -290,6 +291,20 @@ final class EventAudioPlaylistActivity extends ViewDomainActivityBase {
         pageContainer.getStyleClass().addAll("audio-library");
         // Setting a max width for big desktop screens
         return FOPageUtil.restrictToMaxPageWidthAndApplyPageLeftTopRightBottomPadding(pageContainer);
+    }
+
+    // Getters called by AudioColumnsRenderer:
+
+    List<Media> getPublishedMedias() {
+        return publishedMedias;
+    }
+
+    Player getAudioPlayer() {
+        return audioPlayer;
+    }
+
+    VisualGrid getAudioGrid() {
+        return audioGrid;
     }
 
     private String extractLang(String itemCode) {
