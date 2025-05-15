@@ -287,13 +287,17 @@ final class VideosActivity extends ViewDomainActivityBase {
         // auto-scrolling to the video player).
         if (!Objects.areEquals(watchingVideoItem, watchingVideoItemProperty.get())) {
             watchingVideoItemProperty.set(watchingVideoItem);
-        } else { // But if it's the same video, we trigger the necessary event to make it visible again:
-            if (watchingVideoItem.isPublished() && watchMedias.isEmpty()) {
+        } else { // But if it's the same video, the next step depends on its current state.
+            // Let's start with the particular case where the user just received the push notification that the video
+            // has been published (the livestream video became a VOD). While this push updated its published field,
+            // the associated medias are still unloaded, so we need now to load them and start the first media.
+            if (watchingVideoItem.isPublished() && watchMedias.isEmpty()) { // detection of the case explained above
                 loadMediaAndWatch();
-            } else if (videoCollapsePane.isCollapsed()) // if the video player is collapsed, we first expand it
-                videoCollapsePane.expand(); // the auto-scroll will happen after that - see in buildUi
-            else // if the video player is already expanded,
-                scrollToVideoPlayer(); // we scroll to the video player right now
+            } else if (videoCollapsePane.isExpanded()) // otherwise if the player is already expanded and with the
+                // correct video already inside, the only remaining thing to do is to scroll to that video player
+                scrollToVideoPlayer();
+            else // if it is collapsed, we expand it first, and the auto-scroll will happen just after that - see buildUi()
+                videoCollapsePane.expand();
         }
     }
 
