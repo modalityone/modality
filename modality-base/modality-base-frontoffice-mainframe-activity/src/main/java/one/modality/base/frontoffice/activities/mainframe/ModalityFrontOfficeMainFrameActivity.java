@@ -73,7 +73,7 @@ public final class ModalityFrontOfficeMainFrameActivity extends ModalityClientMa
         FXProperties.newBooleanProperty(UserAgent.isNative(), this::onMobileLayoutChange);
 
     private Pane mainFrameContainer;
-    private Node backgroundNode; // can be used to hold a WebView, and prevent iFrame reload in the web version
+    private Node backgroundNode; // can be used to hold a WebView and prevent iFrame reload in the web version
     private final TransitionPane mountTransitionPane = new TransitionPane();
     private CollapsePane overlayMenuBar; // 1 unique instance
     private CollapsePane mountMainMenuButtonBar; // 1 instance per mount node
@@ -87,7 +87,7 @@ public final class ModalityFrontOfficeMainFrameActivity extends ModalityClientMa
         // Starting with a circle transition animation for the first activity displayed
         mountTransitionPane.setAnimateFirstContent(true);
         mountTransitionPane.setTransition(new CircleTransition());
-        // And then a fade transition for subsequent activities
+        // And then a fade transition for later activities
         FXProperties.runOnPropertyChange(transiting -> {
             if (transiting) {
                 overlayMenuBar.setAnimate(false);
@@ -113,10 +113,10 @@ public final class ModalityFrontOfficeMainFrameActivity extends ModalityClientMa
                 double mountNodeHeight = height - headerHeight - footerHeight;
                 mountTransitionPane.setMinHeight(mountNodeHeight);
                 layoutInArea(mountTransitionPane, 0, mountNodeY, width, mountNodeHeight);
-                if (backgroundNode != null) { // Same position & size as the mount node (if present)
+                if (backgroundNode != null) { // Same position and size as the mount node (if present)
                     layoutInArea(backgroundNode, 0, mountNodeY, width, mountNodeHeight);
                 }
-                if (dialogArea != null) { // Same position & size as the mount node (if present)
+                if (dialogArea != null) { // Same position and size as the mount node (if present)
                     layoutInArea(dialogArea, 0, mountNodeY, width, mountNodeHeight);
                 }
             }
@@ -132,7 +132,7 @@ public final class ModalityFrontOfficeMainFrameActivity extends ModalityClientMa
         overlayMenuBar.setAnimate(false);
         overlayMenuBar.setVisible(false);
         overlayMenuBar.collapse();
-        double[] lastMouseY = {0};
+        double[] lastMouseY = { 0 };
         mainFrameContainer.setOnMouseMoved(e -> {
             double mouseY = e.getY(), mouseX = e.getSceneX();
             if (Math.abs(mouseY - lastMouseY[0]) > 5 && !FXCollapseMenu.isCollapseMenu()) {
@@ -149,9 +149,9 @@ public final class ModalityFrontOfficeMainFrameActivity extends ModalityClientMa
                         if (node instanceof CollapsePane)
                             node = ((CollapsePane) node).getContent(); // should return a MonoPane
                         if (node instanceof MonoPane)
-                            node = ((MonoPane) node).getContent(); // should return a hbox
+                            node = ((MonoPane) node).getContent(); // should return an HBox
                         if (node instanceof Parent)
-                            node = ((Parent) node).getChildrenUnmodifiable().get(2); // Should be first button
+                            node = ((Parent) node).getChildrenUnmodifiable().get(2); // Should be the index for the first button
                         if (node != null && mouseX >= node.localToScene(0, 0).getX()) {
                             overlayMenuBar.setAnimate(true);
                             overlayMenuBar.expand();
@@ -175,7 +175,7 @@ public final class ModalityFrontOfficeMainFrameActivity extends ModalityClientMa
             boolean isMobileLayout = mobileLayoutProperty.get();
             // Here are the children we need to set for the main frame container
             List<Node> children = Collections.listOfRemoveNulls(
-                backgroundNode,      // may be a WebView
+                backgroundNode,      // could be a WebView
                 mountTransitionPane, // contains a standard mount node, or null if we want to display the backgroundNode
                 isMobileLayout ? mobileMenuBar : overlayMenuBar); // mobile menu bar (at bottom) or overlay menu bar (in addition to the one inside mountTransitionPane)
             // We call setAll() only if they differ, because setAll() is basically a clear() + addAll() and this causes
@@ -198,6 +198,7 @@ public final class ModalityFrontOfficeMainFrameActivity extends ModalityClientMa
                 CollapsePane languageMenuBar = createLanguageMenuBar();
                 CollapsePane mainMenuButtonBar = createMainMenuButtonBar(false);
                 CollapsePane userMenuButtonBar = createUserMenuButtonBar();
+                //userMenuButtonBar.setBackground(Background.fill(Color.YELLOW));
                 VBox vBox = new VBox(
                     languageMenuBar,
                     mainMenuButtonBar,
@@ -206,6 +207,7 @@ public final class ModalityFrontOfficeMainFrameActivity extends ModalityClientMa
                 );
                 vBox.setAlignment(Pos.CENTER);
                 vBox.setMaxWidth(Double.MAX_VALUE);
+                //vBox.setBackground(Background.fill(Color.YELLOWGREEN));
                 if (mountNode instanceof Region) {
                     Region mountRegion = (Region) mountNode;
                     FXProperties.runOnPropertiesChange(() ->
@@ -227,7 +229,7 @@ public final class ModalityFrontOfficeMainFrameActivity extends ModalityClientMa
                         overlayMenuBar.collapse();
                     } else if (vTopOffset > Screen.getPrimary().getBounds().getHeight()) {
                         overlayMenuBar.setVisible(true); // Making it visible when the top one is no more in the view
-                        overlayMenuBar.setAnimate(true); // port (however it will not be showing while it's collapsed)
+                        overlayMenuBar.setAnimate(true); // port (however, it will not be showing while it's collapsed)
                     }
                     // Collapse management:
                     // Collapsing the overlay menu if an activity explicitly asked to do so
@@ -250,8 +252,8 @@ public final class ModalityFrontOfficeMainFrameActivity extends ModalityClientMa
             // We make the background node visible only when we want to display it
             if (backgroundNode != null)
                 backgroundNode.setVisible(displayBackgroundNode);
-            // Also when we display the background node, we need make the mount node container transparent to the mouse
-            // (as the background node is behind) to allow the user to interact with it (ex: WebView).
+            // Also, when we display the background node, we need to make the mount node container transparent to the
+            // mouse (as the background node is behind) to allow the user to interact with it (ex: WebView).
             mountTransitionPane.setMouseTransparent(displayBackgroundNode);
             updateDialogArea();
         }, mountNodeProperty());
@@ -277,9 +279,9 @@ public final class ModalityFrontOfficeMainFrameActivity extends ModalityClientMa
     }
 
     private static void setupPlayersGlobalConfiguration() {
-        // Fullscreen button
+        // Setting up the fullscreen button
         ModalityFullscreenButton.setupModalityFullscreenButton();
-        // Players color (actually only Wistia supports it)
+        // Setting up the player color (actually, only Wistia supports it)
         Players.setGlobalPlayerColor(Brand.getBrandMainColor());
     }
 
@@ -294,8 +296,8 @@ public final class ModalityFrontOfficeMainFrameActivity extends ModalityClientMa
             dialogArea = (Pane) properties.get(arbitraryKey);
             if (dialogArea == null) {
                 properties.put(arbitraryKey, dialogArea = new Pane());
-                // We request focus on mouse clicked. This is to allow dropdown dialog in ButtonSelector to automatically
-                // close when the user clicks outside (this auto-close mechanism is triggered by fucus change).
+                // We request focus on mouse clicked. This is to allow the dropdown dialog in ButtonSelector to automatically
+                // close when the user clicks outside (focus change triggers this auto-close mechanism).
                 dialogArea.setOnMouseClicked(e -> dialogArea.requestFocus());
                 // We automatically show or hide the dialog area, depending on the presence or not of children:
                 dialogArea.getChildren().addListener((InvalidationListener) observable -> showHideDialogArea());
@@ -340,6 +342,7 @@ public final class ModalityFrontOfficeMainFrameActivity extends ModalityClientMa
         languageBar.setMaxHeight(LANG_BAR_MENU_HEIGHT);
         languageBar.getStyleClass().setAll("button-bar");
         MonoPane languageSection = new MonoPane(languageBar);
+        //languageSection.setBackground(Background.fill(Color.YELLOW));
         languageSection.setAlignment(Pos.BOTTOM_LEFT);
         languageSection.setMinHeight(LANG_MENU_HEIGHT);
         languageSection.setPrefHeight(LANG_MENU_HEIGHT);
@@ -363,6 +366,7 @@ public final class ModalityFrontOfficeMainFrameActivity extends ModalityClientMa
         userMenuButtonBar.setAnimate(false);
         userMenuButtonBar.collapsedProperty().bind(FXLoggedIn.loggedInProperty().not().or(FXCollapseMenu.collapseMenuProperty()));
         userMenuButtonBar.setAnimate(true);
+        //userMenuButtonBar.setBackground(Background.fill(Color.YELLOW));
         return userMenuButtonBar;
     }
 
@@ -404,17 +408,17 @@ public final class ModalityFrontOfficeMainFrameActivity extends ModalityClientMa
         CollapsePane collapsePane = new CollapsePane(buttonBar);
         collapsePane.getStyleClass().setAll("menu-bar", userMenu ? "user-menu-bar" : "main-menu-bar", mobileLayout ? "mobile" : "non-mobile");
         collapsePane.setMaxWidth(Double.MAX_VALUE); // necessary to make the (CSS) border fill the whole page width
-        // Binding collapsedProperty with FXCollapseMenu = general case (will be redefined for user menu to include login)
+        collapsePane.setMinWidth(0); // Temporarily allowing menu shrinking on mobiles to prevent stopping page content shrinking (which is even worse as this crops the content on left and right)
+        // Binding collapsedProperty with FXCollapseMenu = general case (will be redefined for the user menu to include login)
         collapsePane.setAnimate(false);
         collapsePane.collapsedProperty().bind(FXCollapseMenu.collapseMenuProperty()); // will be redefined in some cases
-        collapsePane.setAnimate(false);
         if (mobileLayout) {
             collapsePane.setEffect(new DropShadow());
             collapsePane.setClipEnabled(false);
             // Considering the bottom of the safe area, in particular for OS like iPadOS with a bar at the bottom
             FXProperties.runNowAndOnPropertyChange(sai -> {
                 double safeAreaBottom = sai.getBottom();
-                // we already have a 5px padding for the buttons
+                // we already have 5 px padding for the buttons
                 collapsePane.setPadding(new Insets(0, 0, Math.max(0, safeAreaBottom - 5), 0));
             }, WebFxKitLauncher.safeAreaInsetsProperty());
         }
