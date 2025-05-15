@@ -22,7 +22,7 @@ import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
-import javafx.scene.layout.HBox;
+import javafx.scene.layout.FlowPane;
 import javafx.scene.layout.VBox;
 import one.modality.base.client.bootstrap.ModalityStyle;
 import one.modality.base.client.time.FrontOfficeTimeFormats;
@@ -91,10 +91,13 @@ final class AudioColumnsRenderers {
                 notYetPublishedLabel.setAlignment(Pos.CENTER_RIGHT);
                 return notYetPublishedLabel;
             }
-            HBox hBox = new HBox(10, createAudioButton(audio, firstMedia, audioContext.audioPlayer(), false), createAudioButton(audio, firstMedia, audioContext.audioPlayer(),true));
-            hBox.setAlignment(Pos.CENTER);
-            hBox.setPadding(new Insets(0, 0, 10, 0));
-            return hBox;
+            // Using a flow pane, so that buttons are laid out vertically on mobiles if they don't fit in the width
+            FlowPane flowPane = new FlowPane(10, 10,
+                createAudioButton(audio, firstMedia, audioContext.audioPlayer(), false), // Play button
+                createAudioButton(audio, firstMedia, audioContext.audioPlayer(),true));  // Download button
+            flowPane.setAlignment(Pos.CENTER_RIGHT);
+            flowPane.setPadding(new Insets(0, 0, 10, 0));
+            return flowPane;
         });
     }
 

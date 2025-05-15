@@ -34,7 +34,7 @@ import one.modality.event.frontoffice.medias.EventThumbnailView;
  */
 final class AudioRecordingsActivity extends ViewDomainActivityBase {
 
-    private static final double BOX_WIDTH = 340;
+    private static final int BOX_WIDTH = 263;
 
     // Holding an observable list of events with audio recordings booked by the user (changes on login & logout)
     private final ObservableList<DocumentLine> documentLinesWithBookedAudios = FXCollections.observableArrayList();
@@ -81,9 +81,8 @@ final class AudioRecordingsActivity extends ViewDomainActivityBase {
         Label headerLabel = Bootstrap.h2(Bootstrap.strong(I18nControls.newLabel(AudioRecordingsI18nKeys.AudioRecordingsHeader)));
         Label checkoutLabel = I18nControls.newLabel(AudioRecordingsI18nKeys.CheckoutAudioRecordings);
 
-        ColumnsPane columnsPane = new ColumnsPane(30, 50);
+        ColumnsPane columnsPane = new ColumnsPane(20, 50);
         columnsPane.setFixedColumnWidth(BOX_WIDTH);
-        columnsPane.setAlignment(Pos.TOP_CENTER);
         columnsPane.getStyleClass().add("media-library");
         columnsPane.setPadding(new Insets(50,0,0,0));
 
