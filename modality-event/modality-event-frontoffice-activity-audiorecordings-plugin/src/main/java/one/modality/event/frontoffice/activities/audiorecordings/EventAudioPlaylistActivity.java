@@ -47,6 +47,7 @@ import javafx.scene.layout.VBox;
 import javafx.scene.text.Font;
 import javafx.scene.text.Text;
 import javafx.scene.text.TextAlignment;
+import javafx.stage.Screen;
 import one.modality.base.client.cloudinary.ModalityCloudinary;
 import one.modality.base.client.icons.SvgIcons;
 import one.modality.base.client.time.FrontOfficeTimeFormats;
@@ -79,7 +80,12 @@ final class EventAudioPlaylistActivity extends ViewDomainActivityBase {
     private EntityColumn<ScheduledItem>[] audioColumns;
 
     private final Player audioPlayer = new JavaFXMediaAudioPlayer();
-    private final VisualGrid audioGrid = VisualGrid.createVisualGridWithResponsiveSkin();
+    private final VisualGrid audioGrid =
+        // Using vertical skin on mobiles with screen < 600 px to prevent unnecessary table computing (can cause performance issue on low-end mobiles)
+        Screen.getPrimary().getVisualBounds().getWidth() < 600 ?
+            VisualGrid.createVisualGridWithVerticalSkin() :
+            // Otherwise we use the responsive skin, which will decide between table and vertical skin
+            VisualGrid.createVisualGridWithResponsiveSkin();
 
     @Override
     protected void updateModelFromContextParameters() {
@@ -110,7 +116,7 @@ final class EventAudioPlaylistActivity extends ViewDomainActivityBase {
                             eventIdContainingAudios = Entities.getPrimaryKey(currentEvent.getRepeatedEventId());
                         }
                         entityStore.executeQueryBatch(
-                                //Index 0: we look for the scheduledItem having a bookableScheduledItem which is an audio type (case of festival)
+                                // Index 0: we look for the scheduledItem having a bookableScheduledItem which is an audio type (case of festival)
                                 new EntityStoreQuery("select date, programScheduledItem.(name, timeline.(startTime, endTime), cancelled), published, event, " +
                                     " (select id from Attendance where scheduledItem=si.bookableScheduledItem and documentLine.document.person=? limit 1) as attendanceId, " +
                                     " (exists(select MediaConsumption where media.scheduledItem=si and attendance.documentLine.document.person=? and played) as alreadyPlayed), " +
@@ -119,7 +125,7 @@ final class EventAudioPlaylistActivity extends ViewDomainActivityBase {
                                     " where event=? and bookableScheduledItem.item.family.code=? and item.code=? and programScheduledItem is not null and exists(select Attendance where scheduledItem=si.bookableScheduledItem and documentLine.(!cancelled and document.(person=? and event=? and confirmed and price_balance<=0)))" +
                                     " order by date",
                                     new Object[]{userPersonId, userPersonId, userPersonId, eventIdContainingAudios, KnownItemFamily.AUDIO_RECORDING.getCode(), pathItemCodeProperty.get(), userPersonId, currentEvent}),
-                                //Index 1: we look for the scheduledItem of audio type having a bookableScheduledItem which is a teaching type (case of STTP)
+                                // Index 1: we look for the scheduledItem of audio type having a bookableScheduledItem which is a teaching type (case of STTP)
                                 // TODO: for now we take only the English audio recording scheduledItem in that case. We should take the language default of the organization instead
                                 new EntityStoreQuery("select name, date, programScheduledItem.(name, timeline.(startTime, endTime), cancelled), published, event, " +
                                     " (select id from Attendance where scheduledItem=si.bookableScheduledItem and documentLine.document.person=? limit 1) as attendanceId, " +
@@ -129,7 +135,7 @@ final class EventAudioPlaylistActivity extends ViewDomainActivityBase {
                                     " where event=? and bookableScheduledItem.item.family.code=? and item.code=? and exists(select Attendance where scheduledItem=si.bookableScheduledItem and documentLine.(!cancelled and document.(person=? and event=? and confirmed and price_balance<=0)))" +
                                     " order by date",
                                     new Object[]{userPersonId, userPersonId, userPersonId, eventIdContainingAudios, KnownItemFamily.TEACHING.getCode(), KnownItem.AUDIO_RECORDING_ENGLISH.getCode(), userPersonId, currentEvent}),
-                                //Index 2: the medias
+                                // Index 2: the medias
                                 new EntityStoreQuery("select url, scheduledItem.(date, event), scheduledItem.name, scheduledItem.published, durationMillis " +
                                     " from Media" +
                                     " where scheduledItem.(event=? and (item.code=? or item.code=?) and online) and scheduledItem.published",
@@ -138,8 +144,8 @@ final class EventAudioPlaylistActivity extends ViewDomainActivityBase {
                             .onSuccess(entityLists -> Platform.runLater(() -> {
                                 eventProperty.set(currentEvent); // will update i18n bindings
                                 Collections.setAll(publishedMedias, entityLists[2]);
-                                scheduledAudioItems.setAll(entityLists[0]);
-                                scheduledAudioItems.addAll(entityLists[1]);// will trigger UI update
+                                entityLists[0].addAll(entityLists[1]);
+                                scheduledAudioItems.setAll(entityLists[0]);// will trigger UI update
                             }));
                     });
             }
@@ -188,8 +194,8 @@ final class EventAudioPlaylistActivity extends ViewDomainActivityBase {
         new ResponsiveDesign(responsiveHeader)
             // 1. Horizontal layout (for desktops) - as far as TitleVBox is not higher than the image
             .addResponsiveLayout(/* applicability test: */ width -> {
-                double spacing = width * 0.05;
-                HBox.setMargin(titleVBox, new Insets(0, 0, 0, spacing));
+                    double spacing = width * 0.05;
+                    HBox.setMargin(titleVBox, new Insets(0, 0, 0, spacing));
                     double titleVBoxWidth = width - imageMonoPane.getWidth() - spacing;
                     //Here we resize the font according to the size of the window
                     double fontSizeFactor = Double.max(0.75, Double.min(1, titleVBoxWidth * 0.0042));
@@ -223,7 +229,6 @@ final class EventAudioPlaylistActivity extends ViewDomainActivityBase {
             new ScalePane(listOfTrackLabel),
             audioTracksContainer
         );
-        //loadedContentVBox.setMaxWidth(MAX_WIDTH);
         loadedContentVBox.setAlignment(Pos.TOP_CENTER);
 
         audioGrid.setMinRowHeight(48);
