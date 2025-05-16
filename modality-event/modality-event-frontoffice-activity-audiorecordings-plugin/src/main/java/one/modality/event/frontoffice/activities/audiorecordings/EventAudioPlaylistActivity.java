@@ -199,12 +199,12 @@ final class EventAudioPlaylistActivity extends ViewDomainActivityBase {
                     double titleVBoxWidth = width - imageMonoPane.getWidth() - spacing;
                     //Here we resize the font according to the size of the window
                     double fontSizeFactor = Double.max(0.75, Double.min(1, titleVBoxWidth * 0.0042));
-                    //System.out.println("fontSizeFactor = " + fontSizeFactor);
                     //In JavaFX, the CSS has priority on Font, that's why we do a setStyle after. In web, the Font has priority on CSS
                     eventLabel.setFont(Font.font(fontSizeFactor * 30));
                     eventLabel.setStyle("-fx-font-size: " + fontSizeFactor * 30);
                     eventDescriptionHTMLText.setFont(Font.font(fontSizeFactor * 18));
-                    return fontSizeFactor > 0.75;
+                    return width > 400 // to prevent initial alternation on mobiles before the image is loaded
+                           && fontSizeFactor > 0.75;
                 }, /* apply method: */ () -> {
                     responsiveHeader.setContent(new HBox(imageMonoPane, titleVBox));
                 }
