@@ -24,6 +24,7 @@ import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.layout.FlowPane;
 import javafx.scene.layout.VBox;
+import javafx.scene.text.Text;
 import one.modality.base.client.bootstrap.ModalityStyle;
 import one.modality.base.client.time.FrontOfficeTimeFormats;
 import one.modality.base.shared.entities.Media;
@@ -58,18 +59,18 @@ final class AudioColumnsRenderers {
             LocalDate date = audio.getDate();
             Timeline timeline = audio.getProgramScheduledItem().getTimeline();
             LocalTime startTime = timeline == null ? null : timeline.getStartTime();
-            Label dateLabel = new Label();
-            dateLabel.textProperty().bind(LocalizedTime.formatLocalDateTimeProperty(date, startTime, FrontOfficeTimeFormats.AUDIO_TRACK_DATE_TIME_FORMAT));
-            dateLabel.getStyleClass().add(ModalityStyle.TEXT_COMMENT);
+            Text dateText = new Text();
+            dateText.textProperty().bind(LocalizedTime.formatLocalDateTimeProperty(date, startTime, FrontOfficeTimeFormats.AUDIO_TRACK_DATE_TIME_FORMAT));
+            dateText.getStyleClass().add(ModalityStyle.TEXT_COMMENT);
             long durationMillis;
             EventAudioPlaylistActivity activity = context.getAppContext();
             Media firstMedia = Collections.findFirst(activity.getPublishedMedias(), media -> Entities.sameId(audio, media.getScheduledItem()));
             if (firstMedia != null) {
                 durationMillis = firstMedia.getDurationMillis();
-                FXProperties.setEvenIfBound(dateLabel.textProperty(),
-                    AudioMediaView.formatDuration(durationMillis) + " • " + dateLabel.getText());
+                FXProperties.setEvenIfBound(dateText.textProperty(),
+                    AudioMediaView.formatDuration(durationMillis) + " • " + dateText.getText());
             }
-            VBox vbox = new VBox(2, nameLabel, dateLabel);
+            VBox vbox = new VBox(2, nameLabel, dateText);
             vbox.setAlignment(Pos.BOTTOM_LEFT);
             return vbox;
         });
@@ -94,16 +95,7 @@ final class AudioColumnsRenderers {
             // Using a flow pane for the button, so that buttons are laid out vertically if they don't fit in the width
             // (typically on mobiles).
             FlowPane buttonBar = new FlowPane(10, 10, playButtonButton, downloadButton);
-            // We want a different alignment on desktops and mobiles. On desktops, the audio grid displays its content
-            // in a table, and the button bar is displayed horizontally in the last column. In this case, we want a
-            // right alignment (to be aligned with the possible "Not yet published" labels - also right aligned - in
-            // the other rows). On mobiles, the grid displays its content vertically, and it looks better if the button
-            // bar is centered. This is true whether the buttons are laid out horizontally (when the screen is wide
-            // enough), or vertically (on narrow screens).
-            FXProperties.runNowAndOnPropertyChange(skin -> {
-                boolean isDesktopSkin = skin != null && skin.getClass().getName().contains("Table");
-                buttonBar.setAlignment(isDesktopSkin ? Pos.CENTER_RIGHT : Pos.CENTER);
-            }, activity.getAudioGrid().skinProperty());
+            buttonBar.setAlignment(Pos.CENTER);
             buttonBar.setPadding(new Insets(0, 0, 10, 0));
             return buttonBar;
         });
