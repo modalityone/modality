@@ -11,6 +11,7 @@ import dev.webfx.extras.styles.bootstrap.Bootstrap;
 import dev.webfx.extras.time.format.LocalizedTime;
 import dev.webfx.extras.util.control.Controls;
 import dev.webfx.extras.util.layout.Layouts;
+import dev.webfx.extras.visual.SelectionMode;
 import dev.webfx.extras.visual.VisualResult;
 import dev.webfx.extras.visual.controls.grid.VisualGrid;
 import dev.webfx.extras.webtext.HtmlText;
@@ -186,7 +187,10 @@ final class EventAudioPlaylistActivity extends ViewDomainActivityBase {
         audioExpirationText.managedProperty().bind(dateFormattedProperty.isNotEmpty());
         Layouts.bindManagedToVisibleProperty(audioExpirationText);
 
-        VBox titleVBox = new VBox(eventLabel, eventDescriptionHTMLText, audioExpirationText);
+        VBox titleVBox = new VBox(
+            eventLabel,
+            eventDescriptionHTMLText,
+            audioExpirationText);
         VBox.setMargin(eventDescriptionHTMLText, new Insets(12, 0, 0, 0));
         VBox.setMargin(audioExpirationText, new Insets(30, 0, 0, 0));
 
@@ -236,6 +240,7 @@ final class EventAudioPlaylistActivity extends ViewDomainActivityBase {
         audioGrid.setCellMargin(new Insets(15, 10, 5, 0));
         audioGrid.setFullHeight(true);
         audioGrid.setHeaderVisible(false);
+        audioGrid.setSelectionMode(SelectionMode.DISABLED);
         audioGrid.setAppContext(EventAudioPlaylistActivity.this); // passing the activity to AudioColumnsRenderers
 
         Node loadingContentIndicator = new GoldenRatioPane(Controls.createProgressIndicator(100));
