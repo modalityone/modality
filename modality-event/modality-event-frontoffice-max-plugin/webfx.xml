@@ -13,7 +13,7 @@
         <plugin-module>modality-event-frontoffice-min-plugin</plugin-module>
 
         <plugin-module>modality-event-frontoffice-activity-audiolibrary-plugin</plugin-module>
-        <plugin-module>modality-event-frontoffice-activity-videos-plugin</plugin-module>
+        <plugin-module>modality-event-frontoffice-activity-videostreaming-plugin</plugin-module>
 
         <plugin-module>modality-event-frontoffice-bookingform-recurringevent-plugin</plugin-module>
 

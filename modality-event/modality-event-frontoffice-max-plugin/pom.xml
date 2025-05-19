@@ -26,7 +26,7 @@
 
         <dependency>
             <groupId>one.modality</groupId>
-            <artifactId>modality-event-frontoffice-activity-videos-plugin</artifactId>
+            <artifactId>modality-event-frontoffice-activity-videostreaming-plugin</artifactId>
             <version>1.0.0-SNAPSHOT</version>
             <scope>runtime</scope>
         </dependency>
