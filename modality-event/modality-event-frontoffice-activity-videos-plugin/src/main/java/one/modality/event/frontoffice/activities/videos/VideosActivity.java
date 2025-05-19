@@ -128,12 +128,12 @@ final class VideosActivity extends ViewDomainActivityBase {
                 // we look for the scheduledItem having a bookableScheduledItem which is an audio type (case of festival)
                 entityStore.<DocumentLine>executeQuery(
                         "select document.event.(name, label.(de,en,es,fr,pt), shortDescription, shortDescriptionLabel, audioExpirationDate, startDate, endDate, livestreamUrl, vodExpirationDate, repeatVideo, recurringWithVideo, repeatedEvent), item.code, item.family.code, " +
-                            //We look if there are published audio ScheduledItem of type video, whose bookableScheduledItem has  been booked
+                            // We look if there are published audio ScheduledItem of type video, whose bookableScheduledItem has been booked
                             " (exists(select ScheduledItem where item.family.code=? and bookableScheduledItem.(event=coalesce(dl.document.event.repeatedEvent, dl.document.event) and item=dl.item))) as published " +
-                            //We check if the user has booked, not cancelled and paid the recordings
+                            // We check if the user has booked, not cancelled and paid the recordings
                             " from DocumentLine dl where !cancelled  and dl.document.(person=? and confirmed and price_balance<=0) " +
                             " and dl.document.event.(repeatedEvent = null or repeatVideo)" +
-                            //we check if :
+                            // we check if :
                             " and (" +
                             // 1/ there is a ScheduledItem of video family type whose bookableScheduledItem has been booked (KBS3 setup)
                             " exists (select ScheduledItem videoSI where item.family.code=? and exists(select Attendance where documentLine=dl and scheduledItem=videoSI.bookableScheduledItem))" +
@@ -201,7 +201,7 @@ final class VideosActivity extends ViewDomainActivityBase {
                         scheduleAutoLivestream();
                     }));
                 LocalDate today = Event.todayInEventTimezone();
-                //If we are during the event, we position the currentSelectedDay to today
+                // If we are during the event, we position the currentSelectedDay to today
                 if (today.isAfter(event.getStartDate().minusDays(1)) && today.isBefore(event.getEndDate().plusDays(1))) {
                     daySwitcher.setDay(today);
                 }
@@ -383,12 +383,11 @@ final class VideosActivity extends ViewDomainActivityBase {
             // 1. Horizontal layout (for desktops)
             .addResponsiveLayout(/* applicability test: */ width -> {
                 //If the grid skin is a table, we're in the desktop mode, otherwise we're in the mobile mode
-                Skin<?> videoGridSkin = videoGrid.getSkin();
-                return videoGridSkin != null && videoGridSkin.getClass().getName().contains("Table");
-            }, /* apply method: */ () -> responsiveDaySelectionMonoPane.setContent(daySwitcher.getDesktopView()), /* test dependencies: */ videoGrid.skinProperty())
+                return VisualGrid.isMultiColumnLayout(videoGrid);
+            }, /* apply method: */ () -> responsiveDaySelectionMonoPane.setContent(daySwitcher.getDesktopView()),
+               /* test dependencies: */ videoGrid.skinProperty())
             // 2. Vertical layout (for mobiles)
             .addResponsiveLayout(/* apply method: */ () -> responsiveDaySelectionMonoPane.setContent(daySwitcher.getMobileViewContainer())).start();
-
 
         StackPane decoratedLivestreamCollapsePane = CollapsePane.decorateCollapsePane(videoCollapsePane, true);
         //We display this box only if the current Date is in the list of date in the video Scheduled Item list
