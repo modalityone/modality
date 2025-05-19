@@ -59,7 +59,7 @@ final class FiltersActivity extends ViewDomainActivityBase implements OperationA
         ButtonSelector<DomainClass> classSelector = new ButtonSelector<>(this, container) {
             private final List<DomainClass> allClasses = getDomainModel().getAllClasses();
             private List<DomainClass> searchedClasses;
-            private final VisualGrid dialogVisualGrid = VisualGrid.createVisualGridWithTableSkin();
+            private final VisualGrid dialogVisualGrid = VisualGrid.createVisualGridWithTableLayoutSkin();
             {
                 dialogVisualGrid.setHeaderVisible(false);
                 dialogVisualGrid.setCursor(Cursor.HAND);

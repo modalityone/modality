@@ -82,10 +82,10 @@ final class EventAudioLibraryActivity extends ViewDomainActivityBase {
 
     private final Player audioPlayer = new JavaFXMediaAudioPlayer();
     private final VisualGrid audioGrid =
-        // Using vertical skin on mobiles with screen < 600 px to prevent unnecessary table computing (can cause performance issue on low-end mobiles)
+        // Using mono-column skin on mobiles with screen < 600 px to prevent unnecessary table computing (can cause performance issue on low-end mobiles)
         Screen.getPrimary().getVisualBounds().getWidth() < 600 ?
-            VisualGrid.createVisualGridWithVerticalSkin() :
-            // Otherwise we use the responsive skin, which will decide between table and vertical skin
+            VisualGrid.createVisualGridWithMonoColumnLayoutSkin() :
+            // Otherwise we use the responsive skin, which will decide between table and mono-column skin
             VisualGrid.createVisualGridWithResponsiveSkin();
 
     @Override

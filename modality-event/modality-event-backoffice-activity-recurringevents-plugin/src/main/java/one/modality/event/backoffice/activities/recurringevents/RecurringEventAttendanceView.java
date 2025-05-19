@@ -118,7 +118,7 @@ final class RecurringEventAttendanceView {
             dateLabel.setFont(Font.font(null, FontWeight.BOLD, 16));
             boxesContainer.setTop(Layouts.setMaxWidthToInfinite(dateLabel));
 
-            VisualGrid linesGrid = VisualGrid.createVisualGridWithTableSkin();
+            VisualGrid linesGrid = VisualGrid.createVisualGridWithTableLayoutSkin();
             linesGrid.setHeaderVisible(false);
             linesGrid.setFullHeight(true);
             boxesContainer.setCenter(linesGrid);
