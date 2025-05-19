@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project>
+
+    <exported-packages>
+        <source-packages/>
+        <resource-packages/>
+    </exported-packages>
+
+    <dependencies>
+        <used-by-source-modules/>
+    </dependencies>
+
+    <providers>
+        <provider interface="dev.webfx.stack.routing.uirouter.UiRoute">one.modality.event.frontoffice.activities.audiolibrary.AudioLibraryRouting$AudioLibraryUiRoute</provider>
+        <provider interface="dev.webfx.stack.routing.uirouter.operations.RouteRequestEmitter">one.modality.event.frontoffice.activities.audiolibrary.AudioLibraryRouting$RouteToAudioLibraryRequestEmitter</provider>
+        <provider interface="dev.webfx.stack.routing.uirouter.UiRoute">one.modality.event.frontoffice.activities.audiolibrary.EventAudioLibraryRouting$EventAudioLibraryUiRoute</provider>
+    </providers>
+
+    <i18n javaKeysClass="one.modality.event.frontoffice.activities.audiolibrary.AudioLibraryI18nKeys"/>
+
+</project>
