@@ -380,14 +380,16 @@ final class VideoStreamingActivity extends ViewDomainActivityBase {
 
         //The monoPane that manage the program day selection
         new ResponsiveDesign(responsiveDaySelectionMonoPane)
-            // 1. Horizontal layout (for desktops)
+            // 1. Table layout (for desktops)
             .addResponsiveLayout(/* applicability test: */ width -> {
                 //If the grid skin is a table, we're in the desktop mode, otherwise we're in the mobile mode
-                return VisualGrid.isMultiColumnLayout(videoGrid);
+                return VisualGrid.isTableLayout(videoGrid);
             }, /* apply method: */ () -> responsiveDaySelectionMonoPane.setContent(daySwitcher.getDesktopView()),
                /* test dependencies: */ videoGrid.skinProperty())
             // 2. Vertical layout (for mobiles)
-            .addResponsiveLayout(/* apply method: */ () -> responsiveDaySelectionMonoPane.setContent(daySwitcher.getMobileViewContainer())).start();
+            .addResponsiveLayout(
+                /* apply method: */ () -> responsiveDaySelectionMonoPane.setContent(daySwitcher.getMobileViewContainer())
+            ).start();
 
         StackPane decoratedLivestreamCollapsePane = CollapsePane.decorateCollapsePane(videoCollapsePane, true);
         //We display this box only if the current Date is in the list of date in the video Scheduled Item list
