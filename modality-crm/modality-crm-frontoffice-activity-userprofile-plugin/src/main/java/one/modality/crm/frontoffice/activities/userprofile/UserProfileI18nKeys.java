@@ -17,6 +17,7 @@ public interface UserProfileI18nKeys {
     String UserProfileTitle = "UserProfileTitle";
     String PersonalInformationUpdated = "PersonalInformationUpdated";
     String ErrorWhileChangingPassword = "ErrorWhileChangingPassword";
+    String UserProfileHelp = "UserProfileHelp";
     String ErrorWhileSendingEmail = "ErrorWhileSendingEmail";
     String NewPasswordAgain = "NewPasswordAgain";
     String IncorrectPassword = "IncorrectPassword";
@@ -37,7 +38,6 @@ public interface UserProfileI18nKeys {
     String CurrentPassword = "CurrentPassword";
     String Close = "Close";
     String ChangeEmailTitleForButton = "ChangeEmailTitleForButton";
-    String NeedHelp = "NeedHelp";
     String EmailFormatIncorrect = "EmailFormatIncorrect";
 
 }
