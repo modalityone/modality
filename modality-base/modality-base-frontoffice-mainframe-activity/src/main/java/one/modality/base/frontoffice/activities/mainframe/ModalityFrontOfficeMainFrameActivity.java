@@ -59,6 +59,8 @@ import java.util.Objects;
 
 public final class ModalityFrontOfficeMainFrameActivity extends ModalityClientMainFrameActivity {
 
+    private static final boolean ENABLE_OVERLAY_MENU_BAR = false;
+
     private static final double LANG_MENU_HEIGHT = 52;
     private static final double LANG_BAR_MENU_HEIGHT = 29;
     private static final double WEB_MAIN_MENU_HEIGHT = 100;
@@ -90,7 +92,8 @@ public final class ModalityFrontOfficeMainFrameActivity extends ModalityClientMa
         // And then a fade transition for later activities
         FXProperties.runOnPropertyChange(transiting -> {
             if (transiting) {
-                overlayMenuBar.setAnimate(false);
+                if (ENABLE_OVERLAY_MENU_BAR)
+                    overlayMenuBar.setAnimate(false);
             } else { // Ending a transition
                 mountTransitionPane.setTransition(new FadeTransition());
             }
@@ -105,7 +108,7 @@ public final class ModalityFrontOfficeMainFrameActivity extends ModalityClientMa
                 if (isMobileLayout) {
                     footerHeight = mobileMenuBar.prefHeight(width);
                     layoutInArea(mobileMenuBar, 0, height - footerHeight, width, footerHeight);
-                } else if (mountMainMenuButtonBar != null) {
+                } else if (ENABLE_OVERLAY_MENU_BAR && mountMainMenuButtonBar != null) {
                     Point2D p = mountMainMenuButtonBar.localToScene(0, 0);
                     layoutInArea(overlayMenuBar, p.getX(), /*p.getY() < 0 ? 0 : p.getY()*/ 0, mountMainMenuButtonBar.getWidth(), mountMainMenuButtonBar.getHeight());
                 }
@@ -128,42 +131,44 @@ public final class ModalityFrontOfficeMainFrameActivity extends ModalityClientMa
         );
         overlayMenuBarContent.setAlignment(Pos.CENTER);
         overlayMenuBarContent.setMaxWidth(Double.MAX_VALUE);
-        overlayMenuBar = new CollapsePane(overlayMenuBarContent);
-        overlayMenuBar.setAnimate(false);
-        overlayMenuBar.setVisible(false);
-        overlayMenuBar.collapse();
-        double[] lastMouseY = { 0 };
-        mainFrameContainer.setOnMouseMoved(e -> {
-            double mouseY = e.getY(), mouseX = e.getSceneX();
-            if (Math.abs(mouseY - lastMouseY[0]) > 5 && !FXCollapseMenu.isCollapseMenu()) {
-                Node mountNode = getMountNode();
-                ScrollPane scrollPane = mountNode == null ? null : (ScrollPane) mountNode.getProperties().get("embedding-scrollpane");
-                boolean isPageOnTop = scrollPane == null || scrollPane.getVvalue() == 0;
-                boolean up = mouseY < lastMouseY[0];
-                if (!isPageOnTop && up && mouseY < mainFrameContainer.getHeight() / 3) {
-                    if (overlayMenuBar.isCollapsed()) {
-                        // Searching for the first button (ugly code...)
-                        Node node = overlayMenuBar.getContent(); // should return a vbox;
-                        if (node instanceof VBox)
-                            node = ((VBox) node).getChildren().get(1); // should return a CollapsePane
-                        if (node instanceof CollapsePane)
-                            node = ((CollapsePane) node).getContent(); // should return a MonoPane
-                        if (node instanceof MonoPane)
-                            node = ((MonoPane) node).getContent(); // should return an HBox
-                        if (node instanceof Parent)
-                            node = ((Parent) node).getChildrenUnmodifiable().get(2); // Should be the index for the first button
-                        if (node != null && mouseX >= node.localToScene(0, 0).getX()) {
-                            overlayMenuBar.setAnimate(true);
-                            overlayMenuBar.expand();
+        if (ENABLE_OVERLAY_MENU_BAR) {
+            overlayMenuBar = new CollapsePane(overlayMenuBarContent);
+            overlayMenuBar.setAnimate(false);
+            overlayMenuBar.setVisible(false);
+            overlayMenuBar.collapse();
+            double[] lastMouseY = {0};
+            mainFrameContainer.setOnMouseMoved(e -> {
+                double mouseY = e.getY(), mouseX = e.getSceneX();
+                if (Math.abs(mouseY - lastMouseY[0]) > 5 && !FXCollapseMenu.isCollapseMenu()) {
+                    Node mountNode = getMountNode();
+                    ScrollPane scrollPane = mountNode == null ? null : (ScrollPane) mountNode.getProperties().get("embedding-scrollpane");
+                    boolean isPageOnTop = scrollPane == null || scrollPane.getVvalue() == 0;
+                    boolean up = mouseY < lastMouseY[0];
+                    if (!isPageOnTop && up && mouseY < mainFrameContainer.getHeight() / 3) {
+                        if (overlayMenuBar.isCollapsed()) {
+                            // Searching for the first button (ugly code...)
+                            Node node = overlayMenuBar.getContent(); // should return a vbox;
+                            if (node instanceof VBox)
+                                node = ((VBox) node).getChildren().get(1); // should return a CollapsePane
+                            if (node instanceof CollapsePane)
+                                node = ((CollapsePane) node).getContent(); // should return a MonoPane
+                            if (node instanceof MonoPane)
+                                node = ((MonoPane) node).getContent(); // should return an HBox
+                            if (node instanceof Parent)
+                                node = ((Parent) node).getChildrenUnmodifiable().get(2); // Should be the index for the first button
+                            if (node != null && mouseX >= node.localToScene(0, 0).getX()) {
+                                overlayMenuBar.setAnimate(true);
+                                overlayMenuBar.expand();
+                            }
                         }
+                    } else if (!up && mouseY > WEB_MAIN_MENU_HEIGHT) {
+                        overlayMenuBar.setAnimate(!isPageOnTop);
+                        overlayMenuBar.collapse();
                     }
-                } else if (!up && mouseY > WEB_MAIN_MENU_HEIGHT) {
-                    overlayMenuBar.setAnimate(!isPageOnTop);
-                    overlayMenuBar.collapse();
                 }
-            }
-            lastMouseY[0] = mouseY;
-        });
+                lastMouseY[0] = mouseY;
+            });
+        }
 
         // To be aware: if backgroundNode is set to a WebView (which is actually its main purpose), then modifying the
         // mainFrame children again will cause the iFrame to reload in the web version, which is what we want to prevent
@@ -184,7 +189,7 @@ public final class ModalityFrontOfficeMainFrameActivity extends ModalityClientMa
                 mainFrameContainer.getChildren().setAll(children);
             firstOverlayChildIndex = mainFrameContainer.getChildren().size();
             updateOverlayChildren();
-            if (getMountNode() == null)
+            if (ENABLE_OVERLAY_MENU_BAR && getMountNode() == null)
                 overlayMenuBar.collapse();
         }, FXBackgroundNode.backgroundNodeProperty(), mobileLayoutProperty, mountNodeProperty());
 
@@ -217,33 +222,35 @@ public final class ModalityFrontOfficeMainFrameActivity extends ModalityClientMa
                 BorderPane borderPane = new BorderPane(vBox);
                 ScrollPane finalScrollPane = scrollPane = Controls.createVerticalScrollPane(borderPane);
                 mountNode.getProperties().put("embedding-scrollpane", scrollPane);
-                double[] lastScrollPaneContentHeight = {0}, lastVTopOffset = {0};
-                FXProperties.runOnPropertiesChange(() -> {
-                    mountMainMenuButtonBar = mainMenuButtonBar;
-                    if (mountTransitionPane.isTransiting())
-                        return;
-                    // Visibility management:
-                    double vTopOffset = Controls.computeScrollPaneVTopOffset(finalScrollPane);
-                    if (vTopOffset <= languageMenuBar.getHeight()) { // Making the overlay menu bar invisible when reaching the top
-                        overlayMenuBar.setAnimate(false); // because there is already a web menu on top of that page
-                        overlayMenuBar.collapse();
-                    } else if (vTopOffset > Screen.getPrimary().getBounds().getHeight()) {
-                        overlayMenuBar.setVisible(true); // Making it visible when the top one is no more in the view
-                        overlayMenuBar.setAnimate(true); // port (however, it will not be showing while it's collapsed)
-                    }
-                    // Collapse management:
-                    // Collapsing the overlay menu if an activity explicitly asked to do so
-                    if (FXCollapseMenu.isCollapseMenu())
-                        overlayMenuBar.collapse();
-                    // otherwise if the user scrolled a bit (at least 5 pixels)
-                    else if (Math.abs(vTopOffset - lastVTopOffset[0]) > 5) {
-                        // we expand of collapse the overlay menu depending on the scroll direction
-                        if (overlayMenuBar.isAnimate()) // and only when animated (page scrolled down)
-                            overlayMenuBar.setCollapsed(vTopOffset > lastVTopOffset[0]); // up = expand, down = collapse
-                        lastVTopOffset[0] = vTopOffset;
-                    }
-                    lastScrollPaneContentHeight[0] = borderPane.getHeight();
-                }, scrollPane.vvalueProperty(), FXCollapseMenu.collapseMenuProperty());
+                if (ENABLE_OVERLAY_MENU_BAR) {
+                    double[] lastScrollPaneContentHeight = {0}, lastVTopOffset = {0};
+                    FXProperties.runOnPropertiesChange(() -> {
+                        mountMainMenuButtonBar = mainMenuButtonBar;
+                        if (mountTransitionPane.isTransiting())
+                            return;
+                        // Visibility management:
+                        double vTopOffset = Controls.computeScrollPaneVTopOffset(finalScrollPane);
+                        if (vTopOffset <= languageMenuBar.getHeight()) { // Making the overlay menu bar invisible when reaching the top
+                            overlayMenuBar.setAnimate(false); // because there is already a web menu on top of that page
+                            overlayMenuBar.collapse();
+                        } else if (vTopOffset > Screen.getPrimary().getBounds().getHeight()) {
+                            overlayMenuBar.setVisible(true); // Making it visible when the top one is no more in the view
+                            overlayMenuBar.setAnimate(true); // port (however, it will not be showing while it's collapsed)
+                        }
+                        // Collapse management:
+                        // Collapsing the overlay menu if an activity explicitly asked to do so
+                        if (FXCollapseMenu.isCollapseMenu())
+                            overlayMenuBar.collapse();
+                            // otherwise if the user scrolled a bit (at least 5 pixels)
+                        else if (Math.abs(vTopOffset - lastVTopOffset[0]) > 5) {
+                            // we expand of collapse the overlay menu depending on the scroll direction
+                            if (overlayMenuBar.isAnimate()) // and only when animated (page scrolled down)
+                                overlayMenuBar.setCollapsed(vTopOffset > lastVTopOffset[0]); // up = expand, down = collapse
+                            lastVTopOffset[0] = vTopOffset;
+                        }
+                        lastScrollPaneContentHeight[0] = borderPane.getHeight();
+                    }, scrollPane.vvalueProperty(), FXCollapseMenu.collapseMenuProperty());
+                }
             }
             // Transiting to the node (embedded in the scroll pane)
             mountTransitionPane.transitToContent(scrollPane);
