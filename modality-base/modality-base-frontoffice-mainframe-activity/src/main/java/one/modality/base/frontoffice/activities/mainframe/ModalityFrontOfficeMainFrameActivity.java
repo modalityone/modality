@@ -2,7 +2,6 @@ package one.modality.base.frontoffice.activities.mainframe;
 
 import dev.webfx.extras.panes.*;
 import dev.webfx.extras.panes.transitions.CircleTransition;
-import dev.webfx.extras.panes.transitions.FadeTransition;
 import dev.webfx.extras.player.Players;
 import dev.webfx.extras.util.control.Controls;
 import dev.webfx.extras.util.layout.Layouts;
@@ -95,7 +94,7 @@ public final class ModalityFrontOfficeMainFrameActivity extends ModalityClientMa
                 if (ENABLE_OVERLAY_MENU_BAR)
                     overlayMenuBar.setAnimate(false);
             } else { // Ending a transition
-                mountTransitionPane.setTransition(new FadeTransition());
+                mountTransitionPane.setTransition(null) ; // maybe go back to new FadeTransition() after Spring Festival
             }
         }, mountTransitionPane.transitingProperty());
         //mountTransitionPane.setKeepsLeavingNodes(true); // Note: activities with video players should call TransitionPane.setKeepsLeavingNode(node, false)
