@@ -321,7 +321,7 @@ public final class ModalityFrontOfficeMainFrameActivity extends ModalityClientMa
         if (dialogArea.getChildren().isEmpty())
             mainFrameChildren.remove(dialogArea);
         else if (!mainFrameChildren.contains(dialogArea)) {
-            mainFrameChildren.add(firstOverlayChildIndex - 1, dialogArea);
+            mainFrameChildren.add(firstOverlayChildIndex, dialogArea);
         }
     }
 
