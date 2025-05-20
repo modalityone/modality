@@ -54,6 +54,7 @@ import one.modality.base.client.icons.SvgIcons;
 import one.modality.base.client.time.FrontOfficeTimeFormats;
 import one.modality.base.frontoffice.utility.page.FOPageUtil;
 import one.modality.base.shared.entities.*;
+import one.modality.crm.frontoffice.help.HelpPanel;
 import one.modality.crm.shared.services.authn.fx.FXUserPersonId;
 import one.modality.event.frontoffice.medias.MediaUtil;
 
@@ -231,7 +232,8 @@ final class EventAudioLibraryActivity extends ViewDomainActivityBase {
             responsiveHeader,
             new ScalePane(ScaleMode.FIT_WIDTH, audioPlayer.getMediaView()),
             new ScalePane(listOfTrackLabel),
-            audioTracksContainer
+            audioTracksContainer,
+            HelpPanel.createHelpPanel(AudioLibraryI18nKeys.AudioLibraryHelp, "kbs@kadampa.net")
         );
         loadedContentVBox.setAlignment(Pos.TOP_CENTER);
 
