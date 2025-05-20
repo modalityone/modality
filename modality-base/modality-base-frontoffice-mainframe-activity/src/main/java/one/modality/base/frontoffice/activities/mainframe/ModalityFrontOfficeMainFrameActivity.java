@@ -2,6 +2,7 @@ package one.modality.base.frontoffice.activities.mainframe;
 
 import dev.webfx.extras.panes.*;
 import dev.webfx.extras.panes.transitions.CircleTransition;
+import dev.webfx.extras.panes.transitions.Transition;
 import dev.webfx.extras.player.Players;
 import dev.webfx.extras.util.control.Controls;
 import dev.webfx.extras.util.layout.Layouts;
@@ -59,6 +60,8 @@ import java.util.Objects;
 public final class ModalityFrontOfficeMainFrameActivity extends ModalityClientMainFrameActivity {
 
     private static final boolean ENABLE_OVERLAY_MENU_BAR = false;
+    private static final Transition INITIAL_TRANSITION_EFFECT = new CircleTransition();
+    private static final Transition PAGE_TRANSITION_EFFECT = null; // maybe go back to new FadeTransition() after Spring Festival
 
     private static final double LANG_MENU_HEIGHT = 52;
     private static final double LANG_BAR_MENU_HEIGHT = 29;
@@ -87,14 +90,14 @@ public final class ModalityFrontOfficeMainFrameActivity extends ModalityClientMa
     public Node buildUi() {
         // Starting with a circle transition animation for the first activity displayed
         mountTransitionPane.setAnimateFirstContent(true);
-        mountTransitionPane.setTransition(new CircleTransition());
+        mountTransitionPane.setTransition(INITIAL_TRANSITION_EFFECT);
         // And then a fade transition for later activities
         FXProperties.runOnPropertyChange(transiting -> {
             if (transiting) {
                 if (ENABLE_OVERLAY_MENU_BAR)
                     overlayMenuBar.setAnimate(false);
             } else { // Ending a transition
-                mountTransitionPane.setTransition(null) ; // maybe go back to new FadeTransition() after Spring Festival
+                mountTransitionPane.setTransition(PAGE_TRANSITION_EFFECT) ;
             }
         }, mountTransitionPane.transitingProperty());
         //mountTransitionPane.setKeepsLeavingNodes(true); // Note: activities with video players should call TransitionPane.setKeepsLeavingNode(node, false)
@@ -396,12 +399,15 @@ public final class ModalityFrontOfficeMainFrameActivity extends ModalityClientMa
                 buttonBar = hBox;
                 buttonBar.setPrefHeight(WEB_USER_MENU_HEIGHT);
             } else {
-                Label brandLabel = I18nControls.newLabel(BrandI18nKeys.frontOfficeBrandNameAndLogo);
-                brandLabel.setGraphicTextGap(20);
-                //brandLabel.graphicTextGapProperty().bind(mainFrameContainer.widthProperty().divide(100));
-                brandLabel.getStyleClass().setAll("brand");
-                hBox.getChildren().add(0, brandLabel);
-                hBox.getChildren().add(1, Layouts.createHGrowable());
+                LargestFittingChildPane brandPane = new LargestFittingChildPane(
+                    createBrandLabel(false, 20),
+                    createBrandLabel(false, 5),
+                    createBrandLabel(true, 5)
+                );
+                brandPane.setMaxWidth(Double.MAX_VALUE);
+                brandPane.setAlignment(Pos.CENTER_LEFT);
+                HBox.setHgrow(brandPane, Priority.ALWAYS);
+                hBox.getChildren().add(0, brandPane);
                 hBox.setAlignment(Pos.BOTTOM_RIGHT);
                 hBox.setMaxHeight(Region.USE_PREF_SIZE);
                 buttonBar = new MonoPane(hBox);
@@ -429,6 +435,13 @@ public final class ModalityFrontOfficeMainFrameActivity extends ModalityClientMa
             }, WebFxKitLauncher.safeAreaInsetsProperty());
         }
         return collapsePane;
+    }
+
+    private Label createBrandLabel(boolean shortVersion, double graphicTextGap) {
+        Label brandLabel = I18nControls.newLabel(shortVersion ? BrandI18nKeys.frontOfficeBrandNameAndLogoShort : BrandI18nKeys.frontOfficeBrandNameAndLogo);
+        brandLabel.setGraphicTextGap(graphicTextGap);
+        brandLabel.getStyleClass().setAll("brand");
+        return brandLabel;
     }
 
     private Button createMenuButton(Action routeAction, boolean userMenu, boolean mobileLayout) {

@@ -6,5 +6,6 @@ public interface BrandI18nKeys {
     String frontOfficeBrandNameAndLogo = "frontOfficeBrandNameAndLogo";
     String brandMainColor = "brandMainColor";
     String brandMainBackgroundColor = "brandMainBackgroundColor";
+    String frontOfficeBrandNameAndLogoShort = "frontOfficeBrandNameAndLogoShort";
 
 }
