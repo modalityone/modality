@@ -182,7 +182,7 @@ final class VideoStreamingActivity extends ViewDomainActivityBase {
                 Event eventContainingVideos = Objects.coalesce(event.getRepeatedEvent(), event);
                 // We load all video scheduledItems booked by the user for the event (booking must be confirmed
                 // and paid). They will be grouped by day in the UI.
-                // Note: double dots such as programScheduledItem.timeline..startTime means we do a left join that allows null value (if the event is recurring, the timeline of the programScheduledItem is null)
+                // Note: double dots such as "programScheduledItem.timeline..startTime" means we do a left join that allows null value (if the event is recurring, the timeline of the programScheduledItem is null)
                 entityStore.<ScheduledItem>executeQuery("select name, date, expirationDate, programScheduledItem.(name, startTime, endTime, timeline.(startTime, endTime), cancelled), published, event.(name, type.recurringItem, livestreamUrl, recurringWithVideo), vodDelayed, " +
                             " (exists(select MediaConsumption where scheduledItem=si and attendance.documentLine.document.person=?) as attended), " +
                             " (select id from Attendance where scheduledItem=si.bookableScheduledItem and documentLine.document.person=? limit 1) as attendanceId " +
@@ -321,6 +321,7 @@ final class VideoStreamingActivity extends ViewDomainActivityBase {
         Hyperlink selectEventLink = I18nControls.newHyperlink("Select another event");
         selectEventLink.setOnAction(e -> eventsSelectionPane.expand());
         VBox eventsSelectionVBox = new VBox(10, selectEventLink, eventsSelectionPane);
+        Layouts.setMinMaxHeightToPref(eventsSelectionVBox); // No need to compute min/max height as different to pref (layout computation optimization)
         eventsSelectionVBox.setAlignment(Pos.CENTER);
         eventsSelectionPane.setPadding(new Insets(50, 0, 200, 0));
         // Making the section visible only if there are more than 1 event with videos
@@ -342,6 +343,7 @@ final class VideoStreamingActivity extends ViewDomainActivityBase {
         videoExpirationLabel.setWrapText(true);
         videoExpirationLabel.setPadding(new Insets(30, 0, 0, 0));
         VBox titleVBox = new VBox(eventLabel, eventDescriptionHTMLText, videoExpirationLabel);
+        Layouts.setMinMaxHeightToPref(titleVBox); // No need to compute min/max height as different to pref (layout computation optimization)
         HBox.setHgrow(titleVBox, Priority.ALWAYS); // Necessary for the web version TODO: should work without, so needs investigation and bug fix
 
         MonoPane responsiveHeader = new MonoPane();
@@ -368,6 +370,7 @@ final class VideoStreamingActivity extends ViewDomainActivityBase {
             // 2. Vertical layout (for mobiles) - when TitleVBox is too high (always applicable if 1. is not)
             .addResponsiveLayout(/* apply method: */ () -> {
                 VBox vBox = new VBox(10, eventImageContainer, titleVBox);
+                Layouts.setMinMaxHeightToPref(vBox); // No need to compute min/max height as different to pref (layout computation optimization)
                 vBox.setAlignment(Pos.CENTER);
                 VBox.setMargin(titleVBox, new Insets(5, 10, 5, 10)); // Same as cell padding => vertically aligned with cell content
                 responsiveHeader.setContent(vBox);
@@ -397,18 +400,20 @@ final class VideoStreamingActivity extends ViewDomainActivityBase {
         StackPane decoratedLivestreamCollapsePane = CollapsePane.decorateCollapsePane(videoCollapsePane, true);
         //We display this box only if the current Date is in the list of date in the video Scheduled Item list
         VBox todayProgramVBox = new VBox(30); // Will be populated later (see reacting code below)
+        Layouts.setMinMaxHeightToPref(todayProgramVBox); // No need to compute min/max height as different to pref (layout computation optimization)
         todayProgramVBox.setAlignment(Pos.CENTER);
         Label todayVideosLabel = Bootstrap.strong(Bootstrap.textPrimary(Bootstrap.h3(new Label())));
         todayVideosLabel.setPadding(new Insets(100, 0, 40, 0));
 
         Label eventScheduleLabel = Bootstrap.h3(I18nControls.newLabel(VideoStreamingI18nKeys.EventSchedule));
         VBox selectTheDayBelowVBox = new VBox(5, eventScheduleLabel, selectTheDayBelowLabel);
+        Layouts.setMinMaxHeightToPref(selectTheDayBelowVBox); // No need to compute min/max height as different to pref (layout computation optimization)
         selectTheDayBelowVBox.setAlignment(Pos.CENTER);
         selectTheDayBelowVBox.setPadding(new Insets(100, 0, 0, 0));
 
         videoGrid.setMinRowHeight(48);
         videoGrid.setPrefRowHeight(Region.USE_COMPUTED_SIZE);
-        videoGrid.setCellMargin(new Insets(5, 10, 5, 10));
+        videoGrid.setCellMargin(new Insets(5, 10, 5, 10)); // top and bottom are more for mono colum layout (no real effect on table layout)
         videoGrid.setFullHeight(true);
         videoGrid.setHeaderVisible(true);
         videoGrid.setAppContext(this); // Passing this VideosActivity as appContext to the value renderers
@@ -421,6 +426,7 @@ final class VideoStreamingActivity extends ViewDomainActivityBase {
             videoGrid, // contains the videos for the selected day (or all days)
             HelpPanel.createHelpPanel(VideoStreamingI18nKeys.VideosHelp, VideoStreamingI18nKeys.VideosHelpSecondary) // temporarily hardcoded i18n message for Festivals
         );
+        Layouts.setMinMaxHeightToPref(loadedContentVBox); // No need to compute min/max height as different to pref (layout computation optimization)
         loadedContentVBox.setAlignment(Pos.TOP_CENTER);
 
 
@@ -587,6 +593,7 @@ final class VideoStreamingActivity extends ViewDomainActivityBase {
                 // we autoplay only the first video
                 autoPlay = false;
             }
+            Layouts.setMinMaxHeightToPref(videoMediasVBox); // No need to compute min/max height as different to pref (layout computation optimization)
             videoContent = videoMediasVBox;
         }
         videoCollapsePane.setContent(new ScalePane(ScaleMode.FIT_WIDTH, videoContent));
