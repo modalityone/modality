@@ -233,7 +233,7 @@ final class EventAudioLibraryActivity extends ViewDomainActivityBase {
             new ScalePane(ScaleMode.FIT_WIDTH, audioPlayer.getMediaView()),
             new ScalePane(listOfTrackLabel),
             audioTracksContainer,
-            HelpPanel.createHelpPanel(AudioLibraryI18nKeys.AudioLibraryHelp, "kbs@kadampa.net")
+            HelpPanel.createEmailHelpPanel(AudioLibraryI18nKeys.AudioLibraryHelp, "kbs@kadampa.net")
         );
         loadedContentVBox.setAlignment(Pos.TOP_CENTER);
 

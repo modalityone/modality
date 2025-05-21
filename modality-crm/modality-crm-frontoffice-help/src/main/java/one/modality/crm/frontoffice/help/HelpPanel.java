@@ -19,7 +19,11 @@ import one.modality.base.client.icons.SvgIcons;
  */
 public final class HelpPanel {
 
-    public static Node createHelpPanel(Object helpI18nKey, Object helpEmail) {
+    public static Node createEmailHelpPanel(Object helpI18nKey, String helpEmail) {
+        return createHelpPanel(helpI18nKey,  HelpI18nKeys.EmailUs1, helpEmail);
+    }
+
+    public static Node createHelpPanel(Object helpI18nKey, Object helpSecondaryI18nKey, Object... helpSecondaryArgs) {
         SVGPath headPhoneSvgPath = SvgIcons.createHeadphonesPath();
         MonoPane headPhoneMonoPane = new MonoPane(headPhoneSvgPath);
 
@@ -29,12 +33,13 @@ public final class HelpPanel {
 
         // Using an HtmlText rather than a label so it can contain a clickable link for the email.
         HtmlText emailUs = Bootstrap.strong(new HtmlText());
-        I18n.bindI18nTextProperty(emailUs.textProperty(), HelpI18nKeys.EmailUs1, helpEmail);
+        I18n.bindI18nTextProperty(emailUs.textProperty(), helpSecondaryI18nKey, helpSecondaryArgs);
 
         VBox vBox = new VBox(30, headPhoneMonoPane, needHelp, emailUs);
         vBox.setPadding(new Insets(100, 0, 50, 0));
         vBox.setAlignment(Pos.CENTER);
         return vBox;
     }
+
 
 }

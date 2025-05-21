@@ -411,7 +411,7 @@ final class UserProfileActivity extends ViewDomainActivityBase implements Modali
 
         transitionPane.transitToContent(mainStackPane);
 
-        container.getChildren().add(HelpPanel.createHelpPanel(UserProfileI18nKeys.UserProfileHelp, "kbs@kadampa.net"));
+        container.getChildren().add(HelpPanel.createEmailHelpPanel(UserProfileI18nKeys.UserProfileHelp, "kbs@kadampa.net"));
 
         changeUserEmail.setOnAction(e -> {
             ScalePane userEmailUIView = changeEmailUI.getView();
