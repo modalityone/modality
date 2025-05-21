@@ -292,10 +292,10 @@ public interface Event extends Entity,
         return UK_CLOCK;
     }
 
-    Duration DEBUG_LOCAL_DATETIME_DELTA = Duration.between(LocalDateTime.now(getEventClock()), LocalDateTime.of(2025, 5, 24, 11, 15, 0));
+    //Duration DEBUG_LOCAL_DATETIME_DELTA = Duration.between(LocalDateTime.now(getEventClock()), LocalDateTime.of(2025, 5, 24, 11, 15, 0));
 
     static LocalDateTime nowInEventTimezone() {
-        return LocalDateTime.now(getEventClock()).plus(DEBUG_LOCAL_DATETIME_DELTA);
+        return LocalDateTime.now(getEventClock());//.plus(DEBUG_LOCAL_DATETIME_DELTA);
     }
 
     static LocalDate todayInEventTimezone() {
