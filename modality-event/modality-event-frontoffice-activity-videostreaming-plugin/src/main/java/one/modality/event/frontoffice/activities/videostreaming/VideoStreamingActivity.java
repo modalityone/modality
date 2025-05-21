@@ -228,14 +228,13 @@ final class VideoStreamingActivity extends ViewDomainActivityBase {
             "{expression: 'this', label: 'Status', renderer: 'videoStatus', textAlign: 'center', hShrink: false, styleClass: 'status'}\n" +
             "]", getDomainModel(), "ScheduledItem");
         // The columns (and groups) displayed for recurring events with 1 or just a few sessions per day (such as STTP)
-        allProgramVideoColumns = VisualEntityColumnFactory.get().fromJsonArray("""
-            [
-            {expression: 'this', format: 'allProgramGroup', textAlign: 'center', styleClass: 'status', role: 'group'},
-            {expression: 'date', label: 'Date', format: 'videoDate', hShrink: false, styleClass: 'date'},
-            {expression: '[coalesce(startTime, timeline.startTime, programScheduledItem.startTime, programScheduledItem.timeline.startTime), coalesce(endTime, timeline.endTime, programScheduledItem.endTime, programScheduledItem.timeline.endTime)]', label: 'Time', format: 'videoTimeRange', textAlign: 'center', hShrink: false, styleClass: 'time'},
-            {expression: 'this', label: 'Session', renderer: 'videoName', minWidth: 200, styleClass: 'name'},
-            {expression: 'this', label: 'Status', renderer: 'videoStatus', textAlign: 'center', hShrink: false, styleClass: 'status'}
-            ]""", getDomainModel(), "ScheduledItem");
+        allProgramVideoColumns = VisualEntityColumnFactory.get().fromJsonArray("[\n" +
+            "{expression: 'this', format: 'allProgramGroup', textAlign: 'center', styleClass: 'status', role: 'group'},\n" +
+            "{expression: 'date', label: 'Date', format: 'videoDate', hShrink: false, styleClass: 'date'},\n" +
+            "{expression: '[coalesce(startTime, timeline.startTime, programScheduledItem.startTime, programScheduledItem.timeline.startTime), coalesce(endTime, timeline.endTime, programScheduledItem.endTime, programScheduledItem.timeline.endTime)]', label: 'Time', format: 'videoTimeRange', textAlign: 'center', hShrink: false, styleClass: 'time'},\n" +
+            "{expression: 'this', label: '" + EventI18nKeys.Session + "', renderer: 'videoName', minWidth: 200, styleClass: 'name'},\n" +
+            "{expression: 'this', label: 'Status', renderer: 'videoStatus', textAlign: 'center', hShrink: false, styleClass: 'status'}\n" +
+            "]", getDomainModel(), "ScheduledItem");
     }
 
     private void scheduleAutoLivestream() {
@@ -364,17 +363,11 @@ final class VideoStreamingActivity extends ViewDomainActivityBase {
                     // Now we actually evaluate the responsive test based on the font size factor
                     return fontSizeFactor > 0.75; // if superior to 0.75 threshold => this desktop layout
                 }, /* apply method: */ () -> { // for the desktop layout
-                    // Nothing applied before it is inserted in the scene graph, to avoid a wrong initial layout (especially desktop layout on mobiles)
-                    if (responsiveHeader.getWidth() == 0)
-                        return;
                     responsiveHeader.setContent(new HBox(eventImageContainer, titleVBox));
                 }
                 , /* test dependencies: */ eventImageContainer.widthProperty())
             // 2. Vertical layout (for mobiles) - when TitleVBox is too high (always applicable if 1. is not)
             .addResponsiveLayout(/* apply method: */ () -> {
-                // Nothing applied before it is inserted in the scene graph, to avoid a wrong initial layout
-                if (responsiveHeader.getWidth() == 0)
-                    return;
                 VBox vBox = new VBox(10, eventImageContainer, titleVBox);
                 vBox.setAlignment(Pos.CENTER);
                 VBox.setMargin(titleVBox, new Insets(5, 10, 5, 10)); // Same as cell padding => vertically aligned with cell content
