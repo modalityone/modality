@@ -305,6 +305,7 @@ public final class ModalityFrontOfficeMainFrameActivity extends ModalityClientMa
             dialogArea = (Pane) properties.get(arbitraryKey);
             if (dialogArea == null) {
                 properties.put(arbitraryKey, dialogArea = new Pane());
+                dialogArea.getStyleClass().add("modality-dialog-area");
                 // We request focus on mouse clicked. This is to allow the dropdown dialog in ButtonSelector to automatically
                 // close when the user clicks outside (focus change triggers this auto-close mechanism).
                 dialogArea.setOnMouseClicked(e -> dialogArea.requestFocus());

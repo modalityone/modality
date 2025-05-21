@@ -48,3 +48,9 @@ fx-collapsepane.menu-bar.lang-menu-bar > fx-border {
     color: #838788;
     --fx-svg-path-fill: #838788
 }
+
+
+.modality-dialog-area .gold-layout {
+    backdrop-filter: blur(3px);
+    -webkit-backdrop-filter: blur(3px);
+}
