@@ -416,7 +416,7 @@ final class VideoStreamingActivity extends ViewDomainActivityBase {
             decoratedLivestreamCollapsePane,
             responsiveDaySelectionMonoPane,
             videoGrid, // contains the videos for the selected day (or all days)
-            HelpPanel.createHelpPanel(VideoStreamingI18nKeys.VideosHelp, "kbs@kadampa.net") // set to livestream-support@kadampafestivals.org during festivals
+            HelpPanel.createHelpPanel(VideoStreamingI18nKeys.VideosHelp, VideoStreamingI18nKeys.VideosHelpSecondary) // temporarily hardcoded i18n message for Festivals
         );
         loadedContentVBox.setAlignment(Pos.TOP_CENTER);
 

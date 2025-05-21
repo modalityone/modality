@@ -15,6 +15,7 @@ public interface VideoStreamingI18nKeys {
     String Remarks = "Remarks";
     String LiveAnnouncements = "LiveAnnouncements";
     String Watch = "Watch";
+    String VideosHelpSecondary = "VideosHelpSecondary";
     String LiveNow = "LiveNow";
     String SelectTheDayBelow = "SelectTheDayBelow";
     String VideoNotYetPublished = "VideoNotYetPublished";
