@@ -129,7 +129,7 @@ public class ModalityMagicLinkAuthenticationGateway implements ServerAuthenticat
         // 1) Checking the existence of the magic link in the database, and if so, loading it with required info
         return LoginLinkService.loadLoginLinkFromToken(credentials.getToken(), true, dataSourceModel)
             .compose(magicLink -> {
-                // 2) The magic link is valid, so we memorise its usage date, and also check if the request comes from
+                // 2) The magic link is valid, so we memorize its usage date and also check if the request comes from
                 // a registered or unregistered user (with or without an account)
                 return LoginLinkService.loadUserPersonFromLoginLink(magicLink)
                     .compose(userPerson -> {
@@ -152,8 +152,8 @@ public class ModalityMagicLinkAuthenticationGateway implements ServerAuthenticat
                                     .onFailure(Console::log)
                                     .onSuccess(ignored2 -> {
                                         // 6) We also finally push the userId to the original login client here, and
-                                        // this should be followed by a subsequent push of the authorizations to that
-                                        // same client (as explained above).
+                                        // this should be followed by a later push of the authorizations to that same
+                                        // client (as explained above).
                                         String loginRunId = magicLink.getLoginRunId();
                                         PushServerService.pushState(StateAccessor.createUserIdState(userId), loginRunId);
                                     })

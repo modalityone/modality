@@ -38,9 +38,9 @@ public class ModalityClientApplication extends Application {
         Rectangle2D screenVisualBounds = Screen.getPrimary().getVisualBounds();
         double width = screenVisualBounds.getWidth() * 0.8;
         double height = screenVisualBounds.getHeight() * 0.9;
-        // We first create a scene with a dummy root (waiting for the ui router to start)
+        // We first create a scene with a fake root (waiting for the ui router to start)
         Scene scene = DeviceSceneUtil.newScene(new BorderPane(), width, height);
-        // When the ui router will start, it will set modalityClientStarterActivity.nodeProperty()
+        // When the ui router starts, it will set modalityClientStarterActivity.nodeProperty()
         FXProperties.onPropertySet(modalityClientStarterActivity.nodeProperty(), node -> {
             // From that moment on, we bind the scene root to the ui router activity node
             scene.rootProperty().bind(FXProperties.compute(modalityClientStarterActivity.nodeProperty(), n -> (Parent) n));

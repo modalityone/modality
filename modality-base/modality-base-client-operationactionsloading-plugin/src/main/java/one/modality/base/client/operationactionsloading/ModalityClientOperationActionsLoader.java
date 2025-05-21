@@ -73,11 +73,11 @@ public final class ModalityClientOperationActionsLoader implements ApplicationMo
             String operationCode = operation.evaluate("code");
             String i18nCode = operation.getStringFieldValue("i18nCode");
             boolean isPublic = operation.getBooleanFieldValue("public");
-            // Note: if a i18nCode is read from the database, it should be considered as first choice, before the default
+            // Note: if an i18nCode is read from the database, it should be considered as the first choice, before the default
             // i18n key provided by the software (via operation request). This is part of the Modality customization
             // features. This will indeed happen here because ModalityOperationI18nKey implements HasDictionaryMessageKey,
             // and getDictionaryMessageKey() will return that passed i18nCode. However, if no i18nCode is read from
-            // the database (i.e. i18nCode is null or empty), getDictionaryMessageKey() should return the default i18n
+            // the database (i.e., i18nCode is null or empty), getDictionaryMessageKey() should return the default i18n
             // key instead. This can't happen immediately because we don't have an operation request instance at this
             // stage to read that default i18n key. We will do it through setOperationActionGraphicalPropertiesUpdater()
             // below. Until this happens, getDictionaryMessageKey() will return null.
@@ -99,7 +99,7 @@ public final class ModalityClientOperationActionsLoader implements ApplicationMo
         // Telling the registry how to update the graphical properties when needed (ex: ToggleCancel actions
         // text needs to be updated to say 'Cancel' or 'Uncancel' on selection change)
         registry.setOperationActionGraphicalPropertiesUpdater(operationAction -> {
-            // Actually since text and graphic properties come from I18n, we just need to inform it about the
+            // Actually, since text and graphic properties come from I18n, we just need to inform it about the
             // change, and it will refresh all translations, including therefore these graphical properties.
             // The possible expressions used by operations like ToggleCancel will be recomputed through this
             // refresh thanks to the I18n evaluation system.
