@@ -200,9 +200,17 @@ final class VideoStreamingActivity extends ViewDomainActivityBase {
                         userPersonId, userPersonId, eventContainingVideos, KnownItemFamily.TEACHING.getCode(), KnownItem.VIDEO.getCode(), userPersonId, event)
                     .onFailure(Console::log)
                     .onSuccess(scheduledItems -> Platform.runLater(() -> {
-                        videoScheduledItems.setAll(scheduledItems);
-                        populateVideos();
-                        scheduleAutoLivestream();
+                        videoScheduledItems.setAll(scheduledItems); // Will trigger the build of the video table.
+                        // We are now ready to populate the videos, but we postpone this for the 2 following reasons:
+                        // 1) The UI may not be completely built yet on low-end devices, and loading a video player now
+                        // could be heavy and freeze the UI even more.
+                        // 2) If there is a livestream now (or close), scheduleAutoLivestream() will auto-expand the
+                        // video player and auto-scroll to it, but the auto-scroll target position may not be stable at
+                        // this time (ex: the video table not finished building), causing a wrong final scroll position.
+                        UiScheduler.scheduleDelay(2000, () -> { // 2s is a reasonable waiting time
+                            populateVideoPlayers(); // will load the video player
+                            scheduleAutoLivestream(); // may auto-expand the video player if now is an appropriate time
+                        });
                     }));
                 LocalDate today = Event.todayInEventTimezone();
                 // If we are during the event, we position the `currentSelectedDay` to today
@@ -217,7 +225,7 @@ final class VideoStreamingActivity extends ViewDomainActivityBase {
             EntityId userPersonId = FXUserPersonId.getUserPersonId();
             watchMedias.clear();
             if (userPersonId == null || isUserWatchingLivestream()) {
-                populateVideos(); // livestream
+                populateVideoPlayers(); // livestream
             } else { // The VOD requires additional Media loading
                 loadMediaAndWatch();
             }
@@ -269,7 +277,7 @@ final class VideoStreamingActivity extends ViewDomainActivityBase {
             .onFailure(Console::log)
             .onSuccess(mediaLists -> Platform.runLater(() -> {
                 Collections.setAll(watchMedias, mediaLists);
-                populateVideos(); // VOD
+                populateVideoPlayers(); // VOD
                 videoCollapsePane.expand();
             }));
     }
@@ -577,7 +585,7 @@ final class VideoStreamingActivity extends ViewDomainActivityBase {
         SceneUtil.scrollNodeToBeVerticallyVisibleOnScene(videoCollapsePane, false, true);
     }
 
-    private void populateVideos() {
+    private void populateVideoPlayers() {
         // If some previous videos were consumed, we stop their consumption recorders
         videoConsumptionRecorders.forEach(MediaConsumptionRecorder::stop);
         videoConsumptionRecorders.clear();
