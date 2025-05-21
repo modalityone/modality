@@ -48,6 +48,7 @@ import javafx.scene.control.Label;
 import javafx.scene.layout.*;
 import javafx.scene.text.Font;
 import javafx.scene.text.TextAlignment;
+import javafx.stage.Screen;
 import one.modality.base.client.cloudinary.ModalityCloudinary;
 import one.modality.base.client.i18n.BaseI18nKeys;
 import one.modality.base.client.icons.SvgIcons;
@@ -74,6 +75,7 @@ import java.util.stream.Collectors;
  */
 final class VideoStreamingActivity extends ViewDomainActivityBase {
 
+    private static final double STRAIGHT_MOBILE_LAYOUT_UNDER_WIDTH = 400; // mainly to reduce responsive computation on low-end devices
     private static final int MIN_NUMBER_OF_SESSION_PER_DAY_BEFORE_DISPLAYING_DAILY_PROGRAM = 3;
     private static final double IMAGE_HEIGHT = 240;
     private static final double EVENT_THUMBNAIL_WIDTH = 263;
@@ -98,7 +100,10 @@ final class VideoStreamingActivity extends ViewDomainActivityBase {
     private final Label videoExpirationLabel = new Label();
     private final Label selectTheDayBelowLabel = I18nControls.newLabel(VideoStreamingI18nKeys.SelectTheDayBelow);
     private EntityStore entityStore;
-    private final VisualGrid videoGrid = VisualGrid.createVisualGridWithResponsiveSkin();
+    private final VisualGrid videoGrid =
+        Screen.getPrimary().getVisualBounds().getWidth() <= STRAIGHT_MOBILE_LAYOUT_UNDER_WIDTH ?
+            VisualGrid.createVisualGridWithMonoColumnLayoutSkin() :
+            VisualGrid.createVisualGridWithResponsiveSkin();
 
     private final ObjectProperty<LocalDate> selectedDayProperty = new SimpleObjectProperty<>();
     private final MonoPane pageContainer = new MonoPane(); // Will hold either the loading indicator or the loaded content
@@ -125,7 +130,7 @@ final class VideoStreamingActivity extends ViewDomainActivityBase {
             eventsWithBookedVideos.clear();
             if (userPersonId != null) {
                 eventsWithBookedVideosLoadingProperty.set(true);
-                // we look for the scheduledItem having a bookableScheduledItem which is an audio type (case of festival)
+                // we look for the scheduledItem having a `bookableScheduledItem` which is an audio type (case of festival)
                 entityStore.<DocumentLine>executeQuery(
                         "select document.event.(name, label.(de,en,es,fr,pt), shortDescription, shortDescriptionLabel, audioExpirationDate, startDate, endDate, livestreamUrl, vodExpirationDate, repeatVideo, recurringWithVideo, repeatedEvent), item.code, item.family.code, " +
                             // We look if there are published audio ScheduledItem of type video, whose bookableScheduledItem has been booked
@@ -135,7 +140,7 @@ final class VideoStreamingActivity extends ViewDomainActivityBase {
                             " and dl.document.event.(repeatedEvent = null or repeatVideo)" +
                             // we check if :
                             " and (" +
-                            // 1/ there is a ScheduledItem of video family type whose bookableScheduledItem has been booked (KBS3 setup)
+                            // 1/ there is a ScheduledItem of `video` family type whose `bookableScheduledItem` has been booked (KBS3 setup)
                             " exists (select ScheduledItem videoSI where item.family.code=? and exists(select Attendance where documentLine=dl and scheduledItem=videoSI.bookableScheduledItem))" +
                             // 2/ Or KBS3 / KBS2 setup (this allows displaying the videos that have been booked in the past with KBS2 events, event if we can't display them)
                             " or item.family.code=?)" +
@@ -182,7 +187,7 @@ final class VideoStreamingActivity extends ViewDomainActivityBase {
                 Event eventContainingVideos = Objects.coalesce(event.getRepeatedEvent(), event);
                 // We load all video scheduledItems booked by the user for the event (booking must be confirmed
                 // and paid). They will be grouped by day in the UI.
-                // Note: double dots such as "programScheduledItem.timeline..startTime" means we do a left join that allows null value (if the event is recurring, the timeline of the programScheduledItem is null)
+                // Note: double dots such as `programScheduledItem.timeline..startTime` means we do a left join that allows null value (if the event is recurring, the timeline of the programScheduledItem is null)
                 entityStore.<ScheduledItem>executeQuery("select name, date, expirationDate, programScheduledItem.(name, startTime, endTime, timeline.(startTime, endTime), cancelled), published, event.(name, type.recurringItem, livestreamUrl, recurringWithVideo), vodDelayed, " +
                             " (exists(select MediaConsumption where scheduledItem=si and attendance.documentLine.document.person=?) as attended), " +
                             " (select id from Attendance where scheduledItem=si.bookableScheduledItem and documentLine.document.person=? limit 1) as attendanceId " +
@@ -200,7 +205,7 @@ final class VideoStreamingActivity extends ViewDomainActivityBase {
                         scheduleAutoLivestream();
                     }));
                 LocalDate today = Event.todayInEventTimezone();
-                // If we are during the event, we position the currentSelectedDay to today
+                // If we are during the event, we position the `currentSelectedDay` to today
                 if (today.isAfter(event.getStartDate().minusDays(1)) && today.isBefore(event.getEndDate().plusDays(1))) {
                     daySwitcher.setDay(today);
                 }
@@ -239,7 +244,7 @@ final class VideoStreamingActivity extends ViewDomainActivityBase {
     private void scheduleAutoLivestream() {
         // The livestream url is always the same for the event, but we still need to determine which
         // session is being played for the MediaConsumption management. To do this, we will set
-        // scheduledVideoItemProperty with the scheduled item corresponding to the played session.
+        // `scheduledVideoItemProperty` with the scheduled item corresponding to the played session.
         for (ScheduledItem videoScheduledItem : videoScheduledItems) { // iterating video sessions
             VideoLifecycle videoLifecycle = new VideoLifecycle(videoScheduledItem);
 
@@ -362,7 +367,7 @@ final class VideoStreamingActivity extends ViewDomainActivityBase {
                     eventLabel.setStyle("-fx-font-size: " + fontSizeFactor * 30);
                     eventDescriptionHTMLText.setFont(Font.font(fontSizeFactor * 18));
                     // Now we actually evaluate the responsive test based on the font size factor
-                    return fontSizeFactor > 0.75; // if superior to 0.75 threshold => this desktop layout
+                    return width > STRAIGHT_MOBILE_LAYOUT_UNDER_WIDTH && fontSizeFactor > 0.75; // if superior to 0.75 threshold => this desktop layout
                 }, /* apply method: */ () -> { // for the desktop layout
                     responsiveHeader.setContent(new HBox(eventImageContainer, titleVBox));
                 }
