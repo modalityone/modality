@@ -177,9 +177,8 @@ final class VideoStreamingActivity extends ViewDomainActivityBase {
         FXProperties.runOnPropertiesChange(() -> {
             Event event = eventProperty.get();
             EntityId userPersonId = FXUserPersonId.getUserPersonId();
-            if (event == null || userPersonId == null) {
-                videoScheduledItems.clear();
-            } else {
+            videoScheduledItems.clear();
+            if (event != null && userPersonId != null) {
                 Event eventContainingVideos = Objects.coalesce(event.getRepeatedEvent(), event);
                 // We load all video scheduledItems booked by the user for the event (booking must be confirmed
                 // and paid). They will be grouped by day in the UI.
