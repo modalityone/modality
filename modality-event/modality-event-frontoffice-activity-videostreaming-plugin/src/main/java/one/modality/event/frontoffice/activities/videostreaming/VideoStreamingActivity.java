@@ -350,20 +350,31 @@ final class VideoStreamingActivity extends ViewDomainActivityBase {
         new ResponsiveDesign(responsiveHeader)
             // 1. Horizontal layout (for desktops) - as far as TitleVBox is not higher than the image
             .addResponsiveLayout(/* applicability test: */ width -> {
+                    // Note that we take the opportunity of this responsive test (called each time the width changes) to
+                    // set the font of eventLabel and eventDescriptionHTMLText in dependence on that width
                     double spacing = width * 0.05;
                     HBox.setMargin(titleVBox, new Insets(0, 0, 0, spacing));
                     double titleVBoxWidth = width - eventImageContainer.getWidth() - spacing;
-                    //Here we resize the font according to the size of the window
+                    // Here we resize the font according to the size of the window
                     double fontSizeFactor = Double.max(0.75, Double.min(1, titleVBoxWidth * 0.0042));
-                    //In JavaFX, the CSS has priority on Font, that's why we do a setStyle after. In web, the Font has priority on CSS
+                    // In JavaFX, the CSS has priority on Font, that's why we do a setStyle after. In web, the Font has priority on CSS
                     eventLabel.setFont(Font.font(fontSizeFactor * 30));
                     eventLabel.setStyle("-fx-font-size: " + fontSizeFactor * 30);
                     eventDescriptionHTMLText.setFont(Font.font(fontSizeFactor * 18));
-                    return fontSizeFactor > 0.75;
-                }, /* apply method: */ () -> responsiveHeader.setContent(new HBox(eventImageContainer, titleVBox))
+                    // Now we actually evaluate the responsive test based on the font size factor
+                    return fontSizeFactor > 0.75; // if superior to 0.75 threshold => this desktop layout
+                }, /* apply method: */ () -> { // for the desktop layout
+                    // Nothing applied before it is inserted in the scene graph, to avoid a wrong initial layout (especially desktop layout on mobiles)
+                    if (responsiveHeader.getWidth() == 0)
+                        return;
+                    responsiveHeader.setContent(new HBox(eventImageContainer, titleVBox));
+                }
                 , /* test dependencies: */ eventImageContainer.widthProperty())
             // 2. Vertical layout (for mobiles) - when TitleVBox is too high (always applicable if 1. is not)
             .addResponsiveLayout(/* apply method: */ () -> {
+                // Nothing applied before it is inserted in the scene graph, to avoid a wrong initial layout
+                if (responsiveHeader.getWidth() == 0)
+                    return;
                 VBox vBox = new VBox(10, eventImageContainer, titleVBox);
                 vBox.setAlignment(Pos.CENTER);
                 VBox.setMargin(titleVBox, new Insets(5, 10, 5, 10)); // Same as cell padding => vertically aligned with cell content
