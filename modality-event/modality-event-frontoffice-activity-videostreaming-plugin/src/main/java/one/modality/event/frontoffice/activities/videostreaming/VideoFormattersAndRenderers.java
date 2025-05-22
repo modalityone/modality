@@ -12,6 +12,7 @@ import dev.webfx.platform.util.Objects;
 import dev.webfx.stack.i18n.I18n;
 import dev.webfx.stack.i18n.I18nKeys;
 import dev.webfx.stack.i18n.controls.I18nControls;
+import dev.webfx.stack.i18n.spi.impl.I18nSubKey;
 import dev.webfx.stack.orm.domainmodel.formatter.FormatterRegistry;
 import dev.webfx.stack.orm.entity.binding.EntityBindings;
 import javafx.application.Platform;
@@ -29,7 +30,6 @@ import one.modality.base.client.messaging.ModalityMessaging;
 import one.modality.base.client.time.FrontOfficeTimeFormats;
 import one.modality.base.shared.entities.Event;
 import one.modality.base.shared.entities.ScheduledItem;
-import one.modality.event.frontoffice.medias.MediaUtil;
 
 import java.time.Duration;
 import java.time.LocalDate;
@@ -69,7 +69,10 @@ final class VideoFormattersAndRenderers {
                 I18nControls.bindI18nProperties(nameLabel, VideoStreamingI18nKeys.SessionCancelled);
                 nameLabel.getStyleClass().add("session-cancelled");
             } else {
-                nameLabel.setText(Objects.coalesce(MediaUtil.translate(video), MediaUtil.translate(video.getProgramScheduledItem())));
+                // Note: normally we should first try to translate `video` and then `programScheduledItem`, but the
+                // `video` has the name repeated for some reason (but no label), while what we want is the label
+                // defined on the program in this case, so for now we just use the `programScheduledItem` directly
+                I18nControls.bindI18nTextProperty(nameLabel, new I18nSubKey("expression: i18n(this)", video.getProgramScheduledItem()));
                 nameLabel.getStyleClass().add("name");
             }
             return Controls.setupTextWrapping(nameLabel, true, true);
