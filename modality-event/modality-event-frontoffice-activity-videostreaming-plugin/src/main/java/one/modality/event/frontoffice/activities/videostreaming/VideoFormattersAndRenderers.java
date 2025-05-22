@@ -52,7 +52,8 @@ final class VideoFormattersAndRenderers {
             VideoState.getVideoStatusI18nKey((ScheduledItem) scheduledItem));
         // videoDate format
         FormatterRegistry.registerFormatter("videoDate", PrimType.STRING, date ->
-            LocalizedTime.formatMonthDayProperty((LocalDate) date, FrontOfficeTimeFormats.VOD_TODAY_MONTH_DAY_FORMAT));
+            // LocalizedTime.formatMonthDayProperty((LocalDate) date, FrontOfficeTimeFormats.VOD_TODAY_MONTH_DAY_FORMAT));
+               LocalizedTime.formatLocalDateProperty((LocalDate) date, FrontOfficeTimeFormats.DAY_MONTH_DATE)); // Hotfix Spring 2025
         // videoTimeRange format
         FormatterRegistry.registerFormatter("videoTimeRange", PrimType.STRING, timeRange -> {
             Object[] times = (Object[]) timeRange;
