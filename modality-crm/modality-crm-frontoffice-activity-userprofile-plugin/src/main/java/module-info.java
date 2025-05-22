@@ -18,6 +18,7 @@ module modality.crm.frontoffice.activity.userprofile.plugin {
     requires modality.crm.frontoffice.help;
     requires webfx.extras.filepicker;
     requires webfx.extras.panes;
+    requires webfx.extras.responsive;
     requires webfx.extras.styles.bootstrap;
     requires webfx.extras.styles.materialdesign;
     requires webfx.extras.time.format;

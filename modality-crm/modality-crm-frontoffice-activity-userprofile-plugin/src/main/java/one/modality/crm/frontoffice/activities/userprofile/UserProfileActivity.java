@@ -1,9 +1,8 @@
 package one.modality.crm.frontoffice.activities.userprofile;
 
-import dev.webfx.extras.panes.ColumnsPane;
-import dev.webfx.extras.panes.MonoPane;
-import dev.webfx.extras.panes.ScalePane;
-import dev.webfx.extras.panes.TransitionPane;
+import dev.webfx.extras.panes.*;
+import dev.webfx.extras.responsive.ResponsiveDesign;
+import dev.webfx.extras.responsive.ResponsiveLayout;
 import dev.webfx.extras.styles.bootstrap.Bootstrap;
 import dev.webfx.extras.styles.materialdesign.textfield.MaterialTextField;
 import dev.webfx.extras.styles.materialdesign.textfield.MaterialTextFieldPane;
@@ -36,6 +35,7 @@ import javafx.animation.Interpolator;
 import javafx.application.Platform;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.property.StringProperty;
+import javafx.beans.value.ObservableValue;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Node;
@@ -44,8 +44,8 @@ import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
-import javafx.scene.shape.Circle;
 import javafx.scene.shape.SVGPath;
+import javafx.scene.text.TextAlignment;
 import javafx.util.Duration;
 import one.modality.base.client.activity.ModalityButtonFactoryMixin;
 import one.modality.base.client.cloudinary.ModalityCloudinary;
@@ -71,6 +71,7 @@ import static one.modality.crm.frontoffice.activities.userprofile.ChangePictureU
  */
 final class UserProfileActivity extends ViewDomainActivityBase implements ModalityButtonFactoryMixin {
 
+    static final double PAGE_MAX_WIDTH = 870;
     static final double MODAL_WINDOWS_MAX_WIDTH = 500;
     private static final double PROFILE_IMAGE_SIZE = 150;
     private static final String NO_PICTURE_IMAGE = "images/large/no-picture.png";
@@ -85,7 +86,7 @@ final class UserProfileActivity extends ViewDomainActivityBase implements Modali
     private final StringProperty tokenProperty = new SimpleStringProperty();
     private final UserProfileMessageUI messagePane = new UserProfileMessageUI();
     private final UserAccountUI accountUI = new UserAccountUI();
-    private final MonoPane pictureImageContainer = new MonoPane();
+    private final MonoPane pictureImageContainer = new MonoClipPane(true);
     private UpdateStore updateStore;
     private Person currentPerson;
     private Label nameLabel;
@@ -115,28 +116,21 @@ final class UserProfileActivity extends ViewDomainActivityBase implements Modali
 
     @Override
     public Node buildUi() {
-        //We create a stack pane to manage the datePicker behaviour for the birthDate
-        StackPane mainStackPane = new StackPane(container);
-
         container.setSpacing(20);
         container.getStyleClass().add("user-profile");
         container.setPadding(new Insets(50, 20, 0, 20));
         container.setAlignment(Pos.TOP_CENTER);
-        container.setMaxWidth(870);
+        container.setMaxWidth(PAGE_MAX_WIDTH);
         Label titleLabel = Bootstrap.h2Primary(I18nControls.newLabel(UserProfileI18nKeys.UserProfileTitle));
+        titleLabel.setWrapText(true);
         titleLabel.setPadding(new Insets(100, 0, 50, 0));
         container.getChildren().add(titleLabel);
 
-        HBox pictureAndNameHBox = new HBox();
         picturePane = new StackPane();
-        picturePane.setAlignment(Pos.CENTER);
-        picturePane.setMinSize(PROFILE_IMAGE_SIZE, PROFILE_IMAGE_SIZE);
-        pictureImageContainer.setMinSize(PROFILE_IMAGE_SIZE, PROFILE_IMAGE_SIZE);
-        // Set a circular clip on the StackPane
-        Circle clip = new Circle(75); // Radius of the circle
-        clip.setCenterX(75); // Center X (adjust if needed)
-        clip.setCenterY(75); // Center Y (adjust if needed)
-        pictureImageContainer.setClip(clip);
+        picturePane.setPrefSize(PROFILE_IMAGE_SIZE, PROFILE_IMAGE_SIZE);
+        Layouts.setMinMaxSizeToPref(picturePane);
+        pictureImageContainer.setPrefSize(PROFILE_IMAGE_SIZE, PROFILE_IMAGE_SIZE);
+        Layouts.setMinMaxSizeToPref(pictureImageContainer);
 
         picturePane.getChildren().add(pictureImageContainer);
         SVGPath pickupImageSvgPath = SvgIcons.createPickupPicture();
@@ -152,20 +146,45 @@ final class UserProfileActivity extends ViewDomainActivityBase implements Modali
             Animations.fadeIn(changePictureUI.getView());
         });
         StackPane.setMargin(pickupImageMonoPane, new Insets(0, 10, 10, 0));
+        StackPane.setAlignment(pictureImageContainer, Pos.CENTER);
         StackPane.setAlignment(pickupImageMonoPane, Pos.BOTTOM_RIGHT);
 
-        Region spacer = new Region();
-        VBox nameVbox = new VBox(10);
-        nameVbox.setPadding(new Insets(0, 0, 0, 50));
         nameLabel = Bootstrap.h3(Bootstrap.textSecondary(new Label()));
         emailLabel = Bootstrap.textSecondary(new Label());
-        nameVbox.getChildren().addAll(nameLabel, emailLabel);
-        nameVbox.setAlignment(Pos.CENTER_LEFT);
-        pictureAndNameHBox.setAlignment(Pos.CENTER_LEFT);
-        HBox.setHgrow(spacer, javafx.scene.layout.Priority.ALWAYS);
-        pictureAndNameHBox.getChildren().addAll(picturePane, spacer, nameVbox);
-        pictureAndNameHBox.setPadding(new Insets(0, 0, 50, 0));
-        container.getChildren().add(pictureAndNameHBox);
+        VBox nameVbox = new VBox(10, nameLabel, emailLabel);
+        HBox.setHgrow(nameVbox, Priority.ALWAYS);
+
+        MonoPane pictureAndNameResponsivePane = new MonoPane(nameVbox);
+        pictureAndNameResponsivePane.setPadding(new Insets(0, 0, 50, 0));
+        HBox hBox = new HBox(picturePane, nameVbox);
+        container.getChildren().add(pictureAndNameResponsivePane);
+        new ResponsiveDesign(pictureAndNameResponsivePane)
+            .addResponsiveLayout(new ResponsiveLayout() {
+                @Override
+                public boolean testResponsiveLayoutApplicability(double width) {
+                    double nameVBoxPrefWidth = nameLabel.prefWidth(-1);
+                    return nameVBoxPrefWidth > 0 && width > PROFILE_IMAGE_SIZE + nameVBoxPrefWidth + 10;
+                }
+
+                @Override
+                public void applyResponsiveLayout() {
+                    nameVbox.setAlignment(Pos.CENTER_RIGHT);
+                    hBox.getChildren().setAll(picturePane, nameVbox);
+                    pictureAndNameResponsivePane.setContent(hBox);
+                }
+
+                @Override
+                public ObservableValue<?>[] getResponsiveTestDependencies() {
+                    return new ObservableValue[] { nameLabel.textProperty() };
+                }
+            }).addResponsiveLayout(() -> {
+                nameVbox.setAlignment(Pos.CENTER);
+                hBox.getChildren().clear();
+                VBox vBox = new VBox(20, picturePane, nameVbox);
+                vBox.setAlignment(Pos.CENTER);
+                pictureAndNameResponsivePane.setContent(vBox);
+            })
+            .start();
 
         Separator separator = new Separator();
         container.getChildren().add(separator);
@@ -173,12 +192,12 @@ final class UserProfileActivity extends ViewDomainActivityBase implements Modali
 
         /* THE USER INFORMATION  */
         /* ********************* */
-        int FIELDS_MAX_WIDTH = 345;
+        int FIELDS_MIN_WIDTH = 200;
 
         ColumnsPane columnsPane = new ColumnsPane();
         columnsPane.setMaxColumnCount(2);
         columnsPane.setHgap(100);
-        columnsPane.setMinColumnWidth(FIELDS_MAX_WIDTH);
+        columnsPane.setMinColumnWidth(FIELDS_MIN_WIDTH);
         columnsPane.setPadding(new Insets(50, 0, 0, 0));
 
 
@@ -226,8 +245,6 @@ final class UserProfileActivity extends ViewDomainActivityBase implements Modali
 
         StackPane.setMargin(birthDateField.getView(), new Insets(0, 0, 0, 0));
 
-        firstColumn.getChildren().add(birthDateField.getView());
-
         //Male/Female option
         ToggleGroup maleFemaleToggleGroup = new ToggleGroup();
         // Create RadioButtons
@@ -255,7 +272,6 @@ final class UserProfileActivity extends ViewDomainActivityBase implements Modali
         //optionFemale.setSelected(!person.isMale());
         HBox maleFemaleHBox = new HBox(20, optionMale, optionFemale);
         maleFemaleHBox.setPadding(new Insets(10, 0, 0, 0));
-        maleFemaleHBox.setPrefWidth(FIELDS_MAX_WIDTH);
         firstColumn.getChildren().add(maleFemaleHBox);
 
 
@@ -285,7 +301,7 @@ final class UserProfileActivity extends ViewDomainActivityBase implements Modali
         //optionLay.setSelected(!person.isOrdained());
         HBox layOrdainedHBox = new HBox(20, optionLay, optionOrdained);
         layOrdainedHBox.setPadding(new Insets(10, 0, 0, 0));
-        layOrdainedHBox.setPrefWidth(FIELDS_MAX_WIDTH);
+        //layOrdainedHBox.setPrefWidth(FIELDS_MIN_WIDTH);
         firstColumn.getChildren().add(layOrdainedHBox);
 
         layNameTextField = newMaterialTextField(CrmI18nKeys.LayName);
@@ -358,6 +374,7 @@ final class UserProfileActivity extends ViewDomainActivityBase implements Modali
 
         // Create RadioButtons
         noOrganizationRadioButton = I18nControls.newRadioButton(CreateAccountI18nKeys.NoAttendanceToAKadampaCenter);
+        noOrganizationRadioButton.setWrapText(true);
         //TODO: Add a listener to the organizationButton to detect selection changes
         secondColumn.getChildren().add(noOrganizationRadioButton);
         organizationButton.getMaterialTextField().setAnimateLabel(false);
@@ -384,6 +401,8 @@ final class UserProfileActivity extends ViewDomainActivityBase implements Modali
         container.getChildren().add(infoMessage);
 
         Button saveButton = Bootstrap.largePrimaryButton(I18nControls.newButton(CreateAccountI18nKeys.SaveChanges));
+        saveButton.setWrapText(true);
+        saveButton.setTextAlignment(TextAlignment.CENTER);
         saveButton.disableProperty().bind(EntityBindings.hasChangesProperty(updateStore).not());
         //Here we're editing an existing user
         saveButton.setOnAction(e -> {
@@ -409,7 +428,7 @@ final class UserProfileActivity extends ViewDomainActivityBase implements Modali
 
         container.getChildren().add(saveButton);
 
-        transitionPane.transitToContent(mainStackPane);
+        transitionPane.transitToContent(container);
 
         container.getChildren().add(HelpPanel.createEmailHelpPanel(UserProfileI18nKeys.UserProfileHelp, "kbs@kadampa.net"));
 
