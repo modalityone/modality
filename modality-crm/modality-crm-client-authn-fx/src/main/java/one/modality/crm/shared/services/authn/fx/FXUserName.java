@@ -24,6 +24,16 @@ public final class FXUserName {
         return userNameProperty;
     }
 
+    private final static StringProperty userInitialsProperty = new SimpleStringProperty();
+
+    public static String getUserInitials() {
+        return userInitialsProperty.get();
+    }
+
+    public static ReadOnlyStringProperty userInitialsProperty() {
+        return userInitialsProperty;
+    }
+
     static {
         // TODO: see if we can optimize this code to not systematically use FXUserClaims (which causes a server call)
         //  if userPerson is already present. Also see if we should add FXModalityGuestPrincipal (to create)
@@ -38,6 +48,16 @@ public final class FXUserName {
                     username = Objects.coalesce(userClaims.getUsername(), userClaims.getEmail(), userClaims.getPhone());
             }
             userNameProperty.set(username);
+            userInitialsProperty.set(username != null ? getInitials(username) : null);
         }, FXUserPerson.userPersonProperty(), FXUserClaims.userClaimsProperty());
     }
+
+    private static String getInitials(String name) {
+        StringBuilder sb = new StringBuilder();
+        for (String text : name.split(" ")) {
+             sb.append(text.toUpperCase().charAt(0));
+        }
+        return sb.toString();
+    }
+
 }

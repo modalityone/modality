@@ -5,7 +5,6 @@ import dev.webfx.extras.panes.transitions.CircleTransition;
 import dev.webfx.extras.panes.transitions.Transition;
 import dev.webfx.extras.player.Players;
 import dev.webfx.extras.util.control.Controls;
-import dev.webfx.extras.util.layout.Layouts;
 import dev.webfx.kit.launcher.WebFxKitLauncher;
 import dev.webfx.kit.util.properties.FXProperties;
 import dev.webfx.kit.util.properties.ObservableLists;
@@ -392,22 +391,33 @@ public final class ModalityFrontOfficeMainFrameActivity extends ModalityClientMa
             HBox hBox = new HBox(23, buttons);
             FOPageUtil.restrictToMaxPageWidthAndApplyPageLeftRightPadding(hBox);  // to fit like the mount node
             if (userMenu) {
-                Label usernameLabel = new Label();
-                usernameLabel.textProperty().bind(FXUserName.userNameProperty());
-                hBox.getChildren().add(0, usernameLabel);
-                hBox.getChildren().add(1, Layouts.createHGrowable());
+                Label userNameLabel = new Label();
+                userNameLabel.textProperty().bind(FXUserName.userNameProperty());
+                Controls.setupTextWrapping(userNameLabel, false, true);
+                Label userInitialsLabel = new Label();
+                userInitialsLabel.textProperty().bind(FXUserName.userInitialsProperty());
+                LargestFittingChildPane namePane = new LargestFittingChildPane(
+                    userNameLabel, // Showing the full username if space is available (ex: on desktops)
+                    userInitialsLabel // Otherwise showing only the initials (ex: on small mobiles)
+                );
+                // Stretching namePane to the maximum available width in the HBox and aligned to the left
+                namePane.setMaxWidth(Double.MAX_VALUE);
+                HBox.setHgrow(namePane, Priority.ALWAYS);
+                namePane.setAlignment(Pos.CENTER_LEFT);
+                hBox.getChildren().add(0, namePane);
                 hBox.setAlignment(Pos.CENTER_RIGHT);
                 buttonBar = hBox;
                 buttonBar.setPrefHeight(WEB_USER_MENU_HEIGHT);
             } else {
                 LargestFittingChildPane brandPane = new LargestFittingChildPane(
-                    createBrandLabel(false, 20),
-                    createBrandLabel(false, 5),
-                    createBrandLabel(true, 5)
+                    createBrandLabel(false, 20), // Long name, large gap
+                    createBrandLabel(false, 5), // Long name, small gap
+                    createBrandLabel(true, 5) // Short name, small gap
                 );
+                // Stretching brandPane to the maximum available width in the HBox and aligned to the left
                 brandPane.setMaxWidth(Double.MAX_VALUE);
-                brandPane.setAlignment(Pos.CENTER_LEFT);
                 HBox.setHgrow(brandPane, Priority.ALWAYS);
+                brandPane.setAlignment(Pos.CENTER_LEFT);
                 hBox.getChildren().add(0, brandPane);
                 hBox.setAlignment(Pos.BOTTOM_RIGHT);
                 hBox.setMaxHeight(Region.USE_PREF_SIZE);

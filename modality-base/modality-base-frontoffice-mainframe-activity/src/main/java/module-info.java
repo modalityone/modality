@@ -17,7 +17,6 @@ module modality.base.frontoffice.mainframe.activity {
     requires webfx.extras.player;
     requires webfx.extras.util.animation;
     requires webfx.extras.util.control;
-    requires webfx.extras.util.layout;
     requires webfx.kit.launcher;
     requires webfx.kit.util;
     requires webfx.platform.conf;
