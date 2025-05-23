@@ -5,12 +5,14 @@ import dev.webfx.extras.panes.transitions.CircleTransition;
 import dev.webfx.extras.panes.transitions.Transition;
 import dev.webfx.extras.player.Players;
 import dev.webfx.extras.util.control.Controls;
+import dev.webfx.extras.util.layout.Layouts;
 import dev.webfx.kit.launcher.WebFxKitLauncher;
 import dev.webfx.kit.util.properties.FXProperties;
 import dev.webfx.kit.util.properties.ObservableLists;
 import dev.webfx.platform.conf.Config;
 import dev.webfx.platform.conf.SourcesConfig;
 import dev.webfx.platform.console.Console;
+import dev.webfx.platform.resource.Resource;
 import dev.webfx.platform.useragent.UserAgent;
 import dev.webfx.platform.util.Arrays;
 import dev.webfx.platform.util.collection.Collections;
@@ -35,6 +37,8 @@ import javafx.scene.control.ContentDisplay;
 import javafx.scene.control.Label;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.effect.DropShadow;
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
 import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
 import javafx.scene.paint.Paint;
@@ -194,8 +198,14 @@ public final class ModalityFrontOfficeMainFrameActivity extends ModalityClientMa
                 overlayMenuBar.collapse();
         }, FXBackgroundNode.backgroundNodeProperty(), mobileLayoutProperty, mountNodeProperty());
 
+        // Temporarily hardcoded footer image
+        ImageView footer = new ImageView(new Image(Resource.toUrl("/images/organizations/NKT-IKBU.svg", getClass()), true));
+        VBox.setMargin(footer, new Insets(0, 0, 50, 0));
+
         // Reacting to the mount node changes:
         FXProperties.runNowAndOnPropertyChange(mountNode -> {
+            boolean isLoginPage = mountNode != null && Collections.findFirst(mountNode.getStyleClass(), styleClass -> styleClass.contains("login")) != null;
+            Layouts.setManagedAndVisibleProperties(footer, !isLoginPage);
             // Updating the mount node container with the new mount node
             UiRouter uiRouter = getUiRouter();
             mountTransitionPane.setReverse(uiRouter.getHistory().isGoingBackward());
@@ -209,7 +219,8 @@ public final class ModalityFrontOfficeMainFrameActivity extends ModalityClientMa
                     languageMenuBar,
                     mainMenuButtonBar,
                     userMenuButtonBar,
-                    mountNode
+                    mountNode,
+                    footer
                 );
                 vBox.setAlignment(Pos.CENTER);
                 vBox.setMaxWidth(Double.MAX_VALUE);
