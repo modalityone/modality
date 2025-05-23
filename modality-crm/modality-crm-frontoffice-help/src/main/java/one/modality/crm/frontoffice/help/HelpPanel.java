@@ -36,7 +36,7 @@ public final class HelpPanel {
         I18n.bindI18nTextProperty(emailUs.textProperty(), helpSecondaryI18nKey, helpSecondaryArgs);
 
         VBox vBox = new VBox(30, headPhoneMonoPane, needHelp, emailUs);
-        vBox.setPadding(new Insets(100, 0, 50, 0));
+        vBox.setPadding(new Insets(50, 0, 0, 0));
         vBox.setAlignment(Pos.CENTER);
         return vBox;
     }
