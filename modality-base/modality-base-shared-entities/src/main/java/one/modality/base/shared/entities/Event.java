@@ -285,9 +285,14 @@ public interface Event extends Entity,
         return name == null ? null : name.toLowerCase().contains("online");
     }
 
-    Clock UK_CLOCK = Clock.system(ZoneId.of("Europe/London"));
+    ZoneId ZONE_ID = ZoneId.of("Europe/London");
+    Clock UK_CLOCK = Clock.system(ZONE_ID);
 
     // temporary static method (will be non-static once managed in the event)
+    static ZoneId getEventZoneId() {
+        return ZONE_ID;
+    }
+
     static Clock getEventClock() {
         return UK_CLOCK;
     }

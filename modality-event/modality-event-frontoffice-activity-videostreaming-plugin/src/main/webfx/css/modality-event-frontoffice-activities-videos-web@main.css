@@ -1,3 +1,8 @@
+.livestream {
+    /* Overriding some WebFX Extras CSS variables  */
+    --webfx-switch-selected-background-color: var(--brand-blue-color);
+}
+
 .livestream h3 {
      font-family: "Poppins", sans-serif;
      font-size: 24px;

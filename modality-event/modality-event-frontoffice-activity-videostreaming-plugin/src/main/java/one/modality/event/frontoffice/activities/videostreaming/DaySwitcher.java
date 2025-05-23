@@ -42,7 +42,7 @@ public class DaySwitcher {
 
     private List<LocalDate> dateList;
     private final ObjectProperty<LocalDate> currentDateProperty = new SimpleObjectProperty<>();
-    private BorderPane mobileViewContainer;
+    private final VBox mobileViewContainer = new VBox(30);
     private final VBox desktopViewContainer = new VBox(30);
     private final ColumnsPane dayButtonsColumnsPane = new ColumnsPane();
     private final String title;
@@ -77,6 +77,7 @@ public class DaySwitcher {
             Label titleLabel = Bootstrap.h3(I18nControls.newLabel(title));
             desktopViewContainer.getChildren().add(titleLabel);
         }
+        desktopViewContainer.getChildren().add(TimeZoneSwitch.createTimezoneSwitchBox());
         Label selectDayLabel = I18nControls.newLabel(VideoStreamingI18nKeys.SelectTheDayBelow);
         desktopViewContainer.getChildren().addAll(selectDayLabel, dayButtonsColumnsPane);
         dayButtonsColumnsPane.setHgap(7);
@@ -102,15 +103,17 @@ public class DaySwitcher {
             currentDateProperty.set(Collections.get(dateList, index + 1));
         });
 
-        mobileViewContainer = new BorderPane();
-        mobileViewContainer.setLeft(backArrowPane);
-        mobileViewContainer.setCenter(mobileDateLabel);
-        mobileViewContainer.setRight(forwardArrowPane);
-        mobileViewContainer.getStyleClass().add("program-box");
-        mobileViewContainer.setPadding(new Insets(10));
+        BorderPane daySelectorPane = new BorderPane();
+        daySelectorPane.setLeft(backArrowPane);
+        daySelectorPane.setCenter(mobileDateLabel);
+        daySelectorPane.setRight(forwardArrowPane);
+        daySelectorPane.getStyleClass().add("program-box");
+        daySelectorPane.setPadding(new Insets(10));
         Insets arrowMargin = new Insets(0, 5, 0, 5);
         BorderPane.setMargin(backArrowPane, arrowMargin);
         BorderPane.setMargin(forwardArrowPane, arrowMargin);
+
+        mobileViewContainer.getChildren().setAll(daySelectorPane, TimeZoneSwitch.createTimezoneSwitchBox());
     }
 
     public ObjectProperty<LocalDate> currentDateProperty() {

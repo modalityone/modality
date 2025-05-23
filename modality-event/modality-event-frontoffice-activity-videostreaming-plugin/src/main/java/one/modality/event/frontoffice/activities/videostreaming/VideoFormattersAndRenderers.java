@@ -17,6 +17,8 @@ import dev.webfx.stack.orm.domainmodel.formatter.FormatterRegistry;
 import dev.webfx.stack.orm.entity.binding.EntityBindings;
 import javafx.application.Platform;
 import javafx.beans.property.BooleanProperty;
+import javafx.beans.property.SimpleStringProperty;
+import javafx.beans.property.StringProperty;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.geometry.Insets;
@@ -56,7 +58,15 @@ final class VideoFormattersAndRenderers {
         // videoTimeRange format
         FormatterRegistry.registerFormatter("videoTimeRange", PrimType.STRING, timeRange -> {
             Object[] times = (Object[]) timeRange;
-            return LocalizedTime.formatLocalTimeRangeProperty((LocalTime) times[0], (LocalTime) times[1], FrontOfficeTimeFormats.VIDEO_DAY_TIME_FORMAT);
+            LocalTime startEventLocalTime = (LocalTime) times[0];
+            LocalTime endEventLocalTime = (LocalTime) times[1];
+            StringProperty videoTimeRangeProperty = new SimpleStringProperty();
+            FXProperties.runNowAndOnPropertyChange(eventTimeSelected -> {
+                LocalTime startDisplayTime = eventTimeSelected ? startEventLocalTime : TimeZoneSwitch.convertEventLocalTimeToUserLocalTime(startEventLocalTime);
+                LocalTime endDisplayTime = eventTimeSelected ? endEventLocalTime : TimeZoneSwitch.convertEventLocalTimeToUserLocalTime(endEventLocalTime);
+                videoTimeRangeProperty.bind(LocalizedTime.formatLocalTimeRangeProperty(startDisplayTime, endDisplayTime, FrontOfficeTimeFormats.VIDEO_DAY_TIME_FORMAT));
+            }, TimeZoneSwitch.eventLocalTimeSelectedProperty());
+            return videoTimeRangeProperty;
         });
         FormatterRegistry.registerFormatter("allProgramGroup", PrimType.STRING, scheduledItem ->
             I18n.i18nTextProperty(VideoState.getAllProgramVideoGroupI18nKey((ScheduledItem) scheduledItem))
@@ -93,8 +103,8 @@ final class VideoFormattersAndRenderers {
             );
             //If the publishedProperty change, we Update the button
             ModalityMessaging.getFrontOfficeEntityMessaging().listenEntityChanges(videoScheduledItem.getStore());
-            BooleanProperty isPublishedProperty = EntityBindings.getBooleanFieldProperty(videoScheduledItem,ScheduledItem.published);
-            FXProperties.runOnPropertyChange(()-> Platform.runLater(()->computeStatusLabelAndWatchButton(videoScheduledItem, statusLabel, availableUntilLabel, actionButton, context.getAppContext(), false)), isPublishedProperty);
+            BooleanProperty isPublishedProperty = EntityBindings.getBooleanFieldProperty(videoScheduledItem, ScheduledItem.published);
+            FXProperties.runOnPropertyChange(() -> Platform.runLater(() -> computeStatusLabelAndWatchButton(videoScheduledItem, statusLabel, availableUntilLabel, actionButton, context.getAppContext(), false)), isPublishedProperty);
             vBoxStatusAndButtonContainer.setPadding(new Insets(10));
             vBoxStatusAndButtonContainer.setAlignment(Pos.CENTER);
             return vBoxStatusAndButtonContainer;
