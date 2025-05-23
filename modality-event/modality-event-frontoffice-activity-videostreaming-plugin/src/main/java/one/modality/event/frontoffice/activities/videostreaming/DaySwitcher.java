@@ -130,6 +130,10 @@ public class DaySwitcher {
 
     public void populateDates(List<LocalDate> dates) {
         dateList = dates;
+        // Automatically selecting today if today is part of the event
+        if (currentDateProperty.get() == null && dates.contains(LocalDate.now())) {
+            currentDateProperty.set(LocalDate.now());
+        }
         refreshButtonsOnDateListChanges();
     }
 
