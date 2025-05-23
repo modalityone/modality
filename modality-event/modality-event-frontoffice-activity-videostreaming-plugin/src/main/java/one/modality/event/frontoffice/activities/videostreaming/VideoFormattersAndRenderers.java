@@ -164,7 +164,7 @@ final class VideoFormattersAndRenderers {
         }
         if (hideOrShowLivestreamButton) {
             // In case a user clicked on a previous recorded video, we need to display a button so he can go back to the livestream
-            if (!videoScheduledItem.isPublished() || Objects.areEquals(videoScheduledItem, videoStreamingActivity.getWatchingVideoItem()))
+            if (Objects.areEquals(videoScheduledItem, videoStreamingActivity.getWatchingVideoItem()))
                 hideButton(actionButton);
             else
                 showButton(actionButton, e -> videoStreamingActivity.setWatchingVideo(videoScheduledItem));

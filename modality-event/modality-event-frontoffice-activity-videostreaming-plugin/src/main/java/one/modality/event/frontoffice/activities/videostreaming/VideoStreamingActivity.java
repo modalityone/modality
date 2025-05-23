@@ -298,7 +298,7 @@ final class VideoStreamingActivity extends ViewDomainActivityBase {
         // If it's a different video from the one currently watched by the user, we set the watchingVideoItemProperty
         // and this will trigger all necessary consequent events (loading of media, expanding videoCollapsePane and
         // auto-scrolling to the video player).
-        if (!Objects.areEquals(watchingVideoItem, watchingVideoItemProperty.get())) {
+        if (!Objects.areEquals(watchingVideoItem, watchingVideoItemProperty.get()) && !(isUserWatchingLivestream() && !watchingVideoItem.isPublished() /* livestream too */)) {
             watchingVideoItemProperty.set(watchingVideoItem);
         } else { // But if it's the same video, the next step depends on its current state.
             // Let's start with the particular case where the user just received the push notification that the video
@@ -325,6 +325,8 @@ final class VideoStreamingActivity extends ViewDomainActivityBase {
 
     @Override
     public Node buildUi() { // Reminder: called only once (rebuild = bad UX) => UI is reacting to parameter changes
+
+        videoCollapsePane.prefWidthProperty().bind(pageContainer.widthProperty());
 
         // *************************************************************************************************************
         // ********************************* Building the static part of the UI ****************************************
@@ -608,10 +610,17 @@ final class VideoStreamingActivity extends ViewDomainActivityBase {
                 // we autoplay only the first video
                 autoPlay = false;
             }
-            Layouts.setMinMaxHeightToPref(videoMediasVBox); // No need to compute min/max height as different to pref (layout computation optimization)
+            //Layouts.setMinMaxHeightToPref(videoMediasVBox); // No need to compute min/max height as different to pref (layout computation optimization)
             videoContent = videoMediasVBox;
         }
-        videoCollapsePane.setContent(new ScalePane(ScaleMode.FIT_WIDTH, videoContent));
+        if (videoContent == null) {
+            videoCollapsePane.setContent(null);
+        } else {
+            ScalePane scalePane = new ScalePane(ScaleMode.FIT_WIDTH, videoContent);
+            scalePane.setScaleRegion(true);
+            scalePane.setId("video");
+            videoCollapsePane.setContent(scalePane);
+        }
     }
 
     private Node createVideoView(String url, Media media, boolean autoPlay) {
