@@ -17,6 +17,7 @@ import javafx.geometry.Pos;
 import javafx.scene.Node;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
+import javafx.scene.control.Labeled;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.VBox;
@@ -135,8 +136,7 @@ public class DaySwitcher {
         dayButtonsColumnsPane.getChildren().clear();
         dateList.forEach((LocalDate day) -> {
             Button dateButton;
-            dateButton = Bootstrap.button(new Button());
-            dateButton.textProperty().bind(LocalizedTime.formatLocalDateProperty(day, FrontOfficeTimeFormats.DAY_MONTH_DATE));
+            dateButton = formatLabeledDate(Bootstrap.button(new Button()), day);
             dateButton.setMinWidth(DAY_BUTTON_WIDTH);
             correspondenceDateButton.put(day, dateButton);
             dateButton.setOnAction(e -> currentDateProperty.set(day));
@@ -175,7 +175,7 @@ public class DaySwitcher {
         if (selectedDate == null) {
             I18nControls.bindI18nProperties(mobileDateLabel, VideoStreamingI18nKeys.ViewAllDays);
         } else {
-            mobileDateLabel.textProperty().bind(LocalizedTime.formatLocalDateProperty(selectedDate, FrontOfficeTimeFormats.DAY_MONTH_DATE));
+            formatLabeledDate(mobileDateLabel, selectedDate);
         }
     }
 
@@ -185,6 +185,11 @@ public class DaySwitcher {
         } else {
             currentDateProperty.set(null);
         }
+    }
+
+    private <T extends Labeled> T formatLabeledDate(T labeled, LocalDate date) {
+        labeled.textProperty().bind(LocalizedTime.formatMonthDayProperty(date, FrontOfficeTimeFormats.VIDEO_MONTH_DAY_FORMAT));
+        return labeled;
     }
 
 }
