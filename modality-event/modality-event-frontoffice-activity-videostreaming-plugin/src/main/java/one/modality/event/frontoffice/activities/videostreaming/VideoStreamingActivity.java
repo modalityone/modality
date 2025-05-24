@@ -58,6 +58,8 @@ import one.modality.base.client.time.FrontOfficeTimeFormats;
 import one.modality.base.frontoffice.utility.page.FOPageUtil;
 import one.modality.base.shared.entities.*;
 import one.modality.crm.frontoffice.help.HelpPanel;
+import one.modality.crm.shared.services.authn.ModalityUserPrincipal;
+import one.modality.crm.shared.services.authn.fx.FXModalityUserPrincipal;
 import one.modality.crm.shared.services.authn.fx.FXUserPersonId;
 import one.modality.event.client.i18n.EventI18nKeys;
 import one.modality.event.frontoffice.medias.EventThumbnailView;
@@ -128,9 +130,9 @@ final class VideoStreamingActivity extends ViewDomainActivityBase {
         // Creating our own entity store to hold the loaded data without interfering with other activities
         entityStore = EntityStore.create(getDataSourceModel());
         // Loading the list of events with videos booked by the user and put it into eventsWithBookedVideos
-        FXProperties.runNowAndOnPropertyChange(userPersonId -> {
+        FXProperties.runNowAndOnPropertyChange(modalityUserPrincipal -> {
             eventsWithBookedVideos.clear();
-            if (userPersonId != null) {
+            if (modalityUserPrincipal != null) {
                 eventsWithBookedVideosLoadingProperty.set(true);
                 // we look for the scheduledItem having a `bookableScheduledItem` which is an audio type (case of festival)
                 entityStore.<DocumentLine>executeQuery(
@@ -138,7 +140,7 @@ final class VideoStreamingActivity extends ViewDomainActivityBase {
                             // We look if there are published audio ScheduledItem of type video, whose bookableScheduledItem has been booked
                             " (exists(select ScheduledItem where item.family.code=? and bookableScheduledItem.(event=coalesce(dl.document.event.repeatedEvent, dl.document.event) and item=dl.item))) as published " +
                             // We check if the user has booked, not cancelled and paid the recordings
-                            " from DocumentLine dl where !cancelled  and dl.document.(person=? and confirmed and price_balance<=0) " +
+                            " from DocumentLine dl where !cancelled  and dl.document.(person.frontendAccount=? and confirmed and price_balance<=0) " +
                             " and dl.document.event.(repeatedEvent = null or repeatVideo)" +
                             // we check if :
                             " and (" +
@@ -147,7 +149,7 @@ final class VideoStreamingActivity extends ViewDomainActivityBase {
                             // 2/ Or KBS3 / KBS2 setup (this allows displaying the videos that have been booked in the past with KBS2 events, event if we can't display them)
                             " or item.family.code=?)" +
                             " order by document.event.startDate desc",
-                        KnownItemFamily.VIDEO.getCode(), userPersonId, KnownItemFamily.VIDEO.getCode(), KnownItemFamily.VIDEO.getCode())
+                        KnownItemFamily.VIDEO.getCode(), modalityUserPrincipal.getUserAccountId(), KnownItemFamily.VIDEO.getCode(), KnownItemFamily.VIDEO.getCode())
                     .onFailure(Console::log)
                     .onSuccess(documentLines -> Platform.runLater(() -> {
                         // Extracting the events with videos from the document lines
@@ -179,27 +181,28 @@ final class VideoStreamingActivity extends ViewDomainActivityBase {
                         eventsWithBookedVideosLoadingProperty.set(false);
                     }));
             }
-        }, FXUserPersonId.userPersonIdProperty());
+        }, FXModalityUserPrincipal.modalityUserPrincipalProperty());
         // Initial data loading for the event specified in the path
         FXProperties.runOnPropertiesChange(() -> {
             Event event = eventProperty.get();
-            EntityId userPersonId = FXUserPersonId.getUserPersonId();
+            ModalityUserPrincipal modalityUserPrincipal = FXModalityUserPrincipal.getModalityUserPrincipal();
             videoScheduledItems.clear();
-            if (event != null && userPersonId != null) {
+            if (event != null && modalityUserPrincipal != null) {
+                Object userAccountId = modalityUserPrincipal.getUserAccountId();
                 Event eventContainingVideos = Objects.coalesce(event.getRepeatedEvent(), event);
                 // We load all video scheduledItems booked by the user for the event (booking must be confirmed
                 // and paid). They will be grouped by day in the UI.
                 // Note: double dots such as `programScheduledItem.timeline..startTime` means we do a left join that allows null value (if the event is recurring, the timeline of the programScheduledItem is null)
                 entityStore.<ScheduledItem>executeQuery("select name, label.(de,en,es,fr,pt), date, expirationDate, programScheduledItem.(name, label.(de,en,es,fr,pt), startTime, endTime, timeline.(startTime, endTime), cancelled), published, event.(name, type.recurringItem, livestreamUrl, recurringWithVideo), vodDelayed, " +
-                            " (exists(select MediaConsumption where scheduledItem=si and attendance.documentLine.document.person=?) as attended), " +
-                            " (select id from Attendance where scheduledItem=si.bookableScheduledItem and documentLine.document.person=? limit 1) as attendanceId " +
+                            " (exists(select MediaConsumption where scheduledItem=si and attendance.documentLine.document.person.frontendAccount=?) as attended), " +
+                            " (select id from Attendance where scheduledItem=si.bookableScheduledItem and documentLine.document.person.frontendAccount=? limit 1) as attendanceId " +
                             " from ScheduledItem si " +
                             " where event=?" +
                             " and bookableScheduledItem.item.family.code=?" +
                             " and item.code=?" +
-                            " and exists(select Attendance a where scheduledItem=si.bookableScheduledItem and documentLine.(!cancelled and document.(person=? and event=? and confirmed and price_balance<=0)))" +
+                            " and exists(select Attendance a where scheduledItem=si.bookableScheduledItem and documentLine.(!cancelled and document.(person.frontendAccount=? and event=? and confirmed and price_balance<=0)))" +
                             " order by date, programScheduledItem.timeline..startTime",
-                        userPersonId, userPersonId, eventContainingVideos, KnownItemFamily.TEACHING.getCode(), KnownItem.VIDEO.getCode(), userPersonId, event)
+                        userAccountId, userAccountId, eventContainingVideos, KnownItemFamily.TEACHING.getCode(), KnownItem.VIDEO.getCode(), userAccountId, event)
                     .onFailure(Console::log)
                     .onSuccess(scheduledItems -> Platform.runLater(() -> {
                         videoScheduledItems.setAll(scheduledItems); // Will trigger the build of the video table.
