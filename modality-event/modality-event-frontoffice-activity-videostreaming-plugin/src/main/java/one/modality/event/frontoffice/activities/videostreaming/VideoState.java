@@ -23,6 +23,11 @@ final class VideoState {
 
         VideoLifecycle videoLifecycle = new VideoLifecycle(videoScheduledItem);
 
+        // 8. AVAILABLE or 9. EXPIRED (the 2 possible states once published -> priority states)
+        if (videoScheduledItem.isPublished()) {
+            return videoLifecycle.isNowBeforeExpirationDate() ? BaseI18nKeys.Available : VideoStreamingI18nKeys.Expired;
+        }
+
         // 1. ON_TIME
         if (videoLifecycle.isNowBeforeCountdownStart()) { // More than 3 hours before the session
             return VideoStreamingI18nKeys.OnTime;
@@ -48,9 +53,9 @@ final class VideoState {
             return VideoStreamingI18nKeys.RecordingSoonAvailable;
         }
 
-        // 7. DELAYED (eventually) or 8. AVAILABLE_UNTIL
+        // 7. DELAYED (eventually)
         if (videoLifecycle.isNowBeforeExpirationDate()) {
-            return videoScheduledItem.isPublished() ? BaseI18nKeys.Available : VideoStreamingI18nKeys.VideoDelayed;
+            return VideoStreamingI18nKeys.VideoDelayed;
         }
 
         // 9. EXPIRED
