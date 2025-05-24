@@ -8,7 +8,6 @@ import dev.webfx.extras.util.control.Controls;
 import dev.webfx.extras.util.layout.Layouts;
 import dev.webfx.kit.util.properties.FXProperties;
 import dev.webfx.platform.uischeduler.UiScheduler;
-import dev.webfx.platform.util.Objects;
 import dev.webfx.stack.i18n.I18n;
 import dev.webfx.stack.i18n.I18nKeys;
 import dev.webfx.stack.i18n.controls.I18nControls;
@@ -95,6 +94,7 @@ final class VideoFormattersAndRenderers {
             actionButton.setGraphicTextGap(10);
             Label statusLabel = new Label();
             Label availableUntilLabel = new Label();
+            Controls.setupTextWrapping(availableUntilLabel, true, false);
             computeStatusLabelAndWatchButton(videoScheduledItem, statusLabel, availableUntilLabel, actionButton, context.getAppContext(), true);
             VBox vBoxStatusAndButtonContainer = new VBox(10,
                 actionButton,
@@ -151,7 +151,7 @@ final class VideoFormattersAndRenderers {
             case BaseI18nKeys.Available:
                 hideLabel(statusLabel);
                 showButton(actionButton, e -> {
-                    videoStreamingActivity.setWatchingVideo(videoScheduledItem);
+                    videoStreamingActivity.setWatchingVideo(videoLifecycle);
                     transformButtonFromPlayToPlayAgain(actionButton);
                 });
                 LocalDateTime expirationDate = videoLifecycle.getExpirationDate();
@@ -164,10 +164,10 @@ final class VideoFormattersAndRenderers {
         }
         if (hideOrShowLivestreamButton) {
             // In case a user clicked on a previous recorded video, we need to display a button so he can go back to the livestream
-            if (Objects.areEquals(videoScheduledItem, videoStreamingActivity.getWatchingVideoItem()))
+            if (videoStreamingActivity.isSameVideoAsAlreadyWatching(videoLifecycle))
                 hideButton(actionButton);
             else
-                showButton(actionButton, e -> videoStreamingActivity.setWatchingVideo(videoScheduledItem));
+                showButton(actionButton, e -> videoStreamingActivity.setWatchingVideo(videoLifecycle));
             // We may also need to update the button again when the user changes the watching video
             if (!actionButton.getProperties().containsKey("watchingVideoItemPropertyListener")) { // we install that listener only once
                 actionButton.getProperties().put("watchingVideoItemPropertyListener",

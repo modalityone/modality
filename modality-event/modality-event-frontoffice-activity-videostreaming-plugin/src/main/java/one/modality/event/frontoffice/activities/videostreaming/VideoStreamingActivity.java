@@ -262,7 +262,7 @@ final class VideoStreamingActivity extends ViewDomainActivityBase {
             VideoLifecycle videoLifecycle = new VideoLifecycle(videoScheduledItem);
 
             //If we're 20 minutes before or 30 minutes after the teaching, we display the livestream window
-            if (isTimeToShowVideoLivestream(videoLifecycle)) {
+            if (isTimeToShowVideoAsLivestream(videoLifecycle)) {
                 watchingVideoItemProperty.set(videoScheduledItem); // Stopping possible VOD and showing livestream instead
                 videoCollapsePane.expand(); // Ensures the livestream player is showing
                 UiScheduler.scheduleDelay(videoLifecycle.durationMillisBetweenNowAndShowLivestreamEnd(), this::scheduleAutoLivestream);
@@ -287,21 +287,23 @@ final class VideoStreamingActivity extends ViewDomainActivityBase {
             }));
     }
 
-    private boolean isTimeToShowVideoLivestream(VideoLifecycle videoLifecycle) {
-        return !VideoState.isVideoCancelled(videoLifecycle.getVideoScheduledItem()) && videoLifecycle.isNowBetweenShowLivestreamStartAndShowLivestreamEnd();
+    private boolean isUserWatchingLivestream() {
+        ScheduledItem watchingVideoItem = getWatchingVideoItem();
+        return watchingVideoItem == null || isTimeToShowVideoAsLivestream(new VideoLifecycle(watchingVideoItem));
     }
 
-    private boolean isUserWatchingLivestream() {
-        ScheduledItem videoScheduledItem = watchingVideoItemProperty.get();
-        return videoScheduledItem == null || !videoScheduledItem.isPublished() && isTimeToShowVideoLivestream(new VideoLifecycle(videoScheduledItem));
+    private boolean isTimeToShowVideoAsLivestream(VideoLifecycle videoLifecycle) {
+        ScheduledItem videoScheduledItem = videoLifecycle.getVideoScheduledItem();
+        return videoScheduledItem != null && !VideoState.isVideoCancelled(videoScheduledItem) && videoLifecycle.isNowBetweenShowLivestreamStartAndShowLivestreamEnd();
     }
 
     // Called by the "Watch" button from the VideoFormattersAndRenderers
-    void setWatchingVideo(ScheduledItem watchingVideoItem) {
+    void setWatchingVideo(VideoLifecycle watchingVideoLifecycle) {
         // If it's a different video from the one currently watched by the user, we set the watchingVideoItemProperty
         // and this will trigger all necessary consequent events (loading of media, expanding videoCollapsePane and
         // auto-scrolling to the video player).
-        if (!Objects.areEquals(watchingVideoItem, watchingVideoItemProperty.get()) && !(isUserWatchingLivestream() && !watchingVideoItem.isPublished() /* livestream too */)) {
+        ScheduledItem watchingVideoItem = watchingVideoLifecycle.getVideoScheduledItem();
+        if (!isSameVideoAsAlreadyWatching(watchingVideoLifecycle)) {
             watchingVideoItemProperty.set(watchingVideoItem);
         } else { // But if it's the same video, the next step depends on its current state.
             // Let's start with the particular case where the user just received the push notification that the video
@@ -317,10 +319,14 @@ final class VideoStreamingActivity extends ViewDomainActivityBase {
         }
     }
 
+    boolean isSameVideoAsAlreadyWatching(VideoLifecycle videoLifecycle) {
+        return Objects.areEquals(videoLifecycle.getVideoScheduledItem(), watchingVideoItemProperty.get())
+               || isUserWatchingLivestream() && videoLifecycle.isLiveUpcoming();
+    }
+
     ScheduledItem getWatchingVideoItem() {
         return watchingVideoItemProperty.get();
     }
-
 
     ObjectProperty<ScheduledItem> watchingVideoItemProperty() {
         return watchingVideoItemProperty;
