@@ -23,6 +23,7 @@ import javafx.event.EventHandler;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.control.Button;
+import javafx.scene.control.Hyperlink;
 import javafx.scene.control.Label;
 import javafx.scene.control.Labeled;
 import javafx.scene.layout.VBox;
@@ -90,16 +91,19 @@ final class VideoFormattersAndRenderers {
         ValueRendererRegistry.registerValueRenderer("videoStatus", (value, context) -> {
             ScheduledItem videoScheduledItem = (ScheduledItem) value;
 
-            Button actionButton = Bootstrap.dangerButton(I18nControls.newButton(VideoStreamingI18nKeys.Watch));
-            actionButton.setGraphicTextGap(10);
+            Button watchButton = Bootstrap.dangerButton(I18nControls.newButton(VideoStreamingI18nKeys.Watch));
+            watchButton.setGraphicTextGap(10);
             Label statusLabel = new Label();
             Label availableUntilLabel = new Label();
+            Hyperlink liveNowLink = I18nControls.newHyperlink(I18nKeys.upperCase(VideoStreamingI18nKeys.LiveNow));
             Controls.setupTextWrapping(availableUntilLabel, true, false);
             // Initial computation of the status
-            computeStatusLabelAndWatchButton(videoScheduledItem, statusLabel, availableUntilLabel, actionButton, context.getAppContext(), true);
+            StatusElements se = new StatusElements(videoScheduledItem, statusLabel, availableUntilLabel, liveNowLink, watchButton, context.getAppContext());
+            updateStatusElements(se, true);
             VBox vBoxStatusAndButtonContainer = new VBox(10,
-                actionButton,
+                watchButton,
                 statusLabel,
+                liveNowLink,
                 availableUntilLabel
             );
 
@@ -108,7 +112,7 @@ final class VideoFormattersAndRenderers {
             BooleanProperty isPublishedProperty = EntityBindings.getBooleanFieldProperty(videoScheduledItem, ScheduledItem.published);
 
             // Starting a regular update of the status over the time to reflect the video lifecycle
-            FXProperties.runOnPropertyChange(() -> Platform.runLater(() -> computeStatusLabelAndWatchButton(videoScheduledItem, statusLabel, availableUntilLabel, actionButton, context.getAppContext(), false)), isPublishedProperty);
+            FXProperties.runOnPropertyChange(() -> Platform.runLater(() -> updateStatusElements(se, false)), isPublishedProperty);
 
             vBoxStatusAndButtonContainer.setPadding(new Insets(10));
             vBoxStatusAndButtonContainer.setAlignment(Pos.CENTER);
@@ -119,22 +123,26 @@ final class VideoFormattersAndRenderers {
 
     // PRIVATE API
 
-    private static void computeStatusLabelAndWatchButton(ScheduledItem videoScheduledItem, Label statusLabel, Label availableUntilLabel, Button actionButton, VideoStreamingActivity videoStreamingActivity, boolean initial) {
+    @SuppressWarnings("unusable-by-js")
+    private record StatusElements(ScheduledItem videoScheduledItem, Label statusLabel, Label availableUntilLabel, Hyperlink liveNowLink, Button watchButton, VideoStreamingActivity videoStreamingActivity) { }
+
+    private static void updateStatusElements(StatusElements se, boolean initial) {
         // Stopping refreshing labels and button once removed from the scene (due to responsive design)
-        if (!initial && statusLabel.getScene() == null)
+        if (!initial && se.statusLabel.getScene() == null)
             return;
 
-        Runnable refresher = () -> computeStatusLabelAndWatchButton(videoScheduledItem, statusLabel, availableUntilLabel, actionButton, videoStreamingActivity, false);
+        Runnable refresher = () -> updateStatusElements(se, false);
 
         // Setting default visibilities for most cases (to be changed in specific cases)
-        hideButton(actionButton);
-        showLabel(statusLabel);
-        hideLabel(availableUntilLabel);
+        hideButton(se.watchButton);
+        showLabeled(se.statusLabel);
+        hideLabeled(se.liveNowLink);
+        hideLabeled(se.availableUntilLabel);
 
-        String statusI18nKey = VideoState.getVideoStatusI18nKey(videoScheduledItem);
+        String statusI18nKey = VideoState.getVideoStatusI18nKey(se.videoScheduledItem);
         Object statusI18nArg = null;
-        VideoLifecycle videoLifecycle = new VideoLifecycle(videoScheduledItem);
-        boolean hideOrShowLivestreamButton = false;
+        VideoLifecycle videoLifecycle = new VideoLifecycle(se.videoScheduledItem);
+        boolean hideOrShowWatchButton = false;
 
         switch (statusI18nKey) {
             case VideoStreamingI18nKeys.OnTime:
@@ -143,64 +151,68 @@ final class VideoFormattersAndRenderers {
             case VideoStreamingI18nKeys.StartingIn1:
                 statusI18nArg = formatDuration(videoLifecycle.durationBetweenNowAndSessionStart());
                 scheduleRefreshSeconds(1, refresher); // We refresh the countdown every second
-                hideOrShowLivestreamButton = true;
+                hideOrShowWatchButton = true;
                 break;
             case VideoStreamingI18nKeys.LiveNow:
+                se.liveNowLink.setOnAction(e -> se.videoStreamingActivity.setWatchingVideo(videoLifecycle));
+                hideLabeled(se.statusLabel);
+                showLabeled(se.liveNowLink);
                 scheduleRefreshDuration(videoLifecycle.durationBetweenNowAndSessionEnd(), refresher);
-                hideOrShowLivestreamButton = true;
+                hideOrShowWatchButton = true;
                 break;
             case VideoStreamingI18nKeys.RecordingSoonAvailable:
             case VideoStreamingI18nKeys.VideoDelayed:
                 scheduleRefreshSeconds(60, refresher); // Maybe different in 1 min due to push notification
                 break;
             case BaseI18nKeys.Available:
-                hideLabel(statusLabel);
-                showButton(actionButton, e -> {
-                    videoStreamingActivity.setWatchingVideo(videoLifecycle);
-                    transformButtonFromPlayToPlayAgain(actionButton);
+                hideLabeled(se.statusLabel);
+                showButton(se.watchButton, e -> {
+                    se.videoStreamingActivity.setWatchingVideo(videoLifecycle);
+                    transformButtonFromPlayToPlayAgain(se.watchButton);
                 });
-                LocalDateTime expirationDate = videoScheduledItem.getExpirationDate(); // videoLifecycle.getExpirationDate();
+                LocalDateTime expirationDate = se.videoScheduledItem.getExpirationDate(); // se.videoLifecycle.getExpirationDate();
                 if (expirationDate != null) {
                     FXProperties.runNowAndOnPropertyChange(eventTimeSelected -> {
                         LocalDateTime userTimezoneExpirationDate = eventTimeSelected ? expirationDate : TimeZoneSwitch.convertEventLocalDateTimeToUserLocalDateTime(expirationDate);
-                        I18nControls.bindI18nProperties(availableUntilLabel, VideoStreamingI18nKeys.VideoAvailableUntil1, LocalizedTime.formatLocalDateTimeProperty(userTimezoneExpirationDate, "dd MMM '-' HH.mm"));
+                        I18nControls.bindI18nProperties(se.availableUntilLabel, VideoStreamingI18nKeys.VideoAvailableUntil1, LocalizedTime.formatLocalDateTimeProperty(userTimezoneExpirationDate, "dd MMM '-' HH.mm"));
                     }, TimeZoneSwitch.eventLocalTimeSelectedProperty());
-                    showLabel(availableUntilLabel);
+                    showLabeled(se.availableUntilLabel);
                     // We schedule a refresh so the UI is updated when the expirationDate is reached
                     scheduleRefreshAt(expirationDate, refresher);
                 }
         }
-        if (hideOrShowLivestreamButton) {
+        if (hideOrShowWatchButton) {
             // In case a user clicked on a previous recorded video, we need to display a button so he can go back to the livestream
-            if (videoStreamingActivity.isSameVideoAsAlreadyWatching(videoLifecycle))
-                hideButton(actionButton);
+            if (se.videoStreamingActivity.isSameVideoAsAlreadyWatching(videoLifecycle))
+                hideButton(se.watchButton);
             else
-                showButton(actionButton, e -> videoStreamingActivity.setWatchingVideo(videoLifecycle));
+                showButton(se.watchButton, e -> se.videoStreamingActivity.setWatchingVideo(videoLifecycle));
             // We may also need to update the button again when the user changes the watching video
-            if (!actionButton.getProperties().containsKey("watchingVideoItemPropertyListener")) { // we install that listener only once
-                actionButton.getProperties().put("watchingVideoItemPropertyListener",
-                    FXProperties.runOnPropertyChange(refresher, videoStreamingActivity.watchingVideoItemProperty()));
+            String arbitraryKey = "watchingVideoItemPropertyListener";
+            if (!se.watchButton.getProperties().containsKey(arbitraryKey)) { // we install that listener only once
+                se.watchButton.getProperties().put(arbitraryKey,
+                    FXProperties.runOnPropertyChange(refresher, se.videoStreamingActivity.watchingVideoItemProperty()));
             }
         }
 
-        I18nControls.bindI18nProperties(statusLabel, I18nKeys.upperCase(statusI18nKey), statusI18nArg);
+        I18nControls.bindI18nProperties(se.statusLabel, I18nKeys.upperCase(statusI18nKey), statusI18nArg);
     }
 
-    private static void hideLabel(Labeled label) {
+    private static void hideLabeled(Labeled label) {
         Layouts.setManagedAndVisibleProperties(label, false);
     }
 
-    private static void showLabel(Labeled label) {
+    private static void showLabeled(Labeled label) {
         Layouts.setManagedAndVisibleProperties(label, true);
     }
 
     private static void hideButton(Button button) {
-        hideLabel(button);
+        hideLabeled(button);
         button.setOnAction(null);
     }
 
     private static void showButton(Button button, EventHandler<ActionEvent> actionEvent) {
-        showLabel(button);
+        showLabeled(button);
         button.setOnAction(actionEvent);
     }
 
