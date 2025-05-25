@@ -159,7 +159,7 @@ final class VideoFormattersAndRenderers {
                     videoStreamingActivity.setWatchingVideo(videoLifecycle);
                     transformButtonFromPlayToPlayAgain(actionButton);
                 });
-                LocalDateTime expirationDate = videoLifecycle.getExpirationDate();
+                LocalDateTime expirationDate = videoScheduledItem.getExpirationDate(); // videoLifecycle.getExpirationDate();
                 if (expirationDate != null) {
                     FXProperties.runNowAndOnPropertyChange(eventTimeSelected -> {
                         LocalDateTime userTimezoneExpirationDate = eventTimeSelected ? expirationDate : TimeZoneSwitch.convertEventLocalDateTimeToUserLocalDateTime(expirationDate);
