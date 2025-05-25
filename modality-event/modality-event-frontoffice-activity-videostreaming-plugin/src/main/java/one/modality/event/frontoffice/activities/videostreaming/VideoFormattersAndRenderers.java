@@ -95,16 +95,21 @@ final class VideoFormattersAndRenderers {
             Label statusLabel = new Label();
             Label availableUntilLabel = new Label();
             Controls.setupTextWrapping(availableUntilLabel, true, false);
+            // Initial computation of the status
             computeStatusLabelAndWatchButton(videoScheduledItem, statusLabel, availableUntilLabel, actionButton, context.getAppContext(), true);
             VBox vBoxStatusAndButtonContainer = new VBox(10,
                 actionButton,
                 statusLabel,
                 availableUntilLabel
             );
-            //If the publishedProperty change, we Update the button
+
+            // Push-notification management: we turn the published field into a property
             ModalityMessaging.getFrontOfficeEntityMessaging().listenEntityChanges(videoScheduledItem.getStore());
             BooleanProperty isPublishedProperty = EntityBindings.getBooleanFieldProperty(videoScheduledItem, ScheduledItem.published);
+
+            // Starting a regular update of the status over the time to reflect the video lifecycle
             FXProperties.runOnPropertyChange(() -> Platform.runLater(() -> computeStatusLabelAndWatchButton(videoScheduledItem, statusLabel, availableUntilLabel, actionButton, context.getAppContext(), false)), isPublishedProperty);
+
             vBoxStatusAndButtonContainer.setPadding(new Insets(10));
             vBoxStatusAndButtonContainer.setAlignment(Pos.CENTER);
             return vBoxStatusAndButtonContainer;
@@ -156,7 +161,10 @@ final class VideoFormattersAndRenderers {
                 });
                 LocalDateTime expirationDate = videoLifecycle.getExpirationDate();
                 if (expirationDate != null) {
-                    I18nControls.bindI18nProperties(availableUntilLabel, VideoStreamingI18nKeys.VideoAvailableUntil1, LocalizedTime.formatLocalDateTimeProperty(expirationDate, "dd MMM '-' HH.mm"));
+                    FXProperties.runNowAndOnPropertyChange(eventTimeSelected -> {
+                        LocalDateTime userTimezoneExpirationDate = eventTimeSelected ? expirationDate : TimeZoneSwitch.convertEventLocalDateTimeToUserLocalDateTime(expirationDate);
+                        I18nControls.bindI18nProperties(availableUntilLabel, VideoStreamingI18nKeys.VideoAvailableUntil1, LocalizedTime.formatLocalDateTimeProperty(userTimezoneExpirationDate, "dd MMM '-' HH.mm"));
+                    }, TimeZoneSwitch.eventLocalTimeSelectedProperty());
                     showLabel(availableUntilLabel);
                     // We schedule a refresh so the UI is updated when the expirationDate is reached
                     scheduleRefreshAt(expirationDate, refresher);

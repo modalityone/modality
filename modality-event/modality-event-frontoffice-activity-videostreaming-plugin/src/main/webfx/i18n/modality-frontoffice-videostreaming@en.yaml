@@ -16,7 +16,7 @@ VideoAvailableUntil:
   textFill: "#41BA4D"
 VideoAvailableUntil1:
   textFill: "#41BA4D"
-EventAvailableUntil:
+EventAvailableUntil1:
   textFill: "#41BA4D"
 VideoExpiredSince:
   textFill: "#FF0404"

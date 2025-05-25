@@ -101,7 +101,7 @@ final class VideoStreamingActivity extends ViewDomainActivityBase {
     private Player lastVideoPlayingPlayer; // the last playing player from this activity
 
     private final CollapsePane eventsSelectionPane = new CollapsePane();
-    private final Label videoExpirationLabel = new Label();
+    private final Label videoExpirationLabel = Bootstrap.strong(new Label()); // TODO: put bold in CSS
     private final Label selectTheDayBelowLabel = I18nControls.newLabel(VideoStreamingI18nKeys.SelectTheDayBelow);
     private EntityStore entityStore;
     private final VisualGrid videoGrid =
@@ -497,9 +497,12 @@ final class VideoStreamingActivity extends ViewDomainActivityBase {
                 videoExpirationLabel.setVisible(true);
                 LocalDateTime nowInEventTimezone = Event.nowInEventTimezone();
                 boolean available = nowInEventTimezone.isBefore(vodExpirationDate);
-                I18nControls.bindI18nProperties(videoExpirationLabel,
-                    available ? VideoStreamingI18nKeys.EventAvailableUntil1 : VideoStreamingI18nKeys.VideoExpiredSince1,
-                    LocalizedTime.formatLocalDateTimeProperty(vodExpirationDate, FrontOfficeTimeFormats.VOD_EXPIRATION_DATE_TIME_FORMAT));
+                FXProperties.runNowAndOnPropertyChange(eventTimeSelected -> {
+                    LocalDateTime userTimezoneVodExpirationDate = eventTimeSelected ? vodExpirationDate : TimeZoneSwitch.convertEventLocalDateTimeToUserLocalDateTime(vodExpirationDate);
+                    I18nControls.bindI18nProperties(videoExpirationLabel,
+                        available ? VideoStreamingI18nKeys.EventAvailableUntil1 : VideoStreamingI18nKeys.VideoExpiredSince1,
+                        LocalizedTime.formatLocalDateTimeProperty(userTimezoneVodExpirationDate, FrontOfficeTimeFormats.VOD_EXPIRATION_DATE_TIME_FORMAT));
+                }, TimeZoneSwitch.eventLocalTimeSelectedProperty());
             }
 
             // There are 2 modes of visualization: one with multiple videos per day (ex: Festivals), and one for with one video per day (ex: recurring events like STTP)

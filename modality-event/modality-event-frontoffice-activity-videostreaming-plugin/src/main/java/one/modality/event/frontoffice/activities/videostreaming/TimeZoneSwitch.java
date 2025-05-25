@@ -12,10 +12,7 @@ import javafx.scene.layout.HBox;
 import javafx.scene.layout.Region;
 import one.modality.base.shared.entities.Event;
 
-import java.time.LocalDate;
-import java.time.LocalTime;
-import java.time.ZoneId;
-import java.time.ZonedDateTime;
+import java.time.*;
 
 /**
  * @author Bruno Salmon
@@ -66,9 +63,13 @@ final class TimeZoneSwitch {
         return userZoneDateTime.toLocalTime();
     }
 
-    static LocalDate convertEventLocalDateToUserLocalDate(LocalDate eventLocalDate) {
-        ZonedDateTime eventZonedDateTime = eventLocalDate.atStartOfDay(EVENT_ZONE_ID);
+    static LocalDateTime convertEventLocalDateTimeToUserLocalDateTime(LocalDateTime eventLocalDateTime) {
+        ZonedDateTime eventZonedDateTime = eventLocalDateTime.atZone(EVENT_ZONE_ID);
         ZonedDateTime userZonedDateTime = eventZonedDateTime.withZoneSameInstant(USER_ZONE_ID);
-        return userZonedDateTime.toLocalDate();
+        return userZonedDateTime.toLocalDateTime();
+    }
+
+    static LocalDate convertEventLocalDateToUserLocalDate(LocalDate eventLocalDate) {
+        return convertEventLocalDateTimeToUserLocalDateTime(eventLocalDate.atStartOfDay()).toLocalDate();
     }
 }

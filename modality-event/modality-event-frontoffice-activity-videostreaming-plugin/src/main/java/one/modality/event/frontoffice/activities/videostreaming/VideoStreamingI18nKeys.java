@@ -38,7 +38,6 @@ public interface VideoStreamingI18nKeys {
     String VideoExpiredOn1 = "VideoExpiredOn1";
     String PastRecordings = "PastRecordings";
     String VideoAvailableUntil = "VideoAvailableUntil";
-    String EventAvailableUntil = "EventAvailableUntil";
     String VideoExpiredSince = "VideoExpiredSince";
     String StartingIn = "StartingIn";
 
