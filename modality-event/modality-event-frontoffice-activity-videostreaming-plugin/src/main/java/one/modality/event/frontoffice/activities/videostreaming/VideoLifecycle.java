@@ -7,6 +7,7 @@ import one.modality.base.shared.entities.ScheduledItem;
 import one.modality.base.shared.entities.markers.EntityHasStartAndEndTime;
 
 import java.time.Duration;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
 
@@ -28,10 +29,25 @@ final class VideoLifecycle {
 
     VideoLifecycle(ScheduledItem videoScheduledItem) {
         this.videoScheduledItem = videoScheduledItem;
-        ScheduledItem programScheduledItem = videoScheduledItem.getProgramScheduledItem();
-        EntityHasStartAndEndTime startAndEndTimeHolder = Objects.coalesce(programScheduledItem.getTimeline(), programScheduledItem);
-        sessionStart = videoScheduledItem.getDate().atTime(startAndEndTimeHolder.getStartTime());
-        sessionEnd = videoScheduledItem.getDate().atTime(startAndEndTimeHolder.getEndTime());
+        LocalDate videoDate = videoScheduledItem.getDate();
+        // Start & end times can be specified at different places (listed in order of priority):
+        // - videoScheduledItem
+        // - videoScheduledItem.timeline
+        // - videoScheduledItem.programScheduledItem
+        // - videoScheduledItem.programScheduledItem.timeline
+        EntityHasStartAndEndTime startAndEndTimeHolder = videoScheduledItem;
+        if (startAndEndTimeHolder.getStartTime() == null) {
+            startAndEndTimeHolder = videoScheduledItem.getTimeline();
+            if (startAndEndTimeHolder == null || startAndEndTimeHolder.getStartTime() == null) {
+                ScheduledItem programScheduledItem = videoScheduledItem.getProgramScheduledItem();
+                startAndEndTimeHolder = programScheduledItem;
+                if (startAndEndTimeHolder.getStartTime() == null) {
+                    startAndEndTimeHolder = programScheduledItem.getTimeline();
+                }
+            }
+        }
+        sessionStart = videoDate.atTime(startAndEndTimeHolder.getStartTime());
+        sessionEnd = videoDate.atTime(startAndEndTimeHolder.getEndTime());
         // Starting to show the livestream 20 min before the session
         showLivestreamStart = sessionStart.minusMinutes(20);
         // Stopping to show the livestream 30 min after the session
