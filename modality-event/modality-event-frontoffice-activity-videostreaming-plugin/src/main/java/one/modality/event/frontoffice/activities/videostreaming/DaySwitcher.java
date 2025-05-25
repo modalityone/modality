@@ -16,6 +16,7 @@ import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Node;
 import javafx.scene.control.Button;
+import javafx.scene.control.Hyperlink;
 import javafx.scene.control.Label;
 import javafx.scene.control.Labeled;
 import javafx.scene.layout.BorderPane;
@@ -87,9 +88,7 @@ public class DaySwitcher {
         dayButtonsColumnsPane.setPadding(new Insets(0, 0, 30, 0));
 
         selectAllDaysButton.setMinWidth(DAY_BUTTON_WIDTH);
-        selectAllDaysButton.setOnAction(e -> {
-            currentDateProperty.set(null);
-        });
+        selectAllDaysButton.setOnAction(e -> currentDateProperty.set(null));
     }
 
     private void buildMobileUI() {
@@ -113,7 +112,15 @@ public class DaySwitcher {
         BorderPane.setMargin(backArrowPane, arrowMargin);
         BorderPane.setMargin(forwardArrowPane, arrowMargin);
 
-        mobileViewContainer.getChildren().setAll(daySelectorPane, TimeZoneSwitch.createTimezoneSwitchBox());
+        Hyperlink selectAllDaysLink = I18nControls.newHyperlink(VideoStreamingI18nKeys.ViewAllDays);
+        selectAllDaysLink.setOnAction(e -> currentDateProperty.set(null));
+
+        mobileViewContainer.getChildren().setAll(
+            daySelectorPane,
+            selectAllDaysLink,
+            TimeZoneSwitch.createTimezoneSwitchBox()
+        );
+        mobileViewContainer.setAlignment(Pos.CENTER);
     }
 
     public ObjectProperty<LocalDate> currentDateProperty() {
@@ -180,7 +187,7 @@ public class DaySwitcher {
             Collections.addIfNotContainsOrRemove(button.getStyleClass(), !highlighted, ModalityStyle.BTN_WHITE);
         }
         if (selectedDate == null) {
-            I18nControls.bindI18nProperties(mobileDateLabel, VideoStreamingI18nKeys.ViewAllDays);
+            I18nControls.bindI18nProperties(mobileDateLabel, VideoStreamingI18nKeys.AllDays);
         } else {
             formatLabeledDate(mobileDateLabel, selectedDate);
         }

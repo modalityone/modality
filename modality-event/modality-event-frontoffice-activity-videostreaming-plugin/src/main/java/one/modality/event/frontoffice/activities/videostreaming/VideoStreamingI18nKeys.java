@@ -26,6 +26,7 @@ public interface VideoStreamingI18nKeys {
     String OnTime = "OnTime";
     String VideoDelayed = "VideoDelayed";
     String Expired = "Expired";
+    String AllDays = "AllDays";
     String VideosHelp = "VideosHelp";
     String NoVideosForThisEvent = "NoVideosForThisEvent";
     String StartingIn1 = "StartingIn1";
