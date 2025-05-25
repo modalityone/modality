@@ -255,6 +255,10 @@ final class VideoStreamingActivity extends ViewDomainActivityBase {
     }
 
     private void scheduleAutoLivestream() {
+        // We don't interrupt the user if he is already watching a video
+        if (videoCollapsePane.isExpanded())
+            return;
+
         // The livestream url is always the same for the event, but we still need to determine which
         // session is being played for the MediaConsumption management. To do this, we will set
         // `scheduledVideoItemProperty` with the scheduled item corresponding to the played session.
@@ -320,7 +324,7 @@ final class VideoStreamingActivity extends ViewDomainActivityBase {
     }
 
     boolean isSameVideoAsAlreadyWatching(VideoLifecycle videoLifecycle) {
-        return Objects.areEquals(videoLifecycle.getVideoScheduledItem(), watchingVideoItemProperty.get())
+        return Objects.areEquals(videoLifecycle.getVideoScheduledItem(), getWatchingVideoItem())
                || isUserWatchingLivestream() && videoLifecycle.isLiveUpcoming();
     }
 
