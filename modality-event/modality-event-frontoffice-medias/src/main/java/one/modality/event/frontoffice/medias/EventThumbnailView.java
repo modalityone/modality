@@ -1,13 +1,13 @@
 package one.modality.event.frontoffice.medias;
 
 import dev.webfx.extras.panes.MonoPane;
+import dev.webfx.extras.panes.ScalePane;
 import dev.webfx.extras.styles.bootstrap.Bootstrap;
 import dev.webfx.extras.util.control.Controls;
 import dev.webfx.extras.webtext.HtmlText;
 import dev.webfx.stack.i18n.I18n;
 import dev.webfx.stack.i18n.controls.I18nControls;
 import dev.webfx.stack.i18n.spi.impl.I18nSubKey;
-import javafx.beans.binding.BooleanBinding;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.control.Button;
@@ -25,13 +25,13 @@ import java.time.LocalDateTime;
  */
 public final class EventThumbnailView {
 
-    private static final double CONTAINER_WIDTH = 263;
-    private static final double CONTAINER_HEIGHT = 263;
+    private static final double CONTAINER_WIDTH = 400;
+    private static final double CONTAINER_HEIGHT = 400;
 
     private final Event event;
     private final String imageItemCode;
     private final VBox container = new VBox();
-    private Button actionButton;
+    private Button viewButton;
 
     public enum ItemType {
         ITEM_TYPE_AUDIO,
@@ -128,13 +128,7 @@ public final class EventThumbnailView {
         ));
 
         MonoPane imageContainer = new MonoPane();
-        String imagePath;
-        if (itemType == ItemType.ITEM_TYPE_AUDIO) {
-             imagePath = ModalityCloudinary.eventCoverImagePath(event, languageOfTheItem);
-        }
-        else {
-            imagePath = ModalityCloudinary.eventCoverImagePath(event, I18n.getLanguage());
-        }
+        String imagePath = ModalityCloudinary.eventCoverImagePath(event, itemType == ItemType.ITEM_TYPE_AUDIO ? languageOfTheItem : I18n.getLanguage());
         ModalityCloudinary.loadImage(imagePath, imageContainer, CONTAINER_WIDTH, CONTAINER_HEIGHT, SvgIcons::createAudioCoverPath)
             .onFailure(error-> {
                 //If we can't find the picture of the cover for the selected language, we display the default image
@@ -142,30 +136,26 @@ public final class EventThumbnailView {
             });
 
         StackPane thumbnailStackPane = new StackPane(imageContainer, availabilityLabel);
-        StackPane.setAlignment(availabilityLabel, Pos.TOP_LEFT);
+        thumbnailStackPane.setAlignment(Pos.TOP_LEFT);
         thumbnailStackPane.setPrefSize(CONTAINER_WIDTH, CONTAINER_HEIGHT);
         imageContainer.setMaxSize(CONTAINER_WIDTH, CONTAINER_HEIGHT); // required so that it fills the stack pane
 
-        actionButton = Bootstrap.primaryButton(I18nControls.newButton(MediasI18nKeys.View));
-        actionButton.setPrefWidth(150);
-        //We display the view button only if the content is available
-        actionButton.visibleProperty().bind(new BooleanBinding() {
-            @Override
-            protected boolean computeValue() {
-                return availabilityType == AvailabilityType.AVAILABLE;
-            }
-        });
-        VBox.setMargin(actionButton, new Insets(30, 0, 0, 0));
+        viewButton = Bootstrap.primaryButton(I18nControls.newButton(MediasI18nKeys.View));
+        viewButton.setMinWidth(150);
+        // We display the view button only if the content is available
+        viewButton.setVisible(availabilityType == AvailabilityType.AVAILABLE);
+        VBox.setMargin(viewButton, new Insets(30, 0, 0, 0));
+        ScalePane thumbnailScalePane = new ScalePane(thumbnailStackPane);
         container.getChildren().addAll(
-            thumbnailStackPane,
+            thumbnailScalePane,
             eventLabel,
             shortHTMLDescription,
-            actionButton
+            viewButton
         );
     }
 
-    public Button getActionButton() {
-        return actionButton;
+    public Button getViewButton() {
+        return viewButton;
     }
 
     public static String extractLanguageISOCode(String itemCode) {

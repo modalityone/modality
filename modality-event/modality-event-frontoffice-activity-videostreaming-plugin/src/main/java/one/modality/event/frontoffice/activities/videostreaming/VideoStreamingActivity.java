@@ -164,10 +164,10 @@ final class VideoStreamingActivity extends ViewDomainActivityBase {
                         } else {
                             ColumnsPane columnsPane = new ColumnsPane(20, 50);
                             columnsPane.setFixedColumnWidth(EVENT_THUMBNAIL_WIDTH);
-                            columnsPane.getStyleClass().add("media-library");
+                            columnsPane.getStyleClass().add("audio-library"); // is audio-library good? (must be to have the same CSS rules as audio)
                             for (Event event : eventsWithBookedVideos) {
                                 EventThumbnailView thumbnail = new EventThumbnailView(event, KnownItem.VIDEO.getCode(), EventThumbnailView.ItemType.ITEM_TYPE_VIDEO, true);
-                                Button actionButton = thumbnail.getActionButton();
+                                Button actionButton = thumbnail.getViewButton();
                                 actionButton.setCursor(Cursor.HAND);
                                 actionButton.setOnAction(e -> {
                                     eventProperty.set(event);
