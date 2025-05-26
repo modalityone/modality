@@ -82,7 +82,7 @@ final class AudioLibraryActivity extends ViewDomainActivityBase {
 
         ColumnsPane columnsPane = new ColumnsPane(30, 50);
         columnsPane.setMinColumnWidth(255);
-        columnsPane.setMaxColumnWidth(400);
+        columnsPane.setMaxColumnWidth(EventThumbnailView.CONTAINER_WIDTH); // Max width = unscaled thumbnail (533 px)
         columnsPane.setAlignment(Pos.TOP_CENTER);
         columnsPane.setPadding(new Insets(50,0,0,0));
 

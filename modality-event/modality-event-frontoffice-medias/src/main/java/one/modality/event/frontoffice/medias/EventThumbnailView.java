@@ -25,8 +25,8 @@ import java.time.LocalDateTime;
  */
 public final class EventThumbnailView {
 
-    private static final double CONTAINER_WIDTH = 400;
-    private static final double CONTAINER_HEIGHT = 400;
+    public static final double CONTAINER_WIDTH = 533;
+    private static final double CONTAINER_HEIGHT = 533;
 
     private final Event event;
     private final String imageItemCode;
