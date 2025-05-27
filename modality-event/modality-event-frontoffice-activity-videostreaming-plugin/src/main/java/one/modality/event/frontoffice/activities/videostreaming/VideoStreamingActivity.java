@@ -82,7 +82,8 @@ final class VideoStreamingActivity extends ViewDomainActivityBase {
     private static final double STRAIGHT_MOBILE_LAYOUT_UNDER_WIDTH = 400; // mainly to reduce responsive computation on low-end devices
     private static final int MIN_NUMBER_OF_SESSION_PER_DAY_BEFORE_DISPLAYING_DAILY_PROGRAM = 3;
     private static final double IMAGE_HEIGHT = 240;
-    private static final double EVENT_THUMBNAIL_WIDTH = 263;
+    private static final double COLUMN_MIN_WIDTH = 200;
+    private static final double COLUMN_MAX_WIDTH = 530; // Max width = unscaled thumbnail (533 px)
 
     // Holding an observable list of events with videos booked by the user (changes on login & logout)
     private final ObservableList<Event> eventsWithBookedVideos = FXCollections.observableArrayList();
@@ -163,7 +164,9 @@ final class VideoStreamingActivity extends ViewDomainActivityBase {
                             eventsSelectionPane.setContent(null);
                         } else {
                             ColumnsPane columnsPane = new ColumnsPane(20, 50);
-                            columnsPane.setFixedColumnWidth(EVENT_THUMBNAIL_WIDTH);
+                            columnsPane.setMinColumnWidth(COLUMN_MIN_WIDTH);
+                            columnsPane.setMaxColumnWidth(COLUMN_MAX_WIDTH);
+                            columnsPane.setMaxWidth(Double.MAX_VALUE);
                             columnsPane.getStyleClass().add("audio-library"); // is audio-library good? (must be to have the same CSS rules as audio)
                             for (Event event : eventsWithBookedVideos) {
                                 EventThumbnailView thumbnail = new EventThumbnailView(event, KnownItem.VIDEO.getCode(), EventThumbnailView.ItemType.ITEM_TYPE_VIDEO, true);
@@ -448,12 +451,16 @@ final class VideoStreamingActivity extends ViewDomainActivityBase {
         videoGrid.setHeaderVisible(true);
         videoGrid.setAppContext(this); // Passing this VideosActivity as appContext to the value renderers
 
+        HtmlText festivalShopText = Bootstrap.strong(new HtmlText());
+        I18n.bindI18nTextProperty(festivalShopText.textProperty(), VideoStreamingI18nKeys.FestivalShop);
+
         VBox loadedContentVBox = new VBox(40,
             eventsSelectionVBox,
             responsiveHeader, // contains the event image and the event title
             decoratedLivestreamCollapsePane,
             responsiveDaySelectionMonoPane,
             videoGrid, // contains the videos for the selected day (or all days)
+            festivalShopText,
             HelpPanel.createHelpPanel(VideoStreamingI18nKeys.VideosHelp, VideoStreamingI18nKeys.VideosHelpSecondary) // temporarily hardcoded i18n message for Festivals
         );
         Layouts.setMinMaxHeightToPref(loadedContentVBox); // No need to compute min/max height as different to pref (layout computation optimization)

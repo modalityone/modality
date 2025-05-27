@@ -7,6 +7,7 @@ public interface VideoStreamingI18nKeys {
     String LiveAnnouncementsTitle = "LiveAnnouncementsTitle";
     String RecordingSoonAvailable = "RecordingSoonAvailable";
     String EventAvailableUntil1 = "EventAvailableUntil1";
+    String FestivalShop = "FestivalShop";
     String ScheduleForSpecificDate1 = "ScheduleForSpecificDate1";
     String TimeZoneUK = "TimeZoneUK";
     String EventSchedule = "EventSchedule";
