@@ -6,6 +6,7 @@ import dev.webfx.extras.panes.transitions.Transition;
 import dev.webfx.extras.player.Players;
 import dev.webfx.extras.util.control.Controls;
 import dev.webfx.extras.util.layout.Layouts;
+import dev.webfx.kit.launcher.aria.AriaRole;
 import dev.webfx.kit.launcher.WebFxKitLauncher;
 import dev.webfx.kit.util.properties.FXProperties;
 import dev.webfx.kit.util.properties.ObservableLists;
@@ -358,7 +359,8 @@ public final class ModalityFrontOfficeMainFrameActivity extends ModalityClientMa
             }, ButtonSegment[]::new)
         );
         languageSegmentedBar.stateProperty().bindBidirectional(I18n.languageProperty());
-        HBox languageBar = languageSegmentedBar.getView();
+        HBox languageBar = languageSegmentedBar.getView(); // Aria role already set by SegmentedButton class
+        WebFxKitLauncher.setAriaLabel(languageBar, "Language selector");
         languageBar.setMaxHeight(LANG_BAR_MENU_HEIGHT);
         languageBar.getStyleClass().setAll("button-bar");
         MonoPane languageSection = new MonoPane(languageBar);
@@ -440,6 +442,7 @@ public final class ModalityFrontOfficeMainFrameActivity extends ModalityClientMa
         }
         buttonBar.getStyleClass().setAll("button-bar"); // to make buttons square in CSS (remove round corners)
         CollapsePane collapsePane = new CollapsePane(buttonBar);
+        WebFxKitLauncher.setAriaRole(collapsePane, AriaRole.NAVIGATION);
         collapsePane.getStyleClass().setAll("menu-bar", userMenu ? "user-menu-bar" : "main-menu-bar", mobileLayout ? "mobile" : "non-mobile");
         collapsePane.setMaxWidth(Double.MAX_VALUE); // necessary to make the (CSS) border fill the whole page width
         collapsePane.setMinWidth(0); // Temporarily allowing menu shrinking on mobiles to prevent stopping page content shrinking (which is even worse as this crops the content on left and right)
@@ -468,6 +471,7 @@ public final class ModalityFrontOfficeMainFrameActivity extends ModalityClientMa
 
     private Button createMenuButton(Action routeAction, boolean userMenu, boolean mobileLayout) {
         Button button = ActionBinder.newActionButton(routeAction);
+        WebFxKitLauncher.setAriaRole(button, AriaRole.MENUITEM);
         button.setCursor(Cursor.HAND);
         button.setContentDisplay(userMenu ? ContentDisplay.LEFT : ContentDisplay.TOP);
         button.setGraphicTextGap(mobileLayout ? 0 : 8);

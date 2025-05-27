@@ -1,5 +1,7 @@
 package one.modality.base.frontoffice.activities.mainframe;
 
+import dev.webfx.kit.launcher.WebFxKitLauncher;
+import dev.webfx.kit.launcher.aria.AriaRole;
 import dev.webfx.kit.util.properties.FXProperties;
 import dev.webfx.platform.util.collection.Collections;
 import javafx.beans.property.ObjectProperty;
@@ -35,6 +37,7 @@ final class SegmentedButton<T> {
         frames = Arrays.stream(buttonSegments).map(this::createSegmentFrame).toArray(BorderPane[]::new);
         hBox = new HBox(frames);
         hBox.getStyleClass().setAll("segmented-button");
+        WebFxKitLauncher.setAriaRole(hBox, AriaRole.RADIOGROUP);
         setState(initialState);
     }
 
@@ -59,12 +62,11 @@ final class SegmentedButton<T> {
         graphic.setMouseTransparent(true);
         BorderPane frame = new BorderPane(graphic);
         frame.getStyleClass().setAll("button-segment");
+        WebFxKitLauncher.setAriaRole(frame, AriaRole.RADIO);
         boolean first = buttonSegment == buttonSegments[0];
         frame.setBorder(new Border(new BorderStroke(SEGMENTED_BUTTON_COLOR, BorderStrokeStyle.SOLID, segmentRadii(buttonSegment), new BorderWidths(1, 1 , 1, first ? 1 : 0), null)));
         frame.setCursor(Cursor.HAND);
-        frame.setOnMouseClicked(e -> {
-            setState(buttonSegment.getState());
-        });
+        frame.setOnMouseClicked(e -> setState(buttonSegment.getState()));
         frame.setOnMousePressed(e -> updateFramesFromState(buttonSegment.getState()));
         frame.setOnMouseReleased(e -> updateFrames());
         return frame;
@@ -84,13 +86,15 @@ final class SegmentedButton<T> {
         for (int i = 0, n = buttonSegments.length; i < n; i++) {
             ButtonSegment<T> buttonSegment = buttonSegments[i];
             BorderPane frame = frames[i];
-            if (Objects.equals(state, buttonSegment.getState())) {
+            boolean selected = Objects.equals(state, buttonSegment.getState());
+            if (selected) {
                 Collections.addIfNotContains("selected", frame.getStyleClass());
                 frame.setBackground(new Background(new BackgroundFill(SEGMENTED_BUTTON_COLOR, segmentRadii(buttonSegment), null)));
             } else {
                 frame.getStyleClass().remove("selected");
                 frame.setBackground(null);
             }
+            WebFxKitLauncher.setAriaSelected(frame, selected);
         }
     }
 }
