@@ -6,7 +6,6 @@ module modality.event.frontoffice.activity.videostreaming.plugin {
     requires javafx.base;
     requires javafx.controls;
     requires javafx.graphics;
-    requires modality.base.client.bootstrap;
     requires modality.base.client.cloudinary;
     requires modality.base.client.i18n;
     requires modality.base.client.icons;

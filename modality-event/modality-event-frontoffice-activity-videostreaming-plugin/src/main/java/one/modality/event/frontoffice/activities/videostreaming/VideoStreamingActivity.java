@@ -223,7 +223,7 @@ final class VideoStreamingActivity extends ViewDomainActivityBase {
                 LocalDate today = Event.todayInEventTimezone();
                 // If we are during the event, we position the `currentSelectedDay` to today
                 if (today.isAfter(event.getStartDate().minusDays(1)) && today.isBefore(event.getEndDate().plusDays(1))) {
-                    daySwitcher.setDay(today);
+                    daySwitcher.setSelectedDate(today);
                 }
             }
         }, eventProperty, FXUserPersonId.userPersonIdProperty());
@@ -415,7 +415,7 @@ final class VideoStreamingActivity extends ViewDomainActivityBase {
             .sorted()
             .collect(Collectors.toList()), selectedDayProperty.get(), pageContainer, VideoStreamingI18nKeys.EventSchedule);
         //We bind the currentDate of the daySwitcher to the currentDaySelected so the video appearing are linked to the day selected in the day switcher
-        selectedDayProperty.bind(daySwitcher.currentDateProperty());
+        selectedDayProperty.bind(daySwitcher.selectedDateProperty());
 
         //The monoPane that manage the program day selection
         new ResponsiveDesign(responsiveDaySelectionMonoPane)

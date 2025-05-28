@@ -8,74 +8,78 @@ import dev.webfx.kit.util.properties.FXProperties;
 import dev.webfx.platform.util.collection.Collections;
 import dev.webfx.stack.i18n.controls.I18nControls;
 import javafx.beans.binding.Bindings;
-import javafx.beans.property.DoubleProperty;
 import javafx.beans.property.ObjectProperty;
-import javafx.beans.property.SimpleDoubleProperty;
 import javafx.beans.property.SimpleObjectProperty;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Node;
-import javafx.scene.control.Button;
-import javafx.scene.control.Hyperlink;
-import javafx.scene.control.Label;
-import javafx.scene.control.Labeled;
+import javafx.scene.control.*;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.VBox;
-import one.modality.base.client.bootstrap.ModalityStyle;
 import one.modality.base.client.icons.SvgIcons;
 import one.modality.base.client.time.FrontOfficeTimeFormats;
 
 import java.time.LocalDate;
 import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.stream.Collectors;
 
 /**
  * @author David Hello
+ * @author Bruno Salmon
  */
 public class DaySwitcher {
 
-    private static final double DAY_BUTTON_WIDTH = 150;
+    private static final double DAY_BUTTON_MIN_WIDTH = 150;
 
     private final MonoPane parentContainer;
 
-    private List<LocalDate> dateList;
-    private final ObjectProperty<LocalDate> currentDateProperty = new SimpleObjectProperty<>();
-    private final VBox mobileViewContainer = new VBox(30);
+    private List<LocalDate> availableDates;
+    private final ObjectProperty<LocalDate> selectedDateProperty = new SimpleObjectProperty<>();
+    private final Object titleI18nKey;
+
+    // Desktop view
     private final VBox desktopViewContainer = new VBox(30);
     private final ColumnsPane dayButtonsColumnsPane = new ColumnsPane();
-    private final String title;
+    private final ToggleGroup toggleGroup = new ToggleGroup();
+    private final HashMap<LocalDate, ToggleButton> dateButtonMap = new HashMap<>();
+    private final ToggleButton selectAllDaysButton = Bootstrap.button(I18nControls.newToggleButton(VideoStreamingI18nKeys.ViewAllDays));
 
-    private final HashMap<LocalDate, Button> correspondenceDateButton = new HashMap<>();
-    private final Button selectAllDaysButton = Bootstrap.button(I18nControls.newButton(VideoStreamingI18nKeys.ViewAllDays));
-
+    // Mobile view
+    private final VBox mobileViewContainer = new VBox(30);
     private final Label mobileDateLabel = Bootstrap.h4(new Label());;
     private final Pane backArrowPane = SvgIcons.createBackArrow2();
     private final Pane forwardArrowPane = SvgIcons.createForwardArrow2();
 
-    public DaySwitcher(List<LocalDate> availableDates, LocalDate initialSelectedDate, MonoPane container, String title) {
+    public DaySwitcher(List<LocalDate> availableDates, LocalDate initialSelectedDate, MonoPane container, Object titleI18nKey) {
         parentContainer = container;
-        this.title = title;
-        dateList = availableDates.stream()
+        this.titleI18nKey = titleI18nKey;
+        this.availableDates = availableDates.stream()
             .distinct()
             .sorted()
             .collect(Collectors.toList());
+        setSelectedDate(initialSelectedDate);
 
-        setDay(initialSelectedDate);
+        selectAllDaysButton.setToggleGroup(toggleGroup);
+        // Date buttons behave like standard toggle buttons, except that we can't unselect them by clicking on the same
+        // button again. So if the users does it, we undo that deselection and reestablish the selection.
+        FXProperties.runOnPropertyChange(selectedToggle -> {
+            if (selectedToggle == null) // indicates that the user clicked on the selected date again
+                updateDateButtonSelection(); // we reestablish the button selection from the selected date
+        }, toggleGroup.selectedToggleProperty());
 
-        buildDesktopUI();
-        buildMobileUI();
+        buildDesktopView();
+        buildMobileView();
 
         // Dynamically update label and arrow visibility when the date changes
-        FXProperties.runNowAndOnPropertyChange(this::updateDaysButtonStyle, currentDateProperty);
+        FXProperties.runNowAndOnPropertyChange(this::updateDateButtonSelection, selectedDateProperty);
     }
 
-    private void buildDesktopUI() {
+    private void buildDesktopView() {
         desktopViewContainer.setAlignment(Pos.TOP_CENTER);
-        if (title != null) {
-            Label titleLabel = Bootstrap.h3(I18nControls.newLabel(title));
+        if (titleI18nKey != null) {
+            Label titleLabel = Bootstrap.h3(I18nControls.newLabel(titleI18nKey));
             desktopViewContainer.getChildren().add(titleLabel);
         }
         desktopViewContainer.getChildren().add(TimeZoneSwitch.createTimezoneSwitchBox());
@@ -84,22 +88,22 @@ public class DaySwitcher {
         dayButtonsColumnsPane.setHgap(7);
         dayButtonsColumnsPane.setVgap(15);
         dayButtonsColumnsPane.setMaxColumnCount(8);
-        dayButtonsColumnsPane.setMinColumnWidth(DAY_BUTTON_WIDTH);
+        dayButtonsColumnsPane.setMinColumnWidth(DAY_BUTTON_MIN_WIDTH);
         dayButtonsColumnsPane.setPadding(new Insets(0, 0, 30, 0));
 
-        selectAllDaysButton.setMinWidth(DAY_BUTTON_WIDTH);
-        selectAllDaysButton.setOnAction(e -> currentDateProperty.set(null));
+        selectAllDaysButton.setMinWidth(DAY_BUTTON_MIN_WIDTH);
+        selectAllDaysButton.setOnAction(e -> selectedDateProperty.set(null));
     }
 
-    private void buildMobileUI() {
+    private void buildMobileView() {
         backArrowPane.setOnMouseClicked(e -> {
-            int index = dateList.indexOf(currentDateProperty.get());
-            currentDateProperty.set(index == -1 ? Collections.last(dateList) : Collections.get(dateList, index - 1));
+            int index = availableDates.indexOf(selectedDateProperty.get());
+            selectedDateProperty.set(index == -1 ? Collections.last(availableDates) : Collections.get(availableDates, index - 1));
         });
 
         forwardArrowPane.setOnMouseClicked(e -> {
-            int index = dateList.indexOf(currentDateProperty.get());
-            currentDateProperty.set(Collections.get(dateList, index + 1));
+            int index = availableDates.indexOf(selectedDateProperty.get());
+            selectedDateProperty.set(Collections.get(availableDates, index + 1));
         });
 
         BorderPane daySelectorPane = new BorderPane();
@@ -113,7 +117,7 @@ public class DaySwitcher {
         BorderPane.setMargin(forwardArrowPane, arrowMargin);
 
         Hyperlink selectAllDaysLink = I18nControls.newHyperlink(VideoStreamingI18nKeys.ViewAllDays);
-        selectAllDaysLink.setOnAction(e -> currentDateProperty.set(null));
+        selectAllDaysLink.setOnAction(e -> selectedDateProperty.set(null));
 
         mobileViewContainer.getChildren().setAll(
             daySelectorPane,
@@ -123,8 +127,8 @@ public class DaySwitcher {
         mobileViewContainer.setAlignment(Pos.CENTER);
     }
 
-    public ObjectProperty<LocalDate> currentDateProperty() {
-        return currentDateProperty;
+    public ObjectProperty<LocalDate> selectedDateProperty() {
+        return selectedDateProperty;
     }
 
     public Node getMobileViewContainer() {
@@ -135,70 +139,57 @@ public class DaySwitcher {
         return desktopViewContainer;
     }
 
-    public void populateDates(List<LocalDate> dates) {
-        dateList = dates;
+    public void populateDates(List<LocalDate> availableDates) {
+        this.availableDates = availableDates;
         // Automatically selecting today if today is part of the event
-        if (currentDateProperty.get() == null && dates.contains(LocalDate.now())) {
-            currentDateProperty.set(LocalDate.now());
+        if (selectedDateProperty.get() == null && availableDates.contains(LocalDate.now())) {
+            selectedDateProperty.set(LocalDate.now());
         }
         refreshButtonsOnDateListChanges();
     }
 
     private void refreshButtonsOnDateListChanges() {
-        correspondenceDateButton.clear();
-        correspondenceDateButton.put(null, selectAllDaysButton);
+        dateButtonMap.clear();
+        dateButtonMap.put(null, selectAllDaysButton);
         dayButtonsColumnsPane.getChildren().clear();
-        dateList.forEach((LocalDate day) -> {
-            Button dateButton;
-            dateButton = formatLabeledDate(Bootstrap.button(new Button()), day);
-            dateButton.setMinWidth(DAY_BUTTON_WIDTH);
-            correspondenceDateButton.put(day, dateButton);
-            dateButton.setOnAction(e -> currentDateProperty.set(day));
+        availableDates.forEach((LocalDate day) -> {
+            ToggleButton dateButton = formatLabeledDate(Bootstrap.button(new ToggleButton()), day);
+            dateButton.setToggleGroup(toggleGroup);
+            dateButton.setMinWidth(DAY_BUTTON_MIN_WIDTH);
+            dateButtonMap.put(day, dateButton);
+            dateButton.setOnAction(e -> selectedDateProperty.set(day));
             dayButtonsColumnsPane.getChildren().add(dateButton);
         });
 
         dayButtonsColumnsPane.getChildren().add(selectAllDaysButton);
 
         // 2nd case: the current Date is not in the list, we select all buttons
-        //Here we resize daysColumnPane
+        // Here we resize daysColumnPane
         int numberOfChild = dayButtonsColumnsPane.getChildren().size();
-        int theoreticalColumnPaneWidth = (int) ((DAY_BUTTON_WIDTH + dayButtonsColumnsPane.getHgap()) * (numberOfChild));
-        DoubleProperty theoreticalWidthProperty = new SimpleDoubleProperty(theoreticalColumnPaneWidth);
+        double theoreticalColumnPaneWidth = (DAY_BUTTON_MIN_WIDTH + dayButtonsColumnsPane.getHgap()) * numberOfChild;
         dayButtonsColumnsPane.maxWidthProperty().bind(
             Bindings.createDoubleBinding(
-                () -> Math.min(parentContainer.getWidth(), theoreticalWidthProperty.get()),
-                parentContainer.widthProperty(),
-                theoreticalWidthProperty
+                () -> Math.min(parentContainer.getWidth(), theoreticalColumnPaneWidth),
+                parentContainer.widthProperty()
             )
         );
 
-        updateDaysButtonStyle();
+        updateDateButtonSelection();
     }
 
-    private void updateDaysButtonStyle() {
-        LocalDate selectedDate = currentDateProperty.get();
-        for (Map.Entry<LocalDate, Button> entry : correspondenceDateButton.entrySet()) {
-            Button button = entry.getValue();
-            LocalDate buttonDate = entry.getKey();
-            boolean isAllDaysButton = buttonDate == null;
-            boolean highlighted = isAllDaysButton ? selectedDate == null : // condition for the all-days button
-                buttonDate.equals(selectedDate); // condition for a specific-day button
-            Collections.addIfNotContainsOrRemove(button.getStyleClass(),  highlighted, Bootstrap.BTN_PRIMARY);
-            Collections.addIfNotContainsOrRemove(button.getStyleClass(), !highlighted, ModalityStyle.BTN_WHITE);
-        }
+    private void updateDateButtonSelection() {
+        LocalDate selectedDate = selectedDateProperty.get();
         if (selectedDate == null) {
+            toggleGroup.selectToggle(selectAllDaysButton);
             I18nControls.bindI18nProperties(mobileDateLabel, VideoStreamingI18nKeys.AllDays);
         } else {
+            toggleGroup.selectToggle(dateButtonMap.get(selectedDate));
             formatLabeledDate(mobileDateLabel, selectedDate);
         }
     }
 
-    public void setDay(LocalDate date) {
-        if (dateList.contains(date)) {
-            currentDateProperty.set(date);
-        } else {
-            currentDateProperty.set(null);
-        }
+    public void setSelectedDate(LocalDate date) {
+        selectedDateProperty.set(availableDates.contains(date) ? date : null);
     }
 
     private <T extends Labeled> T formatLabeledDate(T labeled, LocalDate date) {
