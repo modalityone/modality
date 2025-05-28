@@ -1,5 +1,7 @@
 package one.modality.base.client.entities.filters;
 
+import dev.webfx.kit.util.aria.AriaRole;
+import dev.webfx.kit.util.aria.Aria;
 import javafx.collections.ObservableList;
 import javafx.scene.Node;
 import javafx.scene.control.TextField;
@@ -38,6 +40,7 @@ public final class FilterSearchBar {
         if (pm instanceof HasSearchTextProperty) {
             searchBox = mixin.newTextField("GenericSearch"); // Will set the prompt
             ((HasSearchTextProperty) pm).searchTextProperty().bind(searchBox.textProperty());
+            Aria.setAriaRole(searchBox, AriaRole.SEARCHBOX);
         } else
             searchBox = null;
     }

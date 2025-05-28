@@ -1,7 +1,8 @@
 package one.modality.base.frontoffice.activities.mainframe;
 
-import dev.webfx.kit.launcher.WebFxKitLauncher;
-import dev.webfx.kit.launcher.aria.AriaRole;
+import dev.webfx.extras.panes.MonoPane;
+import dev.webfx.kit.util.aria.Aria;
+import dev.webfx.kit.util.aria.AriaRole;
 import dev.webfx.kit.util.properties.FXProperties;
 import dev.webfx.platform.util.collection.Collections;
 import javafx.beans.property.ObjectProperty;
@@ -22,7 +23,7 @@ final class SegmentedButton<T> {
     private static final double RADII = 10;
 
     private final ButtonSegment<T>[] buttonSegments;
-    private final BorderPane[] frames;
+    private final MonoPane[] frames;
     private final HBox hBox;
     private final ObjectProperty<T> stateProperty = FXProperties.newObjectProperty(this::updateFrames);
 
@@ -34,10 +35,11 @@ final class SegmentedButton<T> {
     @SafeVarargs
     public SegmentedButton(T initialState, ButtonSegment<T>... buttonSegments) {
         this.buttonSegments = buttonSegments;
-        frames = Arrays.stream(buttonSegments).map(this::createSegmentFrame).toArray(BorderPane[]::new);
+        frames = Arrays.stream(buttonSegments).map(this::createSegmentFrame).toArray(MonoPane[]::new);
         hBox = new HBox(frames);
         hBox.getStyleClass().setAll("segmented-button");
-        WebFxKitLauncher.setAriaRole(hBox, AriaRole.RADIOGROUP);
+        Aria.setAriaRole(hBox, AriaRole.RADIOGROUP);
+        Aria.setAriaLabel(hBox, "Language selector");
         setState(initialState);
     }
 
@@ -57,18 +59,17 @@ final class SegmentedButton<T> {
         stateProperty.set(state);
     }
 
-    private BorderPane createSegmentFrame(ButtonSegment<T> buttonSegment) {
+    private MonoPane createSegmentFrame(ButtonSegment<T> buttonSegment) {
         Node graphic = buttonSegment.getGraphic();
         graphic.setMouseTransparent(true);
-        BorderPane frame = new BorderPane(graphic);
+        MonoPane frame = new MonoPane(graphic);
         frame.getStyleClass().setAll("button-segment");
-        WebFxKitLauncher.setAriaRole(frame, AriaRole.RADIO);
+        Aria.setAriaRole(frame, AriaRole.RADIO);
         boolean first = buttonSegment == buttonSegments[0];
         frame.setBorder(new Border(new BorderStroke(SEGMENTED_BUTTON_COLOR, BorderStrokeStyle.SOLID, segmentRadii(buttonSegment), new BorderWidths(1, 1 , 1, first ? 1 : 0), null)));
         frame.setCursor(Cursor.HAND);
+        frame.setMaxHeight(Double.MAX_VALUE); // So the buttons can grow and always fit in HBox container bar
         frame.setOnMouseClicked(e -> setState(buttonSegment.getState()));
-        frame.setOnMousePressed(e -> updateFramesFromState(buttonSegment.getState()));
-        frame.setOnMouseReleased(e -> updateFrames());
         return frame;
     }
 
@@ -85,7 +86,7 @@ final class SegmentedButton<T> {
     private void updateFramesFromState(Object state) {
         for (int i = 0, n = buttonSegments.length; i < n; i++) {
             ButtonSegment<T> buttonSegment = buttonSegments[i];
-            BorderPane frame = frames[i];
+            MonoPane frame = frames[i];
             boolean selected = Objects.equals(state, buttonSegment.getState());
             if (selected) {
                 Collections.addIfNotContains("selected", frame.getStyleClass());
@@ -94,7 +95,7 @@ final class SegmentedButton<T> {
                 frame.getStyleClass().remove("selected");
                 frame.setBackground(null);
             }
-            WebFxKitLauncher.setAriaSelected(frame, selected);
+            Aria.setAriaSelected(frame, selected);
         }
     }
 }

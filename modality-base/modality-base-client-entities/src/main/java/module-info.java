@@ -17,6 +17,7 @@ module modality.base.client.entities {
     requires webfx.extras.util.layout;
     requires webfx.extras.util.scene;
     requires webfx.kit.util;
+    requires webfx.kit.util.aria;
     requires webfx.platform.boot;
     requires webfx.platform.util;
     requires webfx.platform.util.time;

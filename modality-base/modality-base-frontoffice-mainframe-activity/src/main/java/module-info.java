@@ -20,6 +20,7 @@ module modality.base.frontoffice.mainframe.activity {
     requires webfx.extras.util.layout;
     requires webfx.kit.launcher;
     requires webfx.kit.util;
+    requires webfx.kit.util.aria;
     requires webfx.platform.conf;
     requires webfx.platform.console;
     requires webfx.platform.resource;
