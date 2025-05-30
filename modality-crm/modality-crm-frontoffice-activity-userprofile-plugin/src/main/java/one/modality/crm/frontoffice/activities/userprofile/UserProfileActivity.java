@@ -1,6 +1,9 @@
 package one.modality.crm.frontoffice.activities.userprofile;
 
-import dev.webfx.extras.panes.*;
+import dev.webfx.extras.panes.ColumnsPane;
+import dev.webfx.extras.panes.MonoClipPane;
+import dev.webfx.extras.panes.MonoPane;
+import dev.webfx.extras.panes.ScalePane;
 import dev.webfx.extras.responsive.ResponsiveDesign;
 import dev.webfx.extras.responsive.ResponsiveLayout;
 import dev.webfx.extras.styles.bootstrap.Bootstrap;
@@ -52,6 +55,7 @@ import one.modality.base.client.cloudinary.ModalityCloudinary;
 import one.modality.base.client.icons.SvgIcons;
 import one.modality.base.client.mainframe.fx.FXMainFrameDialogArea;
 import one.modality.base.client.time.FrontOfficeTimeFormats;
+import one.modality.base.frontoffice.utility.page.FOPageUtil;
 import one.modality.base.shared.entities.Country;
 import one.modality.base.shared.entities.Organization;
 import one.modality.base.shared.entities.Person;
@@ -71,7 +75,6 @@ import static one.modality.crm.frontoffice.activities.userprofile.ChangePictureU
  */
 final class UserProfileActivity extends ViewDomainActivityBase implements ModalityButtonFactoryMixin {
 
-    static final double PAGE_MAX_WIDTH = 870;
     static final double MODAL_WINDOWS_MAX_WIDTH = 500;
     private static final double PROFILE_IMAGE_SIZE = 150;
     private static final String NO_PICTURE_IMAGE = "images/large/no-picture.png";
@@ -79,7 +82,6 @@ final class UserProfileActivity extends ViewDomainActivityBase implements Modali
     private final VBox container = new VBox();
     private final Hyperlink changeUserEmail = I18nControls.newHyperlink(UserProfileI18nKeys.ChangeEmail);
     private final Hyperlink changeUserPassword = I18nControls.newHyperlink(UserProfileI18nKeys.ChangePassword);
-    private final TransitionPane transitionPane = new TransitionPane();
     private final ChangeEmailUI changeEmailUI = new ChangeEmailUI();
     private final ChangePasswordUI changePasswordUI = new ChangePasswordUI();
     private final ChangePictureUI changePictureUI = new ChangePictureUI(this);
@@ -118,12 +120,10 @@ final class UserProfileActivity extends ViewDomainActivityBase implements Modali
     public Node buildUi() {
         container.setSpacing(20);
         container.getStyleClass().add("user-profile");
-        container.setPadding(new Insets(50, 20, 0, 20));
         container.setAlignment(Pos.TOP_CENTER);
-        container.setMaxWidth(PAGE_MAX_WIDTH);
         Label titleLabel = Bootstrap.h2Primary(I18nControls.newLabel(UserProfileI18nKeys.UserProfileTitle));
         titleLabel.setWrapText(true);
-        titleLabel.setPadding(new Insets(100, 0, 50, 0));
+        titleLabel.setPadding(new Insets(0, 0, 50, 0));
         container.getChildren().add(titleLabel);
 
         picturePane = new StackPane();
@@ -232,7 +232,7 @@ final class UserProfileActivity extends ViewDomainActivityBase implements Modali
         personnalDetailsLabel.setPadding(new Insets(40, 0, 10, 0));
         firstColumn.getChildren().add(personnalDetailsLabel);
 
-        birthDateField = new DateField(container); // the date picker will be added as a child to container when shown
+        birthDateField = new DateField(container); // the date picker will be added as a child to the container when shown
         TextField birthDateTextField = birthDateField.getTextField();
         MaterialUtil.makeMaterial(birthDateTextField);
         MaterialTextField materialTextField = MaterialUtil.getMaterialTextField(birthDateTextField);
@@ -244,6 +244,7 @@ final class UserProfileActivity extends ViewDomainActivityBase implements Modali
         birthDateField.getDatePicker().getView().setTranslateY(10); // To add a breathing area between the
 
         StackPane.setMargin(birthDateField.getView(), new Insets(0, 0, 0, 0));
+        //firstColumn.getChildren().add(birthDateField.getView());
 
         //Male/Female option
         ToggleGroup maleFemaleToggleGroup = new ToggleGroup();
@@ -365,7 +366,6 @@ final class UserProfileActivity extends ViewDomainActivityBase implements Modali
             organizationJson = "{class: 'Organization', alias: 'o', where: '!closed and name!=`ISC`', orderBy: 'country.name,name', columns: [{expression: '[image(`images/s16/organizations/svg/` + (type=2 ? `kmc` : type=3 ? `kbc` : type=4 ? `branch` : `generic`) + `.svg`),name]'}] }";
         organizationSelector = createEntityButtonSelector(organizationJson, DataSourceModelService.getDefaultDataSourceModel(), buttonSelectorParameters);
         MaterialTextFieldPane organizationButton = organizationSelector.toMaterialButton(CrmI18nKeys.Centre);
-        //organizationButton.getMaterialTextField().focusLabelFillProperty().setValue(Color.BLACK);
         //TODO: see how to put  the select bg color transparent
         secondColumn.getChildren().add(organizationButton);
         Label orLabel = Bootstrap.small(Bootstrap.textSecondary(I18nControls.newLabel(CreateAccountI18nKeys.Or)));
@@ -427,8 +427,6 @@ final class UserProfileActivity extends ViewDomainActivityBase implements Modali
         });
 
         container.getChildren().add(saveButton);
-
-        transitionPane.transitToContent(container);
 
         container.getChildren().add(HelpPanel.createEmailHelpPanel(UserProfileI18nKeys.UserProfileHelp, "kbs@kadampa.net"));
 
@@ -508,7 +506,7 @@ final class UserProfileActivity extends ViewDomainActivityBase implements Modali
             }
         }, tokenProperty);
 
-        return transitionPane;
+        return FOPageUtil.restrictToMaxPageWidthAndApplyPageLeftTopRightBottomPadding(container);
     }
 
     private void syncUIFromModel() {

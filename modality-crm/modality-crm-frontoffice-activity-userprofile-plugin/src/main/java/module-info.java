@@ -11,6 +11,7 @@ module modality.crm.frontoffice.activity.userprofile.plugin {
     requires modality.base.client.icons;
     requires modality.base.client.mainframe.fx;
     requires modality.base.client.time;
+    requires modality.base.frontoffice.utility;
     requires modality.base.shared.entities;
     requires modality.crm.client.authn.fx;
     requires modality.crm.client.i18n;
