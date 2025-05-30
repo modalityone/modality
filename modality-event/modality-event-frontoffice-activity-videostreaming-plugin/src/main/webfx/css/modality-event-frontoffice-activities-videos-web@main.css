@@ -34,14 +34,16 @@
 .livestream fx-togglebutton {
     --fx-button-border: 1px solid black;
     --fx-button-background: white;
-    --fx-button-background-selected: var(--brand-blue-color);
+    --fx-button-background-selected: var(--bootstrap-grey1);
 }
 
-.livestream fx-togglebutton:hover:not(.selected) {
+.livestream fx-togglebutton:hover {
     --fx-button-background: var(--bootstrap-grey1);
 }
 
-.livestream fx-togglebutton.selected, .livestream fx-togglebutton.selected:hover {
+.livestream fx-togglebutton.fired, .livestream fx-togglebutton.fired:hover {
+    --fx-button-background: var(--brand-blue-color);
+    --fx-button-background-selected: var(--fx-button-background);
     --fx-text-fill: white;
 }
 

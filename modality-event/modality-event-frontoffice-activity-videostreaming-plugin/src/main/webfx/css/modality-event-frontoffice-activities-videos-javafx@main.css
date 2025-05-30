@@ -34,11 +34,12 @@
     -fx-border-color: black;
 }
 
-.livestream ToggleButton:hover {
+.livestream ToggleButton:hover,
+.livestream ToggleButton:selected {
     -fx-background-color: -bootstrap-grey1;
 }
 
-.livestream ToggleButton:selected {
+.livestream ToggleButton.fired {
     -fx-background-color: -brand-blue-color;
     -fx-text-fill: white;
 }
