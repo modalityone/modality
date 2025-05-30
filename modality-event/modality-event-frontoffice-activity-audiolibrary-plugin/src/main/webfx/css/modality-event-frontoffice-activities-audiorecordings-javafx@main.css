@@ -8,7 +8,7 @@
     -fx-text-fill: -bootstrap-grey7;
 }
 
-/** styles for the video desktop table and mobile view **/
+/** styles for the audio desktop table and mobile view **/
 
 .audio-library .name, .audio-library .btn {
     -fx-font-weight: 600; /* semi-bold */

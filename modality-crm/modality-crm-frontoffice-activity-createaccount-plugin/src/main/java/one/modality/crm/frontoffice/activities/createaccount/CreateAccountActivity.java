@@ -72,7 +72,7 @@ final class CreateAccountActivity extends ViewDomainActivityBase implements Moda
         createAccountBorderPane = accountUI.getView();
         createAccountBorderPane.setMaxWidth(586);
         content.getChildren().add(createAccountBorderPane);
-        createAccountBorderPane.getStyleClass().addAll("login-child","background", "fx-border");
+        createAccountBorderPane.getStyleClass().add("login-child");
         return container;
     }
 

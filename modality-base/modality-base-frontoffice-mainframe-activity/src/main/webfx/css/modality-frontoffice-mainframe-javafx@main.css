@@ -9,7 +9,7 @@ CollapsePane.menu-bar.lang-menu-bar {
 }
 
 .menu-bar {
-    -fx-font-family: -poppins-font-family;
+    -fx-font-family: "Montserrat";
 }
 
 .lang-menu-bar .selected Text {

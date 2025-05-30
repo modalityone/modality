@@ -44,20 +44,19 @@
     -bootstrap-red6: #FF0404 ;
 }
 
-.h1 {
-    -fx-font-family: "Roboto"; /*-roboto-font-family */
+/*.h1 {
+    -fx-font-family: "Roboto"; !*-roboto-font-family *!
     -fx-font-size: 34px;
     -fx-font-weight: normal;
-    -fx-line-spacing: 6px; /* Line height in JavaFX is set through line-spacing */
+    -fx-line-spacing: 6px; !* Line height in JavaFX is set through line-spacing *!
     -fx-text-alignment: left;
-}
+}*/
 
 .h2 {
-    -fx-font-family: "Poppins"; /* -poppins-font-family; */
     -fx-font-size: 40px;
-    -fx-font-weight: bold;         /* 'bold' is equivalent to 700 weight */
-    -fx-line-spacing: 20px;
-    -fx-text-alignment: center;    /* Aligns text within its container */
+    -fx-font-weight: bold;
+    /*-fx-line-spacing: 20px;
+    -fx-text-alignment: center;*/
     }
 
 .btn-black {

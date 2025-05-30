@@ -3,8 +3,7 @@
 }
 
 .event-title {
-    color: white;
-    --fx-svg-path-fill: white;
+    --fx-text-fill: white;
 }
 
 /* .text-justified */
@@ -16,64 +15,60 @@
 
 /* Date cells for recurring events */
 
-.event-date-cell > fx-border {
-    border: 1px solid #cccccc;
+.event-date-cell {
+    --fx-border: 1px solid #cccccc;
 }
 
 .event-date-cell.date-unselected {
-    color: #444;
+    --fx-text-fill: #444;
 }
 
 .event-date-cell .event-time {
-    color: #838788;
+    --fx-text-fill: #838788;
 }
 
-.event-date-cell.date-unselected > fx-background {
-    background: none;
+.event-date-cell.date-unselected {
+    --fx-background: none;
 }
 
-.event-date-cell.date-non-selectable > fx-background {
-    background-color: #dddddd;
+.event-date-cell.date-non-selectable {
+    --fx-background: #dddddd;
 }
 
-.event-date-cell.date-non-selectable > fx-border {
-    border-color: #cccccc;
+.event-date-cell.date-non-selectable {
+    --fx-border-color: 1px solid #cccccc;
 }
 
 .event-date-cell.date-non-selectable,
 .event-date-cell.date-non-selectable .event-time {
-    color: #aaaaaa;
+    --fx-text-fill: #aaaaaa;
 }
 
-.event-date-cell.date-selected > fx-background,
-.event-date-cell.date-already-booked > fx-background {
-    background-color: var(--brand-main-color);
-}
-
-.event-date-cell.date-selected > fx-border,
-.event-date-cell.date-already-booked > fx-border {
-    border: none;
+.event-date-cell.date-selected,
+.event-date-cell.date-already-booked {
+    --fx-background: var(--brand-main-color);
+    --fx-border: none;
 }
 
 .event-date-cell.date-selected,
 .event-date-cell.date-selected .event-time {
-    color: white;
+    --fx-text-fill: white;
 }
 
 .event-date-cell.date-already-booked,
 .event-date-cell.date-already-booked .event-time {
-    color: #eeeeee;
+    --fx-text-fill: #eeeeee;
 }
 
 
 /* .subtitle-grey */
 .subtitle-grey {
-    color: grey;
+    --fx-text-fill: grey;
     font-size: 14px;
 }
 
-.line-total > fx-background {
-    background-color: #CCCCCC;
+.line-total {
+    --fx-background: #CCCCCC;
 }
 
 .line-total span {

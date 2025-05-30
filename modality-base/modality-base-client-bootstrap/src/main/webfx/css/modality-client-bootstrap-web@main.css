@@ -44,55 +44,34 @@
     --bootstrap-red6: #FF0404;
 }
 
+.h2 {
+    font-size: 40px;
+    font-weight: bold;
+}
+
 .disabled:hover {
     cursor: not-allowed;
 }
 
 .btn-black {
-    color: var(--bootstrap-white);
-    --fx-svg-path-fill: var(--bootstrap-white);
-}
-
-.btn-black > fx-background {
-    background: black;
-}
-
-.btn-black > fx-border {
-    border-color: black;
+    --fx-text-fill: var(--bootstrap-white);
+    --fx-svg-path-fill: var(--fx-text-fill);
+    --fx-background: black;
+    --fx-border: black;
 }
 
 .btn-black:hover:not(.disabled) {
-    color: var(--bootstrap-white);
-    --fx-svg-path-fill: var(--bootstrap-white);
-}
-
-.btn-black:hover:not(.disabled) > fx-background {
-    background-color: var(--bootstrap-grey7);
-}
-
-.btn-black:hover:not(.disabled) > fx-border {
-    border-color: var(--bootstrap-grey7);
+    --fx-background: var(--bootstrap-grey7);
+    --fx-border: var(--bootstrap-grey7);
 }
 
 .btn-white {
     --fx-svg-path-fill: var(--bootstrap-white);
-}
-
-.btn-white > fx-background {
-    background: white;
-}
-
-.btn-white > fx-border {
-    border-color: black;
+    --fx-background: white;
+    --fx-border: black;
 }
 
 .btn-white:hover:not(.disabled) {
-    color: black;
-    --fx-svg-path-fill: black;
+    --fx-text-fill: black;
+    --fx-background: var(--bootstrap-grey1);
 }
-
-.btn-white:hover:not(.disabled) > fx-background {
-    background-color: var(--bootstrap-grey1);
-}
-
-

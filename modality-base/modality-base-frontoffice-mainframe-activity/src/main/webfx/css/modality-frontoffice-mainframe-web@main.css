@@ -1,54 +1,41 @@
-fx-collapsepane.menu-bar > fx-background {
-    background-color: white;
+fx-collapsepane.menu-bar {
+    --fx-background: white;
+    --fx-border: 1px solid lightgray;
+    --fx-border-radius: 0;
 }
 
 fx-collapsepane.menu-bar > fx-border {
-    border-style: solid;
     border-width: 0 0 1px 0;
-    border-color: lightgray;
-    border-radius: 0;
 }
 
-fx-collapsepane.menu-bar.lang-menu-bar > fx-border {
-    border: none;
+fx-collapsepane.menu-bar.lang-menu-bar {
+    --fx-border: none;
 }
 
 .menu-bar {
-    font-family: var(--poppins-font-family), sans-serif;
+    font-family: var(--montserrat-font-family), sans-serif;
+    --fx-button-background: white; /* removes old-style button gradient */
+    --fx-text-fill: black;
 }
 
-.lang-menu-bar .selected fx-text {
-    color: white;
+.lang-menu-bar .selected {
+    --fx-text-fill: white;
 }
-
 
 .menu-bar fx-button {
-    --fx-button-background: white; /* removes old-style button gradient */
-}
-
-.menu-bar fx-button > fx-border {
-    border: none;
-}
-
-.main-menu-bar fx-button {
-    color: black;
+    --fx-border: none;
 }
 
 .main-menu-bar fx-label.brand {
-    font-family: var(--roboto-font-family), sans-serif;
-    font-size: 14px;
-    font-weight: 500;
-    color: var(--brand-blue-color);
-    line-height: 1.2;
-    --fx-svg-path-fill: var(--brand-blue-color);
+    font-size: 16px;
+    font-weight: bold;
+    --fx-text-fill: var(--brand-blue-color);
 }
 
 .user-menu-bar fx-label, .user-menu-bar fx-button {
     font-size: 12px;
-    color: #838788;
-    --fx-svg-path-fill: #838788
+    --fx-text-fill: #838788;
 }
-
 
 .modality-dialog-area .gold-layout {
     backdrop-filter: blur(3px);

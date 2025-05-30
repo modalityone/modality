@@ -3,13 +3,13 @@
     --webfx-switch-selected-background-color: var(--brand-blue-color);
 }
 
-.livestream h3 {
+.livestream .h3 {
      font-family: "Poppins", sans-serif;
      font-size: 24px;
      font-weight: bold;
  }
 
-.livestream h4 {
+.livestream .h4 {
     font-family: "Poppins", sans-serif;
     font-size: 24px;
     font-weight: 600; /* semi-bold */
@@ -32,7 +32,7 @@
 /* Styling the DaySwitch (each day is a ToggleButton) */
 
 .livestream fx-togglebutton {
-    --fx-border-color: black;
+    --fx-button-border: 1px solid black;
     --fx-button-background: white;
     --fx-button-background-selected: var(--brand-blue-color);
 }
@@ -42,7 +42,7 @@
 }
 
 .livestream fx-togglebutton.selected, .livestream fx-togglebutton.selected:hover {
-    --fx-button-text-color: white;
+    --fx-text-fill: white;
 }
 
 

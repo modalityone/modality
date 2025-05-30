@@ -18,13 +18,10 @@ body, textarea /* because textarea has explicit default monospace font */ {
 
 /* Not sure if it's the right place for this CSS rules */
 .event-button {
-    border-radius: 4px;
     height: 35px;
     max-height: 35px;
     text-align: center;
     font-weight: normal;
-}
-
-.event-button > fx-border {
-    border: none;
+    --fx-border: none;
+    --fx-border-radius: 4px;
 }
