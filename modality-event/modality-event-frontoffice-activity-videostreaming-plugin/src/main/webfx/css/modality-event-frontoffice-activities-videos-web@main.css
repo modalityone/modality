@@ -28,26 +28,6 @@
      color: black;
 }
 
-
-/* Styling the DaySwitch (each day is a ToggleButton) */
-
-.livestream fx-togglebutton {
-    --fx-button-border: 1px solid black;
-    --fx-button-background: white;
-    --fx-button-background-selected: var(--bootstrap-grey1);
-}
-
-.livestream fx-togglebutton:hover {
-    --fx-button-background: var(--bootstrap-grey1);
-}
-
-.livestream fx-togglebutton.fired, .livestream fx-togglebutton.fired:hover {
-    --fx-button-background: var(--brand-blue-color);
-    --fx-button-background-selected: var(--fx-button-background);
-    --fx-text-fill: white;
-}
-
-
 /** styles for the video desktop table and mobile view **/
 
 .livestream .grid-head /* desktop only */ {

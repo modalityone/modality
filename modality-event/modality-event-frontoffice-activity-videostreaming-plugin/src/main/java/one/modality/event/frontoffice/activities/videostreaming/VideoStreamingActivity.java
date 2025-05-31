@@ -538,7 +538,7 @@ final class VideoStreamingActivity extends ViewDomainActivityBase {
 
         // Updating the dates in daySwitch after the video sessions have been loaded
         ObservableLists.runNowAndOnListOrPropertiesChange(change ->
-                daySwitcher.populateDates(videoScheduledItems.stream()
+                daySwitcher.setAvailableDates(videoScheduledItems.stream()
                     .map(ScheduledItem::getDate)
                     .distinct()
                     .sorted()

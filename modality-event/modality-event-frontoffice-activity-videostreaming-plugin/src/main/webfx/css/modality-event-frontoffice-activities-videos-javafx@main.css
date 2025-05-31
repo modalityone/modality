@@ -27,23 +27,6 @@
     -fx-font-weight: normal;
 }
 
-/* Styling the DaySwitch (each day is a ToggleButton) */
-
-.livestream ToggleButton {
-    -fx-background-color: white;
-    -fx-border-color: black;
-}
-
-.livestream ToggleButton:hover,
-.livestream ToggleButton:selected {
-    -fx-background-color: -bootstrap-grey1;
-}
-
-.livestream ToggleButton.fired {
-    -fx-background-color: -brand-blue-color;
-    -fx-text-fill: white;
-}
-
 /** styles for the video desktop table and mobile view **/
 
 .livestream .grid-head Text /* desktop only */ {

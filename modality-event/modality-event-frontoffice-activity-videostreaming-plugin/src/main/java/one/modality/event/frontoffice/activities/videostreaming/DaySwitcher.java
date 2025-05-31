@@ -1,5 +1,6 @@
 package one.modality.event.frontoffice.activities.videostreaming;
 
+import dev.webfx.extras.aria.AriaToggleGroup;
 import dev.webfx.extras.panes.ColumnsPane;
 import dev.webfx.extras.panes.MonoPane;
 import dev.webfx.extras.styles.bootstrap.Bootstrap;
@@ -12,7 +13,10 @@ import javafx.beans.property.ObjectProperty;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Node;
-import javafx.scene.control.*;
+import javafx.scene.control.Hyperlink;
+import javafx.scene.control.Label;
+import javafx.scene.control.Labeled;
+import javafx.scene.control.ToggleButton;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.VBox;
@@ -20,10 +24,7 @@ import one.modality.base.client.icons.SvgIcons;
 import one.modality.base.client.time.FrontOfficeTimeFormats;
 
 import java.time.LocalDate;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
-import java.util.Objects;
 import java.util.stream.Collectors;
 
 /**
@@ -37,15 +38,13 @@ public class DaySwitcher {
     private final MonoPane parentContainer;
 
     private List<LocalDate> availableDates;
-    private final ObjectProperty<LocalDate> selectedDateProperty = FXProperties.newObjectProperty(this::syncDateButtonsFromSelectedDate);
+    private final ObjectProperty<LocalDate> selectedDateProperty = FXProperties.newObjectProperty(this::updateMobileDateLabel);
     private final Object titleI18nKey;
 
     // Desktop view
     private final VBox desktopViewContainer = new VBox(30);
     private final ColumnsPane dayButtonsColumnsPane = new ColumnsPane();
-    private final ToggleGroup toggleGroup = new ToggleGroup();
-    private final HashMap<LocalDate, ToggleButton> dateButtonMap = new HashMap<>();
-    private final ToggleButton selectAllDaysButton = Bootstrap.button(I18nControls.newToggleButton(VideoStreamingI18nKeys.ViewAllDays));
+    private final AriaToggleGroup<LocalDate> dayToggleGroup = new AriaToggleGroup<>();
 
     // Mobile view
     private final VBox mobileViewContainer = new VBox(30);
@@ -62,27 +61,17 @@ public class DaySwitcher {
             .collect(Collectors.toList());
         setSelectedDate(initialSelectedDate);
 
-        selectAllDaysButton.setToggleGroup(toggleGroup);
-        // Date buttons behave like standard toggle buttons, except that we can't unselect them by clicking on the same
-        // button again. So if the user does that, we undo that deselection and reestablish the selection.
-        FXProperties.runOnPropertyChange(selectedToggle -> {
-            if (selectedToggle == null) // indicates that the user clicked on the selected date button again
-                syncDateButtonsFromSelectedDate(); // we reestablish the button selection from the selected date
-        }, toggleGroup.selectedToggleProperty());
-
         buildDesktopView();
         buildMobileView();
+
+        selectedDateProperty.bindBidirectional(dayToggleGroup.firedItemProperty());
     }
 
     private void buildDesktopView() {
         dayButtonsColumnsPane.setHgap(7);
         dayButtonsColumnsPane.setVgap(15);
-        //dayButtonsColumnsPane.setMaxColumnCount(8);
         dayButtonsColumnsPane.setMinColumnWidth(DAY_BUTTON_MIN_WIDTH);
         dayButtonsColumnsPane.setPadding(new Insets(0, 0, 30, 0));
-
-        selectAllDaysButton.setMinWidth(DAY_BUTTON_MIN_WIDTH);
-        selectAllDaysButton.setOnAction(e -> selectedDateProperty.set(null));
 
         if (titleI18nKey != null) {
             Label titleLabel = Bootstrap.h3(I18nControls.newLabel(titleI18nKey));
@@ -97,12 +86,12 @@ public class DaySwitcher {
 
     private void buildMobileView() {
         backArrowPane.setOnMouseClicked(e -> {
-            int index = availableDates.indexOf(selectedDateProperty.get());
+            int index = availableDates.indexOf(getSelectedDate());
             selectedDateProperty.set(index == -1 ? Collections.last(availableDates) : Collections.get(availableDates, index - 1));
         });
 
         forwardArrowPane.setOnMouseClicked(e -> {
-            int index = availableDates.indexOf(selectedDateProperty.get());
+            int index = availableDates.indexOf(getSelectedDate());
             selectedDateProperty.set(Collections.get(availableDates, index + 1));
         });
 
@@ -141,27 +130,12 @@ public class DaySwitcher {
 
     public void setAvailableDates(List<LocalDate> availableDates) {
         this.availableDates = availableDates;
-        // Automatically selecting today if today is part of the event
-        LocalDate today = LocalDate.now();
-        if (selectedDateProperty.get() == null && availableDates.contains(today)) {
-            selectedDateProperty.set(today);
-        }
 
-        dateButtonMap.clear();
+        dayToggleGroup.clear();
         dayButtonsColumnsPane.getChildren().clear();
-        availableDates.forEach((LocalDate day) -> {
-            ToggleButton dateButton = formatLabeledDate(Bootstrap.button(new ToggleButton()), day);
-            dateButton.setToggleGroup(toggleGroup);
-            dateButton.setMinWidth(DAY_BUTTON_MIN_WIDTH);
-            dateButton.setOnAction(e -> selectedDateProperty.set(day));
-            dateButtonMap.put(day, dateButton);
-            dayButtonsColumnsPane.getChildren().add(dateButton);
-        });
+        availableDates.forEach(this::createAndAddDateButton);
+        createAndAddDateButton(null); // All-days button
 
-        dateButtonMap.put(null, selectAllDaysButton);
-        dayButtonsColumnsPane.getChildren().add(selectAllDaysButton);
-
-        // 2nd case: the current Date is not in the list, we select all buttons
         // Here we resize daysColumnPane
         int numberOfChild = dayButtonsColumnsPane.getChildren().size();
         double theoreticalColumnPaneWidth = (DAY_BUTTON_MIN_WIDTH + dayButtonsColumnsPane.getHgap()) * numberOfChild;
@@ -172,33 +146,35 @@ public class DaySwitcher {
             )
         );
 
-        syncDateButtonsFromSelectedDate();
+        // Automatically selecting today if today is part of the event
+        if (!availableDates.contains(getSelectedDate()))
+            setSelectedDate(LocalDate.now());
+        dayToggleGroup.updateButtonsFiredStyleClass();
     }
 
-    private void syncDateButtonsFromSelectedDate() {
-        LocalDate selectedDate = selectedDateProperty.get();
-        // Updating the selected toggle and the date label (on mobile)
-        if (selectedDate == null) {
-            toggleGroup.selectToggle(selectAllDaysButton);
-            I18nControls.bindI18nProperties(mobileDateLabel, VideoStreamingI18nKeys.AllDays);
-        } else {
-            toggleGroup.selectToggle(dateButtonMap.get(selectedDate));
-            formatLabeledDate(mobileDateLabel, selectedDate);
-        }
-        // Marking the selected date button with the CSS class "fired"
-        for (Map.Entry<LocalDate, ToggleButton> entry : dateButtonMap.entrySet()) {
-            ToggleButton dateButton = entry.getValue();
-            LocalDate buttonDate = entry.getKey();
-            Collections.addIfNotContainsOrRemove(dateButton.getStyleClass(), Objects.equals(selectedDate, buttonDate), "fired");
-        }
+    private void createAndAddDateButton(LocalDate date) {
+        ToggleButton dateButton = formatLabeledDate(Bootstrap.button(dayToggleGroup.createItemButton(date)), date, false);
+        dateButton.setMinWidth(DAY_BUTTON_MIN_WIDTH);
+        dayButtonsColumnsPane.getChildren().add(dateButton);
+    }
+
+    private void updateMobileDateLabel() {
+        formatLabeledDate(mobileDateLabel, getSelectedDate(), true);
     }
 
     public void setSelectedDate(LocalDate date) {
         selectedDateProperty.set(availableDates.contains(date) ? date : null);
     }
 
-    private <T extends Labeled> T formatLabeledDate(T labeled, LocalDate date) {
-        labeled.textProperty().bind(LocalizedTime.formatMonthDayProperty(date, FrontOfficeTimeFormats.VIDEO_MONTH_DAY_FORMAT));
+    private LocalDate getSelectedDate() {
+        return selectedDateProperty.get();
+    }
+
+    private <T extends Labeled> T formatLabeledDate(T labeled, LocalDate date, boolean mobile) {
+        if (date == null) // All-days
+            I18nControls.bindI18nProperties(labeled, mobile ? VideoStreamingI18nKeys.AllDays : VideoStreamingI18nKeys.ViewAllDays);
+        else
+            labeled.textProperty().bind(LocalizedTime.formatMonthDayProperty(date, FrontOfficeTimeFormats.VIDEO_MONTH_DAY_FORMAT));
         return labeled;
     }
 
