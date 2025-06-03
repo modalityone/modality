@@ -1,8 +1,11 @@
 package one.modality.base.client.application;
 
+import dev.webfx.platform.util.Strings;
 import dev.webfx.platform.windowhistory.spi.BrowsingHistory;
+import dev.webfx.platform.windowhistory.spi.BrowsingHistoryLocation;
 import dev.webfx.stack.routing.router.auth.authz.RouteRequest;
 import dev.webfx.stack.routing.uirouter.activity.uiroute.UiRouteActivityContext;
+import dev.webfx.stack.routing.uirouter.operations.RoutePushRequest;
 import dev.webfx.stack.routing.uirouter.operations.RouteRequestEmitter;
 import dev.webfx.stack.ui.action.Action;
 import dev.webfx.stack.ui.operation.HasOperationCode;
@@ -76,6 +79,30 @@ public final class RoutingActions {
 
     public static <Rq, M extends UiRouteActivityContext & OperationActionFactoryMixin> OperationAction<Rq, ?> newRoutingAction(Function<BrowsingHistory, Rq> routeRequestFactory, M mixin, ObservableValue<?>... graphicalDependencies) {
         return newRoutingAction(routeRequestFactory, mixin, mixin, graphicalDependencies);
+    }
+
+    public static RoutePushRequest getRoutingActionRoutePushRequest(Action action) {
+        if (action instanceof OperationAction<?,?> operationAction) {
+            Object req = operationAction.getOperationRequestFactory().apply(null);
+            if (req instanceof RoutePushRequest routePushRequest) {
+                return routePushRequest;
+            }
+        }
+        return null;
+    }
+
+    public static boolean isCurrentRouteMatchingRoutingAction(Action action) {
+        RoutePushRequest routePushRequest = getRoutingActionRoutePushRequest(action);
+        if (routePushRequest != null) {
+            BrowsingHistoryLocation currentLocation = routePushRequest.getHistory().getCurrentLocation();
+            String currentPath = currentLocation.getHash();
+            if (Strings.isEmpty(currentPath))
+                currentPath = currentLocation.getPath();
+            else
+                currentPath = Strings.removePrefix(currentPath, "#");
+            return Strings.startsWith(currentPath, routePushRequest.getRoutePath());
+        }
+        return false;
     }
 
 }
