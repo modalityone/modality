@@ -16,7 +16,9 @@
 /* Date cells for recurring events */
 
 .event-date-cell {
-    --fx-border: 1px solid #cccccc;
+    --fx-border-style: solid;
+    --fx-border-color: #cccccc;
+    --fx-border-width: 1px;
 }
 
 .event-date-cell.date-unselected {
@@ -28,15 +30,17 @@
 }
 
 .event-date-cell.date-unselected {
-    --fx-background: none;
+    --fx-background-color: transparent;
 }
 
 .event-date-cell.date-non-selectable {
-    --fx-background: #dddddd;
+    --fx-background-color: #dddddd;
 }
 
 .event-date-cell.date-non-selectable {
-    --fx-border-color: 1px solid #cccccc;
+    --fx-border-style: solid;
+    --fx-border-color: #cccccc;
+    --fx-border-width: 1px;
 }
 
 .event-date-cell.date-non-selectable,
@@ -46,8 +50,8 @@
 
 .event-date-cell.date-selected,
 .event-date-cell.date-already-booked {
-    --fx-background: var(--brand-main-color);
-    --fx-border: none;
+    --fx-background-color: var(--brand-main-color);
+    --fx-border-style: none;
 }
 
 .event-date-cell.date-selected,
@@ -68,7 +72,7 @@
 }
 
 .line-total {
-    --fx-background: #CCCCCC;
+    --fx-background-color: #CCCCCC;
 }
 
 .line-total span {

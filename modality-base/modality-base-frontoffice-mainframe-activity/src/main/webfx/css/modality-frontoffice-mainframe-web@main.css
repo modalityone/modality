@@ -1,20 +1,20 @@
 fx-collapsepane.menu-bar {
-    --fx-background: white;
-    --fx-border: 1px solid lightgray;
+    --fx-background-color: white;
+    --fx-border-style: solid;
+    --fx-border-color: lightgray;
+    --fx-border-width: 0 0 1px 0;
     --fx-border-radius: 0;
 }
 
-fx-collapsepane.menu-bar > fx-border {
-    border-width: 0 0 1px 0;
-}
-
 fx-collapsepane.menu-bar.lang-menu-bar {
-    --fx-border: none;
+    --fx-border-style: none;
 }
 
 .menu-bar {
     font-family: var(--montserrat-font-family), sans-serif;
-    --fx-button-background: white; /* removes old-style button gradient */
+    /* removes old-style button gradient */
+    --fx-button-background-image: none;
+    --fx-button-background-color: white;
     --fx-text-fill: black;
 }
 
@@ -23,7 +23,7 @@ fx-collapsepane.menu-bar.lang-menu-bar {
 }
 
 .menu-bar fx-button {
-    --fx-border: none;
+    --fx-border-style: none;
 }
 
 .main-menu-bar fx-label.brand {

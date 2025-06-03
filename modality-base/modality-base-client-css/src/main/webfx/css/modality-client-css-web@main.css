@@ -22,6 +22,6 @@ body, textarea /* because textarea has explicit default monospace font */ {
     max-height: 35px;
     text-align: center;
     font-weight: normal;
-    --fx-border: none;
+    --fx-border-style: none;
     --fx-border-radius: 4px;
 }

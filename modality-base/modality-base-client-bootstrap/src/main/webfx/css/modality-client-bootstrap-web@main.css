@@ -56,22 +56,22 @@
 .btn-black {
     --fx-text-fill: var(--bootstrap-white);
     --fx-svg-path-fill: var(--fx-text-fill);
-    --fx-background: black;
-    --fx-border: black;
+    --fx-background-color: black;
+    --fx-border-color: black;
 }
 
 .btn-black:hover:not(.disabled) {
-    --fx-background: var(--bootstrap-grey7);
-    --fx-border: var(--bootstrap-grey7);
+    --fx-background-color: var(--bootstrap-grey7);
+    --fx-border-color: var(--bootstrap-grey7);
 }
 
 .btn-white {
     --fx-svg-path-fill: var(--bootstrap-white);
-    --fx-background: white;
-    --fx-border: black;
+    --fx-background-color: white;
+    --fx-border-color: black;
 }
 
 .btn-white:hover:not(.disabled) {
     --fx-text-fill: black;
-    --fx-background: var(--bootstrap-grey1);
+    --fx-background-color: var(--bootstrap-grey1);
 }
