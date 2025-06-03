@@ -1,14 +1,15 @@
 package one.modality.base.frontoffice.activities.mainframe;
 
+import dev.webfx.extras.aria.AriaToggleGroup;
 import dev.webfx.extras.panes.*;
 import dev.webfx.extras.panes.transitions.CircleTransition;
 import dev.webfx.extras.panes.transitions.Transition;
 import dev.webfx.extras.player.Players;
 import dev.webfx.extras.util.control.Controls;
 import dev.webfx.extras.util.layout.Layouts;
-import dev.webfx.kit.util.aria.AriaRole;
 import dev.webfx.kit.launcher.WebFxKitLauncher;
 import dev.webfx.kit.util.aria.Aria;
+import dev.webfx.kit.util.aria.AriaRole;
 import dev.webfx.kit.util.properties.FXProperties;
 import dev.webfx.kit.util.properties.ObservableLists;
 import dev.webfx.platform.conf.Config;
@@ -34,10 +35,7 @@ import javafx.geometry.Pos;
 import javafx.scene.Cursor;
 import javafx.scene.Node;
 import javafx.scene.Parent;
-import javafx.scene.control.Button;
-import javafx.scene.control.ContentDisplay;
-import javafx.scene.control.Label;
-import javafx.scene.control.ScrollPane;
+import javafx.scene.control.*;
 import javafx.scene.effect.DropShadow;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
@@ -73,10 +71,10 @@ public final class ModalityFrontOfficeMainFrameActivity extends ModalityClientMa
     private static final double WEB_MAIN_MENU_HEIGHT = 100;
     private static final double WEB_USER_MENU_HEIGHT = 52;
 
-    private final static Config FRONT_OFFICE_CONFIG = SourcesConfig.getSourcesRootConfig().childConfigAt("modality.base.frontoffice.application");
-    private final static String[] LANGUAGES = FRONT_OFFICE_CONFIG.getString("languages").split(",");
-    private final static String[] MAIN_MENU_OPERATION_CODES = FRONT_OFFICE_CONFIG.getString("mainMenuOperationCodes").split(",");
-    private final static String[] USER_MENU_OPERATION_CODES = FRONT_OFFICE_CONFIG.getString("userMenuOperationCodes").split(",");
+    private static final Config FRONT_OFFICE_CONFIG = SourcesConfig.getSourcesRootConfig().childConfigAt("modality.base.frontoffice.application");
+    private static final String[] LANGUAGES = FRONT_OFFICE_CONFIG.getString("languages").split(",");
+    private static final String[] MAIN_MENU_OPERATION_CODES = FRONT_OFFICE_CONFIG.getString("mainMenuOperationCodes").split(",");
+    private static final String[] USER_MENU_OPERATION_CODES = FRONT_OFFICE_CONFIG.getString("userMenuOperationCodes").split(",");
 
     private final BooleanProperty mobileLayoutProperty =
         FXProperties.newBooleanProperty(UserAgent.isNative(), this::onMobileLayoutChange);
@@ -148,7 +146,7 @@ public final class ModalityFrontOfficeMainFrameActivity extends ModalityClientMa
                 double mouseY = e.getY(), mouseX = e.getSceneX();
                 if (Math.abs(mouseY - lastMouseY[0]) > 5 && !FXCollapseMenu.isCollapseMenu()) {
                     Node mountNode = getMountNode();
-                    ScrollPane scrollPane = mountNode == null ? null : (ScrollPane) mountNode.getProperties().get("embedding-scrollpane");
+                    ScrollPane scrollPane = getMountNodeEmbeddingScrollPane(mountNode);
                     boolean isPageOnTop = scrollPane == null || scrollPane.getVvalue() == 0;
                     boolean up = mouseY < lastMouseY[0];
                     if (!isPageOnTop && up && mouseY < mainFrameContainer.getHeight() / 3) {
@@ -211,12 +209,11 @@ public final class ModalityFrontOfficeMainFrameActivity extends ModalityClientMa
             // Updating the mount node container with the new mount node
             UiRouter uiRouter = getUiRouter();
             mountTransitionPane.setReverse(uiRouter.getHistory().isGoingBackward());
-            ScrollPane scrollPane = mountNode == null ? null : (ScrollPane) mountNode.getProperties().get("embedding-scrollpane");
+            ScrollPane scrollPane = getMountNodeEmbeddingScrollPane(mountNode);
             if (scrollPane == null && mountNode != null) {
                 CollapsePane languageMenuBar = createLanguageMenuBar();
                 CollapsePane mainMenuButtonBar = createMainMenuButtonBar(false);
                 CollapsePane userMenuButtonBar = createUserMenuButtonBar();
-                //userMenuButtonBar.setBackground(Background.fill(Color.YELLOW));
                 VBox vBox = new VBox(
                     languageMenuBar,
                     mainMenuButtonBar,
@@ -226,18 +223,16 @@ public final class ModalityFrontOfficeMainFrameActivity extends ModalityClientMa
                 );
                 vBox.setAlignment(Pos.CENTER);
                 vBox.setMaxWidth(Double.MAX_VALUE);
-                //vBox.setBackground(Background.fill(Color.YELLOWGREEN));
-                if (mountNode instanceof Region) {
-                    Region mountRegion = (Region) mountNode;
+                if (mountNode instanceof Region mountRegion) {
                     FXProperties.runOnPropertiesChange(() ->
                             mountRegion.setMinHeight(mountTransitionPane.getMinHeight() - mainMenuButtonBar.getHeight() - languageMenuBar.getHeight())
                         , mountTransitionPane.minHeightProperty(), mainMenuButtonBar.heightProperty(), languageMenuBar.heightProperty());
                 }
                 BorderPane borderPane = new BorderPane(vBox);
                 ScrollPane finalScrollPane = scrollPane = Controls.createVerticalScrollPane(borderPane);
-                mountNode.getProperties().put("embedding-scrollpane", scrollPane);
+                registerMountNodeEmbeddingScrollPane(mountNode, scrollPane);
                 if (ENABLE_OVERLAY_MENU_BAR) {
-                    double[] lastScrollPaneContentHeight = {0}, lastVTopOffset = {0};
+                    double[] lastVTopOffset = {0};
                     FXProperties.runOnPropertiesChange(() -> {
                         mountMainMenuButtonBar = mainMenuButtonBar;
                         if (mountTransitionPane.isTransiting())
@@ -262,7 +257,6 @@ public final class ModalityFrontOfficeMainFrameActivity extends ModalityClientMa
                                 overlayMenuBar.setCollapsed(vTopOffset > lastVTopOffset[0]); // up = expand, down = collapse
                             lastVTopOffset[0] = vTopOffset;
                         }
-                        lastScrollPaneContentHeight[0] = borderPane.getHeight();
                     }, scrollPane.vvalueProperty(), FXCollapseMenu.collapseMenuProperty());
                 }
             }
@@ -295,8 +289,18 @@ public final class ModalityFrontOfficeMainFrameActivity extends ModalityClientMa
                 FXProperties.toggleProperty(mobileLayoutProperty);
         });
 
-        mainFrameContainer.setBackground(Background.fill(Color.WHITE));
+        mainFrameContainer.setBackground(Background.fill(Color.WHITE)); // TODO Move this to CSS
         return mainFrameContainer;
+    }
+
+    private static final String ARBITRARY_EMBEDDING_SCROLL_PANE_PROPERTIES_KEY = "embeddingScrollPane";
+
+    private static void registerMountNodeEmbeddingScrollPane(Node mountNode, ScrollPane scrollPane) {
+        mountNode.getProperties().put(ARBITRARY_EMBEDDING_SCROLL_PANE_PROPERTIES_KEY, scrollPane);
+    }
+
+    private static ScrollPane getMountNodeEmbeddingScrollPane(Node mountNode) {
+        return mountNode == null ? null : (ScrollPane) mountNode.getProperties().get(ARBITRARY_EMBEDDING_SCROLL_PANE_PROPERTIES_KEY);
     }
 
     private static void setupPlayersGlobalConfiguration() {
@@ -322,18 +326,18 @@ public final class ModalityFrontOfficeMainFrameActivity extends ModalityClientMa
                 // close when the user clicks outside (focus change triggers this auto-close mechanism).
                 dialogArea.setOnMouseClicked(e -> dialogArea.requestFocus());
                 // We automatically show or hide the dialog area, depending on the presence or not of children:
-                dialogArea.getChildren().addListener((InvalidationListener) observable -> showHideDialogArea());
+                dialogArea.getChildren().addListener((InvalidationListener) observable -> showOrHideDialogArea());
             } else
-                showHideDialogArea();
+                showOrHideDialogArea();
         }
         FXMainFrameDialogArea.setDialogArea(dialogArea);
     }
 
-    private void showHideDialogArea() {
+    private void showOrHideDialogArea() {
         ObservableList<Node> mainFrameChildren = mainFrameContainer.getChildren();
-        if (dialogArea.getChildren().isEmpty())
+        if (dialogArea.getChildren().isEmpty()) // If the dialog area has no dialogs to show, we hide it
             mainFrameChildren.remove(dialogArea);
-        else if (!mainFrameChildren.contains(dialogArea)) {
+        else if (!mainFrameChildren.contains(dialogArea)) { // otherwise if it's not already shown, we show it
             mainFrameChildren.add(firstOverlayChildIndex, dialogArea);
         }
     }
@@ -352,7 +356,7 @@ public final class ModalityFrontOfficeMainFrameActivity extends ModalityClientMa
 
     private CollapsePane createLanguageMenuBar() {
         Insets languageButtonPadding = new Insets(0, 9, 0, 9);
-        SegmentedButton<Object> languageSegmentedBar = new SegmentedButton<>(
+        @SuppressWarnings("unchecked") SegmentedButton<Object> languageSegmentedBar = new SegmentedButton<>(
             Arrays.map(LANGUAGES, lang -> {
                 MonoPane languageButton = new MonoPane(new Text(lang.toUpperCase()));
                 languageButton.setPadding(languageButtonPadding);
@@ -362,14 +366,11 @@ public final class ModalityFrontOfficeMainFrameActivity extends ModalityClientMa
         languageSegmentedBar.stateProperty().bindBidirectional(I18n.languageProperty());
         HBox languageBar = languageSegmentedBar.getView(); // Aria role already set by SegmentedButton class
         Aria.setAriaLabel(languageBar, "Language selector");
-        languageBar.setMaxHeight(LANG_BAR_MENU_HEIGHT);
+        Layouts.setFixedHeight(languageBar, LANG_BAR_MENU_HEIGHT);
         languageBar.getStyleClass().setAll("button-bar");
         MonoPane languageSection = new MonoPane(languageBar);
-        //languageSection.setBackground(Background.fill(Color.YELLOW));
         languageSection.setAlignment(Pos.BOTTOM_LEFT);
-        languageSection.setMinHeight(LANG_MENU_HEIGHT);
-        languageSection.setPrefHeight(LANG_MENU_HEIGHT);
-        languageSection.setMaxHeight(LANG_MENU_HEIGHT);
+        Layouts.setFixedHeight(languageSection, LANG_MENU_HEIGHT);
         FOPageUtil.restrictToMaxPageWidthAndApplyPageLeftRightPadding(languageSection);  // to fit like the mount node
         CollapsePane collapsePane = new CollapsePane(languageSection);
         collapsePane.setAnimate(false);
@@ -389,20 +390,26 @@ public final class ModalityFrontOfficeMainFrameActivity extends ModalityClientMa
         userMenuButtonBar.setAnimate(false);
         userMenuButtonBar.collapsedProperty().bind(FXLoggedIn.loggedInProperty().not().or(FXCollapseMenu.collapseMenuProperty()));
         userMenuButtonBar.setAnimate(true);
-        //userMenuButtonBar.setBackground(Background.fill(Color.YELLOW));
         return userMenuButtonBar;
     }
 
     private CollapsePane createMenuButtonBar(String[] menuOperationCodes, boolean userMenu, boolean mobileLayout) {
-        Button[] buttons = RoutingActions.filterRoutingActions(this, this, menuOperationCodes)
-            .stream().map(action -> createMenuButton(action, userMenu, mobileLayout))
-            .toArray(Button[]::new);
+        AriaToggleGroup<Integer> menuItemGroup = new AriaToggleGroup<>(AriaRole.MENUITEM);
+        int[] seq = { 0 };
+        ToggleButton[] menuItemButtons = RoutingActions.filterRoutingActions(this, this, menuOperationCodes)
+            .stream().map(action -> {
+                ToggleButton menuButton = menuItemGroup.registerItemButton(createMenuButton(action, userMenu, mobileLayout), ++seq[0], false);
+                if (RoutingActions.isCurrentRouteMatchingRoutingAction(action))
+                    menuItemGroup.setFiredItem(seq[0]);
+                return menuButton;
+            })
+            .toArray(ToggleButton[]::new);
         Region buttonBar;
         if (mobileLayout) {
-            scaledMobileButtons = Arrays.map(buttons, ModalityFrontOfficeMainFrameActivity::scaleButton, ScalePane[]::new);
+            scaledMobileButtons = Arrays.map(menuItemButtons, ModalityFrontOfficeMainFrameActivity::scaleButton, ScalePane[]::new);
             buttonBar = new ColumnsPane(scaledMobileButtons);
         } else {
-            HBox hBox = new HBox(23, buttons);
+            HBox hBox = new HBox(23, menuItemButtons);
             FOPageUtil.restrictToMaxPageWidthAndApplyPageLeftRightPadding(hBox);  // to fit like the mount node
             if (userMenu) {
                 Label userNameLabel = new Label();
@@ -441,7 +448,7 @@ public final class ModalityFrontOfficeMainFrameActivity extends ModalityClientMa
                 buttonBar.setMaxHeight(WEB_MAIN_MENU_HEIGHT);
             }
         }
-        buttonBar.getStyleClass().setAll("button-bar"); // to make buttons square in CSS (remove round corners)
+        buttonBar.getStyleClass().setAll("button-bar"); // to make menuItemButtons square in CSS (remove round corners)
         CollapsePane collapsePane = new CollapsePane(buttonBar);
         Aria.setAriaRole(collapsePane, AriaRole.NAVIGATION);
         collapsePane.getStyleClass().setAll("menu-bar", userMenu ? "user-menu-bar" : "main-menu-bar", mobileLayout ? "mobile" : "non-mobile");
@@ -456,7 +463,7 @@ public final class ModalityFrontOfficeMainFrameActivity extends ModalityClientMa
             // Considering the bottom of the safe area, in particular for OS like iPadOS with a bar at the bottom
             FXProperties.runNowAndOnPropertyChange(sai -> {
                 double safeAreaBottom = sai.getBottom();
-                // we already have 5 px padding for the buttons
+                // we already have 5 px padding for the menuItemButtons
                 collapsePane.setPadding(new Insets(0, 0, Math.max(0, safeAreaBottom - 5), 0));
             }, WebFxKitLauncher.safeAreaInsetsProperty());
         }
@@ -470,16 +477,14 @@ public final class ModalityFrontOfficeMainFrameActivity extends ModalityClientMa
         return brandLabel;
     }
 
-    private Button createMenuButton(Action routeAction, boolean userMenu, boolean mobileLayout) {
-        Button button = ActionBinder.newActionButton(routeAction);
-        Aria.setAriaRole(button, AriaRole.MENUITEM);
+    private ToggleButton createMenuButton(Action routeAction, boolean userMenu, boolean mobileLayout) {
+        ToggleButton button = ActionBinder.newActionToggleButton(routeAction);
         button.setCursor(Cursor.HAND);
         button.setContentDisplay(userMenu ? ContentDisplay.LEFT : ContentDisplay.TOP);
         button.setGraphicTextGap(mobileLayout ? 0 : 8);
         button.setMinWidth(Region.USE_PREF_SIZE);
         FXProperties.runNowAndOnPropertyChange(graphic -> {
-            if (graphic instanceof SVGPath) {
-                SVGPath svgPath = (SVGPath) graphic;
+            if (graphic instanceof SVGPath svgPath) {
                 boolean hasStroke = svgPath.getStroke() != null;
                 ObjectProperty<Paint> svgColorProperty = hasStroke ? svgPath.strokeProperty() : svgPath.fillProperty();
                 if (mobileLayout) {
@@ -496,7 +501,7 @@ public final class ModalityFrontOfficeMainFrameActivity extends ModalityClientMa
         return button;
     }
 
-    private static ScalePane scaleButton(Button button) {
+    private static ScalePane scaleButton(ButtonBase button) {
         ScalePane scalePane = new ScalePane(ScaleMode.FIT_HEIGHT, button);
         scalePane.setStretchWidth(true);
         scalePane.setStretchHeight(true);

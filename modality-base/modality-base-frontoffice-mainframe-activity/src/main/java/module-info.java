@@ -13,6 +13,7 @@ module modality.base.frontoffice.mainframe.activity {
     requires modality.base.frontoffice.utility;
     requires modality.crm.client.authn.fx;
     requires modality.event.client.mediaview;
+    requires webfx.extras.aria;
     requires webfx.extras.panes;
     requires webfx.extras.player;
     requires webfx.extras.util.animation;
