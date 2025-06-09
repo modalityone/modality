@@ -22,10 +22,7 @@ import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
-import javafx.scene.control.Button;
-import javafx.scene.control.Hyperlink;
-import javafx.scene.control.Label;
-import javafx.scene.control.Labeled;
+import javafx.scene.control.*;
 import javafx.scene.layout.VBox;
 import one.modality.base.client.i18n.BaseI18nKeys;
 import one.modality.base.client.messaging.ModalityMessaging;
@@ -90,8 +87,10 @@ final class VideoFormattersAndRenderers {
         // videoStatus renderer
         ValueRendererRegistry.registerValueRenderer("videoStatus", (value, context) -> {
             ScheduledItem videoScheduledItem = (ScheduledItem) value;
+            VideoStreamingActivity activity = context.getAppContext();
 
-            Button watchButton = Bootstrap.dangerButton(I18nControls.newButton(VideoStreamingI18nKeys.Watch));
+            ToggleButton watchButton = Bootstrap.dangerButton(I18nControls.newToggleButton(VideoStreamingI18nKeys.Watch));
+            activity.watchButtonsGroup.registerItemButton(watchButton, videoScheduledItem, true);
             watchButton.setGraphicTextGap(10);
             Label statusLabel = new Label();
             Label availableUntilLabel = new Label();
@@ -99,7 +98,7 @@ final class VideoFormattersAndRenderers {
             liveNowLink.setPadding(new Insets(15)); // this is to make it easier to click, especially on mobiles
             Controls.setupTextWrapping(availableUntilLabel, true, false);
             // Initial computation of the status
-            StatusElements se = new StatusElements(videoScheduledItem, statusLabel, availableUntilLabel, liveNowLink, watchButton, context.getAppContext());
+            StatusElements se = new StatusElements(videoScheduledItem, statusLabel, availableUntilLabel, liveNowLink, watchButton, activity);
             updateStatusElements(se, true);
             VBox vBoxStatusAndButtonContainer = new VBox(10,
                 watchButton,
@@ -125,7 +124,7 @@ final class VideoFormattersAndRenderers {
     // PRIVATE API
 
     @SuppressWarnings("unusable-by-js")
-    private record StatusElements(ScheduledItem videoScheduledItem, Label statusLabel, Label availableUntilLabel, Hyperlink liveNowLink, Button watchButton, VideoStreamingActivity videoStreamingActivity) { }
+    private record StatusElements(ScheduledItem videoScheduledItem, Label statusLabel, Label availableUntilLabel, Hyperlink liveNowLink, ButtonBase watchButton, VideoStreamingActivity videoStreamingActivity) { }
 
     private static void updateStatusElements(StatusElements se, boolean initial) {
         // Stopping refreshing labels and button once removed from the scene (due to responsive design)
@@ -200,24 +199,29 @@ final class VideoFormattersAndRenderers {
     }
 
     private static void hideLabeled(Labeled label) {
-        Layouts.setManagedAndVisibleProperties(label, false);
+        showLabeled(label, false);
     }
 
     private static void showLabeled(Labeled label) {
-        Layouts.setManagedAndVisibleProperties(label, true);
+        showLabeled(label, true);
     }
 
-    private static void hideButton(Button button) {
+    private static void showLabeled(Labeled label, boolean show) {
+        Layouts.setManagedAndVisibleProperties(label, show);
+        label.setDisable(!show); // to prevent it gaining focus
+    }
+
+    private static void hideButton(ButtonBase button) {
         hideLabeled(button);
         button.setOnAction(null);
     }
 
-    private static void showButton(Button button, EventHandler<ActionEvent> actionEvent) {
+    private static void showButton(ButtonBase button, EventHandler<ActionEvent> actionEvent) {
         showLabeled(button);
         button.setOnAction(actionEvent);
     }
 
-    private static void transformButtonFromPlayToPlayAgain(Button actionButton) {
+    private static void transformButtonFromPlayToPlayAgain(ButtonBase actionButton) {
         I18nControls.bindI18nProperties(actionButton, VideoStreamingI18nKeys.WatchAgain);
         actionButton.getStyleClass().clear();
         Bootstrap.secondaryButton(actionButton);

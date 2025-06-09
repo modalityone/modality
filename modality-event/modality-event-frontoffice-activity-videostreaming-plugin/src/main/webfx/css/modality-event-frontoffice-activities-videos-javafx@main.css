@@ -69,6 +69,14 @@
     -fx-font-weight: bold;
 }
 
+.livestream .status .btn.danger:selected {
+    -fx-text-fill: black;
+}
+
+.livestream .status .btn.danger:selected SVGPath {
+    -fx-fill: black;
+}
+
 .livestream .program-box {
     -fx-background-color: #f4f4f4;
     -fx-background-radius: 30;

@@ -1,5 +1,6 @@
 package one.modality.event.frontoffice.activities.videostreaming;
 
+import dev.webfx.extras.aria.AriaToggleGroup;
 import dev.webfx.extras.panes.*;
 import dev.webfx.extras.player.Player;
 import dev.webfx.extras.player.Players;
@@ -118,6 +119,8 @@ final class VideoStreamingActivity extends ViewDomainActivityBase {
     private boolean displayingDailyProgram;
     private EntityColumn<ScheduledItem>[] dailyProgramVideoColumns;
     private EntityColumn<ScheduledItem>[] allProgramVideoColumns;
+
+    final AriaToggleGroup<ScheduledItem> watchButtonsGroup = new AriaToggleGroup<>();
 
     public VideoStreamingActivity() {
         //We relaunch the request every 14 hours (in case the user never closes the page, and to make sure the coherence of MediaConsumption is ok)
@@ -633,16 +636,13 @@ final class VideoStreamingActivity extends ViewDomainActivityBase {
                 // we autoplay only the first video
                 autoPlay = false;
             }
-            //Layouts.setMinMaxHeightToPref(videoMediasVBox); // No need to compute min/max height as different to pref (layout computation optimization)
+            Layouts.setMinMaxHeightToPref(videoMediasVBox); // No need to compute min/max height as different to pref (layout computation optimization)
             videoContent = videoMediasVBox;
         }
         if (videoContent == null) {
             videoCollapsePane.setContent(null);
         } else {
-            ScalePane scalePane = new ScalePane(ScaleMode.FIT_WIDTH, videoContent);
-            scalePane.setScaleRegion(true);
-            scalePane.setId("video");
-            videoCollapsePane.setContent(scalePane);
+            videoCollapsePane.setContent(new ScalePane(ScaleMode.FIT_WIDTH, videoContent));
         }
     }
 

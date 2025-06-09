@@ -67,6 +67,15 @@
     font-weight: bold;
 }
 
+.livestream .status .btn.danger.pseudo-selected {
+    --fx-border-color-focus: black;
+    --fx-text-fill: var(--fx-border-color-focus);
+}
+
+.livestream .status .btn.danger.pseudo-selected fx-svgpath svg path {
+    fill: var(--fx-text-fill);
+}
+
 .livestream .program-box {
     background-color: #f4f4f4;
     border-radius: 30px;
