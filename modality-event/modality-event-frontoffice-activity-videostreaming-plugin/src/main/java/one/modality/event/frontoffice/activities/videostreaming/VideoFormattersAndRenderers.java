@@ -56,7 +56,7 @@ final class VideoFormattersAndRenderers {
         // videoTimeRange format
         FormatterRegistry.registerFormatter("videoTimeRange", PrimType.STRING, timeRange -> {
             Object[] times = (Object[]) timeRange;
-            return LocalizedTime.formatLocalTimeRangeProperty((LocalTime) times[0], (LocalTime) times[1], FrontOfficeTimeFormats.VIDEO_DAY_TIME_FORMAT);
+            return LocalizedTime.formatLocalTimeRangeProperty((LocalTime) times[0], (LocalTime) times[1], FrontOfficeTimeFormats.AUDIO_VIDEO_DAY_TIME_FORMAT);
         });
         FormatterRegistry.registerFormatter("allProgramGroup", PrimType.STRING, scheduledItem ->
             I18n.i18nTextProperty(VideoState.getAllProgramVideoGroupI18nKey((ScheduledItem) scheduledItem))

@@ -79,7 +79,7 @@ public interface FrontOfficeTimeFormats {
     FormatStyle RECURRING_EVENT_SCHEDULE_MONTH_DAY_FORMAT = FormatStyle.LONG;
     String RECURRING_EVENT_SCHEDULE_TIME_FORMAT = "HH:mm";
     FormatStyle AUDIO_PLAYLIST_DATE_FORMAT = FormatStyle.LONG;
-    FormatStyle AUDIO_TRACK_DATE_TIME_FORMAT = FormatStyle.LONG;
+    FormatStyle AUDIO_TRACK_DATE_TIME_FORMAT = FormatStyle.MEDIUM;
     FormatStyle BOOKING_CHECKOUT_DATE_FORMAT = FormatStyle.FULL;
     LocalizedDateTimeFormat VOD_EXPIRATION_DATE_TIME_FORMAT = new LocalizedDateTimeFormat(FormatStyle.LONG, "HH:mm");
     FormatStyle VOD_TODAY_MONTH_DAY_FORMAT = FormatStyle.FULL;
@@ -87,6 +87,6 @@ public interface FrontOfficeTimeFormats {
     FormatStyle VIDEO_PLAYER_DATE_TIME_FORMAT = FormatStyle.LONG;
     FormatStyle VIDEO_DAY_DATE_FORMAT = FormatStyle.LONG;
     //FormatStyle VIDEO_DAY_TIME_FORMAT = FormatStyle.SHORT; // still too long on the web - ex: 7.00 in the afternoon
-    String VIDEO_DAY_TIME_FORMAT = "HH:mm";
+    String AUDIO_VIDEO_DAY_TIME_FORMAT = "HH:mm";
     String DAY_MONTH_DATE = "EEE, MMMM d";
 }

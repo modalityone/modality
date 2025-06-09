@@ -14,6 +14,7 @@ import dev.webfx.platform.uischeduler.UiScheduler;
 import dev.webfx.platform.util.Booleans;
 import dev.webfx.platform.util.Objects;
 import dev.webfx.platform.util.collection.Collections;
+import dev.webfx.stack.i18n.I18n;
 import dev.webfx.stack.i18n.I18nKeys;
 import dev.webfx.stack.i18n.controls.I18nControls;
 import dev.webfx.stack.orm.entity.Entities;
@@ -60,16 +61,11 @@ final class AudioColumnsRenderers {
             Timeline timeline = audio.getProgramScheduledItem().getTimeline();
             LocalTime startTime = timeline == null ? null : timeline.getStartTime();
             Text dateText = new Text();
-            dateText.textProperty().bind(LocalizedTime.formatLocalDateTimeProperty(date, startTime, FrontOfficeTimeFormats.AUDIO_TRACK_DATE_TIME_FORMAT));
             dateText.getStyleClass().add(ModalityStyle.TEXT_COMMENT);
-            long durationMillis;
             EventAudioLibraryActivity activity = context.getAppContext();
             Media firstMedia = Collections.findFirst(activity.getPublishedMedias(), media -> Entities.sameId(audio, media.getScheduledItem()));
-            if (firstMedia != null) {
-                durationMillis = firstMedia.getDurationMillis();
-                FXProperties.setEvenIfBound(dateText.textProperty(),
-                    AudioMediaView.formatDuration(durationMillis) + " • " + dateText.getText());
-            }
+            long durationMillis = firstMedia == null ? 0 : firstMedia.getDurationMillis();
+            I18n.bindI18nProperties(dateText, "{0}{1} {2}",  durationMillis == 0 ? "" : AudioMediaView.formatDuration(durationMillis) + " • ", LocalizedTime.formatLocalDateProperty(date, FrontOfficeTimeFormats.AUDIO_TRACK_DATE_TIME_FORMAT),LocalizedTime.formatLocalTimeProperty(startTime, FrontOfficeTimeFormats.AUDIO_VIDEO_DAY_TIME_FORMAT));
             VBox vbox = new VBox(2, nameLabel, dateText);
             vbox.setAlignment(Pos.BOTTOM_LEFT);
             return vbox;
