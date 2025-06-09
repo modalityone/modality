@@ -61,7 +61,7 @@ final class VideoFormattersAndRenderers {
             FXProperties.runNowAndOnPropertyChange(eventTimeSelected -> {
                 LocalTime startDisplayTime = eventTimeSelected ? startEventLocalTime : TimeZoneSwitch.convertEventLocalTimeToUserLocalTime(startEventLocalTime);
                 LocalTime endDisplayTime = eventTimeSelected ? endEventLocalTime : TimeZoneSwitch.convertEventLocalTimeToUserLocalTime(endEventLocalTime);
-                videoTimeRangeProperty.bind(LocalizedTime.formatLocalTimeRangeProperty(startDisplayTime, endDisplayTime, FrontOfficeTimeFormats.VIDEO_DAY_TIME_FORMAT));
+                videoTimeRangeProperty.bind(LocalizedTime.formatLocalTimeRangeProperty(startDisplayTime, endDisplayTime, FrontOfficeTimeFormats.AUDIO_VIDEO_DAY_TIME_FORMAT));
             }, TimeZoneSwitch.eventLocalTimeSelectedProperty());
             return videoTimeRangeProperty;
         });
