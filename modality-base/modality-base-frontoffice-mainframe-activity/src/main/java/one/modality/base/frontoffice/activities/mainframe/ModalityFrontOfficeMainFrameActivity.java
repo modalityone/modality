@@ -1,6 +1,7 @@
 package one.modality.base.frontoffice.activities.mainframe;
 
 import dev.webfx.extras.aria.AriaToggleGroup;
+import dev.webfx.extras.aria.FXKeyboardNavigationDetected;
 import dev.webfx.extras.panes.*;
 import dev.webfx.extras.panes.transitions.CircleTransition;
 import dev.webfx.extras.panes.transitions.Transition;
@@ -43,7 +44,6 @@ import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
 import javafx.scene.paint.Paint;
 import javafx.scene.shape.SVGPath;
-import javafx.scene.text.Text;
 import javafx.stage.Screen;
 import one.modality.base.client.application.ModalityClientMainFrameActivity;
 import one.modality.base.client.application.RoutingActions;
@@ -289,7 +289,12 @@ public final class ModalityFrontOfficeMainFrameActivity extends ModalityClientMa
                 FXProperties.toggleProperty(mobileLayoutProperty);
         });
 
-        mainFrameContainer.setBackground(Background.fill(Color.WHITE)); // TODO Move this to CSS
+        mainFrameContainer.getStyleClass().add("main-frame");
+        FXProperties.runNowAndOnPropertyChange(keyboardNavigationDetected -> {
+            Collections.addIfNotContainsOrRemove(mainFrameContainer.getStyleClass(), keyboardNavigationDetected, "keyboard-navigation-on");
+            Collections.addIfNotContainsOrRemove(mainFrameContainer.getStyleClass(), !keyboardNavigationDetected, "keyboard-navigation-off");
+        }, FXKeyboardNavigationDetected.keyboardNavigationDetectedProperty());
+
         return mainFrameContainer;
     }
 
@@ -356,15 +361,13 @@ public final class ModalityFrontOfficeMainFrameActivity extends ModalityClientMa
 
     private CollapsePane createLanguageMenuBar() {
         Insets languageButtonPadding = new Insets(0, 9, 0, 9);
-        @SuppressWarnings("unchecked") SegmentedButton<Object> languageSegmentedBar = new SegmentedButton<>(
-            Arrays.map(LANGUAGES, lang -> {
-                MonoPane languageButton = new MonoPane(new Text(lang.toUpperCase()));
-                languageButton.setPadding(languageButtonPadding);
-                return new ButtonSegment<>(languageButton, lang);
-            }, ButtonSegment[]::new)
-        );
-        languageSegmentedBar.stateProperty().bindBidirectional(I18n.languageProperty());
-        HBox languageBar = languageSegmentedBar.getView(); // Aria role already set by SegmentedButton class
+        SegmentedButton<Object> languageSegmentedButton = new SegmentedButton<>();
+        Arrays.forEach(LANGUAGES, lang -> {
+            ToggleButton toggleButton = languageSegmentedButton.addButtonSegment(lang, lang.toUpperCase());
+            toggleButton.setPadding(languageButtonPadding);
+        });
+        languageSegmentedButton.stateProperty().bindBidirectional(I18n.languageProperty());
+        HBox languageBar = languageSegmentedButton.getView(); // Aria role already set by SegmentedButton class
         Aria.setAriaLabel(languageBar, "Language selector");
         Layouts.setFixedHeight(languageBar, LANG_BAR_MENU_HEIGHT);
         languageBar.getStyleClass().setAll("button-bar");
@@ -409,7 +412,8 @@ public final class ModalityFrontOfficeMainFrameActivity extends ModalityClientMa
             scaledMobileButtons = Arrays.map(menuItemButtons, ModalityFrontOfficeMainFrameActivity::scaleButton, ScalePane[]::new);
             buttonBar = new ColumnsPane(scaledMobileButtons);
         } else {
-            HBox hBox = new HBox(23, menuItemButtons);
+            HBox hBox = new HBox(13, menuItemButtons);
+            hBox.setFillHeight(true);
             FOPageUtil.restrictToMaxPageWidthAndApplyPageLeftRightPadding(hBox);  // to fit like the mount node
             if (userMenu) {
                 Label userNameLabel = new Label();
@@ -483,6 +487,7 @@ public final class ModalityFrontOfficeMainFrameActivity extends ModalityClientMa
         button.setContentDisplay(userMenu ? ContentDisplay.LEFT : ContentDisplay.TOP);
         button.setGraphicTextGap(mobileLayout ? 0 : 8);
         button.setMinWidth(Region.USE_PREF_SIZE);
+        button.setMaxHeight(Double.MAX_VALUE);
         FXProperties.runNowAndOnPropertyChange(graphic -> {
             if (graphic instanceof SVGPath svgPath) {
                 boolean hasStroke = svgPath.getStroke() != null;
@@ -497,7 +502,7 @@ public final class ModalityFrontOfficeMainFrameActivity extends ModalityClientMa
                 }
             }
         }, button.graphicProperty());
-        button.setPadding(mobileLayout ? new Insets(5) : Insets.EMPTY);
+        button.setPadding(new Insets(5));
         return button;
     }
 
