@@ -1,5 +1,5 @@
 /* Declaring color variables with default values */
-* {
+.root {
    -color-base: white;
    -stay-color: transparent;
    -selection-color: #8AAAD380;
