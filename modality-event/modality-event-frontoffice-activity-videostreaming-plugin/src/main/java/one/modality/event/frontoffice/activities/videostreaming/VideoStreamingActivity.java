@@ -149,7 +149,7 @@ final class VideoStreamingActivity extends ViewDomainActivityBase {
                             // we check if :
                             " and (" +
                             // 1/ there is a ScheduledItem of `video` family type whose `bookableScheduledItem` has been booked (KBS3 setup)
-                            " exists (select ScheduledItem videoSI where item.family.code=? and exists(select Attendance where documentLine=dl and scheduledItem=videoSI.bookableScheduledItem))" +
+                            " exists(select ScheduledItem videoSI where item.family.code=? and exists(select Attendance where documentLine=dl and scheduledItem=videoSI.bookableScheduledItem))" +
                             // 2/ Or KBS3 / KBS2 setup (this allows displaying the videos that have been booked in the past with KBS2 events, event if we can't display them)
                             " or item.family.code=?)" +
                             " order by document.event.startDate desc",
@@ -531,7 +531,7 @@ final class VideoStreamingActivity extends ViewDomainActivityBase {
             // Showing selected videos for the currentSelected Day
             FXProperties.runNowAndOnPropertyChange(() -> {
                 LocalDate selectedDay = selectedDayProperty.get();
-                if (selectedDay == null)
+                if (!displayingDailyProgram || selectedDay == null)
                     displayedVideoScheduledItems.setAll(videoScheduledItems);
                 else
                     displayedVideoScheduledItems.setAll(Collections.filter(videoScheduledItems, item -> selectedDay.equals(item.getDate())));
@@ -616,6 +616,8 @@ final class VideoStreamingActivity extends ViewDomainActivityBase {
     }
 
     private void populateVideoPlayers() {
+        if (true)
+            return;
         // If some previous videos were consumed, we stop their consumption recorders
         videoConsumptionRecorders.forEach(MediaConsumptionRecorder::stop);
         videoConsumptionRecorders.clear();

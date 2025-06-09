@@ -79,7 +79,7 @@ final class VideoFormattersAndRenderers {
                 // Note: normally we should first try to translate `video` and then `programScheduledItem`, but the
                 // `video` has the name repeated for some reason (but no label), while what we want is the label
                 // defined on the program in this case, so for now we just use the `programScheduledItem` directly
-                I18nControls.bindI18nTextProperty(nameLabel, new I18nSubKey("expression: i18n(this)", video.getProgramScheduledItem()));
+                I18nControls.bindI18nTextProperty(nameLabel, new I18nSubKey("expression: i18n(this)", video.getName() == null && video.getLabel() == null ? video.getProgramScheduledItem() : video));
                 nameLabel.getStyleClass().add("name");
             }
             return Controls.setupTextWrapping(nameLabel, true, true);
