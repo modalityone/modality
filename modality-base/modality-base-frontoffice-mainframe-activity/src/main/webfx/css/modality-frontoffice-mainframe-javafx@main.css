@@ -71,7 +71,7 @@ so replaced by the following:
 }
 
 .main-menu-bar Label.brand {
-    -fx-font-size: 16px;
+    -fx-font-size: 14px;
     -fx-font-weight: bold;
     -fx-text-fill: -brand-blue-color;
 }

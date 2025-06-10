@@ -58,8 +58,8 @@
 }
 
 .main-menu-bar fx-label.brand {
-    font-size: 16px;
-    font-weight: bold;
+    font-size: 14px;
+    font-weight: 500;
     --fx-text-fill: var(--brand-blue-color);
 }
 
