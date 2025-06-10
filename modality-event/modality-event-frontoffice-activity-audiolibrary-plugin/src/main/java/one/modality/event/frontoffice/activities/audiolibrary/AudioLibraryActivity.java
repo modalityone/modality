@@ -1,7 +1,9 @@
 package one.modality.event.frontoffice.activities.audiolibrary;
 
 import dev.webfx.extras.panes.ColumnsPane;
+import dev.webfx.extras.panes.ScalePane;
 import dev.webfx.extras.styles.bootstrap.Bootstrap;
+import dev.webfx.extras.util.control.Controls;
 import dev.webfx.extras.util.layout.Layouts;
 import dev.webfx.kit.util.properties.FXProperties;
 import dev.webfx.kit.util.properties.ObservableLists;
@@ -21,6 +23,7 @@ import javafx.scene.Node;
 import javafx.scene.control.Button;
 import javafx.scene.control.ContentDisplay;
 import javafx.scene.control.Label;
+import javafx.scene.layout.Region;
 import javafx.scene.layout.VBox;
 import one.modality.base.frontoffice.utility.page.FOPageUtil;
 import one.modality.base.shared.entities.DocumentLine;
@@ -34,6 +37,8 @@ import one.modality.event.frontoffice.medias.EventThumbnailView;
  * @author Bruno Salmon
  */
 final class AudioLibraryActivity extends ViewDomainActivityBase {
+
+    private static final double COLUMN_MIN_WIDTH = 255;
 
     // Holding an observable list of events with audio recordings booked by the user (changes on login & logout)
     private final ObservableList<DocumentLine> documentLinesWithBookedAudios = FXCollections.observableArrayList();
@@ -79,10 +84,10 @@ final class AudioLibraryActivity extends ViewDomainActivityBase {
 
         Label headerLabel = Bootstrap.h2(Bootstrap.strong(I18nControls.newLabel(AudioLibraryI18nKeys.AudioLibraryHeader)));
         Label checkoutLabel = I18nControls.newLabel(AudioLibraryI18nKeys.CheckoutAudioRecordings);
+        Controls.setupTextWrapping(checkoutLabel, true, false);
 
         ColumnsPane columnsPane = new ColumnsPane(30, 50);
-        columnsPane.setMinColumnWidth(255);
-        columnsPane.setMaxColumnWidth(EventThumbnailView.CONTAINER_WIDTH); // Max width = unscaled thumbnail (533 px)
+        columnsPane.setMinColumnWidth(COLUMN_MIN_WIDTH);
         columnsPane.setAlignment(Pos.TOP_CENTER);
         columnsPane.setPadding(new Insets(50,0,0,0));
 
@@ -127,8 +132,12 @@ final class AudioLibraryActivity extends ViewDomainActivityBase {
 
         noContentTitleLabel.setPadding(new Insets(75,0,0,0));
 
+        // We embed headerLabel in a ScalePane, because it can be too wide on mobiles.
+        ScalePane headerScalePane = new ScalePane(headerLabel);
+        headerScalePane.setAlignment(Pos.TOP_LEFT); // VBox will stretch the ScalePane, but we position the label on the left inside
+        headerLabel.setMinWidth(Region.USE_PREF_SIZE); // This is to make it shrink when it doesn't fit in width
         VBox pageContainer = new VBox(
-            headerLabel,
+            headerScalePane,
             checkoutLabel,
             noContentVBox,
             columnsPane
