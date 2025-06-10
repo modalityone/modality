@@ -5,6 +5,7 @@ import dev.webfx.platform.util.time.Times;
 import one.modality.base.shared.entities.Event;
 import one.modality.base.shared.entities.ScheduledItem;
 import one.modality.base.shared.entities.markers.EntityHasStartAndEndTime;
+import one.modality.event.frontoffice.medias.MediaUtil;
 
 import java.time.Duration;
 import java.time.LocalDate;
@@ -30,22 +31,7 @@ final class VideoLifecycle {
     VideoLifecycle(ScheduledItem videoScheduledItem) {
         this.videoScheduledItem = videoScheduledItem;
         LocalDate videoDate = videoScheduledItem.getDate();
-        // Start & end times can be specified at different places (listed in order of priority):
-        // - videoScheduledItem
-        // - videoScheduledItem.timeline
-        // - videoScheduledItem.programScheduledItem
-        // - videoScheduledItem.programScheduledItem.timeline
-        EntityHasStartAndEndTime startAndEndTimeHolder = videoScheduledItem;
-        if (startAndEndTimeHolder.getStartTime() == null) {
-            startAndEndTimeHolder = videoScheduledItem.getTimeline();
-            if (startAndEndTimeHolder == null || startAndEndTimeHolder.getStartTime() == null) {
-                ScheduledItem programScheduledItem = videoScheduledItem.getProgramScheduledItem();
-                startAndEndTimeHolder = programScheduledItem;
-                if (startAndEndTimeHolder.getStartTime() == null) {
-                    startAndEndTimeHolder = programScheduledItem.getTimeline();
-                }
-            }
-        }
+        EntityHasStartAndEndTime startAndEndTimeHolder = MediaUtil.getStartAndEndTimeHolder(videoScheduledItem);
         sessionStart = videoDate.atTime(startAndEndTimeHolder.getStartTime());
         sessionEnd = videoDate.atTime(startAndEndTimeHolder.getEndTime());
         // Starting to show the livestream 20 min before the session

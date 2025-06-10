@@ -119,7 +119,7 @@ final class EventAudioLibraryActivity extends ViewDomainActivityBase {
                         }
                         entityStore.executeQueryBatch(
                                 // Index 0: we look for the scheduledItem having a bookableScheduledItem which is an audio type (case of festival)
-                                new EntityStoreQuery("select date, programScheduledItem.(name, timeline.(startTime, endTime), cancelled), published, event, " +
+                                new EntityStoreQuery("select name, label.(de,en,es,fr,pt), date, expirationDate, programScheduledItem.(name, label.(de,en,es,fr,pt), startTime, endTime, timeline.(startTime, endTime), cancelled), published, event.(name, type.recurringItem, recurringWithAudio), " +
                                     " (select id from Attendance where scheduledItem=si.bookableScheduledItem and documentLine.document.person=? limit 1) as attendanceId, " +
                                     " (exists(select MediaConsumption where media.scheduledItem=si and attendance.documentLine.document.person=? and played) as alreadyPlayed), " +
                                     " (exists(select MediaConsumption where media.scheduledItem=si and attendance.documentLine.document.person=? and downloaded) as alreadyDownloaded) " +
@@ -129,7 +129,7 @@ final class EventAudioLibraryActivity extends ViewDomainActivityBase {
                                     new Object[]{userPersonId, userPersonId, userPersonId, eventIdContainingAudios, KnownItemFamily.AUDIO_RECORDING.getCode(), pathItemCodeProperty.get(), userPersonId, currentEvent}),
                                 // Index 1: we look for the scheduledItem of audio type having a bookableScheduledItem which is a teaching type (case of STTP)
                                 // TODO: for now we take only the English audio recording scheduledItem in that case. We should take the language default of the organization instead
-                                new EntityStoreQuery("select name, date, programScheduledItem.(name, timeline.(startTime, endTime), cancelled), published, event, " +
+                                new EntityStoreQuery("select name, label.(de,en,es,fr,pt), date, expirationDate, programScheduledItem.(name, label.(de,en,es,fr,pt), startTime, endTime, timeline.(startTime, endTime), cancelled), published, event.(name, type.recurringItem, recurringWithAudio), " +
                                     " (select id from Attendance where scheduledItem=si.bookableScheduledItem and documentLine.document.person=? limit 1) as attendanceId, " +
                                     " (exists(select MediaConsumption where media.scheduledItem=si and attendance.documentLine.document.person=? and played) as alreadyPlayed), " +
                                     " (exists(select MediaConsumption where media.scheduledItem=si and attendance.documentLine.document.person=? and downloaded) as alreadyDownloaded) " +

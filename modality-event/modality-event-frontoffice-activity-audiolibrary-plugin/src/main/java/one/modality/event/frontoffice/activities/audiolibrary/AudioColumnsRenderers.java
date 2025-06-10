@@ -30,8 +30,9 @@ import one.modality.base.client.bootstrap.ModalityStyle;
 import one.modality.base.client.time.FrontOfficeTimeFormats;
 import one.modality.base.shared.entities.Media;
 import one.modality.base.shared.entities.ScheduledItem;
-import one.modality.base.shared.entities.Timeline;
+import one.modality.base.shared.entities.markers.EntityHasStartAndEndTime;
 import one.modality.event.frontoffice.medias.MediaConsumptionRecorder;
+import one.modality.event.frontoffice.medias.MediaUtil;
 
 import java.time.LocalDate;
 import java.time.LocalTime;
@@ -47,25 +48,24 @@ final class AudioColumnsRenderers {
 
     static {
         ValueRendererRegistry.registerValueRenderer("audioName", (value /* expecting ScheduledItem */, context /* expecting AudioColumnsContext */) -> {
-            ScheduledItem audio = (ScheduledItem) value; // value = 'this' = audio ScheduledItem
+            ScheduledItem audioScheduledItem = (ScheduledItem) value; // value = 'this' = audio ScheduledItem
             Label nameLabel = new Label();
-            if (audio.getProgramScheduledItem().isCancelled()) {
+            if (audioScheduledItem.getProgramScheduledItem().isCancelled()) {
                 I18nControls.bindI18nProperties(nameLabel, AudioLibraryI18nKeys.SessionCancelled);
                 nameLabel.getStyleClass().add("session-cancelled");
             } else {
-                nameLabel.setText(getAudioName(audio));
+                nameLabel.setText(getAudioName(audioScheduledItem));
                 nameLabel.getStyleClass().add("name");
             }
             Controls.setupTextWrapping(nameLabel, true, false);
-            LocalDate date = audio.getDate();
-            Timeline timeline = audio.getProgramScheduledItem().getTimeline();
-            LocalTime startTime = timeline == null ? null : timeline.getStartTime();
-            Text dateText = new Text();
-            dateText.getStyleClass().add(ModalityStyle.TEXT_COMMENT);
+            LocalDate date = audioScheduledItem.getDate();
+            EntityHasStartAndEndTime startAndEndTimeHolder = MediaUtil.getStartAndEndTimeHolder(audioScheduledItem);
+            LocalTime startTime = startAndEndTimeHolder.getStartTime();
             EventAudioLibraryActivity activity = context.getAppContext();
-            Media firstMedia = Collections.findFirst(activity.getPublishedMedias(), media -> Entities.sameId(audio, media.getScheduledItem()));
+            Media firstMedia = Collections.findFirst(activity.getPublishedMedias(), media -> Entities.sameId(audioScheduledItem, media.getScheduledItem()));
             long durationMillis = firstMedia == null ? 0 : firstMedia.getDurationMillis();
-            I18n.bindI18nProperties(dateText, "{0}{1} {2}",  durationMillis == 0 ? "" : AudioMediaView.formatDuration(durationMillis) + " • ", LocalizedTime.formatLocalDateProperty(date, FrontOfficeTimeFormats.AUDIO_TRACK_DATE_TIME_FORMAT),LocalizedTime.formatLocalTimeProperty(startTime, FrontOfficeTimeFormats.AUDIO_VIDEO_DAY_TIME_FORMAT));
+            Text dateText = I18n.newText("{0}{1} {2}",  durationMillis == 0 ? "" : AudioMediaView.formatDuration(durationMillis) + " • ", LocalizedTime.formatLocalDateProperty(date, FrontOfficeTimeFormats.AUDIO_TRACK_DATE_TIME_FORMAT), LocalizedTime.formatLocalTimeProperty(startTime, FrontOfficeTimeFormats.AUDIO_VIDEO_DAY_TIME_FORMAT));
+            dateText.getStyleClass().add(ModalityStyle.TEXT_COMMENT);
             VBox vbox = new VBox(2, nameLabel, dateText);
             vbox.setAlignment(Pos.BOTTOM_LEFT);
             return vbox;
