@@ -527,6 +527,7 @@ final class VideoStreamingActivity extends ViewDomainActivityBase {
             displayingDailyProgram = videoScheduledItems.stream().collect(Collectors.groupingBy(ScheduledItem::getDate, Collectors.counting())).values().stream().anyMatch(count -> count > MIN_NUMBER_OF_SESSION_PER_DAY_BEFORE_DISPLAYING_DAILY_PROGRAM);
             Layouts.setManagedAndVisibleProperties(selectTheDayBelowLabel, displayingDailyProgram);
             Layouts.setManagedAndVisibleProperties(responsiveDaySelectionMonoPane, displayingDailyProgram);
+            Layouts.setManagedAndVisibleProperties(festivalShopText, displayingDailyProgram);
 
             // Showing selected videos for the currentSelected Day
             FXProperties.runNowAndOnPropertyChange(() -> {
