@@ -617,8 +617,6 @@ final class VideoStreamingActivity extends ViewDomainActivityBase {
     }
 
     private void populateVideoPlayers() {
-        if (true)
-            return;
         // If some previous videos were consumed, we stop their consumption recorders
         videoConsumptionRecorders.forEach(MediaConsumptionRecorder::stop);
         videoConsumptionRecorders.clear();
