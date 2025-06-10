@@ -42,7 +42,7 @@ so replaced by the following:
 }
 
 .menu-bar {
-    -fx-font-family: "Montserrat";
+    -fx-font-family: "Poppins";
     -webfx-aria-toggle-button-background-color-hover: transparent;
     -webfx-aria-toggle-button-background-color-fired: transparent;
     -webfx-aria-toggle-button-background-color-focused: transparent;
