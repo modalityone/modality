@@ -115,7 +115,7 @@ public final class ModalityPasswordAuthenticationGateway implements ServerAuthen
         if (username.contains("@")) // If the username is an email address, it shouldn't be case-sensitive
             username = username.toLowerCase(); // emails are stored in lowercase in the database
         return EntityStore.create(dataSourceModel)
-            .<Person>executeQuery("select id,frontendAccount.(password, salt) from Person where frontendAccount.(corporation=? and username=? and !disabled and backoffice=?) order by id limit 1", 1, username, backoffice)
+            .<Person>executeQuery("select id,frontendAccount.(password, salt) from Person where frontendAccount.(corporation=? and username=? and !removed and !disabled and backoffice=?) order by id limit 1", 1, username, backoffice)
             .compose(persons -> {
                 if (persons.size() != 1)
                     return Future.failedFuture("[%s] Wrong user or password".formatted(ModalityAuthenticationI18nKeys.AuthnWrongUserOrPasswordError));
