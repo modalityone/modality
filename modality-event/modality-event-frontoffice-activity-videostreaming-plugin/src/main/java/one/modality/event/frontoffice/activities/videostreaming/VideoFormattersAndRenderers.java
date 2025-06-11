@@ -170,15 +170,20 @@ final class VideoFormattersAndRenderers {
                     se.videoStreamingActivity.setWatchingVideo(videoLifecycle);
                     transformButtonFromPlayToPlayAgain(se.watchButton);
                 });
-                LocalDateTime expirationDate = se.videoScheduledItem.getExpirationDate(); // se.videoLifecycle.getExpirationDate();
-                if (expirationDate != null) {
+                LocalDateTime videoSpecificExpirationDate = se.videoScheduledItem.getExpirationDate();
+                if (videoSpecificExpirationDate != null) {
                     FXProperties.runNowAndOnPropertyChange(eventTimeSelected -> {
-                        LocalDateTime userTimezoneExpirationDate = eventTimeSelected ? expirationDate : TimeZoneSwitch.convertEventLocalDateTimeToUserLocalDateTime(expirationDate);
+                        LocalDateTime userTimezoneExpirationDate = eventTimeSelected ? videoSpecificExpirationDate : TimeZoneSwitch.convertEventLocalDateTimeToUserLocalDateTime(videoSpecificExpirationDate);
                         I18nControls.bindI18nProperties(se.availableUntilLabel, VideoStreamingI18nKeys.VideoAvailableUntil1, LocalizedTime.formatLocalDateTimeProperty(userTimezoneExpirationDate, "dd MMM '-' HH.mm"));
                     }, TimeZoneSwitch.eventLocalTimeSelectedProperty());
                     showLabeled(se.availableUntilLabel);
                     // We schedule a refresh so the UI is updated when the expirationDate is reached
-                    scheduleRefreshAt(expirationDate, refresher);
+                    scheduleRefreshAt(videoSpecificExpirationDate, refresher);
+                } else {
+                    LocalDateTime generalEventExpirationDate = se.videoScheduledItem.getEvent().getVodExpirationDate();
+                    if (generalEventExpirationDate != null) {
+                        scheduleRefreshAt(generalEventExpirationDate, refresher);
+                    }
                 }
         }
         if (hideOrShowWatchButton) {
