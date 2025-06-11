@@ -3,6 +3,7 @@
 module modality.event.frontoffice.medias {
 
     // Direct dependencies modules
+    requires javafx.base;
     requires javafx.controls;
     requires javafx.graphics;
     requires modality.base.client.cloudinary;

@@ -11,6 +11,7 @@ module modality.event.client.mediaview {
     requires modality.base.client.time;
     requires modality.base.frontoffice.utility;
     requires modality.base.shared.entities;
+    requires modality.event.frontoffice.medias;
     requires webfx.extras.imagestore;
     requires webfx.extras.panes;
     requires webfx.extras.player;

@@ -6,6 +6,8 @@ import one.modality.base.client.entities.functions.I18nFunction;
 import one.modality.base.shared.entities.ScheduledItem;
 import one.modality.base.shared.entities.markers.EntityHasStartAndEndTime;
 
+import java.time.Duration;
+
 public class MediaUtil {
 
     public static String translate(Entity entity) {
@@ -36,5 +38,22 @@ public class MediaUtil {
             }
         }
         return startAndEndTimeHolder;
+    }
+
+    public static String formatDuration(Duration duration) {
+        //TODO: use LocalizedTime instead
+        if (duration == null)
+            return "xx:xx";
+        return formatDuration((int) duration.toHours(), ((int) duration.toMinutes()) % 60, ((int) duration.toSeconds()) % 60);
+    }
+
+    public static String formatDuration(javafx.util.Duration javafxDuration) {
+        if (javafxDuration == null || javafxDuration.isIndefinite() || javafxDuration.isUnknown())
+            return "xx:xx";
+        return formatDuration((int) javafxDuration.toHours(), (int) javafxDuration.toMinutes(), ((int) javafxDuration.toSeconds()) % 60);
+    }
+
+    public static String formatDuration(int hours, int minutes, int seconds) {
+        return (hours == 0 ? "" : (hours < 10 ? "0" : "") + hours + ":") + (minutes < 10 ? "0" : "") + minutes + ":" + (seconds < 10 ? "0" : "") + seconds;
     }
 }

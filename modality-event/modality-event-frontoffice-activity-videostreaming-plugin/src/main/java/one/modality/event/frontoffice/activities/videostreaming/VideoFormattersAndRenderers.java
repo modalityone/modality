@@ -29,6 +29,7 @@ import one.modality.base.client.messaging.ModalityMessaging;
 import one.modality.base.client.time.FrontOfficeTimeFormats;
 import one.modality.base.shared.entities.Event;
 import one.modality.base.shared.entities.ScheduledItem;
+import one.modality.event.frontoffice.medias.MediaUtil;
 
 import java.time.Duration;
 import java.time.LocalDate;
@@ -149,7 +150,7 @@ final class VideoFormattersAndRenderers {
                 scheduleRefreshAt(videoLifecycle.getCountdownStart(), refresher);
                 break;
             case VideoStreamingI18nKeys.StartingIn1:
-                statusI18nArg = formatDuration(videoLifecycle.durationBetweenNowAndSessionStart());
+                statusI18nArg = MediaUtil.formatDuration(videoLifecycle.durationBetweenNowAndSessionStart());
                 scheduleRefreshSeconds(1, refresher); // We refresh the countdown every second
                 hideOrShowWatchButton = true;
                 break;
@@ -253,13 +254,4 @@ final class VideoFormattersAndRenderers {
             UiScheduler.scheduleDelay(delayMillis, refresher);
     }
 
-    static String formatDuration(Duration duration) { // Not sure if it's the best place for this method, but ok for now
-        //TODO: use LocalizedTime instead
-        if (duration == null)
-            return "xx:xx";
-        int hours = (int) duration.toHours();
-        int minutes = ((int) duration.toMinutes()) % 60;
-        int seconds = ((int) duration.toSeconds()) % 60;
-        return (hours < 10 ? "0" : "") + hours + ":" + (minutes < 10 ? "0" : "") + minutes + ":" + (seconds < 10 ? "0" : "") + seconds;
-    }
 }
