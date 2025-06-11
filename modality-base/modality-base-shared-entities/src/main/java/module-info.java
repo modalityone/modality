@@ -8,7 +8,9 @@ module modality.base.shared.entities {
     // Direct dependencies modules
     requires modality.base.shared.domainmodel;
     requires webfx.extras.media.metadata;
+    requires webfx.platform.substitution;
     requires webfx.platform.util;
+    requires webfx.platform.util.time;
     requires webfx.stack.db.submit;
     requires webfx.stack.orm.domainmodel;
     requires webfx.stack.orm.dql;

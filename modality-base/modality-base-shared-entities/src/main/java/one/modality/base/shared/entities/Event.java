@@ -1,6 +1,8 @@
 package one.modality.base.shared.entities;
 
+import dev.webfx.platform.substitution.Substitutor;
 import dev.webfx.platform.util.Strings;
+import dev.webfx.platform.util.time.Times;
 import dev.webfx.stack.orm.entity.Entity;
 import dev.webfx.stack.orm.entity.EntityId;
 import one.modality.base.shared.entities.markers.*;
@@ -285,19 +287,19 @@ public interface Event extends Entity,
         return name == null ? null : name.toLowerCase().contains("online");
     }
 
-    ZoneId ZONE_ID = ZoneId.of("Europe/London");
-    Clock UK_CLOCK = Clock.system(ZONE_ID);
+    ZoneId UK_ZONE_ID = ZoneId.of("Europe/London");
+    Clock UK_CLOCK = Clock.system(UK_ZONE_ID);
+    LocalDateTime APP_START_AT_EVENT_LOCAL_DATETIME = Times.toLocalDateTime(Substitutor.substitute("${{APP_START_AT_EVENT_LOCAL_DATETIME}}")); // Ex: 2025-06-11T23:58:50
+    Clock EVENT_CLOCK = APP_START_AT_EVENT_LOCAL_DATETIME == null ? UK_CLOCK : Clock.offset(UK_CLOCK, Duration.between(LocalDateTime.now(UK_CLOCK), APP_START_AT_EVENT_LOCAL_DATETIME));
 
     // temporary static method (will be non-static once managed in the event)
     static ZoneId getEventZoneId() {
-        return ZONE_ID;
+        return UK_ZONE_ID;
     }
 
     static Clock getEventClock() {
-        return UK_CLOCK;
+        return EVENT_CLOCK;
     }
-
-    //Duration DEBUG_LOCAL_DATETIME_DELTA = Duration.between(LocalDateTime.now(getEventClock()), LocalDateTime.of(2025, 5, 24, 11, 15, 0));
 
     static LocalDateTime nowInEventTimezone() {
         return LocalDateTime.now(getEventClock());//.plus(DEBUG_LOCAL_DATETIME_DELTA);
