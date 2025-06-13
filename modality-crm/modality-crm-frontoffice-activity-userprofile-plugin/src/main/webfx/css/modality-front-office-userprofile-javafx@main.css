@@ -1,6 +1,5 @@
 .user-profile-modal-window {
-    -fx-background-image: none;
-    -fx-background-color: rgba(255, 255, 255,1);
+    -fx-background-color: white;
     -fx-background-radius: 20px;
     -fx-border-color: lightgray;
     -fx-border-radius: 20px;
@@ -8,6 +7,6 @@
 }
 
 .user-profile .material-label { /* is actually a JavaFX Text */
-     -fx-fill: #000000;
+     -fx-fill: black;
      -fx-font-weight: 800;
 }

@@ -1,8 +1,8 @@
 package one.modality.crm.frontoffice.activities.userprofile;
 
 import dev.webfx.extras.filepicker.FilePicker;
-import dev.webfx.extras.panes.ScalePane;
 import dev.webfx.extras.styles.bootstrap.Bootstrap;
+import dev.webfx.extras.util.layout.Layouts;
 import dev.webfx.kit.util.properties.FXProperties;
 import dev.webfx.platform.blob.Blob;
 import dev.webfx.platform.console.Console;
@@ -34,12 +34,15 @@ import one.modality.base.client.icons.SvgIcons;
 
 import java.util.Objects;
 
+/**
+ * @author David Hello
+ */
 final class ChangePictureUI {
 
     static final long CLOUDINARY_RELOAD_DELAY = 10000;
     private static final int MAX_PICTURE_SIZE = 240;
 
-    private final VBox changePictureVBox = new VBox();
+    private final VBox container = new VBox();
     private final Slider zoomSlider;
     private final ImageView imageView;
     private double deltaX = 0;
@@ -47,7 +50,6 @@ final class ChangePictureUI {
     private double zoomFactor = 1;
     private Blob cloudPictureFileToUpload;
     private Object recentlyUploadedCloudPictureId;
-    private final ScalePane container = new ScalePane(changePictureVBox);
     private final UserProfileActivity parentActivity;
     private DialogCallback callback;
     //Those two boolean property are used to know if we have to delete the picture, upload a new one, or if we are currently processing
@@ -62,9 +64,9 @@ final class ChangePictureUI {
 
 
     public ChangePictureUI(UserProfileActivity activity) {
-        changePictureVBox.setMinWidth(500);
+        //container.setMinWidth(500);
         parentActivity = activity;
-        changePictureVBox.setPadding(new Insets(15, 0, 0, 0));
+        container.setPadding(new Insets(15, 0, 0, 0));
 
         StackPane imageStackPane = new StackPane();
         imageStackPane.setMaxWidth(MAX_PICTURE_SIZE);
@@ -132,7 +134,9 @@ final class ChangePictureUI {
         zoomSliderHBox.setAlignment(Pos.CENTER);
 
         Hyperlink removePictureLink = Bootstrap.strong(Bootstrap.textDanger(I18nControls.newHyperlink(UserProfileI18nKeys.RemovePicture)));
+        removePictureLink.setMinWidth(Region.USE_PREF_SIZE);
         Hyperlink addPictureLink = Bootstrap.strong(Bootstrap.textPrimary(I18nControls.newHyperlink(UserProfileI18nKeys.UploadPicture)));
+        addPictureLink.setMinWidth(Region.USE_PREF_SIZE);
 
         FilePicker filePicker = FilePicker.create();
         filePicker.getAcceptedExtensions().addAll("image/*");
@@ -156,7 +160,9 @@ final class ChangePictureUI {
         removePictureLink.setOnAction(e -> removePicture());
 
         // Layout
-        HBox hyperlinks = new HBox(70, removePictureLink, filePicker.getView());
+        Region hGrowable = Layouts.createHGrowable(70);
+        hGrowable.setMinWidth(10);
+        HBox hyperlinks = new HBox(removePictureLink, hGrowable, filePicker.getView());
         hyperlinks.setAlignment(Pos.CENTER);
         zoomSliderPane.setBottom(hyperlinks);
 
@@ -187,19 +193,23 @@ final class ChangePictureUI {
         });
 
         Hyperlink cancel = Bootstrap.textSecondary(I18nControls.newHyperlink(UserProfileI18nKeys.Cancel));
+        cancel.setMinWidth(Region.USE_PREF_SIZE);
         cancel.setOnAction(e -> {
             if (callback != null)
                 callback.closeDialog();
         });
-        HBox actionHBox = new HBox(60, cancel, saveButton);
+        hGrowable = Layouts.createHGrowable();
+        hGrowable.setPrefWidth(60);
+        hGrowable.setMinWidth(10);
+        HBox actionHBox = new HBox(cancel, hGrowable, saveButton);
         actionHBox.setAlignment(Pos.CENTER);
         actionHBox.setPadding(new Insets(40, 0, 0, 0));
-        changePictureVBox.getChildren().setAll(imageStackPane, zoomSliderPane, infoMessage, actionHBox);
-        changePictureVBox.setMaxWidth(MAX_PICTURE_SIZE);
-        changePictureVBox.setBackground(Background.fill(Color.WHITE));
-        changePictureVBox.setAlignment(Pos.CENTER);
-        changePictureVBox.setSpacing(20);
-        ChangePasswordUI.setupModalVBox(changePictureVBox);
+        container.getChildren().setAll(
+            imageStackPane,
+            zoomSliderPane,
+            infoMessage,
+            actionHBox);
+        ChangePasswordUI.setupModalVBox(container);
 
         //We prevent the mouse click event to pass through the Pane
         container.setOnMouseClicked(Event::consume);
@@ -233,7 +243,7 @@ final class ChangePictureUI {
         }
     }
 
-    public ScalePane getView() {
+    public Region getView() {
         return container;
     }
 

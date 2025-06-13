@@ -12,6 +12,9 @@ import dev.webfx.stack.routing.uirouter.operations.RoutePushRequest;
 import dev.webfx.stack.routing.uirouter.operations.RouteRequestEmitter;
 import dev.webfx.stack.ui.operation.HasOperationCode;
 
+/**
+ * @author Bruno Salmon
+ */
 public class UserProfileRouting {
 
     private final static String ANY_PATH = "/user-profile(/email-update/:token)?";

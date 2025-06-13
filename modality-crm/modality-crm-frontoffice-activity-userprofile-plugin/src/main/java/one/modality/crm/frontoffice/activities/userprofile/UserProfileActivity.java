@@ -3,7 +3,6 @@ package one.modality.crm.frontoffice.activities.userprofile;
 import dev.webfx.extras.panes.ColumnsPane;
 import dev.webfx.extras.panes.MonoClipPane;
 import dev.webfx.extras.panes.MonoPane;
-import dev.webfx.extras.panes.ScalePane;
 import dev.webfx.extras.responsive.ResponsiveDesign;
 import dev.webfx.extras.responsive.ResponsiveLayout;
 import dev.webfx.extras.styles.bootstrap.Bootstrap;
@@ -75,7 +74,6 @@ import static one.modality.crm.frontoffice.activities.userprofile.ChangePictureU
  */
 final class UserProfileActivity extends ViewDomainActivityBase implements ModalityButtonFactoryMixin {
 
-    static final double MODAL_WINDOWS_MAX_WIDTH = 500;
     private static final double PROFILE_IMAGE_SIZE = 150;
     private static final String NO_PICTURE_IMAGE = "images/large/no-picture.png";
 
@@ -127,10 +125,8 @@ final class UserProfileActivity extends ViewDomainActivityBase implements Modali
         container.getChildren().add(titleLabel);
 
         picturePane = new StackPane();
-        picturePane.setPrefSize(PROFILE_IMAGE_SIZE, PROFILE_IMAGE_SIZE);
-        Layouts.setMinMaxSizeToPref(picturePane);
-        pictureImageContainer.setPrefSize(PROFILE_IMAGE_SIZE, PROFILE_IMAGE_SIZE);
-        Layouts.setMinMaxSizeToPref(pictureImageContainer);
+        Layouts.setFixedSize(picturePane, PROFILE_IMAGE_SIZE, PROFILE_IMAGE_SIZE);
+        Layouts.setFixedSize(pictureImageContainer, PROFILE_IMAGE_SIZE, PROFILE_IMAGE_SIZE);
 
         picturePane.getChildren().add(pictureImageContainer);
         SVGPath pickupImageSvgPath = SvgIcons.createPickupPicture();
@@ -139,11 +135,11 @@ final class UserProfileActivity extends ViewDomainActivityBase implements Modali
         pickupImageMonoPane.setBackground(new Background(new BackgroundFill(Color.LIGHTGRAY, new CornerRadii(50), Insets.EMPTY)));
         picturePane.getChildren().add(pickupImageMonoPane);
         pickupImageMonoPane.setOnMouseClicked(ev -> {
-            ScalePane changePictureUIView = changePictureUI.getView();
+            Region changePictureUIView = changePictureUI.getView();
             DialogCallback callback = DialogUtil.showModalNodeInGoldLayout(changePictureUIView, FXMainFrameDialogArea.getDialogArea());
             FXMainFrameDialogArea.getDialogArea().setOnMouseClicked(e -> callback.closeDialog());
             changePictureUI.setDialogCallback(callback);
-            Animations.fadeIn(changePictureUI.getView());
+            Animations.fadeIn(changePictureUIView);
         });
         StackPane.setMargin(pickupImageMonoPane, new Insets(0, 10, 10, 0));
         StackPane.setAlignment(pictureImageContainer, Pos.CENTER);
@@ -431,24 +427,24 @@ final class UserProfileActivity extends ViewDomainActivityBase implements Modali
         container.getChildren().add(HelpPanel.createEmailHelpPanel(UserProfileI18nKeys.UserProfileHelp, "kbs@kadampa.net"));
 
         changeUserEmail.setOnAction(e -> {
-            ScalePane userEmailUIView = changeEmailUI.getView();
+            Region userEmailUIView = changeEmailUI.getView();
             DialogCallback callback = DialogUtil.showModalNodeInGoldLayout(userEmailUIView, FXMainFrameDialogArea.getDialogArea());
             FXMainFrameDialogArea.getDialogArea().setOnMouseClicked(ev -> {
                 callback.closeDialog();
                 changeEmailUI.resetToInitialState();
             });
-            Animations.fadeIn(changeEmailUI.getView());
+            Animations.fadeIn(userEmailUIView);
         });
 
         changeUserPassword.setOnAction(e -> {
-            ScalePane passwordUIView = changePasswordUI.getView();
+            Region passwordUIView = changePasswordUI.getView();
             DialogCallback callback = DialogUtil.showModalNodeInGoldLayout(passwordUIView, FXMainFrameDialogArea.getDialogArea());
             FXMainFrameDialogArea.getDialogArea().setOnMouseClicked(ev -> {
                 callback.closeDialog();
                 changePasswordUI.resetToInitialState();
             });
             changePasswordUI.setDialogCallback(callback);
-            Animations.fadeIn(changePasswordUI.getView());
+            Animations.fadeIn(passwordUIView);
         });
 
 

@@ -1,11 +1,11 @@
 package one.modality.crm.frontoffice.activities.userprofile;
 
-import dev.webfx.extras.panes.ScalePane;
 import dev.webfx.extras.styles.bootstrap.Bootstrap;
 import dev.webfx.extras.styles.materialdesign.util.MaterialUtil;
 import dev.webfx.extras.util.animation.Animations;
 import dev.webfx.extras.util.control.Controls;
 import dev.webfx.extras.util.control.HtmlInputAutocomplete;
+import dev.webfx.extras.util.layout.Layouts;
 import dev.webfx.kit.util.properties.FXProperties;
 import dev.webfx.platform.uischeduler.UiScheduler;
 import dev.webfx.stack.authn.AuthenticateWithUsernamePasswordCredentials;
@@ -25,18 +25,22 @@ import javafx.geometry.Pos;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.PasswordField;
+import javafx.scene.layout.Region;
 import javafx.scene.layout.VBox;
+import javafx.scene.text.TextAlignment;
 import one.modality.base.shared.entities.Person;
 import one.modality.crm.frontoffice.activities.createaccount.CreateAccountI18nKeys;
 import one.modality.crm.shared.services.authn.fx.FXUserPerson;
 
+/**
+ * @author David Hello
+ */
 final class ChangePasswordUI implements MaterialFactoryMixin {
 
     private final PasswordField passwordField;
     private final PasswordField newPasswordField;
     private final PasswordField newPasswordRepeatedField;
-    private final VBox changePasswordVBox = new VBox();
-    private final ScalePane container = new ScalePane(changePasswordVBox);
+    private final VBox container = new VBox();
     private final ValidationSupport validationSupport = new ValidationSupport();
     private final Button actionButton;
     private final Button closeButton;
@@ -48,10 +52,14 @@ final class ChangePasswordUI implements MaterialFactoryMixin {
 
     public ChangePasswordUI() {
         Label title = Bootstrap.textPrimary(Bootstrap.h2(I18nControls.newLabel(UserProfileI18nKeys.ChangePassword)));
+        title.setTextAlignment(TextAlignment.CENTER);
         title.setPadding(new Insets(0, 0, 50, 0));
+        Controls.setupTextWrapping(title, true, false);
 
         Label description = Bootstrap.strong(I18nControls.newLabel(UserProfileI18nKeys.UpdatePasswordDesc));
+        description.setTextAlignment(TextAlignment.CENTER);
         description.setPadding(new Insets(0, 0, 10, 0));
+        Controls.setupTextWrapping(description, true, false);
 
         passwordField = newMaterialPasswordField(UserProfileI18nKeys.CurrentPassword);
         Controls.setHtmlInputAutocomplete(passwordField, HtmlInputAutocomplete.CURRENT_PASSWORD);
@@ -89,7 +97,7 @@ final class ChangePasswordUI implements MaterialFactoryMixin {
             ButtonFactory.resetDefaultButton(actionButton);
             actionButton.setOnAction(e -> {
                 if (validateForm()) {
-                    //First we check if the password entered is the correct
+                    // First, we check if the password entered is the correct
                     Object credentials = new AuthenticateWithUsernamePasswordCredentials(emailAddress, passwordField.getText().trim());
                     OperationUtil.turnOnButtonsWaitMode(actionButton);
                     new AuthenticationRequest()
@@ -131,8 +139,8 @@ final class ChangePasswordUI implements MaterialFactoryMixin {
         infoMessage.setWrapText(true);
         resultMessage.setWrapText(true);
 
-        changePasswordVBox.getChildren().setAll(title, description, passwordField, newPasswordField, newPasswordRepeatedField, infoMessage, actionButton,closeButton);
-        setupModalVBox(changePasswordVBox);
+        container.getChildren().setAll(title, description, passwordField, newPasswordField, newPasswordRepeatedField, infoMessage, actionButton,closeButton);
+        setupModalVBox(container);
 
         closeButton.setOnAction(evt -> {
             callback.closeDialog();
@@ -151,14 +159,14 @@ final class ChangePasswordUI implements MaterialFactoryMixin {
     }
 
     public static void setupModalVBox(VBox vBox) {
-        vBox.setPrefWidth(UserProfileActivity.MODAL_WINDOWS_MAX_WIDTH);
         vBox.setSpacing(20);
         vBox.setAlignment(Pos.TOP_CENTER);
-        vBox.setPadding(new Insets(60));
         vBox.getStyleClass().add("user-profile-modal-window");
+        vBox.setPadding(new Insets(60));
+        vBox.setMinWidth(300);
     }
 
-    public ScalePane getView() {
+    public Region getView() {
         return container;
     }
 
@@ -168,10 +176,8 @@ final class ChangePasswordUI implements MaterialFactoryMixin {
         newPasswordRepeatedField.setText("");
         showResultMessage("", "");
         showInfoMessage("", "");
-        closeButton.setVisible(false);
-        closeButton.setManaged(false);
-        actionButton.setVisible(true);
-        actionButton.setManaged(true);
+        Layouts.setManagedAndVisibleProperties(closeButton, false);
+        Layouts.setManagedAndVisibleProperties(actionButton, true);
     }
 
     public void showResultMessage(String errorMessageKey, String cssClass) {
@@ -186,7 +192,7 @@ final class ChangePasswordUI implements MaterialFactoryMixin {
     }
 
     /**
-     * This method is used to initialise the parameters for the form validation
+     * This method is used to initialize the parameters for the form validation
      */
     private void initFormValidation() {
         if (validationSupport.isEmpty()) {

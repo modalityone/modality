@@ -1,7 +1,5 @@
 package one.modality.crm.frontoffice.activities.userprofile;
 
-import dev.webfx.extras.panes.ScalePane;
-import dev.webfx.extras.panes.TransitionPane;
 import dev.webfx.extras.styles.bootstrap.Bootstrap;
 import dev.webfx.extras.styles.materialdesign.util.MaterialUtil;
 import dev.webfx.extras.util.animation.Animations;
@@ -27,17 +25,20 @@ import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.PasswordField;
 import javafx.scene.control.TextField;
+import javafx.scene.layout.Region;
 import javafx.scene.layout.VBox;
+import javafx.scene.text.TextAlignment;
 import one.modality.base.shared.entities.Person;
 import one.modality.crm.shared.services.authn.fx.FXUserPerson;
 
+/**
+ * @author David Hello
+ */
 final class ChangeEmailUI implements MaterialFactoryMixin {
 
     private final PasswordField passwordField;
     private final TextField emailField;
-    private final VBox changeEmailVBox = new VBox();
-    private final TransitionPane transitionPane = new TransitionPane(changeEmailVBox);
-    private final ScalePane container = new ScalePane(transitionPane);
+    private final VBox container = new VBox(20);
     private final ValidationSupport validationSupport = new ValidationSupport();
     private final Label infoMessage = Bootstrap.textDanger(new Label());
     private final Button actionButton = Bootstrap.largePrimaryButton(I18nControls.newButton(UserProfileI18nKeys.Confirm));
@@ -45,9 +46,10 @@ final class ChangeEmailUI implements MaterialFactoryMixin {
     private String emailAddress = "";
 
     public ChangeEmailUI() {
-        javafx.scene.control.Label title = Bootstrap.textPrimary(Bootstrap.h2(I18nControls.newLabel(UserProfileI18nKeys.ChangeEmailAddress)));
-        changeEmailVBox.setPadding(new Insets(20, 0, 0, 0));
+        Label title = Bootstrap.textPrimary(Bootstrap.h2(I18nControls.newLabel(UserProfileI18nKeys.ChangeEmailAddress)));
+        title.setTextAlignment(TextAlignment.CENTER);
         title.setPadding(new Insets(0, 0, 100, 0));
+        Controls.setupTextWrapping(title, true, false);
 
         passwordField = newMaterialPasswordField(UserProfileI18nKeys.CurrentPassword);
         Controls.setHtmlInputAutocomplete(passwordField, HtmlInputAutocomplete.CURRENT_PASSWORD);
@@ -70,7 +72,7 @@ final class ChangeEmailUI implements MaterialFactoryMixin {
             ButtonFactory.resetDefaultButton(actionButton);
             actionButton.setOnAction(e -> {
                 if (validateForm()) {
-                    //First we check if the password entered is the correct
+                    // First, we check if the password entered is the correct
                     Object passwordCheckCredentials = new AuthenticateWithUsernamePasswordCredentials(emailAddress, passwordField.getText().trim());
                     OperationUtil.turnOnButtonsWaitMode(actionButton);
                     AuthenticationService.authenticate(passwordCheckCredentials)
@@ -103,15 +105,17 @@ final class ChangeEmailUI implements MaterialFactoryMixin {
             });
         }, FXUserPerson.userPersonProperty());
 
-        changeEmailVBox.getChildren().setAll(title, passwordField, emailField, infoMessage, actionButton);
-        changeEmailVBox.setMaxWidth(UserProfileActivity.MODAL_WINDOWS_MAX_WIDTH);
-        changeEmailVBox.setMaxHeight(UserProfileActivity.MODAL_WINDOWS_MAX_WIDTH + 100);
+        container.getChildren().setAll(
+            title,
+            passwordField,
+            emailField,
+            infoMessage,
+            actionButton);
 
-        changeEmailVBox.setSpacing(20);
-        ChangePasswordUI.setupModalVBox(changeEmailVBox);
+        ChangePasswordUI.setupModalVBox(container);
     }
 
-    public ScalePane getView() {
+    public Region getView() {
         return container;
     }
 
@@ -126,7 +130,7 @@ final class ChangeEmailUI implements MaterialFactoryMixin {
     }
 
     /**
-     * This method is used to initialise the parameters for the form validation
+     * This method is used to initialize the parameters for the form validation
      */
     private void initFormValidation() {
         if (validationSupport.isEmpty()) {

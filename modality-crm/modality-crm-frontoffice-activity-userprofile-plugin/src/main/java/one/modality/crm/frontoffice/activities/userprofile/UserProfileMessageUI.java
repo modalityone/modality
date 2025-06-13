@@ -12,6 +12,9 @@ import javafx.scene.layout.Background;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 
+/**
+ * @author David Hello
+ */
 final class UserProfileMessageUI {
 
     private final VBox container = new VBox();
@@ -31,7 +34,7 @@ final class UserProfileMessageUI {
         container.getChildren().setAll(title, infoMessage, closeButton);
         container.setAlignment(Pos.TOP_CENTER);
         container.getStyleClass().add("user-profile-modal-window");
-        container.setPrefWidth(UserProfileActivity.MODAL_WINDOWS_MAX_WIDTH);
+        //container.setPrefWidth(UserProfileActivity.MODAL_WINDOWS_MAX_WIDTH);
         container.setSpacing(20);
         container.setOnMouseClicked(Event::consume);
 
