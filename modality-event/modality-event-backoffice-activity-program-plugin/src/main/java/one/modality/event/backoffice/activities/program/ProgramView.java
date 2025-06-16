@@ -8,10 +8,20 @@ import dev.webfx.extras.util.layout.Layouts;
 import dev.webfx.extras.util.masterslave.MasterSlaveLinker;
 import dev.webfx.kit.util.properties.FXProperties;
 import dev.webfx.kit.util.properties.ObservableLists;
+import dev.webfx.platform.uischeduler.UiScheduler;
 import dev.webfx.stack.i18n.controls.I18nControls;
 import dev.webfx.stack.i18n.spi.impl.I18nSubKey;
+import dev.webfx.stack.orm.dql.DqlStatement;
 import dev.webfx.stack.orm.entity.UpdateStore;
 import dev.webfx.stack.orm.entity.binding.EntityBindings;
+import dev.webfx.stack.orm.entity.controls.entity.selector.ButtonSelector;
+import dev.webfx.stack.orm.entity.controls.entity.selector.EntityButtonSelector;
+import dev.webfx.stack.ui.controls.button.ButtonFactoryMixin;
+import dev.webfx.stack.ui.controls.dialog.DialogBuilderUtil;
+import dev.webfx.stack.ui.controls.dialog.DialogContent;
+import dev.webfx.stack.ui.dialog.DialogCallback;
+import dev.webfx.stack.ui.operation.OperationUtil;
+import javafx.application.Platform;
 import javafx.beans.binding.BooleanBinding;
 import javafx.beans.binding.BooleanExpression;
 import javafx.beans.property.BooleanProperty;
@@ -25,16 +35,21 @@ import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
+import one.modality.base.client.mainframe.fx.FXMainFrameDialogArea;
 import one.modality.base.client.util.dialog.ModalityDialog;
 import one.modality.base.client.util.masterslave.ModalitySlaveEditor;
 import one.modality.base.shared.entities.Event;
+import one.modality.base.shared.entities.Item;
+import one.modality.crm.backoffice.organization.fx.FXOrganization;
 import one.modality.event.client.event.fx.FXEvent;
+
+import java.util.stream.Collectors;
 
 /**
  * @author David Hello
  * @author Bruno Salmon
  */
-final class ProgramView extends ModalitySlaveEditor<Event> {
+final class ProgramView extends ModalitySlaveEditor<Event> implements ButtonFactoryMixin  {
 
     private static final double MAX_WIDTH = 1600;
 
@@ -44,7 +59,10 @@ final class ProgramView extends ModalitySlaveEditor<Event> {
     private final MasterSlaveLinker<Event> masterSlaveEventLinker = new MasterSlaveLinker<>(this);
     final ObservableList<DayTemplateView> workingDayTemplateViews = FXCollections.observableArrayList();
 
+    private ButtonSelector<Item> itemSelector;
+
     private final VBox mainVBox;
+
 
     ProgramView(ProgramModel programModel) {
         this.programModel = programModel;
@@ -66,6 +84,10 @@ final class ProgramView extends ModalitySlaveEditor<Event> {
         super.setSlave(approvedEntity);
         programModel.reloadProgramFromSelectedEvent(approvedEntity);
     }
+
+    private void syncItemModelFromUi() {programModel.setBookableTeachingItem(itemSelector.getSelectedItem());
+    }
+
 
     @Override
     public boolean hasChanges() {
@@ -126,11 +148,83 @@ final class ProgramView extends ModalitySlaveEditor<Event> {
         templateDayColumnsPane.setAlignment(Pos.TOP_CENTER);
         ObservableLists.bindConverted(templateDayColumnsPane.getChildren(), workingDayTemplateViews, DayTemplateView::getPanel);
 
+        BooleanProperty dayTicketPreliminaryScheduledItemProperty = programModel.getDayTicketPreliminaryScheduledItemProperty();
+
+        Label dayTicketTeachingAndAudioScheduledItemGenerationLabel = I18nControls.newLabel(ProgramI18nKeys.DayTicketTeachingsAndAudioScheduledItemNotGenerated);
+        Label chooseAnItemLabel = I18nControls.newLabel(ProgramI18nKeys.ChooseAnItemForTheTeachingBookableScheduledItem);
+
+        itemSelector = new EntityButtonSelector<Item>(
+            "{class: 'Item', alias: 's', where: 'family.code=`teach`', orderBy :'name'}",
+            this, FXMainFrameDialogArea::getDialogArea, programModel.getEntityStore().getDataSourceModel())
+            .always(FXOrganization.organizationProperty(), o -> DqlStatement.where("organization=?", o));
+        Button itemSelectorButton = itemSelector.getButton();
+        itemSelectorButton.setMinWidth(250);
+        FXProperties.runOnPropertyChange(this::syncItemModelFromUi, itemSelector.selectedItemProperty());
+
+        Button generatePreliminaryBookableSIButton = Bootstrap.primaryButton(I18nControls.newButton(ProgramI18nKeys.GeneratePreliminaryBookableSI));
+
+        generatePreliminaryBookableSIButton.setOnAction(e -> {
+            if(itemSelector.getSelectedItem()==null) {
+                DialogContent dialogContent = new DialogContent().setContentText(ProgramI18nKeys.PleaseSelectAnItem).setOk();
+                DialogBuilderUtil.showModalNodeInGoldLayout(dialogContent, FXMainFrameDialogArea.getDialogArea());
+                DialogBuilderUtil.armDialogContentButtons(dialogContent, DialogCallback::closeDialog);
+                return;
+            }
+                OperationUtil.turnOnButtonsWaitModeDuringExecution(
+                    programModel.generatePreliminaryBookableSI()
+                        .onFailure(error-> Platform.runLater(()-> {
+                            DialogContent dialogContent = new DialogContent().setContentText(error.getMessage()).setOk();
+                            DialogBuilderUtil.showModalNodeInGoldLayout(dialogContent, FXMainFrameDialogArea.getDialogArea());
+                            DialogBuilderUtil.armDialogContentButtons(dialogContent, DialogCallback::closeDialog);
+                            updateStore.cancelChanges();
+                        }))
+                        .onSuccess(success->{programModel.getDayTicketPreliminaryScheduledItemProperty().setValue(true);})
+                    , generatePreliminaryBookableSIButton);});
+
+        HBox itemAndButtonHBox = new HBox(20,chooseAnItemLabel,itemSelectorButton,generatePreliminaryBookableSIButton);
+        itemAndButtonHBox.setAlignment(Pos.BASELINE_CENTER);
+        itemAndButtonHBox.setPadding(new Insets(40,0,0,0));
+        VBox generatePreliminaryBookableScheduledItemVBox = new VBox(dayTicketTeachingAndAudioScheduledItemGenerationLabel,itemAndButtonHBox);
+
+        generatePreliminaryBookableScheduledItemVBox.visibleProperty().bind(dayTicketPreliminaryScheduledItemProperty.not());
+        generatePreliminaryBookableScheduledItemVBox.managedProperty().bind(dayTicketPreliminaryScheduledItemProperty.not());
+
+        Label dayTicketTeachingAndAudioScheduledItemInfoLabel = new Label();
+        FXProperties.runNowAndOnPropertiesChange(dayTicketTeachingsAndAudioScheduledItemGenerated -> {
+            programModel.reloadProgramFromSelectedEvent(FXEvent.getEvent());
+            //We delay a bit so the request has the time to execute so the program is reloaded.
+            //TODO improve to wait for the reload to be finished rather than waiting 300ms
+            UiScheduler.scheduleDelay(300, ()-> {
+                String teachingItemName = "Not loaded";
+                String languageItemNames = "Not loaded";
+                if (programModel.getTeachingsBookableScheduledItems() != null) {
+                    teachingItemName = programModel.getTeachingsBookableScheduledItems().stream()
+                        .map(scheduledItem -> scheduledItem.getItem().getName())
+                        .distinct()
+                        .collect(Collectors.joining(", "));
+                    languageItemNames = programModel.getAudioRecordingsBookableScheduledItems().stream()
+                        .map(scheduledItem -> scheduledItem.getItem().getName())
+                        .distinct()
+                        .collect(Collectors.joining(", "));
+                }
+                I18nControls.bindI18nProperties(dayTicketTeachingAndAudioScheduledItemInfoLabel, ProgramI18nKeys.DayTicketTeachingsAndAudioScheduledItemInfos, teachingItemName, languageItemNames);
+            });
+           },dayTicketPreliminaryScheduledItemProperty,FXEvent.eventProperty());
+        dayTicketTeachingAndAudioScheduledItemInfoLabel.visibleProperty().bind(dayTicketPreliminaryScheduledItemProperty);
+        dayTicketTeachingAndAudioScheduledItemInfoLabel.managedProperty().bind(dayTicketPreliminaryScheduledItemProperty);
+
+        HBox dayTicketScheduledItemInfoHBox = new HBox(generatePreliminaryBookableScheduledItemVBox,dayTicketTeachingAndAudioScheduledItemInfoLabel);
+        dayTicketScheduledItemInfoHBox.setAlignment(Pos.CENTER);
+        dayTicketScheduledItemInfoHBox.setPadding(new Insets(60, 0, 30, 0));
+
         // Building the event state line
         Label eventStateLabel = Bootstrap.h4(Bootstrap.textSecondary(new Label()));
         FXProperties.runNowAndOnPropertyChange(programGenerated ->
             I18nControls.bindI18nProperties(eventStateLabel, programGenerated ? ProgramI18nKeys.ScheduledItemsAlreadyGenerated : ProgramI18nKeys.ScheduledItemsNotYetGenerated), programGeneratedProperty
         );
+
+        bottomLine.visibleProperty().bind(dayTicketPreliminaryScheduledItemProperty);
+        bottomLine.managedProperty().bind(dayTicketPreliminaryScheduledItemProperty);
 
         HBox eventStateLine = new HBox(eventStateLabel);
         eventStateLine.setAlignment(Pos.CENTER);
@@ -138,6 +232,7 @@ final class ProgramView extends ModalitySlaveEditor<Event> {
 
         return new VBox(
             topLine,
+            dayTicketScheduledItemInfoHBox,
             templateDayColumnsPane,
             eventStateLine,
             bottomLine
