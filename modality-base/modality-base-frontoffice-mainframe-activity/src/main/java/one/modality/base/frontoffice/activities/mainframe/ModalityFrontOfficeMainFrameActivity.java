@@ -495,10 +495,20 @@ public final class ModalityFrontOfficeMainFrameActivity extends ModalityClientMa
     private ToggleButton createMenuButton(Action routeAction, boolean userMenu, boolean mobileLayout) {
         ToggleButton button = ActionBinder.newActionToggleButton(routeAction);
         button.setCursor(Cursor.HAND);
-        button.setContentDisplay(userMenu ? ContentDisplay.LEFT : ContentDisplay.TOP);
-        button.setGraphicTextGap(mobileLayout ? 0 : 8);
         button.setMinWidth(Region.USE_PREF_SIZE);
         button.setMaxHeight(Double.MAX_VALUE);
+        // We display the icons on top of the text for the main menu, but not for the user menu
+        boolean displayIconOnTopOfText = !userMenu;
+        if (displayIconOnTopOfText) {
+            button.setContentDisplay(ContentDisplay.TOP);
+            // All buttons have the same size (because we set maxHeight to MAX_VALUE, so the HBox container will stretch
+            // them all to the same height). However, not all icons have the same size, and the default CENTER alignment
+            // of the ToggleButton results in having the texts not exactly in the same vertical position, which is not
+            // beautiful. To remedy this, we change the vertical alignment BOTTOM. This makes all text aligned at the
+            // same bottom line (icons may not be centered on the same line, but this default is much less visible).
+            button.setAlignment(Pos.BOTTOM_CENTER);
+        }
+        button.setGraphicTextGap(mobileLayout ? 0 : 8);
         FXProperties.runNowAndOnPropertyChange(graphic -> {
             if (graphic instanceof SVGPath svgPath) {
                 boolean hasStroke = svgPath.getStroke() != null;
