@@ -22,7 +22,6 @@ import dev.webfx.platform.util.Arrays;
 import dev.webfx.platform.util.collection.Collections;
 import dev.webfx.stack.i18n.I18n;
 import dev.webfx.stack.i18n.controls.I18nControls;
-import dev.webfx.stack.routing.uirouter.UiRouter;
 import dev.webfx.stack.session.state.client.fx.FXLoggedIn;
 import dev.webfx.stack.ui.action.Action;
 import dev.webfx.stack.ui.action.ActionBinder;
@@ -81,7 +80,7 @@ public final class ModalityFrontOfficeMainFrameActivity extends ModalityClientMa
 
     private Pane mainFrameContainer;
     private Node backgroundNode; // can be used to hold a WebView and prevent iFrame reload in the web version
-    private final TransitionPane mountTransitionPane = new TransitionPane();
+    private final TransitionPane pageTransitionPane = new TransitionPane();
     private CollapsePane overlayMenuBar; // 1 unique instance
     private CollapsePane mountMainMenuButtonBar; // 1 instance per mount node
     private CollapsePane mobileMenuBar; // 1 unique instance
@@ -92,19 +91,19 @@ public final class ModalityFrontOfficeMainFrameActivity extends ModalityClientMa
     @Override
     public Node buildUi() {
         // Starting with a circle transition animation for the first activity displayed
-        mountTransitionPane.setAnimateFirstContent(true);
-        mountTransitionPane.setTransition(INITIAL_TRANSITION_EFFECT);
+        pageTransitionPane.setAnimateFirstContent(true);
+        pageTransitionPane.setTransition(INITIAL_TRANSITION_EFFECT);
         // And then a fade transition for later activities
         FXProperties.runOnPropertyChange(transiting -> {
             if (transiting) {
                 if (ENABLE_OVERLAY_MENU_BAR)
                     overlayMenuBar.setAnimate(false);
             } else { // Ending a transition
-                mountTransitionPane.setTransition(PAGE_TRANSITION_EFFECT) ;
+                pageTransitionPane.setTransition(PAGE_TRANSITION_EFFECT) ;
             }
-        }, mountTransitionPane.transitingProperty());
+        }, pageTransitionPane.transitingProperty());
         //mountTransitionPane.setKeepsLeavingNodes(true); // Note: activities with video players should call TransitionPane.setKeepsLeavingNode(node, false)
-        FXMainFrameTransiting.transitingProperty().bind(mountTransitionPane.transitingProperty());
+        FXMainFrameTransiting.transitingProperty().bind(pageTransitionPane.transitingProperty());
         mainFrameContainer = new LayoutPane() { // Children are set later in updateMountNode()
             @Override
             protected void layoutChildren(double width, double height) {
@@ -119,8 +118,8 @@ public final class ModalityFrontOfficeMainFrameActivity extends ModalityClientMa
                 }
                 double mountNodeY = headerHeight;
                 double mountNodeHeight = height - headerHeight - footerHeight;
-                mountTransitionPane.setMinHeight(mountNodeHeight);
-                layoutInArea(mountTransitionPane, 0, mountNodeY, width, mountNodeHeight);
+                pageTransitionPane.setMinHeight(mountNodeHeight);
+                layoutInArea(pageTransitionPane, 0, mountNodeY, width, mountNodeHeight);
                 if (backgroundNode != null) { // Same position and size as the mount node (if present)
                     layoutInArea(backgroundNode, 0, mountNodeY, width, mountNodeHeight);
                 }
@@ -129,10 +128,11 @@ public final class ModalityFrontOfficeMainFrameActivity extends ModalityClientMa
                 }
             }
         };
-        mobileMenuBar = createMainMenuButtonBar(true);
+        CollapsePane languageMenuBar = createLanguageMenuBar();
+        AriaToggleGroup<Integer> overlayMenuItemGroup = new AriaToggleGroup<>(AriaRole.MENUITEM);
         VBox overlayMenuBarContent = new VBox(
             createLanguageMenuBar(),
-            createMainMenuButtonBar(false)
+            createMainMenuButtonBar(overlayMenuItemGroup, false)
         );
         overlayMenuBarContent.setAlignment(Pos.CENTER);
         overlayMenuBarContent.setMaxWidth(Double.MAX_VALUE);
@@ -186,7 +186,7 @@ public final class ModalityFrontOfficeMainFrameActivity extends ModalityClientMa
             // Here are the children we need to set for the main frame container
             List<Node> children = Collections.listOfRemoveNulls(
                 backgroundNode,      // could be a WebView
-                mountTransitionPane, // contains a standard mount node, or null if we want to display the backgroundNode
+                pageTransitionPane,  // contains a standard mount node, or null if we want to display the backgroundNode
                 isMobileLayout ? mobileMenuBar : overlayMenuBar); // mobile menu bar (at bottom) or overlay menu bar (in addition to the one inside mountTransitionPane)
             // We call setAll() only if they differ, because setAll() is basically a clear() + addAll() and this causes
             // unnecessary changes in the DOM which in addition cause iFrames to unload
@@ -202,66 +202,77 @@ public final class ModalityFrontOfficeMainFrameActivity extends ModalityClientMa
         ImageView footer = new ImageView(new Image(Resource.toUrl("/images/organizations/NKT-IKBU.svg", getClass()), true));
         VBox.setMargin(footer, new Insets(0, 0, 50, 0));
 
+        AriaToggleGroup<Integer> mainAndUserMenuItemGroup = new AriaToggleGroup<>(AriaRole.MENUITEM);
+        CollapsePane mainMenuButtonBar = createMainMenuButtonBar(mainAndUserMenuItemGroup, false);
+        CollapsePane userMenuButtonBar = createUserMenuButtonBar(mainAndUserMenuItemGroup);
+        AriaToggleGroup<Integer> mobileMenuItemGroup = new AriaToggleGroup<>(AriaRole.MENUITEM);
+        mobileMenuBar = createMainMenuButtonBar(mobileMenuItemGroup, true);
+
+        MonoPane mountNodeContainer = new MonoPane();
+
+        VBox pageVBox = new VBox(
+            languageMenuBar,
+            mainMenuButtonBar,
+            userMenuButtonBar,
+            mountNodeContainer,
+            footer
+        );
+        pageVBox.setAlignment(Pos.CENTER);
+        pageVBox.setMaxWidth(Double.MAX_VALUE);
+
+        BorderPane borderPane = new BorderPane(pageVBox);
+        ScrollPane scrollPane = Controls.createVerticalScrollPane(borderPane);
+        pageTransitionPane.transitToContent(scrollPane);
+
+        if (ENABLE_OVERLAY_MENU_BAR) {
+            double[] lastVTopOffset = {0};
+            FXProperties.runOnPropertiesChange(() -> {
+                mountMainMenuButtonBar = mainMenuButtonBar;
+                if (pageTransitionPane.isTransiting())
+                    return;
+                // Visibility management:
+                double vTopOffset = Controls.computeScrollPaneVTopOffset(scrollPane);
+                if (vTopOffset <= languageMenuBar.getHeight()) { // Making the overlay menu bar invisible when reaching the top
+                    overlayMenuBar.setAnimate(false); // because there is already a web menu on top of that page
+                    overlayMenuBar.collapse();
+                } else if (vTopOffset > Screen.getPrimary().getBounds().getHeight()) {
+                    overlayMenuBar.setVisible(true); // Making it visible when the top one is no more in the view
+                    overlayMenuBar.setAnimate(true); // port (however, it will not be showing while it's collapsed)
+                }
+                // Collapse management:
+                // Collapsing the overlay menu if an activity explicitly asked to do so
+                if (FXCollapseMenu.isCollapseMenu())
+                    overlayMenuBar.collapse();
+                    // otherwise if the user scrolled a bit (at least 5 pixels)
+                else if (Math.abs(vTopOffset - lastVTopOffset[0]) > 5) {
+                    // we expand of collapse the overlay menu depending on the scroll direction
+                    if (overlayMenuBar.isAnimate()) // and only when animated (page scrolled down)
+                        overlayMenuBar.setCollapsed(vTopOffset > lastVTopOffset[0]); // up = expand, down = collapse
+                    lastVTopOffset[0] = vTopOffset;
+                }
+            }, scrollPane.vvalueProperty(), FXCollapseMenu.collapseMenuProperty());
+        }
+
         // Reacting to the mount node changes:
         FXProperties.runNowAndOnPropertyChange(mountNode -> {
             boolean isLoginPage = mountNode != null && Collections.findFirst(mountNode.getStyleClass(), styleClass -> styleClass.contains("login")) != null;
             Layouts.setManagedAndVisibleProperties(footer, !isLoginPage);
             // Updating the mount node container with the new mount node
-            UiRouter uiRouter = getUiRouter();
-            mountTransitionPane.setReverse(uiRouter.getHistory().isGoingBackward());
-            ScrollPane scrollPane = getMountNodeEmbeddingScrollPane(mountNode);
-            if (scrollPane == null && mountNode != null) {
-                CollapsePane languageMenuBar = createLanguageMenuBar();
-                CollapsePane mainMenuButtonBar = createMainMenuButtonBar(false);
-                CollapsePane userMenuButtonBar = createUserMenuButtonBar();
-                VBox vBox = new VBox(
-                    languageMenuBar,
-                    mainMenuButtonBar,
-                    userMenuButtonBar,
-                    mountNode,
-                    footer
-                );
-                vBox.setAlignment(Pos.CENTER);
-                vBox.setMaxWidth(Double.MAX_VALUE);
+            if (mountNode != null && getMountNodeEmbeddingScrollPane(mountNode) == null) {
                 if (mountNode instanceof Region mountRegion) {
-                    FXProperties.runOnPropertiesChange(() ->
-                            mountRegion.setMinHeight(mountTransitionPane.getMinHeight() - mainMenuButtonBar.getHeight() - languageMenuBar.getHeight())
-                        , mountTransitionPane.minHeightProperty(), mainMenuButtonBar.heightProperty(), languageMenuBar.heightProperty());
+                    FXProperties.runNowAndOnPropertiesChange(() ->
+                            mountRegion.setMinHeight(pageTransitionPane.getMinHeight() - mainMenuButtonBar.getHeight() - languageMenuBar.getHeight())
+                        , pageTransitionPane.minHeightProperty(), mainMenuButtonBar.heightProperty(), languageMenuBar.heightProperty());
                 }
-                BorderPane borderPane = new BorderPane(vBox);
-                ScrollPane finalScrollPane = scrollPane = Controls.createVerticalScrollPane(borderPane);
                 registerMountNodeEmbeddingScrollPane(mountNode, scrollPane);
-                if (ENABLE_OVERLAY_MENU_BAR) {
-                    double[] lastVTopOffset = {0};
-                    FXProperties.runOnPropertiesChange(() -> {
-                        mountMainMenuButtonBar = mainMenuButtonBar;
-                        if (mountTransitionPane.isTransiting())
-                            return;
-                        // Visibility management:
-                        double vTopOffset = Controls.computeScrollPaneVTopOffset(finalScrollPane);
-                        if (vTopOffset <= languageMenuBar.getHeight()) { // Making the overlay menu bar invisible when reaching the top
-                            overlayMenuBar.setAnimate(false); // because there is already a web menu on top of that page
-                            overlayMenuBar.collapse();
-                        } else if (vTopOffset > Screen.getPrimary().getBounds().getHeight()) {
-                            overlayMenuBar.setVisible(true); // Making it visible when the top one is no more in the view
-                            overlayMenuBar.setAnimate(true); // port (however, it will not be showing while it's collapsed)
-                        }
-                        // Collapse management:
-                        // Collapsing the overlay menu if an activity explicitly asked to do so
-                        if (FXCollapseMenu.isCollapseMenu())
-                            overlayMenuBar.collapse();
-                            // otherwise if the user scrolled a bit (at least 5 pixels)
-                        else if (Math.abs(vTopOffset - lastVTopOffset[0]) > 5) {
-                            // we expand of collapse the overlay menu depending on the scroll direction
-                            if (overlayMenuBar.isAnimate()) // and only when animated (page scrolled down)
-                                overlayMenuBar.setCollapsed(vTopOffset > lastVTopOffset[0]); // up = expand, down = collapse
-                            lastVTopOffset[0] = vTopOffset;
-                        }
-                    }, scrollPane.vvalueProperty(), FXCollapseMenu.collapseMenuProperty());
-                }
             }
+
+            ToggleButton matchingRouteButton = Collections.findFirst(mainAndUserMenuItemGroup.getToggleButtons(), toggleButton ->
+                RoutingActions.isCurrentRouteMatchingRoutingAction(ActionBinder.getNodeAction(toggleButton)));
+            mainAndUserMenuItemGroup.setFiredItem(mainAndUserMenuItemGroup.getButtonItem(matchingRouteButton));
+
             // Transiting to the node (embedded in the scroll pane)
-            mountTransitionPane.transitToContent(scrollPane);
+            mountNodeContainer.setContent(mountNode);
             // When the mount node is null, this is to indicate that we want to display the background node instead
             boolean displayBackgroundNode = mountNode == null;
             // We make the background node visible only when we want to display it
@@ -269,7 +280,7 @@ public final class ModalityFrontOfficeMainFrameActivity extends ModalityClientMa
                 backgroundNode.setVisible(displayBackgroundNode);
             // Also, when we display the background node, we need to make the mount node container transparent to the
             // mouse (as the background node is behind) to allow the user to interact with it (ex: WebView).
-            mountTransitionPane.setMouseTransparent(displayBackgroundNode);
+            pageTransitionPane.setMouseTransparent(displayBackgroundNode);
             updateDialogArea();
         }, mountNodeProperty());
 
@@ -384,26 +395,26 @@ public final class ModalityFrontOfficeMainFrameActivity extends ModalityClientMa
         return collapsePane;
     }
 
-    private CollapsePane createMainMenuButtonBar(boolean mobileLayout) {
-        return createMenuButtonBar(MAIN_MENU_OPERATION_CODES, false, mobileLayout);
+    private CollapsePane createMainMenuButtonBar(AriaToggleGroup<Integer> menuItemGroup, boolean mobileLayout) {
+        return createMenuButtonBar(MAIN_MENU_OPERATION_CODES, menuItemGroup, false, mobileLayout);
     }
 
-    private CollapsePane createUserMenuButtonBar() {
-        CollapsePane userMenuButtonBar = createMenuButtonBar(USER_MENU_OPERATION_CODES, true, false);
+    private CollapsePane createUserMenuButtonBar(AriaToggleGroup<Integer> menuItemGroup) {
+        CollapsePane userMenuButtonBar = createMenuButtonBar(USER_MENU_OPERATION_CODES, menuItemGroup, true, false);
         userMenuButtonBar.setAnimate(false);
         userMenuButtonBar.collapsedProperty().bind(FXLoggedIn.loggedInProperty().not().or(FXCollapseMenu.collapseMenuProperty()));
         userMenuButtonBar.setAnimate(true);
         return userMenuButtonBar;
     }
 
-    private CollapsePane createMenuButtonBar(String[] menuOperationCodes, boolean userMenu, boolean mobileLayout) {
-        AriaToggleGroup<Integer> menuItemGroup = new AriaToggleGroup<>(AriaRole.MENUITEM);
-        int[] seq = { 0 };
+    private int menuItemSeq;
+
+    private CollapsePane createMenuButtonBar(String[] menuOperationCodes, AriaToggleGroup<Integer> menuItemGroup, boolean userMenu, boolean mobileLayout) {
         ToggleButton[] menuItemButtons = RoutingActions.filterRoutingActions(this, this, menuOperationCodes)
             .stream().map(action -> {
-                ToggleButton menuButton = menuItemGroup.registerItemButton(createMenuButton(action, userMenu, mobileLayout), ++seq[0], false);
+                ToggleButton menuButton = menuItemGroup.registerItemButton(createMenuButton(action, userMenu, mobileLayout), ++menuItemSeq, true);
                 if (RoutingActions.isCurrentRouteMatchingRoutingAction(action))
-                    menuItemGroup.setFiredItem(seq[0]);
+                    menuItemGroup.setFiredItem(menuItemSeq);
                 return menuButton;
             })
             .toArray(ToggleButton[]::new);
