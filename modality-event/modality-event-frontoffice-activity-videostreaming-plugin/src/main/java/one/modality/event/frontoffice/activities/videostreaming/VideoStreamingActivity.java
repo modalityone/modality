@@ -140,19 +140,28 @@ final class VideoStreamingActivity extends ViewDomainActivityBase {
                 eventsWithBookedVideosLoadingProperty.set(true);
                 // we look for the scheduledItem having a `bookableScheduledItem` which is an audio type (case of festival)
                 entityStore.<DocumentLine>executeQuery(
-                        "select document.event.(name, label.(de,en,es,fr,pt), shortDescription, shortDescriptionLabel, audioExpirationDate, startDate, endDate, livestreamUrl, vodExpirationDate, repeatVideo, recurringWithVideo, repeatedEvent), item.(code, family.code), " +
-                            // We look if there are published audio ScheduledItem of type video, whose bookableScheduledItem has been booked
-                            " (exists(select ScheduledItem where item.family.code=? and bookableScheduledItem.(event=coalesce(dl.document.event.repeatedEvent, dl.document.event) and item=dl.item))) as published " +
-                            // We check if the user has booked, not cancelled and paid the recordings
-                            " from DocumentLine dl where !cancelled  and dl.document.(person.frontendAccount=? and confirmed and price_balance<=0) " +
-                            " and dl.document.event.(repeatedEvent = null or repeatVideo)" +
-                            // we check if :
-                            " and (" +
-                            // 1/ there is a ScheduledItem of `video` family type whose `bookableScheduledItem` has been booked (KBS3 setup)
-                            " exists(select ScheduledItem videoSI where item.family.code=? and exists(select Attendance where documentLine=dl and scheduledItem=videoSI.bookableScheduledItem))" +
-                            // 2/ Or KBS3 / KBS2 setup (this allows displaying the videos that have been booked in the past with KBS2 events, event if we can't display them)
-                            " or item.family.code=?)" +
-                            " order by document.event.startDate desc",
+                        "select document.event.(name, label.(de,en,es,fr,pt), shortDescription, shortDescriptionLabel, audioExpirationDate, startDate, endDate, livestreamUrl, vodExpirationDate, repeatVideo, recurringWithVideo, repeatedEvent), item.(code, family.code)" +
+                        // We look if there are published audio ScheduledItem of type video, whose bookableScheduledItem has been booked
+                        ", (exists(select ScheduledItem where item.family.code=? and bookableScheduledItem.(event=coalesce(dl.document.event.repeatedEvent, dl.document.event) and item=dl.item))) as published " +
+                        // We check if the user has booked, not cancelled and paid the recordings
+                        " from DocumentLine dl where !cancelled  and dl.document.(person.frontendAccount=? and confirmed and price_balance<=0) " +
+                        " and dl.document.event.(repeatedEvent = null or repeatVideo)" +
+                        // we check if :
+                        " and (" +
+                        // 1/ there is a ScheduledItem of `video` family type whose `bookableScheduledItem` has been booked (KBS3 setup)
+                        " exists(select Attendance a where documentLine=dl and exists(select ScheduledItem where bookableScheduledItem=a.scheduledItem and item.family.code=?))" +
+                        // 2/ Or KBS3 / KBS2 setup (this allows displaying the videos that have been booked in the past with KBS2 events, event if we can't display them)
+                        " or item.family.code=?)" +
+                        // Ordering with the most relevant events, the first event will be the selected one by default.
+                        " order by " +
+                        // 1) Something happening today
+                        " (exists(select Attendance where documentLine=dl and date=now())) desc" +
+                        // 2) today is within event
+                        ", document.event.(now() >= startDate and now() <= endDate) desc" +
+                        // 3) Not expired
+                        ", document.event.(vodExpirationDate = null or now() <= vodExpirationDate)" +
+                        // 4) Smallest event (ex: favor Spring Festival over STTP)
+                        ", document.event.(endDate - startDate)",
                         KnownItemFamily.VIDEO.getCode(), modalityUserPrincipal.getUserAccountId(), KnownItemFamily.VIDEO.getCode(), KnownItemFamily.VIDEO.getCode())
                     .onFailure(Console::log)
                     .onSuccess(documentLines -> Platform.runLater(() -> {
@@ -183,6 +192,7 @@ final class VideoStreamingActivity extends ViewDomainActivityBase {
                             }
                             eventsSelectionPane.setContent(columnsPane);
                         }
+                        // Selecting the most relevant event to show on start (the first one from order by)
                         eventProperty.set(Collections.first(eventsWithBookedVideos));
                         eventsWithBookedVideosLoadingProperty.set(false);
                     }));
@@ -199,15 +209,16 @@ final class VideoStreamingActivity extends ViewDomainActivityBase {
                 // We load all video scheduledItems booked by the user for the event (booking must be confirmed
                 // and paid). They will be grouped by day in the UI.
                 // Note: double dots such as `programScheduledItem.timeline..startTime` means we do a left join that allows null value (if the event is recurring, the timeline of the programScheduledItem is null)
-                entityStore.<ScheduledItem>executeQuery("select name, label.(de,en,es,fr,pt), date, expirationDate, programScheduledItem.(name, label.(de,en,es,fr,pt), startTime, endTime, timeline.(startTime, endTime), cancelled), published, event.(name, type.recurringItem, livestreamUrl, recurringWithVideo), vodDelayed, " +
-                            " (exists(select MediaConsumption where scheduledItem=si and attendance.documentLine.document.person.frontendAccount=?) as attended), " +
-                            " (select id from Attendance where scheduledItem=si.bookableScheduledItem and documentLine.document.person.frontendAccount=? limit 1) as attendanceId " +
-                            " from ScheduledItem si " +
-                            " where event=?" +
-                            " and bookableScheduledItem.item.family.code=?" +
-                            " and item.code=?" +
-                            " and exists(select Attendance a where scheduledItem=si.bookableScheduledItem and documentLine.(!cancelled and document.(person.frontendAccount=? and event=? and confirmed and price_balance<=0)))" +
-                            " order by date, programScheduledItem.timeline..startTime",
+                entityStore.<ScheduledItem>executeQuery(
+                        "select name, label.(de,en,es,fr,pt), date, expirationDate, programScheduledItem.(name, label.(de,en,es,fr,pt), startTime, endTime, timeline.(startTime, endTime), cancelled), published, event.(name, type.recurringItem, livestreamUrl, recurringWithVideo), vodDelayed, " +
+                        " (exists(select MediaConsumption where scheduledItem=si and attendance.documentLine.document.person.frontendAccount=?) as attended), " +
+                        " (select id from Attendance where scheduledItem=si.bookableScheduledItem and documentLine.document.person.frontendAccount=? limit 1) as attendanceId " +
+                        " from ScheduledItem si " +
+                        " where event=?" +
+                        " and bookableScheduledItem.item.family.code=?" +
+                        " and item.code=?" +
+                        " and exists(select Attendance a where scheduledItem=si.bookableScheduledItem and documentLine.(!cancelled and document.(person.frontendAccount=? and event=? and confirmed and price_balance<=0)))" +
+                        " order by date, programScheduledItem.timeline..startTime",
                         userAccountId, userAccountId, eventContainingVideos, KnownItemFamily.TEACHING.getCode(), KnownItem.VIDEO.getCode(), userAccountId, event)
                     .onFailure(Console::log)
                     .onSuccess(scheduledItems -> Platform.runLater(() -> {
@@ -244,14 +255,16 @@ final class VideoStreamingActivity extends ViewDomainActivityBase {
 
         VideoFormattersAndRenderers.registerRenderers();
         // The columns (and groups) displayed for events with a daily program (such as Festivals)
-        dailyProgramVideoColumns = VisualEntityColumnFactory.get().fromJsonArray("[" +
+        dailyProgramVideoColumns = VisualEntityColumnFactory.get().fromJsonArray(
+            "[" +
             "{expression: 'date', format: 'videoDate', role: 'group'},\n" +
             "{expression: 'this', label: '" + EventI18nKeys.Session + "', renderer: 'videoName', minWidth: 200, styleClass: 'name'},\n" +
             "{expression: '[coalesce(startTime, timeline.startTime, programScheduledItem.startTime, programScheduledItem.timeline.startTime), coalesce(endTime, timeline.endTime, programScheduledItem.endTime, programScheduledItem.timeline.endTime)]', label: 'Time', format: 'videoTimeRange', textAlign: 'center', hShrink: false, styleClass: 'time'},\n" +
             "{expression: 'this', label: 'Status', renderer: 'videoStatus', textAlign: 'center', hShrink: false, styleClass: 'status'}\n" +
             "]", getDomainModel(), "ScheduledItem");
         // The columns (and groups) displayed for recurring events with 1 or just a few sessions per day (such as STTP)
-        allProgramVideoColumns = VisualEntityColumnFactory.get().fromJsonArray("[\n" +
+        allProgramVideoColumns = VisualEntityColumnFactory.get().fromJsonArray(
+            "[\n" +
             "{expression: 'this', format: 'allProgramGroup', textAlign: 'center', styleClass: 'status', role: 'group'},\n" +
             "{expression: 'date', label: 'Date', format: 'videoDate', hShrink: false, styleClass: 'date'},\n" +
             "{expression: '[coalesce(startTime, timeline.startTime, programScheduledItem.startTime, programScheduledItem.timeline.startTime), coalesce(endTime, timeline.endTime, programScheduledItem.endTime, programScheduledItem.timeline.endTime)]', label: 'Time', format: 'videoTimeRange', textAlign: 'center', hShrink: false, styleClass: 'time'},\n" +
@@ -424,10 +437,10 @@ final class VideoStreamingActivity extends ViewDomainActivityBase {
         new ResponsiveDesign(responsiveDaySelectionMonoPane)
             // 1. Table layout (for desktops)
             .addResponsiveLayout(/* applicability test: */ width -> {
-                //If the grid skin is a table, we're in the desktop mode, otherwise we're in the mobile mode
-                return VisualGrid.isTableLayout(videoGrid);
-            }, /* apply method: */ () -> responsiveDaySelectionMonoPane.setContent(daySwitcher.getDesktopView()),
-               /* test dependencies: */ videoGrid.skinProperty())
+                    //If the grid skin is a table, we're in the desktop mode, otherwise we're in the mobile mode
+                    return VisualGrid.isTableLayout(videoGrid);
+                }, /* apply method: */ () -> responsiveDaySelectionMonoPane.setContent(daySwitcher.getDesktopView()),
+                /* test dependencies: */ videoGrid.skinProperty())
             // 2. Vertical layout (for mobiles)
             .addResponsiveLayout(
                 /* apply method: */ () -> responsiveDaySelectionMonoPane.setContent(daySwitcher.getMobileViewContainer())
@@ -499,7 +512,7 @@ final class VideoStreamingActivity extends ViewDomainActivityBase {
             // Loading the event image in the header
             String eventCloudImagePath = ModalityCloudinary.eventCoverImagePath(event, I18n.getLanguage());
             ModalityCloudinary.loadImage(eventCloudImagePath, eventImageContainer, -1, IMAGE_HEIGHT, SvgIcons::createVideoIconPath)
-                .onFailure(error-> {
+                .onFailure(error -> {
                     //If we can't find the picture of the cover for the selected language, we display the default image
                     ModalityCloudinary.loadImage(ModalityCloudinary.eventCoverImagePath(event, null), eventImageContainer, -1, IMAGE_HEIGHT, SvgIcons::createVideoIconPath);
                 });
@@ -664,7 +677,7 @@ final class VideoStreamingActivity extends ViewDomainActivityBase {
             videoConsumptionRecorder.start();
         // We embed the video player in a 16/9 aspect ratio pane, so its vertical size is immediately known, which is
         // important for the correct computation of the auto-scroll position.
-        return new AspectRatioPane(16d/9, videoPlayer.getMediaView());
+        return new AspectRatioPane(16d / 9, videoPlayer.getMediaView());
     }
 
 }
