@@ -64,7 +64,7 @@ final class AudioLibraryActivity extends ViewDomainActivityBase {
                        // we check if :
                        " and (" +
                        // 1/ there is a ScheduledItem of type audio whose bookableScheduledItem has been booked (KBS3 setup)
-                       " exists (select ScheduledItem audioSi where item.family.code=? and exists(select Attendance where documentLine=dl and scheduledItem=audioSi.bookableScheduledItem))" +
+                       " exists (select Attendance a where documentLine=dl and exists(select ScheduledItem where bookableScheduledItem=a.scheduledItem and item.family.code=?))" +
                        // 2/ Or KBS3 / KBS2 setup (this allows displaying the audios that have been booked in the past with KBS2 events, event if we can't display them)
                        " or item.family.code=?) and document.event.kbs3=true " +
                        " order by document.event.startDate desc",
