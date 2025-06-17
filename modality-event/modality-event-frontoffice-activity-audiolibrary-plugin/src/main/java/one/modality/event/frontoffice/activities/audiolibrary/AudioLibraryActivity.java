@@ -29,7 +29,7 @@ import one.modality.base.frontoffice.utility.page.FOPageUtil;
 import one.modality.base.shared.entities.DocumentLine;
 import one.modality.base.shared.entities.Event;
 import one.modality.base.shared.entities.KnownItemFamily;
-import one.modality.crm.shared.services.authn.fx.FXUserPersonId;
+import one.modality.crm.shared.services.authn.fx.FXModalityUserPrincipal;
 import one.modality.event.frontoffice.medias.EventThumbnailView;
 
 /**
@@ -47,9 +47,9 @@ final class AudioLibraryActivity extends ViewDomainActivityBase {
     protected void startLogic() {
         // Creating our own entity store to hold the loaded data without interfering with other activities
         EntityStore entityStore = EntityStore.create(getDataSourceModel()); // Activity datasource model is available at this point
-        FXProperties.runNowAndOnPropertyChange(userPersonId -> {
+        FXProperties.runNowAndOnPropertyChange(modalityUserPrincipal -> {
             documentLinesWithBookedAudios.clear();
-            if (userPersonId != null) {
+            if (modalityUserPrincipal != null) {
                 // Here there are 2 cases of event:
                 // 1) Events where we buy the recordings through an audioRecordingsDayTicket (ex: Festival)
                 // 2) Events where the audios are linked to a teachingDayTicket (case of STTP)
@@ -59,7 +59,7 @@ final class AudioLibraryActivity extends ViewDomainActivityBase {
                        // We look if there are published audio ScheduledItem of type audio, whose bookableScheduledItem has been booked
                        " (exists(select ScheduledItem where item.family.code=? and published and bookableScheduledItem.(event=coalesce(dl.document.event.repeatedEvent, dl.document.event) and item=dl.item))) as published " +
                        // We check if the user has booked, not cancelled and paid the recordings
-                       " from DocumentLine dl where !cancelled and dl.document.(person=? and (confirmed or arrived) and price_balance<=0) " +
+                       " from DocumentLine dl where !cancelled and dl.document.(person.frontendAccount=? and (confirmed or arrived) and price_balance<=0) " +
                        " and dl.document.event.(repeatedEvent = null or repeatAudio)" +
                        // we check if :
                        " and (" +
@@ -68,11 +68,11 @@ final class AudioLibraryActivity extends ViewDomainActivityBase {
                        // 2/ Or KBS3 / KBS2 setup (this allows displaying the audios that have been booked in the past with KBS2 events, event if we can't display them)
                        " or item.family.code=?) and document.event.kbs3=true " +
                        " order by document.event.startDate desc",
-                        new Object[]{ KnownItemFamily.AUDIO_RECORDING.getCode(), userPersonId, KnownItemFamily.AUDIO_RECORDING.getCode(), KnownItemFamily.AUDIO_RECORDING.getCode()})
+                        new Object[]{ KnownItemFamily.AUDIO_RECORDING.getCode(), modalityUserPrincipal.getUserAccountId(), KnownItemFamily.AUDIO_RECORDING.getCode(), KnownItemFamily.AUDIO_RECORDING.getCode()})
                     .onFailure(Console::log)
                     .onSuccess(documentLines -> Platform.runLater(() -> documentLinesWithBookedAudios.setAll(documentLines)));
             }
-        }, FXUserPersonId.userPersonIdProperty());
+        }, FXModalityUserPrincipal.modalityUserPrincipalProperty());
     }
 
     @Override
