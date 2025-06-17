@@ -174,7 +174,7 @@ public abstract class MediaLinksManagement {
                 if(timeline!= null) {
                     //Case of Festivals
                     startTime = formatLocalTime(timeline.getStartTime());
-                    endTime = formatLocalTime(timeline.getStartTime());
+                    endTime = formatLocalTime(timeline.getEndTime());
                 } else {
                     //Case of recurring events
                     startTime = formatLocalTime(currentScheduledItem.getProgramScheduledItem().getStartTime());

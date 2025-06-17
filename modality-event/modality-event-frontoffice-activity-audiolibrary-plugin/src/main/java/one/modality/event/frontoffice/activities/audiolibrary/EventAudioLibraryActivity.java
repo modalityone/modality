@@ -126,7 +126,7 @@ final class EventAudioLibraryActivity extends ViewDomainActivityBase {
                                     " (exists(select MediaConsumption where media.scheduledItem=si and attendance.documentLine.document.person.frontendAccount=? and downloaded) as alreadyDownloaded) " +
                                     " from ScheduledItem si" +
                                     " where event=? and bookableScheduledItem.item.family.code=? and item.code=? and programScheduledItem is not null and exists(select Attendance where scheduledItem=si.bookableScheduledItem and documentLine.(!cancelled and document.(person.frontendAccount=? and event=? and confirmed and price_balance<=0)))" +
-                                    " order by date",
+                                    " order by date, startTime, programScheduledItem.timeline.startTime",
                                     new Object[]{userAccountId, userAccountId, userAccountId, eventIdContainingAudios, KnownItemFamily.AUDIO_RECORDING.getCode(), pathItemCodeProperty.get(), userAccountId, currentEvent}),
                                 // Index 1: we look for the scheduledItem of audio type having a bookableScheduledItem which is a teaching type (case of STTP)
                                 // TODO: for now we take only the English audio recording scheduledItem in that case. We should take the default language of the organization instead
@@ -136,7 +136,7 @@ final class EventAudioLibraryActivity extends ViewDomainActivityBase {
                                     " (exists(select MediaConsumption where media.scheduledItem=si and attendance.documentLine.document.person.frontendAccount=? and downloaded) as alreadyDownloaded) " +
                                     " from ScheduledItem si" +
                                     " where event=? and bookableScheduledItem.item.family.code=? and item.code=? and exists(select Attendance where scheduledItem=si.bookableScheduledItem and documentLine.(!cancelled and document.(person.frontendAccount=? and event=? and confirmed and price_balance<=0)))" +
-                                    " order by date",
+                                    " order by date, startTime, programScheduledItem.timeline.startTime",
                                     new Object[]{userAccountId, userAccountId, userAccountId, eventIdContainingAudios, KnownItemFamily.TEACHING.getCode(), KnownItem.AUDIO_RECORDING_ENGLISH.getCode(), userAccountId, currentEvent}),
                                 // Index 2: the medias
                                 new EntityStoreQuery("select url, scheduledItem.(date, event), scheduledItem.name, scheduledItem.published, durationMillis " +
