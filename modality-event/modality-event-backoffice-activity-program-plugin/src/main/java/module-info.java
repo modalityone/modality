@@ -42,6 +42,8 @@ module modality.event.backoffice.activity.program.plugin {
     requires webfx.stack.ui.controls;
     requires webfx.stack.ui.operation;
     requires webfx.stack.ui.validation;
+    requires webfx.platform.scheduler;
+    requires webfx.platform.uischeduler;
 
     // Exported packages
     exports one.modality.event.backoffice.activities.program;

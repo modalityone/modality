@@ -6,10 +6,7 @@ import dev.webfx.platform.async.Future;
 import dev.webfx.platform.console.Console;
 import dev.webfx.platform.util.collection.Collections;
 import dev.webfx.stack.orm.domainmodel.DataSourceModel;
-import dev.webfx.stack.orm.entity.EntityList;
-import dev.webfx.stack.orm.entity.EntityStore;
-import dev.webfx.stack.orm.entity.EntityStoreQuery;
-import dev.webfx.stack.orm.entity.UpdateStore;
+import dev.webfx.stack.orm.entity.*;
 import dev.webfx.stack.ui.controls.dialog.DialogBuilderUtil;
 import dev.webfx.stack.ui.controls.dialog.DialogContent;
 import dev.webfx.stack.ui.operation.OperationUtil;
@@ -24,7 +21,10 @@ import javafx.collections.ObservableList;
 import javafx.scene.control.Button;
 import one.modality.base.client.mainframe.fx.FXMainFrameDialogArea;
 import one.modality.base.shared.entities.*;
+import one.modality.base.shared.entities.markers.EntityHasItem;
+import one.modality.event.client.event.fx.FXEvent;
 
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -47,6 +47,7 @@ final class ProgramModel {
     private List<ScheduledItem> teachingsBookableScheduledItems;
     private List<ScheduledItem> audioRecordingsBookableScheduledItems;
     private final BooleanProperty programGeneratedProperty = new SimpleBooleanProperty();
+    private final BooleanProperty dayTicketPreliminaryScheduledItemProperty = new SimpleBooleanProperty();
 
     private final List<DayTemplate> initialWorkingDayTemplates = new ArrayList<>();
     private final ObservableList<DayTemplate> currentDayTemplates = new OptimizedObservableListWrapper<>();
@@ -56,6 +57,7 @@ final class ProgramModel {
     }
 
     private final ValidationSupport validationSupport = new ValidationSupport();
+    private Item bookableTeachingItem;
 
     ProgramModel(KnownItemFamily programItemFamily, DataSourceModel dataSourceModel) {
         this.programItemFamily = programItemFamily;
@@ -99,6 +101,10 @@ final class ProgramModel {
         return audioRecordingsBookableScheduledItems;
     }
 
+
+    public BooleanProperty getDayTicketPreliminaryScheduledItemProperty() {
+        return dayTicketPreliminaryScheduledItemProperty;
+    }
     Item getVideoItem() {
         return videoItem;
     }
@@ -134,9 +140,10 @@ final class ProgramModel {
                 new EntityStoreQuery("select name,family.code, deprecated from Item where organization=? and family.code in (?,?,?)",
                     new Object[]{selectedEvent.getOrganization(), programItemFamily.getCode(), KnownItemFamily.AUDIO_RECORDING.getCode(), KnownItemFamily.VIDEO.getCode()}),
                 // Index 3: bookableScheduledItem for this event (teachings + optional audio), created during the event setup.
-                new EntityStoreQuery("select item, date from ScheduledItem si where event=? and bookableScheduledItem=si", new Object[]{selectedEvent}),
+                new EntityStoreQuery("select item, date, timeline, programScheduledItem, bookableScheduledItem from ScheduledItem si where event=? and bookableScheduledItem=si", new Object[]{selectedEvent}),
                 // Index 4: we load some fields from the Event table that are not yet loaded. We don't need to look for the result, the result will be loaded automatically in selectedEvent because it has the same id.
-                new EntityStoreQuery("select teachingsDayTicket, audioRecordingsDayTicket from Event where id=?", new Object[]{selectedEvent}))
+                new EntityStoreQuery("select teachingsDayTicket, audioRecordingsDayTicket from Event where id=?", new Object[]{selectedEvent}),
+                new EntityStoreQuery("select distinct name, code from item  where family.code = ? and organization = ? and not deprecated order by name", new Object[]{KnownItemFamily.AUDIO_RECORDING.getCode(), FXEvent.getEvent().getOrganization()}))
             .onFailure(Console::log)
             .onSuccess(entityLists -> Platform.runLater(() -> {
                 // Extracting the different entity lists from the query batch result
@@ -151,7 +158,7 @@ final class ProgramModel {
                 videoItem = Collections.findFirst(items, item -> KnownItemFamily.VIDEO.getCode().equals(item.getFamily().getCode()));
                 teachingsBookableScheduledItems = Collections.filter(bookableScheduledItems, scheduledItem -> KnownItemFamily.TEACHING.getCode().equals(scheduledItem.getItem().getFamily().getCode()));
                 audioRecordingsBookableScheduledItems = Collections.filter(bookableScheduledItems, scheduledItem -> KnownItemFamily.AUDIO_RECORDING.getCode().equals(scheduledItem.getItem().getFamily().getCode()));
-
+                dayTicketPreliminaryScheduledItemProperty.setValue(!teachingsBookableScheduledItems.isEmpty() || !audioRecordingsBookableScheduledItems.isEmpty());
                 Collections.setAll(initialWorkingDayTemplates, dayTemplates.stream().map(updateStore::updateEntity).collect(Collectors.toList()));
                 setLoadedEvent(entityStore.copyEntity(selectedEvent));
 
@@ -259,4 +266,44 @@ final class ProgramModel {
         dayTemplateModels.forEach(DayTemplateModel::initFormValidation);
     }
 
+    public Future<?> generatePreliminaryBookableSI() {
+        UpdateStore localUpdateStore = UpdateStore.createAbove(entityStore);
+
+        //First we add all the teaching scheduledItem : one per day.
+        Event currentSelectedEvent = FXEvent.getEvent();
+        LocalDate startDate = currentSelectedEvent.getStartDate();
+        LocalDate endDate = currentSelectedEvent.getEndDate();
+        for (LocalDate date = startDate; !date.isAfter(endDate); date = date.plusDays(1)) {
+            ScheduledItem teachingScheduledItem = updateStore.insertEntity(ScheduledItem.class);
+            teachingScheduledItem.setEvent(currentSelectedEvent);
+            teachingScheduledItem.setDate(date);
+            teachingScheduledItem.setSite(programSite);
+            teachingScheduledItem.setItem(bookableTeachingItem);
+        }
+
+        //Then we add the audio recording scheduledItem: one per day and one per language
+        for (Item currentItem : languageAudioItems) {
+            for (LocalDate date = startDate; !date.isAfter(endDate); date = date.plusDays(1)) {
+                ScheduledItem audioScheduledItem = updateStore.insertEntity(ScheduledItem.class);
+                audioScheduledItem.setEvent(currentSelectedEvent);
+                audioScheduledItem.setDate(date);
+                audioScheduledItem.setSite(programSite);
+                audioScheduledItem.setItem(currentItem);
+            }
+        }
+        return updateStore.submitChanges();
+    }
+
+    public Item getTeachingBookableScheduledItem() {
+        if(getTeachingsBookableScheduledItems()!=null)
+            return getTeachingsBookableScheduledItems().stream()
+                .map(EntityHasItem::getItem)
+                .distinct()
+                .findFirst().get();
+        return null;
+    }
+
+    public void setBookableTeachingItem(Item selectedItem) {
+        bookableTeachingItem = selectedItem;
+    }
 }

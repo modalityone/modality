@@ -20,6 +20,11 @@ public interface ProgramI18nKeys {
     String ConfirmGeneration = "ConfirmGeneration";
     String ScheduledItemsAlreadyGenerated = "ScheduledItemsAlreadyGenerated";
     String ScheduledItemsNotYetGenerated = "ScheduledItemsNotYetGenerated";
+    String DayTicketTeachingsAndAudioScheduledItemNotGenerated = "DayTicketTeachingsAndAudioScheduledItemNotGenerated";
+    String DayTicketTeachingsAndAudioScheduledItemInfos = "DayTicketTeachingsAndAudioScheduledItemInfos";
+    String ChooseAnItemForTheTeachingBookableScheduledItem = "ChooseAnItemForTheTeachingBookableScheduledItem";
+    String GeneratePreliminaryBookableSI = "GeneratePreliminaryBookableSI";
+    String PleaseSelectAnItem = "PleaseSelectAnItem";
     String DuplicateIcon = "DuplicateIcon";
 
 }

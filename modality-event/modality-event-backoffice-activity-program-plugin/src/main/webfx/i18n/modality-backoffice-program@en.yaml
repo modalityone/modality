@@ -23,3 +23,12 @@ DeleteProgramConfirmation: "Are you sure you want to delete the program? \nIf th
 ConfirmGeneration: "Confirm"
 ScheduledItemsAlreadyGenerated: "The program for this event has already been generated and is locked. Click on Unlock bellow to unlock it before changing the program"
 ScheduledItemsNotYetGenerated: "The program for this event has not yet been generated."
+DayTicketTeachingsAndAudioScheduledItemNotGenerated:
+  text: "The Preliminaries ScheduledItems for the Teachings and the Audio recordings are not yet generated. Don't forget to generate them before locking the program."
+  graphic:
+    fill: "red"
+    svgPath: "M 24 4 L 4 40 h 40 L 24 4 z m -2 14 h 4 v 12 h -4 v -12 z m 2 18 a 2 2 90 1 1 0 -4 a 2 2 90 0 1 0 4 z"
+DayTicketTeachingsAndAudioScheduledItemInfos: "The program will use the item {0} for the bookable teaching scheduledItem and {1} for the bookable audio scheduledItem. \nThis can't be change once the program is generated"
+ChooseAnItemForTheTeachingBookableScheduledItem: "Choose the item type for the Bookable Teaching ScheduledItem:"
+GeneratePreliminaryBookableSI: "Generate Bookable ScheduledItems"
+PleaseSelectAnItem: "Please select an Item for the teaching ScheduledItem"
