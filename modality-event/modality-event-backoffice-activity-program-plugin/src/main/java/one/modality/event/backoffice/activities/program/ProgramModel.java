@@ -267,10 +267,11 @@ final class ProgramModel {
     }
 
     public Future<?> generatePreliminaryBookableSI() {
-        UpdateStore localUpdateStore = UpdateStore.createAbove(entityStore);
-
         //First we add all the teaching scheduledItem : one per day.
-        Event currentSelectedEvent = FXEvent.getEvent();
+        Event currentSelectedEvent = updateStore.updateEntity(FXEvent.getEvent());
+        currentSelectedEvent.setKbs3(true);
+        //Important, we need to define audioRecordingDayTicket to true, otherwise the program won't be generated correctly
+        currentSelectedEvent.setAudioRecordingsDayTicket(true);
         LocalDate startDate = currentSelectedEvent.getStartDate();
         LocalDate endDate = currentSelectedEvent.getEndDate();
         for (LocalDate date = startDate; !date.isAfter(endDate); date = date.plusDays(1)) {
