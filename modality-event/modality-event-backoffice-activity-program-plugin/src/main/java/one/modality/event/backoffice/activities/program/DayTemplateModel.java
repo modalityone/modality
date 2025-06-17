@@ -39,7 +39,7 @@ final class DayTemplateModel {
     DayTemplateModel(DayTemplate dayTemplate, ProgramModel programModel) {
         this.programModel = programModel;
         this.dayTemplate = dayTemplate;
-        startLogic();
+        reloadTimelinesFromDatabase();
     }
 
     public DayTemplate getDayTemplate() {
@@ -82,7 +82,7 @@ final class DayTemplateModel {
         return programModel.getUpdateStore();
     }
 
-    private void startLogic() {
+    public void reloadTimelinesFromDatabase() {
         //We read the value of the database for the child elements only if the dayTemplate is already existing in the database (ie not in cache)
         if (!dayTemplate.getId().isNew()) {
             programModel.getEntityStore().<Timeline>executeQuery(

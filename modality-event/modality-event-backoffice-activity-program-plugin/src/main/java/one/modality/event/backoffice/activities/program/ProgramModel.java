@@ -165,6 +165,9 @@ final class ProgramModel {
                 Collections.setAll(initialWorkingDayTemplates, dayTemplates.stream().map(updateStore::updateEntity).collect(Collectors.toList()));
                 setLoadedEvent(entityStore.copyEntity(selectedEvent));
 
+                for (DayTemplateModel dayTemplateModel : dayTemplateModels) {
+                    dayTemplateModel.reloadTimelinesFromDatabase();
+                }
                 resetModelAndUiToInitial();
             }));
     }
@@ -249,7 +252,10 @@ final class ProgramModel {
                 });
                 Console.log(x);
             })
-            .onSuccess(x -> Platform.runLater(this::resetModelAndUiToInitial));
+            .onSuccess(x -> Platform.runLater(()-> {
+                reloadProgramFromSelectedEvent(FXEvent.getEvent());
+                resetModelAndUiToInitial();
+            }));
     }
 
     Future<?> submitUpdateStoreChangesAndReload(UpdateStore updateStore) {
@@ -265,7 +271,6 @@ final class ProgramModel {
             })
             .onSuccess(x -> Platform.runLater(()-> {
                 reloadProgramFromSelectedEvent(FXEvent.getEvent());
-                resetModelAndUiToInitial();
             }));
     }
 
