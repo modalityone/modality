@@ -191,7 +191,9 @@ final class ProgramView extends ModalitySlaveEditor<Event> implements ButtonFact
 
         Label dayTicketTeachingAndAudioScheduledItemInfoLabel = new Label();
         FXProperties.runNowAndOnPropertiesChange(dayTicketTeachingsAndAudioScheduledItemGenerated -> {
-            programModel.reloadProgramFromSelectedEvent(FXEvent.getEvent());
+            if(FXEvent.getEvent()!=null) {
+                programModel.reloadProgramFromSelectedEvent(FXEvent.getEvent());
+            }
             //We delay a bit so the request has the time to execute so the program is reloaded.
             //TODO improve to wait for the reload to be finished rather than waiting 300ms
             UiScheduler.scheduleDelay(300, ()-> {

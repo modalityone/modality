@@ -6,7 +6,10 @@ import dev.webfx.platform.async.Future;
 import dev.webfx.platform.console.Console;
 import dev.webfx.platform.util.collection.Collections;
 import dev.webfx.stack.orm.domainmodel.DataSourceModel;
-import dev.webfx.stack.orm.entity.*;
+import dev.webfx.stack.orm.entity.EntityList;
+import dev.webfx.stack.orm.entity.EntityStore;
+import dev.webfx.stack.orm.entity.EntityStoreQuery;
+import dev.webfx.stack.orm.entity.UpdateStore;
 import dev.webfx.stack.ui.controls.dialog.DialogBuilderUtil;
 import dev.webfx.stack.ui.controls.dialog.DialogContent;
 import dev.webfx.stack.ui.operation.OperationUtil;
@@ -200,7 +203,7 @@ final class ProgramModel {
     void saveChanges(Button saveButton, Button cancelButton) {
         if (validateForm()) {
             OperationUtil.turnOnButtonsWaitModeDuringExecution(
-                submitUpdateStoreChanges(updateStore),
+                submitUpdateStoreChangesAndReload(updateStore),
                 saveButton, cancelButton);
         }
     }
@@ -235,7 +238,6 @@ final class ProgramModel {
         });
     }
 
-
     Future<?> submitUpdateStoreChanges(UpdateStore updateStore) {
         return updateStore.submitChanges()
             .onFailure(x -> {
@@ -248,6 +250,23 @@ final class ProgramModel {
                 Console.log(x);
             })
             .onSuccess(x -> Platform.runLater(this::resetModelAndUiToInitial));
+    }
+
+    Future<?> submitUpdateStoreChangesAndReload(UpdateStore updateStore) {
+        return updateStore.submitChanges()
+            .onFailure(x -> {
+                DialogContent dialog = DialogContent.createConfirmationDialog("Error", "Operation failed", x.getMessage());
+                dialog.setOk();
+                Platform.runLater(() -> {
+                    DialogBuilderUtil.showModalNodeInGoldLayout(dialog, FXMainFrameDialogArea.getDialogArea());
+                    dialog.getPrimaryButton().setOnAction(a -> dialog.getDialogCallback().closeDialog());
+                });
+                Console.log(x);
+            })
+            .onSuccess(x -> Platform.runLater(()-> {
+                reloadProgramFromSelectedEvent(FXEvent.getEvent());
+                resetModelAndUiToInitial();
+            }));
     }
 
     private boolean validateForm() {
