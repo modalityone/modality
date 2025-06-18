@@ -59,10 +59,10 @@ public final class FXEventId {
                                     // In addition, in case FXOrganizationId is not yet set, we set it now. For ex,
                                     // if a user books an event for the first time through visiting the organization
                                     // website which redirected the booking to Modality, we memorize the organization
-                                    // so that at the end of the booking process, if the users visits the Modality
+                                    // so that at the end of the booking process, if the user visits the Modality
                                     // booking page, he doesn't have to select the organization again, it is already
                                     // selected, and the user can see all its other events on the booking page.
-                                    if (loadedEvent != null && FXOrganizationId.getOrganizationId() == null) {
+                                    if (loadedEvent != null/* && FXOrganizationId.getOrganizationId() == null // commented for collapsedProperty() binding in ModalityFrontOfficeMainFrameActivity*/) {
                                         FXOrganizationId.setOrganizationId(loadedEvent.getOrganizationId());
                                     }
                                 }

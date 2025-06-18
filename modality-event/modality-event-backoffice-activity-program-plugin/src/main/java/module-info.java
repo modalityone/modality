@@ -27,6 +27,7 @@ module modality.event.backoffice.activity.program.plugin {
     requires webfx.kit.util;
     requires webfx.platform.async;
     requires webfx.platform.console;
+    requires webfx.platform.uischeduler;
     requires webfx.platform.util;
     requires webfx.platform.windowhistory;
     requires webfx.stack.i18n;
@@ -40,10 +41,9 @@ module modality.event.backoffice.activity.program.plugin {
     requires webfx.stack.routing.router.client;
     requires webfx.stack.routing.uirouter;
     requires webfx.stack.ui.controls;
+    requires webfx.stack.ui.dialog;
     requires webfx.stack.ui.operation;
     requires webfx.stack.ui.validation;
-    requires webfx.platform.scheduler;
-    requires webfx.platform.uischeduler;
 
     // Exported packages
     exports one.modality.event.backoffice.activities.program;

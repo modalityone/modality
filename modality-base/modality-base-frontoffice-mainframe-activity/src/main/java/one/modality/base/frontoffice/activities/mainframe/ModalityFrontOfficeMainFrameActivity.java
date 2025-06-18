@@ -22,6 +22,7 @@ import dev.webfx.platform.util.Arrays;
 import dev.webfx.platform.util.collection.Collections;
 import dev.webfx.stack.i18n.I18n;
 import dev.webfx.stack.i18n.controls.I18nControls;
+import dev.webfx.stack.orm.entity.Entities;
 import dev.webfx.stack.session.state.client.fx.FXLoggedIn;
 import dev.webfx.stack.ui.action.Action;
 import dev.webfx.stack.ui.action.ActionBinder;
@@ -54,7 +55,9 @@ import one.modality.base.client.mainframe.fx.FXMainFrameTransiting;
 import one.modality.base.frontoffice.mainframe.fx.FXBackgroundNode;
 import one.modality.base.frontoffice.mainframe.fx.FXCollapseMenu;
 import one.modality.base.frontoffice.utility.page.FOPageUtil;
+import one.modality.crm.backoffice.organization.fx.FXOrganizationId;
 import one.modality.crm.shared.services.authn.fx.FXUserName;
+import one.modality.event.client.event.fx.FXEventId;
 
 import java.util.List;
 import java.util.Objects;
@@ -390,6 +393,9 @@ public final class ModalityFrontOfficeMainFrameActivity extends ModalityClientMa
         collapsePane.setAnimate(false);
         //Temporary, while the user language change is not implemented in the settings
         //collapsePane.collapsedProperty().bind(FXLoggedIn.loggedInProperty().or(FXCollapseMenu.collapseMenuProperty()));
+        // Showing the language menu (i.e., not collapsing it) when no event is selected (ex: home page), or it's a NKT event
+        collapsePane.collapsedProperty().bind(FXProperties.combine(FXOrganizationId.organizationIdProperty(), FXEventId.eventIdProperty(),
+            (oId, eId) -> !(eId == null || Entities.samePrimaryKey(oId, 1))));
         collapsePane.setAnimate(true);
         collapsePane.getStyleClass().setAll("menu-bar", "lang-menu-bar", "non-mobile");
         return collapsePane;
