@@ -17,6 +17,9 @@ import one.modality.ecommerce.payment.client.WebPaymentForm;
 import one.modality.event.client.booking.BookableDatesUi;
 import one.modality.event.frontoffice.activities.booking.process.event.BookEventActivity;
 
+/**
+ * @author Bruno Salmon
+ */
 public final class LettersSlideController {
 
     private final BookEventActivity bookEventActivity;
@@ -63,7 +66,7 @@ public final class LettersSlideController {
             displaySlideOnTransitionComplete(slide, FXMainFrameTransiting.transitingProperty());
         } else {
             UiScheduler.runInUiThread((() -> {
-                // Ensuring the slide is always at least as high as the transition pane. This will for example stretch
+                // Ensuring the slide is always at least as high as the transition pane. This will, for example, stretch
                 // the loading slide so it fills the whole screen vertically.
                 slide.mainVbox.minHeightProperty().bind(transitionPane.heightProperty());
                 transitionPane.transitToContent(slide.get());

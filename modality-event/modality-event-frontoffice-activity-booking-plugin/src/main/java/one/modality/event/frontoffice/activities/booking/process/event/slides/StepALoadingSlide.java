@@ -11,6 +11,9 @@ import javafx.scene.shape.SVGPath;
 import one.modality.base.client.brand.Brand;
 import one.modality.event.frontoffice.activities.booking.process.event.BookEventActivity;
 
+/**
+ * @author Bruno Salmon
+ */
 final class StepALoadingSlide extends StepSlide {
 
     // NKT Logo (hard-coded for now)

@@ -31,6 +31,9 @@ import one.modality.ecommerce.client.workingbooking.WorkingBookingProperties;
 
 import java.util.function.Supplier;
 
+/**
+ * @author Bruno Salmon
+ */
 public abstract class StepSlide implements Supplier<Node> {
 
     private final BookEventActivity bookEventActivity;

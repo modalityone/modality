@@ -11,6 +11,9 @@ import one.modality.ecommerce.payment.CancelPaymentResult;
 import one.modality.event.frontoffice.activities.booking.BookingI18nKeys;
 import one.modality.event.frontoffice.activities.booking.process.event.BookEventActivity;
 
+/**
+ * @author Bruno Salmon
+ */
 final class Step6CancellationSlide extends StepSlide {
 
     private static final double MAX_SLIDE_WIDTH = 800;

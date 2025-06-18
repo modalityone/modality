@@ -14,6 +14,9 @@ import javafx.scene.text.TextAlignment;
 import one.modality.event.frontoffice.activities.booking.BookingI18nKeys;
 import one.modality.event.frontoffice.activities.booking.process.event.BookEventActivity;
 
+/**
+ * @author Bruno Salmon
+ */
 final class StepCThankYouSlide extends StepSlide {
 
     private static final double MAX_PAGE_WITH = 800;

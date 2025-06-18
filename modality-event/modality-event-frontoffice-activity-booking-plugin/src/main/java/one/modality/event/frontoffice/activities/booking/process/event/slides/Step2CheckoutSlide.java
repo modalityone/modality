@@ -51,6 +51,9 @@ import one.modality.event.frontoffice.activities.booking.process.event.BookEvent
 import java.time.LocalDate;
 import java.util.stream.Stream;
 
+/**
+ * @author Bruno Salmon
+ */
 final class Step2CheckoutSlide extends StepSlide {
 
     private static final double MAX_SLIDE_WIDTH = 800;
@@ -349,24 +352,24 @@ final class Step2CheckoutSlide extends StepSlide {
             initiateNewPaymentAndDisplayPaymentSlide(); // Will go to payment page on success
         } else {
             // 2) the currentBooking has new option
+            turnOnWaitMode();
             // We look at the changes to fill the history
             WorkingBookingHistoryHelper historyHelper = new WorkingBookingHistoryHelper(workingBooking.getAttendanceAdded(), workingBooking.getAttendanceRemoved());
-            turnOnWaitMode();
             workingBooking.submitChanges(historyHelper.buildHistory())
-                .onFailure(result -> UiScheduler.runInUiThread(() -> {
-                    turnOffWaitMode();
+                .onFailure(throwable -> UiScheduler.runInUiThread(() -> {
                     displayErrorMessage(BookingI18nKeys.ErrorWhileInsertingBooking);
-                    Console.log(result);
+                    Console.log(throwable);
                 }))
                 .onSuccess(result -> UiScheduler.runInUiThread(() -> {
-                    turnOffWaitMode();
                     workingBookingProperties.setBookingReference(result.getDocumentRef());
                     if (workingBookingProperties.getBalance() > 0) {
                         initiateNewPaymentAndDisplayPaymentSlide();
                     } else {
                         displayThankYouSlide();
                     }
-                }));
+                }))
+                .onComplete(ar -> UiScheduler.runInUiThread(this::turnOffWaitMode))
+            ;
         }
     }
 }

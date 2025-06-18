@@ -32,6 +32,9 @@ import one.modality.event.client.booking.BookableDatesUi;
 import one.modality.event.client.event.fx.FXEvent;
 import one.modality.event.frontoffice.activities.booking.process.event.BookEventActivity;
 
+/**
+ * @author Bruno Salmon
+ */
 final class StepBBookEventSlide extends StepSlide {
 
     private static final double MAX_PAGE_WIDTH = FOPageUtil.MAX_PAGE_WIDTH;

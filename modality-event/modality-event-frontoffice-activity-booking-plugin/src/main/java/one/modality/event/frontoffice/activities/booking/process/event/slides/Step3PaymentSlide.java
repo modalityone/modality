@@ -21,6 +21,9 @@ import one.modality.event.frontoffice.activities.booking.BookingI18nKeys;
 import one.modality.event.frontoffice.activities.booking.process.event.BookEventActivity;
 import one.modality.ecommerce.client.workingbooking.WorkingBookingProperties;
 
+/**
+ * @author Bruno Salmon
+ */
 final class Step3PaymentSlide extends StepSlide {
 
     private static final double MAX_SLIDE_WIDTH = 800;

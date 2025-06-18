@@ -7,6 +7,9 @@ import javafx.geometry.Insets;
 import javafx.scene.control.Label;
 import one.modality.event.frontoffice.activities.booking.process.event.BookEventActivity;
 
+/**
+ * @author Bruno Salmon
+ */
 final class Step7ErrorSlide extends StepSlide {
 
     private static final double MAX_SLIDE_WIDTH = 800;

@@ -18,6 +18,9 @@ import one.modality.event.frontoffice.activities.booking.process.event.BookingFo
 import java.util.List;
 import java.util.ServiceLoader;
 
+/**
+ * @author Bruno Salmon
+ */
 final class DigitsSlideController {
 
     private static final List<BookingFormProvider> ALL_BOOKING_FORM_PROVIDERS_SORTED_BY_PRIORITY = MultipleServiceProviders.getProviders(BookingFormProvider.class, () -> ServiceLoader.load(BookingFormProvider.class));
