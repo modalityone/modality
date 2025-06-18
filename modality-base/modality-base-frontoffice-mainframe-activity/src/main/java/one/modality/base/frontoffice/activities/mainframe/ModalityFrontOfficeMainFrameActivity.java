@@ -54,6 +54,7 @@ import one.modality.base.client.mainframe.fx.FXMainFrameOverlayArea;
 import one.modality.base.client.mainframe.fx.FXMainFrameTransiting;
 import one.modality.base.frontoffice.mainframe.fx.FXBackgroundNode;
 import one.modality.base.frontoffice.mainframe.fx.FXCollapseMenu;
+import one.modality.base.frontoffice.mainframe.fx.FXShowFooter;
 import one.modality.base.frontoffice.utility.page.FOPageUtil;
 import one.modality.crm.backoffice.organization.fx.FXOrganizationId;
 import one.modality.crm.shared.services.authn.fx.FXUserName;
@@ -256,10 +257,14 @@ public final class ModalityFrontOfficeMainFrameActivity extends ModalityClientMa
             }, scrollPane.vvalueProperty(), FXCollapseMenu.collapseMenuProperty());
         }
 
+        Layouts.bindManagedToVisibleProperty(footer);
         // Reacting to the mount node changes:
         FXProperties.runNowAndOnPropertyChange(mountNode -> {
             boolean isLoginPage = mountNode != null && Collections.findFirst(mountNode.getStyleClass(), styleClass -> styleClass.contains("login")) != null;
-            Layouts.setManagedAndVisibleProperties(footer, !isLoginPage);
+            if (isLoginPage) {
+                FXProperties.setEvenIfBound(footer.visibleProperty(), false);
+            } else
+                footer.visibleProperty().bind(FXShowFooter.showFooterProperty());
             // Updating the mount node container with the new mount node
             if (mountNode != null && getMountNodeEmbeddingScrollPane(mountNode) == null) {
                 if (mountNode instanceof Region mountRegion) {

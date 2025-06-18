@@ -11,6 +11,7 @@ import javafx.scene.control.Labeled;
 import javafx.scene.layout.Region;
 import javafx.scene.text.Font;
 import one.modality.base.client.mainframe.fx.FXMainFrameTransiting;
+import one.modality.base.frontoffice.mainframe.fx.FXShowFooter;
 import one.modality.base.shared.entities.Event;
 import one.modality.ecommerce.payment.CancelPaymentResult;
 import one.modality.ecommerce.payment.client.WebPaymentForm;
@@ -70,6 +71,8 @@ public final class LettersSlideController {
                 // the loading slide so it fills the whole screen vertically.
                 slide.mainVbox.minHeightProperty().bind(transitionPane.heightProperty());
                 transitionPane.transitToContent(slide.get());
+                // Hiding the footer for the loading slide
+                FXShowFooter.setShowFooter(slide != stepALoadingSlide);
             }));
         }
     }
