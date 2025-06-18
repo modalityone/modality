@@ -2,6 +2,7 @@ package one.modality.event.backoffice.events.eventselector;
 
 import dev.webfx.extras.util.layout.Layouts;
 import dev.webfx.stack.orm.domainmodel.DataSourceModel;
+import dev.webfx.stack.orm.dql.DqlStatement;
 import dev.webfx.stack.orm.entity.EntityStore;
 import dev.webfx.stack.orm.entity.controls.entity.selector.EntityButtonSelector;
 import dev.webfx.stack.ui.controls.button.ButtonFactoryMixin;
@@ -35,6 +36,7 @@ public class MainFrameHeaderEventSelectorProvider implements MainFrameHeaderNode
             eventSelector = new EntityButtonSelector<Event>(
                     "{class: 'Event', alias: 'e', columns: 'icon,name,dateIntervalFormat(startDate,endDate)', orderBy: 'startDate desc'}",
                     buttonFactory, frameContainer, dataSourceModel)
+                    .always(DqlStatement.fields(FXEvent.EXPECTED_FIELDS))
                     .ifNotNullOtherwiseEmpty(FXOrganization.organizationProperty(), o -> where("organization = ?", o))
             ;
             EntityStore store = eventSelector.getStore();
