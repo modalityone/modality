@@ -13,7 +13,7 @@ public enum EventState {
     ON_HOLD,
     RESTRICTED,
     CLOSED,
-    RECONCILIED,
+    RECONCILED,
     FINALISED,
     ARCHIVED;
 

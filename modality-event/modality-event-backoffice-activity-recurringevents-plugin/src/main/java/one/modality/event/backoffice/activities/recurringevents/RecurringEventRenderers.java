@@ -30,7 +30,7 @@ final class RecurringEventRenderers {
                     return Bootstrap.textSuccess(toReturn);
                 case CLOSED:
                 case ARCHIVED:
-                case RECONCILIED:
+                case RECONCILED:
                 case RESTRICTED:
                 case FINALISED:
                     return Bootstrap.textSecondary(toReturn);
