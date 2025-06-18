@@ -37,11 +37,9 @@ public class WorkingBooking {
     public WorkingBooking(PolicyAggregate policyAggregate, DocumentAggregate initialDocumentAggregate) {
         this.policyAggregate = policyAggregate;
         this.initialDocumentAggregate = initialDocumentAggregate;
-        if (initialDocumentAggregate != null) { // Case of existing booking
+        if (initialDocumentAggregate != null) // Case of existing booking
             initialDocumentAggregate.setPolicyAggregate(policyAggregate);
-            documentPrimaryKey = initialDocumentAggregate.getDocument().getPrimaryKey();
-        } else // Case of new booking
-            cancelChanges(); // sounds a bit weired, but this will actually initialize the document
+        cancelChanges(); // sounds a bit weired, but this will actually initialize the document
     }
 
     public PolicyAggregate getPolicyAggregate() {
