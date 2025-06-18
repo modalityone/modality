@@ -129,6 +129,7 @@ final class VideoStreamingActivity extends ViewDomainActivityBase {
         videoCollapsePane.collapse(); // initially collapsed - might be automatically expanded by scheduleAutoLivestream()
     }
 
+
     @Override
     protected void startLogic() {
         // Creating our own entity store to hold the loaded data without interfering with other activities
@@ -152,6 +153,8 @@ final class VideoStreamingActivity extends ViewDomainActivityBase {
                         " exists(select Attendance a where documentLine=dl and exists(select ScheduledItem where bookableScheduledItem=a.scheduledItem and item.family.code=?))" +
                         // 2/ Or KBS3 / KBS2 setup (this allows displaying the videos that have been booked in the past with KBS2 events, event if we can't display them)
                         " or item.family.code=?)" +
+                        // we display only the events that have not expired, or expired since less than 21 days.
+                        " and (document.event.(vodExpirationDate = null or date_part('epoch', now()) < date_part('epoch', vodExpirationDate)+21*24*60*60)) " +
                         // Ordering with the most relevant events, the first event will be the selected one by default.
                         " order by " +
                         // 1) Something happening today
