@@ -16,7 +16,7 @@ import java.util.Iterator;
 import java.util.List;
 
 /**
- * Utility class to help keeping a list of document events minimised.
+ * Utility class to help keep a list of document events minimized.
  * 
  * @author Bruno Salmon
  */

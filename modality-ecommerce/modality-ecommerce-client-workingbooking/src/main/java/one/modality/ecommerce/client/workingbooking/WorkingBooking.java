@@ -24,14 +24,14 @@ import java.util.stream.Collectors;
 public class WorkingBooking {
 
     private final PolicyAggregate policyAggregate;
-    private final DocumentAggregate initialDocumentAggregate; // null for new bookings
+    private DocumentAggregate initialDocumentAggregate; // null for new bookings
     private final ObservableList<AbstractDocumentEvent> documentChanges = FXCollections.observableArrayList();
     private Object documentPrimaryKey; // null for new booking
     private Document document;
     private DocumentAggregate lastestDocumentAggregate;
-    // EntityStore used to hold the entities associated to this working booking (ex: Document, DocumentLine, etc...).
-    // Note that it's not an update store, because the booking submit uses DocumentService instead, which keeps a record
-    // of all individual changes made over the time. This entity store reflects only the latest version of the booking.
+    // EntityStore used to hold the entities associated with this working booking (ex: Document, DocumentLine, etc...).
+    // Note that it's not an update store because the booking submit uses DocumentService instead, which keeps a record
+    // of all individual changes made over time. This entity store reflects only the latest version of the booking.
     private EntityStore entityStore;
 
     public WorkingBooking(PolicyAggregate policyAggregate, DocumentAggregate initialDocumentAggregate) {
@@ -184,8 +184,8 @@ public class WorkingBooking {
     }
 
     public Future<SubmitDocumentChangesResult> submitChanges(String historyComment) {
-        // In case the booking is not linked to the booker account (because the user was not logged-in at the start of
-        // the booking process), we set it now (the front-office probably forced the user to login before submit).
+        // In case the booking is not linked to the booker account - because the user was not logged in at the start of
+        // the booking process - we set it now (the front-office probably forced the user to log in before submit).
         if (document.isNew()) {
             documentChanges.forEach(e -> {
                 if (e instanceof AddDocumentEvent) {
@@ -199,13 +199,20 @@ public class WorkingBooking {
             });
         }
 
+        // We submit the booking changes
         return DocumentService.submitDocumentChanges(
-                new SubmitDocumentChangesArgument(
-                        historyComment, documentChanges.toArray(new AbstractDocumentEvent[0])
-                )).map(result -> {
-                    documentPrimaryKey = result.getDocumentPrimaryKey();
-                    cancelChanges(); // Because successfully submitted
+            new SubmitDocumentChangesArgument(historyComment, documentChanges.toArray(new AbstractDocumentEvent[0]))
+        ).compose(result -> {
+            // The submitting was successful at this point, and we reload the latest version of the booking TODO: make this as on option in SubmitDocumentChangesArgument
+            return DocumentService.loadDocument(new LoadDocumentArgument(result.getDocumentPrimaryKey()))
+                .map(documentAggregate -> {
+                    // We set the polityAggregate (was already loaded), and this also rebuilds internal entities (document, changes)
+                    documentAggregate.setPolicyAggregate(policyAggregate);
+                    // We reset this working booking from this up-to-date document aggregate
+                    initialDocumentAggregate = documentAggregate;
+                    cancelChanges(); // sounds a bit weired, but this will actually initialize the document
                     return result;
+                });
         });
     }
 
