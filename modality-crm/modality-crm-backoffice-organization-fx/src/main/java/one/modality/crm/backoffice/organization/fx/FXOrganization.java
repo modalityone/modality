@@ -50,4 +50,9 @@ public final class FXOrganization {
             organizationProperty.set(organization);
     }
 
+    public static void setOrganizationOnceExpectedFieldsAreLoaded(Organization organization) {
+        organization.<Organization>onExpressionLoaded(EXPECTED_FIELDS)
+            .onSuccess(FXOrganization::setOrganization);
+    }
+
 }

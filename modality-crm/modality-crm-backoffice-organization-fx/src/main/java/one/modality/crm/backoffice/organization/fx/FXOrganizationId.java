@@ -25,16 +25,17 @@ public final class FXOrganizationId {
     private final static ObjectProperty<EntityId> organizationIdProperty = FXProperties.newObjectProperty(organizationId -> {
         // Storing this new value (more precisely the primary key) in the session, and save it
         Session session = FXSession.getSession();
+        Object organizationPrimaryKey = Entities.getPrimaryKey(organizationId);
         if (session != null) {
-            session.put(SESSION_ORGANIZATION_ID_KEY, Entities.getPrimaryKey(organizationId));
+            session.put(SESSION_ORGANIZATION_ID_KEY, organizationPrimaryKey);
             session.store();
         }
         // Also resetting the FXLoginContext
-        FXLoginContext.setLoginContext(new ModalityContext(Entities.getPrimaryKey(organizationId), null, null, null));
+        FXLoginContext.setLoginContext(new ModalityContext(organizationPrimaryKey, null, null, null));
         // Synchronizing FXOrganization to match that new organization id (FXOrganizationId => FXOrganization)
-        if (!Objects.equals(organizationId, FXOrganization.getOrganizationId())) { // Sync only if ids differ.
+        if (!Entities.samePrimaryKey(FXOrganization.getOrganizationId(), organizationPrimaryKey)) { // Sync only if ids differ.
             // If the new organization id is null, we set the FXOrganization to null
-            if (Entities.getPrimaryKey(organizationId) == null)
+            if (organizationPrimaryKey == null)
                 FXOrganization.setOrganization(null);
             else {
                 // Getting the organization store
@@ -42,9 +43,9 @@ public final class FXOrganizationId {
                 // Checking if we can find the organization in memory in that store
                 Organization organization = organizationStore.getEntity(organizationId);
                 // If yes, there is no need to request the server, we use directly that instance
-                if (organization != null)
-                    FXOrganization.setOrganization(organization);
-                else { // Otherwise, we request the server to load that organization from that id
+                if (organization != null) {
+                    FXOrganization.setOrganizationOnceExpectedFieldsAreLoaded(organization);
+                } else { // Otherwise, we request the server to load that organization from that id
                     organizationStore.<Organization>executeQuery("select " + FXOrganization.EXPECTED_FIELDS + " from Organization where id=?", organizationId)
                         .onFailure(Console::log)
                         .onSuccess(list -> // on successfully receiving the list (should be a singleton list)
