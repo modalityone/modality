@@ -26,19 +26,20 @@ public final class FXEventId {
     private final static ObjectProperty<EntityId> eventIdProperty = FXProperties.newObjectProperty(eventId -> {
         // Storing this new value (more precisely the primary key) in the session, and save it
         Session session = FXSession.getSession();
+        Object eventPrimaryKey = Entities.getPrimaryKey(eventId);
         if (session != null) {
-            session.put(SESSION_FX_EVENT_ID_KEY, Entities.getPrimaryKey(eventId));
+            session.put(SESSION_FX_EVENT_ID_KEY, eventPrimaryKey);
             session.store();
         }
         // Also updating the FXLoginContext
         Object loginContext = FXLoginContext.getLoginContext();
         if (loginContext instanceof ModalityContext) {
-            ((ModalityContext) loginContext).setEventId(Entities.getPrimaryKey(eventId));
+            ((ModalityContext) loginContext).setEventId(eventPrimaryKey);
         }
         // Synchronizing FXEvent to match that new event id (FXEventId => FXEvent)
-        if (!Objects.equals(eventId, FXEvent.getEventId())) { // Sync only if ids differ.
+        if (!Entities.samePrimaryKey(eventId, FXEvent.getEventId())) { // Sync only if ids differ.
             // If the new event id is null, we set the FXEvent to null
-            if (Entities.getPrimaryKey(eventId) == null)
+            if (eventPrimaryKey == null)
                 FXEvent.setEvent(null);
             else {
                 // Getting the event store
@@ -46,9 +47,9 @@ public final class FXEventId {
                 // Checking if we can find the event in memory in that store
                 Event event = eventStore.getEntity(eventId);
                 // If yes, there is no need to request the server, we use directly that instance
-                if (event != null)
-                    FXEvent.setEvent(event);
-                else { // Otherwise, we request the server to load that event from that id
+                if (event != null) {
+                    FXEvent.setEventOnceExpectedFieldsAreLoaded(event);
+                } else { // Otherwise, we request the server to load that event from that id
                     eventStore.<Event>executeQuery("select " + FXEvent.EXPECTED_FIELDS + " from Event where id=?", eventId)
                         .onFailure(Console::log)
                         .onSuccess(list -> // on successfully receiving the list (should be a singleton list)
