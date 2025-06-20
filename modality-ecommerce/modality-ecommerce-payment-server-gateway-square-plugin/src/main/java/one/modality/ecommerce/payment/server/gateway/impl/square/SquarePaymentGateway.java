@@ -29,7 +29,7 @@ public final class SquarePaymentGateway implements PaymentGateway {
 
     private static final boolean DEBUG_LOG = true;
 
-    private static final String GATEWAY_NAME = "Square";
+    static final String GATEWAY_NAME = "Square";
 
     private static final String SQUARE_LIVE_WEB_PAYMENTS_SDK_URL = "https://web.squarecdn.com/v1/square.js";
     private static final String SQUARE_SANDBOX_WEB_PAYMENTS_SDK_URL = "https://sandbox.web.squarecdn.com/v1/square.js";
@@ -71,6 +71,7 @@ public final class SquarePaymentGateway implements PaymentGateway {
 
     @Override
     public Future<GatewayInitiatePaymentResult> initiatePayment(GatewayInitiatePaymentArgument argument) {
+        // Reading the account parameters that have been loaded from the database by ServerPaymentServiceProvider
         String appId = argument.getAccountParameter("app_id");
         String locationId = argument.getAccountParameter("location_id"); // KBS3
         if (locationId == null)
@@ -81,7 +82,7 @@ public final class SquarePaymentGateway implements PaymentGateway {
             // && argument.isParentPageHttps() // Maybe would be better to not use seamless integration on http, but commented for now as iFrame integration is not working well in browser (ex: WebPaymentForm fitHeight not working well)
         ;
         String template = seamless ? SCRIPT_TEMPLATE : HTML_TEMPLATE;
-        template = template
+        String paymentFormContent = template
                 .replace("${modality_amount}", Long.toString(argument.getAmount()))
                 .replace("${modality_currencyCode}", argument.getCurrencyCode())
                 .replace("${modality_seamless}", String.valueOf(seamless))
@@ -90,14 +91,14 @@ public final class SquarePaymentGateway implements PaymentGateway {
                 .replace("${square_locationId}", locationId)
                 ;
         if (DEBUG_LOG) {
-            Console.log("[Square][DEBUG] initiatePayment - template = " + template);
+            Console.log("[Square][DEBUG] initiatePayment - content = " + paymentFormContent);
         }
         SandboxCard[] sandboxCards = live ? null : SANDBOX_CARDS;
         if (seamless) {
-            return Future.succeededFuture(GatewayInitiatePaymentResult.createEmbeddedContentInitiatePaymentResult(live, true, template, sandboxCards));
+            return Future.succeededFuture(GatewayInitiatePaymentResult.createEmbeddedContentInitiatePaymentResult(live, true, paymentFormContent, sandboxCards));
         } else { // In other cases, we embed the page in a WebView/iFrame that can be loaded through https (assuming this server is on https)
             String htmlCacheKey = Uuid.randomUuid();
-            SquareRestApiOneTimeHtmlResponsesCache.registerOneTimeHtmlResponse(htmlCacheKey, template);
+            SquareRestApiOneTimeHtmlResponsesCache.registerOneTimeHtmlResponse(htmlCacheKey, paymentFormContent);
             String url = SQUARE_PAYMENT_FORM_ENDPOINT.replace(":htmlCacheKey", htmlCacheKey);
             return Future.succeededFuture(GatewayInitiatePaymentResult.createEmbeddedUrlInitiatePaymentResult(live, false, url, sandboxCards));
         }
@@ -137,14 +138,13 @@ public final class SquarePaymentGateway implements PaymentGateway {
             if (DEBUG_LOG) {
                 Console.log("[Square][DEBUG] completePayment - exception:", ex);
             }
-            // We extract the Square exception (most interesting part) if it is wrapped inside a Java exception
+            // We extract the Square exception (the most interesting part) if it is wrapped inside a Java exception
             if (ex.getCause() instanceof ApiException) {
                 ex = ex.getCause();
             }
             Console.log("[Square] completePayment - Square raised exception " + ex.getMessage());
             // If the exception is about a failed payment, we apply the same process as for a successful payment
-            if (ex instanceof ApiException) {
-                ApiException ae = (ApiException) ex;
+            if (ex instanceof ApiException ae) {
                 Object data = ae.getData();
                 if (DEBUG_LOG) {
                     Console.log("[Square][DEBUG] completePayment - data = " + data);
@@ -155,7 +155,7 @@ public final class SquarePaymentGateway implements PaymentGateway {
                     return null;
                 }
             }
-            // Otherwise it's probably a technical exception
+            // Otherwise, it's probably a technical exception
             promise.fail(ex);
             return null;
         });

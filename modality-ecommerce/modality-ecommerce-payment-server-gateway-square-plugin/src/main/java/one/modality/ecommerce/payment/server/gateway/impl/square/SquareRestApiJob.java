@@ -26,23 +26,23 @@ import one.modality.ecommerce.payment.UpdatePaymentStatusArgument;
  */
 public final class SquareRestApiJob implements ApplicationJob {
 
-    static final String SQUARE_PAYMENT_FORM_ENDPOINT             = "/payment/square/paymentForm/:htmlCacheKey";
-    private static final String SQUARE_LIVE_WEBHOOK_ENDPOINT     = "/payment/square/live/webhook";
-    private static final String SQUARE_SANDBOX_WEBHOOK_ENDPOINT  = "/payment/square/sandbox/webhook";
-
-    private static final SystemUserId SQUARE_HISTORY_USER_ID     = new SystemUserId("Square");
+    static final String SQUARE_PAYMENT_FORM_ENDPOINT = "/payment/square/paymentForm/:htmlCacheKey";
+    // Scroll down to the second section for the webhook REST API constants
 
     @Override
     public void onInit() {
         Router router = VertxInstance.getHttpRouter();
 
-        // This endpoint is called by the Modality front-office when the web payment form content requires a subsequent
-        // server call, typically when it is embedded in an iFrame, iFrame.src is set to that endpoint to pull the html
-        // code and start the web payment form.
+        /*====================================== EMBED PAYMENT FORM REST API =========================================*/
+
+        // This endpoint is called by the Modality front-office when the web payment form can't be initialized through
+        // some direct HTML content, but requires this HTML content to be loaded through a later server REST call.
+        // Typically, when it is embedded in an iFrame, iFrame.src is set to that endpoint to load the HTML code and
+        // start the web payment form.
         router.route(SQUARE_PAYMENT_FORM_ENDPOINT)
                 .handler(ctx -> {
-                    // Because it is a subsequent call to SquarePaymentGateway.initiatePayment(), we expect the content
-                    // to be present in the html cache, as set by SquarePaymentGateway.initiatePayment() just a moment before
+                    // Because it is a later call just after SquarePaymentGateway.initiatePayment(), we expect the
+                    // content to be present in the HTML cache, as set by initiatePayment() just before.
                     String cacheKey = ctx.pathParam("htmlCacheKey");
                     String html = SquareRestApiOneTimeHtmlResponsesCache.getOneTimeHtmlResponse(cacheKey);
                     // And we return that content
@@ -51,16 +51,24 @@ public final class SquareRestApiJob implements ApplicationJob {
                             .end(html);
                 });
 
+        /*=========================================== WEBHOOKS REST API ==============================================*/
+
         // Endpoint for live payments Square web hook
         router.route(SQUARE_LIVE_WEBHOOK_ENDPOINT)
-                .handler(BodyHandler.create()) // To ensure the whole payload is loaded before calling the next handler
+                .handler(BodyHandler.create()) // To ensure that the whole payload is loaded before calling the next handler
                 .handler(ctx -> handleWebhook(ctx, true));
 
         // Same endpoint but for sandbox payments
         router.route(SQUARE_SANDBOX_WEBHOOK_ENDPOINT)
-                .handler(BodyHandler.create()) // To ensure the whole payload is loaded before calling the next handler
+                .handler(BodyHandler.create()) // To ensure that the whole payload is loaded before calling the next handler
                 .handler(ctx -> handleWebhook(ctx, false));
     }
+
+
+    private static final String SQUARE_LIVE_WEBHOOK_ENDPOINT     = "/payment/square/live/webhook";
+    private static final String SQUARE_SANDBOX_WEBHOOK_ENDPOINT  = "/payment/square/sandbox/webhook";
+
+    private static final SystemUserId SQUARE_HISTORY_USER_ID     = new SystemUserId(SquarePaymentGateway.GATEWAY_NAME);
 
     private void handleWebhook(RoutingContext ctx, boolean live) {
         JsonObject vertxPayload = ctx.body().asJsonObject();
@@ -94,10 +102,10 @@ public final class SquareRestApiJob implements ApplicationJob {
                             } else { // We found one payment (no ambiguity)
                                 MoneyTransfer payment = payments.get(0);
                                 Object paymentPk = payment.getPrimaryKey();
-                                // Maybe this Square event doesn't really change the payment status (Square often sends
-                                // sometimes very similar events with the same status, only change is in the payload)
+                                // Maybe this Square event doesn't really change the payment status (Square sometimes
+                                // sends very similar events with the same status, only change is in the payload)
                                 if (payment.isPending() == pending && payment.isSuccessful() == successful && status.equals(payment.getStatus())) {
-                                    // In that case we only update the payload in the database (if the version is newer)
+                                    // In that case, we only update the payload in the database (if the version is newer)
                                     ReadOnlyAstObject dbPayload = AST.parseObject(payment.getGatewayResponse(), "json");
                                     ReadOnlyAstObject dbPaymentObject = AST.lookupObject(dbPayload, "data.object.payment");
                                     if (dbPaymentObject != null && dbPaymentObject.getInteger("version") >= paymentObject.getInteger("version")) {
