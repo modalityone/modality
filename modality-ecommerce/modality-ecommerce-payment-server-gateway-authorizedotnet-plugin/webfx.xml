@@ -8,19 +8,25 @@
     </exported-packages>
 
     <dependencies>
-        <used-by-source-modules/>
-        <plugin-module>jakarta.xml.bind-api</plugin-module>
-        <plugin-module>jaxb-runtime</plugin-module>
+        <used-by-source-modules>
+            <undetected-module>jakarta-xml-bind</undetected-module>
+            <undetected-module>org.apache.httpcomponents.client5.httpclient5</undetected-module>
+            <undetected-module>org.apache.log4j</undetected-module>
+            <undetected-module>org.slf4j</undetected-module>
+        </used-by-source-modules>
     </dependencies>
 
     <providers>
-        <provider interface="one.modality.ecommerce.payment.server.gateway.PaymentGateway">one.modality.ecommerce.payment.server.gateway.impl.authorizedotnet.AuthorizeDotNetApiPaymentGateway</provider>
+        <provider interface="one.modality.ecommerce.payment.server.gateway.PaymentGateway">one.modality.ecommerce.payment.server.gateway.impl.anet.AuthorizePaymentGateway</provider>
+        <provider interface="dev.webfx.platform.boot.spi.ApplicationJob">one.modality.ecommerce.payment.server.gateway.impl.anet.AuthorizeRestApiJob</provider>
     </providers>
 
     <required-libraries>
-        <library artifact="net.authorize:anet-java-sdk:2.0.6"/>
-        <library artifact="jakarta.xml.bind:jakarta.xml.bind-api:2.3.2"/>
-        <library artifact="org.glassfish.jaxb:jaxb-runtime:2.3.2"/>
+        <library artifact="net.authorize:anet-java-sdk:3.0.0"/>
+        <library name="jakarta-xml-bind" artifact="jakarta.xml.bind:jakarta.xml.bind-api:4.0.2"/>
+        <library name="org.apache.httpcomponents.client5.httpclient5" artifact="org.apache.httpcomponents.client5:httpclient5:5.3.1"/>
+        <library name="org.apache.log4j" artifact="org.apache.logging.log4j:log4j-1.2-api:2.23.1"/>
+        <library name="org.slf4j" artifact="org.slf4j:slf4j-api:1.7.36"/>
     </required-libraries>
 
 

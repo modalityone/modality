@@ -1,4 +1,4 @@
-package one.modality.ecommerce.payment.server.gateway.impl.authorizedotnet;
+package one.modality.ecommerce.payment.server.gateway.impl.anet;
 
 import dev.webfx.platform.async.Future;
 import dev.webfx.platform.async.Promise;
@@ -6,27 +6,23 @@ import dev.webfx.platform.scheduler.Scheduler;
 import net.authorize.Environment;
 import net.authorize.api.contract.v1.*;
 import net.authorize.api.controller.CreateTransactionController;
+import net.authorize.api.controller.GetHostedPaymentPageController;
 import net.authorize.api.controller.base.ApiOperationBase;
 import one.modality.ecommerce.payment.server.gateway.*;
-import one.modality.ecommerce.payment.server.gateway.GatewayInitiatePaymentArgument;
-import one.modality.ecommerce.payment.server.gateway.GatewayInitiatePaymentResult;
-import one.modality.ecommerce.payment.server.gateway.GatewayMakeApiPaymentArgument;
-import one.modality.ecommerce.payment.server.gateway.PaymentGateway;
 
 import java.math.BigDecimal;
 
 /**
  * @author Bruno Salmon
  */
-public class AuthorizeDotNetApiPaymentGateway implements PaymentGateway {
+public class AuthorizePaymentGateway implements PaymentGateway {
 
     private static final String GATEWAY_NAME = "Authorize.net";
-    private final static String API_KEY = "6VEbu4X922";
-    private final static String TRANSACTION_KEY = "7pZts3g48E3L58Da"; // @TODO hide this or pull from configuration
 
-    private final static net.authorize.Environment ENV = Environment.SANDBOX;
+    private static final String AUTHORIZE_LIVE_PAYMENT_FORM_URL = "https://accept.authorize.net/payment/paymentform?token=${token}";
+    private static final String AUTHORIZE_SANDBOX_PAYMENT_FORM_URL = "https://test.accept.authorize.net/payment/paymentform?token=${token}";
 
-    public AuthorizeDotNetApiPaymentGateway() {
+    public AuthorizePaymentGateway() {
     }
 
     @Override
@@ -36,13 +32,73 @@ public class AuthorizeDotNetApiPaymentGateway implements PaymentGateway {
 
     @Override
     public Future<GatewayInitiatePaymentResult> initiatePayment(GatewayInitiatePaymentArgument argument) {
-        return Future.failedFuture("initiatePayment() not yet implemented for Authorize.net");
+        boolean live = argument.isLive();
+        long amount = argument.getAmount();
+        String apiLoginId = argument.getAccountParameter("api_login_id"); // KBS3
+        if (apiLoginId == null)
+            apiLoginId = argument.getAccountParameter("x_login"); // KBS2 (was redirected payment)
+        String apiTransactionKey = argument.getAccountParameter("api_transaction_key");
+
+        Environment environment = live ? Environment.PRODUCTION : Environment.SANDBOX;
+
+        //ApiOperationBase.setEnvironment(environment);
+
+        MerchantAuthenticationType merchantAuthentication = new MerchantAuthenticationType();
+        merchantAuthentication.setName(apiLoginId);
+        merchantAuthentication.setTransactionKey(apiTransactionKey);
+        //ApiOperationBase.setMerchantAuthentication(merchantAuthentication);
+
+        SettingType hostedPaymentButtonOptions = new SettingType();
+        hostedPaymentButtonOptions.setSettingName("hostedPaymentButtonOptions");
+        hostedPaymentButtonOptions.setSettingValue("{\"text\": \"Pay\"}");
+
+        SettingType hostedPaymentOrderOptions = new SettingType();
+        hostedPaymentOrderOptions.setSettingName("hostedPaymentOrderOptions");
+        hostedPaymentOrderOptions.setSettingValue("{\"show\": false}");
+
+        ArrayOfSetting paymentSettings = new ArrayOfSetting();
+        paymentSettings.getSetting().add(hostedPaymentButtonOptions);
+        paymentSettings.getSetting().add(hostedPaymentOrderOptions);
+
+        TransactionRequestType transactionRequest = new TransactionRequestType();
+        transactionRequest.setTransactionType(TransactionTypeEnum.AUTH_CAPTURE_TRANSACTION.value());
+        transactionRequest.setAmount(BigDecimal.valueOf(0.01 * amount)); // amount
+
+        GetHostedPaymentPageRequest apiRequest = new GetHostedPaymentPageRequest();
+        apiRequest.setMerchantAuthentication(merchantAuthentication);
+        apiRequest.setTransactionRequest(transactionRequest);
+        apiRequest.setHostedPaymentSettings(paymentSettings);
+
+        GetHostedPaymentPageController controller = new GetHostedPaymentPageController(apiRequest);
+        controller.execute(environment);
+
+        GetHostedPaymentPageResponse response = controller.getApiResponse();
+        MessageTypeEnum resultCode = response == null ? null : response.getMessages().getResultCode();
+        if (resultCode == MessageTypeEnum.OK) {
+            String token = response.getToken();
+            String urlTemplate = live ? AUTHORIZE_LIVE_PAYMENT_FORM_URL : AUTHORIZE_SANDBOX_PAYMENT_FORM_URL;
+            String url = urlTemplate.replace("${token}", token);
+            return Future.succeededFuture(GatewayInitiatePaymentResult.createEmbeddedUrlInitiatePaymentResult(live, false, url, null));
+        } else {
+            ANetApiResponse errorResponse = controller.getErrorResponse();
+            if (errorResponse != null) {
+                return Future.failedFuture(errorResponse.getMessages().getMessage().toString());
+            } else
+                return Future.failedFuture("Authorize call failed with resultCode = " + resultCode);
+        }
     }
 
     @Override
     public Future<GatewayCompletePaymentResult> completePayment(GatewayCompletePaymentArgument argument) {
         return Future.failedFuture("completePayment() not yet implemented for Authorize.net");
     }
+
+
+    // Ben draft implementation of makeApiPayment()
+
+    private final static String API_KEY = "6VEbu4X922";
+    private final static String TRANSACTION_KEY = "7pZts3g48E3L58Da"; // @TODO hide this or pull from configuration
+    private final static net.authorize.Environment ENV = Environment.SANDBOX;
 
     public Future<GatewayMakeApiPaymentResult> makeApiPayment(GatewayMakeApiPaymentArgument argument) {
         Promise<GatewayMakeApiPaymentResult> promise = Promise.promise();
