@@ -29,7 +29,7 @@ var square_card; // Using 'var' declaration so that we can get the object back w
 function modality_injectJavaPaymentForm(jpf) {
     console.log("modality_injectJavaPaymentForm() called");
     modality_javaPaymentForm = jpf;
-    if (square_card) { // happens if the customer use the payment form several times on the same session
+    if (square_card) { // happens if the customer uses the payment form several times on the same session
         try { // We destroy the previous card, otherwise attaching the new card won't work
             console.log("Destroying previous card");
             square_card.destroy();

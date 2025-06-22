@@ -20,6 +20,7 @@ import one.modality.base.shared.entities.MoneyTransfer;
 import one.modality.ecommerce.payment.PaymentService;
 import one.modality.ecommerce.payment.PaymentStatus;
 import one.modality.ecommerce.payment.UpdatePaymentStatusArgument;
+import one.modality.ecommerce.payment.server.gateway.impl.util.RestApiOneTimeHtmlResponsesCache;
 
 /**
  * @author Bruno Salmon
@@ -44,7 +45,7 @@ public final class SquareRestApiJob implements ApplicationJob {
                     // Because it is a later call just after SquarePaymentGateway.initiatePayment(), we expect the
                     // content to be present in the HTML cache, as set by initiatePayment() just before.
                     String cacheKey = ctx.pathParam("htmlCacheKey");
-                    String html = SquareRestApiOneTimeHtmlResponsesCache.getOneTimeHtmlResponse(cacheKey);
+                    String html = RestApiOneTimeHtmlResponsesCache.getOneTimeHtmlResponse(cacheKey);
                     // And we return that content
                     ctx.response()
                             .putHeader(HttpHeaders.CONTENT_TYPE, HttpHeaders.TEXT_HTML)

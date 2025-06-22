@@ -11,5 +11,6 @@ module modality.ecommerce.payment.server.gateway {
 
     // Exported packages
     exports one.modality.ecommerce.payment.server.gateway;
+    exports one.modality.ecommerce.payment.server.gateway.impl.util;
 
 }
