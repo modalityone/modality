@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html>
+
+<!--
+    This file is a standalone HTML page demonstrating usage of the Authorize.net
+    Accept JavaScript library using the integrated payment information form.
+
+    For complete documentation for the Accept JavaScript library, see
+    https://developer.authorize.net/api/reference/features/acceptjs.html
+-->
+
+<head>
+    <title>Sample form</title>
+</head>
+
+<body>
+
+<script type="text/javascript"
+        src="https://jstest.authorize.net/v3/AcceptUI.js"
+        charset="utf-8">
+</script>
+
+<form id="paymentForm"
+      method="POST"
+      action="https://YourServer/PathToExistingPaymentProcessingScript">
+    <input type="hidden" name="dataValue" id="dataValue" />
+    <input type="hidden" name="dataDescriptor" id="dataDescriptor" />
+    <button type="button"
+            class="AcceptUI"
+            data-billingAddressOptions='{"show":true, "required":false}'
+            data-apiLoginID="${apiLoginID}"
+            data-clientKey="${clientKey}"
+            data-acceptUIFormBtnTxt="Submit"
+            data-acceptUIFormHeaderTxt="Card Information"
+            data-responseHandler="responseHandler">Pay
+    </button>
+</form>
+
+<script type="text/javascript">
+
+    function responseHandler(response) {
+        if (response.messages.resultCode === "Error") {
+            var i = 0;
+            while (i < response.messages.message.length) {
+                console.log(
+                    response.messages.message[i].code + ": " +
+                    response.messages.message[i].text
+                );
+                i = i + 1;
+            }
+        } else {
+            paymentFormUpdate(response.opaqueData);
+        }
+    }
+
+
+    function paymentFormUpdate(opaqueData) {
+        document.getElementById("dataDescriptor").value = opaqueData.dataDescriptor;
+        document.getElementById("dataValue").value = opaqueData.dataValue;
+
+        // If using your own form to collect the sensitive data from the customer,
+        // blank out the fields before submitting them to your server.
+        // document.getElementById("cardNumber").value = "";
+        // document.getElementById("expMonth").value = "";
+        // document.getElementById("expYear").value = "";
+        // document.getElementById("cardCode").value = "";
+
+        document.getElementById("paymentForm").submit();
+    }
+
+    // Methods called by WebPaymentForm java class on client-side
+
+    // Parameter injected by WebPaymentForm java class on client-side (to allow JS -> Java callbacks)
+    let modality_javaPaymentForm;
+
+    let modality_inited = true;
+    let modality_initError;
+    let modality_initNotificationCalled;
+
+    function modality_injectJavaPaymentForm(jpf) {
+        console.log("modality_injectJavaPaymentForm() called");
+        modality_javaPaymentForm = jpf;
+        if (modality_inited) {
+            if (modality_initError)
+                modality_notifyGatewayInitFailure(modality_initError);
+            else
+                modality_notifyGatewayInitSuccess();
+        }
+    }
+
+    // Methods called by this JS script to call back the Java WebPaymentForm class
+
+    function modality_notifyGatewayInitSuccess() {
+        modality_inited = true;
+        if (modality_javaPaymentForm) {
+            console.log(modality_javaPaymentForm.onGatewayInitSuccess);
+            modality_javaPaymentForm.onGatewayInitSuccess();
+            modality_initNotificationCalled = true;
+        }
+    }
+
+    function modality_notifyGatewayInitFailure(error) {
+        modality_inited = true;
+        modality_initError = error;
+        if (modality_javaPaymentForm) {
+            modality_javaPaymentForm.onGatewayInitFailure(error);
+            modality_initNotificationCalled = true;
+        }
+    }
+
+    function modality_notifyGatewayCardVerificationFailure(error) {
+        if (modality_javaPaymentForm)
+            modality_javaPaymentForm.onGatewayCardVerificationFailure(error);
+    }
+
+    function modality_notifyGatewayBuyerVerificationFailure(error) {
+        if (modality_javaPaymentForm)
+            modality_javaPaymentForm.onGatewayBuyerVerificationFailure(error);
+    }
+
+    function modality_notifyGatewayPaymentVerificationSuccess(paymentCompletionPayload) {
+        if (modality_javaPaymentForm)
+            modality_javaPaymentForm.onGatewayPaymentVerificationSuccess(paymentCompletionPayload);
+    }
+
+</script>
+
+</body>
+</html>

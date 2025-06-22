@@ -4,6 +4,7 @@ import dev.webfx.platform.boot.spi.ApplicationJob;
 import dev.webfx.platform.vertx.common.VertxInstance;
 import io.vertx.core.http.HttpHeaders;
 import io.vertx.ext.web.Router;
+import one.modality.ecommerce.payment.server.gateway.impl.util.RestApiOneTimeHtmlResponsesCache;
 
 /**
  * @author Bruno Salmon
@@ -27,7 +28,7 @@ public final class AuthorizeRestApiJob implements ApplicationJob {
                 // Because it is a later call just after AuthorizePaymentGateway.initiatePayment(), we expect the
                 // content to be present in the HTML cache, as set by initiatePayment() just before.
                 String cacheKey = ctx.pathParam("htmlCacheKey");
-                String html = AuthorizeRestApiOneTimeHtmlResponsesCache.getOneTimeHtmlResponse(cacheKey);
+                String html = RestApiOneTimeHtmlResponsesCache.getOneTimeHtmlResponse(cacheKey);
                 // And we return that content
                 ctx.response()
                     .putHeader(HttpHeaders.CONTENT_TYPE, HttpHeaders.TEXT_HTML)
