@@ -71,8 +71,11 @@ public class AuthorizePaymentGateway implements PaymentGateway {
 
     @Override
     public Future<GatewayCompletePaymentResult> completePayment(GatewayCompletePaymentArgument argument) {
+        // Capturing argument parameters
         boolean live = argument.isLive();
         long amount = argument.getAmount();
+        GatewayCustomer customer = argument.getCustomer();
+        GatewayItem item = argument.getItem();
         ReadOnlyAstObject payload = AST.parseObject(argument.getPayload(), "json");
         String dataDescriptor = payload.getString("dataDescriptor");
         String dataValue = payload.getString("dataValue");
@@ -85,6 +88,29 @@ public class AuthorizePaymentGateway implements PaymentGateway {
         merchantAuthentication.setName(apiLoginID);
         merchantAuthentication.setTransactionKey(apiTransactionKey);
 
+        CustomerAddressType billingAddress = new CustomerAddressType();
+        billingAddress.setFirstName(customer.firstName());
+        billingAddress.setLastName(customer.lastName());
+        billingAddress.setAddress(customer.address());
+        billingAddress.setCity(customer.city());
+        billingAddress.setState(customer.state());
+        billingAddress.setZip(customer.zipCode());
+        billingAddress.setCountry(customer.country());
+
+        LineItemType anetItem = new LineItemType();
+        anetItem.setItemId(item.id());
+        anetItem.setName(item.name());
+        anetItem.setDescription(item.description());
+        anetItem.setQuantity(BigDecimal.valueOf(item.quantity()));
+        anetItem.setUnitPrice(BigDecimal.valueOf(0.01 * item.price())); // the modality amount is in cents
+
+        ArrayOfLineItem lineItems = new ArrayOfLineItem();
+        lineItems.getLineItem().add(anetItem);
+
+        CustomerDataType customerData = new CustomerDataType();
+        customerData.setEmail(customer.email());
+        customerData.setType(CustomerTypeEnum.INDIVIDUAL);
+
         OpaqueDataType opaqueData = new OpaqueDataType();
         opaqueData.setDataDescriptor(dataDescriptor);
         opaqueData.setDataValue(dataValue);
@@ -96,6 +122,9 @@ public class AuthorizePaymentGateway implements PaymentGateway {
         txnRequest.setTransactionType(TransactionTypeEnum.AUTH_CAPTURE_TRANSACTION.value());
         txnRequest.setAmount(BigDecimal.valueOf(0.01 * amount)); // the modality amount is in cents
         txnRequest.setPayment(paymentType);
+        txnRequest.setBillTo(billingAddress);
+        txnRequest.setCustomer(customerData);
+        txnRequest.setLineItems(lineItems);
 
         CreateTransactionRequest request = new CreateTransactionRequest();
         request.setMerchantAuthentication(merchantAuthentication);

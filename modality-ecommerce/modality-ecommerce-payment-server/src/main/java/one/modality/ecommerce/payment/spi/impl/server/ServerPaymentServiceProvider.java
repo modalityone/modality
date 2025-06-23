@@ -21,10 +21,7 @@ import one.modality.ecommerce.document.service.events.gateway.UpdateMoneyTransfe
 import one.modality.ecommerce.document.service.events.registration.documentline.RemoveDocumentLineEvent;
 import one.modality.ecommerce.history.server.HistoryRecorder;
 import one.modality.ecommerce.payment.*;
-import one.modality.ecommerce.payment.server.gateway.GatewayCompletePaymentArgument;
-import one.modality.ecommerce.payment.server.gateway.GatewayInitiatePaymentArgument;
-import one.modality.ecommerce.payment.server.gateway.GatewayMakeApiPaymentArgument;
-import one.modality.ecommerce.payment.server.gateway.PaymentGateway;
+import one.modality.ecommerce.payment.server.gateway.*;
 import one.modality.ecommerce.payment.spi.PaymentServiceProvider;
 
 import java.util.*;
@@ -108,43 +105,51 @@ public class ServerPaymentServiceProvider implements PaymentServiceProvider {
             .onFailure(Console::log)
             .onSuccess(x -> updateStore.submitChanges());
 
-        return loadPaymentGatewayParameters(paymentPrimaryKey, live)
-            .compose(parameters ->
-                // We also load the amount to pass it to gateways like Authorize.net that set the amount on completion
-                moneyTransfer.onExpressionLoaded("amount").compose(mt -> { // TODO: Should we skip this unnecessary loading for other gateways like Square?
-                    String accessToken = parameters.get("access_token");
-                    // TODO check accessToken is set, otherwise return an error
-                    return paymentGateway.completePayment(new GatewayCompletePaymentArgument(live, accessToken, argument.getGatewayCompletePaymentPayload(), moneyTransfer.getAmount(), parameters))
-                        .onFailure(e -> {
-                            Console.log("An error occurred while completing payment: " + e.getMessage());
-                            // We finally update the payment status through the payment service (this will also create a history entry)
-                            gatewayUserId.callAndReturn(() ->
-                                updatePaymentStatus(UpdatePaymentStatusArgument.createExceptionStatusArgument(
-                                    paymentPrimaryKey, null, e.getMessage()))
-                                    .onFailure(ex -> Console.log("An error occurred while completing payment: " + ex.getMessage()))
-                            );
-                        })
-                        .compose(result -> {
-                            String gatewayResponse = result.getGatewayResponse();
-                            String gatewayTransactionRef = result.getGatewayTransactionRef();
-                            String gatewayStatus = result.getGatewayStatus();
-                            PaymentStatus paymentStatus = result.getPaymentStatus();
-                            boolean pending = paymentStatus.isPending();
-                            boolean successful = paymentStatus.isSuccessful();
-                            // We finally update the payment status through the payment service (this will also create a history entry)
-                            return gatewayUserId.callAndReturn(() ->
-                                updatePaymentStatus(UpdatePaymentStatusArgument.createCapturedStatusArgument(
-                                    paymentPrimaryKey,
-                                    gatewayResponse,
-                                    gatewayTransactionRef,
-                                    gatewayStatus,
-                                    pending,
-                                    successful))
-                                    .map(ignoredVoid -> new CompletePaymentResult(paymentStatus))
-                                    .onFailure(Console::log)
-                            );
-                        });
-                }));
+        return Future.all(
+            loadPaymentGatewayParameters(paymentPrimaryKey, live),
+            // We also load the amount and customer info to pass it to gateways like Authorize.net that set the amount on completion
+            // TODO: Should we skip this unnecessary loading for other gateways like Square?
+            moneyTransfer.onExpressionLoaded("amount,document.(ref,person_firstName,person_lastName,person_email,person_street,person_postCode,person_cityName,person_admin1Name,person_country.name,person_countryName,event.name)")
+        ).compose(cf -> {
+            Map<String, String> parameters = (Map<String, String>) cf.list().get(0); // result of loadPaymentGatewayParameters(paymentPrimaryKey, live)
+            String accessToken = parameters.get("access_token");
+            int amount = moneyTransfer.getAmount();
+            Document document = moneyTransfer.getDocument();
+            GatewayCustomer customer = new GatewayCustomer(document.getFirstName(), document.getLastName(), document.getEmail(), document.getStreet(), document.getCityName(), document.getPostCode(), document.getAdmin1Name(), document.evaluate("coalesce(person_country.name,person_countryName)"));
+            Event event = document.getEvent();
+            GatewayItem item = new GatewayItem("#" + event.getPrimaryKey() + " - #" + document.getRef(), "Deposit", event.getName() + " - Booking Ref " + document.getRef(), 1, amount);
+            // TODO check accessToken is set, otherwise return an error
+            return paymentGateway.completePayment(new GatewayCompletePaymentArgument(live, accessToken, argument.getGatewayCompletePaymentPayload(), parameters, amount, customer, item))
+                .onFailure(e -> {
+                    Console.log("An error occurred while completing payment: " + e.getMessage());
+                    // We finally update the payment status through the payment service (this will also create a history entry)
+                    gatewayUserId.callAndReturn(() ->
+                        updatePaymentStatus(UpdatePaymentStatusArgument.createExceptionStatusArgument(
+                            paymentPrimaryKey, null, e.getMessage()))
+                            .onFailure(ex -> Console.log("An error occurred while completing payment: " + ex.getMessage()))
+                    );
+                })
+                .compose(result -> {
+                    String gatewayResponse = result.getGatewayResponse();
+                    String gatewayTransactionRef = result.getGatewayTransactionRef();
+                    String gatewayStatus = result.getGatewayStatus();
+                    PaymentStatus paymentStatus = result.getPaymentStatus();
+                    boolean pending = paymentStatus.isPending();
+                    boolean successful = paymentStatus.isSuccessful();
+                    // We finally update the payment status through the payment service (this will also create a history entry)
+                    return gatewayUserId.callAndReturn(() ->
+                        updatePaymentStatus(UpdatePaymentStatusArgument.createCapturedStatusArgument(
+                            paymentPrimaryKey,
+                            gatewayResponse,
+                            gatewayTransactionRef,
+                            gatewayStatus,
+                            pending,
+                            successful))
+                            .map(ignoredVoid -> new CompletePaymentResult(paymentStatus))
+                            .onFailure(Console::log)
+                    );
+                });
+        });
     }
 
     @Override

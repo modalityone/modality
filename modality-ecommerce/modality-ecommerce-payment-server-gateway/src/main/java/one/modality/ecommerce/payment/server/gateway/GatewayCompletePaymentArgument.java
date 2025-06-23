@@ -13,15 +13,19 @@ public class GatewayCompletePaymentArgument {
     // The above is enough for some payment gateways like Square, but not for others like Authorize.net where some
     // transaction settings (including payment amount) are set on completion and not on initialization, and additional
     // require API calls
-    private final long amount;
     private final Map<String, String> accountParameters; // necessary to get the Gateway keys for API calls
+    private final long amount;
+    private final GatewayCustomer customer;
+    private final GatewayItem item;
 
-    public GatewayCompletePaymentArgument(boolean live, String accessToken, String payload, long amount, Map<String, String> accountParameters) {
+    public GatewayCompletePaymentArgument(boolean live, String accessToken, String payload, Map<String, String> accountParameters, long amount, GatewayCustomer customer, GatewayItem item) {
         this.live = live;
         this.accessToken = accessToken;
         this.payload = payload;
         this.amount = amount;
         this.accountParameters = accountParameters;
+        this.customer = customer;
+        this.item = item;
     }
 
     public boolean isLive() {
@@ -36,10 +40,6 @@ public class GatewayCompletePaymentArgument {
         return payload;
     }
 
-    public long getAmount() {
-        return amount;
-    }
-
     public Map<String, String> getAccountParameters() {
         return accountParameters;
     }
@@ -48,4 +48,15 @@ public class GatewayCompletePaymentArgument {
         return accountParameters.get(key);
     }
 
+    public long getAmount() {
+        return amount;
+    }
+
+    public GatewayCustomer getCustomer() {
+        return customer;
+    }
+
+    public GatewayItem getItem() {
+        return item;
+    }
 }
