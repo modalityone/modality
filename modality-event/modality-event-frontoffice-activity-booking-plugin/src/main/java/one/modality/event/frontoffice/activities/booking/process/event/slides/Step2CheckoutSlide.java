@@ -164,7 +164,7 @@ final class Step2CheckoutSlide extends StepSlide {
         });
 
         submitButton.setOnAction(event -> submit());
-        // The submit button is disabled if there is nothing to pay and no new changes on the booking
+        // submitButton is disabled if there is nothing to pay and no new changes on the booking
         submitButton.disableProperty().bind(FXProperties.combine(
             getWorkingBookingProperties().balanceProperty(), ObservableLists.isEmpty(getWorkingBooking().getDocumentChanges()),
             (balance, empty) -> balance.intValue() <= 0 && empty));
@@ -356,20 +356,21 @@ final class Step2CheckoutSlide extends StepSlide {
             // We look at the changes to fill the history
             WorkingBookingHistoryHelper historyHelper = new WorkingBookingHistoryHelper(workingBooking.getAttendanceAdded(), workingBooking.getAttendanceRemoved());
             workingBooking.submitChanges(historyHelper.buildHistory())
+                // Turning off the wait mode in all cases - Might be turned on again in success if payment is required
+                .onComplete(ar -> UiScheduler.runInUiThread(this::turnOffWaitMode))
                 .onFailure(throwable -> UiScheduler.runInUiThread(() -> {
                     displayErrorMessage(BookingI18nKeys.ErrorWhileInsertingBooking);
                     Console.log(throwable);
                 }))
                 .onSuccess(result -> UiScheduler.runInUiThread(() -> {
                     workingBookingProperties.setBookingReference(result.getDocumentRef());
+                    // If a payment is required, we initiate the payment and display the payment slide
                     if (workingBookingProperties.getBalance() > 0) {
-                        initiateNewPaymentAndDisplayPaymentSlide();
-                    } else {
+                        initiateNewPaymentAndDisplayPaymentSlide(); // will turn on wait mode again
+                    } else { // if no payment is required, we display the thank-you slide
                         displayThankYouSlide();
                     }
-                }))
-                .onComplete(ar -> UiScheduler.runInUiThread(this::turnOffWaitMode))
-            ;
+                }));
         }
     }
 }
