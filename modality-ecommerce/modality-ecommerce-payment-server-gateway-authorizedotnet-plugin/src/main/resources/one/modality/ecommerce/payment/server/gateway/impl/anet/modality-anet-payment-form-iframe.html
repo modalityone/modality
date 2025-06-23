@@ -28,10 +28,11 @@
 
     // called back by Authorize.net
     function responseHandler(response) {
-        if (response.messages.resultCode === "Error") {
-            String error = "";
-            let message = response.messages.message;
-            for (var i = 0; i < message.length; i++) {
+        let messages = response.messages;
+        if (messages.resultCode === "Error") {
+            let error = "";
+            let message = messages.message;
+            for (let i = 0; i < message.length; i++) {
                 error += message[i].code + ": " + message[i].text;
             }
             modality_notifyGatewayCardVerificationFailure(error);
@@ -39,8 +40,8 @@
             // Note: we don't submit the payment form like in Authorize.net example, we call back the Java WebPaymentForm
             // instead that will finish processing the payment via a bus call.
             modality_notifyGatewayPaymentVerificationSuccess({
-                dataDescriptor: opaqueData.dataDescriptor,
-                dataValue: opaqueData.dataValue
+                dataDescriptor: response.opaqueData.dataDescriptor,
+                dataValue: response.opaqueData.dataValue
             });
         }
     }
