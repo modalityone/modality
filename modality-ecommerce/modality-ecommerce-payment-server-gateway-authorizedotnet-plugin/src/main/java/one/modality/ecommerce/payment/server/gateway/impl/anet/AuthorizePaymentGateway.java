@@ -91,6 +91,8 @@ public class AuthorizePaymentGateway implements PaymentGateway {
         CustomerAddressType billingAddress = new CustomerAddressType();
         billingAddress.setFirstName(customer.firstName());
         billingAddress.setLastName(customer.lastName());
+        billingAddress.setEmail(customer.email());
+        billingAddress.setPhoneNumber(customer.phone());
         billingAddress.setAddress(customer.address());
         billingAddress.setCity(customer.city());
         billingAddress.setState(customer.state());
@@ -108,6 +110,7 @@ public class AuthorizePaymentGateway implements PaymentGateway {
         lineItems.getLineItem().add(anetItem);
 
         CustomerDataType customerData = new CustomerDataType();
+        customerData.setId(customer.id());
         customerData.setEmail(customer.email());
         customerData.setType(CustomerTypeEnum.INDIVIDUAL);
 

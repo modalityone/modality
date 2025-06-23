@@ -3,7 +3,9 @@ package one.modality.ecommerce.payment.spi.impl.server;
 import dev.webfx.platform.async.Future;
 import dev.webfx.platform.console.Console;
 import dev.webfx.platform.service.MultipleServiceProviders;
+import dev.webfx.platform.util.Strings;
 import dev.webfx.stack.orm.datasourcemodel.service.DataSourceModelService;
+import dev.webfx.stack.orm.entity.Entities;
 import dev.webfx.stack.orm.entity.EntityId;
 import dev.webfx.stack.orm.entity.EntityStore;
 import dev.webfx.stack.orm.entity.UpdateStore;
@@ -109,15 +111,31 @@ public class ServerPaymentServiceProvider implements PaymentServiceProvider {
             loadPaymentGatewayParameters(paymentPrimaryKey, live),
             // We also load the amount and customer info to pass it to gateways like Authorize.net that set the amount on completion
             // TODO: Should we skip this unnecessary loading for other gateways like Square?
-            moneyTransfer.onExpressionLoaded("amount,document.(ref,person_firstName,person_lastName,person_email,person_street,person_postCode,person_cityName,person_admin1Name,person_country.name,person_countryName,event.name)")
+            moneyTransfer.onExpressionLoaded("amount,document.(ref,person,person_firstName,person_lastName,person_email,person_phone,person_street,person_postCode,person_cityName,person_admin1Name,person_country.name,person_countryName,event.name)")
         ).compose(cf -> {
             Map<String, String> parameters = (Map<String, String>) cf.list().get(0); // result of loadPaymentGatewayParameters(paymentPrimaryKey, live)
             String accessToken = parameters.get("access_token");
             int amount = moneyTransfer.getAmount();
             Document document = moneyTransfer.getDocument();
-            GatewayCustomer customer = new GatewayCustomer(document.getFirstName(), document.getLastName(), document.getEmail(), document.getStreet(), document.getCityName(), document.getPostCode(), document.getAdmin1Name(), document.evaluate("coalesce(person_country.name,person_countryName)"));
+            GatewayCustomer customer = new GatewayCustomer(
+                Strings.toString(Entities.getPrimaryKey(document.getPersonId())),
+                document.getFirstName(),
+                document.getLastName(),
+                document.getEmail(),
+                document.getPhone(),
+                document.getStreet(),
+                document.getCityName(),
+                document.getPostCode(),
+                document.getAdmin1Name(),
+                document.evaluate("coalesce(person_country.name,person_countryName)")
+            );
             Event event = document.getEvent();
-            GatewayItem item = new GatewayItem("#" + event.getPrimaryKey() + " - #" + document.getRef(), "Deposit", event.getName() + " - Booking Ref " + document.getRef(), 1, amount);
+            GatewayItem item = new GatewayItem(
+                "#" + event.getPrimaryKey() + " - #" + document.getRef(),
+                "Deposit",
+                event.getName() + " - Booking Ref " + document.getRef(),
+                1,
+                amount);
             // TODO check accessToken is set, otherwise return an error
             return paymentGateway.completePayment(new GatewayCompletePaymentArgument(live, accessToken, argument.getGatewayCompletePaymentPayload(), parameters, amount, customer, item))
                 .onFailure(e -> {
