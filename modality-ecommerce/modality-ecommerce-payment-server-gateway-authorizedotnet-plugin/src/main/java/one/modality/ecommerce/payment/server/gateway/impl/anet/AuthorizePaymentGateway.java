@@ -60,12 +60,12 @@ public class AuthorizePaymentGateway implements PaymentGateway {
 
         SandboxCard[] sandboxCards = live ? null : SANDBOX_CARDS;
         if (seamless) {
-            return Future.succeededFuture(GatewayInitiatePaymentResult.createEmbeddedContentInitiatePaymentResult(live, true, paymentFormContent, sandboxCards));
+            return Future.succeededFuture(GatewayInitiatePaymentResult.createEmbeddedContentInitiatePaymentResult(live, true, paymentFormContent, true, sandboxCards));
         } else { // In other cases, we embed the page in a WebView/iFrame that can be loaded through https (assuming this server is on https)
             String htmlCacheKey = Uuid.randomUuid();
             RestApiOneTimeHtmlResponsesCache.registerOneTimeHtmlResponse(htmlCacheKey, paymentFormContent);
             String url = AUTHORIZE_PAYMENT_FORM_LOAD_ENDPOINT.replace(":htmlCacheKey", htmlCacheKey);
-            return Future.succeededFuture(GatewayInitiatePaymentResult.createEmbeddedUrlInitiatePaymentResult(live, false, url, sandboxCards));
+            return Future.succeededFuture(GatewayInitiatePaymentResult.createEmbeddedUrlInitiatePaymentResult(live, false, url, true, sandboxCards));
         }
     }
 

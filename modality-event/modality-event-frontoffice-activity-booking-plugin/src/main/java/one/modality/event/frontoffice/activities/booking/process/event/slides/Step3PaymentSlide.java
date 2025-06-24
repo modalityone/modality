@@ -2,6 +2,7 @@ package one.modality.event.frontoffice.activities.booking.process.event.slides;
 
 import dev.webfx.extras.panes.FlexPane;
 import dev.webfx.extras.styles.bootstrap.Bootstrap;
+import dev.webfx.extras.util.layout.Layouts;
 import dev.webfx.extras.webtext.HtmlText;
 import dev.webfx.kit.util.properties.FXProperties;
 import dev.webfx.platform.console.Console;
@@ -42,7 +43,7 @@ final class Step3PaymentSlide extends StepSlide {
 
     void setWebPaymentForm(WebPaymentForm webPaymentForm) {
         this.webPaymentForm = webPaymentForm;
-        mainVbox.getChildren().clear(); //
+        mainVbox.getChildren().clear();
     }
 
     @Override
@@ -62,6 +63,11 @@ final class Step3PaymentSlide extends StepSlide {
         I18nControls.bindI18nProperties(gatewayLogo, webPaymentForm.getGatewayName());
         VBox.setMargin(gatewayLogo, new Insets(10, 0, 20, 0));
 
+        I18nControls.bindI18nProperties(payButton, BookingI18nKeys.Pay0, workingBookingProperties.formattedBalanceProperty());
+        I18nControls.bindI18nProperties(cancelButton, BaseI18nKeys.Cancel);
+        Layouts.setManagedAndVisibleProperties(payButton, !webPaymentForm.hasHtmlPayButton());
+        webPaymentForm.setHtmlPayButtonText(payButton.getText());
+        webPaymentForm.setHtmlHeaderText("Please enter your payment information");
         Region paymentRegion = webPaymentForm.buildPaymentForm();
 
         mainVbox.getChildren().setAll(
@@ -75,8 +81,6 @@ final class Step3PaymentSlide extends StepSlide {
             mainVbox.getChildren().add(webPaymentForm.createSandboxBar());
         }
 
-        I18nControls.bindI18nProperties(payButton, BookingI18nKeys.Pay0, workingBookingProperties.formattedBalanceProperty());
-        I18nControls.bindI18nProperties(cancelButton, BaseI18nKeys.Cancel);
         payButton.setDefaultButton(true);
         FXProperties.runNowAndOnPropertyChange(userInteractionAllowed -> {
             if (userInteractionAllowed) {

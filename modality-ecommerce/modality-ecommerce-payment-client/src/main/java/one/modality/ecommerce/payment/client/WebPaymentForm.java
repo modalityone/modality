@@ -54,6 +54,8 @@ public class WebPaymentForm {
         if (allowed)
             hideOverlay();
     });
+    private String htmlHeaderText;
+    private String htmlPayButtonText;
     private Scheduled initFailureChecker;
     private boolean initialized;
     private Consumer<String> onLoadFailure; // Called when the webview failed to load
@@ -101,6 +103,18 @@ public class WebPaymentForm {
         return this;
     }
 
+    public boolean hasHtmlPayButton() {
+        return result.hasHtmlPayButton();
+    }
+
+    public void setHtmlHeaderText(String htmlHeaderText) {
+        this.htmlHeaderText = htmlHeaderText;
+    }
+
+    public void setHtmlPayButtonText(String htmlPayButtonText) {
+        this.htmlPayButtonText = htmlPayButtonText;
+    }
+
     public Region buildPaymentForm() {
         String url = result.getUrl();
         if (result.isRedirect()) {
@@ -122,7 +136,7 @@ public class WebPaymentForm {
                     if (initFailureChecker != null)  // can happen on iFrame reload
                         initFailureChecker.cancel(); // we cancel the previous checker to prevent outdated init failure
                     webViewPane.setWindowMember("modality_javaPaymentForm", WebPaymentForm.this);
-                    webViewPane.callWindow("modality_injectJavaPaymentForm", WebPaymentForm.this);
+                    webViewPane.callWindow("modality_injectJavaPaymentForm", WebPaymentForm.this, htmlHeaderText, htmlPayButtonText);
                     initFailureChecker = Scheduler.scheduleDelay(5000, () -> {
                         if (!initialized) {
                             onGatewayInitFailure("The payment page didn't respond as expected");

@@ -24,6 +24,7 @@ import one.modality.ecommerce.document.service.events.registration.documentline.
 import one.modality.ecommerce.history.server.HistoryRecorder;
 import one.modality.ecommerce.payment.*;
 import one.modality.ecommerce.payment.server.gateway.*;
+import one.modality.ecommerce.payment.server.gateway.PaymentGateway; // for CLI
 import one.modality.ecommerce.payment.spi.PaymentServiceProvider;
 
 import java.util.*;
@@ -81,6 +82,7 @@ public class ServerPaymentServiceProvider implements PaymentServiceProvider {
                             gatewayResult.getHtmlContent(),
                             gatewayResult.getUrl(),
                             gatewayResult.isRedirect(),
+                            gatewayResult.hasHtmlPayButton(),
                             paymentGateway.getName(),
                             gatewayResult.getSandboxCards()
                         ));
@@ -173,7 +175,7 @@ public class ServerPaymentServiceProvider implements PaymentServiceProvider {
     @Override
     public Future<CancelPaymentResult> cancelPayment(CancelPaymentArgument argument) {
         return updatePaymentStatusImpl(UpdatePaymentStatusArgument.createCancelStatusArgument(argument.getPaymentPrimaryKey(), argument.isExplicitUserCancellation()))
-            // When payments are cancelled on recurring events, we automatically un-book unpaid options
+            // When payments are canceled on recurring events, we automatically un-book unpaid options
             .compose(this::unbookUnpaidOptionsIfRecurringEvent)
             .onFailure(Console::log);
     }
@@ -272,7 +274,7 @@ public class ServerPaymentServiceProvider implements PaymentServiceProvider {
                     ));
     }
 
-    // Internal server-side method only (no serialisation support)
+    // Internal server-side method only (no serialization support)
 
     public Future<Map<String, String>> loadPaymentGatewayParameters(Object paymentId, boolean live) {
         if (paymentId instanceof String)

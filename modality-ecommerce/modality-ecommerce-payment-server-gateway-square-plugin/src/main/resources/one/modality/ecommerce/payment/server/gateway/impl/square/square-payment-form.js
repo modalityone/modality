@@ -12,7 +12,7 @@ const square_idempotencyKey = window.crypto.randomUUID();
 // Parameter injected by WebPaymentForm java class on client-side (to allow JS -> Java callbacks)
 let modality_javaPaymentForm;
 
-let modality_inited;
+let modality_initialized;
 let modality_initError;
 let modality_initNotificationCalled;
 let modality_containerElement;
@@ -39,7 +39,7 @@ function modality_injectJavaPaymentForm(jpf) {
             return;
         }
     }
-    if (modality_inited) {
+    if (modality_initialized) {
         if (modality_initError)
             modality_notifyGatewayInitFailure(modality_initError);
         else
@@ -52,10 +52,10 @@ function modality_submitGatewayPayment(firstName, lastName, email, phone, addres
     handlePaymentMethodSubmission(firstName, lastName, email, phone, address, city, state, countryCode);
 }
 
-// Methods called by this JS script to call back the Java WebPaymentForm class
+// Methods called by this JS script to call back the Java WebPaymentForm class to notify about the progress in the gateway process
 
 function modality_notifyGatewayInitSuccess() {
-    modality_inited = true;
+    modality_initialized = true;
     if (modality_javaPaymentForm) {
         modality_javaPaymentForm.onGatewayInitSuccess();
         modality_initNotificationCalled = true;
@@ -63,7 +63,7 @@ function modality_notifyGatewayInitSuccess() {
 }
 
 function modality_notifyGatewayInitFailure(error) {
-    modality_inited = true;
+    modality_initialized = true;
     modality_initError = error;
     if (modality_javaPaymentForm) {
         modality_javaPaymentForm.onGatewayInitFailure(error);
@@ -250,6 +250,10 @@ import(square_webPaymentsSDKUrl)
                 square_idempotencyKey: square_idempotencyKey,
             };
 
+            // Notifying the Java WebPaymentForm that the verification is successful => it will complete the payment on
+            // the server-side, passing it this payload. It will basically call PaymentService.completePayment() - after
+            // the UI informed the user this is happening - which will update the payment state in the database in
+            // dependence on the result of AuthorizePaymentGateway.completePayment() <= will treat the payload
             modality_notifyGatewayPaymentVerificationSuccess(JSON.stringify(paymentCompletionPayload));
         }
 
