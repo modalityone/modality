@@ -34,6 +34,5 @@ final class StepALoadingSlide extends StepSlide {
         mainVbox.getChildren().setAll(goldenRatioPane);
         mainVbox.setBackground(Background.fill(Brand.getBrandMainColor()));
         mainVbox.setPadding(Insets.EMPTY); // Removing extra bottom padding
-        mainVbox.getStyleClass().add("loading");
     }
 }

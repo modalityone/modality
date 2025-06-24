@@ -1,71 +1,43 @@
 <!DOCTYPE html>
 <html>
-
-<!--
-    This file is a standalone HTML page demonstrating usage of the Authorize.net
-    Accept JavaScript library using the integrated payment information form.
-
-    For complete documentation for the Accept JavaScript library, see
-    https://developer.authorize.net/api/reference/features/acceptjs.html
--->
-
-<head>
-    <title>Sample form</title>
-</head>
-
-<body>
+<body style="overflow: hidden;">
 
 <script type="text/javascript"
         src="https://jstest.authorize.net/v3/AcceptUI.js"
         charset="utf-8">
 </script>
 
-<form id="paymentForm"
-      method="POST"
-      action="https://YourServer/PathToExistingPaymentProcessingScript">
-    <input type="hidden" name="dataValue" id="dataValue" />
-    <input type="hidden" name="dataDescriptor" id="dataDescriptor" />
-    <button type="button"
+    <button id="displayFormButton" style="visibility: hidden"
+            type="button"
             class="AcceptUI"
-            data-billingAddressOptions='{"show":true, "required":false}'
+            data-billingAddressOptions='{"show":false, "required":false}'
             data-apiLoginID="${apiLoginID}"
             data-clientKey="${clientKey}"
-            data-acceptUIFormBtnTxt="Submit"
-            data-acceptUIFormHeaderTxt="Card Information"
-            data-responseHandler="responseHandler">Pay
+            data-acceptUIFormBtnTxt="Submit your payment"
+            data-acceptUIFormHeaderTxt="Please enter your payment information"
+            data-responseHandler="responseHandler">
     </button>
-</form>
 
 <script type="text/javascript">
 
+    // called back by Authorize.net
     function responseHandler(response) {
-        if (response.messages.resultCode === "Error") {
-            var i = 0;
-            while (i < response.messages.message.length) {
-                console.log(
-                    response.messages.message[i].code + ": " +
-                    response.messages.message[i].text
-                );
-                i = i + 1;
+        let messages = response.messages;
+        if (messages.resultCode === "Error") {
+            let error = "";
+            let message = messages.message;
+            for (let i = 0; i < message.length; i++) {
+                error += message[i].code + ": " + message[i].text;
             }
+            modality_notifyGatewayCardVerificationFailure(error);
         } else {
-            paymentFormUpdate(response.opaqueData);
+            // Note: we don't submit the payment form like in Authorize.net example, we call back the Java WebPaymentForm
+            // instead that will finish processing the payment via a bus call.
+            modality_notifyGatewayPaymentVerificationSuccess(JSON.stringify({
+                dataDescriptor: response.opaqueData.dataDescriptor,
+                dataValue: response.opaqueData.dataValue
+            }));
         }
-    }
-
-
-    function paymentFormUpdate(opaqueData) {
-        document.getElementById("dataDescriptor").value = opaqueData.dataDescriptor;
-        document.getElementById("dataValue").value = opaqueData.dataValue;
-
-        // If using your own form to collect the sensitive data from the customer,
-        // blank out the fields before submitting them to your server.
-        // document.getElementById("cardNumber").value = "";
-        // document.getElementById("expMonth").value = "";
-        // document.getElementById("expYear").value = "";
-        // document.getElementById("cardCode").value = "";
-
-        document.getElementById("paymentForm").submit();
     }
 
     // Methods called by WebPaymentForm java class on client-side
@@ -80,6 +52,7 @@
     function modality_injectJavaPaymentForm(jpf) {
         console.log("modality_injectJavaPaymentForm() called");
         modality_javaPaymentForm = jpf;
+        document.getElementById("displayFormButton").click();
         if (modality_inited) {
             if (modality_initError)
                 modality_notifyGatewayInitFailure(modality_initError);
@@ -93,7 +66,6 @@
     function modality_notifyGatewayInitSuccess() {
         modality_inited = true;
         if (modality_javaPaymentForm) {
-            console.log(modality_javaPaymentForm.onGatewayInitSuccess);
             modality_javaPaymentForm.onGatewayInitSuccess();
             modality_initNotificationCalled = true;
         }

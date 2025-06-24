@@ -12,8 +12,8 @@ public final class InitiatePaymentArgument {
     // in an iFrame. If the Gateway support seamless integration, it will send a GatewayInitiatePaymentResult with
     // seamless = true, and htmlContent will actually contains the script to execute in seamless mode.
     private final boolean seamlessIfSupported;
-    // Indicates that the client already runs on https. If not, the gateway may prefer to run the payment form in a
-    // secure iFrame, even if the client asked a seamless integration (seamlessIfSupported = true).
+    // Indicates that the client already runs on https. If not, gateway may prefer to run the payment form in a secure
+    // iFrame, even if the client asked for a seamless integration (seamlessIfSupported = true).
     private final boolean parentPageHttps;
 
     public InitiatePaymentArgument(int amount, Object documentPrimaryKey, boolean seamlessIfSupported, boolean parentPageHttps) {

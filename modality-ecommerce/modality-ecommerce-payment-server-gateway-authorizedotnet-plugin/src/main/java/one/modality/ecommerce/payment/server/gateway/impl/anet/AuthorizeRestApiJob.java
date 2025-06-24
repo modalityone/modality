@@ -11,7 +11,7 @@ import one.modality.ecommerce.payment.server.gateway.impl.util.RestApiOneTimeHtm
  */
 public final class AuthorizeRestApiJob implements ApplicationJob {
 
-    static final String AUTHORIZE_PAYMENT_FORM_ENDPOINT = "/payment/authorize/paymentForm/:htmlCacheKey";
+    static final String AUTHORIZE_PAYMENT_FORM_LOAD_ENDPOINT = "/payment/anet/loadPaymentForm/:htmlCacheKey";
 
     @Override
     public void onInit() {
@@ -23,7 +23,7 @@ public final class AuthorizeRestApiJob implements ApplicationJob {
         // some direct HTML content, but requires this HTML content to be loaded through a later server REST call.
         // Typically, when it is embedded in an iFrame, iFrame.src is set to that endpoint to load the HTML code and
         // start the web payment form.
-        router.route(AUTHORIZE_PAYMENT_FORM_ENDPOINT)
+        router.route(AUTHORIZE_PAYMENT_FORM_LOAD_ENDPOINT)
             .handler(ctx -> {
                 // Because it is a later call just after AuthorizePaymentGateway.initiatePayment(), we expect the
                 // content to be present in the HTML cache, as set by initiatePayment() just before.

@@ -32,7 +32,7 @@ public class DynamicMapView extends MapViewBase {
                 .replace("YOUR_API_KEY", googleMapJsApiKey);
         if (WebViewPane.isBrowser()) { // In the browser, Google Maps can integrate seamlessly without an iFrame
             // Note: this is not only lighter but also necessary for FireFox, because Google Maps JS API bugs when
-            // inside a FireFox iFrame (map images are not loaded & displayed).
+            // inside a FireFox iFrame (map images are not loaded and displayed).
             script = script.replace("document.body", "document.getElementById('googleMap')");
             // Note: displaying the map in this way will actually remove the default iFrame within <fx-webview>
             // Another benefit of the seamless integration is that the user can zoom with the mouse scroll only (while
@@ -41,7 +41,7 @@ public class DynamicMapView extends MapViewBase {
             // be handled also in JavaFX, otherwise this would scroll the window while zooming.
             webViewPane.setOnScroll(Event::consume);
         }
-        // Also we don't redirect the console, otherwise this would create an infinite loop (because the java WebFX
+        // Also, we don't redirect the console; otherwise this would create an infinite loop (because the java WebFX
         // Console already relies on the current window console).
         webViewPane.setRedirectConsole(!WebViewPane.isBrowser());
         webViewPane.loadFromScript(script, new LoadOptions()
@@ -49,12 +49,12 @@ public class DynamicMapView extends MapViewBase {
                 .setSeamlessContainerId("googleMap")
                 .setOnWebWindowReady(() -> {
                     googleMapLoaded = false;
-                    googleMarkers.clear(); // Important to clear googleMarkers on subsequent views, because we need to recreate them all
+                    googleMarkers.clear(); // Important to clear googleMarkers on later views, because we need to recreate them all
                     loadGluonWebViewAfterFlip = WebViewPane.isGluon();
                     webViewPane.setWindowMember("javaDynamicView", DynamicMapView.this); // indirectly register GWT callbacks
                 }).setOnLoadSuccess(() -> {
                     webViewPane.callWindow("injectJavaDynamicView", DynamicMapView.this);
-                }), false); // Gluon layout not stabilized at this stage => needs to call onGluonLayoutStabilized() later
+                }), false); // Gluon layout isn't stabilized at this stage => needs to call onGluonLayoutStabilized() later
         return webViewPane;
     }
 
@@ -76,7 +76,7 @@ public class DynamicMapView extends MapViewBase {
 
     // Java callbacks called from JavaScript => must be declared in webfx.xml (required for successful GWT & Gluon compilation)
 
-    public void onGoogleMapLoaded() { // Java callback called from JavaScript when Google map is loaded
+    public void onGoogleMapLoaded() { // Java callback called from JavaScript when Google Map is loaded
         Console.log("Google map loaded");
         googleMapLoaded = true;
         updateMapPosition();
