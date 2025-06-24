@@ -28,11 +28,13 @@ import javafx.scene.input.DataFormat;
 import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
 import javafx.scene.text.Text;
+import one.modality.base.shared.entities.Country;
 import one.modality.base.shared.entities.markers.HasPersonalDetails;
 import one.modality.ecommerce.payment.*;
 
 import java.time.LocalDate;
 import java.util.Arrays;
+import java.util.Objects;
 import java.util.function.Consumer;
 import java.util.stream.Collectors;
 
@@ -53,9 +55,9 @@ public class WebPaymentForm {
             hideOverlay();
     });
     private Scheduled initFailureChecker;
-    private boolean inited;
+    private boolean initialized;
     private Consumer<String> onLoadFailure; // Called when the webview failed to load
-    private Consumer<String> onInitFailure; // Called when the payment page failed to initialised (otherwise the card details should appear)
+    private Consumer<String> onInitFailure; // Called when the payment page failed to initialize (otherwise the card details should appear)
     private Consumer<String> onVerificationFailure; // Called when the gateway failed to create the payment (just after the buyer pressed Pay)
     private Consumer<String> onPaymentFailure; // Called when Modality couldn't complete the payment
     private Consumer<PaymentStatus> onPaymentCompletion;
@@ -65,7 +67,7 @@ public class WebPaymentForm {
     public WebPaymentForm(InitiatePaymentResult result, HasPersonalDetails buyerPersonalDetails) {
         this.result = result;
         this.buyerPersonalDetails = buyerPersonalDetails;
-        // If the user closes the window while he hasn't cancelled or completed the payment, we consider this as a
+        // If the user closes the window while he hasn't canceled or completed the payment, we consider this as a
         // user cancellation
         Shutdown.addShutdownHook(e -> {
             if (!paymentCancelled && !paymentCompleted) {
@@ -122,7 +124,7 @@ public class WebPaymentForm {
                     webViewPane.setWindowMember("modality_javaPaymentForm", WebPaymentForm.this);
                     webViewPane.callWindow("modality_injectJavaPaymentForm", WebPaymentForm.this);
                     initFailureChecker = Scheduler.scheduleDelay(5000, () -> {
-                        if (!inited) {
+                        if (!initialized) {
                             onGatewayInitFailure("The payment page didn't respond as expected");
                         }
                     });
@@ -282,16 +284,19 @@ public class WebPaymentForm {
     }
 
     public void pay() {
-        if (!inited || !isUserInteractionAllowed())
+        if (!initialized || !isUserInteractionAllowed())
             throw new IllegalStateException("pay() must be called after the payment form has been initialized and when the user is allowed to interact");
         if (webViewPane.isSeamless()) {
             // We don't show the verification overlay if not seamless, because the overlay will prevent the user to fill
-            // possible the verification form!
+            // the possible verification form!
             showVerificationProcessOverlay();
-        } else // Also we disable the user interaction (was done in seamless mode through showing overlay)
+        } else // Also, we disable the user interaction (was done in seamless mode through showing overlay)
             setUserInteractionAllowed(false);
         try {
             logDebug("Calling modality_submitGatewayPayment() in payment form");
+            Country country = buyerPersonalDetails.getCountry();
+            String countryCode = country == null ? null : country.getIsoAlpha2();
+            String countryName = country == null ? buyerPersonalDetails.getCountryName() : country.getName();
             webViewPane.callWindow("modality_submitGatewayPayment",
                 buyerPersonalDetails.getFirstName(),
                 buyerPersonalDetails.getLastName(),
@@ -300,7 +305,9 @@ public class WebPaymentForm {
                 buyerPersonalDetails.getStreet(),
                 buyerPersonalDetails.getCityName(),
                 buyerPersonalDetails.getAdmin1Name(),
-                buyerPersonalDetails.getCountry().getIsoAlpha2()
+                buyerPersonalDetails.getPostCode(),
+                countryCode,
+                countryName
             );
         } catch (Exception ex) {
             onGatewayBuyerVerificationFailure(ex.getMessage());
@@ -346,13 +353,13 @@ public class WebPaymentForm {
 
     public void onGatewayInitSuccess() {
         logDebug("onGatewayInitSuccess called");
-        inited = true;
+        initialized = true;
         allowUserInteraction();
     }
 
     public void onGatewayInitFailure(String error) {
         logDebug("onGatewayInitFailure called (error = " + error + ")");
-        inited = true;
+        initialized = true;
         //setUserInteractionAllowed(true);
         callConsumerOnUiThreadIfSet(onInitFailure, error);
     }
@@ -400,7 +407,7 @@ public class WebPaymentForm {
 
     private static String evaluateOrNull(String expression) {
         String value = ConfigLoader.getRootConfig().get(expression);
-        if (value == expression)
+        if (Objects.equals(value, expression))
             value = null;
         return value;
     }

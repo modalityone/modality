@@ -26,6 +26,7 @@
             <callback-method name="onGatewayPaymentVerificationSuccess">
                 <callback-argument class="java.lang.String"/>
             </callback-method>
+            <callback-method name="pay"/>
         </callback-class>
     </java-callbacks>
 
