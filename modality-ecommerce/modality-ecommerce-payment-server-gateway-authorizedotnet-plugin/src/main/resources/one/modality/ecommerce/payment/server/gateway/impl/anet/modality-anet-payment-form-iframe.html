@@ -20,6 +20,8 @@
 
 <script type="text/javascript">
 
+    let opaqueData;
+
     // called back by Authorize.net
     function responseHandler(response) {
         let messages = response.messages;
@@ -31,12 +33,10 @@
             }
             modality_notifyGatewayCardVerificationFailure(error);
         } else {
-            // Note: we don't submit the payment form like in Authorize.net example, we call back the Java WebPaymentForm
-            // instead that will finish processing the payment via a bus call.
-            modality_notifyGatewayPaymentVerificationSuccess(JSON.stringify({
-                dataDescriptor: response.opaqueData.dataDescriptor,
-                dataValue: response.opaqueData.dataValue
-            }));
+            // Note: we don't submit the payment form like in Authorize.net HTML example, we call back the Java Modality
+            // WebPaymentForm using the pay() method.
+            opaqueData = response.opaqueData; // capturing the opaque data
+            modality_pay(); // Will call modality_submitGatewayPayment() with buyer personal details to check
         }
     }
 
@@ -45,15 +45,16 @@
     // Parameter injected by WebPaymentForm java class on client-side (to allow JS -> Java callbacks)
     let modality_javaPaymentForm;
 
-    let modality_inited = true;
+    let modality_initialized = true;
     let modality_initError;
     let modality_initNotificationCalled;
 
+    // Called at the initialization of WebPaymentForm
     function modality_injectJavaPaymentForm(jpf) {
         console.log("modality_injectJavaPaymentForm() called");
         modality_javaPaymentForm = jpf;
         document.getElementById("displayFormButton").click();
-        if (modality_inited) {
+        if (modality_initialized) {
             if (modality_initError)
                 modality_notifyGatewayInitFailure(modality_initError);
             else
@@ -61,10 +62,39 @@
         }
     }
 
+    // Called by WebPaymentForm.pay() - through the modality_pay() call made in responseHandler()
+    function modality_submitGatewayPayment(firstName, lastName, email, phone, address, city, state, zipCode, countryCode, countryName) {
+        console.log("modality_submitGatewayPayment() called");
+        // As opposed to some other gateways like Square where the buyer verification is done on client-side, with
+        // Authorize.net it's done on server-side. So at this stage, we immediately reply that the verification is
+        // successful from the client-side point of view, and we capture the buyer's personal details for the
+        // verification on the server-side.
+        const paymentCompletionPayload = {
+            // Authorize.net fields:
+            anet_dataDescriptor: opaqueData.dataDescriptor,
+            anet_dataValue: opaqueData.dataValue,
+            // Modality fields:
+            modality_firstName: firstName,
+            modality_lastName: lastName,
+            modality_email: email,
+            modality_phone: phone,
+            modality_address: address,
+            modality_city: city,
+            modality_state: state,
+            modality_zipCode: zipCode,
+            modality_country: countryName
+        };
+        // Notifying the Java WebPaymentForm that the verification is successful => it will complete the payment on
+        // the server-side, passing it this payload. It will basically call PaymentService.completePayment() - after
+        // the UI informed the user this is happening - which will update the payment state in the database in
+        // dependence on the result of AuthorizePaymentGateway.completePayment() <= will treat the payload
+        modality_notifyGatewayPaymentVerificationSuccess(JSON.stringify(paymentCompletionPayload));
+    }
+
     // Methods called by this JS script to call back the Java WebPaymentForm class
 
     function modality_notifyGatewayInitSuccess() {
-        modality_inited = true;
+        modality_initialized = true;
         if (modality_javaPaymentForm) {
             modality_javaPaymentForm.onGatewayInitSuccess();
             modality_initNotificationCalled = true;
@@ -72,7 +102,7 @@
     }
 
     function modality_notifyGatewayInitFailure(error) {
-        modality_inited = true;
+        modality_initialized = true;
         modality_initError = error;
         if (modality_javaPaymentForm) {
             modality_javaPaymentForm.onGatewayInitFailure(error);
@@ -85,6 +115,7 @@
             modality_javaPaymentForm.onGatewayCardVerificationFailure(error);
     }
 
+    // actually never called with Authorize.net
     function modality_notifyGatewayBuyerVerificationFailure(error) {
         if (modality_javaPaymentForm)
             modality_javaPaymentForm.onGatewayBuyerVerificationFailure(error);
@@ -93,6 +124,11 @@
     function modality_notifyGatewayPaymentVerificationSuccess(paymentCompletionPayload) {
         if (modality_javaPaymentForm)
             modality_javaPaymentForm.onGatewayPaymentVerificationSuccess(paymentCompletionPayload);
+    }
+
+    function modality_pay() {
+        if (modality_javaPaymentForm)
+            modality_javaPaymentForm.pay();
     }
 
 </script>
