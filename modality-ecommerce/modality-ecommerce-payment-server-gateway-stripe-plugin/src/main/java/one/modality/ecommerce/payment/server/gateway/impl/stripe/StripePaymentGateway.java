@@ -7,24 +7,21 @@ import com.stripe.param.PaymentIntentCreateParams;
 import com.stripe.param.checkout.SessionCreateParams;
 import dev.webfx.platform.async.Future;
 import dev.webfx.platform.resource.Resource;
-import one.modality.ecommerce.payment.InitiatePaymentResult;
 import one.modality.ecommerce.payment.server.gateway.*;
-import one.modality.ecommerce.payment.server.gateway.GatewayInitiatePaymentArgument;
-import one.modality.ecommerce.payment.server.gateway.GatewayInitiatePaymentResult;
-import one.modality.ecommerce.payment.server.gateway.GatewayMakeApiPaymentArgument;
-import one.modality.ecommerce.payment.server.gateway.PaymentGateway;
 
 /**
  * @author Bruno Salmon
  */
 public class StripePaymentGateway implements PaymentGateway {
 
+    private static final String GATEWAY_NAME = "Stripe";
+
     private final static String API_SECRET_KEY = "sk_test_26PHem9AhJZvU623DfE1x4sd";
     private final static String API_PUBLIC_KEY = "pk_test_qblFNYngBkEdjEZ16jxxoWSM";
 
     @Override
     public String getName() {
-        return "Stripe";
+        return GATEWAY_NAME;
     }
 
     @Override
@@ -43,7 +40,7 @@ public class StripePaymentGateway implements PaymentGateway {
                     .replace("{{API_KEY}}", API_PUBLIC_KEY)
                     .replace("{{CLIENT_SECRET}}", clientSecret)
                     .replace("{{RETURN_URL}}", "http://127.0.0.1:8080/checkout/success/");
-            return Future.succeededFuture(GatewayInitiatePaymentResult.createEmbeddedContentInitiatePaymentResult(argument.isLive(), false, html, null));
+            return Future.succeededFuture(GatewayInitiatePaymentResult.createEmbeddedContentInitiatePaymentResult(argument.isLive(), false, html, false, null));
         } catch (Exception e) {
             return Future.failedFuture(e);
         }
@@ -54,7 +51,7 @@ public class StripePaymentGateway implements PaymentGateway {
         return Future.failedFuture("completePayment() not yet implemented for Stripe");
     }
 
-    public Future<InitiatePaymentResult> initiatePaymentRedirect(GatewayInitiatePaymentArgument argument) {
+    public Future<GatewayInitiatePaymentResult> initiatePaymentRedirect(GatewayInitiatePaymentArgument argument) {
         Stripe.apiKey = API_SECRET_KEY;
         // Extract the following to a 'StripeClient'
         // Assemble the purchase objects
@@ -89,7 +86,7 @@ public class StripePaymentGateway implements PaymentGateway {
 
         try {
             Session session = Session.create(params);
-            return Future.succeededFuture(InitiatePaymentResult.createRedirectInitiatePaymentResult(null, argument.isLive(), false, session.getUrl(), "Stripe", null));
+            return Future.succeededFuture(GatewayInitiatePaymentResult.createRedirectInitiatePaymentResult(argument.isLive(), false, session.getUrl(), null));
         } catch (Exception e) {
             return Future.failedFuture(e);
         }
