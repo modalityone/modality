@@ -233,7 +233,7 @@ final class VideoStreamingActivity extends ViewDomainActivityBase {
                         // video player and auto-scroll to it, but the auto-scroll target position may not be stable at
                         // this time (ex: the video table not finished building), causing a wrong final scroll position.
                         UiScheduler.scheduleDelay(2000, () -> { // 2s is a reasonable waiting time
-                            populateVideoPlayers(); // will load the video player
+                            populateVideoPlayers(false); // will load the video player
                             scheduleAutoLivestream(); // may auto-expand the video player if now is an appropriate time
                         });
                     }));
@@ -250,7 +250,7 @@ final class VideoStreamingActivity extends ViewDomainActivityBase {
             EntityId userPersonId = FXUserPersonId.getUserPersonId();
             watchMedias.clear();
             if (userPersonId == null || isUserWatchingLivestream()) {
-                populateVideoPlayers(); // livestream
+                populateVideoPlayers(true); // livestream
             } else { // The VOD requires additional Media loading
                 loadMediaAndWatch();
             }
@@ -308,7 +308,7 @@ final class VideoStreamingActivity extends ViewDomainActivityBase {
             .onFailure(Console::log)
             .onSuccess(mediaLists -> Platform.runLater(() -> {
                 Collections.setAll(watchMedias, mediaLists);
-                populateVideoPlayers(); // VOD
+                populateVideoPlayers(true); // VOD
                 videoCollapsePane.expand();
             }));
     }
@@ -591,7 +591,7 @@ final class VideoStreamingActivity extends ViewDomainActivityBase {
 
         // When the livestream collapse pane is collapsed, we pause the livestreamPlayer so the full-screen orange button
         // is not displayed
-        FXProperties.runNowAndOnPropertiesChange(() -> {
+        FXProperties.runNowAndOnPropertiesChange(() -> Platform.runLater(() -> { // Postponed to consider only the final state when both properties are changed
             Player playingPlayer = Players.getGlobalPlayerGroup().getPlayingPlayer();
             if (playingPlayer != null && SceneUtil.hasAncestor(playingPlayer.getMediaView(), videoCollapsePane)) {
                 lastVideoPlayingPlayer = playingPlayer;
@@ -607,7 +607,7 @@ final class VideoStreamingActivity extends ViewDomainActivityBase {
                     lastVideoPlayingPlayer.play();
                 }
             }
-        }, videoCollapsePane.collapsedProperty(), Players.getGlobalPlayerGroup().playingPlayerProperty());
+        }), videoCollapsePane.collapsedProperty(), Players.getGlobalPlayerGroup().playingPlayerProperty());
 
         // Auto-scroll to the video player when it is expanded or watching a new video
         FXProperties.runNowAndOnPropertiesChange(() -> {
@@ -632,12 +632,12 @@ final class VideoStreamingActivity extends ViewDomainActivityBase {
         SceneUtil.scrollNodeToBeVerticallyVisibleOnScene(videoCollapsePane, false, true);
     }
 
-    private void populateVideoPlayers() {
+    private void populateVideoPlayers(boolean willAutoplay) {
         // If some previous videos were consumed, we stop their consumption recorders
         videoConsumptionRecorders.forEach(MediaConsumptionRecorder::stop);
         videoConsumptionRecorders.clear();
         Node videoContent = null;
-        boolean autoPlay = videoCollapsePane.isExpanded();
+        boolean autoPlay = willAutoplay || videoCollapsePane.isExpanded();
         if (isUserWatchingLivestream()) { // Livestream
             Event event = eventProperty.get();
             String livestreamUrl = event == null ? null : event.getLivestreamUrl();
