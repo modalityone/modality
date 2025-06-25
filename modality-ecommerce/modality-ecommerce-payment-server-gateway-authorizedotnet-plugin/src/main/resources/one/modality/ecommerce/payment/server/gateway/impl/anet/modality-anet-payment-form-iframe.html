@@ -6,6 +6,7 @@
         type="button"
         class="AcceptUI"
         data-billingAddressOptions='{"show":false, "required":false}'
+        data-acceptUIFormHeaderTxt='${acceptUIFormHeaderTxt}'
         data-apiLoginID="${apiLoginID}"
         data-clientKey="${clientKey}"
         data-responseHandler="responseHandler">
@@ -48,7 +49,12 @@
         modality_javaPaymentForm = jpf;
         // Changes made on the HTML button are ignored if done after AcceptUI.js is loaded, so we do them before
         const displayFormButton = document.getElementById("displayFormButton");
-        displayFormButton.setAttribute("data-acceptUIFormHeaderTxt", htmlHeaderText);
+        // If the server had no value for ${acceptUIFormHeaderTxt}, we use the value passed by the client. The reason
+        // the server value is preferred is that it is more specific (it is read from the settings for that particular
+        // money account in the database - ex: Authorize.net - NKT-IKBU) whereas the client value is a generic message
+        // (ex: Please enter your payment information).
+        if (displayFormButton.getAttribute("data-acceptUIFormHeaderTxt") === "")
+            displayFormButton.setAttribute("data-acceptUIFormHeaderTxt", htmlHeaderText);
         displayFormButton.setAttribute("data-acceptUIFormBtnTxt", htmlPayButtonText);
         // And then we load AcceptUI.js
         const script = document.createElement("script");

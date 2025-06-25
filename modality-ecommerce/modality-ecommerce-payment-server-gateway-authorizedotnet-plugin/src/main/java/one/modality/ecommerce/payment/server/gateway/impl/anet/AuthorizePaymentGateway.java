@@ -51,11 +51,13 @@ public class AuthorizePaymentGateway implements PaymentGateway {
         boolean live = argument.isLive();
         String apiLoginID = argument.getAccountParameter("apiLoginID");
         String clientKey = argument.getAccountParameter("clientKey");
+        String acceptUIFormHeaderTxt = argument.getAccountParameter("acceptUIFormHeaderTxt", "");
         boolean seamless = false; //argument.isSeamlessIfSupported();
 
         String paymentFormContent = HTML_TEMPLATE
             .replace("${apiLoginID}", apiLoginID)
             .replace("${clientKey}", clientKey)
+            .replace("${acceptUIFormHeaderTxt}", acceptUIFormHeaderTxt)
             ;
 
         SandboxCard[] sandboxCards = live ? null : SANDBOX_CARDS;

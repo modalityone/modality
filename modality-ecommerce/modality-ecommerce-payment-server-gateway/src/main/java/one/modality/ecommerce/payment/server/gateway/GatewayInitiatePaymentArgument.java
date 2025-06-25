@@ -56,4 +56,9 @@ public final class GatewayInitiatePaymentArgument {
     public String getAccountParameter(String key) {
         return accountParameters.get(key);
     }
+
+    public String getAccountParameter(String key, String defaultValue) {
+        String value = getAccountParameter(key);
+        return value == null ? defaultValue : value;
+    }
 }
