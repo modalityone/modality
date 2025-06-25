@@ -52,18 +52,18 @@ final class Step3PaymentSlide extends StepSlide {
         mainVbox.setAlignment(Pos.CENTER_LEFT);
 
         WorkingBookingProperties workingBookingProperties = getWorkingBookingProperties();
-        bindI18nEventExpression(bookedEventTitleLabel, "i18n(this) + '[" + BookingI18nKeys.TotalBookingPrice0 + "]'", workingBookingProperties.formattedBalanceProperty());
+        bindI18nEventExpression(bookedEventTitleLabel, "i18n(this) + ' [" + BookingI18nKeys.TotalBookingPrice1 + "]'", workingBookingProperties.formattedBalanceProperty());
         bookedEventTitleLabel.setWrapText(true);
         VBox.setMargin(bookedEventTitleLabel, new Insets(20, 0, 0, 0));
 
-        I18n.bindI18nTextProperty(paymentInformationHtmlText.textProperty(), BookingI18nKeys.PaymentInformation0, webPaymentForm.getGatewayName());
+        I18n.bindI18nTextProperty(paymentInformationHtmlText.textProperty(), BookingI18nKeys.PaymentInformation1, webPaymentForm.getGatewayName());
         paymentInformationHtmlText.getStyleClass().add("subtitle-grey");
         VBox.setMargin(paymentInformationHtmlText, new Insets(10, 0, 20, 0));
 
         I18nControls.bindI18nProperties(gatewayLogo, webPaymentForm.getGatewayName());
         VBox.setMargin(gatewayLogo, new Insets(10, 0, 20, 0));
 
-        I18nControls.bindI18nProperties(payButton, BookingI18nKeys.Pay0, workingBookingProperties.formattedBalanceProperty());
+        I18nControls.bindI18nProperties(payButton, BookingI18nKeys.Pay1, workingBookingProperties.formattedBalanceProperty());
         I18nControls.bindI18nProperties(cancelButton, BaseI18nKeys.Cancel);
         Layouts.setManagedAndVisibleProperties(payButton, !webPaymentForm.hasHtmlPayButton());
         webPaymentForm.setHtmlPayButtonText(payButton.getText());
