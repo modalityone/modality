@@ -55,8 +55,8 @@ public interface BookingI18nKeys {
     String localCentreAddress = "localCentreAddress";
     String localCentrePhone = "localCentrePhone";
     String localCentreEmail = "localCentreEmail";
-    String Pay0 = "Pay0";
     String Square = "Square";
+//    String Authorize.net = "Authorize.net";
     String BalanceOnPreviousBooking = "BalanceOnPreviousBooking";
     String alreadyBooked = "alreadyBooked";
     String TotalOnPreviousBooking = "TotalOnPreviousBooking";
