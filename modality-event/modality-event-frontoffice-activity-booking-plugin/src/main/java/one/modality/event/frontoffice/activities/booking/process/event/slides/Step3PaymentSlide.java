@@ -1,6 +1,7 @@
 package one.modality.event.frontoffice.activities.booking.process.event.slides;
 
 import dev.webfx.extras.panes.FlexPane;
+import dev.webfx.extras.panes.ScalePane;
 import dev.webfx.extras.styles.bootstrap.Bootstrap;
 import dev.webfx.extras.util.layout.Layouts;
 import dev.webfx.extras.webtext.HtmlText;
@@ -17,10 +18,10 @@ import javafx.scene.layout.Region;
 import javafx.scene.layout.VBox;
 import one.modality.base.client.i18n.BaseI18nKeys;
 import one.modality.ecommerce.client.i18n.EcommerceI18nKeys;
+import one.modality.ecommerce.client.workingbooking.WorkingBookingProperties;
 import one.modality.ecommerce.payment.client.WebPaymentForm;
 import one.modality.event.frontoffice.activities.booking.BookingI18nKeys;
 import one.modality.event.frontoffice.activities.booking.process.event.BookEventActivity;
-import one.modality.ecommerce.client.workingbooking.WorkingBookingProperties;
 
 /**
  * @author Bruno Salmon
@@ -70,10 +71,13 @@ final class Step3PaymentSlide extends StepSlide {
         webPaymentForm.setHtmlHeaderText("Please enter your payment information");
         Region paymentRegion = webPaymentForm.buildPaymentForm();
 
+        ScalePane scaledGatewayLogo = new ScalePane(gatewayLogo);
+        scaledGatewayLogo.setStretchWidth(true);
+
         mainVbox.getChildren().setAll(
             bookedEventTitleLabel,
             paymentInformationHtmlText,
-            gatewayLogo,
+            scaledGatewayLogo,
             paymentRegion
         );
 
