@@ -42,6 +42,7 @@ import javafx.geometry.Pos;
 import javafx.scene.Node;
 import javafx.scene.control.Label;
 import javafx.scene.layout.HBox;
+import javafx.scene.layout.Priority;
 import javafx.scene.layout.Region;
 import javafx.scene.layout.VBox;
 import javafx.scene.text.Font;
@@ -210,6 +211,7 @@ final class EventAudioLibraryActivity extends ViewDomainActivityBase {
                     return width > 400 // to prevent initial alternation on mobiles before the image is loaded
                            && fontSizeFactor > 0.75;
                 }, /* apply method: */ () -> {
+                    HBox.setHgrow(titleVBox, Priority.ALWAYS); // Necessary on the web version, otherwise width is limited to eventLabel
                     responsiveHeader.setContent(new HBox(imageMonoPane, titleVBox));
                 }
                 , /* test dependencies: */ imageMonoPane.widthProperty())
