@@ -109,7 +109,7 @@ public class WorkingBooking {
         if (!addOnly) {
             // We remove all existing attendances not referencing the passed scheduledItems
             List<Attendance> attendancesToRemove = Collections.filter(existingAttendances, a ->
-                Collections.findFirst(scheduledItems, si -> a.getScheduledItem() == si) == null);
+                Collections.findFirst(scheduledItems, si -> Entities.sameId(a.getScheduledItem(), si)) == null);
             removeAttendances(attendancesToRemove);
         }
         lastestDocumentAggregate = null;

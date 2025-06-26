@@ -100,7 +100,7 @@ public final class BookEventActivity extends ViewDomainActivityBase implements B
         getUiRouter().routeAndMount(
             CheckoutAccountRouting.getPath(), // /booking/account
             () -> this, // the parent activity factory (actually this activity)
-            subRouter); // the sub-router that will mount the
+            subRouter); // the sub-router that will mount the checkout activity
     }
 
     @Override
@@ -116,7 +116,7 @@ public final class BookEventActivity extends ViewDomainActivityBase implements B
         // onResume() immediately after, so we need to check the user really left this activity.
         Platform.runLater(() -> { // we postpone the check to ensure the situation is now stable
             if (!isActive()) // final check to see if the user left
-                FXCollapseMenu.resetToDefault(); // showing menu in this case
+                FXCollapseMenu.resetToDefault(); // showing the menu in this case
         });
         super.onPause();
     }
@@ -131,10 +131,10 @@ public final class BookEventActivity extends ViewDomainActivityBase implements B
 
     @Override
     protected void startLogic() {
-        // Initial load of the event policy + possible existing booking of the user (if logged-in)
+        // Initial load of the event policy with the possible existing booking of the user (if logged-in)
         FXProperties.runNowAndOnPropertyChange(this::loadPolicyAndBooking, FXEvent.eventProperty());
 
-        // Subsequent loading when changing the person to book (load of possible booking + reapply new selected dates)
+        // Later loading when changing the person to book (loading of possible booking + reapplying the newly selected dates)
         FXProperties.runOnPropertyChange(() ->
             loadBookingWithSamePolicy(true), FXPersonToBook.personToBookProperty());
     }
@@ -151,7 +151,7 @@ public final class BookEventActivity extends ViewDomainActivityBase implements B
 
         // Note: It's better to use FXUserPersonId rather than FXUserPerson in case of a page reload in the browser
         // (or redirection to this page from a website) because the retrieval of FXUserPersonId is immediate in case
-        // the user was already logged-in (memorised in session), while FXUserPerson requires a DB reading, which
+        // the user was already logged-in (memorized in session), while FXUserPerson requires a DB reading, which
         // may not be finished yet at this time.
         Person personToBook = FXPersonToBook.getPersonToBook();
         Object userPersonPrimaryKey = Entities.getPrimaryKey(personToBook);
@@ -162,7 +162,7 @@ public final class BookEventActivity extends ViewDomainActivityBase implements B
             .onSuccess(policyAndDocumentAggregates -> UiScheduler.runInUiThread(() -> {
                 if (event == FXEvent.getEvent()) { // Double-checking that no other changes occurred in the meantime
                     PolicyAggregate policyAggregate = policyAndDocumentAggregates.getPolicyAggregate(); // never null
-                    DocumentAggregate existingBooking = policyAndDocumentAggregates.getDocumentAggregate(); // may be null
+                    DocumentAggregate existingBooking = policyAndDocumentAggregates.getDocumentAggregate(); // might be null
                     WorkingBooking workingBooking = new WorkingBooking(policyAggregate, existingBooking);
                     workingBookingProperties.setWorkingBooking(workingBooking);
                     lettersSlideController.onWorkingBookingLoaded();
