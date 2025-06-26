@@ -3,9 +3,9 @@ package one.modality.event.frontoffice.activities.booking.process;
 import dev.webfx.platform.uischeduler.UiScheduler;
 import dev.webfx.platform.util.Booleans;
 import dev.webfx.platform.windowhistory.WindowHistory;
+import one.modality.base.frontoffice.utility.browser.BrowserUtil;
 import one.modality.base.shared.entities.Event;
 import one.modality.event.client.event.fx.FXEvent;
-import one.modality.base.frontoffice.utility.browser.BrowserUtil;
 import one.modality.event.frontoffice.activities.booking.process.event.BookEventRouting;
 
 /**
@@ -27,7 +27,8 @@ public final class BookingStarter {
     private static void startKbs2EventBooking(Event event) {
         String bookingFormUrl = event.evaluate("bookingFormUrl");
         bookingFormUrl = bookingFormUrl.replace("{host}", "kadampabookings.org");
-        BrowserUtil.chooseHowToOpenWebsite(bookingFormUrl);
+        //BrowserUtil.chooseHowToOpenWebsite(bookingFormUrl); // Was ok for KMC courses, but not NKT Festivals
+        BrowserUtil.openExternalBrowser(bookingFormUrl);
     }
 
     private static void startKbs3EventBooking(Event event) {
