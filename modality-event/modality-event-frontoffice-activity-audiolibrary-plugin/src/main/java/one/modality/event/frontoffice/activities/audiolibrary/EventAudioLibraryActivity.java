@@ -46,7 +46,6 @@ import javafx.scene.layout.Region;
 import javafx.scene.layout.VBox;
 import javafx.scene.text.Font;
 import javafx.scene.text.Text;
-import javafx.scene.text.TextAlignment;
 import javafx.stage.Screen;
 import one.modality.base.client.cloudinary.ModalityCloudinary;
 import one.modality.base.client.icons.SvgIcons;
@@ -181,7 +180,6 @@ final class EventAudioLibraryActivity extends ViewDomainActivityBase {
         }, eventProperty, pathItemCodeProperty);
         eventLabel.setWrapText(true);
         eventLabel.setMinHeight(Region.USE_PREF_SIZE);
-        eventLabel.setTextAlignment(TextAlignment.CENTER);
 
         eventDescriptionHTMLText.managedProperty().bind(eventDescriptionHTMLText.textProperty().isNotEmpty());
 

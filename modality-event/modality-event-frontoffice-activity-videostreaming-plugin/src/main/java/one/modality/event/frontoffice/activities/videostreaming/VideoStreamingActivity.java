@@ -50,7 +50,6 @@ import javafx.scene.control.Hyperlink;
 import javafx.scene.control.Label;
 import javafx.scene.layout.*;
 import javafx.scene.text.Font;
-import javafx.scene.text.TextAlignment;
 import javafx.stage.Screen;
 import one.modality.base.client.cloudinary.ModalityCloudinary;
 import one.modality.base.client.i18n.BaseI18nKeys;
@@ -384,7 +383,6 @@ final class VideoStreamingActivity extends ViewDomainActivityBase {
         MonoPane eventImageContainer = new MonoPane();
         Label eventLabel = Bootstrap.strong(I18nControls.newLabel(new I18nSubKey("expression: i18n(this)", eventProperty), eventProperty));
         eventLabel.setWrapText(true);
-        eventLabel.setTextAlignment(TextAlignment.CENTER);
         eventLabel.setPadding(new Insets(0, 0, 12, 0));
 
         HtmlText eventDescriptionHTMLText = new HtmlText();
