@@ -57,6 +57,13 @@ public final class GatewayInitiatePaymentArgument {
         return accountParameters.get(key);
     }
 
+    public String getRequiredAccountParameter(String key) throws IllegalArgumentException {
+        String value = getAccountParameter(key);
+        if (value != null)
+            return value;
+        throw new IllegalArgumentException("Missing required account parameter: " + key);
+    }
+
     public String getAccountParameter(String key, String defaultValue) {
         String value = getAccountParameter(key);
         return value == null ? defaultValue : value;

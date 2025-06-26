@@ -48,26 +48,29 @@ public class AuthorizePaymentGateway implements PaymentGateway {
     @Override
     public Future<GatewayInitiatePaymentResult> initiatePayment(GatewayInitiatePaymentArgument argument) {
         // Integrating the Authorize.net Hosted Payment Form inside the Modality page
-        boolean live = argument.isLive();
-        String apiLoginID = argument.getAccountParameter("apiLoginID");
-        String clientKey = argument.getAccountParameter("clientKey");
-        String acceptUIFormHeaderTxt = argument.getAccountParameter("acceptUIFormHeaderTxt", "");
-        boolean seamless = false; //argument.isSeamlessIfSupported();
+        try {
+            boolean live = argument.isLive();
+            String apiLoginID = argument.getRequiredAccountParameter("apiLoginID");
+            String clientKey = argument.getRequiredAccountParameter("clientKey");
+            String acceptUIFormHeaderTxt = argument.getAccountParameter("acceptUIFormHeaderTxt", "");
+            boolean seamless = false; //argument.isSeamlessIfSupported();
 
-        String paymentFormContent = HTML_TEMPLATE
-            .replace("${apiLoginID}", apiLoginID)
-            .replace("${clientKey}", clientKey)
-            .replace("${acceptUIFormHeaderTxt}", acceptUIFormHeaderTxt)
-            ;
+            String paymentFormContent = HTML_TEMPLATE
+                .replace("${apiLoginID}", apiLoginID)
+                .replace("${clientKey}", clientKey)
+                .replace("${acceptUIFormHeaderTxt}", acceptUIFormHeaderTxt);
 
-        SandboxCard[] sandboxCards = live ? null : SANDBOX_CARDS;
-        if (seamless) {
-            return Future.succeededFuture(GatewayInitiatePaymentResult.createEmbeddedContentInitiatePaymentResult(live, true, paymentFormContent, true, sandboxCards));
-        } else { // In other cases, we embed the page in a WebView/iFrame that can be loaded through https (assuming this server is on https)
-            String htmlCacheKey = Uuid.randomUuid();
-            RestApiOneTimeHtmlResponsesCache.registerOneTimeHtmlResponse(htmlCacheKey, paymentFormContent);
-            String url = AUTHORIZE_PAYMENT_FORM_LOAD_ENDPOINT.replace(":htmlCacheKey", htmlCacheKey);
-            return Future.succeededFuture(GatewayInitiatePaymentResult.createEmbeddedUrlInitiatePaymentResult(live, false, url, true, sandboxCards));
+            SandboxCard[] sandboxCards = live ? null : SANDBOX_CARDS;
+            if (seamless) {
+                return Future.succeededFuture(GatewayInitiatePaymentResult.createEmbeddedContentInitiatePaymentResult(live, true, paymentFormContent, true, sandboxCards));
+            } else { // In other cases, we embed the page in a WebView/iFrame that can be loaded through https (assuming this server is on https)
+                String htmlCacheKey = Uuid.randomUuid();
+                RestApiOneTimeHtmlResponsesCache.registerOneTimeHtmlResponse(htmlCacheKey, paymentFormContent);
+                String url = AUTHORIZE_PAYMENT_FORM_LOAD_ENDPOINT.replace(":htmlCacheKey", htmlCacheKey);
+                return Future.succeededFuture(GatewayInitiatePaymentResult.createEmbeddedUrlInitiatePaymentResult(live, false, url, true, sandboxCards));
+            }
+        } catch (Exception e) {
+            return Future.failedFuture(GATEWAY_NAME + " initiatePayment() failed: " + e.getMessage());
         }
     }
 
