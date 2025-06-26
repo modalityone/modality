@@ -220,7 +220,7 @@ final class Step2CheckoutSlide extends StepSlide {
             addExistingTotalLine();
         }
 
-        boolean isRecurring = getEvent().isRecurring();
+        boolean isRecurring = Booleans.isTrue(getEvent().isRecurring());
         if (isRecurring || workingBooking.isNewBooking()) {
             // SECOND PART: WHAT WE BOOK AT THIS STEP - we add this only if it's a new booking or if it's a GP (recurringEvent).
             noDiscountTotalPrice += addAttendanceRows(documentAggregate.getNewAttendancesStream(), false);
