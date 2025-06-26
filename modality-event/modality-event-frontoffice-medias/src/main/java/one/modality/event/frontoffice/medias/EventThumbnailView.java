@@ -4,6 +4,7 @@ import dev.webfx.extras.panes.MonoPane;
 import dev.webfx.extras.panes.ScalePane;
 import dev.webfx.extras.styles.bootstrap.Bootstrap;
 import dev.webfx.extras.util.control.Controls;
+import dev.webfx.extras.util.layout.Layouts;
 import dev.webfx.extras.webtext.HtmlText;
 import dev.webfx.stack.i18n.I18n;
 import dev.webfx.stack.i18n.controls.I18nControls;
@@ -150,6 +151,7 @@ public final class EventThumbnailView {
             thumbnailScalePane,
             eventLabel,
             shortHTMLDescription,
+            Layouts.createVGrowable(), // Extra space so that all view buttons are aligned at the bottom in the same row
             viewButton
         );
     }

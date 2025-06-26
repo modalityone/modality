@@ -22,6 +22,7 @@ module modality.event.frontoffice.medias {
     requires webfx.stack.i18n;
     requires webfx.stack.i18n.controls;
     requires webfx.stack.orm.entity;
+    requires webfx.extras.util.layout;
 
     // Exported packages
     exports one.modality.event.frontoffice.medias;
