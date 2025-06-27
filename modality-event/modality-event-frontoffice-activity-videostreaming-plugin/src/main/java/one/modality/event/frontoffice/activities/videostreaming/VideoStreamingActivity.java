@@ -151,9 +151,9 @@ final class VideoStreamingActivity extends ViewDomainActivityBase {
                         // Ordering with the most relevant events, the first event will be the selected one by default.
                         " order by " +
                         // 1) Something happening today
-                        " (exists(select Attendance where documentLine=dl and date=now())) desc" +
+                        " (exists(select Attendance where documentLine=dl and date=CURRENT_DATE)) desc" +
                         // 2) today is within event
-                        ", document.event.(now() >= startDate and now() <= endDate) desc" +
+                        ", document.event.(CURRENT_DATE >= startDate and CURRENT_DATE <= endDate) desc" +
                         // 3) Not expired
                         ", document.event.(vodExpirationDate = null or now() <= vodExpirationDate)" +
                         // 4) Smallest event (ex: favor Spring Festival over STTP)
