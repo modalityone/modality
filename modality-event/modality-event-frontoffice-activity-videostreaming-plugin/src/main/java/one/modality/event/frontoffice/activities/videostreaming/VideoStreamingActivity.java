@@ -62,7 +62,7 @@ import one.modality.crm.shared.services.authn.ModalityUserPrincipal;
 import one.modality.crm.shared.services.authn.fx.FXModalityUserPrincipal;
 import one.modality.crm.shared.services.authn.fx.FXUserPersonId;
 import one.modality.event.client.i18n.EventI18nKeys;
-import one.modality.event.frontoffice.medias.EventThumbnailView;
+import one.modality.event.frontoffice.medias.EventThumbnail;
 import one.modality.event.frontoffice.medias.MediaConsumptionRecorder;
 
 import java.time.LocalDate;
@@ -183,7 +183,7 @@ final class VideoStreamingActivity extends ViewDomainActivityBase {
                             columnsPane.setMaxWidth(Double.MAX_VALUE);
                             columnsPane.getStyleClass().add("audio-library"); // is audio-library good? (must be to have the same CSS rules as audio)
                             for (Event event : eventsWithBookedVideos) {
-                                EventThumbnailView thumbnail = new EventThumbnailView(event, KnownItem.VIDEO.getCode(), EventThumbnailView.ItemType.ITEM_TYPE_VIDEO, true);
+                                EventThumbnail thumbnail = new EventThumbnail(event, KnownItem.VIDEO.getCode(), EventThumbnail.ItemType.ITEM_TYPE_VIDEO, true);
                                 Button actionButton = thumbnail.getViewButton();
                                 actionButton.setCursor(Cursor.HAND);
                                 actionButton.setOnAction(e -> {

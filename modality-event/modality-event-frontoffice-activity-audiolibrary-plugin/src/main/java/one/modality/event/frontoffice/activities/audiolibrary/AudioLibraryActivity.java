@@ -30,7 +30,7 @@ import one.modality.base.shared.entities.DocumentLine;
 import one.modality.base.shared.entities.Event;
 import one.modality.base.shared.entities.KnownItemFamily;
 import one.modality.crm.shared.services.authn.fx.FXModalityUserPrincipal;
-import one.modality.event.frontoffice.medias.EventThumbnailView;
+import one.modality.event.frontoffice.medias.EventThumbnail;
 
 /**
  * @author David Hello
@@ -105,7 +105,7 @@ final class AudioLibraryActivity extends ViewDomainActivityBase {
                 itemCode = dl.getItem().getFamily().getCode();
             }
             boolean published = Booleans.isTrue(dl.getBooleanFieldValue("published"));
-            EventThumbnailView eventTbView = new EventThumbnailView(event, itemCode, EventThumbnailView.ItemType.ITEM_TYPE_AUDIO, published);
+            EventThumbnail eventTbView = new EventThumbnail(event, itemCode, EventThumbnail.ItemType.ITEM_TYPE_AUDIO, published);
             VBox container = eventTbView.getView();
             Button actionButton = eventTbView.getViewButton();
             actionButton.setCursor(Cursor.HAND);

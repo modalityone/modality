@@ -24,7 +24,7 @@ import java.time.LocalDateTime;
 /**
  * @author David Hello
  */
-public final class EventThumbnailView {
+public final class EventThumbnail {
 
     public static final double CONTAINER_WIDTH = 533;
     private static final double CONTAINER_HEIGHT = 533;
@@ -59,7 +59,7 @@ public final class EventThumbnailView {
     private AvailabilityType availabilityType;
     private final boolean isPublished;
 
-    public EventThumbnailView(Event event, String itemCode, ItemType itemType, boolean isPublished) {
+    public EventThumbnail(Event event, String itemCode, ItemType itemType, boolean isPublished) {
         this.event = event;
         this.imageItemCode = itemCode;
         this.itemType = itemType;
