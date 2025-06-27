@@ -7,14 +7,13 @@ public interface AudioLibraryI18nKeys {
     String Playing = "Playing";
     String AudioLibraryMenu = "AudioLibraryMenu";
     String AudioLibraryHelp = "AudioLibraryHelp";
-    String AvailableUntil1 = "AvailableUntil1";
-    String ContentExpired = "ContentExpired";
-    String AudioCancelled = "AudioCancelled";
+    String SessionCancelled = "SessionCancelled";
     String ListOfTracks = "ListOfTracks";
     String CheckoutAudioRecordings = "CheckoutAudioRecordings";
-    String SessionCancelled = "SessionCancelled";
+    String ContentExpired = "ContentExpired";
     String AudioLibraryNotYetPublished = "AudioLibraryNotYetPublished";
     String NoAudioRecordingForThisEvent = "NoAudioRecordingForThisEvent";
+    String AudioCancelled = "AudioCancelled";
     String Download = "Download";
     String NoAudioRecordingInYourLibrary = "NoAudioRecordingInYourLibrary";
     String YourPurchasedRecordingsWillAppearHere = "YourPurchasedRecordingsWillAppearHere";

@@ -1,4 +1,4 @@
-package one.modality.event.frontoffice.activities.videostreaming;
+package one.modality.event.frontoffice.medias;
 
 import dev.webfx.extras.switches.Switch;
 import dev.webfx.extras.util.layout.Layouts;
@@ -17,7 +17,7 @@ import java.time.*;
 /**
  * @author Bruno Salmon
  */
-final class TimeZoneSwitch {
+public final class TimeZoneSwitch {
 
     private static final ZoneId EVENT_ZONE_ID = Event.getEventZoneId();
     private static final ZoneId USER_ZONE_ID = ZoneId.systemDefault();
@@ -35,7 +35,7 @@ final class TimeZoneSwitch {
 
     private static final BooleanProperty eventLocalTimeSelectedProperty = new SimpleBooleanProperty(EVENT_AND_USER_TIME_ZONES_HAVE_SAME_TIME);
 
-    static Node createTimezoneSwitchBox() {
+    public static Node createTimezoneSwitchBox() {
         if (EVENT_AND_USER_TIME_ZONES_HAVE_SAME_TIME) {
             Node unmanagedInvisibleNode = new Region();
             Layouts.setManagedAndVisibleProperties(unmanagedInvisibleNode, false);
@@ -43,33 +43,33 @@ final class TimeZoneSwitch {
         }
         Switch timezoneSwitch = new Switch();
         timezoneSwitch.selectedProperty().bindBidirectional(eventLocalTimeSelectedProperty);
-        HBox hBox = new HBox(10, I18n.newText(VideoStreamingI18nKeys.TimeZoneUK), timezoneSwitch);
+        HBox hBox = new HBox(10, I18n.newText(MediasI18nKeys.TimeZoneUK), timezoneSwitch);
         hBox.setAlignment(Pos.CENTER);
         return hBox;
     }
 
-    static ObservableBooleanValue eventLocalTimeSelectedProperty() {
+    public static ObservableBooleanValue eventLocalTimeSelectedProperty() {
         return eventLocalTimeSelectedProperty;
     }
 
-    static ObservableBooleanValue userLocalTimeSelectedProperty() {
+    public static ObservableBooleanValue userLocalTimeSelectedProperty() {
         return eventLocalTimeSelectedProperty.not();
     }
 
-    static LocalTime convertEventLocalTimeToUserLocalTime(LocalTime eventLocalTime) {
+    public static LocalTime convertEventLocalTimeToUserLocalTime(LocalTime eventLocalTime) {
         LocalDate today = LocalDate.now(); // arbitrary date
         ZonedDateTime eventZonedDateTime = ZonedDateTime.of(today, eventLocalTime, EVENT_ZONE_ID);
         ZonedDateTime userZoneDateTime = eventZonedDateTime.withZoneSameInstant(USER_ZONE_ID);
         return userZoneDateTime.toLocalTime();
     }
 
-    static LocalDateTime convertEventLocalDateTimeToUserLocalDateTime(LocalDateTime eventLocalDateTime) {
+    public static LocalDateTime convertEventLocalDateTimeToUserLocalDateTime(LocalDateTime eventLocalDateTime) {
         ZonedDateTime eventZonedDateTime = eventLocalDateTime.atZone(EVENT_ZONE_ID);
         ZonedDateTime userZonedDateTime = eventZonedDateTime.withZoneSameInstant(USER_ZONE_ID);
         return userZonedDateTime.toLocalDateTime();
     }
 
-    static LocalDate convertEventLocalDateToUserLocalDate(LocalDate eventLocalDate) {
+    public static LocalDate convertEventLocalDateToUserLocalDate(LocalDate eventLocalDate) {
         return convertEventLocalDateTimeToUserLocalDateTime(eventLocalDate.atStartOfDay()).toLocalDate();
     }
 }

@@ -7,8 +7,6 @@ module modality.event.frontoffice.activity.audiolibrary.plugin {
     requires javafx.controls;
     requires javafx.graphics;
     requires modality.base.client.bootstrap;
-    requires modality.base.client.cloudinary;
-    requires modality.base.client.icons;
     requires modality.base.client.time;
     requires modality.base.client.util;
     requires modality.base.frontoffice.utility;
@@ -22,14 +20,12 @@ module modality.event.frontoffice.activity.audiolibrary.plugin {
     requires webfx.extras.panes;
     requires webfx.extras.player;
     requires webfx.extras.player.audio.javafxmedia;
-    requires webfx.extras.responsive;
     requires webfx.extras.styles.bootstrap;
     requires webfx.extras.time.format;
     requires webfx.extras.util.control;
     requires webfx.extras.util.layout;
     requires webfx.extras.visual;
     requires webfx.extras.visual.grid;
-    requires webfx.extras.webtext;
     requires webfx.kit.util;
     requires webfx.platform.blob;
     requires webfx.platform.console;

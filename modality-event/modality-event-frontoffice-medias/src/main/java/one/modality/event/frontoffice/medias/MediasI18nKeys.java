@@ -3,12 +3,13 @@ package one.modality.event.frontoffice.medias;
 
 public interface MediasI18nKeys {
 
+    String AvailableUntil1 = "AvailableUntil1";
     String Unpublished = "Unpublished";
-    String Expired = "Expired";
-    String vailable = "vailable";
-    String View = "View";
     String Available = "Available";
-//    String modality-event-frontoffice-medias_en = "modality-event-frontoffice-medias_en";
+    String Expired = "Expired";
+    String TimeZoneUK = "TimeZoneUK";
+    String ExpiredSince1 = "ExpiredSince1";
+    String View = "View";
     String Unavailable = "Unavailable";
 
 }

@@ -1,15 +1,16 @@
-package one.modality.event.frontoffice.activities.videostreaming;
+package one.modality.event.frontoffice.medias;
 
 import dev.webfx.extras.panes.MonoPane;
 import dev.webfx.extras.responsive.ResponsiveDesign;
 import dev.webfx.extras.styles.bootstrap.Bootstrap;
 import dev.webfx.extras.time.format.LocalizedTime;
+import dev.webfx.extras.util.control.Controls;
 import dev.webfx.extras.util.layout.Layouts;
 import dev.webfx.extras.webtext.HtmlText;
 import dev.webfx.kit.util.properties.FXProperties;
+import dev.webfx.platform.util.Objects;
 import dev.webfx.stack.i18n.I18n;
 import dev.webfx.stack.i18n.controls.I18nControls;
-import dev.webfx.stack.i18n.spi.impl.I18nSubKey;
 import javafx.beans.property.ObjectProperty;
 import javafx.beans.property.SimpleObjectProperty;
 import javafx.geometry.Insets;
@@ -29,56 +30,74 @@ import java.time.LocalDateTime;
 /**
  * @author Bruno Salmon
  */
-final class EventHeader {
+public final class EventHeader {
 
     private static final double STRAIGHT_MOBILE_LAYOUT_UNDER_WIDTH = 400; // mainly to reduce responsive computation on low-end devices
     private static final double IMAGE_HEIGHT = 240;
 
     private final ObjectProperty<Event> eventProperty = new SimpleObjectProperty<>(); // The event loaded from the event id
+    private final ObjectProperty<Object> languageProperty = new SimpleObjectProperty<>();
+
     private final MonoPane responsiveHeader = new MonoPane();
     private final Label expirationLabel = Bootstrap.strong(new Label()); // TODO: put bold in CSS
 
-    public EventHeader() {
+    public EventHeader(boolean video) {
         MonoPane eventImageContainer = new MonoPane();
-        Label eventLabel = Bootstrap.strong(I18nControls.newLabel(new I18nSubKey("expression: i18n(this)", eventProperty), eventProperty));
-        eventLabel.setWrapText(true);
-        eventLabel.setPadding(new Insets(0, 0, 12, 0));
+
+        Label eventLabel = Bootstrap.strong(new Label());
+        Controls.setupTextWrapping(eventLabel, true, false);
 
         HtmlText eventDescriptionHTMLText = new HtmlText();
-        I18n.bindI18nTextProperty(eventDescriptionHTMLText.textProperty(), new I18nSubKey("expression: coalesce(i18n(shortDescriptionLabel), shortDescription)", eventProperty), eventProperty);
         eventDescriptionHTMLText.managedProperty().bind(eventDescriptionHTMLText.textProperty().isNotEmpty());
         eventDescriptionHTMLText.setMaxHeight(60);
 
-        expirationLabel.setWrapText(true);
-        expirationLabel.setPadding(new Insets(30, 0, 0, 0));
-        VBox titleVBox = new VBox(eventLabel, eventDescriptionHTMLText, expirationLabel);
+        Controls.setupTextWrapping(expirationLabel, true, false);
+        Layouts.bindManagedToVisibleProperty(expirationLabel);
+
+        VBox titleVBox = new VBox(
+            eventLabel,
+            eventDescriptionHTMLText,
+            expirationLabel);
+        VBox.setMargin(eventDescriptionHTMLText, new Insets(12, 0, 0, 0));
+        VBox.setMargin(expirationLabel, new Insets(30, 0, 0, 0));
+
         Layouts.setMinMaxHeightToPref(titleVBox); // No need to compute min/max height as different to pref (layout computation optimization)
         HBox.setHgrow(titleVBox, Priority.ALWAYS); // Necessary for the web version TODO: should work without, so needs investigation and bug fix
 
-        FXProperties.runOnPropertyChange(event -> {
+        FXProperties.runOnPropertiesChange(() -> {
+            Event event = eventProperty.get();
+            if (event == null)
+                return;
+            Object language = languageProperty.get();
+            if (language == null)
+                language = I18n.getLanguage();
+
+            eventLabel.setText(MediaUtil.translate(event, language));
+            eventDescriptionHTMLText.setText(Objects.coalesce(MediaUtil.translate(event.getShortDescriptionLabel(), language), event.getShortDescription()));
+
             // Loading the event image in the header
-            String eventCloudImagePath = ModalityCloudinary.eventCoverImagePath(event, I18n.getLanguage());
-            ModalityCloudinary.loadImage(eventCloudImagePath, eventImageContainer, -1, IMAGE_HEIGHT, SvgIcons::createVideoIconPath)
+            String eventCloudImagePath = ModalityCloudinary.eventCoverImagePath(event, language);
+            ModalityCloudinary.loadImage(eventCloudImagePath, eventImageContainer, -1, IMAGE_HEIGHT, video ? SvgIcons::createVideoIconPath : SvgIcons::createAudioCoverPath)
                 .onFailure(error -> {
-                    //If we can't find the picture of the cover for the selected language, we display the default image
-                    ModalityCloudinary.loadImage(ModalityCloudinary.eventCoverImagePath(event, null), eventImageContainer, -1, IMAGE_HEIGHT, SvgIcons::createVideoIconPath);
+                    // If we can't find the picture of the cover for the selected language, we display the default image
+                    ModalityCloudinary.loadImage(ModalityCloudinary.eventCoverImagePath(event, null), eventImageContainer, -1, IMAGE_HEIGHT, video ? SvgIcons::createVideoIconPath : SvgIcons::createAudioCoverPath);
                 });
             // Updating the expiration date in the header
-            LocalDateTime vodExpirationDate = event.getVodExpirationDate();
-            if (vodExpirationDate == null) {
+            LocalDateTime expirationDate = video ? event.getVodExpirationDate() : event.getAudioExpirationDate();
+            if (expirationDate == null) {
                 expirationLabel.setVisible(false);
             } else {
                 expirationLabel.setVisible(true);
                 LocalDateTime nowInEventTimezone = Event.nowInEventTimezone();
-                boolean available = nowInEventTimezone.isBefore(vodExpirationDate);
+                boolean available = nowInEventTimezone.isBefore(expirationDate);
                 FXProperties.runNowAndOnPropertyChange(eventTimeSelected -> {
-                    LocalDateTime userTimezoneVodExpirationDate = eventTimeSelected ? vodExpirationDate : TimeZoneSwitch.convertEventLocalDateTimeToUserLocalDateTime(vodExpirationDate);
+                    LocalDateTime userTimezoneExpirationDate = eventTimeSelected ? expirationDate : TimeZoneSwitch.convertEventLocalDateTimeToUserLocalDateTime(expirationDate);
                     I18nControls.bindI18nProperties(expirationLabel,
-                        available ? VideoStreamingI18nKeys.EventAvailableUntil1 : VideoStreamingI18nKeys.VideoExpiredSince1,
-                        LocalizedTime.formatLocalDateTimeProperty(userTimezoneVodExpirationDate, FrontOfficeTimeFormats.VOD_EXPIRATION_DATE_TIME_FORMAT));
+                        available ? MediasI18nKeys.AvailableUntil1 : MediasI18nKeys.ExpiredSince1,
+                        LocalizedTime.formatLocalDateTimeProperty(userTimezoneExpirationDate, FrontOfficeTimeFormats.MEDIA_EXPIRATION_DATE_TIME_FORMAT));
                 }, TimeZoneSwitch.eventLocalTimeSelectedProperty());
             }
-        }, eventProperty);
+        }, eventProperty, languageProperty);
 
         new ResponsiveDesign(responsiveHeader)
             // 1. Horizontal layout (for desktops) - as far as TitleVBox is not higher than the image
@@ -110,7 +129,7 @@ final class EventHeader {
             }).start();
     }
 
-    MonoPane getView() {
+    public MonoPane getView() {
         return responsiveHeader;
     }
 
@@ -121,4 +140,9 @@ final class EventHeader {
     public ObjectProperty<Event> eventProperty() {
         return eventProperty;
     }
+
+    public ObjectProperty<Object> languageProperty() {
+        return languageProperty;
+    }
+
 }

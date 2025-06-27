@@ -22,6 +22,7 @@ import javafx.scene.layout.Pane;
 import javafx.scene.layout.VBox;
 import one.modality.base.client.icons.SvgIcons;
 import one.modality.base.client.time.FrontOfficeTimeFormats;
+import one.modality.event.frontoffice.medias.TimeZoneSwitch;
 
 import java.time.LocalDate;
 import java.util.List;

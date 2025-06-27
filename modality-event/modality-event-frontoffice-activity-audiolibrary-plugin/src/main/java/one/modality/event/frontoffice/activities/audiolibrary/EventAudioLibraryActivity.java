@@ -45,6 +45,7 @@ import one.modality.base.shared.entities.*;
 import one.modality.crm.frontoffice.help.HelpPanel;
 import one.modality.crm.shared.services.authn.ModalityUserPrincipal;
 import one.modality.crm.shared.services.authn.fx.FXModalityUserPrincipal;
+import one.modality.event.frontoffice.medias.EventHeader;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -152,9 +153,9 @@ final class EventAudioLibraryActivity extends ViewDomainActivityBase {
         // *************************************************************************************************************
         // ********************************* Building the static part of the UI ****************************************
         // *************************************************************************************************************
-        EventHeader eventHeader = new EventHeader();
+        EventHeader eventHeader = new EventHeader(false);
         eventHeader.eventProperty().bind(eventProperty);
-        eventHeader.pathItemCodeProperty().bind(pathItemCodeProperty);
+        eventHeader.languageProperty().bind(pathItemCodeProperty.map(EventAudioLibraryActivity::extractLang));
 
         MonoPane audioTracksContainer = new MonoPane();
 
@@ -241,6 +242,15 @@ final class EventAudioLibraryActivity extends ViewDomainActivityBase {
 
     VisualGrid getAudioGrid() {
         return audioGrid;
+    }
+
+    private static String extractLang(String itemCode) {
+        //the itemCode is in the form audio-fr
+        if (itemCode == null || !itemCode.contains("-")) {
+            return null;
+        }
+        int dashIndex = itemCode.indexOf("-");
+        return itemCode.substring(dashIndex + 1);
     }
 
 }

@@ -30,6 +30,8 @@ import one.modality.base.client.time.FrontOfficeTimeFormats;
 import one.modality.base.shared.entities.Event;
 import one.modality.base.shared.entities.ScheduledItem;
 import one.modality.event.frontoffice.medias.MediaUtil;
+import one.modality.event.frontoffice.medias.MediasI18nKeys;
+import one.modality.event.frontoffice.medias.TimeZoneSwitch;
 
 import java.time.Duration;
 import java.time.LocalDate;
@@ -175,7 +177,7 @@ final class VideoFormattersAndRenderers {
                 if (videoSpecificExpirationDate != null) {
                     FXProperties.runNowAndOnPropertyChange(eventTimeSelected -> {
                         LocalDateTime userTimezoneExpirationDate = eventTimeSelected ? videoSpecificExpirationDate : TimeZoneSwitch.convertEventLocalDateTimeToUserLocalDateTime(videoSpecificExpirationDate);
-                        I18nControls.bindI18nProperties(se.availableUntilLabel, VideoStreamingI18nKeys.VideoAvailableUntil1, LocalizedTime.formatLocalDateTimeProperty(userTimezoneExpirationDate, "dd MMM '-' HH.mm"));
+                        I18nControls.bindI18nProperties(se.availableUntilLabel, MediasI18nKeys.AvailableUntil1, LocalizedTime.formatLocalDateTimeProperty(userTimezoneExpirationDate, "dd MMM '-' HH.mm"));
                     }, TimeZoneSwitch.eventLocalTimeSelectedProperty());
                     showLabeled(se.availableUntilLabel);
                     // We schedule a refresh so the UI is updated when the expirationDate is reached

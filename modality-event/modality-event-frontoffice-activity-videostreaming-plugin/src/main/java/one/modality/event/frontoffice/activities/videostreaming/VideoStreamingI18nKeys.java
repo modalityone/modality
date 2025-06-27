@@ -6,10 +6,8 @@ public interface VideoStreamingI18nKeys {
     String WatchAgain = "WatchAgain";
     String LiveAnnouncementsTitle = "LiveAnnouncementsTitle";
     String RecordingSoonAvailable = "RecordingSoonAvailable";
-    String EventAvailableUntil1 = "EventAvailableUntil1";
     String FestivalShop = "FestivalShop";
     String ScheduleForSpecificDate1 = "ScheduleForSpecificDate1";
-    String TimeZoneUK = "TimeZoneUK";
     String EventSchedule = "EventSchedule";
     String Unavailable = "Unavailable";
     String LivestreamTitle = "LivestreamTitle";
@@ -22,7 +20,6 @@ public interface VideoStreamingI18nKeys {
     String VideoNotYetPublished = "VideoNotYetPublished";
     String ViewAllDays = "ViewAllDays";
     String NoVideoInYourLibrary = "NoVideoInYourLibrary";
-    String VideoExpiredSince1 = "VideoExpiredSince1";
     String VideoCancelled = "VideoCancelled";
     String OnTime = "OnTime";
     String VideoDelayed = "VideoDelayed";
@@ -36,11 +33,8 @@ public interface VideoStreamingI18nKeys {
     String YourNextLiveStreamEventWillAppearHere = "YourNextLiveStreamEventWillAppearHere";
     String VideosHeader = "VideosHeader";
     String VideoStreamingMenu = "VideoStreamingMenu";
-    String VideoAvailableUntil1 = "VideoAvailableUntil1";
     String VideoExpiredOn1 = "VideoExpiredOn1";
     String PastRecordings = "PastRecordings";
-    String VideoAvailableUntil = "VideoAvailableUntil";
-    String VideoExpiredSince = "VideoExpiredSince";
     String StartingIn = "StartingIn";
 
 }

@@ -58,6 +58,7 @@ import one.modality.crm.shared.services.authn.ModalityUserPrincipal;
 import one.modality.crm.shared.services.authn.fx.FXModalityUserPrincipal;
 import one.modality.crm.shared.services.authn.fx.FXUserPersonId;
 import one.modality.event.client.i18n.EventI18nKeys;
+import one.modality.event.frontoffice.medias.EventHeader;
 import one.modality.event.frontoffice.medias.EventThumbnail;
 import one.modality.event.frontoffice.medias.MediaConsumptionRecorder;
 
@@ -373,7 +374,7 @@ final class VideoStreamingActivity extends ViewDomainActivityBase {
         Layouts.bindManagedToVisibleProperty(eventsSelectionVBox);
 
         // Building the loaded content, starting with the header
-        EventHeader eventHeader = new EventHeader();
+        EventHeader eventHeader = new EventHeader(true);
         eventHeader.eventProperty().bind(eventProperty);
 
         daySwitcher = new DaySwitcher(videoScheduledItems.stream()
