@@ -8,7 +8,6 @@ import dev.webfx.extras.player.StartOptionsBuilder;
 import dev.webfx.extras.player.multi.all.AllPlayers;
 import dev.webfx.extras.responsive.ResponsiveDesign;
 import dev.webfx.extras.styles.bootstrap.Bootstrap;
-import dev.webfx.extras.time.format.LocalizedTime;
 import dev.webfx.extras.util.control.Controls;
 import dev.webfx.extras.util.layout.Layouts;
 import dev.webfx.extras.util.scene.SceneUtil;
@@ -24,7 +23,6 @@ import dev.webfx.platform.util.Objects;
 import dev.webfx.platform.util.collection.Collections;
 import dev.webfx.stack.i18n.I18n;
 import dev.webfx.stack.i18n.controls.I18nControls;
-import dev.webfx.stack.i18n.spi.impl.I18nSubKey;
 import dev.webfx.stack.orm.domainmodel.activity.viewdomain.impl.ViewDomainActivityBase;
 import dev.webfx.stack.orm.entity.EntityId;
 import dev.webfx.stack.orm.entity.EntityStore;
@@ -48,13 +46,11 @@ import javafx.scene.control.Button;
 import javafx.scene.control.ContentDisplay;
 import javafx.scene.control.Hyperlink;
 import javafx.scene.control.Label;
-import javafx.scene.layout.*;
-import javafx.scene.text.Font;
+import javafx.scene.layout.Region;
+import javafx.scene.layout.StackPane;
+import javafx.scene.layout.VBox;
 import javafx.stage.Screen;
-import one.modality.base.client.cloudinary.ModalityCloudinary;
 import one.modality.base.client.i18n.BaseI18nKeys;
-import one.modality.base.client.icons.SvgIcons;
-import one.modality.base.client.time.FrontOfficeTimeFormats;
 import one.modality.base.frontoffice.utility.page.FOPageUtil;
 import one.modality.base.shared.entities.*;
 import one.modality.crm.frontoffice.help.HelpPanel;
@@ -66,7 +62,6 @@ import one.modality.event.frontoffice.medias.EventThumbnail;
 import one.modality.event.frontoffice.medias.MediaConsumptionRecorder;
 
 import java.time.LocalDate;
-import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -81,7 +76,6 @@ final class VideoStreamingActivity extends ViewDomainActivityBase {
 
     private static final double STRAIGHT_MOBILE_LAYOUT_UNDER_WIDTH = 400; // mainly to reduce responsive computation on low-end devices
     private static final int MIN_NUMBER_OF_SESSION_PER_DAY_BEFORE_DISPLAYING_DAILY_PROGRAM = 3;
-    private static final double IMAGE_HEIGHT = 240;
     private static final double COLUMN_MIN_WIDTH = 200;
     private static final double COLUMN_MAX_WIDTH = 530; // Max width = unscaled thumbnail (533 px)
 
@@ -102,7 +96,6 @@ final class VideoStreamingActivity extends ViewDomainActivityBase {
     private Player lastVideoPlayingPlayer; // the last playing player from this activity
 
     private final CollapsePane eventsSelectionPane = new CollapsePane();
-    private final Label videoExpirationLabel = Bootstrap.strong(new Label()); // TODO: put bold in CSS
     private final Label selectTheDayBelowLabel = I18nControls.newLabel(VideoStreamingI18nKeys.SelectTheDayBelow);
     private EntityStore entityStore;
     private final VisualGrid videoGrid =
@@ -231,7 +224,7 @@ final class VideoStreamingActivity extends ViewDomainActivityBase {
                         // 2) If there is a livestream now (or close), scheduleAutoLivestream() will auto-expand the
                         // video player and auto-scroll to it, but the auto-scroll target position may not be stable at
                         // this time (ex: the video table not finished building), causing a wrong final scroll position.
-                        UiScheduler.scheduleDelay(2000, () -> { // 2s is a reasonable waiting time
+                        UiScheduler.scheduleDelay(2000, () -> { // 2 seconds is a reasonable waiting time
                             populateVideoPlayers(false); // will load the video player
                             scheduleAutoLivestream(); // may auto-expand the video player if now is an appropriate time
                         });
@@ -333,10 +326,10 @@ final class VideoStreamingActivity extends ViewDomainActivityBase {
         } else { // But if it's the same video, the next step depends on its current state.
             // Let's start with the particular case where the user just received the push notification that the video
             // has been published (the livestream video became a VOD). While this push updated its published field,
-            // the associated medias are still unloaded, so we need now to load them and start the first media.
+            // the associated media are still unloaded, so we need now to load them and start the first media.
             if (watchingVideoItem.isPublished() && watchMedias.isEmpty()) { // detection of the case explained above
                 loadMediaAndWatch();
-            } else if (videoCollapsePane.isExpanded()) // otherwise if the player is already expanded and with the
+            } else if (videoCollapsePane.isExpanded()) // otherwise, if the player is already expanded and with the
                 // correct video already inside, the only remaining thing to do is to scroll to that video player
                 scrollToVideoPlayer();
             else // if it is collapsed, we expand it first, and the auto-scroll will happen just after that - see buildUi()
@@ -380,51 +373,8 @@ final class VideoStreamingActivity extends ViewDomainActivityBase {
         Layouts.bindManagedToVisibleProperty(eventsSelectionVBox);
 
         // Building the loaded content, starting with the header
-        MonoPane eventImageContainer = new MonoPane();
-        Label eventLabel = Bootstrap.strong(I18nControls.newLabel(new I18nSubKey("expression: i18n(this)", eventProperty), eventProperty));
-        eventLabel.setWrapText(true);
-        eventLabel.setPadding(new Insets(0, 0, 12, 0));
-
-        HtmlText eventDescriptionHTMLText = new HtmlText();
-        I18n.bindI18nTextProperty(eventDescriptionHTMLText.textProperty(), new I18nSubKey("expression: coalesce(i18n(shortDescriptionLabel),shortDescription)", eventProperty), eventProperty);
-        eventDescriptionHTMLText.managedProperty().bind(eventDescriptionHTMLText.textProperty().isNotEmpty());
-        eventDescriptionHTMLText.setMaxHeight(60);
-
-        videoExpirationLabel.setWrapText(true);
-        videoExpirationLabel.setPadding(new Insets(30, 0, 0, 0));
-        VBox titleVBox = new VBox(eventLabel, eventDescriptionHTMLText, videoExpirationLabel);
-        Layouts.setMinMaxHeightToPref(titleVBox); // No need to compute min/max height as different to pref (layout computation optimization)
-        HBox.setHgrow(titleVBox, Priority.ALWAYS); // Necessary for the web version TODO: should work without, so needs investigation and bug fix
-
-        MonoPane responsiveHeader = new MonoPane();
-        new ResponsiveDesign(responsiveHeader)
-            // 1. Horizontal layout (for desktops) - as far as TitleVBox is not higher than the image
-            .addResponsiveLayout(/* applicability test: */ width -> {
-                    // Note that we take the opportunity of this responsive test (called each time the width changes) to
-                    // set the font of eventLabel and eventDescriptionHTMLText in dependence on that width
-                    double spacing = width * 0.05;
-                    HBox.setMargin(titleVBox, new Insets(0, 0, 0, spacing));
-                    double titleVBoxWidth = width - eventImageContainer.getWidth() - spacing;
-                    // Here we resize the font according to the size of the window
-                    double fontSizeFactor = Double.max(0.75, Double.min(1, titleVBoxWidth * 0.0042));
-                    // In JavaFX, the CSS has priority on Font, that's why we do a setStyle after. In web, the Font has priority on CSS
-                    eventLabel.setFont(Font.font(fontSizeFactor * 30));
-                    eventLabel.setStyle("-fx-font-size: " + fontSizeFactor * 30);
-                    eventDescriptionHTMLText.setFont(Font.font(fontSizeFactor * 18));
-                    // Now we actually evaluate the responsive test based on the font size factor
-                    return width > STRAIGHT_MOBILE_LAYOUT_UNDER_WIDTH && fontSizeFactor > 0.75; // if superior to 0.75 threshold => this desktop layout
-                }, /* apply method: */ () -> { // for the desktop layout
-                    responsiveHeader.setContent(new HBox(eventImageContainer, titleVBox));
-                }
-                , /* test dependencies: */ eventImageContainer.widthProperty())
-            // 2. Vertical layout (for mobiles) - when TitleVBox is too high (always applicable if 1. is not)
-            .addResponsiveLayout(/* apply method: */ () -> {
-                VBox vBox = new VBox(10, eventImageContainer, titleVBox);
-                Layouts.setMinMaxHeightToPref(vBox); // No need to compute min/max height as different to pref (layout computation optimization)
-                vBox.setAlignment(Pos.CENTER);
-                VBox.setMargin(titleVBox, new Insets(5, 10, 5, 10)); // Same as cell padding => vertically aligned with cell content
-                responsiveHeader.setContent(vBox);
-            }).start();
+        EventHeader eventHeader = new EventHeader();
+        eventHeader.eventProperty().bind(eventProperty);
 
         daySwitcher = new DaySwitcher(videoScheduledItems.stream()
             .map(ScheduledItem::getDate)
@@ -473,7 +423,7 @@ final class VideoStreamingActivity extends ViewDomainActivityBase {
 
         VBox loadedContentVBox = new VBox(40,
             eventsSelectionVBox,
-            responsiveHeader, // contains the event image and the event title
+            eventHeader.getView(), // contains the event image and the event title
             decoratedLivestreamCollapsePane,
             responsiveDaySelectionMonoPane,
             videoGrid, // contains the videos for the selected day (or all days)
@@ -510,28 +460,6 @@ final class VideoStreamingActivity extends ViewDomainActivityBase {
             // Otherwise, we display the videos and the program (loadedContentVBox with updated content)
             Event event = eventProperty.get();
             pageContainer.setContent(loadedContentVBox);
-            // Loading the event image in the header
-            String eventCloudImagePath = ModalityCloudinary.eventCoverImagePath(event, I18n.getLanguage());
-            ModalityCloudinary.loadImage(eventCloudImagePath, eventImageContainer, -1, IMAGE_HEIGHT, SvgIcons::createVideoIconPath)
-                .onFailure(error -> {
-                    //If we can't find the picture of the cover for the selected language, we display the default image
-                    ModalityCloudinary.loadImage(ModalityCloudinary.eventCoverImagePath(event, null), eventImageContainer, -1, IMAGE_HEIGHT, SvgIcons::createVideoIconPath);
-                });
-            // Updating the expiration date in the header
-            LocalDateTime vodExpirationDate = event.getVodExpirationDate();
-            if (vodExpirationDate == null) {
-                videoExpirationLabel.setVisible(false);
-            } else {
-                videoExpirationLabel.setVisible(true);
-                LocalDateTime nowInEventTimezone = Event.nowInEventTimezone();
-                boolean available = nowInEventTimezone.isBefore(vodExpirationDate);
-                FXProperties.runNowAndOnPropertyChange(eventTimeSelected -> {
-                    LocalDateTime userTimezoneVodExpirationDate = eventTimeSelected ? vodExpirationDate : TimeZoneSwitch.convertEventLocalDateTimeToUserLocalDateTime(vodExpirationDate);
-                    I18nControls.bindI18nProperties(videoExpirationLabel,
-                        available ? VideoStreamingI18nKeys.EventAvailableUntil1 : VideoStreamingI18nKeys.VideoExpiredSince1,
-                        LocalizedTime.formatLocalDateTimeProperty(userTimezoneVodExpirationDate, FrontOfficeTimeFormats.VOD_EXPIRATION_DATE_TIME_FORMAT));
-                }, TimeZoneSwitch.eventLocalTimeSelectedProperty());
-            }
 
             // There are 2 modes of visualization: one with multiple videos per day (ex: Festivals), and one for with one video per day (ex: recurring events like STTP)
             Event eventContainingVideos = Objects.coalesce(event.getRepeatedEvent(), event);
