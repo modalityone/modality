@@ -8,7 +8,7 @@ import javafx.beans.property.SimpleBooleanProperty;
  */
 public final class FXShowFooter {
 
-    private static final BooleanProperty showFooterProperty = new SimpleBooleanProperty();
+    private static final BooleanProperty showFooterProperty = new SimpleBooleanProperty(true);
 
     public static boolean isShowFooter() {
         return showFooterProperty.get();
