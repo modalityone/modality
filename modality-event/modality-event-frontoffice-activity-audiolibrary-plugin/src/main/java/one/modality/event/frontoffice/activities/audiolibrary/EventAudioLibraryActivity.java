@@ -6,20 +6,15 @@ import dev.webfx.extras.panes.ScaleMode;
 import dev.webfx.extras.panes.ScalePane;
 import dev.webfx.extras.player.Player;
 import dev.webfx.extras.player.audio.javafxmedia.JavaFXMediaAudioPlayer;
-import dev.webfx.extras.responsive.ResponsiveDesign;
 import dev.webfx.extras.styles.bootstrap.Bootstrap;
-import dev.webfx.extras.time.format.LocalizedTime;
 import dev.webfx.extras.util.control.Controls;
-import dev.webfx.extras.util.layout.Layouts;
 import dev.webfx.extras.visual.SelectionMode;
 import dev.webfx.extras.visual.VisualResult;
 import dev.webfx.extras.visual.controls.grid.VisualGrid;
-import dev.webfx.extras.webtext.HtmlText;
 import dev.webfx.kit.util.properties.FXProperties;
 import dev.webfx.kit.util.properties.ObservableLists;
 import dev.webfx.platform.console.Console;
 import dev.webfx.platform.util.Numbers;
-import dev.webfx.platform.util.Objects;
 import dev.webfx.platform.util.collection.Collections;
 import dev.webfx.stack.i18n.I18n;
 import dev.webfx.stack.i18n.controls.I18nControls;
@@ -41,22 +36,15 @@ import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Node;
 import javafx.scene.control.Label;
-import javafx.scene.layout.HBox;
-import javafx.scene.layout.Priority;
 import javafx.scene.layout.Region;
 import javafx.scene.layout.VBox;
-import javafx.scene.text.Font;
 import javafx.scene.text.Text;
 import javafx.stage.Screen;
-import one.modality.base.client.cloudinary.ModalityCloudinary;
-import one.modality.base.client.icons.SvgIcons;
-import one.modality.base.client.time.FrontOfficeTimeFormats;
 import one.modality.base.frontoffice.utility.page.FOPageUtil;
 import one.modality.base.shared.entities.*;
 import one.modality.crm.frontoffice.help.HelpPanel;
 import one.modality.crm.shared.services.authn.ModalityUserPrincipal;
 import one.modality.crm.shared.services.authn.fx.FXModalityUserPrincipal;
-import one.modality.event.frontoffice.medias.MediaUtil;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -68,8 +56,6 @@ import java.util.List;
  */
 final class EventAudioLibraryActivity extends ViewDomainActivityBase {
 
-    private static final double IMAGE_HEIGHT = 200;
-
     private final ObjectProperty<Object> pathEventIdProperty = new SimpleObjectProperty<>();
     private final StringProperty pathItemCodeProperty = new SimpleStringProperty();
 
@@ -77,8 +63,6 @@ final class EventAudioLibraryActivity extends ViewDomainActivityBase {
     private final ObservableList<ScheduledItem> scheduledAudioItems = FXCollections.observableArrayList();
     private final List<Media> publishedMedias = new ArrayList<>(); // No need to be observable (reacting to scheduledAudioItems is enough)
 
-    private Label audioExpirationText;
-    private final StringProperty dateFormattedProperty = new SimpleStringProperty();
     private EntityColumn<ScheduledItem>[] audioColumns;
 
     private final Player audioPlayer = new JavaFXMediaAudioPlayer();
@@ -86,7 +70,7 @@ final class EventAudioLibraryActivity extends ViewDomainActivityBase {
         // Using mono-column skin on mobiles with screen < 600 px to prevent unnecessary table computing (can cause performance issue on low-end mobiles)
         Screen.getPrimary().getVisualBounds().getWidth() < 600 ?
             VisualGrid.createVisualGridWithMonoColumnLayoutSkin() :
-            // Otherwise we use the responsive skin, which will decide between table and mono-column skin
+            // Otherwise, we use the responsive skin, which will decide between table and mono-column skin
             VisualGrid.createVisualGridWithResponsiveSkin();
 
     @Override
@@ -168,60 +152,9 @@ final class EventAudioLibraryActivity extends ViewDomainActivityBase {
         // *************************************************************************************************************
         // ********************************* Building the static part of the UI ****************************************
         // *************************************************************************************************************
-        MonoPane imageMonoPane = new MonoPane();
-        Label eventLabel = Bootstrap.strong(new Label());
-        HtmlText eventDescriptionHTMLText = new HtmlText();
-
-        FXProperties.runOnPropertiesChange(() -> {
-            Event event = eventProperty.get();
-            String itemCode = pathItemCodeProperty.get();
-            String languageAbr = itemCode.contains("-") ? itemCode.split("-")[1] : null;
-            eventLabel.setText(MediaUtil.translate(event, languageAbr));
-            eventDescriptionHTMLText.setText(Objects.coalesce(MediaUtil.translate(event.getShortDescriptionLabel(), languageAbr), event.getShortDescription()));
-        }, eventProperty, pathItemCodeProperty);
-        eventLabel.setWrapText(true);
-        eventLabel.setMinHeight(Region.USE_PREF_SIZE);
-
-        eventDescriptionHTMLText.managedProperty().bind(eventDescriptionHTMLText.textProperty().isNotEmpty());
-
-        audioExpirationText = Bootstrap.textSuccess(I18nControls.newLabel(AudioLibraryI18nKeys.AvailableUntil1, dateFormattedProperty));
-        audioExpirationText.managedProperty().bind(dateFormattedProperty.isNotEmpty());
-        Layouts.bindManagedToVisibleProperty(audioExpirationText);
-
-        VBox titleVBox = new VBox(
-            eventLabel,
-            eventDescriptionHTMLText,
-            audioExpirationText);
-        VBox.setMargin(eventDescriptionHTMLText, new Insets(12, 0, 0, 0));
-        VBox.setMargin(audioExpirationText, new Insets(30, 0, 0, 0));
-
-        MonoPane responsiveHeader = new MonoPane();
-        new ResponsiveDesign(responsiveHeader)
-            // 1. Horizontal layout (for desktops) - as far as TitleVBox is not higher than the image
-            .addResponsiveLayout(/* applicability test: */ width -> {
-                    double spacing = width * 0.05;
-                    HBox.setMargin(titleVBox, new Insets(0, 0, 0, spacing));
-                    double titleVBoxWidth = width - imageMonoPane.getWidth() - spacing;
-                    //Here we resize the font according to the size of the window
-                    double fontSizeFactor = Double.max(0.75, Double.min(1, titleVBoxWidth * 0.0042));
-                    //In JavaFX, the CSS has priority on Font, that's why we do a setStyle after. In web, the Font has priority on CSS
-                    eventLabel.setFont(Font.font(fontSizeFactor * 30));
-                    eventLabel.setStyle("-fx-font-size: " + fontSizeFactor * 30);
-                    eventDescriptionHTMLText.setFont(Font.font(fontSizeFactor * 18));
-                    return width > 400 // to prevent initial alternation on mobiles before the image is loaded
-                           && fontSizeFactor > 0.75;
-                }, /* apply method: */ () -> {
-                    HBox.setHgrow(titleVBox, Priority.ALWAYS); // Necessary on the web version, otherwise width is limited to eventLabel
-                    responsiveHeader.setContent(new HBox(imageMonoPane, titleVBox));
-                }
-                , /* test dependencies: */ imageMonoPane.widthProperty())
-            // 2. Vertical layout (for mobiles) - when TitleVBox is too high (always applicable if 1. is not)
-            .addResponsiveLayout(/* apply method: */ () -> {
-                VBox vBox = new VBox(10, imageMonoPane, titleVBox);
-                vBox.setAlignment(Pos.CENTER);
-                VBox.setMargin(titleVBox, new Insets(15, 10, 5, 0)); // Same as cell margin => vertically aligned with cell content
-                responsiveHeader.setContent(vBox);
-            }).start();
+        EventHeader eventHeader = new EventHeader();
+        eventHeader.eventProperty().bind(eventProperty);
+        eventHeader.pathItemCodeProperty().bind(pathItemCodeProperty);
 
         MonoPane audioTracksContainer = new MonoPane();
 
@@ -230,7 +163,7 @@ final class EventAudioLibraryActivity extends ViewDomainActivityBase {
         listOfTrackLabel.getStyleClass().add("list-tracks-title");
 
         VBox loadedContentVBox = new VBox(40,
-            responsiveHeader,
+            eventHeader.getView(),
             new ScalePane(ScaleMode.FIT_WIDTH, audioPlayer.getMediaView()),
             new ScalePane(listOfTrackLabel),
             audioTracksContainer,
@@ -262,18 +195,8 @@ final class EventAudioLibraryActivity extends ViewDomainActivityBase {
                 // TODO display something else (ex: next online events to book) when the user is not logged in, or registered
             } else { // otherwise we display loadedContentVBox and set the content of audioTracksContainer
                 pageContainer.setContent(loadedContentVBox);
-                String lang = extractLang(pathItemCodeProperty.get());
-                String cloudImagePath = ModalityCloudinary.eventCoverImagePath(event, lang);
-                ModalityCloudinary.loadImage(cloudImagePath, imageMonoPane, -1, IMAGE_HEIGHT, SvgIcons::createAudioCoverPath);
-                LocalDateTime audioExpirationDate = event.getAudioExpirationDate();
-                if (audioExpirationDate != null) {
-                    dateFormattedProperty.bind(LocalizedTime.formatLocalDateProperty(audioExpirationDate, FrontOfficeTimeFormats.AUDIO_PLAYLIST_DATE_FORMAT));
-                    audioExpirationText.setVisible(true);
-                } else {
-                    FXProperties.setEvenIfBound(dateFormattedProperty, null);
-                    audioExpirationText.setVisible(false);
-                }
 
+                LocalDateTime audioExpirationDate = event.getAudioExpirationDate();
                 LocalDateTime nowInEventTimezone = Event.nowInEventTimezone();
                 String noContentI18nKey = null;
                 if (audioExpirationDate == null || audioExpirationDate.isAfter(nowInEventTimezone)) {
@@ -318,15 +241,6 @@ final class EventAudioLibraryActivity extends ViewDomainActivityBase {
 
     VisualGrid getAudioGrid() {
         return audioGrid;
-    }
-
-    private String extractLang(String itemCode) {
-        //the itemCode is in the form audio-fr
-        if (itemCode == null || !itemCode.contains("-")) {
-            return null;
-        }
-        int dashIndex = itemCode.indexOf("-");
-        return itemCode.substring(dashIndex + 1);
     }
 
 }
