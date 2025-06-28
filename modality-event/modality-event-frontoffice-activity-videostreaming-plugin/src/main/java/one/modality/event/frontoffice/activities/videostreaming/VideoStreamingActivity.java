@@ -429,7 +429,9 @@ final class VideoStreamingActivity extends ViewDomainActivityBase {
             responsiveDaySelectionMonoPane,
             videoGrid, // contains the videos for the selected day (or all days)
             festivalShopText,
-            HelpPanel.createHelpPanel(VideoStreamingI18nKeys.VideosHelp, VideoStreamingI18nKeys.VideosHelpSecondary) // temporarily hardcoded i18n message for Festivals
+            HelpPanel.createEmailHelpPanel(VideoStreamingI18nKeys.VideosHelp, "kbs@kadampa.net")
+            // For Festivals:
+            //HelpPanel.createHelpPanel(VideoStreamingI18nKeys.VideosHelp, VideoStreamingI18nKeys.VideosHelpSecondary) // temporarily hardcoded i18n message for Festivals
         );
         Layouts.setMinMaxHeightToPref(loadedContentVBox); // No need to compute min/max height as different to pref (layout computation optimization)
         loadedContentVBox.setAlignment(Pos.TOP_CENTER);
