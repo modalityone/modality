@@ -3,7 +3,7 @@ package one.modality.ecommerce.backoffice.activities.bookings;
 
 public interface BookingsI18nKeys {
 
-    String Registration = "Registration";
-    String Security = "Security";
+    Object Registration = "Registration";
+    Object Security = "Security";
 
 }

@@ -318,7 +318,7 @@ final class Step2CheckoutSlide extends StepSlide {
         GridPane.setHalignment(node2, HPos.RIGHT); // price column
     }
 
-    private void addTotalLine(String col1I18n, Object col1Amount, String col2I18n, Object col2Amount, String col3I18n, Object col3Amount) {
+    private void addTotalLine(Object col1I18n, Object col1Amount, Object col2I18n, Object col2Amount, Object col3I18n, Object col3Amount) {
         Label col1Label = I18nControls.newLabel(I18nKeys.embedInString("[0] {0}", I18nKeys.appendColons(col1I18n)), col1Amount);
         Label col2Label = I18nControls.newLabel(I18nKeys.embedInString("[0] {0}", I18nKeys.appendColons(col2I18n)), col2Amount);
         Label col3Label = I18nControls.newLabel(I18nKeys.embedInString("[0] {0}", I18nKeys.appendColons(col3I18n)), col3Amount);

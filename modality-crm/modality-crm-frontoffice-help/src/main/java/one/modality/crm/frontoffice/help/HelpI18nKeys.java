@@ -3,6 +3,6 @@ package one.modality.crm.frontoffice.help;
 
 public interface HelpI18nKeys {
 
-    String EmailUs1 = "EmailUs1";
+    Object EmailUs1 = "EmailUs1";
 
 }

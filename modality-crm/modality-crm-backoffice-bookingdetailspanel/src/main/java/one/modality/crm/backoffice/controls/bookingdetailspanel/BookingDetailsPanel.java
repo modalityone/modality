@@ -149,14 +149,14 @@ public final class BookingDetailsPanel implements
         return button;
     }
 
-    private static Tab createTab(String i18nKey, Node node) {
+    private static Tab createTab(Object i18nKey, Node node) {
         Tab tab = I18nControls.bindI18nProperties(new Tab(), i18nKey);
         tab.setContent(node);
         tab.setClosable(false);
         return tab;
     }
 
-    private Tab createFilterTab(String i18nKey, String dqlStatementString) {
+    private Tab createFilterTab(Object i18nKey, String dqlStatementString) {
         VisualGrid table = new VisualGrid();
         Tab tab = createTab(i18nKey, table);
         // The following is required only for gwt version for any reason (otherwise the table height is not resized when growing)
@@ -181,10 +181,11 @@ public final class BookingDetailsPanel implements
         tab.getProperties().put("visualMapper", visualMapper); // used by getTabVisualMapper()
 
         Supplier<ActionGroup> contextMenuActionGroupFactory = null;
-        switch (i18nKey) {
-            case "Options":
+        // TODO: move this to switch(Object) in Java 21
+        switch (i18nKey.toString()) {
+            case "Options": // TODO: Move this to BookingDetailsI18nKeys.Options in Java 21
                 contextMenuActionGroupFactory = () -> newActionGroup(
-                    newSelectedDocumentOperationAction(AddNewDocumentLineRequest::new), // Executor not implemented yet
+                    newSelectedDocumentOperationAction(AddNewDocumentLineRequest::new), // Executor isn't implemented yet
                     newSeparatorActionGroup(
                         newTabSelectedDocumentLineOperationAction(EditDocumentLineRequest::new, tab), // PropertySheet not using DocumentService
                         newTabSelectedDocumentLineOperationAction(ToggleCancelDocumentLineRequest::new, tab),
@@ -340,7 +341,7 @@ public final class BookingDetailsPanel implements
 
     private OperationAction<?, Object> newSelectedDocumentOperationAction(Function<Document, ?> operationRequestFactory) {
         return newOperationAction(
-            // Creating a new operation request associated to the selected document each time the user clicks on this action
+            // Creating a new operation request associated with the selected document each time the user clicks on this action
             () -> operationRequestFactory.apply(getSelectedDocument()),
             // Refreshing the graphical properties of this action (through i18n) each time the user selects another document,
             selectedDocumentProperty,
@@ -350,16 +351,16 @@ public final class BookingDetailsPanel implements
         );
     }
 
-    // Same but with a selected entity in a tab (note: this method can't be called directly without a cast, that's why other methods follows)
+    // Same but with a selected entity in a tab (note: this method can't be called directly without a cast, that's why other methods follow)
     private <E extends Entity> OperationAction<?, Object> newTabSelectedEntityOperationAction(Function<E, ?> operationRequestFactory, Tab tab) {
         ObjectProperty<E> tabSelectedEntityProperty = getTabSelectedEntityProperty(tab);
         return newOperationAction(
-            // Creating a new operation request associated to the selected entity in the tab each time the user clicks on this action
+            // Creating a new operation request associated with the selected entity in the tab each time the user clicks on this action
             () -> operationRequestFactory.apply(tabSelectedEntityProperty.get()),
             // Refreshing the graphical properties of this action (through i18n) each time the user selects another entity in this tab,
             tabSelectedEntityProperty,
             // or when the server refreshes the data, in particular on push notification after that action has been
-            // executed (ex: "Cancel" => cancelled=true in database => server push => "Uncancel").
+            // executed (ex: "Cancel" => cancelled=true in the database => server push => "Uncancel").
             getTabVisualMapper(tab).visualResultProperty()
         );
     }

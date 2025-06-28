@@ -3,8 +3,8 @@ package one.modality.base.client.operationactionsloading;
 
 public interface ModalityOperationI18nKeys {
 
-    String ExecutedSuccessfullyActionIcon = "ExecutedSuccessfullyActionIcon";
-    String ExecutedCancelledByUserActionIcon = "ExecutedCancelledByUserActionIcon";
-    String ExecutedErrorActionIcon = "ExecutedErrorActionIcon";
+    Object ExecutedSuccessfullyActionIcon = "ExecutedSuccessfullyActionIcon";
+    Object ExecutedCancelledByUserActionIcon = "ExecutedCancelledByUserActionIcon";
+    Object ExecutedErrorActionIcon = "ExecutedErrorActionIcon";
 
 }

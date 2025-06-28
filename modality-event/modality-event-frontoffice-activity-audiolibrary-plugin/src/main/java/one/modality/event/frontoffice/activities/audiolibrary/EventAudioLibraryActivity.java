@@ -199,7 +199,7 @@ final class EventAudioLibraryActivity extends ViewDomainActivityBase {
 
                 LocalDateTime audioExpirationDate = event.getAudioExpirationDate();
                 LocalDateTime nowInEventTimezone = Event.nowInEventTimezone();
-                String noContentI18nKey = null;
+                Object noContentI18nKey = null;
                 if (audioExpirationDate == null || audioExpirationDate.isAfter(nowInEventTimezone)) {
                     // Does this event have audio recordings, and did the person book and pay for them?
                     if (!scheduledAudioItems.isEmpty()) { // yes => we show them as a list of playable tracks

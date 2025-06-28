@@ -31,7 +31,7 @@ import java.util.function.Consumer;
 
 public class GeneralUtility {
 
-    public static <T extends Text> T bindI18N(T text, String key) {
+    public static <T extends Text> T bindI18N(T text, Object key) {
         return I18n.bindI18nProperties(text, key);
     }
 
@@ -172,7 +172,7 @@ public class GeneralUtility {
         return b;
     }*/
 
-    public static Button createButton(String i18nKey) {
+    public static Button createButton(Object i18nKey) {
         Button b = new Button();
         b.setTextFill(Color.WHITE);
         if (i18nKey != null)
@@ -180,22 +180,22 @@ public class GeneralUtility {
         return b;
     }
 
-    public static Hyperlink createHyperlink(String i18nKey, Color color, double fontSize) {
+    public static Hyperlink createHyperlink(Object i18nKey, Color color, double fontSize) {
         return setupLabeled(new Hyperlink(), i18nKey, color, false, fontSize);
     }
 
-    public static <T extends Labeled> T setupLabeled(T labeled, String i8nKey, Color color, boolean bold, double fontSize) {
+    public static <T extends Labeled> T setupLabeled(T labeled, Object i8nKey, Color color, boolean bold, double fontSize) {
         return setupLabeled(labeled, i8nKey, color, bold ? FontWeight.BOLD : FontWeight.NORMAL, fontSize);
     }
 
-    public static <T extends Labeled> T setupLabeled(T labeled, String i18nKey, Color color, FontWeight fontWeight, double fontSize) {
+    public static <T extends Labeled> T setupLabeled(T labeled, Object i18nKey, Color color, FontWeight fontWeight, double fontSize) {
         FXProperties.runNowAndOnDoublePropertyChange(fontRatio ->
             setLabeledFont(labeled, Fonts.MONTSERRAT_TEXT_FAMILY, fontWeight, fontSize * fontRatio), FXApp.fontRatio
         );
         return setupLabeled(labeled, i18nKey, color);
     }
 
-    public static <T extends Labeled> T setupLabeled(T labeled, String i18nKey, Color color) {
+    public static <T extends Labeled> T setupLabeled(T labeled, Object i18nKey, Color color) {
         labeled.setTextFill(color);
         labeled.setWrapText(true);
         labeled.setLineSpacing(6);
@@ -208,7 +208,7 @@ public class GeneralUtility {
         return createLabel(null, color);
     }
 
-    public static Label createLabel(String i18nKey, Color color) {
+    public static Label createLabel(Object i18nKey, Color color) {
         return setupLabeled(new Label(), i18nKey, color);
     }
 
@@ -216,7 +216,7 @@ public class GeneralUtility {
         return createHyperlink(null, color);
     }
 
-    public static Hyperlink createHyperlink(String i18nKey, Color color) {
+    public static Hyperlink createHyperlink(Object i18nKey, Color color) {
         return setupLabeled(new Hyperlink(), i18nKey, color);
     }
 

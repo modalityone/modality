@@ -44,14 +44,14 @@ public final class EventThumbnail {
         EXPIRED(MediasI18nKeys.Expired),
         UNPUBLISHED(MediasI18nKeys.Unpublished);
 
-        private final String key;
+        private final Object i18nKey;
 
-        AvailabilityType(String initialText) {
-            this.key = initialText;
+        AvailabilityType(Object i18nKey) {
+            this.i18nKey = i18nKey;
         }
 
-        public String getKey() {
-            return this.key;
+        public Object getI18nKey() {
+            return this.i18nKey;
         }
     }
 
@@ -120,7 +120,7 @@ public final class EventThumbnail {
         } else
             availabilityType = AvailabilityType.UNPUBLISHED;
 
-        I18nControls.bindI18nProperties(availabilityLabel, availabilityType.getKey());
+        I18nControls.bindI18nProperties(availabilityLabel, availabilityType.getI18nKey());
 
         availabilityLabel.setPadding(new Insets(5, 15, 5, 15));
         availabilityLabel.setBackground(new Background(

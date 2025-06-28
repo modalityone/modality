@@ -119,8 +119,8 @@ final class ChangeEmailUI implements MaterialFactoryMixin {
         return container;
     }
 
-    private void showMessage(String errorMessageKey, String cssClass) {
-        I18nControls.bindI18nProperties(infoMessage, errorMessageKey);
+    private void showMessage(Object errorI18nKey, String cssClass) {
+        I18nControls.bindI18nProperties(infoMessage, errorI18nKey);
         infoMessage.getStyleClass().setAll(cssClass);
         Layouts.setManagedAndVisibleProperties(infoMessage, true);
     }

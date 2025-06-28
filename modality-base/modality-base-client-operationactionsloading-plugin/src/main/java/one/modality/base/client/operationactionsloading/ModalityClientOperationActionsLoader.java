@@ -99,7 +99,7 @@ public final class ModalityClientOperationActionsLoader implements ApplicationMo
         // Telling the registry how to update the graphical properties when needed (ex: ToggleCancel actions
         // text needs to be updated to say 'Cancel' or 'Uncancel' on selection change)
         registry.setOperationActionGraphicalPropertiesUpdater(operationAction -> {
-            // Actually, since text and graphic properties come from I18n, we just need to inform it about the
+            // Actually, since the text and graphic properties come from I18n, we just need to inform it about the
             // change, and it will refresh all translations, including therefore these graphical properties.
             // The possible expressions used by operations like ToggleCancel will be recomputed through this
             // refresh thanks to the I18n evaluation system.
@@ -135,7 +135,7 @@ public final class ModalityClientOperationActionsLoader implements ApplicationMo
             if (operationRequest instanceof RouteRequest) {
                 return null;
             }
-            String i18nKey;
+            Object i18nKey;
             if (throwable == null) {
                 i18nKey = ModalityOperationI18nKeys.ExecutedSuccessfullyActionIcon;
             } else if (throwable instanceof UserCancellationException) {

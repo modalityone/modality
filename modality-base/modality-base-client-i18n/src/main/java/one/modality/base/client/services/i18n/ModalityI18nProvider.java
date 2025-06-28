@@ -85,7 +85,7 @@ public final class ModalityI18nProvider extends AstI18nProvider {
             if (expression != null) {
                 if (entity == null) // could be already set in case of a forward
                     entity = findEntity(i18nKey);
-                // If no entities is found (can happen before data is loaded), we display nothing (displaying the
+                // If no entities are found (can happen before data is loaded), we display nothing (displaying the
                 // expression would look ugly for the final user). This can eventually be commented when not in production.
                 if (entity == null)
                     return null;

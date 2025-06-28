@@ -183,7 +183,7 @@ final class DayTemplateTimelineView implements ButtonFactoryMixin {
         syncEndTimeUiFromModel();
         FXProperties.runOnPropertyChange(this::syncEndTimeModelFromUi, untilTextField.textProperty());
 
-        nameTextField.setPromptText(ProgramI18nKeys.NameThisLine);
+        I18nControls.bindI18nPromptProperty(nameTextField, ProgramI18nKeys.NameThisLine);
         syncNameUiFromModel();
         FXProperties.runOnPropertyChange(this::syncNameModelFromUi, nameTextField.textProperty());
 

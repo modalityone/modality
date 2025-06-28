@@ -162,8 +162,8 @@ final class StepBBookEventSlide extends StepSlide {
     }
 
     @Override
-    void displayErrorMessage(String message) {
-        digitsSlideController.displayErrorMessage(message);
+    void displayErrorMessage(Object errorMessageI18nKey) {
+        digitsSlideController.displayErrorMessage(errorMessageI18nKey);
     }
 
     @Override

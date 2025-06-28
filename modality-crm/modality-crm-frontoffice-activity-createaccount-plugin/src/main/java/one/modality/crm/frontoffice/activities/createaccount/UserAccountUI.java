@@ -441,8 +441,8 @@ public class UserAccountUI implements ModalityButtonFactoryMixin {
         return validationSupport.isValid();
     }
 
-    private void transformPaneToAccountCreationError(String dictionaryKey) {
-        Label errorMessageLabel = Bootstrap.textDanger(I18nControls.newLabel(dictionaryKey));
+    private void transformPaneToAccountCreationError(Object i18nKey) {
+        Label errorMessageLabel = Bootstrap.textDanger(I18nControls.newLabel(i18nKey));
         errorMessageLabel.setPadding(new Insets(60, 20, 60, 20));
         errorMessageLabel.setWrapText(true);
         container.setCenter(errorMessageLabel);

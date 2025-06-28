@@ -3,6 +3,6 @@ package one.modality.crm.client.activities.login;
 
 public interface LoginI18nKeys {
 
-    String LoginMenu = "LoginMenu";
+    Object LoginMenu = "LoginMenu";
 
 }

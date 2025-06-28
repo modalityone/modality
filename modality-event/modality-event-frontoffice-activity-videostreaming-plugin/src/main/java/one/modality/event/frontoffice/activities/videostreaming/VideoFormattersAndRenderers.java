@@ -142,52 +142,47 @@ final class VideoFormattersAndRenderers {
         hideLabeled(se.liveNowLink);
         hideLabeled(se.availableUntilLabel);
 
-        String statusI18nKey = VideoState.getVideoStatusI18nKey(se.videoScheduledItem);
+        Object statusI18nKey = VideoState.getVideoStatusI18nKey(se.videoScheduledItem);
         Object statusI18nArg = null;
         VideoLifecycle videoLifecycle = new VideoLifecycle(se.videoScheduledItem);
         boolean hideOrShowWatchButton = false;
 
-        switch (statusI18nKey) {
-            case VideoStreamingI18nKeys.OnTime:
-                scheduleRefreshAt(videoLifecycle.getCountdownStart(), refresher);
-                break;
-            case VideoStreamingI18nKeys.StartingIn1:
-                statusI18nArg = MediaUtil.formatDuration(videoLifecycle.durationBetweenNowAndSessionStart());
-                scheduleRefreshSeconds(1, refresher); // We refresh the countdown every second
-                hideOrShowWatchButton = true;
-                break;
-            case VideoStreamingI18nKeys.LiveNow:
-                se.liveNowLink.setOnAction(e -> se.videoStreamingActivity.setWatchingVideo(videoLifecycle));
-                hideLabeled(se.statusLabel);
-                showLabeled(se.liveNowLink);
-                scheduleRefreshDuration(videoLifecycle.durationBetweenNowAndSessionEnd(), refresher);
-                hideOrShowWatchButton = true;
-                break;
-            case VideoStreamingI18nKeys.RecordingSoonAvailable:
-            case VideoStreamingI18nKeys.VideoDelayed:
-                scheduleRefreshSeconds(60, refresher); // Maybe different in 1 min due to push notification
-                break;
-            case BaseI18nKeys.Available:
-                hideLabeled(se.statusLabel);
-                showButton(se.watchButton, e -> {
-                    se.videoStreamingActivity.setWatchingVideo(videoLifecycle);
-                    transformButtonFromPlayToPlayAgain(se.watchButton);
-                });
-                LocalDateTime videoSpecificExpirationDate = se.videoScheduledItem.getExpirationDate();
-                if (videoSpecificExpirationDate != null) {
-                    FXProperties.runNowAndOnPropertyChange(eventTimeSelected -> {
-                        LocalDateTime userTimezoneExpirationDate = eventTimeSelected ? videoSpecificExpirationDate : TimeZoneSwitch.convertEventLocalDateTimeToUserLocalDateTime(videoSpecificExpirationDate);
-                        I18nControls.bindI18nProperties(se.availableUntilLabel, MediasI18nKeys.AvailableUntil1, LocalizedTime.formatLocalDateTimeProperty(userTimezoneExpirationDate, "dd MMM '-' HH.mm"));
-                    }, TimeZoneSwitch.eventLocalTimeSelectedProperty());
-                    showLabeled(se.availableUntilLabel);
-                    // We schedule a refresh so the UI is updated when the expirationDate is reached
-                    scheduleRefreshAt(videoSpecificExpirationDate, refresher);
-                } else {
-                    LocalDateTime generalEventExpirationDate = se.videoScheduledItem.getEvent().getVodExpirationDate();
-                    if (generalEventExpirationDate != null) {
-                        scheduleRefreshAt(generalEventExpirationDate, refresher);
-                    }
+        // TODO: move this to switch(Object) in Java 21
+        if (statusI18nKey.equals(VideoStreamingI18nKeys.OnTime)) {
+            scheduleRefreshAt(videoLifecycle.getCountdownStart(), refresher);
+        } else if (statusI18nKey.equals(VideoStreamingI18nKeys.StartingIn1)) {
+            statusI18nArg = MediaUtil.formatDuration(videoLifecycle.durationBetweenNowAndSessionStart());
+            scheduleRefreshSeconds(1, refresher); // We refresh the countdown every second
+            hideOrShowWatchButton = true;
+        } else if (statusI18nKey.equals(VideoStreamingI18nKeys.LiveNow)) {
+            se.liveNowLink.setOnAction(e -> se.videoStreamingActivity.setWatchingVideo(videoLifecycle));
+            hideLabeled(se.statusLabel);
+            showLabeled(se.liveNowLink);
+            scheduleRefreshDuration(videoLifecycle.durationBetweenNowAndSessionEnd(), refresher);
+            hideOrShowWatchButton = true;
+        } else if (statusI18nKey.equals(VideoStreamingI18nKeys.RecordingSoonAvailable) || statusI18nKey.equals(VideoStreamingI18nKeys.VideoDelayed)) {
+            scheduleRefreshSeconds(60, refresher); // Maybe different in 1 min due to push notification
+        } else if (statusI18nKey.equals(BaseI18nKeys.Available)) {
+            hideLabeled(se.statusLabel);
+            showButton(se.watchButton, e -> {
+                se.videoStreamingActivity.setWatchingVideo(videoLifecycle);
+                transformButtonFromPlayToPlayAgain(se.watchButton);
+            });
+            LocalDateTime videoSpecificExpirationDate = se.videoScheduledItem.getExpirationDate();
+            if (videoSpecificExpirationDate != null) {
+                FXProperties.runNowAndOnPropertyChange(eventTimeSelected -> {
+                    LocalDateTime userTimezoneExpirationDate = eventTimeSelected ? videoSpecificExpirationDate : TimeZoneSwitch.convertEventLocalDateTimeToUserLocalDateTime(videoSpecificExpirationDate);
+                    I18nControls.bindI18nProperties(se.availableUntilLabel, MediasI18nKeys.AvailableUntil1, LocalizedTime.formatLocalDateTimeProperty(userTimezoneExpirationDate, "dd MMM '-' HH.mm"));
+                }, TimeZoneSwitch.eventLocalTimeSelectedProperty());
+                showLabeled(se.availableUntilLabel);
+                // We schedule a refresh so the UI is updated when the expirationDate is reached
+                scheduleRefreshAt(videoSpecificExpirationDate, refresher);
+            } else {
+                LocalDateTime generalEventExpirationDate = se.videoScheduledItem.getEvent().getVodExpirationDate();
+                if (generalEventExpirationDate != null) {
+                    scheduleRefreshAt(generalEventExpirationDate, refresher);
                 }
+            }
         }
         if (hideOrShowWatchButton) {
             // In case a user clicked on a previous recorded video, we need to display a button so he can go back to the livestream

@@ -133,8 +133,8 @@ final class DigitsSlideController {
         displaySlide(step6CancellationSlide);
     }
 
-    void displayErrorMessage(String message) {
-        step7ErrorSlide.setErrorMessage(message);
+    void displayErrorMessage(Object errorMessageI18nKey) {
+        step7ErrorSlide.setErrorMessage(errorMessageI18nKey);
         displaySlide(step7ErrorSlide);
     }
 

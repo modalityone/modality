@@ -48,10 +48,10 @@ public class TabsBar<T> {
         return tabs;
     }
 
-    public Tab createTab(String text, Supplier<T> valueSupplier) {
+    public Tab createTab(Object i18nKey, Supplier<T> valueSupplier) {
         Tab[] tab = {null};
         Object[] tabContent = { null };
-        Action action = actionFactory.newAction(text, () -> {
+        Action action = actionFactory.newAction(i18nKey, () -> {
             if (selectedTab != null)
                 selectedTab.setSelected(false);
             selectedTab = tab[0].setSelected(true);
@@ -62,8 +62,8 @@ public class TabsBar<T> {
         return tab[0] = new Tab(action);
     }
 
-    public Tab createTab(String text, T value) {
-        return createTab(text, () -> value);
+    public Tab createTab(Object i18nKey, T value) {
+        return createTab(i18nKey, () -> value);
     }
 
 }

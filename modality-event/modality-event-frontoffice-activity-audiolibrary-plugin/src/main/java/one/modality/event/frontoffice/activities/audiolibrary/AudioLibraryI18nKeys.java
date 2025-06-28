@@ -3,21 +3,21 @@ package one.modality.event.frontoffice.activities.audiolibrary;
 
 public interface AudioLibraryI18nKeys {
 
-    String AudioLibraryHeader = "AudioLibraryHeader";
-    String Playing = "Playing";
-    String AudioLibraryMenu = "AudioLibraryMenu";
-    String AudioLibraryHelp = "AudioLibraryHelp";
-    String SessionCancelled = "SessionCancelled";
-    String ListOfTracks = "ListOfTracks";
-    String CheckoutAudioRecordings = "CheckoutAudioRecordings";
-    String ContentExpired = "ContentExpired";
-    String AudioLibraryNotYetPublished = "AudioLibraryNotYetPublished";
-    String NoAudioRecordingForThisEvent = "NoAudioRecordingForThisEvent";
-    String AudioCancelled = "AudioCancelled";
-    String Download = "Download";
-    String NoAudioRecordingInYourLibrary = "NoAudioRecordingInYourLibrary";
-    String YourPurchasedRecordingsWillAppearHere = "YourPurchasedRecordingsWillAppearHere";
-    String PlayAgain = "PlayAgain";
-    String Play = "Play";
+    Object AudioLibraryHeader = "AudioLibraryHeader";
+    Object Playing = "Playing";
+    Object AudioLibraryMenu = "AudioLibraryMenu";
+    Object AudioLibraryHelp = "AudioLibraryHelp";
+    Object SessionCancelled = "SessionCancelled";
+    Object ListOfTracks = "ListOfTracks";
+    Object CheckoutAudioRecordings = "CheckoutAudioRecordings";
+    Object ContentExpired = "ContentExpired";
+    Object AudioLibraryNotYetPublished = "AudioLibraryNotYetPublished";
+    Object NoAudioRecordingForThisEvent = "NoAudioRecordingForThisEvent";
+    Object AudioCancelled = "AudioCancelled";
+    Object Download = "Download";
+    Object NoAudioRecordingInYourLibrary = "NoAudioRecordingInYourLibrary";
+    Object YourPurchasedRecordingsWillAppearHere = "YourPurchasedRecordingsWillAppearHere";
+    Object PlayAgain = "PlayAgain";
+    Object Play = "Play";
 
 }

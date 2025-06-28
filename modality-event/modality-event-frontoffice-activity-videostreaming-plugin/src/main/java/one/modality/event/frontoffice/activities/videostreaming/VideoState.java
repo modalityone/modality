@@ -13,7 +13,7 @@ final class VideoState {
         return videoScheduledItem.getProgramScheduledItem().isCancelled();
     }
 
-    static String getVideoStatusI18nKey(ScheduledItem videoScheduledItem) {
+    static Object getVideoStatusI18nKey(ScheduledItem videoScheduledItem) {
         // Video status lifecycle:
         // 1. ON_TIME (=> 2. CANCELLED) => 3. COUNTDOWN (=> 4. DELAYED) => 5. LIVE_NOW => 6. SOON_AVAILABLE (=> 7. DELAYED) => 8. AVAILABLE => 9. EXPIRED
 
@@ -62,7 +62,7 @@ final class VideoState {
         return VideoStreamingI18nKeys.Expired;
     }
 
-    static String getAllProgramVideoGroupI18nKey(ScheduledItem videoScheduledItem) {
+    static Object getAllProgramVideoGroupI18nKey(ScheduledItem videoScheduledItem) {
         VideoLifecycle videoLifecycle = new VideoLifecycle(videoScheduledItem);
         if (videoScheduledItem.isPublished() && videoLifecycle.isNowBeforeExpirationDate()) {
             return BaseI18nKeys.Available;
@@ -76,15 +76,14 @@ final class VideoState {
         return BaseI18nKeys.Past;
     }
 
-    static int getAllProgramVideoGroupOrder(String groupI18nKey) {
-        switch (groupI18nKey) {
-            case BaseI18nKeys.Today: return 0;
-            case BaseI18nKeys.Available: return 1;
-            case BaseI18nKeys.Upcoming: return 2;
-            case BaseI18nKeys.Past:
-            default:
-                return 3;
-        }
+    static int getAllProgramVideoGroupOrder(Object groupI18nKey) {
+        if (BaseI18nKeys.Today.equals(groupI18nKey))
+            return 0;
+        if (BaseI18nKeys.Available.equals(groupI18nKey))
+            return 1;
+        if (BaseI18nKeys.Upcoming.equals(groupI18nKey))
+            return 2;
+        return 3;
     }
 
 }

@@ -37,7 +37,7 @@ final class Step7ErrorSlide extends StepSlide {
         super.reset();
     }
 
-    void setErrorMessage(String errorMessageI18nKey) {
+    void setErrorMessage(Object errorMessageI18nKey) {
         errorMessage.setText("<center>" + I18n.getI18nText(errorMessageI18nKey) + "</center>");
     }
 }

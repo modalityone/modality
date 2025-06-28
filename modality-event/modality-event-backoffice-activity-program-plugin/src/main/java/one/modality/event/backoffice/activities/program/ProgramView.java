@@ -9,6 +9,7 @@ import dev.webfx.extras.util.masterslave.MasterSlaveLinker;
 import dev.webfx.kit.util.properties.FXProperties;
 import dev.webfx.kit.util.properties.ObservableLists;
 import dev.webfx.platform.uischeduler.UiScheduler;
+import dev.webfx.stack.i18n.I18n;
 import dev.webfx.stack.i18n.controls.I18nControls;
 import dev.webfx.stack.i18n.spi.impl.I18nSubKey;
 import dev.webfx.stack.orm.dql.DqlStatement;
@@ -165,7 +166,7 @@ final class ProgramView extends ModalitySlaveEditor<Event> implements ButtonFact
 
         generatePreliminaryBookableSIButton.setOnAction(e -> {
             if(itemSelector.getSelectedItem()==null) {
-                DialogContent dialogContent = new DialogContent().setContentText(ProgramI18nKeys.PleaseSelectAnItem).setOk();
+                DialogContent dialogContent = new DialogContent().setContentText(I18n.getI18nText(ProgramI18nKeys.PleaseSelectAnItem)).setOk();
                 DialogBuilderUtil.showModalNodeInGoldLayout(dialogContent, FXMainFrameDialogArea.getDialogArea());
                 DialogBuilderUtil.armDialogContentButtons(dialogContent, DialogCallback::closeDialog);
                 return;

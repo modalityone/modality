@@ -180,13 +180,13 @@ final class ChangePasswordUI implements MaterialFactoryMixin {
         Layouts.setManagedAndVisibleProperties(actionButton, true);
     }
 
-    public void showResultMessage(String errorMessageKey, String cssClass) {
-        I18nControls.bindI18nProperties(resultMessage, errorMessageKey);
+    public void showResultMessage(Object errorI18nKey, String cssClass) {
+        I18nControls.bindI18nProperties(resultMessage, errorI18nKey);
         resultMessage.getStyleClass().setAll(cssClass);
     }
 
-    public void showInfoMessage(String errorMessageKey, String cssClass) {
-        I18nControls.bindI18nProperties(infoMessage, errorMessageKey);
+    public void showInfoMessage(Object errorI18nKey, String cssClass) {
+        I18nControls.bindI18nProperties(infoMessage, errorI18nKey);
         infoMessage.getStyleClass().setAll(cssClass);
         infoMessage.setVisible(true);
     }

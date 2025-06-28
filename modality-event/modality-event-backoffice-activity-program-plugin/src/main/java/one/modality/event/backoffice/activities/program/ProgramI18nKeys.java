@@ -3,28 +3,28 @@ package one.modality.event.backoffice.activities.program;
 
 public interface ProgramI18nKeys {
 
-    String ProgramTitle = "ProgramTitle";
-    String Programme = "Programme";
-    String AddDayTemplate = "AddDayTemplate";
-    String AssignDay = "AssignDay";
-    String DeleteDayTemplate = "DeleteDayTemplate";
-    String To = "To";
-    String ItemSelectedShouldntBeNull = "ItemSelectedShouldntBeNull";
-    String NameThisLine = "NameThisLine";
-    String GenerateProgram = "GenerateProgram";
-    String DeleteProgram = "DeleteProgram";
-    String CancelProgram = "CancelProgram";
-    String SaveProgram = "SaveProgram";
-    String ProgramGenerationConfirmation = "ProgramGenerationConfirmation";
-    String DeleteProgramConfirmation = "DeleteProgramConfirmation";
-    String ConfirmGeneration = "ConfirmGeneration";
-    String ScheduledItemsAlreadyGenerated = "ScheduledItemsAlreadyGenerated";
-    String ScheduledItemsNotYetGenerated = "ScheduledItemsNotYetGenerated";
-    String DayTicketTeachingsAndAudioScheduledItemNotGenerated = "DayTicketTeachingsAndAudioScheduledItemNotGenerated";
-    String DayTicketTeachingsAndAudioScheduledItemInfos = "DayTicketTeachingsAndAudioScheduledItemInfos";
-    String ChooseAnItemForTheTeachingBookableScheduledItem = "ChooseAnItemForTheTeachingBookableScheduledItem";
-    String GeneratePreliminaryBookableSI = "GeneratePreliminaryBookableSI";
-    String PleaseSelectAnItem = "PleaseSelectAnItem";
-    String DuplicateIcon = "DuplicateIcon";
+    Object ProgramTitle = "ProgramTitle";
+    Object Programme = "Programme";
+    Object AddDayTemplate = "AddDayTemplate";
+    Object AssignDay = "AssignDay";
+    Object DeleteDayTemplate = "DeleteDayTemplate";
+    Object To = "To";
+    Object ItemSelectedShouldntBeNull = "ItemSelectedShouldntBeNull";
+    Object NameThisLine = "NameThisLine";
+    Object GenerateProgram = "GenerateProgram";
+    Object DeleteProgram = "DeleteProgram";
+    Object CancelProgram = "CancelProgram";
+    Object SaveProgram = "SaveProgram";
+    Object ProgramGenerationConfirmation = "ProgramGenerationConfirmation";
+    Object DeleteProgramConfirmation = "DeleteProgramConfirmation";
+    Object ConfirmGeneration = "ConfirmGeneration";
+    Object ScheduledItemsAlreadyGenerated = "ScheduledItemsAlreadyGenerated";
+    Object ScheduledItemsNotYetGenerated = "ScheduledItemsNotYetGenerated";
+    Object DayTicketTeachingsAndAudioScheduledItemNotGenerated = "DayTicketTeachingsAndAudioScheduledItemNotGenerated";
+    Object DayTicketTeachingsAndAudioScheduledItemInfos = "DayTicketTeachingsAndAudioScheduledItemInfos";
+    Object ChooseAnItemForTheTeachingBookableScheduledItem = "ChooseAnItemForTheTeachingBookableScheduledItem";
+    Object GeneratePreliminaryBookableSI = "GeneratePreliminaryBookableSI";
+    Object PleaseSelectAnItem = "PleaseSelectAnItem";
+    Object DuplicateIcon = "DuplicateIcon";
 
 }

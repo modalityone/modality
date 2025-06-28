@@ -3,6 +3,7 @@ package one.modality.base.backoffice.operations.entities.generic;
 import dev.webfx.platform.async.Future;
 import dev.webfx.platform.async.Promise;
 import dev.webfx.platform.uischeduler.UiScheduler;
+import dev.webfx.stack.i18n.I18n;
 import dev.webfx.stack.ui.controls.alert.AlertUtil;
 import dev.webfx.stack.ui.controls.dialog.DialogBuilderUtil;
 import dev.webfx.stack.ui.controls.dialog.DialogContent;
@@ -23,7 +24,7 @@ public final class DialogExecutorUtil {
     public static Future<Void> executeOnUserConfirmation(String confirmationText, Pane parentContainer, Supplier<Future<?>> executor) {
         Promise<Void> promise = Promise.promise();
         UiScheduler.runInUiThread(() -> {
-            DialogContent dialogContent = new DialogContent().setHeaderText(BaseI18nKeys.AreYouSure).setContentText(confirmationText);
+            DialogContent dialogContent = new DialogContent().setHeaderText(I18n.getI18nText(BaseI18nKeys.AreYouSure)).setContentText(confirmationText);
             boolean[] executing = { false };
             DialogBuilderUtil.showModalNodeInGoldLayout(dialogContent, parentContainer).addCloseHook(() -> {
                 if (!executing[0])

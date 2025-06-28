@@ -23,7 +23,7 @@ final class Step4PendingPaymentSlide extends StepSlide {
         mainVbox.setSpacing(10);
         mainVbox.setMaxWidth(MAX_SLIDE_WIDTH);
 
-        Label title = Bootstrap.textWarning(Bootstrap.h3(new Label(BookingI18nKeys.PaymentPending)));
+        Label title = Bootstrap.textWarning(Bootstrap.h3(I18nControls.newLabel(BookingI18nKeys.PaymentPending)));
         title.setWrapText(true);
         title.setPadding(new Insets(50, 0, 30, 0));
 

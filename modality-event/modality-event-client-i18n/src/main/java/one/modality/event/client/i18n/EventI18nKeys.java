@@ -3,6 +3,6 @@ package one.modality.event.client.i18n;
 
 public interface EventI18nKeys {
 
-    String Session = "Session";
+    Object Session = "Session";
 
 }

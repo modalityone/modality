@@ -309,7 +309,7 @@ public final class ModalityBackOfficeMainFrameActivity extends ModalityClientMai
 
     @Override
     protected Region createMainFrameFooter() {
-        Text connectionText = createStatusText("Connection");
+        Text connectionText = createStatusText(ModalityBackOfficeMainFrameI18nKeys.Connection);
         Shape connectionLed = new Circle(8);
         FXProperties.runNowAndOnPropertyChange(connected ->
             connectionLed.setFill(connected ? CONNECTED_COLOR : DISCONNECTED_COLOR), FXConnected.connectedProperty()
@@ -318,7 +318,7 @@ public final class ModalityBackOfficeMainFrameActivity extends ModalityClientMai
         Bus bus = BusService.bus();
         if (bus instanceof NetworkBus) { // Actually always true
             NetworkBus networkBus = (NetworkBus) bus;
-            Text trafficText = createStatusText("Traffic");
+            Text trafficText = createStatusText(ModalityBackOfficeMainFrameI18nKeys.Traffic);
             // Outgoing traffic (from client to server)
             Shape outgoingTrafficLed = new Circle(8, NO_TRAFFIC_COLOR);
             Scheduled[] noOutgoingTrafficScheduled = { UiScheduler.scheduleDeferred(() -> {}) };
@@ -338,7 +338,7 @@ public final class ModalityBackOfficeMainFrameActivity extends ModalityClientMai
             statusBar.getChildren().addAll(Layouts.createHSpace(10), trafficText, outgoingTrafficLed, incomingTrafficLed);
         }
         // Pending operations
-        Text pendingText = createStatusText("PendingCalls");
+        Text pendingText = createStatusText(ModalityBackOfficeMainFrameI18nKeys.PendingCalls);
         Text pendingCountText = createStatusText(null);
         ProgressIndicator pendingIndicator = Controls.createProgressIndicator(16);
         Timeline[] pendingFadeTimeline = { new Timeline() };
@@ -365,7 +365,7 @@ public final class ModalityBackOfficeMainFrameActivity extends ModalityClientMai
         return statusBar;
     }
 
-    private static Text createStatusText(String i18nKey) {
+    private static Text createStatusText(Object i18nKey) {
         Text statusText = new Text();
         if (i18nKey != null)
             I18n.bindI18nProperties(statusText, i18nKey);

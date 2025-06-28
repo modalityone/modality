@@ -45,13 +45,13 @@ final class UserProfileMessageUI {
         return container;
     }
 
-    public void setInfoMessage(String messageKey,String cssClasses) {
-        I18nControls.bindI18nProperties(infoMessage,messageKey);
+    public void setInfoMessage(Object messageI18nKey, String cssClasses) {
+        I18nControls.bindI18nProperties(infoMessage, messageI18nKey);
         infoMessage.getStyleClass().clear();
         infoMessage.getStyleClass().add(cssClasses);
     }
-    public void setTitle(String titleKey) {
-        I18nControls.bindI18nProperties(title, titleKey);
+    public void setTitle(Object titleI18nKey) {
+        I18nControls.bindI18nProperties(title, titleI18nKey);
     }
 
     public void resetToInitialState() {

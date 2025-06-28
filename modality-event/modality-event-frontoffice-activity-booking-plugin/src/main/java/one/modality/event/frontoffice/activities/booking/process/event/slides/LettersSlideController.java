@@ -101,8 +101,8 @@ public final class LettersSlideController {
         stepBBookEventSlide.displayCheckoutSlide();
     }
 
-    public void displayErrorMessage(String message) {
-        stepBBookEventSlide.displayErrorMessage(message);
+    public void displayErrorMessage(Object messageI18nKey) {
+        stepBBookEventSlide.displayErrorMessage(messageI18nKey);
         bookEventActivity.onReachingEndSlide();
     }
 

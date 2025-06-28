@@ -502,8 +502,8 @@ final class VideoStreamingActivity extends ViewDomainActivityBase {
             } else { // all-program (ex: STTP) => group = LiveNow, Today, Upcoming or Past
                 // Sorting sessions by group, but for Past session, we reverse the chronological order
                 List<ScheduledItem> sortedVideoScheduledItems = displayedVideoScheduledItems.sorted((v1, v2) -> {
-                    String group1 = VideoState.getAllProgramVideoGroupI18nKey(v1); // LiveNow, Today, Upcoming or Past
-                    String group2 = VideoState.getAllProgramVideoGroupI18nKey(v2); // LiveNow, Today, Upcoming or Past
+                    Object group1 = VideoState.getAllProgramVideoGroupI18nKey(v1); // LiveNow, Today, Upcoming or Past
+                    Object group2 = VideoState.getAllProgramVideoGroupI18nKey(v2); // LiveNow, Today, Upcoming or Past
                     // Sorting Past sessions in chronological reverse order (the most recent first)
                     if (BaseI18nKeys.Past.equals(group1) || BaseI18nKeys.Past.equals(group2)) {
                         return -v1.getDate().compareTo(v2.getDate());

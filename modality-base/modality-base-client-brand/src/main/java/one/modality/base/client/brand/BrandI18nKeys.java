@@ -3,9 +3,9 @@ package one.modality.base.client.brand;
 
 public interface BrandI18nKeys {
 
-    String frontOfficeBrandNameAndLogo = "frontOfficeBrandNameAndLogo";
-    String brandMainColor = "brandMainColor";
-    String brandMainBackgroundColor = "brandMainBackgroundColor";
-    String frontOfficeBrandNameAndLogoShort = "frontOfficeBrandNameAndLogoShort";
+    Object frontOfficeBrandNameAndLogo = "frontOfficeBrandNameAndLogo";
+    Object brandMainColor = "brandMainColor";
+    Object brandMainBackgroundColor = "brandMainBackgroundColor";
+    Object frontOfficeBrandNameAndLogoShort = "frontOfficeBrandNameAndLogoShort";
 
 }

@@ -905,13 +905,13 @@ final class ManageRecurringEventView {
         line5.setPadding(new Insets(20, 0, 0, 0));
         line5.setAlignment(Pos.CENTER_LEFT);
 
-        Label audioCorrespondanceProgramLabel = I18nControls.newLabel(RecurringEventsI18nKeys.AudioCorrespondanceProgram);
+        Label audioCorrespondanceProgramLabel = I18nControls.newLabel(RecurringEventsI18nKeys.AudioCorrespondenceProgram);
         audioCorrespondanceProgramLabel.setPadding(new Insets(0, 20, 0, 0));
         audioCorrespondanceProgramLabel.setPrefWidth(labelWidth + 50);
         audioCorrespondanceProgramSwitch = new Switch();
         audioCorrespondanceProgramSwitch.selectedProperty().addListener(obs -> currentEditedEvent.setRecurringWithAudio(audioCorrespondanceProgramSwitch.selectedProperty().get()));
 
-        Label videoCorrespondanceProgramLabel = I18nControls.newLabel(RecurringEventsI18nKeys.VideoCorrespondanceProgram);
+        Label videoCorrespondanceProgramLabel = I18nControls.newLabel(RecurringEventsI18nKeys.VideoCorrespondenceProgram);
         videoCorrespondanceProgramLabel.setPadding(new Insets(0, 20, 0, 40));
         videoCorrespondanceProgramLabel.setPrefWidth(labelWidth + 60);
         videoCorrespondanceProgramSwitch = new Switch();

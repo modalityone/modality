@@ -32,7 +32,7 @@ public class TextUtility {
         return createText(null, color);
     }
 
-    public static Text createText(String i18nKey, Color color) {
+    public static Text createText(Object i18nKey, Color color) {
         Text text = new Text();
         if (i18nKey != null)
             I18n.bindI18nProperties(text, i18nKey);
@@ -40,7 +40,7 @@ public class TextUtility {
         return text;
     }
 
-    public static Text createText(String i18nKey, Color color, double size) {
+    public static Text createText(Object i18nKey, Color color, double size) {
         Text text = createText(i18nKey, color);
         setTextFont(text, Fonts.MONTSERRAT_TEXT_FAMILY, FontWeight.findByWeight(500), size);
         return text;

@@ -105,8 +105,8 @@ public abstract class StepSlide implements Supplier<Node> {
         getBookEventActivity().displayCancellationSlide(cancelPaymentResult);
     }
 
-    void displayErrorMessage(String message) {
-        getBookEventActivity().displayErrorMessage(message);
+    void displayErrorMessage(Object messageI18nKey) {
+        getBookEventActivity().displayErrorMessage(messageI18nKey);
     }
 
     void displayThankYouSlide() {
@@ -170,7 +170,7 @@ public abstract class StepSlide implements Supplier<Node> {
         OperationUtil.turnOnButtonsWaitMode(buttons);
     }
 
-    static void turnOffButtonWaitMode(Button button, String i18nKey) {
+    static void turnOffButtonWaitMode(Button button, Object i18nKey) {
         OperationUtil.turnOffButtonsWaitMode(button); // but this doesn't reestablish the possible i18n graphic
         // So we reestablish it using i18n
         I18nControls.bindI18nGraphicProperty(button, i18nKey);

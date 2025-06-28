@@ -229,8 +229,8 @@ public final class BookEventActivity extends ViewDomainActivityBase implements B
         lettersSlideController.displayCancellationSlide(bookingCancelled);
     }
 
-    public void displayErrorMessage(String message) {
-        lettersSlideController.displayErrorMessage(message);
+    public void displayErrorMessage(Object messageI18nKey) {
+        lettersSlideController.displayErrorMessage(messageI18nKey);
     }
 
     public void displayThankYouSlide() {
