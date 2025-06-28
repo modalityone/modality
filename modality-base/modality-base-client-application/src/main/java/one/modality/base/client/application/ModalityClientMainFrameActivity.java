@@ -55,11 +55,10 @@ public class ModalityClientMainFrameActivity extends ViewDomainActivityBase
             }
         }, I18n.languageProperty());
         // Binding the local property to i18n language for LocalizedTimeFormat
-        LocalizedTime.localeProperty().bind(FXProperties.compute(I18n.languageProperty(),
-            lang -> new Locale(lang.toString())));
-        // This is to ensure LogoutRequest is registered in OperationActionRegistry (especially in front-office where
-        // it is not explicitly called by just referred via operation code from configuration), so that the Logout
-        // action can be displayed once the user is logged in (via authorization mechanism).
+        LocalizedTime.localeProperty().bind(I18n.languageProperty().map(lang -> new Locale(lang.toString())));
+        // This is to ensure that LogoutRequest is registered in OperationActionRegistry (especially in the front-office
+        // where it is not explicitly called but just referred via operation code from configuration). Then the Logout
+        // action can be displayed once the user is logged in (via the authorization mechanism).
         newOperationAction(LogoutRequest::new);
     }
 

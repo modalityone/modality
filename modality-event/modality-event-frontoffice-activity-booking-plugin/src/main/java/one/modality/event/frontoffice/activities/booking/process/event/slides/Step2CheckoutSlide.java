@@ -269,7 +269,7 @@ final class Step2CheckoutSlide extends StepSlide {
                 });
 
                 if (existing) {
-                    trashOption.disableProperty().bind(FXProperties.compute(workingBookingProperties.previousBalanceProperty(), previousBalance ->
+                    trashOption.disableProperty().bind(workingBookingProperties.previousBalanceProperty().map(previousBalance ->
                         previousBalance.intValue() <= 0 || date.isBefore(LocalDate.now())
                     ));
                 }

@@ -245,10 +245,10 @@ final class ManageRecurringEventView {
     private void initFormValidation() {
         if (validationSupport.isEmpty()) {
             validationSupport.addRequiredInput(nameOfEventTextField);
-            validationSupport.addValidationRule(FXProperties.compute(timeOfTheEventTextField.textProperty(), s1 -> isLocalTimeTextValid(timeOfTheEventTextField.getText())), timeOfTheEventTextField, I18n.i18nTextProperty("ValidationTimeFormatIncorrect")); // ???
-            validationSupport.addValidationRule(FXProperties.compute(durationTextField.textProperty(), s -> isIntegerValid(durationTextField.getText())), durationTextField, I18n.i18nTextProperty("ValidationDurationIncorrect")); // ???
+            validationSupport.addValidationRule(timeOfTheEventTextField.textProperty().map(ManageRecurringEventView::isLocalTimeTextValid), timeOfTheEventTextField, I18n.i18nTextProperty("ValidationTimeFormatIncorrect")); // ???
+            validationSupport.addValidationRule(durationTextField.textProperty().map(ManageRecurringEventView::isIntegerValid), durationTextField, I18n.i18nTextProperty("ValidationDurationIncorrect")); // ???
             validationSupport.addValidationRule(isTeachingsWorkingScheduledItemEmpty.not(), datesOfTheEventLabel, I18n.i18nTextProperty(RecurringEventsI18nKeys.ValidationSelectOneDate));
-            validationSupport.addValidationRule(FXProperties.compute(externalLinkTextField.textProperty(), s1 -> isValidUrl(externalLinkTextField.getText())), externalLinkTextField, I18n.i18nTextProperty("ValidationUrlIncorrect")); // ???
+            validationSupport.addValidationRule(externalLinkTextField.textProperty().map(ManageRecurringEventView::isValidUrl), externalLinkTextField, I18n.i18nTextProperty("ValidationUrlIncorrect")); // ???
         }
     }
 
@@ -942,7 +942,7 @@ final class ManageRecurringEventView {
 
         cancelButton = Bootstrap.largeSecondaryButton(I18nControls.newButton(RecurringEventsI18nKeys.CancelButton));
         cancelButton.setOnAction(e -> displayEventDetails(currentEditedEvent));
-        cancelButton.disableProperty().bind(FXProperties.compute(currentMode, mode -> mode.intValue() == ADD_MODE));
+        cancelButton.disableProperty().bind(currentMode.map(mode -> mode.intValue() == ADD_MODE));
 
         saveButton = Bootstrap.largeSuccessButton(I18nControls.newButton(RecurringEventsI18nKeys.SaveButton));
         saveButton.setOnAction(event -> {

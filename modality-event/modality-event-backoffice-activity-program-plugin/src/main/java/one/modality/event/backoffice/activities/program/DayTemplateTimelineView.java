@@ -27,6 +27,7 @@ import one.modality.base.shared.entities.Timeline;
 import one.modality.crm.backoffice.organization.fx.FXOrganization;
 
 import java.time.LocalTime;
+import java.util.Objects;
 
 import static one.modality.event.backoffice.activities.program.DatesToStringConversion.isLocalTimeTextValid;
 
@@ -155,15 +156,13 @@ final class DayTemplateTimelineView implements ButtonFactoryMixin {
         FXProperties.runOnPropertyChange(this::syncItemModelFromUi, itemSelector.selectedItemProperty());
 
         Button itemButton = itemSelector.getButton();
-        getValidationSupport().addValidationRule(FXProperties.compute(itemSelector.selectedItemProperty(),
-            s1 -> itemSelector.getSelectedItem() != null),
+        getValidationSupport().addValidationRule(itemSelector.selectedItemProperty().map(Objects::nonNull),
             itemButton,
             I18n.i18nTextProperty(ProgramI18nKeys.ItemSelectedShouldntBeNull));
 
         fromTextField.setPromptText("8:46");
         fromTextField.setAlignment(Pos.CENTER);
-        getValidationSupport().addValidationRule(FXProperties.compute(fromTextField.textProperty(),
-            s1 -> isLocalTimeTextValid(fromTextField.getText())),
+        getValidationSupport().addValidationRule(fromTextField.textProperty().map(DatesToStringConversion::isLocalTimeTextValid),
             fromTextField,
             I18n.i18nTextProperty("ValidationTimeFormatIncorrect")); // Declared in Recurring activity!
 
@@ -175,8 +174,7 @@ final class DayTemplateTimelineView implements ButtonFactoryMixin {
 
         untilTextField.setPromptText("13:00");
         untilTextField.setAlignment(Pos.CENTER);
-        getValidationSupport().addValidationRule(FXProperties.compute(untilTextField.textProperty(),
-            s1 -> isLocalTimeTextValid(untilTextField.getText())),
+        getValidationSupport().addValidationRule(untilTextField.textProperty().map(DatesToStringConversion::isLocalTimeTextValid),
             untilTextField,
             I18n.i18nTextProperty("ValidationTimeFormatIncorrect")); // Declared in Recurring activity!
 

@@ -65,8 +65,8 @@ public class MoneyTransferEntityGraph extends Pane implements ControlFactoryMixi
 			for (MoneyAccount moneyAccount : alphabetizedMoneyAccounts) {
 				final int finalIndex = index;
 				Pane pane = getPaneForMoneyAccount(moneyAccount);
-				pane.layoutXProperty().bind(FXProperties.compute(widthProperty(), width -> 20 + width.doubleValue() * widthNumerator / widthDenominator));
-				pane.layoutYProperty().bind(FXProperties.compute(heightProperty(), height -> height.doubleValue() * finalIndex / heightDenominator));
+				pane.layoutXProperty().bind(widthProperty().map(width -> 20 + width.doubleValue() * widthNumerator / widthDenominator));
+				pane.layoutYProperty().bind(heightProperty().map(height -> height.doubleValue() * finalIndex / heightDenominator));
 				index++;
 			}
 		}

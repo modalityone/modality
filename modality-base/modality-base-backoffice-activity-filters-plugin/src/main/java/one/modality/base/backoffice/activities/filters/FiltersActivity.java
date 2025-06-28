@@ -13,9 +13,9 @@ import dev.webfx.stack.orm.entity.controls.entity.selector.ButtonSelector;
 import dev.webfx.stack.orm.reactive.mapping.entities_to_visual.ReactiveVisualMapper;
 import dev.webfx.stack.ui.action.ActionGroup;
 import dev.webfx.stack.ui.operation.action.OperationActionFactoryMixin;
+import javafx.beans.binding.BooleanBinding;
 import javafx.beans.property.ObjectProperty;
 import javafx.beans.property.SimpleObjectProperty;
-import javafx.beans.value.ObservableValue;
 import javafx.geometry.Insets;
 import javafx.geometry.Orientation;
 import javafx.geometry.Pos;
@@ -32,7 +32,6 @@ import one.modality.base.backoffice.operations.entities.filters.*;
 import one.modality.base.shared.entities.Filter;
 
 import java.util.List;
-import java.util.Objects;
 import java.util.stream.Collectors;
 
 import static dev.webfx.stack.orm.dql.DqlStatement.*;
@@ -118,8 +117,7 @@ final class FiltersActivity extends ViewDomainActivityBase implements OperationA
         // FieldPane components
         Label fieldSearchLabel = new Label("Search fields");
         TextField fieldSearchField = new TextField();
-        //BooleanBinding isSelectedFilterNull = selectedFilter.isNull(); // Not yet emulated by WebFX
-        ObservableValue<Boolean> isSelectedFilterNull = FXProperties.compute(selectedFilter, Objects::isNull); // WebFX replacement
+        BooleanBinding isSelectedFilterNull = selectedFilter.isNull();
         fieldSearchField.disableProperty().bind(isSelectedFilterNull);
         Button addNewFieldsButton = newButton(newOperationAction(() -> new AddNewFieldsRequest(entityStore, container)));
         HBox fieldsSearchRow = new HBox(fieldSearchField, addNewFieldsButton);

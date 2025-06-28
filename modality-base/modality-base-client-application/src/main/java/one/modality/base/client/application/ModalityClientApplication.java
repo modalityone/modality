@@ -8,7 +8,6 @@ import dev.webfx.stack.orm.domainmodel.activity.viewdomain.ViewDomainActivityCon
 import dev.webfx.stack.routing.activity.ActivityManager;
 import javafx.application.Application;
 import javafx.geometry.Rectangle2D;
-import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.layout.BorderPane;
 import javafx.stage.Screen;
@@ -43,7 +42,7 @@ public class ModalityClientApplication extends Application {
         // When the ui router starts, it will set modalityClientStarterActivity.nodeProperty()
         FXProperties.onPropertySet(modalityClientStarterActivity.nodeProperty(), node -> {
             // From that moment on, we bind the scene root to the ui router activity node
-            scene.rootProperty().bind(FXProperties.compute(modalityClientStarterActivity.nodeProperty(), n -> (Parent) n));
+            scene.rootProperty().bind(modalityClientStarterActivity.nodeProperty().map(n -> n));
         });
         // Activating focus owner auto scroll
         SceneUtil.installSceneFocusOwnerAutoScroll(scene);

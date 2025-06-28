@@ -143,7 +143,7 @@ final class ProgramView extends ModalitySlaveEditor<Event> implements ButtonFact
         // Building the template days
         ColumnsPane templateDayColumnsPane = new ColumnsPane();
         templateDayColumnsPane.setMinColumnWidth(500);
-        templateDayColumnsPane.hgapProperty().bind(FXProperties.compute(templateDayColumnsPane.widthProperty(), w -> Math.min(50, 0.02 * w.doubleValue())));
+        templateDayColumnsPane.hgapProperty().bind(templateDayColumnsPane.widthProperty().map(w -> Math.min(50, 0.02 * w.doubleValue())));
         templateDayColumnsPane.vgapProperty().bind(templateDayColumnsPane.hgapProperty());
         templateDayColumnsPane.setPadding(new Insets(50, 0, 50, 0));
         templateDayColumnsPane.setAlignment(Pos.TOP_CENTER);
