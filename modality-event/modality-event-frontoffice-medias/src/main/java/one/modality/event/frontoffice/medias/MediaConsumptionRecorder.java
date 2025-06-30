@@ -101,6 +101,8 @@ public class MediaConsumptionRecorder {
 
     private void recordNewMediaConsumption() {
         ScheduledItem scheduledItem = scheduledItemSupplier.get();
+        if (scheduledItem == null)
+            return;
         UpdateStore updateStore = UpdateStore.createAbove(scheduledItem.getStore());
         MediaConsumption mediaConsumption = updateStore.insertEntity(MediaConsumption.class);
         mediaConsumption.setMedia(mediaSupplier.get());

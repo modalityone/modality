@@ -23,6 +23,7 @@ import dev.webfx.platform.util.Objects;
 import dev.webfx.platform.util.collection.Collections;
 import dev.webfx.stack.i18n.I18n;
 import dev.webfx.stack.i18n.controls.I18nControls;
+import dev.webfx.stack.i18n.spi.impl.I18nSubKey;
 import dev.webfx.stack.orm.domainmodel.activity.viewdomain.impl.ViewDomainActivityBase;
 import dev.webfx.stack.orm.entity.EntityId;
 import dev.webfx.stack.orm.entity.EntityStore;
@@ -206,7 +207,7 @@ final class VideoStreamingActivity extends ViewDomainActivityBase {
                 // and paid). They will be grouped by day in the UI.
                 // Note: double dots such as `programScheduledItem.timeline..startTime` means we do a left join that allows null value (if the event is recurring, the timeline of the programScheduledItem is null)
                 entityStore.<ScheduledItem>executeQuery(
-                        "select name, label.(de,en,es,fr,pt), date, expirationDate, programScheduledItem.(name, label.(de,en,es,fr,pt), startTime, endTime, timeline.(startTime, endTime), cancelled), published, event.(name, type.recurringItem, livestreamUrl, recurringWithVideo), vodDelayed, " +
+                        "select name, label.(de,en,es,fr,pt), date, comment, commentLabel.(de,en,fr,pt), expirationDate, programScheduledItem.(name, label.(de,en,es,fr,pt), startTime, endTime, timeline.(startTime, endTime), cancelled), published, event.(name, type.recurringItem, livestreamUrl, recurringWithVideo), vodDelayed, " +
                         " (exists(select MediaConsumption where scheduledItem=si and attendance.documentLine.document.person.frontendAccount=?) as attended), " +
                         " (select id from Attendance where scheduledItem=si.bookableScheduledItem and documentLine.document.person.frontendAccount=? limit 1) as attendanceId " +
                         " from ScheduledItem si " +
@@ -219,6 +220,7 @@ final class VideoStreamingActivity extends ViewDomainActivityBase {
                     .onFailure(Console::log)
                     .onSuccess(scheduledItems -> Platform.runLater(() -> {
                         videoScheduledItems.setAll(scheduledItems); // Will trigger the build of the video table.
+                        watchingVideoItemProperty.set(null);
                         // We are now ready to populate the videos, but we postpone this for the 2 following reasons:
                         // 1) The UI may not be completely built yet on low-end devices, and loading a video player now
                         // could be heavy and freeze the UI even more.
@@ -566,6 +568,9 @@ final class VideoStreamingActivity extends ViewDomainActivityBase {
         videoConsumptionRecorders.forEach(MediaConsumptionRecorder::stop);
         videoConsumptionRecorders.clear();
         Node videoContent = null;
+        VBox videoVBox = new VBox(20);
+        videoVBox.setAlignment(Pos.CENTER);
+
         boolean autoPlay = willAutoplay || videoCollapsePane.isExpanded();
         if (isUserWatchingLivestream()) { // Livestream
             Event event = eventProperty.get();
@@ -576,6 +581,19 @@ final class VideoStreamingActivity extends ViewDomainActivityBase {
         } else { // VOD
             // Creating a Player for each Media and initializing it.
             VBox videoMediasVBox = new VBox(10);
+            String comment = watchingVideoItemProperty.get().getComment();
+            one.modality.base.shared.entities.Label commentLabel = watchingVideoItemProperty.get().getCommentLabel();
+            if(commentLabel==null&& comment!=null) {
+                Label commentUILabel = Bootstrap.strong(I18nControls.newLabel(comment));
+                commentUILabel.setWrapText(true);
+                videoVBox.getChildren().add(commentUILabel);
+            }
+            if(commentLabel!=null) {
+                Label commentUILabel = Bootstrap.strong(I18nControls.newLabel(new I18nSubKey("expression: i18n(this)", commentLabel)));
+                commentUILabel.setWrapText(true);
+                videoVBox.getChildren().add(commentUILabel);
+            }
+
             for (Media media : watchMedias) {
                 Node videoView = createVideoView(media.getUrl(), media, autoPlay);
                 videoMediasVBox.getChildren().add(videoView);
@@ -588,7 +606,9 @@ final class VideoStreamingActivity extends ViewDomainActivityBase {
         if (videoContent == null) {
             videoCollapsePane.setContent(null);
         } else {
-            videoCollapsePane.setContent(new ScalePane(ScaleMode.FIT_WIDTH, videoContent));
+            ScalePane videoContainer = new ScalePane(ScaleMode.FIT_WIDTH,videoContent);
+            videoVBox.getChildren().add(videoContainer);
+            videoCollapsePane.setContent(videoVBox);
         }
     }
 
