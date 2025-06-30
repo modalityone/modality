@@ -509,7 +509,7 @@ final class VideoStreamingActivity extends ViewDomainActivityBase {
                     Object group1 = VideoState.getAllProgramVideoGroupI18nKey(v1); // LiveNow, Today, Upcoming or Past
                     Object group2 = VideoState.getAllProgramVideoGroupI18nKey(v2); // LiveNow, Today, Upcoming or Past
                     // Sorting Past sessions in chronological reverse order (the most recent first)
-                    if (BaseI18nKeys.Past.equals(group1) || BaseI18nKeys.Past.equals(group2)) {
+                    if (BaseI18nKeys.Past.equals(group1) && BaseI18nKeys.Past.equals(group2)) {
                         return -v1.getDate().compareTo(v2.getDate());
                     }
                     // Otherwise sorting by group order (keeping the original sort in groups other than Past - i.e., ascending date)
