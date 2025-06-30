@@ -241,8 +241,8 @@ public abstract class MediaLinksManagement {
                 Label durationLabel = I18nControls.newLabel(MediasI18nKeys.ExactDuration);
                 TextField durationTextField = new TextField();
                 durationTextField.setMaxWidth(100);
-                validationSupport.addRequiredInput(durationTextField);
-                validationSupport.addMinimumDurationValidation(durationTextField, durationTextField, I18n.i18nTextProperty(MediasI18nKeys.DurationShouldBeAtLeast60s));
+                validationSupport.addRequiredInputIfOtherTextFieldNotNull(durationTextField,linkTextField,durationTextField);
+                validationSupport.addMinimumDurationValidationIfOtherTextFieldNotNull(durationTextField, linkTextField, durationTextField, I18n.i18nTextProperty(MediasI18nKeys.DurationShouldBeAtLeast60s));
 
                 Button retrieveDurationButton = Bootstrap.primaryButton(I18nControls.newButton(MediasI18nKeys.RetrieveDuration));
                 HBox thirdLine = new HBox(durationLabel, durationTextField, retrieveDurationButton);
