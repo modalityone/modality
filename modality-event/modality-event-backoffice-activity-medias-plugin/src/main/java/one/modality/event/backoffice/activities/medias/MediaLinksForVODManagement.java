@@ -315,13 +315,16 @@ public class MediaLinksForVODManagement extends MediaLinksManagement {
                 commentLabel.setPadding(new Insets(10, 0, 0, 0));
                 currentVBox.getChildren().add(commentLabel);
 
-                TextField commentTextField = new TextField();
-                commentTextField.setPromptText(I18n.getI18nText(MediasI18nKeys.VODPromptComment));
-                currentVBox.getChildren().add(commentTextField);
+//                TextField commentTextField = new TextField();
+//                commentTextField.setPromptText(I18n.getI18nText(MediasI18nKeys.VODPromptComment));
+//                currentVBox.getChildren().add(commentTextField);
+//                commentTextField.setMaxWidth(URL_TEXT_FIELD_WITH);
+//                if (workingCurrentVideoScheduledItem.getComment() != null)
+//                    commentTextField.setText(workingCurrentVideoScheduledItem.getComment());
+//                commentTextField.textProperty().addListener(observable -> workingCurrentVideoScheduledItem.setComment(commentTextField.getText()));
+                LabelTextField commentTextField = new LabelTextField(workingCurrentVideoScheduledItem,"comment","commentLabel",localUpdateStore);
                 commentTextField.setMaxWidth(URL_TEXT_FIELD_WITH);
-                if (workingCurrentVideoScheduledItem.getComment() != null)
-                    commentTextField.setText(workingCurrentVideoScheduledItem.getComment());
-                commentTextField.textProperty().addListener(observable -> workingCurrentVideoScheduledItem.setComment(commentTextField.getText()));
+                currentVBox.getChildren().add(commentTextField.getView());
 
                 HBox customContentAvailableUntilHBox = new HBox();
                 customContentAvailableUntilHBox.setPadding(new Insets(20, 0, 0, 0));
