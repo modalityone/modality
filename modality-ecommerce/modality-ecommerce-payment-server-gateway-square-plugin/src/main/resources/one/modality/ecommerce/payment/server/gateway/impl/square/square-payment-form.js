@@ -47,7 +47,7 @@ function modality_injectJavaPaymentForm(jpf) {
     }
 }
 
-function modality_submitGatewayPayment(firstName, lastName, email, phone, address, city, state, countryCode) {
+function modality_submitGatewayPayment(firstName, lastName, email, phone, address, city, state, postCode, countryCode, countryName) {
     console.log("modality_submitGatewayPayment() called");
     handlePaymentMethodSubmission(firstName, lastName, email, phone, address, city, state, countryCode);
 }
