@@ -7,11 +7,17 @@ module modality.base.client.i18n {
 
     // Direct dependencies modules
     requires javafx.base;
+    requires javafx.controls;
+    requires javafx.graphics;
+    requires modality.base.shared.entities;
+    requires webfx.extras.styles.bootstrap;
+    requires webfx.kit.util;
     requires webfx.platform.ast;
     requires webfx.platform.conf;
     requires webfx.platform.console;
     requires webfx.stack.i18n;
     requires webfx.stack.i18n.ast;
+    requires webfx.stack.i18n.controls;
     requires webfx.stack.orm.entity;
     requires webfx.stack.ui.operation;
 

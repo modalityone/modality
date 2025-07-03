@@ -1,4 +1,4 @@
-package one.modality.event.backoffice.activities.medias;
+package one.modality.base.client.i18n;
 
 import dev.webfx.extras.styles.bootstrap.Bootstrap;
 import dev.webfx.kit.util.properties.FXProperties;
@@ -78,13 +78,13 @@ public class LabelTextField {
         mainFieldContainer.setAlignment(Pos.CENTER_LEFT);
 
         mainTextField = new TextField();
-        mainTextField.setPromptText(I18n.getI18nText(MediasI18nKeys.DefaultPromptText));
+        mainTextField.setPromptText(I18n.getI18nText(BaseI18nKeys.DefaultPromptText));
         FXProperties.runOnPropertyChange(linkText ->
                 currentEntity.setFieldValue(databaseSimpleFieldName, linkText),
             mainTextField.textProperty());
         HBox.setHgrow(mainTextField, Priority.ALWAYS);
 
-        translationButton = new Button(I18n.getI18nText(MediasI18nKeys.TranslateIcon));
+        translationButton = new Button(I18n.getI18nText(BaseI18nKeys.TranslateIcon));
         translationButton.getStyleClass().add("translation-button");
         translationButton.setOnAction(e -> toggleTranslationPane());
         translationButton.setAlignment(Pos.CENTER);
@@ -124,7 +124,7 @@ public class LabelTextField {
         languageLabel.setMaxWidth(LABEL_WIDTH);
 
         TextField textField = new TextField();
-        textField.setPromptText(I18n.getI18nText(MediasI18nKeys.TranslateIn,languageName));
+        textField.setPromptText(I18n.getI18nText(BaseI18nKeys.TranslateIn,languageName));
         textField.setPrefWidth(TEXT_FIELD_WIDTH);
         textField.setMinWidth(TEXT_FIELD_WIDTH);
         textField.setMaxWidth(TEXT_FIELD_WIDTH);
@@ -145,15 +145,15 @@ public class LabelTextField {
 
     private String getLanguageLabel(String code) {
         return switch (code) {
-            case one.modality.base.shared.entities.Label.en -> I18n.getI18nText(MediasI18nKeys.EnglishWithFlag);
-            case one.modality.base.shared.entities.Label.fr -> I18n.getI18nText(MediasI18nKeys.FrenchWithFlag);
-            case one.modality.base.shared.entities.Label.es -> I18n.getI18nText(MediasI18nKeys.SpanishWithFlag);
-            case one.modality.base.shared.entities.Label.de -> I18n.getI18nText(MediasI18nKeys.GermanWithFlag);
-            case one.modality.base.shared.entities.Label.pt -> I18n.getI18nText(MediasI18nKeys.PortugueseWithFlag);
-            case one.modality.base.shared.entities.Label.zh -> I18n.getI18nText(MediasI18nKeys.MandarinWithFlag);
-            case one.modality.base.shared.entities.Label.yue -> I18n.getI18nText(MediasI18nKeys.CantoneseWithFlag);
-            case one.modality.base.shared.entities.Label.el -> I18n.getI18nText(MediasI18nKeys.GreekWithFlag);
-            case one.modality.base.shared.entities.Label.vi -> I18n.getI18nText(MediasI18nKeys.VietnameseWithFlag);
+            case one.modality.base.shared.entities.Label.en -> I18n.getI18nText(BaseI18nKeys.EnglishWithFlag);
+            case one.modality.base.shared.entities.Label.fr -> I18n.getI18nText(BaseI18nKeys.FrenchWithFlag);
+            case one.modality.base.shared.entities.Label.es -> I18n.getI18nText(BaseI18nKeys.SpanishWithFlag);
+            case one.modality.base.shared.entities.Label.de -> I18n.getI18nText(BaseI18nKeys.GermanWithFlag);
+            case one.modality.base.shared.entities.Label.pt -> I18n.getI18nText(BaseI18nKeys.PortugueseWithFlag);
+            case one.modality.base.shared.entities.Label.zh -> I18n.getI18nText(BaseI18nKeys.MandarinWithFlag);
+            case one.modality.base.shared.entities.Label.yue -> I18n.getI18nText(BaseI18nKeys.CantoneseWithFlag);
+            case one.modality.base.shared.entities.Label.el -> I18n.getI18nText(BaseI18nKeys.GreekWithFlag);
+            case one.modality.base.shared.entities.Label.vi -> I18n.getI18nText(BaseI18nKeys.VietnameseWithFlag);
             default -> code;
         };
     }
@@ -221,7 +221,7 @@ public class LabelTextField {
             moveMainFieldToEnglishField();
             translationPane.setVisible(true);
             translationPane.setManaged(true);
-            translationButton.setText(I18n.getI18nText(MediasI18nKeys.CloseIcon));
+            translationButton.setText(I18n.getI18nText(BaseI18nKeys.CloseIcon));
 
             FadeTransition fadeIn = new FadeTransition(Duration.millis(300), translationPane);
             fadeIn.setFromValue(0.0);
@@ -240,7 +240,7 @@ public class LabelTextField {
             translationPane.setVisible(false);
             translationPane.setManaged(false);
             moveMainFieldBack();
-            translationButton.setText(I18n.getI18nText(MediasI18nKeys.TranslateIcon));
+            translationButton.setText(I18n.getI18nText(BaseI18nKeys.TranslateIcon));
             isTranslationPaneVisible = false;
         });
         fadeOut.play();
@@ -254,7 +254,7 @@ public class LabelTextField {
         mainTextField.setMaxWidth(TEXT_FIELD_WIDTH);
         HBox.setHgrow(mainTextField, Priority.ALWAYS);
 
-        Label label = Bootstrap.strong(I18nControls.newLabel(MediasI18nKeys.EnglishWithFlag));
+        Label label = Bootstrap.strong(I18nControls.newLabel(BaseI18nKeys.EnglishWithFlag));
         label.setMinWidth(LABEL_WIDTH);
         label.setPrefWidth(LABEL_WIDTH);
         label.setMaxWidth(LABEL_WIDTH);

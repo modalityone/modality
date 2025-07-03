@@ -31,6 +31,7 @@ import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.SVGPath;
 import one.modality.base.client.i18n.BaseI18nKeys;
+import one.modality.base.client.i18n.LabelTextField;
 import one.modality.base.client.icons.SvgIcons;
 import one.modality.base.client.messaging.ModalityMessaging;
 import one.modality.base.client.time.BackOfficeTimeFormats;
