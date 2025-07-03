@@ -48,6 +48,9 @@ import java.util.Comparator;
 import java.util.List;
 import java.util.stream.Collectors;
 
+/**
+ * @author David Hello
+ */
 public class MediaLinksForVODManagement extends MediaLinksManagement {
 
     private static final int URL_TEXT_FIELD_WITH = 600;

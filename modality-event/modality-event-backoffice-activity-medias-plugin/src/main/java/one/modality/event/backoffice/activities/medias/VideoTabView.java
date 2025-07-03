@@ -45,7 +45,9 @@ import java.time.format.DateTimeParseException;
 import java.util.Objects;
 import java.util.stream.Collectors;
 
-
+/**
+ * @author David Hello
+ */
 final class VideoTabView {
 
     private final BooleanProperty activeProperty = new SimpleBooleanProperty();

@@ -21,7 +21,9 @@ import javafx.scene.paint.Color;
 
 import static dev.webfx.extras.webtext.HtmlTextEditor.Mode.BASIC;
 
-
+/**
+ * @author David Hello
+ */
 final class LiveStreamingTabView {
 
     private final BooleanProperty activeProperty = new SimpleBooleanProperty();

@@ -12,6 +12,9 @@ import dev.webfx.stack.routing.uirouter.operations.RouteRequestEmitter;
 import dev.webfx.stack.ui.operation.HasOperationCode;
 import one.modality.base.backoffice.activities.home.BackOfficeHomeI18nKeys;
 
+/**
+ * @author Bruno Salmon
+ */
 public final class MediasRouting {
 
     private final static String PATH = "/medias";

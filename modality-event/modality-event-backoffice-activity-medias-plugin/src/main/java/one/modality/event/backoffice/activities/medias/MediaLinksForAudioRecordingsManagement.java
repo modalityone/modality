@@ -33,6 +33,9 @@ import one.modality.event.client.event.fx.FXEventId;
 import java.time.LocalDate;
 import java.util.stream.Collectors;
 
+/**
+ * @author David Hello
+ */
 public class MediaLinksForAudioRecordingsManagement extends MediaLinksManagement {
 
     private static final double IMAGE_SIZE = 272;

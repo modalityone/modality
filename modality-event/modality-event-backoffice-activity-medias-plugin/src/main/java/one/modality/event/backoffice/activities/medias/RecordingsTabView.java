@@ -47,7 +47,9 @@ import java.util.Map;
 import java.util.TreeSet;
 import java.util.stream.Collectors;
 
-
+/**
+ * @author David Hello
+ */
 final class RecordingsTabView {
 
     private Event currentEditedEvent;

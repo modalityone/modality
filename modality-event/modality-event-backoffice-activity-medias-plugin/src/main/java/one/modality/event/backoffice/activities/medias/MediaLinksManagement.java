@@ -50,6 +50,9 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
+/**
+ * @author David Hello
+ */
 public abstract class MediaLinksManagement {
 
     protected EntityStore entityStore;

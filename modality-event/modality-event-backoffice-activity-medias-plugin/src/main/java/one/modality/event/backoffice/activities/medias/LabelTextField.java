@@ -22,6 +22,9 @@ import javafx.util.Duration;
 import java.util.HashMap;
 import java.util.Map;
 
+/**
+ * @author David Hello
+ */
 public class LabelTextField {
 
     private final String databaseSimpleFieldName;
