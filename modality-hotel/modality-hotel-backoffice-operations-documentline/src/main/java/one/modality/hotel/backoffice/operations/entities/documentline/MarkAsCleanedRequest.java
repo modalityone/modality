@@ -1,8 +1,8 @@
 package one.modality.hotel.backoffice.operations.entities.documentline;
 
 import dev.webfx.platform.async.AsyncFunction;
-import dev.webfx.stack.ui.operation.HasOperationCode;
-import dev.webfx.stack.ui.operation.HasOperationExecutor;
+import dev.webfx.extras.operation.HasOperationCode;
+import dev.webfx.extras.operation.HasOperationExecutor;
 import javafx.scene.layout.Pane;
 import one.modality.base.shared.entities.DocumentLine;
 

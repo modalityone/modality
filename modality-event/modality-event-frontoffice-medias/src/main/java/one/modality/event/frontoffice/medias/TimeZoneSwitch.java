@@ -2,7 +2,7 @@ package one.modality.event.frontoffice.medias;
 
 import dev.webfx.extras.switches.Switch;
 import dev.webfx.extras.util.layout.Layouts;
-import dev.webfx.stack.i18n.I18n;
+import dev.webfx.extras.i18n.I18n;
 import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.SimpleBooleanProperty;
 import javafx.beans.value.ObservableBooleanValue;

@@ -19,7 +19,11 @@ module modality.event.backoffice.activity.recurringevents.plugin {
     requires modality.crm.backoffice.organization.fx;
     requires modality.event.client.event.fx;
     requires webfx.extras.cell;
+    requires webfx.extras.controlfactory;
     requires webfx.extras.filepicker;
+    requires webfx.extras.i18n;
+    requires webfx.extras.i18n.controls;
+    requires webfx.extras.operation;
     requires webfx.extras.panes;
     requires webfx.extras.styles.bootstrap;
     requires webfx.extras.switches;
@@ -27,16 +31,16 @@ module modality.event.backoffice.activity.recurringevents.plugin {
     requires webfx.extras.time.format;
     requires webfx.extras.time.pickers;
     requires webfx.extras.util.control;
+    requires webfx.extras.util.dialog;
     requires webfx.extras.util.layout;
     requires webfx.extras.util.masterslave;
+    requires webfx.extras.validation;
     requires webfx.extras.visual.grid;
     requires webfx.extras.webtext;
     requires webfx.kit.util;
     requires webfx.platform.console;
     requires webfx.platform.file;
     requires webfx.platform.windowhistory;
-    requires webfx.stack.i18n;
-    requires webfx.stack.i18n.controls;
     requires webfx.stack.orm.datasourcemodel.service;
     requires webfx.stack.orm.domainmodel;
     requires webfx.stack.orm.domainmodel.activity;
@@ -48,10 +52,6 @@ module modality.event.backoffice.activity.recurringevents.plugin {
     requires webfx.stack.orm.reactive.visual;
     requires webfx.stack.routing.router.client;
     requires webfx.stack.routing.uirouter;
-    requires webfx.stack.ui.controls;
-    requires webfx.stack.ui.dialog;
-    requires webfx.stack.ui.operation;
-    requires webfx.stack.ui.validation;
 
     // Exported packages
     exports one.modality.event.backoffice.activities.recurringevents;

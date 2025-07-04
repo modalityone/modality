@@ -2,9 +2,9 @@ package one.modality.base.backoffice.operations.entities.filters;
 
 import dev.webfx.platform.async.Future;
 import dev.webfx.stack.orm.entity.UpdateStore;
-import dev.webfx.stack.ui.controls.dialog.DialogBuilderUtil;
-import dev.webfx.stack.ui.controls.dialog.DialogContent;
-import dev.webfx.stack.ui.dialog.DialogCallback;
+import dev.webfx.extras.util.dialog.builder.DialogBuilderUtil;
+import dev.webfx.extras.util.dialog.builder.DialogContent;
+import dev.webfx.extras.util.dialog.DialogCallback;
 import javafx.scene.layout.Pane;
 import one.modality.base.shared.entities.Filter;
 import one.modality.base.shared.entities.triggers.Triggers;

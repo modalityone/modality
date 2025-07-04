@@ -1,6 +1,6 @@
 package one.modality.event.backoffice.activities.program;
 
-import dev.webfx.stack.ui.validation.ValidationSupport;
+import dev.webfx.extras.validation.ValidationSupport;
 import one.modality.base.shared.entities.Timeline;
 
 /**

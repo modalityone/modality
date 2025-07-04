@@ -1,11 +1,11 @@
 package one.modality.hotel.backoffice.operations.entities.resourceconfiguration;
 
-import dev.webfx.stack.ui.controls.dialog.DialogContent;
+import dev.webfx.extras.util.dialog.builder.DialogContent;
 import dev.webfx.stack.orm.entity.Entity;
 import dev.webfx.stack.orm.entity.UpdateStore;
 import dev.webfx.platform.async.Future;
 import dev.webfx.platform.async.Promise;
-import dev.webfx.stack.ui.controls.dialog.DialogBuilderUtil;
+import dev.webfx.extras.util.dialog.builder.DialogBuilderUtil;
 import javafx.scene.layout.Pane;
 import javafx.scene.text.Text;
 import one.modality.base.shared.entities.ResourceConfiguration;

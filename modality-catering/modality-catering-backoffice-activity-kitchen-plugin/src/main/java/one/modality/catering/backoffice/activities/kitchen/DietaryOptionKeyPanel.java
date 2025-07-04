@@ -2,8 +2,8 @@ package one.modality.catering.backoffice.activities.kitchen;
 
 import dev.webfx.extras.panes.ScalePane;
 import dev.webfx.extras.theme.text.TextTheme;
-import dev.webfx.stack.i18n.I18n;
-import dev.webfx.stack.ui.fxraiser.FXRaiser;
+import dev.webfx.extras.i18n.I18n;
+import dev.webfx.extras.fxraiser.FXRaiser;
 import javafx.application.Platform;
 import javafx.geometry.Pos;
 import javafx.scene.Node;

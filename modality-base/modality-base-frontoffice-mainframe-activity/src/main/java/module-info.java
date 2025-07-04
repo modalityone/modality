@@ -15,7 +15,11 @@ module modality.base.frontoffice.mainframe.activity {
     requires modality.crm.client.authn.fx;
     requires modality.event.client.event.fx;
     requires modality.event.client.mediaview;
+    requires webfx.extras.action;
     requires webfx.extras.aria;
+    requires webfx.extras.i18n;
+    requires webfx.extras.i18n.controls;
+    requires webfx.extras.operation.action;
     requires webfx.extras.panes;
     requires webfx.extras.player;
     requires webfx.extras.util.animation;
@@ -29,12 +33,8 @@ module modality.base.frontoffice.mainframe.activity {
     requires webfx.platform.resource;
     requires webfx.platform.useragent;
     requires webfx.platform.util;
-    requires webfx.stack.i18n;
-    requires webfx.stack.i18n.controls;
     requires webfx.stack.orm.entity;
     requires webfx.stack.session.state.client.fx;
-    requires webfx.stack.ui.action;
-    requires webfx.stack.ui.operation.action;
 
     // Exported packages
     exports one.modality.base.frontoffice.activities.mainframe;

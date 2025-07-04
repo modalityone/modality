@@ -5,7 +5,7 @@ import dev.webfx.stack.orm.dql.DqlStatement;
 import dev.webfx.stack.orm.entity.controls.entity.selector.EntityButtonSelector;
 import dev.webfx.stack.orm.reactive.dql.statement.conventions.HasColumnsDqlStatementProperty;
 import dev.webfx.stack.orm.reactive.dql.statement.conventions.HasGroupDqlStatementProperty;
-import dev.webfx.stack.ui.controls.button.ButtonFactoryMixin;
+import dev.webfx.extras.controlfactory.button.ButtonFactoryMixin;
 import javafx.beans.property.Property;
 import javafx.scene.layout.Pane;
 import one.modality.base.shared.entities.Filter;

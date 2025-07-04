@@ -2,7 +2,7 @@ package one.modality.base.client.entities.functions;
 
 import dev.webfx.extras.type.PrimType;
 import dev.webfx.extras.type.Type;
-import dev.webfx.stack.i18n.I18n;
+import dev.webfx.extras.i18n.I18n;
 import dev.webfx.stack.orm.entity.Entity;
 import dev.webfx.stack.orm.entity.EntityId;
 import dev.webfx.stack.orm.expression.lci.DomainReader;

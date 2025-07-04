@@ -22,13 +22,16 @@ module modality.ecommerce.backoffice.activity.bookings.plugin {
     requires modality.crm.backoffice.bookingdetailspanel;
     requires modality.ecommerce.backoffice.operations.document;
     requires modality.event.client.activity.eventdependent;
+    requires webfx.extras.action;
+    requires webfx.extras.i18n;
+    requires webfx.extras.operation;
+    requires webfx.extras.operation.action;
     requires webfx.extras.time;
     requires webfx.extras.util.control;
     requires webfx.extras.visual;
     requires webfx.extras.visual.grid;
     requires webfx.platform.windowhistory;
     requires webfx.stack.cache.client;
-    requires webfx.stack.i18n;
     requires webfx.stack.orm.domainmodel.activity;
     requires webfx.stack.orm.dql;
     requires webfx.stack.orm.expression;
@@ -37,9 +40,6 @@ module modality.ecommerce.backoffice.activity.bookings.plugin {
     requires webfx.stack.routing.router;
     requires webfx.stack.routing.router.client;
     requires webfx.stack.routing.uirouter;
-    requires webfx.stack.ui.action;
-    requires webfx.stack.ui.operation;
-    requires webfx.stack.ui.operation.action;
 
     // Exported packages
     exports one.modality.ecommerce.backoffice.activities.bookings;

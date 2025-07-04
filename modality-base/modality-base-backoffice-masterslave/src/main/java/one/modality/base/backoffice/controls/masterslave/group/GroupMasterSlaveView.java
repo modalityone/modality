@@ -7,7 +7,7 @@ import dev.webfx.stack.orm.reactive.dql.statement.conventions.HasSlaveVisibility
 import dev.webfx.stack.orm.reactive.mapping.entities_to_visual.conventions.HasGroupVisualResultProperty;
 import dev.webfx.stack.orm.reactive.mapping.entities_to_visual.conventions.HasMasterVisualResultProperty;
 import dev.webfx.stack.orm.reactive.mapping.entities_to_visual.conventions.HasSlaveVisualResultProperty;
-import dev.webfx.stack.ui.controls.ControlFactoryMixin;
+import dev.webfx.extras.controlfactory.ControlFactoryMixin;
 import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.ObjectProperty;
 import javafx.scene.Node;

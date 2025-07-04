@@ -10,7 +10,7 @@ import one.modality.base.shared.entities.impl.LabelImpl;
 import one.modality.base.shared.entities.markers.HasItem;
 import one.modality.base.shared.entities.markers.HasLabel;
 import one.modality.base.shared.entities.markers.HasName;
-import dev.webfx.stack.i18n.I18n;
+import dev.webfx.extras.i18n.I18n;
 import dev.webfx.platform.util.Objects;
 
 /**

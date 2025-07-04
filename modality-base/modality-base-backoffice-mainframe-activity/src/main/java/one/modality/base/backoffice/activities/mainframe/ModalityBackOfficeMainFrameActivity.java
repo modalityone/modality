@@ -21,7 +21,7 @@ import dev.webfx.stack.com.bus.Bus;
 import dev.webfx.stack.com.bus.BusService;
 import dev.webfx.stack.com.bus.call.PendingBusCall;
 import dev.webfx.stack.com.bus.spi.impl.client.NetworkBus;
-import dev.webfx.stack.i18n.I18n;
+import dev.webfx.extras.i18n.I18n;
 import dev.webfx.stack.session.state.client.fx.FXConnected;
 import javafx.animation.Timeline;
 import javafx.collections.ListChangeListener;

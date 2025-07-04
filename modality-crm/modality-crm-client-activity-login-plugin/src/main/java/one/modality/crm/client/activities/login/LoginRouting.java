@@ -3,7 +3,7 @@ package one.modality.crm.client.activities.login;
 import dev.webfx.platform.util.function.Factory;
 import dev.webfx.platform.windowhistory.spi.BrowsingHistory;
 import dev.webfx.stack.authn.login.ui.spi.impl.gateway.password.PasswordUiLoginGateway;
-import dev.webfx.stack.i18n.HasI18nKey;
+import dev.webfx.extras.i18n.HasI18nKey;
 import dev.webfx.stack.orm.domainmodel.activity.viewdomain.impl.ViewDomainActivityContextFinal;
 import dev.webfx.stack.routing.activity.Activity;
 import dev.webfx.stack.routing.router.auth.authz.RouteRequest;
@@ -13,8 +13,8 @@ import dev.webfx.stack.routing.uirouter.activity.uiroute.UiRouteActivityContext;
 import dev.webfx.stack.routing.uirouter.impl.UiRouteImpl;
 import dev.webfx.stack.routing.uirouter.operations.RoutePushRequest;
 import dev.webfx.stack.routing.uirouter.operations.RouteRequestEmitter;
-import dev.webfx.stack.ui.action.tuner.logout.LogoutOnlyActionTuner;
-import dev.webfx.stack.ui.operation.HasOperationCode;
+import dev.webfx.stack.session.state.client.fx.actiontuner.LogoutOnlyActionTuner;
+import dev.webfx.extras.operation.HasOperationCode;
 
 /**
  * @author Bruno Salmon

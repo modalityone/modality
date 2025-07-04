@@ -4,7 +4,7 @@ import dev.webfx.extras.panes.ScalePane;
 import dev.webfx.extras.theme.FontDef;
 import dev.webfx.extras.theme.shape.ShapeTheme;
 import dev.webfx.extras.theme.text.TextTheme;
-import dev.webfx.stack.ui.fxraiser.FXRaiser;
+import dev.webfx.extras.fxraiser.FXRaiser;
 import javafx.geometry.HPos;
 import javafx.geometry.Insets;
 import javafx.scene.Node;

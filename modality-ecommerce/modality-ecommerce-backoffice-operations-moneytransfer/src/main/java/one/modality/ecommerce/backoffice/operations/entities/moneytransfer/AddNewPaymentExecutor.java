@@ -1,8 +1,8 @@
 package one.modality.ecommerce.backoffice.operations.entities.moneytransfer;
 
 import dev.webfx.platform.async.Future;
-import dev.webfx.stack.ui.dialog.DialogCallback;
-import dev.webfx.stack.ui.dialog.DialogUtil;
+import dev.webfx.extras.util.dialog.DialogCallback;
+import dev.webfx.extras.util.dialog.DialogUtil;
 import dev.webfx.extras.util.layout.Layouts;
 import javafx.application.Platform;
 import javafx.scene.control.Button;

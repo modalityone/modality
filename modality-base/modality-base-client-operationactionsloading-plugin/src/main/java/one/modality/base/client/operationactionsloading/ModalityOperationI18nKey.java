@@ -1,8 +1,8 @@
 package one.modality.base.client.operationactionsloading;
 
 import dev.webfx.platform.util.Strings;
-import dev.webfx.stack.i18n.HasI18nKey;
-import dev.webfx.stack.i18n.spi.HasDictionaryMessageKey;
+import dev.webfx.extras.i18n.HasI18nKey;
+import dev.webfx.extras.i18n.spi.HasDictionaryMessageKey;
 import dev.webfx.stack.orm.entity.Entity;
 import dev.webfx.stack.orm.entity.HasEntity;
 

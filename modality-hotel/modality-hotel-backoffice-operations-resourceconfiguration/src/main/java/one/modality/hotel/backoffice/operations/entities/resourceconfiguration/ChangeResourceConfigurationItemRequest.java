@@ -1,11 +1,11 @@
 package one.modality.hotel.backoffice.operations.entities.resourceconfiguration;
 
 import dev.webfx.platform.async.AsyncFunction;
-import dev.webfx.stack.i18n.HasI18nKey;
-import dev.webfx.stack.i18n.I18nKeys;
+import dev.webfx.extras.i18n.HasI18nKey;
+import dev.webfx.extras.i18n.I18nKeys;
 import dev.webfx.stack.orm.entity.EntityId;
-import dev.webfx.stack.ui.operation.HasOperationCode;
-import dev.webfx.stack.ui.operation.HasOperationExecutor;
+import dev.webfx.extras.operation.HasOperationCode;
+import dev.webfx.extras.operation.HasOperationExecutor;
 import javafx.scene.layout.Pane;
 import one.modality.base.shared.entities.ResourceConfiguration;
 

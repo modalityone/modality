@@ -16,8 +16,13 @@ module modality.ecommerce.backoffice.activity.moneyflows.plugin {
     requires modality.base.shared.entities;
     requires modality.ecommerce.backoffice.operations.moneyflow;
     requires modality.event.client.activity.eventdependent;
+    requires webfx.extras.action;
+    requires webfx.extras.controlfactory;
+    requires webfx.extras.operation;
+    requires webfx.extras.operation.action;
     requires webfx.extras.util.background;
     requires webfx.extras.util.border;
+    requires webfx.extras.util.dialog;
     requires webfx.extras.visual;
     requires webfx.extras.visual.grid;
     requires webfx.kit.util;
@@ -31,10 +36,6 @@ module modality.ecommerce.backoffice.activity.moneyflows.plugin {
     requires webfx.stack.routing.router;
     requires webfx.stack.routing.router.client;
     requires webfx.stack.routing.uirouter;
-    requires webfx.stack.ui.action;
-    requires webfx.stack.ui.controls;
-    requires webfx.stack.ui.operation;
-    requires webfx.stack.ui.operation.action;
 
     // Exported packages
     exports one.modality.ecommerce.backoffice.activities.moneyflows;

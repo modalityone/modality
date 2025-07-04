@@ -1,9 +1,9 @@
 package one.modality.base.backoffice.operations.entities.filters;
 
-import dev.webfx.stack.i18n.HasI18nKey;
-import dev.webfx.stack.i18n.I18nKeys;
-import dev.webfx.stack.ui.operation.HasOperationCode;
-import dev.webfx.stack.ui.operation.HasOperationExecutor;
+import dev.webfx.extras.i18n.HasI18nKey;
+import dev.webfx.extras.i18n.I18nKeys;
+import dev.webfx.extras.operation.HasOperationCode;
+import dev.webfx.extras.operation.HasOperationExecutor;
 import dev.webfx.stack.orm.entity.EntityStore;
 import dev.webfx.platform.async.AsyncFunction;
 import javafx.scene.layout.Pane;

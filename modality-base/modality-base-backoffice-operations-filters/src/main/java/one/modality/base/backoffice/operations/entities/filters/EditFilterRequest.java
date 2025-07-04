@@ -1,7 +1,7 @@
 package one.modality.base.backoffice.operations.entities.filters;
 
-import dev.webfx.stack.ui.operation.HasOperationCode;
-import dev.webfx.stack.ui.operation.HasOperationExecutor;
+import dev.webfx.extras.operation.HasOperationCode;
+import dev.webfx.extras.operation.HasOperationExecutor;
 import dev.webfx.platform.async.AsyncFunction;
 import javafx.scene.layout.Pane;
 import one.modality.base.shared.entities.Filter;

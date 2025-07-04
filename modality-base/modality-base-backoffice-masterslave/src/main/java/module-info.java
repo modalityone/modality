@@ -10,6 +10,7 @@ module modality.base.backoffice.masterslave {
     requires javafx.controls;
     requires javafx.graphics;
     requires modality.base.client.entities;
+    requires webfx.extras.controlfactory;
     requires webfx.extras.imagestore;
     requires webfx.extras.type;
     requires webfx.extras.util.layout;
@@ -25,7 +26,6 @@ module modality.base.backoffice.masterslave {
     requires webfx.stack.orm.reactive.dql;
     requires webfx.stack.orm.reactive.entities;
     requires webfx.stack.orm.reactive.visual;
-    requires webfx.stack.ui.controls;
 
     // Exported packages
     exports one.modality.base.backoffice.controls.masterslave;

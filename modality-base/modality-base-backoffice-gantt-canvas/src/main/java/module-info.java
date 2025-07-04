@@ -14,6 +14,7 @@ module modality.base.backoffice.gantt.canvas {
     requires webfx.extras.canvas.layer;
     requires webfx.extras.canvas.pane;
     requires webfx.extras.geometry;
+    requires webfx.extras.i18n;
     requires webfx.extras.panes;
     requires webfx.extras.theme;
     requires webfx.extras.time;
@@ -27,7 +28,6 @@ module modality.base.backoffice.gantt.canvas {
     requires webfx.platform.resource;
     requires webfx.platform.service;
     requires webfx.platform.util;
-    requires webfx.stack.i18n;
 
     // Exported packages
     exports one.modality.base.backoffice.ganttcanvas;

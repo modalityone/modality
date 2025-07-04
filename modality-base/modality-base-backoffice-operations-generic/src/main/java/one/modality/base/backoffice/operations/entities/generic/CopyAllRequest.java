@@ -1,6 +1,6 @@
 package one.modality.base.backoffice.operations.entities.generic;
 
-import dev.webfx.stack.i18n.HasI18nKey;
+import dev.webfx.extras.i18n.HasI18nKey;
 import dev.webfx.stack.orm.reactive.entities.entities_to_grid.EntityColumn;
 import dev.webfx.stack.orm.entity.Entity;
 import one.modality.base.client.i18n.BaseI18nKeys;

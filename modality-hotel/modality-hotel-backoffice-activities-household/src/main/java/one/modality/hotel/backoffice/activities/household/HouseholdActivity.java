@@ -1,6 +1,6 @@
 package one.modality.hotel.backoffice.activities.household;
 
-import dev.webfx.stack.ui.operation.action.OperationActionFactoryMixin;
+import dev.webfx.extras.operation.action.OperationActionFactoryMixin;
 import javafx.scene.Node;
 import one.modality.base.backoffice.mainframe.fx.FXEventSelector;
 import one.modality.base.client.activity.organizationdependent.OrganizationDependentViewDomainActivity;

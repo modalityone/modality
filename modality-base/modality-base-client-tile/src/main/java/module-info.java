@@ -6,13 +6,13 @@ module modality.base.client.tile {
     requires javafx.base;
     requires javafx.controls;
     requires javafx.graphics;
+    requires webfx.extras.action;
     requires webfx.extras.panes;
     requires webfx.extras.theme;
     requires webfx.extras.util.layout;
     requires webfx.extras.webtext;
     requires webfx.kit.util;
     requires webfx.platform.util;
-    requires webfx.stack.ui.action;
 
     // Exported packages
     exports one.modality.base.client.tile;

@@ -1,9 +1,9 @@
 package one.modality.base.client.operations.i18n;
 
-import dev.webfx.stack.i18n.HasI18nKey;
-import dev.webfx.stack.i18n.operations.ChangeLanguageRequest;
-import dev.webfx.stack.i18n.operations.ChangeLanguageRequestEmitterImpl;
-import dev.webfx.stack.ui.operation.HasOperationCode;
+import dev.webfx.extras.i18n.HasI18nKey;
+import dev.webfx.extras.i18n.operations.ChangeLanguageRequest;
+import dev.webfx.extras.i18n.operations.ChangeLanguageRequestEmitterImpl;
+import dev.webfx.extras.operation.HasOperationCode;
 import one.modality.base.client.i18n.BaseI18nKeys;
 
 /**

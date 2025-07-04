@@ -1,16 +1,15 @@
 package one.modality.base.client.activities.console;
 
 import dev.webfx.platform.windowhistory.spi.BrowsingHistory;
-import dev.webfx.stack.i18n.HasI18nKey;
+import dev.webfx.extras.i18n.HasI18nKey;
 import dev.webfx.stack.routing.router.auth.authz.RouteRequest;
 import dev.webfx.stack.routing.uirouter.UiRoute;
 import dev.webfx.stack.routing.uirouter.activity.uiroute.UiRouteActivityContext;
 import dev.webfx.stack.routing.uirouter.activity.view.impl.ViewActivityContextFinal;
 import dev.webfx.stack.routing.uirouter.impl.UiRouteImpl;
-import dev.webfx.stack.routing.uirouter.operations.RouteI18nKeys;
 import dev.webfx.stack.routing.uirouter.operations.RoutePushRequest;
 import dev.webfx.stack.routing.uirouter.operations.RouteRequestEmitter;
-import dev.webfx.stack.ui.operation.HasOperationCode;
+import dev.webfx.extras.operation.HasOperationCode;
 
 public final class ConsoleRouting {
 

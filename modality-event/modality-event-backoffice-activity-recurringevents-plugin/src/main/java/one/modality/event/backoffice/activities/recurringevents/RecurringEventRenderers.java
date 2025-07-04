@@ -3,7 +3,7 @@ package one.modality.event.backoffice.activities.recurringevents;
 import dev.webfx.extras.cell.renderer.ValueRendererRegistry;
 import dev.webfx.extras.panes.MonoPane;
 import dev.webfx.extras.styles.bootstrap.Bootstrap;
-import dev.webfx.stack.i18n.I18n;
+import dev.webfx.extras.i18n.I18n;
 import javafx.scene.control.Hyperlink;
 import javafx.scene.text.Text;
 import one.modality.base.shared.entities.Document;

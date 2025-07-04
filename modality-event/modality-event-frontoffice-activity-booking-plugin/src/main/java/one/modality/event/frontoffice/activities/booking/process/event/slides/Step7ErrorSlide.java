@@ -2,7 +2,7 @@ package one.modality.event.frontoffice.activities.booking.process.event.slides;
 
 import dev.webfx.extras.styles.bootstrap.Bootstrap;
 import dev.webfx.extras.webtext.HtmlText;
-import dev.webfx.stack.i18n.I18n;
+import dev.webfx.extras.i18n.I18n;
 import javafx.geometry.Insets;
 import javafx.scene.control.Label;
 import one.modality.event.frontoffice.activities.booking.process.event.BookEventActivity;

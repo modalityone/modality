@@ -3,9 +3,9 @@ package one.modality.hotel.backoffice.operations.entities.resourceconfiguration;
 import dev.webfx.platform.async.AsyncFunction;
 import dev.webfx.platform.async.Batch;
 import dev.webfx.stack.db.submit.SubmitResult;
-import dev.webfx.stack.i18n.HasI18nKey;
-import dev.webfx.stack.ui.operation.HasOperationCode;
-import dev.webfx.stack.ui.operation.HasOperationExecutor;
+import dev.webfx.extras.i18n.HasI18nKey;
+import dev.webfx.extras.operation.HasOperationCode;
+import dev.webfx.extras.operation.HasOperationExecutor;
 import one.modality.base.shared.entities.ResourceConfiguration;
 
 public final class ToggleResourceConfigurationOnlineOfflineRequest implements HasOperationCode, HasI18nKey,

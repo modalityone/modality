@@ -11,13 +11,13 @@ module modality.event.frontoffice.bookingform.recurringevent.plugin {
     requires modality.event.client.booking;
     requires modality.event.client.recurringevents;
     requires modality.event.frontoffice.activity.booking.plugin;
+    requires webfx.extras.controlfactory;
+    requires webfx.extras.i18n;
+    requires webfx.extras.i18n.controls;
     requires webfx.extras.panes;
     requires webfx.extras.styles.bootstrap;
     requires webfx.extras.webtext;
     requires webfx.platform.util;
-    requires webfx.stack.i18n;
-    requires webfx.stack.i18n.controls;
-    requires webfx.stack.ui.controls;
 
     // Exported packages
     exports one.modality.event.frontoffice.bookingforms.recurringevent;

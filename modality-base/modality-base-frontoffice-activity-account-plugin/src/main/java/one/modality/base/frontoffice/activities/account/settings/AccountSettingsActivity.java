@@ -1,6 +1,6 @@
 package one.modality.base.frontoffice.activities.account.settings;
 
-import dev.webfx.stack.i18n.I18n;
+import dev.webfx.extras.i18n.I18n;
 import dev.webfx.stack.orm.domainmodel.activity.viewdomain.impl.ViewDomainActivityBase;
 import javafx.scene.Node;
 import javafx.scene.control.Button;

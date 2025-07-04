@@ -1,8 +1,8 @@
 package one.modality.crm.frontoffice.activities.userprofile;
 
 import dev.webfx.extras.styles.bootstrap.Bootstrap;
-import dev.webfx.stack.i18n.controls.I18nControls;
-import dev.webfx.stack.ui.dialog.DialogCallback;
+import dev.webfx.extras.i18n.controls.I18nControls;
+import dev.webfx.extras.util.dialog.DialogCallback;
 import javafx.event.Event;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
