@@ -1,5 +1,5 @@
-one.modality.base.frontoffice.activities.account.AccountUiRoute
-one.modality.base.frontoffice.activities.account.personalinfo.AccountPersonalInformationUiRoute
-one.modality.base.frontoffice.activities.account.settings.AccountSettingsUiRoute
-one.modality.base.frontoffice.activities.account.friendsfamily.AccountFriendsAndFamilyUiRoute
-one.modality.base.frontoffice.activities.account.friendsfamily.edit.AccountFriendsAndFamilyEditUiRoute
+one.modality.base.frontoffice.activities.account.AccountRouting$AccountUiRoute
+one.modality.base.frontoffice.activities.account.personalinfo.AccountPersonalInformationRouting$AccountPersonalInformationUiRoute
+one.modality.base.frontoffice.activities.account.settings.AccountSettingsRouting$AccountSettingsUiRoute
+one.modality.base.frontoffice.activities.account.friendsfamily.AccountFriendsAndFamilyRouting$AccountFriendsAndFamilyUiRoute
+one.modality.base.frontoffice.activities.account.friendsfamily.edit.AccountFriendsAndFamilyEditRouting$AccountFriendsAndFamilyEditUiRoute

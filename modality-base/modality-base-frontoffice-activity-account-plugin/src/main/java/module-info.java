@@ -43,7 +43,6 @@ module modality.base.frontoffice.activity.account.plugin {
     exports one.modality.base.frontoffice.activities.account.friendsfamily;
     exports one.modality.base.frontoffice.activities.account.friendsfamily.edit;
     exports one.modality.base.frontoffice.activities.account.personalinfo;
-    exports one.modality.base.frontoffice.activities.account.routing;
     exports one.modality.base.frontoffice.activities.account.settings;
     exports one.modality.base.frontoffice.operations.routes.account;
 
@@ -51,7 +50,7 @@ module modality.base.frontoffice.activity.account.plugin {
     opens one.modality.base.frontoffice.activities.account.images;
 
     // Provided services
-    provides dev.webfx.stack.routing.uirouter.UiRoute with one.modality.base.frontoffice.activities.account.AccountUiRoute, one.modality.base.frontoffice.activities.account.personalinfo.AccountPersonalInformationUiRoute, one.modality.base.frontoffice.activities.account.settings.AccountSettingsUiRoute, one.modality.base.frontoffice.activities.account.friendsfamily.AccountFriendsAndFamilyUiRoute, one.modality.base.frontoffice.activities.account.friendsfamily.edit.AccountFriendsAndFamilyEditUiRoute;
-    provides dev.webfx.stack.routing.uirouter.operations.RouteRequestEmitter with one.modality.base.frontoffice.activities.account.RouteToAccountRequestEmitter, one.modality.base.frontoffice.activities.account.settings.RouteToAccountSettingsRequestEmitter, one.modality.base.frontoffice.activities.account.personalinfo.RouteToAccountPersonalInformationEmitter, one.modality.base.frontoffice.activities.account.friendsfamily.RouteToAccountFriendsAndFamilyEmitter, one.modality.base.frontoffice.activities.account.friendsfamily.edit.RouteToAccountFriendsAndFamilyEditEmitter;
+    provides dev.webfx.stack.routing.uirouter.UiRoute with one.modality.base.frontoffice.activities.account.AccountRouting.AccountUiRoute, one.modality.base.frontoffice.activities.account.personalinfo.AccountPersonalInformationRouting.AccountPersonalInformationUiRoute, one.modality.base.frontoffice.activities.account.settings.AccountSettingsRouting.AccountSettingsUiRoute, one.modality.base.frontoffice.activities.account.friendsfamily.AccountFriendsAndFamilyRouting.AccountFriendsAndFamilyUiRoute, one.modality.base.frontoffice.activities.account.friendsfamily.edit.AccountFriendsAndFamilyEditRouting.AccountFriendsAndFamilyEditUiRoute;
+    provides dev.webfx.stack.routing.uirouter.operations.RouteRequestEmitter with one.modality.base.frontoffice.activities.account.AccountRouting.RouteToAccountRequestEmitter, one.modality.base.frontoffice.activities.account.settings.AccountSettingsRouting.RouteToAccountSettingsRequestEmitter, one.modality.base.frontoffice.activities.account.personalinfo.AccountPersonalInformationRouting.RouteToAccountPersonalInformationEmitter, one.modality.base.frontoffice.activities.account.friendsfamily.AccountFriendsAndFamilyRouting.RouteToAccountFriendsAndFamilyEmitter, one.modality.base.frontoffice.activities.account.friendsfamily.edit.AccountFriendsAndFamilyEditRouting.RouteToAccountFriendsAndFamilyEditEmitter;
 
 }
