@@ -269,8 +269,8 @@ public final class ModalityFrontOfficeMainFrameActivity extends ModalityClientMa
             if (mountNode != null && getMountNodeEmbeddingScrollPane(mountNode) == null) {
                 if (mountNode instanceof Region mountRegion) {
                     FXProperties.runNowAndOnPropertiesChange(() ->
-                            mountRegion.setMinHeight(pageTransitionPane.getMinHeight() - mainMenuButtonBar.getHeight() - languageMenuBar.getHeight())
-                        , pageTransitionPane.minHeightProperty(), mainMenuButtonBar.heightProperty(), languageMenuBar.heightProperty());
+                            mountRegion.setMinHeight(pageTransitionPane.getMinHeight() - languageMenuBar.getHeight() - mainMenuButtonBar.getHeight() - userMenuButtonBar.getHeight() - footer.getLayoutBounds().getHeight() - VBox.getMargin(footer).getBottom())
+                        , pageTransitionPane.minHeightProperty(), languageMenuBar.heightProperty(), mainMenuButtonBar.heightProperty(), userMenuButtonBar.heightProperty(), footer.layoutBoundsProperty());
                 }
                 registerMountNodeEmbeddingScrollPane(mountNode, scrollPane);
             }
