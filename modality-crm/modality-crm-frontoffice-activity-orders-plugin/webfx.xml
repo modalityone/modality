@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project>
+
+    <exported-packages>
+        <source-packages/>
+        <resource-packages/>
+    </exported-packages>
+
+    <dependencies>
+        <used-by-source-modules/>
+    </dependencies>
+
+    <providers>
+        <provider interface="dev.webfx.stack.routing.uirouter.UiRoute">one.modality.crm.frontoffice.activities.orders.OrdersRouting$UserProfileUiRoute</provider>
+        <provider interface="dev.webfx.stack.routing.uirouter.operations.RouteRequestEmitter">one.modality.crm.frontoffice.activities.orders.OrdersRouting$RouteToUserProfileRequestEmitter</provider>
+    </providers>
+
+    <i18n javaKeysClass="one.modality.crm.frontoffice.activities.orders.OrdersI18nKeys"/>
+
+</project>

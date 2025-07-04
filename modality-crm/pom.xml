@@ -35,6 +35,7 @@
         <module>modality-crm-client-personaldetails</module>
         <module>modality-crm-client-profile-plugin</module>
         <module>modality-crm-frontoffice-activity-createaccount-plugin</module>
+        <module>modality-crm-frontoffice-activity-orders-plugin</module>
         <module>modality-crm-frontoffice-activity-userprofile-plugin</module>
         <module>modality-crm-frontoffice-help</module>
         <module>modality-crm-frontoffice-max-plugin</module>
