@@ -1,14 +1,12 @@
 package one.modality.base.frontoffice.activities.account;
 
+import dev.webfx.extras.operation.action.OperationActionFactoryMixin;
 import dev.webfx.extras.util.control.Controls;
 import dev.webfx.kit.util.properties.FXProperties;
 import dev.webfx.platform.util.collection.Collections;
-import dev.webfx.stack.authn.logout.client.operation.LogoutRequest;
 import dev.webfx.stack.orm.domainmodel.activity.viewdomain.impl.ViewDomainActivityBase;
 import dev.webfx.stack.orm.dql.DqlStatement;
 import dev.webfx.stack.orm.reactive.entities.dql_to_entities.ReactiveEntitiesMapper;
-import dev.webfx.extras.action.ActionBinder;
-import dev.webfx.extras.operation.action.OperationActionFactoryMixin;
 import javafx.beans.InvalidationListener;
 import javafx.beans.property.ObjectProperty;
 import javafx.beans.property.SimpleObjectProperty;
@@ -18,7 +16,6 @@ import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Node;
 import javafx.scene.control.ContentDisplay;
-import javafx.scene.control.Hyperlink;
 import javafx.scene.control.Label;
 import javafx.scene.layout.VBox;
 import javafx.scene.text.FontWeight;
@@ -26,6 +23,7 @@ import javafx.scene.text.TextAlignment;
 import javafx.stage.Screen;
 import one.modality.base.client.brand.Brand;
 import one.modality.base.client.css.Fonts;
+import one.modality.base.frontoffice.utility.page.FOPageUtil;
 import one.modality.base.frontoffice.utility.tyler.GeneralUtility;
 import one.modality.base.shared.entities.Document;
 import one.modality.crm.shared.services.authn.fx.FXModalityUserPrincipal;
@@ -80,15 +78,11 @@ final class AccountActivity extends ViewDomainActivityBase implements OperationA
                 });
         });
 
-        Hyperlink logoutLink = ActionBinder.newActionHyperlink(newOperationAction(LogoutRequest::new));
-        VBox.setMargin(logoutLink, new Insets(50));
         VBox pageContainer = new VBox(
             upcomingBookingsLabel,
             upcomingBookingsContainer,
             pastBookingsLabel,
-            pastBookingsContainer,
-            //GeneralUtility.createOrangeLineSeparator(),
-            logoutLink
+            pastBookingsContainer
         );
         pageContainer.setAlignment(Pos.TOP_CENTER);
 
@@ -96,7 +90,6 @@ final class AccountActivity extends ViewDomainActivityBase implements OperationA
             double fontFactor = GeneralUtility.computeFontFactor(width);
             GeneralUtility.setLabeledFont(upcomingBookingsLabel, Fonts.MONTSERRAT_TEXT_FAMILY, FontWeight.BOLD, fontFactor * 16);
             GeneralUtility.setLabeledFont(pastBookingsLabel, Fonts.MONTSERRAT_TEXT_FAMILY, FontWeight.BOLD, fontFactor * 16);
-            GeneralUtility.setLabeledFont(logoutLink, Fonts.MONTSERRAT_TEXT_FAMILY, FontWeight.BOLD, fontFactor * 16);
         }, pageContainer.widthProperty());
 
 
@@ -117,8 +110,7 @@ final class AccountActivity extends ViewDomainActivityBase implements OperationA
             }, scrollPane.vvalueProperty(), pageContainer.heightProperty());
         });
 
-        return pageContainer;
-        //return FrontOfficeActivityUtil.createActivityPageScrollPane(pageContainer, false);
+        return FOPageUtil.restrictToMaxPageWidthAndApplyPageTopBottomPadding(pageContainer);
     }
 
     @Override

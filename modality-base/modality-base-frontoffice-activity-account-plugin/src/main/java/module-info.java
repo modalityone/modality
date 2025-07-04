@@ -17,7 +17,6 @@ module modality.base.frontoffice.activity.account.plugin {
     requires modality.crm.client.authn.fx;
     requires modality.crm.client.personaldetails;
     requires modality.ecommerce.client.i18n;
-    requires webfx.extras.action;
     requires webfx.extras.controlfactory;
     requires webfx.extras.i18n;
     requires webfx.extras.i18n.controls;
@@ -30,7 +29,6 @@ module modality.base.frontoffice.activity.account.plugin {
     requires webfx.platform.resource;
     requires webfx.platform.util;
     requires webfx.platform.windowhistory;
-    requires webfx.stack.authn.logout.client;
     requires webfx.stack.orm.domainmodel.activity;
     requires webfx.stack.orm.dql;
     requires webfx.stack.orm.entity.controls;
