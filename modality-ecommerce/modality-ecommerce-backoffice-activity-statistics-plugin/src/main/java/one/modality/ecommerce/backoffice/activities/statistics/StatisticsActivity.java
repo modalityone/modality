@@ -1,6 +1,6 @@
 package one.modality.ecommerce.backoffice.activities.statistics;
 
-import dev.webfx.stack.ui.operation.action.OperationActionFactoryMixin;
+import dev.webfx.extras.operation.action.OperationActionFactoryMixin;
 import javafx.scene.Node;
 import javafx.scene.layout.BorderPane;
 import one.modality.base.backoffice.mainframe.fx.FXEventSelector;

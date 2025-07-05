@@ -8,8 +8,8 @@ import dev.webfx.extras.time.format.LocalizedTime;
 import dev.webfx.extras.util.layout.Layouts;
 import dev.webfx.kit.util.properties.ObservableLists;
 import dev.webfx.platform.console.Console;
-import dev.webfx.stack.i18n.I18n;
-import dev.webfx.stack.i18n.controls.I18nControls;
+import dev.webfx.extras.i18n.I18n;
+import dev.webfx.extras.i18n.controls.I18nControls;
 import dev.webfx.stack.orm.entity.EntityStore;
 import dev.webfx.stack.orm.entity.UpdateStore;
 import dev.webfx.stack.orm.entity.binding.EntityBindings;
@@ -31,6 +31,7 @@ import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.SVGPath;
 import one.modality.base.client.i18n.BaseI18nKeys;
+import one.modality.base.client.i18n.LabelTextField;
 import one.modality.base.client.icons.SvgIcons;
 import one.modality.base.client.messaging.ModalityMessaging;
 import one.modality.base.client.time.BackOfficeTimeFormats;
@@ -48,6 +49,9 @@ import java.util.Comparator;
 import java.util.List;
 import java.util.stream.Collectors;
 
+/**
+ * @author David Hello
+ */
 public class MediaLinksForVODManagement extends MediaLinksManagement {
 
     private static final int URL_TEXT_FIELD_WITH = 600;
@@ -315,13 +319,16 @@ public class MediaLinksForVODManagement extends MediaLinksManagement {
                 commentLabel.setPadding(new Insets(10, 0, 0, 0));
                 currentVBox.getChildren().add(commentLabel);
 
-                TextField commentTextField = new TextField();
-                commentTextField.setPromptText(I18n.getI18nText(MediasI18nKeys.VODPromptComment));
-                currentVBox.getChildren().add(commentTextField);
+//                TextField commentTextField = new TextField();
+//                commentTextField.setPromptText(I18n.getI18nText(MediasI18nKeys.VODPromptComment));
+//                currentVBox.getChildren().add(commentTextField);
+//                commentTextField.setMaxWidth(URL_TEXT_FIELD_WITH);
+//                if (workingCurrentVideoScheduledItem.getComment() != null)
+//                    commentTextField.setText(workingCurrentVideoScheduledItem.getComment());
+//                commentTextField.textProperty().addListener(observable -> workingCurrentVideoScheduledItem.setComment(commentTextField.getText()));
+                LabelTextField commentTextField = new LabelTextField(workingCurrentVideoScheduledItem,"comment","commentLabel",localUpdateStore);
                 commentTextField.setMaxWidth(URL_TEXT_FIELD_WITH);
-                if (workingCurrentVideoScheduledItem.getComment() != null)
-                    commentTextField.setText(workingCurrentVideoScheduledItem.getComment());
-                commentTextField.textProperty().addListener(observable -> workingCurrentVideoScheduledItem.setComment(commentTextField.getText()));
+                currentVBox.getChildren().add(commentTextField.getView());
 
                 HBox customContentAvailableUntilHBox = new HBox();
                 customContentAvailableUntilHBox.setPadding(new Insets(20, 0, 0, 0));

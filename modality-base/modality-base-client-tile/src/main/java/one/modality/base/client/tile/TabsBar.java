@@ -1,8 +1,8 @@
 package one.modality.base.client.tile;
 
 import dev.webfx.platform.util.Arrays;
-import dev.webfx.stack.ui.action.Action;
-import dev.webfx.stack.ui.action.ActionFactory;
+import dev.webfx.extras.action.Action;
+import dev.webfx.extras.action.ActionFactory;
 
 import java.util.ArrayList;
 import java.util.Collection;

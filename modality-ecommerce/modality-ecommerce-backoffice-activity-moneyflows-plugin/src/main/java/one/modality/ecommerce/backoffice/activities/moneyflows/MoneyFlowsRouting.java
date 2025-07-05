@@ -9,7 +9,7 @@ import dev.webfx.stack.routing.uirouter.activity.uiroute.UiRouteActivityContext;
 import dev.webfx.stack.routing.uirouter.impl.UiRouteImpl;
 import dev.webfx.stack.routing.uirouter.operations.RoutePushRequest;
 import dev.webfx.stack.routing.uirouter.operations.RouteRequestEmitter;
-import dev.webfx.stack.ui.operation.HasOperationCode;
+import dev.webfx.extras.operation.HasOperationCode;
 import one.modality.base.client.util.routing.ModalityRoutingUtil;
 
 /**

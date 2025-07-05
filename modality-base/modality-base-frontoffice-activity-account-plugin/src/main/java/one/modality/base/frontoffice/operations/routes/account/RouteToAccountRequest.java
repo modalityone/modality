@@ -1,11 +1,11 @@
 package one.modality.base.frontoffice.operations.routes.account;
 
 import dev.webfx.platform.windowhistory.spi.BrowsingHistory;
-import dev.webfx.stack.i18n.HasI18nKey;
+import dev.webfx.extras.i18n.HasI18nKey;
 import dev.webfx.stack.routing.uirouter.operations.RoutePushRequest;
-import dev.webfx.stack.ui.operation.HasOperationCode;
+import dev.webfx.extras.operation.HasOperationCode;
 import one.modality.base.frontoffice.activities.account.AccountI18nKeys;
-import one.modality.base.frontoffice.activities.account.routing.AccountRouting;
+import one.modality.base.frontoffice.activities.account.AccountRouting;
 
 public class RouteToAccountRequest extends RoutePushRequest implements HasOperationCode, HasI18nKey {
 

@@ -2,7 +2,7 @@ package one.modality.base.backoffice.mainframe.headernode;
 
 import dev.webfx.platform.service.MultipleServiceProviders;
 import dev.webfx.stack.orm.domainmodel.DataSourceModel;
-import dev.webfx.stack.ui.controls.button.ButtonFactoryMixin;
+import dev.webfx.extras.controlfactory.button.ButtonFactoryMixin;
 import javafx.scene.Node;
 import javafx.scene.layout.Pane;
 

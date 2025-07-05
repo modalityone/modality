@@ -20,12 +20,12 @@ import dev.webfx.platform.resource.Resource;
 import dev.webfx.platform.useragent.UserAgent;
 import dev.webfx.platform.util.Arrays;
 import dev.webfx.platform.util.collection.Collections;
-import dev.webfx.stack.i18n.I18n;
-import dev.webfx.stack.i18n.controls.I18nControls;
+import dev.webfx.extras.i18n.I18n;
+import dev.webfx.extras.i18n.controls.I18nControls;
 import dev.webfx.stack.orm.entity.Entities;
 import dev.webfx.stack.session.state.client.fx.FXLoggedIn;
-import dev.webfx.stack.ui.action.Action;
-import dev.webfx.stack.ui.action.ActionBinder;
+import dev.webfx.extras.action.Action;
+import dev.webfx.extras.action.ActionBinder;
 import javafx.beans.InvalidationListener;
 import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.ObjectProperty;
@@ -269,8 +269,8 @@ public final class ModalityFrontOfficeMainFrameActivity extends ModalityClientMa
             if (mountNode != null && getMountNodeEmbeddingScrollPane(mountNode) == null) {
                 if (mountNode instanceof Region mountRegion) {
                     FXProperties.runNowAndOnPropertiesChange(() ->
-                            mountRegion.setMinHeight(pageTransitionPane.getMinHeight() - mainMenuButtonBar.getHeight() - languageMenuBar.getHeight())
-                        , pageTransitionPane.minHeightProperty(), mainMenuButtonBar.heightProperty(), languageMenuBar.heightProperty());
+                            mountRegion.setMinHeight(pageTransitionPane.getMinHeight() - languageMenuBar.getHeight() - mainMenuButtonBar.getHeight() - userMenuButtonBar.getHeight() - footer.getLayoutBounds().getHeight() - VBox.getMargin(footer).getBottom())
+                        , pageTransitionPane.minHeightProperty(), languageMenuBar.heightProperty(), mainMenuButtonBar.heightProperty(), userMenuButtonBar.heightProperty(), footer.layoutBoundsProperty());
                 }
                 registerMountNodeEmbeddingScrollPane(mountNode, scrollPane);
             }

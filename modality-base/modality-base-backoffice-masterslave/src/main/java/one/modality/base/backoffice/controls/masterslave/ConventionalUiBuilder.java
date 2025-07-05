@@ -11,7 +11,7 @@ import one.modality.base.client.entities.filters.FilterSearchBar;
 import dev.webfx.stack.orm.reactive.dql.statement.conventions.HasSelectedMasterProperty;
 import dev.webfx.stack.orm.reactive.mapping.entities_to_visual.conventions.HasGroupVisualResultProperty;
 import dev.webfx.stack.orm.reactive.mapping.entities_to_visual.conventions.HasMasterVisualResultProperty;
-import dev.webfx.stack.ui.controls.ControlFactoryMixin;
+import dev.webfx.extras.controlfactory.ControlFactoryMixin;
 import dev.webfx.stack.orm.entity.Entity;
 
 import static dev.webfx.extras.util.layout.Layouts.setHGrowable;

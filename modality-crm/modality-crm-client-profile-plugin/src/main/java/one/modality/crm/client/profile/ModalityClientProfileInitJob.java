@@ -1,7 +1,7 @@
 package one.modality.crm.client.profile;
 
 import dev.webfx.platform.boot.spi.ApplicationJob;
-import dev.webfx.stack.ui.operation.action.OperationActionFactoryMixin;
+import dev.webfx.extras.operation.action.OperationActionFactoryMixin;
 import one.modality.base.client.profile.fx.FXProfile;
 
 /**

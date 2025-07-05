@@ -4,7 +4,7 @@ import dev.webfx.platform.boot.ApplicationBooter;
 import dev.webfx.platform.util.Arrays;
 import dev.webfx.platform.util.Objects;
 import dev.webfx.platform.util.function.Factory;
-import dev.webfx.stack.i18n.I18n;
+import dev.webfx.extras.i18n.I18n;
 import dev.webfx.stack.orm.domainmodel.activity.viewdomain.ViewDomainActivityContext;
 import dev.webfx.stack.orm.domainmodel.activity.viewdomain.ViewDomainActivityContextMixin;
 import dev.webfx.stack.orm.domainmodel.activity.viewdomain.impl.ViewDomainActivityContextFinal;

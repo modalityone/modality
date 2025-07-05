@@ -2,7 +2,7 @@ package one.modality.base.client.activity.table;
 
 import dev.webfx.extras.visual.controls.grid.VisualGrid;
 import dev.webfx.kit.util.properties.FXProperties;
-import dev.webfx.stack.ui.controls.button.ButtonFactoryMixin;
+import dev.webfx.extras.controlfactory.button.ButtonFactoryMixin;
 import dev.webfx.extras.util.scene.SceneUtil;
 import javafx.geometry.Pos;
 import javafx.scene.Node;

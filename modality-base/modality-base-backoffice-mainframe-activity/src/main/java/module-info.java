@@ -16,6 +16,7 @@ module modality.base.backoffice.mainframe.activity {
     requires modality.base.client.profile.fx;
     requires modality.base.client.tile;
     requires webfx.extras.canvas.pane;
+    requires webfx.extras.i18n;
     requires webfx.extras.panes;
     requires webfx.extras.theme;
     requires webfx.extras.util.animation;
@@ -30,7 +31,6 @@ module modality.base.backoffice.mainframe.activity {
     requires webfx.stack.com.bus;
     requires webfx.stack.com.bus.call;
     requires webfx.stack.com.bus.client;
-    requires webfx.stack.i18n;
     requires webfx.stack.session.state.client.fx;
 
     // Exported packages

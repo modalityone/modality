@@ -2,8 +2,8 @@ package one.modality.ecommerce.backoffice.operations.entities.document.registrat
 
 import dev.webfx.platform.async.AsyncFunction;
 import dev.webfx.stack.orm.entity.controls.entity.selector.ButtonSelectorParameters;
-import dev.webfx.stack.ui.operation.HasOperationCode;
-import dev.webfx.stack.ui.operation.HasOperationExecutor;
+import dev.webfx.extras.operation.HasOperationCode;
+import dev.webfx.extras.operation.HasOperationExecutor;
 import one.modality.base.shared.entities.Person;
 
 public final class EditUsersPersonalDetailsRequest implements HasOperationCode,

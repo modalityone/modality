@@ -12,6 +12,8 @@ module modality.base.client.entities {
     requires modality.base.client.presentationmodel;
     requires modality.base.client.time;
     requires modality.base.shared.entities;
+    requires webfx.extras.controlfactory;
+    requires webfx.extras.i18n;
     requires webfx.extras.time.format;
     requires webfx.extras.type;
     requires webfx.extras.util.layout;
@@ -21,14 +23,12 @@ module modality.base.client.entities {
     requires webfx.platform.boot;
     requires webfx.platform.util;
     requires webfx.platform.util.time;
-    requires webfx.stack.i18n;
     requires webfx.stack.orm.domainmodel;
     requires webfx.stack.orm.dql;
     requires webfx.stack.orm.entity;
     requires webfx.stack.orm.entity.controls;
     requires webfx.stack.orm.expression;
     requires webfx.stack.orm.reactive.dql;
-    requires webfx.stack.ui.controls;
 
     // Exported packages
     exports one.modality.base.client.entities;

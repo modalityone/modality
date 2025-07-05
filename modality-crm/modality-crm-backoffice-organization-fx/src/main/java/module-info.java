@@ -13,6 +13,7 @@ module modality.crm.backoffice.organization.fx {
     requires modality.base.client.i18n;
     requires modality.base.shared.context;
     requires transitive modality.base.shared.entities;
+    requires webfx.extras.controlfactory;
     requires webfx.kit.util;
     requires webfx.platform.console;
     requires webfx.platform.uischeduler;
@@ -23,7 +24,6 @@ module modality.crm.backoffice.organization.fx {
     requires webfx.stack.orm.entity.controls;
     requires webfx.stack.session;
     requires webfx.stack.session.state.client.fx;
-    requires webfx.stack.ui.controls;
 
     // Exported packages
     exports one.modality.crm.backoffice.organization.fx;

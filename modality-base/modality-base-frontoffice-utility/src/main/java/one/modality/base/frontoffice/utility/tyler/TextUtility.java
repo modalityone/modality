@@ -1,7 +1,7 @@
 package one.modality.base.frontoffice.utility.tyler;
 
 import dev.webfx.kit.util.properties.FXProperties;
-import dev.webfx.stack.i18n.I18n;
+import dev.webfx.extras.i18n.I18n;
 import javafx.beans.property.StringProperty;
 import javafx.scene.paint.Color;
 import javafx.scene.text.Font;

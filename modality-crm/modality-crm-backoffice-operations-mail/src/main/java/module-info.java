@@ -9,9 +9,9 @@ module modality.crm.backoffice.operations.mail {
     requires javafx.graphics;
     requires modality.base.client.mainframe.fx;
     requires modality.base.shared.entities;
+    requires webfx.extras.i18n;
+    requires webfx.extras.operation;
     requires webfx.platform.async;
-    requires webfx.stack.i18n;
-    requires webfx.stack.ui.operation;
 
     // Exported packages
     exports one.modality.crm.backoffice.operations.entities.mail;

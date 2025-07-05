@@ -17,21 +17,21 @@ module modality.hotel.backoffice.activities.household {
     requires modality.hotel.backoffice.accommodation;
     requires modality.hotel.backoffice.operations.documentline;
     requires webfx.extras.geometry;
+    requires webfx.extras.i18n;
+    requires webfx.extras.operation;
+    requires webfx.extras.operation.action;
     requires webfx.extras.time.layout;
     requires webfx.extras.time.layout.gantt;
     requires webfx.extras.time.window;
     requires webfx.kit.util;
     requires webfx.platform.windowhistory;
     requires webfx.stack.cache.client;
-    requires webfx.stack.i18n;
     requires webfx.stack.orm.domainmodel.activity;
     requires webfx.stack.orm.dql;
     requires webfx.stack.orm.reactive.entities;
     requires webfx.stack.routing.router;
     requires webfx.stack.routing.router.client;
     requires webfx.stack.routing.uirouter;
-    requires webfx.stack.ui.operation;
-    requires webfx.stack.ui.operation.action;
 
     // Exported packages
     exports one.modality.hotel.backoffice.activities.household;

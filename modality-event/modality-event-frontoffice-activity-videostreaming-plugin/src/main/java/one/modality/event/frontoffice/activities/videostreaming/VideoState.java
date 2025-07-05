@@ -1,6 +1,6 @@
 package one.modality.event.frontoffice.activities.videostreaming;
 
-import dev.webfx.stack.i18n.I18nKeys;
+import dev.webfx.extras.i18n.I18nKeys;
 import one.modality.base.client.i18n.BaseI18nKeys;
 import one.modality.base.shared.entities.ScheduledItem;
 

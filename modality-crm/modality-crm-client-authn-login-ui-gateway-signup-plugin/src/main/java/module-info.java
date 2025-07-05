@@ -11,18 +11,18 @@ module modality.crm.client.authn.login.ui.gateway.signup.plugin {
     requires modality.base.shared.entities;
     requires modality.crm.client.i18n;
     requires modality.crm.shared.authn;
+    requires webfx.extras.i18n;
+    requires webfx.extras.i18n.controls;
     requires webfx.extras.styles.bootstrap;
     requires webfx.extras.time.format;
     requires webfx.extras.util.control;
+    requires webfx.extras.validation;
     requires webfx.stack.authn.login.ui.gateway;
     requires webfx.stack.hash.md5;
-    requires webfx.stack.i18n;
-    requires webfx.stack.i18n.controls;
     requires webfx.stack.orm.datasourcemodel.service;
     requires webfx.stack.orm.domainmodel;
     requires webfx.stack.orm.entity;
     requires webfx.stack.session.state.client.fx;
-    requires webfx.stack.ui.validation;
 
     // Exported packages
     exports one.modality.crm.client.authn.login.ui.gateway.signup;

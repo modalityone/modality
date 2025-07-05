@@ -2,8 +2,8 @@ package one.modality.base.frontoffice.utility.tyler;
 
 import dev.webfx.kit.util.properties.FXProperties;
 import dev.webfx.platform.util.Arrays;
-import dev.webfx.stack.i18n.I18n;
-import dev.webfx.stack.i18n.controls.I18nControls;
+import dev.webfx.extras.i18n.I18n;
+import dev.webfx.extras.i18n.controls.I18nControls;
 import dev.webfx.stack.orm.entity.controls.entity.selector.EntityButtonSelector;
 import javafx.animation.TranslateTransition;
 import javafx.beans.property.BooleanProperty;

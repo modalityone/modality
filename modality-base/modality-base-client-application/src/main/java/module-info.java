@@ -12,6 +12,10 @@ module modality.base.client.application {
     requires modality.base.client.activity;
     requires modality.base.client.icons;
     requires modality.base.client.profile.fx;
+    requires webfx.extras.action;
+    requires webfx.extras.i18n;
+    requires webfx.extras.operation;
+    requires webfx.extras.operation.action;
     requires webfx.extras.theme;
     requires webfx.extras.time.format;
     requires webfx.extras.util.layout;
@@ -22,7 +26,6 @@ module modality.base.client.application {
     requires transitive webfx.platform.util;
     requires webfx.platform.windowhistory;
     requires webfx.stack.authn.logout.client;
-    requires webfx.stack.i18n;
     requires webfx.stack.orm.datasourcemodel.service;
     requires transitive webfx.stack.orm.domainmodel.activity;
     requires transitive webfx.stack.routing.activity;
@@ -31,9 +34,6 @@ module modality.base.client.application {
     requires webfx.stack.routing.uirouter;
     requires webfx.stack.session;
     requires webfx.stack.session.state.client.fx;
-    requires webfx.stack.ui.action;
-    requires webfx.stack.ui.operation;
-    requires webfx.stack.ui.operation.action;
 
     // Exported packages
     exports one.modality.base.client.application;

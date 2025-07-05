@@ -2,7 +2,7 @@ package one.modality.event.client.lifecycle;
 
 import dev.webfx.platform.util.Booleans;
 import dev.webfx.platform.util.time.Times;
-import dev.webfx.stack.i18n.I18n;
+import dev.webfx.extras.i18n.I18n;
 import one.modality.base.shared.entities.Event;
 import one.modality.base.shared.entities.EventState;
 

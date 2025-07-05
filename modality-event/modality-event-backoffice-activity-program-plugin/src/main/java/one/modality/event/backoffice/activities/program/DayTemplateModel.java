@@ -8,7 +8,7 @@ import dev.webfx.stack.orm.entity.UpdateStore;
 import javafx.application.Platform;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
-import dev.webfx.stack.ui.validation.ValidationSupport;
+import dev.webfx.extras.validation.ValidationSupport;
 import one.modality.base.shared.entities.*;
 
 import java.time.LocalDate;

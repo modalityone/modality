@@ -6,8 +6,8 @@ import dev.webfx.extras.switches.Switch;
 import dev.webfx.extras.theme.text.TextTheme;
 import dev.webfx.extras.util.control.Controls;
 import dev.webfx.extras.webtext.HtmlTextEditor;
-import dev.webfx.stack.i18n.I18n;
-import dev.webfx.stack.i18n.controls.I18nControls;
+import dev.webfx.extras.i18n.I18n;
+import dev.webfx.extras.i18n.controls.I18nControls;
 import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.SimpleBooleanProperty;
 import javafx.geometry.Insets;
@@ -21,7 +21,9 @@ import javafx.scene.paint.Color;
 
 import static dev.webfx.extras.webtext.HtmlTextEditor.Mode.BASIC;
 
-
+/**
+ * @author David Hello
+ */
 final class LiveStreamingTabView {
 
     private final BooleanProperty activeProperty = new SimpleBooleanProperty();

@@ -10,12 +10,12 @@ module modality.ecommerce.backoffice.operations.moneyflow {
     requires javafx.graphics;
     requires modality.base.client.i18n;
     requires modality.base.shared.entities;
+    requires webfx.extras.i18n;
+    requires webfx.extras.operation;
+    requires webfx.extras.util.dialog;
     requires webfx.platform.async;
-    requires webfx.stack.i18n;
     requires webfx.stack.orm.entity;
     requires webfx.stack.orm.entity.controls;
-    requires webfx.stack.ui.controls;
-    requires webfx.stack.ui.operation;
 
     // Exported packages
     exports one.modality.ecommerce.backoffice.operations.entities.moneyaccount;

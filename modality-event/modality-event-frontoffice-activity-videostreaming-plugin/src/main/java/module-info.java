@@ -19,6 +19,9 @@ module modality.event.frontoffice.activity.videostreaming.plugin {
     requires modality.event.frontoffice.medias;
     requires webfx.extras.aria;
     requires webfx.extras.cell;
+    requires webfx.extras.i18n;
+    requires webfx.extras.i18n.controls;
+    requires webfx.extras.operation;
     requires webfx.extras.panes;
     requires webfx.extras.player;
     requires webfx.extras.player.multi.all;
@@ -39,8 +42,6 @@ module modality.event.frontoffice.activity.videostreaming.plugin {
     requires webfx.platform.util;
     requires webfx.platform.util.time;
     requires webfx.platform.windowhistory;
-    requires webfx.stack.i18n;
-    requires webfx.stack.i18n.controls;
     requires webfx.stack.orm.domainmodel;
     requires webfx.stack.orm.domainmodel.activity;
     requires webfx.stack.orm.entity;
@@ -49,7 +50,6 @@ module modality.event.frontoffice.activity.videostreaming.plugin {
     requires webfx.stack.orm.reactive.visual;
     requires webfx.stack.routing.router.client;
     requires webfx.stack.routing.uirouter;
-    requires webfx.stack.ui.operation;
 
     // Exported packages
     exports one.modality.event.frontoffice.activities.videostreaming;

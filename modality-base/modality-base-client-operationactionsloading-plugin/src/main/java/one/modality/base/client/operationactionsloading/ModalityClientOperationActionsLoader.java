@@ -8,18 +8,19 @@ import dev.webfx.platform.console.Console;
 import dev.webfx.platform.meta.Meta;
 import dev.webfx.platform.scheduler.Scheduler;
 import dev.webfx.stack.authz.client.factory.AuthorizationFactory;
+import dev.webfx.stack.authz.client.factory.AuthorizationUtil;
 import dev.webfx.stack.cache.client.LocalStorageCache;
-import dev.webfx.stack.i18n.I18n;
+import dev.webfx.extras.i18n.I18n;
 import dev.webfx.stack.orm.datasourcemodel.service.DataSourceModelService;
 import dev.webfx.stack.orm.entity.Entity;
 import dev.webfx.stack.orm.entity.EntityStore;
 import dev.webfx.stack.routing.router.auth.authz.RouteRequest;
-import dev.webfx.stack.ui.action.Action;
-import dev.webfx.stack.ui.action.ActionFactoryMixin;
-import dev.webfx.stack.ui.exceptions.UserCancellationException;
-import dev.webfx.stack.ui.operation.action.OperationAction;
-import dev.webfx.stack.ui.operation.action.OperationActionFactoryMixin;
-import dev.webfx.stack.ui.operation.action.OperationActionRegistry;
+import dev.webfx.extras.action.Action;
+import dev.webfx.extras.action.ActionFactoryMixin;
+import dev.webfx.extras.exceptions.UserCancellationException;
+import dev.webfx.extras.operation.action.OperationAction;
+import dev.webfx.extras.operation.action.OperationActionFactoryMixin;
+import dev.webfx.extras.operation.action.OperationActionRegistry;
 import javafx.scene.control.ProgressIndicator;
 
 import java.util.List;
@@ -52,6 +53,8 @@ public final class ModalityClientOperationActionsLoader implements ApplicationMo
         Config config = ConfigLoader.getRootConfig().childConfigAt(CONFIG_PATH);
         hideUnauthorizedRouteOperationActions = config.getBoolean("hideUnauthorizedRouteOperationActions");
         hideUnauthorizedOtherOperationActions = config.getBoolean("hideUnauthorizedOtherOperationActions");
+
+        OperationActionRegistry.setAuthorizer(AuthorizationUtil::authorizedOperationProperty);
 
         EntityStore.create(DataSourceModelService.getDefaultDataSourceModel())
                 .executeCachedQuery(

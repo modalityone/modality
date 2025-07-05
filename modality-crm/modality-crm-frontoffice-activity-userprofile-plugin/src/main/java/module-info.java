@@ -17,7 +17,11 @@ module modality.crm.frontoffice.activity.userprofile.plugin {
     requires modality.crm.client.i18n;
     requires modality.crm.frontoffice.activity.createaccount.plugin;
     requires modality.crm.frontoffice.help;
+    requires webfx.extras.controlfactory;
     requires webfx.extras.filepicker;
+    requires webfx.extras.i18n;
+    requires webfx.extras.i18n.controls;
+    requires webfx.extras.operation;
     requires webfx.extras.panes;
     requires webfx.extras.responsive;
     requires webfx.extras.styles.bootstrap;
@@ -26,7 +30,9 @@ module modality.crm.frontoffice.activity.userprofile.plugin {
     requires webfx.extras.time.pickers;
     requires webfx.extras.util.animation;
     requires webfx.extras.util.control;
+    requires webfx.extras.util.dialog;
     requires webfx.extras.util.layout;
+    requires webfx.extras.validation;
     requires webfx.kit.launcher;
     requires webfx.kit.util;
     requires webfx.platform.blob;
@@ -37,8 +43,6 @@ module modality.crm.frontoffice.activity.userprofile.plugin {
     requires webfx.platform.windowlocation;
     requires webfx.stack.authn;
     requires webfx.stack.authn.login.ui;
-    requires webfx.stack.i18n;
-    requires webfx.stack.i18n.controls;
     requires webfx.stack.orm.datasourcemodel.service;
     requires webfx.stack.orm.domainmodel.activity;
     requires webfx.stack.orm.entity;
@@ -47,10 +51,6 @@ module modality.crm.frontoffice.activity.userprofile.plugin {
     requires webfx.stack.routing.router;
     requires webfx.stack.routing.router.client;
     requires webfx.stack.routing.uirouter;
-    requires webfx.stack.ui.controls;
-    requires webfx.stack.ui.dialog;
-    requires webfx.stack.ui.operation;
-    requires webfx.stack.ui.validation;
 
     // Exported packages
     exports one.modality.crm.frontoffice.activities.userprofile;

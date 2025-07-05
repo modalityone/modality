@@ -13,7 +13,10 @@ module modality.base.backoffice.activity.filters.plugin {
     requires modality.base.backoffice.operations.filters;
     requires modality.base.client.activity.organizationdependent;
     requires modality.base.shared.entities;
+    requires webfx.extras.action;
     requires webfx.extras.cell;
+    requires webfx.extras.operation;
+    requires webfx.extras.operation.action;
     requires webfx.extras.visual;
     requires webfx.extras.visual.grid;
     requires webfx.kit.util;
@@ -27,9 +30,6 @@ module modality.base.backoffice.activity.filters.plugin {
     requires webfx.stack.routing.router;
     requires webfx.stack.routing.router.client;
     requires webfx.stack.routing.uirouter;
-    requires webfx.stack.ui.action;
-    requires webfx.stack.ui.operation;
-    requires webfx.stack.ui.operation.action;
 
     // Exported packages
     exports one.modality.base.backoffice.activities.filters;

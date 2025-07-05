@@ -6,11 +6,11 @@ module modality.crm.frontoffice.help {
     requires javafx.controls;
     requires javafx.graphics;
     requires modality.base.client.icons;
+    requires webfx.extras.i18n;
+    requires webfx.extras.i18n.controls;
     requires webfx.extras.panes;
     requires webfx.extras.styles.bootstrap;
     requires webfx.extras.webtext;
-    requires webfx.stack.i18n;
-    requires webfx.stack.i18n.controls;
 
     // Exported packages
     exports one.modality.crm.frontoffice.help;

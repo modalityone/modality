@@ -8,7 +8,7 @@ import dev.webfx.platform.console.Console;
 import dev.webfx.platform.uischeduler.UiScheduler;
 import dev.webfx.stack.authn.AuthenticationService;
 import dev.webfx.stack.authn.ContinueAccountCreationCredentials;
-import dev.webfx.stack.i18n.I18n;
+import dev.webfx.extras.i18n.I18n;
 import dev.webfx.stack.orm.domainmodel.activity.viewdomain.impl.ViewDomainActivityBase;
 import dev.webfx.stack.orm.entity.UpdateStore;
 import javafx.beans.property.SimpleStringProperty;

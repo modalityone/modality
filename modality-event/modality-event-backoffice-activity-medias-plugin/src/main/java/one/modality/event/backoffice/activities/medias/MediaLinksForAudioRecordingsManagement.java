@@ -8,7 +8,7 @@ import dev.webfx.extras.theme.shape.ShapeTheme;
 import dev.webfx.extras.util.control.Controls;
 import dev.webfx.kit.util.properties.FXProperties;
 import dev.webfx.platform.console.Console;
-import dev.webfx.stack.i18n.controls.I18nControls;
+import dev.webfx.extras.i18n.controls.I18nControls;
 import dev.webfx.stack.orm.entity.EntityStore;
 import dev.webfx.stack.orm.entity.UpdateStore;
 import dev.webfx.stack.orm.entity.binding.EntityBindings;
@@ -33,6 +33,9 @@ import one.modality.event.client.event.fx.FXEventId;
 import java.time.LocalDate;
 import java.util.stream.Collectors;
 
+/**
+ * @author David Hello
+ */
 public class MediaLinksForAudioRecordingsManagement extends MediaLinksManagement {
 
     private static final double IMAGE_SIZE = 272;

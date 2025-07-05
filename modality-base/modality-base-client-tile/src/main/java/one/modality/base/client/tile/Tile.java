@@ -10,7 +10,7 @@ import dev.webfx.extras.theme.text.TextTheme;
 import dev.webfx.extras.util.layout.Layouts;
 import dev.webfx.extras.webtext.HtmlText;
 import dev.webfx.kit.util.properties.FXProperties;
-import dev.webfx.stack.ui.action.Action;
+import dev.webfx.extras.action.Action;
 import javafx.beans.property.Property;
 import javafx.event.ActionEvent;
 import javafx.geometry.HPos;

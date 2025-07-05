@@ -1,7 +1,7 @@
 package one.modality.base.client.time.theme;
 
 import dev.webfx.extras.theme.Facet;
-import dev.webfx.stack.i18n.I18n;
+import dev.webfx.extras.i18n.I18n;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Priority;
 import javafx.scene.layout.Region;

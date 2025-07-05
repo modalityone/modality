@@ -1,8 +1,8 @@
 package one.modality.base.backoffice.operations.entities.generic;
 
 import dev.webfx.stack.orm.reactive.entities.entities_to_grid.EntityColumn;
-import dev.webfx.stack.ui.operation.HasOperationCode;
-import dev.webfx.stack.ui.operation.HasOperationExecutor;
+import dev.webfx.extras.operation.HasOperationCode;
+import dev.webfx.extras.operation.HasOperationExecutor;
 import dev.webfx.stack.orm.entity.Entity;
 import dev.webfx.platform.async.AsyncFunction;
 

@@ -8,6 +8,10 @@ module modality.base.client.operationactionsloading.plugin {
     // Direct dependencies modules
     requires javafx.base;
     requires javafx.controls;
+    requires webfx.extras.action;
+    requires webfx.extras.exceptions;
+    requires webfx.extras.i18n;
+    requires webfx.extras.operation.action;
     requires webfx.extras.util.control;
     requires webfx.platform.boot;
     requires webfx.platform.conf;
@@ -17,13 +21,9 @@ module modality.base.client.operationactionsloading.plugin {
     requires webfx.platform.util;
     requires webfx.stack.authz.client;
     requires webfx.stack.cache.client;
-    requires webfx.stack.i18n;
     requires webfx.stack.orm.datasourcemodel.service;
     requires webfx.stack.orm.entity;
     requires webfx.stack.routing.router.client;
-    requires webfx.stack.ui.action;
-    requires webfx.stack.ui.exceptions;
-    requires webfx.stack.ui.operation.action;
 
     // Exported packages
     exports one.modality.base.client.operationactionsloading;

@@ -3,7 +3,7 @@ package one.modality.base.client.util.functions;
 import one.modality.base.client.entities.Labels;
 import dev.webfx.stack.orm.expression.lci.DomainReader;
 import dev.webfx.stack.orm.expression.terms.function.Function;
-import dev.webfx.stack.i18n.I18n;
+import dev.webfx.extras.i18n.I18n;
 import dev.webfx.extras.type.PrimType;
 
 /**
