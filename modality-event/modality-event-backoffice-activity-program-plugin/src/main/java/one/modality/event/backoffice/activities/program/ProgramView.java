@@ -1,27 +1,26 @@
 package one.modality.event.backoffice.activities.program;
 
 
+import dev.webfx.extras.controlfactory.button.ButtonFactoryMixin;
+import dev.webfx.extras.i18n.I18n;
+import dev.webfx.extras.i18n.controls.I18nControls;
+import dev.webfx.extras.operation.OperationUtil;
 import dev.webfx.extras.panes.ColumnsPane;
 import dev.webfx.extras.styles.bootstrap.Bootstrap;
 import dev.webfx.extras.theme.text.TextTheme;
+import dev.webfx.extras.util.dialog.DialogCallback;
+import dev.webfx.extras.util.dialog.builder.DialogBuilderUtil;
+import dev.webfx.extras.util.dialog.builder.DialogContent;
 import dev.webfx.extras.util.layout.Layouts;
 import dev.webfx.extras.util.masterslave.MasterSlaveLinker;
 import dev.webfx.kit.util.properties.FXProperties;
 import dev.webfx.kit.util.properties.ObservableLists;
 import dev.webfx.platform.uischeduler.UiScheduler;
-import dev.webfx.extras.i18n.I18n;
-import dev.webfx.extras.i18n.controls.I18nControls;
-import dev.webfx.extras.i18n.spi.impl.I18nSubKey;
 import dev.webfx.stack.orm.dql.DqlStatement;
 import dev.webfx.stack.orm.entity.UpdateStore;
 import dev.webfx.stack.orm.entity.binding.EntityBindings;
 import dev.webfx.stack.orm.entity.controls.entity.selector.ButtonSelector;
 import dev.webfx.stack.orm.entity.controls.entity.selector.EntityButtonSelector;
-import dev.webfx.extras.controlfactory.button.ButtonFactoryMixin;
-import dev.webfx.extras.util.dialog.builder.DialogBuilderUtil;
-import dev.webfx.extras.util.dialog.builder.DialogContent;
-import dev.webfx.extras.util.dialog.DialogCallback;
-import dev.webfx.extras.operation.OperationUtil;
 import javafx.application.Platform;
 import javafx.beans.binding.BooleanBinding;
 import javafx.beans.binding.BooleanExpression;
@@ -36,6 +35,7 @@ import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
+import one.modality.base.client.i18n.I18nEntities;
 import one.modality.base.client.mainframe.fx.FXMainFrameDialogArea;
 import one.modality.base.client.util.dialog.ModalityDialog;
 import one.modality.base.client.util.masterslave.ModalitySlaveEditor;
@@ -100,8 +100,8 @@ final class ProgramView extends ModalitySlaveEditor<Event> implements ButtonFact
     private VBox buildUi() {
         // Building the top line
         ObjectProperty<Event> loadedEventProperty = programModel.loadedEventProperty();
-        Label subtitle = Bootstrap.h4(I18nControls.newLabel(
-            new I18nSubKey("expression: '[" + ProgramI18nKeys.Programme + "] - ' + name + ' (' + dateIntervalFormat(startDate, endDate) +')'", loadedEventProperty), loadedEventProperty));
+        Label subtitle = Bootstrap.h4(I18nEntities.newExpressionLabel(loadedEventProperty,
+            "'[" + ProgramI18nKeys.Programme + "] - ' + name + ' (' + dateIntervalFormat(startDate, endDate) +')'"));
         subtitle.setWrapText(true);
         TextTheme.createSecondaryTextFacet(subtitle).style();
 

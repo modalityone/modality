@@ -1,5 +1,7 @@
 package one.modality.event.frontoffice.activities.booking.process.event.slides;
 
+import dev.webfx.extras.i18n.I18nKeys;
+import dev.webfx.extras.i18n.controls.I18nControls;
 import dev.webfx.extras.panes.ColumnsPane;
 import dev.webfx.extras.panes.FlipPane;
 import dev.webfx.extras.panes.MonoPane;
@@ -12,9 +14,6 @@ import dev.webfx.platform.console.Console;
 import dev.webfx.platform.uischeduler.UiScheduler;
 import dev.webfx.platform.util.Booleans;
 import dev.webfx.platform.windowhistory.WindowHistory;
-import dev.webfx.extras.i18n.I18nKeys;
-import dev.webfx.extras.i18n.controls.I18nControls;
-import dev.webfx.extras.i18n.spi.impl.I18nSubKey;
 import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.ObjectProperty;
 import javafx.beans.property.SimpleBooleanProperty;
@@ -30,6 +29,7 @@ import javafx.scene.control.Label;
 import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
 import one.modality.base.client.i18n.BaseI18nKeys;
+import one.modality.base.client.i18n.I18nEntities;
 import one.modality.base.client.icons.SvgIcons;
 import one.modality.base.client.time.FrontOfficeTimeFormats;
 import one.modality.base.shared.entities.Attendance;
@@ -251,8 +251,8 @@ final class Step2CheckoutSlide extends StepSlide {
                 ScheduledItem scheduledItem = a.getScheduledItem();
                 LocalDate date = scheduledItem.getDate();
                 Item item = scheduledItem.getItem();
-                Label scheduledItemLabel = I18nControls.newLabel(
-                    new I18nSubKey("expression: i18n(this) + ' - {0}' " + (existing ? " + ' ([" + BookingI18nKeys.alreadyBooked + "])'" : ""), item),
+                Label scheduledItemLabel = I18nEntities.newExpressionLabel(item,
+                    "i18n(this) + ' - {0}' " + (existing ? " + ' ([" + BookingI18nKeys.alreadyBooked + "])'" : ""),
                     LocalizedTime.formatMonthDayProperty(date, FrontOfficeTimeFormats.BOOKING_CHECKOUT_DATE_FORMAT));
                 int dailyRatePrice = workingBookingProperties.getDailyRatePrice();
                 totalPrice[0] += dailyRatePrice;

@@ -8,6 +8,7 @@ module modality.event.backoffice.activity.program.plugin {
     requires javafx.graphics;
     requires modality.base.backoffice.activity.home.plugin;
     requires modality.base.backoffice.mainframe.fx;
+    requires modality.base.client.i18n;
     requires modality.base.client.icons;
     requires modality.base.client.mainframe.fx;
     requires modality.base.client.time;

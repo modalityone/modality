@@ -3,7 +3,6 @@ package one.modality.event.frontoffice.activities.videostreaming;
 import dev.webfx.extras.aria.AriaToggleGroup;
 import dev.webfx.extras.i18n.I18n;
 import dev.webfx.extras.i18n.controls.I18nControls;
-import dev.webfx.extras.i18n.spi.impl.I18nSubKey;
 import dev.webfx.extras.panes.*;
 import dev.webfx.extras.player.Player;
 import dev.webfx.extras.player.Players;
@@ -52,6 +51,7 @@ import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
 import javafx.stage.Screen;
 import one.modality.base.client.i18n.BaseI18nKeys;
+import one.modality.base.client.i18n.I18nEntities;
 import one.modality.base.frontoffice.utility.page.FOPageUtil;
 import one.modality.base.shared.entities.*;
 import one.modality.crm.frontoffice.help.HelpPanel;
@@ -60,6 +60,7 @@ import one.modality.crm.shared.services.authn.fx.FXModalityUserPrincipal;
 import one.modality.crm.shared.services.authn.fx.FXUserPersonId;
 import one.modality.event.client.i18n.EventI18nKeys;
 import one.modality.event.frontoffice.eventheader.EventHeader;
+import one.modality.event.frontoffice.eventheader.MediaEventHeader;
 import one.modality.event.frontoffice.medias.EventThumbnail;
 import one.modality.event.frontoffice.medias.MediaConsumptionRecorder;
 
@@ -376,7 +377,7 @@ final class VideoStreamingActivity extends ViewDomainActivityBase {
         Layouts.bindManagedToVisibleProperty(eventsSelectionVBox);
 
         // Building the loaded content, starting with the header
-        EventHeader eventHeader = new EventHeader(true);
+        EventHeader eventHeader = new MediaEventHeader(true);
         eventHeader.eventProperty().bind(eventProperty);
 
         daySwitcher = new DaySwitcher(videoScheduledItems.stream()
@@ -589,7 +590,7 @@ final class VideoStreamingActivity extends ViewDomainActivityBase {
                 videoVBox.getChildren().add(commentUILabel);
             }
             if(commentLabel!=null) {
-                Label commentUILabel = Bootstrap.strong(I18nControls.newLabel(new I18nSubKey("expression: i18n(this)", commentLabel)));
+                Label commentUILabel = Bootstrap.strong(I18nEntities.newExpressionLabel(commentLabel, "i18n(this)"));
                 commentUILabel.setWrapText(true);
                 videoVBox.getChildren().add(commentUILabel);
             }

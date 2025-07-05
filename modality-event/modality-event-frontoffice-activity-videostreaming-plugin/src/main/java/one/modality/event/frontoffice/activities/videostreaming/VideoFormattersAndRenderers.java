@@ -1,6 +1,9 @@
 package one.modality.event.frontoffice.activities.videostreaming;
 
 import dev.webfx.extras.cell.renderer.ValueRendererRegistry;
+import dev.webfx.extras.i18n.I18n;
+import dev.webfx.extras.i18n.I18nKeys;
+import dev.webfx.extras.i18n.controls.I18nControls;
 import dev.webfx.extras.styles.bootstrap.Bootstrap;
 import dev.webfx.extras.time.format.LocalizedTime;
 import dev.webfx.extras.type.PrimType;
@@ -8,10 +11,6 @@ import dev.webfx.extras.util.control.Controls;
 import dev.webfx.extras.util.layout.Layouts;
 import dev.webfx.kit.util.properties.FXProperties;
 import dev.webfx.platform.uischeduler.UiScheduler;
-import dev.webfx.extras.i18n.I18n;
-import dev.webfx.extras.i18n.I18nKeys;
-import dev.webfx.extras.i18n.controls.I18nControls;
-import dev.webfx.extras.i18n.spi.impl.I18nSubKey;
 import dev.webfx.stack.orm.domainmodel.formatter.FormatterRegistry;
 import dev.webfx.stack.orm.entity.binding.EntityBindings;
 import javafx.application.Platform;
@@ -25,6 +24,7 @@ import javafx.geometry.Pos;
 import javafx.scene.control.*;
 import javafx.scene.layout.VBox;
 import one.modality.base.client.i18n.BaseI18nKeys;
+import one.modality.base.client.i18n.I18nEntities;
 import one.modality.base.client.messaging.ModalityMessaging;
 import one.modality.base.client.time.FrontOfficeTimeFormats;
 import one.modality.base.shared.entities.Event;
@@ -82,7 +82,8 @@ final class VideoFormattersAndRenderers {
                 // Note: normally we should first try to translate `video` and then `programScheduledItem`, but the
                 // `video` has the name repeated for some reason (but no label), while what we want is the label
                 // defined on the program in this case, so for now we just use the `programScheduledItem` directly
-                I18nControls.bindI18nTextProperty(nameLabel, new I18nSubKey("expression: i18n(this)", video.getName() == null && video.getLabel() == null ? video.getProgramScheduledItem() : video));
+                ScheduledItem namedVideo = video.getName() != null || video.getLabel() != null ? video : video.getProgramScheduledItem();
+                I18nEntities.bindExpressionTextProperty(nameLabel, namedVideo, "i18n(this)");
                 nameLabel.getStyleClass().add("name");
             }
             return Controls.setupTextWrapping(nameLabel, true, true);

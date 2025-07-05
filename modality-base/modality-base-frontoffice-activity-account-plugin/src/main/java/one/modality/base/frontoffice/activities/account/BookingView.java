@@ -1,9 +1,8 @@
 package one.modality.base.frontoffice.activities.account;
 
-import dev.webfx.extras.styles.bootstrap.Bootstrap;
 import dev.webfx.extras.i18n.I18n;
 import dev.webfx.extras.i18n.controls.I18nControls;
-import dev.webfx.extras.i18n.spi.impl.I18nSubKey;
+import dev.webfx.extras.styles.bootstrap.Bootstrap;
 import javafx.geometry.HPos;
 import javafx.geometry.Insets;
 import javafx.geometry.Orientation;
@@ -19,6 +18,7 @@ import javafx.scene.text.FontWeight;
 import javafx.scene.text.Text;
 import one.modality.base.client.brand.Brand;
 import one.modality.base.client.css.Fonts;
+import one.modality.base.client.i18n.I18nEntities;
 import one.modality.base.frontoffice.utility.tyler.GeneralUtility;
 import one.modality.base.frontoffice.utility.tyler.StyleUtility;
 import one.modality.base.frontoffice.utility.tyler.TextUtility;
@@ -205,9 +205,9 @@ public final class BookingView {
     }
 
     public void setEvent(Event event) {
-        I18nControls.bindI18nProperties(eventNameLabel, new I18nSubKey("expression: i18n(this)", event));
-        I18n.bindI18nProperties(eventCentreLocationText, new I18nSubKey("expression: '[At] ' + coalesce(i18n(venue), i18n(organization))", event));
-        I18n.bindI18nProperties(eventCountryLocationText, new I18nSubKey("expression: coalesce(i18n(venue.country), i18n(organization.country))", event));
+        I18nEntities.bindExpressionProperties(eventNameLabel,           event, "i18n(this)");
+        I18nEntities.bindExpressionProperties(eventCentreLocationText,  event, "'[At] ' + coalesce(i18n(venue), i18n(organization))");
+        I18nEntities.bindExpressionProperties(eventCountryLocationText, event, "coalesce(i18n(venue.country), i18n(organization.country))");
     }
 
     private Button createPaymentButton() {

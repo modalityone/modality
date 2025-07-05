@@ -1,14 +1,13 @@
 package one.modality.event.frontoffice.medias;
 
+import dev.webfx.extras.i18n.I18n;
+import dev.webfx.extras.i18n.controls.I18nControls;
 import dev.webfx.extras.panes.MonoPane;
 import dev.webfx.extras.panes.ScalePane;
 import dev.webfx.extras.styles.bootstrap.Bootstrap;
 import dev.webfx.extras.util.control.Controls;
 import dev.webfx.extras.util.layout.Layouts;
 import dev.webfx.extras.webtext.HtmlText;
-import dev.webfx.extras.i18n.I18n;
-import dev.webfx.extras.i18n.controls.I18nControls;
-import dev.webfx.extras.i18n.spi.impl.I18nSubKey;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.control.Button;
@@ -16,6 +15,7 @@ import javafx.scene.control.Label;
 import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
 import one.modality.base.client.cloudinary.ModalityCloudinary;
+import one.modality.base.client.i18n.I18nEntities;
 import one.modality.base.client.icons.SvgIcons;
 import one.modality.base.shared.entities.Event;
 
@@ -84,14 +84,12 @@ public final class EventThumbnail {
         //Here we manage 2 cases:
         //1. For Video, the item is the same for all languages, so we want to display the title and description according to the language of user
         //2. For Audio, since we can order audios in different languages, we want to display the title and description according to the language of the item
-        I18nSubKey titleSubkey =  new I18nSubKey("expression: i18n(this, '" + languageOfTheItem + "')", event);
-
-        Label eventLabel = Bootstrap.h3(I18nControls.newLabel(titleSubkey));
+        Label eventLabel = Bootstrap.h3(I18nEntities.newExpressionLabel(event, "i18n(this, '" + languageOfTheItem + "')"));
         Controls.setupTextWrapping(eventLabel, true, false);
         VBox.setMargin(eventLabel, new Insets(10, 0, 0, 0));
 
         HtmlText shortHTMLDescription = new HtmlText();
-        I18n.bindI18nTextProperty(shortHTMLDescription.textProperty(), new I18nSubKey("expression: coalesce(i18n(shortDescriptionLabel,'"+languageOfTheItem+"'),shortDescription)", event), event);
+        I18nEntities.bindExpressionTextProperty(shortHTMLDescription.textProperty(), event, "coalesce(i18n(shortDescriptionLabel,'" + languageOfTheItem + "'),shortDescription)");
 
         shortHTMLDescription.getStyleClass().add("short-description");
 
