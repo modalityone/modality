@@ -207,7 +207,7 @@ final class VideoStreamingActivity extends ViewDomainActivityBase {
                 // and paid). They will be grouped by day in the UI.
                 // Note: double dots such as `programScheduledItem.timeline..startTime` means we do a left join that allows null value (if the event is recurring, the timeline of the programScheduledItem is null)
                 entityStore.<ScheduledItem>executeQuery(
-                        "select name, label.(de,en,es,fr,pt), date, comment, commentLabel.(de,en,fr,pt), expirationDate, programScheduledItem.(name, label.(de,en,es,fr,pt), startTime, endTime, timeline.(startTime, endTime), cancelled), published, event.(name, type.recurringItem, livestreamUrl, recurringWithVideo), vodDelayed, " +
+                        "select name, label.(de,en,es,fr,pt), date, comment, commentLabel.(de,en,es,fr,pt), expirationDate, programScheduledItem.(name, label.(de,en,es,fr,pt), startTime, endTime, timeline.(startTime, endTime), cancelled), published, event.(name, type.recurringItem, livestreamUrl, recurringWithVideo), vodDelayed, " +
                         " (exists(select MediaConsumption where scheduledItem=si and attendance.documentLine.document.person.frontendAccount=?) as attended), " +
                         " (select id from Attendance where scheduledItem=si.bookableScheduledItem and documentLine.document.person.frontendAccount=? limit 1) as attendanceId " +
                         " from ScheduledItem si " +
