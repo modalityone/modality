@@ -20,6 +20,7 @@ module modality.base.client.i18n {
     requires webfx.platform.ast;
     requires webfx.platform.conf;
     requires webfx.platform.console;
+    requires webfx.platform.util;
     requires webfx.stack.orm.entity;
 
     // Exported packages
