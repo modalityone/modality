@@ -11,23 +11,16 @@ import one.modality.event.client.booking.BookableDatesUi;
 public abstract class AbstractBookingForm implements BookingForm {
 
     protected final BookEventActivity activity;
-    protected final boolean bookAsAGuestAllowed;
-    protected final boolean partialEventAllowed;
+    protected final BookingFormSettings settings;
 
-    public AbstractBookingForm(BookEventActivity activity, boolean bookAsAGuestAllowed, boolean partialEventAllowed) {
+    public AbstractBookingForm(BookEventActivity activity, BookingFormSettings settings) {
         this.activity = activity;
-        this.bookAsAGuestAllowed = bookAsAGuestAllowed;
-        this.partialEventAllowed = partialEventAllowed;
+        this.settings = settings;
     }
 
     @Override
-    public boolean isBookAsAGuestAllowed() {
-        return bookAsAGuestAllowed;
-    }
-
-    @Override
-    public boolean isPartialEventAllowed() {
-        return partialEventAllowed;
+    public BookingFormSettings getSettings() {
+        return settings;
     }
 
     @Override

@@ -7,8 +7,8 @@ import javafx.scene.Node;
  */
 public final class NoBookingForm extends AbstractBookingForm {
 
-    public NoBookingForm(BookEventActivity activity, boolean bookAsAGuestAllowed, boolean partialEventAllowed) {
-        super(activity, bookAsAGuestAllowed, partialEventAllowed);
+    public NoBookingForm(BookEventActivity activity, BookingFormSettings settings) {
+        super(activity, settings);
     }
 
     @Override

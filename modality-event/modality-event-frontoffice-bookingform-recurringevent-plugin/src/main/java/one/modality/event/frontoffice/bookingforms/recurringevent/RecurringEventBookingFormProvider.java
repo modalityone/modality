@@ -1,18 +1,15 @@
 package one.modality.event.frontoffice.bookingforms.recurringevent;
 
+import javafx.scene.layout.Background;
+import one.modality.base.client.brand.Brand;
 import one.modality.base.shared.entities.Event;
-import one.modality.event.frontoffice.activities.booking.process.event.BookEventActivity;
-import one.modality.event.frontoffice.activities.booking.process.event.BookingForm;
-import one.modality.event.frontoffice.activities.booking.process.event.BookingFormProvider;
+import one.modality.event.frontoffice.activities.booking.process.event.*;
+import one.modality.event.frontoffice.eventheader.LocalEventHeader;
+
 /**
  * @author Bruno Salmon
  */
 public class RecurringEventBookingFormProvider implements BookingFormProvider {
-
-    @Override
-    public int getPriority() {
-        return MODALITY_PRIORITY;
-    }
 
     @Override
     public boolean acceptEvent(Event event) {
@@ -20,8 +17,19 @@ public class RecurringEventBookingFormProvider implements BookingFormProvider {
     }
 
     @Override
+    public int getPriority() {
+        return MODALITY_PRIORITY;
+    }
+
+    @Override
     public BookingForm createBookingForm(Event event, BookEventActivity activity) {
-        return new RecurringEventBookingForm(event, activity);
+        return new RecurringEventBookingForm(event, activity, new BookingFormSettingsBuilder()
+            .setEventHeader(new LocalEventHeader())
+            .setHeaderBackground(Background.fill(Brand.getBrandMainColor()))
+            .setBookAsAGuestAllowed(true)
+            .setPartialEventAllowed(true)
+            .build()
+        );
     }
 
 }

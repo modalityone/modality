@@ -6,14 +6,14 @@ import dev.webfx.platform.uischeduler.UiScheduler;
 import dev.webfx.platform.util.collection.Collections;
 import javafx.scene.layout.Region;
 import one.modality.base.shared.entities.Event;
+import one.modality.ecommerce.client.workingbooking.FXPersonToBook;
 import one.modality.ecommerce.payment.CancelPaymentResult;
 import one.modality.ecommerce.payment.client.WebPaymentForm;
-import one.modality.event.client.event.fx.FXEvent;
 import one.modality.event.client.booking.BookableDatesUi;
-import one.modality.ecommerce.client.workingbooking.FXPersonToBook;
 import one.modality.event.frontoffice.activities.booking.process.event.BookEventActivity;
 import one.modality.event.frontoffice.activities.booking.process.event.BookingForm;
 import one.modality.event.frontoffice.activities.booking.process.event.BookingFormProvider;
+import one.modality.event.frontoffice.activities.booking.process.event.BookingFormSettings;
 
 import java.util.List;
 import java.util.ServiceLoader;
@@ -24,7 +24,7 @@ import java.util.ServiceLoader;
 final class DigitsSlideController {
 
     private static final List<BookingFormProvider> ALL_BOOKING_FORM_PROVIDERS_SORTED_BY_PRIORITY = MultipleServiceProviders.getProviders(BookingFormProvider.class, () -> ServiceLoader.load(BookingFormProvider.class));
-    {
+    static {
         ALL_BOOKING_FORM_PROVIDERS_SORTED_BY_PRIORITY.sort((p1, p2) -> p2.getPriority() - p1.getPriority());
     }
 
@@ -59,22 +59,32 @@ final class DigitsSlideController {
         return transitionPane;
     }
 
+    void onEventChanged(Event event) {
+        // Searching for a booking form provider suitable for this event
+        BookingFormProvider bookingFormProvider = Collections.findFirst(ALL_BOOKING_FORM_PROVIDERS_SORTED_BY_PRIORITY, provider -> provider.acceptEvent(event));
+        if (bookingFormProvider == null) {
+            bookingForm = null;
+            step7ErrorSlide.setErrorMessage("Error: Unmanaged type of event");
+            displaySlide(step7ErrorSlide);
+        } else
+            bookingForm = bookingFormProvider.createBookingForm(event, bookEventActivity);
+    }
+
+    public BookingForm getBookingForm() {
+        return bookingForm;
+    }
+
     void onWorkingBookingLoaded() {
         // TODO: avoid rebuilding the whole UI for these remaining slides
         step3PaymentSlide.reset();
         step7ErrorSlide.reset();
 
-        Event event = FXEvent.getEvent();
-        BookingFormProvider suitableBookingFormProvider = Collections.findFirst(ALL_BOOKING_FORM_PROVIDERS_SORTED_BY_PRIORITY, provider -> provider.acceptEvent(event));
-        if (suitableBookingFormProvider == null) {
-            step7ErrorSlide.setErrorMessage("Error: Unmanaged type of event");
-            displaySlide(step7ErrorSlide);
-        } else {
-            bookingForm = suitableBookingFormProvider.createBookingForm(event, bookEventActivity);
+        if (bookingForm != null) {
             bookingForm.onWorkingBookingLoaded();
             step1BookingFormSlide.setBookingForm(bookingForm);
-            step2CheckoutSlide.setBookAsGuestAllowed(bookingForm.isBookAsAGuestAllowed());
-            step2CheckoutSlide.setPartialEventAllowed(bookingForm.isPartialEventAllowed());
+            BookingFormSettings bookingFormSettings = bookingForm.getSettings();
+            step2CheckoutSlide.setBookAsGuestAllowed(bookingFormSettings.isBookAsAGuestAllowed());
+            step2CheckoutSlide.setPartialEventAllowed(bookingFormSettings.isPartialEventAllowed());
 
             if (displayedSlide != step2CheckoutSlide) {
                 displayFirstSlide();

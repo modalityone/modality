@@ -73,6 +73,8 @@ public final class LettersSlideController {
                 transitionPane.transitToContent(slide.get());
                 // Hiding the footer for the loading slide
                 FXShowFooter.setShowFooter(slide != stepALoadingSlide);
+                if (slide == stepBBookEventSlide)
+                    stepBBookEventSlide.onPrepareRevealEvent();
             }));
         }
     }

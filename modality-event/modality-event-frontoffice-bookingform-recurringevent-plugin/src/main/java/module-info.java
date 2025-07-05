@@ -6,11 +6,13 @@ module modality.event.frontoffice.bookingform.recurringevent.plugin {
     requires javafx.base;
     requires javafx.controls;
     requires javafx.graphics;
+    requires modality.base.client.brand;
     requires modality.base.shared.entities;
     requires modality.ecommerce.client.workingbooking;
     requires modality.event.client.booking;
     requires modality.event.client.recurringevents;
     requires modality.event.frontoffice.activity.booking.plugin;
+    requires modality.event.frontoffice.eventheader;
     requires webfx.extras.controlfactory;
     requires webfx.extras.i18n;
     requires webfx.extras.i18n.controls;

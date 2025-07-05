@@ -1,10 +1,10 @@
 package one.modality.event.frontoffice.activities.booking.process.event.slides;
 
+import dev.webfx.extras.i18n.controls.I18nControls;
+import dev.webfx.extras.operation.OperationUtil;
 import dev.webfx.extras.webtext.HtmlText;
 import dev.webfx.platform.console.Console;
 import dev.webfx.platform.uischeduler.UiScheduler;
-import dev.webfx.extras.i18n.controls.I18nControls;
-import dev.webfx.extras.operation.OperationUtil;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Node;
@@ -13,21 +13,20 @@ import javafx.scene.control.Labeled;
 import javafx.scene.layout.Background;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
-import javafx.stage.Screen;
 import one.modality.base.shared.entities.Event;
 import one.modality.base.shared.entities.markers.HasPersonalDetails;
 import one.modality.crm.shared.services.authn.fx.FXUserPerson;
+import one.modality.ecommerce.client.workingbooking.WorkingBooking;
+import one.modality.ecommerce.client.workingbooking.WorkingBookingProperties;
 import one.modality.ecommerce.document.service.DocumentAggregate;
 import one.modality.ecommerce.payment.CancelPaymentResult;
 import one.modality.ecommerce.payment.PaymentService;
 import one.modality.ecommerce.payment.client.ClientPaymentUtil;
 import one.modality.ecommerce.payment.client.WebPaymentForm;
 import one.modality.event.client.booking.BookableDatesUi;
-import one.modality.ecommerce.client.workingbooking.WorkingBooking;
 import one.modality.event.frontoffice.activities.booking.BookingI18nKeys;
 import one.modality.event.frontoffice.activities.booking.fx.FXGuestToBook;
 import one.modality.event.frontoffice.activities.booking.process.event.BookEventActivity;
-import one.modality.ecommerce.client.workingbooking.WorkingBookingProperties;
 
 import java.util.function.Supplier;
 
@@ -43,7 +42,7 @@ public abstract class StepSlide implements Supplier<Node> {
         this.bookEventActivity = bookEventActivity;
         mainVbox.setAlignment(Pos.TOP_CENTER);
         // Setting a good bottom margin (1/3 screen height), so bottom elements are not stuck at the booking of the screen
-        mainVbox.setPadding(new Insets(0, 0, Screen.getPrimary().getVisualBounds().getHeight() / 3, 0));
+        mainVbox.setPadding(new Insets(0, 0, 150, 0));
         // Also a background is necessary for devices not supporting inverse clipping used in circle animation (ex: iPadOS)
         mainVbox.setBackground(Background.fill(Color.WHITE));
     }

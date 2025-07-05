@@ -1,13 +1,13 @@
 package one.modality.event.frontoffice.bookingforms.recurringevent;
 
+import dev.webfx.extras.controlfactory.button.ButtonFactory;
+import dev.webfx.extras.i18n.I18n;
+import dev.webfx.extras.i18n.controls.I18nControls;
 import dev.webfx.extras.panes.ScaleMode;
 import dev.webfx.extras.panes.ScalePane;
 import dev.webfx.extras.styles.bootstrap.Bootstrap;
 import dev.webfx.extras.webtext.HtmlText;
 import dev.webfx.platform.util.collection.Collections;
-import dev.webfx.extras.i18n.I18n;
-import dev.webfx.extras.i18n.controls.I18nControls;
-import dev.webfx.extras.controlfactory.button.ButtonFactory;
 import javafx.beans.binding.Bindings;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
@@ -27,8 +27,9 @@ import one.modality.ecommerce.client.workingbooking.WorkingBookingProperties;
 import one.modality.event.client.booking.BookableDatesUi;
 import one.modality.event.client.recurringevents.RecurringEventSchedule;
 import one.modality.event.frontoffice.activities.booking.BookingI18nKeys;
+import one.modality.event.frontoffice.activities.booking.process.event.AbstractBookingForm;
 import one.modality.event.frontoffice.activities.booking.process.event.BookEventActivity;
-import one.modality.event.frontoffice.activities.booking.process.event.BookingForm;
+import one.modality.event.frontoffice.activities.booking.process.event.BookingFormSettings;
 
 import java.time.LocalDate;
 import java.util.ArrayList;
@@ -37,7 +38,7 @@ import java.util.List;
 /**
  * @author Bruno Salmon
  */
-final class RecurringEventBookingForm implements BookingForm {
+final class RecurringEventBookingForm extends AbstractBookingForm {
 
     private final Event event;
     private final BookEventActivity bookEventActivity;
@@ -46,19 +47,10 @@ final class RecurringEventBookingForm implements BookingForm {
     private final Hyperlink selectAllClassesHyperlink = I18nControls.bindI18nTextProperty(new Hyperlink(), BookingI18nKeys.SelectAllClasses);
     private List<LocalDate> allSelectableDates;
 
-    RecurringEventBookingForm(Event event, BookEventActivity bookEventActivity) {
+    public RecurringEventBookingForm(Event event, BookEventActivity bookEventActivity,BookingFormSettings settings) {
+        super(bookEventActivity, settings);
         this.event = event;
         this.bookEventActivity = bookEventActivity;
-    }
-
-    @Override
-    public boolean isBookAsAGuestAllowed() {
-        return true;
-    }
-
-    @Override
-    public boolean isPartialEventAllowed() {
-        return true;
     }
 
     @Override

@@ -11,11 +11,9 @@ import javafx.beans.property.SimpleObjectProperty;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.control.Labeled;
-import javafx.scene.layout.Background;
 import javafx.scene.layout.Region;
 import javafx.scene.layout.VBox;
 import javafx.scene.text.Font;
-import one.modality.base.client.brand.Brand;
 import one.modality.base.client.i18n.I18nEntities;
 import one.modality.base.frontoffice.utility.page.FOPageUtil;
 import one.modality.base.frontoffice.utility.tyler.GeneralUtility;
@@ -26,8 +24,8 @@ import one.modality.ecommerce.payment.client.WebPaymentForm;
 import one.modality.event.client.booking.BookableDatesUi;
 import one.modality.event.client.event.fx.FXEvent;
 import one.modality.event.frontoffice.activities.booking.process.event.BookEventActivity;
+import one.modality.event.frontoffice.activities.booking.process.event.BookingForm;
 import one.modality.event.frontoffice.eventheader.EventHeader;
-import one.modality.event.frontoffice.eventheader.LocalEventHeader;
 
 /**
  * @author Bruno Salmon
@@ -38,30 +36,52 @@ final class StepBBookEventSlide extends StepSlide {
     private static final double MIN_FONT_SIZE = 12;
     private static final double MAX_FONT_SIZE = 16;
 
-    private final EventHeader eventHeader = new LocalEventHeader();
+    private final VBox headerPane = new VBox(); // For some reason, using MonoPane makes height grows when width grows
+    private EventHeader eventHeader;
     private final ObjectProperty<Font> mediumFontProperty = new SimpleObjectProperty<>(Font.font(StyleUtility.MEDIUM_TEXT_SIZE));
     private final ObjectProperty<Font> subFontProperty = new SimpleObjectProperty<>(Font.font(StyleUtility.SUB_TEXT_SIZE));
     private boolean workingBookingLoaded;
     private final DigitsSlideController digitsSlideController;
 
-    public StepBBookEventSlide(BookEventActivity bookEventActivity) {
+    StepBBookEventSlide(BookEventActivity bookEventActivity) {
         super(bookEventActivity);
         digitsSlideController = new DigitsSlideController(bookEventActivity);
-        eventHeader.eventFontProperty().bind(mediumFontProperty);
-        eventHeader.descriptionFontProperty().bind(subFontProperty);
     }
 
-    public ReadOnlyObjectProperty<Font> mediumFontProperty() {
+    ReadOnlyObjectProperty<Font> mediumFontProperty() {
         return mediumFontProperty;
     }
 
-    public void onEventChanged(Event event) {
+    void onEventChanged(Event event) {
+        digitsSlideController.onEventChanged(event);
         if (workingBookingLoaded)
             digitsSlideController.displayFirstSlide();
         workingBookingLoaded = false;
-        eventHeader.loadAndSetEvent(event)
-            .onFailure(ex -> displayErrorMessage(ex.getMessage()))
-            .onSuccess(x -> UiScheduler.runInUiThread(this::onEventDescriptionLoaded));
+        BookingForm bookingForm = digitsSlideController.getBookingForm();
+        if (bookingForm != null) {
+            eventHeader = bookingForm.getSettings().getEventHeader();
+        } else {
+            eventHeader = null;
+        }
+        if (eventHeader != null) {
+            eventHeader.eventFontProperty().bind(mediumFontProperty);
+            eventHeader.descriptionFontProperty().bind(subFontProperty);
+            applyWidthConstraints(-1);
+            eventHeader.loadAndSetEvent(event)
+                .onFailure(ex -> displayErrorMessage(ex.getMessage()))
+                .onSuccess(x -> UiScheduler.runInUiThread(this::onEventDescriptionLoaded));
+        }
+    }
+
+    void onPrepareRevealEvent() {
+        BookingForm bookingForm = digitsSlideController.getBookingForm();
+        if (bookingForm != null) {
+            headerPane.setBackground(bookingForm.getSettings().getHeaderBackground());
+        }
+        if (eventHeader != null) {
+            headerPane.getChildren().setAll(eventHeader.getView());
+        } else
+            headerPane.getChildren().clear();
     }
 
     void onWorkingBookingLoaded() {
@@ -75,33 +95,36 @@ final class StepBBookEventSlide extends StepSlide {
     }
 
     private void checkLoaded() {
-        if (workingBookingLoaded && eventHeader.isEventLoaded()) {
+        if (workingBookingLoaded && eventHeader != null && eventHeader.isEventLoaded()) {
             displayBookSlide(); // which is me!
         }
     }
 
     public void buildSlideUi() {
-        VBox orangePane = new VBox(eventHeader.getView()); // For some reason, using MonoPane makes height grows when width grows
-        orangePane.setAlignment(Pos.CENTER);
-        orangePane.setBackground(Background.fill(Brand.getBrandMainColor()));
-        orangePane.setMaxWidth(Double.MAX_VALUE);
+        headerPane.setAlignment(Pos.CENTER);
+        headerPane.setMaxWidth(Double.MAX_VALUE);
 
         Region digitsTransitionPane = digitsSlideController.getContainer();
-
         mainVbox.setPadding(Insets.EMPTY);
-        mainVbox.getChildren().setAll(orangePane, digitsTransitionPane);
+        mainVbox.getChildren().setAll(headerPane, digitsTransitionPane);
 
-        FXProperties.runOnDoublePropertyChange(width -> {
-            double maxPageWidth = Math.min(MAX_PAGE_WIDTH, 0.90 * width);
-            double orangeVerticalGap = maxPageWidth * 0.1;
-            orangePane.setPadding(new Insets(orangeVerticalGap, 0, orangeVerticalGap, 0));
+        FXProperties.runNowAndOnDoublePropertyChange(this::applyWidthConstraints, mainVbox.widthProperty());
+    }
+
+    private void applyWidthConstraints(double width) {
+        if (width < 0)
+            width = mainVbox.getWidth();
+        double maxPageWidth = Math.min(MAX_PAGE_WIDTH, 0.90 * width);
+        double headerVerticalGap = maxPageWidth * 0.1;
+        headerPane.setPadding(new Insets(headerVerticalGap, 0, headerVerticalGap, 0));
+        if (eventHeader != null)
             eventHeader.setMaxPageWidth(maxPageWidth);
-            digitsTransitionPane.setMaxWidth(maxPageWidth);
-            digitsTransitionPane.setPadding(new Insets(maxPageWidth * 0.03, 0, 0, 0));
-            double fontFactor = GeneralUtility.computeFontFactor(maxPageWidth);
-            mediumFontProperty.set(Font.font(Math.max(MIN_FONT_SIZE, Math.min(MAX_FONT_SIZE, StyleUtility.MEDIUM_TEXT_SIZE * fontFactor))));
-            subFontProperty.set(   Font.font(Math.max(MIN_FONT_SIZE, Math.min(MAX_FONT_SIZE, StyleUtility.SUB_TEXT_SIZE    * fontFactor))));
-        }, mainVbox.widthProperty());
+        Region digitsTransitionPane = digitsSlideController.getContainer();
+        digitsTransitionPane.setMaxWidth(maxPageWidth);
+        digitsTransitionPane.setPadding(new Insets(maxPageWidth * 0.03, 0, 0, 0));
+        double fontFactor = GeneralUtility.computeFontFactor(maxPageWidth);
+        mediumFontProperty.set(Font.font(Math.max(MIN_FONT_SIZE, Math.min(MAX_FONT_SIZE, StyleUtility.MEDIUM_TEXT_SIZE * fontFactor))));
+        subFontProperty.set(   Font.font(Math.max(MIN_FONT_SIZE, Math.min(MAX_FONT_SIZE, StyleUtility.SUB_TEXT_SIZE    * fontFactor))));
     }
 
     @Override

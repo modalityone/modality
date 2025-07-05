@@ -35,6 +35,12 @@
 
         <dependency>
             <groupId>one.modality</groupId>
+            <artifactId>modality-base-client-brand</artifactId>
+            <version>1.0.0-SNAPSHOT</version>
+        </dependency>
+
+        <dependency>
+            <groupId>one.modality</groupId>
             <artifactId>modality-base-shared-entities</artifactId>
             <version>1.0.0-SNAPSHOT</version>
         </dependency>
@@ -60,6 +66,12 @@
         <dependency>
             <groupId>one.modality</groupId>
             <artifactId>modality-event-frontoffice-activity-booking-plugin</artifactId>
+            <version>1.0.0-SNAPSHOT</version>
+        </dependency>
+
+        <dependency>
+            <groupId>one.modality</groupId>
+            <artifactId>modality-event-frontoffice-eventheader</artifactId>
             <version>1.0.0-SNAPSHOT</version>
         </dependency>
 

@@ -10,9 +10,9 @@ public interface BookingFormProvider {
     int MODALITY_PRIORITY = 0;
     int APP_PRIORITY = 10;
 
-    int getPriority();
-
     boolean acceptEvent(Event event);
+
+    int getPriority(); // The highest priority is used to decide which provider to choose when several accept the event
 
     BookingForm createBookingForm(Event event, BookEventActivity activity);
 

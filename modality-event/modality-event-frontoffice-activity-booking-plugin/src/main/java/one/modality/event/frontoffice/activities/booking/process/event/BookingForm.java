@@ -8,9 +8,7 @@ import one.modality.event.client.booking.BookableDatesUi;
  */
 public interface BookingForm {
 
-    boolean isBookAsAGuestAllowed();
-
-    boolean isPartialEventAllowed();
+    BookingFormSettings getSettings();
 
     Node buildUi();
 
