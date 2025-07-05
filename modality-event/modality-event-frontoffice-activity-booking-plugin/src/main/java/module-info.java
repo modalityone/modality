@@ -12,7 +12,6 @@ module modality.event.frontoffice.activity.booking.plugin {
     requires javafx.web;
     requires jdk.jsobject;
     requires modality.base.client.brand;
-    requires modality.base.client.cloudinary;
     requires modality.base.client.css;
     requires modality.base.client.i18n;
     requires modality.base.client.icons;
@@ -33,6 +32,7 @@ module modality.event.frontoffice.activity.booking.plugin {
     requires modality.ecommerce.payment.client;
     requires modality.event.client.booking;
     requires modality.event.client.event.fx;
+    requires modality.event.frontoffice.eventheader;
     requires webfx.extras.controlfactory;
     requires webfx.extras.i18n;
     requires webfx.extras.i18n.controls;

@@ -126,6 +126,11 @@ public final class MediaEventHeader extends AbstractEventHeader {
             }).start();
     }
 
+    @Override
+    public String getLoadEventFields() {
+        return "name, label, shortDescription, shortDescriptionLabel, description";
+    }
+
     public MonoPane getView() {
         return responsiveHeader;
     }

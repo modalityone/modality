@@ -10,6 +10,7 @@ module modality.event.frontoffice.eventheader {
     requires modality.base.client.i18n;
     requires modality.base.client.icons;
     requires modality.base.client.time;
+    requires modality.base.frontoffice.utility;
     requires modality.base.shared.entities;
     requires modality.event.frontoffice.medias;
     requires webfx.extras.i18n;
@@ -23,6 +24,7 @@ module modality.event.frontoffice.eventheader {
     requires webfx.extras.webtext;
     requires webfx.kit.util;
     requires webfx.platform.async;
+    requires webfx.platform.uischeduler;
 
     // Exported packages
     exports one.modality.event.frontoffice.eventheader;
