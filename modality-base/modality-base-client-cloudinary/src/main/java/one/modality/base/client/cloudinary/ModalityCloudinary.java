@@ -2,6 +2,7 @@ package one.modality.base.client.cloudinary;
 
 import dev.webfx.extras.canvas.blob.CanvasBlob;
 import dev.webfx.extras.panes.MonoPane;
+import dev.webfx.kit.util.scene.DeviceSceneUtil;
 import dev.webfx.platform.async.Future;
 import dev.webfx.platform.async.Promise;
 import dev.webfx.platform.blob.Blob;
@@ -83,7 +84,7 @@ public final class ModalityCloudinary {
             .onSuccess(exists -> Platform.runLater(() -> {
                 if (exists) {
                     imageContainer.setBackground(null);
-                    //First, we need to get the zoom factor of the screen
+                    // First, we need to get the zoom factor of the screen
                     double zoomFactor = Screen.getPrimary().getOutputScaleX();
                     Image image = getImage(imagePath, width < 0 ? (int) width : (int) (width * zoomFactor), height < 0 ? (int) height : (int) (height * zoomFactor));
                     ImageView imageView = new ImageView();
@@ -92,7 +93,10 @@ public final class ModalityCloudinary {
                     if (width < 0 || height < 0)
                         imageView.setPreserveRatio(true);
                     imageView.setImage(image);
-                    imageContainer.setContent(imageView);
+                    if (imageContainer.getContent() == null)
+                        imageContainer.setContent(imageView);
+                    else // If it's an image replacement, better to wait the loading is complete to prevent a blink between the 2 images
+                        DeviceSceneUtil.onImagesLoaded(() -> imageContainer.setContent(imageView), image);
                     promise.complete(imageView);
                 } else {
                     if (noImageNodeGetter != null) {

@@ -7,6 +7,7 @@ module modality.base.client.cloudinary {
     requires modality.base.shared.entities;
     requires webfx.extras.canvas.blob;
     requires webfx.extras.panes;
+    requires webfx.kit.util.scene;
     requires webfx.platform.async;
     requires webfx.platform.blob;
     requires webfx.platform.console;
