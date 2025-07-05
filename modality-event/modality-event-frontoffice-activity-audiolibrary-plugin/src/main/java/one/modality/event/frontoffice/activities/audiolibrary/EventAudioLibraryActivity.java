@@ -1,5 +1,7 @@
 package one.modality.event.frontoffice.activities.audiolibrary;
 
+import dev.webfx.extras.i18n.I18n;
+import dev.webfx.extras.i18n.controls.I18nControls;
 import dev.webfx.extras.panes.GoldenRatioPane;
 import dev.webfx.extras.panes.MonoPane;
 import dev.webfx.extras.panes.ScaleMode;
@@ -16,8 +18,6 @@ import dev.webfx.kit.util.properties.ObservableLists;
 import dev.webfx.platform.console.Console;
 import dev.webfx.platform.util.Numbers;
 import dev.webfx.platform.util.collection.Collections;
-import dev.webfx.extras.i18n.I18n;
-import dev.webfx.extras.i18n.controls.I18nControls;
 import dev.webfx.stack.orm.domainmodel.activity.viewdomain.impl.ViewDomainActivityBase;
 import dev.webfx.stack.orm.entity.Entities;
 import dev.webfx.stack.orm.entity.EntityStore;
@@ -45,7 +45,7 @@ import one.modality.base.shared.entities.*;
 import one.modality.crm.frontoffice.help.HelpPanel;
 import one.modality.crm.shared.services.authn.ModalityUserPrincipal;
 import one.modality.crm.shared.services.authn.fx.FXModalityUserPrincipal;
-import one.modality.event.frontoffice.medias.EventHeader;
+import one.modality.event.frontoffice.eventheader.EventHeader;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;

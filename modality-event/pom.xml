@@ -39,6 +39,7 @@
         <module>modality-event-frontoffice-activity-booking-plugin</module>
         <module>modality-event-frontoffice-activity-videostreaming-plugin</module>
         <module>modality-event-frontoffice-bookingform-recurringevent-plugin</module>
+        <module>modality-event-frontoffice-eventheader</module>
         <module>modality-event-frontoffice-max-plugin</module>
         <module>modality-event-frontoffice-medias</module>
         <module>modality-event-frontoffice-min-plugin</module>

@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project>
+
+    <exported-packages>
+        <source-packages/>
+        <resource-packages/>
+    </exported-packages>
+
+    <dependencies>
+        <used-by-source-modules>
+            <undetected-module>webfx-platform-async</undetected-module>
+        </used-by-source-modules>
+    </dependencies>
+
+</project>

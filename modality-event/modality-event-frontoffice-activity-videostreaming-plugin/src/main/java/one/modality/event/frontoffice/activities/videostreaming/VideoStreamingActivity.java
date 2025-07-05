@@ -1,6 +1,9 @@
 package one.modality.event.frontoffice.activities.videostreaming;
 
 import dev.webfx.extras.aria.AriaToggleGroup;
+import dev.webfx.extras.i18n.I18n;
+import dev.webfx.extras.i18n.controls.I18nControls;
+import dev.webfx.extras.i18n.spi.impl.I18nSubKey;
 import dev.webfx.extras.panes.*;
 import dev.webfx.extras.player.Player;
 import dev.webfx.extras.player.Players;
@@ -21,9 +24,6 @@ import dev.webfx.platform.scheduler.Scheduler;
 import dev.webfx.platform.uischeduler.UiScheduler;
 import dev.webfx.platform.util.Objects;
 import dev.webfx.platform.util.collection.Collections;
-import dev.webfx.extras.i18n.I18n;
-import dev.webfx.extras.i18n.controls.I18nControls;
-import dev.webfx.extras.i18n.spi.impl.I18nSubKey;
 import dev.webfx.stack.orm.domainmodel.activity.viewdomain.impl.ViewDomainActivityBase;
 import dev.webfx.stack.orm.entity.EntityId;
 import dev.webfx.stack.orm.entity.EntityStore;
@@ -59,7 +59,7 @@ import one.modality.crm.shared.services.authn.ModalityUserPrincipal;
 import one.modality.crm.shared.services.authn.fx.FXModalityUserPrincipal;
 import one.modality.crm.shared.services.authn.fx.FXUserPersonId;
 import one.modality.event.client.i18n.EventI18nKeys;
-import one.modality.event.frontoffice.medias.EventHeader;
+import one.modality.event.frontoffice.eventheader.EventHeader;
 import one.modality.event.frontoffice.medias.EventThumbnail;
 import one.modality.event.frontoffice.medias.MediaConsumptionRecorder;
 

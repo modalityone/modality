@@ -1,5 +1,7 @@
-package one.modality.event.frontoffice.medias;
+package one.modality.event.frontoffice.eventheader;
 
+import dev.webfx.extras.i18n.I18n;
+import dev.webfx.extras.i18n.controls.I18nControls;
 import dev.webfx.extras.panes.MonoPane;
 import dev.webfx.extras.responsive.ResponsiveDesign;
 import dev.webfx.extras.styles.bootstrap.Bootstrap;
@@ -9,8 +11,6 @@ import dev.webfx.extras.util.layout.Layouts;
 import dev.webfx.extras.webtext.HtmlText;
 import dev.webfx.kit.util.properties.FXProperties;
 import dev.webfx.platform.util.Objects;
-import dev.webfx.extras.i18n.I18n;
-import dev.webfx.extras.i18n.controls.I18nControls;
 import javafx.beans.property.ObjectProperty;
 import javafx.beans.property.SimpleObjectProperty;
 import javafx.geometry.Insets;
@@ -21,9 +21,12 @@ import javafx.scene.layout.Priority;
 import javafx.scene.layout.VBox;
 import javafx.scene.text.Font;
 import one.modality.base.client.cloudinary.ModalityCloudinary;
+import one.modality.base.client.i18n.I18nEntities;
 import one.modality.base.client.icons.SvgIcons;
 import one.modality.base.client.time.FrontOfficeTimeFormats;
 import one.modality.base.shared.entities.Event;
+import one.modality.event.frontoffice.medias.MediasI18nKeys;
+import one.modality.event.frontoffice.medias.TimeZoneSwitch;
 
 import java.time.LocalDateTime;
 
@@ -72,8 +75,8 @@ public final class EventHeader {
             if (language == null)
                 language = I18n.getLanguage();
 
-            eventLabel.setText(MediaUtil.translate(event, language));
-            eventDescriptionHTMLText.setText(Objects.coalesce(MediaUtil.translate(event.getShortDescriptionLabel(), language), event.getShortDescription()));
+            eventLabel.setText(I18nEntities.translateEntity(event, language));
+            eventDescriptionHTMLText.setText(Objects.coalesce(I18nEntities.translateEntity(event.getShortDescriptionLabel(), language), event.getShortDescription()));
 
             // Loading the event image in the header
             String eventCloudImagePath = ModalityCloudinary.eventCoverImagePath(event, language);

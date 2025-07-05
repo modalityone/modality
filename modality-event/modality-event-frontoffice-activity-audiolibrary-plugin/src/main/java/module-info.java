@@ -14,6 +14,7 @@ module modality.event.frontoffice.activity.audiolibrary.plugin {
     requires modality.crm.client.authn.fx;
     requires modality.crm.frontoffice.help;
     requires modality.crm.shared.authn;
+    requires modality.event.frontoffice.eventheader;
     requires modality.event.frontoffice.medias;
     requires webfx.extras.cell;
     requires webfx.extras.i18n;
