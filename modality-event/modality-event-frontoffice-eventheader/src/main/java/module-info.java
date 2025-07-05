@@ -23,7 +23,6 @@ module modality.event.frontoffice.eventheader {
     requires webfx.extras.webtext;
     requires webfx.kit.util;
     requires webfx.platform.async;
-    requires webfx.platform.util;
 
     // Exported packages
     exports one.modality.event.frontoffice.eventheader;

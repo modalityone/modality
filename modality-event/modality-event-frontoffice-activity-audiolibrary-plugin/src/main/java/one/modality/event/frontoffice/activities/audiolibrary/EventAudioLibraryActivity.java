@@ -46,6 +46,7 @@ import one.modality.crm.frontoffice.help.HelpPanel;
 import one.modality.crm.shared.services.authn.ModalityUserPrincipal;
 import one.modality.crm.shared.services.authn.fx.FXModalityUserPrincipal;
 import one.modality.event.frontoffice.eventheader.EventHeader;
+import one.modality.event.frontoffice.eventheader.MediaEventHeader;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -153,7 +154,7 @@ final class EventAudioLibraryActivity extends ViewDomainActivityBase {
         // *************************************************************************************************************
         // ********************************* Building the static part of the UI ****************************************
         // *************************************************************************************************************
-        EventHeader eventHeader = new EventHeader(false);
+        EventHeader eventHeader = new MediaEventHeader(false);
         eventHeader.eventProperty().bind(eventProperty);
         eventHeader.languageProperty().bind(pathItemCodeProperty.map(EventAudioLibraryActivity::extractLang));
 
