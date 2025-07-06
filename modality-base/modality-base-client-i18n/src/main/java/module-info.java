@@ -9,6 +9,7 @@ module modality.base.client.i18n {
     requires javafx.base;
     requires javafx.controls;
     requires javafx.graphics;
+    requires modality.base.client.entities;
     requires modality.base.shared.entities;
     requires webfx.extras.i18n;
     requires webfx.extras.i18n.ast;
@@ -20,7 +21,6 @@ module modality.base.client.i18n {
     requires webfx.platform.conf;
     requires webfx.platform.console;
     requires webfx.stack.orm.entity;
-    requires modality.base.client.entities;
 
     // Exported packages
     exports one.modality.base.client.i18n;

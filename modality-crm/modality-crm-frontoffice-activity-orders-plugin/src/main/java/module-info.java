@@ -7,6 +7,8 @@ module modality.crm.frontoffice.activity.orders.plugin {
     requires javafx.controls;
     requires javafx.graphics;
     requires modality.base.client.activity;
+    requires modality.base.client.bootstrap;
+    requires modality.base.client.icons;
     requires modality.base.frontoffice.activity.account.plugin;
     requires modality.base.frontoffice.utility;
     requires modality.base.shared.entities;
@@ -15,7 +17,9 @@ module modality.crm.frontoffice.activity.orders.plugin {
     requires webfx.extras.i18n;
     requires webfx.extras.i18n.controls;
     requires webfx.extras.operation;
+    requires webfx.extras.panes;
     requires webfx.extras.styles.bootstrap;
+    requires webfx.extras.time.format;
     requires webfx.extras.util.control;
     requires webfx.kit.util;
     requires webfx.platform.util;
@@ -26,10 +30,6 @@ module modality.crm.frontoffice.activity.orders.plugin {
     requires webfx.stack.routing.router;
     requires webfx.stack.routing.router.client;
     requires webfx.stack.routing.uirouter;
-    requires modality.base.client.bootstrap;
-    requires webfx.extras.time.format;
-    requires modality.base.client.icons;
-    requires webfx.extras.panes;
 
     // Exported packages
     exports one.modality.crm.frontoffice.activities.orders;
