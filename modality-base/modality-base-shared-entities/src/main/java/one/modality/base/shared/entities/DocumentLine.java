@@ -29,6 +29,10 @@ public interface DocumentLine extends
         return getIntegerFieldValue(bedNumber);
     }
 
+    default Integer getPriceNet() {
+        return getIntegerFieldValue("price_net");
+    }
+
     default void setBedNumber(Integer bedNumber) {
         setFieldValue(bedNumber, bedNumber);
     }
