@@ -172,6 +172,9 @@ public final class OrderView {
 
                     // Show item name and total price
                     Label itemNameLabel = new Label(item.getName());
+                    if (item.getLabel() != null) {
+                        itemNameLabel = I18nControls.newLabel(new I18nSubKey("expression: i18n(this)", item.getLabel()));
+                    }
                     Label totalPriceLabel = new Label(formattedTotal);
                     mainGrid.add(itemNameLabel, 2, currentRow[0]);
                     mainGrid.add(totalPriceLabel, 3, currentRow[0]);
