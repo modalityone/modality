@@ -30,6 +30,9 @@ module modality.crm.frontoffice.activity.orders.plugin {
     requires webfx.stack.routing.router;
     requires webfx.stack.routing.router.client;
     requires webfx.stack.routing.uirouter;
+    requires webfx.extras.util.dialog;
+    requires modality.base.client.mainframe.fx;
+    requires modality.base.client.i18n;
 
     // Exported packages
     exports one.modality.crm.frontoffice.activities.orders;

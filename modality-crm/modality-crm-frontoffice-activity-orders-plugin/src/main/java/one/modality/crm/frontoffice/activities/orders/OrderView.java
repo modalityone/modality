@@ -6,6 +6,8 @@ import dev.webfx.extras.i18n.spi.impl.I18nSubKey;
 import dev.webfx.extras.panes.MonoPane;
 import dev.webfx.extras.styles.bootstrap.Bootstrap;
 import dev.webfx.extras.time.format.LocalizedTime;
+import dev.webfx.extras.util.dialog.DialogCallback;
+import dev.webfx.extras.util.dialog.DialogUtil;
 import dev.webfx.stack.orm.dql.DqlStatement;
 import dev.webfx.stack.orm.reactive.entities.dql_to_entities.ReactiveEntitiesMapper;
 import javafx.beans.InvalidationListener;
@@ -23,7 +25,9 @@ import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.SVGPath;
 import one.modality.base.client.bootstrap.ModalityStyle;
+import one.modality.base.client.i18n.BaseI18nKeys;
 import one.modality.base.client.icons.SvgIcons;
+import one.modality.base.client.mainframe.fx.FXMainFrameDialogArea;
 import one.modality.base.frontoffice.activities.account.BookingStatus;
 import one.modality.base.shared.entities.Document;
 import one.modality.base.shared.entities.DocumentLine;
@@ -227,6 +231,49 @@ public final class OrderView {
             cancelButton = Bootstrap.textDanger(I18nControls.newLabel(OrdersI18nKeys.CancelBooking));
             cancelButton.setCursor(Cursor.HAND);
             cancelButton.setVisible(LocalDate.now().isBefore(booking.getEvent().getStartDate()));
+            cancelButton.setOnMouseClicked(event->{
+                BorderPane errorDialog = new BorderPane();
+                errorDialog.setMaxWidth(500);
+                errorDialog.setMinWidth(500);
+
+                errorDialog.setBackground(new Background(new BackgroundFill(Color.WHITE,new CornerRadii(16),Insets.EMPTY)));
+                errorDialog.setPadding(new Insets(30));
+
+                Label title = Bootstrap.strong(Bootstrap.textPrimary(Bootstrap.h3(I18nControls.newLabel(OrdersI18nKeys.CancelBookingTitle))));
+                title.setPadding(new Insets(20,0,0,0));
+                title.setWrapText(true);
+                errorDialog.setTop(title);
+                BorderPane.setAlignment(title, Pos.CENTER);
+                Label areYouSureLabel = Bootstrap.strong(Bootstrap.textSecondary(Bootstrap.h5(I18nControls.newLabel(OrdersI18nKeys.CancelBookingAreYouSure))));
+                areYouSureLabel.setWrapText(true);
+
+                Label refundInfoLabel = Bootstrap.textSecondary((I18nControls.newLabel(OrdersI18nKeys.CancelBookingRefund)));
+                refundInfoLabel.setWrapText(true);
+
+                VBox content = new VBox(30,areYouSureLabel,refundInfoLabel);
+                content.setAlignment(Pos.CENTER);
+                BorderPane.setAlignment(content, Pos.CENTER);
+                BorderPane.setMargin(content, new Insets(30, 0, 30, 0));
+                errorDialog.setCenter(content);
+
+                Label cancelLabel = Bootstrap.strong(Bootstrap.textSecondary(I18nControls.newLabel(BaseI18nKeys.Cancel)));
+                cancelLabel.setCursor(Cursor.HAND);
+                DialogCallback errorMessageCallback = DialogUtil.showModalNodeInGoldLayout(errorDialog, FXMainFrameDialogArea.getDialogArea());
+                cancelLabel.setOnMouseClicked(m -> errorMessageCallback.closeDialog());
+
+                Button confirmButton = Bootstrap.largeDangerButton(I18nControls.newButton(BaseI18nKeys.Confirm));
+                confirmButton.setOnAction(m ->{
+
+
+                });
+                Region spacer = new Region();
+                HBox.setHgrow(spacer,Priority.ALWAYS);
+                HBox buttonsHBox = new HBox(10,cancelLabel,spacer,confirmButton);
+                buttonsHBox.setPadding(new Insets(30,50,20,50));
+                buttonsHBox.setAlignment(Pos.CENTER);
+                errorDialog.setBottom(buttonsHBox);
+            });
+
             Region spacer = new Region();
             HBox.setHgrow(spacer,Priority.ALWAYS);
             totalsAndButtonHBox.getChildren().addAll(totalsSection, paymentButton,spacer,cancelButton);
