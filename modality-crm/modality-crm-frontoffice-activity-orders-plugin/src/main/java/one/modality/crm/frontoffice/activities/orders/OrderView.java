@@ -199,6 +199,7 @@ public final class OrderView {
 
             // Total section (with background)
             HBox totalsAndButtonHBox = new HBox();
+            totalsAndButtonHBox.setAlignment(Pos.CENTER);
             HBox totalsSection = new HBox(15);
             totalsSection.setAlignment(Pos.CENTER_LEFT);
             totalsSection.setPadding(new Insets(8,30,8,30));
@@ -222,20 +223,18 @@ public final class OrderView {
             });
 
             totalsSection.getChildren().addAll(totalLabel, totalValue, paidLabel, paidValue, remainingLabel, remainingValue);
-            totalsAndButtonHBox.getChildren().addAll(totalsSection, paymentButton);
-
-            GridPane.setColumnSpan(totalsAndButtonHBox, 2);
-            mainGrid.add(totalsAndButtonHBox, 1, currentRow[0]);
-            detailNodes.add(totalsAndButtonHBox);
-
             // Cancel booking button
             cancelButton = Bootstrap.textDanger(I18nControls.newLabel(OrdersI18nKeys.CancelBooking));
             cancelButton.setCursor(Cursor.HAND);
             cancelButton.setVisible(LocalDate.now().isBefore(booking.getEvent().getStartDate()));
+            Region spacer = new Region();
+            HBox.setHgrow(spacer,Priority.ALWAYS);
+            totalsAndButtonHBox.getChildren().addAll(totalsSection, paymentButton,spacer,cancelButton);
 
-            GridPane.setColumnSpan(cancelButton, 2);
-            mainGrid.add(cancelButton, 3, currentRow[0]);
-            detailNodes.add(cancelButton);
+            GridPane.setColumnSpan(totalsAndButtonHBox, 4);
+            mainGrid.add(totalsAndButtonHBox, 1, currentRow[0]);
+            detailNodes.add(totalsAndButtonHBox);
+
 
             // Apply current visibility state
             setDetailsVisibility(detailsVisible);
