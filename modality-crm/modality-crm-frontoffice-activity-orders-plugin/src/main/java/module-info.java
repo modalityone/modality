@@ -16,6 +16,8 @@ module modality.crm.frontoffice.activity.orders.plugin {
     requires modality.base.shared.entities;
     requires modality.crm.client.authn.fx;
     requires modality.ecommerce.client.i18n;
+    requires modality.ecommerce.client.workingbooking;
+    requires modality.ecommerce.document.service;
     requires webfx.extras.i18n;
     requires webfx.extras.i18n.controls;
     requires webfx.extras.operation;
@@ -25,20 +27,17 @@ module modality.crm.frontoffice.activity.orders.plugin {
     requires webfx.extras.util.control;
     requires webfx.extras.util.dialog;
     requires webfx.kit.util;
+    requires webfx.platform.async;
+    requires webfx.platform.console;
     requires webfx.platform.util;
     requires webfx.platform.windowhistory;
     requires webfx.stack.orm.domainmodel.activity;
     requires webfx.stack.orm.dql;
+    requires webfx.stack.orm.entity;
     requires webfx.stack.orm.reactive.entities;
     requires webfx.stack.routing.router;
     requires webfx.stack.routing.router.client;
     requires webfx.stack.routing.uirouter;
-    requires webfx.stack.orm.entity;
-    requires webfx.platform.console;
-    requires webfx.platform.uischeduler;
-    requires modality.ecommerce.document.service;
-    requires modality.ecommerce.client.workingbooking;
-    requires modality.crm.backoffice.organization.fx;
 
     // Exported packages
     exports one.modality.crm.frontoffice.activities.orders;

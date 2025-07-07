@@ -92,7 +92,7 @@ final class OrdersActivity extends ViewDomainActivityBase implements ModalityBut
         pageContainer.setAlignment(Pos.TOP_CENTER);
 
 
-
+        FXProperties.runOnPropertyChange(activeOrdersContainer.getChildren()::clear,FXModalityUserPrincipal.modalityUserPrincipalProperty());
         // Lazy loading when the user scrolls down
         Controls.onScrollPaneAncestorSet(pageContainer, scrollPane -> {
             double lazyLoadingBottomSpace = Screen.getPrimary().getVisualBounds().getHeight();
@@ -112,6 +112,7 @@ final class OrdersActivity extends ViewDomainActivityBase implements ModalityBut
 
         return FOPageUtil.restrictToMaxPageWidthAndApplyPageTopBottomPadding(pageContainer);
     }
+
 
     @Override
     protected void startLogic() {
