@@ -8,6 +8,7 @@ module modality.base.client.time {
     requires webfx.extras.time.format;
     requires webfx.platform.boot;
     requires webfx.platform.util;
+    requires modality.base.shared.entities;
 
     // Exported packages
     exports one.modality.base.client.time;
