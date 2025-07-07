@@ -16,6 +16,8 @@ public class EventPriceFormatter extends PriceFormatter {
 
     public static String getEventCurrencyCode(Event event) {
         // Temporary hardcoded
+        if (Entities.samePrimaryKey(event, 1647)) // Fall Festival 2025 - Arizona
+            return "USD";
         Object organizationPk = Entities.getPrimaryKey(event.getOrganizationId());
         if (organizationPk == null)
             return null;
@@ -25,6 +27,8 @@ public class EventPriceFormatter extends PriceFormatter {
 
     public static String getEventCurrencySymbol(Event event) {
         // Temporary hardcoded
+        if ("USD".equals(getEventCurrencyCode(event)))
+            return "$ ";
         if ("EUR".equals(getEventCurrencyCode(event)))
             return " €";
         return "£ ";
