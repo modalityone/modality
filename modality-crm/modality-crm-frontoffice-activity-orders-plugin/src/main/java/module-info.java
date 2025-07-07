@@ -8,7 +8,9 @@ module modality.crm.frontoffice.activity.orders.plugin {
     requires javafx.graphics;
     requires modality.base.client.activity;
     requires modality.base.client.bootstrap;
+    requires modality.base.client.i18n;
     requires modality.base.client.icons;
+    requires modality.base.client.mainframe.fx;
     requires modality.base.frontoffice.activity.account.plugin;
     requires modality.base.frontoffice.utility;
     requires modality.base.shared.entities;
@@ -21,6 +23,7 @@ module modality.crm.frontoffice.activity.orders.plugin {
     requires webfx.extras.styles.bootstrap;
     requires webfx.extras.time.format;
     requires webfx.extras.util.control;
+    requires webfx.extras.util.dialog;
     requires webfx.kit.util;
     requires webfx.platform.util;
     requires webfx.platform.windowhistory;
@@ -30,9 +33,12 @@ module modality.crm.frontoffice.activity.orders.plugin {
     requires webfx.stack.routing.router;
     requires webfx.stack.routing.router.client;
     requires webfx.stack.routing.uirouter;
-    requires webfx.extras.util.dialog;
-    requires modality.base.client.mainframe.fx;
-    requires modality.base.client.i18n;
+    requires webfx.stack.orm.entity;
+    requires webfx.platform.console;
+    requires webfx.platform.uischeduler;
+    requires modality.ecommerce.document.service;
+    requires modality.ecommerce.client.workingbooking;
+    requires modality.crm.backoffice.organization.fx;
 
     // Exported packages
     exports one.modality.crm.frontoffice.activities.orders;
