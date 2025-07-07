@@ -81,6 +81,14 @@ public final class PolicyAggregate {
         return getScheduledItems().stream();
     }
 
+    public Stream<ScheduledItem> getFamilyScheduledItemsStream(ItemFamily itemFamily) {
+        return getFamilyScheduledItemsStream(itemFamily.getCode());
+    }
+
+    public Stream<ScheduledItem> getFamilyScheduledItemsStream(KnownItemFamily knownItemFamily) {
+        return getFamilyScheduledItemsStream(knownItemFamily.getCode());
+    }
+
     public Stream<ScheduledItem> getFamilyScheduledItemsStream(String familyCode) {
         return getScheduledItemsStream()
             .filter(scheduledItem -> Objects.equals(familyCode, scheduledItem.getItem().getFamily().getCode()));
