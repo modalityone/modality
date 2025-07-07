@@ -1,6 +1,7 @@
 package one.modality.base.shared.entities;
 
 import one.modality.base.shared.entities.markers.*;
+import one.modality.base.shared.knownitems.KnownItemFamily;
 
 /**
  * @author Bruno Salmon

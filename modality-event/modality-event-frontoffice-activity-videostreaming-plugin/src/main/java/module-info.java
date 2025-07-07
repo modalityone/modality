@@ -12,6 +12,7 @@ module modality.event.frontoffice.activity.videostreaming.plugin {
     requires modality.base.client.time;
     requires modality.base.frontoffice.utility;
     requires modality.base.shared.entities;
+    requires modality.base.shared.knownitems;
     requires modality.crm.client.authn.fx;
     requires modality.crm.frontoffice.help;
     requires modality.crm.shared.authn;

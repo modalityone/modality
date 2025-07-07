@@ -28,7 +28,7 @@ import javafx.scene.layout.VBox;
 import one.modality.base.frontoffice.utility.page.FOPageUtil;
 import one.modality.base.shared.entities.DocumentLine;
 import one.modality.base.shared.entities.Event;
-import one.modality.base.shared.entities.KnownItemFamily;
+import one.modality.base.shared.knownitems.KnownItemFamily;
 import one.modality.crm.shared.services.authn.fx.FXModalityUserPrincipal;
 import one.modality.event.frontoffice.medias.EventThumbnail;
 

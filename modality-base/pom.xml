@@ -74,6 +74,7 @@
         <module>modality-base-shared-context</module>
         <module>modality-base-shared-domainmodel</module>
         <module>modality-base-shared-entities</module>
+        <module>modality-base-shared-knownitems</module>
     </modules>
 
 </project>

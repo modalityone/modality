@@ -4,11 +4,11 @@ module modality.base.client.time {
 
     // Direct dependencies modules
     requires javafx.graphics;
+    requires modality.base.shared.entities;
     requires webfx.extras.cell;
     requires webfx.extras.time.format;
     requires webfx.platform.boot;
     requires webfx.platform.util;
-    requires modality.base.shared.entities;
 
     // Exported packages
     exports one.modality.base.client.time;

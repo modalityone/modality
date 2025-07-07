@@ -1,4 +1,4 @@
-package one.modality.base.shared.entities;
+package one.modality.base.shared.knownitems;
 
 /**
  * @author Bruno Salmon

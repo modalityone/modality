@@ -1,6 +1,6 @@
 package one.modality.event.backoffice.activities.pricing;
 
-import one.modality.base.shared.entities.KnownItemFamily;
+import one.modality.base.shared.knownitems.KnownItemFamily;
 import one.modality.base.shared.entities.Rate;
 import one.modality.ecommerce.document.service.PolicyAggregate;
 

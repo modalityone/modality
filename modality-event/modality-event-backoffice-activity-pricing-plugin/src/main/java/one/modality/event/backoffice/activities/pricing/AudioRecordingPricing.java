@@ -7,7 +7,7 @@ import dev.webfx.stack.orm.reactive.entities.dql_to_entities.ReactiveEntitiesMap
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import one.modality.base.shared.entities.Item;
-import one.modality.base.shared.entities.KnownItemFamily;
+import one.modality.base.shared.knownitems.KnownItemFamily;
 import one.modality.base.shared.entities.Site;
 import one.modality.base.shared.entities.SiteItem;
 import one.modality.crm.backoffice.organization.fx.FXOrganization;

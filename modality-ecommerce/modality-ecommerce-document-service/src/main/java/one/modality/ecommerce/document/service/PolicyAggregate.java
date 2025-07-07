@@ -10,6 +10,7 @@ import dev.webfx.stack.orm.entity.EntityList;
 import dev.webfx.stack.orm.entity.EntityStore;
 import dev.webfx.stack.orm.entity.query_result_to_entities.QueryResultToEntitiesMapper;
 import one.modality.base.shared.entities.*;
+import one.modality.base.shared.knownitems.KnownItemFamily;
 
 import java.util.List;
 import java.util.Objects;

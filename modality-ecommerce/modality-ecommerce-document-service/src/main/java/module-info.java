@@ -4,6 +4,7 @@ module modality.ecommerce.document.service {
 
     // Direct dependencies modules
     requires modality.base.shared.entities;
+    requires modality.base.shared.knownitems;
     requires transitive webfx.platform.async;
     requires webfx.platform.console;
     requires webfx.platform.service;

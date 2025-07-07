@@ -11,6 +11,7 @@ module modality.event.backoffice.activity.pricing.plugin {
     requires modality.base.client.util;
     requires modality.base.shared.domainmodel;
     requires modality.base.shared.entities;
+    requires modality.base.shared.knownitems;
     requires modality.crm.backoffice.organization.fx;
     requires modality.ecommerce.document.service;
     requires modality.event.client.event.fx;

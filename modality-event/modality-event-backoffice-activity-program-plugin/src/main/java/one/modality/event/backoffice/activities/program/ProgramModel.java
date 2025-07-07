@@ -1,6 +1,10 @@
 package one.modality.event.backoffice.activities.program;
 
+import dev.webfx.extras.operation.OperationUtil;
 import dev.webfx.extras.util.OptimizedObservableListWrapper;
+import dev.webfx.extras.util.dialog.builder.DialogBuilderUtil;
+import dev.webfx.extras.util.dialog.builder.DialogContent;
+import dev.webfx.extras.validation.ValidationSupport;
 import dev.webfx.kit.util.properties.ObservableLists;
 import dev.webfx.platform.async.Future;
 import dev.webfx.platform.console.Console;
@@ -10,10 +14,6 @@ import dev.webfx.stack.orm.entity.EntityList;
 import dev.webfx.stack.orm.entity.EntityStore;
 import dev.webfx.stack.orm.entity.EntityStoreQuery;
 import dev.webfx.stack.orm.entity.UpdateStore;
-import dev.webfx.extras.util.dialog.builder.DialogBuilderUtil;
-import dev.webfx.extras.util.dialog.builder.DialogContent;
-import dev.webfx.extras.operation.OperationUtil;
-import dev.webfx.extras.validation.ValidationSupport;
 import javafx.application.Platform;
 import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.ObjectProperty;
@@ -25,6 +25,7 @@ import javafx.scene.control.Button;
 import one.modality.base.client.mainframe.fx.FXMainFrameDialogArea;
 import one.modality.base.shared.entities.*;
 import one.modality.base.shared.entities.markers.EntityHasItem;
+import one.modality.base.shared.knownitems.KnownItemFamily;
 import one.modality.event.client.event.fx.FXEvent;
 
 import java.time.LocalDate;

@@ -13,7 +13,7 @@ import javafx.scene.control.ContentDisplay;
 import javafx.scene.control.Label;
 import javafx.scene.layout.BorderPane;
 import one.modality.base.backoffice.mainframe.fx.FXEventSelector;
-import one.modality.base.shared.entities.KnownItemFamily;
+import one.modality.base.shared.knownitems.KnownItemFamily;
 
 /**
  * @author Bruno Salmon

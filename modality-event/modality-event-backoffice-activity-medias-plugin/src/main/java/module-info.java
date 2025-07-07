@@ -17,6 +17,7 @@ module modality.event.backoffice.activity.medias.plugin {
     requires modality.base.client.time;
     requires modality.base.client.util;
     requires modality.base.shared.entities;
+    requires modality.base.shared.knownitems;
     requires modality.event.client.event.fx;
     requires webfx.extras.controlfactory;
     requires webfx.extras.filepicker;

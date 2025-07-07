@@ -7,6 +7,7 @@ module modality.base.shared.entities {
 
     // Direct dependencies modules
     requires modality.base.shared.domainmodel;
+    requires modality.base.shared.knownitems;
     requires webfx.extras.media.metadata;
     requires webfx.platform.substitution;
     requires webfx.platform.util;
