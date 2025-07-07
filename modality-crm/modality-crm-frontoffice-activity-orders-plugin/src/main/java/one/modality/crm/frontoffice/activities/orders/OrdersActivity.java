@@ -92,7 +92,7 @@ final class OrdersActivity extends ViewDomainActivityBase implements ModalityBut
         pageContainer.setAlignment(Pos.TOP_CENTER);
 
 
-
+        FXProperties.runOnPropertyChange(activeOrdersContainer.getChildren()::clear,FXModalityUserPrincipal.modalityUserPrincipalProperty());
         // Lazy loading when the user scrolls down
         Controls.onScrollPaneAncestorSet(pageContainer, scrollPane -> {
             double lazyLoadingBottomSpace = Screen.getPrimary().getVisualBounds().getHeight();
@@ -113,6 +113,7 @@ final class OrdersActivity extends ViewDomainActivityBase implements ModalityBut
         return FOPageUtil.restrictToMaxPageWidthAndApplyPageTopBottomPadding(pageContainer);
     }
 
+
     @Override
     protected void startLogic() {
         // Upcoming bookings
@@ -120,7 +121,7 @@ final class OrdersActivity extends ViewDomainActivityBase implements ModalityBut
             .always("{class: 'Document', alias: 'd', orderBy: 'event.startDate desc, ref desc'}")
             .always(DqlStatement.fields(OrderView.BOOKING_REQUIRED_FIELDS))
             .always(where("event.endDate >= now()"))
-            .always(where("!cancelled or price_deposit>0"))
+            .always(where("!abandoned or price_deposit>0"))
             .ifNotNullOtherwiseEmpty(FXModalityUserPrincipal.modalityUserPrincipalProperty(), mup -> where("person.frontendAccount=?", mup.getUserAccountId()))
             .storeEntitiesInto(upcomingBookingsFeed)
             .start();
@@ -130,7 +131,7 @@ final class OrdersActivity extends ViewDomainActivityBase implements ModalityBut
             .always("{class: 'Document', alias: 'd', orderBy: 'event.startDate desc, ref desc', limit: 5}")
             .always(DqlStatement.fields(OrderView.BOOKING_REQUIRED_FIELDS))
             .always(where("event.endDate < now()"))
-            .always(where("!cancelled or price_deposit>0"))
+            .always(where("!abandoned or price_deposit>0"))
             .ifNotNullOtherwiseEmpty(FXModalityUserPrincipal.modalityUserPrincipalProperty(), mup -> where("person.frontendAccount=?", mup.getUserAccountId()))
             .ifNotNull(loadPastEventsBeforeDateProperty, date -> where("event.startDate < ?", date))
             .storeEntitiesInto(pastBookingsFeed)
