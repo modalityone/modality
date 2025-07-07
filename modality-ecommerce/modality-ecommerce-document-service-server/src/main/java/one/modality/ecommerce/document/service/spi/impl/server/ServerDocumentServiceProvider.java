@@ -31,7 +31,7 @@ import java.util.stream.Collectors;
  */
 public class ServerDocumentServiceProvider implements DocumentServiceProvider {
 
-    private final static String POLICY_SCHEDULED_ITEMS_QUERY_BASE = "select site.name,item.(name,code,family.code),date,startTime,timeline.startTime from ScheduledItem";
+    private final static String POLICY_SCHEDULED_ITEMS_QUERY_BASE = "select site.name,item.(name,label,code,family.code,ord),date,startTime,timeline.startTime from ScheduledItem";
     private final static String POLICY_RATES_QUERY_BASE = "select site,item,price,perDay,perPerson,facilityFee_price,startDate,endDate,minDeposit,age1_max,age1_price,age1_discount,age2_max,age2_price,age2_discount,resident_price,resident_discount,resident2_price,resident2_discount from Rate";
     private final static String POLICY_BOOKABLE_PERIODS_QUERY_BASE = "select startScheduledItem,endScheduledItem,name,label from BookablePeriod";
 
