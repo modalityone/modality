@@ -3,7 +3,6 @@ package one.modality.crm.frontoffice.activities.orders;
 
 public interface OrdersI18nKeys {
 
-    Object OrdersMenu = "OrdersMenu";
     Object ActiveOrders = "ActiveOrders";
     Object CancelBookingRefund = "CancelBookingRefund";
     Object CancelBookingTitle = "CancelBookingTitle";
@@ -12,6 +11,7 @@ public interface OrdersI18nKeys {
     Object CancelBooking = "CancelBooking";
     Object OrdersTitleExplanation = "OrdersTitleExplanation";
     Object CompletedOrders = "CompletedOrders";
+    Object OrdersMenu = "OrdersMenu";
     Object CancelBookingAreYouSure = "CancelBookingAreYouSure";
     Object MakePayment = "MakePayment";
     Object OrdersTitle = "OrdersTitle";

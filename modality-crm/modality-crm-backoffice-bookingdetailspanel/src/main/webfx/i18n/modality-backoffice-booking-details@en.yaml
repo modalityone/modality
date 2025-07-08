@@ -19,9 +19,12 @@ MultipleBookingsTab:
 FamilyTab:
   text: "[Family]"
   graphic: "images/s16/child.png"
+MediasTab:
+  text: "[Medias]"
+  #graphic: "images/s16/mailbox.png"
 MailsTab:
   text: "[Mails]"
   graphic: "images/s16/mailbox.png"
 HistoryTab:
-  text: "History"
+  text: "[History]"
   graphic: "images/s16/history.png"

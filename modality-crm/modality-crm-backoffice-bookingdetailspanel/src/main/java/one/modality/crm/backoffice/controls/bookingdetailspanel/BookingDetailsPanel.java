@@ -133,7 +133,7 @@ public final class BookingDetailsPanel implements
             createFilterTab(BookingDetailsI18nKeys.CartTab, "{class: 'Document', columns:`ref,multipleBookingIcon,langIcon,genderIcon,person_firstName,person_lastName,person_age,noteIcon,price_net,price_deposit,price_balance`, where: 'cart=(select cart from Document where id=${selectedDocument})', orderBy: 'ref'}"),
             createFilterTab(BookingDetailsI18nKeys.MultipleBookingsTab, "{class: 'Document', columns:`ref,multipleBookingIcon,langIcon,genderIcon,person_firstName,person_lastName,person_age,noteIcon,price_deposit,plainOptions`, where: 'multipleBooking=(select multipleBooking from Document where id=${selectedDocument})', orderBy: 'ref'}"),
             createFilterTab(BookingDetailsI18nKeys.FamilyTab, "{class: 'Document', columns:`ref,multipleBookingIcon,langIcon,genderIcon,person_firstName,person_lastName,person_age,noteIcon,price_deposit,plainOptions`, where: 'person_carer1Document=${selectedDocument} or person_carer2Document=${selectedDocument} or id=(select person_carer1Document from Document where id=${selectedDocument}) or id=(select person_carer2Document from Document where id=${selectedDocument})', orderBy: 'ref'}"),
-            createFilterTab(BookingDetailsI18nKeys.Medias, "{class: 'MediaConsumption', columns: ['date',{expression: 'action', textAlign: 'center'},'mediaInfo',{expression: 'durationMillis', label: 'Duration', renderer: 'durationMillisRenderer', prefWidth: 70}], where: 'attendance.documentLine.document=${selectedDocument}', orderBy: 'date desc'}"),
+            createFilterTab(BookingDetailsI18nKeys.MediasTab, "{class: 'MediaConsumption', columns: ['date',{expression: 'action', textAlign: 'center'},'mediaInfo',{expression: 'durationMillis', label: 'Duration', renderer: 'durationMillisRenderer', prefWidth: 70}], where: 'attendance.documentLine.document=${selectedDocument}', orderBy: 'date desc'}"),
             createFilterTab(BookingDetailsI18nKeys.MailsTab, "{class: 'Mail', columns: 'date,subject,transmitted,error', where: 'document=${selectedDocument}', orderBy: 'date desc'}"),
             createFilterTab(BookingDetailsI18nKeys.HistoryTab, "{class: 'History', columns: 'date,userDisplay,comment,request', where: 'document=${selectedDocument}', orderBy: 'date desc'}")
         ));
@@ -182,7 +182,7 @@ public final class BookingDetailsPanel implements
         Supplier<ActionGroup> contextMenuActionGroupFactory = null;
         // TODO: move this to switch(Object) in Java 21
         switch (i18nKey.toString()) {
-            case "Options": // TODO: Move this to BookingDetailsI18nKeys.Options in Java 21
+            case "OptionsTab": // TODO: Move this to BookingDetailsI18nKeys.OptionsTab in Java 21
                 contextMenuActionGroupFactory = () -> newActionGroup(
                     newSelectedDocumentOperationAction(AddNewDocumentLineRequest::new), // Executor isn't implemented yet
                     newSeparatorActionGroup(
@@ -193,7 +193,7 @@ public final class BookingDetailsPanel implements
                     newTabCopyActionGroup(true, tab)
                 );
                 break;
-            case "Payments":
+            case "PaymentsTab":
                 contextMenuActionGroupFactory = () -> newActionGroup(
                     newSelectedDocumentOperationAction(AddNewPaymentRequest::new),
                     newSelectedDocumentOperationAction(AddNewTransferRequest::new),
@@ -204,7 +204,7 @@ public final class BookingDetailsPanel implements
                     newTabCopyActionGroup(true, tab)
                 );
                 break;
-            case "MultipleBookings":
+            case "MultipleBookingTab":
                 contextMenuActionGroupFactory = () -> newActionGroup(
                     newTabSelectedDocumentOperationAction(MergeMultipleBookingsOptionsRequest::new, tab),
                     newTabSelectedDocumentOperationAction(CancelOtherMultipleBookingsRequest::new, tab),
@@ -213,19 +213,19 @@ public final class BookingDetailsPanel implements
                     newTabSelectedDocumentOperationAction(ToggleMarkNotMultipleBookingRequest::new, tab)
                 );
                 break;
-            case "Cart":
+            case "CartTab":
                 contextMenuActionGroupFactory = () -> newActionGroup(
                     newTabSelectedDocumentOperationAction(OpenBookingCartRequest::new, tab)
                 );
                 break;
-            case "Mails":
+            case "MailsTab":
                 contextMenuActionGroupFactory = () -> newActionGroup(
                     newTabSelectedMailOperationAction(OpenMailRequest::new, tab),
                     newSelectedDocumentOperationAction(ComposeNewMailRequest::new),
                     newTabCopyActionGroup(true, tab)
                 );
                 break;
-            case "History":
+            case "HistoryTab":
                 contextMenuActionGroupFactory = () -> newTabCopyActionGroup(false, tab);
                 break;
         }

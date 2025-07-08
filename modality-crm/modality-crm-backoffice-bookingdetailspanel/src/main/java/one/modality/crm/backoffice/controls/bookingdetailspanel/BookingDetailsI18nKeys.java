@@ -19,6 +19,7 @@ public interface BookingDetailsI18nKeys {
     Object CartTab = "CartTab";
     Object MultipleBookingsTab = "MultipleBookingsTab";
     Object FamilyTab = "FamilyTab";
+    Object MediasTab = "MediasTab";
     Object MailsTab = "MailsTab";
     Object HistoryTab = "HistoryTab";
 
