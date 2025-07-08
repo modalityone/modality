@@ -9,6 +9,7 @@ module modality.base.frontoffice.mainframe.activity {
     requires modality.base.client.application;
     requires modality.base.client.brand;
     requires modality.base.client.mainframe.fx;
+    requires modality.base.frontoffice.mainframe.footernode;
     requires modality.base.frontoffice.mainframe.fx;
     requires modality.base.frontoffice.utility;
     requires modality.crm.backoffice.organization.fx;
@@ -30,7 +31,6 @@ module modality.base.frontoffice.mainframe.activity {
     requires webfx.kit.util.aria;
     requires webfx.platform.conf;
     requires webfx.platform.console;
-    requires webfx.platform.resource;
     requires webfx.platform.useragent;
     requires webfx.platform.util;
     requires webfx.stack.orm.entity;

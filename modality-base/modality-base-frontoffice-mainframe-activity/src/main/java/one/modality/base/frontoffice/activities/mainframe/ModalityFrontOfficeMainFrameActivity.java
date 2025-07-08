@@ -1,7 +1,11 @@
 package one.modality.base.frontoffice.activities.mainframe;
 
+import dev.webfx.extras.action.Action;
+import dev.webfx.extras.action.ActionBinder;
 import dev.webfx.extras.aria.AriaToggleGroup;
 import dev.webfx.extras.aria.FXKeyboardNavigationDetected;
+import dev.webfx.extras.i18n.I18n;
+import dev.webfx.extras.i18n.controls.I18nControls;
 import dev.webfx.extras.panes.*;
 import dev.webfx.extras.panes.transitions.CircleTransition;
 import dev.webfx.extras.panes.transitions.Transition;
@@ -16,16 +20,11 @@ import dev.webfx.kit.util.properties.ObservableLists;
 import dev.webfx.platform.conf.Config;
 import dev.webfx.platform.conf.SourcesConfig;
 import dev.webfx.platform.console.Console;
-import dev.webfx.platform.resource.Resource;
 import dev.webfx.platform.useragent.UserAgent;
 import dev.webfx.platform.util.Arrays;
 import dev.webfx.platform.util.collection.Collections;
-import dev.webfx.extras.i18n.I18n;
-import dev.webfx.extras.i18n.controls.I18nControls;
 import dev.webfx.stack.orm.entity.Entities;
 import dev.webfx.stack.session.state.client.fx.FXLoggedIn;
-import dev.webfx.extras.action.Action;
-import dev.webfx.extras.action.ActionBinder;
 import javafx.beans.InvalidationListener;
 import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.ObjectProperty;
@@ -38,8 +37,6 @@ import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.control.*;
 import javafx.scene.effect.DropShadow;
-import javafx.scene.image.Image;
-import javafx.scene.image.ImageView;
 import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
 import javafx.scene.paint.Paint;
@@ -52,6 +49,7 @@ import one.modality.base.client.brand.BrandI18nKeys;
 import one.modality.base.client.mainframe.fx.FXMainFrameDialogArea;
 import one.modality.base.client.mainframe.fx.FXMainFrameOverlayArea;
 import one.modality.base.client.mainframe.fx.FXMainFrameTransiting;
+import one.modality.base.frontoffice.mainframe.footernode.MainFrameFooterNodeProvider;
 import one.modality.base.frontoffice.mainframe.fx.FXBackgroundNode;
 import one.modality.base.frontoffice.mainframe.fx.FXCollapseMenu;
 import one.modality.base.frontoffice.mainframe.fx.FXShowFooter;
@@ -202,10 +200,6 @@ public final class ModalityFrontOfficeMainFrameActivity extends ModalityClientMa
                 overlayMenuBar.collapse();
         }, FXBackgroundNode.backgroundNodeProperty(), mobileLayoutProperty, mountNodeProperty());
 
-        // Temporarily hardcoded footer image
-        ImageView footer = new ImageView(new Image(Resource.toUrl("/images/organizations/NKT-IKBU.svg", getClass()), true));
-        VBox.setMargin(footer, new Insets(0, 0, 50, 0));
-
         AriaToggleGroup<Integer> mainAndUserMenuItemGroup = new AriaToggleGroup<>(AriaRole.MENUITEM);
         CollapsePane mainMenuButtonBar = createMainMenuButtonBar(mainAndUserMenuItemGroup, false);
         CollapsePane userMenuButtonBar = createUserMenuButtonBar(mainAndUserMenuItemGroup);
@@ -218,11 +212,18 @@ public final class ModalityFrontOfficeMainFrameActivity extends ModalityClientMa
             languageMenuBar,
             mainMenuButtonBar,
             userMenuButtonBar,
-            mountNodeContainer,
-            footer
+            mountNodeContainer
         );
         pageVBox.setAlignment(Pos.CENTER);
         pageVBox.setMaxWidth(Double.MAX_VALUE);
+
+        MainFrameFooterNodeProvider footerProvider = MainFrameFooterNodeProvider.getProvider();
+        Node footer = footerProvider == null ? null : footerProvider.getFooterNode();
+        if (footer != null) {
+            VBox.setMargin(footer, new Insets(0, 0, 50, 0));
+            pageVBox.getChildren().add(footer);
+            Layouts.bindManagedToVisibleProperty(footer);
+        }
 
         BorderPane borderPane = new BorderPane(pageVBox);
         ScrollPane scrollPane = Controls.createVerticalScrollPane(borderPane);
@@ -257,20 +258,21 @@ public final class ModalityFrontOfficeMainFrameActivity extends ModalityClientMa
             }, scrollPane.vvalueProperty(), FXCollapseMenu.collapseMenuProperty());
         }
 
-        Layouts.bindManagedToVisibleProperty(footer);
         // Reacting to the mount node changes:
         FXProperties.runNowAndOnPropertyChange(mountNode -> {
-            boolean isLoginPage = mountNode != null && Collections.findFirst(mountNode.getStyleClass(), styleClass -> styleClass.contains("login")) != null;
-            if (isLoginPage) {
-                FXProperties.setEvenIfBound(footer.visibleProperty(), false);
-            } else
-                footer.visibleProperty().bind(FXShowFooter.showFooterProperty());
+            if (footer != null) {
+                boolean isLoginPage = mountNode != null && Collections.findFirst(mountNode.getStyleClass(), styleClass -> styleClass.contains("login")) != null;
+                if (isLoginPage) {
+                    FXProperties.setEvenIfBound(footer.visibleProperty(), false);
+                } else
+                    footer.visibleProperty().bind(FXShowFooter.showFooterProperty());
+            }
             // Updating the mount node container with the new mount node
             if (mountNode != null && getMountNodeEmbeddingScrollPane(mountNode) == null) {
                 if (mountNode instanceof Region mountRegion) {
                     FXProperties.runNowAndOnPropertiesChange(() ->
-                            mountRegion.setMinHeight(pageTransitionPane.getMinHeight() - languageMenuBar.getHeight() - mainMenuButtonBar.getHeight() - userMenuButtonBar.getHeight() - (footer.isVisible() ? footer.getLayoutBounds().getHeight() + VBox.getMargin(footer).getBottom() : 0))
-                        , pageTransitionPane.minHeightProperty(), languageMenuBar.heightProperty(), mainMenuButtonBar.heightProperty(), userMenuButtonBar.heightProperty(), footer.layoutBoundsProperty(), footer.visibleProperty());
+                            mountRegion.setMinHeight(pageTransitionPane.getMinHeight() - languageMenuBar.getHeight() - mainMenuButtonBar.getHeight() - userMenuButtonBar.getHeight() - (footer != null && footer.isVisible() ? footer.getLayoutBounds().getHeight() + VBox.getMargin(footer).getBottom() : 0))
+                        , pageTransitionPane.minHeightProperty(), languageMenuBar.heightProperty(), mainMenuButtonBar.heightProperty(), userMenuButtonBar.heightProperty(), footer == null ? null : footer.layoutBoundsProperty(), footer == null ? null : footer.visibleProperty());
                 }
                 registerMountNodeEmbeddingScrollPane(mountNode, scrollPane);
             }
