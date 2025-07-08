@@ -135,4 +135,10 @@ public final class MediaEventHeader extends AbstractEventHeader {
         return responsiveHeader;
     }
 
+    @Override
+    public void setMaxPageWidth(double maxPageWidth) {
+        // Temporarily hardcoded 800 px cap (same size as the booking form)
+        super.setMaxPageWidth(Math.min(maxPageWidth, 800));
+    }
+
 }
