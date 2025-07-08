@@ -1,19 +1,20 @@
-package one.modality.event.frontoffice.activities.booking.process.event;
+package one.modality.event.frontoffice.activities.booking.process.event.bookingform;
 
 import javafx.scene.Node;
 import one.modality.ecommerce.client.workingbooking.WorkingBooking;
 import one.modality.ecommerce.client.workingbooking.WorkingBookingProperties;
 import one.modality.event.client.booking.BookableDatesUi;
+import one.modality.event.frontoffice.activities.booking.process.event.BookEventActivity;
 
 /**
  * @author Bruno Salmon
  */
-public abstract class AbstractBookingForm implements BookingForm {
+public abstract class BookingFormBase implements BookingForm {
 
     protected final BookEventActivity activity;
     protected final BookingFormSettings settings;
 
-    public AbstractBookingForm(BookEventActivity activity, BookingFormSettings settings) {
+    public BookingFormBase(BookEventActivity activity, BookingFormSettings settings) {
         this.activity = activity;
         this.settings = settings;
     }

@@ -1,6 +1,7 @@
-package one.modality.event.frontoffice.activities.booking.process.event;
+package one.modality.event.frontoffice.activities.booking.process.event.bookingform;
 
 import one.modality.base.shared.entities.Event;
+import one.modality.event.frontoffice.activities.booking.process.event.BookEventActivity;
 
 /**
  * @author Bruno Salmon

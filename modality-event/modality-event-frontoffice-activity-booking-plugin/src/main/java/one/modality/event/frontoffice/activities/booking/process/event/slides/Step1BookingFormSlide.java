@@ -4,7 +4,7 @@ import javafx.beans.property.ObjectProperty;
 import javafx.beans.property.SimpleObjectProperty;
 import javafx.scene.Node;
 import one.modality.event.frontoffice.activities.booking.process.event.BookEventActivity;
-import one.modality.event.frontoffice.activities.booking.process.event.BookingForm;
+import one.modality.event.frontoffice.activities.booking.process.event.bookingform.BookingForm;
 
 /**
  * @author Bruno Salmon

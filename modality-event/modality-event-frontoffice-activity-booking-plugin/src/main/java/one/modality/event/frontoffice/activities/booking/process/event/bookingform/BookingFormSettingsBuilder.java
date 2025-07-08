@@ -1,4 +1,4 @@
-package one.modality.event.frontoffice.activities.booking.process.event;
+package one.modality.event.frontoffice.activities.booking.process.event.bookingform;
 
 import javafx.scene.layout.Background;
 import one.modality.event.frontoffice.eventheader.EventHeader;
@@ -10,6 +10,8 @@ public final class BookingFormSettingsBuilder {
 
     private EventHeader eventHeader;
     private Background headerBackground;
+    private boolean showNavigationBar;
+    private boolean showPriceBar;
     private boolean bookAsAGuestAllowed;
     private boolean partialEventAllowed;
 
@@ -33,7 +35,17 @@ public final class BookingFormSettingsBuilder {
         return this;
     }
 
+    public BookingFormSettingsBuilder setShowNavigationBar(boolean showNavigationBar) {
+        this.showNavigationBar = showNavigationBar;
+        return this;
+    }
+
+    public BookingFormSettingsBuilder setShowPriceBar(boolean showPriceBar) {
+        this.showPriceBar = showPriceBar;
+        return this;
+    }
+
     public BookingFormSettings build() {
-        return new BookingFormSettings(eventHeader, headerBackground, bookAsAGuestAllowed, partialEventAllowed);
+        return new BookingFormSettings(eventHeader, headerBackground, showNavigationBar, showPriceBar, bookAsAGuestAllowed, partialEventAllowed);
     }
 }

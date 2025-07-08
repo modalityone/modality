@@ -1,0 +1,26 @@
+.book-event-activity .navigation-bar {
+    -fx-font-weight: bold;
+    -fx-background-color: #E7E7E7;
+    -fx-background-radius: 5px;
+    -fx-border-color: #E7E7E7;
+    -fx-border-radius: 8px;
+}
+
+.book-event-activity .navigation-bar .title {
+    -fx-background-color: white;
+    -fx-background-radius: 8px;
+}
+
+.book-event-activity .navigation-bar ToggleButton {
+    -fx-background-color: transparent;
+    -fx-border-color: transparent;
+}
+
+.book-event-activity .price-bar {
+    -fx-background-color: #F4F4F4;
+    -fx-font-weight: bold;
+}
+
+.book-event-activity .price-bar Label.price {
+    -fx-text-fill: #838788;
+}

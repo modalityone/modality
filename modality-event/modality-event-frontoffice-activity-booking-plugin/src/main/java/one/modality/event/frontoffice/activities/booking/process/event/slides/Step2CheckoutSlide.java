@@ -70,7 +70,7 @@ final class Step2CheckoutSlide extends StepSlide {
     public Step2CheckoutSlide(BookEventActivity bookEventActivity) {
         super(bookEventActivity);
         summaryGridPane.setMaxWidth(10000); // Workaround for a bug in GridPane layout OpenJFX implementation. Indeed,
-        // the default value Double.MAX is causing infinite loop with TransitionPane
+        // the default value Double.MAX is causing an infinite loop with TransitionPane
     }
 
     public void setBookAsGuestAllowed(boolean bookAsGuestAllowed) {

@@ -25,6 +25,6 @@ module modality.event.frontoffice.bookingform.recurringevent.plugin {
     exports one.modality.event.frontoffice.bookingforms.recurringevent;
 
     // Provided services
-    provides one.modality.event.frontoffice.activities.booking.process.event.BookingFormProvider with one.modality.event.frontoffice.bookingforms.recurringevent.RecurringEventBookingFormProvider;
+    provides one.modality.event.frontoffice.activities.booking.process.event.bookingform.BookingFormProvider with one.modality.event.frontoffice.bookingforms.recurringevent.RecurringEventBookingFormProvider;
 
 }

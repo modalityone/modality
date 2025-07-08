@@ -33,6 +33,7 @@ module modality.event.frontoffice.activity.booking.plugin {
     requires modality.event.client.booking;
     requires modality.event.client.event.fx;
     requires modality.event.frontoffice.eventheader;
+    requires webfx.extras.aria;
     requires webfx.extras.controlfactory;
     requires webfx.extras.i18n;
     requires webfx.extras.i18n.controls;
@@ -78,6 +79,8 @@ module modality.event.frontoffice.activity.booking.plugin {
     exports one.modality.event.frontoffice.activities.booking.process;
     exports one.modality.event.frontoffice.activities.booking.process.account;
     exports one.modality.event.frontoffice.activities.booking.process.event;
+    exports one.modality.event.frontoffice.activities.booking.process.event.bookingform;
+    exports one.modality.event.frontoffice.activities.booking.process.event.bookingform.multipages;
     exports one.modality.event.frontoffice.activities.booking.process.event.slides;
     exports one.modality.event.frontoffice.activities.booking.views;
 
@@ -85,7 +88,7 @@ module modality.event.frontoffice.activity.booking.plugin {
     opens one.modality.event.frontoffice.activities.booking.map;
 
     // Used services
-    uses one.modality.event.frontoffice.activities.booking.process.event.BookingFormProvider;
+    uses one.modality.event.frontoffice.activities.booking.process.event.bookingform.BookingFormProvider;
 
     // Provided services
     provides dev.webfx.stack.routing.uirouter.UiRoute with one.modality.event.frontoffice.activities.booking.BookingRouting.BookingUiRoute, one.modality.event.frontoffice.activities.booking.process.event.BookEventRouting.BookEventUiRoute;

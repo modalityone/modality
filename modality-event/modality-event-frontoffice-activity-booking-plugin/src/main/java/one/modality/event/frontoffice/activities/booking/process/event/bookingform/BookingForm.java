@@ -1,4 +1,4 @@
-package one.modality.event.frontoffice.activities.booking.process.event;
+package one.modality.event.frontoffice.activities.booking.process.event.bookingform;
 
 import javafx.scene.Node;
 import one.modality.event.client.booking.BookableDatesUi;

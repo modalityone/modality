@@ -24,7 +24,7 @@ import one.modality.ecommerce.payment.client.WebPaymentForm;
 import one.modality.event.client.booking.BookableDatesUi;
 import one.modality.event.client.event.fx.FXEvent;
 import one.modality.event.frontoffice.activities.booking.process.event.BookEventActivity;
-import one.modality.event.frontoffice.activities.booking.process.event.BookingForm;
+import one.modality.event.frontoffice.activities.booking.process.event.bookingform.BookingForm;
 import one.modality.event.frontoffice.eventheader.EventHeader;
 
 /**

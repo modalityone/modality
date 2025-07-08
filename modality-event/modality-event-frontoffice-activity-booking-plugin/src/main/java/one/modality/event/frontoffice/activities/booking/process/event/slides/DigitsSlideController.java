@@ -11,9 +11,9 @@ import one.modality.ecommerce.payment.CancelPaymentResult;
 import one.modality.ecommerce.payment.client.WebPaymentForm;
 import one.modality.event.client.booking.BookableDatesUi;
 import one.modality.event.frontoffice.activities.booking.process.event.BookEventActivity;
-import one.modality.event.frontoffice.activities.booking.process.event.BookingForm;
-import one.modality.event.frontoffice.activities.booking.process.event.BookingFormProvider;
-import one.modality.event.frontoffice.activities.booking.process.event.BookingFormSettings;
+import one.modality.event.frontoffice.activities.booking.process.event.bookingform.BookingForm;
+import one.modality.event.frontoffice.activities.booking.process.event.bookingform.BookingFormProvider;
+import one.modality.event.frontoffice.activities.booking.process.event.bookingform.BookingFormSettings;
 
 import java.util.List;
 import java.util.ServiceLoader;
@@ -29,7 +29,7 @@ final class DigitsSlideController {
     }
 
     private final BookEventActivity bookEventActivity;
-    private final TransitionPane transitionPane = new TransitionPane();
+    private final TransitionPane stepSlidetransitionPane = new TransitionPane();
     private final Step1BookingFormSlide step1BookingFormSlide;
     private final Step2CheckoutSlide step2CheckoutSlide;
     private final Step3PaymentSlide step3PaymentSlide;
@@ -50,13 +50,13 @@ final class DigitsSlideController {
         step5FailedPaymentSlide  = new Step5FailedPaymentSlide(bookEventActivity);
         step6CancellationSlide   = new Step6CancellationSlide(bookEventActivity);
         step7ErrorSlide          = new Step7ErrorSlide(bookEventActivity);
-        transitionPane.setScrollToTop(true);
+        stepSlidetransitionPane.setScrollToTop(true);
         // The following code is to solve a performance issue that happens on mobiles during the translation transition
-        transitionPane.setUnmanagedDuringTransition(); // For more explanation, read the comment inside this method.
+        stepSlidetransitionPane.setUnmanagedDuringTransition(); // For more explanation, read the comment inside this method.
     }
 
     Region getContainer() {
-        return transitionPane;
+        return stepSlidetransitionPane;
     }
 
     void onEventChanged(Event event) {
@@ -111,9 +111,9 @@ final class DigitsSlideController {
         displayedSlide = slide;
         UiScheduler.runInUiThread((() -> {
             if (animate)
-                transitionPane.transitToContent(slide.get());
+                stepSlidetransitionPane.transitToContent(slide.get());
             else
-                transitionPane.replaceContentNoAnimation(slide.get());
+                stepSlidetransitionPane.replaceContentNoAnimation(slide.get());
         }));
     }
 
