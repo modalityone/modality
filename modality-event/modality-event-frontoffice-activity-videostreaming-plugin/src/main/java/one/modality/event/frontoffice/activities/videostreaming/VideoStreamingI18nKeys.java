@@ -28,13 +28,11 @@ public interface VideoStreamingI18nKeys {
     Object VideosHelp = "VideosHelp";
     Object NoVideosForThisEvent = "NoVideosForThisEvent";
     Object StartingIn1 = "StartingIn1";
-    Object SessionCancelled = "SessionCancelled";
     Object GMTZoneUK = "GMTZoneUK";
     Object YourNextLiveStreamEventWillAppearHere = "YourNextLiveStreamEventWillAppearHere";
     Object VideosHeader = "VideosHeader";
     Object VideoStreamingMenu = "VideoStreamingMenu";
     Object VideoExpiredOn1 = "VideoExpiredOn1";
     Object PastRecordings = "PastRecordings";
-    Object StartingIn = "StartingIn";
 
 }

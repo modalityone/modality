@@ -33,6 +33,7 @@ import one.modality.base.shared.entities.ScheduledItem;
 import one.modality.base.shared.entities.markers.EntityHasStartAndEndTime;
 import one.modality.event.frontoffice.medias.MediaConsumptionRecorder;
 import one.modality.event.frontoffice.medias.MediaUtil;
+import one.modality.event.frontoffice.medias.MediasI18nKeys;
 
 import java.time.LocalDate;
 import java.time.LocalTime;
@@ -51,7 +52,7 @@ final class AudioColumnsRenderers {
             ScheduledItem audioScheduledItem = (ScheduledItem) value; // value = 'this' = audio ScheduledItem
             Label nameLabel = new Label();
             if (audioScheduledItem.getProgramScheduledItem().isCancelled()) {
-                I18nControls.bindI18nProperties(nameLabel, AudioLibraryI18nKeys.SessionCancelled);
+                I18nControls.bindI18nProperties(nameLabel, MediasI18nKeys.SessionCancelled);
                 nameLabel.getStyleClass().add("session-cancelled");
             } else {
                 nameLabel.setText(getAudioName(audioScheduledItem));

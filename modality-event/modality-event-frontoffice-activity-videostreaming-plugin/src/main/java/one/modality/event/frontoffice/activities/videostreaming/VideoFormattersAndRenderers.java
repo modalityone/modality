@@ -76,7 +76,7 @@ final class VideoFormattersAndRenderers {
             ScheduledItem video = (ScheduledItem) value; // value = 'this' = video ScheduledItem
             Label nameLabel = new Label();
             if (VideoState.isVideoCancelled(video)) {
-                I18nControls.bindI18nProperties(nameLabel, VideoStreamingI18nKeys.SessionCancelled);
+                I18nControls.bindI18nProperties(nameLabel, MediasI18nKeys.SessionCancelled);
                 nameLabel.getStyleClass().add("session-cancelled");
             } else {
                 // Note: normally we should first try to translate `video` and then `programScheduledItem`, but the

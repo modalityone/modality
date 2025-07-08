@@ -3,6 +3,7 @@ package one.modality.event.frontoffice.medias;
 
 public interface MediasI18nKeys {
 
+    Object SessionCancelled = "SessionCancelled";
     Object AvailableUntil1 = "AvailableUntil1";
     Object Unpublished = "Unpublished";
     Object Available = "Available";

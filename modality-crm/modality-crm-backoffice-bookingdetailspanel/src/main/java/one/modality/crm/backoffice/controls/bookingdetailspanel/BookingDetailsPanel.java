@@ -1,5 +1,12 @@
 package one.modality.crm.backoffice.controls.bookingdetailspanel;
 
+import dev.webfx.extras.action.ActionBinder;
+import dev.webfx.extras.action.ActionGroup;
+import dev.webfx.extras.controlfactory.button.ButtonFactoryMixin;
+import dev.webfx.extras.i18n.controls.I18nControls;
+import dev.webfx.extras.operation.OperationUtil;
+import dev.webfx.extras.operation.action.OperationAction;
+import dev.webfx.extras.operation.action.OperationActionFactoryMixin;
 import dev.webfx.extras.panes.ColumnsPane;
 import dev.webfx.extras.panes.FlexPane;
 import dev.webfx.extras.panes.ScalePane;
@@ -7,7 +14,6 @@ import dev.webfx.extras.visual.VisualResult;
 import dev.webfx.extras.visual.controls.grid.VisualGrid;
 import dev.webfx.kit.util.properties.FXProperties;
 import dev.webfx.platform.util.Strings;
-import dev.webfx.extras.i18n.controls.I18nControls;
 import dev.webfx.stack.orm.domainmodel.DataSourceModel;
 import dev.webfx.stack.orm.domainmodel.HasDataSourceModel;
 import dev.webfx.stack.orm.entity.Entity;
@@ -16,12 +22,6 @@ import dev.webfx.stack.orm.entity.controls.entity.selector.ButtonSelectorParamet
 import dev.webfx.stack.orm.reactive.mapping.entities_to_visual.ReactiveVisualMapper;
 import dev.webfx.stack.orm.reactive.mapping.entities_to_visual.conventions.HasMasterVisualResultProperty;
 import dev.webfx.stack.routing.activity.impl.elementals.activeproperty.HasActiveProperty;
-import dev.webfx.extras.action.ActionBinder;
-import dev.webfx.extras.action.ActionGroup;
-import dev.webfx.extras.controlfactory.button.ButtonFactoryMixin;
-import dev.webfx.extras.operation.OperationUtil;
-import dev.webfx.extras.operation.action.OperationAction;
-import dev.webfx.extras.operation.action.OperationActionFactoryMixin;
 import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.ObjectProperty;
 import javafx.beans.property.SimpleBooleanProperty;
@@ -46,7 +46,6 @@ import one.modality.base.shared.entities.MoneyTransfer;
 import one.modality.crm.backoffice.operations.entities.mail.ComposeNewMailRequest;
 import one.modality.crm.backoffice.operations.entities.mail.OpenMailRequest;
 import one.modality.crm.client.controls.personaldetails.BookingPersonalDetailsPanel;
-import one.modality.crm.client.i18n.CrmI18nKeys;
 import one.modality.ecommerce.backoffice.operations.entities.document.cart.OpenBookingCartRequest;
 import one.modality.ecommerce.backoffice.operations.entities.document.multiplebookings.CancelOtherMultipleBookingsRequest;
 import one.modality.ecommerce.backoffice.operations.entities.document.multiplebookings.GetBackCancelledMultipleBookingsDepositRequest;
@@ -127,16 +126,16 @@ public final class BookingDetailsPanel implements
         BorderPane.setMargin(flexButtonBar, new Insets(1, 0, 1, 0));
         container.setTop(flexButtonBar);
         container.setCenter(new TabPane(
-            createTab(CrmI18nKeys.PersonalDetails, buildPersonalDetailsView()),
-            createFilterTab(BookingDetailsI18nKeys.Options, "{class: 'DocumentLine', columns: `site,item,dates,lockAllocation,resourceConfiguration,comment,price_isCustom,price_net,price_nonRefundable,price_minDeposit,price_deposit`, where: 'document=${selectedDocument}', orderBy: 'item.family.ord,site..ord,item.ord'}"),
-            createFilterTab(BookingDetailsI18nKeys.Payments, "{class: 'MoneyTransfer', columns: `date,method,transactionRef,comment,amount,verified`, where: 'document=${selectedDocument}', orderBy: 'date,id'}"),
-            createTab(BookingDetailsI18nKeys.Comments, buildCommentView()),
-            createFilterTab(BookingDetailsI18nKeys.Cart, "{class: 'Document', columns:`ref,multipleBookingIcon,langIcon,genderIcon,person_firstName,person_lastName,person_age,noteIcon,price_net,price_deposit,price_balance`, where: 'cart=(select cart from Document where id=${selectedDocument})', orderBy: 'ref'}"),
-            createFilterTab(BookingDetailsI18nKeys.MultipleBookings, "{class: 'Document', columns:`ref,multipleBookingIcon,langIcon,genderIcon,person_firstName,person_lastName,person_age,noteIcon,price_deposit,plainOptions`, where: 'multipleBooking=(select multipleBooking from Document where id=${selectedDocument})', orderBy: 'ref'}"),
-            createFilterTab(BookingDetailsI18nKeys.Family, "{class: 'Document', columns:`ref,multipleBookingIcon,langIcon,genderIcon,person_firstName,person_lastName,person_age,noteIcon,price_deposit,plainOptions`, where: 'person_carer1Document=${selectedDocument} or person_carer2Document=${selectedDocument} or id=(select person_carer1Document from Document where id=${selectedDocument}) or id=(select person_carer2Document from Document where id=${selectedDocument})', orderBy: 'ref'}"),
+            createTab(BookingDetailsI18nKeys.PersonalDetailsTab, buildPersonalDetailsView()),
+            createFilterTab(BookingDetailsI18nKeys.OptionsTab, "{class: 'DocumentLine', columns: `site,item,dates,lockAllocation,resourceConfiguration,comment,price_isCustom,price_net,price_nonRefundable,price_minDeposit,price_deposit`, where: 'document=${selectedDocument}', orderBy: 'item.family.ord,site..ord,item.ord'}"),
+            createFilterTab(BookingDetailsI18nKeys.PaymentsTab, "{class: 'MoneyTransfer', columns: `date,method,transactionRef,comment,amount,verified`, where: 'document=${selectedDocument}', orderBy: 'date,id'}"),
+            createTab(BookingDetailsI18nKeys.CommentsTab, buildCommentView()),
+            createFilterTab(BookingDetailsI18nKeys.CartTab, "{class: 'Document', columns:`ref,multipleBookingIcon,langIcon,genderIcon,person_firstName,person_lastName,person_age,noteIcon,price_net,price_deposit,price_balance`, where: 'cart=(select cart from Document where id=${selectedDocument})', orderBy: 'ref'}"),
+            createFilterTab(BookingDetailsI18nKeys.MultipleBookingsTab, "{class: 'Document', columns:`ref,multipleBookingIcon,langIcon,genderIcon,person_firstName,person_lastName,person_age,noteIcon,price_deposit,plainOptions`, where: 'multipleBooking=(select multipleBooking from Document where id=${selectedDocument})', orderBy: 'ref'}"),
+            createFilterTab(BookingDetailsI18nKeys.FamilyTab, "{class: 'Document', columns:`ref,multipleBookingIcon,langIcon,genderIcon,person_firstName,person_lastName,person_age,noteIcon,price_deposit,plainOptions`, where: 'person_carer1Document=${selectedDocument} or person_carer2Document=${selectedDocument} or id=(select person_carer1Document from Document where id=${selectedDocument}) or id=(select person_carer2Document from Document where id=${selectedDocument})', orderBy: 'ref'}"),
             createFilterTab(BookingDetailsI18nKeys.Medias, "{class: 'MediaConsumption', columns: ['date',{expression: 'action', textAlign: 'center'},'mediaInfo',{expression: 'durationMillis', label: 'Duration', renderer: 'durationMillisRenderer', prefWidth: 70}], where: 'attendance.documentLine.document=${selectedDocument}', orderBy: 'date desc'}"),
-            createFilterTab(BookingDetailsI18nKeys.Mails, "{class: 'Mail', columns: 'date,subject,transmitted,error', where: 'document=${selectedDocument}', orderBy: 'date desc'}"),
-            createFilterTab(BookingDetailsI18nKeys.History, "{class: 'History', columns: 'date,userDisplay,comment,request', where: 'document=${selectedDocument}', orderBy: 'date desc'}")
+            createFilterTab(BookingDetailsI18nKeys.MailsTab, "{class: 'Mail', columns: 'date,subject,transmitted,error', where: 'document=${selectedDocument}', orderBy: 'date desc'}"),
+            createFilterTab(BookingDetailsI18nKeys.HistoryTab, "{class: 'History', columns: 'date,userDisplay,comment,request', where: 'document=${selectedDocument}', orderBy: 'date desc'}")
         ));
         return container;
     }

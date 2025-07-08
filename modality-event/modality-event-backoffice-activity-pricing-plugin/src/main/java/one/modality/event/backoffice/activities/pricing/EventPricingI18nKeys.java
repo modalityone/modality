@@ -3,8 +3,6 @@ package one.modality.event.backoffice.activities.pricing;
 
 public interface EventPricingI18nKeys {
 
-    Object Teachings = "Teachings";
-    Object AudioRecordings = "AudioRecordings";
     Object EventPricing = "EventPricing";
 
 }

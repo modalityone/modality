@@ -12,6 +12,14 @@ public interface BookingDetailsI18nKeys {
     Object Medias = "Medias";
     Object History = "History";
     Object Cart = "Cart";
-    Object PersonalDetails = "PersonalDetails";
+    Object PersonalDetailsTab = "PersonalDetailsTab";
+    Object OptionsTab = "OptionsTab";
+    Object PaymentsTab = "PaymentsTab";
+    Object CommentsTab = "CommentsTab";
+    Object CartTab = "CartTab";
+    Object MultipleBookingsTab = "MultipleBookingsTab";
+    Object FamilyTab = "FamilyTab";
+    Object MailsTab = "MailsTab";
+    Object HistoryTab = "HistoryTab";
 
 }

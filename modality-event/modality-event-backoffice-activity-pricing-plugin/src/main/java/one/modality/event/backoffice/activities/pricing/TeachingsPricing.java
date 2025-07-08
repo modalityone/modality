@@ -1,6 +1,7 @@
 package one.modality.event.backoffice.activities.pricing;
 
 import one.modality.base.shared.knownitems.KnownItemFamily;
+import one.modality.base.shared.knownitems.KnownItemI18nKeys;
 import one.modality.base.shared.entities.Rate;
 import one.modality.ecommerce.document.service.PolicyAggregate;
 
@@ -10,7 +11,7 @@ import one.modality.ecommerce.document.service.PolicyAggregate;
 final class TeachingsPricing extends AbstractItemFamilyPricing {
 
     public TeachingsPricing(PolicyAggregate eventPolicy) {
-        super(KnownItemFamily.TEACHING, EventPricingI18nKeys.Teachings, eventPolicy, true);
+        super(KnownItemFamily.TEACHING, KnownItemI18nKeys.Teachings, eventPolicy, true);
     }
 
     @Override

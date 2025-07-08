@@ -6,7 +6,6 @@ public interface KnownItemI18nKeys {
     Object Teachings = "Teachings";
     Object TeachingsOnline = "TeachingsOnline";
     Object AudioRecordings = "AudioRecordings";
-    Object AudioRecording = "AudioRecording";
     Object Teaching = "Teaching";
 
 }
