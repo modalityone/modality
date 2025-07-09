@@ -14,7 +14,7 @@ import one.modality.event.frontoffice.activities.booking.process.event.BookEvent
 /**
  * @author Bruno Salmon
  */
-final class Step6CancellationSlide extends StepSlide {
+final class Step5CancellationSlide extends StepSlide {
 
     private static final double MAX_SLIDE_WIDTH = 800;
 
@@ -23,7 +23,7 @@ final class Step6CancellationSlide extends StepSlide {
 
     private CancelPaymentResult cancelPaymentResult;
 
-    Step6CancellationSlide(BookEventActivity bookEventActivity) {
+    Step5CancellationSlide(BookEventActivity bookEventActivity) {
         super(bookEventActivity);
     }
 

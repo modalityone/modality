@@ -1,5 +1,7 @@
 package one.modality.event.frontoffice.activities.booking.process.event.bookingform.multipages;
 
+import javafx.beans.property.SimpleBooleanProperty;
+import javafx.beans.value.ObservableBooleanValue;
 import javafx.scene.Node;
 import one.modality.ecommerce.client.workingbooking.WorkingBooking;
 
@@ -14,6 +16,12 @@ public interface BookingFormPage {
 
     void setWorkingBooking(WorkingBooking workingBooking);
 
-    boolean isValid();
+    default boolean isValid() {
+        return validProperty().get();
+    };
+
+    default ObservableBooleanValue validProperty() {
+        return new SimpleBooleanProperty(true);
+    }
 
 }

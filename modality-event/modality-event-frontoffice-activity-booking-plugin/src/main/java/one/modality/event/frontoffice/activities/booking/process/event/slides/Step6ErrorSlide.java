@@ -10,13 +10,13 @@ import one.modality.event.frontoffice.activities.booking.process.event.BookEvent
 /**
  * @author Bruno Salmon
  */
-final class Step7ErrorSlide extends StepSlide {
+final class Step6ErrorSlide extends StepSlide {
 
     private static final double MAX_SLIDE_WIDTH = 800;
 
     private final HtmlText errorMessage = Bootstrap.h5(new HtmlText());
 
-    Step7ErrorSlide(BookEventActivity bookEventActivity) {
+    Step6ErrorSlide(BookEventActivity bookEventActivity) {
         super(bookEventActivity);
     }
 

@@ -14,7 +14,7 @@ import one.modality.event.frontoffice.activities.booking.process.event.BookEvent
 /**
  * @author Bruno Salmon
  */
-final class Step5FailedPaymentSlide extends StepSlide {
+final class Step4FailedPaymentSlide extends StepSlide {
 
     private static final double MAX_SLIDE_WIDTH = 800;
 
@@ -22,7 +22,7 @@ final class Step5FailedPaymentSlide extends StepSlide {
     private final Button cancelButton = Bootstrap.largeDangerButton(I18nControls.bindI18nProperties(new Button(), BookingI18nKeys.CancelBooking));
     private Button pressedButton;
 
-    Step5FailedPaymentSlide(BookEventActivity bookEventActivity) {
+    Step4FailedPaymentSlide(BookEventActivity bookEventActivity) {
         super(bookEventActivity);
     }
 

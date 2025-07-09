@@ -14,10 +14,8 @@ module modality.event.frontoffice.activity.booking.plugin {
     requires modality.base.client.brand;
     requires modality.base.client.css;
     requires modality.base.client.i18n;
-    requires modality.base.client.icons;
     requires modality.base.client.mainframe.fx;
     requires modality.base.client.tile;
-    requires modality.base.client.time;
     requires modality.base.client.util;
     requires modality.base.frontoffice.mainframe.fx;
     requires modality.base.frontoffice.utility;
@@ -30,7 +28,6 @@ module modality.event.frontoffice.activity.booking.plugin {
     requires modality.ecommerce.document.service;
     requires modality.ecommerce.payment;
     requires modality.ecommerce.payment.client;
-    requires modality.event.client.booking;
     requires modality.event.client.event.fx;
     requires modality.event.frontoffice.eventheader;
     requires webfx.extras.aria;
@@ -41,7 +38,6 @@ module modality.event.frontoffice.activity.booking.plugin {
     requires webfx.extras.operation;
     requires webfx.extras.panes;
     requires webfx.extras.styles.bootstrap;
-    requires webfx.extras.time.format;
     requires webfx.extras.util.animation;
     requires webfx.extras.util.control;
     requires webfx.extras.util.dialog;

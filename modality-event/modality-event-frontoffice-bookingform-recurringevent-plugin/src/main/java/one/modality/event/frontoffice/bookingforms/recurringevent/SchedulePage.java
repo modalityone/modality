@@ -9,6 +9,9 @@ import dev.webfx.extras.styles.bootstrap.Bootstrap;
 import dev.webfx.extras.webtext.HtmlText;
 import dev.webfx.platform.util.collection.Collections;
 import javafx.beans.binding.Bindings;
+import javafx.beans.binding.BooleanBinding;
+import javafx.beans.value.ObservableBooleanValue;
+import javafx.collections.ObservableList;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Node;
@@ -39,25 +42,28 @@ import java.util.List;
  */
 final class SchedulePage implements BookingFormPage {
 
-    private final BookEventActivity bookEventActivity;
-    private final RecurringEventSchedule recurringEventSchedule;
+    private static final boolean DEBUG_PAST_EVENT = true;
+
+    private final RecurringEventBookingForm bookingForm;
     private final Hyperlink selectAllClassesHyperlink = I18nControls.bindI18nTextProperty(new Hyperlink(), BookingI18nKeys.SelectAllClasses);
     private final Button checkoutButton = Bootstrap.largeSuccessButton(I18nControls.newButton(BookingI18nKeys.ProceedCheckout));
     private List<LocalDate> allSelectableDates;
     private final VBox container;
 
-    public SchedulePage(Event event, BookEventActivity bookEventActivity, RecurringEventSchedule recurringEventSchedule) {
-        this.bookEventActivity = bookEventActivity;
-        this.recurringEventSchedule = recurringEventSchedule;
+    public SchedulePage(RecurringEventBookingForm bookingForm) {
+        this.bookingForm = bookingForm;
+
+        BookEventActivity activity = bookingForm.getActivity();
+        Event event = bookingForm.getEvent();
 
         HtmlText eventDescription = new HtmlText();
-        bookEventActivity.bindI18nEventExpression(eventDescription, "description");
+        activity.bindI18nEventExpression(eventDescription, "description");
         VBox.setMargin(eventDescription, new Insets(20, 0, 0, 0));
-        eventDescription.fontProperty().bind(bookEventActivity.mediumFontProperty());
+        eventDescription.fontProperty().bind(activity.mediumFontProperty());
         eventDescription.getStyleClass().add("event-description-text");
         eventDescription.setMinWidth(0);
 
-        Button personToBookButton = bookEventActivity.createPersonToBookButton();
+        Button personToBookButton = activity.createPersonToBookButton();
         ScalePane personToBookScalePane = new ScalePane(ScaleMode.FIT_WIDTH, personToBookButton);
         personToBookScalePane.setCanGrow(false);
         personToBookScalePane.setMaxWidth(Double.MAX_VALUE);
@@ -73,10 +79,10 @@ final class SchedulePage implements BookingFormPage {
         selectTheCourseText.setWrapText(true);
         VBox.setMargin(selectTheCourseText, new Insets(0, 0, 5, 0));
 
-        Pane schedule = recurringEventSchedule.buildUi();
+        Pane schedule = bookingForm.getRecurringEventSchedule().buildUi();
         VBox.setMargin(schedule, new Insets(30, 0, 30, 0));
 
-        WorkingBookingProperties workingBookingProperties = bookEventActivity.getWorkingBookingProperties();
+        WorkingBookingProperties workingBookingProperties = activity.getWorkingBookingProperties();
 
         Bootstrap.textPrimary(Bootstrap.h4(selectAllClassesHyperlink));
         selectAllClassesHyperlink.setAlignment(Pos.CENTER);
@@ -91,7 +97,10 @@ final class SchedulePage implements BookingFormPage {
         checkoutScalePane.setCanGrow(false);
         checkoutScalePane.setMaxWidth(Double.MAX_VALUE);
 
-        checkoutButton.setOnAction((e -> bookEventActivity.displayCheckoutSlide()));
+        checkoutButton.setOnAction((e -> {
+            bookingForm.syncWorkingBookingFromEventSchedule();
+            bookingForm.navigateToNextPage();
+        }));
         VBox.setMargin(checkoutScalePane, new Insets(20, 0, 20, 0)); // in addition to VBox bottom margin 80
 
         container = new VBox(
@@ -136,7 +145,8 @@ final class SchedulePage implements BookingFormPage {
 
     @Override
     public void setWorkingBooking(WorkingBooking workingBooking) {
-        WorkingBookingProperties workingBookingProperties = bookEventActivity.getWorkingBookingProperties();
+        BookEventActivity activity = bookingForm.getActivity();
+        WorkingBookingProperties workingBookingProperties = activity.getWorkingBookingProperties();
 
         List<ScheduledItem> scheduledItemsOnEvent = workingBookingProperties.getScheduledItemsOnEvent();
 
@@ -151,12 +161,13 @@ final class SchedulePage implements BookingFormPage {
                 //Here there is already a date booked in this another booking
                 nonSelectableDate.add(localDate);
                 alreadyBookedDate.add(localDate);
-            } else if (localDate.isBefore(LocalDate.now())) {
+            } else if (!DEBUG_PAST_EVENT && localDate.isBefore(LocalDate.now())) {
                 //here the date is past
-                //nonSelectableDate.add(localDate); // TODO reestablish
+                nonSelectableDate.add(localDate);
             }
         });
 
+        RecurringEventSchedule recurringEventSchedule = bookingForm.getRecurringEventSchedule();
         // If the date in not selectable for any reason listed above, we do nothing when we click on the date
         recurringEventSchedule.setOnDateClicked(localDate -> {
             if (nonSelectableDate.contains(localDate)) {
@@ -194,7 +205,7 @@ final class SchedulePage implements BookingFormPage {
         }));*/
 
         // Synchronizing the event schedule from the working booking (will select the dates newly added in the working booking)
-        bookEventActivity.syncEventScheduleFromWorkingBooking();
+        bookingForm.syncEventScheduleFromWorkingBooking();
 
         // Arming the "Select all classes" hyperlink. We create a list of dates that will contain all the selectable
         // dates = the ones that are not in the past and not already booked
@@ -202,12 +213,17 @@ final class SchedulePage implements BookingFormPage {
         allSelectableDates.removeAll(nonSelectableDate);
         selectAllClassesHyperlink.setOnAction((e -> recurringEventSchedule.addClickedDates(allSelectableDates)));
 
-        checkoutButton.disableProperty().bind(Bindings.createBooleanBinding(this::isValid,
-            workingBookingProperties.balanceProperty(), recurringEventSchedule.getSelectedDates()));
+        checkoutButton.disableProperty().bind(BooleanBinding.booleanExpression(validProperty()).not());
     }
 
     @Override
-    public boolean isValid() {
-        return bookEventActivity.getWorkingBookingProperties().getBalance() <= 0 && !Collections.containsAny(recurringEventSchedule.getSelectedDates(), allSelectableDates);
+    public ObservableBooleanValue validProperty() { // TODO not create a new instance each time
+        BookEventActivity activity = bookingForm.getActivity();
+        WorkingBookingProperties workingBookingProperties = activity.getWorkingBookingProperties();
+        ObservableList<LocalDate> selectedDates = bookingForm.getRecurringEventSchedule().getSelectedDates();
+        return Bindings.createBooleanBinding(() ->
+                workingBookingProperties.getBalance() > 0 || Collections.containsAny(selectedDates, allSelectableDates)
+            , workingBookingProperties.balanceProperty(), selectedDates);
     }
+
 }

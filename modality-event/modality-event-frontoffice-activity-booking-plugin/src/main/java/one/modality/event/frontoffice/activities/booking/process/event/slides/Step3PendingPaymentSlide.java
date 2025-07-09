@@ -10,11 +10,11 @@ import one.modality.event.frontoffice.activities.booking.process.event.BookEvent
 /**
  * @author Bruno Salmon
  */
-final class Step4PendingPaymentSlide extends StepSlide {
+final class Step3PendingPaymentSlide extends StepSlide {
 
     private static final double MAX_SLIDE_WIDTH = 800;
 
-    Step4PendingPaymentSlide(BookEventActivity bookEventActivity) {
+    Step3PendingPaymentSlide(BookEventActivity bookEventActivity) {
         super(bookEventActivity);
     }
 

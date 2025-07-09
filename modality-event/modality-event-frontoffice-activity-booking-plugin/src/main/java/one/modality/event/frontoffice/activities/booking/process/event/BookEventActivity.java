@@ -1,5 +1,6 @@
 package one.modality.event.frontoffice.activities.booking.process.event;
 
+import dev.webfx.extras.controlfactory.button.ButtonFactoryMixin;
 import dev.webfx.extras.styles.bootstrap.Bootstrap;
 import dev.webfx.extras.util.layout.Layouts;
 import dev.webfx.extras.webtext.HtmlText;
@@ -15,7 +16,6 @@ import dev.webfx.stack.orm.entity.Entities;
 import dev.webfx.stack.orm.entity.EntityId;
 import dev.webfx.stack.orm.entity.controls.entity.selector.EntityButtonSelector;
 import dev.webfx.stack.routing.uirouter.UiRouter;
-import dev.webfx.extras.controlfactory.button.ButtonFactoryMixin;
 import javafx.application.Platform;
 import javafx.beans.property.ReadOnlyObjectProperty;
 import javafx.geometry.Insets;
@@ -44,8 +44,6 @@ import one.modality.ecommerce.document.service.DocumentService;
 import one.modality.ecommerce.document.service.PolicyAggregate;
 import one.modality.ecommerce.payment.CancelPaymentResult;
 import one.modality.ecommerce.payment.client.WebPaymentForm;
-import one.modality.event.client.booking.BookableDatesUi;
-import one.modality.event.client.booking.WorkingBookingSyncer;
 import one.modality.event.client.event.fx.FXEvent;
 import one.modality.event.client.event.fx.FXEventId;
 import one.modality.event.frontoffice.activities.booking.process.account.CheckoutAccountRouting;
@@ -64,6 +62,10 @@ public final class BookEventActivity extends ViewDomainActivityBase implements B
 
     public WorkingBookingProperties getWorkingBookingProperties() {
         return workingBookingProperties;
+    }
+
+    public WorkingBooking getWorkingBooking() {
+        return workingBookingProperties.getWorkingBooking();
     }
 
     public ReadOnlyObjectProperty<Font> mediumFontProperty() {
@@ -124,9 +126,6 @@ public final class BookEventActivity extends ViewDomainActivityBase implements B
     public void onReachingEndSlide() {
         FXEventId.setEventId(null); // This is to ensure that next time the user books an event in this same session, we
         FXCollapseMenu.setCollapseMenu(false);
-        BookableDatesUi bookableDatesUi = getBookableDatesUi();
-        if (bookableDatesUi != null)
-            bookableDatesUi.clearClickedDates();
     }
 
     @Override
@@ -146,12 +145,10 @@ public final class BookEventActivity extends ViewDomainActivityBase implements B
         // TODO: if eventId doesn't exist in the database, FXEvent.getEvent() stays null and nothing happens (stuck on loading page)
 
         lettersSlideController.onEventChanged(event);
-        if (getBookableDatesUi() != null)
-            getBookableDatesUi().clearClickedDates(); // clearing possible clicked dates from previous event (if some dates are common)
 
         // Note: It's better to use FXUserPersonId rather than FXUserPerson in case of a page reload in the browser
         // (or redirection to this page from a website) because the retrieval of FXUserPersonId is immediate in case
-        // the user was already logged-in (memorized in session), while FXUserPerson requires a DB reading, which
+        // the user was already logged in (memorized in session), while FXUserPerson requires a DB reading, which
         // may not be finished yet at this time.
         Person personToBook = FXPersonToBook.getPersonToBook();
         Object userPersonPrimaryKey = Entities.getPrimaryKey(personToBook);
@@ -189,28 +186,14 @@ public final class BookEventActivity extends ViewDomainActivityBase implements B
                 PolicyAggregate policyAggregate = workingBookingProperties.getPolicyAggregate();
                 WorkingBooking workingBooking = new WorkingBooking(policyAggregate, newPersonExistingBooking);
                 workingBookingProperties.setWorkingBooking(workingBooking);
-                syncWorkingBookingFromEventSchedule();
                 // Informing the slide controller about that change
                 lettersSlideController.onWorkingBookingLoaded();
             }))
             .mapEmpty();
     }
 
-    void syncWorkingBookingFromEventSchedule() {
-        WorkingBookingSyncer.syncWorkingBookingFromEventSchedule(workingBookingProperties.getWorkingBooking(), getBookableDatesUi(), true);
-    }
-
-    public void syncEventScheduleFromWorkingBooking() {
-        WorkingBookingSyncer.syncEventScheduleFromWorkingBooking(workingBookingProperties.getWorkingBooking(), getBookableDatesUi());
-    }
-
     public void displayBookSlide() {
         lettersSlideController.displayBookSlide();
-    }
-
-    public void displayCheckoutSlide() {
-        syncWorkingBookingFromEventSchedule();
-        lettersSlideController.displayCheckoutSlide();
     }
 
     public void displayPaymentSlide(WebPaymentForm webPaymentForm) {
@@ -236,10 +219,6 @@ public final class BookEventActivity extends ViewDomainActivityBase implements B
     public void displayThankYouSlide() {
         lettersSlideController.displayThankYouSlide();
         FXCollapseMenu.setCollapseMenu(false);
-    }
-
-    public BookableDatesUi getBookableDatesUi() {
-        return lettersSlideController.getBookableDatesUi();
     }
 
     public Button createPersonToBookButton() {

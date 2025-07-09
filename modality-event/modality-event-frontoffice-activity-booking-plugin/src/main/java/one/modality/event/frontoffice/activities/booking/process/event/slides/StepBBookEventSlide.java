@@ -21,7 +21,6 @@ import one.modality.base.frontoffice.utility.tyler.StyleUtility;
 import one.modality.base.shared.entities.Event;
 import one.modality.ecommerce.payment.CancelPaymentResult;
 import one.modality.ecommerce.payment.client.WebPaymentForm;
-import one.modality.event.client.booking.BookableDatesUi;
 import one.modality.event.client.event.fx.FXEvent;
 import one.modality.event.frontoffice.activities.booking.process.event.BookEventActivity;
 import one.modality.event.frontoffice.activities.booking.process.event.bookingform.BookingForm;
@@ -128,11 +127,6 @@ final class StepBBookEventSlide extends StepSlide {
     }
 
     @Override
-    protected void displayCheckoutSlide() {
-        digitsSlideController.displayCheckoutSlide();
-    }
-
-    @Override
     void displayErrorMessage(Object errorMessageI18nKey) {
         digitsSlideController.displayErrorMessage(errorMessageI18nKey);
     }
@@ -155,11 +149,6 @@ final class StepBBookEventSlide extends StepSlide {
     @Override
     void displayCancellationSlide(CancelPaymentResult cancelPaymentResult) {
         digitsSlideController.displayCancellationSlide(cancelPaymentResult);
-    }
-
-    @Override
-    BookableDatesUi getBookableDatesUi() {
-        return digitsSlideController.getBookableDateUi();
     }
 
     @Override

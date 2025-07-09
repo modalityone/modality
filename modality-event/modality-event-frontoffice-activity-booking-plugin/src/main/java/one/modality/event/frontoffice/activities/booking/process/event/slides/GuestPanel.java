@@ -32,27 +32,27 @@ import one.modality.event.frontoffice.activities.booking.BookingI18nKeys;
 final class GuestPanel implements MaterialFactoryMixin {
 
     private final BorderPane container = new BorderPane();
-    private final VBox guestTopVBox = new VBox(10);
+    private final VBox topVBox = new VBox(10);
     private final TextField firstNameTextField = newMaterialTextField(CrmI18nKeys.FirstName);
     private final TextField lastNameTextField = newMaterialTextField(CrmI18nKeys.LastName);
     private final TextField emailTextField = newMaterialTextField(CrmI18nKeys.Email);
-    private final Button guestSubmitButton = Bootstrap.largeSuccessButton(I18nControls.newButton(BaseI18nKeys.Submit));
+    private final Button submitButton = Bootstrap.largeSuccessButton(I18nControls.newButton(BaseI18nKeys.Submit));
     private final ValidationSupport validationSupport = new ValidationSupport();
 
     public GuestPanel() {
         Controls.setHtmlInputTypeAndAutocompleteToEmail(emailTextField);
         Label guestDetailsLabel = Bootstrap.textPrimary(Bootstrap.strong(I18nControls.newLabel(BookingI18nKeys.GuestDetails)));
-        guestTopVBox.getChildren().add(guestDetailsLabel);
-        guestTopVBox.setAlignment(Pos.TOP_CENTER);
-        BorderPane.setMargin(guestTopVBox, new Insets(0, 0, 20,0));
-        container.setTop(guestTopVBox);
-        Layouts.setMaxWidthToInfinite(guestSubmitButton);
-        GridPane.setMargin(guestSubmitButton, new Insets(40, 0, 0, 0));
+        topVBox.getChildren().add(guestDetailsLabel);
+        topVBox.setAlignment(Pos.TOP_CENTER);
+        BorderPane.setMargin(topVBox, new Insets(0, 0, 20,0));
+        container.setTop(topVBox);
+        Layouts.setMaxWidthToInfinite(submitButton);
+        GridPane.setMargin(submitButton, new Insets(40, 0, 0, 0));
         GridPane guestGridPane = new GridPaneBuilder()
                 .addNodeFillingRow(firstNameTextField)
                 .addNodeFillingRow(lastNameTextField)
                 .addNodeFillingRow(emailTextField)
-                .addNodeFillingRow(guestSubmitButton)
+                .addNodeFillingRow(submitButton)
                 .build();
         guestGridPane.setMaxSize(400, Region.USE_PREF_SIZE);
         guestGridPane.setPadding(new Insets(40));
@@ -67,11 +67,11 @@ final class GuestPanel implements MaterialFactoryMixin {
     }
 
     public void addTopNode(Node topNode) {
-        guestTopVBox.getChildren().add(topNode);
+        topVBox.getChildren().add(topNode);
     }
 
     public void setOnSubmit(EventHandler<ActionEvent> submitHandler) {
-        guestSubmitButton.setOnAction(event -> {
+        submitButton.setOnAction(event -> {
             if (validationSupport.isValid()) {
                 submitHandler.handle(event);
             } else {
@@ -81,25 +81,29 @@ final class GuestPanel implements MaterialFactoryMixin {
     }
 
     public void onShowing() {
-        guestSubmitButton.setDefaultButton(true);
+        submitButton.setDefaultButton(true);
         //SceneUtil.autoFocusIfEnabled(firstNameTextField);
         UiScheduler.scheduleDelay(500, () -> SceneUtil.autoFocusIfEnabled(firstNameTextField));
     }
 
     public void onHiding() {
-        guestSubmitButton.setDefaultButton(false);
+        submitButton.setDefaultButton(false);
     }
 
     public void turnOnButtonWaitMode() {
-        StepSlide.turnOnButtonWaitMode(guestSubmitButton);
+        StepSlide.turnOnButtonWaitMode(submitButton);
     }
 
     public void turnOffButtonWaitMode() {
-        StepSlide.turnOffButtonWaitMode(guestSubmitButton, BaseI18nKeys.Submit);
+        StepSlide.turnOffButtonWaitMode(submitButton, BaseI18nKeys.Submit);
     }
 
     public Node getContainer() {
         return container;
+    }
+
+    public Button getSubmitButton() {
+        return submitButton;
     }
 
     public String getFirstName() {

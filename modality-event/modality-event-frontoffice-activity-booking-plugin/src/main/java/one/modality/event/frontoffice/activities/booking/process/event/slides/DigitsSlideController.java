@@ -6,14 +6,11 @@ import dev.webfx.platform.uischeduler.UiScheduler;
 import dev.webfx.platform.util.collection.Collections;
 import javafx.scene.layout.Region;
 import one.modality.base.shared.entities.Event;
-import one.modality.ecommerce.client.workingbooking.FXPersonToBook;
 import one.modality.ecommerce.payment.CancelPaymentResult;
 import one.modality.ecommerce.payment.client.WebPaymentForm;
-import one.modality.event.client.booking.BookableDatesUi;
 import one.modality.event.frontoffice.activities.booking.process.event.BookEventActivity;
 import one.modality.event.frontoffice.activities.booking.process.event.bookingform.BookingForm;
 import one.modality.event.frontoffice.activities.booking.process.event.bookingform.BookingFormProvider;
-import one.modality.event.frontoffice.activities.booking.process.event.bookingform.BookingFormSettings;
 
 import java.util.List;
 import java.util.ServiceLoader;
@@ -30,26 +27,24 @@ final class DigitsSlideController {
 
     private final BookEventActivity bookEventActivity;
     private final TransitionPane stepSlidetransitionPane = new TransitionPane();
-    private final Step1BookingFormSlide step1BookingFormSlide;
-    private final Step2CheckoutSlide step2CheckoutSlide;
-    private final Step3PaymentSlide step3PaymentSlide;
-    private final Step4PendingPaymentSlide step4PendingPaymentSlide;
-    private final Step5FailedPaymentSlide step5FailedPaymentSlide;
-    private final Step6CancellationSlide step6CancellationSlide;
-    private final Step7ErrorSlide step7ErrorSlide;
+    private final Step1BookingFormAndSubmitSlide step1BookingFormAndSubmitSlide;
+    private final Step2PaymentSlide step2PaymentSlide;
+    private final Step3PendingPaymentSlide step3PendingPaymentSlide;
+    private final Step4FailedPaymentSlide step4FailedPaymentSlide;
+    private final Step5CancellationSlide step5CancellationSlide;
+    private final Step6ErrorSlide step6ErrorSlide;
     private BookingForm bookingForm;
     private StepSlide displayedSlide;
 
     public DigitsSlideController(BookEventActivity bookEventActivity) {
-        this.bookEventActivity   = bookEventActivity;
+        this.bookEventActivity = bookEventActivity;
 
-        step1BookingFormSlide    = new Step1BookingFormSlide(bookEventActivity);
-        step2CheckoutSlide       = new Step2CheckoutSlide(bookEventActivity);
-        step3PaymentSlide        = new Step3PaymentSlide(bookEventActivity);
-        step4PendingPaymentSlide = new Step4PendingPaymentSlide(bookEventActivity);
-        step5FailedPaymentSlide  = new Step5FailedPaymentSlide(bookEventActivity);
-        step6CancellationSlide   = new Step6CancellationSlide(bookEventActivity);
-        step7ErrorSlide          = new Step7ErrorSlide(bookEventActivity);
+        step1BookingFormAndSubmitSlide = new Step1BookingFormAndSubmitSlide(bookEventActivity);
+        step2PaymentSlide = new Step2PaymentSlide(bookEventActivity);
+        step3PendingPaymentSlide = new Step3PendingPaymentSlide(bookEventActivity);
+        step4FailedPaymentSlide = new Step4FailedPaymentSlide(bookEventActivity);
+        step5CancellationSlide = new Step5CancellationSlide(bookEventActivity);
+        step6ErrorSlide = new Step6ErrorSlide(bookEventActivity);
         stepSlidetransitionPane.setScrollToTop(true);
         // The following code is to solve a performance issue that happens on mobiles during the translation transition
         stepSlidetransitionPane.setUnmanagedDuringTransition(); // For more explanation, read the comment inside this method.
@@ -64,8 +59,8 @@ final class DigitsSlideController {
         BookingFormProvider bookingFormProvider = Collections.findFirst(ALL_BOOKING_FORM_PROVIDERS_SORTED_BY_PRIORITY, provider -> provider.acceptEvent(event));
         if (bookingFormProvider == null) {
             bookingForm = null;
-            step7ErrorSlide.setErrorMessage("Error: Unmanaged type of event");
-            displaySlide(step7ErrorSlide);
+            step6ErrorSlide.setErrorMessage("Error: Unmanaged type of event");
+            displaySlide(step6ErrorSlide);
         } else
             bookingForm = bookingFormProvider.createBookingForm(event, bookEventActivity);
     }
@@ -76,38 +71,24 @@ final class DigitsSlideController {
 
     void onWorkingBookingLoaded() {
         // TODO: avoid rebuilding the whole UI for these remaining slides
-        step3PaymentSlide.reset();
-        step7ErrorSlide.reset();
+        step2PaymentSlide.reset();
+        step6ErrorSlide.reset();
 
         if (bookingForm != null) {
             bookingForm.onWorkingBookingLoaded();
-            step1BookingFormSlide.setBookingForm(bookingForm);
-            BookingFormSettings bookingFormSettings = bookingForm.getSettings();
-            step2CheckoutSlide.setBookAsGuestAllowed(bookingFormSettings.isBookAsAGuestAllowed());
-            step2CheckoutSlide.setPartialEventAllowed(bookingFormSettings.isPartialEventAllowed());
-
-            if (displayedSlide != step2CheckoutSlide) {
-                displayFirstSlide();
-            } else {
-                displayCheckoutSlide();
-            }
+            step1BookingFormAndSubmitSlide.setBookingForm(bookingForm);
             // Sub-routing node binding (displaying the possible sub-routing account node in the appropriate place in step2)
-            step2CheckoutSlide.accountMountNodeProperty().bind(bookEventActivity.mountNodeProperty());
+            step1BookingFormAndSubmitSlide.accountMountNodeProperty().bind(bookEventActivity.mountNodeProperty());
+            displayFirstSlide();
         }
     }
 
     void displayFirstSlide() {
-        displaySlide(!step1BookingFormSlide.isEmpty() ? step1BookingFormSlide : step2CheckoutSlide);
-    }
-
-    BookableDatesUi getBookableDateUi() {
-        if (bookingForm == null)
-            return null;
-        return bookingForm.getBookableDatesUi();
+        displaySlide(step1BookingFormAndSubmitSlide);
     }
 
     private void displaySlide(StepSlide slide) {
-        boolean animate = slide != step1BookingFormSlide || displayedSlide == step5FailedPaymentSlide || displayedSlide == step6CancellationSlide;
+        boolean animate = slide != step1BookingFormAndSubmitSlide || displayedSlide == step4FailedPaymentSlide || displayedSlide == step5CancellationSlide;
         displayedSlide = slide;
         UiScheduler.runInUiThread((() -> {
             if (animate)
@@ -117,35 +98,27 @@ final class DigitsSlideController {
         }));
     }
 
-    void displayCheckoutSlide() {
-        if (displayedSlide == step1BookingFormSlide) {
-            step2CheckoutSlide.setStep1PersonToBookWasShown(FXPersonToBook.getPersonToBook() != null);
-        }
-        step2CheckoutSlide.reset(); // ensures the summary is updated
-        displaySlide(step2CheckoutSlide);
-    }
-
     void displayPaymentSlide(WebPaymentForm webPaymentForm) {
-        step3PaymentSlide.setWebPaymentForm(webPaymentForm);
-        displaySlide(step3PaymentSlide);
+        step2PaymentSlide.setWebPaymentForm(webPaymentForm);
+        displaySlide(step2PaymentSlide);
     }
 
     void displayPendingPaymentSlide() {
-        displaySlide(step4PendingPaymentSlide);
+        displaySlide(step3PendingPaymentSlide);
     }
 
     void displayFailedPaymentSlide() {
-        displaySlide(step5FailedPaymentSlide);
+        displaySlide(step4FailedPaymentSlide);
     }
 
     void displayCancellationSlide(CancelPaymentResult cancelPaymentResult) {
-        step6CancellationSlide.setCancelPaymentResult(cancelPaymentResult);
-        displaySlide(step6CancellationSlide);
+        step5CancellationSlide.setCancelPaymentResult(cancelPaymentResult);
+        displaySlide(step5CancellationSlide);
     }
 
     void displayErrorMessage(Object errorMessageI18nKey) {
-        step7ErrorSlide.setErrorMessage(errorMessageI18nKey);
-        displaySlide(step7ErrorSlide);
+        step6ErrorSlide.setErrorMessage(errorMessageI18nKey);
+        displaySlide(step6ErrorSlide);
     }
 
 }

@@ -1,7 +1,7 @@
 package one.modality.event.frontoffice.activities.booking.process.event.bookingform;
 
+import javafx.beans.value.ObservableBooleanValue;
 import javafx.scene.Node;
-import one.modality.event.client.booking.BookableDatesUi;
 
 /**
  * @author Bruno Salmon
@@ -14,5 +14,9 @@ public interface BookingForm {
 
     void onWorkingBookingLoaded();
 
-    BookableDatesUi getBookableDatesUi();
+    ObservableBooleanValue showLoginProperty();
+
+    ObservableBooleanValue showSubmitButtonProperty();
+
+    ObservableBooleanValue disableSubmitButtonProperty();
 }

@@ -15,7 +15,6 @@ import one.modality.base.frontoffice.mainframe.fx.FXShowFooter;
 import one.modality.base.shared.entities.Event;
 import one.modality.ecommerce.payment.CancelPaymentResult;
 import one.modality.ecommerce.payment.client.WebPaymentForm;
-import one.modality.event.client.booking.BookableDatesUi;
 import one.modality.event.frontoffice.activities.booking.process.event.BookEventActivity;
 
 /**
@@ -99,10 +98,6 @@ public final class LettersSlideController {
         bookEventActivity.onReachingEndSlide();
     }
 
-    public void displayCheckoutSlide() {
-        stepBBookEventSlide.displayCheckoutSlide();
-    }
-
     public void displayErrorMessage(Object messageI18nKey) {
         stepBBookEventSlide.displayErrorMessage(messageI18nKey);
         bookEventActivity.onReachingEndSlide();
@@ -123,10 +118,6 @@ public final class LettersSlideController {
     public void displayCancellationSlide(CancelPaymentResult cancelPaymentResult) {
         stepBBookEventSlide.displayCancellationSlide(cancelPaymentResult);
         //bookEventActivity.onReachingEndSlide(); // Commented as this resets FXEvent() and prevents button to work in cancellation slide
-    }
-
-    public BookableDatesUi getBookableDatesUi() {
-        return stepBBookEventSlide.getBookableDatesUi();
     }
 
     public <T extends Labeled> T bindI18nEventExpression(T text, String eventExpression, Object... args) {

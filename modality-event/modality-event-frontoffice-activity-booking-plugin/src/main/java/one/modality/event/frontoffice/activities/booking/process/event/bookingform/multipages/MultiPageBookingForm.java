@@ -2,10 +2,9 @@ package one.modality.event.frontoffice.activities.booking.process.event.bookingf
 
 import dev.webfx.extras.panes.TransitionPane;
 import dev.webfx.extras.util.layout.Layouts;
+import dev.webfx.kit.util.properties.FXProperties;
 import javafx.scene.Node;
 import javafx.scene.layout.BorderPane;
-import one.modality.ecommerce.client.workingbooking.WorkingBooking;
-import one.modality.ecommerce.client.workingbooking.WorkingBookingProperties;
 import one.modality.event.frontoffice.activities.booking.process.event.BookEventActivity;
 import one.modality.event.frontoffice.activities.booking.process.event.bookingform.BookingFormBase;
 import one.modality.event.frontoffice.activities.booking.process.event.bookingform.BookingFormSettings;
@@ -35,19 +34,8 @@ public abstract class MultiPageBookingForm extends BookingFormBase {
         BorderPane container = new BorderPane(transitionPane);
         if (navigationBar != null) {
             container.setTop(navigationBar.getView());
-            navigationBar.getBackButton().setOnMouseClicked(e -> {
-                navigateToPage(currentFamilyOptionsViewIndex - 1);
-            });
-            navigationBar.getNextButton().setOnMouseClicked(e -> {
-                BookingFormPage[] pages = getPages();
-                BookingFormPage bookingFormPage = pages[currentFamilyOptionsViewIndex];
-                if (bookingFormPage.isValid()) {
-                    if (currentFamilyOptionsViewIndex < pages.length - 1)
-                        navigateToPage(currentFamilyOptionsViewIndex + 1);
-                    else
-                        activity.displayCheckoutSlide();
-                }
-            });
+            navigationBar.getBackButton().setOnMouseClicked(e -> navigateToPreviousPage());
+            navigationBar.getNextButton().setOnMouseClicked(e -> navigateToNextPage());
         }
         if (settings.showNavigationBar())
             container.setBottom(new PriceBar(activity.getWorkingBookingProperties()).getView());
@@ -62,12 +50,21 @@ public abstract class MultiPageBookingForm extends BookingFormBase {
         navigateToPage(0);
     }
 
+    public void navigateToPreviousPage() {
+        navigateToPage(currentFamilyOptionsViewIndex - 1);
+    }
+
+    public void navigateToNextPage() {
+        BookingFormPage[] pages = getPages();
+        BookingFormPage bookingFormPage = pages[currentFamilyOptionsViewIndex];
+        if (bookingFormPage.isValid() && currentFamilyOptionsViewIndex < pages.length - 1)
+            navigateToPage(currentFamilyOptionsViewIndex + 1);
+    }
+
     private void navigateToPage(int index) {
         BookingFormPage[] pages = getPages();
         BookingFormPage bookingFormPage = pages[index];
-        WorkingBookingProperties workingBookingProperties = activity.getWorkingBookingProperties();
-        WorkingBooking workingBooking = workingBookingProperties.getWorkingBooking();
-        bookingFormPage.setWorkingBooking(workingBooking);
+        bookingFormPage.setWorkingBooking(activity.getWorkingBooking());
         transitionPane.setReverse(index < currentFamilyOptionsViewIndex);
         transitionPane.transitToContent(bookingFormPage.getView());
         currentFamilyOptionsViewIndex = index;
@@ -76,6 +73,10 @@ public abstract class MultiPageBookingForm extends BookingFormBase {
             navigationBar.getBackButton().setDisable(index == 0);
             //navigationBar.getNextButton().setDisable(index == familyOptionsViews.length - 1);
         }
+        boolean lastPage = index == pages.length - 1;
+        setShowLogin(lastPage);
+        setShowSubmitButton(lastPage);
+        disableSubmitButtonProperty.bind(FXProperties.not(bookingFormPage.validProperty()));
     }
 
 }

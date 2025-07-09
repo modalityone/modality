@@ -1,9 +1,11 @@
 package one.modality.event.frontoffice.activities.booking.process.event.bookingform;
 
+import javafx.beans.property.BooleanProperty;
+import javafx.beans.property.SimpleBooleanProperty;
+import javafx.beans.value.ObservableBooleanValue;
 import javafx.scene.Node;
 import one.modality.ecommerce.client.workingbooking.WorkingBooking;
 import one.modality.ecommerce.client.workingbooking.WorkingBookingProperties;
-import one.modality.event.client.booking.BookableDatesUi;
 import one.modality.event.frontoffice.activities.booking.process.event.BookEventActivity;
 
 /**
@@ -13,6 +15,9 @@ public abstract class BookingFormBase implements BookingForm {
 
     protected final BookEventActivity activity;
     protected final BookingFormSettings settings;
+    protected final BooleanProperty showLoginProperty = new SimpleBooleanProperty();
+    protected final BooleanProperty showSubmitButtonProperty = new SimpleBooleanProperty();
+    protected final BooleanProperty disableSubmitButtonProperty = new SimpleBooleanProperty();
 
     public BookingFormBase(BookEventActivity activity, BookingFormSettings settings) {
         this.activity = activity;
@@ -39,8 +44,31 @@ public abstract class BookingFormBase implements BookingForm {
         }
     }
 
-    @Override
-    public BookableDatesUi getBookableDatesUi() {
-        return null;
+    public BookEventActivity getActivity() {
+        return activity;
     }
+
+    @Override
+    public ObservableBooleanValue showLoginProperty() {
+        return showLoginProperty;
+    }
+
+    public void setShowLogin(boolean show) {
+        showLoginProperty.set(show);
+    }
+
+    @Override
+    public ObservableBooleanValue showSubmitButtonProperty() {
+        return showSubmitButtonProperty;
+    }
+
+    public void setShowSubmitButton(boolean show) {
+        showSubmitButtonProperty.set(show);
+    }
+
+    @Override
+    public ObservableBooleanValue disableSubmitButtonProperty() {
+        return disableSubmitButtonProperty;
+    }
+
 }

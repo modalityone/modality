@@ -26,7 +26,7 @@ import one.modality.event.frontoffice.activities.booking.process.event.BookEvent
 /**
  * @author Bruno Salmon
  */
-final class Step3PaymentSlide extends StepSlide {
+final class Step2PaymentSlide extends StepSlide {
 
     private static final double MAX_SLIDE_WIDTH = 800;
 
@@ -38,7 +38,7 @@ final class Step3PaymentSlide extends StepSlide {
     private Button pressedButton;
     private WebPaymentForm webPaymentForm;
 
-    Step3PaymentSlide(BookEventActivity bookEventActivity) {
+    Step2PaymentSlide(BookEventActivity bookEventActivity) {
         super(bookEventActivity);
     }
 

@@ -7,8 +7,13 @@ module modality.event.frontoffice.bookingform.recurringevent.plugin {
     requires javafx.controls;
     requires javafx.graphics;
     requires modality.base.client.brand;
+    requires modality.base.client.i18n;
+    requires modality.base.client.icons;
+    requires modality.base.client.time;
     requires modality.base.shared.entities;
+    requires modality.ecommerce.client.i18n;
     requires modality.ecommerce.client.workingbooking;
+    requires modality.ecommerce.document.service;
     requires modality.event.client.booking;
     requires modality.event.client.recurringevents;
     requires modality.event.frontoffice.activity.booking.plugin;
@@ -18,6 +23,8 @@ module modality.event.frontoffice.bookingform.recurringevent.plugin {
     requires webfx.extras.i18n.controls;
     requires webfx.extras.panes;
     requires webfx.extras.styles.bootstrap;
+    requires webfx.extras.time.format;
+    requires webfx.extras.util.layout;
     requires webfx.extras.webtext;
     requires webfx.platform.util;
 

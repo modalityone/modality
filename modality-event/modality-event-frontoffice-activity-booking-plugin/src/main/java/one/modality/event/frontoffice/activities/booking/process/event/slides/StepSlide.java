@@ -18,12 +18,10 @@ import one.modality.base.shared.entities.markers.HasPersonalDetails;
 import one.modality.crm.shared.services.authn.fx.FXUserPerson;
 import one.modality.ecommerce.client.workingbooking.WorkingBooking;
 import one.modality.ecommerce.client.workingbooking.WorkingBookingProperties;
-import one.modality.ecommerce.document.service.DocumentAggregate;
 import one.modality.ecommerce.payment.CancelPaymentResult;
 import one.modality.ecommerce.payment.PaymentService;
 import one.modality.ecommerce.payment.client.ClientPaymentUtil;
 import one.modality.ecommerce.payment.client.WebPaymentForm;
-import one.modality.event.client.booking.BookableDatesUi;
 import one.modality.event.frontoffice.activities.booking.BookingI18nKeys;
 import one.modality.event.frontoffice.activities.booking.fx.FXGuestToBook;
 import one.modality.event.frontoffice.activities.booking.process.event.BookEventActivity;
@@ -72,20 +70,12 @@ public abstract class StepSlide implements Supplier<Node> {
         return getWorkingBookingProperties().getWorkingBooking();
     }
 
-    DocumentAggregate getDocumentAggregate() {
-        return getWorkingBookingProperties().getDocumentAggregate();
-    }
-
     protected Event getEvent() {
         return getWorkingBookingProperties().getEvent();
     }
 
     void displayBookSlide() {
         getBookEventActivity().displayBookSlide();
-    }
-
-    protected void displayCheckoutSlide() {
-        getBookEventActivity().displayCheckoutSlide();
     }
 
     void displayPaymentSlide(WebPaymentForm webPaymentForm) {
@@ -161,10 +151,6 @@ public abstract class StepSlide implements Supplier<Node> {
     void turnOffWaitMode() {
     }
 
-    BookableDatesUi getBookableDatesUi() {
-        return getBookEventActivity().getBookableDatesUi();
-    }
-
     static void turnOnButtonWaitMode(Button... buttons) {
         OperationUtil.turnOnButtonsWaitMode(buttons);
     }
@@ -175,10 +161,6 @@ public abstract class StepSlide implements Supplier<Node> {
         I18nControls.bindI18nGraphicProperty(button, i18nKey);
     }
 
-    protected Button createPersonToBookButton() {
-        return bookEventActivity.createPersonToBookButton();
-    }
-
     public <T extends Labeled> T bindI18nEventExpression(T text, String eventExpression, Object... args) {
         return getBookEventActivity().bindI18nEventExpression(text, eventExpression, args);
     }
@@ -186,6 +168,5 @@ public abstract class StepSlide implements Supplier<Node> {
     public HtmlText bindI18nEventExpression(HtmlText text, String eventExpression, Object... args) {
         return getBookEventActivity().bindI18nEventExpression(text, eventExpression, args);
     }
-
 
 }
