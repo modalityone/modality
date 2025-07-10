@@ -1,6 +1,7 @@
 package one.modality.ecommerce.document.service.util;
 
 import dev.webfx.platform.util.Arrays;
+import dev.webfx.platform.util.collection.Collections;
 import one.modality.base.shared.entities.Attendance;
 import one.modality.base.shared.entities.DocumentLine;
 import one.modality.ecommerce.document.service.events.AbstractAttendancesEvent;
@@ -17,13 +18,13 @@ import java.util.List;
 
 /**
  * Utility class to help keep a list of document events minimized.
- * 
+ *
  * @author Bruno Salmon
  */
 public final class DocumentEvents {
 
     public static void integrateNewDocumentEvent(AbstractDocumentEvent e, List<AbstractDocumentEvent> documentEvents) {
-        e = simplifyDocumentEvent(e, documentEvents); // May simplify the event, and even return null if it's not necessary to add it
+        e = simplifyDocumentEvent(e, documentEvents); // May simplify the event and even return null if it's not necessary to add it
         if (e != null) {
             documentEvents.add(e);
         }
@@ -47,15 +48,12 @@ public final class DocumentEvents {
         // Since we remove this document line, we can simplify the changes by removing all those related to that document line
         for (Iterator<AbstractDocumentEvent> it = documentEvents.iterator(); it.hasNext(); ) {
             AbstractDocumentEvent e = it.next();
-            if (e instanceof AbstractDocumentLineEvent) {
-                AbstractDocumentLineEvent adle = (AbstractDocumentLineEvent) e;
-                if (adle.getDocumentLine() == documentLine) {
-                    it.remove();
-                    // In addition, if we found that this document line was added within these changes, we return null
-                    // to indicate that it's even not necessary to add this event to the present changes
-                    if (e instanceof AddDocumentLineEvent) {
-                        rdle = null;
-                    }
+            if (e instanceof AbstractDocumentLineEvent adle && adle.getDocumentLine() == documentLine) {
+                it.remove();
+                // In addition, if we found that this document line was added within these changes, we return null
+                // to indicate that it's even not necessary to add this event to the present changes
+                if (e instanceof AddDocumentLineEvent) {
+                    rdle = null;
                 }
             }
         }
@@ -68,8 +66,7 @@ public final class DocumentEvents {
         // Since we remove these attendances, we can simplify the changes by removing them from other attendances events
         for (int i = 0; i < documentEvents.size(); i++) {
             AbstractDocumentEvent e = documentEvents.get(i);
-            if (e instanceof AbstractAttendancesEvent) { // AddAttendancesEvent or RemoveAttendancesEvent
-                AbstractAttendancesEvent aae = (AbstractAttendancesEvent) e;
+            if (e instanceof AbstractAttendancesEvent aae) { // AddAttendancesEvent or RemoveAttendancesEvent
                 Attendance[] eventAttendances = aae.getAttendances();
                 // Looking for the remaining attendances for this event (those not covered by removedAttendances)
                 Attendance[] remainingAttendances = Arrays.filter(eventAttendances, a -> !Arrays.contains(removedAttendances, a), Attendance[]::new);
@@ -84,13 +81,17 @@ public final class DocumentEvents {
                     }
                     documentEvents.set(i, aae);
                 }
-                // In both cases, if the event was AddAttendancesEvent, because we removed some attendances from start
+                // In both cases, if the event was AddAttendancesEvent, because we removed some attendances from the start
                 // at this point, there is no need anymore to keep them anymore in RemoveAttendancesEvent
                 if (remainingAttendances.length < eventAttendances.length && aae instanceof AddAttendancesEvent) {
                     reducedRemovedAttendances = Arrays.filter(reducedRemovedAttendances, a -> !Arrays.contains(eventAttendances, a), Attendance[]::new);
                 }
             }
         }
+        // We remove the associated document line if there are no attendances anymore to it
+        DocumentLine documentLine = rae.getDocumentLine();
+        if (Collections.findFirst(documentEvents, e -> e instanceof AddAttendancesEvent aae && aae.getDocumentLine() == documentLine) == null)
+            simplifyRemoveDocumentLineEvent(new RemoveDocumentLineEvent(documentLine), documentEvents); // Note that we don't integrate this RemoveDocumentLineEvent
         // If at the end of this simplification there is no more attendances to keep in RemoveAttendancesEvent
         if (reducedRemovedAttendances.length == 0) {
             return null; // we return null to indicate that it's not necessary anymore to add it in the document changes
@@ -112,5 +113,5 @@ public final class DocumentEvents {
         // do that simplification because we don't have access to the initial document here. TODO: improve this.
         return affde;
     }
-    
+
 }
