@@ -3,6 +3,8 @@ package one.modality.ecommerce.client.workingbooking;
 import dev.webfx.kit.util.properties.ObservableLists;
 import dev.webfx.platform.scheduler.Scheduled;
 import dev.webfx.platform.uischeduler.UiScheduler;
+import javafx.beans.binding.Bindings;
+import javafx.beans.binding.BooleanBinding;
 import javafx.beans.property.*;
 import one.modality.base.shared.entities.Event;
 import one.modality.base.shared.entities.ScheduledItem;
@@ -59,7 +61,7 @@ public class WorkingBookingProperties {
         }
     };
 
-    // Previous total (of the booking loaded from database)
+    // Previous total (of the booking loaded from the database)
     private final StringProperty formattedPreviousTotalProperty = new SimpleStringProperty();
     private final IntegerProperty previousTotalProperty = new SimpleIntegerProperty(-1) {
         @Override
@@ -68,7 +70,7 @@ public class WorkingBookingProperties {
         }
     };
 
-    // Previous balance (of the booking loaded from database)
+    // Previous balance (of the booking loaded from the database)
     private final StringProperty formattedPreviousBalanceProperty = new SimpleStringProperty();
     private final IntegerProperty previousBalanceProperty = new SimpleIntegerProperty(-1) {
         @Override
@@ -81,6 +83,14 @@ public class WorkingBookingProperties {
     // Booking reference
     private final ObjectProperty<Object> bookingReferenceProperty = new SimpleObjectProperty<>();
 
+    // Version number (arbitrary number that increases each time there is a change in the working booking - useful for reacting to changes)
+    private final IntegerProperty versionNumberProperty = new SimpleIntegerProperty();
+
+    // Submittable (indicates if the booking is suitable to submit, which is the case if there is a balance to pay, or it has changes on document lines)
+    private final BooleanBinding submittableProperty = Bindings.createBooleanBinding(() ->
+            getBalance() > 0 || getWorkingBooking().hasDocumentLineChanges()
+        , versionNumberProperty());
+
     public void setWorkingBooking(WorkingBooking workingBooking) {
         this.workingBooking = workingBooking;
         latestBookingPriceCalculator = new PriceCalculator(workingBooking::getLastestDocumentAggregate);
@@ -90,8 +100,18 @@ public class WorkingBookingProperties {
             setBookingReference(initialDocumentAggregate.getDocument().getRef());
         }
         updateAll(); // Updated all price properties
+        setVersionNumber(0);
         // And listening to further changes to automatically keep these properties updated
-        ObservableLists.runOnListChange(c -> scheduleUpdateAll(), workingBooking.getDocumentChanges());
+        ObservableLists.runOnListChange(c -> {
+            if (updateAllScheduled == null) {
+                updateAllScheduled = UiScheduler.scheduleDeferred(() -> {
+                    updateAll();
+                    incrementVersionNumber();
+                    updateAllScheduled = null;
+                });
+            }
+            incrementVersionNumber();
+        }, workingBooking.getDocumentChanges());
     }
 
     public WorkingBooking getWorkingBooking() {
@@ -130,15 +150,6 @@ public class WorkingBookingProperties {
         updateBalance();
         updatePreviousTotal();
         updatePreviousBalance();
-    }
-
-    private void scheduleUpdateAll() {
-        if (updateAllScheduled == null) {
-            updateAllScheduled = UiScheduler.scheduleDeferred(() -> {
-                updateAll();
-                updateAllScheduled = null;
-            });
-        }
     }
 
 
@@ -364,6 +375,32 @@ public class WorkingBookingProperties {
 
     public Object getBookingReference() {
         return bookingReferenceProperty.getValue();
+    }
+
+
+    // Version number
+
+    public int getVersionNumber() {
+        return versionNumberProperty.get();
+    }
+
+    public ReadOnlyIntegerProperty versionNumberProperty() {
+        return versionNumberProperty;
+    }
+
+    private void setVersionNumber(int versionNumber) {
+        versionNumberProperty.set(versionNumber);
+    }
+
+    private void incrementVersionNumber() {
+        setVersionNumber(getVersionNumber() + 1);
+    }
+
+
+    // Submittable
+
+    public BooleanBinding submittableProperty() {
+        return submittableProperty;
     }
 
     // Shorthand methods to workingBooking
