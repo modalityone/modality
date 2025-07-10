@@ -10,6 +10,7 @@ import javafx.collections.ObservableList;
 import one.modality.base.shared.entities.*;
 import one.modality.ecommerce.document.service.*;
 import one.modality.ecommerce.document.service.events.AbstractDocumentEvent;
+import one.modality.ecommerce.document.service.events.AbstractDocumentLineEvent;
 import one.modality.ecommerce.document.service.events.book.*;
 import one.modality.ecommerce.document.service.util.DocumentEvents;
 
@@ -30,8 +31,8 @@ public class WorkingBooking {
     private Document document;
     private DocumentAggregate lastestDocumentAggregate;
     // EntityStore used to hold the entities associated with this working booking (ex: Document, DocumentLine, etc...).
-    // Note that it's not an update store because the booking submit uses DocumentService instead, which keeps a record
-    // of all individual changes made over time. This entity store reflects only the latest version of the booking.
+    // Note that it's not an update store because the booking submission uses DocumentService instead, which keeps a
+    // record of all individual changes made over time. This entity store reflects only the latest version of the booking.
     private EntityStore entityStore;
 
     public WorkingBooking(PolicyAggregate policyAggregate, DocumentAggregate initialDocumentAggregate) {
@@ -158,8 +159,16 @@ public class WorkingBooking {
         DocumentEvents.integrateNewDocumentEvent(e, documentChanges);
     }
 
+    public boolean hasNoChanges() {
+        return documentChanges.isEmpty();
+    }
+
     public boolean hasChanges() {
-        return !documentChanges.isEmpty();
+        return !hasNoChanges();
+    }
+
+    public boolean hasDocumentLineChanges() {
+        return Collections.findFirst(documentChanges, e -> e instanceof AbstractDocumentLineEvent) != null;
     }
 
     public void cancelChanges() {
@@ -183,11 +192,10 @@ public class WorkingBooking {
 
     public Future<SubmitDocumentChangesResult> submitChanges(String historyComment) {
         // In case the booking is not linked to the booker account - because the user was not logged in at the start of
-        // the booking process - we set it now (the front-office probably forced the user to log in before submit).
+        // the booking process - we set it now. (the front-office probably forced the user to log in before submit).
         if (document.isNew()) {
             documentChanges.forEach(e -> {
-                if (e instanceof AddDocumentEvent) {
-                    AddDocumentEvent ade = (AddDocumentEvent) e;
+                if (e instanceof AddDocumentEvent ade) {
                     if (ade.getPersonPrimaryKey() == null)
                         ade.setPersonPrimaryKey(Entities.getPrimaryKey(FXPersonToBook.getPersonToBook()));
                     ade.setFirstName(document.getFirstName());
