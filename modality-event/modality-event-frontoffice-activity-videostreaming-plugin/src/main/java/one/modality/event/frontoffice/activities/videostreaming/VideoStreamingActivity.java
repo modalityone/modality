@@ -20,7 +20,9 @@ import dev.webfx.kit.util.properties.FXProperties;
 import dev.webfx.kit.util.properties.ObservableLists;
 import dev.webfx.platform.console.Console;
 import dev.webfx.platform.scheduler.Scheduler;
+import dev.webfx.platform.substitution.Substitutor;
 import dev.webfx.platform.uischeduler.UiScheduler;
+import dev.webfx.platform.util.Booleans;
 import dev.webfx.platform.util.Objects;
 import dev.webfx.platform.util.collection.Collections;
 import dev.webfx.stack.orm.domainmodel.activity.viewdomain.impl.ViewDomainActivityBase;
@@ -81,6 +83,8 @@ import java.util.stream.Collectors;
  * @author Bruno Salmon
  */
 final class VideoStreamingActivity extends ViewDomainActivityBase {
+
+    private static final boolean DISABLE_COLLAPSE_VIDEO_PLAY = Booleans.booleanValue(Substitutor.substitute("${{DISABLE_COLLAPSE_VIDEO_PLAY}}"));
 
     private static final double STRAIGHT_MOBILE_LAYOUT_UNDER_WIDTH = 400; // mainly to reduce responsive computation on low-end devices
     private static final int MIN_NUMBER_OF_SESSION_PER_DAY_BEFORE_DISPLAYING_DAILY_PROGRAM = 3;
@@ -528,23 +532,27 @@ final class VideoStreamingActivity extends ViewDomainActivityBase {
 
         // When the livestream collapse pane is collapsed, we pause the livestreamPlayer so the full-screen orange button
         // is not displayed
-        FXProperties.runNowAndOnPropertiesChange(() -> Platform.runLater(() -> { // Postponed to consider only the final state when both properties are changed
-            Player playingPlayer = Players.getGlobalPlayerGroup().getPlayingPlayer();
-            if (playingPlayer != null && SceneUtil.hasAncestor(playingPlayer.getMediaView(), videoCollapsePane)) {
-                lastVideoPlayingPlayer = playingPlayer;
-            }
-            if (lastVideoPlayingPlayer != null) {
-                if (videoCollapsePane.isCollapsed())
-                    lastVideoPlayingPlayer.pause();
-                else {
-                    MediaConsumptionRecorder videoConsumptionRecorder = Collections.findFirst(videoConsumptionRecorders,
-                        vcr -> Players.sameSelectedPlayer(vcr.getPlayer(), lastVideoPlayingPlayer));
-                    if (videoConsumptionRecorder != null)
-                        videoConsumptionRecorder.start();
-                    lastVideoPlayingPlayer.play();
+        if (!DISABLE_COLLAPSE_VIDEO_PLAY) {
+            FXProperties.runNowAndOnPropertiesChange(() -> Platform.runLater(() -> { // Postponed to consider only the final state when both properties are changed
+                Player playingPlayer = Players.getGlobalPlayerGroup().getPlayingPlayer();
+                if (playingPlayer != null && SceneUtil.hasAncestor(playingPlayer.getMediaView(), videoCollapsePane)) {
+                    lastVideoPlayingPlayer = playingPlayer;
                 }
-            }
-        }), videoCollapsePane.collapsedProperty(), Players.getGlobalPlayerGroup().playingPlayerProperty());
+                if (lastVideoPlayingPlayer != null) {
+                    if (videoCollapsePane.isCollapsed()) {
+                        Console.log("Pausing " + lastVideoPlayingPlayer);
+                        lastVideoPlayingPlayer.pause();
+                    } else {
+                        MediaConsumptionRecorder videoConsumptionRecorder = Collections.findFirst(videoConsumptionRecorders,
+                            vcr -> Players.sameSelectedPlayer(vcr.getPlayer(), lastVideoPlayingPlayer));
+                        if (videoConsumptionRecorder != null)
+                            videoConsumptionRecorder.start();
+                        Console.log("⛔️⛔️⛔️⛔️⛔️ Playing " + lastVideoPlayingPlayer);
+                        lastVideoPlayingPlayer.play();
+                    }
+                }
+            }), videoCollapsePane.collapsedProperty(), Players.getGlobalPlayerGroup().playingPlayerProperty());
+        }
 
         // Auto-scroll to the video player when it is expanded or watching a new video
         FXProperties.runNowAndOnPropertiesChange(() -> {
