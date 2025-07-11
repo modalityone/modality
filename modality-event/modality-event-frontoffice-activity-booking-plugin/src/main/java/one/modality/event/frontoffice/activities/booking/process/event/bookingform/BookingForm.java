@@ -16,7 +16,12 @@ public interface BookingForm {
 
     ObservableBooleanValue showLoginProperty();
 
-    ObservableBooleanValue showSubmitButtonProperty();
+    ObservableBooleanValue showDefaultSubmitButtonProperty();
 
     ObservableBooleanValue disableSubmitButtonProperty();
+
+    void setActivityCallback(BookingFormActivityCallback activityCallback);
+
+    BookingFormActivityCallback getActivityCallback();
+
 }

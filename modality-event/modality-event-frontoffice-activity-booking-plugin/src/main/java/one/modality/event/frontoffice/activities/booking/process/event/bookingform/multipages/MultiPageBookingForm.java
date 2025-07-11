@@ -73,10 +73,17 @@ public abstract class MultiPageBookingForm extends BookingFormBase {
             navigationBar.getBackButton().setDisable(index == 0);
             //navigationBar.getNextButton().setDisable(index == familyOptionsViews.length - 1);
         }
-        boolean lastPage = index == pages.length - 1;
-        setShowLogin(lastPage);
-        setShowSubmitButton(lastPage);
         disableSubmitButtonProperty.bind(FXProperties.not(bookingFormPage.validProperty()));
+        updateShowLogin();
+        updateShowSubmitButton();
+    }
+
+    protected void updateShowLogin() {
+        setShowLogin(currentFamilyOptionsViewIndex == getPages().length - 1);
+    }
+
+    protected void updateShowSubmitButton() {
+        setShowSubmitButton(currentFamilyOptionsViewIndex == getPages().length - 1);
     }
 
 }

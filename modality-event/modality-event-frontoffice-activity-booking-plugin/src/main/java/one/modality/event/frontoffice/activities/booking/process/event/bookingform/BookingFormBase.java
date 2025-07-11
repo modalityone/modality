@@ -16,8 +16,9 @@ public abstract class BookingFormBase implements BookingForm {
     protected final BookEventActivity activity;
     protected final BookingFormSettings settings;
     protected final BooleanProperty showLoginProperty = new SimpleBooleanProperty();
-    protected final BooleanProperty showSubmitButtonProperty = new SimpleBooleanProperty();
+    protected final BooleanProperty showDefaultSubmitButtonProperty = new SimpleBooleanProperty();
     protected final BooleanProperty disableSubmitButtonProperty = new SimpleBooleanProperty();
+    protected BookingFormActivityCallback activityCallback;
 
     public BookingFormBase(BookEventActivity activity, BookingFormSettings settings) {
         this.activity = activity;
@@ -58,17 +59,27 @@ public abstract class BookingFormBase implements BookingForm {
     }
 
     @Override
-    public ObservableBooleanValue showSubmitButtonProperty() {
-        return showSubmitButtonProperty;
+    public ObservableBooleanValue showDefaultSubmitButtonProperty() {
+        return showDefaultSubmitButtonProperty;
     }
 
     public void setShowSubmitButton(boolean show) {
-        showSubmitButtonProperty.set(show);
+        showDefaultSubmitButtonProperty.set(show);
     }
 
     @Override
     public ObservableBooleanValue disableSubmitButtonProperty() {
         return disableSubmitButtonProperty;
+    }
+
+    @Override
+    public BookingFormActivityCallback getActivityCallback() {
+        return activityCallback;
+    }
+
+    @Override
+    public void setActivityCallback(BookingFormActivityCallback activityCallback) {
+        this.activityCallback = activityCallback;
     }
 
 }
