@@ -26,7 +26,6 @@ import javafx.scene.text.TextAlignment;
 import one.modality.base.shared.entities.Event;
 import one.modality.base.shared.entities.ScheduledItem;
 import one.modality.base.shared.entities.formatters.EventPriceFormatter;
-import one.modality.ecommerce.client.workingbooking.WorkingBooking;
 import one.modality.ecommerce.client.workingbooking.WorkingBookingProperties;
 import one.modality.event.client.recurringevents.RecurringEventSchedule;
 import one.modality.event.frontoffice.activities.booking.BookingI18nKeys;
@@ -144,10 +143,7 @@ final class SchedulePage implements BookingFormPage {
     }
 
     @Override
-    public void setWorkingBooking(WorkingBooking workingBooking) {
-        BookEventActivity activity = bookingForm.getActivity();
-        WorkingBookingProperties workingBookingProperties = activity.getWorkingBookingProperties();
-
+    public void setWorkingBookingProperties(WorkingBookingProperties workingBookingProperties) {
         List<ScheduledItem> scheduledItemsOnEvent = workingBookingProperties.getScheduledItemsOnEvent();
 
         // Computing non-selectable and already booked dates to style the event schedule

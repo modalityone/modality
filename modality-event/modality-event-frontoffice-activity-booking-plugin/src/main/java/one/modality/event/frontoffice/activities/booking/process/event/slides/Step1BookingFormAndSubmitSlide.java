@@ -190,14 +190,18 @@ final class Step1BookingFormAndSubmitSlide extends StepSlide implements BookingF
         return readyToSubmitBookingProperty;
     }
 
+    private void submitBooking() {
+        submitBooking(getWorkingBookingProperties().getBalance());
+    }
+
     @Override
-    public void submitBooking() {
+    public void submitBooking(int paymentDeposit) {
         WorkingBookingProperties workingBookingProperties = getWorkingBookingProperties();
         WorkingBooking workingBooking = getWorkingBooking();
         // Three cases here:
         // 1) we pay an old balance with no new option, the currentBooking has no changes
         if (workingBooking.hasNoChanges()) {
-            initiateNewPaymentAndDisplayPaymentSlide(); // Will go to the payment page on success
+            payOrThankYou(paymentDeposit);
         } else {
             // 2) the currentBooking has a new option
             turnOnWaitMode();
@@ -212,13 +216,17 @@ final class Step1BookingFormAndSubmitSlide extends StepSlide implements BookingF
                 }))
                 .onSuccess(result -> UiScheduler.runInUiThread(() -> {
                     workingBookingProperties.setBookingReference(result.getDocumentRef());
-                    // If a payment is required, we initiate the payment and display the payment slide
-                    if (workingBookingProperties.getBalance() > 0) {
-                        initiateNewPaymentAndDisplayPaymentSlide(); // will turn on wait mode again
-                    } else { // if no payment is required, we display the thank-you slide
-                        displayThankYouSlide();
-                    }
+                    payOrThankYou(paymentDeposit);
                 }));
+        }
+    }
+
+    private void payOrThankYou(int paymentDeposit) {
+        // If a payment is required, we initiate the payment and display the payment slide
+        if (paymentDeposit > 0) {
+            initiateNewPaymentAndDisplayPaymentSlide(paymentDeposit); // will turn on wait mode again
+        } else { // if no payment is required, we display the thank-you slide
+            displayThankYouSlide();
         }
     }
 

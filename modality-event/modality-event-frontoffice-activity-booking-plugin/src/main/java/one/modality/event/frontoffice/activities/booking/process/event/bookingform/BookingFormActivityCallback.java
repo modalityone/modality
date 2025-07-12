@@ -13,7 +13,7 @@ public interface BookingFormActivityCallback {
 
     void disableSubmitButton(boolean disable);
 
-    void submitBooking();
+    void submitBooking(int paymentDeposit);
 
     ObservableBooleanValue readyToSubmitBookingProperty();
 

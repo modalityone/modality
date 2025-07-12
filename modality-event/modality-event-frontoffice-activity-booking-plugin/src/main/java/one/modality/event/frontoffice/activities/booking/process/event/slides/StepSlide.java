@@ -33,6 +33,8 @@ import java.util.function.Supplier;
  */
 public abstract class StepSlide implements Supplier<Node> {
 
+    private static int LAST_PAYMENT_DEPOSIT;
+
     private final BookEventActivity bookEventActivity;
     protected final VBox mainVbox = new VBox();
 
@@ -41,7 +43,7 @@ public abstract class StepSlide implements Supplier<Node> {
         mainVbox.setAlignment(Pos.TOP_CENTER);
         // Setting a good bottom margin (1/3 screen height), so bottom elements are not stuck at the booking of the screen
         mainVbox.setPadding(new Insets(0, 0, 150, 0));
-        // Also a background is necessary for devices not supporting inverse clipping used in circle animation (ex: iPadOS)
+        // Also, a background is necessary for devices not supporting inverse clipping used in circle animation (ex: iPadOS)
         mainVbox.setBackground(Background.fill(Color.WHITE));
     }
 
@@ -102,12 +104,17 @@ public abstract class StepSlide implements Supplier<Node> {
         getBookEventActivity().displayThankYouSlide();
     }
 
+    void initiateNewPaymentAndDisplayPaymentSlide(int paymentDeposit) {
+        LAST_PAYMENT_DEPOSIT = paymentDeposit;
+        initiateNewPaymentAndDisplayPaymentSlide();
+    }
+
     void initiateNewPaymentAndDisplayPaymentSlide() {
         WorkingBookingProperties workingBookingProperties = getWorkingBookingProperties();
         Object documentPrimaryKey = workingBookingProperties.getWorkingBooking().getDocumentPrimaryKey();
         turnOnWaitMode();
         PaymentService.initiatePayment(
-                ClientPaymentUtil.createInitiatePaymentArgument(workingBookingProperties.getBalance(), documentPrimaryKey)
+                ClientPaymentUtil.createInitiatePaymentArgument(LAST_PAYMENT_DEPOSIT, documentPrimaryKey)
             )
             .onFailure(paymentResult -> UiScheduler.runInUiThread(() -> {
                 turnOffWaitMode();

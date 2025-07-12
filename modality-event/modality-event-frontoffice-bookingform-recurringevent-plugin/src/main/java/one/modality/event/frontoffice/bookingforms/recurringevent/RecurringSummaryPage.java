@@ -78,9 +78,10 @@ final class RecurringSummaryPage implements BookingFormPage {
     }
 
     @Override
-    public void setWorkingBooking(WorkingBooking workingBooking) {
+    public void setWorkingBookingProperties(WorkingBookingProperties workingBookingProperties) {
+        WorkingBooking workingBooking = workingBookingProperties.getWorkingBooking();
         // Facility fee checkbox for events with facility fees rates
-        boolean hasFacilityFees = workingBooking.getPolicyAggregate().hasFacilityFees();
+        boolean hasFacilityFees = workingBookingProperties.getPolicyAggregate().hasFacilityFees();
         Layouts.setManagedAndVisibleProperties(facilityFeeCheckBox, hasFacilityFees);
         Document document = workingBooking.getLastestDocumentAggregate().getDocument();
         facilityFeeCheckBox.setSelected(Booleans.isTrue(document.isPersonFacilityFee()));
