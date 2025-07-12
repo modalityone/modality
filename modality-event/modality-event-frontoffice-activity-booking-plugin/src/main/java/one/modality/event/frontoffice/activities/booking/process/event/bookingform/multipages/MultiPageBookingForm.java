@@ -3,8 +3,14 @@ package one.modality.event.frontoffice.activities.booking.process.event.bookingf
 import dev.webfx.extras.panes.TransitionPane;
 import dev.webfx.extras.util.layout.Layouts;
 import dev.webfx.kit.util.properties.FXProperties;
+import dev.webfx.kit.util.properties.Unregisterable;
+import javafx.beans.binding.BooleanBinding;
+import javafx.beans.property.BooleanProperty;
+import javafx.beans.property.SimpleBooleanProperty;
+import javafx.beans.value.ObservableBooleanValue;
 import javafx.scene.Node;
 import javafx.scene.layout.BorderPane;
+import one.modality.ecommerce.client.workingbooking.FXPersonToBook;
 import one.modality.event.frontoffice.activities.booking.process.event.BookEventActivity;
 import one.modality.event.frontoffice.activities.booking.process.event.bookingform.BookingFormBase;
 import one.modality.event.frontoffice.activities.booking.process.event.bookingform.BookingFormSettings;
@@ -19,12 +25,42 @@ public abstract class MultiPageBookingForm extends BookingFormBase {
 
     private final NavigationBar navigationBar;
     private final TransitionPane transitionPane = new TransitionPane();
-    private int currentFamilyOptionsViewIndex;
+    private final BooleanProperty validProperty = new SimpleBooleanProperty();
+    private final BooleanProperty personToBookRequiredProperty = new SimpleBooleanProperty() {
+        @Override
+        protected void invalidated() {
+            getActivityCallback().setPersonToBookRequired(get());
+        }
+    };
+    private final BooleanProperty showDefaultSubmitButtonProperty = new SimpleBooleanProperty() {
+        @Override
+        protected void invalidated() {
+            getActivityCallback().showDefaultSubmitButton(get());
+        }
+    };
+    private final BooleanProperty pageShowingOwnSubmitButtonProperty = new SimpleBooleanProperty();
+    private int currentFamilyOptionsViewIndex = -1;
+    protected BookingFormPage bookingFormPage;
+    private Unregisterable bookingFormPageValidListener;
 
     public MultiPageBookingForm(BookEventActivity activity, BookingFormSettings settings) {
         super(activity, settings);
         Layouts.setFixedWidth(transitionPane, MAX_WIDTH);
-        navigationBar = settings.showNavigationBar() ? new NavigationBar() : null;
+        if (!settings.showNavigationBar()) {
+            navigationBar = null;
+        } else {
+            navigationBar = new NavigationBar();
+            navigationBar.getNextButton().disableProperty().bind(new BooleanBinding() { {
+                    super.bind(validProperty, personToBookRequiredProperty, showDefaultSubmitButtonProperty, showDefaultSubmitButtonProperty, FXPersonToBook.personToBookProperty());
+                }
+
+                @Override
+                protected boolean computeValue() {
+                    //!valid || personToBookRequired && personToBook == null || showDefaultSubmitButton || showDefaultSubmitButton
+                    return !validProperty.get() || personToBookRequiredProperty.get() && FXPersonToBook.getPersonToBook() == null || showDefaultSubmitButtonProperty.get() || showDefaultSubmitButtonProperty.get();
+                }
+            });
+        }
     }
 
     protected abstract BookingFormPage[] getPages();
@@ -46,8 +82,14 @@ public abstract class MultiPageBookingForm extends BookingFormBase {
 
     @Override
     public void onWorkingBookingLoaded() {
-        //bookWholeEvent();
-        navigateToPage(0);
+        if (currentFamilyOptionsViewIndex == -1) {
+            navigateToPage(0);
+        }
+    }
+
+    @Override
+    public ObservableBooleanValue transitingProperty() {
+        return transitionPane.transitingProperty();
     }
 
     public void navigateToPreviousPage() {
@@ -63,27 +105,48 @@ public abstract class MultiPageBookingForm extends BookingFormBase {
 
     private void navigateToPage(int index) {
         BookingFormPage[] pages = getPages();
-        BookingFormPage bookingFormPage = pages[index];
+        bookingFormPage = pages[index];
+        validProperty.bind(bookingFormPage.validProperty());
+        pageShowingOwnSubmitButtonProperty.set(bookingFormPage.isShowingOwnSubmitButton());
         bookingFormPage.setWorkingBooking(activity.getWorkingBooking());
         transitionPane.setReverse(index < currentFamilyOptionsViewIndex);
         transitionPane.transitToContent(bookingFormPage.getView());
         currentFamilyOptionsViewIndex = index;
+        if (bookingFormPageValidListener != null)
+            bookingFormPageValidListener.unregister();
+        bookingFormPageValidListener = FXProperties.runNowAndOnPropertyChange(valid -> {
+            getActivityCallback().disableSubmitButton(!valid);
+        }, bookingFormPage.validProperty());
+        updateNavigationBar();
+        updatePersonToBookRequired();
+        updateShowDefaultSubmitButton();
+    }
+
+    private boolean isLastPage() {
+        return currentFamilyOptionsViewIndex == getPages().length - 1;
+    }
+
+    protected void updateNavigationBar() {
         if (navigationBar != null) {
             navigationBar.setTitleI18nKey(bookingFormPage.getTitleI18nKey());
-            navigationBar.getBackButton().setDisable(index == 0);
-            //navigationBar.getNextButton().setDisable(index == familyOptionsViews.length - 1);
+            navigationBar.getBackButton().setDisable(currentFamilyOptionsViewIndex == 0);
         }
-        disableSubmitButtonProperty.bind(FXProperties.not(bookingFormPage.validProperty()));
-        updateShowLogin();
-        updateShowSubmitButton();
     }
 
-    protected void updateShowLogin() {
-        setShowLogin(currentFamilyOptionsViewIndex == getPages().length - 1);
+    protected void updatePersonToBookRequired() {
+        setPersonToBookRequired(isLastPage());
     }
 
-    protected void updateShowSubmitButton() {
-        setShowSubmitButton(currentFamilyOptionsViewIndex == getPages().length - 1);
+    protected void setPersonToBookRequired(boolean required) {
+        personToBookRequiredProperty.set(required);
+    }
+
+    protected void updateShowDefaultSubmitButton() {
+        setShowDefaultSubmitButton(isLastPage() && !bookingFormPage.isShowingOwnSubmitButton());
+    }
+
+    protected void setShowDefaultSubmitButton(boolean show) {
+        showDefaultSubmitButtonProperty.set(show);
     }
 
 }

@@ -4,6 +4,7 @@ import dev.webfx.extras.i18n.controls.I18nControls;
 import dev.webfx.extras.panes.FlipPane;
 import dev.webfx.extras.panes.MonoPane;
 import dev.webfx.extras.styles.bootstrap.Bootstrap;
+import dev.webfx.extras.util.animation.Animations;
 import dev.webfx.extras.util.layout.Layouts;
 import dev.webfx.kit.util.properties.FXProperties;
 import dev.webfx.platform.console.Console;
@@ -43,9 +44,10 @@ final class Step1BookingFormAndSubmitSlide extends StepSlide implements BookingF
 
     private final Button defaultSubmitButton = Bootstrap.largeSuccessButton(I18nControls.newButton(BaseI18nKeys.Submit));
 
-    private final BooleanProperty bookingFormShowLoginProperty = new SimpleBooleanProperty();
+    private final BooleanProperty bookingFormPersonToBookRequiredProperty = new SimpleBooleanProperty();
     private final BooleanProperty bookingFormShowDefaultSubmitButtonProperty = new SimpleBooleanProperty();
     private final BooleanProperty bookingFormDisableSubmitButtonProperty = new SimpleBooleanProperty();
+    private final BooleanProperty bookingFormTransitingProperty = new SimpleBooleanProperty();
     private final BooleanProperty readyToSubmitBookingProperty = new SimpleBooleanProperty();
     // Node property that will be managed by the sub-router to mount the CheckoutAccountActivity (when routed)
     private final ObjectProperty<Node> checkoutAccountMountNodeProperty = new SimpleObjectProperty<>();
@@ -69,7 +71,7 @@ final class Step1BookingFormAndSubmitSlide extends StepSlide implements BookingF
         signInContainer.setCenter(signInContent);
         flipPane.setFront(signInContainer);
         FXProperties.runNowAndOnPropertiesChange(this::updateLoginAndSubmitVisibility,
-            FXPersonToBook.personToBookProperty(), bookingFormShowLoginProperty, bookingFormShowDefaultSubmitButtonProperty, bookingFormDisableSubmitButtonProperty);
+            FXPersonToBook.personToBookProperty(), bookingFormPersonToBookRequiredProperty, bookingFormShowDefaultSubmitButtonProperty, bookingFormDisableSubmitButtonProperty, bookingFormTransitingProperty);
         orGuestLink.setOnAction(e -> {
             flipPane.flipToBack();
             guestPanel.onShowing();
@@ -116,14 +118,14 @@ final class Step1BookingFormAndSubmitSlide extends StepSlide implements BookingF
         Collections.addIfNotContainsOrRemove(signIntopVBox.getChildren(), bookAsAGuestAllowed, orGuestLink);
 
         // The booking form decides at which point to show the default submitButton
-        bookingFormShowDefaultSubmitButtonProperty.bind(bookingForm.showDefaultSubmitButtonProperty());
-        bookingFormShowLoginProperty.bind(bookingForm.showLoginProperty());
-        bookingFormDisableSubmitButtonProperty.bind(bookingForm.disableSubmitButtonProperty());
+        showDefaultSubmitButton(false);
+        setPersonToBookRequired(false);
+        disableSubmitButton(false);
+        bookingFormTransitingProperty.bind(bookingForm.transitingProperty());
 
         // and if it should be disabled or not, but in addition to that, we disable it if we show the login
         defaultSubmitButton.disableProperty().bind(readyToSubmitBookingProperty.not());
-        guestPanel.getSubmitButton().disableProperty().bind(bookingForm.disableSubmitButtonProperty());
-
+        guestPanel.getSubmitButton().disableProperty().bind(bookingFormDisableSubmitButtonProperty);
 
         mainVbox.getChildren().setAll(
             bookingFormUi,
@@ -133,18 +135,25 @@ final class Step1BookingFormAndSubmitSlide extends StepSlide implements BookingF
     }
 
     private void updateLoginAndSubmitVisibility() {
+        boolean transiting = bookingFormTransitingProperty.get();
         // Updating login visibility
         Person personToBook = FXPersonToBook.getPersonToBook();
-        boolean showLogin = bookingFormShowLoginProperty.get() && personToBook == null; // Means that the user is logged in with an account in Modality
-        if (showLogin && signInContent.getContent() == null) {
+        boolean showLogin = bookingFormPersonToBookRequiredProperty.get() && personToBook == null; // Means that the user is logged in with an account in Modality
+        if (showLogin && signInContent.getContent() == null && !transiting) {
             WindowHistory.getProvider().push(CheckoutAccountRouting.getPath());
         }
-        Layouts.setManagedAndVisibleProperties(flipPane, showLogin);
+        if (!transiting || showLogin)
+            Layouts.setManagedAndVisibleProperties(flipPane, showLogin);
+        Animations.animateProperty(flipPane.opacityProperty(), showLogin ? 1 : 0);
+        if (!transiting) {
+            Layouts.setManagedAndVisibleProperties(defaultSubmitButton, bookingFormShowDefaultSubmitButtonProperty.get() && !showLogin);
+        }
 
         // Updating submit button visibility
-        readyToSubmitBookingProperty.set(!bookingFormDisableSubmitButtonProperty.get() && !showLogin);
-        Layouts.setManagedAndVisibleProperties(defaultSubmitButton, bookingFormShowDefaultSubmitButtonProperty.get() && !showLogin);
-        defaultSubmitButton.setDefaultButton(showLogin);
+        boolean readyToSubmitButton = !bookingFormDisableSubmitButtonProperty.get() && !showLogin;
+        if (!readyToSubmitButton || !transiting)
+            readyToSubmitBookingProperty.set(readyToSubmitButton);
+        defaultSubmitButton.setDefaultButton(!showLogin);
     }
 
     @Override
@@ -157,6 +166,23 @@ final class Step1BookingFormAndSubmitSlide extends StepSlide implements BookingF
     void turnOffWaitMode() {
         turnOffButtonWaitMode(defaultSubmitButton, BaseI18nKeys.Submit);
         guestPanel.turnOffButtonWaitMode();
+    }
+
+    // Callback (called by the booking form or its pages)
+
+    @Override
+    public void setPersonToBookRequired(boolean required) {
+        bookingFormPersonToBookRequiredProperty.set(required);
+    }
+
+    @Override
+    public void showDefaultSubmitButton(boolean show) {
+        bookingFormShowDefaultSubmitButtonProperty.set(show);
+    }
+
+    @Override
+    public void disableSubmitButton(boolean disable) {
+        bookingFormDisableSubmitButtonProperty.set(disable);
     }
 
     @Override

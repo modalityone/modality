@@ -34,6 +34,7 @@ final class DigitsSlideController {
     private final Step5CancellationSlide step5CancellationSlide;
     private final Step6ErrorSlide step6ErrorSlide;
     private BookingForm bookingForm;
+    private boolean bookingFormCreated;
     private StepSlide displayedSlide;
 
     public DigitsSlideController(BookEventActivity bookEventActivity) {
@@ -61,8 +62,10 @@ final class DigitsSlideController {
             bookingForm = null;
             step6ErrorSlide.setErrorMessage("Error: Unmanaged type of event");
             displaySlide(step6ErrorSlide);
-        } else
+        } else {
             bookingForm = bookingFormProvider.createBookingForm(event, bookEventActivity);
+            bookingFormCreated = true;
+        }
     }
 
     public BookingForm getBookingForm() {
@@ -74,12 +77,13 @@ final class DigitsSlideController {
         step2PaymentSlide.reset();
         step6ErrorSlide.reset();
 
-        if (bookingForm != null) {
-            bookingForm.onWorkingBookingLoaded();
+        if (bookingForm != null && bookingFormCreated) {
             step1BookingFormAndSubmitSlide.setBookingForm(bookingForm);
+            bookingForm.onWorkingBookingLoaded();
             // Sub-routing node binding (displaying the possible sub-routing account node in the appropriate place in step2)
             step1BookingFormAndSubmitSlide.accountMountNodeProperty().bind(bookEventActivity.mountNodeProperty());
             displayFirstSlide();
+            bookingFormCreated = false;
         }
     }
 

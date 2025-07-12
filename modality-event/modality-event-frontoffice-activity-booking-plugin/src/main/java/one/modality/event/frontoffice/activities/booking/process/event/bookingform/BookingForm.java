@@ -1,5 +1,6 @@
 package one.modality.event.frontoffice.activities.booking.process.event.bookingform;
 
+import javafx.beans.property.SimpleBooleanProperty;
 import javafx.beans.value.ObservableBooleanValue;
 import javafx.scene.Node;
 
@@ -14,11 +15,9 @@ public interface BookingForm {
 
     void onWorkingBookingLoaded();
 
-    ObservableBooleanValue showLoginProperty();
-
-    ObservableBooleanValue showDefaultSubmitButtonProperty();
-
-    ObservableBooleanValue disableSubmitButtonProperty();
+    default ObservableBooleanValue transitingProperty() {
+        return new SimpleBooleanProperty(false);
+    }
 
     void setActivityCallback(BookingFormActivityCallback activityCallback);
 

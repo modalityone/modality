@@ -14,6 +14,10 @@ public interface BookingFormPage {
 
     Node getView();
 
+    default boolean isShowingOwnSubmitButton() {
+        return false;
+    }
+
     void setWorkingBooking(WorkingBooking workingBooking);
 
     default boolean isValid() {

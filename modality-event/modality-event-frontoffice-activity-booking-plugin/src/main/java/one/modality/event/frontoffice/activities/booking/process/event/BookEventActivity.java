@@ -33,6 +33,7 @@ import one.modality.base.frontoffice.mainframe.fx.FXCollapseMenu;
 import one.modality.base.frontoffice.utility.tyler.TextUtility;
 import one.modality.base.shared.entities.Event;
 import one.modality.base.shared.entities.Person;
+import one.modality.crm.backoffice.organization.fx.FXOrganizationId;
 import one.modality.crm.client.i18n.CrmI18nKeys;
 import one.modality.crm.shared.services.authn.fx.FXModalityUserPrincipal;
 import one.modality.crm.shared.services.authn.fx.FXUserPersonId;
@@ -85,7 +86,7 @@ public final class BookEventActivity extends ViewDomainActivityBase implements B
         if (eventId != null) { // eventId is null when sub-routing /booking/account (instead of /booking/event/:eventId)
             FXEventId.setEventId(EntityId.create(Event.class, Numbers.toShortestNumber(eventId)));
             // Initially hiding the footer (app menu), especially when coming form the website.
-            FXCollapseMenu.setCollapseMenu(true);
+            FXCollapseMenu.setCollapseMenu(!Entities.samePrimaryKey(FXOrganizationId.getOrganizationId(), 1));
         }
     }
 
@@ -108,7 +109,7 @@ public final class BookEventActivity extends ViewDomainActivityBase implements B
     @Override
     public void onResume() {
         // Initially hiding the menu to not distract the user with other things (especially when coming form the website)
-        FXCollapseMenu.setCollapseMenu(true);
+        FXCollapseMenu.setCollapseMenu(!Entities.samePrimaryKey(FXOrganizationId.getOrganizationId(), 1));
         super.onResume();
     }
 
@@ -124,7 +125,7 @@ public final class BookEventActivity extends ViewDomainActivityBase implements B
     }
 
     public void onReachingEndSlide() {
-        FXEventId.setEventId(null); // This is to ensure that next time the user books an event in this same session, we
+        FXEventId.setEventId(null); // This is to ensure that the next time the user books an event in this same session, we
         FXCollapseMenu.setCollapseMenu(false);
     }
 

@@ -7,6 +7,12 @@ import javafx.beans.value.ObservableBooleanValue;
  */
 public interface BookingFormActivityCallback {
 
+    void setPersonToBookRequired(boolean required);
+
+    void showDefaultSubmitButton(boolean show);
+
+    void disableSubmitButton(boolean disable);
+
     void submitBooking();
 
     ObservableBooleanValue readyToSubmitBookingProperty();
