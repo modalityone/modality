@@ -1,5 +1,6 @@
 package one.modality.event.frontoffice.activities.booking.process.event.bookingform.multipages;
 
+import dev.webfx.extras.panes.MonoPane;
 import dev.webfx.extras.panes.TransitionPane;
 import dev.webfx.extras.util.layout.Layouts;
 import dev.webfx.kit.util.properties.FXProperties;
@@ -10,6 +11,7 @@ import javafx.beans.property.SimpleBooleanProperty;
 import javafx.beans.value.ObservableBooleanValue;
 import javafx.scene.Node;
 import javafx.scene.layout.BorderPane;
+import javafx.scene.layout.Region;
 import one.modality.ecommerce.client.workingbooking.FXPersonToBook;
 import one.modality.event.frontoffice.activities.booking.process.event.BookEventActivity;
 import one.modality.event.frontoffice.activities.booking.process.event.bookingform.BookingFormBase;
@@ -22,6 +24,7 @@ import one.modality.event.frontoffice.activities.booking.process.event.bookingfo
 public abstract class MultiPageBookingForm extends BookingFormBase {
 
     private static final double MAX_WIDTH = 800;
+    private static MonoPane LAST_PAGE_EMBEDDED_LOGIN_CONTAINER;
 
     private final NavigationBar navigationBar;
     private final TransitionPane transitionPane = new TransitionPane();
@@ -50,9 +53,10 @@ public abstract class MultiPageBookingForm extends BookingFormBase {
             navigationBar = null;
         } else {
             navigationBar = new NavigationBar();
+            navigationBar.getBackButton().setOnMouseClicked(e -> navigateToPreviousPage());
+            navigationBar.getNextButton().setOnMouseClicked(e -> navigateToNextPage());
             navigationBar.getNextButton().disableProperty().bind(new BooleanBinding() { {
-                    super.bind(validProperty, personToBookRequiredProperty, showDefaultSubmitButtonProperty, showDefaultSubmitButtonProperty, FXPersonToBook.personToBookProperty());
-                }
+                super.bind(validProperty, personToBookRequiredProperty, showDefaultSubmitButtonProperty, showDefaultSubmitButtonProperty, FXPersonToBook.personToBookProperty()); }
 
                 @Override
                 protected boolean computeValue() {
@@ -70,8 +74,6 @@ public abstract class MultiPageBookingForm extends BookingFormBase {
         BorderPane container = new BorderPane(transitionPane);
         if (navigationBar != null) {
             container.setTop(navigationBar.getView());
-            navigationBar.getBackButton().setOnMouseClicked(e -> navigateToPreviousPage());
-            navigationBar.getNextButton().setOnMouseClicked(e -> navigateToNextPage());
         }
         if (settings.showNavigationBar())
             container.setBottom(new PriceBar(activity.getWorkingBookingProperties()).getView());
@@ -117,6 +119,16 @@ public abstract class MultiPageBookingForm extends BookingFormBase {
         bookingFormPageValidListener = FXProperties.runNowAndOnPropertyChange(valid -> {
             getActivityCallback().disableSubmitButton(!valid);
         }, bookingFormPage.validProperty());
+        MonoPane embeddedLoginContainer = bookingFormPage.getEmbeddedLoginContainer();
+        if (embeddedLoginContainer != null && embeddedLoginContainer != LAST_PAGE_EMBEDDED_LOGIN_CONTAINER) {
+            if (LAST_PAGE_EMBEDDED_LOGIN_CONTAINER != null)
+                LAST_PAGE_EMBEDDED_LOGIN_CONTAINER.setContent(null);
+            Region embeddedLoginNode = activityCallback.getEmbeddedLoginNode();
+            embeddedLoginContainer.setContent(embeddedLoginNode);
+            embeddedLoginContainer.visibleProperty().bind(embeddedLoginNode.visibleProperty());
+            embeddedLoginContainer.managedProperty().bind(embeddedLoginNode.managedProperty());
+            LAST_PAGE_EMBEDDED_LOGIN_CONTAINER = embeddedLoginContainer;
+        }
         updateNavigationBar();
         updatePersonToBookRequired();
         updateShowDefaultSubmitButton();
@@ -134,7 +146,7 @@ public abstract class MultiPageBookingForm extends BookingFormBase {
     }
 
     protected void updatePersonToBookRequired() {
-        setPersonToBookRequired(isLastPage());
+        setPersonToBookRequired(bookingFormPage.getEmbeddedLoginContainer() != null);
     }
 
     protected void setPersonToBookRequired(boolean required) {

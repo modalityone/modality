@@ -3,6 +3,7 @@ package one.modality.event.frontoffice.bookingforms.recurringevent;
 import dev.webfx.extras.i18n.I18nKeys;
 import dev.webfx.extras.i18n.controls.I18nControls;
 import dev.webfx.extras.panes.ColumnsPane;
+import dev.webfx.extras.panes.MonoPane;
 import dev.webfx.extras.styles.bootstrap.Bootstrap;
 import dev.webfx.extras.time.format.LocalizedTime;
 import dev.webfx.extras.util.layout.Layouts;
@@ -46,9 +47,11 @@ final class RecurringSummaryPage implements BookingFormPage {
     private final RecurringEventBookingForm bookingForm;
     private final GridPane summaryGridPane = new GridPane();
     private final CheckBox facilityFeeCheckBox = I18nControls.newCheckBox(BookingI18nKeys.FacilityFee);
+    private final MonoPane embeddedLoginContainer = new MonoPane();
     private final VBox container = new VBox(50,
         summaryGridPane,
-        facilityFeeCheckBox
+        facilityFeeCheckBox,
+        embeddedLoginContainer
     );
 
     public RecurringSummaryPage(RecurringEventBookingForm bookingForm) {
@@ -75,6 +78,11 @@ final class RecurringSummaryPage implements BookingFormPage {
     @Override
     public Node getView() {
         return container;
+    }
+
+    @Override
+    public MonoPane getEmbeddedLoginContainer() {
+        return embeddedLoginContainer;
     }
 
     @Override

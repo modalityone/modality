@@ -22,6 +22,7 @@ import javafx.scene.Node;
 import javafx.scene.control.Button;
 import javafx.scene.control.Hyperlink;
 import javafx.scene.layout.BorderPane;
+import javafx.scene.layout.Region;
 import javafx.scene.layout.VBox;
 import one.modality.base.client.i18n.BaseI18nKeys;
 import one.modality.base.shared.entities.Document;
@@ -50,35 +51,35 @@ final class Step1BookingFormAndSubmitSlide extends StepSlide implements BookingF
     private final BooleanProperty bookingFormTransitingProperty = new SimpleBooleanProperty();
     private final BooleanProperty readyToSubmitBookingProperty = new SimpleBooleanProperty();
     // Node property that will be managed by the sub-router to mount the CheckoutAccountActivity (when routed)
-    private final ObjectProperty<Node> checkoutAccountMountNodeProperty = new SimpleObjectProperty<>();
-    private final VBox signIntopVBox = new VBox(10, Bootstrap.textPrimary(Bootstrap.strong(I18nControls.newLabel(BookingI18nKeys.LoginBeforeBooking))));
+    private final ObjectProperty<Node> embeddedLoginMountNodeProperty = new SimpleObjectProperty<>();
+    private final VBox loginTopVBox = new VBox(10, Bootstrap.textPrimary(Bootstrap.strong(I18nControls.newLabel(BookingI18nKeys.LoginBeforeBooking))));
     private final Hyperlink orGuestLink = Bootstrap.textPrimary(I18nControls.newHyperlink(BookingI18nKeys.OrBookAsGuest));
-    private final FlipPane flipPane = new FlipPane();
-    private final MonoPane signInContent = new MonoPane();
+    private final FlipPane loginGuestFlipPane = new FlipPane();
+    private final MonoPane loginContent = new MonoPane();
     private final GuestPanel guestPanel = new GuestPanel();
 
     public Step1BookingFormAndSubmitSlide(BookEventActivity bookEventActivity) {
         super(bookEventActivity);
         mainVbox.setSpacing(100);
         defaultSubmitButton.setOnAction(event -> submitBooking());
-        flipPane.setAlignment(Pos.TOP_CENTER);
-        signInContent.contentProperty().bind(checkoutAccountMountNodeProperty); // managed by sub-router
+        loginGuestFlipPane.setAlignment(Pos.TOP_CENTER);
+        loginContent.contentProperty().bind(embeddedLoginMountNodeProperty); // managed by sub-router
         // Adding the container that will display the CheckoutAccountActivity (and eventually the login page before)
         BorderPane signInContainer = new BorderPane();
-        signIntopVBox.setAlignment(Pos.TOP_CENTER);
-        BorderPane.setMargin(signIntopVBox, new Insets(0, 0, 20, 0));
-        signInContainer.setTop(signIntopVBox);
-        signInContainer.setCenter(signInContent);
-        flipPane.setFront(signInContainer);
+        loginTopVBox.setAlignment(Pos.TOP_CENTER);
+        BorderPane.setMargin(loginTopVBox, new Insets(0, 0, 20, 0));
+        signInContainer.setTop(loginTopVBox);
+        signInContainer.setCenter(loginContent);
+        loginGuestFlipPane.setFront(signInContainer);
         FXProperties.runNowAndOnPropertiesChange(this::updateLoginAndSubmitVisibility,
             FXPersonToBook.personToBookProperty(), bookingFormPersonToBookRequiredProperty, bookingFormShowDefaultSubmitButtonProperty, bookingFormDisableSubmitButtonProperty, bookingFormTransitingProperty);
         orGuestLink.setOnAction(e -> {
-            flipPane.flipToBack();
+            loginGuestFlipPane.flipToBack();
             guestPanel.onShowing();
         });
         Hyperlink orAccountLink = Bootstrap.textPrimary(I18nControls.newHyperlink(BookingI18nKeys.OrBookUsingAccount));
         orAccountLink.setOnAction(e -> {
-            flipPane.flipToFront();
+            loginGuestFlipPane.flipToFront();
             guestPanel.onHiding();
         });
         guestPanel.addTopNode(orAccountLink);
@@ -95,7 +96,7 @@ final class Step1BookingFormAndSubmitSlide extends StepSlide implements BookingF
 
     // Exposing accountMountNodeProperty for the sub-routing binding (done in SlideController)
     ObjectProperty<Node> accountMountNodeProperty() {
-        return checkoutAccountMountNodeProperty;
+        return embeddedLoginMountNodeProperty;
     }
 
     @Override
@@ -114,8 +115,8 @@ final class Step1BookingFormAndSubmitSlide extends StepSlide implements BookingF
 
         boolean bookAsAGuestAllowed = bookingForm.getSettings().isBookAsAGuestAllowed();
         if (bookAsAGuestAllowed)
-            flipPane.setBack(guestPanel.getContainer());
-        Collections.addIfNotContainsOrRemove(signIntopVBox.getChildren(), bookAsAGuestAllowed, orGuestLink);
+            loginGuestFlipPane.setBack(guestPanel.getContainer());
+        Collections.addIfNotContainsOrRemove(loginTopVBox.getChildren(), bookAsAGuestAllowed, orGuestLink);
 
         // The booking form decides at which point to show the default submitButton
         showDefaultSubmitButton(false);
@@ -129,8 +130,7 @@ final class Step1BookingFormAndSubmitSlide extends StepSlide implements BookingF
 
         mainVbox.getChildren().setAll(
             bookingFormUi,
-            defaultSubmitButton,
-            flipPane
+            defaultSubmitButton
         );
     }
 
@@ -139,12 +139,12 @@ final class Step1BookingFormAndSubmitSlide extends StepSlide implements BookingF
         // Updating login visibility
         Person personToBook = FXPersonToBook.getPersonToBook();
         boolean showLogin = bookingFormPersonToBookRequiredProperty.get() && personToBook == null; // Means that the user is logged in with an account in Modality
-        if (showLogin && signInContent.getContent() == null && !transiting) {
+        if (showLogin && loginContent.getContent() == null && !transiting) {
             WindowHistory.getProvider().push(CheckoutAccountRouting.getPath());
         }
         if (!transiting || showLogin)
-            Layouts.setManagedAndVisibleProperties(flipPane, showLogin);
-        Animations.animateProperty(flipPane.opacityProperty(), showLogin ? 1 : 0);
+            Layouts.setManagedAndVisibleProperties(loginGuestFlipPane, showLogin);
+        Animations.animateProperty(loginGuestFlipPane.opacityProperty(), showLogin ? 1 : 0);
         if (!transiting) {
             Layouts.setManagedAndVisibleProperties(defaultSubmitButton, bookingFormShowDefaultSubmitButtonProperty.get() && !showLogin);
         }
@@ -183,6 +183,11 @@ final class Step1BookingFormAndSubmitSlide extends StepSlide implements BookingF
     @Override
     public void disableSubmitButton(boolean disable) {
         bookingFormDisableSubmitButtonProperty.set(disable);
+    }
+
+    @Override
+    public Region getEmbeddedLoginNode() {
+        return loginGuestFlipPane;
     }
 
     @Override
