@@ -56,12 +56,12 @@ public abstract class MultiPageBookingForm extends BookingFormBase {
             navigationBar.getBackButton().setOnMouseClicked(e -> navigateToPreviousPage());
             navigationBar.getNextButton().setOnMouseClicked(e -> navigateToNextPage());
             navigationBar.getNextButton().disableProperty().bind(new BooleanBinding() { {
-                super.bind(validProperty, personToBookRequiredProperty, showDefaultSubmitButtonProperty, showDefaultSubmitButtonProperty, FXPersonToBook.personToBookProperty()); }
+                super.bind(validProperty, personToBookRequiredProperty, showDefaultSubmitButtonProperty, pageShowingOwnSubmitButtonProperty, FXPersonToBook.personToBookProperty()); }
 
                 @Override
                 protected boolean computeValue() {
-                    //!valid || personToBookRequired && personToBook == null || showDefaultSubmitButton || showDefaultSubmitButton
-                    return !validProperty.get() || personToBookRequiredProperty.get() && FXPersonToBook.getPersonToBook() == null || showDefaultSubmitButtonProperty.get() || showDefaultSubmitButtonProperty.get();
+                    //!valid || personToBookRequired && personToBook == null || showDefaultSubmitButton || pageShowingOwnSubmitButton
+                    return !validProperty.get() || personToBookRequiredProperty.get() && FXPersonToBook.getPersonToBook() == null || showDefaultSubmitButtonProperty.get() || pageShowingOwnSubmitButtonProperty.get();
                 }
             });
         }
