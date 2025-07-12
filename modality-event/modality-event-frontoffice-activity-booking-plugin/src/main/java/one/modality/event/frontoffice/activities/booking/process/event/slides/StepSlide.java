@@ -5,7 +5,6 @@ import dev.webfx.extras.operation.OperationUtil;
 import dev.webfx.extras.webtext.HtmlText;
 import dev.webfx.platform.console.Console;
 import dev.webfx.platform.uischeduler.UiScheduler;
-import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Node;
 import javafx.scene.control.Button;
@@ -41,8 +40,6 @@ public abstract class StepSlide implements Supplier<Node> {
     protected StepSlide(BookEventActivity bookEventActivity) {
         this.bookEventActivity = bookEventActivity;
         mainVbox.setAlignment(Pos.TOP_CENTER);
-        // Setting a good bottom margin (1/3 screen height), so bottom elements are not stuck at the booking of the screen
-        mainVbox.setPadding(new Insets(0, 0, 150, 0));
         // Also, a background is necessary for devices not supporting inverse clipping used in circle animation (ex: iPadOS)
         mainVbox.setBackground(Background.fill(Color.WHITE));
     }
