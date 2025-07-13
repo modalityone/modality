@@ -8,7 +8,15 @@
     </modules>
 
     <required-libraries>
-        <library artifact="com.stripe:stripe-java:25.10.0"/>
+        <library artifact="com.stripe:stripe-java:25.10.0">
+            <exported-packages> <!-- Explicit list of packages (automatic discovery was not working on the staging server) -->
+                <package>com.stripe</package>
+                <package>com.stripe.model</package>
+                <package>com.stripe.model.checkout</package>
+                <package>com.stripe.param</package>
+                <package>com.stripe.param.checkout</package>
+            </exported-packages>
+        </library>
         <library artifact="com.google.code.gson:gson:2.11.0">
             <exported-packages>
                 <package>com.google.gson</package>
