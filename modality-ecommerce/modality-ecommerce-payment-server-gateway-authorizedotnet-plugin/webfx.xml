@@ -23,7 +23,13 @@
     </providers>
 
     <required-libraries>
-        <library artifact="net.authorize:anet-java-sdk:3.0.0"/>
+        <library artifact="net.authorize:anet-java-sdk:3.0.0">
+            <exported-packages> <!-- Explicit list of packages (automatic discovery was not working on the staging server) -->
+                <package>net.authorize</package>>
+                <package>net.authorize.api.contract.v1</package>;
+                <package>net.authorize.api.controller</package>
+            </exported-packages>
+        </library>
         <library name="jakarta-xml-bind" artifact="jakarta.xml.bind:jakarta.xml.bind-api:4.0.2"/>
         <library name="org.apache.httpcomponents.client5.httpclient5" artifact="org.apache.httpcomponents.client5:httpclient5:5.3.1"/>
         <library name="org.apache.log4j" artifact="org.apache.logging.log4j:log4j-1.2-api:2.23.1"/>
