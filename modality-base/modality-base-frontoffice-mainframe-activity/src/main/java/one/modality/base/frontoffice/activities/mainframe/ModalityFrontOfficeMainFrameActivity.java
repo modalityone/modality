@@ -220,7 +220,7 @@ public final class ModalityFrontOfficeMainFrameActivity extends ModalityClientMa
         MainFrameFooterNodeProvider footerProvider = MainFrameFooterNodeProvider.getProvider();
         Node footer = footerProvider == null ? null : footerProvider.getFooterNode();
         if (footer != null) {
-            VBox.setMargin(footer, new Insets(0, 0, 50, 0));
+            VBox.setMargin(footer, new Insets(50, 0, 50, 0));
             pageVBox.getChildren().add(footer);
             Layouts.bindManagedToVisibleProperty(footer);
         }
@@ -271,7 +271,7 @@ public final class ModalityFrontOfficeMainFrameActivity extends ModalityClientMa
             if (mountNode != null && getMountNodeEmbeddingScrollPane(mountNode) == null) {
                 if (mountNode instanceof Region mountRegion) {
                     FXProperties.runNowAndOnPropertiesChange(() ->
-                            mountRegion.setMinHeight(pageTransitionPane.getMinHeight() - languageMenuBar.getHeight() - mainMenuButtonBar.getHeight() - userMenuButtonBar.getHeight() - (footer != null && footer.isVisible() ? footer.getLayoutBounds().getHeight() + VBox.getMargin(footer).getBottom() : 0))
+                            mountRegion.setMinHeight(pageTransitionPane.getMinHeight() - languageMenuBar.getHeight() - mainMenuButtonBar.getHeight() - userMenuButtonBar.getHeight() - (footer != null && footer.isVisible() ? footer.getLayoutBounds().getHeight() + VBox.getMargin(footer).getTop() + VBox.getMargin(footer).getBottom() : 0))
                         , pageTransitionPane.minHeightProperty(), languageMenuBar.heightProperty(), mainMenuButtonBar.heightProperty(), userMenuButtonBar.heightProperty(), footer == null ? null : footer.layoutBoundsProperty(), footer == null ? null : footer.visibleProperty());
                 }
                 registerMountNodeEmbeddingScrollPane(mountNode, scrollPane);
