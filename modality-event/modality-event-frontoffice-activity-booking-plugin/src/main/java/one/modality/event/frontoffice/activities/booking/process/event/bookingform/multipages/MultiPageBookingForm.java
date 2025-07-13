@@ -106,6 +106,9 @@ public abstract class MultiPageBookingForm extends BookingFormBase {
     }
 
     private void navigateToPage(int index) {
+        // Not during transitions because 1) Transition is buggy in this case 2) this prevents accidental multiple clicks
+        if (transitionPane.isTransiting())
+            return;
         BookingFormPage[] pages = getPages();
         bookingFormPage = pages[index];
         validProperty.bind(bookingFormPage.validProperty());
