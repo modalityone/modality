@@ -155,7 +155,7 @@ final class RecurringSummaryPage implements BookingFormPage {
         Event event = bookingForm.getEvent();
 
         int[] totalPrice = {0};
-        if (bookingForm.getSettings().isPartialEventAllowed()) { // Ex: GP
+        if (bookingForm.getSettings().partialEventAllowed()) { // Ex: GP
             attendancesStream.forEach(a -> {
                 ScheduledItem scheduledItem = a.getScheduledItem();
                 LocalDate date = scheduledItem.getDate();

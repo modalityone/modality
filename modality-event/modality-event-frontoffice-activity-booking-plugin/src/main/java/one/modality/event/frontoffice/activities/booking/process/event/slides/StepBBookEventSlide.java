@@ -58,7 +58,7 @@ final class StepBBookEventSlide extends StepSlide {
         workingBookingLoaded = false;
         BookingForm bookingForm = digitsSlideController.getBookingForm();
         if (bookingForm != null) {
-            eventHeader = bookingForm.getSettings().getEventHeader();
+            eventHeader = bookingForm.getSettings().eventHeader();
         } else {
             eventHeader = null;
         }
@@ -75,7 +75,7 @@ final class StepBBookEventSlide extends StepSlide {
     void onPrepareRevealEvent() {
         BookingForm bookingForm = digitsSlideController.getBookingForm();
         if (bookingForm != null) {
-            headerPane.setBackground(bookingForm.getSettings().getHeaderBackground());
+            headerPane.setBackground(bookingForm.getSettings().headerBackground());
         }
         if (eventHeader != null) {
             headerPane.getChildren().setAll(eventHeader.getView());
@@ -117,7 +117,7 @@ final class StepBBookEventSlide extends StepSlide {
         double headerTopBottomPadding = maxPageWidth * 0.1;
         BookingForm bookingForm = digitsSlideController.getBookingForm();
         if (bookingForm != null) {
-            double headerMaxTopBottomPadding = bookingForm.getSettings().getHeaderMaxTopBottomPadding();
+            double headerMaxTopBottomPadding = bookingForm.getSettings().headerMaxTopBottomPadding();
             if (headerMaxTopBottomPadding >= 0 && headerTopBottomPadding > headerMaxTopBottomPadding)
                 headerTopBottomPadding = headerMaxTopBottomPadding;
         }

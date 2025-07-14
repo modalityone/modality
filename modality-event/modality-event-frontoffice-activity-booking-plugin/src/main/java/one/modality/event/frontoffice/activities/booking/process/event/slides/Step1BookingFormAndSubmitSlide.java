@@ -114,7 +114,7 @@ final class Step1BookingFormAndSubmitSlide extends StepSlide implements BookingF
         }
         Collections.addIfNotContains("booking-form", bookingFormUi.getStyleClass());
 
-        boolean bookAsAGuestAllowed = bookingForm.getSettings().isBookAsAGuestAllowed();
+        boolean bookAsAGuestAllowed = bookingForm.getSettings().bookAsAGuestAllowed();
         if (bookAsAGuestAllowed)
             loginGuestFlipPane.setBack(guestPanel.getContainer());
         Collections.addIfNotContainsOrRemove(loginTopVBox.getChildren(), bookAsAGuestAllowed, orGuestLink);
