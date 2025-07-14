@@ -1,11 +1,11 @@
 package one.modality.event.frontoffice.activities.booking.process;
 
 import dev.webfx.platform.uischeduler.UiScheduler;
-import dev.webfx.platform.util.Booleans;
 import dev.webfx.platform.windowhistory.WindowHistory;
 import one.modality.base.frontoffice.utility.browser.BrowserUtil;
 import one.modality.base.shared.entities.Event;
 import one.modality.event.client.event.fx.FXEvent;
+import one.modality.event.client.lifecycle.EventLifeCycle;
 import one.modality.event.frontoffice.activities.booking.process.event.BookEventRouting;
 
 /**
@@ -16,7 +16,7 @@ public final class BookingStarter {
     public static void startEventBooking(Event event) {
         event.onExpressionLoaded("kbs3,bookingFormUrl")
                 .onSuccess(ignored -> UiScheduler.runInUiThread(() -> {
-                    if (Booleans.isTrue(event.evaluate("kbs3"))) {
+                    if (EventLifeCycle.isKbs3Event(event)) {
                         startKbs3EventBooking(event);
                     } else {
                         startKbs2EventBooking(event);

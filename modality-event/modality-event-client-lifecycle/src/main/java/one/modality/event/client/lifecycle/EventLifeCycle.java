@@ -1,8 +1,10 @@
 package one.modality.event.client.lifecycle;
 
 import dev.webfx.platform.util.Booleans;
+import dev.webfx.platform.util.Numbers;
 import dev.webfx.platform.util.time.Times;
 import dev.webfx.extras.i18n.I18n;
+import dev.webfx.stack.orm.entity.Entities;
 import one.modality.base.shared.entities.Event;
 import one.modality.base.shared.entities.EventState;
 
@@ -36,7 +38,17 @@ public final class EventLifeCycle {
     }
 
     public static boolean isKbs3Event(Event event) {
-        return Booleans.isTrue(event.isKbs3());
+        if (!Booleans.booleanValue(event.isKbs3()))
+            return false;
+        // Excluding hybride KBS2/KBS3 events (kbs3 flag is on for audio and video consumption but not true KBS3 events
+        // from the booking point of view)
+        int eventId = Numbers.toInteger(Entities.getPrimaryKey(event));
+        return eventId != 1549    // Spring 25 in-person
+               && eventId != 1604 // Spring 25 online
+               && eventId != 1550 // Summer 25 in-person
+               && eventId != 1605 // Summer 25 online
+               && eventId != 1551 // Fall 25 in-person
+            ;
     }
 
     public static String getKbs2BookingFormUrl(Event event) {
