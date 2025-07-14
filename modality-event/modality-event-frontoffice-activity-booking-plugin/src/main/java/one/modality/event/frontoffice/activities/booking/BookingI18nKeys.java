@@ -3,6 +3,7 @@ package one.modality.event.frontoffice.activities.booking;
 
 public interface BookingI18nKeys {
 
+    Object PayNow1 = "PayNow1";
     Object PaymentFailedMessage = "PaymentFailedMessage";
     Object CancelBooking = "CancelBooking";
     Object Pay1 = "Pay1";
@@ -10,8 +11,11 @@ public interface BookingI18nKeys {
     Object OrBookUsingAccount = "OrBookUsingAccount";
     Object ErrorWhileLoadingPaymentForm = "ErrorWhileLoadingPaymentForm";
     Object TotalBookingPrice1 = "TotalBookingPrice1";
+    Object BalanceOnPreviousBooking = "BalanceOnPreviousBooking";
     Object SelectTheEvent = "SelectTheEvent";
+    Object SaveBooking = "SaveBooking";
     Object PreviousBookedDate = "PreviousBookedDate";
+    Object AnyRequest = "AnyRequest";
     Object BookAgain = "BookAgain";
     Object findYourLocalCentre = "findYourLocalCentre";
     Object PaymentPendingMessage = "PaymentPendingMessage";
@@ -22,20 +26,28 @@ public interface BookingI18nKeys {
     Object wholeEvent = "wholeEvent";
     Object Payment = "Payment";
     Object at = "at";
+    Object PaymentBottomMessage = "PaymentBottomMessage";
     Object UncancelBooking = "UncancelBooking";
     Object BookingNumber1 = "BookingNumber1";
     Object LoginBeforeBooking = "LoginBeforeBooking";
+    Object SummaryTopMessage = "SummaryTopMessage";
     Object ProceedCheckout = "ProceedCheckout";
     Object ErrorPaymentGatewayFailure = "ErrorPaymentGatewayFailure";
     Object RegistrationCanceled = "RegistrationCanceled";
     Object PaymentAndBookingCancelled = "PaymentAndBookingCancelled";
     Object localEvents = "localEvents";
+    Object alreadyBooked = "alreadyBooked";
     Object FacilityFee = "FacilityFee";
     Object BookingSubmitted = "BookingSubmitted";
+    Object SummarySubTopMessage = "SummarySubTopMessage";
     Object PaymentCancelled = "PaymentCancelled";
     Object CancelRegistration = "CancelRegistration";
+    Object writeRequest = "writeRequest";
+    Object BookingOptions = "BookingOptions";
     Object PaymentInformation1 = "PaymentInformation1";
+    Object PaymentTopMessage = "PaymentTopMessage";
     Object ErrorWhileInitiatingPayment = "ErrorWhileInitiatingPayment";
+    Object SelectPaymentAmount = "SelectPaymentAmount";
     Object PaymentFailed = "PaymentFailed";
     Object OrBookAsGuest = "OrBookAsGuest";
     Object PaymentPending = "PaymentPending";
@@ -43,6 +55,7 @@ public interface BookingI18nKeys {
     Object ErrorPaymentModalityFailure = "ErrorPaymentModalityFailure";
     Object GuestDetails = "GuestDetails";
     Object ThankYouForBooking = "ThankYouForBooking";
+    Object TotalOnPreviousBooking = "TotalOnPreviousBooking";
     Object comingSoon = "comingSoon";
     Object eventsHeader = "eventsHeader";
     Object Schedule = "Schedule";
@@ -50,6 +63,8 @@ public interface BookingI18nKeys {
     Object AllClasses = "AllClasses";
     Object ErrorWhileInitializingHTMLPaymentForm = "ErrorWhileInitializingHTMLPaymentForm";
     Object closed = "closed";
+    Object Summary = "Summary";
+    Object InternationalEvents = "InternationalEvents";
     Object RetryPayment = "RetryPayment";
     Object ErrorWhileInsertingBooking = "ErrorWhileInsertingBooking";
     Object localCentreWebsite = "localCentreWebsite";
@@ -58,20 +73,5 @@ public interface BookingI18nKeys {
     Object localCentreEmail = "localCentreEmail";
     Object Square = "Square";
 //    Object Authorize.net = "Authorize.net";
-    Object PayNow1 = "PayNow1";
-    Object BalanceOnPreviousBooking = "BalanceOnPreviousBooking";
-    Object SaveBooking = "SaveBooking";
-    Object AnyRequest = "AnyRequest";
-    Object PaymentBottomMessage = "PaymentBottomMessage";
-    Object SummaryTopMessage = "SummaryTopMessage";
-    Object alreadyBooked = "alreadyBooked";
-    Object SummarySubTopMessage = "SummarySubTopMessage";
-    Object writeRequest = "writeRequest";
-    Object BookingOptions = "BookingOptions";
-    Object PaymentTopMessage = "PaymentTopMessage";
-    Object SelectPaymentAmount = "SelectPaymentAmount";
-    Object TotalOnPreviousBooking = "TotalOnPreviousBooking";
-    Object Summary = "Summary";
-    Object InternationalEvents = "InternationalEvents";
 
 }
