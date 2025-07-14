@@ -4,6 +4,7 @@ module modality.event.client.lifecycle {
 
     // Direct dependencies modules
     requires modality.base.shared.entities;
+    requires modality.crm.client.authn.fx;
     requires webfx.extras.i18n;
     requires webfx.platform.util;
     requires webfx.platform.util.time;

@@ -1,12 +1,13 @@
 package one.modality.event.client.lifecycle;
 
+import dev.webfx.extras.i18n.I18n;
 import dev.webfx.platform.util.Booleans;
 import dev.webfx.platform.util.Numbers;
 import dev.webfx.platform.util.time.Times;
-import dev.webfx.extras.i18n.I18n;
 import dev.webfx.stack.orm.entity.Entities;
 import one.modality.base.shared.entities.Event;
 import one.modality.base.shared.entities.EventState;
+import one.modality.crm.shared.services.authn.fx.FXUserPerson;
 
 import java.time.LocalDateTime;
 
@@ -27,7 +28,7 @@ public final class EventLifeCycle {
             return false;
         if (isKbs3Event(event)) {
             EventState state = event.getState();
-            return state == EventState.OPEN;
+            return state == EventState.OPEN || state == EventState.TESTING && FXUserPerson.isTester();
         }
         // KBS2 events
         return Booleans.isTrue(event.isLive());
