@@ -4,9 +4,9 @@ import one.modality.base.shared.entities.Event;
 import one.modality.event.client.booking.WorkingBookingSyncer;
 import one.modality.event.client.recurringevents.RecurringEventSchedule;
 import one.modality.event.frontoffice.activities.booking.process.event.BookEventActivity;
-import one.modality.event.frontoffice.activities.booking.process.event.bookingform.BookingFormSettings;
-import one.modality.event.frontoffice.activities.booking.process.event.bookingform.multipages.BookingFormPage;
-import one.modality.event.frontoffice.activities.booking.process.event.bookingform.multipages.MultiPageBookingForm;
+import one.modality.event.frontoffice.activities.booking.process.event.EventBookingFormSettings;
+import one.modality.ecommerce.frontoffice.bookingform.multipages.BookingFormPage;
+import one.modality.ecommerce.frontoffice.bookingform.multipages.MultiPageBookingForm;
 
 /**
  * @author Bruno Salmon
@@ -14,12 +14,16 @@ import one.modality.event.frontoffice.activities.booking.process.event.bookingfo
 public final class RecurringEventBookingForm extends MultiPageBookingForm {
 
     private final Event event;
+    private final EventBookingFormSettings settings;
+    private final BookEventActivity activity;
     private final RecurringEventSchedule recurringEventSchedule = new RecurringEventSchedule();
     private BookingFormPage[] pages;
 
-    public RecurringEventBookingForm(Event event, BookEventActivity bookEventActivity, BookingFormSettings settings) {
-        super(bookEventActivity, settings);
+    public RecurringEventBookingForm(Event event, BookEventActivity activity, EventBookingFormSettings settings) {
+        super(activity, settings);
         this.event = event;
+        this.settings = settings;
+        this.activity = activity;
     }
 
     @Override
@@ -42,6 +46,10 @@ public final class RecurringEventBookingForm extends MultiPageBookingForm {
 
     public Event getEvent() {
         return event;
+    }
+
+    public BookEventActivity getActivity() {
+        return (BookEventActivity) activity;
     }
 
     public RecurringEventSchedule getRecurringEventSchedule() {

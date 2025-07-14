@@ -14,7 +14,10 @@ import one.modality.ecommerce.document.service.PolicyAggregate;
 
 import java.util.List;
 
-public class WorkingBookingProperties {
+/**
+ * @author Bruno Salmon
+ */
+public final class WorkingBookingProperties {
 
     // These fields are constant once set, but not declared final because they are not set in the constructor, they are
     // set later in the setWorkingBooking() method (called only once).

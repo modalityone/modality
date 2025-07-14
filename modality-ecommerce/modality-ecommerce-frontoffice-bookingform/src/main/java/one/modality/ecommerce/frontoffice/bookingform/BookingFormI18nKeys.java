@@ -1,8 +1,9 @@
 // File managed by WebFX (DO NOT EDIT MANUALLY)
-package one.modality.event.frontoffice.activities.booking;
+package one.modality.ecommerce.frontoffice.bookingform;
 
-public interface BookingI18nKeys {
+public interface BookingFormI18nKeys {
 
+    Object PayNow1 = "PayNow1";
     Object PaymentFailedMessage = "PaymentFailedMessage";
     Object CancelBooking = "CancelBooking";
     Object Pay1 = "Pay1";
@@ -12,7 +13,9 @@ public interface BookingI18nKeys {
     Object TotalBookingPrice1 = "TotalBookingPrice1";
     Object BalanceOnPreviousBooking = "BalanceOnPreviousBooking";
     Object SelectTheEvent = "SelectTheEvent";
+    Object SaveBooking = "SaveBooking";
     Object PreviousBookedDate = "PreviousBookedDate";
+    Object AnyRequest = "AnyRequest";
     Object BookAgain = "BookAgain";
     Object findYourLocalCentre = "findYourLocalCentre";
     Object PaymentPendingMessage = "PaymentPendingMessage";
@@ -21,10 +24,13 @@ public interface BookingI18nKeys {
     Object PricePerClass0 = "PricePerClass0";
     Object ChangeYourLocation = "ChangeYourLocation";
     Object wholeEvent = "wholeEvent";
+    Object Payment = "Payment";
     Object at = "at";
+    Object PaymentBottomMessage = "PaymentBottomMessage";
     Object UncancelBooking = "UncancelBooking";
     Object BookingNumber1 = "BookingNumber1";
     Object LoginBeforeBooking = "LoginBeforeBooking";
+    Object SummaryTopMessage = "SummaryTopMessage";
     Object ProceedCheckout = "ProceedCheckout";
     Object ErrorPaymentGatewayFailure = "ErrorPaymentGatewayFailure";
     Object RegistrationCanceled = "RegistrationCanceled";
@@ -33,10 +39,15 @@ public interface BookingI18nKeys {
     Object alreadyBooked = "alreadyBooked";
     Object FacilityFee = "FacilityFee";
     Object BookingSubmitted = "BookingSubmitted";
+    Object SummarySubTopMessage = "SummarySubTopMessage";
     Object PaymentCancelled = "PaymentCancelled";
     Object CancelRegistration = "CancelRegistration";
+    Object writeRequest = "writeRequest";
+    Object BookingOptions = "BookingOptions";
     Object PaymentInformation1 = "PaymentInformation1";
+    Object PaymentTopMessage = "PaymentTopMessage";
     Object ErrorWhileInitiatingPayment = "ErrorWhileInitiatingPayment";
+    Object SelectPaymentAmount = "SelectPaymentAmount";
     Object PaymentFailed = "PaymentFailed";
     Object OrBookAsGuest = "OrBookAsGuest";
     Object PaymentPending = "PaymentPending";
@@ -52,14 +63,9 @@ public interface BookingI18nKeys {
     Object AllClasses = "AllClasses";
     Object ErrorWhileInitializingHTMLPaymentForm = "ErrorWhileInitializingHTMLPaymentForm";
     Object closed = "closed";
+    Object Summary = "Summary";
     Object InternationalEvents = "InternationalEvents";
     Object RetryPayment = "RetryPayment";
     Object ErrorWhileInsertingBooking = "ErrorWhileInsertingBooking";
-    Object localCentreWebsite = "localCentreWebsite";
-    Object localCentreAddress = "localCentreAddress";
-    Object localCentrePhone = "localCentrePhone";
-    Object localCentreEmail = "localCentreEmail";
-    Object Square = "Square";
-//    Object Authorize.net = "Authorize.net";
 
 }

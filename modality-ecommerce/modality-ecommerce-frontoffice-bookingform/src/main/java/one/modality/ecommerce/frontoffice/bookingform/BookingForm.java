@@ -1,4 +1,4 @@
-package one.modality.event.frontoffice.activities.booking.process.event.bookingform;
+package one.modality.ecommerce.frontoffice.bookingform;
 
 import javafx.beans.property.SimpleBooleanProperty;
 import javafx.beans.value.ObservableBooleanValue;

@@ -1,12 +1,13 @@
-package one.modality.event.frontoffice.activities.booking.process.event.bookingform;
+package one.modality.event.frontoffice.activities.booking.process.event;
 
 import javafx.scene.layout.Background;
+import one.modality.ecommerce.frontoffice.bookingform.BookingFormSettings;
 import one.modality.event.frontoffice.eventheader.EventHeader;
 
 /**
  * @author Bruno Salmon
  */
-public record BookingFormSettings(
+public record EventBookingFormSettings(
     EventHeader eventHeader,
     Background headerBackground,
     double headerMaxTopBottomPadding,
@@ -15,4 +16,4 @@ public record BookingFormSettings(
     boolean showPriceBar,
     boolean bookAsAGuestAllowed,
     boolean partialEventAllowed
-) {}
+) implements BookingFormSettings {}

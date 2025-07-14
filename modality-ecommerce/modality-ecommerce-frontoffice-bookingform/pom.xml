@@ -7,11 +7,11 @@
 
     <parent>
         <groupId>one.modality</groupId>
-        <artifactId>modality-event</artifactId>
+        <artifactId>modality-ecommerce</artifactId>
         <version>1.0.0-SNAPSHOT</version>
     </parent>
 
-    <artifactId>modality-event-frontoffice-bookingform-recurringevent-plugin</artifactId>
+    <artifactId>modality-ecommerce-frontoffice-bookingform</artifactId>
 
     <dependencies>
 
@@ -35,25 +35,13 @@
 
         <dependency>
             <groupId>one.modality</groupId>
-            <artifactId>modality-base-client-brand</artifactId>
+            <artifactId>modality-base-client-bootstrap</artifactId>
             <version>1.0.0-SNAPSHOT</version>
         </dependency>
 
         <dependency>
             <groupId>one.modality</groupId>
             <artifactId>modality-base-client-i18n</artifactId>
-            <version>1.0.0-SNAPSHOT</version>
-        </dependency>
-
-        <dependency>
-            <groupId>one.modality</groupId>
-            <artifactId>modality-base-client-icons</artifactId>
-            <version>1.0.0-SNAPSHOT</version>
-        </dependency>
-
-        <dependency>
-            <groupId>one.modality</groupId>
-            <artifactId>modality-base-client-time</artifactId>
             <version>1.0.0-SNAPSHOT</version>
         </dependency>
 
@@ -82,38 +70,8 @@
         </dependency>
 
         <dependency>
-            <groupId>one.modality</groupId>
-            <artifactId>modality-ecommerce-frontoffice-bookingform</artifactId>
-            <version>1.0.0-SNAPSHOT</version>
-        </dependency>
-
-        <dependency>
-            <groupId>one.modality</groupId>
-            <artifactId>modality-event-client-booking</artifactId>
-            <version>1.0.0-SNAPSHOT</version>
-        </dependency>
-
-        <dependency>
-            <groupId>one.modality</groupId>
-            <artifactId>modality-event-client-recurringevents</artifactId>
-            <version>1.0.0-SNAPSHOT</version>
-        </dependency>
-
-        <dependency>
-            <groupId>one.modality</groupId>
-            <artifactId>modality-event-frontoffice-activity-booking-plugin</artifactId>
-            <version>1.0.0-SNAPSHOT</version>
-        </dependency>
-
-        <dependency>
-            <groupId>one.modality</groupId>
-            <artifactId>modality-event-frontoffice-eventheader</artifactId>
-            <version>1.0.0-SNAPSHOT</version>
-        </dependency>
-
-        <dependency>
             <groupId>dev.webfx</groupId>
-            <artifactId>webfx-extras-controlfactory</artifactId>
+            <artifactId>webfx-extras-aria</artifactId>
             <version>0.1.0-SNAPSHOT</version>
         </dependency>
 
@@ -143,7 +101,7 @@
 
         <dependency>
             <groupId>dev.webfx</groupId>
-            <artifactId>webfx-extras-time-format</artifactId>
+            <artifactId>webfx-extras-util-control</artifactId>
             <version>0.1.0-SNAPSHOT</version>
         </dependency>
 
@@ -155,7 +113,7 @@
 
         <dependency>
             <groupId>dev.webfx</groupId>
-            <artifactId>webfx-extras-webtext</artifactId>
+            <artifactId>webfx-kit-util</artifactId>
             <version>0.1.0-SNAPSHOT</version>
         </dependency>
 
@@ -165,12 +123,6 @@
             <version>0.1.0-SNAPSHOT</version>
             <scope>runtime</scope>
             <optional>true</optional>
-        </dependency>
-
-        <dependency>
-            <groupId>dev.webfx</groupId>
-            <artifactId>webfx-platform-util</artifactId>
-            <version>0.1.0-SNAPSHOT</version>
         </dependency>
 
     </dependencies>

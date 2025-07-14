@@ -1,4 +1,4 @@
-package one.modality.event.frontoffice.activities.booking.process.event.bookingform;
+package one.modality.ecommerce.frontoffice.bookingform;
 
 import javafx.beans.property.StringProperty;
 import javafx.geometry.Insets;
@@ -8,7 +8,7 @@ import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.HBox;
 import one.modality.ecommerce.client.i18n.EcommerceI18nKeys;
 import one.modality.ecommerce.client.workingbooking.WorkingBookingProperties;
-import one.modality.event.frontoffice.activities.booking.process.event.bookingform.util.BookingFormUtil;
+import one.modality.ecommerce.frontoffice.bookingform.util.BookingFormUtil;
 
 /**
  * @author Bruno Salmon

@@ -10,8 +10,6 @@
         <used-by-source-modules/>
     </dependencies>
 
-    <providers>
-        <provider interface="one.modality.ecommerce.frontoffice.bookingform.BookingFormProvider">one.modality.event.frontoffice.bookingforms.recurringevent.RecurringEventBookingFormProvider</provider>
-    </providers>
+    <i18n javaKeysClass="one.modality.ecommerce.frontoffice.bookingform.BookingFormI18nKeys"/>
 
 </project>

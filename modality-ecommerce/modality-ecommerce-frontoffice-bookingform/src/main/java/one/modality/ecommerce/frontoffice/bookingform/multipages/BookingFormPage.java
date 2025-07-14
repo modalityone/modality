@@ -1,4 +1,4 @@
-package one.modality.event.frontoffice.activities.booking.process.event.bookingform.multipages;
+package one.modality.ecommerce.frontoffice.bookingform.multipages;
 
 import dev.webfx.extras.panes.MonoPane;
 import javafx.beans.property.SimpleBooleanProperty;

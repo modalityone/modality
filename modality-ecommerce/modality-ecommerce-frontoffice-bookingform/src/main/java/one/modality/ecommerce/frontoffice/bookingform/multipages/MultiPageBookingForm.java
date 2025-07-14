@@ -1,4 +1,4 @@
-package one.modality.event.frontoffice.activities.booking.process.event.bookingform.multipages;
+package one.modality.ecommerce.frontoffice.bookingform.multipages;
 
 import dev.webfx.extras.panes.MonoPane;
 import dev.webfx.extras.panes.TransitionPane;
@@ -13,10 +13,10 @@ import javafx.scene.Node;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.Region;
 import one.modality.ecommerce.client.workingbooking.FXPersonToBook;
-import one.modality.event.frontoffice.activities.booking.process.event.BookEventActivity;
-import one.modality.event.frontoffice.activities.booking.process.event.bookingform.BookingFormBase;
-import one.modality.event.frontoffice.activities.booking.process.event.bookingform.BookingFormSettings;
-import one.modality.event.frontoffice.activities.booking.process.event.bookingform.PriceBar;
+import one.modality.ecommerce.client.workingbooking.HasWorkingBookingProperties;
+import one.modality.ecommerce.frontoffice.bookingform.BookingFormBase;
+import one.modality.ecommerce.frontoffice.bookingform.BookingFormSettings;
+import one.modality.ecommerce.frontoffice.bookingform.PriceBar;
 
 /**
  * @author Bruno Salmon
@@ -46,7 +46,7 @@ public abstract class MultiPageBookingForm extends BookingFormBase {
     protected BookingFormPage bookingFormPage;
     private Unregisterable bookingFormPageValidListener;
 
-    public MultiPageBookingForm(BookEventActivity activity, BookingFormSettings settings) {
+    public MultiPageBookingForm(HasWorkingBookingProperties activity, BookingFormSettings settings) {
         super(activity, settings);
         Layouts.setFixedWidth(transitionPane, MAX_WIDTH);
         if (!settings.showNavigationBar()) {
@@ -76,7 +76,7 @@ public abstract class MultiPageBookingForm extends BookingFormBase {
             container.setTop(navigationBar.getView());
         }
         if (settings.showNavigationBar())
-            container.setBottom(new PriceBar(activity.getWorkingBookingProperties()).getView());
+            container.setBottom(new PriceBar(workingBookingProperties).getView());
         container.setMaxWidth(MAX_WIDTH);
         return container;
     }
@@ -117,7 +117,7 @@ public abstract class MultiPageBookingForm extends BookingFormBase {
         bookingFormPage = pages[index];
         validProperty.bind(bookingFormPage.validProperty());
         pageShowingOwnSubmitButtonProperty.set(bookingFormPage.isShowingOwnSubmitButton());
-        bookingFormPage.setWorkingBookingProperties(activity.getWorkingBookingProperties());
+        bookingFormPage.setWorkingBookingProperties(workingBookingProperties);
         transitionPane.setReverse(index < currentFamilyOptionsViewIndex);
         transitionPane.transitToContent(bookingFormPage.getView());
         currentFamilyOptionsViewIndex = index;

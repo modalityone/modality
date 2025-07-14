@@ -23,8 +23,8 @@ import one.modality.ecommerce.payment.CancelPaymentResult;
 import one.modality.ecommerce.payment.client.WebPaymentForm;
 import one.modality.event.client.event.fx.FXEvent;
 import one.modality.event.frontoffice.activities.booking.process.event.BookEventActivity;
-import one.modality.event.frontoffice.activities.booking.process.event.bookingform.BookingForm;
-import one.modality.event.frontoffice.activities.booking.process.event.bookingform.BookingFormSettings;
+import one.modality.ecommerce.frontoffice.bookingform.BookingForm;
+import one.modality.event.frontoffice.activities.booking.process.event.EventBookingFormSettings;
 import one.modality.event.frontoffice.eventheader.EventHeader;
 
 /**
@@ -59,7 +59,8 @@ final class StepBBookEventSlide extends StepSlide {
         workingBookingLoaded = false;
         BookingForm bookingForm = digitsSlideController.getBookingForm();
         if (bookingForm != null) {
-            eventHeader = bookingForm.getSettings().eventHeader();
+            EventBookingFormSettings settings = (EventBookingFormSettings) bookingForm.getSettings();
+            eventHeader = settings.eventHeader();
         } else {
             eventHeader = null;
         }
@@ -76,7 +77,8 @@ final class StepBBookEventSlide extends StepSlide {
     void onPrepareRevealEvent() {
         BookingForm bookingForm = digitsSlideController.getBookingForm();
         if (bookingForm != null) {
-            headerPane.setBackground(bookingForm.getSettings().headerBackground());
+            EventBookingFormSettings settings = (EventBookingFormSettings) bookingForm.getSettings();
+            headerPane.setBackground(settings.headerBackground());
         }
         if (eventHeader != null) {
             headerPane.getChildren().setAll(eventHeader.getView());
@@ -117,7 +119,7 @@ final class StepBBookEventSlide extends StepSlide {
         double maxPageWidth = Math.min(MAX_PAGE_WIDTH, 0.90 * width);
         double headerTopBottomPadding = maxPageWidth * 0.1;
         BookingForm bookingForm = digitsSlideController.getBookingForm();
-        BookingFormSettings settings = bookingForm == null ? null : bookingForm.getSettings();
+        EventBookingFormSettings settings = bookingForm == null ? null : (EventBookingFormSettings) bookingForm.getSettings();
         if (settings != null) {
             double headerMaxTopBottomPadding = settings.headerMaxTopBottomPadding();
             if (headerMaxTopBottomPadding >= 0 && headerTopBottomPadding > headerMaxTopBottomPadding)

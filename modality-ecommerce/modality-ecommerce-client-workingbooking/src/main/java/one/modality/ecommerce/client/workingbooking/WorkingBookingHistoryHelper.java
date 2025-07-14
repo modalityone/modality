@@ -5,6 +5,9 @@ import one.modality.base.shared.entities.Attendance;
 
 import java.util.List;
 
+/**
+ * @author Bruno Salmon
+ */
 public final class WorkingBookingHistoryHelper {
 
     private final List<Attendance> attendanceAdded;

@@ -32,7 +32,9 @@ import one.modality.ecommerce.client.workingbooking.WorkingBooking;
 import one.modality.ecommerce.client.workingbooking.WorkingBookingProperties;
 import one.modality.ecommerce.document.service.DocumentAggregate;
 import one.modality.event.frontoffice.activities.booking.BookingI18nKeys;
-import one.modality.event.frontoffice.activities.booking.process.event.bookingform.multipages.BookingFormPage;
+import one.modality.ecommerce.frontoffice.bookingform.BookingFormI18nKeys;
+import one.modality.event.frontoffice.activities.booking.process.event.EventBookingFormSettings;
+import one.modality.ecommerce.frontoffice.bookingform.multipages.BookingFormPage;
 
 import java.time.LocalDate;
 import java.util.List;
@@ -114,7 +116,7 @@ final class RecurringSummaryPage implements BookingFormPage {
 
         summaryGridPane.getChildren().clear();
         addRow(
-            Bootstrap.textPrimary(Bootstrap.strong(I18nControls.newLabel(BookingI18nKeys.Summary))),
+            Bootstrap.textPrimary(Bootstrap.strong(I18nControls.newLabel(BookingFormI18nKeys.Summary))),
             Bootstrap.textPrimary(Bootstrap.strong(I18nControls.newLabel(EcommerceI18nKeys.Price))),
             new Label()
         );
@@ -155,7 +157,8 @@ final class RecurringSummaryPage implements BookingFormPage {
         Event event = bookingForm.getEvent();
 
         int[] totalPrice = {0};
-        if (bookingForm.getSettings().partialEventAllowed()) { // Ex: GP
+        EventBookingFormSettings settings = (EventBookingFormSettings) bookingForm.getSettings();
+        if (settings.partialEventAllowed()) { // Ex: GP
             attendancesStream.forEach(a -> {
                 ScheduledItem scheduledItem = a.getScheduledItem();
                 LocalDate date = scheduledItem.getDate();

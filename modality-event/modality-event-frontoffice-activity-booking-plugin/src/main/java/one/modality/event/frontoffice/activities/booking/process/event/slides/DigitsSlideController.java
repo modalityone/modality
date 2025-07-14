@@ -9,8 +9,8 @@ import one.modality.base.shared.entities.Event;
 import one.modality.ecommerce.payment.CancelPaymentResult;
 import one.modality.ecommerce.payment.client.WebPaymentForm;
 import one.modality.event.frontoffice.activities.booking.process.event.BookEventActivity;
-import one.modality.event.frontoffice.activities.booking.process.event.bookingform.BookingForm;
-import one.modality.event.frontoffice.activities.booking.process.event.bookingform.BookingFormProvider;
+import one.modality.ecommerce.frontoffice.bookingform.BookingForm;
+import one.modality.ecommerce.frontoffice.bookingform.BookingFormProvider;
 
 import java.util.List;
 import java.util.ServiceLoader;

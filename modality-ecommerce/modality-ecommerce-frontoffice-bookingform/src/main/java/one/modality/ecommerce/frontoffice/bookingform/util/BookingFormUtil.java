@@ -1,4 +1,4 @@
-package one.modality.event.frontoffice.activities.booking.process.event.bookingform.util;
+package one.modality.ecommerce.frontoffice.bookingform.util;
 
 import dev.webfx.extras.i18n.I18nKeys;
 import dev.webfx.extras.i18n.controls.I18nControls;

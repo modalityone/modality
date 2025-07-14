@@ -35,8 +35,9 @@ import one.modality.event.frontoffice.activities.booking.BookingI18nKeys;
 import one.modality.event.frontoffice.activities.booking.fx.FXGuestToBook;
 import one.modality.event.frontoffice.activities.booking.process.account.CheckoutAccountRouting;
 import one.modality.event.frontoffice.activities.booking.process.event.BookEventActivity;
-import one.modality.event.frontoffice.activities.booking.process.event.bookingform.BookingForm;
-import one.modality.event.frontoffice.activities.booking.process.event.bookingform.BookingFormActivityCallback;
+import one.modality.ecommerce.frontoffice.bookingform.BookingForm;
+import one.modality.ecommerce.frontoffice.bookingform.BookingFormActivityCallback;
+import one.modality.event.frontoffice.activities.booking.process.event.EventBookingFormSettings;
 
 /**
  * @author Bruno Salmon
@@ -114,7 +115,8 @@ final class Step1BookingFormAndSubmitSlide extends StepSlide implements BookingF
         }
         Collections.addIfNotContains("booking-form", bookingFormUi.getStyleClass());
 
-        boolean bookAsAGuestAllowed = bookingForm.getSettings().bookAsAGuestAllowed();
+        EventBookingFormSettings settings = (EventBookingFormSettings) bookingForm.getSettings();
+        boolean bookAsAGuestAllowed = settings.bookAsAGuestAllowed();
         if (bookAsAGuestAllowed)
             loginGuestFlipPane.setBack(guestPanel.getContainer());
         Collections.addIfNotContainsOrRemove(loginTopVBox.getChildren(), bookAsAGuestAllowed, orGuestLink);

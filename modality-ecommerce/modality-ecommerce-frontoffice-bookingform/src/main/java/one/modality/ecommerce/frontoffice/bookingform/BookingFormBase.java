@@ -1,21 +1,24 @@
-package one.modality.event.frontoffice.activities.booking.process.event.bookingform;
+package one.modality.ecommerce.frontoffice.bookingform;
 
 import javafx.scene.Node;
+import one.modality.ecommerce.client.workingbooking.HasWorkingBookingProperties;
 import one.modality.ecommerce.client.workingbooking.WorkingBooking;
 import one.modality.ecommerce.client.workingbooking.WorkingBookingProperties;
-import one.modality.event.frontoffice.activities.booking.process.event.BookEventActivity;
+import one.modality.ecommerce.document.service.PolicyAggregate;
 
 /**
  * @author Bruno Salmon
  */
 public abstract class BookingFormBase implements BookingForm {
 
-    protected final BookEventActivity activity;
+    protected HasWorkingBookingProperties activity;
+    protected WorkingBookingProperties workingBookingProperties;
     protected final BookingFormSettings settings;
     protected BookingFormActivityCallback activityCallback;
 
-    public BookingFormBase(BookEventActivity activity, BookingFormSettings settings) {
+    public BookingFormBase(HasWorkingBookingProperties activity, BookingFormSettings settings) {
         this.activity = activity;
+        this.workingBookingProperties = activity.getWorkingBookingProperties();
         this.settings = settings;
     }
 
@@ -31,16 +34,20 @@ public abstract class BookingFormBase implements BookingForm {
     public abstract void onWorkingBookingLoaded();
 
     public void bookWholeEvent() {
-        WorkingBookingProperties workingBookingProperties = activity.getWorkingBookingProperties();
         WorkingBooking workingBooking = workingBookingProperties.getWorkingBooking();
         // Automatically booking the whole event if it's a new booking
         if (workingBooking.isNewBooking()) {
-            workingBooking.bookScheduledItems(workingBooking.getPolicyAggregate().getTeachingScheduledItems(), false);
+            PolicyAggregate policyAggregate = workingBooking.getPolicyAggregate();
+            workingBooking.bookScheduledItems(policyAggregate.getTeachingScheduledItems(), false);
         }
     }
 
-    public BookEventActivity getActivity() {
+    public HasWorkingBookingProperties getActivity() {
         return activity;
+    }
+
+    public WorkingBookingProperties getWorkingBookingProperties() {
+        return workingBookingProperties;
     }
 
     @Override

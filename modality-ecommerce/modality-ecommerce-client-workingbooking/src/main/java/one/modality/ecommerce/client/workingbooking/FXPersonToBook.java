@@ -9,7 +9,7 @@ import one.modality.crm.shared.services.authn.fx.FXUserPerson;
 /**
  * @author Bruno Salmon
  */
-public class FXPersonToBook {
+public final class FXPersonToBook {
 
     private final static ObjectProperty<Person> personToBookProperty = new SimpleObjectProperty<>();
 

@@ -22,7 +22,7 @@ import java.util.stream.Collectors;
 /**
  * @author Bruno Salmon
  */
-public class WorkingBooking {
+public final class WorkingBooking {
 
     private final PolicyAggregate policyAggregate;
     private DocumentAggregate initialDocumentAggregate; // null for new bookings

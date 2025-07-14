@@ -38,6 +38,7 @@ import one.modality.crm.client.i18n.CrmI18nKeys;
 import one.modality.crm.shared.services.authn.fx.FXModalityUserPrincipal;
 import one.modality.crm.shared.services.authn.fx.FXUserPersonId;
 import one.modality.ecommerce.client.workingbooking.FXPersonToBook;
+import one.modality.ecommerce.client.workingbooking.HasWorkingBookingProperties;
 import one.modality.ecommerce.client.workingbooking.WorkingBooking;
 import one.modality.ecommerce.client.workingbooking.WorkingBookingProperties;
 import one.modality.ecommerce.document.service.DocumentAggregate;
@@ -56,11 +57,12 @@ import java.util.Objects;
 /**
  * @author Bruno Salmon
  */
-public final class BookEventActivity extends ViewDomainActivityBase implements ButtonFactoryMixin {
+public final class BookEventActivity extends ViewDomainActivityBase implements ButtonFactoryMixin, HasWorkingBookingProperties {
 
     private final WorkingBookingProperties workingBookingProperties = new WorkingBookingProperties();
     private final LettersSlideController lettersSlideController = new LettersSlideController(this);
 
+    @Override
     public WorkingBookingProperties getWorkingBookingProperties() {
         return workingBookingProperties;
     }

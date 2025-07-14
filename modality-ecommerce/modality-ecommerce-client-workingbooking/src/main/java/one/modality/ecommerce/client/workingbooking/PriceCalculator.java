@@ -14,7 +14,7 @@ import java.util.stream.Stream;
  *
  * @author Bruno Salmon
  */
-public class PriceCalculator {
+public final class PriceCalculator {
 
     private final Supplier<DocumentAggregate> documentAggregateSupplier;
     private boolean ignoreLongStayDiscounts;
