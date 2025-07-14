@@ -13,6 +13,10 @@ public interface BookingForm {
 
     Node buildUi();
 
+    default String getEventFieldsToLoad() {
+        return null;
+    }
+
     void onWorkingBookingLoaded();
 
     default ObservableBooleanValue transitingProperty() {

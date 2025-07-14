@@ -21,6 +21,7 @@
     -fx-font-weight: bold;
 }
 
-.book-event-activity .price-bar Label.price {
+.book-event-activity Label.price {
     -fx-text-fill: #838788;
+    -fx-font-weight: bold;
 }

@@ -95,14 +95,19 @@ public abstract class MultiPageBookingForm extends BookingFormBase {
     }
 
     public void navigateToPreviousPage() {
-        navigateToPage(currentFamilyOptionsViewIndex - 1);
+        if (currentFamilyOptionsViewIndex > 0)
+            navigateToPage(currentFamilyOptionsViewIndex - 1);
     }
 
     public void navigateToNextPage() {
         BookingFormPage[] pages = getPages();
-        BookingFormPage bookingFormPage = pages[currentFamilyOptionsViewIndex];
-        if (bookingFormPage.isValid() && currentFamilyOptionsViewIndex < pages.length - 1)
-            navigateToPage(currentFamilyOptionsViewIndex + 1);
+        if (currentFamilyOptionsViewIndex < 0)
+            navigateToPage(0);
+        else {
+            BookingFormPage bookingFormPage = pages[currentFamilyOptionsViewIndex];
+            if (bookingFormPage.isValid() && currentFamilyOptionsViewIndex < pages.length - 1)
+                navigateToPage(currentFamilyOptionsViewIndex + 1);
+        }
     }
 
     private void navigateToPage(int index) {

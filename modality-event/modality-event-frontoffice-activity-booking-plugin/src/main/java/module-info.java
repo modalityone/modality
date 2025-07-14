@@ -11,6 +11,7 @@ module modality.event.frontoffice.activity.booking.plugin {
     requires javafx.graphics;
     requires javafx.web;
     requires jdk.jsobject;
+    requires modality.base.client.bootstrap;
     requires modality.base.client.brand;
     requires modality.base.client.css;
     requires modality.base.client.i18n;
@@ -77,6 +78,7 @@ module modality.event.frontoffice.activity.booking.plugin {
     exports one.modality.event.frontoffice.activities.booking.process.event;
     exports one.modality.event.frontoffice.activities.booking.process.event.bookingform;
     exports one.modality.event.frontoffice.activities.booking.process.event.bookingform.multipages;
+    exports one.modality.event.frontoffice.activities.booking.process.event.bookingform.util;
     exports one.modality.event.frontoffice.activities.booking.process.event.slides;
     exports one.modality.event.frontoffice.activities.booking.views;
 

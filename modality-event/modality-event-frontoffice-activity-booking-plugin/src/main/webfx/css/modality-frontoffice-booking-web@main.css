@@ -25,6 +25,7 @@
     --fx-background-color: #F4F4F4;
 }
 
-.book-event-activity .price-bar fx-label.price {
+.book-event-activity fx-label.price {
     --fx-text-fill: #838788;
+    font-weight: bold;
 }

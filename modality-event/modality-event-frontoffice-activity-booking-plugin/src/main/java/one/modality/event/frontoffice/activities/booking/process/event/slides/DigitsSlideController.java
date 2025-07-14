@@ -79,7 +79,8 @@ final class DigitsSlideController {
 
         if (bookingForm != null && bookingFormCreated) {
             step1BookingFormAndSubmitSlide.setBookingForm(bookingForm);
-            bookingForm.onWorkingBookingLoaded();
+            bookEventActivity.getWorkingBooking().getEvent().onExpressionLoaded(bookingForm.getEventFieldsToLoad())
+                    .onSuccess(ignored -> UiScheduler.runInUiThread(bookingForm::onWorkingBookingLoaded));
             // Sub-routing node binding (displaying the possible sub-routing account node in the appropriate place in step2)
             step1BookingFormAndSubmitSlide.accountMountNodeProperty().bind(bookEventActivity.mountNodeProperty());
             displayFirstSlide();
