@@ -24,6 +24,7 @@ import javafx.beans.property.ObjectProperty;
 import javafx.beans.property.SimpleObjectProperty;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
+import javafx.geometry.HPos;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Cursor;
@@ -55,7 +56,6 @@ import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
-import java.util.Objects;
 import java.util.stream.Collectors;
 
 public final class BookingSummaryView {
@@ -84,14 +84,14 @@ public final class BookingSummaryView {
     private final EntityStore entityStore;
     private final WorkingBooking workingBooking;
     private PriceCalculator priceCalculator = null;
-    private final boolean displayHeader;
+    private final boolean displayHeaderAndPrice;
 
     public BookingSummaryView(Document booking, EntityStore store) {
         this.bookingProperty.set(booking);
         this.entityStore = store;
         this.workingBooking = null;
         //this constructor is called in the OrderView, and we want the header in that case.
-        displayHeader = true;
+        displayHeaderAndPrice = true;
         buildGridLayout();
     }
 
@@ -99,7 +99,7 @@ public final class BookingSummaryView {
         this.bookingProperty.set(workingBooking.getDocument());
         this.entityStore = workingBooking.getDocument().getStore();
         this.workingBooking = workingBooking;
-        displayHeader = false;
+        displayHeaderAndPrice = false;
         buildGridLayout();
         if(workingBooking.getLastestDocumentAggregate()!=null) {
             priceCalculator = new PriceCalculator(workingBooking.getLastestDocumentAggregate());
@@ -141,7 +141,7 @@ public final class BookingSummaryView {
         Document currentDocument = bookingProperty.get();
 
         //We display the header in the order view, but not in the Festival summary view
-        if (displayHeader) {
+        if (displayHeaderAndPrice) {
             final BookingStatus[] bookingStatus = new BookingStatus[1];
             final Label[] statusLabel = new Label[1];
             if (!currentDocument.isNew()) {
@@ -157,13 +157,14 @@ public final class BookingSummaryView {
 
             statusLabel[0].setPadding(new Insets(5, 15, 5, 15));
             statusLabel[0].setBackground(new Background(new BackgroundFill(Color.LIGHTGRAY, new CornerRadii(7, 0, 7, 0, false), new Insets(0))));
+
+            Label personLabel = Bootstrap.strong(new Label(bookingProperty.get().getFullName()));
             Label orderNumberLabel = Bootstrap.textSecondary(I18nControls.newLabel(OrdersI18nKeys.OrderNb, "#" + event.getPrimaryKey() + "-" + bookingProperty.get().getRef()));
 
             mainGrid.add(Controls.setupTextWrapping(statusLabel[0], true, true), 0, 0);
-            mainGrid.add(orderNumberLabel, 1, 0);
+            mainGrid.add(Controls.setupTextWrapping(personLabel, true, true), 1, 0);
+            mainGrid.add(orderNumberLabel, 2, 0);
 
-        // Row 1: Person, event, dates, price, toggle arrow
-        Label personLabel = Bootstrap.strong(new Label(bookingProperty.get().getFullName()));
         Label eventNameLabel = Bootstrap.strong(I18nControls.newLabel(new I18nSubKey("expression: i18n(this)", event)));
 
         DateTimeFormatter dateFormatter = LocalizedTime.dateFormatter("dd/MM/yyyy");
@@ -182,8 +183,8 @@ public final class BookingSummaryView {
         toogleOnOffMonopane.setContent(chevronDown);
         toogleOnOffMonopane.setMinSize(20, 20);
 
-        mainGrid.add(Controls.setupTextWrapping(personLabel, true, true), 0, 1);
-        mainGrid.add(Controls.setupTextWrapping(eventNameLabel, true, true), 1, 1);
+        GridPane.setColumnSpan(eventNameLabel,2);
+        mainGrid.add(Controls.setupTextWrapping(eventNameLabel, true, true), 0, 1);
         mainGrid.add(Controls.setupTextWrapping(datesLabel, true, true), 2, 1);
         mainGrid.add(totalPriceLabel, 3, 1);
         mainGrid.add(toogleOnOffMonopane, 4, 1);
@@ -195,7 +196,7 @@ public final class BookingSummaryView {
         Separator separator = new Separator();
         separator.setPadding(new Insets(15,0,0,0));
         detailNodes.add(separator);
-        if(!displayHeader) toggleDetails();
+        if(!displayHeaderAndPrice) toggleDetails();
         containerPane.getChildren().addAll(mainGrid, separator);
     }
 
@@ -211,50 +212,56 @@ public final class BookingSummaryView {
             detailNodes.clear();
             currentRow[0] = 2;
 
-            final String[] previousItemFamilyName = {""};
-
             // Group and display each item (e.g., meals, rooms) in the booking
             Document booking = bookingProperty.get();
             bookedOptions.stream()
-                    .collect(Collectors.groupingBy(DocumentLine::getItem, LinkedHashMap::new, Collectors.toList()))
-                    .forEach((item, documentLinesBooked) -> {
-                        //The price is either contained in the documentLinesBooked from the database (when we read from the database an existing order
-                        //or if priceCalculator has been initialised, workingBooking.getLastestDocumentAggregate() is not null, which is a new booking not existing yet in the database
-                        //therefore we need to calculate the price in order to display it.
-                        int totalPrice = documentLinesBooked.stream().mapToInt(dl -> dl.getPriceNet() != null ? dl.getPriceNet() : 0).sum();
-
-                        if(priceCalculator!=null) {
-                            totalPrice = priceCalculator.calculateDocumentLinesPrice(documentLinesBooked.stream());
+                    .collect(Collectors.groupingBy(dl -> dl.getItem().getFamily(), LinkedHashMap::new, Collectors.toList()))
+                    .forEach((itemFamily, documentLinesInFamily) -> {
+                        // Show item family category
+                        Label categoryLabel = Bootstrap.textPrimary(new Label(itemFamily.getName()));
+                        if (itemFamily.getLabel() != null) {
+                            categoryLabel = Bootstrap.textPrimary(I18nControls.newLabel(new I18nSubKey("expression: i18n(this)", itemFamily.getLabel())));
                         }
-                        String formattedTotal = EventPriceFormatter.formatWithCurrency(totalPrice, booking.getEvent());
+                        mainGrid.add(Controls.setupTextWrapping(categoryLabel, true, true), 0, currentRow[0]);
+                        detailNodes.add(categoryLabel);
 
-                        // Show item category (if changed from previous)
-                        if (!Objects.equals(previousItemFamilyName[0], item.getFamily().getName())) {
-                            Label categoryLabel = Bootstrap.textPrimary(new Label(item.getFamily().getName()));
-                            if (item.getFamily().getLabel() != null) {
-                                categoryLabel = Bootstrap.textPrimary(I18nControls.newLabel(new I18nSubKey("expression: i18n(this)", item.getFamily().getLabel())));
+                        documentLinesInFamily.forEach(documentLine -> {
+                            int price = documentLine.getPriceNet() != null ? documentLine.getPriceNet() : 0;
+                            if (priceCalculator != null) {
+                                price = priceCalculator.calculateDocumentLinesPrice(java.util.stream.Stream.of(documentLine));
                             }
-                            mainGrid.add(Controls.setupTextWrapping(categoryLabel, true, true), 0, currentRow[0]);
-                            detailNodes.add(categoryLabel);
-                        }
-                        // Check if any DocumentLine in the group is canceled
-                        boolean anyCanceled = documentLinesBooked.stream().anyMatch(dl -> Booleans.booleanValue(dl.isCancelled()));
-                        // Show item name and total price
-                        Label itemNameLabel = new Label(item.getName());
-                        if (item.getLabel() != null) {
-                            itemNameLabel = I18nControls.newLabel(new I18nSubKey("expression: i18n(this)", item.getLabel()));
-                        }
-                        if (anyCanceled) {
-                            itemNameLabel.getStyleClass().add("strikethrough");
-                        }
-                        Label totalPriceLabelText = new Label(formattedTotal);
-                        mainGrid.add(Controls.setupTextWrapping(itemNameLabel, true, true), 1, currentRow[0]);
-                        mainGrid.add(totalPriceLabelText, 2, currentRow[0]);
-                        detailNodes.add(itemNameLabel);
-                        detailNodes.add(totalPriceLabelText);
+                            String formattedPrice = EventPriceFormatter.formatWithCurrency(price, booking.getEvent());
 
-                        currentRow[0]++;
-                        previousItemFamilyName[0] = item.getFamily().getName();
+                            boolean isCancelled = Booleans.booleanValue(documentLine.isCancelled());
+
+                            Label itemNameLabel = new Label(documentLine.getItem().getName());
+                            if (documentLine.getItem().getLabel() != null) {
+                                itemNameLabel = I18nControls.newLabel(new I18nSubKey("expression: i18n(this)", documentLine.getItem().getLabel()));
+                            }
+                            if (isCancelled) {
+                                itemNameLabel.getStyleClass().add("strikethrough");
+                            }
+
+                            String attendanceDates = documentLine.getDates();
+                            Label datesLabel = Bootstrap.textSecondary(new Label(attendanceDates));
+                            if (isCancelled) {
+                                datesLabel.getStyleClass().add("strikethrough");
+                            }
+
+                            Label priceLabel = new Label(formattedPrice);
+                            if (isCancelled) {
+                                priceLabel.getStyleClass().add("strikethrough");
+                            }
+
+                            mainGrid.add(Controls.setupTextWrapping(itemNameLabel, true, true), 1, currentRow[0]);
+                            mainGrid.add(Controls.setupTextWrapping(datesLabel, true, true), 2, currentRow[0]);
+                            mainGrid.add(priceLabel, 3, currentRow[0]);
+                            detailNodes.add(itemNameLabel);
+                            detailNodes.add(datesLabel);
+                            detailNodes.add(priceLabel);
+
+                            currentRow[0]++;
+                        });
                     });
 
             currentRow[0]++; // Space before edit section
@@ -265,83 +272,86 @@ public final class BookingSummaryView {
             addOptionLabel.setGraphic(addIcon);
             addOptionLabel.setGraphicTextGap(15);
             addOptionLabel.setCursor(Cursor.HAND);
-            mainGrid.add(addOptionLabel, 1, currentRow[0]);
+            mainGrid.add(addOptionLabel, 0, currentRow[0]);
             detailNodes.add(addOptionLabel);
             currentRow[0]++;
 
-            // Total section (with background)
-            HBox totalsAndButtonHBox = new HBox();
-            totalsAndButtonHBox.setAlignment(Pos.CENTER);
-            HBox totalsSection = new HBox(15);
-            totalsSection.setAlignment(Pos.CENTER_LEFT);
-            totalsSection.setPadding(new Insets(8, 30, 8, 30));
-            totalsSection.setBackground(new Background(new BackgroundFill(Color.WHITESMOKE, null, null)));
 
-            //The price is either contained in the booking from the database (when we read from the database an existing order)
-            //or if priceCalculator has been initialised, workingBooking.getLastestDocumentAggregate() is not null, which is a new booking not existing yet in the database
-            //therefore we need to calculate the price in order to display it.
-            Integer totalPriceNet = booking.getPriceNet();
-            Integer deposit = booking.getPriceDeposit();
-            if(priceCalculator!= null) {
-                totalPriceNet = priceCalculator.calculateTotalPrice();
-                deposit = booking.getPriceDeposit()!=null?booking.getPriceDeposit():0;
-            }
-            // Show total, paid, and remaining amounts
-            Label totalLabel = Controls.setupTextWrapping(Bootstrap.textSecondary(I18nControls.newLabel(I18nKeys.appendColons(EcommerceI18nKeys.Total))), true, true);
-            Label totalValue = Controls.setupTextWrapping(Bootstrap.strong(I18nControls.newLabel(EventPriceFormatter.formatWithCurrency(totalPriceNet, booking.getEvent()))), true, true);
-            Label paidLabel = Controls.setupTextWrapping(Bootstrap.textSecondary(I18nControls.newLabel(I18nKeys.appendColons(EcommerceI18nKeys.Paid))), true, true);
-            Label paidValue = Controls.setupTextWrapping(Bootstrap.strong(I18nControls.newLabel(EventPriceFormatter.formatWithCurrency(deposit, booking.getEvent()))), true, true);
-            Label remainingLabel = Controls.setupTextWrapping(Bootstrap.textSecondary(I18nControls.newLabel(I18nKeys.appendColons(EcommerceI18nKeys.RemainingAmount))), true, true);
-            Label remainingValue = Controls.setupTextWrapping(Bootstrap.strong(I18nControls.newLabel(EventPriceFormatter.formatWithCurrency(totalPriceNet - deposit, booking.getEvent()))), true, true);
+            if(displayHeaderAndPrice) {
+                // Total section (with background)
+                HBox totalsAndButtonHBox = new HBox();
+                totalsAndButtonHBox.setAlignment(Pos.CENTER);
+                HBox totalsSection = new HBox(15);
+                totalsSection.setAlignment(Pos.CENTER_LEFT);
+                totalsSection.setPadding(new Insets(8, 30, 8, 30));
+                totalsSection.setBackground(new Background(new BackgroundFill(Color.WHITESMOKE, null, null)));
 
-            // Conditional "Make Payment" button
-            Button paymentButton = ModalityStyle.blackButton(I18nControls.newButton(OrdersI18nKeys.MakePayment));
-            Integer finalTotalPriceNet = totalPriceNet;
-            Integer finalDeposit = deposit;
-            paymentButton.visibleProperty().bind(new BooleanBinding() {
-                @Override
-                protected boolean computeValue() {
-                    return finalTotalPriceNet - finalDeposit > 0;
+                //The price is either contained in the booking from the database (when we read from the database an existing order)
+                //or if priceCalculator has been initialised, workingBooking.getLastestDocumentAggregate() is not null, which is a new booking not existing yet in the database
+                //therefore we need to calculate the price in order to display it.
+                Integer totalPriceNet = booking.getPriceNet();
+                Integer deposit = booking.getPriceDeposit();
+                if (priceCalculator != null) {
+                    totalPriceNet = priceCalculator.calculateTotalPrice();
+                    deposit = booking.getPriceDeposit() != null ? booking.getPriceDeposit() : 0;
                 }
-            });
+                // Show total, paid, and remaining amounts
+                Label totalLabel = Controls.setupTextWrapping(Bootstrap.textSecondary(I18nControls.newLabel(I18nKeys.appendColons(EcommerceI18nKeys.Total))), true, true);
+                Label totalValue = Controls.setupTextWrapping(Bootstrap.strong(I18nControls.newLabel(EventPriceFormatter.formatWithCurrency(totalPriceNet, booking.getEvent()))), true, true);
+                Label paidLabel = Controls.setupTextWrapping(Bootstrap.textSecondary(I18nControls.newLabel(I18nKeys.appendColons(EcommerceI18nKeys.Paid))), true, true);
+                Label paidValue = Controls.setupTextWrapping(Bootstrap.strong(I18nControls.newLabel(EventPriceFormatter.formatWithCurrency(deposit, booking.getEvent()))), true, true);
+                Label remainingLabel = Controls.setupTextWrapping(Bootstrap.textSecondary(I18nControls.newLabel(I18nKeys.appendColons(EcommerceI18nKeys.RemainingAmount))), true, true);
+                Label remainingValue = Controls.setupTextWrapping(Bootstrap.strong(I18nControls.newLabel(EventPriceFormatter.formatWithCurrency(totalPriceNet - deposit, booking.getEvent()))), true, true);
 
-            totalsSection.getChildren().addAll(totalLabel, totalValue, paidLabel, paidValue, remainingLabel, remainingValue);
-            // Cancel booking button
-            cancelLabel = Controls.setupTextWrapping(Bootstrap.textDanger(I18nControls.newLabel(OrdersI18nKeys.CancelBooking)), true, true);
-            cancelLabel.setCursor(Cursor.HAND);
-            cancelLabel.setOnMouseClicked(event -> {
-                BorderPane errorDialog = new BorderPane();
-                errorDialog.setMinWidth(500);
-                ScalePane errorContainer = new ScalePane(errorDialog);
+                // Conditional "Make Payment" button
+                Button paymentButton = ModalityStyle.blackButton(I18nControls.newButton(OrdersI18nKeys.MakePayment));
+                Integer finalTotalPriceNet = totalPriceNet;
+                Integer finalDeposit = deposit;
+                paymentButton.visibleProperty().bind(new BooleanBinding() {
+                    @Override
+                    protected boolean computeValue() {
+                        return finalTotalPriceNet - finalDeposit > 0;
+                    }
+                });
 
-                errorDialog.setBackground(new Background(new BackgroundFill(Color.WHITE, new CornerRadii(16), Insets.EMPTY)));
-                errorDialog.setPadding(new Insets(30));
 
-                Label title = Bootstrap.strong(Bootstrap.textPrimary(Bootstrap.h3(I18nControls.newLabel(OrdersI18nKeys.CancelBookingTitle))));
-                title.setPadding(new Insets(20, 0, 0, 0));
-                title.setWrapText(true);
-                errorDialog.setTop(title);
-                BorderPane.setAlignment(title, Pos.CENTER);
-                Label areYouSureLabel = Bootstrap.strong(Bootstrap.textSecondary(Bootstrap.h5(I18nControls.newLabel(OrdersI18nKeys.CancelBookingAreYouSure))));
-                areYouSureLabel.setWrapText(true);
+                totalsSection.getChildren().addAll(totalLabel, totalValue, paidLabel, paidValue, remainingLabel, remainingValue);
+                // Cancel booking button
+                cancelLabel = Controls.setupTextWrapping(Bootstrap.textDanger(I18nControls.newLabel(OrdersI18nKeys.CancelBooking)), true, true);
+                cancelLabel.setCursor(Cursor.HAND);
+                cancelLabel.setOnMouseClicked(event -> {
+                    BorderPane errorDialog = new BorderPane();
+                    errorDialog.setMinWidth(500);
+                    ScalePane errorContainer = new ScalePane(errorDialog);
 
-                Label refundInfoLabel = Bootstrap.textSecondary((I18nControls.newLabel(OrdersI18nKeys.CancelBookingRefund)));
-                refundInfoLabel.setWrapText(true);
+                    errorDialog.setBackground(new Background(new BackgroundFill(Color.WHITE, new CornerRadii(16), Insets.EMPTY)));
+                    errorDialog.setPadding(new Insets(30));
 
-                VBox content = new VBox(30, areYouSureLabel, refundInfoLabel);
-                content.setAlignment(Pos.CENTER);
-                BorderPane.setAlignment(content, Pos.CENTER);
-                BorderPane.setMargin(content, new Insets(30, 0, 30, 0));
-                errorDialog.setCenter(content);
+                    Label title = Bootstrap.strong(Bootstrap.textPrimary(Bootstrap.h3(I18nControls.newLabel(OrdersI18nKeys.CancelBookingTitle))));
+                    title.setPadding(new Insets(20, 0, 0, 0));
+                    title.setWrapText(true);
+                    errorDialog.setTop(title);
+                    BorderPane.setAlignment(title, Pos.CENTER);
+                    Label areYouSureLabel = Bootstrap.strong(Bootstrap.textSecondary(Bootstrap.h5(I18nControls.newLabel(OrdersI18nKeys.CancelBookingAreYouSure))));
+                    areYouSureLabel.setWrapText(true);
 
-                Label cancelLabelText = Bootstrap.strong(Bootstrap.textSecondary(I18nControls.newLabel(BaseI18nKeys.Cancel)));
-                cancelLabelText.setCursor(Cursor.HAND);
-                DialogCallback errorMessageCallback = DialogUtil.showModalNodeInGoldLayout(errorContainer, FXMainFrameDialogArea.getDialogArea());
-                cancelLabelText.setOnMouseClicked(m -> errorMessageCallback.closeDialog());
+                    Label refundInfoLabel = Bootstrap.textSecondary((I18nControls.newLabel(OrdersI18nKeys.CancelBookingRefund)));
+                    refundInfoLabel.setWrapText(true);
 
-                Button confirmButton = Bootstrap.largeDangerButton(I18nControls.newButton(BaseI18nKeys.Confirm));
-                confirmButton.setOnAction(m -> {
-                    Future<?> operationFuture = DocumentService.loadDocumentWithPolicy(booking)
+                    VBox content = new VBox(30, areYouSureLabel, refundInfoLabel);
+                    content.setAlignment(Pos.CENTER);
+                    BorderPane.setAlignment(content, Pos.CENTER);
+                    BorderPane.setMargin(content, new Insets(30, 0, 30, 0));
+                    errorDialog.setCenter(content);
+
+                    Label cancelLabelText = Bootstrap.strong(Bootstrap.textSecondary(I18nControls.newLabel(BaseI18nKeys.Cancel)));
+                    cancelLabelText.setCursor(Cursor.HAND);
+                    DialogCallback errorMessageCallback = DialogUtil.showModalNodeInGoldLayout(errorContainer, FXMainFrameDialogArea.getDialogArea());
+                    cancelLabelText.setOnMouseClicked(m -> errorMessageCallback.closeDialog());
+
+                    Button confirmButton = Bootstrap.largeDangerButton(I18nControls.newButton(BaseI18nKeys.Confirm));
+                    confirmButton.setOnAction(m -> {
+                        Future<?> operationFuture = DocumentService.loadDocumentWithPolicy(booking)
                             .onFailure(Console::log)
                             .compose(policyAndDocumentAggregates -> {
                                 PolicyAggregate policyAggregate = policyAndDocumentAggregates.getPolicyAggregate(); // never null
@@ -351,28 +361,32 @@ public final class BookingSummaryView {
                                 return workingBooking.submitChanges("Booking canceled online by user");
                             });
 
-                    OperationUtil.turnOnButtonsWaitModeDuringExecution(operationFuture, confirmButton, cancelLabelText);
+                        OperationUtil.turnOnButtonsWaitModeDuringExecution(operationFuture, confirmButton, cancelLabelText);
 
-                    // Close dialog only after operation completes (success or failure)
-                    operationFuture.onComplete(x -> {
-                        errorMessageCallback.closeDialog();
-                        loadFromDatabase();
+                        // Close dialog only after operation completes (success or failure)
+                        operationFuture.onComplete(x -> {
+                            errorMessageCallback.closeDialog();
+                            loadFromDatabase();
+                        });
                     });
+                    HBox buttonsHBox = new HBox(70, cancelLabelText, confirmButton);
+                    buttonsHBox.setPadding(new Insets(30, 20, 20, 20));
+                    buttonsHBox.setAlignment(Pos.CENTER);
+                    errorDialog.setBottom(buttonsHBox);
                 });
-                HBox buttonsHBox = new HBox(70, cancelLabelText, confirmButton);
-                buttonsHBox.setPadding(new Insets(30, 20, 20, 20));
-                buttonsHBox.setAlignment(Pos.CENTER);
-                errorDialog.setBottom(buttonsHBox);
-            });
 
-            Region spacer = new Region();
-            HBox.setHgrow(spacer, Priority.ALWAYS);
-            totalsAndButtonHBox.getChildren().addAll(totalsSection, paymentButton, spacer, cancelLabel);
+                Region spacer = new Region();
+                HBox.setHgrow(spacer, Priority.ALWAYS);
+                totalsAndButtonHBox.getChildren().addAll(totalsSection, paymentButton);
 
-            GridPane.setColumnSpan(totalsAndButtonHBox, 5);
-            mainGrid.add(totalsAndButtonHBox, 0, currentRow[0]);
-            detailNodes.add(totalsAndButtonHBox);
+                mainGrid.add(cancelLabel, 0, currentRow[0]);
+                detailNodes.add(cancelLabel);
 
+                GridPane.setColumnSpan(totalsAndButtonHBox, 4);
+                GridPane.setHalignment(totalsAndButtonHBox, HPos.RIGHT);
+                mainGrid.add(totalsAndButtonHBox, 1, currentRow[0]);
+                detailNodes.add(totalsAndButtonHBox);
+            }
             // Apply current visibility state
             setDetailsVisibility(detailsVisible);
         }));

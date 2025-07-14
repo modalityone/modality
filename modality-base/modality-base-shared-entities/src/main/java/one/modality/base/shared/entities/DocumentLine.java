@@ -33,6 +33,11 @@ public interface DocumentLine extends
         return getIntegerFieldValue("price_net");
     }
 
+    default String getDates() {
+        return getStringFieldValue("dates");
+    }
+
+
     default void setBedNumber(Integer bedNumber) {
         setFieldValue(bedNumber, bedNumber);
     }
