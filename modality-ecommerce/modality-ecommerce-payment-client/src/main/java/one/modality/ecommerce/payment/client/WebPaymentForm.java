@@ -127,8 +127,10 @@ public class WebPaymentForm {
         }
         webViewPane.setFitHeight(true); // Note: works with browser seamless mode and OpenJFX WebView, but not well with browser iFrame (constantly increasing)
         webViewPane.setMaxHeight(800); // Setting a maximum in case we are in browser iFrame (which we avoid for now)
-        webViewPane.setFitHeightExtra(result.isSeamless() ? 5 : 10);
-        //webViewPane.setRedirectConsole(true); // causes stack overflow
+        // Commented for Authorized.net, as this makes the payment form to always increase TODO: check with Square
+        // webViewPane.setFitHeightExtra(result.isSeamless() ? 5 : 10);
+        // Commented as this causes stack overflows
+        // webViewPane.setRedirectConsole(true);
         LoadOptions loadOptions = new LoadOptions()
             .setOnLoadFailure(this::onLoadFailure)
             .setOnLoadSuccess(() -> { // Note: can be called several times in case of an iFrame reload
