@@ -114,12 +114,19 @@ final class StepBBookEventSlide extends StepSlide {
         if (width < 0)
             width = mainVbox.getWidth();
         double maxPageWidth = Math.min(MAX_PAGE_WIDTH, 0.90 * width);
-        double headerVerticalGap = maxPageWidth * 0.1;
-        headerPane.setPadding(new Insets(headerVerticalGap, 0, headerVerticalGap, 0));
+        double headerTopBottomPadding = maxPageWidth * 0.1;
+        BookingForm bookingForm = digitsSlideController.getBookingForm();
+        if (bookingForm != null) {
+            double headerMaxTopBottomPadding = bookingForm.getSettings().getHeaderMaxTopBottomPadding();
+            if (headerMaxTopBottomPadding >= 0 && headerTopBottomPadding > headerMaxTopBottomPadding)
+                headerTopBottomPadding = headerMaxTopBottomPadding;
+        }
+        headerPane.setPadding(new Insets(headerTopBottomPadding, 0, headerTopBottomPadding, 0));
         if (eventHeader != null)
             eventHeader.setMaxPageWidth(maxPageWidth);
         Region digitsTransitionPane = digitsSlideController.getContainer();
         digitsTransitionPane.setMaxWidth(maxPageWidth);
+        // Extra space between the header (with padding) and the digitsTransitionPane (which contains the booking form)
         digitsTransitionPane.setPadding(new Insets(maxPageWidth * 0.03, 0, 0, 0));
         double fontFactor = GeneralUtility.computeFontFactor(maxPageWidth);
         mediumFontProperty.set(Font.font(Math.max(MIN_FONT_SIZE, Math.min(MAX_FONT_SIZE, StyleUtility.MEDIUM_TEXT_SIZE * fontFactor))));

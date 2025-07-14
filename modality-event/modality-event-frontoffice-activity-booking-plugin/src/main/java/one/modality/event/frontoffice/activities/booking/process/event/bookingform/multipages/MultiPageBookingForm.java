@@ -77,7 +77,6 @@ public abstract class MultiPageBookingForm extends BookingFormBase {
         }
         if (settings.showNavigationBar())
             container.setBottom(new PriceBar(activity.getWorkingBookingProperties()).getView());
-        container.getStyleClass().add("online-festival-booking-form");
         container.setMaxWidth(MAX_WIDTH);
         return container;
     }

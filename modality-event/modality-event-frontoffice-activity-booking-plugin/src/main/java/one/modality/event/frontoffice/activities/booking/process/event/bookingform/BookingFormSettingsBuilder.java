@@ -10,6 +10,7 @@ public final class BookingFormSettingsBuilder {
 
     private EventHeader eventHeader;
     private Background headerBackground;
+    private double headerMaxTopBottomPadding = -1;
     private boolean showNavigationBar;
     private boolean showPriceBar;
     private boolean bookAsAGuestAllowed;
@@ -22,6 +23,11 @@ public final class BookingFormSettingsBuilder {
 
     public BookingFormSettingsBuilder setHeaderBackground(Background headerBackground) {
         this.headerBackground = headerBackground;
+        return this;
+    }
+
+    public BookingFormSettingsBuilder setHeaderMaxTopBottomPadding(double headerMaxTopBottomPadding) {
+        this.headerMaxTopBottomPadding = headerMaxTopBottomPadding;
         return this;
     }
 
@@ -46,6 +52,6 @@ public final class BookingFormSettingsBuilder {
     }
 
     public BookingFormSettings build() {
-        return new BookingFormSettings(eventHeader, headerBackground, showNavigationBar, showPriceBar, bookAsAGuestAllowed, partialEventAllowed);
+        return new BookingFormSettings(eventHeader, headerBackground, headerMaxTopBottomPadding, showNavigationBar, showPriceBar, bookAsAGuestAllowed, partialEventAllowed);
     }
 }
