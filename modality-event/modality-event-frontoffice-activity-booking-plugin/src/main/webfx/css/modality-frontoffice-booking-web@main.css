@@ -1,14 +1,20 @@
 .booking-form .navigation-bar {
     font-weight: bold;
-    --fx-background-color: #E7E7E7;
+    --fx-background-image: linear-gradient(to right, #E7E7E7, #E7E7E7 75%, #0096D6 78%, #0096D6);
     --fx-background-radius: 8px;
     --fx-border-style: solid;
-    --fx-border-color: #E7E7E7;
+    --fx-border-color: transparent;
+    --fx-border-image: linear-gradient(to right, #E7E7E7, #E7E7E7 75%, #0096D6 78%, #0096D6);
     --fx-border-width: 1px;
     --fx-border-radius: 8px;
     --fx-button-background-color: transparent;
     --fx-button-border-color: transparent;
+    --fx-border-color-focus: transparent;
     --fx-togglebutton-border-color-hover: transparent;
+    --fx-togglebutton-border-color-selected: transparent;
+    --webfx-aria-toggle-button-background-color: transparent;
+    --webfx-aria-toggle-button-background-color-hover: transparent;
+    --webfx-aria-toggle-button-background-color-fired: transparent;
 }
 
 .booking-form .navigation-bar .title {
@@ -18,6 +24,19 @@
     --fx-border-color: #E7E7E7;
     --fx-border-width: 1px;
     --fx-border-radius: 8px;
+}
+
+.booking-form .navigation-bar fx-togglebutton.disabled {
+    --fx-text-fill: transparent;
+}
+
+.booking-form .next-button {
+    --fx-text-fill: white;
+}
+
+.booking-form .back-button {
+    --fx-text-fill: var(--bootstrap-grey5);
+    --webfx-aria-toggle-button-text-fill-fired: var(--bootstrap-grey5);
 }
 
 .booking-form .price-bar {

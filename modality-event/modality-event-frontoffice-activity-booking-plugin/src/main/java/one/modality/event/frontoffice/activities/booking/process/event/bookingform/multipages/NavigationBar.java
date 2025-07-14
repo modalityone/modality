@@ -32,12 +32,14 @@ public final class NavigationBar {
     public NavigationBar() {
         titleLabel.setAlignment(Pos.CENTER);
         titleLabel.setMaxSize(Double.MAX_VALUE, Double.MAX_VALUE);
-        titleLabel.getStyleClass().add("title");
         container.setCenter(titleLabel);
         container.setLeft(backButton);
         container.setRight(nextButton);
         container.setMinHeight(51);
         container.getStyleClass().add("navigation-bar");
+        titleLabel.getStyleClass().add("title");
+        backButton.getStyleClass().add("back-button");
+        nextButton.getStyleClass().add("next-button");
     }
 
     public void setTitleI18nKey(Object labelI18nKey) {
