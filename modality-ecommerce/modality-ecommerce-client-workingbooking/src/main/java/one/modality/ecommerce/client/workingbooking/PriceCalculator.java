@@ -7,6 +7,7 @@ import one.modality.ecommerce.document.service.DocumentAggregate;
 
 import java.util.List;
 import java.util.function.Supplier;
+import java.util.stream.Stream;
 
 /**
  * First draft version.
@@ -144,4 +145,7 @@ public class PriceCalculator {
             .orElse(0);
     }
 
+    public int calculateDocumentLinesPrice(Stream<DocumentLine> stream) {
+        return Kbs2PriceAlgorithm.computeBookingBill(getDocumentAggregate(), stream, false, false).getInvoiced();
+    }
 }

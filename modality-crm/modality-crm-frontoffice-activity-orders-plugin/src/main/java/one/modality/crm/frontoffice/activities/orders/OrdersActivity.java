@@ -119,7 +119,7 @@ final class OrdersActivity extends ViewDomainActivityBase implements ModalityBut
         // Upcoming bookings
         ReactiveEntitiesMapper.<Document>createReactiveChain(this)
             .always("{class: 'Document', alias: 'd', orderBy: 'event.startDate desc, ref desc'}")
-            .always(DqlStatement.fields(OrderView.BOOKING_REQUIRED_FIELDS))
+            .always(DqlStatement.fields(BookingSummaryView.BOOKING_REQUIRED_FIELDS))
             .always(where("event.endDate >= now()"))
             .always(where("!abandoned or price_deposit>0"))
             .ifNotNullOtherwiseEmpty(FXModalityUserPrincipal.modalityUserPrincipalProperty(), mup -> where("person.frontendAccount=?", mup.getUserAccountId()))
@@ -129,7 +129,7 @@ final class OrdersActivity extends ViewDomainActivityBase implements ModalityBut
         // Past bookings
         ReactiveEntitiesMapper.<Document>createReactiveChain(this)
             .always("{class: 'Document', alias: 'd', orderBy: 'event.startDate desc, ref desc', limit: 5}")
-            .always(DqlStatement.fields(OrderView.BOOKING_REQUIRED_FIELDS))
+            .always(DqlStatement.fields(BookingSummaryView.BOOKING_REQUIRED_FIELDS))
             .always(where("event.endDate < now()"))
             .always(where("!abandoned or price_deposit>0"))
             .ifNotNullOtherwiseEmpty(FXModalityUserPrincipal.modalityUserPrincipalProperty(), mup -> where("person.frontendAccount=?", mup.getUserAccountId()))

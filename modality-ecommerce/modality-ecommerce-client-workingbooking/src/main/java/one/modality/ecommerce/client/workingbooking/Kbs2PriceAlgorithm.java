@@ -10,6 +10,7 @@ import one.modality.ecommerce.document.service.PolicyAggregate;
 import java.time.LocalDate;
 import java.util.*;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 /**
  * @author Bruno Salmon
@@ -25,8 +26,12 @@ public final class Kbs2PriceAlgorithm {
     }
 
     private static Bill computeBookingBill(DocumentAggregate documentAggregate, boolean ignoreLongStayDiscount, boolean update) {
+        return computeBookingBill(documentAggregate, documentAggregate.getDocumentLinesStream(), ignoreLongStayDiscount, update);
+    }
+
+    public static Bill computeBookingBill(DocumentAggregate documentAggregate, Stream<DocumentLine> documentLineStream, boolean ignoreLongStayDiscount, boolean update) {
         Map<SiteItem, Block> hash = new HashMap<>();
-        documentAggregate.getDocumentLinesStream().forEach(line -> {
+        documentLineStream.forEach(line -> {
             Site site = line.getSite();
             Item item = line.getItem();
             if (item.getRateAliasItem() != null)
@@ -45,7 +50,7 @@ public final class Kbs2PriceAlgorithm {
         return new Bill(documentAggregate, blocks, ignoreLongStayDiscount, update);
     }
 
-    private static final class Bill {
+    public static final class Bill {
 
         //private final WorkingBooking workingBooking;
         private final DocumentAggregate documentAggregate;
