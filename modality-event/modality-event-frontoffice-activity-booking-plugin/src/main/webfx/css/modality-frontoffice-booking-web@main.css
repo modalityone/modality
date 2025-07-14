@@ -1,4 +1,4 @@
-.book-event-activity .navigation-bar {
+.booking-form .navigation-bar {
     font-weight: bold;
     --fx-background-color: #E7E7E7;
     --fx-background-radius: 8px;
@@ -11,7 +11,7 @@
     --fx-togglebutton-border-color-hover: transparent;
 }
 
-.book-event-activity .navigation-bar .title {
+.booking-form .navigation-bar .title {
     --fx-background-color: white;
     --fx-background-radius: 8px;
     --fx-border-style: solid;
@@ -20,12 +20,32 @@
     --fx-border-radius: 8px;
 }
 
-.book-event-activity .price-bar {
+.booking-form .price-bar {
     font-weight: bold;
     --fx-background-color: #F4F4F4;
 }
 
-.book-event-activity fx-label.price {
+.booking-form .price-label {
     --fx-text-fill: #838788;
     font-weight: bold;
+}
+
+.booking-form {
+    font-family: "Poppins", sans-serif;
+    --fx-line-height: 1.6;
+    --fx-textarea-border-color: black;
+    --fx-textarea-border-radius: 19px;
+}
+
+.booking-form fx-radiobutton, .booking-form fx-checkbox {
+    font-weight: bold;
+}
+
+.booking-form .period-label {
+    --fx-text-fill: #838788;
+}
+
+.booking-form .price-label {
+    font-weight: bold;
+    --fx-text-fill: #838788;
 }

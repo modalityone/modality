@@ -66,7 +66,7 @@ public final class BookingFormUtil {
 
     public static VBox createPageVBox(String pageStyleClass, boolean largeSpacing, Node... children) {
         VBox vBox = new VBox(largeSpacing ? 48 : 24, children);
-        vBox.getStyleClass().addAll("booking-options", pageStyleClass);
+        //vBox.getStyleClass().addAll(pageStyleClass);
         vBox.setPadding(new Insets(48, 0, 48, 0));
         vBox.setAlignment(Pos.CENTER);
         return vBox;
@@ -87,16 +87,29 @@ public final class BookingFormUtil {
         return textArea;
     }
 
+    public static Label createPeriodLabel() {
+        return createStyledLabel("period-label");
+    }
+
     public static Label createPricePromptLabel(Object i18nKey, boolean appendColons) {
         if (appendColons)
             i18nKey = I18nKeys.appendColons(i18nKey);
         return Bootstrap.strong(I18nControls.newLabel(i18nKey));
     }
 
+    public static Label createPriceAmountLabel() {
+        return createStyledLabel("price-label");
+    }
+
     public static Label createPriceAmountLabel(StringProperty formattedPriceProperty) {
-        Label priceLabel = new Label();
-        priceLabel.getStyleClass().add("price");
+        Label priceLabel = createPriceAmountLabel();
         priceLabel.textProperty().bind(formattedPriceProperty);
         return priceLabel;
+    }
+
+    private static Label createStyledLabel(String styleClass) {
+        Label label = new Label();
+        label.getStyleClass().add(styleClass);
+        return label;
     }
 }
