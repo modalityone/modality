@@ -11,6 +11,7 @@ public final class BookingFormSettingsBuilder {
     private EventHeader eventHeader;
     private Background headerBackground;
     private double headerMaxTopBottomPadding = -1;
+    private double extraSpaceBetweenHeaderAndBookingForm; // if between 0 and 1, then it's a percent factor of the booking form width
     private boolean showNavigationBar;
     private boolean showPriceBar;
     private boolean bookAsAGuestAllowed;
@@ -28,6 +29,11 @@ public final class BookingFormSettingsBuilder {
 
     public BookingFormSettingsBuilder setHeaderMaxTopBottomPadding(double headerMaxTopBottomPadding) {
         this.headerMaxTopBottomPadding = headerMaxTopBottomPadding;
+        return this;
+    }
+
+    public BookingFormSettingsBuilder setExtraSpaceBetweenHeaderAndBookingForm(double extraSpaceBetweenHeaderAndBookingForm) {
+        this.extraSpaceBetweenHeaderAndBookingForm = extraSpaceBetweenHeaderAndBookingForm;
         return this;
     }
 
@@ -52,6 +58,6 @@ public final class BookingFormSettingsBuilder {
     }
 
     public BookingFormSettings build() {
-        return new BookingFormSettings(eventHeader, headerBackground, headerMaxTopBottomPadding, showNavigationBar, showPriceBar, bookAsAGuestAllowed, partialEventAllowed);
+        return new BookingFormSettings(eventHeader, headerBackground, headerMaxTopBottomPadding, extraSpaceBetweenHeaderAndBookingForm, showNavigationBar, showPriceBar, bookAsAGuestAllowed, partialEventAllowed);
     }
 }

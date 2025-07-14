@@ -29,6 +29,7 @@ public class RecurringEventBookingFormProvider implements BookingFormProvider {
         return new RecurringEventBookingForm(event, activity, new BookingFormSettingsBuilder()
             .setEventHeader(new LocalEventHeader())
             .setHeaderBackground(Background.fill(Brand.getBrandMainColor()))
+            .setExtraSpaceBetweenHeaderAndBookingForm(0.03) // 3% of the booking form width
             .setBookAsAGuestAllowed(true)
             .setPartialEventAllowed(true)
             .build()

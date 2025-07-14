@@ -10,6 +10,7 @@ public record BookingFormSettings(
     EventHeader eventHeader,
     Background headerBackground,
     double headerMaxTopBottomPadding,
+    double extraSpaceBetweenHeaderAndBookingForm, // if between 0 and 1, then it's a percent factor of the booking form width
     boolean showNavigationBar,
     boolean showPriceBar,
     boolean bookAsAGuestAllowed,

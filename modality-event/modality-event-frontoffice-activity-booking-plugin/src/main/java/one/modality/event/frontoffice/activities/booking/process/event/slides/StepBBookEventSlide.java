@@ -24,6 +24,7 @@ import one.modality.ecommerce.payment.client.WebPaymentForm;
 import one.modality.event.client.event.fx.FXEvent;
 import one.modality.event.frontoffice.activities.booking.process.event.BookEventActivity;
 import one.modality.event.frontoffice.activities.booking.process.event.bookingform.BookingForm;
+import one.modality.event.frontoffice.activities.booking.process.event.bookingform.BookingFormSettings;
 import one.modality.event.frontoffice.eventheader.EventHeader;
 
 /**
@@ -116,8 +117,9 @@ final class StepBBookEventSlide extends StepSlide {
         double maxPageWidth = Math.min(MAX_PAGE_WIDTH, 0.90 * width);
         double headerTopBottomPadding = maxPageWidth * 0.1;
         BookingForm bookingForm = digitsSlideController.getBookingForm();
-        if (bookingForm != null) {
-            double headerMaxTopBottomPadding = bookingForm.getSettings().headerMaxTopBottomPadding();
+        BookingFormSettings settings = bookingForm == null ? null : bookingForm.getSettings();
+        if (settings != null) {
+            double headerMaxTopBottomPadding = settings.headerMaxTopBottomPadding();
             if (headerMaxTopBottomPadding >= 0 && headerTopBottomPadding > headerMaxTopBottomPadding)
                 headerTopBottomPadding = headerMaxTopBottomPadding;
         }
@@ -127,7 +129,11 @@ final class StepBBookEventSlide extends StepSlide {
         Region digitsTransitionPane = digitsSlideController.getContainer();
         digitsTransitionPane.setMaxWidth(maxPageWidth);
         // Extra space between the header (with padding) and the digitsTransitionPane (which contains the booking form)
-        digitsTransitionPane.setPadding(new Insets(maxPageWidth * 0.03, 0, 0, 0));
+        double extraSpace = settings == null ? 0 : settings.extraSpaceBetweenHeaderAndBookingForm();
+        if (extraSpace > 0 && extraSpace < 1) { // indicates a percentage of the booking form width
+            extraSpace *= maxPageWidth;
+        }
+        digitsTransitionPane.setPadding(extraSpace == 0 ? Insets.EMPTY : new Insets(extraSpace, 0, 0, 0));
         double fontFactor = GeneralUtility.computeFontFactor(maxPageWidth);
         mediumFontProperty.set(Font.font(Math.max(MIN_FONT_SIZE, Math.min(MAX_FONT_SIZE, StyleUtility.MEDIUM_TEXT_SIZE * fontFactor))));
         subFontProperty.set(   Font.font(Math.max(MIN_FONT_SIZE, Math.min(MAX_FONT_SIZE, StyleUtility.SUB_TEXT_SIZE    * fontFactor))));
