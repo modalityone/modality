@@ -17,7 +17,7 @@ import java.util.Objects;
  */
 public final class FXEvent {
 
-    public static final String EXPECTED_FIELDS = "icon,name,startDate,endDate, type.recurringItem, organization.(" + FXOrganization.EXPECTED_FIELDS + "), venue";
+    public static final String EXPECTED_FIELDS = "icon, name, startDate, endDate, type.recurringItem, organization.(" + FXOrganization.EXPECTED_FIELDS + "), venue, state";
 
     private final static ObjectProperty<Event> lastNonNullEventProperty = new SimpleObjectProperty<>();
 
