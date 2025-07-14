@@ -7,10 +7,12 @@ import dev.webfx.platform.conf.SourcesConfig;
 import dev.webfx.extras.i18n.controls.I18nControls;
 import javafx.geometry.Insets;
 import javafx.scene.control.ContentDisplay;
+import javafx.scene.control.Hyperlink;
 import javafx.scene.control.Label;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.VBox;
 import javafx.scene.text.TextAlignment;
+import one.modality.crm.frontoffice.activities.orders.OrdersRouting;
 import one.modality.event.frontoffice.activities.booking.BookingI18nKeys;
 import one.modality.event.frontoffice.activities.booking.process.event.BookEventActivity;
 
@@ -41,9 +43,12 @@ final class StepCThankYouSlide extends StepSlide {
         thankYouLabel.setTextAlignment(TextAlignment.CENTER);
         VBox.setMargin(thankYouLabel, new Insets(20,0,50,0));
 
-        Label bookingNumber = I18nControls.newLabel(BookingI18nKeys.BookingNumber1, getWorkingBookingProperties().bookingReferenceProperty());
+        Hyperlink bookingNumber = I18nControls.newHyperlink(BookingI18nKeys.BookingNumber1, getWorkingBookingProperties().bookingReferenceProperty());
         bookingNumber.setWrapText(true);
         bookingNumber.setTextAlignment(TextAlignment.CENTER);
+        bookingNumber.setOnAction(e -> {
+            new OrdersRouting.RouteToOrdersRequest(getBookEventActivity().getHistory()).execute();
+        });
 
         mainVbox.getChildren().setAll(
                 headerImageScalePane,

@@ -23,6 +23,7 @@ module modality.event.frontoffice.activity.booking.plugin {
     requires modality.crm.backoffice.organization.fx;
     requires modality.crm.client.authn.fx;
     requires modality.crm.client.i18n;
+    requires modality.crm.frontoffice.activity.orders.plugin;
     requires modality.ecommerce.client.i18n;
     requires modality.ecommerce.client.workingbooking;
     requires modality.ecommerce.document.service;

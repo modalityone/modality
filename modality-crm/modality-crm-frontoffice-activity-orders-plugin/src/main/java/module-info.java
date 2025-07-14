@@ -44,6 +44,6 @@ module modality.crm.frontoffice.activity.orders.plugin {
 
     // Provided services
     provides dev.webfx.stack.routing.uirouter.UiRoute with one.modality.crm.frontoffice.activities.orders.OrdersRouting.UserProfileUiRoute;
-    provides dev.webfx.stack.routing.uirouter.operations.RouteRequestEmitter with one.modality.crm.frontoffice.activities.orders.OrdersRouting.RouteToUserProfileRequestEmitter;
+    provides dev.webfx.stack.routing.uirouter.operations.RouteRequestEmitter with one.modality.crm.frontoffice.activities.orders.OrdersRouting.RouteToOrdersRequestEmitter;
 
 }

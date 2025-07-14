@@ -39,9 +39,9 @@ public class OrdersRouting {
         }
     }
 
-    public static class RouteToUserProfileRequest extends RoutePushRequest implements HasOperationCode, HasI18nKey {
+    public static class RouteToOrdersRequest extends RoutePushRequest implements HasOperationCode, HasI18nKey {
 
-        public RouteToUserProfileRequest(BrowsingHistory browsingHistory) {
+        public RouteToOrdersRequest(BrowsingHistory browsingHistory) {
             super(getPath(), browsingHistory);
         }
 
@@ -56,11 +56,11 @@ public class OrdersRouting {
         }
     }
 
-    public static class RouteToUserProfileRequestEmitter implements RouteRequestEmitter {
+    public static class RouteToOrdersRequestEmitter implements RouteRequestEmitter {
 
         @Override
         public RouteRequest instantiateRouteRequest(UiRouteActivityContext context) {
-            return new RouteToUserProfileRequest(context.getHistory());
+            return new RouteToOrdersRequest(context.getHistory());
         }
     }
 }
