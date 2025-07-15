@@ -11,6 +11,7 @@ import one.modality.base.shared.entities.ScheduledItem;
 import one.modality.base.shared.entities.formatters.EventPriceFormatter;
 import one.modality.ecommerce.document.service.DocumentAggregate;
 import one.modality.ecommerce.document.service.PolicyAggregate;
+import one.modality.ecommerce.shared.pricecalculator.PriceCalculator;
 
 import java.util.List;
 

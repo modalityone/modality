@@ -7,6 +7,7 @@ module modality.ecommerce.client.workingbooking {
     requires modality.base.shared.entities;
     requires modality.crm.client.authn.fx;
     requires modality.ecommerce.document.service;
+    requires modality.ecommerce.shared.pricecalculator;
     requires webfx.kit.util;
     requires webfx.platform.async;
     requires webfx.platform.scheduler;

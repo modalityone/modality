@@ -18,6 +18,7 @@ module modality.crm.frontoffice.activity.orders.plugin {
     requires modality.ecommerce.client.i18n;
     requires modality.ecommerce.client.workingbooking;
     requires modality.ecommerce.document.service;
+    requires modality.ecommerce.shared.pricecalculator;
     requires webfx.extras.i18n;
     requires webfx.extras.i18n.controls;
     requires webfx.extras.operation;

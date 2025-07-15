@@ -13,6 +13,7 @@ import one.modality.ecommerce.document.service.events.AbstractDocumentEvent;
 import one.modality.ecommerce.document.service.events.AbstractDocumentLineEvent;
 import one.modality.ecommerce.document.service.events.book.*;
 import one.modality.ecommerce.document.service.util.DocumentEvents;
+import one.modality.ecommerce.shared.pricecalculator.PriceCalculator;
 
 import java.util.ArrayList;
 import java.util.List;

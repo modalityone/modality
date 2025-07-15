@@ -12,7 +12,7 @@
 
     <providers>
         <provider interface="dev.webfx.stack.routing.uirouter.UiRoute">one.modality.crm.frontoffice.activities.orders.OrdersRouting$UserProfileUiRoute</provider>
-        <provider interface="dev.webfx.stack.routing.uirouter.operations.RouteRequestEmitter">one.modality.crm.frontoffice.activities.orders.OrdersRouting.RouteToOrdersRequestEmitter</provider>
+        <provider interface="dev.webfx.stack.routing.uirouter.operations.RouteRequestEmitter">one.modality.crm.frontoffice.activities.orders.OrdersRouting$RouteToOrdersRequestEmitter</provider>
     </providers>
 
     <i18n javaKeysClass="one.modality.crm.frontoffice.activities.orders.OrdersI18nKeys"/>

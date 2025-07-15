@@ -1,4 +1,4 @@
-package one.modality.ecommerce.client.workingbooking;
+package one.modality.ecommerce.shared.pricecalculator;
 
 import dev.webfx.platform.util.Booleans;
 import dev.webfx.platform.util.collection.Collections;

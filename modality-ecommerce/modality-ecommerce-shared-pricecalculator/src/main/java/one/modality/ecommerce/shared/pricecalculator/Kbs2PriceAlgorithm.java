@@ -1,4 +1,4 @@
-package one.modality.ecommerce.client.workingbooking;
+package one.modality.ecommerce.shared.pricecalculator;
 
 import dev.webfx.platform.util.Booleans;
 import dev.webfx.platform.util.Objects;
@@ -15,7 +15,9 @@ import java.util.stream.Stream;
 /**
  * @author Bruno Salmon
  */
-public final class Kbs2PriceAlgorithm {
+final class Kbs2PriceAlgorithm {
+
+    private record PriceMemo(Rate rate, int dailyPrice, int price, int consumableDays) {}
 
     public static int computeBookingPrice(DocumentAggregate documentAggregate, boolean ignoreLongStayDiscount, boolean update) {
         return computeBookingBill(documentAggregate, ignoreLongStayDiscount, update).getInvoiced();
@@ -214,7 +216,7 @@ public final class Kbs2PriceAlgorithm {
                         int dailyPrice = ratePrice / consumableDays;
                         // Ugly workaround for Online January retreat 2021 because this price algorithm is not always correct.
                         // Ex: 1 week (actually 8 days): £70, 2 weeks (actually 15 days): £120, 3 weeks (actually 22 days): £180
-                        // => For the 3 weeks case, this price algorithm computes £190 instead of £180 because it considers
+                        // => For the 3-weeks case, this price algorithm computes £190 instead of £180 because it considers
                         // the £120 rate is the cheaper (because £120 / 15 < £180 / 22) and then add £70 for the remaining days.
                         /* Commented in KBS3
                         if (rate.id === 27510 && remainingDays === maxDay) // £120 rate with 22 remaining days
@@ -230,7 +232,7 @@ public final class Kbs2PriceAlgorithm {
                     }
                     if (cheapest == null) // Happens when no rate is finally applicable
                         break;
-                    // applying the found cheapest rate on the next consumable days (applyable for this rate)
+                    // applying the found cheapest rate on the next consumable days (applicable for this rate)
                     var remainingPrice = cheapest.price;
                     if (second == null)
                         second = cheapest;
@@ -318,19 +320,6 @@ public final class Kbs2PriceAlgorithm {
             return price;
         }
 
-        private static final class PriceMemo {
-            final Rate rate;
-            final int dailyPrice;
-            final int price;
-            final int consumableDays;
-
-            PriceMemo(Rate rate, int dailyPrice, int price, int consumableDays) {
-                this.rate = rate;
-                this.dailyPrice = dailyPrice;
-                this.price = price;
-                this.consumableDays = consumableDays;
-            }
-        }
     }
 
 }

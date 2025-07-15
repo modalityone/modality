@@ -47,6 +47,7 @@
         <module>modality-ecommerce-payment-server-gateway-stripe-plugin</module>
         <module>modality-ecommerce-server-max-plugin</module>
         <module>modality-ecommerce-server-min-plugin</module>
+        <module>modality-ecommerce-shared-pricecalculator</module>
     </modules>
 
 </project>
