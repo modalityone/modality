@@ -44,4 +44,18 @@ public enum BookingStatus {
             return BookingStatus.COMPLETE;
         return BookingStatus.CONFIRMED;
     }
+
+    public static String getBookingStatusExpression() {
+        return "price_net < price_minDeposit ? 'PAYMENT_REQUIRED' : cancelled ? 'CANCELLED' : !confirmed && !arrived ? 'IN_PROGRESS' : price_deposit >= price_net ? 'COMPLETE' : 'CONFIRMED'";
+    }
+
+    public static String getBookingStatusOrderExpression() {
+        return getBookingStatusExpression()
+            .replace("'PAYMENT_REQUIRED'", String.valueOf(PAYMENT_REQUIRED.ordinal()))
+            .replace("'CANCELLED'", String.valueOf(CANCELLED.ordinal()))
+            .replace("'IN_PROGRESS'", String.valueOf(IN_PROGRESS.ordinal()))
+            .replace("'CONFIRMED'", String.valueOf(CONFIRMED.ordinal()))
+            .replace("'COMPLETE'", String.valueOf(COMPLETE.ordinal()))
+            ;
+    }
 }
