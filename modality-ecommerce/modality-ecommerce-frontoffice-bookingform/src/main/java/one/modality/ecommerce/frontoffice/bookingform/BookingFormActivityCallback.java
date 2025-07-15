@@ -1,6 +1,7 @@
 package one.modality.ecommerce.frontoffice.bookingform;
 
 import javafx.beans.value.ObservableBooleanValue;
+import javafx.scene.control.Button;
 import javafx.scene.layout.Region;
 
 /**
@@ -14,7 +15,7 @@ public interface BookingFormActivityCallback {
 
     void disableSubmitButton(boolean disable);
 
-    void submitBooking(int paymentDeposit);
+    void submitBooking(int paymentDeposit, Button... bookingFormSubmitButtons);
 
     Region getEmbeddedLoginNode();
 

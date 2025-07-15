@@ -9,6 +9,7 @@ import dev.webfx.extras.util.layout.Layouts;
 import dev.webfx.kit.util.properties.FXProperties;
 import dev.webfx.platform.console.Console;
 import dev.webfx.platform.uischeduler.UiScheduler;
+import dev.webfx.platform.util.Arrays;
 import dev.webfx.platform.util.collection.Collections;
 import dev.webfx.platform.windowhistory.WindowHistory;
 import javafx.beans.property.BooleanProperty;
@@ -58,6 +59,7 @@ final class Step1BookingFormAndSubmitSlide extends StepSlide implements BookingF
     private final FlipPane loginGuestFlipPane = new FlipPane();
     private final MonoPane loginContent = new MonoPane();
     private final GuestPanel guestPanel = new GuestPanel();
+    private Button[] bookingFormSubmitButtons;
 
     public Step1BookingFormAndSubmitSlide(BookEventActivity bookEventActivity) {
         super(bookEventActivity);
@@ -162,12 +164,15 @@ final class Step1BookingFormAndSubmitSlide extends StepSlide implements BookingF
     @Override
     void turnOnWaitMode() {
         turnOnButtonWaitMode(defaultSubmitButton);
+        turnOnButtonWaitMode(bookingFormSubmitButtons);
         guestPanel.turnOnButtonWaitMode();
     }
 
     @Override
     void turnOffWaitMode() {
         turnOffButtonWaitMode(defaultSubmitButton, BaseI18nKeys.Submit);
+        if (!Arrays.isEmpty(bookingFormSubmitButtons))
+            turnOffButtonWaitMode(bookingFormSubmitButtons[0], BaseI18nKeys.Submit); // TODO: get the correct i18n key from the booking form
         guestPanel.turnOffButtonWaitMode();
     }
 
@@ -203,7 +208,8 @@ final class Step1BookingFormAndSubmitSlide extends StepSlide implements BookingF
     }
 
     @Override
-    public void submitBooking(int paymentDeposit) {
+    public void submitBooking(int paymentDeposit, Button... bookingFormSubmitButtons) {
+        this.bookingFormSubmitButtons = bookingFormSubmitButtons;
         WorkingBookingProperties workingBookingProperties = getWorkingBookingProperties();
         WorkingBooking workingBooking = getWorkingBooking();
         // Three cases here:
