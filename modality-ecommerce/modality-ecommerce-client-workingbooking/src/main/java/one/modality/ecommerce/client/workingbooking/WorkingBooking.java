@@ -75,7 +75,7 @@ public final class WorkingBooking {
     public void bookScheduledItems(List<ScheduledItem> scheduledItems, boolean addOnly) {
         if (scheduledItems.isEmpty())
             return;
-        // first draft version assuming it's a new booking and new line
+        // First draft version assuming all scheduled items are referring to the same site and items
         ScheduledItem scheduledItemSample = scheduledItems.get(0);
         Site site = scheduledItemSample.getSite();
         Item item = scheduledItemSample.getItem();
@@ -115,6 +115,21 @@ public final class WorkingBooking {
             removeAttendances(attendancesToRemove);
         }
         lastestDocumentAggregate = null;
+    }
+
+    public void unbookScheduledItems(List<ScheduledItem> scheduledItems) {
+        removeAttendances(Collections.filter(getAttendancesAdded(false), a -> scheduledItems.contains(a.getScheduledItem())));
+    }
+
+    public boolean areScheduledItemsBooked(List<ScheduledItem> scheduledItems) {
+        if (scheduledItems.isEmpty())
+            return false;
+        // First draft version assuming all scheduled items are referring to the same site and items
+        ScheduledItem scheduledItemSample = scheduledItems.get(0);
+        Site site = scheduledItemSample.getSite();
+        Item item = scheduledItemSample.getItem();
+        DocumentLine existingDocumentLine = getLastestDocumentAggregate().getFirstSiteItemDocumentLine(site, item);
+        return existingDocumentLine != null;
     }
 
     public void removeAttendance(Attendance attendance) {
@@ -237,20 +252,32 @@ public final class WorkingBooking {
         return documentChanges;
     }
 
-    public List<Attendance> getAttendanceAdded() {
+    public List<Attendance> getAttendancesAdded(boolean fromChangesOnly) {
         List<Attendance> list = new ArrayList<>();
-        for (AbstractDocumentEvent currentEvent : documentChanges) {
-            if (currentEvent instanceof AddAttendancesEvent)
-                list.addAll(Arrays.asList(((AddAttendancesEvent) currentEvent).getAttendances()));
+        DocumentAggregate documentAggregate = getLastestDocumentAggregate();
+        while (documentAggregate != null) {
+            for (AbstractDocumentEvent currentEvent : documentAggregate.getNewDocumentEvents()) {
+                if (currentEvent instanceof AddAttendancesEvent)
+                    list.addAll(Arrays.asList(((AddAttendancesEvent) currentEvent).getAttendances()));
+            }
+            if (fromChangesOnly)
+                break;
+            documentAggregate = documentAggregate.getPreviousVersion();
         }
         return list;
     }
 
-    public List<Attendance> getAttendanceRemoved() {
+    public List<Attendance> getAttendancesRemoved(boolean fromChangesOnly) {
         List<Attendance> list = new ArrayList<>();
-        for (AbstractDocumentEvent currentEvent : documentChanges) {
-            if (currentEvent instanceof RemoveAttendancesEvent)
-                list.addAll(Arrays.asList(((RemoveAttendancesEvent) currentEvent).getAttendances()));
+        DocumentAggregate documentAggregate = getLastestDocumentAggregate();
+        while (documentAggregate != null) {
+            for (AbstractDocumentEvent currentEvent : documentAggregate.getNewDocumentEvents()) {
+                if (currentEvent instanceof RemoveAttendancesEvent)
+                    list.addAll(Arrays.asList(((RemoveAttendancesEvent) currentEvent).getAttendances()));
+            }
+            if (fromChangesOnly)
+                break;
+            documentAggregate = documentAggregate.getPreviousVersion();
         }
         return list;
     }

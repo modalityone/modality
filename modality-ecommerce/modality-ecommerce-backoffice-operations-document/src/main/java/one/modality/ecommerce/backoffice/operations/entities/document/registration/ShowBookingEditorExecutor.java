@@ -71,7 +71,7 @@ final class ShowBookingEditorExecutor {
                     DialogBuilderUtil.armDialogContentButtons(dialogContent, dialogCallback -> {
                         executing[0] = true;
                         WorkingBookingSyncer.syncWorkingBookingFromEventSchedule(workingBooking,recurringEventSchedule,false);
-                        WorkingBookingHistoryHelper historyHelper = new WorkingBookingHistoryHelper(workingBooking.getAttendanceAdded(),workingBooking.getAttendanceRemoved());
+                        WorkingBookingHistoryHelper historyHelper = new WorkingBookingHistoryHelper(workingBooking.getAttendancesAdded(true), workingBooking.getAttendancesRemoved(true));
                         workingBooking.submitChanges(historyHelper.buildHistory())
                             .onSuccess(ignored->dialogCallback.closeDialog())
                             .onFailure(e-> {

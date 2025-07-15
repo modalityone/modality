@@ -25,7 +25,7 @@ public final class WorkingBookingSyncer {
     }
 
     public static void syncEventScheduleFromWorkingBooking(WorkingBooking workingBooking, BookableDatesUi bookableDatesUi) {
-        List<Attendance> attendanceAdded = workingBooking.getAttendanceAdded();
+        List<Attendance> attendanceAdded = workingBooking.getAttendancesAdded(true);
         List<LocalDate> datesAdded = Collections.map(attendanceAdded, Attendance::getDate);
         bookableDatesUi.setScheduledItems(workingBooking.getScheduledItemsOnEvent(), true);
         bookableDatesUi.addSelectedDates(datesAdded);
