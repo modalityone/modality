@@ -197,7 +197,7 @@ public final class BookingView {
         paidPriceValue.setText(EventPriceFormatter.formatWithCurrency(booking.getPriceDeposit(), event));
         paidPriceValue.setFill(Color.GRAY);
 
-        if (bookingStatus == BookingStatus.PAYMENT_REQUIRED) {
+        if (bookingStatus == BookingStatus.INCOMPLETE) {
             buttons.add(createPaymentButton());
         }
 

@@ -22,6 +22,7 @@ import javafx.scene.layout.VBox;
 import javafx.scene.text.TextAlignment;
 import javafx.stage.Screen;
 import one.modality.base.client.activity.ModalityButtonFactoryMixin;
+import one.modality.base.frontoffice.activities.account.BookingStatus;
 import one.modality.base.frontoffice.utility.page.FOPageUtil;
 import one.modality.base.shared.entities.Document;
 import one.modality.crm.shared.services.authn.fx.FXModalityUserPrincipal;
@@ -30,6 +31,7 @@ import java.time.LocalDate;
 import java.util.LinkedHashMap;
 import java.util.stream.Collectors;
 
+import static dev.webfx.stack.orm.dql.DqlStatement.orderBy;
 import static dev.webfx.stack.orm.dql.DqlStatement.where;
 
 /**
@@ -118,11 +120,13 @@ final class OrdersActivity extends ViewDomainActivityBase implements ModalityBut
     protected void startLogic() {
         // Upcoming bookings
         ReactiveEntitiesMapper.<Document>createReactiveChain(this)
-            .always("{class: 'Document', alias: 'd', orderBy: 'event.startDate desc, ref desc'}")
+            .always("{class: 'Document', alias: 'd'}")
             .always(DqlStatement.fields(BookingSummaryView.BOOKING_REQUIRED_FIELDS))
             .always(where("event.endDate >= now()"))
             .always(where("!abandoned or price_deposit>0"))
             .ifNotNullOtherwiseEmpty(FXModalityUserPrincipal.modalityUserPrincipalProperty(), mup -> where("person.frontendAccount=?", mup.getUserAccountId()))
+            .always(orderBy(BookingStatus.getBookingStatusOrderExpression(true)))
+            .always(orderBy("event.startDate desc, ref desc"))
             .storeEntitiesInto(upcomingBookingsFeed)
             .start();
 

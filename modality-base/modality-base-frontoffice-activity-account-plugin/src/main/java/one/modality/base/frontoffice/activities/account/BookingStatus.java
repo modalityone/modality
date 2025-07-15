@@ -13,8 +13,7 @@ import one.modality.base.shared.entities.Document;
 public enum BookingStatus {
 
     // Incomplete = payment_required or action_required
-    PAYMENT_REQUIRED("BookingStatusPaymentRequired"),
-    ACTION_REQUIRED("BookingStatusActionRequired"),
+    INCOMPLETE("BookingStatusIncomplete"),
     CANCELLED("BookingStatusCancelled"),
     IN_PROGRESS("BookingStatusInProgress"),
     CONFIRMED("BookingStatusConfirmed"),
@@ -35,7 +34,7 @@ public enum BookingStatus {
     public static BookingStatus ofBooking(Document booking) {
         Integer priceDeposit = booking.getPriceDeposit();
         if (priceDeposit < booking.getPriceMinDeposit())
-            return BookingStatus.PAYMENT_REQUIRED;
+            return BookingStatus.INCOMPLETE;
         if (booking.isCancelled())
             return BookingStatus.CANCELLED;
         if (!booking.isConfirmed() && !booking.isArrived())
@@ -46,16 +45,17 @@ public enum BookingStatus {
     }
 
     public static String getBookingStatusExpression() {
-        return "price_net < price_minDeposit ? 'PAYMENT_REQUIRED' : cancelled ? 'CANCELLED' : !confirmed && !arrived ? 'IN_PROGRESS' : price_deposit >= price_net ? 'COMPLETE' : 'CONFIRMED'";
+        return "price_net < price_minDeposit ? 'INCOMPLETE' : cancelled ? 'CANCELLED' : !confirmed && !arrived ? 'IN_PROGRESS' : price_deposit >= price_net ? 'COMPLETE' : 'CONFIRMED'";
     }
 
-    public static String getBookingStatusOrderExpression() {
+    public static String getBookingStatusOrderExpression(boolean asc) {
         return getBookingStatusExpression()
-            .replace("'PAYMENT_REQUIRED'", String.valueOf(PAYMENT_REQUIRED.ordinal()))
+            .replace("'INCOMPLETE'", String.valueOf(INCOMPLETE.ordinal()))
             .replace("'CANCELLED'", String.valueOf(CANCELLED.ordinal()))
             .replace("'IN_PROGRESS'", String.valueOf(IN_PROGRESS.ordinal()))
             .replace("'CONFIRMED'", String.valueOf(CONFIRMED.ordinal()))
             .replace("'COMPLETE'", String.valueOf(COMPLETE.ordinal()))
+            + (asc ? " desc" : "")
             ;
     }
 }

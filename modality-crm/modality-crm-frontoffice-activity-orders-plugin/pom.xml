@@ -41,19 +41,7 @@
 
         <dependency>
             <groupId>one.modality</groupId>
-            <artifactId>modality-base-client-bootstrap</artifactId>
-            <version>1.0.0-SNAPSHOT</version>
-        </dependency>
-
-        <dependency>
-            <groupId>one.modality</groupId>
             <artifactId>modality-base-client-i18n</artifactId>
-            <version>1.0.0-SNAPSHOT</version>
-        </dependency>
-
-        <dependency>
-            <groupId>one.modality</groupId>
-            <artifactId>modality-base-client-icons</artifactId>
             <version>1.0.0-SNAPSHOT</version>
         </dependency>
 
@@ -108,6 +96,12 @@
         <dependency>
             <groupId>one.modality</groupId>
             <artifactId>modality-ecommerce-shared-pricecalculator</artifactId>
+            <version>1.0.0-SNAPSHOT</version>
+        </dependency>
+
+        <dependency>
+            <groupId>one.modality</groupId>
+            <artifactId>modality-event-client-lifecycle</artifactId>
             <version>1.0.0-SNAPSHOT</version>
         </dependency>
 

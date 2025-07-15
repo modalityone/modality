@@ -24,5 +24,6 @@ public interface AccountI18nKeys {
     Object BookingStatusComplete = "BookingStatusComplete";
     Object EditYourPersonalInformation = "EditYourPersonalInformation";
     Object Settings = "Settings";
+    Object BookingStatusIncomplete = "BookingStatusIncomplete";
 
 }

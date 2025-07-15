@@ -7,9 +7,7 @@ module modality.crm.frontoffice.activity.orders.plugin {
     requires javafx.controls;
     requires javafx.graphics;
     requires modality.base.client.activity;
-    requires modality.base.client.bootstrap;
     requires modality.base.client.i18n;
-    requires modality.base.client.icons;
     requires modality.base.client.mainframe.fx;
     requires modality.base.frontoffice.activity.account.plugin;
     requires modality.base.frontoffice.utility;
@@ -19,6 +17,7 @@ module modality.crm.frontoffice.activity.orders.plugin {
     requires modality.ecommerce.client.workingbooking;
     requires modality.ecommerce.document.service;
     requires modality.ecommerce.shared.pricecalculator;
+    requires modality.event.client.lifecycle;
     requires webfx.extras.i18n;
     requires webfx.extras.i18n.controls;
     requires webfx.extras.operation;

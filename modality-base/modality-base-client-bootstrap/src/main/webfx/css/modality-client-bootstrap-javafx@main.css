@@ -42,6 +42,21 @@
     -bootstrap-red4: #ac2925 ;
     -bootstrap-red5: #761c19 ;
     -bootstrap-red6: #FF0404 ;
+
+        -badge-default-bg: -bootstrap-white;
+        -badge-default-txt: -bootstrap-grey7;
+        -badge-primary-bg: #e3f2fd;
+        -badge-primary-txt: #2e7d32;
+        -badge-success-bg: #e8f5e8;
+        -badge-success-txt: #2e7d32;
+        -badge-info-bg: -bootstrap-blue1;
+        -badge-info-txt: -bootstrap-white;
+        -badge-warning-bg: -bootstrap-orange1;
+        -badge-warning-txt: -bootstrap-white;
+        -badge-danger-bg: #ffebee;
+        -badge-danger-txt: #c62828;
+        -badge-secondary-bg: #eceff1;
+        -badge-secondary-txt: #546e7a;
 }
 
 /*.h1 {

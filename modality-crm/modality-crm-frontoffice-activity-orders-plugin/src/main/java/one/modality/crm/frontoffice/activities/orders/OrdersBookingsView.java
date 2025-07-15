@@ -1,6 +1,7 @@
 package one.modality.crm.frontoffice.activities.orders;
 
 import dev.webfx.platform.util.collection.Collections;
+import javafx.geometry.Insets;
 import javafx.scene.Node;
 import javafx.scene.layout.VBox;
 import one.modality.base.shared.entities.Document;
@@ -15,10 +16,11 @@ public final class OrdersBookingsView {
 
     private Event event;
 
-    private final VBox container = new VBox(10);
+    private final VBox container = new VBox(50);
 
     public OrdersBookingsView(Event event, List<Document> eventBookings, OrdersActivity ordersActivity) {
         setEvent(event);
+        container.setPadding(new Insets(0,30,0,30));
         container.getChildren().addAll(
             Collections.map(eventBookings, b -> new OrderView(b,ordersActivity).getView())
         );

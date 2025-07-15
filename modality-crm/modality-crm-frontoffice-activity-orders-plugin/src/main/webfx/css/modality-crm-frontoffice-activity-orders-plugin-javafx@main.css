@@ -1,0 +1,122 @@
+
+.order-card {
+    -fx-background-color: white;
+    -fx-background-radius: 12px;
+    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.1), 8, 0, 0, 2);
+}
+
+.order-header {
+    -fx-border-color: #eee;
+    -fx-border-width: 0 0 1px 0;
+}
+
+.order-status {
+    -fx-background-radius: 18px;
+    -fx-font-size: 14px;
+    -fx-font-weight: 800;
+}
+
+.status-incomplete {
+    -fx-background-color: #ffebee;
+    -fx-text-fill: #c62828;
+}
+
+.status-progress {
+    -fx-background-color: #e3f2fd;
+    -fx-text-fill: #1976d2;
+}
+
+.status-confirmed {
+    -fx-background-color: #e8f5e8;
+    -fx-text-fill: #2e7d32;
+}
+
+.status-complete {
+    -fx-background-color: #e8f5e8;
+    -fx-text-fill: #2e7d32;
+}
+
+.status-cancelled {
+    -fx-background-color: #ffebee;
+    -fx-text-fill: #c62828;
+}
+
+.order-title {
+    -fx-font-size: 16px;
+    -fx-font-weight: 600;
+    -fx-text-fill: #333;
+    }
+
+
+.order-id {
+    -fx-font-size: 14px;
+    -fx-text-fill: #666;
+}
+
+.booker-name {
+    -fx-font-size: 14px;
+    -fx-font-weight: 700;
+}
+.semi-bold {
+    -fx-font-weight: 700
+}
+.order-price {
+    -fx-font-size: 18px;
+    -fx-font-weight: 700;
+    -fx-text-fill: #333;
+}
+
+.order-dates {
+    -fx-font-size: 14px;
+    -fx-text-fill: #666;
+}
+
+
+.detail-item {
+    -fx-border-color: #f0f0f0;
+    -fx-border-width: 0 0 1px 0;
+    -fx-font-size: 14px;
+}
+
+.detail-item:last-child {
+    -fx-border-width: 0;
+}
+
+
+.detail-label {
+    -fx-font-weight: 700;
+}
+
+.detail-value {
+    -fx-font-size: 15px;
+}
+
+
+.detail-subitem {
+
+    -fx-font-size: 14px;
+}
+
+.detail-subitem-label {
+    -fx-text-fill: #666;
+}
+
+
+
+
+.payment-row {
+    -fx-font-size: 14px;
+    -fx-text-fill: black;
+}
+
+.payment-remaining {
+    -fx-font-weight: 700;
+    -fx-text-fill: black;
+    -fx-font-size: 16px;
+    -fx-border-color: #eee;
+    -fx-border-width: 1px 0 0 0;
+}
+
+
+
+

@@ -15,5 +15,8 @@ public interface OrdersI18nKeys {
     Object CancelBookingAreYouSure = "CancelBookingAreYouSure";
     Object MakePayment = "MakePayment";
     Object OrdersTitle = "OrdersTitle";
+    Object AskARefund = "AskARefund";
+    Object ViewDetails = "ViewDetails";
+    Object HideDetails = "HideDetails";
 
 }
