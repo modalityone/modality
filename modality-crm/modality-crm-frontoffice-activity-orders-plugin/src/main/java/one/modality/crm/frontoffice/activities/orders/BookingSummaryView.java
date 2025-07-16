@@ -17,10 +17,7 @@ import dev.webfx.platform.async.Future;
 import dev.webfx.platform.console.Console;
 import dev.webfx.platform.uischeduler.UiScheduler;
 import dev.webfx.platform.util.Booleans;
-import dev.webfx.stack.orm.entity.Entities;
-import dev.webfx.stack.orm.entity.EntityList;
-import dev.webfx.stack.orm.entity.EntityStore;
-import dev.webfx.stack.orm.entity.EntityStoreQuery;
+import dev.webfx.stack.orm.entity.*;
 import javafx.application.Platform;
 import javafx.beans.InvalidationListener;
 import javafx.beans.property.IntegerProperty;
@@ -42,9 +39,7 @@ import javafx.scene.paint.Color;
 import one.modality.base.client.i18n.BaseI18nKeys;
 import one.modality.base.client.mainframe.fx.FXMainFrameDialogArea;
 import one.modality.base.frontoffice.activities.account.BookingStatus;
-import one.modality.base.shared.entities.Document;
-import one.modality.base.shared.entities.DocumentLine;
-import one.modality.base.shared.entities.Event;
+import one.modality.base.shared.entities.*;
 import one.modality.base.shared.entities.formatters.EventPriceFormatter;
 import one.modality.ecommerce.client.i18n.EcommerceI18nKeys;
 import one.modality.ecommerce.client.workingbooking.WorkingBooking;
@@ -65,8 +60,8 @@ public final class BookingSummaryView {
     private static final String BOOKING_EVENT_REQUIRED_FIELDS = "event.(name,label,image.url,live,startDate,endDate,kbs3, venue.(name,label,country),organization.country)";
     private static final String BOOKING_PERSON_REQUIRED_FIELDS = "ref, person, person_firstName,person_lastName";
     private static final String BOOKING_STATUS_REQUIRED_FIELDS = BookingStatus.BOOKING_REQUIRED_FIELDS;
-    public  static final String BOOKING_REQUIRED_FIELDS = BOOKING_EVENT_REQUIRED_FIELDS + "," + BOOKING_PERSON_REQUIRED_FIELDS + "," + BOOKING_STATUS_REQUIRED_FIELDS;
-    public  static final String DOCUMENT_LINE_REQUIRED_FIELDS = "item.name,item.label,item.family.name,item.family.label,quantity,price_net,dates,cancelled";
+    public static final String BOOKING_REQUIRED_FIELDS = BOOKING_EVENT_REQUIRED_FIELDS + "," + BOOKING_PERSON_REQUIRED_FIELDS + "," + BOOKING_STATUS_REQUIRED_FIELDS;
+    public static final String DOCUMENT_LINE_REQUIRED_FIELDS = "item.name,item.label,item.family.name,item.family.label,quantity,price_net,dates,cancelled";
 
     private final ObservableList<DocumentLine> bookedOptions = FXCollections.observableArrayList(); // Reactive list of booking options
     private final ObjectProperty<Document> bookingProperty = new SimpleObjectProperty<>(); // The booking (order) to display
@@ -79,6 +74,7 @@ public final class BookingSummaryView {
     private PriceCalculator priceCalculator = null;
     private final IntegerProperty remainingAmountProperty = new SimpleIntegerProperty();
     private boolean orderDetailsLoaded = false;
+    private UpdateStore updateStore;
 
     public BookingSummaryView(Document booking, EntityStore store, OrdersActivity ordersActivity) {
         this.ordersActivity = ordersActivity;
@@ -86,18 +82,20 @@ public final class BookingSummaryView {
         this.entityStore = store;
         //this constructor is called in the OrderView, and we want the header in that case.
         buildUi();
+        updateStore = UpdateStore.createAbove(entityStore);
     }
 
     public BookingSummaryView(WorkingBooking workingBooking) {
         this.bookingProperty.set(workingBooking.getDocument());
         this.entityStore = workingBooking.getDocument().getStore();
         containerPane.getChildren().add(createOrderDetails());
-        if(workingBooking.getLastestDocumentAggregate()!=null) {
+        if (workingBooking.getLastestDocumentAggregate() != null) {
             priceCalculator = new PriceCalculator(workingBooking.getLastestDocumentAggregate());
         }
         workingBooking.getDocumentChanges().addListener((InvalidationListener) observable ->
-                Platform.runLater(()->bookedOptions.setAll(workingBooking.getLastestDocumentAggregate().getDocumentLines())));
+            Platform.runLater(() -> bookedOptions.setAll(workingBooking.getLastestDocumentAggregate().getDocumentLines())));
         bookedOptions.setAll(workingBooking.getLastestDocumentAggregate().getDocumentLines());
+        updateStore = UpdateStore.createAbove(entityStore);
     }
 
 
@@ -120,7 +118,7 @@ public final class BookingSummaryView {
     private Node createOrderHeader() {
         Event event = bookingProperty.get().getEvent();
         VBox orderHeader = new VBox(15);
-        orderHeader.setPadding(new Insets(16,16,16,16));
+        orderHeader.setPadding(new Insets(16, 16, 16, 16));
         orderHeader.getStyleClass().add("order-header");
 
         // Order Status
@@ -132,8 +130,8 @@ public final class BookingSummaryView {
                 statusLabel[0].getStyleClass().clear();
                 switch (BookingStatus.ofBooking(bookingProperty.get())) {
                     case INCOMPLETE:
-                            statusLabel[0].getStyleClass().add(Bootstrap.DANGER);
-                            break;
+                        statusLabel[0].getStyleClass().add(Bootstrap.DANGER);
+                        break;
                     case CANCELLED:
                         statusLabel[0].getStyleClass().add(Bootstrap.WARNING);
                         break;
@@ -186,7 +184,7 @@ public final class BookingSummaryView {
         DateTimeFormatter dayMonthYearFormatter = LocalizedTime.dateFormatter("MMM d, yyyy");
         String eventDates;
         if (event.getStartDate().getYear() == event.getEndDate().getYear()) {
-            eventDates= event.getStartDate().format(dayMonthFormatter) + " - " + event.getEndDate().format(dayMonthYearFormatter);
+            eventDates = event.getStartDate().format(dayMonthFormatter) + " - " + event.getEndDate().format(dayMonthYearFormatter);
         } else {
             eventDates = event.getStartDate().format(dayMonthYearFormatter) + " - " + event.getEndDate().format(dayMonthYearFormatter);
         }
@@ -205,13 +203,48 @@ public final class BookingSummaryView {
         hideDetailsLabel.setContentDisplay(ContentDisplay.RIGHT);
         hideDetailsLabel.setGraphicTextGap(20);
 
-        HBox viewDetailsHBox = new HBox(5,viewDetailsLabel,hideDetailsLabel);
-        viewDetailsHBox.setPadding(new Insets(30,0,0,0));
+        HBox viewDetailsHBox = new HBox(5, viewDetailsLabel, hideDetailsLabel);
+        viewDetailsHBox.setPadding(new Insets(30, 0, 0, 0));
         viewDetailsHBox.setAlignment(Pos.CENTER);
 
+        Label contactUsLabel = Bootstrap.strong(Bootstrap.textPrimary(I18nControls.newLabel(OrdersI18nKeys.ContactUsAboutThisBooking)));
+        contactUsLabel.setCursor(Cursor.HAND);
+        contactUsLabel.setOnMouseClicked(e -> {
+            ContactUsWindow contactUsWindow = new ContactUsWindow();
+            contactUsWindow.buildUI();
+            DialogCallback messageWindowCallback = DialogUtil.showModalNodeInGoldLayout(contactUsWindow.getContainer(), FXMainFrameDialogArea.getDialogArea());
+            contactUsWindow.getCancelButton().setOnMouseClicked(m -> messageWindowCallback.closeDialog());
+
+            contactUsWindow.getSendButton().setOnAction(m -> {
+                Mail email = updateStore.insertEntity(Mail.class);
+                email.setFromName(bookingProperty.get().getFirstName() + ' ' + bookingProperty.get().getLastName());
+                email.setFromEmail(bookingProperty.get().getEmail());
+                email.setSubject("[" + bookingProperty.get().getPrimaryKey() + "-" + bookingProperty.get().getRef() + "] " + contactUsWindow.getSubject());
+                email.setOut(false);
+                email.setDocument(bookingProperty.get());
+                String content = contactUsWindow.getMessage();
+                content = content.replaceAll("\r", "<br/>");
+                content = content.replaceAll("\n", "<br/>");
+                content = "<html>" + content + "</html>";
+                email.setContent(content);
+                History history = updateStore.insertEntity(History.class);
+                history.setUsername("online");
+                history.setComment("Sent " + email.getSubject());
+                history.setDocument(bookingProperty.get());
+                history.setMail(email);
+
+                OperationUtil.turnOnButtonsWaitModeDuringExecution(
+                    updateStore.submitChanges()
+                        .onFailure(Console::log)
+                        .onComplete(c -> contactUsWindow.displaySuccessMessage(5000, messageWindowCallback::closeDialog)),
+                    contactUsWindow.getSendButton(), contactUsWindow.getCancelButton());
+
+            });
+        });
         VBox orderDetailsAndSummary = new VBox();
         orderDetailsAndSummary.getChildren().addAll(createOrderDetails(),
             createPaymentSummary(),
+            contactUsLabel,
             createOrderActions());
         CollapsePane detailsCollapsePane = new CollapsePane(orderDetailsAndSummary);
         detailsCollapsePane.setCollapsed(true);
@@ -220,10 +253,10 @@ public final class BookingSummaryView {
         viewDetailsLabel.managedProperty().bind(detailsCollapsePane.collapsedProperty());
         viewDetailsLabel.visibleProperty().bind(detailsCollapsePane.collapsedProperty());
 
-        FXProperties.runNowAndOnPropertyChange(id-> {
+        FXProperties.runNowAndOnPropertyChange(id -> {
             boolean weAreLookingThisOrder = Entities.samePrimaryKey(id, bookingProperty.get());
-            if(weAreLookingThisOrder && !orderDetailsLoaded) {
-                loadFromDatabase().onComplete(e-> {
+            if (weAreLookingThisOrder && !orderDetailsLoaded) {
+                loadFromDatabase().onComplete(e -> {
                     detailsCollapsePane.setCollapsed(false);
                     Controls.setVerticalScrollNodeWishedPosition(orderHeader, VPos.CENTER);
                     SceneUtil.scrollNodeToBeVerticallyVisibleOnScene(orderHeader, false, true);
@@ -234,20 +267,20 @@ public final class BookingSummaryView {
         }, ordersActivity.getSelectedDocumentIdProperty());
 
         viewDetailsHBox.setOnMouseClicked(m -> {
-            if(!orderDetailsLoaded) {
+            if (!orderDetailsLoaded) {
                 OperationUtil.turnOnButtonsWaitModeDuringExecution(loadFromDatabase()
-                    .onComplete(x ->
-                        // Calling in UI thread but after another animation frame to ensure the layout pass is finished
-                        // and the height is stabilised for the CollapsePane animation
-                        UiScheduler.scheduleInAnimationFrame(detailsCollapsePane::toggleCollapse, 2))
+                        .onComplete(x ->
+                            // Calling in UI thread but after another animation frame to ensure the layout pass is finished
+                            // and the height is stabilised for the CollapsePane animation
+                            UiScheduler.scheduleInAnimationFrame(detailsCollapsePane::toggleCollapse, 2))
                     , viewDetailsLabel);
 
             } else {
                 detailsCollapsePane.toggleCollapse();
             }
-            });
+        });
 
-        orderHeader.getChildren().addAll(statusLabel[0], orderTitleLabel, orderMeta, dateHBox,viewDetailsHBox,detailsCollapsePane);
+        orderHeader.getChildren().addAll(statusLabel[0], orderTitleLabel, orderMeta, dateHBox, viewDetailsHBox, detailsCollapsePane);
         return orderHeader;
     }
 
@@ -340,7 +373,7 @@ public final class BookingSummaryView {
 
     private Node createPaymentSummary() {
         VBox paymentSummary = new VBox(15);
-        paymentSummary.setPadding(new Insets(15,0,25,0));
+        paymentSummary.setPadding(new Insets(15, 0, 25, 0));
 
         // Total row
         HBox totalRow = new HBox();
@@ -353,9 +386,9 @@ public final class BookingSummaryView {
         Label remainingLabel = Controls.setupTextWrapping(I18nControls.newLabel(I18nKeys.appendColons(EcommerceI18nKeys.RemainingAmount)), true, true);
         Label remainingValue = Controls.setupTextWrapping(new Label(), true, true);
 
-        FXProperties.runNowAndOnPropertyChange(()-> {
+        FXProperties.runNowAndOnPropertyChange(() -> {
             Document booking = bookingProperty.get();
-            if(booking!=null) {
+            if (booking != null) {
                 Integer totalPriceNet = booking.getPriceNet();
                 Integer deposit = booking.getPriceDeposit();
                 if (priceCalculator != null) {
@@ -367,7 +400,7 @@ public final class BookingSummaryView {
                 remainingValue.setText(EventPriceFormatter.formatWithCurrency(totalPriceNet - deposit, booking.getEvent()));
                 remainingAmountProperty.set(totalPriceNet - deposit);
             }
-        },bookingProperty);
+        }, bookingProperty);
 
         Region spacer1 = new Region();
         HBox.setHgrow(spacer1, Priority.ALWAYS);
@@ -385,7 +418,7 @@ public final class BookingSummaryView {
 
         // Remaining row
         HBox remainingRow = new HBox();
-        remainingRow.setPadding(new Insets(15,0,0,0));
+        remainingRow.setPadding(new Insets(15, 0, 0, 0));
         remainingRow.getStyleClass().add("payment-remaining");
         Region spacer3 = new Region();
         HBox.setHgrow(spacer3, Priority.ALWAYS);
@@ -397,12 +430,14 @@ public final class BookingSummaryView {
 
     private Node createOrderActions() {
         HBox orderActions = new HBox(12); // Gap of 12px
-        orderActions.setPadding(new Insets(20,0,0,0));
+        orderActions.setPadding(new Insets(20, 0, 0, 0));
         orderActions.setAlignment(Pos.CENTER);
         addOptionButton = Bootstrap.secondaryButton(I18nControls.newButton(OrdersI18nKeys.AddOrEditOption));
+        addOptionButton.setMinWidth(Region.USE_PREF_SIZE);
         I18nControls.bindI18nProperties(addOptionButton, OrdersI18nKeys.AddOrEditOption);
 
         Button makePaymentButton = Bootstrap.primaryButton(I18nControls.newButton(OrdersI18nKeys.MakePayment));
+        makePaymentButton.setMinWidth(Region.USE_PREF_SIZE);
         makePaymentButton.visibleProperty().bind(remainingAmountProperty.greaterThan(0));
         makePaymentButton.managedProperty().bind(makePaymentButton.visibleProperty());
 
@@ -411,6 +446,7 @@ public final class BookingSummaryView {
         askRefundButton.managedProperty().bind(askRefundButton.visibleProperty());
 
         cancelLabel = Bootstrap.textDanger(I18nControls.newLabel(OrdersI18nKeys.CancelBooking));
+        cancelLabel.setWrapText(true);
         cancelLabel.setOnMouseClicked(event -> {
             BorderPane errorDialog = new BorderPane();
             errorDialog.setMinWidth(500);
@@ -464,8 +500,8 @@ public final class BookingSummaryView {
             errorDialog.setBottom(buttonsHBox);
         });
         Region spacer = new Region();
-        HBox.setHgrow(spacer,Priority.ALWAYS);
-        orderActions.getChildren().addAll(addOptionButton, makePaymentButton,askRefundButton, spacer,cancelLabel);
+        HBox.setHgrow(spacer, Priority.ALWAYS);
+        orderActions.getChildren().addAll(addOptionButton, makePaymentButton, askRefundButton, spacer, cancelLabel);
         orderActions.managedProperty().bind(addOptionButton.managedProperty().or(makePaymentButton.managedProperty().or(askRefundButton.managedProperty().or(cancelLabel.managedProperty()))));
         orderActions.visibleProperty().bind(orderActions.managedProperty());
         return orderActions;
@@ -473,13 +509,13 @@ public final class BookingSummaryView {
 
 
     private void computeCancelAndAddLabelVisibility() {
-        if(cancelLabel!= null) //We don't display the cancel button on a new booking (when priceCalculator!=null)
-            cancelLabel.setVisible(priceCalculator == null && LocalDate.now().isBefore(bookingProperty.get().getEvent().getStartDate())&&!bookingProperty.get().isCancelled());
+        if (cancelLabel != null) //We don't display the cancel button on a new booking (when priceCalculator!=null)
+            cancelLabel.setVisible(priceCalculator == null && LocalDate.now().isBefore(bookingProperty.get().getEvent().getStartDate()) && !bookingProperty.get().isCancelled());
 
-        if(addOptionButton!= null) {
+        if (addOptionButton != null) {
             Boolean cancelled = bookingProperty.get().isCancelled();
             boolean isNotCancelled = cancelled != null && !cancelled;
-            boolean isKBS3 =  EventLifeCycle.isKbs3Event(bookingProperty.get().getEvent());
+            boolean isKBS3 = EventLifeCycle.isKbs3Event(bookingProperty.get().getEvent());
             boolean notEnded = LocalDate.now().isBefore(bookingProperty.get().getEvent().getEndDate().plusDays(30));
             boolean visible = notEnded && isNotCancelled && isKBS3;
             addOptionButton.setVisible(visible);
@@ -487,24 +523,22 @@ public final class BookingSummaryView {
         }
     }
 
-
     private Future<EntityList[]> loadFromDatabase() {
         bookedOptions.clear();
         orderDetailsLoaded = true;
         return entityStore.executeQueryBatch(
-            new EntityStoreQuery("select " + BookingSummaryView.DOCUMENT_LINE_REQUIRED_FIELDS +" from DocumentLine dl " +
-                                " where dl.document.id = ? and item.family.summaryHidden=false " +
-                                " order by item.family ",  new Object[]{bookingProperty.get().getId()}),
+                new EntityStoreQuery("select " + BookingSummaryView.DOCUMENT_LINE_REQUIRED_FIELDS + " from DocumentLine dl " +
+                    " where dl.document.id = ? and item.family.summaryHidden=false " +
+                    " order by item.family ", new Object[]{bookingProperty.get().getId()}),
                 new EntityStoreQuery("select " + BookingSummaryView.BOOKING_REQUIRED_FIELDS + " from Document d " +
-                                " where d.id = ?",  new Object[]{bookingProperty.get().getId()}))
-                .onFailure(Console::log)
-                .onSuccess(entityLists -> Platform.runLater(() -> {
-                    bookedOptions.addAll(entityLists[0]);
-                    this.bookingProperty.set(null);
-                    this.bookingProperty.set((Document) entityLists[1].get(0));
-                }));
+                    " where d.id = ?", new Object[]{bookingProperty.get().getId()}))
+            .onFailure(Console::log)
+            .onSuccess(entityLists -> Platform.runLater(() -> {
+                bookedOptions.addAll(entityLists[0]);
+                this.bookingProperty.set(null);
+                this.bookingProperty.set((Document) entityLists[1].get(0));
+            }));
     }
-
 
 
     /**
