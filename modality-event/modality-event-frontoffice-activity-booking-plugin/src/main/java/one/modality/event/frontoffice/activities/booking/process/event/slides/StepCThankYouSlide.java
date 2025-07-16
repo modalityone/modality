@@ -13,6 +13,7 @@ import javafx.scene.image.ImageView;
 import javafx.scene.layout.VBox;
 import javafx.scene.text.TextAlignment;
 import one.modality.crm.frontoffice.activities.orders.OrdersRouting;
+import one.modality.ecommerce.client.workingbooking.WorkingBookingProperties;
 import one.modality.event.frontoffice.activities.booking.BookingI18nKeys;
 import one.modality.event.frontoffice.activities.booking.process.event.BookEventActivity;
 
@@ -43,18 +44,19 @@ final class StepCThankYouSlide extends StepSlide {
         thankYouLabel.setTextAlignment(TextAlignment.CENTER);
         VBox.setMargin(thankYouLabel, new Insets(20,0,50,0));
 
-        Hyperlink bookingNumber = I18nControls.newHyperlink(BookingI18nKeys.BookingNumber1, getWorkingBookingProperties().bookingReferenceProperty());
-        bookingNumber.setWrapText(true);
-        bookingNumber.setTextAlignment(TextAlignment.CENTER);
-        bookingNumber.setOnAction(e -> {
-            new OrdersRouting.RouteToOrdersRequest(getBookEventActivity().getHistory()).execute();
-        });
+        WorkingBookingProperties workingBookingProperties = getWorkingBookingProperties();
+        Hyperlink bookingNumberLink = I18nControls.newHyperlink(BookingI18nKeys.BookingNumber1, workingBookingProperties.bookingReferenceProperty());
+        bookingNumberLink.setWrapText(true);
+        bookingNumberLink.setTextAlignment(TextAlignment.CENTER);
+        bookingNumberLink.setOnAction(e ->
+            new OrdersRouting.RouteToOrdersRequest(workingBookingProperties.getWorkingBooking().getDocument(), getBookEventActivity().getHistory()).execute()
+        );
 
         mainVbox.getChildren().setAll(
                 headerImageScalePane,
                 bookingConfirmedLabel,
                 thankYouLabel,
-                bookingNumber);
+                bookingNumberLink);
         mainVbox.setMaxWidth(MAX_PAGE_WITH);
         mainVbox.setSpacing(40);
     }

@@ -11,14 +11,16 @@ import dev.webfx.stack.routing.uirouter.activity.uiroute.UiRouteActivityContext;
 import dev.webfx.stack.routing.uirouter.impl.UiRouteImpl;
 import dev.webfx.stack.routing.uirouter.operations.RoutePushRequest;
 import dev.webfx.stack.routing.uirouter.operations.RouteRequestEmitter;
+import one.modality.base.client.util.routing.ModalityRoutingUtil;
 
 /**
  * @author Bruno Salmon
  */
 public class OrdersRouting {
 
-    private final static String ANY_PATH = "/orders(/:documentPrimaryKey)?";
+    private final static String ANY_PATH = "/orders(/:documentId)?";
     private final static String PATH = "/orders";
+    private final static String DOCUMENT_PATH = "/orders/:documentId";
     private final static String OPERATION_CODE = "RouteToOrders";
 
     public static String getAnyPath() {
@@ -27,6 +29,10 @@ public class OrdersRouting {
 
     public static String getPath() {
         return PATH;
+    }
+
+    public static String getDocumentPath(Object document) {
+        return ModalityRoutingUtil.interpolateDocumentIdInPath(document, DOCUMENT_PATH);
     }
 
     public static class UserProfileUiRoute extends UiRouteImpl<ViewDomainActivityContextFinal> {
@@ -45,6 +51,10 @@ public class OrdersRouting {
     }
 
     public static class RouteToOrdersRequest extends RoutePushRequest implements HasOperationCode, HasI18nKey {
+
+        public RouteToOrdersRequest(Object document, BrowsingHistory browsingHistory) {
+            super(getDocumentPath(document), browsingHistory);
+        }
 
         public RouteToOrdersRequest(BrowsingHistory browsingHistory) {
             super(getPath(), browsingHistory);
