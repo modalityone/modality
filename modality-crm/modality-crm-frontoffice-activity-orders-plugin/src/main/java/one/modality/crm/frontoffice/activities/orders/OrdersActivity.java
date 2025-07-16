@@ -62,6 +62,7 @@ final class OrdersActivity extends ViewDomainActivityBase implements ModalityBut
 
         Label ordersExplationLabel = Bootstrap.strong(Bootstrap.textSecondary(I18nControls.newLabel(OrdersI18nKeys.OrdersTitleExplanation)));
         ordersExplationLabel.setTextAlignment(TextAlignment.CENTER);
+        ordersExplationLabel.setWrapText(true);
         ordersExplationLabel.setPadding(new Insets(0, 15, 40, 15));
 
         Label activeOrdersLabel = Bootstrap.strong(Bootstrap.textSuccess(Bootstrap.h4(I18nControls.newLabel(OrdersI18nKeys.ActiveOrders))));

@@ -17,6 +17,18 @@ public interface OrdersI18nKeys {
     Object OrdersTitle = "OrdersTitle";
     Object ViewDetails = "ViewDetails";
     Object HideDetails = "HideDetails";
+    Object Sending = "Sending";
     Object AskARefund = "AskARefund";
+    Object Message = "Message";
+    Object Cancel = "Cancel";
+    Object ContactUs = "ContactUs";
+    Object MessageSentSuccessfully = "MessageSentSuccessfully";
+    Object ContactUsAboutThisBooking = "ContactUsAboutThisBooking";
+    Object SubjectPlaceholder = "SubjectPlaceholder";
+    Object SendMessage = "SendMessage";
+    Object ContactUsPrompt = "ContactUsPrompt";
+    Object FillRequiredFields = "FillRequiredFields";
+    Object MessagePlaceholder = "MessagePlaceholder";
+    Object Subject = "Subject";
 
 }
