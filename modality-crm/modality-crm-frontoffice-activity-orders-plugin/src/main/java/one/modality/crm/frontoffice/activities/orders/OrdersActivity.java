@@ -2,6 +2,7 @@ package one.modality.crm.frontoffice.activities.orders;
 
 import dev.webfx.extras.i18n.controls.I18nControls;
 import dev.webfx.extras.styles.bootstrap.Bootstrap;
+import dev.webfx.extras.util.background.BackgroundFactory;
 import dev.webfx.extras.util.control.Controls;
 import dev.webfx.kit.util.properties.FXProperties;
 import dev.webfx.platform.util.collection.Collections;
@@ -19,6 +20,7 @@ import javafx.scene.Node;
 import javafx.scene.control.ContentDisplay;
 import javafx.scene.control.Label;
 import javafx.scene.layout.VBox;
+import javafx.scene.paint.Color;
 import javafx.scene.text.TextAlignment;
 import javafx.stage.Screen;
 import one.modality.base.client.activity.ModalityButtonFactoryMixin;
@@ -59,13 +61,13 @@ final class OrdersActivity extends ViewDomainActivityBase implements ModalityBut
         activeOrdersLabel.setTextAlignment(TextAlignment.CENTER);
         activeOrdersLabel.setPadding(new Insets(0, 0, 40, 0));
 
-        VBox activeOrdersContainer = new VBox(10);
+        VBox activeOrdersContainer = createBookingsContainer();
 
         Label completedOrdersLabel = Bootstrap.strong(Bootstrap.textSecondary(Bootstrap.h4(I18nControls.newLabel(OrdersI18nKeys.CompletedOrders))));
         completedOrdersLabel.setTextAlignment(TextAlignment.CENTER);
         completedOrdersLabel.setPadding(new Insets(100, 0, 40, 0));
 
-        VBox pastBookingsContainer = new VBox(10);
+        VBox pastBookingsContainer = createBookingsContainer();
 
         upcomingBookingsFeed.addListener((InvalidationListener) observable -> {
             upcomingBookingsFeed.stream().collect(Collectors.groupingBy(Document::getEvent, LinkedHashMap::new, Collectors.toList())) // Using LinkedHashMap to keep the sort
@@ -115,6 +117,12 @@ final class OrdersActivity extends ViewDomainActivityBase implements ModalityBut
         return FOPageUtil.restrictToMaxPageWidthAndApplyPageTopBottomPadding(pageContainer);
     }
 
+    private static VBox createBookingsContainer() {
+        VBox ordersContainer = new VBox(30);
+        ordersContainer.setBackground(BackgroundFactory.newBackground(Color.gray(0.95), 30));
+        ordersContainer.setPadding(new Insets(40, 0, 40, 0));
+        return ordersContainer;
+    }
 
     @Override
     protected void startLogic() {
