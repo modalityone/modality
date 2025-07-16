@@ -64,7 +64,7 @@ public final class ContactUsWindow  {
         messageArea = new TextArea();
         I18nControls.bindI18nProperties(messageArea, "MessagePlaceholder");
         messageArea.setWrapText(true);
-        //messageArea.setPrefRowCount(5);
+        messageArea.setPrefRowCount(5);
         Label messageCount = new Label("0/1000");
         messageCount.getStyleClass().add("char-count");
         VBox messageGroup = new VBox(8, messageLabel, messageArea, messageCount);
