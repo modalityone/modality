@@ -8,6 +8,8 @@ import one.modality.ecommerce.document.service.events.book.AddAttendancesEvent;
 import one.modality.ecommerce.document.service.events.book.AddDocumentLineEvent;
 import one.modality.ecommerce.document.service.events.book.AddMoneyTransferEvent;
 import one.modality.ecommerce.document.service.events.book.RemoveAttendancesEvent;
+import one.modality.ecommerce.document.service.events.registration.documentline.RemoveDocumentLineEvent;
+import one.modality.ecommerce.document.service.events.registration.moneytransfer.RemoveMoneyTransferEvent;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -81,14 +83,18 @@ public final class DocumentAggregate {
         existingMoneyTransfersCount = moneyTransfers.size();
         newDocumentEvents.forEach(e -> {
             e.setEntityStore(entityStore);
-            if (e instanceof AddDocumentLineEvent) {
-                documentLines.add(((AddDocumentLineEvent) e).getDocumentLine());
-            } else if (e instanceof AddAttendancesEvent) {
-                attendances.addAll(Arrays.asList(((AddAttendancesEvent) e).getAttendances()));
-            } else if (e instanceof RemoveAttendancesEvent) {
-                attendances.removeAll(Arrays.asList(((RemoveAttendancesEvent) e).getAttendances()));
-            } else if (e instanceof AddMoneyTransferEvent) {
-                moneyTransfers.add(((AddMoneyTransferEvent) e).getMoneyTransfer());
+            if (e instanceof AddDocumentLineEvent adle) {
+                documentLines.add(adle.getDocumentLine());
+            } else if (e instanceof RemoveDocumentLineEvent rdle) {
+                documentLines.remove(rdle.getDocumentLine());
+            } else if (e instanceof AddAttendancesEvent aae) {
+                attendances.addAll(Arrays.asList(aae.getAttendances()));
+            } else if (e instanceof RemoveAttendancesEvent rae) {
+                attendances.removeAll(Arrays.asList(rae.getAttendances()));
+            } else if (e instanceof AddMoneyTransferEvent ate) {
+                moneyTransfers.add(ate.getMoneyTransfer());
+            } else if (e instanceof RemoveMoneyTransferEvent rmte) {
+                moneyTransfers.remove(rmte.getMoneyTransfer());
             } else { // Ex: AddDocumentEvent, CancelDocumentEvent, UpdateMoneyTransferEvent, etc...
                 e.replayEvent();
                 //Console.log("⚠️ DocumentAggregate doesn't recognize this event: " + e.getClass());

@@ -72,7 +72,7 @@ public final class DocumentEvents {
                 Attendance[] remainingAttendances = Arrays.filter(eventAttendances, a -> !Arrays.contains(removedAttendances, a), Attendance[]::new);
                 if (remainingAttendances.length == 0) { // If all attendances disappeared, we can simply remove this event
                     documentEvents.remove(i--);
-                } else if (remainingAttendances.length < eventAttendances.length) { // if some disappeared but not all
+                } else if (remainingAttendances.length < eventAttendances.length) { // if some disappeared but not all,
                     // we replace this event with the same event but covering only the remaining attendances
                     if (aae instanceof AddAttendancesEvent) {
                         aae = new AddAttendancesEvent(remainingAttendances);
@@ -91,8 +91,8 @@ public final class DocumentEvents {
         // We remove the associated document line if there are no attendances anymore to it
         DocumentLine documentLine = rae.getDocumentLine();
         if (Collections.findFirst(documentEvents, e -> e instanceof AddAttendancesEvent aae && aae.getDocumentLine() == documentLine) == null)
-            simplifyRemoveDocumentLineEvent(new RemoveDocumentLineEvent(documentLine), documentEvents); // Note that we don't integrate this RemoveDocumentLineEvent
-        // If at the end of this simplification there is no more attendances to keep in RemoveAttendancesEvent
+            integrateNewDocumentEvent(new RemoveDocumentLineEvent(documentLine), documentEvents); // Note that we don't integrate this RemoveDocumentLineEvent
+        // If at the end of this simplification, there is no more attendances to keep in RemoveAttendancesEvent
         if (reducedRemovedAttendances.length == 0) {
             return null; // we return null to indicate that it's not necessary anymore to add it in the document changes
         }
