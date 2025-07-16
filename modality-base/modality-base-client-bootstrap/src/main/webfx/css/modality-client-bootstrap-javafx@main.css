@@ -51,8 +51,8 @@
         -badge-success-txt: #2e7d32;
         -badge-info-bg: -bootstrap-blue1;
         -badge-info-txt: -bootstrap-white;
-        -badge-warning-bg: -bootstrap-orange1;
-        -badge-warning-txt: -bootstrap-white;
+        -badge-warning-bg: #eceff1;
+        -badge-warning-txt: #546e7a;
         -badge-danger-bg: #ffebee;
         -badge-danger-txt: #c62828;
         -badge-secondary-bg: #eceff1;

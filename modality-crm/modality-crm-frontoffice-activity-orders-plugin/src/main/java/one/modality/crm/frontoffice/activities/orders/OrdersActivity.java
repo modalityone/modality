@@ -5,13 +5,15 @@ import dev.webfx.extras.styles.bootstrap.Bootstrap;
 import dev.webfx.extras.util.background.BackgroundFactory;
 import dev.webfx.extras.util.control.Controls;
 import dev.webfx.kit.util.properties.FXProperties;
-import dev.webfx.platform.console.Console;
+import dev.webfx.platform.util.Numbers;
 import dev.webfx.platform.util.collection.Collections;
 import dev.webfx.stack.orm.domainmodel.activity.viewdomain.impl.ViewDomainActivityBase;
 import dev.webfx.stack.orm.dql.DqlStatement;
 import dev.webfx.stack.orm.reactive.entities.dql_to_entities.ReactiveEntitiesMapper;
 import javafx.beans.InvalidationListener;
+import javafx.beans.property.IntegerProperty;
 import javafx.beans.property.ObjectProperty;
+import javafx.beans.property.SimpleIntegerProperty;
 import javafx.beans.property.SimpleObjectProperty;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
@@ -45,10 +47,10 @@ final class OrdersActivity extends ViewDomainActivityBase implements ModalityBut
     private final ObservableList<Document> upcomingBookingsFeed = FXCollections.observableArrayList();
     private final ObservableList<Document> pastBookingsFeed = FXCollections.observableArrayList();
     private final ObjectProperty<LocalDate> loadPastEventsBeforeDateProperty = new SimpleObjectProperty<>();
-
+    private IntegerProperty selectedDocumentIdProperty = new SimpleIntegerProperty();
     @Override
     protected void updateModelFromContextParameters() {
-        Console.log("documentPrimaryKey = " + getParameter("documentPrimaryKey"));
+        selectedDocumentIdProperty.setValue(Numbers.toInteger(getParameter("documentId")));
     }
 
     @Override
@@ -60,7 +62,7 @@ final class OrdersActivity extends ViewDomainActivityBase implements ModalityBut
 
         Label ordersExplationLabel = Bootstrap.strong(Bootstrap.textSecondary(I18nControls.newLabel(OrdersI18nKeys.OrdersTitleExplanation)));
         ordersExplationLabel.setTextAlignment(TextAlignment.CENTER);
-        ordersExplationLabel.setPadding(new Insets(0, 0, 40, 0));
+        ordersExplationLabel.setPadding(new Insets(0, 15, 40, 15));
 
         Label activeOrdersLabel = Bootstrap.strong(Bootstrap.textSuccess(Bootstrap.h4(I18nControls.newLabel(OrdersI18nKeys.ActiveOrders))));
         activeOrdersLabel.setContentDisplay(ContentDisplay.TOP);
@@ -154,5 +156,9 @@ final class OrdersActivity extends ViewDomainActivityBase implements ModalityBut
             .ifNotNull(loadPastEventsBeforeDateProperty, date -> where("event.startDate < ?", date))
             .storeEntitiesInto(pastBookingsFeed)
             .start();
+    }
+
+    public IntegerProperty getSelectedDocumentIdProperty() {
+        return selectedDocumentIdProperty;
     }
 }
