@@ -4,6 +4,8 @@ import dev.webfx.extras.i18n.I18nKeys;
 import dev.webfx.extras.i18n.controls.I18nControls;
 import dev.webfx.extras.styles.bootstrap.Bootstrap;
 import dev.webfx.extras.util.control.Controls;
+import dev.webfx.kit.util.properties.FXProperties;
+import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.StringProperty;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
@@ -17,6 +19,13 @@ import javafx.scene.layout.Region;
 import javafx.scene.layout.VBox;
 import javafx.scene.text.TextAlignment;
 import one.modality.base.client.bootstrap.ModalityStyle;
+import one.modality.base.shared.entities.ScheduledItem;
+import one.modality.base.shared.entities.formatters.EventPriceFormatter;
+import one.modality.ecommerce.client.workingbooking.WorkingBooking;
+import one.modality.ecommerce.document.service.PolicyAggregate;
+import one.modality.ecommerce.shared.pricecalculator.PriceCalculator;
+
+import java.util.List;
 
 /**
  * @author Bruno Salmon
@@ -111,5 +120,23 @@ public final class BookingFormUtil {
         Label label = new Label();
         label.getStyleClass().add(styleClass);
         return label;
+    }
+
+    public static void setupPeriodOption(List<ScheduledItem> bookableScheduledItems, Label priceLabel, BooleanProperty selectedProperty, WorkingBooking workingBooking) {
+        FXProperties.runOnPropertyChange(selected -> {
+            if (selected)
+                workingBooking.bookScheduledItems(bookableScheduledItems, false);
+            else
+                workingBooking.unbookScheduledItems(bookableScheduledItems);
+        }, selectedProperty);
+        PolicyAggregate policyAggregate = workingBooking.getPolicyAggregate();
+        WorkingBooking periodWorkingBooking = new WorkingBooking(policyAggregate, workingBooking.getInitialDocumentAggregate());
+        periodWorkingBooking.unbookScheduledItems(bookableScheduledItems);
+        int unbookedTotalPrice = new PriceCalculator(periodWorkingBooking.getLastestDocumentAggregate()).calculateTotalPrice();
+        periodWorkingBooking.bookScheduledItems(bookableScheduledItems, false);
+        int bookedTotalPrice = new PriceCalculator(periodWorkingBooking.getLastestDocumentAggregate()).calculateTotalPrice();
+        int optionPrice = bookedTotalPrice - unbookedTotalPrice;
+        priceLabel.setText(EventPriceFormatter.formatWithCurrency(optionPrice, policyAggregate.getEvent()));
+
     }
 }

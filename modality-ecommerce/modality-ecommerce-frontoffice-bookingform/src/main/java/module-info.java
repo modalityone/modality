@@ -20,6 +20,7 @@ module modality.ecommerce.frontoffice.bookingform {
     requires webfx.extras.util.control;
     requires webfx.extras.util.layout;
     requires webfx.kit.util;
+    requires modality.ecommerce.shared.pricecalculator;
 
     // Exported packages
     exports one.modality.ecommerce.frontoffice.bookingform;
