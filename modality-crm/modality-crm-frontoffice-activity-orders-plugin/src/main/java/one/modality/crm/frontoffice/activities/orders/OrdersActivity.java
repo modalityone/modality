@@ -5,6 +5,7 @@ import dev.webfx.extras.styles.bootstrap.Bootstrap;
 import dev.webfx.extras.util.background.BackgroundFactory;
 import dev.webfx.extras.util.control.Controls;
 import dev.webfx.kit.util.properties.FXProperties;
+import dev.webfx.platform.console.Console;
 import dev.webfx.platform.util.collection.Collections;
 import dev.webfx.stack.orm.domainmodel.activity.viewdomain.impl.ViewDomainActivityBase;
 import dev.webfx.stack.orm.dql.DqlStatement;
@@ -44,6 +45,11 @@ final class OrdersActivity extends ViewDomainActivityBase implements ModalityBut
     private final ObservableList<Document> upcomingBookingsFeed = FXCollections.observableArrayList();
     private final ObservableList<Document> pastBookingsFeed = FXCollections.observableArrayList();
     private final ObjectProperty<LocalDate> loadPastEventsBeforeDateProperty = new SimpleObjectProperty<>();
+
+    @Override
+    protected void updateModelFromContextParameters() {
+        Console.log("documentPrimaryKey = " + getParameter("documentPrimaryKey"));
+    }
 
     @Override
     public Node buildUi() {

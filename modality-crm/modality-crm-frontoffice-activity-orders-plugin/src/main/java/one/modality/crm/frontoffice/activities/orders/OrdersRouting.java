@@ -17,8 +17,13 @@ import dev.webfx.stack.routing.uirouter.operations.RouteRequestEmitter;
  */
 public class OrdersRouting {
 
+    private final static String ANY_PATH = "/orders(/:documentPrimaryKey)?";
     private final static String PATH = "/orders";
     private final static String OPERATION_CODE = "RouteToOrders";
+
+    public static String getAnyPath() {
+        return ANY_PATH;
+    }
 
     public static String getPath() {
         return PATH;
@@ -31,7 +36,7 @@ public class OrdersRouting {
         }
 
         public static UiRoute<ViewDomainActivityContextFinal> uiRoute() {
-            return UiRoute.createRegex(PathBuilder.toRegexPath(OrdersRouting.getPath())
+            return UiRoute.createRegex(PathBuilder.toRegexPath(OrdersRouting.getAnyPath())
                     , true
                     , OrdersActivity::new
                     , ViewDomainActivityContextFinal::new
