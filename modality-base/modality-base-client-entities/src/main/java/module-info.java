@@ -14,7 +14,6 @@ module modality.base.client.entities {
     requires modality.base.shared.entities;
     requires webfx.extras.controlfactory;
     requires webfx.extras.i18n;
-    requires webfx.extras.time.format;
     requires webfx.extras.type;
     requires webfx.extras.util.layout;
     requires webfx.extras.util.scene;

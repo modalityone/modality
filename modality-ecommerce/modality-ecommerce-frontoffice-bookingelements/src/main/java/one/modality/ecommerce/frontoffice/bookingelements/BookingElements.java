@@ -1,4 +1,4 @@
-package one.modality.ecommerce.frontoffice.bookingform.util;
+package one.modality.ecommerce.frontoffice.bookingelements;
 
 import dev.webfx.extras.i18n.I18nKeys;
 import dev.webfx.extras.i18n.controls.I18nControls;
@@ -30,7 +30,7 @@ import java.util.List;
 /**
  * @author Bruno Salmon
  */
-public final class BookingFormUtil {
+public final class BookingElements {
 
     public static Label createStrongLabel() {
         return Bootstrap.strong(createLabel());
@@ -123,6 +123,7 @@ public final class BookingFormUtil {
     }
 
     public static void setupPeriodOption(List<ScheduledItem> bookableScheduledItems, Label priceLabel, BooleanProperty selectedProperty, WorkingBooking workingBooking) {
+        selectedProperty.set(workingBooking.areScheduledItemsBooked(bookableScheduledItems));
         FXProperties.runOnPropertyChange(selected -> {
             if (selected)
                 workingBooking.bookScheduledItems(bookableScheduledItems, false);
@@ -137,6 +138,5 @@ public final class BookingFormUtil {
         int bookedTotalPrice = new PriceCalculator(periodWorkingBooking.getLastestDocumentAggregate()).calculateTotalPrice();
         int optionPrice = bookedTotalPrice - unbookedTotalPrice;
         priceLabel.setText(EventPriceFormatter.formatWithCurrency(optionPrice, policyAggregate.getEvent()));
-
     }
 }

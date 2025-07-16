@@ -14,9 +14,10 @@ import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.Region;
 import one.modality.ecommerce.client.workingbooking.FXPersonToBook;
 import one.modality.ecommerce.client.workingbooking.HasWorkingBookingProperties;
+import one.modality.ecommerce.frontoffice.bookingelements.NavigationBar;
 import one.modality.ecommerce.frontoffice.bookingform.BookingFormBase;
 import one.modality.ecommerce.frontoffice.bookingform.BookingFormSettings;
-import one.modality.ecommerce.frontoffice.bookingform.PriceBar;
+import one.modality.ecommerce.frontoffice.bookingelements.PriceBar;
 
 /**
  * @author Bruno Salmon

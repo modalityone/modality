@@ -1,4 +1,4 @@
-package one.modality.ecommerce.frontoffice.bookingform.multipages;
+package one.modality.ecommerce.frontoffice.bookingelements;
 
 import dev.webfx.extras.aria.AriaToggleGroup;
 import dev.webfx.extras.i18n.controls.I18nControls;

@@ -1,4 +1,4 @@
-package one.modality.ecommerce.frontoffice.bookingform;
+package one.modality.ecommerce.frontoffice.bookingelements;
 
 import dev.webfx.extras.panes.CenteredPane;
 import dev.webfx.extras.styles.bootstrap.Bootstrap;
@@ -10,7 +10,6 @@ import javafx.scene.layout.HBox;
 import one.modality.base.shared.entities.EventState;
 import one.modality.ecommerce.client.i18n.EcommerceI18nKeys;
 import one.modality.ecommerce.client.workingbooking.WorkingBookingProperties;
-import one.modality.ecommerce.frontoffice.bookingform.util.BookingFormUtil;
 
 /**
  * @author Bruno Salmon
@@ -32,8 +31,8 @@ public final class PriceBar {
     }
 
     private static Node createPriceBox(Object i18nKey, StringProperty formattedPriceProperty) {
-        Label promptLabel = BookingFormUtil.createPricePromptLabel(i18nKey, true);
-        Label priceLabel = BookingFormUtil.createPriceAmountLabel(formattedPriceProperty);
+        Label promptLabel = BookingElements.createPricePromptLabel(i18nKey, true);
+        Label priceLabel = BookingElements.createPriceAmountLabel(formattedPriceProperty);
         HBox hBox = new HBox(10, promptLabel, priceLabel);
         hBox.setPadding(new Insets(7, 24, 7, 24));
         return hBox;
