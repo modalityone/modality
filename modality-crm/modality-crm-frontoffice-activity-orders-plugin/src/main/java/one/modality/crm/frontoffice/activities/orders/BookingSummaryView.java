@@ -11,8 +11,10 @@ import dev.webfx.extras.time.format.LocalizedTime;
 import dev.webfx.extras.util.control.Controls;
 import dev.webfx.extras.util.dialog.DialogCallback;
 import dev.webfx.extras.util.dialog.DialogUtil;
+import dev.webfx.extras.util.layout.Layouts;
 import dev.webfx.extras.util.scene.SceneUtil;
 import dev.webfx.kit.util.properties.FXProperties;
+import dev.webfx.kit.util.properties.ObservableLists;
 import dev.webfx.platform.async.Future;
 import dev.webfx.platform.console.Console;
 import dev.webfx.platform.uischeduler.UiScheduler;
@@ -53,6 +55,7 @@ import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.LinkedHashMap;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 public final class BookingSummaryView {
 
@@ -74,9 +77,9 @@ public final class BookingSummaryView {
     private PriceCalculator priceCalculator = null;
     private final IntegerProperty remainingAmountProperty = new SimpleIntegerProperty();
     private boolean orderDetailsLoaded = false;
-    private UpdateStore updateStore;
+    private final UpdateStore updateStore;
 
-    public BookingSummaryView(Document booking, EntityStore store, OrdersActivity ordersActivity) {
+    BookingSummaryView(Document booking, EntityStore store, OrdersActivity ordersActivity) {
         this.ordersActivity = ordersActivity;
         this.bookingProperty.set(booking);
         this.entityStore = store;
@@ -92,9 +95,9 @@ public final class BookingSummaryView {
         if (workingBooking.getLastestDocumentAggregate() != null) {
             priceCalculator = new PriceCalculator(workingBooking.getLastestDocumentAggregate());
         }
-        workingBooking.getDocumentChanges().addListener((InvalidationListener) observable ->
-            Platform.runLater(() -> bookedOptions.setAll(workingBooking.getLastestDocumentAggregate().getDocumentLines())));
-        bookedOptions.setAll(workingBooking.getLastestDocumentAggregate().getDocumentLines());
+        ObservableLists.runNowAndOnListChange(change ->
+                UiScheduler.runInUiThread(() -> bookedOptions.setAll(workingBooking.getLastestDocumentAggregate().getDocumentLines()))
+            , workingBooking.getDocumentChanges());
         updateStore = UpdateStore.createAbove(entityStore);
     }
 
@@ -248,10 +251,8 @@ public final class BookingSummaryView {
             createOrderActions());
         CollapsePane detailsCollapsePane = new CollapsePane(orderDetailsAndSummary);
         detailsCollapsePane.setCollapsed(true);
-        hideDetailsLabel.managedProperty().bind(detailsCollapsePane.collapsedProperty().not());
-        hideDetailsLabel.visibleProperty().bind(detailsCollapsePane.collapsedProperty().not());
-        viewDetailsLabel.managedProperty().bind(detailsCollapsePane.collapsedProperty());
-        viewDetailsLabel.visibleProperty().bind(detailsCollapsePane.collapsedProperty());
+        Layouts.bindManagedAndVisiblePropertiesTo(detailsCollapsePane.collapsedProperty().not(), hideDetailsLabel);
+        Layouts.bindManagedAndVisiblePropertiesTo(detailsCollapsePane.collapsedProperty(), viewDetailsLabel);
 
         FXProperties.runNowAndOnPropertyChange(id -> {
             boolean weAreLookingThisOrder = Entities.samePrimaryKey(id, bookingProperty.get());
@@ -268,10 +269,11 @@ public final class BookingSummaryView {
 
         viewDetailsHBox.setOnMouseClicked(m -> {
             if (!orderDetailsLoaded) {
-                OperationUtil.turnOnButtonsWaitModeDuringExecution(loadFromDatabase()
+                OperationUtil.turnOnButtonsWaitModeDuringExecution(
+                    loadFromDatabase()
                         .onComplete(x ->
-                            // Calling in UI thread but after another animation frame to ensure the layout pass is finished
-                            // and the height is stabilised for the CollapsePane animation
+                            // Calling in UI thread, but after another animation frame to ensure the layout pass is finished
+                            // and the height is stabilized for the CollapsePane animation
                             UiScheduler.scheduleInAnimationFrame(detailsCollapsePane::toggleCollapse, 2))
                     , viewDetailsLabel);
 
@@ -309,12 +311,12 @@ public final class BookingSummaryView {
                     }
                     categoryLabel.getStyleClass().add("detail-label");
 
-                    // Calculate total price for this family
+                    // Calculate the total price for this family
                     int familyTotalPrice = documentLinesInFamily.stream()
                         .mapToInt(dl -> {
                             int price = dl.getPriceNet() != null ? dl.getPriceNet() : 0;
                             if (priceCalculator != null) {
-                                price = priceCalculator.calculateDocumentLinesPrice(java.util.stream.Stream.of(dl));
+                                price = priceCalculator.calculateDocumentLinesPrice(Stream.of(dl));
                             }
                             return price;
                         })
@@ -331,7 +333,7 @@ public final class BookingSummaryView {
                     documentLinesInFamily.forEach(documentLine -> {
                         int price = documentLine.getPriceNet() != null ? documentLine.getPriceNet() : 0;
                         if (priceCalculator != null) {
-                            price = priceCalculator.calculateDocumentLinesPrice(java.util.stream.Stream.of(documentLine));
+                            price = priceCalculator.calculateDocumentLinesPrice(Stream.of(documentLine));
                         }
                         String formattedPrice = EventPriceFormatter.formatWithCurrency(price, booking.getEvent());
                         boolean isCancelled = Booleans.booleanValue(documentLine.isCancelled());
@@ -386,8 +388,7 @@ public final class BookingSummaryView {
         Label remainingLabel = Controls.setupTextWrapping(I18nControls.newLabel(I18nKeys.appendColons(EcommerceI18nKeys.RemainingAmount)), true, true);
         Label remainingValue = Controls.setupTextWrapping(new Label(), true, true);
 
-        FXProperties.runNowAndOnPropertyChange(() -> {
-            Document booking = bookingProperty.get();
+        FXProperties.runNowAndOnPropertyChange(booking -> {
             if (booking != null) {
                 Integer totalPriceNet = booking.getPriceNet();
                 Integer deposit = booking.getPriceDeposit();
@@ -429,7 +430,7 @@ public final class BookingSummaryView {
     }
 
     private Node createOrderActions() {
-        HBox orderActions = new HBox(12); // Gap of 12px
+        HBox orderActions = new HBox(12); // Gap of 12 px
         orderActions.setPadding(new Insets(20, 0, 0, 0));
         orderActions.setAlignment(Pos.CENTER);
         addOptionButton = Bootstrap.secondaryButton(I18nControls.newButton(OrdersI18nKeys.AddOrEditOption));
@@ -475,25 +476,22 @@ public final class BookingSummaryView {
             cancelLabelText.setOnMouseClicked(m -> errorMessageCallback.closeDialog());
 
             Button confirmButton = Bootstrap.largeDangerButton(I18nControls.newButton(BaseI18nKeys.Confirm));
-            confirmButton.setOnAction(m -> {
-                Future<?> operationFuture = DocumentService.loadDocumentWithPolicy(bookingProperty.get())
-                    .onFailure(Console::log)
-                    .compose(policyAndDocumentAggregates -> {
-                        PolicyAggregate policyAggregate = policyAndDocumentAggregates.getPolicyAggregate(); // never null
-                        DocumentAggregate existingBooking = policyAndDocumentAggregates.getDocumentAggregate(); // might be null
-                        WorkingBooking workingBooking = new WorkingBooking(policyAggregate, existingBooking);
-                        workingBooking.cancelBooking();
-                        return workingBooking.submitChanges("Booking canceled online by user");
-                    });
-
-                OperationUtil.turnOnButtonsWaitModeDuringExecution(operationFuture, confirmButton, cancelLabelText);
-
-                // Close dialog only after operation completes (success or failure)
-                operationFuture.onComplete(x -> {
-                    errorMessageCallback.closeDialog();
-                    loadFromDatabase();
-                });
-            });
+            confirmButton.setOnAction(ae ->
+                OperationUtil.turnOnButtonsWaitModeDuringExecution(
+                    DocumentService.loadDocumentWithPolicy(bookingProperty.get())
+                        .compose(policyAndDocumentAggregates -> {
+                            PolicyAggregate policyAggregate = policyAndDocumentAggregates.getPolicyAggregate(); // never null
+                            DocumentAggregate existingBooking = policyAndDocumentAggregates.getDocumentAggregate(); // might be null
+                            WorkingBooking workingBooking = new WorkingBooking(policyAggregate, existingBooking);
+                            workingBooking.cancelBooking();
+                            return workingBooking.submitChanges("Booking canceled online by user")
+                                .compose(result -> loadFromDatabase());
+                        })
+                        .onFailure(Console::log)
+                        .onComplete(x -> {
+                            // Close dialog only after the operation completes (success or failure)
+                            errorMessageCallback.closeDialog();
+                        }), confirmButton, cancelLabelText));
             HBox buttonsHBox = new HBox(70, cancelLabelText, confirmButton);
             buttonsHBox.setPadding(new Insets(30, 20, 20, 20));
             buttonsHBox.setAlignment(Pos.CENTER);
@@ -502,28 +500,33 @@ public final class BookingSummaryView {
         Region spacer = new Region();
         HBox.setHgrow(spacer, Priority.ALWAYS);
         orderActions.getChildren().addAll(addOptionButton, makePaymentButton, askRefundButton, spacer, cancelLabel);
-        orderActions.managedProperty().bind(addOptionButton.managedProperty().or(makePaymentButton.managedProperty().or(askRefundButton.managedProperty().or(cancelLabel.managedProperty()))));
-        orderActions.visibleProperty().bind(orderActions.managedProperty());
+        Layouts.bindManagedAndVisiblePropertiesTo(
+            addOptionButton.managedProperty().or(makePaymentButton.managedProperty().or(askRefundButton.managedProperty().or(cancelLabel.managedProperty()))),
+            orderActions
+        );
         return orderActions;
     }
 
 
     private void computeCancelAndAddLabelVisibility() {
+        Document booking = bookingProperty.get();
+        Event event = booking.getEvent();
         if (cancelLabel != null) //We don't display the cancel button on a new booking (when priceCalculator!=null)
-            cancelLabel.setVisible(priceCalculator == null && LocalDate.now().isBefore(bookingProperty.get().getEvent().getStartDate()) && !bookingProperty.get().isCancelled());
+            cancelLabel.setVisible(priceCalculator == null && LocalDate.now().isBefore(event.getStartDate()) && !booking.isCancelled());
 
         if (addOptionButton != null) {
-            Boolean cancelled = bookingProperty.get().isCancelled();
+            Boolean cancelled = booking.isCancelled();
             boolean isNotCancelled = cancelled != null && !cancelled;
-            boolean isKBS3 = EventLifeCycle.isKbs3Event(bookingProperty.get().getEvent());
-            boolean notEnded = LocalDate.now().isBefore(bookingProperty.get().getEvent().getEndDate().plusDays(30));
+            boolean isKBS3 = EventLifeCycle.isKbs3Event(event);
+            boolean notEnded = LocalDate.now().isBefore(event.getEndDate().plusDays(30));
             boolean visible = notEnded && isNotCancelled && isKBS3;
             addOptionButton.setVisible(visible);
             addOptionButton.setManaged(visible);
         }
     }
 
-    private Future<EntityList[]> loadFromDatabase() {
+
+    private Future<?> loadFromDatabase() {
         bookedOptions.clear();
         orderDetailsLoaded = true;
         return entityStore.executeQueryBatch(
