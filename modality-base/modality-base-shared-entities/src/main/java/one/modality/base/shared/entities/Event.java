@@ -28,6 +28,7 @@ public interface Event extends Entity,
     String vodExpirationDate = "vodExpirationDate";
     String vodProcessingTimeMinutes = "vodProcessingTimeMinutes";
     String audioExpirationDate = "audioExpirationDate";
+    String audioClosingDate = "audioClosingDate";
     String livestreamUrl = "livestreamUrl";
     String live = "live";
     String feesBottomLabel = "feesBottomLabel";
@@ -122,6 +123,14 @@ public interface Event extends Entity,
 
     default LocalDateTime getAudioExpirationDate() {
         return getLocalDateTimeFieldValue(audioExpirationDate);
+    }
+
+    default void setAudioClosingDate(LocalDateTime value) {
+        setFieldValue(audioClosingDate, value);
+    }
+
+    default LocalDateTime getAudioClosingDate() {
+        return getLocalDateTimeFieldValue(audioClosingDate);
     }
 
     default void setLivestreamUrl(String value) {

@@ -14,8 +14,19 @@ public interface ItemFamily extends
         EntityHasOrd,
         HasItemFamilyType {
 
+    String summaryHidden = "summaryHidden";
+
     @Override
     default KnownItemFamily getItemFamilyType() {
         return KnownItemFamily.fromCode(getCode());
     }
+
+    default void setSummaryHidden(Boolean value) {
+        setFieldValue(summaryHidden, value);
+    }
+
+    default Boolean isSummaryHidden() {
+        return getBooleanFieldValue(summaryHidden);
+    }
+
 }
