@@ -10,7 +10,7 @@ public final class OrderView {
 
     public OrderView(Document booking, OrdersActivity ordersActivity) {
         EntityStore entityStore = EntityStore.create(ordersActivity.getDataSourceModel());
-        bookingSummaryView = new BookingSummaryView(booking, entityStore);
+        bookingSummaryView = new BookingSummaryView(booking, entityStore,ordersActivity);
     }
 
     public Node getView() {

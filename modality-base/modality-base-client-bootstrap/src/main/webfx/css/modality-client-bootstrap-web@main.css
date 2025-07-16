@@ -46,17 +46,17 @@
     --badge-default-bg: var(--bootstrap-white);
     --badge-default-txt: var(--bootstrap-grey7);
     --badge-primary-bg: #e3f2fd;
-    --badge-primary-txt: #2e7d32;
+    --badge-primary-txt: #1976d2;
     --badge-success-bg: #e8f5e8;
     --badge-success-txt: #2e7d32;
     --badge-info-bg: var(--bootstrap-blue1);
     --badge-info-txt: var(--bootstrap-white);
-    --badge-warning-bg: var(--bootstrap-orange1);
-    --badge-warning-txt: var(--bootstrap-white);
+    --badge-warning-bg: #eceff1;
+    --badge-warning-txt: #546e7a;
     --badge-danger-bg: #ffebee;
     --badge-danger-txt: #c62828;
-    --badge-secondary-bg: #eceff1;
-    --badge-secondary-txt: #546e7a;
+    --badge-secondary-bg: #fff3e0;
+    --badge-secondary-txt: #f57c00;
 }
 
 .h2 {

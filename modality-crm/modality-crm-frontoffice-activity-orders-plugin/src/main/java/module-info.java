@@ -28,9 +28,11 @@ module modality.crm.frontoffice.activity.orders.plugin {
     requires webfx.extras.util.background;
     requires webfx.extras.util.control;
     requires webfx.extras.util.dialog;
+    requires webfx.extras.util.scene;
     requires webfx.kit.util;
     requires webfx.platform.async;
     requires webfx.platform.console;
+    requires webfx.platform.uischeduler;
     requires webfx.platform.util;
     requires webfx.platform.windowhistory;
     requires webfx.stack.orm.domainmodel.activity;

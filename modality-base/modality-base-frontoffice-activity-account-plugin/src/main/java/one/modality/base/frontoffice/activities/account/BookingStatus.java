@@ -13,11 +13,11 @@ import one.modality.base.shared.entities.Document;
 public enum BookingStatus {
 
     // Incomplete = payment_required or action_required
-    INCOMPLETE("BookingStatusIncomplete"),
-    CANCELLED("BookingStatusCancelled"),
-    IN_PROGRESS("BookingStatusInProgress"),
-    CONFIRMED("BookingStatusConfirmed"),
-    COMPLETE("BookingStatusComplete");
+    INCOMPLETE(AccountI18nKeys.BookingStatusIncomplete.toString()),
+    IN_PROGRESS(AccountI18nKeys.BookingStatusInProgress.toString()),
+    CONFIRMED(AccountI18nKeys.BookingStatusConfirmed.toString()),
+    COMPLETE(AccountI18nKeys.BookingStatusComplete.toString()),
+    CANCELLED(AccountI18nKeys.BookingStatusCancelled.toString());
 
     public static final String BOOKING_REQUIRED_FIELDS = "price_net,price_deposit,price_minDeposit,cancelled,confirmed,arrived";
 
@@ -45,16 +45,16 @@ public enum BookingStatus {
     }
 
     public static String getBookingStatusExpression() {
-        return "price_net < price_minDeposit ? 'INCOMPLETE' : cancelled ? 'CANCELLED' : !confirmed && !arrived ? 'IN_PROGRESS' : price_deposit >= price_net ? 'COMPLETE' : 'CONFIRMED'";
+        return "price_net < price_minDeposit ? 'INCOMPLETE' : !confirmed && !arrived ? 'IN_PROGRESS' : price_deposit >= price_net ? 'COMPLETE' : !cancelled ? 'CONFIRMED' : 'CANCELLED' ";
     }
 
     public static String getBookingStatusOrderExpression(boolean asc) {
         return getBookingStatusExpression()
             .replace("'INCOMPLETE'", String.valueOf(INCOMPLETE.ordinal()))
-            .replace("'CANCELLED'", String.valueOf(CANCELLED.ordinal()))
             .replace("'IN_PROGRESS'", String.valueOf(IN_PROGRESS.ordinal()))
             .replace("'CONFIRMED'", String.valueOf(CONFIRMED.ordinal()))
             .replace("'COMPLETE'", String.valueOf(COMPLETE.ordinal()))
+            .replace("'CANCELLED'", String.valueOf(CANCELLED.ordinal()))
             + (asc ? " desc" : "")
             ;
     }
