@@ -215,6 +215,7 @@ public final class BookingSummaryView {
 
         Label contactUsLabel = Bootstrap.strong(Bootstrap.textPrimary(I18nControls.newLabel(OrdersI18nKeys.ContactUsAboutThisBooking)));
         contactUsLabel.setCursor(Cursor.HAND);
+        contactUsLabel.setWrapText(true);
         contactUsLabel.setOnMouseClicked(e -> {
             ContactUsWindow contactUsWindow = new ContactUsWindow();
             contactUsWindow.buildUI();
