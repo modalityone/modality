@@ -88,9 +88,10 @@ public final class BookingElements {
 
     public static VBox createPageVBox(String pageStyleClass, boolean largeSpacing, Node... children) {
         VBox vBox = new VBox(largeSpacing ? 48 : 24, children);
-        //vBox.getStyleClass().addAll(pageStyleClass);
+        //vBox.getStyleClass().add(pageStyleClass);
         vBox.setPadding(new Insets(48, 0, 48, 0));
         vBox.setAlignment(Pos.CENTER);
+        vBox.setMinHeight(Region.USE_PREF_SIZE);
         return vBox;
     }
 
