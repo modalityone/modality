@@ -21,6 +21,7 @@ public interface OrdersI18nKeys {
     Object AskARefund = "AskARefund";
     Object Message = "Message";
     Object Cancel = "Cancel";
+    Object ThisWindowWillCloseAutomatically = "ThisWindowWillCloseAutomatically";
     Object ContactUs = "ContactUs";
     Object MessageSentSuccessfully = "MessageSentSuccessfully";
     Object ContactUsAboutThisBooking = "ContactUsAboutThisBooking";
@@ -30,5 +31,6 @@ public interface OrdersI18nKeys {
     Object FillRequiredFields = "FillRequiredFields";
     Object MessagePlaceholder = "MessagePlaceholder";
     Object Subject = "Subject";
+    Object MessageSentSuccessfullyDetails = "MessageSentSuccessfullyDetails";
 
 }
