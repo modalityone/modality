@@ -1,4 +1,4 @@
-package one.modality.event.frontoffice.bookingforms.recurringevent;
+package one.modality.event.frontoffice.bookingform.recurringevent;
 
 import dev.webfx.extras.i18n.I18nKeys;
 import dev.webfx.extras.i18n.controls.I18nControls;
@@ -27,14 +27,13 @@ import one.modality.base.client.time.FrontOfficeTimeFormats;
 import one.modality.base.shared.entities.*;
 import one.modality.base.shared.entities.formatters.EventPriceFormatter;
 import one.modality.ecommerce.client.i18n.EcommerceI18nKeys;
-import one.modality.ecommerce.shared.pricecalculator.PriceCalculator;
 import one.modality.ecommerce.client.workingbooking.WorkingBooking;
 import one.modality.ecommerce.client.workingbooking.WorkingBookingProperties;
 import one.modality.ecommerce.document.service.DocumentAggregate;
-import one.modality.event.frontoffice.activities.booking.BookingI18nKeys;
 import one.modality.ecommerce.frontoffice.bookingform.BookingFormI18nKeys;
-import one.modality.event.frontoffice.activities.book.event.EventBookingFormSettings;
 import one.modality.ecommerce.frontoffice.bookingform.multipages.BookingFormPage;
+import one.modality.ecommerce.shared.pricecalculator.PriceCalculator;
+import one.modality.event.frontoffice.activities.book.event.EventBookingFormSettings;
 
 import java.time.LocalDate;
 import java.util.List;
@@ -48,7 +47,7 @@ final class RecurringSummaryPage implements BookingFormPage {
 
     private final RecurringEventBookingForm bookingForm;
     private final GridPane summaryGridPane = new GridPane();
-    private final CheckBox facilityFeeCheckBox = I18nControls.newCheckBox(BookingI18nKeys.FacilityFee);
+    private final CheckBox facilityFeeCheckBox = I18nControls.newCheckBox(RecurringEventI18nKeys.FacilityFee);
     private final MonoPane embeddedLoginContainer = new MonoPane();
     private final VBox container = new VBox(50,
         summaryGridPane,
@@ -164,7 +163,7 @@ final class RecurringSummaryPage implements BookingFormPage {
                 LocalDate date = scheduledItem.getDate();
                 Item item = scheduledItem.getItem();
                 Label scheduledItemLabel = I18nEntities.newExpressionLabel(item,
-                    "i18n(this) + ' - {0}' " + (existing ? " + ' ([" + BookingI18nKeys.alreadyBooked + "])'" : ""),
+                    "i18n(this) + ' - {0}' " + (existing ? " + ' ([" + RecurringEventI18nKeys.alreadyBooked + "])'" : ""),
                     LocalizedTime.formatMonthDayProperty(date, FrontOfficeTimeFormats.BOOKING_CHECKOUT_DATE_FORMAT));
                 int dailyRatePrice = workingBookingProperties.getDailyRatePrice();
                 totalPrice[0] += dailyRatePrice;
@@ -204,9 +203,9 @@ final class RecurringSummaryPage implements BookingFormPage {
     private void addExistingTotalLine() {
         WorkingBookingProperties workingBookingProperties = bookingForm.getActivity().getWorkingBookingProperties();
         addTotalLine(
-            BookingI18nKeys.TotalOnPreviousBooking, workingBookingProperties.formattedPreviousTotalProperty(),
+            RecurringEventI18nKeys.TotalOnPreviousBooking, workingBookingProperties.formattedPreviousTotalProperty(),
             EcommerceI18nKeys.Deposit, workingBookingProperties.formattedDepositProperty(),
-            BookingI18nKeys.BalanceOnPreviousBooking, workingBookingProperties.formattedPreviousBalanceProperty()
+            RecurringEventI18nKeys.BalanceOnPreviousBooking, workingBookingProperties.formattedPreviousBalanceProperty()
         );
     }
 

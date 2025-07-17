@@ -1,4 +1,4 @@
-package one.modality.event.frontoffice.bookingforms.recurringevent;
+package one.modality.event.frontoffice.bookingform.recurringevent;
 
 import one.modality.base.shared.entities.Event;
 import one.modality.event.client.booking.WorkingBookingSyncer;

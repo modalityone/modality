@@ -1,4 +1,4 @@
-package one.modality.event.frontoffice.bookingforms.recurringevent;
+package one.modality.event.frontoffice.bookingform.recurringevent;
 
 import dev.webfx.extras.controlfactory.button.ButtonFactory;
 import dev.webfx.extras.i18n.I18n;
@@ -28,10 +28,9 @@ import one.modality.base.shared.entities.ScheduledItem;
 import one.modality.base.shared.entities.formatters.EventPriceFormatter;
 import one.modality.ecommerce.client.workingbooking.WorkingBookingProperties;
 import one.modality.ecommerce.frontoffice.bookingelements.BookingElements;
-import one.modality.event.client.recurringevents.RecurringEventSchedule;
-import one.modality.event.frontoffice.activities.booking.BookingI18nKeys;
-import one.modality.event.frontoffice.activities.book.event.BookEventActivity;
 import one.modality.ecommerce.frontoffice.bookingform.multipages.BookingFormPage;
+import one.modality.event.client.recurringevents.RecurringEventSchedule;
+import one.modality.event.frontoffice.activities.book.event.BookEventActivity;
 
 import java.time.LocalDate;
 import java.util.ArrayList;
@@ -45,8 +44,8 @@ final class SchedulePage implements BookingFormPage {
     private static final boolean DEBUG_PAST_EVENT = true;
 
     private final RecurringEventBookingForm bookingForm;
-    private final Hyperlink selectAllClassesHyperlink = I18nControls.bindI18nTextProperty(new Hyperlink(), BookingI18nKeys.SelectAllClasses);
-    private final Button checkoutButton = Bootstrap.largeSuccessButton(I18nControls.newButton(BookingI18nKeys.ProceedCheckout));
+    private final Hyperlink selectAllClassesHyperlink = I18nControls.bindI18nTextProperty(new Hyperlink(), RecurringEventI18nKeys.SelectAllClasses);
+    private final Button checkoutButton = Bootstrap.largeSuccessButton(I18nControls.newButton(RecurringEventI18nKeys.ProceedCheckout));
     private List<LocalDate> allSelectableDates;
     private final VBox container;
 
@@ -70,11 +69,11 @@ final class SchedulePage implements BookingFormPage {
         personToBookScalePane.managedProperty().bind(personToBookButton.managedProperty());
         VBox.setMargin(personToBookScalePane, new Insets(30, 0, 20, 0));
 
-        Text scheduleText = I18n.newText(BookingI18nKeys.Schedule);
+        Text scheduleText = I18n.newText(RecurringEventI18nKeys.Schedule);
         Bootstrap.textPrimary(Bootstrap.h4(scheduleText));
         VBox.setMargin(scheduleText, new Insets(20, 0, 10, 0));
 
-        Label selectTheCourseText = I18nControls.newLabel(BookingI18nKeys.SelectTheEvent);
+        Label selectTheCourseText = I18nControls.newLabel(RecurringEventI18nKeys.SelectTheEvent);
         selectTheCourseText.setTextAlignment(TextAlignment.CENTER);
         selectTheCourseText.setWrapText(true);
         VBox.setMargin(selectTheCourseText, new Insets(0, 0, 5, 0));
@@ -87,7 +86,7 @@ final class SchedulePage implements BookingFormPage {
         Bootstrap.textPrimary(Bootstrap.h4(selectAllClassesHyperlink));
         selectAllClassesHyperlink.setAlignment(Pos.CENTER);
 
-        Text priceText = new Text(I18n.getI18nText(BookingI18nKeys.PricePerClass0, EventPriceFormatter.formatWithCurrency(workingBookingProperties.getDailyRatePrice(), event)));
+        Text priceText = new Text(I18n.getI18nText(RecurringEventI18nKeys.PricePerClass0, EventPriceFormatter.formatWithCurrency(workingBookingProperties.getDailyRatePrice(), event)));
         priceText.getStyleClass().add("subtitle-grey");
         VBox.setMargin(priceText, new Insets(20, 0, 0, 0));
 
@@ -119,7 +118,7 @@ final class SchedulePage implements BookingFormPage {
         int allClassesPrice = workingBookingProperties.getWholeEventPrice();
         int allClassesNoDiscountPrice = workingBookingProperties.getWholeEventNoDiscountPrice();
         if (allClassesPrice < allClassesNoDiscountPrice) {
-            Text allClassesText = new Text(I18n.getI18nText(BookingI18nKeys.AllClasses + ":"));
+            Text allClassesText = new Text(I18n.getI18nText(RecurringEventI18nKeys.AllClasses + ":"));
             allClassesText.getStyleClass().add("subtitle-grey");
             Text noDiscountPriceText = new Text(EventPriceFormatter.formatWithCurrency(allClassesNoDiscountPrice, event));
             noDiscountPriceText.setStrikethrough(true);

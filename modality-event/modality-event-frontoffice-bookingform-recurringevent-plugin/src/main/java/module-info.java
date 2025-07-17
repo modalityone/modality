@@ -33,9 +33,9 @@ module modality.event.frontoffice.bookingform.recurringevent.plugin {
     requires webfx.platform.util;
 
     // Exported packages
-    exports one.modality.event.frontoffice.bookingforms.recurringevent;
+    exports one.modality.event.frontoffice.bookingform.recurringevent;
 
     // Provided services
-    provides one.modality.ecommerce.frontoffice.bookingform.BookingFormProvider with one.modality.event.frontoffice.bookingforms.recurringevent.RecurringEventBookingFormProvider;
+    provides one.modality.ecommerce.frontoffice.bookingform.BookingFormProvider with one.modality.event.frontoffice.bookingform.recurringevent.RecurringEventBookingFormProvider;
 
 }

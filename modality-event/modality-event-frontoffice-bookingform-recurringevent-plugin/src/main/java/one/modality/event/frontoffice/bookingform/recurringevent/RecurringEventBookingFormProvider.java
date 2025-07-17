@@ -1,4 +1,4 @@
-package one.modality.event.frontoffice.bookingforms.recurringevent;
+package one.modality.event.frontoffice.bookingform.recurringevent;
 
 import javafx.scene.layout.Background;
 import one.modality.base.client.brand.Brand;
