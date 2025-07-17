@@ -12,10 +12,12 @@ import one.modality.crm.shared.services.authn.fx.FXUserPerson;
 public final class FXPersonToBook {
 
     private final static ObjectProperty<Person> personToBookProperty = new SimpleObjectProperty<>();
+    private static boolean automaticallyFollowUserPerson;
 
     static {
         // When the modality user changes, we reset the person to book to be that user
-        FXProperties.runNowAndOnPropertyChange(FXPersonToBook::setPersonToBook, FXUserPerson.userPersonProperty());
+        FXProperties.runNowAndOnPropertyChange(userPerson ->
+            setPersonToBook(automaticallyFollowUserPerson ? userPerson : null), FXUserPerson.userPersonProperty());
     }
 
     public static Person getPersonToBook() {
@@ -30,4 +32,9 @@ public final class FXPersonToBook {
         personToBookProperty.set(userPerson);
     }
 
+    public static void setAutomaticallyFollowUserPerson(boolean follow) {
+        automaticallyFollowUserPerson = follow;
+        if (follow && getPersonToBook() == null)
+            setPersonToBook(FXUserPerson.getUserPerson());
+    }
 }

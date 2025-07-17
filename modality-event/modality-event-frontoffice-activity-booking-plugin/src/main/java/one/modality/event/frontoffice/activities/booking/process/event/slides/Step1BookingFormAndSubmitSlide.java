@@ -28,16 +28,16 @@ import javafx.scene.layout.VBox;
 import one.modality.base.client.i18n.BaseI18nKeys;
 import one.modality.base.shared.entities.Document;
 import one.modality.base.shared.entities.Person;
-import one.modality.ecommerce.client.workingbooking.FXPersonToBook;
+import one.modality.crm.shared.services.authn.fx.FXUserPerson;
 import one.modality.ecommerce.client.workingbooking.WorkingBooking;
 import one.modality.ecommerce.client.workingbooking.WorkingBookingHistoryHelper;
 import one.modality.ecommerce.client.workingbooking.WorkingBookingProperties;
+import one.modality.ecommerce.frontoffice.bookingform.BookingForm;
+import one.modality.ecommerce.frontoffice.bookingform.BookingFormActivityCallback;
 import one.modality.event.frontoffice.activities.booking.BookingI18nKeys;
 import one.modality.event.frontoffice.activities.booking.fx.FXGuestToBook;
 import one.modality.event.frontoffice.activities.booking.process.account.CheckoutAccountRouting;
 import one.modality.event.frontoffice.activities.booking.process.event.BookEventActivity;
-import one.modality.ecommerce.frontoffice.bookingform.BookingForm;
-import one.modality.ecommerce.frontoffice.bookingform.BookingFormActivityCallback;
 import one.modality.event.frontoffice.activities.booking.process.event.EventBookingFormSettings;
 
 /**
@@ -75,7 +75,7 @@ final class Step1BookingFormAndSubmitSlide extends StepSlide implements BookingF
         signInContainer.setCenter(loginContent);
         loginGuestFlipPane.setFront(signInContainer);
         FXProperties.runNowAndOnPropertiesChange(this::updateLoginAndSubmitVisibility,
-            FXPersonToBook.personToBookProperty(), bookingFormPersonToBookRequiredProperty, bookingFormShowDefaultSubmitButtonProperty, bookingFormDisableSubmitButtonProperty, bookingFormTransitingProperty);
+            FXUserPerson.userPersonProperty(), bookingFormPersonToBookRequiredProperty, bookingFormShowDefaultSubmitButtonProperty, bookingFormDisableSubmitButtonProperty, bookingFormTransitingProperty);
         orGuestLink.setOnAction(e -> {
             loginGuestFlipPane.flipToBack();
             guestPanel.onShowing();
@@ -142,8 +142,8 @@ final class Step1BookingFormAndSubmitSlide extends StepSlide implements BookingF
     private void updateLoginAndSubmitVisibility() {
         boolean transiting = bookingFormTransitingProperty.get();
         // Updating login visibility
-        Person personToBook = FXPersonToBook.getPersonToBook();
-        boolean showLogin = bookingFormPersonToBookRequiredProperty.get() && personToBook == null; // Means that the user is logged in with an account in Modality
+        Person userPerson = FXUserPerson.getUserPerson();
+        boolean showLogin = bookingFormPersonToBookRequiredProperty.get() && userPerson == null; // Means that the user is logged in with an account in Modality
         if (showLogin && loginContent.getContent() == null && !transiting) {
             WindowHistory.getProvider().push(CheckoutAccountRouting.getPath());
         }

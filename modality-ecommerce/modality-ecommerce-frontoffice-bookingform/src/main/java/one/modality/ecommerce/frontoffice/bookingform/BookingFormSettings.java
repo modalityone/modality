@@ -7,4 +7,5 @@ public interface BookingFormSettings {
 
     boolean showNavigationBar();
 
+    boolean autoLoadExistingBooking();
 }

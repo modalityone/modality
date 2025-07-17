@@ -33,6 +33,7 @@ public class RecurringEventBookingFormProvider implements BookingFormProvider {
             .setExtraSpaceBetweenHeaderAndBookingForm(0.03) // 3% of the booking form width
             .setBookAsAGuestAllowed(true)
             .setPartialEventAllowed(true)
+            .setAutoLoadExistingBooking(true)
             .build()
         );
     }

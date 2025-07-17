@@ -74,6 +74,10 @@ final class StepBBookEventSlide extends StepSlide {
         }
     }
 
+    boolean autoLoadExistingBooking() {
+        return digitsSlideController.autoLoadExistingBooking();
+    }
+
     void onPrepareRevealEvent() {
         BookingForm bookingForm = digitsSlideController.getBookingForm();
         if (bookingForm != null) {

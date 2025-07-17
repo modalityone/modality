@@ -68,6 +68,10 @@ final class DigitsSlideController {
         }
     }
 
+    boolean autoLoadExistingBooking() {
+        return bookingForm.getSettings().autoLoadExistingBooking();
+    }
+
     public BookingForm getBookingForm() {
         return bookingForm;
     }

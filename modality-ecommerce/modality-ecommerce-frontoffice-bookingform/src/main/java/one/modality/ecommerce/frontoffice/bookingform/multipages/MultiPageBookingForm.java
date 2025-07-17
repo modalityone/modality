@@ -116,9 +116,9 @@ public abstract class MultiPageBookingForm extends BookingFormBase {
             return;
         BookingFormPage[] pages = getPages();
         displayedPage = pages[index];
-        validProperty.bind(displayedPage.validProperty());
         pageShowingOwnSubmitButtonProperty.set(displayedPage.isShowingOwnSubmitButton());
         displayedPage.setWorkingBookingProperties(workingBookingProperties);
+        validProperty.bind(displayedPage.validProperty());
         transitionPane.setReverse(index < displayedPageIndex);
         transitionPane.transitToContent(displayedPage.getView());
         displayedPageIndex = index;

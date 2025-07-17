@@ -50,6 +50,10 @@ public final class LettersSlideController {
         stepBBookEventSlide.onEventChanged(event);
     }
 
+    public boolean autoLoadExistingBooking() {
+        return stepBBookEventSlide.autoLoadExistingBooking();
+    }
+
     public ReadOnlyObjectProperty<Font> mediumFontProperty() {
         return stepBBookEventSlide.mediumFontProperty();
     }

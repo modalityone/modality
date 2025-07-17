@@ -13,6 +13,7 @@ public final class EventBookingFormSettingsBuilder {
     private double headerMaxTopBottomPadding = -1;
     private double extraSpaceBetweenHeaderAndBookingForm; // if between 0 and 1, then it's a percent factor of the booking form width
     private boolean showNavigationBar;
+    private boolean autoLoadExistingBooking;
     private boolean showPriceBar;
     private boolean bookAsAGuestAllowed;
     private boolean partialEventAllowed;
@@ -52,12 +53,17 @@ public final class EventBookingFormSettingsBuilder {
         return this;
     }
 
+    public EventBookingFormSettingsBuilder setAutoLoadExistingBooking(boolean autoLoadExistingBooking) {
+        this.autoLoadExistingBooking = autoLoadExistingBooking;
+        return this;
+    }
+
     public EventBookingFormSettingsBuilder setShowPriceBar(boolean showPriceBar) {
         this.showPriceBar = showPriceBar;
         return this;
     }
 
     public EventBookingFormSettings build() {
-        return new EventBookingFormSettings(eventHeader, headerBackground, headerMaxTopBottomPadding, extraSpaceBetweenHeaderAndBookingForm, showNavigationBar, showPriceBar, bookAsAGuestAllowed, partialEventAllowed);
+        return new EventBookingFormSettings(eventHeader, headerBackground, headerMaxTopBottomPadding, extraSpaceBetweenHeaderAndBookingForm, showNavigationBar, autoLoadExistingBooking, showPriceBar, bookAsAGuestAllowed, partialEventAllowed);
     }
 }

@@ -134,14 +134,16 @@ public final class BookEventActivity extends ViewDomainActivityBase implements B
 
         lettersSlideController.onEventChanged(event);
 
-        // Note: It's better to use FXUserPersonId rather than FXUserPerson in case of a page reload in the browser
-        // (or redirection to this page from a website) because the retrieval of FXUserPersonId is immediate in case
-        // the user was already logged in (memorized in session), while FXUserPerson requires a DB reading, which
-        // may not be finished yet at this time.
         Person personToBook = FXPersonToBook.getPersonToBook();
         Object userPersonPrimaryKey = Entities.getPrimaryKey(personToBook);
-        if (userPersonPrimaryKey == null)
+        FXPersonToBook.setAutomaticallyFollowUserPerson(userPersonPrimaryKey == null);
+        if (userPersonPrimaryKey == null && lettersSlideController.autoLoadExistingBooking()) {
+            // Note: It's better to use FXUserPersonId rather than FXUserPerson in case of a page reload in the browser
+            // (or redirection to this page from a website) because the retrieval of FXUserPersonId is immediate in case
+            // the user was already logged in (memorized in session), while FXUserPerson requires a DB reading, which
+            // may not be finished yet at this time.
             userPersonPrimaryKey = FXUserPersonId.getUserPersonPrimaryKey();
+        }
         DocumentService.loadPolicyAndDocument(event, userPersonPrimaryKey)
             .onFailure(Console::log)
             .onSuccess(policyAndDocumentAggregates -> UiScheduler.runInUiThread(() -> {
