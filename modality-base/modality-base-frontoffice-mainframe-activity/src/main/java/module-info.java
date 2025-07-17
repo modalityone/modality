@@ -33,7 +33,9 @@ module modality.base.frontoffice.mainframe.activity {
     requires webfx.platform.console;
     requires webfx.platform.useragent;
     requires webfx.platform.util;
+    requires webfx.platform.windowhistory;
     requires webfx.stack.orm.entity;
+    requires webfx.stack.routing.uirouter;
     requires webfx.stack.session.state.client.fx;
 
     // Exported packages

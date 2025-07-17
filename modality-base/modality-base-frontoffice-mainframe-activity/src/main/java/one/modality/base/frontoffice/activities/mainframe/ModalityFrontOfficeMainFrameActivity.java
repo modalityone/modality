@@ -23,7 +23,9 @@ import dev.webfx.platform.console.Console;
 import dev.webfx.platform.useragent.UserAgent;
 import dev.webfx.platform.util.Arrays;
 import dev.webfx.platform.util.collection.Collections;
+import dev.webfx.platform.windowhistory.spi.BrowsingHistory;
 import dev.webfx.stack.orm.entity.Entities;
+import dev.webfx.stack.routing.uirouter.UiRouter;
 import dev.webfx.stack.session.state.client.fx.FXLoggedIn;
 import javafx.beans.InvalidationListener;
 import javafx.beans.property.BooleanProperty;
@@ -61,6 +63,9 @@ import one.modality.event.client.event.fx.FXEventId;
 import java.util.List;
 import java.util.Objects;
 
+/**
+ * @author Bruno Salmon
+ */
 public final class ModalityFrontOfficeMainFrameActivity extends ModalityClientMainFrameActivity {
 
     private static final boolean ENABLE_OVERLAY_MENU_BAR = false;
@@ -467,6 +472,13 @@ public final class ModalityFrontOfficeMainFrameActivity extends ModalityClientMa
                 brandPane.setMaxWidth(Double.MAX_VALUE);
                 HBox.setHgrow(brandPane, Priority.ALWAYS);
                 brandPane.setAlignment(Pos.CENTER_LEFT);
+                // Routing to the default route (likely the home page) when clicking on the brand pane
+                brandPane.setCursor(Cursor.HAND);
+                brandPane.setOnMouseClicked(e -> {
+                    BrowsingHistory history = getHistory();
+                    UiRouter uiRouter = getUiRouter();
+                    history.push(uiRouter.getDefaultInitialHistoryPath());
+                });
                 hBox.getChildren().add(0, brandPane);
                 hBox.setAlignment(Pos.BOTTOM_RIGHT);
                 hBox.setMaxHeight(Region.USE_PREF_SIZE);
@@ -530,8 +542,7 @@ public final class ModalityFrontOfficeMainFrameActivity extends ModalityClientMa
                     button.textFillProperty().bind(svgColorProperty);
                 } else {
                     /* Commented as this was making the Books stroke to null (icon was appearing black)
-                    svgColorProperty.bind(button.textFillProperty());
-                    */
+                    svgColorProperty.bind(button.textFillProperty()); */
                     svgColorProperty.set(Color.BLACK); // menu items color hard-code for now
                 }
             }
