@@ -14,32 +14,19 @@ import java.util.List;
 public final class WorkingBookingSyncer {
 
     public static void syncWorkingBookingFromEventSchedule(WorkingBooking workingBooking, BookableDatesUi bookableDatesUi, boolean addOnly) {
-        if (bookableDatesUi != null)
-            syncWorkingBookingFromSelectedScheduledItems(workingBooking, bookableDatesUi.getSelectedScheduledItem(), addOnly);
+        syncWorkingBookingFromSelectedScheduledItems(workingBooking, bookableDatesUi.getSelectedScheduledItem(), addOnly);
     }
 
     public static void syncWorkingBookingFromSelectedScheduledItems(WorkingBooking workingBooking, List<ScheduledItem> scheduledItems, boolean addOnly) {
-      //  if (workingBooking.getDocument() == null)
-            workingBooking.cancelChanges(); // weird, but this is to ensure the document is created
+        workingBooking.cancelChanges(); // weird, but this is to ensure the document is created
         workingBooking.bookScheduledItems(scheduledItems, addOnly); // We re-apply the selected items to the booking
     }
 
     public static void syncEventScheduleFromWorkingBooking(WorkingBooking workingBooking, BookableDatesUi bookableDatesUi) {
+        bookableDatesUi.setScheduledItems(workingBooking.getScheduledItemsOnEvent(), true);
         List<Attendance> attendanceAdded = workingBooking.getAttendancesAdded(true);
         List<LocalDate> datesAdded = Collections.map(attendanceAdded, Attendance::getDate);
-        bookableDatesUi.setScheduledItems(workingBooking.getScheduledItemsOnEvent(), true);
         bookableDatesUi.addSelectedDates(datesAdded);
     }
-
-/* Same API but with WorkingBookingProperties
-    public static void syncEventScheduleFromWorkingBooking(WorkingBookingProperties workingBookingProperties, RecurringEventSchedule recurringEventSchedule) {
-        syncEventScheduleFromWorkingBooking(workingBookingProperties.getWorkingBooking(), recurringEventSchedule);
-    }
-
-    public static void syncWorkingBookingFromNewSelectedScheduledItems(WorkingBookingProperties workingBookingProperties, List<ScheduledItem> scheduledItemsAdded) {
-        syncWorkingBookingFromNewSelectedScheduledItems(workingBookingProperties.getWorkingBooking(), scheduledItemsAdded);
-        workingBookingProperties.updateAll();
-    }
-*/
 
 }

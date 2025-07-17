@@ -28,6 +28,9 @@ import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
+/**
+ * @author David Hello
+ */
 public class RecurringEventSchedule implements BookableDatesUi {
 
     private final ColumnsPane columnsPane = new ColumnsPane();
@@ -37,14 +40,12 @@ public class RecurringEventSchedule implements BookableDatesUi {
     private final Map<LocalDate, ScheduledItemBox> scheduledItemBoxes = new HashMap<>();
 
     private final Function<LocalDate, String> computeCssClassForSelectedDateFunction = localDate -> getSelectedDateCssClass();
-    private Function<LocalDate, String> computeCssClassForUnselectedDateFunction = localDate -> getUnselectedDateCssClass();
-    //private Function<LocalDate, Node> computeNodeForExistingBookedDateFunction = localDate -> getDefaultNodeForExistingBookedDate();
+    private Function<LocalDate, String> computeCssClassForUnselectedDateFunction     = localDate -> getUnselectedDateCssClass();
     private Consumer<LocalDate> dateClickedHandler = null;
 
-    // We define the property on the css and the default value
-    private final ObjectProperty<String> selectedDateCssClassProperty = new SimpleObjectProperty<>( "date-selected");
+    // We define the property on the CSS and the default value
+    private final ObjectProperty<String> selectedDateCssClassProperty   = new SimpleObjectProperty<>( "date-selected");
     private final ObjectProperty<String> unselectedDateCssClassProperty = new SimpleObjectProperty<>( "date-unselected");
-    //private final ObjectProperty<String> existingBookedDateNodeProperty = new SimpleObjectProperty<>( );
 
     private final ObjectProperty<Font> dayFontProperty = new SimpleObjectProperty<>();
     private final ObjectProperty<Font> timeFontProperty = new SimpleObjectProperty<>();
@@ -67,7 +68,7 @@ public class RecurringEventSchedule implements BookableDatesUi {
         // We bind the children to scheduled items, mapping each to a ScheduledItemBox
         ObservableLists.bindConverted(columnsPane.getChildren(), scheduledItemsList, si -> new ScheduledItemBox(si).getContainerVBox());
 
-        // We keep the dates styles updated on selection change
+        // We keep the date styles updated on selection change
         ObservableLists.runOnListChange(change -> {
             while (change.next()) {
                 change.getAddedSubList().forEach(this::changeCssPropertyForSelectedDate);
@@ -94,7 +95,7 @@ public class RecurringEventSchedule implements BookableDatesUi {
     }
 
     /**
-     * This method can be used if we want to customize the behaviour when clicking on a date
+     * This method can be used if we want to customize the behavior when clicking on a date
      * @param dateClickedHandler the dateClickedHandler
      */
     public void setOnDateClicked(Consumer<LocalDate> dateClickedHandler) {
@@ -104,10 +105,6 @@ public class RecurringEventSchedule implements BookableDatesUi {
     public void setUnselectedDateCssGetter(Function<LocalDate,String> function) {
         computeCssClassForUnselectedDateFunction = function;
     }
-
-    /*public void setComputeNodeForExistingBookedDateFunction(Function<LocalDate, Node> function) {
-        computeNodeForExistingBookedDateFunction = function;
-    }*/
 
     public void changeCssPropertyForSelectedDate(LocalDate date) {
         if (date != null)
@@ -191,10 +188,6 @@ public class RecurringEventSchedule implements BookableDatesUi {
         return unselectedDateCssClassProperty.get();
     }
 
-    /*public Node getDefaultNodeForExistingBookedDate() {
-        return new Label(existingBookedDateNodeProperty.get());
-    }*/
-
     private class ScheduledItemBox {
 
         private final Text dayText = new Text();
@@ -215,7 +208,7 @@ public class RecurringEventSchedule implements BookableDatesUi {
             LocalDate date = scheduledItem.getDate();
             dayText.textProperty().bind(LocalizedTime.formatMonthDayProperty(date, FrontOfficeTimeFormats.RECURRING_EVENT_SCHEDULE_MONTH_DAY_FORMAT));
             dayText.fontProperty().bind(dayFontProperty);
-            /* Commented for now as it's not used and returns an empty label that however shift the date (not centered anymore)
+            /* Commented for now as it's not used and returns an empty label that shifts the date (not centered anymore)
             Node comment = computeNodeForExistingBookedDateFunction.apply(date);
             if (comment != null) {
                 dayAndCommentHBox.getChildren().add(comment);

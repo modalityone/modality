@@ -18,6 +18,7 @@ public final class RecurringEventBookingForm extends MultiPageBookingForm {
     private final BookEventActivity activity;
     private final RecurringEventSchedule recurringEventSchedule = new RecurringEventSchedule();
     private BookingFormPage[] pages;
+    private SchedulePage schedulePage;
 
     public RecurringEventBookingForm(Event event, BookEventActivity activity, EventBookingFormSettings settings) {
         super(activity, settings);
@@ -31,7 +32,7 @@ public final class RecurringEventBookingForm extends MultiPageBookingForm {
         if (pages == null) {
             if (settings.partialEventAllowed()) {
                 pages = new BookingFormPage[]{
-                    new SchedulePage(this),
+                    schedulePage = new SchedulePage(this),
                     new RecurringSummaryPage(this)
                 };
             } else {
@@ -49,19 +50,28 @@ public final class RecurringEventBookingForm extends MultiPageBookingForm {
     }
 
     public BookEventActivity getActivity() {
-        return (BookEventActivity) activity;
+        return activity;
     }
 
     public RecurringEventSchedule getRecurringEventSchedule() {
         return recurringEventSchedule;
     }
 
+    @Override
+    public void onWorkingBookingLoaded() {
+        if (schedulePage != null) {
+            // This call is required to sync the already booked dates (which changed because of the booking change)
+            schedulePage.setWorkingBookingProperties(workingBookingProperties);
+        }
+        super.onWorkingBookingLoaded();
+    }
+
     public void syncWorkingBookingFromEventSchedule() {
-        WorkingBookingSyncer.syncWorkingBookingFromEventSchedule(activity.getWorkingBooking(), recurringEventSchedule, true);
+        WorkingBookingSyncer.syncWorkingBookingFromEventSchedule(getWorkingBooking(), recurringEventSchedule, true);
     }
 
     public void syncEventScheduleFromWorkingBooking() {
-        WorkingBookingSyncer.syncEventScheduleFromWorkingBooking(activity.getWorkingBooking(), recurringEventSchedule);
+        WorkingBookingSyncer.syncEventScheduleFromWorkingBooking(getWorkingBooking(), recurringEventSchedule);
     }
 
 }
