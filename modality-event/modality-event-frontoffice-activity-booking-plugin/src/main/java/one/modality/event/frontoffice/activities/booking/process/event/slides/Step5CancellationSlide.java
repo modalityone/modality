@@ -32,7 +32,7 @@ final class Step5CancellationSlide extends StepSlide {
         mainVbox.setSpacing(10);
         mainVbox.setMaxWidth(MAX_SLIDE_WIDTH);
 
-        Label title = Bootstrap.textWarning(Bootstrap.h3(new Label("Cancellation")));
+        Label title = Bootstrap.textWarning(Bootstrap.h3(new Label("Cancellation"))); // I18n ???
         title.setWrapText(true);
         VBox.setMargin(title, new Insets(50, 0, 0, 0));
 
@@ -41,7 +41,7 @@ final class Step5CancellationSlide extends StepSlide {
         VBox.setMargin(message, new Insets(50, 0, 50, 0));
 
         button.setOnAction(e -> {
-            // Booking cancelled => un-cancel booking
+            // Booking cancelled => uncancel booking
             if (cancelPaymentResult.isBookingCancelled()) {
                 cancelOrUncancelBookingAndDisplayNextSlide(false);
             } else {

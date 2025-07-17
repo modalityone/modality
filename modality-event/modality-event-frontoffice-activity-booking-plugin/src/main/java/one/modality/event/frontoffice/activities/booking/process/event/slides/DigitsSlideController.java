@@ -77,14 +77,16 @@ final class DigitsSlideController {
         step2PaymentSlide.reset();
         step6ErrorSlide.reset();
 
-        if (bookingForm != null && bookingFormCreated) {
-            step1BookingFormAndSubmitSlide.setBookingForm(bookingForm);
+        if (bookingForm != null) {
+            if (bookingFormCreated) {
+                step1BookingFormAndSubmitSlide.setBookingForm(bookingForm);
+                // Sub-routing node binding (displaying the possible sub-routing account node in the appropriate place in step2)
+                step1BookingFormAndSubmitSlide.accountMountNodeProperty().bind(bookEventActivity.mountNodeProperty());
+                displayFirstSlide();
+                bookingFormCreated = false;
+            }
             bookEventActivity.getWorkingBooking().getEvent().onExpressionLoaded(bookingForm.getEventFieldsToLoad())
-                    .onSuccess(ignored -> UiScheduler.runInUiThread(bookingForm::onWorkingBookingLoaded));
-            // Sub-routing node binding (displaying the possible sub-routing account node in the appropriate place in step2)
-            step1BookingFormAndSubmitSlide.accountMountNodeProperty().bind(bookEventActivity.mountNodeProperty());
-            displayFirstSlide();
-            bookingFormCreated = false;
+                .onSuccess(ignored -> UiScheduler.runInUiThread(bookingForm::onWorkingBookingLoaded));
         }
     }
 

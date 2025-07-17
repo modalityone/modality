@@ -15,9 +15,9 @@ import javafx.scene.layout.Region;
 import one.modality.ecommerce.client.workingbooking.FXPersonToBook;
 import one.modality.ecommerce.client.workingbooking.HasWorkingBookingProperties;
 import one.modality.ecommerce.frontoffice.bookingelements.NavigationBar;
+import one.modality.ecommerce.frontoffice.bookingelements.PriceBar;
 import one.modality.ecommerce.frontoffice.bookingform.BookingFormBase;
 import one.modality.ecommerce.frontoffice.bookingform.BookingFormSettings;
-import one.modality.ecommerce.frontoffice.bookingelements.PriceBar;
 
 /**
  * @author Bruno Salmon
@@ -43,8 +43,8 @@ public abstract class MultiPageBookingForm extends BookingFormBase {
         }
     };
     private final BooleanProperty pageShowingOwnSubmitButtonProperty = new SimpleBooleanProperty();
-    private int currentFamilyOptionsViewIndex = -1;
-    protected BookingFormPage bookingFormPage;
+    private int displayedPageIndex = -1;
+    protected BookingFormPage displayedPage;
     private Unregisterable bookingFormPageValidListener;
 
     public MultiPageBookingForm(HasWorkingBookingProperties activity, BookingFormSettings settings) {
@@ -84,7 +84,7 @@ public abstract class MultiPageBookingForm extends BookingFormBase {
 
     @Override
     public void onWorkingBookingLoaded() {
-        if (currentFamilyOptionsViewIndex == -1) {
+        if (displayedPageIndex == -1) {
             navigateToPage(0);
         }
     }
@@ -95,18 +95,18 @@ public abstract class MultiPageBookingForm extends BookingFormBase {
     }
 
     public void navigateToPreviousPage() {
-        if (currentFamilyOptionsViewIndex > 0)
-            navigateToPage(currentFamilyOptionsViewIndex - 1);
+        if (displayedPageIndex > 0)
+            navigateToPage(displayedPageIndex - 1);
     }
 
     public void navigateToNextPage() {
         BookingFormPage[] pages = getPages();
-        if (currentFamilyOptionsViewIndex < 0)
+        if (displayedPageIndex < 0)
             navigateToPage(0);
         else {
-            BookingFormPage bookingFormPage = pages[currentFamilyOptionsViewIndex];
-            if (bookingFormPage.isValid() && currentFamilyOptionsViewIndex < pages.length - 1)
-                navigateToPage(currentFamilyOptionsViewIndex + 1);
+            BookingFormPage bookingFormPage = pages[displayedPageIndex];
+            if (bookingFormPage.isValid() && displayedPageIndex < pages.length - 1)
+                navigateToPage(displayedPageIndex + 1);
         }
     }
 
@@ -115,19 +115,19 @@ public abstract class MultiPageBookingForm extends BookingFormBase {
         if (transitionPane.isTransiting())
             return;
         BookingFormPage[] pages = getPages();
-        bookingFormPage = pages[index];
-        validProperty.bind(bookingFormPage.validProperty());
-        pageShowingOwnSubmitButtonProperty.set(bookingFormPage.isShowingOwnSubmitButton());
-        bookingFormPage.setWorkingBookingProperties(workingBookingProperties);
-        transitionPane.setReverse(index < currentFamilyOptionsViewIndex);
-        transitionPane.transitToContent(bookingFormPage.getView());
-        currentFamilyOptionsViewIndex = index;
+        displayedPage = pages[index];
+        validProperty.bind(displayedPage.validProperty());
+        pageShowingOwnSubmitButtonProperty.set(displayedPage.isShowingOwnSubmitButton());
+        displayedPage.setWorkingBookingProperties(workingBookingProperties);
+        transitionPane.setReverse(index < displayedPageIndex);
+        transitionPane.transitToContent(displayedPage.getView());
+        displayedPageIndex = index;
         if (bookingFormPageValidListener != null)
             bookingFormPageValidListener.unregister();
         bookingFormPageValidListener = FXProperties.runNowAndOnPropertyChange(valid -> {
             getActivityCallback().disableSubmitButton(!valid);
-        }, bookingFormPage.validProperty());
-        MonoPane embeddedLoginContainer = bookingFormPage.getEmbeddedLoginContainer();
+        }, displayedPage.validProperty());
+        MonoPane embeddedLoginContainer = displayedPage.getEmbeddedLoginContainer();
         if (embeddedLoginContainer != null && embeddedLoginContainer != LAST_PAGE_EMBEDDED_LOGIN_CONTAINER) {
             if (LAST_PAGE_EMBEDDED_LOGIN_CONTAINER != null)
                 LAST_PAGE_EMBEDDED_LOGIN_CONTAINER.setContent(null);
@@ -143,18 +143,18 @@ public abstract class MultiPageBookingForm extends BookingFormBase {
     }
 
     private boolean isLastPage() {
-        return currentFamilyOptionsViewIndex == getPages().length - 1;
+        return displayedPageIndex == getPages().length - 1;
     }
 
     protected void updateNavigationBar() {
         if (navigationBar != null) {
-            navigationBar.setTitleI18nKey(bookingFormPage.getTitleI18nKey());
-            navigationBar.getBackButton().setDisable(currentFamilyOptionsViewIndex == 0);
+            navigationBar.setTitleI18nKey(displayedPage.getTitleI18nKey());
+            navigationBar.getBackButton().setDisable(displayedPageIndex == 0);
         }
     }
 
     protected void updatePersonToBookRequired() {
-        setPersonToBookRequired(bookingFormPage.getEmbeddedLoginContainer() != null);
+        setPersonToBookRequired(displayedPage.getEmbeddedLoginContainer() != null);
     }
 
     protected void setPersonToBookRequired(boolean required) {
@@ -162,7 +162,7 @@ public abstract class MultiPageBookingForm extends BookingFormBase {
     }
 
     protected void updateShowDefaultSubmitButton() {
-        setShowDefaultSubmitButton(isLastPage() && !bookingFormPage.isShowingOwnSubmitButton());
+        setShowDefaultSubmitButton(isLastPage() && !displayedPage.isShowingOwnSubmitButton());
     }
 
     protected void setShowDefaultSubmitButton(boolean show) {

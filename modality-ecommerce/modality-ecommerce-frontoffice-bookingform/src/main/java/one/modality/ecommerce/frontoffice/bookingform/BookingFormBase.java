@@ -34,7 +34,7 @@ public abstract class BookingFormBase implements BookingForm {
     public abstract void onWorkingBookingLoaded();
 
     public void bookWholeEvent() {
-        WorkingBooking workingBooking = workingBookingProperties.getWorkingBooking();
+        WorkingBooking workingBooking = getWorkingBooking();
         // Automatically booking the whole event if it's a new booking
         if (workingBooking.isNewBooking()) {
             PolicyAggregate policyAggregate = workingBooking.getPolicyAggregate();
@@ -48,6 +48,10 @@ public abstract class BookingFormBase implements BookingForm {
 
     public WorkingBookingProperties getWorkingBookingProperties() {
         return workingBookingProperties;
+    }
+
+    public WorkingBooking getWorkingBooking() {
+        return workingBookingProperties.getWorkingBooking();
     }
 
     @Override

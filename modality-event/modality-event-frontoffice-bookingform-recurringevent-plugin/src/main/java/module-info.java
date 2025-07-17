@@ -14,6 +14,7 @@ module modality.event.frontoffice.bookingform.recurringevent.plugin {
     requires modality.ecommerce.client.i18n;
     requires modality.ecommerce.client.workingbooking;
     requires modality.ecommerce.document.service;
+    requires modality.ecommerce.frontoffice.bookingelements;
     requires modality.ecommerce.frontoffice.bookingform;
     requires modality.ecommerce.shared.pricecalculator;
     requires modality.event.client.booking;

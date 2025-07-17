@@ -27,6 +27,7 @@ import one.modality.base.shared.entities.Event;
 import one.modality.base.shared.entities.ScheduledItem;
 import one.modality.base.shared.entities.formatters.EventPriceFormatter;
 import one.modality.ecommerce.client.workingbooking.WorkingBookingProperties;
+import one.modality.ecommerce.frontoffice.bookingelements.BookingElements;
 import one.modality.event.client.recurringevents.RecurringEventSchedule;
 import one.modality.event.frontoffice.activities.booking.BookingI18nKeys;
 import one.modality.event.frontoffice.activities.booking.process.event.BookEventActivity;
@@ -62,7 +63,7 @@ final class SchedulePage implements BookingFormPage {
         eventDescription.getStyleClass().add("event-description-text");
         eventDescription.setMinWidth(0);
 
-        Button personToBookButton = activity.createPersonToBookButton();
+        Button personToBookButton = BookingElements.createPersonToBookButton(true);
         ScalePane personToBookScalePane = new ScalePane(ScaleMode.FIT_WIDTH, personToBookButton);
         personToBookScalePane.setCanGrow(false);
         personToBookScalePane.setMaxWidth(Double.MAX_VALUE);

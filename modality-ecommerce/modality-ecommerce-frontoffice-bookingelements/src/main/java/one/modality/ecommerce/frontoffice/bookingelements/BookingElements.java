@@ -1,10 +1,16 @@
 package one.modality.ecommerce.frontoffice.bookingelements;
 
+import dev.webfx.extras.controlfactory.button.ButtonFactoryMixin;
 import dev.webfx.extras.i18n.I18nKeys;
 import dev.webfx.extras.i18n.controls.I18nControls;
 import dev.webfx.extras.styles.bootstrap.Bootstrap;
 import dev.webfx.extras.util.control.Controls;
+import dev.webfx.extras.util.layout.Layouts;
 import dev.webfx.kit.util.properties.FXProperties;
+import dev.webfx.stack.orm.datasourcemodel.service.DataSourceModelService;
+import dev.webfx.stack.orm.domainmodel.DataSourceModel;
+import dev.webfx.stack.orm.dql.DqlStatement;
+import dev.webfx.stack.orm.entity.controls.entity.selector.EntityButtonSelector;
 import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.StringProperty;
 import javafx.geometry.Insets;
@@ -17,10 +23,17 @@ import javafx.scene.layout.GridPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Region;
 import javafx.scene.layout.VBox;
+import javafx.scene.paint.Color;
 import javafx.scene.text.TextAlignment;
 import one.modality.base.client.bootstrap.ModalityStyle;
+import one.modality.base.client.mainframe.fx.FXMainFrameDialogArea;
+import one.modality.base.frontoffice.utility.tyler.TextUtility;
+import one.modality.base.shared.entities.Person;
 import one.modality.base.shared.entities.ScheduledItem;
 import one.modality.base.shared.entities.formatters.EventPriceFormatter;
+import one.modality.crm.client.i18n.CrmI18nKeys;
+import one.modality.crm.shared.services.authn.fx.FXModalityUserPrincipal;
+import one.modality.ecommerce.client.workingbooking.FXPersonToBook;
 import one.modality.ecommerce.client.workingbooking.WorkingBooking;
 import one.modality.ecommerce.document.service.PolicyAggregate;
 import one.modality.ecommerce.shared.pricecalculator.PriceCalculator;
@@ -139,4 +152,31 @@ public final class BookingElements {
         int optionPrice = bookedTotalPrice - unbookedTotalPrice;
         priceLabel.setText(EventPriceFormatter.formatWithCurrency(optionPrice, policyAggregate.getEvent()));
     }
+
+    public static Button createPersonToBookButton(boolean embedPersonToBookText) {
+        return createPersonToBookButton(embedPersonToBookText, new ButtonFactoryMixin() {}, DataSourceModelService.getDefaultDataSourceModel());
+    }
+
+    private static Button createPersonToBookButton(boolean embedPersonToBookText, ButtonFactoryMixin buttonFactory, DataSourceModel dataSourceModel) {
+        EntityButtonSelector<Person> personSelector = new EntityButtonSelector<Person>(
+            "{class: 'Person', alias: 'p', columns: [{expression: `[genderIcon,firstName,lastName]`}], orderBy: 'id'}",
+            buttonFactory, FXMainFrameDialogArea::getDialogArea, dataSourceModel
+        ) { // Overriding the button content to add the "Teacher" prefix text
+            @Override
+            protected Node getOrCreateButtonContentFromSelectedItem() {
+                Node buttonContent = super.getOrCreateButtonContentFromSelectedItem();
+                if (embedPersonToBookText)
+                    buttonContent = new HBox(20, TextUtility.createText(CrmI18nKeys.PersonToBook + ":", Color.GRAY), buttonContent);
+                return buttonContent;
+            }
+        }.ifNotNullOtherwiseEmpty(FXModalityUserPrincipal.modalityUserPrincipalProperty(), mup -> DqlStatement.where("frontendAccount=?", mup.getUserAccountId()));
+        personSelector.selectedItemProperty().bindBidirectional(FXPersonToBook.personToBookProperty());
+        Button personButton = Bootstrap.largeButton(personSelector.getButton());
+        personButton.setMinWidth(300);
+        personButton.setMaxWidth(Region.USE_PREF_SIZE);
+        VBox.setMargin(personButton, new Insets(20, 0, 20, 0));
+        Layouts.bindManagedAndVisiblePropertiesTo(FXModalityUserPrincipal.loggedInProperty(), personButton);
+        return personButton;
+    }
+
 }
