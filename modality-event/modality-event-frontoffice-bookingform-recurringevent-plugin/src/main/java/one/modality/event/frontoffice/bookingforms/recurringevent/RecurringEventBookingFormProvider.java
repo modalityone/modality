@@ -4,10 +4,10 @@ import javafx.scene.layout.Background;
 import one.modality.base.client.brand.Brand;
 import one.modality.base.shared.entities.Event;
 import one.modality.ecommerce.client.workingbooking.HasWorkingBookingProperties;
-import one.modality.event.frontoffice.activities.booking.process.event.*;
+import one.modality.event.frontoffice.activities.book.event.BookEventActivity;
 import one.modality.ecommerce.frontoffice.bookingform.BookingForm;
 import one.modality.ecommerce.frontoffice.bookingform.BookingFormProvider;
-import one.modality.event.frontoffice.activities.booking.process.event.EventBookingFormSettingsBuilder;
+import one.modality.event.frontoffice.activities.book.event.EventBookingFormSettingsBuilder;
 import one.modality.event.frontoffice.eventheader.LocalEventHeader;
 
 /**

@@ -3,8 +3,8 @@ package one.modality.event.frontoffice.bookingforms.recurringevent;
 import one.modality.base.shared.entities.Event;
 import one.modality.event.client.booking.WorkingBookingSyncer;
 import one.modality.event.client.recurringevents.RecurringEventSchedule;
-import one.modality.event.frontoffice.activities.booking.process.event.BookEventActivity;
-import one.modality.event.frontoffice.activities.booking.process.event.EventBookingFormSettings;
+import one.modality.event.frontoffice.activities.book.event.BookEventActivity;
+import one.modality.event.frontoffice.activities.book.event.EventBookingFormSettings;
 import one.modality.ecommerce.frontoffice.bookingform.multipages.BookingFormPage;
 import one.modality.ecommerce.frontoffice.bookingform.multipages.MultiPageBookingForm;
 

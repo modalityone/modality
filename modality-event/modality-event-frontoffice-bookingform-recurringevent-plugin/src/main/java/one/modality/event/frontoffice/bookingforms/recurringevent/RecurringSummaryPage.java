@@ -33,7 +33,7 @@ import one.modality.ecommerce.client.workingbooking.WorkingBookingProperties;
 import one.modality.ecommerce.document.service.DocumentAggregate;
 import one.modality.event.frontoffice.activities.booking.BookingI18nKeys;
 import one.modality.ecommerce.frontoffice.bookingform.BookingFormI18nKeys;
-import one.modality.event.frontoffice.activities.booking.process.event.EventBookingFormSettings;
+import one.modality.event.frontoffice.activities.book.event.EventBookingFormSettings;
 import one.modality.ecommerce.frontoffice.bookingform.multipages.BookingFormPage;
 
 import java.time.LocalDate;

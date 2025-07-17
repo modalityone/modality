@@ -36,6 +36,7 @@
         <module>modality-event-client-recurringevents</module>
         <module>modality-event-client-theme</module>
         <module>modality-event-frontoffice-activity-audiolibrary-plugin</module>
+        <module>modality-event-frontoffice-activity-book</module>
         <module>modality-event-frontoffice-activity-booking-plugin</module>
         <module>modality-event-frontoffice-activity-videostreaming-plugin</module>
         <module>modality-event-frontoffice-bookingform-recurringevent-plugin</module>

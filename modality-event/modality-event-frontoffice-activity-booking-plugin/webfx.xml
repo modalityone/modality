@@ -18,7 +18,6 @@
 
     <providers>
         <provider interface="dev.webfx.stack.routing.uirouter.UiRoute">one.modality.event.frontoffice.activities.booking.BookingRouting$BookingUiRoute</provider>
-        <provider interface="dev.webfx.stack.routing.uirouter.UiRoute">one.modality.event.frontoffice.activities.booking.process.event.BookEventRouting$BookEventUiRoute</provider>
         <provider interface="dev.webfx.stack.routing.uirouter.operations.RouteRequestEmitter">one.modality.event.frontoffice.activities.booking.BookingRouting$RouteToBookingRequestEmitter</provider>
     </providers>
 

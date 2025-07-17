@@ -1,0 +1,35 @@
+package one.modality.event.frontoffice.activities.book.event.slides;
+
+import dev.webfx.extras.styles.bootstrap.Bootstrap;
+import dev.webfx.extras.i18n.controls.I18nControls;
+import javafx.geometry.Insets;
+import javafx.scene.control.Label;
+import one.modality.event.frontoffice.activities.book.BookI18nKeys;
+import one.modality.event.frontoffice.activities.book.event.BookEventActivity;
+
+/**
+ * @author Bruno Salmon
+ */
+final class Step3PendingPaymentSlide extends StepSlide {
+
+    private static final double MAX_SLIDE_WIDTH = 800;
+
+    Step3PendingPaymentSlide(BookEventActivity bookEventActivity) {
+        super(bookEventActivity);
+    }
+
+    @Override
+    public void buildSlideUi() {
+        mainVbox.setSpacing(10);
+        mainVbox.setMaxWidth(MAX_SLIDE_WIDTH);
+
+        Label title = Bootstrap.textWarning(Bootstrap.h3(I18nControls.newLabel(BookI18nKeys.PaymentPending)));
+        title.setWrapText(true);
+        title.setPadding(new Insets(50, 0, 30, 0));
+
+        Label message = Bootstrap.textDanger(Bootstrap.h5(I18nControls.newLabel(BookI18nKeys.PaymentPendingMessage)));
+
+        mainVbox.getChildren().setAll(title, message);
+    }
+
+}

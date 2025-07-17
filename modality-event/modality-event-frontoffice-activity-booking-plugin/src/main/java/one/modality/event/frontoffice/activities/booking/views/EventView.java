@@ -23,7 +23,7 @@ import one.modality.base.frontoffice.utility.tyler.TextUtility;
 import one.modality.base.shared.entities.Event;
 import one.modality.base.shared.entities.EventState;
 import one.modality.event.frontoffice.activities.booking.BookingI18nKeys;
-import one.modality.event.frontoffice.activities.booking.process.BookingStarter;
+import one.modality.event.frontoffice.activities.book.BookStarter;
 
 public final class EventView {
 
@@ -58,7 +58,7 @@ public final class EventView {
     );
 
     public EventView() {
-        GeneralUtility.onNodeClickedWithoutScroll(e -> BookingStarter.startEventBooking(event), bookButton);
+        GeneralUtility.onNodeClickedWithoutScroll(e -> BookStarter.startBookEvent(event), bookButton);
         container.setPadding(new Insets(40));
         container.setBackground(Background.fill(StyleUtility.BACKGROUND_GRAY_COLOR));
 
