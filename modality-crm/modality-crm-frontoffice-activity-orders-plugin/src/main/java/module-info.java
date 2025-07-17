@@ -9,6 +9,7 @@ module modality.crm.frontoffice.activity.orders.plugin {
     requires modality.base.client.activity;
     requires modality.base.client.bootstrap;
     requires modality.base.client.i18n;
+    requires modality.base.client.icons;
     requires modality.base.client.mainframe.fx;
     requires modality.base.client.util;
     requires modality.base.frontoffice.activity.account.plugin;
@@ -44,8 +45,6 @@ module modality.crm.frontoffice.activity.orders.plugin {
     requires webfx.stack.routing.router;
     requires webfx.stack.routing.router.client;
     requires webfx.stack.routing.uirouter;
-    requires modality.base.client.icons;
-    requires modality.ecommerce.frontoffice.bookingelements;
 
     // Exported packages
     exports one.modality.crm.frontoffice.activities.orders;
