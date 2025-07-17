@@ -20,7 +20,6 @@ module modality.event.frontoffice.bookingform.recurringevent.plugin {
     requires modality.event.client.booking;
     requires modality.event.client.recurringevents;
     requires modality.event.frontoffice.activity.book;
-    requires modality.event.frontoffice.activity.booking.plugin;
     requires modality.event.frontoffice.eventheader;
     requires webfx.extras.controlfactory;
     requires webfx.extras.i18n;
