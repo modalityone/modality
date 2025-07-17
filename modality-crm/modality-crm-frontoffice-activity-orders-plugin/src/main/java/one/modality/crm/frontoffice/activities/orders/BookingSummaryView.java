@@ -19,7 +19,10 @@ import dev.webfx.platform.async.Future;
 import dev.webfx.platform.console.Console;
 import dev.webfx.platform.uischeduler.UiScheduler;
 import dev.webfx.platform.util.Booleans;
-import dev.webfx.stack.orm.entity.*;
+import dev.webfx.stack.orm.entity.Entities;
+import dev.webfx.stack.orm.entity.EntityStore;
+import dev.webfx.stack.orm.entity.EntityStoreQuery;
+import dev.webfx.stack.orm.entity.UpdateStore;
 import javafx.application.Platform;
 import javafx.beans.InvalidationListener;
 import javafx.beans.property.IntegerProperty;
@@ -212,6 +215,7 @@ public final class BookingSummaryView {
 
         Label contactUsLabel = Bootstrap.strong(Bootstrap.textPrimary(I18nControls.newLabel(OrdersI18nKeys.ContactUsAboutThisBooking)));
         contactUsLabel.setCursor(Cursor.HAND);
+        contactUsLabel.setWrapText(true);
         contactUsLabel.setOnMouseClicked(e -> {
             ContactUsWindow contactUsWindow = new ContactUsWindow();
             contactUsWindow.buildUI();

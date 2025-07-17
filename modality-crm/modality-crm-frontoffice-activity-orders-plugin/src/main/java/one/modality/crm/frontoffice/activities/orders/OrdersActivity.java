@@ -57,6 +57,7 @@ final class OrdersActivity extends ViewDomainActivityBase implements ModalityBut
     public Node buildUi() {
         Label ordersLabel = Bootstrap.textPrimary(Bootstrap.h2(I18nControls.newLabel(OrdersI18nKeys.OrdersTitle)));
         ordersLabel.setTextAlignment(TextAlignment.CENTER);
+        ordersLabel.setWrapText(true);
         ordersLabel.setPadding(new Insets(100, 0, 40, 0));
 
 

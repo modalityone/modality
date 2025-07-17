@@ -102,8 +102,6 @@
 }
 
 
-
-
 .payment-row {
     -fx-font-size: 14px;
     -fx-text-fill: black;
@@ -115,6 +113,11 @@
     -fx-font-size: 16px;
     -fx-border-color: #eee;
     -fx-border-width: 1px 0 0 0;
+}
+
+.thank-you-message {
+    -fx-font-size: 16px;
+    -fx-text-fill: #666;
 }
 
 

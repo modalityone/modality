@@ -1,6 +1,7 @@
 package one.modality.crm.frontoffice.activities.orders;
 
 import dev.webfx.extras.i18n.controls.I18nControls;
+import dev.webfx.extras.panes.MonoPane;
 import dev.webfx.extras.styles.bootstrap.Bootstrap;
 import javafx.animation.KeyFrame;
 import javafx.animation.KeyValue;
@@ -15,7 +16,7 @@ import javafx.scene.paint.Color;
 import javafx.scene.text.TextAlignment;
 import javafx.util.Duration;
 import one.modality.base.client.bootstrap.ModalityStyle;
-
+import one.modality.base.client.icons.SvgIcons;
 
 
 public final class ContactUsWindow  {
@@ -29,15 +30,16 @@ public final class ContactUsWindow  {
     public void buildUI() {
         dialogPane.setBackground(new Background(new BackgroundFill(Color.WHITE, new CornerRadii(12), Insets.EMPTY)));
         dialogPane.setMaxWidth(500);
+        dialogPane.setPrefHeight(550);
 
         // Header
         VBox header = new VBox(5);
         header.setPadding(new Insets(24));
         header.setBackground(new Background(new BackgroundFill(Color.web("#2196F3"), new CornerRadii(12, 12, 0, 0, false), Insets.EMPTY)));
-        Label titleLabel = Bootstrap.strong(Bootstrap.h3(I18nControls.newLabel("ContactUs")));
+        Label titleLabel = Bootstrap.strong(Bootstrap.h3(I18nControls.newLabel(OrdersI18nKeys.ContactUs)));
         titleLabel.setTextFill(Color.WHITE);
         titleLabel.setWrapText(true);
-        Label subtitleLabel = Bootstrap.strong(I18nControls.newLabel("ContactUsPrompt"));
+        Label subtitleLabel = Bootstrap.strong(I18nControls.newLabel(OrdersI18nKeys.ContactUsPrompt));
         subtitleLabel.setTextFill(Color.WHITE);
         subtitleLabel.setWrapText(true);
         header.getChildren().addAll(titleLabel, subtitleLabel);
@@ -64,7 +66,7 @@ public final class ContactUsWindow  {
         messageArea = new TextArea();
         I18nControls.bindI18nProperties(messageArea, "MessagePlaceholder");
         messageArea.setWrapText(true);
-        messageArea.setPrefRowCount(5);
+        messageArea.setPrefRowCount(7);
         Label messageCount = new Label("0/1000");
         messageCount.getStyleClass().add("char-count");
         VBox messageGroup = new VBox(8, messageLabel, messageArea, messageCount);
@@ -113,29 +115,41 @@ public final class ContactUsWindow  {
         );
     }
 
+
     public void displaySuccessMessage(int duration, Runnable onFinished) {
         // 1. Create the success layout
         Platform.runLater(()-> {
-            VBox successPane = new VBox(20);
+            VBox successPane = new VBox(10);
             successPane.setAlignment(Pos.CENTER);
             successPane.setPadding(new Insets(40, 24, 40, 24)); // Consistent padding
 
             // Icon (using a simple label with style)
-            Label iconLabel = new Label("✓");
-            iconLabel.setStyle("-fx-font-size: 48px; -fx-text-fill: #4CAF50; -fx-font-weight: bold;");
+            MonoPane iconLabel = SvgIcons.createSuccessIcon();
+            iconLabel.setPadding(new Insets(20,0,0,0));
 
             // Message
-            Label messageLabel = I18nControls.newLabel("MessageSentSuccessfully");
+            Label messageLabel = Bootstrap.strong(Bootstrap.h4(I18nControls.newLabel(OrdersI18nKeys.MessageSentSuccessfully)));
             messageLabel.setWrapText(true);
             messageLabel.setTextAlignment(TextAlignment.CENTER);
-            messageLabel.setStyle("-fx-font-size: 16px;");
+            messageLabel.setPadding(new Insets(10,0,15,0));
 
+            Label thankYouLabel = I18nControls.newLabel(OrdersI18nKeys.MessageSentSuccessfullyDetails);
+            thankYouLabel.setWrapText(true);
+            thankYouLabel.setTextAlignment(TextAlignment.CENTER);
+            thankYouLabel.getStyleClass().add("thank-you-message");
+
+            Label thisWindowWillCloseLabel = I18nControls.newLabel(OrdersI18nKeys.ThisWindowWillCloseAutomatically);
+            thisWindowWillCloseLabel.setWrapText(true);
+            thisWindowWillCloseLabel.setTextAlignment(TextAlignment.CENTER);
+            thisWindowWillCloseLabel.setPadding(new Insets(30,0,0,0));
+            thisWindowWillCloseLabel.getStyleClass().add("paiement-row");
 
             // Progress Bar
             ProgressBar progressBar = new ProgressBar(0);
             progressBar.setPrefWidth(Double.MAX_VALUE); // Take full width of VBox
+            progressBar.setPrefHeight(4);
 
-            successPane.getChildren().addAll(iconLabel, messageLabel, progressBar);
+            successPane.getChildren().addAll(iconLabel, messageLabel, thankYouLabel, thisWindowWillCloseLabel, progressBar);
 
             // 2. Replace dialog content
             dialogPane.setCenter(successPane);
