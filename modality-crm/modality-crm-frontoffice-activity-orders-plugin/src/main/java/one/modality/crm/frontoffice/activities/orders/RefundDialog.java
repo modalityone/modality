@@ -65,7 +65,7 @@ public final class RefundDialog extends BaseDialog {
         // Temple project link
         Hyperlink templeLink = new Hyperlink();
         I18nControls.bindI18nProperties(templeLink, OrdersI18nKeys.TempleProjectTitle);
-        templeLink.setOnAction(e -> BrowserUtil.openExternalBrowser(I18n.getI18nText(OrdersI18nKeys.TempleProjectTitle)));
+        templeLink.setOnAction(e -> BrowserUtil.openExternalBrowser(I18n.getI18nText(OrdersI18nKeys.TempleProjectLink)));
 
         content.getChildren().addAll(explanationLabel, templeLink);
         dialogPane.setCenter(content);
