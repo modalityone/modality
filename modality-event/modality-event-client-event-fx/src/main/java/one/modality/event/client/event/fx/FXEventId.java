@@ -24,7 +24,7 @@ public final class FXEventId {
     private static final String SESSION_FX_EVENT_ID_KEY = "fxEventId";
 
     private final static ObjectProperty<EntityId> eventIdProperty = FXProperties.newObjectProperty(eventId -> {
-        // Storing this new value (more precisely the primary key) in the session, and save it
+        // Storing this new value (more precisely the primary key) in the session and save it
         Session session = FXSession.getSession();
         Object eventPrimaryKey = Entities.getPrimaryKey(eventId);
         if (session != null) {
@@ -36,7 +36,7 @@ public final class FXEventId {
         if (loginContext instanceof ModalityContext) {
             ((ModalityContext) loginContext).setEventId(eventPrimaryKey);
         }
-        // Synchronizing FXEvent to match that new event id (FXEventId => FXEvent)
+        // Synchronizing FXEvent to match that new eventId (FXEventId => FXEvent)
         if (!Entities.samePrimaryKey(eventId, FXEvent.getEventId())) { // Sync only if ids differ.
             // If the new event id is null, we set the FXEvent to null
             if (eventPrimaryKey == null)
@@ -46,7 +46,7 @@ public final class FXEventId {
                 EntityStore eventStore = FXEvent.getEventStore();
                 // Checking if we can find the event in memory in that store
                 Event event = eventStore.getEntity(eventId);
-                // If yes, there is no need to request the server, we use directly that instance
+                // If yes, there is no need to request the server; we use directly that instance
                 if (event != null) {
                     FXEvent.setEventOnceExpectedFieldsAreLoaded(event);
                 } else { // Otherwise, we request the server to load that event from that id

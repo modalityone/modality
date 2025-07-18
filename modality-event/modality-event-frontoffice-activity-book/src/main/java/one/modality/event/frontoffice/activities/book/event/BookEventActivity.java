@@ -158,6 +158,7 @@ public final class BookEventActivity extends ViewDomainActivityBase implements B
         }
         Object modifyBookingDocumentId = getModifyBookingDocumentId();
         if (modifyBookingDocumentId != null) {
+            // Note: this call doesn't automatically rebuild PolicyAggregate entities
             DocumentService.loadPolicyAndDocument(new LoadDocumentArgument(modifyBookingDocumentId))
                 .onFailure(Console::log)
                 .onSuccess(policyAndDocumentAggregates -> {
@@ -175,8 +176,18 @@ public final class BookEventActivity extends ViewDomainActivityBase implements B
     }
 
     private void onPolityAndDocumentAggregatesLoaded(PolicyAggregate policyAggregate, DocumentAggregate existingBooking) {
-        WorkingBooking workingBooking = new WorkingBooking(policyAggregate, existingBooking);
         UiScheduler.runInUiThread(() -> {
+            // Ensuring the policy aggregate has rebuilt entities (not automatically done when modifying bookings)
+            if (policyAggregate.getEvent() == null && existingBooking != null) {
+                Object eventPrimaryKey = existingBooking.getEventPrimaryKey();
+                Event event = FXEvent.getEvent();
+                if (!Entities.samePrimaryKey(event, eventPrimaryKey)) {
+                    FXEventId.setEventPrimaryKey(eventPrimaryKey);
+                    event = FXEvent.getEvent();
+                }
+                policyAggregate.rebuildEntities(event);
+            }
+            WorkingBooking workingBooking = new WorkingBooking(policyAggregate, existingBooking);
             workingBookingProperties.setWorkingBooking(workingBooking);
             lettersSlideController.onWorkingBookingLoaded();
         });
