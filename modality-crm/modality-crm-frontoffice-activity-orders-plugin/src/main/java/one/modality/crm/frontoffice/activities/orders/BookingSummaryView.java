@@ -221,7 +221,7 @@ public final class BookingSummaryView {
         contactUsLabel.setCursor(Cursor.HAND);
         contactUsLabel.setWrapText(true);
         contactUsLabel.setOnMouseClicked(e -> {
-            ContactUsWindow contactUsWindow = new ContactUsWindow();
+            ContactUsDialog contactUsWindow = new ContactUsDialog();
             contactUsWindow.buildUI();
             DialogCallback messageWindowCallback = DialogUtil.showModalNodeInGoldLayout(contactUsWindow.getContainer(), FXMainFrameDialogArea.getDialogArea());
             contactUsWindow.getCancelButton().setOnMouseClicked(m -> messageWindowCallback.closeDialog());
@@ -456,6 +456,48 @@ public final class BookingSummaryView {
         Button askRefundButton = Bootstrap.primaryButton(I18nControls.newButton(OrdersI18nKeys.AskARefund));
         askRefundButton.visibleProperty().bind(remainingAmountProperty.lessThan(0));
         askRefundButton.managedProperty().bind(askRefundButton.visibleProperty());
+        askRefundButton.setOnAction(event -> {
+            String formattedPrice = EventPriceFormatter.formatWithCurrency(remainingAmountProperty.get(),bookingProperty.get().getEvent());
+            RefundDialog refundWindow = new RefundDialog(formattedPrice,String.valueOf(bookingProperty.get().getRef()),bookingProperty.get().getEvent());
+            refundWindow.buildUI();
+            DialogCallback messageWindowCallback = DialogUtil.showModalNodeInGoldLayout(refundWindow.getContainer(), FXMainFrameDialogArea.getDialogArea());
+            refundWindow.getCancelButton().setOnMouseClicked(m -> messageWindowCallback.closeDialog());
+            refundWindow.getRefundButton().setOnAction(m -> {
+                Mail email = updateStore.insertEntity(Mail.class);
+                email.setFromName(bookingProperty.get().getFirstName() + ' ' + bookingProperty.get().getLastName());
+                email.setFromEmail(bookingProperty.get().getEmail());
+                email.setSubject("[" + bookingProperty.get().getPrimaryKey() + "-" + bookingProperty.get().getRef() + "] Refund of "+ formattedPrice +" requested");
+                email.setOut(false);
+                email.setDocument(bookingProperty.get());
+                String content = "The user has requested a refund for his canceled booking. Amount : " + formattedPrice;
+                content = content.replaceAll("\r", "<br/>");
+                content = content.replaceAll("\n", "<br/>");
+                content = "<html>" + content + "</html>";
+                email.setContent(content);
+                History history = updateStore.insertEntity(History.class);
+                history.setUsername("online");
+                history.setComment("Sent " + email.getSubject());
+                history.setDocument(bookingProperty.get());
+                history.setMail(email);
+
+                //TODO: prevent the Refund to display if the refund as already been requested, and display somewhere in the interface that the refund has been requested
+                OperationUtil.turnOnButtonsWaitModeDuringExecution(
+                    updateStore.submitChanges()
+                        .onFailure(Console::log)
+                        .onComplete(c -> refundWindow.displayRefundSuccessMessage(8000, messageWindowCallback::closeDialog)),
+                    refundWindow.getRefundButton(), refundWindow.getDonateButton(), refundWindow.getCancelButton());
+
+            });
+            refundWindow.getDonateButton().setOnAction(m -> {
+                //TODO implementation
+                    OperationUtil.turnOnButtonsWaitModeDuringExecution(
+                        updateStore.submitChanges()
+                            .onFailure(Console::log)
+                            .onComplete(c -> refundWindow.displayDonationSuccessMessage(8000, messageWindowCallback::closeDialog)),
+                        refundWindow.getRefundButton(), refundWindow.getDonateButton());
+
+                });
+            });
 
         cancelLabel = Bootstrap.textDanger(I18nControls.newLabel(OrdersI18nKeys.CancelBooking));
         cancelLabel.setCursor(Cursor.HAND);

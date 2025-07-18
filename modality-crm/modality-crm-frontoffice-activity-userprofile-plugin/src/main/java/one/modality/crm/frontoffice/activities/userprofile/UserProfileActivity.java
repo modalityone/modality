@@ -64,7 +64,7 @@ final class UserProfileActivity extends ViewDomainActivityBase implements Modali
 
     @Override
     public Node buildUi() {
-        view = new UserProfileView(changePictureUI, true, true, true, true, true, true, true, true);
+        view = new UserProfileView(changePictureUI, true, true, false,true, true, true, true, true, true);
         VBox viewNode = view.buildView();
         viewNode.getChildren().add(HelpPanel.createEmailHelpPanel(UserProfileI18nKeys.UserProfileHelp, "kbs@kadampa.net"));
 

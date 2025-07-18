@@ -52,6 +52,7 @@ public class UserProfileView implements ModalityButtonFactoryMixin {
 
     private final boolean showTitle;
     private final boolean showProfileHeader;
+    private final boolean showName;
     private final boolean showEmail;
     private final boolean showPassword;
     private final boolean showPersonalDetails;
@@ -67,6 +68,8 @@ public class UserProfileView implements ModalityButtonFactoryMixin {
     public StackPane picturePane;
     public Label nameLabel;
     public Label emailLabel;
+    public TextField firstNameTextField;
+    public TextField lastNameTextField;
     public TextField emailTextField;
     public DateField birthDateField;
     public TextField layNameTextField;
@@ -88,9 +91,10 @@ public class UserProfileView implements ModalityButtonFactoryMixin {
     private Node profileHeader;
     private Separator profileHeaderSeparator;
 
-    public UserProfileView(ChangePictureUI changePictureUI, boolean showTitle, boolean showProfileHeader, boolean showEmail, boolean showPassword, boolean showPersonalDetails, boolean showAddress, boolean showKadampaCenter, boolean showSaveChangesButton) {
+    public UserProfileView(ChangePictureUI changePictureUI, boolean showTitle, boolean showProfileHeader,  boolean showName, boolean showEmail, boolean showPassword, boolean showPersonalDetails, boolean showAddress, boolean showKadampaCenter, boolean showSaveChangesButton) {
         this.changePictureUI = changePictureUI;
         this.showTitle = showTitle;
+        this.showName = showName;
         this.showProfileHeader = showProfileHeader;
         this.showEmail = showEmail;
         this.showPassword = showPassword;
@@ -231,6 +235,15 @@ public class UserProfileView implements ModalityButtonFactoryMixin {
         Label loginInfoLabel = Bootstrap.small(Bootstrap.textSecondary(I18nControls.newLabel(CreateAccountI18nKeys.LoginDetails)));
         loginInfoLabel.setPadding(new Insets(0, 0, 10, 0));
         vBox.getChildren().add(loginInfoLabel);
+
+        firstNameTextField = newMaterialTextField(CrmI18nKeys.FirstName);
+        formatTextFieldLabel(firstNameTextField);
+        lastNameTextField = newMaterialTextField(CrmI18nKeys.LastName);
+        formatTextFieldLabel(lastNameTextField);
+        vBox.getChildren().addAll(firstNameTextField,lastNameTextField);
+        setManagedAndVisible(firstNameTextField,showName);
+        setManagedAndVisible(lastNameTextField,showName);
+
 
         changeUserEmail = I18nControls.newHyperlink(UserProfileI18nKeys.ChangeEmail);
         StackPane emailPane = new StackPane();
