@@ -33,6 +33,7 @@ import one.modality.base.client.mainframe.fx.FXMainFrameDialogArea;
 import one.modality.base.frontoffice.utility.page.FOPageUtil;
 import one.modality.base.shared.entities.Person;
 import one.modality.crm.frontoffice.activities.createaccount.UserAccountUI;
+import one.modality.crm.frontoffice.help.HelpPanel;
 import one.modality.crm.shared.services.authn.fx.FXUserPerson;
 
 import java.util.Objects;
@@ -63,8 +64,9 @@ final class UserProfileActivity extends ViewDomainActivityBase implements Modali
 
     @Override
     public Node buildUi() {
-        view = new UserProfileView(changePictureUI, true, true, true, true, true, true, true, true, true);
+        view = new UserProfileView(changePictureUI, true, true, true, true, true, true, true, true);
         VBox viewNode = view.buildView();
+        viewNode.getChildren().add(HelpPanel.createEmailHelpPanel(UserProfileI18nKeys.UserProfileHelp, "kbs@kadampa.net"));
 
         // Bind event handlers
         view.layNameTextField.textProperty().addListener((observable, oldValue, newValue) -> currentPerson.setLayName(newValue));
@@ -218,6 +220,7 @@ final class UserProfileActivity extends ViewDomainActivityBase implements Modali
         if (currentPerson.getBirthDate() != null) {
             view.birthDateField.getTextField().setDisable(true);
         }
+        view.birthDateField.getTextField().setDisable(true);
         loadProfilePictureIfExist();
     }
 

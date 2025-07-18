@@ -42,7 +42,6 @@ import one.modality.base.shared.entities.Country;
 import one.modality.base.shared.entities.Organization;
 import one.modality.crm.client.i18n.CrmI18nKeys;
 import one.modality.crm.frontoffice.activities.createaccount.CreateAccountI18nKeys;
-import one.modality.crm.frontoffice.help.HelpPanel;
 
 import static one.modality.crm.frontoffice.activities.createaccount.UserAccountUI.createEntityButtonSelector;
 
@@ -59,7 +58,6 @@ public class UserProfileView implements ModalityButtonFactoryMixin {
     private final boolean showAddress;
     private final boolean showKadampaCenter;
     private final boolean showSaveChangesButton;
-    private final boolean showHelpPanel;
     private final ChangePictureUI changePictureUI;
 
     public VBox container;
@@ -85,8 +83,12 @@ public class UserProfileView implements ModalityButtonFactoryMixin {
     public Label infoMessage;
     public Button saveButton;
     private VBox loginDetailsVBox, personalDetailsVBox, addressInfoVBox, kadampaCenterVBox;
+    private PasswordField passwordField;
+    private Label titleLabel;
+    private Node profileHeader;
+    private Separator profileHeaderSeparator;
 
-    public UserProfileView(ChangePictureUI changePictureUI, boolean showTitle, boolean showProfileHeader, boolean showEmail, boolean showPassword, boolean showPersonalDetails, boolean showAddress, boolean showKadampaCenter, boolean showSaveChangesButton, boolean showHelpPanel) {
+    public UserProfileView(ChangePictureUI changePictureUI, boolean showTitle, boolean showProfileHeader, boolean showEmail, boolean showPassword, boolean showPersonalDetails, boolean showAddress, boolean showKadampaCenter, boolean showSaveChangesButton) {
         this.changePictureUI = changePictureUI;
         this.showTitle = showTitle;
         this.showProfileHeader = showProfileHeader;
@@ -96,7 +98,6 @@ public class UserProfileView implements ModalityButtonFactoryMixin {
         this.showAddress = showAddress;
         this.showKadampaCenter = showKadampaCenter;
         this.showSaveChangesButton = showSaveChangesButton;
-        this.showHelpPanel = showHelpPanel;
     }
 
     public VBox buildView() {
@@ -104,43 +105,41 @@ public class UserProfileView implements ModalityButtonFactoryMixin {
         container.setSpacing(20);
         container.getStyleClass().add("user-profile");
         container.setAlignment(Pos.TOP_CENTER);
-        if (showTitle) {
-            Label titleLabel = Bootstrap.h2Primary(I18nControls.newLabel(UserProfileI18nKeys.UserProfileTitle));
-            titleLabel.setWrapText(true);
-            titleLabel.setPadding(new Insets(0, 0, 50, 0));
-            container.getChildren().add(titleLabel);
-        }
 
-        if (showProfileHeader) {
-            buildProfileHeader();
-        }
+        titleLabel = buildTitle();
+        container.getChildren().add(titleLabel);
+        setManagedAndVisible(titleLabel, showTitle);
+
+        profileHeader = buildProfileHeader();
+        container.getChildren().add(profileHeader);
+        setManagedAndVisible(profileHeader, showProfileHeader);
 
         int FIELDS_MIN_WIDTH = 200;
         ColumnsPane columnsPane = new ColumnsPane();
         columnsPane.setMaxColumnCount(2);
         columnsPane.setHgap(100);
         columnsPane.setMinColumnWidth(FIELDS_MIN_WIDTH);
-        columnsPane.setPadding(new Insets(50, 0, 0, 0));
+        columnsPane.setVgap(50);
 
         VBox firstColumn = new VBox(15);
-        if (showEmail || showPassword) {
-            loginDetailsVBox = buildLoginDetails();
-            firstColumn.getChildren().add(loginDetailsVBox);
-        }
-        if (showPersonalDetails) {
-            personalDetailsVBox = buildPersonalDetails();
-            firstColumn.getChildren().add(personalDetailsVBox);
-        }
+        loginDetailsVBox = buildLoginDetails();
+        firstColumn.getChildren().add(loginDetailsVBox);
+        setManagedAndVisible(loginDetailsVBox, showEmail || showPassword);
+
+        personalDetailsVBox = buildPersonalDetails();
+        firstColumn.getChildren().add(personalDetailsVBox);
+        setManagedAndVisible(personalDetailsVBox, showPersonalDetails);
+        firstColumn.managedProperty().bind(loginDetailsVBox.managedProperty());
+        firstColumn.visibleProperty().bind(loginDetailsVBox.visibleProperty());
 
         VBox secondColumn = new VBox(15);
-        if (showAddress) {
-            addressInfoVBox = buildAddressInfo();
-            secondColumn.getChildren().add(addressInfoVBox);
-        }
-        if (showKadampaCenter) {
-            kadampaCenterVBox = buildKadampaCenter();
-            secondColumn.getChildren().add(kadampaCenterVBox);
-        }
+        addressInfoVBox = buildAddressInfo();
+        secondColumn.getChildren().add(addressInfoVBox);
+        setManagedAndVisible(addressInfoVBox, showAddress);
+
+        kadampaCenterVBox = buildKadampaCenter();
+        secondColumn.getChildren().add(kadampaCenterVBox);
+        setManagedAndVisible(kadampaCenterVBox, showKadampaCenter);
 
         columnsPane.getChildren().addAll(firstColumn, secondColumn);
         container.getChildren().add(columnsPane);
@@ -150,18 +149,21 @@ public class UserProfileView implements ModalityButtonFactoryMixin {
         infoMessage.setPadding(new Insets(20, 0, 20, 0));
         container.getChildren().add(infoMessage);
 
-        if (showSaveChangesButton) {
-            buildSaveChangesButton();
-        }
-
-        if (showHelpPanel) {
-            container.getChildren().add(HelpPanel.createEmailHelpPanel(UserProfileI18nKeys.UserProfileHelp, "kbs@kadampa.net"));
-        }
+        saveButton = buildSaveChangesButton();
+        container.getChildren().add(saveButton);
+        setManagedAndVisible(saveButton, showSaveChangesButton);
 
         return container;
     }
 
-    private void buildProfileHeader() {
+    private Label buildTitle() {
+        Label titleLabel = Bootstrap.h2Primary(I18nControls.newLabel(UserProfileI18nKeys.UserProfileTitle));
+        titleLabel.setWrapText(true);
+        titleLabel.setPadding(new Insets(0, 0, 50, 0));
+        return titleLabel;
+    }
+
+    private Node buildProfileHeader() {
         pictureImageContainer = new MonoClipPane(true);
         picturePane = new StackPane();
         Layouts.setFixedSize(picturePane, PROFILE_IMAGE_SIZE, PROFILE_IMAGE_SIZE);
@@ -192,7 +194,6 @@ public class UserProfileView implements ModalityButtonFactoryMixin {
         MonoPane pictureAndNameResponsivePane = new MonoPane(nameVbox);
         pictureAndNameResponsivePane.setPadding(new Insets(0, 0, 50, 0));
         HBox hBox = new HBox(picturePane, nameVbox);
-        container.getChildren().add(pictureAndNameResponsivePane);
         new ResponsiveDesign(pictureAndNameResponsivePane)
                 .addResponsiveLayout(new ResponsiveLayout() {
                     @Override
@@ -221,8 +222,8 @@ public class UserProfileView implements ModalityButtonFactoryMixin {
                 })
                 .start();
 
-        Separator separator = new Separator();
-        container.getChildren().add(separator);
+        profileHeaderSeparator = new Separator();
+        return new VBox(pictureAndNameResponsivePane, profileHeaderSeparator);
     }
 
     private VBox buildLoginDetails() {
@@ -231,30 +232,29 @@ public class UserProfileView implements ModalityButtonFactoryMixin {
         loginInfoLabel.setPadding(new Insets(0, 0, 10, 0));
         vBox.getChildren().add(loginInfoLabel);
 
-        if (showEmail) {
-            changeUserEmail = I18nControls.newHyperlink(UserProfileI18nKeys.ChangeEmail);
-            StackPane emailPane = new StackPane();
-            emailTextField = newMaterialTextField(CrmI18nKeys.Email);
-            formatTextFieldLabel(emailTextField);
-            emailTextField.setDisable(true);
-            emailPane.getChildren().addAll(emailTextField, changeUserEmail);
-            StackPane.setAlignment(changeUserEmail, Pos.BOTTOM_RIGHT);
-            StackPane.setMargin(changeUserEmail, new Insets(0, 0, 3, 0));
-            vBox.getChildren().add(emailPane);
-        }
+        changeUserEmail = I18nControls.newHyperlink(UserProfileI18nKeys.ChangeEmail);
+        StackPane emailPane = new StackPane();
+        emailTextField = newMaterialTextField(CrmI18nKeys.Email);
+        formatTextFieldLabel(emailTextField);
+        emailTextField.setDisable(true);
+        emailPane.getChildren().addAll(emailTextField, changeUserEmail);
+        StackPane.setAlignment(changeUserEmail, Pos.BOTTOM_RIGHT);
+        StackPane.setMargin(changeUserEmail, new Insets(0, 0, 3, 0));
+        vBox.getChildren().add(emailPane);
+        setManagedAndVisible(emailPane, showEmail);
 
-        if (showPassword) {
-            changeUserPassword = I18nControls.newHyperlink(UserProfileI18nKeys.ChangePassword);
-            StackPane passwordPane = new StackPane();
-            PasswordField passwordField = newMaterialPasswordField(CrmI18nKeys.Password);
-            passwordField.setText("*******");
-            passwordField.setDisable(true);
-            formatTextFieldLabel(passwordField);
-            passwordPane.getChildren().addAll(passwordField, changeUserPassword);
-            StackPane.setAlignment(changeUserPassword, Pos.BOTTOM_RIGHT);
-            StackPane.setMargin(changeUserPassword, new Insets(0, 0, 3, 0));
-            vBox.getChildren().add(passwordPane);
-        }
+        changeUserPassword = I18nControls.newHyperlink(UserProfileI18nKeys.ChangePassword);
+        StackPane passwordPane = new StackPane();
+        passwordField = newMaterialPasswordField(CrmI18nKeys.Password);
+        passwordField.setText("*******");
+        passwordField.setDisable(true);
+        formatTextFieldLabel(passwordField);
+        passwordPane.getChildren().addAll(passwordField, changeUserPassword);
+        StackPane.setAlignment(changeUserPassword, Pos.BOTTOM_RIGHT);
+        StackPane.setMargin(changeUserPassword, new Insets(0, 0, 3, 0));
+        vBox.getChildren().add(passwordPane);
+        setManagedAndVisible(passwordPane, showPassword);
+
         return vBox;
     }
 
@@ -274,7 +274,7 @@ public class UserProfileView implements ModalityButtonFactoryMixin {
         I18n.bindI18nTextProperty(birthDateTextField.promptTextProperty(), I18nKeys.embedInString(I18nKeys.appendColons(UserProfileI18nKeys.DateOfBirthFormat)) + " {0}",
                 LocalizedTime.inferLocalDatePatternProperty(birthDateField.dateTimeFormatterProperty(), true));
         birthDateField.getDatePicker().getView().setTranslateY(10);
-        vBox.getChildren().add(birthDateField.getView());
+        //vBox.getChildren().add(birthDateField.getView());
 
         ToggleGroup maleFemaleToggleGroup = new ToggleGroup();
         optionMale = I18nControls.newRadioButton(CrmI18nKeys.Male);
@@ -363,11 +363,11 @@ public class UserProfileView implements ModalityButtonFactoryMixin {
         return vBox;
     }
 
-    private void buildSaveChangesButton() {
-        saveButton = Bootstrap.largePrimaryButton(I18nControls.newButton(CreateAccountI18nKeys.SaveChanges));
-        saveButton.setWrapText(true);
-        saveButton.setTextAlignment(TextAlignment.CENTER);
-        container.getChildren().add(saveButton);
+    private Button buildSaveChangesButton() {
+        Button button = Bootstrap.largePrimaryButton(I18nControls.newButton(CreateAccountI18nKeys.SaveChanges));
+        button.setWrapText(true);
+        button.setTextAlignment(TextAlignment.CENTER);
+        return button;
     }
 
     private void formatTextFieldLabel(TextField textField) {
