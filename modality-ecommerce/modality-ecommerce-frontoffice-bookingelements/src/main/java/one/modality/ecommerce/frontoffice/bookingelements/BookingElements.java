@@ -156,10 +156,14 @@ public final class BookingElements {
     }
 
     public static Button createPersonToBookButton(boolean embedPersonToBookText) {
-        return createPersonToBookButton(embedPersonToBookText, new ButtonFactoryMixin() {}, DataSourceModelService.getDefaultDataSourceModel());
+        return createPersonToBookSelector(embedPersonToBookText).getButton();
     }
 
-    private static Button createPersonToBookButton(boolean embedPersonToBookText, ButtonFactoryMixin buttonFactory, DataSourceModel dataSourceModel) {
+    public static EntityButtonSelector<Person> createPersonToBookSelector(boolean embedPersonToBookText) {
+        return createPersonToBookSelector(embedPersonToBookText, new ButtonFactoryMixin() {}, DataSourceModelService.getDefaultDataSourceModel());
+    }
+
+    private static EntityButtonSelector<Person> createPersonToBookSelector(boolean embedPersonToBookText, ButtonFactoryMixin buttonFactory, DataSourceModel dataSourceModel) {
         EntityButtonSelector<Person> personSelector = new EntityButtonSelector<Person>(
             "{class: 'Person', alias: 'p', columns: [{expression: '[firstName,lastName]'}], fields: 'email,phone,postCode,cityName,country,organization', orderBy: 'id'}",
             buttonFactory, FXMainFrameDialogArea::getDialogArea, dataSourceModel
@@ -185,7 +189,7 @@ public final class BookingElements {
         personButton.setMaxWidth(Region.USE_PREF_SIZE);
         VBox.setMargin(personButton, new Insets(20, 0, 20, 0));
         Layouts.bindManagedAndVisiblePropertiesTo(FXModalityUserPrincipal.loggedInProperty(), personButton);
-        return personButton;
+        return personSelector;
     }
 
 }
