@@ -458,6 +458,7 @@ public final class BookingSummaryView {
         askRefundButton.managedProperty().bind(askRefundButton.visibleProperty());
 
         cancelLabel = Bootstrap.textDanger(I18nControls.newLabel(OrdersI18nKeys.CancelBooking));
+        cancelLabel.setCursor(Cursor.HAND);
         cancelLabel.setWrapText(true);
         cancelLabel.setOnMouseClicked(event -> {
             BorderPane errorDialog = new BorderPane();
