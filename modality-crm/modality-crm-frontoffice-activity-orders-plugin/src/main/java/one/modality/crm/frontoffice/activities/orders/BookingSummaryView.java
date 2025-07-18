@@ -463,12 +463,29 @@ public final class BookingSummaryView {
             DialogCallback messageWindowCallback = DialogUtil.showModalNodeInGoldLayout(refundWindow.getContainer(), FXMainFrameDialogArea.getDialogArea());
             refundWindow.getCancelButton().setOnMouseClicked(m -> messageWindowCallback.closeDialog());
             refundWindow.getRefundButton().setOnAction(m -> {
+                Mail email = updateStore.insertEntity(Mail.class);
+                email.setFromName(bookingProperty.get().getFirstName() + ' ' + bookingProperty.get().getLastName());
+                email.setFromEmail(bookingProperty.get().getEmail());
+                email.setSubject("[" + bookingProperty.get().getPrimaryKey() + "-" + bookingProperty.get().getRef() + "] Refund of "+ formattedPrice +" requested");
+                email.setOut(false);
+                email.setDocument(bookingProperty.get());
+                String content = "The user has requested a refund for his canceled booking. Amount : " + formattedPrice;
+                content = content.replaceAll("\r", "<br/>");
+                content = content.replaceAll("\n", "<br/>");
+                content = "<html>" + content + "</html>";
+                email.setContent(content);
+                History history = updateStore.insertEntity(History.class);
+                history.setUsername("online");
+                history.setComment("Sent " + email.getSubject());
+                history.setDocument(bookingProperty.get());
+                history.setMail(email);
+
+                //TODO: prevent the Refund to display if the refund as already been requested, and display somewhere in the interface that the refund has been requested
                 OperationUtil.turnOnButtonsWaitModeDuringExecution(
-                    //TODO implementation
                     updateStore.submitChanges()
                         .onFailure(Console::log)
                         .onComplete(c -> refundWindow.displayRefundSuccessMessage(8000, messageWindowCallback::closeDialog)),
-                    refundWindow.getRefundButton(), refundWindow.getDonateButton());
+                    refundWindow.getRefundButton(), refundWindow.getDonateButton(), refundWindow.getCancelButton());
 
             });
             refundWindow.getDonateButton().setOnAction(m -> {
