@@ -4,10 +4,7 @@ import dev.webfx.platform.util.collection.Collections;
 import dev.webfx.stack.orm.entity.EntityStore;
 import one.modality.base.shared.entities.*;
 import one.modality.ecommerce.document.service.events.AbstractDocumentEvent;
-import one.modality.ecommerce.document.service.events.book.AddAttendancesEvent;
-import one.modality.ecommerce.document.service.events.book.AddDocumentLineEvent;
-import one.modality.ecommerce.document.service.events.book.AddMoneyTransferEvent;
-import one.modality.ecommerce.document.service.events.book.RemoveAttendancesEvent;
+import one.modality.ecommerce.document.service.events.book.*;
 import one.modality.ecommerce.document.service.events.registration.documentline.RemoveDocumentLineEvent;
 import one.modality.ecommerce.document.service.events.registration.moneytransfer.RemoveMoneyTransferEvent;
 
@@ -116,6 +113,28 @@ public final class DocumentAggregate {
 
     public PolicyAggregate getPolicyAggregate() {
         return policyAggregate;
+    }
+
+    // Accessing event
+
+    public Event getEvent() {
+        if (policyAggregate != null)
+            return policyAggregate.getEvent();
+        if (document != null)
+            return document.getEvent();
+        return null;
+    }
+
+    public Object getEventPrimaryKey() {
+        Event event = getEvent();
+        if (event != null)
+            return event.getPrimaryKey();
+        AddDocumentEvent ade = (AddDocumentEvent) Collections.findFirst(newDocumentEvents, e -> e instanceof AddDocumentEvent);
+        if (ade != null)
+            return ade.getEventPrimaryKey();
+        if (previousVersion != null)
+            return previousVersion.getEventPrimaryKey();
+        return null;
     }
 
     // Accessing document

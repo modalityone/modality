@@ -8,8 +8,8 @@ public final class LoadDocumentArgument {
     // Primary key of the document to load
     private final Object documentPrimaryKey;
 
-    // Alternatively, primary key of the person and event. In that case, the document service will load the latest
-    // document associated to that person for this event (or null if none is found).
+    // Alternatively, the primary key of the person and event. In that case, the document service will load the latest
+    // document associated with that person for this event (or null if none is found).
     private final Object personPrimaryKey;
     private final Object eventPrimaryKey;
 

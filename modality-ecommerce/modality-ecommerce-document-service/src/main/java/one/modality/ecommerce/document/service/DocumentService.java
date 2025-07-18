@@ -31,7 +31,7 @@ public final class DocumentService {
         return getProvider().submitDocumentChanges(argument);
     }
 
-    // Additional top-level utility methods to load document (not directly implemented by provider and not directly serialised)
+    // Additional top-level utility methods to load a document (not directly implemented by the provider and not directly serialized)
 
     public static Future<DocumentAggregate> loadDocument(Event event, Person userPerson) {
         return loadDocument(Entities.getPrimaryKey(event), Entities.getPrimaryKey(userPerson));
@@ -39,11 +39,11 @@ public final class DocumentService {
 
     public static Future<DocumentAggregate> loadDocument(Object eventPrimaryKey, Object userPersonPrimaryKey) {
         return eventPrimaryKey == null || userPersonPrimaryKey == null ? Future.succeededFuture(null) :
-                loadDocument(new LoadDocumentArgument(userPersonPrimaryKey, eventPrimaryKey));
+            loadDocument(new LoadDocumentArgument(userPersonPrimaryKey, eventPrimaryKey));
     }
 
 
-    // Additional top-level utility methods to load document and policy (not directly implemented by provider and not directly serialised)
+    // Additional top-level utility methods to load document and policy (not directly implemented by the provider and not directly serialized)
 
     public static Future<PolicyAndDocumentAggregates> loadDocumentWithPolicy(Document document) {
         return loadDocumentWithPolicyAndHistory(document, null);
@@ -55,8 +55,8 @@ public final class DocumentService {
 
     private static Future<PolicyAndDocumentAggregates> loadDocumentWithPolicyAndHistory(Document document, Object historyPrimaryKey) {
         return loadPolicyAndDocument(
-                document.getEvent(),
-                new LoadDocumentArgument(document.getPrimaryKey(), null, null, historyPrimaryKey));
+            document.getEvent(),
+            new LoadDocumentArgument(document.getPrimaryKey(), null, null, historyPrimaryKey));
     }
 
     public static Future<PolicyAndDocumentAggregates> loadPolicyAndDocument(Event event, Object userPersonPrimaryKey) {
@@ -65,11 +65,11 @@ public final class DocumentService {
 
     private static Future<PolicyAndDocumentAggregates> loadPolicyAndDocument(Event event, LoadDocumentArgument loadDocumentArgument) {
         return Future.all(
-                // 0) We load the policy aggregate for this event
-                loadPolicy(new LoadPolicyArgument(event)),
-                // 1) And eventually the already existing booking of the user (i.e. his last booking for this event)
-                loadDocumentArgument == null ? Future.succeededFuture(null) : // unless the user is not provided
-                        loadDocument(loadDocumentArgument)
+            // 0) We load the policy aggregate for this event
+            loadPolicy(new LoadPolicyArgument(event)),
+            // 1) And eventually the already existing booking of the user (i.e., his last booking for this event)
+            loadDocumentArgument == null ? Future.succeededFuture(null) : // unless the user is not provided
+                loadDocument(loadDocumentArgument)
         ).compose(compositeFuture -> {
             PolicyAggregate policyAggregate = compositeFuture.resultAt(0); // 0 = policy aggregate (never null)
             policyAggregate.rebuildEntities(event); // we rebuild the entities
@@ -84,4 +84,9 @@ public final class DocumentService {
         });
     }
 
+    public static Future<PolicyAndDocumentAggregates> loadPolicyAndDocument(LoadDocumentArgument loadDocumentArgument) {
+        return loadDocument(loadDocumentArgument)
+            .compose(documentAggregate -> loadPolicy(new LoadPolicyArgument(documentAggregate.getEventPrimaryKey()))
+                .compose(policyAggregate -> Future.succeededFuture(new PolicyAndDocumentAggregates(policyAggregate, documentAggregate))));
+    }
 }
