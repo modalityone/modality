@@ -32,5 +32,17 @@ public interface OrdersI18nKeys {
     Object MessageSentSuccessfullyDetails = "MessageSentSuccessfullyDetails";
     Object MakePayment = "MakePayment";
     Object OrdersTitle = "OrdersTitle";
+    Object ThankYou = "ThankYou";
+    Object RefundRequested = "RefundRequested";
+    Object RefundExplanation = "RefundExplanation";
+    Object DonateToTempleProject = "DonateToTempleProject";
+    Object RemainingAmount = "RemainingAmount";
+    Object TempleProjectExplanation = "TempleProjectExplanation";
+    Object TempleProjectTitle = "TempleProjectTitle";
+    Object RefundMessage = "RefundMessage";
+    Object RefundRequest = "RefundRequest";
+    Object DonationSuccessMessage = "DonationSuccessMessage";
+    Object TempleProjectLink = "TempleProjectLink";
+    Object RequestRefund = "RequestRefund";
 
 }
