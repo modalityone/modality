@@ -19,6 +19,7 @@ import dev.webfx.platform.async.Future;
 import dev.webfx.platform.console.Console;
 import dev.webfx.platform.uischeduler.UiScheduler;
 import dev.webfx.platform.util.Booleans;
+import dev.webfx.platform.windowhistory.WindowHistory;
 import dev.webfx.stack.orm.entity.Entities;
 import dev.webfx.stack.orm.entity.EntityStore;
 import dev.webfx.stack.orm.entity.EntityStoreQuery;
@@ -60,6 +61,9 @@ import java.util.LinkedHashMap;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
+/**
+ * @author David Hello
+ */
 public final class BookingSummaryView {
 
     // Required fields for retrieving booking and its details
@@ -440,6 +444,9 @@ public final class BookingSummaryView {
         addOptionButton = Bootstrap.secondaryButton(I18nControls.newButton(OrdersI18nKeys.AddOrEditOption));
         addOptionButton.setMinWidth(Region.USE_PREF_SIZE);
         I18nControls.bindI18nProperties(addOptionButton, OrdersI18nKeys.AddOrEditOption);
+        addOptionButton.setOnAction(e -> {
+            WindowHistory.getProvider().push("/modify-booking/" + bookingProperty.get().getPrimaryKey());
+        });
 
         Button makePaymentButton = Bootstrap.primaryButton(I18nControls.newButton(OrdersI18nKeys.MakePayment));
         makePaymentButton.setMinWidth(Region.USE_PREF_SIZE);

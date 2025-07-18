@@ -12,13 +12,13 @@ import java.util.List;
 /**
  * @author David Hello
  */
-public final class OrdersBookingsView {
+final class OrdersBookingsView {
 
     private Event event;
 
     private final VBox container = new VBox(50);
 
-    public OrdersBookingsView(Event event, List<Document> eventBookings, OrdersActivity ordersActivity) {
+    OrdersBookingsView(Event event, List<Document> eventBookings, OrdersActivity ordersActivity) {
         setEvent(event);
         container.setPadding(new Insets(0,30,0,30));
         container.getChildren().addAll(
