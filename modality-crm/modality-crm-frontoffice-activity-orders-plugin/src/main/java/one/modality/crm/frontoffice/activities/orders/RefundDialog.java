@@ -44,7 +44,7 @@ public final class RefundDialog extends BaseDialog {
         VBox header = createHeader(OrdersI18nKeys.RefundRequest, null);
 
         // Add amount info to header
-        Label amountLabel = Bootstrap.strong(I18nControls.newLabel(OrdersI18nKeys.RemainingAmount,refundAmount));
+        Label amountLabel = Bootstrap.strong(I18nControls.newLabel(OrdersI18nKeys.RemainingAmountForRefund,refundAmount));
         amountLabel.setTextFill(Color.WHITE);
         header.getChildren().add(amountLabel);
 
@@ -70,10 +70,10 @@ public final class RefundDialog extends BaseDialog {
         content.getChildren().addAll(explanationLabel, templeLink);
         dialogPane.setCenter(content);
 
-        refundButton = ModalityStyle.whiteButton(I18nControls.newButton(OrdersI18nKeys.RequestRefund));
+        refundButton = Bootstrap.primaryButton(I18nControls.newButton(OrdersI18nKeys.RequestRefund));
         refundButton.setMinWidth(Region.USE_PREF_SIZE);
 
-        donateButton = Bootstrap.primaryButton(I18nControls.newButton(OrdersI18nKeys.DonateToTempleProject));
+        donateButton = ModalityStyle.whiteButton(I18nControls.newButton(OrdersI18nKeys.DonateToTempleProject));
         donateButton.setMinWidth(Region.USE_PREF_SIZE);
 
         // Button layout - side by side for main actions
