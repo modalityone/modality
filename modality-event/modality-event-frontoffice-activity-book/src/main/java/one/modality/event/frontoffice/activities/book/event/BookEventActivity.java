@@ -7,13 +7,15 @@ import dev.webfx.platform.async.Future;
 import dev.webfx.platform.console.Console;
 import dev.webfx.platform.uischeduler.UiScheduler;
 import dev.webfx.platform.util.Numbers;
+import dev.webfx.platform.util.Objects;
 import dev.webfx.stack.orm.domainmodel.activity.viewdomain.impl.ViewDomainActivityBase;
 import dev.webfx.stack.orm.domainmodel.activity.viewdomain.impl.ViewDomainActivityContextFinal;
 import dev.webfx.stack.orm.entity.Entities;
-import dev.webfx.stack.orm.entity.EntityId;
 import dev.webfx.stack.routing.uirouter.UiRouter;
 import javafx.application.Platform;
+import javafx.beans.property.ObjectProperty;
 import javafx.beans.property.ReadOnlyObjectProperty;
+import javafx.beans.property.SimpleObjectProperty;
 import javafx.scene.Node;
 import javafx.scene.control.Labeled;
 import javafx.scene.layout.Region;
@@ -27,17 +29,13 @@ import one.modality.ecommerce.client.workingbooking.FXPersonToBook;
 import one.modality.ecommerce.client.workingbooking.HasWorkingBookingProperties;
 import one.modality.ecommerce.client.workingbooking.WorkingBooking;
 import one.modality.ecommerce.client.workingbooking.WorkingBookingProperties;
-import one.modality.ecommerce.document.service.DocumentAggregate;
-import one.modality.ecommerce.document.service.DocumentService;
-import one.modality.ecommerce.document.service.PolicyAggregate;
+import one.modality.ecommerce.document.service.*;
 import one.modality.ecommerce.payment.CancelPaymentResult;
 import one.modality.ecommerce.payment.client.WebPaymentForm;
 import one.modality.event.client.event.fx.FXEvent;
 import one.modality.event.client.event.fx.FXEventId;
 import one.modality.event.frontoffice.activities.book.account.CheckoutAccountRouting;
 import one.modality.event.frontoffice.activities.book.event.slides.LettersSlideController;
-
-import java.util.Objects;
 
 
 /**
@@ -47,6 +45,9 @@ public final class BookEventActivity extends ViewDomainActivityBase implements B
 
     private final WorkingBookingProperties workingBookingProperties = new WorkingBookingProperties();
     private final LettersSlideController lettersSlideController = new LettersSlideController(this);
+    // When routed through /modify-booking/:modifyBookingDocumentId, this property will store the documentId to modify
+    private final ObjectProperty<Object> modifyBookingDocumentIdProperty = new SimpleObjectProperty<>();
+    // When routed through /book-event/:eventId, FXEventId and FXEvent are used to store the event to book
 
     @Override
     public WorkingBookingProperties getWorkingBookingProperties() {
@@ -61,6 +62,10 @@ public final class BookEventActivity extends ViewDomainActivityBase implements B
         return lettersSlideController.mediumFontProperty();
     }
 
+    private Object getModifyBookingDocumentId() {
+        return modifyBookingDocumentIdProperty.get();
+    }
+
     @Override
     public Node buildUi() {
         Region activityContainer = lettersSlideController.getContainer();
@@ -70,12 +75,13 @@ public final class BookEventActivity extends ViewDomainActivityBase implements B
 
     @Override
     protected void updateModelFromContextParameters() {
-        Object eventId = getParameter("eventId");
+        Object eventId = Objects.coalesce(getParameter("eventId"), getParameter("gpClassId"));
         if (eventId != null) { // eventId is null when sub-routing /booking/account (instead of /booking/event/:eventId)
-            FXEventId.setEventId(EntityId.create(Event.class, Numbers.toShortestNumber(eventId)));
+            FXEventId.setEventPrimaryKey(Numbers.toShortestNumber(eventId));
             // Initially hiding the footer (app menu), especially when coming from the website.
             FXCollapseMenu.setCollapseMenu(!Entities.samePrimaryKey(FXOrganizationId.getOrganizationId(), 1));
         }
+        modifyBookingDocumentIdProperty.set(getParameter("modifyBookingDocumentId"));
     }
 
     @Override
@@ -114,47 +120,66 @@ public final class BookEventActivity extends ViewDomainActivityBase implements B
 
     public void onReachingEndSlide() {
         FXEventId.setEventId(null); // This is to ensure that the next time the user books an event in this same session, we
+        modifyBookingDocumentIdProperty.set(null);
         FXCollapseMenu.setCollapseMenu(false);
     }
 
     @Override
     protected void startLogic() {
         // Initial load of the event policy with the possible existing booking of the user (if logged-in)
-        FXProperties.runNowAndOnPropertyChange(this::loadPolicyAndBooking, FXEvent.eventProperty());
+        FXProperties.runNowAndOnPropertiesChange(this::loadPolicyAndBooking, FXEvent.eventProperty(), modifyBookingDocumentIdProperty);
 
         // Later loading when changing the person to book (loading of possible booking and reapplying the newly selected dates)
         FXProperties.runOnPropertyChange(this::onPersonToBookChanged, FXPersonToBook.personToBookProperty());
     }
 
     void loadPolicyAndBooking() {
-        Event event = FXEvent.getEvent();
-        if (event == null) // Too early - may happen on first call (ex: on page reload)
-            return;
         // TODO: if eventId doesn't exist in the database, FXEvent.getEvent() stays null and nothing happens (stuck on loading page)
+        Event event = FXEvent.getEvent(); // might be null on the first call (ex: on page reload)
+        if (event != null) { // happens when routed through /book-event/:eventId
+            lettersSlideController.onEventChanged(event);
 
-        lettersSlideController.onEventChanged(event);
-
-        Person personToBook = FXPersonToBook.getPersonToBook();
-        Object userPersonPrimaryKey = Entities.getPrimaryKey(personToBook);
-        FXPersonToBook.setAutomaticallyFollowUserPerson(userPersonPrimaryKey == null);
-        if (userPersonPrimaryKey == null && lettersSlideController.autoLoadExistingBooking()) {
-            // Note: It's better to use FXUserPersonId rather than FXUserPerson in case of a page reload in the browser
-            // (or redirection to this page from a website) because the retrieval of FXUserPersonId is immediate in case
-            // the user was already logged in (memorized in session), while FXUserPerson requires a DB reading, which
-            // may not be finished yet at this time.
-            userPersonPrimaryKey = FXUserPersonId.getUserPersonPrimaryKey();
+            Person personToBook = FXPersonToBook.getPersonToBook();
+            Object userPersonPrimaryKey = Entities.getPrimaryKey(personToBook);
+            FXPersonToBook.setAutomaticallyFollowUserPerson(userPersonPrimaryKey == null);
+            if (userPersonPrimaryKey == null && lettersSlideController.autoLoadExistingBooking()) {
+                // Note: It's better to use FXUserPersonId rather than FXUserPerson in case of a page reload in the browser
+                // (or redirection to this page from a website) because the retrieval of FXUserPersonId is immediate in case
+                // the user was already logged in (memorized in session), while FXUserPerson requires a DB reading, which
+                // may not be finished yet at this time.
+                userPersonPrimaryKey = FXUserPersonId.getUserPersonPrimaryKey();
+            }
+            DocumentService.loadPolicyAndDocument(event, userPersonPrimaryKey)
+                .onFailure(Console::log)
+                .onSuccess(policyAndDocumentAggregates -> {
+                    if (event == FXEvent.getEvent()) // Double-checking that no other changes occurred in the meantime
+                        onPolityAndDocumentAggregatesLoaded(policyAndDocumentAggregates);
+                });
         }
-        DocumentService.loadPolicyAndDocument(event, userPersonPrimaryKey)
-            .onFailure(Console::log)
-            .onSuccess(policyAndDocumentAggregates -> UiScheduler.runInUiThread(() -> {
-                if (event == FXEvent.getEvent()) { // Double-checking that no other changes occurred in the meantime
-                    PolicyAggregate policyAggregate = policyAndDocumentAggregates.getPolicyAggregate(); // never null
-                    DocumentAggregate existingBooking = policyAndDocumentAggregates.getDocumentAggregate(); // might be null
-                    WorkingBooking workingBooking = new WorkingBooking(policyAggregate, existingBooking);
-                    workingBookingProperties.setWorkingBooking(workingBooking);
-                    lettersSlideController.onWorkingBookingLoaded();
-                }
-            }));
+        Object modifyBookingDocumentId = getModifyBookingDocumentId();
+        if (modifyBookingDocumentId != null) {
+            DocumentService.loadPolicyAndDocument(new LoadDocumentArgument(modifyBookingDocumentId))
+                .onFailure(Console::log)
+                .onSuccess(policyAndDocumentAggregates -> {
+                    if (modifyBookingDocumentId == modifyBookingDocumentIdProperty.get()) { // Double-checking
+                        onPolityAndDocumentAggregatesLoaded(policyAndDocumentAggregates);
+                    }
+                });
+        }
+    }
+
+    private void onPolityAndDocumentAggregatesLoaded(PolicyAndDocumentAggregates policyAndDocumentAggregates) {
+        PolicyAggregate policyAggregate = policyAndDocumentAggregates.getPolicyAggregate(); // never null
+        DocumentAggregate existingBooking = policyAndDocumentAggregates.getDocumentAggregate(); // might be null
+        onPolityAndDocumentAggregatesLoaded(policyAggregate, existingBooking);
+    }
+
+    private void onPolityAndDocumentAggregatesLoaded(PolicyAggregate policyAggregate, DocumentAggregate existingBooking) {
+        WorkingBooking workingBooking = new WorkingBooking(policyAggregate, existingBooking);
+        UiScheduler.runInUiThread(() -> {
+            workingBookingProperties.setWorkingBooking(workingBooking);
+            lettersSlideController.onWorkingBookingLoaded();
+        });
     }
 
     public Future<Void> loadBookingWithSamePolicy(boolean onlyIfDifferentPerson) {
@@ -166,18 +191,14 @@ public final class BookEventActivity extends ViewDomainActivityBase implements B
         // Double-checking that the person to book is different from the previous booking person
         Person personToBook = FXPersonToBook.getPersonToBook();
         DocumentAggregate previousPersonExistingBooking = previousPersonWorkingBooking.getInitialDocumentAggregate();
-        if (onlyIfDifferentPerson && previousPersonExistingBooking != null && Objects.equals(previousPersonExistingBooking.getDocument().getPerson(), personToBook))
+        if (onlyIfDifferentPerson && previousPersonExistingBooking != null && Entities.sameId(previousPersonExistingBooking.getDocument().getPerson(), personToBook))
             return Future.succeededFuture();
         // Loading the possible existing booking of the new person to book for that event
         return DocumentService.loadDocument(event, personToBook)
             .onFailure(Console::log)
             .onSuccess(newPersonExistingBooking -> UiScheduler.runInUiThread(() -> {
                 // Re-instantiating the working booking with that new existing booking (can be null if it doesn't exist)
-                PolicyAggregate policyAggregate = workingBookingProperties.getPolicyAggregate();
-                WorkingBooking workingBooking = new WorkingBooking(policyAggregate, newPersonExistingBooking);
-                workingBookingProperties.setWorkingBooking(workingBooking);
-                // Informing the slide controller about that change
-                lettersSlideController.onWorkingBookingLoaded();
+                onPolityAndDocumentAggregatesLoaded(workingBookingProperties.getPolicyAggregate(), newPersonExistingBooking);
             }))
             .mapEmpty();
     }

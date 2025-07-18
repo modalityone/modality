@@ -1,6 +1,7 @@
 package one.modality.event.frontoffice.activities.book.event;
 
 import dev.webfx.stack.orm.domainmodel.activity.viewdomain.impl.ViewDomainActivityContextFinal;
+import dev.webfx.stack.routing.router.util.PathBuilder;
 import dev.webfx.stack.routing.uirouter.UiRoute;
 import dev.webfx.stack.routing.uirouter.impl.UiRouteImpl;
 import one.modality.base.client.util.routing.ModalityRoutingUtil;
@@ -10,14 +11,19 @@ import one.modality.base.client.util.routing.ModalityRoutingUtil;
  */
 public final class BookEventRouting {
 
-    private final static String PATH = "/booking/event/:eventId";
-
-    public static String getPath() {
-        return PATH;
-    }
+    // Current restriction: each path passed to toRegexOrPath() must have a unique parameter name.
+    // TODO: investigate if we can remove this restriction and be able to use eventId or documentId in several paths
+    private final static String BOOK_EVENT_PATH = "/book-event/:eventId";
+    private final static String MODIFY_BOOKING_PATH = "/modify-booking/:modifyBookingDocumentId";
+    private final static String PAY_BOOKING_PATH = "/pay-booking/:payBookingDocumentId";
+    private final static String BOOK_EVENT_PATH_DEPRECATED = "/booking/event/:gpClassId"; // Temporarily keeping for GP Class compatibility
 
     public static String getBookEventPath(Object eventId) {
-        return ModalityRoutingUtil.interpolateEventIdInPath(eventId, PATH);
+        return ModalityRoutingUtil.interpolateEventIdInPath(eventId, BOOK_EVENT_PATH);
+    }
+
+    public static String getModifyBookingPath(Object documentId) {
+        return ModalityRoutingUtil.interpolateEventIdInPath(documentId, MODIFY_BOOKING_PATH);
     }
 
     public static final class BookEventUiRoute extends UiRouteImpl {
@@ -27,12 +33,11 @@ public final class BookEventRouting {
         }
 
         public static UiRoute<?> uiRoute() {
-            return UiRoute.create(BookEventRouting.getPath()
+            return UiRoute.createRegex(PathBuilder.toRegexOrPath(BOOK_EVENT_PATH, MODIFY_BOOKING_PATH, PAY_BOOKING_PATH, BOOK_EVENT_PATH_DEPRECATED)
                     , false
                     , BookEventActivity::new
                     , ViewDomainActivityContextFinal::new
             );
         }
-
     }
 }

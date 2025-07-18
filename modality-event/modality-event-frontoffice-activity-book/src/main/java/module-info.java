@@ -16,7 +16,6 @@ module modality.event.frontoffice.activity.book {
     requires modality.crm.backoffice.organization.fx;
     requires modality.crm.client.authn.fx;
     requires modality.crm.client.i18n;
-    requires modality.crm.frontoffice.activity.orders.plugin;
     requires modality.ecommerce.client.i18n;
     requires modality.ecommerce.client.workingbooking;
     requires modality.ecommerce.document.service;
@@ -50,6 +49,7 @@ module modality.event.frontoffice.activity.book {
     requires webfx.platform.windowhistory;
     requires webfx.stack.orm.domainmodel.activity;
     requires webfx.stack.orm.entity;
+    requires webfx.stack.routing.router;
     requires webfx.stack.routing.uirouter;
 
     // Exported packages

@@ -12,7 +12,6 @@ import javafx.scene.control.Label;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.VBox;
 import javafx.scene.text.TextAlignment;
-import one.modality.crm.frontoffice.activities.orders.OrdersRouting;
 import one.modality.ecommerce.client.workingbooking.WorkingBookingProperties;
 import one.modality.event.frontoffice.activities.book.BookI18nKeys;
 import one.modality.event.frontoffice.activities.book.event.BookEventActivity;
@@ -49,7 +48,9 @@ final class StepCThankYouSlide extends StepSlide {
         bookingNumberLink.setWrapText(true);
         bookingNumberLink.setTextAlignment(TextAlignment.CENTER);
         bookingNumberLink.setOnAction(e ->
-            new OrdersRouting.RouteToOrdersRequest(workingBookingProperties.getWorkingBooking().getDocument(), getBookEventActivity().getHistory()).execute()
+            // Commented as this introduces a circular dependency with modality-crm-frontoffice-orders-plugin
+            //new OrdersRouting.RouteToOrdersRequest(getWorkingBooking().getDocument(), getBookEventActivity().getHistory()).execute()
+            getBookEventActivity().getHistory().push("/orders/" + getWorkingBooking().getDocument().getPrimaryKey())
         );
 
         mainVbox.getChildren().setAll(
