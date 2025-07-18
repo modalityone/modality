@@ -247,7 +247,7 @@ public final class BookingSummaryView {
                 OperationUtil.turnOnButtonsWaitModeDuringExecution(
                     updateStore.submitChanges()
                         .onFailure(Console::log)
-                        .onComplete(c -> contactUsWindow.displaySuccessMessage(8000, messageWindowCallback::closeDialog)),
+                        .onComplete(c -> contactUsWindow.displaySuccessMessage(5000, messageWindowCallback::closeDialog)),
                     contactUsWindow.getSendButton(), contactUsWindow.getCancelButton());
 
             });

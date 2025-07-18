@@ -43,7 +43,7 @@ public interface OrdersI18nKeys {
     Object MakePayment = "MakePayment";
     Object OrdersTitle = "OrdersTitle";
     Object TempleProjectLink = "TempleProjectLink";
-    Object RequestRefund = "RequestRefund";
     Object RemainingAmountForRefund = "RemainingAmountForRefund";
+    Object RequestRefund = "RequestRefund";
 
 }
