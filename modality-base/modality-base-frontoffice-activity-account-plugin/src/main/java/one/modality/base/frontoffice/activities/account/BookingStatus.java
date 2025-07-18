@@ -1,5 +1,6 @@
 package one.modality.base.frontoffice.activities.account;
 
+import dev.webfx.platform.console.Console;
 import one.modality.base.shared.entities.Document;
 
 /**
@@ -33,13 +34,22 @@ public enum BookingStatus {
 
     public static BookingStatus ofBooking(Document booking) {
         Integer priceDeposit = booking.getPriceDeposit();
-        if (priceDeposit < booking.getPriceMinDeposit())
+        Integer priceMinDeposit = booking.getPriceMinDeposit();
+        Boolean cancelled = booking.isCancelled();
+        Boolean confirmed = booking.isConfirmed();
+        Boolean arrived = booking.isArrived();
+        Integer priceNet = booking.getPriceNet();
+        if (priceNet == null || priceDeposit == null || priceMinDeposit == null || cancelled == null || confirmed == null || arrived == null) {
+            Console.log("⚠️ Booking status cannot be computed (so returning INCOMPLETE) because some required fields are null: " + booking);
             return BookingStatus.INCOMPLETE;
-        if (booking.isCancelled())
+        }
+        if (priceDeposit < priceMinDeposit)
+            return BookingStatus.INCOMPLETE;
+        if (cancelled)
             return BookingStatus.CANCELLED;
-        if (!booking.isConfirmed() && !booking.isArrived())
+        if (!confirmed && !arrived)
             return BookingStatus.IN_PROGRESS;
-        if (priceDeposit >= booking.getPriceNet())
+        if (priceDeposit >= priceNet)
             return BookingStatus.COMPLETE;
         return BookingStatus.CONFIRMED;
     }
