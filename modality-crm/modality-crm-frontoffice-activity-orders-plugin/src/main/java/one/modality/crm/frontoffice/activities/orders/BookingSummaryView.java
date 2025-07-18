@@ -539,7 +539,6 @@ public final class BookingSummaryView {
 
 
     private Future<?> loadFromDatabase() {
-        bookedOptions.clear();
         orderDetailsLoaded = true;
         return entityStore.executeQueryBatch(
                 new EntityStoreQuery("select " + BookingSummaryView.DOCUMENT_LINE_REQUIRED_FIELDS + " from DocumentLine dl " +
@@ -549,9 +548,8 @@ public final class BookingSummaryView {
                     " where d.id = ?", new Object[]{bookingProperty.get().getId()}))
             .onFailure(Console::log)
             .onSuccess(entityLists -> Platform.runLater(() -> {
-                bookedOptions.addAll(entityLists[0]);
-                this.bookingProperty.set(null);
-                this.bookingProperty.set((Document) entityLists[1].get(0));
+                bookedOptions.setAll(entityLists[0]);
+                bookingProperty.set((Document) entityLists[1].get(0));
             }));
     }
 
