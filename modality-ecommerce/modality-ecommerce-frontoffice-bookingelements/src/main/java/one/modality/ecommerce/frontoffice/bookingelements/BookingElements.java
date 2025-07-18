@@ -10,6 +10,7 @@ import dev.webfx.kit.util.properties.FXProperties;
 import dev.webfx.stack.orm.datasourcemodel.service.DataSourceModelService;
 import dev.webfx.stack.orm.domainmodel.DataSourceModel;
 import dev.webfx.stack.orm.dql.DqlStatement;
+import dev.webfx.stack.orm.entity.EntityStore;
 import dev.webfx.stack.orm.entity.controls.entity.selector.EntityButtonSelector;
 import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.StringProperty;
@@ -160,7 +161,7 @@ public final class BookingElements {
 
     private static Button createPersonToBookButton(boolean embedPersonToBookText, ButtonFactoryMixin buttonFactory, DataSourceModel dataSourceModel) {
         EntityButtonSelector<Person> personSelector = new EntityButtonSelector<Person>(
-            "{class: 'Person', alias: 'p', columns: [{expression: `[firstName,lastName]`}], fields: 'email,phone,postCode,cityName,country,organization', orderBy: 'id'}",
+            "{class: 'Person', alias: 'p', columns: [{expression: '[firstName,lastName]'}], fields: 'email,phone,postCode,cityName,country,organization', orderBy: 'id'}",
             buttonFactory, FXMainFrameDialogArea::getDialogArea, dataSourceModel
         ) { // Overriding the button content to add the "Teacher" prefix text
             @Override
@@ -170,7 +171,14 @@ public final class BookingElements {
                     buttonContent = new HBox(20, TextUtility.createText(CrmI18nKeys.PersonToBook + ":", Color.GRAY), buttonContent);
                 return buttonContent;
             }
-        }.ifNotNullOtherwiseEmpty(FXModalityUserPrincipal.modalityUserPrincipalProperty(), mup -> DqlStatement.where("frontendAccount=?", mup.getUserAccountId()));
+        }
+            .ifNotNullOtherwiseEmpty(FXModalityUserPrincipal.modalityUserPrincipalProperty(), mup -> DqlStatement.where("frontendAccount=?", mup.getUserAccountId()))
+            .appendNullEntity(false);
+        // Creating a virtual teacher named "All" that will be used to select all teachers
+        EntityStore store = personSelector.getStore();
+        Person anotherPerson = store.createEntity(Person.class);
+        anotherPerson.setFirstName("Someone else"); // TODO make this i18n
+        personSelector.setVisualNullEntity(anotherPerson);
         personSelector.selectedItemProperty().bindBidirectional(FXPersonToBook.personToBookProperty());
         Button personButton = Bootstrap.largeButton(personSelector.getButton());
         personButton.setMinWidth(300);
