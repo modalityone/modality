@@ -134,28 +134,6 @@ public final class BookEventActivity extends ViewDomainActivityBase implements B
     }
 
     void loadPolicyAndBooking() {
-        // TODO: if eventId doesn't exist in the database, FXEvent.getEvent() stays null and nothing happens (stuck on loading page)
-        Event event = FXEvent.getEvent(); // might be null on the first call (ex: on page reload)
-        if (event != null) { // happens when routed through /book-event/:eventId
-            lettersSlideController.onEventChanged(event);
-
-            Person personToBook = FXPersonToBook.getPersonToBook();
-            Object userPersonPrimaryKey = Entities.getPrimaryKey(personToBook);
-            FXPersonToBook.setAutomaticallyFollowUserPerson(userPersonPrimaryKey == null);
-            if (userPersonPrimaryKey == null && lettersSlideController.autoLoadExistingBooking()) {
-                // Note: It's better to use FXUserPersonId rather than FXUserPerson in case of a page reload in the browser
-                // (or redirection to this page from a website) because the retrieval of FXUserPersonId is immediate in case
-                // the user was already logged in (memorized in session), while FXUserPerson requires a DB reading, which
-                // may not be finished yet at this time.
-                userPersonPrimaryKey = FXUserPersonId.getUserPersonPrimaryKey();
-            }
-            DocumentService.loadPolicyAndDocument(event, userPersonPrimaryKey)
-                .onFailure(Console::log)
-                .onSuccess(policyAndDocumentAggregates -> {
-                    if (event == FXEvent.getEvent()) // Double-checking that no other changes occurred in the meantime
-                        onPolityAndDocumentAggregatesLoaded(policyAndDocumentAggregates);
-                });
-        }
         Object modifyBookingDocumentId = getModifyBookingDocumentId();
         if (modifyBookingDocumentId != null) {
             // Note: this call doesn't automatically rebuild PolicyAggregate entities
@@ -166,6 +144,29 @@ public final class BookEventActivity extends ViewDomainActivityBase implements B
                         onPolityAndDocumentAggregatesLoaded(policyAndDocumentAggregates);
                     }
                 });
+        } else {
+            // TODO: if eventId doesn't exist in the database, FXEvent.getEvent() stays null and nothing happens (stuck on loading page)
+            Event event = FXEvent.getEvent(); // might be null on the first call (ex: on page reload)
+            if (event != null) { // happens when routed through /book-event/:eventId
+                lettersSlideController.onEventChanged(event);
+
+                Person personToBook = FXPersonToBook.getPersonToBook();
+                Object userPersonPrimaryKey = Entities.getPrimaryKey(personToBook);
+                FXPersonToBook.setAutomaticallyFollowUserPerson(userPersonPrimaryKey == null);
+                if (userPersonPrimaryKey == null && lettersSlideController.autoLoadExistingBooking()) {
+                    // Note: It's better to use FXUserPersonId rather than FXUserPerson in case of a page reload in the browser
+                    // (or redirection to this page from a website) because the retrieval of FXUserPersonId is immediate in case
+                    // the user was already logged in (memorized in session), while FXUserPerson requires a DB reading, which
+                    // may not be finished yet at this time.
+                    userPersonPrimaryKey = FXUserPersonId.getUserPersonPrimaryKey();
+                }
+                DocumentService.loadPolicyAndDocument(event, userPersonPrimaryKey)
+                    .onFailure(Console::log)
+                    .onSuccess(policyAndDocumentAggregates -> {
+                        if (event == FXEvent.getEvent()) // Double-checking that no other changes occurred in the meantime
+                            onPolityAndDocumentAggregatesLoaded(policyAndDocumentAggregates);
+                    });
+            }
         }
     }
 
@@ -186,6 +187,8 @@ public final class BookEventActivity extends ViewDomainActivityBase implements B
                     event = FXEvent.getEvent();
                 }
                 policyAggregate.rebuildEntities(event);
+                // Ensuring the appropriate booking form for that event is set (required before calling onWorkingBookingLoaded())
+                lettersSlideController.onEventChanged(event);
             }
             WorkingBooking workingBooking = new WorkingBooking(policyAggregate, existingBooking);
             workingBookingProperties.setWorkingBooking(workingBooking);

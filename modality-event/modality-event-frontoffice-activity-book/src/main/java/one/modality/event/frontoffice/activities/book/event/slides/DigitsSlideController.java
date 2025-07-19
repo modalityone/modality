@@ -6,11 +6,11 @@ import dev.webfx.platform.uischeduler.UiScheduler;
 import dev.webfx.platform.util.collection.Collections;
 import javafx.scene.layout.Region;
 import one.modality.base.shared.entities.Event;
+import one.modality.ecommerce.frontoffice.bookingform.BookingForm;
+import one.modality.ecommerce.frontoffice.bookingform.BookingFormProvider;
 import one.modality.ecommerce.payment.CancelPaymentResult;
 import one.modality.ecommerce.payment.client.WebPaymentForm;
 import one.modality.event.frontoffice.activities.book.event.BookEventActivity;
-import one.modality.ecommerce.frontoffice.bookingform.BookingForm;
-import one.modality.ecommerce.frontoffice.bookingform.BookingFormProvider;
 
 import java.util.List;
 import java.util.ServiceLoader;
