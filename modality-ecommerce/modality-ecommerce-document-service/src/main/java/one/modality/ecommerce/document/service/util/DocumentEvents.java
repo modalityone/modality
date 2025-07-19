@@ -2,6 +2,7 @@ package one.modality.ecommerce.document.service.util;
 
 import dev.webfx.platform.util.Arrays;
 import dev.webfx.platform.util.collection.Collections;
+import dev.webfx.stack.orm.entity.Entities;
 import one.modality.base.shared.entities.Attendance;
 import one.modality.base.shared.entities.DocumentLine;
 import one.modality.ecommerce.document.service.events.AbstractAttendancesEvent;
@@ -31,11 +32,17 @@ public final class DocumentEvents {
     }
 
     private static AbstractDocumentEvent simplifyDocumentEvent(AbstractDocumentEvent e, List<AbstractDocumentEvent> documentEvents) {
-        if (e instanceof RemoveDocumentLineEvent) {
-            return simplifyRemoveDocumentLineEvent((RemoveDocumentLineEvent) e, documentEvents);
+        if (e instanceof AddDocumentLineEvent adle) {
+            return simplifyAddDocumentLineEvent(adle, documentEvents);
         }
-        if (e instanceof RemoveAttendancesEvent) {
-            return simplifyRemoveAttendancesEvent((RemoveAttendancesEvent) e, documentEvents);
+        if (e instanceof RemoveDocumentLineEvent rdle) {
+            return simplifyRemoveDocumentLineEvent(rdle, documentEvents);
+        }
+        if (e instanceof AddAttendancesEvent aae) {
+            return simplifyAddAttendancesEvent(aae, documentEvents);
+        }
+        if (e instanceof RemoveAttendancesEvent rae) {
+            return simplifyRemoveAttendancesEvent(rae, documentEvents);
         }
         if (e instanceof ApplyFacilityFeeDocumentEvent) {
             return simplifyApplyFacilityFeeDocumentEvent((ApplyFacilityFeeDocumentEvent) e, documentEvents);
@@ -43,12 +50,25 @@ public final class DocumentEvents {
         return e;
     }
 
+    private static AbstractDocumentEvent simplifyAddDocumentLineEvent(AddDocumentLineEvent adle, List<AbstractDocumentEvent> documentEvents) {
+        DocumentLine documentLine = adle.getDocumentLine();
+        // If this line was previously removed, we can just cancel that removal instead of adding the document line again
+        for (Iterator<AbstractDocumentEvent> it = documentEvents.iterator(); it.hasNext(); ) {
+            AbstractDocumentEvent e = it.next();
+            if (e instanceof RemoveDocumentLineEvent rdle && sameDocumentLine(rdle.getDocumentLine(), documentLine)) {
+                it.remove();
+                adle = null;
+            }
+        }
+        return adle;
+    }
+
     private static AbstractDocumentEvent simplifyRemoveDocumentLineEvent(RemoveDocumentLineEvent rdle, List<AbstractDocumentEvent> documentEvents) {
         DocumentLine documentLine = rdle.getDocumentLine();
         // Since we remove this document line, we can simplify the changes by removing all those related to that document line
         for (Iterator<AbstractDocumentEvent> it = documentEvents.iterator(); it.hasNext(); ) {
             AbstractDocumentEvent e = it.next();
-            if (e instanceof AbstractDocumentLineEvent adle && adle.getDocumentLine() == documentLine) {
+            if (e instanceof AbstractDocumentLineEvent adle && sameDocumentLine(adle.getDocumentLine(), documentLine)) {
                 it.remove();
                 // In addition, if we found that this document line was added within these changes, we return null
                 // to indicate that it's even not necessary to add this event to the present changes
@@ -60,47 +80,70 @@ public final class DocumentEvents {
         return rdle;
     }
 
+    private static AbstractDocumentEvent simplifyAddAttendancesEvent(AddAttendancesEvent aae, List<AbstractDocumentEvent> documentEvents) {
+        return simplifyAttendancesEvent(aae, documentEvents);
+    }
+
     private static AbstractDocumentEvent simplifyRemoveAttendancesEvent(RemoveAttendancesEvent rae, List<AbstractDocumentEvent> documentEvents) {
-        Attendance[] removedAttendances = rae.getAttendances();
-        Attendance[] reducedRemovedAttendances = removedAttendances;
-        // Since we remove these attendances, we can simplify the changes by removing them from other attendances events
-        for (int i = 0; i < documentEvents.size(); i++) {
+        return simplifyAttendancesEvent(rae, documentEvents);
+    }
+
+    private static AbstractDocumentEvent simplifyAttendancesEvent(AbstractAttendancesEvent ae, List<AbstractDocumentEvent> documentEvents) {
+        Attendance[] initialAttendances = ae.getAttendances(); // removed or added attendances
+        Attendance[] reducedAttendances = initialAttendances; // reduced
+        DocumentLine documentLine = ae.getDocumentLine();
+        // Since this event may undo previous events, we simplify by removing the undone events (partially or totally)
+        for (int i = 0; i < documentEvents.size() && reducedAttendances.length > 0; i++) {
             AbstractDocumentEvent e = documentEvents.get(i);
-            if (e instanceof AbstractAttendancesEvent aae) { // AddAttendancesEvent or RemoveAttendancesEvent
+            // Only attendance events operating on the same document line can be simplified
+            if (e instanceof AbstractAttendancesEvent aae && sameDocumentLine(aae.getDocumentLine(), documentLine)) { // AddAttendancesEvent or RemoveAttendancesEvent
                 Attendance[] eventAttendances = aae.getAttendances();
-                // Looking for the remaining attendances for this event (those not covered by removedAttendances)
-                Attendance[] remainingAttendances = Arrays.filter(eventAttendances, a -> !Arrays.contains(removedAttendances, a), Attendance[]::new);
-                if (remainingAttendances.length == 0) { // If all attendances disappeared, we can simply remove this event
-                    documentEvents.remove(i--);
-                } else if (remainingAttendances.length < eventAttendances.length) { // if some disappeared but not all,
-                    // we replace this event with the same event but covering only the remaining attendances
-                    if (aae instanceof AddAttendancesEvent) {
-                        aae = new AddAttendancesEvent(remainingAttendances);
-                    } else if (aae instanceof RemoveAttendancesEvent) {
-                        aae = new RemoveAttendancesEvent(remainingAttendances);
+                // If the existing event is not of the same class, it is exclusive with the new event,
+                if (ae.getClass() != aae.getClass()) { // ex: RemoveAttendance and AddAttendance
+                    // In that case we can remove the overlapping period, i.e., keep only the attendances that are not
+                    // overlapping initialAttendances
+                    Attendance[] remainingAttendances = excludeAttendances(eventAttendances, initialAttendances);
+                    if (remainingAttendances.length == 0) { // If all attendances disappeared,
+                        documentEvents.remove(i--); // we can simply remove this event
+                    } else if (remainingAttendances.length < eventAttendances.length) { // if some disappeared but not all,
+                        // we replace this event with the same event but covering only the remaining attendances
+                        documentEvents.set(i, cloneWithNewAttendances(aae, remainingAttendances));
                     }
-                    documentEvents.set(i, aae);
                 }
-                // In both cases, if the event was AddAttendancesEvent, because we removed some attendances from the start
-                // at this point, there is no need anymore to keep them anymore in RemoveAttendancesEvent
-                if (remainingAttendances.length < eventAttendances.length && aae instanceof AddAttendancesEvent) {
-                    reducedRemovedAttendances = Arrays.filter(reducedRemovedAttendances, a -> !Arrays.contains(eventAttendances, a), Attendance[]::new);
-                }
+                // In the same way, the new event can be reduced, and we can remove the overlapping period too.
+                // This is true for both exclusive events and joining events (no need to repeat the same attendance
+                // in the later case).
+                reducedAttendances = excludeAttendances(reducedAttendances, eventAttendances);
+                // TODO: if there are still attendances on both joining events, we should merge them into 1 single event
             }
         }
-        // We remove the associated document line if there are no attendances anymore to it
-        DocumentLine documentLine = rae.getDocumentLine();
-        if (Collections.findFirst(documentEvents, e -> e instanceof AddAttendancesEvent aae && aae.getDocumentLine() == documentLine) == null)
-            integrateNewDocumentEvent(new RemoveDocumentLineEvent(documentLine), documentEvents); // Note that we don't integrate this RemoveDocumentLineEvent
+        if (ae instanceof RemoveAttendancesEvent) {
+            // We also remove the associated document line if there are no attendances anymore to it
+            if (Collections.findFirst(documentEvents, e -> e instanceof AddAttendancesEvent aae && aae.getDocumentLine() == documentLine) == null)
+                integrateNewDocumentEvent(new RemoveDocumentLineEvent(documentLine), documentEvents); // Note that we don't integrate this RemoveDocumentLineEvent
+        }
         // If at the end of this simplification, there is no more attendances to keep in RemoveAttendancesEvent
-        if (reducedRemovedAttendances.length == 0) {
+        if (reducedAttendances.length == 0) {
             return null; // we return null to indicate that it's not necessary anymore to add it in the document changes
         }
         // If some were removed but not all, we simplify this event with only the necessary attendances
-        if (reducedRemovedAttendances != removedAttendances) {
-            rae = new RemoveAttendancesEvent(reducedRemovedAttendances);
+        if (reducedAttendances.length < initialAttendances.length) {
+            ae = cloneWithNewAttendances(ae, reducedAttendances);
         }
-        return rae;
+        return ae;
+    }
+
+    private static Attendance[] excludeAttendances(Attendance[] attendances, Attendance[] toExclude) {
+        return Arrays.filter(attendances, a -> Arrays.findFirst(toExclude, ea -> Entities.samePrimaryKey(ea.getScheduledItem(), a.getScheduledItem())) == null, Attendance[]::new);
+    }
+
+    private static AbstractAttendancesEvent cloneWithNewAttendances(AbstractAttendancesEvent ae, Attendance[] attendances) {
+        if (ae instanceof AddAttendancesEvent)
+            return new AddAttendancesEvent(attendances);
+        else if (ae instanceof RemoveAttendancesEvent)
+            return new RemoveAttendancesEvent(attendances);
+        else
+            throw new IllegalArgumentException("Unknown AttendancesEvent type: " + ae);
     }
 
     private static AbstractDocumentEvent simplifyApplyFacilityFeeDocumentEvent(ApplyFacilityFeeDocumentEvent affde, List<AbstractDocumentEvent> documentEvents) {
@@ -112,6 +155,12 @@ public final class DocumentEvents {
         // second event applyFacilityFee = false as it finally doesn't change the initial document). However, we can't
         // do that simplification because we don't have access to the initial document here. TODO: improve this.
         return affde;
+    }
+
+    private static boolean sameDocumentLine(DocumentLine line1, DocumentLine line2) {
+        if (Entities.samePrimaryKey(line1, line2))
+            return true;
+        return Entities.samePrimaryKey(line1.getSite(), line2.getSite()) && Entities.samePrimaryKey(line1.getItem(), line2.getItem());
     }
 
 }
