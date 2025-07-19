@@ -1,10 +1,14 @@
 package one.modality.ecommerce.client.workingbooking;
 
+import dev.webfx.kit.util.properties.FXProperties;
+import dev.webfx.kit.util.properties.ObservableLists;
 import dev.webfx.platform.async.Future;
 import dev.webfx.platform.util.Arrays;
 import dev.webfx.platform.util.collection.Collections;
 import dev.webfx.stack.orm.entity.Entities;
 import dev.webfx.stack.orm.entity.EntityStore;
+import javafx.beans.binding.BooleanBinding;
+import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import one.modality.base.shared.entities.*;
@@ -28,6 +32,10 @@ public final class WorkingBooking {
     private final PolicyAggregate policyAggregate;
     private DocumentAggregate initialDocumentAggregate; // null for new bookings
     private final ObservableList<AbstractDocumentEvent> documentChanges = FXCollections.observableArrayList();
+    // Making notEmptyBinding a class field to prevent GC in OpenJFX
+    private final BooleanBinding notEmptyBinding = ObservableLists.isNotEmpty(documentChanges);
+    // Note: hasChangesProperty is deferred so that it is always triggered after the changes (when there are several)
+    private final ObservableValue<Boolean> hasChangesProperty = FXProperties.deferredProperty(notEmptyBinding);
     private Object documentPrimaryKey; // null for new booking
     private Document document;
     private DocumentAggregate lastestDocumentAggregate;
@@ -75,7 +83,7 @@ public final class WorkingBooking {
     public void bookScheduledItems(List<ScheduledItem> scheduledItems, boolean addOnly) {
         if (scheduledItems.isEmpty())
             return;
-        // First draft version assuming all scheduled items are referring to the same site and items
+        // A first draft version assuming all scheduled items are referring to the same site and items
         ScheduledItem scheduledItemSample = scheduledItems.get(0);
         Site site = scheduledItemSample.getSite();
         Item item = scheduledItemSample.getItem();
@@ -124,7 +132,7 @@ public final class WorkingBooking {
     public boolean areScheduledItemsBooked(List<ScheduledItem> scheduledItems) {
         if (scheduledItems.isEmpty())
             return false;
-        // First draft version assuming all scheduled items are referring to the same site and items
+        // A first draft version assuming all scheduled items are referring to the same site and items
         ScheduledItem scheduledItemSample = scheduledItems.get(0);
         Site site = scheduledItemSample.getSite();
         Item item = scheduledItemSample.getItem();
@@ -157,14 +165,6 @@ public final class WorkingBooking {
         lastestDocumentAggregate = null;
     }
 
-    public void applyFacilityFeeRate() {
-        applyFacilityFeeRate(true);
-    }
-
-    public void removeFacilityFeeRate() {
-        applyFacilityFeeRate(false);
-    }
-
     public void applyFacilityFeeRate(boolean apply) {
         integrateNewDocumentEvent(new ApplyFacilityFeeDocumentEvent(document, apply), true);
     }
@@ -181,6 +181,10 @@ public final class WorkingBooking {
 
     public boolean hasChanges() {
         return !hasNoChanges();
+    }
+
+    public ObservableValue<Boolean> hasChangesProperty() {
+        return hasChangesProperty;
     }
 
     public boolean hasDocumentLineChanges() {
@@ -313,6 +317,8 @@ public final class WorkingBooking {
         PriceCalculator priceCalculator = new PriceCalculator(workingBooking.getLastestDocumentAggregate());
         return priceCalculator.calculateNoLongStayDiscountTotalPrice();
     }
+
+    // Static factory method
 
     public static WorkingBooking createWholeEventWorkingBooking(PolicyAggregate policyAggregate) {
         WorkingBooking workingBooking = new WorkingBooking(policyAggregate, null);

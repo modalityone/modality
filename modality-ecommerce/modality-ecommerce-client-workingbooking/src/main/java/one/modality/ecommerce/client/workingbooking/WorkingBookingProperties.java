@@ -6,6 +6,7 @@ import dev.webfx.platform.uischeduler.UiScheduler;
 import javafx.beans.binding.Bindings;
 import javafx.beans.binding.BooleanBinding;
 import javafx.beans.property.*;
+import javafx.beans.value.ObservableBooleanValue;
 import one.modality.base.shared.entities.Event;
 import one.modality.base.shared.entities.ScheduledItem;
 import one.modality.base.shared.entities.formatters.EventPriceFormatter;
@@ -25,6 +26,16 @@ public final class WorkingBookingProperties {
     private WorkingBooking workingBooking;
     private PriceCalculator previousBookingPriceCalculator;
     private PriceCalculator latestBookingPriceCalculator;
+
+    private final BooleanProperty hasChangesProperty = new SimpleBooleanProperty();
+
+    public ObservableBooleanValue hasChangesProperty() {
+        return hasChangesProperty;
+    }
+
+    public boolean hasChanges() {
+        return hasChangesProperty.get();
+    }
 
     private Scheduled updateAllScheduled;
 
@@ -105,6 +116,7 @@ public final class WorkingBookingProperties {
         }
         updateAll(); // Updated all price properties
         setVersionNumber(0);
+        hasChangesProperty.bind(workingBooking.hasChangesProperty());
         // And listening to further changes to automatically keep these properties updated
         ObservableLists.runOnListChange(c -> {
             if (updateAllScheduled == null) {
@@ -147,7 +159,7 @@ public final class WorkingBookingProperties {
     }
 
 
-    public void updateAll() {
+    private void updateAll() {
         updateDeposit();
         updateTotal();
         updateMinDeposit();
