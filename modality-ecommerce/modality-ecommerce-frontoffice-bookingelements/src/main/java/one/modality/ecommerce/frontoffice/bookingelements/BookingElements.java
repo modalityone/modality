@@ -177,7 +177,9 @@ public final class BookingElements {
             }
         }
             .ifNotNullOtherwiseEmpty(FXModalityUserPrincipal.modalityUserPrincipalProperty(), mup -> DqlStatement.where("frontendAccount=?", mup.getUserAccountId()))
-            .appendNullEntity(false);
+            .appendNullEntity(false)
+            .setSearchCondition(null) // Temporarily disabling search because it doesn't work TODO fix this
+            ;
         // Creating a virtual teacher named "All" that will be used to select all teachers
         EntityStore store = personSelector.getStore();
         Person anotherPerson = store.createEntity(Person.class);
