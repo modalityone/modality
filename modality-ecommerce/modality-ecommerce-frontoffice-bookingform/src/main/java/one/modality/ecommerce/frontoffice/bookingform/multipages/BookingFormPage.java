@@ -4,6 +4,7 @@ import dev.webfx.extras.panes.MonoPane;
 import javafx.beans.property.SimpleBooleanProperty;
 import javafx.beans.value.ObservableBooleanValue;
 import javafx.scene.Node;
+import one.modality.ecommerce.client.workingbooking.WorkingBooking;
 import one.modality.ecommerce.client.workingbooking.WorkingBookingProperties;
 
 /**
@@ -21,6 +22,10 @@ public interface BookingFormPage {
 
     default boolean isShowingOwnSubmitButton() {
         return false;
+    }
+
+    default boolean isApplicableToBooking(WorkingBooking workingBooking) {
+        return true;
     }
 
     void setWorkingBookingProperties(WorkingBookingProperties workingBookingProperties);

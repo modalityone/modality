@@ -61,8 +61,13 @@ public abstract class MultiPageBookingForm extends BookingFormBase {
 
                 @Override
                 protected boolean computeValue() {
-                    //!valid || personToBookRequired && personToBook == null || showDefaultSubmitButton || pageShowingOwnSubmitButton
-                    return !validProperty.get() || personToBookRequiredProperty.get() && FXPersonToBook.getPersonToBook() == null || showDefaultSubmitButtonProperty.get() || pageShowingOwnSubmitButtonProperty.get();
+                    // We disable the "next" button in the following cases:
+                    // When the displayed page is not valid
+                    return !validProperty.get()
+                           // When it is required to specify the person to book, and it's still not set on the booking nor on the person to book button
+                           || personToBookRequiredProperty.get() && getWorkingBooking().getDocument().getPerson() == null && FXPersonToBook.getPersonToBook() == null
+                           // When the page shows a submitButton (either the default one or its own)
+                           || showDefaultSubmitButtonProperty.get() || pageShowingOwnSubmitButtonProperty.get();
                 }
             });
         }
@@ -85,7 +90,7 @@ public abstract class MultiPageBookingForm extends BookingFormBase {
     @Override
     public void onWorkingBookingLoaded() {
         if (displayedPageIndex == -1) {
-            navigateToPage(0);
+            navigateToNextPage();
         }
     }
 
@@ -95,33 +100,46 @@ public abstract class MultiPageBookingForm extends BookingFormBase {
     }
 
     public void navigateToPreviousPage() {
-        if (displayedPageIndex > 0)
-            navigateToPage(displayedPageIndex - 1);
+        navigateToPage(false);
     }
 
     public void navigateToNextPage() {
+        navigateToPage(true);
+    }
+
+    private void navigateToPage(boolean forward) {
+        int applicablePageIndex = findApplicablePageIndex(forward);
+        if (applicablePageIndex >= 0)
+            navigateToPage(applicablePageIndex);
+    }
+
+    private int findApplicablePageIndex(boolean forward) {
+        // Not during transitions because 1) Transition is buggy in this case 2) this prevents accidental multiple clicks
+        if (transitionPane.isTransiting())
+            return -1;
         BookingFormPage[] pages = getPages();
-        if (displayedPageIndex < 0)
-            navigateToPage(0);
-        else {
-            BookingFormPage bookingFormPage = pages[displayedPageIndex];
-            if (bookingFormPage.isValid() && displayedPageIndex < pages.length - 1)
-                navigateToPage(displayedPageIndex + 1);
+        if (forward && displayedPageIndex >= 0 && !pages[displayedPageIndex].isValid())
+            return -1;
+        int increment = forward ? 1 : -1;
+        for (int index = displayedPageIndex + increment; index >= 0 && index < pages.length; index += increment) {
+            BookingFormPage candidatPage = pages[index];
+            if (candidatPage.isApplicableToBooking(getWorkingBooking()))
+                return index;
         }
+        return -1;
     }
 
     private void navigateToPage(int index) {
         // Not during transitions because 1) Transition is buggy in this case 2) this prevents accidental multiple clicks
         if (transitionPane.isTransiting())
             return;
+        boolean isBackwards = index < displayedPageIndex;
         BookingFormPage[] pages = getPages();
         displayedPage = pages[index];
+        displayedPageIndex = index;
         pageShowingOwnSubmitButtonProperty.set(displayedPage.isShowingOwnSubmitButton());
         displayedPage.setWorkingBookingProperties(workingBookingProperties);
         validProperty.bind(displayedPage.validProperty());
-        transitionPane.setReverse(index < displayedPageIndex);
-        transitionPane.transitToContent(displayedPage.getView());
-        displayedPageIndex = index;
         if (bookingFormPageValidListener != null)
             bookingFormPageValidListener.unregister();
         bookingFormPageValidListener = FXProperties.runNowAndOnPropertyChange(valid -> {
@@ -140,6 +158,8 @@ public abstract class MultiPageBookingForm extends BookingFormBase {
         updateNavigationBar();
         updatePersonToBookRequired();
         updateShowDefaultSubmitButton();
+        transitionPane.setReverse(isBackwards);
+        transitionPane.transitToContent(displayedPage.getView());
     }
 
     private boolean isLastPage() {
@@ -149,7 +169,7 @@ public abstract class MultiPageBookingForm extends BookingFormBase {
     protected void updateNavigationBar() {
         if (navigationBar != null) {
             navigationBar.setTitleI18nKey(displayedPage.getTitleI18nKey());
-            navigationBar.getBackButton().setDisable(displayedPageIndex == 0);
+            navigationBar.getBackButton().setDisable(findApplicablePageIndex(false) == -1);
         }
     }
 
