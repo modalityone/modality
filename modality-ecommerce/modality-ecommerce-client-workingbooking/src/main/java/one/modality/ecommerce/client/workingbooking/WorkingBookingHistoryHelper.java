@@ -1,48 +1,43 @@
 package one.modality.ecommerce.client.workingbooking;
 
-import dev.webfx.platform.util.time.Times;
+import dev.webfx.platform.util.collection.Collections;
+import one.modality.base.client.time.ModalityDates;
 import one.modality.base.shared.entities.Attendance;
 
+import java.time.LocalDate;
 import java.util.List;
+import java.util.stream.Collectors;
 
 /**
+ * @author David Hello
  * @author Bruno Salmon
  */
 public final class WorkingBookingHistoryHelper {
 
-    private final List<Attendance> attendanceAdded;
-    private final List<Attendance> attendanceRemoved;
-    private final StringBuilder history = new StringBuilder();
+    private final WorkingBooking workingBooking;
 
-    public WorkingBookingHistoryHelper(List<Attendance> attendanceAdded, List<Attendance> attendanceRemoved) {
-        this.attendanceAdded = attendanceAdded;
-        this.attendanceRemoved = attendanceRemoved;
+    public WorkingBookingHistoryHelper(WorkingBooking workingBooking) {
+        this.workingBooking = workingBooking;
     }
 
-    public String buildHistory() {
-        boolean first = true;
-        if (!attendanceAdded.isEmpty()) {
-            history.append("Booked ");
-            for (Attendance attendance : attendanceAdded) {
-                if (!first)
-                    history.append(", ");
-                // We get the date throw the scheduledItem associated to the attendance, because the
-                // attendance date is not loaded from the database if it comes from a previous booking
-                history.append(Times.format(attendance.getScheduledItem().getDate(), "dd/MM"));
-                first = false;
-            }
+    public String generateHistoryComment() {
+        StringBuilder sb = new StringBuilder();
+        appendHistoryCommentFromAttendances(workingBooking.getAttendancesAdded(true), true, sb);
+        appendHistoryCommentFromAttendances(workingBooking.getAttendancesRemoved(true), false, sb);
+        return sb.toString();
+    }
+
+    private void appendHistoryCommentFromAttendances(List<Attendance> attendances, boolean added, StringBuilder sb) {
+        if (!attendances.isEmpty()) {
+            if (sb.length() > 0) // GWT
+                sb.append("  ~  ");
+            sb.append(!added ? "Removed" : workingBooking.isNewBooking() ? "Booked" : "Added");
+            attendances.stream().collect(Collectors.groupingBy(a -> a.getScheduledItem().getItem()))
+                .forEach((item, itemAttendances) -> {
+                    List<LocalDate> dates = Collections.map(itemAttendances, a -> a.getScheduledItem().getDate());
+                    sb.append("  ⦿ ").append(item.getName()).append(" ").append(ModalityDates.formatDateSeries(dates));
+                });
         }
-        if (!attendanceRemoved.isEmpty()) {
-            history.append(first ? "Removed " : " & removed ");
-            first = true;
-            for (Attendance attendance : attendanceRemoved) {
-                if (!first)
-                    history.append(", ");
-                history.append(Times.format(attendance.getScheduledItem().getDate(), "dd/MM"));
-                first = false;
-            }
-        }
-        return history.toString();
     }
 
 }

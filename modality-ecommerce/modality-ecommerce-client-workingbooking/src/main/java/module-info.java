@@ -4,6 +4,7 @@ module modality.ecommerce.client.workingbooking {
 
     // Direct dependencies modules
     requires javafx.base;
+    requires modality.base.client.time;
     requires modality.base.shared.entities;
     requires modality.crm.client.authn.fx;
     requires modality.ecommerce.document.service;
@@ -13,7 +14,6 @@ module modality.ecommerce.client.workingbooking {
     requires webfx.platform.scheduler;
     requires webfx.platform.uischeduler;
     requires webfx.platform.util;
-    requires webfx.platform.util.time;
     requires webfx.stack.orm.entity;
 
     // Exported packages
