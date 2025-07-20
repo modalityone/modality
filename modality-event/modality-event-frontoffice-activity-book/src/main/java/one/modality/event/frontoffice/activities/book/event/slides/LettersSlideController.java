@@ -85,7 +85,8 @@ public final class LettersSlideController {
     private void displaySlideOnTransitionComplete(StepSlide slide, ReadOnlyBooleanProperty transitingProperty) {
         FXProperties.runOrUnregisterOnPropertyChange((thisListener, oldValue, newValue) -> {
             thisListener.unregister();
-            displaySlide(slide);
+            if (!newValue)
+                displaySlide(slide);
         }, transitingProperty);
     }
 
