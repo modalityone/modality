@@ -14,7 +14,6 @@ import dev.webfx.extras.util.dialog.DialogCallback;
 import dev.webfx.extras.util.dialog.DialogUtil;
 import dev.webfx.extras.util.layout.Layouts;
 import dev.webfx.extras.util.scene.SceneUtil;
-import dev.webfx.kit.util.properties.FXProperties;
 import dev.webfx.kit.util.properties.ObservableLists;
 import dev.webfx.platform.async.Future;
 import dev.webfx.platform.console.Console;
@@ -23,7 +22,6 @@ import dev.webfx.platform.windowhistory.WindowHistory;
 import dev.webfx.stack.orm.entity.Entities;
 import dev.webfx.stack.orm.entity.EntityStoreQuery;
 import dev.webfx.stack.orm.entity.UpdateStore;
-import javafx.beans.value.ObservableValue;
 import javafx.collections.ObservableList;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
@@ -87,17 +85,12 @@ public final class OrderCardView {
     // Public API
 
     // This constructor is called by OrdersView and will be part of a list (ex: upcoming orders or past orders)
-    public OrderCardView(Document orderDocument, ObservableValue<Object> selectedOrderIdProperty) {
+    public OrderCardView(Document orderDocument) {
         this.orderDocument = orderDocument;
         // Building the UI
         buildUi();
         // First update UI (later update will occur when orderDocumentLines are loaded)
         updateUi();
-        FXProperties.runNowAndOnPropertyChange(id -> {
-            if (Entities.samePrimaryKey(id, orderDocument)) {
-                loadAndExpandOrderDetails(true);
-            }
-        }, selectedOrderIdProperty);
     }
 
     /**
@@ -105,6 +98,17 @@ public final class OrderCardView {
      */
     public Node getView() {
         return containerPane;
+    }
+
+    public void autoScrollToExpandedDetailsIfOrderId(Object orderId) {
+        boolean autoScrollAndExpand = Entities.samePrimaryKey(orderId, orderDocument);
+        detailsCollapsePane.setAnimate(false);
+        if (autoScrollAndExpand) {
+            loadAndExpandOrderDetails(true);
+        } else {
+            detailsCollapsePane.collapse();
+            detailsCollapsePane.setAnimate(true);
+        }
     }
 
     // Private implementation
@@ -237,6 +241,7 @@ public final class OrderCardView {
                     // finished, and the height is stabilized for the CollapsePane animation
                     UiScheduler.scheduleInAnimationFrame(() -> {
                         detailsCollapsePane.expand();
+                        detailsCollapsePane.setAnimate(true); // autoScrollToExpandedDetailsIfOrderId() might have set it to false
                         if (autoscroll) {
                             Controls.setVerticalScrollNodeWishedPosition(containerPane, VPos.CENTER);
                             SceneUtil.scrollNodeToBeVerticallyVisibleOnScene(containerPane, false, true);

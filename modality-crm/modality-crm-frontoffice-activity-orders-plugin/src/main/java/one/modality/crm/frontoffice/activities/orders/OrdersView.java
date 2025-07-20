@@ -1,5 +1,6 @@
 package one.modality.crm.frontoffice.activities.orders;
 
+import dev.webfx.kit.util.properties.FXProperties;
 import dev.webfx.platform.util.collection.Collections;
 import javafx.beans.value.ObservableValue;
 import javafx.geometry.Insets;
@@ -18,10 +19,13 @@ final class OrdersView {
     private final VBox container = new VBox(50);
 
     OrdersView(List<Document> orders, ObservableValue<Object> selectedOrderIdProperty) {
+        List<OrderCardView> cards = Collections.map(orders, OrderCardView::new);
+        container.getChildren().setAll(Collections.map(cards, OrderCardView::getView));
         container.setPadding(new Insets(0,30,0,30));
-        container.getChildren().setAll(
-            Collections.map(orders, order -> new OrderCardView(order, selectedOrderIdProperty).getView())
-        );
+        FXProperties.runNowAndOnPropertyChange(orderId -> {
+            if (orderId != null)
+                cards.forEach(card -> card.autoScrollToExpandedDetailsIfOrderId(orderId));
+        }, selectedOrderIdProperty);
     }
 
     public Node getView() {
