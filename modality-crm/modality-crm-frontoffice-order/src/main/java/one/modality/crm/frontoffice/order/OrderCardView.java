@@ -148,12 +148,12 @@ public final class OrderCardView {
         Boolean cancelled = orderDocument.isCancelled();
         boolean isNotCancelled = cancelled != null && !cancelled;
         boolean isKBS3 = EventLifeCycle.isKbs3Event(event);
+        boolean notStarted = LocalDate.now().isBefore(event.getStartDate());
         boolean notEnded = LocalDate.now().isBefore(event.getEndDate().plusDays(30));
-        boolean visible = notEnded && isNotCancelled && isKBS3;
-        Layouts.setManagedAndVisibleProperties(modifyOrderButton, visible);
-        Layouts.setManagedAndVisibleProperties(makePaymentButton, remainingAmount > 0);
-        Layouts.setManagedAndVisibleProperties(askRefundButton, remainingAmount < 0);
-        Layouts.setManagedAndVisibleProperties(cancelOrderLabel, LocalDate.now().isBefore(event.getStartDate()) && !orderDocument.isCancelled());
+        Layouts.setManagedAndVisibleProperties(modifyOrderButton, isKBS3 && notEnded && isNotCancelled);
+        Layouts.setManagedAndVisibleProperties(makePaymentButton, isKBS3 && notEnded && remainingAmount > 0);
+        Layouts.setManagedAndVisibleProperties(askRefundButton, notEnded && remainingAmount < 0);
+        Layouts.setManagedAndVisibleProperties(cancelOrderLabel, isNotCancelled && notStarted);
     }
 
     private Node createOrderCard(Node orderDetails) {
