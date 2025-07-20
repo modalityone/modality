@@ -11,7 +11,7 @@
         <version>1.0.0-SNAPSHOT</version>
     </parent>
 
-    <artifactId>modality-crm-frontoffice-activity-orders-plugin</artifactId>
+    <artifactId>modality-crm-frontoffice-order</artifactId>
 
     <dependencies>
 
@@ -35,13 +35,25 @@
 
         <dependency>
             <groupId>one.modality</groupId>
-            <artifactId>modality-base-client-activity</artifactId>
+            <artifactId>modality-base-client-bootstrap</artifactId>
             <version>1.0.0-SNAPSHOT</version>
         </dependency>
 
         <dependency>
             <groupId>one.modality</groupId>
-            <artifactId>modality-base-client-util</artifactId>
+            <artifactId>modality-base-client-i18n</artifactId>
+            <version>1.0.0-SNAPSHOT</version>
+        </dependency>
+
+        <dependency>
+            <groupId>one.modality</groupId>
+            <artifactId>modality-base-client-icons</artifactId>
+            <version>1.0.0-SNAPSHOT</version>
+        </dependency>
+
+        <dependency>
+            <groupId>one.modality</groupId>
+            <artifactId>modality-base-client-mainframe-fx</artifactId>
             <version>1.0.0-SNAPSHOT</version>
         </dependency>
 
@@ -59,13 +71,31 @@
 
         <dependency>
             <groupId>one.modality</groupId>
-            <artifactId>modality-crm-client-authn-fx</artifactId>
+            <artifactId>modality-ecommerce-client-i18n</artifactId>
             <version>1.0.0-SNAPSHOT</version>
         </dependency>
 
         <dependency>
             <groupId>one.modality</groupId>
-            <artifactId>modality-crm-frontoffice-order</artifactId>
+            <artifactId>modality-ecommerce-client-workingbooking</artifactId>
+            <version>1.0.0-SNAPSHOT</version>
+        </dependency>
+
+        <dependency>
+            <groupId>one.modality</groupId>
+            <artifactId>modality-ecommerce-document-service</artifactId>
+            <version>1.0.0-SNAPSHOT</version>
+        </dependency>
+
+        <dependency>
+            <groupId>one.modality</groupId>
+            <artifactId>modality-ecommerce-shared-pricecalculator</artifactId>
+            <version>1.0.0-SNAPSHOT</version>
+        </dependency>
+
+        <dependency>
+            <groupId>one.modality</groupId>
+            <artifactId>modality-event-client-lifecycle</artifactId>
             <version>1.0.0-SNAPSHOT</version>
         </dependency>
 
@@ -89,13 +119,19 @@
 
         <dependency>
             <groupId>dev.webfx</groupId>
+            <artifactId>webfx-extras-panes</artifactId>
+            <version>0.1.0-SNAPSHOT</version>
+        </dependency>
+
+        <dependency>
+            <groupId>dev.webfx</groupId>
             <artifactId>webfx-extras-styles-bootstrap</artifactId>
             <version>0.1.0-SNAPSHOT</version>
         </dependency>
 
         <dependency>
             <groupId>dev.webfx</groupId>
-            <artifactId>webfx-extras-util-background</artifactId>
+            <artifactId>webfx-extras-time-format</artifactId>
             <version>0.1.0-SNAPSHOT</version>
         </dependency>
 
@@ -107,7 +143,37 @@
 
         <dependency>
             <groupId>dev.webfx</groupId>
+            <artifactId>webfx-extras-util-dialog</artifactId>
+            <version>0.1.0-SNAPSHOT</version>
+        </dependency>
+
+        <dependency>
+            <groupId>dev.webfx</groupId>
+            <artifactId>webfx-extras-util-layout</artifactId>
+            <version>0.1.0-SNAPSHOT</version>
+        </dependency>
+
+        <dependency>
+            <groupId>dev.webfx</groupId>
+            <artifactId>webfx-extras-util-scene</artifactId>
+            <version>0.1.0-SNAPSHOT</version>
+        </dependency>
+
+        <dependency>
+            <groupId>dev.webfx</groupId>
             <artifactId>webfx-kit-util</artifactId>
+            <version>0.1.0-SNAPSHOT</version>
+        </dependency>
+
+        <dependency>
+            <groupId>dev.webfx</groupId>
+            <artifactId>webfx-platform-async</artifactId>
+            <version>0.1.0-SNAPSHOT</version>
+        </dependency>
+
+        <dependency>
+            <groupId>dev.webfx</groupId>
+            <artifactId>webfx-platform-console</artifactId>
             <version>0.1.0-SNAPSHOT</version>
         </dependency>
 
@@ -117,6 +183,12 @@
             <version>0.1.0-SNAPSHOT</version>
             <scope>runtime</scope>
             <optional>true</optional>
+        </dependency>
+
+        <dependency>
+            <groupId>dev.webfx</groupId>
+            <artifactId>webfx-platform-uischeduler</artifactId>
+            <version>0.1.0-SNAPSHOT</version>
         </dependency>
 
         <dependency>
@@ -133,37 +205,7 @@
 
         <dependency>
             <groupId>dev.webfx</groupId>
-            <artifactId>webfx-stack-orm-domainmodel-activity</artifactId>
-            <version>0.1.0-SNAPSHOT</version>
-        </dependency>
-
-        <dependency>
-            <groupId>dev.webfx</groupId>
-            <artifactId>webfx-stack-orm-dql</artifactId>
-            <version>0.1.0-SNAPSHOT</version>
-        </dependency>
-
-        <dependency>
-            <groupId>dev.webfx</groupId>
-            <artifactId>webfx-stack-orm-reactive-entities</artifactId>
-            <version>0.1.0-SNAPSHOT</version>
-        </dependency>
-
-        <dependency>
-            <groupId>dev.webfx</groupId>
-            <artifactId>webfx-stack-routing-router</artifactId>
-            <version>0.1.0-SNAPSHOT</version>
-        </dependency>
-
-        <dependency>
-            <groupId>dev.webfx</groupId>
-            <artifactId>webfx-stack-routing-router-client</artifactId>
-            <version>0.1.0-SNAPSHOT</version>
-        </dependency>
-
-        <dependency>
-            <groupId>dev.webfx</groupId>
-            <artifactId>webfx-stack-routing-uirouter</artifactId>
+            <artifactId>webfx-stack-orm-entity</artifactId>
             <version>0.1.0-SNAPSHOT</version>
         </dependency>
 

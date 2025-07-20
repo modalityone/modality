@@ -36,7 +36,6 @@ module modality.base.frontoffice.activity.account.plugin {
     requires webfx.stack.orm.reactive.entities;
     requires webfx.stack.routing.router.client;
     requires webfx.stack.routing.uirouter;
-    requires webfx.platform.console;
 
     // Exported packages
     exports one.modality.base.frontoffice.activities.account;

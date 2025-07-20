@@ -1,4 +1,4 @@
-package one.modality.crm.frontoffice.activities.orders;
+package one.modality.crm.frontoffice.order;
 
 import dev.webfx.extras.i18n.I18n;
 import dev.webfx.extras.i18n.controls.I18nControls;
@@ -17,20 +17,21 @@ import one.modality.base.client.bootstrap.ModalityStyle;
 import one.modality.base.frontoffice.utility.browser.BrowserUtil;
 import one.modality.base.shared.entities.Event;
 
-public final class RefundDialog extends BaseDialog {
+/**
+ * @author David Hello
+ */
+final class RefundDialog extends BaseDialog {
 
+    private final String refundAmount;
+    private final String orderReference;
     private Label cancelLabel;
     private Button refundButton;
     private Button donateButton;
-    private String refundAmount;
-    private String orderReference;
-    private Event event;
 
     public RefundDialog(String refundAmount, String orderReference, Event event) {
         super();
         this.refundAmount = refundAmount;
         this.orderReference = orderReference;
-        this.event = event;
     }
 
     @Override
@@ -41,10 +42,10 @@ public final class RefundDialog extends BaseDialog {
     @Override
     public void buildUI() {
         // Header
-        VBox header = createHeader(OrdersI18nKeys.RefundRequest, null);
+        VBox header = createHeader(OrderI18nKeys.RefundRequest, null);
 
         // Add amount info to header
-        Label amountLabel = Bootstrap.strong(I18nControls.newLabel(OrdersI18nKeys.RemainingAmountForRefund,refundAmount));
+        Label amountLabel = Bootstrap.strong(I18nControls.newLabel(OrderI18nKeys.RemainingAmountForRefund,refundAmount));
         amountLabel.setTextFill(Color.WHITE);
         header.getChildren().add(amountLabel);
 
@@ -56,7 +57,7 @@ public final class RefundDialog extends BaseDialog {
         content.setAlignment(Pos.CENTER);
 
         // Explanation text
-        Label explanationLabel = I18nControls.newLabel(OrdersI18nKeys.RefundExplanation);
+        Label explanationLabel = I18nControls.newLabel(OrderI18nKeys.RefundExplanation);
         explanationLabel.setWrapText(true);
         explanationLabel.setTextAlignment(TextAlignment.CENTER);
         explanationLabel.getStyleClass().add("thank-you-message");
@@ -64,16 +65,16 @@ public final class RefundDialog extends BaseDialog {
 
         // Temple project link
         Hyperlink templeLink = new Hyperlink();
-        I18nControls.bindI18nProperties(templeLink, OrdersI18nKeys.TempleProjectTitle);
-        templeLink.setOnAction(e -> BrowserUtil.openExternalBrowser(I18n.getI18nText(OrdersI18nKeys.TempleProjectLink)));
+        I18nControls.bindI18nProperties(templeLink, OrderI18nKeys.TempleProjectTitle);
+        templeLink.setOnAction(e -> BrowserUtil.openExternalBrowser(I18n.getI18nText(OrderI18nKeys.TempleProjectLink)));
 
         content.getChildren().addAll(explanationLabel, templeLink);
         dialogPane.setCenter(content);
 
-        refundButton = Bootstrap.primaryButton(I18nControls.newButton(OrdersI18nKeys.RequestRefund));
+        refundButton = Bootstrap.primaryButton(I18nControls.newButton(OrderI18nKeys.RequestRefund));
         refundButton.setMinWidth(Region.USE_PREF_SIZE);
 
-        donateButton = ModalityStyle.whiteButton(I18nControls.newButton(OrdersI18nKeys.DonateToTempleProject));
+        donateButton = ModalityStyle.whiteButton(I18nControls.newButton(OrderI18nKeys.DonateToTempleProject));
         donateButton.setMinWidth(Region.USE_PREF_SIZE);
 
         // Button layout - side by side for main actions
@@ -94,12 +95,12 @@ public final class RefundDialog extends BaseDialog {
         String contactEmail = "treasurer@kadampa.org";
         //TODO: add the treasurer email to the organization
         // String contactEmail = event.getOrganization().getTreasurerEmail(); // This should be configurable
-        String refundMessage = I18n.getI18nText(OrdersI18nKeys.RefundMessage,contactEmail);
+        String refundMessage = I18n.getI18nText(OrderI18nKeys.RefundMessage,contactEmail);
 
         displaySuccessMessage(
-            OrdersI18nKeys.RefundRequested,
+            OrderI18nKeys.RefundRequested,
             refundMessage,
-            OrdersI18nKeys.ThisWindowWillCloseAutomatically,
+            OrderI18nKeys.ThisWindowWillCloseAutomatically,
             duration,
             onFinished
         );
@@ -107,9 +108,9 @@ public final class RefundDialog extends BaseDialog {
 
     public void displayDonationSuccessMessage(int duration, Runnable onFinished) {
         displaySuccessMessage(
-            OrdersI18nKeys.ThankYou,
-            OrdersI18nKeys.DonationSuccessMessage,
-            OrdersI18nKeys.ThisWindowWillCloseAutomatically,
+            OrderI18nKeys.ThankYou,
+            OrderI18nKeys.DonationSuccessMessage,
+            OrderI18nKeys.ThisWindowWillCloseAutomatically,
             duration,
             onFinished
         );

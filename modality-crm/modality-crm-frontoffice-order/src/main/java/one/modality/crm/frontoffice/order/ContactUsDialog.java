@@ -1,14 +1,16 @@
-package one.modality.crm.frontoffice.activities.orders;
+package one.modality.crm.frontoffice.order;
 
 import dev.webfx.extras.i18n.controls.I18nControls;
 import dev.webfx.extras.styles.bootstrap.Bootstrap;
 import javafx.beans.binding.Bindings;
-import javafx.geometry.Insets;
 import javafx.scene.control.*;
 import javafx.scene.layout.*;
 import one.modality.base.client.bootstrap.ModalityStyle;
 
-public final class ContactUsDialog extends BaseDialog {
+/**
+ * @author David Hello
+ */
+final class ContactUsDialog extends BaseDialog {
 
     private TextField subjectTextField;
     private Button cancelButton;
@@ -18,25 +20,25 @@ public final class ContactUsDialog extends BaseDialog {
     @Override
     public void buildUI() {
         // Header
-        VBox header = createHeader(OrdersI18nKeys.ContactUs, OrdersI18nKeys.ContactUsPrompt);
+        VBox header = createHeader(OrderI18nKeys.ContactUs, OrderI18nKeys.ContactUsPrompt);
         dialogPane.setTop(header);
 
         // Form
         VBox form = createForm();
 
         // Subject
-        Label subjectLabel = Bootstrap.strong(I18nControls.newLabel(OrdersI18nKeys.Subject));
+        Label subjectLabel = Bootstrap.strong(I18nControls.newLabel(OrderI18nKeys.Subject));
         subjectLabel.getStyleClass().add("form-label");
 
         subjectTextField = new TextField();
-        I18nControls.bindI18nProperties(subjectTextField, OrdersI18nKeys.SubjectPlaceholder);
+        I18nControls.bindI18nProperties(subjectTextField, OrderI18nKeys.SubjectPlaceholder);
         subjectTextField.setMaxWidth(Double.MAX_VALUE);
         Label subjectCount = new Label("0/100");
         subjectCount.getStyleClass().add("char-count");
         VBox subjectGroup = new VBox(8, subjectLabel, subjectTextField, subjectCount);
 
         // Message
-        Label messageLabel = Bootstrap.strong(I18nControls.newLabel(OrdersI18nKeys.Message));
+        Label messageLabel = Bootstrap.strong(I18nControls.newLabel(OrderI18nKeys.Message));
         messageLabel.getStyleClass().add("form-label");
         messageArea = new TextArea();
         I18nControls.bindI18nProperties(messageArea, "MessagePlaceholder");
@@ -54,9 +56,9 @@ public final class ContactUsDialog extends BaseDialog {
         setupCharacterCounters(messageArea, messageCount, 1000);
 
         // Buttons
-        cancelButton = ModalityStyle.whiteButton(I18nControls.newButton(OrdersI18nKeys.Cancel));
+        cancelButton = ModalityStyle.whiteButton(I18nControls.newButton(OrderI18nKeys.Cancel));
         cancelButton.setMinWidth(Region.USE_PREF_SIZE);
-        sendButton = Bootstrap.primaryButton(I18nControls.newButton(OrdersI18nKeys.SendMessage));
+        sendButton = Bootstrap.primaryButton(I18nControls.newButton(OrderI18nKeys.SendMessage));
         sendButton.setMinWidth(Region.USE_PREF_SIZE);
 
         HBox buttonGroup = createButtonGroup(cancelButton, sendButton);
@@ -84,9 +86,9 @@ public final class ContactUsDialog extends BaseDialog {
 
     public void displaySuccessMessage(int duration, Runnable onFinished) {
         displaySuccessMessage(
-            OrdersI18nKeys.MessageSentSuccessfully,
-            OrdersI18nKeys.MessageSentSuccessfullyDetails,
-            OrdersI18nKeys.ThisWindowWillCloseAutomatically,
+            OrderI18nKeys.MessageSentSuccessfully,
+            OrderI18nKeys.MessageSentSuccessfullyDetails,
+            OrderI18nKeys.ThisWindowWillCloseAutomatically,
             duration,
             onFinished
         );

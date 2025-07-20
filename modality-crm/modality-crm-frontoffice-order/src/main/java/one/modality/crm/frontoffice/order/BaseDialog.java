@@ -1,4 +1,4 @@
-package one.modality.crm.frontoffice.activities.orders;
+package one.modality.crm.frontoffice.order;
 
 
 import dev.webfx.extras.i18n.controls.I18nControls;
@@ -18,7 +18,10 @@ import javafx.scene.text.TextAlignment;
 import javafx.util.Duration;
 import one.modality.base.client.icons.SvgIcons;
 
-public abstract class BaseDialog {
+/**
+ * @author David Hello
+ */
+abstract class BaseDialog {
 
     protected final BorderPane dialogPane = new BorderPane();
     protected static final double DEFAULT_MAX_WIDTH = 500;

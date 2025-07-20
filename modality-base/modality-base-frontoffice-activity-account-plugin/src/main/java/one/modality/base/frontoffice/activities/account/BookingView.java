@@ -37,8 +37,8 @@ public final class BookingView {
 
     private static final String BOOKING_EVENT_REQUIRED_FIELDS = "event.(name,label,image.url,live,startDate,endDate,venue.(name,label,country),organization.country)";
     private static final String BOOKING_PERSON_REQUIRED_FIELDS = "ref,person_firstName,person_lastName";
-    private static final String BOOKING_STATUS_REQUIRED_FIELDS = BookingStatus.BOOKING_REQUIRED_FIELDS;
-    public  static final String BOOKING_REQUIRED_FIELDS = BOOKING_EVENT_REQUIRED_FIELDS + "," + BOOKING_PERSON_REQUIRED_FIELDS + "," + BOOKING_STATUS_REQUIRED_FIELDS;
+    //private static final String BOOKING_STATUS_REQUIRED_FIELDS = BookingStatus.BOOKING_REQUIRED_FIELDS;
+    public  static final String BOOKING_REQUIRED_FIELDS = BOOKING_EVENT_REQUIRED_FIELDS + "," + BOOKING_PERSON_REQUIRED_FIELDS; // + "," + BOOKING_STATUS_REQUIRED_FIELDS;
 
     private final Document booking;
 
@@ -184,8 +184,8 @@ public final class BookingView {
         Event event = booking.getEvent();
         setEvent(event);
 
-        BookingStatus bookingStatus = BookingStatus.ofBooking(booking);
-        I18nControls.bindI18nProperties(statusLabel, bookingStatus.getI18nKey());
+        /*BookingStatus bookingStatus = BookingStatus.ofBooking(booking);
+        I18nControls.bindI18nProperties(statusLabel, bookingStatus.getI18nKey());*/
 
         personLabel.setText(booking.getFullName());
         personLabel.setTextFill(Color.GRAY);
@@ -197,9 +197,9 @@ public final class BookingView {
         paidPriceValue.setText(EventPriceFormatter.formatWithCurrency(booking.getPriceDeposit(), event));
         paidPriceValue.setFill(Color.GRAY);
 
-        if (bookingStatus == BookingStatus.INCOMPLETE) {
+        /*if (bookingStatus == BookingStatus.INCOMPLETE) {
             buttons.add(createPaymentButton());
-        }
+        }*/
 
         containerPane.getChildren().addAll(buttons);
     }

@@ -5,15 +5,12 @@ import dev.webfx.extras.styles.bootstrap.Bootstrap;
 import dev.webfx.extras.util.background.BackgroundFactory;
 import dev.webfx.extras.util.control.Controls;
 import dev.webfx.kit.util.properties.FXProperties;
-import dev.webfx.platform.util.Numbers;
 import dev.webfx.platform.util.collection.Collections;
 import dev.webfx.stack.orm.domainmodel.activity.viewdomain.impl.ViewDomainActivityBase;
 import dev.webfx.stack.orm.dql.DqlStatement;
 import dev.webfx.stack.orm.reactive.entities.dql_to_entities.ReactiveEntitiesMapper;
 import javafx.beans.InvalidationListener;
-import javafx.beans.property.IntegerProperty;
 import javafx.beans.property.ObjectProperty;
-import javafx.beans.property.SimpleIntegerProperty;
 import javafx.beans.property.SimpleObjectProperty;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
@@ -27,9 +24,10 @@ import javafx.scene.paint.Color;
 import javafx.scene.text.TextAlignment;
 import javafx.stage.Screen;
 import one.modality.base.client.activity.ModalityButtonFactoryMixin;
-import one.modality.base.frontoffice.activities.account.BookingStatus;
 import one.modality.base.frontoffice.utility.page.FOPageUtil;
 import one.modality.base.shared.entities.Document;
+import one.modality.crm.frontoffice.order.OrderStatus;
+import one.modality.crm.frontoffice.order.OrderView;
 import one.modality.crm.shared.services.authn.fx.FXModalityUserPrincipal;
 
 import java.time.LocalDate;
@@ -47,10 +45,11 @@ final class OrdersActivity extends ViewDomainActivityBase implements ModalityBut
     private final ObservableList<Document> upcomingBookingsFeed = FXCollections.observableArrayList();
     private final ObservableList<Document> pastBookingsFeed = FXCollections.observableArrayList();
     private final ObjectProperty<LocalDate> loadPastEventsBeforeDateProperty = new SimpleObjectProperty<>();
-    private IntegerProperty selectedDocumentIdProperty = new SimpleIntegerProperty();
+    private final ObjectProperty<Object> selectedOrderIdProperty = new SimpleObjectProperty<>();
+
     @Override
     protected void updateModelFromContextParameters() {
-        selectedDocumentIdProperty.setValue(Numbers.toInteger(getParameter("documentId")));
+        selectedOrderIdProperty.setValue(getParameter("documentId"));
     }
 
     @Override
@@ -82,16 +81,16 @@ final class OrdersActivity extends ViewDomainActivityBase implements ModalityBut
         upcomingBookingsFeed.addListener((InvalidationListener) observable -> {
             upcomingBookingsFeed.stream().collect(Collectors.groupingBy(Document::getEvent, LinkedHashMap::new, Collectors.toList())) // Using LinkedHashMap to keep the sort
                 .forEach((event, eventBookings) -> {
-                    OrdersBookingsView ordersBookingsView = new OrdersBookingsView(event, eventBookings,this);
-                    activeOrdersContainer.getChildren().add(0, ordersBookingsView.getView()); // inverting order => chronological order
+                    OrdersView ordersView = new OrdersView(event, eventBookings, selectedOrderIdProperty);
+                    activeOrdersContainer.getChildren().add(0, ordersView.getView()); // inverting order => chronological order
                 });
         });
 
         pastBookingsFeed.addListener((InvalidationListener) observable -> {
             pastBookingsFeed.stream().collect(Collectors.groupingBy(Document::getEvent, LinkedHashMap::new, Collectors.toList())) // Using LinkedHashMap to keep the sort
                 .forEach((event, eventBookings) -> {
-                    OrdersBookingsView ordersBookingsView = new OrdersBookingsView(event, eventBookings, this);
-                    pastBookingsContainer.getChildren().add(ordersBookingsView.getView());
+                    OrdersView ordersView = new OrdersView(event, eventBookings, selectedOrderIdProperty);
+                    pastBookingsContainer.getChildren().add(ordersView.getView());
                 });
         });
 
@@ -106,7 +105,7 @@ final class OrdersActivity extends ViewDomainActivityBase implements ModalityBut
         pageContainer.setAlignment(Pos.TOP_CENTER);
 
 
-        FXProperties.runOnPropertyChange(activeOrdersContainer.getChildren()::clear,FXModalityUserPrincipal.modalityUserPrincipalProperty());
+        FXProperties.runOnPropertyChange(activeOrdersContainer.getChildren()::clear, FXModalityUserPrincipal.modalityUserPrincipalProperty());
         // Lazy loading when the user scrolls down
         Controls.onScrollPaneAncestorSet(pageContainer, scrollPane -> {
             double lazyLoadingBottomSpace = Screen.getPrimary().getVisualBounds().getHeight();
@@ -139,11 +138,11 @@ final class OrdersActivity extends ViewDomainActivityBase implements ModalityBut
         // Upcoming bookings
         ReactiveEntitiesMapper.<Document>createReactiveChain(this)
             .always("{class: 'Document', alias: 'd'}")
-            .always(DqlStatement.fields(BookingSummaryView.BOOKING_REQUIRED_FIELDS))
+            .always(DqlStatement.fields(OrderView.ORDER_REQUIRED_FIELDS))
             .always(where("event.endDate >= now()"))
             .always(where("!abandoned or price_deposit>0"))
             .ifNotNullOtherwiseEmpty(FXModalityUserPrincipal.modalityUserPrincipalProperty(), mup -> where("person.frontendAccount=?", mup.getUserAccountId()))
-            .always(orderBy(BookingStatus.getBookingStatusOrderExpression(true)))
+            .always(orderBy(OrderStatus.getBookingStatusOrderExpression(true)))
             .always(orderBy("event.startDate desc, ref desc"))
             .storeEntitiesInto(upcomingBookingsFeed)
             .start();
@@ -151,7 +150,7 @@ final class OrdersActivity extends ViewDomainActivityBase implements ModalityBut
         // Past bookings
         ReactiveEntitiesMapper.<Document>createReactiveChain(this)
             .always("{class: 'Document', alias: 'd', orderBy: 'event.startDate desc, ref desc', limit: 5}")
-            .always(DqlStatement.fields(BookingSummaryView.BOOKING_REQUIRED_FIELDS))
+            .always(DqlStatement.fields(OrderView.ORDER_REQUIRED_FIELDS))
             .always(where("event.endDate < now()"))
             .always(where("!abandoned or price_deposit>0"))
             .ifNotNullOtherwiseEmpty(FXModalityUserPrincipal.modalityUserPrincipalProperty(), mup -> where("person.frontendAccount=?", mup.getUserAccountId()))
@@ -160,7 +159,4 @@ final class OrdersActivity extends ViewDomainActivityBase implements ModalityBut
             .start();
     }
 
-    public IntegerProperty getSelectedDocumentIdProperty() {
-        return selectedDocumentIdProperty;
-    }
 }
