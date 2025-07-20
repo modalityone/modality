@@ -100,7 +100,7 @@ public final class OrderCardView {
         return containerPane;
     }
 
-    public void autoScrollToExpandedDetailsIfOrderId(Object orderId) {
+    public boolean autoScrollToExpandedDetailsIfOrderId(Object orderId) {
         boolean autoScrollAndExpand = Entities.samePrimaryKey(orderId, orderDocument);
         detailsCollapsePane.setAnimate(false);
         if (autoScrollAndExpand) {
@@ -109,6 +109,7 @@ public final class OrderCardView {
             detailsCollapsePane.collapse();
             detailsCollapsePane.setAnimate(true);
         }
+        return autoScrollAndExpand;
     }
 
     // Private implementation

@@ -39,14 +39,16 @@ import static dev.webfx.stack.orm.dql.DqlStatement.orderBy;
 import static dev.webfx.stack.orm.dql.DqlStatement.where;
 
 /**
+ * @author Bruno Salmon
  * @author David Hello
  */
 final class OrdersActivity extends ViewDomainActivityBase implements ModalityButtonFactoryMixin {
 
-    private final ObservableList<Document> upcomingBookingsFeed = FXCollections.observableArrayList();
-    private final ObservableList<Document> pastBookingsFeed = FXCollections.observableArrayList();
+    private final ObservableList<Document> upcomingOrdersFeed = FXCollections.observableArrayList();
+    private final ObservableList<Document> pastOrdersFeed = FXCollections.observableArrayList();
     private final ObjectProperty<LocalDate> loadPastEventsBeforeDateProperty = new SimpleObjectProperty<>();
     private final ObjectProperty<Object> selectedOrderIdProperty = new SimpleObjectProperty<>();
+    private ReactiveEntitiesMapper<Document> upcomingOrdersMapper;
 
     @Override
     protected void updateModelFromContextParameters() {
@@ -84,19 +86,26 @@ final class OrdersActivity extends ViewDomainActivityBase implements ModalityBut
 
         VBox pastBookingsContainer = createBookingsContainer();
 
-        upcomingBookingsFeed.addListener((InvalidationListener) observable -> {
-            upcomingBookingsFeed.stream().collect(Collectors.groupingBy(Document::getEvent, LinkedHashMap::new, Collectors.toList())) // Using LinkedHashMap to keep the sort
-                .forEach((event, eventBookings) -> {
-                    OrdersView ordersView = new OrdersView(eventBookings, selectedOrderIdProperty);
-                    activeOrdersContainer.getChildren().add(0, ordersView.getView()); // inverting order => chronological order
+        upcomingOrdersFeed.addListener((InvalidationListener) observable -> {
+            upcomingOrdersFeed.stream().collect(Collectors.groupingBy(Document::getEvent, LinkedHashMap::new, Collectors.toList())) // Using LinkedHashMap to keep the sort
+                .forEach((event, eventOrders) -> {
+                    eventOrders.forEach(orderDocument -> {
+                        OrderCardView cardView = new OrderCardView(orderDocument);
+                        Node cardNode = cardView.getView();
+                        cardNode.getProperties().put("orderCardView", cardView);
+                        activeOrdersContainer.getChildren().add(0, cardNode); // inverting order => chronological order
+                        cardView.autoScrollToExpandedDetailsIfOrderId(selectedOrderIdProperty.get());
+                    });
                 });
         });
 
-        pastBookingsFeed.addListener((InvalidationListener) observable -> {
-            pastBookingsFeed.stream().collect(Collectors.groupingBy(Document::getEvent, LinkedHashMap::new, Collectors.toList())) // Using LinkedHashMap to keep the sort
-                .forEach((event, eventBookings) -> {
-                    OrdersView ordersView = new OrdersView(eventBookings, selectedOrderIdProperty);
-                    pastBookingsContainer.getChildren().add(ordersView.getView());
+        pastOrdersFeed.addListener((InvalidationListener) observable -> {
+            pastOrdersFeed.stream().collect(Collectors.groupingBy(Document::getEvent, LinkedHashMap::new, Collectors.toList())) // Using LinkedHashMap to keep the sort
+                .forEach((event, eventOrders) -> {
+                    eventOrders.forEach(orderDocument -> {
+                        OrderCardView cardView = new OrderCardView(orderDocument);
+                        pastBookingsContainer.getChildren().add(cardView.getView());
+                    });
                 });
         });
 
@@ -117,16 +126,33 @@ final class OrdersActivity extends ViewDomainActivityBase implements ModalityBut
             pageContainer.setPadding(new Insets(0, 0, lazyLoadingBottomSpace, 0));
             FXProperties.runOnPropertiesChange(() -> {
                 if (Controls.computeScrollPaneVBottomOffset(scrollPane) > pageContainer.getHeight() - lazyLoadingBottomSpace) {
-                    Document lastBooking = Collections.last(pastBookingsFeed);
-                    if (lastBooking == null)
+                    Document lastOrderDocument = Collections.last(pastOrdersFeed);
+                    if (lastOrderDocument == null)
                         pageContainer.setPadding(Insets.EMPTY);
                     else {
-                        LocalDate startDate = lastBooking.getEvent().getStartDate();
+                        LocalDate startDate = lastOrderDocument.getEvent().getStartDate();
                         FXProperties.setIfNotEquals(loadPastEventsBeforeDateProperty, startDate);
                     }
                 }
             }, scrollPane.vvalueProperty(), pageContainer.heightProperty());
         });
+
+        // selectedOrderIdProperty management
+        FXProperties.runNowAndOnPropertyChange(orderId -> {
+            if (orderId != null) {
+                boolean[] found = {false};
+                activeOrdersContainer.getChildren().forEach(view -> {
+                    OrderCardView cardView = (OrderCardView) view.getProperties().get("orderCardView");
+                    if (cardView.autoScrollToExpandedDetailsIfOrderId(orderId))
+                        found[0] = true;
+                });
+                if (!found[0]) {
+                    activeOrdersContainer.getChildren().clear();
+                    upcomingOrdersFeed.clear();
+                    upcomingOrdersMapper.refreshWhenActive();
+                }
+            }
+        }, selectedOrderIdProperty);
 
         return FOPageUtil.restrictToMaxPageWidthAndApplyPageTopBottomPadding(pageContainer);
     }
@@ -134,14 +160,14 @@ final class OrdersActivity extends ViewDomainActivityBase implements ModalityBut
     private static VBox createBookingsContainer() {
         VBox ordersContainer = new VBox(30);
         ordersContainer.setBackground(BackgroundFactory.newBackground(Color.gray(0.95), 30));
-        ordersContainer.setPadding(new Insets(40, 0, 40, 0));
+        ordersContainer.setPadding(new Insets(40, 30, 40, 30));
         return ordersContainer;
     }
 
     @Override
     protected void startLogic() {
-        // Upcoming bookings
-        ReactiveEntitiesMapper.<Document>createReactiveChain(this)
+        // Upcoming orders
+        upcomingOrdersMapper = ReactiveEntitiesMapper.<Document>createReactiveChain(this)
             .always("{class: 'Document', alias: 'd'}")
             .always(DqlStatement.fields(OrderCardView.ORDER_REQUIRED_FIELDS))
             .always(where("event.endDate >= now()"))
@@ -149,10 +175,10 @@ final class OrdersActivity extends ViewDomainActivityBase implements ModalityBut
             .ifNotNullOtherwiseEmpty(FXModalityUserPrincipal.modalityUserPrincipalProperty(), mup -> where("person.frontendAccount=?", mup.getUserAccountId()))
             .always(orderBy(OrderStatus.getBookingStatusOrderExpression(true)))
             .always(orderBy("event.startDate desc, ref desc"))
-            .storeEntitiesInto(upcomingBookingsFeed)
+            .storeEntitiesInto(upcomingOrdersFeed)
             .start();
 
-        // Past bookings
+        // Past orders
         ReactiveEntitiesMapper.<Document>createReactiveChain(this)
             .always("{class: 'Document', alias: 'd', orderBy: 'event.startDate desc, ref desc', limit: 5}")
             .always(DqlStatement.fields(OrderCardView.ORDER_REQUIRED_FIELDS))
@@ -160,7 +186,7 @@ final class OrdersActivity extends ViewDomainActivityBase implements ModalityBut
             .always(where("!abandoned or price_deposit>0"))
             .ifNotNullOtherwiseEmpty(FXModalityUserPrincipal.modalityUserPrincipalProperty(), mup -> where("person.frontendAccount=?", mup.getUserAccountId()))
             .ifNotNull(loadPastEventsBeforeDateProperty, date -> where("event.startDate < ?", date))
-            .storeEntitiesInto(pastBookingsFeed)
+            .storeEntitiesInto(pastOrdersFeed)
             .start();
     }
 
