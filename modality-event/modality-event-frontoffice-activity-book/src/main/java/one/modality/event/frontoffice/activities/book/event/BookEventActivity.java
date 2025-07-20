@@ -46,7 +46,7 @@ public final class BookEventActivity extends ViewDomainActivityBase implements B
     private final WorkingBookingProperties workingBookingProperties = new WorkingBookingProperties();
     private final LettersSlideController lettersSlideController = new LettersSlideController(this);
     // When routed through /modify-booking/:modifyBookingDocumentId, this property will store the documentId to modify
-    private final ObjectProperty<Object> modifyBookingDocumentIdProperty = new SimpleObjectProperty<>();
+    private final ObjectProperty<Object> modifyOrderDocumentIdProperty = new SimpleObjectProperty<>();
     // When routed through /book-event/:eventId, FXEventId and FXEvent are used to store the event to book
 
     @Override
@@ -62,8 +62,8 @@ public final class BookEventActivity extends ViewDomainActivityBase implements B
         return lettersSlideController.mediumFontProperty();
     }
 
-    private Object getModifyBookingDocumentId() {
-        return modifyBookingDocumentIdProperty.get();
+    private Object getModifyOrderDocumentId() {
+        return modifyOrderDocumentIdProperty.get();
     }
 
     @Override
@@ -81,7 +81,7 @@ public final class BookEventActivity extends ViewDomainActivityBase implements B
             // Initially hiding the footer (app menu), especially when coming from the website.
             FXCollapseMenu.setCollapseMenu(!Entities.samePrimaryKey(FXOrganizationId.getOrganizationId(), 1));
         }
-        modifyBookingDocumentIdProperty.set(getParameter("modifyBookingDocumentId"));
+        modifyOrderDocumentIdProperty.set(getParameter("modifyOrderDocumentId"));
     }
 
     @Override
@@ -120,27 +120,27 @@ public final class BookEventActivity extends ViewDomainActivityBase implements B
 
     public void onReachingEndSlide() {
         FXEventId.setEventId(null); // This is to ensure that the next time the user books an event in this same session, we
-        modifyBookingDocumentIdProperty.set(null);
+        modifyOrderDocumentIdProperty.set(null);
         FXCollapseMenu.setCollapseMenu(false);
     }
 
     @Override
     protected void startLogic() {
         // Initial load of the event policy with the possible existing booking of the user (if logged-in)
-        FXProperties.runNowAndOnPropertiesChange(this::loadPolicyAndBooking, FXEvent.eventProperty(), modifyBookingDocumentIdProperty);
+        FXProperties.runNowAndOnPropertiesChange(this::loadPolicyAndBooking, FXEvent.eventProperty(), modifyOrderDocumentIdProperty);
 
         // Later loading when changing the person to book (loading of possible booking and reapplying the newly selected dates)
         FXProperties.runOnPropertyChange(this::onPersonToBookChanged, FXPersonToBook.personToBookProperty());
     }
 
     void loadPolicyAndBooking() {
-        Object modifyBookingDocumentId = getModifyBookingDocumentId();
+        Object modifyBookingDocumentId = getModifyOrderDocumentId();
         if (modifyBookingDocumentId != null) {
             // Note: this call doesn't automatically rebuild PolicyAggregate entities
             DocumentService.loadPolicyAndDocument(new LoadDocumentArgument(modifyBookingDocumentId))
                 .onFailure(Console::log)
                 .onSuccess(policyAndDocumentAggregates -> {
-                    if (modifyBookingDocumentId == modifyBookingDocumentIdProperty.get()) { // Double-checking
+                    if (modifyBookingDocumentId == modifyOrderDocumentIdProperty.get()) { // Double-checking
                         onPolityAndDocumentAggregatesLoaded(policyAndDocumentAggregates);
                     }
                 });
