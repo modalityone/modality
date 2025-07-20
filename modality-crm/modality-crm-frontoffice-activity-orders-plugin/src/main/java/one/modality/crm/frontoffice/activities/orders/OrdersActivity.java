@@ -27,7 +27,7 @@ import one.modality.base.client.activity.ModalityButtonFactoryMixin;
 import one.modality.base.frontoffice.utility.page.FOPageUtil;
 import one.modality.base.shared.entities.Document;
 import one.modality.crm.frontoffice.order.OrderStatus;
-import one.modality.crm.frontoffice.order.OrderView;
+import one.modality.crm.frontoffice.order.OrderCardView;
 import one.modality.crm.shared.services.authn.fx.FXModalityUserPrincipal;
 
 import java.time.LocalDate;
@@ -81,7 +81,7 @@ final class OrdersActivity extends ViewDomainActivityBase implements ModalityBut
         upcomingBookingsFeed.addListener((InvalidationListener) observable -> {
             upcomingBookingsFeed.stream().collect(Collectors.groupingBy(Document::getEvent, LinkedHashMap::new, Collectors.toList())) // Using LinkedHashMap to keep the sort
                 .forEach((event, eventBookings) -> {
-                    OrdersView ordersView = new OrdersView(event, eventBookings, selectedOrderIdProperty);
+                    OrdersView ordersView = new OrdersView(eventBookings, selectedOrderIdProperty);
                     activeOrdersContainer.getChildren().add(0, ordersView.getView()); // inverting order => chronological order
                 });
         });
@@ -89,7 +89,7 @@ final class OrdersActivity extends ViewDomainActivityBase implements ModalityBut
         pastBookingsFeed.addListener((InvalidationListener) observable -> {
             pastBookingsFeed.stream().collect(Collectors.groupingBy(Document::getEvent, LinkedHashMap::new, Collectors.toList())) // Using LinkedHashMap to keep the sort
                 .forEach((event, eventBookings) -> {
-                    OrdersView ordersView = new OrdersView(event, eventBookings, selectedOrderIdProperty);
+                    OrdersView ordersView = new OrdersView(eventBookings, selectedOrderIdProperty);
                     pastBookingsContainer.getChildren().add(ordersView.getView());
                 });
         });
@@ -138,7 +138,7 @@ final class OrdersActivity extends ViewDomainActivityBase implements ModalityBut
         // Upcoming bookings
         ReactiveEntitiesMapper.<Document>createReactiveChain(this)
             .always("{class: 'Document', alias: 'd'}")
-            .always(DqlStatement.fields(OrderView.ORDER_REQUIRED_FIELDS))
+            .always(DqlStatement.fields(OrderCardView.ORDER_REQUIRED_FIELDS))
             .always(where("event.endDate >= now()"))
             .always(where("!abandoned or price_deposit>0"))
             .ifNotNullOtherwiseEmpty(FXModalityUserPrincipal.modalityUserPrincipalProperty(), mup -> where("person.frontendAccount=?", mup.getUserAccountId()))
@@ -150,7 +150,7 @@ final class OrdersActivity extends ViewDomainActivityBase implements ModalityBut
         // Past bookings
         ReactiveEntitiesMapper.<Document>createReactiveChain(this)
             .always("{class: 'Document', alias: 'd', orderBy: 'event.startDate desc, ref desc', limit: 5}")
-            .always(DqlStatement.fields(OrderView.ORDER_REQUIRED_FIELDS))
+            .always(DqlStatement.fields(OrderCardView.ORDER_REQUIRED_FIELDS))
             .always(where("event.endDate < now()"))
             .always(where("!abandoned or price_deposit>0"))
             .ifNotNullOtherwiseEmpty(FXModalityUserPrincipal.modalityUserPrincipalProperty(), mup -> where("person.frontendAccount=?", mup.getUserAccountId()))

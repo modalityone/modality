@@ -6,8 +6,7 @@ import javafx.geometry.Insets;
 import javafx.scene.Node;
 import javafx.scene.layout.VBox;
 import one.modality.base.shared.entities.Document;
-import one.modality.base.shared.entities.Event;
-import one.modality.crm.frontoffice.order.OrderView;
+import one.modality.crm.frontoffice.order.OrderCardView;
 
 import java.util.List;
 
@@ -16,19 +15,13 @@ import java.util.List;
  */
 final class OrdersView {
 
-    private final Event event;
     private final VBox container = new VBox(50);
 
-    OrdersView(Event event, List<Document> orders, ObservableValue<Object> selectedOrderIdProperty) {
-        this.event = event;
+    OrdersView(List<Document> orders, ObservableValue<Object> selectedOrderIdProperty) {
         container.setPadding(new Insets(0,30,0,30));
         container.getChildren().setAll(
-            Collections.map(orders, order -> new OrderView(order, selectedOrderIdProperty).getView())
+            Collections.map(orders, order -> new OrderCardView(order, selectedOrderIdProperty).getView())
         );
-    }
-
-    public Event getEvent() {
-        return event;
     }
 
     public Node getView() {

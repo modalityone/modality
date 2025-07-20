@@ -5,6 +5,7 @@ import dev.webfx.extras.i18n.controls.I18nControls;
 import dev.webfx.extras.i18n.spi.impl.I18nSubKey;
 import dev.webfx.extras.operation.OperationUtil;
 import dev.webfx.extras.panes.CollapsePane;
+import dev.webfx.extras.panes.MonoPane;
 import dev.webfx.extras.panes.ScalePane;
 import dev.webfx.extras.styles.bootstrap.Bootstrap;
 import dev.webfx.extras.time.format.LocalizedTime;
@@ -14,18 +15,15 @@ import dev.webfx.extras.util.dialog.DialogUtil;
 import dev.webfx.extras.util.layout.Layouts;
 import dev.webfx.extras.util.scene.SceneUtil;
 import dev.webfx.kit.util.properties.FXProperties;
-import dev.webfx.kit.util.properties.ObservableLists;
 import dev.webfx.platform.async.Future;
 import dev.webfx.platform.console.Console;
 import dev.webfx.platform.uischeduler.UiScheduler;
-import dev.webfx.platform.util.Booleans;
 import dev.webfx.platform.windowhistory.WindowHistory;
 import dev.webfx.stack.orm.entity.Entities;
 import dev.webfx.stack.orm.entity.EntityStore;
 import dev.webfx.stack.orm.entity.EntityStoreQuery;
 import dev.webfx.stack.orm.entity.UpdateStore;
 import javafx.application.Platform;
-import javafx.beans.InvalidationListener;
 import javafx.beans.property.IntegerProperty;
 import javafx.beans.property.ObjectProperty;
 import javafx.beans.property.SimpleIntegerProperty;
@@ -52,61 +50,42 @@ import one.modality.ecommerce.client.workingbooking.WorkingBooking;
 import one.modality.ecommerce.document.service.DocumentAggregate;
 import one.modality.ecommerce.document.service.DocumentService;
 import one.modality.ecommerce.document.service.PolicyAggregate;
-import one.modality.ecommerce.shared.pricecalculator.PriceCalculator;
 import one.modality.event.client.lifecycle.EventLifeCycle;
 
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
-import java.util.LinkedHashMap;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 /**
  * @author David Hello
  */
-public final class OrderView {
+public final class OrderCardView {
 
     // Required fields for retrieving order and its details
     private static final String ORDER_EVENT_REQUIRED_FIELDS = "event.(name,label,image.url,live,startDate,endDate,kbs3, venue.(name,label,country),organization.country)";
     private static final String ORDER_PERSON_REQUIRED_FIELDS = "ref, person, person_firstName,person_lastName";
     private static final String ORDER_STATUS_REQUIRED_FIELDS = OrderStatus.BOOKING_REQUIRED_FIELDS;
     public static final String ORDER_REQUIRED_FIELDS = ORDER_EVENT_REQUIRED_FIELDS + "," + ORDER_PERSON_REQUIRED_FIELDS + "," + ORDER_STATUS_REQUIRED_FIELDS;
-    public static final String DOCUMENT_LINE_REQUIRED_FIELDS = "item.name,item.label,item.family.name,item.family.label,quantity,price_net,dates,cancelled";
+    private static final String DOCUMENT_LINE_REQUIRED_FIELDS = "item.name,item.label,item.family.name,item.family.label,quantity,price_net,dates,cancelled";
 
     private final ObjectProperty<Document> orderDocumentProperty = new SimpleObjectProperty<>(); // The order document to display
     private final ObservableList<DocumentLine> orderDocumentLines = FXCollections.observableArrayList(); // Reactive list of order options
     private final VBox containerPane = new VBox(); // Main container for the UI
     private final ObservableValue<Object> selectedOrderIdProperty;
-
-    private Label cancelOrderLabel;
-    private Button modifyOrderButton;
     private final EntityStore entityStore;
-    private PriceCalculator priceCalculator = null;
-    private final IntegerProperty remainingAmountProperty = new SimpleIntegerProperty();
-    private boolean orderDetailsLoaded = false;
     private final UpdateStore updateStore;
 
-    public OrderView(Document order, ObservableValue<Object> selectedOrderIdProperty) {
-        this.selectedOrderIdProperty = selectedOrderIdProperty;
-        orderDocumentProperty.set(order);
-        entityStore = order.getStore();
-        //this constructor is called in the OrderView, and we want the header in that case.
-        buildUi();
-        updateStore = UpdateStore.createAbove(entityStore);
-    }
+    private boolean orderDetailsLoaded = false;
+    private Label cancelOrderLabel;
+    private Button modifyOrderButton;
+    private final IntegerProperty remainingAmountProperty = new SimpleIntegerProperty();
 
-    public OrderView(WorkingBooking workingBooking) {
-        selectedOrderIdProperty = null;
-        orderDocumentProperty.set(workingBooking.getDocument());
-        entityStore = workingBooking.getDocument().getStore();
-        containerPane.getChildren().add(createOrderDetails());
-        if (workingBooking.getLastestDocumentAggregate() != null) {
-            priceCalculator = new PriceCalculator(workingBooking.getLastestDocumentAggregate());
-        }
-        ObservableLists.runNowAndOnListChange(change ->
-                UiScheduler.runInUiThread(() -> orderDocumentLines.setAll(workingBooking.getLastestDocumentAggregate().getDocumentLines()))
-            , workingBooking.getDocumentChanges());
+    // This constructor is called by OrdersView and will be part of a list (ex: upcoming orders or past orders)
+    public OrderCardView(Document orderDocument, ObservableValue<Object> selectedOrderIdProperty) {
+        this.selectedOrderIdProperty = selectedOrderIdProperty;
+        orderDocumentProperty.set(orderDocument);
+        entityStore = orderDocument.getStore();
         updateStore = UpdateStore.createAbove(entityStore);
+        buildUi();
     }
 
     /**
@@ -116,7 +95,7 @@ public final class OrderView {
         return containerPane;
     }
 
-    public Document getOrderDocument() {
+    private Document getOrderDocument() {
         return orderDocumentProperty.get();
     }
 
@@ -124,52 +103,42 @@ public final class OrderView {
      * Builds the main UI layout for the summary view and detail section.
      */
     private void buildUi() {
+        Node orderDetails = new OrderDetailsView(getOrderDocument(), orderDocumentLines, null).getView();
+        // embedded in a card with a header
+        containerPane.getChildren().add(createOrderCard(orderDetails));
         containerPane.getStyleClass().add("container-pane");
-        containerPane.getChildren().add(createOrderCard());
     }
 
-    private Node createOrderCard() {
-        // Main order card container
-        VBox orderCard = new VBox();
-        orderCard.getStyleClass().add("order-card");
-        orderCard.getChildren().add(createOrderHeader());
-        return orderCard;
-    }
-
-    private Node createOrderHeader() {
+    private Node createOrderCard(Node orderDetails) {
         Document document = getOrderDocument();
         Event event = document.getEvent();
-        VBox orderHeader = new VBox(15);
-        orderHeader.setPadding(new Insets(16, 16, 16, 16));
-        orderHeader.getStyleClass().add("order-header");
 
         // Order Status
-        Label[] statusLabel = new Label[1];
-        statusLabel[0] = Bootstrap.badge(new Label());
+        Label statusLabel = Bootstrap.badge(new Label());
         // Bind status style class
         FXProperties.runNowAndOnPropertyChange(orderDocument -> {
             if (orderDocument != null) {
-                statusLabel[0].getStyleClass().clear();
+                statusLabel.getStyleClass().clear();
                 switch (OrderStatus.ofDocument(orderDocument)) {
                     case INCOMPLETE:
-                        statusLabel[0].getStyleClass().add(Bootstrap.DANGER);
+                        statusLabel.getStyleClass().add(Bootstrap.DANGER);
                         break;
                     case CANCELLED:
-                        statusLabel[0].getStyleClass().add(Bootstrap.WARNING);
+                        statusLabel.getStyleClass().add(Bootstrap.WARNING);
                         break;
                     case IN_PROGRESS:
-                        statusLabel[0].getStyleClass().add(Bootstrap.PRIMARY);
+                        statusLabel.getStyleClass().add(Bootstrap.PRIMARY);
                         break;
                     case COMPLETE, CONFIRMED:
-                        statusLabel[0].getStyleClass().add(Bootstrap.SUCCESS);
+                        statusLabel.getStyleClass().add(Bootstrap.SUCCESS);
                         break;
                     default:
                         //statusLabel[0].getStyleClass().add(Bootstrap.SECONDARY);
                         break;
                 }
-                statusLabel[0].getStyleClass().add(Bootstrap.BADGE);
-                statusLabel[0].getStyleClass().add(Bootstrap.STRONG);
-                I18nControls.bindI18nProperties(statusLabel[0], I18nKeys.upperCase(OrderStatus.ofDocument(orderDocument).getI18nKey()));
+                statusLabel.getStyleClass().add(Bootstrap.BADGE);
+                statusLabel.getStyleClass().add(Bootstrap.STRONG);
+                I18nControls.bindI18nProperties(statusLabel, I18nKeys.upperCase(OrderStatus.ofDocument(orderDocument).getI18nKey()));
                 computeCancelAndAddLabelVisibility();
             }
         }, orderDocumentProperty);
@@ -265,7 +234,8 @@ public final class OrderView {
             });
         });
         VBox orderDetailsAndSummary = new VBox();
-        orderDetailsAndSummary.getChildren().addAll(createOrderDetails(),
+        orderDetailsAndSummary.getChildren().addAll(
+            orderDetails,
             createPaymentSummary(),
             contactUsLabel,
             createOrderActions());
@@ -273,20 +243,6 @@ public final class OrderView {
         detailsCollapsePane.setCollapsed(true);
         Layouts.bindManagedAndVisiblePropertiesTo(detailsCollapsePane.collapsedProperty().not(), hideDetailsLabel);
         Layouts.bindManagedAndVisiblePropertiesTo(detailsCollapsePane.collapsedProperty(), viewDetailsLabel);
-
-        FXProperties.runNowAndOnPropertyChange(id -> {
-            boolean weAreLookingThisOrder = Entities.samePrimaryKey(id, document);
-            if (weAreLookingThisOrder/* && !orderDetailsLoaded*/) {
-                loadFromDatabase()
-                    .onComplete(e -> UiScheduler.runInUiThread(() -> {
-                        detailsCollapsePane.setCollapsed(false);
-                        Controls.setVerticalScrollNodeWishedPosition(orderHeader, VPos.CENTER);
-                        SceneUtil.scrollNodeToBeVerticallyVisibleOnScene(orderHeader, false, true);
-                    }));
-            } else {
-                detailsCollapsePane.setCollapsed(true);
-            }
-        }, selectedOrderIdProperty);
 
         viewDetailsHBox.setOnMouseClicked(m -> {
             if (!orderDetailsLoaded) {
@@ -303,95 +259,28 @@ public final class OrderView {
             }
         });
 
-        orderHeader.getChildren().addAll(statusLabel[0], orderTitleLabel, orderMeta, dateHBox, viewDetailsHBox, detailsCollapsePane);
-        return orderHeader;
-    }
+        VBox orderHeader = new VBox(15,
+            statusLabel, orderTitleLabel, orderMeta, dateHBox, viewDetailsHBox, detailsCollapsePane);
+        orderHeader.setPadding(new Insets(16, 16, 16, 16));
+        orderHeader.getStyleClass().add("order-header");
 
-    private Node createOrderDetails() {
-        VBox orderDetails = new VBox();
+        FXProperties.runNowAndOnPropertyChange(id -> {
+            boolean weAreLookingThisOrder = Entities.samePrimaryKey(id, document);
+            if (weAreLookingThisOrder/* && !orderDetailsLoaded*/) {
+                loadFromDatabase()
+                    .onComplete(e -> UiScheduler.runInUiThread(() -> {
+                        detailsCollapsePane.setCollapsed(false);
+                        Controls.setVerticalScrollNodeWishedPosition(orderHeader, VPos.CENTER);
+                        SceneUtil.scrollNodeToBeVerticallyVisibleOnScene(orderHeader, false, true);
+                    }));
+            } else {
+                detailsCollapsePane.setCollapsed(true);
+            }
+        }, selectedOrderIdProperty);
 
-        orderDocumentLines.addListener((InvalidationListener) observable -> {
-            orderDetails.getChildren().clear(); // Clear existing details
-            // Group and display each item (e.g., meals, rooms) in the booking
-            Document document = orderDocumentProperty.get();
-            orderDocumentLines.stream()
-                .collect(Collectors.groupingBy(dl -> dl.getItem().getFamily(), LinkedHashMap::new, Collectors.toList()))
-                .forEach((itemFamily, documentLinesInFamily) -> {
-                    // Create expandable detail item for each family
-                    VBox detailItem = new VBox();
-                    detailItem.getStyleClass().add("detail-item");
-                    detailItem.setPadding(new Insets(15, 0, 0, 0));
-                    HBox detailHeader = new HBox();
-                    detailHeader.getStyleClass().add("detail-header");
-                    detailHeader.getStyleClass().add("expandable");
-
-                    // Show item family category
-                    Label categoryLabel = Bootstrap.textPrimary(new Label(itemFamily.getName()));
-                    if (itemFamily.getLabel() != null) {
-                        categoryLabel = Bootstrap.textPrimary(I18nControls.newLabel(new I18nSubKey("expression: i18n(this)", itemFamily.getLabel())));
-                    }
-                    categoryLabel.getStyleClass().add("detail-label");
-
-                    // Calculate the total price for this family
-                    int familyTotalPrice = documentLinesInFamily.stream()
-                        .mapToInt(dl -> {
-                            int price = dl.getPriceNet() != null ? dl.getPriceNet() : 0;
-                            if (priceCalculator != null) {
-                                price = priceCalculator.calculateDocumentLinesPrice(Stream.of(dl));
-                            }
-                            return price;
-                        })
-                        .sum();
-                    Label familyPriceLabel = new Label(EventPriceFormatter.formatWithCurrency(familyTotalPrice, document.getEvent()));
-                    familyPriceLabel.getStyleClass().add("detail-value");
-
-                    detailHeader.getChildren().addAll(categoryLabel, new Region(), familyPriceLabel);
-                    HBox.setHgrow(detailHeader.getChildren().get(1), Priority.ALWAYS); // Spacer
-
-                    VBox detailContentVBox = new VBox();
-                    detailContentVBox.setPadding(new Insets(10, 0, 15, 20));
-
-                    documentLinesInFamily.forEach(documentLine -> {
-                        int price = documentLine.getPriceNet() != null ? documentLine.getPriceNet() : 0;
-                        if (priceCalculator != null) {
-                            price = priceCalculator.calculateDocumentLinesPrice(Stream.of(documentLine));
-                        }
-                        String formattedPrice = EventPriceFormatter.formatWithCurrency(price, document.getEvent());
-                        boolean isCancelled = Booleans.booleanValue(documentLine.isCancelled());
-
-                        HBox subItem = new HBox();
-                        subItem.getStyleClass().add("detail-subitem");
-
-                        // Show item family category
-                        Label itemNameLabel = new Label(documentLine.getItem().getName());
-                        if (itemFamily.getLabel() != null) {
-                            itemNameLabel = I18nControls.newLabel(new I18nSubKey("expression: i18n(this)", documentLine.getItem().getLabel()));
-                        }
-                        itemNameLabel.getStyleClass().add("detail-subitem-label");
-                        itemNameLabel.setWrapText(true);
-                        if (isCancelled) {
-                            itemNameLabel.getStyleClass().add("strikethrough");
-                        }
-
-                        Label datesLabel = Bootstrap.textSecondary(new Label(documentLine.getDates()));
-
-                        datesLabel.setPadding(new Insets(0, 40, 0, 0));
-                        if (isCancelled) {
-                            datesLabel.getStyleClass().add("strikethrough");
-                        }
-                        Label priceLabel = Bootstrap.textSecondary(new Label(formattedPrice));
-                        priceLabel.getStyleClass().add("detail-subitem-value");
-
-                        Region subSpacer = new Region();
-                        HBox.setHgrow(subSpacer, Priority.ALWAYS);
-                        subItem.getChildren().addAll(itemNameLabel, subSpacer, datesLabel, priceLabel);
-                        detailContentVBox.getChildren().add(subItem);
-                    });
-                    detailItem.getChildren().addAll(detailHeader, detailContentVBox);
-                    orderDetails.getChildren().add(detailItem);
-                });
-        });
-        return orderDetails;
+        MonoPane orderCard = new MonoPane(orderHeader);
+        orderCard.getStyleClass().add("order-card");
+        return orderCard;
     }
 
     private Node createPaymentSummary() {
@@ -413,10 +302,6 @@ public final class OrderView {
             if (orderDocument != null) {
                 Integer totalPriceNet = orderDocument.getPriceNet();
                 Integer deposit = orderDocument.getPriceDeposit();
-                if (priceCalculator != null) {
-                    totalPriceNet = priceCalculator.calculateTotalPrice();
-                    deposit = orderDocument.getPriceDeposit() != null ? orderDocument.getPriceDeposit() : 0;
-                }
                 totalValue.setText(EventPriceFormatter.formatWithCurrency(totalPriceNet, orderDocument.getEvent()));
                 paidValue.setText(EventPriceFormatter.formatWithCurrency(deposit, orderDocument.getEvent()));
                 remainingValue.setText(EventPriceFormatter.formatWithCurrency(totalPriceNet - deposit, orderDocument.getEvent()));
@@ -451,13 +336,10 @@ public final class OrderView {
     }
 
     private Node createOrderActions() {
-        HBox orderActions = new HBox(12); // Gap of 12 px
-        orderActions.setPadding(new Insets(20, 0, 0, 0));
-        orderActions.setAlignment(Pos.CENTER);
         modifyOrderButton = Bootstrap.secondaryButton(I18nControls.newButton(OrderI18nKeys.AddOrEditOption));
         modifyOrderButton.setMinWidth(Region.USE_PREF_SIZE);
         modifyOrderButton.setOnAction(e -> {
-            WindowHistory.getProvider().push("/modify-order/" + orderDocumentProperty.get().getPrimaryKey());
+            WindowHistory.getProvider().push("/modify-order/" + getOrderDocument().getPrimaryKey());
         });
 
         Button makePaymentButton = Bootstrap.primaryButton(I18nControls.newButton(OrderI18nKeys.MakePayment));
@@ -468,19 +350,21 @@ public final class OrderView {
         Button askRefundButton = Bootstrap.primaryButton(I18nControls.newButton(OrderI18nKeys.AskARefund));
         askRefundButton.visibleProperty().bind(remainingAmountProperty.lessThan(0));
         askRefundButton.managedProperty().bind(askRefundButton.visibleProperty());
-        askRefundButton.setOnAction(event -> {
-            String formattedPrice = EventPriceFormatter.formatWithCurrency(remainingAmountProperty.get(), orderDocumentProperty.get().getEvent());
-            RefundDialog refundWindow = new RefundDialog(formattedPrice, String.valueOf(orderDocumentProperty.get().getRef()), orderDocumentProperty.get().getEvent());
+        askRefundButton.setOnAction(e -> {
+            Document orderDocument = getOrderDocument();
+            Event event = orderDocument.getEvent();
+            String formattedPrice = EventPriceFormatter.formatWithCurrency(remainingAmountProperty.get(), event);
+            RefundDialog refundWindow = new RefundDialog(formattedPrice, String.valueOf(orderDocument.getRef()), event);
             refundWindow.buildUI();
             DialogCallback messageWindowCallback = DialogUtil.showModalNodeInGoldLayout(refundWindow.getContainer(), FXMainFrameDialogArea.getDialogArea());
             refundWindow.getCancelButton().setOnMouseClicked(m -> messageWindowCallback.closeDialog());
             refundWindow.getRefundButton().setOnAction(m -> {
                 Mail email = updateStore.insertEntity(Mail.class);
-                email.setFromName(orderDocumentProperty.get().getFirstName() + ' ' + orderDocumentProperty.get().getLastName());
-                email.setFromEmail(orderDocumentProperty.get().getEmail());
-                email.setSubject("[" + orderDocumentProperty.get().getPrimaryKey() + "-" + orderDocumentProperty.get().getRef() + "] Refund of " + formattedPrice + " requested");
+                email.setFromName(orderDocument.getFirstName() + ' ' + orderDocument.getLastName());
+                email.setFromEmail(orderDocument.getEmail());
+                email.setSubject("[" + orderDocument.getPrimaryKey() + "-" + orderDocument.getRef() + "] Refund of " + formattedPrice + " requested");
                 email.setOut(false);
-                email.setDocument(orderDocumentProperty.get());
+                email.setDocument(orderDocument);
                 String content = "The user has requested a refund for his canceled booking. Amount : " + formattedPrice;
                 content = content.replaceAll("\r", "<br/>");
                 content = content.replaceAll("\n", "<br/>");
@@ -489,7 +373,7 @@ public final class OrderView {
                 History history = updateStore.insertEntity(History.class);
                 history.setUsername("online");
                 history.setComment("Sent " + email.getSubject());
-                history.setDocument(orderDocumentProperty.get());
+                history.setDocument(orderDocument);
                 history.setMail(email);
 
                 //TODO: prevent the Refund to display if the refund as already been requested, and display somewhere in the interface that the refund has been requested
@@ -544,7 +428,7 @@ public final class OrderView {
             Button confirmButton = Bootstrap.largeDangerButton(I18nControls.newButton(BaseI18nKeys.Confirm));
             confirmButton.setOnAction(ae ->
                 OperationUtil.turnOnButtonsWaitModeDuringExecution(
-                    DocumentService.loadDocumentWithPolicy(orderDocumentProperty.get())
+                    DocumentService.loadDocumentWithPolicy(getOrderDocument())
                         .compose(policyAndDocumentAggregates -> {
                             PolicyAggregate policyAggregate = policyAndDocumentAggregates.getPolicyAggregate(); // never null
                             DocumentAggregate existingBooking = policyAndDocumentAggregates.getDocumentAggregate(); // might be null
@@ -565,9 +449,13 @@ public final class OrderView {
         });
         Region spacer = new Region();
         HBox.setHgrow(spacer, Priority.ALWAYS);
-        orderActions.getChildren().addAll(modifyOrderButton, makePaymentButton, askRefundButton, spacer, cancelOrderLabel);
+
+        HBox orderActions = new HBox(12, // Gap of 12 px
+            modifyOrderButton, makePaymentButton, askRefundButton, spacer, cancelOrderLabel);
+        orderActions.setPadding(new Insets(20, 0, 0, 0));
+        orderActions.setAlignment(Pos.CENTER);
         Layouts.bindManagedAndVisiblePropertiesTo(
-            modifyOrderButton.managedProperty().or(makePaymentButton.managedProperty().or(askRefundButton.managedProperty().or(cancelOrderLabel.managedProperty()))),
+            modifyOrderButton.managedProperty().or(makePaymentButton.managedProperty()).or(askRefundButton.managedProperty()).or(cancelOrderLabel.managedProperty()),
             orderActions
         );
         return orderActions;
@@ -575,13 +463,13 @@ public final class OrderView {
 
 
     private void computeCancelAndAddLabelVisibility() {
-        Document document = orderDocumentProperty.get();
-        Event event = document.getEvent();
+        Document orderDocument = getOrderDocument();
+        Event event = orderDocument.getEvent();
         if (cancelOrderLabel != null) //We don't display the cancel button on a new booking (when priceCalculator!=null)
-            cancelOrderLabel.setVisible(priceCalculator == null && LocalDate.now().isBefore(event.getStartDate()) && !document.isCancelled());
+            cancelOrderLabel.setVisible(LocalDate.now().isBefore(event.getStartDate()) && !orderDocument.isCancelled());
 
         if (modifyOrderButton != null) {
-            Boolean cancelled = document.isCancelled();
+            Boolean cancelled = orderDocument.isCancelled();
             boolean isNotCancelled = cancelled != null && !cancelled;
             boolean isKBS3 = EventLifeCycle.isKbs3Event(event);
             boolean notEnded = LocalDate.now().isBefore(event.getEndDate().plusDays(30));
