@@ -12,11 +12,11 @@ import dev.webfx.platform.uischeduler.UiScheduler;
 import dev.webfx.platform.util.Arrays;
 import dev.webfx.platform.util.collection.Collections;
 import dev.webfx.platform.windowhistory.WindowHistory;
+import javafx.beans.binding.BooleanExpression;
 import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.ObjectProperty;
 import javafx.beans.property.SimpleBooleanProperty;
 import javafx.beans.property.SimpleObjectProperty;
-import javafx.beans.value.ObservableBooleanValue;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Node;
@@ -35,10 +35,10 @@ import one.modality.ecommerce.client.workingbooking.WorkingBookingProperties;
 import one.modality.ecommerce.frontoffice.bookingform.BookingForm;
 import one.modality.ecommerce.frontoffice.bookingform.BookingFormActivityCallback;
 import one.modality.event.frontoffice.activities.book.BookI18nKeys;
-import one.modality.event.frontoffice.activities.book.fx.FXGuestToBook;
 import one.modality.event.frontoffice.activities.book.account.CheckoutAccountRouting;
 import one.modality.event.frontoffice.activities.book.event.BookEventActivity;
 import one.modality.event.frontoffice.activities.book.event.EventBookingFormSettings;
+import one.modality.event.frontoffice.activities.book.fx.FXGuestToBook;
 
 /**
  * @author Bruno Salmon
@@ -199,7 +199,7 @@ final class Step1BookingFormAndSubmitSlide extends StepSlide implements BookingF
     }
 
     @Override
-    public ObservableBooleanValue readyToSubmitBookingProperty() {
+    public BooleanExpression readyToSubmitBookingProperty() {
         return readyToSubmitBookingProperty;
     }
 

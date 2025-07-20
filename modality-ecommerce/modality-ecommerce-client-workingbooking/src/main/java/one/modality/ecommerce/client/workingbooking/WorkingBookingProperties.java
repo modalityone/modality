@@ -5,8 +5,8 @@ import dev.webfx.platform.scheduler.Scheduled;
 import dev.webfx.platform.uischeduler.UiScheduler;
 import javafx.beans.binding.Bindings;
 import javafx.beans.binding.BooleanBinding;
+import javafx.beans.binding.BooleanExpression;
 import javafx.beans.property.*;
-import javafx.beans.value.ObservableBooleanValue;
 import one.modality.base.shared.entities.Event;
 import one.modality.base.shared.entities.ScheduledItem;
 import one.modality.base.shared.entities.formatters.EventPriceFormatter;
@@ -29,7 +29,7 @@ public final class WorkingBookingProperties {
 
     private final BooleanProperty hasChangesProperty = new SimpleBooleanProperty();
 
-    public ObservableBooleanValue hasChangesProperty() {
+    public BooleanExpression hasChangesProperty() {
         return hasChangesProperty;
     }
 

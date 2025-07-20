@@ -45,8 +45,10 @@ public final class BookEventActivity extends ViewDomainActivityBase implements B
 
     private final WorkingBookingProperties workingBookingProperties = new WorkingBookingProperties();
     private final LettersSlideController lettersSlideController = new LettersSlideController(this);
-    // When routed through /modify-booking/:modifyBookingDocumentId, this property will store the documentId to modify
+    // When routed through /modify-order/:modifyOrderDocumentId, this property will store the documentId to modify
     private final ObjectProperty<Object> modifyOrderDocumentIdProperty = new SimpleObjectProperty<>();
+    // When routed through /pay-order/:payOrderDocumentId, this property will store the documentId to pay
+    private final ObjectProperty<Object> payOrderDocumentIdProperty = new SimpleObjectProperty<>();
     // When routed through /book-event/:eventId, FXEventId and FXEvent are used to store the event to book
 
     @Override
@@ -66,6 +68,10 @@ public final class BookEventActivity extends ViewDomainActivityBase implements B
         return modifyOrderDocumentIdProperty.get();
     }
 
+    private Object getPayOrderDocumentId() {
+        return payOrderDocumentIdProperty.get();
+    }
+
     @Override
     public Node buildUi() {
         Region activityContainer = lettersSlideController.getContainer();
@@ -82,6 +88,7 @@ public final class BookEventActivity extends ViewDomainActivityBase implements B
             FXCollapseMenu.setCollapseMenu(!Entities.samePrimaryKey(FXOrganizationId.getOrganizationId(), 1));
         }
         modifyOrderDocumentIdProperty.set(getParameter("modifyOrderDocumentId"));
+        payOrderDocumentIdProperty.set(getParameter("payOrderDocumentId"));
     }
 
     @Override
@@ -121,26 +128,30 @@ public final class BookEventActivity extends ViewDomainActivityBase implements B
     public void onReachingEndSlide() {
         FXEventId.setEventId(null); // This is to ensure that the next time the user books an event in this same session, we
         modifyOrderDocumentIdProperty.set(null);
+        payOrderDocumentIdProperty.set(null);
         FXCollapseMenu.setCollapseMenu(false);
     }
 
     @Override
     protected void startLogic() {
         // Initial load of the event policy with the possible existing booking of the user (if logged-in)
-        FXProperties.runNowAndOnPropertiesChange(this::loadPolicyAndBooking, FXEvent.eventProperty(), modifyOrderDocumentIdProperty);
+        FXProperties.runNowAndOnPropertiesChange(this::loadPolicyAndBooking,
+            FXEvent.eventProperty(), modifyOrderDocumentIdProperty, payOrderDocumentIdProperty);
 
         // Later loading when changing the person to book (loading of possible booking and reapplying the newly selected dates)
         FXProperties.runOnPropertyChange(this::onPersonToBookChanged, FXPersonToBook.personToBookProperty());
     }
 
     void loadPolicyAndBooking() {
-        Object modifyBookingDocumentId = getModifyOrderDocumentId();
-        if (modifyBookingDocumentId != null) {
+        Object modifyOrderDocumentId = getModifyOrderDocumentId();
+        Object payOrderDocumentId = getPayOrderDocumentId();
+        Object modifyOrPayOrderDocumentId = Objects.coalesce(modifyOrderDocumentId, payOrderDocumentId);
+        if (modifyOrPayOrderDocumentId != null) {
             // Note: this call doesn't automatically rebuild PolicyAggregate entities
-            DocumentService.loadPolicyAndDocument(new LoadDocumentArgument(modifyBookingDocumentId))
+            DocumentService.loadPolicyAndDocument(new LoadDocumentArgument(modifyOrPayOrderDocumentId))
                 .onFailure(Console::log)
                 .onSuccess(policyAndDocumentAggregates -> {
-                    if (modifyBookingDocumentId == modifyOrderDocumentIdProperty.get()) { // Double-checking
+                    if (modifyOrPayOrderDocumentId == Objects.coalesce(getModifyOrderDocumentId(), getPayOrderDocumentId())) { // Double-checking
                         onPolityAndDocumentAggregatesLoaded(policyAndDocumentAggregates);
                     }
                 });
@@ -190,7 +201,8 @@ public final class BookEventActivity extends ViewDomainActivityBase implements B
                 // Ensuring the appropriate booking form for that event is set (required before calling onWorkingBookingLoaded())
                 lettersSlideController.onEventChanged(event);
             }
-            WorkingBooking workingBooking = new WorkingBooking(policyAggregate, existingBooking);
+            // We also pass getPayOrderDocumentId() which will be used to initialize paymentRequestedByUser in WorkingBooking
+            WorkingBooking workingBooking = new WorkingBooking(policyAggregate, existingBooking, getPayOrderDocumentId());
             workingBookingProperties.setWorkingBooking(workingBooking);
             lettersSlideController.onWorkingBookingLoaded();
         });

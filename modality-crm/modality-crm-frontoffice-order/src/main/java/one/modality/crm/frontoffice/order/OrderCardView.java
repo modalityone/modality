@@ -357,7 +357,8 @@ public final class OrderCardView {
 
     private void setupMakePaymentButton() {
         makePaymentButton.setMinWidth(Region.USE_PREF_SIZE);
-        // TODO
+        makePaymentButton.setOnAction(e ->
+            WindowHistory.getProvider().push("/pay-order/" + orderDocument.getPrimaryKey()));
     }
 
     private void setupAskRefundButton() {

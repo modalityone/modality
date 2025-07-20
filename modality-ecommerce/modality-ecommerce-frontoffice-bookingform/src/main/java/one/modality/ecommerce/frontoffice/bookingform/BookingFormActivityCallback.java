@@ -1,6 +1,6 @@
 package one.modality.ecommerce.frontoffice.bookingform;
 
-import javafx.beans.value.ObservableBooleanValue;
+import javafx.beans.binding.BooleanExpression;
 import javafx.scene.control.Button;
 import javafx.scene.layout.Region;
 
@@ -19,6 +19,6 @@ public interface BookingFormActivityCallback {
 
     Region getEmbeddedLoginNode();
 
-    ObservableBooleanValue readyToSubmitBookingProperty();
+    BooleanExpression readyToSubmitBookingProperty();
 
 }

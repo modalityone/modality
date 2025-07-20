@@ -44,12 +44,24 @@ public final class WorkingBooking {
     // record of all individual changes made over time. This entity store reflects only the latest version of the booking.
     private EntityStore entityStore;
 
+    // Convenient flag to mark working bookings created from a user payment request.
+    private final boolean paymentRequestedByUser;
+    // Then a booking form can actually distinguish 3 cases from the working booking state:
+    // 1) workingBooking.isNewBooking() == true => non-existing, new, initial booking (after pressing a Book Now button)
+    // 2) isPaymentRequestedByUser() == true => existing, saved booking the user requested to pay from the orders page
+    // 3) otherwise => existing booking that the user requested to modify from the orders page
+
     public WorkingBooking(PolicyAggregate policyAggregate, DocumentAggregate initialDocumentAggregate) {
+        this(policyAggregate, initialDocumentAggregate, null);
+    }
+
+    public WorkingBooking(PolicyAggregate policyAggregate, DocumentAggregate initialDocumentAggregate, Object paymentRequestedByUserDocumentId) {
         this.policyAggregate = policyAggregate;
         this.initialDocumentAggregate = initialDocumentAggregate;
         if (initialDocumentAggregate != null) // Case of existing booking
             initialDocumentAggregate.setPolicyAggregate(policyAggregate);
         cancelChanges(); // sounds a bit weired, but this will actually initialize the document
+        paymentRequestedByUser = Entities.samePrimaryKey(documentPrimaryKey, paymentRequestedByUserDocumentId);
     }
 
     public PolicyAggregate getPolicyAggregate() {
@@ -78,6 +90,10 @@ public final class WorkingBooking {
 
     public Event getEvent() {
         return policyAggregate.getEvent();
+    }
+
+    public boolean isPaymentRequestedByUser() {
+        return paymentRequestedByUser;
     }
 
     public void bookScheduledItems(List<ScheduledItem> scheduledItems, boolean addOnly) {
