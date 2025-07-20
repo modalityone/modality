@@ -127,12 +127,13 @@ public final class OrderCardView {
         // Updating status badge
         OrderStatus orderStatus = OrderStatus.ofDocument(orderDocument);
         I18nControls.bindI18nProperties(statusBadge, I18nKeys.upperCase(orderStatus.getI18nKey()));
-        statusBadge.getStyleClass().setAll(Bootstrap.BADGE, Bootstrap.STRONG, switch (orderStatus) {
+        String badgeStyleClass = switch (orderStatus) {
             case INCOMPLETE -> Bootstrap.DANGER;
             case CANCELLED -> Bootstrap.WARNING;
             case IN_PROGRESS -> Bootstrap.PRIMARY;
             case COMPLETE, CONFIRMED -> Bootstrap.SUCCESS;
-        });
+        };
+        statusBadge.getStyleClass().setAll(Bootstrap.BADGE, Bootstrap.STRONG, badgeStyleClass);
 
         // Updating prices
         int totalPriceNet = orderDocument.getPriceNet();
