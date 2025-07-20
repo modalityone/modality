@@ -50,7 +50,7 @@ final class StepCThankYouSlide extends StepSlide {
         bookingNumberLink.setOnAction(e ->
             // Commented as this introduces a circular dependency with modality-crm-frontoffice-orders-plugin
             //new OrdersRouting.RouteToOrdersRequest(getWorkingBooking().getDocument(), getBookEventActivity().getHistory()).execute()
-            getBookEventActivity().getHistory().push("/orders/" + getWorkingBooking().getDocument().getPrimaryKey())
+            getBookEventActivity().getHistory().push("/orders/" + getWorkingBooking().getDocument().getPrimaryKey() + "/refresh")
         );
 
         mainVbox.getChildren().setAll(

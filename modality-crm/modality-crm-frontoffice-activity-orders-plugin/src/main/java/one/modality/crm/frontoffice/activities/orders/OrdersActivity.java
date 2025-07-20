@@ -5,6 +5,7 @@ import dev.webfx.extras.styles.bootstrap.Bootstrap;
 import dev.webfx.extras.util.background.BackgroundFactory;
 import dev.webfx.extras.util.control.Controls;
 import dev.webfx.kit.util.properties.FXProperties;
+import dev.webfx.platform.util.Booleans;
 import dev.webfx.platform.util.collection.Collections;
 import dev.webfx.stack.orm.domainmodel.activity.viewdomain.impl.ViewDomainActivityBase;
 import dev.webfx.stack.orm.dql.DqlStatement;
@@ -26,8 +27,8 @@ import javafx.stage.Screen;
 import one.modality.base.client.activity.ModalityButtonFactoryMixin;
 import one.modality.base.frontoffice.utility.page.FOPageUtil;
 import one.modality.base.shared.entities.Document;
-import one.modality.crm.frontoffice.order.OrderStatus;
 import one.modality.crm.frontoffice.order.OrderCardView;
+import one.modality.crm.frontoffice.order.OrderStatus;
 import one.modality.crm.shared.services.authn.fx.FXModalityUserPrincipal;
 
 import java.time.LocalDate;
@@ -49,6 +50,12 @@ final class OrdersActivity extends ViewDomainActivityBase implements ModalityBut
 
     @Override
     protected void updateModelFromContextParameters() {
+        // If the route request comes after an order modification (ex: StepCThankYouSlide), the /refresh suffix has been
+        // added and then interpreted by ModalityClientStarterActivity as a "refresh" = true parameter, indicating that
+        // the selected order must be refreshed even if it's identical to the last one visited.
+        if (Booleans.booleanValue(getParameter("refresh"))) // if "refresh" = true
+            selectedOrderIdProperty.setValue(null); // we reset selectedOrderIdProperty to force the change
+        // We set selectedOrderIdProperty with the route parameter "documentId" (if provided)
         selectedOrderIdProperty.setValue(getParameter("documentId"));
     }
 
@@ -58,7 +65,6 @@ final class OrdersActivity extends ViewDomainActivityBase implements ModalityBut
         ordersLabel.setTextAlignment(TextAlignment.CENTER);
         ordersLabel.setWrapText(true);
         ordersLabel.setPadding(new Insets(100, 0, 40, 0));
-
 
         Label ordersExplationLabel = Bootstrap.strong(Bootstrap.textSecondary(I18nControls.newLabel(OrdersI18nKeys.OrdersTitleExplanation)));
         ordersExplationLabel.setTextAlignment(TextAlignment.CENTER);
@@ -103,7 +109,6 @@ final class OrdersActivity extends ViewDomainActivityBase implements ModalityBut
             pastBookingsContainer
         );
         pageContainer.setAlignment(Pos.TOP_CENTER);
-
 
         FXProperties.runOnPropertyChange(activeOrdersContainer.getChildren()::clear, FXModalityUserPrincipal.modalityUserPrincipalProperty());
         // Lazy loading when the user scrolls down
