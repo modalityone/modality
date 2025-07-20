@@ -22,6 +22,7 @@ module modality.base.client.application {
     requires webfx.extras.util.scene;
     requires webfx.kit.util;
     requires webfx.kit.util.scene;
+    requires webfx.platform.ast;
     requires webfx.platform.boot;
     requires transitive webfx.platform.util;
     requires webfx.platform.windowhistory;
