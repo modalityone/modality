@@ -78,6 +78,7 @@ public abstract class MultiPageBookingForm extends BookingFormBase {
     @Override
     public Node buildUi() {
         BorderPane container = new BorderPane(transitionPane);
+        container.getStyleClass().add("booking-elements");
         if (navigationBar != null) {
             container.setTop(navigationBar.getView());
         }

@@ -16,6 +16,7 @@ import one.modality.base.shared.entities.Document;
 import one.modality.base.shared.entities.DocumentLine;
 import one.modality.base.shared.entities.formatters.EventPriceFormatter;
 import one.modality.ecommerce.client.workingbooking.WorkingBooking;
+import one.modality.ecommerce.frontoffice.bookingelements.BookingElements;
 import one.modality.ecommerce.shared.pricecalculator.PriceCalculator;
 
 import java.util.LinkedHashMap;
@@ -51,8 +52,8 @@ public final class OrderDetails {
                 .collect(Collectors.groupingBy(dl -> dl.getItem().getFamily(), LinkedHashMap::new, Collectors.toList()))
                 .forEach((itemFamily, documentLinesInFamily) -> {
                     // Show item family category
-                    Label categoryLabel = Bootstrap.textPrimary(I18nEntities.newExpressionLabel(itemFamily, "i18n(this)"));
-                    categoryLabel.getStyleClass().add("detail-label");
+                    Label familyLabel = Bootstrap.textPrimary(I18nEntities.newExpressionLabel(itemFamily, "i18n(this)"));
+                    familyLabel.getStyleClass().add("detail-label");
 
                     // Calculate the total price for this family
                     int familyTotalPrice;
@@ -63,16 +64,29 @@ public final class OrderDetails {
                             .mapToInt(dl -> dl.getPriceNet() != null ? dl.getPriceNet() : 0)
                             .sum();
                     }
-                    Label familyPriceLabel = new Label(EventPriceFormatter.formatWithCurrency(familyTotalPrice, document.getEvent()));
-                    familyPriceLabel.getStyleClass().add("detail-value");
+                    Label familyPriceLabel = BookingElements.createPriceLabel(EventPriceFormatter.formatWithCurrency(familyTotalPrice, document.getEvent()));
+                    //familyPriceLabel.getStyleClass().add("detail-value");
 
-                    HBox detailHeader = new HBox(categoryLabel, Layouts.createHGrowable(), familyPriceLabel);
+                    HBox detailHeader = new HBox(familyLabel, Layouts.createHGrowable(), familyPriceLabel);
                     detailHeader.getStyleClass().addAll("detail-header", "expandable");
 
-                    VBox detailContentVBox = new VBox();
+                    VBox detailContentVBox = new VBox(8);
                     detailContentVBox.setPadding(new Insets(10, 0, 15, 20));
 
                     documentLinesInFamily.forEach(documentLine -> {
+                        // Show item family category
+                        Label itemLabel = Bootstrap.strong(I18nEntities.newExpressionLabel(documentLine.getItem(), "i18n(this)"));
+                        //itemLabel.getStyleClass().add("detail-subitem-label");
+                        itemLabel.setWrapText(true);
+
+                        Label datesLabel = BookingElements.createPeriodLabel(documentLine.getDates());
+                        datesLabel.setPadding(new Insets(0, 40, 0, 5));
+
+                        if (Booleans.booleanValue(documentLine.isCancelled())) {
+                            itemLabel.getStyleClass().add("strikethrough");
+                            datesLabel.getStyleClass().add("strikethrough");
+                        }
+
                         int price;
                         if (priceCalculator != null) {
                             price = priceCalculator.calculateDocumentLinesPrice(Stream.of(documentLine));
@@ -80,22 +94,8 @@ public final class OrderDetails {
                             price = documentLine.getPriceNet() != null ? documentLine.getPriceNet() : 0;;
                         }
                         String formattedPrice = EventPriceFormatter.formatWithCurrency(price, document.getEvent());
-
-                        // Show item family category
-                        Label itemLabel = I18nEntities.newExpressionLabel(documentLine.getItem(), "i18n(this)");
-                        itemLabel.getStyleClass().add("detail-subitem-label");
-                        itemLabel.setWrapText(true);
-
-                        Label datesLabel = Bootstrap.textSecondary(new Label(documentLine.getDates()));
-                        datesLabel.setPadding(new Insets(0, 40, 0, 0));
-
-                        if (Booleans.booleanValue(documentLine.isCancelled())) {
-                            itemLabel.getStyleClass().add("strikethrough");
-                            datesLabel.getStyleClass().add("strikethrough");
-                        }
-
-                        Label priceLabel = Bootstrap.textSecondary(new Label(formattedPrice));
-                        priceLabel.getStyleClass().add("detail-subitem-value");
+                        Label priceLabel = BookingElements.createSubPriceLabel(formattedPrice);
+                        //priceLabel.getStyleClass().add("detail-subitem-value");
 
                         HBox subItem = new HBox(itemLabel, Layouts.createHGrowable(), datesLabel, priceLabel);
                         subItem.getStyleClass().add("detail-subitem");

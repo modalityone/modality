@@ -69,12 +69,12 @@ public final class OrderCard {
 
     private final Label statusBadge = Bootstrap.badge(new Label());
     private final Label orderPriceLabel = new Label();
-    private final Label totalLabel = Controls.setupTextWrapping(I18nControls.newLabel(I18nKeys.appendColons(EcommerceI18nKeys.Total)), true, true);
-    private final Label totalValue = Controls.setupTextWrapping(new Label(), true, true);
-    private final Label paidLabel = Controls.setupTextWrapping(I18nControls.newLabel(I18nKeys.appendColons(EcommerceI18nKeys.Paid)), true, true);
-    private final Label paidValue = Controls.setupTextWrapping(new Label(), true, true);
-    private final Label remainingLabel = Controls.setupTextWrapping(I18nControls.newLabel(I18nKeys.appendColons(EcommerceI18nKeys.RemainingAmount)), true, true);
-    private final Label remainingValue = Controls.setupTextWrapping(new Label(), true, true);
+    private final Label totalLabel = I18nControls.newLabel(I18nKeys.appendColons(EcommerceI18nKeys.Total));
+    private final Label totalValue = BookingElements.createPriceLabel();
+    private final Label paidLabel = I18nControls.newLabel(I18nKeys.appendColons(EcommerceI18nKeys.Paid));
+    private final Label paidValue = BookingElements.createPriceLabel();
+    private final Label remainingLabel = I18nControls.newLabel(I18nKeys.appendColons(EcommerceI18nKeys.RemainingAmount));
+    private final Label remainingValue = new Label();
     private final Label contactUsLabel = Bootstrap.strong(Bootstrap.textPrimary(I18nControls.newLabel(OrderI18nKeys.ContactUsAboutThisBooking)));
     private final Button modifyOrderButton = Bootstrap.secondaryButton(I18nControls.newButton(OrderI18nKeys.AddOrEditOption));
     private final Button makePaymentButton = Bootstrap.primaryButton(I18nControls.newButton(OrderI18nKeys.MakePayment));
@@ -126,7 +126,7 @@ public final class OrderCard {
         Node orderDetails = new OrderDetails(orderDocument, orderDocumentLines, null).getView();
         // embedded in a card with a header
         containerPane.setContent(createOrderCard(orderDetails));
-        containerPane.getStyleClass().add("container-pane");
+        containerPane.getStyleClass().addAll("container-pane", "booking-elements");
     }
 
     private void updateUi() { // Note: orderDetails updates itself when orderDocumentLines changes, so no need to update it
@@ -281,29 +281,25 @@ public final class OrderCard {
     }
 
     private Node createPaymentSummary() {
-        VBox paymentSummary = new VBox(15);
-        paymentSummary.setPadding(new Insets(15, 0, 25, 0));
-
         // Total row
-        HBox totalRow = new HBox();
+        HBox totalRow = new HBox(totalLabel, Layouts.createHGrowable(), totalValue);
         totalRow.getStyleClass().add("payment-row");
 
-        totalRow.getChildren().addAll(totalLabel, Layouts.createHGrowable(), totalValue);
-        paymentSummary.getChildren().add(totalRow);
-
         // Paid row
-        HBox paidRow = new HBox();
+        HBox paidRow = new HBox(paidLabel, Layouts.createHGrowable(), paidValue);
         paidRow.getStyleClass().add("payment-row");
 
-        paidRow.getChildren().addAll(paidLabel, Layouts.createHGrowable(), paidValue);
-        paymentSummary.getChildren().add(paidRow);
-
         // Remaining row
-        HBox remainingRow = new HBox();
+        HBox remainingRow = new HBox(remainingLabel, Layouts.createHGrowable(), remainingValue);
         remainingRow.setPadding(new Insets(15, 0, 0, 0));
         remainingRow.getStyleClass().add("payment-remaining");
-        remainingRow.getChildren().addAll(remainingLabel, Layouts.createHGrowable(), remainingValue);
-        paymentSummary.getChildren().add(remainingRow);
+
+        VBox paymentSummary = new VBox(15,
+            totalRow,
+            paidRow,
+            remainingRow
+        );
+        paymentSummary.setPadding(new Insets(15, 0, 25, 0));
 
         return paymentSummary;
     }

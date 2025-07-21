@@ -1,8 +1,8 @@
-.booking-form {
+.booking-elements {
     -fx-font-family: "Poppins";
 }
 
-.booking-form .navigation-bar {
+.booking-elements .navigation-bar {
     -fx-font-weight: bold;
     -fx-background-color: linear-gradient(to right, #E7E7E7, #E7E7E7 75%, #0096D6 78%, #0096D6);
     -fx-background-radius: 8px;
@@ -10,52 +10,56 @@
     -fx-border-radius: 8px;
 }
 
-.booking-form .navigation-bar .title {
+.booking-elements .navigation-bar .title {
     -fx-background-color: white;
     -fx-background-radius: 8px;
 }
 
-.booking-form .navigation-bar ToggleButton {
+.booking-elements .navigation-bar ToggleButton {
     -fx-background-color: transparent;
     -fx-border-color: transparent;
 }
 
-.booking-form .navigation-bar ToggleButton:disabled {
+.booking-elements .navigation-bar ToggleButton:disabled {
     -fx-text-fill: transparent;
 }
 
-.booking-form .next-button {
+.booking-elements .next-button {
     -fx-text-fill: white;
 }
 
-.booking-form .back-button {
+.booking-elements .back-button {
     -fx-text-fill: -bootstrap-grey5;
 }
 
-.booking-form .price-bar {
+.booking-elements .price-bar {
     -fx-background-color: #F4F4F4;
     -fx-font-weight: bold;
 }
 
-.booking-form RadioButton, .booking-form CheckBox {
+.booking-elements RadioButton, .booking-elements CheckBox {
     -fx-font-weight: bold;
 }
 
-.booking-form .period-label {
+.booking-elements .period-label {
     -fx-text-fill: #838788;
 }
 
-.booking-form .price-label {
+.booking-elements .price-label {
     -fx-font-weight: bold;
     -fx-text-fill: #838788;
 }
 
-.booking-form LabeledText {
+.booking-elements .sub-price-label {
+    -fx-text-fill: #838788;
+}
+
+.booking-elements LabeledText {
     -fx-font-size: 14px;
     -fx-line-spacing: 5px;
 }
 
-.booking-form .text-area {
+.booking-elements .text-area {
     -fx-border-color: black;
     -fx-border-radius: 19px;
     -fx-background-radius: 19px;

@@ -31,7 +31,7 @@ public final class PriceBar {
 
     private static Node createPriceBox(Object i18nKey, StringProperty formattedPriceProperty) {
         Label promptLabel = BookingElements.createPricePromptLabel(i18nKey, true);
-        Label priceLabel = BookingElements.createPriceAmountLabel(formattedPriceProperty);
+        Label priceLabel = BookingElements.createPriceLabel(formattedPriceProperty);
         HBox hBox = new HBox(10, promptLabel, priceLabel);
         hBox.setPadding(new Insets(7, 24, 7, 24));
         return hBox;

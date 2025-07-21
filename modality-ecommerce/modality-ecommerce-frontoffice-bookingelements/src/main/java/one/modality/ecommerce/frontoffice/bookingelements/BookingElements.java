@@ -46,27 +46,36 @@ import java.util.List;
  */
 public final class BookingElements {
 
+    private static Label createLabel() {
+        return new Label();
+    }
+
     public static Label createStrongLabel() {
         return Bootstrap.strong(createLabel());
     }
 
-    public static Label createStrongLabel(Object i18nKey) {
-        return I18nControls.bindI18nProperties(createStrongLabel(), i18nKey);
+    public static Label createWordingLabel() {
+        return createWordingLabel(true);
     }
 
-    public static Label createSecondaryLabel() {
-        return Bootstrap.textSecondary(createLabel());
-    }
-
-    public static Label createSecondaryLabel(Object i18nKey) {
-        return I18nControls.bindI18nProperties(createSecondaryLabel(), i18nKey);
-    }
-
-    private static Label createLabel() {
-        Label label = new Label();
+    public static Label createWordingLabel(boolean strong) {
+        Label label = strong ? createStrongLabel() : createLabel();
+        label.getStyleClass().add("wording-label");
         label.setTextAlignment(TextAlignment.CENTER);
         Controls.setupTextWrapping(label, true, false);
         return label;
+    }
+
+    public static Label createWordingLabel(Object i18nKey) {
+        return I18nControls.bindI18nProperties(createWordingLabel(), i18nKey);
+    }
+
+    public static Label createSecondaryWordingLabel() {
+        return Bootstrap.textSecondary(createWordingLabel(false));
+    }
+
+    public static Label createSecondaryWordingLabel(Object i18nKey) {
+        return I18nControls.bindI18nProperties(createSecondaryWordingLabel(), i18nKey);
     }
 
     public static Region twoLabels(Label label1, Label label2) {
@@ -115,18 +124,40 @@ public final class BookingElements {
         return createStyledLabel("period-label");
     }
 
+    public static Label createPeriodLabel(String period) {
+        Label periodLabel = createPeriodLabel();
+        periodLabel.setText(period);
+        return periodLabel;
+    }
+
     public static Label createPricePromptLabel(Object i18nKey, boolean appendColons) {
         if (appendColons)
             i18nKey = I18nKeys.appendColons(i18nKey);
         return Bootstrap.strong(I18nControls.newLabel(i18nKey));
     }
 
-    public static Label createPriceAmountLabel() {
+    public static Label createPriceLabel() {
         return createStyledLabel("price-label");
     }
 
-    public static Label createPriceAmountLabel(StringProperty formattedPriceProperty) {
-        Label priceLabel = createPriceAmountLabel();
+    public static Label createPriceLabel(String formattedPrice) {
+        Label priceAmountLabel = createPriceLabel();
+        priceAmountLabel.setText(formattedPrice);
+        return priceAmountLabel;
+    }
+
+    public static Label createSubPriceLabel() {
+        return createStyledLabel("sub-price-label");
+    }
+
+    public static Label createSubPriceLabel(String formattedPrice) {
+        Label priceAmountLabel = createSubPriceLabel();
+        priceAmountLabel.setText(formattedPrice);
+        return priceAmountLabel;
+    }
+
+    public static Label createPriceLabel(StringProperty formattedPriceProperty) {
+        Label priceLabel = createPriceLabel();
         priceLabel.textProperty().bind(formattedPriceProperty);
         return priceLabel;
     }

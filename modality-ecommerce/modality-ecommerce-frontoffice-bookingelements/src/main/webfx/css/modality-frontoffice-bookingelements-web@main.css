@@ -1,4 +1,4 @@
-.booking-form .navigation-bar {
+.booking-elements .navigation-bar {
     font-weight: bold;
     --fx-background-image: linear-gradient(to right, #E7E7E7, #E7E7E7 75%, #0096D6 78%, #0096D6);
     --fx-background-radius: 8px;
@@ -17,7 +17,7 @@
     --webfx-aria-toggle-button-background-color-fired: transparent;
 }
 
-.booking-form .navigation-bar .title {
+.booking-elements .navigation-bar .title {
     --fx-background-color: white;
     --fx-background-radius: 8px;
     --fx-border-style: solid;
@@ -26,45 +26,56 @@
     --fx-border-radius: 8px;
 }
 
-.booking-form .navigation-bar fx-togglebutton.disabled {
+.booking-elements .navigation-bar fx-togglebutton.disabled {
     --fx-text-fill: transparent;
 }
 
-.booking-form .next-button {
+.booking-elements .next-button {
     --fx-text-fill: white;
 }
 
-.booking-form .back-button {
+.booking-elements .back-button {
     --fx-text-fill: var(--bootstrap-grey5);
     --webfx-aria-toggle-button-text-fill-fired: var(--bootstrap-grey5);
 }
 
-.booking-form .price-bar {
+.booking-elements .price-bar {
     font-weight: bold;
     --fx-background-color: #F4F4F4;
 }
 
-.booking-form .price-label {
+.booking-elements .price-label {
     --fx-text-fill: #838788;
     font-weight: bold;
 }
 
-.booking-form {
+.booking-elements {
     font-family: "Poppins", sans-serif;
-    --fx-line-height: 1.6;
     --fx-textarea-border-color: black;
     --fx-textarea-border-radius: 19px;
 }
 
-.booking-form fx-radiobutton, .booking-form fx-checkbox {
+.booking-elements .badge { /* badges don't look vertically centered with Poppins font */
+    font-family: "Montserrat", sans-serif;
+}
+
+.booking-elements .wording-label {
+    --fx-line-height: 1.6;
+}
+
+.booking-elements fx-radiobutton, .booking-elements fx-checkbox {
     font-weight: bold;
 }
 
-.booking-form .period-label {
+.booking-elements .period-label {
     --fx-text-fill: #838788;
 }
 
-.booking-form .price-label {
+.booking-elements .price-label {
     font-weight: bold;
+    --fx-text-fill: #838788;
+}
+
+.booking-elements .sub-price-label {
     --fx-text-fill: #838788;
 }
