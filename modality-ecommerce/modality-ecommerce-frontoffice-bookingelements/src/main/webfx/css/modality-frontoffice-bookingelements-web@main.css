@@ -63,8 +63,12 @@
     --fx-line-height: 1.6;
 }
 
-.booking-elements fx-radiobutton, .booking-elements fx-checkbox {
+.booking-elements .option-label {
     font-weight: bold;
+}
+
+.booking-elements .option-label-secondary {
+    font-weight: 600;
 }
 
 .booking-elements .period-label {

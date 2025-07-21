@@ -37,8 +37,12 @@
     -fx-font-weight: bold;
 }
 
-.booking-elements RadioButton, .booking-elements CheckBox {
+.booking-elements .option-label {
     -fx-font-weight: bold;
+}
+
+.booking-elements .option-label-secondary {
+    -fx-font-weight: 600;
 }
 
 .booking-elements .period-label {

@@ -14,6 +14,7 @@ import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.Region;
 import one.modality.ecommerce.client.workingbooking.FXPersonToBook;
 import one.modality.ecommerce.client.workingbooking.HasWorkingBookingProperties;
+import one.modality.ecommerce.frontoffice.bookingelements.BookingElements;
 import one.modality.ecommerce.frontoffice.bookingelements.NavigationBar;
 import one.modality.ecommerce.frontoffice.bookingelements.PriceBar;
 import one.modality.ecommerce.frontoffice.bookingform.BookingFormBase;
@@ -78,14 +79,13 @@ public abstract class MultiPageBookingForm extends BookingFormBase {
     @Override
     public Node buildUi() {
         BorderPane container = new BorderPane(transitionPane);
-        container.getStyleClass().add("booking-elements");
         if (navigationBar != null) {
             container.setTop(navigationBar.getView());
         }
         if (settings.showNavigationBar())
             container.setBottom(new PriceBar(workingBookingProperties).getView());
         container.setMaxWidth(MAX_WIDTH);
-        return container;
+        return BookingElements.styleBookingElementsContainer(container);
     }
 
     @Override

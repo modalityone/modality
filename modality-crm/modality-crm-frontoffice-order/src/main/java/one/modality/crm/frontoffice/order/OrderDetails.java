@@ -75,7 +75,7 @@ public final class OrderDetails {
 
                     documentLinesInFamily.forEach(documentLine -> {
                         // Show item family category
-                        Label itemLabel = Bootstrap.strong(I18nEntities.newExpressionLabel(documentLine.getItem(), "i18n(this)"));
+                        Label itemLabel = BookingElements.secondaryOptionLabel(I18nEntities.newExpressionLabel(documentLine.getItem(), "i18n(this)"));
                         //itemLabel.getStyleClass().add("detail-subitem-label");
                         itemLabel.setWrapText(true);
 

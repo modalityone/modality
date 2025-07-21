@@ -17,9 +17,7 @@ import javafx.beans.property.StringProperty;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Node;
-import javafx.scene.control.Button;
-import javafx.scene.control.Label;
-import javafx.scene.control.TextArea;
+import javafx.scene.control.*;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Region;
@@ -46,46 +44,80 @@ import java.util.List;
  */
 public final class BookingElements {
 
-    private static Label createLabel() {
-        return new Label();
+    public static <N extends Node> N styleBookingElementsContainer(N node) {
+        return style(node, "booking-elements");
     }
 
-    public static Label createStrongLabel() {
-        return Bootstrap.strong(createLabel());
+    private static <N extends Node> N style(N node, String styleClass) {
+        node.getStyleClass().add(styleClass);
+        return node;
     }
+
 
     public static Label createWordingLabel() {
-        return createWordingLabel(true);
-    }
-
-    public static Label createWordingLabel(boolean strong) {
-        Label label = strong ? createStrongLabel() : createLabel();
-        label.getStyleClass().add("wording-label");
-        label.setTextAlignment(TextAlignment.CENTER);
-        Controls.setupTextWrapping(label, true, false);
-        return label;
+        return createWordingLabel(null);
     }
 
     public static Label createWordingLabel(Object i18nKey) {
-        return I18nControls.bindI18nProperties(createWordingLabel(), i18nKey);
+        return wordingLabel(new Label(), i18nKey);
+    }
+
+    public static <L extends Labeled> L wordingLabel(L label) {
+        return wordingLabel(label, null);
+    }
+
+    public static <L extends Labeled> L wordingLabel(L label, Object i18nKey) {
+        return wordingLabel(label, true, i18nKey);
+    }
+
+    private static <L extends Labeled> L wordingLabel(L label, boolean strong, Object i18nKey) {
+        label.getStyleClass().add("wording-label");
+        label.setTextAlignment(TextAlignment.CENTER);
+        Controls.setupTextWrapping(label, true, false);
+        if (strong)
+            Bootstrap.strong(label);
+        if (i18nKey != null)
+            I18nControls.bindI18nProperties(label, i18nKey);
+        return label;
     }
 
     public static Label createSecondaryWordingLabel() {
-        return Bootstrap.textSecondary(createWordingLabel(false));
+        return createSecondaryWordingLabel(null);
     }
 
     public static Label createSecondaryWordingLabel(Object i18nKey) {
-        return I18nControls.bindI18nProperties(createSecondaryWordingLabel(), i18nKey);
+        return secondaryWordingLabel(new Label(), i18nKey);
     }
 
-    public static Region twoLabels(Label label1, Label label2) {
+    public static <L extends Labeled> L  secondaryWordingLabel(L label) {
+        return secondaryWordingLabel(label, null);
+    }
+
+    public static <L extends Labeled> L secondaryWordingLabel(L label, Object i18nKey) {
+        return wordingLabel(label, false, i18nKey);
+    }
+
+    public static <L extends Labeled> L optionLabel(L label) {
+        return optionLabel(label, false);
+    }
+
+    private static <L extends Labeled> L optionLabel(L label, boolean secondary) {
+        label.setContentDisplay(ContentDisplay.TEXT_ONLY); // We ignore graphics such as the French flag for French audio recording
+        return style(label, secondary ? "option-label-secondary" : "option-label");
+    }
+
+    public static <L extends Labeled> L secondaryOptionLabel(L label) {
+        return optionLabel(label, true);
+    }
+
+    public static Region twoLabels(Labeled label1, Labeled label2) {
         HBox hBox = new HBox(5, label1, label2);
         hBox.setAlignment(Pos.CENTER);
         return hBox;
     }
 
-    public static Region buttonBar(Button button1, Button button2) {
-        HBox buttonBar = new HBox(20, button1, button2);
+    public static Region buttonBar(Labeled... buttons) {
+        HBox buttonBar = new HBox(20, buttons);
         buttonBar.setMaxWidth(Region.USE_PREF_SIZE);
         return buttonBar;
     }
@@ -96,9 +128,12 @@ public final class BookingElements {
         return gridPane;
     }
 
-    public static VBox createPageVBox(String pageStyleClass, boolean largeSpacing, Node... children) {
-        VBox vBox = new VBox(largeSpacing ? 48 : 24, children);
-        //vBox.getStyleClass().add(pageStyleClass);
+    public static VBox createFormPageVBox(boolean largeSpacing, Node... children) {
+        return formPageVBox(new VBox(children), largeSpacing);
+    }
+
+    public static VBox formPageVBox(VBox vBox, boolean largeSpacing) {
+        vBox.setSpacing(largeSpacing ? 48 : 24);
         vBox.setPadding(new Insets(48, 0, 48, 0));
         vBox.setAlignment(Pos.CENTER);
         vBox.setMinHeight(Region.USE_PREF_SIZE);
@@ -163,9 +198,7 @@ public final class BookingElements {
     }
 
     private static Label createStyledLabel(String styleClass) {
-        Label label = new Label();
-        label.getStyleClass().add(styleClass);
-        return label;
+        return style(new Label(), styleClass);
     }
 
     public static void setupPeriodOption(List<ScheduledItem> bookableScheduledItems, Label priceLabel, BooleanProperty selectedProperty, WorkingBooking workingBooking) {
