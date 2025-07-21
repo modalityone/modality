@@ -50,7 +50,7 @@ import java.time.format.DateTimeFormatter;
 /**
  * @author David Hello
  */
-public final class OrderCardView {
+public final class OrderCard {
 
     // Required fields for retrieving order and its details
     private static final String ORDER_EVENT_REQUIRED_FIELDS = "event.(name,label,image.url,live,startDate,endDate,kbs3, venue.(name,label,country),organization.country)";
@@ -85,7 +85,7 @@ public final class OrderCardView {
     // Public API
 
     // This constructor is called by OrdersView and will be part of a list (ex: upcoming orders or past orders)
-    public OrderCardView(Document orderDocument) {
+    public OrderCard(Document orderDocument) {
         this.orderDocument = orderDocument;
         // Building the UI
         buildUi();
@@ -118,7 +118,7 @@ public final class OrderCardView {
      * Builds the main UI layout for the card view and detail section.
      */
     private void buildUi() {
-        Node orderDetails = new OrderDetailsView(orderDocument, orderDocumentLines, null).getView();
+        Node orderDetails = new OrderDetails(orderDocument, orderDocumentLines, null).getView();
         // embedded in a card with a header
         containerPane.setContent(createOrderCard(orderDetails));
         containerPane.getStyleClass().add("container-pane");

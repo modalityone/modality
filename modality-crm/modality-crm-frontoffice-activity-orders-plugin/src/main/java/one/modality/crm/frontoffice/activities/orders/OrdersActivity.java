@@ -30,7 +30,7 @@ import javafx.stage.Screen;
 import one.modality.base.client.activity.ModalityButtonFactoryMixin;
 import one.modality.base.frontoffice.utility.page.FOPageUtil;
 import one.modality.base.shared.entities.Document;
-import one.modality.crm.frontoffice.order.OrderCardView;
+import one.modality.crm.frontoffice.order.OrderCard;
 import one.modality.crm.frontoffice.order.OrderStatus;
 import one.modality.crm.shared.services.authn.fx.FXModalityUserPrincipal;
 
@@ -47,11 +47,11 @@ import static dev.webfx.stack.orm.dql.DqlStatement.where;
  */
 final class OrdersActivity extends ViewDomainActivityBase implements ModalityButtonFactoryMixin {
 
-    private final ObservableList<OrderCardView> upcomingOrderCardViews = FXCollections.observableArrayList();
+    private final ObservableList<OrderCard> upcomingOrderCards = FXCollections.observableArrayList();
     private final ObservableList<Document> pastOrdersFeed = FXCollections.observableArrayList();
     private final ObjectProperty<LocalDate> loadPastEventsBeforeDateProperty = new SimpleObjectProperty<>();
     private final ObjectProperty<Object> selectedOrderIdProperty = new SimpleObjectProperty<>();
-    private ReactiveObjectsMapper<Document, OrderCardView> upcomingOrdersMapper;
+    private ReactiveObjectsMapper<Document, OrderCard> upcomingOrdersMapper;
 
     @Override
     protected void updateModelFromContextParameters() {
@@ -83,7 +83,7 @@ final class OrdersActivity extends ViewDomainActivityBase implements ModalityBut
 
         VBox activeOrdersContainer = createOrdersContainer();
         // No feed for the active orders, we just load them all, map them to cards and then add them to the container
-        ObservableLists.bindConverted(activeOrdersContainer.getChildren(), upcomingOrderCardViews, OrderCardView::getView);
+        ObservableLists.bindConverted(activeOrdersContainer.getChildren(), upcomingOrderCards, OrderCard::getView);
 
         Label completedOrdersLabel = Bootstrap.strong(Bootstrap.textSecondary(Bootstrap.h4(I18nControls.newLabel(OrdersI18nKeys.CompletedOrders))));
         completedOrdersLabel.setTextAlignment(TextAlignment.CENTER);
@@ -95,8 +95,8 @@ final class OrdersActivity extends ViewDomainActivityBase implements ModalityBut
             pastOrdersFeed.stream().collect(Collectors.groupingBy(Document::getEvent, LinkedHashMap::new, Collectors.toList())) // Using LinkedHashMap to keep the sort
                 .forEach((event, eventOrders) -> {
                     eventOrders.forEach(orderDocument -> {
-                        OrderCardView cardView = new OrderCardView(orderDocument);
-                        pastOrdersContainer.getChildren().add(cardView.getView());
+                        OrderCard orderCard = new OrderCard(orderDocument);
+                        pastOrdersContainer.getChildren().add(orderCard.getView());
                     });
                 });
         });
@@ -134,14 +134,14 @@ final class OrdersActivity extends ViewDomainActivityBase implements ModalityBut
             Object orderId = selectedOrderIdProperty.get();
             if (orderId != null) {
                 boolean found = false;
-                for (OrderCardView cardView : upcomingOrderCardViews) {
-                    if (cardView.autoScrollToExpandedDetailsIfOrderId(orderId))
+                for (OrderCard orderCard : upcomingOrderCards) {
+                    if (orderCard.autoScrollToExpandedDetailsIfOrderId(orderId))
                         found = true;
                 }
-                if (!found && !upcomingOrderCardViews.isEmpty())
+                if (!found && !upcomingOrderCards.isEmpty())
                     upcomingOrdersMapper.refreshWhenActive();
             }
-        }, selectedOrderIdProperty, ObservableLists.versionNumber(upcomingOrderCardViews));
+        }, selectedOrderIdProperty, ObservableLists.versionNumber(upcomingOrderCards));
 
         return FOPageUtil.restrictToMaxPageWidthAndApplyPageTopBottomPadding(pageContainer);
     }
@@ -156,22 +156,22 @@ final class OrdersActivity extends ViewDomainActivityBase implements ModalityBut
     @Override
     protected void startLogic() {
         // Upcoming orders
-        upcomingOrdersMapper = ReactiveObjectsMapper.<Document, OrderCardView>createReactiveChain(this)
+        upcomingOrdersMapper = ReactiveObjectsMapper.<Document, OrderCard>createReactiveChain(this)
             .always("{class: 'Document', alias: 'd'}")
-            .always(DqlStatement.fields(OrderCardView.ORDER_REQUIRED_FIELDS))
+            .always(DqlStatement.fields(OrderCard.ORDER_REQUIRED_FIELDS))
             .always(where("event.endDate >= now()"))
             .always(where("!abandoned or price_deposit>0"))
             .ifNotNullOtherwiseEmpty(FXModalityUserPrincipal.modalityUserPrincipalProperty(), mup -> where("person.frontendAccount=?", mup.getUserAccountId()))
             .always(orderBy(OrderStatus.getBookingStatusOrderExpression(true)))
             .always(orderBy("event.startDate desc, ref desc"))
-            .setIndividualEntityToObjectMapperFactory(IndividualEntityToObjectMapper.factory(OrderCardView::new))
-            .storeMappedObjectsInto(upcomingOrderCardViews)
+            .setIndividualEntityToObjectMapperFactory(IndividualEntityToObjectMapper.factory(OrderCard::new))
+            .storeMappedObjectsInto(upcomingOrderCards)
             .start();
 
         // Past orders
         ReactiveEntitiesMapper.<Document>createReactiveChain(this)
             .always("{class: 'Document', alias: 'd', orderBy: 'event.startDate desc, ref desc', limit: 5}")
-            .always(DqlStatement.fields(OrderCardView.ORDER_REQUIRED_FIELDS))
+            .always(DqlStatement.fields(OrderCard.ORDER_REQUIRED_FIELDS))
             .always(where("event.endDate < now()"))
             .always(where("!abandoned or price_deposit>0"))
             .ifNotNullOtherwiseEmpty(FXModalityUserPrincipal.modalityUserPrincipalProperty(), mup -> where("person.frontendAccount=?", mup.getUserAccountId()))

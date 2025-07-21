@@ -27,12 +27,12 @@ import java.util.stream.Stream;
 /**
  * @author Bruno Salmon
  */
-public final class OrderDetailsView {
+public final class OrderDetails {
 
     private final VBox orderDetails = new VBox();
 
     // This constructor is called by the summary page of a booking form
-    public OrderDetailsView(WorkingBooking workingBooking) {
+    public OrderDetails(WorkingBooking workingBooking) {
         this(workingBooking.getDocument(), workingBookingObservableLines(workingBooking), new PriceCalculator(workingBooking::getLastestDocumentAggregate));
     }
 
@@ -45,7 +45,7 @@ public final class OrderDetailsView {
     }
 
     // This constructor is called by OrderCardView
-    OrderDetailsView(Document document, ObservableList<DocumentLine> orderDocumentLines, PriceCalculator priceCalculator) {
+    OrderDetails(Document document, ObservableList<DocumentLine> orderDocumentLines, PriceCalculator priceCalculator) {
         ObservableLists.runNowAndOnListChange(change -> {
             orderDetails.getChildren().clear(); // Clear existing details
             // Group and display each item (e.g., meals, rooms) in the booking
