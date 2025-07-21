@@ -138,10 +138,10 @@ final class OrdersActivity extends ViewDomainActivityBase implements ModalityBut
                     if (cardView.autoScrollToExpandedDetailsIfOrderId(orderId))
                         found = true;
                 }
-                if (!found)
+                if (!found && !upcomingOrderCardViews.isEmpty())
                     upcomingOrdersMapper.refreshWhenActive();
             }
-        }, selectedOrderIdProperty, ObservableLists.size(upcomingOrderCardViews));
+        }, selectedOrderIdProperty, ObservableLists.versionNumber(upcomingOrderCardViews));
 
         return FOPageUtil.restrictToMaxPageWidthAndApplyPageTopBottomPadding(pageContainer);
     }
