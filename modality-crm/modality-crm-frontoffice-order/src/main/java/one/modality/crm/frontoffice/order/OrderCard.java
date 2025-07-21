@@ -56,7 +56,7 @@ import java.time.format.DateTimeFormatter;
 public final class OrderCard {
 
     // Required fields for retrieving order and its details
-    private static final String ORDER_EVENT_REQUIRED_FIELDS = "event.(name,label,image.url,live,startDate,endDate,kbs3, venue.(name,label,country),organization.country)";
+    private static final String ORDER_EVENT_REQUIRED_FIELDS = "event.(name,label,state,image.url,live,startDate,endDate,kbs3, venue.(name,label,country),organization.country)";
     private static final String ORDER_PERSON_REQUIRED_FIELDS = "ref,person,person_firstName,person_lastName,cart.uuid";
     private static final String ORDER_STATUS_REQUIRED_FIELDS = OrderStatus.BOOKING_REQUIRED_FIELDS;
     public static final String ORDER_REQUIRED_FIELDS = ORDER_EVENT_REQUIRED_FIELDS + "," + ORDER_PERSON_REQUIRED_FIELDS + "," + ORDER_STATUS_REQUIRED_FIELDS;
@@ -78,7 +78,7 @@ public final class OrderCard {
     private final Button modifyOrderButton = Bootstrap.secondaryButton(I18nControls.newButton(OrderI18nKeys.AddOrEditOption));
     private final Button makePaymentButton = Bootstrap.primaryButton(I18nControls.newButton(OrderI18nKeys.MakePayment));
     private final Button askRefundButton = Bootstrap.primaryButton(I18nControls.newButton(OrderI18nKeys.AskARefund));
-    private final Button legacyCartButton = Bootstrap.secondaryButton(I18nControls.newButton(OrderI18nKeys.LegacyCart));
+    private final Button legacyCartButton = Bootstrap.primaryButton(I18nControls.newButton(OrderI18nKeys.LegacyCart));
     private final Label cancelOrderLabel = Bootstrap.textDanger(I18nControls.newLabel(OrderI18nKeys.CancelBooking));
     private final Label viewDetailsLabel = Bootstrap.h4(Bootstrap.textPrimary(I18nControls.newLabel(OrderI18nKeys.ViewDetails)));
     private final CollapsePane detailsCollapsePane = new CollapsePane();
@@ -230,8 +230,16 @@ public final class OrderCard {
                 loadAndExpandOrderDetails(false);
         });
 
+        boolean showTestModeBadge = event.getState() == EventState.TESTING;
+
         VBox orderHeader = new VBox(15,
-            statusBadge, orderTitleLabel, orderMeta, dateHBox, viewDetailsHBox, detailsCollapsePane);
+            showTestModeBadge ? new HBox(10, statusBadge, Bootstrap.dangerBadge(Bootstrap.strong(new Label("TEST MODE")))) : statusBadge,
+            orderTitleLabel,
+            orderMeta,
+            dateHBox,
+            viewDetailsHBox,
+            detailsCollapsePane
+        );
         orderHeader.setPadding(new Insets(16));
         orderHeader.getStyleClass().add("order-header");
 
