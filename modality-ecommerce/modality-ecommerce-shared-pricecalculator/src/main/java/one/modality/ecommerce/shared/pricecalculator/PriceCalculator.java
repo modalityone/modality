@@ -5,6 +5,7 @@ import dev.webfx.platform.util.collection.Collections;
 import one.modality.base.shared.entities.*;
 import one.modality.ecommerce.document.service.DocumentAggregate;
 
+import java.util.Collection;
 import java.util.List;
 import java.util.function.Supplier;
 import java.util.stream.Stream;
@@ -147,5 +148,9 @@ public final class PriceCalculator {
 
     public int calculateDocumentLinesPrice(Stream<DocumentLine> stream) {
         return Kbs2PriceAlgorithm.computeBookingBill(getDocumentAggregate(), stream, false, false).getInvoiced();
+    }
+
+    public int calculateDocumentLinesPrice(Collection<DocumentLine> lines) {
+        return calculateDocumentLinesPrice(lines.stream());
     }
 }
