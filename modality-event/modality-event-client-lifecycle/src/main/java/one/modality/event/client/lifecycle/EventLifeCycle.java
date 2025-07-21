@@ -10,6 +10,7 @@ import one.modality.base.shared.entities.Event;
 import one.modality.base.shared.entities.EventState;
 import one.modality.crm.shared.services.authn.fx.FXUserPerson;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 
 /**
@@ -33,6 +34,21 @@ public final class EventLifeCycle {
         }
         // KBS2 events
         return Booleans.isTrue(event.isLive());
+    }
+
+    public static boolean isClosed(Event event, boolean considerAudioRecording) {
+        LocalDate closingDate = getClosingDate(event, considerAudioRecording);
+        return Times.isPast(closingDate, Event.getEventClock());
+    }
+
+    public static LocalDate getClosingDate(Event event, boolean considerAudioRecording) {
+        LocalDate closingDate = event.getEndDate();
+        if (considerAudioRecording) {
+            LocalDateTime audioClosingDate = event.getAudioClosingDate();
+            if (audioClosingDate != null)
+                closingDate = audioClosingDate.toLocalDate();
+        }
+        return closingDate;
     }
 
     public static boolean isKbs2Event(Event event) {
