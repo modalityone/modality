@@ -94,7 +94,7 @@ public final class BookingElements {
     }
 
     public static <L extends Labeled> L secondaryWordingLabel(L label, Object i18nKey) {
-        return wordingLabel(label, false, i18nKey);
+        return wordingLabel(Bootstrap.textSecondary(label), false, i18nKey);
     }
 
     public static <L extends Labeled> L optionLabel(L label) {
