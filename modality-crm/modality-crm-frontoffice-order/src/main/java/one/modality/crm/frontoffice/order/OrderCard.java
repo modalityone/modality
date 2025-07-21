@@ -45,6 +45,7 @@ import one.modality.ecommerce.client.workingbooking.WorkingBooking;
 import one.modality.ecommerce.document.service.DocumentAggregate;
 import one.modality.ecommerce.document.service.DocumentService;
 import one.modality.ecommerce.document.service.PolicyAggregate;
+import one.modality.ecommerce.frontoffice.bookingelements.BookingElements;
 import one.modality.event.client.lifecycle.EventLifeCycle;
 
 import java.time.LocalDate;
@@ -233,7 +234,7 @@ public final class OrderCard {
         boolean showTestModeBadge = event.getState() == EventState.TESTING;
 
         VBox orderHeader = new VBox(15,
-            showTestModeBadge ? new HBox(10, statusBadge, Bootstrap.dangerBadge(Bootstrap.strong(new Label("TEST MODE")))) : statusBadge,
+            showTestModeBadge ? new HBox(10, statusBadge, BookingElements.createTestModeBadge()) : statusBadge,
             orderTitleLabel,
             orderMeta,
             dateHBox,

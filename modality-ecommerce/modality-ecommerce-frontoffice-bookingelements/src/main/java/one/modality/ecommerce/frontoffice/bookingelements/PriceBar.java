@@ -1,7 +1,6 @@
 package one.modality.ecommerce.frontoffice.bookingelements;
 
 import dev.webfx.extras.panes.CenteredPane;
-import dev.webfx.extras.styles.bootstrap.Bootstrap;
 import javafx.beans.property.StringProperty;
 import javafx.geometry.Insets;
 import javafx.scene.Node;
@@ -23,7 +22,7 @@ public final class PriceBar {
         container.setLeft(createPriceBox(EcommerceI18nKeys.Total, workingBookingProperties.formattedTotalProperty()));
         container.setRight(createPriceBox(EcommerceI18nKeys.MinDeposit, workingBookingProperties.formattedMinDepositProperty()));
         if (workingBookingProperties.getEvent().getState() == EventState.TESTING)
-            container.setCenter(Bootstrap.textDanger(new Label("TEST MODE")));
+            container.setCenter(BookingElements.createTestModeLabel());
     }
 
     public Node getView() {

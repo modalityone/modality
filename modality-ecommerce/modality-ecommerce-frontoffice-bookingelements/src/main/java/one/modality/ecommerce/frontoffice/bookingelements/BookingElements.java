@@ -194,4 +194,12 @@ public final class BookingElements {
         return personSelector;
     }
 
+    public static Label createTestModeLabel() {
+        return Bootstrap.strong(Bootstrap.textDanger(new Label("TEST MODE")));
+    }
+
+    public static Label createTestModeBadge() {
+        return Bootstrap.dangerBadge(createTestModeLabel());
+    }
+
 }
