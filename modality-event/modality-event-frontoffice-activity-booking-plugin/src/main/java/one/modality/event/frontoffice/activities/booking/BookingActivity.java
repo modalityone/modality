@@ -123,7 +123,7 @@ final class BookingActivity extends ViewDomainActivityBase implements ButtonFact
         });
 
         Function<Event, IndividualEntityToObjectMapper<Event, Node>>
-            factory = IndividualEntityToObjectMapper.createFactory(EventView::new, EventView::setEvent, EventView::getView);
+            factory = IndividualEntityToObjectMapper.factory(EventView::new, EventView::setEvent, EventView::getView);
         ObservableEntitiesToObjectsMapper<Event, ? extends IndividualEntityToObjectMapper<Event, Node>>
             entitiesToObjectsMapper = new ObservableEntitiesToObjectsMapper<>(localEventsOfSelectedType, factory, (Event e, IndividualEntityToObjectMapper<Event, Node> m) -> m.onEntityChangedOrReplaced(e), (Event e1, IndividualEntityToObjectMapper<Event, Node> m1) -> m1.onEntityRemoved(e1));
         ObservableLists.bindConverted(localEventsContainer.getChildren(), entitiesToObjectsMapper.getMappedObjects(), IndividualEntityToObjectMapper::getMappedObject);
@@ -149,7 +149,7 @@ final class BookingActivity extends ViewDomainActivityBase implements ButtonFact
         ReactiveObjectsMapper.<Event, Node>createPushReactiveChain(this)
             .always(commonDqlStart + "', where: 'organization.type.code = `CORP` and endDate > now() and !bookingClosed and name not like `%Online%`', orderBy: 'startDate, id'}")
             .always(DqlStatement.where("name like '%Festival%'")) // This is to remove STTP classes TODO: find a more generic way to filter out private events
-            .setIndividualEntityToObjectMapperFactory(IndividualEntityToObjectMapper.createFactory(EventView::new, EventView::setEvent, EventView::getView))
+            .setIndividualEntityToObjectMapperFactory(IndividualEntityToObjectMapper.factory(EventView::new, EventView::setEvent, EventView::getView))
             .storeMappedObjectsInto(internationalEventsContainer.getChildren())
             .setResultCacheEntry(LocalStorageCache.get().getCacheEntry("cache-booking-internationalEvents"))
             .start();
