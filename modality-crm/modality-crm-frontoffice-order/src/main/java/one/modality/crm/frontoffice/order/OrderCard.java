@@ -14,6 +14,7 @@ import dev.webfx.extras.util.dialog.DialogCallback;
 import dev.webfx.extras.util.dialog.DialogUtil;
 import dev.webfx.extras.util.layout.Layouts;
 import dev.webfx.extras.util.scene.SceneUtil;
+import dev.webfx.kit.util.properties.FXProperties;
 import dev.webfx.kit.util.properties.ObservableLists;
 import dev.webfx.platform.async.Future;
 import dev.webfx.platform.console.Console;
@@ -81,7 +82,7 @@ public final class OrderCard {
     private final Button askRefundButton = Bootstrap.primaryButton(I18nControls.newButton(OrderI18nKeys.AskARefund));
     private final Button legacyCartButton = Bootstrap.primaryButton(I18nControls.newButton(OrderI18nKeys.LegacyCart));
     private final Label cancelOrderLabel = Bootstrap.textDanger(I18nControls.newLabel(OrderI18nKeys.CancelBooking));
-    private final Label viewDetailsLabel = Bootstrap.h4(Bootstrap.textPrimary(I18nControls.newLabel(OrderI18nKeys.ViewDetails)));
+    private final Label viewHideDetailsLabel = Bootstrap.h4(Bootstrap.textPrimary(new Label()));
     private final CollapsePane detailsCollapsePane = new CollapsePane();
 
     private int remainingAmount; // computed in update UI
@@ -187,7 +188,6 @@ public final class OrderCard {
         orderPriceLabel.getStyleClass().add("order-price");
 
         // Order Dates
-
         DateTimeFormatter dayMonthFormatter = LocalizedTime.dateFormatter("MMM d");
         DateTimeFormatter dayMonthYearFormatter = LocalizedTime.dateFormatter("MMM d, yyyy");
         String eventDates;
@@ -202,17 +202,11 @@ public final class OrderCard {
         HBox dateHBox = new HBox(orderDatesLabel);
         dateHBox.setAlignment(Pos.CENTER);
 
-        viewDetailsLabel.getStyleClass().add("semi-bold");
-        viewDetailsLabel.setContentDisplay(ContentDisplay.RIGHT);
-        viewDetailsLabel.setGraphicTextGap(20);
-        Label hideDetailsLabel = Bootstrap.h4(Bootstrap.textPrimary(I18nControls.newLabel(OrderI18nKeys.HideDetails)));
-        hideDetailsLabel.getStyleClass().add("semi-bold");
-        hideDetailsLabel.setContentDisplay(ContentDisplay.RIGHT);
-        hideDetailsLabel.setGraphicTextGap(20);
-
-        HBox viewDetailsHBox = new HBox(5, viewDetailsLabel, hideDetailsLabel);
-        viewDetailsHBox.setPadding(new Insets(30, 0, 0, 0));
-        viewDetailsHBox.setAlignment(Pos.CENTER);
+        viewHideDetailsLabel.getStyleClass().add("semi-bold");
+        viewHideDetailsLabel.setPadding(new Insets(30, 0, 0, 0));
+        // We embed the label in a stretchable mono pane so it appears horizontally centered
+        MonoPane viewHideDetailsPane = new MonoPane(viewHideDetailsLabel);
+        viewHideDetailsPane.setMaxWidth(Double.MAX_VALUE);
 
         setupContactUsLabel();
 
@@ -223,24 +217,35 @@ public final class OrderCard {
             createOrderActionsBar());
         detailsCollapsePane.setContent(orderDetailsAndSummary);
         detailsCollapsePane.setCollapsed(true);
-        Layouts.bindManagedAndVisiblePropertiesTo(detailsCollapsePane.collapsedProperty().not(), hideDetailsLabel);
-        Layouts.bindManagedAndVisiblePropertiesTo(detailsCollapsePane.collapsedProperty(), viewDetailsLabel);
 
-        viewDetailsHBox.setOnMouseClicked(e -> {
-            if (orderDetailsLoaded)
+        // Show / hide details management:
+        // We initially bind the label with i18n ViewDetails, which also has a chevron icon which we display on the right
+        I18nControls.bindI18nProperties(viewHideDetailsLabel, OrderI18nKeys.ViewDetails);
+        viewHideDetailsLabel.setContentDisplay(ContentDisplay.RIGHT);
+        viewHideDetailsLabel.setGraphicTextGap(15); // adding some extra space
+        // We capture that chevron once set and ask the collapse pane to animate it in dependence of the CollapsePane state
+        FXProperties.onPropertySet(viewHideDetailsLabel.graphicProperty(), graphic ->
+            CollapsePane.animateChevron(graphic, detailsCollapsePane));
+        // We also alternate the label text in dependence of the CollapsePane state
+        FXProperties.runOnPropertyChange(collapsed -> {
+            I18nControls.bindI18nTextProperty(viewHideDetailsLabel, collapsed ? OrderI18nKeys.ViewDetails : OrderI18nKeys.HideDetails);
+        }, detailsCollapsePane.collapsedProperty());
+        // We set the mouse click handler on the label
+        viewHideDetailsLabel.setOnMouseClicked(e -> {
+            if (orderDetailsLoaded) // if already loaded, we just toggle the CollapsePane state
                 detailsCollapsePane.toggleCollapse();
-            else
-                loadAndExpandOrderDetails(false);
+            else // otherwise (first time the user clicks on it), we load the details from the database
+                loadAndExpandOrderDetails(false); // CollapsePane will be expanded once loaded (see below)
         });
+        viewHideDetailsLabel.setCursor(Cursor.HAND);
 
         boolean showTestModeBadge = event.getState() == EventState.TESTING;
-
         VBox orderHeader = new VBox(15,
             showTestModeBadge ? new HBox(10, statusBadge, BookingElements.createTestModeBadge()) : statusBadge,
             orderTitleLabel,
             orderMeta,
             dateHBox,
-            viewDetailsHBox,
+            viewHideDetailsPane,
             detailsCollapsePane
         );
         orderHeader.setPadding(new Insets(16));
@@ -265,7 +270,7 @@ public final class OrderCard {
                             SceneUtil.scrollNodeToBeVerticallyVisibleOnScene(containerPane, false, true);
                         }
                     }, 2))
-            , viewDetailsLabel);
+            , viewHideDetailsLabel);
     }
 
     private Future<?> loadFromDatabase() {
