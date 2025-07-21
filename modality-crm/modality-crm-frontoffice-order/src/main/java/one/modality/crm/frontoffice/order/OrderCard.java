@@ -23,18 +23,21 @@ import dev.webfx.stack.orm.entity.Entities;
 import dev.webfx.stack.orm.entity.EntityStoreQuery;
 import dev.webfx.stack.orm.entity.UpdateStore;
 import javafx.collections.ObservableList;
+import javafx.event.ActionEvent;
+import javafx.event.EventHandler;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.geometry.VPos;
 import javafx.scene.Cursor;
 import javafx.scene.Node;
-import javafx.scene.control.Button;
-import javafx.scene.control.ContentDisplay;
+import javafx.scene.control.*;
 import javafx.scene.control.Label;
+import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
 import one.modality.base.client.i18n.BaseI18nKeys;
 import one.modality.base.client.mainframe.fx.FXMainFrameDialogArea;
+import one.modality.base.frontoffice.utility.browser.BrowserUtil;
 import one.modality.base.shared.entities.*;
 import one.modality.base.shared.entities.formatters.EventPriceFormatter;
 import one.modality.ecommerce.client.i18n.EcommerceI18nKeys;
@@ -54,7 +57,7 @@ public final class OrderCard {
 
     // Required fields for retrieving order and its details
     private static final String ORDER_EVENT_REQUIRED_FIELDS = "event.(name,label,image.url,live,startDate,endDate,kbs3, venue.(name,label,country),organization.country)";
-    private static final String ORDER_PERSON_REQUIRED_FIELDS = "ref, person, person_firstName,person_lastName";
+    private static final String ORDER_PERSON_REQUIRED_FIELDS = "ref,person,person_firstName,person_lastName,cart.uuid";
     private static final String ORDER_STATUS_REQUIRED_FIELDS = OrderStatus.BOOKING_REQUIRED_FIELDS;
     public static final String ORDER_REQUIRED_FIELDS = ORDER_EVENT_REQUIRED_FIELDS + "," + ORDER_PERSON_REQUIRED_FIELDS + "," + ORDER_STATUS_REQUIRED_FIELDS;
     private static final String DOCUMENT_LINE_REQUIRED_FIELDS = "item.name,item.label,item.family.name,item.family.label,quantity,price_net,dates,cancelled";
@@ -72,9 +75,10 @@ public final class OrderCard {
     private final Label remainingLabel = Controls.setupTextWrapping(I18nControls.newLabel(I18nKeys.appendColons(EcommerceI18nKeys.RemainingAmount)), true, true);
     private final Label remainingValue = Controls.setupTextWrapping(new Label(), true, true);
     private final Label contactUsLabel = Bootstrap.strong(Bootstrap.textPrimary(I18nControls.newLabel(OrderI18nKeys.ContactUsAboutThisBooking)));
+    private final Button modifyOrderButton = Bootstrap.secondaryButton(I18nControls.newButton(OrderI18nKeys.AddOrEditOption));
     private final Button makePaymentButton = Bootstrap.primaryButton(I18nControls.newButton(OrderI18nKeys.MakePayment));
     private final Button askRefundButton = Bootstrap.primaryButton(I18nControls.newButton(OrderI18nKeys.AskARefund));
-    private final Button modifyOrderButton = Bootstrap.secondaryButton(I18nControls.newButton(OrderI18nKeys.AddOrEditOption));
+    private final Button legacyCartButton = Bootstrap.secondaryButton(I18nControls.newButton(OrderI18nKeys.LegacyCart));
     private final Label cancelOrderLabel = Bootstrap.textDanger(I18nControls.newLabel(OrderI18nKeys.CancelBooking));
     private final Label viewDetailsLabel = Bootstrap.h4(Bootstrap.textPrimary(I18nControls.newLabel(OrderI18nKeys.ViewDetails)));
     private final CollapsePane detailsCollapsePane = new CollapsePane();
@@ -154,6 +158,7 @@ public final class OrderCard {
         boolean notEnded = LocalDate.now().isBefore(event.getEndDate().plusDays(30));
         Layouts.setManagedAndVisibleProperties(modifyOrderButton, isKBS3 && notEnded && isNotCancelled);
         Layouts.setManagedAndVisibleProperties(makePaymentButton, isKBS3 && notEnded && remainingAmount > 0);
+        Layouts.setManagedAndVisibleProperties(legacyCartButton, !isKBS3);
         Layouts.setManagedAndVisibleProperties(askRefundButton, notEnded && remainingAmount < 0);
         Layouts.setManagedAndVisibleProperties(cancelOrderLabel, isNotCancelled && notStarted);
     }
@@ -297,15 +302,16 @@ public final class OrderCard {
     private Node createOrderActionsBar() {
         setupModifyOrderButton();
         setupMakePaymentButton();
+        setupLegacyCartButton();
         setupAskRefundButton();
         setupCancelOrderButton();
 
         HBox orderActionsBar = new HBox(12, // Gap of 12 px
-            modifyOrderButton, makePaymentButton, askRefundButton, Layouts.createHGrowable(), cancelOrderLabel);
+            modifyOrderButton, makePaymentButton, legacyCartButton, askRefundButton, Layouts.createHGrowable(), cancelOrderLabel);
         orderActionsBar.setPadding(new Insets(20, 0, 0, 0));
         orderActionsBar.setAlignment(Pos.CENTER);
         Layouts.bindManagedAndVisiblePropertiesTo(
-            modifyOrderButton.managedProperty().or(makePaymentButton.managedProperty()).or(askRefundButton.managedProperty()).or(cancelOrderLabel.managedProperty()),
+            modifyOrderButton.managedProperty().or(makePaymentButton.managedProperty()).or(askRefundButton.managedProperty()).or(legacyCartButton.managedProperty()).or(cancelOrderLabel.managedProperty()),
             orderActionsBar
         );
         return orderActionsBar;
@@ -314,9 +320,7 @@ public final class OrderCard {
     // Button setups
 
     private void setupContactUsLabel() {
-        contactUsLabel.setCursor(Cursor.HAND);
-        contactUsLabel.setWrapText(true);
-        contactUsLabel.setOnMouseClicked(me -> {
+        setupLabeled(contactUsLabel, true, e -> {
             ContactUsDialog contactUsWindow = new ContactUsDialog();
             contactUsWindow.buildUI();
             DialogCallback messageWindowCallback = DialogUtil.showModalNodeInGoldLayout(contactUsWindow.getContainer(), FXMainFrameDialogArea.getDialogArea());
@@ -352,15 +356,19 @@ public final class OrderCard {
     }
 
     private void setupModifyOrderButton() {
-        modifyOrderButton.setMinWidth(Region.USE_PREF_SIZE);
-        modifyOrderButton.setOnAction(e ->
+        setupButton(modifyOrderButton, false, e ->
             WindowHistory.getProvider().push("/modify-order/" + orderDocument.getPrimaryKey()));
     }
 
     private void setupMakePaymentButton() {
-        makePaymentButton.setMinWidth(Region.USE_PREF_SIZE);
-        makePaymentButton.setOnAction(e ->
+        setupButton(makePaymentButton, false, e ->
             WindowHistory.getProvider().push("/pay-order/" + orderDocument.getPrimaryKey()));
+    }
+
+    private void setupLegacyCartButton() {
+        legacyCartButton.setGraphicTextGap(10);
+        setupButton(legacyCartButton, false,e ->
+            BrowserUtil.openExternalBrowser(EventLifeCycle.getKbs2BookingCartUrl(orderDocument)));
     }
 
     private void setupAskRefundButton() {
@@ -464,5 +472,19 @@ public final class OrderCard {
             buttonsHBox.setAlignment(Pos.CENTER);
             errorDialog.setBottom(buttonsHBox);
         });
+    }
+
+    private static void setupLabeled(Labeled button, boolean wrap, EventHandler<MouseEvent> onMouseClicked) {
+        button.setCursor(Cursor.HAND);
+        if (wrap)
+            button.setWrapText(true);
+        else
+            button.setMinWidth(Region.USE_PREF_SIZE);
+        button.setOnMouseClicked(onMouseClicked);
+    }
+
+    private static void setupButton(ButtonBase button, boolean wrap, EventHandler<ActionEvent> onAction) {
+        setupLabeled(button, wrap, null);
+        button.setOnAction(onAction);
     }
 }

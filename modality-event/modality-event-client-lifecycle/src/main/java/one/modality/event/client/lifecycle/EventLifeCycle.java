@@ -5,6 +5,7 @@ import dev.webfx.platform.util.Booleans;
 import dev.webfx.platform.util.Numbers;
 import dev.webfx.platform.util.time.Times;
 import dev.webfx.stack.orm.entity.Entities;
+import one.modality.base.shared.entities.Document;
 import one.modality.base.shared.entities.Event;
 import one.modality.base.shared.entities.EventState;
 import one.modality.crm.shared.services.authn.fx.FXUserPerson;
@@ -59,6 +60,15 @@ public final class EventLifeCycle {
         Object language = I18n.getLanguage();
         if (language instanceof String)
             url = url + "&lang=" + language;
+        return url;
+    }
+
+    public static String getKbs2BookingCartUrl(Document document) {
+        String url = getKbs2BookingFormUrl(document.getEvent());
+        int i = url.indexOf("?");
+        if (i > 0)
+            url = url.substring(0, i);
+        url += "?cartuuid=" + document.getCart().getUuid();
         return url;
     }
 

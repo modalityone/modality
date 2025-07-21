@@ -40,6 +40,7 @@ public interface OrderI18nKeys {
     Object CancelBookingAreYouSure = "CancelBookingAreYouSure";
     Object Subject = "Subject";
     Object RefundMessage = "RefundMessage";
+    Object LegacyCart = "LegacyCart";
     Object RefundRequest = "RefundRequest";
     Object MessageSentSuccessfullyDetails = "MessageSentSuccessfullyDetails";
     Object DonationSuccessMessage = "DonationSuccessMessage";
