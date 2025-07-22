@@ -196,6 +196,11 @@ public final class BookEventActivity extends ViewDomainActivityBase implements B
                 if (!Entities.samePrimaryKey(event, eventPrimaryKey)) {
                     FXEventId.setEventPrimaryKey(eventPrimaryKey);
                     event = FXEvent.getEvent();
+                    if (event == null) { // The event is not yet loading from the database
+                        // We postpone and try again when it's loaded
+                        FXProperties.onPropertySet(FXEvent.eventProperty(), e -> onPolityAndDocumentAggregatesLoaded(policyAggregate, existingBooking));
+                        return;
+                    }
                 }
                 policyAggregate.rebuildEntities(event);
                 // Ensuring the appropriate booking form for that event is set (required before calling onWorkingBookingLoaded())
