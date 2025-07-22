@@ -121,12 +121,15 @@ public final class SvgIcons {
             new Stop(1, Color.web("#45a049"))
         ));
 
-        // Checkmark shape (as SVG path)
+        // Checkmark shape
+        /* Commented as it's not correctly centered in the StackPane with WebFX TODO: investigate this issue in WebFX
         Path checkmark = new Path(
             new MoveTo(20, 30),
             new LineTo(30, 40),
             new LineTo(44, 24)
-        );
+        );*/
+        // Using a SVGPath instead (works with WebFX)
+        SVGPath checkmark = createSVGPath("M 20 30 L 30 40 L 44 24");
         checkmark.setStroke(Color.WHITE);
         checkmark.setStrokeWidth(4);
         checkmark.setFill(null);
