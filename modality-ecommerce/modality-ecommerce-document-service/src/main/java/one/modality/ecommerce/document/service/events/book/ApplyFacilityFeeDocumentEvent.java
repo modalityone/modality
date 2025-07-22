@@ -6,7 +6,7 @@ import one.modality.ecommerce.document.service.events.AbstractDocumentEvent;
 /**
  * @author Bruno Salmon
  */
-public class ApplyFacilityFeeDocumentEvent extends AbstractDocumentEvent {
+public final class ApplyFacilityFeeDocumentEvent extends AbstractDocumentEvent {
 
     private final boolean apply;
 
@@ -26,6 +26,7 @@ public class ApplyFacilityFeeDocumentEvent extends AbstractDocumentEvent {
 
     @Override
     public void replayEventOnDocument() {
+        super.replayEventOnDocument();
         document.setPersonFacilityFee(apply);
     }
 }
