@@ -4,6 +4,7 @@ import dev.webfx.extras.panes.TransitionPane;
 import dev.webfx.extras.panes.transitions.CircleTransition;
 import dev.webfx.extras.webtext.HtmlText;
 import dev.webfx.kit.util.properties.FXProperties;
+import dev.webfx.kit.util.properties.Unregisterable;
 import dev.webfx.platform.uischeduler.UiScheduler;
 import javafx.beans.property.ReadOnlyBooleanProperty;
 import javafx.beans.property.ReadOnlyObjectProperty;
@@ -82,10 +83,14 @@ public final class LettersSlideController {
         }
     }
 
+    private Unregisterable displaySlideOnTransitionCompleteWaiter;
+
     private void displaySlideOnTransitionComplete(StepSlide slide, ReadOnlyBooleanProperty transitingProperty) {
-        FXProperties.runOrUnregisterOnPropertyChange((thisListener, oldValue, newValue) -> {
+        if (displaySlideOnTransitionCompleteWaiter != null)
+            displaySlideOnTransitionCompleteWaiter.unregister();
+        displaySlideOnTransitionCompleteWaiter = FXProperties.runOrUnregisterOnPropertyChange((thisListener, oldValue, transiting) -> {
             thisListener.unregister();
-            if (!newValue)
+            if (!transiting)
                 displaySlide(slide);
         }, transitingProperty);
     }
