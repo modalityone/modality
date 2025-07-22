@@ -344,7 +344,7 @@ public final class OrderCard {
                 Mail email = updateStore.insertEntity(Mail.class);
                 email.setFromName(d.getFirstName() + ' ' + d.getLastName());
                 email.setFromEmail(d.getEmail());
-                email.setSubject("[" + d.getPrimaryKey() + "-" + d.getRef() + "] " + contactUsWindow.getSubject());
+                email.setSubject("[" + Entities.getPrimaryKey(d.getEvent()) + "-" + d.getRef() + "] " + contactUsWindow.getSubject());
                 email.setOut(false);
                 email.setDocument(d);
                 String content = contactUsWindow.getMessage();
