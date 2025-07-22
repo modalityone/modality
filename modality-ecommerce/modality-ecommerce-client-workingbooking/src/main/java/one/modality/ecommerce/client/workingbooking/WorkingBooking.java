@@ -184,6 +184,10 @@ public final class WorkingBooking {
         integrateNewDocumentEvent(new ApplyFacilityFeeDocumentEvent(document, apply), true);
     }
 
+    public void addRequest(String request) {
+        integrateNewDocumentEvent(new AddRequestEvent(document, request), true);
+    }
+
     private void integrateNewDocumentEvent(AbstractDocumentEvent e, boolean applyImmediatelyToDocument) {
         if (applyImmediatelyToDocument)
             e.replayEventOnDocument();
@@ -329,8 +333,11 @@ public final class WorkingBooking {
         return getLastestDocumentAggregate().getAttendancesRemoved(fromChangesOnly);
     }
 
+    public AddRequestEvent findAddRequestEvent(boolean fromChangesOnly) {
+        return getLastestDocumentAggregate().findAddRequestEvent(fromChangesOnly);
+    }
 
-    // Static factory method
+        // Static factory method
 
     public static WorkingBooking createWholeEventWorkingBooking(PolicyAggregate policyAggregate) {
         WorkingBooking workingBooking = new WorkingBooking(policyAggregate, null);

@@ -14,6 +14,7 @@ public interface History extends Entity, EntityHasDocument, EntityHasUserPerson 
     String changes = "changes";
     String mail = "mail";
     String moneyTransfer = "moneyTransfer";
+    String request = "request";
 
     default void setUsername(String value) {
         setFieldValue(username, value);
@@ -33,6 +34,14 @@ public interface History extends Entity, EntityHasDocument, EntityHasUserPerson 
 
     default void setChanges(String value) {
         setFieldValue(changes, value);
+    }
+
+    default String getRequest() {
+        return getStringFieldValue(request);
+    }
+
+    default void setRequest(String value) {
+        setFieldValue(request, value);
     }
 
     default String getChanges() {

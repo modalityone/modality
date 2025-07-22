@@ -5,6 +5,7 @@ import dev.webfx.platform.ast.ReadOnlyAstArray;
 import dev.webfx.platform.async.Batch;
 import dev.webfx.platform.async.Future;
 import dev.webfx.platform.util.Arrays;
+import dev.webfx.platform.util.Strings;
 import dev.webfx.stack.com.serial.SerialCodecManager;
 import dev.webfx.stack.db.query.QueryArgument;
 import dev.webfx.stack.db.query.QueryArgumentBuilder;
@@ -83,7 +84,7 @@ public class ServerDocumentServiceProvider implements DocumentServiceProvider {
     private Future<DocumentAggregate> loadLatestDocumentFromDatabase(LoadDocumentArgument argument) {
         Object[] parameters = {argument.getDocumentPrimaryKey()};
         EntityStoreQuery[] queries = {
-            new EntityStoreQuery("select event,person,ref,person_firstName,person_lastName,person_email,person_facilityFee from Document where id=? order by id", parameters),
+            new EntityStoreQuery("select event,person,ref,person_firstName,person_lastName,person_email,person_facilityFee,request from Document where id=? order by id", parameters),
             new EntityStoreQuery("select document,site,item from DocumentLine where document=? and site!=null order by id", parameters),
             new EntityStoreQuery("select documentLine,scheduledItem from Attendance where documentLine.document=? order by id", parameters),
             new EntityStoreQuery("select document,amount,pending,successful from MoneyTransfer where document=? order by id", parameters)
@@ -109,6 +110,8 @@ public class ServerDocumentServiceProvider implements DocumentServiceProvider {
                 ((List<MoneyTransfer>) entityLists[3]).forEach(mt -> documentEvents.add(new AddMoneyTransferEvent(mt)));
                 if (document.isPersonFacilityFee())
                     documentEvents.add(new ApplyFacilityFeeDocumentEvent(document, true));
+                if (!Strings.isBlank(document.getRequest()))
+                    documentEvents.add(new AddRequestEvent(document, document.getRequest()));
                 return new DocumentAggregate(documentEvents);
             });
     }
@@ -145,7 +148,7 @@ public class ServerDocumentServiceProvider implements DocumentServiceProvider {
         DocumentLine documentLine = null;
         AbstractDocumentEvent[] documentEvents = argument.getDocumentEvents();
         for (AbstractDocumentEvent e : documentEvents) {
-            e.setEntityStore(updateStore); // This indicates it's for submit
+            e.setEntityStore(updateStore); // This indicates it's for submission
             e.replayEvent();
             if (document == null)
                 document = e.getDocument();
@@ -154,7 +157,7 @@ public class ServerDocumentServiceProvider implements DocumentServiceProvider {
             }
         }
 
-        // Note: At this point, document may be null, but in that case we at least have documentLine not null
+        // Note: At this point, the document may be null, but in that case we at least have documentLine not null
         return HistoryRecorder.prepareDocumentHistoryBeforeSubmit(argument.getHistoryComment(), document, documentLine)
             .compose(history -> // At this point, history.getDocument() is never null (it has eventually been
                 submitChangesAndPrepareResult(updateStore, history.getDocument()) // resolved through DB reading)

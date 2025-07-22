@@ -1,6 +1,7 @@
 package one.modality.ecommerce.document.service.util;
 
 import dev.webfx.platform.util.Arrays;
+import dev.webfx.platform.util.Strings;
 import dev.webfx.platform.util.collection.Collections;
 import dev.webfx.stack.orm.entity.Entities;
 import one.modality.base.shared.entities.Attendance;
@@ -8,10 +9,7 @@ import one.modality.base.shared.entities.DocumentLine;
 import one.modality.ecommerce.document.service.events.AbstractAttendancesEvent;
 import one.modality.ecommerce.document.service.events.AbstractDocumentEvent;
 import one.modality.ecommerce.document.service.events.AbstractDocumentLineEvent;
-import one.modality.ecommerce.document.service.events.book.AddAttendancesEvent;
-import one.modality.ecommerce.document.service.events.book.AddDocumentLineEvent;
-import one.modality.ecommerce.document.service.events.book.ApplyFacilityFeeDocumentEvent;
-import one.modality.ecommerce.document.service.events.book.RemoveAttendancesEvent;
+import one.modality.ecommerce.document.service.events.book.*;
 import one.modality.ecommerce.document.service.events.registration.documentline.RemoveDocumentLineEvent;
 
 import java.util.Iterator;
@@ -44,8 +42,11 @@ public final class DocumentEvents {
         if (e instanceof RemoveAttendancesEvent rae) {
             return simplifyRemoveAttendancesEvent(rae, documentEvents);
         }
-        if (e instanceof ApplyFacilityFeeDocumentEvent) {
-            return simplifyApplyFacilityFeeDocumentEvent((ApplyFacilityFeeDocumentEvent) e, documentEvents);
+        if (e instanceof ApplyFacilityFeeDocumentEvent affe) {
+            return simplifyApplyFacilityFeeDocumentEvent(affe, documentEvents);
+        }
+        if (e instanceof AddRequestEvent) {
+            return simplifyAddRequestEvent((AddRequestEvent) e, documentEvents);
         }
         return e;
     }
@@ -146,7 +147,7 @@ public final class DocumentEvents {
             throw new IllegalArgumentException("Unknown AttendancesEvent type: " + ae);
     }
 
-    private static AbstractDocumentEvent simplifyApplyFacilityFeeDocumentEvent(ApplyFacilityFeeDocumentEvent affde, List<AbstractDocumentEvent> documentEvents) {
+    private static AbstractDocumentEvent simplifyApplyFacilityFeeDocumentEvent(ApplyFacilityFeeDocumentEvent affe, List<AbstractDocumentEvent> documentEvents) {
         // This new event will override all previous events of the same type, so we can get rid of those
         documentEvents.removeIf(e -> e instanceof ApplyFacilityFeeDocumentEvent);
         // Note: ideally, we should check if this final event changes or not the initial document and skip it if it
@@ -154,7 +155,17 @@ public final class DocumentEvents {
         // the initial document didn't have facility applied, then we should remove both events (no need to keep the
         // second event applyFacilityFee = false as it finally doesn't change the initial document). However, we can't
         // do that simplification because we don't have access to the initial document here. TODO: improve this.
-        return affde;
+        return affe;
+    }
+
+    private static AbstractDocumentEvent simplifyAddRequestEvent(AddRequestEvent are, List<AbstractDocumentEvent> documentEvents) {
+        // This new event will override all previous events of the same type, so we can get rid of those
+        documentEvents.removeIf(e -> e instanceof AddRequestEvent);
+        if (Strings.isBlank(are.getRequest())) {
+            // TODO: undo the possible change made on document request
+            return null;
+        }
+        return are;
     }
 
     private static boolean sameDocumentLine(DocumentLine line1, DocumentLine line2) {

@@ -2,6 +2,7 @@ package one.modality.ecommerce.history.server;
 
 import dev.webfx.platform.ast.AST;
 import dev.webfx.platform.async.Future;
+import dev.webfx.platform.util.Arrays;
 import dev.webfx.stack.authn.AuthenticationService;
 import dev.webfx.stack.com.serial.SerialCodecManager;
 import dev.webfx.stack.orm.entity.Entity;
@@ -16,6 +17,7 @@ import one.modality.ecommerce.document.service.events.AbstractAttendancesEvent;
 import one.modality.ecommerce.document.service.events.AbstractDocumentEvent;
 import one.modality.ecommerce.document.service.events.AbstractDocumentLineEvent;
 import one.modality.ecommerce.document.service.events.AbstractMoneyTransferEvent;
+import one.modality.ecommerce.document.service.events.book.AddRequestEvent;
 
 import java.util.function.Consumer;
 import java.util.function.Supplier;
@@ -46,7 +48,7 @@ public final class HistoryRecorder {
         history.setDocument(document);
         history.setComment(comment);
 
-        // Final step in the history creation is to set the user
+        // The final step in the history creation is to set the user
         return setHistoryUser(history, userId);
     }
 
@@ -78,6 +80,10 @@ public final class HistoryRecorder {
         History h = updateStore.updateEntity(history); // weird API?
         resolveDocumentEventsPrimaryKeys(documentEvents, updateStore);
         h.setChanges(AST.formatArray(SerialCodecManager.encodeJavaArrayToAstArray(documentEvents), "json"));
+        // Also if the user wrote a request in these changes, we copy that request in the history
+        AddRequestEvent are = (AddRequestEvent) Arrays.findFirst(documentEvents, e -> e instanceof AddRequestEvent);
+        if (are != null)
+            h.setRequest(are.getRequest());
         return updateStore.submitChanges().map(ignored -> result);
     }
 

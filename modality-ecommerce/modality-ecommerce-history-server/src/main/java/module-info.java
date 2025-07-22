@@ -9,6 +9,7 @@ module modality.ecommerce.history.server {
     requires modality.ecommerce.document.service;
     requires webfx.platform.ast;
     requires webfx.platform.async;
+    requires webfx.platform.util;
     requires webfx.stack.authn;
     requires webfx.stack.com.serial;
     requires webfx.stack.orm.entity;

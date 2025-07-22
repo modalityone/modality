@@ -26,6 +26,7 @@ public interface Document extends
     String passReady = "passReady";
     String flagged = "flagged";
     String personFacilityFee = "person_facilityFee";
+    String request = "request";
 
     default void setRef(Integer value) {
         setFieldValue(ref, value);
@@ -126,4 +127,13 @@ public interface Document extends
     default Boolean isPersonFacilityFee() {
         return getBooleanFieldValue(personFacilityFee);
     }
+
+    default void setRequest(String value) {
+        setFieldValue(request, value);
+    }
+
+    default String getRequest() {
+        return getStringFieldValue(request);
+    }
+
 }
