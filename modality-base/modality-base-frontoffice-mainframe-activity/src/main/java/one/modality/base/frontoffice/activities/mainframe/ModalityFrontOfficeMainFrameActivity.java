@@ -24,7 +24,6 @@ import dev.webfx.platform.useragent.UserAgent;
 import dev.webfx.platform.util.Arrays;
 import dev.webfx.platform.util.collection.Collections;
 import dev.webfx.platform.windowhistory.spi.BrowsingHistory;
-import dev.webfx.stack.orm.entity.Entities;
 import dev.webfx.stack.routing.uirouter.UiRouter;
 import dev.webfx.stack.session.state.client.fx.FXLoggedIn;
 import javafx.beans.InvalidationListener;
@@ -56,9 +55,7 @@ import one.modality.base.frontoffice.mainframe.fx.FXBackgroundNode;
 import one.modality.base.frontoffice.mainframe.fx.FXCollapseMenu;
 import one.modality.base.frontoffice.mainframe.fx.FXShowFooter;
 import one.modality.base.frontoffice.utility.page.FOPageUtil;
-import one.modality.crm.backoffice.organization.fx.FXOrganizationId;
 import one.modality.crm.shared.services.authn.fx.FXUserName;
-import one.modality.event.client.event.fx.FXEventId;
 
 import java.util.List;
 import java.util.Objects;
@@ -404,10 +401,10 @@ public final class ModalityFrontOfficeMainFrameActivity extends ModalityClientMa
         CollapsePane collapsePane = new CollapsePane(languageSection);
         collapsePane.setAnimate(false);
         //Temporary, while the user language change is not implemented in the settings
-        //collapsePane.collapsedProperty().bind(FXLoggedIn.loggedInProperty().or(FXCollapseMenu.collapseMenuProperty()));
+        collapsePane.collapsedProperty().bind(/*FXLoggedIn.loggedInProperty().or*/(FXCollapseMenu.collapseMenuProperty()));
         // Showing the language menu (i.e., not collapsing it) when no event is selected (ex: home page), or it's a NKT event
-        collapsePane.collapsedProperty().bind(FXProperties.combine(FXOrganizationId.organizationIdProperty(), FXEventId.eventIdProperty(),
-            (oId, eId) -> !(eId == null || Entities.samePrimaryKey(oId, 1))));
+        /*collapsePane.collapsedProperty().bind(FXProperties.combine(FXOrganizationId.organizationIdProperty(), FXEventId.eventIdProperty(),
+            (oId, eId) -> !(eId == null || Entities.samePrimaryKey(oId, 1))));*/
         collapsePane.setAnimate(true);
         collapsePane.getStyleClass().setAll("menu-bar", "lang-menu-bar", "non-mobile");
         return collapsePane;

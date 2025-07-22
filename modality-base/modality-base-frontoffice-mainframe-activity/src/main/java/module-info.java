@@ -12,9 +12,7 @@ module modality.base.frontoffice.mainframe.activity {
     requires modality.base.frontoffice.mainframe.footernode;
     requires modality.base.frontoffice.mainframe.fx;
     requires modality.base.frontoffice.utility;
-    requires modality.crm.backoffice.organization.fx;
     requires modality.crm.client.authn.fx;
-    requires modality.event.client.event.fx;
     requires modality.event.client.mediaview;
     requires webfx.extras.action;
     requires webfx.extras.aria;
@@ -34,7 +32,6 @@ module modality.base.frontoffice.mainframe.activity {
     requires webfx.platform.useragent;
     requires webfx.platform.util;
     requires webfx.platform.windowhistory;
-    requires webfx.stack.orm.entity;
     requires webfx.stack.routing.uirouter;
     requires webfx.stack.session.state.client.fx;
 
