@@ -12,6 +12,7 @@ module modality.crm.frontoffice.order {
     requires modality.base.client.mainframe.fx;
     requires modality.base.frontoffice.utility;
     requires modality.base.shared.entities;
+    requires modality.crm.client.authn.fx;
     requires modality.ecommerce.client.i18n;
     requires modality.ecommerce.client.workingbooking;
     requires modality.ecommerce.document.service;

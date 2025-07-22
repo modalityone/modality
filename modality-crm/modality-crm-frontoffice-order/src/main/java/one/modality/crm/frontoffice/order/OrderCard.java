@@ -41,6 +41,7 @@ import one.modality.base.client.mainframe.fx.FXMainFrameDialogArea;
 import one.modality.base.frontoffice.utility.browser.BrowserUtil;
 import one.modality.base.shared.entities.*;
 import one.modality.base.shared.entities.formatters.EventPriceFormatter;
+import one.modality.crm.shared.services.authn.fx.FXUserPerson;
 import one.modality.ecommerce.client.i18n.EcommerceI18nKeys;
 import one.modality.ecommerce.client.workingbooking.WorkingBooking;
 import one.modality.ecommerce.document.service.DocumentAggregate;
@@ -353,7 +354,11 @@ public final class OrderCard {
                 content = "<html>" + content + "</html>";
                 email.setContent(content);
                 History history = updateStore.insertEntity(History.class);
-                history.setUsername("online");
+                Person userPerson = FXUserPerson.getUserPerson();
+                if (userPerson != null) {
+                    history.setUserPerson(userPerson);
+                } else
+                    history.setUsername("online");
                 history.setComment("Sent " + email.getSubject());
                 history.setDocument(d);
                 history.setMail(email);
