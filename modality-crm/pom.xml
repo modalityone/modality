@@ -40,7 +40,6 @@
         <module>modality-crm-frontoffice-help</module>
         <module>modality-crm-frontoffice-max-plugin</module>
         <module>modality-crm-frontoffice-min-plugin</module>
-        <module>modality-crm-frontoffice-order</module>
         <module>modality-crm-server-authn-gateway-magiclink-plugin</module>
         <module>modality-crm-server-authn-gateway-shared</module>
         <module>modality-crm-server-authn-gateway-usernamepassword-plugin</module>

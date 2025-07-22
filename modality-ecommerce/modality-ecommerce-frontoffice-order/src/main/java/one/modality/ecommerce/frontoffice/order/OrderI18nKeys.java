@@ -1,5 +1,5 @@
 // File managed by WebFX (DO NOT EDIT MANUALLY)
-package one.modality.crm.frontoffice.order;
+package one.modality.ecommerce.frontoffice.order;
 
 public interface OrderI18nKeys {
 

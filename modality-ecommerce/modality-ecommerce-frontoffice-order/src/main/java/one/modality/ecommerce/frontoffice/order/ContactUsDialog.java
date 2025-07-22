@@ -1,4 +1,4 @@
-package one.modality.crm.frontoffice.order;
+package one.modality.ecommerce.frontoffice.order;
 
 import dev.webfx.extras.i18n.controls.I18nControls;
 import dev.webfx.extras.styles.bootstrap.Bootstrap;

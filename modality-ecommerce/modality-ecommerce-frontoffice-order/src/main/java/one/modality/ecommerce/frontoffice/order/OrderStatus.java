@@ -1,4 +1,4 @@
-package one.modality.crm.frontoffice.order;
+package one.modality.ecommerce.frontoffice.order;
 
 import dev.webfx.platform.console.Console;
 import one.modality.base.shared.entities.Document;

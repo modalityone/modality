@@ -1,6 +1,6 @@
 // File managed by WebFX (DO NOT EDIT MANUALLY)
 
-module modality.crm.frontoffice.order {
+module modality.ecommerce.frontoffice.order {
 
     // Direct dependencies modules
     requires javafx.base;
@@ -38,6 +38,6 @@ module modality.crm.frontoffice.order {
     requires webfx.stack.orm.entity;
 
     // Exported packages
-    exports one.modality.crm.frontoffice.order;
+    exports one.modality.ecommerce.frontoffice.order;
 
 }

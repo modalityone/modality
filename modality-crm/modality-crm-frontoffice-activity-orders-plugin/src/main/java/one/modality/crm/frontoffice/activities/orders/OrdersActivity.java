@@ -30,8 +30,8 @@ import javafx.stage.Screen;
 import one.modality.base.client.activity.ModalityButtonFactoryMixin;
 import one.modality.base.frontoffice.utility.page.FOPageUtil;
 import one.modality.base.shared.entities.Document;
-import one.modality.crm.frontoffice.order.OrderCard;
-import one.modality.crm.frontoffice.order.OrderStatus;
+import one.modality.ecommerce.frontoffice.order.OrderCard;
+import one.modality.ecommerce.frontoffice.order.OrderStatus;
 import one.modality.crm.shared.services.authn.fx.FXModalityUserPrincipal;
 
 import java.time.LocalDate;

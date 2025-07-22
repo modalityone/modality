@@ -10,6 +10,6 @@
         <used-by-source-modules/>
     </dependencies>
 
-    <i18n javaKeysClass="one.modality.crm.frontoffice.order.OrderI18nKeys"/>
+    <i18n javaKeysClass="one.modality.ecommerce.frontoffice.order.OrderI18nKeys"/>
 
 </project>

@@ -36,6 +36,7 @@
         <module>modality-ecommerce-document-service-server</module>
         <module>modality-ecommerce-frontoffice-bookingelements</module>
         <module>modality-ecommerce-frontoffice-bookingform</module>
+        <module>modality-ecommerce-frontoffice-order</module>
         <module>modality-ecommerce-history-server</module>
         <module>modality-ecommerce-payment</module>
         <module>modality-ecommerce-payment-buscall</module>

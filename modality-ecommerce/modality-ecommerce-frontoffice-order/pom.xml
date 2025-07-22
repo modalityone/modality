@@ -7,11 +7,11 @@
 
     <parent>
         <groupId>one.modality</groupId>
-        <artifactId>modality-crm</artifactId>
+        <artifactId>modality-ecommerce</artifactId>
         <version>1.0.0-SNAPSHOT</version>
     </parent>
 
-    <artifactId>modality-crm-frontoffice-order</artifactId>
+    <artifactId>modality-ecommerce-frontoffice-order</artifactId>
 
     <dependencies>
 

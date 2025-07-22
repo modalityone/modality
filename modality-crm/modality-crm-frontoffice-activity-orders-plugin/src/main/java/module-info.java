@@ -11,7 +11,7 @@ module modality.crm.frontoffice.activity.orders.plugin {
     requires modality.base.frontoffice.utility;
     requires modality.base.shared.entities;
     requires modality.crm.client.authn.fx;
-    requires modality.crm.frontoffice.order;
+    requires modality.ecommerce.frontoffice.order;
     requires webfx.extras.i18n;
     requires webfx.extras.i18n.controls;
     requires webfx.extras.operation;
