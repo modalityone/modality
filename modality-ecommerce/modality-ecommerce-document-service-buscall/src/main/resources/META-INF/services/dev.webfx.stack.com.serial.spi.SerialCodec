@@ -3,7 +3,7 @@ one.modality.ecommerce.document.service.buscall.serial.book.AddDocumentEventSeri
 one.modality.ecommerce.document.service.buscall.serial.book.AddDocumentLineEventSerialCodec
 one.modality.ecommerce.document.service.buscall.serial.book.AddMoneyTransferEventSerialCodec
 one.modality.ecommerce.document.service.buscall.serial.book.AddRequestEventSerialCodec
-one.modality.ecommerce.document.service.buscall.serial.book.ApplyFacilityFeeDocumentEventSerialCodec
+one.modality.ecommerce.document.service.buscall.serial.book.ApplyFacilityFeeEventSerialCodec
 one.modality.ecommerce.document.service.buscall.serial.book.CancelDocumentEventSerialCodec
 one.modality.ecommerce.document.service.buscall.serial.book.RemoveAttendancesEventSerialCodec
 one.modality.ecommerce.document.service.buscall.serial.gateway.UpdateMoneyTransferEventSerialCodec

@@ -109,7 +109,7 @@ public class ServerDocumentServiceProvider implements DocumentServiceProvider {
                     .entrySet().forEach(entry -> documentEvents.add(new AddAttendancesEvent(entry.getValue().toArray(new Attendance[0]))));
                 ((List<MoneyTransfer>) entityLists[3]).forEach(mt -> documentEvents.add(new AddMoneyTransferEvent(mt)));
                 if (document.isPersonFacilityFee())
-                    documentEvents.add(new ApplyFacilityFeeDocumentEvent(document, true));
+                    documentEvents.add(new ApplyFacilityFeeEvent(document, true));
                 if (!Strings.isBlank(document.getRequest()))
                     documentEvents.add(new AddRequestEvent(document, document.getRequest()));
                 return new DocumentAggregate(documentEvents);

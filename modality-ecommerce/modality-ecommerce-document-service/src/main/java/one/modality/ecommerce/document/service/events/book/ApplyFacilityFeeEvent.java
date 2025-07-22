@@ -6,16 +6,16 @@ import one.modality.ecommerce.document.service.events.AbstractDocumentEvent;
 /**
  * @author Bruno Salmon
  */
-public final class ApplyFacilityFeeDocumentEvent extends AbstractDocumentEvent {
+public final class ApplyFacilityFeeEvent extends AbstractDocumentEvent {
 
     private final boolean apply;
 
-    public ApplyFacilityFeeDocumentEvent(Object documentPrimaryKey, boolean apply) {
+    public ApplyFacilityFeeEvent(Object documentPrimaryKey, boolean apply) {
         super(documentPrimaryKey);
         this.apply = apply;
     }
 
-    public ApplyFacilityFeeDocumentEvent(Document document, boolean apply) {
+    public ApplyFacilityFeeEvent(Document document, boolean apply) {
         super(document);
         this.apply = apply;
     }

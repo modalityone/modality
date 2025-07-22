@@ -181,7 +181,7 @@ public final class WorkingBooking {
     }
 
     public void applyFacilityFeeRate(boolean apply) {
-        integrateNewDocumentEvent(new ApplyFacilityFeeDocumentEvent(document, apply), true);
+        integrateNewDocumentEvent(new ApplyFacilityFeeEvent(document, apply), true);
     }
 
     public void addRequest(String request) {

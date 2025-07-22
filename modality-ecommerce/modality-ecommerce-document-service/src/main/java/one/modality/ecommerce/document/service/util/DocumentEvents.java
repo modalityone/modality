@@ -42,7 +42,7 @@ public final class DocumentEvents {
         if (e instanceof RemoveAttendancesEvent rae) {
             return simplifyRemoveAttendancesEvent(rae, documentEvents);
         }
-        if (e instanceof ApplyFacilityFeeDocumentEvent affe) {
+        if (e instanceof ApplyFacilityFeeEvent affe) {
             return simplifyApplyFacilityFeeDocumentEvent(affe, documentEvents);
         }
         if (e instanceof AddRequestEvent) {
@@ -147,9 +147,9 @@ public final class DocumentEvents {
             throw new IllegalArgumentException("Unknown AttendancesEvent type: " + ae);
     }
 
-    private static AbstractDocumentEvent simplifyApplyFacilityFeeDocumentEvent(ApplyFacilityFeeDocumentEvent affe, List<AbstractDocumentEvent> documentEvents) {
+    private static AbstractDocumentEvent simplifyApplyFacilityFeeDocumentEvent(ApplyFacilityFeeEvent affe, List<AbstractDocumentEvent> documentEvents) {
         // This new event will override all previous events of the same type, so we can get rid of those
-        documentEvents.removeIf(e -> e instanceof ApplyFacilityFeeDocumentEvent);
+        documentEvents.removeIf(e -> e instanceof ApplyFacilityFeeEvent);
         // Note: ideally, we should check if this final event changes or not the initial document and skip it if it
         // doesn't. Ex: if applyFacilityFee = true on first event, and then applyFacilityFee = false on second event and
         // the initial document didn't have facility applied, then we should remove both events (no need to keep the
