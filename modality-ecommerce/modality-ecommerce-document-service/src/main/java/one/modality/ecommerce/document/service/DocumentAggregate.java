@@ -103,6 +103,10 @@ public final class DocumentAggregate {
             document = entityStore.createEntity(Document.class);
     }
 
+    public PolicyAggregate getPolicyAggregate() {
+        return policyAggregate;
+    }
+
     public DocumentAggregate getPreviousVersion() {
         return previousVersion;
     }
@@ -111,8 +115,66 @@ public final class DocumentAggregate {
         return newDocumentEvents;
     }
 
-    public PolicyAggregate getPolicyAggregate() {
-        return policyAggregate;
+    public List<AbstractDocumentEvent> getNewDocumentEvents(boolean excludePreviousVersions) {
+        if (excludePreviousVersions)
+            return getNewDocumentEvents();
+
+        List<AbstractDocumentEvent> allEvents = new ArrayList<>();
+        DocumentAggregate current = this;
+        while (current != null) {
+            allEvents.addAll(getNewDocumentEvents());
+            current = current.getPreviousVersion();
+        }
+
+        // Then create a stream of all events from all aggregates and filter it
+        return allEvents;
+    }
+
+    public Stream<AbstractDocumentEvent> getNewDocumentEventsStream(boolean excludePreviousVersionEvents) {
+        return getNewDocumentEvents(excludePreviousVersionEvents).stream();
+    }
+
+    public Stream<AddAttendancesEvent> getAddAttendancesEventStream(boolean excludePreviousVersionEvents) {
+        return getNewDocumentEventsStream(excludePreviousVersionEvents)
+            // Not GWT compatible
+            //.filter(AddAttendancesEvent.class::isInstance)
+            //.map(AddAttendancesEvent.class::cast)
+            .filter(e -> e instanceof AddAttendancesEvent)
+            .map(e -> (AddAttendancesEvent) e);
+    }
+
+    public Stream<Attendance> getAttendancesAddedStream(boolean excludePreviousVersionEvents) {
+        return getAddAttendancesEventStream(excludePreviousVersionEvents)
+            .flatMap(e -> java.util.Arrays.stream(e.getAttendances()));
+    }
+
+    public List<Attendance> getAttendancesAdded(boolean excludePreviousVersionEvents) {
+        return getAttendancesAddedStream(excludePreviousVersionEvents)
+            .collect(Collectors.toList());
+    }
+
+    public Stream<RemoveAttendancesEvent> getRemoveAttendancesEventStream(boolean excludePreviousVersionEvents) {
+        return getNewDocumentEventsStream(excludePreviousVersionEvents)
+            .filter(e -> e instanceof RemoveAttendancesEvent)
+            .map(e -> (RemoveAttendancesEvent) e);
+    }
+
+    public Stream<Attendance> getAttendancesRemovedStream(boolean excludePreviousVersionEvents) {
+        return getRemoveAttendancesEventStream(excludePreviousVersionEvents)
+            .flatMap(e -> java.util.Arrays.stream(e.getAttendances()));
+    }
+
+    public List<Attendance> getAttendancesRemoved(boolean excludePreviousVersionEvents) {
+        return getAttendancesRemovedStream(excludePreviousVersionEvents)
+            .collect(Collectors.toList());
+    }
+
+    public AddRequestEvent findAddRequestEvent(boolean excludePreviousVersionEvents) {
+        return getNewDocumentEventsStream(excludePreviousVersionEvents)
+            .filter(e -> e instanceof AddRequestEvent)
+            .map(e -> (AddRequestEvent) e)
+            .findFirst()
+            .orElse(null);
     }
 
     // Accessing event

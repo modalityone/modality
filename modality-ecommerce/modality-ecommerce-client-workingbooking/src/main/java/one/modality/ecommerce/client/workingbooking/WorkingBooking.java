@@ -3,7 +3,6 @@ package one.modality.ecommerce.client.workingbooking;
 import dev.webfx.kit.util.properties.FXProperties;
 import dev.webfx.kit.util.properties.ObservableLists;
 import dev.webfx.platform.async.Future;
-import dev.webfx.platform.util.Arrays;
 import dev.webfx.platform.util.collection.Collections;
 import dev.webfx.stack.orm.entity.Entities;
 import dev.webfx.stack.orm.entity.EntityStore;
@@ -19,10 +18,10 @@ import one.modality.ecommerce.document.service.events.book.*;
 import one.modality.ecommerce.document.service.util.DocumentEvents;
 import one.modality.ecommerce.shared.pricecalculator.PriceCalculator;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 /**
  * @author Bruno Salmon
@@ -272,36 +271,6 @@ public final class WorkingBooking {
         return documentChanges;
     }
 
-    public List<Attendance> getAttendancesAdded(boolean fromChangesOnly) {
-        List<Attendance> list = new ArrayList<>();
-        DocumentAggregate documentAggregate = getLastestDocumentAggregate();
-        while (documentAggregate != null) {
-            for (AbstractDocumentEvent currentEvent : documentAggregate.getNewDocumentEvents()) {
-                if (currentEvent instanceof AddAttendancesEvent)
-                    list.addAll(Arrays.asList(((AddAttendancesEvent) currentEvent).getAttendances()));
-            }
-            if (fromChangesOnly)
-                break;
-            documentAggregate = documentAggregate.getPreviousVersion();
-        }
-        return list;
-    }
-
-    public List<Attendance> getAttendancesRemoved(boolean fromChangesOnly) {
-        List<Attendance> list = new ArrayList<>();
-        DocumentAggregate documentAggregate = getLastestDocumentAggregate();
-        while (documentAggregate != null) {
-            for (AbstractDocumentEvent currentEvent : documentAggregate.getNewDocumentEvents()) {
-                if (currentEvent instanceof RemoveAttendancesEvent)
-                    list.addAll(Arrays.asList(((RemoveAttendancesEvent) currentEvent).getAttendances()));
-            }
-            if (fromChangesOnly)
-                break;
-            documentAggregate = documentAggregate.getPreviousVersion();
-        }
-        return list;
-    }
-
     public List<ScheduledItem> getScheduledItemsAlreadyBooked() {
         DocumentAggregate initialDocumentAggregate = getInitialDocumentAggregate();
         if (initialDocumentAggregate == null) {
@@ -333,6 +302,33 @@ public final class WorkingBooking {
         PriceCalculator priceCalculator = new PriceCalculator(workingBooking.getLastestDocumentAggregate());
         return priceCalculator.calculateNoLongStayDiscountTotalPrice();
     }
+
+    // Shorthand methods to lastestDocumentAggregate
+
+    public Stream<AddAttendancesEvent> getAddAttendancesEventStream(boolean fromChangesOnly) {
+        return getLastestDocumentAggregate().getAddAttendancesEventStream(fromChangesOnly);
+    }
+
+    public Stream<Attendance> getAttendancesAddedStream(boolean fromChangesOnly) {
+        return getLastestDocumentAggregate().getAttendancesAddedStream(fromChangesOnly);
+    }
+
+    public List<Attendance> getAttendancesAdded(boolean fromChangesOnly) {
+        return getLastestDocumentAggregate().getAttendancesAdded(fromChangesOnly);
+    }
+
+    public Stream<RemoveAttendancesEvent> getRemoveAttendancesEventStream(boolean fromChangesOnly) {
+        return getLastestDocumentAggregate().getRemoveAttendancesEventStream(fromChangesOnly);
+    }
+
+    public Stream<Attendance> getAttendancesRemovedStream(boolean fromChangesOnly) {
+        return getLastestDocumentAggregate().getAttendancesRemovedStream(fromChangesOnly);
+    }
+
+    public List<Attendance> getAttendancesRemoved(boolean fromChangesOnly) {
+        return getLastestDocumentAggregate().getAttendancesRemoved(fromChangesOnly);
+    }
+
 
     // Static factory method
 
