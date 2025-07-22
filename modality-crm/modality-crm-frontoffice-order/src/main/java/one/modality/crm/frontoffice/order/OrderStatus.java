@@ -56,7 +56,7 @@ public enum OrderStatus {
     }
 
     public static String getBookingStatusExpression() {
-        return "price_net < price_minDeposit ? 'INCOMPLETE' : !confirmed && !arrived ? 'IN_PROGRESS' : price_deposit >= price_net ? 'COMPLETE' : !cancelled ? 'CONFIRMED' : 'CANCELLED' ";
+        return "price_deposit < price_minDeposit ? 'INCOMPLETE' : !confirmed && !arrived ? 'IN_PROGRESS' : price_deposit >= price_net ? 'COMPLETE' : !cancelled ? 'CONFIRMED' : 'CANCELLED' ";
     }
 
     public static String getBookingStatusOrderExpression(boolean asc) {
@@ -66,7 +66,7 @@ public enum OrderStatus {
             .replace("'CONFIRMED'", String.valueOf(CONFIRMED.ordinal()))
             .replace("'COMPLETE'", String.valueOf(COMPLETE.ordinal()))
             .replace("'CANCELLED'", String.valueOf(CANCELLED.ordinal()))
-            + (asc ? " desc" : "")
+            + (asc ? " asc" : " desc")
             ;
     }
 }
