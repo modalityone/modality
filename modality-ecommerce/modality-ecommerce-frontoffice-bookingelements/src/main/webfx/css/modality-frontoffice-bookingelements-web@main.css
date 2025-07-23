@@ -8,6 +8,10 @@
     font-size: 15px;
 }
 
+.personal-details-container, .personal-details-container input {
+    font-size: large;
+}
+
 .person-to-book-selector-dialog {
     font-family: "Poppins", sans-serif;
     font-size: 18px;

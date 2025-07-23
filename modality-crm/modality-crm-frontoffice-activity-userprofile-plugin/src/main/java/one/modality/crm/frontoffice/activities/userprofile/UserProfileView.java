@@ -45,10 +45,14 @@ import one.modality.crm.frontoffice.activities.createaccount.CreateAccountI18nKe
 
 import static one.modality.crm.frontoffice.activities.createaccount.UserAccountUI.createEntityButtonSelector;
 
+/**
+ * @author David Hello
+ */
 public class UserProfileView implements ModalityButtonFactoryMixin {
 
     private static final double PROFILE_IMAGE_SIZE = 150;
     public static final String NO_PICTURE_IMAGE = "images/large/no-picture.png";
+    private static final double FIELDS_MIN_WIDTH = 200;
 
     private final boolean showTitle;
     private final boolean showProfileHeader;
@@ -118,12 +122,12 @@ public class UserProfileView implements ModalityButtonFactoryMixin {
         container.getChildren().add(profileHeader);
         setManagedAndVisible(profileHeader, showProfileHeader);
 
-        int FIELDS_MIN_WIDTH = 200;
         ColumnsPane columnsPane = new ColumnsPane();
         columnsPane.setMaxColumnCount(2);
         columnsPane.setHgap(100);
         columnsPane.setMinColumnWidth(FIELDS_MIN_WIDTH);
         columnsPane.setVgap(50);
+        columnsPane.getStyleClass().add("personal-details-container");
 
         VBox firstColumn = new VBox(15);
         loginDetailsVBox = buildLoginDetails();

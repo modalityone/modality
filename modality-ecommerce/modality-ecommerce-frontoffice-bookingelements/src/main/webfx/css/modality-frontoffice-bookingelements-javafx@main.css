@@ -11,6 +11,10 @@
     -fx-font-size: 18px; /* Same as .btn-lg which is the style applied to the person to book button */
 }
 
+.personal-details-container {
+    -fx-font-size: 15px;
+}
+
 .booking-elements .navigation-bar {
     -fx-font-weight: bold;
     -fx-background-color: linear-gradient(to right, #E7E7E7, #E7E7E7 75%, #0096D6 78%, #0096D6);
