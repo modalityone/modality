@@ -242,6 +242,10 @@ public final class BookingElements {
                 return buttonContent;
             }
         }
+            .setDialogPrefRowHeight(37)
+            .setDialogFullHeight(true)
+            .setDialogCellMargin(new Insets(17))
+            .setDialogStyleClass("person-to-book-selector-dialog")
             .ifNotNullOtherwiseEmpty(FXModalityUserPrincipal.modalityUserPrincipalProperty(), mup -> DqlStatement.where("frontendAccount=?", mup.getUserAccountId()))
             .appendNullEntity(false)
             .setSearchCondition(null) // Temporarily disabling search because it doesn't work TODO fix this

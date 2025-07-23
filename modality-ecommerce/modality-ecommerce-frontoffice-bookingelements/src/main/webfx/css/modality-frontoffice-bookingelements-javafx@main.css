@@ -6,6 +6,11 @@
     -fx-font-size: 15px;
 }
 
+.person-to-book-selector-dialog { /* Can't be under .booking-elements as it's in the dialog area top layer */
+    -fx-font-family: "Poppins", sans-serif;
+    -fx-font-size: 18px; /* Same as .btn-lg which is the style applied to the person to book button */
+}
+
 .booking-elements .navigation-bar {
     -fx-font-weight: bold;
     -fx-background-color: linear-gradient(to right, #E7E7E7, #E7E7E7 75%, #0096D6 78%, #0096D6);

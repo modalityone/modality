@@ -8,6 +8,12 @@
     font-size: 15px;
 }
 
+.person-to-book-selector-dialog {
+    font-family: "Poppins", sans-serif;
+    font-size: 18px;
+    --webfx-visualgrid-selection-color: #EEEEEE;
+}
+
 .booking-elements .navigation-bar {
     font-weight: bold;
     --fx-background-image: linear-gradient(to right, #E7E7E7, #E7E7E7 75%, #0096D6 78%, #0096D6);
