@@ -1,6 +1,7 @@
 package one.modality.event.frontoffice.activities.book.event;
 
 import javafx.scene.layout.Background;
+import one.modality.base.shared.entities.Event;
 import one.modality.ecommerce.frontoffice.bookingform.BookingFormSettings;
 import one.modality.event.frontoffice.eventheader.EventHeader;
 
@@ -8,6 +9,7 @@ import one.modality.event.frontoffice.eventheader.EventHeader;
  * @author Bruno Salmon
  */
 public record EventBookingFormSettings(
+    Event event,
     EventHeader eventHeader,
     Background headerBackground,
     double headerMaxTopBottomPadding,

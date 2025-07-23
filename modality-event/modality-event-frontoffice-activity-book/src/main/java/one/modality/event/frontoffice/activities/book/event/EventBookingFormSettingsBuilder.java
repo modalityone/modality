@@ -1,6 +1,7 @@
 package one.modality.event.frontoffice.activities.book.event;
 
 import javafx.scene.layout.Background;
+import one.modality.base.shared.entities.Event;
 import one.modality.event.frontoffice.eventheader.EventHeader;
 
 /**
@@ -8,6 +9,7 @@ import one.modality.event.frontoffice.eventheader.EventHeader;
  */
 public final class EventBookingFormSettingsBuilder {
 
+    private final Event event;
     private EventHeader eventHeader;
     private Background headerBackground;
     private double headerMaxTopBottomPadding = -1;
@@ -17,6 +19,10 @@ public final class EventBookingFormSettingsBuilder {
     private boolean showPriceBar;
     private boolean bookAsAGuestAllowed;
     private boolean partialEventAllowed;
+
+    public EventBookingFormSettingsBuilder(Event event) {
+        this.event = event;
+    }
 
     public EventBookingFormSettingsBuilder setEventHeader(EventHeader eventHeader) {
         this.eventHeader = eventHeader;
@@ -64,6 +70,6 @@ public final class EventBookingFormSettingsBuilder {
     }
 
     public EventBookingFormSettings build() {
-        return new EventBookingFormSettings(eventHeader, headerBackground, headerMaxTopBottomPadding, extraSpaceBetweenHeaderAndBookingForm, showNavigationBar, autoLoadExistingBooking, showPriceBar, bookAsAGuestAllowed, partialEventAllowed);
+        return new EventBookingFormSettings(event, eventHeader, headerBackground, headerMaxTopBottomPadding, extraSpaceBetweenHeaderAndBookingForm, showNavigationBar, autoLoadExistingBooking, showPriceBar, bookAsAGuestAllowed, partialEventAllowed);
     }
 }

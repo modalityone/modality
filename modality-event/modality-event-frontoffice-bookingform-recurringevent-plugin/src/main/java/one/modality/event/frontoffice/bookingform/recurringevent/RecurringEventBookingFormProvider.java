@@ -27,7 +27,7 @@ public class RecurringEventBookingFormProvider implements BookingFormProvider {
 
     @Override
     public BookingForm createBookingForm(Event event, HasWorkingBookingProperties activity) {
-        return new RecurringEventBookingForm(event, (BookEventActivity) activity, new EventBookingFormSettingsBuilder()
+        return new RecurringEventBookingForm(event, (BookEventActivity) activity, new EventBookingFormSettingsBuilder(event)
             .setEventHeader(new LocalEventHeader())
             .setHeaderBackground(Background.fill(Brand.getBrandMainColor()))
             .setExtraSpaceBetweenHeaderAndBookingForm(0.03) // 3% of the booking form width
