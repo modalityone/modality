@@ -45,4 +45,8 @@ final class StepALoadingSlide extends StepSlide {
         mainVbox.getChildren().setAll(goldenRatioPane);
         mainVbox.setPadding(Insets.EMPTY); // Removing extra bottom padding
     }
+
+    boolean showFooter() {
+        return !SHOW_BRAND_LOGO;
+    }
 }

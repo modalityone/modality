@@ -76,7 +76,7 @@ public final class LettersSlideController {
                 slide.mainVbox.minHeightProperty().bind(transitionPane.heightProperty());
                 transitionPane.transitToContent(slide.get());
                 // Hiding the footer for the loading slide
-                FXShowFooter.setShowFooter(slide != stepALoadingSlide);
+                FXShowFooter.setShowFooter(slide != stepALoadingSlide || stepALoadingSlide.showFooter());
                 if (slide == stepBBookEventSlide)
                     stepBBookEventSlide.onPrepareRevealEvent();
             }));
