@@ -245,7 +245,7 @@ public final class BookingElements {
             .setDialogPrefRowHeight(37)
             .setDialogFullHeight(true)
             .setDialogCellMargin(new Insets(17))
-            .setDialogStyleClass("person-to-book-selector-dialog")
+            .setDialogStyleClass("person-to-book-dialog")
             .ifNotNullOtherwiseEmpty(FXModalityUserPrincipal.modalityUserPrincipalProperty(), mup -> DqlStatement.where("frontendAccount=?", mup.getUserAccountId()))
             .appendNullEntity(false)
             .setSearchCondition(null) // Temporarily disabling search because it doesn't work TODO fix this
@@ -259,6 +259,7 @@ public final class BookingElements {
         Button personButton = Bootstrap.largeButton(personSelector.getButton());
         personButton.setMinWidth(300);
         personButton.setMaxWidth(Region.USE_PREF_SIZE);
+        personButton.getStyleClass().add("person-to-book-button");
         VBox.setMargin(personButton, new Insets(20, 0, 20, 0));
         Layouts.bindManagedAndVisiblePropertiesTo(FXModalityUserPrincipal.loggedInProperty(), personButton);
         return personSelector;

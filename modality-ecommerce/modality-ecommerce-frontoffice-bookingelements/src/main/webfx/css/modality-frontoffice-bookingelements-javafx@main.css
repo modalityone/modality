@@ -6,13 +6,29 @@
     -fx-font-size: 15px;
 }
 
-.person-to-book-selector-dialog { /* Can't be under .booking-elements as it's in the dialog area top layer */
-    -fx-font-family: "Poppins", sans-serif;
-    -fx-font-size: 18px; /* Same as .btn-lg which is the style applied to the person to book button */
-}
-
 .personal-details-container {
     -fx-font-size: 15px;
+}
+
+.person-to-book-button, .person-to-book-dialog {
+    -fx-background-color: -brand-blue-color;
+    -fx-border-style: none;
+    -fx-text-fill: white;
+}
+
+.person-to-book-button Text, .person-to-book-dialog Text {
+    -fx-fill: white;
+}
+
+.person-to-book-button SVGPath {
+    -fx-fill: transparent;
+    -fx-stroke: white;
+}
+
+.person-to-book-dialog {
+    -fx-font-family: "Poppins", sans-serif;
+    -fx-font-size: 18px; /* Same as .btn-lg which is the style applied to the person to book button */
+    -webfx-visualgrid-selection-color: #6aabd5;
 }
 
 .booking-elements .navigation-bar {

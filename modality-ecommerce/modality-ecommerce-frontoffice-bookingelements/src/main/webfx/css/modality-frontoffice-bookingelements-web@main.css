@@ -12,10 +12,18 @@
     font-size: large;
 }
 
-.person-to-book-selector-dialog {
+.person-to-book-button, .person-to-book-dialog {
+    --fx-background-color: var(--brand-blue-color);
+    --fx-border-style:none;
+    --fx-text-fill: white;
+    --fx-svg-path-fill: transparent;
+    --fx-svg-path-stroke: white;
+}
+
+.person-to-book-dialog {
     font-family: "Poppins", sans-serif;
     font-size: 18px;
-    --webfx-visualgrid-selection-color: #EEEEEE;
+    --webfx-visualgrid-selection-color: #6aabd5;
 }
 
 .booking-elements .navigation-bar {
