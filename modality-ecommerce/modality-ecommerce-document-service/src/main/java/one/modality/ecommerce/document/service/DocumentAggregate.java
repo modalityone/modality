@@ -122,7 +122,7 @@ public final class DocumentAggregate {
         List<AbstractDocumentEvent> allEvents = new ArrayList<>();
         DocumentAggregate current = this;
         while (current != null) {
-            allEvents.addAll(getNewDocumentEvents());
+            allEvents.addAll(current.getNewDocumentEvents());
             current = current.getPreviousVersion();
         }
 
