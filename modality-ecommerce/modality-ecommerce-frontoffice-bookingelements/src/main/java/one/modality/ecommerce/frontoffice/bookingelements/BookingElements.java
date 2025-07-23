@@ -13,7 +13,7 @@ import dev.webfx.stack.orm.dql.DqlStatement;
 import dev.webfx.stack.orm.entity.EntityStore;
 import dev.webfx.stack.orm.entity.controls.entity.selector.EntityButtonSelector;
 import javafx.beans.property.BooleanProperty;
-import javafx.beans.property.StringProperty;
+import javafx.beans.value.ObservableValue;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Node;
@@ -193,7 +193,7 @@ public final class BookingElements {
         return priceAmountLabel;
     }
 
-    public static Label createPriceLabel(StringProperty formattedPriceProperty) {
+    public static Label createPriceLabel(ObservableValue<String> formattedPriceProperty) {
         Label priceLabel = createPriceLabel();
         priceLabel.textProperty().bind(formattedPriceProperty);
         return priceLabel;

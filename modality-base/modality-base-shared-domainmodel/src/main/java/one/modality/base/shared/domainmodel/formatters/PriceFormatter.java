@@ -52,11 +52,19 @@ public class PriceFormatter implements ValueFormatter, ValueParser {
     }
 
     public static String formatWithoutCurrency(Object value) {
+        return formatWithoutCurrency(value, true);
+    }
+
+    public static String formatWithoutCurrency(Object value, boolean show00cents) {
         return formatWithCurrency(value, null);
     }
 
     public static String formatWithCurrency(Object value, String currencySymbol) {
-        String price = (String) INSTANCE.format(value, currencySymbol == null);
+        return formatWithCurrency(value, currencySymbol, false);
+    }
+
+    public static String formatWithCurrency(Object value, String currencySymbol, boolean show00cents) {
+        String price = (String) INSTANCE.format(value, show00cents);
         return currencySymbol == null || currencySymbol.isEmpty() ? price : currencySymbol.startsWith(" ") ? price + currencySymbol : currencySymbol + price;
     }
 }

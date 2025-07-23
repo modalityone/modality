@@ -1,7 +1,7 @@
 package one.modality.ecommerce.frontoffice.bookingelements;
 
 import dev.webfx.extras.panes.CenteredPane;
-import javafx.beans.property.StringProperty;
+import javafx.beans.value.ObservableValue;
 import javafx.geometry.Insets;
 import javafx.scene.Node;
 import javafx.scene.control.Label;
@@ -29,7 +29,7 @@ public final class PriceBar {
         return container;
     }
 
-    private static Node createPriceBox(Object i18nKey, StringProperty formattedPriceProperty) {
+    private static Node createPriceBox(Object i18nKey, ObservableValue<String> formattedPriceProperty) {
         Label promptLabel = BookingElements.createPricePromptLabel(i18nKey, true);
         Label priceLabel = BookingElements.createPriceLabel(formattedPriceProperty);
         HBox hBox = new HBox(10, promptLabel, priceLabel);
