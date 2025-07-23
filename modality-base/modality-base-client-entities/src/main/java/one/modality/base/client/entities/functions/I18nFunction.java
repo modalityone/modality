@@ -1,13 +1,13 @@
 package one.modality.base.client.entities.functions;
 
+import dev.webfx.extras.i18n.I18n;
 import dev.webfx.extras.type.PrimType;
 import dev.webfx.extras.type.Type;
-import dev.webfx.extras.i18n.I18n;
 import dev.webfx.stack.orm.entity.Entity;
 import dev.webfx.stack.orm.entity.EntityId;
 import dev.webfx.stack.orm.expression.lci.DomainReader;
 import dev.webfx.stack.orm.expression.terms.function.Function;
-import one.modality.base.shared.entities.Label;
+import one.modality.base.shared.entities.markers.EntityHasI18nFields;
 import one.modality.base.shared.entities.markers.HasLabel;
 import one.modality.base.shared.entities.markers.HasName;
 
@@ -44,18 +44,18 @@ public final class I18nFunction extends Function {
         Object result = null;
         if (argument instanceof EntityId)
             argument = domainReader.getDomainObjectFromId(argument, null);
-        Label label = null;
-        if (argument instanceof Label)
-            label = (Label) argument;
+        Object i18nEntity = null;
+        if (argument instanceof EntityHasI18nFields) // Ex: Label or Letter
+            i18nEntity = argument;
         else if (argument instanceof HasLabel)
-            label = ((HasLabel) argument).getLabel();
-        if (label != null) {
+            i18nEntity = ((HasLabel) argument).getLabel();
+        if (i18nEntity != null) {
             if (language != null)
-                result = domainReader.getDomainFieldValue(label, language);
+                result = domainReader.getDomainFieldValue(i18nEntity, language);
             if (result == null)
-                result = domainReader.getDomainFieldValue(label, I18n.getLanguage());
+                result = domainReader.getDomainFieldValue(i18nEntity, I18n.getLanguage());
             if (result == null)
-                result = domainReader.getDomainFieldValue(label, I18n.getDefaultLanguage());
+                result = domainReader.getDomainFieldValue(i18nEntity, I18n.getDefaultLanguage());
         } else if (argument instanceof Entity) {
             Object i18nKey = domainReader.getDomainFieldValue(argument, "i18nKey");
             if (i18nKey != null)
