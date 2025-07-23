@@ -44,7 +44,9 @@ import java.util.List;
  */
 public final class BookingElements {
 
-    public static <N extends Node> N styleBookingElementsContainer(N node) {
+    public static <N extends Node> N styleBookingElementsContainer(N node, boolean bookingForm) {
+        if (bookingForm)
+            style(node, "booking-form");
         return style(node, "booking-elements");
     }
 

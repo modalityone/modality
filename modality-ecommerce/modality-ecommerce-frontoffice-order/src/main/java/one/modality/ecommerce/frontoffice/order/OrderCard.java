@@ -129,7 +129,7 @@ public final class OrderCard {
         // embedded in a card with a header
         containerPane.setContent(createOrderCard(orderDetails));
         containerPane.getStyleClass().addAll("container-pane");
-        BookingElements.styleBookingElementsContainer(containerPane);
+        BookingElements.styleBookingElementsContainer(containerPane, false);
     }
 
     private void updateUi() { // Note: orderDetails updates itself when orderDocumentLines changes, so no need to update it

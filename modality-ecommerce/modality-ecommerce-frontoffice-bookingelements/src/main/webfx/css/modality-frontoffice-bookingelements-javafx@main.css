@@ -2,6 +2,10 @@
     -fx-font-family: "Poppins";
 }
 
+.booking-elements.booking-form {
+    -fx-font-size: 15px;
+}
+
 .booking-elements .navigation-bar {
     -fx-font-weight: bold;
     -fx-background-color: linear-gradient(to right, #E7E7E7, #E7E7E7 75%, #0096D6 78%, #0096D6);
@@ -37,6 +41,14 @@
     -fx-font-weight: bold;
 }
 
+.booking-elements .badge { /* badges don't look vertically centered with Poppins font on the web version */
+    -fx-font-family: "Montserrat", sans-serif;
+}
+
+.booking-elements .wording-label {
+    -fx-line-spacing: 5px; // --fx-line-height: 1.6;
+}
+
 .booking-elements .option-label {
     -fx-font-weight: bold;
 }
@@ -56,11 +68,6 @@
 
 .booking-elements .sub-price-label {
     -fx-text-fill: #838788;
-}
-
-.booking-elements LabeledText {
-    -fx-font-size: 14px;
-    -fx-line-spacing: 5px;
 }
 
 .booking-elements .text-area {

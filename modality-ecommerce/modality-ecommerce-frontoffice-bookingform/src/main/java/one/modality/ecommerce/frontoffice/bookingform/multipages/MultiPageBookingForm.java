@@ -85,7 +85,7 @@ public abstract class MultiPageBookingForm extends BookingFormBase {
         if (settings.showNavigationBar())
             container.setBottom(new PriceBar(workingBookingProperties).getView());
         container.setMaxWidth(MAX_WIDTH);
-        return BookingElements.styleBookingElementsContainer(container);
+        return BookingElements.styleBookingElementsContainer(container, true);
     }
 
     @Override

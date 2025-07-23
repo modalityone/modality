@@ -1,3 +1,13 @@
+.booking-elements {
+    font-family: "Poppins", sans-serif;
+    --fx-textarea-border-color: black;
+    --fx-textarea-border-radius: 19px;
+}
+
+.booking-elements.booking-form {
+    font-size: 15px;
+}
+
 .booking-elements .navigation-bar {
     font-weight: bold;
     --fx-background-image: linear-gradient(to right, #E7E7E7, #E7E7E7 75%, #0096D6 78%, #0096D6);
@@ -49,13 +59,7 @@
     font-weight: bold;
 }
 
-.booking-elements {
-    font-family: "Poppins", sans-serif;
-    --fx-textarea-border-color: black;
-    --fx-textarea-border-radius: 19px;
-}
-
-.booking-elements .badge { /* badges don't look vertically centered with Poppins font */
+.booking-elements .badge { /* badges don't look vertically centered with Poppins font on the web version */
     font-family: "Montserrat", sans-serif;
 }
 
