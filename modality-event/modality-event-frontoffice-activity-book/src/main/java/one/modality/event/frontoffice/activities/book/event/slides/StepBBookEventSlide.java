@@ -91,16 +91,15 @@ final class StepBBookEventSlide extends StepSlide {
     }
 
     void onWorkingBookingLoaded() {
-        digitsSlideController.onWorkingBookingLoaded();
         workingBookingLoaded = true;
-        checkLoaded();
+        digitsSlideController.onWorkingBookingLoaded(this::displayIfLoaded);
     }
 
     void onEventDescriptionLoaded() {
-        checkLoaded();
+        displayIfLoaded();
     }
 
-    private void checkLoaded() {
+    private void displayIfLoaded() {
         if (workingBookingLoaded && eventHeader != null && eventHeader.isEventLoaded()) {
             displayBookSlide(); // which is me!
         }

@@ -76,12 +76,14 @@ final class DigitsSlideController {
         return bookingForm;
     }
 
-    void onWorkingBookingLoaded() {
+    void onWorkingBookingLoaded(Runnable onReadyToReveal) {
         // TODO: avoid rebuilding the whole UI for these remaining slides
         step2PaymentSlide.reset();
         step6ErrorSlide.reset();
 
-        if (bookingForm != null) {
+        if (bookingForm == null)
+            onReadyToReveal.run();
+        else {
             if (bookingFormCreated) {
                 step1BookingFormAndSubmitSlide.setBookingForm(bookingForm);
                 // Sub-routing node binding (displaying the possible sub-routing account node in the appropriate place in step2)
@@ -90,7 +92,10 @@ final class DigitsSlideController {
                 bookingFormCreated = false;
             }
             bookEventActivity.getWorkingBooking().getEvent().onExpressionLoaded(bookingForm.getEventFieldsToLoad())
-                .onSuccess(ignored -> UiScheduler.runInUiThread(bookingForm::onWorkingBookingLoaded));
+                .onSuccess(ignored -> UiScheduler.runInUiThread(() -> {
+                    bookingForm.onWorkingBookingLoaded();
+                    onReadyToReveal.run();
+                }));
         }
     }
 
