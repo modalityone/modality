@@ -57,9 +57,11 @@
     -fx-font-size: 14px;
     -fx-font-weight: 700;
 }
+
 .semi-bold {
     -fx-font-weight: 700
 }
+
 .order-price {
     -fx-font-size: 18px;
     -fx-font-weight: 700;
@@ -71,7 +73,6 @@
     -fx-text-fill: #666;
 }
 
-
 .detail-item {
     -fx-border-color: #f0f0f0;
     -fx-border-width: 0 0 1px 0;
@@ -82,7 +83,6 @@
     -fx-border-width: 0;
 }
 
-
 .detail-label {
     -fx-font-weight: 700;
 }
@@ -91,16 +91,13 @@
     -fx-font-size: 15px;
 }
 
-
 .detail-subitem {
-
     -fx-font-size: 14px;
 }
 
 .detail-subitem-label {
     -fx-text-fill: #666;
 }
-
 
 .payment-row {
     -fx-font-size: 14px;
