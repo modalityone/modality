@@ -30,6 +30,7 @@ module modality.ecommerce.frontoffice.bookingelements {
     requires webfx.stack.orm.domainmodel;
     requires webfx.stack.orm.dql;
     requires webfx.stack.orm.entity;
+    requires webfx.stack.orm.entity.binding;
     requires webfx.stack.orm.entity.controls;
 
     // Exported packages

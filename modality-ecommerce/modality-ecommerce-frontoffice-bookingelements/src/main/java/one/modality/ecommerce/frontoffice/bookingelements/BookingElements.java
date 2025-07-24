@@ -1,6 +1,7 @@
 package one.modality.ecommerce.frontoffice.bookingelements;
 
 import dev.webfx.extras.controlfactory.button.ButtonFactoryMixin;
+import dev.webfx.extras.i18n.I18n;
 import dev.webfx.extras.i18n.I18nKeys;
 import dev.webfx.extras.i18n.controls.I18nControls;
 import dev.webfx.extras.styles.bootstrap.Bootstrap;
@@ -11,6 +12,7 @@ import dev.webfx.stack.orm.datasourcemodel.service.DataSourceModelService;
 import dev.webfx.stack.orm.domainmodel.DataSourceModel;
 import dev.webfx.stack.orm.dql.DqlStatement;
 import dev.webfx.stack.orm.entity.EntityStore;
+import dev.webfx.stack.orm.entity.binding.EntityBindings;
 import dev.webfx.stack.orm.entity.controls.entity.selector.EntityButtonSelector;
 import javafx.beans.property.BooleanProperty;
 import javafx.beans.value.ObservableValue;
@@ -253,7 +255,7 @@ public final class BookingElements {
         // Creating a virtual teacher named "All" that will be used to select all teachers
         EntityStore store = personSelector.getStore();
         Person anotherPerson = store.createEntity(Person.class);
-        anotherPerson.setFirstName("Someone else"); // TODO make this i18n
+        I18n.bindI18nTextProperty(EntityBindings.getStringFieldProperty(anotherPerson, "firstName"), "addNewPerson"); // BookingFormI18nKeys.addNewPerson TODO: move in this module
         personSelector.setVisualNullEntity(anotherPerson);
         personSelector.selectedItemProperty().bindBidirectional(FXPersonToBook.personToBookProperty());
         Button personButton = Bootstrap.largeButton(personSelector.getButton());

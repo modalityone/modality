@@ -4,6 +4,7 @@ package one.modality.ecommerce.frontoffice.bookingform;
 public interface BookingFormI18nKeys {
 
     Object AnyRequest = "AnyRequest";
+    Object addNewPerson = "addNewPerson";
     Object TermsAndConditions = "TermsAndConditions";
     Object PayNow1 = "PayNow1";
     Object SummaryTopMessage = "SummaryTopMessage";
