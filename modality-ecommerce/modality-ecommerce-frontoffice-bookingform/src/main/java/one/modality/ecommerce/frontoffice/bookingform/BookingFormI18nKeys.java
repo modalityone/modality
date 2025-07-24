@@ -15,8 +15,11 @@ public interface BookingFormI18nKeys {
     Object SaveBooking = "SaveBooking";
     Object AgreeTermsAndConditions = "AgreeTermsAndConditions";
     Object PaymentBottomMessage = "PaymentBottomMessage";
+    Object comingSoon = "comingSoon";
     Object SummarySubTopMessage = "SummarySubTopMessage";
+    Object bookNow = "bookNow";
     Object Summary = "Summary";
+    Object closed = "closed";
     Object writeRequest = "writeRequest";
     Object BookingOptions = "BookingOptions";
 

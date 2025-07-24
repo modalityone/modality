@@ -5,11 +5,8 @@ public interface BookingI18nKeys {
 
     Object ChangeYourLocation = "ChangeYourLocation";
     Object at = "at";
-    Object comingSoon = "comingSoon";
     Object findYourLocalCentre = "findYourLocalCentre";
     Object eventsHeader = "eventsHeader";
-    Object bookNow = "bookNow";
-    Object closed = "closed";
     Object Booking = "Booking";
     Object InternationalEvents = "InternationalEvents";
     Object localEvents = "localEvents";
