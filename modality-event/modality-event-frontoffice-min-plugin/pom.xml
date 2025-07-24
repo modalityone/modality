@@ -15,23 +15,4 @@
 
     <description>Convenient module that embeds the minimal front-office modules for the Event layer.</description>
 
-    <dependencies>
-
-        <dependency>
-            <groupId>one.modality</groupId>
-            <artifactId>modality-event-frontoffice-activity-booking-plugin</artifactId>
-            <version>1.0.0-SNAPSHOT</version>
-            <scope>runtime</scope>
-        </dependency>
-
-        <dependency>
-            <groupId>dev.webfx</groupId>
-            <artifactId>webfx-platform-javatime-emul-j2cl</artifactId>
-            <version>0.1.0-SNAPSHOT</version>
-            <scope>runtime</scope>
-            <optional>true</optional>
-        </dependency>
-
-    </dependencies>
-
 </project>
