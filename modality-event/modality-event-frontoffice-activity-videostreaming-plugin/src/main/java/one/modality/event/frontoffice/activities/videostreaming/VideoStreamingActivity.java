@@ -104,6 +104,7 @@ final class VideoStreamingActivity extends ViewDomainActivityBase {
     private final List<Media> watchMedias = new ArrayList<>(); // the medias of the VOD to watch
 
     private final CollapsePane videoCollapsePane = new CollapsePane(); // contains the video player(s): 1 for livestream, 1 per media for VOD
+    private final StackPane decoratedLivestreamCollapsePane = CollapsePane.decorateCollapsePane(videoCollapsePane, true);
     private final List<MediaConsumptionRecorder> videoConsumptionRecorders = new ArrayList<>(); // the video consumption recorders (1 per player)
     private Player lastVideoPlayingPlayer; // the last playing player from this activity
 
@@ -131,6 +132,7 @@ final class VideoStreamingActivity extends ViewDomainActivityBase {
         Scheduler.schedulePeriodic(14 * 3600 * 1000, this::startLogic);
         eventsSelectionPane.collapse(); // initially collapsed
         videoCollapsePane.collapse(); // initially collapsed - might be automatically expanded by scheduleAutoLivestream()
+        decoratedLivestreamCollapsePane.setVisible(false); // will be visible if it contains at least a video or livestream
     }
 
 
@@ -410,7 +412,6 @@ final class VideoStreamingActivity extends ViewDomainActivityBase {
                 /* apply method: */ () -> responsiveDaySelectionMonoPane.setContent(daySwitcher.getMobileViewContainer())
             ).start();
 
-        StackPane decoratedLivestreamCollapsePane = CollapsePane.decorateCollapsePane(videoCollapsePane, true);
         //We display this box only if the current Date is in the list of date in the video Scheduled Item list
         VBox todayProgramVBox = new VBox(30); // Will be populated later (see reacting code below)
         Layouts.setMinMaxHeightToPref(todayProgramVBox); // No need to compute min/max height as different to pref (layout computation optimization)
@@ -590,19 +591,21 @@ final class VideoStreamingActivity extends ViewDomainActivityBase {
             Event event = eventProperty.get();
             String livestreamUrl = event == null ? null : event.getLivestreamUrl();
             if (livestreamUrl != null) {
-                videoContent = createVideoView(livestreamUrl, null, autoPlay);
+                // Checking that the user has access to a live session for today
+                if (videoScheduledItems.stream().map(VideoLifecycle::new).anyMatch(VideoLifecycle::isLiveToday))
+                    videoContent = createVideoView(livestreamUrl, null, autoPlay);
             }
         } else { // VOD
             // Creating a Player for each Media and initializing it.
             VBox videoMediasVBox = new VBox(10);
             String comment = watchingVideoItemProperty.get().getComment();
             one.modality.base.shared.entities.Label commentLabel = watchingVideoItemProperty.get().getCommentLabel();
-            if(commentLabel==null&& comment!=null) {
+            if (commentLabel == null && comment != null) {
                 Label commentUILabel = Bootstrap.strong(I18nControls.newLabel(comment));
                 commentUILabel.setWrapText(true);
                 videoVBox.getChildren().add(commentUILabel);
             }
-            if(commentLabel!=null) {
+            if (commentLabel != null) {
                 Label commentUILabel = Bootstrap.strong(I18nEntities.newExpressionLabel(commentLabel, "i18n(this)"));
                 commentUILabel.setWrapText(true);
                 videoVBox.getChildren().add(commentUILabel);
@@ -620,10 +623,11 @@ final class VideoStreamingActivity extends ViewDomainActivityBase {
         if (videoContent == null) {
             videoCollapsePane.setContent(null);
         } else {
-            ScalePane videoContainer = new ScalePane(ScaleMode.FIT_WIDTH,videoContent);
+            ScalePane videoContainer = new ScalePane(ScaleMode.FIT_WIDTH, videoContent);
             videoVBox.getChildren().add(videoContainer);
             videoCollapsePane.setContent(videoVBox);
         }
+        decoratedLivestreamCollapsePane.setVisible(videoContent != null);
     }
 
     private Node createVideoView(String url, Media media, boolean autoPlay) {
