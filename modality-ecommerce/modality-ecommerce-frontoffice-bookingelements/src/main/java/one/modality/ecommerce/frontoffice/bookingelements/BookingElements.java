@@ -24,11 +24,9 @@ import javafx.scene.layout.GridPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Region;
 import javafx.scene.layout.VBox;
-import javafx.scene.paint.Color;
 import javafx.scene.text.TextAlignment;
 import one.modality.base.client.bootstrap.ModalityStyle;
 import one.modality.base.client.mainframe.fx.FXMainFrameDialogArea;
-import one.modality.base.frontoffice.utility.tyler.TextUtility;
 import one.modality.base.shared.entities.Person;
 import one.modality.base.shared.entities.ScheduledItem;
 import one.modality.base.shared.entities.formatters.EventPriceFormatter;
@@ -240,7 +238,7 @@ public final class BookingElements {
             protected Node getOrCreateButtonContentFromSelectedItem() {
                 Node buttonContent = super.getOrCreateButtonContentFromSelectedItem();
                 if (embedPersonToBookText)
-                    buttonContent = new HBox(20, TextUtility.createText(CrmI18nKeys.PersonToBook + ":", Color.GRAY), buttonContent);
+                    buttonContent = new HBox(20, I18n.newText(I18nKeys.appendColons(CrmI18nKeys.PersonToBook)), buttonContent);
                 return buttonContent;
             }
         }
