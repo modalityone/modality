@@ -151,7 +151,20 @@ final class Kbs2PriceAlgorithm {
         }
 
         int computeBlockPrice(Bill bill, boolean minDeposit) {
-            int price = 0;
+            int perDayRatesPrice = computeBlockPriceWithRates(bill, minDeposit, true);
+            int fixedRatesPrice = computeBlockPriceWithRates(bill, minDeposit, false);
+            if (perDayRatesPrice == Integer.MIN_VALUE) {
+                if (fixedRatesPrice == Integer.MIN_VALUE)
+                    return 0;
+                else
+                    return fixedRatesPrice;
+            }
+            if (fixedRatesPrice == Integer.MIN_VALUE)
+                return perDayRatesPrice;
+            return Math.min(perDayRatesPrice, fixedRatesPrice);
+        }
+
+        private int computeBlockPriceWithRates(Bill bill, boolean minDeposit, boolean perDayRates) {
             List<BlockAttendance> bas = blockAttendances;
             int blockLength = bas.size();
             int remainingDays = blockLength;
@@ -172,10 +185,12 @@ final class Kbs2PriceAlgorithm {
             DocumentAggregate documentAggregate = bill.getDocumentAggregate();
             PolicyAggregate policyAggregate = documentAggregate.getPolicyAggregate();
             List<Rate> rates = policyAggregate.getSiteItemRatesStream(siteItem.getSite(), siteItem.getItem())
+                .filter(r -> r.isPerDay() == perDayRates)
                 .filter(r -> r.getStartDate() == null || r.getStartDate().isBefore(lastDay) || r.getStartDate().isEqual(lastDay))
                 .filter(r -> r.getEndDate() == null || r.getEndDate().isAfter(firstDay) || r.getEndDate().isEqual(firstDay))
                 //.filter(r -> r.getRateMatchesDocument(bill.getDocument()))
                 .collect(Collectors.toList());
+            int price = Integer.MIN_VALUE;
             if (!rates.isEmpty()) {
                 //rates.sort(function (r1, r2) { return (r1.perDay ? 1 : r1.maxDay ) - (r2.perDay ? 1 : r2.maxDay);});
                 while (remainingDays > 0) {
@@ -250,7 +265,10 @@ final class Kbs2PriceAlgorithm {
                         int minDepositPercent = Objects.coalesce(cheapest.rate.getMinDeposit(), 25);
                         deltaPrice = deltaPrice * minDepositPercent / 100;
                     }
-                    price += deltaPrice;
+                    if (price == Integer.MIN_VALUE)
+                        price = deltaPrice;
+                    else
+                        price += deltaPrice;
                     // marking progress
                     consumedDays += cheapest.consumableDays;
                     remainingDays -= cheapest.consumableDays;
