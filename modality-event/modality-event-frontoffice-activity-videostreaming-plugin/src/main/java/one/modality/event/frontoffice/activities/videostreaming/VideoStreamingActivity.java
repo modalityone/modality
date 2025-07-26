@@ -536,7 +536,7 @@ final class VideoStreamingActivity extends ViewDomainActivityBase {
         if (!DISABLE_COLLAPSE_VIDEO_PLAY) {
             FXProperties.runNowAndOnPropertiesChange(() -> Platform.runLater(() -> { // Postponed to consider only the final state when both properties are changed
                 Player playingPlayer = Players.getGlobalPlayerGroup().getPlayingPlayer();
-                if (playingPlayer != null && SceneUtil.hasAncestor(playingPlayer.getMediaView(), videoCollapsePane)) {
+                if (/*playingPlayer != null && // commented as this prevents pausing VODs */ SceneUtil.hasAncestor(playingPlayer.getMediaView(), videoCollapsePane)) {
                     lastVideoPlayingPlayer = playingPlayer;
                 }
                 if (lastVideoPlayingPlayer != null) {
