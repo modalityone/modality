@@ -236,7 +236,7 @@ public final class BookEventActivity extends ViewDomainActivityBase implements B
 
     private void onPersonToBookChanged() {
         WorkingBooking workingBooking = getWorkingBooking();
-        if (workingBooking.isNewBooking())
+        if (workingBooking != null && workingBooking.isNewBooking())
             workingBooking.getDocument().setPerson(FXPersonToBook.getPersonToBook());
         else
             loadBookingWithSamePolicy(true);
