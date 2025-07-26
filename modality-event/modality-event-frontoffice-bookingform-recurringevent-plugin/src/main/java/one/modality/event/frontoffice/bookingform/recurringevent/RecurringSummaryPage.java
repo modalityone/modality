@@ -111,7 +111,9 @@ final class RecurringSummaryPage implements BookingFormPage {
         WorkingBooking workingBooking = workingBookingProperties.getWorkingBooking();
         Event event = bookingForm.getEvent();
 
-        //workingBookingProperties.updateAll(); Now private because it auto updates on changes TODO remove if no side effects
+        // Ensuring all properties are up to date (although workingBookingProperties auto updates them, it does it in
+        // a postponed way, so they might not be updated right now).
+        workingBookingProperties.updateAll();
 
         summaryGridPane.getChildren().clear();
         addRow(

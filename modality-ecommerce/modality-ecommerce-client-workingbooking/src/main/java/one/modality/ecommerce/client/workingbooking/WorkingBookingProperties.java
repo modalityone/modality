@@ -166,7 +166,7 @@ public final class WorkingBookingProperties {
     }
 
 
-    private void updateAll() {
+    public void updateAll() {
         updateDeposit();
         updateTotal();
         updateMinDeposit();
