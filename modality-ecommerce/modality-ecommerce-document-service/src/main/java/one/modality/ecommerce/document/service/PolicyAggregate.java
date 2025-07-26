@@ -57,10 +57,11 @@ public final class PolicyAggregate {
         queryMapping = dataSourceModel.parseAndCompileSelect(bookablePeriodsQueryBase).getQueryMapping();
         bookablePeriods = QueryResultToEntitiesMapper.mapQueryResultToEntities(bookablePeriodsQueryResult, queryMapping, entityStore, "bookablePeriods");
         if (bookablePeriods.isEmpty()) {
+            List<ScheduledItem> teachingScheduledItems = getTeachingScheduledItems();
             BookablePeriod wholeEventPeriod = entityStore.createEntity(BookablePeriod.class);
             wholeEventPeriod.setEvent(event);
-            wholeEventPeriod.setStartScheduledItem(Collections.first(scheduledItems)); // Check if ok
-            wholeEventPeriod.setEndScheduledItem(Collections.last(scheduledItems)); // Check if ok
+            wholeEventPeriod.setStartScheduledItem(Collections.first(teachingScheduledItems)); // should be the first teaching date
+            wholeEventPeriod.setEndScheduledItem(Collections.last(teachingScheduledItems)); // should be the last teaching date
             wholeEventPeriod.setFieldValue("i18nKey", "WholeEvent"); // Will be recognized by I18nFunction
             bookablePeriods.add(wholeEventPeriod);
         }
