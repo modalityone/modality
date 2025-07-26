@@ -99,7 +99,8 @@ final class VideoFormattersAndRenderers {
             Label statusLabel = new Label();
             Label availableUntilLabel = new Label();
             Hyperlink liveNowLink = I18nControls.newHyperlink(I18nKeys.upperCase(VideoStreamingI18nKeys.LiveNow));
-            liveNowLink.setPadding(new Insets(15)); // this is to make it easier to click, especially on mobiles
+            // Commented, as this makes the row bigger (this padding is added to the cell padding)
+            // liveNowLink.setPadding(new Insets(15)); // this is to make it easier to click, especially on mobiles
             Controls.setupTextWrapping(availableUntilLabel, true, false);
             // Initial computation of the status
             StatusElements se = new StatusElements(videoScheduledItem, statusLabel, availableUntilLabel, liveNowLink, watchButton, activity);
