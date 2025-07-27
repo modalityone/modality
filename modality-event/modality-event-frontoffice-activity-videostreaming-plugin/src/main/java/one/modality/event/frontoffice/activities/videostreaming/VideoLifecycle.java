@@ -34,14 +34,14 @@ final class VideoLifecycle {
         EntityHasStartAndEndTime startAndEndTimeHolder = MediaUtil.getStartAndEndTimeHolder(videoScheduledItem);
         sessionStart = videoDate.atTime(startAndEndTimeHolder.getStartTime());
         sessionEnd = videoDate.atTime(startAndEndTimeHolder.getEndTime());
-        // Starting to show the livestream 20 min before the session
-        showLivestreamStart = sessionStart.minusMinutes(20);
-        // Stopping to show the livestream 30 min after the session
-        showLivestreamEnd = sessionEnd.plusMinutes(30);
         // Starting the countdown 3 hours before the session
         countdownStart = sessionStart.minusHours(3);
+        // Starting to show the livestream 20 min before the session
+        showLivestreamStart = sessionStart.minusMinutes(20);
         // Starting to show "LIVE NOW" 2 min before the session
         liveNowStart = sessionStart.minusMinutes(2);
+        // Stopping to show the livestream 30 min after the session
+        showLivestreamEnd = sessionEnd.plusMinutes(30);
         maxNormalProcessingEnd = sessionEnd.plusMinutes(getVodProcessingTimeMinute(videoScheduledItem));
         expirationDate = Objects.coalesce(videoScheduledItem.getExpirationDate(), videoScheduledItem.getEvent().getVodExpirationDate());
     }

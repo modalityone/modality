@@ -44,6 +44,13 @@ import java.time.LocalTime;
  */
 final class VideoFormattersAndRenderers {
 
+    // This padding is applied to the labels so that they have the same padding (at least vertically) as the buttons.
+    // This is to make the rows the same height, whether there is a Watch button or a status label such as LIVE NOW.
+    // The watch button is made via Bootstrap that applies default padding of 6 px on top and bottom, but buttons have
+    // also a 1 px border, that's why we use 7 px on top and bottom for the label padding.
+    // Note: the second benefit is that it makes it easier to click on the LIVE NOW hyperlink on mobiles
+    private static final Insets LABEL_PADDING = new Insets(7);
+
     static void registerRenderers() {
         // Actually done (only once) in the static initializer below
     }
@@ -75,6 +82,7 @@ final class VideoFormattersAndRenderers {
         ValueRendererRegistry.registerValueRenderer("videoName", (value /* expecting ScheduledItem */, context) -> {
             ScheduledItem video = (ScheduledItem) value; // value = 'this' = video ScheduledItem
             Label nameLabel = new Label();
+            nameLabel.setPadding(LABEL_PADDING);
             if (VideoState.isVideoCancelled(video)) {
                 I18nControls.bindI18nProperties(nameLabel, MediasI18nKeys.SessionCancelled);
                 nameLabel.getStyleClass().add("session-cancelled");
@@ -97,8 +105,10 @@ final class VideoFormattersAndRenderers {
             activity.watchButtonsGroup.registerItemButton(watchButton, videoScheduledItem, true);
             watchButton.setGraphicTextGap(10);
             Label statusLabel = new Label();
-            Label availableUntilLabel = new Label();
+            statusLabel.setPadding(LABEL_PADDING);
+            Label availableUntilLabel = new Label(); // No need to set padding as it is under the Watch button
             Hyperlink liveNowLink = I18nControls.newHyperlink(I18nKeys.upperCase(VideoStreamingI18nKeys.LiveNow));
+            liveNowLink.setPadding(LABEL_PADDING);
             // Commented, as this makes the row bigger (this padding is added to the cell padding)
             // liveNowLink.setPadding(new Insets(15)); // this is to make it easier to click, especially on mobiles
             Controls.setupTextWrapping(availableUntilLabel, true, false);

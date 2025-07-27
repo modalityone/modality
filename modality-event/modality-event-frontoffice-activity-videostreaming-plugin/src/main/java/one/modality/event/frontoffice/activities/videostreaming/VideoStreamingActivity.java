@@ -427,7 +427,7 @@ final class VideoStreamingActivity extends ViewDomainActivityBase {
 
         videoGrid.setMinRowHeight(48);
         videoGrid.setPrefRowHeight(Region.USE_COMPUTED_SIZE);
-        videoGrid.setCellMargin(new Insets(5, 10, 5, 10)); // top and bottom are more for mono colum layout (no real effect on table layout)
+        videoGrid.setMonoCellMargin(new Insets(5, 10, 5, 10)); // top and bottom are more for mono colum layout (no real effect on table layout)
         videoGrid.setFullHeight(true);
         videoGrid.setHeaderVisible(true);
         videoGrid.setAppContext(this); // Passing this VideosActivity as appContext to the value renderers
