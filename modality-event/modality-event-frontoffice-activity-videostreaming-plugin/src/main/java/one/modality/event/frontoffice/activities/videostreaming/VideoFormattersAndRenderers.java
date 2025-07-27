@@ -190,8 +190,9 @@ final class VideoFormattersAndRenderers {
             // In case a user clicked on a previous recorded video, we need to display a button so he can go back to the livestream
             if (se.videoStreamingActivity.isSameVideoAsAlreadyWatching(videoLifecycle))
                 hideButton(se.watchButton);
-            else
+            else if (!videoLifecycle.isNowBeforeShowLivestreamStart()) {
                 showButton(se.watchButton, e -> se.videoStreamingActivity.setWatchingVideo(videoLifecycle));
+            }
             // We may also need to update the button again when the user changes the watching video
             String arbitraryKey = "watchingVideoItemPropertyListener";
             if (!se.watchButton.getProperties().containsKey(arbitraryKey)) { // we install that listener only once
