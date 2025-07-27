@@ -354,7 +354,7 @@ final class VideoStreamingActivity extends ViewDomainActivityBase {
 
     boolean isSameVideoAsAlreadyWatching(VideoLifecycle videoLifecycle) {
         return Objects.areEquals(videoLifecycle.getVideoScheduledItem(), getWatchingVideoItem())
-               || isUserWatchingLivestream() && videoLifecycle.isLiveUpcoming();
+               || isUserWatchingLivestream() && videoLifecycle.isNowBetweenLiveNowStartAndSessionEnd();
     }
 
     ScheduledItem getWatchingVideoItem() {
@@ -590,7 +590,7 @@ final class VideoStreamingActivity extends ViewDomainActivityBase {
         boolean autoPlay = willAutoplay || videoCollapsePane.isExpanded();
         if (isUserWatchingLivestream()) { // Livestream
             Event event = eventProperty.get();
-            String livestreamUrl = event == null ? null : event.getLivestreamUrl();
+            String livestreamUrl = null; // event == null ? null : event.getLivestreamUrl();
             if (livestreamUrl != null) {
                 // Checking that the user has access to a live session for today
                 if (videoScheduledItems.stream().map(VideoLifecycle::new).anyMatch(VideoLifecycle::isLiveToday))
