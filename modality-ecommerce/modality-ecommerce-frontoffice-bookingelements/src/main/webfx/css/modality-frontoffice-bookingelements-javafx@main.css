@@ -33,9 +33,7 @@
 
 .booking-elements .navigation-bar {
     -fx-font-weight: bold;
-    -fx-background-color: linear-gradient(to right, #E7E7E7, #E7E7E7 75%, #0096D6 78%, #0096D6);
     -fx-background-radius: 8px;
-    -fx-border-color: linear-gradient(to right, #E7E7E7, #E7E7E7 75%, #0096D6 78%, #0096D6);
     -fx-border-radius: 8px;
 }
 

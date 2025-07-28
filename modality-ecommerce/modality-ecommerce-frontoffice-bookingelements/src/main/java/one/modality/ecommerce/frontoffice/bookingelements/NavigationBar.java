@@ -2,18 +2,19 @@ package one.modality.ecommerce.frontoffice.bookingelements;
 
 import dev.webfx.extras.aria.AriaToggleGroup;
 import dev.webfx.extras.i18n.controls.I18nControls;
-import dev.webfx.extras.panes.ScalePane;
 import dev.webfx.extras.styles.bootstrap.Bootstrap;
+import dev.webfx.extras.util.control.Controls;
+import dev.webfx.kit.util.properties.FXProperties;
 import javafx.beans.property.ObjectProperty;
 import javafx.beans.property.SimpleObjectProperty;
+import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Cursor;
 import javafx.scene.control.Label;
 import javafx.scene.control.ToggleButton;
-import javafx.scene.layout.ColumnConstraints;
-import javafx.scene.layout.GridPane;
-import javafx.scene.layout.Region;
-import javafx.scene.layout.RowConstraints;
+import javafx.scene.layout.*;
+import javafx.scene.paint.*;
+import javafx.scene.text.TextAlignment;
 import one.modality.base.client.i18n.BaseI18nKeys;
 
 /**
@@ -32,19 +33,36 @@ public final class NavigationBar {
             I18nControls.bindI18nProperties(titleLabel, get());
         }
     };
-    private final ScalePane scalePane = new ScalePane(gridPane);
 
     public NavigationBar() {
         titleLabel.setAlignment(Pos.CENTER);
+        titleLabel.setTextAlignment(TextAlignment.CENTER);
         titleLabel.setMaxSize(Double.MAX_VALUE, Double.MAX_VALUE);
-        // Using a grid pane with buttons and title. 30% width for each button and 70% for the title
+        Controls.setupTextWrapping(titleLabel, true, false);
+        titleLabel.setPadding(new Insets(0, 5, 0, 5));
+        GridPane.setHgrow(titleLabel, Priority.ALWAYS);
         ColumnConstraints c1 = new ColumnConstraints();
-        c1.setPercentWidth(30);
+        Color gray = Color.web("#E7E7E7");
+        Color blue = Color.web("#0096D6");
+        BorderWidths borderWidths = new BorderWidths(2);
+        CornerRadii radii = new CornerRadii(8);
+        FXProperties.runOnPropertiesChange(o -> {
+            double w = gridPane.getWidth();
+            double buttonWidth = Math.max(100, 0.2 * w);
+            c1.setMinWidth(buttonWidth);
+            Paint paint = nextButton.isDisable() ? gray :
+                new LinearGradient(0, 0, 1, 0, true, CycleMethod.NO_CYCLE,
+                    new Stop(0, gray),
+                    new Stop((w - 1.2 * buttonWidth) / w, gray),
+                    new Stop((w - buttonWidth) / w, blue),
+                    new Stop(1, blue));
+            gridPane.setBackground(new Background(new BackgroundFill(paint, radii, Insets.EMPTY)));
+            gridPane.setBorder(new Border(new BorderStroke(paint, BorderStrokeStyle.SOLID, radii, borderWidths)));
+        }, gridPane.widthProperty(), nextButton.disabledProperty());
         ColumnConstraints c2 = new ColumnConstraints();
-        c2.setPercentWidth(70);
+        gridPane.getColumnConstraints().addAll(c1, c2, c1);
         RowConstraints r1 = new RowConstraints();
         r1.setMinHeight(51);
-        gridPane.getColumnConstraints().addAll(c1, c2, c1);
         gridPane.getRowConstraints().add(r1);
         gridPane.add(backButton, 0, 0);
         gridPane.add(titleLabel, 1, 0);
@@ -54,9 +72,6 @@ public final class NavigationBar {
         titleLabel.getStyleClass().add("title");
         backButton.getStyleClass().add("back-button");
         nextButton.getStyleClass().add("next-button");
-        // The grid pane can shrink up to a certain point
-        gridPane.setMinWidth(450); // minimal size for the Spanish version to fit without wrapping
-        // For shorter sizes on small mobiles, the scale pane will scale it down
     }
 
     public void setTitleI18nKey(Object labelI18nKey) {
@@ -64,7 +79,7 @@ public final class NavigationBar {
     }
 
     public Region getView() {
-        return scalePane;
+        return gridPane;
     }
 
     public ToggleButton getBackButton() {
@@ -78,8 +93,7 @@ public final class NavigationBar {
     private ToggleButton createNavigationButton(Object i18nKey) {
         ToggleButton button = Bootstrap.textSecondary(I18nControls.bindI18nProperties(barToggleGroup.createItemButton(i18nKey), i18nKey));
         button.setAlignment(Pos.CENTER);
-        button.setMaxWidth(Double.MAX_VALUE);
-        button.setMaxHeight(Double.MAX_VALUE);
+        button.setMaxSize(Double.MAX_VALUE, Double.MAX_VALUE);
         button.setCursor(Cursor.HAND);
         return button;
     }
