@@ -56,15 +56,6 @@ public final class PolicyAggregate {
         rates = QueryResultToEntitiesMapper.mapQueryResultToEntities(ratesQueryResult, queryMapping, entityStore, "rates");
         queryMapping = dataSourceModel.parseAndCompileSelect(bookablePeriodsQueryBase).getQueryMapping();
         bookablePeriods = QueryResultToEntitiesMapper.mapQueryResultToEntities(bookablePeriodsQueryResult, queryMapping, entityStore, "bookablePeriods");
-        if (bookablePeriods.isEmpty()) {
-            List<ScheduledItem> teachingScheduledItems = getTeachingScheduledItems();
-            BookablePeriod wholeEventPeriod = entityStore.createEntity(BookablePeriod.class);
-            wholeEventPeriod.setEvent(event);
-            wholeEventPeriod.setStartScheduledItem(Collections.first(teachingScheduledItems)); // should be the first teaching date
-            wholeEventPeriod.setEndScheduledItem(Collections.last(teachingScheduledItems)); // should be the last teaching date
-            wholeEventPeriod.setFieldValue("i18nKey", "WholeEvent"); // Will be recognized by I18nFunction
-            bookablePeriods.add(wholeEventPeriod);
-        }
     }
 
     public EntityStore getEntityStore() {
@@ -169,6 +160,26 @@ public final class PolicyAggregate {
 
     public List<BookablePeriod> getBookablePeriods() {
         return bookablePeriods;
+    }
+
+    public List<BookablePeriod> getBookablePeriods(KnownItemFamily knownItemFamily) {
+        return Collections.filter(getBookablePeriods(), bp -> Entities.samePrimaryKey(bp.getStartScheduledItem().getItem().getFamily(), knownItemFamily.getPrimaryKey()));
+    }
+
+    public List<BookablePeriod> getBookablePeriods(KnownItemFamily knownItemFamily, Object wholePeriodI18nKey) {
+        List<BookablePeriod> bookablePeriods = getBookablePeriods(knownItemFamily);
+        bookablePeriods.add(createFamilyWholeBookablePeriod(knownItemFamily, wholePeriodI18nKey));
+        return bookablePeriods;
+    }
+
+    public BookablePeriod createFamilyWholeBookablePeriod(KnownItemFamily knownItemFamily, Object i18nKey) {
+        List<ScheduledItem> familyScheduledItems = getFamilyScheduledItems(knownItemFamily);
+        BookablePeriod wholeBookablePeriod = entityStore.createEntity(BookablePeriod.class);
+        wholeBookablePeriod.setEvent(event);
+        wholeBookablePeriod.setStartScheduledItem(Collections.first(familyScheduledItems)); // should be the first teaching date
+        wholeBookablePeriod.setEndScheduledItem(Collections.last(familyScheduledItems)); // should be the last teaching date
+        wholeBookablePeriod.setFieldValue("i18nKey", i18nKey); // Will be recognized by I18nFunction
+        return wholeBookablePeriod;
     }
 
     // The following methods are meant to be used for serialization, not for application code
