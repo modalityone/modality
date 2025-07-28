@@ -2,7 +2,6 @@ package one.modality.ecommerce.frontoffice.bookingform.multipages;
 
 import dev.webfx.extras.panes.MonoPane;
 import dev.webfx.extras.panes.TransitionPane;
-import dev.webfx.extras.util.layout.Layouts;
 import dev.webfx.kit.util.properties.FXProperties;
 import dev.webfx.kit.util.properties.Unregisterable;
 import javafx.beans.binding.BooleanBinding;
@@ -50,7 +49,6 @@ public abstract class MultiPageBookingForm extends BookingFormBase {
 
     public MultiPageBookingForm(HasWorkingBookingProperties activity, BookingFormSettings settings) {
         super(activity, settings);
-        Layouts.setFixedWidth(transitionPane, MAX_WIDTH);
         if (!settings.showNavigationBar()) {
             navigationBar = null;
         } else {
@@ -78,14 +76,14 @@ public abstract class MultiPageBookingForm extends BookingFormBase {
 
     @Override
     public Node buildUi() {
-        BorderPane container = new BorderPane(transitionPane);
+        BorderPane borderPane = new BorderPane(transitionPane);
         if (navigationBar != null) {
-            container.setTop(navigationBar.getView());
+            borderPane.setTop(navigationBar.getView());
         }
         if (settings.showNavigationBar())
-            container.setBottom(new PriceBar(workingBookingProperties).getView());
-        container.setMaxWidth(MAX_WIDTH);
-        return BookingElements.styleBookingElementsContainer(container, true);
+            borderPane.setBottom(new PriceBar(workingBookingProperties).getView());
+        borderPane.setMaxWidth(MAX_WIDTH); // Max width for desktops
+        return BookingElements.styleBookingElementsContainer(borderPane, true);
     }
 
     @Override

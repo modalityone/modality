@@ -11,7 +11,6 @@ module modality.ecommerce.frontoffice.bookingform {
     requires modality.ecommerce.document.service;
     requires modality.ecommerce.frontoffice.bookingelements;
     requires webfx.extras.panes;
-    requires webfx.extras.util.layout;
     requires webfx.kit.util;
 
     // Exported packages

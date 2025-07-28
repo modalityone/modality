@@ -9,7 +9,6 @@ module modality.ecommerce.frontoffice.bookingelements {
     requires modality.base.client.bootstrap;
     requires modality.base.client.i18n;
     requires modality.base.client.mainframe.fx;
-    requires modality.base.frontoffice.utility;
     requires modality.base.shared.entities;
     requires modality.crm.client.authn.fx;
     requires modality.crm.client.i18n;

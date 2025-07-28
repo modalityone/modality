@@ -153,7 +153,7 @@ public final class BookingElements {
     public static TextArea createTextArea() {
         TextArea textArea = new TextArea();
         textArea.setMinHeight(130);
-        VBox.setMargin(textArea, new Insets(0, 95, 0, 95));
+        textArea.setMaxWidth(600);
         return textArea;
     }
 
@@ -174,7 +174,10 @@ public final class BookingElements {
     }
 
     public static Label createPriceLabel() {
-        return createStyledLabel("price-label");
+        Label priceLabel = createStyledLabel("price-label");
+        // Preventing price labels to shrink on mobiles
+        priceLabel.setMinWidth(Region.USE_PREF_SIZE);
+        return priceLabel;
     }
 
     public static Label createPriceLabel(String formattedPrice) {
