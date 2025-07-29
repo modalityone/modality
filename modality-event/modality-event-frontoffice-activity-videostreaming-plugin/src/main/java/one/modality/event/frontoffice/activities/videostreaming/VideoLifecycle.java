@@ -70,6 +70,10 @@ final class VideoLifecycle {
         return nowInEventTimezone.isBefore(showLivestreamStart);
     }
 
+    boolean isNowBeforeLiveNowStart() {
+        return nowInEventTimezone.isBefore(liveNowStart);
+    }
+
     boolean isNowBetweenShowLivestreamStartAndShowLivestreamEnd() {
         return Times.isBetween(nowInEventTimezone, showLivestreamStart, showLivestreamEnd);
     }
