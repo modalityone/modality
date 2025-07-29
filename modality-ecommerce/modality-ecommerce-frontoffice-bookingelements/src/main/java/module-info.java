@@ -21,6 +21,7 @@ module modality.ecommerce.frontoffice.bookingelements {
     requires webfx.extras.i18n;
     requires webfx.extras.i18n.controls;
     requires webfx.extras.panes;
+    requires webfx.extras.responsive;
     requires webfx.extras.styles.bootstrap;
     requires webfx.extras.util.control;
     requires webfx.extras.util.layout;

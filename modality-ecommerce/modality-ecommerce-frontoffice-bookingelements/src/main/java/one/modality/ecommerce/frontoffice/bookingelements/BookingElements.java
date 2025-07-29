@@ -4,6 +4,8 @@ import dev.webfx.extras.controlfactory.button.ButtonFactoryMixin;
 import dev.webfx.extras.i18n.I18n;
 import dev.webfx.extras.i18n.I18nKeys;
 import dev.webfx.extras.i18n.controls.I18nControls;
+import dev.webfx.extras.panes.MonoPane;
+import dev.webfx.extras.responsive.ResponsiveDesign;
 import dev.webfx.extras.styles.bootstrap.Bootstrap;
 import dev.webfx.extras.util.control.Controls;
 import dev.webfx.extras.util.layout.Layouts;
@@ -91,7 +93,7 @@ public final class BookingElements {
         return secondaryWordingLabel(new Label(), i18nKey);
     }
 
-    public static <L extends Labeled> L  secondaryWordingLabel(L label) {
+    public static <L extends Labeled> L secondaryWordingLabel(L label) {
         return secondaryWordingLabel(label, null);
     }
 
@@ -112,16 +114,30 @@ public final class BookingElements {
         return optionLabel(label, true);
     }
 
-    public static Region twoLabels(Labeled label1, Labeled label2) {
-        HBox hBox = new HBox(5, label1, label2);
-        hBox.setAlignment(Pos.CENTER);
-        return hBox;
-    }
-
-    public static Region buttonBar(Labeled... buttons) {
-        HBox buttonBar = new HBox(20, buttons);
-        buttonBar.setMaxWidth(Region.USE_PREF_SIZE);
-        return buttonBar;
+    public static Region twoLabels(double spacing, boolean verticalSwap, Labeled label1, Labeled label2) {
+        MonoPane monoPane = new MonoPane();
+        new ResponsiveDesign(monoPane)
+            // 1. Horizontal layout (when labels can be on the same line without wrapping)
+            .addResponsiveLayout(/* applicability test: */ width ->
+                    width >= label1.prefWidth(-1) + label2.prefWidth(-1) + 5,
+                /* apply method: */ () -> {
+                    label1.setWrapText(false);
+                    label2.setWrapText(false);
+                    HBox hBox = new HBox(spacing, label1, label2);
+                    hBox.setAlignment(Pos.CENTER);
+                    monoPane.setContent(hBox);
+                }, /* test dependencies: */ label1.textProperty(), label2.textProperty())
+            // 2. Vertical layout (when the labels can't be on the same line without wrapping)
+            .addResponsiveLayout(/* apply method: */ () -> {
+                    label1.setWrapText(true);
+                    label2.setWrapText(true);
+                    VBox vBox = verticalSwap ? new VBox(spacing, label2, label1) : new VBox(spacing, label1, label2);
+                    vBox.setAlignment(Pos.CENTER);
+                    monoPane.setContent(vBox);
+                }
+            ).start();
+        monoPane.setMinWidth(0);
+        return monoPane;
     }
 
     public static GridPane createOptionsGridPane(boolean largeVGap) {
