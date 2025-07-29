@@ -1,13 +1,13 @@
 package one.modality.event.frontoffice.activities.videostreaming;
 
 import dev.webfx.extras.aria.AriaToggleGroup;
+import dev.webfx.extras.i18n.controls.I18nControls;
 import dev.webfx.extras.panes.ColumnsPane;
 import dev.webfx.extras.panes.MonoPane;
 import dev.webfx.extras.styles.bootstrap.Bootstrap;
 import dev.webfx.extras.time.format.LocalizedTime;
 import dev.webfx.kit.util.properties.FXProperties;
 import dev.webfx.platform.util.collection.Collections;
-import dev.webfx.extras.i18n.controls.I18nControls;
 import javafx.beans.binding.Bindings;
 import javafx.beans.property.ObjectProperty;
 import javafx.geometry.Insets;
@@ -26,7 +26,6 @@ import one.modality.event.frontoffice.medias.TimeZoneSwitch;
 
 import java.time.LocalDate;
 import java.util.List;
-import java.util.stream.Collectors;
 
 /**
  * @author David Hello
@@ -53,14 +52,9 @@ public class DaySwitcher {
     private final Pane backArrowPane = SvgIcons.createBackArrow2();
     private final Pane forwardArrowPane = SvgIcons.createForwardArrow2();
 
-    public DaySwitcher(List<LocalDate> availableDates, LocalDate initialSelectedDate, MonoPane container, Object titleI18nKey) {
+    public DaySwitcher(MonoPane container, Object titleI18nKey) {
         parentContainer = container;
         this.titleI18nKey = titleI18nKey;
-        this.availableDates = availableDates.stream()
-            .distinct()
-            .sorted()
-            .collect(Collectors.toList());
-        setSelectedDate(initialSelectedDate);
 
         buildDesktopView();
         buildMobileView();

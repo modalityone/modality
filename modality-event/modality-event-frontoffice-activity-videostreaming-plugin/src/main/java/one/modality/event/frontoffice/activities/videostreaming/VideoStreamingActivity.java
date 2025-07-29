@@ -119,7 +119,7 @@ final class VideoStreamingActivity extends ViewDomainActivityBase {
     private final ObjectProperty<LocalDate> selectedDayProperty = new SimpleObjectProperty<>();
     private final MonoPane pageContainer = new MonoPane(); // Will hold either the loading indicator or the loaded content
     private final MonoPane responsiveDaySelectionMonoPane = new MonoPane();
-    private DaySwitcher daySwitcher;
+    private final DaySwitcher daySwitcher = new DaySwitcher(pageContainer, VideoStreamingI18nKeys.EventSchedule);
 
     private boolean displayingDailyProgram;
     private EntityColumn<ScheduledItem>[] dailyProgramVideoColumns;
@@ -133,6 +133,8 @@ final class VideoStreamingActivity extends ViewDomainActivityBase {
         eventsSelectionPane.collapse(); // initially collapsed
         videoCollapsePane.collapse(); // initially collapsed - might be automatically expanded by scheduleAutoLivestream()
         decoratedLivestreamCollapsePane.setVisible(false); // will be visible if it contains at least a video or livestream
+        //We bind the currentDate of the daySwitcher to the currentDaySelected so the video appearing are linked to the day selected in the day switcher
+        selectedDayProperty.bind(daySwitcher.selectedDateProperty());
     }
 
 
@@ -244,11 +246,6 @@ final class VideoStreamingActivity extends ViewDomainActivityBase {
                             scheduleAutoLivestream(); // may auto-expand the video player if now is an appropriate time
                         });
                     }));
-                LocalDate today = Event.todayInEventTimezone();
-                // If we are during the event, we position the `currentSelectedDay` to today
-                if (today.isAfter(event.getStartDate().minusDays(1)) && today.isBefore(event.getEndDate().plusDays(1))) {
-                    daySwitcher.setSelectedDate(today);
-                }
             }
         }, eventProperty, FXUserPersonId.userPersonIdProperty());
 
@@ -391,14 +388,6 @@ final class VideoStreamingActivity extends ViewDomainActivityBase {
         EventHeader eventHeader = new MediaEventHeader(true);
         eventHeader.eventProperty().bind(eventProperty);
 
-        daySwitcher = new DaySwitcher(videoScheduledItems.stream()
-            .map(ScheduledItem::getDate)
-            .distinct()
-            .sorted()
-            .collect(Collectors.toList()), selectedDayProperty.get(), pageContainer, VideoStreamingI18nKeys.EventSchedule);
-        //We bind the currentDate of the daySwitcher to the currentDaySelected so the video appearing are linked to the day selected in the day switcher
-        selectedDayProperty.bind(daySwitcher.selectedDateProperty());
-
         //The monoPane that manage the program day selection
         new ResponsiveDesign(responsiveDaySelectionMonoPane)
             // 1. Table layout (for desktops)
@@ -487,15 +476,6 @@ final class VideoStreamingActivity extends ViewDomainActivityBase {
             Layouts.setManagedAndVisibleProperties(responsiveDaySelectionMonoPane, displayingDailyProgram);
             Layouts.setManagedAndVisibleProperties(festivalShopText, displayingDailyProgram);
 
-            // Showing selected videos for the currentSelected Day
-            FXProperties.runNowAndOnPropertyChange(() -> {
-                LocalDate selectedDay = selectedDayProperty.get();
-                if (!displayingDailyProgram || selectedDay == null)
-                    displayedVideoScheduledItems.setAll(videoScheduledItems);
-                else
-                    displayedVideoScheduledItems.setAll(Collections.filter(videoScheduledItems, item -> selectedDay.equals(item.getDate())));
-            }, selectedDayProperty);
-
         }, videoScheduledItems, eventProperty, eventsWithBookedVideosLoadingProperty);
 
         // Updating the dates in daySwitch after the video sessions have been loaded
@@ -506,6 +486,15 @@ final class VideoStreamingActivity extends ViewDomainActivityBase {
                     .sorted()
                     .collect(Collectors.toList())),
             videoScheduledItems);
+
+        // Showing selected videos for the currentSelected Day
+        FXProperties.runNowAndOnPropertyChange(() -> {
+            LocalDate selectedDay = selectedDayProperty.get();
+            if (!displayingDailyProgram || selectedDay == null)
+                displayedVideoScheduledItems.setAll(videoScheduledItems);
+            else
+                displayedVideoScheduledItems.setAll(Collections.filter(videoScheduledItems, item -> selectedDay.equals(item.getDate())));
+        }, selectedDayProperty);
 
         // Showing selected videos once they are loaded
         ObservableLists.runNowAndOnListOrPropertiesChange(change -> {
