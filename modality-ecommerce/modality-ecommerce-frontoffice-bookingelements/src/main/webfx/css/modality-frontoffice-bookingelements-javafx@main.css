@@ -51,12 +51,16 @@
     -fx-text-fill: transparent;
 }
 
+.booking-elements .back-button {
+    -fx-text-fill: -bootstrap-grey5;
+}
+
 .booking-elements .next-button {
     -fx-text-fill: white;
 }
 
-.booking-elements .back-button {
-    -fx-text-fill: -bootstrap-grey5;
+.booking-elements .back-button SVGPath, .booking-elements .next-button SVGPath {
+    -fx-fill: transparent; /* for the chevron icon */
 }
 
 .booking-elements .price-bar {

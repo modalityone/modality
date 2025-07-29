@@ -7,13 +7,17 @@ import dev.webfx.extras.util.control.Controls;
 import dev.webfx.kit.util.properties.FXProperties;
 import javafx.beans.property.ObjectProperty;
 import javafx.beans.property.SimpleObjectProperty;
+import javafx.geometry.HPos;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Cursor;
+import javafx.scene.control.ContentDisplay;
 import javafx.scene.control.Label;
 import javafx.scene.control.ToggleButton;
 import javafx.scene.layout.*;
 import javafx.scene.paint.*;
+import javafx.scene.shape.SVGPath;
+import javafx.scene.shape.StrokeLineCap;
 import javafx.scene.text.TextAlignment;
 import one.modality.base.client.i18n.BaseI18nKeys;
 
@@ -35,6 +39,8 @@ public final class NavigationBar {
     };
 
     public NavigationBar() {
+        backButton.setGraphic(createChevron(true));
+        nextButton.setGraphic(createChevron(false));
         titleLabel.setAlignment(Pos.CENTER);
         titleLabel.setTextAlignment(TextAlignment.CENTER);
         titleLabel.setMaxSize(Double.MAX_VALUE, Double.MAX_VALUE);
@@ -42,13 +48,17 @@ public final class NavigationBar {
         titleLabel.setPadding(new Insets(0, 5, 0, 5));
         GridPane.setHgrow(titleLabel, Priority.ALWAYS);
         ColumnConstraints c1 = new ColumnConstraints();
+        c1.setHalignment(HPos.CENTER);
         Color gray = Color.web("#E7E7E7");
         Color blue = Color.web("#0096D6");
         BorderWidths borderWidths = new BorderWidths(2);
         CornerRadii radii = new CornerRadii(8);
         FXProperties.runOnPropertiesChange(o -> {
             double w = gridPane.getWidth();
-            double buttonWidth = Math.max(100, 0.2 * w);
+            boolean mobileView = w < 500;
+            backButton.setContentDisplay(mobileView ? ContentDisplay.GRAPHIC_ONLY : ContentDisplay.TEXT_ONLY);
+            nextButton.setContentDisplay(mobileView ? ContentDisplay.GRAPHIC_ONLY : ContentDisplay.TEXT_ONLY);
+            double buttonWidth = mobileView ? 60 : Math.max(100, 0.2 * w);
             c1.setMinWidth(buttonWidth);
             Paint paint = nextButton.isDisable() ? gray :
                 new LinearGradient(0, 0, 1, 0, true, CycleMethod.NO_CYCLE,
@@ -72,6 +82,8 @@ public final class NavigationBar {
         titleLabel.getStyleClass().add("title");
         backButton.getStyleClass().add("back-button");
         nextButton.getStyleClass().add("next-button");
+        backButton.visibleProperty().bind(backButton.disabledProperty().not());
+        nextButton.visibleProperty().bind(nextButton.disabledProperty().not());
     }
 
     public void setTitleI18nKey(Object labelI18nKey) {
@@ -96,5 +108,15 @@ public final class NavigationBar {
         button.setMaxSize(Double.MAX_VALUE, Double.MAX_VALUE);
         button.setCursor(Cursor.HAND);
         return button;
+    }
+
+    private SVGPath createChevron(boolean back) {
+        SVGPath svgPath = new SVGPath();
+        svgPath.setContent(back ? "M21 10 l-8 8 l8 8" : "M15 10 l8 8 l-8 8");
+        svgPath.setFill(null);
+        svgPath.setStroke(Color.WHITE);
+        svgPath.setStrokeWidth(3); // Scaled down from 8 (also by 2/3)
+        svgPath.setStrokeLineCap(StrokeLineCap.ROUND);
+        return svgPath;
     }
 }
