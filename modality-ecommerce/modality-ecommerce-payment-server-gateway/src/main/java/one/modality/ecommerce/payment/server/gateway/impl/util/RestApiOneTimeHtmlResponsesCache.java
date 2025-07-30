@@ -47,7 +47,7 @@ public final class RestApiOneTimeHtmlResponsesCache {
             Path paymentCacheFile = getPaymentCacheFilePath(key);
             if (result == null)
                 result = new String(Files.readAllBytes(paymentCacheFile));
-            //Files.delete(paymentCacheFile); // File cache deletion is temporarily disabled for now
+            Files.delete(paymentCacheFile);
         } catch (Exception e) {
             Console.log("[PAYMENT] Error while reading cache key: " + key + ": " + e.getMessage());
         }
