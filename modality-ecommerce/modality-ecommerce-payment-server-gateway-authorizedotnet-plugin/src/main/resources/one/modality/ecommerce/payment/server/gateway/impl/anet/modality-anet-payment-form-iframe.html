@@ -1,6 +1,6 @@
 <!DOCTYPE html>
 <html>
-<body style="overflow: hidden; margin: 0; height: 100vh; display: flex; justify-content: center; align-items: center;">
+<body style="min-height: 300px; overflow: hidden; margin: 0; height: 100vh; display: flex; justify-content: center; align-items: center;">
 
 <button id="displayFormButton" style="padding: 10px; font-size: 16px; border-width: 1px; border-radius: 5px; cursor: pointer;"
         type="button"
@@ -35,9 +35,9 @@
         }
     }
 
-    // Methods called by WebPaymentForm java class on client-side
+    // Methods called by WebPaymentForm java class on the client-side
 
-    // Parameter injected by WebPaymentForm java class on client-side (to allow JS -> Java callbacks)
+    // Parameter injected by WebPaymentForm java class on the client-side (to allow JS -> Java callbacks)
     let modality_javaPaymentForm;
 
     let modality_initialized = true;
@@ -52,7 +52,7 @@
         const displayFormButton = document.getElementById("displayFormButton");
         // If the server had no value for ${acceptUIFormHeaderTxt}, we use the value passed by the client. The reason
         // the server value is preferred is that it is more specific (it is read from the settings for that particular
-        // money account in the database - ex: Authorize.net - NKT-IKBU) whereas the client value is a generic message
+        // money account in the database - ex: Authorize.net - NKT-IKBU), whereas the client value is a generic message
         // (ex: Please enter your payment information).
         if (displayFormButton.getAttribute("data-acceptUIFormHeaderTxt") === "")
             displayFormButton.setAttribute("data-acceptUIFormHeaderTxt", htmlHeaderText);
@@ -74,8 +74,8 @@
     // Called by WebPaymentForm.pay() - through the modality_pay() call made in responseHandler()
     function modality_submitGatewayPayment(firstName, lastName, email, phone, address, city, state, zipCode, countryCode, countryName) {
         console.log("modality_submitGatewayPayment() called");
-        // As opposed to some other gateways like Square where the buyer verification is done on client-side, with
-        // Authorize.net it's done on server-side. So at this stage, we immediately reply that the verification is
+        // As opposed to some other gateways like Square where the buyer verification is done on the client-side, with
+        // Authorize.net it's done on the server-side. So at this stage, we immediately reply that the verification is
         // successful from the client-side point of view, and we capture the buyer's personal details for the
         // verification on the server-side.
         const paymentCompletionPayload = {
