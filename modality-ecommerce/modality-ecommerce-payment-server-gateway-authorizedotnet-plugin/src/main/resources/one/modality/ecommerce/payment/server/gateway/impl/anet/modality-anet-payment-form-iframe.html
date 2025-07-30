@@ -1,8 +1,8 @@
 <!DOCTYPE html>
 <html>
-<body style="overflow: hidden;">
+<body style="overflow: hidden; margin: 0; height: 100vh; display: flex; justify-content: center; align-items: center;">
 
-<button id="displayFormButton" style="visibility: hidden"
+<button id="displayFormButton" style="padding: 10px; font-size: 16px; border-width: 1px; border-radius: 5px; cursor: pointer;"
         type="button"
         class="AcceptUI"
         data-billingAddressOptions='{"show":false, "required":false}'
@@ -10,6 +10,7 @@
         data-apiLoginID="${apiLoginID}"
         data-clientKey="${clientKey}"
         data-responseHandler="responseHandler">
+    Pay with Authorize.net
 </button>
 
 <script type="text/javascript">
