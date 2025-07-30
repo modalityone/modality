@@ -8,6 +8,7 @@ module modality.ecommerce.payment.server.gateway {
     // Direct dependencies modules
     requires modality.ecommerce.payment;
     requires webfx.platform.async;
+    requires webfx.platform.console;
 
     // Exported packages
     exports one.modality.ecommerce.payment.server.gateway;
