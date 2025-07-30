@@ -53,7 +53,7 @@ public class DynamicMapView extends MapViewBase {
                     loadGluonWebViewAfterFlip = WebViewPane.isGluon();
                     webViewPane.setWindowMember("javaDynamicView", DynamicMapView.this); // indirectly register GWT callbacks
                 }).setOnLoadSuccess(() -> {
-                    webViewPane.callWindow("injectJavaDynamicView", DynamicMapView.this);
+                    webViewPane.callWindowSilently("injectJavaDynamicView", DynamicMapView.this);
                 }), false); // Gluon layout isn't stabilized at this stage => needs to call onGluonLayoutStabilized() later
         return webViewPane;
     }
