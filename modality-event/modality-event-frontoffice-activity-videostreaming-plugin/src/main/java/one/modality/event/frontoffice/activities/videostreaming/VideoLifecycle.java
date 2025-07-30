@@ -35,7 +35,7 @@ final class VideoLifecycle {
         sessionStart = videoDate.atTime(startAndEndTimeHolder.getStartTime());
         sessionEnd = videoDate.atTime(startAndEndTimeHolder.getEndTime());
         // Starting the countdown 3 hours before the session
-        countdownStart = sessionStart.minusHours(3);
+        countdownStart = sessionStart.minusHours(1); // Changed to 1h for the Festival to prevent 2 countdowns at the same time
         // Starting to show the livestream 20 min before the session
         showLivestreamStart = sessionStart.minusMinutes(20);
         // Starting to show "LIVE NOW" 2 min before the session
