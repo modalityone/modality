@@ -161,6 +161,7 @@ public class WebPaymentForm {
     }
 
     private void injectPaymentFormToJS(int attempt) {
+        logDebug("Injecting the payment form into the Modality JS code - attempt n°" + attempt);
         try {
             webViewPane.setWindowMember("modality_javaPaymentForm", this);
             webViewPane.callWindow("modality_injectJavaPaymentForm", this, htmlHeaderText, htmlPayButtonText);
@@ -171,9 +172,12 @@ public class WebPaymentForm {
             });
         } catch (Exception ex) {
             if (attempt < 10) {
-                UiScheduler.scheduleDeferred(() -> injectPaymentFormToJS(attempt + 1));
-            } else
+                logDebug("Attempt n°" + attempt + " failed - retrying in 100 ms");
+                UiScheduler.scheduleDelay(100, () -> injectPaymentFormToJS(attempt + 1));
+            } else {
+                logDebug("Attempt n°" + attempt + " failed - reporting initialization failure");
                 onGatewayInitFailure(ex.getMessage());
+            }
         }
     }
 
