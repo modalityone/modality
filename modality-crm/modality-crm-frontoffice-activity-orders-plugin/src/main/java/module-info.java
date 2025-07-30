@@ -19,8 +19,10 @@ module modality.crm.frontoffice.activity.orders.plugin {
     requires webfx.extras.util.background;
     requires webfx.extras.util.control;
     requires webfx.kit.util;
+    requires webfx.platform.uischeduler;
     requires webfx.platform.util;
     requires webfx.platform.windowhistory;
+    requires webfx.stack.db.query;
     requires webfx.stack.orm.domainmodel.activity;
     requires webfx.stack.orm.dql;
     requires webfx.stack.orm.reactive.entities;

@@ -6,6 +6,7 @@ import dev.webfx.extras.util.background.BackgroundFactory;
 import dev.webfx.extras.util.control.Controls;
 import dev.webfx.kit.util.properties.FXProperties;
 import dev.webfx.kit.util.properties.ObservableLists;
+import dev.webfx.platform.uischeduler.UiScheduler;
 import dev.webfx.platform.util.Booleans;
 import dev.webfx.platform.util.collection.Collections;
 import dev.webfx.stack.orm.domainmodel.activity.viewdomain.impl.ViewDomainActivityBase;
@@ -23,6 +24,7 @@ import javafx.geometry.Pos;
 import javafx.scene.Node;
 import javafx.scene.control.ContentDisplay;
 import javafx.scene.control.Label;
+import javafx.scene.control.ProgressIndicator;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 import javafx.scene.text.TextAlignment;
@@ -82,8 +84,12 @@ final class OrdersActivity extends ViewDomainActivityBase implements ModalityBut
         activeOrdersLabel.setPadding(new Insets(0, 0, 40, 0));
 
         VBox activeOrdersContainer = createOrdersContainer();
-        // No feed for the active orders, we just load them all, map them to cards and then add them to the container
-        ObservableLists.bindConverted(activeOrdersContainer.getChildren(), upcomingOrderCards, OrderCard::getView);
+        // No feed for the active orders, we just load them all, map them to cards and then add them to the container,
+        // but keeping the initial progress indicator until the first result arrives.
+        FXProperties.onPropertySet(upcomingOrdersMapper.resultProperty(), ignored -> UiScheduler.runInUiThread(() ->
+            // This binding will also remove the initial progress indicator
+            ObservableLists.bindConverted(activeOrdersContainer.getChildren(), upcomingOrderCards, OrderCard::getView)
+        ));
 
         Label completedOrdersLabel = Bootstrap.strong(Bootstrap.textSecondary(Bootstrap.h4(I18nControls.newLabel(OrdersI18nKeys.CompletedOrders))));
         completedOrdersLabel.setTextAlignment(TextAlignment.CENTER);
@@ -92,6 +98,9 @@ final class OrdersActivity extends ViewDomainActivityBase implements ModalityBut
         VBox pastOrdersContainer = createOrdersContainer();
         // Feed management for the past orders
         pastOrdersFeed.addListener((InvalidationListener) observable -> {
+            // Removing the progress indicator if present
+            if (Collections.first(pastOrdersContainer.getChildren()) instanceof ProgressIndicator)
+                pastOrdersContainer.getChildren().clear();
             pastOrdersFeed.stream().collect(Collectors.groupingBy(Document::getEvent, LinkedHashMap::new, Collectors.toList())) // Using LinkedHashMap to keep the sort
                 .forEach((event, eventOrders) -> {
                     eventOrders.forEach(orderDocument -> {
@@ -147,7 +156,8 @@ final class OrdersActivity extends ViewDomainActivityBase implements ModalityBut
     }
 
     private static VBox createOrdersContainer() {
-        VBox ordersContainer = new VBox(30);
+        VBox ordersContainer = new VBox(30, Controls.createProgressIndicator(50));
+        ordersContainer.setAlignment(Pos.TOP_CENTER);
         ordersContainer.setBackground(BackgroundFactory.newBackground(Color.gray(0.95), 30));
         ordersContainer.setPadding(new Insets(40, 30, 40, 30));
         return ordersContainer;
@@ -178,6 +188,8 @@ final class OrdersActivity extends ViewDomainActivityBase implements ModalityBut
             .ifNotNull(loadPastEventsBeforeDateProperty, date -> where("event.startDate < ?", date))
             .storeEntitiesInto(pastOrdersFeed)
             .start();
+
+
     }
 
 }
