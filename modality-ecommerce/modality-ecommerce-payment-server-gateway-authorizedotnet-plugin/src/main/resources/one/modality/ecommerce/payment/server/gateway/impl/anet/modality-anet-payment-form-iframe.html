@@ -57,6 +57,7 @@
         if (displayFormButton.getAttribute("data-acceptUIFormHeaderTxt") === "")
             displayFormButton.setAttribute("data-acceptUIFormHeaderTxt", htmlHeaderText);
         displayFormButton.setAttribute("data-acceptUIFormBtnTxt", htmlPayButtonText);
+        displayFormButton.textContent = htmlPayButtonText;
         // And then we load AcceptUI.js
         const script = document.createElement("script");
         script.src = "https://jstest.authorize.net/v3/AcceptUI.js";
