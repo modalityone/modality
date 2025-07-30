@@ -134,19 +134,9 @@ public class WebPaymentForm {
         LoadOptions loadOptions = new LoadOptions()
             .setOnLoadFailure(this::onLoadFailure)
             .setOnLoadSuccess(() -> { // Note: can be called several times in case of an iFrame reload
-                try {
-                    if (initFailureChecker != null)  // can happen on iFrame reload
-                        initFailureChecker.cancel(); // we cancel the previous checker to prevent outdated init failure
-                    webViewPane.setWindowMember("modality_javaPaymentForm", WebPaymentForm.this);
-                    webViewPane.callWindow("modality_injectJavaPaymentForm", WebPaymentForm.this, htmlHeaderText, htmlPayButtonText);
-                    initFailureChecker = Scheduler.scheduleDelay(5000, () -> {
-                        if (!initialized) {
-                            onGatewayInitFailure("The payment page didn't respond as expected");
-                        }
-                    });
-                } catch (Exception ex) {
-                    onGatewayInitFailure(ex.getMessage());
-                }
+                if (initFailureChecker != null)  // can happen on iFrame reload
+                    initFailureChecker.cancel(); // we cancel the previous checker to prevent outdated init failure
+                injectPaymentFormToJS(1);
             });
         String htmlContent = result.getHtmlContent();
         if (htmlContent != null) {
@@ -168,6 +158,23 @@ public class WebPaymentForm {
         showLoadingFormOverlay();
         stackPane.setMaxWidth(Double.MAX_VALUE);
         return stackPane;
+    }
+
+    private void injectPaymentFormToJS(int attempt) {
+        try {
+            webViewPane.setWindowMember("modality_javaPaymentForm", this);
+            webViewPane.callWindow("modality_injectJavaPaymentForm", this, htmlHeaderText, htmlPayButtonText);
+            initFailureChecker = Scheduler.scheduleDelay(5000, () -> {
+                if (!initialized) {
+                    onGatewayInitFailure("The payment page didn't respond as expected");
+                }
+            });
+        } catch (Exception ex) {
+            if (attempt < 10) {
+                UiScheduler.scheduleDeferred(() -> injectPaymentFormToJS(attempt + 1));
+            } else
+                onGatewayInitFailure(ex.getMessage());
+        }
     }
 
     private void showOverlay(Node overlay) {
