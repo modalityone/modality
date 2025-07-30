@@ -2,6 +2,7 @@ package one.modality.ecommerce.payment.server.gateway.impl.anet;
 
 import dev.webfx.platform.boot.spi.ApplicationJob;
 import dev.webfx.platform.vertx.common.VertxInstance;
+import dev.webfx.platform.util.http.HttpResponseStatus;
 import io.vertx.core.http.HttpHeaders;
 import io.vertx.ext.web.Router;
 import one.modality.ecommerce.payment.server.gateway.impl.util.RestApiOneTimeHtmlResponsesCache;
@@ -29,10 +30,14 @@ public final class AuthorizeRestApiJob implements ApplicationJob {
                 // content to be present in the HTML cache, as set by initiatePayment() just before.
                 String cacheKey = ctx.pathParam("htmlCacheKey");
                 String html = RestApiOneTimeHtmlResponsesCache.getOneTimeHtmlResponse(cacheKey);
-                // And we return that content
-                ctx.response()
-                    .putHeader(HttpHeaders.CONTENT_TYPE, HttpHeaders.TEXT_HTML)
-                    .end(html);
+                if (html != null) // We return that content if found
+                    ctx.response()
+                        .putHeader(HttpHeaders.CONTENT_TYPE, HttpHeaders.TEXT_HTML)
+                        .end(html);
+                else // Not found
+                    ctx.response()
+                        .setStatusCode(HttpResponseStatus.BAD_REQUEST_400)
+                        .end("No value for cache key: " + cacheKey);
             });
     }
 

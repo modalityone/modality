@@ -20,6 +20,7 @@ module modality.ecommerce.payment.server.gateway.authorizedotnet.plugin {
     requires webfx.platform.boot;
     requires webfx.platform.resource;
     requires webfx.platform.util;
+    requires webfx.platform.util.http;
     requires webfx.platform.vertx.common;
 
     // Exported packages
