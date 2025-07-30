@@ -171,7 +171,7 @@ public class WebPaymentForm {
                 }
             });
         } catch (Exception ex) {
-            if (attempt < 10) {
+            if (attempt < 100) {
                 logDebug("Attempt n°" + attempt + " failed - retrying in 100 ms");
                 UiScheduler.scheduleDelay(100, () -> injectPaymentFormToJS(attempt + 1));
             } else {
