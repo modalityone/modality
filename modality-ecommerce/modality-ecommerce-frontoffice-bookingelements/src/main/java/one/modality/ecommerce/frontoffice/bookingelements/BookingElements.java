@@ -267,10 +267,10 @@ public final class BookingElements {
             .setDialogPrefRowHeight(37)
             .setDialogFullHeight(true)
             .setDialogCellMargin(new Insets(17))
+            .setSearchCondition(null) // Temporarily disabling search because it doesn't work TODO fix this
             .setDialogStyleClass("person-to-book-dialog")
             .ifNotNullOtherwiseEmpty(FXModalityUserPrincipal.modalityUserPrincipalProperty(), mup -> DqlStatement.where("frontendAccount=?", mup.getUserAccountId()))
             .appendNullEntity(false)
-            .setSearchCondition(null) // Temporarily disabling search because it doesn't work TODO fix this
             ;
         // Creating a virtual teacher named "All" that will be used to select all teachers
         EntityStore store = personSelector.getStore();

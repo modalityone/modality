@@ -33,7 +33,6 @@ module modality.crm.frontoffice.activity.userprofile.plugin {
     requires webfx.extras.util.dialog;
     requires webfx.extras.util.layout;
     requires webfx.extras.validation;
-    requires webfx.kit.launcher;
     requires webfx.kit.util;
     requires webfx.platform.blob;
     requires webfx.platform.console;

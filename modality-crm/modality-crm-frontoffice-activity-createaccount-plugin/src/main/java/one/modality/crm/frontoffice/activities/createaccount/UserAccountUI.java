@@ -1,6 +1,8 @@
 package one.modality.crm.frontoffice.activities.createaccount;
 
 
+import dev.webfx.extras.i18n.I18n;
+import dev.webfx.extras.i18n.controls.I18nControls;
 import dev.webfx.extras.panes.MonoPane;
 import dev.webfx.extras.styles.bootstrap.Bootstrap;
 import dev.webfx.extras.styles.materialdesign.textfield.MaterialTextFieldPane;
@@ -8,14 +10,13 @@ import dev.webfx.extras.styles.materialdesign.util.MaterialUtil;
 import dev.webfx.extras.util.control.Controls;
 import dev.webfx.extras.util.control.HtmlInputAutocomplete;
 import dev.webfx.extras.util.layout.Layouts;
+import dev.webfx.extras.validation.ValidationSupport;
 import dev.webfx.kit.launcher.WebFxKitLauncher;
 import dev.webfx.platform.console.Console;
 import dev.webfx.platform.windowhistory.spi.BrowsingHistory;
 import dev.webfx.stack.authn.AuthenticationService;
 import dev.webfx.stack.authn.FinaliseAccountCreationCredentials;
 import dev.webfx.stack.authn.login.ui.spi.impl.gateway.password.PasswordI18nKeys;
-import dev.webfx.extras.i18n.I18n;
-import dev.webfx.extras.i18n.controls.I18nControls;
 import dev.webfx.stack.orm.datasourcemodel.service.DataSourceModelService;
 import dev.webfx.stack.orm.domainmodel.DataSourceModel;
 import dev.webfx.stack.orm.entity.Entity;
@@ -24,7 +25,6 @@ import dev.webfx.stack.orm.entity.UpdateStore;
 import dev.webfx.stack.orm.entity.binding.EntityBindings;
 import dev.webfx.stack.orm.entity.controls.entity.selector.ButtonSelectorParameters;
 import dev.webfx.stack.orm.entity.controls.entity.selector.EntityButtonSelector;
-import dev.webfx.extras.validation.ValidationSupport;
 import javafx.application.Platform;
 import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.SimpleBooleanProperty;
@@ -37,6 +37,8 @@ import javafx.scene.layout.VBox;
 import one.modality.base.client.activity.ModalityButtonFactoryMixin;
 import one.modality.base.client.mainframe.fx.FXMainFrameDialogArea;
 import one.modality.base.shared.domainmodel.functions.AbcNames;
+import one.modality.base.shared.entities.Country;
+import one.modality.base.shared.entities.Organization;
 import one.modality.base.shared.entities.Person;
 import one.modality.crm.client.activities.login.LoginRouting;
 import one.modality.crm.client.i18n.CrmI18nKeys;
@@ -80,9 +82,9 @@ public class UserAccountUI implements ModalityButtonFactoryMixin {
         ProgressIndicator progressIndicator = new ProgressIndicator(50);
         progressIndicator.setProgress(-1);
         MonoPane monopane = new MonoPane(progressIndicator);
-        BorderPane.setMargin(monopane,new Insets(200,0,200,0));
+        BorderPane.setMargin(monopane, new Insets(200, 0, 200, 0));
         container.setCenter(monopane);
-        if(editModeProperty.get()==EDITION_MODE) {
+        if (editModeProperty.get() == EDITION_MODE) {
             passwordManagedProperty.setValue(false);
             termAndConditionManagedProperty.setValue(false);
         }
@@ -90,7 +92,7 @@ public class UserAccountUI implements ModalityButtonFactoryMixin {
 
     private void createTitle() {
         Label title;
-        if(editModeProperty.get()==CREATION_MODE)
+        if (editModeProperty.get() == CREATION_MODE)
             title = Bootstrap.h2Primary(I18nControls.newLabel(PasswordI18nKeys.CreateAccountTitle));
         else title = Bootstrap.h2Primary(I18nControls.newLabel(PasswordI18nKeys.EditUserAccount));
         title.setPadding(new Insets(40, 0, 0, 0));
@@ -107,7 +109,7 @@ public class UserAccountUI implements ModalityButtonFactoryMixin {
 
         //******* LOGIN DETAILS ********//
         Label loginInfoLabel = Bootstrap.small(Bootstrap.textSecondary(I18nControls.newLabel(CreateAccountI18nKeys.LoginDetails)));
-        loginInfoLabel.setPadding(new Insets(0,0,10,0));
+        loginInfoLabel.setPadding(new Insets(0, 0, 10, 0));
         Layouts.bindManagedAndVisiblePropertiesTo(emailManagedProperty.or(passwordManagedProperty), loginInfoLabel);
         fieldsListVBox.getChildren().add(loginInfoLabel);
 
@@ -182,7 +184,7 @@ public class UserAccountUI implements ModalityButtonFactoryMixin {
             }
         });
         optionMale.setSelected(null != person.isMale() && person.isMale());
-        optionFemale.setSelected(null != person.isMale()&& !person.isMale());
+        optionFemale.setSelected(null != person.isMale() && !person.isMale());
         //optionFemale.setSelected(!person.isMale());
         HBox maleFemaleHBox = new HBox(20, optionMale, optionFemale);
         maleFemaleHBox.setPadding(new Insets(10, 0, 0, 0));
@@ -265,11 +267,8 @@ public class UserAccountUI implements ModalityButtonFactoryMixin {
 
 
         ButtonSelectorParameters buttonSelectorParameters = new ButtonSelectorParameters().setButtonFactory(this).setDialogParentGetter(FXMainFrameDialogArea::getDialogArea);
-        String countryJson = "{class: 'Country', orderBy: 'name'}";
-        if (WebFxKitLauncher.supportsSvgImageFormat())
-            countryJson = "{class: 'Country', orderBy: 'name', columns: [{expression: '[image(`images/s16/countries/svg/` + iso_alpha2 + `.svg`),name]'}] }";
-        countrySelector = createEntityButtonSelector(countryJson, DataSourceModelService.getDefaultDataSourceModel(), buttonSelectorParameters);
-        countrySelector.setSelectedItem(person.getCountry());
+        countrySelector = createCountryButtonSelector(DataSourceModelService.getDefaultDataSourceModel(), buttonSelectorParameters)
+            .setSelectedItem(person.getCountry());
         MaterialTextFieldPane countryButton = countrySelector.toMaterialButton(CrmI18nKeys.Country);
         //countryButton.getMaterialTextField().focusLabelFillProperty().setValue(Color.BLACK);
         Layouts.bindManagedAndVisiblePropertiesTo(countryManagedProperty, countryButton);
@@ -286,11 +285,8 @@ public class UserAccountUI implements ModalityButtonFactoryMixin {
         Layouts.bindManagedAndVisiblePropertiesTo(kadampaCenterManagedProperty, kadampaCenterLabel);
         fieldsListVBox.getChildren().add(kadampaCenterLabel);
 
-        String organizationJson = "{class: 'Organization', alias: 'o', where: '!closed and name!=`ISC`', orderBy: 'country.name,name'}";
-        if (WebFxKitLauncher.supportsSvgImageFormat())
-            organizationJson = "{class: 'Organization', alias: 'o', where: '!closed and name!=`ISC`', orderBy: 'country.name,name', columns: [{expression: '[image(`images/s16/organizations/svg/` + (type=2 ? `kmc` : type=3 ? `kbc` : type=4 ? `branch` : `generic`) + `.svg`),name]'}] }";
-        EntityButtonSelector organizationSelector = createEntityButtonSelector(organizationJson, DataSourceModelService.getDefaultDataSourceModel(), buttonSelectorParameters);
-        organizationSelector.setSelectedItem(person.getOrganization());
+        EntityButtonSelector<Organization> organizationSelector = createOrganizationButtonSelector(DataSourceModelService.getDefaultDataSourceModel(), buttonSelectorParameters)
+            .setSelectedItem(person.getOrganization());
         MaterialTextFieldPane organizationButton = organizationSelector.toMaterialButton(CrmI18nKeys.Centre);
         //organizationButton.getMaterialTextField().focusLabelFillProperty().setValue(Color.BLACK);
         //TODO: see how to put  the select bg color transparent
@@ -309,7 +305,7 @@ public class UserAccountUI implements ModalityButtonFactoryMixin {
 
         Layouts.bindManagedAndVisiblePropertiesTo(kadampaCenterManagedProperty, orLabel);
         Layouts.bindManagedAndVisiblePropertiesTo(kadampaCenterManagedProperty, optionNoKadampaCenter);
-        optionNoKadampaCenter.setSelected(null == organizationSelector.getSelectedItem() || null ==person.getCountry());
+        optionNoKadampaCenter.setSelected(null == organizationSelector.getSelectedItem() || null == person.getCountry());
         //If the select box is checked, we empty the kadampa center info
         optionNoKadampaCenter.selectedProperty().addListener((observable, oldValue, newValue) -> {
             if (newValue) {
@@ -318,7 +314,7 @@ public class UserAccountUI implements ModalityButtonFactoryMixin {
         });
         organizationSelector.selectedItemProperty().addListener((observable, oldValue, newValue) -> {
             person.setOrganization(newValue);
-            if(newValue!=null) optionNoKadampaCenter.setSelected(false);
+            if (newValue != null) optionNoKadampaCenter.setSelected(false);
         });
 
         //******* TERM & COND ********//
@@ -351,7 +347,7 @@ public class UserAccountUI implements ModalityButtonFactoryMixin {
         }
 
         actionButton.disableProperty().bind(EntityBindings.hasChangesProperty(updateStore).not());
-        if(editModeProperty.get()==CREATION_MODE) {
+        if (editModeProperty.get() == CREATION_MODE) {
             actionButton.setOnAction(e -> {
                 if (validateForm()) {
                     AuthenticationService.authenticate(new FinaliseAccountCreationCredentials(token, passwordField.getText().trim()))
@@ -375,7 +371,7 @@ public class UserAccountUI implements ModalityButtonFactoryMixin {
             });
         } else {
             //Here we're editing an existing user
-            actionButton.setOnAction(e-> {
+            actionButton.setOnAction(e -> {
                 updateStore.submitChanges().
                     onFailure(failure -> {
                         Console.log("Error while updating account:" + failure);
@@ -392,7 +388,7 @@ public class UserAccountUI implements ModalityButtonFactoryMixin {
         container.setBottom(actionButton);
         BorderPane.setMargin(actionButton, new Insets(0, 0, 40, 0));
 
-        if(editModeProperty.get()==EDITION_MODE) {
+        if (editModeProperty.get() == EDITION_MODE) {
             //In Edit Mode, we prevent to change the firstName and lastName
             firstNameTextField.setDisable(true);
             lastNameTextField.setDisable(true);
@@ -425,8 +421,8 @@ public class UserAccountUI implements ModalityButtonFactoryMixin {
             validationSupport.addRequiredInput(firstNameTextField);
             validationSupport.addRequiredInput(lastNameTextField);
             validationSupport.addRequiredInput(postCodeTextField);
-            validationSupport.addRequiredInput(countrySelector.selectedItemProperty(), countrySelector.getButton(),I18n.i18nTextProperty(CreateAccountI18nKeys.CountryRequired));
-            validationSupport.addValidationRule(termAndConditionReadCheckBox.selectedProperty(), termAndConditionReadCheckBox,I18n.i18nTextProperty(CreateAccountI18nKeys.TermsAndCondsRequired));
+            validationSupport.addRequiredInput(countrySelector.selectedItemProperty(), countrySelector.getButton(), I18n.i18nTextProperty(CreateAccountI18nKeys.CountryRequired));
+            validationSupport.addValidationRule(termAndConditionReadCheckBox.selectedProperty(), termAndConditionReadCheckBox, I18n.i18nTextProperty(CreateAccountI18nKeys.TermsAndCondsRequired));
         }
     }
 
@@ -448,7 +444,7 @@ public class UserAccountUI implements ModalityButtonFactoryMixin {
         container.setCenter(errorMessageLabel);
         if (actionButton != null) {
             I18nControls.bindI18nProperties(actionButton, CreateAccountI18nKeys.LoginTitle);
-            actionButton.setOnAction(e-> new LoginRouting.RouteToLoginRequest(browsingHistory).execute());
+            actionButton.setOnAction(e -> new LoginRouting.RouteToLoginRequest(browsingHistory).execute());
             actionButton.disableProperty().unbind();
             actionButton.setDisable(false);
         }
@@ -462,14 +458,33 @@ public class UserAccountUI implements ModalityButtonFactoryMixin {
         MaterialUtil.getMaterialTextField(textField).setAnimateLabel(false);
     }
 
+    public static EntityButtonSelector<Organization> createOrganizationButtonSelector(DataSourceModel dataSourceModel, ButtonSelectorParameters buttonSelectorParameters) {
+        String organizationJson = "{class: 'Organization', alias: 'o', where: '!closed', orderBy: 'country.name,name'}";
+        if (WebFxKitLauncher.supportsSvgImageFormat())
+            organizationJson = "{class: 'Organization', alias: 'o', where: '!closed', orderBy: 'country.name,name', columns: [{expression: '[image(`images/s16/organizations/svg/` + (type=2 ? `kmc` : type=3 ? `kbc` : type=4 ? `branch` : `generic`) + `.svg`),name]'}] }";
+        return UserAccountUI.<Organization>createEntityButtonSelector(organizationJson, dataSourceModel, buttonSelectorParameters)
+            .setDialogStyleClass("organization-selector-dialog");
+    }
+
+    public static EntityButtonSelector<Country> createCountryButtonSelector(DataSourceModel dataSourceModel, ButtonSelectorParameters buttonSelectorParameters) {
+        String countryJson = "{class: 'Country', orderBy: 'name'}";
+        if (WebFxKitLauncher.supportsSvgImageFormat())
+            countryJson = "{class: 'Country', orderBy: 'name', columns: [{expression: '[image(`images/s16/countries/svg/` + iso_alpha2 + `.svg`),name]'}] }";
+        return UserAccountUI.<Country>createEntityButtonSelector(countryJson, dataSourceModel, buttonSelectorParameters)
+            .setDialogStyleClass("country-selector-dialog");
+    }
+
     public static <T extends Entity> EntityButtonSelector<T> createEntityButtonSelector(Object jsonOrClass, DataSourceModel dataSourceModel, ButtonSelectorParameters buttonSelectorParameters) {
-        return new EntityButtonSelector<>(jsonOrClass, dataSourceModel, buttonSelectorParameters) {
+        return new EntityButtonSelector<T>(jsonOrClass, dataSourceModel, buttonSelectorParameters) {
             @Override
             protected void setSearchParameters(String search, EntityStore store) {
                 super.setSearchParameters(search, store);
                 store.setParameterValue("abcSearchLike", AbcNames.evaluate(search, true));
             }
-        };
+        }
+            .setDialogPrefRowHeight(37)
+            .setDialogCellMargin(new Insets(17))
+            ;
     }
 
     public void displayError(Throwable e) {

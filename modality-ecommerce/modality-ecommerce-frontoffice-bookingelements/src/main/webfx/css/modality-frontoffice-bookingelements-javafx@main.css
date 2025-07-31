@@ -26,9 +26,12 @@
 }
 
 .person-to-book-dialog {
-    -fx-font-family: "Poppins", sans-serif;
-    -fx-font-size: 18px; /* Same as .btn-lg which is the style applied to the person to book button */
     -webfx-visualgrid-selection-color: #6aabd5;
+}
+
+.webfx-button-selector-dialog {
+    -fx-font-family: "Poppins", sans-serif;
+    -fx-font-size: 18px;
 }
 
 .booking-elements .navigation-bar {

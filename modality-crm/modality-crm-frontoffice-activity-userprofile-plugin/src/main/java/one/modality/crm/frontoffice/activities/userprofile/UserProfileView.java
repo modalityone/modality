@@ -19,7 +19,6 @@ import dev.webfx.extras.util.control.Controls;
 import dev.webfx.extras.util.dialog.DialogCallback;
 import dev.webfx.extras.util.dialog.DialogUtil;
 import dev.webfx.extras.util.layout.Layouts;
-import dev.webfx.kit.launcher.WebFxKitLauncher;
 import dev.webfx.stack.orm.datasourcemodel.service.DataSourceModelService;
 import dev.webfx.stack.orm.entity.controls.entity.selector.ButtonSelector;
 import dev.webfx.stack.orm.entity.controls.entity.selector.ButtonSelectorParameters;
@@ -42,13 +41,12 @@ import one.modality.base.shared.entities.Country;
 import one.modality.base.shared.entities.Organization;
 import one.modality.crm.client.i18n.CrmI18nKeys;
 import one.modality.crm.frontoffice.activities.createaccount.CreateAccountI18nKeys;
-
-import static one.modality.crm.frontoffice.activities.createaccount.UserAccountUI.createEntityButtonSelector;
+import one.modality.crm.frontoffice.activities.createaccount.UserAccountUI;
 
 /**
  * @author David Hello
  */
-public class UserProfileView implements ModalityButtonFactoryMixin {
+public final class UserProfileView implements ModalityButtonFactoryMixin {
 
     private static final double PROFILE_IMAGE_SIZE = 150;
     public static final String NO_PICTURE_IMAGE = "images/large/no-picture.png";
@@ -90,10 +88,6 @@ public class UserProfileView implements ModalityButtonFactoryMixin {
     public Label infoMessage;
     public Button saveButton;
     private VBox loginDetailsVBox, personalDetailsVBox, addressInfoVBox, kadampaCenterVBox;
-    private PasswordField passwordField;
-    private Label titleLabel;
-    private Node profileHeader;
-    private Separator profileHeaderSeparator;
 
     public UserProfileView(ChangePictureUI changePictureUI, boolean showTitle, boolean showProfileHeader,  boolean showName, boolean showEmail, boolean showPassword, boolean showPersonalDetails, boolean showAddress, boolean showKadampaCenter, boolean showSaveChangesButton) {
         this.changePictureUI = changePictureUI;
@@ -114,11 +108,11 @@ public class UserProfileView implements ModalityButtonFactoryMixin {
         container.getStyleClass().add("user-profile");
         container.setAlignment(Pos.TOP_CENTER);
 
-        titleLabel = buildTitle();
+        Label titleLabel = buildTitle();
         container.getChildren().add(titleLabel);
         setManagedAndVisible(titleLabel, showTitle);
 
-        profileHeader = buildProfileHeader();
+        Node profileHeader = buildProfileHeader();
         container.getChildren().add(profileHeader);
         setManagedAndVisible(profileHeader, showProfileHeader);
 
@@ -230,7 +224,7 @@ public class UserProfileView implements ModalityButtonFactoryMixin {
                 })
                 .start();
 
-        profileHeaderSeparator = new Separator();
+        Separator profileHeaderSeparator = new Separator();
         return new VBox(pictureAndNameResponsivePane, profileHeaderSeparator);
     }
 
@@ -262,7 +256,7 @@ public class UserProfileView implements ModalityButtonFactoryMixin {
 
         changeUserPassword = I18nControls.newHyperlink(UserProfileI18nKeys.ChangePassword);
         StackPane passwordPane = new StackPane();
-        passwordField = newMaterialPasswordField(CrmI18nKeys.Password);
+        PasswordField passwordField = newMaterialPasswordField(CrmI18nKeys.Password);
         passwordField.setText("*******");
         passwordField.setDisable(true);
         formatTextFieldLabel(passwordField);
@@ -347,10 +341,7 @@ public class UserProfileView implements ModalityButtonFactoryMixin {
         vBox.getChildren().add(cityNameTextField);
 
         ButtonSelectorParameters buttonSelectorParameters = new ButtonSelectorParameters().setButtonFactory(this).setDialogParentGetter(FXMainFrameDialogArea::getDialogArea);
-        String countryJson = "{class: 'Country', orderBy: 'name'}";
-        if (WebFxKitLauncher.supportsSvgImageFormat())
-            countryJson = "{class: 'Country', orderBy: 'name', columns: [{expression: '[image(`images/s16/countries/svg/` + iso_alpha2 + `.svg`),name]'}] }";
-        countrySelector = createEntityButtonSelector(countryJson, DataSourceModelService.getDefaultDataSourceModel(), buttonSelectorParameters);
+        countrySelector = UserAccountUI.createCountryButtonSelector(DataSourceModelService.getDefaultDataSourceModel(), buttonSelectorParameters);
         MaterialTextFieldPane countryButton = countrySelector.toMaterialButton(CrmI18nKeys.Country);
         countryButton.getMaterialTextField().setAnimateLabel(false);
         vBox.getChildren().add(countryButton);
@@ -364,11 +355,9 @@ public class UserProfileView implements ModalityButtonFactoryMixin {
         vBox.getChildren().add(kadampaCenterLabel);
 
         ButtonSelectorParameters buttonSelectorParameters = new ButtonSelectorParameters().setButtonFactory(this).setDialogParentGetter(FXMainFrameDialogArea::getDialogArea);
-        String organizationJson = "{class: 'Organization', alias: 'o', where: '!closed and name!=`ISC`', orderBy: 'country.name,name'}";
-        if (WebFxKitLauncher.supportsSvgImageFormat())
-            organizationJson = "{class: 'Organization', alias: 'o', where: '!closed and name!=`ISC`', orderBy: 'country.name,name', columns: [{expression: '[image(`images/s16/organizations/svg/` + (type=2 ? `kmc` : type=3 ? `kbc` : type=4 ? `branch` : `generic`) + `.svg`),name]'}] }";
-        organizationSelector = createEntityButtonSelector(organizationJson, DataSourceModelService.getDefaultDataSourceModel(), buttonSelectorParameters);
+        organizationSelector = UserAccountUI.createOrganizationButtonSelector(DataSourceModelService.getDefaultDataSourceModel(), buttonSelectorParameters);
         MaterialTextFieldPane organizationButton = organizationSelector.toMaterialButton(CrmI18nKeys.Centre);
+        organizationButton.getMaterialTextField().setAnimateLabel(false);
         vBox.getChildren().add(organizationButton);
         Label orLabel = Bootstrap.small(Bootstrap.textSecondary(I18nControls.newLabel(CreateAccountI18nKeys.Or)));
         vBox.getChildren().add(orLabel);
@@ -376,7 +365,6 @@ public class UserProfileView implements ModalityButtonFactoryMixin {
         noOrganizationRadioButton = I18nControls.newRadioButton(CreateAccountI18nKeys.NoAttendanceToAKadampaCenter);
         noOrganizationRadioButton.setWrapText(true);
         vBox.getChildren().add(noOrganizationRadioButton);
-        organizationButton.getMaterialTextField().setAnimateLabel(false);
         return vBox;
     }
 

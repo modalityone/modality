@@ -21,9 +21,12 @@
 }
 
 .person-to-book-dialog {
+    --webfx-visualgrid-selection-color: #6aabd5;
+}
+
+.webfx-button-selector-dialog, .webfx-button-selector-dialog input {
     font-family: "Poppins", sans-serif;
     font-size: 18px;
-    --webfx-visualgrid-selection-color: #6aabd5;
 }
 
 .booking-elements .navigation-bar {
