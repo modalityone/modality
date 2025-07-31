@@ -106,7 +106,10 @@ public final class BookingElements {
     }
 
     private static <L extends Labeled> L optionLabel(L label, boolean secondary) {
-        label.setContentDisplay(ContentDisplay.TEXT_ONLY); // We ignore graphics such as the French flag for French audio recording
+        // We ignore graphics such as the French flag for French audio recording
+        if (label instanceof Label) // We don't ignore graphic for checkboxes or radio buttons, of course
+            label.setContentDisplay(ContentDisplay.TEXT_ONLY);
+        label.setPadding(new Insets(5));
         return style(label, secondary ? "option-label-secondary" : "option-label");
     }
 
