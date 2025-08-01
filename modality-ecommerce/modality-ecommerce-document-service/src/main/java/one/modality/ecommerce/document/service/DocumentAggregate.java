@@ -191,11 +191,37 @@ public final class DocumentAggregate {
         Event event = getEvent();
         if (event != null)
             return event.getPrimaryKey();
-        AddDocumentEvent ade = (AddDocumentEvent) Collections.findFirst(newDocumentEvents, e -> e instanceof AddDocumentEvent);
+        AddDocumentEvent ade = getAddDocumentEvent();
         if (ade != null)
             return ade.getEventPrimaryKey();
         if (previousVersion != null)
             return previousVersion.getEventPrimaryKey();
+        return null;
+    }
+
+    private AddDocumentEvent getAddDocumentEvent() {
+        return (AddDocumentEvent) Collections.findFirst(newDocumentEvents, e -> e instanceof AddDocumentEvent);
+    }
+
+    public Object getDocumentPrimaryKey() {
+        if (document != null)
+            return document.getPrimaryKey();
+        AddDocumentEvent ade = getAddDocumentEvent();
+        if (ade != null)
+            return ade.getDocumentPrimaryKey();
+        if (previousVersion != null)
+            return previousVersion.getDocumentPrimaryKey();
+        return null;
+    }
+
+    public Integer getDocumentRef() {
+        if (document != null)
+            return document.getRef();
+        AddDocumentEvent ade = getAddDocumentEvent();
+        if (ade != null)
+            return ade.getRef();
+        if (previousVersion != null)
+            return previousVersion.getDocumentRef();
         return null;
     }
 
