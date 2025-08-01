@@ -15,6 +15,7 @@ public interface Document extends
     EntityHasPerson,
     EntityHasPersonalDetailsCopy {
     String ref = "ref";
+    String person_lang = "person_lang";
     String cart = "cart";
     String priceNet = "price_net";
     String priceDeposit = "price_deposit";
@@ -34,6 +35,14 @@ public interface Document extends
 
     default Integer getRef() {
         return getIntegerFieldValue(ref);
+    }
+
+    default void setPersonLang(String value) {
+        setFieldValue(person_lang, value);
+    }
+
+    default String getPersonLang() {
+        return getStringFieldValue(person_lang);
     }
 
     default void setCart(Object value) {

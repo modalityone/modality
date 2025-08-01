@@ -1,8 +1,10 @@
 package one.modality.ecommerce.client.workingbooking;
 
+import dev.webfx.extras.i18n.I18n;
 import dev.webfx.kit.util.properties.FXProperties;
 import dev.webfx.kit.util.properties.ObservableLists;
 import dev.webfx.platform.async.Future;
+import dev.webfx.platform.util.Strings;
 import dev.webfx.platform.util.collection.Collections;
 import dev.webfx.stack.orm.entity.Entities;
 import dev.webfx.stack.orm.entity.EntityStore;
@@ -235,9 +237,11 @@ public final class WorkingBooking {
         if (document.isNew()) {
             documentChanges.forEach(e -> {
                 if (e instanceof AddDocumentEvent ade) {
+                    ade.setPersonLang(Strings.toString(I18n.getLanguage()));
                     Person personToBook = FXPersonToBook.getPersonToBook();
                     if (personToBook != null)
                         ade.setPersonPrimaryKey(Entities.getPrimaryKey(personToBook));
+                    // If booked as a guest
                     ade.setFirstName(document.getFirstName());
                     ade.setLastName(document.getLastName());
                     ade.setEmail(document.getEmail());

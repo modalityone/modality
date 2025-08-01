@@ -10,11 +10,11 @@ module modality.ecommerce.frontoffice.bookingform {
     requires modality.ecommerce.client.workingbooking;
     requires modality.ecommerce.document.service;
     requires modality.ecommerce.frontoffice.bookingelements;
+    requires webfx.extras.operation;
     requires webfx.extras.panes;
     requires webfx.kit.util;
-    requires webfx.extras.operation;
+    requires webfx.platform.async;
     requires webfx.platform.uischeduler;
-    requires webfx.platform.console;
 
     // Exported packages
     exports one.modality.ecommerce.frontoffice.bookingform;

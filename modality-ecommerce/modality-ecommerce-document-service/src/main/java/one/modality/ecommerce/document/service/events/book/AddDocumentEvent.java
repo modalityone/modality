@@ -12,18 +12,20 @@ import one.modality.ecommerce.document.service.events.AbstractDocumentEvent;
 public final class AddDocumentEvent extends AbstractDocumentEvent {
 
     private final Object eventPrimaryKey;
+    private String personLang;
     // Booking with an account
     private Object personPrimaryKey;
     // Booking as a guest
     private String firstName;
     private String lastName;
     private String email;
-    // Generated information once stored in database
+    // Generated information once stored in the database
     private Integer ref;
 
     public AddDocumentEvent(Document document) {
         super(document);
         eventPrimaryKey = Entities.getPrimaryKey(document.getEvent());
+        personLang = document.getPersonLang();
         personPrimaryKey = Entities.getPrimaryKey(document.getPerson());
         firstName = document.getFirstName();
         lastName = document.getLastName();
@@ -31,9 +33,10 @@ public final class AddDocumentEvent extends AbstractDocumentEvent {
         ref = document.getRef();
     }
 
-    public AddDocumentEvent(Object documentPrimaryKey, Object eventPrimaryKey, Object personPrimaryKey, String firstName, String lastName, String email, Integer ref) {
+    public AddDocumentEvent(Object documentPrimaryKey, Object eventPrimaryKey, String personLang, Object personPrimaryKey, String firstName, String lastName, String email, Integer ref) {
         super(documentPrimaryKey);
         this.eventPrimaryKey = eventPrimaryKey;
+        this.personLang = personLang;
         this.personPrimaryKey = personPrimaryKey;
         this.firstName = firstName;
         this.lastName = lastName;
@@ -43,6 +46,14 @@ public final class AddDocumentEvent extends AbstractDocumentEvent {
 
     public Object getEventPrimaryKey() {
         return eventPrimaryKey;
+    }
+
+    public String getPersonLang() {
+        return personLang;
+    }
+
+    public void setPersonLang(String personLang) {
+        this.personLang = personLang;
     }
 
     public Object getPersonPrimaryKey() {
@@ -99,6 +110,7 @@ public final class AddDocumentEvent extends AbstractDocumentEvent {
     public void replayEventOnDocument() {
         super.replayEventOnDocument();
         document.setEvent(isForSubmit() ? getEventPrimaryKey() : entityStore.getOrCreateEntity(Event.class, getEventPrimaryKey()));
+        document.setPersonLang(personLang);
         Object personPrimaryKey = getPersonPrimaryKey();
         if (personPrimaryKey != null) {
             document.setPerson(isForSubmit() ? personPrimaryKey : entityStore.getOrCreateEntity(Person.class, personPrimaryKey));

@@ -59,6 +59,12 @@
 
         <dependency>
             <groupId>dev.webfx</groupId>
+            <artifactId>webfx-extras-operation</artifactId>
+            <version>0.1.0-SNAPSHOT</version>
+        </dependency>
+
+        <dependency>
+            <groupId>dev.webfx</groupId>
             <artifactId>webfx-extras-panes</artifactId>
             <version>0.1.0-SNAPSHOT</version>
         </dependency>
@@ -71,10 +77,22 @@
 
         <dependency>
             <groupId>dev.webfx</groupId>
+            <artifactId>webfx-platform-async</artifactId>
+            <version>0.1.0-SNAPSHOT</version>
+        </dependency>
+
+        <dependency>
+            <groupId>dev.webfx</groupId>
             <artifactId>webfx-platform-javatime-emul-j2cl</artifactId>
             <version>0.1.0-SNAPSHOT</version>
             <scope>runtime</scope>
             <optional>true</optional>
+        </dependency>
+
+        <dependency>
+            <groupId>dev.webfx</groupId>
+            <artifactId>webfx-platform-uischeduler</artifactId>
+            <version>0.1.0-SNAPSHOT</version>
         </dependency>
 
     </dependencies>
