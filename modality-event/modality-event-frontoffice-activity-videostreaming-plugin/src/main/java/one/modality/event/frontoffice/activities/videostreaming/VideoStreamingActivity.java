@@ -488,13 +488,13 @@ final class VideoStreamingActivity extends ViewDomainActivityBase {
             videoScheduledItems);
 
         // Showing selected videos for the currentSelected Day
-        FXProperties.runNowAndOnPropertyChange(() -> {
+        FXProperties.runNowAndOnPropertiesChange(() -> {
             LocalDate selectedDay = selectedDayProperty.get();
             if (!displayingDailyProgram || selectedDay == null)
                 displayedVideoScheduledItems.setAll(videoScheduledItems);
             else
                 displayedVideoScheduledItems.setAll(Collections.filter(videoScheduledItems, item -> selectedDay.equals(item.getDate())));
-        }, selectedDayProperty);
+        }, selectedDayProperty, ObservableLists.versionNumber(videoScheduledItems));
 
         // Showing selected videos once they are loaded
         ObservableLists.runNowAndOnListOrPropertiesChange(change -> {
