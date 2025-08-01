@@ -235,8 +235,9 @@ public final class WorkingBooking {
         if (document.isNew()) {
             documentChanges.forEach(e -> {
                 if (e instanceof AddDocumentEvent ade) {
-                    if (ade.getPersonPrimaryKey() == null)
-                        ade.setPersonPrimaryKey(Entities.getPrimaryKey(FXPersonToBook.getPersonToBook()));
+                    Person personToBook = FXPersonToBook.getPersonToBook();
+                    if (personToBook != null)
+                        ade.setPersonPrimaryKey(Entities.getPrimaryKey(personToBook));
                     ade.setFirstName(document.getFirstName());
                     ade.setLastName(document.getLastName());
                     ade.setEmail(document.getEmail());
