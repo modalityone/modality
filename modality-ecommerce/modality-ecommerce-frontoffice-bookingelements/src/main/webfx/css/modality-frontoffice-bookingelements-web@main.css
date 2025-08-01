@@ -52,10 +52,12 @@
 
 .booking-elements .navigation-bar fx-togglebutton.disabled {
     --fx-text-fill: transparent;
+    --fx-progress-indicator-color: var(--brand-blue-color);
 }
 
 .booking-elements .next-button {
     --fx-text-fill: white;
+    --fx-progress-indicator-color: white;
 }
 
 .booking-elements .back-button {
