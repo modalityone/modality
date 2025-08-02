@@ -272,7 +272,7 @@ public final class WorkingBookingProperties {
 
     // Min deposit
 
-    public int getMinDepositProperty() {
+    public int getMinDeposit() {
         return minDepositProperty.get();
     }
 
