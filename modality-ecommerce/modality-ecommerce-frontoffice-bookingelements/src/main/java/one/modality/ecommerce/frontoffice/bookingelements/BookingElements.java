@@ -228,8 +228,8 @@ public final class BookingElements {
     public static TextField createPriceTextField() {
         TextField priceTextField = style(new TextField(), "price-textfield");
         priceTextField.setAlignment(Pos.CENTER_RIGHT);
-        priceTextField.setMinWidth(50);
-        priceTextField.setMaxWidth(80);
+        priceTextField.setMinWidth(80);
+        priceTextField.setPrefWidth(80);
         Controls.setHtmlInputType(priceTextField, "number");
         return priceTextField;
     }
