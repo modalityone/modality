@@ -75,6 +75,12 @@
     font-weight: bold;
 }
 
+.booking-elements .price-textfield {
+    font-size: 15px;
+    font-weight: bold;
+    --fx-textfield-border-style: none;
+}
+
 .booking-elements .badge { /* badges don't look vertically centered with Poppins font on the web version */
     font-family: "Montserrat", sans-serif;
 }

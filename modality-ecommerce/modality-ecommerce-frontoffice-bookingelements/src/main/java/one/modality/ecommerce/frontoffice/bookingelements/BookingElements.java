@@ -225,6 +225,15 @@ public final class BookingElements {
         return style(new Label(), styleClass);
     }
 
+    public static TextField createPriceTextField() {
+        TextField priceTextField = style(new TextField(), "price-textfield");
+        priceTextField.setAlignment(Pos.CENTER_RIGHT);
+        priceTextField.setMinWidth(50);
+        priceTextField.setMaxWidth(80);
+        Controls.setHtmlInputType(priceTextField, "number");
+        return priceTextField;
+    }
+
     public static void setupPeriodOption(List<ScheduledItem> bookableScheduledItems, Label priceLabel, BooleanProperty selectedProperty, WorkingBooking workingBooking) {
         selectedProperty.set(workingBooking.areScheduledItemsBooked(bookableScheduledItems));
         FXProperties.runOnPropertyChange(selected -> {

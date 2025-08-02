@@ -100,6 +100,12 @@
     -fx-text-fill: #838788;
 }
 
+.booking-elements .price-textfield {
+    -fx-font-size: 15px;
+    -fx-font-weight: bold;
+    -fx-border-style: none;
+}
+
 .booking-elements .text-area {
     -fx-border-color: black;
     -fx-border-radius: 19px;
