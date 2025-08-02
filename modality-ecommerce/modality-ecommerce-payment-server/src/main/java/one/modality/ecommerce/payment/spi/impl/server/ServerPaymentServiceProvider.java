@@ -77,6 +77,7 @@ public class ServerPaymentServiceProvider implements PaymentServiceProvider {
                             parameters
                         )).map(gatewayResult -> new InitiatePaymentResult( // Step 5: Returning a InitiatePaymentResult
                             moneyTransfer.getPrimaryKey(),
+                            argument.getAmount(),
                             gatewayResult.isLive(),
                             gatewayResult.isSeamless(),
                             gatewayResult.getHtmlContent(),

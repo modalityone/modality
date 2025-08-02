@@ -13,6 +13,7 @@ public final class InitiatePaymentResultSerialCodec extends SerialCodecBase<Init
 
     private static final String CODEC_ID = "InitiatePaymentResult";
     private static final String PAYMENT_PRIMARY_KEY_KEY = "payment";
+    private static final String AMOUNT_KEY = "amount";
     private static final String LIVE_KEY = "live";
     private static final String SEAMLESS_KEY = "seamless";
     private static final String HTML_CONTENT_KEY = "htmlContent";
@@ -29,6 +30,7 @@ public final class InitiatePaymentResultSerialCodec extends SerialCodecBase<Init
     @Override
     public void encode(InitiatePaymentResult arg, AstObject serial) {
         encodeObject( serial, PAYMENT_PRIMARY_KEY_KEY, arg.getPaymentPrimaryKey());
+        encodeInteger(serial, AMOUNT_KEY,              arg.getAmount());
         encodeBoolean(serial, LIVE_KEY,                arg.isLive());
         encodeBoolean(serial, SEAMLESS_KEY,            arg.isSeamless());
         encodeString( serial, HTML_CONTENT_KEY,        arg.getHtmlContent());
@@ -43,6 +45,7 @@ public final class InitiatePaymentResultSerialCodec extends SerialCodecBase<Init
     public InitiatePaymentResult decode(ReadOnlyAstObject serial) {
         return new InitiatePaymentResult(
                 decodeObject( serial, PAYMENT_PRIMARY_KEY_KEY),
+                decodeInteger(serial, AMOUNT_KEY),
                 decodeBoolean(serial, LIVE_KEY),
                 decodeBoolean(serial, SEAMLESS_KEY),
                 decodeString( serial, HTML_CONTENT_KEY),

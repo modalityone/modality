@@ -78,6 +78,10 @@ public class WebPaymentForm {
         });
     }
 
+    public int getAmount() {
+        return result.getAmount();
+    }
+
     public WebPaymentForm setOnLoadFailure(Consumer<String> onLoadFailure) {
         this.onLoadFailure = onLoadFailure;
         return this;
