@@ -17,6 +17,7 @@ import javafx.scene.control.Label;
 import javafx.scene.layout.Region;
 import javafx.scene.layout.VBox;
 import one.modality.base.client.i18n.BaseI18nKeys;
+import one.modality.base.shared.entities.formatters.EventPriceFormatter;
 import one.modality.ecommerce.client.i18n.EcommerceI18nKeys;
 import one.modality.ecommerce.client.workingbooking.WorkingBookingProperties;
 import one.modality.ecommerce.payment.client.WebPaymentForm;
@@ -64,7 +65,7 @@ final class Step2PaymentSlide extends StepSlide {
         I18nControls.bindI18nProperties(gatewayLogo, webPaymentForm.getGatewayName());
         VBox.setMargin(gatewayLogo, new Insets(10, 0, 20, 0));
 
-        I18nControls.bindI18nProperties(payButton, BookI18nKeys.Pay1, workingBookingProperties.formattedBalanceProperty());
+        I18nControls.bindI18nProperties(payButton, BookI18nKeys.Pay1, EventPriceFormatter.formatWithCurrency(webPaymentForm.getAmount(), workingBookingProperties.getEvent()));
         I18nControls.bindI18nProperties(cancelButton, BaseI18nKeys.Cancel);
         Layouts.setManagedAndVisibleProperties(payButton, !webPaymentForm.hasHtmlPayButton());
         webPaymentForm.setHtmlPayButtonText(payButton.getText());
