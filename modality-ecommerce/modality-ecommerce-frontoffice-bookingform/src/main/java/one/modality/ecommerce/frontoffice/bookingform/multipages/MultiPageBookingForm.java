@@ -191,7 +191,7 @@ public abstract class MultiPageBookingForm extends BookingFormBase {
         updatePersonToBookRequired();
         updateShowDefaultSubmitButton();
         transitionPane.setReverse(!isForward);
-        transitionPane.transitToContent(displayedPage.getView());
+        transitionPane.transitToContent(displayedPage.getView(), displayedPage::onTransitionFinished);
     }
 
     private boolean isLastPage() {

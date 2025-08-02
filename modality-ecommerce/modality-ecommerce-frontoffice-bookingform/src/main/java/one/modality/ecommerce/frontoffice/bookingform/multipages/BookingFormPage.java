@@ -19,6 +19,8 @@ public interface BookingFormPage {
 
     Node getView();
 
+    default void onTransitionFinished() { }
+
     default MonoPane getEmbeddedLoginContainer() {
         return null;
     }
