@@ -97,7 +97,10 @@ final class Kbs2PriceAlgorithm {
                 for (i = 0; i < bill.document.cancelledDocumentLines.length; i++)
                     price += bill.document.cancelledDocumentLines[i].price_net;
     */
-            if (update && !minDeposit) {
+            if (minDeposit) {
+                // Rounding the min deposit of the booking to the superior amount (without cents)
+                price = ((price + 99) / 100) * 100;
+            } else if (update) {
                 documentAggregate.getDocument().setPriceNet(price);
             }
             return price;
