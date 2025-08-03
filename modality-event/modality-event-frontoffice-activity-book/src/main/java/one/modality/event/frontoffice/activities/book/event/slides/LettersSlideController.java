@@ -14,8 +14,8 @@ import javafx.scene.text.Font;
 import one.modality.base.client.mainframe.fx.FXMainFrameTransiting;
 import one.modality.base.frontoffice.mainframe.fx.FXShowFooter;
 import one.modality.base.shared.entities.Event;
+import one.modality.ecommerce.frontoffice.bookingform.GatewayPaymentForm;
 import one.modality.ecommerce.payment.CancelPaymentResult;
-import one.modality.ecommerce.payment.client.WebPaymentForm;
 import one.modality.event.frontoffice.activities.book.event.BookEventActivity;
 
 /**
@@ -113,8 +113,8 @@ public final class LettersSlideController {
         bookEventActivity.onReachingEndSlide();
     }
 
-    public void displayPaymentSlide(WebPaymentForm webPaymentForm) {
-        stepBBookEventSlide.displayPaymentSlide(webPaymentForm);
+    public void displayPaymentSlide(GatewayPaymentForm gatewayPaymentForm) {
+        stepBBookEventSlide.displayPaymentSlide(gatewayPaymentForm);
     }
 
     public void displayPendingPaymentSlide() {

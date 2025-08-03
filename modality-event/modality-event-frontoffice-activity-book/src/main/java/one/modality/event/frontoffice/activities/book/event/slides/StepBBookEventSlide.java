@@ -19,11 +19,11 @@ import one.modality.base.frontoffice.utility.page.FOPageUtil;
 import one.modality.base.frontoffice.utility.tyler.GeneralUtility;
 import one.modality.base.frontoffice.utility.tyler.StyleUtility;
 import one.modality.base.shared.entities.Event;
+import one.modality.ecommerce.frontoffice.bookingform.BookingForm;
+import one.modality.ecommerce.frontoffice.bookingform.GatewayPaymentForm;
 import one.modality.ecommerce.payment.CancelPaymentResult;
-import one.modality.ecommerce.payment.client.WebPaymentForm;
 import one.modality.event.client.event.fx.FXEvent;
 import one.modality.event.frontoffice.activities.book.event.BookEventActivity;
-import one.modality.ecommerce.frontoffice.bookingform.BookingForm;
 import one.modality.event.frontoffice.activities.book.event.EventBookingFormSettings;
 import one.modality.event.frontoffice.eventheader.EventHeader;
 
@@ -150,8 +150,8 @@ final class StepBBookEventSlide extends StepSlide {
     }
 
     @Override
-    void displayPaymentSlide(WebPaymentForm webPaymentForm) {
-        digitsSlideController.displayPaymentSlide(webPaymentForm);
+    void displayPaymentSlide(GatewayPaymentForm gatewayPaymentForm) {
+        digitsSlideController.displayPaymentSlide(gatewayPaymentForm);
     }
 
     @Override

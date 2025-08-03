@@ -17,6 +17,7 @@ import one.modality.base.shared.entities.markers.HasPersonalDetails;
 import one.modality.crm.shared.services.authn.fx.FXUserPerson;
 import one.modality.ecommerce.client.workingbooking.WorkingBooking;
 import one.modality.ecommerce.client.workingbooking.WorkingBookingProperties;
+import one.modality.ecommerce.frontoffice.bookingform.GatewayPaymentForm;
 import one.modality.ecommerce.payment.CancelPaymentResult;
 import one.modality.ecommerce.payment.PaymentService;
 import one.modality.ecommerce.payment.client.ClientPaymentUtil;
@@ -25,6 +26,7 @@ import one.modality.event.frontoffice.activities.book.BookI18nKeys;
 import one.modality.event.frontoffice.activities.book.event.BookEventActivity;
 import one.modality.event.frontoffice.activities.book.fx.FXGuestToBook;
 
+import java.util.function.Consumer;
 import java.util.function.Supplier;
 
 /**
@@ -77,8 +79,8 @@ public abstract class StepSlide implements Supplier<Node> {
         getBookEventActivity().displayBookSlide();
     }
 
-    void displayPaymentSlide(WebPaymentForm webPaymentForm) {
-        getBookEventActivity().displayPaymentSlide(webPaymentForm);
+    void displayPaymentSlide(GatewayPaymentForm gatewayPaymentForm) {
+        getBookEventActivity().displayPaymentSlide(gatewayPaymentForm);
     }
 
     void displayPendingPaymentSlide() {
@@ -101,12 +103,12 @@ public abstract class StepSlide implements Supplier<Node> {
         getBookEventActivity().displayThankYouSlide();
     }
 
-    void initiateNewPaymentAndDisplayPaymentSlide(int paymentDeposit) {
+    void initiateNewPaymentAndDisplayPaymentSlide(int paymentDeposit, Consumer<GatewayPaymentForm> gatewayPaymentFormDisplayer) {
         LAST_PAYMENT_DEPOSIT = paymentDeposit;
-        initiateNewPaymentAndDisplayPaymentSlide();
+        initiateNewPaymentAndDisplayPaymentSlide(gatewayPaymentFormDisplayer);
     }
 
-    void initiateNewPaymentAndDisplayPaymentSlide() {
+    void initiateNewPaymentAndDisplayPaymentSlide(Consumer<GatewayPaymentForm> gatewayPaymentFormDisplayer) {
         WorkingBookingProperties workingBookingProperties = getWorkingBookingProperties();
         Object documentPrimaryKey = workingBookingProperties.getWorkingBooking().getDocumentPrimaryKey();
         turnOnWaitMode();
@@ -124,7 +126,11 @@ public abstract class StepSlide implements Supplier<Node> {
                 if (buyerDetails == null)
                     buyerDetails = FXGuestToBook.getGuestToBook();
                 WebPaymentForm webPaymentForm = new WebPaymentForm(paymentResult, buyerDetails);
-                displayPaymentSlide(webPaymentForm);
+                GatewayPaymentForm gatewayPaymentForm = new ProvidedGatewayPaymentForm(webPaymentForm, this);
+                if (gatewayPaymentFormDisplayer != null)
+                    gatewayPaymentFormDisplayer.accept(gatewayPaymentForm);
+                else
+                    displayPaymentSlide(gatewayPaymentForm);
             }));
     }
 

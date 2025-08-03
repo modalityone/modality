@@ -49,7 +49,7 @@ final class Step4FailedPaymentSlide extends StepSlide {
 
         retryPayButton.setOnAction(e -> {
             pressedButton = retryPayButton;
-            initiateNewPaymentAndDisplayPaymentSlide();
+            initiateNewPaymentAndDisplayPaymentSlide(null);
         });
         cancelButton.setOnAction(e -> {
             pressedButton = cancelButton;

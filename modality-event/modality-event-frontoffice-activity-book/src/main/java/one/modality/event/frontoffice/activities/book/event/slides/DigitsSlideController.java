@@ -8,8 +8,8 @@ import javafx.scene.layout.Region;
 import one.modality.base.shared.entities.Event;
 import one.modality.ecommerce.frontoffice.bookingform.BookingForm;
 import one.modality.ecommerce.frontoffice.bookingform.BookingFormProvider;
+import one.modality.ecommerce.frontoffice.bookingform.GatewayPaymentForm;
 import one.modality.ecommerce.payment.CancelPaymentResult;
-import one.modality.ecommerce.payment.client.WebPaymentForm;
 import one.modality.event.frontoffice.activities.book.event.BookEventActivity;
 
 import java.util.List;
@@ -114,8 +114,8 @@ final class DigitsSlideController {
         }));
     }
 
-    void displayPaymentSlide(WebPaymentForm webPaymentForm) {
-        step2PaymentSlide.setWebPaymentForm(webPaymentForm);
+    void displayPaymentSlide(GatewayPaymentForm gatewayPaymentForm) {
+        step2PaymentSlide.setWebPaymentForm(gatewayPaymentForm);
         displaySlide(step2PaymentSlide);
     }
 

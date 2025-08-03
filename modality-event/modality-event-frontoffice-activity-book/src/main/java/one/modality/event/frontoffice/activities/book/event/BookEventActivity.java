@@ -30,8 +30,8 @@ import one.modality.ecommerce.client.workingbooking.HasWorkingBookingProperties;
 import one.modality.ecommerce.client.workingbooking.WorkingBooking;
 import one.modality.ecommerce.client.workingbooking.WorkingBookingProperties;
 import one.modality.ecommerce.document.service.*;
+import one.modality.ecommerce.frontoffice.bookingform.GatewayPaymentForm;
 import one.modality.ecommerce.payment.CancelPaymentResult;
-import one.modality.ecommerce.payment.client.WebPaymentForm;
 import one.modality.event.client.event.fx.FXEvent;
 import one.modality.event.client.event.fx.FXEventId;
 import one.modality.event.frontoffice.activities.book.account.CheckoutAccountRouting;
@@ -246,8 +246,8 @@ public final class BookEventActivity extends ViewDomainActivityBase implements B
         lettersSlideController.displayBookSlide();
     }
 
-    public void displayPaymentSlide(WebPaymentForm webPaymentForm) {
-        lettersSlideController.displayPaymentSlide(webPaymentForm);
+    public void displayPaymentSlide(GatewayPaymentForm gatewayPaymentForm) {
+        lettersSlideController.displayPaymentSlide(gatewayPaymentForm);
     }
 
     public void displayPendingPaymentSlide() {

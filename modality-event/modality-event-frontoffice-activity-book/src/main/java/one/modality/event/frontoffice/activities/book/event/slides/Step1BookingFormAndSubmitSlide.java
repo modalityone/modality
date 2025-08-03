@@ -34,11 +34,14 @@ import one.modality.ecommerce.client.workingbooking.WorkingBookingHistoryHelper;
 import one.modality.ecommerce.client.workingbooking.WorkingBookingProperties;
 import one.modality.ecommerce.frontoffice.bookingform.BookingForm;
 import one.modality.ecommerce.frontoffice.bookingform.BookingFormActivityCallback;
+import one.modality.ecommerce.frontoffice.bookingform.GatewayPaymentForm;
 import one.modality.event.frontoffice.activities.book.BookI18nKeys;
 import one.modality.event.frontoffice.activities.book.account.CheckoutAccountRouting;
 import one.modality.event.frontoffice.activities.book.event.BookEventActivity;
 import one.modality.event.frontoffice.activities.book.event.EventBookingFormSettings;
 import one.modality.event.frontoffice.activities.book.fx.FXGuestToBook;
+
+import java.util.function.Consumer;
 
 /**
  * @author Bruno Salmon
@@ -207,14 +210,14 @@ final class Step1BookingFormAndSubmitSlide extends StepSlide implements BookingF
     }
 
     @Override
-    public void submitBooking(int paymentDeposit, Button... bookingFormSubmitButtons) {
-        this.bookingFormSubmitButtons = bookingFormSubmitButtons;
+    public void submitBooking(int paymentDeposit, Consumer<GatewayPaymentForm> gatewayPaymentFormDisplayer, Button... submitButtons) {
+        bookingFormSubmitButtons = submitButtons;
         WorkingBookingProperties workingBookingProperties = getWorkingBookingProperties();
         WorkingBooking workingBooking = getWorkingBooking();
         // Three cases here:
         // 1) we pay an old balance with no new option, the currentBooking has no changes
         if (workingBooking.hasNoChanges()) {
-            payOrThankYou(paymentDeposit);
+            payOrThankYou(paymentDeposit, gatewayPaymentFormDisplayer);
         } else {
             // 2) the currentBooking has a new option
             turnOnWaitMode();
@@ -229,15 +232,15 @@ final class Step1BookingFormAndSubmitSlide extends StepSlide implements BookingF
                 }))
                 .onSuccess(result -> UiScheduler.runInUiThread(() -> {
                     workingBookingProperties.setBookingReference(result.getDocumentRef());
-                    payOrThankYou(paymentDeposit);
+                    payOrThankYou(paymentDeposit, gatewayPaymentFormDisplayer);
                 }));
         }
     }
 
-    private void payOrThankYou(int paymentDeposit) {
+    private void payOrThankYou(int paymentDeposit, Consumer<GatewayPaymentForm> gatewayPaymentFormDisplayer) {
         // If a payment is required, we initiate the payment and display the payment slide
         if (paymentDeposit > 0) {
-            initiateNewPaymentAndDisplayPaymentSlide(paymentDeposit); // will turn on wait mode again
+            initiateNewPaymentAndDisplayPaymentSlide(paymentDeposit, gatewayPaymentFormDisplayer); // will turn on wait mode again
         } else { // if no payment is required, we display the thank-you slide
             displayThankYouSlide();
         }

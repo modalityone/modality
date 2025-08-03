@@ -4,6 +4,8 @@ import javafx.beans.binding.BooleanExpression;
 import javafx.scene.control.Button;
 import javafx.scene.layout.Region;
 
+import java.util.function.Consumer;
+
 /**
  * @author Bruno Salmon
  */
@@ -15,7 +17,11 @@ public interface BookingFormActivityCallback {
 
     void disableSubmitButton(boolean disable);
 
-    void submitBooking(int paymentDeposit, Button... bookingFormSubmitButtons);
+    default void submitBooking(int paymentDeposit, Button... submitButtons) {
+        submitBooking(paymentDeposit, null, submitButtons);
+    }
+
+    void submitBooking(int paymentDeposit, Consumer<GatewayPaymentForm> gatewayPaymentFormDisplayer, Button... submitButtons);
 
     Region getEmbeddedLoginNode();
 
