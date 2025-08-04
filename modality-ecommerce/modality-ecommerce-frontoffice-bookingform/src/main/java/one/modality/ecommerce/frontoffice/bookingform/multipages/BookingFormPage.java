@@ -47,4 +47,8 @@ public interface BookingFormPage {
         return new SimpleObjectProperty<>();
     }
 
+    default ObservableBooleanValue canGoBackProperty() {
+        return new SimpleBooleanProperty(true);
+    }
+
 }

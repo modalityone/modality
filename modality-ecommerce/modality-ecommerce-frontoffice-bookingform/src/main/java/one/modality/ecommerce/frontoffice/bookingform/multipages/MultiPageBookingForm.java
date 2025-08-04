@@ -65,6 +65,8 @@ public abstract class MultiPageBookingForm extends BookingFormBase {
             }
         }
     };
+    private final BooleanProperty previousPageApplicableProperty = new SimpleBooleanProperty();
+    private final BooleanProperty pageCanGoBackProperty = new SimpleBooleanProperty();
     private int displayedPageIndex = -1;
     protected BookingFormPage displayedPage;
     private Unregisterable bookingFormPageValidListener;
@@ -76,6 +78,14 @@ public abstract class MultiPageBookingForm extends BookingFormBase {
         } else {
             navigationBar = new NavigationBar();
             navigationBar.getBackButton().setOnMouseClicked(e -> navigateToPreviousPage());
+            navigationBar.getBackButton().disableProperty().bind(new BooleanBinding() { {
+                super.bind(previousPageApplicableProperty, pageCanGoBackProperty); }
+
+                @Override
+                protected boolean computeValue() {
+                    return !previousPageApplicableProperty.get() || !pageCanGoBackProperty.get();
+                }
+            });
             navigationBar.getNextButton().setOnMouseClicked(e -> navigateToNextPage());
             navigationBar.getNextButton().disableProperty().bind(new BooleanBinding() { {
                 super.bind(pageValidProperty, personToBookRequiredProperty, showDefaultSubmitButtonProperty, pageShowingOwnSubmitButtonProperty, pageBusyFutureProperty, pageBusyCountProperty, FXPersonToBook.personToBookProperty()); }
@@ -172,6 +182,7 @@ public abstract class MultiPageBookingForm extends BookingFormBase {
         displayedPage.setWorkingBookingProperties(workingBookingProperties);
         pageValidProperty.bind(displayedPage.validProperty());
         pageBusyFutureProperty.bind(displayedPage.busyFutureProperty());
+        pageCanGoBackProperty.bind(displayedPage.canGoBackProperty());
         if (bookingFormPageValidListener != null)
             bookingFormPageValidListener.unregister();
         bookingFormPageValidListener = FXProperties.runNowAndOnPropertyChange(valid -> {
@@ -201,7 +212,7 @@ public abstract class MultiPageBookingForm extends BookingFormBase {
     protected void updateNavigationBar() {
         if (navigationBar != null) {
             navigationBar.setTitleI18nKey(displayedPage.getTitleI18nKey());
-            navigationBar.getBackButton().setDisable(findApplicablePageIndex(false) == -1);
+            previousPageApplicableProperty.set(findApplicablePageIndex(false) != -1);
         }
     }
 
