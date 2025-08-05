@@ -60,7 +60,7 @@
         displayFormButton.textContent = htmlPayButtonText;
         // And then we load AcceptUI.js
         const script = document.createElement("script");
-        script.src = "https://jstest.authorize.net/v3/AcceptUI.js";
+        script.src = "${acceptUIJsURL}";
         script.async = true;
         script.onerror = () => modality_notifyGatewayInitFailure("Failed to load AcceptUI.js");
         script.onload = () => {
