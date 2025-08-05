@@ -29,7 +29,7 @@ public final class FXUserPerson {
             setUserPerson(null);
         else {
             DataSourceModel dataSourceModel = DataSourceModelService.getDefaultDataSourceModel();
-            EntityStore.create(dataSourceModel).<Person>executeQuery("select firstName,lastName,male,ordained,email,phone,street,postCode,cityName,country,organization,birthdate,layName,frontendAccount.tester from Person where id=?", userPersonId)
+            EntityStore.create(dataSourceModel).<Person>executeQuery("select firstName,lastName,male,ordained,email,phone,street,postCode,cityName,country,organization,birthdate,layName,frontendAccount.(tester,security) from Person where id=?", userPersonId)
                 .onFailure(Console::log)
                 .onSuccess(persons -> UiScheduler.runInUiThread(() -> {
                     setUserPerson(null); // Temporary transition to null because otherwise DynamicEntity.equals()
