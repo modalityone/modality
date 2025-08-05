@@ -246,4 +246,8 @@ final class Step1BookingFormAndSubmitSlide extends StepSlide implements BookingF
         }
     }
 
+    @Override
+    public void onEndReached() {
+        getBookEventActivity().onEndSlideReached();
+    }
 }

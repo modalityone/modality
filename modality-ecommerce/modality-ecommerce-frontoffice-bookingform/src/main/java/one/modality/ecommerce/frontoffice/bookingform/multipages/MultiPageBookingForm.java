@@ -67,6 +67,13 @@ public abstract class MultiPageBookingForm extends BookingFormBase {
     };
     private final BooleanProperty previousPageApplicableProperty = new SimpleBooleanProperty();
     private final BooleanProperty pageCanGoBackProperty = new SimpleBooleanProperty();
+    private final BooleanProperty pageEndReachedProperty = new SimpleBooleanProperty() {
+        @Override
+        protected void invalidated() {
+            if (get())
+                getActivityCallback().onEndReached();
+        }
+    };
     private int displayedPageIndex = -1;
     protected BookingFormPage displayedPage;
     private Unregisterable bookingFormPageValidListener;
@@ -161,8 +168,8 @@ public abstract class MultiPageBookingForm extends BookingFormBase {
             return -1;
         int increment = forward ? 1 : -1;
         for (int index = displayedPageIndex + increment; index >= 0 && index < pages.length; index += increment) {
-            BookingFormPage candidatPage = pages[index];
-            if (candidatPage.isApplicableToBooking(getWorkingBooking()))
+            BookingFormPage predicatePage = pages[index];
+            if (predicatePage.isApplicableToBooking(getWorkingBooking()))
                 return index;
         }
         return -1;
@@ -183,6 +190,7 @@ public abstract class MultiPageBookingForm extends BookingFormBase {
         pageValidProperty.bind(displayedPage.validProperty());
         pageBusyFutureProperty.bind(displayedPage.busyFutureProperty());
         pageCanGoBackProperty.bind(displayedPage.canGoBackProperty());
+        pageEndReachedProperty.bind(displayedPage.endReachedProperty());
         if (bookingFormPageValidListener != null)
             bookingFormPageValidListener.unregister();
         bookingFormPageValidListener = FXProperties.runNowAndOnPropertyChange(valid -> {

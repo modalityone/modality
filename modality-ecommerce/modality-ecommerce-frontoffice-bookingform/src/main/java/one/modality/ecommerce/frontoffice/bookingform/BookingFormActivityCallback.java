@@ -27,4 +27,6 @@ public interface BookingFormActivityCallback {
 
     BooleanExpression readyToSubmitBookingProperty();
 
+    void onEndReached();
+
 }

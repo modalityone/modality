@@ -105,12 +105,12 @@ public final class LettersSlideController {
 
     public void displayThankYouSlide() {
         displaySlide(stepCThankYouSlide);
-        bookEventActivity.onReachingEndSlide();
+        bookEventActivity.onEndSlideReached();
     }
 
     public void displayErrorMessage(Object messageI18nKey) {
         stepBBookEventSlide.displayErrorMessage(messageI18nKey);
-        bookEventActivity.onReachingEndSlide();
+        bookEventActivity.onEndSlideReached();
     }
 
     public void displayPaymentSlide(GatewayPaymentForm gatewayPaymentForm) {

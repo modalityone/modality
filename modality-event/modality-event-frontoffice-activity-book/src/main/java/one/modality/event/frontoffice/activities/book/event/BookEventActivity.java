@@ -125,7 +125,7 @@ public final class BookEventActivity extends ViewDomainActivityBase implements B
         super.onPause();
     }
 
-    public void onReachingEndSlide() {
+    public void onEndSlideReached() {
         FXEventId.setEventId(null); // This is to ensure that the next time the user books an event in this same session, we
         modifyOrderDocumentIdProperty.set(null);
         payOrderDocumentIdProperty.set(null);
