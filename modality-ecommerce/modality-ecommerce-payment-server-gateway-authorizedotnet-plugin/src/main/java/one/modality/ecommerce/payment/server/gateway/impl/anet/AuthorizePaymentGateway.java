@@ -24,6 +24,8 @@ import static one.modality.ecommerce.payment.server.gateway.impl.anet.AuthorizeR
 public class AuthorizePaymentGateway implements PaymentGateway {
 
     static final String GATEWAY_NAME = "Authorize.net";
+    private static final String ACCEPT_JS_TEST_URL = "https://jstest.authorize.net/v3/AcceptUI.js";
+    private static final String ACCEPT_JS_LIVE_URL = "https://authorize.net/v3/AcceptUI.js";
 
     private static final String HTML_TEMPLATE = Resource.getText(Resource.toUrl("modality-anet-payment-form-iframe.html", AuthorizePaymentGateway.class));
 
@@ -53,12 +55,16 @@ public class AuthorizePaymentGateway implements PaymentGateway {
             String apiLoginID = argument.getRequiredAccountParameter("apiLoginID");
             String clientKey = argument.getRequiredAccountParameter("clientKey");
             String acceptUIFormHeaderTxt = argument.getAccountParameter("acceptUIFormHeaderTxt", "");
+            String acceptUIJsURL = live ? ACCEPT_JS_LIVE_URL : ACCEPT_JS_TEST_URL;
             boolean seamless = false; //argument.isSeamlessIfSupported();
 
             String paymentFormContent = HTML_TEMPLATE
                 .replace("${apiLoginID}", apiLoginID)
                 .replace("${clientKey}", clientKey)
-                .replace("${acceptUIFormHeaderTxt}", acceptUIFormHeaderTxt);
+                .replace("${acceptUIFormHeaderTxt}", acceptUIFormHeaderTxt)
+                .replace("${acceptUIFormHeaderTxt}", acceptUIFormHeaderTxt)
+                .replace("${acceptUIJsURL}", acceptUIJsURL)
+                ;
 
             SandboxCard[] sandboxCards = live ? null : SANDBOX_CARDS;
             if (seamless) {
