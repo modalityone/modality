@@ -26,6 +26,7 @@ module modality.ecommerce.frontoffice.bookingelements {
     requires webfx.extras.util.control;
     requires webfx.extras.util.layout;
     requires webfx.kit.util;
+    requires webfx.platform.windowhistory;
     requires webfx.stack.orm.datasourcemodel.service;
     requires webfx.stack.orm.domainmodel;
     requires webfx.stack.orm.dql;

@@ -10,6 +10,7 @@ import dev.webfx.extras.styles.bootstrap.Bootstrap;
 import dev.webfx.extras.util.control.Controls;
 import dev.webfx.extras.util.layout.Layouts;
 import dev.webfx.kit.util.properties.FXProperties;
+import dev.webfx.platform.windowhistory.spi.BrowsingHistory;
 import dev.webfx.stack.orm.datasourcemodel.service.DataSourceModelService;
 import dev.webfx.stack.orm.domainmodel.DataSourceModel;
 import dev.webfx.stack.orm.dql.DqlStatement;
@@ -36,6 +37,7 @@ import one.modality.crm.client.i18n.CrmI18nKeys;
 import one.modality.crm.shared.services.authn.fx.FXModalityUserPrincipal;
 import one.modality.ecommerce.client.workingbooking.FXPersonToBook;
 import one.modality.ecommerce.client.workingbooking.WorkingBooking;
+import one.modality.ecommerce.client.workingbooking.WorkingBookingProperties;
 import one.modality.ecommerce.document.service.PolicyAggregate;
 import one.modality.ecommerce.shared.pricecalculator.PriceCalculator;
 
@@ -294,6 +296,18 @@ public final class BookingElements {
         VBox.setMargin(personButton, new Insets(20, 0, 20, 0));
         Layouts.bindManagedAndVisiblePropertiesTo(FXModalityUserPrincipal.loggedInProperty(), personButton);
         return personSelector;
+    }
+
+    public static Hyperlink createOrderLink(Object i18nKey, WorkingBookingProperties workingBookingProperties, BrowsingHistory history) {
+        Hyperlink orderLink = I18nControls.newHyperlink(i18nKey, workingBookingProperties.bookingReferenceProperty());
+        orderLink.setWrapText(true);
+        orderLink.setTextAlignment(TextAlignment.CENTER);
+        orderLink.setOnAction(e ->
+            // Commented as this introduces a circular dependency with modality-crm-frontoffice-orders-plugin
+            //new OrdersRouting.RouteToOrdersRequest(getWorkingBooking().getDocument(), getBookEventActivity().getHistory()).execute()
+            history.push("/orders/" + workingBookingProperties.getWorkingBooking().getDocumentPrimaryKey() + "/refresh")
+        );
+        return orderLink;
     }
 
     public static Label createTestModeLabel() {

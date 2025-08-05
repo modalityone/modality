@@ -7,12 +7,11 @@ import dev.webfx.extras.styles.bootstrap.Bootstrap;
 import dev.webfx.platform.conf.SourcesConfig;
 import javafx.geometry.Insets;
 import javafx.scene.control.ContentDisplay;
-import javafx.scene.control.Hyperlink;
 import javafx.scene.control.Label;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.VBox;
 import javafx.scene.text.TextAlignment;
-import one.modality.ecommerce.client.workingbooking.WorkingBookingProperties;
+import one.modality.ecommerce.frontoffice.bookingelements.BookingElements;
 import one.modality.event.frontoffice.activities.book.BookI18nKeys;
 import one.modality.event.frontoffice.activities.book.event.BookEventActivity;
 
@@ -32,7 +31,7 @@ final class StepCThankYouSlide extends StepSlide {
         String headerImageUrl = SourcesConfig.getSourcesRootConfig().childConfigAt("modality.event.frontoffice.activity.bookevent").getString("headerImageUrl");
         ImageView headerImageView = ImageStore.createImageView(headerImageUrl);
         ScalePane headerImageScalePane = new ScalePane(headerImageView);
-        headerImageScalePane.setPadding(new Insets(30,0,50,0));
+        headerImageScalePane.setPadding(new Insets(30, 0, 50, 0));
 
         Label bookingConfirmedLabel = Bootstrap.textSuccess(Bootstrap.h3(I18nControls.newLabel(BookI18nKeys.BookingSubmitted)));
         bookingConfirmedLabel.setContentDisplay(ContentDisplay.TOP);
@@ -41,23 +40,13 @@ final class StepCThankYouSlide extends StepSlide {
         Label thankYouLabel = Bootstrap.textSecondary(Bootstrap.h4(I18nControls.newLabel(BookI18nKeys.ThankYouForBooking)));
         thankYouLabel.setWrapText(true);
         thankYouLabel.setTextAlignment(TextAlignment.CENTER);
-        VBox.setMargin(thankYouLabel, new Insets(20,0,50,0));
-
-        WorkingBookingProperties workingBookingProperties = getWorkingBookingProperties();
-        Hyperlink bookingNumberLink = I18nControls.newHyperlink(BookI18nKeys.BookingNumber1, workingBookingProperties.bookingReferenceProperty());
-        bookingNumberLink.setWrapText(true);
-        bookingNumberLink.setTextAlignment(TextAlignment.CENTER);
-        bookingNumberLink.setOnAction(e ->
-            // Commented as this introduces a circular dependency with modality-crm-frontoffice-orders-plugin
-            //new OrdersRouting.RouteToOrdersRequest(getWorkingBooking().getDocument(), getBookEventActivity().getHistory()).execute()
-            getBookEventActivity().getHistory().push("/orders/" + getWorkingBooking().getDocument().getPrimaryKey() + "/refresh")
-        );
+        VBox.setMargin(thankYouLabel, new Insets(20, 0, 50, 0));
 
         mainVbox.getChildren().setAll(
-                headerImageScalePane,
-                bookingConfirmedLabel,
-                thankYouLabel,
-                bookingNumberLink);
+            headerImageScalePane,
+            bookingConfirmedLabel,
+            thankYouLabel,
+            BookingElements.createOrderLink(BookI18nKeys.BookingNumber1, getWorkingBookingProperties(), getBookEventActivity().getHistory()));
         mainVbox.setMaxWidth(MAX_PAGE_WITH);
         mainVbox.setSpacing(40);
     }
