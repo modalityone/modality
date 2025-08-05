@@ -25,7 +25,7 @@ public class AuthorizePaymentGateway implements PaymentGateway {
 
     static final String GATEWAY_NAME = "Authorize.net";
     private static final String ACCEPT_JS_TEST_URL = "https://jstest.authorize.net/v3/AcceptUI.js";
-    private static final String ACCEPT_JS_LIVE_URL = "https://authorize.net/v3/AcceptUI.js";
+    private static final String ACCEPT_JS_LIVE_URL = "https://js.authorize.net/v3/AcceptUI.js";
 
     private static final String HTML_TEMPLATE = Resource.getText(Resource.toUrl("modality-anet-payment-form-iframe.html", AuthorizePaymentGateway.class));
 
