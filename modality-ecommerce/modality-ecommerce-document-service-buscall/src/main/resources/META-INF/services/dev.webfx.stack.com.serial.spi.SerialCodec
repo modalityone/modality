@@ -12,6 +12,7 @@ one.modality.ecommerce.document.service.buscall.serial.multiplebookings.GetBackC
 one.modality.ecommerce.document.service.buscall.serial.multiplebookings.MarkNotMultipleBookingEventSerialCodec
 one.modality.ecommerce.document.service.buscall.serial.multiplebookings.MergeMultipleBookingsOptionsEventSerialCodec
 one.modality.ecommerce.document.service.buscall.serial.registration.documentline.CancelDocumentLineEventSerialCodec
+one.modality.ecommerce.document.service.buscall.serial.registration.documentline.PriceDocumentLineEventSerialCodec
 one.modality.ecommerce.document.service.buscall.serial.registration.documentline.RemoveDocumentLineEventSerialCodec
 one.modality.ecommerce.document.service.buscall.serial.registration.moneytransfer.RemoveMoneyTransferEventSerialCodec
 one.modality.ecommerce.document.service.buscall.serial.registration.FlagDocumentEventSerialCodec

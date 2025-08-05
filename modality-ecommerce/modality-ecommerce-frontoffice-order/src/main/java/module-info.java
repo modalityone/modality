@@ -13,6 +13,7 @@ module modality.ecommerce.frontoffice.order {
     requires modality.base.frontoffice.utility;
     requires modality.base.shared.entities;
     requires modality.crm.client.authn.fx;
+    requires modality.crm.client.i18n;
     requires modality.ecommerce.client.i18n;
     requires modality.ecommerce.client.workingbooking;
     requires modality.ecommerce.document.service;
@@ -36,7 +37,6 @@ module modality.ecommerce.frontoffice.order {
     requires webfx.platform.util;
     requires webfx.platform.windowhistory;
     requires webfx.stack.orm.entity;
-    requires modality.crm.client.i18n;
 
     // Exported packages
     exports one.modality.ecommerce.frontoffice.order;

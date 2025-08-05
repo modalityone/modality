@@ -20,6 +20,7 @@ import one.modality.ecommerce.document.service.*;
 import one.modality.ecommerce.document.service.events.AbstractDocumentEvent;
 import one.modality.ecommerce.document.service.events.AbstractDocumentLineEvent;
 import one.modality.ecommerce.document.service.events.book.*;
+import one.modality.ecommerce.document.service.events.registration.documentline.PriceDocumentLineEvent;
 import one.modality.ecommerce.document.service.spi.DocumentServiceProvider;
 import one.modality.ecommerce.history.server.HistoryRecorder;
 
@@ -85,7 +86,7 @@ public class ServerDocumentServiceProvider implements DocumentServiceProvider {
         Object[] parameters = {argument.getDocumentPrimaryKey()};
         EntityStoreQuery[] queries = {
             new EntityStoreQuery("select event,person,ref,person_lang,person_firstName,person_lastName,person_email,person_facilityFee,request from Document where id=? order by id", parameters),
-            new EntityStoreQuery("select document,site,item from DocumentLine where document=? and site!=null order by id", parameters),
+            new EntityStoreQuery("select document,site,item,price_net,price_minDeposit,price_custom,price_discount from DocumentLine where document=? and site!=null order by id", parameters),
             new EntityStoreQuery("select documentLine,scheduledItem from Attendance where documentLine.document=? order by id", parameters),
             new EntityStoreQuery("select document,amount,pending,successful from MoneyTransfer where document=? order by id", parameters)
         };
@@ -104,7 +105,10 @@ public class ServerDocumentServiceProvider implements DocumentServiceProvider {
                 }
                 List<AbstractDocumentEvent> documentEvents = new ArrayList<>();
                 documentEvents.add(new AddDocumentEvent(document));
-                ((List<DocumentLine>) entityLists[1]).forEach(dl -> documentEvents.add(new AddDocumentLineEvent(dl)));
+                ((List<DocumentLine>) entityLists[1]).forEach(dl -> {
+                    documentEvents.add(new AddDocumentLineEvent(dl));
+                    documentEvents.add(new PriceDocumentLineEvent(dl));
+                });
                 ((List<Attendance>) entityLists[2]).stream().collect(Collectors.groupingBy(Attendance::getDocumentLine))
                     .entrySet().forEach(entry -> documentEvents.add(new AddAttendancesEvent(entry.getValue().toArray(new Attendance[0]))));
                 ((List<MoneyTransfer>) entityLists[3]).forEach(mt -> documentEvents.add(new AddMoneyTransferEvent(mt)));

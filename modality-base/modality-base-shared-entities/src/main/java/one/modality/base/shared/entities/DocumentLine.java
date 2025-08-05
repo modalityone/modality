@@ -12,9 +12,50 @@ public interface DocumentLine extends
     EntityHasRead,
     EntityHasArrivalSiteAndItem,
     EntityHasResourceConfiguration {
+    String dates = "dates";
+    String price_net = "price_net";
+    String price_minDeposit = "price_minDeposit";
+    String price_custom = "price_custom";
+    String price_discount = "price_discount";
+    String timeline = "timeline";
     String cleaned = "cleaned";
     String bedNumber = "bedNumber";
-    String timeline = "timeline";
+
+    default String getDates() {
+        return getStringFieldValue(dates);
+    }
+
+    default Integer getPriceNet() {
+        return getIntegerFieldValue(price_net);
+    }
+
+    default void setPriceNet(Integer value) {
+        setFieldValue(price_net, value);
+    }
+
+    default Integer getPriceMinDeposit() {
+        return getIntegerFieldValue(price_minDeposit);
+    }
+
+    default void setPriceMinDeposit(Integer value) {
+        setFieldValue(price_minDeposit, value);
+    }
+
+    default Integer getPriceCustom() {
+        return getIntegerFieldValue(price_custom);
+    }
+
+    default void setPriceCustom(Integer value) {
+        setFieldValue(price_custom, value);
+    }
+
+    default Integer getPriceDiscount() {
+        return getIntegerFieldValue(price_discount);
+    }
+
+    default void setPriceDiscount(Integer value) {
+        setFieldValue(price_discount, value);
+    }
 
     default boolean isCleaned() {
         return getBooleanFieldValue(cleaned);
@@ -29,17 +70,8 @@ public interface DocumentLine extends
         return getIntegerFieldValue(bedNumber);
     }
 
-    default Integer getPriceNet() {
-        return getIntegerFieldValue("price_net");
-    }
-
-    default String getDates() {
-        return getStringFieldValue("dates");
-    }
-
-
-    default void setBedNumber(Integer bedNumber) {
-        setFieldValue(bedNumber, bedNumber);
+    default void setBedNumber(Integer value) {
+        setFieldValue(bedNumber, value);
     }
 
     default void setTimeLine(Object value) {

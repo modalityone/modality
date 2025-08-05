@@ -52,7 +52,7 @@ public final class OrderCard {
     private static final String ORDER_PERSON_REQUIRED_FIELDS = "ref,person,person_firstName,person_lastName,cart.uuid";
     private static final String ORDER_STATUS_REQUIRED_FIELDS = OrderStatus.BOOKING_REQUIRED_FIELDS;
     public static final String ORDER_REQUIRED_FIELDS = ORDER_EVENT_REQUIRED_FIELDS + "," + ORDER_PERSON_REQUIRED_FIELDS + "," + ORDER_STATUS_REQUIRED_FIELDS;
-    private static final String DOCUMENT_LINE_REQUIRED_FIELDS = "item.name,item.label,item.family.name,item.family.label,quantity,price_net,dates,cancelled";
+    private static final String DOCUMENT_LINE_REQUIRED_FIELDS = "item.(name,label,family.(name,label)),quantity,price_net,dates,cancelled";
 
     private final Document orderDocument; // The order document to display
     private final ObservableList<DocumentLine> orderDocumentLines = ObservableLists.newObservableList(this::updateUi); // Reactive list of order options

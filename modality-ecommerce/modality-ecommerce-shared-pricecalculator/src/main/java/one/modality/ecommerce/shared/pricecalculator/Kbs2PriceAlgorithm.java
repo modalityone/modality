@@ -32,8 +32,13 @@ final class Kbs2PriceAlgorithm {
     }
 
     public static Bill computeBookingBill(DocumentAggregate documentAggregate, Stream<DocumentLine> documentLineStream, boolean ignoreLongStayDiscount, boolean update) {
+        List<DocumentLine> pricedLines = new ArrayList<>();
         Map<SiteItem, Block> hash = new HashMap<>();
         documentLineStream.forEach(line -> {
+            if (line.getPriceNet() != null) {
+                pricedLines.add(line);
+                return;
+            }
             Site site = line.getSite();
             Item item = line.getItem();
             if (item.getRateAliasItem() != null)
@@ -49,13 +54,13 @@ final class Kbs2PriceAlgorithm {
             });
         });
         Collection<Block> blocks = hash.values();
-        return new Bill(documentAggregate, blocks, ignoreLongStayDiscount, update);
+        return new Bill(documentAggregate, pricedLines, blocks, ignoreLongStayDiscount, update);
     }
 
     public static final class Bill {
 
-        //private final WorkingBooking workingBooking;
         private final DocumentAggregate documentAggregate;
+        private final Collection<DocumentLine> pricedLines;
         private final Collection<Block> blocks;
         private final boolean ignoreLongStayDiscount;
         private final boolean update;
@@ -63,8 +68,9 @@ final class Kbs2PriceAlgorithm {
         private int price = -1;
         private int minDeposit = -1;
 
-        Bill(DocumentAggregate workingBooking, Collection<Block> blocks, boolean ignoreLongStayDiscount, boolean update) {
-            this.documentAggregate = workingBooking;
+        Bill(DocumentAggregate documentAggregate, Collection<DocumentLine> pricedLines, Collection<Block> blocks, boolean ignoreLongStayDiscount, boolean update) {
+            this.documentAggregate = documentAggregate;
+            this.pricedLines = pricedLines;
             this.blocks = blocks;
             this.ignoreLongStayDiscount = ignoreLongStayDiscount;
             this.update = update;
@@ -89,6 +95,9 @@ final class Kbs2PriceAlgorithm {
 
         private int computeBillPrice(boolean minDeposit) {
             int price = 0;
+            for (DocumentLine pricedLine : pricedLines) {
+                price += minDeposit ? pricedLine.getPriceMinDeposit() : pricedLine.getPriceNet();
+            }
             for (Block block : blocks)
                 price += block.computeBlockPrice(this, minDeposit);
     /* from KBS2
@@ -111,7 +120,6 @@ final class Kbs2PriceAlgorithm {
 
         private final DocumentLine documentLine;
         private final LocalDate date;
-
         int price;
 
         BlockAttendance(DocumentLine documentLine, LocalDate date) {
@@ -121,6 +129,10 @@ final class Kbs2PriceAlgorithm {
 
         LocalDate getDate() {
             return date;
+        }
+
+        public DocumentLine getDocumentLine() {
+            return documentLine;
         }
     }
 
