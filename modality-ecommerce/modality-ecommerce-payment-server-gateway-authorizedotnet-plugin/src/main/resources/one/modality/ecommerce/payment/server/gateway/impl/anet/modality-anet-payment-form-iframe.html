@@ -60,14 +60,14 @@
         displayFormButton.textContent = htmlPayButtonText;
         // And then we load AcceptUI.js
         const script = document.createElement("script");
-        script.src = "${acceptUIJsURL}";
+        script.src = "https://jstest.authorize.net/v3/AcceptUI.js";
         script.async = true;
         script.onerror = () => modality_notifyGatewayInitFailure("Failed to load AcceptUI.js");
         script.onload = () => {
-            // Automatically displaying the form once loaded
-            displayFormButton.click();
             // And notifying Modality that the initialization succeeded
             modality_notifyGatewayInitSuccess();
+            // Automatically displaying the form once loaded
+            setTimeout(() => displayFormButton.click(), 500); // Without delay, it's not always working
         };
         document.head.appendChild(script);
     }
