@@ -264,7 +264,7 @@ public final class BookingElements {
 
     private static EntityButtonSelector<Person> createPersonToBookSelector(boolean embedPersonToBookText, ButtonFactoryMixin buttonFactory, DataSourceModel dataSourceModel) {
         EntityButtonSelector<Person> personSelector = new EntityButtonSelector<Person>(
-            "{class: 'Person', alias: 'p', columns: [{expression: '[firstName,lastName]'}], fields: 'email,phone,postCode,cityName,country,organization', orderBy: 'id'}",
+            "{class: 'Person', alias: 'p', columns: [{expression: '[firstName,lastName]'}], fields: 'email,phone,postCode,cityName,country,organization', where: '!removed', orderBy: 'owner desc,id'}",
             buttonFactory, FXMainFrameDialogArea::getDialogArea, dataSourceModel
         ) { // Overriding the button content to add the "Teacher" prefix text
             @Override
