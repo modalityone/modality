@@ -7,6 +7,7 @@ import dev.webfx.extras.panes.ScalePane;
 import dev.webfx.extras.styles.bootstrap.Bootstrap;
 import dev.webfx.extras.util.layout.Layouts;
 import dev.webfx.kit.util.properties.FXProperties;
+import dev.webfx.platform.async.AsyncResult;
 import dev.webfx.platform.console.Console;
 import dev.webfx.platform.uischeduler.UiScheduler;
 import javafx.geometry.Insets;
@@ -18,8 +19,11 @@ import one.modality.base.client.i18n.BaseI18nKeys;
 import one.modality.base.shared.entities.formatters.EventPriceFormatter;
 import one.modality.ecommerce.client.i18n.EcommerceI18nKeys;
 import one.modality.ecommerce.frontoffice.bookingform.GatewayPaymentForm;
+import one.modality.ecommerce.payment.CancelPaymentResult;
 import one.modality.ecommerce.payment.client.WebPaymentForm;
 import one.modality.event.frontoffice.activities.book.BookI18nKeys;
+
+import java.util.function.Consumer;
 
 import static one.modality.event.frontoffice.activities.book.event.slides.StepSlide.turnOffButtonWaitMode;
 import static one.modality.event.frontoffice.activities.book.event.slides.StepSlide.turnOnButtonWaitMode;
@@ -31,9 +35,10 @@ final class ProvidedGatewayPaymentForm implements GatewayPaymentForm {
 
     private final String gatewayName;
     private final Button payButton = Bootstrap.largeSuccessButton(new Button());
-    private final Button cancelButton = Bootstrap.largeSecondaryButton(new Button());
+    private final Button cancelButton = Bootstrap.largeSecondaryButton(I18nControls.newButton(BaseI18nKeys.Cancel));
     private final VBox mainVbox;
     private Button pressedButton;
+    private Consumer<AsyncResult<CancelPaymentResult>> cancelPaymentResultHandler;
 
     public ProvidedGatewayPaymentForm(WebPaymentForm webPaymentForm, StepSlide stepSlide) {
         gatewayName = webPaymentForm.getGatewayName();
@@ -43,7 +48,6 @@ final class ProvidedGatewayPaymentForm implements GatewayPaymentForm {
         //VBox.setMargin(gatewayLogo, new Insets(10, 0, 20, 0));
 
         I18nControls.bindI18nProperties(payButton, BookI18nKeys.Pay1, EventPriceFormatter.formatWithCurrency(webPaymentForm.getAmount(), stepSlide.getEvent()));
-        I18nControls.bindI18nProperties(cancelButton, BaseI18nKeys.Cancel);
         Layouts.setManagedAndVisibleProperties(payButton, !webPaymentForm.hasHtmlPayButton());
         webPaymentForm.setHtmlPayButtonText(payButton.getText());
         webPaymentForm.setHtmlHeaderText("Please enter your payment information");
@@ -77,7 +81,9 @@ final class ProvidedGatewayPaymentForm implements GatewayPaymentForm {
             pressedButton = cancelButton;
             webPaymentForm.cancelPayment()
                 .onComplete(ar -> UiScheduler.runInUiThread(() -> {
-                    if (ar.failed())
+                    if (cancelPaymentResultHandler != null) {
+                        cancelPaymentResultHandler.accept(ar);
+                    } else if (ar.failed())
                         stepSlide.displayErrorMessage(ar.cause().getMessage());
                     else {
                         stepSlide.displayCancellationSlide(ar.result());
@@ -122,6 +128,11 @@ final class ProvidedGatewayPaymentForm implements GatewayPaymentForm {
     @Override
     public String getGatewayName() {
         return gatewayName;
+    }
+
+    @Override
+    public void setCancelPaymentResultHandler(Consumer<AsyncResult<CancelPaymentResult>> cancelPaymentResultHandler) {
+        this.cancelPaymentResultHandler = cancelPaymentResultHandler;
     }
 
     @Override

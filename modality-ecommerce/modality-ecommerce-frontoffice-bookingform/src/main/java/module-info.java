@@ -10,6 +10,7 @@ module modality.ecommerce.frontoffice.bookingform {
     requires modality.ecommerce.client.workingbooking;
     requires modality.ecommerce.document.service;
     requires modality.ecommerce.frontoffice.bookingelements;
+    requires transitive modality.ecommerce.payment;
     requires webfx.extras.operation;
     requires webfx.extras.panes;
     requires webfx.kit.util;

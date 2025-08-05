@@ -19,6 +19,7 @@ module modality.event.frontoffice.activity.book {
     requires modality.ecommerce.client.i18n;
     requires modality.ecommerce.client.workingbooking;
     requires modality.ecommerce.document.service;
+    requires modality.ecommerce.frontoffice.bookingelements;
     requires modality.ecommerce.frontoffice.bookingform;
     requires modality.ecommerce.payment;
     requires modality.ecommerce.payment.client;

@@ -7,7 +7,9 @@
     </exported-packages>
 
     <dependencies>
-        <used-by-source-modules/>
+        <used-by-source-modules>
+            <module transitive="true">modality-ecommerce-payment</module>
+        </used-by-source-modules>
     </dependencies>
 
     <i18n javaKeysClass="one.modality.ecommerce.frontoffice.bookingform.BookingFormI18nKeys"/>
