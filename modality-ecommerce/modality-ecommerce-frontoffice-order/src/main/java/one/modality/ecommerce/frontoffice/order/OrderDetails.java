@@ -1,5 +1,6 @@
 package one.modality.ecommerce.frontoffice.order;
 
+import dev.webfx.extras.i18n.controls.I18nControls;
 import dev.webfx.extras.styles.bootstrap.Bootstrap;
 import dev.webfx.extras.util.layout.Layouts;
 import dev.webfx.kit.util.properties.ObservableLists;
@@ -15,6 +16,8 @@ import one.modality.base.client.i18n.I18nEntities;
 import one.modality.base.shared.entities.Document;
 import one.modality.base.shared.entities.DocumentLine;
 import one.modality.base.shared.entities.formatters.EventPriceFormatter;
+import one.modality.base.shared.entities.markers.HasPersonalDetails;
+import one.modality.crm.client.i18n.CrmI18nKeys;
 import one.modality.ecommerce.client.workingbooking.WorkingBooking;
 import one.modality.ecommerce.frontoffice.bookingelements.BookingElements;
 import one.modality.ecommerce.shared.pricecalculator.PriceCalculator;
@@ -32,7 +35,7 @@ public final class OrderDetails {
 
     // This constructor is called by the summary page of a booking form
     public OrderDetails(WorkingBooking workingBooking) {
-        this(workingBooking.getDocument(), workingBookingObservableLines(workingBooking), new PriceCalculator(workingBooking::getLastestDocumentAggregate));
+        this(workingBooking.getDocument(), workingBookingObservableLines(workingBooking), new PriceCalculator(workingBooking::getLastestDocumentAggregate), true);
     }
 
     private static ObservableList<DocumentLine> workingBookingObservableLines(WorkingBooking workingBooking) {
@@ -44,9 +47,27 @@ public final class OrderDetails {
     }
 
     // This constructor is called by OrderCardView
-    OrderDetails(Document document, ObservableList<DocumentLine> orderDocumentLines, PriceCalculator priceCalculator) {
+    OrderDetails(Document document, ObservableList<DocumentLine> orderDocumentLines, PriceCalculator priceCalculator, boolean displayName) {
         ObservableLists.runNowAndOnListChange(change -> {
             orderDetails.getChildren().clear(); // Clear existing details
+
+            if (displayName) {
+                Label nameSectionLabel = Bootstrap.textPrimary(I18nControls.newLabel(CrmI18nKeys.Name));
+                nameSectionLabel.getStyleClass().addAll("detail-label", "detail-subitem"); // Same style as family item
+
+                // For new bookings, the name might not be set; the person is more reliable in that case
+                HasPersonalDetails personalDetails = document.getPerson();
+                // But if not set (or loaded), we use the name in the booking itself
+                if (personalDetails == null || personalDetails.getFirstName() == null)
+                    personalDetails = document;
+                Label nameLabel = BookingElements.secondaryOptionLabel(new Label(personalDetails.getFullName()));
+                nameLabel.getStyleClass().addAll("detail-label", "detail-item"); // Same style as item
+                nameLabel.setMaxWidth(Double.MAX_VALUE); // To make the separator line fill the whole width
+                nameLabel.setPadding(new Insets(10, 0, 15, 20)); // same padding as items
+
+                orderDetails.getChildren().addAll(nameSectionLabel, nameLabel);
+            }
+
             // Group and display each item (e.g., meals, rooms) in the booking
             orderDocumentLines.stream()
                 .collect(Collectors.groupingBy(dl -> dl.getItem().getFamily(), LinkedHashMap::new, Collectors.toList()))

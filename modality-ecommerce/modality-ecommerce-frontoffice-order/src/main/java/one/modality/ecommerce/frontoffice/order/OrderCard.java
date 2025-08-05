@@ -119,7 +119,7 @@ public final class OrderCard {
      * Builds the main UI layout for the card view and detail section.
      */
     private void buildUi() {
-        Node orderDetails = new OrderDetails(orderDocument, orderDocumentLines, null).getView();
+        Node orderDetails = new OrderDetails(orderDocument, orderDocumentLines, null, false).getView();
         // embedded in a card with a header
         containerPane.setContent(createOrderCard(orderDetails));
         containerPane.getStyleClass().addAll("container-pane");

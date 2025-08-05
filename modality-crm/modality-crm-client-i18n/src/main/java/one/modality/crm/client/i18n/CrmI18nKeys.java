@@ -11,6 +11,7 @@ public interface CrmI18nKeys {
     Object PersonToBook = "PersonToBook";
     Object Gender = "Gender";
     Object YourPersonalDetails = "YourPersonalDetails";
+    Object Name = "Name";
     Object Carer1 = "Carer1";
     Object Carer2 = "Carer2";
     Object ref = "ref";
