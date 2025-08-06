@@ -45,6 +45,7 @@ module modality.event.frontoffice.activity.videostreaming.plugin {
     requires webfx.platform.util;
     requires webfx.platform.util.time;
     requires webfx.platform.windowhistory;
+    requires webfx.stack.cache.client;
     requires webfx.stack.orm.domainmodel;
     requires webfx.stack.orm.domainmodel.activity;
     requires webfx.stack.orm.entity;
