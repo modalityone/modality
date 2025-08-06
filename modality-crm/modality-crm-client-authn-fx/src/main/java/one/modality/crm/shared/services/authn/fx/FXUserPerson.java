@@ -4,9 +4,11 @@ import dev.webfx.kit.util.properties.FXProperties;
 import dev.webfx.platform.console.Console;
 import dev.webfx.platform.uischeduler.UiScheduler;
 import dev.webfx.platform.util.Booleans;
+import dev.webfx.stack.cache.client.LocalStorageCache;
 import dev.webfx.stack.orm.datasourcemodel.service.DataSourceModelService;
 import dev.webfx.stack.orm.domainmodel.DataSourceModel;
 import dev.webfx.stack.orm.entity.EntityId;
+import dev.webfx.stack.orm.entity.EntityList;
 import dev.webfx.stack.orm.entity.EntityStore;
 import javafx.beans.property.ObjectProperty;
 import javafx.beans.property.SimpleObjectProperty;
@@ -29,13 +31,19 @@ public final class FXUserPerson {
             setUserPerson(null);
         else {
             DataSourceModel dataSourceModel = DataSourceModelService.getDefaultDataSourceModel();
-            EntityStore.create(dataSourceModel).<Person>executeQuery("select firstName,lastName,male,ordained,email,phone,street,postCode,cityName,country,organization,birthdate,layName,frontendAccount.(tester,security) from Person where id=?", userPersonId)
+            EntityStore.create(dataSourceModel).<Person>executeCachedQuery(
+                    LocalStorageCache.get().getCacheEntry("cache-fx-user-person"), FXUserPerson::onPersonLoaded,
+                    "select firstName,lastName,male,ordained,email,phone,street,postCode,cityName,country,organization,birthdate,layName,frontendAccount.(tester,security) from Person where id=?", userPersonId)
                 .onFailure(Console::log)
-                .onSuccess(persons -> UiScheduler.runInUiThread(() -> {
-                    setUserPerson(null); // Temporary transition to null because otherwise DynamicEntity.equals()
-                    setUserPerson(persons.get(0)); // is currently returning true and prevents the listeners to be called
-                }));
+                .onSuccess(FXUserPerson::onPersonLoaded);
         }
+    }
+
+    private static void onPersonLoaded(EntityList<Person> persons) {
+        UiScheduler.runInUiThread(() -> {
+            setUserPerson(null); // Temporary transition to null because otherwise DynamicEntity.equals()
+            setUserPerson(persons.get(0)); // is currently returning true and prevents the listeners to be called
+        });
     }
 
     public static Person getUserPerson() {
