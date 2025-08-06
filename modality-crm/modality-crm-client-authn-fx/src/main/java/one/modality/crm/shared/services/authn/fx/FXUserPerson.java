@@ -31,7 +31,7 @@ public final class FXUserPerson {
             setUserPerson(null);
         else {
             DataSourceModel dataSourceModel = DataSourceModelService.getDefaultDataSourceModel();
-            EntityStore.create(dataSourceModel).<Person>executeCachedQuery(
+            EntityStore.create(dataSourceModel).executeCachedQuery(
                     LocalStorageCache.get().getCacheEntry("cache-fx-user-person"), FXUserPerson::onPersonLoaded,
                     "select firstName,lastName,male,ordained,email,phone,street,postCode,cityName,country,organization,birthdate,layName,frontendAccount.(tester,security) from Person where id=?", userPersonId)
                 .onFailure(Console::log)
