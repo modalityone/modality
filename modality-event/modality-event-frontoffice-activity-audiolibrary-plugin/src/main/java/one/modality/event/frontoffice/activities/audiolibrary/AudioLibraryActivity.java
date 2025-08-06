@@ -1,5 +1,6 @@
 package one.modality.event.frontoffice.activities.audiolibrary;
 
+import dev.webfx.extras.i18n.controls.I18nControls;
 import dev.webfx.extras.panes.ColumnsPane;
 import dev.webfx.extras.panes.ScalePane;
 import dev.webfx.extras.styles.bootstrap.Bootstrap;
@@ -9,8 +10,9 @@ import dev.webfx.kit.util.properties.FXProperties;
 import dev.webfx.kit.util.properties.ObservableLists;
 import dev.webfx.platform.console.Console;
 import dev.webfx.platform.util.Booleans;
-import dev.webfx.extras.i18n.controls.I18nControls;
+import dev.webfx.stack.cache.client.LocalStorageCache;
 import dev.webfx.stack.orm.domainmodel.activity.viewdomain.impl.ViewDomainActivityBase;
+import dev.webfx.stack.orm.entity.EntityList;
 import dev.webfx.stack.orm.entity.EntityStore;
 import javafx.application.Platform;
 import javafx.beans.binding.BooleanExpression;
@@ -54,7 +56,8 @@ final class AudioLibraryActivity extends ViewDomainActivityBase {
                 // 1) Events where we buy the recordings through an audioRecordingsDayTicket (ex: Festival)
                 // 2) Events where the audios are linked to a teachingDayTicket (case of STTP)
                 // See in the backoffice ProgramActivity doc directory for more information
-                entityStore.<DocumentLine>executeQuery(
+                entityStore.executeCachedQuery(
+                        LocalStorageCache.get().getCacheEntry("cache-audio-library-document-lines"), this::onDocumentLinesLoaded,
                    "select document.event.(name,label.(de,en,es,fr,pt), shortDescription, shortDescriptionLabel, audioExpirationDate, startDate, endDate, repeatedEvent), item.code, item.family.code, " +
                        // We look if there are published audio ScheduledItem of type audio, whose bookableScheduledItem has been booked
                        " (exists(select ScheduledItem where item.family.code=? and published and bookableScheduledItem.(event=coalesce(dl.document.event.repeatedEvent, dl.document.event) and item=dl.item))) as published " +
@@ -70,9 +73,13 @@ final class AudioLibraryActivity extends ViewDomainActivityBase {
                        " order by document.event.startDate desc",
                         new Object[]{ KnownItemFamily.AUDIO_RECORDING.getCode(), modalityUserPrincipal.getUserAccountId(), KnownItemFamily.AUDIO_RECORDING.getCode(), KnownItemFamily.AUDIO_RECORDING.getCode()})
                     .onFailure(Console::log)
-                    .onSuccess(documentLines -> Platform.runLater(() -> documentLinesWithBookedAudios.setAll(documentLines)));
+                    .onSuccess(this::onDocumentLinesLoaded);
             }
         }, FXModalityUserPrincipal.modalityUserPrincipalProperty());
+    }
+
+    private void onDocumentLinesLoaded(EntityList<DocumentLine> documentLines) {
+        Platform.runLater(() -> documentLinesWithBookedAudios.setAll(documentLines));
     }
 
     @Override
@@ -132,7 +139,7 @@ final class AudioLibraryActivity extends ViewDomainActivityBase {
 
         noContentTitleLabel.setPadding(new Insets(75,0,0,0));
 
-        // We embed headerLabel in a ScalePane, because it can be too wide on mobiles.
+        // We embed headerLabel in a ScalePane because it can be too wide on mobiles.
         ScalePane headerScalePane = new ScalePane(headerLabel);
         headerScalePane.setAlignment(Pos.TOP_LEFT); // VBox will stretch the ScalePane, but we position the label on the left inside
         headerLabel.setMinWidth(Region.USE_PREF_SIZE); // This is to make it shrink when it doesn't fit in width
