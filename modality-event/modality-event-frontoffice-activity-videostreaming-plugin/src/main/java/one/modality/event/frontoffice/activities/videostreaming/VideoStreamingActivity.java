@@ -165,7 +165,7 @@ final class VideoStreamingActivity extends ViewDomainActivityBase {
                         " exists(select Attendance a where documentLine=dl and exists(select ScheduledItem where bookableScheduledItem=a.scheduledItem and item.family.code=?))" +
                         // 2/ Or KBS3 / KBS2 setup (this allows displaying the videos that have been booked in the past with KBS2 events, event if we can't display them)
                         " or item.family.code=?)" +
-                        // we display only the events that have not expired, or expired since less than 21 days.
+                        // we display only the events that have not expired or expired since less than 21 days.
                         " and (document.event.(vodExpirationDate = null or date_part('epoch', now()) < date_part('epoch', vodExpirationDate)+21*24*60*60)) " +
                         // Ordering with the most relevant events, the first event will be the selected one by default.
                         " order by " +
@@ -278,6 +278,8 @@ final class VideoStreamingActivity extends ViewDomainActivityBase {
 
     private void onScheduledItemsLoaded(EntityList<ScheduledItem> scheduledItems) {
         Platform.runLater(() -> {
+            if (videoScheduledItems.equals(scheduledItems)) // happens when there is no change with the cache
+                return;
             videoScheduledItems.setAll(scheduledItems); // Will trigger the build of the video table.
             watchingVideoItemProperty.set(null);
             // We are now ready to populate the videos, but we postpone this for the 2 following reasons:
@@ -364,7 +366,7 @@ final class VideoStreamingActivity extends ViewDomainActivityBase {
 
     boolean isSameVideoAsAlreadyWatching(VideoLifecycle videoLifecycle) {
         return Objects.areEquals(videoLifecycle.getVideoScheduledItem(), getWatchingVideoItem())
-               || isUserWatchingLivestream() && videoLifecycle.isNowBetweenLiveNowStartAndSessionEnd();
+               || isUserWatchingLivestream() && !videoLifecycle.getVideoScheduledItem().isPublished() && videoLifecycle.isNowBetweenLiveNowStartAndSessionEnd();
     }
 
     ScheduledItem getWatchingVideoItem() {
