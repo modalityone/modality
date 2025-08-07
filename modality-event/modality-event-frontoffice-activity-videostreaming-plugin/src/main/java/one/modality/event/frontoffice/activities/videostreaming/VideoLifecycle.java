@@ -10,6 +10,7 @@ import one.modality.event.frontoffice.medias.MediaUtil;
 import java.time.Duration;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.LocalTime;
 import java.time.temporal.ChronoUnit;
 
 /**
@@ -32,8 +33,12 @@ final class VideoLifecycle {
         this.videoScheduledItem = videoScheduledItem;
         LocalDate videoDate = videoScheduledItem.getDate();
         EntityHasStartAndEndTime startAndEndTimeHolder = MediaUtil.getStartAndEndTimeHolder(videoScheduledItem);
-        sessionStart = videoDate.atTime(startAndEndTimeHolder.getStartTime());
-        sessionEnd = videoDate.atTime(startAndEndTimeHolder.getEndTime());
+        LocalTime startTime = startAndEndTimeHolder.getStartTime();
+        LocalTime endTime = startAndEndTimeHolder.getEndTime();
+        sessionStart = videoDate.atTime(startTime);
+        if (endTime.isBefore(startTime)) // Ex: 23:00 - 00:10
+            videoDate = videoDate.plusDays(1); // end time actually refers to the next day
+        sessionEnd = videoDate.atTime(endTime);
         // Starting the countdown 3 hours before the session
         countdownStart = sessionStart.minusHours(1); // Changed to 1h for the Festival to prevent 2 countdowns at the same time
         // Starting to show the livestream 20 min before the session
