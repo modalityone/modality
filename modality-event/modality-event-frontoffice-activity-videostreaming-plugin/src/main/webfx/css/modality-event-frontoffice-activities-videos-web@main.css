@@ -80,3 +80,10 @@
     background-color: #f4f4f4;
     border-radius: 30px;
 }
+
+.livestream .video-comment {
+    --fx-text-fill: var(--bootstrap-blue5);
+    font-weight: bold;
+    font-size: 16px;
+    --fx-line-height: 1.6;
+}

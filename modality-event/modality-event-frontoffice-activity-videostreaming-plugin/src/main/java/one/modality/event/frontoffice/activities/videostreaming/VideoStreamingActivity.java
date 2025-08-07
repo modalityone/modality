@@ -53,6 +53,7 @@ import javafx.scene.control.Label;
 import javafx.scene.layout.Region;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
+import javafx.scene.text.TextAlignment;
 import javafx.stage.Screen;
 import one.modality.base.client.i18n.BaseI18nKeys;
 import one.modality.base.client.i18n.I18nEntities;
@@ -550,8 +551,10 @@ final class VideoStreamingActivity extends ViewDomainActivityBase {
                             vcr -> Players.sameSelectedPlayer(vcr.getPlayer(), lastVideoPlayingPlayer));
                         if (videoConsumptionRecorder != null)
                             videoConsumptionRecorder.start();
-                        Console.log("⛔️⛔️⛔️⛔️⛔️ Playing " + lastVideoPlayingPlayer);
-                        lastVideoPlayingPlayer.play();
+                        if (!lastVideoPlayingPlayer.isPlaying()) {
+                            Console.log("⛔️⛔️⛔️⛔️⛔️ Playing " + lastVideoPlayingPlayer);
+                            lastVideoPlayingPlayer.play();
+                        }
                     }
                 }
             }), videoCollapsePane.collapsedProperty(), Players.getGlobalPlayerGroup().playingPlayerProperty());
@@ -600,16 +603,18 @@ final class VideoStreamingActivity extends ViewDomainActivityBase {
         } else { // VOD
             // Creating a Player for each Media and initializing it.
             VBox videoMediasVBox = new VBox(10);
-            String comment = watchingVideoItemProperty.get().getComment();
-            one.modality.base.shared.entities.Label commentLabel = watchingVideoItemProperty.get().getCommentLabel();
-            if (commentLabel == null && comment != null) {
-                Label commentUILabel = Bootstrap.strong(I18nControls.newLabel(comment));
-                commentUILabel.setWrapText(true);
-                videoVBox.getChildren().add(commentUILabel);
-            }
+            String comment = getWatchingVideoItem().getComment();
+            one.modality.base.shared.entities.Label commentLabel = getWatchingVideoItem().getCommentLabel();
+            Label commentUILabel = null;
             if (commentLabel != null) {
-                Label commentUILabel = Bootstrap.strong(I18nEntities.newExpressionLabel(commentLabel, "i18n(this)"));
-                commentUILabel.setWrapText(true);
+                commentUILabel = I18nEntities.newExpressionLabel(commentLabel, "i18n(this)");
+            } else if (comment != null) {
+                commentUILabel = new Label(comment);
+            }
+            if (commentUILabel != null) {
+                commentUILabel.getStyleClass().add("video-comment");
+                commentUILabel.setTextAlignment(TextAlignment.CENTER);
+                Controls.setupTextWrapping(commentUILabel, true, false);
                 videoVBox.getChildren().add(commentUILabel);
             }
 
@@ -635,9 +640,13 @@ final class VideoStreamingActivity extends ViewDomainActivityBase {
     private Node createVideoView(String url, Media media, boolean autoPlay) {
         Player videoPlayer = AllPlayers.createAllVideoPlayer();
         videoPlayer.setMedia(videoPlayer.acceptMedia(url));
+        // Aspect ratio should be read from metadata but hardcoded for now
+        double aspectRatio = 16d/9d;
+        if (url.contains("wistia"))   // Wistia is used only for the Festival play so far
+            aspectRatio = 1085d/595d; // This is the aspect ratio for the Life of Buddha play
         videoPlayer.setStartOptions(new StartOptionsBuilder()
             .setAutoplay(autoPlay)
-            .setAspectRatioTo16by9() // should be read from metadata but hardcoded for now
+            .setAspectRatio(aspectRatio)
             .build());
         videoPlayer.displayVideo();
         boolean livestream = media == null;
@@ -649,7 +658,7 @@ final class VideoStreamingActivity extends ViewDomainActivityBase {
             videoConsumptionRecorder.start();
         // We embed the video player in a 16/9 aspect ratio pane, so its vertical size is immediately known, which is
         // important for the correct computation of the auto-scroll position.
-        return new AspectRatioPane(16d / 9, videoPlayer.getMediaView());
+        return new AspectRatioPane(aspectRatio, videoPlayer.getMediaView());
     }
 
 }
