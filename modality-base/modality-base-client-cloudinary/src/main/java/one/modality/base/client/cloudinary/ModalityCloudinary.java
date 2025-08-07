@@ -2,6 +2,7 @@ package one.modality.base.client.cloudinary;
 
 import dev.webfx.extras.canvas.blob.CanvasBlob;
 import dev.webfx.extras.panes.MonoPane;
+import dev.webfx.kit.util.properties.FXProperties;
 import dev.webfx.kit.util.scene.DeviceSceneUtil;
 import dev.webfx.platform.async.Future;
 import dev.webfx.platform.async.Promise;
@@ -11,7 +12,6 @@ import dev.webfx.platform.uischeduler.UiScheduler;
 import dev.webfx.stack.cloud.image.CloudImageService;
 import dev.webfx.stack.cloud.image.impl.client.ClientImageService;
 import dev.webfx.stack.orm.entity.Entities;
-import javafx.application.Platform;
 import javafx.scene.Node;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
@@ -29,7 +29,7 @@ public final class ModalityCloudinary {
 
     private static final CloudImageService CLOUD_IMAGE_SERVICE = new ClientImageService();
 
-    // Low level API
+    // Low-level API
 
     public static Future<Void> deleteImage(String imagePath) {
         return CLOUD_IMAGE_SERVICE.delete(imagePath, true);
@@ -79,37 +79,42 @@ public final class ModalityCloudinary {
 
     public static Future<ImageView> loadImage(String imagePath, MonoPane imageContainer, double width, double height, Supplier<Node> noImageNodeGetter) {
         Promise<ImageView> promise = Promise.promise();
-        imageExists(imagePath)
-            .onFailure(promise::fail)
-            .onSuccess(exists -> Platform.runLater(() -> {
-                if (exists) {
-                    imageContainer.setBackground(null);
-                    // First, we need to get the zoom factor of the screen
-                    double zoomFactor = Screen.getPrimary().getOutputScaleX();
-                    Image image = getImage(imagePath, width < 0 ? (int) width : (int) (width * zoomFactor), height < 0 ? (int) height : (int) (height * zoomFactor));
-                    ImageView imageView = new ImageView();
-                    imageView.setFitWidth(width);
-                    imageView.setFitHeight(height);
-                    if (width < 0 || height < 0)
-                        imageView.setPreserveRatio(true);
-                    imageView.setImage(image);
-                    if (imageContainer.getContent() == null)
-                        imageContainer.setContent(imageView);
-                    else // If it's an image replacement, better to wait the loading is complete to prevent a blink between the 2 images
-                        DeviceSceneUtil.onImagesLoaded(() -> imageContainer.setContent(imageView), image);
-                    promise.complete(imageView);
-                } else {
+        loadImage(imagePath, imageContainer, width, height, noImageNodeGetter, promise);
+        return promise.future();
+    }
+
+    private static void loadImage(String imagePath, MonoPane imageContainer, double width, double height, Supplier<Node> noImageNodeGetter, Promise<ImageView> promise) {
+        // First, we need to get the zoom factor of the screen
+        double zoomFactor = Screen.getPrimary().getOutputScaleX();
+        try { // getImage() can raise at the beginning if
+            Image image = getImage(imagePath, width < 0 ? (int) width : (int) (width * zoomFactor), height < 0 ? (int) height : (int) (height * zoomFactor));
+            ImageView imageView = new ImageView();
+            imageView.setFitWidth(width);
+            imageView.setFitHeight(height);
+            if (width < 0 || height < 0)
+                imageView.setPreserveRatio(true);
+            imageView.setImage(image);
+            FXProperties.runNowAndOnPropertyChange(error -> {
+                if (error) {
                     if (noImageNodeGetter != null) {
                         Node noImageNode = noImageNodeGetter.get();
                         imageContainer.setBackground(Background.fill(Color.LIGHTGRAY));
                         imageContainer.setContent(noImageNode);
                     }
                     String message = imagePath + " doesn't exist in cloudinary";
-                    promise.fail(message);
+                    promise.tryFail(message);
                     Console.log("⚠️ " + message);
+                } else {
+                    if (imageContainer.getContent() == null)
+                        imageContainer.setContent(imageView);
+                    else // If it's an image replacement, better to wait the loading is complete to prevent a blink between the 2 images
+                        DeviceSceneUtil.onImagesLoaded(() -> imageContainer.setContent(imageView), image);
                 }
-            }));
-        return promise.future();
+            }, image.errorProperty());
+            promise.tryComplete(imageView);
+        } catch (Exception e) {
+            UiScheduler.scheduleDelay(100, () -> loadImage(imagePath, imageContainer, width, height, noImageNodeGetter, promise));
+        }
     }
 
     // Image uploading API
@@ -167,7 +172,7 @@ public final class ModalityCloudinary {
         Promise<Void> promise = Promise.promise();
         deleteImage(cloudImagePath)
             .onComplete(ar -> {
-                //We wait for 2 second (if we don't wait, the picture doesn't change below, probably because
+                //We wait for 2 seconds (if we don't wait, the picture doesn't change below, probably because
                 //cloudinary server didn't have enough time to delete the old/proceed the old and new picture
                 UiScheduler.scheduleDelay(ar.failed() ? 0 : 2000, () ->
                     uploadImage(cloudImagePath, fileToUpload)
