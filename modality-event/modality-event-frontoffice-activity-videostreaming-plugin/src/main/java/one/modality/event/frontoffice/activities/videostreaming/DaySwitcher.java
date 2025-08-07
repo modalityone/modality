@@ -26,6 +26,7 @@ import one.modality.event.frontoffice.medias.TimeZoneSwitch;
 
 import java.time.LocalDate;
 import java.util.List;
+import java.util.Objects;
 
 /**
  * @author David Hello
@@ -124,10 +125,18 @@ public class DaySwitcher {
     }
 
     public void setAvailableDates(List<LocalDate> availableDates) {
+        // Doing nothing if no changes (this may happen if the dates from the server are still identical to the cached ones)
+        if (Objects.equals(this.availableDates, availableDates))
+            return;
+
         this.availableDates = availableDates;
 
-        dayToggleGroup.clear();
+        // Memorizing the selected date before clearing it
+        LocalDate selectedDate = getSelectedDate();
+        // Clearing the current buttons
+        dayToggleGroup.clear(); // this also indirectly clears the selected dates (which is why we memorized it)
         dayButtonsColumnsPane.getChildren().clear();
+        // Rebuilding the buttons based on the new available dates
         availableDates.forEach(this::createAndAddDateButton);
         createAndAddDateButton(null); // All-days button
 
@@ -142,8 +151,10 @@ public class DaySwitcher {
         );
 
         // Automatically selecting today if today is part of the event
-        if (!availableDates.contains(getSelectedDate()))
+        if (!availableDates.contains(selectedDate))
             setSelectedDate(LocalDate.now());
+        else
+            setSelectedDate(selectedDate);
         dayToggleGroup.updateButtonsFiredStyleClass();
     }
 
