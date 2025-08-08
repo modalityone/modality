@@ -134,7 +134,7 @@ final class VideoStreamingActivity extends ViewDomainActivityBase {
         //We relaunch the request every 14 hours (in case the user never closes the page, and to make sure the coherence of MediaConsumption is ok)
         Scheduler.schedulePeriodic(14 * 3600 * 1000, this::startLogic);
         eventsSelectionPane.collapse(); // initially collapsed
-        //videoCollapsePane.collapse(); // initially collapsed - might be automatically expanded by scheduleAutoLivestream()
+        videoCollapsePane.collapse(); // initially collapsed - might be automatically expanded by scheduleAutoLivestream()
         decoratedLivestreamCollapsePane.setVisible(false); // will be visible if it contains at least a video or livestream
         //We bind the currentDate of the daySwitcher to the currentDaySelected so the video appearing are linked to the day selected in the day switcher
         selectedDayProperty.bind(daySwitcher.selectedDateProperty());
