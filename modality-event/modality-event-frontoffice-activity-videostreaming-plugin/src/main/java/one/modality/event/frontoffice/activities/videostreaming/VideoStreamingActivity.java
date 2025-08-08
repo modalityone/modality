@@ -323,7 +323,7 @@ final class VideoStreamingActivity extends ViewDomainActivityBase {
     }
 
     private void loadMediaAndWatch() {
-        entityStore.<Media>executeQuery("select url from Media where scheduledItem=?", getWatchingVideoItem())
+        entityStore.<Media>executeQuery("select url from Media where scheduledItem=? order by id", getWatchingVideoItem())
             .onFailure(Console::log)
             .onSuccess(mediaLists -> Platform.runLater(() -> {
                 Collections.setAll(watchMedias, mediaLists);
