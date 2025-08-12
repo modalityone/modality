@@ -8,7 +8,6 @@ import dev.webfx.extras.util.animation.Animations;
 import dev.webfx.extras.util.layout.Layouts;
 import dev.webfx.kit.util.properties.FXProperties;
 import dev.webfx.platform.console.Console;
-import dev.webfx.platform.uischeduler.UiScheduler;
 import dev.webfx.platform.util.Arrays;
 import dev.webfx.platform.util.collection.Collections;
 import dev.webfx.platform.windowhistory.WindowHistory;
@@ -224,16 +223,17 @@ final class Step1BookingFormAndSubmitSlide extends StepSlide implements BookingF
             // We look at the changes to fill the history
             WorkingBookingHistoryHelper historyHelper = new WorkingBookingHistoryHelper(workingBooking);
             workingBooking.submitChanges(historyHelper.generateHistoryComment())
+                .inUiThread()
                 // Turning off the wait mode in all cases - Might be turned on again in success if payment is required
-                .onComplete(ar -> UiScheduler.runInUiThread(this::turnOffWaitMode))
-                .onFailure(throwable -> UiScheduler.runInUiThread(() -> {
+                .onComplete(ar -> turnOffWaitMode())
+                .onFailure(throwable -> {
                     displayErrorMessage(BookI18nKeys.ErrorWhileInsertingBooking);
                     Console.log(throwable);
-                }))
-                .onSuccess(result -> UiScheduler.runInUiThread(() -> {
+                })
+                .onSuccess(result -> {
                     workingBookingProperties.setBookingReference(result.getDocumentRef());
                     payOrThankYou(paymentDeposit, gatewayPaymentFormDisplayer);
-                }));
+                });
         }
     }
 

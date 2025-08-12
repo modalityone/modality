@@ -16,7 +16,6 @@ import dev.webfx.platform.console.Console;
 import dev.webfx.platform.util.Strings;
 import dev.webfx.stack.orm.entity.*;
 import dev.webfx.stack.orm.entity.binding.EntityBindings;
-import javafx.application.Platform;
 import javafx.beans.binding.BooleanExpression;
 import javafx.beans.property.*;
 import javafx.collections.FXCollections;
@@ -192,7 +191,8 @@ final class RecordingsTabView {
                         new Object[]{currentEditedEvent, KnownItemFamily.AUDIO_RECORDING.getCode(), KnownItemFamily.TEACHING.getCode()}),
                     new EntityStoreQuery("select url, scheduledItem.programScheduledItem, scheduledItem.item, scheduledItem.item.code ,scheduledItem.date, scheduledItem.published, durationMillis from Media where scheduledItem.event= ? and scheduledItem.item.family.code = ?", new Object[]{currentEditedEvent, KnownItemFamily.AUDIO_RECORDING.getCode()}))
                 .onFailure(Console::log)
-                .onSuccess(entityList -> Platform.runLater(() -> {
+                .inUiThread()
+                .onSuccess(entityList -> {
                     EntityList<ScheduledItem> itemList = entityList[0];
                     EntityList<ScheduledItem> siList = entityList[1];
                     EntityList<Media> mediaList = entityList[2];
@@ -257,7 +257,7 @@ final class RecordingsTabView {
 
                         masterSettings.getChildren().add(languageListVBox);
                     }
-                }));
+                });
             ObservableLists.bindConverted(recordingsSection.getChildren(), workingItems, this::drawLanguageBox);
         }
         // Layout container (HBox)
@@ -339,8 +339,10 @@ final class RecordingsTabView {
     private void displayEventDetails(Event e) {
         if (e != null)
             e.onExpressionLoaded("organization,audioExpirationDate, repeatedEvent, repeatAudio, repeatVideo")
-                .onSuccess(ignored -> Platform.runLater(this::drawContainer))
-                .onFailure((Console::log));
+                .onFailure((Console::log))
+                .inUiThread()
+                .onSuccess(ignored -> drawContainer())
+                ;
     }
 
     //This parameter will allow us to manage the interaction and behaviour of the Panel that display the details of an event and the event selected

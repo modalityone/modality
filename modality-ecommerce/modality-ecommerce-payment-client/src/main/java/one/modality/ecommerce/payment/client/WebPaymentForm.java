@@ -15,7 +15,6 @@ import dev.webfx.platform.scheduler.Scheduler;
 import dev.webfx.platform.shutdown.Shutdown;
 import dev.webfx.platform.uischeduler.UiScheduler;
 import dev.webfx.platform.util.Numbers;
-import javafx.application.Platform;
 import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.ReadOnlyBooleanProperty;
 import javafx.geometry.Point2D;
@@ -41,7 +40,7 @@ import java.util.stream.Collectors;
 /**
  * @author Bruno Salmon
  */
-public class WebPaymentForm {
+public final class WebPaymentForm {
 
     private static final boolean DEBUG = true;
 
@@ -392,7 +391,7 @@ public class WebPaymentForm {
         logDebug("onGatewayInitFailure called (error = " + error + ")");
         initialized = true;
         //setUserInteractionAllowed(true);
-        callConsumerOnUiThreadIfSet(onInitFailure, error);
+        callConsumerInUiThreadIfSet(onInitFailure, error);
     }
 
     public void onGatewayCardVerificationFailure(String error) {
@@ -403,7 +402,7 @@ public class WebPaymentForm {
     public void onGatewayBuyerVerificationFailure(String error) {
         logDebug("onGatewayBuyerVerificationFailure called (error = " + error + ")");
         allowUserInteraction();
-        callConsumerOnUiThreadIfSet(onVerificationFailure, error);
+        callConsumerInUiThreadIfSet(onVerificationFailure, error);
     }
 
     public void onGatewayPaymentVerificationSuccess(String gatewayCompletePaymentPayload) {
@@ -418,14 +417,14 @@ public class WebPaymentForm {
     public void onModalityCompletePaymentFailure(String error) {
         logDebug("onModalityCompletePaymentFailure called (error = " + error + ")");
         allowUserInteraction();
-        callConsumerOnUiThreadIfSet(onPaymentFailure, error);
+        callConsumerInUiThreadIfSet(onPaymentFailure, error);
     }
 
 
     public void onModalityCompletePaymentSuccess(PaymentStatus status) {
         logDebug("onModalityCompletePaymentSuccess called (status = " + status + ")");
         //setUserInteractionAllowedInUiThread(true);
-        callConsumerOnUiThreadIfSet(onPaymentCompletion, status);
+        callConsumerInUiThreadIfSet(onPaymentCompletion, status);
     }
 
 
@@ -443,9 +442,9 @@ public class WebPaymentForm {
         return value;
     }
 
-    private <T> void callConsumerOnUiThreadIfSet(Consumer<T> consumer, T argument) {
+    private <T> void callConsumerInUiThreadIfSet(Consumer<T> consumer, T argument) {
         if (consumer != null) {
-            Platform.runLater(() -> consumer.accept(argument));
+            UiScheduler.runInUiThread(() -> consumer.accept(argument));
         }
     }
 

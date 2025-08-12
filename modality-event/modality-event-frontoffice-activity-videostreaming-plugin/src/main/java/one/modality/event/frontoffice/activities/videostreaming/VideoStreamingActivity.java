@@ -178,7 +178,8 @@ final class VideoStreamingActivity extends ViewDomainActivityBase {
                         ", document.event.(endDate - startDate)",
                         KnownItemFamily.VIDEO.getCode(), modalityUserPrincipal.getUserAccountId(), KnownItemFamily.VIDEO.getCode(), KnownItemFamily.VIDEO.getCode())
                     .onFailure(Console::log)
-                    .onSuccess(documentLines -> UiScheduler.runInUiThread(() -> {
+                    .inUiThread()
+                    .onSuccess(documentLines -> {
                         // Extracting the events with videos from the document lines
                         eventsWithBookedVideos.setAll(
                             Collections.map(documentLines, dl -> dl.getDocument().getEvent()));
@@ -206,7 +207,7 @@ final class VideoStreamingActivity extends ViewDomainActivityBase {
                         // Selecting the most relevant event to show on start (the first one from order by)
                         eventProperty.set(Collections.first(eventsWithBookedVideos));
                         eventsWithBookedVideosLoadingProperty.set(false);
-                    }));
+                    });
             }
         }, FXModalityUserPrincipal.modalityUserPrincipalProperty());
         // Initial data loading for the event specified in the path
@@ -234,7 +235,8 @@ final class VideoStreamingActivity extends ViewDomainActivityBase {
                              order by date, programScheduledItem.timeline..startTime""",
                         userAccountId, userAccountId, eventContainingVideos, KnownItemFamily.TEACHING.getCode(), KnownItem.VIDEO.getCode(), userAccountId, event)
                     .onFailure(Console::log)
-                    .onSuccess(scheduledItems -> UiScheduler.runInUiThread(() -> {
+                    .inUiThread()
+                    .onSuccess(scheduledItems -> {
                         videoScheduledItems.setAll(scheduledItems); // Will trigger the build of the video table.
                         watchingVideoItemProperty.set(null);
                         // We are now ready to populate the videos, but we postpone this for the 2 following reasons:
@@ -247,7 +249,7 @@ final class VideoStreamingActivity extends ViewDomainActivityBase {
                             populateVideoPlayers(false); // will load the video player
                             scheduleAutoLivestream(); // may auto-expand the video player if now is an appropriate time
                         });
-                    }));
+                    });
             }
         }, eventProperty, FXUserPersonId.userPersonIdProperty());
 
@@ -312,11 +314,12 @@ final class VideoStreamingActivity extends ViewDomainActivityBase {
     private void loadMediaAndWatch() {
         entityStore.<Media>executeQuery("select url from Media where scheduledItem=? order by id", getWatchingVideoItem())
             .onFailure(Console::log)
-            .onSuccess(mediaLists -> Platform.runLater(() -> {
+            .inUiThread()
+            .onSuccess(mediaLists -> {
                 Collections.setAll(watchMedias, mediaLists);
                 populateVideoPlayers(true); // VOD
                 videoCollapsePane.expand();
-            }));
+            });
     }
 
     private boolean isUserWatchingLivestream() {

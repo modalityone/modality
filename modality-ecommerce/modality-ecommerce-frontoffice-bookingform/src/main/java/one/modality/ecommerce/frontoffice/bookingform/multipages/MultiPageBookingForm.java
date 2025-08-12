@@ -57,10 +57,12 @@ public abstract class MultiPageBookingForm extends BookingFormBase {
                     ToggleButton nextButton = navigationBar.getNextButton();
                     nextButton.setContentDisplay(ContentDisplay.GRAPHIC_ONLY);
                     OperationUtil.turnOnButtonsWaitModeDuringExecution(
-                        future.onComplete(ar -> UiScheduler.runInUiThread(() -> {
-                            pageBusyCountProperty.set(pageBusyCountProperty.get() + 1); // To force recomputation of next button disable property
-                            navigationBar.updateButtons(); // To reestablish the content display
-                        })), nextButton);
+                        future
+                            .inUiThread()
+                            .onComplete(ar -> {
+                                pageBusyCountProperty.set(pageBusyCountProperty.get() + 1); // To force recomputation of next button disable property
+                                navigationBar.updateButtons(); // To reestablish the content display
+                            }), nextButton);
                 });
             }
         }
@@ -85,8 +87,10 @@ public abstract class MultiPageBookingForm extends BookingFormBase {
         } else {
             navigationBar = new NavigationBar();
             navigationBar.getBackButton().setOnMouseClicked(e -> navigateToPreviousPage());
-            navigationBar.getBackButton().disableProperty().bind(new BooleanBinding() { {
-                super.bind(previousPageApplicableProperty, pageCanGoBackProperty); }
+            navigationBar.getBackButton().disableProperty().bind(new BooleanBinding() {
+                {
+                    super.bind(previousPageApplicableProperty, pageCanGoBackProperty);
+                }
 
                 @Override
                 protected boolean computeValue() {
@@ -94,8 +98,10 @@ public abstract class MultiPageBookingForm extends BookingFormBase {
                 }
             });
             navigationBar.getNextButton().setOnMouseClicked(e -> navigateToNextPage());
-            navigationBar.getNextButton().disableProperty().bind(new BooleanBinding() { {
-                super.bind(pageValidProperty, personToBookRequiredProperty, showDefaultSubmitButtonProperty, pageShowingOwnSubmitButtonProperty, pageBusyFutureProperty, pageBusyCountProperty, FXPersonToBook.personToBookProperty()); }
+            navigationBar.getNextButton().disableProperty().bind(new BooleanBinding() {
+                {
+                    super.bind(pageValidProperty, personToBookRequiredProperty, showDefaultSubmitButtonProperty, pageShowingOwnSubmitButtonProperty, pageBusyFutureProperty, pageBusyCountProperty, FXPersonToBook.personToBookProperty());
+                }
 
                 @Override
                 protected boolean computeValue() {

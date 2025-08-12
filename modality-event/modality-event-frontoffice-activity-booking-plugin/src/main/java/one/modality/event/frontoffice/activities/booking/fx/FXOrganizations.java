@@ -2,7 +2,6 @@ package one.modality.event.frontoffice.activities.booking.fx;
 
 import dev.webfx.platform.console.Console;
 import dev.webfx.stack.orm.entity.EntityStore;
-import javafx.application.Platform;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import one.modality.base.shared.entities.Organization;
@@ -16,9 +15,10 @@ public final class FXOrganizations {
 
     static {
         EntityStore.create()
-                .<Organization>executeQuery("select name,type,latitude,longitude,country from Organization where !closed and name!='ISC' order by country.name,name")
-                .onFailure(Console::log)
-                .onSuccess(list -> Platform.runLater(() -> organizations.setAll(list)));
+            .<Organization>executeQuery("select name,type,latitude,longitude,country from Organization where !closed and name!='ISC' order by country.name,name")
+            .onFailure(Console::log)
+            .inUiThread()
+            .onSuccess(organizations::setAll);
 
     }
 

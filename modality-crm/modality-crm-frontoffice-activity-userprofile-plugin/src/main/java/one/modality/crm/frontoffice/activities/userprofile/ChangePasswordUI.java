@@ -1,24 +1,23 @@
 package one.modality.crm.frontoffice.activities.userprofile;
 
+import dev.webfx.extras.controlfactory.MaterialFactoryMixin;
+import dev.webfx.extras.controlfactory.button.ButtonFactory;
+import dev.webfx.extras.i18n.I18n;
+import dev.webfx.extras.i18n.controls.I18nControls;
+import dev.webfx.extras.operation.OperationUtil;
 import dev.webfx.extras.styles.bootstrap.Bootstrap;
 import dev.webfx.extras.styles.materialdesign.util.MaterialUtil;
 import dev.webfx.extras.util.animation.Animations;
 import dev.webfx.extras.util.control.Controls;
 import dev.webfx.extras.util.control.HtmlInputAutocomplete;
+import dev.webfx.extras.util.dialog.DialogCallback;
 import dev.webfx.extras.util.layout.Layouts;
+import dev.webfx.extras.validation.ValidationSupport;
 import dev.webfx.kit.util.properties.FXProperties;
-import dev.webfx.platform.uischeduler.UiScheduler;
 import dev.webfx.stack.authn.AuthenticateWithUsernamePasswordCredentials;
 import dev.webfx.stack.authn.AuthenticationRequest;
 import dev.webfx.stack.authn.AuthenticationService;
 import dev.webfx.stack.authn.UpdatePasswordCredentials;
-import dev.webfx.extras.i18n.I18n;
-import dev.webfx.extras.i18n.controls.I18nControls;
-import dev.webfx.extras.controlfactory.MaterialFactoryMixin;
-import dev.webfx.extras.controlfactory.button.ButtonFactory;
-import dev.webfx.extras.util.dialog.DialogCallback;
-import dev.webfx.extras.operation.OperationUtil;
-import dev.webfx.extras.validation.ValidationSupport;
 import javafx.event.Event;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
@@ -103,33 +102,33 @@ final class ChangePasswordUI implements MaterialFactoryMixin {
                     new AuthenticationRequest()
                         .setUserCredentials(credentials)
                         .executeAsync()
-                        .onComplete(ar -> UiScheduler.runInUiThread(() -> OperationUtil.turnOffButtonsWaitMode(actionButton)))
-                        .onFailure(failure -> UiScheduler.runInUiThread(() -> {
+                        .inUiThread()
+                        .onComplete(ar -> OperationUtil.turnOffButtonsWaitMode(actionButton))
+                        .onFailure(failure -> {
                             Animations.shake(container);
                             showInfoMessage(UserProfileI18nKeys.IncorrectPassword, Bootstrap.TEXT_DANGER);
-                        }))
+                        })
                         .onSuccess(ignored -> {
                             //Here we send an email
                             //TODO : Change the function when it's ready
                             Object updatePasswordCredentials = new UpdatePasswordCredentials(passwordField.getText().trim(), newPasswordField.getText().trim());
-                            UiScheduler.runInUiThread(() -> {
-                                OperationUtil.turnOnButtonsWaitMode(actionButton);
-                                AuthenticationService.updateCredentials(updatePasswordCredentials)
-                                    .onComplete(ar -> UiScheduler.runInUiThread(() -> OperationUtil.turnOffButtonsWaitMode(actionButton)))
-                                    .onFailure(failure -> UiScheduler.runInUiThread(() -> {
-                                        //  showResultMessage(failure.getMessage(), Bootstrap.TEXT_DANGER);
-                                        showInfoMessage(failure.getMessage(), Bootstrap.TEXT_DANGER);
-                                        displayCloseButton();
+                            OperationUtil.turnOnButtonsWaitMode(actionButton);
+                            AuthenticationService.updateCredentials(updatePasswordCredentials)
+                                .inUiThread()
+                                .onComplete(ar -> OperationUtil.turnOffButtonsWaitMode(actionButton))
+                                .onFailure(failure -> {
+                                    //  showResultMessage(failure.getMessage(), Bootstrap.TEXT_DANGER);
+                                    showInfoMessage(failure.getMessage(), Bootstrap.TEXT_DANGER);
+                                    displayCloseButton();
 
-                                        // transitionPane.transitToContent(messageVBox);
-                                    }))
-                                    .onSuccess(s -> UiScheduler.runInUiThread(() -> {
-                                        showResultMessage(UserProfileI18nKeys.PasswordSuccessfullyChanged, Bootstrap.TEXT_SUCCESS);
-                                        showInfoMessage(UserProfileI18nKeys.PasswordSuccessfullyChanged, Bootstrap.TEXT_SUCCESS);
-                                        displayCloseButton();
-                                        // transitionPane.transitToContent(messageVBox);
-                                    }));
-                            });
+                                    // transitionPane.transitToContent(messageVBox);
+                                })
+                                .onSuccess(s -> {
+                                    showResultMessage(UserProfileI18nKeys.PasswordSuccessfullyChanged, Bootstrap.TEXT_SUCCESS);
+                                    showInfoMessage(UserProfileI18nKeys.PasswordSuccessfullyChanged, Bootstrap.TEXT_SUCCESS);
+                                    displayCloseButton();
+                                    // transitionPane.transitToContent(messageVBox);
+                                });
                         });
                 }
             });
@@ -139,7 +138,7 @@ final class ChangePasswordUI implements MaterialFactoryMixin {
         infoMessage.setWrapText(true);
         resultMessage.setWrapText(true);
 
-        container.getChildren().setAll(title, description, passwordField, newPasswordField, newPasswordRepeatedField, infoMessage, actionButton,closeButton);
+        container.getChildren().setAll(title, description, passwordField, newPasswordField, newPasswordRepeatedField, infoMessage, actionButton, closeButton);
         setupModalVBox(container);
 
         closeButton.setOnAction(evt -> {

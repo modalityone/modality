@@ -25,7 +25,6 @@ module modality.ecommerce.backoffice.operations.document {
     requires webfx.kit.launcher;
     requires webfx.platform.async;
     requires webfx.platform.console;
-    requires webfx.platform.uischeduler;
     requires webfx.stack.orm.entity;
     requires webfx.stack.orm.entity.controls;
 

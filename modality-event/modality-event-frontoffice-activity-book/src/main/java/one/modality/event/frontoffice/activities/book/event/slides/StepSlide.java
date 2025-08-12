@@ -4,7 +4,6 @@ import dev.webfx.extras.i18n.controls.I18nControls;
 import dev.webfx.extras.operation.OperationUtil;
 import dev.webfx.extras.webtext.HtmlText;
 import dev.webfx.platform.console.Console;
-import dev.webfx.platform.uischeduler.UiScheduler;
 import javafx.geometry.Pos;
 import javafx.scene.Node;
 import javafx.scene.control.Button;
@@ -115,12 +114,13 @@ public abstract class StepSlide implements Supplier<Node> {
         PaymentService.initiatePayment(
                 ClientPaymentUtil.createInitiatePaymentArgument(LAST_PAYMENT_DEPOSIT, documentPrimaryKey)
             )
-            .onFailure(paymentResult -> UiScheduler.runInUiThread(() -> {
+            .inUiThread()
+            .onFailure(paymentResult -> {
                 turnOffWaitMode();
                 displayErrorMessage(BookI18nKeys.ErrorWhileInitiatingPayment);
                 Console.log(paymentResult);
-            }))
-            .onSuccess(paymentResult -> UiScheduler.runInUiThread(() -> {
+            })
+            .onSuccess(paymentResult -> {
                 turnOffWaitMode();
                 HasPersonalDetails buyerDetails = FXUserPerson.getUserPerson();
                 if (buyerDetails == null)
@@ -131,7 +131,7 @@ public abstract class StepSlide implements Supplier<Node> {
                     gatewayPaymentFormDisplayer.accept(gatewayPaymentForm);
                 else
                     displayPaymentSlide(gatewayPaymentForm);
-            }));
+            });
     }
 
     void cancelOrUncancelBookingAndDisplayNextSlide(boolean cancel) {
@@ -142,16 +142,18 @@ public abstract class StepSlide implements Supplier<Node> {
             workingBooking.uncancelBooking();
         turnOnWaitMode();
         workingBooking.submitChanges(cancel ? "Cancelled booking" : "Uncancelled booking")
-            .onFailure(ex -> UiScheduler.runInUiThread(() -> {
+            .inUiThread()
+            .onFailure(ex -> {
                 turnOffWaitMode();
                 displayErrorMessage(ex.getMessage());
-            }))
+            })
             .onSuccess(ignored -> {
                 if (cancel)
                     displayCancellationSlide(new CancelPaymentResult(true));
                 else
                     getBookEventActivity().loadBookingWithSamePolicy(false)
-                        .onComplete(ar -> UiScheduler.runInUiThread(this::turnOffWaitMode));
+                        .inUiThread()
+                        .onComplete(ar -> turnOffWaitMode());
             });
     }
 

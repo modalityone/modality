@@ -72,7 +72,8 @@ final class AudioLibraryActivity extends ViewDomainActivityBase {
                        " order by document.event.startDate desc",
                         new Object[]{ KnownItemFamily.AUDIO_RECORDING.getCode(), modalityUserPrincipal.getUserAccountId(), KnownItemFamily.AUDIO_RECORDING.getCode(), KnownItemFamily.AUDIO_RECORDING.getCode()})
                     .onFailure(Console::log)
-                    .onSuccess(documentLines -> UiScheduler.runInUiThread(() -> documentLinesWithBookedAudios.setAll(documentLines)));
+                    .inUiThread()
+                    .onSuccess(documentLinesWithBookedAudios::setAll);
             }
         }, FXModalityUserPrincipal.modalityUserPrincipalProperty());
     }

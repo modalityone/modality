@@ -92,10 +92,11 @@ final class DigitsSlideController {
                 bookingFormCreated = false;
             }
             bookEventActivity.getWorkingBooking().getEvent().onExpressionLoaded(bookingForm.getEventFieldsToLoad())
-                .onSuccess(ignored -> UiScheduler.runInUiThread(() -> {
+                .inUiThread()
+                .onSuccess(ignored -> {
                     bookingForm.onWorkingBookingLoaded();
                     onReadyToReveal.run();
-                }));
+                });
         }
     }
 

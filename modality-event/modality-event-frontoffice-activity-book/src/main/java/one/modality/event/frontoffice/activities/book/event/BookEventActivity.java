@@ -227,10 +227,10 @@ public final class BookEventActivity extends ViewDomainActivityBase implements B
         // Loading the possible existing booking of the new person to book for that event
         return DocumentService.loadDocument(event, personToBook)
             .onFailure(Console::log)
-            .onSuccess(newPersonExistingBooking -> UiScheduler.runInUiThread(() -> {
+            .onSuccess(newPersonExistingBooking -> {
                 // Re-instantiating the working booking with that new existing booking (can be null if it doesn't exist)
                 onPolityAndDocumentAggregatesLoaded(workingBookingProperties.getPolicyAggregate(), newPersonExistingBooking);
-            }))
+            })
             .mapEmpty();
     }
 

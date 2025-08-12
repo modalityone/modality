@@ -25,7 +25,6 @@ module modality.event.frontoffice.eventheader {
     requires webfx.kit.util;
     requires webfx.platform.async;
     requires webfx.stack.cache.client;
-    requires webfx.platform.uischeduler;
 
     // Exported packages
     exports one.modality.event.frontoffice.eventheader;

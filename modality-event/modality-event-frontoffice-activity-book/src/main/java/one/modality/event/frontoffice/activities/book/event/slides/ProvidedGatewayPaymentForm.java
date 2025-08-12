@@ -9,7 +9,6 @@ import dev.webfx.extras.util.layout.Layouts;
 import dev.webfx.kit.util.properties.FXProperties;
 import dev.webfx.platform.async.AsyncResult;
 import dev.webfx.platform.console.Console;
-import dev.webfx.platform.uischeduler.UiScheduler;
 import javafx.geometry.Insets;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
@@ -80,7 +79,8 @@ final class ProvidedGatewayPaymentForm implements GatewayPaymentForm {
         cancelButton.setOnAction(e -> {
             pressedButton = cancelButton;
             webPaymentForm.cancelPayment()
-                .onComplete(ar -> UiScheduler.runInUiThread(() -> {
+                .inUiThread()
+                .onComplete(ar -> {
                     if (cancelPaymentResultHandler != null) {
                         cancelPaymentResultHandler.accept(ar);
                     } else if (ar.failed())
@@ -88,7 +88,7 @@ final class ProvidedGatewayPaymentForm implements GatewayPaymentForm {
                     else {
                         stepSlide.displayCancellationSlide(ar.result());
                     }
-                }));
+                });
         });
         payButton.setMaxWidth(Double.MAX_VALUE);
         cancelButton.setMaxWidth(Double.MAX_VALUE);

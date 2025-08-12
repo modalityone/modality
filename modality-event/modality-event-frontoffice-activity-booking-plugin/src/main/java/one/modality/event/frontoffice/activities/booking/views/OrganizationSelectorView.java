@@ -1,5 +1,6 @@
 package one.modality.event.frontoffice.activities.booking.views;
 
+import dev.webfx.extras.controlfactory.button.ButtonFactoryMixin;
 import dev.webfx.extras.panes.*;
 import dev.webfx.extras.util.layout.Layouts;
 import dev.webfx.extras.util.scene.SceneUtil;
@@ -11,8 +12,6 @@ import dev.webfx.platform.util.Numbers;
 import dev.webfx.stack.orm.domainmodel.activity.viewdomain.impl.ViewDomainActivityBase;
 import dev.webfx.stack.orm.entity.Entities;
 import dev.webfx.stack.orm.entity.controls.entity.selector.EntityButtonSelector;
-import dev.webfx.extras.controlfactory.button.ButtonFactoryMixin;
-import javafx.application.Platform;
 import javafx.geometry.Pos;
 import javafx.scene.Cursor;
 import javafx.scene.Node;
@@ -152,7 +151,8 @@ public final class OrganizationSelectorView {
         Organization organization = FXOrganization.getOrganization();
         if (organization != null) {
             organization.onExpressionLoaded("domainName,latitude,longitude,street,cityName,postCode,country.(name,iso_alpha2,latitude,longitude,north,south,east,west),phone,email")
-                .onSuccess(ignored -> Platform.runLater(() -> {
+                .inUiThread()
+                .onSuccess(ignored -> {
                     Integer organizationId = Numbers.toInteger(organization.getPrimaryKey());
                     String imageLink = // Temporarily hardcoded
                         // Manjushri KMC
@@ -238,7 +238,7 @@ public final class OrganizationSelectorView {
                     GeneralUtility.onNodeClickedWithoutScroll(e2 ->
                         BrowserUtil.openExternalBrowser("mailto:" + email), emailLink);
                     FXCountry.setCountry(organization.getCountry());
-                }));
+                });
         }
     }
 

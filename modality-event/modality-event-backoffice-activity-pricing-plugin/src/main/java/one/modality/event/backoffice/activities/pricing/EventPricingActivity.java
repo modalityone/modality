@@ -5,7 +5,6 @@ import dev.webfx.extras.panes.CollapsePane;
 import dev.webfx.extras.util.control.Controls;
 import dev.webfx.extras.util.masterslave.MasterSlaveLinker;
 import dev.webfx.kit.util.properties.FXProperties;
-import dev.webfx.platform.uischeduler.UiScheduler;
 import dev.webfx.platform.util.collection.Collections;
 import dev.webfx.stack.orm.domainmodel.activity.viewdomain.impl.ViewDomainActivityBase;
 import javafx.beans.property.ObjectProperty;
@@ -54,10 +53,11 @@ final class EventPricingActivity extends ViewDomainActivityBase {
             eventPolicyProperty.set(null);
         } else {
             DocumentService.loadPolicy(new LoadPolicyArgument(event))
-                .onSuccess(eventPolicy -> UiScheduler.runInUiThread(() -> {
+                .inUiThread()
+                .onSuccess(eventPolicy -> {
                     eventPolicy.rebuildEntities(event);
                     eventPolicyProperty.set(eventPolicy);
-                }));
+                });
         }
     }
 

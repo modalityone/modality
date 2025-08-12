@@ -2,7 +2,6 @@ package one.modality.event.frontoffice.activities.book.event.slides;
 
 import dev.webfx.extras.webtext.HtmlText;
 import dev.webfx.kit.util.properties.FXProperties;
-import dev.webfx.platform.uischeduler.UiScheduler;
 import dev.webfx.platform.util.Arrays;
 import javafx.beans.property.ObjectProperty;
 import javafx.beans.property.Property;
@@ -70,7 +69,8 @@ final class StepBBookEventSlide extends StepSlide {
             applyWidthConstraints(-1);
             eventHeader.loadAndSetEvent(event)
                 .onFailure(ex -> displayErrorMessage(ex.getMessage()))
-                .onSuccess(x -> UiScheduler.runInUiThread(this::onEventDescriptionLoaded));
+                .inUiThread()
+                .onSuccess(x -> onEventDescriptionLoaded());
         }
     }
 

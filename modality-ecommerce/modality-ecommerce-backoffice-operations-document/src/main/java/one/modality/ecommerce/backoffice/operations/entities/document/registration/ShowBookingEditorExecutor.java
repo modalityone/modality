@@ -7,7 +7,6 @@ import dev.webfx.extras.util.dialog.builder.DialogContent;
 import dev.webfx.platform.async.Future;
 import dev.webfx.platform.async.Promise;
 import dev.webfx.platform.console.Console;
-import dev.webfx.platform.uischeduler.UiScheduler;
 import javafx.collections.ListChangeListener;
 import javafx.scene.control.Button;
 import javafx.scene.layout.Pane;
@@ -37,7 +36,8 @@ final class ShowBookingEditorExecutor {
         Promise<Void> promise = Promise.promise();
         DocumentService.loadDocumentWithPolicy(document)
             .onFailure(Console::log)
-            .onSuccess(policyAndDocumentAggregates -> UiScheduler.runInUiThread(() -> {
+            .inUiThread()
+            .onSuccess(policyAndDocumentAggregates -> {
                 PolicyAggregate policyAggregate = policyAndDocumentAggregates.getPolicyAggregate(); // never null
                 DocumentAggregate existingBooking = policyAndDocumentAggregates.getDocumentAggregate(); // may be null
                 WorkingBooking workingBooking = new WorkingBooking(policyAggregate, existingBooking);
@@ -77,7 +77,7 @@ final class ShowBookingEditorExecutor {
                         .onFailure(dialogCallback::showException);
                 });
 
-            }));
+            });
         return promise.future();
     }
 }

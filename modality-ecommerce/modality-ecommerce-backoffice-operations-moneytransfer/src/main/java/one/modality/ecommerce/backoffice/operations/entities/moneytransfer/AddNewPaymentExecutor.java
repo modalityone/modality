@@ -1,10 +1,9 @@
 package one.modality.ecommerce.backoffice.operations.entities.moneytransfer;
 
-import dev.webfx.platform.async.Future;
 import dev.webfx.extras.util.dialog.DialogCallback;
 import dev.webfx.extras.util.dialog.DialogUtil;
 import dev.webfx.extras.util.layout.Layouts;
-import javafx.application.Platform;
+import dev.webfx.platform.async.Future;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.layout.BorderPane;
@@ -12,8 +11,8 @@ import javafx.scene.layout.Pane;
 import javafx.scene.layout.StackPane;
 import javafx.scene.web.WebView;
 import one.modality.base.shared.entities.Document;
-import one.modality.ecommerce.payment.PaymentService;
 import one.modality.ecommerce.payment.InitiatePaymentArgument;
+import one.modality.ecommerce.payment.PaymentService;
 
 final class AddNewPaymentExecutor {
 
@@ -33,11 +32,12 @@ final class AddNewPaymentExecutor {
         BorderPane borderPane = new BorderPane(stackPane);
         int amount = document.getPriceNet() - document.getPriceDeposit();
         PaymentService.initiatePayment(new InitiatePaymentArgument(amount, document.getPrimaryKey(), false, false))
-                .onFailure(e -> Platform.runLater(() -> borderPane.setCenter(new Label(e.getMessage()))))
-                .onSuccess(r -> Platform.runLater(() -> {
-                    String htmlContent = r.getHtmlContent();
-                    webView.getEngine().loadContent(htmlContent);
-                }));
+            .inUiThread()
+            .onFailure(e -> borderPane.setCenter(new Label(e.getMessage())))
+            .onSuccess(r -> {
+                String htmlContent = r.getHtmlContent();
+                webView.getEngine().loadContent(htmlContent);
+            });
         Button cancelButton = new Button("Cancel");
         Layouts.setMaxWidthToInfinite(cancelButton);
         borderPane.setBottom(cancelButton);

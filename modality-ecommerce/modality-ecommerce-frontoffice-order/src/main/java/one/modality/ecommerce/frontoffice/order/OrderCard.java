@@ -277,7 +277,8 @@ public final class OrderCard {
                                      " where d = ?", new Object[]{orderDocument}))
             .onFailure(Console::log)
             // We update orderDocumentLines, which will consequently update both the card and details UI (so we do that in the UI thread)
-            .onSuccess(entityLists -> UiScheduler.runInUiThread(() -> orderDocumentLines.setAll(entityLists[0])));
+            .inUiThread()
+            .onSuccess(entityLists -> orderDocumentLines.setAll(entityLists[0]));
     }
 
     private Node createPaymentSummary() {

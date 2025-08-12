@@ -25,7 +25,7 @@ public final class DialogExecutorUtil {
         Promise<Void> promise = Promise.promise();
         UiScheduler.runInUiThread(() -> {
             DialogContent dialogContent = new DialogContent().setHeaderText(I18n.getI18nText(BaseI18nKeys.AreYouSure)).setContentText(confirmationText);
-            boolean[] executing = { false };
+            boolean[] executing = {false};
             DialogBuilderUtil.showModalNodeInGoldLayout(dialogContent, parentContainer).addCloseHook(() -> {
                 if (!executing[0])
                     promise.fail(new UserCancellationException());
@@ -34,23 +34,20 @@ public final class DialogExecutorUtil {
                 executing[0] = true;
                 Button executingButton = dialogContent.getPrimaryButton();
                 OperationUtil.turnOnButtonsWaitModeDuringExecution(
-                executor.get()
-                    .onFailure(cause -> {
-                        promise.fail(cause);
-                        UiScheduler.runInUiThread(() -> {
+                    executor.get()
+                        .inUiThread()
+                        .onFailure(cause -> {
+                            promise.fail(cause);
                             reportException(dialogCallback, parentContainer, cause); // Actually just print stack trace for now...
                             if (dialogCallback != null) // So we close the window
                                 dialogCallback.closeDialog();
-                        });
-                    })
-                    .onSuccess(b -> {
-                        promise.complete();
-                        UiScheduler.runInUiThread(() -> {
+                        })
+                        .onSuccess(b -> {
+                            promise.complete();
                             if (dialogCallback != null)
                                 dialogCallback.closeDialog();
-                        });
-                    })
-                , executingButton, dialogContent.getSecondaryButton());
+                        })
+                    , executingButton, dialogContent.getSecondaryButton());
             });
         });
         return promise.future();

@@ -35,7 +35,6 @@ import dev.webfx.stack.orm.entity.*;
 import dev.webfx.stack.orm.entity.binding.EntityBindings;
 import dev.webfx.stack.orm.entity.controls.entity.selector.EntityButtonSelector;
 import dev.webfx.stack.orm.reactive.mapping.entities_to_visual.ReactiveVisualMapper;
-import javafx.application.Platform;
 import javafx.beans.InvalidationListener;
 import javafx.beans.binding.Bindings;
 import javafx.beans.binding.BooleanBinding;
@@ -101,13 +100,13 @@ final class ManageRecurringEventView {
     private static final double EVENT_IMAGE_HEIGHT = 200;
 
     private static final String EVENT_COLUMNS = "[" +
-        "{expression: 'state', label: 'Status', renderer: 'eventStateRenderer'}," +
-        "{expression: 'advertised', label: 'Advertised'}," +
-        "{expression: 'name', label: 'Name'}," +
-        "{expression: 'type', label: 'TypeOfEvent'}," +
-        "{expression: 'venue.name', label: 'Location'}," +
-        "{expression: 'dateIntervalFormat(startDate, endDate)', label: 'Dates'}" +
-        "]";
+                                                "{expression: 'state', label: 'Status', renderer: 'eventStateRenderer'}," +
+                                                "{expression: 'advertised', label: 'Advertised'}," +
+                                                "{expression: 'name', label: 'Name'}," +
+                                                "{expression: 'type', label: 'TypeOfEvent'}," +
+                                                "{expression: 'venue.name', label: 'Location'}," +
+                                                "{expression: 'dateIntervalFormat(startDate, endDate)', label: 'Dates'}" +
+                                                "]";
 
     private final RecurringEventsActivity activity;
     private final BooleanProperty activeProperty = new SimpleBooleanProperty();
@@ -322,14 +321,15 @@ final class ManageRecurringEventView {
         entityStore.executeQueryBatch(
                 // Index 0: the  scheduledItem
                 new EntityStoreQuery("select item,date,startTime, site, programScheduledItem, bookableScheduledItem, endTime, event.(openingDate, shortDescription, description, state, advertised, kbs3, type.recurringItem, externalLink, venue.name), (select id from Attendance " +
-                    " where scheduledItem=si limit 1) as attendance " +
-                    " from ScheduledItem si where event=?", new Object[]{e}),
+                                     " where scheduledItem=si limit 1) as attendance " +
+                                     " from ScheduledItem si where event=?", new Object[]{e}),
                 //Index 1: the video Item (we should have exactly 1)
                 new EntityStoreQuery("select Item where family=? and organization=?", new Object[]{KnownItemFamily.VIDEO.getPrimaryKey(), FXOrganization.getOrganization()}),
                 //Index 2: the audio Item (we should have exactly one that has the same language as the default language of the organization)
                 new EntityStoreQuery("select Item where family=? and organization=? and language=organization.language", new Object[]{KnownItemFamily.AUDIO_RECORDING.getPrimaryKey(), FXOrganization.getOrganization()}))
             .onFailure(Console::log)
-            .onSuccess(entityLists -> Platform.runLater(() -> {
+            .inUiThread()
+            .onSuccess(entityLists -> {
                 EntityList<ScheduledItem> scheduledItems = entityLists[0];
                 EntityList<Item> videoItems = entityLists[1];
                 EntityList<Item> audioItems = entityLists[2];
@@ -461,7 +461,7 @@ final class ManageRecurringEventView {
                 }
                 currentObservedEvent = currentEditedEvent;
                 bindButtons();
-            }));
+            });
     }
 
     private void bindButtons() {
@@ -513,7 +513,7 @@ final class ManageRecurringEventView {
         if (Objects.equals(cloudImagePath, recentlyUploadedCloudPictureId))
             return;
         ModalityCloudinary.loadImage(cloudImagePath, eventImageContainer, EVENT_IMAGE_WIDTH, EVENT_IMAGE_HEIGHT, () -> null)
-                .onComplete(ar -> isPictureDisplayed.setValue(eventImageContainer.getContent() != null));
+            .onComplete(ar -> isPictureDisplayed.setValue(eventImageContainer.getContent() != null));
     }
 
 
@@ -589,7 +589,8 @@ final class ManageRecurringEventView {
             currentObservedEvent = currentEditedEvent;
             entityStore.executeQuery("select recurringItem, organization from EventType where recurringItem!=null and organization=?", FXOrganization.getOrganization())
                 .onFailure(Console::log)
-                .onSuccess(e -> Platform.runLater(() -> {
+                .inUiThread()
+                .onSuccess(e -> {
                     //TODO: if there is several type of recurring EventType for an organization, create an UI that allow to select which one we choose.
                     EventType eventType = (EventType) e.get(0);
                     recurringItem = eventType.getRecurringItem();
@@ -630,14 +631,15 @@ final class ManageRecurringEventView {
                                 site.setFieldValue("main", true);
                                 site.setFieldValue("itemFamily", KnownItemFamily.TEACHING.getPrimaryKey());
                                 //We had in the database the site now (otherwise too complicated to manage with the actual components)
-                                updateStoreForSite.submitChanges().onSuccess((batch -> Platform.runLater(() -> {
+                                updateStoreForSite.submitChanges()
+                                    .inUiThread()
+                                    .onSuccess((batch -> {
                                         Object newSiteId = batch.getArray()[0].getGeneratedKeys()[0];
                                         Site newSite = updateStoreForSite.createEntity(Site.class, newSiteId);
                                         //The createEntity doesn't load the name, so we need to set it up manually
                                         newSite.setName(site.getName());
                                         setSelectedItem(newSite);
-                                    }
-                                )));
+                                    }));
                             });
                         }
 
@@ -673,7 +675,7 @@ final class ManageRecurringEventView {
                         teachingsWorkingScheduledItems.forEach(si -> si.setSite(eventSite));
                     });
                     locationHBox.getChildren().setAll(siteLabel, siteSelector.getButton());
-                }));
+                });
         })));
 
         titleEventDetailsLabel = I18nControls.newLabel(RecurringEventsI18nKeys.EventDetailsTitle);
@@ -694,7 +696,8 @@ final class ManageRecurringEventView {
                     teachingsScheduledItemsReadFromDatabase.forEach(updateStore::deleteEntity);
                     updateStore.deleteEntity(currentEditedEvent);
                     return updateStore.submitChanges()
-                        .onFailure(x -> Platform.runLater(() -> {
+                        .inUiThread()
+                        .onFailure(x -> {
                             areWeDeleting = false;
                             Text infoText = I18n.newText(RecurringEventsI18nKeys.ErrorWhileDeletingEvent);
                             Bootstrap.textSuccess(Bootstrap.strong(Bootstrap.h3(infoText)));
@@ -711,12 +714,12 @@ final class ManageRecurringEventView {
                             okErrorButton.setOnAction(m -> errorMessageCallback.closeDialog());
                             errorDialog.setBottom(okErrorButton);
                             BorderPane.setAlignment(okErrorButton, Pos.CENTER);
-                        }))
-                        .onSuccess(x -> Platform.runLater(() -> {
+                        })
+                        .onSuccess(x -> {
                             String cloudImagePath = ModalityCloudinary.eventImagePath(currentEditedEvent);
                             deleteCloudPictureIfNecessary(cloudImagePath);
                             uploadCloudPictureIfNecessary(cloudImagePath);
-                        }));
+                        });
                 });
             }
         });
@@ -1060,16 +1063,15 @@ final class ManageRecurringEventView {
         cancelButton.disableProperty().unbind();
         OperationUtil.turnOnButtonsWaitModeDuringExecution(
             updateStore.submitChanges()
-                .onFailure(x -> {
-                    DialogContent dialog = DialogContent.createConfirmationDialog("Error", "Operation failed", x.getMessage());
+                .inUiThread()
+                .onFailure(ex -> {
+                    DialogContent dialog = DialogContent.createConfirmationDialog("Error", "Operation failed", ex.getMessage());
                     dialog.setOk();
-                    Platform.runLater(() -> {
-                        DialogBuilderUtil.showModalNodeInGoldLayout(dialog, FXMainFrameDialogArea.getDialogArea());
-                        dialog.getPrimaryButton().setOnAction(a -> dialog.getDialogCallback().closeDialog());
-                    });
-                    Console.log(x);
+                    DialogBuilderUtil.showModalNodeInGoldLayout(dialog, FXMainFrameDialogArea.getDialogArea());
+                    dialog.getPrimaryButton().setOnAction(a -> dialog.getDialogCallback().closeDialog());
+                    Console.log(ex);
                 })
-                .onSuccess(x -> Platform.runLater(() -> {
+                .onSuccess(x -> {
                     String cloudImagePath = ModalityCloudinary.eventImagePath(currentEditedEvent);
                     deleteCloudPictureIfNecessary(cloudImagePath);
                     uploadCloudPictureIfNecessary(cloudImagePath);
@@ -1078,9 +1080,9 @@ final class ManageRecurringEventView {
                     cloudPictureFileToUpload = null;
                     eventVisualMapper.requestSelectedEntity(currentEditedEvent);
                     // displayEventDetails(currentEditedEvent);
-                }))
+                })
                 // Reestablishing buttons binding
-                .onComplete(ar -> Platform.runLater(this::bindButtons))
+                .onComplete(ar -> bindButtons())
             , saveButton, cancelButton);
     }
 

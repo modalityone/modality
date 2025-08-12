@@ -14,7 +14,6 @@ import dev.webfx.stack.orm.entity.EntityList;
 import dev.webfx.stack.orm.entity.EntityStore;
 import dev.webfx.stack.orm.entity.EntityStoreQuery;
 import dev.webfx.stack.orm.entity.UpdateStore;
-import javafx.application.Platform;
 import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.ObjectProperty;
 import javafx.beans.property.SimpleBooleanProperty;
@@ -149,7 +148,8 @@ final class ProgramModel {
                 new EntityStoreQuery("select teachingsDayTicket, audioRecordingsDayTicket from Event where id=?", new Object[]{selectedEvent}),
                 new EntityStoreQuery("select distinct name, code from item  where family.code = ? and organization = ? and not deprecated order by name", new Object[]{KnownItemFamily.AUDIO_RECORDING.getCode(), FXEvent.getEvent().getOrganization()}))
             .onFailure(Console::log)
-            .onSuccess(entityLists -> Platform.runLater(() -> {
+            .inUiThread()
+            .onSuccess(entityLists -> {
                 // Extracting the different entity lists from the query batch result
                 EntityList<DayTemplate> dayTemplates = entityLists[0];
                 EntityList<Site> sites = entityLists[1];
@@ -170,7 +170,7 @@ final class ProgramModel {
                     dayTemplateModel.reloadTimelinesFromDatabase();
                 }
                 resetModelAndUiToInitial();
-            }));
+            });
     }
 
     private void resetModelAndUiToInitial() {
@@ -244,35 +244,31 @@ final class ProgramModel {
 
     Future<?> submitUpdateStoreChanges(UpdateStore updateStore) {
         return updateStore.submitChanges()
+            .inUiThread()
             .onFailure(x -> {
                 DialogContent dialog = DialogContent.createConfirmationDialog("Error", "Operation failed", x.getMessage());
                 dialog.setOk();
-                Platform.runLater(() -> {
-                    DialogBuilderUtil.showModalNodeInGoldLayout(dialog, FXMainFrameDialogArea.getDialogArea());
-                    dialog.getPrimaryButton().setOnAction(a -> dialog.getDialogCallback().closeDialog());
-                });
+                DialogBuilderUtil.showModalNodeInGoldLayout(dialog, FXMainFrameDialogArea.getDialogArea());
+                dialog.getPrimaryButton().setOnAction(a -> dialog.getDialogCallback().closeDialog());
                 Console.log(x);
             })
-            .onSuccess(x -> Platform.runLater(()-> {
+            .onSuccess(x -> {
                 reloadProgramFromSelectedEvent(FXEvent.getEvent());
                 resetModelAndUiToInitial();
-            }));
+            });
     }
 
     Future<?> submitUpdateStoreChangesAndReload(UpdateStore updateStore) {
         return updateStore.submitChanges()
+            .inUiThread()
             .onFailure(x -> {
                 DialogContent dialog = DialogContent.createConfirmationDialog("Error", "Operation failed", x.getMessage());
                 dialog.setOk();
-                Platform.runLater(() -> {
-                    DialogBuilderUtil.showModalNodeInGoldLayout(dialog, FXMainFrameDialogArea.getDialogArea());
-                    dialog.getPrimaryButton().setOnAction(a -> dialog.getDialogCallback().closeDialog());
-                });
+                DialogBuilderUtil.showModalNodeInGoldLayout(dialog, FXMainFrameDialogArea.getDialogArea());
+                dialog.getPrimaryButton().setOnAction(a -> dialog.getDialogCallback().closeDialog());
                 Console.log(x);
             })
-            .onSuccess(x -> Platform.runLater(()-> {
-                reloadProgramFromSelectedEvent(FXEvent.getEvent());
-            }));
+            .onSuccess(x -> reloadProgramFromSelectedEvent(FXEvent.getEvent()));
     }
 
     private boolean validateForm() {

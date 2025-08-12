@@ -13,7 +13,6 @@ import dev.webfx.kit.util.properties.FXProperties;
 import dev.webfx.platform.console.Console;
 import dev.webfx.stack.orm.entity.*;
 import dev.webfx.stack.orm.entity.binding.EntityBindings;
-import javafx.application.Platform;
 import javafx.beans.binding.BooleanExpression;
 import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.SimpleBooleanProperty;
@@ -254,7 +253,8 @@ final class VideoTabView {
                 new EntityStoreQuery("select url, scheduledItem.(item, item.code, date, vodDelayed, published) from Media where scheduledItem.event = ? and scheduledItem.item.code = ? order by id",
                     new Object[]{currentEditedEvent, KnownItem.VIDEO.getCode()})
             ).onFailure(Console::log)
-            .onSuccess(entityList -> Platform.runLater(() -> {
+            .inUiThread()
+            .onSuccess(entityList -> {
                 //TODO: when we know which Item we use for VOD, we change the code bellow
                 // EntityList<Item> VODItems = entityList[0];
                 EntityList<ScheduledItem> videoSIList = entityList[1];
@@ -271,7 +271,7 @@ final class VideoTabView {
 
                 // Now that the data is ready, update the container
                 container.setCenter(languageLinkManagement.getContainer());
-            }));
+            });
 
         // Return the placeholder container, which will be updated later
         return container;
@@ -317,8 +317,9 @@ final class VideoTabView {
     private void displayEventDetails(Event e) {
         if (e != null)
             e.onExpressionLoaded("organization,vodExpirationDate,livestreamUrl")
-                .onSuccess(ignored -> Platform.runLater(this::drawContainer))
-                .onFailure((Console::log));
+                .onFailure((Console::log))
+                .inUiThread()
+                .onSuccess(ignored -> drawContainer());
     }
 
     //This parameter will allow us to manage the interaction and behaviour of the Panel that display the details of an event and the event selected

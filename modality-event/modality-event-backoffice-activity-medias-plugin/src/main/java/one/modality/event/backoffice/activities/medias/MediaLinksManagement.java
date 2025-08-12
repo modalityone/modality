@@ -1,22 +1,20 @@
 package one.modality.event.backoffice.activities.medias;
 
+import dev.webfx.extras.i18n.I18n;
+import dev.webfx.extras.i18n.controls.I18nControls;
+import dev.webfx.extras.operation.OperationUtil;
 import dev.webfx.extras.panes.MonoPane;
 import dev.webfx.extras.styles.bootstrap.Bootstrap;
 import dev.webfx.extras.switches.Switch;
 import dev.webfx.extras.theme.text.TextTheme;
 import dev.webfx.extras.time.format.LocalizedTime;
+import dev.webfx.extras.validation.ValidationSupport;
 import dev.webfx.kit.util.properties.FXProperties;
 import dev.webfx.platform.console.Console;
-import dev.webfx.platform.uischeduler.UiScheduler;
-import dev.webfx.extras.i18n.I18n;
-import dev.webfx.extras.i18n.controls.I18nControls;
 import dev.webfx.stack.orm.entity.EntityStore;
 import dev.webfx.stack.orm.entity.EntityStoreQuery;
 import dev.webfx.stack.orm.entity.UpdateStore;
 import dev.webfx.stack.orm.entity.binding.EntityBindings;
-import dev.webfx.extras.operation.OperationUtil;
-import dev.webfx.extras.validation.ValidationSupport;
-import javafx.application.Platform;
 import javafx.beans.InvalidationListener;
 import javafx.beans.property.IntegerProperty;
 import javafx.beans.property.SimpleIntegerProperty;
@@ -80,9 +78,8 @@ public abstract class MediaLinksManagement {
         entityStore.<Media>executeQuery(
                 new EntityStoreQuery("select url, scheduledItem.programScheduledItem, scheduledItem.name, scheduledItem.programScheduledItem.name, scheduledItem.item, scheduledItem.date, scheduledItem.published, scheduledItem.item.code from Media where scheduledItem.event= ? and scheduledItem.item.code = ?", new Object[]{FXEvent.getEvent(), currentItemCode}))
             .onFailure(Console::log)
-            .onSuccess(mediasList -> Platform.runLater(() ->
-                recordingsMediasReadFromDatabase.setAll(mediasList)
-            ));
+            .inUiThread()
+            .onSuccess(recordingsMediasReadFromDatabase::setAll);
     }
 
     public void updatePercentageProperty(LocalDate date, IntegerProperty percentageProperty, StringProperty cssProperty) {
@@ -355,8 +352,8 @@ public abstract class MediaLinksManagement {
                     OperationUtil.turnOnButtonsWaitModeDuringExecution(
                         updateStore.submitChanges()
                             .onFailure(Console::log)
-                            .onSuccess(x ->
-                                UiScheduler.runInUiThread(this::resetUpdateStoreAndOtherComponents))
+                            .inUiThread()
+                            .onSuccess(x -> resetUpdateStoreAndOtherComponents())
                         , saveButton);
                 }
             });

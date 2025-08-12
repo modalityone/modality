@@ -7,13 +7,13 @@ import dev.webfx.extras.time.format.LocalizedTime;
 import dev.webfx.extras.util.control.Controls;
 import dev.webfx.extras.util.control.HtmlInputAutocomplete;
 import dev.webfx.extras.validation.ValidationSupport;
+import dev.webfx.platform.console.Console;
 import dev.webfx.stack.authn.login.ui.spi.impl.gateway.UiLoginGatewayBase;
 import dev.webfx.stack.authn.login.ui.spi.impl.gateway.UiLoginPortalCallback;
 import dev.webfx.stack.hash.md5.Md5;
 import dev.webfx.stack.orm.entity.EntityStore;
 import dev.webfx.stack.orm.entity.UpdateStore;
 import dev.webfx.stack.session.state.client.fx.FXUserId;
-import javafx.application.Platform;
 import javafx.beans.binding.Bindings;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.geometry.Insets;
@@ -134,7 +134,8 @@ public final class ModalitySignupUiLoginGateway extends UiLoginGatewayBase {
                 person.setFrontendAccount(frontendAccount);
 
                 updateStore.submitChanges()
-                    .onFailure(exception -> Platform.runLater(() -> {
+                    .inUiThread()
+                    .onFailure(exception -> {
                         if (exception.getMessage().contains("ERROR: duplicate key value violates unique constraint \"frontend_account_corporation_id_username\"")) {
                             errorMessage.setText("Your email is already registered in the database. Try to reset the password to access your account");
                             errorMessage.setVisible(true);
@@ -142,14 +143,13 @@ public final class ModalitySignupUiLoginGateway extends UiLoginGatewayBase {
                             errorMessage.setText("An error has occurred during the creation. Please try later");
                             errorMessage.setVisible(true);
                         }
-                        System.out.println(exception.getMessage());
+                        Console.log(exception);
                         updateStore.cancelChanges();
-                    }))
-                    .onSuccess(result -> Platform.runLater(() -> {
-                        System.out.println("insert done");
+                    })
+                    .onSuccess(result -> {
                         //We log the user in
                         FXUserId.setUserId(new ModalityUserPrincipal(frontendAccount.getPrimaryKey(), person.getPrimaryKey()));
-                    }));
+                    });
             }
         });
 

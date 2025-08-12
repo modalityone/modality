@@ -21,7 +21,6 @@ import dev.webfx.stack.orm.entity.UpdateStore;
 import dev.webfx.stack.orm.entity.binding.EntityBindings;
 import dev.webfx.stack.orm.entity.controls.entity.selector.ButtonSelector;
 import dev.webfx.stack.orm.entity.controls.entity.selector.EntityButtonSelector;
-import javafx.application.Platform;
 import javafx.beans.binding.BooleanBinding;
 import javafx.beans.binding.BooleanExpression;
 import javafx.beans.property.BooleanProperty;
@@ -173,13 +172,14 @@ final class ProgramView extends ModalitySlaveEditor<Event> implements ButtonFact
             }
                 OperationUtil.turnOnButtonsWaitModeDuringExecution(
                     programModel.generatePreliminaryBookableSI()
-                        .onFailure(error-> Platform.runLater(()-> {
+                        .inUiThread()
+                        .onFailure(error -> {
                             DialogContent dialogContent = new DialogContent().setContentText(error.getMessage()).setOk();
                             DialogBuilderUtil.showModalNodeInGoldLayout(dialogContent, FXMainFrameDialogArea.getDialogArea());
                             DialogBuilderUtil.armDialogContentButtons(dialogContent, DialogCallback::closeDialog);
                             updateStore.cancelChanges();
-                        }))
-                        .onSuccess(success->{programModel.getDayTicketPreliminaryScheduledItemProperty().setValue(true);})
+                        })
+                        .onSuccess(success-> programModel.getDayTicketPreliminaryScheduledItemProperty().setValue(true))
                     , generatePreliminaryBookableSIButton);});
 
         HBox itemAndButtonHBox = new HBox(20,chooseAnItemLabel,itemSelectorButton,generatePreliminaryBookableSIButton);

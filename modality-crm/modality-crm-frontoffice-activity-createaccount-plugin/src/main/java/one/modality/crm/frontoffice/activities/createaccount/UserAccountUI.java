@@ -25,7 +25,6 @@ import dev.webfx.stack.orm.entity.UpdateStore;
 import dev.webfx.stack.orm.entity.binding.EntityBindings;
 import dev.webfx.stack.orm.entity.controls.entity.selector.ButtonSelectorParameters;
 import dev.webfx.stack.orm.entity.controls.entity.selector.EntityButtonSelector;
-import javafx.application.Platform;
 import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.SimpleBooleanProperty;
 import javafx.geometry.Insets;
@@ -351,20 +350,22 @@ public class UserAccountUI implements ModalityButtonFactoryMixin {
             actionButton.setOnAction(e -> {
                 if (validateForm()) {
                     AuthenticationService.authenticate(new FinaliseAccountCreationCredentials(token, passwordField.getText().trim()))
+                        .inUiThread()
                         .onFailure(failure -> {
-                            Console.log("Error while creating account:" + failure);
-                            Platform.runLater(() -> transformPaneToAccountCreationError(CreateAccountI18nKeys.CreatingAccountError));
+                            Console.log("Error while creating account:", failure);
+                            transformPaneToAccountCreationError(CreateAccountI18nKeys.CreatingAccountError);
                         })
                         .onSuccess(faPk -> {
                             person.setFrontendAccount(faPk);
                             updateStore.submitChanges()
+                                .inUiThread()
                                 .onFailure(failure -> {
                                     Console.log("Error while creating account:" + failure);
-                                    Platform.runLater(() -> transformPaneToAccountCreationError(CreateAccountI18nKeys.CreatingPersonAssociatedToAccountError));
+                                    transformPaneToAccountCreationError(CreateAccountI18nKeys.CreatingPersonAssociatedToAccountError);
                                 })
                                 .onSuccess(success -> {
                                     Console.log("Account created with success");
-                                    Platform.runLater(this::transformPaneToAccountCreatedWithSuccess);
+                                    transformPaneToAccountCreatedWithSuccess();
                                 });
                         });
                 }
@@ -372,14 +373,15 @@ public class UserAccountUI implements ModalityButtonFactoryMixin {
         } else {
             //Here we're editing an existing user
             actionButton.setOnAction(e -> {
-                updateStore.submitChanges().
-                    onFailure(failure -> {
+                updateStore.submitChanges()
+                    .inUiThread()
+                    .onFailure(failure -> {
                         Console.log("Error while updating account:" + failure);
-                        Platform.runLater(() -> transformPaneToAccountCreationError(CreateAccountI18nKeys.CreatingPersonAssociatedToAccountError));
+                        transformPaneToAccountCreationError(CreateAccountI18nKeys.CreatingPersonAssociatedToAccountError);
                     })
                     .onSuccess(success -> {
                         Console.log("Account updated with success");
-                        Platform.runLater(this::transformPaneToAccountCreatedWithSuccess);
+                        transformPaneToAccountCreatedWithSuccess();
                     });
                 //TODO
             });

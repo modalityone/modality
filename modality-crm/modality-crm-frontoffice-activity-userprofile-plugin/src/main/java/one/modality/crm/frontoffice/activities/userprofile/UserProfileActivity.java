@@ -15,7 +15,6 @@ import dev.webfx.stack.orm.entity.EntityStore;
 import dev.webfx.stack.orm.entity.UpdateStore;
 import dev.webfx.stack.orm.entity.binding.EntityBindings;
 import javafx.animation.Interpolator;
-import javafx.application.Platform;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.property.StringProperty;
 import javafx.scene.Node;
@@ -64,7 +63,7 @@ final class UserProfileActivity extends ViewDomainActivityBase implements Modali
 
     @Override
     public Node buildUi() {
-        view = new UserProfileView(changePictureUI, true, true, false,true, true, true, true, true, true);
+        view = new UserProfileView(changePictureUI, true, true, false, true, true, true, true, true, true);
         VBox viewNode = view.buildView();
         viewNode.getChildren().add(HelpPanel.createEmailHelpPanel(UserProfileI18nKeys.UserProfileHelp, "kbs@kadampa.net"));
 
@@ -113,21 +112,18 @@ final class UserProfileActivity extends ViewDomainActivityBase implements Modali
         view.saveButton.disableProperty().bind(EntityBindings.hasChangesProperty(updateStore).not());
         view.saveButton.setOnAction(e -> {
             if (validateForm())
-                updateStore.submitChanges().
-                    onFailure(failure -> {
+                updateStore.submitChanges()
+                    .inUiThread()
+                    .onFailure(failure -> {
                         Console.log("Error while updating account:" + failure);
-                        Platform.runLater(() -> {
-                            view.infoMessage.setVisible(true);
-                            I18nControls.bindI18nProperties(view.infoMessage, UserProfileI18nKeys.ErrorWhileUpdatingPersonalInformation);
-                        });
+                        view.infoMessage.setVisible(true);
+                        I18nControls.bindI18nProperties(view.infoMessage, UserProfileI18nKeys.ErrorWhileUpdatingPersonalInformation);
                     })
                     .onSuccess(success -> {
                         Console.log("Account updated with success");
-                        Platform.runLater(() -> {
-                            view.infoMessage.setVisible(true);
-                            I18nControls.bindI18nProperties(view.infoMessage, UserProfileI18nKeys.PersonalInformationUpdated);
-                            FXUserPerson.reloadUserPerson();
-                        });
+                        view.infoMessage.setVisible(true);
+                        I18nControls.bindI18nProperties(view.infoMessage, UserProfileI18nKeys.PersonalInformationUpdated);
+                        FXUserPerson.reloadUserPerson();
                     });
         });
 
@@ -164,35 +160,32 @@ final class UserProfileActivity extends ViewDomainActivityBase implements Modali
         FXProperties.runNowAndOnPropertyChange(token -> {
             if (token != null) {
                 AuthenticationService.authenticate(new FinaliseEmailUpdateCredentials(token))
+                    .inUiThread()
                     .onFailure(e -> {
                         String technicalMessage = e.getMessage();
                         Console.log("Technical error: " + technicalMessage);
-                        Platform.runLater(() -> {
-                            messagePane.setInfoMessage(technicalMessage, "danger");
-                            messagePane.setTitle(UserProfileI18nKeys.Error);
-                            DialogCallback callback = DialogUtil.showModalNodeInGoldLayout(messagePane.getView(), FXMainFrameDialogArea.getDialogArea());
-                            FXMainFrameDialogArea.getDialogArea().setOnMouseClicked(ev -> {
-                                callback.closeDialog();
-                                messagePane.resetToInitialState();
-                            });
-                            messagePane.setDialogCallback(callback);
-                            Animations.fadeIn(messagePane.getView());
+                        messagePane.setInfoMessage(technicalMessage, "danger");
+                        messagePane.setTitle(UserProfileI18nKeys.Error);
+                        DialogCallback callback = DialogUtil.showModalNodeInGoldLayout(messagePane.getView(), FXMainFrameDialogArea.getDialogArea());
+                        FXMainFrameDialogArea.getDialogArea().setOnMouseClicked(ev -> {
+                            callback.closeDialog();
+                            messagePane.resetToInitialState();
                         });
+                        messagePane.setDialogCallback(callback);
+                        Animations.fadeIn(messagePane.getView());
                     })
                     .onSuccess(email -> {
                         Console.log("Email change successfully: " + email);
-                        Platform.runLater(() -> {
-                            messagePane.setInfoMessage(UserProfileI18nKeys.EmailUpdatedWithSuccess, "success");
-                            messagePane.setTitle(UserProfileI18nKeys.UserProfileTitle);
-                            DialogCallback callback = DialogUtil.showModalNodeInGoldLayout(messagePane.getView(), FXMainFrameDialogArea.getDialogArea());
-                            FXMainFrameDialogArea.getDialogArea().setOnMouseClicked(ev -> {
-                                callback.closeDialog();
-                                messagePane.resetToInitialState();
-                            });
-                            messagePane.setDialogCallback(callback);
-                            Animations.fadeIn(messagePane.getView());
-                            FXUserPerson.reloadUserPerson();
+                        messagePane.setInfoMessage(UserProfileI18nKeys.EmailUpdatedWithSuccess, "success");
+                        messagePane.setTitle(UserProfileI18nKeys.UserProfileTitle);
+                        DialogCallback callback = DialogUtil.showModalNodeInGoldLayout(messagePane.getView(), FXMainFrameDialogArea.getDialogArea());
+                        FXMainFrameDialogArea.getDialogArea().setOnMouseClicked(ev -> {
+                            callback.closeDialog();
+                            messagePane.resetToInitialState();
                         });
+                        messagePane.setDialogCallback(callback);
+                        Animations.fadeIn(messagePane.getView());
+                        FXUserPerson.reloadUserPerson();
                     });
             }
         }, tokenProperty);
@@ -233,7 +226,7 @@ final class UserProfileActivity extends ViewDomainActivityBase implements Modali
         if (Objects.equals(cloudImagePath, changePictureUI.getRecentlyUploadedCloudPictureId()))
             return;
         ModalityCloudinary.loadImage(cloudImagePath, view.pictureImageContainer, 150, 150, () -> new ImageView(UserProfileView.NO_PICTURE_IMAGE))
-                .onSuccess(imageView -> view.setImage(imageView));
+            .onSuccess(imageView -> view.setImage(imageView));
     }
 
     public Person getCurrentPerson() {

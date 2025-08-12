@@ -1,7 +1,6 @@
 package one.modality.ecommerce.payment.client;
 
 import dev.webfx.platform.console.Console;
-import javafx.application.Platform;
 import javafx.geometry.Insets;
 import javafx.scene.Node;
 import javafx.scene.control.Button;
@@ -9,8 +8,8 @@ import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
 import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
-import one.modality.ecommerce.payment.PaymentService;
 import one.modality.ecommerce.payment.MakeApiPaymentArgument;
+import one.modality.ecommerce.payment.PaymentService;
 
 /**
  * @author Bruno Salmon
@@ -75,12 +74,13 @@ public class ApiPaymentForm {
             payBtn.setDisable(true);
             cancelPayBtn.setDisable(true);
             PaymentService.makeApiPayment(new MakeApiPaymentArgument((int) (100 * Double.parseDouble(amountTF.getText())), null, ccNumberTF.getText(), expiryTF.getText()))
-                    .onSuccess(r -> Console.log(r.isSuccess() ? "Payment OK!" : "Payment KO!"))
-                    .onFailure(r -> Console.log("Payment Error!"))
-                    .onComplete(r -> Platform.runLater(() -> {
-                        payBtn.setDisable(false);
-                        cancelPayBtn.setDisable(false);
-                    }));
+                .onSuccess(r -> Console.log(r.isSuccess() ? "Payment OK!" : "Payment KO!"))
+                .onFailure(ex -> Console.log("Payment Error:", ex))
+                .inUiThread()
+                .onComplete(r -> {
+                    payBtn.setDisable(false);
+                    cancelPayBtn.setDisable(false);
+                });
         });
         grid.setMaxSize(Region.USE_PREF_SIZE, Region.USE_PREF_SIZE);
         grid.setBorder(new Border(new BorderStroke(Color.GRAY, BorderStrokeStyle.SOLID, null, BorderStroke.THIN)));

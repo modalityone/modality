@@ -1,6 +1,7 @@
 package one.modality.event.backoffice.activities.medias;
 
 import dev.webfx.extras.filepicker.FilePicker;
+import dev.webfx.extras.i18n.controls.I18nControls;
 import dev.webfx.extras.panes.MonoPane;
 import dev.webfx.extras.styles.bootstrap.Bootstrap;
 import dev.webfx.extras.switches.Switch;
@@ -8,11 +9,9 @@ import dev.webfx.extras.theme.shape.ShapeTheme;
 import dev.webfx.extras.util.control.Controls;
 import dev.webfx.kit.util.properties.FXProperties;
 import dev.webfx.platform.console.Console;
-import dev.webfx.extras.i18n.controls.I18nControls;
 import dev.webfx.stack.orm.entity.EntityStore;
 import dev.webfx.stack.orm.entity.UpdateStore;
 import dev.webfx.stack.orm.entity.binding.EntityBindings;
-import javafx.application.Platform;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.geometry.Insets;
@@ -86,10 +85,11 @@ public class MediaLinksForAudioRecordingsManagement extends MediaLinksManagement
         SvgIcons.armButton(trashImage, () ->
             ModalityCloudinary.deleteImage(eventCoverCloudImagePath)
                 .onFailure(Console::log)
-                .onSuccess(e -> Platform.runLater(() -> {
+                .inUiThread()
+                .onSuccess(e -> {
                     eventCoverImageContainer.setContent(null);
                     trashImage.setVisible(false);
-                }))
+                })
         );
         trashImage.setVisible(false);
         ShapeTheme.createSecondaryShapeFacet(trashImage).style();
@@ -118,9 +118,10 @@ public class MediaLinksForAudioRecordingsManagement extends MediaLinksManagement
         FXProperties.runOnPropertyChange(fileToUpload -> {
             replaceProgressIndicator.setVisible(true);
             ModalityCloudinary.replaceImage(eventCoverCloudImagePath, fileToUpload)
+                .inUiThread()
                 .onComplete(ar -> {
                     if (ar.failed())
-                        Platform.runLater(() -> replaceProgressIndicator.setVisible(false));
+                        replaceProgressIndicator.setVisible(false);
                     else
                         loadAudioCoverPicture();
                 });

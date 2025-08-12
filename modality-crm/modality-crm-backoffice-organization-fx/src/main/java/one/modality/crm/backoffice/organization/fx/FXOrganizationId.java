@@ -2,7 +2,6 @@ package one.modality.crm.backoffice.organization.fx;
 
 import dev.webfx.kit.util.properties.FXProperties;
 import dev.webfx.platform.console.Console;
-import dev.webfx.platform.uischeduler.UiScheduler;
 import dev.webfx.stack.authn.login.ui.FXLoginContext;
 import dev.webfx.stack.orm.entity.Entities;
 import dev.webfx.stack.orm.entity.EntityId;
@@ -48,13 +47,13 @@ public final class FXOrganizationId {
                 } else { // Otherwise, we request the server to load that organization from that id
                     organizationStore.<Organization>executeQuery("select " + FXOrganization.EXPECTED_FIELDS + " from Organization where id=?", organizationId)
                         .onFailure(Console::log)
-                        .onSuccess(list -> // on successfully receiving the list (should be a singleton list)
-                            UiScheduler.runInUiThread(() -> {
-                                if (Objects.equals(organizationId, getOrganizationId())) { // final check it is still relevant
-                                    Organization loadedOrganization = list.isEmpty() ? null : list.get(0);
-                                    FXOrganization.setOrganization(loadedOrganization); // we finally set FXEvent
-                                }
-                            }));
+                        .inUiThread()
+                        .onSuccess(list -> { // on successfully receiving the list (should be a singleton list)
+                            if (Objects.equals(organizationId, getOrganizationId())) { // final check it is still relevant
+                                Organization loadedOrganization = list.isEmpty() ? null : list.get(0);
+                                FXOrganization.setOrganization(loadedOrganization); // we finally set FXEvent
+                            }
+                        });
                 }
             }
         }

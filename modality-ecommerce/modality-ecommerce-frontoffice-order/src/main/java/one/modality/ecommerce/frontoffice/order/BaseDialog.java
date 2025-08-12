@@ -4,10 +4,10 @@ package one.modality.ecommerce.frontoffice.order;
 import dev.webfx.extras.i18n.controls.I18nControls;
 import dev.webfx.extras.panes.MonoPane;
 import dev.webfx.extras.styles.bootstrap.Bootstrap;
+import dev.webfx.platform.uischeduler.UiScheduler;
 import javafx.animation.KeyFrame;
 import javafx.animation.KeyValue;
 import javafx.animation.Timeline;
-import javafx.application.Platform;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.control.Label;
@@ -83,7 +83,7 @@ abstract class BaseDialog {
     }
 
     protected void displaySuccessMessage(Object titleKey, Object messageKey, Object detailsKey, int duration, Runnable onFinished) {
-        Platform.runLater(() -> {
+        UiScheduler.runInUiThread(() -> {
             VBox successPane = new VBox(10);
             successPane.setAlignment(Pos.CENTER);
             successPane.setPadding(new Insets(40, 24, 40, 24));

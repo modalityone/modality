@@ -1,17 +1,16 @@
 package one.modality.crm.frontoffice.activities.userprofile;
 
 import dev.webfx.extras.filepicker.FilePicker;
+import dev.webfx.extras.i18n.controls.I18nControls;
+import dev.webfx.extras.operation.OperationUtil;
 import dev.webfx.extras.styles.bootstrap.Bootstrap;
+import dev.webfx.extras.util.dialog.DialogCallback;
 import dev.webfx.extras.util.layout.Layouts;
 import dev.webfx.kit.util.properties.FXProperties;
 import dev.webfx.platform.blob.Blob;
 import dev.webfx.platform.console.Console;
 import dev.webfx.platform.file.File;
 import dev.webfx.platform.uischeduler.UiScheduler;
-import dev.webfx.extras.i18n.controls.I18nControls;
-import dev.webfx.extras.util.dialog.DialogCallback;
-import dev.webfx.extras.operation.OperationUtil;
-import javafx.application.Platform;
 import javafx.beans.InvalidationListener;
 import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.SimpleBooleanProperty;
@@ -226,6 +225,7 @@ final class ChangePictureUI {
                     if (Objects.equals(cloudImagePath, recentlyUploadedCloudPictureId))
                         recentlyUploadedCloudPictureId = null;
                 })
+                .inUiThread()
                 .onComplete(ar -> {
                     if (isPictureToBeUploaded.getValue())
                         uploadCloudPictureIfNeeded(cloudImagePath);
@@ -233,7 +233,7 @@ final class ChangePictureUI {
                     else {
                         parentActivity.removeUserProfilePicture();
                         callback.closeDialog();
-                        Platform.runLater(() -> OperationUtil.turnOffButtonsWaitMode(saveButton));
+                        OperationUtil.turnOffButtonsWaitMode(saveButton);
                         isCurrentlyProcessing.setValue(false);
                         reinitialize();
                     }
@@ -297,11 +297,12 @@ final class ChangePictureUI {
                     recentlyUploadedCloudPictureId = cloudImagePath;
                     callback.closeDialog();
                 })
+                .inUiThread()
                 .onComplete(event -> {
-                    Platform.runLater(parentActivity::showProgressIndicator);
-                    //We wait for some time before reloading the image so cloudinary has the time to process it (it can take up to 10 seconds)
+                    parentActivity.showProgressIndicator();
+                    //We wait for some time before reloading the image, so cloudinary has the time to process it (it can take up to 10 seconds)
                     UiScheduler.scheduleDelay(CLOUDINARY_RELOAD_DELAY, parentActivity::loadProfilePictureIfExist);
-                    Platform.runLater(() -> OperationUtil.turnOffButtonsWaitMode(saveButton));
+                    OperationUtil.turnOffButtonsWaitMode(saveButton);
                     isCurrentlyProcessing.setValue(false);
                     reinitialize();
                 });

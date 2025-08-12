@@ -15,7 +15,6 @@ import dev.webfx.stack.orm.entity.UpdateStore;
 import dev.webfx.stack.orm.entity.binding.EntityBindings;
 import dev.webfx.stack.orm.entity.result.EntityChanges;
 import dev.webfx.stack.orm.entity.result.EntityChangesBuilder;
-import javafx.application.Platform;
 import javafx.beans.binding.Bindings;
 import javafx.collections.FXCollections;
 import javafx.collections.ListChangeListener;
@@ -435,11 +434,11 @@ public class MediaLinksForVODManagement extends MediaLinksManagement {
                             .build();
                         localUpdateStore.submitChanges()
                             .onFailure(Console::log)
+                            .inUiThread()
                             .onSuccess(x -> {
-                                Console.log(x);
                                 // Notifying the front-office clients for the possible changes made on ScheduledItems.published
                                 ModalityMessaging.getFrontOfficeEntityMessaging().publishEntityChanges(changesForFrontOffice);
-                                Platform.runLater(this::resetUpdateStoreAndOtherComponents);
+                                resetUpdateStoreAndOtherComponents();
                             });
                     }
                 });

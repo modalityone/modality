@@ -1,14 +1,13 @@
 package one.modality.event.backoffice.activities.program;
 
 import dev.webfx.extras.util.OptimizedObservableListWrapper;
+import dev.webfx.extras.validation.ValidationSupport;
 import dev.webfx.kit.util.properties.ObservableLists;
 import dev.webfx.platform.console.Console;
 import dev.webfx.platform.util.collection.Collections;
 import dev.webfx.stack.orm.entity.UpdateStore;
-import javafx.application.Platform;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
-import dev.webfx.extras.validation.ValidationSupport;
 import one.modality.base.shared.entities.*;
 
 import java.time.LocalDate;
@@ -90,10 +89,11 @@ final class DayTemplateModel {
                     , dayTemplate
                 )
                 .onFailure(Console::log)
-                .onSuccess(timelines -> Platform.runLater(() -> {
+                .inUiThread()
+                .onSuccess(timelines -> {
                     Collections.setAll(initialTemplateTimelines, timelines.stream().map(getUpdateStore()::updateEntity).collect(Collectors.toList()));
                     resetModelAndUiToInitial();
-                }));
+                });
         }
     }
 

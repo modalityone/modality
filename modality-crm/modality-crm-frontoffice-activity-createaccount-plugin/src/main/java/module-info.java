@@ -24,7 +24,6 @@ module modality.crm.frontoffice.activity.createaccount.plugin {
     requires webfx.kit.launcher;
     requires webfx.kit.util;
     requires webfx.platform.console;
-    requires webfx.platform.uischeduler;
     requires webfx.platform.windowhistory;
     requires webfx.stack.authn;
     requires webfx.stack.authn.login.ui.gateway.password.plugin;

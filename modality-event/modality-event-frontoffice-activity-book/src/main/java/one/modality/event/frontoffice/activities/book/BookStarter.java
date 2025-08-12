@@ -1,6 +1,5 @@
 package one.modality.event.frontoffice.activities.book;
 
-import dev.webfx.platform.uischeduler.UiScheduler;
 import dev.webfx.platform.windowhistory.WindowHistory;
 import one.modality.base.frontoffice.utility.browser.BrowserUtil;
 import one.modality.base.shared.entities.Event;
@@ -15,13 +14,14 @@ public final class BookStarter {
 
     public static void startBookEvent(Event event) {
         event.onExpressionLoaded("kbs3,bookingFormUrl")
-                .onSuccess(ignored -> UiScheduler.runInUiThread(() -> {
-                    if (EventLifeCycle.isKbs3Event(event)) {
-                        startBookKbs3Event(event);
-                    } else {
-                        startBookKbs2Event(event);
-                    }
-                }));
+            .inUiThread()
+            .onSuccess(ignored -> {
+                if (EventLifeCycle.isKbs3Event(event)) {
+                    startBookKbs3Event(event);
+                } else {
+                    startBookKbs2Event(event);
+                }
+            });
     }
 
     private static void startBookKbs2Event(Event event) {

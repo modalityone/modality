@@ -22,7 +22,6 @@ import dev.webfx.platform.util.collection.Collections;
 import dev.webfx.stack.cache.client.LocalStorageCache;
 import dev.webfx.stack.orm.domainmodel.activity.viewdomain.impl.ViewDomainActivityBase;
 import dev.webfx.stack.orm.entity.Entities;
-import dev.webfx.stack.orm.entity.EntityList;
 import dev.webfx.stack.orm.entity.EntityStore;
 import dev.webfx.stack.orm.entity.EntityStoreQuery;
 import dev.webfx.stack.orm.reactive.entities.entities_to_grid.EntityColumn;
@@ -98,12 +97,57 @@ final class EventAudioLibraryActivity extends ViewDomainActivityBase {
                 scheduledAudioItems.clear(); // will trigger UI update
                 eventProperty.set(null); // will update i18n bindings
             } else {
-                entityStore.<Event>executeQueryWithCacheDetails(
+                entityStore.<Event>executeQueryWithCache(
                         LocalStorageCache.get().getCacheEntry("cache-audio-library-event"),
                         "select name, label, shortDescription, shortDescriptionLabel, audioExpirationDate, startDate, endDate, livestreamUrl, vodExpirationDate, repeatAudio, repeatedEvent" +
                         " from Event where id=? limit 1", eventId)
                     .onFailure(Console::log)
-                    .onSuccess(maybeCacheValue -> onEventLoaded(maybeCacheValue.value()));
+                    .onSuccess(events -> {
+                        Event event = events.get(0);
+                        UiScheduler.runInUiThread(() -> eventProperty.set(event)); // will update i18n bindings
+                        Object eventIdContainingAudios = Entities.getPrimaryKey(event);
+                        if (event.getRepeatedEventId() != null) {
+                            eventIdContainingAudios = Entities.getPrimaryKey(event.getRepeatedEventId());
+                        }
+                        Object userAccountId = FXModalityUserPrincipal.getModalityUserPrincipal().getUserAccountId();
+                        Object eventId1 = event.getPrimaryKey();
+                        event.getStore().executeQueryBatchWithCache(
+                                LocalStorageCache.get().getCacheEntry("cache-audio-library-scheduled-items-medias"),
+                                // Index 0: we look for the scheduledItem having a bookableScheduledItem which is an audio type (case of festival)
+                                new EntityStoreQuery("""
+                                    select name, label, date, expirationDate, programScheduledItem.(name, label, startTime, endTime, timeline.(startTime, endTime), cancelled), published, event.(name, type.recurringItem, recurringWithAudio), \
+                                     (select id from Attendance where scheduledItem=si.bookableScheduledItem and documentLine.document.person.frontendAccount=? limit 1) as attendanceId, \
+                                     (exists(select MediaConsumption where media.scheduledItem=si and attendance.documentLine.document.person.frontendAccount=? and played) as alreadyPlayed), \
+                                     (exists(select MediaConsumption where media.scheduledItem=si and attendance.documentLine.document.person.frontendAccount=? and downloaded) as alreadyDownloaded) \
+                                     from ScheduledItem si\
+                                     where event=? and bookableScheduledItem.item.family.code=? and item.code=? and programScheduledItem is not null and exists(select Attendance where scheduledItem=si.bookableScheduledItem and documentLine.(!cancelled and document.(person.frontendAccount=? and event=? and confirmed and price_balance<=0)))\
+                                     order by date, startTime, programScheduledItem.timeline..startTime""",
+                                    new Object[]{userAccountId, userAccountId, userAccountId, eventIdContainingAudios, KnownItemFamily.AUDIO_RECORDING.getCode(), pathItemCodeProperty.get(), userAccountId, eventId1}),
+                                // Index 1: we look for the scheduledItem of audio type having a bookableScheduledItem which is a teaching type (case of STTP)
+                                // TODO: for now we take only the English audio recording scheduledItem in that case. We should take the default language of the organization instead
+                                new EntityStoreQuery("""
+                                    select name, label, date, expirationDate, programScheduledItem.(name, label, startTime, endTime, timeline.(startTime, endTime), cancelled), published, event.(name, type.recurringItem, recurringWithAudio), \
+                                     (select id from Attendance where scheduledItem=si.bookableScheduledItem and documentLine.document.person.frontendAccount=? limit 1) as attendanceId, \
+                                     (exists(select MediaConsumption where media.scheduledItem=si and attendance.documentLine.document.person.frontendAccount=? and played) as alreadyPlayed), \
+                                     (exists(select MediaConsumption where media.scheduledItem=si and attendance.documentLine.document.person.frontendAccount=? and downloaded) as alreadyDownloaded) \
+                                     from ScheduledItem si\
+                                     where event=? and bookableScheduledItem.item.family.code=? and item.code=? and exists(select Attendance where scheduledItem=si.bookableScheduledItem and documentLine.(!cancelled and document.(person.frontendAccount=? and event=? and confirmed and price_balance<=0)))\
+                                     order by date, startTime, programScheduledItem.timeline..startTime""",
+                                    new Object[]{userAccountId, userAccountId, userAccountId, eventIdContainingAudios, KnownItemFamily.TEACHING.getCode(), KnownItem.AUDIO_RECORDING_ENGLISH.getCode(), userAccountId, eventId1}),
+                                // Index 2: the medias
+                                new EntityStoreQuery("""
+                                    select url, scheduledItem.(date, event), scheduledItem.name, scheduledItem.published, durationMillis \
+                                     from Media\
+                                     where scheduledItem.(event=? and (item.code=? or item.code=?) and online) and scheduledItem.published""",
+                                    new Object[]{eventIdContainingAudios, pathItemCodeProperty.get(), KnownItem.AUDIO_RECORDING_ENGLISH.getCode()}))
+                            .onFailure(Console::log)
+                            .inUiThread()
+                            .onSuccess(entityLists -> {
+                                Collections.setAll(publishedMedias, entityLists[2]);
+                                entityLists[0].addAll(entityLists[1]);
+                                scheduledAudioItems.setAll(entityLists[0]);// will trigger UI update
+                            });
+                    });
             }
         }, pathEventIdProperty, pathItemCodeProperty, FXModalityUserPrincipal.modalityUserPrincipalProperty());
 
@@ -113,52 +157,6 @@ final class EventAudioLibraryActivity extends ViewDomainActivityBase {
             {expression: 'this', renderer: 'audioName', minWidth: 300},
             {expression: 'this', renderer: 'audioButtons', textAlign: 'center', hShrink: false, hGrow: false}
             ]""", getDomainModel(), "ScheduledItem");
-    }
-
-    private void onEventLoaded(EntityList<Event> events) {
-        Event event = events.get(0);
-        UiScheduler.runInUiThread(() -> eventProperty.set(event)); // will update i18n bindings
-        Object eventIdContainingAudios = Entities.getPrimaryKey(event);
-        if (event.getRepeatedEventId() != null) {
-            eventIdContainingAudios = Entities.getPrimaryKey(event.getRepeatedEventId());
-        }
-        Object userAccountId = FXModalityUserPrincipal.getModalityUserPrincipal().getUserAccountId();
-        Object eventId = event.getPrimaryKey();
-        event.getStore().executeQueryBatchWithCache(
-                LocalStorageCache.get().getCacheEntry("cache-audio-library-scheduled-items-medias"),
-                // Index 0: we look for the scheduledItem having a bookableScheduledItem which is an audio type (case of festival)
-                new EntityStoreQuery("""
-                    select name, label, date, expirationDate, programScheduledItem.(name, label, startTime, endTime, timeline.(startTime, endTime), cancelled), published, event.(name, type.recurringItem, recurringWithAudio), \
-                     (select id from Attendance where scheduledItem=si.bookableScheduledItem and documentLine.document.person.frontendAccount=? limit 1) as attendanceId, \
-                     (exists(select MediaConsumption where media.scheduledItem=si and attendance.documentLine.document.person.frontendAccount=? and played) as alreadyPlayed), \
-                     (exists(select MediaConsumption where media.scheduledItem=si and attendance.documentLine.document.person.frontendAccount=? and downloaded) as alreadyDownloaded) \
-                     from ScheduledItem si\
-                     where event=? and bookableScheduledItem.item.family.code=? and item.code=? and programScheduledItem is not null and exists(select Attendance where scheduledItem=si.bookableScheduledItem and documentLine.(!cancelled and document.(person.frontendAccount=? and event=? and confirmed and price_balance<=0)))\
-                     order by date, startTime, programScheduledItem.timeline..startTime""",
-                    new Object[]{userAccountId, userAccountId, userAccountId, eventIdContainingAudios, KnownItemFamily.AUDIO_RECORDING.getCode(), pathItemCodeProperty.get(), userAccountId, eventId}),
-                // Index 1: we look for the scheduledItem of audio type having a bookableScheduledItem which is a teaching type (case of STTP)
-                // TODO: for now we take only the English audio recording scheduledItem in that case. We should take the default language of the organization instead
-                new EntityStoreQuery("""
-                    select name, label, date, expirationDate, programScheduledItem.(name, label, startTime, endTime, timeline.(startTime, endTime), cancelled), published, event.(name, type.recurringItem, recurringWithAudio), \
-                     (select id from Attendance where scheduledItem=si.bookableScheduledItem and documentLine.document.person.frontendAccount=? limit 1) as attendanceId, \
-                     (exists(select MediaConsumption where media.scheduledItem=si and attendance.documentLine.document.person.frontendAccount=? and played) as alreadyPlayed), \
-                     (exists(select MediaConsumption where media.scheduledItem=si and attendance.documentLine.document.person.frontendAccount=? and downloaded) as alreadyDownloaded) \
-                     from ScheduledItem si\
-                     where event=? and bookableScheduledItem.item.family.code=? and item.code=? and exists(select Attendance where scheduledItem=si.bookableScheduledItem and documentLine.(!cancelled and document.(person.frontendAccount=? and event=? and confirmed and price_balance<=0)))\
-                     order by date, startTime, programScheduledItem.timeline..startTime""",
-                    new Object[]{userAccountId, userAccountId, userAccountId, eventIdContainingAudios, KnownItemFamily.TEACHING.getCode(), KnownItem.AUDIO_RECORDING_ENGLISH.getCode(), userAccountId, eventId}),
-                // Index 2: the medias
-                new EntityStoreQuery("""
-                    select url, scheduledItem.(date, event), scheduledItem.name, scheduledItem.published, durationMillis \
-                     from Media\
-                     where scheduledItem.(event=? and (item.code=? or item.code=?) and online) and scheduledItem.published""",
-                    new Object[]{eventIdContainingAudios, pathItemCodeProperty.get(), KnownItem.AUDIO_RECORDING_ENGLISH.getCode()}))
-            .onFailure(Console::log)
-            .onSuccess(entityLists -> UiScheduler.runInUiThread(() -> {
-                Collections.setAll(publishedMedias, entityLists[2]);
-                entityLists[0].addAll(entityLists[1]);
-                scheduledAudioItems.setAll(entityLists[0]);// will trigger UI update
-            }));
     }
 
     @Override
