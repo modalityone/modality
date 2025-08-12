@@ -15,7 +15,7 @@ module modality.base.shared.entities {
     requires webfx.stack.db.submit;
     requires webfx.stack.orm.domainmodel;
     requires webfx.stack.orm.dql;
-    requires webfx.stack.orm.entity;
+    requires transitive webfx.stack.orm.entity;
 
     // Exported packages
     exports one.modality.base.shared.entities;

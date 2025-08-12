@@ -61,7 +61,9 @@
     </providers>
 
     <dependencies>
-        <used-by-source-modules/>
+        <used-by-source-modules>
+            <module transitive="true">webfx-stack-orm-entity</module>
+        </used-by-source-modules>
     </dependencies>
 
 </project>
