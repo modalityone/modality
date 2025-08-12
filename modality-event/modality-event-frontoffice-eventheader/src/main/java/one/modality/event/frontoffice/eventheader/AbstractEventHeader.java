@@ -1,7 +1,6 @@
 package one.modality.event.frontoffice.eventheader;
 
 import dev.webfx.platform.async.Future;
-import dev.webfx.stack.cache.client.LocalStorageCache;
 import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.ObjectProperty;
 import javafx.beans.property.SimpleBooleanProperty;
@@ -34,8 +33,7 @@ public abstract class AbstractEventHeader implements EventHeader {
     @Override
     public Future<Event> loadAndSetEvent(Event event) {
         eventLoadedProperty.set(false);
-        return event.<Event>onExpressionLoadedWithCache(LocalStorageCache.get().getCacheEntry("cache-event-header-event"),
-                getLoadEventFields())
+        return event.<Event>onExpressionLoadedWithCache("cache-event-header-event", getLoadEventFields())
             .inUiThread()
             .onSuccess(ignored -> {
                 setEvent(event);

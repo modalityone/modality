@@ -6,7 +6,6 @@ import dev.webfx.platform.util.Strings;
 import dev.webfx.stack.authz.client.operation.OperationAuthorizationRuleParser;
 import dev.webfx.stack.authz.client.spi.impl.inmemory.InMemoryUserAuthorizationChecker;
 import dev.webfx.stack.cache.CacheEntry;
-import dev.webfx.stack.cache.client.LocalStorageCache;
 import dev.webfx.stack.cache.client.SessionClientCache;
 import dev.webfx.stack.db.query.QueryResult;
 import dev.webfx.stack.orm.domainmodel.DataSourceModel;
@@ -54,8 +53,7 @@ final class ModalityInMemoryUserAuthorizationChecker extends InMemoryUserAuthori
         // In addition, we may have public operations. Since they are public, they don't need authorizations, however
         // some may have a route associated, and we need therefore to authorize those public routes.
         EntityStore.create(dataSourceModel)
-                .executeQueryWithCache(
-                        LocalStorageCache.get().getCacheEntry("cache-authz-operations"),
+                .executeQueryWithCache("cache-authz-operations",
                     "select grantRoute,guest,public from Operation where grantRoute!=null and (public or guest) and " + (Meta.isBackoffice() ? "backoffice" : "frontoffice"))
                 .onFailure(Console::log)
                 .onSuccess(this::onPublicOrGuestOperationsWithGrantRouteChanged);

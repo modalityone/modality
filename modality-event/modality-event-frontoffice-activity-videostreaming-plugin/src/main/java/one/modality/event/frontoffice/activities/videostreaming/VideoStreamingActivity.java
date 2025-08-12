@@ -25,7 +25,6 @@ import dev.webfx.platform.uischeduler.UiScheduler;
 import dev.webfx.platform.util.Booleans;
 import dev.webfx.platform.util.Objects;
 import dev.webfx.platform.util.collection.Collections;
-import dev.webfx.stack.cache.client.LocalStorageCache;
 import dev.webfx.stack.orm.domainmodel.activity.viewdomain.impl.ViewDomainActivityBase;
 import dev.webfx.stack.orm.entity.EntityId;
 import dev.webfx.stack.orm.entity.EntityStore;
@@ -150,8 +149,7 @@ final class VideoStreamingActivity extends ViewDomainActivityBase {
             if (modalityUserPrincipal != null) {
                 eventsWithBookedVideosLoadingProperty.set(true);
                 // we look for the scheduledItem having a `bookableScheduledItem` which is an audio type (case of festival)
-                entityStore.<DocumentLine>executeQueryWithCache(
-                        LocalStorageCache.get().getCacheEntry("cache-video-streaming-document-lines"),
+                entityStore.<DocumentLine>executeQueryWithCache("cache-video-streaming-document-lines",
                         "select document.event.(name, label, shortDescription, shortDescriptionLabel, audioExpirationDate, startDate, endDate, livestreamUrl, vodExpirationDate, repeatVideo, recurringWithVideo, repeatedEvent), item.(code, family.code)" +
                         // We look if there are published audio ScheduledItem of type video, whose bookableScheduledItem has been booked
                         ", (exists(select ScheduledItem where item.family.code=? and bookableScheduledItem.(event=coalesce(dl.document.event.repeatedEvent, dl.document.event) and item=dl.item))) as published " +
@@ -221,8 +219,7 @@ final class VideoStreamingActivity extends ViewDomainActivityBase {
                 // We load all video scheduledItems booked by the user for the event (booking must be confirmed
                 // and paid). They will be grouped by day in the UI.
                 // Note: double dots such as `programScheduledItem.timeline..startTime` means we do a left join that allows null value (if the event is recurring, the timeline of the programScheduledItem is null)
-                entityStore.<ScheduledItem>executeQueryWithCache(
-                        LocalStorageCache.get().getCacheEntry("cache-video-streaming-scheduled-items"),
+                entityStore.<ScheduledItem>executeQueryWithCache("cache-video-streaming-scheduled-items",
                         """
                             select name, label, date, comment, commentLabel, expirationDate, programScheduledItem.(name, label, startTime, endTime, timeline.(startTime, endTime), cancelled), published, event.(name, type.recurringItem, livestreamUrl, recurringWithVideo), vodDelayed, \
                              (exists(select MediaConsumption where scheduledItem=si and attendance.documentLine.document.person.frontendAccount=?) as attended), \

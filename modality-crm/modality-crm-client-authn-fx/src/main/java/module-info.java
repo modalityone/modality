@@ -13,7 +13,6 @@ module modality.crm.client.authn.fx {
     requires webfx.platform.console;
     requires webfx.platform.util;
     requires webfx.stack.authn;
-    requires webfx.stack.cache.client;
     requires webfx.stack.orm.entity;
     requires webfx.stack.session.state;
     requires webfx.stack.session.state.client.fx;

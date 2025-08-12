@@ -1,9 +1,8 @@
 package one.modality.catering.backoffice.activities.kitchen;
 
+import dev.webfx.extras.i18n.I18n;
 import dev.webfx.extras.theme.text.TextTheme;
 import dev.webfx.kit.util.properties.FXProperties;
-import dev.webfx.stack.cache.client.LocalStorageCache;
-import dev.webfx.extras.i18n.I18n;
 import javafx.application.Platform;
 import javafx.collections.FXCollections;
 import javafx.collections.ListChangeListener;
@@ -97,8 +96,7 @@ public class MealsSelectionPane extends VBox {
             return;
         }
 
-        organization.getStore().<Item>executeQueryWithCache(
-            LocalStorageCache.get().getCacheEntry("cache-kitchen-mealsItems"),
+        organization.getStore().<Item>executeQueryWithCache("cache-kitchen-mealsItems",
             "select id,name,code,ord from Item i where i.family.code='meals' and organization=? order by ord", organization
         ).onSuccess(organizationAllMealsItemsObservableList::setAll);
     }

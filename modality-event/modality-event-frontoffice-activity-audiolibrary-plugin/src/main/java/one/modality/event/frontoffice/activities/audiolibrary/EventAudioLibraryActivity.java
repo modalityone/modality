@@ -19,7 +19,6 @@ import dev.webfx.platform.console.Console;
 import dev.webfx.platform.uischeduler.UiScheduler;
 import dev.webfx.platform.util.Numbers;
 import dev.webfx.platform.util.collection.Collections;
-import dev.webfx.stack.cache.client.LocalStorageCache;
 import dev.webfx.stack.orm.domainmodel.activity.viewdomain.impl.ViewDomainActivityBase;
 import dev.webfx.stack.orm.entity.Entities;
 import dev.webfx.stack.orm.entity.EntityStore;
@@ -97,8 +96,7 @@ final class EventAudioLibraryActivity extends ViewDomainActivityBase {
                 scheduledAudioItems.clear(); // will trigger UI update
                 eventProperty.set(null); // will update i18n bindings
             } else {
-                entityStore.<Event>executeQueryWithCache(
-                        LocalStorageCache.get().getCacheEntry("cache-audio-library-event"),
+                entityStore.<Event>executeQueryWithCache("cache-audio-library-event",
                         "select name, label, shortDescription, shortDescriptionLabel, audioExpirationDate, startDate, endDate, livestreamUrl, vodExpirationDate, repeatAudio, repeatedEvent" +
                         " from Event where id=? limit 1", eventId)
                     .onFailure(Console::log)
@@ -111,8 +109,7 @@ final class EventAudioLibraryActivity extends ViewDomainActivityBase {
                         }
                         Object userAccountId = FXModalityUserPrincipal.getModalityUserPrincipal().getUserAccountId();
                         Object eventId1 = event.getPrimaryKey();
-                        event.getStore().executeQueryBatchWithCache(
-                                LocalStorageCache.get().getCacheEntry("cache-audio-library-scheduled-items-medias"),
+                        event.getStore().executeQueryBatchWithCache("cache-audio-library-scheduled-items-medias",
                                 // Index 0: we look for the scheduledItem having a bookableScheduledItem which is an audio type (case of festival)
                                 new EntityStoreQuery("""
                                     select name, label, date, expirationDate, programScheduledItem.(name, label, startTime, endTime, timeline.(startTime, endTime), cancelled), published, event.(name, type.recurringItem, recurringWithAudio), \

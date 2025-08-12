@@ -36,7 +36,6 @@ module modality.event.frontoffice.activity.audiolibrary.plugin {
     requires webfx.platform.uischeduler;
     requires webfx.platform.util;
     requires webfx.platform.windowhistory;
-    requires webfx.stack.cache.client;
     requires webfx.stack.orm.domainmodel.activity;
     requires webfx.stack.orm.entity;
     requires webfx.stack.orm.reactive.entities;

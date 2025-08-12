@@ -16,6 +16,7 @@ import dev.webfx.platform.meta.Meta;
 import dev.webfx.platform.scheduler.Scheduler;
 import dev.webfx.stack.authz.client.factory.AuthorizationFactory;
 import dev.webfx.stack.authz.client.factory.AuthorizationUtil;
+import dev.webfx.stack.cache.DefaultCache;
 import dev.webfx.stack.cache.client.LocalStorageCache;
 import dev.webfx.stack.orm.entity.Entity;
 import dev.webfx.stack.orm.entity.EntityStore;
@@ -54,10 +55,10 @@ public final class ModalityClientOperationActionsLoader implements ApplicationMo
         hideUnauthorizedOtherOperationActions = config.getBoolean("hideUnauthorizedOtherOperationActions");
 
         OperationActionRegistry.setAuthorizer(AuthorizationUtil::authorizedOperationProperty);
+        DefaultCache.setDefaultCache(LocalStorageCache.get());
 
         EntityStore.create()
-                .executeQueryWithCache(
-                        LocalStorageCache.get().getCacheEntry("cache-clientOperations"),
+                .executeQueryWithCache("cache-clientOperations",
                     "select code,i18nCode,public from Operation where " + (Meta.isBackoffice() ? "backoffice" : "frontoffice"))
                 .onFailure(cause -> {
                     Console.log("Failed loading operations", cause);

@@ -3,7 +3,6 @@ package one.modality.crm.shared.services.authn.fx;
 import dev.webfx.kit.util.properties.FXProperties;
 import dev.webfx.platform.console.Console;
 import dev.webfx.platform.util.Booleans;
-import dev.webfx.stack.cache.client.LocalStorageCache;
 import dev.webfx.stack.orm.entity.EntityId;
 import dev.webfx.stack.orm.entity.EntityStore;
 import javafx.beans.property.ObjectProperty;
@@ -26,8 +25,7 @@ public final class FXUserPerson {
         if (userPersonId == null)
             setUserPerson(null);
         else {
-            EntityStore.create().<Person>executeQueryWithCache(
-                    LocalStorageCache.get().getCacheEntry("cache-fx-user-person"),
+            EntityStore.create().<Person>executeQueryWithCache("cache-fx-user-person",
                     "select firstName,lastName,male,ordained,email,phone,street,postCode,cityName,country,organization,birthdate,layName,frontendAccount.(tester,security) from Person where id=?", userPersonId)
                 .onFailure(Console::log)
                 .inUiThread()
