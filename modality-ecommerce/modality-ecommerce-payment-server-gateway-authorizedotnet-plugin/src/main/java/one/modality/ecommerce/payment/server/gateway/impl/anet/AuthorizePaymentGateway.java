@@ -4,7 +4,6 @@ import dev.webfx.platform.ast.AST;
 import dev.webfx.platform.ast.ReadOnlyAstObject;
 import dev.webfx.platform.async.Future;
 import dev.webfx.platform.resource.Resource;
-import dev.webfx.platform.util.collection.Collections;
 import dev.webfx.platform.util.uuid.Uuid;
 import net.authorize.Environment;
 import net.authorize.api.contract.v1.*;
@@ -172,17 +171,37 @@ public class AuthorizePaymentGateway implements PaymentGateway {
                 responseCode,
                 paymentStatus
             ));
-        } else { // API request failed (technical error)
+        } else { // API request failed (technical error or validation failure)
+            StringBuilder sb = new StringBuilder();
+
+            // First, check transactionResponse errors (more specific)
+            TransactionResponse transactionResponse = response == null ? null : response.getTransactionResponse();
+            TransactionResponse.Errors errors = transactionResponse == null ? null : transactionResponse.getErrors();
+            if (errors != null) {
+                for (TransactionResponse.Errors.Error error : errors.getError()) {
+                    sb.append(" errorCode = ").append(error.getErrorCode()).append(": ").append(error.getErrorText());
+                }
+            }
+
+            // Then check high-level API messages (generic like E00027)
             ANetApiResponse errorResponse = controller.getErrorResponse();
             MessagesType messages;
             if (errorResponse != null) {
                 messages = errorResponse.getMessages();
-            } else if (response != null)
+            } else if (response != null) {
                 messages = response.getMessages();
-            else
+            } else {
                 messages = null;
-            MessagesType.Message message = messages == null ? null : Collections.first(messages.getMessage());
-            return Future.failedFuture("Authorize payment completion failed: " + (message == null ? "no response or no message" : message.getText() + " - code = " + message.getCode()));
+            }
+            if (messages != null) {
+                for (MessagesType.Message message : messages.getMessage()) {
+                    sb.append(" code = ").append(message.getCode()).append(": ").append(message.getText());
+                }
+            } else if (sb.isEmpty()) {
+                sb.append("no response or no message");
+            }
+
+            return Future.failedFuture("Authorize payment completion failed:" + sb);
         }
     }
 
