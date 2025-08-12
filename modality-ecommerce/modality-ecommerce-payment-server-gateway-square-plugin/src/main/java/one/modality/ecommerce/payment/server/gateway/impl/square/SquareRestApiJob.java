@@ -7,7 +7,6 @@ import dev.webfx.platform.boot.spi.ApplicationJob;
 import dev.webfx.platform.console.Console;
 import dev.webfx.platform.util.http.HttpResponseStatus;
 import dev.webfx.platform.vertx.common.VertxInstance;
-import dev.webfx.stack.orm.datasourcemodel.service.DataSourceModelService;
 import dev.webfx.stack.orm.entity.EntityStore;
 import dev.webfx.stack.orm.entity.UpdateStore;
 import dev.webfx.stack.session.state.SystemUserId;
@@ -92,7 +91,7 @@ public final class SquareRestApiJob implements ApplicationJob {
                 PaymentStatus paymentStatus = squarePaymentStatus.getGenericPaymentStatus();
                 boolean pending = paymentStatus.isPending();
                 boolean successful = paymentStatus.isSuccessful();
-                EntityStore.create(DataSourceModelService.getDefaultDataSourceModel())
+                EntityStore.create()
                     .<MoneyTransfer>executeQuery("select pending, successful, status, gatewayResponse from MoneyTransfer where transactionRef=?", id)
                         .onFailure(e -> Console.log(logPrefix + "⛔️️  An error occurred when reading the payment with transactionRef = " + id, e))
                         .onSuccess(payments -> {

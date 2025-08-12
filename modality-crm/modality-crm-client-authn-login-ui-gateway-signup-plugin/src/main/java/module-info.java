@@ -19,8 +19,6 @@ module modality.crm.client.authn.login.ui.gateway.signup.plugin {
     requires webfx.extras.validation;
     requires webfx.stack.authn.login.ui.gateway;
     requires webfx.stack.hash.md5;
-    requires webfx.stack.orm.datasourcemodel.service;
-    requires webfx.stack.orm.domainmodel;
     requires webfx.stack.orm.entity;
     requires webfx.stack.session.state.client.fx;
 

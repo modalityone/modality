@@ -280,7 +280,7 @@ public class ServerPaymentServiceProvider implements PaymentServiceProvider {
     public Future<Map<String, String>> loadPaymentGatewayParameters(Object paymentId, boolean live) {
         if (paymentId instanceof String)
             paymentId = Integer.parseInt((String) paymentId);
-        return EntityStore.create(DataSourceModelService.getDefaultDataSourceModel())
+        return EntityStore.create()
             .<GatewayParameter>executeQuery("select name,value from GatewayParameter where (account=(select toMoneyAccount from MoneyTransfer where id=?) or account==null and lower(company.name)=lower((select lower(toMoneyAccount.gatewayCompany.name) from MoneyTransfer where id=?))) and (? ? live : test) order by account nulls first", paymentId, paymentId, live)
             .onFailure(e -> Console.log("An error occurred while loading paymentGatewayParameters", e))
             .map(gpList -> {

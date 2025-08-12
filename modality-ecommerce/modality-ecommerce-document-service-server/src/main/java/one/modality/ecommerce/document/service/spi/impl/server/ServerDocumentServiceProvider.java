@@ -96,7 +96,7 @@ public class ServerDocumentServiceProvider implements DocumentServiceProvider {
                 queries[i] = new EntityStoreQuery(queries[i].getSelect().replace("=?", "=(select Document where person=? and event=? and !cancelled order by id desc limit 1)"), parameters);
             }
         }
-        return EntityStore.create(DataSourceModelService.getDefaultDataSourceModel())
+        return EntityStore.create()
             .executeQueryBatch(queries)
             .map(entityLists -> {
                 Document document = ((List<Document>) entityLists[0]).stream().findFirst().orElse(null);
@@ -127,7 +127,7 @@ public class ServerDocumentServiceProvider implements DocumentServiceProvider {
             parameters = new Object[]{argument.getPersonPrimaryKey(), argument.getEventPrimaryKey(), argument.getHistoryPrimaryKey()};
             select = select.replace("document=?", "document=(select Document where person=? and event=? and !cancelled order by id desc limit 1)");
         }
-        return EntityStore.create(DataSourceModelService.getDefaultDataSourceModel())
+        return EntityStore.create()
             .<History>executeQuery(select, parameters)
             .map(historyList -> {
                 if (historyList.isEmpty()) {

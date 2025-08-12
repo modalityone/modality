@@ -3,17 +3,15 @@ package one.modality.hotel.backoffice.activities.accommodation;
 import dev.webfx.extras.theme.FontDef;
 import dev.webfx.extras.theme.text.TextTheme;
 import dev.webfx.extras.time.format.LocalizedTime;
+import dev.webfx.extras.util.dialog.DialogCallback;
+import dev.webfx.extras.util.dialog.builder.DialogBuilderUtil;
+import dev.webfx.extras.util.dialog.builder.DialogContent;
 import dev.webfx.kit.util.properties.FXProperties;
 import dev.webfx.platform.console.Console;
 import dev.webfx.platform.util.Strings;
-import dev.webfx.stack.orm.datasourcemodel.service.DataSourceModelService;
-import dev.webfx.stack.orm.domainmodel.DataSourceModel;
 import dev.webfx.stack.orm.entity.EntityId;
 import dev.webfx.stack.orm.entity.EntityStore;
 import dev.webfx.stack.orm.entity.UpdateStore;
-import dev.webfx.extras.util.dialog.builder.DialogBuilderUtil;
-import dev.webfx.extras.util.dialog.builder.DialogContent;
-import dev.webfx.extras.util.dialog.DialogCallback;
 import javafx.application.Platform;
 import javafx.geometry.Insets;
 import javafx.scene.control.CheckBox;
@@ -41,7 +39,10 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
-public class CreateAnnualSchedulePane extends VBox {
+/**
+ * @author Dan Newman
+ */
+public final class CreateAnnualSchedulePane extends VBox {
 
     private final ResourceConfigurationLoader resourceConfigurationLoader;
     private final Pane parent;
@@ -88,8 +89,7 @@ public class CreateAnnualSchedulePane extends VBox {
 
     private void displayItemsWithOpenConfiguration() {
         EntityId organizationId = FXOrganizationId.getOrganizationId();
-        DataSourceModel dataSourceModel = DataSourceModelService.getDefaultDataSourceModel();
-        EntityStore.create(dataSourceModel).<ResourceConfiguration>executeQuery("select distinct rc.item.name, rc.resource.site from ResourceConfiguration rc where rc.item.family.code='acco' and rc.resource.site.organization.id=? and rc.resource.site.event is null and rc.endDate is null", organizationId)
+        EntityStore.create().<ResourceConfiguration>executeQuery("select distinct rc.item.name, rc.resource.site from ResourceConfiguration rc where rc.item.family.code='acco' and rc.resource.site.organization.id=? and rc.resource.site.event is null and rc.endDate is null", organizationId)
                 .onFailure(error -> {
                     Console.log("Error while reading scheduled items.", error);
                 })
@@ -197,8 +197,7 @@ public class CreateAnnualSchedulePane extends VBox {
                 .map(si -> si.getId().getPrimaryKey().toString())
                 .collect(Collectors.joining(","));
 
-        DataSourceModel dataSourceModel = DataSourceModelService.getDefaultDataSourceModel();
-        EntityStore.create(dataSourceModel).<ScheduledItem>executeQuery("select item.id, max(date) as date, available, online, resource from ScheduledItem si where item.id in (" + commaSeparatedItemIds + ") group by item.id, available, online, resource")
+        EntityStore.create().<ScheduledItem>executeQuery("select item.id, max(date) as date, available, online, resource from ScheduledItem si where item.id in (" + commaSeparatedItemIds + ") group by item.id, available, online, resource")
                 .onFailure(error -> {
                     Console.log("Error while reading scheduled items.", error);
                 })

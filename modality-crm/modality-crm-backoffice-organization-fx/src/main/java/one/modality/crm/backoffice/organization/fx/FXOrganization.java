@@ -1,7 +1,6 @@
 package one.modality.crm.backoffice.organization.fx;
 
 import dev.webfx.kit.util.properties.FXProperties;
-import dev.webfx.stack.orm.datasourcemodel.service.DataSourceModelService;
 import dev.webfx.stack.orm.entity.Entities;
 import dev.webfx.stack.orm.entity.EntityId;
 import dev.webfx.stack.orm.entity.EntityStore;
@@ -34,7 +33,7 @@ public final class FXOrganization {
 
     public static EntityStore getOrganizationStore() {
         Organization organization = getOrganization();
-        return organization != null ? organization.getStore() : EntityStore.create(DataSourceModelService.getDefaultDataSourceModel());
+        return organization != null ? organization.getStore() : EntityStore.create();
     }
 
     public static ObjectProperty<Organization> organizationProperty() {

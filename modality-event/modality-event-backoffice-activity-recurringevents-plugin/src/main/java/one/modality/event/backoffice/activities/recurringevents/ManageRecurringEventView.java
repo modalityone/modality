@@ -30,7 +30,6 @@ import dev.webfx.kit.util.properties.ObservableLists;
 import dev.webfx.platform.console.Console;
 import dev.webfx.platform.file.File;
 import dev.webfx.stack.orm.datasourcemodel.service.DataSourceModelService;
-import dev.webfx.stack.orm.domainmodel.DataSourceModel;
 import dev.webfx.stack.orm.dql.DqlStatement;
 import dev.webfx.stack.orm.entity.*;
 import dev.webfx.stack.orm.entity.binding.EntityBindings;
@@ -117,8 +116,7 @@ final class ManageRecurringEventView {
     private final HtmlTextEditor shortDescriptionHtmlEditor = new HtmlTextEditor();
     private final HtmlTextEditor descriptionHtmlEditor = new HtmlTextEditor();
     private final TextField timeOfTheEventTextField = I18nControls.bindI18nProperties(new TextField(), RecurringEventsI18nKeys.TimeOfTheEvent);
-    private final DataSourceModel dataSourceModel = DataSourceModelService.getDefaultDataSourceModel();
-    private final EntityStore entityStore = EntityStore.create(dataSourceModel);
+    private final EntityStore entityStore = EntityStore.create();
     private List<ScheduledItem> teachingsScheduledItemsReadFromDatabase = new ArrayList<>();
     private List<ScheduledItem> audioScheduledItemsReadFromDatabase = new ArrayList<>();
     private List<ScheduledItem> videoScheduledItemsReadFromDatabase = new ArrayList<>();
@@ -606,11 +604,11 @@ final class ManageRecurringEventView {
                     I18nControls.bindI18nTextProperty(titleEventDetailsLabel, RecurringEventsI18nKeys.EventDetailsTitle);
                     siteSelector = new EntityButtonSelector<Site>(
                         "{class: 'Site', alias: 's', where: 'event=null', orderBy :'name'}",
-                        activity, eventDetailsVBox, dataSourceModel
+                        activity, eventDetailsVBox, DataSourceModelService.getDefaultDataSourceModel()
                     ) { // Overriding the button content to add the possibility of Adding a new site prefix text
                         private final BorderPane bp = new BorderPane();
                         final TextField searchTextField = super.getSearchTextField();
-                        private final UpdateStore updateStoreForSite = UpdateStore.create(DataSourceModelService.getDefaultDataSourceModel());
+                        private final UpdateStore updateStoreForSite = UpdateStore.create();
 
                         final Text addSiteText = I18n.newText(RecurringEventsI18nKeys.AddNewLocation);
                         final MonoPane addSitePane = new MonoPane(addSiteText);

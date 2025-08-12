@@ -43,7 +43,6 @@ module modality.event.backoffice.activity.recurringevents.plugin {
     requires webfx.platform.file;
     requires webfx.platform.windowhistory;
     requires webfx.stack.orm.datasourcemodel.service;
-    requires webfx.stack.orm.domainmodel;
     requires webfx.stack.orm.domainmodel.activity;
     requires webfx.stack.orm.dql;
     requires webfx.stack.orm.entity;

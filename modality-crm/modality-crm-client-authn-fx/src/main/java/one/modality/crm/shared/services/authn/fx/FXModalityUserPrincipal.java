@@ -3,7 +3,6 @@ package one.modality.crm.shared.services.authn.fx;
 import dev.webfx.kit.util.properties.FXProperties;
 import dev.webfx.platform.console.Console;
 import dev.webfx.stack.authn.UserClaims;
-import dev.webfx.stack.orm.datasourcemodel.service.DataSourceModelService;
 import dev.webfx.stack.orm.entity.EntityStore;
 import dev.webfx.stack.session.state.LogoutUserId;
 import dev.webfx.stack.session.state.client.fx.FXLoggedIn;
@@ -58,8 +57,8 @@ public final class FXModalityUserPrincipal {
                 if (userClaims != null) { // Yes, the user logged-in through SSO
                     String email = userClaims.getEmail();
                     if (email != null) { // Yes, the user provided an email
-                        // Loading the Modality user (i.e. Person) owning a frontend account whose username is that exact same email
-                        EntityStore.create(DataSourceModelService.getDefaultDataSourceModel())
+                        // Loading the Modality user (i.e., Person) owning a frontend account whose username is that exact same email
+                        EntityStore.create()
                                 .<Person>executeQuery("select id, frontendAccount.id from Person where frontendAccount.(username=? and corporation=1) and !removed order by id limit 1", email)
                                 .onFailure(Console::log)
                                 .onSuccess(personList -> {
