@@ -28,7 +28,6 @@ import dev.webfx.platform.util.collection.Collections;
 import dev.webfx.stack.cache.client.LocalStorageCache;
 import dev.webfx.stack.orm.domainmodel.activity.viewdomain.impl.ViewDomainActivityBase;
 import dev.webfx.stack.orm.entity.EntityId;
-import dev.webfx.stack.orm.entity.EntityList;
 import dev.webfx.stack.orm.entity.EntityStore;
 import dev.webfx.stack.orm.reactive.entities.entities_to_grid.EntityColumn;
 import dev.webfx.stack.orm.reactive.mapping.entities_to_visual.EntitiesToVisualResultMapper;
@@ -151,9 +150,9 @@ final class VideoStreamingActivity extends ViewDomainActivityBase {
             if (modalityUserPrincipal != null) {
                 eventsWithBookedVideosLoadingProperty.set(true);
                 // we look for the scheduledItem having a `bookableScheduledItem` which is an audio type (case of festival)
-                entityStore.executeCachedListQuery(
-                        LocalStorageCache.get().getCacheEntry("cache-video-streaming-document-lines"), this::onDocumentLinesLoaded, null,
-                        "select document.event.(name, label.(de,en,es,fr,pt), shortDescription, shortDescriptionLabel, audioExpirationDate, startDate, endDate, livestreamUrl, vodExpirationDate, repeatVideo, recurringWithVideo, repeatedEvent), item.(code, family.code)" +
+                entityStore.<DocumentLine>executeQueryWithCache(
+                        LocalStorageCache.get().getCacheEntry("cache-video-streaming-document-lines"),
+                        "select document.event.(name, label, shortDescription, shortDescriptionLabel, audioExpirationDate, startDate, endDate, livestreamUrl, vodExpirationDate, repeatVideo, recurringWithVideo, repeatedEvent), item.(code, family.code)" +
                         // We look if there are published audio ScheduledItem of type video, whose bookableScheduledItem has been booked
                         ", (exists(select ScheduledItem where item.family.code=? and bookableScheduledItem.(event=coalesce(dl.document.event.repeatedEvent, dl.document.event) and item=dl.item))) as published " +
                         // We check if the user has booked, not cancelled and paid the recordings
@@ -179,11 +178,39 @@ final class VideoStreamingActivity extends ViewDomainActivityBase {
                         ", document.event.(endDate - startDate)",
                         KnownItemFamily.VIDEO.getCode(), modalityUserPrincipal.getUserAccountId(), KnownItemFamily.VIDEO.getCode(), KnownItemFamily.VIDEO.getCode())
                     .onFailure(Console::log)
-                    .onSuccess(this::onDocumentLinesLoaded);
+                    .onSuccess(documentLines -> UiScheduler.runInUiThread(() -> {
+                        // Extracting the events with videos from the document lines
+                        eventsWithBookedVideos.setAll(
+                            Collections.map(documentLines, dl -> dl.getDocument().getEvent()));
+                        // If there are 2 events with videos or more, we populate the events selection pane
+                        if (eventsWithBookedVideos.size() < 2) {
+                            eventsSelectionPane.setContent(null);
+                        } else {
+                            ColumnsPane columnsPane = new ColumnsPane(20, 50);
+                            columnsPane.setMinColumnWidth(COLUMN_MIN_WIDTH);
+                            columnsPane.setMaxColumnWidth(COLUMN_MAX_WIDTH);
+                            columnsPane.setMaxWidth(Double.MAX_VALUE);
+                            columnsPane.getStyleClass().add("audio-library"); // is audio-library good? (must be to have the same CSS rules as audio)
+                            for (Event event : eventsWithBookedVideos) {
+                                EventThumbnail thumbnail = new EventThumbnail(event, KnownItem.VIDEO.getCode(), EventThumbnail.ItemType.ITEM_TYPE_VIDEO, true);
+                                Button actionButton = thumbnail.getViewButton();
+                                actionButton.setCursor(Cursor.HAND);
+                                actionButton.setOnAction(e -> {
+                                    eventProperty.set(event);
+                                    eventsSelectionPane.collapse();
+                                });
+                                columnsPane.getChildren().add(thumbnail.getView());
+                            }
+                            eventsSelectionPane.setContent(columnsPane);
+                        }
+                        // Selecting the most relevant event to show on start (the first one from order by)
+                        eventProperty.set(Collections.first(eventsWithBookedVideos));
+                        eventsWithBookedVideosLoadingProperty.set(false);
+                    }));
             }
         }, FXModalityUserPrincipal.modalityUserPrincipalProperty());
         // Initial data loading for the event specified in the path
-        FXProperties.runOnPropertiesChange(() -> {
+        FXProperties.runNowAndOnPropertiesChange(() -> {
             Event event = eventProperty.get();
             ModalityUserPrincipal modalityUserPrincipal = FXModalityUserPrincipal.getModalityUserPrincipal();
             videoScheduledItems.clear();
@@ -193,20 +220,34 @@ final class VideoStreamingActivity extends ViewDomainActivityBase {
                 // We load all video scheduledItems booked by the user for the event (booking must be confirmed
                 // and paid). They will be grouped by day in the UI.
                 // Note: double dots such as `programScheduledItem.timeline..startTime` means we do a left join that allows null value (if the event is recurring, the timeline of the programScheduledItem is null)
-                entityStore.executeCachedListQuery(
-                        LocalStorageCache.get().getCacheEntry("cache-video-streaming-scheduled-items"), this::onScheduledItemsLoaded, null,
-                        "select name, label.(de,en,es,fr,pt), date, comment, commentLabel.(de,en,es,fr,pt), expirationDate, programScheduledItem.(name, label.(de,en,es,fr,pt), startTime, endTime, timeline.(startTime, endTime), cancelled), published, event.(name, type.recurringItem, livestreamUrl, recurringWithVideo), vodDelayed, " +
-                        " (exists(select MediaConsumption where scheduledItem=si and attendance.documentLine.document.person.frontendAccount=?) as attended), " +
-                        " (select id from Attendance where scheduledItem=si.bookableScheduledItem and documentLine.document.person.frontendAccount=? limit 1) as attendanceId " +
-                        " from ScheduledItem si " +
-                        " where event=?" +
-                        " and bookableScheduledItem.item.family.code=?" +
-                        " and item.code=?" +
-                        " and exists(select Attendance a where scheduledItem=si.bookableScheduledItem and documentLine.(!cancelled and document.(person.frontendAccount=? and event=? and confirmed and price_balance<=0)))" +
-                        " order by date, programScheduledItem.timeline..startTime",
+                entityStore.<ScheduledItem>executeQueryWithCache(
+                        LocalStorageCache.get().getCacheEntry("cache-video-streaming-scheduled-items"),
+                        """
+                            select name, label, date, comment, commentLabel, expirationDate, programScheduledItem.(name, label, startTime, endTime, timeline.(startTime, endTime), cancelled), published, event.(name, type.recurringItem, livestreamUrl, recurringWithVideo), vodDelayed, \
+                             (exists(select MediaConsumption where scheduledItem=si and attendance.documentLine.document.person.frontendAccount=?) as attended), \
+                             (select id from Attendance where scheduledItem=si.bookableScheduledItem and documentLine.document.person.frontendAccount=? limit 1) as attendanceId \
+                             from ScheduledItem si \
+                             where event=?\
+                             and bookableScheduledItem.item.family.code=?\
+                             and item.code=?\
+                             and exists(select Attendance a where scheduledItem=si.bookableScheduledItem and documentLine.(!cancelled and document.(person.frontendAccount=? and event=? and confirmed and price_balance<=0)))\
+                             order by date, programScheduledItem.timeline..startTime""",
                         userAccountId, userAccountId, eventContainingVideos, KnownItemFamily.TEACHING.getCode(), KnownItem.VIDEO.getCode(), userAccountId, event)
                     .onFailure(Console::log)
-                    .onSuccess(this::onScheduledItemsLoaded);
+                    .onSuccess(scheduledItems -> UiScheduler.runInUiThread(() -> {
+                        videoScheduledItems.setAll(scheduledItems); // Will trigger the build of the video table.
+                        watchingVideoItemProperty.set(null);
+                        // We are now ready to populate the videos, but we postpone this for the 2 following reasons:
+                        // 1) The UI may not be completely built yet on low-end devices, and loading a video player now
+                        // could be heavy and freeze the UI even more.
+                        // 2) If there is a livestream now (or close), scheduleAutoLivestream() will auto-expand the
+                        // video player and auto-scroll to it, but the auto-scroll target position may not be stable at
+                        // this time (ex: the video table not finished building), causing a wrong final scroll position.
+                        UiScheduler.scheduleDelay(2000, () -> { // 2 seconds is a reasonable waiting time
+                            populateVideoPlayers(false); // will load the video player
+                            scheduleAutoLivestream(); // may auto-expand the video player if now is an appropriate time
+                        });
+                    }));
             }
         }, eventProperty, FXUserPersonId.userPersonIdProperty());
 
@@ -239,60 +280,6 @@ final class VideoStreamingActivity extends ViewDomainActivityBase {
             "{expression: 'this', label: '" + EventI18nKeys.Session + "', renderer: 'videoName', minWidth: 200, styleClass: 'name'},\n" +
             "{expression: 'this', label: 'Status', renderer: 'videoStatus', textAlign: 'center', hShrink: false, styleClass: 'status'}\n" +
             "]", getDomainModel(), "ScheduledItem");
-    }
-
-    private void onDocumentLinesLoaded(EntityList<DocumentLine> documentLines) {
-        Platform.runLater(() -> {
-            // Extracting the events with videos from the document lines
-            eventsWithBookedVideos.setAll(
-                documentLines.stream()
-                    .map(documentLine -> documentLine.getDocument().getEvent())  // Extract events from DocumentLine
-                    .distinct()
-                    .collect(Collectors.toList()));
-            // If there are 2 events with videos or more, we populate the events selection pane
-            if (eventsWithBookedVideos.size() < 2) {
-                eventsSelectionPane.setContent(null);
-            } else {
-                ColumnsPane columnsPane = new ColumnsPane(20, 50);
-                columnsPane.setMinColumnWidth(COLUMN_MIN_WIDTH);
-                columnsPane.setMaxColumnWidth(COLUMN_MAX_WIDTH);
-                columnsPane.setMaxWidth(Double.MAX_VALUE);
-                columnsPane.getStyleClass().add("audio-library"); // is audio-library good? (must be to have the same CSS rules as audio)
-                for (Event event : eventsWithBookedVideos) {
-                    EventThumbnail thumbnail = new EventThumbnail(event, KnownItem.VIDEO.getCode(), EventThumbnail.ItemType.ITEM_TYPE_VIDEO, true);
-                    Button actionButton = thumbnail.getViewButton();
-                    actionButton.setCursor(Cursor.HAND);
-                    actionButton.setOnAction(e -> {
-                        eventProperty.set(event);
-                        eventsSelectionPane.collapse();
-                    });
-                    columnsPane.getChildren().add(thumbnail.getView());
-                }
-                eventsSelectionPane.setContent(columnsPane);
-            }
-            // Selecting the most relevant event to show on start (the first one from order by)
-            eventProperty.set(Collections.first(eventsWithBookedVideos));
-            eventsWithBookedVideosLoadingProperty.set(false);
-        });
-    }
-
-    private void onScheduledItemsLoaded(EntityList<ScheduledItem> scheduledItems) {
-        Platform.runLater(() -> {
-            if (videoScheduledItems.equals(scheduledItems)) // happens when there is no change with the cache
-                return;
-            videoScheduledItems.setAll(scheduledItems); // Will trigger the build of the video table.
-            watchingVideoItemProperty.set(null);
-            // We are now ready to populate the videos, but we postpone this for the 2 following reasons:
-            // 1) The UI may not be completely built yet on low-end devices, and loading a video player now
-            // could be heavy and freeze the UI even more.
-            // 2) If there is a livestream now (or close), scheduleAutoLivestream() will auto-expand the
-            // video player and auto-scroll to it, but the auto-scroll target position may not be stable at
-            // this time (ex: the video table not finished building), causing a wrong final scroll position.
-            UiScheduler.scheduleDelay(2000, () -> { // 2 seconds is a reasonable waiting time
-                populateVideoPlayers(false); // will load the video player
-                scheduleAutoLivestream(); // may auto-expand the video player if now is an appropriate time
-            });
-        });
     }
 
     private void scheduleAutoLivestream() {
@@ -486,7 +473,10 @@ final class VideoStreamingActivity extends ViewDomainActivityBase {
             assert eventContainingVideos != null;
 
             //Here we check if we should display the list of the days, so we can select to display the program just for one day.
-            displayingDailyProgram = videoScheduledItems.stream().collect(Collectors.groupingBy(ScheduledItem::getDate, Collectors.counting())).values().stream().anyMatch(count -> count > MIN_NUMBER_OF_SESSION_PER_DAY_BEFORE_DISPLAYING_DAILY_PROGRAM);
+            displayingDailyProgram = videoScheduledItems.stream()
+                .collect(Collectors.groupingBy(ScheduledItem::getDate, Collectors.counting()))
+                .values().stream()
+                .anyMatch(count -> count > MIN_NUMBER_OF_SESSION_PER_DAY_BEFORE_DISPLAYING_DAILY_PROGRAM);
             Layouts.setManagedAndVisibleProperties(selectTheDayBelowLabel, displayingDailyProgram);
             Layouts.setManagedAndVisibleProperties(responsiveDaySelectionMonoPane, displayingDailyProgram);
             Layouts.setManagedAndVisibleProperties(festivalShopText, displayingDailyProgram);
@@ -542,7 +532,7 @@ final class VideoStreamingActivity extends ViewDomainActivityBase {
                 Player playingPlayer = Players.getGlobalPlayerGroup().getPlayingPlayer();
                 // commented as this prevents pausing VODs
                 // if (playingPlayer != null && SceneUtil.hasAncestor(playingPlayer.getMediaView(), videoCollapsePane)) {
-                    lastVideoPlayingPlayer = playingPlayer;
+                lastVideoPlayingPlayer = playingPlayer;
                 //}
                 if (lastVideoPlayingPlayer != null) {
                     if (videoCollapsePane.isCollapsed()) {
@@ -643,9 +633,9 @@ final class VideoStreamingActivity extends ViewDomainActivityBase {
         Player videoPlayer = AllPlayers.createAllVideoPlayer();
         videoPlayer.setMedia(videoPlayer.acceptMedia(url));
         // Aspect ratio should be read from metadata but hardcoded for now
-        double aspectRatio = 16d/9d;
+        double aspectRatio = 16d / 9d;
         if (url.contains("wistia"))   // Wistia is used only for the Festival play so far
-            aspectRatio = 1085d/595d; // This is the aspect ratio for the Life of Buddha play
+            aspectRatio = 1085d / 595d; // This is the aspect ratio for the Life of Buddha play
         videoPlayer.setStartOptions(new StartOptionsBuilder()
             .setAutoplay(autoPlay)
             .setAspectRatio(aspectRatio)

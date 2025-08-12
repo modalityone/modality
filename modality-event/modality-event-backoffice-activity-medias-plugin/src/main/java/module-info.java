@@ -40,7 +40,6 @@ module modality.event.backoffice.activity.medias.plugin {
     requires webfx.platform.uischeduler;
     requires webfx.platform.util;
     requires webfx.platform.windowhistory;
-    requires webfx.stack.orm.datasourcemodel.service;
     requires webfx.stack.orm.domainmodel;
     requires webfx.stack.orm.domainmodel.activity;
     requires webfx.stack.orm.dql;

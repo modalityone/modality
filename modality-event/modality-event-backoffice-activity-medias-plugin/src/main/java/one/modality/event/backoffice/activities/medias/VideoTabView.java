@@ -11,8 +11,6 @@ import dev.webfx.extras.util.masterslave.SlaveEditor;
 import dev.webfx.extras.validation.ValidationSupport;
 import dev.webfx.kit.util.properties.FXProperties;
 import dev.webfx.platform.console.Console;
-import dev.webfx.stack.orm.datasourcemodel.service.DataSourceModelService;
-import dev.webfx.stack.orm.domainmodel.DataSourceModel;
 import dev.webfx.stack.orm.entity.*;
 import dev.webfx.stack.orm.entity.binding.EntityBindings;
 import javafx.application.Platform;
@@ -54,8 +52,7 @@ import java.util.stream.Collectors;
 final class VideoTabView {
 
     private final BooleanProperty activeProperty = new SimpleBooleanProperty();
-    private final DataSourceModel dataSourceModel = DataSourceModelService.getDefaultDataSourceModel();
-    private final EntityStore entityStore = EntityStore.create(dataSourceModel);
+    private final EntityStore entityStore = EntityStore.create();
     private final UpdateStore updateStore = UpdateStore.createAbove(entityStore);
     private final ValidationSupport validationSupport = new ValidationSupport();
     private final ObservableList<LocalDate> teachingsDates = FXCollections.observableArrayList();
@@ -173,7 +170,7 @@ final class VideoTabView {
         masterSettings.getChildren().add(contentExpirationTimeTextField);
 
         FXProperties.runOnPropertiesChange(() -> updateVodExpirationDate(currentEvent, dateFormatter, timeFormatter)
-        , contentExpirationTimeTextField.textProperty(), contentExpirationDateTextField.textProperty());
+            , contentExpirationTimeTextField.textProperty(), contentExpirationDateTextField.textProperty());
 
         Label vodAvailableAfterLive = I18nControls.newLabel(MediasI18nKeys.VODAvailableAfter);
         vodAvailableAfterLive.getStyleClass().add(Bootstrap.TEXT_SECONDARY);
@@ -211,9 +208,9 @@ final class VideoTabView {
 
 
         BorderPane individualSettingsHBox;
-        if(currentEditedEvent.getRepeatedEvent()!=null && currentEditedEvent.isRepeatVideo()) {
+        if (currentEditedEvent.getRepeatedEvent() != null && currentEditedEvent.isRepeatVideo()) {
             Label seeRepeatableEventLabel = I18nControls.newLabel(MediasI18nKeys.VideoConfigurationDoneInRepeatableEvent, currentEditedEvent.getRepeatedEvent().getName(), Entities.getPrimaryKey(currentEditedEvent.getRepeatedEventId()).toString());
-            seeRepeatableEventLabel.setPadding(new Insets(200,0,0,0));
+            seeRepeatableEventLabel.setPadding(new Insets(200, 0, 0, 0));
             individualSettingsHBox = new BorderPane();
             individualSettingsHBox.setCenter(seeRepeatableEventLabel);
         } else {
@@ -242,7 +239,7 @@ final class VideoTabView {
             // Combine the date and time to create LocalDateTime
             currentEvent.setVodExpirationDate(LocalDateTime.of(date, time));
         } catch (DateTimeParseException e) {
-            if(Objects.equals(contentExpirationDateTextField.getText(), "") && Objects.equals(contentExpirationTimeTextField.getText(), ""))
+            if (Objects.equals(contentExpirationDateTextField.getText(), "") && Objects.equals(contentExpirationTimeTextField.getText(), ""))
                 currentEvent.setVodExpirationDate(null);
         }
     }
@@ -254,7 +251,7 @@ final class VideoTabView {
                     new Object[]{currentEditedEvent.getOrganization(), KnownItem.VIDEO.getCode()}),
                 new EntityStoreQuery("select name, programScheduledItem.(startTime, endTime), date, event, site, expirationDate,available, vodDelayed, published, comment, commentLabel, item, item.code, programScheduledItem.name, programScheduledItem.timeline.startTime, programScheduledItem.timeline.endTime from ScheduledItem where programScheduledItem.event= ? and item.code = ? and programScheduledItem.item.family.code = ? order by date",
                     new Object[]{currentEditedEvent, KnownItem.VIDEO.getCode(), KnownItemFamily.TEACHING.getCode()}),
-                new EntityStoreQuery("select url, scheduledItem.item, scheduledItem.date, scheduledItem.vodDelayed, scheduledItem.published, scheduledItem.item.code from Media where scheduledItem.event= ? and scheduledItem.item.code = ?",
+                new EntityStoreQuery("select url, scheduledItem.(item, item.code, date, vodDelayed, published) from Media where scheduledItem.event = ? and scheduledItem.item.code = ? order by id",
                     new Object[]{currentEditedEvent, KnownItem.VIDEO.getCode()})
             ).onFailure(Console::log)
             .onSuccess(entityList -> Platform.runLater(() -> {

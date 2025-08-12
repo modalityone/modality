@@ -35,16 +35,12 @@ public abstract class AbstractEventHeader implements EventHeader {
     @Override
     public Future<Event> loadAndSetEvent(Event event) {
         eventLoadedProperty.set(false);
-        return event.onCachedExpressionLoaded(LocalStorageCache.get().getCacheEntry("cache-event-header-event"),
-                this::onEventLoaded, getLoadEventFields())
-            .onSuccess(this::onEventLoaded);
-    }
-
-    private void onEventLoaded(Event event) {
-        UiScheduler.runInUiThread(() -> {
-            setEvent(event);
-            eventLoadedProperty.set(true);
-        });
+        return event.<Event>onExpressionLoadedWithCache(LocalStorageCache.get().getCacheEntry("cache-event-header-event"),
+                getLoadEventFields())
+            .onSuccess(ignored -> UiScheduler.runInUiThread(() -> {
+                setEvent(event);
+                eventLoadedProperty.set(true);
+            }));
     }
 
     @Override

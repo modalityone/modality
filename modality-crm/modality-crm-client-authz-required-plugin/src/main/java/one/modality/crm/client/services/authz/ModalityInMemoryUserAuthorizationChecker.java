@@ -54,9 +54,9 @@ final class ModalityInMemoryUserAuthorizationChecker extends InMemoryUserAuthori
         // In addition, we may have public operations. Since they are public, they don't need authorizations, however
         // some may have a route associated, and we need therefore to authorize those public routes.
         EntityStore.create(dataSourceModel)
-                .executeCachedQuery(
-                        LocalStorageCache.get().getCacheEntry("cache-authz-operations"), this::onPublicOrGuestOperationsWithGrantRouteChanged,
-                        "select grantRoute,guest,public from Operation where grantRoute!=null and (public or guest) and " + (Meta.isBackoffice() ? "backoffice" : "frontoffice"))
+                .executeQueryWithCache(
+                        LocalStorageCache.get().getCacheEntry("cache-authz-operations"),
+                    "select grantRoute,guest,public from Operation where grantRoute!=null and (public or guest) and " + (Meta.isBackoffice() ? "backoffice" : "frontoffice"))
                 .onFailure(Console::log)
                 .onSuccess(this::onPublicOrGuestOperationsWithGrantRouteChanged);
     }

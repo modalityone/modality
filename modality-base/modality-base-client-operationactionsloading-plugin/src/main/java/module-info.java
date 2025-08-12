@@ -21,7 +21,6 @@ module modality.base.client.operationactionsloading.plugin {
     requires webfx.platform.util;
     requires webfx.stack.authz.client;
     requires webfx.stack.cache.client;
-    requires webfx.stack.orm.datasourcemodel.service;
     requires webfx.stack.orm.entity;
     requires webfx.stack.routing.router.client;
 

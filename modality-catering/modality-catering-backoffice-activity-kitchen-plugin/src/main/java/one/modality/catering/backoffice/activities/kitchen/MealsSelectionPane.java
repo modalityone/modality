@@ -97,8 +97,8 @@ public class MealsSelectionPane extends VBox {
             return;
         }
 
-        organization.getStore().<Item>executeCachedQuery(
-            LocalStorageCache.get().getCacheEntry("cache-kitchen-mealsItems"), organizationAllMealsItemsObservableList::setAll,
+        organization.getStore().<Item>executeQueryWithCache(
+            LocalStorageCache.get().getCacheEntry("cache-kitchen-mealsItems"),
             "select id,name,code,ord from Item i where i.family.code='meals' and organization=? order by ord", organization
         ).onSuccess(organizationAllMealsItemsObservableList::setAll);
     }

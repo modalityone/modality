@@ -14,8 +14,6 @@ import dev.webfx.kit.util.properties.FXProperties;
 import dev.webfx.kit.util.properties.ObservableLists;
 import dev.webfx.platform.console.Console;
 import dev.webfx.platform.util.Strings;
-import dev.webfx.stack.orm.datasourcemodel.service.DataSourceModelService;
-import dev.webfx.stack.orm.domainmodel.DataSourceModel;
 import dev.webfx.stack.orm.entity.*;
 import dev.webfx.stack.orm.entity.binding.EntityBindings;
 import javafx.application.Platform;
@@ -56,8 +54,7 @@ import java.util.stream.Collectors;
 final class RecordingsTabView {
 
     private Event currentEditedEvent;
-    private final DataSourceModel dataSourceModel = DataSourceModelService.getDefaultDataSourceModel();
-    private final EntityStore entityStore = EntityStore.create(dataSourceModel);
+    private final EntityStore entityStore = EntityStore.create();
     private final UpdateStore updateStore = UpdateStore.createAbove(entityStore);
     private final ValidationSupport validationSupport = new ValidationSupport();
     private TextField contentExpirationDate;
