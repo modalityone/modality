@@ -110,32 +110,32 @@ final class EventAudioLibraryActivity extends ViewDomainActivityBase {
                         Object userAccountId = FXModalityUserPrincipal.getModalityUserPrincipal().getUserAccountId();
                         Object eventId1 = event.getPrimaryKey();
                         event.getStore().executeQueryBatchWithCache("cache-audio-library-scheduled-items-medias",
-                                // Index 0: we look for the scheduledItem having a bookableScheduledItem which is an audio type (case of festival)
+                                // Index 0: we look for the scheduledItem having a `bookableScheduledItem` which is an audio type (case of festival)
                                 new EntityStoreQuery("""
                                     select name, label, date, expirationDate, programScheduledItem.(name, label, startTime, endTime, timeline.(startTime, endTime), cancelled), published, event.(name, type.recurringItem, recurringWithAudio), \
-                                     (select id from Attendance where scheduledItem=si.bookableScheduledItem and documentLine.document.person.frontendAccount=? limit 1) as attendanceId, \
-                                     (exists(select MediaConsumption where media.scheduledItem=si and attendance.documentLine.document.person.frontendAccount=? and played) as alreadyPlayed), \
-                                     (exists(select MediaConsumption where media.scheduledItem=si and attendance.documentLine.document.person.frontendAccount=? and downloaded) as alreadyDownloaded) \
+                                     (select id from Attendance where scheduledItem=si.bookableScheduledItem and documentLine.document.person.frontendAccount=$1 limit 1) as attendanceId, \
+                                     (exists(select MediaConsumption where media.scheduledItem=si and attendance.documentLine.document.person.frontendAccount=$1 and played) as alreadyPlayed), \
+                                     (exists(select MediaConsumption where media.scheduledItem=si and attendance.documentLine.document.person.frontendAccount=$1 and downloaded) as alreadyDownloaded) \
                                      from ScheduledItem si\
-                                     where event=? and bookableScheduledItem.item.family.code=? and item.code=? and programScheduledItem is not null and exists(select Attendance where scheduledItem=si.bookableScheduledItem and documentLine.(!cancelled and document.(person.frontendAccount=? and event=? and confirmed and price_balance<=0)))\
+                                     where event=$2 and bookableScheduledItem.item.family.code=$3 and item.code=$4 and programScheduledItem is not null and exists(select Attendance where scheduledItem=si.bookableScheduledItem and documentLine.(!cancelled and document.(person.frontendAccount=$1 and event=$5 and confirmed and price_balance<=0)))\
                                      order by date, startTime, programScheduledItem.timeline..startTime""",
-                                    new Object[]{userAccountId, userAccountId, userAccountId, eventIdContainingAudios, KnownItemFamily.AUDIO_RECORDING.getCode(), pathItemCodeProperty.get(), userAccountId, eventId1}),
-                                // Index 1: we look for the scheduledItem of audio type having a bookableScheduledItem which is a teaching type (case of STTP)
+                                    new Object[]{userAccountId, eventIdContainingAudios, KnownItemFamily.AUDIO_RECORDING.getCode(), pathItemCodeProperty.get(), eventId1}),
+                                // Index 1: we look for the scheduledItem of audio type having a `bookableScheduledItem` which is a teaching type (case of STTP)
                                 // TODO: for now we take only the English audio recording scheduledItem in that case. We should take the default language of the organization instead
                                 new EntityStoreQuery("""
                                     select name, label, date, expirationDate, programScheduledItem.(name, label, startTime, endTime, timeline.(startTime, endTime), cancelled), published, event.(name, type.recurringItem, recurringWithAudio), \
-                                     (select id from Attendance where scheduledItem=si.bookableScheduledItem and documentLine.document.person.frontendAccount=? limit 1) as attendanceId, \
-                                     (exists(select MediaConsumption where media.scheduledItem=si and attendance.documentLine.document.person.frontendAccount=? and played) as alreadyPlayed), \
-                                     (exists(select MediaConsumption where media.scheduledItem=si and attendance.documentLine.document.person.frontendAccount=? and downloaded) as alreadyDownloaded) \
+                                     (select id from Attendance where scheduledItem=si.bookableScheduledItem and documentLine.document.person.frontendAccount=$1 limit 1) as attendanceId, \
+                                     (exists(select MediaConsumption where media.scheduledItem=si and attendance.documentLine.document.person.frontendAccount=$1 and played) as alreadyPlayed), \
+                                     (exists(select MediaConsumption where media.scheduledItem=si and attendance.documentLine.document.person.frontendAccount=$1 and downloaded) as alreadyDownloaded) \
                                      from ScheduledItem si\
-                                     where event=? and bookableScheduledItem.item.family.code=? and item.code=? and exists(select Attendance where scheduledItem=si.bookableScheduledItem and documentLine.(!cancelled and document.(person.frontendAccount=? and event=? and confirmed and price_balance<=0)))\
+                                     where event=$2 and bookableScheduledItem.item.family.code=$3 and item.code=$4 and exists(select Attendance where scheduledItem=si.bookableScheduledItem and documentLine.(!cancelled and document.(person.frontendAccount=$1 and event=$5 and confirmed and price_balance<=0)))\
                                      order by date, startTime, programScheduledItem.timeline..startTime""",
-                                    new Object[]{userAccountId, userAccountId, userAccountId, eventIdContainingAudios, KnownItemFamily.TEACHING.getCode(), KnownItem.AUDIO_RECORDING_ENGLISH.getCode(), userAccountId, eventId1}),
+                                    new Object[]{userAccountId, eventIdContainingAudios, KnownItemFamily.TEACHING.getCode(), KnownItem.AUDIO_RECORDING_ENGLISH.getCode(), eventId1}),
                                 // Index 2: the medias
                                 new EntityStoreQuery("""
                                     select url, scheduledItem.(date, event), scheduledItem.name, scheduledItem.published, durationMillis \
                                      from Media\
-                                     where scheduledItem.(event=? and (item.code=? or item.code=?) and online) and scheduledItem.published""",
+                                     where scheduledItem.(event=? and online and published and item.code in (?,?))""",
                                     new Object[]{eventIdContainingAudios, pathItemCodeProperty.get(), KnownItem.AUDIO_RECORDING_ENGLISH.getCode()}))
                             .onFailure(Console::log)
                             .inUiThread()

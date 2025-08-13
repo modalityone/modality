@@ -147,21 +147,22 @@ final class VideoStreamingActivity extends ViewDomainActivityBase {
         FXProperties.runNowAndOnPropertyChange(modalityUserPrincipal -> {
             eventsWithBookedVideos.clear();
             if (modalityUserPrincipal != null) {
+                Object userAccountId = modalityUserPrincipal.getUserAccountId();
                 eventsWithBookedVideosLoadingProperty.set(true);
                 // we look for the scheduledItem having a `bookableScheduledItem` which is an audio type (case of festival)
                 entityStore.<DocumentLine>executeQueryWithCache("cache-video-streaming-document-lines",
                         "select document.event.(name, label, shortDescription, shortDescriptionLabel, audioExpirationDate, startDate, endDate, livestreamUrl, vodExpirationDate, repeatVideo, recurringWithVideo, repeatedEvent), item.(code, family.code)" +
                         // We look if there are published audio ScheduledItem of type video, whose bookableScheduledItem has been booked
-                        ", (exists(select ScheduledItem where item.family.code=? and bookableScheduledItem.(event=coalesce(dl.document.event.repeatedEvent, dl.document.event) and item=dl.item))) as published " +
+                        ", (exists(select ScheduledItem where item.family.code=$2 and bookableScheduledItem.(event=coalesce(dl.document.event.repeatedEvent, dl.document.event) and item=dl.item))) as published " +
                         // We check if the user has booked, not cancelled and paid the recordings
-                        " from DocumentLine dl where !cancelled  and dl.document.(person.frontendAccount=? and confirmed and price_balance<=0) " +
-                        " and dl.document.event.(repeatedEvent = null or repeatVideo)" +
+                        " from DocumentLine dl where !cancelled  and dl.document.(person.frontendAccount=$1 and confirmed and price_balance<=0) " +
+                        " and dl.document.event.(kbs3 and (repeatedEvent = null or repeatVideo))" +
                         // we check if :
                         " and (" +
                         // 1/ there is a ScheduledItem of `video` family type whose `bookableScheduledItem` has been booked (KBS3 setup)
-                        " exists(select Attendance a where documentLine=dl and exists(select ScheduledItem where bookableScheduledItem=a.scheduledItem and item.family.code=?))" +
+                        " exists(select Attendance a where documentLine=dl and exists(select ScheduledItem where bookableScheduledItem=a.scheduledItem and item.family.code=$2))" +
                         // 2/ Or KBS3 / KBS2 setup (this allows displaying the videos that have been booked in the past with KBS2 events, event if we can't display them)
-                        " or item.family.code=?)" +
+                        " or item.family.code=$2)" +
                         // we display only the events that have not expired or expired since less than 21 days.
                         " and (document.event.(vodExpirationDate = null or date_part('epoch', now()) < date_part('epoch', vodExpirationDate)+21*24*60*60)) " +
                         // Ordering with the most relevant events, the first event will be the selected one by default.
@@ -174,7 +175,7 @@ final class VideoStreamingActivity extends ViewDomainActivityBase {
                         ", document.event.(vodExpirationDate = null or now() <= vodExpirationDate)" +
                         // 4) Smallest event (ex: favor Spring Festival over STTP)
                         ", document.event.(endDate - startDate)",
-                        KnownItemFamily.VIDEO.getCode(), modalityUserPrincipal.getUserAccountId(), KnownItemFamily.VIDEO.getCode(), KnownItemFamily.VIDEO.getCode())
+                        userAccountId, KnownItemFamily.VIDEO.getCode())
                     .onFailure(Console::log)
                     .inUiThread()
                     .onSuccess(documentLines -> {
@@ -222,15 +223,15 @@ final class VideoStreamingActivity extends ViewDomainActivityBase {
                 entityStore.<ScheduledItem>executeQueryWithCache("cache-video-streaming-scheduled-items",
                         """
                             select name, label, date, comment, commentLabel, expirationDate, programScheduledItem.(name, label, startTime, endTime, timeline.(startTime, endTime), cancelled), published, event.(name, type.recurringItem, livestreamUrl, recurringWithVideo), vodDelayed, \
-                             (exists(select MediaConsumption where scheduledItem=si and attendance.documentLine.document.person.frontendAccount=?) as attended), \
-                             (select id from Attendance where scheduledItem=si.bookableScheduledItem and documentLine.document.person.frontendAccount=? limit 1) as attendanceId \
+                             (exists(select MediaConsumption where scheduledItem=si and attendance.documentLine.document.person.frontendAccount=$1) as attended), \
+                             (select id from Attendance where scheduledItem=si.bookableScheduledItem and documentLine.document.person.frontendAccount=$1 limit 1) as attendanceId \
                              from ScheduledItem si \
-                             where event=?\
-                             and bookableScheduledItem.item.family.code=?\
-                             and item.code=?\
-                             and exists(select Attendance a where scheduledItem=si.bookableScheduledItem and documentLine.(!cancelled and document.(person.frontendAccount=? and event=? and confirmed and price_balance<=0)))\
+                             where event=$2\
+                             and bookableScheduledItem.item.family.code=$3\
+                             and item.code=$4\
+                             and exists(select Attendance a where scheduledItem=si.bookableScheduledItem and documentLine.(!cancelled and document.(person.frontendAccount=$1 and event=$5 and confirmed and price_balance<=0)))\
                              order by date, programScheduledItem.timeline..startTime""",
-                        userAccountId, userAccountId, eventContainingVideos, KnownItemFamily.TEACHING.getCode(), KnownItem.VIDEO.getCode(), userAccountId, event)
+                        /*$1*/ userAccountId, /*$2*/ eventContainingVideos, /*$3*/ KnownItemFamily.TEACHING.getCode(), /*$4*/ KnownItem.VIDEO.getCode(), /*$5*/ event)
                     .onFailure(Console::log)
                     .inUiThread()
                     .onSuccess(scheduledItems -> {

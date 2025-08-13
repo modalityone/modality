@@ -56,18 +56,18 @@ final class AudioLibraryActivity extends ViewDomainActivityBase {
                 entityStore.<DocumentLine>executeQueryWithCache("cache-audio-library-document-lines",
                         "select document.event.(name,label, shortDescription, shortDescriptionLabel, audioExpirationDate, startDate, endDate, repeatedEvent), item.code, item.family.code, " +
                        // We look if there are published audio ScheduledItem of type audio, whose bookableScheduledItem has been booked
-                       " (exists(select ScheduledItem where item.family.code=? and published and bookableScheduledItem.(event=coalesce(dl.document.event.repeatedEvent, dl.document.event) and item=dl.item))) as published " +
+                       " (exists(select ScheduledItem where item.family.code=$1 and published and bookableScheduledItem.(event=coalesce(dl.document.event.repeatedEvent, dl.document.event) and item=dl.item))) as published " +
                        // We check if the user has booked, not cancelled and paid the recordings
-                       " from DocumentLine dl where !cancelled and dl.document.(person.frontendAccount=? and (confirmed or arrived) and price_balance<=0) " +
-                       " and dl.document.event.(repeatedEvent = null or repeatAudio)" +
+                       " from DocumentLine dl where !cancelled and dl.document.(person.frontendAccount=$2 and (confirmed or arrived) and price_balance<=0) " +
+                       " and dl.document.event.(kbs3 and (repeatedEvent = null or repeatAudio))" +
                        // we check if :
                        " and (" +
                        // 1/ there is a ScheduledItem of type audio whose bookableScheduledItem has been booked (KBS3 setup)
-                       " exists (select Attendance a where documentLine=dl and exists(select ScheduledItem where bookableScheduledItem=a.scheduledItem and item.family.code=?))" +
+                       " exists(select Attendance a where documentLine=dl and exists(select ScheduledItem where bookableScheduledItem=a.scheduledItem and item.family.code=$1))" +
                        // 2/ Or KBS3 / KBS2 setup (this allows displaying the audios that have been booked in the past with KBS2 events, event if we can't display them)
-                       " or item.family.code=?) and document.event.kbs3=true " +
+                       " or item.family.code=$1)" +
                        " order by document.event.startDate desc",
-                        new Object[]{ KnownItemFamily.AUDIO_RECORDING.getCode(), modalityUserPrincipal.getUserAccountId(), KnownItemFamily.AUDIO_RECORDING.getCode(), KnownItemFamily.AUDIO_RECORDING.getCode()})
+                        new Object[]{ KnownItemFamily.AUDIO_RECORDING.getCode(), modalityUserPrincipal.getUserAccountId()})
                     .onFailure(Console::log)
                     .inUiThread()
                     .onSuccess(documentLinesWithBookedAudios::setAll);
