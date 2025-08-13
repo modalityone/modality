@@ -24,6 +24,7 @@ module modality.base.client.activity {
     requires webfx.platform.util;
     requires webfx.stack.db.query;
     requires webfx.stack.orm.domainmodel.activity;
+    requires webfx.stack.orm.entity;
     requires webfx.stack.orm.reactive.dql;
     requires webfx.stack.orm.reactive.visual;
     requires webfx.stack.routing.uirouter;

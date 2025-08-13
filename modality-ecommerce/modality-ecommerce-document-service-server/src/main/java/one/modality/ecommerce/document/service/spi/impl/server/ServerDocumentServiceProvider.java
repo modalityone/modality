@@ -8,9 +8,9 @@ import dev.webfx.platform.util.Arrays;
 import dev.webfx.platform.util.Strings;
 import dev.webfx.stack.com.serial.SerialCodecManager;
 import dev.webfx.stack.db.query.QueryArgument;
-import dev.webfx.stack.db.query.QueryArgumentBuilder;
 import dev.webfx.stack.db.query.QueryService;
 import dev.webfx.stack.orm.datasourcemodel.service.DataSourceModelService;
+import dev.webfx.stack.orm.entity.DqlQueries;
 import dev.webfx.stack.orm.entity.EntityStore;
 import dev.webfx.stack.orm.entity.EntityStoreQuery;
 import dev.webfx.stack.orm.entity.UpdateStore;
@@ -41,32 +41,21 @@ public class ServerDocumentServiceProvider implements DocumentServiceProvider {
     public Future<PolicyAggregate> loadPolicy(LoadPolicyArgument argument) {
         // Managing the case of recurring event only for now
         Object eventPk = argument.getEventPk();
-        Object dataSourceId = DataSourceModelService.getDefaultDataSourceId();
-        String language = "DQL";
         return QueryService.executeQueryBatch(
                 new Batch<>(new QueryArgument[]{
-                    new QueryArgumentBuilder() // Loading scheduled items (of this event or of the repeated event if set)
-                        .setStatement(POLICY_SCHEDULED_ITEMS_QUERY_BASE + " where event = (select coalesce(repeatedEvent, id) from Event where id=?) and bookableScheduledItem=id " +
-                                      "order by site,item,date")
-                        .setParameters(eventPk)
-                        .setLanguage(language)
-                        .setDataSourceId(dataSourceId)
-                        .build(),
-                    new QueryArgumentBuilder() // Loading rates (of this event or of the repeated event if set)
-                        .setStatement(POLICY_RATES_QUERY_BASE + " where site.event = (select coalesce(repeatedEvent, id) from Event where id=?) or site = (select coalesce(repeatedEvent.venue, venue) from Event where id = ?) " +
-                                      // Note: TeachingsPricing relies on the following order to work properly
-                                      "order by site,item,perDay desc,startDate,endDate,price")
-                        .setParameters(eventPk, eventPk)
-                        .setLanguage(language)
-                        .setDataSourceId(dataSourceId)
-                        .build(),
-                    new QueryArgumentBuilder() // Loading bookable periods (of this event or of the repeated event if set)
-                        .setStatement(POLICY_BOOKABLE_PERIODS_QUERY_BASE + " where event = (select coalesce(repeatedEvent, id) from Event where id=?)" +
-                                      "order by startScheduledItem.date,endScheduledItem.date")
-                        .setParameters(eventPk)
-                        .setLanguage(language)
-                        .setDataSourceId(dataSourceId)
-                        .build()
+                    // Loading scheduled items (of this event or of the repeated event if set)
+                    DqlQueries.newQueryArgumentForDefaultDataSource(
+                        POLICY_SCHEDULED_ITEMS_QUERY_BASE + " where event = (select coalesce(repeatedEvent, id) from Event where id=$1) and bookableScheduledItem=id " +
+                        "order by site,item,date", eventPk),
+                    // Loading rates (of this event or of the repeated event if set)
+                    DqlQueries.newQueryArgumentForDefaultDataSource(
+                        POLICY_RATES_QUERY_BASE + " where site.event = (select coalesce(repeatedEvent, id) from Event where id=$1) or site = (select coalesce(repeatedEvent.venue, venue) from Event where id=$1) " +
+                        // Note: TeachingsPricing relies on the following order to work properly
+                        "order by site,item,perDay desc,startDate,endDate,price", eventPk),
+                    // Loading bookable periods (of this event or of the repeated event if set)
+                    DqlQueries.newQueryArgumentForDefaultDataSource(
+                        POLICY_BOOKABLE_PERIODS_QUERY_BASE + " where event = (select coalesce(repeatedEvent, id) from Event where id=$1)" +
+                        "order by startScheduledItem.date,endScheduledItem.date", eventPk)
                 }))
             .map(batch -> new PolicyAggregate(
                 POLICY_SCHEDULED_ITEMS_QUERY_BASE, batch.get(0),
