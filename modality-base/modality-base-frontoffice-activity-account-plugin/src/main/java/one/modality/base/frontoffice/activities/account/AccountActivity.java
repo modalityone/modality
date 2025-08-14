@@ -117,7 +117,8 @@ final class AccountActivity extends ViewDomainActivityBase implements OperationA
     protected void startLogic() {
         // Upcoming bookings
         ReactiveEntitiesMapper.<Document>createReactiveChain(this)
-            .always("{class: 'Document', alias: 'd', orderBy: 'event.startDate desc, ref desc'}")
+            .always( // language=JSON5
+                "{class: 'Document', alias: 'd', orderBy: 'event.startDate desc, ref desc'}")
             .always(DqlStatement.fields(BookingView.BOOKING_REQUIRED_FIELDS))
             .always(DqlStatement.where("event.endDate >= now()"))
             .always(DqlStatement.where("!cancelled or price_deposit>0"))
@@ -128,7 +129,8 @@ final class AccountActivity extends ViewDomainActivityBase implements OperationA
 
         // Past bookings
         ReactiveEntitiesMapper.<Document>createReactiveChain(this)
-            .always("{class: 'Document', alias: 'd', orderBy: 'event.startDate desc, ref desc', limit: 5}")
+            .always( // language=JSON5
+                "{class: 'Document', alias: 'd', orderBy: 'event.startDate desc, ref desc', limit: 5}")
             .always(DqlStatement.fields(BookingView.BOOKING_REQUIRED_FIELDS))
             .always(DqlStatement.where("event.endDate < now()"))
             .always(DqlStatement.where("!cancelled or price_deposit>0"))

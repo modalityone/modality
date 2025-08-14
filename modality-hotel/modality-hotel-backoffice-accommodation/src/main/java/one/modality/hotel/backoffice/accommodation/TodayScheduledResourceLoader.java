@@ -53,7 +53,8 @@ public final class TodayScheduledResourceLoader {
         }
         if (rem == null) { // first call
             rem = ReactiveEntitiesMapper.<ScheduledResource>createPushReactiveChain(mixin)
-                    .always("{class: 'ScheduledResource', alias: 'sr', fields: 'max,configuration,(select count(1) from Attendance where present and scheduledResource=sr and !documentLine.cancelled) as booked'}")
+                    .always( // language=JSON5
+                        "{class: 'ScheduledResource', alias: 'sr', fields: 'max,configuration,(select count(1) from Attendance where present and scheduledResource=sr and !documentLine.cancelled) as booked'}")
                     // Returning events for the selected organization only (or returning an empty set if no organization is selected)
                     .ifNotNullOtherwiseEmpty(pm.organizationIdProperty(), o -> where("configuration.resource.site.organization=?", o))
                     // Restricting events to those appearing in the time window

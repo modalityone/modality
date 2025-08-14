@@ -167,7 +167,8 @@ final class OrdersActivity extends ViewDomainActivityBase implements ModalityBut
     protected void startLogic() {
         // Upcoming orders
         upcomingOrdersMapper = ReactiveObjectsMapper.<Document, OrderCard>createReactiveChain(this)
-            .always("{class: 'Document', alias: 'd'}")
+            .always( // language=JSON5
+                "{class: 'Document', alias: 'd'}")
             .always(DqlStatement.fields(OrderCard.ORDER_REQUIRED_FIELDS))
             .always(where("event.endDate >= now()"))
             .always(where("!abandoned or price_deposit>0"))
@@ -180,7 +181,8 @@ final class OrdersActivity extends ViewDomainActivityBase implements ModalityBut
 
         // Past orders
         ReactiveEntitiesMapper.<Document>createReactiveChain(this)
-            .always("{class: 'Document', alias: 'd', orderBy: 'event.startDate desc, ref desc', limit: 5}")
+            .always( // language=JSON5
+                "{class: 'Document', alias: 'd', orderBy: 'event.startDate desc, ref desc', limit: 5}")
             .always(DqlStatement.fields(OrderCard.ORDER_REQUIRED_FIELDS))
             .always(where("event.endDate < now()"))
             .always(where("!abandoned or price_deposit>0"))

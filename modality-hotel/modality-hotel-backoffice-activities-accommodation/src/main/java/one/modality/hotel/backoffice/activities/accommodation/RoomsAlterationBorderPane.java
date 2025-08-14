@@ -30,7 +30,7 @@ class RoomsAlterationBorderPane {
         Node body = roomsAlterationView.buildView();
         BorderPane borderPane = new BorderPane(body);
 
-        EntityButtonSelector<Item> roomTypeSelector = new EntityButtonSelector<Item>(
+        EntityButtonSelector<Item> roomTypeSelector = new EntityButtonSelector<Item>( // language=JSON5
                 "{class: 'Item', alias: 'i', where: 'family.code=`acco`'}",
                 activity, activity.container, activity.getDataSourceModel()
         )

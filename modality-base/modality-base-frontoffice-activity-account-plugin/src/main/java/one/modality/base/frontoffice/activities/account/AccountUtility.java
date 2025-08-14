@@ -74,7 +74,7 @@ public final class AccountUtility {
         Node gender = GeneralUtility.createField("Biological gender", createHorizontalRadioButtons("Male", "Female", personPM.IS_MALE, !personPM.IS_NEW));
         Node practitioner = GeneralUtility.createField("Practitioner", createHorizontalRadioButtons("Lay", "Ordained", personPM.IS_LAY, !personPM.IS_NEW));
 
-        EntityButtonSelector<Country> countriesButtonSelector = new EntityButtonSelector<>(
+        EntityButtonSelector<Country> countriesButtonSelector = new EntityButtonSelector<>( // language=JSON5
                 "{class:'country', orderBy:'name'}",
                 activityMixin, container, activity.getDataSourceModel()
         );

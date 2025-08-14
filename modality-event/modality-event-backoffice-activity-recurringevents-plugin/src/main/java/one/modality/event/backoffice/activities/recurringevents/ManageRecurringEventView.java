@@ -99,15 +99,16 @@ final class ManageRecurringEventView {
     private static final double EVENT_IMAGE_WIDTH = 200;
     private static final double EVENT_IMAGE_HEIGHT = 200;
 
-    private static final String EVENT_COLUMNS = """
-        [
-        {expression: 'state', label: 'Status', renderer: 'eventStateRenderer'},
-        {expression: 'advertised', label: 'Advertised'},
-        {expression: 'name', label: 'Name'},
-        {expression: 'type', label: 'TypeOfEvent'},
-        {expression: 'venue.name', label: 'Location'},
-        {expression: 'dateIntervalFormat(startDate, endDate)', label: 'Dates'}
-        ]""";
+    private static final String EVENT_COLUMNS = // language=JSON5
+        """
+            [
+                {expression: 'state', label: 'Status', renderer: 'eventStateRenderer'},
+                {expression: 'advertised', label: 'Advertised'},
+                {expression: 'name', label: 'Name'},
+                {expression: 'type', label: 'TypeOfEvent'},
+                {expression: 'venue.name', label: 'Location'},
+                {expression: 'dateIntervalFormat(startDate, endDate)', label: 'Dates'}
+            ]""";
 
     private final RecurringEventsActivity activity;
     private final BooleanProperty activeProperty = new SimpleBooleanProperty();
@@ -262,7 +263,8 @@ final class ManageRecurringEventView {
         RecurringEventRenderers.registerRenderers();
 
         eventVisualMapper = ReactiveVisualMapper.<Event>createPushReactiveChain(activity)
-            .always("{class: 'Event', alias: 'e', fields: 'type.recurringItem, recurringWithAudio, recurringWithVideo, (select site.name from Timeline where event=e limit 1) as location'}")
+            .always( // language=JSON5
+                "{class: 'Event', alias: 'e', fields: 'type.recurringItem, recurringWithAudio, recurringWithVideo, (select site.name from Timeline where event=e limit 1) as location'}")
             .always(FXOrganization.organizationProperty(), o -> DqlStatement.where("organization=?", o))
             .always(DqlStatement.where("type.recurringItem!=null and kbs3"))
             .setEntityColumns(EVENT_COLUMNS)
@@ -607,7 +609,7 @@ final class ManageRecurringEventView {
                     currentEditedEvent.setAdvertised(false);
                     currentMode.set(ADD_MODE);
                     I18nControls.bindI18nTextProperty(titleEventDetailsLabel, RecurringEventsI18nKeys.EventDetailsTitle);
-                    siteSelector = new EntityButtonSelector<Site>(
+                    siteSelector = new EntityButtonSelector<Site>( // language=JSON5
                         "{class: 'Site', alias: 's', where: 'event=null', orderBy :'name'}",
                         activity, eventDetailsVBox, DataSourceModelService.getDefaultDataSourceModel()
                     ) { // Overriding the button content to add the possibility of Adding a new site prefix text

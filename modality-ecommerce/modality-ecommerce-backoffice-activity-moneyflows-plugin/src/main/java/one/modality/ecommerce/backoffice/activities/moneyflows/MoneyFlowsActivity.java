@@ -154,7 +154,8 @@ final class MoneyFlowsActivity extends OrganizationDependentViewDomainActivity i
     protected void startLogic() {
         // Setting up the master mapper that build the content displayed in the master view
         moneyAccountVisualMapper = ReactiveVisualMapper.<MoneyAccount>createPushReactiveChain(this)
-                .always("{class: 'MoneyAccount', alias: 'ma', columns: 'name,closed,currency,event,gatewayCompany,type', fields: 'id', where: 'event=null', orderBy: 'name desc'}")
+                .always( // language=JSON5
+                    "{class: 'MoneyAccount', alias: 'ma', columns: 'name,closed,currency,event,gatewayCompany,type', fields: 'id', where: 'event=null', orderBy: 'name desc'}")
                 .ifNotNull(pm.organizationIdProperty(), organization -> where("organization=?", organization))
                 .ifTrimNotEmpty(pm.searchTextProperty(), s -> DqlStatement.where("name like ?", AbcNames.evaluate(s, true)))
                 .applyDomainModelRowStyle() // Colorizing the rows
@@ -165,7 +166,8 @@ final class MoneyFlowsActivity extends OrganizationDependentViewDomainActivity i
                 .start();
 
         moneyFlowVisualMapper = ReactiveVisualMapper.<MoneyFlow>createPushReactiveChain(this)
-                .always("{class: 'MoneyFlow', alias: 'mf', fields: 'organization', where: 'fromMoneyAccount.event=null && toMoneyAccount.event=null'}")
+                .always( // language=JSON5
+                    "{class: 'MoneyFlow', alias: 'mf', fields: 'organization', where: 'fromMoneyAccount.event=null && toMoneyAccount.event=null'}")
                 .setEntityColumns("[" +
                         "{label: 'From', expression: 'fromMoneyAccount'}," +
                         "{label: 'To', expression: 'toMoneyAccount'}," +
@@ -183,7 +185,8 @@ final class MoneyFlowsActivity extends OrganizationDependentViewDomainActivity i
                 .start();
 
         ReactiveObjectsMapper.<MoneyAccount, MoneyAccountPane>createPushReactiveChain(this)
-                .always("{class: 'MoneyAccount', alias: 'ma', fields: 'name,type,organization', where: 'event=null'}")
+                .always( // language=JSON5
+                    "{class: 'MoneyAccount', alias: 'ma', fields: 'name,type,organization', where: 'event=null'}")
                 .ifNotNull(pm.organizationIdProperty(), organization -> where("organization=?", organization))
                 .setIndividualEntityToObjectMapperFactory(MoneyAccountToPaneMapper::new)
                 .setStore(moneyAccountVisualMapper.getStore())
@@ -191,7 +194,8 @@ final class MoneyFlowsActivity extends OrganizationDependentViewDomainActivity i
                 .start();
 
         ReactiveObjectsMapper.<MoneyFlow, MoneyFlowArrowView>createPushReactiveChain(this)
-                .always("{class: 'MoneyFlow', alias: 'mf', fields: 'fromMoneyAccount,toMoneyAccount', where: 'fromMoneyAccount.event=null && toMoneyAccount.event=null'}")
+                .always( // language=JSON5
+                    "{class: 'MoneyFlow', alias: 'mf', fields: 'fromMoneyAccount,toMoneyAccount', where: 'fromMoneyAccount.event=null && toMoneyAccount.event=null'}")
                 .ifNotNull(pm.organizationIdProperty(), organization -> where("organization=?", organization))
                 .setIndividualEntityToObjectMapperFactory(graph::newMoneyFlowToArrowMapper)
                 .setStore(moneyAccountVisualMapper.getStore())

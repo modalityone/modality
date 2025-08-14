@@ -29,15 +29,16 @@ final class MediaConsumptionTabView {
         ReactiveVisualMapper.createPushReactiveChain()
             .setDataSourceModel(dataSourceModel)
             .always("{class: 'MediaConsumption', orderBy: 'date desc'}")
-            .setEntityColumns("""
+            .setEntityColumns( // language=JSON5
+                """
                 [
-                {expression: 'attendance.documentLine.document.event', prefWidth: 120},
-                'attendance.documentLine.document',
-                {expression: 'attendance.documentLine.document.person_country', prefWidth: 150},
-                'date',
-                {expression: 'action', textAlign: 'center'},
-                'mediaInfo',
-                {expression: 'durationMillis', label: 'Duration', renderer: 'durationMillisRenderer', prefWidth: 70}
+                    {expression: 'attendance.documentLine.document.event', prefWidth: 120},
+                    'attendance.documentLine.document',
+                    {expression: 'attendance.documentLine.document.person_country', prefWidth: 150},
+                    'date',
+                    {expression: 'action', textAlign: 'center'},
+                    'mediaInfo',
+                    {expression: 'durationMillis', label: 'Duration', renderer: 'durationMillisRenderer', prefWidth: 70}
                 ]""")
             .ifTrue(limitCheckbox.selectedProperty(), DqlStatement.limit("100"))
             .bindActivePropertyTo(activeProperty)

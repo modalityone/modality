@@ -25,7 +25,7 @@ public class MainFrameHeaderOrganizationSelectorProvider implements MainFrameHea
     @Override
     public Node getHeaderNode(ButtonFactoryMixin buttonFactory, Pane frameContainer, DataSourceModel dataSourceModel) {
         if (organizationSelector == null) {
-            organizationSelector = new EntityButtonSelector<>(
+            organizationSelector = new EntityButtonSelector<>( // language=JSON5
                     "{class: 'Organization', alias: 'o', where: 'exists(select Event where organization=o)'}",
                     buttonFactory, frameContainer, dataSourceModel
             );

@@ -22,7 +22,8 @@ public final class MyBookingPersonalDetailsPanel extends BookingPersonalDetailsP
 
     public MyBookingPersonalDetailsPanel(EntityHasPersonalDetails entity, ButtonSelectorParameters buttonSelectorParameters) {
         super(entity, buttonSelectorParameters);
-        EntityButtonSelector<Person> personSelector = MyBookingPersonalDetailsPanel.<Person>createEntityButtonSelector("{class: 'Person', alias: 'p', fields: 'genderIcon,firstName,lastName,birthdate,email,phone,street,postCode,cityName,organization,country', columns: `[{expression: 'genderIcon,firstName,lastName'}]`, where: '!removed', orderBy: 'id'}", entity.getStore().getDataSourceModel(), buttonSelectorParameters)
+        EntityButtonSelector<Person> personSelector = MyBookingPersonalDetailsPanel.<Person>createEntityButtonSelector( // language=JSON5
+            "{class: 'Person', alias: 'p', fields: 'genderIcon,firstName,lastName,birthdate,email,phone,street,postCode,cityName,organization,country', columns: [{expression: 'genderIcon,firstName,lastName'}], where: '!removed', orderBy: 'id'}", entity.getStore().getDataSourceModel(), buttonSelectorParameters)
                 .ifNotNullOtherwiseEmpty(FXModalityUserPrincipal.modalityUserPrincipalProperty(), mup -> DqlStatement.where("frontendAccount=?", mup.getUserAccountId()))
                 .autoSelectFirstEntity();
         personButton = personSelector.toMaterialButton(CrmI18nKeys.PersonToBook);

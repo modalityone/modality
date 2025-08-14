@@ -306,7 +306,7 @@ public final class AlterRoomPane extends VBox {
     }
 
     private void createProductComboBox() {
-        roomTypeSelector = new EntityButtonSelector<Item>(
+        roomTypeSelector = new EntityButtonSelector<Item>( // language=JSON5
             "{class: 'Item', alias: 'i', where: 'family.code=`acco`'}",
             mixin, this, selectedResourceConfigurationProperty.get().getStore().getDataSourceModel()
         )
@@ -909,16 +909,18 @@ public final class AlterRoomPane extends VBox {
         }
         if (rvm == null) { // first call
             rvm = ReactiveVisualMapper.<ResourceConfiguration>createPushReactiveChain(mixin)
-                .always("{class: 'ResourceConfiguration', alias: 'rc', fields: 'name,item.name,max,allowsGuest,allowsResident,allowsResidentFamily,allowsSpecialGuest,allowsVolunteer,allowsFemale,allowsMale,startDate,endDate,resource.site'}")
+                .always( // language=JSON5
+                    "{class: 'ResourceConfiguration', alias: 'rc', fields: 'name,item.name,max,allowsGuest,allowsResident,allowsResidentFamily,allowsSpecialGuest,allowsVolunteer,allowsFemale,allowsMale,startDate,endDate,resource.site'}")
                 .always(orderBy("endDate desc"))
-                .setEntityColumns("[" +
-                                  "{label: 'Name', expression: 'name'}," +
-                                  "{label: 'Product', expression: 'item.name'}," +
-                                  "{label: 'Beds', expression: 'max'}," +
-                                  //"{label: 'Eligible', expression: 'name'}," +
-                                  "{label: 'From', expression: 'startDate'}," +
-                                  "{label: 'To', expression: 'endDate'}" +
-                                  "]")
+                .setEntityColumns( // language=JSON5
+                    """
+                        [
+                            {label: 'Name', expression: 'name'},
+                            {label: 'Product', expression: 'item.name'},
+                            {label: 'Beds', expression: 'max'},
+                            {label: 'From', expression: 'startDate'},
+                            {label: 'To', expression: 'endDate'}
+                        ]""")
                 .ifNotNullOtherwiseEmpty(pm.organizationIdProperty(), o -> where("resource.site.(organization=? and event=null)", o))
                 .ifNotNullOtherwiseEmpty(resourceConfigurationProperty, rc -> where("resource = ?", rc.getResource()))
                 .applyDomainModelRowStyle()

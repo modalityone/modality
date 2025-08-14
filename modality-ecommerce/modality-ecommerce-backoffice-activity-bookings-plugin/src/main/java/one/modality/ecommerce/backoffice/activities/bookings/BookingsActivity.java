@@ -157,7 +157,8 @@ final class BookingsActivity extends EventDependentViewDomainActivity implements
     protected void startLogic() {
         // Setting up the group mapper that build the content displayed in the group view
         groupVisualMapper = ReactiveVisualMapper.<Document>createGroupReactiveChain(this, pm)
-                .always("{class: 'Document', alias: 'd'}")
+                .always( // language=JSON5
+                    "{class: 'Document', alias: 'd'}")
                 // Applying the event condition
                 //.ifNotNullOtherwiseEmpty(pm.eventIdProperty(), eventId -> where("event=?", eventId))
                 .ifNotNullOtherwiseEmpty(pm.organizationIdProperty(), organizationId -> where("organization=?", organizationId))
@@ -173,7 +174,8 @@ final class BookingsActivity extends EventDependentViewDomainActivity implements
 
         // Setting up the master mapper that build the content displayed in the master view
         masterVisualMapper = ReactiveVisualMapper.<Document>createMasterPushReactiveChain(this, pm)
-                .always("{class: 'Document', alias: 'd', orderBy: 'ref desc'}")
+                .always( // language=JSON5
+                    "{class: 'Document', alias: 'd', orderBy: 'ref desc'}")
                 // Always loading the fields required for viewing the booking details
                 .always(fields(BookingDetailsPanel.REQUIRED_FIELDS))
                 // Applying the event condition

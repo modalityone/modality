@@ -71,7 +71,7 @@ final class ModalityClientProfilePanel {
                     FXProfile.hideProfilePanel();
                     PersonalDetailsPanel.editPersonalDetails(userPerson, true, new ButtonSelectorParameters().setButtonFactory(buttonFactoryMixin).setDialogParent(FXMainFrameDialogArea.getDialogArea()));
                 });
-                // If there is no organization selected by the user (which happens on very first login), then we set it to its affiliated organization by default
+                // If there is no organization selected by the user (which happens on the very first login), then we set it to its affiliated organization by default
                 if (FXOrganization.getOrganization() == null
                         // Also checking organizationId because if it's non-null (ex: retrieved from session), it means the Organization is loading
                         && Entities.getPrimaryKey(FXOrganizationId.getOrganizationId()) == null) {
@@ -79,7 +79,8 @@ final class ModalityClientProfilePanel {
                 }
                 ReactiveVisualMapper.createReactiveChain(null)
                     .setDataSourceModel(userPerson.getStore().getDataSourceModel())
-                    .always("{class: 'AuthorizationAssignment', columns: [{expression: 'role.name', label:'Role', textAlign: 'center'},{expression: 'management.manager.fullName', label:'Granted by', textAlign: 'center'}]}")
+                    .always( // language=JSON5
+                        "{class: 'AuthorizationAssignment', columns: [{expression: 'role.name', label:'Role', textAlign: 'center'},{expression: 'management.manager.fullName', label:'Granted by', textAlign: 'center'}]}")
                     .always(DqlStatement.where("active and management.user=?", userPerson))
                     .visualizeResultInto(roleGrid)
                     .start();
@@ -108,7 +109,7 @@ final class ModalityClientProfilePanel {
             });
         }), I18n.dictionaryProperty());
 
-        EntityButtonSelector<Organization> organizationSelector = new EntityButtonSelector<>(
+        EntityButtonSelector<Organization> organizationSelector = new EntityButtonSelector<>( // language=JSON5
                 "{class: 'Organization', alias: 'o', where: 'exists(select Event where organization=o)', fields: '" + FXOrganization.EXPECTED_FIELDS + "'}",
                 buttonFactoryMixin, vBox, DataSourceModelService.getDefaultDataSourceModel()
         );

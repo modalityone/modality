@@ -266,7 +266,7 @@ final class VideoStreamingActivity extends ViewDomainActivityBase {
 
         VideoFormattersAndRenderers.registerRenderers();
         // The columns (and groups) displayed for events with a daily program (such as Festivals)
-        dailyProgramVideoColumns = VisualEntityColumnFactory.get().fromJsonArray(
+        dailyProgramVideoColumns = VisualEntityColumnFactory.get().fromJsonArray( // language=JSON5
             """      
             [
                 {expression: 'date', format: 'videoDate', role: 'group'},
@@ -275,7 +275,7 @@ final class VideoStreamingActivity extends ViewDomainActivityBase {
                 {expression: 'this', label: 'Status', renderer: 'videoStatus', textAlign: 'center', hShrink: false, styleClass: 'status'}
             ]""".replace("\"Session\"", EventI18nKeys.Session.toString()), getDomainModel(), "ScheduledItem");
         // The columns (and groups) displayed for recurring events with 1 or just a few sessions per day (such as STTP)
-        allProgramVideoColumns = VisualEntityColumnFactory.get().fromJsonArray(
+        allProgramVideoColumns = VisualEntityColumnFactory.get().fromJsonArray( // language=JSON5
             """
             [
                 {expression: 'this', format: 'allProgramGroup', textAlign: 'center', styleClass: 'status', role: 'group'},

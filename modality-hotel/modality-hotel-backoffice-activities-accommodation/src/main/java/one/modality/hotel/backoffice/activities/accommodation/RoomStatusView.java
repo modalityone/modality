@@ -221,7 +221,8 @@ public class RoomStatusView {
         }
         if (ratesRem == null) { // first call
             ratesRem = ReactiveEntitiesMapper.<Rate>createPushReactiveChain(mixin)
-                    .always("{class: 'Rate', alias: 'r', fields: 'startDate,endDate,item.id,price'}")
+                    .always( // language=JSON5
+                        "{class: 'Rate', alias: 'r', fields: 'startDate,endDate,item.id,price'}")
                     // Returning events for the selected organization only (or returning an empty set if no organization is selected)
                     .ifNotNullOtherwiseEmpty(pm.organizationIdProperty(), o -> where("site.organization=?", o))
                     // Restricting events to those appearing in the time window

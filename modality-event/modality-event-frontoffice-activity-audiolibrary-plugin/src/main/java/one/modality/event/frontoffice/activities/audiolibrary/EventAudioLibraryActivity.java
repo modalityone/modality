@@ -165,7 +165,7 @@ final class EventAudioLibraryActivity extends ViewDomainActivityBase {
         }, pathEventIdProperty, pathItemCodeProperty, FXModalityUserPrincipal.modalityUserPrincipalProperty());
 
         AudioColumnsRenderers.registerRenderers();
-        audioColumns = VisualEntityColumnFactory.get().fromJsonArray(
+        audioColumns = VisualEntityColumnFactory.get().fromJsonArray( // language=JSON5
             """
             [
               {expression: 'this', renderer: 'audioName', minWidth: 300},

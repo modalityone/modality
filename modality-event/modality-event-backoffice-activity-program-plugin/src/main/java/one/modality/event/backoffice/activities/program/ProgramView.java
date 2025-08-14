@@ -153,7 +153,7 @@ final class ProgramView extends ModalitySlaveEditor<Event> implements ButtonFact
         Label dayTicketTeachingAndAudioScheduledItemGenerationLabel = I18nControls.newLabel(ProgramI18nKeys.DayTicketTeachingsAndAudioScheduledItemNotGenerated);
         Label chooseAnItemLabel = I18nControls.newLabel(ProgramI18nKeys.ChooseAnItemForTheTeachingBookableScheduledItem);
 
-        itemSelector = new EntityButtonSelector<Item>(
+        itemSelector = new EntityButtonSelector<Item>( // language=JSON5
             "{class: 'Item', alias: 's', where: 'family.code=`teach`', orderBy :'name'}",
             this, FXMainFrameDialogArea::getDialogArea, programModel.getEntityStore().getDataSourceModel())
             .always(FXOrganization.organizationProperty(), o -> DqlStatement.where("organization=?", o));

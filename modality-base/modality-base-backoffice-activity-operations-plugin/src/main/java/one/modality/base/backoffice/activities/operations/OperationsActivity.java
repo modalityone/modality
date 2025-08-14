@@ -27,16 +27,18 @@ import static dev.webfx.stack.orm.dql.DqlStatement.where;
  */
 final class OperationsActivity extends ViewDomainActivityBase implements ModalityButtonFactoryMixin {
 
-    private final static String OPERATION_COLUMNS = "[" +
-        "{expression: 'name', label: 'Name'}," +
-        "{expression: 'code', label: 'Code'}," +
-        "{expression: 'grantRoute', label: 'Grant route'}," +
-        "{expression: 'i18nCode', label: 'i18n'}," +
-        "{expression: 'backoffice', label:'BackOffice'}," +
-        "{expression: 'frontoffice', label: 'FrontOffice'}," +
-        "{expression: 'guest', label: 'Guest'}," +
-        "{expression: 'public', label: 'Public'}" +
-    "]";
+    private final static String OPERATION_COLUMNS = // language=JSON5
+        """
+            [
+            {expression: 'name', label: 'Name'},
+            {expression: 'code', label: 'Code'},
+            {expression: 'grantRoute', label: 'Grant route'},
+            {expression: 'i18nCode', label: 'i18n'},
+            {expression: 'backoffice', label:'BackOffice'},
+            {expression: 'frontoffice', label: 'FrontOffice'},
+            {expression: 'guest', label: 'Guest'},
+            {expression: 'public', label: 'Public'}
+            ]""";
 
     enum OperationTab {
         BACKOFFICE_ROUTES(true, true),
@@ -96,7 +98,8 @@ final class OperationsActivity extends ViewDomainActivityBase implements Modalit
     @Override
     protected void startLogic() {
         ReactiveVisualMapper.createPushReactiveChain(this)
-            .always("{class: 'Operation', alias: 'o', orderBy: 'code'}")
+            .always( // language=JSON5
+                "{class: 'Operation', alias: 'o', orderBy: 'code'}")
             // Search box condition
             .ifTrimNotEmpty(searchBox.textProperty(), s -> where("lower(code) like ?", "%" + s.toLowerCase() + "%"))
             // Limit condition

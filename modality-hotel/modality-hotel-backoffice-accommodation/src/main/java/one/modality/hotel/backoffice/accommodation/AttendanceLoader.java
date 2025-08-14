@@ -52,7 +52,8 @@ public final class AttendanceLoader {
         }
         if (rem == null) { // first call
             rem = ReactiveEntitiesMapper.<Attendance>createPushReactiveChain(mixin)
-                    .always("{class: 'Attendance', alias: 'a', fields: 'date,documentLine.document.(arrived,person_firstName,person_lastName,event.id),scheduledResource.configuration.(name,item.name),documentLine.document.event.name'}")
+                    .always( // language=JSON5
+                        "{class: 'Attendance', alias: 'a', fields: 'date,documentLine.document.(arrived,person_firstName,person_lastName,event.id),scheduledResource.configuration.(name,item.name),documentLine.document.event.name'}")
                     .always(where("scheduledResource is not null"))
                     // Order is important for TimeBarUtil
                     .always(orderBy("scheduledResource.configuration.item.ord,scheduledResource.configuration.name,documentLine.document.person_lastName,documentLine.document.person_firstName,date"))

@@ -461,17 +461,21 @@ public class UserAccountUI implements ModalityButtonFactoryMixin {
     }
 
     public static EntityButtonSelector<Organization> createOrganizationButtonSelector(DataSourceModel dataSourceModel, ButtonSelectorParameters buttonSelectorParameters) {
-        String organizationJson = "{class: 'Organization', alias: 'o', where: '!closed', orderBy: 'country.name,name'}";
+        String organizationJson = // language=JSON5
+            "{class: 'Organization', alias: 'o', where: '!closed', orderBy: 'country.name,name'}";
         if (WebFxKitLauncher.supportsSvgImageFormat())
-            organizationJson = "{class: 'Organization', alias: 'o', where: '!closed', orderBy: 'country.name,name', columns: [{expression: '[image(`images/s16/organizations/svg/` + (type=2 ? `kmc` : type=3 ? `kbc` : type=4 ? `branch` : `generic`) + `.svg`),name]'}] }";
+            organizationJson = // language=JSON5
+                "{class: 'Organization', alias: 'o', where: '!closed', orderBy: 'country.name,name', columns: [{expression: '[image(`images/s16/organizations/svg/` + (type=2 ? `kmc` : type=3 ? `kbc` : type=4 ? `branch` : `generic`) + `.svg`),name]'}] }";
         return UserAccountUI.<Organization>createEntityButtonSelector(organizationJson, dataSourceModel, buttonSelectorParameters)
             .setDialogStyleClass("organization-selector-dialog");
     }
 
     public static EntityButtonSelector<Country> createCountryButtonSelector(DataSourceModel dataSourceModel, ButtonSelectorParameters buttonSelectorParameters) {
-        String countryJson = "{class: 'Country', orderBy: 'name'}";
+        String countryJson = // language=JSON5
+            "{class: 'Country', orderBy: 'name'}";
         if (WebFxKitLauncher.supportsSvgImageFormat())
-            countryJson = "{class: 'Country', orderBy: 'name', columns: [{expression: '[image(`images/s16/countries/svg/` + iso_alpha2 + `.svg`),name]'}] }";
+            countryJson = // language=JSON5
+                "{class: 'Country', orderBy: 'name', columns: [{expression: '[image(`images/s16/countries/svg/` + iso_alpha2 + `.svg`),name]'}] }";
         return UserAccountUI.<Country>createEntityButtonSelector(countryJson, dataSourceModel, buttonSelectorParameters)
             .setDialogStyleClass("country-selector-dialog");
     }

@@ -25,8 +25,9 @@ final class ChangeResourceConfigurationItemExecutor {
     private static Future<Void> execute(ResourceConfiguration resourceConfiguration, Pane parentContainer, String itemFamilyCode, EntityId siteId) {
         Promise<Void> promise = Promise.promise();
         DataSourceModel dataSourceModel = resourceConfiguration.getStore().getDataSourceModel();
-        EntityButtonSelector<Item> itemSelector = new EntityButtonSelector<>("{class: `Item`, alias: `i`, where: `family.code='" + itemFamilyCode + "' and exists(select Option where item=i and site=" + siteId.getPrimaryKey() + ")`, orderBy: `ord,id`}", new ButtonFactoryMixin() {
-        }, parentContainer, dataSourceModel);
+        EntityButtonSelector<Item> itemSelector = new EntityButtonSelector<>( // language=JSON5
+            "{class: 'Item', alias: 'i', where: 'family.code=`" + itemFamilyCode + "` and exists(select Option where item=i and site=" + siteId.getPrimaryKey() + ")', orderBy: 'ord,id'}"
+            , new ButtonFactoryMixin() {}, parentContainer, dataSourceModel);
         itemSelector.setShowMode(ButtonSelector.ShowMode.MODAL_DIALOG);
         itemSelector.showDialog();
         itemSelector.setCloseHandler(() -> {

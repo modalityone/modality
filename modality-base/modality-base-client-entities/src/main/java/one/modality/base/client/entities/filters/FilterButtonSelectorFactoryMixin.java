@@ -14,7 +14,12 @@ import java.util.function.Predicate;
 
 public interface FilterButtonSelectorFactoryMixin extends ButtonFactoryMixin, HasDataSourceModel {
 
-    String FILTER_SELECTOR_TEMPLATE = "{class: 'Filter', fields: 'class,alias,fields,whereClause,groupByClause,havingClause,orderByClause,limitClause,columns', where: `class='#class#' and #condition# and (activityName='#activityName#' or !exists(select Filter where class='#class#' and #condition# and activityName='#activityName#') and activityName=null)`, orderBy: 'ord,id'}";
+    String FILTER_SELECTOR_TEMPLATE = // language=JSON5
+        """
+            {class: 'Filter',
+             fields: 'class,alias,fields,whereClause,groupByClause,havingClause,orderByClause,limitClause,columns',
+             where: 'class=`#class#` and #condition# and (activityName=`#activityName#` or !exists(select Filter where class=`#class#` and #condition# and activityName=`#activityName#`) and activityName=null)',
+             orderBy: 'ord,id'}""";
 
     default EntityButtonSelector<Filter> createFilterButtonSelector(String activityName, String domainClassId, String conditionToken, Predicate<Filter> autoSelectPredicate, Pane parent) {
         EntityButtonSelector<Filter> selector = new EntityButtonSelector<>(FILTER_SELECTOR_TEMPLATE.replaceAll("#class#", domainClassId).replaceAll("#condition#", conditionToken).replaceAll("#activityName#", activityName), this, parent, getDataSourceModel());

@@ -244,22 +244,19 @@ final class FiltersActivity extends ViewDomainActivityBase implements OperationA
 
         // Setting up the filter mapper that builds the content displayed in the filters listing
         filtersVisualMapper = ReactiveVisualMapper.<Filter>createPushReactiveChain(this)
-                .always("{class: 'Filter', alias: 'fil', fields: 'id', where: '!isColumns', orderBy: 'name asc'}")
-                .setEntityColumns("[" +
-                        "{label: 'Name', expression: 'name'}," +
-                        //"{label: 'Is Columns', expression: 'isColumns'}," +
-                        //"{label: 'Is Condition', expression: 'isCondition'}," +
-                        //"{label: 'Is Group', expression: 'isGroup'}," +
-                        //"{label: 'Is Active', expression: 'active'}," +
-                        "{label: 'Activity Name', expression: 'activityName'}," +
-                        "{label: 'Class', expression: 'class'}," +
-                        //"{label: 'Columns', expression: 'columns'}," +
-                        "{label: 'Where', expression: 'whereClause'}," +
-                        "{label: 'GroupBy', expression: 'groupByClause'}," +
-                        "{label: 'Having', expression: 'havingClause'}," +
-                        //"{label: 'OrderBy', expression: 'orderByClause'}," +
-                        "{label: 'Limit', expression: 'limitClause'}" +
-                        "]")
+                .always( // language=JSON5
+                    "{class: 'Filter', alias: 'fil', fields: 'id', where: '!isColumns', orderBy: 'name asc'}")
+                .setEntityColumns( // language=JSON5
+                    """
+                        [
+                            {label: 'Name', expression: 'name'},
+                            {label: 'Activity Name', expression: 'activityName'},
+                            {label: 'Class', expression: 'class'},
+                            {label: 'Where', expression: 'whereClause'},
+                            {label: 'GroupBy', expression: 'groupByClause'},
+                            {label: 'Having', expression: 'havingClause'},
+                            {label: 'Limit', expression: 'limitClause'}
+                        ]""")
                 .ifTrimNotEmpty(pm.searchTextProperty(), s -> where("lower(name) like ?", "%" + s.toLowerCase() + "%"))
                 .ifTrimNotEmpty(pm.filterClassProperty(), s -> where("lower(class) = ?", s.toLowerCase()))
                 .applyDomainModelRowStyle() // Colorizing the rows
@@ -276,22 +273,19 @@ final class FiltersActivity extends ViewDomainActivityBase implements OperationA
                 .start();
 
         fieldsVisualMapper = ReactiveVisualMapper.<Filter>createPushReactiveChain(this)
-                .always("{class: 'Filter', alias: 'fil', fields: 'id', where: 'isColumns', orderBy: 'name asc'}")
-                .setEntityColumns("[" +
-                        "{label: 'Name', expression: 'name'}," +
-                        //"{label: 'Is Columns', expression: 'isColumns'}," +
-                        //"{label: 'Is Condition', expression: 'isCondition'}," +
-                        "{label: 'Is Group', expression: 'isGroup'}," +
-                        //"{label: 'Is Active', expression: 'active'}," +
-                        "{label: 'Activity Name', expression: 'activityName'}," +
-                        //"{label: 'Class', expression: 'class'}," +
-                        "{label: 'Columns', expression: 'columns'}," +
-                        "{label: 'Where', expression: 'whereClause'}," +
-                        "{label: 'GroupBy', expression: 'groupByClause'}," +
-                        //"{label: 'Having', expression: 'havingClause'}," +
-                        "{label: 'OrderBy', expression: 'orderByClause'}" +
-                        //"{label: 'Limit', expression: 'limitClause'}" +
-                        "]")
+                .always( // language=JSON5
+                    "{class: 'Filter', alias: 'fil', fields: 'id', where: 'isColumns', orderBy: 'name asc'}")
+                .setEntityColumns( // language=JSON5
+                    """
+                        [
+                            {label: 'Name', expression: 'name'},
+                            {label: 'Is Group', expression: 'isGroup'},
+                            {label: 'Activity Name', expression: 'activityName'},
+                            {label: 'Columns', expression: 'columns'},
+                            {label: 'Where', expression: 'whereClause'},
+                            {label: 'GroupBy', expression: 'groupByClause'},
+                            {label: 'OrderBy', expression: 'orderByClause'}
+                        ]""")
                 .ifTrimNotEmpty(pm.fieldsSearchTextProperty(), s -> where("lower(name) like ?", "%" + s.toLowerCase() + "%"))
                 .always(selectedFilter, s -> s != null ? where("lower(class) = ?", s.getClassId().toString().toLowerCase()) : where("1 = 0"))
                 .applyDomainModelRowStyle() // Colorizing the rows
@@ -317,7 +311,8 @@ final class FiltersActivity extends ViewDomainActivityBase implements OperationA
         displayStatus(status);
 
         filterFieldsResultVisualMapper = ReactiveVisualMapper.<Entity>createPushReactiveChain(this)
-                .always("{class: '" + selectedClass + "', alias: 'ma', columns: '" + columns + "', fields: 'id'" + orderBy + ", limit: 100}")
+                .always( // language=JSON5
+                    "{class: '" + selectedClass + "', alias: 'ma', columns: '" + columns + "', fields: 'id'" + orderBy + ", limit: 100}")
                 .ifNotNull(selectedFilter, s -> where(s.getWhereClause()))
                 .ifNotNull(selectedFilter, s -> limit(s.getLimitClause()))
                 .ifNotNull(selectedFilter, s -> s.getOrderByClause() != null && !s.getOrderByClause().isEmpty() ? parse("orderBy: '" + s.getOrderByClause() + "'") : null)

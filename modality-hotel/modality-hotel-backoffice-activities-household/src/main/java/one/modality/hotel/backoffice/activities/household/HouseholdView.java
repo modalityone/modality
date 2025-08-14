@@ -212,7 +212,8 @@ final class HouseholdView {
     void startLogic(Object mixin) {
         resourceConfigurationLoader.startLogic(mixin);
         ReactiveEntitiesMapper.<Attendance>createPushReactiveChain(mixin)
-                .always("{class: 'Attendance', alias: 'a', fields: 'date,documentLine.document.(arrived,person_firstName,person_lastName,event.name),documentLine.cleaned,scheduledResource.configuration.(name,item.name)', where: 'a.(scheduledResource != null and documentLine.(!cancelled and !document.cancelled))'}")
+                .always( // language=JSON5
+                    "{class: 'Attendance', alias: 'a', fields: 'date,documentLine.document.(arrived,person_firstName,person_lastName,event.name),documentLine.cleaned,scheduledResource.configuration.(name,item.name)', where: 'a.(scheduledResource != null and documentLine.(!cancelled and !document.cancelled))'}")
                 //.always(where("scheduledResource.configuration.(lastCleaningDate == null or lastCleaningDate < date)"))
                 // Order is important for TimeBarUtil
                 .always(orderBy("scheduledResource.configuration.item.ord,scheduledResource.configuration.name,documentLine.document.id,date"))

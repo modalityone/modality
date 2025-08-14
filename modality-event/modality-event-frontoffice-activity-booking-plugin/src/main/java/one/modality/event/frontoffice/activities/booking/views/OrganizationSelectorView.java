@@ -80,7 +80,8 @@ public final class OrganizationSelectorView {
     }
 
     private Node getOrganizationView() {
-        String organizationJson = "{class: 'Organization', alias: 'o', where: '!closed and name!=`ISC`', orderBy: 'country.name,name'}";
+        String organizationJson = // language=JSON5
+            "{class: 'Organization', alias: 'o', where: '!closed and name!=`ISC`', orderBy: 'country.name,name'}";
         if (WebFxKitLauncher.supportsSvgImageFormat())
             organizationJson = organizationJson.replace("}", ", columns: [{expression: '[image(`images/s16/organizations/svg/` + (type=2 ? `kmc` : type=3 ? `kbc` : type=4 ? `branch` : `generic`) + `.svg`),name]'}] }");
         EntityButtonSelector<Organization> organizationButtonSelector = new EntityButtonSelector<>(

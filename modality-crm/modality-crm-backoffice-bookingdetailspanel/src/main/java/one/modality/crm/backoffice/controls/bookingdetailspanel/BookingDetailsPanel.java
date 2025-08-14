@@ -69,7 +69,8 @@ public final class BookingDetailsPanel implements
     HasActiveProperty,
     UiBuilder {
 
-    public static final String REQUIRED_FIELDS = "person_firstName,person_lastName,person_age,person_email,person_organization,person_phone,person_cityName,person_country,person_carer1Name,person_carer2Name,event.startDate,dates"; // event.startDate is required for the personal details panel
+    public static final String REQUIRED_FIELDS = // event.startDate is required for the personal details panel
+        "person_firstName,person_lastName,person_age,person_email,person_organization,person_phone,person_cityName,person_country,person_carer1Name,person_carer2Name,event.startDate,dates";
 
     private final ObjectProperty<Document> selectedDocumentProperty;
     private final BooleanProperty activeProperty = new SimpleBooleanProperty(true);
@@ -127,15 +128,23 @@ public final class BookingDetailsPanel implements
         container.setTop(flexButtonBar);
         container.setCenter(new TabPane(
             createTab(BookingDetailsI18nKeys.PersonalDetailsTab, buildPersonalDetailsView()),
-            createFilterTab(BookingDetailsI18nKeys.OptionsTab, "{class: 'DocumentLine', columns: `site,item,dates,lockAllocation,resourceConfiguration,comment,price_isCustom,price_net,price_nonRefundable,price_minDeposit,price_deposit`, where: 'document=${selectedDocument}', orderBy: 'item.family.ord,site..ord,item.ord'}"),
-            createFilterTab(BookingDetailsI18nKeys.PaymentsTab, "{class: 'MoneyTransfer', columns: `date,method,transactionRef,comment,amount,verified`, where: 'document=${selectedDocument}', orderBy: 'date,id'}"),
+            createFilterTab(BookingDetailsI18nKeys.OptionsTab, // language=JSON5
+                "{class: 'DocumentLine', columns: 'site,item,dates,lockAllocation,resourceConfiguration,comment,price_isCustom,price_net,price_nonRefundable,price_minDeposit,price_deposit', where: 'document=${selectedDocument}', orderBy: 'item.family.ord,site..ord,item.ord'}"),
+            createFilterTab(BookingDetailsI18nKeys.PaymentsTab, // language=JSON5
+                "{class: 'MoneyTransfer', columns: 'date,method,transactionRef,comment,amount,verified', where: 'document=${selectedDocument}', orderBy: 'date,id'}"),
             createTab(BookingDetailsI18nKeys.CommentsTab, buildCommentView()),
-            createFilterTab(BookingDetailsI18nKeys.CartTab, "{class: 'Document', columns:`ref,multipleBookingIcon,langIcon,genderIcon,person_firstName,person_lastName,person_age,noteIcon,price_net,price_deposit,price_balance`, where: 'cart=(select cart from Document where id=${selectedDocument})', orderBy: 'ref'}"),
-            createFilterTab(BookingDetailsI18nKeys.MultipleBookingsTab, "{class: 'Document', columns:`ref,multipleBookingIcon,langIcon,genderIcon,person_firstName,person_lastName,person_age,noteIcon,price_deposit,plainOptions`, where: 'multipleBooking=(select multipleBooking from Document where id=${selectedDocument})', orderBy: 'ref'}"),
-            createFilterTab(BookingDetailsI18nKeys.FamilyTab, "{class: 'Document', columns:`ref,multipleBookingIcon,langIcon,genderIcon,person_firstName,person_lastName,person_age,noteIcon,price_deposit,plainOptions`, where: 'person_carer1Document=${selectedDocument} or person_carer2Document=${selectedDocument} or id=(select person_carer1Document from Document where id=${selectedDocument}) or id=(select person_carer2Document from Document where id=${selectedDocument})', orderBy: 'ref'}"),
-            createFilterTab(BookingDetailsI18nKeys.MediasTab, "{class: 'MediaConsumption', columns: ['date',{expression: 'action', textAlign: 'center'},'mediaInfo',{expression: 'durationMillis', label: 'Duration', renderer: 'durationMillisRenderer', prefWidth: 70}], where: 'attendance.documentLine.document=${selectedDocument}', orderBy: 'date desc'}"),
-            createFilterTab(BookingDetailsI18nKeys.MailsTab, "{class: 'Mail', columns: 'date,subject,transmitted,error', where: 'document=${selectedDocument}', orderBy: 'date desc'}"),
-            createFilterTab(BookingDetailsI18nKeys.HistoryTab, "{class: 'History', columns: 'date,userDisplay,comment,request', where: 'document=${selectedDocument}', orderBy: 'date desc'}")
+            createFilterTab(BookingDetailsI18nKeys.CartTab, // language=JSON5
+                "{class: 'Document', columns:'ref,multipleBookingIcon,langIcon,genderIcon,person_firstName,person_lastName,person_age,noteIcon,price_net,price_deposit,price_balance', where: 'cart=(select cart from Document where id=${selectedDocument})', orderBy: 'ref'}"),
+            createFilterTab(BookingDetailsI18nKeys.MultipleBookingsTab, // language=JSON5
+                "{class: 'Document', columns:'ref,multipleBookingIcon,langIcon,genderIcon,person_firstName,person_lastName,person_age,noteIcon,price_deposit,plainOptions', where: 'multipleBooking=(select multipleBooking from Document where id=${selectedDocument})', orderBy: 'ref'}"),
+            createFilterTab(BookingDetailsI18nKeys.FamilyTab, // language=JSON5
+                "{class: 'Document', columns:'ref,multipleBookingIcon,langIcon,genderIcon,person_firstName,person_lastName,person_age,noteIcon,price_deposit,plainOptions', where: 'person_carer1Document=${selectedDocument} or person_carer2Document=${selectedDocument} or id=(select person_carer1Document from Document where id=${selectedDocument}) or id=(select person_carer2Document from Document where id=${selectedDocument})', orderBy: 'ref'}"),
+            createFilterTab(BookingDetailsI18nKeys.MediasTab, // language=JSON5
+                "{class: 'MediaConsumption', columns: ['date',{expression: 'action', textAlign: 'center'},'mediaInfo',{expression: 'durationMillis', label: 'Duration', renderer: 'durationMillisRenderer', prefWidth: 70}], where: 'attendance.documentLine.document=${selectedDocument}', orderBy: 'date desc'}"),
+            createFilterTab(BookingDetailsI18nKeys.MailsTab, // language=JSON5
+                "{class: 'Mail', columns: 'date,subject,transmitted,error', where: 'document=${selectedDocument}', orderBy: 'date desc'}"),
+            createFilterTab(BookingDetailsI18nKeys.HistoryTab, // language=JSON5
+                "{class: 'History', columns: 'date,userDisplay,comment,request', where: 'document=${selectedDocument}', orderBy: 'date desc'}")
         ));
         return container;
     }

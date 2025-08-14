@@ -33,7 +33,7 @@ public class MainFrameHeaderEventSelectorProvider implements MainFrameHeaderNode
     public Node getHeaderNode(ButtonFactoryMixin buttonFactory, Pane frameContainer, DataSourceModel dataSourceModel) {
         if (eventSelector == null) {
             // Creating the event selector
-            eventSelector = new EntityButtonSelector<Event>(
+            eventSelector = new EntityButtonSelector<Event>( // language=JSON5
                     "{class: 'Event', alias: 'e', columns: 'icon,name,dateIntervalFormat(startDate,endDate)', orderBy: 'startDate desc'}",
                     buttonFactory, frameContainer, dataSourceModel)
                     .always(DqlStatement.fields(FXEvent.EXPECTED_FIELDS))

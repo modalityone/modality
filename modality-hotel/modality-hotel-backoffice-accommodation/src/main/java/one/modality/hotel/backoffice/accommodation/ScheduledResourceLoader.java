@@ -54,7 +54,8 @@ public final class ScheduledResourceLoader {
         if (rem == null) { // first call
             // This ReactiveEntitiesMapper will populate the provided parents of the GanttLayout (indirectly from allScheduledResources observable list)
             rem = ReactiveEntitiesMapper.<ScheduledResource>createPushReactiveChain(mixin)
-                    .always("{class: 'ScheduledResource', alias: 'sr', fields: 'date,available,online,max,configuration.(name,item.name),(select count(1) from Attendance where scheduledResource=sr) as booked'}")
+                    .always( // language=JSON5
+                        "{class: 'ScheduledResource', alias: 'sr', fields: 'date,available,online,max,configuration.(name,item.name),(select count(1) from Attendance where scheduledResource=sr) as booked'}")
                     .always(orderBy("configuration.item.ord,configuration.name,configuration,date")) // Order is important for TimeBarUtil (see comment on barsLayout)
                     // Returning events for the selected organization only (or returning an empty set if no organization is selected)
                     .ifNotNullOtherwiseEmpty(pm.organizationIdProperty(), o -> where("configuration.resource.site.organization=?", o))

@@ -146,7 +146,7 @@ final class DayTemplateTimelineView implements ButtonFactoryMixin {
     }
 
     private Region buildUi() {
-        itemSelector = new EntityButtonSelector<Item>(
+        itemSelector = new EntityButtonSelector<Item>( // language=JSON5
             "{class: 'Item', alias: 's', where: 'family.code=`teach`', orderBy :'name'}",
             this, FXMainFrameDialogArea.getDialogArea(), getTimeline().getStore().getDataSourceModel()
         )

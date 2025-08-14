@@ -137,14 +137,18 @@ public class PersonalDetailsPanel implements ModalityButtonFactoryMixin {
         streetTextField = newMaterialTextField(CrmI18nKeys.Street);
         postCodeTextField = newMaterialTextField(CrmI18nKeys.Postcode);
         cityNameTextField = newMaterialTextField(CrmI18nKeys.City);
-        String countryJson = "{class: 'Country', orderBy: 'name'}";
+        String countryJson = // language=JSON5
+            "{class: 'Country', orderBy: 'name'}";
         if (WebFxKitLauncher.supportsSvgImageFormat())
-            countryJson = "{class: 'Country', orderBy: 'name', columns: [{expression: '[image(`images/s16/countries/svg/` + iso_alpha2 + `.svg`),name]'}] }";
+            countryJson = // language=JSON5
+                "{class: 'Country', orderBy: 'name', columns: [{expression: '[image(`images/s16/countries/svg/` + iso_alpha2 + `.svg`),name]'}] }";
         countrySelector = createEntityButtonSelector(countryJson, dataSourceModel, buttonSelectorParameters);
         countryButton = countrySelector.toMaterialButton(CrmI18nKeys.Country);
-        String organizationJson = "{class: 'Organization', alias: 'o', where: '!closed and name!=`ISC`', orderBy: 'country.name,name'}";
+        String organizationJson = // language=JSON5
+            "{class: 'Organization', alias: 'o', where: '!closed and name!=`ISC`', orderBy: 'country.name,name'}";
         if (WebFxKitLauncher.supportsSvgImageFormat())
-            organizationJson = "{class: 'Organization', alias: 'o', where: '!closed and name!=`ISC`', orderBy: 'country.name,name', columns: [{expression: '[image(`images/s16/organizations/svg/` + (type=2 ? `kmc` : type=3 ? `kbc` : type=4 ? `branch` : `generic`) + `.svg`),name]'}] }";
+            organizationJson = // language=JSON5
+                "{class: 'Organization', alias: 'o', where: '!closed and name!=`ISC`', orderBy: 'country.name,name', columns: [{expression: '[image(`images/s16/organizations/svg/` + (type=2 ? `kmc` : type=3 ? `kbc` : type=4 ? `branch` : `generic`) + `.svg`),name]'}] }";
         organizationSelector = createEntityButtonSelector(organizationJson, dataSourceModel, buttonSelectorParameters);
         organizationButton = organizationSelector.toMaterialButton(CrmI18nKeys.Centre);
         SceneUtil.onSceneReady(getContainer(), scene -> {
