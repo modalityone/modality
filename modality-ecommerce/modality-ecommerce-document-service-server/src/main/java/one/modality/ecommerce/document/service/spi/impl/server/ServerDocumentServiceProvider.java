@@ -72,17 +72,16 @@ public class ServerDocumentServiceProvider implements DocumentServiceProvider {
     }
 
     private Future<DocumentAggregate> loadLatestDocumentFromDatabase(LoadDocumentArgument argument) {
-        Object[] parameters = {argument.getDocumentPrimaryKey()};
+        Object docPk = argument.getDocumentPrimaryKey();
         EntityStoreQuery[] queries = {
-            new EntityStoreQuery("select event,person,ref,person_lang,person_firstName,person_lastName,person_email,person_facilityFee,request from Document where id=? order by id", parameters),
-            new EntityStoreQuery("select document,site,item,price_net,price_minDeposit,price_custom,price_discount from DocumentLine where document=? and site!=null order by id", parameters),
-            new EntityStoreQuery("select documentLine,scheduledItem from Attendance where documentLine.document=? order by id", parameters),
-            new EntityStoreQuery("select document,amount,pending,successful from MoneyTransfer where document=? order by id", parameters)
+            new EntityStoreQuery("select event,person,ref,person_lang,person_firstName,person_lastName,person_email,person_facilityFee,request from Document where id=? order by id", docPk),
+            new EntityStoreQuery("select document,site,item,price_net,price_minDeposit,price_custom,price_discount from DocumentLine where document=? and site!=null order by id", docPk),
+            new EntityStoreQuery("select documentLine,scheduledItem from Attendance where documentLine.document=? order by id", docPk),
+            new EntityStoreQuery("select document,amount,pending,successful from MoneyTransfer where document=? order by id", docPk)
         };
-        if (parameters[0] == null) {
-            parameters = new Object[]{argument.getPersonPrimaryKey(), argument.getEventPrimaryKey()};
+        if (docPk == null) {
             for (int i = 0; i < queries.length; i++) {
-                queries[i] = new EntityStoreQuery(queries[i].getSelect().replace("=?", "=(select Document where person=? and event=? and !cancelled order by id desc limit 1)"), parameters);
+                queries[i] = new EntityStoreQuery(queries[i].getSelect().replace("=?", "=(select Document where person=? and event=? and !cancelled order by id desc limit 1)"), argument.getPersonPrimaryKey(), argument.getEventPrimaryKey());
             }
         }
         return EntityStore.create()

@@ -222,14 +222,16 @@ final class VideoStreamingActivity extends ViewDomainActivityBase {
                 // Note: double dots such as `programScheduledItem.timeline..startTime` means we do a left join that allows null value (if the event is recurring, the timeline of the programScheduledItem is null)
                 entityStore.<ScheduledItem>executeQueryWithCache("cache-video-streaming-scheduled-items",
                         """
-                            select name, label, date, comment, commentLabel, expirationDate, programScheduledItem.(name, label, startTime, endTime, timeline.(startTime, endTime), cancelled), published, event.(name, type.recurringItem, livestreamUrl, recurringWithVideo), vodDelayed, \
-                             (exists(select MediaConsumption where scheduledItem=si and attendance.documentLine.document.person.frontendAccount=$1) as attended), \
-                             (select id from Attendance where scheduledItem=si.bookableScheduledItem and documentLine.document.person.frontendAccount=$1 limit 1) as attendanceId \
-                             from ScheduledItem si \
-                             where event=$2\
-                             and bookableScheduledItem.item.family.code=$3\
-                             and item.code=$4\
-                             and exists(select Attendance a where scheduledItem=si.bookableScheduledItem and documentLine.(!cancelled and document.(person.frontendAccount=$1 and event=$5 and confirmed and price_balance<=0)))\
+                            select name, label, date, comment, commentLabel, expirationDate, programScheduledItem.(name, label, startTime, endTime, timeline.(startTime, endTime), cancelled), published, event.(name, type.recurringItem, livestreamUrl, recurringWithVideo), vodDelayed,
+                                (exists(select MediaConsumption where scheduledItem=si and attendance.documentLine.document.person.frontendAccount=$1) as attended),
+                                (select id from Attendance where scheduledItem=si.bookableScheduledItem and documentLine.document.person.frontendAccount=$1 limit 1) as attendanceId
+                             from ScheduledItem si
+                             where event=$2
+                                and bookableScheduledItem.item.family.code=$3
+                                and item.code=$4
+                                and exists(select Attendance a
+                                 where scheduledItem=si.bookableScheduledItem
+                                    and documentLine.(!cancelled and document.(person.frontendAccount=$1 and event=$5 and confirmed and price_balance<=0)))
                              order by date, programScheduledItem.timeline..startTime""",
                         /*$1*/ userAccountId, /*$2*/ eventContainingVideos, /*$3*/ KnownItemFamily.TEACHING.getCode(), /*$4*/ KnownItem.VIDEO.getCode(), /*$5*/ event)
                     .onFailure(Console::log)
@@ -265,21 +267,23 @@ final class VideoStreamingActivity extends ViewDomainActivityBase {
         VideoFormattersAndRenderers.registerRenderers();
         // The columns (and groups) displayed for events with a daily program (such as Festivals)
         dailyProgramVideoColumns = VisualEntityColumnFactory.get().fromJsonArray(
-            "[" +
-            "{expression: 'date', format: 'videoDate', role: 'group'},\n" +
-            "{expression: 'this', label: '" + EventI18nKeys.Session + "', renderer: 'videoName', minWidth: 200, styleClass: 'name'},\n" +
-            "{expression: '[coalesce(startTime, timeline.startTime, programScheduledItem.startTime, programScheduledItem.timeline.startTime), coalesce(endTime, timeline.endTime, programScheduledItem.endTime, programScheduledItem.timeline.endTime)]', label: 'Time', format: 'videoTimeRange', textAlign: 'center', hShrink: false, styleClass: 'time'},\n" +
-            "{expression: 'this', label: 'Status', renderer: 'videoStatus', textAlign: 'center', hShrink: false, styleClass: 'status'}\n" +
-            "]", getDomainModel(), "ScheduledItem");
+            """      
+            [
+                {expression: 'date', format: 'videoDate', role: 'group'},
+                {expression: 'this', label: '"Session"', renderer: 'videoName', minWidth: 200, styleClass: 'name'},
+                {expression: '[coalesce(startTime, timeline.startTime, programScheduledItem.startTime, programScheduledItem.timeline.startTime), coalesce(endTime, timeline.endTime, programScheduledItem.endTime, programScheduledItem.timeline.endTime)]', label: 'Time', format: 'videoTimeRange', textAlign: 'center', hShrink: false, styleClass: 'time'},
+                {expression: 'this', label: 'Status', renderer: 'videoStatus', textAlign: 'center', hShrink: false, styleClass: 'status'}
+            ]""".replace("\"Session\"", EventI18nKeys.Session.toString()), getDomainModel(), "ScheduledItem");
         // The columns (and groups) displayed for recurring events with 1 or just a few sessions per day (such as STTP)
         allProgramVideoColumns = VisualEntityColumnFactory.get().fromJsonArray(
-            "[\n" +
-            "{expression: 'this', format: 'allProgramGroup', textAlign: 'center', styleClass: 'status', role: 'group'},\n" +
-            "{expression: 'date', label: 'Date', format: 'videoDate', hShrink: false, styleClass: 'date'},\n" +
-            "{expression: '[coalesce(startTime, timeline.startTime, programScheduledItem.startTime, programScheduledItem.timeline.startTime), coalesce(endTime, timeline.endTime, programScheduledItem.endTime, programScheduledItem.timeline.endTime)]', label: 'Time', format: 'videoTimeRange', textAlign: 'center', hShrink: false, styleClass: 'time'},\n" +
-            "{expression: 'this', label: '" + EventI18nKeys.Session + "', renderer: 'videoName', minWidth: 200, styleClass: 'name'},\n" +
-            "{expression: 'this', label: 'Status', renderer: 'videoStatus', textAlign: 'center', hShrink: false, styleClass: 'status'}\n" +
-            "]", getDomainModel(), "ScheduledItem");
+            """
+            [
+                {expression: 'this', format: 'allProgramGroup', textAlign: 'center', styleClass: 'status', role: 'group'},
+                {expression: 'date', label: 'Date', format: 'videoDate', hShrink: false, styleClass: 'date'},
+                {expression: '[coalesce(startTime, timeline.startTime, programScheduledItem.startTime, programScheduledItem.timeline.startTime), coalesce(endTime, timeline.endTime, programScheduledItem.endTime, programScheduledItem.timeline.endTime)]', label: 'Time', format: 'videoTimeRange', textAlign: 'center', hShrink: false, styleClass: 'time'},
+                {expression: 'this', label: '"Session"', renderer: 'videoName', minWidth: 200, styleClass: 'name'},
+                {expression: 'this', label: 'Status', renderer: 'videoStatus', textAlign: 'center', hShrink: false, styleClass: 'status'}
+            ]""".replace("\"Session\"", EventI18nKeys.Session.toString()), getDomainModel(), "ScheduledItem");
     }
 
     private void scheduleAutoLivestream() {

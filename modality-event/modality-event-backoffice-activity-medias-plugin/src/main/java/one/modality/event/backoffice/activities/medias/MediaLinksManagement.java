@@ -12,7 +12,6 @@ import dev.webfx.extras.validation.ValidationSupport;
 import dev.webfx.kit.util.properties.FXProperties;
 import dev.webfx.platform.console.Console;
 import dev.webfx.stack.orm.entity.EntityStore;
-import dev.webfx.stack.orm.entity.EntityStoreQuery;
 import dev.webfx.stack.orm.entity.UpdateStore;
 import dev.webfx.stack.orm.entity.binding.EntityBindings;
 import javafx.beans.InvalidationListener;
@@ -75,8 +74,11 @@ public abstract class MediaLinksManagement {
     }
 
     private void reinitialiseRecordingsMediasReadFromDatabase() {
-        entityStore.<Media>executeQuery(
-                new EntityStoreQuery("select url, scheduledItem.programScheduledItem, scheduledItem.name, scheduledItem.programScheduledItem.name, scheduledItem.item, scheduledItem.date, scheduledItem.published, scheduledItem.item.code from Media where scheduledItem.event= ? and scheduledItem.item.code = ?", new Object[]{FXEvent.getEvent(), currentItemCode}))
+        entityStore.<Media>executeQuery("""
+                    select url, scheduledItem.(name, item.code, date, published, programScheduledItem.name)
+                     from Media
+                     where scheduledItem.event= ? and scheduledItem.item.code = ?""",
+                FXEvent.getEvent(), currentItemCode)
             .onFailure(Console::log)
             .inUiThread()
             .onSuccess(recordingsMediasReadFromDatabase::setAll);
@@ -91,7 +93,7 @@ public abstract class MediaLinksManagement {
         // Calculate the number of media for this day and language
         long numberOfScheduledItemLinkedToMediaForThisDay = recordingsMediasReadFromDatabase.stream()
             .filter(media -> media.getScheduledItem().getDate().equals(date) &&
-                media.getScheduledItem().getItem().getCode().equals(currentItemCode))
+                             media.getScheduledItem().getItem().getCode().equals(currentItemCode))
             .map(Media::getScheduledItem)
             .filter(item -> item.getDate().equals(date))  // Récupère le ScheduledItem associé à chaque Media
             .distinct()                    // Supprime les doublons si nécessaire (facultatif)
@@ -171,7 +173,7 @@ public abstract class MediaLinksManagement {
                 Timeline timeline = currentScheduledItem.getProgramScheduledItem().getTimeline();
                 String startTime;
                 String endTime;
-                if(timeline!= null) {
+                if (timeline != null) {
                     //Case of Festivals
                     startTime = formatLocalTime(timeline.getStartTime());
                     endTime = formatLocalTime(timeline.getEndTime());
@@ -226,7 +228,7 @@ public abstract class MediaLinksManagement {
                 });
 
                 nameTextField.textProperty().addListener((observable, oldValue, newValue) -> {
-                    if(newValue.isEmpty()) {
+                    if (newValue.isEmpty()) {
                         currentEditedScheduledItem.setName(null);
                     } else {
                         currentEditedScheduledItem.setName(nameTextField.getText());
@@ -241,7 +243,7 @@ public abstract class MediaLinksManagement {
                 Label durationLabel = I18nControls.newLabel(MediasI18nKeys.ExactDuration);
                 TextField durationTextField = new TextField();
                 durationTextField.setMaxWidth(100);
-                validationSupport.addRequiredInputIfOtherTextFieldNotNull(durationTextField,linkTextField,durationTextField);
+                validationSupport.addRequiredInputIfOtherTextFieldNotNull(durationTextField, linkTextField, durationTextField);
                 validationSupport.addMinimumDurationValidationIfOtherTextFieldNotNull(durationTextField, linkTextField, durationTextField, I18n.i18nTextProperty(MediasI18nKeys.DurationShouldBeAtLeast60s));
 
                 Button retrieveDurationButton = Bootstrap.primaryButton(I18nControls.newButton(MediasI18nKeys.RetrieveDuration));

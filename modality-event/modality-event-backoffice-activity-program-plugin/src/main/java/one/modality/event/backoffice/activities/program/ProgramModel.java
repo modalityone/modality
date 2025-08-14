@@ -136,17 +136,18 @@ final class ProgramModel {
         //We execute the query in batch, otherwise we can have synchronisation problem between the different threads
         entityStore.executeQueryBatch(
                 // Index 0: day templates
-                new EntityStoreQuery("select name, event.(livestreamUrl,vodExpirationDate,audioExpirationDate), dates from DayTemplate dt where event=? order by name", new Object[]{selectedEvent}),
+                new EntityStoreQuery("select name, event.(livestreamUrl,vodExpirationDate,audioExpirationDate), dates from DayTemplate dt where event=? order by name", selectedEvent),
                 // Index 1: program site (singleton list)
-                new EntityStoreQuery("select name from Site where event=? and main limit 1", new Object[]{selectedEvent}),
+                new EntityStoreQuery("select name from Site where event=? and main limit 1", selectedEvent),
                 // Index 2: items for this program item family + audio recording + video
                 new EntityStoreQuery("select name,family.code, deprecated from Item where organization=? and family.code in (?,?,?)",
-                    new Object[]{selectedEvent.getOrganization(), programItemFamily.getCode(), KnownItemFamily.AUDIO_RECORDING.getCode(), KnownItemFamily.VIDEO.getCode()}),
+                    selectedEvent.getOrganization(), programItemFamily.getCode(), KnownItemFamily.AUDIO_RECORDING.getCode(), KnownItemFamily.VIDEO.getCode()),
                 // Index 3: bookableScheduledItem for this event (teachings + optional audio), created during the event setup.
-                new EntityStoreQuery("select item, date, timeline, programScheduledItem, bookableScheduledItem from ScheduledItem si where event=? and bookableScheduledItem=si", new Object[]{selectedEvent}),
-                // Index 4: we load some fields from the Event table that are not yet loaded. We don't need to look for the result, the result will be loaded automatically in selectedEvent because it has the same id.
-                new EntityStoreQuery("select teachingsDayTicket, audioRecordingsDayTicket from Event where id=?", new Object[]{selectedEvent}),
-                new EntityStoreQuery("select distinct name, code from item  where family.code = ? and organization = ? and not deprecated order by name", new Object[]{KnownItemFamily.AUDIO_RECORDING.getCode(), FXEvent.getEvent().getOrganization()}))
+                new EntityStoreQuery("select item, date, timeline, programScheduledItem, bookableScheduledItem from ScheduledItem si where event=? and bookableScheduledItem=si", selectedEvent),
+                // Index 4: we load some fields from the Event table that are not yet loaded. We don't need to look for the result, the result will be loaded automatically in `selectedEvent` because it has the same id.
+                new EntityStoreQuery("select teachingsDayTicket, audioRecordingsDayTicket from Event where id=?", selectedEvent),
+                new EntityStoreQuery("select distinct name, code from item  where family.code = ? and organization = ? and not deprecated order by name",
+                    KnownItemFamily.AUDIO_RECORDING.getCode(), FXEvent.getEvent().getOrganization()))
             .onFailure(Console::log)
             .inUiThread()
             .onSuccess(entityLists -> {

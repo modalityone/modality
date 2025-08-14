@@ -247,11 +247,11 @@ final class VideoTabView {
         BorderPane container = new BorderPane();
         entityStore.executeQueryBatch(
                 new EntityStoreQuery("select distinct name,family.code from Item where organization=? and family.code = ? order by name",
-                    new Object[]{currentEditedEvent.getOrganization(), KnownItem.VIDEO.getCode()}),
+                    currentEditedEvent.getOrganization(), KnownItem.VIDEO.getCode()),
                 new EntityStoreQuery("select name, programScheduledItem.(startTime, endTime), date, event, site, expirationDate,available, vodDelayed, published, comment, commentLabel, item, item.code, programScheduledItem.name, programScheduledItem.timeline.startTime, programScheduledItem.timeline.endTime from ScheduledItem where programScheduledItem.event= ? and item.code = ? and programScheduledItem.item.family.code = ? order by date",
-                    new Object[]{currentEditedEvent, KnownItem.VIDEO.getCode(), KnownItemFamily.TEACHING.getCode()}),
+                    currentEditedEvent, KnownItem.VIDEO.getCode(), KnownItemFamily.TEACHING.getCode()),
                 new EntityStoreQuery("select url, scheduledItem.(item, item.code, date, vodDelayed, published) from Media where scheduledItem.event = ? and scheduledItem.item.code = ? order by id",
-                    new Object[]{currentEditedEvent, KnownItem.VIDEO.getCode()})
+                    currentEditedEvent, KnownItem.VIDEO.getCode())
             ).onFailure(Console::log)
             .inUiThread()
             .onSuccess(entityList -> {

@@ -185,11 +185,23 @@ final class RecordingsTabView {
             masterSettings.getChildren().add(languageLabel);
 
             entityStore.executeQueryBatch(
-                    new EntityStoreQuery("select distinct item.name, item.code from ScheduledItem  where programScheduledItem.event= ? and item.family.code = ? and programScheduledItem.item.family.code = ? order by item.name",
-                        new Object[]{currentEditedEvent, KnownItemFamily.AUDIO_RECORDING.getCode(), KnownItemFamily.TEACHING.getCode()}),
-                    new EntityStoreQuery("select name, date, programScheduledItem.(startTime, endTime), item.code, programScheduledItem.timeline.startTime, published, programScheduledItem.name, programScheduledItem.timeline.endTime,programScheduledItem.timeline.audioOffered, event, site, expirationDate, available from ScheduledItem where programScheduledItem.event= ? and item.family.code = ? and programScheduledItem.item.family.code = ? order by date, programScheduledItem..timeline..startTime",
-                        new Object[]{currentEditedEvent, KnownItemFamily.AUDIO_RECORDING.getCode(), KnownItemFamily.TEACHING.getCode()}),
-                    new EntityStoreQuery("select url, scheduledItem.programScheduledItem, scheduledItem.item, scheduledItem.item.code ,scheduledItem.date, scheduledItem.published, durationMillis from Media where scheduledItem.event= ? and scheduledItem.item.family.code = ?", new Object[]{currentEditedEvent, KnownItemFamily.AUDIO_RECORDING.getCode()}))
+                    new EntityStoreQuery("""
+                            select distinct item.(name, code)
+                             from ScheduledItem
+                             where programScheduledItem.event= ? and item.family.code = ? and programScheduledItem.item.family.code = ?
+                             order by item.name""",
+                        currentEditedEvent, KnownItemFamily.AUDIO_RECORDING.getCode(), KnownItemFamily.TEACHING.getCode()),
+                    new EntityStoreQuery("""
+                            select name, date, programScheduledItem.(name, startTime, endTime, timeline.(startTime, endTime, audioOffered)), event, site, item.code, published, expirationDate, available
+                             from ScheduledItem
+                             where programScheduledItem.event= ? and item.family.code = ? and programScheduledItem.item.family.code = ?
+                             order by date, programScheduledItem..timeline..startTime""",
+                        currentEditedEvent, KnownItemFamily.AUDIO_RECORDING.getCode(), KnownItemFamily.TEACHING.getCode()),
+                    new EntityStoreQuery("""
+                            select url, durationMillis, scheduledItem.(item.code, programScheduledItem, date, published)
+                             from Media
+                             where scheduledItem.(event= ? and item.family.code = ?)""",
+                        currentEditedEvent, KnownItemFamily.AUDIO_RECORDING.getCode()))
                 .onFailure(Console::log)
                 .inUiThread()
                 .onSuccess(entityList -> {

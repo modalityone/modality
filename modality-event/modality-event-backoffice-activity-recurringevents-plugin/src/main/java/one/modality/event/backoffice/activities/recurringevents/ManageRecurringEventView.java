@@ -99,14 +99,15 @@ final class ManageRecurringEventView {
     private static final double EVENT_IMAGE_WIDTH = 200;
     private static final double EVENT_IMAGE_HEIGHT = 200;
 
-    private static final String EVENT_COLUMNS = "[" +
-                                                "{expression: 'state', label: 'Status', renderer: 'eventStateRenderer'}," +
-                                                "{expression: 'advertised', label: 'Advertised'}," +
-                                                "{expression: 'name', label: 'Name'}," +
-                                                "{expression: 'type', label: 'TypeOfEvent'}," +
-                                                "{expression: 'venue.name', label: 'Location'}," +
-                                                "{expression: 'dateIntervalFormat(startDate, endDate)', label: 'Dates'}" +
-                                                "]";
+    private static final String EVENT_COLUMNS = """
+        [
+        {expression: 'state', label: 'Status', renderer: 'eventStateRenderer'},
+        {expression: 'advertised', label: 'Advertised'},
+        {expression: 'name', label: 'Name'},
+        {expression: 'type', label: 'TypeOfEvent'},
+        {expression: 'venue.name', label: 'Location'},
+        {expression: 'dateIntervalFormat(startDate, endDate)', label: 'Dates'}
+        ]""";
 
     private final RecurringEventsActivity activity;
     private final BooleanProperty activeProperty = new SimpleBooleanProperty();
@@ -317,16 +318,19 @@ final class ManageRecurringEventView {
         eventDetailsVBox.setManaged(true);
 
         currentMode.set(EDIT_MODE);
-        //We execute the query in batch, otherwise we can have synchronisation problem between the different threads
+        //We execute the query in batch, otherwise we can have a synchronisation problem between the different threads
         entityStore.executeQueryBatch(
-                // Index 0: the  scheduledItem
-                new EntityStoreQuery("select item,date,startTime, site, programScheduledItem, bookableScheduledItem, endTime, event.(openingDate, shortDescription, description, state, advertised, kbs3, type.recurringItem, externalLink, venue.name), (select id from Attendance " +
-                                     " where scheduledItem=si limit 1) as attendance " +
-                                     " from ScheduledItem si where event=?", new Object[]{e}),
+                // Index 0: the scheduledItem
+                new EntityStoreQuery("""
+                    select item,date,startTime, site, programScheduledItem, bookableScheduledItem, endTime, event.(openingDate, shortDescription, description, state, advertised, kbs3, type.recurringItem, externalLink, venue.name), (select id from Attendance \
+                     where scheduledItem=si limit 1) as attendance \
+                     from ScheduledItem si where event=?""", e),
                 //Index 1: the video Item (we should have exactly 1)
-                new EntityStoreQuery("select Item where family=? and organization=?", new Object[]{KnownItemFamily.VIDEO.getPrimaryKey(), FXOrganization.getOrganization()}),
+                new EntityStoreQuery("select Item where family=? and organization=?",
+                    KnownItemFamily.VIDEO.getPrimaryKey(), FXOrganization.getOrganization()),
                 //Index 2: the audio Item (we should have exactly one that has the same language as the default language of the organization)
-                new EntityStoreQuery("select Item where family=? and organization=? and language=organization.language", new Object[]{KnownItemFamily.AUDIO_RECORDING.getPrimaryKey(), FXOrganization.getOrganization()}))
+                new EntityStoreQuery("select Item where family=? and organization=? and language=organization.language",
+                    KnownItemFamily.AUDIO_RECORDING.getPrimaryKey(), FXOrganization.getOrganization()))
             .onFailure(Console::log)
             .inUiThread()
             .onSuccess(entityLists -> {
