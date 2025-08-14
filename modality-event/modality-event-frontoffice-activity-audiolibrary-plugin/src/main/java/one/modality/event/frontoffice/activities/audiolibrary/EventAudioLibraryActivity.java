@@ -110,7 +110,6 @@ final class EventAudioLibraryActivity extends ViewDomainActivityBase {
                             eventIdContainingAudios = Entities.getPrimaryKey(event.getRepeatedEventId());
                         }
                         Object userAccountId = FXModalityUserPrincipal.getModalityUserPrincipal().getUserAccountId();
-                        Object eventId1 = event.getPrimaryKey();
                         event.getStore().executeQueryBatchWithCache("cache-audio-library-scheduled-items-medias",
                                 // Index 0: we look for the scheduledItem having a `bookableScheduledItem` which is an audio type (case of festival)
                                 new EntityStoreQuery("""
@@ -127,7 +126,7 @@ final class EventAudioLibraryActivity extends ViewDomainActivityBase {
                                             where scheduledItem=si.bookableScheduledItem
                                                 and documentLine.(!cancelled and document.(person.frontendAccount=$1 and event=$5 and confirmed and price_balance<=0)))
                                      order by date, startTime, programScheduledItem.timeline..startTime""",
-                                    userAccountId, eventIdContainingAudios, KnownItemFamily.AUDIO_RECORDING.getCode(), pathItemCodeProperty.get(), eventId1),
+                                    userAccountId, eventIdContainingAudios, KnownItemFamily.AUDIO_RECORDING.getCode(), pathItemCodeProperty.get(), event),
                                 // Index 1: we look for the scheduledItem of audio type having a `bookableScheduledItem` which is a teaching type (case of STTP)
                                 // TODO: for now we take only the English audio recording scheduledItem in that case. We should take the default language of the organization instead
                                 new EntityStoreQuery("""
@@ -143,7 +142,7 @@ final class EventAudioLibraryActivity extends ViewDomainActivityBase {
                                             where scheduledItem=si.bookableScheduledItem
                                                 and documentLine.(!cancelled and document.(person.frontendAccount=$1 and event=$5 and confirmed and price_balance<=0)))
                                      order by date, startTime, programScheduledItem.timeline..startTime""",
-                                    userAccountId, eventIdContainingAudios, KnownItemFamily.TEACHING.getCode(), KnownItem.AUDIO_RECORDING_ENGLISH.getCode(), eventId1),
+                                    userAccountId, eventIdContainingAudios, KnownItemFamily.TEACHING.getCode(), KnownItem.AUDIO_RECORDING_ENGLISH.getCode(), event),
                                 // Index 2: the medias
                                 new EntityStoreQuery("""
                                     select url, durationMillis, scheduledItem.(date, event, name, published)
@@ -158,7 +157,7 @@ final class EventAudioLibraryActivity extends ViewDomainActivityBase {
                                 //noinspection unchecked
                                 entityLists[0].addAll(entityLists[1]);
                                 //noinspection unchecked
-                                scheduledAudioItems.setAll(entityLists[0]);// will trigger UI update
+                                scheduledAudioItems.setAll(entityLists[0]); // will trigger UI update
                             });
                     });
             }
