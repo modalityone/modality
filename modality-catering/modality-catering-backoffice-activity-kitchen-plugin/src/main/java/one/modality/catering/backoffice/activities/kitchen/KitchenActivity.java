@@ -173,27 +173,29 @@ final class KitchenActivity extends ViewDomainActivityBase
 
     // LOGIC
 
-    private static final String MEALS_COUNT_SQL = "select si.date, i.name, di.code, di.name, count(*), di.ord, di.graphic\n" +
-            "from attendance a\n" +
-            "  join scheduled_item si on si.id = a.scheduled_item_id\n" +
-            "  join document_line dl on dl.id=a.document_line_id\n" +
-            "  join site s on s.id=si.site_id\n" +
-            "  join item i on i.id=si.item_id\n" +
-            "  join item_family f on f.id=i.family_id  \n" +
-            "  , ( select i.id,i.code,i.name,i.ord,i.graphic from item i join item_family f on f.id=i.family_id where i.organization_id = $1 and f.code='diet'\n" +
-            "    union\n" +
-            "    select * from (values (-1, 'Total', null, 10001, null), (-2, '?', null, 10000, null)) vitem(id, code, ord)\n" +
-            "    ) di\n" +
-            "where not dl.cancelled\n" +
-            "  and s.organization_id = $1\n" +
-            "  and f.code = 'meals'\n" +
-            "  and si.date between $2 and $3\n" +
-            "  and case when di.id=-1 then true\n" +
-            "       when di.id=-2 then not exists(select * from document_line dl2 join item i2 on i2.id=dl2.item_id join item_family f2 on f2.id=i2.family_id where dl2.document_id=dl.document_id and not dl2.cancelled and f2.code='diet')\n" +
-            "       else exists(select * from document_line dl2 where dl2.document_id=dl.document_id and not dl2.cancelled and dl2.item_id=di.id)\n" +
-            "        end\n" +
-            "group by si.date, i.name, di.code, di.name, i.ord, di.ord, di.graphic\n" +
-            "order by si.date, i.ord, di.ord;";
+    private static final String MEALS_COUNT_SQL = // language=SQL
+        """
+            select si.date, i.name, di.code, di.name, count(*), di.ord, di.graphic
+             from attendance a
+              join scheduled_item si on si.id = a.scheduled_item_id
+              join document_line dl on dl.id=a.document_line_id
+              join site s on s.id=si.site_id
+              join item i on i.id=si.item_id
+              join item_family f on f.id=i.family_id
+              , ( select i.id,i.code,i.name,i.ord,i.graphic from item i join item_family f on f.id=i.family_id where i.organization_id = $1 and f.code='diet'
+                union
+                select * from (values (-1, 'Total', null, 10001, null), (-2, '?', null, 10000, null)) vitem(id, code, ord)
+                ) di
+             where not dl.cancelled
+              and s.organization_id = $1
+              and f.code = 'meals'
+              and si.date between $2 and $3
+              and case when di.id=-1 then true
+                   when di.id=-2 then not exists(select * from document_line dl2 join item i2 on i2.id=dl2.item_id join item_family f2 on f2.id=i2.family_id where dl2.document_id=dl.document_id and not dl2.cancelled and f2.code='diet')
+                   else exists(select * from document_line dl2 where dl2.document_id=dl.document_id and not dl2.cancelled and dl2.item_id=di.id)
+                    end
+             group by si.date, i.name, di.code, di.name, i.ord, di.ord, di.graphic
+             order by si.date, i.ord, di.ord;""";
 
     private final ReactiveQueryCall reactiveQueryCall = new ReactiveQueryCall();
 
