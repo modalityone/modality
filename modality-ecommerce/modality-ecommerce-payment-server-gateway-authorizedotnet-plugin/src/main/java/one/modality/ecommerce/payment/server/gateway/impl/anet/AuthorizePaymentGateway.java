@@ -4,6 +4,7 @@ import dev.webfx.platform.ast.AST;
 import dev.webfx.platform.ast.ReadOnlyAstObject;
 import dev.webfx.platform.async.Future;
 import dev.webfx.platform.resource.Resource;
+import dev.webfx.platform.util.Strings;
 import dev.webfx.platform.util.uuid.Uuid;
 import net.authorize.Environment;
 import net.authorize.api.contract.v1.*;
@@ -120,6 +121,9 @@ public class AuthorizePaymentGateway implements PaymentGateway {
         billingAddress.setState(      clientSideState     != null ? clientSideState     : serverSideCustomer.state());
         billingAddress.setZip(        clientSideZipCode   != null ? clientSideZipCode   : serverSideCustomer.zipCode());
         billingAddress.setCountry(    clientCountry       != null ? clientCountry       : serverSideCustomer.country());
+
+        // Some fields are limited in length, so we truncate them if necessary
+        billingAddress.setAddress(Strings.truncate(billingAddress.getAddress(), 100));
 
         LineItemType anetItem = new LineItemType();
         anetItem.setItemId(serverItem.id());
