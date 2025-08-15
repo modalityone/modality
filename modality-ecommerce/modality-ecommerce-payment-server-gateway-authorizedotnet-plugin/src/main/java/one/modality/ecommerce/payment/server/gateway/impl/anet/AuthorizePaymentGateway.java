@@ -123,7 +123,14 @@ public class AuthorizePaymentGateway implements PaymentGateway {
         billingAddress.setCountry(    clientCountry       != null ? clientCountry       : serverSideCustomer.country());
 
         // Some fields are limited in length, so we truncate them if necessary
-        billingAddress.setAddress(Strings.truncate(billingAddress.getAddress(), 100));
+        // (Source: https://api.authorize.net/xml/v1/schema/anetapischema.xsd - nameAndAddressType)
+        billingAddress.setFirstName(Strings.truncate(billingAddress.getFirstName(), 50));
+        billingAddress.setLastName( Strings.truncate(billingAddress.getLastName(),  50));
+        billingAddress.setAddress(  Strings.truncate(billingAddress.getAddress(),   60));
+        billingAddress.setCity(     Strings.truncate(billingAddress.getCity(),      40));
+        billingAddress.setState(    Strings.truncate(billingAddress.getState(),     40));
+        billingAddress.setZip(      Strings.truncate(billingAddress.getZip(),       20));
+        billingAddress.setCountry(  Strings.truncate(billingAddress.getCountry(),   60));
 
         LineItemType anetItem = new LineItemType();
         anetItem.setItemId(serverItem.id());
