@@ -27,6 +27,7 @@ import javafx.scene.input.DataFormat;
 import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
 import javafx.scene.text.Text;
+import one.modality.base.client.error.ErrorReporter;
 import one.modality.base.shared.entities.Country;
 import one.modality.base.shared.entities.markers.HasPersonalDetails;
 import one.modality.ecommerce.payment.*;
@@ -373,7 +374,7 @@ public final class WebPaymentForm {
     }
 
     private void onLoadFailure(String error) {
-        logDebug("onLoadFailure called (error = " + error + ")");
+        logError("onLoadFailure called (error = " + error + ")");
         if (onLoadFailure != null) {
             onLoadFailure.accept(error);
         }
@@ -388,19 +389,19 @@ public final class WebPaymentForm {
     }
 
     public void onGatewayInitFailure(String error) {
-        logDebug("onGatewayInitFailure called (error = " + error + ")");
+        logError("onGatewayInitFailure called (error = " + error + ")");
         initialized = true;
         //setUserInteractionAllowed(true);
         callConsumerInUiThreadIfSet(onInitFailure, error);
     }
 
     public void onGatewayCardVerificationFailure(String error) {
-        logDebug("onGatewayCardVerificationFailure called (error = " + error + ")");
+        logError("onGatewayCardVerificationFailure called (error = " + error + ")");
         allowUserInteraction();
     }
 
     public void onGatewayBuyerVerificationFailure(String error) {
-        logDebug("onGatewayBuyerVerificationFailure called (error = " + error + ")");
+        logError("onGatewayBuyerVerificationFailure called (error = " + error + ")");
         allowUserInteraction();
         callConsumerInUiThreadIfSet(onVerificationFailure, error);
     }
@@ -415,7 +416,7 @@ public final class WebPaymentForm {
     }
 
     public void onModalityCompletePaymentFailure(String error) {
-        logDebug("onModalityCompletePaymentFailure called (error = " + error + ")");
+        logError("onModalityCompletePaymentFailure called (error = " + error + ")");
         allowUserInteraction();
         callConsumerInUiThreadIfSet(onPaymentFailure, error);
     }
@@ -446,6 +447,11 @@ public final class WebPaymentForm {
         if (consumer != null) {
             UiScheduler.runInUiThread(() -> consumer.accept(argument));
         }
+    }
+
+    private static void logError(String message) {
+        ErrorReporter.reportError("[WebPaymentForm] " + message);
+        logDebug(message);
     }
 
     private static void logDebug(String message) {
