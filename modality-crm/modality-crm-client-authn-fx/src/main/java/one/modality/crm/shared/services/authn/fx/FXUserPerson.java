@@ -3,6 +3,7 @@ package one.modality.crm.shared.services.authn.fx;
 import dev.webfx.kit.util.properties.FXProperties;
 import dev.webfx.platform.console.Console;
 import dev.webfx.platform.util.Booleans;
+import dev.webfx.platform.util.collection.Collections;
 import dev.webfx.stack.orm.entity.EntityId;
 import dev.webfx.stack.orm.entity.EntityStore;
 import javafx.beans.property.ObjectProperty;
@@ -25,13 +26,17 @@ public final class FXUserPerson {
         if (userPersonId == null)
             setUserPerson(null);
         else {
-            EntityStore.create().<Person>executeQueryWithCache("cache-fx-user-person",
-                    "select firstName,lastName,male,ordained,email,phone,street,postCode,cityName,country,organization,birthdate,layName,frontendAccount.(tester,security) from Person where id=?", userPersonId)
+            EntityStore.create().<Person>executeQueryWithCache("cache-fx-user-person", """
+                    select firstName, lastName, male, ordained, email, phone, street, postCode, cityName, country
+                            , organization, birthdate, layName, frontendAccount.(tester, security)
+                        from Person
+                        where id=?
+                    """, userPersonId)
                 .onFailure(Console::log)
                 .inUiThread()
-                .onSuccess(persons -> {
+                .onCacheAndOrSuccess(persons -> {
                     setUserPerson(null); // Temporary transition to null because otherwise DynamicEntity.equals()
-                    setUserPerson(persons.get(0)); // is currently returning true and prevents the listeners to be called
+                    setUserPerson(Collections.first(persons)); // is currently returning true and prevents the listeners to be called
                 });
         }
     }

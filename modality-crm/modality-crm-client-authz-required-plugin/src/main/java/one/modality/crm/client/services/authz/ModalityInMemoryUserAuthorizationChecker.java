@@ -50,13 +50,19 @@ final class ModalityInMemoryUserAuthorizationChecker extends InMemoryUserAuthori
                 onAuthorizationPush(cachedValue);
         }
         // Note: the pushObject sent by the server contained all permissions specifically assigned to the user.
-        // In addition, we may have public operations. Since they are public, they don't need authorizations, however
+        // In addition, we may have public operations. Since they are public, they don't need authorizations, however,
         // some may have a route associated, and we need therefore to authorize those public routes.
         EntityStore.create(dataSourceModel)
-                .executeQueryWithCache("cache-authz-operations",
-                    "select grantRoute,guest,public from Operation where grantRoute!=null and (public or guest) and " + (Meta.isBackoffice() ? "backoffice" : "frontoffice"))
-                .onFailure(Console::log)
-                .onSuccess(this::onPublicOrGuestOperationsWithGrantRouteChanged);
+            .executeQueryWithCache("cache-authz-operations",
+                """
+                    select grantRoute, guest, public
+                        from Operation
+                        where grantRoute!=null
+                            and (public or guest)
+                            and officeType
+                    """.replace("officeType", Meta.isBackoffice() ? "backoffice" : "frontoffice"))
+            .onFailure(Console::log)
+            .onCacheAndOrSuccess(this::onPublicOrGuestOperationsWithGrantRouteChanged);
     }
 
     private void onPublicOrGuestOperationsWithGrantRouteChanged(List<Entity> operations) {
@@ -81,7 +87,7 @@ final class ModalityInMemoryUserAuthorizationChecker extends InMemoryUserAuthori
         EntityStore entityStore = EntityStore.create(dataSourceModel);
         EntityList<Entity> assignments = QueryResultToEntitiesMapper.mapQueryResultToEntities(queryResult, queryMapping, entityStore, "assignments");
         clearAllAuthorizationRulesAndGrantAuthorizedRoutesFromPublicOrGuestOperations();
-        for (Entity assignment: assignments) {
+        for (Entity assignment : assignments) {
             // Case of a rule (ex: "grant route:*" or "grant operation:*")
             Entity authorizationRule = assignment.getForeignEntity("rule");
             if (authorizationRule != null) // if yes, passing the rule as a string (will be parsed)

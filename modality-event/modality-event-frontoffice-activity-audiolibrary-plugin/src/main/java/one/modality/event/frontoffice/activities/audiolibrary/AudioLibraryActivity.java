@@ -70,7 +70,7 @@ final class AudioLibraryActivity extends ViewDomainActivityBase {
                         new Object[]{ KnownItemFamily.AUDIO_RECORDING.getCode(), modalityUserPrincipal.getUserAccountId()})
                     .onFailure(Console::log)
                     .inUiThread()
-                    .onSuccess(documentLinesWithBookedAudios::setAll);
+                    .onCacheAndOrSuccess(documentLinesWithBookedAudios::setAll);
             }
         }, FXModalityUserPrincipal.modalityUserPrincipalProperty());
     }

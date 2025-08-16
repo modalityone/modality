@@ -178,7 +178,7 @@ final class VideoStreamingActivity extends ViewDomainActivityBase {
                         userAccountId, KnownItemFamily.VIDEO.getCode())
                     .onFailure(Console::log)
                     .inUiThread()
-                    .onSuccess(documentLines -> {
+                    .onCacheAndOrSuccess(documentLines -> {
                         // Extracting the events with videos from the document lines
                         eventsWithBookedVideos.setAll(
                             Collections.map(documentLines, dl -> dl.getDocument().getEvent()));
@@ -236,7 +236,7 @@ final class VideoStreamingActivity extends ViewDomainActivityBase {
                         /*$1*/ userAccountId, /*$2*/ eventContainingVideos, /*$3*/ KnownItemFamily.TEACHING.getCode(), /*$4*/ KnownItem.VIDEO.getCode(), /*$5*/ event)
                     .onFailure(Console::log)
                     .inUiThread()
-                    .onSuccess(scheduledItems -> {
+                    .onCacheAndOrSuccess(scheduledItems -> {
                         videoScheduledItems.setAll(scheduledItems); // Will trigger the build of the video table.
                         watchingVideoItemProperty.set(null);
                         // We are now ready to populate the videos, but we postpone this for the 2 following reasons:

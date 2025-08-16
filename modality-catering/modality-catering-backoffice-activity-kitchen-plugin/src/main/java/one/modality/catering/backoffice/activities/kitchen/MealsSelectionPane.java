@@ -26,7 +26,9 @@ public class MealsSelectionPane extends VBox {
 
     private final ObservableList<Item> selectedItemsObservableList = FXCollections.observableArrayList();
 
-    public ObservableList<Item> selectedItemsObservableList() { return selectedItemsObservableList; }
+    public ObservableList<Item> selectedItemsObservableList() {
+        return selectedItemsObservableList;
+    }
 
     private final Map<Item, CheckBox> itemCheckBoxMap = new HashMap<>();
     private final HBox itemCheckBoxPane = new HBox(10);
@@ -74,8 +76,8 @@ public class MealsSelectionPane extends VBox {
 
     private AbbreviationGenerator buildAbbreviationGenerator() {
         List<String> mealNames = organizationAllMealsItemsObservableList.stream()
-                .map(Item::getName)
-                .collect(Collectors.toList());
+            .map(Item::getName)
+            .collect(Collectors.toList());
         return new AbbreviationGenerator(mealNames);
     }
 
@@ -85,9 +87,9 @@ public class MealsSelectionPane extends VBox {
 
     private List<Item> getSelectedItems() {
         return itemCheckBoxMap.entrySet().stream()
-                .filter(entry -> entry.getValue().isSelected())
-                .map(Map.Entry::getKey)
-                .collect(Collectors.toList());
+            .filter(entry -> entry.getValue().isSelected())
+            .map(Map.Entry::getKey)
+            .collect(Collectors.toList());
     }
 
     public void setOrganization(Organization organization) {
@@ -96,9 +98,14 @@ public class MealsSelectionPane extends VBox {
             return;
         }
 
-        organization.getStore().<Item>executeQueryWithCache("cache-kitchen-mealsItems",
-            "select id,name,code,ord from Item i where i.family.code='meals' and organization=? order by ord", organization
-        ).onSuccess(organizationAllMealsItemsObservableList::setAll);
+        organization.getStore().<Item>executeQueryWithCache("cache-kitchen-mealsItems", """
+            select id, name, code, ord
+               from Item
+               where family.code='meals'
+                   and organization=?
+               order by ord
+            """, organization
+        ).onCacheAndOrSuccess(organizationAllMealsItemsObservableList::setAll);
     }
 
     public AbbreviationGenerator getAbbreviationGenerator() {
@@ -107,10 +114,10 @@ public class MealsSelectionPane extends VBox {
 
     public void setDisplayedMealNames(Set<String> displayedMealNames) {
         List<CheckBox> displayedCheckBoxes = itemCheckBoxMap.entrySet().stream()
-                .filter(entry -> displayedMealNames.contains(entry.getKey().getName()))
-                .sorted(Comparator.comparing(e -> e.getKey().getName()))
-                .map(Map.Entry::getValue)
-                .collect(Collectors.toList());
+            .filter(entry -> displayedMealNames.contains(entry.getKey().getName()))
+            .sorted(Comparator.comparing(e -> e.getKey().getName()))
+            .map(Map.Entry::getValue)
+            .collect(Collectors.toList());
 
         Platform.runLater(() -> itemCheckBoxPane.getChildren().setAll(displayedCheckBoxes));
     }

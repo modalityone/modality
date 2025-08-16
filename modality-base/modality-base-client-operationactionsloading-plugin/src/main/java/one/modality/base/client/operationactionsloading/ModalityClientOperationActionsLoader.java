@@ -29,8 +29,8 @@ import java.util.List;
  * @author Bruno Salmon
  */
 public final class ModalityClientOperationActionsLoader implements ApplicationModuleBooter,
-        OperationActionFactoryMixin,
-        ActionFactoryMixin {
+    OperationActionFactoryMixin,
+    ActionFactoryMixin {
 
     private final static String CONFIG_PATH = "modality.base.client.operationactionsloading";
 
@@ -58,14 +58,18 @@ public final class ModalityClientOperationActionsLoader implements ApplicationMo
         DefaultCache.setDefaultCache(LocalStorageCache.get());
 
         EntityStore.create()
-                .executeQueryWithCache("cache-clientOperations",
-                    "select code,i18nCode,public from Operation where " + (Meta.isBackoffice() ? "backoffice" : "frontoffice"))
-                .onFailure(cause -> {
-                    Console.log("Failed loading operations", cause);
-                    // Schedule a retry, as the client won't work anyway without a successful load
-                    Scheduler.scheduleDeferred(this::bootModule);
-                })
-                .onSuccess(this::registerOperations);
+            .executeQueryWithCache("cache-clientOperations",
+                """
+                    select code, i18nCode, public
+                        from Operation
+                        where officeType
+                    """.replace("officeType", Meta.isBackoffice() ? "backoffice" : "frontoffice"))
+            .onFailure(cause -> {
+                Console.log("Failed loading operations", cause);
+                // Schedule a retry, as the client won't work anyway without a successful load
+                Scheduler.scheduleDeferred(this::bootModule);
+            })
+            .onCacheAndOrSuccess(this::registerOperations);
     }
 
     private void registerOperations(List<Entity> operations) {
@@ -92,9 +96,9 @@ public final class ModalityClientOperationActionsLoader implements ApplicationMo
                 boolean isRoute = operationCode.startsWith("RouteTo");
                 boolean hideUnauthorizedAction = isRoute ? hideUnauthorizedRouteOperationActions : hideUnauthorizedOtherOperationActions;
                 operationGraphicalAction = newAuthAction(
-                        i18nKey,
-                        registry.authorizedOperationActionProperty(operationCode, AuthorizationFactory::isAuthorized),
-                        hideUnauthorizedAction);
+                    i18nKey,
+                    registry.authorizedOperationActionProperty(operationCode, AuthorizationFactory::isAuthorized),
+                    hideUnauthorizedAction);
             }
             operationGraphicalAction.setUserData(i18nKey);
             registry.registerOperationGraphicalAction(operationCode, operationGraphicalAction);
