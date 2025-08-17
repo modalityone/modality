@@ -1,14 +1,13 @@
 package one.modality.ecommerce.backoffice.activities.bookings;
 
+import dev.webfx.extras.action.ActionGroup;
+import dev.webfx.extras.operation.action.OperationAction;
+import dev.webfx.extras.operation.action.OperationActionFactoryMixin;
 import dev.webfx.extras.time.TimeUtil;
 import dev.webfx.extras.time.YearWeek;
 import dev.webfx.extras.util.control.Controls;
 import dev.webfx.extras.visual.controls.grid.VisualGrid;
-import dev.webfx.stack.cache.client.LocalStorageCache;
 import dev.webfx.stack.orm.reactive.mapping.entities_to_visual.ReactiveVisualMapper;
-import dev.webfx.extras.action.ActionGroup;
-import dev.webfx.extras.operation.action.OperationAction;
-import dev.webfx.extras.operation.action.OperationActionFactoryMixin;
 import javafx.scene.Node;
 import javafx.scene.layout.BorderPane;
 import one.modality.base.backoffice.controls.masterslave.ConventionalUiBuilderMixin;
@@ -169,7 +168,7 @@ final class BookingsActivity extends EventDependentViewDomainActivity implements
                 .ifInstanceOf(pm.ganttSelectedObjectProperty(), Year.class,      year   -> where("exists(select Attendance where documentLine.document=d and date >= ? and date <= ?)", TimeUtil.getFirstDayOfYear(year),   TimeUtil.getLastDayOfYear(year)))
                 .ifInstanceOf(pm.ganttSelectedObjectProperty(), ScheduledItem.class, si -> where("exists(select Attendance where documentLine.document=d and scheduledItem = ?)", si))
                 .ifInstanceOf(pm.ganttSelectedObjectProperty(), Event.class,     event  -> where("event=?", event))
-                .setResultCacheEntry(LocalStorageCache.get().getCacheEntry("cache-bookings-group"))
+                .setResultCacheEntry("cache-bookings-group")
                 .start();
 
         // Setting up the master mapper that build the content displayed in the master view
@@ -194,7 +193,7 @@ final class BookingsActivity extends EventDependentViewDomainActivity implements
                         Character.isDigit(s.charAt(0)) ? where("ref = ?", Integer.parseInt(s))
                                 : s.contains("@") ? where("lower(person_email) like ?", "%" + s.toLowerCase() + "%")
                                 : where("person_abcNames like ?", AbcNames.evaluate(s, true)))
-                .setResultCacheEntry(LocalStorageCache.get().getCacheEntry("cache-bookings-master"))
+                .setResultCacheEntry("cache-bookings-master")
                 .applyDomainModelRowStyle() // Colorizing the rows
                 .autoSelectSingleRow() // When the result is a singe row, automatically select it
                 .start();

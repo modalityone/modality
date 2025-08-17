@@ -9,7 +9,6 @@ import dev.webfx.extras.time.layout.gantt.LocalDateGanttLayout;
 import dev.webfx.extras.time.layout.impl.ChildBounds;
 import dev.webfx.extras.time.window.TimeWindowUtil;
 import dev.webfx.kit.util.properties.FXProperties;
-import dev.webfx.stack.cache.client.LocalStorageCache;
 import dev.webfx.stack.orm.dql.DqlStatement;
 import dev.webfx.stack.orm.entity.Entities;
 import dev.webfx.stack.orm.reactive.entities.dql_to_entities.ReactiveEntitiesMapper;
@@ -232,7 +231,7 @@ public final class EventsGanttCanvas {
             .always(pm.timeWindowStartProperty(), startDate -> DqlStatement.orderBy("greatest(e.startDate, ?),id", startDate))
             // Storing the result directly in the events layer
             .storeEntitiesInto(eventsLayer.getChildren())
-            .setResultCacheEntry(LocalStorageCache.get().getCacheEntry("cache-eventsGanttCanvas"))
+            .setResultCacheEntry("cache-eventsGanttCanvas")
             // We are now ready to start
             .start();
 

@@ -2,11 +2,11 @@ package one.modality.crm.client.services.authz;
 
 import dev.webfx.platform.console.Console;
 import dev.webfx.platform.meta.Meta;
+import dev.webfx.stack.shareddata.cache.CacheEntry;
 import dev.webfx.platform.util.Strings;
 import dev.webfx.stack.authz.client.operation.OperationAuthorizationRuleParser;
 import dev.webfx.stack.authz.client.spi.impl.inmemory.InMemoryUserAuthorizationChecker;
-import dev.webfx.stack.cache.CacheEntry;
-import dev.webfx.stack.cache.client.SessionClientCache;
+import dev.webfx.stack.shareddata.cache.serial.SerialCache;
 import dev.webfx.stack.db.query.QueryResult;
 import dev.webfx.stack.orm.domainmodel.DataSourceModel;
 import dev.webfx.stack.orm.dql.sqlcompiler.mapping.QueryRowToEntityMapping;
@@ -33,7 +33,7 @@ final class ModalityInMemoryUserAuthorizationChecker extends InMemoryUserAuthori
     private final static String AUTHZ_QUERY_BASE = "select rule.rule,activityState.route,operation.(code,grantRoute,guest) from AuthorizationAssignment aa";
 
     private final DataSourceModel dataSourceModel;
-    private final CacheEntry<Object> authorizationPushCashEntry = SessionClientCache.get().getCacheEntry("cache-authz-push");
+    private final CacheEntry<Object> authorizationPushCashEntry = SerialCache.createCacheEntry("cache-authz-push");
     private List<Entity> publicOrGuestOperationsWithGrantRoute;
     private Object lastPushObject;
     private List<Entity> lastPublicOrGuestOperationsWithGrantRoute;
@@ -43,11 +43,13 @@ final class ModalityInMemoryUserAuthorizationChecker extends InMemoryUserAuthori
         // Registering the authorization (requests and rules) parsers
         ruleRegistry.addAuthorizationRuleParser(new RoutingAuthorizationRuleParser());
         ruleRegistry.addAuthorizationRuleParser(new OperationAuthorizationRuleParser());
-        // Getting initial authorizations from cache if present (only if previous session was logged in as Modality user already)
+        // Getting initial authorizations from cache if present (only if the previous session was logged in as Modality user already)
         if (FXModalityUserPrincipal.getModalityUserPrincipal() != null) {
-            Object cachedValue = authorizationPushCashEntry.getValue();
-            if (cachedValue != null)
-                onAuthorizationPush(cachedValue);
+            authorizationPushCashEntry.getValue()
+                .onSuccess(cachedValue -> {
+                    if (cachedValue != null)
+                        onAuthorizationPush(cachedValue);
+                });
         }
         // Note: the pushObject sent by the server contained all permissions specifically assigned to the user.
         // In addition, we may have public operations. Since they are public, they don't need authorizations, however,

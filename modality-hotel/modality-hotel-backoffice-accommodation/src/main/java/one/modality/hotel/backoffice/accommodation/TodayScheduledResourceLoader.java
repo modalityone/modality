@@ -1,7 +1,6 @@
 package one.modality.hotel.backoffice.accommodation;
 
 import dev.webfx.kit.util.properties.FXProperties;
-import dev.webfx.stack.cache.client.LocalStorageCache;
 import dev.webfx.stack.orm.reactive.entities.dql_to_entities.ReactiveEntitiesMapper;
 import dev.webfx.stack.routing.activity.impl.elementals.activeproperty.HasActiveProperty;
 import javafx.beans.value.ObservableValue;
@@ -61,7 +60,7 @@ public final class TodayScheduledResourceLoader {
                     .always(FXToday.todayProperty(), today -> where("sr.date = ?", today))
                     // Storing the result directly in the events layer
                     .storeEntitiesInto(todayScheduledResources)
-                    .setResultCacheEntry(LocalStorageCache.get().getCacheEntry("cache-accommodationTodayScheduledResource"))
+                    .setResultCacheEntry("cache-accommodationTodayScheduledResource")
                     // We are now ready to start
                     .start();
         } else if (activeProperty != null) // subsequent calls

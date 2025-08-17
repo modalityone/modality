@@ -6,7 +6,6 @@ import dev.webfx.extras.time.layout.gantt.LocalDateGanttLayout;
 import dev.webfx.extras.time.layout.impl.ObjectBounds;
 import dev.webfx.extras.time.window.TimeWindowUtil;
 import dev.webfx.kit.util.properties.FXProperties;
-import dev.webfx.stack.cache.client.LocalStorageCache;
 import dev.webfx.stack.orm.reactive.entities.dql_to_entities.ReactiveEntitiesMapper;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
@@ -223,7 +222,7 @@ final class HouseholdView {
                 .always(pm.timeWindowEndProperty(), endDate -> where("a.date >= ? and (a.date +1 >= ? and a.date -1 <= ? or a.date <= ? and !a.documentLine.cleaned)", FXToday.getToday().minus(2, ChronoUnit.MONTHS), pm.getTimeWindowStart(), endDate, FXToday.getToday())) // +1/-1 is to avoid the round corners on right for bookings exceeding the time window
                 // Storing the result directly in the events layer
                 .storeEntitiesInto(attendances)
-                .setResultCacheEntry(LocalStorageCache.get().getCacheEntry("cache-householdAttendance"))
+                .setResultCacheEntry("cache-householdAttendance")
                 // We are now ready to start
                 .start();
     }

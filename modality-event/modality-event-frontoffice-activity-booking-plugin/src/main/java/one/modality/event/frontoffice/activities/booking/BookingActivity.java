@@ -1,5 +1,6 @@
 package one.modality.event.frontoffice.activities.booking;
 
+import dev.webfx.extras.controlfactory.button.ButtonFactoryMixin;
 import dev.webfx.extras.imagestore.ImageStore;
 import dev.webfx.extras.panes.FlexPane;
 import dev.webfx.extras.panes.GrowingPane;
@@ -10,14 +11,12 @@ import dev.webfx.platform.conf.SourcesConfig;
 import dev.webfx.platform.os.OperatingSystem;
 import dev.webfx.platform.useragent.UserAgent;
 import dev.webfx.platform.util.collection.Collections;
-import dev.webfx.stack.cache.client.LocalStorageCache;
 import dev.webfx.stack.orm.domainmodel.activity.viewdomain.impl.ViewDomainActivityBase;
 import dev.webfx.stack.orm.dql.DqlStatement;
 import dev.webfx.stack.orm.entity.Entity;
 import dev.webfx.stack.orm.reactive.entities.entities_to_objects.IndividualEntityToObjectMapper;
 import dev.webfx.stack.orm.reactive.entities.entities_to_objects.ObservableEntitiesToObjectsMapper;
 import dev.webfx.stack.orm.reactive.entities.entities_to_objects.ReactiveObjectsMapper;
-import dev.webfx.extras.controlfactory.button.ButtonFactoryMixin;
 import javafx.beans.InvalidationListener;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
@@ -151,7 +150,7 @@ final class BookingActivity extends ViewDomainActivityBase implements ButtonFact
             .always(DqlStatement.where("name like '%Festival%'")) // This is to remove STTP classes TODO: find a more generic way to filter out private events
             .setIndividualEntityToObjectMapperFactory(IndividualEntityToObjectMapper.factory(EventView::new, EventView::setEvent, EventView::getView))
             .storeMappedObjectsInto(internationalEventsContainer.getChildren())
-            .setResultCacheEntry(LocalStorageCache.get().getCacheEntry("cache-booking-internationalEvents"))
+            .setResultCacheEntry("cache-booking-internationalEvents")
             .start();
 
         // Loading local events
@@ -159,7 +158,7 @@ final class BookingActivity extends ViewDomainActivityBase implements ButtonFact
             .always(commonDqlStart + ", type.(name,label.<loadAll>,ord), state', where: 'endDate > now() and !bookingClosed and type.name != `Not event`', orderBy: 'startDate'}")
             .ifNotNullOtherwiseEmpty(FXOrganizationId.organizationIdProperty(), orgId -> where("organization=?", orgId))
             .storeEntitiesInto(localEvents)
-            .setResultCacheEntry(LocalStorageCache.get().getCacheEntry("cache-booking-localEvents"))
+            .setResultCacheEntry("cache-booking-localEvents")
             .start();
     }
 }

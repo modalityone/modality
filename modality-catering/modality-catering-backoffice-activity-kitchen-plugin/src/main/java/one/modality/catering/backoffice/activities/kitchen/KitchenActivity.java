@@ -1,5 +1,6 @@
 package one.modality.catering.backoffice.activities.kitchen;
 
+import dev.webfx.extras.i18n.controls.I18nControls;
 import dev.webfx.extras.theme.FontDef;
 import dev.webfx.extras.theme.luminance.LuminanceTheme;
 import dev.webfx.extras.theme.text.TextTheme;
@@ -12,10 +13,8 @@ import dev.webfx.extras.util.layout.Layouts;
 import dev.webfx.kit.launcher.WebFxKitLauncher;
 import dev.webfx.kit.util.properties.FXProperties;
 import dev.webfx.platform.uischeduler.UiScheduler;
-import dev.webfx.stack.cache.client.LocalStorageCache;
 import dev.webfx.stack.db.query.QueryArgument;
 import dev.webfx.stack.db.query.QueryArgumentBuilder;
-import dev.webfx.extras.i18n.controls.I18nControls;
 import dev.webfx.stack.orm.domainmodel.activity.viewdomain.impl.ViewDomainActivityBase;
 import dev.webfx.stack.orm.domainmodel.activity.viewdomain.impl.ViewDomainActivityContextFinal;
 import dev.webfx.stack.orm.entity.EntityId;
@@ -249,7 +248,7 @@ final class KitchenActivity extends ViewDomainActivityBase
 
             rebuildDayPanels();
         }, reactiveQueryCall.resultProperty());
-        reactiveQueryCall.setResultCacheEntry(LocalStorageCache.get().getCacheEntry("cache-kitchen-mealsCount"));
+        reactiveQueryCall.setResultCacheEntry("cache-kitchen-mealsCount");
         reactiveQueryCall.start();
     }
 

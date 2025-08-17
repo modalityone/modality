@@ -1,7 +1,6 @@
 package one.modality.hotel.backoffice.accommodation;
 
 import dev.webfx.kit.util.properties.FXProperties;
-import dev.webfx.stack.cache.client.LocalStorageCache;
 import dev.webfx.stack.orm.reactive.entities.dql_to_entities.ReactiveEntitiesMapper;
 import dev.webfx.stack.routing.activity.impl.elementals.activeproperty.HasActiveProperty;
 import javafx.beans.value.ObservableValue;
@@ -63,7 +62,7 @@ public final class ResourceConfigurationLoader {
                     .ifNotNullOtherwiseEmpty(pm.organizationIdProperty(), o -> where("resource.site.(organization=? and event=null)", o))
                     // Restricting events to those appearing in the time window
                     .storeEntitiesInto(resourceConfigurations)
-                    .setResultCacheEntry(LocalStorageCache.get().getCacheEntry("cache-accommodationResourceConfiguration"))
+                    .setResultCacheEntry("cache-accommodationResourceConfiguration")
                     // We are now ready to start
                     .start();
         } else if (activeProperty != null) // subsequent calls
