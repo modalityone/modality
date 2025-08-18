@@ -6,6 +6,7 @@ import com.squareup.square.api.PaymentsApi;
 import com.squareup.square.authentication.BearerAuthModel;
 import com.squareup.square.exceptions.ApiException;
 import com.squareup.square.models.CreatePaymentRequest;
+import com.squareup.square.models.CreatePaymentResponse;
 import com.squareup.square.models.Money;
 import com.squareup.square.models.Payment;
 import dev.webfx.platform.ast.AST;
@@ -129,35 +130,40 @@ public final class SquarePaymentGateway implements PaymentGateway {
         paymentsApi.createPaymentAsync(new CreatePaymentRequest.Builder(sourceId, idempotencyKey)
                 .locationId(locationId)
                 .verificationToken(verificationToken)
-                .amountMoney(new Money(amount, currencyCode))
+                .amountMoney(new Money.Builder()
+                        .amount(amount)
+                        .currency(currencyCode)
+                        .build())
                 .build()
-        ).thenAccept(result -> { // Seems to always indicate a successful payment
-            Payment payment = result.getPayment();
-            // We generate the final result from the payment information, and also capture the http response body (stored in the database)
-            promise.complete(generateResultFromSquarePayment(payment, result.getContext()));
+        ).thenAccept(apiResponse -> { // Successful HTTP response (payment may still be failed/pending)
+            Payment payment = apiResponse.getPayment();
+            // We generate the final result from the payment information and also capture the http response body (stored in the database)
+            promise.complete(generateResultFromSquarePayment(payment, apiResponse.getContext()));
         }).exceptionally(ex -> { // Can be a technical exception, or a failed payment (ex: card declined)
             if (DEBUG_LOG) {
                 Console.log("[Square][DEBUG] completePayment - exception:", ex);
             }
             // We extract the Square exception (the most interesting part) if it is wrapped inside a Java exception
-            if (ex.getCause() instanceof ApiException) {
-                ex = ex.getCause();
+            Throwable t = ex;
+            if (t.getCause() instanceof ApiException) {
+                t = t.getCause();
             }
-            Console.log("[Square] completePayment - Square raised exception " + ex.getMessage());
+            Console.log("[Square] completePayment - Square raised exception " + t.getMessage());
             // If the exception is about a failed payment, we apply the same process as for a successful payment
-            if (ex instanceof ApiException ae) {
+            if (t instanceof ApiException ae) {
                 Object data = ae.getData();
                 if (DEBUG_LOG) {
                     Console.log("[Square][DEBUG] completePayment - data = " + data);
                 }
-                if (data instanceof Payment) {
-                    // Same as for a successful payment, the difference will be the status that will indicate it's failed
-                    promise.complete(generateResultFromSquarePayment((Payment) data, ae.getHttpContext()));
+                if (data instanceof CreatePaymentResponse cpr) {
+                    Payment payment = cpr.getPayment();
+                    // The same as for a successful payment, the difference will be the status that will indicate it's failed
+                    promise.complete(generateResultFromSquarePayment(payment, ae.getHttpContext()));
                     return null;
                 }
             }
             // Otherwise, it's probably a technical exception
-            promise.fail(ex);
+            promise.fail(t);
             return null;
         });
         return promise.future();

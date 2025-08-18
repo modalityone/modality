@@ -20,7 +20,7 @@
         <dependency>
             <groupId>io.apimatic</groupId>
             <artifactId>core-interfaces</artifactId>
-            <version>0.3.1</version>
+            <version>0.3.3</version>
         </dependency>
 
         <dependency>
@@ -44,7 +44,7 @@
         <dependency>
             <groupId>com.squareup</groupId>
             <artifactId>square</artifactId>
-            <version>40.1.1.20240717</version>
+            <version>41.1.0.20240919</version>
             <exclusions>
                 <exclusion>
                     <groupId>com.sun.activation</groupId>

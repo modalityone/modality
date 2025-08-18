@@ -19,10 +19,10 @@
 
     <required-libraries>
         <!-- Square library -->
-        <library>
+        <library name="com-squareup-square">
             <groupId>com.squareup</groupId>
             <artifactId>square</artifactId>
-            <version>40.1.1.20240717</version>
+            <version>41.1.0.20240919</version>
             <!-- These dependencies clash with some underlying Vert.x modules, so we solve this issue by excluding them -->
             <exclusions>
                 <exclusion>
@@ -46,7 +46,7 @@
         <library>
             <groupId>io.apimatic</groupId>
             <artifactId>core-interfaces</artifactId>
-            <version>0.3.1</version>
+            <version>0.3.3</version>
             <exported-packages>
                 <package>io.apimatic.coreinterfaces.http</package>
             </exported-packages>

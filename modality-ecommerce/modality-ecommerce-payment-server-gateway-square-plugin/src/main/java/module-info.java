@@ -6,13 +6,13 @@
 module modality.ecommerce.payment.server.gateway.square.plugin {
 
     // Direct dependencies modules
+    requires com.squareup.square;
     requires core.interfaces;
     requires io.vertx.core;
     requires io.vertx.web;
     requires modality.base.shared.entities;
     requires modality.ecommerce.payment;
     requires modality.ecommerce.payment.server.gateway;
-    requires square;
     requires webfx.platform.ast;
     requires webfx.platform.async;
     requires webfx.platform.boot;
