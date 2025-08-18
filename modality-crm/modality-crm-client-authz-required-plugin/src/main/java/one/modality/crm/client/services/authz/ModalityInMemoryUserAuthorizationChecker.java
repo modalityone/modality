@@ -32,13 +32,15 @@ final class ModalityInMemoryUserAuthorizationChecker extends InMemoryUserAuthori
     // TODO: share this constant with the server counterpart (ModalityAuthorizationServerServiceProvider).
     private final static String AUTHZ_QUERY_BASE = "select rule.rule,activityState.route,operation.(code,grantRoute,guest) from AuthorizationAssignment aa";
 
+    private final Object userId;
     private final DataSourceModel dataSourceModel;
     private final CacheEntry<Object> authorizationPushCacheEntry = SerialCache.createCacheEntry("modality/crm/authz/push-query-result");
     private List<Entity> publicOrGuestOperationsWithGrantRoute;
     private Object lastPushObject;
     private List<Entity> lastPublicOrGuestOperationsWithGrantRoute;
 
-    ModalityInMemoryUserAuthorizationChecker(DataSourceModel dataSourceModel) {
+    ModalityInMemoryUserAuthorizationChecker(Object userId, DataSourceModel dataSourceModel) {
+        this.userId = userId;
         this.dataSourceModel = dataSourceModel;
         // Registering the authorization (requests and rules) parsers
         ruleRegistry.addAuthorizationRuleParser(new RoutingAuthorizationRuleParser());
@@ -81,14 +83,32 @@ final class ModalityInMemoryUserAuthorizationChecker extends InMemoryUserAuthori
                 FXAuthorizationsChanged.fireAuthorizationsChanged();
             return;
         }
-        lastPushObject = pushObject;
-        lastPublicOrGuestOperationsWithGrantRoute = publicOrGuestOperationsWithGrantRoute;
 
         // At this point, it's an actual change in the authorizations
         QueryResult queryResult = (QueryResult) pushObject;
         QueryRowToEntityMapping queryMapping = dataSourceModel.parseAndCompileSelect(AUTHZ_QUERY_BASE).getQueryMapping();
         EntityStore entityStore = EntityStore.create(dataSourceModel);
         EntityList<Entity> assignments = QueryResultToEntitiesMapper.mapQueryResultToEntities(queryResult, queryMapping, entityStore, "assignments");
+
+        // A bit hacky, but we try to detect if the pushObject is really for this user, because sometimes there is
+        // confusion with the logout user. It looks like the server may still push authorizations for the logout user
+        // just after the user logged in for some reason.
+        // Firstly, we check that the user is still matching the current user
+        Object currentUserId = FXUserId.getUserId();
+        boolean userStillMatching = Objects.equals(userId, currentUserId) || LogoutUserId.isLogoutUserIdOrNull(userId) && LogoutUserId.isLogoutUserIdOrNull(currentUserId);
+        if (!userStillMatching) {
+            return;
+        }
+        // Secondly, if there is no assignment, it's likely a push for the logout user, so we ignore it (if this user is
+        // not the logout user).
+        if (assignments.isEmpty() && !LogoutUserId.isLogoutUserIdOrNull(userId) && lastPushObject != null) {
+            return;
+        }
+        // TODO: find a better way to detect for which user the pushObject is intended - should probably be part of the
+        //  pushObject itself, or at least mark the pushObject when intended for the logout user.
+
+        lastPushObject = pushObject;
+        lastPublicOrGuestOperationsWithGrantRoute = publicOrGuestOperationsWithGrantRoute;
         clearAllAuthorizationRulesAndGrantAuthorizedRoutesFromPublicOrGuestOperations();
         for (Entity assignment : assignments) {
             // Case of a rule (ex: "grant route:*" or "grant operation:*")

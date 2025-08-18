@@ -21,8 +21,8 @@ public final class ModalityAuthorizationClientServiceProvider extends Authorizat
     }
 
     @Override
-    protected UserAuthorizationChecker createUserAuthorizationChecker() {
-        return new ModalityInMemoryUserAuthorizationChecker(dataSourceModel);
+    protected UserAuthorizationChecker createUserAuthorizationChecker(Object userId) {
+        return new ModalityInMemoryUserAuthorizationChecker(userId, dataSourceModel);
     }
 
     @Override
