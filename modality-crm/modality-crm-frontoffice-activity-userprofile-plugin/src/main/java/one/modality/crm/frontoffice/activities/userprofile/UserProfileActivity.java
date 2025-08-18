@@ -70,6 +70,7 @@ final class UserProfileActivity extends ViewDomainActivityBase implements Modali
         // Bind event handlers
         view.layNameTextField.textProperty().addListener((observable, oldValue, newValue) -> currentPerson.setLayName(newValue));
         view.phoneTextField.textProperty().addListener((observable, oldValue, newValue) -> currentPerson.setPhone(newValue));
+        view.streetTextField.textProperty().addListener((observable, oldValue, newValue) -> currentPerson.setStreet(newValue));
         view.postCodeTextField.textProperty().addListener((observable, oldValue, newValue) -> currentPerson.setPostCode(newValue));
         view.cityNameTextField.textProperty().addListener((observable, oldValue, newValue) -> currentPerson.setCityName(newValue));
         view.countrySelector.selectedItemProperty().addListener((observable, oldValue, newValue) -> currentPerson.setCountry(newValue));
@@ -204,6 +205,7 @@ final class UserProfileActivity extends ViewDomainActivityBase implements Modali
         view.optionLay.setSelected(null == currentPerson.isOrdained() || !currentPerson.isOrdained());
         view.layNameTextField.setText(currentPerson.getLayName());
         view.phoneTextField.setText(currentPerson.getPhone());
+        view.streetTextField.setText(currentPerson.getStreet());
         view.postCodeTextField.setText(currentPerson.getPostCode());
         view.cityNameTextField.setText(currentPerson.getCityName());
         view.countrySelector.setSelectedItem(currentPerson.getCountry());

@@ -76,6 +76,7 @@ public final class UserProfileView implements ModalityButtonFactoryMixin {
     public DateField birthDateField;
     public TextField layNameTextField;
     public TextField phoneTextField;
+    public TextField streetTextField;
     public TextField postCodeTextField;
     public TextField cityNameTextField;
     public EntityButtonSelector<Country> countrySelector;
@@ -89,7 +90,7 @@ public final class UserProfileView implements ModalityButtonFactoryMixin {
     public Button saveButton;
     private VBox loginDetailsVBox, personalDetailsVBox, addressInfoVBox, kadampaCenterVBox;
 
-    public UserProfileView(ChangePictureUI changePictureUI, boolean showTitle, boolean showProfileHeader,  boolean showName, boolean showEmail, boolean showPassword, boolean showPersonalDetails, boolean showAddress, boolean showKadampaCenter, boolean showSaveChangesButton) {
+    public UserProfileView(ChangePictureUI changePictureUI, boolean showTitle, boolean showProfileHeader, boolean showName, boolean showEmail, boolean showPassword, boolean showPersonalDetails, boolean showAddress, boolean showKadampaCenter, boolean showSaveChangesButton) {
         this.changePictureUI = changePictureUI;
         this.showTitle = showTitle;
         this.showName = showName;
@@ -197,32 +198,32 @@ public final class UserProfileView implements ModalityButtonFactoryMixin {
         pictureAndNameResponsivePane.setPadding(new Insets(0, 0, 50, 0));
         HBox hBox = new HBox(picturePane, nameVbox);
         new ResponsiveDesign(pictureAndNameResponsivePane)
-                .addResponsiveLayout(new ResponsiveLayout() {
-                    @Override
-                    public boolean testResponsiveLayoutApplicability(double width) {
-                        double nameVBoxPrefWidth = nameLabel.prefWidth(-1);
-                        return nameVBoxPrefWidth > 0 && width > PROFILE_IMAGE_SIZE + nameVBoxPrefWidth + 10;
-                    }
+            .addResponsiveLayout(new ResponsiveLayout() {
+                @Override
+                public boolean testResponsiveLayoutApplicability(double width) {
+                    double nameVBoxPrefWidth = nameLabel.prefWidth(-1);
+                    return nameVBoxPrefWidth > 0 && width > PROFILE_IMAGE_SIZE + nameVBoxPrefWidth + 10;
+                }
 
-                    @Override
-                    public void applyResponsiveLayout() {
-                        nameVbox.setAlignment(Pos.CENTER_RIGHT);
-                        hBox.getChildren().setAll(picturePane, nameVbox);
-                        pictureAndNameResponsivePane.setContent(hBox);
-                    }
+                @Override
+                public void applyResponsiveLayout() {
+                    nameVbox.setAlignment(Pos.CENTER_RIGHT);
+                    hBox.getChildren().setAll(picturePane, nameVbox);
+                    pictureAndNameResponsivePane.setContent(hBox);
+                }
 
-                    @Override
-                    public ObservableValue<?>[] getResponsiveTestDependencies() {
-                        return new ObservableValue[]{nameLabel.textProperty()};
-                    }
-                }).addResponsiveLayout(() -> {
-                    nameVbox.setAlignment(Pos.CENTER);
-                    hBox.getChildren().clear();
-                    VBox vBox = new VBox(20, picturePane, nameVbox);
-                    vBox.setAlignment(Pos.CENTER);
-                    pictureAndNameResponsivePane.setContent(vBox);
-                })
-                .start();
+                @Override
+                public ObservableValue<?>[] getResponsiveTestDependencies() {
+                    return new ObservableValue[]{nameLabel.textProperty()};
+                }
+            }).addResponsiveLayout(() -> {
+                nameVbox.setAlignment(Pos.CENTER);
+                hBox.getChildren().clear();
+                VBox vBox = new VBox(20, picturePane, nameVbox);
+                vBox.setAlignment(Pos.CENTER);
+                pictureAndNameResponsivePane.setContent(vBox);
+            })
+            .start();
 
         Separator profileHeaderSeparator = new Separator();
         return new VBox(pictureAndNameResponsivePane, profileHeaderSeparator);
@@ -238,9 +239,9 @@ public final class UserProfileView implements ModalityButtonFactoryMixin {
         formatTextFieldLabel(firstNameTextField);
         lastNameTextField = newMaterialTextField(CrmI18nKeys.LastName);
         formatTextFieldLabel(lastNameTextField);
-        vBox.getChildren().addAll(firstNameTextField,lastNameTextField);
-        setManagedAndVisible(firstNameTextField,showName);
-        setManagedAndVisible(lastNameTextField,showName);
+        vBox.getChildren().addAll(firstNameTextField, lastNameTextField);
+        setManagedAndVisible(firstNameTextField, showName);
+        setManagedAndVisible(lastNameTextField, showName);
 
 
         changeUserEmail = I18nControls.newHyperlink(UserProfileI18nKeys.ChangeEmail);
@@ -283,7 +284,7 @@ public final class UserProfileView implements ModalityButtonFactoryMixin {
         I18n.bindI18nTextProperty(materialTextField.labelTextProperty(), CrmI18nKeys.BirthDate);
         birthDateField.dateTimeFormatterProperty().bind(LocalizedTime.dateFormatterProperty(FrontOfficeTimeFormats.BIRTH_DATE_FORMAT));
         I18n.bindI18nTextProperty(birthDateTextField.promptTextProperty(), I18nKeys.embedInString(I18nKeys.appendColons(UserProfileI18nKeys.DateOfBirthFormat)) + " {0}",
-                LocalizedTime.inferLocalDatePatternProperty(birthDateField.dateTimeFormatterProperty(), true));
+            LocalizedTime.inferLocalDatePatternProperty(birthDateField.dateTimeFormatterProperty(), true));
         birthDateField.getDatePicker().getView().setTranslateY(10);
         //vBox.getChildren().add(birthDateField.getView());
 
@@ -331,6 +332,10 @@ public final class UserProfileView implements ModalityButtonFactoryMixin {
         Label addressInformationLabel = Bootstrap.small(Bootstrap.textSecondary(I18nControls.newLabel(CreateAccountI18nKeys.AddressInformation)));
         addressInformationLabel.setPadding(new Insets(0, 0, 10, 0));
         vBox.getChildren().add(addressInformationLabel);
+
+        streetTextField = newMaterialTextField(CrmI18nKeys.Street);
+        formatTextFieldLabel(streetTextField);
+        vBox.getChildren().add(streetTextField);
 
         postCodeTextField = newMaterialTextField(CrmI18nKeys.Postcode);
         formatTextFieldLabel(postCodeTextField);
