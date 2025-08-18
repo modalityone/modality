@@ -54,13 +54,14 @@ public final class ModalityClientOperationActionsLoader implements ApplicationMo
 
         OperationActionRegistry.setAuthorizer(AuthorizationUtil::authorizedOperationProperty);
 
+        String officeType = Meta.isBackoffice() ? "backoffice" : "frontoffice";
         EntityStore.create()
-            .executeQueryWithCache("cache-clientOperations",
+            .executeQueryWithCache("modality/base/" + officeType + "-operations",
                 """
                     select code, i18nCode, public
                         from Operation
                         where officeType
-                    """.replace("officeType", Meta.isBackoffice() ? "backoffice" : "frontoffice"))
+                    """.replace("officeType", officeType))
             .onFailure(cause -> {
                 Console.log("Failed loading operations", cause);
                 // Schedule a retry, as the client won't work anyway without a successful load

@@ -150,7 +150,7 @@ final class BookingActivity extends ViewDomainActivityBase implements ButtonFact
             .always(DqlStatement.where("name like '%Festival%'")) // This is to remove STTP classes TODO: find a more generic way to filter out private events
             .setIndividualEntityToObjectMapperFactory(IndividualEntityToObjectMapper.factory(EventView::new, EventView::setEvent, EventView::getView))
             .storeMappedObjectsInto(internationalEventsContainer.getChildren())
-            .setResultCacheEntry("cache-booking-internationalEvents")
+            .setResultCacheEntry("modality/event/booking/international-events")
             .start();
 
         // Loading local events
@@ -158,7 +158,7 @@ final class BookingActivity extends ViewDomainActivityBase implements ButtonFact
             .always(commonDqlStart + ", type.(name,label.<loadAll>,ord), state', where: 'endDate > now() and !bookingClosed and type.name != `Not event`', orderBy: 'startDate'}")
             .ifNotNullOtherwiseEmpty(FXOrganizationId.organizationIdProperty(), orgId -> where("organization=?", orgId))
             .storeEntitiesInto(localEvents)
-            .setResultCacheEntry("cache-booking-localEvents")
+            .setResultCacheEntry("modality/event/booking/local-events")
             .start();
     }
 }

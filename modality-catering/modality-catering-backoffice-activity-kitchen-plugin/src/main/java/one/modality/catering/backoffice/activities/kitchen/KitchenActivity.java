@@ -248,7 +248,7 @@ final class KitchenActivity extends ViewDomainActivityBase
 
             rebuildDayPanels();
         }, reactiveQueryCall.resultProperty());
-        reactiveQueryCall.setResultCacheEntry("cache-kitchen-mealsCount");
+        reactiveQueryCall.setResultCacheEntry("modality/catering/kitchen/year-month-meals-count");
         reactiveQueryCall.start();
     }
 

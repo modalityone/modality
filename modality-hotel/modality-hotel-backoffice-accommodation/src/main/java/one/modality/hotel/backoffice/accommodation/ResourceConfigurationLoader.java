@@ -28,7 +28,7 @@ public final class ResourceConfigurationLoader {
     private static ResourceConfigurationLoader INSTANCE;
     private ObservableValue<Boolean> activeProperty;
     public static ResourceConfigurationLoader getOrCreate(AccommodationPresentationModel pm) {
-        // Creating the instance on first call only (assuming the presentation model is identical on subsequent calls)
+        // Creating the instance on the first call only (assuming the presentation model is identical on later calls)
         if (INSTANCE == null)
             INSTANCE = new ResourceConfigurationLoader(pm);
         return INSTANCE;
@@ -60,12 +60,12 @@ public final class ResourceConfigurationLoader {
                     .always(orderBy("item.ord,name"))
                     // Returning events for the selected organization only (or returning an empty set if no organization is selected)
                     .ifNotNullOtherwiseEmpty(pm.organizationIdProperty(), o -> where("resource.site.(organization=? and event=null)", o))
-                    // Restricting events to those appearing in the time window
+                    // Restricting events to those appearing in the time window // TODO: looks like not implemented?
                     .storeEntitiesInto(resourceConfigurations)
-                    .setResultCacheEntry("cache-accommodationResourceConfiguration")
+                    .setResultCacheEntry("modality/hotel/accommodation/resource-configurations")
                     // We are now ready to start
                     .start();
-        } else if (activeProperty != null) // subsequent calls
+        } else if (activeProperty != null) // later calls
             rem.bindActivePropertyTo(activeProperty); // updating the reactive entities mapper active property
     }
 }

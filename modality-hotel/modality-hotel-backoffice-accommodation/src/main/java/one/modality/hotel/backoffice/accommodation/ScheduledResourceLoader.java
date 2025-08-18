@@ -63,7 +63,7 @@ public final class ScheduledResourceLoader {
                     .always(pm.timeWindowEndProperty(), endDate -> where("sr.date <= ?", endDate))
                     // Storing the result directly in the events layer
                     .storeEntitiesInto(scheduledResources)
-                    .setResultCacheEntry("cache-accommodationScheduledResource")
+                    .setResultCacheEntry("modality/hotel/accommodation/time-window-scheduled-resources")
                     // We are now ready to start
                     .start();
         } else if (activeProperty != null) // subsequent calls

@@ -33,7 +33,7 @@ public abstract class AbstractEventHeader implements EventHeader {
     @Override
     public Future<Event> loadAndSetEvent(Event event) {
         eventLoadedProperty.set(false);
-        return event.<Event>onExpressionLoadedWithCache("cache-event-header-event", getLoadEventFields())
+        return event.<Event>onExpressionLoadedWithCache("modality/event/event-header", getLoadEventFields())
             .inUiThread()
             .onSuccess(ignored -> {
                 setEvent(event);

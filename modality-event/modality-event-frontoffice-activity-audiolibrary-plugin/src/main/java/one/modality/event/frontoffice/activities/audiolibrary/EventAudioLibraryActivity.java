@@ -96,7 +96,7 @@ final class EventAudioLibraryActivity extends ViewDomainActivityBase {
                 scheduledAudioItems.clear(); // will trigger UI update
                 eventProperty.set(null); // will update i18n bindings
             } else {
-                entityStore.<Event>executeQueryWithCache("cache-audio-library-event", """
+                entityStore.<Event>executeQueryWithCache("modality/event/audio-library/event", """
                             select name, label, shortDescription, shortDescriptionLabel, audioExpirationDate
                                     , startDate, endDate, livestreamUrl, vodExpirationDate, repeatAudio, repeatedEvent
                                 from Event
@@ -111,7 +111,7 @@ final class EventAudioLibraryActivity extends ViewDomainActivityBase {
                             eventIdContainingAudios = Entities.getPrimaryKey(event.getRepeatedEventId());
                         }
                         Object userAccountId = FXModalityUserPrincipal.getModalityUserPrincipal().getUserAccountId();
-                        event.getStore().executeQueryBatchWithCache("cache-audio-library-scheduled-items-medias",
+                        event.getStore().executeQueryBatchWithCache("modality/event/audio-library/scheduled-items-medias",
                                 // Index 0: we look for the scheduledItem having a `bookableScheduledItem` which is an audio type (case of festival)
                                 new EntityStoreQuery("""
                                     select name, label, date, expirationDate, programScheduledItem.(name, label, startTime, endTime, timeline.(startTime, endTime), cancelled), published, event.(name, type.recurringItem, recurringWithAudio)

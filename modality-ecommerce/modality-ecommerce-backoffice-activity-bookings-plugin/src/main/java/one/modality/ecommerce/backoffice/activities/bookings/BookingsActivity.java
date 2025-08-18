@@ -168,7 +168,7 @@ final class BookingsActivity extends EventDependentViewDomainActivity implements
                 .ifInstanceOf(pm.ganttSelectedObjectProperty(), Year.class,      year   -> where("exists(select Attendance where documentLine.document=d and date >= ? and date <= ?)", TimeUtil.getFirstDayOfYear(year),   TimeUtil.getLastDayOfYear(year)))
                 .ifInstanceOf(pm.ganttSelectedObjectProperty(), ScheduledItem.class, si -> where("exists(select Attendance where documentLine.document=d and scheduledItem = ?)", si))
                 .ifInstanceOf(pm.ganttSelectedObjectProperty(), Event.class,     event  -> where("event=?", event))
-                .setResultCacheEntry("cache-bookings-group")
+                .setResultCacheEntry("modality/ecommerce/bookings/group-documents")
                 .start();
 
         // Setting up the master mapper that build the content displayed in the master view
@@ -193,9 +193,9 @@ final class BookingsActivity extends EventDependentViewDomainActivity implements
                         Character.isDigit(s.charAt(0)) ? where("ref = ?", Integer.parseInt(s))
                                 : s.contains("@") ? where("lower(person_email) like ?", "%" + s.toLowerCase() + "%")
                                 : where("person_abcNames like ?", AbcNames.evaluate(s, true)))
-                .setResultCacheEntry("cache-bookings-master")
+                .setResultCacheEntry("modality/ecommerce/bookings/documents")
                 .applyDomainModelRowStyle() // Colorizing the rows
-                .autoSelectSingleRow() // When the result is a singe row, automatically select it
+                .autoSelectSingleRow() // When the result is a single row, automatically select it
                 .start();
     }
 

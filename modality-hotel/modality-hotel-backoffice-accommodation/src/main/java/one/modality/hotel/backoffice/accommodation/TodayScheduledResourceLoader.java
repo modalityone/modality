@@ -60,7 +60,7 @@ public final class TodayScheduledResourceLoader {
                     .always(FXToday.todayProperty(), today -> where("sr.date = ?", today))
                     // Storing the result directly in the events layer
                     .storeEntitiesInto(todayScheduledResources)
-                    .setResultCacheEntry("cache-accommodationTodayScheduledResource")
+                    .setResultCacheEntry("modality/hotel/accommodation/today-scheduled-resources")
                     // We are now ready to start
                     .start();
         } else if (activeProperty != null) // subsequent calls

@@ -33,7 +33,7 @@ final class ModalityInMemoryUserAuthorizationChecker extends InMemoryUserAuthori
     private final static String AUTHZ_QUERY_BASE = "select rule.rule,activityState.route,operation.(code,grantRoute,guest) from AuthorizationAssignment aa";
 
     private final DataSourceModel dataSourceModel;
-    private final CacheEntry<Object> authorizationPushCashEntry = SerialCache.createCacheEntry("cache-authz-push");
+    private final CacheEntry<Object> authorizationPushCacheEntry = SerialCache.createCacheEntry("modality/crm/authz/push-query-result");
     private List<Entity> publicOrGuestOperationsWithGrantRoute;
     private Object lastPushObject;
     private List<Entity> lastPublicOrGuestOperationsWithGrantRoute;
@@ -45,7 +45,7 @@ final class ModalityInMemoryUserAuthorizationChecker extends InMemoryUserAuthori
         ruleRegistry.addAuthorizationRuleParser(new OperationAuthorizationRuleParser());
         // Getting initial authorizations from cache if present (only if the previous session was logged in as Modality user already)
         if (FXModalityUserPrincipal.getModalityUserPrincipal() != null) {
-            authorizationPushCashEntry.getValue()
+            authorizationPushCacheEntry.getValue()
                 .onSuccess(cachedValue -> {
                     if (cachedValue != null)
                         onAuthorizationPush(cachedValue);
@@ -54,15 +54,16 @@ final class ModalityInMemoryUserAuthorizationChecker extends InMemoryUserAuthori
         // Note: the pushObject sent by the server contained all permissions specifically assigned to the user.
         // In addition, we may have public operations. Since they are public, they don't need authorizations, however,
         // some may have a route associated, and we need therefore to authorize those public routes.
+        String officeType = Meta.isBackoffice() ? "backoffice" : "frontoffice";
         EntityStore.create(dataSourceModel)
-            .executeQueryWithCache("cache-authz-operations",
+            .executeQueryWithCache("modality/crm/" + officeType + "/authz/operations",
                 """
                     select grantRoute, guest, public
                         from Operation
                         where grantRoute!=null
                             and (public or guest)
                             and officeType
-                    """.replace("officeType", Meta.isBackoffice() ? "backoffice" : "frontoffice"))
+                    """.replace("officeType", officeType))
             .onFailure(Console::log)
             .onCacheAndOrSuccess(this::onPublicOrGuestOperationsWithGrantRouteChanged);
     }
@@ -75,7 +76,7 @@ final class ModalityInMemoryUserAuthorizationChecker extends InMemoryUserAuthori
     void onAuthorizationPush(Object pushObject) {
         // May happen that it's the same input as last time, and there is no need to recompute everything
         if (Objects.equals(pushObject, lastPushObject) && lastPublicOrGuestOperationsWithGrantRoute == publicOrGuestOperationsWithGrantRoute) {
-            // However, we need to fire the event, otherwise the requested page won't be displayed after second login from same user
+            // However, we need to fire the event; otherwise the requested page won't be displayed after second login from same user
             if (!FXAuthorizationsReceived.isAuthorizationsReceived())
                 FXAuthorizationsChanged.fireAuthorizationsChanged();
             return;
@@ -121,7 +122,7 @@ final class ModalityInMemoryUserAuthorizationChecker extends InMemoryUserAuthori
         FXAuthorizationsChanged.fireAuthorizationsChanged();
 
         // Caching latest authorizations
-        authorizationPushCashEntry.putValue(pushObject);
+        authorizationPushCacheEntry.putValue(pushObject);
     }
 
     private void clearAllAuthorizationRulesAndGrantAuthorizedRoutesFromPublicOrGuestOperations() {

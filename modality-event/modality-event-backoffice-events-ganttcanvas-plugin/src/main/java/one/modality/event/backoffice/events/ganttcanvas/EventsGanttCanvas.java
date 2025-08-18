@@ -231,7 +231,7 @@ public final class EventsGanttCanvas {
             .always(pm.timeWindowStartProperty(), startDate -> DqlStatement.orderBy("greatest(e.startDate, ?),id", startDate))
             // Storing the result directly in the events layer
             .storeEntitiesInto(eventsLayer.getChildren())
-            .setResultCacheEntry("cache-eventsGanttCanvas")
+            .setResultCacheEntry("modality/event/gantt-canvas/events")
             // We are now ready to start
             .start();
 
@@ -248,7 +248,7 @@ public final class EventsGanttCanvas {
             .always(pm.timeWindowEndProperty(), endDate -> where("si.date <= ?", endDate))
             // Storing the result directly in the events layer
             .storeEntitiesInto(recurringEventDatesLayer.getChildren())
-            //.setResultCacheEntry(LocalStorageCache.get().getCacheEntry("cache-eventsGanttCanvas"))
+            //.setResultCacheEntry("modality/event/gantt-canvas/scheduled-items")
             .setStore(eventReactiveEntitiesMapper.getStore())
             // We are now ready to start
             .start();

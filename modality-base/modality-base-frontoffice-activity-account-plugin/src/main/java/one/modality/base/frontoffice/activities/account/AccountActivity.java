@@ -124,7 +124,7 @@ final class AccountActivity extends ViewDomainActivityBase implements OperationA
             .always(DqlStatement.where("!cancelled or price_deposit>0"))
             .ifNotNullOtherwiseEmpty(FXModalityUserPrincipal.modalityUserPrincipalProperty(), mup -> where("person.frontendAccount=?", mup.getUserAccountId()))
             .storeEntitiesInto(upcomingBookingsFeed)
-            //.setResultCacheEntry(LocalStorageCache.get().getCacheEntry("cache-account-upcomingBookings"))
+            //.setResultCacheEntry("kbs/account/upcoming-bookings-documents")
             .start();
 
         // Past bookings
@@ -137,7 +137,7 @@ final class AccountActivity extends ViewDomainActivityBase implements OperationA
             .ifNotNullOtherwiseEmpty(FXModalityUserPrincipal.modalityUserPrincipalProperty(), mup -> where("person.frontendAccount=?", mup.getUserAccountId()))
             .ifNotNull(loadPastEventsBeforeDateProperty, date -> DqlStatement.where("event.startDate < ?", date))
             .storeEntitiesInto(pastBookingsFeed)
-            //.setResultCacheEntry(LocalStorageCache.get().getCacheEntry("cache-account-pastBookings"))
+            //.setResultCacheEntry("kbs/account/past-bookings-documents")
             .start();
     }
 

@@ -53,7 +53,7 @@ final class AudioLibraryActivity extends ViewDomainActivityBase {
                 // 1) Events where we buy the recordings through an audioRecordingsDayTicket (ex: Festival)
                 // 2) Events where the audios are linked to a teachingDayTicket (case of STTP)
                 // See in the backoffice ProgramActivity doc directory for more information
-                entityStore.<DocumentLine>executeQueryWithCache("cache-*audio-library-document-lines",
+                entityStore.<DocumentLine>executeQueryWithCache("modality/event/audio-library/document-lines",
                         "select document.event.(name,label, shortDescription, shortDescriptionLabel, audioExpirationDate, startDate, endDate, repeatedEvent), item.(code, family.code)," +
                        // We look if there are published audio ScheduledItem of type audio, whose bookableScheduledItem has been booked
                        " (exists(select ScheduledItem where item.family.code=$1 and published and bookableScheduledItem.(event=coalesce(dl.document.event.repeatedEvent, dl.document.event) and item=dl.item))) as published " +

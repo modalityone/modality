@@ -98,7 +98,7 @@ public class MealsSelectionPane extends VBox {
             return;
         }
 
-        organization.getStore().<Item>executeQueryWithCache("cache-kitchen-mealsItems", """
+        organization.getStore().<Item>executeQueryWithCache("modality/catering/kitchen/meals-items", """
             select id, name, code, ord
                from Item
                where family.code='meals'

@@ -222,7 +222,7 @@ final class HouseholdView {
                 .always(pm.timeWindowEndProperty(), endDate -> where("a.date >= ? and (a.date +1 >= ? and a.date -1 <= ? or a.date <= ? and !a.documentLine.cleaned)", FXToday.getToday().minus(2, ChronoUnit.MONTHS), pm.getTimeWindowStart(), endDate, FXToday.getToday())) // +1/-1 is to avoid the round corners on right for bookings exceeding the time window
                 // Storing the result directly in the events layer
                 .storeEntitiesInto(attendances)
-                .setResultCacheEntry("cache-householdAttendance")
+                .setResultCacheEntry("modality/hotel/household/time-window-attendances")
                 // We are now ready to start
                 .start();
     }
