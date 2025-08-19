@@ -57,6 +57,8 @@ public final class WebPaymentForm {
     private String htmlHeaderText;
     private String htmlPayButtonText;
     private Scheduled initFailureChecker;
+    private int debugStep;
+    private int debugStepCounter;
     private boolean initialized;
     private Consumer<String> onLoadFailure; // Called when the webview failed to load
     private Consumer<String> onInitFailure; // Called when the payment page failed to initialize (otherwise the card details should appear)
@@ -382,6 +384,12 @@ public final class WebPaymentForm {
 
     // Callback methods (called back by the payment gateway script)
 
+    public void onGatewayDebugStep(int debugStep) {
+        this.debugStep = debugStep;
+        debugStepCounter++;
+        logDebug("debugStep = " + debugStep);
+    }
+
     public void onGatewayInitSuccess() {
         logDebug("onGatewayInitSuccess called");
         initialized = true;
@@ -449,7 +457,9 @@ public final class WebPaymentForm {
         }
     }
 
-    private static void logError(String message) {
+    private void logError(String message) {
+        if (debugStepCounter > 0)
+            message = message + " [debugStep = " + debugStep + ", debugStepCounter = " + debugStepCounter + "]";
         ErrorReporter.reportError("[WebPaymentForm] " + message);
         logDebug(message);
     }
