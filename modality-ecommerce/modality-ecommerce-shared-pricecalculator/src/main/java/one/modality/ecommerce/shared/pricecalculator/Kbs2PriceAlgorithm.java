@@ -3,6 +3,7 @@ package one.modality.ecommerce.shared.pricecalculator;
 import dev.webfx.platform.util.Booleans;
 import dev.webfx.platform.util.Objects;
 import dev.webfx.platform.util.collection.Collections;
+import dev.webfx.platform.util.time.Times;
 import one.modality.base.shared.entities.*;
 import one.modality.ecommerce.document.service.DocumentAggregate;
 import one.modality.ecommerce.document.service.PolicyAggregate;
@@ -201,8 +202,10 @@ final class Kbs2PriceAlgorithm {
             PolicyAggregate policyAggregate = documentAggregate.getPolicyAggregate();
             List<Rate> rates = policyAggregate.getSiteItemRatesStream(siteItem.getSite(), siteItem.getItem())
                 .filter(r -> r.isPerDay() == perDayRates)
-                .filter(r -> r.getStartDate() == null || r.getStartDate().isBefore(lastDay) || r.getStartDate().isEqual(lastDay))
-                .filter(r -> r.getEndDate() == null || r.getEndDate().isAfter(firstDay) || r.getEndDate().isEqual(firstDay))
+                .filter(r -> r.getOnDate() == null || Times.isPastOrToday(r.getOnDate()))
+                .filter(r -> r.getOffDate() == null || Times.isFutureOrToday(r.getOffDate()))
+                .filter(r -> r.getStartDate() == null || Times.isBeforeOrEquals(r.getStartDate(), lastDay))
+                .filter(r -> r.getEndDate() == null || Times.isAfterOrEquals(r.getEndDate(), firstDay))
                 //.filter(r -> r.getRateMatchesDocument(bill.getDocument()))
                 .collect(Collectors.toList());
             int price = Integer.MIN_VALUE;

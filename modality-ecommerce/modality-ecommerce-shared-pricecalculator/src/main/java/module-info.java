@@ -6,6 +6,7 @@ module modality.ecommerce.shared.pricecalculator {
     requires modality.base.shared.entities;
     requires modality.ecommerce.document.service;
     requires webfx.platform.util;
+    requires webfx.platform.util.time;
 
     // Exported packages
     exports one.modality.ecommerce.shared.pricecalculator;

@@ -16,6 +16,8 @@ public interface Rate extends
 
     String startDate = "startDate";
     String endDate = "endDate";
+    String onDate = "onDate";
+    String offDate = "offDate";
     String minDay = "minDay";
     String maxDay = "maxDay";
     String perDay = "perDay";
@@ -62,6 +64,22 @@ public interface Rate extends
 
     default LocalDate getEndDate() {
         return getLocalDateFieldValue(endDate);
+    }
+
+    default void setOnDate(LocalDate value) {
+        setFieldValue(onDate, value);
+    }
+
+    default LocalDate getOnDate() {
+        return getLocalDateFieldValue(onDate);
+    }
+
+    default void setOffDate(LocalDate value) {
+        setFieldValue(offDate, value);
+    }
+
+    default LocalDate getOffDate() {
+        return getLocalDateFieldValue(offDate);
     }
 
     default void setMinDay(Integer value) {
