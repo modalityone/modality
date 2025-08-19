@@ -13,7 +13,7 @@
 
     <java-callbacks>
         <callback-class name="one.modality.ecommerce.payment.client.WebPaymentForm">
-            <callback-method name="onGatewayInitStep">
+            <callback-method name="onGatewayDebugStep">
                 <callback-argument class="java.lang.Integer"/>
             </callback-method>
             <callback-method name="onGatewayInitSuccess"/>
