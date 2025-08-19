@@ -57,7 +57,7 @@ public final class WebPaymentForm {
     private String htmlHeaderText;
     private String htmlPayButtonText;
     private Scheduled initFailureChecker;
-    private int debugStep;
+    private Object debugStep;
     private int debugStepCounter;
     private boolean initialized;
     private Consumer<String> onLoadFailure; // Called when the webview failed to load
@@ -384,7 +384,7 @@ public final class WebPaymentForm {
 
     // Callback methods (called back by the payment gateway script)
 
-    public void onGatewayDebugStep(int debugStep) {
+    public void onGatewayDebugStep(Object debugStep) {
         this.debugStep = debugStep;
         debugStepCounter++;
         logDebug("debugStep = " + debugStep);
