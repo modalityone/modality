@@ -30,7 +30,7 @@ module modality.ecommerce.payment.server.gateway.authorizedotnet.plugin {
     opens one.modality.ecommerce.payment.server.gateway.impl.anet;
 
     // Provided services
-    provides dev.webfx.platform.boot.spi.ApplicationJob with one.modality.ecommerce.payment.server.gateway.impl.anet.AuthorizeRestApiJob;
-    provides one.modality.ecommerce.payment.server.gateway.PaymentGateway with one.modality.ecommerce.payment.server.gateway.impl.anet.AuthorizePaymentGateway;
+    provides dev.webfx.platform.boot.spi.ApplicationJob with one.modality.ecommerce.payment.server.gateway.impl.anet.AnetRestApiJob;
+    provides one.modality.ecommerce.payment.server.gateway.PaymentGateway with one.modality.ecommerce.payment.server.gateway.impl.anet.AnetPaymentGateway;
 
 }

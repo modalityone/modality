@@ -16,18 +16,18 @@ import one.modality.ecommerce.payment.server.gateway.impl.util.RestApiOneTimeHtm
 
 import java.math.BigDecimal;
 
-import static one.modality.ecommerce.payment.server.gateway.impl.anet.AuthorizeRestApiJob.AUTHORIZE_PAYMENT_FORM_LOAD_ENDPOINT;
+import static one.modality.ecommerce.payment.server.gateway.impl.anet.AnetRestApiJob.AUTHORIZE_PAYMENT_FORM_LOAD_ENDPOINT;
 
 /**
  * @author Bruno Salmon
  */
-public class AuthorizePaymentGateway implements PaymentGateway {
+public class AnetPaymentGateway implements PaymentGateway {
 
     static final String GATEWAY_NAME = "Authorize.net";
     private static final String ACCEPT_JS_TEST_URL = "https://jstest.authorize.net/v3/AcceptUI.js";
     private static final String ACCEPT_JS_LIVE_URL = "https://js.authorize.net/v3/AcceptUI.js";
 
-    private static final String HTML_TEMPLATE = Resource.getText(Resource.toUrl("modality-anet-payment-form-iframe.html", AuthorizePaymentGateway.class));
+    private static final String HTML_TEMPLATE = Resource.getText(Resource.toUrl("modality-anet-payment-form-iframe.html", AnetPaymentGateway.class));
 
     private static final SandboxCard[] SANDBOX_CARDS = {
         new SandboxCard("Visa - Success", "4111 1111 1111 1111", null, "123", "46282"),
@@ -39,7 +39,7 @@ public class AuthorizePaymentGateway implements PaymentGateway {
         new SandboxCard("Wrong CVV", "4111 1111 1111 1111", null, "901", "46282"),
     };
 
-    public AuthorizePaymentGateway() {
+    public AnetPaymentGateway() {
     }
 
     @Override

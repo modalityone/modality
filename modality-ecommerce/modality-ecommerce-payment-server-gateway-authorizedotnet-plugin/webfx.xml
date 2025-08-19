@@ -18,8 +18,8 @@
     </dependencies>
 
     <providers>
-        <provider interface="one.modality.ecommerce.payment.server.gateway.PaymentGateway">one.modality.ecommerce.payment.server.gateway.impl.anet.AuthorizePaymentGateway</provider>
-        <provider interface="dev.webfx.platform.boot.spi.ApplicationJob">one.modality.ecommerce.payment.server.gateway.impl.anet.AuthorizeRestApiJob</provider>
+        <provider interface="one.modality.ecommerce.payment.server.gateway.PaymentGateway">one.modality.ecommerce.payment.server.gateway.impl.anet.AnetPaymentGateway</provider>
+        <provider interface="dev.webfx.platform.boot.spi.ApplicationJob">one.modality.ecommerce.payment.server.gateway.impl.anet.AnetRestApiJob</provider>
     </providers>
 
     <required-libraries>

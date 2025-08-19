@@ -10,7 +10,7 @@ import one.modality.ecommerce.payment.server.gateway.impl.util.RestApiOneTimeHtm
 /**
  * @author Bruno Salmon
  */
-public final class AuthorizeRestApiJob implements ApplicationJob {
+public final class AnetRestApiJob implements ApplicationJob {
 
     static final String AUTHORIZE_PAYMENT_FORM_LOAD_ENDPOINT = "/payment/anet/loadPaymentForm/:htmlCacheKey";
 
