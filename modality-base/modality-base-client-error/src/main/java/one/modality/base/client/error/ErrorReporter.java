@@ -1,5 +1,7 @@
 package one.modality.base.client.error;
 
+import dev.webfx.platform.useragent.UserAgent;
+import dev.webfx.platform.windowlocation.WindowLocation;
 import dev.webfx.stack.orm.entity.UpdateStore;
 import one.modality.base.shared.entities.Error;
 import one.modality.crm.shared.services.authn.fx.FXUserPersonId;
@@ -18,6 +20,8 @@ public final class ErrorReporter {
         Error error = updateStore.insertEntity(Error.class);
         error.setMessage(message);
         error.setUserPerson(FXUserPersonId.getUserPersonId());
+        error.setUserAgent(UserAgent.getUserAgentName());
+        error.setRoute(WindowLocation.getPath());
         updateStore.submitChanges();
     }
 

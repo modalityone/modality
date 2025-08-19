@@ -10,6 +10,8 @@ import one.modality.base.shared.entities.markers.EntityHasUserPerson;
 public interface Error extends Entity, EntityHasLocalDateTime, EntityHasUserPerson {
 
     String message = "message";
+    String userAgent = "userAgent";
+    String route = "route";
 
     default void setMessage(String value) {
         setFieldValue(message, value);
@@ -17,6 +19,22 @@ public interface Error extends Entity, EntityHasLocalDateTime, EntityHasUserPers
 
     default String getMessage() {
         return getStringFieldValue(message);
+    }
+
+    default void setUserAgent(String value) {
+        setFieldValue(userAgent, value);
+    }
+
+    default String getUserAgent() {
+        return getStringFieldValue(userAgent);
+    }
+
+    default void setRoute(String value) {
+        setFieldValue(route, value);
+    }
+
+    default String getRoute() {
+        return getStringFieldValue(route);
     }
 
 }
