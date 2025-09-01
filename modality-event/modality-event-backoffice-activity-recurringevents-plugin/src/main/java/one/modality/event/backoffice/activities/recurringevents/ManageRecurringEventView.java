@@ -35,7 +35,6 @@ import dev.webfx.stack.orm.entity.*;
 import dev.webfx.stack.orm.entity.binding.EntityBindings;
 import dev.webfx.stack.orm.entity.controls.entity.selector.EntityButtonSelector;
 import dev.webfx.stack.orm.reactive.mapping.entities_to_visual.ReactiveVisualMapper;
-import javafx.application.Platform;
 import javafx.beans.InvalidationListener;
 import javafx.beans.binding.Bindings;
 import javafx.beans.binding.BooleanBinding;
@@ -283,13 +282,14 @@ final class ManageRecurringEventView {
                 //Index 1: the audio Item (we should have exactly one that has the same language as the default language of the organization)
                 new EntityStoreQuery("select Item where family=? and organization=? and language=organization.language", new Object[]{KnownItemFamily.AUDIO_RECORDING.getPrimaryKey(), FXOrganization.getOrganization()}))
             .onFailure(Console::log)
-            .onSuccess(entityLists -> Platform.runLater(() -> {
+            .inUiThread()
+            .onSuccess(entityLists -> {
                     EntityList<Item> videoItems = entityLists[0];
                     EntityList<Item> audioItems = entityLists[1];
                     if (!videoItems.isEmpty()) videoItemId = Entities.getPrimaryKey(videoItems.get(0));
                     if (!audioItems.isEmpty()) audioItemId = Entities.getPrimaryKey(audioItems.get(0));
 
-                }));
+                });
         /*
         We create a booleanBinding that will be used by the submit and draft button if either the updateStoreChanged, or the pictures needs to be uploaded
         or deleted
