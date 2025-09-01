@@ -63,6 +63,9 @@ public final class RecurringEventBookingForm extends MultiPageBookingForm {
             // This call is required to sync the already booked dates (which changed because of the booking change)
             schedulePage.setWorkingBookingProperties(workingBookingProperties);
         }
+        // Automatically booking the whole event if it's a new booking and partial event is not allowed
+        if (getWorkingBooking().isNewBooking() && !settings.partialEventAllowed())
+            bookWholeEvent();
         super.onWorkingBookingLoaded();
     }
 
