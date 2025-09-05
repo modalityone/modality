@@ -1,7 +1,7 @@
 package one.modality.ecommerce.payment.server.gateway.impl.anet;
 
 import dev.webfx.platform.boot.spi.ApplicationJob;
-import dev.webfx.platform.vertx.common.VertxInstance;
+import dev.webfx.platform.util.vertx.VertxInstance;
 import dev.webfx.platform.util.http.HttpResponseStatus;
 import io.vertx.core.http.HttpHeaders;
 import io.vertx.ext.web.Router;

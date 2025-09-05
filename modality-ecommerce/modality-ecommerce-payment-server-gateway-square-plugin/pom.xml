@@ -111,7 +111,7 @@
 
         <dependency>
             <groupId>dev.webfx</groupId>
-            <artifactId>webfx-platform-vertx-common</artifactId>
+            <artifactId>webfx-platform-util-vertx</artifactId>
             <version>0.1.0-SNAPSHOT</version>
         </dependency>
 

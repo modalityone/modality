@@ -20,7 +20,7 @@ module modality.ecommerce.payment.server.gateway.square.plugin {
     requires webfx.platform.resource;
     requires webfx.platform.util;
     requires webfx.platform.util.http;
-    requires webfx.platform.vertx.common;
+    requires webfx.platform.util.vertx;
     requires webfx.stack.orm.entity;
     requires webfx.stack.session.state;
 
