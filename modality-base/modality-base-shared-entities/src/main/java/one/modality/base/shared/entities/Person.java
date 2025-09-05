@@ -13,6 +13,15 @@ import java.time.LocalDate;
 public interface Person extends Entity, EntityHasPersonalDetails, EntityHasEvent {
     String birthDate = "birthdate";
     String frontendAccount = "frontendAccount";
+    String accountPerson = "accountPerson";
+
+    default void setBirthDate(LocalDate value) {
+        setFieldValue(birthDate, value);
+    }
+
+    default LocalDate getBirthDate() {
+        return getLocalDateFieldValue(birthDate);
+    }
 
     default void setFrontendAccount(Object value) {
         setForeignField(frontendAccount, value);
@@ -26,11 +35,15 @@ public interface Person extends Entity, EntityHasPersonalDetails, EntityHasEvent
         return getForeignEntity(frontendAccount);
     }
 
-    default void setBirthDate(LocalDate value) {
-        setFieldValue(birthDate, value);
+    default void setAccountPerson(Object value) {
+        setForeignField(accountPerson, value);
     }
 
-    default LocalDate getBirthDate() {
-        return getLocalDateFieldValue(birthDate);
+    default EntityId getAccountPersonId() {
+        return getForeignEntityId(accountPerson);
+    }
+
+    default Person getAccountPerson() {
+        return getForeignEntity(accountPerson);
     }
 }
