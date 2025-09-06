@@ -3,7 +3,7 @@ package one.modality.server.base.rest.map;
 import dev.webfx.platform.boot.spi.ApplicationModuleBooter;
 import dev.webfx.platform.conf.SourcesConfig;
 import dev.webfx.platform.util.http.HttpHeaders;
-import dev.webfx.platform.vertx.common.VertxInstance;
+import dev.webfx.platform.util.vertx.VertxInstance;
 import dev.webfx.stack.orm.entity.EntityStore;
 import io.vertx.core.http.HttpMethod;
 import io.vertx.ext.web.Router;

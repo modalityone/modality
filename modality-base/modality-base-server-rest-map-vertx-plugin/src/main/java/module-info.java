@@ -10,7 +10,7 @@ module modality.base.server.rest.map.vertx.plugin {
     requires webfx.platform.boot;
     requires webfx.platform.conf;
     requires webfx.platform.util.http;
-    requires webfx.platform.vertx.common;
+    requires webfx.platform.util.vertx;
     requires webfx.stack.orm.entity;
 
     // Exported packages
