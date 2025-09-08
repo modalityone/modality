@@ -324,7 +324,34 @@ public final class UserProfileView implements ModalityButtonFactoryMixin {
         phoneTextField.getStyleClass().setAll("transparent-input");
         formatTextFieldLabel(phoneTextField);
         vBox.getChildren().add(phoneTextField);
+
+        // Add Kelsang auto-detection functionality
+        setupKelsangAutoDetection();
+
         return vBox;
+    }
+
+    /**
+     * Sets up automatic detection of "Kelsang" in first name or last name fields
+     * and automatically selects the ordained option when found.
+     */
+    private void setupKelsangAutoDetection() {
+        // Create a method to check for Kelsang and update ordained status
+        Runnable checkForKelsang = () -> {
+            String firstName = firstNameTextField.getText();
+            String lastName = lastNameTextField.getText();
+
+            boolean containsKelsang = (firstName != null && firstName.toLowerCase().contains("kelsang")) ||
+                (lastName != null && lastName.toLowerCase().contains("kelsang"));
+
+            if (containsKelsang && !optionOrdained.isDisable()) {
+                optionOrdained.setSelected(true);
+            }
+        };
+
+        // Add listeners to both name text fields
+        firstNameTextField.textProperty().addListener((observable, oldValue, newValue) -> checkForKelsang.run());
+        lastNameTextField.textProperty().addListener((observable, oldValue, newValue) -> checkForKelsang.run());
     }
 
     private VBox buildAddressInfo() {

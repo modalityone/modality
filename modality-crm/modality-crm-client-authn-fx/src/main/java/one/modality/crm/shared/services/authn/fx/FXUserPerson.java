@@ -28,7 +28,7 @@ public final class FXUserPerson {
         else {
             EntityStore.create().<Person>executeQueryWithCache("modality/crm/authn/fx-user-person", """
                     select firstName, lastName, male, ordained, email, phone, street, postCode, cityName, country
-                            , organization, birthdate, layName, frontendAccount.(tester, security)
+                            , organization, birthdate, layName, frontendAccount.(tester, security), accountPerson
                         from Person
                         where id=?
                     """, userPersonId)
