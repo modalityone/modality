@@ -58,7 +58,7 @@ final class AudioLibraryActivity extends ViewDomainActivityBase {
                        // We look if there are published audio ScheduledItem of type audio, whose bookableScheduledItem has been booked
                        " (exists(select ScheduledItem where item.family.code=$1 and published and bookableScheduledItem.(event=coalesce(dl.document.event.repeatedEvent, dl.document.event) and item=dl.item))) as published " +
                        // We check if the user has booked, not cancelled and paid the recordings
-                       " from DocumentLine dl where !cancelled and dl.document.((confirmed or arrived) and price_balance<=0 and accountCanAccessPersonMedia($2, person)) " +
+                       " from DocumentLine dl where !cancelled and dl.document.((confirmed or arrived) and price_balance<=0 and accountCanAccessPersonMedias($2, person)) " +
                        " and dl.document.event.(kbs3 and (repeatedEvent = null or repeatAudio))" +
                        // we check if :
                        " and (" +
