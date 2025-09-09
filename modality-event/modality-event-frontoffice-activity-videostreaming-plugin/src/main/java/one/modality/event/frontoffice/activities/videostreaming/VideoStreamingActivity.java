@@ -155,7 +155,7 @@ final class VideoStreamingActivity extends ViewDomainActivityBase {
                         // We look if there are published audio ScheduledItem of type video, whose bookableScheduledItem has been booked
                         ", (exists(select ScheduledItem where item.family.code=$2 and bookableScheduledItem.(event=coalesce(dl.document.event.repeatedEvent, dl.document.event) and item=dl.item))) as published " +
                         // We check if the user has booked, not cancelled and paid the recordings
-                        " from DocumentLine dl where !cancelled  and dl.document.(confirmed and price_balance<=0 and person.(frontendAccount=$1 and accountPerson=null or accountPerson..frontendAccount=$1)) " +
+                        " from DocumentLine dl where !cancelled  and dl.document.(confirmed and price_balance<=0 and accountCanAccessPersonMedia($1, person)) " +
                         " and dl.document.event.(kbs3 and (repeatedEvent = null or repeatVideo))" +
                         // we check if :
                         " and (" +
@@ -223,15 +223,15 @@ final class VideoStreamingActivity extends ViewDomainActivityBase {
                 entityStore.<ScheduledItem>executeQueryWithCache("modality/event/video-streaming/scheduled-items",
                         """
                             select name, label, date, comment, commentLabel, expirationDate, programScheduledItem.(name, label, startTime, endTime, timeline.(startTime, endTime), cancelled), published, event.(name, type.recurringItem, livestreamUrl, recurringWithVideo), vodDelayed,
-                                (exists(select MediaConsumption where scheduledItem=si and attendance.documentLine.document.person.(frontendAccount=$1 and accountPerson=null or accountPerson..frontendAccount=$1)) as attended),
-                                (select id from Attendance where scheduledItem=si.bookableScheduledItem and documentLine.document.person.(frontendAccount=$1 and accountPerson=null or accountPerson..frontendAccount=$1) limit 1) as attendanceId
+                                (exists(select MediaConsumption where scheduledItem=si and accountCanAccessPersonMedia($1, attendance.documentLine.document.person)) as attended),
+                                (select id from Attendance where scheduledItem=si.bookableScheduledItem and accountCanAccessPersonMedia($1, documentLine.document.person) limit 1) as attendanceId
                              from ScheduledItem si
                              where event=$2
                                 and bookableScheduledItem.item.family.code=$3
                                 and item.code=$4
                                 and exists(select Attendance a
                                  where scheduledItem=si.bookableScheduledItem
-                                    and documentLine.(!cancelled and document.(event=$5 and confirmed and price_balance<=0 and person.(frontendAccount=$1 and accountPerson=null or accountPerson..frontendAccount=$1))))
+                                    and documentLine.(!cancelled and document.(event=$5 and confirmed and price_balance<=0 and accountCanAccessPersonMedia($1, person))))
                              order by date, programScheduledItem.timeline..startTime""",
                         /*$1*/ userAccountId, /*$2*/ eventContainingVideos, /*$3*/ KnownItemFamily.TEACHING.getCode(), /*$4*/ KnownItem.VIDEO.getCode(), /*$5*/ event)
                     .onFailure(Console::log)
