@@ -32,9 +32,9 @@ import javafx.stage.Screen;
 import one.modality.base.client.activity.ModalityButtonFactoryMixin;
 import one.modality.base.frontoffice.utility.page.FOPageUtil;
 import one.modality.base.shared.entities.Document;
+import one.modality.crm.shared.services.authn.fx.FXModalityUserPrincipal;
 import one.modality.ecommerce.frontoffice.order.OrderCard;
 import one.modality.ecommerce.frontoffice.order.OrderStatus;
-import one.modality.crm.shared.services.authn.fx.FXModalityUserPrincipal;
 
 import java.time.LocalDate;
 import java.util.LinkedHashMap;
@@ -98,14 +98,12 @@ final class OrdersActivity extends ViewDomainActivityBase implements ModalityBut
         VBox pastOrdersContainer = createOrdersContainer();
         // Feed management for the past orders
         pastOrdersFeed.addListener((InvalidationListener) observable -> {
-            // Removing the progress indicator if present
-            if (Collections.first(pastOrdersContainer.getChildren()) instanceof ProgressIndicator)
-                pastOrdersContainer.getChildren().clear();
             pastOrdersFeed.stream().collect(Collectors.groupingBy(Document::getEvent, LinkedHashMap::new, Collectors.toList())) // Using LinkedHashMap to keep the sort
                 .forEach((event, eventOrders) -> {
                     eventOrders.forEach(orderDocument -> {
                         OrderCard orderCard = new OrderCard(orderDocument);
-                        pastOrdersContainer.getChildren().add(orderCard.getView());
+                        // Inserting the card before the progress indicator (which is normally the last child)
+                        pastOrdersContainer.getChildren().add(pastOrdersContainer.getChildren().size() - 1, orderCard.getView());
                     });
                 });
         });
@@ -128,11 +126,14 @@ final class OrdersActivity extends ViewDomainActivityBase implements ModalityBut
             FXProperties.runOnPropertiesChange(() -> {
                 if (Controls.computeScrollPaneVBottomOffset(scrollPane) > pageContainer.getHeight() - lazyLoadingBottomSpace) {
                     Document lastOrderDocument = Collections.last(pastOrdersFeed);
-                    if (lastOrderDocument == null)
-                        pageContainer.setPadding(Insets.EMPTY);
-                    else {
+                    if (lastOrderDocument != null) {
                         LocalDate startDate = lastOrderDocument.getEvent().getStartDate();
                         FXProperties.setIfNotEquals(loadPastEventsBeforeDateProperty, startDate);
+                    } else if (loadPastEventsBeforeDateProperty.get() != null) {
+                        // Removing the progress indicator normally present as the last child
+                        if (Collections.last(pastOrdersContainer.getChildren()) instanceof ProgressIndicator)
+                            pastOrdersContainer.getChildren().remove(pastOrdersContainer.getChildren().size() - 1);
+                        pageContainer.setPadding(Insets.EMPTY);
                     }
                 }
             }, scrollPane.vvalueProperty(), pageContainer.heightProperty());
