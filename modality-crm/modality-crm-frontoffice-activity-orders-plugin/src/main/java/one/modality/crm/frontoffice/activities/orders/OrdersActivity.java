@@ -172,7 +172,7 @@ final class OrdersActivity extends ViewDomainActivityBase implements ModalityBut
             .always(DqlStatement.fields(OrderCard.ORDER_REQUIRED_FIELDS))
             .always(where("event.endDate >= now()"))
             .always(where("!abandoned or price_deposit>0"))
-            .ifNotNullOtherwiseEmpty(FXModalityUserPrincipal.modalityUserPrincipalProperty(), mup -> where("person.(frontendAccount=$1 or accountPerson..frontendAccount=$1)", mup.getUserAccountId()))
+            .ifNotNullOtherwiseEmpty(FXModalityUserPrincipal.modalityUserPrincipalProperty(), mup -> where("accountCanAccessPersonOrders($1, person)", mup.getUserAccountId()))
             .always(orderBy(OrderStatus.getBookingStatusOrderExpression(true)))
             .always(orderBy("event.startDate desc, ref desc"))
             .setIndividualEntityToObjectMapperFactory(IndividualEntityToObjectMapper.factory(OrderCard::new))
@@ -186,11 +186,10 @@ final class OrdersActivity extends ViewDomainActivityBase implements ModalityBut
             .always(DqlStatement.fields(OrderCard.ORDER_REQUIRED_FIELDS))
             .always(where("event.endDate < now()"))
             .always(where("!abandoned or price_deposit>0"))
-            .ifNotNullOtherwiseEmpty(FXModalityUserPrincipal.modalityUserPrincipalProperty(), mup -> where("person.(frontendAccount=$1 or accountPerson..frontendAccount=$1)", mup.getUserAccountId()))
+            .ifNotNullOtherwiseEmpty(FXModalityUserPrincipal.modalityUserPrincipalProperty(), mup -> where("accountCanAccessPersonOrders($1, person)", mup.getUserAccountId()))
             .ifNotNull(loadPastEventsBeforeDateProperty, date -> where("event.startDate < ?", date))
             .storeEntitiesInto(pastOrdersFeed)
             .start();
-
 
     }
 
