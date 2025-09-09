@@ -30,6 +30,7 @@ public interface Event extends Entity,
     String audioExpirationDate = "audioExpirationDate";
     String audioClosingDate = "audioClosingDate";
     String livestreamUrl = "livestreamUrl";
+    String livestreamMessageLabel = "livestreamMessageLabel";
     String live = "live";
     String feesBottomLabel = "feesBottomLabel";
     String kbs3 = "kbs3";
@@ -139,6 +140,18 @@ public interface Event extends Entity,
 
     default String getLivestreamUrl() {
         return getStringFieldValue(livestreamUrl);
+    }
+
+    default void setLivestreamMessageLabel(Object value) {
+        setForeignField(livestreamMessageLabel, value);
+    }
+
+    default EntityId getLivestreamMessageLabelId() {
+        return getForeignEntityId(livestreamMessageLabel);
+    }
+
+    default Label getLivestreamMessageLabel() {
+        return getForeignEntity(livestreamMessageLabel);
     }
 
     default void setLive(Boolean value) {
