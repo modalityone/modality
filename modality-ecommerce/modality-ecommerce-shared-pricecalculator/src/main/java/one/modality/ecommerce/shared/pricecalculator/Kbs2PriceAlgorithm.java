@@ -18,6 +18,7 @@ import java.util.stream.Stream;
  */
 final class Kbs2PriceAlgorithm {
 
+    @SuppressWarnings("unusable-by-js")
     private record PriceMemo(Rate rate, int dailyPrice, int price, int consumableDays) {}
 
     public static int computeBookingPrice(DocumentAggregate documentAggregate, boolean ignoreLongStayDiscount, boolean update) {

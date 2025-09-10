@@ -8,6 +8,7 @@ import one.modality.event.frontoffice.eventheader.EventHeader;
 /**
  * @author Bruno Salmon
  */
+@SuppressWarnings("unusable-by-js")
 public record EventBookingFormSettings(
     Event event,
     EventHeader eventHeader,
