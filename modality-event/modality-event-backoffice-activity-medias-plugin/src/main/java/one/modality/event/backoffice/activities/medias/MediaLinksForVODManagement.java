@@ -429,15 +429,17 @@ public class MediaLinksForVODManagement extends MediaLinksManagement {
                     if (validationSupport.isValid()) {
                         // Capturing the changes made on ScheduledItems.published fields, as they need to be notified to
                         // the front-office clients (if submit is successful)
-                        EntityChanges changesForFrontOffice = EntityChangesBuilder.create()
-                            .addFilteredEntityChanges(localUpdateStore.getEntityChanges(), ScheduledItem.class, ScheduledItem.published)
-                            .build();
+                        EntityChanges localChanges = localUpdateStore.getEntityChanges();
+                        EntityChangesBuilder changesForFrontOfficeBuilder = EntityChangesBuilder.create()
+                            .addFilteredEntityChanges(localChanges, ScheduledItem.class, ScheduledItem.published);
                         localUpdateStore.submitChanges()
                             .onFailure(Console::log)
                             .inUiThread()
-                            .onSuccess(x -> {
-                                // Notifying the front-office clients for the possible changes made on ScheduledItems.published
-                                ModalityMessaging.getFrontOfficeEntityMessaging().publishEntityChanges(changesForFrontOffice);
+                            .onSuccess(result -> {
+                                // Probably not needed, but just in case, we consider the possible generated keys
+                                result.forEachIdWithGeneratedKey(changesForFrontOfficeBuilder::considerEntityIdRefactor);
+                                // Notifying the front-office clients of the possible changes made on ScheduledItems.published
+                                ModalityMessaging.getFrontOfficeEntityMessaging().publishEntityChanges(changesForFrontOfficeBuilder.build());
                                 resetUpdateStoreAndOtherComponents();
                             });
                     }
