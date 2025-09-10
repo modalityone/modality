@@ -1,15 +1,13 @@
 package one.modality.hotel.backoffice.operations.entities.resourceconfiguration;
 
-import dev.webfx.platform.async.AsyncFunction;
-import dev.webfx.platform.async.Batch;
-import dev.webfx.stack.db.submit.SubmitResult;
 import dev.webfx.extras.i18n.HasI18nKey;
 import dev.webfx.extras.operation.HasOperationCode;
 import dev.webfx.extras.operation.HasOperationExecutor;
+import dev.webfx.platform.async.AsyncFunction;
 import one.modality.base.shared.entities.ResourceConfiguration;
 
 public final class ToggleResourceConfigurationOnlineOfflineRequest implements HasOperationCode, HasI18nKey,
-        HasOperationExecutor<ToggleResourceConfigurationOnlineOfflineRequest, Batch<SubmitResult>> {
+        HasOperationExecutor<ToggleResourceConfigurationOnlineOfflineRequest, Void> {
 
     private final static String OPERATION_CODE = "ToggleResourceConfigurationOnlineOffline";
 
@@ -35,7 +33,7 @@ public final class ToggleResourceConfigurationOnlineOfflineRequest implements Ha
 
 
     @Override
-    public AsyncFunction<ToggleResourceConfigurationOnlineOfflineRequest, Batch<SubmitResult>> getOperationExecutor() {
+    public AsyncFunction<ToggleResourceConfigurationOnlineOfflineRequest, Void> getOperationExecutor() {
         return ToggleResourceConfigurationOnlineOfflineExecutor::executeRequest;
     }
 }

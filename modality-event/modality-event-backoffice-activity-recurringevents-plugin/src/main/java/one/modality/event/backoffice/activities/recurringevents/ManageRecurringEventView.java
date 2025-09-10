@@ -644,18 +644,18 @@ final class ManageRecurringEventView {
                             addSitePane.setOnMousePressed(event -> {
                                 Site site = updateStoreForSite.insertEntity(Site.class);
                                 site.setName(searchTextField.getText());
-                                site.setForeignField("organization", FXOrganization.getOrganization());
-                                site.setFieldValue("asksForPassport", false);
+                                site.setOrganization(FXOrganization.getOrganization());
+                                site.setItemFamily(KnownItemFamily.TEACHING.getPrimaryKey());
+                                site.setMain(true);
                                 site.setFieldValue("online", false);
-                                site.setFieldValue("hideDates", true);
                                 site.setFieldValue("forceSoldout", false);
-                                site.setFieldValue("main", true);
-                                site.setFieldValue("itemFamily", KnownItemFamily.TEACHING.getPrimaryKey());
+                                site.setFieldValue("hideDates", true);
+                                site.setFieldValue("asksForPassport", false);
                                 //We had in the database the site now (otherwise too complicated to manage with the actual components)
                                 updateStoreForSite.submitChanges()
                                     .inUiThread()
-                                    .onSuccess((batch -> {
-                                        Object newSiteId = batch.getArray()[0].getGeneratedKeys()[0];
+                                    .onSuccess((result -> {
+                                        Object newSiteId = result.getGeneratedKey();
                                         Site newSite = updateStoreForSite.createEntity(Site.class, newSiteId);
                                         //The createEntity doesn't load the name, so we need to set it up manually
                                         newSite.setName(site.getName());

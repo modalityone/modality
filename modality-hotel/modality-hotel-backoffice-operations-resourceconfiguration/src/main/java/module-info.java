@@ -13,7 +13,6 @@ module modality.hotel.backoffice.operations.resourceconfiguration {
     requires webfx.extras.operation;
     requires webfx.extras.util.dialog;
     requires webfx.platform.async;
-    requires webfx.stack.db.submit;
     requires webfx.stack.orm.domainmodel;
     requires webfx.stack.orm.entity;
     requires webfx.stack.orm.entity.controls;
