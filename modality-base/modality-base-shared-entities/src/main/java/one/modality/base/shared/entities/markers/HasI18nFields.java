@@ -41,4 +41,8 @@ public interface HasI18nFields {
 
     String getVi();
 
+    void setIt(String value);
+
+    String getIt();
+
 }

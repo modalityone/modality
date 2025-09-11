@@ -1,13 +1,23 @@
 package one.modality.base.client.i18n;
 
-import dev.webfx.extras.styles.bootstrap.Bootstrap;
-import dev.webfx.kit.util.properties.FXProperties;
 import dev.webfx.extras.i18n.I18n;
 import dev.webfx.extras.i18n.controls.I18nControls;
+import dev.webfx.extras.styles.bootstrap.Bootstrap;
+import dev.webfx.kit.util.properties.FXProperties;
+import dev.webfx.platform.ast.AST;
+import dev.webfx.platform.ast.ReadOnlyAstArray;
+import dev.webfx.platform.ast.ReadOnlyAstObject;
+import dev.webfx.platform.async.Future;
+import dev.webfx.platform.async.Promise;
+import dev.webfx.platform.conf.SourcesConfig;
+import dev.webfx.platform.console.Console;
+import dev.webfx.platform.fetch.json.JsonFetch;
+import dev.webfx.platform.scheduler.Scheduler;
 import dev.webfx.stack.orm.entity.Entity;
 import dev.webfx.stack.orm.entity.UpdateStore;
 import javafx.animation.FadeTransition;
 import javafx.animation.Interpolator;
+import javafx.application.Platform;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Node;
@@ -19,8 +29,11 @@ import javafx.scene.layout.Priority;
 import javafx.scene.layout.VBox;
 import javafx.util.Duration;
 
+import java.net.URLEncoder;
+import java.nio.charset.StandardCharsets;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Objects;
 
 /**
  * @author David Hello
@@ -29,17 +42,18 @@ public class LabelTextField {
 
     private final String databaseSimpleFieldName;
     private final String databaseLabelFieldName;
-    private final Entity currentEntity;
+    private Entity currentEntity;
     private VBox container;
     private TextField mainTextField;
     private Button translationButton;
+    private Button autoTranslateButton;
     private VBox translationPane;
     private HBox mainFieldContainer;
     private boolean isTranslationPaneVisible = false;
-    private one.modality.base.shared.entities.Label commentLabel;
     private final UpdateStore updateStore;
     private one.modality.base.shared.entities.Label initialLabel;
     private one.modality.base.shared.entities.Label workingLabel;
+
 
     private final Map<String, TextField> languageFields = new HashMap<>();
     private static final String[] LANGUAGES = {
@@ -50,38 +64,76 @@ public class LabelTextField {
         one.modality.base.shared.entities.Label.pt,
         one.modality.base.shared.entities.Label.zh,
         one.modality.base.shared.entities.Label.yue,
+ //       one.modality.base.shared.entities.Label.it,
         one.modality.base.shared.entities.Label.el,
         one.modality.base.shared.entities.Label.vi
     };
+
+    /**
+     * Shows a translation error message to the user
+     * @param message Error message to display
+     */
+    private void showTranslationError(String message) {
+        // You can implement this based on your UI framework's notification system
+        // For now, we'll just print to console
+        System.err.println("Translation Error: " + message);
+        // You might want to show a dialog or notification to the user here
+    }
+
+    // Language code mapping for translation API
+    private static final Map<String, String> LANGUAGE_CODE_MAP;
+    static {
+        LANGUAGE_CODE_MAP = new HashMap<>();
+        LANGUAGE_CODE_MAP.put(one.modality.base.shared.entities.Label.en, "en");
+        LANGUAGE_CODE_MAP.put(one.modality.base.shared.entities.Label.fr, "fr");
+        LANGUAGE_CODE_MAP.put(one.modality.base.shared.entities.Label.es, "es");
+        LANGUAGE_CODE_MAP.put(one.modality.base.shared.entities.Label.de, "de");
+        LANGUAGE_CODE_MAP.put(one.modality.base.shared.entities.Label.pt, "pt");
+        LANGUAGE_CODE_MAP.put(one.modality.base.shared.entities.Label.zh, "zh");
+        LANGUAGE_CODE_MAP.put(one.modality.base.shared.entities.Label.yue, "zh-yue");
+        LANGUAGE_CODE_MAP.put(one.modality.base.shared.entities.Label.it, "it");
+        LANGUAGE_CODE_MAP.put(one.modality.base.shared.entities.Label.el, "el");
+        LANGUAGE_CODE_MAP.put(one.modality.base.shared.entities.Label.vi, "vi");
+    }
 
     // Constants for consistent sizing
     private static final double LABEL_WIDTH = 120;
     private static final double TEXT_FIELD_WIDTH = 450;
 
     public LabelTextField(Entity currentEntity, String databaseSimpleFieldName, String databaseLabelFieldName, UpdateStore updateStore) {
-        this.currentEntity = currentEntity;
+        this.currentEntity = updateStore.updateEntity(currentEntity); //this entity will be updated in the database by positioning the foreign key pointing to the label
         this.databaseSimpleFieldName = databaseSimpleFieldName;
         this.databaseLabelFieldName = databaseLabelFieldName;
         this.updateStore = updateStore;
-        initialLabel = currentEntity.getForeignEntity(databaseLabelFieldName);
-        workingLabel = updateStore.updateEntity(initialLabel);
-
         initializeUI();
-        setupEventHandlers();
-        populateFieldsFromEntity();
+        if(this.currentEntity!=null) {
+            initialLabel = this.currentEntity.getForeignEntity(databaseLabelFieldName);
+            workingLabel = updateStore.updateEntity(initialLabel);
+            populateFieldsFromEntity();
+        }
     }
 
     private void initializeUI() {
         container = new VBox(5);
-
         mainFieldContainer = new HBox(5);
         mainFieldContainer.setAlignment(Pos.CENTER_LEFT);
 
         mainTextField = new TextField();
         mainTextField.setPromptText(I18n.getI18nText(BaseI18nKeys.DefaultPromptText));
-        FXProperties.runOnPropertyChange(linkText ->
-                currentEntity.setFieldValue(databaseSimpleFieldName, linkText),
-            mainTextField.textProperty());
+        FXProperties.runOnPropertyChange(linkText -> {
+            if (databaseSimpleFieldName != null && !Objects.equals(linkText, "")) {
+                currentEntity.setFieldValue(databaseSimpleFieldName, linkText);
+            } else {
+                // When databaseSimpleFieldName is null, update the EN value of the label
+                ensureWorkingLabelExists();
+                if (!Objects.equals(linkText, "")) {
+                    workingLabel.setEn(linkText);
+                } else {
+                    //If we work with a label and the English field Text is null, we reset the update store
+                    resetChanges();
+                }
+            }
+        }, mainTextField.textProperty());
         HBox.setHgrow(mainTextField, Priority.ALWAYS);
 
         translationButton = new Button(I18n.getI18nText(BaseI18nKeys.TranslateIcon));
@@ -96,6 +148,23 @@ public class LabelTextField {
         container.getChildren().add(mainFieldContainer);
     }
 
+    /**
+     * Ensures a working label exists
+     */
+    private void ensureWorkingLabelExists() {
+        if (workingLabel == null) {
+            workingLabel = updateStore.insertEntity(one.modality.base.shared.entities.Label.class);
+            currentEntity.setForeignField(databaseLabelFieldName, workingLabel);
+        }
+    }
+
+    private void resetChanges() {
+        updateStore.cancelChanges();
+        if(initialLabel==null)
+            workingLabel = null;
+    }
+
+
     private void createTranslationPane() {
         translationPane = new VBox(8);
         translationPane.setPadding(new Insets(10));
@@ -103,10 +172,26 @@ public class LabelTextField {
         translationPane.setVisible(false);
         translationPane.setManaged(false);
 
+        autoTranslateButton = new Button("🌐 Help Translate");
+        autoTranslateButton.getStyleClass().add("auto-translate-button");
+        autoTranslateButton.setOnAction(e -> autoTranslateEmptyFields());
+        autoTranslateButton.setMaxWidth(Double.MAX_VALUE);
+
+        // New Clear All button
+        Button clearAllTranslationButton = new Button("🗑️ Clear All");
+        clearAllTranslationButton.getStyleClass().add("clear-all-button");
+        clearAllTranslationButton.setOnAction(e -> clearAllTranslationFields());
+        clearAllTranslationButton.setMaxWidth(Double.MAX_VALUE);
+
+
+        HBox buttonContainer = new HBox(15,autoTranslateButton, clearAllTranslationButton);
+        buttonContainer.setAlignment(Pos.CENTER);
+        translationPane.getChildren().add(buttonContainer);
+
         for (String lang : LANGUAGES) {
             if (!lang.equals(one.modality.base.shared.entities.Label.en)) {
                 String label = getLanguageLabel(lang);
-                HBox fieldBox = createLanguageField(label, lang.toUpperCase(), lang);
+                HBox fieldBox = createLanguageField(label, lang);
                 translationPane.getChildren().add(fieldBox);
             }
         }
@@ -114,7 +199,7 @@ public class LabelTextField {
         container.getChildren().add(translationPane);
     }
 
-    private HBox createLanguageField(String languageName, String languageCode, String langKey) {
+    private HBox createLanguageField(String languageName, String langKey) {
         HBox fieldBox = new HBox(10);
         fieldBox.setAlignment(Pos.CENTER_LEFT);
 
@@ -131,16 +216,140 @@ public class LabelTextField {
         HBox.setHgrow(textField, Priority.ALWAYS);
         languageFields.put(langKey, textField);
 
-        FXProperties.runOnPropertyChange(linkText ->
-                workingLabel.setFieldValue(langKey, linkText),
-            textField.textProperty());
-
+        FXProperties.runOnPropertyChange(linkText -> {
+            if (workingLabel != null) {
+                workingLabel.setFieldValue(langKey, linkText);
+            }
+        }, textField.textProperty());
 
         HBox textFieldContainer = new HBox(5, textField);
         textFieldContainer.setAlignment(Pos.CENTER_LEFT);
 
         fieldBox.getChildren().addAll(languageLabel, textFieldContainer);
         return fieldBox;
+    }
+
+    /**
+     * Auto-translates empty fields using a free translation API
+     */
+    private void autoTranslateEmptyFields() {
+        String sourceText = mainTextField.getText();
+        if (sourceText == null || sourceText.trim().isEmpty()) {
+            showTranslationError("Please enter text in the main field before translating.");
+            return;
+        }
+
+        // Disable the button to prevent multiple concurrent requests
+        autoTranslateButton.setDisable(true);
+        autoTranslateButton.setText("🔄 Translating...");
+
+        Runnable translationRunnable = () -> {
+            for (String lang : LANGUAGES) {
+                if (!lang.equals(one.modality.base.shared.entities.Label.en)) {
+                    TextField field = languageFields.get(lang);
+                    if (field != null && (field.getText() == null || field.getText().trim().isEmpty())) {
+                        String targetLangCode = LANGUAGE_CODE_MAP.get(lang);
+                        if (targetLangCode != null) {
+                            Future<String> translatedText = translateWithDeepL(sourceText, targetLangCode);
+                            translatedText.onSuccess(text -> {
+                                if (text != null && !text.trim().isEmpty()) {
+                                    Platform.runLater(() -> {
+                                        field.setText(text);
+                                        // Update the working label
+                                        ensureWorkingLabelExists();
+                                        if (workingLabel != null) {
+                                            workingLabel.setFieldValue(lang, text);
+                                        }
+                                    });
+                                }
+                            });
+                        }
+                    }
+                }
+            }
+
+            // Update UI on completion
+            Platform.runLater(() -> {
+                autoTranslateButton.setDisable(false);
+                // Fetch remaining DeepL characters asynchronously
+                getDeepLAvailableCharacters().onComplete(result -> Platform.runLater(() -> {
+                    if (result.succeeded()) {
+                        int remaining = result.result();
+                        autoTranslateButton.setText("🌐 Help Translate (" + remaining + " chars left)");
+                    } else {
+                        autoTranslateButton.setText("🌐 Help Translate (usage unknown)");
+                        Console.log("Failed to fetch DeepL usage: " + result.cause());
+                    }
+                }));
+            });
+        };
+
+        Scheduler.runInBackground(translationRunnable);
+    }
+
+
+    private void clearAllTranslationFields() {
+        for (TextField field : languageFields.values()) {
+            field.clear();
+        }
+
+        if (workingLabel != null) {
+            for (String lang : LANGUAGES) {
+                if (!lang.equals(one.modality.base.shared.entities.Label.en)) {
+                    workingLabel.setFieldValue(lang, "");
+                }
+            }
+        }
+    }
+
+    private void clearTranslationTextFields() {
+        for (TextField field : languageFields.values()) {
+            field.clear();
+        }
+        mainTextField.clear();
+    }
+
+
+    private Future<String> translateWithDeepL(String text, String targetLang) {
+        //For Cantonese, we use traditional chinese
+        if("zh-yue".equals(targetLang)) targetLang = "ZH-HANT";
+        Promise<String> promise = Promise.promise();
+
+        String deeplTranslateAPIKey = SourcesConfig.getSourcesRootConfig()
+            .childConfigAt("modality.base.client.i18n")
+            .getString("deeplTranslatedApiKey");
+
+        String params = "auth_key=" + URLEncoder.encode(deeplTranslateAPIKey, StandardCharsets.UTF_8)
+            + "&text=" + URLEncoder.encode(text, StandardCharsets.UTF_8)
+            + "&source_lang=" + "en".toUpperCase()
+            + "&target_lang=" + targetLang.toUpperCase();
+
+        try {
+            String apiUrl = "https://api-free.deepl.com/v2/translate?"+params;
+
+            JsonFetch.fetchJsonObject(
+                    apiUrl)
+                .onFailure(error -> {
+                    Console.log("DeepL translation error", error);
+                    promise.fail("DeepL translation error" + error); // complete with error value
+                })
+                .onSuccess(response -> {
+                    try {
+                        ReadOnlyAstObject o = AST.parseObject(response.toString(), "json");
+                        ReadOnlyAstArray translated = o.getArray("translations");
+                        String translation = translated.getObject(0).get("text");
+                        promise.complete(translation);
+                    } catch (Exception e) {
+                        Console.log("Error parsing DeepL usage JSON", e);
+                        promise.fail("Error parsing DeepL usage JSON: " + e);
+                    }
+                });
+        } catch (Exception e) {
+            Console.log("Error constructing DeepL usage request", e);
+            promise.fail("Error constructing DeepL usage request");
+        }
+
+        return promise.future();
     }
 
     private String getLanguageLabel(String code) {
@@ -152,28 +361,11 @@ public class LabelTextField {
             case one.modality.base.shared.entities.Label.pt -> I18n.getI18nText(BaseI18nKeys.PortugueseWithFlag);
             case one.modality.base.shared.entities.Label.zh -> I18n.getI18nText(BaseI18nKeys.MandarinWithFlag);
             case one.modality.base.shared.entities.Label.yue -> I18n.getI18nText(BaseI18nKeys.CantoneseWithFlag);
-            case one.modality.base.shared.entities.Label.el -> I18n.getI18nText(BaseI18nKeys.GreekWithFlag);
             case one.modality.base.shared.entities.Label.vi -> I18n.getI18nText(BaseI18nKeys.VietnameseWithFlag);
+            case one.modality.base.shared.entities.Label.it -> I18n.getI18nText(BaseI18nKeys.ItalianWithFlag);
+            case one.modality.base.shared.entities.Label.el -> I18n.getI18nText(BaseI18nKeys.GreekWithFlag);
             default -> code;
         };
-    }
-
-    private void setupEventHandlers() {
-
-        mainTextField.focusedProperty().addListener((obs, oldVal, newVal) -> {
-            if (!newVal) {
-                if (isTranslationPaneVisible) {
-                    workingLabel.setEn(mainTextField.getText());
-                    for (String lang : LANGUAGES) {
-                        if (!lang.equals(one.modality.base.shared.entities.Label.en)) {
-                            workingLabel.setFieldValue(lang, languageFields.get(lang).getText());
-                        }
-                    }
-                } else {
-                    currentEntity.setFieldValue(databaseSimpleFieldName, mainTextField.getText());
-                }
-            }
-        });
     }
 
     private void populateFieldsFromEntity() {
@@ -185,32 +377,39 @@ public class LabelTextField {
                 }
             }
             showTranslationPane();
-        } else {
+        } else if (databaseSimpleFieldName != null) {
             String fallback = (String) currentEntity.getFieldValue(databaseSimpleFieldName);
             mainTextField.setText(fallback != null ? fallback : "");
+            clearTranslationTextFields();
+            if (isTranslationPaneVisible)
+                hideTranslationPane();
+        } else {
+            // When both initialLabel and databaseSimpleFieldName are null, start with empty field
+            mainTextField.setText("");
+            clearTranslationTextFields();
+            if (isTranslationPaneVisible)
+                hideTranslationPane();
         }
     }
-
 
     private void toggleTranslationPane() {
         if (isTranslationPaneVisible) {
             hideTranslationPane();
-            if (workingLabel != null) {
+            if (databaseSimpleFieldName != null && workingLabel != null && !Objects.equals(mainTextField.getText(), "")) {
+                // Only delete the label if we have a simple field to fall back to
                 updateStore.deleteEntity(workingLabel);
                 workingLabel = null;
                 currentEntity.setForeignField(databaseLabelFieldName, null);
             }
         } else {
             showTranslationPane();
-            if (workingLabel == null) {
-                workingLabel = updateStore.insertEntity(one.modality.base.shared.entities.Label.class);
+            if (workingLabel != null && !Objects.equals(mainTextField.getText(), "")) {
                 workingLabel.setEn(mainTextField.getText());
                 for (String lang : LANGUAGES) {
                     if (!lang.equals(one.modality.base.shared.entities.Label.en)) {
                         workingLabel.setFieldValue(lang, languageFields.get(lang).getText());
                     }
                 }
-                currentEntity.setForeignField(databaseLabelFieldName, workingLabel);
             }
         }
     }
@@ -265,12 +464,14 @@ public class LabelTextField {
         HBox englishFieldBox = new HBox(10, label, textFieldContainer);
         englishFieldBox.setAlignment(Pos.CENTER_LEFT);
 
-        translationPane.getChildren().add(0, englishFieldBox);
+        // Insert after the auto-translate button (index 1)
+        translationPane.getChildren().add(1, englishFieldBox);
     }
 
     private void moveMainFieldBack() {
-        if (!translationPane.getChildren().isEmpty()) {
-            translationPane.getChildren().remove(0);
+        // Remove from index 1 (after auto-translate button)
+        if (translationPane.getChildren().size() > 1) {
+            translationPane.getChildren().remove(1);
         }
         mainTextField.setPrefWidth(-1);
         mainTextField.setMinWidth(-1);
@@ -286,5 +487,56 @@ public class LabelTextField {
     public void setMaxWidth(int maxWidth) {
         container.setMaxWidth(maxWidth);
         mainTextField.setMaxWidth(maxWidth);
+    }
+
+    public void setMinWidth(int minWidth) {
+        container.setMinWidth(minWidth);
+        mainTextField.setMinWidth(minWidth);
+    }
+
+    private Future<Integer> getDeepLAvailableCharacters() {
+        Promise<Integer> promise = Promise.promise();
+
+        String deeplTranslateAPIKey = SourcesConfig.getSourcesRootConfig()
+            .childConfigAt("modality.base.client.i18n")
+            .getString("deeplTranslatedApiKey");
+
+        try {
+            String url = "https://api-free.deepl.com/v2/usage?auth_key=" + URLEncoder.encode(deeplTranslateAPIKey, StandardCharsets.UTF_8);
+
+            JsonFetch.fetchJsonObject(url)
+                .onFailure(error -> {
+                    Console.log("Error fetching DeepL usage", error);
+                    promise.fail("Error fetching DeepL usage" + error); // complete with error value
+                })
+                .onSuccess(response -> {
+                    try {
+                        ReadOnlyAstObject o = AST.parseObject(response.toString(), "json");
+                        int characterLimit = o.getInteger("character_limit");
+                        int characterCount = o.getInteger("character_count");
+                        promise.complete(characterLimit - characterCount);
+                    } catch (Exception e) {
+                        Console.log("Error parsing DeepL usage JSON", e);
+                        promise.fail("Error parsing DeepL usage JSON: " +e);
+                    }
+                });
+        } catch (Exception e) {
+            Console.log("Error constructing DeepL usage request", e);
+            promise.fail("Error constructing DeepL usage request");
+        }
+
+        return promise.future();
+    }
+
+    public void reloadOnNewEntity(Entity newEntity) {
+        workingLabel = null;
+        currentEntity = updateStore.updateEntity(newEntity);
+        if(currentEntity!=null) {
+            initialLabel = currentEntity.getForeignEntity(databaseLabelFieldName);
+            workingLabel = updateStore.updateEntity(initialLabel);
+            clearTranslationTextFields();
+            populateFieldsFromEntity();
+            updateStore.cancelChanges();
+        }
     }
 }

@@ -18,8 +18,11 @@ module modality.base.client.i18n {
     requires webfx.extras.styles.bootstrap;
     requires webfx.kit.util;
     requires webfx.platform.ast;
+    requires webfx.platform.async;
     requires webfx.platform.conf;
     requires webfx.platform.console;
+    requires webfx.platform.fetch.ast.json;
+    requires webfx.platform.scheduler;
     requires webfx.platform.util;
     requires webfx.stack.orm.entity;
 
