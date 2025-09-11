@@ -53,7 +53,10 @@ public class LabelTextField {
     private final UpdateStore updateStore;
     private one.modality.base.shared.entities.Label initialLabel;
     private one.modality.base.shared.entities.Label workingLabel;
-
+    private Label errorMessageLabel;
+    private HBox errorMessageBox;
+    private FadeTransition errorFadeIn;
+    private FadeTransition errorFadeOut;
 
     private final Map<String, TextField> languageFields = new HashMap<>();
     private static final String[] LANGUAGES = {
@@ -69,16 +72,6 @@ public class LabelTextField {
         one.modality.base.shared.entities.Label.vi
     };
 
-    /**
-     * Shows a translation error message to the user
-     * @param message Error message to display
-     */
-    private void showTranslationError(String message) {
-        // You can implement this based on your UI framework's notification system
-        // For now, we'll just print to console
-        System.err.println("Translation Error: " + message);
-        // You might want to show a dialog or notification to the user here
-    }
 
     // Language code mapping for translation API
     private static final Map<String, String> LANGUAGE_CODE_MAP;
@@ -164,7 +157,6 @@ public class LabelTextField {
             workingLabel = null;
     }
 
-
     private void createTranslationPane() {
         translationPane = new VBox(8);
         translationPane.setPadding(new Insets(10));
@@ -177,16 +169,20 @@ public class LabelTextField {
         autoTranslateButton.setOnAction(e -> autoTranslateEmptyFields());
         autoTranslateButton.setMaxWidth(Double.MAX_VALUE);
 
-        // New Clear All button
+        // Clear All button
         Button clearAllTranslationButton = new Button("🗑️ Clear All");
         clearAllTranslationButton.getStyleClass().add("clear-all-button");
         clearAllTranslationButton.setOnAction(e -> clearAllTranslationFields());
         clearAllTranslationButton.setMaxWidth(Double.MAX_VALUE);
 
-
-        HBox buttonContainer = new HBox(15,autoTranslateButton, clearAllTranslationButton);
+        HBox buttonContainer = new HBox(15, autoTranslateButton, clearAllTranslationButton);
         buttonContainer.setAlignment(Pos.CENTER);
-        translationPane.getChildren().add(buttonContainer);
+
+        // Create error message box
+        createErrorMessageBox();
+
+        // Add components in order: buttons, error box, language fields
+        translationPane.getChildren().addAll(buttonContainer, errorMessageBox);
 
         for (String lang : LANGUAGES) {
             if (!lang.equals(one.modality.base.shared.entities.Label.en)) {
@@ -239,11 +235,16 @@ public class LabelTextField {
             return;
         }
 
+        // Hide any existing error messages
+        hideErrorMessage();
+
         // Disable the button to prevent multiple concurrent requests
         autoTranslateButton.setDisable(true);
         autoTranslateButton.setText("🔄 Translating...");
 
         Runnable translationRunnable = () -> {
+            boolean hasErrors = false;
+
             for (String lang : LANGUAGES) {
                 if (!lang.equals(one.modality.base.shared.entities.Label.en)) {
                     TextField field = languageFields.get(lang);
@@ -255,13 +256,17 @@ public class LabelTextField {
                                 if (text != null && !text.trim().isEmpty()) {
                                     Platform.runLater(() -> {
                                         field.setText(text);
-                                        // Update the working label
                                         ensureWorkingLabelExists();
                                         if (workingLabel != null) {
                                             workingLabel.setFieldValue(lang, text);
                                         }
                                     });
                                 }
+                            }).onFailure(error -> {
+                                Platform.runLater(() -> {
+                                    String languageLabel = getLanguageLabel(lang);
+                                    showTranslationError("Failed to translate to " + languageLabel + ": " + error.getMessage());
+                                });
                             });
                         }
                     }
@@ -271,7 +276,6 @@ public class LabelTextField {
             // Update UI on completion
             Platform.runLater(() -> {
                 autoTranslateButton.setDisable(false);
-                // Fetch remaining DeepL characters asynchronously
                 getDeepLAvailableCharacters().onComplete(result -> Platform.runLater(() -> {
                     if (result.succeeded()) {
                         int remaining = result.result();
@@ -311,7 +315,6 @@ public class LabelTextField {
 
 
     private Future<String> translateWithDeepL(String text, String targetLang) {
-        //For Cantonese, we use traditional chinese
         if("zh-yue".equals(targetLang)) targetLang = "ZH-HANT";
         Promise<String> promise = Promise.promise();
 
@@ -319,37 +322,59 @@ public class LabelTextField {
             .childConfigAt("modality.base.client.i18n")
             .getString("deeplTranslatedApiKey");
 
+        if (deeplTranslateAPIKey == null || deeplTranslateAPIKey.trim().isEmpty()) {
+            promise.fail("DeepL API key not configured");
+            return promise.future();
+        }
+
         String params = "auth_key=" + URLEncoder.encode(deeplTranslateAPIKey, StandardCharsets.UTF_8)
             + "&text=" + URLEncoder.encode(text, StandardCharsets.UTF_8)
             + "&source_lang=" + "en".toUpperCase()
             + "&target_lang=" + targetLang.toUpperCase();
 
         try {
-            String apiUrl = "https://api-free.deepl.com/v2/translate?"+params;
+            String apiUrl = "https://api-free.deepl.com/v2/translate?" + params;
 
-            JsonFetch.fetchJsonObject(
-                    apiUrl)
+            JsonFetch.fetchJsonObject(apiUrl)
                 .onFailure(error -> {
                     Console.log("DeepL translation error", error);
-                    promise.fail("DeepL translation error" + error); // complete with error value
+                    String errorMessage = "Translation service unavailable.";
+                    if (error.getMessage() != null) {
+                        if (error.getMessage().contains("403")) {
+                            errorMessage = "Invalid API key or quota exceeded";
+                        } else if (error.getMessage().contains("429")) {
+                            errorMessage = "Too many requests. Please wait and try again.";
+                        } else if (error.getMessage().contains("network") || error.getMessage().contains("timeout")) {
+                            errorMessage = "Network error. Please check your connection.";
+                        }
+                    }
+                    promise.fail(errorMessage);
                 })
                 .onSuccess(response -> {
                     try {
                         ReadOnlyAstObject o = AST.parseObject(response.toString(), "json");
                         ReadOnlyAstArray translated = o.getArray("translations");
-                        String translation = translated.getObject(0).get("text");
-                        promise.complete(translation);
+                        if (translated != null && translated.size() > 0) {
+                            String translation = translated.getObject(0).get("text");
+                            promise.complete(translation);
+                        } else {
+                            promise.fail("No translation received from service. Please check DEEPL_TRANSLATE_API_KEY variable (currently:" + deeplTranslateAPIKey+")");
+                        }
                     } catch (Exception e) {
-                        Console.log("Error parsing DeepL usage JSON", e);
-                        promise.fail("Error parsing DeepL usage JSON: " + e);
+                        Console.log("Error parsing DeepL response JSON", e);
+                        promise.fail("Invalid response from translation service");
                     }
                 });
         } catch (Exception e) {
-            Console.log("Error constructing DeepL usage request", e);
-            promise.fail("Error constructing DeepL usage request");
+            Console.log("Error constructing DeepL request", e);
+            promise.fail("Failed to create translation request");
         }
 
         return promise.future();
+    }
+
+    private void displayErrorMessageWhenTranslating(String deeplTranslateAPIKey) {
+
     }
 
     private String getLanguageLabel(String code) {
@@ -464,8 +489,8 @@ public class LabelTextField {
         HBox englishFieldBox = new HBox(10, label, textFieldContainer);
         englishFieldBox.setAlignment(Pos.CENTER_LEFT);
 
-        // Insert after the auto-translate button (index 1)
-        translationPane.getChildren().add(1, englishFieldBox);
+        // Insert after the auto-translate button (index 2)
+        translationPane.getChildren().add(2, englishFieldBox);
     }
 
     private void moveMainFieldBack() {
@@ -500,6 +525,7 @@ public class LabelTextField {
         String deeplTranslateAPIKey = SourcesConfig.getSourcesRootConfig()
             .childConfigAt("modality.base.client.i18n")
             .getString("deeplTranslatedApiKey");
+
 
         try {
             String url = "https://api-free.deepl.com/v2/usage?auth_key=" + URLEncoder.encode(deeplTranslateAPIKey, StandardCharsets.UTF_8);
@@ -537,6 +563,72 @@ public class LabelTextField {
             clearTranslationTextFields();
             populateFieldsFromEntity();
             updateStore.cancelChanges();
+        }
+    }
+
+    private void showTranslationError(String message) {
+        Platform.runLater(() -> {
+            errorMessageLabel.setText(message);
+            showErrorMessage();
+        });
+    }
+
+    private void createErrorMessageBox() {
+        errorMessageLabel = new Label();
+        errorMessageLabel.getStyleClass().addAll("error-message-text", "text-danger");
+        errorMessageLabel.setWrapText(true);
+        errorMessageLabel.setMaxWidth(Double.MAX_VALUE);
+
+        // Create error icon (you can replace with your preferred icon)
+        Label errorIcon = new Label("⚠️");
+        errorIcon.getStyleClass().add("error-icon");
+
+        errorMessageBox = new HBox(8, errorIcon, errorMessageLabel);
+        errorMessageBox.getStyleClass().add("error-message-box");
+        errorMessageBox.setAlignment(Pos.CENTER_LEFT);
+        errorMessageBox.setPadding(new Insets(10, 15, 10, 15));
+        errorMessageBox.setMaxWidth(Double.MAX_VALUE);
+        errorMessageBox.setVisible(false);
+        errorMessageBox.setManaged(false);
+
+        // Create fade animations
+        errorFadeIn = new FadeTransition(Duration.millis(200), errorMessageBox);
+        errorFadeIn.setFromValue(0.0);
+        errorFadeIn.setToValue(1.0);
+        errorFadeIn.setInterpolator(Interpolator.EASE_OUT);
+
+        errorFadeOut = new FadeTransition(Duration.millis(200), errorMessageBox);
+        errorFadeOut.setFromValue(1.0);
+        errorFadeOut.setToValue(0.0);
+        errorFadeOut.setInterpolator(Interpolator.EASE_IN);
+        errorFadeOut.setOnFinished(e -> {
+            errorMessageBox.setVisible(false);
+            errorMessageBox.setManaged(false);
+        });
+    }
+
+    private void showErrorMessage() {
+        // Stop any existing animation
+        if (errorFadeOut != null) {
+            errorFadeOut.stop();
+        }
+        if (errorFadeIn != null) {
+            errorFadeIn.stop();
+        }
+
+        errorMessageBox.setVisible(true);
+        errorMessageBox.setManaged(true);
+        errorMessageBox.setOpacity(0.0);
+
+        errorFadeIn.play();
+
+        // Auto-hide after 5 seconds
+        Scheduler.scheduleDelay(5000, () -> Platform.runLater(this::hideErrorMessage));
+    }
+
+    private void hideErrorMessage() {
+        if (errorMessageBox.isVisible()) {
+            errorFadeOut.play();
         }
     }
 }
