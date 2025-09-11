@@ -87,3 +87,155 @@
     font-size: 16px;
     --fx-line-height: 1.6;
 }
+
+/* Dark Amber Alert Scheme*/
+:root {
+    --notification-bg-primary: #BF360C;
+    --notification-bg-secondary: #D84315;
+    --notification-text-color: #FFFDE7;
+    --notification-border-color: #FF6D00;
+    --notification-icon-color: #FFD600;
+    --notification-icon-bg: rgba(255, 214, 0, 0.2);
+    --notification-close-color: #FFE0B2;
+    --notification-close-hover-bg: rgba(255, 214, 0, 0.2);
+    --notification-close-hover-color: #FFD600;
+}
+
+.notification-bar {
+    border-radius: 8px !important;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.08) !important;
+    overflow: hidden !important;
+}
+
+/* Background styling for error notifications */
+.notification-error > fx-background {
+    background: linear-gradient(to bottom, var(--notification-bg-primary), var(--notification-bg-secondary)) !important;
+    border-radius: 8px !important;
+}
+
+/* Border styling for error notifications */
+.notification-error > fx-border {
+    border: 1px solid var(--notification-border-color) !important;
+    border-radius: 8px !important;
+}
+
+/* Warning notifications */
+.notification-warning > fx-background {
+    background: linear-gradient(to bottom, var(--notification-bg-primary), var(--notification-bg-secondary)) !important;
+    border-radius: 8px !important;
+}
+
+.notification-warning > fx-border {
+    border: 1px solid var(--notification-border-color) !important;
+    border-radius: 8px !important;
+}
+
+/* Info notifications */
+.notification-info > fx-background {
+    background: linear-gradient(to bottom, var(--notification-bg-primary), var(--notification-bg-secondary)) !important;
+    border-radius: 8px !important;
+}
+
+.notification-info > fx-border {
+    border: 1px solid var(--notification-border-color) !important;
+    border-radius: 8px !important;
+}
+
+/* Style the notification text - target the fx-text element directly */
+.notification-error fx-label.notification-text fx-text {
+    color: var(--notification-text-color) !important;
+    font-size: 20px !important;
+    font-weight: 500 !important;
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif !important;
+    text-shadow: none !important;
+    line-height: 1.4 !important;
+}
+
+/* Style the notification icon */
+.notification-error fx-label.notification-icon {
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+}
+
+.notification-error fx-label.notification-icon fx-text {
+    color: var(--notification-icon-color) !important;
+    font-size: 40px !important;
+    font-weight: bold !important;
+    text-align: center !important;
+}
+
+
+/* Common icon container styling for all notification types */
+.notification-error fx-label.notification-icon{
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+}
+
+
+/* Style the close button */
+.notification-bar fx-button.notification-close {
+    cursor: pointer !important;
+    transition: all 0.2s ease !important;
+}
+
+.notification-bar fx-button.notification-close > fx-background {
+    background: transparent !important;
+    border-radius: 50% !important;
+    transition: background-color 0.2s ease !important;
+}
+
+.notification-bar fx-button.notification-close fx-text {
+    color: var(--notification-close-color) !important;
+    font-size: 18px !important;
+    font-weight: bold !important;
+}
+
+/* Close button hover states */
+.notification-error fx-button.notification-close:hover > fx-background {
+    background-color: var(--notification-close-hover-bg) !important;
+}
+
+.notification-error fx-button.notification-close:hover fx-text {
+    color: var(--notification-close-hover-color) !important;
+}
+
+/* Mobile: scrolling notification text only */
+@media only screen and (max-width: 768px) {
+    /* Add flex properties to the main container */
+    .notification-bar {
+        display: flex !important;
+        align-items: center !important;
+    }
+
+    /* Outer container = only the notification text, not the close button */
+    .notification-bar fx-label.notification-text {
+        display: block !important;
+        overflow: hidden !important;
+        /* Replace width with flex: 1 */
+        flex: 1 !important; /* This tells the container to take up all available space */
+        white-space: nowrap !important;
+        position: relative !important;
+        box-sizing: border-box !important;
+    }
+
+    /* Inner text = scroll across the container */
+    .notification-bar fx-label.notification-text fx-text {
+        display: inline-block !important;
+        white-space: nowrap !important;
+        will-change: transform !important;
+        animation: scroll-text 12s linear infinite !important;
+        font-size: 30px !important;
+    }
+}
+
+/* Animation remains the same */
+@keyframes scroll-text {
+    0% {
+        transform: translateX(100%);
+    }
+    100% {
+        transform: translateX(-100%);
+    }
+}

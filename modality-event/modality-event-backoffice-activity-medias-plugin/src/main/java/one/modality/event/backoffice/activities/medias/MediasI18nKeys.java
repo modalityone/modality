@@ -12,6 +12,7 @@ public interface MediasI18nKeys {
     Object VODPromptComment = "VODPromptComment";
     Object VODCustomExpirationDate = "VODCustomExpirationDate";
     Object SelectLanguage = "SelectLanguage";
+    Object RemoveMessage = "RemoveMessage";
     Object DurationShouldBeAtLeast60s = "DurationShouldBeAtLeast60s";
     Object NoLinkDefinedYet = "NoLinkDefinedYet";
     Object VODComment = "VODComment";
