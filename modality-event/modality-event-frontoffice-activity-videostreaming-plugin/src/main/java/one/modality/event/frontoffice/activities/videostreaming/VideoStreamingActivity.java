@@ -18,6 +18,7 @@ import dev.webfx.extras.visual.controls.grid.VisualGrid;
 import dev.webfx.extras.webtext.HtmlText;
 import dev.webfx.kit.util.properties.FXProperties;
 import dev.webfx.kit.util.properties.ObservableLists;
+import dev.webfx.kit.util.properties.Unregisterable;
 import dev.webfx.platform.console.Console;
 import dev.webfx.platform.scheduler.Scheduler;
 import dev.webfx.platform.substitution.Substitutor;
@@ -28,9 +29,14 @@ import dev.webfx.platform.util.collection.Collections;
 import dev.webfx.stack.orm.domainmodel.activity.viewdomain.impl.ViewDomainActivityBase;
 import dev.webfx.stack.orm.entity.EntityId;
 import dev.webfx.stack.orm.entity.EntityStore;
+import dev.webfx.stack.orm.entity.binding.EntityBindings;
 import dev.webfx.stack.orm.reactive.entities.entities_to_grid.EntityColumn;
 import dev.webfx.stack.orm.reactive.mapping.entities_to_visual.EntitiesToVisualResultMapper;
 import dev.webfx.stack.orm.reactive.mapping.entities_to_visual.VisualEntityColumnFactory;
+import javafx.animation.Interpolator;
+import javafx.animation.KeyFrame;
+import javafx.animation.KeyValue;
+import javafx.animation.Timeline;
 import javafx.application.Platform;
 import javafx.beans.binding.Bindings;
 import javafx.beans.property.BooleanProperty;
@@ -48,13 +54,13 @@ import javafx.scene.control.Button;
 import javafx.scene.control.ContentDisplay;
 import javafx.scene.control.Hyperlink;
 import javafx.scene.control.Label;
-import javafx.scene.layout.Region;
-import javafx.scene.layout.StackPane;
-import javafx.scene.layout.VBox;
+import javafx.scene.layout.*;
 import javafx.scene.text.TextAlignment;
 import javafx.stage.Screen;
+import javafx.util.Duration;
 import one.modality.base.client.i18n.BaseI18nKeys;
 import one.modality.base.client.i18n.I18nEntities;
+import one.modality.base.client.messaging.ModalityMessaging;
 import one.modality.base.frontoffice.utility.page.FOPageUtil;
 import one.modality.base.shared.entities.DocumentLine;
 import one.modality.base.shared.entities.Event;
@@ -75,6 +81,7 @@ import one.modality.event.frontoffice.medias.MediaConsumptionRecorder;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.function.Consumer;
 import java.util.stream.Collectors;
 
 /**
@@ -127,6 +134,13 @@ final class VideoStreamingActivity extends ViewDomainActivityBase {
     private EntityColumn<ScheduledItem>[] allProgramVideoColumns;
 
     final AriaToggleGroup<ScheduledItem> watchButtonsGroup = new AriaToggleGroup<>();
+    private final Label livestreamMessageLabel = new Label();
+
+    private final VBox notificationContainer = new VBox(5);
+    private final ObservableList<Node> activeNotifications = FXCollections.observableArrayList();
+
+    private boolean isNotificationDisplayed = false;
+    private Unregisterable unregisterable;
 
     public VideoStreamingActivity() {
         //We relaunch the request every 14 hours (in case the user never closes the page, and to make sure the coherence of MediaConsumption is ok)
@@ -151,7 +165,7 @@ final class VideoStreamingActivity extends ViewDomainActivityBase {
                 eventsWithBookedVideosLoadingProperty.set(true);
                 // we look for the scheduledItem having a `bookableScheduledItem` which is an audio type (case of festival)
                 entityStore.<DocumentLine>executeQueryWithCache("modality/event/video-streaming/document-lines",
-                        "select document.event.(name, label, shortDescription, shortDescriptionLabel, audioExpirationDate, startDate, endDate, livestreamUrl, vodExpirationDate, repeatVideo, recurringWithVideo, repeatedEvent), item.(code, family.code)" +
+                        "select document.event.(name, label, shortDescription, shortDescriptionLabel, audioExpirationDate, startDate, endDate, livestreamUrl, vodExpirationDate, repeatVideo, recurringWithVideo, repeatedEvent ,livestreamMessageLabel), item.(code, family.code)" +
                         // We look if there are published audio ScheduledItem of type video, whose bookableScheduledItem has been booked
                         ", (exists(select ScheduledItem where item.family.code=$2 and bookableScheduledItem.(event=coalesce(dl.document.event.repeatedEvent, dl.document.event) and item=dl.item))) as published " +
                         // We check if the user has booked, not cancelled and paid the recordings
@@ -222,7 +236,7 @@ final class VideoStreamingActivity extends ViewDomainActivityBase {
                 // Note: double dots such as `programScheduledItem.timeline..startTime` means we do a left join that allows null value (if the event is recurring, the timeline of the programScheduledItem is null)
                 entityStore.<ScheduledItem>executeQueryWithCache("modality/event/video-streaming/scheduled-items",
                         """
-                            select name, label, date, comment, commentLabel, expirationDate, programScheduledItem.(name, label, startTime, endTime, timeline.(startTime, endTime), cancelled), published, event.(name, type.recurringItem, livestreamUrl, recurringWithVideo), vodDelayed,
+                            select name, label, date, comment, commentLabel, expirationDate, programScheduledItem.(name, label, startTime, endTime, timeline.(startTime, endTime), cancelled), published, event.(name, type.recurringItem, livestreamUrl, recurringWithVideo, livestreamMessageLabel), vodDelayed,
                                 (exists(select MediaConsumption where scheduledItem=si and accountCanAccessPersonMedias($1, attendance.documentLine.document.person)) as attended),
                                 (select id from Attendance where scheduledItem=si.bookableScheduledItem and accountCanAccessPersonMedias($1, documentLine.document.person) limit 1) as attendanceId
                              from ScheduledItem si
@@ -534,10 +548,9 @@ final class VideoStreamingActivity extends ViewDomainActivityBase {
         // is not displayed
         if (!DISABLE_COLLAPSE_VIDEO_PLAY) {
             FXProperties.runNowAndOnPropertiesChange(() -> Platform.runLater(() -> { // Postponed to consider only the final state when both properties are changed
-                Player playingPlayer = Players.getGlobalPlayerGroup().getPlayingPlayer();
                 // commented as this prevents pausing VODs
                 // if (playingPlayer != null && SceneUtil.hasAncestor(playingPlayer.getMediaView(), videoCollapsePane)) {
-                lastVideoPlayingPlayer = playingPlayer;
+                lastVideoPlayingPlayer = Players.getGlobalPlayerGroup().getPlayingPlayer();
                 //}
                 if (lastVideoPlayingPlayer != null) {
                     if (videoCollapsePane.isCollapsed()) {
@@ -594,8 +607,58 @@ final class VideoStreamingActivity extends ViewDomainActivityBase {
             String livestreamUrl = event == null ? null : event.getLivestreamUrl();
             if (livestreamUrl != null) {
                 // Checking that the user has access to a live session for today
-                if (videoScheduledItems.stream().map(VideoLifecycle::new).anyMatch(VideoLifecycle::isLiveToday))
-                    videoContent = createVideoView(livestreamUrl, null, autoPlay);
+                if (videoScheduledItems.stream().map(VideoLifecycle::new).anyMatch(VideoLifecycle::isLiveToday)) {
+                    // Create the main video container with notification overlay
+                    StackPane livestreamContainer = new StackPane();
+                    VBox videoMediasVBox = new VBox(10);
+
+                    // Set up notification container at the top
+                    notificationContainer.setAlignment(Pos.BOTTOM_CENTER);
+                    notificationContainer.setPadding(new Insets(10, 20, 70, 20));
+                    notificationContainer.setMouseTransparent(true); // Allow clicks to pass through empty areas
+                    StackPane.setAlignment(notificationContainer, Pos.BOTTOM_CENTER);
+
+                    // Push-notification management: we turn the published field into a property
+                    ModalityMessaging.getFrontOfficeEntityMessaging().listenEntityChanges(event.getStore());
+                    ObjectProperty<one.modality.base.shared.entities.Label> liveMessageLabelProperty = EntityBindings.getForeignEntityProperty(event, Event.livestreamMessageLabel);
+
+                    // Consumer that gets called when address fields change
+                    Consumer<one.modality.base.shared.entities.Label> onLabelChange = (labelEntity) -> Platform.runLater(() -> {
+                       // System.out.println("Label changed: " + labelEntity.getEn() + ", " + labelEntity.getFr());
+                        I18nEntities.bindExpressionProperties(livestreamMessageLabel, labelEntity, "i18n(this)");
+                        showNotification(livestreamMessageLabel, "critical", false);
+                    });
+                    if(unregisterable!=null) {
+                        unregisterable.unregister();
+                    }
+                    unregisterable = EntityBindings.onForeignFieldsChanged(onLabelChange, event, Event.livestreamMessageLabel, "en", "de", "fr", "es", "pt");
+
+                    // Listen for livestream message changes and show notifications
+                    FXProperties.runOnPropertyChange(() -> {
+                        if(liveMessageLabelProperty.get()==null) {
+                            clearAllNotifications();
+                        }
+                    }, liveMessageLabelProperty);
+
+                    I18nEntities.bindExpressionProperties(livestreamMessageLabel, liveMessageLabelProperty, "i18n(this)");
+                    livestreamMessageLabel.setTextAlignment(TextAlignment.CENTER);
+                    if(liveMessageLabelProperty.get()!=null) {
+                        showNotification(livestreamMessageLabel, "critical", false);
+                    }
+
+                    // Create video view
+                    Node videoView = createVideoView(livestreamUrl, null, autoPlay);
+                    videoMediasVBox.getChildren().add(videoView);
+                    Layouts.setMinMaxHeightToPref(videoMediasVBox);
+
+                    // Assemble the container
+                    livestreamContainer.getChildren().addAll(videoMediasVBox, notificationContainer);
+                    videoContent = livestreamContainer;
+
+                    // Example: Show different types of notifications based on livestream status
+                    // You can trigger these based on your livestream monitoring logic
+                }
+
             }
         } else { // VOD
             // Creating a Player for each Media and initializing it.
@@ -644,6 +707,7 @@ final class VideoStreamingActivity extends ViewDomainActivityBase {
         videoPlayer.setStartOptions(new StartOptionsBuilder()
             .setAutoplay(autoPlay)
             .setAspectRatio(aspectRatio)
+            .setFullscreen(false)
             .build());
         videoPlayer.displayVideo();
         boolean livestream = media == null;
@@ -656,6 +720,111 @@ final class VideoStreamingActivity extends ViewDomainActivityBase {
         // We embed the video player in a 16/9 aspect ratio pane, so its vertical size is immediately known, which is
         // important for the correct computation of the auto-scroll position.
         return new AspectRatioPane(aspectRatio, videoPlayer.getMediaView());
+    }
+
+    // Add this method to create notification bars
+    // Complete notification system with CSS-like animations
+    private Node createNotificationBar(Label messageLabel, String type, boolean autoHide) {
+        HBox notificationBar = new HBox(12);
+        notificationBar.setAlignment(Pos.CENTER_LEFT);
+        notificationBar.setPadding(new Insets(12, 16, 12, 16));
+        notificationBar.setMaxWidth(Double.MAX_VALUE);
+
+        // Set initial state for animation
+        notificationBar.setTranslateY(-50);
+        notificationBar.setOpacity(0);
+
+        // Set style based on type
+        switch (type.toLowerCase()) {
+            case "error":
+            case "critical":
+                notificationBar.getStyleClass().addAll("notification-bar", "notification-error");
+                break;
+            case "warning":
+                notificationBar.getStyleClass().addAll("notification-bar", "notification-warning");
+                break;
+            case "info":
+            default:
+                notificationBar.getStyleClass().addAll("notification-bar", "notification-info");
+                break;
+        }
+
+        // Icon (you can replace with actual icons from your icon library)
+        Label iconLabel = new Label("⚠"); // Use appropriate icon based on type
+        iconLabel.getStyleClass().add("notification-icon");
+
+        // Message text
+        messageLabel.getStyleClass().add("notification-text");
+        messageLabel.setWrapText(true);
+        messageLabel.setMaxWidth(Double.MAX_VALUE);
+        HBox.setHgrow(messageLabel, Priority.ALWAYS);
+
+        // Close button
+        Button closeButton = new Button("✕");
+        closeButton.getStyleClass().add("notification-close");
+        closeButton.setOnAction(e -> hideNotification(notificationBar));
+
+        notificationBar.getChildren().addAll(iconLabel, messageLabel, closeButton);
+
+        // CSS-like slide-in animation using Timeline for smooth transition
+        Timeline slideIn = new Timeline(
+            new KeyFrame(Duration.ZERO,
+                new KeyValue(notificationBar.translateYProperty(), -50),
+                new KeyValue(notificationBar.opacityProperty(), 0)
+            ),
+            new KeyFrame(Duration.millis(300),
+                new KeyValue(notificationBar.translateYProperty(), 0, Interpolator.EASE_OUT),
+                new KeyValue(notificationBar.opacityProperty(), 1, Interpolator.EASE_OUT)
+            )
+        );
+        slideIn.play();
+
+        // Auto-hide after delay if requested
+        if (autoHide) {
+            Timeline autoHideTimeline = new Timeline(new KeyFrame(Duration.seconds(8), e -> hideNotification(notificationBar)));
+            autoHideTimeline.play();
+        }
+
+        return notificationBar;
+    }
+
+    // Method to show notification
+    private void showNotification(Label messageLabel, String type, boolean autoHide) {
+        if(!isNotificationDisplayed) {
+            Node notification = createNotificationBar(messageLabel, type, autoHide);
+            activeNotifications.add(notification);
+            Platform.runLater(() -> {
+                notificationContainer.getChildren().add(0, notification); // Add to top
+            });
+            isNotificationDisplayed = true;
+        }
+    }
+
+    // Method to hide notification with CSS-like animation
+    private void hideNotification(Node notification) {
+        Timeline slideOut = new Timeline(
+            new KeyFrame(Duration.ZERO,
+                new KeyValue(notification.translateYProperty(), 0),
+                new KeyValue(notification.opacityProperty(), 1)
+            ),
+            new KeyFrame(Duration.millis(250),
+                new KeyValue(notification.translateYProperty(), -notification.getBoundsInLocal().getHeight() - 10, Interpolator.EASE_IN),
+                new KeyValue(notification.opacityProperty(), 0, Interpolator.EASE_IN)
+            )
+        );
+
+        slideOut.setOnFinished(e -> {
+            notificationContainer.getChildren().remove(notification);
+            activeNotifications.remove(notification);
+            isNotificationDisplayed = false;
+        });
+
+        slideOut.play();
+    }
+
+    // Method to clear all notifications
+    private void clearAllNotifications() {
+        activeNotifications.forEach(this::hideNotification);
     }
 
 }

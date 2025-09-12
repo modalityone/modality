@@ -88,3 +88,135 @@
     -fx-font-size: 16px;
     -fx-spacing: 10px;
 }
+/* Base notification styles */
+.notification {
+    -fx-background-radius: 8px;
+    -fx-border-radius: 8px;
+    -fx-border-width: 1px;
+    -fx-spacing: 12px;
+    -fx-alignment: CENTER_LEFT;
+    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.08), 4, 0, 0, 2);
+}
+
+/* Notification type variants */
+.notification-error {
+    -fx-background-color: linear-gradient(to bottom, #fef2f2, #fecaca);
+    -fx-border-color: #f87171;
+}
+
+.notification-warning {
+    -fx-background-color: linear-gradient(to bottom, #fffbeb, #fed7aa);
+    -fx-border-color: #fb923c;
+}
+
+.notification-info {
+    -fx-background-color: linear-gradient(to bottom, #eff6ff, #bfdbfe);
+    -fx-border-color: #60a5fa;
+}
+
+/* Icon styles - Significantly larger and more prominent */
+.notification-icon {
+    -fx-font-size: 24px;
+    -fx-font-weight: bold;
+    -fx-min-width: 32px;
+    -fx-min-height: 32px;
+    -fx-alignment: center;
+    -fx-background-radius: 50%;
+    -fx-padding: 4px;
+}
+
+.notification-error .notification-icon {
+    -fx-text-fill: #dc2626;
+    -fx-background-color: rgba(220, 38, 38, 0.1);
+}
+
+.notification-warning .notification-icon {
+    -fx-text-fill: #d97706;
+    -fx-background-color: rgba(217, 119, 6, 0.1);
+}
+
+.notification-info .notification-icon {
+    -fx-text-fill: #2563eb;
+    -fx-background-color: rgba(37, 99, 235, 0.1);
+}
+
+/* Text styles - Better readability and hierarchy */
+.notification-text {
+    -fx-text-fill: #374151;
+    -fx-font-size: 15px;
+    -fx-font-weight: 500;
+    -fx-line-spacing: 2px;
+    -fx-wrap-text: true;
+}
+
+.notification-error .notification-text {
+    -fx-text-fill: #991b1b;
+}
+
+.notification-warning .notification-text {
+    -fx-text-fill: #92400e;
+}
+
+.notification-info .notification-text {
+    -fx-text-fill: #1e40af;
+}
+
+/* Close button styles - More modern and accessible */
+.notification-close {
+    -fx-background-color: transparent;
+    -fx-border-color: transparent;
+    -fx-text-fill: #9ca3af;
+    -fx-font-size: 20px;
+    -fx-font-weight: bold;
+    -fx-padding: 8px;
+    -fx-min-width: 32px;
+    -fx-min-height: 32px;
+    -fx-background-radius: 50%;
+    -fx-border-radius: 50%;
+    -fx-cursor: hand;
+    -fx-alignment: center;
+}
+
+.notification-close:hover {
+    -fx-background-color: rgba(0,0,0,0.08);
+    -fx-text-fill: #6b7280;
+    -fx-scale-x: 1.1;
+    -fx-scale-y: 1.1;
+}
+
+.notification-close:pressed {
+    -fx-background-color: rgba(0,0,0,0.12);
+    -fx-scale-x: 0.95;
+    -fx-scale-y: 0.95;
+}
+
+/* Additional refinements for specific notification types */
+.notification-error .notification-close:hover {
+    -fx-background-color: rgba(220, 38, 38, 0.1);
+    -fx-text-fill: #dc2626;
+}
+
+.notification-warning .notification-close:hover {
+    -fx-background-color: rgba(217, 119, 6, 0.1);
+    -fx-text-fill: #d97706;
+}
+
+.notification-info .notification-close:hover {
+    -fx-background-color: rgba(37, 99, 235, 0.1);
+    -fx-text-fill: #2563eb;
+}
+
+/* Responsive text sizing for longer messages */
+.notification-text-long {
+    -fx-font-size: 14px;
+    -fx-line-spacing: 3px;
+}
+
+/* Animation support for smooth appearance */
+.notification-fade-in {
+    -fx-opacity: 0;
+}
+
+.notification-fade-in:hover {
+    -fx-opacity: 1;
+}
