@@ -82,6 +82,7 @@ public final class EventThumbnail {
         container.setPrefWidth(CONTAINER_WIDTH);
         String languageOfTheItem = extractLanguageISOCode(imageItemCode);
         //Here we manage 2 cases:
+
         //1. For Video, the item is the same for all languages, so we want to display the title and description according to the language of user
         //2. For Audio, since we can order audios in different languages, we want to display the title and description according to the language of the item
         Label eventLabel = Bootstrap.h3(I18nEntities.newExpressionLabel(event, "i18n(this, '" + languageOfTheItem + "')"));
@@ -161,6 +162,10 @@ public final class EventThumbnail {
     public static String extractLanguageISOCode(String itemCode) {
         if (itemCode == null) return null;
         String[] parts = itemCode.split("-");
-        return parts.length > 1 ? parts[1] : null; // Return the second part (ISO 639-1 code)
+        String toReturn = parts.length > 1 ? parts[1] : null;
+
+        return  I18nEntities.convertAudioLanguageCodeToWrittenLanguageCode(toReturn);
     }
+
+
 }

@@ -23,6 +23,7 @@ import javafx.scene.layout.*;
 import javafx.scene.shape.SVGPath;
 import one.modality.base.client.cloudinary.ModalityCloudinary;
 import one.modality.base.client.i18n.BaseI18nKeys;
+import one.modality.base.client.i18n.I18nEntities;
 import one.modality.base.client.icons.SvgIcons;
 import one.modality.base.shared.entities.Item;
 import one.modality.base.shared.entities.Media;
@@ -53,7 +54,7 @@ public class MediaLinksForAudioRecordingsManagement extends MediaLinksManagement
         parentRecordingView = recordingsTabView;
         //Language code is 'audio-en", audio-fr", "audio-es", ...
         String languageCode = languageItem.getCode().split("-")[1];
-        eventCoverCloudImagePath = ModalityCloudinary.eventCoverImagePath(FXEventId.getEventId(), languageCode);
+        eventCoverCloudImagePath = ModalityCloudinary.eventCoverImagePath(FXEventId.getEventId(), I18nEntities.convertAudioLanguageCodeToWrittenLanguageCode(languageCode));
         buildContainer();
     }
 

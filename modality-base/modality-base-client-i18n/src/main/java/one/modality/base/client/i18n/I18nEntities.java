@@ -13,6 +13,8 @@ import javafx.scene.control.Labeled;
 import javafx.scene.text.Text;
 import one.modality.base.client.entities.functions.I18nFunction;
 
+import java.util.Objects;
+
 /**
  * @author Bruno Salmon
  */
@@ -86,5 +88,17 @@ public final class I18nEntities {
 
     private static Object[] argsAndEntityProperty(Object[] args, ObservableValue<? extends Entity> entityProperty) {
         return Arrays.add(Object[]::new, args, entityProperty);
+    }
+
+    public static String convertAudioLanguageCodeToWrittenLanguageCode(String code) {
+        if(Objects.equals(code, "zhma")) {
+            //Mandarin use mainly simplified chinese
+            return "zhs";
+        }
+        if(Objects.equals(code, "zhca")) {
+            //Cantonese use mainly traditional chinese
+            return "zht";
+        }
+        return code;
     }
 }
