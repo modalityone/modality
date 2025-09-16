@@ -54,6 +54,7 @@ import javafx.scene.control.Button;
 import javafx.scene.control.ContentDisplay;
 import javafx.scene.control.Hyperlink;
 import javafx.scene.control.Label;
+import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.*;
 import javafx.scene.text.TextAlignment;
 import javafx.stage.Screen;
@@ -73,6 +74,7 @@ import one.modality.crm.shared.services.authn.ModalityUserPrincipal;
 import one.modality.crm.shared.services.authn.fx.FXModalityUserPrincipal;
 import one.modality.crm.shared.services.authn.fx.FXUserPersonId;
 import one.modality.event.client.i18n.EventI18nKeys;
+import one.modality.event.client.mediaview.MediaButtons;
 import one.modality.event.frontoffice.eventheader.EventHeader;
 import one.modality.event.frontoffice.eventheader.MediaEventHeader;
 import one.modality.event.frontoffice.medias.EventThumbnail;
@@ -136,11 +138,12 @@ final class VideoStreamingActivity extends ViewDomainActivityBase {
     final AriaToggleGroup<ScheduledItem> watchButtonsGroup = new AriaToggleGroup<>();
     private final Label livestreamMessageLabel = new Label();
 
-    private final VBox notificationContainer = new VBox(5);
-    private final ObservableList<Node> activeNotifications = FXCollections.observableArrayList();
+    private final HBox notificationContainer = new HBox(12);
 
-    private boolean isNotificationDisplayed = false;
     private Unregisterable unregisterable;
+
+    // Add these fields to your VideoStreamingActivity class
+    private final Duration INACTIVITY_DURATION = Duration.seconds(3.5);
 
     public VideoStreamingActivity() {
         //We relaunch the request every 14 hours (in case the user never closes the page, and to make sure the coherence of MediaConsumption is ok)
@@ -435,6 +438,14 @@ final class VideoStreamingActivity extends ViewDomainActivityBase {
         selectTheDayBelowVBox.setAlignment(Pos.CENTER);
         selectTheDayBelowVBox.setPadding(new Insets(100, 0, 0, 0));
 
+        notificationContainer.setMaxHeight(60);
+        notificationContainer.setPrefHeight(60);
+        notificationContainer.setPadding(new Insets(0,15,0,15));
+        StackPane.setAlignment(notificationContainer,Pos.BOTTOM_CENTER);
+        StackPane.setMargin(notificationContainer,new Insets(0,20,60,20));
+        notificationContainer.setAlignment(Pos.CENTER);
+        notificationContainer.setVisible(false);
+
         videoGrid.setMinRowHeight(48);
         videoGrid.setPrefRowHeight(Region.USE_COMPUTED_SIZE);
         videoGrid.setMonoCellMargin(new Insets(5, 10, 5, 10)); // top and bottom are more for mono colum layout (no real effect on table layout)
@@ -608,25 +619,21 @@ final class VideoStreamingActivity extends ViewDomainActivityBase {
             if (livestreamUrl != null) {
                 // Checking that the user has access to a live session for today
                 if (videoScheduledItems.stream().map(VideoLifecycle::new).anyMatch(VideoLifecycle::isLiveToday)) {
-                    // Create the main video container with notification overlay
-                    StackPane livestreamContainer = new StackPane();
-                    VBox videoMediasVBox = new VBox(10);
-
-                    // Set up notification container at the top
-                    notificationContainer.setAlignment(Pos.BOTTOM_CENTER);
-                    notificationContainer.setPadding(new Insets(10, 20, 70, 20));
-                    notificationContainer.setMouseTransparent(true); // Allow clicks to pass through empty areas
+                    Player videoPlayer = AllPlayers.createAllVideoPlayer();
                     StackPane.setAlignment(notificationContainer, Pos.BOTTOM_CENTER);
+                    videoPlayer.getOverlayChildren().add(notificationContainer);
+                    //child2.setOnMouseClicked(e -> System.out.println("Child 2 clicked"));
+                   createAutoHideFullscreenButton(videoPlayer);
 
-                    // Push-notification management: we turn the published field into a property
+
+                        // Push-notification management: we turn the published field into a property
                     ModalityMessaging.getFrontOfficeEntityMessaging().listenEntityChanges(event.getStore());
                     ObjectProperty<one.modality.base.shared.entities.Label> liveMessageLabelProperty = EntityBindings.getForeignEntityProperty(event, Event.livestreamMessageLabel);
 
                     // Consumer that gets called when address fields change
                     Consumer<one.modality.base.shared.entities.Label> onLabelChange = (labelEntity) -> Platform.runLater(() -> {
-                       // System.out.println("Label changed: " + labelEntity.getEn() + ", " + labelEntity.getFr());
                         I18nEntities.bindExpressionProperties(livestreamMessageLabel, labelEntity, "i18n(this)");
-                        showNotification(livestreamMessageLabel, "critical", false);
+                        showNotification(livestreamMessageLabel);
                     });
                     if(unregisterable!=null) {
                         unregisterable.unregister();
@@ -636,27 +643,21 @@ final class VideoStreamingActivity extends ViewDomainActivityBase {
                     // Listen for livestream message changes and show notifications
                     FXProperties.runOnPropertyChange(() -> {
                         if(liveMessageLabelProperty.get()==null) {
-                            clearAllNotifications();
+                            hideNotification();
+                        }
+                        else {
+                            showNotification(livestreamMessageLabel);
                         }
                     }, liveMessageLabelProperty);
 
                     I18nEntities.bindExpressionProperties(livestreamMessageLabel, liveMessageLabelProperty, "i18n(this)");
                     livestreamMessageLabel.setTextAlignment(TextAlignment.CENTER);
                     if(liveMessageLabelProperty.get()!=null) {
-                        showNotification(livestreamMessageLabel, "critical", false);
+                        showNotification(livestreamMessageLabel);
                     }
 
                     // Create video view
-                    Node videoView = createVideoView(livestreamUrl, null, autoPlay);
-                    videoMediasVBox.getChildren().add(videoView);
-                    Layouts.setMinMaxHeightToPref(videoMediasVBox);
-
-                    // Assemble the container
-                    livestreamContainer.getChildren().addAll(videoMediasVBox, notificationContainer);
-                    videoContent = livestreamContainer;
-
-                    // Example: Show different types of notifications based on livestream status
-                    // You can trigger these based on your livestream monitoring logic
+                    videoContent = createVideoView(livestreamUrl, null, autoPlay,videoPlayer);
                 }
 
             }
@@ -677,9 +678,9 @@ final class VideoStreamingActivity extends ViewDomainActivityBase {
                 Controls.setupTextWrapping(commentUILabel, true, false);
                 videoVBox.getChildren().add(commentUILabel);
             }
-
+            Player videoPlayer = AllPlayers.createAllVideoPlayer();
             for (Media media : watchMedias) {
-                Node videoView = createVideoView(media.getUrl(), media, autoPlay);
+                Node videoView = createVideoView(media.getUrl(), media, autoPlay,videoPlayer);
                 videoMediasVBox.getChildren().add(videoView);
                 // we autoplay only the first video
                 autoPlay = false;
@@ -697,8 +698,7 @@ final class VideoStreamingActivity extends ViewDomainActivityBase {
         decoratedLivestreamCollapsePane.setVisible(videoContent != null);
     }
 
-    private Node createVideoView(String url, Media media, boolean autoPlay) {
-        Player videoPlayer = AllPlayers.createAllVideoPlayer();
+    private Node createVideoView(String url, Media media, boolean autoPlay, Player videoPlayer) {
         videoPlayer.setMedia(videoPlayer.acceptMedia(url));
         // Aspect ratio should be read from metadata but hardcoded for now
         double aspectRatio = 16d / 9d;
@@ -717,35 +717,94 @@ final class VideoStreamingActivity extends ViewDomainActivityBase {
         videoConsumptionRecorders.add(videoConsumptionRecorder);
         if (autoPlay)
             videoConsumptionRecorder.start();
+
+
         // We embed the video player in a 16/9 aspect ratio pane, so its vertical size is immediately known, which is
         // important for the correct computation of the auto-scroll position.
         return new AspectRatioPane(aspectRatio, videoPlayer.getMediaView());
     }
 
-    // Add this method to create notification bars
-    // Complete notification system with CSS-like animations
-    private Node createNotificationBar(Label messageLabel, String type, boolean autoHide) {
-        HBox notificationBar = new HBox(12);
-        notificationBar.setAlignment(Pos.CENTER_LEFT);
-        notificationBar.setPadding(new Insets(12, 16, 12, 16));
-        notificationBar.setMaxWidth(Double.MAX_VALUE);
+    // New method to create fullscreen button with auto-hide functionality
+    private void createAutoHideFullscreenButton(Player videoPlayer) {
+        Pane fullScreenContainer = MediaButtons.createFullscreenButton();
+        fullScreenContainer.setMaxSize(60, 60);
+        fullScreenContainer.setCursor(Cursor.HAND);
+        fullScreenContainer.setPadding(new Insets(10, 10, 0, 0));
+        StackPane.setAlignment(fullScreenContainer, Pos.TOP_RIGHT);
 
-        // Set initial state for animation
-        notificationBar.setTranslateY(-50);
-        notificationBar.setOpacity(0);
+        fullScreenContainer.setOnMouseClicked(e -> {
+            if (videoPlayer.isFullscreen())
+                videoPlayer.cancelFullscreen();
+            else
+                videoPlayer.requestFullscreen();
+        });
 
-        // Set style based on type
-        switch (type.toLowerCase()) {
+            // Add fullscreen button to video player overlay
+            videoPlayer.getOverlayChildren().add(fullScreenContainer);
+
+            // Initialize timeline for hiding the button
+            Timeline hideFullscreenButtonTimeline = new Timeline(
+                new KeyFrame(INACTIVITY_DURATION, e -> hideFullscreenButton(fullScreenContainer))
+            );
+            hideFullscreenButtonTimeline.play();
+            // Get the media view to attach mouse/keyboard listeners
+            Node mediaView = videoPlayer.getMediaView();
+            mediaView.addEventFilter(MouseEvent.ANY, e -> {
+            showFullscreenButton(fullScreenContainer);
+            resetHideTimer(hideFullscreenButtonTimeline);
+        });
+
+            // Make sure the media view can receive focus for keyboard events
+            mediaView.setFocusTraversable(true);
+
+            // Start the initial timer
+            resetHideTimer(hideFullscreenButtonTimeline);
+
+    }
+
+    // Method to show the fullscreen button with fade-in animation
+    private void showFullscreenButton(Pane fullScreenContainer) {
+        if (fullScreenContainer.getOpacity() < 1.0) {
+            Timeline fadeIn = new Timeline(
+                new KeyFrame(Duration.ZERO, new KeyValue(fullScreenContainer.opacityProperty(), fullScreenContainer.getOpacity())),
+                new KeyFrame(Duration.millis(200), new KeyValue(fullScreenContainer.opacityProperty(), 1.0, Interpolator.EASE_OUT))
+            );
+            fadeIn.play();
+        }
+    }
+
+    // Method to hide the fullscreen button with fade-out animation
+    private void hideFullscreenButton(Pane fullScreenContainer) {
+        Timeline fadeOut = new Timeline(
+            new KeyFrame(Duration.ZERO, new KeyValue(fullScreenContainer.opacityProperty(), 1.0)),
+            new KeyFrame(Duration.millis(300), new KeyValue(fullScreenContainer.opacityProperty(), 0.0, Interpolator.EASE_IN))
+        );
+        fadeOut.play();
+    }
+
+    // Method to reset the hide timer
+    private void resetHideTimer(Timeline hideFullscreenButtonTimeline) {
+        if (hideFullscreenButtonTimeline != null) {
+            hideFullscreenButtonTimeline.stop();
+            hideFullscreenButtonTimeline.play();
+        }
+    }
+
+
+    // Method to show notification
+    private void showNotification(Label messageLabel) {
+
+        switch ("critical".toLowerCase()) {
             case "error":
             case "critical":
-                notificationBar.getStyleClass().addAll("notification-bar", "notification-error");
+                notificationContainer.getStyleClass().setAll("notification-bar", "notification-error");
                 break;
             case "warning":
-                notificationBar.getStyleClass().addAll("notification-bar", "notification-warning");
+                notificationContainer.getStyleClass().setAll("notification-bar", "notification-warning");
                 break;
             case "info":
             default:
-                notificationBar.getStyleClass().addAll("notification-bar", "notification-info");
+                notificationContainer.getStyleClass().setAll("notification-bar", "notification-info");
                 break;
         }
 
@@ -762,69 +821,35 @@ final class VideoStreamingActivity extends ViewDomainActivityBase {
         // Close button
         Button closeButton = new Button("✕");
         closeButton.getStyleClass().add("notification-close");
-        closeButton.setOnAction(e -> hideNotification(notificationBar));
+        closeButton.setOnAction(e -> hideNotification());
 
-        notificationBar.getChildren().addAll(iconLabel, messageLabel, closeButton);
+        notificationContainer.getChildren().setAll(iconLabel, messageLabel, closeButton);
 
         // CSS-like slide-in animation using Timeline for smooth transition
         Timeline slideIn = new Timeline(
             new KeyFrame(Duration.ZERO,
-                new KeyValue(notificationBar.translateYProperty(), -50),
-                new KeyValue(notificationBar.opacityProperty(), 0)
+                new KeyValue(notificationContainer.opacityProperty(), 0)
             ),
             new KeyFrame(Duration.millis(300),
-                new KeyValue(notificationBar.translateYProperty(), 0, Interpolator.EASE_OUT),
-                new KeyValue(notificationBar.opacityProperty(), 1, Interpolator.EASE_OUT)
+                new KeyValue(notificationContainer.opacityProperty(), 1, Interpolator.EASE_OUT)
             )
         );
         slideIn.play();
-
-        // Auto-hide after delay if requested
-        if (autoHide) {
-            Timeline autoHideTimeline = new Timeline(new KeyFrame(Duration.seconds(8), e -> hideNotification(notificationBar)));
-            autoHideTimeline.play();
-        }
-
-        return notificationBar;
-    }
-
-    // Method to show notification
-    private void showNotification(Label messageLabel, String type, boolean autoHide) {
-        if(!isNotificationDisplayed) {
-            Node notification = createNotificationBar(messageLabel, type, autoHide);
-            activeNotifications.add(notification);
-            Platform.runLater(() -> {
-                notificationContainer.getChildren().add(0, notification); // Add to top
-            });
-            isNotificationDisplayed = true;
-        }
+        notificationContainer.setVisible(true);
     }
 
     // Method to hide notification with CSS-like animation
-    private void hideNotification(Node notification) {
+    private void hideNotification() {
         Timeline slideOut = new Timeline(
             new KeyFrame(Duration.ZERO,
-                new KeyValue(notification.translateYProperty(), 0),
-                new KeyValue(notification.opacityProperty(), 1)
+                new KeyValue(notificationContainer.opacityProperty(), 1)
             ),
             new KeyFrame(Duration.millis(250),
-                new KeyValue(notification.translateYProperty(), -notification.getBoundsInLocal().getHeight() - 10, Interpolator.EASE_IN),
-                new KeyValue(notification.opacityProperty(), 0, Interpolator.EASE_IN)
+                new KeyValue(notificationContainer.opacityProperty(), 0, Interpolator.EASE_IN)
             )
         );
-
-        slideOut.setOnFinished(e -> {
-            notificationContainer.getChildren().remove(notification);
-            activeNotifications.remove(notification);
-            isNotificationDisplayed = false;
-        });
-
+        slideOut.setOnFinished(e -> notificationContainer.setVisible(false));
         slideOut.play();
-    }
-
-    // Method to clear all notifications
-    private void clearAllNotifications() {
-        activeNotifications.forEach(this::hideNotification);
     }
 
 }

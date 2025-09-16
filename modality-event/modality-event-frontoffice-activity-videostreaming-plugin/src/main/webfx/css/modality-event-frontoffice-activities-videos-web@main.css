@@ -119,37 +119,31 @@
     border-radius: 8px !important;
 }
 
-/* Warning notifications */
-.notification-warning > fx-background {
-    background: linear-gradient(to bottom, var(--notification-bg-primary), var(--notification-bg-secondary)) !important;
-    border-radius: 8px !important;
-}
 
-.notification-warning > fx-border {
-    border: 1px solid var(--notification-border-color) !important;
-    border-radius: 8px !important;
-}
+    /* Text container setup for scrolling */
+    .notification-error fx-label.notification-text {
+        display: flex !important;
+        align-items: center !important;
+        justify-content: flex-start !important;
+        overflow: hidden !important;
+        position: relative !important;
+    }
 
-/* Info notifications */
-.notification-info > fx-background {
-    background: linear-gradient(to bottom, var(--notification-bg-primary), var(--notification-bg-secondary)) !important;
-    border-radius: 8px !important;
-}
+    /* Text with scrolling animation - always animate on desktop */
+    .notification-error fx-label.notification-text fx-text {
+        font-size: clamp(20px, 1.5vw, 40px) !important;
+        line-height: 1.2em !important;
+        color: var(--notification-text-color) !important;
+        font-weight: 500 !important;
+        font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif !important;
+        text-shadow: none !important;
+        white-space: nowrap !important;
+        display: inline-block !important;
+        text-align: left !important;
+        animation: scroll-text 15s linear infinite !important;
+        will-change: transform !important;
+    }
 
-.notification-info > fx-border {
-    border: 1px solid var(--notification-border-color) !important;
-    border-radius: 8px !important;
-}
-
-/* Style the notification text - target the fx-text element directly */
-.notification-error fx-label.notification-text fx-text {
-    color: var(--notification-text-color) !important;
-    font-size: 20px !important;
-    font-weight: 500 !important;
-    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif !important;
-    text-shadow: none !important;
-    line-height: 1.4 !important;
-}
 
 /* Style the notification icon */
 .notification-error fx-label.notification-icon {
@@ -165,20 +159,12 @@
     text-align: center !important;
 }
 
-
-/* Common icon container styling for all notification types */
-.notification-error fx-label.notification-icon{
-    display: flex !important;
-    align-items: center !important;
-    justify-content: center !important;
-}
-
-
 /* Style the close button */
 .notification-bar fx-button.notification-close {
     cursor: pointer !important;
     transition: all 0.2s ease !important;
 }
+
 
 .notification-bar fx-button.notification-close > fx-background {
     background: transparent !important;
@@ -201,36 +187,8 @@
     color: var(--notification-close-hover-color) !important;
 }
 
-/* Mobile: scrolling notification text only */
-@media only screen and (max-width: 768px) {
-    /* Add flex properties to the main container */
-    .notification-bar {
-        display: flex !important;
-        align-items: center !important;
-    }
 
-    /* Outer container = only the notification text, not the close button */
-    .notification-bar fx-label.notification-text {
-        display: block !important;
-        overflow: hidden !important;
-        /* Replace width with flex: 1 */
-        flex: 1 !important; /* This tells the container to take up all available space */
-        white-space: nowrap !important;
-        position: relative !important;
-        box-sizing: border-box !important;
-    }
-
-    /* Inner text = scroll across the container */
-    .notification-bar fx-label.notification-text fx-text {
-        display: inline-block !important;
-        white-space: nowrap !important;
-        will-change: transform !important;
-        animation: scroll-text 12s linear infinite !important;
-        font-size: 30px !important;
-    }
-}
-
-/* Animation remains the same */
+/* Desktop scroll animation - starts before close button */
 @keyframes scroll-text {
     0% {
         transform: translateX(100%);
@@ -239,3 +197,4 @@
         transform: translateX(-100%);
     }
 }
+
