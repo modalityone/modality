@@ -100,7 +100,6 @@
     --notification-close-hover-bg: rgba(255, 214, 0, 0.2);
     --notification-close-hover-color: #FFD600;
 }
-
 .notification-bar {
     border-radius: 8px !important;
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.08) !important;
@@ -119,31 +118,29 @@
     border-radius: 8px !important;
 }
 
+/* Text container setup for scrolling */
+.notification-error fx-label.notification-text {
+    display: flex !important;
+    align-items: center !important;
+    justify-content: flex-start !important;
+    overflow: hidden !important;
+    position: relative !important;
+}
 
-    /* Text container setup for scrolling */
-    .notification-error fx-label.notification-text {
-        display: flex !important;
-        align-items: center !important;
-        justify-content: flex-start !important;
-        overflow: hidden !important;
-        position: relative !important;
-    }
-
-    /* Text with scrolling animation - always animate on desktop */
-    .notification-error fx-label.notification-text fx-text {
-        font-size: clamp(20px, 1.5vw, 40px) !important;
-        line-height: 1.2em !important;
-        color: var(--notification-text-color) !important;
-        font-weight: 500 !important;
-        font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif !important;
-        text-shadow: none !important;
-        white-space: nowrap !important;
-        display: inline-block !important;
-        text-align: left !important;
-        animation: scroll-text 15s linear infinite !important;
-        will-change: transform !important;
-    }
-
+/* Text with scrolling animation */
+.notification-error fx-label.notification-text fx-text {
+    font-size: clamp(20px, 1.5vw, 40px) !important;
+    line-height: 1.2em !important;
+    color: var(--notification-text-color) !important;
+    font-weight: 500 !important;
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif !important;
+    text-shadow: none !important;
+    white-space: nowrap !important;
+    width: max-content !important;
+    text-align: left !important;
+    animation: scroll-text 20s linear infinite !important;
+    will-change: transform !important;
+}
 
 /* Style the notification icon */
 .notification-error fx-label.notification-icon {
@@ -164,7 +161,6 @@
     cursor: pointer !important;
     transition: all 0.2s ease !important;
 }
-
 
 .notification-bar fx-button.notification-close > fx-background {
     background: transparent !important;
@@ -187,7 +183,6 @@
     color: var(--notification-close-hover-color) !important;
 }
 
-
 /* Desktop scroll animation - starts before close button */
 @keyframes scroll-text {
     0% {
@@ -197,4 +192,3 @@
         transform: translateX(-100%);
     }
 }
-
