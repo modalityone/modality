@@ -25,11 +25,11 @@ public interface HasI18nFields {
 
     String getPt();
 
-    void setZh(String value);
+    void setZhs(String value);
 
-    String getZh();
+    String getZhs();
 
-    void setYue(String value);
+    void setZht(String value);
 
     String getYue();
 

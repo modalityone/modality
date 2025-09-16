@@ -65,8 +65,8 @@ public class LabelTextField {
         one.modality.base.shared.entities.Label.es,
         one.modality.base.shared.entities.Label.de,
         one.modality.base.shared.entities.Label.pt,
-        one.modality.base.shared.entities.Label.zh,
-        one.modality.base.shared.entities.Label.yue,
+        one.modality.base.shared.entities.Label.zhs,
+        one.modality.base.shared.entities.Label.zht,
  //       one.modality.base.shared.entities.Label.it,
         one.modality.base.shared.entities.Label.el,
         one.modality.base.shared.entities.Label.vi
@@ -82,8 +82,8 @@ public class LabelTextField {
         LANGUAGE_CODE_MAP.put(one.modality.base.shared.entities.Label.es, "es");
         LANGUAGE_CODE_MAP.put(one.modality.base.shared.entities.Label.de, "de");
         LANGUAGE_CODE_MAP.put(one.modality.base.shared.entities.Label.pt, "pt");
-        LANGUAGE_CODE_MAP.put(one.modality.base.shared.entities.Label.zh, "zh");
-        LANGUAGE_CODE_MAP.put(one.modality.base.shared.entities.Label.yue, "zh-yue");
+        LANGUAGE_CODE_MAP.put(one.modality.base.shared.entities.Label.zhs, "zhs");
+        LANGUAGE_CODE_MAP.put(one.modality.base.shared.entities.Label.zht, "zht");
         LANGUAGE_CODE_MAP.put(one.modality.base.shared.entities.Label.it, "it");
         LANGUAGE_CODE_MAP.put(one.modality.base.shared.entities.Label.el, "el");
         LANGUAGE_CODE_MAP.put(one.modality.base.shared.entities.Label.vi, "vi");
@@ -384,8 +384,8 @@ public class LabelTextField {
             case one.modality.base.shared.entities.Label.es -> I18n.getI18nText(BaseI18nKeys.SpanishWithFlag);
             case one.modality.base.shared.entities.Label.de -> I18n.getI18nText(BaseI18nKeys.GermanWithFlag);
             case one.modality.base.shared.entities.Label.pt -> I18n.getI18nText(BaseI18nKeys.PortugueseWithFlag);
-            case one.modality.base.shared.entities.Label.zh -> I18n.getI18nText(BaseI18nKeys.MandarinWithFlag);
-            case one.modality.base.shared.entities.Label.yue -> I18n.getI18nText(BaseI18nKeys.CantoneseWithFlag);
+            case one.modality.base.shared.entities.Label.zhs -> I18n.getI18nText(BaseI18nKeys.MandarinWithFlag);
+            case one.modality.base.shared.entities.Label.zht -> I18n.getI18nText(BaseI18nKeys.CantoneseWithFlag);
             case one.modality.base.shared.entities.Label.vi -> I18n.getI18nText(BaseI18nKeys.VietnameseWithFlag);
             case one.modality.base.shared.entities.Label.it -> I18n.getI18nText(BaseI18nKeys.ItalianWithFlag);
             case one.modality.base.shared.entities.Label.el -> I18n.getI18nText(BaseI18nKeys.GreekWithFlag);
