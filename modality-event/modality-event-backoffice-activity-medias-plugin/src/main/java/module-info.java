@@ -34,7 +34,6 @@ module modality.event.backoffice.activity.medias.plugin {
     requires webfx.extras.util.masterslave;
     requires webfx.extras.validation;
     requires webfx.extras.visual.grid;
-    requires webfx.extras.webtext;
     requires webfx.kit.util;
     requires webfx.platform.console;
     requires webfx.platform.util;
