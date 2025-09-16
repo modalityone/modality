@@ -4,10 +4,8 @@ import dev.webfx.extras.i18n.I18n;
 import dev.webfx.extras.i18n.controls.I18nControls;
 import dev.webfx.extras.panes.MonoPane;
 import dev.webfx.extras.styles.bootstrap.Bootstrap;
-import dev.webfx.extras.switches.Switch;
 import dev.webfx.extras.theme.text.TextTheme;
 import dev.webfx.extras.util.control.Controls;
-import dev.webfx.extras.webtext.HtmlTextEditor;
 import dev.webfx.kit.util.properties.FXProperties;
 import dev.webfx.platform.console.Console;
 import dev.webfx.stack.orm.entity.EntityStore;
@@ -24,7 +22,6 @@ import javafx.geometry.Pos;
 import javafx.scene.Node;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
-import javafx.scene.control.TextField;
 import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
 import javafx.util.Duration;
@@ -86,8 +83,7 @@ final class LiveStreamingTabView {
             EntityChanges entityChanges = updateStore.getEntityChanges();
             EntityChangesBuilder changesForFrontOfficeBuilder = EntityChangesBuilder.create()
                 .addFilteredEntityChanges(entityChanges, Event.class, Event.livestreamMessageLabel)
-                .addFilteredEntityChanges(entityChanges, one.modality.base.shared.entities.Label.class, "en", "fr", "de", "pt", "es")
-                ;
+                .addFilteredEntityChanges(entityChanges, one.modality.base.shared.entities.Label.class, "en", "fr", "de", "pt", "es");
             updateStore.submitChanges()
                 .onFailure(Console::log)
                 .inUiThread()
@@ -138,33 +134,6 @@ final class LiveStreamingTabView {
         )));
 
         mainVBox.getChildren().add(liveMessageContainer);
-
-        HtmlTextEditor explanationHTMLEditor = new HtmlTextEditor();
-        explanationHTMLEditor.setMode(HtmlTextEditor.Mode.STANDARD);
-        explanationHTMLEditor.setPrefHeight(450);
-        Label explanationLabel = I18nControls.newLabel(MediasI18nKeys.ExplanationText);
-        // HBox explanationHBox = new HBox(explanationLabel,explanationHTMLEditor);
-        mainVBox.getChildren().addAll(new HBox(explanationLabel),explanationHTMLEditor);
-
-        Label areWeUsingIndividualLinksForEachSessionLabel = I18nControls.newLabel(MediasI18nKeys.AreWeUsingIndividualLinksForEachSession);
-        Switch areWeUsingIndividualLinksForEachSessionSwitch = new Switch();
-
-        HBox individualLinksHBox = new HBox();
-        individualLinksHBox.setSpacing(10);
-        individualLinksHBox.getChildren().addAll(areWeUsingIndividualLinksForEachSessionLabel,areWeUsingIndividualLinksForEachSessionSwitch);
-        mainVBox.getChildren().add(individualLinksHBox);
-
-        HBox globalLinkLine = new HBox();
-        globalLinkLine.setAlignment(Pos.CENTER_LEFT);
-        Label liveStreamGlobalLink = I18nControls.newLabel(MediasI18nKeys.LiveStreamGlobalLink);
-        liveStreamGlobalLink.setPadding(new Insets(0,10,0,0));
-        // liveStreamGlobalLink.setMinWidth(labelMinWith);
-        globalLinkLine.getChildren().add(liveStreamGlobalLink);
-        TextField globalLinkTextField = new TextField();
-        globalLinkTextField.setMinWidth(600);
-        globalLinkLine.getChildren().add(globalLinkTextField);
-
-        mainVBox.getChildren().addAll(globalLinkLine);
 
         mainFrame.setCenter(mainVBox);
         BorderPane.setAlignment(mainVBox,Pos.CENTER);
