@@ -4,15 +4,10 @@ import dev.webfx.extras.i18n.I18n;
 import dev.webfx.extras.i18n.controls.I18nControls;
 import dev.webfx.extras.styles.bootstrap.Bootstrap;
 import dev.webfx.kit.util.properties.FXProperties;
-import dev.webfx.platform.ast.AST;
-import dev.webfx.platform.ast.ReadOnlyAstArray;
-import dev.webfx.platform.ast.ReadOnlyAstObject;
 import dev.webfx.platform.async.Future;
-import dev.webfx.platform.async.Promise;
-import dev.webfx.platform.conf.SourcesConfig;
 import dev.webfx.platform.console.Console;
-import dev.webfx.platform.fetch.json.JsonFetch;
 import dev.webfx.platform.scheduler.Scheduler;
+import dev.webfx.stack.cloud.deepl.client.ClientDeeplService;
 import dev.webfx.stack.orm.entity.Entity;
 import dev.webfx.stack.orm.entity.UpdateStore;
 import javafx.animation.FadeTransition;
@@ -29,8 +24,6 @@ import javafx.scene.layout.Priority;
 import javafx.scene.layout.VBox;
 import javafx.util.Duration;
 
-import java.net.URLEncoder;
-import java.nio.charset.StandardCharsets;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
@@ -243,7 +236,6 @@ public class LabelTextField {
         autoTranslateButton.setText("🔄 Translating...");
 
         Runnable translationRunnable = () -> {
-            boolean hasErrors = false;
 
             for (String lang : LANGUAGES) {
                 if (!lang.equals(one.modality.base.shared.entities.Label.en)) {
@@ -262,12 +254,10 @@ public class LabelTextField {
                                         }
                                     });
                                 }
-                            }).onFailure(error -> {
-                                Platform.runLater(() -> {
-                                    String languageLabel = getLanguageLabel(lang);
-                                    showTranslationError("Failed to translate to " + languageLabel + ": " + error.getMessage());
-                                });
-                            });
+                            }).onFailure(error -> Platform.runLater(() -> {
+                                String languageLabel = getLanguageLabel(lang);
+                                showTranslationError("Failed to translate to " + languageLabel + ": " + error.getMessage());
+                            }));
                         }
                     }
                 }
@@ -315,67 +305,11 @@ public class LabelTextField {
 
 
     private Future<String> translateWithDeepL(String text, String targetLang) {
-        if("zh-yue".equals(targetLang)) targetLang = "ZH-HANT";
-        Promise<String> promise = Promise.promise();
-
-        String deeplTranslateAPIKey = SourcesConfig.getSourcesRootConfig()
-            .childConfigAt("modality.base.client.i18n")
-            .getString("deeplTranslatedApiKey");
-
-        if (deeplTranslateAPIKey == null || deeplTranslateAPIKey.trim().isEmpty()) {
-            promise.fail("DeepL API key not configured");
-            return promise.future();
-        }
-
-        String params = "auth_key=" + URLEncoder.encode(deeplTranslateAPIKey, StandardCharsets.UTF_8)
-            + "&text=" + URLEncoder.encode(text, StandardCharsets.UTF_8)
-            + "&source_lang=" + "en".toUpperCase()
-            + "&target_lang=" + targetLang.toUpperCase();
-
-        try {
-            String apiUrl = "https://api-free.deepl.com/v2/translate?" + params;
-
-            JsonFetch.fetchJsonObject(apiUrl)
-                .onFailure(error -> {
-                    Console.log("DeepL translation error", error);
-                    String errorMessage = "Translation service unavailable.";
-                    if (error.getMessage() != null) {
-                        if (error.getMessage().contains("403")) {
-                            errorMessage = "Invalid API key or quota exceeded";
-                        } else if (error.getMessage().contains("429")) {
-                            errorMessage = "Too many requests. Please wait and try again.";
-                        } else if (error.getMessage().contains("network") || error.getMessage().contains("timeout")) {
-                            errorMessage = "Network error. Please check your connection.";
-                        }
-                    }
-                    promise.fail(errorMessage);
-                })
-                .onSuccess(response -> {
-                    try {
-                        ReadOnlyAstObject o = AST.parseObject(response.toString(), "json");
-                        ReadOnlyAstArray translated = o.getArray("translations");
-                        if (translated != null && translated.size() > 0) {
-                            String translation = translated.getObject(0).get("text");
-                            promise.complete(translation);
-                        } else {
-                            promise.fail("No translation received from service. Please check DEEPL_TRANSLATE_API_KEY variable (currently:" + deeplTranslateAPIKey+")");
-                        }
-                    } catch (Exception e) {
-                        Console.log("Error parsing DeepL response JSON", e);
-                        promise.fail("Invalid response from translation service");
-                    }
-                });
-        } catch (Exception e) {
-            Console.log("Error constructing DeepL request", e);
-            promise.fail("Failed to create translation request");
-        }
-
-        return promise.future();
+        if("zht".equals(targetLang)) targetLang = "ZH-HANT";
+        if("zhs".equals(targetLang)) targetLang = "ZH-HANS";
+       return ClientDeeplService.translate(text,"en",targetLang);
     }
 
-    private void displayErrorMessageWhenTranslating(String deeplTranslateAPIKey) {
-
-    }
 
     private String getLanguageLabel(String code) {
         return switch (code) {
@@ -495,8 +429,8 @@ public class LabelTextField {
 
     private void moveMainFieldBack() {
         // Remove from index 1 (after auto-translate button)
-        if (translationPane.getChildren().size() > 1) {
-            translationPane.getChildren().remove(1);
+        if (translationPane.getChildren().size() > 2) {
+            translationPane.getChildren().remove(2);
         }
         mainTextField.setPrefWidth(-1);
         mainTextField.setMinWidth(-1);
@@ -520,38 +454,8 @@ public class LabelTextField {
     }
 
     private Future<Integer> getDeepLAvailableCharacters() {
-        Promise<Integer> promise = Promise.promise();
+        return ClientDeeplService.usage();
 
-        String deeplTranslateAPIKey = SourcesConfig.getSourcesRootConfig()
-            .childConfigAt("modality.base.client.i18n")
-            .getString("deeplTranslatedApiKey");
-
-
-        try {
-            String url = "https://api-free.deepl.com/v2/usage?auth_key=" + URLEncoder.encode(deeplTranslateAPIKey, StandardCharsets.UTF_8);
-
-            JsonFetch.fetchJsonObject(url)
-                .onFailure(error -> {
-                    Console.log("Error fetching DeepL usage", error);
-                    promise.fail("Error fetching DeepL usage" + error); // complete with error value
-                })
-                .onSuccess(response -> {
-                    try {
-                        ReadOnlyAstObject o = AST.parseObject(response.toString(), "json");
-                        int characterLimit = o.getInteger("character_limit");
-                        int characterCount = o.getInteger("character_count");
-                        promise.complete(characterLimit - characterCount);
-                    } catch (Exception e) {
-                        Console.log("Error parsing DeepL usage JSON", e);
-                        promise.fail("Error parsing DeepL usage JSON: " +e);
-                    }
-                });
-        } catch (Exception e) {
-            Console.log("Error constructing DeepL usage request", e);
-            promise.fail("Error constructing DeepL usage request");
-        }
-
-        return promise.future();
     }
 
     public void reloadOnNewEntity(Entity newEntity) {

@@ -21,9 +21,9 @@ module modality.base.client.i18n {
     requires webfx.platform.async;
     requires webfx.platform.conf;
     requires webfx.platform.console;
-    requires webfx.platform.fetch.ast.json;
     requires webfx.platform.scheduler;
     requires webfx.platform.util;
+    requires webfx.stack.cloud.deepl.client;
     requires webfx.stack.orm.entity;
 
     // Exported packages
