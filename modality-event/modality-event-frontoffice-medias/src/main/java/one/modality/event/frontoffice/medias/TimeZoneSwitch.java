@@ -56,7 +56,7 @@ public final class TimeZoneSwitch {
     public Node createTimezoneSwitchBox() {
         Switch timezoneSwitch = new Switch();
         timezoneSwitch.selectedProperty().bindBidirectional(eventLocalTimeSelectedProperty);
-        HBox hBox = new HBox(10, I18n.newText(MediasI18nKeys.TimeZoneUK), timezoneSwitch);
+        HBox hBox = new HBox(10, I18n.newText(MediasI18nKeys.TimeZoneTime1, eventZoneIdProperty), timezoneSwitch);
         hBox.setAlignment(Pos.CENTER);
         Layouts.bindManagedAndVisiblePropertiesTo(eventAndUserTimeZonesHaveSameTimeProperty.not(), hBox);
         return hBox;
