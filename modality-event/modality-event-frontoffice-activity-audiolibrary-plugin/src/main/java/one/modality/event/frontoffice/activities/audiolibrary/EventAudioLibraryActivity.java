@@ -224,7 +224,7 @@ final class EventAudioLibraryActivity extends ViewDomainActivityBase {
                 pageContainer.setContent(loadedContentVBox);
 
                 LocalDateTime audioExpirationDate = event.getAudioExpirationDate();
-                LocalDateTime nowInEventTimezone = Event.nowInEventTimezone();
+                LocalDateTime nowInEventTimezone = event.nowInEventTimezone();
                 Object noContentI18nKey = null;
                 if (audioExpirationDate == null || audioExpirationDate.isAfter(nowInEventTimezone)) {
                     // Does this event have audio recordings, and did the person book and pay for them?

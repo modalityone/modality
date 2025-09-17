@@ -101,6 +101,12 @@
 
         <dependency>
             <groupId>one.modality</groupId>
+            <artifactId>modality-event-client-mediaview</artifactId>
+            <version>1.0.0-SNAPSHOT</version>
+        </dependency>
+
+        <dependency>
+            <groupId>one.modality</groupId>
             <artifactId>modality-event-frontoffice-eventheader</artifactId>
             <version>1.0.0-SNAPSHOT</version>
         </dependency>
@@ -321,12 +327,6 @@
             <groupId>dev.webfx</groupId>
             <artifactId>webfx-stack-routing-uirouter</artifactId>
             <version>0.1.0-SNAPSHOT</version>
-        </dependency>
-        <dependency>
-            <groupId>one.modality</groupId>
-            <artifactId>modality-event-client-mediaview</artifactId>
-            <version>1.0.0-SNAPSHOT</version>
-            <scope>compile</scope>
         </dependency>
 
     </dependencies>

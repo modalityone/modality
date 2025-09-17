@@ -96,7 +96,7 @@ public final class EventThumbnail {
 
         Label availabilityLabel = new Label();
         if (isPublished) {
-            LocalDateTime nowInEventTimezone = Event.nowInEventTimezone();
+            LocalDateTime nowInEventTimezone = event.nowInEventTimezone();
             if (itemType == ItemType.ITEM_TYPE_VIDEO) {
                 //If the vodExpirationDate is set to null, it means the event is livestream Only
                 LocalDateTime vodExpirationDate = event.getVodExpirationDate();

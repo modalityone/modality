@@ -17,6 +17,7 @@ module modality.event.frontoffice.activity.videostreaming.plugin {
     requires modality.crm.frontoffice.help;
     requires modality.crm.shared.authn;
     requires modality.event.client.i18n;
+    requires modality.event.client.mediaview;
     requires modality.event.frontoffice.eventheader;
     requires modality.event.frontoffice.medias;
     requires webfx.extras.aria;
@@ -53,7 +54,6 @@ module modality.event.frontoffice.activity.videostreaming.plugin {
     requires webfx.stack.orm.reactive.visual;
     requires webfx.stack.routing.router.client;
     requires webfx.stack.routing.uirouter;
-    requires modality.event.client.mediaview;
 
     // Exported packages
     exports one.modality.event.frontoffice.activities.videostreaming;

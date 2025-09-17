@@ -37,6 +37,7 @@ public final class MediaEventHeader extends AbstractEventHeader {
 
     private final MonoPane responsiveHeader = new MonoPane();
     private final Label expirationLabel = Bootstrap.strong(new Label()); // TODO: put bold in CSS
+    private final TimeZoneSwitch timeZoneSwitch = TimeZoneSwitch.getGlobal(); // new TimeZoneSwitch();
 
     public MediaEventHeader(boolean video) {
         MonoPane eventImageContainer = new MonoPane();
@@ -85,14 +86,15 @@ public final class MediaEventHeader extends AbstractEventHeader {
                 expirationLabel.setVisible(false);
             } else {
                 expirationLabel.setVisible(true);
-                LocalDateTime nowInEventTimezone = Event.nowInEventTimezone();
+                timeZoneSwitch.setEventZoneId(event.getEventZoneId());
+                LocalDateTime nowInEventTimezone = event.nowInEventTimezone();
                 boolean available = nowInEventTimezone.isBefore(expirationDate);
                 FXProperties.runNowAndOnPropertyChange(eventTimeSelected -> {
-                    LocalDateTime userTimezoneExpirationDate = eventTimeSelected ? expirationDate : TimeZoneSwitch.convertEventLocalDateTimeToUserLocalDateTime(expirationDate);
+                    LocalDateTime userTimezoneExpirationDate = eventTimeSelected ? expirationDate : timeZoneSwitch.convertEventLocalDateTimeToUserLocalDateTime(expirationDate);
                     I18nControls.bindI18nProperties(expirationLabel,
                         available ? MediasI18nKeys.AvailableUntil1 : MediasI18nKeys.ExpiredSince1,
                         LocalizedTime.formatLocalDateTimeProperty(userTimezoneExpirationDate, FrontOfficeTimeFormats.MEDIA_EXPIRATION_DATE_TIME_FORMAT));
-                }, TimeZoneSwitch.eventLocalTimeSelectedProperty());
+                }, timeZoneSwitch.eventLocalTimeSelectedProperty());
             }
         }, eventProperty, languageProperty, I18n.languageProperty());
 

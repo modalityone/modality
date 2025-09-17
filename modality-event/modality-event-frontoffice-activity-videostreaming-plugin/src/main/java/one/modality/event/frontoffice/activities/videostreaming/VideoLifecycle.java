@@ -27,7 +27,7 @@ final class VideoLifecycle {
     private final LocalDateTime liveNowStart;
     private final LocalDateTime maxNormalProcessingEnd;
     private final LocalDateTime expirationDate;
-    private final LocalDateTime nowInEventTimezone = Event.nowInEventTimezone();
+    private final LocalDateTime nowInEventTimezone;
 
     VideoLifecycle(ScheduledItem videoScheduledItem) {
         this.videoScheduledItem = videoScheduledItem;
@@ -48,7 +48,9 @@ final class VideoLifecycle {
         // Stopping to show the livestream 30 min after the session
         showLivestreamEnd = sessionEnd.plusMinutes(30);
         maxNormalProcessingEnd = sessionEnd.plusMinutes(getVodProcessingTimeMinute(videoScheduledItem));
-        expirationDate = Objects.coalesce(videoScheduledItem.getExpirationDate(), videoScheduledItem.getEvent().getVodExpirationDate());
+        Event event = videoScheduledItem.getEvent();
+        expirationDate = Objects.coalesce(videoScheduledItem.getExpirationDate(), event.getVodExpirationDate());
+        nowInEventTimezone = event.nowInEventTimezone();
     }
 
     public ScheduledItem getVideoScheduledItem() {
@@ -108,7 +110,7 @@ final class VideoLifecycle {
     }
 
     boolean isNowBeforeExpirationDate() {
-        return expirationDate == null || Times.isFuture(expirationDate, Event.getEventClock());
+        return expirationDate == null || Times.isFuture(expirationDate, videoScheduledItem.getEvent().getEventClock());
     }
 
     boolean isLiveToday() {

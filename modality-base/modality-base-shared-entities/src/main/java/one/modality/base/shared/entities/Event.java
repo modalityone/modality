@@ -1,13 +1,14 @@
 package one.modality.base.shared.entities;
 
-import dev.webfx.platform.substitution.Substitutor;
 import dev.webfx.platform.util.Strings;
-import dev.webfx.platform.util.time.Times;
 import dev.webfx.stack.orm.entity.Entity;
 import dev.webfx.stack.orm.entity.EntityId;
 import one.modality.base.shared.entities.markers.*;
 
-import java.time.*;
+import java.time.Clock;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.ZoneId;
 
 /**
  * @author Bruno Salmon
@@ -47,6 +48,7 @@ public interface Event extends Entity,
     String repeatedEvent = "repeatedEvent";
     String repeatAudio = "repeatAudio";
     String repeatVideo = "repeatVideo";
+    String timezone = "timezone";
 
     default void setState(Object value) {
         setFieldValue(state, Strings.stringValue(value));
@@ -309,25 +311,23 @@ public interface Event extends Entity,
         return name == null ? null : name.toLowerCase().contains("online");
     }
 
-    ZoneId UK_ZONE_ID = ZoneId.of("Europe/London");
-    Clock UK_CLOCK = Clock.system(UK_ZONE_ID);
-    LocalDateTime APP_START_AT_EVENT_LOCAL_DATETIME = Times.toLocalDateTime(Substitutor.substitute("${{APP_START_AT_EVENT_LOCAL_DATETIME}}")); // Ex: 2025-06-11T23:58:50
-    Clock EVENT_CLOCK = APP_START_AT_EVENT_LOCAL_DATETIME == null ? UK_CLOCK : Clock.offset(UK_CLOCK, Duration.between(LocalDateTime.now(UK_CLOCK), APP_START_AT_EVENT_LOCAL_DATETIME));
-
-    // temporary static method (will be non-static once managed in the event)
-    static ZoneId getEventZoneId() {
-        return UK_ZONE_ID;
+    default void setTimezone(String value) {
+        setFieldValue(timezone, value);
     }
 
-    static Clock getEventClock() {
-        return EVENT_CLOCK;
+    default String getTimezone() {
+        return getStringFieldValue(timezone);
     }
 
-    static LocalDateTime nowInEventTimezone() {
-        return LocalDateTime.now(getEventClock());//.plus(DEBUG_LOCAL_DATETIME_DELTA);
+    ZoneId getEventZoneId(); // requires some logic => implemented in EventImpl
+
+    Clock getEventClock(); // requires some logic => implemented in EventImpl
+
+    default LocalDateTime nowInEventTimezone() {
+        return LocalDateTime.now(getEventClock());
     }
 
-    static LocalDate todayInEventTimezone() {
+    default LocalDate todayInEventTimezone() {
         return nowInEventTimezone().toLocalDate();
     }
 

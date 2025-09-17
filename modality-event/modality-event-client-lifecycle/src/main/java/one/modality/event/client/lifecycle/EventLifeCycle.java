@@ -19,14 +19,14 @@ import java.time.LocalDateTime;
 public final class EventLifeCycle {
 
     public static boolean isPastEvent(Event event) {
-        return Times.isPast(event.getEndDate(), Event.getEventClock());
+        return Times.isPast(event.getEndDate(), event.getEventClock());
     }
 
     public static boolean canBookNow(Event event) {
         if (isPastEvent(event))
             return false;
         LocalDateTime openingDate = event.getOpeningDate();
-        if (openingDate != null && Times.isFuture(openingDate.minusHours(1), Event.getEventClock()))
+        if (openingDate != null && Times.isFuture(openingDate.minusHours(1), event.getEventClock()))
             return false;
         if (isKbs3Event(event)) {
             EventState state = event.getState();
@@ -38,7 +38,7 @@ public final class EventLifeCycle {
 
     public static boolean isClosed(Event event, boolean considerAudioRecording) {
         LocalDate closingDate = getClosingDate(event, considerAudioRecording);
-        return Times.isPast(closingDate, Event.getEventClock());
+        return Times.isPast(closingDate, event.getEventClock());
     }
 
     public static LocalDate getClosingDate(Event event, boolean considerAudioRecording) {

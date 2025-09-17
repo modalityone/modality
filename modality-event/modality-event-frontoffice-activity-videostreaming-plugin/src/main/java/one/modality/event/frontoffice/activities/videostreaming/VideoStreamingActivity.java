@@ -79,6 +79,7 @@ import one.modality.event.frontoffice.eventheader.EventHeader;
 import one.modality.event.frontoffice.eventheader.MediaEventHeader;
 import one.modality.event.frontoffice.medias.EventThumbnail;
 import one.modality.event.frontoffice.medias.MediaConsumptionRecorder;
+import one.modality.event.frontoffice.medias.TimeZoneSwitch;
 
 import java.time.LocalDate;
 import java.util.ArrayList;
@@ -168,7 +169,7 @@ final class VideoStreamingActivity extends ViewDomainActivityBase {
                 eventsWithBookedVideosLoadingProperty.set(true);
                 // we look for the scheduledItem having a `bookableScheduledItem` which is an audio type (case of festival)
                 entityStore.<DocumentLine>executeQueryWithCache("modality/event/video-streaming/document-lines",
-                        "select document.event.(name, label, shortDescription, shortDescriptionLabel, audioExpirationDate, startDate, endDate, livestreamUrl, vodExpirationDate, repeatVideo, recurringWithVideo, repeatedEvent ,livestreamMessageLabel), item.(code, family.code)" +
+                        "select document.event.(name, label, shortDescription, shortDescriptionLabel, audioExpirationDate, startDate, endDate, livestreamUrl, timezone, vodExpirationDate, repeatVideo, recurringWithVideo, repeatedEvent, livestreamMessageLabel), item.(code, family.code)" +
                         // We look if there are published audio ScheduledItem of type video, whose bookableScheduledItem has been booked
                         ", (exists(select ScheduledItem where item.family.code=$2 and bookableScheduledItem.(event=coalesce(dl.document.event.repeatedEvent, dl.document.event) and item=dl.item))) as published " +
                         // We check if the user has booked, not cancelled and paid the recordings
@@ -232,6 +233,7 @@ final class VideoStreamingActivity extends ViewDomainActivityBase {
             ModalityUserPrincipal modalityUserPrincipal = FXModalityUserPrincipal.getModalityUserPrincipal();
             videoScheduledItems.clear();
             if (event != null && modalityUserPrincipal != null) {
+                TimeZoneSwitch.getGlobal().setEventZoneId(event.getEventZoneId());
                 Object userAccountId = modalityUserPrincipal.getUserAccountId();
                 Event eventContainingVideos = Objects.coalesce(event.getRepeatedEvent(), event);
                 // We load all video scheduledItems booked by the user for the event (booking must be confirmed

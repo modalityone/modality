@@ -68,11 +68,12 @@ final class VideoFormattersAndRenderers {
             LocalTime startEventLocalTime = (LocalTime) times[0];
             LocalTime endEventLocalTime = (LocalTime) times[1];
             StringProperty videoTimeRangeProperty = new SimpleStringProperty();
-            FXProperties.runNowAndOnPropertyChange(eventTimeSelected -> {
-                LocalTime startDisplayTime = eventTimeSelected ? startEventLocalTime : TimeZoneSwitch.convertEventLocalTimeToUserLocalTime(startEventLocalTime);
-                LocalTime endDisplayTime = eventTimeSelected ? endEventLocalTime : TimeZoneSwitch.convertEventLocalTimeToUserLocalTime(endEventLocalTime);
+            TimeZoneSwitch globalTimeZoneSwitch = TimeZoneSwitch.getGlobal();
+            FXProperties.runNowAndOnPropertyChange(eventLocalTimeSelected -> {
+                LocalTime startDisplayTime = eventLocalTimeSelected ? startEventLocalTime : globalTimeZoneSwitch.convertEventLocalTimeToUserLocalTime(startEventLocalTime);
+                LocalTime endDisplayTime = eventLocalTimeSelected ? endEventLocalTime : globalTimeZoneSwitch.convertEventLocalTimeToUserLocalTime(endEventLocalTime);
                 videoTimeRangeProperty.bind(LocalizedTime.formatLocalTimeRangeProperty(startDisplayTime, endDisplayTime, FrontOfficeTimeFormats.AUDIO_VIDEO_DAY_TIME_FORMAT));
-            }, TimeZoneSwitch.eventLocalTimeSelectedProperty());
+            }, globalTimeZoneSwitch.eventLocalTimeSelectedProperty());
             return videoTimeRangeProperty;
         });
         FormatterRegistry.registerFormatter("allProgramGroup", PrimType.STRING, scheduledItem ->
@@ -158,10 +159,11 @@ final class VideoFormattersAndRenderers {
         Object statusI18nArg = null;
         VideoLifecycle videoLifecycle = new VideoLifecycle(se.videoScheduledItem);
         boolean hideOrShowWatchButton = false;
+        Event event = se.videoScheduledItem.getEvent();
 
         // TODO: move this to switch(Object) in Java 21
         if (statusI18nKey.equals(VideoStreamingI18nKeys.OnTime)) {
-            scheduleRefreshAt(videoLifecycle.getCountdownStart(), refresher);
+            scheduleRefreshAt(event, videoLifecycle.getCountdownStart(), refresher);
         } else if (statusI18nKey.equals(VideoStreamingI18nKeys.StartingIn1)) {
             statusI18nArg = MediaUtil.formatDuration(videoLifecycle.durationBetweenNowAndSessionStart());
             scheduleRefreshSeconds(1, refresher); // We refresh the countdown every second
@@ -182,17 +184,18 @@ final class VideoFormattersAndRenderers {
             });
             LocalDateTime videoSpecificExpirationDate = se.videoScheduledItem.getExpirationDate();
             if (videoSpecificExpirationDate != null) {
+                TimeZoneSwitch globalTimeZoneSwitch = TimeZoneSwitch.getGlobal();
                 FXProperties.runNowAndOnPropertyChange(eventTimeSelected -> {
-                    LocalDateTime userTimezoneExpirationDate = eventTimeSelected ? videoSpecificExpirationDate : TimeZoneSwitch.convertEventLocalDateTimeToUserLocalDateTime(videoSpecificExpirationDate);
+                    LocalDateTime userTimezoneExpirationDate = eventTimeSelected ? videoSpecificExpirationDate : globalTimeZoneSwitch.convertEventLocalDateTimeToUserLocalDateTime(videoSpecificExpirationDate);
                     I18nControls.bindI18nProperties(se.availableUntilLabel, MediasI18nKeys.AvailableUntil1, LocalizedTime.formatLocalDateTimeProperty(userTimezoneExpirationDate, "dd MMM '-' HH.mm"));
-                }, TimeZoneSwitch.eventLocalTimeSelectedProperty());
+                }, globalTimeZoneSwitch.eventLocalTimeSelectedProperty());
                 showLabeled(se.availableUntilLabel);
                 // We schedule a refresh so the UI is updated when the expirationDate is reached
-                scheduleRefreshAt(videoSpecificExpirationDate, refresher);
+                scheduleRefreshAt(event, videoSpecificExpirationDate, refresher);
             } else {
-                LocalDateTime generalEventExpirationDate = se.videoScheduledItem.getEvent().getVodExpirationDate();
+                LocalDateTime generalEventExpirationDate = event.getVodExpirationDate();
                 if (generalEventExpirationDate != null) {
-                    scheduleRefreshAt(generalEventExpirationDate, refresher);
+                    scheduleRefreshAt(event, generalEventExpirationDate, refresher);
                 }
             }
         }
@@ -243,8 +246,8 @@ final class VideoFormattersAndRenderers {
         Bootstrap.secondaryButton(actionButton);
     }
 
-    private static void scheduleRefreshAt(LocalDateTime scheduleDataTime, Runnable refresher) {
-        scheduleRefreshDuration(Duration.between(Event.nowInEventTimezone(), scheduleDataTime), refresher);
+    private static void scheduleRefreshAt(Event event, LocalDateTime scheduleDataTime, Runnable refresher) {
+        scheduleRefreshDuration(Duration.between(event.nowInEventTimezone(), scheduleDataTime), refresher);
     }
 
     private static void scheduleRefreshDuration(Duration duration, Runnable refresher) {
