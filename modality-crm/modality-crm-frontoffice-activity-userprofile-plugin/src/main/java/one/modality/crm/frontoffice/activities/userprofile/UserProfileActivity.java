@@ -87,28 +87,16 @@ final class UserProfileActivity extends ViewDomainActivityBase implements Modali
         ToggleGroup maleFemaleToggleGroup = new ToggleGroup();
         view.optionMale.setToggleGroup(maleFemaleToggleGroup);
         view.optionFemale.setToggleGroup(maleFemaleToggleGroup);
-        maleFemaleToggleGroup.selectedToggleProperty().addListener((observable, oldValue, newValue) -> {
-            if (newValue != null) {
-                if (view.optionMale.isSelected()) {
-                    currentPerson.setMale(true);
-                }
-                if (view.optionFemale.isSelected()) {
-                    currentPerson.setMale(false);
-                }
-            }
-        });
+        maleFemaleToggleGroup.selectedToggleProperty().addListener((observable, oldValue, newValue) ->
+            currentPerson.setMale(view.optionMale.isSelected())
+        );
 
         ToggleGroup layOrdainedToggleGroup = new ToggleGroup();
         view.optionLay.setToggleGroup(layOrdainedToggleGroup);
         view.optionOrdained.setToggleGroup(layOrdainedToggleGroup);
-        layOrdainedToggleGroup.selectedToggleProperty().addListener((observable, oldValue, newValue) -> {
-            if (view.optionOrdained.isSelected()) {
-                currentPerson.setOrdained(true);
-            }
-            if (view.optionLay.isSelected()) {
-                currentPerson.setOrdained(false);
-            }
-        });
+        layOrdainedToggleGroup.selectedToggleProperty().addListener((observable, oldValue, newValue) ->
+            currentPerson.setOrdained(view.optionOrdained.isSelected())
+        );
 
         view.saveButton.disableProperty().bind(EntityBindings.hasChangesProperty(updateStore).not());
         view.saveButton.setOnAction(e -> {
