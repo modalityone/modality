@@ -133,9 +133,9 @@ public class AnetPaymentGateway implements PaymentGateway {
         billingAddress.setCountry(  Strings.truncate(billingAddress.getCountry(),   60));
 
         LineItemType anetItem = new LineItemType();
-        anetItem.setItemId(serverItem.id());
-        anetItem.setName(serverItem.name());
-        anetItem.setDescription(serverItem.description());
+        anetItem.setItemId(         Strings.truncate(serverItem.id(),                31));
+        anetItem.setName(           Strings.truncate(serverItem.name(),              31));
+        anetItem.setDescription(    Strings.truncate(serverItem.description(),      255));
         anetItem.setQuantity(BigDecimal.valueOf(serverItem.quantity()));
         anetItem.setUnitPrice(BigDecimal.valueOf(0.01 * serverItem.price())); // the modality amount is in cents
 
@@ -162,8 +162,27 @@ public class AnetPaymentGateway implements PaymentGateway {
         txnRequest.setCustomer(customerData);
         txnRequest.setLineItems(lineItems);
 
+        // Provide a unique order/invoice number per payment to avoid duplicate detection when paying the same booking multiple times
+        String uniqueSuffix = Uuid.randomUuid().substring(0, 8);
+        OrderType order = new OrderType();
+        String invoiceNumber = Strings.truncate(serverItem.id(), 20); // Authorize.Net allows up to 20 chars
+        order.setInvoiceNumber(invoiceNumber);
+        // Optionally include a concise description
+        order.setDescription(Strings.truncate(serverItem.name(), 255));
+        txnRequest.setOrder(order);
+
+        // Explicitly disable duplicate transaction check to allow multiple payments with same amount/card
+        SettingType dupSetting = new SettingType();
+        dupSetting.setSettingName("duplicateWindow");
+        dupSetting.setSettingValue("0");
+        ArrayOfSetting settings = new ArrayOfSetting();
+        settings.getSetting().add(dupSetting);
+        txnRequest.setTransactionSettings(settings);
+
         CreateTransactionRequest request = new CreateTransactionRequest();
         request.setMerchantAuthentication(merchantAuthentication);
+        // Set a unique refId for traceability and to further distinguish requests
+        request.setRefId(Strings.truncate("mod-" + uniqueSuffix, 20));
         request.setTransactionRequest(txnRequest);
 
         CreateTransactionController controller = new CreateTransactionController(request);
