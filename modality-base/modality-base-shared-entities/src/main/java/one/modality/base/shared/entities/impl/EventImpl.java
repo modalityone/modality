@@ -40,11 +40,11 @@ public final class EventImpl extends DynamicEntity implements Event {
     public Clock getEventClock() {
         if (eventClock == null) {
             if (getEventZoneId() != null) {
-                Clock eventClockWithoutDebugOffset = Clock.system(eventZoneId);
-                eventClock = APP_START_AT_EVENT_LOCAL_DATETIME == null ? eventClockWithoutDebugOffset :
-                    Clock.offset(eventClockWithoutDebugOffset, Duration.between(LocalDateTime.now(eventClockWithoutDebugOffset), APP_START_AT_EVENT_LOCAL_DATETIME));
+                eventClock = Clock.system(eventZoneId);
             } else
-                return Clock.systemDefaultZone();
+                eventClock = Clock.systemDefaultZone();
+            if (APP_START_AT_EVENT_LOCAL_DATETIME != null)
+                eventClock = Clock.offset(eventClock, Duration.between(LocalDateTime.now(eventClock), APP_START_AT_EVENT_LOCAL_DATETIME));
         }
         return eventClock;
     }
