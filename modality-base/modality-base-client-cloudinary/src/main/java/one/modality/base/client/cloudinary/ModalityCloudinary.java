@@ -2,12 +2,9 @@ package one.modality.base.client.cloudinary;
 
 import dev.webfx.extras.canvas.blob.CanvasBlob;
 import dev.webfx.extras.panes.MonoPane;
-import dev.webfx.kit.util.properties.FXProperties;
-import dev.webfx.kit.util.scene.DeviceSceneUtil;
 import dev.webfx.platform.async.Future;
 import dev.webfx.platform.async.Promise;
 import dev.webfx.platform.blob.Blob;
-import dev.webfx.platform.console.Console;
 import dev.webfx.platform.uischeduler.UiScheduler;
 import dev.webfx.stack.cloud.image.CloudImageService;
 import dev.webfx.stack.cloud.image.impl.client.ClientImageService;
@@ -16,9 +13,7 @@ import javafx.scene.Node;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.image.Image;
-import javafx.scene.image.ImageView;
 import javafx.scene.image.WritableImage;
-import javafx.scene.layout.Background;
 import javafx.scene.paint.Color;
 import javafx.stage.Screen;
 import one.modality.base.shared.entities.Event;
@@ -44,8 +39,32 @@ public final class ModalityCloudinary {
         return new Image(url, true);
     }
 
+    public static Image getHdpiImage(String imagePath, double width, double height) {
+        double zoomFactor = Screen.getPrimary().getOutputScaleX();
+        return getImage(imagePath, width < 0 ? (int) width : (int) (width * zoomFactor), height < 0 ? (int) height : (int) (height * zoomFactor));
+    }
+
+    public static Future<Image> getImageOnReady(String imagePath, int width, int height) {
+        return CLOUD_IMAGE_SERVICE.readyFuture().map(aVoid -> getImage(imagePath, width, height));
+    }
+
+    public static Future<Image> getHdpiImageOnReady(String imagePath, double width, double height) {
+        return CLOUD_IMAGE_SERVICE.readyFuture().map(aVoid -> getHdpiImage(imagePath, width, height));
+    }
+
     public static Future<Boolean> imageExists(String imagePath) {
         return CLOUD_IMAGE_SERVICE.exists(imagePath);
+    }
+
+    public static Future<Image> loadHdpiImage(String imagePath, double width, double height, MonoPane imageContainer, Supplier<Node> noImageNodeGetter) {
+        return Images.onImageLoaded(getHdpiImageOnReady(imagePath, width, height), imageContainer, width, height, noImageNodeGetter);
+    }
+
+    public static Future<Image> loadHdpiEventCoverImage(Event event, Object language, double width, double height, MonoPane imageContainer, Supplier<Node> noImageNodeGetter) {
+        String eventCoverImagePath = eventCoverImagePath(event, language);
+        String defaultLanguageEventCoverImagePath = ModalityCloudinary.eventCoverImagePath(event, null);
+        return loadHdpiImage(eventCoverImagePath, width, height, imageContainer, null)
+            .recover(error -> loadHdpiImage(defaultLanguageEventCoverImagePath, width, height, imageContainer, noImageNodeGetter));
     }
 
     // Image path API
@@ -73,48 +92,6 @@ public final class ModalityCloudinary {
         if (event.getRepeatedEvent() != null)
             event = event.getRepeatedEvent();
         return eventCoverImagePath(Entities.getPrimaryKey(event), language);
-    }
-
-    // Image loading API
-
-    public static Future<ImageView> loadImage(String imagePath, MonoPane imageContainer, double width, double height, Supplier<Node> noImageNodeGetter) {
-        Promise<ImageView> promise = Promise.promise();
-        loadImage(imagePath, imageContainer, width, height, noImageNodeGetter, promise);
-        return promise.future();
-    }
-
-    private static void loadImage(String imagePath, MonoPane imageContainer, double width, double height, Supplier<Node> noImageNodeGetter, Promise<ImageView> promise) {
-        // First, we need to get the zoom factor of the screen
-        double zoomFactor = Screen.getPrimary().getOutputScaleX();
-        try { // getImage() can raise at the beginning if
-            Image image = getImage(imagePath, width < 0 ? (int) width : (int) (width * zoomFactor), height < 0 ? (int) height : (int) (height * zoomFactor));
-            ImageView imageView = new ImageView();
-            imageView.setFitWidth(width);
-            imageView.setFitHeight(height);
-            if (width < 0 || height < 0)
-                imageView.setPreserveRatio(true);
-            imageView.setImage(image);
-            FXProperties.runNowAndOnPropertyChange(error -> {
-                if (error) {
-                    if (noImageNodeGetter != null) {
-                        Node noImageNode = noImageNodeGetter.get();
-                        imageContainer.setBackground(Background.fill(Color.LIGHTGRAY));
-                        imageContainer.setContent(noImageNode);
-                    }
-                    String message = imagePath + " doesn't exist in cloudinary";
-                    promise.tryFail(message);
-                    Console.log("⚠️ " + message);
-                } else {
-                    if (imageContainer.getContent() == null)
-                        imageContainer.setContent(imageView);
-                    else // If it's an image replacement, better to wait the loading is complete to prevent a blink between the 2 images
-                        DeviceSceneUtil.onImagesLoaded(() -> imageContainer.setContent(imageView), image);
-                }
-            }, image.errorProperty());
-            promise.tryComplete(imageView);
-        } catch (Exception e) {
-            UiScheduler.scheduleDelay(100, () -> loadImage(imagePath, imageContainer, width, height, noImageNodeGetter, promise));
-        }
     }
 
     // Image uploading API

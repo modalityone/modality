@@ -215,8 +215,7 @@ final class UserProfileActivity extends ViewDomainActivityBase implements Modali
         String cloudImagePath = ModalityCloudinary.personImagePath(currentPerson);
         if (Objects.equals(cloudImagePath, changePictureUI.getRecentlyUploadedCloudPictureId()))
             return;
-        ModalityCloudinary.loadImage(cloudImagePath, view.pictureImageContainer, 150, 150, () -> new ImageView(UserProfileView.NO_PICTURE_IMAGE))
-            .onSuccess(imageView -> view.setImage(imageView));
+        ModalityCloudinary.loadHdpiImage(cloudImagePath, 150, 150, view.pictureImageContainer, () -> new ImageView(UserProfileView.NO_PICTURE_IMAGE));
     }
 
     public Person getCurrentPerson() {

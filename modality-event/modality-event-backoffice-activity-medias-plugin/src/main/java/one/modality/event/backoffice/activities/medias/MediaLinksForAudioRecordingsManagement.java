@@ -150,7 +150,7 @@ public class MediaLinksForAudioRecordingsManagement extends MediaLinksManagement
     }
 
     private void loadAudioCoverPicture() {
-        ModalityCloudinary.loadImage(eventCoverCloudImagePath, eventCoverImageContainer, IMAGE_SIZE, IMAGE_SIZE, SvgIcons::createAudioCoverPath)
+        ModalityCloudinary.loadHdpiImage(eventCoverCloudImagePath, IMAGE_SIZE, IMAGE_SIZE, eventCoverImageContainer, SvgIcons::createAudioCoverPath)
             .onComplete(ar -> {
                 trashImage.setVisible(ar.succeeded());
                 replaceProgressIndicator.setVisible(false);

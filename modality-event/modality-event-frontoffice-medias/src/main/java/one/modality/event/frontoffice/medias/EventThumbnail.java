@@ -128,12 +128,7 @@ public final class EventThumbnail {
         ));
 
         MonoPane imageContainer = new MonoPane();
-        String imagePath = ModalityCloudinary.eventCoverImagePath(event, itemType == ItemType.ITEM_TYPE_AUDIO ? languageOfTheItem : I18n.getLanguage());
-        ModalityCloudinary.loadImage(imagePath, imageContainer, CONTAINER_WIDTH, CONTAINER_HEIGHT, SvgIcons::createAudioCoverPath)
-            .onFailure(error-> {
-                //If we can't find the picture of the cover for the selected language, we display the default image
-                ModalityCloudinary.loadImage(ModalityCloudinary.eventCoverImagePath(event, null), imageContainer, CONTAINER_WIDTH, CONTAINER_HEIGHT, SvgIcons::createAudioCoverPath);
-            });
+        ModalityCloudinary.loadHdpiEventCoverImage(event, itemType == ItemType.ITEM_TYPE_AUDIO ? languageOfTheItem : I18n.getLanguage(), CONTAINER_WIDTH, CONTAINER_HEIGHT, imageContainer, SvgIcons::createAudioCoverPath);
 
         StackPane thumbnailStackPane = new StackPane(imageContainer, availabilityLabel);
         thumbnailStackPane.setAlignment(Pos.TOP_LEFT);

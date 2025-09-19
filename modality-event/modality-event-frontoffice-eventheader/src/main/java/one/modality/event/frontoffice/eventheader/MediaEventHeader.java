@@ -74,12 +74,7 @@ public final class MediaEventHeader extends AbstractEventHeader {
             I18nEntities.bindExpressionTextProperty(eventDescriptionHTMLText.textProperty(), event, "i18n(coalesce(shortDescriptionLabel, shortDescription), '" + language + "')");
 
             // Loading the event image in the header
-            String eventCloudImagePath = ModalityCloudinary.eventCoverImagePath(event, language);
-            ModalityCloudinary.loadImage(eventCloudImagePath, eventImageContainer, -1, IMAGE_HEIGHT, video ? SvgIcons::createVideoIconPath : SvgIcons::createAudioCoverPath)
-                .onFailure(error -> {
-                    // If we can't find the picture of the cover for the selected language, we display the default image
-                    ModalityCloudinary.loadImage(ModalityCloudinary.eventCoverImagePath(event, null), eventImageContainer, -1, IMAGE_HEIGHT, video ? SvgIcons::createVideoIconPath : SvgIcons::createAudioCoverPath);
-                });
+            ModalityCloudinary.loadHdpiEventCoverImage(event, language, -1, IMAGE_HEIGHT, eventImageContainer, video ? SvgIcons::createVideoIconPath : SvgIcons::createAudioCoverPath);
             // Updating the expiration date in the header
             LocalDateTime expirationDate = video ? event.getVodExpirationDate() : event.getAudioExpirationDate();
             if (expirationDate == null) {

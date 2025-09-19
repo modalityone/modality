@@ -104,7 +104,7 @@ public final class LocalEventHeader extends AbstractEventHeader {
     public Future<Event> loadAndSetEvent(Event event) {
         //eventImageContainer.setContent(null);
         String cloudImagePath = ModalityCloudinary.eventImagePath(event);
-        ModalityCloudinary.loadImage(cloudImagePath, eventImageContainer, -1, -1, null);
+        ModalityCloudinary.loadHdpiImage(cloudImagePath, -1, -1, eventImageContainer, null);
         return super.loadAndSetEvent(event);
     }
 

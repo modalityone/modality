@@ -533,7 +533,7 @@ final class ManageRecurringEventView {
         String cloudImagePath = ModalityCloudinary.eventImagePath(currentEditedEvent);
         if (Objects.equals(cloudImagePath, recentlyUploadedCloudPictureId))
             return;
-        ModalityCloudinary.loadImage(cloudImagePath, eventImageContainer, EVENT_IMAGE_WIDTH, EVENT_IMAGE_HEIGHT, () -> null)
+        ModalityCloudinary.loadHdpiImage(cloudImagePath, EVENT_IMAGE_WIDTH, EVENT_IMAGE_HEIGHT, eventImageContainer, () -> null)
             .onComplete(ar -> isPictureDisplayed.setValue(eventImageContainer.getContent() != null));
     }
 
