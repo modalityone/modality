@@ -134,7 +134,7 @@ public class ServerPaymentServiceProvider implements PaymentServiceProvider {
             );
             Event event = document.getEvent();
             GatewayItem item = new GatewayItem(
-                "#" + event.getPrimaryKey() + " - #" + document.getRef(),
+                "E#" + event.getPrimaryKey() + " - D#" + document.getRef() + " - P#" + paymentPrimaryKey,
                 "Deposit",
                 event.getName() + " - Booking Ref " + document.getRef(),
                 1,

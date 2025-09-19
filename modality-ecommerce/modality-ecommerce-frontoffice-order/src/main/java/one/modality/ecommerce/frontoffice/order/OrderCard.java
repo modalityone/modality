@@ -49,7 +49,7 @@ public final class OrderCard {
 
     // Required fields for retrieving order and its details
     private static final String ORDER_EVENT_REQUIRED_FIELDS = "event.(name,label,state,image.url,live,startDate,endDate,kbs3,venue.(name,label,country),organization.country)";
-    private static final String ORDER_PERSON_REQUIRED_FIELDS = "ref,person,person_firstName,person_lastName,cart.uuid";
+    private static final String ORDER_PERSON_REQUIRED_FIELDS = "ref,person,person_firstName,person_lastName,person_email,cart.uuid";
     private static final String ORDER_STATUS_REQUIRED_FIELDS = OrderStatus.BOOKING_REQUIRED_FIELDS;
     public static final String ORDER_REQUIRED_FIELDS = ORDER_EVENT_REQUIRED_FIELDS + "," + ORDER_PERSON_REQUIRED_FIELDS + "," + ORDER_STATUS_REQUIRED_FIELDS;
     private static final String DOCUMENT_LINE_REQUIRED_FIELDS = "item.(name,label,family.(name,label)),quantity,price_net,dates,cancelled";
