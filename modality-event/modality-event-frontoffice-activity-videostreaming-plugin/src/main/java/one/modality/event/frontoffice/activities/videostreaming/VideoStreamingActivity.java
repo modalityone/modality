@@ -440,11 +440,10 @@ final class VideoStreamingActivity extends ViewDomainActivityBase {
         selectTheDayBelowVBox.setAlignment(Pos.CENTER);
         selectTheDayBelowVBox.setPadding(new Insets(100, 0, 0, 0));
 
-        notificationContainer.setMaxHeight(60);
-        notificationContainer.setPrefHeight(60);
-        notificationContainer.setPadding(new Insets(0,15,0,15));
-        StackPane.setAlignment(notificationContainer,Pos.BOTTOM_CENTER);
-        StackPane.setMargin(notificationContainer,new Insets(0,20,60,20));
+        notificationContainer.setMaxSize(60, 60);
+        notificationContainer.setPadding(new Insets(0, 15, 0, 15));
+        StackPane.setAlignment(notificationContainer, Pos.BOTTOM_CENTER);
+        StackPane.setMargin(notificationContainer, new Insets(0, 20, 60, 20));
         notificationContainer.setAlignment(Pos.CENTER);
         notificationContainer.setVisible(false);
 
@@ -624,11 +623,9 @@ final class VideoStreamingActivity extends ViewDomainActivityBase {
                     Player videoPlayer = AllPlayers.createAllVideoPlayer();
                     StackPane.setAlignment(notificationContainer, Pos.BOTTOM_CENTER);
                     videoPlayer.getOverlayChildren().add(notificationContainer);
-                    //child2.setOnMouseClicked(e -> System.out.println("Child 2 clicked"));
-                   createAutoHideFullscreenButton(videoPlayer);
+                    createAutoHideFullscreenButton(videoPlayer);
 
-
-                        // Push-notification management: we turn the published field into a property
+                    // Push-notification management: we turn the published field into a property
                     ModalityMessaging.getFrontOfficeEntityMessaging().listenEntityChanges(event.getStore());
                     ObjectProperty<one.modality.base.shared.entities.Label> liveMessageLabelProperty = EntityBindings.getForeignEntityProperty(event, Event.livestreamMessageLabel);
 
@@ -637,29 +634,28 @@ final class VideoStreamingActivity extends ViewDomainActivityBase {
                         I18nEntities.bindExpressionProperties(livestreamMessageLabel, labelEntity, "i18n(this)");
                         showNotification(livestreamMessageLabel);
                     });
-                    if(unregisterable!=null) {
+                    if (unregisterable != null) {
                         unregisterable.unregister();
                     }
                     unregisterable = EntityBindings.onForeignFieldsChanged(onLabelChange, event, Event.livestreamMessageLabel, "en", "de", "fr", "es", "pt");
 
                     // Listen for livestream message changes and show notifications
                     FXProperties.runOnPropertyChange(() -> {
-                        if(liveMessageLabelProperty.get()==null) {
+                        if (liveMessageLabelProperty.get() == null) {
                             hideNotification();
-                        }
-                        else {
+                        } else {
                             showNotification(livestreamMessageLabel);
                         }
                     }, liveMessageLabelProperty);
 
                     I18nEntities.bindExpressionProperties(livestreamMessageLabel, liveMessageLabelProperty, "i18n(this)");
                     livestreamMessageLabel.setTextAlignment(TextAlignment.CENTER);
-                    if(liveMessageLabelProperty.get()!=null) {
+                    if (liveMessageLabelProperty.get() != null) {
                         showNotification(livestreamMessageLabel);
                     }
 
                     // Create video view
-                    videoContent = createVideoView(livestreamUrl, null, autoPlay,videoPlayer);
+                    videoContent = createVideoView(livestreamUrl, null, autoPlay, videoPlayer);
                 }
 
             }
@@ -682,7 +678,7 @@ final class VideoStreamingActivity extends ViewDomainActivityBase {
             }
             Player videoPlayer = AllPlayers.createAllVideoPlayer();
             for (Media media : watchMedias) {
-                Node videoView = createVideoView(media.getUrl(), media, autoPlay,videoPlayer);
+                Node videoView = createVideoView(media.getUrl(), media, autoPlay, videoPlayer);
                 videoMediasVBox.getChildren().add(videoView);
                 // we autoplay only the first video
                 autoPlay = false;
@@ -726,7 +722,7 @@ final class VideoStreamingActivity extends ViewDomainActivityBase {
         return new AspectRatioPane(aspectRatio, videoPlayer.getMediaView());
     }
 
-    // New method to create fullscreen button with auto-hide functionality
+    // New method to create the fullscreen button with auto-hide functionality
     private void createAutoHideFullscreenButton(Player videoPlayer) {
         Pane fullScreenContainer = MediaButtons.createFullscreenButton();
         fullScreenContainer.setMaxSize(60, 60);
@@ -741,26 +737,23 @@ final class VideoStreamingActivity extends ViewDomainActivityBase {
                 videoPlayer.requestFullscreen();
         });
 
-            // Add fullscreen button to video player overlay
-            videoPlayer.getOverlayChildren().add(fullScreenContainer);
+        // Add fullscreen button to video player overlay
+        videoPlayer.getOverlayChildren().add(fullScreenContainer);
 
-            // Initialize timeline for hiding the button
-            Timeline hideFullscreenButtonTimeline = new Timeline(
-                new KeyFrame(INACTIVITY_DURATION, e -> hideFullscreenButton(fullScreenContainer))
-            );
-            hideFullscreenButtonTimeline.play();
-            // Get the media view to attach mouse/keyboard listeners
-            Node mediaView = videoPlayer.getMediaView();
-            mediaView.addEventFilter(MouseEvent.ANY, e -> {
+        // Initialize timeline for hiding the button
+        Timeline hideFullscreenButtonTimeline = new Timeline(
+            new KeyFrame(INACTIVITY_DURATION, e -> hideFullscreenButton(fullScreenContainer))
+        );
+        hideFullscreenButtonTimeline.play();
+        // Get the media view to attach mouse/keyboard listeners
+        Node mediaView = videoPlayer.getMediaView();
+        mediaView.addEventFilter(MouseEvent.ANY, e -> {
             showFullscreenButton(fullScreenContainer);
             resetHideTimer(hideFullscreenButtonTimeline);
         });
 
-            // Make sure the media view can receive focus for keyboard events
-            mediaView.setFocusTraversable(true);
-
-            // Start the initial timer
-            resetHideTimer(hideFullscreenButtonTimeline);
+        // Start the initial timer
+        resetHideTimer(hideFullscreenButtonTimeline);
 
     }
 
@@ -811,7 +804,7 @@ final class VideoStreamingActivity extends ViewDomainActivityBase {
         }
 
         // Icon (you can replace with actual icons from your icon library)
-        Label iconLabel = new Label("⚠"); // Use appropriate icon based on type
+        Label iconLabel = new Label("⚠"); // Use the appropriate icon based on type
         iconLabel.getStyleClass().add("notification-icon");
 
         // Message text
