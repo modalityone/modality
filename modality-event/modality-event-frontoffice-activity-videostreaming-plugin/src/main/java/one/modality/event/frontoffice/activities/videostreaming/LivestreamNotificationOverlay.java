@@ -2,16 +2,17 @@ package one.modality.event.frontoffice.activities.videostreaming;
 
 import dev.webfx.extras.player.Player;
 import dev.webfx.kit.util.properties.FXProperties;
-import dev.webfx.kit.util.properties.Unregisterable;
+import dev.webfx.platform.uischeduler.UiScheduler;
+import dev.webfx.platform.useragent.UserAgent;
 import dev.webfx.stack.orm.entity.binding.EntityBindings;
 import javafx.animation.Interpolator;
 import javafx.animation.KeyFrame;
 import javafx.animation.KeyValue;
 import javafx.animation.Timeline;
-import javafx.application.Platform;
 import javafx.beans.property.ObjectProperty;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
+import javafx.scene.Node;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.layout.HBox;
@@ -33,7 +34,6 @@ final class LivestreamNotificationOverlay {
 
     private final Label livestreamMessageLabel = new Label();
     private final HBox notificationContainer = new HBox(12);
-    private Unregisterable unregisterable;
 
     public static void addNotificationOverlayToLivestreamPlayer(Player livestreamPlayer, Event event) {
         new LivestreamNotificationOverlay(livestreamPlayer, event);
@@ -56,34 +56,39 @@ final class LivestreamNotificationOverlay {
         ObjectProperty<one.modality.base.shared.entities.Label> liveMessageLabelProperty = EntityBindings.getForeignEntityProperty(event, Event.livestreamMessageLabel);
 
         // Consumer that gets called when address fields change
-        Consumer<one.modality.base.shared.entities.Label> onLabelChange = (labelEntity) -> Platform.runLater(() -> {
+        Consumer<one.modality.base.shared.entities.Label> onLabelChange =labelEntity -> UiScheduler.runInUiThread(() -> {
             I18nEntities.bindExpressionProperties(livestreamMessageLabel, labelEntity, "i18n(this)");
             showNotification(livestreamMessageLabel);
         });
-        if (unregisterable != null) {
-            unregisterable.unregister();
-        }
-        unregisterable = EntityBindings.onForeignFieldsChanged(onLabelChange, event, Event.livestreamMessageLabel, "en", "de", "fr", "es", "pt");
+        EntityBindings.onForeignFieldsChanged(onLabelChange, event, Event.livestreamMessageLabel, "en", "de", "fr", "es", "pt");
+
+        I18nEntities.bindExpressionProperties(livestreamMessageLabel, liveMessageLabelProperty, "i18n(this)");
+        livestreamMessageLabel.setTextAlignment(TextAlignment.CENTER);
 
         // Listen for livestream message changes and show notifications
-        FXProperties.runOnPropertyChange(() -> {
-            if (liveMessageLabelProperty.get() == null) {
+        FXProperties.runNowAndOnPropertyChange(liveMessageLabel -> {
+            if (liveMessageLabel == null) {
                 hideNotification();
             } else {
                 showNotification(livestreamMessageLabel);
             }
         }, liveMessageLabelProperty);
 
-        I18nEntities.bindExpressionProperties(livestreamMessageLabel, liveMessageLabelProperty, "i18n(this)");
-        livestreamMessageLabel.setTextAlignment(TextAlignment.CENTER);
-        if (liveMessageLabelProperty.get() != null) {
-            showNotification(livestreamMessageLabel);
+        if (UserAgent.isBrowser()) {
+            // Computing the "--scroll-text-duration" CSS property so that the text scroll speed is always the same
+            // whatever the container width and text length.
+            FXProperties.runOnPropertiesChange(() -> {
+                double containerWidth = notificationContainer.getWidth();
+                double messageWidth = livestreamMessageLabel.prefWidth(-1); // total width of the text on a single line
+                double totalScrollDistance = containerWidth + messageWidth;
+                double totalScrollDuration = totalScrollDistance / 160; // in seconds - 160 is an empiric value
+                livestreamMessageLabel.setStyle("--scroll-text-duration:" + totalScrollDuration + "s");
+            }, notificationContainer.widthProperty(), livestreamMessageLabel.textProperty());
         }
-
     }
 
     // Method to show notification
-    private void showNotification(Label messageLabel) {
+    private void showNotification(Node messageLabel) {
 
         switch ("critical".toLowerCase()) {
             case "error":
@@ -100,13 +105,11 @@ final class LivestreamNotificationOverlay {
         }
 
         // Icon (you can replace with actual icons from your icon library)
-        Label iconLabel = new Label("⚠"); // Use the appropriate icon based on type
+        Label iconLabel = new Label("⚠️"); // Use the appropriate icon based on type
         iconLabel.getStyleClass().add("notification-icon");
 
         // Message text
         messageLabel.getStyleClass().add("notification-text");
-        messageLabel.setWrapText(true);
-        messageLabel.setMaxWidth(Double.MAX_VALUE);
         HBox.setHgrow(messageLabel, Priority.ALWAYS);
 
         // Close button

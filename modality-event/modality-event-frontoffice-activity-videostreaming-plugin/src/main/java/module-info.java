@@ -43,6 +43,7 @@ module modality.event.frontoffice.activity.videostreaming.plugin {
     requires webfx.platform.scheduler;
     requires webfx.platform.substitution;
     requires webfx.platform.uischeduler;
+    requires webfx.platform.useragent;
     requires webfx.platform.util;
     requires webfx.platform.util.time;
     requires webfx.platform.windowhistory;
@@ -54,7 +55,6 @@ module modality.event.frontoffice.activity.videostreaming.plugin {
     requires webfx.stack.orm.reactive.visual;
     requires webfx.stack.routing.router.client;
     requires webfx.stack.routing.uirouter;
-    requires webfx.extras.player.video;
 
     // Exported packages
     exports one.modality.event.frontoffice.activities.videostreaming;

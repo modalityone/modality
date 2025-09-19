@@ -88,6 +88,7 @@
     -fx-font-size: 16px;
     -fx-spacing: 10px;
 }
+
 /* Base notification styles */
 .notification {
     -fx-background-radius: 8px;
