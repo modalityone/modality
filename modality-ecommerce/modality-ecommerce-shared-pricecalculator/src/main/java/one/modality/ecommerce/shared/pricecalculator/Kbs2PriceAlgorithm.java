@@ -282,6 +282,9 @@ final class Kbs2PriceAlgorithm {
                     int deltaPrice = cheapest.price;
                     if (minDeposit) {
                         int minDepositPercent = Objects.coalesce(cheapest.rate.getMinDeposit(), 25);
+                        LocalDate cutoffDate = cheapest.rate.getCutoffDate();
+                        if (cutoffDate != null && Times.isPastOrToday(cutoffDate))
+                            minDepositPercent = Objects.coalesce(cheapest.rate.getMinDeposit2(), 25);
                         deltaPrice = deltaPrice * minDepositPercent / 100;
                     }
                     if (price == Integer.MIN_VALUE)
