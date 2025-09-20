@@ -383,7 +383,7 @@ final class VideoStreamingActivity extends ViewDomainActivityBase {
         Node loadingContentIndicator = new GoldenRatioPane(Controls.createProgressIndicator(100));
 
         // We display an event selection section only if there are more than 1 event with videos booked by the user
-        Hyperlink selectEventLink = I18nControls.newHyperlink("Select another event");
+        Hyperlink selectEventLink = I18nControls.newHyperlink(VideoStreamingI18nKeys.SelectAnotherEvent);
         selectEventLink.setOnAction(e -> eventsSelectionPane.toggleCollapse());
         VBox eventsSelectionVBox = new VBox(10, selectEventLink, eventsSelectionPane);
         Layouts.setMinMaxHeightToPref(eventsSelectionVBox); // No need to compute min/max height as different to pref (layout computation optimization)
