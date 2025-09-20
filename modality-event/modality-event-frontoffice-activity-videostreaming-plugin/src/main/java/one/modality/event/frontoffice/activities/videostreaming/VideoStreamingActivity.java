@@ -25,6 +25,7 @@ import dev.webfx.platform.uischeduler.UiScheduler;
 import dev.webfx.platform.util.Booleans;
 import dev.webfx.platform.util.Objects;
 import dev.webfx.platform.util.collection.Collections;
+import dev.webfx.platform.util.time.Times;
 import dev.webfx.stack.orm.domainmodel.activity.viewdomain.impl.ViewDomainActivityBase;
 import dev.webfx.stack.orm.entity.EntityId;
 import dev.webfx.stack.orm.entity.EntityStore;
@@ -32,7 +33,6 @@ import dev.webfx.stack.orm.reactive.entities.entities_to_grid.EntityColumn;
 import dev.webfx.stack.orm.reactive.mapping.entities_to_visual.EntitiesToVisualResultMapper;
 import dev.webfx.stack.orm.reactive.mapping.entities_to_visual.VisualEntityColumnFactory;
 import javafx.application.Platform;
-import javafx.beans.binding.Bindings;
 import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.ObjectProperty;
 import javafx.beans.property.SimpleBooleanProperty;
@@ -184,7 +184,7 @@ final class VideoStreamingActivity extends ViewDomainActivityBase {
                         eventsWithBookedVideos.setAll(
                             Collections.map(documentLines, dl -> dl.getDocument().getEvent()));
                         // If there are 2 events with videos or more, we populate the events selection pane
-                        if (eventsWithBookedVideos.size() < 2) {
+                        if (eventsWithBookedVideos.stream().filter(e -> Times.isFuture(e.getVodExpirationDate())).count() < 2) {
                             eventsSelectionPane.setContent(null);
                         } else {
                             ColumnsPane columnsPane = new ColumnsPane(20, 50);
@@ -390,7 +390,7 @@ final class VideoStreamingActivity extends ViewDomainActivityBase {
         eventsSelectionVBox.setAlignment(Pos.CENTER);
         eventsSelectionPane.setPadding(new Insets(50, 0, 200, 0));
         // Making the section visible only if there are more than 1 event with videos
-        eventsSelectionVBox.visibleProperty().bind(Bindings.size(eventsWithBookedVideos).greaterThan(1));
+        eventsSelectionVBox.visibleProperty().bind(eventsSelectionPane.contentProperty().isNotNull());
         Layouts.bindManagedToVisibleProperty(eventsSelectionVBox);
 
         // Building the loaded content, starting with the header
