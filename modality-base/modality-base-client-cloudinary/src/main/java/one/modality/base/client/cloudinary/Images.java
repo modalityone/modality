@@ -34,14 +34,19 @@ final class Images {
     }
 
     public static Future<Image> onImageLoaded(Future<Image> imageFuture, MonoPane imageContainer, double width, double height, Supplier<Node> noImageNodeGetter) {
-        ImageView imageView = new ImageView();
-        imageView.setFitWidth(width);
-        imageView.setFitHeight(height);
-        if (width < 0 || height < 0)
-            imageView.setPreserveRatio(true);
         Promise<Image> promise = Promise.promise();
         onImageLoaded(imageFuture, image -> {
+            ImageView imageView;
+            // Reusing the same image view if already present to prevent flashing transition between images
+            if (imageContainer.getContent() instanceof ImageView iv)
+                imageView = iv;
+            else
+                imageView = new ImageView();
             imageView.setImage(image);
+            imageView.setFitWidth(width);
+            imageView.setFitHeight(height);
+            if (width < 0 || height < 0)
+                imageView.setPreserveRatio(true);
             imageContainer.setContent(imageView);
             promise.complete(image);
         }, error -> {
