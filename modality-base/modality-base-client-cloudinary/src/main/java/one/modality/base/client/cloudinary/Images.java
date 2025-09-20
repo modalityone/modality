@@ -48,14 +48,14 @@ final class Images {
             if (width < 0 || height < 0)
                 imageView.setPreserveRatio(true);
             imageContainer.setContent(imageView);
-            promise.complete(image);
+            promise.tryComplete(image);
         }, error -> {
             if (noImageNodeGetter != null) {
                 Node noImageNode = noImageNodeGetter.get();
                 imageContainer.setBackground(Background.fill(Color.LIGHTGRAY));
                 imageContainer.setContent(noImageNode);
             }
-            promise.fail(error);
+            promise.tryFail(error);
         });
         return promise.future().inUiThread();
     }
