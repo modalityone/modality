@@ -87,7 +87,7 @@ final class OrdersActivity extends ViewDomainActivityBase implements ModalityBut
         VBox activeOrdersContainer = createOrdersContainer();
         // No feed for the active orders, we just load them all, map them to cards and then add them to the container,
         // but keeping the initial progress indicator until the first result arrives.
-        FXProperties.runNowAndOnPropertyChange(calling -> UiScheduler.runInUiThread(() -> {
+        FXProperties.runNowAndOnPropertyChange(calling -> UiScheduler.scheduleDeferred(() -> {
             if (calling)
                 activeOrdersContainer.getChildren().setAll(Controls.createProgressIndicator(50));
             else if (upcomingOrderCards.isEmpty())
@@ -112,7 +112,7 @@ final class OrdersActivity extends ViewDomainActivityBase implements ModalityBut
                     });
                 });
         });
-        FXProperties.runNowAndOnPropertyChange(calling -> UiScheduler.runInUiThread(() -> {
+        FXProperties.runNowAndOnPropertyChange(calling -> UiScheduler.scheduleDeferred(() -> {
             if (calling && pastOrdersContainer.getChildren().isEmpty())
                 pastOrdersContainer.getChildren().setAll(Controls.createProgressIndicator(50));
             else if (!calling && pastOrdersContainer.getChildren().size() == 1)
