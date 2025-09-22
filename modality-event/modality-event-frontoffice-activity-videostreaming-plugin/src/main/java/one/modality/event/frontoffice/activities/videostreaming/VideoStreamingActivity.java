@@ -585,9 +585,6 @@ final class VideoStreamingActivity extends ViewDomainActivityBase {
     private String playingLivestreamUrl; // we memorize the livestream url to skip unnecessary multiple player creations
 
     private void populateVideoPlayers(boolean willAutoplay) {
-        // If some previous videos were consumed, we stop their consumption recorders
-        videoConsumptionRecorders.forEach(MediaConsumptionRecorder::stop);
-        videoConsumptionRecorders.clear();
         Node videoContent = null;
         VBox videoVBox = new VBox(20);
         videoVBox.setAlignment(Pos.CENTER);
@@ -605,7 +602,7 @@ final class VideoStreamingActivity extends ViewDomainActivityBase {
                         return;
                     }
                     playingLivestreamUrl = livestreamUrl;
-                    Player livestreamPlayer = AllPlayers.createAllVideoPlayer();
+                    Player livestreamPlayer = createVideoPlayer();
                     LivestreamNotificationOverlay.addNotificationOverlayToLivestreamPlayer(livestreamPlayer, event);
                     FullscreenButtonOverlay.addFullscreenButtonOverlayToVideoPlayer(livestreamPlayer);
                     // Because we keep the same player for the same livestream url (without rebuilding it later),
@@ -633,7 +630,7 @@ final class VideoStreamingActivity extends ViewDomainActivityBase {
                 Controls.setupTextWrapping(commentUILabel, true, false);
                 videoVBox.getChildren().add(commentUILabel);
             }
-            Player videoPlayer = AllPlayers.createAllVideoPlayer();
+            Player videoPlayer = createVideoPlayer();
             for (Media media : watchMedias) {
                 Node videoView = createVideoView(media.getUrl(), media, autoPlay, videoPlayer);
                 videoMediasVBox.getChildren().add(videoView);
@@ -653,13 +650,20 @@ final class VideoStreamingActivity extends ViewDomainActivityBase {
         decoratedLivestreamCollapsePane.setVisible(videoContent != null);
     }
 
+    private Player createVideoPlayer() {
+        // Because we create a new player, we stop all possible previous media consumption recorders.
+        videoConsumptionRecorders.forEach(MediaConsumptionRecorder::stop);
+        videoConsumptionRecorders.clear();
+        // We create a multi-player that supports all video player plugins embed in Modality (Castr, VideoJS, Wistia, YouTube).
+        return AllPlayers.createAllVideoPlayer();
+    }
+
     private Node createVideoView(String url, Media media, boolean autoPlay, Player videoPlayer) {
-        videoPlayer.setMedia(videoPlayer.acceptMedia(url));
         // Aspect ratio should be read from metadata but hardcoded for now
         double aspectRatio = 16d / 9d;
         if (url.contains("wistia"))   // Wistia is used only for the Festival play so far
             aspectRatio = 1085d / 595d; // This is the aspect ratio for the Life of Buddha play (hardcoded for now)
-        videoPlayer.setStartOptions(new StartOptionsBuilder()
+        videoPlayer.setMedia(videoPlayer.acceptMedia(url), new StartOptionsBuilder()
             .setAutoplay(autoPlay)
             .setAspectRatio(aspectRatio)
             .setFullscreen(false)
