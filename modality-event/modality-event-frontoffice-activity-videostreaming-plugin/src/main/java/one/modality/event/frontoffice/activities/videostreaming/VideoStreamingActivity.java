@@ -582,6 +582,8 @@ final class VideoStreamingActivity extends ViewDomainActivityBase {
         SceneUtil.scrollNodeToBeVerticallyVisibleOnScene(videoCollapsePane, false, true);
     }
 
+    private String playingLivestreamUrl; // we memorize the livestream url to skip unnecessary multiple player creations
+
     private void populateVideoPlayers(boolean willAutoplay) {
         // If some previous videos were consumed, we stop their consumption recorders
         videoConsumptionRecorders.forEach(MediaConsumptionRecorder::stop);
@@ -597,14 +599,24 @@ final class VideoStreamingActivity extends ViewDomainActivityBase {
             if (livestreamUrl != null) {
                 // Checking that the user has access to a live session for today
                 if (videoScheduledItems.stream().map(VideoLifecycle::new).anyMatch(VideoLifecycle::isLiveToday)) {
+                    // populateVideoPlayers() might be called several times for the same livestream. If this happens,
+                    // we don't recreate the player each time but just keep the existing one.
+                    if (Objects.areEquals(livestreamUrl, playingLivestreamUrl)) {
+                        return;
+                    }
+                    playingLivestreamUrl = livestreamUrl;
                     Player livestreamPlayer = AllPlayers.createAllVideoPlayer();
                     LivestreamNotificationOverlay.addNotificationOverlayToLivestreamPlayer(livestreamPlayer, event);
                     FullscreenButtonOverlay.addFullscreenButtonOverlayToVideoPlayer(livestreamPlayer);
+                    // Because we keep the same player for the same livestream url (without rebuilding it later),
+                    // we force the autoplay right now if this player doesn't have a play() api.
+                    autoPlay = autoPlay || !livestreamPlayer.getNavigationSupport().api();
                     // Creating the video view
                     videoContent = createVideoView(livestreamUrl, null, autoPlay, livestreamPlayer);
                 }
             }
         } else { // VOD
+            playingLivestreamUrl = null;
             // Creating a Player for each Media and initializing it.
             VBox videoMediasVBox = new VBox(10);
             String comment = getWatchingVideoItem().getComment();
@@ -646,7 +658,7 @@ final class VideoStreamingActivity extends ViewDomainActivityBase {
         // Aspect ratio should be read from metadata but hardcoded for now
         double aspectRatio = 16d / 9d;
         if (url.contains("wistia"))   // Wistia is used only for the Festival play so far
-            aspectRatio = 1085d / 595d; // This is the aspect ratio for the Life of Buddha play
+            aspectRatio = 1085d / 595d; // This is the aspect ratio for the Life of Buddha play (hardcoded for now)
         videoPlayer.setStartOptions(new StartOptionsBuilder()
             .setAutoplay(autoPlay)
             .setAspectRatio(aspectRatio)
