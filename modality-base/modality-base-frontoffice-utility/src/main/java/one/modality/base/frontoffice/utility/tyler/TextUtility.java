@@ -40,17 +40,6 @@ public class TextUtility {
         return text;
     }
 
-    public static Text createText(Object i18nKey, Color color, double size) {
-        Text text = createText(i18nKey, color);
-        setTextFont(text, Fonts.MONTSERRAT_TEXT_FAMILY, FontWeight.findByWeight(500), size);
-        return text;
-    }
-
-    /*public static void setFontFamily(Text text, String family, double size) {
-        FXProperties.runNowAndOnPropertiesChange(() -> {
-            setTextFont(text, family, FontWeight.NORMAL, size * FXApp.fontRatio.get());
-        }, FXApp.fontRatio);
-    }*/
 
     public static void setTextFont(Text text, String fontFamily, FontWeight fontWeight, double fontSize) {
         text.setFont(Font.font(fontFamily, fontWeight, fontSize));
@@ -66,10 +55,6 @@ public class TextUtility {
     public static Text getMainText(String content, String color) {
         return getText(content, color, StyleUtility.MAIN_TEXT_SIZE);
     }
-
-    /*public static Text getSubText(String content, String color) {
-        return getText(content, StyleUtility.SUB_TEXT_SIZE, color);
-    }*/
 
     public static Text getAccountHeaderText(String content) {
         return weight(getText(content, StyleUtility.BLACK, 20), FontWeight.findByWeight(600));

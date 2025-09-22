@@ -1,6 +1,7 @@
 package one.modality.event.client.mediaview;
 
 import dev.webfx.extras.panes.ScalePane;
+import dev.webfx.extras.styles.bootstrap.Bootstrap;
 import dev.webfx.extras.util.animation.Animations;
 import javafx.animation.KeyFrame;
 import javafx.animation.KeyValue;
@@ -15,9 +16,10 @@ import javafx.scene.shape.Circle;
 import javafx.scene.shape.SVGPath;
 import javafx.scene.shape.StrokeLineCap;
 import javafx.scene.shape.StrokeLineJoin;
+import javafx.scene.text.Font;
+import javafx.scene.text.Text;
 import javafx.util.Duration;
 import one.modality.base.client.brand.Brand;
-import one.modality.base.frontoffice.utility.tyler.TextUtility;
 
 /**
  * @author Bruno Salmon
@@ -33,15 +35,20 @@ public final class MediaButtons {
     private static final String FULLSCREEN_PATH_16 = "M 2.2857143,10.285714 H 0 V 16 H 5.7142857 V 13.714286 H 2.2857143 Z M 0,5.7142857 H 2.2857143 V 2.2857143 H 5.7142857 V 0 H 0 Z M 13.714286,13.714286 H 10.285714 V 16 H 16 V 10.285714 H 13.714286 Z M 10.285714,0 v 2.2857143 h 3.428572 V 5.7142857 H 16 V 0 Z";
 
     public static Pane createBackwardButton() {
+        Text text = Bootstrap.textSecondary(new Text("10"));
+        text.setFont(Font.font(8));
         return embedButton(new StackPane(
             createSVGButton(BACKWARD_BUTTON_PATH_32, Color.BLACK, null),
-            TextUtility.createText("10", Color.GRAY, 8)));
+            text
+        ));
     }
 
     public static Pane createForwardButton() {
+        Text text = Bootstrap.textSecondary(new Text("30"));
+        text.setFont(Font.font(8));
         return embedButton(new StackPane(
             createSVGButton(FORWARD_BUTTON_PATH_32, Color.BLACK, null),
-            translateX(TextUtility.createText("30", Color.GRAY, 8), 2) // Needs to be translated a bit to look centered with SVG
+            translateX(text, 2) // Needs to be translated a bit to look centered with SVG
         ));
     }
 
