@@ -89,98 +89,81 @@
     -fx-spacing: 10px;
 }
 
-/* Base notification styles */
-.notification {
-    -fx-background-radius: 8px;
-    -fx-border-radius: 8px;
-    -fx-border-width: 1px;
+.livestream {
+    /* Dark Amber Alert Scheme */
+    -notification-bg-primary: #BF360C;
+    -notification-bg-secondary: #D84315;
+    -notification-text-color: #FFFDE7;
+    -notification-border-color: #FF6D00;
+    -notification-icon-bg: rgba(255, 214, 0, 0.2);
+    -notification-close-color: #FFE0B2;
+    -notification-close-hover-bg: rgba(255, 214, 0, 0.2);
+    -notification-close-hover-color: #FFD600;
+
+    /* This is to uniformize the fullscreen button color with the notification bar color */
+    -modality-media-button-circle-background: -notification-bg-secondary;
+}
+
+.notification-bar {
     -fx-spacing: 12px;
     -fx-alignment: CENTER_LEFT;
-    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.08), 4, 0, 0, 2);
+    -fx-effect: dropshadow(gaussian, rgba(0, 0, 0, 0.08), 4, 0, 0, 2);
 }
 
-/* Notification type variants */
+/* Background styling for notifications */
 .notification-bar {
-    -fx-background-color: linear-gradient(to bottom, #fef2f2, #fecaca);
-    -fx-border-color: #f87171;
+    -fx-background-color: linear-gradient(to bottom, -notification-bg-primary, -notification-bg-secondary);
+    -fx-background-radius: 8px;
 }
 
-/* Icon styles - Significantly larger and more prominent */
-.notification-icon {
-    -fx-font-size: 24px;
-    -fx-font-weight: bold;
-    -fx-min-width: 32px;
-    -fx-min-height: 32px;
-    -fx-alignment: center;
-    -fx-background-radius: 50%;
-    -fx-padding: 4px;
+/* Border styling for notifications */
+.notification-bar {
+    -fx-border-width: 1px;
+    -fx-border-style: solid;
+    -fx-border-color: -notification-border-color;
+    -fx-border-radius: 8px;
 }
 
-.notification-bar .notification-icon {
-    -fx-text-fill: #dc2626;
-    -fx-background-color: rgba(220, 38, 38, 0.1);
+/* Text container setup for scrolling */
+Label.notification-text {
+    -fx-ellipsis-string: null;
 }
 
-/* Text styles - Better readability and hierarchy */
-.notification-text {
-    -fx-text-fill: #374151;
-    -fx-font-size: 15px;
+/* Text with scrolling animation */
+Label.notification-text {
+    -fx-font-size: 32px;
     -fx-font-weight: 500;
-    -fx-line-spacing: 2px;
-    -fx-wrap-text: true;
+    -fx-text-fill: -notification-text-color;
 }
 
-.notification-bar .notification-text {
-    -fx-text-fill: #991b1b;
-}
-
-/* Close button styles - More modern and accessible */
-.notification-close {
-    -fx-background-color: transparent;
-    -fx-border-color: transparent;
-    -fx-text-fill: #9ca3af;
-    -fx-font-size: 20px;
+/* Style the notification icon */
+.notification-bar Text.notification-icon {
+    -fx-font-size: 40px;
     -fx-font-weight: bold;
-    -fx-padding: 8px;
-    -fx-min-width: 32px;
-    -fx-min-height: 32px;
-    -fx-background-radius: 50%;
-    -fx-border-radius: 50%;
+}
+
+/* Style the close button */
+.notification-bar Button.notification-close {
     -fx-cursor: hand;
-    -fx-alignment: center;
 }
 
-.notification-close:hover {
-    -fx-background-color: rgba(0,0,0,0.08);
-    -fx-text-fill: #6b7280;
-    -fx-scale-x: 1.1;
-    -fx-scale-y: 1.1;
+.notification-bar Button.notification-close {
+    -fx-background-color: transparent;
+    -fx-border-radius: 50%;
+    transition: -fx-background-color 0.5s ease;
 }
 
-.notification-close:pressed {
-    -fx-background-color: rgba(0,0,0,0.12);
-    -fx-scale-x: 0.95;
-    -fx-scale-y: 0.95;
+.notification-bar Button.notification-close {
+    -fx-text-fill: -notification-close-color;
+    -fx-font-size: 18px ;
+    -fx-font-weight: bold ;
 }
 
-/* Additional refinements for specific notification types */
-.notification-bar .notification-close:hover {
-    -fx-background-color: rgba(220, 38, 38, 0.1);
-    -fx-text-fill: #dc2626;
+/* Close button hover states */
+.notification-bar Button.notification-close:hover {
+    -fx-background-color: -notification-close-hover-bg;
 }
 
-
-/* Responsive text sizing for longer messages */
-.notification-text-long {
-    -fx-font-size: 14px;
-    -fx-line-spacing: 3px;
-}
-
-/* Animation support for smooth appearance */
-.notification-fade-in {
-    -fx-opacity: 0;
-}
-
-.notification-fade-in:hover {
-    -fx-opacity: 1;
+.notification-bar Button.notification-close:hover {
+    -fx-text-fill: -notification-close-hover-color;
 }

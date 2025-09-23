@@ -28,10 +28,6 @@
      color: black;
 }
 
-.livestream {
-    --modality-media-button-circle-background: var(--notification-bg-secondary);
-}
-
 /** styles for the video desktop table and mobile view **/
 
 .livestream .grid-head /* desktop only */ {
@@ -92,21 +88,23 @@
     --fx-line-height: 1.6;
 }
 
-/* Dark Amber Alert Scheme*/
-:root {
+
+.livestream {
+    /* Dark Amber Alert Scheme */
     --notification-bg-primary: #BF360C;
     --notification-bg-secondary: #D84315;
     --notification-text-color: #FFFDE7;
     --notification-border-color: #FF6D00;
-    --notification-icon-color: #FFD600;
     --notification-icon-bg: rgba(255, 214, 0, 0.2);
     --notification-close-color: #FFE0B2;
     --notification-close-hover-bg: rgba(255, 214, 0, 0.2);
     --notification-close-hover-color: #FFD600;
+
+    /* This is to uniformize the fullscreen button color with the notification bar color */
+    --modality-media-button-circle-background: var(--notification-bg-secondary);
 }
 
 .notification-bar {
-    border-radius: 8px;
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.08);
     overflow: hidden;
 }
@@ -153,14 +151,7 @@ fx-label.notification-text fx-text {
 }
 
 /* Style the notification icon */
-.notification-bar fx-label.notification-icon {
-    display: flex ;
-    align-items: center ;
-    justify-content: center ;
-}
-
-.notification-bar fx-label.notification-icon fx-text {
-    color: var(--notification-icon-color) ;
+.notification-bar fx-text.notification-icon {
     font-size: 40px ;
     font-weight: bold ;
     text-align: center ;
@@ -169,13 +160,12 @@ fx-label.notification-text fx-text {
 /* Style the close button */
 .notification-bar fx-button.notification-close {
     cursor: pointer ;
-    transition: all 0.2s ease ;
 }
 
 .notification-bar fx-button.notification-close > fx-background {
     background: transparent ;
     border-radius: 50% ;
-    transition: background-color 0.2s ease ;
+    transition: background-color 0.5s ease ;
 }
 
 .notification-bar fx-button.notification-close fx-text {
