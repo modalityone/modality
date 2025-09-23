@@ -1,3 +1,7 @@
+.root {
+    -modality-media-button-circle-background: -brand-main-color;
+}
+
 .media-button {
-    -fx-fill: -brand-main-color;
+    -fx-fill: -modality-media-button-circle-background;
 }

@@ -28,6 +28,10 @@
      color: black;
 }
 
+.livestream {
+    --modality-media-button-circle-background: var(--notification-bg-secondary);
+}
+
 /** styles for the video desktop table and mobile view **/
 
 .livestream .grid-head /* desktop only */ {
