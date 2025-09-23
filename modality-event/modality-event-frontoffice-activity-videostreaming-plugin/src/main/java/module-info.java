@@ -32,6 +32,7 @@ module modality.event.frontoffice.activity.videostreaming.plugin {
     requires webfx.extras.styles.bootstrap;
     requires webfx.extras.time.format;
     requires webfx.extras.type;
+    requires webfx.extras.util.animation;
     requires webfx.extras.util.control;
     requires webfx.extras.util.layout;
     requires webfx.extras.util.scene;

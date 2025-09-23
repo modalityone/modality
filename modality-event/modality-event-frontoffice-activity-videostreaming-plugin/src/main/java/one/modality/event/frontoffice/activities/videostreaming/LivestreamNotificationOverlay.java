@@ -1,14 +1,11 @@
 package one.modality.event.frontoffice.activities.videostreaming;
 
 import dev.webfx.extras.player.Player;
+import dev.webfx.extras.util.animation.Animations;
 import dev.webfx.kit.util.properties.FXProperties;
 import dev.webfx.platform.uischeduler.UiScheduler;
 import dev.webfx.platform.useragent.UserAgent;
 import dev.webfx.stack.orm.entity.binding.EntityBindings;
-import javafx.animation.Interpolator;
-import javafx.animation.KeyFrame;
-import javafx.animation.KeyValue;
-import javafx.animation.Timeline;
 import javafx.beans.property.ObjectProperty;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
@@ -19,7 +16,6 @@ import javafx.scene.layout.HBox;
 import javafx.scene.layout.Priority;
 import javafx.scene.layout.StackPane;
 import javafx.scene.text.TextAlignment;
-import javafx.util.Duration;
 import one.modality.base.client.i18n.I18nEntities;
 import one.modality.base.client.messaging.ModalityMessaging;
 import one.modality.base.shared.entities.Event;
@@ -106,31 +102,15 @@ final class LivestreamNotificationOverlay {
 
         notificationContainer.getChildren().setAll(iconLabel, messageLabel, closeButton);
 
-        // CSS-like slide-in animation using Timeline for smooth transition
-        Timeline slideIn = new Timeline(
-            new KeyFrame(Duration.ZERO,
-                new KeyValue(notificationContainer.opacityProperty(), 0)
-            ),
-            new KeyFrame(Duration.millis(300),
-                new KeyValue(notificationContainer.opacityProperty(), 1, Interpolator.EASE_OUT)
-            )
-        );
-        slideIn.play();
+        notificationContainer.setOpacity(0);
+        Animations.animateProperty(notificationContainer.opacityProperty(), 1);
         notificationContainer.setVisible(true);
     }
 
     // Method to hide notification with CSS-like animation
     private void hideNotification() {
-        Timeline slideOut = new Timeline(
-            new KeyFrame(Duration.ZERO,
-                new KeyValue(notificationContainer.opacityProperty(), 1)
-            ),
-            new KeyFrame(Duration.millis(250),
-                new KeyValue(notificationContainer.opacityProperty(), 0, Interpolator.EASE_IN)
-            )
-        );
-        slideOut.setOnFinished(e -> notificationContainer.setVisible(false));
-        slideOut.play();
+        Animations.animateProperty(notificationContainer.opacityProperty(), 0)
+            .setOnFinished(e -> notificationContainer.setVisible(false));
     }
 
 
