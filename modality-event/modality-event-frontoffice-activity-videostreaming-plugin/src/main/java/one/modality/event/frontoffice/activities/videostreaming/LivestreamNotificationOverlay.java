@@ -1,21 +1,25 @@
 package one.modality.event.frontoffice.activities.videostreaming;
 
+import dev.webfx.extras.panes.MonoClipPane;
 import dev.webfx.extras.player.Player;
 import dev.webfx.extras.util.animation.Animations;
 import dev.webfx.kit.util.properties.FXProperties;
 import dev.webfx.platform.uischeduler.UiScheduler;
 import dev.webfx.platform.useragent.UserAgent;
 import dev.webfx.stack.orm.entity.binding.EntityBindings;
+import javafx.animation.Interpolator;
+import javafx.animation.Timeline;
 import javafx.beans.property.ObjectProperty;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Node;
 import javafx.scene.control.Button;
-import javafx.scene.control.Label;
 import javafx.scene.layout.HBox;
-import javafx.scene.layout.Priority;
+import javafx.scene.layout.Region;
 import javafx.scene.layout.StackPane;
+import javafx.scene.text.Text;
 import javafx.scene.text.TextAlignment;
+import javafx.util.Duration;
 import one.modality.base.client.i18n.I18nEntities;
 import one.modality.base.client.messaging.ModalityMessaging;
 import one.modality.base.shared.entities.Event;
@@ -23,25 +27,30 @@ import one.modality.base.shared.entities.Event;
 import java.util.function.Consumer;
 
 /**
+ * A class that can display a notification message pushed by the server on the livestream video overlay. The message is
+ * displayed as a text that scrolls in a loop from right to left in a notification bar. The user can close the
+ * notification bar using a close button before the team clears the message.
+ *
  * @author David Hello
  * @author Bruno Salmon
  */
 final class LivestreamNotificationOverlay {
 
-    private final Label livestreamMessageLabel = new Label();
     private final HBox notificationContainer = new HBox(12);
+    private final Text notificationText = new Text();
 
     public static void addNotificationOverlayToLivestreamPlayer(Player livestreamPlayer, Event event) {
         new LivestreamNotificationOverlay(livestreamPlayer, event);
     }
 
     private LivestreamNotificationOverlay(Player livestreamPlayer, Event event) {
-        notificationContainer.setMaxHeight(60);
-        notificationContainer.setPrefHeight(60);
-        notificationContainer.setPadding(new Insets(0, 15, 0, 15));
+        // Note that we use web CSS for the scroll text animation in the browser. This web animation completely resets
+        // any translateX/Y possibly set by WebFX, which actually includes layoutX/Y. So it's important to set any
+        // padding or margin not on the text itself but on the container.
+        notificationContainer.setMaxHeight(Region.USE_PREF_SIZE);
+        notificationContainer.setPadding(new Insets(8, 15, 8, 15));
         StackPane.setAlignment(notificationContainer, Pos.BOTTOM_CENTER);
         StackPane.setMargin(notificationContainer, new Insets(0, 20, 60, 20));
-        notificationContainer.setAlignment(Pos.CENTER);
         notificationContainer.setVisible(false);
 
         StackPane.setAlignment(notificationContainer, Pos.BOTTOM_CENTER);
@@ -53,54 +62,67 @@ final class LivestreamNotificationOverlay {
 
         // Consumer that gets called when address fields change
         Consumer<one.modality.base.shared.entities.Label> onLabelChange =labelEntity -> UiScheduler.runInUiThread(() -> {
-            I18nEntities.bindExpressionProperties(livestreamMessageLabel, labelEntity, "i18n(this)");
-            showNotification(livestreamMessageLabel);
+            I18nEntities.bindExpressionProperties(notificationText, labelEntity, "i18n(this)");
+            showNotification(notificationText);
         });
         EntityBindings.onForeignFieldsChanged(onLabelChange, event, Event.livestreamMessageLabel, "en", "de", "fr", "es", "pt");
 
-        I18nEntities.bindExpressionProperties(livestreamMessageLabel, liveMessageLabelProperty, "i18n(this)");
-        livestreamMessageLabel.setTextAlignment(TextAlignment.CENTER);
+        I18nEntities.bindExpressionProperties(notificationText, liveMessageLabelProperty, "i18n(this)");
+        notificationText.setTextAlignment(TextAlignment.CENTER);
 
         // Listen for livestream message changes and show notifications
         FXProperties.runNowAndOnPropertyChange(liveMessageLabel -> {
             if (liveMessageLabel == null) {
                 hideNotification();
             } else {
-                showNotification(livestreamMessageLabel);
+                showNotification(notificationText);
             }
         }, liveMessageLabelProperty);
 
-        if (UserAgent.isBrowser()) {
+        FXProperties.runOnPropertiesChange(() -> {
             // Computing the "--scroll-text-duration" CSS property so that the text scroll speed is always the same
             // whatever the container width and text length.
-            FXProperties.runOnPropertiesChange(() -> {
-                double containerWidth = notificationContainer.getWidth();
-                double messageWidth = livestreamMessageLabel.prefWidth(-1); // total width of the text on a single line
-                double totalScrollDistance = containerWidth + messageWidth;
-                double totalScrollDuration = totalScrollDistance / 160; // in seconds - 160 is an empiric value
-                livestreamMessageLabel.setStyle("--scroll-text-duration:" + totalScrollDuration + "s");
-            }, notificationContainer.widthProperty(), livestreamMessageLabel.textProperty());
-        }
+            double containerWidth = notificationContainer.getWidth();
+            double messageWidth = notificationText.prefWidth(-1); // total width of the text on a single line
+            double totalScrollDistance = containerWidth + messageWidth;
+            double totalScrollDuration = totalScrollDistance / 160; // in seconds - 160 is an empiric value
+            if (UserAgent.isBrowser()) // We use CSS animation in browsers (smoother)
+                notificationText.setStyle("--scroll-text-duration:" + totalScrollDuration + "s");
+            else // otherwise JavaFX programmatic animation
+                startJavaFxTextScrollAnimation(containerWidth, totalScrollDistance, totalScrollDuration);
+        }, notificationContainer.widthProperty(), notificationText.textProperty());
     }
 
-    // Method to show notification
-    private void showNotification(Node messageLabel) {
+    private Timeline javaFxTextScrollTimeline;
+
+    private void startJavaFxTextScrollAnimation(double containerWidth, double totalScrollDistance, double totalScrollDuration) {
+        if (javaFxTextScrollTimeline != null)
+            javaFxTextScrollTimeline.stop();
+        notificationText.setTranslateX(containerWidth);
+        javaFxTextScrollTimeline = Animations.animateProperty(notificationText.translateXProperty(), containerWidth - totalScrollDistance, Duration.seconds(totalScrollDuration), Interpolator.LINEAR);
+        javaFxTextScrollTimeline.setOnFinished(e -> startJavaFxTextScrollAnimation(containerWidth, totalScrollDistance, totalScrollDuration));
+    }
+
+    // Method to show the notification message
+    private void showNotification(Node notificationText) {
         notificationContainer.getStyleClass().setAll("notification-bar");
 
-        // Icon (you can replace with actual icons from your icon library)
-        Label iconLabel = new Label("⚠️"); // Use the appropriate icon based on type
-        iconLabel.getStyleClass().add("notification-icon");
+        // Icon
+        Text iconText = new Text("⚠️");
+        iconText.getStyleClass().add("notification-icon");
 
-        // Message text
-        messageLabel.getStyleClass().add("notification-text");
-        HBox.setHgrow(messageLabel, Priority.ALWAYS);
+        // Text box with the message inside, but clipped if it's too long
+        MonoClipPane notificationTextBox = new MonoClipPane(notificationText); // We clip the text (works for both web and JavaFX)
+        notificationTextBox.setMinWidth(0); // Important to tell JavaFX that it can be smaller than the text
+        notificationTextBox.setAlignment(Pos.TOP_LEFT); // The web CSS animation will reset any layoutX/Y anyway
+        notificationTextBox.getStyleClass().add("notification-text-box");
 
         // Close button
         Button closeButton = new Button("✕");
         closeButton.getStyleClass().add("notification-close");
         closeButton.setOnAction(e -> hideNotification());
 
-        notificationContainer.getChildren().setAll(iconLabel, messageLabel, closeButton);
+        notificationContainer.getChildren().setAll(iconText, notificationTextBox, closeButton);
 
         notificationContainer.setOpacity(0);
         Animations.animateProperty(notificationContainer.opacityProperty(), 1);

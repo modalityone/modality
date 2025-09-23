@@ -125,15 +125,12 @@
 }
 
 /* Text container setup for scrolling */
-Label.notification-text {
-    -fx-ellipsis-string: null;
-}
-
 /* Text with scrolling animation */
-Label.notification-text {
+.notification-text-box Text {
     -fx-font-size: 32px;
     -fx-font-weight: 500;
-    -fx-text-fill: -notification-text-color;
+    -fx-fill: -notification-text-color;
+    -fx-ellipsis-string: null;
 }
 
 /* Style the notification icon */

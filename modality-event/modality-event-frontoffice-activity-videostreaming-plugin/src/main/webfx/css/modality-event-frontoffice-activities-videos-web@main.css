@@ -122,17 +122,12 @@
 }
 
 /* Text container setup for scrolling */
-fx-label.notification-text {
-    display: flex;
-    align-items: center;
-    justify-content: flex-start;
-    overflow: hidden;
-    position: relative;
+.notification-text-box {
     --scroll-text-duration: 20s; /* Will be actually recomputed in the app to always get the same text speed */
 }
 
 /* Text with scrolling animation */
-fx-label.notification-text fx-text {
+.notification-text-box fx-text {
     font-size: 32px;
     font-weight: 500;
     color: var(--notification-text-color);
@@ -143,10 +138,10 @@ fx-label.notification-text fx-text {
 /* Scroll text animation */
 @keyframes scroll-text {
     0% {
-        transform: translateX(0);
+        transform: translateX(0) translateY(3px);
     }
     100% {
-        transform: translateX(-100%);
+        transform: translateX(-100%) translateY(3px);
     }
 }
 
