@@ -19,7 +19,6 @@ import javafx.scene.shape.StrokeLineJoin;
 import javafx.scene.text.Font;
 import javafx.scene.text.Text;
 import javafx.util.Duration;
-import one.modality.base.client.brand.Brand;
 
 /**
  * @author Bruno Salmon
@@ -54,26 +53,34 @@ public final class MediaButtons {
 
     public static Pane createPlayButton() {
         return embedButton(new StackPane(
-            new Circle(16, Brand.getBrandMainColor()),
+            createMediaButtonStyledBackgroundCircle(),
             translateX(createSVGButton(PLAY_TRIANGLE_PATH_15, null, Color.WHITE), 1) // Needs to be translated a bit to look centered with SVG
         ));
     }
 
     public static Pane createPauseButton() {
         return embedButton(new StackPane(
-            new Circle(16, Brand.getBrandMainColor()),
+            createMediaButtonStyledBackgroundCircle(),
             createSVGButton(PAUSE_SIGN_PATH_15, null, Color.WHITE)));
     }
 
     public static Pane createFullscreenButton() {
         return embedButton(new StackPane(
-            new Circle(16, Brand.getBrandMainColor()),
+            createMediaButtonStyledBackgroundCircle(),
             createSVGButton(FULLSCREEN_PATH_16, null, Color.WHITE)));
+    }
+
+    private static Circle createMediaButtonStyledBackgroundCircle() {
+        Circle circle = new Circle(16);
+        circle.getStyleClass().setAll("media-button"); // background color is defined in CSS
+        return circle;
     }
 
     public static void animateFullscreenButton(Pane fullscreenButton) {
         StackPane stackPane = (StackPane) ((ScalePane) fullscreenButton).getContent();
-        Circle fadingCircle = new Circle(16, 16, 16, Brand.getBrandMainColor());
+        Circle fadingCircle = createMediaButtonStyledBackgroundCircle();
+        fadingCircle.setCenterX(16);
+        fadingCircle.setCenterY(16);
         fadingCircle.setManaged(false);
         stackPane.getChildren().add(0, fadingCircle);
         Timeline timeline = new Timeline();
