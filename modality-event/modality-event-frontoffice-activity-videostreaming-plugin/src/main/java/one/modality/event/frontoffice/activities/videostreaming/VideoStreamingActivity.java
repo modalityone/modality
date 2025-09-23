@@ -604,7 +604,7 @@ final class VideoStreamingActivity extends ViewDomainActivityBase {
                     playingLivestreamUrl = livestreamUrl;
                     Player livestreamPlayer = createVideoPlayer();
                     LivestreamNotificationOverlay.addNotificationOverlayToLivestreamPlayer(livestreamPlayer, event);
-                    FullscreenButtonOverlay.addFullscreenButtonOverlayToVideoPlayer(livestreamPlayer);
+                    //FullscreenButtonOverlay.addFullscreenButtonOverlayToVideoPlayer(livestreamPlayer);
                     // Because we keep the same player for the same livestream url (without rebuilding it later),
                     // we force the autoplay right now if this player doesn't have a play() api.
                     autoPlay = autoPlay || !livestreamPlayer.getNavigationSupport().api();

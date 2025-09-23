@@ -30,12 +30,7 @@ final class FullscreenButtonOverlay {
         fullScreenContainer.setPadding(new Insets(10, 10, 0, 0));
         StackPane.setAlignment(fullScreenContainer, Pos.TOP_RIGHT);
 
-        fullScreenContainer.setOnMouseClicked(e -> {
-            if (videoPlayer.isFullscreen())
-                videoPlayer.cancelFullscreen();
-            else
-                videoPlayer.requestFullscreen();
-        });
+        fullScreenContainer.setOnMouseClicked(e -> videoPlayer.toggleFullscreen());
 
         // Add fullscreen button to video player overlay
         videoPlayer.getOverlayChildren().add(fullScreenContainer);
