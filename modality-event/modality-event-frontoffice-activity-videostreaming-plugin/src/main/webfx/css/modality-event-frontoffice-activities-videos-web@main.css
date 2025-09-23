@@ -112,13 +112,13 @@
 }
 
 /* Background styling for error notifications */
-.notification-error > fx-background {
+.notification-bar > fx-background {
     background: linear-gradient(to bottom, var(--notification-bg-primary), var(--notification-bg-secondary));
     border-radius: 8px;
 }
 
 /* Border styling for error notifications */
-.notification-error > fx-border {
+.notification-bar > fx-border {
     border: 1px solid var(--notification-border-color);
     border-radius: 8px;
 }
@@ -153,13 +153,13 @@ fx-label.notification-text fx-text {
 }
 
 /* Style the notification icon */
-.notification-error fx-label.notification-icon {
+.notification-bar fx-label.notification-icon {
     display: flex ;
     align-items: center ;
     justify-content: center ;
 }
 
-.notification-error fx-label.notification-icon fx-text {
+.notification-bar fx-label.notification-icon fx-text {
     color: var(--notification-icon-color) ;
     font-size: 40px ;
     font-weight: bold ;
@@ -185,10 +185,10 @@ fx-label.notification-text fx-text {
 }
 
 /* Close button hover states */
-.notification-error fx-button.notification-close:hover > fx-background {
+.notification-bar fx-button.notification-close:hover > fx-background {
     background-color: var(--notification-close-hover-bg) ;
 }
 
-.notification-error fx-button.notification-close:hover fx-text {
+.notification-bar fx-button.notification-close:hover fx-text {
     color: var(--notification-close-hover-color) ;
 }

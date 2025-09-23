@@ -100,19 +100,9 @@
 }
 
 /* Notification type variants */
-.notification-error {
+.notification-bar {
     -fx-background-color: linear-gradient(to bottom, #fef2f2, #fecaca);
     -fx-border-color: #f87171;
-}
-
-.notification-warning {
-    -fx-background-color: linear-gradient(to bottom, #fffbeb, #fed7aa);
-    -fx-border-color: #fb923c;
-}
-
-.notification-info {
-    -fx-background-color: linear-gradient(to bottom, #eff6ff, #bfdbfe);
-    -fx-border-color: #60a5fa;
 }
 
 /* Icon styles - Significantly larger and more prominent */
@@ -126,19 +116,9 @@
     -fx-padding: 4px;
 }
 
-.notification-error .notification-icon {
+.notification-bar .notification-icon {
     -fx-text-fill: #dc2626;
     -fx-background-color: rgba(220, 38, 38, 0.1);
-}
-
-.notification-warning .notification-icon {
-    -fx-text-fill: #d97706;
-    -fx-background-color: rgba(217, 119, 6, 0.1);
-}
-
-.notification-info .notification-icon {
-    -fx-text-fill: #2563eb;
-    -fx-background-color: rgba(37, 99, 235, 0.1);
 }
 
 /* Text styles - Better readability and hierarchy */
@@ -150,16 +130,8 @@
     -fx-wrap-text: true;
 }
 
-.notification-error .notification-text {
+.notification-bar .notification-text {
     -fx-text-fill: #991b1b;
-}
-
-.notification-warning .notification-text {
-    -fx-text-fill: #92400e;
-}
-
-.notification-info .notification-text {
-    -fx-text-fill: #1e40af;
 }
 
 /* Close button styles - More modern and accessible */
@@ -192,20 +164,11 @@
 }
 
 /* Additional refinements for specific notification types */
-.notification-error .notification-close:hover {
+.notification-bar .notification-close:hover {
     -fx-background-color: rgba(220, 38, 38, 0.1);
     -fx-text-fill: #dc2626;
 }
 
-.notification-warning .notification-close:hover {
-    -fx-background-color: rgba(217, 119, 6, 0.1);
-    -fx-text-fill: #d97706;
-}
-
-.notification-info .notification-close:hover {
-    -fx-background-color: rgba(37, 99, 235, 0.1);
-    -fx-text-fill: #2563eb;
-}
 
 /* Responsive text sizing for longer messages */
 .notification-text-long {

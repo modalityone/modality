@@ -89,20 +89,7 @@ final class LivestreamNotificationOverlay {
 
     // Method to show notification
     private void showNotification(Node messageLabel) {
-
-        switch ("critical".toLowerCase()) {
-            case "error":
-            case "critical":
-                notificationContainer.getStyleClass().setAll("notification-bar", "notification-error");
-                break;
-            case "warning":
-                notificationContainer.getStyleClass().setAll("notification-bar", "notification-warning");
-                break;
-            case "info":
-            default:
-                notificationContainer.getStyleClass().setAll("notification-bar", "notification-info");
-                break;
-        }
+        notificationContainer.getStyleClass().setAll("notification-bar");
 
         // Icon (you can replace with actual icons from your icon library)
         Label iconLabel = new Label("⚠️"); // Use the appropriate icon based on type
