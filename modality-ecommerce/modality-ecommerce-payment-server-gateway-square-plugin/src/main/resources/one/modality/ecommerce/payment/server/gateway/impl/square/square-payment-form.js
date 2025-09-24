@@ -1,6 +1,6 @@
 console.log("Starting Modality-Square script");
 
-// Parameters injected by SquarePaymentGateway java class on server-side
+// Parameters injected by SquarePaymentGateway java class on the server side
 const modality_amount = ${modality_amount};
 const modality_currencyCode = "${modality_currencyCode}";
 const modality_seamless = ${modality_seamless};
@@ -9,7 +9,7 @@ const square_appId = '${square_appId}';
 const square_locationId = '${square_locationId}';
 const square_idempotencyKey = window.crypto.randomUUID();
 
-// Parameter injected by WebPaymentForm java class on client-side (to allow JS -> Java callbacks)
+// Parameter injected by WebPaymentForm java class on the client side (to allow JS -> Java callbacks)
 let modality_javaPaymentForm;
 
 let modality_initialized;
@@ -24,18 +24,18 @@ const square_cardElementId = 'square-card-container';
 // Variables
 var square_card; // Using 'var' declaration so that we can get the object back when executing the script a second time
 
-// Methods called by WebPaymentForm java class on client-side
+// Methods called by WebPaymentForm java class on the client side
 
 function modality_injectJavaPaymentForm(jpf) {
     console.log("modality_injectJavaPaymentForm() called");
     modality_javaPaymentForm = jpf;
-    if (square_card) { // happens if the customer uses the payment form several times on the same session
+    if (square_card) { // happens if the customer uses the payment form several times in the same session
         try { // We destroy the previous card, otherwise attaching the new card won't work
             console.log("Destroying previous card");
             square_card.destroy();
         } catch (e) {
             console.error('Destroying previous card failed', e);
-            modality_notifyGatewayInitFailure('Destroying previous card failed')
+            modality_notifyGatewayInitFailure('Destroying previous card failed: ' + e.message);
             return;
         }
     }
@@ -196,7 +196,7 @@ import(square_webPaymentsSDKUrl)
                 payments = window.Square.payments(square_appId, square_locationId);
             } catch (e) {
                 console.error('Payments failed', e);
-                modality_notifyGatewayInitFailure('Square payments failed to initialize')
+                modality_notifyGatewayInitFailure('Square payments failed to initialize: ' + e.message);
                 const statusContainer = document.getElementById(
                     'square-payment-status-container',
                 );
@@ -210,7 +210,7 @@ import(square_webPaymentsSDKUrl)
                 square_card = await initializeCard(payments);
             } catch (e) {
                 console.error('Initializing Card failed', e);
-                modality_notifyGatewayInitFailure('Square card initialization failed')
+                modality_notifyGatewayInitFailure('Square card initialization failed: ' + e.message);
                 return;
             }
 
