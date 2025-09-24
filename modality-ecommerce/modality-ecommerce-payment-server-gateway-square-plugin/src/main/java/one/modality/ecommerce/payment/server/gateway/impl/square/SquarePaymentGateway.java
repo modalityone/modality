@@ -17,6 +17,7 @@ import dev.webfx.platform.console.Console;
 import dev.webfx.platform.resource.Resource;
 import dev.webfx.platform.util.uuid.Uuid;
 import io.apimatic.coreinterfaces.http.Context;
+import io.apimatic.coreinterfaces.http.response.Response;
 import one.modality.ecommerce.payment.PaymentStatus;
 import one.modality.ecommerce.payment.SandboxCard;
 import one.modality.ecommerce.payment.server.gateway.*;
@@ -148,22 +149,27 @@ public final class SquarePaymentGateway implements PaymentGateway {
             if (t.getCause() instanceof ApiException) {
                 t = t.getCause();
             }
-            Console.log("[Square] completePayment - Square raised exception " + t.getMessage());
-            // If the exception is about a failed payment, we apply the same process as for a successful payment
+            String message = "[Square] completePayment - Square raised exception " + t.getMessage();
+            // Enhanced logging for better debugging
             if (t instanceof ApiException ae) {
+                Context httpContext = ae.getHttpContext();
+                Response response = httpContext.getResponse();
+                message += " | HTTP Status: " + ae.getResponseCode() +
+                           " | Headers: " + response.getHeaders() +
+                           " | Response Body: " + response.getBody();
                 Object data = ae.getData();
-                if (DEBUG_LOG) {
-                    Console.log("[Square][DEBUG] completePayment - data = " + data);
-                }
                 if (data instanceof CreatePaymentResponse cpr) {
                     Payment payment = cpr.getPayment();
+                    message += " | Payment: " + payment;
+                    Console.log(message);
                     // The same as for a successful payment, the difference will be the status that will indicate it's failed
-                    promise.complete(generateResultFromSquarePayment(payment, ae.getHttpContext()));
+                    promise.complete(generateResultFromSquarePayment(payment, httpContext));
                     return null;
                 }
             }
+            Console.log(message);
             // Otherwise, it's probably a technical exception
-            promise.fail(t);
+            promise.fail(message);
             return null;
         });
         return promise.future();
