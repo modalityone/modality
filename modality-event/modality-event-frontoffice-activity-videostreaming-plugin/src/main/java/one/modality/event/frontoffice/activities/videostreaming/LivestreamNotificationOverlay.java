@@ -124,15 +124,12 @@ final class LivestreamNotificationOverlay {
 
         notificationContainer.getChildren().setAll(iconText, notificationTextBox, closeButton);
 
-        notificationContainer.setOpacity(0);
-        Animations.animateProperty(notificationContainer.opacityProperty(), 1);
-        notificationContainer.setVisible(true);
+        Animations.fadeIn(notificationContainer, true);
     }
 
     // Method to hide notification with CSS-like animation
     private void hideNotification() {
-        Animations.animateProperty(notificationContainer.opacityProperty(), 0)
-            .setOnFinished(e -> notificationContainer.setVisible(false));
+        Animations.fadeOut(notificationContainer, true);
     }
 
 
