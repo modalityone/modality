@@ -70,7 +70,7 @@ public final class BookingDetailsPanel implements
     UiBuilder {
 
     public static final String REQUIRED_FIELDS = // event.startDate is required for the personal details panel
-        "person_firstName,person_lastName,person_age,person_email,person_organization,person_phone,person_cityName,person_country,person_carer1Name,person_carer2Name,event.startDate,dates";
+        "person_firstName,person_lastName,person_age,person_email,person_organization,person_phone,person_street,person_postCode,person_cityName,person_country,person_carer1Name,person_carer2Name,event.startDate,dates";
 
     private final ObjectProperty<Document> selectedDocumentProperty;
     private final BooleanProperty activeProperty = new SimpleBooleanProperty(true);
