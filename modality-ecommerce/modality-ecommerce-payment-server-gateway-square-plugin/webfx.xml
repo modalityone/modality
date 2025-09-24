@@ -49,6 +49,7 @@
             <version>0.3.3</version>
             <exported-packages>
                 <package>io.apimatic.coreinterfaces.http</package>
+                <package>io.apimatic.coreinterfaces.http.response</package>
             </exported-packages>
         </library>
     </required-libraries>
