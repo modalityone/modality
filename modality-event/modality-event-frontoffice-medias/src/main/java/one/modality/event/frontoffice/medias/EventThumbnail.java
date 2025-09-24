@@ -8,6 +8,7 @@ import dev.webfx.extras.styles.bootstrap.Bootstrap;
 import dev.webfx.extras.util.control.Controls;
 import dev.webfx.extras.util.layout.Layouts;
 import dev.webfx.extras.webtext.HtmlText;
+import dev.webfx.kit.util.properties.FXProperties;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.control.Button;
@@ -128,7 +129,12 @@ public final class EventThumbnail {
         ));
 
         MonoPane imageContainer = new MonoPane();
-        ModalityCloudinary.loadHdpiEventCoverImage(event, itemType == ItemType.ITEM_TYPE_AUDIO ? languageOfTheItem : I18n.getLanguage(), CONTAINER_WIDTH, CONTAINER_HEIGHT, imageContainer, SvgIcons::createAudioCoverPath);
+        if (itemType == ItemType.ITEM_TYPE_AUDIO) // for audio recordings, the language is linked to the item, not the user interface
+            ModalityCloudinary.loadHdpiEventCoverImage(event, languageOfTheItem, CONTAINER_WIDTH, CONTAINER_HEIGHT, imageContainer, SvgIcons::createAudioCoverPath);
+        else // for videos, however, the language is linked to the user interface (EventThumbnail is used for changing the event selection in VideoStreamingActivity)
+            FXProperties.runNowAndOnPropertyChange(language ->
+                    ModalityCloudinary.loadHdpiEventCoverImage(event, language, CONTAINER_WIDTH, CONTAINER_HEIGHT, imageContainer, SvgIcons::createAudioCoverPath)
+                , I18n.languageProperty());
 
         StackPane thumbnailStackPane = new StackPane(imageContainer, availabilityLabel);
         thumbnailStackPane.setAlignment(Pos.TOP_LEFT);
@@ -159,7 +165,7 @@ public final class EventThumbnail {
         String[] parts = itemCode.split("-");
         String toReturn = parts.length > 1 ? parts[1] : null;
 
-        return  I18nEntities.convertAudioLanguageCodeToWrittenLanguageCode(toReturn);
+        return I18nEntities.convertAudioLanguageCodeToWrittenLanguageCode(toReturn);
     }
 
 
