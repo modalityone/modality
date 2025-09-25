@@ -118,21 +118,29 @@ public final class WorkingBooking {
             integrateNewDocumentEvent(new AddDocumentLineEvent(documentLine), false);
             existingAttendances = null;
         }
-        Attendance[] attendances = scheduledItems.stream().map(scheduledItem -> {
+        Attendance[] newAttendances = scheduledItems.stream().map(scheduledItem -> {
             // Checking that the scheduledItem is not already in the existing attendances
             if (Collections.findFirst(existingAttendances, a -> Objects.equals(a.getScheduledItem(), scheduledItem)) != null)
                 return null;
             // Second check, but using the date
             if (Collections.findFirst(existingAttendances, a -> Objects.equals(a.getDate(), scheduledItem.getDate())) != null)
                 return null;
-            Attendance attendance = getEntityStore().createEntity(Attendance.class);
-            attendance.setDocumentLine(documentLine);
-            attendance.setDate(scheduledItem.getDate());
-            attendance.setScheduledItem(scheduledItem);
-            return attendance;
+            // Note: attendances are not directly submitted to the database but incorporated in document events, so we
+            // don't use insertEntity() but createEntity() to create them in memory.
+            Attendance newAttendance = getEntityStore().createEntity(Attendance.class);
+            // Note: documentLine may come from another store (ex: initial document aggregate), and in that case, the
+            // following assignment will copy it in this store, but not its related entities, such as document.
+            newAttendance.setDocumentLine(documentLine); // may copy documentLine if from another store, but not document
+            // However, it's really necessary that newAttendance.getDocumentLine().getDocument() doesn't return null
+            // when passing it to new AttendancesEvent() because all document events must know which document they are
+            // referring to. So we ensure this by the following assignment:
+            newAttendance.getDocumentLine().setDocument(document); // may copy document to the store as well
+            newAttendance.setDate(scheduledItem.getDate());
+            newAttendance.setScheduledItem(scheduledItem);
+            return newAttendance;
         }).filter(Objects::nonNull).toArray(Attendance[]::new);
-        if (attendances.length > 0)
-            integrateNewDocumentEvent(new AddAttendancesEvent(attendances), false);
+        if (newAttendances.length > 0)
+            integrateNewDocumentEvent(new AddAttendancesEvent(newAttendances), false);
         if (!addOnly) {
             // We remove all existing attendances not referencing the passed scheduledItems
             List<Attendance> attendancesToRemove = Collections.filter(existingAttendances, a ->
@@ -342,7 +350,7 @@ public final class WorkingBooking {
         return getLastestDocumentAggregate().findAddRequestEvent(fromChangesOnly);
     }
 
-        // Static factory method
+    // Static factory method
 
     public static WorkingBooking createWholeEventWorkingBooking(PolicyAggregate policyAggregate) {
         WorkingBooking workingBooking = new WorkingBooking(policyAggregate, null);
