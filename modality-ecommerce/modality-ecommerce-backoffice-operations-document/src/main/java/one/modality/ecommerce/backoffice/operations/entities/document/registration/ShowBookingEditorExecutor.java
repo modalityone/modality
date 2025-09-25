@@ -7,6 +7,7 @@ import dev.webfx.extras.util.dialog.builder.DialogContent;
 import dev.webfx.platform.async.Future;
 import dev.webfx.platform.async.Promise;
 import dev.webfx.platform.console.Console;
+import dev.webfx.platform.util.collection.Collections;
 import javafx.collections.ListChangeListener;
 import javafx.scene.control.Button;
 import javafx.scene.layout.Pane;
@@ -39,11 +40,14 @@ final class ShowBookingEditorExecutor {
             .inUiThread()
             .onSuccess(policyAndDocumentAggregates -> {
                 PolicyAggregate policyAggregate = policyAndDocumentAggregates.getPolicyAggregate(); // never null
-                DocumentAggregate existingBooking = policyAndDocumentAggregates.getDocumentAggregate(); // may be null
+                DocumentAggregate existingBooking = policyAndDocumentAggregates.getDocumentAggregate(); // might be null
                 WorkingBooking workingBooking = new WorkingBooking(policyAggregate, existingBooking);
 
+                // We cover the cases of recurring events (ex: GP classes or STTP), as well as online Festivals.
+                // In all these cases, we use RecurringEventSchedule to display the teaching sessions (but not the audio
+                // recordings).
                 RecurringEventSchedule recurringEventSchedule = new RecurringEventSchedule();
-                recurringEventSchedule.setScheduledItems(workingBooking.getScheduledItemsOnEvent(), true);
+                recurringEventSchedule.setScheduledItems(Collections.filter(workingBooking.getScheduledItemsOnEvent(), scheduledItem -> scheduledItem.getItem().getFamily().isTeaching()), true);
                 recurringEventSchedule.addSelectedDates(workingBooking.getScheduledItemsAlreadyBooked().stream().map(ScheduledItem::getDate).collect(Collectors.toList()));
                 workingBooking.getScheduledItemsAlreadyBooked();
                 Pane schedule = recurringEventSchedule.buildUi();
