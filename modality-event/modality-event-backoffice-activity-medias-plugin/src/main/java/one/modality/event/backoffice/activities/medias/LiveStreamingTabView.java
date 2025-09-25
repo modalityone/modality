@@ -9,6 +9,7 @@ import dev.webfx.extras.util.control.Controls;
 import dev.webfx.kit.util.properties.FXProperties;
 import dev.webfx.platform.console.Console;
 import dev.webfx.stack.orm.entity.EntityStore;
+import dev.webfx.stack.orm.entity.SubmitChangesResult;
 import dev.webfx.stack.orm.entity.UpdateStore;
 import dev.webfx.stack.orm.entity.binding.EntityBindings;
 import dev.webfx.stack.orm.entity.result.EntityChanges;
@@ -39,12 +40,12 @@ final class LiveStreamingTabView {
     private final EntityStore entityStore = EntityStore.create();
     private final UpdateStore updateStore = UpdateStore.createAbove(entityStore);
     private LabelTextField liveMessageTextField;
-    private VBox mainVBox; // Reference to main container for adding notifications
+    private VBox mainVBox; // Reference to the main container for adding notifications
     private Label successNotificationLabel; // Success notification label
 
     public Node buildContainer() {
         BorderPane mainFrame = new BorderPane();
-        mainFrame.setPadding(new Insets(0,0,30,0));
+        mainFrame.setPadding(new Insets(0, 0, 30, 0));
         Label title = I18nControls.newLabel(MediasI18nKeys.LiveStreamingTitle);
         title.setPadding(new Insets(30));
         title.setGraphicTextGap(30);
@@ -59,60 +60,46 @@ final class LiveStreamingTabView {
         mainVBox.setAlignment(Pos.CENTER);
         mainVBox.setMaxWidth(maxWith);
 
-        // Create success notification (initially hidden)
+        // Creating the success notification (initially hidden)
         createSuccessNotification();
 
         Label liveMessageLabel = I18nControls.newLabel(MediasI18nKeys.LiveInfoMessage);
         liveMessageLabel.setTextFill(Color.WHITE);
         liveMessageLabel.getStyleClass().add(Bootstrap.STRONG);
 
-        liveMessageTextField = new LabelTextField(FXEvent.getEvent(),null,Event.livestreamMessageLabel, updateStore);
+        liveMessageTextField = new LabelTextField(FXEvent.getEvent(), null, Event.livestreamMessageLabel, updateStore);
         liveMessageTextField.setMinWidth(600);
-        FXProperties.runNowAndOnPropertyChange(()-> {
-            liveMessageTextField.reloadOnNewEntity(FXEvent.getEvent());
-        },FXEvent.eventProperty());
+        FXProperties.runNowAndOnPropertyChange(() ->
+                liveMessageTextField.reloadOnNewEntity(FXEvent.getEvent())
+            , FXEvent.eventProperty());
 
         Region spacer = new Region();
-        HBox.setHgrow(spacer,Priority.ALWAYS);
+        HBox.setHgrow(spacer, Priority.ALWAYS);
         Button publishMessageButton = Bootstrap.successButton(new Button(I18n.getI18nText(MediasI18nKeys.PublishMessage)));
         publishMessageButton.disableProperty().bind(EntityBindings.hasChangesProperty(updateStore).not());
 
-        publishMessageButton.setOnAction(event -> {
-            // Capturing the changes made on ScheduledItems.published fields, as they need to be notified to
-            // the front-office clients (if submit is successful)
-            EntityChanges entityChanges = updateStore.getEntityChanges();
-            EntityChangesBuilder changesForFrontOfficeBuilder = EntityChangesBuilder.create()
-                .addFilteredEntityChanges(entityChanges, Event.class, Event.livestreamMessageLabel)
-                .addFilteredEntityChanges(entityChanges, one.modality.base.shared.entities.Label.class, "en", "fr", "de", "pt", "es");
+        publishMessageButton.setOnAction(event ->
             updateStore.submitChanges()
                 .onFailure(Console::log)
                 .inUiThread()
                 .onSuccess(result -> {
-                    result.forEachIdWithGeneratedKey(changesForFrontOfficeBuilder::considerEntityIdRefactor);
-                    // Notifying the front-office clients for the possible changes made on ScheduledItems.published
-                    ModalityMessaging.getFrontOfficeEntityMessaging().publishEntityChanges(changesForFrontOfficeBuilder.build());
+                    notifyFrontOfficeClientsAboutLivestreamMessageChanges(result);
                     // Show success notification
                     showSuccessNotification();
-                });
-        });
+                }));
 
         Button removeMessageButton = Bootstrap.dangerButton(new Button(I18n.getI18nText(MediasI18nKeys.RemoveMessage)));
         removeMessageButton.setOnAction(event -> {
             Event currentEvent = updateStore.updateEntity(FXEvent.getEvent());
             one.modality.base.shared.entities.Label labelToDelete = currentEvent.getLivestreamMessageLabel();
-            if(labelToDelete!=null) {
+            if (labelToDelete != null) {
                 currentEvent.setLivestreamMessageLabel(null);
                 updateStore.deleteEntity(labelToDelete);
-                EntityChanges changesForFrontOffice = EntityChangesBuilder.create()
-                    .addFilteredEntityChanges(updateStore.getEntityChanges(), Event.class, Event.livestreamMessageLabel)
-                    .build();
                 updateStore.submitChanges().onFailure(Console::log)
                     .inUiThread()
-                    .onSuccess(x -> {
+                    .onSuccess(result -> {
+                        notifyFrontOfficeClientsAboutLivestreamMessageChanges(result);
                         liveMessageTextField.reloadOnNewEntity(currentEvent);
-
-                        // Notifying the front-office clients for the possible changes made on ScheduledItems.published
-                        ModalityMessaging.getFrontOfficeEntityMessaging().publishEntityChanges(changesForFrontOffice);
                         // Show success notification for removal
                         showSuccessNotification("Message successfully removed!");
                     });
@@ -124,21 +111,32 @@ final class LiveStreamingTabView {
         buttonVBox.setAlignment(Pos.CENTER_RIGHT);
         buttonVBox.getChildren().addAll(publishMessageButton, removeMessageButton);
 
-        HBox liveMessageHBox = new HBox(liveMessageTextField.getView(),spacer,buttonVBox);
+        HBox liveMessageHBox = new HBox(liveMessageTextField.getView(), spacer, buttonVBox);
         liveMessageHBox.setAlignment(Pos.CENTER_LEFT);
-        VBox liveMessageVBox = new VBox(20,liveMessageLabel,liveMessageHBox);
+        VBox liveMessageVBox = new VBox(20, liveMessageLabel, liveMessageHBox);
         MonoPane liveMessageContainer = new MonoPane(liveMessageVBox);
         liveMessageContainer.setPadding(new Insets(15));
         liveMessageContainer.setBackground(new Background(new BackgroundFill(
-            Color.web("0096D6"), new CornerRadii(10), Insets.EMPTY // Match CornerRadii of border
+            Color.web("0096D6"), new CornerRadii(10), Insets.EMPTY // Match border CornerRadii
         )));
 
         mainVBox.getChildren().add(liveMessageContainer);
 
         mainFrame.setCenter(mainVBox);
-        BorderPane.setAlignment(mainVBox,Pos.CENTER);
+        BorderPane.setAlignment(mainVBox, Pos.CENTER);
 
         return Controls.createVerticalScrollPaneWithPadding(10, mainFrame);
+    }
+
+    private void notifyFrontOfficeClientsAboutLivestreamMessageChanges(SubmitChangesResult result) {
+        // Notifying the front-office clients of the possible changes made
+        EntityChanges committedChanges = result.getCommittedChanges();
+        ModalityMessaging.getFrontOfficeEntityMessaging().publishEntityChanges(
+            EntityChangesBuilder.create()
+                .addFilteredEntityChanges(committedChanges, Event.class, Event.livestreamMessageLabel)
+                .addFilteredEntityChanges(committedChanges, one.modality.base.shared.entities.Label.class, "en", "de", "fr", "es", "pt") // I18n.getSupportedLanguages().toArray() returns only "en", "fr" for some reasons TODO: fix this
+                .build()
+        );
     }
 
     /**
@@ -149,7 +147,7 @@ final class LiveStreamingTabView {
         successNotificationLabel.setTextFill(Color.WHITE);
         successNotificationLabel.setPadding(new Insets(15, 20, 15, 20));
 
-        // Create container with green background and rounded corners
+        // Creating the container with a green background and rounded corners
         MonoPane notificationContainer = new MonoPane(successNotificationLabel);
         notificationContainer.setBackground(new Background(new BackgroundFill(
             Color.web("#28a745"), // Bootstrap success green
@@ -172,20 +170,20 @@ final class LiveStreamingTabView {
     }
 
     /**
-     * Shows success notification with default message
+     * Shows success notification with a default message
      */
     private void showSuccessNotification() {
         showSuccessNotification("Message successfully published!");
     }
 
     /**
-     * Shows success notification with custom message
+     * Shows success notification with a custom message
      */
     private void showSuccessNotification(String message) {
         successNotificationLabel.setText(message);
         MonoPane container = (MonoPane) successNotificationLabel.getUserData();
 
-        // Add to mainVBox if not already added
+        // Adding the container to `mainVBox` if not already added
         if (!mainVBox.getChildren().contains(container)) {
             mainVBox.getChildren().add(0, container); // Add at the top
         }
