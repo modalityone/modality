@@ -22,14 +22,14 @@ import java.util.List;
  */
 public final class DocumentEvents {
 
-    public static void integrateNewDocumentEvent(AbstractDocumentEvent e, List<AbstractDocumentEvent> documentEvents) {
-        e = simplifyDocumentEvent(e, documentEvents); // May simplify the event and even return null if it's not necessary to add it
+    public static void integrateNewDocumentEvent(AbstractDocumentEvent e, List<AbstractDocumentEvent> documentEvents, List<AbstractDocumentEvent> initialDocumentEvents) {
+        e = simplifyDocumentEvent(e, documentEvents, initialDocumentEvents); // May simplify the event and even return null if it's not necessary to add it
         if (e != null) {
             documentEvents.add(e);
         }
     }
 
-    private static AbstractDocumentEvent simplifyDocumentEvent(AbstractDocumentEvent e, List<AbstractDocumentEvent> documentEvents) {
+    private static AbstractDocumentEvent simplifyDocumentEvent(AbstractDocumentEvent e, List<AbstractDocumentEvent> documentEvents, List<AbstractDocumentEvent> initialDocumentEvents) {
         if (e instanceof AddDocumentLineEvent adle) {
             return simplifyAddDocumentLineEvent(adle, documentEvents);
         }
@@ -40,7 +40,7 @@ public final class DocumentEvents {
             return simplifyAddAttendancesEvent(aae, documentEvents);
         }
         if (e instanceof RemoveAttendancesEvent rae) {
-            return simplifyRemoveAttendancesEvent(rae, documentEvents);
+            return simplifyRemoveAttendancesEvent(rae, documentEvents, initialDocumentEvents);
         }
         if (e instanceof ApplyFacilityFeeEvent affe) {
             return simplifyApplyFacilityFeeDocumentEvent(affe, documentEvents);
@@ -82,14 +82,14 @@ public final class DocumentEvents {
     }
 
     private static AbstractDocumentEvent simplifyAddAttendancesEvent(AddAttendancesEvent aae, List<AbstractDocumentEvent> documentEvents) {
-        return simplifyAttendancesEvent(aae, documentEvents);
+        return simplifyAttendancesEvent(aae, documentEvents, null);
     }
 
-    private static AbstractDocumentEvent simplifyRemoveAttendancesEvent(RemoveAttendancesEvent rae, List<AbstractDocumentEvent> documentEvents) {
-        return simplifyAttendancesEvent(rae, documentEvents);
+    private static AbstractDocumentEvent simplifyRemoveAttendancesEvent(RemoveAttendancesEvent rae, List<AbstractDocumentEvent> documentEvents, List<AbstractDocumentEvent> initialDocumentEvents) {
+        return simplifyAttendancesEvent(rae, documentEvents, initialDocumentEvents);
     }
 
-    private static AbstractDocumentEvent simplifyAttendancesEvent(AbstractAttendancesEvent ae, List<AbstractDocumentEvent> documentEvents) {
+    private static AbstractDocumentEvent simplifyAttendancesEvent(AbstractAttendancesEvent ae, List<AbstractDocumentEvent> documentEvents, List<AbstractDocumentEvent> initialDocumentEvents) {
         Attendance[] initialAttendances = ae.getAttendances(); // removed or added attendances
         Attendance[] reducedAttendances = initialAttendances; // reduced
         DocumentLine documentLine = ae.getDocumentLine();
@@ -119,9 +119,11 @@ public final class DocumentEvents {
             }
         }
         if (ae instanceof RemoveAttendancesEvent) {
+            Attendance[] ra = reducedAttendances;
             // We also remove the associated document line if there are no attendances anymore to it
-            if (Collections.findFirst(documentEvents, e -> e instanceof AddAttendancesEvent aae && aae.getDocumentLine() == documentLine) == null)
-                integrateNewDocumentEvent(new RemoveDocumentLineEvent(documentLine), documentEvents); // Note that we don't integrate this RemoveDocumentLineEvent
+            if (hasNoRemainingAddedAttendancesOnDocumentLineOtherThan(initialDocumentEvents, documentLine, reducedAttendances)
+                && hasNoRemainingAddedAttendancesOnDocumentLineOtherThan(documentEvents, documentLine, reducedAttendances))
+                integrateNewDocumentEvent(new RemoveDocumentLineEvent(documentLine), documentEvents, initialDocumentEvents);
         }
         // If at the end of this simplification, there is no more attendances to keep in RemoveAttendancesEvent
         if (reducedAttendances.length == 0) {
@@ -132,6 +134,14 @@ public final class DocumentEvents {
             ae = cloneWithNewAttendances(ae, reducedAttendances);
         }
         return ae;
+    }
+
+    private static boolean hasNoRemainingAddedAttendancesOnDocumentLineOtherThan(List<AbstractDocumentEvent> initialDocumentEvents, DocumentLine documentLine, Attendance[] attendances) {
+        return Collections.findFirst(initialDocumentEvents, e ->
+            e instanceof AddAttendancesEvent aae
+            && aae.getDocumentLine() == documentLine
+            && Arrays.findFirst(aae.getAttendances(), a -> !Arrays.contains(attendances, a)) != null
+        ) == null;
     }
 
     private static Attendance[] excludeAttendances(Attendance[] attendances, Attendance[] toExclude) {

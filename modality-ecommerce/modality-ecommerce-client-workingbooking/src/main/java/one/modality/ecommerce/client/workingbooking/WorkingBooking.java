@@ -49,8 +49,8 @@ public final class WorkingBooking {
     private final boolean paymentRequestedByUser;
     // Then a booking form can actually distinguish 3 cases from the working booking state:
     // 1) workingBooking.isNewBooking() == true => non-existing, new, initial booking (after pressing a Book Now button)
-    // 2) isPaymentRequestedByUser() == true => existing, saved booking the user requested to pay from the orders page
-    // 3) otherwise => existing booking that the user requested to modify from the orders page
+    // 2) isPaymentRequestedByUser() == true => existing, saved booking the user requested to pay from Orders page
+    // 3) otherwise => existing booking that the user requested to modify from Orders page
 
     public WorkingBooking(PolicyAggregate policyAggregate, DocumentAggregate initialDocumentAggregate) {
         this(policyAggregate, initialDocumentAggregate, null);
@@ -193,7 +193,7 @@ public final class WorkingBooking {
     private void integrateNewDocumentEvent(AbstractDocumentEvent e, boolean applyImmediatelyToDocument) {
         if (applyImmediatelyToDocument)
             e.replayEventOnDocument();
-        DocumentEvents.integrateNewDocumentEvent(e, documentChanges);
+        DocumentEvents.integrateNewDocumentEvent(e, documentChanges, initialDocumentAggregate == null ? null : initialDocumentAggregate.getNewDocumentEvents());
     }
 
     public boolean hasNoChanges() {
