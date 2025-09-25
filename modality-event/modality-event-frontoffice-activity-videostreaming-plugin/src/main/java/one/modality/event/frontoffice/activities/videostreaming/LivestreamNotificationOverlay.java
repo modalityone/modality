@@ -15,6 +15,7 @@ import javafx.geometry.Pos;
 import javafx.scene.Node;
 import javafx.scene.control.Button;
 import javafx.scene.layout.HBox;
+import javafx.scene.layout.Priority;
 import javafx.scene.layout.Region;
 import javafx.scene.layout.StackPane;
 import javafx.scene.text.Text;
@@ -113,9 +114,13 @@ final class LivestreamNotificationOverlay {
 
         // Text box with the message inside, but clipped if it's too long
         MonoClipPane notificationTextBox = new MonoClipPane(notificationText); // We clip the text (works for both web and JavaFX)
-        notificationTextBox.setMinWidth(0); // Important to tell JavaFX that it can be smaller than the text
         notificationTextBox.setAlignment(Pos.TOP_LEFT); // The web CSS animation will reset any layoutX/Y anyway
         notificationTextBox.getStyleClass().add("notification-text-box");
+        // Important to tell that it can be smaller than the text (for long texts)
+        notificationTextBox.setMinWidth(0);
+        // Important to tell that it should always fit the whole width of the notification bar (for short texts)
+        notificationTextBox.setMaxWidth(Double.MAX_VALUE);
+        HBox.setHgrow(notificationTextBox, Priority.ALWAYS);
 
         // Close button
         Button closeButton = new Button("✕");
