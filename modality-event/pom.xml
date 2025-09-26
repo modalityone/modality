@@ -28,12 +28,12 @@
         <module>modality-event-backoffice-max-plugin</module>
         <module>modality-event-backoffice-min-plugin</module>
         <module>modality-event-client-activity-eventdependent</module>
-        <module>modality-event-client-booking</module>
         <module>modality-event-client-event-fx</module>
         <module>modality-event-client-i18n</module>
         <module>modality-event-client-lifecycle</module>
         <module>modality-event-client-mediaview</module>
-        <module>modality-event-client-recurringevents</module>
+        <module>modality-event-client-scheduleditemsselector</module>
+        <module>modality-event-client-scheduleditemsselector-box</module>
         <module>modality-event-client-theme</module>
         <module>modality-event-frontoffice-activity-audiolibrary-plugin</module>
         <module>modality-event-frontoffice-activity-book</module>

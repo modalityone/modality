@@ -16,8 +16,8 @@ module modality.ecommerce.backoffice.operations.document {
     requires modality.crm.client.personaldetails;
     requires modality.ecommerce.client.workingbooking;
     requires modality.ecommerce.document.service;
-    requires modality.event.client.booking;
-    requires modality.event.client.recurringevents;
+    requires modality.event.client.scheduleditemsselector;
+    requires modality.event.client.scheduleditemsselector.box;
     requires webfx.extras.exceptions;
     requires webfx.extras.i18n;
     requires webfx.extras.operation;

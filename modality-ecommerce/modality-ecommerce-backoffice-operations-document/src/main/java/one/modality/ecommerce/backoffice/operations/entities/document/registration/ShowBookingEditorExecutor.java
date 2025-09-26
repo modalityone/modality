@@ -18,8 +18,8 @@ import one.modality.ecommerce.client.workingbooking.WorkingBookingHistoryHelper;
 import one.modality.ecommerce.document.service.DocumentAggregate;
 import one.modality.ecommerce.document.service.DocumentService;
 import one.modality.ecommerce.document.service.PolicyAggregate;
-import one.modality.event.client.booking.WorkingBookingSyncer;
-import one.modality.event.client.recurringevents.RecurringEventSchedule;
+import one.modality.event.client.scheduleditemsselector.WorkingBookingSyncer;
+import one.modality.event.client.selecteditemsselector.box.BoxScheduledItemsSelector;
 
 import java.time.LocalDate;
 import java.util.stream.Collectors;
@@ -46,11 +46,11 @@ final class ShowBookingEditorExecutor {
                 // We cover the cases of recurring events (ex: GP classes or STTP), as well as online Festivals.
                 // In all these cases, we use RecurringEventSchedule to display the teaching sessions (but not the audio
                 // recordings).
-                RecurringEventSchedule recurringEventSchedule = new RecurringEventSchedule();
-                recurringEventSchedule.setScheduledItems(Collections.filter(workingBooking.getScheduledItemsOnEvent(), scheduledItem -> scheduledItem.getItem().getFamily().isTeaching()), true);
-                recurringEventSchedule.addSelectedDates(workingBooking.getScheduledItemsAlreadyBooked().stream().map(ScheduledItem::getDate).collect(Collectors.toList()));
+                BoxScheduledItemsSelector boxScheduledItemsSelector = new BoxScheduledItemsSelector();
+                boxScheduledItemsSelector.setSelectableScheduledItems(Collections.filter(workingBooking.getScheduledItemsOnEvent(), scheduledItem -> scheduledItem.getItem().getFamily().isTeaching()), true);
+                boxScheduledItemsSelector.addSelectedDates(workingBooking.getScheduledItemsAlreadyBooked().stream().map(ScheduledItem::getDate).collect(Collectors.toList()));
                 workingBooking.getScheduledItemsAlreadyBooked();
-                Pane schedule = recurringEventSchedule.buildUi();
+                Pane schedule = boxScheduledItemsSelector.buildUi();
                 DialogContent dialogContent = new DialogContent().setHeaderText("BookingDetails").setContent(schedule);
                 boolean[] executing = {false};
                 DialogCallback dc = DialogBuilderUtil.showModalNodeInGoldLayout(dialogContent, parentContainer);
@@ -58,9 +58,9 @@ final class ShowBookingEditorExecutor {
                 Button saveButton = dialogContent.getPrimaryButton();
                 saveButton.setDisable(true);
                 //Here we disable the save button if there are no changes in the booking dates
-                recurringEventSchedule.getSelectedDates().addListener((ListChangeListener<LocalDate>) change -> {
-                    saveButton.setDisable(recurringEventSchedule.getSelectedDates().equals(workingBooking.getScheduledItemsAlreadyBooked().stream().map(ScheduledItem::getDate).collect(Collectors.toList())));
-                    if (recurringEventSchedule.getSelectedDates().isEmpty()) {
+                boxScheduledItemsSelector.getSelectedDates().addListener((ListChangeListener<LocalDate>) change -> {
+                    saveButton.setDisable(boxScheduledItemsSelector.getSelectedDates().equals(workingBooking.getScheduledItemsAlreadyBooked().stream().map(ScheduledItem::getDate).collect(Collectors.toList())));
+                    if (boxScheduledItemsSelector.getSelectedDates().isEmpty()) {
                         //If there is no selection, we prevent to save
                         saveButton.setDisable(true);
                     }
@@ -74,7 +74,7 @@ final class ShowBookingEditorExecutor {
                 //here we validate
                 DialogBuilderUtil.armDialogContentButtons(dialogContent, dialogCallback -> {
                     executing[0] = true;
-                    WorkingBookingSyncer.syncWorkingBookingFromEventSchedule(workingBooking, recurringEventSchedule, false);
+                    WorkingBookingSyncer.syncWorkingBookingFromScheduledItemsSelector(workingBooking, boxScheduledItemsSelector, false);
                     WorkingBookingHistoryHelper historyHelper = new WorkingBookingHistoryHelper(workingBooking);
                     workingBooking.submitChanges(historyHelper.generateHistoryComment())
                         .onSuccess(ignored -> dialogCallback.closeDialog())

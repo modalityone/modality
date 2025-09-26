@@ -176,7 +176,7 @@ final class RecurringSummaryPage implements BookingFormPage {
                 trashOption.setOnAction(e -> {
                     workingBooking.removeAttendance(a);
                     if (!existing) {
-                        bookingForm.getRecurringEventSchedule().removeClickedDate(date);
+                        bookingForm.getScheduledItemBoxesSelector().removeClickedDate(date);
                     }
                     rebuildSummaryGridPane();
                 });

@@ -101,13 +101,13 @@
 
         <dependency>
             <groupId>one.modality</groupId>
-            <artifactId>modality-event-client-booking</artifactId>
+            <artifactId>modality-event-client-scheduleditemsselector</artifactId>
             <version>1.0.0-SNAPSHOT</version>
         </dependency>
 
         <dependency>
             <groupId>one.modality</groupId>
-            <artifactId>modality-event-client-recurringevents</artifactId>
+            <artifactId>modality-event-client-scheduleditemsselector-box</artifactId>
             <version>1.0.0-SNAPSHOT</version>
         </dependency>
 
