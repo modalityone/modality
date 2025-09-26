@@ -16,7 +16,7 @@ public final class RecurringEventBookingForm extends MultiPageBookingForm {
     private final Event event;
     private final EventBookingFormSettings settings;
     private final BookEventActivity activity;
-    private final BoxScheduledItemsSelector boxScheduledItemsSelector = new BoxScheduledItemsSelector();
+    private final BoxScheduledItemsSelector boxScheduledItemsSelector = new BoxScheduledItemsSelector(false, true);
     private BookingFormPage[] pages;
     private RecurringSchedulePage recurringSchedulePage;
 

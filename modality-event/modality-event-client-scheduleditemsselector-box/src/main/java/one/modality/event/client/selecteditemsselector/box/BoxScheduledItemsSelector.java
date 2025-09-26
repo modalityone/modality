@@ -32,6 +32,9 @@ import java.util.stream.Collectors;
  */
 public final class BoxScheduledItemsSelector implements ScheduledItemsSelector {
 
+    private final boolean showDayOfWeek;
+    private final boolean showTime;
+
     private final ColumnsPane columnsPane = new ColumnsPane();
     private final ObservableList<ScheduledItem> scheduledItemsList = FXCollections.observableArrayList();
     private final ObservableList<LocalDate> selectedDates = FXCollections.observableArrayList(); // indicates the dates to add to the current booking
@@ -50,7 +53,10 @@ public final class BoxScheduledItemsSelector implements ScheduledItemsSelector {
     private final ObjectProperty<Font> dateFontProperty = new SimpleObjectProperty<>();
     private final ObjectProperty<Font> timeFontProperty = new SimpleObjectProperty<>();
 
-    public BoxScheduledItemsSelector() {
+    public BoxScheduledItemsSelector(boolean showDayOfWeek, boolean showTime) {
+        this.showDayOfWeek = showDayOfWeek;
+        this.showTime = showTime;
+
         columnsPane.setMaxColumnCount(4);
         columnsPane.setMaxWidth(800);
 
@@ -189,9 +195,7 @@ public final class BoxScheduledItemsSelector implements ScheduledItemsSelector {
     }
 
     private class ScheduledItemBox {
-        private final Text dateText = new Text();
-        private final Text timeText = new Text();
-        private final VBox box = new VBox(dateText, timeText);
+        private final VBox box = new VBox();
 
         private ScheduledItemBox(ScheduledItem scheduledItem) {
             box.getStyleClass().add("scheduled-item-box");
@@ -200,19 +204,32 @@ public final class BoxScheduledItemsSelector implements ScheduledItemsSelector {
             box.setMaxWidth(Double.MAX_VALUE);
             box.setSpacing(5);
             LocalDate date = scheduledItem.getDate();
+            if (showDayOfWeek) {
+                Text dayOfWeekText = new Text();
+                dayOfWeekText.getStyleClass().add("day-of-week");
+                dayOfWeekText.textProperty().bind(LocalizedTime.formatDayOfWeekProperty(date.getDayOfWeek(), FrontOfficeTimeFormats.BOX_SCHEDULED_ITEM_DAY_OF_WEEK_FORMAT));
+                dayOfWeekText.fontProperty().bind(dateFontProperty);
+                box.getChildren().add(dayOfWeekText);
+            }
+            Text dateText = new Text();
+            dateText.getStyleClass().add("date");
             dateText.textProperty().bind(LocalizedTime.formatMonthDayProperty(date, FrontOfficeTimeFormats.BOX_SCHEDULED_ITEM_MONTH_DAY_FORMAT));
             dateText.fontProperty().bind(dateFontProperty);
-            timeText.getStyleClass().add("time");
-            timeText.fontProperty().bind(timeFontProperty);
-            LocalTime startTime = scheduledItem.getStartTime();
-            if (startTime == null) {
-                Timeline timeline = scheduledItem.getTimeline();
-                if (timeline != null)
-                    startTime = timeline.getStartTime();
-            }
-            if (startTime != null) {
-                I18n.bindI18nProperties(timeText, BoxScheduledItemsSelectorI18nKeys.AtTime1,
-                    LocalizedTime.formatLocalTimeProperty(startTime, FrontOfficeTimeFormats.BOX_SCHEDULED_ITEM_TIME_FORMAT));
+            box.getChildren().add(dateText);
+            if (showTime) {
+                Text timeText = new Text();
+                timeText.getStyleClass().add("time");
+                timeText.fontProperty().bind(timeFontProperty);
+                LocalTime startTime = scheduledItem.getStartTime();
+                if (startTime == null) {
+                    Timeline timeline = scheduledItem.getTimeline();
+                    if (timeline != null)
+                        startTime = timeline.getStartTime();
+                }
+                if (startTime != null) {
+                    I18n.bindI18nProperties(timeText, BoxScheduledItemsSelectorI18nKeys.AtTime1,
+                        LocalizedTime.formatLocalTimeProperty(startTime, FrontOfficeTimeFormats.BOX_SCHEDULED_ITEM_TIME_FORMAT));
+                }
             }
             scheduledItemBoxes.put(date, this);
             box.setOnMouseClicked(event -> {

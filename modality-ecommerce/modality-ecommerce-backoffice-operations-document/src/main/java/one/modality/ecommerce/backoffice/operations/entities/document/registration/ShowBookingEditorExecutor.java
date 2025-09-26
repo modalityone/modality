@@ -46,7 +46,7 @@ final class ShowBookingEditorExecutor {
                 // We cover the cases of recurring events (ex: GP classes or STTP), as well as online Festivals.
                 // In all these cases, we use RecurringEventSchedule to display the teaching sessions (but not the audio
                 // recordings).
-                BoxScheduledItemsSelector boxScheduledItemsSelector = new BoxScheduledItemsSelector();
+                BoxScheduledItemsSelector boxScheduledItemsSelector = new BoxScheduledItemsSelector(true, false);
                 boxScheduledItemsSelector.setSelectableScheduledItems(Collections.filter(workingBooking.getScheduledItemsOnEvent(), scheduledItem -> scheduledItem.getItem().getFamily().isTeaching()), true);
                 boxScheduledItemsSelector.addSelectedDates(workingBooking.getScheduledItemsAlreadyBooked().stream().map(ScheduledItem::getDate).collect(Collectors.toList()));
                 workingBooking.getScheduledItemsAlreadyBooked();
