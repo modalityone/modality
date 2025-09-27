@@ -14,10 +14,10 @@ module modality.ecommerce.backoffice.operations.document {
     requires modality.base.client.mainframe.fx;
     requires modality.base.shared.entities;
     requires modality.crm.client.personaldetails;
+    requires modality.ecommerce.client.scheduleditemsselector;
+    requires modality.ecommerce.client.scheduleditemsselector.box;
     requires modality.ecommerce.client.workingbooking;
     requires modality.ecommerce.document.service;
-    requires modality.event.client.scheduleditemsselector;
-    requires modality.event.client.scheduleditemsselector.box;
     requires webfx.extras.exceptions;
     requires webfx.extras.i18n;
     requires webfx.extras.operation;

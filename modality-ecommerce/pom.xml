@@ -29,6 +29,8 @@
         <module>modality-ecommerce-backoffice-operations-moneytransfer</module>
         <module>modality-ecommerce-client-i18n</module>
         <module>modality-ecommerce-client-min-plugin</module>
+        <module>modality-ecommerce-client-scheduleditemsselector</module>
+        <module>modality-ecommerce-client-scheduleditemsselector-box</module>
         <module>modality-ecommerce-client-workingbooking</module>
         <module>modality-ecommerce-document-service</module>
         <module>modality-ecommerce-document-service-buscall</module>

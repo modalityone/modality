@@ -1,4 +1,4 @@
-package one.modality.event.client.scheduleditemsselector;
+package one.modality.ecommerce.client.scheduleditemsselector;
 
 import javafx.collections.ObservableList;
 import one.modality.base.shared.entities.ScheduledItem;

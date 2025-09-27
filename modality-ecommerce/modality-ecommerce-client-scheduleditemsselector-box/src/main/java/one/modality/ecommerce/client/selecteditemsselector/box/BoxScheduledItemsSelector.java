@@ -1,4 +1,4 @@
-package one.modality.event.client.selecteditemsselector.box;
+package one.modality.ecommerce.client.selecteditemsselector.box;
 
 import dev.webfx.extras.i18n.I18n;
 import dev.webfx.extras.panes.ColumnsPane;
@@ -18,7 +18,7 @@ import javafx.scene.text.Text;
 import one.modality.base.client.time.FrontOfficeTimeFormats;
 import one.modality.base.shared.entities.ScheduledItem;
 import one.modality.base.shared.entities.Timeline;
-import one.modality.event.client.scheduleditemsselector.ScheduledItemsSelector;
+import one.modality.ecommerce.client.scheduleditemsselector.ScheduledItemsSelector;
 
 import java.time.LocalDate;
 import java.time.LocalTime;
@@ -36,10 +36,10 @@ public final class BoxScheduledItemsSelector implements ScheduledItemsSelector {
     private final boolean showTime;
 
     private final ColumnsPane columnsPane = new ColumnsPane();
-    private final ObservableList<ScheduledItem> scheduledItemsList = FXCollections.observableArrayList();
+    private final ObservableList<ScheduledItem> selectableScheduledItems = FXCollections.observableArrayList();
+    private final Map<LocalDate, ScheduledItemBox> scheduledItemBoxes = new HashMap<>();
     private final ObservableList<LocalDate> selectedDates = FXCollections.observableArrayList(); // indicates the dates to add to the current booking
     private final List<LocalDate> clickedDates = new HashList<>(); // Same as selected dates, or larger as it keeps clicked dates when changing the person to book
-    private final Map<LocalDate, ScheduledItemBox> scheduledItemBoxes = new HashMap<>();
 
     private final Function<LocalDate, String> computeCssClassForSelectedDateFunction = localDate -> getSelectedDateCssClass();
     private Function<LocalDate, String> computeCssClassForUnselectedDateFunction     = localDate -> getUnselectedDateCssClass();
@@ -72,7 +72,7 @@ public final class BoxScheduledItemsSelector implements ScheduledItemsSelector {
         }, columnsPane.widthProperty());
 
         // We bind the children to scheduled items, mapping each to a ScheduledItemBox
-        ObservableLists.bindConverted(columnsPane.getChildren(), scheduledItemsList, si -> new ScheduledItemBox(si).getBox());
+        ObservableLists.bindConverted(columnsPane.getChildren(), selectableScheduledItems, si -> new ScheduledItemBox(si).getBox());
 
         // We keep the date styles updated on selection change
         ObservableLists.runOnListChange(change -> {
@@ -86,9 +86,9 @@ public final class BoxScheduledItemsSelector implements ScheduledItemsSelector {
     @Override
     public void setSelectableScheduledItems(List<ScheduledItem> selectableScheduledItems, boolean reapplyClickedDates) {
         selectableScheduledItems.sort(Comparator.comparing(ScheduledItem::getDate));
-        scheduledItemsList.setAll(selectableScheduledItems);
+        this.selectableScheduledItems.setAll(selectableScheduledItems);
         selectedDates.clear();
-        List<LocalDate> clickedDatesToReapply = !reapplyClickedDates ? Collections.emptyList() : scheduledItemsList.stream()
+        List<LocalDate> clickedDatesToReapply = !reapplyClickedDates ? Collections.emptyList() : this.selectableScheduledItems.stream()
                 .map(ScheduledItem::getDate)
                 .filter(clickedDates::contains)
                 .collect(Collectors.toList());
@@ -146,14 +146,14 @@ public final class BoxScheduledItemsSelector implements ScheduledItemsSelector {
 
     @Override
     public void addSelectedDates(List<LocalDate> dates) {
-        scheduledItemsList.stream()
+        selectableScheduledItems.stream()
                 .map(ScheduledItem::getDate)
                 .filter(dates::contains)
                 .forEach(selectedDates::add);
     }
 
     public void addClickedDates(List<LocalDate> dates) {
-        scheduledItemsList.stream()
+        selectableScheduledItems.stream()
                 .map(ScheduledItem::getDate)
                 .filter(dates::contains)
                 .forEach(this::addClickedDate);
@@ -181,7 +181,7 @@ public final class BoxScheduledItemsSelector implements ScheduledItemsSelector {
 
     @Override
     public ObservableList<ScheduledItem> getSelectedScheduledItems() {
-        return FXCollections.observableList(scheduledItemsList.stream()
+        return FXCollections.observableList(selectableScheduledItems.stream()
                 .filter(item -> selectedDates.contains(item.getDate()))
                 .collect(Collectors.toList()));
     }

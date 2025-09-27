@@ -1,6 +1,6 @@
 // File managed by WebFX (DO NOT EDIT MANUALLY)
 
-module modality.event.client.scheduleditemsselector {
+module modality.ecommerce.client.scheduleditemsselector {
 
     // Direct dependencies modules
     requires javafx.base;
@@ -9,6 +9,6 @@ module modality.event.client.scheduleditemsselector {
     requires webfx.platform.util;
 
     // Exported packages
-    exports one.modality.event.client.scheduleditemsselector;
+    exports one.modality.ecommerce.client.scheduleditemsselector;
 
 }

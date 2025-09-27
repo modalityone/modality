@@ -7,11 +7,11 @@
 
     <parent>
         <groupId>one.modality</groupId>
-        <artifactId>modality-event</artifactId>
+        <artifactId>modality-ecommerce</artifactId>
         <version>1.0.0-SNAPSHOT</version>
     </parent>
 
-    <artifactId>modality-event-client-scheduleditemsselector</artifactId>
+    <artifactId>modality-ecommerce-client-scheduleditemsselector</artifactId>
 
     <dependencies>
 

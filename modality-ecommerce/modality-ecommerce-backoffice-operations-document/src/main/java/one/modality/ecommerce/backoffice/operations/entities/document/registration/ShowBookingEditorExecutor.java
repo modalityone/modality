@@ -19,8 +19,8 @@ import one.modality.ecommerce.client.workingbooking.WorkingBookingHistoryHelper;
 import one.modality.ecommerce.document.service.DocumentAggregate;
 import one.modality.ecommerce.document.service.DocumentService;
 import one.modality.ecommerce.document.service.PolicyAggregate;
-import one.modality.event.client.scheduleditemsselector.WorkingBookingSyncer;
-import one.modality.event.client.selecteditemsselector.box.BoxScheduledItemsSelector;
+import one.modality.ecommerce.client.scheduleditemsselector.WorkingBookingSyncer;
+import one.modality.ecommerce.client.selecteditemsselector.box.BoxScheduledItemsSelector;
 
 import java.time.LocalDate;
 import java.util.stream.Collectors;

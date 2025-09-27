@@ -1,4 +1,4 @@
-package one.modality.event.client.scheduleditemsselector;
+package one.modality.ecommerce.client.scheduleditemsselector;
 
 import dev.webfx.platform.util.collection.Collections;
 import one.modality.base.shared.entities.Attendance;

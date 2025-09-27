@@ -67,6 +67,18 @@
 
         <dependency>
             <groupId>one.modality</groupId>
+            <artifactId>modality-ecommerce-client-scheduleditemsselector</artifactId>
+            <version>1.0.0-SNAPSHOT</version>
+        </dependency>
+
+        <dependency>
+            <groupId>one.modality</groupId>
+            <artifactId>modality-ecommerce-client-scheduleditemsselector-box</artifactId>
+            <version>1.0.0-SNAPSHOT</version>
+        </dependency>
+
+        <dependency>
+            <groupId>one.modality</groupId>
             <artifactId>modality-ecommerce-client-workingbooking</artifactId>
             <version>1.0.0-SNAPSHOT</version>
         </dependency>
@@ -74,18 +86,6 @@
         <dependency>
             <groupId>one.modality</groupId>
             <artifactId>modality-ecommerce-document-service</artifactId>
-            <version>1.0.0-SNAPSHOT</version>
-        </dependency>
-
-        <dependency>
-            <groupId>one.modality</groupId>
-            <artifactId>modality-event-client-scheduleditemsselector</artifactId>
-            <version>1.0.0-SNAPSHOT</version>
-        </dependency>
-
-        <dependency>
-            <groupId>one.modality</groupId>
-            <artifactId>modality-event-client-scheduleditemsselector-box</artifactId>
             <version>1.0.0-SNAPSHOT</version>
         </dependency>
 

@@ -12,13 +12,13 @@ module modality.event.frontoffice.bookingform.recurringevent.plugin {
     requires modality.base.client.time;
     requires modality.base.shared.entities;
     requires modality.ecommerce.client.i18n;
+    requires modality.ecommerce.client.scheduleditemsselector;
+    requires modality.ecommerce.client.scheduleditemsselector.box;
     requires modality.ecommerce.client.workingbooking;
     requires modality.ecommerce.document.service;
     requires modality.ecommerce.frontoffice.bookingelements;
     requires modality.ecommerce.frontoffice.bookingform;
     requires modality.ecommerce.shared.pricecalculator;
-    requires modality.event.client.scheduleditemsselector;
-    requires modality.event.client.scheduleditemsselector.box;
     requires modality.event.frontoffice.activity.book;
     requires modality.event.frontoffice.eventheader;
     requires webfx.extras.controlfactory;

@@ -1,5 +1,5 @@
 // File managed by WebFX (DO NOT EDIT MANUALLY)
-package one.modality.event.client.selecteditemsselector.box;
+package one.modality.ecommerce.client.selecteditemsselector.box;
 
 public interface BoxScheduledItemsSelectorI18nKeys {
 

@@ -29,7 +29,7 @@ import one.modality.base.shared.entities.formatters.EventPriceFormatter;
 import one.modality.ecommerce.client.workingbooking.WorkingBookingProperties;
 import one.modality.ecommerce.frontoffice.bookingelements.BookingElements;
 import one.modality.ecommerce.frontoffice.bookingform.multipages.BookingFormPage;
-import one.modality.event.client.selecteditemsselector.box.BoxScheduledItemsSelector;
+import one.modality.ecommerce.client.selecteditemsselector.box.BoxScheduledItemsSelector;
 import one.modality.event.frontoffice.activities.book.event.BookEventActivity;
 
 import java.time.LocalDate;
