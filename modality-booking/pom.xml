@@ -20,6 +20,7 @@
     <modules>
         <module>modality-booking-backoffice-activity-bookings-plugin</module>
         <module>modality-booking-backoffice-bookingeditor</module>
+        <module>modality-booking-backoffice-bookingeditor-teaching-plugin</module>
         <module>modality-booking-backoffice-operations-document</module>
         <module>modality-booking-client-scheduleditemsselector</module>
         <module>modality-booking-client-scheduleditemsselector-box</module>

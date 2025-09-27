@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project>
+
+    <exported-packages>
+        <source-packages/>
+        <resource-packages/>
+    </exported-packages>
+
+    <dependencies>
+        <used-by-source-modules/>
+    </dependencies>
+
+    <providers>
+        <provider interface="one.modality.booking.backoffice.bookingeditor.spi.BookingEditorProvider">one.modality.booking.backoffice.bookingeditor.teaching.TeachingBookingEditorProvider</provider>
+    </providers>
+
+</project>

@@ -7,49 +7,66 @@
 
     <parent>
         <groupId>one.modality</groupId>
-        <artifactId>modality-event</artifactId>
+        <artifactId>modality-booking</artifactId>
         <version>1.0.0-SNAPSHOT</version>
     </parent>
 
-    <artifactId>modality-event-backoffice-max-plugin</artifactId>
-
-    <description>Convenient module that embeds all back-office activities modules of the Event layer.</description>
+    <artifactId>modality-booking-backoffice-bookingeditor-teaching-plugin</artifactId>
 
     <dependencies>
 
         <dependency>
-            <groupId>one.modality</groupId>
-            <artifactId>modality-booking-backoffice-bookingeditor-teaching-plugin</artifactId>
-            <version>1.0.0-SNAPSHOT</version>
-            <scope>runtime</scope>
+            <groupId>org.openjfx</groupId>
+            <artifactId>javafx-base</artifactId>
+            <scope>provided</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>org.openjfx</groupId>
+            <artifactId>javafx-graphics</artifactId>
+            <scope>provided</scope>
         </dependency>
 
         <dependency>
             <groupId>one.modality</groupId>
-            <artifactId>modality-event-backoffice-activity-medias-plugin</artifactId>
+            <artifactId>modality-base-shared-entities</artifactId>
             <version>1.0.0-SNAPSHOT</version>
-            <scope>runtime</scope>
         </dependency>
 
         <dependency>
             <groupId>one.modality</groupId>
-            <artifactId>modality-event-backoffice-activity-program-plugin</artifactId>
+            <artifactId>modality-booking-backoffice-bookingeditor</artifactId>
             <version>1.0.0-SNAPSHOT</version>
-            <scope>runtime</scope>
         </dependency>
 
         <dependency>
             <groupId>one.modality</groupId>
-            <artifactId>modality-event-backoffice-activity-recurringevents-plugin</artifactId>
+            <artifactId>modality-booking-client-scheduleditemsselector</artifactId>
             <version>1.0.0-SNAPSHOT</version>
-            <scope>runtime</scope>
         </dependency>
 
         <dependency>
             <groupId>one.modality</groupId>
-            <artifactId>modality-event-backoffice-min-plugin</artifactId>
+            <artifactId>modality-booking-client-scheduleditemsselector-box</artifactId>
             <version>1.0.0-SNAPSHOT</version>
-            <scope>runtime</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>one.modality</groupId>
+            <artifactId>modality-booking-client-workingbooking</artifactId>
+            <version>1.0.0-SNAPSHOT</version>
+        </dependency>
+
+        <dependency>
+            <groupId>dev.webfx</groupId>
+            <artifactId>webfx-kit-util</artifactId>
+            <version>0.1.0-SNAPSHOT</version>
+        </dependency>
+
+        <dependency>
+            <groupId>dev.webfx</groupId>
+            <artifactId>webfx-platform-async</artifactId>
+            <version>0.1.0-SNAPSHOT</version>
         </dependency>
 
         <dependency>
@@ -58,6 +75,12 @@
             <version>0.1.0-SNAPSHOT</version>
             <scope>runtime</scope>
             <optional>true</optional>
+        </dependency>
+
+        <dependency>
+            <groupId>dev.webfx</groupId>
+            <artifactId>webfx-platform-util</artifactId>
+            <version>0.1.0-SNAPSHOT</version>
         </dependency>
 
     </dependencies>
