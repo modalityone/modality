@@ -1,6 +1,7 @@
 package one.modality.ecommerce.backoffice.operations.entities.document.registration;
 
 import dev.webfx.extras.exceptions.UserCancellationException;
+import dev.webfx.extras.operation.OperationUtil;
 import dev.webfx.extras.util.dialog.DialogCallback;
 import dev.webfx.extras.util.dialog.builder.DialogBuilderUtil;
 import dev.webfx.extras.util.dialog.builder.DialogContent;
@@ -76,9 +77,11 @@ final class ShowBookingEditorExecutor {
                     executing[0] = true;
                     WorkingBookingSyncer.syncWorkingBookingFromScheduledItemsSelector(workingBooking, boxScheduledItemsSelector, false);
                     WorkingBookingHistoryHelper historyHelper = new WorkingBookingHistoryHelper(workingBooking);
-                    workingBooking.submitChanges(historyHelper.generateHistoryComment())
-                        .onSuccess(ignored -> dialogCallback.closeDialog())
-                        .onFailure(dialogCallback::showException);
+                    OperationUtil.turnOnButtonsWaitModeDuringExecution(
+                        workingBooking.submitChanges(historyHelper.generateHistoryComment())
+                            .onSuccess(ignored -> dialogCallback.closeDialog())
+                            .onFailure(dialogCallback::showException)
+                        , saveButton, dialogContent.getSecondaryButton() /* = cancel button */);
                 });
 
             });
