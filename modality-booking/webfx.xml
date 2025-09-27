@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project>
+
+    <description>Layer that contains modules implementing the general features related to bookings.</description>
+
+    <modules>
+        <subdirectories-modules/>
+    </modules>
+
+</project>

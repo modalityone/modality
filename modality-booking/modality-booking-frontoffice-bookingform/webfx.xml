@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project>
+
+    <exported-packages>
+        <source-packages/>
+        <resource-packages/>
+    </exported-packages>
+
+    <dependencies>
+        <used-by-source-modules>
+            <module transitive="true">modality-ecommerce-payment</module>
+        </used-by-source-modules>
+    </dependencies>
+
+    <i18n javaKeysClass="one.modality.booking.frontoffice.bookingform.BookingFormI18nKeys"/>
+
+</project>

@@ -11,7 +11,7 @@ import javafx.scene.control.Label;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.VBox;
 import javafx.scene.text.TextAlignment;
-import one.modality.ecommerce.frontoffice.bookingelements.BookingElements;
+import one.modality.booking.frontoffice.bookingelements.BookingElements;
 import one.modality.event.frontoffice.activities.book.BookI18nKeys;
 import one.modality.event.frontoffice.activities.book.event.BookEventActivity;
 

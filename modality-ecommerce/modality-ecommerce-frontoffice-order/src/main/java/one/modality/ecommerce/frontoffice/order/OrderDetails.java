@@ -18,8 +18,8 @@ import one.modality.base.shared.entities.DocumentLine;
 import one.modality.base.shared.entities.formatters.EventPriceFormatter;
 import one.modality.base.shared.entities.markers.HasPersonalDetails;
 import one.modality.crm.client.i18n.CrmI18nKeys;
-import one.modality.ecommerce.client.workingbooking.WorkingBooking;
-import one.modality.ecommerce.frontoffice.bookingelements.BookingElements;
+import one.modality.booking.client.workingbooking.WorkingBooking;
+import one.modality.booking.frontoffice.bookingelements.BookingElements;
 import one.modality.ecommerce.shared.pricecalculator.PriceCalculator;
 
 import java.util.LinkedHashMap;

@@ -22,7 +22,7 @@ import one.modality.base.frontoffice.utility.tyler.StyleUtility;
 import one.modality.base.frontoffice.utility.tyler.TextUtility;
 import one.modality.base.shared.entities.Event;
 import one.modality.base.shared.entities.EventState;
-import one.modality.ecommerce.frontoffice.bookingform.BookingFormI18nKeys;
+import one.modality.booking.frontoffice.bookingform.BookingFormI18nKeys;
 import one.modality.event.frontoffice.activities.book.BookStarter;
 
 public final class EventView {

@@ -43,6 +43,7 @@ import one.modality.base.shared.entities.Document;
 import one.modality.base.shared.entities.DocumentLine;
 import one.modality.base.shared.entities.Mail;
 import one.modality.base.shared.entities.MoneyTransfer;
+import one.modality.booking.backoffice.operations.entities.document.registration.ShowBookingEditorRequest;
 import one.modality.crm.backoffice.operations.entities.mail.ComposeNewMailRequest;
 import one.modality.crm.backoffice.operations.entities.mail.OpenMailRequest;
 import one.modality.crm.client.controls.personaldetails.BookingPersonalDetailsPanel;

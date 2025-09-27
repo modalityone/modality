@@ -57,6 +57,7 @@
 
     <modules>
         <module>modality-base</module>
+        <module>modality-booking</module>
         <module>modality-catering</module>
         <module>modality-crm</module>
         <module>modality-ecommerce</module>

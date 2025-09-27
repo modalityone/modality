@@ -26,10 +26,10 @@ import javafx.scene.text.TextAlignment;
 import one.modality.base.shared.entities.Event;
 import one.modality.base.shared.entities.ScheduledItem;
 import one.modality.base.shared.entities.formatters.EventPriceFormatter;
-import one.modality.ecommerce.client.workingbooking.WorkingBookingProperties;
-import one.modality.ecommerce.frontoffice.bookingelements.BookingElements;
-import one.modality.ecommerce.frontoffice.bookingform.multipages.BookingFormPage;
-import one.modality.ecommerce.client.selecteditemsselector.box.BoxScheduledItemsSelector;
+import one.modality.booking.client.workingbooking.WorkingBookingProperties;
+import one.modality.booking.frontoffice.bookingelements.BookingElements;
+import one.modality.booking.frontoffice.bookingform.multipages.BookingFormPage;
+import one.modality.booking.client.selecteditemsselector.box.BoxScheduledItemsSelector;
 import one.modality.event.frontoffice.activities.book.event.BookEventActivity;
 
 import java.time.LocalDate;
