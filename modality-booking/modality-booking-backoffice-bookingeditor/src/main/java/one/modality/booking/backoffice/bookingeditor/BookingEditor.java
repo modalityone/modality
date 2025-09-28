@@ -13,9 +13,6 @@ import javafx.scene.layout.Pane;
 import one.modality.base.shared.entities.Document;
 import one.modality.booking.backoffice.bookingeditor.spi.BookingEditorProvider;
 import one.modality.booking.client.workingbooking.WorkingBooking;
-import one.modality.ecommerce.document.service.DocumentAggregate;
-import one.modality.ecommerce.document.service.DocumentService;
-import one.modality.ecommerce.document.service.PolicyAggregate;
 
 /**
  * @author Bruno Salmon
@@ -30,14 +27,10 @@ public interface BookingEditor {
 
     static Future<Void> editBooking(Document document, Pane parentContainer) {
         Promise<Void> promise = Promise.promise();
-        DocumentService.loadDocumentWithPolicy(document)
+        WorkingBooking.loadWorkingBooking(document)
             .onFailure(promise::fail)
             .inUiThread()
-            .onSuccess(policyAndDocumentAggregates -> {
-                PolicyAggregate policyAggregate = policyAndDocumentAggregates.getPolicyAggregate(); // never null
-                DocumentAggregate existingBooking = policyAndDocumentAggregates.getDocumentAggregate(); // might be null
-                WorkingBooking workingBooking = new WorkingBooking(policyAggregate, existingBooking);
-
+            .onSuccess(workingBooking -> {
                 BookingEditor bookingEditor = BookingEditorProvider.bestSuitableBookingEditor(workingBooking);
                 DialogContent dialogContent = new DialogContent()
                     .setHeaderText("BookingDetails")

@@ -16,8 +16,10 @@ import javafx.event.EventHandler;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Cursor;
-import javafx.scene.control.*;
+import javafx.scene.control.Button;
+import javafx.scene.control.ButtonBase;
 import javafx.scene.control.Label;
+import javafx.scene.control.Labeled;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
@@ -26,11 +28,8 @@ import one.modality.base.client.mainframe.fx.FXMainFrameDialogArea;
 import one.modality.base.frontoffice.utility.browser.BrowserUtil;
 import one.modality.base.shared.entities.*;
 import one.modality.base.shared.entities.formatters.EventPriceFormatter;
-import one.modality.crm.shared.services.authn.fx.FXUserPerson;
 import one.modality.booking.client.workingbooking.WorkingBooking;
-import one.modality.ecommerce.document.service.DocumentAggregate;
-import one.modality.ecommerce.document.service.DocumentService;
-import one.modality.ecommerce.document.service.PolicyAggregate;
+import one.modality.crm.shared.services.authn.fx.FXUserPerson;
 import one.modality.event.client.lifecycle.EventLifeCycle;
 
 import java.util.function.Supplier;
@@ -217,11 +216,8 @@ public final class OrderActions {
             Button confirmButton = Bootstrap.largeDangerButton(I18nControls.newButton(BaseI18nKeys.Confirm));
             confirmButton.setOnAction(ae ->
                 OperationUtil.turnOnButtonsWaitModeDuringExecution(
-                    DocumentService.loadDocumentWithPolicy(orderDocument)
-                        .compose(policyAndDocumentAggregates -> {
-                            PolicyAggregate policyAggregate = policyAndDocumentAggregates.getPolicyAggregate(); // never null
-                            DocumentAggregate existingBooking = policyAndDocumentAggregates.getDocumentAggregate(); // might be null
-                            WorkingBooking workingBooking = new WorkingBooking(policyAggregate, existingBooking);
+                    WorkingBooking.loadWorkingBooking(orderDocument)
+                        .compose(workingBooking -> {
                             workingBooking.cancelBooking();
                             return workingBooking.submitChanges("Booking canceled online by user")
                                 .compose(result -> loadFromDatabaseFunction.get());

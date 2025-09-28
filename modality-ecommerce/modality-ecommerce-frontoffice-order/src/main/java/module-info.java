@@ -17,7 +17,6 @@ module modality.ecommerce.frontoffice.order {
     requires modality.crm.client.authn.fx;
     requires modality.crm.client.i18n;
     requires modality.ecommerce.client.i18n;
-    requires modality.ecommerce.document.service;
     requires modality.ecommerce.shared.pricecalculator;
     requires modality.event.client.lifecycle;
     requires webfx.extras.i18n;

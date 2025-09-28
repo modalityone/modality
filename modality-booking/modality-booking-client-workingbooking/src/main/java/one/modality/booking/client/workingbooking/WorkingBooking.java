@@ -358,4 +358,13 @@ public final class WorkingBooking {
         return workingBooking;
     }
 
+    public static Future<WorkingBooking> loadWorkingBooking(Document document) {
+        return DocumentService.loadDocumentWithPolicy(document)
+            .map(policyAndDocumentAggregates -> {
+                PolicyAggregate policyAggregate = policyAndDocumentAggregates.getPolicyAggregate(); // never null
+                DocumentAggregate existingBooking = policyAndDocumentAggregates.getDocumentAggregate(); // might be null
+                return new WorkingBooking(policyAggregate, existingBooking);
+            });
+    }
+
 }
