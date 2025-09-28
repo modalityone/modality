@@ -1,15 +1,12 @@
 package one.modality.booking.backoffice.bookingeditor;
 
-import dev.webfx.extras.exceptions.UserCancellationException;
-import dev.webfx.extras.async.AsyncSpinner;
-import dev.webfx.extras.util.dialog.builder.DialogBuilderUtil;
 import dev.webfx.extras.util.dialog.builder.DialogContent;
 import dev.webfx.platform.async.Future;
-import dev.webfx.platform.async.Promise;
 import javafx.beans.property.ReadOnlyBooleanProperty;
 import javafx.scene.Node;
 import javafx.scene.control.Button;
 import javafx.scene.layout.Pane;
+import dev.webfx.extras.async.AsyncDialog;
 import one.modality.base.shared.entities.Document;
 import one.modality.booking.backoffice.bookingeditor.spi.BookingEditorProvider;
 import one.modality.booking.client.workingbooking.WorkingBooking;
@@ -28,11 +25,9 @@ public interface BookingEditor {
     // Static methods
 
     static Future<Void> editBooking(Document document, Pane parentContainer) {
-        Promise<Void> promise = Promise.promise();
-        WorkingBooking.loadWorkingBooking(document)
-            .onFailure(promise::fail)
+        return WorkingBooking.loadWorkingBooking(document)
             .inUiThread()
-            .onSuccess(workingBooking -> {
+            .compose(workingBooking -> {
                 BookingEditor bookingEditor = BookingEditorProvider.bestSuitableBookingEditor(workingBooking);
                 DialogContent dialogContent = new DialogContent()
                     .setHeaderText("BookingDetails")
@@ -40,26 +35,9 @@ public interface BookingEditor {
                 //We disable the save button at the beginning
                 Button saveButton = dialogContent.getPrimaryButton();
                 saveButton.disableProperty().bind(bookingEditor.hasChanges().not());
-                Button cancelButton = dialogContent.getSecondaryButton();
 
-                //here we validate
-                boolean[] executing = {false};
-                DialogBuilderUtil.armDialogContentButtons(dialogContent, dialogCallback -> {
-                    executing[0] = true;
-                    AsyncSpinner.displayButtonSpinnerDuringAsyncExecution(
-                        bookingEditor.saveChanges()
-                            .onFailure(dialogCallback::showException)
-                            .onSuccess(ignored -> dialogCallback.closeDialog())
-                        , saveButton, cancelButton);
-                });
-
-                DialogBuilderUtil.showModalNodeInGoldLayout(dialogContent, parentContainer)
-                    .addCloseHook(() -> {
-                        if (!executing[0])
-                            promise.fail(new UserCancellationException());
-                    });
+                return AsyncDialog.showDialogWithAsyncOperationOnPrimaryButton(dialogContent, parentContainer, bookingEditor::saveChanges);
             });
-        return promise.future();
     }
 
 }
