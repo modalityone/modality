@@ -1,5 +1,6 @@
 package one.modality.base.backoffice.operations.entities.generic;
 
+import dev.webfx.extras.async.AsyncSpinner;
 import dev.webfx.platform.async.Future;
 import dev.webfx.platform.async.Promise;
 import dev.webfx.platform.uischeduler.UiScheduler;
@@ -9,7 +10,6 @@ import dev.webfx.extras.util.dialog.builder.DialogBuilderUtil;
 import dev.webfx.extras.util.dialog.builder.DialogContent;
 import dev.webfx.extras.util.dialog.DialogCallback;
 import dev.webfx.extras.exceptions.UserCancellationException;
-import dev.webfx.extras.operation.OperationUtil;
 import javafx.scene.control.Button;
 import javafx.scene.layout.Pane;
 import one.modality.base.client.i18n.BaseI18nKeys;
@@ -33,12 +33,12 @@ public final class DialogExecutorUtil {
             DialogBuilderUtil.armDialogContentButtons(dialogContent, dialogCallback -> {
                 executing[0] = true;
                 Button executingButton = dialogContent.getPrimaryButton();
-                OperationUtil.turnOnButtonsWaitModeDuringExecution(
+                AsyncSpinner.displayButtonSpinnerDuringAsyncExecution(
                     executor.get()
                         .inUiThread()
                         .onFailure(cause -> {
                             promise.fail(cause);
-                            reportException(dialogCallback, parentContainer, cause); // Actually just print stack trace for now...
+                            reportException(dialogCallback, parentContainer, cause); // Actually, just print stack trace for now...
                             if (dialogCallback != null) // So we close the window
                                 dialogCallback.closeDialog();
                         })

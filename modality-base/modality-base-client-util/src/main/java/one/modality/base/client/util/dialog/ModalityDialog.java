@@ -1,5 +1,6 @@
 package one.modality.base.client.util.dialog;
 
+import dev.webfx.extras.async.AsyncSpinner;
 import dev.webfx.extras.styles.bootstrap.Bootstrap;
 import dev.webfx.platform.async.AsyncFunction;
 import dev.webfx.platform.async.AsyncSupplier;
@@ -9,7 +10,6 @@ import dev.webfx.extras.i18n.I18n;
 import dev.webfx.extras.i18n.controls.I18nControls;
 import dev.webfx.extras.util.dialog.DialogCallback;
 import dev.webfx.extras.util.dialog.DialogUtil;
-import dev.webfx.extras.operation.OperationUtil;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.control.Button;
@@ -73,7 +73,7 @@ public final class ModalityDialog {
 
     private static void runClosingDialogAction(DialogCallback dialogCallback, AsyncFunction<DialogCallback, ?> action, Labeled... buttons) {
         if (action != null)
-            OperationUtil.turnOnButtonsWaitModeDuringExecution(action.apply(dialogCallback), buttons);
+            AsyncSpinner.displayButtonSpinnerDuringAsyncExecution(action.apply(dialogCallback), buttons);
     }
 
 }

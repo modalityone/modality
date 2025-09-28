@@ -2,6 +2,7 @@ package one.modality.event.frontoffice.activities.audiolibrary;
 
 import dev.webfx.extras.cell.renderer.ValueRendererRegistry;
 import dev.webfx.extras.media.metadata.MediaMetadataBuilder;
+import dev.webfx.extras.async.AsyncSpinner;
 import dev.webfx.extras.player.Player;
 import dev.webfx.extras.player.audio.javafxmedia.AudioMediaView;
 import dev.webfx.extras.styles.bootstrap.Bootstrap;
@@ -18,7 +19,6 @@ import dev.webfx.extras.i18n.I18n;
 import dev.webfx.extras.i18n.I18nKeys;
 import dev.webfx.extras.i18n.controls.I18nControls;
 import dev.webfx.stack.orm.entity.Entities;
-import dev.webfx.extras.operation.OperationUtil;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.control.Button;
@@ -114,8 +114,8 @@ final class AudioColumnsRenderers {
                 // 3) Sometimes (especially on mobiles) the system can take a few seconds before showing there is a
                 // download in progress, giving the impression that nothing happens and making the user pressing
                 // the button several times. To prevent this, we disable the download button for 5s.
-                OperationUtil.turnOnButtonsWaitMode(button);
-                UiScheduler.scheduleDelay(5000, () -> OperationUtil.turnOffButtonsWaitMode(button));
+                AsyncSpinner.displayButtonSpinner(button);
+                UiScheduler.scheduleDelay(5000, () -> AsyncSpinner.hideButtonSpinner(button));
             } else if (!Objects.areEquals(audioPlayer.getMedia(), playerMedia)) { // Play action
                 audioPlayer.resetToInitialState();
                 audioPlayer.setMedia(playerMedia);

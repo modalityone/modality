@@ -3,7 +3,7 @@ package one.modality.event.backoffice.activities.recurringevents;
 import dev.webfx.extras.filepicker.FilePicker;
 import dev.webfx.extras.i18n.I18n;
 import dev.webfx.extras.i18n.controls.I18nControls;
-import dev.webfx.extras.operation.OperationUtil;
+import dev.webfx.extras.async.AsyncSpinner;
 import dev.webfx.extras.panes.FlexPane;
 import dev.webfx.extras.panes.MonoPane;
 import dev.webfx.extras.styles.bootstrap.Bootstrap;
@@ -1082,7 +1082,7 @@ final class ManageRecurringEventView {
         // Unbinding buttons, so they can be displayed as disabled during the process
         saveButton.disableProperty().unbind();
         cancelButton.disableProperty().unbind();
-        OperationUtil.turnOnButtonsWaitModeDuringExecution(
+        AsyncSpinner.displayButtonSpinnerDuringAsyncExecution(
             updateStore.submitChanges()
                 .inUiThread()
                 .onFailure(ex -> {

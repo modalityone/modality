@@ -1,7 +1,7 @@
 package one.modality.ecommerce.frontoffice.order;
 
 import dev.webfx.extras.i18n.controls.I18nControls;
-import dev.webfx.extras.operation.OperationUtil;
+import dev.webfx.extras.async.AsyncSpinner;
 import dev.webfx.extras.panes.ScalePane;
 import dev.webfx.extras.styles.bootstrap.Bootstrap;
 import dev.webfx.extras.util.dialog.DialogCallback;
@@ -76,7 +76,7 @@ public final class OrderActions {
                 history.setDocument(d);
                 history.setMail(email);
 
-                OperationUtil.turnOnButtonsWaitModeDuringExecution(
+                AsyncSpinner.displayButtonSpinnerDuringAsyncExecution(
                     updateStore.submitChanges()
                         .onFailure(Console::log)
                         .onComplete(c -> contactUsWindow.displaySuccessMessage(5000, messageWindowCallback::closeDialog)),
@@ -157,7 +157,7 @@ public final class OrderActions {
                 history.setMail(email);
 
                 //TODO: prevent the Refund to display if the refund as already been requested, and display somewhere in the interface that the refund has been requested
-                OperationUtil.turnOnButtonsWaitModeDuringExecution(
+                AsyncSpinner.displayButtonSpinnerDuringAsyncExecution(
                     updateStore.submitChanges()
                         .onFailure(Console::log)
                         .onComplete(c -> refundWindow.displayRefundSuccessMessage(8000, messageWindowCallback::closeDialog)),
@@ -167,7 +167,7 @@ public final class OrderActions {
             refundWindow.getDonateButton().setOnAction(ae -> {
                 UpdateStore updateStore = UpdateStore.createAbove(orderDocument.getStore());
                 //TODO implementation
-                OperationUtil.turnOnButtonsWaitModeDuringExecution(
+                AsyncSpinner.displayButtonSpinnerDuringAsyncExecution(
                     updateStore.submitChanges()
                         .onFailure(Console::log)
                         .onComplete(c -> refundWindow.displayDonationSuccessMessage(8000, messageWindowCallback::closeDialog)),
@@ -215,7 +215,7 @@ public final class OrderActions {
 
             Button confirmButton = Bootstrap.largeDangerButton(I18nControls.newButton(BaseI18nKeys.Confirm));
             confirmButton.setOnAction(ae ->
-                OperationUtil.turnOnButtonsWaitModeDuringExecution(
+                AsyncSpinner.displayButtonSpinnerDuringAsyncExecution(
                     WorkingBooking.loadWorkingBooking(orderDocument)
                         .compose(workingBooking -> {
                             workingBooking.cancelBooking();

@@ -4,7 +4,7 @@ import dev.webfx.extras.controlfactory.MaterialFactoryMixin;
 import dev.webfx.extras.controlfactory.button.ButtonFactory;
 import dev.webfx.extras.i18n.I18n;
 import dev.webfx.extras.i18n.controls.I18nControls;
-import dev.webfx.extras.operation.OperationUtil;
+import dev.webfx.extras.async.AsyncSpinner;
 import dev.webfx.extras.styles.bootstrap.Bootstrap;
 import dev.webfx.extras.styles.materialdesign.util.MaterialUtil;
 import dev.webfx.extras.util.animation.Animations;
@@ -72,10 +72,10 @@ final class ChangeEmailUI implements MaterialFactoryMixin {
                 if (validateForm()) {
                     // First, we check if the password entered is the correct
                     Object passwordCheckCredentials = new AuthenticateWithUsernamePasswordCredentials(emailAddress, passwordField.getText().trim());
-                    OperationUtil.turnOnButtonsWaitMode(actionButton);
+                    AsyncSpinner.displayButtonSpinner(actionButton);
                     AuthenticationService.authenticate(passwordCheckCredentials)
                         .inUiThread()
-                        .onComplete(ar -> OperationUtil.turnOffButtonsWaitMode(actionButton))
+                        .onComplete(ar -> AsyncSpinner.hideButtonSpinner(actionButton))
                         .onFailure(failure -> {
                             showMessage(UserProfileI18nKeys.IncorrectPassword, Bootstrap.TEXT_DANGER);
                             Animations.shake(container);
@@ -83,10 +83,10 @@ final class ChangeEmailUI implements MaterialFactoryMixin {
                         .onSuccess(ignored -> {
                             //Here we send an email
                             Object emailUpdateCredentials = new InitiateEmailUpdateCredentials(emailField.getText().trim(), WindowLocation.getOrigin(), WindowLocation.getPath(), I18n.getLanguage(), FXLoginContext.getLoginContext());
-                            OperationUtil.turnOnButtonsWaitMode(actionButton);
+                            AsyncSpinner.displayButtonSpinner(actionButton);
                             AuthenticationService.authenticate(emailUpdateCredentials)
                                 .inUiThread()
-                                .onComplete(ar -> OperationUtil.turnOffButtonsWaitMode(actionButton))
+                                .onComplete(ar -> AsyncSpinner.hideButtonSpinner(actionButton))
                                 .onFailure(failure -> {
                                     // callback.notifyUserLoginFailed(failure);
                                     showMessage(failure.getMessage(), Bootstrap.TEXT_DANGER);

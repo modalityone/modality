@@ -8,8 +8,8 @@ module modality.booking.backoffice.bookingeditor {
     requires javafx.graphics;
     requires modality.base.shared.entities;
     requires modality.booking.client.workingbooking;
+    requires webfx.extras.async;
     requires webfx.extras.exceptions;
-    requires webfx.extras.operation;
     requires webfx.extras.util.dialog;
     requires webfx.platform.async;
     requires webfx.platform.service;

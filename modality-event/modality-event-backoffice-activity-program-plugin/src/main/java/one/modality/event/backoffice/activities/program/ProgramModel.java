@@ -1,6 +1,6 @@
 package one.modality.event.backoffice.activities.program;
 
-import dev.webfx.extras.operation.OperationUtil;
+import dev.webfx.extras.async.AsyncSpinner;
 import dev.webfx.extras.util.OptimizedObservableListWrapper;
 import dev.webfx.extras.util.dialog.builder.DialogBuilderUtil;
 import dev.webfx.extras.util.dialog.builder.DialogContent;
@@ -207,7 +207,7 @@ final class ProgramModel {
 
     void saveChanges(Button saveButton, Button cancelButton) {
         if (validateForm()) {
-            OperationUtil.turnOnButtonsWaitModeDuringExecution(
+            AsyncSpinner.displayButtonSpinnerDuringAsyncExecution(
                 submitUpdateStoreChangesAndReload(updateStore),
                 saveButton, cancelButton);
         }

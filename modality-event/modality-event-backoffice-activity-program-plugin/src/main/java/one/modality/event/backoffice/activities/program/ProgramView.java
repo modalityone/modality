@@ -4,7 +4,7 @@ package one.modality.event.backoffice.activities.program;
 import dev.webfx.extras.controlfactory.button.ButtonFactoryMixin;
 import dev.webfx.extras.i18n.I18n;
 import dev.webfx.extras.i18n.controls.I18nControls;
-import dev.webfx.extras.operation.OperationUtil;
+import dev.webfx.extras.async.AsyncSpinner;
 import dev.webfx.extras.panes.ColumnsPane;
 import dev.webfx.extras.styles.bootstrap.Bootstrap;
 import dev.webfx.extras.theme.text.TextTheme;
@@ -170,7 +170,7 @@ final class ProgramView extends ModalitySlaveEditor<Event> implements ButtonFact
                 DialogBuilderUtil.armDialogContentButtons(dialogContent, DialogCallback::closeDialog);
                 return;
             }
-                OperationUtil.turnOnButtonsWaitModeDuringExecution(
+                AsyncSpinner.displayButtonSpinnerDuringAsyncExecution(
                     programModel.generatePreliminaryBookableSI()
                         .inUiThread()
                         .onFailure(error -> {

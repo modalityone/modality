@@ -17,6 +17,7 @@ module modality.crm.frontoffice.activity.userprofile.plugin {
     requires modality.crm.client.i18n;
     requires modality.crm.frontoffice.activity.createaccount.plugin;
     requires modality.crm.frontoffice.help;
+    requires webfx.extras.async;
     requires webfx.extras.controlfactory;
     requires webfx.extras.filepicker;
     requires webfx.extras.i18n;

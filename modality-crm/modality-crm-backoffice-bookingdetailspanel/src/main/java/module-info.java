@@ -22,9 +22,9 @@ module modality.crm.backoffice.bookingdetailspanel {
     requires modality.ecommerce.backoffice.operations.documentline;
     requires modality.ecommerce.backoffice.operations.moneytransfer;
     requires webfx.extras.action;
+    requires webfx.extras.async;
     requires webfx.extras.controlfactory;
     requires webfx.extras.i18n.controls;
-    requires webfx.extras.operation;
     requires webfx.extras.operation.action;
     requires webfx.extras.panes;
     requires webfx.extras.visual;

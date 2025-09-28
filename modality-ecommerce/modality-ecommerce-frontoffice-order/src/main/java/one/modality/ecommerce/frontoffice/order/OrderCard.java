@@ -3,7 +3,7 @@ package one.modality.ecommerce.frontoffice.order;
 import dev.webfx.extras.i18n.I18nKeys;
 import dev.webfx.extras.i18n.controls.I18nControls;
 import dev.webfx.extras.i18n.spi.impl.I18nSubKey;
-import dev.webfx.extras.operation.OperationUtil;
+import dev.webfx.extras.async.AsyncSpinner;
 import dev.webfx.extras.panes.CollapsePane;
 import dev.webfx.extras.panes.MonoPane;
 import dev.webfx.extras.styles.bootstrap.Bootstrap;
@@ -250,7 +250,7 @@ public final class OrderCard {
     }
 
     private void loadAndExpandOrderDetails(boolean autoscroll) {
-        OperationUtil.turnOnButtonsWaitModeDuringExecution(
+        AsyncSpinner.displayButtonSpinnerDuringAsyncExecution(
             loadFromDatabase()
                 .onComplete(ar ->
                     // Calling in UI thread, but after another animation frame to ensure the layout pass is

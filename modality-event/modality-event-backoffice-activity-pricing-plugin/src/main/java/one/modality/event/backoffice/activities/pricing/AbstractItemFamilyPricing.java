@@ -1,7 +1,7 @@
 package one.modality.event.backoffice.activities.pricing;
 
 import dev.webfx.extras.i18n.controls.I18nControls;
-import dev.webfx.extras.operation.OperationUtil;
+import dev.webfx.extras.async.AsyncSpinner;
 import dev.webfx.extras.styles.bootstrap.Bootstrap;
 import dev.webfx.extras.time.TimeUtil;
 import dev.webfx.extras.validation.ValidationSupport;
@@ -134,7 +134,7 @@ abstract class AbstractItemFamilyPricing implements ItemFamilyPricing {
 
         saveButton.setOnAction(e -> {
                 if (dateUIs.stream().allMatch(DateUI::isValid)) {
-                    OperationUtil.turnOnButtonsWaitModeDuringExecution(
+                    AsyncSpinner.displayButtonSpinnerDuringAsyncExecution(
                         updateStore.submitChanges()
                             .onFailure(Console::log)
                         , saveButton);

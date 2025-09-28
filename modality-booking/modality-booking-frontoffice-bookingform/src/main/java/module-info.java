@@ -11,7 +11,7 @@ module modality.booking.frontoffice.bookingform {
     requires modality.booking.frontoffice.bookingelements;
     requires modality.ecommerce.document.service;
     requires transitive modality.ecommerce.payment;
-    requires webfx.extras.operation;
+    requires webfx.extras.async;
     requires webfx.extras.panes;
     requires webfx.kit.util;
     requires webfx.platform.async;

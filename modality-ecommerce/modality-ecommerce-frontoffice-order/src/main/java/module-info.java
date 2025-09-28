@@ -19,9 +19,9 @@ module modality.ecommerce.frontoffice.order {
     requires modality.ecommerce.client.i18n;
     requires modality.ecommerce.shared.pricecalculator;
     requires modality.event.client.lifecycle;
+    requires webfx.extras.async;
     requires webfx.extras.i18n;
     requires webfx.extras.i18n.controls;
-    requires webfx.extras.operation;
     requires webfx.extras.panes;
     requires webfx.extras.styles.bootstrap;
     requires webfx.extras.time.format;

@@ -26,11 +26,11 @@ module modality.event.frontoffice.activity.book {
     requires modality.event.client.event.fx;
     requires modality.event.client.lifecycle;
     requires modality.event.frontoffice.eventheader;
+    requires webfx.extras.async;
     requires webfx.extras.controlfactory;
     requires webfx.extras.i18n;
     requires webfx.extras.i18n.controls;
     requires webfx.extras.imagestore;
-    requires webfx.extras.operation;
     requires webfx.extras.panes;
     requires webfx.extras.styles.bootstrap;
     requires webfx.extras.util.animation;

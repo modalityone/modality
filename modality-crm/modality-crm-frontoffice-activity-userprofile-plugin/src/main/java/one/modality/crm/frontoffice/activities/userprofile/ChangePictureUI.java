@@ -2,7 +2,7 @@ package one.modality.crm.frontoffice.activities.userprofile;
 
 import dev.webfx.extras.filepicker.FilePicker;
 import dev.webfx.extras.i18n.controls.I18nControls;
-import dev.webfx.extras.operation.OperationUtil;
+import dev.webfx.extras.async.AsyncSpinner;
 import dev.webfx.extras.styles.bootstrap.Bootstrap;
 import dev.webfx.extras.util.dialog.DialogCallback;
 import dev.webfx.extras.util.layout.Layouts;
@@ -173,7 +173,7 @@ final class ChangePictureUI {
         saveButton.disableProperty().bind((isPictureToBeUploaded.not().and(isPictureToBeDeleted.not().and(zoomPropertyChanged.not())).or(isCurrentlyProcessing)));
 
         saveButton.setOnAction(e -> {
-            OperationUtil.turnOnButtonsWaitMode(saveButton);
+            AsyncSpinner.displayButtonSpinner(saveButton);
             isCurrentlyProcessing.setValue(true);
             String cloudImagePath = ModalityCloudinary.personImagePath(parentActivity.getCurrentPerson());
             // Create a Canvas to draw the original image
@@ -233,7 +233,7 @@ final class ChangePictureUI {
                     else {
                         parentActivity.removeUserProfilePicture();
                         callback.closeDialog();
-                        OperationUtil.turnOffButtonsWaitMode(saveButton);
+                        AsyncSpinner.hideButtonSpinner(saveButton);
                         isCurrentlyProcessing.setValue(false);
                         reinitialize();
                     }
@@ -302,7 +302,7 @@ final class ChangePictureUI {
                     parentActivity.showProgressIndicator();
                     //We wait for some time before reloading the image, so cloudinary has the time to process it (it can take up to 10 seconds)
                     UiScheduler.scheduleDelay(CLOUDINARY_RELOAD_DELAY, parentActivity::loadProfilePictureIfExist);
-                    OperationUtil.turnOffButtonsWaitMode(saveButton);
+                    AsyncSpinner.hideButtonSpinner(saveButton);
                     isCurrentlyProcessing.setValue(false);
                     reinitialize();
                 });

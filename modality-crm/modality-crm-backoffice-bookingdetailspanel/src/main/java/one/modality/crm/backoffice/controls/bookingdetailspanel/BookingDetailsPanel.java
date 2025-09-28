@@ -4,7 +4,7 @@ import dev.webfx.extras.action.ActionBinder;
 import dev.webfx.extras.action.ActionGroup;
 import dev.webfx.extras.controlfactory.button.ButtonFactoryMixin;
 import dev.webfx.extras.i18n.controls.I18nControls;
-import dev.webfx.extras.operation.OperationUtil;
+import dev.webfx.extras.async.AsyncSpinner;
 import dev.webfx.extras.operation.action.OperationAction;
 import dev.webfx.extras.operation.action.OperationActionFactoryMixin;
 import dev.webfx.extras.panes.ColumnsPane;
@@ -318,7 +318,7 @@ public final class BookingDetailsPanel implements
             UpdateStore updateStore = UpdateStore.createAbove(originalDocument.getStore());
             Document updatedDocument = updateStore.updateEntity(originalDocument);
             updatedDocument.setFieldValue(commentField, textArea.getText());
-            OperationUtil.turnOnButtonsWaitModeDuringExecution(
+            AsyncSpinner.displayButtonSpinnerDuringAsyncExecution(
                 updateStore.submitChanges().onSuccess(x -> {
                     // Now that the changes have been successfully recorded in the database, we will exit the edit
                     // mode. But this will also trigger textSyncer, which will copy the text from the original

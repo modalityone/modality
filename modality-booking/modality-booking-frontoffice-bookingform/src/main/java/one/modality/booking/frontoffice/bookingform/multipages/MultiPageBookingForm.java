@@ -1,6 +1,6 @@
 package one.modality.booking.frontoffice.bookingform.multipages;
 
-import dev.webfx.extras.operation.OperationUtil;
+import dev.webfx.extras.async.AsyncSpinner;
 import dev.webfx.extras.panes.MonoPane;
 import dev.webfx.extras.panes.TransitionPane;
 import dev.webfx.kit.util.properties.FXProperties;
@@ -56,7 +56,7 @@ public abstract class MultiPageBookingForm extends BookingFormBase {
                 UiScheduler.scheduleDeferred(() -> {
                     ToggleButton nextButton = navigationBar.getNextButton();
                     nextButton.setContentDisplay(ContentDisplay.GRAPHIC_ONLY);
-                    OperationUtil.turnOnButtonsWaitModeDuringExecution(
+                    AsyncSpinner.displayButtonSpinnerDuringAsyncExecution(
                         future
                             .inUiThread()
                             .onComplete(ar -> {

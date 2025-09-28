@@ -17,6 +17,7 @@ module modality.event.backoffice.activity.program.plugin {
     requires modality.base.shared.knownitems;
     requires modality.crm.backoffice.organization.fx;
     requires modality.event.client.event.fx;
+    requires webfx.extras.async;
     requires webfx.extras.controlfactory;
     requires webfx.extras.i18n;
     requires webfx.extras.i18n.controls;

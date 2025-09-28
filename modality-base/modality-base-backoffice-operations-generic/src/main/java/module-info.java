@@ -11,6 +11,7 @@ module modality.base.backoffice.operations.generic {
     requires modality.base.client.i18n;
     requires modality.base.client.mainframe.fx;
     requires modality.base.shared.entities;
+    requires webfx.extras.async;
     requires webfx.extras.exceptions;
     requires webfx.extras.i18n;
     requires webfx.extras.operation;

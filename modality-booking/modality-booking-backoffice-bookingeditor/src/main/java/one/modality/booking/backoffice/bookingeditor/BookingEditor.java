@@ -1,7 +1,7 @@
 package one.modality.booking.backoffice.bookingeditor;
 
 import dev.webfx.extras.exceptions.UserCancellationException;
-import dev.webfx.extras.operation.OperationUtil;
+import dev.webfx.extras.async.AsyncSpinner;
 import dev.webfx.extras.util.dialog.builder.DialogBuilderUtil;
 import dev.webfx.extras.util.dialog.builder.DialogContent;
 import dev.webfx.platform.async.Future;
@@ -25,6 +25,8 @@ public interface BookingEditor {
 
     Future<Void> saveChanges();
 
+    // Static methods
+
     static Future<Void> editBooking(Document document, Pane parentContainer) {
         Promise<Void> promise = Promise.promise();
         WorkingBooking.loadWorkingBooking(document)
@@ -44,7 +46,7 @@ public interface BookingEditor {
                 boolean[] executing = {false};
                 DialogBuilderUtil.armDialogContentButtons(dialogContent, dialogCallback -> {
                     executing[0] = true;
-                    OperationUtil.turnOnButtonsWaitModeDuringExecution(
+                    AsyncSpinner.displayButtonSpinnerDuringAsyncExecution(
                         bookingEditor.saveChanges()
                             .onFailure(dialogCallback::showException)
                             .onSuccess(ignored -> dialogCallback.closeDialog())
