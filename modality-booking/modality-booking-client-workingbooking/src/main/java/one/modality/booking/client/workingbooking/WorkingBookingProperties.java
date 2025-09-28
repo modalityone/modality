@@ -27,6 +27,13 @@ public final class WorkingBookingProperties {
     private PriceCalculator previousBookingPriceCalculator;
     private PriceCalculator latestBookingPriceCalculator;
 
+    public WorkingBookingProperties() {
+    }
+
+    public WorkingBookingProperties(WorkingBooking workingBooking) {
+        setWorkingBooking(workingBooking);
+    }
+
     private final BooleanProperty hasChangesProperty = new SimpleBooleanProperty();
 
     public BooleanExpression hasChangesProperty() {

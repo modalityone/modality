@@ -1,15 +1,15 @@
 package one.modality.booking.backoffice.bookingeditor;
 
+import dev.webfx.extras.async.AsyncDialog;
 import dev.webfx.extras.util.dialog.builder.DialogContent;
 import dev.webfx.platform.async.Future;
-import javafx.beans.property.ReadOnlyBooleanProperty;
 import javafx.scene.Node;
 import javafx.scene.control.Button;
 import javafx.scene.layout.Pane;
-import dev.webfx.extras.async.AsyncDialog;
 import one.modality.base.shared.entities.Document;
 import one.modality.booking.backoffice.bookingeditor.spi.BookingEditorProvider;
 import one.modality.booking.client.workingbooking.WorkingBooking;
+import one.modality.booking.client.workingbooking.WorkingBookingProperties;
 
 /**
  * @author Bruno Salmon
@@ -17,8 +17,6 @@ import one.modality.booking.client.workingbooking.WorkingBooking;
 public interface BookingEditor {
 
     Node buildUi();
-
-    ReadOnlyBooleanProperty hasChanges();
 
     Future<Void> saveChanges();
 
@@ -28,13 +26,14 @@ public interface BookingEditor {
         return WorkingBooking.loadWorkingBooking(document)
             .inUiThread()
             .compose(workingBooking -> {
+                WorkingBookingProperties workingBookingProperties = new WorkingBookingProperties(workingBooking);
                 BookingEditor bookingEditor = BookingEditorProvider.bestSuitableBookingEditor(workingBooking);
                 DialogContent dialogContent = new DialogContent()
                     .setHeaderText("BookingDetails")
                     .setContent(bookingEditor.buildUi());
-                //We disable the save button at the beginning
+                // We don't allow the user to save if there are no changes made on the booking
                 Button saveButton = dialogContent.getPrimaryButton();
-                saveButton.disableProperty().bind(bookingEditor.hasChanges().not());
+                saveButton.disableProperty().bind(workingBookingProperties.hasChangesProperty().not());
 
                 return AsyncDialog.showDialogWithAsyncOperationOnPrimaryButton(dialogContent, parentContainer, bookingEditor::saveChanges);
             });

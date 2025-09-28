@@ -3,10 +3,6 @@ package one.modality.booking.backoffice.bookingeditor.teaching;
 import dev.webfx.kit.util.properties.ObservableLists;
 import dev.webfx.platform.async.Future;
 import dev.webfx.platform.util.collection.Collections;
-import javafx.beans.property.BooleanProperty;
-import javafx.beans.property.ReadOnlyBooleanProperty;
-import javafx.beans.property.SimpleBooleanProperty;
-import javafx.collections.ObservableList;
 import javafx.scene.Node;
 import one.modality.base.shared.entities.ScheduledItem;
 import one.modality.booking.backoffice.bookingeditor.BookingEditor;
@@ -25,7 +21,6 @@ import java.util.stream.Collectors;
 public class TeachingBookingEditor implements BookingEditor {
 
     private final WorkingBooking workingBooking;
-    private final BooleanProperty hasChangesProperty = new SimpleBooleanProperty(true);
     private final BoxScheduledItemsSelector boxScheduledItemsSelector = new BoxScheduledItemsSelector(true, false);
 
     public TeachingBookingEditor(WorkingBooking workingBooking) {
@@ -42,11 +37,11 @@ public class TeachingBookingEditor implements BookingEditor {
             .map(ScheduledItem::getDate)
             .collect(Collectors.toList());
         boxScheduledItemsSelector.addSelectedDates(alreadyBookedSelectedDates);
-        // We prevent the user from saving when there are no changes, or no dates are selected.
-        ObservableList<LocalDate> selectedDates = boxScheduledItemsSelector.getSelectedDates();
-        ObservableLists.runNowAndOnListChange(ignored ->
-                hasChangesProperty.set(!selectedDates.equals(alreadyBookedSelectedDates) && !selectedDates.isEmpty())
-            , selectedDates);
+        // We keep the working booking in sync with the selected dates - this keeps hasChangesProperty up to date in
+        // WorkingBookingProperties which is used to reflect the user changes and enable the Save button.
+        ObservableLists.runOnListChange(ignored ->
+                syncWorkingBookingFromScheduledItemsSelector()
+        , boxScheduledItemsSelector.getSelectedDates());
     }
 
     @Override
@@ -54,14 +49,13 @@ public class TeachingBookingEditor implements BookingEditor {
         return boxScheduledItemsSelector.buildUi();
     }
 
-    @Override
-    public ReadOnlyBooleanProperty hasChanges() {
-        return hasChangesProperty;
+    private void syncWorkingBookingFromScheduledItemsSelector() {
+        WorkingBookingSyncer.syncWorkingBookingFromScheduledItemsSelector(workingBooking, boxScheduledItemsSelector, false);
     }
 
     @Override
     public Future<Void> saveChanges() {
-        WorkingBookingSyncer.syncWorkingBookingFromScheduledItemsSelector(workingBooking, boxScheduledItemsSelector, false);
+        syncWorkingBookingFromScheduledItemsSelector();
         WorkingBookingHistoryHelper historyHelper = new WorkingBookingHistoryHelper(workingBooking);
         return workingBooking.submitChanges(historyHelper.generateHistoryComment())
             .mapEmpty();
