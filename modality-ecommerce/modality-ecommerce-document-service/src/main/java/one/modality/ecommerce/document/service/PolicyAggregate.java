@@ -10,10 +10,10 @@ import dev.webfx.stack.orm.entity.EntityList;
 import dev.webfx.stack.orm.entity.EntityStore;
 import dev.webfx.stack.orm.entity.query_result_to_entities.QueryResultToEntitiesMapper;
 import one.modality.base.shared.entities.*;
+import one.modality.base.shared.entities.markers.EntityHasItem;
 import one.modality.base.shared.knownitems.KnownItemFamily;
 
-import java.util.List;
-import java.util.Objects;
+import java.util.*;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -74,17 +74,17 @@ public final class PolicyAggregate {
         return getScheduledItems().stream();
     }
 
+    public Stream<ScheduledItem> getFamilyScheduledItemsStream(String familyCode) {
+        return getScheduledItemsStream()
+            .filter(scheduledItem -> Objects.equals(familyCode, scheduledItem.getItem().getFamily().getCode()));
+    }
+
     public Stream<ScheduledItem> getFamilyScheduledItemsStream(ItemFamily itemFamily) {
         return getFamilyScheduledItemsStream(itemFamily.getCode());
     }
 
     public Stream<ScheduledItem> getFamilyScheduledItemsStream(KnownItemFamily knownItemFamily) {
         return getFamilyScheduledItemsStream(knownItemFamily.getCode());
-    }
-
-    public Stream<ScheduledItem> getFamilyScheduledItemsStream(String familyCode) {
-        return getScheduledItemsStream()
-            .filter(scheduledItem -> Objects.equals(familyCode, scheduledItem.getItem().getFamily().getCode()));
     }
 
     public List<ScheduledItem> getFamilyScheduledItems(String familyCode) {
@@ -101,6 +101,17 @@ public final class PolicyAggregate {
 
     public List<ScheduledItem> getTeachingScheduledItems() {
         return getFamilyScheduledItems(KnownItemFamily.TEACHING);
+    }
+
+    public List<ScheduledItem> getAudioRecordingScheduledItems() {
+        return getFamilyScheduledItems(KnownItemFamily.AUDIO_RECORDING);
+    }
+
+    public Map<Item, List<ScheduledItem>> audioRecordingItemsToScheduledItemsMap() {
+        return getFamilyScheduledItemsStream(KnownItemFamily.AUDIO_RECORDING)
+            .collect(Collectors.groupingBy(EntityHasItem::getItem,
+                () -> new TreeMap<>(Comparator.comparing(Item::getOrd)),
+                Collectors.toList()));
     }
 
     public List<Rate> getRates() {
@@ -182,7 +193,7 @@ public final class PolicyAggregate {
         return wholeBookablePeriod;
     }
 
-    // The following methods are meant to be used for serialization, not for application code
+    // The following methods are meant to be used for serialization, not by the application code
 
     public String getRatesQueryBase() {
         return ratesQueryBase;

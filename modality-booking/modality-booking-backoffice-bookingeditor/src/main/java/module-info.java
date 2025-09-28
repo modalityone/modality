@@ -3,10 +3,10 @@
 module modality.booking.backoffice.bookingeditor {
 
     // Direct dependencies modules
-    requires javafx.base;
     requires javafx.controls;
     requires javafx.graphics;
     requires modality.base.shared.entities;
+    requires modality.base.shared.knownitems;
     requires modality.booking.client.workingbooking;
     requires webfx.extras.async;
     requires webfx.extras.util.dialog;
@@ -16,6 +16,7 @@ module modality.booking.backoffice.bookingeditor {
 
     // Exported packages
     exports one.modality.booking.backoffice.bookingeditor;
+    exports one.modality.booking.backoffice.bookingeditor.family;
     exports one.modality.booking.backoffice.bookingeditor.spi;
 
     // Used services

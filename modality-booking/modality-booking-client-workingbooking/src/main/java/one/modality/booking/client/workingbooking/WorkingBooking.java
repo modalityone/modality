@@ -13,6 +13,7 @@ import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import one.modality.base.shared.entities.*;
+import one.modality.base.shared.knownitems.KnownItemFamily;
 import one.modality.ecommerce.document.service.*;
 import one.modality.ecommerce.document.service.events.AbstractDocumentEvent;
 import one.modality.ecommerce.document.service.events.AbstractDocumentLineEvent;
@@ -288,19 +289,23 @@ public final class WorkingBooking {
         return documentChanges;
     }
 
-    public List<ScheduledItem> getScheduledItemsAlreadyBooked() {
+    public List<ScheduledItem> getAlreadyBookedScheduledItems() {
         DocumentAggregate initialDocumentAggregate = getInitialDocumentAggregate();
-        if (initialDocumentAggregate == null) {
+        if (initialDocumentAggregate == null)
             return Collections.emptyList();
-        }
         return initialDocumentAggregate.getAttendancesStream()
             .map(Attendance::getScheduledItem)
             .collect(Collectors.toList());
     }
 
+    public List<ScheduledItem> getAlreadyBookedFamilyScheduledItems(KnownItemFamily knownItemFamily) {
+        return Collections.filter(getAlreadyBookedScheduledItems(), scheduledItem ->
+            Entities.samePrimaryKey(scheduledItem.getItem().getFamily(), knownItemFamily.getPrimaryKey()));
+    }
+
     // Shorthand methods to PolicyAggregate
 
-    public List<ScheduledItem> getScheduledItemsOnEvent() {
+    public List<ScheduledItem> getPolicyScheduledItems() {
         return getPolicyAggregate().getScheduledItems();
     }
 

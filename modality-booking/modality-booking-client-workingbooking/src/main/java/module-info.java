@@ -6,6 +6,7 @@ module modality.booking.client.workingbooking {
     requires javafx.base;
     requires modality.base.client.time;
     requires modality.base.shared.entities;
+    requires modality.base.shared.knownitems;
     requires modality.crm.client.authn.fx;
     requires transitive modality.ecommerce.document.service;
     requires modality.ecommerce.shared.pricecalculator;

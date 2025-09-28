@@ -8,6 +8,7 @@ import dev.webfx.stack.orm.entity.Entity;
 import dev.webfx.stack.orm.entity.lciimpl.EntityDomainReader;
 import javafx.beans.property.Property;
 import javafx.beans.value.ObservableValue;
+import javafx.scene.control.CheckBox;
 import javafx.scene.control.Label;
 import javafx.scene.control.Labeled;
 import javafx.scene.text.Text;
@@ -74,6 +75,14 @@ public final class I18nEntities {
 
     public static Label newExpressionLabel(ObservableValue<? extends Entity> entityProperty, String expression) {
         return bindExpressionProperties(new Label(), entityProperty, expression);
+    }
+
+    public static CheckBox newExpressionCheckBox(Entity entity, String expression, Object... args) {
+        return bindExpressionProperties(new CheckBox(), entity, expression, args);
+    }
+
+    public static CheckBox newExpressionCheckBox(ObservableValue<? extends Entity> entityProperty, String expression) {
+        return bindExpressionProperties(new CheckBox(), entityProperty, expression);
     }
 
     public static String translateEntity(Entity entity) {

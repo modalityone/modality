@@ -23,10 +23,15 @@ public final class WorkingBookingSyncer {
     }
 
     public static void syncScheduledItemsSelectorFromWorkingBooking(ScheduledItemsSelector scheduledItemsSelector, WorkingBooking workingBooking) {
-        scheduledItemsSelector.setSelectableScheduledItems(workingBooking.getScheduledItemsOnEvent(), true);
+        List<ScheduledItem> policyScheduledItems = workingBooking.getPolicyScheduledItems();
         List<Attendance> attendanceAdded = workingBooking.getAttendancesAdded(true);
         List<LocalDate> datesAdded = Collections.map(attendanceAdded, Attendance::getDate);
-        scheduledItemsSelector.addSelectedDates(datesAdded);
+        syncScheduledItemsSelectorFromPolicyAndBookedDates(scheduledItemsSelector, policyScheduledItems, datesAdded);
+    }
+
+    public static void syncScheduledItemsSelectorFromPolicyAndBookedDates(ScheduledItemsSelector scheduledItemsSelector, List<ScheduledItem> policyScheduledItems, List<LocalDate> bookedDates) {
+        scheduledItemsSelector.setSelectableScheduledItems(policyScheduledItems, true);
+        scheduledItemsSelector.addSelectedDates(bookedDates);
     }
 
 }
