@@ -1,7 +1,7 @@
 package one.modality.ecommerce.backoffice.operations.entities.document.multiplebookings;
 
 import dev.webfx.platform.async.Future;
-import one.modality.base.backoffice.operations.entities.generic.DialogExecutorUtil;
+import one.modality.base.client.util.dialog.ModalityDialog;
 import one.modality.ecommerce.document.service.DocumentService;
 import one.modality.ecommerce.document.service.SubmitDocumentChangesArgument;
 import one.modality.ecommerce.document.service.events.multiplebookings.CancelOtherMultipleBookingsEvent;
@@ -12,7 +12,7 @@ import one.modality.ecommerce.document.service.events.multiplebookings.CancelOth
 final class CancelOtherMultipleBookingsExecutor {
 
     static Future<Void> executeRequest(CancelOtherMultipleBookingsRequest rq) {
-        return DialogExecutorUtil.executeOnUserConfirmation(
+        return ModalityDialog.showConfirmationDialogForAsyncOperation(
                 "Please confirm"
                 , rq.getParentContainer(),
                 () -> DocumentService.submitDocumentChanges(

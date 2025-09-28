@@ -2,7 +2,7 @@ package one.modality.ecommerce.backoffice.operations.entities.documentline;
 
 import dev.webfx.platform.async.Future;
 import dev.webfx.platform.util.Objects;
-import one.modality.base.backoffice.operations.entities.generic.DialogExecutorUtil;
+import one.modality.base.client.util.dialog.ModalityDialog;
 import one.modality.base.shared.entities.DocumentLine;
 import one.modality.ecommerce.document.service.DocumentService;
 import one.modality.ecommerce.document.service.SubmitDocumentChangesArgument;
@@ -19,7 +19,7 @@ final class ToggleCancelDocumentLineExecutor {
                     boolean cancelled = !documentLine.isCancelled();
                     boolean read = true;
                     String itemName = Objects.coalesce(documentLine.evaluate("item.name"), "option");
-                    return DialogExecutorUtil.executeOnUserConfirmation(
+                    return ModalityDialog.showConfirmationDialogForAsyncOperation(
                         "Are you sure you want to " + (cancelled ? "cancel " : "uncancel ") + itemName + "?"
                         , rq.getParentContainer(),
                         () -> DocumentService.submitDocumentChanges(

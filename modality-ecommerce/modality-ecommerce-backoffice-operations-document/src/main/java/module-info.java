@@ -7,9 +7,9 @@ module modality.ecommerce.backoffice.operations.document {
 
     // Direct dependencies modules
     requires javafx.graphics;
-    requires modality.base.backoffice.operations.generic;
     requires modality.base.client.i18n;
     requires modality.base.client.mainframe.fx;
+    requires modality.base.client.util;
     requires modality.base.shared.entities;
     requires modality.crm.client.personaldetails;
     requires modality.ecommerce.document.service;
