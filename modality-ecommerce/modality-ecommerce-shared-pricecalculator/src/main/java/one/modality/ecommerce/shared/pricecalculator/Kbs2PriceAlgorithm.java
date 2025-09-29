@@ -201,7 +201,7 @@ final class Kbs2PriceAlgorithm {
             LocalDate lastDay = Collections.last(bas).getDate();
             DocumentAggregate documentAggregate = bill.getDocumentAggregate();
             PolicyAggregate policyAggregate = documentAggregate.getPolicyAggregate();
-            List<Rate> rates = policyAggregate.getSiteItemRatesStream(siteItem.getSite(), siteItem.getItem())
+            List<Rate> rates = policyAggregate.filterRatesStreamOfSiteAndItem(siteItem.getSite(), siteItem.getItem())
                 .filter(r -> r.isPerDay() == perDayRates)
                 .filter(r -> r.getOnDate() == null || Times.isPastOrToday(r.getOnDate()))
                 .filter(r -> r.getOffDate() == null || Times.isFutureOrToday(r.getOffDate()))

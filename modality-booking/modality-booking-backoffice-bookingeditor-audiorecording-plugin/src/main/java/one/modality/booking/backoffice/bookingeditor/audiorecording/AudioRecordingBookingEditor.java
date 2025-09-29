@@ -23,13 +23,12 @@ import java.util.Objects;
 final class AudioRecordingBookingEditor extends FamilyBookingEditorBase {
 
     private final Map<Item, List<ScheduledItem>> audioRecordingItemsToScheduledItemsMap;
-    private final Map<Item, CheckBox> audioRecordingItemsToCheckBoxMap= new LinkedHashMap<>();
+    private final Map<Item, CheckBox> audioRecordingItemsToCheckBoxesMap = new LinkedHashMap<>();
 
     AudioRecordingBookingEditor(WorkingBooking workingBooking) {
         super(workingBooking, KnownItemFamily.AUDIO_RECORDING);
-        audioRecordingItemsToScheduledItemsMap = workingBooking
-            .getPolicyAggregate()
-            .audioRecordingItemsToScheduledItemsMap();
+        audioRecordingItemsToScheduledItemsMap = workingBooking.getPolicyAggregate()
+            .groupScheduledItemsByAudioRecordingItems();
         // Final subclasses should call this method:
         initiateUiAndSyncFromWorkingBooking();
     }
@@ -37,21 +36,24 @@ final class AudioRecordingBookingEditor extends FamilyBookingEditorBase {
     @Override
     protected void initiateUiAndSyncFromWorkingBooking() {
         List<ScheduledItem> alreadyBookedAudioRecordingScheduledItems = getAlreadyBookedFamilyScheduledItems();
+        // We create a checkbox for each audio recording language in the policy
         for (Map.Entry<Item, List<ScheduledItem>> entry : audioRecordingItemsToScheduledItemsMap.entrySet()) {
             CheckBox languageCheckBox = I18nEntities.newExpressionCheckBox(entry.getKey(), "i18n(this)");
-            audioRecordingItemsToCheckBoxMap.put(entry.getKey(), languageCheckBox);
+            audioRecordingItemsToCheckBoxesMap.put(entry.getKey(), languageCheckBox);
+            // We check the checkbox if the language is already booked
             languageCheckBox.setSelected(entry.getValue().stream().anyMatch(alreadyBookedAudioRecordingScheduledItems::contains));
         }
-        audioRecordingItemsToCheckBoxMap.values().forEach(languageCheckBox ->
+        // We also automatically sync the working booking each time the user changes one of the checkbox states
+        audioRecordingItemsToCheckBoxesMap.values().forEach(languageCheckBox ->
             FXProperties.runNowAndOnPropertyChange(this::syncWorkingBookingFromUi, languageCheckBox.selectedProperty())
         );
     }
 
     @Override
     public void syncWorkingBookingFromUi() {
-        List<ScheduledItem> bookedTeachingScheduledItems = getBookedFamilyScheduledItems(KnownItemFamily.TEACHING);
+        List<ScheduledItem> bookedTeachingScheduledItems = getBookedTeachingScheduledItems();
         for (Map.Entry<Item, List<ScheduledItem>> entry : audioRecordingItemsToScheduledItemsMap.entrySet()) {
-            CheckBox languageCheckBox = audioRecordingItemsToCheckBoxMap.get(entry.getKey());
+            CheckBox languageCheckBox = audioRecordingItemsToCheckBoxesMap.get(entry.getKey());
             List<ScheduledItem> policyLanguageScheduledItems = entry.getValue();
             if (languageCheckBox.isSelected()) {
                 // Restricting the dates to the booked teachings
@@ -67,7 +69,7 @@ final class AudioRecordingBookingEditor extends FamilyBookingEditorBase {
     @Override
     public Node buildUi() {
         FlowPane flowPane = new FlowPane(20, 15);
-        flowPane.getChildren().addAll(audioRecordingItemsToCheckBoxMap.values());
+        flowPane.getChildren().addAll(audioRecordingItemsToCheckBoxesMap.values());
         return flowPane;
     }
 }

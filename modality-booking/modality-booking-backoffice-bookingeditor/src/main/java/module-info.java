@@ -13,12 +13,13 @@ module modality.booking.backoffice.bookingeditor {
     requires webfx.platform.async;
     requires webfx.platform.service;
     requires webfx.platform.util;
+    requires webfx.stack.orm.entity;
 
     // Exported packages
     exports one.modality.booking.backoffice.bookingeditor;
     exports one.modality.booking.backoffice.bookingeditor.family;
-    exports one.modality.booking.backoffice.bookingeditor.spi;
     exports one.modality.booking.backoffice.bookingeditor.multi;
+    exports one.modality.booking.backoffice.bookingeditor.spi;
 
     // Used services
     uses one.modality.booking.backoffice.bookingeditor.spi.BookingEditorProvider;

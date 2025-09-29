@@ -93,7 +93,7 @@ public final class PriceCalculator {
             return dailyRatePrice;
         // 2) Calculating the price consisting of applying the cheapest (if multiple) fixed rate
         int fixedRatePrice = documentAggregate.getPolicyAggregate()
-            .getSiteItemFixedRatesStream(site, item)
+            .filterFixedRatesStreamOfSiteAndItem(site, item)
             .filter(this::isRateApplicable)
             .mapToInt(this::getCheapestApplicableRatePrice)
             .min()
@@ -139,7 +139,7 @@ public final class PriceCalculator {
         if (documentAggregate == null)
             return 0;
         return documentAggregate.getPolicyAggregate()
-            .getSiteItemDailyRatesStream(site, item)
+            .filterDailyRatesStreamOfSiteAndItem(site, item)
             .filter(this::isRateApplicable)
             .mapToInt(this::getCheapestApplicableRatePrice)
             .min()

@@ -13,6 +13,7 @@ import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import one.modality.base.shared.entities.*;
+import one.modality.base.shared.entities.util.ScheduledItems;
 import one.modality.base.shared.knownitems.KnownItemFamily;
 import one.modality.ecommerce.document.service.*;
 import one.modality.ecommerce.document.service.events.AbstractDocumentEvent;
@@ -289,18 +290,21 @@ public final class WorkingBooking {
         return documentChanges;
     }
 
-    public List<ScheduledItem> getAlreadyBookedScheduledItems() {
+    public Stream<Attendance> getAlreadyBookedAttendancesStream() {
         DocumentAggregate initialDocumentAggregate = getInitialDocumentAggregate();
         if (initialDocumentAggregate == null)
-            return Collections.emptyList();
-        return initialDocumentAggregate.getAttendancesStream()
+            return Stream.empty();
+        return initialDocumentAggregate.getAttendancesStream();
+    }
+
+    public List<ScheduledItem> getAlreadyBookedScheduledItems() {
+        return getAlreadyBookedAttendancesStream()
             .map(Attendance::getScheduledItem)
             .collect(Collectors.toList());
     }
 
-    public List<ScheduledItem> getAlreadyBookedFamilyScheduledItems(KnownItemFamily knownItemFamily) {
-        return Collections.filter(getAlreadyBookedScheduledItems(), scheduledItem ->
-            Entities.samePrimaryKey(scheduledItem.getItem().getFamily(), knownItemFamily.getPrimaryKey()));
+    public List<ScheduledItem> getAlreadyBookedFamilyScheduledItems(KnownItemFamily family) {
+        return ScheduledItems.filterFamily(getAlreadyBookedScheduledItems(), family);
     }
 
     // Shorthand methods to PolicyAggregate
@@ -325,26 +329,16 @@ public final class WorkingBooking {
         return priceCalculator.calculateNoLongStayDiscountTotalPrice();
     }
 
+    public List<Attendance> getBookedAttendances() {
+        List<Attendance> attendancesAdded = getAttendancesAdded(false);
+        List<Attendance> attendancesRemoved = getAttendancesRemoved(false);
+        return Collections.filter(attendancesAdded, attendance -> !attendancesRemoved.contains(attendance));
+    }
+
     // Shorthand methods to lastestDocumentAggregate
-
-    public Stream<AddAttendancesEvent> getAddAttendancesEventStream(boolean fromChangesOnly) {
-        return getLastestDocumentAggregate().getAddAttendancesEventStream(fromChangesOnly);
-    }
-
-    public Stream<Attendance> getAttendancesAddedStream(boolean fromChangesOnly) {
-        return getLastestDocumentAggregate().getAttendancesAddedStream(fromChangesOnly);
-    }
 
     public List<Attendance> getAttendancesAdded(boolean fromChangesOnly) {
         return getLastestDocumentAggregate().getAttendancesAdded(fromChangesOnly);
-    }
-
-    public Stream<RemoveAttendancesEvent> getRemoveAttendancesEventStream(boolean fromChangesOnly) {
-        return getLastestDocumentAggregate().getRemoveAttendancesEventStream(fromChangesOnly);
-    }
-
-    public Stream<Attendance> getAttendancesRemovedStream(boolean fromChangesOnly) {
-        return getLastestDocumentAggregate().getAttendancesRemovedStream(fromChangesOnly);
     }
 
     public List<Attendance> getAttendancesRemoved(boolean fromChangesOnly) {
@@ -355,11 +349,11 @@ public final class WorkingBooking {
         return getLastestDocumentAggregate().findAddRequestEvent(fromChangesOnly);
     }
 
-    // Static factory method
+    // Static factory and loading methods
 
     public static WorkingBooking createWholeEventWorkingBooking(PolicyAggregate policyAggregate) {
         WorkingBooking workingBooking = new WorkingBooking(policyAggregate, null);
-        workingBooking.bookScheduledItems(policyAggregate.getTeachingScheduledItems(), false);
+        workingBooking.bookScheduledItems(policyAggregate.filterTeachingScheduledItems(), false);
         return workingBooking;
     }
 
