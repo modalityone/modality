@@ -1,6 +1,16 @@
 package one.modality.booking.backoffice.bookingeditor.family;
 
+import dev.webfx.extras.i18n.controls.I18nControls;
+import dev.webfx.extras.styles.bootstrap.Bootstrap;
+import dev.webfx.extras.util.border.BorderFactory;
 import dev.webfx.platform.util.collection.Collections;
+import javafx.geometry.Insets;
+import javafx.geometry.Pos;
+import javafx.scene.Node;
+import javafx.scene.control.Label;
+import javafx.scene.layout.Background;
+import javafx.scene.layout.StackPane;
+import javafx.scene.paint.Color;
 import one.modality.base.shared.entities.Attendance;
 import one.modality.base.shared.entities.ScheduledItem;
 import one.modality.base.shared.entities.util.ScheduledItems;
@@ -60,6 +70,22 @@ public abstract class FamilyBookingEditorBase extends BookingEditorBase {
 
     protected List<LocalDate> getAlreadyBookedFamilyDates(KnownItemFamily family) {
         return Collections.map(getAlreadyBookedFamilyScheduledItems(family), ScheduledItem::getDate);
+    }
+
+    protected Node embedInFamilyFrame(Node content) {
+        return embedInFrame(content, getFamily().getI18nKey());
+    }
+
+    protected Node embedInFrame(Node content, Object i18nKey) {
+        Label familyLabel = Bootstrap.textSecondary(Bootstrap.strong(I18nControls.newLabel(i18nKey)));
+        familyLabel.setPadding(new Insets(5));
+        familyLabel.setBackground(Background.fill(Color.WHITE));
+        StackPane.setAlignment(familyLabel, Pos.TOP_LEFT);
+        familyLabel.setTranslateY(-35);
+        StackPane frame = new StackPane(content, familyLabel);
+        frame.setBorder(BorderFactory.newBorder(Color.LIGHTGRAY, 10));
+        frame.setPadding(new Insets(20, 15, 15, 15));
+        return frame;
     }
 
     public KnownItemFamily getFamily() {

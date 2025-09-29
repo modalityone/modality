@@ -28,8 +28,10 @@ public interface BookingEditor {
             .compose(workingBooking -> {
                 WorkingBookingProperties workingBookingProperties = new WorkingBookingProperties(workingBooking);
                 BookingEditor bookingEditor = BookingEditorProvider.bestSuitableBookingEditor(workingBooking);
+                // TODO: display a message when no suitable booking editor could be found
                 DialogContent dialogContent = new DialogContent()
-                    .setHeaderText("BookingDetails")
+                    .setHeaderText("Booking Options")
+                    .setSaveCancel()
                     .setContent(bookingEditor.buildUi());
                 // We don't allow the user to save if there are no changes made on the booking
                 Button saveButton = dialogContent.getPrimaryButton();

@@ -12,6 +12,7 @@ module modality.booking.backoffice.bookingeditor.audiorecording.plugin {
     requires modality.booking.client.workingbooking;
     requires webfx.kit.util;
     requires webfx.platform.util;
+    requires webfx.extras.styles.bootstrap;
 
     // Exported packages
     exports one.modality.booking.backoffice.bookingeditor.audiorecording;

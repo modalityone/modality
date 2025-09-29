@@ -1,5 +1,6 @@
 package one.modality.booking.backoffice.bookingeditor.teaching;
 
+import dev.webfx.extras.styles.bootstrap.Bootstrap;
 import dev.webfx.kit.util.properties.ObservableLists;
 import javafx.scene.Node;
 import one.modality.base.shared.knownitems.KnownItemFamily;
@@ -23,7 +24,10 @@ final class TeachingBookingEditor extends FamilyBookingEditorBase {
 
     @Override
     public Node buildUi() {
-        return boxScheduledItemsSelector.buildUi();
+        return embedInFamilyFrame(
+            // We make the day texts bold in the box selector. Note: works on the web but not on OpenJFX
+            Bootstrap.strong(boxScheduledItemsSelector.buildUi())
+        );
     }
 
     @Override

@@ -1,5 +1,6 @@
 package one.modality.booking.backoffice.bookingeditor.audiorecording;
 
+import dev.webfx.extras.styles.bootstrap.Bootstrap;
 import dev.webfx.kit.util.properties.FXProperties;
 import dev.webfx.platform.util.collection.Collections;
 import javafx.scene.Node;
@@ -38,7 +39,7 @@ final class AudioRecordingBookingEditor extends FamilyBookingEditorBase {
         List<ScheduledItem> alreadyBookedAudioRecordingScheduledItems = getAlreadyBookedFamilyScheduledItems();
         // We create a checkbox for each audio recording language in the policy
         for (Map.Entry<Item, List<ScheduledItem>> entry : audioRecordingItemsToScheduledItemsMap.entrySet()) {
-            CheckBox languageCheckBox = I18nEntities.newTranslatedEntityCheckBox(entry.getKey());
+            CheckBox languageCheckBox = Bootstrap.strong(I18nEntities.newTranslatedEntityCheckBox(entry.getKey()));
             audioRecordingItemsToCheckBoxesMap.put(entry.getKey(), languageCheckBox);
             // We check the checkbox if the language is already booked
             languageCheckBox.setSelected(entry.getValue().stream().anyMatch(alreadyBookedAudioRecordingScheduledItems::contains));
@@ -70,6 +71,6 @@ final class AudioRecordingBookingEditor extends FamilyBookingEditorBase {
     public Node buildUi() {
         FlowPane flowPane = new FlowPane(20, 15);
         flowPane.getChildren().addAll(audioRecordingItemsToCheckBoxesMap.values());
-        return flowPane;
+        return embedInFamilyFrame(flowPane);
     }
 }

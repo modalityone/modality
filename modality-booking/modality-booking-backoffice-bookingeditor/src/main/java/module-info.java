@@ -14,6 +14,11 @@ module modality.booking.backoffice.bookingeditor {
     requires webfx.platform.service;
     requires webfx.platform.util;
     requires webfx.stack.orm.entity;
+    requires webfx.extras.i18n;
+    requires webfx.extras.panes;
+    requires webfx.extras.util.border;
+    requires webfx.extras.i18n.controls;
+    requires webfx.extras.styles.bootstrap;
 
     // Exported packages
     exports one.modality.booking.backoffice.bookingeditor;
