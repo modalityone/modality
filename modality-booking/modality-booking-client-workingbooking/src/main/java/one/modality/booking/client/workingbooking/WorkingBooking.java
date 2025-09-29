@@ -13,12 +13,13 @@ import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import one.modality.base.shared.entities.*;
-import one.modality.base.shared.entities.util.ScheduledItems;
+import one.modality.base.shared.entities.util.DocumentLines;
 import one.modality.base.shared.knownitems.KnownItemFamily;
 import one.modality.ecommerce.document.service.*;
 import one.modality.ecommerce.document.service.events.AbstractDocumentEvent;
 import one.modality.ecommerce.document.service.events.AbstractDocumentLineEvent;
 import one.modality.ecommerce.document.service.events.book.*;
+import one.modality.ecommerce.document.service.events.registration.documentline.PriceDocumentLineEvent;
 import one.modality.ecommerce.document.service.util.DocumentEvents;
 import one.modality.ecommerce.shared.pricecalculator.PriceCalculator;
 
@@ -136,7 +137,7 @@ public final class WorkingBooking {
             // However, it's really necessary that newAttendance.getDocumentLine().getDocument() doesn't return null
             // when passing it to new AttendancesEvent() because all document events must know which document they are
             // referring to. So we ensure this by the following assignment:
-            newAttendance.getDocumentLine().setDocument(document); // may copy document to the store as well
+            newAttendance.getDocumentLine().setDocument(document); // may copy the document to the store as well
             newAttendance.setDate(scheduledItem.getDate());
             newAttendance.setScheduledItem(scheduledItem);
             return newAttendance;
@@ -205,8 +206,11 @@ public final class WorkingBooking {
     }
 
     private void integrateNewDocumentEvent(AbstractDocumentEvent e, boolean applyImmediatelyToDocument) {
-        if (applyImmediatelyToDocument)
+        if (applyImmediatelyToDocument) {
             e.replayEventOnDocument();
+            if (e instanceof AbstractDocumentLineEvent dle)
+                dle.replayEventOnDocumentLine();
+        }
         DocumentEvents.integrateNewDocumentEvent(e, documentChanges, initialDocumentAggregate == null ? null : initialDocumentAggregate.getNewDocumentEvents());
     }
 
@@ -307,8 +311,38 @@ public final class WorkingBooking {
             .collect(Collectors.toList());
     }
 
-    public List<ScheduledItem> getAlreadyBookedFamilyScheduledItems(KnownItemFamily family) {
-        return ScheduledItems.filterFamily(getAlreadyBookedScheduledItems(), family);
+    public List<DocumentLine> getDocumentLines() {
+        return getLastestDocumentAggregate().getDocumentLines();
+    }
+
+    public List<DocumentLine> getFamilyDocumentLines(KnownItemFamily family) {
+        return DocumentLines.filterFamily(getDocumentLines(), family);
+    }
+
+    public List<DocumentLine> getTeachingDocumentLines() {
+        return getFamilyDocumentLines(KnownItemFamily.TEACHING);
+    }
+
+    public DocumentLine getTeachingDocumentLine() {
+        return Collections.first(getTeachingDocumentLines());
+    }
+
+    public void applyDocumentLineFreeOfCharge(DocumentLine documentLine, boolean freeOfCharge) {
+        if (isDocumentLineFreeOfCharge(documentLine) == freeOfCharge)
+            return;
+        integrateNewDocumentEvent(PriceDocumentLineEvent.createDocumentLineDiscountEvent(documentLine, freeOfCharge ? 100 : 0), true);
+    }
+
+    public boolean isTeachingFreeOfCharge() {
+        return isDocumentLineFreeOfCharge(getTeachingDocumentLine());
+    }
+
+    public void applyTeachingFreeOfCharge(boolean freeOfCharge) {
+        applyDocumentLineFreeOfCharge(getTeachingDocumentLine(), freeOfCharge);
+    }
+
+    public boolean isDocumentLineFreeOfCharge(DocumentLine documentLine) {
+        return DocumentLines.isFreeOfCharge(documentLine);
     }
 
     // Shorthand methods to PolicyAggregate
@@ -351,6 +385,10 @@ public final class WorkingBooking {
 
     public AddRequestEvent findAddRequestEvent(boolean fromChangesOnly) {
         return getLastestDocumentAggregate().findAddRequestEvent(fromChangesOnly);
+    }
+
+    public PriceDocumentLineEvent findPriceDocumentLineEvent(boolean fromChangesOnly) {
+        return getLastestDocumentAggregate().findPriceDocumentLineEvent(fromChangesOnly);
     }
 
     // Static factory and loading methods

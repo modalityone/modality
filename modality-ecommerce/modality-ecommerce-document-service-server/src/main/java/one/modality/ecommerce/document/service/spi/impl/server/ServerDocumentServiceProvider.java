@@ -149,6 +149,9 @@ public class ServerDocumentServiceProvider implements DocumentServiceProvider {
             }
         }
 
+        if (document == null && documentLine == null)
+            return Future.failedFuture("No document changes to submit");
+
         // Note: At this point, the document may be null, but in that case we at least have documentLine not null
         return HistoryRecorder.prepareDocumentHistoryBeforeSubmit(argument.getHistoryComment(), document, documentLine)
             .compose(history -> // At this point, history.getDocument() is never null (it has eventually been

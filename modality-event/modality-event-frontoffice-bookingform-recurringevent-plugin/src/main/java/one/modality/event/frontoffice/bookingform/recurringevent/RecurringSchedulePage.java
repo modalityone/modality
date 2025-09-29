@@ -151,7 +151,7 @@ final class RecurringSchedulePage implements BookingFormPage {
         List<LocalDate> alreadyBookedDate = new ArrayList<>();
         scheduledItemsOnEvent.forEach(si -> {
             LocalDate localDate = si.getDate();
-            if (workingBookingProperties.getScheduledItemsAlreadyBooked().stream()
+            if (workingBookingProperties.getAlreadyBookedScheduledItems().stream()
                 .map(ScheduledItem::getDate)
                 .anyMatch(date -> date.equals(localDate))) {
                 //Here there is already a date booked in this another booking

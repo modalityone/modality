@@ -3,6 +3,7 @@
 module modality.booking.backoffice.bookingeditor.teaching.plugin {
 
     // Direct dependencies modules
+    requires javafx.controls;
     requires javafx.graphics;
     requires modality.base.shared.knownitems;
     requires modality.booking.backoffice.bookingeditor;

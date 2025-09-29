@@ -4,6 +4,7 @@ import dev.webfx.platform.util.collection.Collections;
 import one.modality.base.client.time.ModalityDates;
 import one.modality.base.shared.entities.Attendance;
 import one.modality.ecommerce.document.service.events.book.AddRequestEvent;
+import one.modality.ecommerce.document.service.events.registration.documentline.PriceDocumentLineEvent;
 
 import java.time.LocalDate;
 import java.util.List;
@@ -30,6 +31,18 @@ public final class WorkingBookingHistoryHelper {
         if (addRequestEvent != null) {
             newSection(sb).append("Wrote a request"); // No need to say more, as the request itself will be copied in
             // the history (request) on the server side (see HistoryRecorder).
+        }
+        PriceDocumentLineEvent priceDocumentLineEvent = workingBooking.findPriceDocumentLineEvent(true);
+        if (priceDocumentLineEvent != null) {
+            Integer priceDiscount = priceDocumentLineEvent.getPrice_discount();
+            if (priceDiscount != null) {
+                newSection(sb);
+                if (priceDiscount == 0)
+                    sb.append("Removed the discount on ");
+                else
+                    sb.append("Applied a ").append(priceDiscount).append("% discount on ");
+                sb.append(priceDocumentLineEvent.getDocumentLine().getItem().getName());
+            }
         }
         return sb.toString();
     }

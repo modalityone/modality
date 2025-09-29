@@ -21,7 +21,7 @@ import java.util.stream.Stream;
 public final class ScheduledItems {
 
     public static boolean isOfFamily(ScheduledItem scheduledItem, KnownItemFamily family) {
-        return Items.isOfFamily(scheduledItem.getItem(), family);
+        return Items.isOfFamily(scheduledItem, family);
     }
 
     public static Stream<ScheduledItem> filterFamily(Stream<ScheduledItem> scheduledItems, KnownItemFamily family) {

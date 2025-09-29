@@ -483,7 +483,7 @@ public final class WorkingBookingProperties {
 
     // Shorthand methods to workingBooking
 
-    public List<ScheduledItem> getScheduledItemsAlreadyBooked() {
+    public List<ScheduledItem> getAlreadyBookedScheduledItems() {
         return workingBooking.getAlreadyBookedScheduledItems();
     }
 

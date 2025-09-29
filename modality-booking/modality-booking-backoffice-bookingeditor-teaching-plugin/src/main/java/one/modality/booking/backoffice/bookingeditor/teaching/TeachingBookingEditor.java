@@ -1,8 +1,11 @@
 package one.modality.booking.backoffice.bookingeditor.teaching;
 
 import dev.webfx.extras.styles.bootstrap.Bootstrap;
+import dev.webfx.kit.util.properties.FXProperties;
 import dev.webfx.kit.util.properties.ObservableLists;
 import javafx.scene.Node;
+import javafx.scene.control.CheckBox;
+import javafx.scene.layout.VBox;
 import one.modality.base.shared.knownitems.KnownItemFamily;
 import one.modality.booking.backoffice.bookingeditor.family.FamilyBookingEditorBase;
 import one.modality.booking.client.scheduleditemsselector.WorkingBookingSyncer;
@@ -15,6 +18,7 @@ import one.modality.booking.client.workingbooking.WorkingBooking;
 final class TeachingBookingEditor extends FamilyBookingEditorBase {
 
     private final BoxScheduledItemsSelector boxScheduledItemsSelector = new BoxScheduledItemsSelector(true, false);
+    private final CheckBox freeOfChargeCheckBox = new CheckBox("Free of charge");
 
     TeachingBookingEditor(WorkingBooking workingBooking) {
         super(workingBooking, KnownItemFamily.TEACHING);
@@ -25,8 +29,11 @@ final class TeachingBookingEditor extends FamilyBookingEditorBase {
     @Override
     public Node buildUi() {
         return embedInFamilyFrame(
-            // We make the day texts bold in the box selector. Note: works on the web but not on OpenJFX
-            Bootstrap.strong(boxScheduledItemsSelector.buildUi())
+            new VBox(10,
+                // We make the day texts bold in the box selector. Note: works on the web but not on OpenJFX
+                Bootstrap.strong(boxScheduledItemsSelector.buildUi()),
+                freeOfChargeCheckBox
+            )
         );
     }
 
@@ -39,6 +46,8 @@ final class TeachingBookingEditor extends FamilyBookingEditorBase {
         ObservableLists.runOnListChange(ignored ->
                 syncWorkingBookingFromUi()
             , boxScheduledItemsSelector.getSelectedDates());
+        freeOfChargeCheckBox.setSelected(workingBooking.isTeachingFreeOfCharge());
+        FXProperties.runOnPropertyChange(workingBooking::applyTeachingFreeOfCharge, freeOfChargeCheckBox.selectedProperty());
     }
 
     @Override

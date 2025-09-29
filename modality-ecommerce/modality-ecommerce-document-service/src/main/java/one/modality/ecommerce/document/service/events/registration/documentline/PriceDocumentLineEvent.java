@@ -61,4 +61,8 @@ public final class PriceDocumentLineEvent extends AbstractDocumentLineEvent {
         if (price_discount != null)
             documentLine.setPriceDiscount(price_discount);
     }
+
+    public static PriceDocumentLineEvent createDocumentLineDiscountEvent(DocumentLine documentLine, Integer price_discount) {
+        return new PriceDocumentLineEvent(documentLine, null, null, null, price_discount);
+    }
 }

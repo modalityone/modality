@@ -5,6 +5,7 @@ import dev.webfx.stack.orm.entity.EntityStore;
 import one.modality.base.shared.entities.*;
 import one.modality.ecommerce.document.service.events.AbstractDocumentEvent;
 import one.modality.ecommerce.document.service.events.book.*;
+import one.modality.ecommerce.document.service.events.registration.documentline.PriceDocumentLineEvent;
 import one.modality.ecommerce.document.service.events.registration.documentline.RemoveDocumentLineEvent;
 import one.modality.ecommerce.document.service.events.registration.moneytransfer.RemoveMoneyTransferEvent;
 
@@ -173,6 +174,14 @@ public final class DocumentAggregate {
         return getNewDocumentEventsStream(excludePreviousVersionEvents)
             .filter(e -> e instanceof AddRequestEvent)
             .map(e -> (AddRequestEvent) e)
+            .findFirst()
+            .orElse(null);
+    }
+
+    public PriceDocumentLineEvent findPriceDocumentLineEvent(boolean excludePreviousVersionEvents) {
+        return getNewDocumentEventsStream(excludePreviousVersionEvents)
+            .filter(e -> e instanceof PriceDocumentLineEvent)
+            .map(e -> (PriceDocumentLineEvent) e)
             .findFirst()
             .orElse(null);
     }
