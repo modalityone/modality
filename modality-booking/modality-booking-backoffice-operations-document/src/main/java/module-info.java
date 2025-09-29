@@ -14,6 +14,7 @@ module modality.booking.backoffice.operations.document {
     requires webfx.stack.orm.entity;
 
     // Exported packages
+    exports one.modality.booking.backoffice.operations.entities.document;
     exports one.modality.booking.backoffice.operations.entities.document.registration;
 
 }

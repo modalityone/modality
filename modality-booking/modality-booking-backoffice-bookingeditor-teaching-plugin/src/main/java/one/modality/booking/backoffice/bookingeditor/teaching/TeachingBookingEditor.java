@@ -33,7 +33,7 @@ final class TeachingBookingEditor extends FamilyBookingEditorBase {
     @Override
     protected void initiateUiAndSyncFromWorkingBooking() {
         WorkingBookingSyncer.syncScheduledItemsSelectorFromPolicyAndBookedDates(boxScheduledItemsSelector,
-            getPolicyFamilyScheduledItems(), getAlreadyBookedFamilyDates());
+            getPolicyFamilyScheduledItems(), getBookedTeachingDates());
         // We keep the working booking in sync with the selected dates - this keeps hasChangesProperty up to date in
         // WorkingBookingProperties which is used to reflect the user changes and enable the Save button.
         ObservableLists.runOnListChange(ignored ->

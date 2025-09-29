@@ -36,7 +36,7 @@ final class AudioRecordingBookingEditor extends FamilyBookingEditorBase {
 
     @Override
     protected void initiateUiAndSyncFromWorkingBooking() {
-        List<ScheduledItem> alreadyBookedAudioRecordingScheduledItems = getAlreadyBookedFamilyScheduledItems();
+        List<ScheduledItem> alreadyBookedAudioRecordingScheduledItems = getBookedFamilyScheduledItems();
         // We create a checkbox for each audio recording language in the policy
         for (Map.Entry<Item, List<ScheduledItem>> entry : audioRecordingItemsToScheduledItemsMap.entrySet()) {
             CheckBox languageCheckBox = Bootstrap.strong(I18nEntities.newTranslatedEntityCheckBox(entry.getKey()));

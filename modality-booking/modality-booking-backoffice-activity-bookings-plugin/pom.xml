@@ -97,6 +97,12 @@
 
         <dependency>
             <groupId>one.modality</groupId>
+            <artifactId>modality-booking-backoffice-operations-document</artifactId>
+            <version>1.0.0-SNAPSHOT</version>
+        </dependency>
+
+        <dependency>
+            <groupId>one.modality</groupId>
             <artifactId>modality-crm-backoffice-bookingdetailspanel</artifactId>
             <version>1.0.0-SNAPSHOT</version>
         </dependency>
@@ -110,6 +116,12 @@
         <dependency>
             <groupId>one.modality</groupId>
             <artifactId>modality-event-client-activity-eventdependent</artifactId>
+            <version>1.0.0-SNAPSHOT</version>
+        </dependency>
+
+        <dependency>
+            <groupId>one.modality</groupId>
+            <artifactId>modality-event-client-event-fx</artifactId>
             <version>1.0.0-SNAPSHOT</version>
         </dependency>
 

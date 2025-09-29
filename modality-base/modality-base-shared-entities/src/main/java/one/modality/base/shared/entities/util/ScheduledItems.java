@@ -7,6 +7,7 @@ import one.modality.base.shared.entities.ScheduledItem;
 import one.modality.base.shared.entities.markers.EntityHasItem;
 import one.modality.base.shared.knownitems.KnownItemFamily;
 
+import java.time.LocalDate;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
@@ -44,6 +45,10 @@ public final class ScheduledItems {
 
     public static List<ScheduledItem> fromAttendances(List<Attendance> attendances) {
         return Collections.map(attendances, Attendance::getScheduledItem);
+    }
+
+    public static List<LocalDate> toDates(List<ScheduledItem> scheduledItems) {
+        return Collections.map(scheduledItems, ScheduledItem::getDate);
     }
 
 }

@@ -19,9 +19,11 @@ module modality.booking.backoffice.activity.bookings.plugin {
     requires modality.base.client.util;
     requires modality.base.shared.domainmodel;
     requires modality.base.shared.entities;
+    requires modality.booking.backoffice.operations.document;
     requires modality.crm.backoffice.bookingdetailspanel;
     requires modality.ecommerce.backoffice.operations.document;
     requires modality.event.client.activity.eventdependent;
+    requires modality.event.client.event.fx;
     requires webfx.extras.action;
     requires webfx.extras.i18n;
     requires webfx.extras.operation;

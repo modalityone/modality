@@ -167,6 +167,10 @@ public final class WorkingBooking {
         return existingDocumentLine != null;
     }
 
+    public void bookWholeEvent() {
+        bookScheduledItems(policyAggregate.filterTeachingScheduledItems(), false);
+    }
+
     public void removeAttendance(Attendance attendance) {
         removeAttendances(java.util.Collections.singletonList(attendance));
     }
@@ -353,7 +357,7 @@ public final class WorkingBooking {
 
     public static WorkingBooking createWholeEventWorkingBooking(PolicyAggregate policyAggregate) {
         WorkingBooking workingBooking = new WorkingBooking(policyAggregate, null);
-        workingBooking.bookScheduledItems(policyAggregate.filterTeachingScheduledItems(), false);
+        workingBooking.bookWholeEvent();
         return workingBooking;
     }
 
