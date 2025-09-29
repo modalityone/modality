@@ -182,6 +182,6 @@ final class StepBBookEventSlide extends StepSlide {
     }
 
     private void bindI18nEventExpression(Property<String> textProperty, String eventExpression, Object... args) {
-        I18nEntities.bindExpressionTextProperty(textProperty, FXEvent.lastNonNullEventProperty(), eventExpression, Arrays.add(Object[]::new, args, eventHeader.eventLoadedProperty()));
+        I18nEntities.bindExpressionToTextProperty(textProperty, FXEvent.lastNonNullEventProperty(), eventExpression, Arrays.add(Object[]::new, args, eventHeader.eventLoadedProperty()));
     }
 }

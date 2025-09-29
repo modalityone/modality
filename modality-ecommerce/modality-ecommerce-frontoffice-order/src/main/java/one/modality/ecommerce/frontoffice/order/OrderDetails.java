@@ -73,7 +73,7 @@ public final class OrderDetails {
                 .collect(Collectors.groupingBy(dl -> dl.getItem().getFamily(), LinkedHashMap::new, Collectors.toList()))
                 .forEach((itemFamily, documentLinesInFamily) -> {
                     // Show item family category
-                    Label familyLabel = Bootstrap.textPrimary(I18nEntities.newExpressionLabel(itemFamily, "i18n(this)"));
+                    Label familyLabel = Bootstrap.textPrimary(I18nEntities.newTranslatedEntityLabel(itemFamily));
                     familyLabel.getStyleClass().add("detail-label");
 
                     // Calculate the total price for this family
@@ -96,7 +96,7 @@ public final class OrderDetails {
 
                     documentLinesInFamily.forEach(documentLine -> {
                         // Show item family category
-                        Label itemLabel = BookingElements.secondaryOptionLabel(I18nEntities.newExpressionLabel(documentLine.getItem(), "i18n(this)"));
+                        Label itemLabel = BookingElements.secondaryOptionLabel(I18nEntities.newTranslatedEntityLabel(documentLine.getItem()));
                         //itemLabel.getStyleClass().add("detail-subitem-label");
                         itemLabel.setWrapText(true);
 

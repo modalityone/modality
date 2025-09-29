@@ -91,7 +91,7 @@ public final class EventThumbnail {
         VBox.setMargin(eventLabel, new Insets(10, 0, 0, 0));
 
         HtmlText shortHTMLDescription = new HtmlText();
-        I18nEntities.bindExpressionTextProperty(shortHTMLDescription.textProperty(), event, "coalesce(i18n(shortDescriptionLabel,'" + languageOfTheItem + "'),shortDescription)");
+        I18nEntities.bindExpressionToTextProperty(shortHTMLDescription.textProperty(), event, "coalesce(i18n(shortDescriptionLabel,'" + languageOfTheItem + "'),shortDescription)");
 
         shortHTMLDescription.getStyleClass().add("short-description");
 

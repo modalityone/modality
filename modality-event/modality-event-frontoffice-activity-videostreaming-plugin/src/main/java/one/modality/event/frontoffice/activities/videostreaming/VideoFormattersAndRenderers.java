@@ -92,7 +92,7 @@ final class VideoFormattersAndRenderers {
                 // `video` has the name repeated for some reason (but no label), while what we want is the label
                 // defined on the program in this case, so for now we just use the `programScheduledItem` directly
                 ScheduledItem namedVideo = video.getName() != null || video.getLabel() != null ? video : video.getProgramScheduledItem();
-                I18nEntities.bindExpressionTextProperty(nameLabel, namedVideo, "i18n(this)");
+                I18nEntities.bindTranslatedEntityToTextProperty(nameLabel, namedVideo);
                 nameLabel.getStyleClass().add("name");
             }
             return Controls.setupTextWrapping(nameLabel, true, true);

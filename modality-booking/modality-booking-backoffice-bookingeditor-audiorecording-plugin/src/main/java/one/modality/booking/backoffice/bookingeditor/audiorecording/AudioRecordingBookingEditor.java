@@ -38,7 +38,7 @@ final class AudioRecordingBookingEditor extends FamilyBookingEditorBase {
         List<ScheduledItem> alreadyBookedAudioRecordingScheduledItems = getAlreadyBookedFamilyScheduledItems();
         // We create a checkbox for each audio recording language in the policy
         for (Map.Entry<Item, List<ScheduledItem>> entry : audioRecordingItemsToScheduledItemsMap.entrySet()) {
-            CheckBox languageCheckBox = I18nEntities.newExpressionCheckBox(entry.getKey(), "i18n(this)");
+            CheckBox languageCheckBox = I18nEntities.newTranslatedEntityCheckBox(entry.getKey());
             audioRecordingItemsToCheckBoxesMap.put(entry.getKey(), languageCheckBox);
             // We check the checkbox if the language is already booked
             languageCheckBox.setSelected(entry.getValue().stream().anyMatch(alreadyBookedAudioRecordingScheduledItems::contains));

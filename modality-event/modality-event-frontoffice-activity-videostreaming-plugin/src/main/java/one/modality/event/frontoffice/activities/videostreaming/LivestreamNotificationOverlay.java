@@ -62,13 +62,12 @@ final class LivestreamNotificationOverlay {
         ObjectProperty<one.modality.base.shared.entities.Label> liveMessageLabelProperty = EntityBindings.getForeignEntityProperty(event, Event.livestreamMessageLabel);
 
         // Consumer that gets called when address fields change
-        Consumer<one.modality.base.shared.entities.Label> onLabelChange =labelEntity -> UiScheduler.runInUiThread(() -> {
-            I18nEntities.bindExpressionProperties(notificationText, labelEntity, "i18n(this)");
-            showNotification(notificationText);
-        });
+        Consumer<one.modality.base.shared.entities.Label> onLabelChange =labelEntity -> UiScheduler.runInUiThread(() ->
+            showNotification(I18nEntities.bindTranslatedEntityToProperties(notificationText, labelEntity))
+        );
         EntityBindings.onForeignFieldsChanged(onLabelChange, event, Event.livestreamMessageLabel, "en", "de", "fr", "es", "pt");
 
-        I18nEntities.bindExpressionProperties(notificationText, liveMessageLabelProperty, "i18n(this)");
+        I18nEntities.bindTranslatedEntityToProperties(notificationText, liveMessageLabelProperty);
         notificationText.setTextAlignment(TextAlignment.CENTER);
 
         // Listen for livestream message changes and show notifications

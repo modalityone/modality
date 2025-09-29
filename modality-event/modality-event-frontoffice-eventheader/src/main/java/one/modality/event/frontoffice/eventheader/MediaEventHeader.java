@@ -70,8 +70,8 @@ public final class MediaEventHeader extends AbstractEventHeader {
             if (language == null)
                 language = I18n.getLanguage();
 
-            I18nEntities.bindExpressionTextProperty(eventLabel, event,  "i18n(this, '" + language + "')");
-            I18nEntities.bindExpressionTextProperty(eventDescriptionHTMLText.textProperty(), event, "i18n(coalesce(shortDescriptionLabel, shortDescription), '" + language + "')");
+            I18nEntities.bindExpressionToTextProperty(eventLabel, event, "i18n(this, '" + language + "')");
+            I18nEntities.bindExpressionToTextProperty(eventDescriptionHTMLText.textProperty(), event, "i18n(coalesce(shortDescriptionLabel, shortDescription), '" + language + "')");
 
             // Loading the event image in the header
             ModalityCloudinary.loadHdpiEventCoverImage(event, language, -1, IMAGE_HEIGHT, eventImageContainer, video ? SvgIcons::createVideoIconPath : SvgIcons::createAudioCoverPath);

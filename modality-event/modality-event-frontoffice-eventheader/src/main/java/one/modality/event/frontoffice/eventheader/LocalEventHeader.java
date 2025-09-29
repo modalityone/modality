@@ -92,7 +92,7 @@ public final class LocalEventHeader extends AbstractEventHeader {
     }
 
     private void bindI18nEventExpression(Property<String> textProperty, String eventExpression) {
-        I18nEntities.bindExpressionTextProperty(textProperty, eventProperty(), eventExpression, eventLoadedProperty());
+        I18nEntities.bindExpressionToTextProperty(textProperty, eventProperty(), eventExpression, eventLoadedProperty());
     }
 
     @Override

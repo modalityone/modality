@@ -619,7 +619,7 @@ final class VideoStreamingActivity extends ViewDomainActivityBase {
             one.modality.base.shared.entities.Label commentLabel = getWatchingVideoItem().getCommentLabel();
             Label commentUILabel = null;
             if (commentLabel != null) {
-                commentUILabel = I18nEntities.newExpressionLabel(commentLabel, "i18n(this)");
+                commentUILabel = I18nEntities.newTranslatedEntityLabel(commentLabel);
             } else if (comment != null) {
                 commentUILabel = new Label(comment);
             }
