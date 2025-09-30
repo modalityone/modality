@@ -122,6 +122,7 @@ public final class BookingDetailsPanel implements
             createFlexButton(ShowBookingEditorRequest::new),
             createFlexButton(ToggleMarkDocumentAsReadRequest::new),
             createFlexButton(ToggleMarkDocumentAsWillPayRequest::new),
+            createFlexButton(ToggleConfirmDocumentRequest::new),
             createFlexButton(ToggleCancelDocumentRequest::new),
             createFlexButton(ToggleMarkDocumentAsArrivedRequest::new)
         );

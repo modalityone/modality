@@ -6,6 +6,7 @@
 module modality.ecommerce.backoffice.operations.document {
 
     // Direct dependencies modules
+    requires javafx.controls;
     requires javafx.graphics;
     requires modality.base.client.i18n;
     requires modality.base.client.mainframe.fx;
@@ -13,6 +14,7 @@ module modality.ecommerce.backoffice.operations.document {
     requires modality.base.shared.entities;
     requires modality.crm.client.personaldetails;
     requires modality.ecommerce.document.service;
+    requires webfx.extras.async;
     requires webfx.extras.i18n;
     requires webfx.extras.operation;
     requires webfx.extras.util.dialog;
@@ -20,6 +22,7 @@ module modality.ecommerce.backoffice.operations.document {
     requires webfx.platform.async;
     requires webfx.stack.orm.entity;
     requires webfx.stack.orm.entity.controls;
+    requires webfx.extras.panes;
 
     // Exported packages
     exports one.modality.ecommerce.backoffice.operations.entities.document;

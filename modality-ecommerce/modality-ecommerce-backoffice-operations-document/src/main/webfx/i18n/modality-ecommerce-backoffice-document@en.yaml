@@ -20,6 +20,10 @@ KBS2Uncancel:
   graphic: "images/s16/actions/cancel.png"
 ToggleCancel:
   graphic: "[KBS2Cancel]"
+Confirm:
+  graphic: "images/s16/actions/confirm.png"
+ToggleConfirm:
+  graphic: "images/s16/actions/confirm.png"
 Flag:
   graphic: "images/s16/actions/flag.png"
 Unflag:
