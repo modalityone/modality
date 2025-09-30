@@ -66,8 +66,8 @@ public final class TimeZoneSwitch {
         return eventLocalTimeSelectedProperty;
     }
 
-    public ObservableBooleanValue userLocalTimeSelectedProperty() {
-        return eventLocalTimeSelectedProperty.not();
+    public boolean isEventLocalTimeSelected() {
+        return eventLocalTimeSelectedProperty.get();
     }
 
     public LocalTime convertEventLocalTimeToUserLocalTime(LocalTime eventLocalTime) {
@@ -87,9 +87,5 @@ public final class TimeZoneSwitch {
         ZonedDateTime eventZonedDateTime = eventLocalDateTime.atZone(eventZoneId);
         ZonedDateTime userZonedDateTime = eventZonedDateTime.withZoneSameInstant(USER_ZONE_ID);
         return userZonedDateTime.toLocalDateTime();
-    }
-
-    public LocalDate convertEventLocalDateToUserLocalDate(LocalDate eventLocalDate) {
-        return convertEventLocalDateTimeToUserLocalDateTime(eventLocalDate.atStartOfDay()).toLocalDate();
     }
 }

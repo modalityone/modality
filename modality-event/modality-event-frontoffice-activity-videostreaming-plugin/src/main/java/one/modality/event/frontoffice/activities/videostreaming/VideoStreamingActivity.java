@@ -271,9 +271,9 @@ final class VideoStreamingActivity extends ViewDomainActivityBase {
         dailyProgramVideoColumns = VisualEntityColumnFactory.get().fromJsonArray( // language=JSON5
             """      
             [
-                {expression: 'date', format: 'videoDate', role: 'group'},
+                {expression: 'this', format: 'videoDate', role: 'group'},
                 {expression: 'this', label: '"Session"', renderer: 'videoName', minWidth: 200, styleClass: 'name'},
-                {expression: '[coalesce(startTime, timeline.startTime, programScheduledItem.startTime, programScheduledItem.timeline.startTime), coalesce(endTime, timeline.endTime, programScheduledItem.endTime, programScheduledItem.timeline.endTime)]', label: 'Time', format: 'videoTimeRange', textAlign: 'center', hShrink: false, styleClass: 'time'},
+                {expression: 'this', label: 'Time', format: 'videoTimeRange', textAlign: 'center', hShrink: false, styleClass: 'time'},
                 {expression: 'this', label: 'Status', renderer: 'videoStatus', textAlign: 'center', hShrink: false, styleClass: 'status'}
             ]""".replace("\"Session\"", EventI18nKeys.Session.toString()), getDomainModel(), "ScheduledItem");
         // The columns (and groups) displayed for recurring events with 1 or just a few sessions per day (such as STTP)
@@ -281,8 +281,8 @@ final class VideoStreamingActivity extends ViewDomainActivityBase {
             """
             [
                 {expression: 'this', format: 'allProgramGroup', textAlign: 'center', styleClass: 'status', role: 'group'},
-                {expression: 'date', label: 'Date', format: 'videoDate', hShrink: false, styleClass: 'date'},
-                {expression: '[coalesce(startTime, timeline.startTime, programScheduledItem.startTime, programScheduledItem.timeline.startTime), coalesce(endTime, timeline.endTime, programScheduledItem.endTime, programScheduledItem.timeline.endTime)]', label: 'Time', format: 'videoTimeRange', textAlign: 'center', hShrink: false, styleClass: 'time'},
+                {expression: 'this', label: 'Date', format: 'videoDate', hShrink: false, styleClass: 'date'},
+                {expression: 'this', label: 'Time', format: 'videoTimeRange', textAlign: 'center', hShrink: false, styleClass: 'time'},
                 {expression: 'this', label: '"Session"', renderer: 'videoName', minWidth: 200, styleClass: 'name'},
                 {expression: 'this', label: 'Status', renderer: 'videoStatus', textAlign: 'center', hShrink: false, styleClass: 'status'}
             ]""".replace("\"Session\"", EventI18nKeys.Session.toString()), getDomainModel(), "ScheduledItem");
@@ -530,7 +530,9 @@ final class VideoStreamingActivity extends ViewDomainActivityBase {
                 vr = EntitiesToVisualResultMapper.mapEntitiesToVisualResult(sortedVideoScheduledItems, allProgramVideoColumns);
             }
             videoGrid.setVisualResult(vr);
-        }, displayedVideoScheduledItems);
+        }, displayedVideoScheduledItems
+            // We also rebuild the whole table on time zone change, because the video date groups may start at different rows for different timezones
+            , TimeZoneSwitch.getGlobal().eventLocalTimeSelectedProperty());
 
         // When the livestream collapse pane is collapsed, we pause the livestreamPlayer so the full-screen orange button
         // is not displayed

@@ -15,8 +15,7 @@ import dev.webfx.stack.orm.domainmodel.formatter.FormatterRegistry;
 import dev.webfx.stack.orm.entity.binding.EntityBindings;
 import javafx.application.Platform;
 import javafx.beans.property.BooleanProperty;
-import javafx.beans.property.SimpleStringProperty;
-import javafx.beans.property.StringProperty;
+import javafx.beans.value.ObservableStringValue;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.geometry.Insets;
@@ -29,6 +28,7 @@ import one.modality.base.client.messaging.ModalityMessaging;
 import one.modality.base.client.time.FrontOfficeTimeFormats;
 import one.modality.base.shared.entities.Event;
 import one.modality.base.shared.entities.ScheduledItem;
+import one.modality.base.shared.entities.util.ScheduledItems;
 import one.modality.event.frontoffice.medias.MediaUtil;
 import one.modality.event.frontoffice.medias.MediasI18nKeys;
 import one.modality.event.frontoffice.medias.TimeZoneSwitch;
@@ -60,22 +60,11 @@ final class VideoFormattersAndRenderers {
         FormatterRegistry.registerFormatter("videoSection", PrimType.STRING, scheduledItem ->
             VideoState.getVideoStatusI18nKey((ScheduledItem) scheduledItem));
         // videoDate format
-        FormatterRegistry.registerFormatter("videoDate", PrimType.STRING, date ->
-            LocalizedTime.formatMonthDayProperty((LocalDate) date, FrontOfficeTimeFormats.VOD_TODAY_MONTH_DAY_FORMAT));
+        FormatterRegistry.registerFormatter("videoDate", PrimType.STRING, scheduledItem ->
+            formatVideoDateOrTimes((ScheduledItem) scheduledItem, false));
         // videoTimeRange format
-        FormatterRegistry.registerFormatter("videoTimeRange", PrimType.STRING, timeRange -> {
-            Object[] times = (Object[]) timeRange;
-            LocalTime startEventLocalTime = (LocalTime) times[0];
-            LocalTime endEventLocalTime = (LocalTime) times[1];
-            StringProperty videoTimeRangeProperty = new SimpleStringProperty();
-            TimeZoneSwitch globalTimeZoneSwitch = TimeZoneSwitch.getGlobal();
-            FXProperties.runNowAndOnPropertyChange(eventLocalTimeSelected -> {
-                LocalTime startDisplayTime = eventLocalTimeSelected ? startEventLocalTime : globalTimeZoneSwitch.convertEventLocalTimeToUserLocalTime(startEventLocalTime);
-                LocalTime endDisplayTime = eventLocalTimeSelected ? endEventLocalTime : globalTimeZoneSwitch.convertEventLocalTimeToUserLocalTime(endEventLocalTime);
-                videoTimeRangeProperty.bind(LocalizedTime.formatLocalTimeRangeProperty(startDisplayTime, endDisplayTime, FrontOfficeTimeFormats.AUDIO_VIDEO_DAY_TIME_FORMAT));
-            }, globalTimeZoneSwitch.eventLocalTimeSelectedProperty());
-            return videoTimeRangeProperty;
-        });
+        FormatterRegistry.registerFormatter("videoTimeRange", PrimType.STRING, scheduledItem ->
+            formatVideoDateOrTimes((ScheduledItem) scheduledItem, true));
         FormatterRegistry.registerFormatter("allProgramGroup", PrimType.STRING, scheduledItem ->
             I18n.i18nTextProperty(VideoState.getAllProgramVideoGroupI18nKey((ScheduledItem) scheduledItem))
         );
@@ -138,6 +127,23 @@ final class VideoFormattersAndRenderers {
     }
 
     // PRIVATE API
+
+    private static ObservableStringValue formatVideoDateOrTimes(ScheduledItem scheduledItem, boolean times) {
+        TimeZoneSwitch globalTimeZoneSwitch = TimeZoneSwitch.getGlobal();
+        boolean eventLocalTimeSelected = globalTimeZoneSwitch.isEventLocalTimeSelected();
+        LocalTime startEventLocalTime = ScheduledItems.getSessionStartTime(scheduledItem);
+        if (times) {
+            LocalTime startDisplayTime = eventLocalTimeSelected ? startEventLocalTime : globalTimeZoneSwitch.convertEventLocalTimeToUserLocalTime(startEventLocalTime);
+            LocalTime endEventLocalTime = ScheduledItems.getSessionEndTime(scheduledItem);
+            LocalTime endDisplayTime = eventLocalTimeSelected ? endEventLocalTime : globalTimeZoneSwitch.convertEventLocalTimeToUserLocalTime(endEventLocalTime);
+            return LocalizedTime.formatLocalTimeRangeProperty(startDisplayTime, endDisplayTime, FrontOfficeTimeFormats.AUDIO_VIDEO_DAY_TIME_FORMAT);
+        }
+        LocalDate eventLocalDate = scheduledItem.getDate();
+        LocalDateTime eventLocalDateTime = LocalDateTime.of(eventLocalDate, startEventLocalTime);
+        LocalDateTime displayLocalDateTime = eventLocalTimeSelected ? eventLocalDateTime : globalTimeZoneSwitch.convertEventLocalDateTimeToUserLocalDateTime(eventLocalDateTime);
+        LocalDate displayLocalDate = displayLocalDateTime.toLocalDate();
+        return LocalizedTime.formatMonthDayProperty(displayLocalDate, FrontOfficeTimeFormats.VOD_TODAY_MONTH_DAY_FORMAT);
+    }
 
     @SuppressWarnings("unusable-by-js")
     private record StatusElements(ScheduledItem videoScheduledItem, Label statusLabel, Label availableUntilLabel, Hyperlink liveNowLink, ButtonBase watchButton, VideoStreamingActivity videoStreamingActivity) { }

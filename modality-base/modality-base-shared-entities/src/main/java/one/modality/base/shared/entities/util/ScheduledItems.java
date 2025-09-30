@@ -8,6 +8,7 @@ import one.modality.base.shared.entities.markers.EntityHasItem;
 import one.modality.base.shared.knownitems.KnownItemFamily;
 
 import java.time.LocalDate;
+import java.time.LocalTime;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
@@ -49,6 +50,14 @@ public final class ScheduledItems {
 
     public static List<LocalDate> toDates(List<ScheduledItem> scheduledItems) {
         return Collections.map(scheduledItems, ScheduledItem::getDate);
+    }
+
+    public static LocalTime getSessionStartTime(ScheduledItem scheduledItem) {
+        return scheduledItem.evaluate("coalesce(startTime, timeline.startTime, programScheduledItem.startTime, programScheduledItem.timeline.startTime)");
+    }
+
+    public static LocalTime getSessionEndTime(ScheduledItem scheduledItem) {
+        return scheduledItem.evaluate("coalesce(endTime, timeline.endTime, programScheduledItem.endTime, programScheduledItem.timeline.endTime)");
     }
 
 }
