@@ -1,6 +1,7 @@
 package one.modality.base.shared.entities.util;
 
 import dev.webfx.platform.util.collection.Collections;
+import dev.webfx.stack.orm.entity.Entities;
 import one.modality.base.shared.entities.Attendance;
 import one.modality.base.shared.entities.DocumentLine;
 import one.modality.base.shared.knownitems.KnownItemFamily;
@@ -42,4 +43,9 @@ public final class DocumentLines {
     }
 
 
+    public static boolean sameDocumentLine(DocumentLine line1, DocumentLine line2) {
+        if (Entities.samePrimaryKey(line1, line2))
+            return true;
+        return Entities.samePrimaryKey(line1.getSite(), line2.getSite()) && Entities.samePrimaryKey(line1.getItem(), line2.getItem());
+    }
 }
