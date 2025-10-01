@@ -13,7 +13,7 @@ import dev.webfx.extras.webtext.HtmlText;
 import dev.webfx.kit.util.properties.FXProperties;
 import dev.webfx.kit.util.properties.ObservableLists;
 import dev.webfx.platform.util.collection.Collections;
-import dev.webfx.stack.orm.domainmodel.DomainModel;
+import dev.webfx.stack.orm.entity.EntityStore;
 import dev.webfx.stack.orm.reactive.entities.entities_to_grid.EntityColumn;
 import dev.webfx.stack.orm.reactive.mapping.entities_to_visual.EntitiesToVisualResultMapper;
 import dev.webfx.stack.orm.reactive.mapping.entities_to_visual.VisualEntityColumnFactory;
@@ -75,7 +75,7 @@ final class Timetable {
         videoGrid.setAppContext(activity); // Passing this VideosActivity as appContext to the value renderers
     }
 
-    void startLogic(DomainModel domainModel) {
+    void startLogic(EntityStore entityStore) {
         TimetableFormattersAndRenderers.registerRenderers();
         // The columns (and groups) displayed for events with a daily program (such as Festivals)
         dailyProgramVideoColumns = VisualEntityColumnFactory.get().fromJsonArray( // language=JSON5
@@ -85,7 +85,7 @@ final class Timetable {
                 {expression: 'this', label: '"Session"', renderer: 'videoName', minWidth: 200, styleClass: 'name'},
                 {expression: 'this', label: 'Time', format: 'videoTimeRange', textAlign: 'center', hShrink: false, styleClass: 'time'},
                 {expression: 'this', label: 'Status', renderer: 'videoStatus', textAlign: 'center', hShrink: false, styleClass: 'status'}
-            ]""".replace("\"Session\"", EventI18nKeys.Session.toString()), domainModel, "ScheduledItem");
+            ]""".replace("\"Session\"", EventI18nKeys.Session.toString()), entityStore.getDomainModel(), "ScheduledItem");
         // The columns (and groups) displayed for recurring events with 1 or just a few sessions per day (such as STTP)
         allProgramVideoColumns = VisualEntityColumnFactory.get().fromJsonArray( // language=JSON5
             """
@@ -95,7 +95,7 @@ final class Timetable {
                 {expression: 'this', label: 'Time', format: 'videoTimeRange', textAlign: 'center', hShrink: false, styleClass: 'time'},
                 {expression: 'this', label: '"Session"', renderer: 'videoName', minWidth: 200, styleClass: 'name'},
                 {expression: 'this', label: 'Status', renderer: 'videoStatus', textAlign: 'center', hShrink: false, styleClass: 'status'}
-            ]""".replace("\"Session\"", EventI18nKeys.Session.toString()), domainModel, "ScheduledItem");
+            ]""".replace("\"Session\"", EventI18nKeys.Session.toString()), entityStore.getDomainModel(), "ScheduledItem");
 
     }
 

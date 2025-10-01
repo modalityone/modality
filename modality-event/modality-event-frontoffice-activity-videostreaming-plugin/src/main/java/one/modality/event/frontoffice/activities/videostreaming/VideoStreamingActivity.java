@@ -1,8 +1,6 @@
 package one.modality.event.frontoffice.activities.videostreaming;
 
 import dev.webfx.extras.i18n.controls.I18nControls;
-import dev.webfx.extras.panes.CollapsePane;
-import dev.webfx.extras.panes.ColumnsPane;
 import dev.webfx.extras.panes.GoldenRatioPane;
 import dev.webfx.extras.panes.MonoPane;
 import dev.webfx.extras.styles.bootstrap.Bootstrap;
@@ -14,7 +12,6 @@ import dev.webfx.platform.console.Console;
 import dev.webfx.platform.scheduler.Scheduler;
 import dev.webfx.platform.util.Objects;
 import dev.webfx.platform.util.collection.Collections;
-import dev.webfx.platform.util.time.Times;
 import dev.webfx.stack.orm.domainmodel.activity.viewdomain.impl.ViewDomainActivityBase;
 import dev.webfx.stack.orm.entity.EntityStore;
 import javafx.beans.property.BooleanProperty;
@@ -23,13 +20,9 @@ import javafx.beans.property.SimpleBooleanProperty;
 import javafx.beans.property.SimpleObjectProperty;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
-import javafx.geometry.Insets;
 import javafx.geometry.Pos;
-import javafx.scene.Cursor;
 import javafx.scene.Node;
-import javafx.scene.control.Button;
 import javafx.scene.control.ContentDisplay;
-import javafx.scene.control.Hyperlink;
 import javafx.scene.control.Label;
 import javafx.scene.layout.VBox;
 import one.modality.base.frontoffice.utility.page.FOPageUtil;
@@ -44,7 +37,6 @@ import one.modality.crm.shared.services.authn.fx.FXModalityUserPrincipal;
 import one.modality.crm.shared.services.authn.fx.FXUserPersonId;
 import one.modality.event.frontoffice.eventheader.EventHeader;
 import one.modality.event.frontoffice.eventheader.MediaEventHeader;
-import one.modality.event.frontoffice.medias.EventThumbnail;
 import one.modality.event.frontoffice.medias.TimeZoneSwitch;
 
 /**
@@ -55,35 +47,31 @@ import one.modality.event.frontoffice.medias.TimeZoneSwitch;
  */
 final class VideoStreamingActivity extends ViewDomainActivityBase {
 
-    private static final double COLUMN_MIN_WIDTH = 200;
-    private static final double COLUMN_MAX_WIDTH = 530; // Max width = unscaled thumbnail (533 px)
-
-    // Holding an observable list of events with videos booked by the user (changes on login & logout)
+    // Observable list of events with videos booked by the user (changes on login & logout)
     private final ObservableList<Event> eventsWithBookedVideos = FXCollections.observableArrayList();
-    // Holding a boolean property to know if the loading of the eventsWithBookedVideos is in progress
+    // A boolean property to know if the loading of the eventsWithBookedVideos is in progress
     private final BooleanProperty eventsWithBookedVideosLoadingProperty = new SimpleBooleanProperty();
 
-    private final ObjectProperty<Event> eventProperty = new SimpleObjectProperty<>(); // The event loaded from the event id
-    private final ObservableList<ScheduledItem> videoScheduledItems = FXCollections.observableArrayList(); // The list of all videos for that event
+    // Event property to tell from which event we display the videos (can be changed by the event selector)
+    private final ObjectProperty<Event> eventProperty = new SimpleObjectProperty<>();
+    // The list of all videos loaded for that event
+    private final ObservableList<ScheduledItem> videoScheduledItems = FXCollections.observableArrayList();
 
-    private final CollapsePane eventsSelectionPane = new CollapsePane();
-    private EntityStore entityStore;
-
+    // Main UI elements
     private final MonoPane pageContainer = new MonoPane(); // Will hold either the loading indicator or the loaded content
-
+    final EventSelector eventSelector = new EventSelector(eventProperty, eventsWithBookedVideos);
     final LivestreamAndVideoPlayers livestreamAndVideoPlayers = new LivestreamAndVideoPlayers(eventProperty, videoScheduledItems);
     final Timetable timetable = new Timetable(videoScheduledItems, pageContainer, this);
 
     public VideoStreamingActivity() {
         //We relaunch the request every 14 hours (in case the user never closes the page, and to make sure the coherence of MediaConsumption is ok)
         Scheduler.schedulePeriodic(14 * 3600 * 1000, this::startLogic);
-        eventsSelectionPane.collapse(); // initially collapsed
     }
 
     @Override
     protected void startLogic() {
         // Creating our own entity store to hold the loaded data without interfering with other activities
-        entityStore = EntityStore.create(getDataSourceModel());
+        EntityStore entityStore = EntityStore.create(getDataSourceModel());
 
         // Loading the list of events with videos booked by the user and put it into eventsWithBookedVideos
         FXProperties.runNowAndOnPropertyChange(modalityUserPrincipal -> {
@@ -121,30 +109,10 @@ final class VideoStreamingActivity extends ViewDomainActivityBase {
                     .onFailure(Console::log)
                     .inUiThread()
                     .onCacheAndOrSuccess(documentLines -> {
-                        // Extracting the events with videos from the document lines
-                        eventsWithBookedVideos.setAll(
-                            Collections.map(documentLines, dl -> dl.getDocument().getEvent()));
-                        // If there are 2 events with videos or more, we populate the events selection pane
-                        if (eventsWithBookedVideos.stream().filter(e -> Times.isFuture(e.getVodExpirationDate())).count() < 2) {
-                            eventsSelectionPane.setContent(null);
-                        } else {
-                            ColumnsPane columnsPane = new ColumnsPane(20, 50);
-                            columnsPane.setMinColumnWidth(COLUMN_MIN_WIDTH);
-                            columnsPane.setMaxColumnWidth(COLUMN_MAX_WIDTH);
-                            columnsPane.setMaxWidth(Double.MAX_VALUE);
-                            columnsPane.getStyleClass().add("audio-library"); // is audio-library good? (must be to have the same CSS rules as audio)
-                            for (Event event : eventsWithBookedVideos) {
-                                EventThumbnail thumbnail = new EventThumbnail(event, KnownItem.VIDEO.getCode(), EventThumbnail.ItemType.ITEM_TYPE_VIDEO, true);
-                                Button actionButton = thumbnail.getViewButton();
-                                actionButton.setCursor(Cursor.HAND);
-                                actionButton.setOnAction(e -> {
-                                    eventProperty.set(event);
-                                    eventsSelectionPane.collapse();
-                                });
-                                columnsPane.getChildren().add(thumbnail.getView());
-                            }
-                            eventsSelectionPane.setContent(columnsPane);
-                        }
+                        // Extracting the events with videos from the document lines.
+                        eventsWithBookedVideos.setAll( // Note: this will update the event selector as well
+                            Collections.map(documentLines, dl -> dl.getDocument().getEvent())
+                        );
                         // Selecting the most relevant event to show on start (the first one from order by)
                         eventProperty.set(Collections.first(eventsWithBookedVideos));
                         eventsWithBookedVideosLoadingProperty.set(false);
@@ -185,7 +153,7 @@ final class VideoStreamingActivity extends ViewDomainActivityBase {
         }, eventProperty, FXUserPersonId.userPersonIdProperty());
 
         livestreamAndVideoPlayers.startLogic(entityStore);
-        timetable.startLogic(getDomainModel());
+        timetable.startLogic(entityStore);
     }
 
     @Override
@@ -195,25 +163,13 @@ final class VideoStreamingActivity extends ViewDomainActivityBase {
         // ********************************* Building the static part of the UI ****************************************
         // *************************************************************************************************************
 
-        Node loadingContentIndicator = new GoldenRatioPane(Controls.createProgressIndicator(100));
-
-        // We display an event selection section only if there are more than 1 event with videos booked by the user
-        Hyperlink selectEventLink = I18nControls.newHyperlink(VideoStreamingI18nKeys.SelectAnotherEvent);
-        selectEventLink.setOnAction(e -> eventsSelectionPane.toggleCollapse());
-        VBox eventsSelectionVBox = new VBox(10, selectEventLink, eventsSelectionPane);
-        Layouts.setMinMaxHeightToPref(eventsSelectionVBox); // No need to compute min/max height as different to pref (layout computation optimization)
-        eventsSelectionVBox.setAlignment(Pos.CENTER);
-        eventsSelectionPane.setPadding(new Insets(50, 0, 200, 0));
-        // Making the section visible only if there are more than 1 event with videos
-        eventsSelectionVBox.visibleProperty().bind(eventsSelectionPane.contentProperty().isNotNull());
-        Layouts.bindManagedToVisibleProperty(eventsSelectionVBox);
-
         // Building the loaded content, starting with the header
+        Node loadingContentIndicator = new GoldenRatioPane(Controls.createProgressIndicator(100));
         EventHeader eventHeader = new MediaEventHeader(true);
         eventHeader.eventProperty().bind(eventProperty);
 
         VBox loadedContentVBox = new VBox(40,
-            eventsSelectionVBox,
+            eventSelector.buildUi(),
             eventHeader.getView(), // contains the event image and the event title
             livestreamAndVideoPlayers.buildUi(pageContainer),
             timetable.buildUi(),
