@@ -42,7 +42,7 @@ import java.time.LocalTime;
  * @author Bruno Salmon
  * @author David Hello
  */
-final class VideoFormattersAndRenderers {
+final class TimetableFormattersAndRenderers {
 
     // This padding is applied to the labels so that they have the same padding (at least vertically) as the buttons.
     // This is to make the rows the same height, whether there is a Watch button or a status label such as LIVE NOW.
@@ -92,7 +92,7 @@ final class VideoFormattersAndRenderers {
             VideoStreamingActivity activity = context.getAppContext();
 
             ToggleButton watchButton = Bootstrap.dangerButton(I18nControls.newToggleButton(VideoStreamingI18nKeys.Watch));
-            activity.watchButtonsGroup.registerItemButton(watchButton, videoScheduledItem, true);
+            activity.timetable.watchButtonsGroup.registerItemButton(watchButton, videoScheduledItem, true);
             watchButton.setGraphicTextGap(10);
             Label statusLabel = new Label();
             statusLabel.setPadding(LABEL_PADDING);
