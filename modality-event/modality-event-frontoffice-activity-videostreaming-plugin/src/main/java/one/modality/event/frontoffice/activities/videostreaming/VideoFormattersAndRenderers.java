@@ -103,7 +103,7 @@ final class VideoFormattersAndRenderers {
             // liveNowLink.setPadding(new Insets(15)); // this is to make it easier to click, especially on mobiles
             Controls.setupTextWrapping(availableUntilLabel, true, false);
             // Initial computation of the status
-            StatusElements se = new StatusElements(videoScheduledItem, statusLabel, availableUntilLabel, liveNowLink, watchButton, activity);
+            StatusElements se = new StatusElements(videoScheduledItem, statusLabel, availableUntilLabel, liveNowLink, watchButton, activity.livestreamAndVideoPlayers);
             updateStatusElements(se, true);
             VBox vBoxStatusAndButtonContainer = new VBox(10,
                 watchButton,
@@ -146,7 +146,7 @@ final class VideoFormattersAndRenderers {
     }
 
     @SuppressWarnings("unusable-by-js")
-    private record StatusElements(ScheduledItem videoScheduledItem, Label statusLabel, Label availableUntilLabel, Hyperlink liveNowLink, ButtonBase watchButton, VideoStreamingActivity videoStreamingActivity) { }
+    private record StatusElements(ScheduledItem videoScheduledItem, Label statusLabel, Label availableUntilLabel, Hyperlink liveNowLink, ButtonBase watchButton, LivestreamAndVideoPlayers livestreamAndVideoPlayers) { }
 
     private static void updateStatusElements(StatusElements se, boolean initial) {
         // Stopping refreshing labels and button once removed from the scene (due to responsive design)
@@ -175,7 +175,7 @@ final class VideoFormattersAndRenderers {
             scheduleRefreshSeconds(1, refresher); // We refresh the countdown every second
             hideOrShowWatchButton = true;
         } else if (statusI18nKey.equals(VideoStreamingI18nKeys.LiveNow)) {
-            se.liveNowLink.setOnAction(e -> se.videoStreamingActivity.setWatchingVideo(videoLifecycle));
+            se.liveNowLink.setOnAction(e -> se.livestreamAndVideoPlayers.setWatchingVideo(videoLifecycle));
             hideLabeled(se.statusLabel);
             showLabeled(se.liveNowLink);
             scheduleRefreshDuration(videoLifecycle.durationBetweenNowAndSessionEnd(), refresher);
@@ -185,7 +185,7 @@ final class VideoFormattersAndRenderers {
         } else if (statusI18nKey.equals(BaseI18nKeys.Available)) {
             hideLabeled(se.statusLabel);
             showButton(se.watchButton, e -> {
-                se.videoStreamingActivity.setWatchingVideo(videoLifecycle);
+                se.livestreamAndVideoPlayers.setWatchingVideo(videoLifecycle);
                 transformButtonFromPlayToPlayAgain(se.watchButton);
             });
             LocalDateTime videoSpecificExpirationDate = se.videoScheduledItem.getExpirationDate();
@@ -207,16 +207,16 @@ final class VideoFormattersAndRenderers {
         }
         if (hideOrShowWatchButton) {
             // In case a user clicked on a previous recorded video, we need to display a button so he can go back to the livestream
-            if (se.videoStreamingActivity.isSameVideoAsAlreadyWatching(videoLifecycle))
+            if (se.livestreamAndVideoPlayers.isSameVideoAsAlreadyWatching(videoLifecycle))
                 hideButton(se.watchButton);
             else if (!videoLifecycle.isNowBeforeLiveNowStart()) { // Preventing Watch button to appear to early (if published = true wrongly set on ScheduledItem)
-                showButton(se.watchButton, e -> se.videoStreamingActivity.setWatchingVideo(videoLifecycle));
+                showButton(se.watchButton, e -> se.livestreamAndVideoPlayers.setWatchingVideo(videoLifecycle));
             }
             // We may also need to update the button again when the user changes the watching video
             String arbitraryKey = "watchingVideoItemPropertyListener";
             if (!se.watchButton.getProperties().containsKey(arbitraryKey)) { // we install that listener only once
                 se.watchButton.getProperties().put(arbitraryKey,
-                    FXProperties.runOnPropertyChange(refresher, se.videoStreamingActivity.watchingVideoItemProperty()));
+                    FXProperties.runOnPropertyChange(refresher, se.livestreamAndVideoPlayers.watchingVideoItemProperty()));
             }
         }
 
