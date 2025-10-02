@@ -270,8 +270,8 @@ final class LivestreamAndVideoPlayers {
                 Controls.setupTextWrapping(commentUILabel, true, false);
                 videoVBox.getChildren().add(commentUILabel);
             }
-            Player videoPlayer = createVideoPlayer();
             for (Media media : watchMedias) {
+                Player videoPlayer = createVideoPlayer();
                 Node videoView = createVideoView(media.getUrl(), media, autoPlay, videoPlayer);
                 videoMediasVBox.getChildren().add(videoView);
                 // we autoplay only the first video
