@@ -212,6 +212,11 @@ final class VideoStreamingActivity extends ViewDomainActivityBase {
 
         }, videoScheduledItems, eventProperty, eventsWithBookedVideosLoadingProperty);
 
+        // Some reactions to changes in the timetable couldn't be done in timetable.buildUi() but must be done now,
+        // i.e., after the above code, because timetable.updateProgramDisplayMode() has to be called before the other
+        // reactions to changes.
+        timetable.reactToChanges();
+
         // *************************************************************************************************************
         // ************************************* Building final container **********************************************
         // *************************************************************************************************************

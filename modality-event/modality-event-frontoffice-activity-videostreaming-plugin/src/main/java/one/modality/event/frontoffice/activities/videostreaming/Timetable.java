@@ -125,6 +125,16 @@ final class Timetable {
         videoGrid.setFullHeight(true);
         videoGrid.setHeaderVisible(true);
 
+        I18n.bindI18nTextProperty(festivalShopText.textProperty(), VideoStreamingI18nKeys.FestivalShop);
+
+        return new VBox(5,
+            responsiveDaySelectionMonoPane,
+            videoGrid, // contains the videos for the selected day (or all days)
+            festivalShopText
+        );
+    }
+
+    void reactToChanges() {
         // Showing selected videos for the selected Day
         FXProperties.runNowAndOnPropertiesChange(() -> {
             LocalDate selectedDay = selectedDayProperty.get();
@@ -168,14 +178,6 @@ final class Timetable {
             }, displayedVideoScheduledItems
             // We also rebuild the whole table on time zone change, because the video date groups may start at different rows for different timezones
             , TimeZoneSwitch.getGlobal().eventLocalTimeSelectedProperty());
-
-        I18n.bindI18nTextProperty(festivalShopText.textProperty(), VideoStreamingI18nKeys.FestivalShop);
-
-        return new VBox(5,
-            responsiveDaySelectionMonoPane,
-            videoGrid, // contains the videos for the selected day (or all days)
-            festivalShopText
-        );
     }
 
     void updateProgramDisplayMode() {
