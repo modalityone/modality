@@ -131,17 +131,17 @@ final class TimetableFormattersAndRenderers {
     private static ObservableStringValue formatVideoDateOrTimes(ScheduledItem scheduledItem, boolean times) {
         TimeZoneSwitch globalTimeZoneSwitch = TimeZoneSwitch.getGlobal();
         boolean eventLocalTimeSelected = globalTimeZoneSwitch.isEventLocalTimeSelected();
-        LocalTime startEventLocalTime = ScheduledItems.getSessionStartTime(scheduledItem);
-        if (times) {
-            LocalTime startDisplayTime = eventLocalTimeSelected ? startEventLocalTime : globalTimeZoneSwitch.convertEventLocalTimeToUserLocalTime(startEventLocalTime);
-            LocalTime endEventLocalTime = ScheduledItems.getSessionEndTime(scheduledItem);
-            LocalTime endDisplayTime = eventLocalTimeSelected ? endEventLocalTime : globalTimeZoneSwitch.convertEventLocalTimeToUserLocalTime(endEventLocalTime);
-            return LocalizedTime.formatLocalTimeRangeProperty(startDisplayTime, endDisplayTime, FrontOfficeTimeFormats.AUDIO_VIDEO_DAY_TIME_FORMAT);
-        }
         LocalDate eventLocalDate = scheduledItem.getDate();
-        LocalDateTime eventLocalDateTime = LocalDateTime.of(eventLocalDate, startEventLocalTime);
-        LocalDateTime displayLocalDateTime = eventLocalTimeSelected ? eventLocalDateTime : globalTimeZoneSwitch.convertEventLocalDateTimeToUserLocalDateTime(eventLocalDateTime);
-        LocalDate displayLocalDate = displayLocalDateTime.toLocalDate();
+        LocalTime eventLocalStartTime = ScheduledItems.getSessionStartTime(scheduledItem);
+        if (times) {
+            LocalTime displayStartTime = eventLocalTimeSelected ? eventLocalStartTime : globalTimeZoneSwitch.convertEventLocalTimeToUserLocalTime(eventLocalDate, eventLocalStartTime);
+            LocalTime eventLocalEndTime = ScheduledItems.getSessionEndTime(scheduledItem);
+            LocalTime displayEndTime = eventLocalTimeSelected ? eventLocalEndTime : globalTimeZoneSwitch.convertEventLocalTimeToUserLocalTime(eventLocalDate, eventLocalEndTime);
+            return LocalizedTime.formatLocalTimeRangeProperty(displayStartTime, displayEndTime, FrontOfficeTimeFormats.AUDIO_VIDEO_DAY_TIME_FORMAT);
+        }
+        LocalDateTime eventLocalStartDateTime = LocalDateTime.of(eventLocalDate, eventLocalStartTime);
+        LocalDateTime displayLocalStartDateTime = eventLocalTimeSelected ? eventLocalStartDateTime : globalTimeZoneSwitch.convertEventLocalDateTimeToUserLocalDateTime(eventLocalStartDateTime);
+        LocalDate displayLocalDate = displayLocalStartDateTime.toLocalDate();
         return LocalizedTime.formatMonthDayProperty(displayLocalDate, FrontOfficeTimeFormats.VOD_TODAY_MONTH_DAY_FORMAT);
     }
 
