@@ -177,6 +177,7 @@ final class LivestreamAndVideoPlayers {
 
     private boolean isUserWatchingLivestream() {
         ScheduledItem watchingVideoItem = getWatchingVideoItem();
+        // Note sure if watchingVideoItem == null is still relevant. TODO: investigate this.
         return watchingVideoItem == null || isTimeToShowVideoAsLivestream(new VideoLifecycle(watchingVideoItem));
     }
 
@@ -235,22 +236,19 @@ final class LivestreamAndVideoPlayers {
             Event event = eventProperty.get();
             String livestreamUrl = event == null ? null : event.getLivestreamUrl();
             if (livestreamUrl != null) {
-                // Checking that the user has access to a live session for today
-                if (videoScheduledItems.stream().map(VideoLifecycle::new).anyMatch(VideoLifecycle::isLiveToday)) {
-                    // populateVideoPlayers() might be called several times for the same livestream. If this happens,
-                    // we don't recreate the player each time but just keep the existing one.
-                    if (Objects.areEquals(livestreamUrl, playingLivestreamUrl)) {
-                        return;
-                    }
-                    playingLivestreamUrl = livestreamUrl;
-                    Player livestreamPlayer = createVideoPlayer();
-                    LivestreamNotificationOverlay.addNotificationOverlayToLivestreamPlayer(livestreamPlayer, event);
-                    // Because we keep the same player for the same livestream url (without rebuilding it later),
-                    // we force the autoplay right now if this player doesn't have a play() api.
-                    autoPlay = autoPlay || !livestreamPlayer.getNavigationSupport().api();
-                    // Creating the video view
-                    videoContent = createVideoView(livestreamUrl, null, autoPlay, livestreamPlayer);
+                // populateVideoPlayers() might be called several times for the same livestream. If this happens,
+                // we don't recreate the player each time but just keep the existing one.
+                if (Objects.areEquals(livestreamUrl, playingLivestreamUrl)) {
+                    return;
                 }
+                playingLivestreamUrl = livestreamUrl;
+                Player livestreamPlayer = createVideoPlayer();
+                LivestreamNotificationOverlay.addNotificationOverlayToLivestreamPlayer(livestreamPlayer, event);
+                // Because we keep the same player for the same livestream url (without rebuilding it later),
+                // we force the autoplay right now if this player doesn't have a play() api.
+                autoPlay = autoPlay || !livestreamPlayer.getNavigationSupport().api();
+                // Creating the video view
+                videoContent = createVideoView(livestreamUrl, null, autoPlay, livestreamPlayer);
             }
         } else { // VOD
             playingLivestreamUrl = null;
