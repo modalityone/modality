@@ -7,6 +7,8 @@ import dev.webfx.kit.util.properties.FXProperties;
 import dev.webfx.kit.util.properties.Unregisterable;
 import dev.webfx.platform.scheduler.Scheduled;
 import dev.webfx.platform.uischeduler.UiScheduler;
+import dev.webfx.platform.useragent.UserAgent;
+import dev.webfx.platform.util.collection.Collections;
 import javafx.animation.Timeline;
 import javafx.collections.ObservableList;
 import javafx.event.EventHandler;
@@ -22,17 +24,24 @@ import one.modality.event.client.mediaview.MediaButtons;
  */
 public class ModalityFullscreenButton {
 
+    private static final long FADE_OUT_DELAY = 5000;
+    private static final String FULL_SIZE_PLAYER_OVERLAY_ID = "full-overlay";
+
     private static final Pane FULLSCREEN_BUTTON = MediaButtons.createFullscreenButton();
     private static Timeline FULLSCREEN_BUTTON_TIMELINE;
     private static Unregisterable FULLSCREEN_LAYOUT;
     private static boolean FULLSCREEN_BUTTON_IN_PLAYER;
     private static boolean FULLSCREEN_BUTTON_ANIMATED;
     private static Scheduled FADE_OUT_SCHEDULED;
-    private static final EventHandler<MouseEvent> MOUSE_MOVE_OVER_PLAYER_WITH_FULLSCREEN_BUTTON_HANDLER = e -> {
+    private static final EventHandler<MouseEvent> MOUSE_OVER_PLAYER_WITH_FULLSCREEN_BUTTON_DETECTION_HANDLER = e -> {
+        fadeInFullscreenButtonAndScheduleFadeOut();
+    };
+
+    private static void fadeInFullscreenButtonAndScheduleFadeOut() {
         if (FULLSCREEN_BUTTON_TIMELINE == null || Animations.isTimelineFinished(FULLSCREEN_BUTTON_TIMELINE))
             fadeFullscreenButton(true);
         fadeFullscreenButton(false);
-    };
+    }
 
     public static void setupModalityFullscreenButton() {
         FullscreenButton.setupFullscreenButton(
@@ -98,12 +107,57 @@ public class ModalityFullscreenButton {
             MediaButtons.animateFullscreenButton(fullscreenButton);
         else if (!FULLSCREEN_BUTTON_ANIMATED) {
             MediaButtons.animateFullscreenButton(fullscreenButton);
+            // When the fullscreen button is displayed in the player, we can't keep it shown all the time because it
+            // covers the video. So we display it only for a short time and then fade it out until we detect some
+            // mouse movement on the player, then we fade it back in.
+            fadeInFullscreenButtonAndScheduleFadeOut();
+            // Now we select the node that we will listen to in order to detect when the mouse is over the player
             Player player = FullscreenButton.getSuitableFullscreenPlayingPlayer();
-            Node mediaView = player.getMediaView();
-            mediaView.removeEventFilter(MouseEvent.ANY, MOUSE_MOVE_OVER_PLAYER_WITH_FULLSCREEN_BUTTON_HANDLER);
-            mediaView.addEventFilter(MouseEvent.ANY, MOUSE_MOVE_OVER_PLAYER_WITH_FULLSCREEN_BUTTON_HANDLER);
+            Node mouseOverPlayerDetectionNode;
+            // If it's not in the browser (OpenJFX), we can simply take the media view of the player
+            if (!UserAgent.isBrowser()) {
+                mouseOverPlayerDetectionNode = player.getMediaView();
+            } else { // But if it's in the browser, it's a bit more challenging.
+                // The issue is that the player is likely an iFrame, which is like a black hole regarding events.
+                // So what we do is to add a transparent overlay that covers the whole player area, and then we listen
+                // to mouse events on that overlay. This trick solves this black hole issue, and it works in all browsers.
+                // However, the downside is that it prevents the user from interacting with the player controls!
+                // To solve this issue, we make the overlay mouse transparent as soon as a mouse event is detected, for
+                // the time the fullscreen button is displayed (i.e., 5 seconds). When the fullscreen button is faded out,
+                // we restore the overlay mouse transparency to detect again mouse events to fade it back in.
+
+                // First, we check if that overlay has been already added from a previous pass.
+                Node fullSizePlayerOverlay = Collections.findFirst(player.getOverlayChildren(), ModalityFullscreenButton::isFullSizePlayerOverlay);
+                // If not, we create it and add it to the player overlay area.
+                if (fullSizePlayerOverlay == null) {
+                    fullSizePlayerOverlay = new Region();
+                    fullSizePlayerOverlay.setId(FULL_SIZE_PLAYER_OVERLAY_ID);
+                    player.getOverlayChildren().add(fullSizePlayerOverlay);
+                    // This is the important part: we make the overlay mouse transparent when the fullscreen button is
+                    // displayed (i.e., visible and not faded out), because there is no need anymore to cause this button
+                    // to appear (it's already there) for the next 5s it is displayed. And this is what allows the user
+                    // to interact with the player controls.
+                    fullSizePlayerOverlay.mouseTransparentProperty().bind(
+                        FULLSCREEN_BUTTON.visibleProperty()
+                            .and(FULLSCREEN_BUTTON.opacityProperty().greaterThan(0))
+                    );
+                }
+                mouseOverPlayerDetectionNode = fullSizePlayerOverlay;
+                // FOR DEBUG ONLY TO SEE WHEN THE fullSizePlayerOverlay IS MOUSE TRANSPARENT OR NOT
+                /*FXProperties.runOnPropertyChange(mouseTransparent -> {
+                    ((Region) mouseOverPlayerDetectionNode).setBackground(mouseTransparent ? null : Background.fill(Color.GREEN));
+                    mouseOverPlayerDetectionNode.setOpacity(0.5);
+                }, mouseOverPlayerDetectionNode.mouseTransparentProperty());*/
+            }
+            // Installing the mouse over player detection handler (first removing it in case it was already installed)
+            mouseOverPlayerDetectionNode.removeEventHandler(MouseEvent.ANY, MOUSE_OVER_PLAYER_WITH_FULLSCREEN_BUTTON_DETECTION_HANDLER);
+            mouseOverPlayerDetectionNode.addEventFilter(MouseEvent.ANY, MOUSE_OVER_PLAYER_WITH_FULLSCREEN_BUTTON_DETECTION_HANDLER);
         }
         FULLSCREEN_BUTTON_ANIMATED = true;
+    }
+
+    private static boolean isFullSizePlayerOverlay(Node node) {
+        return FULL_SIZE_PLAYER_OVERLAY_ID.equals(node.getId());
     }
 
     private static void fadeFullscreenButton(boolean fadeIn) {
@@ -115,7 +169,7 @@ public class ModalityFullscreenButton {
             stopPreviousFullscreenButtonAnimation();
             FULLSCREEN_BUTTON_TIMELINE = Animations.fade(FULLSCREEN_BUTTON, fadeIn, false);
         } else {
-            FADE_OUT_SCHEDULED = UiScheduler.scheduleDelay(3500, () -> {
+            FADE_OUT_SCHEDULED = UiScheduler.scheduleDelay(FADE_OUT_DELAY, () -> {
                 FULLSCREEN_BUTTON_TIMELINE = Animations.fade(FULLSCREEN_BUTTON, fadeIn, false);
             });
         }
