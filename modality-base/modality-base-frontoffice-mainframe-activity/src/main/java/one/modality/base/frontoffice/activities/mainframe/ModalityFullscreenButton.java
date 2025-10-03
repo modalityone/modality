@@ -16,6 +16,7 @@ import javafx.scene.Node;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.Region;
+import javafx.scene.layout.StackPane;
 import one.modality.base.client.mainframe.fx.FXMainFrameOverlayArea;
 import one.modality.event.client.mediaview.MediaButtons;
 
@@ -132,6 +133,9 @@ public class ModalityFullscreenButton {
                 if (fullSizePlayerOverlay == null) {
                     fullSizePlayerOverlay = new Region();
                     fullSizePlayerOverlay.setId(FULL_SIZE_PLAYER_OVERLAY_ID);
+                    // Actually not covering the bottom (player controls) and left (unmute button on Castr) to minimize
+                    // the risk of dropping the first event interaction with these controls.
+                    StackPane.setMargin(fullSizePlayerOverlay, new javafx.geometry.Insets(0, 0, 70, 70));
                     player.getOverlayChildren().add(fullSizePlayerOverlay);
                     // This is the important part: we make the overlay mouse transparent when the fullscreen button is
                     // displayed (i.e., visible and not faded out), because there is no need anymore to cause this button
