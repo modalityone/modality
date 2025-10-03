@@ -207,10 +207,11 @@ final class TimetableFormattersAndRenderers {
         }
         if (hideOrShowWatchButton) {
             // In case a user clicked on a previous recorded video, we need to display a button so he can go back to the livestream
-            if (se.livestreamAndVideoPlayers.isSameVideoAsAlreadyWatching(videoLifecycle))
+            if (se.livestreamAndVideoPlayers.isSameVideoAsAlreadyWatching(videoLifecycle)) {
                 hideButton(se.watchButton);
-            else if (!videoLifecycle.isNowBeforeLiveNowStart()) { // Preventing Watch button to appear to early (if published = true wrongly set on ScheduledItem)
+            } else if (!videoLifecycle.isNowBeforeLiveNowStart()) { // Preventing Watch button to appear to early (if published = true wrongly set on ScheduledItem)
                 showButton(se.watchButton, e -> se.livestreamAndVideoPlayers.setWatchingVideo(videoLifecycle));
+                hideLabeled(se.liveNowLink);
             }
             // We may also need to update the button again when the user changes the watching video
             String arbitraryKey = "watchingVideoItemPropertyListener";
