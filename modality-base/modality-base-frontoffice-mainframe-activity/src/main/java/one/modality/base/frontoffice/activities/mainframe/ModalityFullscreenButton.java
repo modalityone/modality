@@ -24,7 +24,7 @@ import one.modality.event.client.mediaview.MediaButtons;
  */
 public class ModalityFullscreenButton {
 
-    private static final long FADE_OUT_DELAY = 5000;
+    private static final long FADE_OUT_DELAY = 10000;
     private static final String FULL_SIZE_PLAYER_OVERLAY_ID = "full-overlay";
 
     private static final Pane FULLSCREEN_BUTTON = MediaButtons.createFullscreenButton();
@@ -123,8 +123,8 @@ public class ModalityFullscreenButton {
                 // to mouse events on that overlay. This trick solves this black hole issue, and it works in all browsers.
                 // However, the downside is that it prevents the user from interacting with the player controls!
                 // To solve this issue, we make the overlay mouse transparent as soon as a mouse event is detected, for
-                // the time the fullscreen button is displayed (i.e., 5 seconds). When the fullscreen button is faded out,
-                // we restore the overlay mouse transparency to detect again mouse events to fade it back in.
+                // the time the fullscreen button is displayed (i.e., 10 seconds). When the fullscreen button is faded
+                // out, we restore the overlay mouse transparency to detect again mouse events to fade it back in.
 
                 // First, we check if that overlay has been already added from a previous pass.
                 Node fullSizePlayerOverlay = Collections.findFirst(player.getOverlayChildren(), ModalityFullscreenButton::isFullSizePlayerOverlay);
