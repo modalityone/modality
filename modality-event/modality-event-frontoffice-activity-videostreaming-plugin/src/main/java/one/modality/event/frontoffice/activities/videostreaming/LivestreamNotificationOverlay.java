@@ -62,7 +62,7 @@ final class LivestreamNotificationOverlay {
         ObjectProperty<one.modality.base.shared.entities.Label> liveMessageLabelProperty = EntityBindings.getForeignEntityProperty(event, Event.livestreamMessageLabel);
 
         // Consumer that gets called when address fields change
-        Consumer<one.modality.base.shared.entities.Label> onLabelChange =labelEntity -> UiScheduler.runInUiThread(() ->
+        Consumer<one.modality.base.shared.entities.Label> onLabelChange = labelEntity -> UiScheduler.runInUiThread(() ->
             showNotification(I18nEntities.bindTranslatedEntityToProperties(notificationText, labelEntity))
         );
         EntityBindings.onForeignFieldsChanged(onLabelChange, event, Event.livestreamMessageLabel, "en", "de", "fr", "es", "pt");
@@ -79,18 +79,21 @@ final class LivestreamNotificationOverlay {
             }
         }, liveMessageLabelProperty);
 
-        FXProperties.runOnPropertiesChange(() -> {
-            // Computing the "--scroll-text-duration" CSS property so that the text scroll speed is always the same
-            // whatever the container width and text length.
-            double containerWidth = notificationContainer.getWidth();
-            double messageWidth = notificationText.prefWidth(-1); // total width of the text on a single line
-            double totalScrollDistance = containerWidth + messageWidth;
-            double totalScrollDuration = totalScrollDistance / 160; // in seconds - 160 is an empiric value
-            if (UserAgent.isBrowser()) // We use CSS animation in browsers (smoother)
-                notificationText.setStyle("--scroll-text-duration:" + totalScrollDuration + "s");
-            else // otherwise JavaFX programmatic animation
-                startJavaFxTextScrollAnimation(containerWidth, totalScrollDistance, totalScrollDuration);
-        }, notificationContainer.widthProperty(), notificationText.textProperty());
+        FXProperties.runOnPropertiesChange(() ->
+            // The reason for deferring is to ensure that notificationText.prefWidth(-1) will return the correct value
+            // (otherwise WebFX may not have mapped yet the text to the DOM)
+            UiScheduler.scheduleDeferred(() -> {
+                // Computing the "--scroll-text-duration" CSS property so that the text scroll speed is always the same
+                // whatever the container width and text length.
+                double containerWidth = notificationContainer.getWidth();
+                double messageWidth = notificationText.prefWidth(-1); // total width of the text on a single line
+                double totalScrollDistance = containerWidth + messageWidth;
+                double totalScrollDuration = totalScrollDistance / 160; // in seconds - 160 is an empiric value
+                if (UserAgent.isBrowser()) // We use CSS animation in browsers (smoother)
+                    notificationText.setStyle("--scroll-text-duration:" + totalScrollDuration + "s");
+                else // otherwise JavaFX programmatic animation
+                    startJavaFxTextScrollAnimation(containerWidth, totalScrollDistance, totalScrollDuration);
+            }), notificationContainer.widthProperty(), notificationText.textProperty());
     }
 
     private Timeline javaFxTextScrollTimeline;
