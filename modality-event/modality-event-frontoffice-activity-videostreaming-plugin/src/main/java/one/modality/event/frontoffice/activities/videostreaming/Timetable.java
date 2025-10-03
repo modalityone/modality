@@ -30,10 +30,13 @@ import javafx.scene.layout.VBox;
 import javafx.stage.Screen;
 import one.modality.base.client.i18n.BaseI18nKeys;
 import one.modality.base.shared.entities.ScheduledItem;
+import one.modality.base.shared.entities.util.ScheduledItems;
 import one.modality.event.client.i18n.EventI18nKeys;
 import one.modality.event.frontoffice.medias.TimeZoneSwitch;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.LocalTime;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -126,12 +129,24 @@ final class Timetable {
         videoGrid.setHeaderVisible(true);
 
         I18n.bindI18nTextProperty(festivalShopText.textProperty(), VideoStreamingI18nKeys.FestivalShop);
+        VBox.setMargin(festivalShopText, new Insets(80, 0, 0, 0));
 
-        return new VBox(5,
+        return new VBox(
             responsiveDaySelectionMonoPane,
             videoGrid, // contains the videos for the selected day (or all days)
             festivalShopText
         );
+    }
+
+    private LocalDate videoDisplayedDate(ScheduledItem scheduledItem) {
+        // TODO: factor this code with TimetableFormattersAndRenderers.formatVideoDateOrTimes()
+        TimeZoneSwitch globalTimeZoneSwitch = TimeZoneSwitch.getGlobal();
+        boolean eventLocalTimeSelected = globalTimeZoneSwitch.isEventLocalTimeSelected();
+        LocalDate eventLocalDate = scheduledItem.getDate();
+        LocalTime eventLocalStartTime = ScheduledItems.getSessionStartTime(scheduledItem);
+        LocalDateTime eventLocalStartDateTime = LocalDateTime.of(eventLocalDate, eventLocalStartTime);
+        LocalDateTime displayLocalStartDateTime = eventLocalTimeSelected ? eventLocalStartDateTime : globalTimeZoneSwitch.convertEventLocalDateTimeToUserLocalDateTime(eventLocalStartDateTime);
+        return displayLocalStartDateTime.toLocalDate();
     }
 
     void reactToChanges() {
@@ -141,17 +156,20 @@ final class Timetable {
             if (!displayingDailyProgram || selectedDay == null)
                 displayedVideoScheduledItems.setAll(videoScheduledItems);
             else
-                displayedVideoScheduledItems.setAll(Collections.filter(videoScheduledItems, item -> selectedDay.equals(item.getDate())));
+                displayedVideoScheduledItems.setAll(Collections.filter(videoScheduledItems,
+                    videoScheduledItem -> selectedDay.equals(videoDisplayedDate(videoScheduledItem))));
         }, selectedDayProperty, ObservableLists.versionNumber(videoScheduledItems));
 
         // Updating the dates in daySwitch after the video sessions have been loaded
         ObservableLists.runNowAndOnListOrPropertiesChange(change ->
                 daySwitcher.setAvailableDates(videoScheduledItems.stream()
-                    .map(ScheduledItem::getDate)
+                    .map(this::videoDisplayedDate)
                     .distinct()
                     .sorted()
                     .collect(Collectors.toList()))
-            , videoScheduledItems);
+            , videoScheduledItems
+            // We also rebuild the whole table on time zone change, because the video date groups may start at different rows for different timezones
+            , TimeZoneSwitch.getGlobal().eventLocalTimeSelectedProperty());
 
         // Showing selected videos once they are loaded
         ObservableLists.runNowAndOnListOrPropertiesChange(change -> {

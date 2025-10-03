@@ -152,9 +152,10 @@ public class DaySwitcher {
 
         // Automatically selecting today if today is part of the event
         if (!availableDates.contains(selectedDate))
-            setSelectedDate(LocalDate.now());
-        else
-            setSelectedDate(selectedDate);
+            selectedDate = LocalDate.now(TimeZoneSwitch.getGlobal().getEventZoneId());
+
+        setSelectedDate(selectedDate);
+
         dayToggleGroup.updateButtonsFiredStyleClass();
     }
 
