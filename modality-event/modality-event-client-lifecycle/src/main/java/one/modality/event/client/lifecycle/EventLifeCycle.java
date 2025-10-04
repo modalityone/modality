@@ -37,6 +37,11 @@ public final class EventLifeCycle {
     }
 
     public static boolean isClosed(Event event, boolean considerAudioRecording) {
+        if (isKbs3Event(event) || true /* temporary hotfix for in-person Fall 25 closing (KBS2 way not implemented) */) {
+            EventState state = event.getState();
+            if (state == EventState.CLOSED)
+                return true;
+        }
         LocalDate closingDate = getClosingDate(event, considerAudioRecording);
         return Times.isPast(closingDate, event.getEventClock());
     }
