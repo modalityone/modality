@@ -110,7 +110,11 @@ final class Kbs2PriceAlgorithm {
     */
             if (minDeposit) {
                 // Rounding the min deposit of the booking to the superior amount (without cents)
-                price = ((price + 99) / 100) * 100;
+                int rounded = ((price + 99) / 100) * 100;
+                if (rounded > price) { // If the rounded amount is indeed superior,
+                    // we still need to check that it doesn't exceed the total amount
+                    price = Math.min(rounded, getInvoiced());
+                }
             } else if (update) {
                 documentAggregate.getDocument().setPriceNet(price);
             }
