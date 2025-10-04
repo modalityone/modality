@@ -3,6 +3,7 @@ package one.modality.booking.frontoffice.bookingform.multipages;
 import dev.webfx.extras.async.AsyncSpinner;
 import dev.webfx.extras.panes.MonoPane;
 import dev.webfx.extras.panes.TransitionPane;
+import dev.webfx.extras.util.layout.Layouts;
 import dev.webfx.kit.util.properties.FXProperties;
 import dev.webfx.kit.util.properties.Unregisterable;
 import dev.webfx.platform.async.Future;
@@ -76,6 +77,7 @@ public abstract class MultiPageBookingForm extends BookingFormBase {
                 getActivityCallback().onEndReached();
         }
     };
+    private final BooleanProperty pageIsPriceBarRelevantToShowProperty = new SimpleBooleanProperty();
     private int displayedPageIndex = -1;
     protected BookingFormPage displayedPage;
     private Unregisterable bookingFormPageValidListener;
@@ -100,7 +102,7 @@ public abstract class MultiPageBookingForm extends BookingFormBase {
             navigationBar.getNextButton().setOnMouseClicked(e -> navigateToNextPage());
             navigationBar.getNextButton().disableProperty().bind(new BooleanBinding() {
                 {
-                    super.bind(pageValidProperty, personToBookRequiredProperty, showDefaultSubmitButtonProperty, pageShowingOwnSubmitButtonProperty, pageBusyFutureProperty, pageBusyCountProperty, FXPersonToBook.personToBookProperty());
+                    super.bind(pageValidProperty, pageEndReachedProperty, personToBookRequiredProperty, showDefaultSubmitButtonProperty, pageShowingOwnSubmitButtonProperty, pageBusyFutureProperty, pageBusyCountProperty, FXPersonToBook.personToBookProperty());
                 }
 
                 @Override
@@ -110,6 +112,7 @@ public abstract class MultiPageBookingForm extends BookingFormBase {
                     // We disable the "next" button in the following cases:
                     // When the displayed page is not valid
                     return !pageValidProperty.get()
+                           || pageEndReachedProperty.get()
                            // When it is required to specify the person to book, and it's still not set on the booking nor on the person to book button
                            || personToBookRequiredProperty.get() && getWorkingBooking().getDocument().getPerson() == null && FXPersonToBook.getPersonToBook() == null
                            // When the page shows a submitButton (either the default one or its own)
@@ -128,8 +131,11 @@ public abstract class MultiPageBookingForm extends BookingFormBase {
         if (navigationBar != null) {
             borderPane.setTop(navigationBar.getView());
         }
-        if (settings.showNavigationBar())
-            borderPane.setBottom(new PriceBar(workingBookingProperties).getView());
+        if (settings.showNavigationBar()) {
+            Node priceBarView = new PriceBar(workingBookingProperties).getView();
+            Layouts.bindManagedAndVisiblePropertiesTo(pageIsPriceBarRelevantToShowProperty, priceBarView);
+            borderPane.setBottom(priceBarView);
+        }
         borderPane.setMaxWidth(MAX_WIDTH); // Max width for desktops
         return BookingElements.styleBookingElementsContainer(borderPane, true);
     }
@@ -192,6 +198,7 @@ public abstract class MultiPageBookingForm extends BookingFormBase {
         displayedPage = pages[index];
         displayedPageIndex = index;
         pageShowingOwnSubmitButtonProperty.set(displayedPage.isShowingOwnSubmitButton());
+        pageIsPriceBarRelevantToShowProperty.set(displayedPage.isPriceBarRelevantToShow());
         displayedPage.setWorkingBookingProperties(workingBookingProperties);
         pageValidProperty.bind(displayedPage.validProperty());
         pageBusyFutureProperty.bind(displayedPage.busyFutureProperty());

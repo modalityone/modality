@@ -29,6 +29,10 @@ public interface BookingFormPage {
         return false;
     }
 
+    default boolean isPriceBarRelevantToShow() {
+        return true;
+    }
+
     default boolean isApplicableToBooking(WorkingBooking workingBooking) {
         return true;
     }
