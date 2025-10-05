@@ -1,6 +1,7 @@
 package one.modality.ecommerce.document.service.events.registration.documentline;
 
 import dev.webfx.platform.util.Objects;
+import dev.webfx.platform.util.collection.Collections;
 import one.modality.base.shared.entities.DocumentLine;
 import one.modality.base.shared.entities.util.DocumentLines;
 import one.modality.ecommerce.document.service.events.AbstractDocumentEvent;
@@ -107,7 +108,7 @@ public final class PriceDocumentLineEvent extends AbstractDocumentLineEvent {
 
     public static PriceDocumentLineEvent mergeDocumentLinePriceEvents(List<AbstractDocumentEvent> events, DocumentLine documentLine, boolean removeEvents) {
         PriceDocumentLineEvent mergedEvent = null;
-        for (int i = events.size() - 1; i >=0; i--) {
+        for (int i = Collections.size(events) - 1; i >= 0; i--) {
             if (events.get(i) instanceof PriceDocumentLineEvent event && DocumentLines.sameDocumentLine(event.getDocumentLine(), documentLine)) {
                 mergedEvent = mergeDocumentLinePriceEvents(mergedEvent, event);
                 if (removeEvents) {
