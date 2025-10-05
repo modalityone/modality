@@ -33,7 +33,7 @@ public final class EventLifeCycle {
             return state == EventState.OPEN || state == EventState.TESTING && FXUserPerson.isTester();
         }
         // KBS2 events
-        return Booleans.isTrue(event.isLive());
+        return Booleans.isTrue(event.isLive()) && !isClosed(event, false);
     }
 
     public static boolean isClosed(Event event, boolean considerAudioRecording) {
