@@ -32,6 +32,7 @@ public final class MediaButtons {
     private static final String PAUSE_SIGN_PATH_15 = "M9.5 23H13.5V9H9.5V23ZM17.5 9V23H21.5V9H17.5Z";
 
     private static final String FULLSCREEN_PATH_16 = "M2.3 10.3H0V16H5.7V13.7H2.3ZM0 5.7H2.3V2.3H5.7V0H0ZM13.7 13.7H10.3V16H16V10.3H13.7ZM10.3 0v2.3h3.4V5.7H16V0Z";
+    private static final String RELOAD_PATH_16 = "M16 6.2a.6.6 90 01-.6.6H11.5a.6.6 90 01-.4-1l1.5-1.5-.4-.4a5.8 5.8 90 10-4.2 9.9 5.8 5.8 90 005.5-3.9A1.1 1.1 90 1115.5 10.6 8 8 90 118 0a7.9 7.9 90 015.8 2.5l0 0 .3.3 1-1a.6.6 90 01.4-.2.6.6 90 01.6.6Z";
 
     public static Pane createBackwardButton() {
         Text text = Bootstrap.textSecondary(new Text("10"));
@@ -70,6 +71,12 @@ public final class MediaButtons {
             createSVGButton(FULLSCREEN_PATH_16, null, Color.WHITE)));
     }
 
+    public static Pane createReloadButton() {
+        return embedButton(new StackPane(
+            createMediaButtonStyledBackgroundCircle(),
+            createSVGButton(RELOAD_PATH_16, null, Color.WHITE)));
+    }
+
     private static Circle createMediaButtonStyledBackgroundCircle() {
         Circle circle = new Circle(16);
         circle.getStyleClass().setAll("media-button"); // background color is defined in CSS
@@ -77,6 +84,10 @@ public final class MediaButtons {
     }
 
     public static void animateFullscreenButton(Pane fullscreenButton) {
+        animateFullscreenButton(fullscreenButton, null);
+    }
+
+    public static void animateFullscreenButton(Pane fullscreenButton, Runnable onFinished) {
         StackPane stackPane = (StackPane) ((ScalePane) fullscreenButton).getContent();
         Circle fadingCircle = createMediaButtonStyledBackgroundCircle();
         fadingCircle.setCenterX(16);
@@ -103,6 +114,8 @@ public final class MediaButtons {
         timeline.play();
         timeline.setOnFinished(e -> {
             stackPane.getChildren().remove(fadingCircle);
+            if (onFinished != null)
+                onFinished.run();
         });
     }
 

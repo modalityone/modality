@@ -29,6 +29,7 @@ public class ModalityVideoOverlay {
     private static final String USER_ACTIVITY_DETECTION_OVERLAY_ID = "user-activity-overlay";
 
     private static final Pane FULLSCREEN_BUTTON = MediaButtons.createFullscreenButton();
+    private static final Pane RELOAD_BUTTON = MediaButtons.createReloadButton();
     private static Timeline FULLSCREEN_BUTTON_TIMELINE;
     private static Unregisterable FULLSCREEN_LAYOUT;
     private static boolean FULLSCREEN_BUTTON_IN_PLAYER;
@@ -50,6 +51,7 @@ public class ModalityVideoOverlay {
             ModalityVideoOverlay::hideFullscreenButton,
             ModalityVideoOverlay::animateFullscreenButton
         );
+        RELOAD_BUTTON.setOpacity(0);
     }
 
     private static Pane showFullscreenButton() {
@@ -62,6 +64,10 @@ public class ModalityVideoOverlay {
         if (FULLSCREEN_BUTTON_IN_PLAYER) {
             overlayChildren = playingPlayer.getOverlayChildren();
             overlayArea = playingPlayer.getMediaView();
+            if (!overlayChildren.contains(RELOAD_BUTTON)) {
+                overlayChildren.add(RELOAD_BUTTON);
+            }
+            RELOAD_BUTTON.setOnMouseClicked(e -> playingPlayer.reload());
         } else {
             overlayChildren = FXMainFrameOverlayArea.getOverlayChildren();
             overlayArea = FXMainFrameOverlayArea.getOverlayArea();
@@ -70,16 +76,19 @@ public class ModalityVideoOverlay {
         if (!overlayChildren.contains(FULLSCREEN_BUTTON)) {
             overlayChildren.add(FULLSCREEN_BUTTON);
             FULLSCREEN_BUTTON.setManaged(false); // We don't want the player overlay (StackPane) to center and resize
+            RELOAD_BUTTON.setManaged(false);
             // the fullscreen button, we manage it ourselves as follows:
             FULLSCREEN_LAYOUT = FXProperties.runNowAndOnPropertiesChange(() -> {
                 double width = overlayArea.getWidth();
                 FULLSCREEN_BUTTON.resizeRelocate(width - 60, 10, 50, 50);
+                RELOAD_BUTTON.resizeRelocate(width - 60, overlayArea.getHeight() / 2 - 25, 50, 50);
             }, overlayArea.widthProperty(), overlayArea.heightProperty());
             FULLSCREEN_BUTTON.setTranslateY(-60);
         }
         FULLSCREEN_BUTTON_ANIMATED = false;
         stopPreviousFullscreenButtonAnimation();
         if (FULLSCREEN_BUTTON.getTranslateY() < 0) {
+            FXProperties.setEvenIfBound(FULLSCREEN_BUTTON.opacityProperty(), 0);
             FULLSCREEN_BUTTON_TIMELINE = Animations.animateProperty(FULLSCREEN_BUTTON.translateYProperty(), 0);
             FULLSCREEN_BUTTON_TIMELINE.setOnFinished(e -> animateFullscreenButton());
         } else {
@@ -107,7 +116,9 @@ public class ModalityVideoOverlay {
         if (!FULLSCREEN_BUTTON_IN_PLAYER)
             MediaButtons.animateFullscreenButton(fullscreenButton);
         else if (!FULLSCREEN_BUTTON_ANIMATED) {
-            MediaButtons.animateFullscreenButton(fullscreenButton);
+            MediaButtons.animateFullscreenButton(fullscreenButton, () -> {
+                Animations.fadeIn(RELOAD_BUTTON).setOnFinished(e -> RELOAD_BUTTON.opacityProperty().bind(FULLSCREEN_BUTTON.opacityProperty()));
+            });
             // When the fullscreen button is displayed in the player, we can't keep it shown all the time because it
             // covers the video. So we display it only for a short time and then fade it out until we detect some
             // mouse movement on the player, then we fade it back in.
@@ -171,10 +182,10 @@ public class ModalityVideoOverlay {
         }
         if (fadeIn) {
             stopPreviousFullscreenButtonAnimation();
-            FULLSCREEN_BUTTON_TIMELINE = Animations.fade(FULLSCREEN_BUTTON, fadeIn, false);
+            FULLSCREEN_BUTTON_TIMELINE = Animations.fade(FULLSCREEN_BUTTON, true, false);
         } else {
             FADE_OUT_SCHEDULED = UiScheduler.scheduleDelay(FADE_OUT_DELAY_MILLIS, () -> {
-                FULLSCREEN_BUTTON_TIMELINE = Animations.fade(FULLSCREEN_BUTTON, fadeIn, false);
+                FULLSCREEN_BUTTON_TIMELINE = Animations.fade(FULLSCREEN_BUTTON, false, false);
             });
         }
     }
