@@ -2,6 +2,7 @@ package one.modality.base.frontoffice.activities.mainframe;
 
 import dev.webfx.extras.player.FullscreenButton;
 import dev.webfx.extras.player.Player;
+import dev.webfx.extras.player.Players;
 import dev.webfx.extras.util.animation.Animations;
 import dev.webfx.kit.util.properties.FXProperties;
 import dev.webfx.kit.util.properties.Unregisterable;
@@ -51,7 +52,12 @@ public class ModalityVideoOverlay {
             ModalityVideoOverlay::hideFullscreenButton,
             ModalityVideoOverlay::animateFullscreenButton
         );
-        RELOAD_BUTTON.setOpacity(0);
+        RELOAD_BUTTON.setOpacity(0); // Initially not visible
+        // Ensuring the fullscreen button is only visible when a player is playing. This prevents it from being shown
+        // while no playing player has been detected (the button can't do anything in that case, and that can be
+        // frustrating for the user when pressing it, so better to hide it). This is important when the player detection
+        // is not working well (happens on my iPhone SE).
+        FULLSCREEN_BUTTON.visibleProperty().bind(Players.getGlobalPlayerGroup().playingPlayerProperty().isNotNull());
     }
 
     private static Pane showFullscreenButton() {
@@ -156,8 +162,8 @@ public class ModalityVideoOverlay {
                     // to appear (it's already there) for the next 5s it is displayed. And this is what allows the user
                     // to interact with the player controls.
                     userActivityDetectionOverlay.mouseTransparentProperty().bind(
-                        FULLSCREEN_BUTTON.visibleProperty()
-                            .and(FULLSCREEN_BUTTON.opacityProperty().greaterThan(0))
+                        FULLSCREEN_BUTTON.visibleProperty().not()
+                            .or(FULLSCREEN_BUTTON.opacityProperty().greaterThan(0))
                     );
                 }
                 mouseOverPlayerDetectionNode = userActivityDetectionOverlay;
