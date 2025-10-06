@@ -272,8 +272,10 @@ final class LivestreamAndVideoPlayers {
                 Player videoPlayer = createVideoPlayer();
                 Node videoView = createVideoView(media.getUrl(), media, autoPlay, videoPlayer);
                 videoMediasVBox.getChildren().add(videoView);
-                // we autoplay only the first video
-                autoPlay = false;
+                videoPlayer.getOverlayChildren(); // We don't add any overlay children yet, but after this "empty" call
+                // videoPlayer.appRequestedOverlayChildren() will return true, and ModalityVideoOverlay will detect the
+                // presence of an overlay and add the fullscreen button (which is the purpose of this empty call).
+                autoPlay = false; // we autoplay only the first video
             }
             Layouts.setMinMaxHeightToPref(videoMediasVBox); // No need to compute min/max height as different to pref (layout computation optimization)
             videoContent = videoMediasVBox;

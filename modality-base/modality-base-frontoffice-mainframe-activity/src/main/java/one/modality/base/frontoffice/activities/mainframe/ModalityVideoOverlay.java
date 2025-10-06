@@ -64,7 +64,8 @@ public class ModalityVideoOverlay {
         if (FULLSCREEN_BUTTON_IN_PLAYER) {
             overlayChildren = playingPlayer.getOverlayChildren();
             overlayArea = playingPlayer.getMediaView();
-            if (!overlayChildren.contains(RELOAD_BUTTON)) {
+            if (!overlayChildren.isEmpty() // excludes the video-on-demand player whose overlay is empty (we don't display the reload button there)
+                && !overlayChildren.contains(RELOAD_BUTTON)) {
                 overlayChildren.add(RELOAD_BUTTON);
             }
             RELOAD_BUTTON.setOnMouseClicked(e -> playingPlayer.reload());
@@ -117,6 +118,7 @@ public class ModalityVideoOverlay {
             MediaButtons.animateFullscreenButton(fullscreenButton);
         else if (!FULLSCREEN_BUTTON_ANIMATED) {
             MediaButtons.animateFullscreenButton(fullscreenButton, () -> {
+                RELOAD_BUTTON.opacityProperty().unbind();
                 Animations.fadeIn(RELOAD_BUTTON).setOnFinished(e -> RELOAD_BUTTON.opacityProperty().bind(FULLSCREEN_BUTTON.opacityProperty()));
             });
             // When the fullscreen button is displayed in the player, we can't keep it shown all the time because it
