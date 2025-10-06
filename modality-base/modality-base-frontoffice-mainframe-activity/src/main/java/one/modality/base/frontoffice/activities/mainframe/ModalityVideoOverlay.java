@@ -64,20 +64,21 @@ public class ModalityVideoOverlay {
         if (FULLSCREEN_BUTTON_IN_PLAYER) {
             overlayChildren = playingPlayer.getOverlayChildren();
             overlayArea = playingPlayer.getMediaView();
-            if (!overlayChildren.isEmpty() // excludes the video-on-demand player whose overlay is empty (we don't display the reload button there)
-                && !overlayChildren.contains(RELOAD_BUTTON)) {
-                overlayChildren.add(RELOAD_BUTTON);
-            }
-            RELOAD_BUTTON.setOnMouseClicked(e -> playingPlayer.reload());
         } else {
             overlayChildren = FXMainFrameOverlayArea.getOverlayChildren();
             overlayArea = FXMainFrameOverlayArea.getOverlayArea();
         }
         // Translating the fullscreen button down and then animate it
         if (!overlayChildren.contains(FULLSCREEN_BUTTON)) {
+            if (!overlayChildren.isEmpty() // excludes the video-on-demand player whose overlay is empty (we don't display the reload button there)
+                && !overlayChildren.contains(RELOAD_BUTTON)) {
+                overlayChildren.add(RELOAD_BUTTON);
+            }
+            RELOAD_BUTTON.setManaged(false);
+            RELOAD_BUTTON.setOnMouseClicked(e -> playingPlayer.reload());
+
             overlayChildren.add(FULLSCREEN_BUTTON);
             FULLSCREEN_BUTTON.setManaged(false); // We don't want the player overlay (StackPane) to center and resize
-            RELOAD_BUTTON.setManaged(false);
             // the fullscreen button, we manage it ourselves as follows:
             FULLSCREEN_LAYOUT = FXProperties.runNowAndOnPropertiesChange(() -> {
                 double width = overlayArea.getWidth();
