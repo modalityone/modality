@@ -85,14 +85,16 @@ public class ModalityVideoOverlay {
 
             overlayChildren.add(FULLSCREEN_BUTTON);
             FULLSCREEN_BUTTON.setManaged(false); // We don't want the player overlay (StackPane) to center and resize
-            // the fullscreen button, we manage it ourselves as follows:
-            FULLSCREEN_LAYOUT = FXProperties.runNowAndOnPropertiesChange(() -> {
-                double width = overlayArea.getWidth();
-                FULLSCREEN_BUTTON.resizeRelocate(width - 60, 10, 50, 50);
-                RELOAD_BUTTON.resizeRelocate(width - 60, overlayArea.getHeight() / 2 - 25, 50, 50);
-            }, overlayArea.widthProperty(), overlayArea.heightProperty());
             FULLSCREEN_BUTTON.setTranslateY(-60);
         }
+        // the fullscreen button, we manage it ourselves as follows:
+        if (FULLSCREEN_LAYOUT != null)
+            FULLSCREEN_LAYOUT.unregister();
+        FULLSCREEN_LAYOUT = FXProperties.runNowAndOnPropertiesChange(() -> {
+            double width = overlayArea.getWidth();
+            FULLSCREEN_BUTTON.resizeRelocate(width - 60, 10, 50, 50);
+            RELOAD_BUTTON.resizeRelocate(width - 60, overlayArea.getHeight() / 2 - 25, 50, 50);
+        }, overlayArea.widthProperty(), overlayArea.heightProperty());
         FULLSCREEN_BUTTON_ANIMATED = false;
         stopPreviousFullscreenButtonAnimation();
         if (FULLSCREEN_BUTTON.getTranslateY() < 0) {
