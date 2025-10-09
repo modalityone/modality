@@ -1,5 +1,6 @@
 package one.modality.base.shared.entities.util;
 
+import dev.webfx.platform.util.Booleans;
 import dev.webfx.platform.util.collection.Collections;
 import one.modality.base.shared.entities.Attendance;
 import one.modality.base.shared.entities.Item;
@@ -32,6 +33,15 @@ public final class ScheduledItems {
     public static List<ScheduledItem> filterFamily(List<ScheduledItem> scheduledItems, KnownItemFamily family) {
         return Collections.filter(scheduledItems, scheduledItem -> isOfFamily(scheduledItem, family));
     }
+
+    public static Stream<ScheduledItem> filterNotCancelled(Stream<ScheduledItem> scheduledItems) {
+        return scheduledItems.filter(scheduledItem -> Booleans.isNotTrue(scheduledItem.isCancelled()));
+    }
+
+    public static List<ScheduledItem> filterNotCancelled(List<ScheduledItem> scheduledItems) {
+        return Collections.filter(scheduledItems, scheduledItem -> Booleans.isNotTrue(scheduledItem.isCancelled()));
+    }
+
 
     public static Map<Item, List<ScheduledItem>> groupScheduledItemsByItems(Stream<ScheduledItem> scheduledItems) {
         return scheduledItems
