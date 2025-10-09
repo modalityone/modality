@@ -13,10 +13,10 @@ module modality.booking.frontoffice.bookingform {
     requires transitive modality.ecommerce.payment;
     requires webfx.extras.async;
     requires webfx.extras.panes;
+    requires webfx.extras.util.layout;
     requires webfx.kit.util;
     requires webfx.platform.async;
     requires webfx.platform.uischeduler;
-    requires webfx.extras.util.layout;
 
     // Exported packages
     exports one.modality.booking.frontoffice.bookingform;
