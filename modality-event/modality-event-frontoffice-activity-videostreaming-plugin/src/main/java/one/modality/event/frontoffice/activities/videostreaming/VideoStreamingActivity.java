@@ -79,7 +79,7 @@ final class VideoStreamingActivity extends ViewDomainActivityBase {
             if (modalityUserPrincipal != null) {
                 Object userAccountId = modalityUserPrincipal.getUserAccountId();
                 eventsWithBookedVideosLoadingProperty.set(true);
-                // we look for the scheduledItem having a `bookableScheduledItem` which is an audio type (case of festival)
+                // we look for the scheduledItem having a `bookableScheduledItem` which is a video type
                 entityStore.<DocumentLine>executeQueryWithCache("modality/event/video-streaming/document-lines",
                         "select document.event.(name, label, shortDescription, shortDescriptionLabel, audioExpirationDate, startDate, endDate, livestreamUrl, timezone, vodExpirationDate, repeatVideo, recurringWithVideo, repeatedEvent, livestreamMessageLabel), item.(code, family.code)" +
                         // We look if there are published audio ScheduledItem of type video, whose bookableScheduledItem has been booked
