@@ -1,9 +1,9 @@
 // File managed by WebFX (DO NOT EDIT MANUALLY)
 
 /**
- * Plugin module to declare the backward and forward navigation operations in Java.
+ * Plugin module to declare the backward and forward navigation operations in OpenJFX.
  */
-module modality.base.client.navigationarrows.java.plugin {
+module modality.base.client.navigationarrows.openjfx.plugin {
 
     // Direct dependencies modules
     requires webfx.stack.routing.router.client;

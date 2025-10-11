@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project>
 
-    <description>Plugin module to declare the backward and forward navigation operations in Java.</description>
+    <description>Plugin module to declare the backward and forward navigation operations in OpenJFX.</description>
 
     <exported-packages>
         <source-packages/>

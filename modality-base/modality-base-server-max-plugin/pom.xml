@@ -26,7 +26,7 @@
 
         <dependency>
             <groupId>dev.webfx</groupId>
-            <artifactId>webfx-platform-conf-file-java-plugin</artifactId>
+            <artifactId>webfx-platform-conf-file-jre-plugin</artifactId>
             <version>0.1.0-SNAPSHOT</version>
             <scope>runtime</scope>
         </dependency>

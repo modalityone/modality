@@ -11,9 +11,9 @@
         <version>1.0.0-SNAPSHOT</version>
     </parent>
 
-    <artifactId>modality-base-client-navigationarrows-java-plugin</artifactId>
+    <artifactId>modality-base-client-navigationarrows-openjfx-plugin</artifactId>
 
-    <description>Plugin module to declare the backward and forward navigation operations in Java.</description>
+    <description>Plugin module to declare the backward and forward navigation operations in OpenJFX.</description>
 
     <dependencies>
 

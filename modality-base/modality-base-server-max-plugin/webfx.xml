@@ -11,7 +11,7 @@
         <used-by-source-modules/>
 
         <!-- Allowing configuration variables from file (conf folder) & system properties (ex: user.dir) in executables (Vert.x) -->
-        <plugin-module>webfx-platform-conf-file-java-plugin</plugin-module>
+        <plugin-module>webfx-platform-conf-file-jre-plugin</plugin-module>
         <plugin-module>webfx-platform-substitution-var-conf-plugin</plugin-module>
         <plugin-module>webfx-platform-substitution-var-sysprop-plugin</plugin-module>
 

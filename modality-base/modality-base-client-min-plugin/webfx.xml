@@ -9,7 +9,7 @@
     <dependencies>
         <used-by-source-modules/>
 
-        <plugin-module executable-target="java">modality-base-client-navigationarrows-java-plugin</plugin-module>
+        <plugin-module executable-target="openjfx">modality-base-client-navigationarrows-openjfx-plugin</plugin-module>
 
         <plugin-module>modality-base-client-i18n</plugin-module>
         <plugin-module>modality-base-client-css</plugin-module>
