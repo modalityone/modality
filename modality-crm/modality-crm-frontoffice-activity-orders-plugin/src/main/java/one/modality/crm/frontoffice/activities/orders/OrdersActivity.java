@@ -93,7 +93,13 @@ final class OrdersActivity extends ViewDomainActivityBase implements ModalityBut
             else if (upcomingOrderCards.isEmpty())
                 activeOrdersContainer.getChildren().setAll(Bootstrap.strong(Bootstrap.textSecondary(I18nControls.newLabel(OrdersI18nKeys.NoActiveOrders))));
             else
+            {
                 ObservableLists.setAllConverted(upcomingOrderCards, OrderCard::getView, activeOrdersContainer.getChildren());
+                for (OrderCard orderCard : upcomingOrderCards) {
+                    //We expand all the upcoming orders by default
+                    orderCard.expandDetails();
+                }
+            }
         }), upcomingOrdersMapper.callingProperty());
 
         Label completedOrdersLabel = Bootstrap.strong(Bootstrap.textSecondary(Bootstrap.h4(I18nControls.newLabel(OrdersI18nKeys.CompletedOrders))));
@@ -184,9 +190,9 @@ final class OrdersActivity extends ViewDomainActivityBase implements ModalityBut
         // Upcoming orders
         upcomingOrdersMapper = ReactiveObjectsMapper.<Document, OrderCard>createReactiveChain(this)
             .always( // language=JSON5
-                "{class: 'Document', alias: 'd'}")
+                "{class: 'Document', alias: 'd', fields: 'event.vodExpirationDate' }")
             .always(DqlStatement.fields(OrderCard.ORDER_REQUIRED_FIELDS))
-            .always(where("event.endDate >= now()"))
+            .always(where("event.endDate >= now() or event.vodExpirationDate >= now()"))
             .always(where("!abandoned or price_deposit>0"))
             .ifNotNullOtherwiseEmpty(FXModalityUserPrincipal.modalityUserPrincipalProperty(), mup -> where("accountCanAccessPersonOrders(?, person)", mup.getUserAccountId()))
             .always(orderBy(OrderStatus.getBookingStatusOrderExpression(true)))
@@ -198,14 +204,13 @@ final class OrdersActivity extends ViewDomainActivityBase implements ModalityBut
         // Past orders
         completedOrdersMapper = ReactiveEntitiesMapper.<Document>createReactiveChain(this)
             .always( // language=JSON5
-                "{class: 'Document', alias: 'd', orderBy: 'event.startDate desc, ref desc', limit: 5}")
+                "{class: 'Document', alias: 'd', fields: 'event.vodExpirationDate', orderBy: 'event.startDate desc, ref desc', limit: 5}")
             .always(DqlStatement.fields(OrderCard.ORDER_REQUIRED_FIELDS))
-            .always(where("event.endDate < now()"))
+            .always(where("event.endDate < now() and (event.vodExpirationDate==null or event.vodExpirationDate < now())"))
             .always(where("!abandoned or price_deposit>0"))
             .ifNotNullOtherwiseEmpty(FXModalityUserPrincipal.modalityUserPrincipalProperty(), mup -> where("accountCanAccessPersonOrders(?, person)", mup.getUserAccountId()))
             .ifNotNull(loadPastEventsBeforeDateProperty, date -> where("event.startDate < ?", date))
             .storeEntitiesInto(pastOrdersFeed)
             .start();
     }
-
 }

@@ -113,6 +113,10 @@ public final class OrderCard {
         return autoScrollAndExpand;
     }
 
+    public void expandDetails() {
+        loadAndExpandOrderDetails(false);
+    }
+
     // Private implementation
 
     /**
