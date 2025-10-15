@@ -35,7 +35,9 @@ import one.modality.base.shared.entities.Media;
 import one.modality.base.shared.entities.ScheduledItem;
 import one.modality.crm.shared.services.authn.fx.FXUserPersonId;
 import one.modality.event.frontoffice.medias.MediaConsumptionRecorder;
+import one.modality.event.frontoffice.medias.TimeZoneSwitch;
 
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -65,6 +67,7 @@ final class LivestreamAndVideoPlayers {
         this.videoScheduledItems = videoScheduledItems;
         videoCollapsePane.collapse(); // initially collapsed - might be automatically expanded by scheduleAutoLivestream()
         decoratedVideoCollapsePane.setVisible(false); // will be visible if it contains at least a video or livestream
+
     }
 
     public void startLogic(EntityStore entityStore) {
@@ -81,6 +84,10 @@ final class LivestreamAndVideoPlayers {
                 populateVideoPlayers(false); // will load the video player
                 scheduleAutoLivestream(); // may auto-expand the video player if now is an appropriate time
             });
+            //If the event is finished, we display the local date/time for the video
+            if(eventProperty.get() != null && eventProperty.get().getEndDate().isBefore(LocalDate.now())) {
+                TimeZoneSwitch.getGlobal().setEventLocalTimeSelected(true);
+            }
         }, videoScheduledItems);
         // Later Media loading when the user wants to watch a specific video (this sets watchVideoItemProperty)
         FXProperties.runOnPropertiesChange(() -> {
