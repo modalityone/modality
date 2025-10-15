@@ -72,6 +72,10 @@ public final class TimeZoneSwitch {
         return eventLocalTimeSelectedProperty.get();
     }
 
+    public void setEventLocalTimeSelected(boolean value) {
+        eventLocalTimeSelectedProperty.set(value);
+    }
+
     /**
      * Converts a LocalTime from the event timezone to the user timezone for a specific event-local date.
      * Passing the exact eventLocalDate is important to account for daylight saving transitions.
