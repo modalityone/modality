@@ -22,7 +22,6 @@ module modality.ecommerce.backoffice.operations.document {
     requires webfx.platform.async;
     requires webfx.stack.orm.entity;
     requires webfx.stack.orm.entity.controls;
-    requires webfx.extras.panes;
 
     // Exported packages
     exports one.modality.ecommerce.backoffice.operations.entities.document;

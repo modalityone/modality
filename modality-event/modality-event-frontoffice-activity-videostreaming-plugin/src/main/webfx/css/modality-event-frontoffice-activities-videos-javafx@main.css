@@ -164,3 +164,21 @@
 .notification-bar Button.notification-close:hover {
     -fx-text-fill: -notification-close-hover-color;
 }
+
+.notice-icon {
+    -fx-background-color: -notification-border-color;
+    -fx-background-radius: 45;
+}
+
+.notice-label {
+     -fx-font-size: 40px;
+     -fx-text-fill: #FFFFFF;
+     -fx-font-weight: bold;
+}
+
+.balance-box {
+    -fx-background-color: #f9fafb;
+    -fx-border-color: #e5e7eb;
+    -fx-border-radius: 6;
+    -fx-background-radius: 6;
+}

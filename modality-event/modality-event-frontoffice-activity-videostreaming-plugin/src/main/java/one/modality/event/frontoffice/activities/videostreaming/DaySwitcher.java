@@ -153,7 +153,11 @@ public class DaySwitcher {
         // Automatically selecting today if today is part of the event
         if (!availableDates.contains(selectedDate)) {
             TimeZoneSwitch timeZoneSwitch = TimeZoneSwitch.getGlobal();
-            selectedDate = timeZoneSwitch.isEventLocalTimeSelected() ? LocalDate.now(timeZoneSwitch.getEventZoneId()) : LocalDate.now();
+            if(timeZoneSwitch.isEventLocalTimeSelected()  && timeZoneSwitch.getEventZoneId()!=null) {
+                selectedDate = timeZoneSwitch.isEventLocalTimeSelected() ? LocalDate.now(timeZoneSwitch.getEventZoneId()) : LocalDate.now();
+            } else {
+                selectedDate =  LocalDate.now();
+            }
         }
 
         setSelectedDate(selectedDate);

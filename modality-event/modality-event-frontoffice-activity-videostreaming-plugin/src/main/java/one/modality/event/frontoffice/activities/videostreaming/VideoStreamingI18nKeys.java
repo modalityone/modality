@@ -35,5 +35,11 @@ public interface VideoStreamingI18nKeys {
     Object SelectAnotherEvent = "SelectAnotherEvent";
     Object VideoExpiredOn1 = "VideoExpiredOn1";
     Object PastRecordings = "PastRecordings";
+    Object OutstandingBalance = "OutstandingBalance";
+    Object CompleteYourRegistration = "CompleteYourRegistration";
+    Object PayBalanceNow = "PayBalanceNow";
+    Object RegistrationAlmostComplete = "RegistrationAlmostComplete";
+    Object RegistrationNotConfirmedExplanation = "RegistrationNotConfirmedExplanation";
+    Object RegistrationNotConfirmed = "RegistrationNotConfirmed";
 
 }
