@@ -14,6 +14,7 @@ import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import one.modality.base.shared.entities.*;
 import one.modality.base.shared.entities.util.DocumentLines;
+import one.modality.base.shared.entities.util.ScheduledItems;
 import one.modality.base.shared.knownitems.KnownItemFamily;
 import one.modality.ecommerce.document.service.*;
 import one.modality.ecommerce.document.service.events.AbstractDocumentEvent;
@@ -169,7 +170,7 @@ public final class WorkingBooking {
     }
 
     public void bookWholeEvent() {
-        bookScheduledItems(policyAggregate.filterTeachingScheduledItems(), false);
+        bookScheduledItems(ScheduledItems.filterNotCancelled(policyAggregate.filterTeachingScheduledItems()), false);
     }
 
     public void removeAttendance(Attendance attendance) {

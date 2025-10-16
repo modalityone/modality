@@ -18,6 +18,7 @@ import javafx.scene.text.Text;
 import one.modality.base.client.time.FrontOfficeTimeFormats;
 import one.modality.base.shared.entities.ScheduledItem;
 import one.modality.base.shared.entities.Timeline;
+import one.modality.base.shared.entities.util.ScheduledItems;
 import one.modality.booking.client.scheduleditemsselector.ScheduledItemsSelector;
 
 import java.time.LocalDate;
@@ -85,8 +86,10 @@ public final class BoxScheduledItemsSelector implements ScheduledItemsSelector {
 
     @Override
     public void setSelectableScheduledItems(List<ScheduledItem> selectableScheduledItems, boolean reapplyClickedDates) {
+        // We ensured they are sorted by date
         selectableScheduledItems.sort(Comparator.comparing(ScheduledItem::getDate));
-        this.selectableScheduledItems.setAll(selectableScheduledItems);
+        // We dont show cancelled scheduled items
+        this.selectableScheduledItems.setAll(ScheduledItems.filterNotCancelled(selectableScheduledItems));
         selectedDates.clear();
         List<LocalDate> clickedDatesToReapply = !reapplyClickedDates ? Collections.emptyList() : this.selectableScheduledItems.stream()
                 .map(ScheduledItem::getDate)
