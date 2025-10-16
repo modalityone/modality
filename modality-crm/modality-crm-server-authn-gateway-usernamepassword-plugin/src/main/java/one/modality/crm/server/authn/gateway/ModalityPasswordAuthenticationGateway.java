@@ -245,7 +245,7 @@ public final class ModalityPasswordAuthenticationGateway implements ServerAuthen
     @Override
     public Future<?> verifyAuthenticated() {
         Object userId = ThreadLocalStateHolder.getUserId();
-        Console.log("👮👮👮👮👮 Checking userId=[%s]".formatted(userId));
+        Console.log("👮 Checking userId=[%s]".formatted(userId));
         return queryModalityUserPerson("id")
             .map(ignoredQueryResult -> userId);
     }
