@@ -7,13 +7,17 @@ module modality.event.frontoffice.activity.audiolibrary.plugin {
     requires javafx.controls;
     requires javafx.graphics;
     requires modality.base.client.bootstrap;
+    requires modality.base.client.icons;
     requires modality.base.client.time;
     requires modality.base.client.util;
     requires modality.base.frontoffice.utility;
+    requires modality.base.shared.domainmodel;
     requires modality.base.shared.entities;
     requires modality.base.shared.knownitems;
     requires modality.crm.client.authn.fx;
     requires modality.crm.frontoffice.help;
+    requires modality.ecommerce.frontoffice.order;
+    requires modality.event.frontoffice.activity.videostreaming.plugin;
     requires modality.event.frontoffice.eventheader;
     requires modality.event.frontoffice.medias;
     requires webfx.extras.async;
@@ -43,6 +47,7 @@ module modality.event.frontoffice.activity.audiolibrary.plugin {
     requires webfx.stack.orm.reactive.visual;
     requires webfx.stack.routing.router.client;
     requires webfx.stack.routing.uirouter;
+    requires webfx.platform.ast;
 
     // Exported packages
     exports one.modality.event.frontoffice.activities.audiolibrary;

@@ -24,6 +24,8 @@ module modality.event.frontoffice.medias {
     requires webfx.platform.shutdown;
     requires webfx.platform.util;
     requires webfx.stack.orm.entity;
+    requires modality.base.shared.domainmodel;
+    requires modality.ecommerce.frontoffice.order;
 
     // Exported packages
     exports one.modality.event.frontoffice.medias;
