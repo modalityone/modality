@@ -47,6 +47,9 @@ import one.modality.crm.shared.services.authn.fx.FXUserPersonId;
 import one.modality.ecommerce.frontoffice.order.OrderActions;
 import one.modality.event.frontoffice.eventheader.EventHeader;
 import one.modality.event.frontoffice.eventheader.MediaEventHeader;
+import one.modality.event.frontoffice.medias.NoContentView;
+import one.modality.event.frontoffice.medias.NotConfirmedView;
+import one.modality.event.frontoffice.medias.PaymentPendingView;
 import one.modality.event.frontoffice.medias.TimeZoneSwitch;
 
 
@@ -58,7 +61,6 @@ import one.modality.event.frontoffice.medias.TimeZoneSwitch;
  */
 final class VideoStreamingActivity extends ViewDomainActivityBase {
 
-    // Define the state enum
     public enum VideoContentState {
         LOADING,
         NO_CONTENT,
@@ -85,6 +87,7 @@ final class VideoStreamingActivity extends ViewDomainActivityBase {
 
     // Main UI elements
     private final MonoPane pageContainer = new MonoPane(); // Will hold either the loading indicator or the loaded content
+    private final VBox mediaContentContainer = new VBox(40); //Will hold the players, track list, or warning or error message
     final EventSelector eventSelector = new EventSelector(eventProperty, eventsWithBookedVideos);
     final LivestreamAndVideoPlayers livestreamAndVideoPlayers = new LivestreamAndVideoPlayers(eventProperty, videoScheduledItems);
     final Timetable timetable = new Timetable(videoScheduledItems, pageContainer, this);
@@ -224,12 +227,12 @@ final class VideoStreamingActivity extends ViewDomainActivityBase {
 
         EventHeader eventHeader = new MediaEventHeader(true);
         eventHeader.eventProperty().bind(eventProperty);
-
+        mediaContentContainer.getChildren().addAll(livestreamAndVideoPlayers.buildUi(pageContainer),
+                                                    timetable.buildUi());
         VBox loadedContentVBox = new VBox(40,
             eventSelector.buildUi(),
             eventHeader.getView(), // contains the event image and the event title
-            livestreamAndVideoPlayers.buildUi(pageContainer),
-            timetable.buildUi(),
+            mediaContentContainer,
             // General help panel
             // HelpPanel.createEmailHelpPanel(VideoStreamingI18nKeys.VideosHelp, "kbs@kadampa.net")
             // For Festivals:
@@ -262,6 +265,10 @@ final class VideoStreamingActivity extends ViewDomainActivityBase {
         // ************************************* Building final container **********************************************
         // *************************************************************************************************************
 
+        // Otherwise, we display the loaded content
+        pageContainer.setContent(loadedContentVBox);
+        // and ensure the program is displayed in the appropriate mode (Ex: Festival or STTP)
+        timetable.updateProgramDisplayMode();
         pageContainer.getStyleClass().add("livestream");
         return FOPageUtil.restrictToMaxPageWidthAndApplyPageLeftTopRightBottomPadding(pageContainer);
     }
@@ -271,155 +278,38 @@ final class VideoStreamingActivity extends ViewDomainActivityBase {
         EventHeader eventHeader = new MediaEventHeader(true);
         eventHeader.eventProperty().bind(eventProperty);
 
-        VBox loadedContentVBox = new VBox(40,
-                eventSelector.buildUi(),
-                eventHeader.getView(), // contains the event image and the event title
-                livestreamAndVideoPlayers.buildUi(pageContainer),
-                timetable.buildUi(),
-                // General help panel
-                // HelpPanel.createEmailHelpPanel(VideoStreamingI18nKeys.VideosHelp, "kbs@kadampa.net")
-                // For Festivals:
-                HelpPanel.createHelpPanel(VideoStreamingI18nKeys.VideosHelp, VideoStreamingI18nKeys.VideosHelpSecondary) // temporarily hardcoded i18n message for Festivals
-        );
-        Layouts.setMinMaxHeightToPref(loadedContentVBox); // No need to compute min/max height as different to pref (layout computation optimization)
-        loadedContentVBox.setAlignment(Pos.TOP_CENTER);
-
         // We display the loading indicator while the data is loading
         if (state==VideoContentState.LOADING) { // this indicates that the data has not finished loaded
-            pageContainer.setContent(loadingContentIndicator); // TODO display something else (ex: next online events to book) when the user is not logged in, or registered
+            mediaContentContainer.getChildren().setAll(loadingContentIndicator);
             return;
         }
 
         // If the user didn't book any event with videos, we display "no content"
         if (state==VideoContentState.NO_CONTENT) {
-            Label noContentTitleLabel = Bootstrap.h3(I18nControls.newLabel(VideoStreamingI18nKeys.NoVideoInYourLibrary));
-            noContentTitleLabel.setContentDisplay(ContentDisplay.TOP);
-            noContentTitleLabel.setGraphicTextGap(20);
-            Label noContentText = I18nControls.newLabel(VideoStreamingI18nKeys.YourNextLiveStreamEventWillAppearHere);
-            VBox noContentVBox = new VBox(30, noContentTitleLabel, noContentText);
-            noContentVBox.setAlignment(Pos.TOP_CENTER);
-            pageContainer.setContent(noContentVBox);
+            NoContentView content = new NoContentView("VIDEO");
+            mediaContentContainer.getChildren().setAll(content.getView());
             return;
         }
 
         if(state==VideoContentState.PAYMENT_PENDING){
             int balance = (int) eventProperty.get().getFieldValue("balance");
             Document orderDocument = (Document) eventProperty.get().getFieldValue("document");
-            MonoPane noticeIcon = new MonoPane();
-            noticeIcon.setMinSize(80, 80);
-            noticeIcon.setPrefSize(80, 80);
-            noticeIcon.setMaxSize(80, 80);
-            noticeIcon.getStyleClass().add("notice-icon");
-            SVGPath warningPath = SvgIcons.createWarningPath();
-            warningPath.setFill(Color.WHITE);
-
-            noticeIcon.setContent(warningPath);
-            warningPath.getStyleClass().add("notice-label");
-            noticeIcon.setAlignment(Pos.CENTER);
-            // Title
-            Label titleLabel = Bootstrap.h3(I18nControls.newLabel(VideoStreamingI18nKeys.CompleteYourRegistration));
-            titleLabel.setWrapText(true);
-            titleLabel.setTextAlignment(TextAlignment.CENTER);
-
-            // Description text
-            Label descriptionLabel = Bootstrap.textSecondary(I18nControls.newLabel(VideoStreamingI18nKeys.RegistrationAlmostComplete));
-            descriptionLabel.setWrapText(true);
-            descriptionLabel.setTextAlignment(TextAlignment.CENTER);
-            descriptionLabel.setMaxWidth(500);
-
-            // Balance amount container
-            VBox balanceBox = new VBox(8);
-            balanceBox.setAlignment(Pos.CENTER);
-            balanceBox.getStyleClass().add("balance-box");
-            balanceBox.setPadding(new Insets(20));
-            balanceBox.setMinWidth(250);
-
-            Label balanceLabel = Bootstrap.h4(Bootstrap.strong(Bootstrap.textSecondary(I18nControls.newLabel(VideoStreamingI18nKeys.OutstandingBalance))));
-            // balanceLabel.setStyle("-fx-font-size: 14px; -fx-text-fill: #6b7280; -fx-font-weight: 500;");
-
-            Label balanceValue = Bootstrap.h3(new Label(PriceFormatter.formatWithCurrency(balance, EventPriceFormatter.getEventCurrencySymbol(eventProperty.get()))));
-
-            balanceBox.getChildren().addAll(balanceLabel, balanceValue);
-
-            // Payment button
-            Button makePaymentButton = OrderActions.newMakePaymentButton(orderDocument);
-            // Get the existing action
-            EventHandler<ActionEvent> oldHandler = makePaymentButton.getOnAction();
-            // Set a new combined action
-            makePaymentButton.setOnAction(e -> {
-                // First, call the original action if it exists
-                if (oldHandler != null) {
-                    oldHandler.handle(e);
-                }
-                // Then do your new action
-                isPaymentCurrentlyProcessing = true;
-            });
-
-            // Main payment notice container
-            VBox paymentNoticeVBox = new VBox(24, noticeIcon, titleLabel, descriptionLabel, balanceBox, makePaymentButton);
-            paymentNoticeVBox.setAlignment(Pos.TOP_CENTER);
-            // paymentNoticeVBox.setStyle("-fx-background-color: white; -fx-background-radius: 8; -fx-padding: 50 40; -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.1), 3, 0, 0, 1);");
-            paymentNoticeVBox.setMaxWidth(900);
-
-            VBox currentContentVBox = new VBox(40,
-                    eventSelector.buildUi(),
-                    eventHeader.getView(), // contains the event image and the event title
-                    paymentNoticeVBox,
-                    // General help panel
-                    // HelpPanel.createEmailHelpPanel(VideoStreamingI18nKeys.VideosHelp, "kbs@kadampa.net")
-                    // For Festivals:
-                    HelpPanel.createHelpPanel(VideoStreamingI18nKeys.VideosHelp, VideoStreamingI18nKeys.VideosHelpSecondary) // temporarily hardcoded i18n message for Festivals
+            PaymentPendingView paymentView = new PaymentPendingView(
+                balance,
+                eventProperty.get(),
+                orderDocument,
+                () -> isPaymentCurrentlyProcessing = true,
+                "VIDEO"
             );
-            Layouts.setMinMaxHeightToPref(currentContentVBox); // No need to compute min/max height as different to pref (layout computation optimization)
-            currentContentVBox.setAlignment(Pos.TOP_CENTER);
-            pageContainer.setContent(currentContentVBox);
+            mediaContentContainer.getChildren().setAll(paymentView.getView());
             return;
         }
         //Case where the event is not confirmed
         if(state==VideoContentState.NOT_CONFIRMED){
-            MonoPane noticeIcon = new MonoPane();
-            noticeIcon.setMinSize(80, 80);
-            noticeIcon.setPrefSize(80, 80);
-            noticeIcon.setMaxSize(80, 80);
-            noticeIcon.getStyleClass().add("notice-icon");
-            SVGPath warningPath = SvgIcons.createWarningPath();
-            warningPath.setFill(Color.WHITE);
-
-            noticeIcon.setContent(warningPath);
-            warningPath.getStyleClass().add("notice-label");
-            noticeIcon.setAlignment(Pos.CENTER);
-            // Title
-            Label titleLabel = Bootstrap.h3(I18nControls.newLabel(VideoStreamingI18nKeys.RegistrationNotConfirmed));
-            titleLabel.setWrapText(true);
-            titleLabel.setTextAlignment(TextAlignment.CENTER);
-
-            // Description text
-            Label descriptionLabel = Bootstrap.textSecondary(I18nControls.newLabel(VideoStreamingI18nKeys.RegistrationNotConfirmedExplanation));
-            descriptionLabel.setWrapText(true);
-            descriptionLabel.setTextAlignment(TextAlignment.CENTER);
-            descriptionLabel.setMaxWidth(500);
-
-            VBox currentContentVBox = new VBox(40,
-                    eventSelector.buildUi(),
-                    eventHeader.getView(), // contains the event image and the event title
-                    noticeIcon,
-                    titleLabel,
-                    descriptionLabel,
-                    // General help panel
-                    // HelpPanel.createEmailHelpPanel(VideoStreamingI18nKeys.VideosHelp, "kbs@kadampa.net")
-                    // For Festivals:
-                    HelpPanel.createHelpPanel(VideoStreamingI18nKeys.VideosHelp, VideoStreamingI18nKeys.VideosHelpSecondary) // temporarily hardcoded i18n message for Festivals
-            );
-            Layouts.setMinMaxHeightToPref(currentContentVBox); // No need to compute min/max height as different to pref (layout computation optimization)
-            currentContentVBox.setAlignment(Pos.TOP_CENTER);
-            pageContainer.setContent(currentContentVBox);
+            NotConfirmedView notConfirmedView = new NotConfirmedView();
+            mediaContentContainer.getChildren().setAll(notConfirmedView.getView());
             return;
         }
-
-        // Otherwise, we display the loaded content
-        pageContainer.setContent(loadedContentVBox);
-        // and ensure the program is displayed in the appropriate mode (Ex: Festival or STTP)
-        timetable.updateProgramDisplayMode();
     }
 
 

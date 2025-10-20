@@ -12,5 +12,12 @@ public interface MediasI18nKeys {
     Object ExpiredSince1 = "ExpiredSince1";
     Object View = "View";
     Object Unavailable = "Unavailable";
+    Object OutstandingBalance = "OutstandingBalance";
+    Object PayBalanceNow = "PayBalanceNow";
+    Object RegistrationAlmostComplete = "RegistrationAlmostComplete";
+    Object NoContentPublished = "NoContentPublished";
+    Object RegistrationNotConfirmedExplanation = "RegistrationNotConfirmedExplanation";
+    Object NoContentAvailable = "NoContentAvailable";
+    Object RegistrationNotConfirmed = "RegistrationNotConfirmed";
 
 }

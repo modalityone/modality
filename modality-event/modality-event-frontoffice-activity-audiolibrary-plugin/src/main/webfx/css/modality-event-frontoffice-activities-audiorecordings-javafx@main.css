@@ -9,6 +9,9 @@
 }
 
 /** styles for the audio desktop table and mobile view **/
+.audio-library {
+    -notification-border-color: #FF6D00;
+}
 
 .audio-library .name, .audio-library .btn {
     -fx-font-weight: 600; /* semi-bold */
@@ -33,3 +36,5 @@
     -fx-font-size: 10px;
     -fx-text-fill: -bootstrap-grey5;
 }
+
+

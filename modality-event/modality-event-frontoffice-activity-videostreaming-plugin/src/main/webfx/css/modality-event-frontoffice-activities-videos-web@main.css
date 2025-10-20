@@ -177,25 +177,3 @@
 .notification-bar fx-button.notification-close:hover fx-text {
     color: var(--notification-close-hover-color) ;
 }
-
-.notice-icon {
-    background-color: var(--notification-border-color);
-    border-radius: 40px;
-    width: 80px;
-    height: 80px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-}
-
-.notice-label fx-text {
-    font-size: 40px;
-    color: #FFFFFF;
-    font-weight: bold;
-}
-
-.balance-box {
-    background-color: #f9fafb;
-    border: 1px solid #e5e7eb;
-    border-radius: 6px;
-}
