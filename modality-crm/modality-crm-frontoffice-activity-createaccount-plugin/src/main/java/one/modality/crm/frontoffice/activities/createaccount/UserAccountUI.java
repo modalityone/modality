@@ -13,6 +13,7 @@ import dev.webfx.extras.util.layout.Layouts;
 import dev.webfx.extras.validation.ValidationSupport;
 import dev.webfx.kit.launcher.WebFxKitLauncher;
 import dev.webfx.platform.console.Console;
+import dev.webfx.platform.util.Booleans;
 import dev.webfx.platform.windowhistory.spi.BrowsingHistory;
 import dev.webfx.stack.authn.AuthenticationService;
 import dev.webfx.stack.authn.FinaliseAccountCreationCredentials;
@@ -49,7 +50,7 @@ public class UserAccountUI implements ModalityButtonFactoryMixin {
 
     protected TextField firstNameTextField, lastNameTextField, emailTextField, layNameTextField, phoneTextField, postCodeTextField, cityNameTextField;
     protected PasswordField passwordField, repeatPasswordField;
-    protected EntityButtonSelector countrySelector;
+    protected EntityButtonSelector<Country> countrySelector;
     private final BorderPane container = new BorderPane();
     //The property that will be used to decide if we display and manage some elements
     private final BooleanProperty emailManagedProperty = new SimpleBooleanProperty(true);
@@ -172,19 +173,11 @@ public class UserAccountUI implements ModalityButtonFactoryMixin {
         RadioButton optionFemale = I18nControls.newRadioButton(CrmI18nKeys.Female);
         optionFemale.setToggleGroup(maleFemaleToggleGroup);
         // Add a listener to the ToggleGroup to detect selection changes
-        maleFemaleToggleGroup.selectedToggleProperty().addListener((observable, oldValue, newValue) -> {
-            if (newValue != null) {
-                if (optionMale.isSelected()) {
-                    person.setMale(true);
-                }
-                if (optionFemale.isSelected()) {
-                    person.setMale(false);
-                }
-            }
-        });
-        optionMale.setSelected(null != person.isMale() && person.isMale());
-        optionFemale.setSelected(null != person.isMale() && !person.isMale());
-        //optionFemale.setSelected(!person.isMale());
+        maleFemaleToggleGroup.selectedToggleProperty().addListener((observable, oldValue, newToggle) ->
+            person.setMale(newToggle == null ? null : optionMale.isSelected())
+        );
+        optionMale.setSelected(Booleans.isTrue(person.isMale()));
+        optionFemale.setSelected(Booleans.isFalse(person.isMale()));
         HBox maleFemaleHBox = new HBox(20, optionMale, optionFemale);
         maleFemaleHBox.setPadding(new Insets(10, 0, 0, 0));
         maleFemaleHBox.setPrefWidth(FIELDS_MAX_WIDTH);
@@ -202,16 +195,11 @@ public class UserAccountUI implements ModalityButtonFactoryMixin {
         optionOrdained.setToggleGroup(layOrdainedToggleGroup);
 
         // Add a listener to the ToggleGroup to detect selection changes
-        layOrdainedToggleGroup.selectedToggleProperty().addListener((observable, oldValue, newValue) -> {
-            if (optionOrdained.isSelected()) {
-                person.setOrdained(true);
-            }
-            if (optionLay.isSelected()) {
-                person.setOrdained(false);
-            }
+        layOrdainedToggleGroup.selectedToggleProperty().addListener((observable, oldValue, newToggle) -> {
+            person.setOrdained(newToggle == null ? null : optionOrdained.isSelected());
         });
-        optionOrdained.setSelected(null != person.isOrdained() && person.isOrdained());
-        optionLay.setSelected(null == person.isOrdained() || !person.isOrdained());
+        optionOrdained.setSelected(Booleans.isTrue(person.isOrdained()));
+        optionLay.setSelected(Booleans.isFalse(person.isOrdained()));
         //optionLay.setSelected(!person.isOrdained());
         HBox layOrdainedHBox = new HBox(20, optionLay, optionOrdained);
         layOrdainedHBox.setPadding(new Insets(10, 0, 0, 0));
@@ -489,8 +477,7 @@ public class UserAccountUI implements ModalityButtonFactoryMixin {
             }
         }
             .setDialogPrefRowHeight(37)
-            .setDialogCellMargin(new Insets(17))
-            ;
+            .setDialogCellMargin(new Insets(17));
     }
 
     public void displayError(Throwable e) {

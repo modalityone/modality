@@ -11,4 +11,15 @@ public interface Label extends
     EntityHasIcon,
     EntityHasOrganization,
     EntityHasI18nFields {
+
+    String livestreamMessage = "livestreamMessage";
+
+    default void setLivestreamMessage(Boolean value) {
+        setFieldValue(livestreamMessage, value);
+    }
+
+    default Boolean isLivestreamMessage() {
+        return getBooleanFieldValue(livestreamMessage);
+    }
+
 }

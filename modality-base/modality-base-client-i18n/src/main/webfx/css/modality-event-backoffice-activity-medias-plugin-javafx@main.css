@@ -13,3 +13,31 @@
 .strikethrough LabeledText {
     -fx-strikethrough: true;
 }
+
+
+/* Error message box styling */
+.error-message-box {
+    -fx-background-color: #fee;
+    -fx-border-color: #fcc;
+    -fx-border-width: 1px;
+    -fx-border-radius: 4px;
+    -fx-background-radius: 4px;
+    -fx-padding: 10px 15px 10px 15px;
+    -fx-alignment: center-left;
+    -fx-spacing: 8px;
+    -fx-max-width: infinity;
+}
+
+/* Error message text styling */
+.error-message-text {
+    -fx-wrap-text: true;
+}
+
+/* Error icon styling */
+.error-icon {
+    -fx-font-size: 14px;
+    -fx-min-width: 20px;
+    -fx-pref-width: 20px;
+    -fx-max-width: 20px;
+    -fx-alignment: center-left;
+}

@@ -18,8 +18,8 @@ import one.modality.base.frontoffice.utility.page.FOPageUtil;
 import one.modality.base.frontoffice.utility.tyler.GeneralUtility;
 import one.modality.base.frontoffice.utility.tyler.StyleUtility;
 import one.modality.base.shared.entities.Event;
-import one.modality.ecommerce.frontoffice.bookingform.BookingForm;
-import one.modality.ecommerce.frontoffice.bookingform.GatewayPaymentForm;
+import one.modality.booking.frontoffice.bookingform.BookingForm;
+import one.modality.booking.frontoffice.bookingform.GatewayPaymentForm;
 import one.modality.ecommerce.payment.CancelPaymentResult;
 import one.modality.event.client.event.fx.FXEvent;
 import one.modality.event.frontoffice.activities.book.event.BookEventActivity;
@@ -182,6 +182,6 @@ final class StepBBookEventSlide extends StepSlide {
     }
 
     private void bindI18nEventExpression(Property<String> textProperty, String eventExpression, Object... args) {
-        I18nEntities.bindExpressionTextProperty(textProperty, FXEvent.lastNonNullEventProperty(), eventExpression, Arrays.add(Object[]::new, args, eventHeader.eventLoadedProperty()));
+        I18nEntities.bindExpressionToTextProperty(textProperty, FXEvent.lastNonNullEventProperty(), eventExpression, Arrays.add(Object[]::new, args, eventHeader.eventLoadedProperty()));
     }
 }

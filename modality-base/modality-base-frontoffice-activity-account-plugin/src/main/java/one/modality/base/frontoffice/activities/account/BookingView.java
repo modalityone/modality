@@ -205,9 +205,9 @@ public final class BookingView {
     }
 
     public void setEvent(Event event) {
-        I18nEntities.bindExpressionProperties(eventNameLabel,           event, "i18n(this)");
-        I18nEntities.bindExpressionProperties(eventCentreLocationText,  event, "'[At] ' + coalesce(i18n(venue), i18n(organization))");
-        I18nEntities.bindExpressionProperties(eventCountryLocationText, event, "coalesce(i18n(venue.country), i18n(organization.country))");
+        I18nEntities.bindTranslatedEntityToTextProperty(eventNameLabel,   event);
+        I18nEntities.bindExpressionToProperties(eventCentreLocationText,  event, "'[At] ' + coalesce(i18n(venue), i18n(organization))");
+        I18nEntities.bindExpressionToProperties(eventCountryLocationText, event, "coalesce(i18n(venue.country), i18n(organization.country))");
     }
 
     private Button createPaymentButton() {

@@ -38,6 +38,7 @@ public interface BaseI18nKeys {
     Object PortugueseWithFlag = "PortugueseWithFlag";
     Object CloseIcon = "CloseIcon";
     Object MandarinWithFlag = "MandarinWithFlag";
+    Object ItalianWithFlag = "ItalianWithFlag";
     Object FrenchWithFlag = "FrenchWithFlag";
     Object VietnameseWithFlag = "VietnameseWithFlag";
     Object DefaultPromptText = "DefaultPromptText";

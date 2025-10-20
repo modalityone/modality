@@ -88,3 +88,79 @@
     -fx-font-size: 16px;
     -fx-spacing: 10px;
 }
+
+.livestream {
+    /* Dark Amber Alert Scheme */
+    -notification-bg-primary: #BF360C;
+    -notification-bg-secondary: #D84315;
+    -notification-text-color: #FFFDE7;
+    -notification-border-color: #FF6D00;
+    -notification-icon-bg: rgba(255, 214, 0, 0.2);
+    -notification-close-color: #FFE0B2;
+    -notification-close-hover-bg: rgba(255, 214, 0, 0.2);
+    -notification-close-hover-color: #FFD600;
+
+    /* This is to uniformize the fullscreen button color with the notification bar color */
+    -modality-media-button-circle-background: -notification-bg-secondary;
+}
+
+.notification-bar {
+    -fx-spacing: 12px;
+    -fx-alignment: CENTER_LEFT;
+    -fx-effect: dropshadow(gaussian, rgba(0, 0, 0, 0.08), 4, 0, 0, 2);
+}
+
+/* Background styling for notifications */
+.notification-bar {
+    -fx-background-color: linear-gradient(to bottom, -notification-bg-primary, -notification-bg-secondary);
+    -fx-background-radius: 8px;
+}
+
+/* Border styling for notifications */
+.notification-bar {
+    -fx-border-width: 1px;
+    -fx-border-style: solid;
+    -fx-border-color: -notification-border-color;
+    -fx-border-radius: 8px;
+}
+
+/* Text container setup for scrolling */
+/* Text with scrolling animation */
+.notification-text-box Text {
+    -fx-font-size: 32px;
+    -fx-font-weight: 500;
+    -fx-fill: -notification-text-color;
+    -fx-ellipsis-string: null;
+}
+
+/* Style the notification icon */
+.notification-bar Text.notification-icon {
+    -fx-font-size: 40px;
+    -fx-font-weight: bold;
+}
+
+/* Style the close button */
+.notification-bar Button.notification-close {
+    -fx-cursor: hand;
+}
+
+.notification-bar Button.notification-close {
+    -fx-background-color: transparent;
+    -fx-border-radius: 50%;
+    transition: -fx-background-color 0.5s ease;
+}
+
+.notification-bar Button.notification-close {
+    -fx-text-fill: -notification-close-color;
+    -fx-font-size: 18px ;
+    -fx-font-weight: bold ;
+}
+
+/* Close button hover states */
+.notification-bar Button.notification-close:hover {
+    -fx-background-color: -notification-close-hover-bg;
+}
+
+.notification-bar Button.notification-close:hover {
+    -fx-text-fill: -notification-close-hover-color;
+}

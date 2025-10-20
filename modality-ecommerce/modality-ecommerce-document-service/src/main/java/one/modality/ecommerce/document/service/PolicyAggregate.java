@@ -10,11 +10,12 @@ import dev.webfx.stack.orm.entity.EntityList;
 import dev.webfx.stack.orm.entity.EntityStore;
 import dev.webfx.stack.orm.entity.query_result_to_entities.QueryResultToEntitiesMapper;
 import one.modality.base.shared.entities.*;
+import one.modality.base.shared.entities.util.Rates;
+import one.modality.base.shared.entities.util.ScheduledItems;
 import one.modality.base.shared.knownitems.KnownItemFamily;
 
 import java.util.List;
-import java.util.Objects;
-import java.util.stream.Collectors;
+import java.util.Map;
 import java.util.stream.Stream;
 
 /**
@@ -74,33 +75,16 @@ public final class PolicyAggregate {
         return getScheduledItems().stream();
     }
 
-    public Stream<ScheduledItem> getFamilyScheduledItemsStream(ItemFamily itemFamily) {
-        return getFamilyScheduledItemsStream(itemFamily.getCode());
+    public List<ScheduledItem> filterScheduledItemsOfFamily(KnownItemFamily knownItemFamily) {
+        return ScheduledItems.filterFamily(getScheduledItems(), knownItemFamily);
     }
 
-    public Stream<ScheduledItem> getFamilyScheduledItemsStream(KnownItemFamily knownItemFamily) {
-        return getFamilyScheduledItemsStream(knownItemFamily.getCode());
+    public List<ScheduledItem> filterTeachingScheduledItems() {
+        return filterScheduledItemsOfFamily(KnownItemFamily.TEACHING);
     }
 
-    public Stream<ScheduledItem> getFamilyScheduledItemsStream(String familyCode) {
-        return getScheduledItemsStream()
-            .filter(scheduledItem -> Objects.equals(familyCode, scheduledItem.getItem().getFamily().getCode()));
-    }
-
-    public List<ScheduledItem> getFamilyScheduledItems(String familyCode) {
-        return getFamilyScheduledItemsStream(familyCode).collect(Collectors.toList());
-    }
-
-    public List<ScheduledItem> getFamilyScheduledItems(ItemFamily itemFamily) {
-        return getFamilyScheduledItems(itemFamily.getCode());
-    }
-
-    public List<ScheduledItem> getFamilyScheduledItems(KnownItemFamily knownItemFamily) {
-        return getFamilyScheduledItems(knownItemFamily.getCode());
-    }
-
-    public List<ScheduledItem> getTeachingScheduledItems() {
-        return getFamilyScheduledItems(KnownItemFamily.TEACHING);
+    public Map<Item, List<ScheduledItem>> groupScheduledItemsByAudioRecordingItems() {
+        return ScheduledItems.groupScheduledItemsByAudioRecordingItems(getScheduledItemsStream());
     }
 
     public List<Rate> getRates() {
@@ -111,13 +95,16 @@ public final class PolicyAggregate {
         return getRates().stream();
     }
 
-    public Stream<Rate> getDailyRatesStream() {
-        return getRatesStream()
-            .filter(Rate::isPerDay);
+    public List<Rate> getDailyRates() {
+        return Rates.filterDailyRates(getRates());
     }
 
-    public List<Rate> getDailyRates() {
-        return getDailyRatesStream().collect(Collectors.toList());
+    public Stream<Rate> getDailyRatesStream() {
+        return Rates.filterDailyRates(getRatesStream());
+    }
+
+    public Stream<Rate> getFixedRatesStream() {
+        return Rates.filterFixedRates(getRatesStream());
     }
 
     public Rate getDailyRate() {
@@ -130,32 +117,24 @@ public final class PolicyAggregate {
     }
 
     public int getDailyRatePrice() {
-        Rate rate = getDailyRate();
-        return rate != null ? rate.getPrice() : 0;
+        Rate dailyRate = getDailyRate();
+        return dailyRate != null ? dailyRate.getPrice() : 0;
     }
 
-    public Stream<Rate> getSiteItemRatesStream(Site site, Item item) {
-        return getRatesStream()
-            .filter(r -> Entities.sameId(r.getSite(), site) && Entities.sameId(r.getItem(), item));
+    public Stream<Rate> filterRatesStreamOfSiteAndItem(Site site, Item item) {
+        return Rates.filterRatesOfSiteAndItem(getRatesStream(), site, item);
     }
 
-    public Stream<Rate> getSiteItemDailyRatesStream(Site site, Item item) {
-        return getSiteItemRatesStream(site, item)
-            .filter(Rate::isPerDay);
+    public Stream<Rate> filterDailyRatesStreamOfSiteAndItem(Site site, Item item) {
+        return Rates.filterRatesOfSiteAndItem(getDailyRatesStream(), site, item);
     }
 
-    public Stream<Rate> getSiteItemFixedRatesStream(Site site, Item item) {
-        return getSiteItemRatesStream(site, item)
-            .filter(r -> !r.isPerDay());
-    }
-
-    public List<Rate> getSiteItemRates(Site site, Item item) {
-        return getSiteItemRatesStream(site, item)
-                .collect(Collectors.toList());
+    public Stream<Rate> filterFixedRatesStreamOfSiteAndItem(Site site, Item item) {
+        return Rates.filterRatesOfSiteAndItem(getFixedRatesStream(), site, item);
     }
 
     public boolean hasFacilityFees() {
-        return getRatesStream().anyMatch(rate -> rate.getFacilityFeePrice() != null || rate.getFacilityFeeDiscount() != null);
+        return Rates.hasFacilityFees(getRatesStream());
     }
 
     public List<BookablePeriod> getBookablePeriods() {
@@ -173,7 +152,7 @@ public final class PolicyAggregate {
     }
 
     public BookablePeriod createFamilyWholeBookablePeriod(KnownItemFamily knownItemFamily, Object i18nKey) {
-        List<ScheduledItem> familyScheduledItems = getFamilyScheduledItems(knownItemFamily);
+        List<ScheduledItem> familyScheduledItems = filterScheduledItemsOfFamily(knownItemFamily);
         BookablePeriod wholeBookablePeriod = entityStore.createEntity(BookablePeriod.class);
         wholeBookablePeriod.setEvent(event);
         wholeBookablePeriod.setStartScheduledItem(Collections.first(familyScheduledItems)); // should be the first teaching date
@@ -182,7 +161,7 @@ public final class PolicyAggregate {
         return wholeBookablePeriod;
     }
 
-    // The following methods are meant to be used for serialization, not for application code
+    // The following methods are meant to be used for serialization, not by the application code
 
     public String getRatesQueryBase() {
         return ratesQueryBase;

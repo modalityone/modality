@@ -18,6 +18,7 @@ import java.util.stream.Stream;
  */
 final class Kbs2PriceAlgorithm {
 
+    @SuppressWarnings("unusable-by-js")
     private record PriceMemo(Rate rate, int dailyPrice, int price, int consumableDays) {}
 
     public static int computeBookingPrice(DocumentAggregate documentAggregate, boolean ignoreLongStayDiscount, boolean update) {
@@ -109,7 +110,11 @@ final class Kbs2PriceAlgorithm {
     */
             if (minDeposit) {
                 // Rounding the min deposit of the booking to the superior amount (without cents)
-                price = ((price + 99) / 100) * 100;
+                int rounded = ((price + 99) / 100) * 100;
+                if (rounded > price) { // If the rounded amount is indeed superior,
+                    // we still need to check that it doesn't exceed the total amount
+                    price = Math.min(rounded, getInvoiced());
+                }
             } else if (update) {
                 documentAggregate.getDocument().setPriceNet(price);
             }
@@ -200,7 +205,7 @@ final class Kbs2PriceAlgorithm {
             LocalDate lastDay = Collections.last(bas).getDate();
             DocumentAggregate documentAggregate = bill.getDocumentAggregate();
             PolicyAggregate policyAggregate = documentAggregate.getPolicyAggregate();
-            List<Rate> rates = policyAggregate.getSiteItemRatesStream(siteItem.getSite(), siteItem.getItem())
+            List<Rate> rates = policyAggregate.filterRatesStreamOfSiteAndItem(siteItem.getSite(), siteItem.getItem())
                 .filter(r -> r.isPerDay() == perDayRates)
                 .filter(r -> r.getOnDate() == null || Times.isPastOrToday(r.getOnDate()))
                 .filter(r -> r.getOffDate() == null || Times.isFutureOrToday(r.getOffDate()))
@@ -281,6 +286,9 @@ final class Kbs2PriceAlgorithm {
                     int deltaPrice = cheapest.price;
                     if (minDeposit) {
                         int minDepositPercent = Objects.coalesce(cheapest.rate.getMinDeposit(), 25);
+                        LocalDate cutoffDate = cheapest.rate.getCutoffDate();
+                        if (cutoffDate != null && Times.isPastOrToday(cutoffDate))
+                            minDepositPercent = Objects.coalesce(cheapest.rate.getMinDeposit2(), 25);
                         deltaPrice = deltaPrice * minDepositPercent / 100;
                     }
                     if (price == Integer.MIN_VALUE)

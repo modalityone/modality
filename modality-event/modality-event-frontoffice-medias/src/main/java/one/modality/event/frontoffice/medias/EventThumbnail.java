@@ -8,6 +8,7 @@ import dev.webfx.extras.styles.bootstrap.Bootstrap;
 import dev.webfx.extras.util.control.Controls;
 import dev.webfx.extras.util.layout.Layouts;
 import dev.webfx.extras.webtext.HtmlText;
+import dev.webfx.kit.util.properties.FXProperties;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.control.Button;
@@ -82,6 +83,7 @@ public final class EventThumbnail {
         container.setPrefWidth(CONTAINER_WIDTH);
         String languageOfTheItem = extractLanguageISOCode(imageItemCode);
         //Here we manage 2 cases:
+
         //1. For Video, the item is the same for all languages, so we want to display the title and description according to the language of user
         //2. For Audio, since we can order audios in different languages, we want to display the title and description according to the language of the item
         Label eventLabel = Bootstrap.h3(I18nEntities.newExpressionLabel(event, "i18n(this, '" + languageOfTheItem + "')"));
@@ -89,13 +91,13 @@ public final class EventThumbnail {
         VBox.setMargin(eventLabel, new Insets(10, 0, 0, 0));
 
         HtmlText shortHTMLDescription = new HtmlText();
-        I18nEntities.bindExpressionTextProperty(shortHTMLDescription.textProperty(), event, "coalesce(i18n(shortDescriptionLabel,'" + languageOfTheItem + "'),shortDescription)");
+        I18nEntities.bindExpressionToTextProperty(shortHTMLDescription.textProperty(), event, "coalesce(i18n(shortDescriptionLabel,'" + languageOfTheItem + "'),shortDescription)");
 
         shortHTMLDescription.getStyleClass().add("short-description");
 
         Label availabilityLabel = new Label();
         if (isPublished) {
-            LocalDateTime nowInEventTimezone = Event.nowInEventTimezone();
+            LocalDateTime nowInEventTimezone = event.nowInEventTimezone();
             if (itemType == ItemType.ITEM_TYPE_VIDEO) {
                 //If the vodExpirationDate is set to null, it means the event is livestream Only
                 LocalDateTime vodExpirationDate = event.getVodExpirationDate();
@@ -127,12 +129,12 @@ public final class EventThumbnail {
         ));
 
         MonoPane imageContainer = new MonoPane();
-        String imagePath = ModalityCloudinary.eventCoverImagePath(event, itemType == ItemType.ITEM_TYPE_AUDIO ? languageOfTheItem : I18n.getLanguage());
-        ModalityCloudinary.loadImage(imagePath, imageContainer, CONTAINER_WIDTH, CONTAINER_HEIGHT, SvgIcons::createAudioCoverPath)
-            .onFailure(error-> {
-                //If we can't find the picture of the cover for the selected language, we display the default image
-                ModalityCloudinary.loadImage(ModalityCloudinary.eventCoverImagePath(event, null), imageContainer, CONTAINER_WIDTH, CONTAINER_HEIGHT, SvgIcons::createAudioCoverPath);
-            });
+        if (itemType == ItemType.ITEM_TYPE_AUDIO) // for audio recordings, the language is linked to the item, not the user interface
+            ModalityCloudinary.loadHdpiEventCoverImage(event, languageOfTheItem, CONTAINER_WIDTH, CONTAINER_HEIGHT, imageContainer, SvgIcons::createAudioCoverPath);
+        else // for videos, however, the language is linked to the user interface (EventThumbnail is used for changing the event selection in VideoStreamingActivity)
+            FXProperties.runNowAndOnPropertyChange(language ->
+                    ModalityCloudinary.loadHdpiEventCoverImage(event, language, CONTAINER_WIDTH, CONTAINER_HEIGHT, imageContainer, SvgIcons::createAudioCoverPath)
+                , I18n.languageProperty());
 
         StackPane thumbnailStackPane = new StackPane(imageContainer, availabilityLabel);
         thumbnailStackPane.setAlignment(Pos.TOP_LEFT);
@@ -141,8 +143,6 @@ public final class EventThumbnail {
 
         viewButton = Bootstrap.primaryButton(I18nControls.newButton(MediasI18nKeys.View));
         viewButton.setMinWidth(150);
-        // We display the view button only if the content is available
-        viewButton.setVisible(availabilityType == AvailabilityType.AVAILABLE);
         VBox.setMargin(viewButton, new Insets(30, 0, 0, 0));
         ScalePane thumbnailScalePane = new ScalePane(thumbnailStackPane);
         container.getChildren().addAll(
@@ -161,6 +161,10 @@ public final class EventThumbnail {
     public static String extractLanguageISOCode(String itemCode) {
         if (itemCode == null) return null;
         String[] parts = itemCode.split("-");
-        return parts.length > 1 ? parts[1] : null; // Return the second part (ISO 639-1 code)
+        String toReturn = parts.length > 1 ? parts[1] : null;
+
+        return I18nEntities.convertAudioLanguageCodeToWrittenLanguageCode(toReturn);
     }
+
+
 }

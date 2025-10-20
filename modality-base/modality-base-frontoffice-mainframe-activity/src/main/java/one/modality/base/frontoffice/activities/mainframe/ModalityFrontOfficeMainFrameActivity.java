@@ -333,7 +333,7 @@ public final class ModalityFrontOfficeMainFrameActivity extends ModalityClientMa
 
     private static void setupPlayersGlobalConfiguration() {
         // Setting up the fullscreen button
-        ModalityFullscreenButton.setupModalityFullscreenButton();
+        ModalityVideoOverlay.setupModalityVideoOverlay();
         // Setting up the player color (actually, only Wistia supports it)
         Players.setGlobalPlayerColor(Brand.getBrandMainColor());
     }

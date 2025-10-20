@@ -13,7 +13,6 @@ import dev.webfx.platform.console.Console;
 import dev.webfx.stack.orm.entity.EntityStore;
 import dev.webfx.stack.orm.entity.UpdateStore;
 import dev.webfx.stack.orm.entity.binding.EntityBindings;
-import dev.webfx.stack.orm.entity.result.EntityChanges;
 import dev.webfx.stack.orm.entity.result.EntityChangesBuilder;
 import javafx.beans.binding.Bindings;
 import javafx.collections.FXCollections;
@@ -427,17 +426,16 @@ public class MediaLinksForVODManagement extends MediaLinksManagement {
                 //The action on the save button
                 saveButton.setOnAction(e -> {
                     if (validationSupport.isValid()) {
-                        // Capturing the changes made on ScheduledItems.published fields, as they need to be notified to
-                        // the front-office clients (if submit is successful)
-                        EntityChanges changesForFrontOffice = EntityChangesBuilder.create()
-                            .addFilteredEntityChanges(localUpdateStore.getEntityChanges(), ScheduledItem.class, ScheduledItem.published)
-                            .build();
                         localUpdateStore.submitChanges()
                             .onFailure(Console::log)
                             .inUiThread()
-                            .onSuccess(x -> {
-                                // Notifying the front-office clients for the possible changes made on ScheduledItems.published
-                                ModalityMessaging.getFrontOfficeEntityMessaging().publishEntityChanges(changesForFrontOffice);
+                            .onSuccess(result -> {
+                                // Notifying the front-office clients of the possible changes made on ScheduledItems.published
+                                ModalityMessaging.getFrontOfficeEntityMessaging().publishEntityChanges(
+                                    EntityChangesBuilder.create()
+                                        .addFilteredEntityChanges(result.getCommittedChanges(), ScheduledItem.class, ScheduledItem.published)
+                                        .build()
+                                );
                                 resetUpdateStoreAndOtherComponents();
                             });
                     }

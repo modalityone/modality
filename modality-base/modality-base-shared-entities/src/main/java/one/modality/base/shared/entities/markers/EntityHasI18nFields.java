@@ -12,8 +12,9 @@ public interface EntityHasI18nFields extends Entity, HasI18nFields {
     String es = "es"; // Spanish
     String fr = "fr"; // French
     String pt = "pt"; // Portuguese
-    String zh = "zh"; // Simplified Chinese (Mandarin)
-    String yue = "yue"; // Cantonese
+    String zht = "zht"; // Traditional Chinese
+    String zhs = "zhs"; // Simplified Chinese
+    String it = "it"; // Greek
     String el = "el"; // Greek
     String vi = "vi"; // Vietnamese
 
@@ -68,23 +69,23 @@ public interface EntityHasI18nFields extends Entity, HasI18nFields {
     }
 
     @Override
-    default void setZh(String value) {
-        setFieldValue(zh, value);
+    default void setZhs(String value) {
+        setFieldValue(zhs, value);
     }
 
     @Override
-    default String getZh() {
-        return getStringFieldValue(zh);
+    default String getZhs() {
+        return getStringFieldValue(zhs);
     }
 
     @Override
-    default void setYue(String value) {
-        setFieldValue(yue, value);
+    default void setZht(String value) {
+        setFieldValue(zht, value);
     }
 
     @Override
     default String getYue() {
-        return getStringFieldValue(yue);
+        return getStringFieldValue(zht);
     }
 
     @Override
@@ -105,6 +106,16 @@ public interface EntityHasI18nFields extends Entity, HasI18nFields {
     @Override
     default String getVi() {
         return getStringFieldValue(vi);
+    }
+
+    @Override
+    default void setIt(String value) {
+        setFieldValue(it, value);
+    }
+
+    @Override
+    default String getIt() {
+        return getStringFieldValue(it);
     }
 
 }

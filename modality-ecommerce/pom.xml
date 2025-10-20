@@ -18,7 +18,6 @@
     <packaging>pom</packaging>
 
     <modules>
-        <module>modality-ecommerce-backoffice-activity-bookings-plugin</module>
         <module>modality-ecommerce-backoffice-activity-moneyflows-plugin</module>
         <module>modality-ecommerce-backoffice-activity-statistics-plugin</module>
         <module>modality-ecommerce-backoffice-max-plugin</module>
@@ -29,13 +28,10 @@
         <module>modality-ecommerce-backoffice-operations-moneytransfer</module>
         <module>modality-ecommerce-client-i18n</module>
         <module>modality-ecommerce-client-min-plugin</module>
-        <module>modality-ecommerce-client-workingbooking</module>
         <module>modality-ecommerce-document-service</module>
         <module>modality-ecommerce-document-service-buscall</module>
         <module>modality-ecommerce-document-service-remote</module>
         <module>modality-ecommerce-document-service-server</module>
-        <module>modality-ecommerce-frontoffice-bookingelements</module>
-        <module>modality-ecommerce-frontoffice-bookingform</module>
         <module>modality-ecommerce-frontoffice-order</module>
         <module>modality-ecommerce-history-server</module>
         <module>modality-ecommerce-payment</module>

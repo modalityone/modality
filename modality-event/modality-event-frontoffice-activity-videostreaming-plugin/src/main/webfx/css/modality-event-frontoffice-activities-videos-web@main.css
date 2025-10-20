@@ -87,3 +87,93 @@
     font-size: 16px;
     --fx-line-height: 1.6;
 }
+
+
+.livestream {
+    /* Dark Amber Alert Scheme */
+    --notification-bg-primary: #BF360C;
+    --notification-bg-secondary: #D84315;
+    --notification-text-color: #FFFDE7;
+    --notification-border-color: #FF6D00;
+    --notification-icon-bg: rgba(255, 214, 0, 0.2);
+    --notification-close-color: #FFE0B2;
+    --notification-close-hover-bg: rgba(255, 214, 0, 0.2);
+    --notification-close-hover-color: #FFD600;
+
+    /* This is to uniformize the fullscreen button color with the notification bar color */
+    --modality-media-button-circle-background: var(--notification-bg-secondary);
+}
+
+.notification-bar {
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.08);
+    overflow: hidden;
+}
+
+/* Background styling for error notifications */
+.notification-bar > fx-background {
+    background: linear-gradient(to bottom, var(--notification-bg-primary), var(--notification-bg-secondary));
+    border-radius: 8px;
+}
+
+/* Border styling for error notifications */
+.notification-bar > fx-border {
+    border: 1px solid var(--notification-border-color);
+    border-radius: 8px;
+}
+
+/* Text container setup for scrolling */
+.notification-text-box {
+    --scroll-text-duration: 20s; /* Will be actually recomputed in the app to always get the same text speed */
+}
+
+/* Text with scrolling animation */
+.notification-text-box fx-text {
+    font-size: 32px;
+    font-weight: 500;
+    color: var(--notification-text-color);
+    animation: scroll-text var(--scroll-text-duration) linear infinite;
+    padding-left: 100%;
+}
+
+/* Scroll text animation */
+@keyframes scroll-text {
+    0% {
+        transform: translateX(0) translateY(3px);
+    }
+    100% {
+        transform: translateX(-100%) translateY(3px);
+    }
+}
+
+/* Style the notification icon */
+.notification-bar fx-text.notification-icon {
+    font-size: 40px ;
+    font-weight: bold ;
+    text-align: center ;
+}
+
+/* Style the close button */
+.notification-bar fx-button.notification-close {
+    cursor: pointer ;
+}
+
+.notification-bar fx-button.notification-close > fx-background {
+    background: transparent ;
+    border-radius: 50% ;
+    transition: background-color 0.5s ease ;
+}
+
+.notification-bar fx-button.notification-close fx-text {
+    color: var(--notification-close-color) ;
+    font-size: 18px ;
+    font-weight: bold ;
+}
+
+/* Close button hover states */
+.notification-bar fx-button.notification-close:hover > fx-background {
+    background-color: var(--notification-close-hover-bg) ;
+}
+
+.notification-bar fx-button.notification-close:hover fx-text {
+    color: var(--notification-close-hover-color) ;
+}

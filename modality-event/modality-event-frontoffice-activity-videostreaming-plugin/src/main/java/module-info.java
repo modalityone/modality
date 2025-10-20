@@ -11,11 +11,13 @@ module modality.event.frontoffice.activity.videostreaming.plugin {
     requires modality.base.client.messaging;
     requires modality.base.client.time;
     requires modality.base.frontoffice.utility;
+    requires modality.base.shared.domainmodel;
     requires modality.base.shared.entities;
     requires modality.base.shared.knownitems;
     requires modality.crm.client.authn.fx;
     requires modality.crm.frontoffice.help;
     requires modality.crm.shared.authn;
+    requires modality.ecommerce.frontoffice.order;
     requires modality.event.client.i18n;
     requires modality.event.frontoffice.eventheader;
     requires modality.event.frontoffice.medias;
@@ -31,6 +33,7 @@ module modality.event.frontoffice.activity.videostreaming.plugin {
     requires webfx.extras.styles.bootstrap;
     requires webfx.extras.time.format;
     requires webfx.extras.type;
+    requires webfx.extras.util.animation;
     requires webfx.extras.util.control;
     requires webfx.extras.util.layout;
     requires webfx.extras.util.scene;
@@ -42,6 +45,7 @@ module modality.event.frontoffice.activity.videostreaming.plugin {
     requires webfx.platform.scheduler;
     requires webfx.platform.substitution;
     requires webfx.platform.uischeduler;
+    requires webfx.platform.useragent;
     requires webfx.platform.util;
     requires webfx.platform.util.time;
     requires webfx.platform.windowhistory;

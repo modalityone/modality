@@ -37,6 +37,7 @@ public final class MediaEventHeader extends AbstractEventHeader {
 
     private final MonoPane responsiveHeader = new MonoPane();
     private final Label expirationLabel = Bootstrap.strong(new Label()); // TODO: put bold in CSS
+    private final TimeZoneSwitch timeZoneSwitch = TimeZoneSwitch.getGlobal(); // new TimeZoneSwitch();
 
     public MediaEventHeader(boolean video) {
         MonoPane eventImageContainer = new MonoPane();
@@ -69,30 +70,26 @@ public final class MediaEventHeader extends AbstractEventHeader {
             if (language == null)
                 language = I18n.getLanguage();
 
-            I18nEntities.bindExpressionTextProperty(eventLabel, event,  "i18n(this, '" + language + "')");
-            I18nEntities.bindExpressionTextProperty(eventDescriptionHTMLText.textProperty(), event, "i18n(coalesce(shortDescriptionLabel, shortDescription), '" + language + "')");
+            I18nEntities.bindExpressionToTextProperty(eventLabel, event, "i18n(this, '" + language + "')");
+            I18nEntities.bindExpressionToTextProperty(eventDescriptionHTMLText.textProperty(), event, "i18n(coalesce(shortDescriptionLabel, shortDescription), '" + language + "')");
 
             // Loading the event image in the header
-            String eventCloudImagePath = ModalityCloudinary.eventCoverImagePath(event, language);
-            ModalityCloudinary.loadImage(eventCloudImagePath, eventImageContainer, -1, IMAGE_HEIGHT, video ? SvgIcons::createVideoIconPath : SvgIcons::createAudioCoverPath)
-                .onFailure(error -> {
-                    // If we can't find the picture of the cover for the selected language, we display the default image
-                    ModalityCloudinary.loadImage(ModalityCloudinary.eventCoverImagePath(event, null), eventImageContainer, -1, IMAGE_HEIGHT, video ? SvgIcons::createVideoIconPath : SvgIcons::createAudioCoverPath);
-                });
+            ModalityCloudinary.loadHdpiEventCoverImage(event, language, -1, IMAGE_HEIGHT, eventImageContainer, video ? SvgIcons::createVideoIconPath : SvgIcons::createAudioCoverPath);
             // Updating the expiration date in the header
             LocalDateTime expirationDate = video ? event.getVodExpirationDate() : event.getAudioExpirationDate();
             if (expirationDate == null) {
                 expirationLabel.setVisible(false);
             } else {
                 expirationLabel.setVisible(true);
-                LocalDateTime nowInEventTimezone = Event.nowInEventTimezone();
+                timeZoneSwitch.setEventZoneId(event.getEventZoneId());
+                LocalDateTime nowInEventTimezone = event.nowInEventTimezone();
                 boolean available = nowInEventTimezone.isBefore(expirationDate);
                 FXProperties.runNowAndOnPropertyChange(eventTimeSelected -> {
-                    LocalDateTime userTimezoneExpirationDate = eventTimeSelected ? expirationDate : TimeZoneSwitch.convertEventLocalDateTimeToUserLocalDateTime(expirationDate);
+                    LocalDateTime userTimezoneExpirationDate = eventTimeSelected ? expirationDate : timeZoneSwitch.convertEventLocalDateTimeToUserLocalDateTime(expirationDate);
                     I18nControls.bindI18nProperties(expirationLabel,
                         available ? MediasI18nKeys.AvailableUntil1 : MediasI18nKeys.ExpiredSince1,
                         LocalizedTime.formatLocalDateTimeProperty(userTimezoneExpirationDate, FrontOfficeTimeFormats.MEDIA_EXPIRATION_DATE_TIME_FORMAT));
-                }, TimeZoneSwitch.eventLocalTimeSelectedProperty());
+                }, timeZoneSwitch.eventLocalTimeSelectedProperty());
             }
         }, eventProperty, languageProperty, I18n.languageProperty());
 

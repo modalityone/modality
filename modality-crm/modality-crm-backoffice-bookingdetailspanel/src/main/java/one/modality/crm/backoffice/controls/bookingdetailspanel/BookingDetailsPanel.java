@@ -4,7 +4,7 @@ import dev.webfx.extras.action.ActionBinder;
 import dev.webfx.extras.action.ActionGroup;
 import dev.webfx.extras.controlfactory.button.ButtonFactoryMixin;
 import dev.webfx.extras.i18n.controls.I18nControls;
-import dev.webfx.extras.operation.OperationUtil;
+import dev.webfx.extras.async.AsyncSpinner;
 import dev.webfx.extras.operation.action.OperationAction;
 import dev.webfx.extras.operation.action.OperationActionFactoryMixin;
 import dev.webfx.extras.panes.ColumnsPane;
@@ -43,6 +43,7 @@ import one.modality.base.shared.entities.Document;
 import one.modality.base.shared.entities.DocumentLine;
 import one.modality.base.shared.entities.Mail;
 import one.modality.base.shared.entities.MoneyTransfer;
+import one.modality.booking.backoffice.operations.entities.document.registration.ShowBookingEditorRequest;
 import one.modality.crm.backoffice.operations.entities.mail.ComposeNewMailRequest;
 import one.modality.crm.backoffice.operations.entities.mail.OpenMailRequest;
 import one.modality.crm.client.controls.personaldetails.BookingPersonalDetailsPanel;
@@ -70,7 +71,7 @@ public final class BookingDetailsPanel implements
     UiBuilder {
 
     public static final String REQUIRED_FIELDS = // event.startDate is required for the personal details panel
-        "person_firstName,person_lastName,person_age,person_email,person_organization,person_phone,person_cityName,person_country,person_carer1Name,person_carer2Name,event.startDate,dates";
+        "person_firstName,person_lastName,person_age,person_email,person_organization,person_phone,person_street,person_postCode,person_cityName,person_country,person_carer1Name,person_carer2Name,event.startDate,dates";
 
     private final ObjectProperty<Document> selectedDocumentProperty;
     private final BooleanProperty activeProperty = new SimpleBooleanProperty(true);
@@ -121,6 +122,7 @@ public final class BookingDetailsPanel implements
             createFlexButton(ShowBookingEditorRequest::new),
             createFlexButton(ToggleMarkDocumentAsReadRequest::new),
             createFlexButton(ToggleMarkDocumentAsWillPayRequest::new),
+            createFlexButton(ToggleConfirmDocumentRequest::new),
             createFlexButton(ToggleCancelDocumentRequest::new),
             createFlexButton(ToggleMarkDocumentAsArrivedRequest::new)
         );
@@ -317,7 +319,7 @@ public final class BookingDetailsPanel implements
             UpdateStore updateStore = UpdateStore.createAbove(originalDocument.getStore());
             Document updatedDocument = updateStore.updateEntity(originalDocument);
             updatedDocument.setFieldValue(commentField, textArea.getText());
-            OperationUtil.turnOnButtonsWaitModeDuringExecution(
+            AsyncSpinner.displayButtonSpinnerDuringAsyncExecution(
                 updateStore.submitChanges().onSuccess(x -> {
                     // Now that the changes have been successfully recorded in the database, we will exit the edit
                     // mode. But this will also trigger textSyncer, which will copy the text from the original

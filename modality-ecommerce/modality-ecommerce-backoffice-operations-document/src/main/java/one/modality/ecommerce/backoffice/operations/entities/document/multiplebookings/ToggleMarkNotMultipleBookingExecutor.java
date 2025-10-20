@@ -1,7 +1,7 @@
 package one.modality.ecommerce.backoffice.operations.entities.document.multiplebookings;
 
 import dev.webfx.platform.async.Future;
-import one.modality.base.backoffice.operations.entities.generic.DialogExecutorUtil;
+import one.modality.base.client.util.dialog.ModalityDialog;
 import one.modality.base.shared.entities.Document;
 import one.modality.ecommerce.document.service.DocumentService;
 import one.modality.ecommerce.document.service.SubmitDocumentChangesArgument;
@@ -17,7 +17,7 @@ final class ToggleMarkNotMultipleBookingExecutor {
                 .compose(document -> {
                     Document notMultipleBooking = document.evaluate("notMultipleBooking = null ? multipleBooking : null"); // toggling confirmed
 
-                    return DialogExecutorUtil.executeOnUserConfirmation(
+                    return ModalityDialog.showConfirmationDialogForAsyncOperation(
                             "Are you sure you want to " + (notMultipleBooking == null ? "unmark" : "mark") + " this booking as multiple booking?"
                             , rq.getParentContainer(),
                             () -> DocumentService.submitDocumentChanges(

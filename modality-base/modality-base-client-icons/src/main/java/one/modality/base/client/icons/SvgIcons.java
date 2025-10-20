@@ -51,7 +51,11 @@ public final class SvgIcons {
     private static final String ROUNDED_TRIANGLE_UP = "M5.2 1.4.2 9.6c-.4.8.1 1.6 1 1.6H10.9c.8 0 1.4-.9 1-1.6L7.2 1.4c-.4-.8-1.6-.8-1.9 0z";
     private static final String ROUNDED_TRIANGLE_DOWN = "M5.2 10.8.1 2.6c-.4-.8.1-1.6 1-1.6H10.8c.8 0 1.4.9 1 1.6L7.1 10.8c-.4.8-1.6.8-1.9 0z";
 
-
+    private static final String EYE_OPEN_PATH = "M12 4.5C7 4.5 2.73 7.61 1 12c1.73 4.39 6 7.5 11 7.5s9.27-3.11 11-7.5c-1.73-4.39-6-7.5-11-7.5zM12 17c-2.76 0-5-2.24-5-5s2.24-5 5-5 5 2.24 5 5-2.24 5-5 5zm0-8c-1.66 0-3 1.34-3 3s1.34 3 3 3 3-1.34 3-3-1.34-3-3-3z";
+    private static final String EYE_CLOSE_PATH = "M12 7c2.76 0 5 2.24 5 5 0 .65-.13 1.26-.36 1.83l2.92 2.92c1.51-1.26 2.7-2.89 3.43-4.75-1.73-4.39-6-7.5-11-7.5-1.4 0-2.74.25-3.98.7l2.16 2.16C10.74 7.13 11.35 7 12 7zM2 4.27l2.28 2.28.46.46C3.08 8.3 1.78 10.02 1 12c1.73 4.39 6 7.5 11 7.5 1.55 0 3.03-.3 4.38-.84l.42.42L19.73 22 21 20.73 3.27 3 2 4.27zM7.53 9.8l1.55 1.55c-.05.21-.08.43-.08.65 0 1.66 1.34 3 3 3 .22 0 .44-.03.65-.08l1.55 1.55c-.67.33-1.41.53-2.2.53-2.76 0-5-2.24-5-5 0-.79.2-1.53.53-2.2zm4.31-.78l3.15 3.15.02-.16c0-1.66-1.34-3-3-3l-.17.01z";
+    private static final String FULL_SCREEN_PATH ="M 46 21 V 18 C 46 16.1401 46 15.2101 45.7956 14.4471 C 45.2408 12.3765 43.6234 10.7592 41.553 10.2044 C 40.79 10 39.86 10 38 10 V 10 H 35 M 46 35 V 36.4 C 46 39.7604 46 41.4404 45.346 42.724 C 44.7708 43.853 43.853 44.7708 42.724 45.346 C 41.4404 46 39.7604 46 36.4 46 H 35 M 10 35 V 38 V 38 C 10 39.86 10 40.79 10.2044 41.553 C 10.7592 43.6234 12.3765 45.2408 14.4471 45.7956 C 15.2101 46 16.1401 46 18 46 H 21 M 10 21 V 18 V 18 C 10 16.1401 10 15.2101 10.2044 14.4471 C 10.7592 12.3765 12.3765 10.7592 14.4471 10.2044 C 15.2101 10 16.1401 10 18 10 V 10 H 21";
+    private static final String WARNING_PATH ="M32.427,7.987c2.183,0.124 4,1.165 5.096,3.281l17.936,36.208c1.739,3.66 -0.954,8.585 -5.373,8.656l-36.119,0c-4.022,-0.064 -7.322,-4.631 -5.352,-8.696l18.271,-36.207c0.342,-0.65 0.498,-0.838 0.793,-1.179c1.186,-1.375 2.483,-2.111 4.748,-2.063Zm-0.295,3.997c-0.687,0.034 -1.316,0.419 -1.659,1.017c-6.312,11.979 -12.397,24.081 -18.301,36.267c-0.546,1.225 0.391,2.797 1.762,2.863c12.06,0.195 24.125,0.195 36.185,0c1.325,-0.064 2.321,-1.584 1.769,-2.85c-5.793,-12.184 -11.765,-24.286 -17.966,-36.267c-0.366,-0.651 -0.903,-1.042 -1.79,-1.03Z " +
+            "M33.631,40.581l-3.348,0l-0.368,-16.449l4.1,0l-0.384,16.449Zm-3.828,5.03c0,-0.609 0.197,-1.113 0.592,-1.514c0.396,-0.4 0.935,-0.601 1.618,-0.601c0.684,0 1.223,0.201 1.618,0.601c0.395,0.401 0.593,0.905 0.593,1.514c0,0.587 -0.193,1.078 -0.577,1.473c-0.385,0.395 -0.929,0.593 -1.634,0.593c-0.705,0 -1.249,-0.198 -1.634,-0.593c-0.384,-0.395 -0.576,-0.886 -0.576,-1.473Z";
     public static SVGPath createSVGPath(String path) {
         SVGPath svgPath = new SVGPath();
         svgPath.setContent(path);
@@ -61,6 +65,7 @@ public final class SvgIcons {
     public static SVGPath createStrokeSVGPath(String path, Paint stroke, double strokeWidth) {
         return createSVGPath(path, null, stroke, strokeWidth);
     }
+
 
     public static SVGPath setSVGPathFill(SVGPath svgPath, Paint fill) {
         svgPath.setFill(fill);
@@ -278,6 +283,7 @@ public final class SvgIcons {
         return circleClipPane;
     }
 
+
     public static Pane createForwardArrow2() {
         Pane backArrow2 = createBackArrow2();
         backArrow2.setRotate(180);
@@ -290,6 +296,17 @@ public final class SvgIcons {
         cross.setStroke(Color.RED);
         return cross;
     }
+
+    public static SVGPath createEyeOpenPath() {
+        return createSVGPath(EYE_OPEN_PATH);
+    }
+    public static SVGPath createEyeClosePath() {
+        return createSVGPath(EYE_CLOSE_PATH);
+    }
+
+    public static SVGPath createFullScreenPath() { return createSVGPath(FULL_SCREEN_PATH);}
+
+    public static SVGPath createWarningPath() { return createSVGPath(WARNING_PATH);}
 }
 
 

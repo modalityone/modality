@@ -19,26 +19,31 @@ import java.time.LocalDateTime;
 public final class EventLifeCycle {
 
     public static boolean isPastEvent(Event event) {
-        return Times.isPast(event.getEndDate(), Event.getEventClock());
+        return Times.isPast(event.getEndDate(), event.getEventClock());
     }
 
     public static boolean canBookNow(Event event) {
         if (isPastEvent(event))
             return false;
         LocalDateTime openingDate = event.getOpeningDate();
-        if (openingDate != null && Times.isFuture(openingDate.minusHours(1), Event.getEventClock()))
+        if (openingDate != null && Times.isFuture(openingDate.minusHours(1), event.getEventClock()))
             return false;
         if (isKbs3Event(event)) {
             EventState state = event.getState();
             return state == EventState.OPEN || state == EventState.TESTING && FXUserPerson.isTester();
         }
         // KBS2 events
-        return Booleans.isTrue(event.isLive());
+        return Booleans.isTrue(event.isLive()) && !isClosed(event, false);
     }
 
     public static boolean isClosed(Event event, boolean considerAudioRecording) {
+        if (isKbs3Event(event) || true /* temporary hotfix for in-person Fall 25 closing (KBS2 way not implemented) */) {
+            EventState state = event.getState();
+            if (state == EventState.CLOSED)
+                return !considerAudioRecording; // TODO: consider audioClosingDate
+        }
         LocalDate closingDate = getClosingDate(event, considerAudioRecording);
-        return Times.isPast(closingDate, Event.getEventClock());
+        return Times.isPast(closingDate, event.getEventClock());
     }
 
     public static LocalDate getClosingDate(Event event, boolean considerAudioRecording) {

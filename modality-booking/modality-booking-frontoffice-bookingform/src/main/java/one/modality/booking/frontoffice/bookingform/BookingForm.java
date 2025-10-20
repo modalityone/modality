@@ -1,0 +1,30 @@
+package one.modality.booking.frontoffice.bookingform;
+
+import javafx.beans.property.SimpleBooleanProperty;
+import javafx.beans.value.ObservableBooleanValue;
+import javafx.scene.Node;
+
+/**
+ * @author Bruno Salmon
+ */
+public interface BookingForm {
+
+    BookingFormSettings getSettings();
+
+    Node buildUi();
+
+    default String getEventFieldsToLoad() {
+        return null;
+    }
+
+    void onWorkingBookingLoaded();
+
+    default ObservableBooleanValue transitingProperty() {
+        return new SimpleBooleanProperty(false);
+    }
+
+    void setActivityCallback(BookingFormActivityCallback activityCallback);
+
+    BookingFormActivityCallback getActivityCallback();
+
+}

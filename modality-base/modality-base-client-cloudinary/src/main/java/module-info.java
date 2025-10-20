@@ -8,10 +8,8 @@ module modality.base.client.cloudinary {
     requires webfx.extras.canvas.blob;
     requires webfx.extras.panes;
     requires webfx.kit.util;
-    requires webfx.kit.util.scene;
     requires webfx.platform.async;
     requires webfx.platform.blob;
-    requires webfx.platform.console;
     requires webfx.platform.uischeduler;
     requires webfx.stack.cloud.image;
     requires webfx.stack.cloud.image.client;

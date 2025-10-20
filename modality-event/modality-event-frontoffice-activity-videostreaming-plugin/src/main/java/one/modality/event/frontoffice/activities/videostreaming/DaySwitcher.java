@@ -74,7 +74,7 @@ public class DaySwitcher {
             desktopViewContainer.getChildren().add(titleLabel);
         }
         desktopViewContainer.getChildren().addAll(
-            TimeZoneSwitch.createTimezoneSwitchBox(),
+            TimeZoneSwitch.getGlobal().createTimezoneSwitchBox(),
             I18nControls.newLabel(VideoStreamingI18nKeys.SelectTheDayBelow),
             dayButtonsColumnsPane);
         desktopViewContainer.setAlignment(Pos.TOP_CENTER);
@@ -107,7 +107,7 @@ public class DaySwitcher {
         mobileViewContainer.getChildren().setAll(
             daySelectorPane,
             selectAllDaysLink,
-            TimeZoneSwitch.createTimezoneSwitchBox()
+            TimeZoneSwitch.getGlobal().createTimezoneSwitchBox()
         );
         mobileViewContainer.setAlignment(Pos.CENTER);
     }
@@ -151,10 +151,17 @@ public class DaySwitcher {
         );
 
         // Automatically selecting today if today is part of the event
-        if (!availableDates.contains(selectedDate))
-            setSelectedDate(LocalDate.now());
-        else
-            setSelectedDate(selectedDate);
+        if (!availableDates.contains(selectedDate)) {
+            TimeZoneSwitch timeZoneSwitch = TimeZoneSwitch.getGlobal();
+            if(timeZoneSwitch.isEventLocalTimeSelected()  && timeZoneSwitch.getEventZoneId()!=null) {
+                selectedDate = timeZoneSwitch.isEventLocalTimeSelected() ? LocalDate.now(timeZoneSwitch.getEventZoneId()) : LocalDate.now();
+            } else {
+                selectedDate =  LocalDate.now();
+            }
+        }
+
+        setSelectedDate(selectedDate);
+
         dayToggleGroup.updateButtonsFiredStyleClass();
     }
 

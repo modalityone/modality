@@ -3,7 +3,9 @@ package one.modality.crm.frontoffice.activities.orders;
 
 public interface OrdersI18nKeys {
 
+    Object NoActiveOrders = "NoActiveOrders";
     Object ActiveOrders = "ActiveOrders";
+    Object NoCompletedOrders = "NoCompletedOrders";
     Object OrdersTitleExplanation = "OrdersTitleExplanation";
     Object CompletedOrders = "CompletedOrders";
     Object OrdersMenu = "OrdersMenu";

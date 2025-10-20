@@ -3,6 +3,7 @@ package one.modality.base.client.time;
 import dev.webfx.extras.time.format.LocalizedDateTimeFormat;
 
 import java.time.format.FormatStyle;
+import java.time.format.TextStyle;
 
 /**
  * @author Bruno Salmon
@@ -76,8 +77,9 @@ public interface FrontOfficeTimeFormats {
     String BIRTH_DATE_FORMAT = "dd/MM/yyyy";
     //FormatStyle BIRTH_DATE_FORMAT = FormatStyle.SHORT;
     FormatStyle MEDIA_INFO_DATE_FORMAT = FormatStyle.LONG;
-    FormatStyle RECURRING_EVENT_SCHEDULE_MONTH_DAY_FORMAT = FormatStyle.LONG;
-    String RECURRING_EVENT_SCHEDULE_TIME_FORMAT = "HH:mm";
+    TextStyle BOX_SCHEDULED_ITEM_DAY_OF_WEEK_FORMAT = TextStyle.FULL;
+    FormatStyle BOX_SCHEDULED_ITEM_MONTH_DAY_FORMAT = FormatStyle.LONG;
+    String BOX_SCHEDULED_ITEM_TIME_FORMAT = "HH:mm";
     FormatStyle AUDIO_PLAYLIST_DATE_FORMAT = FormatStyle.LONG;
     FormatStyle AUDIO_TRACK_DATE_TIME_FORMAT = FormatStyle.MEDIUM;
     FormatStyle BOOKING_CHECKOUT_DATE_FORMAT = FormatStyle.FULL;

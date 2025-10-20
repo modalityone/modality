@@ -4,7 +4,7 @@ import dev.webfx.extras.controlfactory.MaterialFactoryMixin;
 import dev.webfx.extras.controlfactory.button.ButtonFactory;
 import dev.webfx.extras.i18n.I18n;
 import dev.webfx.extras.i18n.controls.I18nControls;
-import dev.webfx.extras.operation.OperationUtil;
+import dev.webfx.extras.async.AsyncSpinner;
 import dev.webfx.extras.styles.bootstrap.Bootstrap;
 import dev.webfx.extras.styles.materialdesign.util.MaterialUtil;
 import dev.webfx.extras.util.animation.Animations;
@@ -98,12 +98,12 @@ final class ChangePasswordUI implements MaterialFactoryMixin {
                 if (validateForm()) {
                     // First, we check if the password entered is the correct
                     Object credentials = new AuthenticateWithUsernamePasswordCredentials(emailAddress, passwordField.getText().trim());
-                    OperationUtil.turnOnButtonsWaitMode(actionButton);
+                    AsyncSpinner.displayButtonSpinner(actionButton);
                     new AuthenticationRequest()
                         .setUserCredentials(credentials)
                         .executeAsync()
                         .inUiThread()
-                        .onComplete(ar -> OperationUtil.turnOffButtonsWaitMode(actionButton))
+                        .onComplete(ar -> AsyncSpinner.hideButtonSpinner(actionButton))
                         .onFailure(failure -> {
                             Animations.shake(container);
                             showInfoMessage(UserProfileI18nKeys.IncorrectPassword, Bootstrap.TEXT_DANGER);
@@ -112,10 +112,10 @@ final class ChangePasswordUI implements MaterialFactoryMixin {
                             //Here we send an email
                             //TODO : Change the function when it's ready
                             Object updatePasswordCredentials = new UpdatePasswordCredentials(passwordField.getText().trim(), newPasswordField.getText().trim());
-                            OperationUtil.turnOnButtonsWaitMode(actionButton);
+                            AsyncSpinner.displayButtonSpinner(actionButton);
                             AuthenticationService.updateCredentials(updatePasswordCredentials)
                                 .inUiThread()
-                                .onComplete(ar -> OperationUtil.turnOffButtonsWaitMode(actionButton))
+                                .onComplete(ar -> AsyncSpinner.hideButtonSpinner(actionButton))
                                 .onFailure(failure -> {
                                     //  showResultMessage(failure.getMessage(), Bootstrap.TEXT_DANGER);
                                     showInfoMessage(failure.getMessage(), Bootstrap.TEXT_DANGER);

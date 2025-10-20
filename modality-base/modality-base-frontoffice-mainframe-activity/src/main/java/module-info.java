@@ -29,6 +29,8 @@ module modality.base.frontoffice.mainframe.activity {
     requires webfx.kit.util.aria;
     requires webfx.platform.conf;
     requires webfx.platform.console;
+    requires webfx.platform.scheduler;
+    requires webfx.platform.uischeduler;
     requires webfx.platform.useragent;
     requires webfx.platform.util;
     requires webfx.platform.windowhistory;

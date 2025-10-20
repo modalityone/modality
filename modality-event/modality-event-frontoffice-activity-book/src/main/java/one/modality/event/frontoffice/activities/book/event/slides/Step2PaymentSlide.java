@@ -7,8 +7,8 @@ import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.control.Label;
 import javafx.scene.layout.VBox;
-import one.modality.ecommerce.client.workingbooking.WorkingBookingProperties;
-import one.modality.ecommerce.frontoffice.bookingform.GatewayPaymentForm;
+import one.modality.booking.client.workingbooking.WorkingBookingProperties;
+import one.modality.booking.frontoffice.bookingform.GatewayPaymentForm;
 import one.modality.event.frontoffice.activities.book.BookI18nKeys;
 import one.modality.event.frontoffice.activities.book.event.BookEventActivity;
 

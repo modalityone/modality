@@ -4,9 +4,9 @@ import java.util.Objects;
 
 /**
  * Represents a registered user who successfully logged in and who has an account in Modality. All users who logged in
- * using username/password are in this case, but also registered users who used another login method such as magic link
- * or SSO login will be finally recognised as registered user and their userId will be an instance of this class.
- * Non registered users will have an instance of ModalityGuestPrincipal instead.
+ * using username/password are in this case. But also registered users who used another login method such as magic link
+ * or SSO login will be finally recognized as registered user, and their userId will be an instance of this class.
+ * Non-registered users will have an instance of ModalityGuestPrincipal instead.
  *
  * @author Bruno Salmon
  */
@@ -44,11 +44,11 @@ public final class ModalityUserPrincipal {
     // Static methods helpers
 
     public static Object getUserPersonId(Object principal) {
-        return principal instanceof ModalityUserPrincipal ? ((ModalityUserPrincipal) principal).getUserPersonId() : null;
+        return principal instanceof ModalityUserPrincipal mup ? mup.getUserPersonId() : null;
     }
 
     public static Object getUserAccountId(Object principal) {
-        return principal instanceof ModalityUserPrincipal ? ((ModalityUserPrincipal) principal).getUserAccountId() : null;
+        return principal instanceof ModalityUserPrincipal mup ? mup.getUserAccountId() : null;
     }
 
 }

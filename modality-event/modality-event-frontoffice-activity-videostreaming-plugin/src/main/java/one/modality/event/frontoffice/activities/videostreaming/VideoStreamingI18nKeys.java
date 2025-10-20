@@ -32,6 +32,7 @@ public interface VideoStreamingI18nKeys {
     Object YourNextLiveStreamEventWillAppearHere = "YourNextLiveStreamEventWillAppearHere";
     Object VideosHeader = "VideosHeader";
     Object VideoStreamingMenu = "VideoStreamingMenu";
+    Object SelectAnotherEvent = "SelectAnotherEvent";
     Object VideoExpiredOn1 = "VideoExpiredOn1";
     Object PastRecordings = "PastRecordings";
 

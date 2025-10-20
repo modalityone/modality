@@ -22,7 +22,7 @@ import one.modality.base.frontoffice.utility.tyler.StyleUtility;
 import one.modality.base.frontoffice.utility.tyler.TextUtility;
 import one.modality.base.shared.entities.Event;
 import one.modality.base.shared.entities.EventState;
-import one.modality.ecommerce.frontoffice.bookingform.BookingFormI18nKeys;
+import one.modality.booking.frontoffice.bookingform.BookingFormI18nKeys;
 import one.modality.event.frontoffice.activities.book.BookStarter;
 
 public final class EventView {
@@ -100,10 +100,10 @@ public final class EventView {
         if (hasImage) {
             eventImageView.setImage(new Image(imageUrl, true));
         }
-        I18nEntities.bindExpressionProperties(eventNameLabel,           event, "i18n(this)");
-        I18nEntities.bindExpressionProperties(eventDescriptionLabel,    event, "i18n(shortDescriptionLabel)");
-        I18nEntities.bindExpressionProperties(eventCentreLocationText,  event, "'[At] ' + coalesce(i18n(venue), i18n(organization))");
-        I18nEntities.bindExpressionProperties(eventCountryLocationText, event, "coalesce(i18n(venue.country), i18n(organization.country))");
+        I18nEntities.bindExpressionToProperties(eventNameLabel,           event, "i18n(this)");
+        I18nEntities.bindExpressionToProperties(eventDescriptionLabel,    event, "i18n(shortDescriptionLabel)");
+        I18nEntities.bindExpressionToProperties(eventCentreLocationText,  event, "'[At] ' + coalesce(i18n(venue), i18n(organization))");
+        I18nEntities.bindExpressionToProperties(eventCountryLocationText, event, "coalesce(i18n(venue.country), i18n(organization.country))");
         eventDateText.setText(Strings.toString(event.getStartDate()));
         buttonContainer.setCenter((event.isLive() || event.getState() == EventState.OPEN) ? bookButton : comingSoonButton);
     }

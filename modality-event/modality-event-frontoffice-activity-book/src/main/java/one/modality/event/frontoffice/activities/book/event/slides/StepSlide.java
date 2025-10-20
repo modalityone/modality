@@ -1,7 +1,7 @@
 package one.modality.event.frontoffice.activities.book.event.slides;
 
 import dev.webfx.extras.i18n.controls.I18nControls;
-import dev.webfx.extras.operation.OperationUtil;
+import dev.webfx.extras.async.AsyncSpinner;
 import dev.webfx.extras.webtext.HtmlText;
 import dev.webfx.platform.console.Console;
 import javafx.geometry.Pos;
@@ -14,9 +14,9 @@ import javafx.scene.paint.Color;
 import one.modality.base.shared.entities.Event;
 import one.modality.base.shared.entities.markers.HasPersonalDetails;
 import one.modality.crm.shared.services.authn.fx.FXUserPerson;
-import one.modality.ecommerce.client.workingbooking.WorkingBooking;
-import one.modality.ecommerce.client.workingbooking.WorkingBookingProperties;
-import one.modality.ecommerce.frontoffice.bookingform.GatewayPaymentForm;
+import one.modality.booking.client.workingbooking.WorkingBooking;
+import one.modality.booking.client.workingbooking.WorkingBookingProperties;
+import one.modality.booking.frontoffice.bookingform.GatewayPaymentForm;
 import one.modality.ecommerce.payment.CancelPaymentResult;
 import one.modality.ecommerce.payment.PaymentService;
 import one.modality.ecommerce.payment.client.ClientPaymentUtil;
@@ -164,11 +164,11 @@ public abstract class StepSlide implements Supplier<Node> {
     }
 
     static void turnOnButtonWaitMode(Button... buttons) {
-        OperationUtil.turnOnButtonsWaitMode(buttons);
+        AsyncSpinner.displayButtonSpinner(buttons);
     }
 
     static void turnOffButtonWaitMode(Button button, Object i18nKey) {
-        OperationUtil.turnOffButtonsWaitMode(button); // but this doesn't reestablish the possible i18n graphic
+        AsyncSpinner.hideButtonSpinner(button); // but this doesn't reestablish the possible i18n graphic
         // So we reestablish it using i18n
         I18nControls.bindI18nGraphicProperty(button, i18nKey);
     }

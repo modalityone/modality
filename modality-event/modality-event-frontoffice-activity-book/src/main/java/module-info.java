@@ -13,24 +13,24 @@ module modality.event.frontoffice.activity.book {
     requires modality.base.frontoffice.mainframe.fx;
     requires modality.base.frontoffice.utility;
     requires modality.base.shared.entities;
+    requires modality.booking.client.workingbooking;
+    requires modality.booking.frontoffice.bookingelements;
+    requires modality.booking.frontoffice.bookingform;
     requires modality.crm.backoffice.organization.fx;
     requires modality.crm.client.authn.fx;
     requires modality.crm.client.i18n;
     requires modality.ecommerce.client.i18n;
-    requires modality.ecommerce.client.workingbooking;
     requires modality.ecommerce.document.service;
-    requires modality.ecommerce.frontoffice.bookingelements;
-    requires modality.ecommerce.frontoffice.bookingform;
     requires modality.ecommerce.payment;
     requires modality.ecommerce.payment.client;
     requires modality.event.client.event.fx;
     requires modality.event.client.lifecycle;
     requires modality.event.frontoffice.eventheader;
+    requires webfx.extras.async;
     requires webfx.extras.controlfactory;
     requires webfx.extras.i18n;
     requires webfx.extras.i18n.controls;
     requires webfx.extras.imagestore;
-    requires webfx.extras.operation;
     requires webfx.extras.panes;
     requires webfx.extras.styles.bootstrap;
     requires webfx.extras.util.animation;
@@ -61,7 +61,7 @@ module modality.event.frontoffice.activity.book {
     exports one.modality.event.frontoffice.activities.book.fx;
 
     // Used services
-    uses one.modality.ecommerce.frontoffice.bookingform.BookingFormProvider;
+    uses one.modality.booking.frontoffice.bookingform.BookingFormProvider;
 
     // Provided services
     provides dev.webfx.stack.routing.uirouter.UiRoute with one.modality.event.frontoffice.activities.book.event.BookEventRouting.BookEventUiRoute;

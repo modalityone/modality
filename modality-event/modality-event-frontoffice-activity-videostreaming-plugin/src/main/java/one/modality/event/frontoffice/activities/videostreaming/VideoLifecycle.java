@@ -27,10 +27,13 @@ final class VideoLifecycle {
     private final LocalDateTime liveNowStart;
     private final LocalDateTime maxNormalProcessingEnd;
     private final LocalDateTime expirationDate;
-    private final LocalDateTime nowInEventTimezone = Event.nowInEventTimezone();
+    private final LocalDateTime nowInEventTimezone;
 
     VideoLifecycle(ScheduledItem videoScheduledItem) {
         this.videoScheduledItem = videoScheduledItem;
+        Event event = videoScheduledItem.getEvent();
+        expirationDate = Objects.coalesce(videoScheduledItem.getExpirationDate(), event.getVodExpirationDate());
+        nowInEventTimezone = event.nowInEventTimezone();
         LocalDate videoDate = videoScheduledItem.getDate();
         EntityHasStartAndEndTime startAndEndTimeHolder = MediaUtil.getStartAndEndTimeHolder(videoScheduledItem);
         LocalTime startTime = startAndEndTimeHolder.getStartTime();
@@ -42,13 +45,15 @@ final class VideoLifecycle {
         // Starting the countdown 3 hours before the session
         countdownStart = sessionStart.minusHours(1); // Changed to 1h for the Festival to prevent 2 countdowns at the same time
         // Starting to show the livestream 20 min before the session
-        showLivestreamStart = sessionStart.minusMinutes(20);
+        if (sessionStart.toLocalDate().equals(event.getStartDate())) // Exception for the Friday introduction
+            showLivestreamStart = sessionStart.minusDays(3); // we display it much before (because of the link letter)
+        else
+            showLivestreamStart = sessionStart.minusMinutes(20);
         // Starting to show "LIVE NOW" 2 min before the session
         liveNowStart = sessionStart.minusMinutes(2);
         // Stopping to show the livestream 30 min after the session
         showLivestreamEnd = sessionEnd.plusMinutes(30);
         maxNormalProcessingEnd = sessionEnd.plusMinutes(getVodProcessingTimeMinute(videoScheduledItem));
-        expirationDate = Objects.coalesce(videoScheduledItem.getExpirationDate(), videoScheduledItem.getEvent().getVodExpirationDate());
     }
 
     public ScheduledItem getVideoScheduledItem() {
@@ -108,7 +113,7 @@ final class VideoLifecycle {
     }
 
     boolean isNowBeforeExpirationDate() {
-        return expirationDate == null || Times.isFuture(expirationDate, Event.getEventClock());
+        return expirationDate == null || Times.isFuture(expirationDate, videoScheduledItem.getEvent().getEventClock());
     }
 
     boolean isLiveToday() {

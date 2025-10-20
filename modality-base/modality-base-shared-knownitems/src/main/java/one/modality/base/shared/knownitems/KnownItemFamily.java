@@ -5,24 +5,27 @@ package one.modality.base.shared.knownitems;
  */
 public enum KnownItemFamily {
     // Note: primary keys are temporarily hardcoded (should be configurable)
-    TEACHING("teach", 3),
-    TRANSLATION("transl", 8),
-    VIDEO("video", 29),
-    ACCOMMODATION("acco", 1),
-    MEALS("meals", 2),
-    DIET("diet", 14),
-    PARKING("park", 15),
-    TRANSPORT("transp", 12),
-    TAX("tax", 26),
-    AUDIO_RECORDING("record", 20),
-    UNKNOWN(null, -1);
+    // TODO: complete the i18n keys
+    TEACHING("teach", 3, KnownItemI18nKeys.Teachings),
+    TRANSLATION("transl", 8, null),
+    VIDEO("video", 29, null),
+    ACCOMMODATION("acco", 1, null),
+    MEALS("meals", 2, null),
+    DIET("diet", 14, null),
+    PARKING("park", 15, null),
+    TRANSPORT("transp", 12, null),
+    TAX("tax", 26, null),
+    AUDIO_RECORDING("record", 20, KnownItemI18nKeys.AudioRecordings),
+    UNKNOWN(null, -1, null);
 
     private final String code;
     private final int primaryKey;
+    private final Object i18nKey;
 
-    KnownItemFamily(String code, int primaryKey) {
+    KnownItemFamily(String code, int primaryKey, Object i18nKey) {
         this.code = code;
         this.primaryKey = primaryKey;
+        this.i18nKey = i18nKey;
     }
 
     public String getCode() {
@@ -31,6 +34,10 @@ public enum KnownItemFamily {
 
     public int getPrimaryKey() {
         return primaryKey;
+    }
+
+    public Object getI18nKey() {
+        return i18nKey;
     }
 
     public static KnownItemFamily fromCode(String code) {

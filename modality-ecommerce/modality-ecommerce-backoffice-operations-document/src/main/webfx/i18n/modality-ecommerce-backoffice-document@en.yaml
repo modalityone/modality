@@ -1,0 +1,62 @@
+OpenBookingCart:
+  graphic: "images/s16/cart.png"
+CancelOthers:
+  graphic: "images/s16/actions/cancel.png"
+GetBackCancelledDeposit:
+  graphic: "images/s16/methods/contra.png"
+MergeOptionsFromOtherNotCancelledBookings:
+  graphic: "images/s16/actions/merge.png"
+MarkMultipleBooking:
+  graphic: "images/s16/multipleBookings/redCross.png"
+MarkNotMultipleBooking:
+  graphic: "[MarkMultipleBooking]"
+ToggleMarkNotMultipleBooking:
+  graphic: "[expression: multipleBooking = null ? '[MarkMultipleBooking]' : '[MarkNotMultipleBooking]' ]"
+PassUpdated:
+  graphic: "images/s16/actions/passUpdated.png"
+KBS2Cancel:
+  graphic: "images/s16/actions/cancel.png"
+KBS2Uncancel:
+  graphic: "images/s16/actions/cancel.png"
+ToggleCancel:
+  graphic: "[KBS2Cancel]"
+Confirm:
+  graphic: "images/s16/actions/confirm.png"
+ToggleConfirm:
+  graphic: "images/s16/actions/confirm.png"
+Flag:
+  graphic: "images/s16/actions/flag.png"
+Unflag:
+  graphic: "[Flag]"
+ToggleFlag:
+  graphic: "[Flag]"
+MarkAsArrived:
+  graphic: "images/s16/actions/markAsArrived.png"
+ToggleMarkAsArrived:
+  graphic: "[MarkAsArrived]"
+MarkAsRead:
+  graphic: "images/s16/actions/markAsRead.png"
+ToggleMarkAsRead:
+  graphic: "[MarkAsRead]"
+WillPay:
+  graphic: "images/s16/actions/willPay.png"
+ToggleWillPay:
+  graphic: "[WillPay]"
+PassReady:
+  graphic: "images/s16/actions/passReady.png"
+PassNotReady:
+  graphic: "[PassReady]"
+TogglePassReady:
+  graphic: "[PassReady]"
+MarkAsKnown:
+  graphic: "images/s16/security/known.png"
+MarkAsUnchecked:
+  graphic: "images/s16/security/unchecked.png"
+MarkAsUnknown:
+  graphic: "images/s16/security/unknown.png"
+MarkAsVerified:
+  graphic: "images/s16/security/verified.png"
+SendLetter:
+  graphic: "images/s16/letter.png"
+ShowBookingEditor:
+  graphic: "[expression: genderIcon]"

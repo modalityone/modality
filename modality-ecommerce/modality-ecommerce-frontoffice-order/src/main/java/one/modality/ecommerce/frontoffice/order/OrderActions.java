@@ -1,7 +1,7 @@
 package one.modality.ecommerce.frontoffice.order;
 
 import dev.webfx.extras.i18n.controls.I18nControls;
-import dev.webfx.extras.operation.OperationUtil;
+import dev.webfx.extras.async.AsyncSpinner;
 import dev.webfx.extras.panes.ScalePane;
 import dev.webfx.extras.styles.bootstrap.Bootstrap;
 import dev.webfx.extras.util.dialog.DialogCallback;
@@ -16,8 +16,10 @@ import javafx.event.EventHandler;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Cursor;
-import javafx.scene.control.*;
+import javafx.scene.control.Button;
+import javafx.scene.control.ButtonBase;
 import javafx.scene.control.Label;
+import javafx.scene.control.Labeled;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
@@ -26,11 +28,8 @@ import one.modality.base.client.mainframe.fx.FXMainFrameDialogArea;
 import one.modality.base.frontoffice.utility.browser.BrowserUtil;
 import one.modality.base.shared.entities.*;
 import one.modality.base.shared.entities.formatters.EventPriceFormatter;
+import one.modality.booking.client.workingbooking.WorkingBooking;
 import one.modality.crm.shared.services.authn.fx.FXUserPerson;
-import one.modality.ecommerce.client.workingbooking.WorkingBooking;
-import one.modality.ecommerce.document.service.DocumentAggregate;
-import one.modality.ecommerce.document.service.DocumentService;
-import one.modality.ecommerce.document.service.PolicyAggregate;
 import one.modality.event.client.lifecycle.EventLifeCycle;
 
 import java.util.function.Supplier;
@@ -77,7 +76,7 @@ public final class OrderActions {
                 history.setDocument(d);
                 history.setMail(email);
 
-                OperationUtil.turnOnButtonsWaitModeDuringExecution(
+                AsyncSpinner.displayButtonSpinnerDuringAsyncExecution(
                     updateStore.submitChanges()
                         .onFailure(Console::log)
                         .onComplete(c -> contactUsWindow.displaySuccessMessage(5000, messageWindowCallback::closeDialog)),
@@ -158,7 +157,7 @@ public final class OrderActions {
                 history.setMail(email);
 
                 //TODO: prevent the Refund to display if the refund as already been requested, and display somewhere in the interface that the refund has been requested
-                OperationUtil.turnOnButtonsWaitModeDuringExecution(
+                AsyncSpinner.displayButtonSpinnerDuringAsyncExecution(
                     updateStore.submitChanges()
                         .onFailure(Console::log)
                         .onComplete(c -> refundWindow.displayRefundSuccessMessage(8000, messageWindowCallback::closeDialog)),
@@ -168,7 +167,7 @@ public final class OrderActions {
             refundWindow.getDonateButton().setOnAction(ae -> {
                 UpdateStore updateStore = UpdateStore.createAbove(orderDocument.getStore());
                 //TODO implementation
-                OperationUtil.turnOnButtonsWaitModeDuringExecution(
+                AsyncSpinner.displayButtonSpinnerDuringAsyncExecution(
                     updateStore.submitChanges()
                         .onFailure(Console::log)
                         .onComplete(c -> refundWindow.displayDonationSuccessMessage(8000, messageWindowCallback::closeDialog)),
@@ -216,12 +215,9 @@ public final class OrderActions {
 
             Button confirmButton = Bootstrap.largeDangerButton(I18nControls.newButton(BaseI18nKeys.Confirm));
             confirmButton.setOnAction(ae ->
-                OperationUtil.turnOnButtonsWaitModeDuringExecution(
-                    DocumentService.loadDocumentWithPolicy(orderDocument)
-                        .compose(policyAndDocumentAggregates -> {
-                            PolicyAggregate policyAggregate = policyAndDocumentAggregates.getPolicyAggregate(); // never null
-                            DocumentAggregate existingBooking = policyAndDocumentAggregates.getDocumentAggregate(); // might be null
-                            WorkingBooking workingBooking = new WorkingBooking(policyAggregate, existingBooking);
+                AsyncSpinner.displayButtonSpinnerDuringAsyncExecution(
+                    WorkingBooking.loadWorkingBooking(orderDocument)
+                        .compose(workingBooking -> {
                             workingBooking.cancelBooking();
                             return workingBooking.submitChanges("Booking canceled online by user")
                                 .compose(result -> loadFromDatabaseFunction.get());

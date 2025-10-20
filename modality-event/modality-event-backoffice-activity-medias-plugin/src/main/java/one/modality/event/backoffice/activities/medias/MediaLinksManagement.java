@@ -2,7 +2,7 @@ package one.modality.event.backoffice.activities.medias;
 
 import dev.webfx.extras.i18n.I18n;
 import dev.webfx.extras.i18n.controls.I18nControls;
-import dev.webfx.extras.operation.OperationUtil;
+import dev.webfx.extras.async.AsyncSpinner;
 import dev.webfx.extras.panes.MonoPane;
 import dev.webfx.extras.styles.bootstrap.Bootstrap;
 import dev.webfx.extras.switches.Switch;
@@ -306,13 +306,13 @@ public abstract class MediaLinksManagement {
 
                         MediaPlayer mediaPlayer = new MediaPlayer(javafxMedia);
                         // Wait until the media is ready (loaded) to get the duration
-                        OperationUtil.turnOnButtonsWaitMode(retrieveDurationButton);
+                        AsyncSpinner.displayButtonSpinner(retrieveDurationButton);
                         mediaPlayer.setOnReady(() -> {
                             // Get the duration of the MP3 file
                             Duration duration = javafxMedia.getDuration();
                             long durationInMillis = (long) duration.toMillis();
                             durationTextField.setText(String.valueOf(durationInMillis / 1000));
-                            OperationUtil.turnOffButtonsWaitMode(retrieveDurationButton);
+                            AsyncSpinner.hideButtonSpinner(retrieveDurationButton);
                         });
                     }
                 });
@@ -351,7 +351,7 @@ public abstract class MediaLinksManagement {
             saveButton.disableProperty().bind(EntityBindings.hasChangesProperty(updateStore).not());
             saveButton.setOnAction(e -> {
                 if (validationSupport.isValid()) {
-                    OperationUtil.turnOnButtonsWaitModeDuringExecution(
+                    AsyncSpinner.displayButtonSpinnerDuringAsyncExecution(
                         updateStore.submitChanges()
                             .onFailure(Console::log)
                             .inUiThread()

@@ -1,7 +1,7 @@
 package one.modality.event.backoffice.activities.pricing;
 
 import dev.webfx.extras.i18n.controls.I18nControls;
-import dev.webfx.extras.operation.OperationUtil;
+import dev.webfx.extras.async.AsyncSpinner;
 import dev.webfx.extras.styles.bootstrap.Bootstrap;
 import dev.webfx.extras.time.TimeUtil;
 import dev.webfx.extras.validation.ValidationSupport;
@@ -65,7 +65,7 @@ abstract class AbstractItemFamilyPricing implements ItemFamilyPricing {
     private final List<SiteItem> initialSelectedSiteItems;
     // If the managers add or remove some options, this list will contain their most recent selection.
     private final List<SiteItem> selectedSiteItems = new ArrayList<>();
-    // Map associating each option to its model (containing the rates and scheduled items for that option). This map
+    // Map associating each option with its model (containing the rates and scheduled items for that option). This map
     // may contain more options than selectedSiteItems, because it also contains the options that have been removed
     private final Map<SiteItem, SiteItemModel> siteItemModels = new HashMap<>();
     private final List<ScheduledItem> initialScheduledItems;
@@ -80,7 +80,7 @@ abstract class AbstractItemFamilyPricing implements ItemFamilyPricing {
         this.everyday = everyday;
         this.updateStore = UpdateStore.createAbove(eventPolicy.getEntityStore());
         EntityBindings.disableNodesWhenUpdateStoreHasNoChanges(updateStore, saveButton, cancelButton);
-        initialScheduledItems = eventPolicy.getFamilyScheduledItems(knownItemFamily);
+        initialScheduledItems = eventPolicy.filterScheduledItemsOfFamily(knownItemFamily);
         initialSelectedSiteItems = initialScheduledItems.stream().map(SiteItem::new).distinct().collect(Collectors.toList());
 
         Event event = getEvent();
@@ -134,7 +134,7 @@ abstract class AbstractItemFamilyPricing implements ItemFamilyPricing {
 
         saveButton.setOnAction(e -> {
                 if (dateUIs.stream().allMatch(DateUI::isValid)) {
-                    OperationUtil.turnOnButtonsWaitModeDuringExecution(
+                    AsyncSpinner.displayButtonSpinnerDuringAsyncExecution(
                         updateStore.submitChanges()
                             .onFailure(Console::log)
                         , saveButton);
@@ -164,7 +164,7 @@ abstract class AbstractItemFamilyPricing implements ItemFamilyPricing {
             siteItemUI.checkBox.setSelected(selectedSiteItems.contains(siteItemUI.siteItem));
         }
 
-        // All the selected options share the same dates and rates (in reality the ScheduledItem and Rate will be created
+        // All the selected options share the same dates and rates (in reality, the ScheduledItem and Rate will be created
         // in the database for each SiteItem, but with the same information regarding dates and rates). So in the UI, we
         // show this information (dates and rates) only once. referenceSiteItem is the sample that we will use for this.
         SiteItem referenceSiteItem = Collections.first(selectedSiteItems);
@@ -200,7 +200,7 @@ abstract class AbstractItemFamilyPricing implements ItemFamilyPricing {
                 siteItemModel.initialRates.forEach(updateStore::deleteEntity);
                 continue; // nothing more to do for this siteItem
             }
-            // If we reach this points, it's because the siteItem has been added or eventually modified
+            // If we reach this point, it's because the siteItem has been added or eventually modified
             // We will try to reuse existing rates if possible (and eventually update them), otherwise we will create new ones
             List<Rate> initialRates = siteItemModel.initialRates; // from policy rates, kept only those related to this siteItem
             int lastUsedInitialRateIndex = -1;
@@ -227,7 +227,7 @@ abstract class AbstractItemFamilyPricing implements ItemFamilyPricing {
                 Object price = priceFormatter.parseValue(rateField.getText());
                 Rate rate = null;
                 if (lastUpdatedRate != null && Numbers.identicalObjectsOrNumberValues(price, lastUpdatedRate.getPrice())) {
-                    rate = lastUpdatedRate; // continuing using same rate (extending its end date)
+                    rate = lastUpdatedRate; // continuing using the same rate (extending its end date)
                 } else if (lastUsedInitialRateIndex < initialRates.size() - 1) {
                     rate = Collections.findFirst(initialRates, lastUsedInitialRateIndex + 1, r -> siteItemModel.rateMatchesSiteItemPerDayAndDate(r, date));
                     if (rate != null) {
@@ -251,7 +251,7 @@ abstract class AbstractItemFamilyPricing implements ItemFamilyPricing {
                 completeRate(rate);
                 lastUpdatedRate = rate;
             }
-            // Deleting remaining daily teaching rates (i.e. those not reused)
+            // Deleting remaining daily teaching rates (i.e., those not reused)
             for (int i = lastUsedInitialRateIndex + 1; i < initialRates.size(); i++) {
                 Rate rate = initialRates.get(i);
                 if (rate != null && !Entities.sameId(rate, lastUpdatedRate))
@@ -268,7 +268,7 @@ abstract class AbstractItemFamilyPricing implements ItemFamilyPricing {
             rate.setMinDeposit(100);
     }
 
-    // Class containing the UI elements associated to a date (checkbox, text and rate text field)
+    // Class containing the UI elements associated with a date (checkbox, text and rate text field)
     private class DateUI {
         private final LocalDate date;
         private final Text dateText;
@@ -295,7 +295,7 @@ abstract class AbstractItemFamilyPricing implements ItemFamilyPricing {
         }
     }
 
-    // Class containing the UI elements associated to a SiteIem (checkbox with text)
+    // Class containing the UI elements associated with a SiteIem (checkbox with text)
     private class SiteItemUI {
         private final SiteItem siteItem;
         private final CheckBox checkBox;
@@ -319,7 +319,7 @@ abstract class AbstractItemFamilyPricing implements ItemFamilyPricing {
         }
     }
 
-    // Class containing the information (model) associated to a SiteItem.
+    // Class containing the information (model) associated with a SiteItem.
     private class SiteItemModel {
         private final SiteItem siteItem;
         private final List<Rate> initialRates;

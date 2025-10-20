@@ -13,7 +13,7 @@ import one.modality.base.client.i18n.I18nEntities;
  */
 public class EventTitleHeader extends AbstractEventHeader {
 
-    private final Label eventTitleLabel = Bootstrap.h3(Bootstrap.strong(I18nEntities.newExpressionLabel(eventProperty(), "i18n(this)")));
+    private final Label eventTitleLabel = Bootstrap.h3(Bootstrap.strong(I18nEntities.newTranslatedEntityLabel(eventProperty())));
 
     public EventTitleHeader() {
         eventTitleLabel.setAlignment(Pos.CENTER);

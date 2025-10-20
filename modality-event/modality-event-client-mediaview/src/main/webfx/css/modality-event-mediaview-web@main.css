@@ -1,0 +1,7 @@
+.root {
+    --modality-media-button-circle-background: var(--brand-main-color);
+}
+
+.media-button {
+    background-color: var(--modality-media-button-circle-background);
+}

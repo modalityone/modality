@@ -77,6 +77,24 @@
 
         <dependency>
             <groupId>one.modality</groupId>
+            <artifactId>modality-booking-client-workingbooking</artifactId>
+            <version>1.0.0-SNAPSHOT</version>
+        </dependency>
+
+        <dependency>
+            <groupId>one.modality</groupId>
+            <artifactId>modality-booking-frontoffice-bookingelements</artifactId>
+            <version>1.0.0-SNAPSHOT</version>
+        </dependency>
+
+        <dependency>
+            <groupId>one.modality</groupId>
+            <artifactId>modality-booking-frontoffice-bookingform</artifactId>
+            <version>1.0.0-SNAPSHOT</version>
+        </dependency>
+
+        <dependency>
+            <groupId>one.modality</groupId>
             <artifactId>modality-crm-backoffice-organization-fx</artifactId>
             <version>1.0.0-SNAPSHOT</version>
         </dependency>
@@ -101,25 +119,7 @@
 
         <dependency>
             <groupId>one.modality</groupId>
-            <artifactId>modality-ecommerce-client-workingbooking</artifactId>
-            <version>1.0.0-SNAPSHOT</version>
-        </dependency>
-
-        <dependency>
-            <groupId>one.modality</groupId>
             <artifactId>modality-ecommerce-document-service</artifactId>
-            <version>1.0.0-SNAPSHOT</version>
-        </dependency>
-
-        <dependency>
-            <groupId>one.modality</groupId>
-            <artifactId>modality-ecommerce-frontoffice-bookingelements</artifactId>
-            <version>1.0.0-SNAPSHOT</version>
-        </dependency>
-
-        <dependency>
-            <groupId>one.modality</groupId>
-            <artifactId>modality-ecommerce-frontoffice-bookingform</artifactId>
             <version>1.0.0-SNAPSHOT</version>
         </dependency>
 
@@ -155,6 +155,12 @@
 
         <dependency>
             <groupId>dev.webfx</groupId>
+            <artifactId>webfx-extras-async</artifactId>
+            <version>0.1.0-SNAPSHOT</version>
+        </dependency>
+
+        <dependency>
+            <groupId>dev.webfx</groupId>
             <artifactId>webfx-extras-controlfactory</artifactId>
             <version>0.1.0-SNAPSHOT</version>
         </dependency>
@@ -174,12 +180,6 @@
         <dependency>
             <groupId>dev.webfx</groupId>
             <artifactId>webfx-extras-imagestore</artifactId>
-            <version>0.1.0-SNAPSHOT</version>
-        </dependency>
-
-        <dependency>
-            <groupId>dev.webfx</groupId>
-            <artifactId>webfx-extras-operation</artifactId>
             <version>0.1.0-SNAPSHOT</version>
         </dependency>
 

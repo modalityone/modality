@@ -134,7 +134,7 @@ public class ServerPaymentServiceProvider implements PaymentServiceProvider {
             );
             Event event = document.getEvent();
             GatewayItem item = new GatewayItem(
-                "#" + event.getPrimaryKey() + " - #" + document.getRef(),
+                "E#" + event.getPrimaryKey() + " - D#" + document.getRef() + " - P#" + paymentPrimaryKey,
                 "Deposit",
                 event.getName() + " - Booking Ref " + document.getRef(),
                 1,
@@ -334,8 +334,8 @@ public class ServerPaymentServiceProvider implements PaymentServiceProvider {
             return HistoryRecorder.preparePaymentHistoryBeforeSubmit(historyComment, moneyTransfer, userId)
                 .compose(history ->
                     updateStore.submitChanges(Triggers.frontOfficeTransaction(updateStore))
-                        .compose(submitResultBatch -> { // Checking that something happened in the database
-                            int rowCount = submitResultBatch.get(0).getRowCount();
+                        .compose(result -> { // Checking that something happened in the database
+                            int rowCount = result.getRowCount();
                             if (rowCount == 0)
                                 return Future.failedFuture("Unknown payment");
                             // Completing the history recording (changes column with resolved primary keys)

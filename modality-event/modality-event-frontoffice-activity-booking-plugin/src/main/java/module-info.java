@@ -18,8 +18,8 @@ module modality.event.frontoffice.activity.booking.plugin {
     requires modality.base.client.tile;
     requires modality.base.frontoffice.utility;
     requires modality.base.shared.entities;
+    requires modality.booking.frontoffice.bookingform;
     requires modality.crm.backoffice.organization.fx;
-    requires modality.ecommerce.frontoffice.bookingform;
     requires modality.event.frontoffice.activity.book;
     requires webfx.extras.controlfactory;
     requires webfx.extras.i18n;

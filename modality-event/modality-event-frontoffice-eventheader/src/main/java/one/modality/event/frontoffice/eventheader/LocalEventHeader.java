@@ -92,7 +92,7 @@ public final class LocalEventHeader extends AbstractEventHeader {
     }
 
     private void bindI18nEventExpression(Property<String> textProperty, String eventExpression) {
-        I18nEntities.bindExpressionTextProperty(textProperty, eventProperty(), eventExpression, eventLoadedProperty());
+        I18nEntities.bindExpressionToTextProperty(textProperty, eventProperty(), eventExpression, eventLoadedProperty());
     }
 
     @Override
@@ -104,7 +104,7 @@ public final class LocalEventHeader extends AbstractEventHeader {
     public Future<Event> loadAndSetEvent(Event event) {
         //eventImageContainer.setContent(null);
         String cloudImagePath = ModalityCloudinary.eventImagePath(event);
-        ModalityCloudinary.loadImage(cloudImagePath, eventImageContainer, -1, -1, null);
+        ModalityCloudinary.loadHdpiImage(cloudImagePath, -1, -1, eventImageContainer, null);
         return super.loadAndSetEvent(event);
     }
 

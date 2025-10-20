@@ -32,9 +32,9 @@ import javafx.stage.Screen;
 import one.modality.base.client.activity.ModalityButtonFactoryMixin;
 import one.modality.base.frontoffice.utility.page.FOPageUtil;
 import one.modality.base.shared.entities.Document;
+import one.modality.crm.shared.services.authn.fx.FXModalityUserPrincipal;
 import one.modality.ecommerce.frontoffice.order.OrderCard;
 import one.modality.ecommerce.frontoffice.order.OrderStatus;
-import one.modality.crm.shared.services.authn.fx.FXModalityUserPrincipal;
 
 import java.time.LocalDate;
 import java.util.LinkedHashMap;
@@ -54,6 +54,7 @@ final class OrdersActivity extends ViewDomainActivityBase implements ModalityBut
     private final ObjectProperty<LocalDate> loadPastEventsBeforeDateProperty = new SimpleObjectProperty<>();
     private final ObjectProperty<Object> selectedOrderIdProperty = new SimpleObjectProperty<>();
     private ReactiveObjectsMapper<Document, OrderCard> upcomingOrdersMapper;
+    private ReactiveEntitiesMapper<Document> completedOrdersMapper;
 
     @Override
     protected void updateModelFromContextParameters() {
@@ -86,10 +87,20 @@ final class OrdersActivity extends ViewDomainActivityBase implements ModalityBut
         VBox activeOrdersContainer = createOrdersContainer();
         // No feed for the active orders, we just load them all, map them to cards and then add them to the container,
         // but keeping the initial progress indicator until the first result arrives.
-        FXProperties.onPropertySet(upcomingOrdersMapper.resultProperty(), ignored -> UiScheduler.runInUiThread(() ->
-            // This binding will also remove the initial progress indicator
-            ObservableLists.bindConverted(activeOrdersContainer.getChildren(), upcomingOrderCards, OrderCard::getView)
-        ));
+        FXProperties.runNowAndOnPropertyChange(calling -> UiScheduler.scheduleDeferred(() -> {
+            if (calling)
+                activeOrdersContainer.getChildren().setAll(Controls.createProgressIndicator(50));
+            else if (upcomingOrderCards.isEmpty())
+                activeOrdersContainer.getChildren().setAll(Bootstrap.strong(Bootstrap.textSecondary(I18nControls.newLabel(OrdersI18nKeys.NoActiveOrders))));
+            else
+            {
+                ObservableLists.setAllConverted(upcomingOrderCards, OrderCard::getView, activeOrdersContainer.getChildren());
+                for (OrderCard orderCard : upcomingOrderCards) {
+                    //We expand all the upcoming orders by default
+                    orderCard.expandDetails();
+                }
+            }
+        }), upcomingOrdersMapper.callingProperty());
 
         Label completedOrdersLabel = Bootstrap.strong(Bootstrap.textSecondary(Bootstrap.h4(I18nControls.newLabel(OrdersI18nKeys.CompletedOrders))));
         completedOrdersLabel.setTextAlignment(TextAlignment.CENTER);
@@ -98,17 +109,21 @@ final class OrdersActivity extends ViewDomainActivityBase implements ModalityBut
         VBox pastOrdersContainer = createOrdersContainer();
         // Feed management for the past orders
         pastOrdersFeed.addListener((InvalidationListener) observable -> {
-            // Removing the progress indicator if present
-            if (Collections.first(pastOrdersContainer.getChildren()) instanceof ProgressIndicator)
-                pastOrdersContainer.getChildren().clear();
             pastOrdersFeed.stream().collect(Collectors.groupingBy(Document::getEvent, LinkedHashMap::new, Collectors.toList())) // Using LinkedHashMap to keep the sort
                 .forEach((event, eventOrders) -> {
                     eventOrders.forEach(orderDocument -> {
                         OrderCard orderCard = new OrderCard(orderDocument);
-                        pastOrdersContainer.getChildren().add(orderCard.getView());
+                        // Inserting the card before the progress indicator (which is normally the last child)
+                        pastOrdersContainer.getChildren().add(pastOrdersContainer.getChildren().size() - 1, orderCard.getView());
                     });
                 });
         });
+        FXProperties.runNowAndOnPropertyChange(calling -> UiScheduler.scheduleDeferred(() -> {
+            if (calling && pastOrdersContainer.getChildren().isEmpty())
+                pastOrdersContainer.getChildren().setAll(Controls.createProgressIndicator(50));
+            else if (!calling && pastOrdersContainer.getChildren().size() == 1)
+                pastOrdersContainer.getChildren().setAll(Bootstrap.strong(Bootstrap.textSecondary(I18nControls.newLabel(OrdersI18nKeys.NoCompletedOrders))));
+        }), completedOrdersMapper.callingProperty());
 
         VBox pageContainer = new VBox(
             ordersLabel,
@@ -120,7 +135,11 @@ final class OrdersActivity extends ViewDomainActivityBase implements ModalityBut
         );
         pageContainer.setAlignment(Pos.TOP_CENTER);
 
-        FXProperties.runOnPropertyChange(activeOrdersContainer.getChildren()::clear, FXModalityUserPrincipal.modalityUserPrincipalProperty());
+        FXProperties.runOnPropertyChange(() -> UiScheduler.runInUiThread(() -> {
+            activeOrdersContainer.getChildren().clear();
+            pastOrdersContainer.getChildren().clear();
+        }), FXModalityUserPrincipal.modalityUserPrincipalProperty());
+
         // Lazy loading when the user scrolls down
         Controls.onScrollPaneAncestorSet(pageContainer, scrollPane -> {
             double lazyLoadingBottomSpace = Screen.getPrimary().getVisualBounds().getHeight();
@@ -128,11 +147,14 @@ final class OrdersActivity extends ViewDomainActivityBase implements ModalityBut
             FXProperties.runOnPropertiesChange(() -> {
                 if (Controls.computeScrollPaneVBottomOffset(scrollPane) > pageContainer.getHeight() - lazyLoadingBottomSpace) {
                     Document lastOrderDocument = Collections.last(pastOrdersFeed);
-                    if (lastOrderDocument == null)
-                        pageContainer.setPadding(Insets.EMPTY);
-                    else {
+                    if (lastOrderDocument != null) {
                         LocalDate startDate = lastOrderDocument.getEvent().getStartDate();
                         FXProperties.setIfNotEquals(loadPastEventsBeforeDateProperty, startDate);
+                    } else if (loadPastEventsBeforeDateProperty.get() != null) {
+                        // Removing the progress indicator normally present as the last child
+                        if (Collections.last(pastOrdersContainer.getChildren()) instanceof ProgressIndicator)
+                            pastOrdersContainer.getChildren().remove(pastOrdersContainer.getChildren().size() - 1);
+                        pageContainer.setPadding(Insets.EMPTY);
                     }
                 }
             }, scrollPane.vvalueProperty(), pageContainer.heightProperty());
@@ -156,7 +178,7 @@ final class OrdersActivity extends ViewDomainActivityBase implements ModalityBut
     }
 
     private static VBox createOrdersContainer() {
-        VBox ordersContainer = new VBox(30, Controls.createProgressIndicator(50));
+        VBox ordersContainer = new VBox(30);
         ordersContainer.setAlignment(Pos.TOP_CENTER);
         ordersContainer.setBackground(BackgroundFactory.newBackground(Color.gray(0.95), 30));
         ordersContainer.setPadding(new Insets(40, 30, 40, 30));
@@ -168,11 +190,11 @@ final class OrdersActivity extends ViewDomainActivityBase implements ModalityBut
         // Upcoming orders
         upcomingOrdersMapper = ReactiveObjectsMapper.<Document, OrderCard>createReactiveChain(this)
             .always( // language=JSON5
-                "{class: 'Document', alias: 'd'}")
+                "{class: 'Document', alias: 'd', fields: 'event.vodExpirationDate' }")
             .always(DqlStatement.fields(OrderCard.ORDER_REQUIRED_FIELDS))
-            .always(where("event.endDate >= now()"))
+            .always(where("event.endDate >= now() or event.vodExpirationDate >= now()"))
             .always(where("!abandoned or price_deposit>0"))
-            .ifNotNullOtherwiseEmpty(FXModalityUserPrincipal.modalityUserPrincipalProperty(), mup -> where("person.(frontendAccount=$1 or accountPerson..frontendAccount=$1)", mup.getUserAccountId()))
+            .ifNotNullOtherwiseEmpty(FXModalityUserPrincipal.modalityUserPrincipalProperty(), mup -> where("accountCanAccessPersonOrders(?, person)", mup.getUserAccountId()))
             .always(orderBy(OrderStatus.getBookingStatusOrderExpression(true)))
             .always(orderBy("event.startDate desc, ref desc"))
             .setIndividualEntityToObjectMapperFactory(IndividualEntityToObjectMapper.factory(OrderCard::new))
@@ -180,18 +202,15 @@ final class OrdersActivity extends ViewDomainActivityBase implements ModalityBut
             .start();
 
         // Past orders
-        ReactiveEntitiesMapper.<Document>createReactiveChain(this)
+        completedOrdersMapper = ReactiveEntitiesMapper.<Document>createReactiveChain(this)
             .always( // language=JSON5
-                "{class: 'Document', alias: 'd', orderBy: 'event.startDate desc, ref desc', limit: 5}")
+                "{class: 'Document', alias: 'd', fields: 'event.vodExpirationDate', orderBy: 'event.startDate desc, ref desc', limit: 5}")
             .always(DqlStatement.fields(OrderCard.ORDER_REQUIRED_FIELDS))
-            .always(where("event.endDate < now()"))
+            .always(where("event.endDate < now() and (event.vodExpirationDate==null or event.vodExpirationDate < now())"))
             .always(where("!abandoned or price_deposit>0"))
-            .ifNotNullOtherwiseEmpty(FXModalityUserPrincipal.modalityUserPrincipalProperty(), mup -> where("person.(frontendAccount=$1 or accountPerson..frontendAccount=$1)", mup.getUserAccountId()))
+            .ifNotNullOtherwiseEmpty(FXModalityUserPrincipal.modalityUserPrincipalProperty(), mup -> where("accountCanAccessPersonOrders(?, person)", mup.getUserAccountId()))
             .ifNotNull(loadPastEventsBeforeDateProperty, date -> where("event.startDate < ?", date))
             .storeEntitiesInto(pastOrdersFeed)
             .start();
-
-
     }
-
 }

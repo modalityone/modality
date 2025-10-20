@@ -3,7 +3,7 @@ package one.modality.ecommerce.frontoffice.order;
 import dev.webfx.extras.i18n.I18nKeys;
 import dev.webfx.extras.i18n.controls.I18nControls;
 import dev.webfx.extras.i18n.spi.impl.I18nSubKey;
-import dev.webfx.extras.operation.OperationUtil;
+import dev.webfx.extras.async.AsyncSpinner;
 import dev.webfx.extras.panes.CollapsePane;
 import dev.webfx.extras.panes.MonoPane;
 import dev.webfx.extras.styles.bootstrap.Bootstrap;
@@ -35,7 +35,7 @@ import one.modality.base.shared.entities.Event;
 import one.modality.base.shared.entities.EventState;
 import one.modality.base.shared.entities.formatters.EventPriceFormatter;
 import one.modality.ecommerce.client.i18n.EcommerceI18nKeys;
-import one.modality.ecommerce.frontoffice.bookingelements.BookingElements;
+import one.modality.booking.frontoffice.bookingelements.BookingElements;
 import one.modality.event.client.lifecycle.EventLifeCycle;
 
 import java.time.LocalDate;
@@ -49,7 +49,7 @@ public final class OrderCard {
 
     // Required fields for retrieving order and its details
     private static final String ORDER_EVENT_REQUIRED_FIELDS = "event.(name,label,state,image.url,live,startDate,endDate,kbs3,venue.(name,label,country),organization.country)";
-    private static final String ORDER_PERSON_REQUIRED_FIELDS = "ref,person,person_firstName,person_lastName,cart.uuid";
+    private static final String ORDER_PERSON_REQUIRED_FIELDS = "ref,person,person_firstName,person_lastName,person_email,cart.uuid";
     private static final String ORDER_STATUS_REQUIRED_FIELDS = OrderStatus.BOOKING_REQUIRED_FIELDS;
     public static final String ORDER_REQUIRED_FIELDS = ORDER_EVENT_REQUIRED_FIELDS + "," + ORDER_PERSON_REQUIRED_FIELDS + "," + ORDER_STATUS_REQUIRED_FIELDS;
     private static final String DOCUMENT_LINE_REQUIRED_FIELDS = "item.(name,label,family.(name,label)),quantity,price_net,dates,cancelled";
@@ -111,6 +111,10 @@ public final class OrderCard {
             detailsCollapsePane.setAnimate(true);
         }
         return autoScrollAndExpand;
+    }
+
+    public void expandDetails() {
+        loadAndExpandOrderDetails(false);
     }
 
     // Private implementation
@@ -250,7 +254,7 @@ public final class OrderCard {
     }
 
     private void loadAndExpandOrderDetails(boolean autoscroll) {
-        OperationUtil.turnOnButtonsWaitModeDuringExecution(
+        AsyncSpinner.displayButtonSpinnerDuringAsyncExecution(
             loadFromDatabase()
                 .onComplete(ar ->
                     // Calling in UI thread, but after another animation frame to ensure the layout pass is

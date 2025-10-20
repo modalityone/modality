@@ -16,6 +16,7 @@ module modality.event.client.mediaview {
     requires webfx.extras.panes;
     requires webfx.extras.player;
     requires webfx.extras.player.multi.all;
+    requires webfx.extras.styles.bootstrap;
     requires webfx.extras.time.format;
     requires webfx.extras.util.animation;
     requires webfx.kit.util;

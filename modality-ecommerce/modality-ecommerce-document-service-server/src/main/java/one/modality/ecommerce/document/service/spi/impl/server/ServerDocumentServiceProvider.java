@@ -33,8 +33,8 @@ import java.util.stream.Collectors;
  */
 public class ServerDocumentServiceProvider implements DocumentServiceProvider {
 
-    private final static String POLICY_SCHEDULED_ITEMS_QUERY_BASE = "select site.name,item.(name,label,code,family.(code,name,label),ord),date,startTime,timeline.startTime from ScheduledItem";
-    private final static String POLICY_RATES_QUERY_BASE = "select site,item,price,perDay,perPerson,facilityFee_price,startDate,endDate,onDate,offDate,minDeposit,age1_max,age1_price,age1_discount,age2_max,age2_price,age2_discount,resident_price,resident_discount,resident2_price,resident2_discount from Rate";
+    private final static String POLICY_SCHEDULED_ITEMS_QUERY_BASE = "select site.name,item.(name,label,code,family.(code,name,label),ord),date,startTime,timeline.startTime,cancelled from ScheduledItem";
+    private final static String POLICY_RATES_QUERY_BASE = "select site,item,price,perDay,perPerson,facilityFee_price,startDate,endDate,onDate,offDate,minDeposit,cutoffDate,minDeposit2,age1_max,age1_price,age1_discount,age2_max,age2_price,age2_discount,resident_price,resident_discount,resident2_price,resident2_discount from Rate";
     private final static String POLICY_BOOKABLE_PERIODS_QUERY_BASE = "select startScheduledItem,endScheduledItem,name,label from BookablePeriod";
 
     @Override
@@ -148,6 +148,9 @@ public class ServerDocumentServiceProvider implements DocumentServiceProvider {
                 documentLine = ((AbstractDocumentLineEvent) e).getDocumentLine();
             }
         }
+
+        if (document == null && documentLine == null)
+            return Future.failedFuture("No document changes to submit");
 
         // Note: At this point, the document may be null, but in that case we at least have documentLine not null
         return HistoryRecorder.prepareDocumentHistoryBeforeSubmit(argument.getHistoryComment(), document, documentLine)

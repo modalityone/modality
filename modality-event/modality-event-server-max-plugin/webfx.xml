@@ -11,6 +11,9 @@
 
         <plugin-module>modality-event-server-min-plugin</plugin-module>
 
+        <!-- DeepL service, used by modality-event-backoffice-activity-medias-plugin which is included in modality-event-backoffice-max-plugin -->
+        <plugin-module>webfx-stack-cloud-deepl-server-plugin</plugin-module>
+
     </dependencies>
 
 </project>

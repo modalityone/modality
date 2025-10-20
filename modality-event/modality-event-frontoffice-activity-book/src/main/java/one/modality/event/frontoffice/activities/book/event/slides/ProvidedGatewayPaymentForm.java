@@ -17,7 +17,7 @@ import javafx.scene.layout.VBox;
 import one.modality.base.client.i18n.BaseI18nKeys;
 import one.modality.base.shared.entities.formatters.EventPriceFormatter;
 import one.modality.ecommerce.client.i18n.EcommerceI18nKeys;
-import one.modality.ecommerce.frontoffice.bookingform.GatewayPaymentForm;
+import one.modality.booking.frontoffice.bookingform.GatewayPaymentForm;
 import one.modality.ecommerce.payment.CancelPaymentResult;
 import one.modality.ecommerce.payment.client.WebPaymentForm;
 import one.modality.event.frontoffice.activities.book.BookI18nKeys;

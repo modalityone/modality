@@ -12,7 +12,7 @@
 
         <plugin-module>modality-ecommerce-client-min-plugin</plugin-module>
 
-        <plugin-module>modality-ecommerce-backoffice-activity-bookings-plugin</plugin-module>
+        <plugin-module>modality-booking-backoffice-activity-bookings-plugin</plugin-module>
         <plugin-module>modality-ecommerce-backoffice-activity-moneyflows-plugin</plugin-module>
         <plugin-module>modality-ecommerce-backoffice-activity-statistics-plugin</plugin-module>
 

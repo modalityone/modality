@@ -11,9 +11,9 @@ module modality.base.client.util {
     requires modality.base.client.entities;
     requires modality.base.client.i18n;
     requires modality.base.client.mainframe.fx;
+    requires webfx.extras.async;
     requires webfx.extras.i18n;
     requires webfx.extras.i18n.controls;
-    requires webfx.extras.operation;
     requires webfx.extras.styles.bootstrap;
     requires webfx.extras.type;
     requires webfx.extras.util.dialog;
