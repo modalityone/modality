@@ -3,17 +3,38 @@
 module modality.crm.frontoffice.activity.members.plugin {
 
     // Direct dependencies modules
+    requires javafx.base;
     requires javafx.controls;
     requires javafx.graphics;
+    requires modality.base.client.mainframe.fx;
+    requires modality.base.shared.entities;
+    requires modality.crm.client.authn.fx;
+    requires modality.crm.frontoffice.activity.userprofile.plugin;
+    requires modality.crm.frontoffice.help;
+    requires modality.crm.shared.authn;
     requires webfx.extras.i18n;
     requires webfx.extras.i18n.controls;
     requires webfx.extras.operation;
     requires webfx.extras.panes;
     requires webfx.extras.styles.bootstrap;
+    requires webfx.extras.util.dialog;
+    requires webfx.extras.util.layout;
+    requires webfx.kit.util;
+    requires webfx.platform.console;
     requires webfx.platform.windowhistory;
+    requires webfx.stack.authn.logout.client;
     requires webfx.stack.orm.domainmodel.activity;
+    requires webfx.stack.orm.entity;
+    requires webfx.stack.orm.entity.binding;
+    requires webfx.stack.orm.entity.controls;
     requires webfx.stack.routing.router.client;
     requires webfx.stack.routing.uirouter;
+    requires modality.crm.client.i18n;
+    requires webfx.extras.validation;
+    requires webfx.stack.authn.login.ui.gateway.password.plugin;
+    requires webfx.extras.async;
+    requires webfx.platform.uischeduler;
+    requires java.desktop;
 
     // Exported packages
     exports one.modality.crm.frontoffice.activities.members;
