@@ -24,6 +24,7 @@ module modality.base.client.application {
     requires webfx.kit.util.scene;
     requires webfx.platform.ast;
     requires webfx.platform.boot;
+    requires webfx.platform.storage;
     requires transitive webfx.platform.util;
     requires webfx.platform.windowhistory;
     requires webfx.stack.authn.logout.client;
@@ -35,7 +36,6 @@ module modality.base.client.application {
     requires webfx.stack.routing.uirouter;
     requires webfx.stack.session;
     requires webfx.stack.session.state.client.fx;
-    requires webfx.platform.storage;
 
     // Exported packages
     exports one.modality.base.client.application;
