@@ -205,7 +205,6 @@ public abstract class MediaLinksManagement {
                 Label linkLabel = new Label(I18n.getI18nText("Link"));
                 TextField linkTextField = new TextField();
                 linkTextField.setPromptText(I18n.getI18nText("Link"));
-                linkTextField.getStyleClass().add("media-link-textfield");
                 linkTextField.setMaxWidth(Double.MAX_VALUE);
                 validationSupport.addUrlOrEmptyValidation(linkTextField, I18n.i18nTextProperty(MediasI18nKeys.MalformedUrl));
                 VBox linkBox = new VBox(8, linkLabel, linkTextField);
@@ -228,7 +227,6 @@ public abstract class MediaLinksManagement {
                     overrideNameSwitch.setSelected(true);
                     nameTextField.setText(currentEditedScheduledItem.getName());
                 }
-                nameTextField.getStyleClass().add("media-link-textfield");
                 nameTextField.setMaxWidth(Double.MAX_VALUE);
 
                 VBox nameBox = new VBox(8, nameLabel, nameTextField);
@@ -256,7 +254,6 @@ public abstract class MediaLinksManagement {
                 // Duration section with label on top
                 Label durationLabel = I18nControls.newLabel(MediasI18nKeys.ExactDuration);
                 TextField durationTextField = new TextField();
-                durationTextField.getStyleClass().add("media-duration-textfield");
                 validationSupport.addRequiredInputIfOtherTextFieldNotNull(durationTextField, linkTextField, durationTextField);
                 validationSupport.addMinimumDurationValidationIfOtherTextFieldNotNull(durationTextField, linkTextField, durationTextField, I18n.i18nTextProperty(MediasI18nKeys.DurationShouldBeAtLeast60s));
 
