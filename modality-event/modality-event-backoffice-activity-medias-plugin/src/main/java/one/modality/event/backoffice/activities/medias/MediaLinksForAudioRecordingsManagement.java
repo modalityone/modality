@@ -142,7 +142,7 @@ public class MediaLinksForAudioRecordingsManagement extends MediaLinksManagement
         //  topContent.getChildren().add(publishAllHBox);
 
         mainContainer.setTop(topContent);
-        mainContainer.setMinWidth(800);
+        mainContainer.getStyleClass().add("media-form-container");
         VBox teachingDatesVBox = new VBox();
         teachingDatesVBox.setSpacing(30);
         mainContainer.setCenter(teachingDatesVBox);

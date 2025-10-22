@@ -68,7 +68,7 @@ final class LiveStreamingTabView {
         liveMessageLabel.getStyleClass().add(Bootstrap.STRONG);
 
         liveMessageTextField = new LabelTextField(FXEvent.getEvent(), null, Event.livestreamMessageLabel, updateStore);
-        liveMessageTextField.setMinWidth(600);
+        liveMessageTextField.setMaxWidth(Integer.MAX_VALUE);
         FXProperties.runNowAndOnPropertyChange(() ->
                 liveMessageTextField.reloadOnNewEntity(FXEvent.getEvent())
             , FXEvent.eventProperty());

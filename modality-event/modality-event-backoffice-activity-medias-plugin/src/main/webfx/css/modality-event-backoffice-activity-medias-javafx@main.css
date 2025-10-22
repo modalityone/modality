@@ -1,0 +1,45 @@
+/* Responsive text field for media links - takes full width */
+.media-link-textfield {
+    -fx-max-width: Infinity;
+}
+
+/* Responsive text field for media names */
+.media-name-textfield {
+    -fx-max-width: Infinity;
+}
+
+/* Responsive text field for duration */
+.media-duration-textfield {
+    -fx-pref-width: 150;
+    -fx-max-width: 200;
+}
+
+/* Responsive container for media form fields */
+.media-form-container {
+    -fx-pref-width: 1000;
+    -fx-max-width: 1000;
+    -fx-min-width: 0;
+}
+
+/* Responsive HBox that should stack on small screens */
+.media-field-row {
+    -fx-spacing: 10;
+}
+
+/* VOD-specific responsive text field - takes full width */
+.vod-link-textfield {
+    -fx-max-width: Infinity;
+}
+
+/* Publication info container */
+.publication-info-container {
+    -fx-max-width: 600;
+}
+
+/* Media settings section styling */
+.media-settings-section {
+    -fx-border-color: #dee2e6;
+    -fx-border-width: 1;
+    -fx-border-radius: 5;
+    -fx-background-radius: 5;
+}
