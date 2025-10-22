@@ -35,6 +35,7 @@ module modality.base.client.application {
     requires webfx.stack.routing.uirouter;
     requires webfx.stack.session;
     requires webfx.stack.session.state.client.fx;
+    requires webfx.platform.storage;
 
     // Exported packages
     exports one.modality.base.client.application;
