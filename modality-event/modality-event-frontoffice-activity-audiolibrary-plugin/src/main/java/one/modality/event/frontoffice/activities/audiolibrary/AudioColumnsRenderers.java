@@ -1,8 +1,11 @@
 package one.modality.event.frontoffice.activities.audiolibrary;
 
-import dev.webfx.extras.cell.renderer.ValueRendererRegistry;
-import dev.webfx.extras.media.metadata.MediaMetadataBuilder;
 import dev.webfx.extras.async.AsyncSpinner;
+import dev.webfx.extras.cell.renderer.ValueRendererRegistry;
+import dev.webfx.extras.i18n.I18n;
+import dev.webfx.extras.i18n.I18nKeys;
+import dev.webfx.extras.i18n.controls.I18nControls;
+import dev.webfx.extras.media.metadata.MediaMetadataBuilder;
 import dev.webfx.extras.player.Player;
 import dev.webfx.extras.player.audio.javafxmedia.AudioMediaView;
 import dev.webfx.extras.styles.bootstrap.Bootstrap;
@@ -11,13 +14,11 @@ import dev.webfx.extras.util.control.Controls;
 import dev.webfx.kit.util.properties.FXProperties;
 import dev.webfx.kit.util.properties.Unregisterable;
 import dev.webfx.platform.blob.spi.BlobProvider;
+import dev.webfx.platform.storage.LocalStorage;
 import dev.webfx.platform.uischeduler.UiScheduler;
 import dev.webfx.platform.util.Booleans;
 import dev.webfx.platform.util.Objects;
 import dev.webfx.platform.util.collection.Collections;
-import dev.webfx.extras.i18n.I18n;
-import dev.webfx.extras.i18n.I18nKeys;
-import dev.webfx.extras.i18n.controls.I18nControls;
 import dev.webfx.stack.orm.entity.Entities;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
@@ -107,8 +108,13 @@ final class AudioColumnsRenderers {
         updateButton(button, audio, firstMedia, audioPlayer, download);
         button.setOnAction(event -> {
             if (download) { // Download action
+                String url = firstMedia.getUrl();
+                boolean useProxy = Booleans.isTrue(LocalStorage.getItem("modality-download-proxy"));
+                if (useProxy) {
+                    url = "/proxy/" + url;
+                }
                 // 1) We download the file. Note: there is no way to track the progress of the download...
-                downloadFile(firstMedia.getUrl());
+                downloadFile(url);
                 // 2) We record this action using MediaConsumptionRecorder
                 MediaConsumptionRecorder.recordDownloadMediaConsumption(audio, firstMedia);
                 // 3) Sometimes (especially on mobiles) the system can take a few seconds before showing there is a
