@@ -61,7 +61,7 @@ public abstract class ModalityClientStarterActivity
             getHistory().replace(path.substring(0, path.length() - 8), AST.createObject().set("refresh", true));
         });
         // LocalStorage settings management used by the technical support to enable specific features to specific users (ex: modality-download-proxy)
-        router.routeWithRegex("/.*/setItem/:item/:value").handler(routingContext -> {
+        router.routeWithRegex("/.*/setItem/(?<item>.*)/(?<value>.*)").handler(routingContext -> {
             String item = routingContext.getParams().getString("item");
             String value = routingContext.getParams().getString("value");
             LocalStorage.setItem(item, value);
