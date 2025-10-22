@@ -33,5 +33,6 @@ public interface CrmI18nKeys {
     Object Country = "Country";
     Object LastName = "LastName";
     Object BirthDate = "BirthDate";
+    Object LinkedAccountMessage = "LinkedAccountMessage";
 
 }

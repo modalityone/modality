@@ -3,10 +3,6 @@ package one.modality.event.backoffice.activities.medias;
 
 public interface MediasI18nKeys {
 
-    Object LiveStreamingTitle = "LiveStreamingTitle";
-    Object RecordingsTitle = "RecordingsTitle";
-    Object VideoSettingsTitle = "VideoSettingsTitle";
-    Object Upload = "Upload";
     Object AudioRecordingTabTitle = "AudioRecordingTabTitle";
     Object LiveStreamGlobalLinkComment = "LiveStreamGlobalLinkComment";
     Object VODPromptComment = "VODPromptComment";
@@ -14,6 +10,7 @@ public interface MediasI18nKeys {
     Object SelectLanguage = "SelectLanguage";
     Object RemoveMessage = "RemoveMessage";
     Object DurationShouldBeAtLeast60s = "DurationShouldBeAtLeast60s";
+    Object Upload = "Upload";
     Object NoLinkDefinedYet = "NoLinkDefinedYet";
     Object VODComment = "VODComment";
     Object VODDelayed = "VODDelayed";
@@ -41,8 +38,11 @@ public interface MediasI18nKeys {
     Object AvailableOffline = "AvailableOffline";
     Object PublishMessage = "PublishMessage";
     Object AudioConfigurationDoneInRepeatableEvent = "AudioConfigurationDoneInRepeatableEvent";
+    Object RecordingsTitle = "RecordingsTitle";
+    Object LiveStreamingTitle = "LiveStreamingTitle";
     Object VideoTabTitle = "VideoTabTitle";
     Object VODPublished = "VODPublished";
+    Object VideoSettingsTitle = "VideoSettingsTitle";
     Object AvailableUntil = "AvailableUntil";
 
 }

@@ -143,8 +143,6 @@ public final class EventThumbnail {
 
         viewButton = Bootstrap.primaryButton(I18nControls.newButton(MediasI18nKeys.View));
         viewButton.setMinWidth(150);
-        // We display the view button only if the content is available
-        viewButton.setVisible(availabilityType == AvailabilityType.AVAILABLE);
         VBox.setMargin(viewButton, new Insets(30, 0, 0, 0));
         ScalePane thumbnailScalePane = new ScalePane(thumbnailStackPane);
         container.getChildren().addAll(

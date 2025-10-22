@@ -19,7 +19,9 @@ import dev.webfx.extras.util.control.Controls;
 import dev.webfx.extras.util.dialog.DialogCallback;
 import dev.webfx.extras.util.dialog.DialogUtil;
 import dev.webfx.extras.util.layout.Layouts;
+import dev.webfx.kit.util.properties.FXProperties;
 import dev.webfx.stack.orm.datasourcemodel.service.DataSourceModelService;
+import dev.webfx.stack.orm.entity.Entities;
 import dev.webfx.stack.orm.entity.controls.entity.selector.ButtonSelector;
 import dev.webfx.stack.orm.entity.controls.entity.selector.ButtonSelectorParameters;
 import dev.webfx.stack.orm.entity.controls.entity.selector.EntityButtonSelector;
@@ -39,6 +41,8 @@ import one.modality.base.client.mainframe.fx.FXMainFrameDialogArea;
 import one.modality.base.client.time.FrontOfficeTimeFormats;
 import one.modality.base.shared.entities.Country;
 import one.modality.base.shared.entities.Organization;
+import one.modality.base.shared.entities.Person;
+import one.modality.base.shared.entities.markers.HasOnline;
 import one.modality.crm.client.i18n.CrmI18nKeys;
 import one.modality.crm.frontoffice.activities.createaccount.CreateAccountI18nKeys;
 import one.modality.crm.frontoffice.activities.createaccount.UserAccountUI;
@@ -61,6 +65,8 @@ public final class UserProfileView implements ModalityButtonFactoryMixin {
     private final boolean showAddress;
     private final boolean showKadampaCenter;
     private final boolean showSaveChangesButton;
+    private final boolean showCancelButton;
+
     private final ChangePictureUI changePictureUI;
 
     public VBox container;
@@ -88,9 +94,13 @@ public final class UserProfileView implements ModalityButtonFactoryMixin {
     public RadioButton noOrganizationRadioButton;
     public Label infoMessage;
     public Button saveButton;
+    public Button cancelButton;
+    private Person currentEditedPerson;
     private VBox loginDetailsVBox, personalDetailsVBox, addressInfoVBox, kadampaCenterVBox;
+    private boolean syncing;
 
-    public UserProfileView(ChangePictureUI changePictureUI, boolean showTitle, boolean showProfileHeader, boolean showName, boolean showEmail, boolean showPassword, boolean showPersonalDetails, boolean showAddress, boolean showKadampaCenter, boolean showSaveChangesButton) {
+
+    public UserProfileView(ChangePictureUI changePictureUI, boolean showTitle, boolean showProfileHeader, boolean showName, boolean showEmail, boolean showPassword, boolean showPersonalDetails, boolean showAddress, boolean showKadampaCenter, boolean showSaveChangesButton, boolean showCancelButton, Person person) {
         this.changePictureUI = changePictureUI;
         this.showTitle = showTitle;
         this.showName = showName;
@@ -101,6 +111,16 @@ public final class UserProfileView implements ModalityButtonFactoryMixin {
         this.showAddress = showAddress;
         this.showKadampaCenter = showKadampaCenter;
         this.showSaveChangesButton = showSaveChangesButton;
+        this.showCancelButton = showCancelButton;
+        this.currentEditedPerson = person;
+    }
+
+    public Person getCurrentEditedPerson() {
+        return currentEditedPerson;
+    }
+
+    public void setCurrentEditedPerson(Person currentEditedPerson) {
+        this.currentEditedPerson = currentEditedPerson;
     }
 
     public VBox buildView() {
@@ -152,9 +172,34 @@ public final class UserProfileView implements ModalityButtonFactoryMixin {
         infoMessage.setPadding(new Insets(20, 0, 20, 0));
         container.getChildren().add(infoMessage);
 
+        ColumnsPane buttonsColumnsPane = new ColumnsPane();
+        buttonsColumnsPane.setMaxColumnCount(2);
+        buttonsColumnsPane.setHgap(50);
+        buttonsColumnsPane.setMinColumnWidth(200);
+        buttonsColumnsPane.setVgap(30);
+
+        cancelButton = buildCancelButton();
+        setManagedAndVisible(cancelButton, showCancelButton);
+
         saveButton = buildSaveChangesButton();
-        container.getChildren().add(saveButton);
         setManagedAndVisible(saveButton, showSaveChangesButton);
+
+        buttonsColumnsPane.getChildren().addAll(cancelButton,saveButton);
+        container.getChildren().add(buttonsColumnsPane);
+
+        FXProperties.runOnPropertiesChange(this::syncModelFromUI,
+            firstNameTextField.textProperty(),
+            lastNameTextField.textProperty(),
+            emailTextField.textProperty(),
+            layNameTextField.textProperty(),
+            phoneTextField.textProperty(),
+            streetTextField.textProperty(),
+            postCodeTextField.textProperty(),
+            cityNameTextField.textProperty(),
+            countrySelector.selectedItemProperty(),
+            organizationSelector.selectedItemProperty(),
+            noOrganizationRadioButton.selectedProperty()
+        );
 
         return container;
     }
@@ -229,6 +274,18 @@ public final class UserProfileView implements ModalityButtonFactoryMixin {
         return new VBox(pictureAndNameResponsivePane, profileHeaderSeparator);
     }
 
+    public TextField getFirstNameTextField() {
+        return firstNameTextField;
+    }
+
+    public TextField getLastNameTextField() {
+        return lastNameTextField;
+    }
+
+    public TextField getEmailTextField() {
+        return emailTextField;
+    }
+
     private VBox buildLoginDetails() {
         VBox vBox = new VBox(15);
         Label loginInfoLabel = Bootstrap.small(Bootstrap.textSecondary(I18nControls.newLabel(CreateAccountI18nKeys.LoginDetails)));
@@ -286,7 +343,7 @@ public final class UserProfileView implements ModalityButtonFactoryMixin {
         I18n.bindI18nTextProperty(birthDateTextField.promptTextProperty(), I18nKeys.embedInString(I18nKeys.appendColons(UserProfileI18nKeys.DateOfBirthFormat)) + " {0}",
             LocalizedTime.inferLocalDatePatternProperty(birthDateField.dateTimeFormatterProperty(), true));
         birthDateField.getDatePicker().getView().setTranslateY(10);
-        //vBox.getChildren().add(birthDateField.getView());
+        vBox.getChildren().add(birthDateField.getView());
 
         ToggleGroup maleFemaleToggleGroup = new ToggleGroup();
         optionMale = I18nControls.newRadioButton(CrmI18nKeys.Male);
@@ -406,6 +463,12 @@ public final class UserProfileView implements ModalityButtonFactoryMixin {
         button.setTextAlignment(TextAlignment.CENTER);
         return button;
     }
+    private Button buildCancelButton() {
+        Button button = Bootstrap.largeSecondaryButton(I18nControls.newButton(CreateAccountI18nKeys.Cancel));
+        button.setWrapText(true);
+        button.setTextAlignment(TextAlignment.CENTER);
+        return button;
+    }
 
     private void formatTextFieldLabel(TextField textField) {
         MaterialUtil.getMaterialTextField(textField).setAnimateLabel(false);
@@ -419,6 +482,7 @@ public final class UserProfileView implements ModalityButtonFactoryMixin {
     public void setLoginDetailsVisible(boolean visible) {
         setManagedAndVisible(loginDetailsVBox, visible);
     }
+
 
     public void setPersonalDetailsVisible(boolean visible) {
         setManagedAndVisible(personalDetailsVBox, visible);
@@ -439,8 +503,65 @@ public final class UserProfileView implements ModalityButtonFactoryMixin {
     public void setEmailFieldDisabled(boolean disabled) {
         emailTextField.setDisable(disabled);
     }
+    public void setOptionMaleFemaleDisabled(boolean disabled) {
+        optionMale.setDisable(disabled);
+        optionFemale.setDisable(disabled);
+    }
+    public void setOptionLayOrdainedDisabled(boolean disabled) {
+        optionLay.setDisable(disabled);
+        optionOrdained.setDisable(disabled);
+    }
+    public void setBirthDateFieldVisible(boolean visible) {
+        setManagedAndVisible(birthDateField.getView(), visible);
+    }
 
     public void setImage(ImageView imageView) {
         pictureImageContainer.setContent(imageView);
+    }
+
+    public void syncUIFromModel() {
+        if (syncing)
+            return;
+        syncing = true;
+        firstNameTextField.setText(currentEditedPerson.getFirstName());
+        lastNameTextField.setText(currentEditedPerson.getLastName());
+        emailTextField.setText(currentEditedPerson.getEmail());
+        layNameTextField.setText(currentEditedPerson.getLayName());
+        phoneTextField.setText(currentEditedPerson.getPhone());
+        streetTextField.setText(currentEditedPerson.getStreet());
+        postCodeTextField.setText(currentEditedPerson.getPostCode());
+        cityNameTextField.setText(currentEditedPerson.getCityName());
+        countrySelector.setSelectedItem(currentEditedPerson.getCountry());
+        organizationSelector.setSelectedItem(currentEditedPerson.getOrganization());
+        noOrganizationRadioButton.setSelected(currentEditedPerson.getOrganization() == null);
+
+        syncing = false;
+    }
+
+    private void syncModelFromUI() {
+        if (syncing)
+            return;
+        syncing = true;
+        if(currentEditedPerson!=null) {
+            currentEditedPerson.setFirstName(firstNameTextField.getText());
+            currentEditedPerson.setLastName(lastNameTextField.getText());
+            currentEditedPerson.setEmail(emailTextField.getText());
+            currentEditedPerson.setLayName(layNameTextField.getText());
+            currentEditedPerson.setPhone(phoneTextField.getText());
+            currentEditedPerson.setStreet(streetTextField.getText());
+            currentEditedPerson.setPostCode(postCodeTextField.getText());
+            currentEditedPerson.setCityName(cityNameTextField.getText());
+            currentEditedPerson.setCountry(countrySelector.getSelectedItem());
+            Organization organization = organizationSelector.getSelectedItem();
+            boolean noOrganization = noOrganizationRadioButton.isSelected()
+                && (organization == null || Entities.sameId(organization, currentEditedPerson.getOrganization()));
+            if (noOrganization) {
+                organization = null;
+            }
+            currentEditedPerson.setOrganization(organization);
+            organizationSelector.setSelectedItem(organization);
+            noOrganizationRadioButton.setSelected(organization == null);
+        }
+        syncing = false;
     }
 }

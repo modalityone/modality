@@ -21,5 +21,6 @@ public interface CreateAccountI18nKeys {
     Object PasswordStrength = "PasswordStrength";
     Object CreatingAccountError = "CreatingAccountError";
     Object PasswordNotMatchingError = "PasswordNotMatchingError";
+    Object Cancel = "Cancel";
 
 }

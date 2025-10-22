@@ -32,6 +32,7 @@ module modality.event.frontoffice.activity.audiolibrary.plugin {
     requires webfx.extras.visual;
     requires webfx.extras.visual.grid;
     requires webfx.kit.util;
+    requires webfx.platform.ast;
     requires webfx.platform.blob;
     requires webfx.platform.console;
     requires webfx.platform.uischeduler;
@@ -43,6 +44,7 @@ module modality.event.frontoffice.activity.audiolibrary.plugin {
     requires webfx.stack.orm.reactive.visual;
     requires webfx.stack.routing.router.client;
     requires webfx.stack.routing.uirouter;
+    requires webfx.platform.storage;
 
     // Exported packages
     exports one.modality.event.frontoffice.activities.audiolibrary;
