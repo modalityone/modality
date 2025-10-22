@@ -109,7 +109,7 @@ final class AudioColumnsRenderers {
         button.setOnAction(event -> {
             if (download) { // Download action
                 String url = firstMedia.getUrl();
-                boolean useProxy = Booleans.isTrue(LocalStorage.getItem("modality-download-proxy"));
+                boolean useProxy = Booleans.booleanValue(LocalStorage.getItem("modality-download-proxy"));
                 if (useProxy) {
                     url = "/proxy/" + url;
                 }
