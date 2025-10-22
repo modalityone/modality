@@ -8,7 +8,6 @@ import dev.webfx.extras.panes.FlexPane;
 import dev.webfx.extras.panes.MonoPane;
 import dev.webfx.extras.styles.bootstrap.Bootstrap;
 import dev.webfx.extras.switches.Switch;
-import dev.webfx.extras.theme.Facet;
 import dev.webfx.extras.theme.shape.ShapeTheme;
 import dev.webfx.extras.theme.text.TextTheme;
 import dev.webfx.extras.time.format.LocalizedTime;
@@ -278,9 +277,9 @@ final class ManageRecurringEventView {
         //We need initialize the audio and video Item Id.
         entityStore.executeQueryBatch(
                 //Index 0: the video Item (we should have exactly 1)
-                new EntityStoreQuery("select Item where family=? and organization=?", new Object[]{KnownItemFamily.VIDEO.getPrimaryKey(), FXOrganization.getOrganization()}),
+                new EntityStoreQuery("select Item where family=? and organization=?", KnownItemFamily.VIDEO.getPrimaryKey(), FXOrganization.getOrganization()),
                 //Index 1: the audio Item (we should have exactly one that has the same language as the default language of the organization)
-                new EntityStoreQuery("select Item where family=? and organization=? and language=organization.language", new Object[]{KnownItemFamily.AUDIO_RECORDING.getPrimaryKey(), FXOrganization.getOrganization()}))
+                new EntityStoreQuery("select Item where family=? and organization=? and language=organization.language", KnownItemFamily.AUDIO_RECORDING.getPrimaryKey(), FXOrganization.getOrganization()))
             .onFailure(Console::log)
             .inUiThread()
             .onSuccess(entityLists -> {
@@ -339,7 +338,7 @@ final class ManageRecurringEventView {
         entityStore.executeQueryBatch(
                 // Index 0: the scheduledItem
                 new EntityStoreQuery("""
-                    select item,date,startTime, site, programScheduledItem, bookableScheduledItem, endTime, event.(openingDate, shortDescription, description, state, advertised, kbs3, type.recurringItem, externalLink, venue.name), (select id from Attendance \
+                    select item,date,startTime, site, programScheduledItem, bookableScheduledItem, endTime, cancelled, event.(openingDate, shortDescription, description, state, advertised, kbs3, type.recurringItem, externalLink, venue.name), (select id from Attendance \
                      where scheduledItem=si limit 1) as attendance \
                      from ScheduledItem si where event=?""", e),
                 //Index 1: the video Item (we should have exactly 1)
@@ -677,7 +676,7 @@ final class ManageRecurringEventView {
                             FXProperties.runOnPropertyChange(searchText -> {
                                 List<String> siteNames = siteList.stream()
                                     .map(Site::getName)
-                                    .collect(Collectors.toList());
+                                    .toList();
                                 if (searchTextField.getText() != null && searchTextField.getText().length() > 2 && !siteNames.contains(searchTextField.getText())) {
                                     Console.log("We add : " + searchTextField.getText());
                                     addSitePane.setVisible(true);
@@ -1143,7 +1142,7 @@ final class ManageRecurringEventView {
                 // isWorkingScheduledItemEmpty.set(workingScheduledItems.isEmpty());
                 if (currentEditedEvent != null && (currentEditedEvent == currentObservedEvent)) {
                     recurringEventsVBox.getChildren().clear();
-                    List<LocalDate> dates = teachingsWorkingScheduledItems.stream().map(EntityHasLocalDate::getDate).collect(Collectors.toList());
+                    List<LocalDate> dates = teachingsWorkingScheduledItems.stream().map(EntityHasLocalDate::getDate).toList();
                     if (isTeachingsWorkingScheduledItemEmpty.not().getValue()) {
                         if (!Collections.min(dates).equals(currentEditedEvent.getStartDate()))
                             currentEditedEvent.setStartDate(Collections.min(dates));
@@ -1201,7 +1200,7 @@ final class ManageRecurringEventView {
                             }
                         }
 
-                        List<LocalDate> localDatesSorted = calendarPane.getDatePicker().getSelectedDates().stream().sorted().collect(Collectors.toList());
+                        List<LocalDate> localDatesSorted = calendarPane.getDatePicker().getSelectedDates().stream().sorted().toList();
                         if (!localDatesSorted.isEmpty()) {
                             currentEditedEvent.setStartDate(localDatesSorted.get(0));
                             currentEditedEvent.setEndDate(localDatesSorted.get(localDatesSorted.size() - 1));
@@ -1227,16 +1226,40 @@ final class ManageRecurringEventView {
             Text dateText = new Text();
             dateText.textProperty().bind(LocalizedTime.formatMonthDayProperty(date, RECURRING_EVENT_SCHEDULED_ITEM_DATE_FORMAT));
 
-            SVGPath trashDate = SvgIcons.createTrashSVGPath();
-            Facet facet = ShapeTheme.createSecondaryShapeFacet(trashDate).style();
-
             TextField currentScheduleItemStartTime = new TextField();
 
+            // Create a container for the left icon (either trash or cancel button)
+            MonoPane leftIconContainer = new MonoPane();
+            leftIconContainer.setMinSize(20, 20); // Set minimum size for easier clicking
+
             if (scheduledItem.getFieldValue("attendance") == null) {
+                // No attendance - show trash button
+                SVGPath trashDate = SvgIcons.createTrashSVGPath();
+                ShapeTheme.createSecondaryShapeFacet(trashDate).style();
                 SvgIcons.armButton(trashDate, () -> datePicker.getSelectedDates().remove(date));
+                leftIconContainer.setContent(trashDate);
             } else {
-                facet.setDisabled(true);
+                // Has attendance - show cancel/uncancel button instead
                 currentScheduleItemStartTime.setDisable(true);
+
+                // Create cancel/uncancel button using a red cross icon
+                SVGPath cancelIcon = SvgIcons.createRedCross();
+
+                // Initialize the icon state based on current cancelled status
+                Boolean cancelledValue = scheduledItem.isCancelled();
+                boolean isCancelled = Boolean.TRUE.equals(cancelledValue);
+                updateCancelIconAppearance(cancelIcon, isCancelled);
+
+                // Add click handler to toggle cancelled status
+                SvgIcons.armButton(cancelIcon, () -> {
+                    Boolean currentCancelledValue = scheduledItem.isCancelled();
+                    boolean currentCancelledState = Boolean.TRUE.equals(currentCancelledValue);
+                    boolean newCancelledState = !currentCancelledState;
+                    scheduledItem.setCancelled(newCancelledState);
+                    updateCancelIconAppearance(cancelIcon, newCancelledState);
+                });
+
+                leftIconContainer.setContent(cancelIcon);
             }
 
             //We add a listener to update the value of the scheduled item when the text field is changed
@@ -1265,7 +1288,8 @@ final class ManageRecurringEventView {
             }
             BorderPane currentLineBorderPane = new BorderPane();
             BorderPane.setMargin(dateText, new Insets(0, 20, 0, 10));
-            currentLineBorderPane.setLeft(trashDate);
+
+            currentLineBorderPane.setLeft(leftIconContainer);
             currentLineBorderPane.setCenter(dateText);
             currentLineBorderPane.setRight(currentScheduleItemStartTime);
             currentLineBorderPane.setPadding(new Insets(0, 0, 3, 0));
@@ -1297,6 +1321,25 @@ final class ManageRecurringEventView {
             return super.computePrefHeight(width) + 10;
         }
 
+    }
+
+    /**
+     * Updates the visual appearance of the cancel icon based on the cancelled state.
+     * When cancelled, the icon appears red. When not cancelled, it appears gray with reduced opacity.
+     *
+     * @param cancelIcon the SVGPath icon to update
+     * @param isCancelled whether the scheduled item is cancelled
+     */
+    private void updateCancelIconAppearance(SVGPath cancelIcon, boolean isCancelled) {
+        if (isCancelled) {
+            // Show red cross for cancelled state
+            cancelIcon.setStroke(Color.RED);
+            cancelIcon.setOpacity(1.0);
+        } else {
+            // Show gray cross with reduced opacity for normal state (indicates it can be clicked to cancel)
+            cancelIcon.setStroke(Color.GRAY);
+            cancelIcon.setOpacity(0.5);
+        }
     }
 
     /**

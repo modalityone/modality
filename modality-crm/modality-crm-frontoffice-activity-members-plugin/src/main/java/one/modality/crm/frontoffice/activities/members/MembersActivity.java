@@ -58,7 +58,6 @@ final class MembersActivity extends ViewDomainActivityBase {
     private final MonoPane mainContent = new MonoPane();
     private Person personToModifyOrAdd;
     private UserProfileView userProfileView;
-    private boolean syncing =false;
     private UpdateStore updateStore;
     private final ValidationSupport validationSupport = new ValidationSupport();
 
@@ -144,8 +143,6 @@ final class MembersActivity extends ViewDomainActivityBase {
                         removeTextLink
                     );
                 }
-
-
             return currentPersonHBox;
         });
 
