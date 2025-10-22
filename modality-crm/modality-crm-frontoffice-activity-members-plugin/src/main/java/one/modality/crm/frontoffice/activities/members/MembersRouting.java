@@ -31,7 +31,7 @@ public final class MembersRouting {
 
         public static UiRoute<?> uiRoute() {
             return UiRoute.create(MembersRouting.getPath()
-                    , false
+                    , true
                     , MembersActivity::new
                     , ViewDomainActivityContextFinal::new
             );

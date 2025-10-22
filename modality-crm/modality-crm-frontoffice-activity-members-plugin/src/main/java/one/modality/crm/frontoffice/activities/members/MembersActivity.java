@@ -75,6 +75,15 @@ final class MembersActivity extends ViewDomainActivityBase {
         description.setWrapText(true);
         description.setPadding(new Insets(0,0,30,0));
         description.setTextAlignment(TextAlignment.CENTER);
+        description.visibleProperty().bind(ObservableLists.isEmpty(personsList).not());
+        description.managedProperty().bind(description.visibleProperty());
+
+        Label noMembersLabel = Bootstrap.textSecondary(I18nControls.newLabel(MembersI18nKeys.NoMembersMessage));
+        noMembersLabel.setWrapText(true);
+        noMembersLabel.setTextAlignment(TextAlignment.CENTER);
+        noMembersLabel.setPadding(new Insets(0,0,30,0));
+        noMembersLabel.visibleProperty().bind(ObservableLists.isEmpty(personsList));
+        noMembersLabel.managedProperty().bind(noMembersLabel.visibleProperty());
 
         membersListVbox.setAlignment(Pos.CENTER);
 
@@ -151,10 +160,11 @@ final class MembersActivity extends ViewDomainActivityBase {
             setPersonToAddOrModify(null);
             mainContent.setContent(userProfileViewNode);
         });
-        membersListVbox.getChildren().addAll(listOfMemberVBox,addButton);
+        membersListVbox.getChildren().addAll(listOfMemberVBox, addButton);
         mainContent.setContent(membersListVbox);
         VBox container = new VBox(20,titleLabel,
                                 description,
+                                noMembersLabel,
                                 mainContent,
                                 HelpPanel.createEmailHelpPanel(MembersI18nKeys.MembersHelp, "kbs@kadampa.net"));
         container.setMaxWidth(800);
@@ -172,7 +182,7 @@ final class MembersActivity extends ViewDomainActivityBase {
             ModalityUserPrincipal modalityUserPrincipal = FXModalityUserPrincipal.modalityUserPrincipalProperty().get();
             if (FXModalityUserPrincipal.modalityUserPrincipalProperty() != null) {
                 entityStore.<Person>executeQueryWithCache("modality/event/audio-library/document-lines",
-                        "select fullName,owner,accountPerson, email, organization, nationality, street, postCode, cityName from Person p where frontendAccount=$0",
+                        "select fullName,owner,accountPerson, email, organization, nationality, street, postCode, cityName from Person p where frontendAccount=$0 and owner=false",
                         new Object[]{ modalityUserPrincipal.getUserAccountId()})
                     .onFailure(Console::log)
                     .inUiThread()
