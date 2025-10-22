@@ -676,7 +676,7 @@ final class ManageRecurringEventView {
                             FXProperties.runOnPropertyChange(searchText -> {
                                 List<String> siteNames = siteList.stream()
                                     .map(Site::getName)
-                                    .toList();
+                                    .collect(Collectors.toList());
                                 if (searchTextField.getText() != null && searchTextField.getText().length() > 2 && !siteNames.contains(searchTextField.getText())) {
                                     Console.log("We add : " + searchTextField.getText());
                                     addSitePane.setVisible(true);
@@ -1142,7 +1142,7 @@ final class ManageRecurringEventView {
                 // isWorkingScheduledItemEmpty.set(workingScheduledItems.isEmpty());
                 if (currentEditedEvent != null && (currentEditedEvent == currentObservedEvent)) {
                     recurringEventsVBox.getChildren().clear();
-                    List<LocalDate> dates = teachingsWorkingScheduledItems.stream().map(EntityHasLocalDate::getDate).toList();
+                    List<LocalDate> dates = teachingsWorkingScheduledItems.stream().map(EntityHasLocalDate::getDate).collect(Collectors.toList());
                     if (isTeachingsWorkingScheduledItemEmpty.not().getValue()) {
                         if (!Collections.min(dates).equals(currentEditedEvent.getStartDate()))
                             currentEditedEvent.setStartDate(Collections.min(dates));
@@ -1200,7 +1200,7 @@ final class ManageRecurringEventView {
                             }
                         }
 
-                        List<LocalDate> localDatesSorted = calendarPane.getDatePicker().getSelectedDates().stream().sorted().toList();
+                        List<LocalDate> localDatesSorted = calendarPane.getDatePicker().getSelectedDates().stream().sorted().collect(Collectors.toList());
                         if (!localDatesSorted.isEmpty()) {
                             currentEditedEvent.setStartDate(localDatesSorted.get(0));
                             currentEditedEvent.setEndDate(localDatesSorted.get(localDatesSorted.size() - 1));
