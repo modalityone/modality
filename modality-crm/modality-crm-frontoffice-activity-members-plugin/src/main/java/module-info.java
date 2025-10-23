@@ -20,6 +20,7 @@ module modality.crm.frontoffice.activity.members.plugin {
     requires webfx.extras.panes;
     requires webfx.extras.styles.bootstrap;
     requires webfx.extras.util.dialog;
+    requires webfx.extras.util.layout;
     requires webfx.extras.validation;
     requires webfx.kit.util;
     requires webfx.platform.console;

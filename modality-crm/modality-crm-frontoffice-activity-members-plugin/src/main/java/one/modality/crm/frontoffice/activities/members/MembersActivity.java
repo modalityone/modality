@@ -7,9 +7,9 @@ import dev.webfx.extras.operation.OperationDirect;
 import dev.webfx.extras.panes.MonoPane;
 import dev.webfx.extras.styles.bootstrap.Bootstrap;
 import dev.webfx.extras.util.dialog.DialogCallback;
-import dev.webfx.extras.util.dialog.DialogUtil;
 import dev.webfx.extras.util.dialog.builder.DialogBuilderUtil;
 import dev.webfx.extras.util.dialog.builder.DialogContent;
+import dev.webfx.extras.util.layout.Layouts;
 import dev.webfx.extras.validation.ValidationSupport;
 import dev.webfx.kit.util.properties.FXProperties;
 import dev.webfx.kit.util.properties.ObservableLists;
@@ -32,8 +32,10 @@ import javafx.scene.Node;
 import javafx.scene.control.Button;
 import javafx.scene.control.Hyperlink;
 import javafx.scene.control.Label;
-import javafx.scene.layout.*;
-import javafx.scene.paint.Color;
+import javafx.scene.layout.HBox;
+import javafx.scene.layout.Priority;
+import javafx.scene.layout.Region;
+import javafx.scene.layout.VBox;
 import javafx.scene.text.TextAlignment;
 import one.modality.base.client.mainframe.fx.FXMainFrameDialogArea;
 import one.modality.base.shared.entities.FrontendAccount;
@@ -45,7 +47,6 @@ import one.modality.crm.frontoffice.help.HelpPanel;
 import one.modality.crm.shared.services.authn.ModalityUserPrincipal;
 import one.modality.crm.shared.services.authn.fx.FXModalityUserPrincipal;
 import one.modality.crm.shared.services.authn.fx.FXUserPerson;
-
 
 /**
  * @author David Hello
@@ -74,15 +75,13 @@ final class MembersActivity extends ViewDomainActivityBase {
         description.setWrapText(true);
         description.setPadding(new Insets(0, 0, 30, 0));
         description.setTextAlignment(TextAlignment.CENTER);
-        description.visibleProperty().bind(ObservableLists.isEmpty(personsList).not());
-        description.managedProperty().bind(description.visibleProperty());
+        Layouts.bindManagedAndVisiblePropertiesTo(ObservableLists.isEmpty(personsList).not(), description);
 
         Label noMembersLabel = Bootstrap.textSecondary(I18nControls.newLabel(MembersI18nKeys.NoMembersMessage));
         noMembersLabel.setWrapText(true);
         noMembersLabel.setTextAlignment(TextAlignment.CENTER);
         noMembersLabel.setPadding(new Insets(0, 0, 30, 0));
-        noMembersLabel.visibleProperty().bind(ObservableLists.isEmpty(personsList));
-        noMembersLabel.managedProperty().bind(noMembersLabel.visibleProperty());
+        Layouts.bindManagedAndVisiblePropertiesTo(ObservableLists.isEmpty(personsList), noMembersLabel);
 
         membersListVbox.setAlignment(Pos.CENTER);
 
@@ -103,7 +102,6 @@ final class MembersActivity extends ViewDomainActivityBase {
             if (!isAccountOwner) {
                 Hyperlink removeTextLink = Bootstrap.textDanger(I18nControls.newHyperlink(MembersI18nKeys.RemoveMember));
                 removeTextLink.setOnAction(e -> {
-                    DialogUtil.dialogBackgroundProperty().setValue(Background.fill(Color.WHITE));
                     DialogContent dialog = DialogContent.createConfirmationDialog(I18n.getI18nText(MembersI18nKeys.RemovingAMemberTitle), I18n.getI18nText(MembersI18nKeys.RemovingAMemberConfirmation));
                     dialog.setOkCancel();
                     DialogBuilderUtil.showModalNodeInGoldLayout(dialog, FXMainFrameDialogArea.getDialogArea());
