@@ -48,6 +48,7 @@ import one.modality.crm.shared.services.authn.fx.FXUserPerson;
 
 
 /**
+ * @author David Hello
  * @author Bruno Salmon
  */
 final class MembersActivity extends ViewDomainActivityBase {
@@ -61,102 +62,98 @@ final class MembersActivity extends ViewDomainActivityBase {
     private UpdateStore updateStore;
     private final ValidationSupport validationSupport = new ValidationSupport();
 
-
-
     @Override
     public Node buildUi() {
         Label titleLabel = Bootstrap.textPrimary(Bootstrap.strong(Bootstrap.h2(I18nControls.newLabel(MembersI18nKeys.MembersInYourAccount))));
         titleLabel.setWrapText(true);
         titleLabel.setTextAlignment(TextAlignment.CENTER);
 
-        titleLabel.setPadding(new Insets(100,0,0,0));
+        titleLabel.setPadding(new Insets(100, 0, 0, 0));
 
         Label description = Bootstrap.textSecondary(I18nControls.newLabel(MembersI18nKeys.MembersInYourAccountDescription));
         description.setWrapText(true);
-        description.setPadding(new Insets(0,0,30,0));
+        description.setPadding(new Insets(0, 0, 30, 0));
         description.setTextAlignment(TextAlignment.CENTER);
 
         membersListVbox.setAlignment(Pos.CENTER);
 
-        userProfileView = new UserProfileView(null, false, false, true, true, false, false, true, true, true,true,null);
+        userProfileView = new UserProfileView(null, false, false, true, true, false, false, true, true, true, true, null);
         Node userProfileViewNode = userProfileView.buildView();
         userProfileView.saveButton.disableProperty().bind(EntityBindings.hasChangesProperty(updateStore).not());
 
-        VBox listOfMemberVBox=new VBox(15);
+        VBox listOfMemberVBox = new VBox(15);
         ObservableLists.bindConverted(listOfMemberVBox.getChildren(), personsList, person -> {
-                HBox currentPersonHBox = new HBox(20);
-                Region spacer = new Region();
-                HBox.setHgrow(spacer, Priority.ALWAYS);
-                Hyperlink editDetailsLink = Bootstrap.textPrimary(I18nControls.newHyperlink(MembersI18nKeys.EditMemberDetails));
-                editDetailsLink.setOnAction(e -> Console.log("edit"));
-                editDetailsLink.setCursor(Cursor.HAND);
+            HBox currentPersonHBox = new HBox(20);
+            Region spacer = new Region();
+            HBox.setHgrow(spacer, Priority.ALWAYS);
+            Hyperlink editDetailsLink = Bootstrap.textPrimary(I18nControls.newHyperlink(MembersI18nKeys.EditMemberDetails));
+            editDetailsLink.setOnAction(e -> Console.log("edit"));
+            editDetailsLink.setCursor(Cursor.HAND);
 
-                Node removeTextLink = Bootstrap.textSecondary(I18nControls.newLabel(MembersI18nKeys.MainAccount));
-                boolean isAccountOwner = Entities.samePrimaryKey(person, FXUserPerson.getUserPerson());
-                if (!isAccountOwner) {
-                    removeTextLink = Bootstrap.textDanger(I18nControls.newHyperlink(MembersI18nKeys.RemoveMember));
-                    ((Hyperlink) removeTextLink).setOnAction(e -> {
-                        DialogUtil.dialogBackgroundProperty().setValue(Background.fill(Color.WHITE));
-                        DialogContent dialog = DialogContent.createConfirmationDialog(I18n.getI18nText(MembersI18nKeys.RemovingAMemberTitle), I18n.getI18nText(MembersI18nKeys.RemovingAMemberConfirmation));
-                        dialog.setOkCancel();
+            boolean isAccountOwner = Entities.samePrimaryKey(person, FXUserPerson.getUserPerson());
+            if (!isAccountOwner) {
+                Hyperlink removeTextLink = Bootstrap.textDanger(I18nControls.newHyperlink(MembersI18nKeys.RemoveMember));
+                removeTextLink.setOnAction(e -> {
+                    DialogUtil.dialogBackgroundProperty().setValue(Background.fill(Color.WHITE));
+                    DialogContent dialog = DialogContent.createConfirmationDialog(I18n.getI18nText(MembersI18nKeys.RemovingAMemberTitle), I18n.getI18nText(MembersI18nKeys.RemovingAMemberConfirmation));
+                    dialog.setOkCancel();
+                    DialogBuilderUtil.showModalNodeInGoldLayout(dialog, FXMainFrameDialogArea.getDialogArea());
+                    DialogBuilderUtil.armDialogContentButtons(dialog, dialogCallback -> {
+                        updateStore.deleteEntity(person);
+                        updateStore.submitChanges()
+                            .onFailure(dialogCallback::showException)
+                            .onSuccess(batchResult -> {
+                                dialogCallback.closeDialog();
+                                //We update this value so the listener can refresh the UI
+                                doesNeedRefreshProperty.set(!doesNeedRefreshProperty.get());
+                            });
+                    });
+                });
+                removeTextLink.setCursor(Cursor.HAND);
+
+                editDetailsLink.setOnAction(e -> {
+                    if (person != null) {
+                        // Forcing logout for security staff if they try to book with that account
+                        FrontendAccount userAccount = person.getFrontendAccount(); // Note: null (not loaded) for members
+                        if (userAccount != null && userAccount.isSecurity())
+                            OperationDirect.executeOperation(new LogoutRequest());
+                    }
+                    //If the person is linked to an account, we don't display the information.
+                    if (person.getAccountPerson() != null) {
+                        Label userhasAccountLabel = I18nControls.newLabel(CrmI18nKeys.LinkedAccountMessage);
+                        userhasAccountLabel.setWrapText(true);
+                        userhasAccountLabel.setTextAlignment(TextAlignment.CENTER);
+                        DialogContent dialog = DialogContent.createConfirmationDialog(I18n.getI18nText(MembersI18nKeys.MemberInformation), I18n.getI18nText(CrmI18nKeys.LinkedAccountMessage));
+                        dialog.setOk();
                         DialogBuilderUtil.showModalNodeInGoldLayout(dialog, FXMainFrameDialogArea.getDialogArea());
-                        DialogBuilderUtil.armDialogContentButtons(dialog, dialogCallback -> {
-                            updateStore.deleteEntity(person);
-                            updateStore.submitChanges()
-                                .onFailure(dialogCallback::showException)
-                                .onSuccess(batchResult -> {
-                                    dialogCallback.closeDialog();
-                                    //We update this value so the listener can refresh the UI
-                                    doesNeedRefreshProperty.set(!doesNeedRefreshProperty.get());
-                                });
-                        });
-                    });
-                    removeTextLink.setCursor(Cursor.HAND);
+                        DialogBuilderUtil.armDialogContentButtons(dialog, DialogCallback::closeDialog);
+                    } else {
+                        setPersonToAddOrModify(person);
+                        mainContent.setContent(userProfileViewNode);
+                    }
+                });
 
-
-                    editDetailsLink.setOnAction(e -> {
-                        if (person != null) {
-                            // Forcing logout for security staff if they try to book with that account
-                            FrontendAccount userAccount = person.getFrontendAccount(); // Note: null (not loaded) for members
-                            if (userAccount != null && userAccount.isSecurity())
-                                OperationDirect.executeOperation(new LogoutRequest());
-                        }
-                        //If the person is linked to an account, we don't display the informations.
-                        if(person.getAccountPerson()!=null) {
-                            Label userhasAccountLabel = I18nControls.newLabel(CrmI18nKeys.LinkedAccountMessage);
-                            userhasAccountLabel.setWrapText(true);
-                            userhasAccountLabel.setTextAlignment(TextAlignment.CENTER);
-                            DialogContent dialog = DialogContent.createConfirmationDialog(I18n.getI18nText(MembersI18nKeys.MemberInformation), I18n.getI18nText(CrmI18nKeys.LinkedAccountMessage));
-                            dialog.setOk();
-                            DialogBuilderUtil.showModalNodeInGoldLayout(dialog, FXMainFrameDialogArea.getDialogArea());
-                            DialogBuilderUtil.armDialogContentButtons(dialog, DialogCallback::closeDialog);
-                        } else {
-                            setPersonToAddOrModify(person);
-                            mainContent.setContent(userProfileViewNode);
-                        }
-                    });
-
-                    currentPersonHBox.getChildren().addAll(
-                        Bootstrap.strong(new Label(person.getFullName())),
-                        spacer,
-                        editDetailsLink,
-                        removeTextLink
-                    );
-                }
+                currentPersonHBox.getChildren().addAll(
+                    Bootstrap.strong(new Label(person.getFullName())),
+                    spacer,
+                    editDetailsLink,
+                    removeTextLink
+                );
+            }
             return currentPersonHBox;
         });
 
         Button addButton = Bootstrap.largePrimaryButton(I18nControls.newButton(MembersI18nKeys.AddMember));
-        addButton.setOnAction(e-> {
+        addButton.setOnAction(e -> {
             setPersonToAddOrModify(null);
             mainContent.setContent(userProfileViewNode);
         });
-        membersListVbox.getChildren().addAll(listOfMemberVBox,addButton);
+        membersListVbox.getChildren().addAll(listOfMemberVBox, addButton);
         mainContent.setContent(membersListVbox);
-        VBox container = new VBox(20,titleLabel,
-                                description,
-                                mainContent,
-                                HelpPanel.createEmailHelpPanel(MembersI18nKeys.MembersHelp, "kbs@kadampa.net"));
+        VBox container = new VBox(20, titleLabel,
+            description,
+            mainContent,
+            HelpPanel.createEmailHelpPanel(MembersI18nKeys.MembersHelp, "kbs@kadampa.net"));
         container.setMaxWidth(800);
         container.setAlignment(Pos.TOP_CENTER);
         return container;
@@ -173,7 +170,7 @@ final class MembersActivity extends ViewDomainActivityBase {
             if (FXModalityUserPrincipal.modalityUserPrincipalProperty() != null) {
                 entityStore.<Person>executeQueryWithCache("modality/event/audio-library/document-lines",
                         "select fullName,owner,accountPerson, email, organization, nationality, street, postCode, cityName from Person p where frontendAccount=$0",
-                        new Object[]{ modalityUserPrincipal.getUserAccountId()})
+                        new Object[]{modalityUserPrincipal.getUserAccountId()})
                     .onFailure(Console::log)
                     .inUiThread()
                     .onCacheAndOrSuccess(personsList::setAll);
@@ -191,9 +188,11 @@ final class MembersActivity extends ViewDomainActivityBase {
             validationSupport.addRequiredInput(userProfileView.getFirstNameTextField());
             validationSupport.addRequiredInput(userProfileView.getLastNameTextField());
             validationSupport.addRequiredInput(userProfileView.getEmailTextField());
-            validationSupport.addEmailValidation(userProfileView.getEmailTextField(),userProfileView.getEmailTextField(), I18n.i18nTextProperty(UserProfileI18nKeys.EmailFormatIncorrect));
+            validationSupport.addEmailValidation(userProfileView.getEmailTextField(), userProfileView.getEmailTextField(), I18n.i18nTextProperty(UserProfileI18nKeys.EmailFormatIncorrect));
+            validationSupport.setAlwaysShowRequiredDecorations(true);
         }
     }
+
     private void setPersonToAddOrModify(Person person) {
         userProfileView.setLoginDetailsVisible(true);
         userProfileView.setEmailFieldDisabled(false);
@@ -209,8 +208,7 @@ final class MembersActivity extends ViewDomainActivityBase {
         updateStore.cancelChanges();
         if (person != null) {
             personToModifyOrAdd = updateStore.updateEntity(person);
-        }
-        else { // Should be always true because the account owner was always selected first
+        } else { // Should be always true because the account owner was always selected first
             // Here the update store should have already been initialized
             assert updateStore != null;
             personToModifyOrAdd = updateStore.insertEntity(Person.class);
@@ -221,27 +219,30 @@ final class MembersActivity extends ViewDomainActivityBase {
         userProfileView.cancelButton.setOnAction(e -> mainContent.setContent(membersListVbox));
 
         userProfileView.saveButton.setOnAction(e -> {
-                if (validateForm()) {
-                    AsyncSpinner.displayButtonSpinnerDuringAsyncExecution(
-                        updateStore.submitChanges()
-                            .inUiThread()
-                            .onFailure(failure -> {
-                                Console.log("Error while updating account:" + failure);
-                                userProfileView.infoMessage.setVisible(true);
-                                Bootstrap.textDanger(I18nControls.bindI18nProperties(userProfileView.infoMessage, UserProfileI18nKeys.ErrorWhileUpdatingPersonalInformation));
-                            })
-                            .onSuccess(success -> {
-                                Console.log("Account updated with success");
-                                userProfileView.infoMessage.setVisible(true);
-                                Bootstrap.textSuccess(I18nControls.bindI18nProperties(userProfileView.infoMessage, UserProfileI18nKeys.PersonalInformationUpdated));
-                                UiScheduler.scheduleDelay(5000, () -> userProfileView.infoMessage.setVisible(false));
-                                doesNeedRefreshProperty.set(!doesNeedRefreshProperty.get());
-                                mainContent.setContent(membersListVbox);
-                            })
-                        , userProfileView.saveButton);
-                }
-            });
+            if (validateForm()) {
+                AsyncSpinner.displayButtonSpinnerDuringAsyncExecution(
+                    updateStore.submitChanges()
+                        .inUiThread()
+                        .onFailure(failure -> {
+                            Console.log("Error while updating account:" + failure);
+                            userProfileView.infoMessage.setVisible(true);
+                            Bootstrap.textDanger(I18nControls.bindI18nProperties(userProfileView.infoMessage, UserProfileI18nKeys.ErrorWhileUpdatingPersonalInformation));
+                        })
+                        .onSuccess(success -> {
+                            Console.log("Account updated with success");
+                            userProfileView.infoMessage.setVisible(true);
+                            Bootstrap.textSuccess(I18nControls.bindI18nProperties(userProfileView.infoMessage, UserProfileI18nKeys.PersonalInformationUpdated));
+                            UiScheduler.scheduleDelay(5000, () -> userProfileView.infoMessage.setVisible(false));
+                            doesNeedRefreshProperty.set(!doesNeedRefreshProperty.get());
+                            mainContent.setContent(membersListVbox);
+                        })
+                    , userProfileView.saveButton
+                );
+            }
+        });
         userProfileView.syncUIFromModel();
-        }
+        // Initializing the validation support to show the required fields from the start
+        initFormValidation();
+    }
 
 }
