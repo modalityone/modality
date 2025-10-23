@@ -534,6 +534,9 @@ public final class ModalityFrontOfficeMainFrameActivity extends ModalityClientMa
         FXProperties.runNowAndOnPropertyChange(graphic -> {
             if (graphic instanceof SVGPath svgPath) {
                 boolean hasStroke = svgPath.getStroke() != null;
+                boolean hasFill = svgPath.getFill() != null;
+                Collections.addIfNotContainsOrRemove(button.getStyleClass(), hasStroke, "hasStroke");
+                Collections.addIfNotContainsOrRemove(button.getStyleClass(), hasFill, "hasFill");
                 ObjectProperty<Paint> svgColorProperty = hasStroke ? svgPath.strokeProperty() : svgPath.fillProperty();
                 if (mobileLayout) {
                     button.textFillProperty().bind(svgColorProperty);

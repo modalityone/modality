@@ -3,6 +3,7 @@ package one.modality.base.client.application;
 import dev.webfx.extras.i18n.I18n;
 import dev.webfx.platform.ast.AST;
 import dev.webfx.platform.boot.ApplicationBooter;
+import dev.webfx.platform.storage.LocalStorage;
 import dev.webfx.platform.util.Arrays;
 import dev.webfx.platform.util.Objects;
 import dev.webfx.platform.util.function.Factory;
@@ -42,7 +43,7 @@ public abstract class ModalityClientStarterActivity
     @Override
     public void onCreate(ViewDomainActivityContext context) {
         this.context = context;
-        // Language routing management (ex: /de/..., /fr/..., etc...)
+        // Langage routing management (ex: /de/..., /fr/..., etc...)
         Router router = getUiRouter().getRouter();
         router.routeWithRegex("/../.*").handler(routingContext -> {
             String path = routingContext.path();
@@ -58,6 +59,16 @@ public abstract class ModalityClientStarterActivity
             String path = routingContext.path();
             // Redirecting to the standard path without the refresh suffix, but setting refresh = true in the state
             getHistory().replace(path.substring(0, path.length() - 8), AST.createObject().set("refresh", true));
+        });
+        // LocalStorage settings management used by the technical support to enable specific features to specific users (ex: modality-download-proxy)
+        router.routeWithRegex("/.*/setItem/(?<item>.*)/(?<value>.*)").handler(routingContext -> {
+            String item = routingContext.getParams().getString("item");
+            String value = routingContext.getParams().getString("value");
+            LocalStorage.setItem(item, value);
+            String path = routingContext.path();
+            int index = path.indexOf("/setItem");
+            // Redirecting to the standard path without the refresh suffix, but setting refresh = true in the state
+            getHistory().replace(path.substring(0, index));
         });
         getUiRouter().routeAndMount("/", containerActivityFactory, setupContainedRouter(UiRouter.createSubRouter(context)));
     }

@@ -9,7 +9,9 @@ module modality.event.frontoffice.medias {
     requires modality.base.client.cloudinary;
     requires modality.base.client.i18n;
     requires modality.base.client.icons;
+    requires modality.base.shared.domainmodel;
     requires modality.base.shared.entities;
+    requires modality.ecommerce.frontoffice.order;
     requires webfx.extras.i18n;
     requires webfx.extras.i18n.controls;
     requires webfx.extras.panes;

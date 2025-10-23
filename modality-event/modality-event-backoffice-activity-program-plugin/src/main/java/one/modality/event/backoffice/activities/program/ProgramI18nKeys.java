@@ -3,6 +3,7 @@ package one.modality.event.backoffice.activities.program;
 
 public interface ProgramI18nKeys {
 
+    Object DuplicateIcon = "DuplicateIcon";
     Object ProgramTitle = "ProgramTitle";
     Object Programme = "Programme";
     Object AddDayTemplate = "AddDayTemplate";
@@ -25,6 +26,5 @@ public interface ProgramI18nKeys {
     Object ChooseAnItemForTheTeachingBookableScheduledItem = "ChooseAnItemForTheTeachingBookableScheduledItem";
     Object GeneratePreliminaryBookableSI = "GeneratePreliminaryBookableSI";
     Object PleaseSelectAnItem = "PleaseSelectAnItem";
-    Object DuplicateIcon = "DuplicateIcon";
 
 }

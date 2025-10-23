@@ -2,6 +2,7 @@ package one.modality.event.backoffice.activities.medias;
 
 import dev.webfx.extras.i18n.I18n;
 import dev.webfx.extras.i18n.controls.I18nControls;
+import dev.webfx.extras.panes.ColumnsPane;
 import dev.webfx.extras.styles.bootstrap.Bootstrap;
 import dev.webfx.extras.theme.text.TextTheme;
 import dev.webfx.extras.time.format.LocalizedTime;
@@ -25,6 +26,7 @@ import javafx.scene.Node;
 import javafx.scene.control.*;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.HBox;
+import javafx.scene.layout.Region;
 import javafx.scene.layout.VBox;
 import one.modality.base.client.i18n.BaseI18nKeys;
 import one.modality.base.client.time.BackOfficeTimeFormats;
@@ -206,29 +208,34 @@ final class VideoTabView {
         masterSettings.getChildren().add(saveButton);
 
 
-        BorderPane individualSettingsHBox;
+        BorderPane individualSettings;
         if (currentEditedEvent.getRepeatedEvent() != null && currentEditedEvent.isRepeatVideo()) {
             Label seeRepeatableEventLabel = I18nControls.newLabel(MediasI18nKeys.VideoConfigurationDoneInRepeatableEvent, currentEditedEvent.getRepeatedEvent().getName(), Entities.getPrimaryKey(currentEditedEvent.getRepeatedEventId()).toString());
             seeRepeatableEventLabel.setPadding(new Insets(200, 0, 0, 0));
-            individualSettingsHBox = new BorderPane();
-            individualSettingsHBox.setCenter(seeRepeatableEventLabel);
+            individualSettings = new BorderPane();
+            individualSettings.setCenter(seeRepeatableEventLabel);
         } else {
-            individualSettingsHBox = buildIndividualLinksContainer();
-            individualSettingsHBox.setPadding(new Insets(20));
-            individualSettingsHBox.setMinWidth(1000);
+            individualSettings = buildIndividualLinksContainer();
+            individualSettings.setPadding(new Insets(20));
         }
 
-        // Layout container (HBox)
-        Separator VSeparator = new Separator();
-        VSeparator.setOrientation(Orientation.VERTICAL);
-        //  VSeparator.setPadding(new Insets(30));
-        HBox mainLayout = new HBox(60, masterSettings, VSeparator, individualSettingsHBox);
+        // Add CSS classes for styling
+        masterSettings.getStyleClass().add("media-settings-section");
+        individualSettings.getStyleClass().add("media-settings-section");
 
-        mainFrame.setCenter(mainLayout);
-        individualSettingsHBox.setMaxWidth(800);
+        // Layout container using ColumnsPane for responsiveness
+        ColumnsPane columnsPane = new ColumnsPane(40);
+        columnsPane.setMaxColumnCount(2);
+        columnsPane.setMinColumnWidth(350);
+        columnsPane.setVgap(20);
+        columnsPane.getChildren().addAll(masterSettings, individualSettings);
+
+        VBox container = new VBox(columnsPane);
+        container.setPadding(new Insets(20));
+
+        mainFrame.setCenter(container);
 
         BorderPane.setAlignment(mainFrame, Pos.CENTER);
-        BorderPane.setAlignment(mainLayout, Pos.CENTER);
     }
 
     private void updateVodExpirationDate(Event currentEvent, DateTimeFormatter dateFormatter, DateTimeFormatter timeFormatter) {

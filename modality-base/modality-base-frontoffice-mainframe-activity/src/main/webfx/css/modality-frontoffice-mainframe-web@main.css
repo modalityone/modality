@@ -30,8 +30,12 @@
     font-weight: bold;
 }
 
-.menu-bar fx-togglebutton.aria-toggle.fired fx-svgpath svg path {
+.menu-bar fx-togglebutton.aria-toggle.fired fx-svgpath svg path[fill] {
     fill: var(--fx-text-fill);
+}
+
+.menu-bar fx-togglebutton.aria-toggle.fired fx-svgpath svg path[stroke] {
+    stroke: var(--fx-text-fill);
 }
 
 .lang-menu-bar {
