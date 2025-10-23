@@ -74,6 +74,15 @@ final class MembersActivity extends ViewDomainActivityBase {
         description.setWrapText(true);
         description.setPadding(new Insets(0, 0, 30, 0));
         description.setTextAlignment(TextAlignment.CENTER);
+        description.visibleProperty().bind(ObservableLists.isEmpty(personsList).not());
+        description.managedProperty().bind(description.visibleProperty());
+
+        Label noMembersLabel = Bootstrap.textSecondary(I18nControls.newLabel(MembersI18nKeys.NoMembersMessage));
+        noMembersLabel.setWrapText(true);
+        noMembersLabel.setTextAlignment(TextAlignment.CENTER);
+        noMembersLabel.setPadding(new Insets(0, 0, 30, 0));
+        noMembersLabel.visibleProperty().bind(ObservableLists.isEmpty(personsList));
+        noMembersLabel.managedProperty().bind(noMembersLabel.visibleProperty());
 
         membersListVbox.setAlignment(Pos.CENTER);
 
@@ -152,6 +161,7 @@ final class MembersActivity extends ViewDomainActivityBase {
         mainContent.setContent(membersListVbox);
         VBox container = new VBox(20, titleLabel,
             description,
+            noMembersLabel,
             mainContent,
             HelpPanel.createEmailHelpPanel(MembersI18nKeys.MembersHelp, "kbs@kadampa.net"));
         container.setMaxWidth(800);

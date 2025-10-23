@@ -2,6 +2,7 @@ package one.modality.event.backoffice.activities.medias;
 
 import dev.webfx.extras.i18n.I18n;
 import dev.webfx.extras.i18n.controls.I18nControls;
+import dev.webfx.extras.panes.ColumnsPane;
 import dev.webfx.extras.styles.bootstrap.Bootstrap;
 import dev.webfx.extras.switches.Switch;
 import dev.webfx.extras.theme.text.TextTheme;
@@ -272,14 +273,23 @@ final class RecordingsTabView {
                 });
             ObservableLists.bindConverted(recordingsSection.getChildren(), workingItems, this::drawLanguageBox);
         }
-        // Layout container (HBox)
-        Separator VSeparator = new Separator();
-        VSeparator.setOrientation(Orientation.VERTICAL);
-        VSeparator.setPadding(new Insets(30));
-        HBox mainLayout = new HBox(10, masterSettings, VSeparator, recordingsSection);
-        BorderPane.setAlignment(mainLayout, Pos.CENTER);
-        /////////////////
-        mainFrame.setCenter(mainLayout);
+
+        // Add CSS classes for styling
+        masterSettings.getStyleClass().add("media-settings-section");
+        recordingsSection.getStyleClass().add("media-settings-section");
+
+        // Layout container using ColumnsPane for responsiveness
+        ColumnsPane columnsPane = new ColumnsPane(40);
+        columnsPane.setMaxColumnCount(2);
+        columnsPane.setMinColumnWidth(350);
+        columnsPane.setVgap(20);
+        columnsPane.getChildren().addAll(masterSettings, recordingsSection);
+
+        VBox container = new VBox(columnsPane);
+        container.setPadding(new Insets(20));
+
+        mainFrame.setCenter(container);
+        BorderPane.setAlignment(mainFrame, Pos.CENTER);
     }
 
     public void addUpdateStoreHasChangesProperty(BooleanExpression booleanProperty) {

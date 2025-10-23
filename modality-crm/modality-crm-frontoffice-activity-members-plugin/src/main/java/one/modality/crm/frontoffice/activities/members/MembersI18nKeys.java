@@ -6,6 +6,7 @@ public interface MembersI18nKeys {
     Object MembersMenu = "MembersMenu";
     Object RemoveMember = "RemoveMember";
     Object MembersHelp = "MembersHelp";
+    Object NoMembersMessage = "NoMembersMessage";
     Object AddMember = "AddMember";
     Object MemberInformation = "MemberInformation";
     Object RemovingAMemberTitle = "RemovingAMemberTitle";
