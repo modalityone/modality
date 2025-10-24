@@ -2,7 +2,7 @@ package one.modality.event.backoffice.activities.medias;
 
 import dev.webfx.extras.i18n.I18n;
 import dev.webfx.extras.i18n.controls.I18nControls;
-import dev.webfx.extras.panes.ColumnsPane;
+import javafx.scene.layout.FlowPane;
 import dev.webfx.extras.styles.bootstrap.Bootstrap;
 import dev.webfx.extras.switches.Switch;
 import dev.webfx.extras.theme.text.TextTheme;
@@ -278,14 +278,23 @@ final class RecordingsTabView {
         masterSettings.getStyleClass().add("media-settings-section");
         recordingsSection.getStyleClass().add("media-settings-section");
 
-        // Layout container using ColumnsPane for responsiveness
-        ColumnsPane columnsPane = new ColumnsPane(40);
-        columnsPane.setMaxColumnCount(2);
-        columnsPane.setMinColumnWidth(350);
-        columnsPane.setVgap(20);
-        columnsPane.getChildren().addAll(masterSettings, recordingsSection);
+        // Set responsive width constraints - left column narrower (40%), right column wider (60%)
+        masterSettings.setMinWidth(350);
+        masterSettings.setMaxWidth(500);
+        recordingsSection.setMinWidth(350);
+        recordingsSection.setMaxWidth(Double.MAX_VALUE);
+        HBox.setHgrow(recordingsSection, Priority.ALWAYS);
 
-        VBox container = new VBox(columnsPane);
+        // Layout container using FlowPane for responsiveness with flexible column widths
+        FlowPane flowPane = new FlowPane(40, 20);
+        flowPane.setAlignment(Pos.TOP_LEFT);
+        flowPane.getChildren().addAll(masterSettings, recordingsSection);
+
+        // Set preferred width binding so children resize with the container
+        masterSettings.prefWidthProperty().bind(flowPane.widthProperty().multiply(0.35).subtract(30));
+        recordingsSection.prefWidthProperty().bind(flowPane.widthProperty().multiply(0.60).subtract(30));
+
+        VBox container = new VBox(flowPane);
         container.setPadding(new Insets(20));
 
         mainFrame.setCenter(container);
