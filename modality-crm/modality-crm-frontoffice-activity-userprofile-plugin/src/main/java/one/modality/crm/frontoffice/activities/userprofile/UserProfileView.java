@@ -42,7 +42,6 @@ import one.modality.base.client.time.FrontOfficeTimeFormats;
 import one.modality.base.shared.entities.Country;
 import one.modality.base.shared.entities.Organization;
 import one.modality.base.shared.entities.Person;
-import one.modality.base.shared.entities.markers.HasOnline;
 import one.modality.crm.client.i18n.CrmI18nKeys;
 import one.modality.crm.frontoffice.activities.createaccount.CreateAccountI18nKeys;
 import one.modality.crm.frontoffice.activities.createaccount.UserAccountUI;
@@ -113,10 +112,6 @@ public final class UserProfileView implements ModalityButtonFactoryMixin {
         this.showSaveChangesButton = showSaveChangesButton;
         this.showCancelButton = showCancelButton;
         this.currentEditedPerson = person;
-    }
-
-    public Person getCurrentEditedPerson() {
-        return currentEditedPerson;
     }
 
     public void setCurrentEditedPerson(Person currentEditedPerson) {
@@ -198,7 +193,10 @@ public final class UserProfileView implements ModalityButtonFactoryMixin {
             cityNameTextField.textProperty(),
             countrySelector.selectedItemProperty(),
             organizationSelector.selectedItemProperty(),
-            noOrganizationRadioButton.selectedProperty()
+            noOrganizationRadioButton.selectedProperty(),
+            birthDateField.dateProperty(),
+            optionMale.selectedProperty(),
+            optionLay.selectedProperty()
         );
 
         return container;
@@ -533,6 +531,11 @@ public final class UserProfileView implements ModalityButtonFactoryMixin {
         cityNameTextField.setText(currentEditedPerson.getCityName());
         countrySelector.setSelectedItem(currentEditedPerson.getCountry());
         organizationSelector.setSelectedItem(currentEditedPerson.getOrganization());
+        birthDateField.setDate(currentEditedPerson.getBirthDate());
+        optionOrdained.setSelected(currentEditedPerson.isOrdained());
+        optionLay.setSelected(!optionOrdained.isSelected());
+        optionMale.setSelected(currentEditedPerson.isMale());
+        optionFemale.setSelected(!optionMale.isSelected());
         noOrganizationRadioButton.setSelected(currentEditedPerson.getOrganization() == null);
 
         syncing = false;
@@ -559,6 +562,9 @@ public final class UserProfileView implements ModalityButtonFactoryMixin {
                 organization = null;
             }
             currentEditedPerson.setOrganization(organization);
+            currentEditedPerson.setBirthDate(birthDateField.getDate());
+            currentEditedPerson.setOrdained(optionOrdained.isSelected());
+            currentEditedPerson.setMale(optionMale.isSelected());
             organizationSelector.setSelectedItem(organization);
             noOrganizationRadioButton.setSelected(organization == null);
         }

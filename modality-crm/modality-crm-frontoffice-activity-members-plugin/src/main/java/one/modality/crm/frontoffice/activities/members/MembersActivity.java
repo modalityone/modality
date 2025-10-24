@@ -173,9 +173,9 @@ final class MembersActivity extends ViewDomainActivityBase {
         FXProperties.runNowAndOnPropertiesChange(changes -> {
             personsList.clear();
             ModalityUserPrincipal modalityUserPrincipal = FXModalityUserPrincipal.modalityUserPrincipalProperty().get();
-            if (FXModalityUserPrincipal.modalityUserPrincipalProperty() != null) {
+            if (modalityUserPrincipal != null) {
                 entityStore.<Person>executeQueryWithCache("modality/event/audio-library/document-lines",
-                        "select fullName,owner,accountPerson, email, organization, nationality, street, postCode, cityName from Person p where frontendAccount=$0 and owner=false",
+                        "select fullName,owner,accountPerson, email, organization, nationality, country, street, postCode, cityName, male, ordained, phone, layName, birthdate from Person p where frontendAccount=$0 and owner=false",
                         new Object[]{modalityUserPrincipal.getUserAccountId()})
                     .onFailure(Console::log)
                     .inUiThread()
@@ -206,15 +206,22 @@ final class MembersActivity extends ViewDomainActivityBase {
         userProfileView.setPersonalDetailsVisible(true);
         userProfileView.setOptionMaleFemaleDisabled(false);
         userProfileView.setOptionLayOrdainedDisabled(false);
-        userProfileView.layNameTextField.setDisable(true);
         userProfileView.setAddressInfoVisible(true);
         userProfileView.setKadampaCenterVisible(true);
         userProfileView.saveButton.setVisible(true);
+        if (person.getLayName() == null || person.getLayName().isBlank()) {
+            userProfileView.layNameTextField.setDisable(false);
+        }
+        else {
+            userProfileView.layNameTextField.setDisable(true);
+        }
+
 
         updateStore.cancelChanges();
         if (person != null) {
             userProfileView.firstNameTextField.setDisable(true);
             userProfileView.lastNameTextField.setDisable(true);
+
             personToModifyOrAdd = updateStore.updateEntity(person);
         } else { // Should be always true because the account owner was always selected first
             // Here the update store should have already been initialized
