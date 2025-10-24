@@ -22,7 +22,7 @@
         <library name="com-squareup-square">
             <groupId>com.squareup</groupId>
             <artifactId>square</artifactId>
-            <version>43.1.0.20250220</version>
+            <version>45.1.0.20251016</version>
             <!-- These dependencies clash with some underlying Vert.x modules, so we solve this issue by excluding them -->
             <exclusions>
                 <exclusion>
@@ -36,10 +36,8 @@
             </exclusions>
             <exported-packages>
                 <package>com.squareup.square</package>
-                <package>com.squareup.square.api</package>
-                <package>com.squareup.square.authentication</package>
-                <package>com.squareup.square.exceptions</package>
-                <package>com.squareup.square.models</package>
+                <package>com.squareup.square.core</package>
+                <package>com.squareup.square.types</package>
             </exported-packages>
         </library>
         <!-- Underlying library used by Square that we use in Modality code to access the http response body -->

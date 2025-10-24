@@ -1,14 +1,15 @@
 package one.modality.ecommerce.payment.server.gateway.impl.square;
 
-import com.squareup.square.Environment;
+import com.squareup.square.AsyncSquareClient;
 import com.squareup.square.SquareClient;
-import com.squareup.square.api.PaymentsApi;
-import com.squareup.square.authentication.BearerAuthModel;
-import com.squareup.square.exceptions.ApiException;
-import com.squareup.square.models.CreatePaymentRequest;
-import com.squareup.square.models.CreatePaymentResponse;
-import com.squareup.square.models.Money;
-import com.squareup.square.models.Payment;
+import com.squareup.square.core.Environment;
+import com.squareup.square.core.SquareApiException;
+import com.squareup.square.types.CreatePaymentRequest;
+import com.squareup.square.types.CreatePaymentResponse;
+import com.squareup.square.types.Currency;
+import com.squareup.square.types.Error;
+import com.squareup.square.types.Money;
+import com.squareup.square.types.Payment;
 import dev.webfx.platform.ast.AST;
 import dev.webfx.platform.ast.ReadOnlyAstObject;
 import dev.webfx.platform.async.Future;
@@ -16,8 +17,6 @@ import dev.webfx.platform.async.Promise;
 import dev.webfx.platform.console.Console;
 import dev.webfx.platform.resource.Resource;
 import dev.webfx.platform.util.uuid.Uuid;
-import io.apimatic.coreinterfaces.http.Context;
-import io.apimatic.coreinterfaces.http.response.Response;
 import one.modality.ecommerce.payment.PaymentStatus;
 import one.modality.ecommerce.payment.SandboxCard;
 import one.modality.ecommerce.payment.server.gateway.*;
@@ -40,31 +39,31 @@ public final class SquarePaymentGateway implements PaymentGateway {
     private static final String CSS_TEMPLATE = Resource.getText(Resource.toUrl("square-payment-form.css", SquarePaymentGateway.class));
     private static final String SCRIPT_TEMPLATE = Resource.getText(Resource.toUrl("square-payment-form.js", SquarePaymentGateway.class));
     private static final String HTML_TEMPLATE = Resource.getText(Resource.toUrl("square-payment-form-iframe.html", SquarePaymentGateway.class))
-            .replace("${square_paymentFormScript}", SCRIPT_TEMPLATE)
-            .replace("${square_paymentFormCSS}", CSS_TEMPLATE);
+        .replace("${square_paymentFormScript}", SCRIPT_TEMPLATE)
+        .replace("${square_paymentFormCSS}", CSS_TEMPLATE);
 
     private static final SandboxCard[] SANDBOX_CARDS = {
-            new SandboxCard("Visa - Success", "4111 1111 1111 1111", null, "111", "11111"),
-            new SandboxCard("Mastercard - Success", "5105 1051 0510 5100", null, "111", "11111"),
-            new SandboxCard("Discover - Success", "6011 0000 0000 0004", null, "111", "11111"),
-            new SandboxCard("JCB - Success", "3569 9900 1009 5841", null, "111", null),
-            new SandboxCard("American Express - Success", "6011 0000 0000 0004", null, "1111", "11111"),
-            new SandboxCard("China Union Pay - Success", "6222 9888 1234 0000", null, "111", null),
-            new SandboxCard("Square Gift Card - Success", "6011 0000 0000 0004", null, "111", "11111"),
-            new SandboxCard("CVV incorrect", null, null, "911", null),
-            new SandboxCard("Postal code incorrect", null, null, null, "99999"),
-            new SandboxCard("Expiration date incorrect", null, "01/40", null, null),
-            new SandboxCard("Declined number", "4000000000000002", null, null, null),
-            new SandboxCard("On file auth declined", "4000000000000010", null, null, null),
-            new SandboxCard("Visa - No challenge", "4800 0000 0000 0004", null, "111", "11111"),
-            new SandboxCard("Mastercard - No challenge", "5222 2200 0000 0005", null, "111", "11111"),
-            new SandboxCard("Discover EU - No challenge", "6011 0000 0020 1016", null, "111", "11111"),
-            new SandboxCard("JCB - Success", "3569 9900 1009 5841", null, "111", null),
-            new SandboxCard("Visa EU - Verification code: 123456", "4310 0000 0020 1019", null, "1111", "11111"),
-            new SandboxCard("Mastercard - Verification code: 123456", "5248 4800 0021 0026", null, "1111", "11111"),
-            new SandboxCard("Mastercard EU - Verification code: 123456", "5500 0000 0020 1016", null, "1111", "11111"),
-            new SandboxCard("American Express EU - Verification code: 123456", "3700 000002 01014", null, "1111", "11111"),
-            new SandboxCard("Visa - Failed verification", "4811 1100 0000 0008", null, "1111", "11111")
+        new SandboxCard("Visa - Success", "4111 1111 1111 1111", null, "111", "11111"),
+        new SandboxCard("Mastercard - Success", "5105 1051 0510 5100", null, "111", "11111"),
+        new SandboxCard("Discover - Success", "6011 0000 0000 0004", null, "111", "11111"),
+        new SandboxCard("JCB - Success", "3569 9900 1009 5841", null, "111", null),
+        new SandboxCard("American Express - Success", "6011 0000 0000 0004", null, "1111", "11111"),
+        new SandboxCard("China Union Pay - Success", "6222 9888 1234 0000", null, "111", null),
+        new SandboxCard("Square Gift Card - Success", "6011 0000 0000 0004", null, "111", "11111"),
+        new SandboxCard("CVV incorrect", null, null, "911", null),
+        new SandboxCard("Postal code incorrect", null, null, null, "99999"),
+        new SandboxCard("Expiration date incorrect", null, "01/40", null, null),
+        new SandboxCard("Declined number", "4000000000000002", null, null, null),
+        new SandboxCard("On file auth declined", "4000000000000010", null, null, null),
+        new SandboxCard("Visa - No challenge", "4800 0000 0000 0004", null, "111", "11111"),
+        new SandboxCard("Mastercard - No challenge", "5222 2200 0000 0005", null, "111", "11111"),
+        new SandboxCard("Discover EU - No challenge", "6011 0000 0020 1016", null, "111", "11111"),
+        new SandboxCard("JCB - Success", "3569 9900 1009 5841", null, "111", null),
+        new SandboxCard("Visa EU - Verification code: 123456", "4310 0000 0020 1019", null, "1111", "11111"),
+        new SandboxCard("Mastercard - Verification code: 123456", "5248 4800 0021 0026", null, "1111", "11111"),
+        new SandboxCard("Mastercard EU - Verification code: 123456", "5500 0000 0020 1016", null, "1111", "11111"),
+        new SandboxCard("American Express EU - Verification code: 123456", "3700 000002 01014", null, "1111", "11111"),
+        new SandboxCard("Visa - Failed verification", "4811 1100 0000 0008", null, "1111", "11111")
     };
 
     @Override
@@ -83,16 +82,15 @@ public final class SquarePaymentGateway implements PaymentGateway {
         // Our Square gateway script implementation supports seamless integration.
         boolean seamless = argument.isSeamlessIfSupported()
             // && argument.isParentPageHttps() // Maybe would be better to not use seamless integration on http, but commented for now as iFrame integration is not working well in browser (ex: WebPaymentForm fitHeight not working well)
-        ;
+            ;
         String template = seamless ? SCRIPT_TEMPLATE : HTML_TEMPLATE;
         String paymentFormContent = template
-                .replace("${modality_amount}", Long.toString(argument.getAmount()))
-                .replace("${modality_currencyCode}", argument.getCurrencyCode())
-                .replace("${modality_seamless}", String.valueOf(seamless))
-                .replace("${square_webPaymentsSDKUrl}", live ? SQUARE_LIVE_WEB_PAYMENTS_SDK_URL : SQUARE_SANDBOX_WEB_PAYMENTS_SDK_URL)
-                .replace("${square_appId}", appId)
-                .replace("${square_locationId}", locationId)
-                ;
+            .replace("${modality_amount}", Long.toString(argument.getAmount()))
+            .replace("${modality_currencyCode}", argument.getCurrencyCode())
+            .replace("${modality_seamless}", String.valueOf(seamless))
+            .replace("${square_webPaymentsSDKUrl}", live ? SQUARE_LIVE_WEB_PAYMENTS_SDK_URL : SQUARE_SANDBOX_WEB_PAYMENTS_SDK_URL)
+            .replace("${square_appId}", appId)
+            .replace("${square_locationId}", locationId);
         if (DEBUG_LOG) {
             Console.log("[Square][DEBUG] initiatePayment - content = " + paymentFormContent);
         }
@@ -112,10 +110,10 @@ public final class SquarePaymentGateway implements PaymentGateway {
         Promise<GatewayCompletePaymentResult> promise = Promise.promise();
         boolean live = argument.isLive();
         String accessToken = argument.getAccessToken();
-        SquareClient client = new SquareClient.Builder()
-                .environment(live ? Environment.PRODUCTION : Environment.SANDBOX)
-                .bearerAuthCredentials(new BearerAuthModel.Builder(accessToken).build())
-                .build();
+        AsyncSquareClient client = AsyncSquareClient.builder()
+            .environment(live ? Environment.PRODUCTION : Environment.SANDBOX)
+            .token(accessToken)
+            .build();
         ReadOnlyAstObject payload = AST.parseObject(argument.getPayload(), "json");
         Long amount = payload.getLong("modality_amount");
         String currencyCode = payload.getString("modality_currencyCode");
@@ -127,58 +125,59 @@ public final class SquarePaymentGateway implements PaymentGateway {
             Console.log("[Square][DEBUG] completePayment - payload = " + argument.getPayload() + ", amount = " + amount + ", currencyCode = " + currencyCode + ", locationId = " + locationId + ", idempotencyKey = " + idempotencyKey + ", sourceId = " + sourceId + ", verificationToken = " + verificationToken);
         }
 
-        PaymentsApi paymentsApi = client.getPaymentsApi();
-        paymentsApi.createPaymentAsync(new CreatePaymentRequest.Builder(sourceId, idempotencyKey)
-                .locationId(locationId)
-                .verificationToken(verificationToken)
-                .amountMoney(new Money.Builder()
+        // Use Square SDK async client pattern (like AsyncCustomersClient)
+        client.payments()
+            .create(
+                CreatePaymentRequest.builder()
+                    .sourceId(sourceId)
+                    .idempotencyKey(idempotencyKey)
+                    .locationId(locationId)
+                    .verificationToken(verificationToken)
+                    .amountMoney(Money.builder()
                         .amount(amount)
-                        .currency(currencyCode)
+                        .currency(Currency.valueOf(currencyCode))
                         .build())
-                .build()
-        ).thenAccept(apiResponse -> { // Successful HTTP response (payment may still be failed/pending)
-            Payment payment = apiResponse.getPayment();
-            // We generate the final result from the payment information and also capture the http response body (stored in the database)
-            promise.complete(generateResultFromSquarePayment(payment, apiResponse.getContext()));
-        }).exceptionally(ex -> { // Can be a technical exception, or a failed payment (ex: card declined)
-            if (DEBUG_LOG) {
-                Console.log("[Square][DEBUG] completePayment - exception:", ex);
-            }
-            // We extract the Square exception (the most interesting part) if it is wrapped inside a Java exception
-            Throwable t = ex;
-            if (t.getCause() instanceof ApiException) {
-                t = t.getCause();
-            }
-            String message = "[Square] completePayment - Square raised exception " + t.getMessage();
-            // Enhanced logging for better debugging
-            if (t instanceof ApiException ae) {
-                Context httpContext = ae.getHttpContext();
-                Response response = httpContext.getResponse();
-                message += " | HTTP Status: " + ae.getResponseCode() +
-                           " | Headers: " + response.getHeaders() +
-                           " | Response Body: " + response.getBody();
-                Object data = ae.getData();
-                if (data instanceof CreatePaymentResponse cpr) {
-                    Payment payment = cpr.getPayment();
-                    message += " | Payment: " + payment;
-                    Console.log(message);
-                    // The same as for a successful payment, the difference will be the status that will indicate it's failed
-                    promise.complete(generateResultFromSquarePayment(payment, httpContext));
-                    return null;
+                    .build()
+            )
+            .thenAccept(response -> {
+                // Extract payment from response (it's an Optional in v45)
+                Payment payment = response.getPayment().orElse(null);
+                if (payment != null) {
+                    // We generate the final result from the payment information and also capture the response (stored in the database)
+                    promise.complete(generateResultFromSquarePayment(payment, response));
+                } else {
+                    promise.fail("[Square] completePayment - Payment is null in response");
                 }
-            }
-            Console.log(message);
-            // Otherwise, it's probably a technical exception
-            promise.fail(message);
-            return null;
-        });
+            })
+            .exceptionally(ex -> {
+                if (DEBUG_LOG) {
+                    Console.log("[Square][DEBUG] completePayment - exception:", ex);
+                }
+                // Extract the cause if wrapped
+                Throwable cause = ex.getCause() != null ? ex.getCause() : ex;
+                String message = "[Square] completePayment - Square raised exception " + cause.getMessage();
+
+                // Enhanced logging for better debugging
+                if (cause instanceof SquareApiException ae) {
+                    message += " | Errors: ";
+                    for (Error error : ae.errors()) {
+                        message += error.getCategory() + ": " + error.getCode() + " - " + error.getDetail() + "; ";
+                    }
+                    Console.log(message);
+                } else {
+                    Console.log(message);
+                }
+                promise.fail(message);
+                return null;  // Required for exceptionally
+            });
         return promise.future();
     }
 
-    private static GatewayCompletePaymentResult generateResultFromSquarePayment(Payment payment, Context httpContext) {
-        String gatewayResponse = httpContext.getResponse().getBody();
-        String gatewayTransactionRef = payment.getId();
-        String gatewayStatus = payment.getStatus();
+    private static GatewayCompletePaymentResult generateResultFromSquarePayment(Payment payment, CreatePaymentResponse response) {
+        // In v45, we serialize the response object to JSON for storage
+        String gatewayResponse = response.toString(); // This will be stored in the database
+        String gatewayTransactionRef = payment.getId().orElse(null);
+        String gatewayStatus = payment.getStatus().orElse("UNKNOWN");
         SquarePaymentStatus squarePaymentStatus = SquarePaymentStatus.valueOf(gatewayStatus.toUpperCase());
         PaymentStatus paymentStatus = squarePaymentStatus.getGenericPaymentStatus();
         return new GatewayCompletePaymentResult(gatewayResponse, gatewayTransactionRef, gatewayStatus, paymentStatus);

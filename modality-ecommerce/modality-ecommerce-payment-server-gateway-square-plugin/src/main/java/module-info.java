@@ -23,6 +23,7 @@ module modality.ecommerce.payment.server.gateway.square.plugin {
     requires webfx.platform.util.vertx;
     requires webfx.stack.orm.entity;
     requires webfx.stack.session.state;
+    requires square;
 
     // Exported packages
     exports one.modality.ecommerce.payment.server.gateway.impl.square;

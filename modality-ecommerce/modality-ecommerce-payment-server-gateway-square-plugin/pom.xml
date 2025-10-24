@@ -44,7 +44,7 @@
         <dependency>
             <groupId>com.squareup</groupId>
             <artifactId>square</artifactId>
-            <version>43.1.0.20250220</version>
+            <version>45.1.0.20251016</version>
             <exclusions>
                 <exclusion>
                     <groupId>com.sun.activation</groupId>
