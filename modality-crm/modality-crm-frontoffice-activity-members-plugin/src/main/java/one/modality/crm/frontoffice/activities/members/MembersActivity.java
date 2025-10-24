@@ -98,8 +98,6 @@ final class MembersActivity extends ViewDomainActivityBase {
             editDetailsLink.setOnAction(e -> Console.log("edit"));
             editDetailsLink.setCursor(Cursor.HAND);
 
-            boolean isAccountOwner = Entities.samePrimaryKey(person, FXUserPerson.getUserPerson());
-            if (!isAccountOwner) {
                 Hyperlink removeTextLink = Bootstrap.textDanger(I18nControls.newHyperlink(MembersI18nKeys.RemoveMember));
                 removeTextLink.setOnAction(e -> {
                     DialogContent dialog = DialogContent.createConfirmationDialog(I18n.getI18nText(MembersI18nKeys.RemovingAMemberTitle), I18n.getI18nText(MembersI18nKeys.RemovingAMemberConfirmation));
@@ -146,7 +144,7 @@ final class MembersActivity extends ViewDomainActivityBase {
                     editDetailsLink,
                     removeTextLink
                 );
-            }
+
             return currentPersonHBox;
         });
 
@@ -177,7 +175,7 @@ final class MembersActivity extends ViewDomainActivityBase {
             ModalityUserPrincipal modalityUserPrincipal = FXModalityUserPrincipal.modalityUserPrincipalProperty().get();
             if (FXModalityUserPrincipal.modalityUserPrincipalProperty() != null) {
                 entityStore.<Person>executeQueryWithCache("modality/event/audio-library/document-lines",
-                        "select fullName,owner,accountPerson, email, organization, nationality, street, postCode, cityName from Person p where frontendAccount=$0",
+                        "select fullName,owner,accountPerson, email, organization, nationality, street, postCode, cityName from Person p where frontendAccount=$0 and owner=false",
                         new Object[]{modalityUserPrincipal.getUserAccountId()})
                     .onFailure(Console::log)
                     .inUiThread()
@@ -208,17 +206,21 @@ final class MembersActivity extends ViewDomainActivityBase {
         userProfileView.setPersonalDetailsVisible(true);
         userProfileView.setOptionMaleFemaleDisabled(false);
         userProfileView.setOptionLayOrdainedDisabled(false);
-        userProfileView.layNameTextField.setDisable(false);
+        userProfileView.layNameTextField.setDisable(true);
         userProfileView.setAddressInfoVisible(true);
         userProfileView.setKadampaCenterVisible(true);
         userProfileView.saveButton.setVisible(true);
 
         updateStore.cancelChanges();
         if (person != null) {
+            userProfileView.firstNameTextField.setDisable(true);
+            userProfileView.lastNameTextField.setDisable(true);
             personToModifyOrAdd = updateStore.updateEntity(person);
         } else { // Should be always true because the account owner was always selected first
             // Here the update store should have already been initialized
             assert updateStore != null;
+            userProfileView.firstNameTextField.setDisable(false);
+            userProfileView.lastNameTextField.setDisable(false);
             personToModifyOrAdd = updateStore.insertEntity(Person.class);
             FXProperties.onPropertySet(FXUserPerson.userPersonProperty(), p -> personToModifyOrAdd.setFrontendAccount(p.getFrontendAccount()));
         }
