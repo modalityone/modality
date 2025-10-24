@@ -2,7 +2,8 @@ package one.modality.event.backoffice.activities.medias;
 
 import dev.webfx.extras.i18n.I18n;
 import dev.webfx.extras.i18n.controls.I18nControls;
-import javafx.scene.layout.FlowPane;
+import dev.webfx.extras.panes.MonoPane;
+import dev.webfx.extras.responsive.ResponsiveDesign;
 import dev.webfx.extras.styles.bootstrap.Bootstrap;
 import dev.webfx.extras.switches.Switch;
 import dev.webfx.extras.theme.text.TextTheme;
@@ -277,24 +278,38 @@ final class RecordingsTabView {
         masterSettings.getStyleClass().add("media-settings-section");
         recordingsSection.getStyleClass().add("media-settings-section");
 
-        // Set responsive width constraints - left column narrower (40%), right column wider (60%)
+        // Set width constraints
         masterSettings.setMinWidth(350);
         masterSettings.setMaxWidth(500);
         recordingsSection.setMinWidth(350);
         recordingsSection.setMaxWidth(Double.MAX_VALUE);
-        HBox.setHgrow(recordingsSection, Priority.ALWAYS);
 
-        // Layout container using FlowPane for responsiveness with flexible column widths
-        FlowPane flowPane = new FlowPane(40, 20);
-        flowPane.setAlignment(Pos.TOP_LEFT);
-        flowPane.getChildren().addAll(masterSettings, recordingsSection);
+        // Create responsive container that switches between HBox (wide) and VBox (narrow)
+        MonoPane responsivePane = new MonoPane();
 
-        // Set preferred width binding so children resize with the container
-        masterSettings.prefWidthProperty().bind(flowPane.widthProperty().multiply(0.35).subtract(30));
-        recordingsSection.prefWidthProperty().bind(flowPane.widthProperty().multiply(0.60).subtract(30));
-
-        VBox container = new VBox(flowPane);
+        VBox container = new VBox(responsivePane);
         container.setPadding(new Insets(20));
+
+        // Use ResponsiveDesign to switch layouts based on width
+        new ResponsiveDesign(container)
+            .addResponsiveLayout(
+                width -> width >= 800,
+                () -> {
+                    // Wide screen: side-by-side with different widths
+                    HBox hBox = new HBox(40, masterSettings, recordingsSection);
+                    hBox.setAlignment(Pos.TOP_LEFT);
+                    HBox.setHgrow(recordingsSection, Priority.ALWAYS);
+                    responsivePane.setContent(hBox);
+                })
+            .addResponsiveLayout(
+                width -> width < 800,
+                () -> {
+                    // Narrow screen: stacked vertically, both full width
+                    VBox vBox = new VBox(20, masterSettings, recordingsSection);
+                    vBox.setAlignment(Pos.TOP_LEFT);
+                    responsivePane.setContent(vBox);
+                })
+            .start();
 
         mainFrame.setCenter(container);
         BorderPane.setAlignment(mainFrame, Pos.CENTER);

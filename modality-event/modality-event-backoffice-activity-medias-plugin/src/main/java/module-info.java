@@ -26,6 +26,7 @@ module modality.event.backoffice.activity.medias.plugin {
     requires webfx.extras.i18n.controls;
     requires webfx.extras.operation;
     requires webfx.extras.panes;
+    requires webfx.extras.responsive;
     requires webfx.extras.styles.bootstrap;
     requires webfx.extras.switches;
     requires webfx.extras.theme;
