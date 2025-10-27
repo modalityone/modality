@@ -25,6 +25,7 @@ import one.modality.base.client.time.FrontOfficeTimeFormats;
 import one.modality.event.frontoffice.medias.TimeZoneSwitch;
 
 import java.time.LocalDate;
+import java.time.ZoneId;
 import java.util.List;
 import java.util.Objects;
 
@@ -153,7 +154,8 @@ public class DaySwitcher {
         // Automatically selecting today if today is part of the event
         if (!availableDates.contains(selectedDate)) {
             TimeZoneSwitch timeZoneSwitch = TimeZoneSwitch.getGlobal();
-            selectedDate = timeZoneSwitch.isEventLocalTimeSelected() ? LocalDate.now(timeZoneSwitch.getEventZoneId()) : LocalDate.now();
+            ZoneId eventZoneId = timeZoneSwitch.getEventZoneId();
+            selectedDate = timeZoneSwitch.isEventLocalTimeSelected() && eventZoneId != null ? LocalDate.now(eventZoneId) : LocalDate.now();
         }
 
         setSelectedDate(selectedDate);

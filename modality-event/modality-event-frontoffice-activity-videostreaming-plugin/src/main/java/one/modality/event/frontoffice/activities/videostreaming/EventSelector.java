@@ -61,7 +61,7 @@ final class EventSelector {
 
         ObservableLists.runNowAndOnListChange(change -> {
             // If there are 2 events with videos or more, we populate the events selection pane
-            if (eventsWithBookedVideos.stream().filter(e -> Times.isFuture(e.getVodExpirationDate())).count() < 2) {
+            if (eventsWithBookedVideos.stream().filter(e -> e.getVodExpirationDate() == null || Times.isFuture(e.getVodExpirationDate())).count() < 2) {
                 eventsSelectionPane.setContent(null);
             } else {
                 ColumnsPane columnsPane = new ColumnsPane(20, 50);
