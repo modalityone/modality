@@ -1,4 +1,9 @@
 one.modality.base.shared.entities.impl.AttendanceImpl$ProvidedFactory
+one.modality.base.shared.entities.impl.AuthorizationOrganizationAdminImpl$ProvidedFactory
+one.modality.base.shared.entities.impl.AuthorizationOrganizationUserAccessImpl$ProvidedFactory
+one.modality.base.shared.entities.impl.AuthorizationRoleImpl$ProvidedFactory
+one.modality.base.shared.entities.impl.AuthorizationRoleOperationImpl$ProvidedFactory
+one.modality.base.shared.entities.impl.AuthorizationRuleImpl$ProvidedFactory
 one.modality.base.shared.entities.impl.BookablePeriodImpl$ProvidedFactory
 one.modality.base.shared.entities.impl.BookImpl$ProvidedFactory
 one.modality.base.shared.entities.impl.CartImpl$ProvidedFactory
@@ -33,6 +38,8 @@ one.modality.base.shared.entities.impl.MoneyAccountImpl$ProvidedFactory
 one.modality.base.shared.entities.impl.MoneyAccountTypeImpl$ProvidedFactory
 one.modality.base.shared.entities.impl.MoneyFlowImpl$ProvidedFactory
 one.modality.base.shared.entities.impl.NewsImpl$ProvidedFactory
+one.modality.base.shared.entities.impl.OperationImpl$ProvidedFactory
+one.modality.base.shared.entities.impl.OperationGroupImpl$ProvidedFactory
 one.modality.base.shared.entities.impl.OrganizationImpl$ProvidedFactory
 one.modality.base.shared.entities.impl.OrganizationTypeImpl$ProvidedFactory
 one.modality.base.shared.entities.impl.PersonImpl$ProvidedFactory
