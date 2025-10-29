@@ -9,7 +9,7 @@
     <dependencies>
         <used-by-source-modules/>
 
-        <plugin-module>modality-crm-client-max-plugin</plugin-module>
+        <plugin-module>modality-crm-backoffice-min-plugin</plugin-module>
 
     </dependencies>
 

@@ -18,6 +18,7 @@
     <packaging>pom</packaging>
 
     <modules>
+        <module>modality-crm-backoffice-activity-admin-plugin</module>
         <module>modality-crm-backoffice-bookingdetailspanel</module>
         <module>modality-crm-backoffice-max-plugin</module>
         <module>modality-crm-backoffice-min-plugin</module>
