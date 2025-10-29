@@ -9,6 +9,7 @@ import javafx.scene.control.Label;
 import javafx.scene.layout.HBox;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.SVGPath;
+import one.modality.base.client.bootstrap.ModalityStyle;
 import one.modality.base.client.icons.SvgIcons;
 import one.modality.base.shared.entities.AuthorizationRole;
 import one.modality.base.shared.entities.AuthorizationRoleOperation;
@@ -54,7 +55,7 @@ final class OperationGroupsRenderers {
                 } else {
                     // Build the chips
                     for (Operation operation : operations) {
-                        Label chip = Bootstrap.badgeLightInfo(new Label(operation.getName()));
+                        Label chip = ModalityStyle.badgeOperation(new Label(operation.getName()));
                         chip.setPadding(new Insets(3, 8, 3, 8));
                         flow.getChildren().add(chip);
                     }
@@ -86,9 +87,9 @@ final class OperationGroupsRenderers {
                         .filter(role -> role != null)
                         .collect(Collectors.toSet());
 
-                    // Build the chips - green color for roles
+                    // Build the chips
                     for (AuthorizationRole role : uniqueRoles) {
-                        Label chip = Bootstrap.badgeLightSuccess(new Label(role.getName()));
+                        Label chip = ModalityStyle.badgeRole(new Label(role.getName()));
                         chip.setPadding(new Insets(3, 8, 3, 8));
                         flow.getChildren().add(chip);
                     }

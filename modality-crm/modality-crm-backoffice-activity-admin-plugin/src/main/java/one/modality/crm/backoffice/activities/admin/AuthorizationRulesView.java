@@ -24,7 +24,9 @@ import javafx.geometry.Pos;
 import javafx.scene.Node;
 import javafx.scene.control.*;
 import javafx.scene.layout.*;
+import one.modality.base.client.bootstrap.ModalityStyle;
 import one.modality.base.client.mainframe.fx.FXMainFrameDialogArea;
+import one.modality.base.shared.entities.AuthorizationRole;
 import one.modality.base.shared.entities.AuthorizationRule;
 
 import java.util.Comparator;
@@ -77,6 +79,9 @@ public class AuthorizationRulesView {
         infoBox.setWrapText(true);
         infoBox.setMaxWidth(Double.MAX_VALUE);
 
+        // Legend
+        HBox legend = createLegend();
+
         // Card container - wraps content with white background
         VBox card = new VBox(16);
         card.getStyleClass().add("section-card");
@@ -91,7 +96,7 @@ public class AuthorizationRulesView {
         card.getChildren().addAll(sectionTitle, header, rulesGrid);
         VBox.setVgrow(rulesGrid, Priority.ALWAYS);
 
-        view.getChildren().addAll(infoBox, card);
+        view.getChildren().addAll(infoBox, legend, card);
         VBox.setVgrow(card, Priority.ALWAYS);
 
         // Initialize ReactiveEntitiesMapper
@@ -129,6 +134,22 @@ public class AuthorizationRulesView {
         return header;
     }
 
+    private HBox createLegend() {
+        HBox legend = new HBox(20);
+        legend.setAlignment(Pos.CENTER_LEFT);
+        legend.setPadding(new Insets(12, 0, 0, 0));
+
+        Label legendLabel = I18nControls.newLabel(Legend);
+        legendLabel.getStyleClass().add("admin-legend-label");
+
+        // Role badge sample
+        Label roleSample = ModalityStyle.badgeRole(new Label("Role"));
+        roleSample.setPadding(new Insets(3, 8, 3, 8));
+
+        legend.getChildren().addAll(legendLabel, roleSample);
+        return legend;
+    }
+
     private void startLogic() {
         DataSourceModel dataSourceModel = DataSourceModelService.getDefaultDataSourceModel();
         updateStore = UpdateStore.createAbove(EntityStore.create(dataSourceModel));
@@ -138,14 +159,15 @@ public class AuthorizationRulesView {
             """
             [
                 {expression: 'name', label: 'Rule Name', minWidth: 150},
-                {expression: 'rule', label: 'Rule Expression', minWidth: 400},
+                {expression: 'rule', label: 'Rule Expression', minWidth: 300},
+                {expression: 'this', label: 'Used In', renderer: 'ruleUsedIn', minWidth: 200},
                 {expression: 'this', label: 'Actions', renderer: 'ruleActions', minWidth: 100, prefWidth: 120, hShrink: false, textAlign: 'center'}
             ]""", dataSourceModel.getDomainModel(), "AuthorizationRule");
 
-        // Query all authorization rules
+        // Query all authorization rules with their role relationship
         rulesMapper = ReactiveEntitiesMapper.<AuthorizationRule>createPushReactiveChain()
             .setDataSourceModel(dataSourceModel)
-            .always("{class: 'AuthorizationRule', alias: 'r', fields: 'name,rule', orderBy: 'name'}")
+            .always("{class: 'AuthorizationRule', alias: 'r', fields: 'name,rule,role.name', orderBy: 'name'}")
             .storeEntitiesInto(rulesFeed)
             .start();
 
@@ -187,6 +209,18 @@ public class AuthorizationRulesView {
         displayedRules.setAll(rules);
     }
 
+    /**
+     * Helper method for renderers to get the role that uses a specific rule.
+     * Each rule belongs to exactly one role (via role_id foreign key).
+     */
+    List<AuthorizationRole> getRolesForRule(AuthorizationRule rule) {
+        AuthorizationRole role = rule.getRole();
+        if (role != null) {
+            return List.of(role);
+        }
+        return List.of();
+    }
+
     private void showCreateDialog() {
         AuthorizationRulesDialog.show(null, this::refresh);
     }
@@ -209,7 +243,7 @@ public class AuthorizationRulesView {
         titleLabel.setMaxWidth(Double.MAX_VALUE);
 
         // Message
-        Label messageLabel = new Label(I18n.getI18nText(Delete) + " " + rule.getName() + "?");
+        Label messageLabel = new Label(I18n.getI18nText(Delete) + I18n.getI18nText(Space) + rule.getName() + I18n.getI18nText(QuestionMark));
         messageLabel.setWrapText(true);
         messageLabel.setMaxWidth(Double.MAX_VALUE);
         messageLabel.getStyleClass().add("delete-dialog-message");

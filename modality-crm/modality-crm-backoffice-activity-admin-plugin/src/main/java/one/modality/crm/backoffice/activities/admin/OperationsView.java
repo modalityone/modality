@@ -25,6 +25,7 @@ import javafx.geometry.Pos;
 import javafx.scene.Node;
 import javafx.scene.control.*;
 import javafx.scene.layout.*;
+import one.modality.base.client.bootstrap.ModalityStyle;
 import one.modality.base.client.mainframe.fx.FXMainFrameDialogArea;
 import one.modality.base.shared.entities.AuthorizationRoleOperation;
 import one.modality.base.shared.entities.Operation;
@@ -98,6 +99,9 @@ public class OperationsView {
         infoBox.setWrapText(true);
         infoBox.setMaxWidth(Double.MAX_VALUE);
 
+        // Legend
+        HBox legend = createLegend();
+
         // Card container - wraps content with white background
         VBox card = new VBox(16);
         card.getStyleClass().add("section-card");
@@ -113,7 +117,7 @@ public class OperationsView {
         card.getChildren().addAll(sectionTitle, header, operationsGrid);
         VBox.setVgrow(operationsGrid, Priority.ALWAYS);
 
-        view.getChildren().addAll(infoBox, card);
+        view.getChildren().addAll(infoBox, legend, card);
         VBox.setVgrow(card, Priority.ALWAYS);
 
         // Initialize ReactiveVisualMapper
@@ -153,6 +157,30 @@ public class OperationsView {
         return header;
     }
 
+    private HBox createLegend() {
+        HBox legend = new HBox(20);
+        legend.setAlignment(Pos.CENTER_LEFT);
+        legend.setPadding(new Insets(12, 0, 0, 0));
+
+        Label legendLabel = I18nControls.newLabel(Legend);
+        legendLabel.getStyleClass().add("admin-legend-label");
+
+        // Operation badge sample
+        Label operationSample = ModalityStyle.badgeOperation(new Label("Operation"));
+        operationSample.setPadding(new Insets(3, 8, 3, 8));
+
+        // Operation Group badge sample
+        Label groupSample = ModalityStyle.badgeOperationGroup(new Label("Operation Group"));
+        groupSample.setPadding(new Insets(3, 8, 3, 8));
+
+        // Role badge sample
+        Label roleSample = ModalityStyle.badgeRole(new Label("Role"));
+        roleSample.setPadding(new Insets(3, 8, 3, 8));
+
+        legend.getChildren().addAll(legendLabel, operationSample, groupSample, roleSample);
+        return legend;
+    }
+
     private void startLogic() {
         DataSourceModel dataSourceModel = DataSourceModelService.getDefaultDataSourceModel();
         updateStore = UpdateStore.createAbove(EntityStore.create(dataSourceModel));
@@ -169,7 +197,7 @@ public class OperationsView {
                     {expression: 'frontend', label: 'Frontend', renderer: 'booleanCheck', minWidth: 80, prefWidth: 90, hShrink: false, textAlign: 'center'},
                     {expression: 'guest', label: 'Guest', renderer: 'booleanCheck', minWidth: 70, prefWidth: 80, hShrink: false, textAlign: 'center'},
                     {expression: 'public', label: 'Public', renderer: 'booleanCheck', minWidth: 70, prefWidth: 80, hShrink: false, textAlign: 'center'},
-                    {expression: 'this', label: 'Used In', renderer: 'operationUsedIn', minWidth: 400},
+                    {expression: 'this', label: 'Used In', renderer: 'operationUsedIn', minWidth: 150, prefWidth: 500},
                     {expression: 'this', label: 'Actions', renderer: 'operationActions', minWidth: 100, prefWidth: 120, hShrink: false, textAlign: 'center'}
                 ]""", dataSourceModel.getDomainModel(), "Operation");
         } else {
@@ -182,7 +210,7 @@ public class OperationsView {
                     {expression: 'frontend', label: 'Frontend', renderer: 'booleanCheck', minWidth: 80, prefWidth: 90, hShrink: false, textAlign: 'center'},
                     {expression: 'guest', label: 'Guest', renderer: 'booleanCheck', minWidth: 70, prefWidth: 80, hShrink: false, textAlign: 'center'},
                     {expression: 'public', label: 'Public', renderer: 'booleanCheck', minWidth: 70, prefWidth: 80, hShrink: false, textAlign: 'center'},
-                    {expression: 'this', label: 'Used In', renderer: 'operationUsedIn', minWidth: 400},
+                    {expression: 'this', label: 'Used In', renderer: 'operationUsedIn', minWidth: 150, prefWidth: 500},
                     {expression: 'this', label: 'Actions', renderer: 'operationActions', minWidth: 100, prefWidth: 120, hShrink: false, textAlign: 'center'}
                 ]""", dataSourceModel.getDomainModel(), "Operation");
         }
@@ -206,7 +234,7 @@ public class OperationsView {
         // Query all role operations to show which roles use which operations
         roleOperationsMapper = ReactiveEntitiesMapper.<AuthorizationRoleOperation>createPushReactiveChain()
             .setDataSourceModel(dataSourceModel)
-            .always("{class: 'AuthorizationRoleOperation', alias: 'ro', fields: 'role.name,operation,date', orderBy: 'role,id'}")
+            .always("{class: 'AuthorizationRoleOperation', alias: 'ro', fields: 'role.name,operation', orderBy: 'role,id'}")
             .storeEntitiesInto(roleOperationsFeed)
             .start();
 
@@ -288,7 +316,7 @@ public class OperationsView {
         titleLabel.setMaxWidth(Double.MAX_VALUE);
 
         // Message
-        Label messageLabel = new Label(I18n.getI18nText(Delete) + " " + operation.getName() + "?");
+        Label messageLabel = new Label(I18n.getI18nText(Delete) + I18n.getI18nText(Space) + operation.getName() + I18n.getI18nText(QuestionMark));
         messageLabel.setWrapText(true);
         messageLabel.setMaxWidth(Double.MAX_VALUE);
         messageLabel.getStyleClass().add("delete-dialog-message");

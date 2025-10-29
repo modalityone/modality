@@ -11,6 +11,7 @@ import javafx.scene.layout.HBox;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.SVGPath;
 import javafx.scene.text.Text;
+import one.modality.base.client.bootstrap.ModalityStyle;
 import one.modality.base.client.icons.SvgIcons;
 import one.modality.base.shared.entities.AuthorizationOrganizationUserAccess;
 import one.modality.base.shared.entities.Event;
@@ -87,7 +88,7 @@ public class AssignUserAndRoleToOrganizationViewRenderers {
             if (value == null) {
                 return null;
             }
-            Label badge = Bootstrap.badgeLightInfo(new Label(value.toString()));
+            Label badge = ModalityStyle.badgeRole(new Label(value.toString()));
             badge.setPadding(new Insets(4, 12, 4, 12));
             return badge;
         });
@@ -101,7 +102,7 @@ public class AssignUserAndRoleToOrganizationViewRenderers {
             String text = event != null ? "Event: " + event.getName() : I18n.getI18nText(EntireOrganization);
             boolean isOrg = event == null;
             Label badge = isOrg
-                ? Bootstrap.badgeLightSuccess(new Label(text))
+                ? Bootstrap.badgePurple(new Label(text))
                 : Bootstrap.badgeLightWarning(new Label(text));
             badge.setPadding(new Insets(4, 12, 4, 12));
             return badge;
@@ -125,7 +126,7 @@ public class AssignUserAndRoleToOrganizationViewRenderers {
             String text = isReadOnly ? I18n.getI18nText(ReadOnly) : I18n.getI18nText(ReadAndWrite);
             Label badge = isReadOnly
                 ? Bootstrap.badgeGray(new Label(text))
-                : Bootstrap.badgeLightSuccess(new Label(text));
+                : Bootstrap.badgeLightInfo(new Label(text));
             badge.setPadding(new Insets(4, 12, 4, 12));
             return badge;
         });

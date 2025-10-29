@@ -9,6 +9,7 @@ import javafx.scene.control.Label;
 import javafx.scene.layout.HBox;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.SVGPath;
+import one.modality.base.client.bootstrap.ModalityStyle;
 import one.modality.base.client.icons.SvgIcons;
 import one.modality.base.shared.entities.AuthorizationRole;
 import one.modality.base.shared.entities.AuthorizationRoleOperation;
@@ -60,14 +61,14 @@ final class OperationsRenderers {
                 emptyLabel.getStyleClass().add("admin-text-italic");
                 flow.getChildren().add(emptyLabel);
             } else {
-                // Add group chip (yellow)
+                // Add group chip
                 if (hasGroup) {
-                    Label groupChip = Bootstrap.badgeLightWarning(new Label(group.getName()));
+                    Label groupChip = ModalityStyle.badgeOperationGroup(new Label(group.getName()));
                     groupChip.setPadding(new Insets(3, 8, 3, 8));
                     flow.getChildren().add(groupChip);
                 }
 
-                // Add role chips (green) - get unique roles
+                // Add role chips - get unique roles
                 if (hasRoles) {
                     Set<AuthorizationRole> uniqueRoles = roleOperations.stream()
                         .map(AuthorizationRoleOperation::getRole)
@@ -75,7 +76,7 @@ final class OperationsRenderers {
                         .collect(Collectors.toSet());
 
                     for (AuthorizationRole role : uniqueRoles) {
-                        Label roleChip = Bootstrap.badgeLightSuccess(new Label(role.getName()));
+                        Label roleChip = ModalityStyle.badgeRole(new Label(role.getName()));
                         roleChip.setPadding(new Insets(3, 8, 3, 8));
                         flow.getChildren().add(roleChip);
                     }

@@ -20,6 +20,7 @@ import dev.webfx.stack.orm.reactive.entities.entities_to_grid.EntityColumn;
 import dev.webfx.stack.orm.reactive.mapping.entities_to_visual.EntitiesToVisualResultMapper;
 import dev.webfx.stack.orm.reactive.mapping.entities_to_visual.VisualEntityColumnFactory;
 import javafx.scene.layout.*;
+import one.modality.base.client.bootstrap.ModalityStyle;
 import one.modality.base.client.mainframe.fx.FXMainFrameDialogArea;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
@@ -83,6 +84,9 @@ public class OperationGroupsView {
         infoBox.setWrapText(true);
         infoBox.setMaxWidth(Double.MAX_VALUE);
 
+        // Legend
+        HBox legend = createLegend();
+
         // Card container
         VBox card = new VBox(16);
         card.getStyleClass().add("section-card");
@@ -97,7 +101,7 @@ public class OperationGroupsView {
         card.getChildren().addAll(sectionTitle, header, groupsGrid);
         VBox.setVgrow(groupsGrid, Priority.ALWAYS);
 
-        view.getChildren().addAll(infoBox, card);
+        view.getChildren().addAll(infoBox, legend, card);
         VBox.setVgrow(card, Priority.ALWAYS);
 
         // Initialize ReactiveEntitiesMapper and setup logic
@@ -133,6 +137,30 @@ public class OperationGroupsView {
         header.getChildren().addAll(searchContainer, createButton);
 
         return header;
+    }
+
+    private HBox createLegend() {
+        HBox legend = new HBox(20);
+        legend.setAlignment(Pos.CENTER_LEFT);
+        legend.setPadding(new Insets(12, 0, 0, 0));
+
+        Label legendLabel = I18nControls.newLabel(Legend);
+        legendLabel.getStyleClass().add("admin-legend-label");
+
+        // Operation badge sample
+        Label operationSample = ModalityStyle.badgeOperation(new Label("Operation"));
+        operationSample.setPadding(new Insets(3, 8, 3, 8));
+
+        // Operation Group badge sample
+        Label groupSample = ModalityStyle.badgeOperationGroup(new Label("Operation Group"));
+        groupSample.setPadding(new Insets(3, 8, 3, 8));
+
+        // Role badge sample
+        Label roleSample = ModalityStyle.badgeRole(new Label("Role"));
+        roleSample.setPadding(new Insets(3, 8, 3, 8));
+
+        legend.getChildren().addAll(legendLabel, operationSample, groupSample, roleSample);
+        return legend;
     }
 
     private void updateDisplayedGroups() {
@@ -186,7 +214,7 @@ public class OperationGroupsView {
         // Query all role operations to show which roles use which operation groups
         roleOperationsMapper = ReactiveEntitiesMapper.<AuthorizationRoleOperation>createPushReactiveChain()
             .setDataSourceModel(dataSourceModel)
-            .always("{class: 'AuthorizationRoleOperation', alias: 'ro', fields: 'role.name,operationGroup,date', orderBy: 'role,id'}")
+            .always("{class: 'AuthorizationRoleOperation', alias: 'ro', fields: 'role.name,operationGroup', orderBy: 'role,id'}")
             .storeEntitiesInto(roleOperationsFeed)
             .start();
 
@@ -250,7 +278,7 @@ public class OperationGroupsView {
         titleLabel.setMaxWidth(Double.MAX_VALUE);
 
         // Message
-        Label messageLabel = new Label(I18n.getI18nText(Admin18nKeys.Delete) + " " + group.getName() + "?");
+        Label messageLabel = new Label(I18n.getI18nText(Admin18nKeys.Delete) + I18n.getI18nText(Space) + group.getName() + I18n.getI18nText(QuestionMark));
         messageLabel.setWrapText(true);
         messageLabel.setMaxWidth(Double.MAX_VALUE);
         messageLabel.getStyleClass().add("delete-dialog-message");

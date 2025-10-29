@@ -28,7 +28,9 @@ import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
 import javafx.scene.layout.*;
+import one.modality.base.client.bootstrap.ModalityStyle;
 import one.modality.base.client.mainframe.fx.FXMainFrameDialogArea;
+import one.modality.base.shared.entities.AuthorizationOrganizationUserAccess;
 import one.modality.base.shared.entities.AuthorizationRole;
 import one.modality.base.shared.entities.AuthorizationRoleOperation;
 
@@ -50,8 +52,10 @@ public class RolesView {
     private TextField searchField;
     private ReactiveEntitiesMapper<AuthorizationRole> rolesMapper;
     private ReactiveEntitiesMapper<AuthorizationRoleOperation> roleOperationsMapper;
+    private ReactiveEntitiesMapper<AuthorizationOrganizationUserAccess> userAccessMapper;
     private final ObservableList<AuthorizationRole> rolesFeed = FXCollections.observableArrayList();
     private final ObservableList<AuthorizationRoleOperation> roleOperationsFeed = FXCollections.observableArrayList();
+    private final ObservableList<AuthorizationOrganizationUserAccess> userAccessFeed = FXCollections.observableArrayList();
     private final ObservableList<AuthorizationRole> displayedRoles = FXCollections.observableArrayList();
     private EntityColumn<AuthorizationRole>[] columns;
 
@@ -82,6 +86,9 @@ public class RolesView {
         infoBox.setWrapText(true);
         infoBox.setMaxWidth(Double.MAX_VALUE);
 
+        // Legend
+        HBox legend = createLegend();
+
         // Card container
         VBox card = new VBox(16);
         card.getStyleClass().add("section-card");
@@ -96,7 +103,7 @@ public class RolesView {
         card.getChildren().addAll(sectionTitle, header, rolesGrid);
         VBox.setVgrow(rolesGrid, Priority.ALWAYS);
 
-        view.getChildren().addAll(infoBox, card);
+        view.getChildren().addAll(infoBox, legend, card);
         VBox.setVgrow(card, Priority.ALWAYS);
 
         // Initialize ReactiveEntitiesMapper and setup logic
@@ -132,6 +139,26 @@ public class RolesView {
         header.getChildren().addAll(searchContainer, createButton);
 
         return header;
+    }
+
+    private HBox createLegend() {
+        HBox legend = new HBox(20);
+        legend.setAlignment(Pos.CENTER_LEFT);
+        legend.setPadding(new Insets(12, 0, 0, 0));
+
+        Label legendLabel = I18nControls.newLabel(Legend);
+        legendLabel.getStyleClass().add("admin-legend-label");
+
+        // Operation badge sample
+        Label operationSample = ModalityStyle.badgeOperation(new Label("Operation"));
+        operationSample.setPadding(new Insets(3, 8, 3, 8));
+
+        // Operation Group badge sample
+        Label groupSample = ModalityStyle.badgeOperationGroup(new Label("Operation Group"));
+        groupSample.setPadding(new Insets(3, 8, 3, 8));
+
+        legend.getChildren().addAll(legendLabel, operationSample, groupSample);
+        return legend;
     }
 
     private void updateDisplayedRoles() {
@@ -178,20 +205,16 @@ public class RolesView {
         // Query all role operations
         roleOperationsMapper = ReactiveEntitiesMapper.<AuthorizationRoleOperation>createPushReactiveChain()
             .setDataSourceModel(dataSourceModel)
-            .always("{class: 'AuthorizationRoleOperation', alias: 'ro', fields: 'role,operation.name,operationGroup.name,date', orderBy: 'role,id'}")
+            .always("{class: 'AuthorizationRoleOperation', alias: 'ro', fields: 'role,operation.name,operationGroup.name', orderBy: 'role,id'}")
             .storeEntitiesInto(roleOperationsFeed)
             .start();
 
-        // Debug: Monitor roleOperationsFeed changes
-        ObservableLists.runNowAndOnListChange(change -> {
-            System.out.println("roleOperationsFeed changed! New size: " + roleOperationsFeed.size());
-            if (!roleOperationsFeed.isEmpty()) {
-                AuthorizationRoleOperation first = roleOperationsFeed.get(0);
-                System.out.println("  First item: role=" + (first.getRole() != null ? first.getRole().getPrimaryKey() : "null") +
-                    ", operation=" + (first.getOperation() != null ? first.getOperation().getName() : "null") +
-                    ", group=" + (first.getOperationGroup() != null ? first.getOperationGroup().getName() : "null"));
-            }
-        }, roleOperationsFeed);
+        // Query all user access records to show which users have which roles
+        userAccessMapper = ReactiveEntitiesMapper.<AuthorizationOrganizationUserAccess>createPushReactiveChain()
+            .setDataSourceModel(dataSourceModel)
+            .always("{class: 'AuthorizationOrganizationUserAccess', alias: 'ua', fields: 'role,user', orderBy: 'role,id'}")
+            .storeEntitiesInto(userAccessFeed)
+            .start();
 
         // Update displayed roles when roles feed or search text changes
         FXProperties.runNowAndOnPropertiesChange(
@@ -211,33 +234,31 @@ public class RolesView {
 
         // Also update grid when role operations change (to refresh permissions column)
         ObservableLists.runNowAndOnListChange(change -> updateGrid.run(), roleOperationsFeed);
+
+        // Also update grid when user access changes (to refresh "Used By" column)
+        ObservableLists.runNowAndOnListChange(change -> updateGrid.run(), userAccessFeed);
     }
 
     /**
      * Helper method for renderers to get role operations for a specific role.
      */
     List<AuthorizationRoleOperation> getRoleOperationsForRole(AuthorizationRole role) {
-        System.out.println("getRoleOperationsForRole called for role: " + role.getName() + " (id=" + role.getPrimaryKey() + ")");
-        System.out.println("Total roleOperationsFeed size: " + roleOperationsFeed.size());
-
-        List<AuthorizationRoleOperation> result = roleOperationsFeed.stream()
-            .filter(ro -> {
-                boolean hasRole = ro.getRole() != null;
-                if (hasRole) {
-                    Object rolePk = ro.getRole().getPrimaryKey();
-                    boolean matches = rolePk != null && rolePk.equals(role.getPrimaryKey());
-                    System.out.println("  RoleOp: role=" + ro.getRole().getPrimaryKey() +
-                        ", operation=" + (ro.getOperation() != null ? ro.getOperation().getName() : "null") +
-                        ", group=" + (ro.getOperationGroup() != null ? ro.getOperationGroup().getName() : "null") +
-                        ", matches=" + matches);
-                    return matches;
-                }
-                return false;
-            })
+        return roleOperationsFeed.stream()
+            .filter(ro -> ro.getRole() != null && ro.getRole().getPrimaryKey().equals(role.getPrimaryKey()))
             .collect(Collectors.toList());
+    }
 
-        System.out.println("Returning " + result.size() + " role operations");
-        return result;
+    /**
+     * Helper method for renderers to get the count of users that have a specific role.
+     */
+    int getUserCountForRole(AuthorizationRole role) {
+        long count = userAccessFeed.stream()
+            .filter(ua -> ua.getRole() != null && ua.getRole().getPrimaryKey().equals(role.getPrimaryKey()))
+            .map(ua -> ua.getUser() != null ? ua.getUser().getPrimaryKey() : null)
+            .filter(userId -> userId != null)
+            .distinct()
+            .count();
+        return (int) count;
     }
 
     private void showCreateDialog() {
@@ -266,7 +287,7 @@ public class RolesView {
         titleLabel.setMaxWidth(Double.MAX_VALUE);
 
         // Message
-        Label messageLabel = new Label(I18n.getI18nText(Delete) + " " + role.getName() + "?");
+        Label messageLabel = new Label(I18n.getI18nText(Delete) + I18n.getI18nText(Space) + role.getName() + I18n.getI18nText(QuestionMark));
         messageLabel.setWrapText(true);
         messageLabel.setMaxWidth(Double.MAX_VALUE);
         messageLabel.getStyleClass().add("delete-dialog-message");
@@ -392,6 +413,9 @@ public class RolesView {
         if (roleOperationsMapper != null) {
             roleOperationsMapper.refreshWhenActive();
         }
+        if (userAccessMapper != null) {
+            userAccessMapper.refreshWhenActive();
+        }
     }
 
     public void setActive(boolean active) {
@@ -402,6 +426,10 @@ public class RolesView {
         if (roleOperationsMapper != null) {
             ReactiveDqlQuery<AuthorizationRoleOperation> reactiveDqlQuery = roleOperationsMapper.getReactiveDqlQuery();
             reactiveDqlQuery.setActive(active);
+        }
+        if (userAccessMapper != null) {
+            ReactiveDqlQuery<AuthorizationOrganizationUserAccess> userAccessQuery = userAccessMapper.getReactiveDqlQuery();
+            userAccessQuery.setActive(active);
         }
     }
 }

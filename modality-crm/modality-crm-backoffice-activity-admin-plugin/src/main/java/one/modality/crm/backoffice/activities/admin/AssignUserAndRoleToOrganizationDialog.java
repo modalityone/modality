@@ -66,7 +66,7 @@ public class AssignUserAndRoleToOrganizationDialog {
         VBox organizationBox = new VBox(4);
         organizationBox.getStyleClass().add("organization-info-box");
 
-        Label organizationPrefix = new Label("Organization:");
+        Label organizationPrefix = I18nControls.newLabel(OrganizationLabel);
         organizationPrefix.getStyleClass().add("organization-info-prefix");
 
         Organization currentOrg = FXOrganization.getOrganization();
@@ -244,10 +244,12 @@ public class AssignUserAndRoleToOrganizationDialog {
                 roleSelector.getSelectedItem().getStringFieldValue("name") : "[Role]";
             String scope = entireOrgRadio.isSelected() ?
                 I18n.getI18nText(EntireOrganization).toLowerCase() :
-                (eventSelector.getSelectedItem() != null ? "Event: " + eventSelector.getSelectedItem().getStringFieldValue("name") : "[Event]");
+                (eventSelector.getSelectedItem() != null ? I18n.getI18nText(EventPrefix) + eventSelector.getSelectedItem().getStringFieldValue("name") : "[Event]");
 
-            summaryBox.setText("Summary: The selected user will have " + accessType +
-                " access for the " + role + " role across the " + scope + ".");
+            summaryBox.setText(I18n.getI18nText(AssignRoleSummaryText)
+                .replace("{0}", accessType)
+                .replace("{1}", role)
+                .replace("{2}", scope));
         };
 
         roleSelector.selectedItemProperty().addListener((obs, oldVal, newVal) -> updateSummary.run());

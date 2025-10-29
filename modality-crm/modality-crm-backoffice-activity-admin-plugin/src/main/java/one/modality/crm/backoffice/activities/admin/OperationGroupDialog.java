@@ -1,5 +1,6 @@
 package one.modality.crm.backoffice.activities.admin;
 
+import dev.webfx.extras.i18n.I18n;
 import dev.webfx.extras.i18n.controls.I18nControls;
 import dev.webfx.extras.styles.bootstrap.Bootstrap;
 import dev.webfx.extras.util.dialog.DialogCallback;
@@ -122,11 +123,11 @@ public class OperationGroupDialog {
         VBox selectedPanel = new VBox(8);
         selectedPanel.setPadding(new Insets(12));
         selectedPanel.setMaxWidth(Double.MAX_VALUE);
-        selectedPanel.setStyle("-fx-background-color: #f9f9f9; -fx-border-color: #ddd; -fx-border-width: 1; -fx-border-style: dashed; -fx-border-radius: 4; -fx-background-radius: 4;");
+        selectedPanel.getStyleClass().add("operation-selection-panel");
 
         // Selected operations header with count
-        Label selectedCountLabel = new Label("Selected Operations (0):");
-        selectedCountLabel.setStyle("-fx-font-weight: bold; -fx-font-size: 13px; -fx-text-fill: #666;");
+        Label selectedCountLabel = new Label();
+        selectedCountLabel.getStyleClass().add("operation-selection-count-label");
 
         // Flow pane for selected operation chips
         FlowPane selectedChipsPane = new FlowPane();
@@ -135,8 +136,8 @@ public class OperationGroupDialog {
         selectedChipsPane.setMaxWidth(Double.MAX_VALUE);
 
         // Initial empty message
-        Label emptyMessage = new Label("No operations selected yet");
-        emptyMessage.setStyle("-fx-text-fill: #999; -fx-font-size: 13px;");
+        Label emptyMessage = I18nControls.newLabel(NoOperationsSelectedYet);
+        emptyMessage.getStyleClass().add("operation-selection-empty-message");
         selectedChipsPane.getChildren().add(emptyMessage);
 
         selectedPanel.getChildren().addAll(selectedCountLabel, selectedChipsPane);
@@ -229,14 +230,14 @@ public class OperationGroupDialog {
         Runnable updateSelectedOperationsDisplay = () -> {
             // Count selected operations
             long selectedCount = operationCheckboxes.stream().filter(CheckBox::isSelected).count();
-            selectedCountLabel.setText("Selected Operations (" + selectedCount + "):");
+            selectedCountLabel.setText(I18n.getI18nText(SelectedOperationsCount).replace("{0}", String.valueOf(selectedCount)));
 
             // Clear and rebuild chips
             selectedChipsPane.getChildren().clear();
 
             if (selectedCount == 0) {
-                Label empty = new Label("No operations selected yet");
-                empty.setStyle("-fx-text-fill: #999; -fx-font-size: 13px;");
+                Label empty = I18nControls.newLabel(NoOperationsSelectedYet);
+                empty.getStyleClass().add("operation-selection-empty-message");
                 selectedChipsPane.getChildren().add(empty);
             } else {
                 for (CheckBox cb : operationCheckboxes) {
@@ -245,21 +246,19 @@ public class OperationGroupDialog {
                         HBox chipContainer = new HBox(4);
                         chipContainer.setAlignment(Pos.CENTER);
                         chipContainer.setPadding(new Insets(6, 8, 6, 12));
-                        chipContainer.setStyle("-fx-background-color: #d1ecf1; -fx-border-color: #bee5eb; -fx-border-radius: 4; -fx-background-radius: 4;");
+                        chipContainer.getStyleClass().add("operation-selection-chip");
 
                         // Operation name label
                         Label nameLabel = new Label(cb.getText());
-                        nameLabel.setStyle("-fx-text-fill: #0c5460; -fx-font-size: 13px;");
+                        nameLabel.getStyleClass().add("operation-selection-chip-label");
 
-                        // Remove button (x)
+                        // Remove button (×)
                         Label removeBtn = new Label("×");
-                        removeBtn.setStyle("-fx-text-fill: #0c5460; -fx-font-size: 16px; -fx-font-weight: bold; -fx-cursor: hand;");
+                        removeBtn.getStyleClass().add("operation-selection-chip-remove");
                         removeBtn.setOnMouseClicked(e -> {
                             // Uncheck the corresponding checkbox
                             cb.setSelected(false);
                         });
-                        removeBtn.setOnMouseEntered(e -> removeBtn.setStyle("-fx-text-fill: #dc3545; -fx-font-size: 16px; -fx-font-weight: bold; -fx-cursor: hand;"));
-                        removeBtn.setOnMouseExited(e -> removeBtn.setStyle("-fx-text-fill: #0c5460; -fx-font-size: 16px; -fx-font-weight: bold; -fx-cursor: hand;"));
 
                         chipContainer.getChildren().addAll(nameLabel, removeBtn);
                         selectedChipsPane.getChildren().add(chipContainer);

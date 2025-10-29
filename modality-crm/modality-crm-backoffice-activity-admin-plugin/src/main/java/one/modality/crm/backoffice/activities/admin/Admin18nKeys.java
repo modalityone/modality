@@ -16,6 +16,7 @@ public interface Admin18nKeys {
     Object AccessType = "AccessType";
     Object CreateRuleButton = "CreateRuleButton";
     Object Assigned = "Assigned";
+    Object Space = "Space";
     Object OperationCodeValidationError = "OperationCodeValidationError";
     Object Roles = "Roles";
     Object Code = "Code";
@@ -49,6 +50,7 @@ public interface Admin18nKeys {
     Object FailedToSaveGroup = "FailedToSaveGroup";
     Object DeleteRoleConfirm = "DeleteRoleConfirm";
     Object SelectManager = "SelectManager";
+    Object QuestionMark = "QuestionMark";
     Object Organizations = "Organizations";
     Object AssignRoleDialogTitle = "AssignRoleDialogTitle";
     Object SearchOperationsPlaceholder = "SearchOperationsPlaceholder";
@@ -113,17 +115,22 @@ public interface Admin18nKeys {
     Object OperationGroupsInfoBox = "OperationGroupsInfoBox";
     Object DeleteRole = "DeleteRole";
     Object Actions = "Actions";
+    Object EventPrefix = "EventPrefix";
     Object EditOperationHeader = "EditOperationHeader";
     Object Routes = "Routes";
+    Object FailedToRevokeAccess = "FailedToRevokeAccess";
     Object CreateGroupTitle = "CreateGroupTitle";
     Object RuleExpression = "RuleExpression";
     Object OperationNamePlaceholder = "OperationNamePlaceholder";
     Object RolesSectionTitle = "RolesSectionTitle";
     Object GroupDescriptionPlaceholder = "GroupDescriptionPlaceholder";
     Object RouteName = "RouteName";
+    Object DashSeparator = "DashSeparator";
     Object CopySuffix = "CopySuffix";
+    Object SelectedOperationsCount = "SelectedOperationsCount";
     Object SearchOperations = "SearchOperations";
     Object OperationCreationPlaceholder = "OperationCreationPlaceholder";
+    Object Legend = "Legend";
     Object Cancel = "Cancel";
     Object AtLeastOneOperationError = "AtLeastOneOperationError";
     Object AdminPlural = "AdminPlural";
@@ -145,9 +152,11 @@ public interface Admin18nKeys {
     Object None = "None";
     Object TeamMembersAndRoles = "TeamMembersAndRoles";
     Object ScopeDescription = "ScopeDescription";
+    Object AssignRoleSummaryText = "AssignRoleSummaryText";
     Object RouteCodeValidationError = "RouteCodeValidationError";
     Object OperationsInfoBox = "OperationsInfoBox";
     Object CreateRoleButton = "CreateRoleButton";
+    Object OrganizationLabel = "OrganizationLabel";
     Object CreateRouteTitle = "CreateRouteTitle";
     Object DeleteOperation = "DeleteOperation";
     Object RoleNamePlaceholder = "RoleNamePlaceholder";
@@ -192,6 +201,7 @@ public interface Admin18nKeys {
     Object Error = "Error";
     Object SelectUserPlaceholder = "SelectUserPlaceholder";
     Object SelectOrganization = "SelectOrganization";
+    Object NoOperationsSelectedYet = "NoOperationsSelectedYet";
     Object AdminSingular = "AdminSingular";
     Object CreateOperation = "CreateOperation";
     Object Frontend = "Frontend";
@@ -199,6 +209,7 @@ public interface Admin18nKeys {
     Object DeleteOperationConfirm = "DeleteOperationConfirm";
     Object DeleteRuleConfirm = "DeleteRuleConfirm";
     Object DuplicateRoleTitle = "DuplicateRoleTitle";
+    Object RevokeAccessConfirmation = "RevokeAccessConfirmation";
     Object AdminMenu = "AdminMenu";
 
 }

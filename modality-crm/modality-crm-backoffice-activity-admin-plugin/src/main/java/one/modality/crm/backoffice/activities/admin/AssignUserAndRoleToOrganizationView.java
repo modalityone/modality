@@ -208,7 +208,7 @@ public class AssignUserAndRoleToOrganizationView {
         Organization organization = FXOrganization.getOrganization();
         if (organization != null) {
             String orgName = organization.getStringFieldValue("name");
-            currentOrgLabel.setText(orgName != null ? " - " + orgName : "");
+            currentOrgLabel.setText(orgName != null ? I18n.getI18nText(DashSeparator) + orgName : "");
         } else {
             currentOrgLabel.setText("");
         }
@@ -284,12 +284,12 @@ public class AssignUserAndRoleToOrganizationView {
         titleLabel.getStyleClass().add("delete-dialog-title");
 
         Person user = userAccess.getUser();
-        String userName = user != null ? user.getFirstName() + " " + user.getLastName() : "Unknown";
-        Label messageLabel = new Label(I18n.getI18nText(Delete) + " " + userName);
+        String userName = user != null ? user.getFirstName() + I18n.getI18nText(Space) + user.getLastName() : "Unknown";
+        Label messageLabel = new Label(I18n.getI18nText(Delete) + I18n.getI18nText(Space) + userName);
         messageLabel.getStyleClass().add("delete-dialog-message");
         messageLabel.setWrapText(true);
 
-        Label confirmLabel = new Label("Are you sure you want to revoke access for this user? This action cannot be undone.");
+        Label confirmLabel = I18nControls.newLabel(RevokeAccessConfirmation);
         confirmLabel.getStyleClass().add("delete-dialog-confirm");
         confirmLabel.setWrapText(true);
 
@@ -338,7 +338,7 @@ public class AssignUserAndRoleToOrganizationView {
         titleLabel.getStyleClass().add("error-dialog-title");
         titleLabel.setMaxWidth(Double.MAX_VALUE);
 
-        Label headerLabel = new Label("Failed to revoke access");
+        Label headerLabel = I18nControls.newLabel(FailedToRevokeAccess);
         headerLabel.setWrapText(true);
         headerLabel.setMaxWidth(Double.MAX_VALUE);
         headerLabel.getStyleClass().add("error-dialog-header");

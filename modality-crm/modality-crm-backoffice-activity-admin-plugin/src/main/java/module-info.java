@@ -7,6 +7,7 @@ module modality.crm.backoffice.activity.admin.plugin {
     requires javafx.controls;
     requires javafx.graphics;
     requires modality.base.backoffice.mainframe.fx;
+    requires modality.base.client.bootstrap;
     requires modality.base.client.icons;
     requires modality.base.client.mainframe.fx;
     requires modality.base.client.tile;

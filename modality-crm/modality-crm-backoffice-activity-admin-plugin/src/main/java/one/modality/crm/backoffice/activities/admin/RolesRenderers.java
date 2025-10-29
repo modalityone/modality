@@ -9,6 +9,7 @@ import javafx.scene.control.Label;
 import javafx.scene.layout.HBox;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.SVGPath;
+import one.modality.base.client.bootstrap.ModalityStyle;
 import one.modality.base.client.icons.SvgIcons;
 import one.modality.base.shared.entities.AuthorizationRole;
 import one.modality.base.shared.entities.AuthorizationRoleOperation;
@@ -48,20 +49,20 @@ final class RolesRenderers {
                     emptyLabel.getStyleClass().add("admin-text-italic");
                     flow.getChildren().add(emptyLabel);
                 } else {
-                    // First add OperationGroups (yellow badges)
+                    // First add OperationGroups
                     roleOperations.stream()
                         .filter(ro -> ro.getOperationGroup() != null)
                         .forEach(ro -> {
-                            Label groupChip = Bootstrap.badgeLightWarning(new Label(ro.getOperationGroup().getName()));
+                            Label groupChip = ModalityStyle.badgeOperationGroup(new Label(ro.getOperationGroup().getName()));
                             groupChip.setPadding(new Insets(3, 8, 3, 8));
                             flow.getChildren().add(groupChip);
                         });
 
-                    // Then add individual Operations (blue badges)
+                    // Then add individual Operations
                     roleOperations.stream()
                         .filter(ro -> ro.getOperation() != null)
                         .forEach(ro -> {
-                            Label operationChip = Bootstrap.badgeLightInfo(new Label(ro.getOperation().getName()));
+                            Label operationChip = ModalityStyle.badgeOperation(new Label(ro.getOperation().getName()));
                             operationChip.setPadding(new Insets(3, 8, 3, 8));
                             flow.getChildren().add(operationChip);
                         });
@@ -73,10 +74,25 @@ final class RolesRenderers {
 
         // Register used by count renderer
         ValueRendererRegistry.registerValueRenderer("usedByCount", (value, context) -> {
-            // TODO: Query actual user count when authorization assignments are implemented
-            Label label = new Label("-");
-            label.getStyleClass().add("table-cell-text-secondary");
-            return label;
+            if (!(value instanceof AuthorizationRole)) {
+                return new Label("-");
+            }
+            AuthorizationRole role = (AuthorizationRole) value;
+
+            if (rolesView == null) {
+                return new Label("-");
+            }
+
+            int userCount = rolesView.getUserCountForRole(role);
+            if (userCount == 0) {
+                Label label = new Label("-");
+                label.getStyleClass().add("table-cell-text-secondary");
+                return label;
+            }
+
+            Label badge = ModalityStyle.badgeUser(new Label(String.valueOf(userCount)));
+            badge.setPadding(new Insets(3, 8, 3, 8));
+            return badge;
         });
 
         // Register role actions renderer

@@ -9,6 +9,7 @@ import javafx.scene.control.Label;
 import javafx.scene.layout.HBox;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.SVGPath;
+import one.modality.base.client.bootstrap.ModalityStyle;
 import one.modality.base.client.icons.SvgIcons;
 import one.modality.base.shared.entities.AuthorizationOrganizationAdmin;
 import one.modality.base.shared.entities.Organization;
@@ -54,7 +55,7 @@ final class AssignAdminToOrganizationsViewRenderers {
                         Person person = admin.getAdmin();
                         if (person != null) {
                             String managerName = person.getFirstName() + " " + person.getLastName();
-                            Label chip = Bootstrap.badgeLightInfo(new Label(managerName));
+                            Label chip = ModalityStyle.badgeUser(new Label(managerName));
                             chip.setPadding(new Insets(3, 8, 3, 8));
                             flow.getChildren().add(chip);
                         }
@@ -74,8 +75,8 @@ final class AssignAdminToOrganizationsViewRenderers {
 
             int userCount = organizationsView != null ? organizationsView.getUserAccessCountForOrganization(organization) : 0;
 
-            Label badge = Bootstrap.badgeLightInfo(new Label(String.valueOf(userCount)));
-            badge.setPadding(new Insets(4, 12, 4, 12));
+            Label badge = ModalityStyle.badgeUser(new Label(String.valueOf(userCount)));
+            badge.setPadding(new Insets(3, 8, 3, 8));
             return badge;
         });
 

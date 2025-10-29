@@ -14,6 +14,7 @@
             <module>webfx-extras-util-layout</module>
             <module>webfx-kit-util</module>
             <module>modality-base-client-mainframe-fx</module>
+            <module>modality-base-client-bootstrap</module>
             <module>webfx-stack-orm-entity-controls</module>
             <module>webfx-stack-orm-datasourcemodel-service</module>
             <module>webfx-stack-orm-reactive-entities</module>

@@ -409,6 +409,57 @@
     -fx-text-fill: #dc3545;
 }
 
+/* Legend Label */
+.admin-legend-label {
+    -fx-font-weight: bold;
+    -fx-font-size: 12;
+}
+
+/* Operation Group Selection Panel (used in OperationGroupDialog) */
+.operation-selection-panel {
+    -fx-background-color: #f9f9f9;
+    -fx-border-color: #ddd;
+    -fx-border-width: 1;
+    -fx-border-style: dashed;
+    -fx-border-radius: 4;
+    -fx-background-radius: 4;
+}
+
+.operation-selection-count-label {
+    -fx-font-weight: bold;
+    -fx-font-size: 13;
+    -fx-text-fill: #666;
+}
+
+.operation-selection-empty-message {
+    -fx-text-fill: #999;
+    -fx-font-size: 13;
+}
+
+/* Operation Selection Chip Styles (used in OperationGroupDialog) */
+.operation-selection-chip {
+    -fx-background-color: #d1ecf1;
+    -fx-border-color: #bee5eb;
+    -fx-border-radius: 4;
+    -fx-background-radius: 4;
+}
+
+.operation-selection-chip-label {
+    -fx-text-fill: #0c5460;
+    -fx-font-size: 13;
+}
+
+.operation-selection-chip-remove {
+    -fx-text-fill: #0c5460;
+    -fx-font-size: 16;
+    -fx-font-weight: bold;
+    -fx-cursor: hand;
+}
+
+.operation-selection-chip-remove:hover {
+    -fx-text-fill: #dc3545;
+}
+
 /* VisualGrid Header Styles */
 .grid-head {
     -fx-background-color: #e9ecef;

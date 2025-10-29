@@ -400,6 +400,53 @@
     color: #dc3545;
 }
 
+/* Legend Label */
+.admin-legend-label {
+    font-weight: bold;
+    font-size: 12px;
+}
+
+/* Operation Group Selection Panel (used in OperationGroupDialog) */
+.operation-selection-panel {
+    background-color: #f9f9f9;
+    border: 1px dashed #ddd;
+    border-radius: 4px;
+}
+
+.operation-selection-count-label {
+    font-weight: bold;
+    font-size: 13px;
+    color: #666;
+}
+
+.operation-selection-empty-message {
+    color: #999;
+    font-size: 13px;
+}
+
+/* Operation Selection Chip Styles (used in OperationGroupDialog) */
+.operation-selection-chip {
+    background-color: #d1ecf1;
+    border: 1px solid #bee5eb;
+    border-radius: 4px;
+}
+
+.operation-selection-chip-label {
+    color: #0c5460;
+    font-size: 13px;
+}
+
+.operation-selection-chip-remove {
+    color: #0c5460;
+    font-size: 16px;
+    font-weight: bold;
+    cursor: pointer;
+}
+
+.operation-selection-chip-remove:hover {
+    color: #dc3545;
+}
+
 /* VisualGrid Header Styles - minimal styling to avoid interfering with default behavior */
 .grid-head {
     background-color: #e9ecef !important;
