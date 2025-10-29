@@ -2,7 +2,6 @@ package one.modality.crm.backoffice.activities.admin;
 
 import dev.webfx.extras.i18n.I18n;
 import dev.webfx.extras.i18n.controls.I18nControls;
-import dev.webfx.extras.styles.bootstrap.Bootstrap;
 import dev.webfx.extras.visual.VisualResult;
 import dev.webfx.extras.visual.controls.grid.VisualGrid;
 import dev.webfx.kit.util.properties.FXProperties;
@@ -22,7 +21,6 @@ import javafx.geometry.Pos;
 import javafx.scene.Node;
 import javafx.scene.control.*;
 import javafx.scene.layout.*;
-import one.modality.base.client.mainframe.fx.FXMainFrameDialogArea;
 import one.modality.base.shared.entities.AuthorizationOrganizationAdmin;
 import one.modality.base.shared.entities.AuthorizationOrganizationUserAccess;
 import one.modality.base.shared.entities.Organization;
@@ -257,60 +255,8 @@ public class AssignAdminToOrganizationsView {
         AssignAdminToOrganizationDialog.show(organization, admins, entityStore);
     }
 
-    private void showErrorDialog(String content) {
-        VBox dialogContent = new VBox(20);
-        dialogContent.setPadding(new Insets(30));
-        dialogContent.setMinWidth(350);
-        dialogContent.setPrefWidth(500);
-        dialogContent.setMaxWidth(700);
-
-        Label titleLabel = I18nControls.newLabel(Error);
-        titleLabel.getStyleClass().add("error-dialog-title");
-        titleLabel.setMaxWidth(Double.MAX_VALUE);
-
-        Label headerLabel = I18nControls.newLabel(FailedToSaveGroup);
-        headerLabel.setWrapText(true);
-        headerLabel.setMaxWidth(Double.MAX_VALUE);
-        headerLabel.getStyleClass().add("error-dialog-header");
-
-        Label contentLabel = new Label(content);
-        contentLabel.setWrapText(true);
-        contentLabel.setMaxWidth(Double.MAX_VALUE);
-        contentLabel.getStyleClass().add("error-dialog-content");
-
-        dialogContent.getChildren().addAll(titleLabel, headerLabel, contentLabel);
-
-        HBox footer = new HBox();
-        footer.setAlignment(Pos.CENTER_RIGHT);
-
-        Button okButton = Bootstrap.dangerButton(I18nControls.newButton(OK));
-
-        footer.getChildren().add(okButton);
-        dialogContent.getChildren().add(footer);
-
-        BorderPane dialogPane = new BorderPane(dialogContent);
-        dialogPane.getStyleClass().add("modal-dialog-pane");
-        dev.webfx.extras.util.dialog.DialogCallback dialogCallback = dev.webfx.extras.util.dialog.DialogUtil.showModalNodeInGoldLayout(
-            dialogPane, FXMainFrameDialogArea.getDialogArea()
-        );
-
-        okButton.setOnAction(e -> dialogCallback.closeDialog());
-    }
-
     public EntityStore getEntityStore() {
         return organizationsMapper != null ? organizationsMapper.getStore() : null;
-    }
-
-    public void refresh() {
-        if (organizationsMapper != null) {
-            organizationsMapper.refreshWhenActive();
-        }
-        if (organizationAdminsMapper != null) {
-            organizationAdminsMapper.refreshWhenActive();
-        }
-        if (userAccessMapper != null) {
-            userAccessMapper.refreshWhenActive();
-        }
     }
 
     public void setActive(boolean active) {

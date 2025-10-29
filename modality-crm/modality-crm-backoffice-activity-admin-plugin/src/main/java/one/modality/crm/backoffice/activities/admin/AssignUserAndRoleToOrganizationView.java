@@ -160,7 +160,7 @@ public class AssignUserAndRoleToOrganizationView {
                     return true;
                 }
 
-                // Match against user name
+                // Match against username
                 Person user = access.getUser();
                 if (user != null) {
                     String fullName = (user.getFirstName() + " " + user.getLastName()).toLowerCase();
@@ -262,11 +262,7 @@ public class AssignUserAndRoleToOrganizationView {
 
 
     private void showAssignRoleDialog() {
-        AssignUserAndRoleToOrganizationDialog.show(null, this::refresh, buttonFactory, getEntityStore());
-    }
-
-    void showEditRoleDialog(AuthorizationOrganizationUserAccess userAccess) {
-        AssignUserAndRoleToOrganizationDialog.show(userAccess, this::refresh, buttonFactory, getEntityStore());
+        AssignUserAndRoleToOrganizationDialog.show(null, buttonFactory, getEntityStore());
     }
 
     private EntityStore getEntityStore() {
@@ -365,12 +361,6 @@ public class AssignUserAndRoleToOrganizationView {
         );
 
         okButton.setOnAction(e -> dialogCallback.closeDialog());
-    }
-
-    public void refresh() {
-        if (userAccessMapper != null) {
-            userAccessMapper.refreshWhenActive();
-        }
     }
 
     public void setActive(boolean active) {

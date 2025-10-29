@@ -44,11 +44,10 @@ public class AssignUserAndRoleToOrganizationDialog {
      * Shows the assign role dialog.
      *
      * @param existingUserAccess Existing user access record to edit (null for new assignment)
-     * @param onSuccess Callback to execute after successful assignment
-     * @param buttonFactory Button factory for creating dialog buttons
-     * @param entityStore The entity store for database operations
+     * @param buttonFactory      Button factory for creating dialog buttons
+     * @param entityStore        The entity store for database operations
      */
-    public static void show(Entity existingUserAccess, Runnable onSuccess, ButtonFactoryMixin buttonFactory, EntityStore entityStore) {
+    public static void show(Entity existingUserAccess, ButtonFactoryMixin buttonFactory, EntityStore entityStore) {
         DataSourceModel dataSourceModel = DataSourceModelService.getDefaultDataSourceModel();
         UpdateStore updateStore = UpdateStore.createAbove(entityStore);
 
@@ -270,15 +269,14 @@ public class AssignUserAndRoleToOrganizationDialog {
 
         // Disable save button until all required fields are filled
         BooleanBinding isInvalid = Bindings.createBooleanBinding(() -> {
-            // User must be selected
-            if (userSelector.getSelectedItem() == null) return true;
-            // Role must be selected
-            if (roleSelector.getSelectedItem() == null) return true;
-            // If specific event is selected, event must be chosen
-            if (specificEventRadio.isSelected() && eventSelector.getSelectedItem() == null) return true;
-            return false;
-        }, userSelector.selectedItemProperty(), roleSelector.selectedItemProperty(),
-           specificEventRadio.selectedProperty(), eventSelector.selectedItemProperty());
+                // User must be selected
+                if (userSelector.getSelectedItem() == null) return true;
+                // Role must be selected
+                if (roleSelector.getSelectedItem() == null) return true;
+                // If specific event is selected, event must be chosen
+                return specificEventRadio.isSelected() && eventSelector.getSelectedItem() == null;
+            }, userSelector.selectedItemProperty(), roleSelector.selectedItemProperty(),
+            specificEventRadio.selectedProperty(), eventSelector.selectedItemProperty());
 
         assignButton.disableProperty().bind(isInvalid);
 
@@ -323,14 +321,8 @@ public class AssignUserAndRoleToOrganizationDialog {
 
             // Submit changes
             updateStore.submitChanges()
-                .onSuccess(result -> {
-                    dialogCallback.closeDialog();
-                })
-                .onFailure(error -> {
-                    Platform.runLater(() -> {
-                        showErrorDialog(error.getMessage());
-                    });
-                });
+                .onSuccess(result -> dialogCallback.closeDialog())
+                .onFailure(error -> Platform.runLater(() -> showErrorDialog(error.getMessage())));
         });
     }
 
@@ -353,7 +345,7 @@ public class AssignUserAndRoleToOrganizationDialog {
             // Inline function doesn't work TODO: fix it
             //.setSearchCondition("searchMatchesPerson(p)")
             .setSearchCondition("abcNames(p..fullName) like ?abcSearchLike or lower(p..email) like ?searchEmailLike");
-        }
+    }
 
     /**
      * Creates an EntityButtonSelector for authorization_role entities.
@@ -384,10 +376,10 @@ public class AssignUserAndRoleToOrganizationDialog {
     /**
      * Creates a scope card (Entire Organization or Specific Event).
      *
-     * @param radio RadioButton associated with this card
-     * @param title Card title
+     * @param radio       RadioButton associated with this card
+     * @param title       Card title
      * @param description Card description
-     * @param selected Whether this card is initially selected
+     * @param selected    Whether this card is initially selected
      * @return The card VBox
      */
     private static VBox createScopeCard(RadioButton radio, String title, String description, boolean selected) {
@@ -421,7 +413,7 @@ public class AssignUserAndRoleToOrganizationDialog {
     /**
      * Updates the visual style of a scope card based on selection state.
      *
-     * @param card The card VBox to update
+     * @param card     The card VBox to update
      * @param selected Whether the card is selected
      */
     private static void updateScopeCardStyles(VBox card, boolean selected) {

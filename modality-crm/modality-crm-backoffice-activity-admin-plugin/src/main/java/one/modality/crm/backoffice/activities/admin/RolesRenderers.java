@@ -2,7 +2,6 @@ package one.modality.crm.backoffice.activities.admin;
 
 import dev.webfx.extras.cell.renderer.ValueRendererRegistry;
 import dev.webfx.extras.panes.MonoPane;
-import dev.webfx.extras.styles.bootstrap.Bootstrap;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.control.Label;
@@ -74,10 +73,9 @@ final class RolesRenderers {
 
         // Register used by count renderer
         ValueRendererRegistry.registerValueRenderer("usedByCount", (value, context) -> {
-            if (!(value instanceof AuthorizationRole)) {
+            if (!(value instanceof AuthorizationRole role)) {
                 return new Label("-");
             }
-            AuthorizationRole role = (AuthorizationRole) value;
 
             if (rolesView == null) {
                 return new Label("-");

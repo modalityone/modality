@@ -2,7 +2,6 @@ package one.modality.crm.backoffice.activities.admin;
 
 import dev.webfx.extras.cell.renderer.ValueRendererRegistry;
 import dev.webfx.extras.panes.MonoPane;
-import dev.webfx.extras.styles.bootstrap.Bootstrap;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.control.Label;
@@ -68,10 +67,9 @@ final class AssignAdminToOrganizationsViewRenderers {
 
         // Register active users renderer
         ValueRendererRegistry.registerValueRenderer("activeUsers", (value, context) -> {
-            if (!(value instanceof Organization)) {
+            if (!(value instanceof Organization organization)) {
                 return null;
             }
-            Organization organization = (Organization) value;
 
             int userCount = organizationsView != null ? organizationsView.getUserAccessCountForOrganization(organization) : 0;
 

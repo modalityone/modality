@@ -1,6 +1,5 @@
 package one.modality.crm.backoffice.activities.admin;
 
-import dev.webfx.extras.i18n.I18n;
 import dev.webfx.extras.i18n.controls.I18nControls;
 import dev.webfx.extras.styles.bootstrap.Bootstrap;
 import dev.webfx.extras.util.dialog.DialogCallback;
@@ -18,13 +17,12 @@ import javafx.scene.control.*;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.HBox;
-import javafx.scene.layout.Priority;
 import javafx.scene.layout.VBox;
 import one.modality.base.client.mainframe.fx.FXMainFrameDialogArea;
 import one.modality.base.shared.entities.Operation;
 
-import static javafx.scene.layout.Region.USE_COMPUTED_SIZE;
 import static one.modality.crm.backoffice.activities.admin.Admin18nKeys.*;
+import static one.modality.crm.backoffice.activities.admin.FormFieldHelper.*;
 
 /**
  * Dialog for creating and editing operations and routes.
@@ -71,12 +69,12 @@ public class OperationDialog {
         formFields.setMaxWidth(Double.MAX_VALUE);
 
         // Operation/Route Name field (required)
-        VBox nameField = createFormField(
+        FormField<TextField> nameFormField = createTextField(
             isRouteEntity ? RouteName : OperationName,
             isRouteEntity ? RouteNamePlaceholder : OperationNamePlaceholder,
             isRouteEntity ? RouteNameHelp : null
         );
-        TextField nameInput = (TextField) ((VBox) nameField.getChildren().get(1)).getChildren().get(0);
+        TextField nameInput = nameFormField.inputField();
         if (isEdit) {
             nameInput.setText(operation.getStringFieldValue("name"));
         } else if (isRouteEntity) {
@@ -85,26 +83,22 @@ public class OperationDialog {
         }
 
         // Operation Code field (required)
-        VBox codeField = createFormField(
+        FormField<TextField> codeFormField = createTextField(
             OperationCode,
             isRouteEntity ? RouteCodePlaceholder : OperationCodePlaceholder,
             OperationCodeHelp
         );
-        TextField codeInput = (TextField) ((VBox) codeField.getChildren().get(1)).getChildren().get(0);
+        TextField codeInput = codeFormField.inputField();
         if (isEdit) {
             codeInput.setText(operation.getStringFieldValue("operationCode"));
         }
 
         // Grant Route field (only for routes)
-        VBox routeField = null;
+        FormField<TextField> routeFormField = null;
         TextField routeInput = null;
         if (isRouteEntity) {
-            routeField = createFormField(
-                GrantRoute,
-                GrantRoutePlaceholder,
-                GrantRouteHelp
-            );
-            routeInput = (TextField) ((VBox) routeField.getChildren().get(1)).getChildren().get(0);
+            routeFormField = createTextField(GrantRoute, GrantRoutePlaceholder, GrantRouteHelp);
+            routeInput = routeFormField.inputField();
             if (isEdit) {
                 String grantRoute = operation.getStringFieldValue("grantRoute");
                 if (grantRoute != null) {
@@ -114,12 +108,8 @@ public class OperationDialog {
         }
 
         // i18nCode field
-        VBox i18nField = createFormField(
-            I18nCodeLabel,
-            I18nCodePlaceholder,
-            I18nCodeHelp
-        );
-        TextField i18nInput = (TextField) ((VBox) i18nField.getChildren().get(1)).getChildren().get(0);
+        FormField<TextField> i18nFormField = createTextField(I18nCodeLabel, I18nCodePlaceholder, I18nCodeHelp);
+        TextField i18nInput = i18nFormField.inputField();
         if (isEdit) {
             String i18nCode = operation.getStringFieldValue("i18nCode");
             if (i18nCode != null) {
@@ -158,11 +148,11 @@ public class OperationDialog {
         accessSettings.getChildren().addAll(accessLabel, checkboxGrid);
 
         // Add fields conditionally based on whether this is a route or operation
-        formFields.getChildren().addAll(nameField, codeField);
+        formFields.getChildren().addAll(nameFormField.container(), codeFormField.container());
         if (isRouteEntity) {
-            formFields.getChildren().add(routeField);
+            formFields.getChildren().add(routeFormField.container());
         }
-        formFields.getChildren().addAll(i18nField, accessSettings);
+        formFields.getChildren().addAll(i18nFormField.container(), accessSettings);
 
         // Create entity store and update store before buttons
         EntityStore store = operation != null ? operation.getStore() : EntityStore.create(DataSourceModelService.getDefaultDataSourceModel());
@@ -296,46 +286,7 @@ public class OperationDialog {
 
 
     /**
-     * Creates a form field with label, input, and optional help text.
-     */
-    private static VBox createFormField(Object labelKey, Object placeholderKey, Object helpKey) {
-        VBox field = new VBox(8);
-        field.setMaxWidth(Double.MAX_VALUE);
-
-        Label label = I18nControls.newLabel(labelKey);
-        label.getStyleClass().add("form-field-label");
-
-        VBox inputContainer = new VBox(4);
-        inputContainer.setMaxWidth(Double.MAX_VALUE);
-
-        TextField input = new TextField();
-        I18n.bindI18nTextProperty(input.promptTextProperty(), placeholderKey);
-        input.setMinWidth(200);
-        input.setPrefWidth(USE_COMPUTED_SIZE);
-        input.setMaxWidth(Double.MAX_VALUE);
-        input.setPadding(new Insets(10, 12, 10, 12));
-        input.getStyleClass().add("form-field-input");
-
-        // Make input grow horizontally
-        HBox.setHgrow(input, Priority.ALWAYS);
-        VBox.setVgrow(input, Priority.NEVER);
-
-        inputContainer.getChildren().add(input);
-
-        if (helpKey != null) {
-            Label help = I18nControls.newLabel(helpKey);
-            help.getStyleClass().add("form-field-help");
-            help.setWrapText(true);
-            help.setMaxWidth(Double.MAX_VALUE);
-            inputContainer.getChildren().add(help);
-        }
-
-        field.getChildren().addAll(label, inputContainer);
-        return field;
-    }
-
-    /**
-     * Shows an error dialog with the specified title, header, and content.
+     * Shows an error dialog with the specified content.
      */
     private static void showErrorDialog(Object headerKey, String content) {
         VBox dialogContent = new VBox(20);

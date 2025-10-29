@@ -12,23 +12,23 @@ import javafx.scene.layout.VBox;
 import static one.modality.crm.backoffice.activities.admin.Admin18nKeys.*;
 
 /**
- * Super Admin View containing 5 sub-tabs for comprehensive rights management:
- * - Organizations
- * - Operations
- * - Operation Groups
- * - Routes
- * - Roles
+ * Super Admin View containing 6 sub-tabs for comprehensive rights management:
+ * - Organizations: Manage organization admins
+ * - Operations: Manage individual operations
+ * - Operation Groups: Manage groups of related operations
+ * - Routes: Manage application routes
+ * - Rules: Manage authorization rules
+ * - Roles: Manage user roles and permissions
  *
  * @author Claude Code
  */
 public class SuperAdminView {
 
     private final AssignAdminToOrganizationsView organizationsView = new AssignAdminToOrganizationsView();
-    private final OperationsView operationsView = new OperationsView(false);  // Operations view
+    private final OperationsView operationsView = new OperationsView(false);  // false = operations
     private final OperationGroupsView operationGroupsView = new OperationGroupsView();
-    private final OperationsView routesView = new OperationsView(true);
-    private final AuthorizationRulesView rulesView = new AuthorizationRulesView();  // Routes view
-    // Routes view
+    private final OperationsView routesView = new OperationsView(true);  // true = routes
+    private final AuthorizationRulesView rulesView = new AuthorizationRulesView();
     private final RolesView rolesView = new RolesView();
 
     private final VBox view;

@@ -17,9 +17,6 @@ import one.modality.base.shared.entities.AuthorizationOrganizationUserAccess;
 import one.modality.base.shared.entities.Event;
 import one.modality.base.shared.entities.Person;
 
-import java.time.LocalDate;
-import java.time.format.DateTimeFormatter;
-
 import static one.modality.crm.backoffice.activities.admin.Admin18nKeys.*;
 
 /**
@@ -42,11 +39,9 @@ public class AssignUserAndRoleToOrganizationViewRenderers {
     public static void registerRenderers() {
         // Register custom renderers for user management grid
         ValueRendererRegistry.registerValueRenderer("userActions", (value, context) -> {
-            if (!(value instanceof AuthorizationOrganizationUserAccess)) {
+            if (!(value instanceof AuthorizationOrganizationUserAccess userAccess)) {
                 return null;
             }
-
-            AuthorizationOrganizationUserAccess userAccess = (AuthorizationOrganizationUserAccess) value;
 
             HBox actionsBox = new HBox(12);
             actionsBox.setAlignment(Pos.CENTER);
@@ -67,10 +62,9 @@ public class AssignUserAndRoleToOrganizationViewRenderers {
         });
 
         ValueRendererRegistry.registerValueRenderer("userName", (value, context) -> {
-            if (!(value instanceof AuthorizationOrganizationUserAccess)) {
+            if (!(value instanceof AuthorizationOrganizationUserAccess userAccess)) {
                 return null;
             }
-            AuthorizationOrganizationUserAccess userAccess = (AuthorizationOrganizationUserAccess) value;
             Person user = userAccess.getUser();
             if (user == null) {
                 return Bootstrap.strong(new Text("Unknown"));
@@ -94,10 +88,9 @@ public class AssignUserAndRoleToOrganizationViewRenderers {
         });
 
         ValueRendererRegistry.registerValueRenderer("scopeName", (value, context) -> {
-            if (!(value instanceof AuthorizationOrganizationUserAccess)) {
+            if (!(value instanceof AuthorizationOrganizationUserAccess userAccess)) {
                 return null;
             }
-            AuthorizationOrganizationUserAccess userAccess = (AuthorizationOrganizationUserAccess) value;
             Event event = userAccess.getEvent();
             String text = event != null ? "Event: " + event.getName() : I18n.getI18nText(EntireOrganization);
             boolean isOrg = event == null;
@@ -115,8 +108,7 @@ public class AssignUserAndRoleToOrganizationViewRenderers {
             boolean isReadOnly;
             if (value instanceof Boolean) {
                 isReadOnly = (Boolean) value;
-            } else if (value instanceof AuthorizationOrganizationUserAccess) {
-                AuthorizationOrganizationUserAccess userAccess = (AuthorizationOrganizationUserAccess) value;
+            } else if (value instanceof AuthorizationOrganizationUserAccess userAccess) {
                 Boolean readOnlyValue = userAccess.isReadOnly();
                 isReadOnly = readOnlyValue != null && readOnlyValue;
             } else {

@@ -2,7 +2,6 @@ package one.modality.crm.backoffice.activities.admin;
 
 import dev.webfx.extras.cell.renderer.ValueRendererRegistry;
 import dev.webfx.extras.panes.MonoPane;
-import dev.webfx.extras.styles.bootstrap.Bootstrap;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.control.Label;
@@ -17,6 +16,7 @@ import one.modality.base.shared.entities.Operation;
 import one.modality.base.shared.entities.OperationGroup;
 
 import java.util.List;
+import java.util.Objects;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -84,7 +84,7 @@ final class OperationGroupsRenderers {
                     // Get unique roles (in case multiple operations from this group are in the same role)
                     Set<AuthorizationRole> uniqueRoles = roleOperations.stream()
                         .map(AuthorizationRoleOperation::getRole)
-                        .filter(role -> role != null)
+                        .filter(Objects::nonNull)
                         .collect(Collectors.toSet());
 
                     // Build the chips

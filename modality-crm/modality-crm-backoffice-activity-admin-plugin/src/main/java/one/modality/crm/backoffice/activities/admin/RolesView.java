@@ -36,6 +36,7 @@ import one.modality.base.shared.entities.AuthorizationRoleOperation;
 
 import java.util.Comparator;
 import java.util.List;
+import java.util.Objects;
 import java.util.stream.Collectors;
 
 import static one.modality.crm.backoffice.activities.admin.Admin18nKeys.*;
@@ -255,7 +256,7 @@ public class RolesView {
         long count = userAccessFeed.stream()
             .filter(ua -> ua.getRole() != null && ua.getRole().getPrimaryKey().equals(role.getPrimaryKey()))
             .map(ua -> ua.getUser() != null ? ua.getUser().getPrimaryKey() : null)
-            .filter(userId -> userId != null)
+            .filter(Objects::nonNull)
             .distinct()
             .count();
         return (int) count;

@@ -198,10 +198,8 @@ public class AuthorizationRulesView {
         // Apply search filter
         if (!searchText.isEmpty()) {
             rules = rules.stream()
-                .filter(rule -> {
-                    return (rule.getName() != null && rule.getName().toLowerCase().contains(searchText)) ||
-                           (rule.getRule() != null && rule.getRule().toLowerCase().contains(searchText));
-                })
+                .filter(rule -> (rule.getName() != null && rule.getName().toLowerCase().contains(searchText)) ||
+                       (rule.getRule() != null && rule.getRule().toLowerCase().contains(searchText)))
                 .collect(Collectors.toList());
         }
 

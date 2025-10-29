@@ -2,7 +2,6 @@ package one.modality.crm.backoffice.activities.admin;
 
 import dev.webfx.extras.cell.renderer.ValueRendererRegistry;
 import dev.webfx.extras.panes.MonoPane;
-import dev.webfx.extras.styles.bootstrap.Bootstrap;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.control.Label;
@@ -36,10 +35,9 @@ final class AuthorizationRulesRenderers {
 
         // Register the "Used In" renderer
         ValueRendererRegistry.registerValueRenderer("ruleUsedIn", (value, context) -> {
-            if (!(value instanceof AuthorizationRule)) {
+            if (!(value instanceof AuthorizationRule rule)) {
                 return null;
             }
-            AuthorizationRule rule = (AuthorizationRule) value;
 
             if (authorizationRulesView == null) {
                 return new Label("-");
@@ -67,10 +65,9 @@ final class AuthorizationRulesRenderers {
 
         // Register the actions renderer
         ValueRendererRegistry.registerValueRenderer("ruleActions", (value, context) -> {
-            if (!(value instanceof AuthorizationRule)) {
+            if (!(value instanceof AuthorizationRule rule)) {
                 return null;
             }
-            AuthorizationRule rule = (AuthorizationRule) value;
 
             HBox actionsBox = new HBox(12);
             actionsBox.setAlignment(Pos.CENTER);

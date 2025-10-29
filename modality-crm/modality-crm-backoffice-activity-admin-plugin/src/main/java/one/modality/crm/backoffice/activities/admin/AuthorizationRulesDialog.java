@@ -22,6 +22,7 @@ import one.modality.base.client.mainframe.fx.FXMainFrameDialogArea;
 import one.modality.base.shared.entities.AuthorizationRule;
 
 import static one.modality.crm.backoffice.activities.admin.Admin18nKeys.*;
+import static one.modality.crm.backoffice.activities.admin.FormFieldHelper.*;
 
 /**
  * Dialog for creating and editing authorization rules.
@@ -69,40 +70,24 @@ public class AuthorizationRulesDialog {
         formFields.setMaxWidth(Double.MAX_VALUE);
 
         // Rule Name field (required)
-        VBox nameField = createFormField(
-            RuleName,
-            RuleNamePlaceholder,
-            null
-        );
-        TextField nameInput = (TextField) ((VBox) nameField.getChildren().get(1)).getChildren().get(0);
+        FormField<TextField> nameFormField = createTextField(RuleName, RuleNamePlaceholder, null);
+        TextField nameInput = nameFormField.inputField();
         if (isEdit) {
             nameInput.setText(rule.getStringFieldValue("name"));
         }
 
         // Rule Expression field (required)
-        VBox ruleField = createFormField(
-            RuleExpression,
-            RuleExpressionPlaceholder,
-            RuleExpressionHelp
-        );
-        TextArea ruleInput = new TextArea();
-        ruleInput.setPrefRowCount(4);
-        ruleInput.setWrapText(true);
-        ruleInput.setMaxWidth(Double.MAX_VALUE);
-        I18n.bindI18nTextProperty(ruleInput.promptTextProperty(), RuleExpressionPlaceholder);
+        FormField<TextArea> ruleFormField = createTextArea(RuleExpression, RuleExpressionPlaceholder, RuleExpressionHelp, 4);
+        TextArea ruleInput = ruleFormField.inputField();
         if (isEdit) {
             String ruleExpression = rule.getStringFieldValue("rule");
             if (ruleExpression != null) {
                 ruleInput.setText(ruleExpression);
             }
         }
-        // Replace the TextField with TextArea in the field container
-        VBox ruleInputContainer = (VBox) ruleField.getChildren().get(1);
-        ruleInputContainer.getChildren().clear();
-        ruleInputContainer.getChildren().add(ruleInput);
 
         // Add form fields to container
-        formFields.getChildren().addAll(nameField, ruleField);
+        formFields.getChildren().addAll(nameFormField.container(), ruleFormField.container());
 
         // Validation
         ValidationSupport validationSupport = new ValidationSupport();
@@ -156,7 +141,7 @@ public class AuthorizationRulesDialog {
             // Validate form using ValidationSupport
             if (!validationSupport.isValid()) {
                 // Show validation error dialog
-                showErrorDialog(ValidationError, I18n.getI18nText(AtLeastOneOperationError));
+                showErrorDialog(ValidationError, I18n.getI18nText(RequiredFieldsMissing));
                 return;
             }
 
@@ -172,42 +157,6 @@ public class AuthorizationRulesDialog {
                 showErrorDialog(FailedToSaveRule, error.getMessage());
             });
         });
-    }
-
-    /**
-     * Creates a form field with label, input, and optional help text.
-     */
-    private static VBox createFormField(Object labelKey, Object placeholderKey, Object helpKey) {
-        VBox field = new VBox(8);
-        field.setMaxWidth(Double.MAX_VALUE);
-
-        // Label
-        Label label = I18nControls.newLabel(labelKey);
-        label.getStyleClass().add("form-field-label");
-
-        // Input container
-        VBox inputContainer = new VBox(4);
-        inputContainer.setMaxWidth(Double.MAX_VALUE);
-
-        // Text input
-        TextField input = new TextField();
-        input.setMaxWidth(Double.MAX_VALUE);
-        if (placeholderKey != null) {
-            I18n.bindI18nTextProperty(input.promptTextProperty(), placeholderKey);
-        }
-
-        inputContainer.getChildren().add(input);
-
-        // Help text (optional)
-        if (helpKey != null) {
-            Label helpText = I18nControls.newLabel(helpKey);
-            helpText.getStyleClass().add("form-field-help");
-            helpText.setWrapText(true);
-            inputContainer.getChildren().add(helpText);
-        }
-
-        field.getChildren().addAll(label, inputContainer);
-        return field;
     }
 
     /**

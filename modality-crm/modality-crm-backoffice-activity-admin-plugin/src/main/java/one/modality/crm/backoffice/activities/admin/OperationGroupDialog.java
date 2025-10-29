@@ -29,6 +29,7 @@ import java.util.Set;
 
 import static javafx.scene.layout.Region.USE_COMPUTED_SIZE;
 import static one.modality.crm.backoffice.activities.admin.Admin18nKeys.*;
+import static one.modality.crm.backoffice.activities.admin.FormFieldHelper.*;
 
 /**
  * Dialog for creating and editing operation groups.
@@ -65,11 +66,11 @@ public class OperationGroupDialog {
                             selectedOperationIds.add(op.getPrimaryKey());
                         }
                     }
-                    Platform.runLater(() -> buildAndShowDialog(group, isEdit, updateStore, availableOperations, selectedOperationIds, onSuccess));
+                    Platform.runLater(() -> buildAndShowDialog(group, true, updateStore, availableOperations, selectedOperationIds, onSuccess));
                 });
         } else {
             store.<Operation>executeQuery(query)
-                .onSuccess(availableOperations -> Platform.runLater(() -> buildAndShowDialog(group, isEdit, updateStore, availableOperations, new HashSet<>(), onSuccess)));
+                .onSuccess(availableOperations -> Platform.runLater(() -> buildAndShowDialog(null, false, updateStore, availableOperations, new HashSet<>(), onSuccess)));
         }
     }
 
@@ -98,9 +99,8 @@ public class OperationGroupDialog {
         formFields.setMaxWidth(Double.MAX_VALUE);
 
         // Group Name field (required)
-        VBox nameField = createFormField(
-        );
-        TextField nameInput = (TextField) ((VBox) nameField.getChildren().get(1)).getChildren().get(0);
+        FormField<TextField> nameFormField = createTextField(GroupName, GroupNamePlaceholder, null);
+        TextField nameInput = nameFormField.inputField();
         if (isEdit) {
             nameInput.setText(group.getName());
         }
@@ -165,28 +165,13 @@ public class OperationGroupDialog {
         }
 
         // Add search filter listener
-        searchOperations.textProperty().addListener((obs, oldVal, newVal) -> {
-            String searchText = newVal != null ? newVal.toLowerCase().trim() : "";
-            for (CheckBox cb : operationCheckboxes) {
-                if (searchText.isEmpty()) {
-                    // Show all checkboxes when search is empty
-                    cb.setVisible(true);
-                    cb.setManaged(true);
-                } else {
-                    // Show only checkboxes that match the search
-                    String cbText = cb.getText();
-                    boolean matches = cbText != null && cbText.toLowerCase().contains(searchText);
-                    cb.setVisible(matches);
-                    cb.setManaged(matches);
-                }
-            }
-        });
+        addSearchFilter(searchOperations, operationCheckboxes);
 
         checkboxScroll.setContent(checkboxGroup);
         operationsField.getChildren().addAll(operationsLabel, searchOperations, selectedPanel, checkboxScroll);
 
         // Add fields to form
-        formFields.getChildren().addAll(nameField, operationsField);
+        formFields.getChildren().addAll(nameFormField.container(), operationsField);
 
         // Create the entity to save
         OperationGroup groupToSave = group != null ? updateStore.updateEntity(group) : updateStore.insertEntity(OperationGroup.class);
@@ -335,34 +320,7 @@ public class OperationGroupDialog {
     }
 
     /**
-     * Creates a form field with label, input, and optional help text.
-     */
-    private static VBox createFormField() {
-        VBox field = new VBox(8);
-        field.setMaxWidth(Double.MAX_VALUE);
-
-        Label label = I18nControls.newLabel(Admin18nKeys.GroupName);
-        label.getStyleClass().add("form-field-label");
-
-        VBox inputContainer = new VBox(4);
-        inputContainer.setMaxWidth(Double.MAX_VALUE);
-
-        TextField input = new TextField();
-        input.setPromptText(I18nControls.newLabel(Admin18nKeys.GroupNamePlaceholder).getText());
-        input.setMinWidth(200);
-        input.setPrefWidth(USE_COMPUTED_SIZE);
-        input.setMaxWidth(Double.MAX_VALUE);
-        input.setPadding(new Insets(10, 12, 10, 12));
-        input.getStyleClass().add("form-field-input");
-
-        inputContainer.getChildren().add(input);
-
-        field.getChildren().addAll(label, inputContainer);
-        return field;
-    }
-
-    /**
-     * Shows an error dialog with the specified title, header, and content.
+     * Shows an error dialog with the specified content.
      */
     private static void showErrorDialog(String content) {
         VBox dialogContent = new VBox(20);

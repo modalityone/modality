@@ -29,6 +29,7 @@ import java.util.*;
 
 import static javafx.scene.layout.Region.USE_COMPUTED_SIZE;
 import static one.modality.crm.backoffice.activities.admin.Admin18nKeys.*;
+import static one.modality.crm.backoffice.activities.admin.FormFieldHelper.*;
 
 /**
  * Dialog for creating and editing authorization roles.
@@ -127,8 +128,8 @@ public class RolesDialog {
         formFields.setMaxWidth(Double.MAX_VALUE);
 
         // Role Name field (required)
-        VBox nameField = createFormField();
-        TextField nameInput = (TextField) ((VBox) nameField.getChildren().get(1)).getChildren().get(0);
+        FormField<TextField> nameFormField = createTextField(RoleName, RoleNamePlaceholder, null);
+        TextField nameInput = nameFormField.inputField();
         if (role != null) {
             nameInput.setText(isDuplicate ? role.getName() + I18n.getI18nText(CopySuffix) : role.getName());
         }
@@ -294,7 +295,7 @@ public class RolesDialog {
         selectionTabs.getTabs().addAll(groupsTab, operationsTab, rulesTab);
 
         // Add fields to form
-        formFields.getChildren().addAll(nameField, selectedItemsContainer, selectionTabs);
+        formFields.getChildren().addAll(nameFormField.container(), selectedItemsContainer, selectionTabs);
 
         // Create the entity to save
         AuthorizationRole roleToSave = (role != null && !isDuplicate)
@@ -385,46 +386,14 @@ public class RolesDialog {
         };
 
         // Add search filter listeners
-        searchOperations.textProperty().addListener((obs, oldVal, newVal) -> {
-            String searchText = newVal != null ? newVal.toLowerCase().trim() : "";
-            for (CheckBox cb : operationCheckboxes) {
-                String cbText = cb.getText();
-                boolean matches = searchText.isEmpty() || (cbText != null && cbText.toLowerCase().contains(searchText));
-                cb.setVisible(matches);
-                cb.setManaged(matches);
-            }
-        });
-
-        searchGroups.textProperty().addListener((obs, oldVal, newVal) -> {
-            String searchText = newVal != null ? newVal.toLowerCase().trim() : "";
-            for (CheckBox cb : groupCheckboxes) {
-                String cbText = cb.getText();
-                boolean matches = searchText.isEmpty() || (cbText != null && cbText.toLowerCase().contains(searchText));
-                cb.setVisible(matches);
-                cb.setManaged(matches);
-            }
-        });
-
-        searchRules.textProperty().addListener((obs, oldVal, newVal) -> {
-            String searchText = newVal != null ? newVal.toLowerCase().trim() : "";
-            for (CheckBox cb : ruleCheckboxes) {
-                String cbText = cb.getText();
-                boolean matches = searchText.isEmpty() || (cbText != null && cbText.toLowerCase().contains(searchText));
-                cb.setVisible(matches);
-                cb.setManaged(matches);
-            }
-        });
+        addSearchFilter(searchOperations, operationCheckboxes);
+        addSearchFilter(searchGroups, groupCheckboxes);
+        addSearchFilter(searchRules, ruleCheckboxes);
 
         // Add checkbox listeners
-        for (CheckBox cb : operationCheckboxes) {
-            cb.selectedProperty().addListener((obs, oldVal, newVal) -> updateSelectedItemsDisplay.run());
-        }
-        for (CheckBox cb : groupCheckboxes) {
-            cb.selectedProperty().addListener((obs, oldVal, newVal) -> updateSelectedItemsDisplay.run());
-        }
-        for (CheckBox cb : ruleCheckboxes) {
-            cb.selectedProperty().addListener((obs, oldVal, newVal) -> updateSelectedItemsDisplay.run());
-        }
+        addCheckboxListeners(operationCheckboxes, updateSelectedItemsDisplay);
+        addCheckboxListeners(groupCheckboxes, updateSelectedItemsDisplay);
+        addCheckboxListeners(ruleCheckboxes, updateSelectedItemsDisplay);
 
         // Initial display update
         updateSelectedItemsDisplay.run();
@@ -555,32 +524,6 @@ public class RolesDialog {
 
         chip.getChildren().addAll(nameLabel, removeBtn);
         return chip;
-    }
-
-    /**
-     * Creates a form field for role name.
-     */
-    private static VBox createFormField() {
-        VBox field = new VBox(8);
-        field.setMaxWidth(Double.MAX_VALUE);
-
-        Label label = I18nControls.newLabel(RoleName);
-        label.getStyleClass().add("form-field-label");
-
-        VBox inputContainer = new VBox(4);
-        inputContainer.setMaxWidth(Double.MAX_VALUE);
-
-        TextField input = new TextField();
-        I18n.bindI18nTextProperty(input.promptTextProperty(), RoleNamePlaceholder);
-        input.setMinWidth(200);
-        input.setPrefWidth(USE_COMPUTED_SIZE);
-        input.setMaxWidth(Double.MAX_VALUE);
-        input.setPadding(new Insets(10, 12, 10, 12));
-        input.getStyleClass().add("form-field-input");
-
-        inputContainer.getChildren().add(input);
-        field.getChildren().addAll(label, inputContainer);
-        return field;
     }
 
     /**
