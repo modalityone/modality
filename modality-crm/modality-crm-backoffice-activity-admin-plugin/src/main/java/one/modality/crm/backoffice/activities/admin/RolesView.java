@@ -33,6 +33,7 @@ import one.modality.base.client.mainframe.fx.FXMainFrameDialogArea;
 import one.modality.base.shared.entities.AuthorizationOrganizationUserAccess;
 import one.modality.base.shared.entities.AuthorizationRole;
 import one.modality.base.shared.entities.AuthorizationRoleOperation;
+import one.modality.base.shared.entities.AuthorizationRule;
 
 import java.util.Comparator;
 import java.util.List;
@@ -53,9 +54,11 @@ public class RolesView {
     private TextField searchField;
     private ReactiveEntitiesMapper<AuthorizationRole> rolesMapper;
     private ReactiveEntitiesMapper<AuthorizationRoleOperation> roleOperationsMapper;
+    private ReactiveEntitiesMapper<AuthorizationRule> roleRulesMapper;
     private ReactiveEntitiesMapper<AuthorizationOrganizationUserAccess> userAccessMapper;
     private final ObservableList<AuthorizationRole> rolesFeed = FXCollections.observableArrayList();
     private final ObservableList<AuthorizationRoleOperation> roleOperationsFeed = FXCollections.observableArrayList();
+    private final ObservableList<AuthorizationRule> roleRulesFeed = FXCollections.observableArrayList();
     private final ObservableList<AuthorizationOrganizationUserAccess> userAccessFeed = FXCollections.observableArrayList();
     private final ObservableList<AuthorizationRole> displayedRoles = FXCollections.observableArrayList();
     private EntityColumn<AuthorizationRole>[] columns;
@@ -150,6 +153,10 @@ public class RolesView {
         Label legendLabel = I18nControls.newLabel(Legend);
         legendLabel.getStyleClass().add("admin-legend-label");
 
+        // Rule badge sample
+        Label ruleSample = ModalityStyle.badgeRule(new Label("Rule"));
+        ruleSample.setPadding(new Insets(3, 8, 3, 8));
+
         // Operation badge sample
         Label operationSample = ModalityStyle.badgeOperation(new Label("Operation"));
         operationSample.setPadding(new Insets(3, 8, 3, 8));
@@ -158,7 +165,7 @@ public class RolesView {
         Label groupSample = ModalityStyle.badgeOperationGroup(new Label("Operation Group"));
         groupSample.setPadding(new Insets(3, 8, 3, 8));
 
-        legend.getChildren().addAll(legendLabel, operationSample, groupSample);
+        legend.getChildren().addAll(legendLabel, ruleSample, operationSample, groupSample);
         return legend;
     }
 
@@ -210,6 +217,13 @@ public class RolesView {
             .storeEntitiesInto(roleOperationsFeed)
             .start();
 
+        // Query all authorization rules that belong to roles
+        roleRulesMapper = ReactiveEntitiesMapper.<AuthorizationRule>createPushReactiveChain()
+            .setDataSourceModel(dataSourceModel)
+            .always("{class: 'AuthorizationRule', alias: 'ar', fields: 'role,name,rule', where: 'role is not null', orderBy: 'role,name'}")
+            .storeEntitiesInto(roleRulesFeed)
+            .start();
+
         // Query all user access records to show which users have which roles
         userAccessMapper = ReactiveEntitiesMapper.<AuthorizationOrganizationUserAccess>createPushReactiveChain()
             .setDataSourceModel(dataSourceModel)
@@ -236,6 +250,9 @@ public class RolesView {
         // Also update grid when role operations change (to refresh permissions column)
         ObservableLists.runNowAndOnListChange(change -> updateGrid.run(), roleOperationsFeed);
 
+        // Also update grid when role rules change (to refresh permissions column)
+        ObservableLists.runNowAndOnListChange(change -> updateGrid.run(), roleRulesFeed);
+
         // Also update grid when user access changes (to refresh "Used By" column)
         ObservableLists.runNowAndOnListChange(change -> updateGrid.run(), userAccessFeed);
     }
@@ -246,6 +263,16 @@ public class RolesView {
     List<AuthorizationRoleOperation> getRoleOperationsForRole(AuthorizationRole role) {
         return roleOperationsFeed.stream()
             .filter(ro -> ro.getRole() != null && ro.getRole().getPrimaryKey().equals(role.getPrimaryKey()))
+            .collect(Collectors.toList());
+    }
+
+    /**
+     * Helper method for renderers to get authorization rules for a specific role.
+     */
+    List<AuthorizationRule> getRulesForRole(AuthorizationRole role) {
+        return roleRulesFeed.stream()
+            .filter(rule -> rule.getRole() != null && rule.getRole().getPrimaryKey().equals(role.getPrimaryKey()))
+            .sorted(Comparator.comparing(AuthorizationRule::getName))
             .collect(Collectors.toList());
     }
 
@@ -414,6 +441,9 @@ public class RolesView {
         if (roleOperationsMapper != null) {
             roleOperationsMapper.refreshWhenActive();
         }
+        if (roleRulesMapper != null) {
+            roleRulesMapper.refreshWhenActive();
+        }
         if (userAccessMapper != null) {
             userAccessMapper.refreshWhenActive();
         }
@@ -427,6 +457,10 @@ public class RolesView {
         if (roleOperationsMapper != null) {
             ReactiveDqlQuery<AuthorizationRoleOperation> reactiveDqlQuery = roleOperationsMapper.getReactiveDqlQuery();
             reactiveDqlQuery.setActive(active);
+        }
+        if (roleRulesMapper != null) {
+            ReactiveDqlQuery<AuthorizationRule> rulesQuery = roleRulesMapper.getReactiveDqlQuery();
+            rulesQuery.setActive(active);
         }
         if (userAccessMapper != null) {
             ReactiveDqlQuery<AuthorizationOrganizationUserAccess> userAccessQuery = userAccessMapper.getReactiveDqlQuery();

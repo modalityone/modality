@@ -12,6 +12,7 @@ import one.modality.base.client.bootstrap.ModalityStyle;
 import one.modality.base.client.icons.SvgIcons;
 import one.modality.base.shared.entities.AuthorizationRole;
 import one.modality.base.shared.entities.AuthorizationRoleOperation;
+import one.modality.base.shared.entities.AuthorizationRule;
 
 import java.util.List;
 
@@ -39,32 +40,47 @@ final class RolesRenderers {
             HBox flow = new HBox(4);
             flow.setAlignment(Pos.CENTER_LEFT);
 
-            // Get role operations for this role from the view's feed
             if (rolesView != null) {
+                // Get rules and role operations for this role from the view's feeds
+                List<AuthorizationRule> rules = rolesView.getRulesForRole(role);
                 List<AuthorizationRoleOperation> roleOperations = rolesView.getRoleOperationsForRole(role);
 
-                if (roleOperations == null || roleOperations.isEmpty()) {
+                boolean hasRules = rules != null && !rules.isEmpty();
+                boolean hasOperations = roleOperations != null && !roleOperations.isEmpty();
+
+                if (!hasRules && !hasOperations) {
                     Label emptyLabel = new Label("-");
                     emptyLabel.getStyleClass().add("admin-text-italic");
                     flow.getChildren().add(emptyLabel);
                 } else {
-                    // First add OperationGroups
-                    roleOperations.stream()
-                        .filter(ro -> ro.getOperationGroup() != null)
-                        .forEach(ro -> {
-                            Label groupChip = ModalityStyle.badgeOperationGroup(new Label(ro.getOperationGroup().getName()));
-                            groupChip.setPadding(new Insets(3, 8, 3, 8));
-                            flow.getChildren().add(groupChip);
+                    // First add Rules (on top)
+                    if (hasRules) {
+                        rules.forEach(rule -> {
+                            Label ruleChip = ModalityStyle.badgeRule(new Label(rule.getName()));
+                            ruleChip.setPadding(new Insets(3, 8, 3, 8));
+                            flow.getChildren().add(ruleChip);
                         });
+                    }
 
-                    // Then add individual Operations
-                    roleOperations.stream()
-                        .filter(ro -> ro.getOperation() != null)
-                        .forEach(ro -> {
-                            Label operationChip = ModalityStyle.badgeOperation(new Label(ro.getOperation().getName()));
-                            operationChip.setPadding(new Insets(3, 8, 3, 8));
-                            flow.getChildren().add(operationChip);
-                        });
+                    // Then add OperationGroups
+                    if (hasOperations) {
+                        roleOperations.stream()
+                            .filter(ro -> ro.getOperationGroup() != null)
+                            .forEach(ro -> {
+                                Label groupChip = ModalityStyle.badgeOperationGroup(new Label(ro.getOperationGroup().getName()));
+                                groupChip.setPadding(new Insets(3, 8, 3, 8));
+                                flow.getChildren().add(groupChip);
+                            });
+
+                        // Finally add individual Operations
+                        roleOperations.stream()
+                            .filter(ro -> ro.getOperation() != null)
+                            .forEach(ro -> {
+                                Label operationChip = ModalityStyle.badgeOperation(new Label(ro.getOperation().getName()));
+                                operationChip.setPadding(new Insets(3, 8, 3, 8));
+                                flow.getChildren().add(operationChip);
+                            });
+                    }
                 }
             }
 
