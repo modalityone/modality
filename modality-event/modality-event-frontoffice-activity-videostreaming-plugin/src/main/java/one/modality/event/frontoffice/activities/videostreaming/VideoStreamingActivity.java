@@ -234,9 +234,9 @@ final class VideoStreamingActivity extends ViewDomainActivityBase {
             eventHeader.getView(), // contains the event image and the event title
             mediaContentContainer,
             // General help panel
-            // HelpPanel.createEmailHelpPanel(VideoStreamingI18nKeys.VideosHelp, "kbs@kadampa.net")
+            HelpPanel.createEmailHelpPanel(VideoStreamingI18nKeys.VideosHelp, "kbs@kadampa.net")
             // For Festivals:
-            HelpPanel.createHelpPanel(VideoStreamingI18nKeys.VideosHelp, VideoStreamingI18nKeys.VideosHelpSecondary) // temporarily hardcoded i18n message for Festivals
+            //HelpPanel.createHelpPanel(VideoStreamingI18nKeys.VideosHelp, VideoStreamingI18nKeys.VideosHelpSecondary) // temporarily hardcoded i18n message for Festivals
         );
         Layouts.setMinMaxHeightToPref(loadedContentVBox); // No need to compute min/max height as different to pref (layout computation optimization)
         loadedContentVBox.setAlignment(Pos.TOP_CENTER);
