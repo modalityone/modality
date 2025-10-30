@@ -1,0 +1,493 @@
+/* Rights Management Admin Plugin - Web CSS */
+
+/* Root variables */
+:root {
+    --admin-primary-color: #00b8d4;
+    --admin-success-color: #4caf50;
+    --admin-warning-color: #ffa726;
+    --admin-danger-color: #ff5252;
+    --admin-info-color: #e1f5fe;
+    --admin-info-bg-color: #e3f2fd;
+    --admin-info-text-color: #1976d2;
+    --admin-info-border-color: #2196f3;
+    --admin-gray-color: #9e9e9e;
+    --admin-border-color: #ddd;
+    --admin-background-white: white;
+    --admin-background-light: #f5f5f5;
+    --admin-text-primary: #333;
+    --admin-text-secondary: #666;
+}
+
+/* Card styling */
+.admin-card {
+    background-color: var(--admin-background-white);
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+/* Note: Badge and alert styles are now centralized in Bootstrap module */
+/* Use: badge-light-info, badge-light-success, badge-light-warning, badge-light-danger, badge-gray */
+/* Use: alert-info (or info-box), alert-success, alert-warning, alert-danger */
+/* Padding for info boxes is set in Java code via Bootstrap helper methods */
+
+/* Section card - wraps content with white background and rounded corners */
+.section-card {
+    background-color: white;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+.section-title {
+    font-size: 18px;
+    font-weight: bold;
+}
+
+/* Route label (monospace) */
+.admin-route-label {
+    font-family: 'Courier New', monospace;
+    background-color: var(--admin-background-light);
+    border-radius: 4px;
+    color: var(--admin-text-secondary);
+}
+
+/* Action buttons */
+.admin-action-btn {
+    background-color: var(--admin-background-light);
+    cursor: pointer;
+    border-radius: 4px;
+}
+
+.admin-action-btn:hover {
+    background-color: #e0e0e0;
+}
+
+.admin-action-btn-delete {
+    color: var(--admin-danger-color);
+}
+
+.admin-action-btn-remove {
+    background-color: var(--admin-danger-color);
+    color: white;
+    cursor: pointer;
+}
+
+/* Title and subtitle */
+.admin-title {
+    font-size: 24px;
+    font-weight: bold;
+}
+
+.admin-subtitle {
+    font-size: 18px;
+    color: var(--admin-text-secondary);
+}
+
+.admin-card-title {
+    font-size: 18px;
+    font-weight: bold;
+}
+
+.admin-section-label {
+    font-size: 14px;
+    font-weight: bold;
+}
+
+.admin-text-italic {
+    color: #999;
+    font-style: italic;
+}
+
+/* Modern Tab Design for Super Admin Sub-Tabs */
+.super-admin-sub-tabs {
+    background-color: transparent;
+    border-style: solid;
+    border-color: transparent transparent #ddd transparent;
+    border-width: 0 0 1px 0;
+}
+
+.super-admin-sub-tabs .tab-header-area {
+    background-color: transparent;
+}
+
+.super-admin-sub-tabs .tab-header-background {
+    background-color: transparent;
+}
+
+.super-admin-sub-tabs .headers-region {
+    background-color: transparent;
+}
+
+.super-admin-sub-tabs .tab {
+    background-color: transparent;
+    border-radius: 0;
+    border-style: solid;
+    border-color: transparent transparent transparent transparent;
+    border-width: 0 0 3px 0;
+}
+
+.super-admin-sub-tabs .tab-label {
+    color: #666;
+    font-size: 14px;
+}
+
+.super-admin-sub-tabs .tab:hover .tab-label {
+    color: #00b8d4;
+}
+
+.super-admin-sub-tabs .tab:selected,
+.super-admin-sub-tabs .tab.selected {
+    background-color: transparent;
+    border-color: transparent transparent #00b8d4 transparent;
+}
+
+.super-admin-sub-tabs .tab:selected .tab-label,
+.super-admin-sub-tabs .tab.selected .tab-label {
+    color: #00b8d4;
+}
+
+.super-admin-sub-tabs .tab .focus-indicator {
+    border-color: transparent;
+}
+
+.super-admin-sub-tabs .tab-content-area {
+    background-color: transparent;
+    border-color: transparent;
+}
+
+/* Assign Role Dialog Styles */
+.dialog-title {
+    font-size: 20px;
+    font-weight: bold;
+}
+
+/* Organization Info Box */
+.organization-info-box {
+    background-color: var(--admin-info-bg-color);
+    border-color: var(--admin-info-border-color);
+    border-width: 1px;
+    border-style: solid;
+    border-radius: 6px;
+}
+
+.organization-info-prefix {
+    color: var(--admin-text-secondary);
+    font-size: 13px;
+}
+
+.organization-info-name {
+    color: var(--admin-info-text-color);
+    font-size: 14px;
+}
+
+.form-label {
+    font-weight: bold;
+}
+
+.form-description {
+    font-size: 13px;
+    color: #666;
+}
+
+/* Scope Card Styles */
+.scope-card {
+    border-radius: 6px;
+    cursor: pointer;
+    border-width: 2px;
+    border-style: solid;
+    border-color: #e0e0e0;
+    background-color: white;
+}
+
+.scope-card.selected {
+    border-color: #00b8d4;
+    background-color: #e1f5fe;
+}
+
+.scope-card-title {
+    font-weight: 600;
+}
+
+.scope-card-description {
+    font-size: 12px;
+    color: #666;
+}
+
+.dialog-summary {
+    font-size: 14px;
+}
+
+/* Modal Dialog Styles */
+.modal-title {
+    font-size: 20px;
+    font-weight: 800;
+}
+
+.modal-dialog-pane {
+    background-color: white;
+    border-radius: 8px;
+}
+
+/* Form Field Styles */
+.form-field-label {
+    font-weight: 500;
+    font-size: 14px;
+}
+
+.form-field-input {
+    border-color: #ddd;
+    border-radius: 4px;
+}
+
+.form-field-help {
+    color: #666;
+    font-size: 12px;
+}
+
+/* Error Dialog Styles */
+.error-dialog-title {
+    font-size: 20px;
+    font-weight: 600;
+    color: #dc3545;
+}
+
+.error-dialog-header {
+    font-size: 16px;
+    font-weight: 500;
+}
+
+.error-dialog-content {
+    font-size: 14px;
+    color: #666;
+}
+
+/* Delete Dialog Styles */
+.delete-dialog-title {
+    font-size: 20px;
+    font-weight: 600;
+}
+
+.delete-dialog-message {
+    font-size: 14px;
+}
+
+.delete-dialog-confirm {
+    font-size: 14px;
+    color: #666;
+}
+
+/* Role Dialog - Selected Permissions */
+.role-dialog-permissions-title {
+    font-weight: bold;
+    font-size: 14px;
+    color: #333;
+}
+
+.role-dialog-permissions-count {
+    font-size: 12px;
+    color: #666;
+}
+
+.role-dialog-permissions-pane {
+    background-color: #f9f9f9;
+    border-color: #ddd;
+    border-width: 1px;
+    border-radius: 4px;
+    border-style: solid;
+}
+
+.role-dialog-empty-message {
+    color: #999;
+    font-size: 13px;
+    font-style: italic;
+}
+
+/* Permission Chip Styles */
+.permission-chip-operation {
+    background-color: #d1ecf1;
+    border: 1px solid rgba(12, 84, 96, 0.13);
+    border-radius: 4px;
+}
+
+.permission-chip-group {
+    background-color: #fff8e1;
+    border: 1px solid rgba(245, 127, 23, 0.13);
+    border-radius: 4px;
+}
+
+.permission-chip-rule {
+    background-color: #e8f5e9;
+    border: 1px solid rgba(46, 125, 50, 0.13);
+    border-radius: 4px;
+}
+
+.permission-chip-label-operation {
+    color: #0c5460;
+    font-size: 13px;
+}
+
+.permission-chip-label-group {
+    color: #f57f17;
+    font-size: 13px;
+}
+
+.permission-chip-label-rule {
+    color: #2e7d32;
+    font-size: 13px;
+}
+
+.permission-chip-remove-btn {
+    font-size: 16px;
+    font-weight: bold;
+    cursor: pointer;
+}
+
+.permission-chip-remove-btn-operation {
+    color: #0c5460;
+}
+
+.permission-chip-remove-btn-group {
+    color: #f57f17;
+}
+
+.permission-chip-remove-btn-rule {
+    color: #2e7d32;
+}
+
+.permission-chip-remove-btn-operation:hover {
+    color: #dc3545;
+}
+
+.permission-chip-remove-btn-group:hover {
+    color: #dc3545;
+}
+
+.permission-chip-remove-btn-rule:hover {
+    color: #dc3545;
+}
+
+/* Admin Chip Styles (Organization Admins) */
+.admin-selected-panel {
+    background-color: #f9f9f9;
+    border: 1px dashed #ddd;
+    border-radius: 4px;
+}
+
+.admin-count-label {
+    font-weight: bold;
+    font-size: 13px;
+    color: #333;
+}
+
+.admin-chip {
+    background-color: #e3f2fd;
+    border: 1px solid rgba(33, 150, 243, 0.13);
+    border-radius: 16px;
+}
+
+.admin-chip-label {
+    color: #1976d2;
+    font-size: 13px;
+}
+
+.admin-chip-remove {
+    color: #1976d2;
+    font-size: 16px;
+    font-weight: bold;
+    cursor: pointer;
+}
+
+.admin-chip-remove:hover {
+    color: #dc3545;
+}
+
+/* Legend Label */
+.admin-legend-label {
+    font-weight: bold;
+    font-size: 12px;
+}
+
+/* Operation Group Selection Panel (used in OperationGroupDialog) */
+.operation-selection-panel {
+    background-color: #f9f9f9;
+    border: 1px dashed #ddd;
+    border-radius: 4px;
+}
+
+.operation-selection-count-label {
+    font-weight: bold;
+    font-size: 13px;
+    color: #666;
+}
+
+.operation-selection-empty-message {
+    color: #999;
+    font-size: 13px;
+}
+
+/* Operation Selection Chip Styles (used in OperationGroupDialog) */
+.operation-selection-chip {
+    background-color: #d1ecf1;
+    border: 1px solid #bee5eb;
+    border-radius: 4px;
+}
+
+.operation-selection-chip-label {
+    color: #0c5460;
+    font-size: 13px;
+}
+
+.operation-selection-chip-remove {
+    color: #0c5460;
+    font-size: 16px;
+    font-weight: bold;
+    cursor: pointer;
+}
+
+.operation-selection-chip-remove:hover {
+    color: #dc3545;
+}
+
+/* VisualGrid Header Styles - minimal styling to avoid interfering with default behavior */
+.grid-head {
+    background-color: #e9ecef !important;
+    border-bottom: 2px solid #dee2e6;
+    font-weight: bold;
+    font-size: 13px;
+    color: #495057;
+}
+
+/* Fix badge colors in web view - override with !important */
+.badge-light-info {
+    background-color: #e1f5fe !important;
+    color: #00b8d4 !important;
+}
+
+.badge-light-success {
+    background-color: #e8f5e9 !important;
+    color: #4caf50 !important;
+}
+
+.badge-light-warning {
+    background-color: #fff3e0 !important;
+    color: #ffa726 !important;
+}
+
+.badge-light-danger {
+    background-color: #ffebee !important;
+    color: #ff5252 !important;
+}
+
+.badge-gray, .badge-light-gray {
+    background-color: #f5f5f5 !important;
+    color: #666 !important;
+}
+
+/* Ensure table cells are properly aligned and have no extra padding */
+table tbody td {
+    vertical-align: middle;
+}
+
+table tbody td > * {
+    vertical-align: middle;
+}
+
