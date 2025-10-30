@@ -6,11 +6,14 @@
 module modality.crm.server.authz.required.plugin {
 
     // Direct dependencies modules
+    requires modality.base.shared.entities;
     requires webfx.platform.async;
+    requires webfx.platform.util;
     requires webfx.stack.authn;
     requires webfx.stack.authz.server;
     requires webfx.stack.com.bus;
     requires webfx.stack.db.query;
+    requires webfx.stack.orm.datasourcemodel.service;
     requires webfx.stack.orm.entity;
     requires webfx.stack.push.server;
     requires webfx.stack.session.state;
