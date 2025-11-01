@@ -25,10 +25,10 @@
 
 
     <providers>
-        <provider interface="dev.webfx.stack.routing.uirouter.UiRoute">one.modality.crm.backoffice.activities.superadmin.SuperAdminRouting$SuperAdminUiRoute</provider>
-        <provider interface="dev.webfx.stack.routing.uirouter.operations.RouteRequestEmitter">one.modality.crm.backoffice.activities.superadmin.SuperAdminRouting$RouteToSuperAdminRequestEmitter</provider>
+        <provider interface="dev.webfx.stack.routing.uirouter.UiRoute">one.modality.crm.backoffice.activities.customers.CustomersRouting$CustomersUiRoute</provider>
+        <provider interface="dev.webfx.stack.routing.uirouter.operations.RouteRequestEmitter">one.modality.crm.backoffice.activities.customers.CustomersRouting$RouteToCustomersRequestEmitter</provider>
     </providers>
 
-    <i18n javaKeysClass="one.modality.crm.backoffice.activities.superadmin.SuperAdmin18nKeys"/>
+    <i18n javaKeysClass="one.modality.crm.backoffice.activities.customers.CustomersI18nKeys"/>
 
 </project>

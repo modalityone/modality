@@ -1,4 +1,4 @@
-package one.modality.crm.backoffice.activities.superadmin;
+package one.modality.crm.backoffice.activities.customers;
 
 import dev.webfx.extras.i18n.HasI18nKey;
 import dev.webfx.extras.operation.HasOperationCode;
@@ -14,33 +14,33 @@ import dev.webfx.stack.routing.uirouter.operations.RouteRequestEmitter;
 /**
  * @author Bruno Salmon
  */
-public final class SuperAdminRouting {
+public final class CustomersRouting {
 
-    private final static String PATH = "/superadmin";
-    private final static String OPERATION_CODE = "RouteToSuperAdmin";
+    private final static String PATH = "/customers";
+    private final static String OPERATION_CODE = "RouteToCustomers";
 
     public static String getPath() {
         return PATH;
     }
 
-    public static final class SuperAdminUiRoute extends UiRouteImpl {
+    public static final class CustomersUiRoute extends UiRouteImpl {
 
-        public SuperAdminUiRoute() {
+        public CustomersUiRoute() {
             super(uiRoute());
         }
 
         public static UiRoute<?> uiRoute() {
-            return UiRoute.create(SuperAdminRouting.getPath()
+            return UiRoute.create(CustomersRouting.getPath()
                     , true
-                    , SuperAdminActivity::new
+                    , CustomersActivity::new
                     , ViewDomainActivityContextFinal::new
             );
         }
     }
 
-    public static class RouteToSuperAdminRequest extends RoutePushRequest implements HasOperationCode, HasI18nKey {
+    public static class RouteToCustomersRequest extends RoutePushRequest implements HasOperationCode, HasI18nKey {
 
-        public RouteToSuperAdminRequest(BrowsingHistory browsingHistory) {
+        public RouteToCustomersRequest(BrowsingHistory browsingHistory) {
             super(getPath(), browsingHistory);
         }
 
@@ -51,16 +51,16 @@ public final class SuperAdminRouting {
 
         @Override
         public Object getI18nKey() {
-            //return SuperAdmin18nKeys.SuperAdminMenu;
-            return "SuperAdminMenu";
+            //return Customers18nKeys.CustomersMenu;
+            return "CustomersMenu";
         }
     }
 
-    public static class RouteToSuperAdminRequestEmitter implements RouteRequestEmitter {
+    public static class RouteToCustomersRequestEmitter implements RouteRequestEmitter {
 
         @Override
         public RouteRequest instantiateRouteRequest(UiRouteActivityContext context) {
-            return new RouteToSuperAdminRequest(context.getHistory());
+            return new RouteToCustomersRequest(context.getHistory());
         }
     }
 }

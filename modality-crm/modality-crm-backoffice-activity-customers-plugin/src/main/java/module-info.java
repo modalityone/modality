@@ -1,6 +1,6 @@
 // File managed by WebFX (DO NOT EDIT MANUALLY)
 
-module modality.crm.backoffice.activity.superadmin.plugin {
+module modality.crm.backoffice.activity.customers.plugin {
 
     // Direct dependencies modules
     requires javafx.controls;
@@ -24,10 +24,10 @@ module modality.crm.backoffice.activity.superadmin.plugin {
     requires webfx.stack.routing.uirouter;
 
     // Exported packages
-    exports one.modality.crm.backoffice.activities.superadmin;
+    exports one.modality.crm.backoffice.activities.customers;
 
     // Provided services
-    provides dev.webfx.stack.routing.uirouter.UiRoute with one.modality.crm.backoffice.activities.superadmin.SuperAdminRouting.SuperAdminUiRoute;
-    provides dev.webfx.stack.routing.uirouter.operations.RouteRequestEmitter with one.modality.crm.backoffice.activities.superadmin.SuperAdminRouting.RouteToSuperAdminRequestEmitter;
+    provides dev.webfx.stack.routing.uirouter.UiRoute with one.modality.crm.backoffice.activities.customers.CustomersRouting.CustomersUiRoute;
+    provides dev.webfx.stack.routing.uirouter.operations.RouteRequestEmitter with one.modality.crm.backoffice.activities.customers.CustomersRouting.RouteToCustomersRequestEmitter;
 
 }
