@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project>
+
+    <exported-packages>
+        <source-packages/>
+        <resource-packages/>
+    </exported-packages>
+
+    <dependencies>
+        <used-by-source-modules>
+            <undetected-module>javafx-controls</undetected-module>
+            <module>webfx-extras-controlfactory</module>
+            <module>webfx-extras-util-dialog</module>
+            <module>webfx-extras-util-layout</module>
+            <module>webfx-kit-util</module>
+            <module>modality-base-client-mainframe-fx</module>
+            <module>modality-base-client-bootstrap</module>
+            <module>webfx-stack-orm-entity-controls</module>
+            <module>webfx-stack-orm-datasourcemodel-service</module>
+            <module>webfx-stack-orm-reactive-entities</module>
+            <module>modality-base-shared-entities</module>
+            <module>modality-base-shared-domainmodel</module>
+        </used-by-source-modules>
+    </dependencies>
+
+
+    <providers>
+        <provider interface="dev.webfx.stack.routing.uirouter.UiRoute">one.modality.crm.backoffice.activities.superadmin.SuperAdminRouting$SuperAdminUiRoute</provider>
+        <provider interface="dev.webfx.stack.routing.uirouter.operations.RouteRequestEmitter">one.modality.crm.backoffice.activities.superadmin.SuperAdminRouting$RouteToAdminRequestEmitter</provider>
+    </providers>
+
+    <i18n javaKeysClass="one.modality.crm.backoffice.activities.superadmin.SuperAdmin18nKeys"/>
+
+</project>

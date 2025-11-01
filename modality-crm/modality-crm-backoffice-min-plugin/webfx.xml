@@ -10,6 +10,7 @@
         <used-by-source-modules/>
 
         <plugin-module>modality-crm-client-min-plugin</plugin-module>
+        <plugin-module>modality-crm-backoffice-activity-superadmin-plugin</plugin-module>
         <plugin-module>modality-crm-backoffice-activity-admin-plugin</plugin-module>
 
     </dependencies>
