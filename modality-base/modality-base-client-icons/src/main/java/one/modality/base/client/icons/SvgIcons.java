@@ -58,6 +58,12 @@ public final class SvgIcons {
             "M33.631,40.581l-3.348,0l-0.368,-16.449l4.1,0l-0.384,16.449Zm-3.828,5.03c0,-0.609 0.197,-1.113 0.592,-1.514c0.396,-0.4 0.935,-0.601 1.618,-0.601c0.684,0 1.223,0.201 1.618,0.601c0.395,0.401 0.593,0.905 0.593,1.514c0,0.587 -0.193,1.078 -0.577,1.473c-0.385,0.395 -0.929,0.593 -1.634,0.593c-0.705,0 -1.249,-0.198 -1.634,-0.593c-0.384,-0.395 -0.576,-0.886 -0.576,-1.473Z";
     private static final String EDIT_PATH = "M3 17.25V21h3.75L17.81 9.94l-3.75-3.75L3 17.25zM20.71 7.04c.39-.39.39-1.02 0-1.41l-2.34-2.34c-.39-.39-1.02-.39-1.41 0l-1.83 1.83 3.75 3.75 1.83-1.83z";
     private static final String DUPLICATE_PATH = "M14 8V4H4v10h4v6h10V8h-4zM6 12V6h6v2H8v4H6zm12 6H10V10h8v8z";
+    // FontAwesome icons
+    private static final String FA_PEN_PATH = "M362.7 19.3L314.3 67.7 444.3 197.7l48.4-48.4c25-25 25-65.5 0-90.5L453.3 19.3c-25-25-65.5-25-90.5 0zm-71 71L58.6 323.5c-10.4 10.4-18 23.3-22.2 37.4L1 481.2C-1.5 489.7 .8 498.8 7 505s15.3 8.5 23.7 6.1l120.3-35.4c14.1-4.2 27-11.8 37.4-22.2L421.7 220.3 291.7 90.3z";
+    private static final String FA_SAVE_PATH = "M64 32C64 14.3 49.7 0 32 0S0 14.3 0 32V416c0 17.7 14.3 32 32 32s32-14.3 32-32V32zm0 96c0-17.7-14.3-32-32-32s-32 14.3-32 32V416c0 17.7 14.3 32 32 32s32-14.3 32-32V128zM64 0H288c12.4 0 24.2 4.9 33 13.7L429.3 122c8.8 8.8 13.7 20.6 13.7 33V448c0 35.3-28.7 64-64 64H64c-35.3 0-64-28.7-64-64V64C0 28.7 28.7 0 64 0zM384 448V160H256c-17.7 0-32-14.3-32-32V0H64V448H384zM256 0V128H384L256 0z";
+    private static final String FA_PLUS_ICON_PATH = "M256 80c0-17.7-14.3-32-32-32s-32 14.3-32 32V224H48c-17.7 0-32 14.3-32 32s14.3 32 32 32H192V432c0 17.7 14.3 32 32 32s32-14.3 32-32V288H400c17.7 0 32-14.3 32-32s-14.3-32-32-32H256V80z";
+    private static final String FA_TIMES_PATH = "M342.6 150.6c12.5-12.5 12.5-32.8 0-45.3s-32.8-12.5-45.3 0L192 210.7 86.6 105.4c-12.5-12.5-32.8-12.5-45.3 0s-12.5 32.8 0 45.3L146.7 256 41.4 361.4c-12.5 12.5-12.5 32.8 0 45.3s32.8 12.5 45.3 0L192 301.3 297.4 406.6c12.5 12.5 32.8 12.5 45.3 0s12.5-32.8 0-45.3L237.3 256 342.6 150.6z";
+    private static final String FA_COPY_PATH = "M384 336H192c-8.8 0-16-7.2-16-16V64c0-8.8 7.2-16 16-16l140.1 0L400 115.9V320c0 8.8-7.2 16-16 16zM192 384H384c35.3 0 64-28.7 64-64V115.9c0-12.7-5.1-24.9-14.1-33.9L366.1 14.1c-9-9-21.2-14.1-33.9-14.1H192c-35.3 0-64 28.7-64 64V320c0 35.3 28.7 64 64 64zM64 128c-35.3 0-64 28.7-64 64V448c0 35.3 28.7 64 64 64H256c35.3 0 64-28.7 64-64V416H272v32c0 8.8-7.2 16-16 16H64c-8.8 0-16-7.2-16-16V192c0-8.8 7.2-16 16-16H96V128H64z";
 
     public static SVGPath createSVGPath(String path) {
         SVGPath svgPath = new SVGPath();
@@ -318,6 +324,26 @@ public final class SvgIcons {
     public static SVGPath createFullScreenPath() { return createSVGPath(FULL_SCREEN_PATH);}
 
     public static SVGPath createWarningPath() { return createSVGPath(WARNING_PATH);}
+
+    public static SVGPath createPenPath() {
+        return createSVGPath(FA_PEN_PATH);
+    }
+
+    public static SVGPath createSavePath() {
+        return createSVGPath(FA_SAVE_PATH);
+    }
+
+    public static SVGPath createPlusIconPath() {
+        return createSVGPath(FA_PLUS_ICON_PATH);
+    }
+
+    public static SVGPath createTimesPath() {
+        return createSVGPath(FA_TIMES_PATH);
+    }
+
+    public static SVGPath createCopyPath() {
+        return createSVGPath(FA_COPY_PATH);
+    }
 }
 
 

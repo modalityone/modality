@@ -1,7 +1,8 @@
-package one.modality.crm.backoffice.activities.admin;
+package one.modality.crm.backoffice.activities.superadmin;
 
 import dev.webfx.extras.i18n.I18n;
 import dev.webfx.extras.i18n.controls.I18nControls;
+import dev.webfx.extras.switches.Switch;
 import dev.webfx.extras.visual.VisualResult;
 import dev.webfx.extras.visual.controls.grid.VisualGrid;
 import dev.webfx.kit.util.properties.FXProperties;
@@ -30,7 +31,7 @@ import java.util.Comparator;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import static one.modality.crm.backoffice.activities.admin.Admin18nKeys.*;
+import static one.modality.crm.backoffice.activities.superadmin.SuperAdmin18nKeys.*;
 
 /**
  * Organizations tab view showing organizations and their assigned managers.
@@ -42,7 +43,7 @@ public class AssignAdminToOrganizationsView {
     private final VBox view;
     private final VisualGrid organizationsGrid;
     private TextField searchField;
-    private CheckBox showAllCheckBox;
+    private Switch showAllSwitch;
     private ReactiveEntitiesMapper<Organization> organizationsMapper;
     private ReactiveEntitiesMapper<AuthorizationOrganizationAdmin> organizationAdminsMapper;
     private final ObservableList<Organization> organizationsFeed = FXCollections.observableArrayList();
@@ -118,10 +119,19 @@ public class AssignAdminToOrganizationsView {
         StackPane.setAlignment(searchIcon, Pos.CENTER_RIGHT);
         StackPane.setMargin(searchIcon, new Insets(0, 12, 0, 0));
 
-        showAllCheckBox = I18nControls.newCheckBox(ShowOrganizationsWithoutManagers);
+        // Create toggle switch with label beside it
+        HBox switchContainer = new HBox(8);
+        switchContainer.setAlignment(Pos.CENTER_LEFT);
+
+        showAllSwitch = new Switch();
+
+        Label switchLabel = I18nControls.newLabel(ShowOrganizationsWithoutManagers);
+        switchLabel.getStyleClass().add("switch-label");
+
+        switchContainer.getChildren().addAll(showAllSwitch, switchLabel);
 
         HBox.setHgrow(searchContainer, Priority.SOMETIMES);
-        searchArea.getChildren().addAll(searchContainer, showAllCheckBox);
+        searchArea.getChildren().addAll(searchContainer, switchContainer);
 
         return searchArea;
     }
@@ -160,13 +170,13 @@ public class AssignAdminToOrganizationsView {
             .storeEntitiesInto(userAccessFeed)
             .start();
 
-        // Update displayed organizations when organizations feed, org admins, search text, or checkbox changes
+        // Update displayed organizations when organizations feed, org admins, search text, or switch changes
         FXProperties.runNowAndOnPropertiesChange(
             this::updateDisplayedOrganizations,
             ObservableLists.versionNumber(organizationsFeed),
             ObservableLists.versionNumber(organizationAdminsFeed),
             searchField.textProperty(),
-            showAllCheckBox.selectedProperty()
+            showAllSwitch.selectedProperty()
         );
 
         // Update grid when displayed organizations change or when org admins or user access changes
@@ -193,7 +203,7 @@ public class AssignAdminToOrganizationsView {
         String searchText = searchField != null && searchField.getText() != null
             ? searchField.getText().toLowerCase().trim()
             : "";
-        boolean showAll = showAllCheckBox != null && showAllCheckBox.isSelected();
+        boolean showAll = showAllSwitch != null && showAllSwitch.isSelected();
 
         // Get all organizations and sort by name
         List<Organization> organizations = organizationsFeed.stream()
@@ -226,7 +236,6 @@ public class AssignAdminToOrganizationsView {
                 })
                 .collect(Collectors.toList());
         }
-
         // Update displayed organizations
         displayedOrganizations.setAll(organizations);
     }

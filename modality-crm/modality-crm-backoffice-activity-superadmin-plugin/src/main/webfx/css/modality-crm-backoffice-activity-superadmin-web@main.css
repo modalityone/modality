@@ -1,0 +1,242 @@
+/* Rights Management Super Admin Plugin - Web CSS */
+/* Note: This file contains only CSS classes actually used in the superadmin module Java code */
+
+/* Root variables */
+:root {
+    --admin-primary-color: #00b8d4;
+    --admin-success-color: #4caf50;
+    --admin-warning-color: #ffa726;
+    --admin-danger-color: #ff5252;
+    --admin-info-color: #e1f5fe;
+    --admin-info-bg-color: #e3f2fd;
+    --admin-info-text-color: #1976d2;
+    --admin-info-border-color: #2196f3;
+    --admin-gray-color: #9e9e9e;
+    --admin-border-color: #ddd;
+    --admin-background-white: white;
+    --admin-background-light: #f5f5f5;
+    --admin-text-primary: #333;
+    --admin-text-secondary: #666;
+}
+
+/* Route label (monospace) - used in Operations view */
+.admin-route-label {
+    font-family: 'Courier New', monospace;
+    background-color: var(--admin-background-light);
+    border-radius: 4px;
+    color: var(--admin-text-secondary);
+}
+
+/* Info banner - used in dialogs */
+.admin-info-banner {
+    background-color: var(--admin-info-bg-color);
+    border-left: 3px solid var(--admin-info-border-color);
+    border-radius: 4px;
+}
+
+.admin-info-banner-text {
+    color: var(--admin-info-text-color);
+    font-size: 13px;
+}
+
+/* Modern Tab Design for Super Admin Sub-Tabs */
+.super-admin-sub-tabs {
+    background-color: white;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+}
+
+.super-admin-sub-tabs .tab-header-area {
+    background-color: white;
+    border-radius: 8px 8px 0 0;
+}
+
+.super-admin-sub-tabs .tab-header-background {
+    background-color: white;
+    border-radius: 8px 8px 0 0;
+}
+
+.super-admin-sub-tabs .headers-region {
+    background-color: white;
+}
+
+.super-admin-sub-tabs .tab {
+    background-color: transparent;
+    border-radius: 0;
+    border-style: solid;
+    border-color: transparent transparent transparent transparent;
+    border-width: 0 0 3px 0;
+}
+
+.super-admin-sub-tabs .tab-label {
+    color: #666;
+    font-size: 14px;
+}
+
+.super-admin-sub-tabs .tab:hover .tab-label {
+    color: #00b8d4;
+}
+
+.super-admin-sub-tabs .tab:selected,
+.super-admin-sub-tabs .tab.selected {
+    background-color: transparent;
+    border-color: transparent transparent #00b8d4 transparent;
+}
+
+.super-admin-sub-tabs .tab:selected .tab-label,
+.super-admin-sub-tabs .tab.selected .tab-label {
+    color: #00b8d4;
+}
+
+.super-admin-sub-tabs .tab .focus-indicator {
+    border-color: transparent;
+}
+
+.super-admin-sub-tabs .tab-content-area {
+    background-color: white;
+    border-color: transparent;
+}
+
+/* Role Dialog - Selected Permissions */
+.role-dialog-permissions-title {
+    font-weight: bold;
+    font-size: 14px;
+    color: #333;
+}
+
+.role-dialog-permissions-count {
+    font-size: 12px;
+    color: #666;
+}
+
+.role-dialog-permissions-pane {
+    background-color: #f9f9f9;
+    border-color: #ddd;
+    border-width: 1px;
+    border-radius: 4px;
+    border-style: solid;
+}
+
+.role-dialog-empty-message {
+    color: #999;
+    font-size: 13px;
+    font-style: italic;
+}
+
+/* Permission Chip Styles - used in Roles dialog */
+.permission-chip-operation {
+    background-color: #d1ecf1;
+    border: 1px solid rgba(12, 84, 96, 0.13);
+    border-radius: 4px;
+}
+
+.permission-chip-group {
+    background-color: #fff8e1;
+    border: 1px solid rgba(245, 127, 23, 0.13);
+    border-radius: 4px;
+}
+
+.permission-chip-rule {
+    background-color: #e8f5e9;
+    border: 1px solid rgba(46, 125, 50, 0.13);
+    border-radius: 4px;
+}
+
+.permission-chip-label-operation {
+    color: #0c5460;
+    font-size: 13px;
+}
+
+.permission-chip-label-group {
+    color: #f57f17;
+    font-size: 13px;
+}
+
+.permission-chip-label-rule {
+    color: #2e7d32;
+    font-size: 13px;
+}
+
+.permission-chip-remove-btn {
+    font-size: 16px;
+    font-weight: bold;
+    cursor: pointer;
+}
+
+.permission-chip-remove-btn-operation {
+    color: #0c5460;
+}
+
+.permission-chip-remove-btn-group {
+    color: #f57f17;
+}
+
+.permission-chip-remove-btn-rule {
+    color: #2e7d32;
+}
+
+.permission-chip-remove-btn-operation:hover {
+    color: #dc3545;
+}
+
+.permission-chip-remove-btn-group:hover {
+    color: #dc3545;
+}
+
+.permission-chip-remove-btn-rule:hover {
+    color: #dc3545;
+}
+
+/* Operation Group Selection Panel - used in OperationGroupDialog */
+.operation-selection-panel {
+    background-color: #f9f9f9;
+    border: 1px dashed #ddd;
+    border-radius: 4px;
+}
+
+.operation-selection-count-label {
+    font-weight: bold;
+    font-size: 13px;
+    color: #666;
+}
+
+.operation-selection-empty-message {
+    color: #999;
+    font-size: 13px;
+}
+
+/* Operation Selection Chip Styles - used in OperationGroupDialog */
+.operation-selection-chip {
+    background-color: #d1ecf1;
+    border: 1px solid #bee5eb;
+    border-radius: 4px;
+}
+
+.operation-selection-chip-label {
+    color: #0c5460;
+    font-size: 13px;
+}
+
+.operation-selection-chip-remove {
+    color: #0c5460;
+    font-size: 16px;
+    font-weight: bold;
+    cursor: pointer;
+}
+
+.operation-selection-chip-remove:hover {
+    color: #dc3545;
+}
+
+/* Table header styling */
+.grid-head .grid-col {
+    background-color: #e9ecef;
+}
+
+.grid-head Text,
+.grid-head Label {
+    font-weight: bold;
+    font-size: 13px;
+    fill: #495057;
+    color: #495057;
+}

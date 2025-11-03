@@ -1,4 +1,4 @@
-package one.modality.crm.backoffice.activities.admin;
+package one.modality.crm.backoffice.activities.superadmin;
 
 import dev.webfx.extras.i18n.I18n;
 import dev.webfx.extras.i18n.controls.I18nControls;
@@ -28,8 +28,8 @@ import one.modality.base.shared.entities.OperationGroup;
 import java.util.*;
 
 import static javafx.scene.layout.Region.USE_COMPUTED_SIZE;
-import static one.modality.crm.backoffice.activities.admin.Admin18nKeys.*;
-import static one.modality.crm.backoffice.activities.admin.FormFieldHelper.*;
+import static one.modality.crm.backoffice.activities.superadmin.SuperAdmin18nKeys.*;
+import static one.modality.crm.backoffice.activities.superadmin.FormFieldHelper.*;
 
 /**
  * Dialog for creating and editing authorization roles.
@@ -63,11 +63,11 @@ public class RolesDialog {
         // Use the provided store and create an update store above it
         UpdateStore updateStore = UpdateStore.createAbove(store);
 
-        // Load data using executeQueryBatch
+        // Load data using executeQueryBatch (filtering only backend operations)
         if (role != null) {
             // Editing or duplicating - load all data including role-specific data
             store.executeQueryBatch(
-                new EntityStoreQuery("select id,name from Operation order by name"),
+                new EntityStoreQuery("select id,name from Operation where backend=true order by name"),
                 new EntityStoreQuery("select id,name from OperationGroup order by name"),
                 new EntityStoreQuery("select id,name,rule from AuthorizationRule order by name"),
                 new EntityStoreQuery("select id,operation,operationGroup from AuthorizationRoleOperation where role=? order by id", role.getPrimaryKey()),
@@ -82,9 +82,9 @@ public class RolesDialog {
                 onSuccess
             ));
         } else {
-            // Creating new - only load operations, groups, and rules
+            // Creating new - only load operations, groups, and rules (filtering only backend operations)
             store.executeQueryBatch(
-                new EntityStoreQuery("select id,name from Operation order by name"),
+                new EntityStoreQuery("select id,name from Operation where backend=true order by name"),
                 new EntityStoreQuery("select id,name from OperationGroup order by name"),
                 new EntityStoreQuery("select id,name,rule from AuthorizationRule order by name")
             ).inUiThread().onSuccess(entityLists -> buildAndShowDialog(
@@ -158,7 +158,7 @@ public class RolesDialog {
         selectedItemsContainer.setMaxWidth(Double.MAX_VALUE);
 
         Label selectedItemsTitle = new Label();
-        I18n.bindI18nTextProperty(selectedItemsTitle.textProperty(), Admin18nKeys.Permissions);
+        I18n.bindI18nTextProperty(selectedItemsTitle.textProperty(), SuperAdmin18nKeys.Permissions);
         selectedItemsTitle.getStyleClass().add("role-dialog-permissions-title");
 
         // Combined display for both operations and groups
@@ -173,6 +173,19 @@ public class RolesDialog {
         selectedCountLabel.getStyleClass().add("role-dialog-permissions-count");
 
         selectedItemsContainer.getChildren().addAll(selectedItemsTitle, selectedCountLabel, selectedItemsPane);
+
+        // === INFO BANNER ===
+        VBox infoBanner = new VBox(6);
+        infoBanner.getStyleClass().add("admin-info-banner");
+        infoBanner.setPadding(new Insets(12));
+        infoBanner.setMaxWidth(Double.MAX_VALUE);
+
+        Label infoText = I18nControls.newLabel(BackofficeOperationsOnly);
+        infoText.getStyleClass().add("admin-info-banner-text");
+        infoText.setWrapText(true);
+        infoText.setMaxWidth(Double.MAX_VALUE);
+
+        infoBanner.getChildren().add(infoText);
 
         // === TABS FOR OPERATIONS AND OPERATION GROUPS ===
         TabPane selectionTabs = new TabPane();
@@ -257,7 +270,7 @@ public class RolesDialog {
 
         // === AUTHORIZATION RULES TAB ===
         Tab rulesTab = new Tab();
-        I18n.bindI18nTextProperty(rulesTab.textProperty(), Admin18nKeys.Rules);
+        I18n.bindI18nTextProperty(rulesTab.textProperty(), SuperAdmin18nKeys.Rules);
 
         VBox rulesContent = new VBox(12);
         rulesContent.setPadding(new Insets(16));
@@ -295,7 +308,7 @@ public class RolesDialog {
         selectionTabs.getTabs().addAll(groupsTab, operationsTab, rulesTab);
 
         // Add fields to form
-        formFields.getChildren().addAll(nameFormField.container(), selectedItemsContainer, selectionTabs);
+        formFields.getChildren().addAll(nameFormField.container(), selectedItemsContainer, infoBanner, selectionTabs);
 
         // Create the entity to save
         AuthorizationRole roleToSave = (role != null && !isDuplicate)

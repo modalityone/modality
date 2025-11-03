@@ -1,4 +1,4 @@
-package one.modality.crm.backoffice.activities.admin;
+package one.modality.crm.backoffice.activities.superadmin;
 
 import dev.webfx.extras.cell.renderer.ValueRendererRegistry;
 import dev.webfx.extras.panes.MonoPane;
@@ -31,7 +31,7 @@ final class AuthorizationRulesRenderers {
 
     static void registerRenderers() {
         // Register common renderers shared with other admin views
-        AdminRenderers.registerCommonRenderers();
+        SuperAdminRenderers.registerCommonRenderers();
 
         // Register the "Used In" renderer
         ValueRendererRegistry.registerValueRenderer("ruleUsedIn", (value, context) -> {

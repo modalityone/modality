@@ -18,7 +18,6 @@ public final class CustomersRouting {
 
     private final static String PATH = "/customers";
     private final static String OPERATION_CODE = "RouteToCustomers";
-
     public static String getPath() {
         return PATH;
     }
@@ -51,8 +50,7 @@ public final class CustomersRouting {
 
         @Override
         public Object getI18nKey() {
-            //return Customers18nKeys.CustomersMenu;
-            return "CustomersMenu";
+            return CustomersI18nKeys.CustomersMenu;
         }
     }
 

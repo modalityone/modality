@@ -1,4 +1,4 @@
-package one.modality.crm.backoffice.activities.admin;
+package one.modality.crm.backoffice.activities.superadmin;
 
 import dev.webfx.extras.cell.renderer.ValueRendererRegistry;
 import dev.webfx.extras.styles.bootstrap.Bootstrap;
@@ -8,16 +8,16 @@ import javafx.scene.control.Label;
 import javafx.scene.layout.HBox;
 
 /**
- * Common renderers shared across admin views.
+ * Common renderers shared across super admin views.
  *
  * @author Claude Code
  */
-final class AdminRenderers {
+final class SuperAdminRenderers {
 
     private static boolean registered = false;
 
     /**
-     * Register common renderers used by multiple admin views.
+     * Register common renderers used by multiple super admin views.
      * This method is idempotent - calling it multiple times is safe.
      */
     static void registerCommonRenderers() {
@@ -29,13 +29,14 @@ final class AdminRenderers {
         // Register boolean check renderer (used by both Operations and Routes views)
         ValueRendererRegistry.registerValueRenderer("booleanCheck", (value, context) -> {
             Boolean checked = (Boolean) value;
-            Label check = new Label("✓");
+            // Show checkmark for true, empty for false (avoids inline CSS)
+            String symbol = Boolean.TRUE.equals(checked) ? "✓" : "";
+            Label check = new Label(symbol);
             check.setPadding(new Insets(4, 8, 4, 8));
             if (Boolean.TRUE.equals(checked)) {
                 Bootstrap.badgeLightSuccess(check);
             } else {
                 Bootstrap.badgeGray(check);
-                check.setStyle("-fx-text-fill: transparent;");
             }
             HBox container = new HBox(check);
             container.setAlignment(Pos.CENTER);

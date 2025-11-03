@@ -23,7 +23,6 @@ import static one.modality.crm.backoffice.activities.admin.Admin18nKeys.*;
  */
 final class AdminActivity extends ViewDomainActivityBase implements ButtonFactoryMixin {
 
-    private final SuperAdminView superAdminView = new SuperAdminView();
     private final AssignUserAndRoleToOrganizationView userManagementView = new AssignUserAndRoleToOrganizationView(this);
 
     private final BorderPane container = new BorderPane();
@@ -36,7 +35,6 @@ final class AdminActivity extends ViewDomainActivityBase implements ButtonFactor
     @Override
     public Node buildUi() {
         mainTabsBar.setTabs(
-            mainTabsBar.createTab(SuperAdminView, superAdminView::getView),
             mainTabsBar.createTab(ManageUsers, userManagementView::getView)
         );
         return container;
@@ -50,10 +48,8 @@ final class AdminActivity extends ViewDomainActivityBase implements ButtonFactor
     private void updateAllTabsActiveProperties() {
         List<Tab> mainTabs = mainTabsBar.getTabs();
         boolean activityActive = isActive();
-        boolean superAdminActive = activityActive && mainTabs.get(0).isSelected();
-        boolean manageUsersActive = activityActive && mainTabs.get(1).isSelected();
+        boolean manageUsersActive = activityActive && mainTabs.get(0).isSelected();
 
-        superAdminView.setActive(superAdminActive);
         userManagementView.setActive(manageUsersActive);
     }
 

@@ -1,0 +1,71 @@
+// File managed by WebFX (DO NOT EDIT MANUALLY)
+package one.modality.crm.backoffice.activities.customers;
+
+public interface CustomersI18nKeys {
+
+    Object EditButton = "EditButton";
+    Object LayNameLabel = "LayNameLabel";
+    Object PassportLabel = "PassportLabel";
+    Object LinkedAccountsDescription = "LinkedAccountsDescription";
+    Object CancelButton = "CancelButton";
+    Object AdditionalInfoSection = "AdditionalInfoSection";
+    Object DeleteConfirmMessage = "DeleteConfirmMessage";
+    Object TableEmailHeader = "TableEmailHeader";
+    Object SaveButton = "SaveButton";
+    Object PostCodeLabel = "PostCodeLabel";
+    Object NoLinkedAccountsText = "NoLinkedAccountsText";
+    Object PersonalInfoTab = "PersonalInfoTab";
+    Object OrganizationLabel = "OrganizationLabel";
+    Object EmailLabel = "EmailLabel";
+    Object AccountAccessTab = "AccountAccessTab";
+    Object FirstNameLabel = "FirstNameLabel";
+    Object TableActionsHeader = "TableActionsHeader";
+    Object CountryLabel = "CountryLabel";
+    Object EditingLabel = "EditingLabel";
+    Object NoAccountText = "NoAccountText";
+    Object PageSubtitle = "PageSubtitle";
+    Object UsernameLabel = "UsernameLabel";
+    Object LanguageLabel = "LanguageLabel";
+    Object TableStatusHeader = "TableStatusHeader";
+    Object LastNameLabel = "LastNameLabel";
+    Object BirthdateLabel = "BirthdateLabel";
+    Object TableOrganizationHeader = "TableOrganizationHeader";
+    Object TableNameHeader = "TableNameHeader";
+    Object AccountTypeLinked = "AccountTypeLinked";
+    Object TableRolesLinksHeader = "TableRolesLinksHeader";
+    Object PhoneLabel = "PhoneLabel";
+    Object SaveErrorMessage = "SaveErrorMessage";
+    Object TableIdHeader = "TableIdHeader";
+    Object StatusActive = "StatusActive";
+    Object StatusInactive = "StatusInactive";
+    Object CityLabel = "CityLabel";
+    Object LimitTo100 = "LimitTo100";
+    Object OwnerAccountTitle = "OwnerAccountTitle";
+    Object OrdainedLabel = "OrdainedLabel";
+    Object StatusRemoved = "StatusRemoved";
+    Object LocationSection = "LocationSection";
+    Object CustomersMenu = "CustomersMenu";
+    Object DeleteButton = "DeleteButton";
+    Object DeleteErrorMessage = "DeleteErrorMessage";
+    Object PasswordHashLabel = "PasswordHashLabel";
+    Object TableAccountTypeHeader = "TableAccountTypeHeader";
+    Object LinkedAccountsTitle = "LinkedAccountsTitle";
+    Object SearchPlaceholder = "SearchPlaceholder";
+    Object AccountTypeFrontofficeOwner = "AccountTypeFrontofficeOwner";
+    Object SaveSuccessMessage = "SaveSuccessMessage";
+    Object PageTitle = "PageTitle";
+    Object EmailingListLabel = "EmailingListLabel";
+    Object NationalityLabel = "NationalityLabel";
+    Object StreetLabel = "StreetLabel";
+    Object DeleteSuccessMessage = "DeleteSuccessMessage";
+    Object AccountTypeNone = "AccountTypeNone";
+    Object LoginCredentialsSection = "LoginCredentialsSection";
+    Object MaleLabel = "MaleLabel";
+    Object AccountTypeFrontoffice = "AccountTypeFrontoffice";
+    Object OwnerAccountDescription = "OwnerAccountDescription";
+    Object AccountTypeBackoffice = "AccountTypeBackoffice";
+    Object ContactIdentitySection = "ContactIdentitySection";
+    Object PersonalAttributesSection = "PersonalAttributesSection";
+    Object BasicInfoSection = "BasicInfoSection";
+
+}

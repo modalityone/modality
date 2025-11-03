@@ -90,3 +90,347 @@
     --fx-text-fill: black;
     --fx-background-color: var(--bootstrap-grey1);
 }
+
+/* Outline button styles */
+.btn.outline-primary {
+    --fx-text-fill: var(--bootstrap-blue5);
+    --fx-svg-path-fill: var(--bootstrap-blue5);
+    --fx-background-color: transparent;
+    --fx-border-color: var(--bootstrap-blue5);
+    --fx-border-width: 1px;
+}
+
+.btn.outline-primary:hover:not(.disabled) {
+    --fx-text-fill: white;
+    --fx-svg-path-fill: white;
+    --fx-background-color: var(--bootstrap-blue5);
+    --fx-border-color: var(--bootstrap-blue5);
+}
+
+.btn.outline-secondary {
+    --fx-text-fill: var(--bootstrap-grey6);
+    --fx-svg-path-fill: var(--bootstrap-grey6);
+    --fx-background-color: transparent;
+    --fx-border-color: var(--bootstrap-grey6);
+    --fx-border-width: 1px;
+}
+
+.btn.outline-secondary:hover:not(.disabled) {
+    --fx-text-fill: white;
+    --fx-svg-path-fill: white;
+    --fx-background-color: var(--bootstrap-grey6);
+    --fx-border-color: var(--bootstrap-grey6);
+}
+
+.btn.outline-success {
+    --fx-text-fill: var(--bootstrap-green1);
+    --fx-svg-path-fill: var(--bootstrap-green1);
+    --fx-background-color: transparent;
+    --fx-border-color: var(--bootstrap-green1);
+    --fx-border-width: 1px;
+}
+
+.btn.outline-success:hover:not(.disabled) {
+    --fx-text-fill: white;
+    --fx-svg-path-fill: white;
+    --fx-background-color: var(--bootstrap-green1);
+    --fx-border-color: var(--bootstrap-green1);
+}
+
+.btn.outline-danger {
+    --fx-text-fill: var(--bootstrap-red1);
+    --fx-svg-path-fill: var(--bootstrap-red1);
+    --fx-background-color: transparent;
+    --fx-border-color: var(--bootstrap-red1);
+    --fx-border-width: 1px;
+}
+
+.btn.outline-danger:hover:not(.disabled) {
+    --fx-text-fill: white;
+    --fx-svg-path-fill: white;
+    --fx-background-color: var(--bootstrap-red1);
+    --fx-border-color: var(--bootstrap-red1);
+}
+
+.btn.outline-warning {
+    --fx-text-fill: var(--bootstrap-orange1);
+    --fx-svg-path-fill: var(--bootstrap-orange1);
+    --fx-background-color: transparent;
+    --fx-border-color: var(--bootstrap-orange1);
+    --fx-border-width: 1px;
+}
+
+.btn.outline-warning:hover:not(.disabled) {
+    --fx-text-fill: white;
+    --fx-svg-path-fill: white;
+    --fx-background-color: var(--bootstrap-orange1);
+    --fx-border-color: var(--bootstrap-orange1);
+}
+
+.btn.outline-info {
+    --fx-text-fill: var(--bootstrap-blue1);
+    --fx-svg-path-fill: var(--bootstrap-blue1);
+    --fx-background-color: transparent;
+    --fx-border-color: var(--bootstrap-blue1);
+    --fx-border-width: 1px;
+}
+
+.btn.outline-info:hover:not(.disabled) {
+    --fx-text-fill: white;
+    --fx-svg-path-fill: white;
+    --fx-background-color: var(--bootstrap-blue1);
+    --fx-border-color: var(--bootstrap-blue1);
+}
+
+/* Button icon styling - ensures icons inherit button text color */
+.button-icon {
+    fill: var(--fx-text-fill);
+}
+
+/* Form section card styling - card-like container */
+.form-section-card {
+    --fx-background-color: var(--bootstrap-white);
+    --fx-border-color: var(--bootstrap-grey3);
+    --fx-border-width: 1px;
+    --fx-border-radius: 6px;
+    --fx-background-radius: 6px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+/* Form section card title */
+.form-section-card-title {
+    font-size: 16px;
+    font-weight: bold;
+    --fx-text-fill: var(--bootstrap-grey7);
+}
+
+/* 2-column responsive form grid */
+.form-grid {
+    --fx-hgap: 16px;
+    --fx-vgap: 16px;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 16px;
+}
+
+/* Copy to clipboard button */
+.copy-button {
+    --fx-background-color: transparent;
+    --fx-border-color: transparent;
+    --fx-text-fill: var(--bootstrap-grey6);
+    --fx-svg-path-fill: var(--bootstrap-grey6);
+    cursor: pointer;
+}
+
+.copy-button:hover:not(.disabled) {
+    --fx-text-fill: var(--bootstrap-blue5);
+    --fx-svg-path-fill: var(--bootstrap-blue5);
+}
+
+/* Copy notification label */
+.copy-notification {
+    --fx-background-color: rgba(0, 0, 0, 0.75);
+    --fx-text-fill: white;
+    --fx-background-radius: 4px;
+    font-size: 12px;
+}
+
+/* Read-only text field styling - distinct but readable */
+.text-field.readonly-field {
+    --fx-background-color: var(--bootstrap-grey1);
+    --fx-border-color: var(--bootstrap-grey3);
+    --fx-text-fill: var(--bootstrap-grey7);
+    opacity: 1.0;
+}
+
+.text-field.readonly-field input {
+    background-color: var(--bootstrap-grey1);
+    border-color: var(--bootstrap-grey3);
+    color: var(--bootstrap-grey7);
+}
+
+/* Read-only button styling - same as text fields */
+.button.readonly-field {
+    --fx-background-color: var(--bootstrap-grey1);
+    --fx-border-color: var(--bootstrap-grey3);
+    --fx-text-fill: var(--bootstrap-grey7);
+    opacity: 1.0;
+}
+
+.button.readonly-field button {
+    background-color: var(--bootstrap-grey1);
+    border-color: var(--bootstrap-grey3);
+    color: var(--bootstrap-grey7);
+}
+
+/* Outline button styles */
+.btn.outline-primary {
+    --fx-text-fill: var(--bootstrap-blue5);
+    --fx-svg-path-fill: var(--bootstrap-blue5);
+    --fx-background-color: transparent;
+    --fx-border-color: var(--bootstrap-blue5);
+    --fx-border-width: 1px;
+}
+
+.btn.outline-primary:hover:not(.disabled) {
+    --fx-text-fill: white;
+    --fx-svg-path-fill: white;
+    --fx-background-color: var(--bootstrap-blue5);
+    --fx-border-color: var(--bootstrap-blue5);
+}
+
+.btn.outline-secondary {
+    --fx-text-fill: var(--bootstrap-grey6);
+    --fx-svg-path-fill: var(--bootstrap-grey6);
+    --fx-background-color: transparent;
+    --fx-border-color: var(--bootstrap-grey6);
+    --fx-border-width: 1px;
+}
+
+.btn.outline-secondary:hover:not(.disabled) {
+    --fx-text-fill: white;
+    --fx-svg-path-fill: white;
+    --fx-background-color: var(--bootstrap-grey6);
+    --fx-border-color: var(--bootstrap-grey6);
+}
+
+.btn.outline-success {
+    --fx-text-fill: var(--bootstrap-green1);
+    --fx-svg-path-fill: var(--bootstrap-green1);
+    --fx-background-color: transparent;
+    --fx-border-color: var(--bootstrap-green1);
+    --fx-border-width: 1px;
+}
+
+.btn.outline-success:hover:not(.disabled) {
+    --fx-text-fill: white;
+    --fx-svg-path-fill: white;
+    --fx-background-color: var(--bootstrap-green1);
+    --fx-border-color: var(--bootstrap-green1);
+}
+
+.btn.outline-danger {
+    --fx-text-fill: var(--bootstrap-red1);
+    --fx-svg-path-fill: var(--bootstrap-red1);
+    --fx-background-color: transparent;
+    --fx-border-color: var(--bootstrap-red1);
+    --fx-border-width: 1px;
+}
+
+.btn.outline-danger:hover:not(.disabled) {
+    --fx-text-fill: white;
+    --fx-svg-path-fill: white;
+    --fx-background-color: var(--bootstrap-red1);
+    --fx-border-color: var(--bootstrap-red1);
+}
+
+.btn.outline-warning {
+    --fx-text-fill: var(--bootstrap-orange1);
+    --fx-svg-path-fill: var(--bootstrap-orange1);
+    --fx-background-color: transparent;
+    --fx-border-color: var(--bootstrap-orange1);
+    --fx-border-width: 1px;
+}
+
+.btn.outline-warning:hover:not(.disabled) {
+    --fx-text-fill: white;
+    --fx-svg-path-fill: white;
+    --fx-background-color: var(--bootstrap-orange1);
+    --fx-border-color: var(--bootstrap-orange1);
+}
+
+.btn.outline-info {
+    --fx-text-fill: var(--bootstrap-blue1);
+    --fx-svg-path-fill: var(--bootstrap-blue1);
+    --fx-background-color: transparent;
+    --fx-border-color: var(--bootstrap-blue1);
+    --fx-border-width: 1px;
+}
+
+.btn.outline-info:hover:not(.disabled) {
+    --fx-text-fill: white;
+    --fx-svg-path-fill: white;
+    --fx-background-color: var(--bootstrap-blue1);
+    --fx-border-color: var(--bootstrap-blue1);
+}
+
+/* Button icon styling - ensures icons inherit button text color */
+.button-icon {
+    fill: var(--fx-text-fill);
+}
+
+/* Form section card styling - card-like container */
+.form-section-card {
+    --fx-background-color: var(--bootstrap-white);
+    --fx-border-color: var(--bootstrap-grey3);
+    --fx-border-width: 1px;
+    --fx-border-radius: 6px;
+    --fx-background-radius: 6px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+/* Form section card title */
+.form-section-card-title {
+    font-size: 16px;
+    font-weight: bold;
+    --fx-text-fill: var(--bootstrap-grey7);
+}
+
+/* 2-column responsive form grid */
+.form-grid {
+    --fx-hgap: 16px;
+    --fx-vgap: 16px;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 16px;
+}
+
+/* Copy to clipboard button */
+.copy-button {
+    --fx-background-color: transparent;
+    --fx-border-color: transparent;
+    --fx-text-fill: var(--bootstrap-grey6);
+    --fx-svg-path-fill: var(--bootstrap-grey6);
+    cursor: pointer;
+}
+
+.copy-button:hover:not(.disabled) {
+    --fx-text-fill: var(--bootstrap-blue5);
+    --fx-svg-path-fill: var(--bootstrap-blue5);
+}
+
+/* Copy notification label */
+.copy-notification {
+    --fx-background-color: rgba(0, 0, 0, 0.75);
+    --fx-text-fill: white;
+    --fx-background-radius: 4px;
+    font-size: 12px;
+}
+
+/* Read-only text field styling - distinct but readable */
+.text-field.readonly-field {
+    --fx-background-color: var(--bootstrap-grey1);
+    --fx-border-color: var(--bootstrap-grey3);
+    --fx-text-fill: var(--bootstrap-grey7);
+    opacity: 1.0;
+}
+
+.text-field.readonly-field input {
+    background-color: var(--bootstrap-grey1);
+    border-color: var(--bootstrap-grey3);
+    color: var(--bootstrap-grey7);
+}
+
+/* Read-only button styling - same as text fields */
+.button.readonly-field {
+    --fx-background-color: var(--bootstrap-grey1);
+    --fx-border-color: var(--bootstrap-grey3);
+    --fx-text-fill: var(--bootstrap-grey7);
+    opacity: 1.0;
+}
+
+.button.readonly-field button {
+    background-color: var(--bootstrap-grey1);
+    border-color: var(--bootstrap-grey3);
+    color: var(--bootstrap-grey7);
+}
