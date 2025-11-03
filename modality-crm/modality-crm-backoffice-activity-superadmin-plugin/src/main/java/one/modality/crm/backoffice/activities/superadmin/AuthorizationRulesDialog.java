@@ -1,4 +1,4 @@
-package one.modality.crm.backoffice.activities.admin;
+package one.modality.crm.backoffice.activities.superadmin;
 
 import dev.webfx.extras.i18n.I18n;
 import dev.webfx.extras.i18n.controls.I18nControls;
@@ -21,8 +21,8 @@ import javafx.scene.layout.VBox;
 import one.modality.base.client.mainframe.fx.FXMainFrameDialogArea;
 import one.modality.base.shared.entities.AuthorizationRule;
 
-import static one.modality.crm.backoffice.activities.admin.Admin18nKeys.*;
-import static one.modality.crm.backoffice.activities.admin.FormFieldHelper.*;
+import static one.modality.crm.backoffice.activities.superadmin.SuperAdmin18nKeys.*;
+import static one.modality.crm.backoffice.activities.superadmin.FormFieldHelper.*;
 
 /**
  * Dialog for creating and editing authorization rules.

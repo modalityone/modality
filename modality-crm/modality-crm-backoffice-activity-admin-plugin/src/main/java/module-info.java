@@ -23,7 +23,6 @@ module modality.crm.backoffice.activity.admin.plugin {
     requires webfx.extras.styles.bootstrap;
     requires webfx.extras.util.dialog;
     requires webfx.extras.util.layout;
-    requires webfx.extras.validation;
     requires webfx.extras.visual;
     requires webfx.extras.visual.grid;
     requires webfx.kit.util;

@@ -1,4 +1,4 @@
-package one.modality.crm.backoffice.activities.admin;
+package one.modality.crm.backoffice.activities.superadmin;
 
 import dev.webfx.extras.i18n.controls.I18nControls;
 import dev.webfx.extras.styles.bootstrap.Bootstrap;
@@ -21,8 +21,8 @@ import javafx.scene.layout.VBox;
 import one.modality.base.client.mainframe.fx.FXMainFrameDialogArea;
 import one.modality.base.shared.entities.Operation;
 
-import static one.modality.crm.backoffice.activities.admin.Admin18nKeys.*;
-import static one.modality.crm.backoffice.activities.admin.FormFieldHelper.*;
+import static one.modality.crm.backoffice.activities.superadmin.SuperAdmin18nKeys.*;
+import static one.modality.crm.backoffice.activities.superadmin.FormFieldHelper.*;
 
 /**
  * Dialog for creating and editing operations and routes.
@@ -296,7 +296,7 @@ public class OperationDialog {
         dialogContent.setMaxWidth(700);
 
         // Title
-        Label titleLabel = Bootstrap.strong(I18nControls.newLabel(Admin18nKeys.Error));
+        Label titleLabel = Bootstrap.strong(I18nControls.newLabel(SuperAdmin18nKeys.Error));
         titleLabel.getStyleClass().add("error-dialog-title");
         titleLabel.setMaxWidth(Double.MAX_VALUE);
 

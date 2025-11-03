@@ -1,4 +1,4 @@
-package one.modality.crm.backoffice.activities.admin;
+package one.modality.crm.backoffice.activities.superadmin;
 
 import dev.webfx.extras.i18n.I18n;
 import dev.webfx.extras.i18n.controls.I18nControls;
@@ -28,8 +28,8 @@ import one.modality.base.shared.entities.OperationGroup;
 import java.util.*;
 
 import static javafx.scene.layout.Region.USE_COMPUTED_SIZE;
-import static one.modality.crm.backoffice.activities.admin.Admin18nKeys.*;
-import static one.modality.crm.backoffice.activities.admin.FormFieldHelper.*;
+import static one.modality.crm.backoffice.activities.superadmin.SuperAdmin18nKeys.*;
+import static one.modality.crm.backoffice.activities.superadmin.FormFieldHelper.*;
 
 /**
  * Dialog for creating and editing authorization roles.
@@ -158,7 +158,7 @@ public class RolesDialog {
         selectedItemsContainer.setMaxWidth(Double.MAX_VALUE);
 
         Label selectedItemsTitle = new Label();
-        I18n.bindI18nTextProperty(selectedItemsTitle.textProperty(), Admin18nKeys.Permissions);
+        I18n.bindI18nTextProperty(selectedItemsTitle.textProperty(), SuperAdmin18nKeys.Permissions);
         selectedItemsTitle.getStyleClass().add("role-dialog-permissions-title");
 
         // Combined display for both operations and groups
@@ -257,7 +257,7 @@ public class RolesDialog {
 
         // === AUTHORIZATION RULES TAB ===
         Tab rulesTab = new Tab();
-        I18n.bindI18nTextProperty(rulesTab.textProperty(), Admin18nKeys.Rules);
+        I18n.bindI18nTextProperty(rulesTab.textProperty(), SuperAdmin18nKeys.Rules);
 
         VBox rulesContent = new VBox(12);
         rulesContent.setPadding(new Insets(16));

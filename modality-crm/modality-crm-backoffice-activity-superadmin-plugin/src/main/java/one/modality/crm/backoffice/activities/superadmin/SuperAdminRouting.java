@@ -51,8 +51,7 @@ public final class SuperAdminRouting {
 
         @Override
         public Object getI18nKey() {
-            //return SuperAdmin18nKeys.SuperAdminMenu;
-            return "SuperAdminMenu";
+            return SuperAdmin18nKeys.SuperAdminMenu;
         }
     }
 

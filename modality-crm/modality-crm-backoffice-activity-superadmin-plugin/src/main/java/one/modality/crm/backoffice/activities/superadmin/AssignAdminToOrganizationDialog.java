@@ -1,4 +1,4 @@
-package one.modality.crm.backoffice.activities.admin;
+package one.modality.crm.backoffice.activities.superadmin;
 
 import dev.webfx.extras.controlfactory.button.ButtonFactoryMixin;
 import dev.webfx.extras.i18n.I18n;
@@ -28,7 +28,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-import static one.modality.crm.backoffice.activities.admin.Admin18nKeys.*;
+import static one.modality.crm.backoffice.activities.superadmin.SuperAdmin18nKeys.*;
 
 /**
  * Dialog for managing admins of an organization.
@@ -298,7 +298,7 @@ public class AssignAdminToOrganizationDialog {
         titleLabel.getStyleClass().add("error-dialog-title");
         titleLabel.setMaxWidth(Double.MAX_VALUE);
 
-        Label headerLabel = I18nControls.newLabel(FailedToSaveGroup);
+        Label headerLabel = I18nControls.newLabel(FailedToAssignAdmin);
         headerLabel.setWrapText(true);
         headerLabel.setMaxWidth(Double.MAX_VALUE);
         headerLabel.getStyleClass().add("error-dialog-header");

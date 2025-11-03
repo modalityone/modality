@@ -1,4 +1,4 @@
-package one.modality.crm.backoffice.activities.admin;
+package one.modality.crm.backoffice.activities.superadmin;
 
 import dev.webfx.extras.cell.renderer.ValueRendererRegistry;
 import dev.webfx.extras.panes.MonoPane;
@@ -35,7 +35,7 @@ final class OperationGroupsRenderers {
 
     static void registerRenderers() {
         // Register common renderers
-        AdminRenderers.registerCommonRenderers();
+        SuperAdminRenderers.registerCommonRenderers();
 
         // Register operations list renderer
         ValueRendererRegistry.registerValueRenderer("operationsList", (value, context) -> {

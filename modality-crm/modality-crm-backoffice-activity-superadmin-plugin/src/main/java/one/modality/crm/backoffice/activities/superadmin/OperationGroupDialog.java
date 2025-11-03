@@ -1,4 +1,4 @@
-package one.modality.crm.backoffice.activities.admin;
+package one.modality.crm.backoffice.activities.superadmin;
 
 import dev.webfx.extras.i18n.I18n;
 import dev.webfx.extras.i18n.controls.I18nControls;
@@ -28,8 +28,8 @@ import java.util.List;
 import java.util.Set;
 
 import static javafx.scene.layout.Region.USE_COMPUTED_SIZE;
-import static one.modality.crm.backoffice.activities.admin.Admin18nKeys.*;
-import static one.modality.crm.backoffice.activities.admin.FormFieldHelper.*;
+import static one.modality.crm.backoffice.activities.superadmin.SuperAdmin18nKeys.*;
+import static one.modality.crm.backoffice.activities.superadmin.FormFieldHelper.*;
 
 /**
  * Dialog for creating and editing operation groups.
@@ -105,49 +105,52 @@ public class OperationGroupDialog {
             nameInput.setText(group.getName());
         }
 
-        // Select Operations field (checkboxes)
-        VBox operationsField = new VBox(8);
-        Label operationsLabel = I18nControls.newLabel(SelectOperations);
-        operationsLabel.getStyleClass().add("form-field-label");
+        // === SELECTED OPERATIONS DISPLAY (On Top - Always Visible) ===
+        VBox selectedItemsContainer = new VBox(12);
+        selectedItemsContainer.setMaxWidth(Double.MAX_VALUE);
 
-        // Search box for filtering operations
-        TextField searchOperations = new TextField();
-        searchOperations.setPromptText(I18nControls.newLabel(SearchOperationsPlaceholder).getText());
-        searchOperations.setMinWidth(200);
-        searchOperations.setPrefWidth(USE_COMPUTED_SIZE);
-        searchOperations.setMaxWidth(Double.MAX_VALUE);
-        searchOperations.setPadding(new Insets(8, 12, 8, 12));
-        searchOperations.getStyleClass().add("form-field-input");
-
-        // Selected Operations Display Panel
-        VBox selectedPanel = new VBox(8);
-        selectedPanel.setPadding(new Insets(12));
-        selectedPanel.setMaxWidth(Double.MAX_VALUE);
-        selectedPanel.getStyleClass().add("operation-selection-panel");
+        Label selectedItemsTitle = I18nControls.newLabel(SelectedOperations);
+        selectedItemsTitle.getStyleClass().add("role-dialog-permissions-title");
 
         // Selected operations header with count
         Label selectedCountLabel = new Label();
         selectedCountLabel.getStyleClass().add("operation-selection-count-label");
 
-        // Flow pane for selected operation chips
+        // Selected Operations Display Panel
         FlowPane selectedChipsPane = new FlowPane();
         selectedChipsPane.setHgap(6);
         selectedChipsPane.setVgap(6);
+        selectedChipsPane.setPadding(new Insets(12));
+        selectedChipsPane.setMinHeight(80);
         selectedChipsPane.setMaxWidth(Double.MAX_VALUE);
+        selectedChipsPane.getStyleClass().add("operation-selection-panel");
 
         // Initial empty message
         Label emptyMessage = I18nControls.newLabel(NoOperationsSelectedYet);
         emptyMessage.getStyleClass().add("operation-selection-empty-message");
         selectedChipsPane.getChildren().add(emptyMessage);
 
-        selectedPanel.getChildren().addAll(selectedCountLabel, selectedChipsPane);
+        selectedItemsContainer.getChildren().addAll(selectedItemsTitle, selectedCountLabel, selectedChipsPane);
+
+        // === SEARCH OPERATIONS SECTION (Below Selected Operations) ===
+        VBox operationsField = new VBox(12);
+        operationsField.setMaxWidth(Double.MAX_VALUE);
+
+        // Section label (not marked as required)
+        Label operationsLabel = I18nControls.newLabel(SearchOperations);
+        operationsLabel.getStyleClass().add("section-label");
+
+        // Search box for filtering operations
+        TextField searchOperations = new TextField();
+        I18n.bindI18nTextProperty(searchOperations.promptTextProperty(), SearchOperationsPlaceholder);
+        searchOperations.setPrefWidth(USE_COMPUTED_SIZE);
+        searchOperations.setMaxWidth(Double.MAX_VALUE);
+        searchOperations.setPadding(new Insets(8, 12, 8, 12));
 
         // ScrollPane for checkbox list
         ScrollPane checkboxScroll = new ScrollPane();
         checkboxScroll.setFitToWidth(true);
-        checkboxScroll.setMinHeight(200);
-        checkboxScroll.setPrefHeight(300);
-        checkboxScroll.setMaxHeight(400);
+        checkboxScroll.setPrefHeight(250);
 
         VBox checkboxGroup = new VBox(12);
         checkboxGroup.setPadding(new Insets(12));
@@ -168,10 +171,10 @@ public class OperationGroupDialog {
         addSearchFilter(searchOperations, operationCheckboxes);
 
         checkboxScroll.setContent(checkboxGroup);
-        operationsField.getChildren().addAll(operationsLabel, searchOperations, selectedPanel, checkboxScroll);
+        operationsField.getChildren().addAll(operationsLabel, searchOperations, checkboxScroll);
 
         // Add fields to form
-        formFields.getChildren().addAll(nameFormField.container(), operationsField);
+        formFields.getChildren().addAll(nameFormField.container(), selectedItemsContainer, operationsField);
 
         // Create the entity to save
         OperationGroup groupToSave = group != null ? updateStore.updateEntity(group) : updateStore.insertEntity(OperationGroup.class);
@@ -330,12 +333,12 @@ public class OperationGroupDialog {
         dialogContent.setMaxWidth(700);
 
         // Title
-        Label titleLabel = Bootstrap.strong(I18nControls.newLabel(Admin18nKeys.Error));
+        Label titleLabel = Bootstrap.strong(I18nControls.newLabel(SuperAdmin18nKeys.Error));
         titleLabel.getStyleClass().add("error-dialog-title");
         titleLabel.setMaxWidth(Double.MAX_VALUE);
 
         // Header
-        Label headerLabel = I18nControls.newLabel(Admin18nKeys.FailedToSaveGroup);
+        Label headerLabel = I18nControls.newLabel(SuperAdmin18nKeys.FailedToSaveGroup);
         headerLabel.setWrapText(true);
         headerLabel.setMaxWidth(Double.MAX_VALUE);
         headerLabel.getStyleClass().add("error-dialog-header");

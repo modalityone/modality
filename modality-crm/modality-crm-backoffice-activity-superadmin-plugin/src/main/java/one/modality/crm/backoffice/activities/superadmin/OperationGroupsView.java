@@ -1,4 +1,4 @@
-package one.modality.crm.backoffice.activities.admin;
+package one.modality.crm.backoffice.activities.superadmin;
 
 import dev.webfx.extras.i18n.I18n;
 import dev.webfx.extras.i18n.controls.I18nControls;
@@ -37,7 +37,7 @@ import java.util.*;
 import java.util.stream.Collectors;
 
 import static dev.webfx.stack.orm.dql.DqlStatement.where;
-import static one.modality.crm.backoffice.activities.admin.Admin18nKeys.*;
+import static one.modality.crm.backoffice.activities.superadmin.SuperAdmin18nKeys.*;
 
 /**
  * Operation Groups tab view.
@@ -272,18 +272,18 @@ public class OperationGroupsView {
         dialogContent.setMaxWidth(700);
 
         // Title
-        Label titleLabel = I18nControls.newLabel(Admin18nKeys.DeleteGroup);
+        Label titleLabel = I18nControls.newLabel(SuperAdmin18nKeys.DeleteGroup);
         titleLabel.getStyleClass().add("delete-dialog-title");
         titleLabel.setMaxWidth(Double.MAX_VALUE);
 
         // Message
-        Label messageLabel = new Label(I18n.getI18nText(Admin18nKeys.Delete) + I18n.getI18nText(Space) + group.getName() + I18n.getI18nText(QuestionMark));
+        Label messageLabel = new Label(I18n.getI18nText(SuperAdmin18nKeys.Delete) + I18n.getI18nText(Space) + group.getName() + I18n.getI18nText(QuestionMark));
         messageLabel.setWrapText(true);
         messageLabel.setMaxWidth(Double.MAX_VALUE);
         messageLabel.getStyleClass().add("delete-dialog-message");
 
         // Confirmation text
-        Label confirmLabel = I18nControls.newLabel(Admin18nKeys.DeleteGroupConfirm);
+        Label confirmLabel = I18nControls.newLabel(SuperAdmin18nKeys.DeleteGroupConfirm);
         confirmLabel.setWrapText(true);
         confirmLabel.setMaxWidth(Double.MAX_VALUE);
         confirmLabel.getStyleClass().add("delete-dialog-confirm");
@@ -294,8 +294,8 @@ public class OperationGroupsView {
         HBox footer = new HBox(12);
         footer.setAlignment(Pos.CENTER_RIGHT);
 
-        Button cancelButton = Bootstrap.button(I18nControls.newButton(Admin18nKeys.Cancel));
-        Button deleteButton = Bootstrap.dangerButton(I18nControls.newButton(Admin18nKeys.Delete));
+        Button cancelButton = Bootstrap.button(I18nControls.newButton(SuperAdmin18nKeys.Cancel));
+        Button deleteButton = Bootstrap.dangerButton(I18nControls.newButton(SuperAdmin18nKeys.Delete));
 
         footer.getChildren().addAll(cancelButton, deleteButton);
         dialogContent.getChildren().add(footer);
@@ -350,12 +350,12 @@ public class OperationGroupsView {
         dialogContent.setMaxWidth(700);
 
         // Title
-        Label titleLabel = I18nControls.newLabel(Admin18nKeys.Error);
+        Label titleLabel = I18nControls.newLabel(SuperAdmin18nKeys.Error);
         titleLabel.getStyleClass().add("error-dialog-title");
         titleLabel.setMaxWidth(Double.MAX_VALUE);
 
         // Header
-        Label headerLabel = I18nControls.newLabel(Admin18nKeys.FailedToSaveGroup);
+        Label headerLabel = I18nControls.newLabel(SuperAdmin18nKeys.FailedToSaveGroup);
         headerLabel.setWrapText(true);
         headerLabel.setMaxWidth(Double.MAX_VALUE);
         headerLabel.getStyleClass().add("error-dialog-header");
@@ -372,7 +372,7 @@ public class OperationGroupsView {
         HBox footer = new HBox();
         footer.setAlignment(Pos.CENTER_RIGHT);
 
-        Button okButton = Bootstrap.dangerButton(I18nControls.newButton(Admin18nKeys.OK));
+        Button okButton = Bootstrap.dangerButton(I18nControls.newButton(SuperAdmin18nKeys.OK));
 
         footer.getChildren().add(okButton);
         dialogContent.getChildren().add(footer);

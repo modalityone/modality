@@ -1,4 +1,4 @@
-package one.modality.crm.backoffice.activities.admin;
+package one.modality.crm.backoffice.activities.superadmin;
 
 import dev.webfx.extras.i18n.controls.I18nControls;
 import javafx.geometry.Insets;
@@ -9,16 +9,16 @@ import javafx.scene.control.Tab;
 import javafx.scene.control.TabPane;
 import javafx.scene.layout.VBox;
 
-import static one.modality.crm.backoffice.activities.admin.Admin18nKeys.*;
+import static one.modality.crm.backoffice.activities.superadmin.SuperAdmin18nKeys.*;
 
 /**
  * Super Admin View containing 6 sub-tabs for comprehensive rights management:
- * - Organizations: Manage organization admins
+ * - Organizations: Assign admins to organizations
  * - Operations: Manage individual operations
  * - Operation Groups: Manage groups of related operations
  * - Routes: Manage application routes
- * - Rules: Manage authorization rules
  * - Roles: Manage user roles and permissions
+ * - Rules: Manage authorization rules
  *
  * @author Claude Code
  */
@@ -28,8 +28,8 @@ public class SuperAdminView {
     private final OperationsView operationsView = new OperationsView(false);  // false = operations
     private final OperationGroupsView operationGroupsView = new OperationGroupsView();
     private final OperationsView routesView = new OperationsView(true);  // true = routes
-    private final AuthorizationRulesView rulesView = new AuthorizationRulesView();
     private final RolesView rolesView = new RolesView();
+    private final AuthorizationRulesView rulesView = new AuthorizationRulesView();
 
     private final VBox view;
     private final TabPane tabPane;
@@ -42,7 +42,7 @@ public class SuperAdminView {
         view.setFillWidth(true);
 
         // Title and description
-        Label titleLabel = I18nControls.newLabel(SuperAdminView);
+        Label titleLabel = I18nControls.newLabel(RightsManagement);
         titleLabel.getStyleClass().add("admin-title");
 
         Label descriptionLabel = I18nControls.newLabel(ManageOrganizationsOperationsRoutesRoles);
@@ -50,7 +50,7 @@ public class SuperAdminView {
 
         // Create sub-tabs
         Tab organizationsTab = new Tab(null, organizationsView.getView());
-        I18nControls.bindI18nTextProperty(organizationsTab, Organizations);
+        I18nControls.bindI18nTextProperty(organizationsTab, OrganizationTab);
         organizationsTab.setClosable(false);
 
         Tab operationsTab = new Tab(null, operationsView.getView());
@@ -65,16 +65,16 @@ public class SuperAdminView {
         I18nControls.bindI18nTextProperty(routesTab, Routes);
         routesTab.setClosable(false);
 
-        Tab rulesTab = new Tab(null, rulesView.getView());
-        I18nControls.bindI18nTextProperty(rulesTab, Rules);
-        rulesTab.setClosable(false);
-
         Tab rolesTab = new Tab(null, rolesView.getView());
         I18nControls.bindI18nTextProperty(rolesTab, Roles);
         rolesTab.setClosable(false);
 
+        Tab rulesTab = new Tab(null, rulesView.getView());
+        I18nControls.bindI18nTextProperty(rulesTab, Rules);
+        rulesTab.setClosable(false);
+
         // Create TabPane with sub-tabs
-        tabPane = new TabPane(organizationsTab, operationsTab, operationGroupsTab, routesTab, rulesTab, rolesTab);
+        tabPane = new TabPane(organizationsTab, operationsTab, operationGroupsTab, routesTab, rolesTab, rulesTab);
         tabPane.getStyleClass().add("super-admin-sub-tabs");
 
         view.getChildren().addAll(titleLabel, descriptionLabel, tabPane);
@@ -94,8 +94,8 @@ public class SuperAdminView {
                 case 1 -> operationsView.setActive(true);
                 case 2 -> operationGroupsView.setActive(true);
                 case 3 -> routesView.setActive(true);
-                case 4 -> rulesView.setActive(true);
-                case 5 -> rolesView.setActive(true);
+                case 4 -> rolesView.setActive(true);
+                case 5 -> rulesView.setActive(true);
             }
         } else {
             // Deactivate all
@@ -103,8 +103,8 @@ public class SuperAdminView {
             operationsView.setActive(false);
             operationGroupsView.setActive(false);
             routesView.setActive(false);
-            rulesView.setActive(false);
             rolesView.setActive(false);
+            rulesView.setActive(false);
         }
     }
 }
