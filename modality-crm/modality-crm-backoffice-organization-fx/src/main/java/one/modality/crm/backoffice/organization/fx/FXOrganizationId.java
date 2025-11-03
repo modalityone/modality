@@ -2,7 +2,9 @@ package one.modality.crm.backoffice.organization.fx;
 
 import dev.webfx.kit.util.properties.FXProperties;
 import dev.webfx.platform.console.Console;
+import dev.webfx.platform.util.Strings;
 import dev.webfx.stack.authn.login.ui.FXLoginContext;
+import dev.webfx.stack.authz.client.context.AuthorizationContext;
 import dev.webfx.stack.orm.entity.Entities;
 import dev.webfx.stack.orm.entity.EntityId;
 import dev.webfx.stack.orm.entity.EntityStore;
@@ -57,6 +59,9 @@ public final class FXOrganizationId {
                 }
             }
         }
+        // Passing organizationId to AuthorizationContext. This will cause a reevaluation of the authorizations, because
+        // some may be granted only to a specific organization.
+        AuthorizationContext.setContextProperty("organizationId", Strings.toString(organizationPrimaryKey));
     });
 
     static {

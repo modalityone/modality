@@ -2,7 +2,9 @@ package one.modality.event.client.event.fx;
 
 import dev.webfx.kit.util.properties.FXProperties;
 import dev.webfx.platform.console.Console;
+import dev.webfx.platform.util.Strings;
 import dev.webfx.stack.authn.login.ui.FXLoginContext;
+import dev.webfx.stack.authz.client.context.AuthorizationContext;
 import dev.webfx.stack.orm.entity.Entities;
 import dev.webfx.stack.orm.entity.EntityId;
 import dev.webfx.stack.orm.entity.EntityStore;
@@ -59,7 +61,7 @@ public final class FXEventId {
                                 // In addition, in case FXOrganizationId is not yet set, we set it now. For ex,
                                 // if a user books an event for the first time through visiting the organization
                                 // website which redirected the booking to Modality, we memorize the organization
-                                // so that at the end of the booking process, if the user visits the Modality
+                                // so that at the end of the booking process. If the user visits the Modality
                                 // booking page, he doesn't have to select the organization again, it is already
                                 // selected, and the user can see all its other events on the booking page.
                                 if (loadedEvent != null/* && FXOrganizationId.getOrganizationId() == null // commented for collapsedProperty() binding in ModalityFrontOfficeMainFrameActivity*/) {
@@ -70,6 +72,9 @@ public final class FXEventId {
                 }
             }
         }
+        // Passing eventId to AuthorizationContext. This will cause a reevaluation of the authorizations, because
+        // some may be granted only to a specific event.
+        AuthorizationContext.setContextProperty("eventId", Strings.toString(eventPrimaryKey));
     });
 
     static {

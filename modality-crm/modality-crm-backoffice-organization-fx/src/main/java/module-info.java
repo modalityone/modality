@@ -17,6 +17,7 @@ module modality.crm.backoffice.organization.fx {
     requires webfx.kit.util;
     requires webfx.platform.console;
     requires webfx.stack.authn.login.ui;
+    requires webfx.stack.authz.client;
     requires webfx.stack.orm.domainmodel;
     requires webfx.stack.orm.entity;
     requires webfx.stack.orm.entity.controls;
