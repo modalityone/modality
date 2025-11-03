@@ -4,6 +4,7 @@ one.modality.base.shared.entities.impl.AuthorizationOrganizationUserAccessImpl$P
 one.modality.base.shared.entities.impl.AuthorizationRoleImpl$ProvidedFactory
 one.modality.base.shared.entities.impl.AuthorizationRoleOperationImpl$ProvidedFactory
 one.modality.base.shared.entities.impl.AuthorizationRuleImpl$ProvidedFactory
+one.modality.base.shared.entities.impl.AuthorizationSuperAdminImpl$ProvidedFactory
 one.modality.base.shared.entities.impl.BookablePeriodImpl$ProvidedFactory
 one.modality.base.shared.entities.impl.BookImpl$ProvidedFactory
 one.modality.base.shared.entities.impl.CartImpl$ProvidedFactory
