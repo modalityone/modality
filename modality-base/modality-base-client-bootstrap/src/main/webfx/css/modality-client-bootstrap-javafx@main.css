@@ -101,3 +101,333 @@
     -fx-background-color: -bootstrap-grey1;
     -fx-border-color: black;
 }
+
+/* Outline button styles */
+.btn.outline-primary {
+    -fx-text-fill: -bootstrap-blue5;
+    -fx-fill: -bootstrap-blue5;
+    -fx-background-color: transparent;
+    -fx-border-color: -bootstrap-blue5;
+    -fx-border-width: 1;
+}
+
+.btn.outline-primary:hover {
+    -fx-text-fill: white;
+    -fx-fill: white;
+    -fx-background-color: -bootstrap-blue5;
+    -fx-border-color: -bootstrap-blue5;
+}
+
+.btn.outline-secondary {
+    -fx-text-fill: -bootstrap-grey6;
+    -fx-fill: -bootstrap-grey6;
+    -fx-background-color: transparent;
+    -fx-border-color: -bootstrap-grey6;
+    -fx-border-width: 1;
+}
+
+.btn.outline-secondary:hover {
+    -fx-text-fill: white;
+    -fx-fill: white;
+    -fx-background-color: -bootstrap-grey6;
+    -fx-border-color: -bootstrap-grey6;
+}
+
+.btn.outline-success {
+    -fx-text-fill: -bootstrap-green1;
+    -fx-fill: -bootstrap-green1;
+    -fx-background-color: transparent;
+    -fx-border-color: -bootstrap-green1;
+    -fx-border-width: 1;
+}
+
+.btn.outline-success:hover {
+    -fx-text-fill: white;
+    -fx-fill: white;
+    -fx-background-color: -bootstrap-green1;
+    -fx-border-color: -bootstrap-green1;
+}
+
+.btn.outline-danger {
+    -fx-text-fill: -bootstrap-red1;
+    -fx-fill: -bootstrap-red1;
+    -fx-background-color: transparent;
+    -fx-border-color: -bootstrap-red1;
+    -fx-border-width: 1;
+}
+
+.btn.outline-danger:hover {
+    -fx-text-fill: white;
+    -fx-fill: white;
+    -fx-background-color: -bootstrap-red1;
+    -fx-border-color: -bootstrap-red1;
+}
+
+.btn.outline-warning {
+    -fx-text-fill: -bootstrap-orange1;
+    -fx-fill: -bootstrap-orange1;
+    -fx-background-color: transparent;
+    -fx-border-color: -bootstrap-orange1;
+    -fx-border-width: 1;
+}
+
+.btn.outline-warning:hover {
+    -fx-text-fill: white;
+    -fx-fill: white;
+    -fx-background-color: -bootstrap-orange1;
+    -fx-border-color: -bootstrap-orange1;
+}
+
+.btn.outline-info {
+    -fx-text-fill: -bootstrap-blue1;
+    -fx-fill: -bootstrap-blue1;
+    -fx-background-color: transparent;
+    -fx-border-color: -bootstrap-blue1;
+    -fx-border-width: 1;
+}
+
+.btn.outline-info:hover {
+    -fx-text-fill: white;
+    -fx-fill: white;
+    -fx-background-color: -bootstrap-blue1;
+    -fx-border-color: -bootstrap-blue1;
+}
+
+/* Button icon styling - ensures icons inherit button text color */
+.button-icon {
+    -fx-fill: -fx-text-fill;
+}
+
+/* Form section card styling - card-like container */
+.form-section-card {
+    -fx-background-color: -bootstrap-white;
+    -fx-border-color: -bootstrap-grey3;
+    -fx-border-width: 1;
+    -fx-border-radius: 6;
+    -fx-background-radius: 6;
+    -fx-effect: dropshadow(gaussian, rgba(0, 0, 0, 0.1), 4, 0, 0, 2);
+}
+
+/* Form section card title */
+.form-section-card-title {
+    -fx-font-size: 16px;
+    -fx-font-weight: bold;
+    -fx-text-fill: -bootstrap-grey7;
+}
+
+/* 2-column responsive form grid */
+.form-grid {
+    -fx-hgap: 16;
+    -fx-vgap: 16;
+}
+
+/* Copy to clipboard button */
+.copy-button {
+    -fx-background-color: transparent;
+    -fx-border-color: transparent;
+    -fx-text-fill: -bootstrap-grey6;
+    -fx-fill: -bootstrap-grey6;
+    -fx-cursor: hand;
+}
+
+.copy-button:hover {
+    -fx-text-fill: -bootstrap-blue5;
+    -fx-fill: -bootstrap-blue5;
+}
+
+/* Copy notification label */
+.copy-notification {
+    -fx-background-color: rgba(0, 0, 0, 0.75);
+    -fx-text-fill: white;
+    -fx-background-radius: 4;
+    -fx-font-size: 12px;
+}
+
+/* Read-only text field styling - distinct but readable */
+.text-field.readonly-field {
+    -fx-background-color: -bootstrap-grey1;
+    -fx-border-color: -bootstrap-grey3;
+    -fx-text-fill: -bootstrap-grey7;
+    -fx-opacity: 1.0;
+}
+
+.text-field.readonly-field .text {
+    -fx-fill: -bootstrap-grey7;
+}
+
+/* Read-only button styling - same as text fields */
+.button.readonly-field {
+    -fx-background-color: -bootstrap-grey1;
+    -fx-border-color: -bootstrap-grey3;
+    -fx-text-fill: -bootstrap-grey7;
+    -fx-opacity: 1.0;
+}
+
+.button.readonly-field .text {
+    -fx-fill: -bootstrap-grey7;
+}
+
+/* Outline button styles */
+.btn.outline-primary {
+    -fx-text-fill: -bootstrap-blue5;
+    -fx-fill: -bootstrap-blue5;
+    -fx-background-color: transparent;
+    -fx-border-color: -bootstrap-blue5;
+    -fx-border-width: 1;
+}
+
+.btn.outline-primary:hover {
+    -fx-text-fill: white;
+    -fx-fill: white;
+    -fx-background-color: -bootstrap-blue5;
+    -fx-border-color: -bootstrap-blue5;
+}
+
+.btn.outline-secondary {
+    -fx-text-fill: -bootstrap-grey6;
+    -fx-fill: -bootstrap-grey6;
+    -fx-background-color: transparent;
+    -fx-border-color: -bootstrap-grey6;
+    -fx-border-width: 1;
+}
+
+.btn.outline-secondary:hover {
+    -fx-text-fill: white;
+    -fx-fill: white;
+    -fx-background-color: -bootstrap-grey6;
+    -fx-border-color: -bootstrap-grey6;
+}
+
+.btn.outline-success {
+    -fx-text-fill: -bootstrap-green1;
+    -fx-fill: -bootstrap-green1;
+    -fx-background-color: transparent;
+    -fx-border-color: -bootstrap-green1;
+    -fx-border-width: 1;
+}
+
+.btn.outline-success:hover {
+    -fx-text-fill: white;
+    -fx-fill: white;
+    -fx-background-color: -bootstrap-green1;
+    -fx-border-color: -bootstrap-green1;
+}
+
+.btn.outline-danger {
+    -fx-text-fill: -bootstrap-red1;
+    -fx-fill: -bootstrap-red1;
+    -fx-background-color: transparent;
+    -fx-border-color: -bootstrap-red1;
+    -fx-border-width: 1;
+}
+
+.btn.outline-danger:hover {
+    -fx-text-fill: white;
+    -fx-fill: white;
+    -fx-background-color: -bootstrap-red1;
+    -fx-border-color: -bootstrap-red1;
+}
+
+.btn.outline-warning {
+    -fx-text-fill: -bootstrap-orange1;
+    -fx-fill: -bootstrap-orange1;
+    -fx-background-color: transparent;
+    -fx-border-color: -bootstrap-orange1;
+    -fx-border-width: 1;
+}
+
+.btn.outline-warning:hover {
+    -fx-text-fill: white;
+    -fx-fill: white;
+    -fx-background-color: -bootstrap-orange1;
+    -fx-border-color: -bootstrap-orange1;
+}
+
+.btn.outline-info {
+    -fx-text-fill: -bootstrap-blue1;
+    -fx-fill: -bootstrap-blue1;
+    -fx-background-color: transparent;
+    -fx-border-color: -bootstrap-blue1;
+    -fx-border-width: 1;
+}
+
+.btn.outline-info:hover {
+    -fx-text-fill: white;
+    -fx-fill: white;
+    -fx-background-color: -bootstrap-blue1;
+    -fx-border-color: -bootstrap-blue1;
+}
+
+/* Button icon styling - ensures icons inherit button text color */
+.button-icon {
+    -fx-fill: -fx-text-fill;
+}
+
+/* Form section card styling - card-like container */
+.form-section-card {
+    -fx-background-color: -bootstrap-white;
+    -fx-border-color: -bootstrap-grey3;
+    -fx-border-width: 1;
+    -fx-border-radius: 6;
+    -fx-background-radius: 6;
+    -fx-effect: dropshadow(gaussian, rgba(0, 0, 0, 0.1), 4, 0, 0, 2);
+}
+
+/* Form section card title */
+.form-section-card-title {
+    -fx-font-size: 16px;
+    -fx-font-weight: bold;
+    -fx-text-fill: -bootstrap-grey7;
+}
+
+/* 2-column responsive form grid */
+.form-grid {
+    -fx-hgap: 16;
+    -fx-vgap: 16;
+}
+
+/* Copy to clipboard button */
+.copy-button {
+    -fx-background-color: transparent;
+    -fx-border-color: transparent;
+    -fx-text-fill: -bootstrap-grey6;
+    -fx-fill: -bootstrap-grey6;
+    -fx-cursor: hand;
+}
+
+.copy-button:hover {
+    -fx-text-fill: -bootstrap-blue5;
+    -fx-fill: -bootstrap-blue5;
+}
+
+/* Copy notification label */
+.copy-notification {
+    -fx-background-color: rgba(0, 0, 0, 0.75);
+    -fx-text-fill: white;
+    -fx-background-radius: 4;
+    -fx-font-size: 12px;
+}
+
+/* Read-only text field styling - distinct but readable */
+.text-field.readonly-field {
+    -fx-background-color: -bootstrap-grey1;
+    -fx-border-color: -bootstrap-grey3;
+    -fx-text-fill: -bootstrap-grey7;
+    -fx-opacity: 1.0;
+}
+
+.text-field.readonly-field .text {
+    -fx-fill: -bootstrap-grey7;
+}
+
+/* Read-only button styling - same as text fields */
+.button.readonly-field {
+    -fx-background-color: -bootstrap-grey1;
+    -fx-border-color: -bootstrap-grey3;
+    -fx-text-fill: -bootstrap-grey7;
+    -fx-opacity: 1.0;
+}
+
+.button.readonly-field .text {
+    -fx-fill: -bootstrap-grey7;
+}
