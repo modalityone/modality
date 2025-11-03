@@ -74,8 +74,8 @@ public interface SuperAdmin18nKeys {
     Object CreateGroup = "CreateGroup";
     Object FailedToUpdateOperations = "FailedToUpdateOperations";
     Object RightsManagement = "RightsManagement";
-    Object RoutesInfoBox = "RoutesInfoBox";
     Object GrantRoute = "GrantRoute";
+    Object RoutesInfoBox = "RoutesInfoBox";
     Object NoGroupsSelected = "NoGroupsSelected";
     Object Rules = "Rules";
     Object I18nCodePlaceholder = "I18nCodePlaceholder";
@@ -92,6 +92,7 @@ public interface SuperAdmin18nKeys {
     Object SearchRules = "SearchRules";
     Object RouteCodeValidationError = "RouteCodeValidationError";
     Object OperationsInfoBox = "OperationsInfoBox";
+    Object BackofficeOperationsOnly = "BackofficeOperationsOnly";
     Object CreateRoleButton = "CreateRoleButton";
     Object RulePlural = "RulePlural";
     Object Name = "Name";

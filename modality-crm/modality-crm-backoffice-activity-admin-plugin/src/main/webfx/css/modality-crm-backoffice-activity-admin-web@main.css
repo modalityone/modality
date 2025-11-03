@@ -92,6 +92,19 @@
     color: #666;
 }
 
+/* Table header styling */
+.grid-head .grid-col {
+    background-color: #e9ecef;
+}
+
+.grid-head Text,
+.grid-head Label {
+    font-weight: bold;
+    font-size: 13px;
+    fill: #495057;
+    color: #495057;
+}
+
 .dialog-summary {
     font-size: 14px;
 }

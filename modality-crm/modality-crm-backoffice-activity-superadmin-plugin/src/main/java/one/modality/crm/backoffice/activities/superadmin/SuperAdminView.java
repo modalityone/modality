@@ -7,6 +7,7 @@ import javafx.scene.Node;
 import javafx.scene.control.Label;
 import javafx.scene.control.Tab;
 import javafx.scene.control.TabPane;
+import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
 
 import static one.modality.crm.backoffice.activities.superadmin.SuperAdmin18nKeys.*;
@@ -48,28 +49,28 @@ public class SuperAdminView {
         Label descriptionLabel = I18nControls.newLabel(ManageOrganizationsOperationsRoutesRoles);
         descriptionLabel.getStyleClass().add("admin-subtitle");
 
-        // Create sub-tabs
-        Tab organizationsTab = new Tab(null, organizationsView.getView());
+        // Create sub-tabs with padded content
+        Tab organizationsTab = new Tab(null, wrapWithPadding(organizationsView.getView()));
         I18nControls.bindI18nTextProperty(organizationsTab, OrganizationTab);
         organizationsTab.setClosable(false);
 
-        Tab operationsTab = new Tab(null, operationsView.getView());
+        Tab operationsTab = new Tab(null, wrapWithPadding(operationsView.getView()));
         I18nControls.bindI18nTextProperty(operationsTab, Operations);
         operationsTab.setClosable(false);
 
-        Tab operationGroupsTab = new Tab(null, operationGroupsView.getView());
+        Tab operationGroupsTab = new Tab(null, wrapWithPadding(operationGroupsView.getView()));
         I18nControls.bindI18nTextProperty(operationGroupsTab, OperationGroups);
         operationGroupsTab.setClosable(false);
 
-        Tab routesTab = new Tab(null, routesView.getView());
+        Tab routesTab = new Tab(null, wrapWithPadding(routesView.getView()));
         I18nControls.bindI18nTextProperty(routesTab, Routes);
         routesTab.setClosable(false);
 
-        Tab rolesTab = new Tab(null, rolesView.getView());
+        Tab rolesTab = new Tab(null, wrapWithPadding(rolesView.getView()));
         I18nControls.bindI18nTextProperty(rolesTab, Roles);
         rolesTab.setClosable(false);
 
-        Tab rulesTab = new Tab(null, rulesView.getView());
+        Tab rulesTab = new Tab(null, wrapWithPadding(rulesView.getView()));
         I18nControls.bindI18nTextProperty(rulesTab, Rules);
         rulesTab.setClosable(false);
 
@@ -83,6 +84,12 @@ public class SuperAdminView {
 
     public Node getView() {
         return view;
+    }
+
+    private Node wrapWithPadding(Node content) {
+        StackPane wrapper = new StackPane(content);
+        wrapper.setPadding(new Insets(24));
+        return wrapper;
     }
 
     public void setActive(boolean active) {

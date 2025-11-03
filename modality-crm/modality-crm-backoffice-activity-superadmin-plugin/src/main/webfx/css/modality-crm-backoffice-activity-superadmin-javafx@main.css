@@ -27,24 +27,44 @@
     -fx-text-fill: -admin-text-secondary;
 }
 
+/* Info banner - used in dialogs */
+.admin-info-banner {
+    -fx-background-color: -admin-info-bg-color;
+    -fx-border-color: -admin-info-border-color;
+    -fx-border-width: 0 0 0 3;
+    -fx-border-radius: 4;
+    -fx-background-radius: 4;
+}
+
+.admin-info-banner-text {
+    -fx-text-fill: -admin-info-text-color;
+    -fx-font-size: 13;
+}
+
 /* Modern Tab Design for Super Admin Sub-Tabs */
 .super-admin-sub-tabs {
-    -fx-background-color: transparent;
-    -fx-border-color: transparent transparent #ddd transparent;
-    -fx-border-width: 0 0 1 0;
+    -fx-background-color: white;
+    -fx-border-color: #ddd;
+    -fx-border-width: 1;
+    -fx-border-radius: 8;
+    -fx-background-radius: 8;
 }
 
 .super-admin-sub-tabs .tab-header-area {
-    -fx-background-color: transparent;
+    -fx-background-color: white;
     -fx-padding: 0;
+    -fx-border-radius: 8 8 0 0;
+    -fx-background-radius: 8 8 0 0;
 }
 
 .super-admin-sub-tabs .tab-header-background {
-    -fx-background-color: transparent;
+    -fx-background-color: white;
+    -fx-border-radius: 8 8 0 0;
+    -fx-background-radius: 8 8 0 0;
 }
 
 .super-admin-sub-tabs .headers-region {
-    -fx-background-color: transparent;
+    -fx-background-color: white;
 }
 
 .super-admin-sub-tabs .tab {
@@ -78,9 +98,8 @@
 }
 
 .super-admin-sub-tabs .tab-content-area {
-    -fx-background-color: transparent;
+    -fx-background-color: white;
     -fx-border-color: transparent;
-    -fx-padding: 24 0 0 0;
 }
 
 /* Role Dialog - Selected Permissions */
@@ -219,4 +238,17 @@
 
 .operation-selection-chip-remove:hover {
     -fx-text-fill: #dc3545;
+}
+
+/* Table header styling */
+.grid-head .grid-col {
+    -fx-background-color: #e9ecef;
+}
+
+.grid-head Text,
+.grid-head Label {
+    -fx-font-weight: bold;
+    -fx-font-size: 13;
+    -fx-fill: #495057;
+    -fx-text-fill: #495057;
 }

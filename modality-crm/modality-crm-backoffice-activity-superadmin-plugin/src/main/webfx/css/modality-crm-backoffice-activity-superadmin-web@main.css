@@ -27,24 +27,37 @@
     color: var(--admin-text-secondary);
 }
 
+/* Info banner - used in dialogs */
+.admin-info-banner {
+    background-color: var(--admin-info-bg-color);
+    border-left: 3px solid var(--admin-info-border-color);
+    border-radius: 4px;
+}
+
+.admin-info-banner-text {
+    color: var(--admin-info-text-color);
+    font-size: 13px;
+}
+
 /* Modern Tab Design for Super Admin Sub-Tabs */
 .super-admin-sub-tabs {
-    background-color: transparent;
-    border-style: solid;
-    border-color: transparent transparent #ddd transparent;
-    border-width: 0 0 1px 0;
+    background-color: white;
+    border: 1px solid #ddd;
+    border-radius: 8px;
 }
 
 .super-admin-sub-tabs .tab-header-area {
-    background-color: transparent;
+    background-color: white;
+    border-radius: 8px 8px 0 0;
 }
 
 .super-admin-sub-tabs .tab-header-background {
-    background-color: transparent;
+    background-color: white;
+    border-radius: 8px 8px 0 0;
 }
 
 .super-admin-sub-tabs .headers-region {
-    background-color: transparent;
+    background-color: white;
 }
 
 .super-admin-sub-tabs .tab {
@@ -80,7 +93,7 @@
 }
 
 .super-admin-sub-tabs .tab-content-area {
-    background-color: transparent;
+    background-color: white;
     border-color: transparent;
 }
 
@@ -213,4 +226,17 @@
 
 .operation-selection-chip-remove:hover {
     color: #dc3545;
+}
+
+/* Table header styling */
+.grid-head .grid-col {
+    background-color: #e9ecef;
+}
+
+.grid-head Text,
+.grid-head Label {
+    font-weight: bold;
+    font-size: 13px;
+    fill: #495057;
+    color: #495057;
 }

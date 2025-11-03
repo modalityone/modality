@@ -134,3 +134,17 @@
     -fx-font-size: 14;
     -fx-text-fill: #666;
 }
+
+
+.grid-head .grid-col {
+    -fx-background-color: #e9ecef;
+}
+
+.grid-head Text,
+.grid-head Label {
+    -fx-font-weight: bold;
+    -fx-font-size: 13;
+    -fx-fill: #495057;
+    -fx-text-fill: #495057;
+}
+

@@ -51,10 +51,10 @@ public class OperationGroupDialog {
         // Use the provided store and create an update store above it
         UpdateStore updateStore = UpdateStore.createAbove(store);
 
-        // Load operations: only those with no group, or belonging to the current group (if editing)
+        // Load operations: only backend operations with no group, or belonging to the current group (if editing)
         String query = isEdit
-            ? "select id,name,group from Operation where group is null or group=? order by name"
-            : "select id,name,group from Operation where group is null order by name";
+            ? "select id,name,group from Operation where backend=true and (group is null or group=?) order by name"
+            : "select id,name,group from Operation where backend=true and group is null order by name";
 
         if (isEdit) {
             store.<Operation>executeQuery(query, group.getPrimaryKey())
@@ -132,6 +132,19 @@ public class OperationGroupDialog {
 
         selectedItemsContainer.getChildren().addAll(selectedItemsTitle, selectedCountLabel, selectedChipsPane);
 
+        // === INFO BANNER ===
+        VBox infoBanner = new VBox(6);
+        infoBanner.getStyleClass().add("admin-info-banner");
+        infoBanner.setPadding(new Insets(12));
+        infoBanner.setMaxWidth(Double.MAX_VALUE);
+
+        Label infoText = I18nControls.newLabel(BackofficeOperationsOnly);
+        infoText.getStyleClass().add("admin-info-banner-text");
+        infoText.setWrapText(true);
+        infoText.setMaxWidth(Double.MAX_VALUE);
+
+        infoBanner.getChildren().add(infoText);
+
         // === SEARCH OPERATIONS SECTION (Below Selected Operations) ===
         VBox operationsField = new VBox(12);
         operationsField.setMaxWidth(Double.MAX_VALUE);
@@ -174,7 +187,7 @@ public class OperationGroupDialog {
         operationsField.getChildren().addAll(operationsLabel, searchOperations, checkboxScroll);
 
         // Add fields to form
-        formFields.getChildren().addAll(nameFormField.container(), selectedItemsContainer, operationsField);
+        formFields.getChildren().addAll(nameFormField.container(), selectedItemsContainer, infoBanner, operationsField);
 
         // Create the entity to save
         OperationGroup groupToSave = group != null ? updateStore.updateEntity(group) : updateStore.insertEntity(OperationGroup.class);
