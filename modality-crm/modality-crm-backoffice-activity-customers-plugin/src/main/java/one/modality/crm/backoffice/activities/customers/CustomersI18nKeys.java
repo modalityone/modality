@@ -20,13 +20,17 @@ public interface CustomersI18nKeys {
     Object AccountAccessTab = "AccountAccessTab";
     Object FirstNameLabel = "FirstNameLabel";
     Object TableActionsHeader = "TableActionsHeader";
+    Object ContactIdentitySection = "ContactIdentitySection";
+    Object PersonalAttributesSection = "PersonalAttributesSection";
     Object CountryLabel = "CountryLabel";
     Object EditingLabel = "EditingLabel";
     Object NoAccountText = "NoAccountText";
     Object PageSubtitle = "PageSubtitle";
     Object UsernameLabel = "UsernameLabel";
     Object LanguageLabel = "LanguageLabel";
+    Object IdentityOrganizationSection = "IdentityOrganizationSection";
     Object TableStatusHeader = "TableStatusHeader";
+    Object AddressSection = "AddressSection";
     Object LastNameLabel = "LastNameLabel";
     Object BirthdateLabel = "BirthdateLabel";
     Object TableOrganizationHeader = "TableOrganizationHeader";
@@ -41,6 +45,7 @@ public interface CustomersI18nKeys {
     Object CityLabel = "CityLabel";
     Object LimitTo100 = "LimitTo100";
     Object OwnerAccountTitle = "OwnerAccountTitle";
+    Object BasicInfoSection = "BasicInfoSection";
     Object OrdainedLabel = "OrdainedLabel";
     Object StatusRemoved = "StatusRemoved";
     Object LocationSection = "LocationSection";
@@ -64,8 +69,19 @@ public interface CustomersI18nKeys {
     Object AccountTypeFrontoffice = "AccountTypeFrontoffice";
     Object OwnerAccountDescription = "OwnerAccountDescription";
     Object AccountTypeBackoffice = "AccountTypeBackoffice";
-    Object ContactIdentitySection = "ContactIdentitySection";
-    Object PersonalAttributesSection = "PersonalAttributesSection";
-    Object BasicInfoSection = "BasicInfoSection";
+    Object RegistrationsTab = "RegistrationsTab";
+    Object BookingStatusLabel = "BookingStatusLabel";
+    Object AccountTypeFilterAll = "AccountTypeFilterAll";
+    Object AccountTypeFilterBackoffice = "AccountTypeFilterBackoffice";
+    Object NoRegistrationsText = "NoRegistrationsText";
+    Object ActiveStatusFilterInactive = "ActiveStatusFilterInactive";
+    Object LoadingRegistrationsText = "LoadingRegistrationsText";
+    Object AccountTypeFilterLabel = "AccountTypeFilterLabel";
+    Object ActiveStatusFilterAll = "ActiveStatusFilterAll";
+    Object AccountTypeFilterFrontoffice = "AccountTypeFilterFrontoffice";
+    Object ActiveStatusFilterActive = "ActiveStatusFilterActive";
+    Object BookingDateLabel = "BookingDateLabel";
+    Object BookingRefLabel = "BookingRefLabel";
+    Object EventLabel = "EventLabel";
 
 }

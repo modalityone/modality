@@ -22,13 +22,11 @@
     font-size: 24px;
     font-weight: 600;
     color: var(--kbs-text-primary-color);
-    margin: 0 0 4px 0;
 }
 
 .page-subtitle {
     font-size: 13px;
     color: var(--kbs-text-secondary-color);
-    margin: 0;
 }
 
 /* Customers container */
@@ -53,7 +51,6 @@
 }
 
 .customers-grid th {
-    padding: 12px 16px;
     text-align: left;
     font-size: 12px;
     font-weight: 600;
@@ -62,7 +59,6 @@
 }
 
 .customers-grid td {
-    padding: 14px 16px;
     border-bottom: 1px solid var(--kbs-border-color);
     font-size: 14px;
 }
@@ -76,208 +72,106 @@
     border-left: 3px solid var(--kbs-primary-color);
 }
 
-/* Edit Panel */
-.edit-panel {
-    background-color: var(--kbs-white-color);
-    border-top: 3px solid var(--kbs-primary-color);
-    display: none;
-    animation: slideDown 0.3s ease-out;
-}
-
-.edit-panel.active {
-    display: block;
-}
-
-@keyframes slideDown {
-    from {
-        opacity: 0;
-        transform: translateY(-20px);
-    }
-    to {
-        opacity: 1;
-        transform: translateY(0);
-    }
-}
-
-.edit-panel-header {
-    padding: 20px 24px;
-    background-color: var(--kbs-bg-light-color);
-    border-bottom: 1px solid var(--kbs-border-color);
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-}
-
-.edit-panel-title {
-    font-size: 20px;
-    font-weight: 600;
-    color: var(--kbs-text-primary-color);
-}
-
-.edit-panel-id {
-    padding: 4px 10px;
-    background-color: var(--kbs-white-color);
-    border-radius: 12px;
-    font-size: 12px;
-    font-weight: 600;
-    color: var(--kbs-text-secondary-color);
+/* Customer ID - monospace display */
+.customer-id {
     font-family: 'Courier New', monospace;
 }
 
-/* Edit Tabs */
-.edit-tabs {
-    display: flex;
-    background-color: var(--kbs-bg-light-color);
-    padding: 0 24px;
-    border-bottom: 1px solid var(--kbs-border-color);
+/* Panel header icon */
+.panel-header-icon {
+    font-size: 20px;
 }
 
-.edit-tab {
-    padding: 14px 20px;
-    border: none;
-    background-color: transparent;
+/* Role/Link icons and text */
+.role-icon {
+    font-size: 13px;
+}
+
+.role-icon-success {
+    font-size: 13px;
+    color: #2E7D32;
+}
+
+.role-link-text {
+    font-size: 13px;
     color: var(--kbs-text-secondary-color);
-    font-size: 14px;
-    font-weight: 500;
-    cursor: pointer;
-    border-bottom: 2px solid transparent;
+}
+
+/* Account Type Toggle Buttons */
+.account-type-toggle-container {
+    /* No padding/spacing here - set in Java code */
     display: flex;
     align-items: center;
-    gap: 8px;
 }
 
-.edit-tab:hover {
-    color: var(--kbs-text-primary-color);
-    background-color: rgba(0, 163, 255, 0.05);
-}
-
-.edit-tab.active {
-    color: var(--kbs-primary-color);
+.account-type-toggle {
     background-color: var(--kbs-white-color);
-    border-bottom-color: var(--kbs-primary-color);
-}
-
-/* Edit Content */
-.edit-content {
-    padding: 24px;
-    max-height: 600px;
-    overflow-y: auto;
-    background-color: var(--kbs-white-color);
-}
-
-.edit-tab-content {
-    display: none;
-}
-
-.edit-tab-content.active {
-    display: block;
-}
-
-.edit-scroll-pane {
-    background-color: var(--kbs-white-color);
-}
-
-/* Form Elements */
-.form-grid-2 {
-    display: grid;
-    grid-template-columns: repeat(2, 1fr);
-    gap: 20px;
-}
-
-.form-grid-3 {
-    display: grid;
-    grid-template-columns: repeat(3, 1fr);
-    gap: 20px;
-}
-
-.form-group {
-    display: flex;
-    flex-direction: column;
-    gap: 8px;
-}
-
-.form-label {
-    font-size: 13px;
-    font-weight: 600;
-    color: var(--kbs-text-primary-color);
-}
-
-.form-field {
-    padding: 10px 12px;
     border: 1px solid var(--kbs-border-color);
     border-radius: 6px;
-    font-size: 14px;
+    color: var(--kbs-text-secondary-color);
+    font-size: 13px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.2s ease;
 }
 
-.form-field:focus {
-    border-color: var(--kbs-primary-color);
-    outline: none;
-}
-
-.form-field:disabled {
+.account-type-toggle:hover {
     background-color: var(--kbs-bg-light-color);
-    cursor: not-allowed;
-}
-
-.form-checkbox {
-    font-size: 14px;
-}
-
-.form-checkbox:disabled {
-    opacity: 0.7;
-}
-
-/* Form Section Title */
-.form-section-title {
-    font-size: 15px;
-    font-weight: 600;
     color: var(--kbs-text-primary-color);
-    margin: 24px 0 16px 0;
-    padding-bottom: 8px;
-    border-bottom: 1px solid var(--kbs-border-color);
 }
 
-/* Password Hash Display */
-.password-hash-display {
-    font-family: 'Courier New', monospace;
-    font-size: 12px;
-    background-color: var(--kbs-bg-light-color) !important;
-    letter-spacing: 1px;
+.account-type-toggle:selected,
+.account-type-toggle.selected {
+    background-color: var(--kbs-primary-color);
+    color: var(--kbs-white-color);
+    border-color: var(--kbs-primary-color);
 }
 
-/* Account Credentials Section */
-.account-credentials-section {
-    background-color: #F0F8FF;
-    padding: 20px;
-    border-radius: 8px;
-    margin-bottom: 20px;
-    border: 1px solid #B3D9FF;
+.account-type-toggle:selected:hover,
+.account-type-toggle.selected:hover {
+    background-color: var(--kbs-primary-hover-color);
+    border-color: var(--kbs-primary-hover-color);
+}
+
+/* Filter Group Separator */
+.filter-group-separator {
+    background-color: var(--kbs-border-color);
+    width: 1px;
+    opacity: 0.5;
 }
 
 /* Linked Accounts Box */
 .linked-accounts-box {
-    background-color: #F0F8FF;
+    background: #F0F8FF;
     border: 1px solid #B3D9FF;
     border-radius: 8px;
-    padding: 20px;
-    margin-bottom: 20px;
 }
 
 .linked-accounts-description {
     color: var(--kbs-text-secondary-color);
     font-size: 13px;
-    margin-bottom: 16px;
+}
+
+.linked-person-items {
+    /* No padding/spacing here - set in Java code */
 }
 
 .linked-person-item {
+    /* No padding/spacing here - set in Java code */
     display: flex;
     align-items: center;
-    gap: 12px;
-    padding: 12px;
-    background-color: var(--kbs-white-color);
+    background: white;
     border-radius: 6px;
     border: 1px solid var(--kbs-border-color);
-    margin-bottom: 8px;
+}
+
+.linked-person-check-icon {
+    font-size: 14px;
+    color: #2E7D32;
+}
+
+.linked-person-user-icon {
+    font-size: 20px;
 }
 
 .linked-person-name {
@@ -286,9 +180,9 @@
 }
 
 .linked-person-email {
+    flex: 1;
     font-size: 12px;
     color: var(--kbs-text-secondary-color);
-    flex: 1;
 }
 
 .linked-person-id {
@@ -296,69 +190,3 @@
     color: var(--kbs-text-secondary-color);
 }
 
-/* Account Type Badges */
-.account-type-badge {
-    display: inline-flex;
-    padding: 5px 12px;
-    border-radius: 16px;
-    font-size: 11px;
-    font-weight: 600;
-    text-transform: uppercase;
-}
-
-/* Status Badges */
-.status-badge {
-    display: inline-flex;
-    padding: 5px 12px;
-    border-radius: 16px;
-    font-size: 12px;
-    font-weight: 500;
-}
-
-.status-badge.active {
-    background-color: #E8F5E9;
-    color: #2E7D32;
-}
-
-.status-badge.inactive {
-    background-color: #FFEBEE;
-    color: #C62828;
-}
-
-/* Action Buttons in Table */
-.btn-icon {
-    background: none;
-    border: none;
-    padding: 6px;
-    cursor: pointer;
-    border-radius: 4px;
-    color: var(--kbs-text-secondary-color);
-    transition: all 0.2s;
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-}
-
-.btn-icon:hover {
-    background-color: var(--kbs-bg-light-color);
-    color: var(--kbs-text-primary-color);
-}
-
-.btn-icon.danger:hover {
-    background-color: #FFEBEE;
-    color: var(--kbs-danger-color);
-}
-
-/* Responsive Design */
-@media (max-width: 768px) {
-    .form-grid-2,
-    .form-grid-3 {
-        grid-template-columns: 1fr;
-    }
-
-    .edit-panel-header {
-        flex-direction: column;
-        align-items: flex-start;
-        gap: 16px;
-    }
-}

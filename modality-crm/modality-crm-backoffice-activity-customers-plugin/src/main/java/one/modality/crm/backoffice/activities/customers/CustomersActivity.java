@@ -1,6 +1,5 @@
 package one.modality.crm.backoffice.activities.customers;
 
-import dev.webfx.extras.controlfactory.button.ButtonFactoryMixin;
 import dev.webfx.extras.i18n.controls.I18nControls;
 import dev.webfx.stack.orm.domainmodel.activity.viewdomain.impl.ViewDomainActivityBase;
 import javafx.geometry.Insets;
@@ -9,6 +8,7 @@ import javafx.scene.Node;
 import javafx.scene.control.Label;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.VBox;
+import one.modality.base.client.entities.filters.FilterButtonSelectorFactoryMixin;
 
 import static one.modality.crm.backoffice.activities.customers.CustomersI18nKeys.*;
 
@@ -20,10 +20,11 @@ import static one.modality.crm.backoffice.activities.customers.CustomersI18nKeys
  * @author Bruno Salmon
  * @author Claude Code
  */
-final class CustomersActivity extends ViewDomainActivityBase implements ButtonFactoryMixin {
+final class CustomersActivity extends ViewDomainActivityBase implements FilterButtonSelectorFactoryMixin {
 
     private final CustomersPresentationModel pm = new CustomersPresentationModel();
     private CustomersView customersView;
+    private CustomersFilterSearchBar filterSearchBar;
 
 
     @Override
@@ -32,8 +33,13 @@ final class CustomersActivity extends ViewDomainActivityBase implements ButtonFa
         BorderPane container = new BorderPane();
         container.setId("customers");
 
-        // Create header
+        // Create header with FilterSearchBar
         VBox header = createHeader();
+
+        // Create the FilterSearchBar and add it to the header
+        filterSearchBar = new CustomersFilterSearchBar(this, "customers", "Person", container, pm);
+        header.getChildren().add(filterSearchBar.buildUi());
+
         container.setTop(header);
 
         // Create the main view
@@ -63,6 +69,7 @@ final class CustomersActivity extends ViewDomainActivityBase implements ButtonFa
     @Override
     public void onResume() {
         super.onResume();
+        filterSearchBar.onResume(); // activate search text focus on activity resume
         pm.setActive(true);
         if (customersView != null) {
             customersView.setActive(true);

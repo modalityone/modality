@@ -20,7 +20,9 @@ final class CustomersPresentationModel implements
     HasMasterVisualResultProperty,
     HasMasterVisualSelectionProperty,
     HasSearchTextProperty,
-    HasLimitProperty {
+    HasLimitProperty,
+    HasAccountTypeFilterProperty,
+    HasActiveStatusFilterProperty {
 
     // Master table properties
     private final ObjectProperty<VisualResult> masterVisualResultProperty = new SimpleObjectProperty<VisualResult>();
@@ -66,6 +68,20 @@ final class CustomersPresentationModel implements
 
     public Object getOrganizationId() {
         return organizationIdProperty.get();
+    }
+
+    // Account type filter property (null = all, "frontoffice" or "backoffice")
+    private final StringProperty accountTypeFilterProperty = new SimpleStringProperty();
+    @Override
+    public StringProperty accountTypeFilterProperty() {
+        return accountTypeFilterProperty;
+    }
+
+    // Active status filter property (null = all, "active" or "inactive")
+    private final StringProperty activeStatusFilterProperty = new SimpleStringProperty("active");
+    @Override
+    public StringProperty activeStatusFilterProperty() {
+        return activeStatusFilterProperty;
     }
 
     // Active property for lifecycle management

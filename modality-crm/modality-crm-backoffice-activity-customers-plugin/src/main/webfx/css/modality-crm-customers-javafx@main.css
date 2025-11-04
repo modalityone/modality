@@ -50,10 +50,16 @@
     -fx-text-fill: -kbs-text-secondary-color;
     -fx-font-weight: 600;
     -fx-font-size: 12px;
+    -fx-min-height: 28;
+    -fx-pref-height: 28;
+    -fx-max-height: 28;
 }
 
 .customers-grid .table-view .table-row-cell {
     -fx-border-color: transparent transparent -kbs-border-color transparent;
+    -fx-min-height: 32;
+    -fx-pref-height: 32;
+    -fx-max-height: 32;
 }
 
 .customers-grid .table-view .table-row-cell:hover {
@@ -61,9 +67,10 @@
 }
 
 .customers-grid .table-view .table-row-cell:selected {
-    -fx-background-color: #FFF3CD;
+    -fx-background-color: #E3F2FD;
     -fx-border-color: transparent transparent -kbs-border-color -kbs-primary-color;
-    -fx-border-width: 0 0 1px 3px;
+    -fx-border-width: 0 0 1px 4px;
+    -fx-font-weight: 500;
 }
 
 /* Edit Panel */
@@ -88,7 +95,6 @@
 .edit-panel-id {
     -fx-background-color: -kbs-white-color;
     -fx-background-radius: 12px;
-    -fx-padding: 4px 10px;
     -fx-font-size: 12px;
     -fx-font-weight: 600;
     -fx-text-fill: -kbs-text-secondary-color;
@@ -214,14 +220,26 @@
     -fx-font-size: 13px;
 }
 
+.linked-person-items {
+    /* No padding/spacing here - set in Java code */
+}
+
 .linked-person-item {
-    -fx-spacing: 12;
+    /* No padding/spacing here - set in Java code */
     -fx-background-color: -kbs-white-color;
     -fx-border-color: -kbs-border-color;
     -fx-border-radius: 6px;
     -fx-background-radius: 6px;
     -fx-border-width: 1px;
-    -fx-alignment: CENTER_LEFT;
+}
+
+.linked-person-check-icon {
+    -fx-font-size: 14px;
+    -fx-fill: #2E7D32;
+}
+
+.linked-person-user-icon {
+    -fx-font-size: 20px;
 }
 
 .linked-person-name {
@@ -239,10 +257,11 @@
     -fx-text-fill: -kbs-text-secondary-color;
 }
 
-/* Account Type Badges (using existing Bootstrap styles, additional custom) */
+/* Account Type Badges */
 .account-type-badge {
     -fx-font-size: 11px;
     -fx-font-weight: 600;
+    -fx-background-radius: 16px;
 }
 
 /* Status Badges */
@@ -261,3 +280,172 @@
     -fx-background-color: #FFEBEE;
     -fx-text-fill: #C62828;
 }
+
+/* Role Badges */
+.role-badge {
+    -fx-background-radius: 3px;
+    -fx-font-size: 11px;
+    -fx-font-weight: 600;
+}
+
+.role-badge.admin {
+    -fx-background-color: #FCE4EC;
+    -fx-text-fill: #C2185B;
+}
+
+.role-badge.developer {
+    -fx-background-color: #E8F5E9;
+    -fx-text-fill: #2E7D32;
+}
+
+/* Action Buttons */
+.action-button {
+    -fx-background-color: transparent;
+    -fx-border-color: transparent;
+    -fx-background-radius: 4px;
+    -fx-cursor: hand;
+}
+
+.action-button:hover {
+    -fx-background-color: -kbs-bg-light-color;
+}
+
+.action-button.danger:hover {
+    -fx-background-color: #FFEBEE;
+}
+
+.action-icon {
+    -fx-fill: #666666;
+}
+
+.action-icon.danger {
+    -fx-fill: -kbs-danger-color;
+}
+
+.action-button:hover .action-icon {
+    -fx-fill: -kbs-text-primary-color;
+}
+
+.action-button.danger:hover .action-icon.danger {
+    -fx-fill: -kbs-danger-color;
+}
+
+/* Search Bar */
+.search-bar {
+    -fx-background-color: -kbs-white-color;
+    -fx-border-color: transparent transparent -kbs-border-color transparent;
+    -fx-border-width: 0 0 1px 0;
+}
+
+.search-box {
+    -fx-border-color: -kbs-border-color;
+    -fx-border-radius: 6px;
+    -fx-background-radius: 6px;
+    -fx-font-size: 14px;
+}
+
+.search-box:focused {
+    -fx-border-color: -kbs-primary-color;
+}
+
+.limit-checkbox {
+    -fx-font-size: 14px;
+    -fx-text-fill: -kbs-text-secondary-color;
+}
+
+/* Account Type Toggle Buttons */
+.account-type-toggle-container {
+    /* No padding/spacing here - set in Java code */
+}
+
+.account-type-toggle {
+    -fx-background-color: -kbs-white-color;
+    -fx-border-color: -kbs-border-color;
+    -fx-border-width: 1px;
+    -fx-border-radius: 6px;
+    -fx-background-radius: 6px;
+    -fx-text-fill: -kbs-text-secondary-color;
+    -fx-font-size: 13px;
+    -fx-font-weight: 500;
+    -fx-cursor: hand;
+}
+
+.account-type-toggle:hover {
+    -fx-background-color: -kbs-bg-light-color;
+    -fx-text-fill: -kbs-text-primary-color;
+}
+
+.account-type-toggle:selected {
+    -fx-background-color: -kbs-primary-color;
+    -fx-text-fill: -kbs-white-color;
+    -fx-border-color: -kbs-primary-color;
+}
+
+.account-type-toggle:selected:hover {
+    -fx-background-color: -kbs-primary-hover-color;
+    -fx-border-color: -kbs-primary-hover-color;
+}
+
+/* Filter Group Separator */
+.filter-group-separator {
+    -fx-background-color: -kbs-border-color;
+    -fx-opacity: 0.5;
+}
+
+.filter-group-separator .line {
+    -fx-border-color: -kbs-border-color;
+    -fx-background-color: -kbs-border-color;
+    -fx-opacity: 0.5;
+}
+
+/* Readonly field styling */
+.readonly-field {
+    -fx-background-color: -kbs-bg-light-color;
+    -fx-opacity: 1.0;
+}
+
+/* Customer ID - monospace display */
+.customer-id {
+    -fx-font-family: "Courier New", monospace;
+}
+
+/* Panel header icon */
+.panel-header-icon {
+    -fx-font-size: 20px;
+}
+
+/* Role/Link icons and text */
+.role-icon {
+    -fx-font-size: 13px;
+}
+
+.role-icon-success {
+    -fx-font-size: 13px;
+    -fx-fill: #2E7D32;
+}
+
+.role-link-text {
+    -fx-font-size: 13px;
+    -fx-text-fill: -kbs-text-secondary-color;
+}
+
+/* Close Button */
+.btn-close {
+    -fx-background-color: transparent;
+    -fx-text-fill: #666666;
+    -fx-font-size: 20px;
+    -fx-font-weight: 300;
+    -fx-cursor: hand;
+    -fx-border-radius: 4px;
+    -fx-background-radius: 4px;
+}
+
+.btn-close:hover {
+    -fx-background-color: #E3F2FD;
+    -fx-text-fill: -kbs-primary-color;
+}
+
+.btn-close:pressed {
+    -fx-background-color: #BBDEFB;
+}
+
