@@ -6,8 +6,6 @@ import dev.webfx.extras.i18n.controls.I18nControls;
 import dev.webfx.extras.styles.bootstrap.Bootstrap;
 import dev.webfx.extras.util.dialog.DialogCallback;
 import dev.webfx.extras.util.dialog.DialogUtil;
-import dev.webfx.stack.orm.datasourcemodel.service.DataSourceModelService;
-import dev.webfx.stack.orm.domainmodel.DataSourceModel;
 import dev.webfx.stack.orm.entity.EntityStore;
 import dev.webfx.stack.orm.entity.UpdateStore;
 import dev.webfx.stack.orm.entity.controls.entity.selector.EntityButtonSelector;
@@ -15,8 +13,12 @@ import javafx.application.Platform;
 import javafx.beans.binding.BooleanBinding;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
-import javafx.scene.control.*;
-import javafx.scene.layout.*;
+import javafx.scene.control.Button;
+import javafx.scene.control.Label;
+import javafx.scene.layout.BorderPane;
+import javafx.scene.layout.FlowPane;
+import javafx.scene.layout.HBox;
+import javafx.scene.layout.VBox;
 import one.modality.base.client.mainframe.fx.FXMainFrameDialogArea;
 import one.modality.base.shared.domainmodel.functions.AbcNames;
 import one.modality.base.shared.entities.AuthorizationOrganizationAdmin;
@@ -36,18 +38,16 @@ import static one.modality.crm.backoffice.activities.superadmin.SuperAdmin18nKey
  *
  * @author Claude Code
  */
-public class AssignAdminToOrganizationDialog {
+final class AssignAdminToOrganizationDialog {
 
     /**
      * Shows the manage admins dialog.
      *
      * @param organization The organization to manage
-     * @param admins Current list of organization admins
+     * @param admins       Current list of organization admins
      */
-    public static void show(Organization organization, List<AuthorizationOrganizationAdmin> admins,
-                            EntityStore entityStore) {
-        DataSourceModel dataSourceModel = DataSourceModelService.getDefaultDataSourceModel();
-        UpdateStore updateStore = UpdateStore.createAbove(entityStore);
+    public static void show(Organization organization, List<AuthorizationOrganizationAdmin> admins) {
+        UpdateStore updateStore = UpdateStore.createAbove(organization.getStore());
 
         // Track selected admins
         Set<Object> selectedAdminIds = new HashSet<>();
@@ -167,7 +167,7 @@ public class AssignAdminToOrganizationDialog {
         EntityButtonSelector<Person> adminSelector = new EntityButtonSelector<Person>( // language=JSON5
             "{class: 'Person', alias: 'p', columns: [{expression: '[firstName,lastName,`(` + email + `)`]'}], where: 'owner and !removed and frontendAccount.(backoffice and !disabled)', orderBy: 'firstName,lastName'}",
             new ButtonFactoryMixin() {
-            }, FXMainFrameDialogArea::getDialogArea, dataSourceModel
+            }, FXMainFrameDialogArea::getDialogArea, organization.getStore().getDataSourceModel()
         ) {
             @Override
             protected void setSearchParameters(String search, EntityStore store) {

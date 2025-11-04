@@ -9,19 +9,23 @@ import dev.webfx.kit.util.properties.FXProperties;
 import dev.webfx.kit.util.properties.ObservableLists;
 import dev.webfx.stack.orm.datasourcemodel.service.DataSourceModelService;
 import dev.webfx.stack.orm.domainmodel.DataSourceModel;
-import dev.webfx.stack.orm.entity.EntityStore;
-import dev.webfx.stack.orm.reactive.dql.query.ReactiveDqlQuery;
 import dev.webfx.stack.orm.reactive.entities.dql_to_entities.ReactiveEntitiesMapper;
 import dev.webfx.stack.orm.reactive.entities.entities_to_grid.EntityColumn;
 import dev.webfx.stack.orm.reactive.mapping.entities_to_visual.EntitiesToVisualResultMapper;
 import dev.webfx.stack.orm.reactive.mapping.entities_to_visual.VisualEntityColumnFactory;
+import javafx.beans.property.BooleanProperty;
+import javafx.beans.property.SimpleBooleanProperty;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Node;
-import javafx.scene.control.*;
-import javafx.scene.layout.*;
+import javafx.scene.control.Label;
+import javafx.scene.control.TextField;
+import javafx.scene.layout.HBox;
+import javafx.scene.layout.Priority;
+import javafx.scene.layout.StackPane;
+import javafx.scene.layout.VBox;
 import one.modality.base.shared.entities.AuthorizationOrganizationAdmin;
 import one.modality.base.shared.entities.AuthorizationOrganizationUserAccess;
 import one.modality.base.shared.entities.Organization;
@@ -38,20 +42,18 @@ import static one.modality.crm.backoffice.activities.superadmin.SuperAdmin18nKey
  *
  * @author Claude Code
  */
-public class AssignAdminToOrganizationsView {
+final class AssignAdminToOrganizationsView {
 
     private final VBox view;
     private final VisualGrid organizationsGrid;
     private TextField searchField;
     private Switch showAllSwitch;
-    private ReactiveEntitiesMapper<Organization> organizationsMapper;
-    private ReactiveEntitiesMapper<AuthorizationOrganizationAdmin> organizationAdminsMapper;
     private final ObservableList<Organization> organizationsFeed = FXCollections.observableArrayList();
     private final ObservableList<AuthorizationOrganizationAdmin> organizationAdminsFeed = FXCollections.observableArrayList();
     private final ObservableList<AuthorizationOrganizationUserAccess> userAccessFeed = FXCollections.observableArrayList();
     private final ObservableList<Organization> displayedOrganizations = FXCollections.observableArrayList();
     private EntityColumn<Organization>[] columns;
-    private ReactiveEntitiesMapper<AuthorizationOrganizationUserAccess> userAccessMapper;
+    private final BooleanProperty activeProperty = new SimpleBooleanProperty();
 
     static {
         // Register custom renderers
@@ -150,24 +152,27 @@ public class AssignAdminToOrganizationsView {
             ]""", dataSourceModel.getDomainModel(), "Organization");
 
         // Query all organizations
-        organizationsMapper = ReactiveEntitiesMapper.<Organization>createPushReactiveChain()
+        ReactiveEntitiesMapper.<Organization>createPushReactiveChain()
             .setDataSourceModel(dataSourceModel)
             .always("{class: 'Organization', alias: 'o', fields: 'name', orderBy: 'name'}")
             .storeEntitiesInto(organizationsFeed)
+            .bindActivePropertyTo(activeProperty)
             .start();
 
         // Query all organization admins
-        organizationAdminsMapper = ReactiveEntitiesMapper.<AuthorizationOrganizationAdmin>createPushReactiveChain()
+        ReactiveEntitiesMapper.<AuthorizationOrganizationAdmin>createPushReactiveChain()
             .setDataSourceModel(dataSourceModel)
             .always("{class: 'AuthorizationOrganizationAdmin', alias: 'oa', fields: 'organization,admin.(firstName,lastName,email)', orderBy: 'organization,id'}")
             .storeEntitiesInto(organizationAdminsFeed)
+            .bindActivePropertyTo(activeProperty)
             .start();
 
         // Query all user access to count active users per organization
-        userAccessMapper = ReactiveEntitiesMapper.<AuthorizationOrganizationUserAccess>createPushReactiveChain()
+        ReactiveEntitiesMapper.<AuthorizationOrganizationUserAccess>createPushReactiveChain()
             .setDataSourceModel(dataSourceModel)
             .always("{class: 'AuthorizationOrganizationUserAccess', alias: 'ua', fields: 'organization,user', orderBy: 'organization,id'}")
             .storeEntitiesInto(userAccessFeed)
+            .bindActivePropertyTo(activeProperty)
             .start();
 
         // Update displayed organizations when organizations feed, org admins, search text, or switch changes
@@ -259,27 +264,10 @@ public class AssignAdminToOrganizationsView {
 
     void showManageManagersDialog(Organization organization) {
         List<AuthorizationOrganizationAdmin> admins = getAdminsForOrganization(organization);
-        EntityStore entityStore = getEntityStore();
-
-        AssignAdminToOrganizationDialog.show(organization, admins, entityStore);
-    }
-
-    public EntityStore getEntityStore() {
-        return organizationsMapper != null ? organizationsMapper.getStore() : null;
+        AssignAdminToOrganizationDialog.show(organization, admins);
     }
 
     public void setActive(boolean active) {
-        if (organizationsMapper != null) {
-            ReactiveDqlQuery<Organization> reactiveDqlQuery = organizationsMapper.getReactiveDqlQuery();
-            reactiveDqlQuery.setActive(active);
-        }
-        if (organizationAdminsMapper != null) {
-            ReactiveDqlQuery<AuthorizationOrganizationAdmin> reactiveDqlQuery = organizationAdminsMapper.getReactiveDqlQuery();
-            reactiveDqlQuery.setActive(active);
-        }
-        if (userAccessMapper != null) {
-            ReactiveDqlQuery<AuthorizationOrganizationUserAccess> reactiveDqlQuery = userAccessMapper.getReactiveDqlQuery();
-            reactiveDqlQuery.setActive(active);
-        }
+        activeProperty.set(active);
     }
 }
