@@ -82,7 +82,7 @@ public class AssignUserAndRoleToOrganizationViewRenderers {
             if (value == null) {
                 return null;
             }
-            Label badge = ModalityStyle.badgeRole(new Label(value.toString()));
+            Label badge = ModalityStyle.badgeLightDanger(new Label(value.toString()));
             badge.setPadding(new Insets(4, 12, 4, 12));
             return badge;
         });
@@ -95,8 +95,8 @@ public class AssignUserAndRoleToOrganizationViewRenderers {
             String text = event != null ? "Event: " + event.getName() : I18n.getI18nText(EntireOrganization);
             boolean isOrg = event == null;
             Label badge = isOrg
-                ? Bootstrap.badgePurple(new Label(text))
-                : Bootstrap.badgeLightWarning(new Label(text));
+                ? ModalityStyle.badgeLightPurple(new Label(text))
+                : ModalityStyle.badgeLightWarning(new Label(text));
             badge.setPadding(new Insets(4, 12, 4, 12));
             return badge;
         });
@@ -117,8 +117,8 @@ public class AssignUserAndRoleToOrganizationViewRenderers {
 
             String text = isReadOnly ? I18n.getI18nText(ReadOnly) : I18n.getI18nText(ReadAndWrite);
             Label badge = isReadOnly
-                ? Bootstrap.badgeGray(new Label(text))
-                : Bootstrap.badgeLightInfo(new Label(text));
+                ? ModalityStyle.badgeGray(new Label(text))
+                : ModalityStyle.badgeLightInfo(new Label(text));
             badge.setPadding(new Insets(4, 12, 4, 12));
             return badge;
         });

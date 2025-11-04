@@ -55,7 +55,7 @@ final class AuthorizationRulesRenderers {
             flow.setAlignment(Pos.CENTER_LEFT);
 
             for (AuthorizationRole role : roles) {
-                Label roleChip = ModalityStyle.badgeRole(new Label(role.getName()));
+                Label roleChip = ModalityStyle.badgePurple(new Label(role.getName()));
                 roleChip.setPadding(new Insets(3, 8, 3, 8));
                 flow.getChildren().add(roleChip);
             }

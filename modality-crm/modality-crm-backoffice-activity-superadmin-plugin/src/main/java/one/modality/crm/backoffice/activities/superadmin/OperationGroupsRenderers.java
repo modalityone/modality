@@ -55,7 +55,7 @@ final class OperationGroupsRenderers {
                 } else {
                     // Build the chips
                     for (Operation operation : operations) {
-                        Label chip = ModalityStyle.badgeOperation(new Label(operation.getName()));
+                        Label chip = ModalityStyle.badgeLightSuccess(new Label(operation.getName()));
                         chip.setPadding(new Insets(3, 8, 3, 8));
                         flow.getChildren().add(chip);
                     }
@@ -89,7 +89,7 @@ final class OperationGroupsRenderers {
 
                     // Build the chips
                     for (AuthorizationRole role : uniqueRoles) {
-                        Label chip = ModalityStyle.badgeRole(new Label(role.getName()));
+                        Label chip = ModalityStyle.badgePurple(new Label(role.getName()));
                         chip.setPadding(new Insets(3, 8, 3, 8));
                         flow.getChildren().add(chip);
                     }

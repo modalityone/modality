@@ -54,7 +54,7 @@ final class AssignAdminToOrganizationsViewRenderers {
                         Person person = admin.getAdmin();
                         if (person != null) {
                             String managerName = person.getFirstName() + " " + person.getLastName();
-                            Label chip = ModalityStyle.badgeUser(new Label(managerName));
+                            Label chip = ModalityStyle.badgeLightInfo(new Label(managerName));
                             chip.setPadding(new Insets(3, 8, 3, 8));
                             flow.getChildren().add(chip);
                         }
@@ -73,7 +73,7 @@ final class AssignAdminToOrganizationsViewRenderers {
 
             int userCount = organizationsView != null ? organizationsView.getUserAccessCountForOrganization(organization) : 0;
 
-            Label badge = ModalityStyle.badgeUser(new Label(String.valueOf(userCount)));
+            Label badge =ModalityStyle.badgeLightInfo(new Label(String.valueOf(userCount)));
             badge.setPadding(new Insets(3, 8, 3, 8));
             return badge;
         });

@@ -147,15 +147,15 @@ public class OperationGroupsView {
         legendLabel.getStyleClass().add("admin-legend-label");
 
         // Operation badge sample
-        Label operationSample = ModalityStyle.badgeOperation(new Label("Operation"));
+        Label operationSample = ModalityStyle.badgeLightSuccess(new Label("Operation"));
         operationSample.setPadding(new Insets(3, 8, 3, 8));
 
         // Operation Group badge sample
-        Label groupSample = ModalityStyle.badgeOperationGroup(new Label("Operation Group"));
+        Label groupSample = ModalityStyle.badgeLightDanger(new Label("Operation Group"));
         groupSample.setPadding(new Insets(3, 8, 3, 8));
 
         // Role badge sample
-        Label roleSample = ModalityStyle.badgeRole(new Label("Role"));
+        Label roleSample = ModalityStyle.badgePurple(new Label("Role"));
         roleSample.setPadding(new Insets(3, 8, 3, 8));
 
         legend.getChildren().addAll(legendLabel, operationSample, groupSample, roleSample);

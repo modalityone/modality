@@ -37,12 +37,16 @@ public interface ModalityStyle {
     String OUTLINE_WARNING = "outline-warning";
     String OUTLINE_INFO = "outline-info";
 
-    // Admin module semantic badge styles
-    String BADGE_OPERATION = "badge-operation";
-    String BADGE_OPERATION_GROUP = "badge-operation-group";
-    String BADGE_RULE = "badge-rule";
-    String BADGE_ROLE = "badge-role";
-    String BADGE_USER = "badge-user";
+    // Color-based badge styles (moved from Bootstrap for custom Modality styling)
+    String BADGE_LIGHT_INFO = "badge-light-info";
+    String BADGE_LIGHT_SUCCESS = "badge-light-success";
+    String BADGE_LIGHT_WARNING = "badge-light-warning";
+    String BADGE_LIGHT_DANGER = "badge-light-danger";
+    String BADGE_GRAY = "badge-gray";
+    String BADGE_LIGHT_GRAY = "badge-light-gray";
+    String BADGE_PURPLE = "badge-purple";
+    String BADGE_LIGHT_PURPLE = "badge-light-purple";
+    String BADGE_LIGHT_PINK = "badge-light-pink";
 
     // Form section card styles
     String FORM_SECTION_CARD = "form-section-card";
@@ -85,25 +89,41 @@ public interface ModalityStyle {
         return Bootstrap.button(button, OUTLINE_INFO);
     }
 
-    // Admin module semantic badges
-    static <N extends Node> N badgeOperation(N badge) {
-        return Bootstrap.style(badge, BADGE_OPERATION);
+    // Color-based badges (moved from Bootstrap for custom Modality styling)
+    static <N extends Node> N badgeLightInfo(N badge) {
+        return Bootstrap.badgePadding(badge, BADGE_LIGHT_INFO);
     }
 
-    static <N extends Node> N badgeOperationGroup(N badge) {
-        return Bootstrap.style(badge, BADGE_OPERATION_GROUP);
+    static <N extends Node> N badgeLightSuccess(N badge) {
+        return Bootstrap.badgePadding(badge, BADGE_LIGHT_SUCCESS);
     }
 
-    static <N extends Node> N badgeRule(N badge) {
-        return Bootstrap.style(badge, BADGE_RULE);
+    static <N extends Node> N badgeLightWarning(N badge) {
+        return Bootstrap.badgePadding(badge, BADGE_LIGHT_WARNING);
     }
 
-    static <N extends Node> N badgeRole(N badge) {
-        return Bootstrap.style(badge, BADGE_ROLE);
+    static <N extends Node> N badgeLightDanger(N badge) {
+        return Bootstrap.badgePadding(badge, BADGE_LIGHT_DANGER);
     }
 
-    static <N extends Node> N badgeUser(N badge) {
-        return Bootstrap.style(badge, BADGE_USER);
+    static <N extends Node> N badgeGray(N badge) {
+        return Bootstrap.badgePadding(badge, BADGE_GRAY);
+    }
+
+    static <N extends Node> N badgeLightGray(N badge) {
+        return Bootstrap.badgePadding(badge, BADGE_LIGHT_GRAY);
+    }
+
+    static <N extends Node> N badgePurple(N badge) {
+        return Bootstrap.badgePadding(badge, BADGE_PURPLE);
+    }
+
+    static <N extends Node> N badgeLightPurple(N badge) {
+        return Bootstrap.badgePadding(badge, BADGE_LIGHT_PURPLE);
+    }
+
+    static <N extends Node> N badgeLightPink(N badge) {
+        return Bootstrap.badgePadding(badge, BADGE_LIGHT_PINK);
     }
 
     // Icon button helper methods
@@ -942,6 +962,35 @@ public interface ModalityStyle {
         notificationContainer.setDisable(false);
 
         return stackPane;
+    }
+
+    // Tab styling helpers
+
+    /**
+     * Applies modern tab styling to a TabPane
+     * Creates a clean, modern look with bottom border on selected tabs
+     * Used in backoffice admin panels for consistent UX
+     *
+     * @param tabPane The TabPane to style
+     * @return The styled TabPane
+     */
+    static TabPane modernTabPane(TabPane tabPane) {
+        tabPane.getStyleClass().add("modality-modern-tabs");
+        tabPane.setTabClosingPolicy(TabPane.TabClosingPolicy.UNAVAILABLE);
+        return tabPane;
+    }
+
+    /**
+     * Creates a wrapper with padding for tab content
+     * Provides consistent spacing within tab content areas
+     *
+     * @param content The content node to wrap
+     * @return StackPane containing the content with padding
+     */
+    static StackPane wrapTabContent(Node content) {
+        StackPane wrapper = new StackPane(content);
+        wrapper.setPadding(new Insets(24));
+        return wrapper;
     }
 
 }

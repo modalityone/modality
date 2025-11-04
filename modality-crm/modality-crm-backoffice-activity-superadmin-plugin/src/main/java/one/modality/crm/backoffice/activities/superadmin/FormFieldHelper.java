@@ -23,11 +23,11 @@ import static javafx.scene.layout.Region.USE_COMPUTED_SIZE;
  */
 public class FormFieldHelper {
 
-    /**
+        /**
          * Container for form field components with type-safe access to the input field.
          */
-        public record FormField<T>(VBox container, T inputField) {
-    }
+        @SuppressWarnings("unusable-by-js")
+        public record FormField<T>(VBox container, T inputField) { }
 
     /**
      * Creates a text field with label and optional help text.

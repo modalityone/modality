@@ -56,7 +56,7 @@ final class RolesRenderers {
                     // First add Rules (on top)
                     if (hasRules) {
                         rules.forEach(rule -> {
-                            Label ruleChip = ModalityStyle.badgeRule(new Label(rule.getName()));
+                            Label ruleChip = ModalityStyle.badgeLightWarning(new Label(rule.getName()));
                             ruleChip.setPadding(new Insets(3, 8, 3, 8));
                             flow.getChildren().add(ruleChip);
                         });
@@ -67,7 +67,7 @@ final class RolesRenderers {
                         roleOperations.stream()
                             .filter(ro -> ro.getOperationGroup() != null)
                             .forEach(ro -> {
-                                Label groupChip = ModalityStyle.badgeOperationGroup(new Label(ro.getOperationGroup().getName()));
+                                Label groupChip = ModalityStyle.badgeLightDanger(new Label(ro.getOperationGroup().getName()));
                                 groupChip.setPadding(new Insets(3, 8, 3, 8));
                                 flow.getChildren().add(groupChip);
                             });
@@ -76,7 +76,7 @@ final class RolesRenderers {
                         roleOperations.stream()
                             .filter(ro -> ro.getOperation() != null)
                             .forEach(ro -> {
-                                Label operationChip = ModalityStyle.badgeOperation(new Label(ro.getOperation().getName()));
+                                Label operationChip = ModalityStyle.badgeLightSuccess(new Label(ro.getOperation().getName()));
                                 operationChip.setPadding(new Insets(3, 8, 3, 8));
                                 flow.getChildren().add(operationChip);
                             });
@@ -104,7 +104,7 @@ final class RolesRenderers {
                 return label;
             }
 
-            Label badge = ModalityStyle.badgeUser(new Label(String.valueOf(userCount)));
+            Label badge = ModalityStyle.badgeLightInfo(new Label(String.valueOf(userCount)));
             badge.setPadding(new Insets(3, 8, 3, 8));
             return badge;
         });

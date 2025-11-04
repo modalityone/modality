@@ -143,7 +143,7 @@ public class AuthorizationRulesView {
         legendLabel.getStyleClass().add("admin-legend-label");
 
         // Role badge sample
-        Label roleSample = ModalityStyle.badgeRole(new Label("Role"));
+        Label roleSample = ModalityStyle.badgePurple(new Label("Role"));
         roleSample.setPadding(new Insets(3, 8, 3, 8));
 
         legend.getChildren().addAll(legendLabel, roleSample);

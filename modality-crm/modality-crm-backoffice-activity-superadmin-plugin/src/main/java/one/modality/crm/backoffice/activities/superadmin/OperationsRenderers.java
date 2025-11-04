@@ -63,7 +63,7 @@ final class OperationsRenderers {
             } else {
                 // Add group chip
                 if (hasGroup) {
-                    Label groupChip = ModalityStyle.badgeOperationGroup(new Label(group.getName()));
+                    Label groupChip = ModalityStyle.badgeLightDanger(new Label(group.getName()));
                     groupChip.setPadding(new Insets(3, 8, 3, 8));
                     flow.getChildren().add(groupChip);
                 }
@@ -76,7 +76,7 @@ final class OperationsRenderers {
                         .collect(Collectors.toSet());
 
                     for (AuthorizationRole role : uniqueRoles) {
-                        Label roleChip = ModalityStyle.badgeRole(new Label(role.getName()));
+                        Label roleChip = ModalityStyle.badgePurple(new Label(role.getName()));
                         roleChip.setPadding(new Insets(3, 8, 3, 8));
                         flow.getChildren().add(roleChip);
                     }

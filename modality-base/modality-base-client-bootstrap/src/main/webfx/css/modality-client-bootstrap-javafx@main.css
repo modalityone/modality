@@ -431,3 +431,111 @@
 .button.readonly-field .text {
     -fx-fill: -bootstrap-grey7;
 }
+/* Badge - Light Pink (for admin/role badges) */
+.badge-light-pink {
+    -fx-background-color: #FCE4EC;
+    -fx-text-fill: #C2185B;
+    -fx-font-size: 11px;
+    -fx-font-weight: 600;
+    -fx-background-radius: 3px;
+}
+
+/* Modern Badge Variants (Light backgrounds for better readability) - Moved from Bootstrap */
+.badge-light-info {
+    -fx-background-color: #e1f5fe;
+    -fx-text-fill: #00b8d4;
+    -fx-background-radius: 12;
+}
+
+.badge-light-success {
+    -fx-background-color: #e8f5e9;
+    -fx-text-fill: #4caf50;
+    -fx-background-radius: 12;
+}
+
+.badge-light-warning {
+    -fx-background-color: #fff3e0;
+    -fx-text-fill: #ffa726;
+    -fx-background-radius: 12;
+}
+
+.badge-light-danger {
+    -fx-background-color: #ffebee;
+    -fx-text-fill: #ff5252;
+    -fx-background-radius: 12;
+}
+
+.badge-light-gray, .badge-gray {
+    -fx-background-color: #f5f5f5;
+    -fx-text-fill: #666;
+    -fx-background-radius: 12;
+}
+
+.badge-light-purple, .badge-purple {
+    -fx-background-color: #f3e5f5;
+    -fx-text-fill: #9c27b0;
+    -fx-background-radius: 12;
+}
+
+/* Modern Tab Design for Admin Panels */
+.modality-modern-tabs {
+    -fx-background-color: white;
+    -fx-border-color: #ddd;
+    -fx-border-width: 1;
+    -fx-border-radius: 8;
+    -fx-background-radius: 8;
+}
+
+.modality-modern-tabs .tab-header-area {
+    -fx-background-color: white;
+    -fx-border-radius: 8 8 0 0;
+    -fx-background-radius: 8 8 0 0;
+}
+
+.modality-modern-tabs .tab-header-background {
+    -fx-background-color: white;
+    -fx-border-radius: 8 8 0 0;
+    -fx-background-radius: 8 8 0 0;
+}
+
+.modality-modern-tabs .headers-region {
+    -fx-background-color: white;
+    -fx-spacing: 8;
+}
+
+.modality-modern-tabs .tab {
+    -fx-background-color: transparent;
+    -fx-background-radius: 0;
+    -fx-border-color: transparent transparent transparent transparent;
+    -fx-border-width: 0 0 3 0;
+    -fx-min-height: 48;
+    -fx-pref-height: 48;
+}
+
+.modality-modern-tabs .tab-label {
+    -fx-text-fill: #666;
+    -fx-font-size: 15;
+}
+
+.modality-modern-tabs .tab:hover .tab-label {
+    -fx-text-fill: -bootstrap-blue5;
+}
+
+.modality-modern-tabs .tab:selected {
+    -fx-background-color: transparent;
+    -fx-border-color: transparent transparent -bootstrap-blue5 transparent;
+}
+
+.modality-modern-tabs .tab:selected .tab-label {
+    -fx-text-fill: -bootstrap-blue5;
+}
+
+.modality-modern-tabs .tab .focus-indicator {
+    -fx-border-color: transparent;
+}
+
+.modality-modern-tabs .tab-content-area {
+    -fx-background-color: white;
+    -fx-border-color: transparent;
+}
+

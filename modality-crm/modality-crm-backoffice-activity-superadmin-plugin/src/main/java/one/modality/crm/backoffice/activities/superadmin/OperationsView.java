@@ -24,6 +24,7 @@ import javafx.geometry.Pos;
 import javafx.scene.Node;
 import javafx.scene.control.*;
 import javafx.scene.layout.*;
+import one.modality.base.backoffice.formattersrenderers.ModalityBackofficeRenderers;
 import one.modality.base.client.bootstrap.ModalityStyle;
 import one.modality.base.client.mainframe.fx.FXMainFrameDialogArea;
 import one.modality.base.shared.entities.AuthorizationRoleOperation;
@@ -164,15 +165,15 @@ public class OperationsView {
         legendLabel.getStyleClass().add("admin-legend-label");
 
         // Operation badge sample
-        Label operationSample = ModalityStyle.badgeOperation(new Label("Operation"));
+        Label operationSample = ModalityStyle.badgeLightSuccess(new Label("Operation"));
         operationSample.setPadding(new Insets(3, 8, 3, 8));
 
         // Operation Group badge sample
-        Label groupSample = ModalityStyle.badgeOperationGroup(new Label("Operation Group"));
+        Label groupSample = ModalityStyle.badgeLightDanger(new Label("Operation Group"));
         groupSample.setPadding(new Insets(3, 8, 3, 8));
 
         // Role badge sample
-        Label roleSample = ModalityStyle.badgeRole(new Label("Role"));
+        Label roleSample = ModalityStyle.badgePurple(new Label("Role"));
         roleSample.setPadding(new Insets(3, 8, 3, 8));
 
         legend.getChildren().addAll(legendLabel, operationSample, groupSample, roleSample);
@@ -191,26 +192,26 @@ public class OperationsView {
                     {expression: 'name', label: 'Name', minWidth: 150},
                     {expression: 'operationCode', label: 'Code', minWidth: 150},
                     {expression: 'grantRoute', label: 'Route Path', minWidth: 200},
-                    {expression: 'backend', label: 'Backend', renderer: 'booleanCheck', minWidth: 80, prefWidth: 90, hShrink: false, textAlign: 'center'},
-                    {expression: 'frontend', label: 'Frontend', renderer: 'booleanCheck', minWidth: 80, prefWidth: 90, hShrink: false, textAlign: 'center'},
-                    {expression: 'guest', label: 'Guest', renderer: 'booleanCheck', minWidth: 70, prefWidth: 80, hShrink: false, textAlign: 'center'},
-                    {expression: 'public', label: 'Public', renderer: 'booleanCheck', minWidth: 70, prefWidth: 80, hShrink: false, textAlign: 'center'},
+                    {expression: 'backend', label: 'Backend', renderer: '"BOOLEAN_BADGE"', minWidth: 80, prefWidth: 90, hShrink: false, textAlign: 'center'},
+                    {expression: 'frontend', label: 'Frontend', renderer: '"BOOLEAN_BADGE"', minWidth: 80, prefWidth: 90, hShrink: false, textAlign: 'center'},
+                    {expression: 'guest', label: 'Guest', renderer: '"BOOLEAN_BADGE"', minWidth: 70, prefWidth: 80, hShrink: false, textAlign: 'center'},
+                    {expression: 'public', label: 'Public', renderer: '"BOOLEAN_BADGE"', minWidth: 70, prefWidth: 80, hShrink: false, textAlign: 'center'},
                     {expression: 'this', label: 'Used In', renderer: 'operationUsedIn', minWidth: 150, prefWidth: 500},
                     {expression: 'this', label: 'Actions', renderer: 'operationActions', minWidth: 100, prefWidth: 120, hShrink: false, textAlign: 'center'}
-                ]""", dataSourceModel.getDomainModel(), "Operation");
+                ]""".replace("\"BOOLEAN_BADGE\"", ModalityBackofficeRenderers.getBooleanBadge()), dataSourceModel.getDomainModel(), "Operation");
         } else {
             columns = VisualEntityColumnFactory.get().fromJsonArray( // language=JSON5
                 """
                 [
                     {expression: 'name', label: 'Name', minWidth: 150},
                     {expression: 'operationCode', label: 'Code', minWidth: 150},
-                    {expression: 'backend', label: 'Backend', renderer: 'booleanCheck', minWidth: 80, prefWidth: 90, hShrink: false, textAlign: 'center'},
-                    {expression: 'frontend', label: 'Frontend', renderer: 'booleanCheck', minWidth: 80, prefWidth: 90, hShrink: false, textAlign: 'center'},
-                    {expression: 'guest', label: 'Guest', renderer: 'booleanCheck', minWidth: 70, prefWidth: 80, hShrink: false, textAlign: 'center'},
-                    {expression: 'public', label: 'Public', renderer: 'booleanCheck', minWidth: 70, prefWidth: 80, hShrink: false, textAlign: 'center'},
+                    {expression: 'backend', label: 'Backend', renderer: '"BOOLEAN_BADGE"', minWidth: 80, prefWidth: 90, hShrink: false, textAlign: 'center'},
+                    {expression: 'frontend', label: 'Frontend', renderer: '"BOOLEAN_BADGE"', minWidth: 80, prefWidth: 90, hShrink: false, textAlign: 'center'},
+                    {expression: 'guest', label: 'Guest', renderer: '"BOOLEAN_BADGE"', minWidth: 70, prefWidth: 80, hShrink: false, textAlign: 'center'},
+                    {expression: 'public', label: 'Public', renderer: '"BOOLEAN_BADGE"', minWidth: 70, prefWidth: 80, hShrink: false, textAlign: 'center'},
                     {expression: 'this', label: 'Used In', renderer: 'operationUsedIn', minWidth: 150, prefWidth: 500},
                     {expression: 'this', label: 'Actions', renderer: 'operationActions', minWidth: 100, prefWidth: 120, hShrink: false, textAlign: 'center'}
-                ]""", dataSourceModel.getDomainModel(), "Operation");
+                ]""".replace("\"BOOLEAN_BADGE\"",ModalityBackofficeRenderers.getBooleanBadge()), dataSourceModel.getDomainModel(), "Operation");
         }
 
         // Build the query based on whether this is routes or operations
