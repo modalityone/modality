@@ -71,7 +71,19 @@
 
         <dependency>
             <groupId>one.modality</groupId>
+            <artifactId>modality-base-client-mainframe-fx</artifactId>
+            <version>1.0.0-SNAPSHOT</version>
+        </dependency>
+
+        <dependency>
+            <groupId>one.modality</groupId>
             <artifactId>modality-base-client-messaging</artifactId>
+            <version>1.0.0-SNAPSHOT</version>
+        </dependency>
+
+        <dependency>
+            <groupId>one.modality</groupId>
+            <artifactId>modality-base-client-presentationmodel</artifactId>
             <version>1.0.0-SNAPSHOT</version>
         </dependency>
 
@@ -114,6 +126,12 @@
         <dependency>
             <groupId>dev.webfx</groupId>
             <artifactId>webfx-extras-async</artifactId>
+            <version>0.1.0-SNAPSHOT</version>
+        </dependency>
+
+        <dependency>
+            <groupId>dev.webfx</groupId>
+            <artifactId>webfx-extras-cell</artifactId>
             <version>0.1.0-SNAPSHOT</version>
         </dependency>
 
@@ -209,6 +227,12 @@
 
         <dependency>
             <groupId>dev.webfx</groupId>
+            <artifactId>webfx-extras-visual</artifactId>
+            <version>0.1.0-SNAPSHOT</version>
+        </dependency>
+
+        <dependency>
+            <groupId>dev.webfx</groupId>
             <artifactId>webfx-extras-visual-grid</artifactId>
             <version>0.1.0-SNAPSHOT</version>
         </dependency>
@@ -272,6 +296,18 @@
         <dependency>
             <groupId>dev.webfx</groupId>
             <artifactId>webfx-stack-orm-entity-binding</artifactId>
+            <version>0.1.0-SNAPSHOT</version>
+        </dependency>
+
+        <dependency>
+            <groupId>dev.webfx</groupId>
+            <artifactId>webfx-stack-orm-entity-controls</artifactId>
+            <version>0.1.0-SNAPSHOT</version>
+        </dependency>
+
+        <dependency>
+            <groupId>dev.webfx</groupId>
+            <artifactId>webfx-stack-orm-reactive-entities</artifactId>
             <version>0.1.0-SNAPSHOT</version>
         </dependency>
 

@@ -1,0 +1,271 @@
+/* Media Dashboard Styles */
+
+/* Event Subtitle - discrete display */
+.event-subtitle {
+    font-size: 13px;
+    color: #7f8c8d;
+    font-weight: 400;
+}
+
+/* Livestream Section */
+.livestream-section {
+    background-color: white;
+    border-radius: 8px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+}
+
+/* No Livestream Message */
+.no-livestream-message {
+    background-color: white;
+    border-radius: 8px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+}
+
+.no-livestream-icon {
+    fill: #95a5a6;
+}
+
+.no-livestream-text {
+    font-size: 18px;
+    font-weight: 600;
+    color: #2c3e50;
+}
+
+.no-livestream-subtitle {
+    font-size: 14px;
+    color: #7f8c8d;
+}
+
+.section-title {
+    font-size: 16px;
+    font-weight: 600;
+    color: #00ADEF;
+    border-bottom: 2px solid #f0f0f0;
+}
+
+.section-title-icon {
+    fill: #00ADEF;
+}
+
+.section-title-text {
+    color: #00ADEF;
+}
+
+/* Session Info Box */
+.session-info-box {
+    background-color: #f8f9fa;
+    border-radius: 8px;
+    border-left: 4px solid #e74c3c;
+}
+
+.session-name-live {
+    font-size: 18px;
+    font-weight: 700;
+    color: #2c3e50;
+}
+
+.session-date-live {
+    font-size: 14px;
+    color: #7f8c8d;
+}
+
+.session-time-live {
+    font-size: 14px;
+    color: #7f8c8d;
+}
+
+.live-badge {
+    background-color: #e74c3c;
+    border-radius: 6px;
+    color: white;
+    font-size: 12px;
+    font-weight: 600;
+    text-transform: uppercase;
+}
+
+.live-dot {
+    background-color: white;
+    border-radius: 50%;
+    animation: pulse 2s infinite;
+}
+
+@keyframes pulse {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.3; }
+}
+
+.live-label {
+    color: white;
+    font-weight: bold;
+    font-size: 11px;
+    text-transform: uppercase;
+}
+
+/* Stat Cards */
+.stat-card {
+    background-color: #3498db;
+    border-radius: 5px;
+}
+
+.stat-label {
+    font-size: 14px;
+    color: white;
+}
+
+.stat-value {
+    font-size: 36px;
+    font-weight: bold;
+    color: white;
+}
+
+.stat-value-live {
+    color: white;
+}
+
+/* Session Details Section */
+.session-details-section {
+    background-color: white;
+    border-radius: 5px;
+    border: 1px solid #ddd;
+}
+
+.session-selector-label {
+    font-size: 14px;
+    font-weight: bold;
+}
+
+.session-label {
+    font-size: 14px;
+    color: #2c3e50;
+}
+
+.session-cell {
+    /* Container for session dropdown cells */
+}
+
+.select-label {
+    font-size: 14px;
+    font-weight: 600;
+    color: #00ADEF;
+}
+
+.session-select {
+    background-color: white;
+    border: 2px solid #e8e8e8;
+    border-radius: 8px;
+    font-size: 15px;
+    font-weight: 500;
+    color: #2c3e50;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+.session-select:hover {
+    border-color: #00ADEF;
+    box-shadow: 0 2px 8px rgba(0,173,239,0.1);
+}
+
+.session-select:focus {
+    outline: none;
+    border-color: #00ADEF;
+    box-shadow: 0 0 0 3px rgba(0,173,239,0.1);
+}
+
+.filter-label {
+    font-size: 13px;
+    color: #555;
+    font-weight: 600;
+}
+
+/* Filter Buttons */
+.filter-button {
+    cursor: pointer;
+}
+
+.filter-button-active {
+    background-color: #007bff;
+    color: white;
+    border-radius: 4px;
+    font-weight: 600;
+}
+
+.filter-button-inactive {
+    background-color: #f8f9fa;
+    color: #495057;
+    border-radius: 4px;
+    border: 1px solid #dee2e6;
+}
+
+.filter-select {
+    background-color: white;
+    border: 2px solid #e8e8e8;
+    border-radius: 8px;
+    font-size: 14px;
+    font-weight: 500;
+    color: #2c3e50;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+.filter-select:hover {
+    border-color: #00ADEF;
+    box-shadow: 0 2px 8px rgba(0,173,239,0.1);
+}
+
+.filter-select:focus {
+    outline: none;
+    border-color: #00ADEF;
+    box-shadow: 0 0 0 3px rgba(0,173,239,0.1);
+}
+
+/* Stat Boxes */
+.stat-box {
+    border-radius: 5px;
+}
+
+.stat-box-purple {
+    background-color: #9b59b6;
+}
+
+.stat-box-red {
+    background-color: #e74c3c;
+}
+
+.stat-box-green {
+    background-color: #2ecc71;
+}
+
+.stat-box-label {
+    font-size: 13px;
+    color: white;
+}
+
+.stat-box-value {
+    font-size: 32px;
+    font-weight: bold;
+    color: white;
+}
+
+/* Table Styling for Media Dashboard */
+.livestream-section .grid-head,
+.session-details-section .grid-head {
+    font-size: 12px;
+    font-weight: 600;
+    color: #00ADEF;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    background-color: #f8f9fa;
+    border-bottom: 2px solid #e8e8e8;
+}
+
+.livestream-section .grid-body,
+.session-details-section .grid-body {
+    font-size: 14px;
+    color: #2c3e50;
+    border-bottom: 1px solid #f0f0f0;
+}
+
+.livestream-section .grid-row:hover,
+.session-details-section .grid-row:hover {
+    background-color: #f8fafb;
+}
