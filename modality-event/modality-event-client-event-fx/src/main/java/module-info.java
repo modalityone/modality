@@ -9,6 +9,7 @@ module modality.event.client.event.fx {
     requires modality.crm.backoffice.organization.fx;
     requires webfx.kit.util;
     requires webfx.platform.console;
+    requires webfx.platform.util;
     requires webfx.stack.authn.login.ui;
     requires webfx.stack.authz.client;
     requires webfx.stack.orm.entity;
