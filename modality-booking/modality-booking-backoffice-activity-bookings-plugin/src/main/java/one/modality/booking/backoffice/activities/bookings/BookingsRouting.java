@@ -21,9 +21,10 @@ import java.time.LocalDate;
  */
 public final class BookingsRouting {
 
-    // Would be better but pb retrieving named groups doesn't work with JavaScript RegExp (can't retrieve groups): private final static String ANY_PATH = "/bookings(/organization/:organizationId|/event/:eventId|/day/:day|/arrivals|/departures|/minday/:minDay|/maxday/:maxDay|/filter/:filter|/groupby|:groupBy|/orderby/:orderBy/columns/:columns|export/:activityStateId)*";
-    private final static String ANY_PATH = "/bookings(/organization/:organizationId)?(/event/:eventId)?(/day/:day)?(/arrivals)?(/departures)?(/minday/:minDay)?(/maxday/:maxDay)?(/filter/:filter)?(/groupby/:groupBy)?(/orderby/:orderBy)?(/columns/:columns)?(/export/:activityStateId)?";
+    // Would be better to use this, but pb retrieving named groups doesn't work with JavaScript RegExp (can't retrieve groups): private final static String ANY_PATH = "/bookings(/organization/:organizationId|/event/:eventId|/day/:day|/arrivals|/departures|/minday/:minDay|/maxday/:maxDay|/filter/:filter|/groupby|:groupBy|/orderby/:orderBy/columns/:columns|export/:activityStateId)*";
+    private final static String ANY_PATH = "/bookings(/organization/:organizationId)?(/event/:eventId)?(/document/:documentId)?(/day/:day)?(/arrivals)?(/departures)?(/minday/:minDay)?(/maxday/:maxDay)?(/filter/:filter)?(/groupby/:groupBy)?(/orderby/:orderBy)?(/columns/:columns)?(/export/:activityStateId)?";
     private final static String EVENT_PATH = "/bookings/event/:eventId";
+    private final static String DOCUMENT_PATH = "/bookings/document/:documentId";
     private final static String OPERATION_CODE = "RouteToBookings";
 
     public static String getAnyPath() {
@@ -34,15 +35,19 @@ public final class BookingsRouting {
         return eventId == null ? "/bookings" : ModalityRoutingUtil.interpolateEventIdInPath(eventId, EVENT_PATH);
     }
 
+    public static String getDocumentBookingPath(Object documentId) {
+        return documentId == null ? "/bookings" : ModalityRoutingUtil.interpolateDocumentIdInPath(documentId, DOCUMENT_PATH);
+    }
+
     public static LocalDate parseDayParam(String parameterValue) {
         if (parameterValue == null)
             return null;
-        switch (parameterValue) {
-            case "yesterday" : return LocalDate.now().minusDays(1);
-            case "today":      return LocalDate.now();
-            case "tomorrow" :  return LocalDate.now().plusDays(1);
-            default:           return LocalDate.parse(parameterValue); // Expecting an iso date (yyyy-MM-dd)
-        }
+        return switch (parameterValue) {
+            case "yesterday" -> LocalDate.now().minusDays(1);
+            case "today" -> LocalDate.now();
+            case "tomorrow" -> LocalDate.now().plusDays(1);
+            default -> LocalDate.parse(parameterValue); // Expecting an iso date (yyyy-MM-dd)
+        };
     }
 
     public static final class BookingsUiRoute extends UiRouteImpl {
