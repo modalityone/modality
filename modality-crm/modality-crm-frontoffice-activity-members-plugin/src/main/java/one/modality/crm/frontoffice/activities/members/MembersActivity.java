@@ -209,18 +209,18 @@ final class MembersActivity extends ViewDomainActivityBase {
         userProfileView.setAddressInfoVisible(true);
         userProfileView.setKadampaCenterVisible(true);
         userProfileView.saveButton.setVisible(true);
-        if (person.getLayName() == null || person.getLayName().isBlank()) {
-            userProfileView.layNameTextField.setDisable(false);
-        }
-        else {
-            userProfileView.layNameTextField.setDisable(true);
-        }
-
 
         updateStore.cancelChanges();
         if (person != null) {
             userProfileView.firstNameTextField.setDisable(true);
             userProfileView.lastNameTextField.setDisable(true);
+
+            if (person.getLayName() == null || person.getLayName().isBlank()) {
+                userProfileView.layNameTextField.setDisable(false);
+            }
+            else {
+                userProfileView.layNameTextField.setDisable(true);
+            }
 
             personToModifyOrAdd = updateStore.updateEntity(person);
         } else { // Should be always true because the account owner was always selected first
