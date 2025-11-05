@@ -11,10 +11,6 @@ public interface HasActiveStatusFilterProperty {
 
     StringProperty activeStatusFilterProperty();
 
-    default String getActiveStatusFilter() {
-        return activeStatusFilterProperty().get();
-    }
-
     default void setActiveStatusFilter(String value) {
         activeStatusFilterProperty().set(value);
     }

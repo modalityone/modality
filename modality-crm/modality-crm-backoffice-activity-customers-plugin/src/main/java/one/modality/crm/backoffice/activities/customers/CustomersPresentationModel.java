@@ -25,13 +25,13 @@ final class CustomersPresentationModel implements
     HasActiveStatusFilterProperty {
 
     // Master table properties
-    private final ObjectProperty<VisualResult> masterVisualResultProperty = new SimpleObjectProperty<VisualResult>();
+    private final ObjectProperty<VisualResult> masterVisualResultProperty = new SimpleObjectProperty<>();
     @Override
     public ObjectProperty<VisualResult> masterVisualResultProperty() {
         return masterVisualResultProperty;
     }
 
-    private final ObjectProperty<VisualSelection> masterVisualSelectionProperty = new SimpleObjectProperty<VisualSelection>();
+    private final ObjectProperty<VisualSelection> masterVisualSelectionProperty = new SimpleObjectProperty<>();
     @Override
     public ObjectProperty<VisualSelection> masterVisualSelectionProperty() {
         return masterVisualSelectionProperty;
@@ -56,19 +56,7 @@ final class CustomersPresentationModel implements
         return selectedPersonProperty;
     }
 
-    public Person getSelectedPerson() {
-        return selectedPersonProperty.get();
-    }
-
     // Organization filter property
-    private final ObjectProperty<Object> organizationIdProperty = new SimpleObjectProperty<>();
-    public ObjectProperty<Object> organizationIdProperty() {
-        return organizationIdProperty;
-    }
-
-    public Object getOrganizationId() {
-        return organizationIdProperty.get();
-    }
 
     // Account type filter property (null = all, "frontoffice" or "backoffice")
     private final StringProperty accountTypeFilterProperty = new SimpleStringProperty();
@@ -93,4 +81,5 @@ final class CustomersPresentationModel implements
     public void setActive(boolean active) {
         activeProperty.set(active);
     }
+
 }

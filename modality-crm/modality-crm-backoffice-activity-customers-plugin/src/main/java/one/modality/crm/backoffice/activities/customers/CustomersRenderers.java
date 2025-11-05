@@ -1,18 +1,17 @@
 package one.modality.crm.backoffice.activities.customers;
 
 import dev.webfx.extras.cell.renderer.ValueRendererRegistry;
-import dev.webfx.extras.panes.MonoPane;
+import dev.webfx.extras.i18n.I18n;
 import dev.webfx.extras.styles.bootstrap.Bootstrap;
-import dev.webfx.stack.orm.entity.Entity;
 import javafx.geometry.Pos;
 import javafx.scene.control.Label;
 import javafx.scene.layout.HBox;
-import javafx.scene.shape.SVGPath;
 import javafx.scene.text.Text;
 import one.modality.base.client.bootstrap.ModalityStyle;
-import one.modality.base.client.icons.SvgIcons;
 import one.modality.base.shared.entities.FrontendAccount;
 import one.modality.base.shared.entities.Person;
+
+import static one.modality.crm.backoffice.activities.customers.CustomersI18nKeys.*;
 
 /**
  * Custom cell renderers for the Customers table.
@@ -57,24 +56,24 @@ final class CustomersRenderers {
                 // Person has a frontend account
                 if (Boolean.TRUE.equals(account.isBackoffice())) {
                     // It's a backoffice account
-                    badge.setText("BACKOFFICE");
-                    ModalityStyle.badgeLightInfo(badge);
+                    badge.setText(I18n.getI18nText(BadgeBackoffice));
+                    Bootstrap.warningBadge(badge);
                 } else if (isOwner) {
                     // It's a frontoffice account and this person is the owner
-                    badge.setText("FRONTOFFICE (OWNER)");
-                    ModalityStyle.badgeLightWarning(badge);
+                    badge.setText(I18n.getI18nText(BadgeFrontofficeOwner));
+                    Bootstrap.successBadge(badge);
                 } else {
                     // It's a frontoffice account but not owner (shouldn't happen normally)
-                    badge.setText("FRONTOFFICE");
-                    ModalityStyle.badgeLightPurple(badge);
+                    badge.setText(I18n.getI18nText(BadgeFrontoffice));
+                    Bootstrap.primaryBadge(badge);
                 }
             } else if (accountPerson != null) {
                 // Person doesn't have their own account but uses someone else's
-                badge.setText("LINKED");
+                badge.setText(I18n.getI18nText(BadgeLinked));
                 ModalityStyle.badgeLightInfo(badge);
             } else {
                 // No account at all
-                badge.setText("NONE");
+                badge.setText(I18n.getI18nText(BadgeNone));
                 ModalityStyle.badgeLightGray(badge);
             }
 
@@ -92,13 +91,13 @@ final class CustomersRenderers {
 
             // Check disabled first, then removed
             if (account != null && Boolean.TRUE.equals(account.isDisabled())) {
-                badge.setText("DISABLED");
-                ModalityStyle.badgeLightWarning(badge);
+                badge.setText(I18n.getI18nText(BadgeDisabled));
+                Bootstrap.dangerBadge(badge);
             } else if (Boolean.TRUE.equals(person.isRemoved())) {
-                badge.setText("REMOVED");
-                ModalityStyle.badgeLightDanger(badge);
+                badge.setText(I18n.getI18nText(BadgeRemoved));
+                Bootstrap.secondaryBadge(badge);
             } else {
-                badge.setText("ACTIVE");
+                badge.setText(I18n.getI18nText(BadgeActive));
                 ModalityStyle.badgeLightSuccess(badge);
             }
 
@@ -107,7 +106,7 @@ final class CustomersRenderers {
             return container;
         });
 
-        // Roles/Links Renderer
+        // Roles/Members Renderer
         ValueRendererRegistry.registerValueRenderer("customerRolesLinks", (value, context) -> {
             Person person = (Person) value;
             FrontendAccount account = person.getFrontendAccount();
@@ -118,18 +117,16 @@ final class CustomersRenderers {
             container.setAlignment(Pos.CENTER_LEFT);
 
             if (account != null && Boolean.TRUE.equals(account.isBackoffice())) {
-                // Show backoffice roles (placeholder - would need to query authorization roles)
-                // For now, just show a generic badge
-                Label roleBadge = new Label("BACKOFFICE");
-                ModalityStyle.badgeLightInfo(roleBadge);
-                container.getChildren().add(roleBadge);
+                // Backoffice accounts don't show anything in the Members column
+                // Empty container
             } else if (isOwner) {
-                // Show linked accounts count
-                int linkedCount = view != null ? view.getLinkedAccountsCount(person) : 0;
-                if(linkedCount>0) {
+                // Show members count
+                int membersCount = view != null ? view.getMembersCount(person) : 0;
+                if(membersCount>0) {
                     Text icon = new Text("🔗");
                     icon.getStyleClass().add("role-icon");
-                    Label linkInfo = new Label("Linked accounts: " + linkedCount);
+                    Label linkInfo = new Label();
+                    linkInfo.setText(I18n.getI18nText(MembersCountText, membersCount));
                     linkInfo.getStyleClass().add("role-link-text");
                     container.getChildren().addAll(icon, linkInfo);
                 }
@@ -139,7 +136,8 @@ final class CustomersRenderers {
                 icon.getStyleClass().add("role-icon-success");
                 String ownerName = accountPerson.getFullName();
                 Object id = accountPerson.getPrimaryKey();
-                Label linkInfo = new Label("→ "+ id +" - " + ownerName);
+                Label linkInfo = new Label();
+                linkInfo.setText(I18n.getI18nText(LinkedToOwnerText, id, ownerName));
                 linkInfo.getStyleClass().add("role-link-text");
                 container.getChildren().addAll(icon, linkInfo);
             }

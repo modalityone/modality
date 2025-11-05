@@ -14,7 +14,7 @@
 
 /* Page Header */
 .page-header {
-    -fx-background-color: -kbs-white-color;
+    -fx-background-color: transparent;
     -fx-border-color: transparent transparent -kbs-border-color transparent;
     -fx-border-width: 0 0 1px 0;
 }
@@ -32,7 +32,7 @@
 
 /* Customers container */
 #customers {
-    -fx-background-color: -kbs-bg-light-color;
+    -fx-background-color: transparent;
 }
 
 /* Customers grid styling */
@@ -206,8 +206,8 @@
     -fx-border-width: 1px;
 }
 
-/* Linked Accounts Box */
-.linked-accounts-box {
+/* Members Box */
+.members-box {
     -fx-background-color: #F0F8FF;
     -fx-border-color: #B3D9FF;
     -fx-border-radius: 8px;
@@ -215,16 +215,16 @@
     -fx-border-width: 1px;
 }
 
-.linked-accounts-description {
+.members-description {
     -fx-text-fill: -kbs-text-secondary-color;
     -fx-font-size: 13px;
 }
 
-.linked-person-items {
+.member-items {
     /* No padding/spacing here - set in Java code */
 }
 
-.linked-person-item {
+.member-item {
     /* No padding/spacing here - set in Java code */
     -fx-background-color: -kbs-white-color;
     -fx-border-color: -kbs-border-color;
@@ -233,26 +233,26 @@
     -fx-border-width: 1px;
 }
 
-.linked-person-check-icon {
+.member-check-icon {
     -fx-font-size: 14px;
     -fx-fill: #2E7D32;
 }
 
-.linked-person-user-icon {
+.member-user-icon {
     -fx-font-size: 20px;
 }
 
-.linked-person-name {
+.member-name {
     -fx-font-weight: 600;
     -fx-text-fill: -kbs-text-primary-color;
 }
 
-.linked-person-email {
+.member-email {
     -fx-font-size: 12px;
     -fx-text-fill: -kbs-text-secondary-color;
 }
 
-.linked-person-id {
+.member-id {
     -fx-font-size: 11px;
     -fx-text-fill: -kbs-text-secondary-color;
 }
