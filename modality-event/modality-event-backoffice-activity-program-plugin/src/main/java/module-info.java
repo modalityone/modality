@@ -36,7 +36,6 @@ module modality.event.backoffice.activity.program.plugin {
     requires webfx.kit.util;
     requires webfx.platform.async;
     requires webfx.platform.console;
-    requires webfx.platform.uischeduler;
     requires webfx.platform.util;
     requires webfx.platform.windowhistory;
     requires webfx.stack.orm.domainmodel;
