@@ -25,21 +25,21 @@ public final class FilterSearchBar {
     private final TextField searchBox; // Keeping this reference to activate focus on activity resume
 
     public FilterSearchBar(FilterButtonSelectorFactoryMixin mixin, String activityName, String domainClassId, Pane parent, Object pm) {
-        if (pm instanceof HasConditionDqlStatementProperty)
-            conditionChain = new FilterConditionChain(mixin, activityName, domainClassId, parent, (HasConditionDqlStatementProperty) pm);
+        if (pm instanceof HasConditionDqlStatementProperty hasConditionProperty)
+            conditionChain = new FilterConditionChain(mixin, activityName, domainClassId, parent, hasConditionProperty);
         else
             conditionChain = null;
-        if (pm instanceof HasGroupDqlStatementProperty)
-            groupSelector = mixin.createGroupFilterButtonSelectorAndBind(activityName,domainClassId, parent, (HasGroupDqlStatementProperty) pm);
+        if (pm instanceof HasGroupDqlStatementProperty hasGroupProperty)
+            groupSelector = mixin.createGroupFilterButtonSelectorAndBind(activityName,domainClassId, parent, hasGroupProperty);
         else
             groupSelector = null;
-        if (pm instanceof HasColumnsDqlStatementProperty)
-            columnsSelector = mixin.createColumnsFilterButtonSelectorAndBind(activityName,domainClassId, parent, (HasColumnsDqlStatementProperty) pm);
+        if (pm instanceof HasColumnsDqlStatementProperty hasColumnProperty)
+            columnsSelector = mixin.createColumnsFilterButtonSelectorAndBind(activityName,domainClassId, parent, hasColumnProperty);
         else
             columnsSelector = null;
-        if (pm instanceof HasSearchTextProperty) {
+        if (pm instanceof HasSearchTextProperty hasSearchTextProperty) {
             searchBox = mixin.newTextField("GenericSearch"); // Will set the prompt
-            ((HasSearchTextProperty) pm).searchTextProperty().bind(searchBox.textProperty());
+            searchBox.textProperty().bindBidirectional(hasSearchTextProperty.searchTextProperty());
             Aria.setAriaRole(searchBox, AriaRole.SEARCHBOX);
         } else
             searchBox = null;

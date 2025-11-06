@@ -8,6 +8,7 @@ import dev.webfx.extras.visual.controls.grid.VisualGrid;
 import dev.webfx.kit.util.properties.FXProperties;
 import dev.webfx.kit.util.properties.ObservableLists;
 import dev.webfx.platform.console.Console;
+import dev.webfx.platform.windowhistory.spi.BrowsingHistory;
 import javafx.beans.InvalidationListener;
 import javafx.beans.binding.BooleanBinding;
 import dev.webfx.platform.uischeduler.UiScheduler;
@@ -36,10 +37,12 @@ import javafx.scene.paint.Color;
 import javafx.scene.shape.SVGPath;
 import javafx.scene.text.Text;
 import one.modality.base.client.bootstrap.ModalityStyle;
+import one.modality.base.client.icons.SvgIcons;
 import one.modality.base.shared.domainmodel.functions.AbcNames;
 import one.modality.base.shared.entities.Document;
 import one.modality.base.shared.entities.FrontendAccount;
 import one.modality.base.shared.entities.Person;
+import one.modality.booking.backoffice.activities.bookings.BookingsRouting;
 
 import static dev.webfx.stack.orm.dql.DqlStatement.limit;
 import static dev.webfx.stack.orm.dql.DqlStatement.where;
@@ -63,12 +66,10 @@ final class CustomersView {
                 {expression: 'organization.name', label: 'Center', prefWidth: 250, hShrink: true, textAlign: 'center'},
                 {expression: 'this', label: 'Account Type', renderer: 'customerAccountType', prefWidth: 250, hShrink: true, textAlign: 'center'},
                 {expression: 'this', label: 'Status', renderer: 'customerStatus', prefWidth: 120, hShrink: true, textAlign: 'center'},
-                {expression: 'this', label: 'Roles / Links', renderer: 'customerRolesLinks', prefWidth: 200, hShrink: true, textAlign: 'center'}
+                {expression: 'this', label: 'Members', renderer: 'customerRolesLinks', prefWidth: 200, hShrink: true, textAlign: 'center'}
             ]""";
 
     // Table header height for limit calculation
-    private static final int TABLE_HEADER_HEIGHT = 29;
-    private static final int TABLE_ROW_HEIGHT = 28;
 
     private final BorderPane view;
     private final VisualGrid customersGrid;
@@ -83,17 +84,15 @@ final class CustomersView {
     private BooleanBinding hasNoChangesBinding;
 
     private ReactiveVisualMapper<Person> customersMapper;
-    private final ObservableList<Person> customersFeed = FXCollections.observableArrayList();
-    private final ObservableList<Person> linkedAccountsFeed = FXCollections.observableArrayList();
+    private final ObservableList<Person> membersFeed = FXCollections.observableArrayList();
     private final ObservableList<Document> registrationsFeed = FXCollections.observableArrayList();
-    private final ObservableList<Person> allLinkedAccountsForCounting = FXCollections.observableArrayList();
+    private final ObservableList<Person> allMembersForCounting = FXCollections.observableArrayList();
     private final ObjectProperty<Person> selectedPersonProperty = new SimpleObjectProperty<>();
-    private ReactiveEntitiesMapper<Person> linkedAccountsMapper;
+    private ReactiveEntitiesMapper<Person> membersMapper;
     private ReactiveEntitiesMapper<Document> registrationsMapper;
-    private ReactiveEntitiesMapper<Person> allLinkedAccountsMapper;
 
     // Filter controls
-    private CheckBox limitCheckBox;
+    private final CheckBox limitCheckBox;
 
     private Label accountTypeBadge;
     private Button editModeButton;
@@ -127,11 +126,11 @@ final class CustomersView {
 
     // Account tab controls
     private TextField usernameField;
-    private PasswordField passwordField;
     private TextField passwordHashField;
     private VBox accountTypeSection;
-    private VBox backofficeRolesBox;
-    private VBox linkedAccountsBox;
+
+    // Registrations tab controls
+    private VBox registrationsContainer;
 
     public CustomersView(CustomersPresentationModel pm, CustomersActivity activity) {
         this.pm = pm;
@@ -146,7 +145,7 @@ final class CustomersView {
         view.setId("customers");
 
         // Create limit checkbox
-        limitCheckBox = new CheckBox(I18n.getI18nText(LimitTo100));
+        limitCheckBox = I18nControls.newCheckBox(LimitTo100);
         limitCheckBox.setSelected(true);
 
         // Create customers grid
@@ -211,9 +210,13 @@ final class CustomersView {
                     : s.contains("@") ? where("lower(email) like ?", "%" + s.toLowerCase() + "%")
                     : where("abcNames like ?",AbcNames.evaluate(s, true)))
             // Apply account type filter (null = show all, otherwise filter by type)
-            .ifNotNull(pm.accountTypeFilterProperty(), accountType ->
-                "frontoffice".equals(accountType) ? where("frontendAccount!=null and !frontendAccount.backoffice")
-                    : where("frontendAccount!=null and frontendAccount.backoffice"))
+            .ifNotNull(pm.accountTypeFilterProperty(), accountType -> switch (accountType) {
+                case "frontoffice" -> where("frontendAccount!=null and !frontendAccount.backoffice");
+                case "backoffice" -> where("frontendAccount!=null and frontendAccount.backoffice");
+                case "owner" -> where("frontendAccount!=null and !frontendAccount.backoffice and owner");
+                case "non-owner" -> where("!owner or frontendAccount=null or frontendAccount.backoffice");
+                default -> where("1=1"); // Show all if unknown filter value
+            })
             // Apply active status filter (null = show all, "active" = only active, "inactive" = disabled or removed)
             .ifNotNull(pm.activeStatusFilterProperty(), status ->
                 "active".equals(status) ? where("!removed and (frontendAccount=null or !frontendAccount.disabled)")
@@ -227,27 +230,28 @@ final class CustomersView {
             .addEntitiesHandler(entityList -> Console.log("Customers loaded: " + entityList.size() + " customers"))
             .start();
 
-        // Set up a mapper to load ALL linked accounts with minimal fields (for counting in the table)
+        // Set up a mapper to load ALL members with minimal fields (for counting in the table)
         // This is loaded once at startup and kept in memory
-        allLinkedAccountsMapper = ReactiveEntitiesMapper.<Person>createPushReactiveChain()
+        //JSON5
+        ReactiveEntitiesMapper.<Person>createPushReactiveChain()
             .setDataSourceModel(dataSourceModel)
             .always(
                 //JSON5
                 "{class: 'Person', alias: 'alac', " +
                     "fields: 'id, frontendAccount', " +
                     "where: '!owner and !removed and frontendAccount!=null'}")
-            .storeEntitiesInto(allLinkedAccountsForCounting)
+            .storeEntitiesInto(allMembersForCounting)
             .start();
 
-        // Set up the reactive mapper for linked accounts (persons using the selected person's frontend account)
+        // Set up the reactive mapper for members (persons using the selected person's frontend account)
         // Using the same logic as MembersActivity - this loads full details for display in the Account tab
         // Note: This mapper is NOT started here - it will be started lazily when the Account & Access tab is selected
-        linkedAccountsMapper = ReactiveEntitiesMapper.<Person>createPushReactiveChain()
+        membersMapper = ReactiveEntitiesMapper.<Person>createPushReactiveChain()
             .setDataSourceModel(dataSourceModel)
             .always(
                 //JSON5
                 "{class: 'Person', alias: 'la', " +
-                    "fields: 'firstName, lastName, fullName, email, accountPerson', " +
+                    "fields: 'firstName, lastName, fullName, email, accountPerson.(id,fullName)', " +
                     "where: '!owner and !removed', " +
                     "orderBy: 'id'}")
             .ifNotNull(selectedPersonProperty, person -> {
@@ -264,7 +268,7 @@ final class CustomersView {
                 // If no account found, return empty (no linked accounts)
                 return where("1=0"); // Always false condition
             })
-            .storeEntitiesInto(linkedAccountsFeed);
+            .storeEntitiesInto(membersFeed);
         // Note: .start() NOT called here - will be called lazily when Account & Access tab is selected
 
         // Set up the reactive mapper for registrations (documents for the selected person)
@@ -275,7 +279,7 @@ final class CustomersView {
             .always(
                 //JSON5
                 "{class: 'Document', alias: 'd', " +
-                    "fields: 'ref, cancelled, price_deposit, price_net, person_firstName, person_lastName, event.(name, startDate, endDate, organization.(id, name))', " +
+                    "fields: 'ref, cancelled, price_deposit, price_net, person.(id,firstName,lastName), event.(name, startDate, endDate, organization.(id, name))', " +
                     "where: '!abandoned or price_deposit>0', " +
                     "orderBy: 'event.startDate desc', " +
                     "limit: 20}")
@@ -293,7 +297,25 @@ final class CustomersView {
                 // If no account found, show documents where person matches directly
                 return where("person=?", person.getPrimaryKey());
             })
-            .storeEntitiesInto(registrationsFeed);
+            .addEntitiesHandler(entityList -> {
+                // Update the feed
+                registrationsFeed.setAll(entityList);
+                // Directly update the UI to ensure "Loading..." message is replaced
+                // This is necessary because setAll() on empty list might not trigger change listener
+                UiScheduler.runInUiThread(() -> {
+                    registrationsContainer.getChildren().clear();
+                    if (entityList.isEmpty()) {
+                        Label noRegistrationsLabel = I18nControls.newLabel(NoRegistrationsText);
+                        Bootstrap.textSecondary(noRegistrationsLabel);
+                        registrationsContainer.getChildren().add(noRegistrationsLabel);
+                    } else {
+                        for (Document doc : entityList) {
+                            Node registrationCard = createRegistrationCard(doc);
+                            registrationsContainer.getChildren().add(registrationCard);
+                        }
+                    }
+                });
+            });
         // Note: .start() NOT called here - will be called lazily when Registrations tab is selected
 
         // Refresh the grid when linked accounts change
@@ -301,10 +323,10 @@ final class CustomersView {
             if (customersMapper != null) {
                 customersMapper.refreshWhenActive();
             }
-        }, linkedAccountsFeed);
+        }, membersFeed);
 
         // Update the account type section when linked accounts change
-        linkedAccountsFeed.addListener((InvalidationListener) observable -> {
+        membersFeed.addListener((InvalidationListener) observable -> {
             Person selectedPerson = selectedPersonProperty.get();
             if (selectedPerson != null && accountTypeSection != null) {
                 FrontendAccount account = selectedPerson.getFrontendAccount();
@@ -331,7 +353,6 @@ final class CustomersView {
 
     private BorderPane createEditPanel() {
         BorderPane panel = new BorderPane();
-     //   panel.getStyleClass().add("edit-panel");
 
         // Header
         HBox editPanelHeader = createEditPanelHeader();
@@ -356,7 +377,7 @@ final class CustomersView {
         fieldsBox.setAlignment(Pos.BOTTOM_LEFT);
 
         // Add user icon at the beginning
-        SVGPath userIcon = createUserIcon();
+        SVGPath userIcon = SvgIcons.createUserIcon();
         userIcon.setFill(Color.web("#00A3FF")); // Bootstrap primary color
         StackPane iconPane = new StackPane(userIcon);
         iconPane.setPrefSize(32, 32);
@@ -420,9 +441,9 @@ final class CustomersView {
         cancelButton.setManaged(false);
 
         // Discrete close button with × symbol
-        Button closeButton = new Button("×");
+        Button closeButton = I18nControls.newButton(CloseButtonSymbol);
+        closeButton.setPadding(new Insets(4, 8, 4, 8));
         closeButton.getStyleClass().addAll("btn", "btn-close");
-        closeButton.setStyle("-fx-font-size: 20px; -fx-padding: 4 8 4 8;");
         Bootstrap.button(closeButton);
         closeButton.setOnAction(e -> closeEditPanel());
 
@@ -449,17 +470,17 @@ final class CustomersView {
 
         // Registrations Tab
         Tab registrationsTab = new Tab();
-        I18n.bindI18nTextProperty(registrationsTab.textProperty(), "RegistrationsTab");
+        I18n.bindI18nTextProperty(registrationsTab.textProperty(), RegistrationsTab);
         registrationsTab.setContent(ModalityStyle.wrapTabContent(createRegistrationsPanel()));
 
         tabPane.getTabs().addAll(personalTab, accountTab, registrationsTab);
 
         // Lazy load data when tabs are selected
         tabPane.getSelectionModel().selectedItemProperty().addListener((obs, oldTab, newTab) -> {
-            if (newTab == accountTab && linkedAccountsMapper != null) {
+            if (newTab == accountTab && membersMapper != null) {
                 // Start the mapper if not already started
-                if (!linkedAccountsMapper.isStarted()) {
-                    linkedAccountsMapper.start();
+                if (!membersMapper.isStarted()) {
+                    membersMapper.start();
                 }
             }
             if (newTab == registrationsTab && registrationsMapper != null) {
@@ -489,7 +510,7 @@ final class CustomersView {
         // === Contact Information ===
         emailField = createFormField(formGrid, 0, row, EmailLabel);
         phoneField = createFormField(formGrid, 1, row, PhoneLabel);
-        organizationSelector = createOrgComboField(formGrid, 2, row);
+        organizationSelector = createOrgComboField(formGrid, row);
         row++;
 
         // === Personal Attributes ===
@@ -516,7 +537,7 @@ final class CustomersView {
         // Create badges for read mode (styling applied in updateAttributeBadges)
         genderBadge = new Label();
 
-        ordainedBadge = new Label("Ordained");
+        ordainedBadge = I18nControls.newLabel(OrdainedLabel);
 
         attributeBadgesBox = new HBox(12);
         attributeBadgesBox.setAlignment(Pos.CENTER_LEFT);
@@ -546,8 +567,7 @@ final class CustomersView {
         // === Location & Birth ===
         countryNameField = createFormField(formGrid, 0, row, CountryLabel);
         nationalityField = createFormField(formGrid, 1, row, NationalityLabel);
-        birthdatePicker = createDateField(formGrid, 2, row);
-        row++;
+        birthdatePicker = createDateField(formGrid, row);
 
         content.getChildren().add(formGrid);
 
@@ -555,18 +575,6 @@ final class CustomersView {
         scrollPane.setFitToWidth(true);
         scrollPane.getStyleClass().add("edit-scroll-pane");
         return scrollPane;
-    }
-
-    private VBox createSectionCard(Object i18nKey) {
-        VBox section = new VBox(12);
-        section.getStyleClass().add("form-section-card");
-        section.setPadding(new Insets(20));
-
-        Label title = I18nControls.newLabel(i18nKey);
-        title.getStyleClass().add("form-section-card-title");
-
-        section.getChildren().add(title);
-        return section;
     }
 
     private ScrollPane createAccountAccessPanel() {
@@ -590,35 +598,20 @@ final class CustomersView {
         content.getStyleClass().add("edit-content");
         content.setPadding(new Insets(20));
 
-        // Registrations section box (similar to linked accounts box in Account&Access tab)
+        // Registrations section box (similar to members box in Account&Access tab)
         VBox registrationsBox = new VBox();
         registrationsBox.setSpacing(16);
         registrationsBox.setPadding(new Insets(20));
-        registrationsBox.getStyleClass().add("linked-accounts-box");
+        registrationsBox.getStyleClass().add("members-box");
 
-        Label title = I18nControls.newLabel("RegistrationsTab");
+        Label title = I18nControls.newLabel(RegistrationsTab);
         title.getStyleClass().add("form-section-title");
 
         // Registrations list container
-        VBox registrationsContainer = new VBox(8);
+        registrationsContainer = new VBox(8);
 
-        // Add listener to update registrations display when feed changes
-        registrationsFeed.addListener((InvalidationListener) observable -> {
-            registrationsContainer.getChildren().clear();
-            if (registrationsFeed.isEmpty()) {
-                Label noRegistrationsLabel = I18nControls.newLabel("NoRegistrationsText");
-                Bootstrap.textSecondary(noRegistrationsLabel);
-                registrationsContainer.getChildren().add(noRegistrationsLabel);
-            } else {
-                for (Document doc : registrationsFeed) {
-                    Node registrationCard = createRegistrationCard(doc);
-                    registrationsContainer.getChildren().add(registrationCard);
-                }
-            }
-        });
-
-        // Initially show loading text
-        Label loadingLabel = I18nControls.newLabel("LoadingRegistrationsText");
+        // Initially show loading text (will be replaced when data loads via handler)
+        Label loadingLabel = I18nControls.newLabel(LoadingRegistrationsText);
         Bootstrap.textSecondary(loadingLabel);
         registrationsContainer.getChildren().add(loadingLabel);
 
@@ -633,7 +626,7 @@ final class CustomersView {
 
     private Node createRegistrationCard(Document doc) {
         GridPane card = new GridPane();
-        card.getStyleClass().add("linked-person-item");
+        card.getStyleClass().add("member-item");
         card.setHgap(16);
         card.setPadding(new Insets(12));
 
@@ -669,15 +662,22 @@ final class CustomersView {
         GridPane.setHgrow(eventLabel, Priority.ALWAYS);
         card.add(eventLabel, 1, 0);
 
-        // Column 2: Booking ref
-        Label refLabel = new Label("#" + doc.getRef());
-        refLabel.setMinWidth(80);
-        card.add(refLabel, 2, 0);
+        // Column 2: Booking ref (clickable hyperlink to booking details)
+        Hyperlink refLink = new Hyperlink("#" + doc.getRef());
+        refLink.setMinWidth(80);
+        refLink.setOnAction(e -> {
+            BrowsingHistory history = activity.getHistory();
+            if (history != null) {
+                history.push(BookingsRouting.getDocumentBookingPath(doc.getPrimaryKey()));
+            }
+        });
+        card.add(refLink, 2, 0);
 
-        // Column 3: Attendee name (who the booking is for) - using denormalized fields like OrderCard does
+        // Column 3: Attendee name (who the booking is for) - format as "#ID FirstName LastName"
         Label attendeeLabel = new Label();
-        String attendeeName = doc.getFullName(); // Uses person_firstName and person_lastName denormalized fields
-        if (attendeeName != null && !attendeeName.trim().isEmpty()) {
+        if (doc.getPerson() != null) {
+            Person attendee = doc.getPerson();
+            String attendeeName = "#" + attendee.getId().getPrimaryKey().toString() + " " + attendee.getFullName();
             attendeeLabel.setText(attendeeName);
         }
         Bootstrap.textSecondary(attendeeLabel);
@@ -687,16 +687,16 @@ final class CustomersView {
         // Column 4: Status badge (at the end)
         Label statusBadge = new Label();
         if (doc.isCancelled()) {
-            statusBadge.setText("Cancelled");
+            statusBadge.setText(I18n.getI18nText(StatusCancelled));
             Bootstrap.dangerBadge(statusBadge);
         } else if (doc.getPriceDeposit() >= doc.getPriceNet()) {
-            statusBadge.setText("Paid");
+            statusBadge.setText(I18n.getI18nText(StatusPaid));
             Bootstrap.successBadge(statusBadge);
         } else if (doc.getPriceDeposit() > 0) {
-            statusBadge.setText("Partial");
+            statusBadge.setText(I18n.getI18nText(StatusPartial));
             Bootstrap.warningBadge(statusBadge);
         } else {
-            statusBadge.setText("Pending");
+            statusBadge.setText(I18n.getI18nText(StatusPending));
             Bootstrap.secondaryBadge(statusBadge);
         }
         card.add(statusBadge, 4, 0);
@@ -704,6 +704,15 @@ final class CustomersView {
         return card;
     }
 
+    /**
+     * Creates a read-only text field with an i18n label and adds it to the specified grid position.
+     *
+     * @param grid The GridPane to add the field to
+     * @param col The column position in the grid
+     * @param row The row position in the grid
+     * @param i18nKey The i18n key for the field label
+     * @return The created TextField (initially read-only)
+     */
     private TextField createFormField(GridPane grid, int col, int row, Object i18nKey) {
         Label label = I18nControls.newLabel(i18nKey);
         TextField field = new TextField();
@@ -715,7 +724,7 @@ final class CustomersView {
         return field;
     }
 
-    private EntityButtonSelector<Entity> createOrgComboField(GridPane grid, int col, int row) {
+    private EntityButtonSelector<Entity> createOrgComboField(GridPane grid, int row) {
         Label label = I18nControls.newLabel(OrganizationLabel);
 
         DataSourceModel dataSourceModel = DataSourceModelService.getDefaultDataSourceModel();
@@ -756,13 +765,13 @@ final class CustomersView {
         }
 
         VBox box = ModalityStyle.createFormEntitySelector(label, selector);
-        grid.add(box, col, row);
+        grid.add(box, 2, row);
 
         return selector;
     }
 
 
-    private DatePicker createDateField(GridPane grid, int col, int row) {
+    private DatePicker createDateField(GridPane grid, int row) {
         Label label = I18nControls.newLabel(BirthdateLabel);
 
         DatePicker picker = new DatePicker();
@@ -770,7 +779,7 @@ final class CustomersView {
         picker.setDisable(true);
 
         VBox box = ModalityStyle.createFormDatePicker(label, picker);
-        grid.add(box, col, row);
+        grid.add(box, 2, row);
 
         return picker;
     }
@@ -814,8 +823,8 @@ final class CustomersView {
 
         // Refresh lazy-loaded mappers if they're already started
         // This ensures data refreshes when switching between users
-        if (linkedAccountsMapper != null && linkedAccountsMapper.isStarted()) {
-            linkedAccountsMapper.refreshWhenActive();
+        if (membersMapper != null && membersMapper.isStarted()) {
+            membersMapper.refreshWhenActive();
         }
         if (registrationsMapper != null && registrationsMapper.isStarted()) {
             registrationsMapper.refreshWhenActive();
@@ -892,16 +901,29 @@ final class CustomersView {
         });
     }
 
+    /**
+     * Updates the account type badge in the header based on the person's account status.
+     *
+     * @param account The person's frontend account (may be null)
+     * @param isOwner Whether the person is the owner of their account
+     * @param accountPerson The account owner person (for linked accounts, may be null)
+     */
     private void updateAccountBadge(FrontendAccount account, boolean isOwner, Person accountPerson) {
         accountTypeBadge.getStyleClass().clear();
 
         if (account != null) {
-            if (isOwner) {
+            if (Boolean.TRUE.equals(account.isBackoffice())) {
+                // Backoffice account
+                accountTypeBadge.setText(I18n.getI18nText(AccountTypeBackoffice));
+                Bootstrap.warningBadge(accountTypeBadge);
+            } else if (isOwner) {
+                // Frontoffice Owner
                 accountTypeBadge.setText(I18n.getI18nText(AccountTypeFrontofficeOwner));
-                ModalityStyle.badgeLightWarning(accountTypeBadge);
+                Bootstrap.successBadge(accountTypeBadge);
             } else {
+                // Frontoffice (non-owner)
                 accountTypeBadge.setText(I18n.getI18nText(AccountTypeFrontoffice));
-                ModalityStyle.badgeLightPurple(accountTypeBadge);
+                Bootstrap.primaryBadge(accountTypeBadge);
             }
         } else if (accountPerson != null) {
             accountTypeBadge.setText(I18n.getI18nText(AccountTypeLinked));
@@ -916,67 +938,80 @@ final class CustomersView {
         accountTypeSection.getChildren().clear();
 
         if (account != null && isOwner) {
-            // Show linked accounts (people using this account)
-            Label title = I18nControls.newLabel(LinkedAccountsTitle);
+            // Show members (people using this account)
+            Label title = I18nControls.newLabel(MembersTitle);
             title.getStyleClass().add("form-section-title");
 
             VBox linkedBox = new VBox();
             linkedBox.setSpacing(16);
             linkedBox.setPadding(new Insets(20));
-            linkedBox.getStyleClass().add("linked-accounts-box");
+            linkedBox.getStyleClass().add("members-box");
 
-            Label description = I18nControls.newLabel(LinkedAccountsDescription);
-            description.getStyleClass().add("linked-accounts-description");
+            Label description = I18nControls.newLabel(MembersDescription);
+            description.getStyleClass().add("members-description");
 
-            // Get linked accounts for this person
+            // Get members for this person
             Person selectedPerson = selectedPersonProperty.get();
             VBox personItems = new VBox();
             personItems.setSpacing(8);
-            personItems.getStyleClass().add("linked-person-items");
+            personItems.getStyleClass().add("member-items");
 
             if (selectedPerson != null) {
-                // The linkedAccountsFeed already contains only accounts using the selected person's frontendAccount
+                // The membersFeed already contains only accounts using the selected person's frontendAccount
                 // No additional filtering needed - just check if the list is empty
-                if (linkedAccountsFeed.isEmpty()) {
-                    Label placeholder = new Label(I18n.getI18nText(NoLinkedAccountsText));
+                if (membersFeed.isEmpty()) {
+                    Label placeholder = new Label(I18n.getI18nText(NoMembersText));
                     personItems.getChildren().add(placeholder);
                 } else {
-                    // Display all linked accounts from the feed
-                    linkedAccountsFeed.forEach(linkedPerson -> {
+                    // Display all members from the feed
+                    membersFeed.forEach(member -> {
                             HBox personItem = new HBox();
                             personItem.setSpacing(12);
                             personItem.setPadding(new Insets(12));
-                            personItem.getStyleClass().add("linked-person-item");
+                            personItem.getStyleClass().add("member-item");
                             personItem.setAlignment(Pos.CENTER_LEFT);
 
                             Text checkIcon = new Text("✓");
-                            checkIcon.getStyleClass().add("linked-person-check-icon");
+                            checkIcon.getStyleClass().add("member-check-icon");
 
-                            Label personName = new Label(linkedPerson.getFirstName() + " " + linkedPerson.getLastName());
-                            personName.getStyleClass().add("linked-person-name");
+                            Label personName = new Label("#" + member.getId().getPrimaryKey().toString() + " " + member.getFirstName() + " " + member.getLastName());
+                            personName.getStyleClass().add("member-name");
 
-                            Label personEmail = new Label(linkedPerson.getEmail());
-                            personEmail.getStyleClass().add("linked-person-email");
+                            Label personEmail = new Label(member.getEmail());
+                            personEmail.getStyleClass().add("member-email");
                             HBox.setHgrow(personEmail, Priority.ALWAYS);
 
-                            Label personId = new Label("ID: " + linkedPerson.getId());
-                            personId.getStyleClass().add("linked-person-id");
+
+                            // Add badge if this person is linked to another account
+                            Label linkedBadge = null;
+                            if (member.getAccountPerson() != null) {
+                                linkedBadge = new Label();
+                                linkedBadge.setText(I18n.getI18nText(LinkedToAccountText,
+                                    member.getAccountPerson().getId().getPrimaryKey().toString(),
+                                    member.getAccountPerson().getFullName()));
+                                ModalityStyle.badgeLightInfo(linkedBadge);
+                                linkedBadge.getStyleClass().add("member-account-badge");
+                            }
 
                             // Add delete button (visible only in edit mode)
-                            Button deleteButton = new Button("×");
+                            Button deleteButton = I18nControls.newButton(DeleteMemberButtonSymbol);
+                            deleteButton.setPadding(new Insets(4, 8, 4, 8));
                             deleteButton.getStyleClass().addAll("action-button", "danger");
-                            deleteButton.setStyle("-fx-font-size: 18px; -fx-padding: 4 8 4 8;");
-                            deleteButton.setOnAction(e -> deleteLinkedAccount(linkedPerson));
+                            deleteButton.setOnAction(e -> deleteMember(member));
                             // Bind visibility to edit mode (edit mode = saveButton is visible)
                             deleteButton.visibleProperty().bind(saveButton.visibleProperty());
                             deleteButton.managedProperty().bind(saveButton.visibleProperty());
 
-                            personItem.getChildren().addAll(checkIcon, personName, personEmail, personId, deleteButton);
+                            if (linkedBadge != null) {
+                                personItem.getChildren().addAll(checkIcon, personName, personEmail, linkedBadge, deleteButton);
+                            } else {
+                                personItem.getChildren().addAll(checkIcon, personName, personEmail, deleteButton);
+                            }
                             personItems.getChildren().add(personItem);
                         });
                 }
             } else {
-                Label placeholder = new Label(I18n.getI18nText(NoLinkedAccountsText));
+                Label placeholder = new Label(I18n.getI18nText(NoMembersText));
                 personItems.getChildren().add(placeholder);
             }
 
@@ -991,34 +1026,39 @@ final class CustomersView {
             VBox ownerBox = new VBox();
             ownerBox.setSpacing(16);
             ownerBox.setPadding(new Insets(20));
-            ownerBox.getStyleClass().add("linked-accounts-box");
+            ownerBox.getStyleClass().add("members-box");
 
             Label description = I18nControls.newLabel(OwnerAccountDescription);
-            description.getStyleClass().add("linked-accounts-description");
+            description.getStyleClass().add("members-description");
 
             HBox ownerItem = new HBox();
             ownerItem.setSpacing(12);
             ownerItem.setPadding(new Insets(12));
-            ownerItem.getStyleClass().add("linked-person-item");
+            ownerItem.getStyleClass().add("member-item");
             ownerItem.setAlignment(Pos.CENTER_LEFT);
 
             Text ownerIcon = new Text("\uD83D\uDC64"); // 👤
-            ownerIcon.getStyleClass().add("linked-person-user-icon");
+            ownerIcon.getStyleClass().add("member-user-icon");
 
-            Label ownerName = new Label(accountPerson.getFirstName() + " " + accountPerson.getLastName());
-            ownerName.getStyleClass().add("linked-person-name");
+            Label ownerName = new Label("#" + accountPerson.getPrimaryKey().toString() + " " + accountPerson.getFirstName() + " " + accountPerson.getLastName());
+            ownerName.getStyleClass().add("member-name");
 
             Label ownerEmail = new Label(accountPerson.getEmail());
-            ownerEmail.getStyleClass().add("linked-person-email");
+            ownerEmail.getStyleClass().add("member-email");
             HBox.setHgrow(ownerEmail, Priority.ALWAYS);
 
-            Label ownerId = new Label("ID: " + accountPerson.getId());
-            ownerId.getStyleClass().add("linked-person-id");
-
-            ownerItem.getChildren().addAll(ownerIcon, ownerName, ownerEmail, ownerId);
+            ownerItem.getChildren().addAll(ownerIcon, ownerName, ownerEmail);
 
             ownerBox.getChildren().addAll(description, ownerItem);
             accountTypeSection.getChildren().addAll(title, ownerBox);
+        } else {
+            VBox ownerBox = new VBox();
+            ownerBox.setSpacing(16);
+            ownerBox.setPadding(new Insets(20));
+            ownerBox.getStyleClass().add("members-box");
+            Label placeholder = new Label(I18n.getI18nText(NoOwnerText));
+            ownerBox.getChildren().add(placeholder);
+            accountTypeSection.getChildren().add(ownerBox);
         }
     }
 
@@ -1028,9 +1068,9 @@ final class CustomersView {
             saveButton.disableProperty().unbind();
         }
 
-        // Stop linked accounts mapper if it was started
-        if (linkedAccountsMapper != null && linkedAccountsMapper.isStarted()) {
-            linkedAccountsMapper.stop();
+        // Stop members mapper if it was started
+        if (membersMapper != null && membersMapper.isStarted()) {
+            membersMapper.stop();
         }
 
         // Stop registrations mapper if it was started
@@ -1044,7 +1084,7 @@ final class CustomersView {
         hasNoChangesBinding = null;
 
         // Clear feeds
-        linkedAccountsFeed.clear();
+        membersFeed.clear();
         registrationsFeed.clear();
 
         // Clear selection through the mapper (proper way according to ReactiveVisualMapper)
@@ -1055,12 +1095,12 @@ final class CustomersView {
         setEditMode(false);
     }
 
-    private void deleteLinkedAccount(Person linkedPerson) {
-        if (linkedPerson == null) return;
+    private void deleteMember(Person member) {
+        if (member == null) return;
 
-        // Create an UpdateStore to modify the linked person
-        UpdateStore deleteStore = UpdateStore.createAbove(linkedPerson.getStore());
-        Person personToUnlink = deleteStore.updateEntity(linkedPerson);
+        // Create an UpdateStore to modify the member
+        UpdateStore deleteStore = UpdateStore.createAbove(member.getStore());
+        Person personToUnlink = deleteStore.updateEntity(member);
 
         // Remove the link by setting accountPerson to null
         personToUnlink.setAccountPerson(null);
@@ -1068,19 +1108,16 @@ final class CustomersView {
         // Submit the change
         deleteStore.submitChanges()
             .onSuccess(result -> {
-                Console.log("Linked account removed successfully: " + linkedPerson.getId());
+                Console.log("Member removed successfully: " + member.getId());
 
-                // Remove from the linkedAccountsFeed by finding the person with matching ID
-                linkedAccountsFeed.removeIf(p -> p.getPrimaryKey().equals(linkedPerson.getPrimaryKey()));
+                // Remove from the membersFeed by finding the person with matching ID
+                membersFeed.removeIf(p -> p.getPrimaryKey().equals(member.getPrimaryKey()));
 
-                // The listener on linkedAccountsFeed will automatically update the UI
+                // The listener on membersFeed will automatically update the UI
                 // Also refresh the mappers to ensure data consistency
                 customersMapper.refreshWhenActive();
             })
-            .onFailure(error -> {
-                Console.log("Error removing linked account: " + error.getMessage());
-                error.printStackTrace();
-            });
+            .onFailure(error -> Console.log("Error removing member: " + error.getMessage()));
     }
 
     private void updateAttributeBadges(Person person) {
@@ -1088,7 +1125,7 @@ final class CustomersView {
 
         // Update gender badge with color
         boolean isMale = Boolean.TRUE.equals(person.isMale());
-        genderBadge.setText(isMale ? "Male" : "Female");
+        genderBadge.setText(I18n.getI18nText(isMale ? GenderMale : GenderFemale));
         // Clear previous styles
         genderBadge.getStyleClass().clear();
         // Apply color: Primary for Male, Pink for Female
@@ -1107,6 +1144,13 @@ final class CustomersView {
         Bootstrap.dangerBadge(ordainedBadge);
     }
 
+    /**
+     * Toggles between read mode and edit mode for the edit panel.
+     * In read mode, fields are disabled and badges are shown.
+     * In edit mode, fields are editable and checkboxes are shown.
+     *
+     * @param editMode true to enable edit mode, false for read mode
+     */
     private void setEditMode(boolean editMode) {
 
         // Toggle between badges (read mode) and checkboxes (edit mode)
@@ -1141,66 +1185,71 @@ final class CustomersView {
         cancelButton.setManaged(editMode);
     }
 
+    /**
+     * Sets up listeners on all form fields to automatically update the personToUpdate entity
+     * and invalidate the hasNoChangesBinding when values change.
+     * This enables real-time entity updates and proper save button state management.
+     */
     private void setupFieldListeners() {
         if (personToUpdate == null || hasNoChangesBinding == null) return;
 
         // Text field listeners
         firstNameField.textProperty().addListener((obs, oldVal, newVal) -> {
-            personToUpdate.setFieldValue("firstName", newVal != null ? newVal.trim() : null);
+            personToUpdate.setFirstName(newVal != null ? newVal.trim() : null);
             hasNoChangesBinding.invalidate();
         });
 
         lastNameField.textProperty().addListener((obs, oldVal, newVal) -> {
-            personToUpdate.setFieldValue("lastName", newVal != null ? newVal.trim() : null);
+            personToUpdate.setLastName(newVal != null ? newVal.trim() : null);
             hasNoChangesBinding.invalidate();
         });
 
         layNameField.textProperty().addListener((obs, oldVal, newVal) -> {
-            personToUpdate.setFieldValue("layName", newVal != null && !newVal.trim().isEmpty() ? newVal.trim() : null);
+            personToUpdate.setLayName(newVal != null && !newVal.trim().isEmpty() ? newVal.trim() : null);
             hasNoChangesBinding.invalidate();
         });
 
         emailField.textProperty().addListener((obs, oldVal, newVal) -> {
-            personToUpdate.setFieldValue("email", newVal != null ? newVal.trim() : null);
+            personToUpdate.setEmail(newVal != null ? newVal.trim() : null);
             hasNoChangesBinding.invalidate();
         });
 
         phoneField.textProperty().addListener((obs, oldVal, newVal) -> {
-            personToUpdate.setFieldValue("phone", newVal != null && !newVal.trim().isEmpty() ? newVal.trim() : null);
+            personToUpdate.setPhone(newVal != null && !newVal.trim().isEmpty() ? newVal.trim() : null);
             hasNoChangesBinding.invalidate();
         });
 
         nationalityField.textProperty().addListener((obs, oldVal, newVal) -> {
-            personToUpdate.setFieldValue("nationality", newVal != null && !newVal.trim().isEmpty() ? newVal.trim() : null);
+            personToUpdate.setNationality(newVal != null && !newVal.trim().isEmpty() ? newVal.trim() : null);
             hasNoChangesBinding.invalidate();
         });
 
         cityNameField.textProperty().addListener((obs, oldVal, newVal) -> {
-            personToUpdate.setFieldValue("cityName", newVal != null && !newVal.trim().isEmpty() ? newVal.trim() : null);
+            personToUpdate.setCityName(newVal != null && !newVal.trim().isEmpty() ? newVal.trim() : null);
             hasNoChangesBinding.invalidate();
         });
 
         countryNameField.textProperty().addListener((obs, oldVal, newVal) -> {
-            personToUpdate.setFieldValue("countryName", newVal != null && !newVal.trim().isEmpty() ? newVal.trim() : null);
+            personToUpdate.setCountryName(newVal != null && !newVal.trim().isEmpty() ? newVal.trim() : null);
             hasNoChangesBinding.invalidate();
         });
 
         streetField.textProperty().addListener((obs, oldVal, newVal) -> {
-            personToUpdate.setFieldValue("street", newVal != null && !newVal.trim().isEmpty() ? newVal.trim() : null);
+            personToUpdate.setStreet(newVal != null && !newVal.trim().isEmpty() ? newVal.trim() : null);
             hasNoChangesBinding.invalidate();
         });
 
         postCodeField.textProperty().addListener((obs, oldVal, newVal) -> {
-            personToUpdate.setFieldValue("postCode", newVal != null && !newVal.trim().isEmpty() ? newVal.trim() : null);
+            personToUpdate.setPostCode(newVal != null && !newVal.trim().isEmpty() ? newVal.trim() : null);
             hasNoChangesBinding.invalidate();
         });
 
         // Checkbox listeners
         maleCheckBox.selectedProperty().addListener((obs, oldVal, newVal) -> {
-            personToUpdate.setFieldValue("male", newVal);
+            personToUpdate.setMale(newVal);
             hasNoChangesBinding.invalidate();
             // Update badge immediately for visual feedback with color
-            genderBadge.setText(newVal ? "Male" : "Female");
+            genderBadge.setText(I18n.getI18nText(newVal ? GenderMale : GenderFemale));
             genderBadge.getStyleClass().clear();
             if (newVal) {
                 Bootstrap.primaryBadge(genderBadge);
@@ -1210,7 +1259,7 @@ final class CustomersView {
         });
 
         ordainedCheckBox.selectedProperty().addListener((obs, oldVal, newVal) -> {
-            personToUpdate.setFieldValue("ordained", newVal);
+            personToUpdate.setOrdained(newVal);
             hasNoChangesBinding.invalidate();
             // Update badge visibility immediately
             ordainedBadge.setVisible(newVal);
@@ -1219,7 +1268,7 @@ final class CustomersView {
 
         // DatePicker listener
         birthdatePicker.valueProperty().addListener((obs, oldVal, newVal) -> {
-            personToUpdate.setFieldValue("birthdate", newVal);
+            personToUpdate.setBirthDate(newVal);
             hasNoChangesBinding.invalidate();
         });
 
@@ -1248,7 +1297,6 @@ final class CustomersView {
             .onFailure(error -> {
                 // Handle error
                 Console.log("Error saving person: " + error.getMessage());
-                error.printStackTrace();
             });
     }
 
@@ -1275,41 +1323,12 @@ final class CustomersView {
         }
     }
 
-    public ObservableList<Person> getCustomersFeed() {
-        return customersFeed;
-    }
-
-    // Method called by the action renderer to programmatically select a person
-    void selectPerson(Person person) {
-        if (person != null) {
-            selectedPersonProperty.set(person);
-            openEditPanel(person);
-        }
-    }
-
-    // Method called by the delete action renderer
-    void showDeleteDialog(Person person) {
-        if (person == null) return;
-
-        // TODO: Implement delete confirmation dialog
-        // For now, just log the action
-        Console.log("Delete requested for person: " + person.getId());
-        // In the future, this should show a confirmation dialog and then:
-        // 1. Mark the person as removed in the database
-        // 2. Refresh the grid
-        // Example:
-        // UpdateStore updateStore = UpdateStore.createAbove(person.getStore());
-        // Person personToUpdate = updateStore.updateEntity(person);
-        // personToUpdate.setRemoved(true);
-        // updateStore.submitChanges().onSuccess(result -> customersMapper.refreshWhenActive());
-    }
-
     /**
-     * Helper method for renderers to get the count of linked accounts for a specific person.
+     * Helper method for renderers to get the count of members for a specific person.
      * Returns the number of persons who use the given person's frontend account.
-     * Uses allLinkedAccountsForCounting which contains minimal data (id, frontendAccount) for all linked accounts.
+     * Uses allMembersForCounting which contains minimal data (id, frontendAccount) for all members.
      */
-    int getLinkedAccountsCount(Person person) {
+    int getMembersCount(Person person) {
         if (person == null) return 0;
 
         // Get the frontend account for this person
@@ -1322,24 +1341,13 @@ final class CustomersView {
 
         if (accountId == null) return 0;
 
-        // Count persons in allLinkedAccountsForCounting who have the same frontendAccount
-        // This list contains minimal data for ALL linked accounts, loaded once at startup
+        // Count persons in allMembersForCounting who have the same frontendAccount
+        // This list contains minimal data for ALL members, loaded once at startup
         final Object finalAccountId = accountId;
-        return (int) allLinkedAccountsForCounting.stream()
+        return (int) allMembersForCounting.stream()
             .filter(p -> p.getFrontendAccount() != null &&
                         p.getFrontendAccount().getPrimaryKey().equals(finalAccountId))
             .count();
     }
 
-    /**
-     * Creates a user/person icon SVG path
-     */
-    private SVGPath createUserIcon() {
-        // User icon: circle for head + semicircle for shoulders
-        String userIconPath = "M16 8C16 10.2091 14.2091 12 12 12C9.79086 12 8 10.2091 8 8C8 5.79086 9.79086 4 12 4C14.2091 4 16 5.79086 16 8Z " +
-                              "M12 14C8.68629 14 6 16.6863 6 20V21C6 21.5523 6.44772 22 7 22H17C17.5523 22 18 21.5523 18 21V20C18 16.6863 15.3137 14 12 14Z";
-        SVGPath svgPath = new SVGPath();
-        svgPath.setContent(userIconPath);
-        return svgPath;
-    }
 }
