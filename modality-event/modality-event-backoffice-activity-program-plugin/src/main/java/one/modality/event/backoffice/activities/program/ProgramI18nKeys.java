@@ -26,5 +26,7 @@ public interface ProgramI18nKeys {
     Object ChooseAnItemForTheTeachingBookableScheduledItem = "ChooseAnItemForTheTeachingBookableScheduledItem";
     Object GeneratePreliminaryBookableSI = "GeneratePreliminaryBookableSI";
     Object PleaseSelectAnItem = "PleaseSelectAnItem";
+    Object DayTicketConfiguration = "DayTicketConfiguration";
+    Object RecurringItemEventNotSupported = "RecurringItemEventNotSupported";
 
 }

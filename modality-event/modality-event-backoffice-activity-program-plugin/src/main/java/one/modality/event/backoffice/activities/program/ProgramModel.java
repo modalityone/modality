@@ -56,7 +56,7 @@ final class ProgramModel {
     private final ObservableList<DayTemplate> currentDayTemplates = new OptimizedObservableListWrapper<>();
     private final ObservableList<DayTemplateModel> dayTemplateModels = FXCollections.observableArrayList();
     {
-        ObservableLists.bindConverted(dayTemplateModels, currentDayTemplates, dayTemplate -> new DayTemplateModel(dayTemplate, this));
+        ObservableLists.bindConvertedOptimized(dayTemplateModels, currentDayTemplates, dayTemplate -> new DayTemplateModel(dayTemplate, this));
     }
 
     private final ValidationSupport validationSupport = new ValidationSupport();
@@ -145,7 +145,7 @@ final class ProgramModel {
                 // Index 3: bookableScheduledItem for this event (teachings + optional audio), created during the event setup.
                 new EntityStoreQuery("select item, date, timeline, programScheduledItem, bookableScheduledItem from ScheduledItem si where event=? and bookableScheduledItem=si", selectedEvent),
                 // Index 4: we load some fields from the Event table that are not yet loaded. We don't need to look for the result, the result will be loaded automatically in `selectedEvent` because it has the same id.
-                new EntityStoreQuery("select teachingsDayTicket, audioRecordingsDayTicket from Event where id=?", selectedEvent),
+                new EntityStoreQuery("select teachingsDayTicket, audioRecordingsDayTicket, type.recurringItem from Event where id=?", selectedEvent),
                 new EntityStoreQuery("select distinct name, code from item  where family.code = ? and organization = ? and not deprecated order by name",
                     KnownItemFamily.AUDIO_RECORDING.getCode(), FXEvent.getEvent().getOrganization()))
             .onFailure(Console::log)

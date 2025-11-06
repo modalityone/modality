@@ -8,6 +8,7 @@ import dev.webfx.extras.async.AsyncSpinner;
 import dev.webfx.extras.panes.ColumnsPane;
 import dev.webfx.extras.styles.bootstrap.Bootstrap;
 import dev.webfx.extras.theme.text.TextTheme;
+import dev.webfx.extras.util.OptimizedObservableListWrapper;
 import dev.webfx.extras.util.dialog.DialogCallback;
 import dev.webfx.extras.util.dialog.builder.DialogBuilderUtil;
 import dev.webfx.extras.util.dialog.builder.DialogContent;
@@ -68,7 +69,7 @@ final class ProgramView extends ModalitySlaveEditor<Event> implements ButtonFact
         this.programModel = programModel;
         mainVBox = buildUi();
         mainVBox.setMaxWidth(MAX_WIDTH);
-        ObservableLists.bindConverted(workingDayTemplateViews, programModel.getWorkingDayTemplates(), DayTemplateView::new);
+        ObservableLists.bindConvertedOptimized(workingDayTemplateViews, programModel.getWorkingDayTemplates(), DayTemplateView::new);
     }
 
     public Node getView() {
@@ -99,16 +100,58 @@ final class ProgramView extends ModalitySlaveEditor<Event> implements ButtonFact
     private VBox buildUi() {
         // Building the top line
         ObjectProperty<Event> loadedEventProperty = programModel.loadedEventProperty();
-        Label subtitle = Bootstrap.h4(I18nEntities.newExpressionLabel(loadedEventProperty,
-            "'[" + ProgramI18nKeys.Programme + "] - ' + name + ' (' + dateIntervalFormat(startDate, endDate) +')'"));
+        Label subtitle = Bootstrap.strong(Bootstrap.h4(I18nEntities.newExpressionLabel(loadedEventProperty,
+            "'[" + ProgramI18nKeys.Programme + "] - ' + name + ' (' + dateIntervalFormat(startDate, endDate) +')'")));
         subtitle.setWrapText(true);
-        TextTheme.createSecondaryTextFacet(subtitle).style();
 
-        Button addTemplateButton = Bootstrap.primaryButton(I18nControls.newButton(ProgramI18nKeys.AddDayTemplate));
-        addTemplateButton.setGraphicTextGap(10);
-        addTemplateButton.setOnAction(e -> programModel.addNewDayTemplate());
+        HBox topLine = new HBox(subtitle);
+        topLine.setAlignment(Pos.CENTER);
+        topLine.setPadding(new Insets(20, 0, 20, 0));
 
-        HBox topLine = new HBox(subtitle, Layouts.createHGrowable(), addTemplateButton);
+        // Building the day ticket configuration warning
+        Label dayTicketConfigLabel = Bootstrap.strong(new Label());
+        dayTicketConfigLabel.setWrapText(true);
+        dayTicketConfigLabel.setMaxWidth(750);
+
+        VBox dayTicketConfigBox = new VBox(dayTicketConfigLabel);
+        dayTicketConfigBox.setAlignment(Pos.CENTER);
+        dayTicketConfigBox.setMaxWidth(MAX_WIDTH);
+
+        FXProperties.runNowAndOnPropertyChange(event -> {
+            if (event != null) {
+                boolean teachingEnabled = event.isTeachingsDayTicket();
+                boolean audioEnabled = event.isAudioRecordingsDayTicket();
+
+                String teachingStatus = teachingEnabled ? "✓ ENABLED" : "✗ DISABLED";
+                String audioStatus = audioEnabled ? "✓ ENABLED" : "✗ DISABLED";
+                I18nControls.bindI18nProperties(dayTicketConfigLabel, ProgramI18nKeys.DayTicketConfiguration, teachingStatus, audioStatus);
+
+                // Apply danger alert if either is disabled, info alert if both enabled
+                dayTicketConfigBox.getStyleClass().clear();
+                if (!teachingEnabled || !audioEnabled) {
+                    Bootstrap.alertDanger(dayTicketConfigBox);
+                } else {
+                    Bootstrap.alertSuccess(dayTicketConfigBox);
+                }
+            }
+        }, loadedEventProperty);
+
+        HBox dayTicketConfigLine = new HBox(dayTicketConfigBox);
+        dayTicketConfigLine.setAlignment(Pos.CENTER);
+        dayTicketConfigLine.setPadding(new Insets(0, 0, 20, 0));
+
+        // Building the recurring item blocking message
+        Label recurringItemWarningLabel = Bootstrap.strong(I18nControls.newLabel(ProgramI18nKeys.RecurringItemEventNotSupported));
+        recurringItemWarningLabel.setWrapText(true);
+        recurringItemWarningLabel.setMaxWidth(800);
+
+        VBox recurringItemWarningBox = Bootstrap.alertDanger(new VBox(recurringItemWarningLabel));
+        recurringItemWarningBox.setAlignment(Pos.CENTER);
+        recurringItemWarningBox.setMaxWidth(MAX_WIDTH);
+
+        HBox recurringItemWarningLine = new HBox(recurringItemWarningBox);
+        recurringItemWarningLine.setAlignment(Pos.CENTER);
+        recurringItemWarningLine.setPadding(new Insets(20, 0, 20, 0));
 
         // Building the bottom line
         Button cancelButton = Bootstrap.largeSecondaryButton(I18nControls.newButton(ProgramI18nKeys.CancelProgram));
@@ -144,14 +187,26 @@ final class ProgramView extends ModalitySlaveEditor<Event> implements ButtonFact
         templateDayColumnsPane.setMinColumnWidth(500);
         templateDayColumnsPane.hgapProperty().bind(templateDayColumnsPane.widthProperty().map(w -> Math.min(50, 0.02 * w.doubleValue())));
         templateDayColumnsPane.vgapProperty().bind(templateDayColumnsPane.hgapProperty());
-        templateDayColumnsPane.setPadding(new Insets(50, 0, 50, 0));
+        templateDayColumnsPane.setPadding(new Insets(50, 0, 20, 0));
         templateDayColumnsPane.setAlignment(Pos.TOP_CENTER);
-        ObservableLists.bindConverted(templateDayColumnsPane.getChildren(), workingDayTemplateViews, DayTemplateView::getPanel);
+        ObservableLists.bindConvertedOptimized(templateDayColumnsPane.getChildren(), workingDayTemplateViews, DayTemplateView::getPanel);
+
+        // Building the add template button section
+        Button addTemplateButton = Bootstrap.primaryButton(I18nControls.newButton(ProgramI18nKeys.AddDayTemplate));
+        addTemplateButton.setGraphicTextGap(10);
+        addTemplateButton.setOnAction(e -> programModel.addNewDayTemplate());
+        HBox addTemplateButtonBox = new HBox(addTemplateButton);
+        addTemplateButtonBox.setAlignment(Pos.CENTER);
+        addTemplateButtonBox.setPadding(new Insets(0, 0, 30, 0));
 
         BooleanProperty dayTicketPreliminaryScheduledItemProperty = programModel.getDayTicketPreliminaryScheduledItemProperty();
 
-        Label dayTicketTeachingAndAudioScheduledItemGenerationLabel = I18nControls.newLabel(ProgramI18nKeys.DayTicketTeachingsAndAudioScheduledItemNotGenerated);
+        Label dayTicketTeachingAndAudioScheduledItemGenerationLabel = Bootstrap.strong(I18nControls.newLabel(ProgramI18nKeys.DayTicketTeachingsAndAudioScheduledItemNotGenerated));
+        dayTicketTeachingAndAudioScheduledItemGenerationLabel.setWrapText(true);
+        dayTicketTeachingAndAudioScheduledItemGenerationLabel.setMaxWidth(750);
+
         Label chooseAnItemLabel = I18nControls.newLabel(ProgramI18nKeys.ChooseAnItemForTheTeachingBookableScheduledItem);
+        chooseAnItemLabel.setWrapText(true);
 
         itemSelector = new EntityButtonSelector<Item>( // language=JSON5
             "{class: 'Item', alias: 's', where: 'family.code=`teach`', orderBy :'name'}",
@@ -184,13 +239,18 @@ final class ProgramView extends ModalitySlaveEditor<Event> implements ButtonFact
 
         HBox itemAndButtonHBox = new HBox(20,chooseAnItemLabel,itemSelectorButton,generatePreliminaryBookableSIButton);
         itemAndButtonHBox.setAlignment(Pos.BASELINE_CENTER);
-        itemAndButtonHBox.setPadding(new Insets(40,0,0,0));
-        VBox generatePreliminaryBookableScheduledItemVBox = new VBox(dayTicketTeachingAndAudioScheduledItemGenerationLabel,itemAndButtonHBox);
+        itemAndButtonHBox.setPadding(new Insets(20,0,0,0));
+        VBox generatePreliminaryBookableScheduledItemVBox = Bootstrap.alertInfo(new VBox(10, dayTicketTeachingAndAudioScheduledItemGenerationLabel,itemAndButtonHBox));
+        generatePreliminaryBookableScheduledItemVBox.setAlignment(Pos.CENTER);
+        generatePreliminaryBookableScheduledItemVBox.setMaxWidth(800);
 
         generatePreliminaryBookableScheduledItemVBox.visibleProperty().bind(dayTicketPreliminaryScheduledItemProperty.not());
         generatePreliminaryBookableScheduledItemVBox.managedProperty().bind(dayTicketPreliminaryScheduledItemProperty.not());
 
-        Label dayTicketTeachingAndAudioScheduledItemInfoLabel = new Label();
+        Label dayTicketTeachingAndAudioScheduledItemInfoLabel = Bootstrap.strong(new Label());
+        dayTicketTeachingAndAudioScheduledItemInfoLabel.setWrapText(true);
+        dayTicketTeachingAndAudioScheduledItemInfoLabel.setMaxWidth(750);
+
         FXProperties.runNowAndOnPropertiesChange(dayTicketTeachingsAndAudioScheduledItemGenerated -> {
             if(FXEvent.getEvent()!=null) {
                 programModel.reloadProgramFromSelectedEvent(FXEvent.getEvent());
@@ -213,32 +273,84 @@ final class ProgramView extends ModalitySlaveEditor<Event> implements ButtonFact
                 I18nControls.bindI18nProperties(dayTicketTeachingAndAudioScheduledItemInfoLabel, ProgramI18nKeys.DayTicketTeachingsAndAudioScheduledItemInfos, teachingItemName, languageItemNames);
             });
            },dayTicketPreliminaryScheduledItemProperty,FXEvent.eventProperty());
-        dayTicketTeachingAndAudioScheduledItemInfoLabel.visibleProperty().bind(dayTicketPreliminaryScheduledItemProperty);
-        dayTicketTeachingAndAudioScheduledItemInfoLabel.managedProperty().bind(dayTicketPreliminaryScheduledItemProperty);
 
-        HBox dayTicketScheduledItemInfoHBox = new HBox(generatePreliminaryBookableScheduledItemVBox,dayTicketTeachingAndAudioScheduledItemInfoLabel);
+        VBox dayTicketSuccessInfoVBox = Bootstrap.alertInfo(new VBox(dayTicketTeachingAndAudioScheduledItemInfoLabel));
+        dayTicketSuccessInfoVBox.setAlignment(Pos.CENTER);
+        dayTicketSuccessInfoVBox.setMaxWidth(800);
+        dayTicketSuccessInfoVBox.visibleProperty().bind(dayTicketPreliminaryScheduledItemProperty);
+        dayTicketSuccessInfoVBox.managedProperty().bind(dayTicketPreliminaryScheduledItemProperty);
+
+        HBox dayTicketScheduledItemInfoHBox = new HBox(generatePreliminaryBookableScheduledItemVBox, dayTicketSuccessInfoVBox);
         dayTicketScheduledItemInfoHBox.setAlignment(Pos.CENTER);
         dayTicketScheduledItemInfoHBox.setPadding(new Insets(60, 0, 30, 0));
 
         // Building the event state line
-        Label eventStateLabel = Bootstrap.h4(Bootstrap.textSecondary(new Label()));
-        FXProperties.runNowAndOnPropertyChange(programGenerated ->
-            I18nControls.bindI18nProperties(eventStateLabel, programGenerated ? ProgramI18nKeys.ScheduledItemsAlreadyGenerated : ProgramI18nKeys.ScheduledItemsNotYetGenerated), programGeneratedProperty
-        );
+        Label eventStateLabel = Bootstrap.strong(new Label());
+        eventStateLabel.setWrapText(true);
+        eventStateLabel.setMaxWidth(550);
+
+        VBox eventStateBox = new VBox(eventStateLabel);
+        eventStateBox.setAlignment(Pos.CENTER);
+        eventStateBox.setMaxWidth(600);
+
+        FXProperties.runNowAndOnPropertyChange(programGenerated -> {
+            I18nControls.bindI18nProperties(eventStateLabel, programGenerated ? ProgramI18nKeys.ScheduledItemsAlreadyGenerated : ProgramI18nKeys.ScheduledItemsNotYetGenerated);
+            // Apply different alert style based on state
+            eventStateBox.getStyleClass().clear();
+            if (programGenerated) {
+                Bootstrap.alertWarning(eventStateBox);
+            } else {
+                Bootstrap.alertInfo(eventStateBox);
+            }
+        }, programGeneratedProperty);
 
         bottomLine.visibleProperty().bind(dayTicketPreliminaryScheduledItemProperty);
         bottomLine.managedProperty().bind(dayTicketPreliminaryScheduledItemProperty);
 
-        HBox eventStateLine = new HBox(eventStateLabel);
+        HBox eventStateLine = new HBox(eventStateBox);
         eventStateLine.setAlignment(Pos.CENTER);
         eventStateLine.setPadding(new Insets(0, 0, 30, 0));
 
-        return new VBox(
-            topLine,
+        // Main content container (everything except topLine and recurring warning)
+        VBox mainContentBox = new VBox(
+            dayTicketConfigLine,
             dayTicketScheduledItemInfoHBox,
             templateDayColumnsPane,
+            addTemplateButtonBox,
             eventStateLine,
             bottomLine
+        );
+
+        // Control visibility based on recurringItem field
+        FXProperties.runNowAndOnPropertyChange(event -> {
+            if (event != null && event.getType() != null) {
+                Boolean isRecurring = event.getType().isRecurring();
+                if (Boolean.TRUE.equals(isRecurring)) {
+                    // Show warning, hide main content for recurring item events
+                    recurringItemWarningLine.setVisible(true);
+                    recurringItemWarningLine.setManaged(true);
+                    mainContentBox.setVisible(false);
+                    mainContentBox.setManaged(false);
+                } else {
+                    // Hide warning, show main content for non-recurring events
+                    recurringItemWarningLine.setVisible(false);
+                    recurringItemWarningLine.setManaged(false);
+                    mainContentBox.setVisible(true);
+                    mainContentBox.setManaged(true);
+                }
+            } else {
+                // Default: hide warning, show main content
+                recurringItemWarningLine.setVisible(false);
+                recurringItemWarningLine.setManaged(false);
+                mainContentBox.setVisible(true);
+                mainContentBox.setManaged(true);
+            }
+        }, loadedEventProperty);
+
+        return new VBox(
+            topLine,
+            recurringItemWarningLine,
+            mainContentBox
         );
     }
 }

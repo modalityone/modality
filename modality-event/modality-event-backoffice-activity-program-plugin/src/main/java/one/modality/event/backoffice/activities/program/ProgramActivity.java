@@ -53,7 +53,7 @@ final class ProgramActivity extends ViewDomainActivityBase {
 
         BorderPane.setAlignment(title, Pos.CENTER);
         mainFrame.setTop(title);
-        mainFrame.setPadding(new Insets(0, 0, 30, 0));
+        mainFrame.setPadding(new Insets(0, 20, 30, 20));
 
         return Controls.createVerticalScrollPane(mainFrame);
     }
