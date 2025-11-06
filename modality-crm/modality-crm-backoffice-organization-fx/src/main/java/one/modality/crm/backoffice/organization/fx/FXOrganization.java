@@ -15,14 +15,14 @@ import java.util.Objects;
  */
 public final class FXOrganization {
 
-    public static final String EXPECTED_FIELDS = "name,type.(code,name),country,language";
+    public static final String EXPECTED_FIELDS = "name,type.(code,name),country,language,teachingsDayTicketItem";
 
     private final static ObjectProperty<Organization> organizationProperty = FXProperties.newObjectProperty(() ->
-            FXOrganizationId.setOrganizationId(getOrganizationId()));
+        FXOrganizationId.setOrganizationId(getOrganizationId()));
 
     static {
         FXOrganizationId.init();
-        // Registering "FXOrganization" as possible entity holder for i18n key forwards in Modality (used by KBS to
+        // Registering "FXOrganization" as a possible entity holder for i18n key forwards in Modality (used by KBS to
         // rename "Recurring events" to "STTP" or "GP Classes" depending on the selected organization).
         ModalityI18nProvider.registerEntityHolder("FXOrganization", FXOrganization::getOrganization);
     }
