@@ -1,6 +1,6 @@
 package one.modality.crm.backoffice.activities.customers;
 
-import dev.webfx.extras.i18n.I18n;
+import dev.webfx.extras.i18n.controls.I18nControls;
 import javafx.collections.ObservableList;
 import javafx.geometry.Orientation;
 import javafx.scene.Node;
@@ -22,12 +22,12 @@ import static one.modality.crm.backoffice.activities.customers.CustomersI18nKeys
 public final class CustomersFilterSearchBar {
 
     private final FilterSearchBar filterSearchBar;
-    private final ToggleGroup accountTypeToggleGroup;
     private final ToggleButton allAccountsButton;
     private final ToggleButton frontofficeButton;
     private final ToggleButton backofficeButton;
+    private final ToggleButton ownerButton;
+    private final ToggleButton nonOwnerButton;
 
-    private final ToggleGroup activeStatusToggleGroup;
     private final ToggleButton allStatusButton;
     private final ToggleButton activeButton;
     private final ToggleButton inactiveButton;
@@ -37,24 +37,31 @@ public final class CustomersFilterSearchBar {
         filterSearchBar = new FilterSearchBar(mixin, activityName, domainClassId, parent, pm);
 
         // Create toggle group for account type filter
-        accountTypeToggleGroup = new ToggleGroup();
+        ToggleGroup accountTypeToggleGroup = new ToggleGroup();
 
-        allAccountsButton = new ToggleButton(I18n.getI18nText(AccountTypeFilterAll));
+        allAccountsButton = I18nControls.newToggleButton(AccountTypeFilterAll);
         allAccountsButton.setToggleGroup(accountTypeToggleGroup);
         allAccountsButton.getStyleClass().add("account-type-toggle");
         allAccountsButton.setSelected(true);
 
-        frontofficeButton = new ToggleButton(I18n.getI18nText(AccountTypeFilterFrontoffice));
+        frontofficeButton = I18nControls.newToggleButton(AccountTypeFilterFrontoffice);
         frontofficeButton.setToggleGroup(accountTypeToggleGroup);
         frontofficeButton.getStyleClass().add("account-type-toggle");
 
-        backofficeButton = new ToggleButton(I18n.getI18nText(AccountTypeFilterBackoffice));
+        backofficeButton = I18nControls.newToggleButton(AccountTypeFilterBackoffice);
         backofficeButton.setToggleGroup(accountTypeToggleGroup);
         backofficeButton.getStyleClass().add("account-type-toggle");
 
+        ownerButton = I18nControls.newToggleButton(AccountTypeFilterOwner);
+        ownerButton.setToggleGroup(accountTypeToggleGroup);
+        ownerButton.getStyleClass().add("account-type-toggle");
+
+        nonOwnerButton = I18nControls.newToggleButton(AccountTypeFilterNonOwner);
+        nonOwnerButton.setToggleGroup(accountTypeToggleGroup);
+        nonOwnerButton.getStyleClass().add("account-type-toggle");
+
         // Bind account type toggle selection to presentation model
-        if (pm instanceof HasAccountTypeFilterProperty) {
-            HasAccountTypeFilterProperty filterPm = (HasAccountTypeFilterProperty) pm;
+        if (pm instanceof HasAccountTypeFilterProperty filterPm) {
             accountTypeToggleGroup.selectedToggleProperty().addListener((obs, oldVal, newVal) -> {
                 if (newVal == allAccountsButton) {
                     filterPm.setAccountTypeFilter(null);
@@ -62,29 +69,32 @@ public final class CustomersFilterSearchBar {
                     filterPm.setAccountTypeFilter("frontoffice");
                 } else if (newVal == backofficeButton) {
                     filterPm.setAccountTypeFilter("backoffice");
+                } else if (newVal == ownerButton) {
+                    filterPm.setAccountTypeFilter("owner");
+                } else if (newVal == nonOwnerButton) {
+                    filterPm.setAccountTypeFilter("non-owner");
                 }
             });
         }
 
         // Create toggle group for active status filter
-        activeStatusToggleGroup = new ToggleGroup();
+        ToggleGroup activeStatusToggleGroup = new ToggleGroup();
 
-        allStatusButton = new ToggleButton(I18n.getI18nText(ActiveStatusFilterAll));
+        allStatusButton = I18nControls.newToggleButton(ActiveStatusFilterAll);
         allStatusButton.setToggleGroup(activeStatusToggleGroup);
         allStatusButton.getStyleClass().add("account-type-toggle");
 
-        activeButton = new ToggleButton(I18n.getI18nText(ActiveStatusFilterActive));
+        activeButton = I18nControls.newToggleButton(ActiveStatusFilterActive);
         activeButton.setToggleGroup(activeStatusToggleGroup);
         activeButton.getStyleClass().add("account-type-toggle");
         activeButton.setSelected(true);
 
-        inactiveButton = new ToggleButton(I18n.getI18nText(ActiveStatusFilterInactive));
+        inactiveButton = I18nControls.newToggleButton(ActiveStatusFilterInactive);
         inactiveButton.setToggleGroup(activeStatusToggleGroup);
         inactiveButton.getStyleClass().add("account-type-toggle");
 
         // Bind active status toggle selection to presentation model
-        if (pm instanceof HasActiveStatusFilterProperty) {
-            HasActiveStatusFilterProperty statusPm = (HasActiveStatusFilterProperty) pm;
+        if (pm instanceof HasActiveStatusFilterProperty statusPm) {
             activeStatusToggleGroup.selectedToggleProperty().addListener((obs, oldVal, newVal) -> {
                 if (newVal == allStatusButton) {
                     statusPm.setActiveStatusFilter(null);
@@ -105,7 +115,7 @@ public final class CustomersFilterSearchBar {
         HBox accountTypeContainer = new HBox();
         accountTypeContainer.setSpacing(8); // Spacing between buttons
         accountTypeContainer.getStyleClass().add("account-type-toggle-container");
-        accountTypeContainer.getChildren().addAll(allAccountsButton, frontofficeButton, backofficeButton);
+        accountTypeContainer.getChildren().addAll(allAccountsButton, frontofficeButton, backofficeButton, ownerButton, nonOwnerButton);
 
         // Create a vertical separator between the two filter groups
         Separator separator = new Separator(Orientation.VERTICAL);

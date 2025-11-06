@@ -11,10 +11,6 @@ public interface HasAccountTypeFilterProperty {
 
     StringProperty accountTypeFilterProperty();
 
-    default String getAccountTypeFilter() {
-        return accountTypeFilterProperty().get();
-    }
-
     default void setAccountTypeFilter(String value) {
         accountTypeFilterProperty().set(value);
     }
