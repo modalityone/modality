@@ -70,6 +70,7 @@ public abstract class MultiPageBookingForm extends BookingFormBase {
     };
     private final BooleanProperty previousPageApplicableProperty = new SimpleBooleanProperty();
     private final BooleanProperty pageCanGoBackProperty = new SimpleBooleanProperty();
+    private final BooleanProperty pageCanGoForwardProperty = new SimpleBooleanProperty();
     private final BooleanProperty pageEndReachedProperty = new SimpleBooleanProperty() {
         @Override
         protected void invalidated() {
@@ -112,6 +113,7 @@ public abstract class MultiPageBookingForm extends BookingFormBase {
                     // We disable the "next" button in the following cases:
                     // When the displayed page is not valid
                     return !pageValidProperty.get()
+                           || !pageCanGoForwardProperty.get()
                            || pageEndReachedProperty.get()
                            // When it is required to specify the person to book, and it's still not set on the booking nor on the person to book button
                            || personToBookRequiredProperty.get() && getWorkingBooking().getDocument().getPerson() == null && FXPersonToBook.getPersonToBook() == null
@@ -203,6 +205,7 @@ public abstract class MultiPageBookingForm extends BookingFormBase {
         pageValidProperty.bind(displayedPage.validProperty());
         pageBusyFutureProperty.bind(displayedPage.busyFutureProperty());
         pageCanGoBackProperty.bind(displayedPage.canGoBackProperty());
+        pageCanGoForwardProperty.bind(displayedPage.canGoForwardProperty());
         pageEndReachedProperty.bind(displayedPage.endReachedProperty());
         if (bookingFormPageValidListener != null)
             bookingFormPageValidListener.unregister();
