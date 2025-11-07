@@ -55,6 +55,10 @@ public interface BookingFormPage {
         return new SimpleBooleanProperty(true);
     }
 
+    default ObservableBooleanValue canGoForwardProperty() {
+        return new SimpleBooleanProperty(true);
+    }
+
     default ObservableBooleanValue endReachedProperty() {
         return new SimpleBooleanProperty(false);
     }

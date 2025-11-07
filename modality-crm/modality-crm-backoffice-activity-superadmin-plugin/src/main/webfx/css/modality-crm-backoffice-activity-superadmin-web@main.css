@@ -39,64 +39,6 @@
     font-size: 13px;
 }
 
-/* Modern Tab Design for Super Admin Sub-Tabs */
-.super-admin-sub-tabs {
-    background-color: white;
-    border: 1px solid #ddd;
-    border-radius: 8px;
-}
-
-.super-admin-sub-tabs .tab-header-area {
-    background-color: white;
-    border-radius: 8px 8px 0 0;
-}
-
-.super-admin-sub-tabs .tab-header-background {
-    background-color: white;
-    border-radius: 8px 8px 0 0;
-}
-
-.super-admin-sub-tabs .headers-region {
-    background-color: white;
-}
-
-.super-admin-sub-tabs .tab {
-    background-color: transparent;
-    border-radius: 0;
-    border-style: solid;
-    border-color: transparent transparent transparent transparent;
-    border-width: 0 0 3px 0;
-}
-
-.super-admin-sub-tabs .tab-label {
-    color: #666;
-    font-size: 14px;
-}
-
-.super-admin-sub-tabs .tab:hover .tab-label {
-    color: #00b8d4;
-}
-
-.super-admin-sub-tabs .tab:selected,
-.super-admin-sub-tabs .tab.selected {
-    background-color: transparent;
-    border-color: transparent transparent #00b8d4 transparent;
-}
-
-.super-admin-sub-tabs .tab:selected .tab-label,
-.super-admin-sub-tabs .tab.selected .tab-label {
-    color: #00b8d4;
-}
-
-.super-admin-sub-tabs .tab .focus-indicator {
-    border-color: transparent;
-}
-
-.super-admin-sub-tabs .tab-content-area {
-    background-color: white;
-    border-color: transparent;
-}
-
 /* Role Dialog - Selected Permissions */
 .role-dialog-permissions-title {
     font-weight: bold;
