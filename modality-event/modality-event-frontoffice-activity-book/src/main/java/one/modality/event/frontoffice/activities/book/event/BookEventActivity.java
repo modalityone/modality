@@ -23,14 +23,14 @@ import javafx.scene.text.Font;
 import one.modality.base.frontoffice.mainframe.fx.FXCollapseMenu;
 import one.modality.base.shared.entities.Event;
 import one.modality.base.shared.entities.Person;
-import one.modality.crm.backoffice.organization.fx.FXOrganizationId;
-import one.modality.crm.shared.services.authn.fx.FXUserPersonId;
 import one.modality.booking.client.workingbooking.FXPersonToBook;
 import one.modality.booking.client.workingbooking.HasWorkingBookingProperties;
 import one.modality.booking.client.workingbooking.WorkingBooking;
 import one.modality.booking.client.workingbooking.WorkingBookingProperties;
-import one.modality.ecommerce.document.service.*;
 import one.modality.booking.frontoffice.bookingform.GatewayPaymentForm;
+import one.modality.crm.backoffice.organization.fx.FXOrganizationId;
+import one.modality.crm.shared.services.authn.fx.FXUserPersonId;
+import one.modality.ecommerce.document.service.*;
 import one.modality.ecommerce.payment.CancelPaymentResult;
 import one.modality.event.client.event.fx.FXEvent;
 import one.modality.event.client.event.fx.FXEventId;
@@ -84,11 +84,20 @@ public final class BookEventActivity extends ViewDomainActivityBase implements B
         Object eventId = Objects.coalesce(getParameter("eventId"), getParameter("gpClassId"));
         if (eventId != null) { // eventId is null when sub-routing /booking/account (instead of /booking/event/:eventId)
             FXEventId.setEventPrimaryKey(Numbers.toShortestNumber(eventId));
-            // Initially hiding the footer (app menu), especially when coming from the website.
-            FXCollapseMenu.setCollapseMenu(!Entities.samePrimaryKey(FXOrganizationId.getOrganizationId(), 1));
+            // Initially hiding the app menu, especially when coming from the website.
+            setCollapseMenu();
         }
         modifyOrderDocumentIdProperty.set(getParameter("modifyOrderDocumentId"));
         payOrderDocumentIdProperty.set(getParameter("payOrderDocumentId"));
+    }
+
+    private void setCollapseMenu() {
+        Event event = FXEvent.getEvent();
+        FXCollapseMenu.setCollapseMenu(
+            // We never collapse the menu for NKT events (Festivals & STTP)
+            !Entities.samePrimaryKey(FXOrganizationId.getOrganizationId(), 1)
+            // But we do hide the menu for MKMC GP classes to not distract the user from booking
+            && event == null || event.isRecurring());
     }
 
     @Override
@@ -109,8 +118,7 @@ public final class BookEventActivity extends ViewDomainActivityBase implements B
 
     @Override
     public void onResume() {
-        // Initially hiding the menu to not distract the user from booking (especially when coming from the website)
-        FXCollapseMenu.setCollapseMenu(!Entities.samePrimaryKey(FXOrganizationId.getOrganizationId(), 1));
+        setCollapseMenu(); // Re-establishing the collapse menu policy for this activity
         super.onResume();
     }
 
@@ -159,6 +167,7 @@ public final class BookEventActivity extends ViewDomainActivityBase implements B
             // TODO: if eventId doesn't exist in the database, FXEvent.getEvent() stays null and nothing happens (stuck on loading page)
             Event event = FXEvent.getEvent(); // might be null on the first call (ex: on page reload)
             if (event != null) { // happens when routed through /book-event/:eventId
+                setCollapseMenu(); // Updating the collapse menu policy (because it depends on the event)
                 lettersSlideController.onEventChanged(event);
 
                 Person personToBook = FXPersonToBook.getPersonToBook();
