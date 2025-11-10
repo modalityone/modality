@@ -2,13 +2,17 @@ package one.modality.base.shared.entities;
 
 import dev.webfx.stack.orm.entity.Entity;
 import dev.webfx.stack.orm.entity.EntityId;
-import one.modality.base.shared.entities.markers.EntityHasLocalDateTime;
+
+import java.time.LocalDateTime;
 
 /**
  * @author Bruno Salmon
  */
-public interface Invitation extends Entity, EntityHasLocalDateTime {
+public interface Invitation extends Entity {
 
+    String creationDate = "creationDate";
+    String usageDate = "usageDate";
+    String token = "token";
     String inviter = "inviter";
     String invitee = "invitee";
     String pending = "pending";
@@ -16,6 +20,30 @@ public interface Invitation extends Entity, EntityHasLocalDateTime {
     String aliasFirstName = "aliasFirstName";
     String aliasLastName = "aliasLastName";
     String createdAliasPerson = "createdAliasPerson";
+
+    default void setCreationDate(LocalDateTime value) {
+        setFieldValue(creationDate, value);
+    }
+
+    default LocalDateTime getCreationDate() {
+        return getLocalDateTimeFieldValue(creationDate);
+    }
+
+    default void setUsageDate(LocalDateTime value) {
+        setFieldValue(usageDate, value);
+    }
+
+    default LocalDateTime getUsageDate() {
+        return getLocalDateTimeFieldValue(usageDate);
+    }
+
+    default void setToken(String value) {
+        setFieldValue(token, value);
+    }
+
+    default String getToken() {
+        return getStringFieldValue(token);
+    }
 
     // Inviter person
     default void setInviter(Object value) {
