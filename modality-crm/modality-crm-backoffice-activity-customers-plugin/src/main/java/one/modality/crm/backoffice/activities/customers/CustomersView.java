@@ -84,12 +84,15 @@ final class CustomersView {
     private BooleanBinding hasNoChangesBinding;
 
     private ReactiveVisualMapper<Person> customersMapper;
+    private dev.webfx.stack.orm.reactive.entities.entities_to_grid.EntityColumn<Person>[] customerColumns;
     private final ObservableList<Person> membersFeed = FXCollections.observableArrayList();
     private final ObservableList<Document> registrationsFeed = FXCollections.observableArrayList();
     private final ObservableList<Person> allMembersForCounting = FXCollections.observableArrayList();
+    private final ObservableList<Person> currentCustomersFeed = FXCollections.observableArrayList();
     private final ObjectProperty<Person> selectedPersonProperty = new SimpleObjectProperty<>();
     private ReactiveEntitiesMapper<Person> membersMapper;
     private ReactiveEntitiesMapper<Document> registrationsMapper;
+    private ReactiveEntitiesMapper<Person> allMembersMapper;
 
     // Filter controls
     private final CheckBox limitCheckBox;
@@ -164,7 +167,8 @@ final class CustomersView {
             pm.limitProperty().setValue(limitCheckBox.isSelected() ? 100 : -1),
             limitCheckBox.selectedProperty());
 
-        // Bind visual result from presentation model to grid
+        // Bind grid to visual result property to receive updates from filter changes
+        // We also manually update it when member counts change (see listener below on allMembersForCounting)
         customersGrid.visualResultProperty().bind(pm.masterVisualResultProperty());
 
         // Create edit panel (initially hidden)
@@ -194,6 +198,10 @@ final class CustomersView {
     private void startLogic() {
         // Parse the columns using VisualEntityColumnFactory to properly register custom renderers
         DataSourceModel dataSourceModel = DataSourceModelService.getDefaultDataSourceModel();
+
+        // Parse columns once for reuse
+        customerColumns = dev.webfx.stack.orm.reactive.mapping.entities_to_visual.VisualEntityColumnFactory.get()
+            .fromJsonArray(CUSTOMER_COLUMNS, dataSourceModel.getDomainModel(), "Person");
 
         // Set up the reactive mapper for customers
         customersMapper = ReactiveVisualMapper.<Person>createPushReactiveChain(activity)
@@ -227,21 +235,25 @@ final class CustomersView {
             .visualizeResultInto(pm.masterVisualResultProperty())
             .bindActivePropertyTo(pm.activeProperty())
             .setSelectedEntityHandler(this::onPersonSelected)
-            .addEntitiesHandler(entityList -> Console.log("Customers loaded: " + entityList.size() + " customers"))
+            .addEntitiesHandler(entityList -> {
+                Console.log("Customers loaded: " + entityList.size() + " customers");
+                // Store current entities so we can manually recreate visual result when member counts change
+                currentCustomersFeed.setAll(entityList);
+            })
             .start();
 
         // Set up a mapper to load ALL members with minimal fields (for counting in the table)
-        // This is loaded once at startup and kept in memory
+        // This is loaded once at startup and kept in memory, and refreshed when members are added/removed
         //JSON5
-        ReactiveEntitiesMapper.<Person>createPushReactiveChain()
+        allMembersMapper = ReactiveEntitiesMapper.<Person>createPushReactiveChain()
             .setDataSourceModel(dataSourceModel)
             .always(
                 //JSON5
                 "{class: 'Person', alias: 'alac', " +
                     "fields: 'id, frontendAccount', " +
                     "where: '!owner and !removed and frontendAccount!=null'}")
-            .storeEntitiesInto(allMembersForCounting)
-            .start();
+            .storeEntitiesInto(allMembersForCounting);
+        allMembersMapper.start();
 
         // Set up the reactive mapper for members (persons using the selected person's frontend account)
         // Using the same logic as MembersActivity - this loads full details for display in the Account tab
@@ -324,6 +336,15 @@ final class CustomersView {
                 customersMapper.refreshWhenActive();
             }
         }, membersFeed);
+
+        // Refresh the grid when the members counting list changes (to update member counts in table)
+        // Trigger mapper to refresh so that cell renderers see updated member counts
+        ObservableLists.runNowAndOnListChange(change -> {
+            if (customersMapper != null && !currentCustomersFeed.isEmpty()) {
+                // Trigger mapper refresh to update visual result with new member counts
+                customersMapper.refreshWhenActive();
+            }
+        }, allMembersForCounting);
 
         // Update the account type section when linked accounts change
         membersFeed.addListener((InvalidationListener) observable -> {
@@ -890,7 +911,7 @@ final class CustomersView {
         if (!splitPane.getItems().contains(editPanel)) {
             splitPane.getItems().add(editPanel);
             // Set the divider position to give 60% to the grid, 40% to the edit panel
-            splitPane.setDividerPositions(0.6);
+            splitPane.setDividerPositions(0.5);
         }
 
         // Scroll to edit panel
@@ -1102,20 +1123,25 @@ final class CustomersView {
         UpdateStore deleteStore = UpdateStore.createAbove(member.getStore());
         Person personToUnlink = deleteStore.updateEntity(member);
 
-        // Remove the link by setting accountPerson to null
-        personToUnlink.setAccountPerson(null);
+        // Remove the link by clearing the frontendAccount
+        personToUnlink.setFrontendAccount(null);
 
         // Submit the change
         deleteStore.submitChanges()
             .onSuccess(result -> {
                 Console.log("Member removed successfully: " + member.getId());
 
-                // Remove from the membersFeed by finding the person with matching ID
-                membersFeed.removeIf(p -> p.getPrimaryKey().equals(member.getPrimaryKey()));
+                // Update UI on the FX application thread
+                UiScheduler.runInUiThread(() -> {
+                    // Remove from the membersFeed by finding the person with matching ID
+                    membersFeed.removeIf(p -> p.getPrimaryKey().equals(member.getPrimaryKey()));
 
-                // The listener on membersFeed will automatically update the UI
-                // Also refresh the mappers to ensure data consistency
-                customersMapper.refreshWhenActive();
+                    // Refresh allMembersMapper to update the count (will re-query and exclude the deleted member)
+                    // The listener on allMembersForCounting will automatically refresh the table when the list updates
+                    if (allMembersMapper != null) {
+                        allMembersMapper.refreshWhenActive();
+                    }
+                });
             })
             .onFailure(error -> Console.log("Error removing member: " + error.getMessage()));
     }

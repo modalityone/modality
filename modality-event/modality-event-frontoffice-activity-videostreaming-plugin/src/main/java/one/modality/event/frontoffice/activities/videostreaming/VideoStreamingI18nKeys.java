@@ -35,5 +35,7 @@ public interface VideoStreamingI18nKeys {
     Object SelectAnotherEvent = "SelectAnotherEvent";
     Object VideoExpiredOn1 = "VideoExpiredOn1";
     Object PastRecordings = "PastRecordings";
+    Object LivestreamOnlyWarning = "LivestreamOnlyWarning";
+    Object SessionCompleted = "SessionCompleted";
 
 }

@@ -1,10 +1,12 @@
 package one.modality.crm.backoffice.activities.customers;
 
 import dev.webfx.extras.i18n.controls.I18nControls;
+import dev.webfx.extras.styles.bootstrap.Bootstrap;
 import dev.webfx.stack.orm.domainmodel.activity.viewdomain.impl.ViewDomainActivityBase;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Node;
+import javafx.scene.control.ContentDisplay;
 import javafx.scene.control.Label;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.VBox;
@@ -41,7 +43,7 @@ final class CustomersActivity extends ViewDomainActivityBase implements FilterBu
         header.getChildren().add(filterSearchBar.buildUi());
 
         container.setTop(header);
-
+        BorderPane.setAlignment(header,Pos.CENTER);
         // Create the main view
         customersView = new CustomersView(pm, this);
         container.setCenter(customersView.getView());
@@ -50,19 +52,13 @@ final class CustomersActivity extends ViewDomainActivityBase implements FilterBu
     }
 
     private VBox createHeader() {
-        VBox header = new VBox(4);
+        VBox header = new VBox(60);
         header.setPadding(new Insets(20, 24, 20, 24));
-        header.setAlignment(Pos.CENTER_LEFT);
-        header.getStyleClass().add("page-header");
-
-        Label title = I18nControls.newLabel(PageTitle);
-        title.getStyleClass().add("page-title");
-
-        Label subtitle = I18nControls.newLabel(PageSubtitle);
-        subtitle.getStyleClass().add("page-subtitle");
-
-        header.getChildren().addAll(title, subtitle);
-
+        header.setAlignment(Pos.CENTER);
+        Label title = Bootstrap.textPrimary(Bootstrap.h2(I18nControls.newLabel(PageTitle)));
+        title.setContentDisplay(ContentDisplay.TOP);
+        title.setGraphicTextGap(30);
+        header.getChildren().addAll(title);
         return header;
     }
 

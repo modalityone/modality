@@ -11,13 +11,11 @@ module modality.event.frontoffice.activity.videostreaming.plugin {
     requires modality.base.client.messaging;
     requires modality.base.client.time;
     requires modality.base.frontoffice.utility;
-    requires modality.base.shared.domainmodel;
     requires modality.base.shared.entities;
     requires modality.base.shared.knownitems;
     requires modality.crm.client.authn.fx;
     requires modality.crm.frontoffice.help;
     requires modality.crm.shared.authn;
-    requires modality.ecommerce.frontoffice.order;
     requires modality.event.client.i18n;
     requires modality.event.frontoffice.eventheader;
     requires modality.event.frontoffice.medias;
