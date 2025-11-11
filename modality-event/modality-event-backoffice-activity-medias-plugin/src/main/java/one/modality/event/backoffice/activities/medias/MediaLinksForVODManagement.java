@@ -106,7 +106,18 @@ public class MediaLinksForVODManagement extends MediaLinksManagement {
             /* The content with the list of the teachings per day and the links **/
             List<ScheduledItem> filteredListForCurrentDay = scheduledItemsReadFromDatabase.stream()
                 .filter(item -> item.getDate().equals(currentDate)) // Filter by date
-                .sorted(Comparator.comparing(item -> item.getProgramScheduledItem().getTimeline().getStartTime())) // Sort by start date
+                .sorted(Comparator.comparing(item -> {
+                    ScheduledItem programScheduledItem = item.getProgramScheduledItem();
+                    // Priority: first check scheduledItem's own startTime, then timeline's startTime
+                    LocalTime startTime = programScheduledItem.getStartTime();
+                    if (startTime == null) {
+                        Timeline timeline = programScheduledItem.getTimeline();
+                        if (timeline != null) {
+                            startTime = timeline.getStartTime();
+                        }
+                    }
+                    return startTime;
+                }, Comparator.nullsLast(Comparator.naturalOrder()))) // Sort by start date, nulls last
                 .collect(Collectors.toList());
 
             for (ScheduledItem currentVideoScheduledItem : filteredListForCurrentDay) {
