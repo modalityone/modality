@@ -50,6 +50,7 @@ public final class BookEventActivity extends ViewDomainActivityBase implements B
     // When routed through /pay-order/:payOrderDocumentId, this property will store the documentId to pay
     private final ObjectProperty<Object> payOrderDocumentIdProperty = new SimpleObjectProperty<>();
     // When routed through /book-event/:eventId, FXEventId and FXEvent are used to store the event to book
+    private boolean reachingEndSlide;
 
     @Override
     public WorkingBookingProperties getWorkingBookingProperties() {
@@ -81,6 +82,8 @@ public final class BookEventActivity extends ViewDomainActivityBase implements B
 
     @Override
     protected void updateModelFromContextParameters() {
+        if (reachingEndSlide)
+            return;
         Object eventId = Objects.coalesce(getParameter("eventId"), getParameter("gpClassId"));
         if (eventId != null) { // eventId is null when sub-routing /booking/account (instead of /booking/event/:eventId)
             FXEventId.setEventPrimaryKey(Numbers.toShortestNumber(eventId));
@@ -134,10 +137,17 @@ public final class BookEventActivity extends ViewDomainActivityBase implements B
     }
 
     public void onEndSlideReached() {
-        FXEventId.setEventId(null); // This is to ensure that the next time the user books an event in this same session, we
+        // We reset the event to null to ensure that the next time the user books an event in this same session.
+        // Note that changing eventId fires an AuthorizationsChanged event (because authorizations in the back-office may
+        // depend on the event, this also applies to the front-office due to code genericity). The AuthorizationsChanged
+        // event in turn causes a route refresh (to consider possible new authorizations).
+        reachingEndSlide = true;
+        FXEventId.setEventId(null);
         modifyOrderDocumentIdProperty.set(null);
         payOrderDocumentIdProperty.set(null);
+        // Now that the booking process is finished, we can display the menu if it was hidden.
         FXCollapseMenu.setCollapseMenu(false);
+        reachingEndSlide = false;
     }
 
     @Override
