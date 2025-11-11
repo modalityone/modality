@@ -20,6 +20,7 @@ import dev.webfx.extras.util.dialog.DialogCallback;
 import dev.webfx.extras.util.dialog.DialogUtil;
 import dev.webfx.extras.util.layout.Layouts;
 import dev.webfx.kit.util.properties.FXProperties;
+import dev.webfx.platform.util.Booleans;
 import dev.webfx.stack.orm.datasourcemodel.service.DataSourceModelService;
 import dev.webfx.stack.orm.entity.Entities;
 import dev.webfx.stack.orm.entity.controls.entity.selector.ButtonSelector;
@@ -532,10 +533,10 @@ public final class UserProfileView implements ModalityButtonFactoryMixin {
         countrySelector.setSelectedItem(currentEditedPerson.getCountry());
         organizationSelector.setSelectedItem(currentEditedPerson.getOrganization());
         birthDateField.setDate(currentEditedPerson.getBirthDate());
-        optionOrdained.setSelected(currentEditedPerson.isOrdained());
-        optionLay.setSelected(!optionOrdained.isSelected());
-        optionMale.setSelected(currentEditedPerson.isMale());
-        optionFemale.setSelected(!optionMale.isSelected());
+        optionOrdained.setSelected(Booleans.isTrue(currentEditedPerson.isOrdained()));
+        optionLay.setSelected(Booleans.isFalse(currentEditedPerson.isOrdained()));
+        optionMale.setSelected(Booleans.isTrue(currentEditedPerson.isMale()));
+        optionFemale.setSelected(Booleans.isFalse(currentEditedPerson.isMale()));
         noOrganizationRadioButton.setSelected(currentEditedPerson.getOrganization() == null);
 
         syncing = false;
@@ -563,8 +564,8 @@ public final class UserProfileView implements ModalityButtonFactoryMixin {
             }
             currentEditedPerson.setOrganization(organization);
             currentEditedPerson.setBirthDate(birthDateField.getDate());
-            currentEditedPerson.setOrdained(optionOrdained.isSelected());
-            currentEditedPerson.setMale(optionMale.isSelected());
+            currentEditedPerson.setOrdained(!optionOrdained.isSelected() && !optionLay.isSelected() ? null : optionOrdained.isSelected());
+            currentEditedPerson.setMale(!optionMale.isSelected() && !optionFemale.isSelected() ? null : optionMale.isSelected());
             organizationSelector.setSelectedItem(organization);
             noOrganizationRadioButton.setSelected(organization == null);
         }
