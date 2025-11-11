@@ -142,6 +142,7 @@ final class EventAudioLibraryActivity extends ViewDomainActivityBase {
                                 //TODO: optimize the request so we don t need to repeat three times the (select ... from Attendance)
                                         new EntityStoreQuery("""
                                     select name, label, date, expirationDate, programScheduledItem.(name, label, startTime, endTime, timeline.(startTime, endTime), cancelled), published, event.(name, type.recurringItem, recurringWithAudio)
+                                        , (select id from Attendance where scheduledItem=si.bookableScheduledItem and accountCanAccessPersonMedias($1, documentLine.document.person) limit 1) as attendanceId
                                         , (select jsonb_build_array(documentLine.document.(id,price_deposit,price_net,confirmed)) from Attendance where scheduledItem=si.bookableScheduledItem and accountCanAccessPersonMedias($1, documentLine.document.person) limit 1) as paymentAndConfirmedInfoJSonArray
                                         , (exists(select MediaConsumption where media.scheduledItem=si and accountCanAccessPersonMedias($1, attendance.documentLine.document.person) and played) as alreadyPlayed)
                                         , (exists(select MediaConsumption where media.scheduledItem=si and accountCanAccessPersonMedias($1, attendance.documentLine.document.person) and downloaded) as alreadyDownloaded)
@@ -159,6 +160,7 @@ final class EventAudioLibraryActivity extends ViewDomainActivityBase {
                                 // TODO: for now we take only the English audio recording scheduledItem in that case. We should take the default language of the organization instead
                                 new EntityStoreQuery("""
                                     select name, label, date, expirationDate, programScheduledItem.(name, label, startTime, endTime, timeline.(startTime, endTime), cancelled), published, event.(name, type.recurringItem, recurringWithAudio),
+                                        (select id from Attendance where scheduledItem=si.bookableScheduledItem and accountCanAccessPersonMedias($1, documentLine.document.person) limit 1) as attendanceId,
                                         (select jsonb_build_array(documentLine.document.(id,price_deposit,price_net,confirmed)) from Attendance where scheduledItem=si.bookableScheduledItem and accountCanAccessPersonMedias($1, documentLine.document.person) limit 1) as paymentAndConfirmedInfoJSonArray,
                                         (exists(select MediaConsumption where media.scheduledItem=si and accountCanAccessPersonMedias($1, attendance.documentLine.document.person) and played) as alreadyPlayed),
                                         (exists(select MediaConsumption where media.scheduledItem=si and accountCanAccessPersonMedias($1, attendance.documentLine.document.person) and downloaded) as alreadyDownloaded)
