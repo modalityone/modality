@@ -76,7 +76,7 @@ public final class BookingElements {
         return wordingLabel(label, true, i18nKey);
     }
 
-    private static <L extends Labeled> L wordingLabel(L label, boolean strong, Object i18nKey) {
+    public static <L extends Labeled> L wordingLabel(L label, boolean strong, Object i18nKey) {
         label.getStyleClass().add("wording-label");
         label.setTextAlignment(TextAlignment.CENTER);
         Controls.setupTextWrapping(label, true, false);
