@@ -20,31 +20,21 @@ import javafx.beans.property.SimpleBooleanProperty;
 import javafx.beans.property.SimpleObjectProperty;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
-import javafx.event.ActionEvent;
-import javafx.event.EventHandler;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Node;
-import javafx.scene.control.Button;
-import javafx.scene.control.ContentDisplay;
 import javafx.scene.control.Label;
 import javafx.scene.layout.VBox;
-import javafx.scene.paint.Color;
-import javafx.scene.shape.SVGPath;
 import javafx.scene.text.TextAlignment;
-import one.modality.base.client.icons.SvgIcons;
 import one.modality.base.frontoffice.utility.page.FOPageUtil;
-import one.modality.base.shared.domainmodel.formatters.PriceFormatter;
 import one.modality.base.shared.entities.*;
 import one.modality.base.shared.entities.Event;
-import one.modality.base.shared.entities.formatters.EventPriceFormatter;
 import one.modality.base.shared.knownitems.KnownItem;
 import one.modality.base.shared.knownitems.KnownItemFamily;
 import one.modality.crm.frontoffice.help.HelpPanel;
 import one.modality.crm.shared.services.authn.ModalityUserPrincipal;
 import one.modality.crm.shared.services.authn.fx.FXModalityUserPrincipal;
 import one.modality.crm.shared.services.authn.fx.FXUserPersonId;
-import one.modality.ecommerce.frontoffice.order.OrderActions;
 import one.modality.event.frontoffice.eventheader.EventHeader;
 import one.modality.event.frontoffice.eventheader.MediaEventHeader;
 import one.modality.event.frontoffice.medias.NoContentView;
@@ -227,11 +217,20 @@ final class VideoStreamingActivity extends ViewDomainActivityBase {
 
         EventHeader eventHeader = new MediaEventHeader(true);
         eventHeader.eventProperty().bind(eventProperty);
+
+        // Warning banner for livestream-only events
+        Label livestreamOnlyWarning = Bootstrap.alertWarning(I18nControls.newLabel(VideoStreamingI18nKeys.LivestreamOnlyWarning));
+        livestreamOnlyWarning.setWrapText(true);
+        livestreamOnlyWarning.setTextAlignment(TextAlignment.CENTER);
+        livestreamOnlyWarning.setMaxWidth(800);
+        VBox.setMargin(livestreamOnlyWarning, new Insets(0, 0, 20, 0));
+
         mediaContentContainer.getChildren().addAll(livestreamAndVideoPlayers.buildUi(pageContainer),
                                                     timetable.buildUi());
         VBox loadedContentVBox = new VBox(40,
             eventSelector.buildUi(),
             eventHeader.getView(), // contains the event image and the event title
+            livestreamOnlyWarning,
             mediaContentContainer,
             // General help panel
             HelpPanel.createEmailHelpPanel(VideoStreamingI18nKeys.VideosHelp, "kbs@kadampa.net")
@@ -245,6 +244,15 @@ final class VideoStreamingActivity extends ViewDomainActivityBase {
         // *************************************************************************************************************
         // *********************************** Reacting to parameter changes *******************************************
         // *************************************************************************************************************
+
+        // Show/hide the livestream-only warning banner based on the event's vodExpirationDate
+        FXProperties.runNowAndOnPropertyChange(event -> {
+            boolean isLivestreamOnly = event != null && event.getVodExpirationDate() == null;
+            Console.log("Event changed: " + (event != null ? event.getName() : "null") +
+                       ", vodExpirationDate: " + (event != null ? event.getVodExpirationDate() : "N/A") +
+                       ", isLivestreamOnly: " + isLivestreamOnly);
+            Layouts.setManagedAndVisibleProperties(livestreamOnlyWarning, isLivestreamOnly);
+        }, eventProperty);
 
         // Reacting to data loading (initially or when the event changes or on login/logout)
         ObservableLists.runNowAndOnListOrPropertiesChange(changes -> {

@@ -16,12 +16,16 @@ final class VideoState {
     static Object getVideoStatusI18nKey(ScheduledItem videoScheduledItem) {
         // Video status lifecycle:
         // 1. ON_TIME (=> 2. CANCELLED) => 3. COUNTDOWN (=> 4. DELAYED) => 5. LIVE_NOW => 6. SOON_AVAILABLE (=> 7. DELAYED) => 8. AVAILABLE => 9. EXPIRED
+        // For livestream-only events (vodExpirationDate = null): 1. ON_TIME => 2. COUNTDOWN => 3. LIVE_NOW => 4. SESSION_COMPLETED
 
         // 2. CANCELLED
         if (isVideoCancelled(videoScheduledItem))
             return VideoStreamingI18nKeys.VideoCancelled;
 
         VideoLifecycle videoLifecycle = new VideoLifecycle(videoScheduledItem);
+
+        // Check if this is a livestream-only event (no video recording)
+        boolean isLivestreamOnly = videoScheduledItem.getEvent().getVodExpirationDate() == null;
 
         // 8. AVAILABLE or 9. EXPIRED (the 2 possible states once published -> priority states)
         if (videoScheduledItem.isPublished()) {
@@ -46,6 +50,11 @@ final class VideoState {
         // 5. LIVE_NOW
         if (videoLifecycle.isNowBetweenLiveNowStartAndSessionEnd()) {
             return VideoStreamingI18nKeys.LiveNow;
+        }
+
+        // For livestream-only events, after the session ends, show "Session completed"
+        if (isLivestreamOnly) {
+            return VideoStreamingI18nKeys.SessionCompleted;
         }
 
         // 6. SOON_AVAILABLE
