@@ -103,7 +103,9 @@ public abstract class MultiPageBookingForm extends BookingFormBase {
             navigationBar.getNextButton().setOnMouseClicked(e -> navigateToNextPage());
             navigationBar.getNextButton().disableProperty().bind(new BooleanBinding() {
                 {
-                    super.bind(pageValidProperty, pageEndReachedProperty, personToBookRequiredProperty, showDefaultSubmitButtonProperty, pageShowingOwnSubmitButtonProperty, pageBusyFutureProperty, pageBusyCountProperty, FXPersonToBook.personToBookProperty());
+                    super.bind(pageValidProperty, pageCanGoForwardProperty, pageEndReachedProperty,
+                        personToBookRequiredProperty, showDefaultSubmitButtonProperty, pageShowingOwnSubmitButtonProperty,
+                        pageBusyFutureProperty, pageBusyCountProperty, FXPersonToBook.personToBookProperty());
                 }
 
                 @Override
