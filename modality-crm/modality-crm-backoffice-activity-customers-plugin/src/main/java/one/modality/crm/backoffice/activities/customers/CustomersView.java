@@ -167,8 +167,9 @@ final class CustomersView {
             pm.limitProperty().setValue(limitCheckBox.isSelected() ? 100 : -1),
             limitCheckBox.selectedProperty());
 
-        // Don't bind - we'll manually set visual result to allow updates when member counts change
-        // customersGrid.visualResultProperty().bind(pm.masterVisualResultProperty());
+        // Bind grid to visual result property to receive updates from filter changes
+        // We also manually update it when member counts change (see listener below on allMembersForCounting)
+        customersGrid.visualResultProperty().bind(pm.masterVisualResultProperty());
 
         // Create edit panel (initially hidden)
         editPanel = createEditPanel();
@@ -337,15 +338,11 @@ final class CustomersView {
         }, membersFeed);
 
         // Refresh the grid when the members counting list changes (to update member counts in table)
-        // Force immediate visual result update to re-render cells with updated counts
-        // This is similar to how OperationsView handles roleOperationsFeed changes
+        // Trigger mapper to refresh so that cell renderers see updated member counts
         ObservableLists.runNowAndOnListChange(change -> {
-            if (customerColumns != null && !currentCustomersFeed.isEmpty()) {
-                // Manually recreate VisualResult from current entities (like OperationsView does)
-                dev.webfx.extras.visual.VisualResult vr = dev.webfx.stack.orm.reactive.mapping.entities_to_visual.EntitiesToVisualResultMapper
-                    .mapEntitiesToVisualResult(currentCustomersFeed, customerColumns);
-                // Set directly on grid since pm.masterVisualResultProperty() is bound by the mapper
-                customersGrid.setVisualResult(vr);
+            if (customersMapper != null && !currentCustomersFeed.isEmpty()) {
+                // Trigger mapper refresh to update visual result with new member counts
+                customersMapper.refreshWhenActive();
             }
         }, allMembersForCounting);
 
