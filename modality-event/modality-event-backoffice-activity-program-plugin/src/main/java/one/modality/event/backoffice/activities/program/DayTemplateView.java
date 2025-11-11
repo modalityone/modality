@@ -42,11 +42,11 @@ import java.time.YearMonth;
  * <p><b>Visual Layout:</b>
  * <pre>
  * ┌─────────────────────────────────────────────────────────────┐
- * │ [Template Name TextField]                        [Duplicate] │
+ * │ [Template Name TextField]                              [📋] │
  * │ ─────────────────────────────────────────────────────────── │
  * │                                                               │
- * │ Timeline 1: [Item] [9:00] to [12:00] [Name] [🔊] [📹] [🗑️] │
- * │ Timeline 2: [Item] [14:00] to [17:00] [Name] [🔊] [📹] [🗑️]│
+ * │ Timeline 1: [9:00] to [12:00] [Name] [🔊] [📹] [🗑️]         │
+ * │ Timeline 2: [14:00] to [17:00] [Name] [🔊] [📹] [🗑️]        │
  * │ [+ Add Timeline]                                              │
  * │                                                               │
  * │ [Delete this template]                                        │
@@ -270,10 +270,11 @@ final class DayTemplateView {
         ObservableLists.bindConverted(listOfSelectedDatesVBox.getChildren(), workingDayTemplateDateViews, DayTemplateDateView::getView);
 
         //========== TOP SECTION: Template Name & Duplicate ==========//
-        // Duplicate button (clickable icon)
-        Label duplicateButton = I18nControls.newLabel(ProgramI18nKeys.DuplicateIcon);
-        duplicateButton.setOnMouseClicked(e -> dayTemplateModel.duplicate());
-        duplicateButton.setCursor(Cursor.HAND);
+        // Duplicate button (SVG icon - two overlapping rectangles)
+        SVGPath duplicateIcon = new SVGPath();
+        duplicateIcon.setContent("M16 1H4c-1.1 0-2 .9-2 2v14h2V3h12V1zm3 4H8c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h11c1.1 0 2-.9 2-2V7c0-1.1-.9-2-2-2zm0 16H8V7h11v14z");
+        duplicateIcon.setFill(Color.web("#6b7280")); // Gray color
+        MonoPane duplicateButton = SvgIcons.createButtonPane(duplicateIcon, dayTemplateModel::duplicate);
 
         // Separator between header and content
         Separator topSeparator = new Separator();
@@ -379,6 +380,11 @@ final class DayTemplateView {
         mainContainer.setBorder(new Border(new BorderStroke(Color.LIGHTGRAY,
             BorderStrokeStyle.SOLID, new CornerRadii(10), BorderWidths.DEFAULT)));
         mainContainer.setPadding(new Insets(10, 10, 10, 10));
+        mainContainer.getStyleClass().add("day-template-panel");
+        // Set all width constraints to match ColumnsPane column width (550px)
+        mainContainer.setMinWidth(550);
+        mainContainer.setPrefWidth(550);
+        mainContainer.setMaxWidth(550);
         mainContainer.setTop(new VBox(topLine, topSeparator));
         mainContainer.setCenter(centerBorderPane);
         mainContainer.setMaxHeight(Region.USE_PREF_SIZE);

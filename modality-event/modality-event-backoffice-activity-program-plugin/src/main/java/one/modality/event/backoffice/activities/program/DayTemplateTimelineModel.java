@@ -76,6 +76,16 @@ final class DayTemplateTimelineModel {
     }
 
     /**
+     * Returns the program model from the parent day template model.
+     * Used to access shared program-level data like the session program item.
+     *
+     * @return The ProgramModel instance
+     */
+    public ProgramModel getProgramModel() {
+        return dayTemplateModel.getProgramModel();
+    }
+
+    /**
      * Returns the validation support instance from the parent model.
      * The validation support is shared across all timelines in the same day template,
      * allowing for coordinated form validation.
@@ -119,6 +129,32 @@ final class DayTemplateTimelineModel {
      */
     void removeTemplateTimeLine() {
         dayTemplateModel.removeTemplateTimeLine(timeline);
+    }
+
+    /**
+     * Duplicates this timeline entry.
+     * Creates a new timeline with the same name and audio/video settings,
+     * but leaves start and end times empty for the user to fill in.
+     *
+     * <p>Copied properties:
+     * <ul>
+     *   <li>Item (teaching session)</li>
+     *   <li>Name</li>
+     *   <li>Audio offered flag</li>
+     *   <li>Video offered flag</li>
+     *   <li>Site</li>
+     * </ul>
+     *
+     * <p>NOT copied (left empty):
+     * <ul>
+     *   <li>Start time (user must fill in)</li>
+     *   <li>End time (user must fill in)</li>
+     * </ul>
+     *
+     * The duplicate is inserted immediately after this timeline in the list.
+     */
+    void duplicateTimeline() {
+        dayTemplateModel.duplicateTimeline(timeline);
     }
 
 }

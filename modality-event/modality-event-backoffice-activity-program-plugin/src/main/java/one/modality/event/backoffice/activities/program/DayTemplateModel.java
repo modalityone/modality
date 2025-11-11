@@ -274,7 +274,10 @@ final class DayTemplateModel {
      */
     void resetModelAndUiToInitial() {
         // Revert working copy to initial database state
-        currentTemplateTimelines.setAll(initialTemplateTimelines);
+        // Re-add entities to UpdateStore to ensure future changes are tracked after cancelChanges()
+        currentTemplateTimelines.setAll(initialTemplateTimelines.stream()
+                .map(getUpdateStore()::updateEntity)
+                .collect(Collectors.toList()));
         // Reset each timeline's UI fields
         dayTemplateTimelineModels.forEach(DayTemplateTimelineModel::resetModelAndUiToInitial);
 
@@ -475,6 +478,35 @@ final class DayTemplateModel {
     void removeTemplateTimeLine(Timeline timeline) {
         getUpdateStore().deleteEntity(timeline);
         currentTemplateTimelines.remove(timeline);
+    }
+
+    /**
+     * Duplicates a specific timeline entry.
+     * Creates a new timeline with the same name, audio/video flags, but leaves
+     * start and end times empty for the user to fill in.
+     *
+     * @param sourceTimeline The timeline to duplicate
+     */
+    void duplicateTimeline(Timeline sourceTimeline) {
+        // Create new timeline entity
+        Timeline duplicateTimeline = getUpdateStore().insertEntity(Timeline.class);
+
+        // Copy only name and audio/video settings
+        duplicateTimeline.setItem(sourceTimeline.getItem());
+        duplicateTimeline.setName(sourceTimeline.getName());
+        duplicateTimeline.setAudioOffered(sourceTimeline.isAudioOffered());
+        duplicateTimeline.setVideoOffered(sourceTimeline.isVideoOffered());
+        duplicateTimeline.setSite(sourceTimeline.getSite());
+        duplicateTimeline.setDayTemplate(dayTemplate);
+        // Leave start and end times null (user must fill them in)
+
+        // Insert after the source timeline
+        int index = currentTemplateTimelines.indexOf(sourceTimeline);
+        if (index >= 0) {
+            currentTemplateTimelines.add(index + 1, duplicateTimeline);
+        } else {
+            currentTemplateTimelines.add(duplicateTimeline);
+        }
     }
 
     /**

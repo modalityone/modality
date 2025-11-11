@@ -2,25 +2,15 @@ package one.modality.event.backoffice.activities.program;
 
 
 import dev.webfx.extras.controlfactory.button.ButtonFactoryMixin;
-import dev.webfx.extras.i18n.I18n;
 import dev.webfx.extras.i18n.controls.I18nControls;
-import dev.webfx.extras.async.AsyncSpinner;
-import dev.webfx.extras.panes.ColumnsPane;
 import dev.webfx.extras.styles.bootstrap.Bootstrap;
-import dev.webfx.extras.theme.text.TextTheme;
-import dev.webfx.extras.util.OptimizedObservableListWrapper;
-import dev.webfx.extras.util.dialog.DialogCallback;
-import dev.webfx.extras.util.dialog.builder.DialogBuilderUtil;
-import dev.webfx.extras.util.dialog.builder.DialogContent;
 import dev.webfx.extras.util.layout.Layouts;
 import dev.webfx.extras.util.masterslave.MasterSlaveLinker;
 import dev.webfx.kit.util.properties.FXProperties;
 import dev.webfx.kit.util.properties.ObservableLists;
-import dev.webfx.stack.orm.dql.DqlStatement;
 import dev.webfx.stack.orm.entity.UpdateStore;
 import dev.webfx.stack.orm.entity.binding.EntityBindings;
 import dev.webfx.stack.orm.entity.controls.entity.selector.ButtonSelector;
-import dev.webfx.stack.orm.entity.controls.entity.selector.EntityButtonSelector;
 import javafx.beans.binding.BooleanBinding;
 import javafx.beans.binding.BooleanExpression;
 import javafx.beans.property.BooleanProperty;
@@ -35,22 +25,17 @@ import javafx.scene.control.Label;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import one.modality.base.client.i18n.I18nEntities;
-import one.modality.base.client.mainframe.fx.FXMainFrameDialogArea;
 import one.modality.base.client.util.dialog.ModalityDialog;
 import one.modality.base.client.util.masterslave.ModalitySlaveEditor;
 import one.modality.base.shared.entities.Event;
 import one.modality.base.shared.entities.Item;
-import one.modality.crm.backoffice.organization.fx.FXOrganization;
 import one.modality.event.client.event.fx.FXEvent;
-
-import java.util.stream.Collectors;
 
 /**
  * Main UI view for the Program module in the back-office application.
  *
  * This view provides a comprehensive interface for event program management:
  * <ol>
- *   <li><b>Day Ticket Configuration:</b> Shows current event configuration for teaching/audio day tickets</li>
  *   <li><b>Preliminary Setup:</b> Generate bookable scheduled items for day ticket pricing</li>
  *   <li><b>Template Management:</b> Create, edit, and delete day templates with timelines</li>
  *   <li><b>Program Generation:</b> Generate the complete program from templates</li>
@@ -60,9 +45,9 @@ import java.util.stream.Collectors;
  * <p><b>UI Layout Structure:</b>
  * <pre>
  * ┌─────────────────────────────────────────────────────────────┐
- * │ [Event Title and Date Range]                                │
+ * │ [Program & Timeline] (Title)                                │
  * ├─────────────────────────────────────────────────────────────┤
- * │ [Day Ticket Configuration Status] (teaching/audio enabled)  │
+ * │ [Event Name and Date Range]                                 │
  * ├─────────────────────────────────────────────────────────────┤
  * │ [Preliminary Bookable Items Setup] (if not yet generated)   │
  * │   OR                                                         │
@@ -133,6 +118,21 @@ final class ProgramView extends ModalitySlaveEditor<Event> implements ButtonFact
     private ButtonSelector<Item> itemSelector;
 
     /**
+     * Step 1 view component (Preliminary Bookable Items Configuration).
+     */
+    private final ProgramStep1View step1View;
+
+    /**
+     * Step 2 view component (Day Template Management).
+     */
+    private final ProgramStep2View step2View;
+
+    /**
+     * Step 3 view component (Program Validation & Finalization).
+     */
+    private final ProgramStep3View step3View;
+
+    /**
      * The root container for the entire UI.
      * Built once in the constructor and returned by {@link #getView()}.
      */
@@ -145,9 +145,11 @@ final class ProgramView extends ModalitySlaveEditor<Event> implements ButtonFact
      * Initialization steps:
      * <ol>
      *   <li>Store the program model reference</li>
+     *   <li>Create step view components</li>
      *   <li>Build the complete UI structure</li>
      *   <li>Set maximum width constraint</li>
      *   <li>Bind day template views to model for automatic synchronization</li>
+     *   <li>Bind item selector from step 1 view</li>
      * </ol>
      *
      * The binding ensures that when day templates are added/removed from the model,
@@ -157,10 +159,18 @@ final class ProgramView extends ModalitySlaveEditor<Event> implements ButtonFact
      */
     ProgramView(ProgramModel programModel) {
         this.programModel = programModel;
-        mainVBox = buildUi();
-        mainVBox.setMaxWidth(MAX_WIDTH);
         // Automatic conversion: DayTemplateModel → DayTemplateView
         ObservableLists.bindConvertedOptimized(workingDayTemplateViews, programModel.getWorkingDayTemplates(), DayTemplateView::new);
+        // Create step view components
+        step1View = new ProgramStep1View(programModel, this);
+        step2View = new ProgramStep2View(programModel, workingDayTemplateViews);
+        step3View = new ProgramStep3View(programModel);
+        // Build UI
+        mainVBox = buildUi();
+        mainVBox.setMaxWidth(MAX_WIDTH);
+        // Bind item selector from step 1 view for syncItemModelFromUi
+        itemSelector = step1View.getItemSelector();
+        FXProperties.runOnPropertyChange(this::syncItemModelFromUi, itemSelector.selectedItemProperty());
     }
 
     /**
@@ -210,6 +220,7 @@ final class ProgramView extends ModalitySlaveEditor<Event> implements ButtonFact
     public void setSlave(Event approvedEntity) {
         super.setSlave(approvedEntity);
         programModel.reloadProgramFromSelectedEvent(approvedEntity);
+        step3View.setEvent(approvedEntity);
     }
 
     /**
@@ -275,89 +286,43 @@ final class ProgramView extends ModalitySlaveEditor<Event> implements ButtonFact
         return programModel.getUpdateStore().hasChanges();
     }
 
-    // Private implementation
-
     /**
      * Builds the complete UI structure for the Program view.
      *
-     * This method creates a complex, reactive UI with multiple sections:
+     * <p><b>Main Components:</b>
+     * <ol>
+     *   <li><b>Header:</b> Program title ("Program & Timeline")</li>
+     *   <li><b>Event Info:</b> Event name and date range</li>
+     *   <li><b>Recurring Warning:</b> Alert for unsupported recurring events</li>
+     *   <li><b>Step 1 View:</b> Preliminary bookable items configuration (from ProgramStep1View)</li>
+     *   <li><b>Step 2 View:</b> Day template management (from ProgramStep2View)</li>
+     *   <li><b>Step 3 View:</b> Program validation and finalization (from ProgramStep3View)</li>
+     *   <li><b>Bottom Buttons:</b> Save, Generate/Delete Program actions</li>
+     * </ol>
      *
-     * <p><b>1. Top Line (Event Header):</b>
+     * <p><b>Bottom Action Buttons:</b>
      * <ul>
-     *   <li>Event name and date range</li>
-     *   <li>Centered, wrapped text for long event names</li>
-     *   <li>Reactive binding to loadedEventProperty</li>
-     * </ul>
-     *
-     * <p><b>2. Day Ticket Configuration Status:</b>
-     * <ul>
-     *   <li>Shows teaching day ticket status (enabled/disabled)</li>
-     *   <li>Shows audio recording day ticket status (enabled/disabled)</li>
-     *   <li>Green alert if both enabled, red alert if either disabled</li>
-     *   <li>Updates reactively when event changes</li>
-     * </ul>
-     *
-     * <p><b>3. Recurring Item Warning:</b>
-     * <ul>
-     *   <li>Red danger alert for recurring item events</li>
-     *   <li>Explains that recurring events are not yet supported</li>
-     *   <li>Visibility controlled by updateVisibilityBasedOnRecurringItem()</li>
-     * </ul>
-     *
-     * <p><b>4. Preliminary Bookable Items Section:</b>
-     * <ul>
-     *   <li>Visible only if preliminary items haven't been generated yet</li>
-     *   <li>Item selector for choosing teaching item (e.g., "STTP")</li>
-     *   <li>Button to generate preliminary bookable scheduled items</li>
-     *   <li>After generation, shows info about created items</li>
-     * </ul>
-     *
-     * <p><b>5. Day Template Columns:</b>
-     * <ul>
-     *   <li>ColumnsPane with automatic layout (min 500px per column)</li>
-     *   <li>Each column shows one day template with timelines and dates</li>
-     *   <li>Reactive binding to workingDayTemplateViews</li>
-     *   <li>Responsive gap sizing based on container width</li>
-     * </ul>
-     *
-     * <p><b>6. Add Template Button:</b>
-     * <ul>
-     *   <li>Centered button to create new day templates</li>
-     *   <li>Calls programModel.addNewDayTemplate()</li>
-     * </ul>
-     *
-     * <p><b>7. Program State Alert:</b>
-     * <ul>
-     *   <li>Yellow warning if program already generated (templates locked)</li>
-     *   <li>Blue info if program not yet generated (templates editable)</li>
-     *   <li>Updates reactively based on programGeneratedProperty</li>
-     * </ul>
-     *
-     * <p><b>8. Bottom Action Buttons:</b>
-     * <ul>
-     *   <li><b>Cancel:</b> Reverts all unsaved changes</li>
      *   <li><b>Save:</b> Validates and saves all changes to database</li>
      *   <li><b>Generate Program:</b> Transforms templates into scheduled items (shows when not generated)</li>
      *   <li><b>Delete Program:</b> Unlocks templates by deleting scheduled items (shows when generated)</li>
-     *   <li>Save/Cancel disabled when no changes exist</li>
+     *   <li>Save disabled when no changes exist</li>
      *   <li>Generate Program disabled when there are unsaved changes (forces save first)</li>
      *   <li>Entire bottom section hidden until preliminary items are generated</li>
-     * </ul>
-     *
-     * <p><b>Reactive Bindings:</b>
-     * The UI uses extensive property bindings for automatic updates:
-     * <ul>
-     *   <li>Event changes trigger full UI refresh</li>
-     *   <li>Program generated state toggles button visibility</li>
-     *   <li>Day ticket configuration updates alert colors</li>
-     *   <li>Preliminary items toggle section visibility</li>
-     *   <li>Unsaved changes enable/disable Save and Cancel</li>
      * </ul>
      *
      * @return The root VBox containing all UI components
      */
     private VBox buildUi() {
-        // ========== 1. Top Line (Event Header) ==========
+        // ========== 1. Header ==========
+        Label title = Bootstrap.h2(Bootstrap.textPrimary(I18nControls.newLabel(ProgramI18nKeys.ProgramTitle)));
+        //title.setContentDisplay(ContentDisplay.TOP);
+        title.setPadding(new Insets(30));
+        title.setGraphicTextGap(30);
+
+        VBox headerBox = new VBox(title);
+        headerBox.setAlignment(Pos.CENTER);
+
+        // ========== 2. Event Info Line ==========
         ObjectProperty<Event> loadedEventProperty = programModel.loadedEventProperty();
         Label subtitle = Bootstrap.strong(Bootstrap.h4(I18nEntities.newExpressionLabel(loadedEventProperty,
             "'[" + ProgramI18nKeys.Programme + "] - ' + name + ' (' + dateIntervalFormat(startDate, endDate) +')'")));
@@ -365,40 +330,7 @@ final class ProgramView extends ModalitySlaveEditor<Event> implements ButtonFact
 
         HBox topLine = new HBox(subtitle);
         topLine.setAlignment(Pos.CENTER);
-        topLine.setPadding(new Insets(20, 0, 20, 0));
-
-        // ========== 2. Day Ticket Configuration Status ==========
-        Label dayTicketConfigLabel = Bootstrap.strong(new Label());
-        dayTicketConfigLabel.setWrapText(true);
-        dayTicketConfigLabel.setMaxWidth(750);
-
-        VBox dayTicketConfigBox = new VBox(dayTicketConfigLabel);
-        dayTicketConfigBox.setAlignment(Pos.CENTER);
-        dayTicketConfigBox.setMaxWidth(MAX_WIDTH);
-
-        // Reactive update: Change alert color based on day ticket configuration
-        FXProperties.runNowAndOnPropertyChange(event -> {
-            if (event != null) {
-                boolean teachingEnabled = event.isTeachingsDayTicket();
-                boolean audioEnabled = event.isAudioRecordingsDayTicket();
-
-                String teachingStatus = teachingEnabled ? "✓ ENABLED" : "✗ DISABLED";
-                String audioStatus = audioEnabled ? "✓ ENABLED" : "✗ DISABLED";
-                I18nControls.bindI18nProperties(dayTicketConfigLabel, ProgramI18nKeys.DayTicketConfiguration, teachingStatus, audioStatus);
-
-                // Apply danger alert if either is disabled, success alert if both enabled
-                dayTicketConfigBox.getStyleClass().clear();
-                if (!teachingEnabled || !audioEnabled) {
-                    Bootstrap.alertDanger(dayTicketConfigBox);
-                } else {
-                    Bootstrap.alertSuccess(dayTicketConfigBox);
-                }
-            }
-        }, loadedEventProperty);
-
-        HBox dayTicketConfigLine = new HBox(dayTicketConfigBox);
-        dayTicketConfigLine.setAlignment(Pos.CENTER);
-        dayTicketConfigLine.setPadding(new Insets(0, 0, 20, 0));
+        topLine.setPadding(new Insets(0, 0, 20, 0));
 
         // ========== 3. Recurring Item Warning ==========
         Label recurringItemWarningLabel = Bootstrap.strong(I18nControls.newLabel(ProgramI18nKeys.RecurringItemEventNotSupported));
@@ -413,29 +345,28 @@ final class ProgramView extends ModalitySlaveEditor<Event> implements ButtonFact
         recurringItemWarningLine.setAlignment(Pos.CENTER);
         recurringItemWarningLine.setPadding(new Insets(20, 0, 20, 0));
 
+        // ========== Preliminary Bookable Items Section - Property Declarations ==========
+        BooleanProperty dayTicketPreliminaryScheduledItemProperty = programModel.getDayTicketPreliminaryScheduledItemProperty();
+        BooleanProperty programGeneratedProperty = programModel.programGeneratedProperty();
+
         // ========== 8. Bottom Action Buttons ==========
-        Button cancelButton = Bootstrap.largeSecondaryButton(I18nControls.newButton(ProgramI18nKeys.CancelProgram));
-        cancelButton.setOnAction(e -> programModel.cancelChanges());
+        Button saveButton = Bootstrap.largeSuccessButton(I18nControls.newButton(ProgramI18nKeys.SaveDraft));
+        saveButton.setOnAction(e -> programModel.saveChanges(saveButton));
 
-        Button saveButton = Bootstrap.largeSuccessButton(I18nControls.newButton(ProgramI18nKeys.SaveProgram));
-        saveButton.setOnAction(e -> programModel.saveChanges(saveButton, cancelButton));
-
-        // Disable Save/Cancel when no changes exist
+        // Disable Save when no changes exist
         UpdateStore updateStore = programModel.getUpdateStore();
         BooleanExpression hasChangesProperty = EntityBindings.hasChangesProperty(updateStore);
         BooleanBinding hasNoChangesProperty = hasChangesProperty.not();
         saveButton.disableProperty().bind(hasNoChangesProperty);
-        cancelButton.disableProperty().bind(hasNoChangesProperty);
 
         // Generate Program / Delete Program buttons (mutually exclusive visibility)
-        Button generateProgramButton = Bootstrap.largePrimaryButton(I18nControls.newButton(ProgramI18nKeys.GenerateProgram));
+        Button generateProgramButton = Bootstrap.largePrimaryButton(I18nControls.newButton(ProgramI18nKeys.ValidateProgram));
         generateProgramButton.setOnAction(e -> ModalityDialog.showConfirmationDialog(ProgramI18nKeys.ProgramGenerationConfirmation, programModel::generateProgram));
 
         Button deleteProgramButton = Bootstrap.largePrimaryButton(I18nControls.newButton(ProgramI18nKeys.DeleteProgram));
         deleteProgramButton.setOnAction(e -> ModalityDialog.showConfirmationDialog(ProgramI18nKeys.DeleteProgramConfirmation, programModel::deleteProgram));
 
         // Toggle visibility: Generate shows when not generated, Delete shows when generated
-        BooleanProperty programGeneratedProperty = programModel.programGeneratedProperty();
         generateProgramButton.visibleProperty().bind(programGeneratedProperty.not());
         deleteProgramButton.visibleProperty().bind(programGeneratedProperty);
         Layouts.bindAllManagedToVisibleProperty(generateProgramButton, deleteProgramButton);
@@ -443,179 +374,58 @@ final class ProgramView extends ModalitySlaveEditor<Event> implements ButtonFact
         // Disable Generate Program button when there are unsaved changes (force save first)
         generateProgramButton.disableProperty().bind(hasChangesProperty);
 
-        HBox bottomLine = new HBox(cancelButton, saveButton, generateProgramButton, deleteProgramButton);
+        Label saveHintLabel = Bootstrap.small(I18nControls.newLabel(ProgramI18nKeys.SaveBeforeValidatingHint));
+        saveHintLabel.getStyleClass().add("text-muted");
+        saveHintLabel.setMaxWidth(400);
+        saveHintLabel.setWrapText(true);
+        saveHintLabel.setAlignment(Pos.CENTER);
+        saveHintLabel.setTextAlignment(javafx.scene.text.TextAlignment.CENTER);
+        saveHintLabel.visibleProperty().bind(hasChangesProperty);
+        saveHintLabel.managedProperty().bind(hasChangesProperty);
+
+        HBox bottomLine = new HBox(saveButton, generateProgramButton, deleteProgramButton);
         bottomLine.setAlignment(Pos.BASELINE_CENTER);
         bottomLine.setSpacing(100);
 
-        // ========== 5. Day Template Columns ==========
-        ColumnsPane templateDayColumnsPane = new ColumnsPane();
-        templateDayColumnsPane.setMinColumnWidth(500);
-        // Responsive gap sizing: 2% of width, max 50px
-        templateDayColumnsPane.hgapProperty().bind(templateDayColumnsPane.widthProperty().map(w -> Math.min(50, 0.02 * w.doubleValue())));
-        templateDayColumnsPane.vgapProperty().bind(templateDayColumnsPane.hgapProperty());
-        templateDayColumnsPane.setPadding(new Insets(50, 0, 20, 0));
-        templateDayColumnsPane.setAlignment(Pos.TOP_CENTER);
-        // Reactive binding: DayTemplateView list → UI panels
-        ObservableLists.bindConvertedOptimized(templateDayColumnsPane.getChildren(), workingDayTemplateViews, DayTemplateView::getPanel);
-
-        // ========== 6. Add Template Button ==========
-        Button addTemplateButton = Bootstrap.primaryButton(I18nControls.newButton(ProgramI18nKeys.AddDayTemplate));
-        addTemplateButton.setGraphicTextGap(10);
-        addTemplateButton.setOnAction(e -> programModel.addNewDayTemplate());
-        HBox addTemplateButtonBox = new HBox(addTemplateButton);
-        addTemplateButtonBox.setAlignment(Pos.CENTER);
-        addTemplateButtonBox.setPadding(new Insets(0, 0, 30, 0));
-
-        // ========== 4. Preliminary Bookable Items Section ==========
-        BooleanProperty dayTicketPreliminaryScheduledItemProperty = programModel.getDayTicketPreliminaryScheduledItemProperty();
-
-        // Section 4a: Generate Preliminary Items (shows when NOT yet generated)
-        Label dayTicketTeachingAndAudioScheduledItemGenerationLabel = Bootstrap.strong(I18nControls.newLabel(ProgramI18nKeys.DayTicketTeachingsAndAudioScheduledItemNotGenerated));
-        dayTicketTeachingAndAudioScheduledItemGenerationLabel.setWrapText(true);
-        dayTicketTeachingAndAudioScheduledItemGenerationLabel.setMaxWidth(750);
-
-        Label chooseAnItemLabel = I18nControls.newLabel(ProgramI18nKeys.ChooseAnItemForTheTeachingBookableScheduledItem);
-        chooseAnItemLabel.setWrapText(true);
-
-        // Item selector: Choose teaching item for preliminary scheduled items (e.g., "STTP")
-        itemSelector = new EntityButtonSelector<Item>( // language=JSON5
-            "{class: 'Item', alias: 's', where: 'family.code=`teach`', orderBy :'name'}",
-            this, FXMainFrameDialogArea::getDialogArea, programModel.getEntityStore().getDataSourceModel())
-            .always(FXOrganization.organizationProperty(), o -> DqlStatement.where("organization=?", o));
-        Button itemSelectorButton = itemSelector.getButton();
-        itemSelectorButton.setMinWidth(250);
-        // Sync selected item to model whenever it changes
-        FXProperties.runOnPropertyChange(this::syncItemModelFromUi, itemSelector.selectedItemProperty());
-
-        Button generatePreliminaryBookableSIButton = Bootstrap.primaryButton(I18nControls.newButton(ProgramI18nKeys.GeneratePreliminaryBookableSI));
-
-        // Generate preliminary items with validation and error handling
-        generatePreliminaryBookableSIButton.setOnAction(e -> {
-            // Validation: Ensure item is selected before generating
-            if(itemSelector.getSelectedItem()==null) {
-                DialogContent dialogContent = new DialogContent().setContentText(I18n.getI18nText(ProgramI18nKeys.PleaseSelectAnItem)).setOk();
-                DialogBuilderUtil.showModalNodeInGoldLayout(dialogContent, FXMainFrameDialogArea.getDialogArea());
-                DialogBuilderUtil.armDialogContentButtons(dialogContent, DialogCallback::closeDialog);
-                return;
-            }
-                // Show spinner during async operation
-                AsyncSpinner.displayButtonSpinnerDuringAsyncExecution(
-                    programModel.generatePreliminaryBookableSI()
-                        .inUiThread()
-                        .onFailure(error -> {
-                            // Show error dialog and rollback changes
-                            DialogContent dialogContent = new DialogContent().setContentText(error.getMessage()).setOk();
-                            DialogBuilderUtil.showModalNodeInGoldLayout(dialogContent, FXMainFrameDialogArea.getDialogArea());
-                            DialogBuilderUtil.armDialogContentButtons(dialogContent, DialogCallback::closeDialog);
-                            updateStore.cancelChanges();
-                        })
-                        .onSuccess(success-> programModel.getDayTicketPreliminaryScheduledItemProperty().setValue(true))
-                    , generatePreliminaryBookableSIButton);});
-
-        HBox itemAndButtonHBox = new HBox(20,chooseAnItemLabel,itemSelectorButton,generatePreliminaryBookableSIButton);
-        itemAndButtonHBox.setAlignment(Pos.BASELINE_CENTER);
-        itemAndButtonHBox.setPadding(new Insets(20,0,0,0));
-        VBox generatePreliminaryBookableScheduledItemVBox = Bootstrap.alertInfo(new VBox(10, dayTicketTeachingAndAudioScheduledItemGenerationLabel,itemAndButtonHBox));
-        generatePreliminaryBookableScheduledItemVBox.setAlignment(Pos.CENTER);
-        generatePreliminaryBookableScheduledItemVBox.setMaxWidth(800);
-
-        // Show this section only when preliminary items NOT yet generated
-        generatePreliminaryBookableScheduledItemVBox.visibleProperty().bind(dayTicketPreliminaryScheduledItemProperty.not());
-        generatePreliminaryBookableScheduledItemVBox.managedProperty().bind(dayTicketPreliminaryScheduledItemProperty.not());
-
-        // Section 4b: Preliminary Items Info (shows when already generated)
-        Label dayTicketTeachingAndAudioScheduledItemInfoLabel = Bootstrap.strong(new Label());
-        dayTicketTeachingAndAudioScheduledItemInfoLabel.setWrapText(true);
-        dayTicketTeachingAndAudioScheduledItemInfoLabel.setMaxWidth(750);
-
-        // Reactive update: Reload data when preliminary items are generated or event changes
-        FXProperties.runNowAndOnPropertiesChange(dayTicketTeachingsAndAudioScheduledItemGenerated -> {
-            if(FXEvent.getEvent()!=null) {
-                programModel.reloadProgramFromSelectedEvent(FXEvent.getEvent())
-                    .inUiThread()
-                    .onSuccess(result -> {
-                        String teachingItemName = "Not loaded";
-                        String languageItemNames = "Not loaded";
-                        if (programModel.getTeachingsBookableScheduledItems() != null) {
-                            // Extract distinct teaching item names
-                            teachingItemName = programModel.getTeachingsBookableScheduledItems().stream()
-                                .map(scheduledItem -> scheduledItem.getItem().getName())
-                                .distinct()
-                                .collect(Collectors.joining(", "));
-                            // Extract distinct audio language item names
-                            languageItemNames = programModel.getAudioRecordingsBookableScheduledItems().stream()
-                                .map(scheduledItem -> scheduledItem.getItem().getName())
-                                .distinct()
-                                .collect(Collectors.joining(", "));
-                        }
-                        I18nControls.bindI18nProperties(dayTicketTeachingAndAudioScheduledItemInfoLabel, ProgramI18nKeys.DayTicketTeachingsAndAudioScheduledItemInfos, teachingItemName, languageItemNames);
-                    });
-            }
-           },dayTicketPreliminaryScheduledItemProperty,FXEvent.eventProperty());
-
-        VBox dayTicketSuccessInfoVBox = Bootstrap.alertInfo(new VBox(dayTicketTeachingAndAudioScheduledItemInfoLabel));
-        dayTicketSuccessInfoVBox.setAlignment(Pos.CENTER);
-        dayTicketSuccessInfoVBox.setMaxWidth(800);
-        // Show this section only when preliminary items already generated
-        dayTicketSuccessInfoVBox.visibleProperty().bind(dayTicketPreliminaryScheduledItemProperty);
-        dayTicketSuccessInfoVBox.managedProperty().bind(dayTicketPreliminaryScheduledItemProperty);
-
-        // Container for both preliminary items sections (only one visible at a time)
-        HBox dayTicketScheduledItemInfoHBox = new HBox(generatePreliminaryBookableScheduledItemVBox, dayTicketSuccessInfoVBox);
-        dayTicketScheduledItemInfoHBox.setAlignment(Pos.CENTER);
-        dayTicketScheduledItemInfoHBox.setPadding(new Insets(60, 0, 30, 0));
-
-        // ========== 7. Program State Alert ==========
-        Label eventStateLabel = Bootstrap.strong(new Label());
-        eventStateLabel.setWrapText(true);
-        eventStateLabel.setMaxWidth(550);
-
-        VBox eventStateBox = new VBox(eventStateLabel);
-        eventStateBox.setAlignment(Pos.CENTER);
-        eventStateBox.setMaxWidth(600);
-
-        // Reactive update: Change message and alert color based on program state
-        FXProperties.runNowAndOnPropertyChange(programGenerated -> {
-            I18nControls.bindI18nProperties(eventStateLabel, programGenerated ? ProgramI18nKeys.ScheduledItemsAlreadyGenerated : ProgramI18nKeys.ScheduledItemsNotYetGenerated);
-            // Apply different alert style based on state
-            eventStateBox.getStyleClass().clear();
-            if (programGenerated) {
-                Bootstrap.alertWarning(eventStateBox); // Yellow warning: Templates locked
-            } else {
-                Bootstrap.alertInfo(eventStateBox); // Blue info: Templates editable
-            }
-        }, programGeneratedProperty);
+        VBox bottomContainer = new VBox(8, saveHintLabel, bottomLine);
+        bottomContainer.setAlignment(Pos.CENTER);
 
         // Hide bottom buttons until preliminary items are generated
-        bottomLine.visibleProperty().bind(dayTicketPreliminaryScheduledItemProperty);
-        bottomLine.managedProperty().bind(dayTicketPreliminaryScheduledItemProperty);
+        bottomContainer.visibleProperty().bind(dayTicketPreliminaryScheduledItemProperty);
+        bottomContainer.managedProperty().bind(dayTicketPreliminaryScheduledItemProperty);
 
-        HBox eventStateLine = new HBox(eventStateBox);
-        eventStateLine.setAlignment(Pos.CENTER);
-        eventStateLine.setPadding(new Insets(0, 0, 30, 0));
+        // ========== Step Views ==========
+        // Step 1 - Preliminary Bookable Items Configuration
+        Node step1Node = step1View.getView();
+
+        // Step 2 - Day Template Management (complete)
+        Node step2Node = step2View.getView();
+
+        // Step 3 - Program Validation & Finalization
+        Node step3Node = step3View.getView();
 
         // ========== Main Layout Assembly ==========
         // Main content container (everything except topLine and recurring warning)
         VBox mainContentBox = new VBox(
-            dayTicketConfigLine,
-            dayTicketScheduledItemInfoHBox,
-            templateDayColumnsPane,
-            addTemplateButtonBox,
-            eventStateLine,
-            bottomLine
+            step1Node,
+            step2Node,
+            step3Node,
+            bottomContainer
         );
+        mainContentBox.setAlignment(Pos.TOP_CENTER);
+        mainContentBox.setFillWidth(true); // Ensure children get full width
 
         // Reactive visibility: Control visibility based on recurringItem field
         FXProperties.runNowAndOnPropertyChange(event ->
             updateVisibilityBasedOnRecurringItem(event, recurringItemWarningLine, mainContentBox),
             loadedEventProperty);
 
-        // Final layout: Top line + warning + main content
+        // Final layout: Header + event info line + warning + main content
         return new VBox(
+            headerBox,
             topLine,
             recurringItemWarningLine,
             mainContentBox
         );
     }
 }
-
