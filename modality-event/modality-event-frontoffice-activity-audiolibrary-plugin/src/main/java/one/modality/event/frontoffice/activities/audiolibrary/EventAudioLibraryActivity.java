@@ -143,7 +143,7 @@ final class EventAudioLibraryActivity extends ViewDomainActivityBase {
                                         new EntityStoreQuery("""
                                     select name, label, date, expirationDate, programScheduledItem.(name, label, startTime, endTime, timeline.(startTime, endTime), cancelled), published, event.(name, type.recurringItem, recurringWithAudio)
                                         , (select id from Attendance where scheduledItem=si.bookableScheduledItem and accountCanAccessPersonMedias($1, documentLine.document.person) limit 1) as attendanceId
-                                        , (select jsonb_build_array(documentLine.document.(id,price_deposit,price_net,confirmed)) from Attendance where scheduledItem=si.bookableScheduledItem and accountCanAccessPersonMedias($1, documentLine.document.person) limit 1) as paymentAndConfirmedInfoJSonArray
+                                        , (select jsonb_build_array(documentLine.document.(id,price_deposit,price_net,confirmed)) from Attendance where scheduledItem=si.bookableScheduledItem and documentLine.(!cancelled and !document.cancelled) and accountCanAccessPersonMedias($1, documentLine.document.person) limit 1) as paymentAndConfirmedInfoJSonArray
                                         , (exists(select MediaConsumption where media.scheduledItem=si and accountCanAccessPersonMedias($1, attendance.documentLine.document.person) and played) as alreadyPlayed)
                                         , (exists(select MediaConsumption where media.scheduledItem=si and accountCanAccessPersonMedias($1, attendance.documentLine.document.person) and downloaded) as alreadyDownloaded)
                                         from ScheduledItem si
@@ -161,7 +161,7 @@ final class EventAudioLibraryActivity extends ViewDomainActivityBase {
                                 new EntityStoreQuery("""
                                     select name, label, date, expirationDate, programScheduledItem.(name, label, startTime, endTime, timeline.(startTime, endTime), cancelled), published, event.(name, type.recurringItem, recurringWithAudio),
                                         (select id from Attendance where scheduledItem=si.bookableScheduledItem and accountCanAccessPersonMedias($1, documentLine.document.person) limit 1) as attendanceId,
-                                        (select jsonb_build_array(documentLine.document.(id,price_deposit,price_net,confirmed)) from Attendance where scheduledItem=si.bookableScheduledItem and accountCanAccessPersonMedias($1, documentLine.document.person) limit 1) as paymentAndConfirmedInfoJSonArray,
+                                        (select jsonb_build_array(documentLine.document.(id,price_deposit,price_net,confirmed)) from Attendance where scheduledItem=si.bookableScheduledItem and documentLine.(!cancelled and !document.cancelled) and accountCanAccessPersonMedias($1, documentLine.document.person) limit 1) as paymentAndConfirmedInfoJSonArray,
                                         (exists(select MediaConsumption where media.scheduledItem=si and accountCanAccessPersonMedias($1, attendance.documentLine.document.person) and played) as alreadyPlayed),
                                         (exists(select MediaConsumption where media.scheduledItem=si and accountCanAccessPersonMedias($1, attendance.documentLine.document.person) and downloaded) as alreadyDownloaded)
                                      from ScheduledItem si
