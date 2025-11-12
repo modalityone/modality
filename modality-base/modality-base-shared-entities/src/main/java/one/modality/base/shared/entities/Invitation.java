@@ -15,6 +15,7 @@ public interface Invitation extends Entity {
     String token = "token";
     String inviter = "inviter";
     String invitee = "invitee";
+    String inviterPayer = "inviterPayer";
     String pending = "pending";
     String accepted = "accepted";
     String aliasFirstName = "aliasFirstName";
@@ -69,6 +70,14 @@ public interface Invitation extends Entity {
 
     default Person getInvitee() {
         return getForeignEntity(invitee);
+    }
+
+    default void setInviterPayer(Boolean value) {
+        setFieldValue(inviterPayer, value);
+    }
+
+    default Boolean isInviterPayer() {
+        return getBooleanFieldValue(inviterPayer);
     }
 
     // Pending and accepted flags
