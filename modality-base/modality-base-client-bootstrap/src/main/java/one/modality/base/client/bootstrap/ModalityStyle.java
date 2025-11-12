@@ -131,6 +131,7 @@ public interface ModalityStyle {
     /**
      * Sets an SVG icon as the graphic of a Labeled (Button, Label, etc.)
      * The icon is automatically scaled to fit button size and styled with CSS class
+     * Handles bound graphic properties by unbinding them first if necessary
      */
     static <N extends Labeled> N setIcon(N labeled, SVGPath icon) {
         // Target size of 16px for button icons
@@ -155,6 +156,12 @@ public interface ModalityStyle {
         iconContainer.setPrefSize(targetSize, targetSize);
         iconContainer.setMaxSize(targetSize, targetSize);
         iconContainer.setAlignment(Pos.CENTER);
+
+        // Check if graphic property is bound (e.g., from I18nControls)
+        // If bound, unbind it first to avoid "A bound value cannot be set" error
+        if (labeled.graphicProperty().isBound()) {
+            labeled.graphicProperty().unbind();
+        }
 
         labeled.setGraphic(iconContainer);
         return labeled;

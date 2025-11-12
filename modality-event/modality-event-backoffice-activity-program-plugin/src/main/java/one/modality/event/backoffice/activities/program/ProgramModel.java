@@ -206,23 +206,11 @@ final class ProgramModel {
     private final javafx.beans.property.BooleanProperty canGenerateProgramProperty =
         new javafx.beans.property.SimpleBooleanProperty(false);
 
-    public javafx.beans.property.BooleanProperty canGenerateProgramProperty() {
-        return canGenerateProgramProperty;
-    }
-
     /**
      * Updates the canGenerateProgram property based on current state.
      */
     private void updateCanGenerateProgramProperty() {
         canGenerateProgramProperty.set(canGenerateProgram());
-    }
-
-    /**
-     * Returns an observable list of day template models.
-     * Used by UI to reactively observe template changes.
-     */
-    public ObservableList<DayTemplateModel> getDayTemplateModels() {
-        return dayTemplateModels;
     }
 
     /**
@@ -339,13 +327,6 @@ final class ProgramModel {
     }
 
     /**
-     * Returns the bookable teaching item for day tickets and program sessions.
-     */
-    Item getBookableTeachingItem() {
-        return bookableTeachingItem;
-    }
-
-    /**
      * Returns the property indicating whether the program is generated.
      */
     BooleanProperty programGeneratedProperty() {
@@ -400,7 +381,7 @@ final class ProgramModel {
         // Execute queries in batch to avoid synchronization issues between threads
         return entityStore.executeQueryBatch(
                         // Index 0: day templates
-                        new EntityStoreQuery("select name, event.(livestreamUrl,vodExpirationDate,audioExpirationDate), dates from DayTemplate dt where event=? order by name", selectedEvent),
+                        new EntityStoreQuery("select name, event.(livestreamUrl,vodExpirationDate,audioExpirationDate, shortDescription, shortDescriptionLabel.(en,fr,de,es,pt,zhs,zht,el,vi)), dates from DayTemplate dt where event=? order by name", selectedEvent),
                         // Index 1: program site (singleton list)
                         new EntityStoreQuery("select name from Site where event=? and main limit 1", selectedEvent),
                         // Index 2: items for this program item family + audio recording + video
@@ -883,8 +864,8 @@ final class ProgramModel {
         java.util.Map<Object, Object> scheduledItemToBookableId = new java.util.HashMap<>();
         List<Object> scheduledItemIds = new ArrayList<>();
 
-        for (int i = 0; i < scheduledItems.size(); i++) {
-            ScheduledItem si = (ScheduledItem) scheduledItems.get(i);
+        for (ScheduledItem scheduledItem : scheduledItems) {
+            ScheduledItem si = scheduledItem;
             Object scheduledItemId = si.getPrimaryKey();
             scheduledItemIds.add(scheduledItemId);
 
@@ -972,8 +953,8 @@ final class ProgramModel {
                     EntityList attendanceResults = results[resultIndex++];
                     java.util.Map<Object, Integer> attendanceCountMap = new java.util.HashMap<>();
 
-                    for (int i = 0; i < attendanceResults.size(); i++) {
-                        Attendance attendance = (Attendance) attendanceResults.get(i);
+                    for (Object attendanceResult : attendanceResults) {
+                        Attendance attendance = (Attendance) attendanceResult;
                         Object bookableId = attendance.getScheduledItem().getPrimaryKey();
                         attendanceCountMap.put(bookableId, attendanceCountMap.getOrDefault(bookableId, 0) + 1);
                     }
@@ -981,9 +962,9 @@ final class ProgramModel {
                 }
 
                 // Process audio ScheduledItem results - track which sessions have audio offered
-                EntityList<ScheduledItem> audioSIResults = results[resultIndex++];
-                for (int i = 0; i < audioSIResults.size(); i++) {
-                    ScheduledItem audioItem = audioSIResults.get(i);
+                EntityList audioSIResults = results[resultIndex++];
+                for (Object audioSIResult : audioSIResults) {
+                    ScheduledItem audioItem = (ScheduledItem) audioSIResult;
                     ScheduledItem programItem = audioItem.getProgramScheduledItem();
                     if (programItem != null) {
                         counts.audioOffered.put(programItem.getPrimaryKey(), true);
@@ -994,8 +975,7 @@ final class ProgramModel {
                 EntityList<Media> audioMediaResults = results[resultIndex++];
                 java.util.Map<Object, Integer> audioCountMap = new java.util.HashMap<>();
 
-                for (int i = 0; i < audioMediaResults.size(); i++) {
-                    Media audioMedia = audioMediaResults.get(i);
+                for (Media audioMedia : audioMediaResults) {
                     // Get the teaching scheduledItem ID via: Media -> audio ScheduledItem -> programScheduledItem
                     ScheduledItem audioScheduledItem = audioMedia.getScheduledItem();
                     if (audioScheduledItem != null && audioScheduledItem.getProgramScheduledItem() != null) {
@@ -1007,8 +987,7 @@ final class ProgramModel {
 
                 // Process video ScheduledItem results - track which sessions have video offered
                 EntityList<ScheduledItem> videoSIResults = results[resultIndex++];
-                for (int i = 0; i < videoSIResults.size(); i++) {
-                    ScheduledItem videoItem = videoSIResults.get(i);
+                for (ScheduledItem videoItem : videoSIResults) {
                     ScheduledItem programItem = videoItem.getProgramScheduledItem();
                     if (programItem != null) {
                         counts.videoOffered.put(programItem.getPrimaryKey(), true);
@@ -1019,8 +998,7 @@ final class ProgramModel {
                 EntityList<Media> videoMediaResults = results[resultIndex];
                 java.util.Map<Object, Integer> videoCountMap = new java.util.HashMap<>();
 
-                for (int i = 0; i < videoMediaResults.size(); i++) {
-                    Media videoMedia = videoMediaResults.get(i);
+                for (Media videoMedia : videoMediaResults) {
                     // Get the teaching scheduledItem ID via: Media -> video ScheduledItem -> programScheduledItem
                     ScheduledItem videoScheduledItem = videoMedia.getScheduledItem();
                     if (videoScheduledItem != null && videoScheduledItem.getProgramScheduledItem() != null) {
@@ -1086,23 +1064,6 @@ final class ProgramModel {
     }
 
     /**
-     * Deletes all audio and video child scheduledItems for a program scheduled item.
-     *
-     * @param programScheduledItem The parent program scheduled item
-     * @param updateStore The update store to use for deletion
-     * @return Future that completes when child scheduledItems are queried and deleted
-     */
-    Future<Void> deleteMediaChildScheduledItems(ScheduledItem programScheduledItem, UpdateStore updateStore) {
-        return entityStore.executeQuery(
-            "select id from ScheduledItem where programScheduledItem=? and (item.family.code=? or item.family.code=?)",
-            programScheduledItem, KnownItemFamily.AUDIO_RECORDING.getCode(), KnownItemFamily.VIDEO.getCode()
-        ).map(childScheduledItems -> {
-            childScheduledItems.forEach(updateStore::deleteEntity);
-            return null;
-        });
-    }
-
-    /**
      * Updates audio and video child scheduledItems based on checkbox states.
      * If audio/video is now enabled but wasn't before, creates child scheduledItems.
      * If audio/video is now disabled but was enabled before, deletes child scheduledItems.
@@ -1128,8 +1089,8 @@ final class ProgramModel {
         ).map(results -> {
             EntityList<ScheduledItem> audioChildren = results[0];
             EntityList<ScheduledItem> videoChildren = results[1];
-            boolean hasAudio = audioChildren.size() > 0;
-            boolean hasVideo = videoChildren.size() > 0;
+            boolean hasAudio = !audioChildren.isEmpty();
+            boolean hasVideo = !videoChildren.isEmpty();
 
             // Handle audio
             if (audioOffered && !hasAudio) {
@@ -1137,8 +1098,8 @@ final class ProgramModel {
                 createAudioChildScheduledItems(programScheduledItem, updateStore);
             } else if (!audioOffered && hasAudio) {
                 // Delete audio child scheduledItems
-                for (int i = 0; i < audioChildren.size(); i++) {
-                    updateStore.deleteEntity(audioChildren.get(i));
+                for (ScheduledItem audioChild : audioChildren) {
+                    updateStore.deleteEntity(audioChild);
                 }
             }
 
@@ -1148,8 +1109,8 @@ final class ProgramModel {
                 createVideoChildScheduledItem(programScheduledItem, updateStore);
             } else if (!videoOffered && hasVideo) {
                 // Delete video child scheduledItems
-                for (int i = 0; i < videoChildren.size(); i++) {
-                    updateStore.deleteEntity(videoChildren.get(i));
+                for (ScheduledItem videoChild : videoChildren) {
+                    updateStore.deleteEntity(videoChild);
                 }
             }
 
@@ -1218,14 +1179,6 @@ final class ProgramModel {
         if (event != null && event.isTeachingsDayTicket()) {
             videoScheduledItem.setBookableScheduledItem(bookableScheduledItem);
         }
-    }
-
-    /**
-     * Finds a bookable scheduled item for a specific date.
-     */
-    private static ScheduledItem findBookableScheduledItemByDate(List<ScheduledItem> bookableScheduledItems,
-                                                                  LocalDate date) {
-        return findBookableScheduledItemByDate(bookableScheduledItems, date, null);
     }
 
     /**

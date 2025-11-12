@@ -13,6 +13,7 @@ import dev.webfx.platform.console.Console;
 import dev.webfx.stack.orm.entity.EntityList;
 import dev.webfx.stack.orm.entity.EntityStore;
 import dev.webfx.stack.orm.entity.UpdateStore;
+import javafx.beans.binding.BooleanBinding;
 import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.ObjectProperty;
 import javafx.beans.property.SimpleObjectProperty;
@@ -41,7 +42,6 @@ import java.util.*;
 
 /**
  * UI component for Step 3 of the program setup: Program Validation & Finalization.
- *
  * This step displays when the program has been generated (validated) and shows:
  * - Step progress indicator (All steps complete, Step 3 active)
  * - Generated program timetable with actual scheduled items
@@ -256,6 +256,71 @@ final class ProgramStep3View {
     }
 
     /**
+     * Builds a warning message shown when the event has no short description.
+     * The short description is required for displaying event information on the user frontend.
+     */
+    private VBox buildShortDescriptionWarning() {
+        BooleanProperty programGeneratedProperty = programModel.programGeneratedProperty();
+
+        // Main container
+        VBox warningContainer = new VBox();
+        warningContainer.setAlignment(Pos.CENTER);
+        warningContainer.setPadding(new Insets(0, 20, 24, 20));
+
+        // Warning icon
+        SVGPath warningIcon = new SVGPath();
+        warningIcon.setContent("M1 21h22L12 2 1 21zm12-3h-2v-2h2v2zm0-4h-2v-4h2v4z");
+        warningIcon.setFill(javafx.scene.paint.Color.web("#d97706"));
+        warningIcon.setScaleX(1.2);
+        warningIcon.setScaleY(1.2);
+
+        // Title
+        Label warningTitle = Bootstrap.strong(I18nControls.newLabel(ProgramI18nKeys.EventShortDescriptionRequired));
+        warningTitle.getStyleClass().add("program-warning-title-yellow");
+
+        VBox warningTitleBox = new VBox(warningTitle);
+
+        // Content
+        Label warningMessage = I18nControls.newLabel(ProgramI18nKeys.EventShortDescriptionRequiredMessage);
+        warningMessage.setWrapText(true);
+        warningMessage.getStyleClass().add("program-warning-message-yellow");
+
+        VBox warningContent = new VBox(8, warningTitleBox, warningMessage);
+
+        HBox warningHeader = new HBox(12, warningIcon, warningContent);
+        warningHeader.setAlignment(Pos.TOP_LEFT);
+
+        VBox warningBox = new VBox(warningHeader);
+        warningBox.getStyleClass().add("program-warning-box-yellow");
+        warningBox.setPadding(new Insets(20));
+        warningBox.setMaxWidth(MAX_WIDTH);
+
+        warningContainer.getChildren().add(warningBox);
+
+        // Show warning when program is generated AND event has no short description or short description label
+        // Use programModel's loadedEventProperty to ensure the event has these fields loaded from the database
+        BooleanBinding hasNoShortDescription = javafx.beans.binding.Bindings.createBooleanBinding(() -> {
+            Event event = programModel.getLoadedEvent();
+            if (event == null) {
+                return false;
+            }
+            String shortDescription = event.getShortDescription();
+            one.modality.base.shared.entities.Label shortDescriptionLabel = event.getShortDescriptionLabel();
+
+            boolean shortDescEmpty = shortDescription == null || shortDescription.trim().isEmpty();
+            boolean shortDescLabelEmpty = shortDescriptionLabel == null;
+
+            return shortDescEmpty && shortDescLabelEmpty;
+        }, programModel.loadedEventProperty());
+
+        BooleanBinding shouldShowWarning = programGeneratedProperty.and(hasNoShortDescription);
+        warningContainer.visibleProperty().bind(shouldShowWarning);
+        warningContainer.managedProperty().bind(shouldShowWarning);
+
+        return warningContainer;
+    }
+
+    /**
      * Builds the event image upload section following the HTML template design.
      */
     private VBox buildEventImageUpload() {
@@ -359,14 +424,11 @@ final class ProgramStep3View {
         HBox overlayButtons = new HBox(8);
         overlayButtons.setAlignment(Pos.CENTER);
 
-        // View button (circular, 40px) - zoom in icon
-        SVGPath viewIcon = new SVGPath();
-        viewIcon.setContent("M11 11 A8 8 0 0 1 11 27 A8 8 0 0 1 11 11 M21 21 L16.65 16.65 M11 8 L11 14 M8 11 L14 11");
-        viewIcon.setStroke(javafx.scene.paint.Color.web("#374151"));
-        viewIcon.setFill(javafx.scene.paint.Color.TRANSPARENT);
-        viewIcon.setStrokeWidth(2);
-        viewIcon.setScaleX(0.7);
-        viewIcon.setScaleY(0.7);
+        // View button (circular, 40px) - magnifying glass/zoom icon
+        SVGPath viewIcon = SvgIcons.createZoomIconPath();
+        viewIcon.setFill(javafx.scene.paint.Color.web("#374151"));
+        viewIcon.setScaleX(1.2);
+        viewIcon.setScaleY(1.2);
         Button viewBtn = createOverlayButton(viewIcon, this::handleViewFullSizeImage);
 
         // Replace button (circular, 40px) - pen icon
@@ -653,18 +715,21 @@ final class ProgramStep3View {
         dialogContent.setAlignment(Pos.CENTER);
         dialogContent.setPadding(new Insets(24));
 
-        // Container for the image - let it adapt to the image size
+        // Container for the image - square size to preserve 1:1 aspect ratio
+        // Reduced size to account for dialog padding (48px), VBox spacing (12px), and button (~50px) = ~110px total
         MonoPane fullImageContainer = new MonoPane();
-        fullImageContainer.setPrefSize(800, 600);
-        fullImageContainer.setMaxSize(Region.USE_PREF_SIZE, Region.USE_PREF_SIZE);
+        fullImageContainer.setMinSize(300, 300);
+        fullImageContainer.setPrefSize(500, 500);
+        fullImageContainer.setMaxSize(500, 500);
 
         ProgressIndicator dialogProgress = new ProgressIndicator();
         dialogProgress.setPrefSize(60, 60);
 
-        // Stack pane to overlay progress indicator - adapt to content size
+        // Stack pane to overlay progress indicator - white background container
         StackPane imagePane = new StackPane(fullImageContainer, dialogProgress);
-        imagePane.setMaxWidth(800);
-        imagePane.setMaxHeight(600);
+        imagePane.setMinSize(300, 300);
+        imagePane.setPrefSize(500, 500);
+        imagePane.setMaxSize(500, 500);
 
         dialogContent.getChildren().add(imagePane);
 
@@ -673,8 +738,9 @@ final class ProgramStep3View {
         closeButton.setOnAction(e -> dialogCallback.closeDialog());
         dialogContent.getChildren().add(closeButton);
 
-        // Load the full-size image - it will preserve aspect ratio within max dimensions
-        ModalityCloudImageService.loadHdpiImage(eventCoverCloudImagePath, 800, 600, fullImageContainer, null)
+        // Load the full-size image with square dimensions to preserve 1:1 aspect ratio
+        // The image will be scaled to fit within 500x500 while preserving proportions
+        ModalityCloudImageService.loadHdpiImage(eventCoverCloudImagePath, 500, 500, fullImageContainer, null)
             .onComplete(ar -> dialogProgress.setVisible(false));
     }
 
@@ -799,8 +865,8 @@ final class ProgramStep3View {
 
         // Group scheduled items by date
         Map<LocalDate, List<ScheduledItem>> itemsByDate = new TreeMap<>();
-        for (int i = 0; i < scheduledItems.size(); i++) {
-            ScheduledItem si = (ScheduledItem) scheduledItems.get(i);
+        for (Object scheduledItem : scheduledItems) {
+            ScheduledItem si = (ScheduledItem) scheduledItem;
             LocalDate date = si.getDate();
             itemsByDate.computeIfAbsent(date, k -> new ArrayList<>()).add(si);
         }
@@ -1225,6 +1291,9 @@ final class ProgramStep3View {
         // Step indicator
         container.getChildren().add(stepIndicatorContainer);
 
+        // Short description warning (shown when event has no short description)
+        container.getChildren().add(buildShortDescriptionWarning());
+
         // Event image upload
         container.getChildren().add(buildEventImageUpload());
 
@@ -1258,22 +1327,19 @@ final class ProgramStep3View {
     }
 
     private void handleDeleteSession(ScheduledItem scheduledItem) {
-        String sessionName = scheduledItem.getName() != null
-            ? scheduledItem.getName()
-            : I18n.getI18nText(ProgramI18nKeys.UnnamedSession);
         String confirmationMessage = I18n.getI18nText(ProgramI18nKeys.DeleteSessionConfirmation);
-
         ModalityDialog.showConfirmationDialog(confirmationMessage, () -> deleteSession(scheduledItem));
     }
 
     private void deleteSession(ScheduledItem scheduledItem) {
+        // Create local UpdateStore for immediate save operation (not part of template editing workflow)
         UpdateStore updateStore = UpdateStore.createAbove(entityStore);
         ScheduledItem itemToDelete = updateStore.updateEntity(scheduledItem);
         updateStore.deleteEntity(itemToDelete);
 
         updateStore.submitChanges()
             .onSuccess(result -> loadProgramData())
-            .onFailure(error -> Console.log(error));
+            .onFailure(Console::log);
     }
 
     private void handleCancelSession(ScheduledItem scheduledItem) {
@@ -1298,13 +1364,14 @@ final class ProgramStep3View {
     }
 
     private void cancelSession(ScheduledItem scheduledItem) {
+        // Create local UpdateStore for immediate save operation (not part of template editing workflow)
         UpdateStore updateStore = UpdateStore.createAbove(entityStore);
         ScheduledItem itemToCancel = updateStore.updateEntity(scheduledItem);
         itemToCancel.setCancelled(true);
 
         updateStore.submitChanges()
             .onSuccess(result -> loadProgramData())
-            .onFailure(error -> Console.log(error));
+            .onFailure(Console::log);
     }
 
     private void handleUncancelSession(ScheduledItem scheduledItem) {
@@ -1329,12 +1396,13 @@ final class ProgramStep3View {
     }
 
     private void uncancelSession(ScheduledItem scheduledItem) {
+        // Create local UpdateStore for immediate save operation (not part of template editing workflow)
         UpdateStore updateStore = UpdateStore.createAbove(entityStore);
         ScheduledItem itemToUncancel = updateStore.updateEntity(scheduledItem);
         itemToUncancel.setCancelled(false);
 
         updateStore.submitChanges()
             .onSuccess(result -> loadProgramData())
-            .onFailure(error -> Console.log(error));
+            .onFailure(Console::log);
     }
 }

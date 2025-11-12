@@ -27,7 +27,6 @@ import java.util.stream.Collectors;
 
 /**
  * UI component for Step 2 of the program setup: Day Template Management.
- *
  * This step allows the user to:
  * - View step progress indicator (Step 1 complete, Step 2 active, Step 3 inactive)
  * - Read information about day templates
@@ -438,10 +437,8 @@ final class ProgramStep2View {
         BooleanProperty dayTicketPreliminaryScheduledItemProperty = programModel.getDayTicketPreliminaryScheduledItemProperty();
         BooleanProperty programGeneratedProperty = programModel.programGeneratedProperty();
 
-        Button addTemplateButton = I18nControls.newButton(ProgramI18nKeys.AddDayTemplate);
-        addTemplateButton.getStyleClass().addAll("btn", "btn-outline-primary");
-        addTemplateButton.setPadding(new Insets(Bootstrap.DEFAULT_V_PADDING, Bootstrap.DEFAULT_H_PADDING, Bootstrap.DEFAULT_V_PADDING, Bootstrap.DEFAULT_H_PADDING));
-        addTemplateButton.setGraphicTextGap(10);
+        // Create button with outline primary styling and plus icon
+        Button addTemplateButton = ModalityStyle.largeOutlinePrimaryAddButton(I18nControls.newButton(ProgramI18nKeys.AddDayTemplate));
         addTemplateButton.setOnAction(e -> programModel.addNewDayTemplate());
 
         HBox addTemplateButtonBox = new HBox(addTemplateButton);

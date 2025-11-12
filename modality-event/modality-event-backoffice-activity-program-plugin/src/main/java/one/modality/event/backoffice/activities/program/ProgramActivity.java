@@ -1,7 +1,6 @@
 package one.modality.event.backoffice.activities.program;
 
 
-import dev.webfx.extras.async.AsyncSpinner;
 import dev.webfx.extras.styles.bootstrap.Bootstrap;
 import dev.webfx.extras.theme.text.TextTheme;
 import dev.webfx.extras.util.control.Controls;
@@ -17,7 +16,6 @@ import javafx.scene.Node;
 import javafx.scene.control.ContentDisplay;
 import javafx.scene.control.Label;
 import javafx.scene.control.ProgressIndicator;
-import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
 import javafx.scene.layout.HBox;
@@ -123,7 +121,6 @@ final class ProgramActivity extends ViewDomainActivityBase {
      * the {@link ProgramView} for managing templates, and the {@link ProgramStep3View}
      * for displaying the generated program. The view's logic is started to begin loading
      * data and setting up reactive bindings.
-     *
      * The loading indicator is shown initially and hidden once the program state is determined.
      */
     @Override
@@ -140,27 +137,9 @@ final class ProgramActivity extends ViewDomainActivityBase {
         // Create Step 3 view (generated program - used when program is generated)
         step3View = new ProgramStep3View(programModel);
 
-        // Load initial event data if available
-        if (FXEvent.getEvent() != null) {
-            Console.log("ProgramActivity: Loading initial event: " + FXEvent.getEvent().getName());
-            step3View.setEvent(FXEvent.getEvent());
-            // Explicitly trigger initial load and hide loading indicator when complete
-            programModel.reloadProgramFromSelectedEvent(FXEvent.getEvent())
-                .inUiThread()
-                .onComplete(result -> {
-                    Console.log("ProgramActivity: Initial data load complete, hiding loading indicator");
-                    loadingProperty.set(false);
-                });
-        } else {
-            Console.log("ProgramActivity: No initial event, hiding loading indicator");
-            loadingProperty.set(false);
-        }
-
-        // Also hide loading indicator when program generated state changes (for subsequent reloads)
-        FXProperties.runOnPropertyChange(programGenerated -> {
-            Console.log("ProgramActivity: programGenerated changed to " + programGenerated);
-            loadingProperty.set(false);
-        }, programModel.programGeneratedProperty());
+        // Note: Initial event loading and subsequent event changes are handled
+        // in buildUi() via the event property listener, which shows/hides the
+        // loading indicator appropriately
 
         // Track event configuration validity
         FXProperties.runNowAndOnPropertyChange(event -> {
@@ -275,9 +254,19 @@ final class ProgramActivity extends ViewDomainActivityBase {
         viewContainer.getChildren().addAll(loadingPane, configWarningNode, templateViewNode, generatedViewNode);
 
         // Reactive binding: Update event in Step 3 view when event changes
+        // Show loading indicator while data is being reloaded
         FXProperties.runNowAndOnPropertyChange(event -> {
             if (event != null) {
+                Console.log("ProgramActivity: Event changed, showing loading indicator and reloading data");
+                loadingProperty.set(true);
                 step3View.setEvent(event);
+                // Reload program data and hide loading indicator when complete
+                programModel.reloadProgramFromSelectedEvent(event)
+                    .inUiThread()
+                    .onComplete(result -> {
+                        Console.log("ProgramActivity: Data reload complete after event change");
+                        loadingProperty.set(false);
+                    });
             }
         }, FXEvent.eventProperty());
 
