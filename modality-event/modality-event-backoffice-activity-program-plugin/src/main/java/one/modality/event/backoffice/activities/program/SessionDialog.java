@@ -65,7 +65,9 @@ public class SessionDialog {
     public static void show(ScheduledItem scheduledItem, LocalDate date, EntityStore entityStore, ProgramModel programModel, Runnable onSuccess) {
         boolean isEdit = scheduledItem != null;
 
-        // Create UpdateStore for entity management
+        // Create a local UpdateStore for this dialog session.
+        // This allows users to cancel the dialog without affecting other unsaved changes in ProgramModel.
+        // When saved, changes are submitted immediately to the database.
         UpdateStore updateStore = UpdateStore.createAbove(entityStore);
 
         // Get the entity to edit (create a temporary one for new sessions)

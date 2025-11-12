@@ -14,7 +14,6 @@ import one.modality.base.backoffice.activities.home.BackOfficeHomeI18nKeys;
 
 /**
  * Routing configuration for the Program activity.
- *
  * This class defines the routing infrastructure for the Program module, including:
  * <ul>
  *   <li>URL path mapping ("/program")</li>
@@ -71,7 +70,6 @@ public class ProgramRouting {
 
     /**
      * UI Route implementation for the Program activity.
-     *
      * This class registers the route configuration with the routing system, mapping
      * the "/program" path to the {@link ProgramActivity}.
      *
@@ -109,7 +107,6 @@ public class ProgramRouting {
 
     /**
      * Route request for navigating to the Program activity.
-     *
      * This request can be executed to navigate the user to the Program activity.
      * It implements {@link HasOperationCode} for authorization checks and
      * {@link HasI18nKey} for localized display in UI elements (menus, buttons).
@@ -132,7 +129,6 @@ public class ProgramRouting {
 
         /**
          * Returns the operation code for this route request.
-         *
          * Used by the authorization system to check if the user has permission
          * to access the Program activity.
          *
@@ -145,7 +141,6 @@ public class ProgramRouting {
 
         /**
          * Returns the i18n key for displaying this route in the UI.
-         *
          * Used for menu items, buttons, and other UI elements that navigate
          * to the Program activity. The key resolves to localized text like
          * "Program" in English or "Programme" in French.
@@ -160,7 +155,6 @@ public class ProgramRouting {
 
     /**
      * Route request emitter for the Program activity.
-     *
      * This emitter is used by the routing framework to create route requests
      * based on the current activity context. It's registered via Java SPI in:
      * META-INF/services/dev.webfx.stack.routing.uirouter.operations.RouteRequestEmitter

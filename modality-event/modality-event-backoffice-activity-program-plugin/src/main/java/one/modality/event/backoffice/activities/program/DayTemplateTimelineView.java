@@ -12,7 +12,6 @@ import dev.webfx.extras.validation.ValidationSupport;
 import javafx.geometry.Pos;
 import javafx.scene.Cursor;
 import javafx.scene.Node;
-import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
 import javafx.scene.layout.Region;
@@ -239,6 +238,7 @@ final class DayTemplateTimelineView implements ButtonFactoryMixin {
 
     /**
      * Creates a media toggle button (audio or video) with icon, strike-through, and color styling.
+     * Uses the same icons as Step 3 (ProgramStep3View) for visual consistency.
      * When active: green (audio) or amber (video) icon with colored background and border.
      * When inactive: grey icon with red diagonal strike-through line.
      *
@@ -248,8 +248,19 @@ final class DayTemplateTimelineView implements ButtonFactoryMixin {
      * @return StackPane containing the styled toggle button
      */
     private StackPane createMediaToggleButton(boolean isAudio, Supplier<Boolean> stateGetter, Consumer<Boolean> stateSetter) {
-        // Create icon
-        SVGPath icon = isAudio ? SvgIcons.createSoundIconPath() : SvgIcons.createVideoIconPath();
+        // Create icon - using same SVG paths as Step 3 for consistency
+        SVGPath icon = new SVGPath();
+        if (isAudio) {
+            // Microphone icon (same as Step 3)
+            icon.setContent("M12 14c1.66 0 3-1.34 3-3V5c0-1.66-1.34-3-3-3S9 3.34 9 5v6c0 1.66 1.34 3 3 3zm5.91-3c-.49 0-.9.36-.98.85C16.52 14.21 14.47 16 12 16s-4.52-1.79-4.93-4.15c-.08-.49-.49-.85-.98-.85-.61 0-1.09.54-1 1.14.49 3 2.89 5.35 5.91 5.78V20c0 .55.45 1 1 1s1-.45 1-1v-2.08c3.02-.43 5.42-2.78 5.91-5.78.1-.6-.39-1.14-1-1.14z");
+            icon.setScaleX(0.9);
+            icon.setScaleY(0.9);
+        } else {
+            // Video camera icon (same as Step 3)
+            icon.setContent("M17 10.5V7c0-.55-.45-1-1-1H4c-.55 0-1 .45-1 1v10c0 .55.45 1 1 1h12c.55 0 1-.45 1-1v-3.5l4 4v-11l-4 4z");
+            icon.setScaleX(0.9);
+            icon.setScaleY(0.9);
+        }
         icon.setFill(Color.web("#94a3b8")); // Default grey color
 
         // Create strike-through line (red diagonal)

@@ -24,6 +24,7 @@ public interface ProgramI18nKeys {
     Object DayTicketTeachingsAndAudioScheduledItemInfos = "DayTicketTeachingsAndAudioScheduledItemInfos";
     Object ScheduledItemsNotYetGenerated = "ScheduledItemsNotYetGenerated";
     Object GenerateProgram = "GenerateProgram";
+    Object EventShortDescriptionRequiredMessage = "EventShortDescriptionRequiredMessage";
     Object Sessions = "Sessions";
     Object ProgramGenerationConfirmation = "ProgramGenerationConfirmation";
     Object ReplaceImage = "ReplaceImage";
@@ -70,6 +71,7 @@ public interface ProgramI18nKeys {
     Object EndTimeRequired = "EndTimeRequired";
     Object CancelProgram = "CancelProgram";
     Object AudioOffered = "AudioOffered";
+    Object EventShortDescriptionRequired = "EventShortDescriptionRequired";
     Object SessionsActive = "SessionsActive";
     Object VideoOffered = "VideoOffered";
     Object WhatHappensNextMessage = "WhatHappensNextMessage";

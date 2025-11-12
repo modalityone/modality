@@ -33,7 +33,6 @@ import one.modality.event.client.event.fx.FXEvent;
 
 /**
  * Main UI view for the Program module in the back-office application.
- *
  * This view provides a comprehensive interface for event program management:
  * <ol>
  *   <li><b>Preliminary Setup:</b> Generate bookable scheduled items for day ticket pricing</li>
@@ -115,7 +114,7 @@ final class ProgramView extends ModalitySlaveEditor<Event> implements ButtonFact
      * Item selector for choosing the teaching item for preliminary bookable scheduled items.
      * Allows user to select which teaching item (e.g., "STTP") to use for day ticket pricing.
      */
-    private ButtonSelector<Item> itemSelector;
+    private final ButtonSelector<Item> itemSelector;
 
     /**
      * Step 1 view component (Preliminary Bookable Items Configuration).
@@ -141,7 +140,6 @@ final class ProgramView extends ModalitySlaveEditor<Event> implements ButtonFact
 
     /**
      * Constructs the Program view with the given model.
-     *
      * Initialization steps:
      * <ol>
      *   <li>Store the program model reference</li>
@@ -175,7 +173,6 @@ final class ProgramView extends ModalitySlaveEditor<Event> implements ButtonFact
 
     /**
      * Returns the root UI node for this view.
-     *
      * Called by the activity to display this view in the main application area.
      *
      * @return The main VBox container with all UI components
@@ -186,7 +183,6 @@ final class ProgramView extends ModalitySlaveEditor<Event> implements ButtonFact
 
     /**
      * Starts the reactive logic for this view.
-     *
      * Establishes bidirectional binding between:
      * <ul>
      *   <li><b>Master:</b> Global event selector (FXEvent.eventProperty)</li>
@@ -195,7 +191,6 @@ final class ProgramView extends ModalitySlaveEditor<Event> implements ButtonFact
      *
      * When the user selects a different event, this view automatically reloads
      * all program data for the new event via {@link #setSlave(Event)}.
-     *
      * Called once by {@link ProgramActivity} after view construction.
      */
     void startLogic() {
@@ -204,7 +199,6 @@ final class ProgramView extends ModalitySlaveEditor<Event> implements ButtonFact
 
     /**
      * Callback invoked when a new event is selected (master-slave pattern).
-     *
      * This method is called automatically by the master-slave linker when:
      * <ul>
      *   <li>User selects a different event in the event selector</li>
@@ -225,7 +219,6 @@ final class ProgramView extends ModalitySlaveEditor<Event> implements ButtonFact
 
     /**
      * Synchronizes the selected teaching item from UI to the model.
-     *
      * Called whenever the item selector's selection changes.
      * Updates the model with the user's item choice for preliminary bookable scheduled items.
      */
@@ -271,7 +264,6 @@ final class ProgramView extends ModalitySlaveEditor<Event> implements ButtonFact
 
     /**
      * Checks if there are unsaved changes in the program.
-     *
      * Used by the framework to:
      * <ul>
      *   <li>Enable/disable Save and Cancel buttons</li>
@@ -353,11 +345,13 @@ final class ProgramView extends ModalitySlaveEditor<Event> implements ButtonFact
         Button saveButton = Bootstrap.largeSuccessButton(I18nControls.newButton(ProgramI18nKeys.SaveDraft));
         saveButton.setOnAction(e -> programModel.saveChanges(saveButton));
 
-        // Disable Save when no changes exist
+        // Disable Save when no changes exist OR when there are no day templates
         UpdateStore updateStore = programModel.getUpdateStore();
         BooleanExpression hasChangesProperty = EntityBindings.hasChangesProperty(updateStore);
         BooleanBinding hasNoChangesProperty = hasChangesProperty.not();
-        saveButton.disableProperty().bind(hasNoChangesProperty);
+        BooleanBinding noTemplatesBinding = javafx.beans.binding.Bindings.isEmpty(workingDayTemplateViews);
+        BooleanBinding shouldDisableSave = hasNoChangesProperty.or(noTemplatesBinding);
+        saveButton.disableProperty().bind(shouldDisableSave);
 
         // Generate Program / Delete Program buttons (mutually exclusive visibility)
         Button generateProgramButton = Bootstrap.largePrimaryButton(I18nControls.newButton(ProgramI18nKeys.ValidateProgram));
@@ -396,6 +390,23 @@ final class ProgramView extends ModalitySlaveEditor<Event> implements ButtonFact
 
         // ========== Step Views ==========
         // Step 1 - Preliminary Bookable Items Configuration
+        VBox mainContentBox = getVBox(bottomContainer);
+
+        // Reactive visibility: Control visibility based on recurringItem field
+        FXProperties.runNowAndOnPropertyChange(event ->
+            updateVisibilityBasedOnRecurringItem(event, recurringItemWarningLine, mainContentBox),
+            loadedEventProperty);
+
+        // Final layout: Header + event info line + warning + main content
+        return new VBox(
+            headerBox,
+            topLine,
+            recurringItemWarningLine,
+            mainContentBox
+        );
+    }
+
+    private VBox getVBox(VBox bottomContainer) {
         Node step1Node = step1View.getView();
 
         // Step 2 - Day Template Management (complete)
@@ -410,22 +421,10 @@ final class ProgramView extends ModalitySlaveEditor<Event> implements ButtonFact
             step1Node,
             step2Node,
             step3Node,
-            bottomContainer
+                bottomContainer
         );
         mainContentBox.setAlignment(Pos.TOP_CENTER);
         mainContentBox.setFillWidth(true); // Ensure children get full width
-
-        // Reactive visibility: Control visibility based on recurringItem field
-        FXProperties.runNowAndOnPropertyChange(event ->
-            updateVisibilityBasedOnRecurringItem(event, recurringItemWarningLine, mainContentBox),
-            loadedEventProperty);
-
-        // Final layout: Header + event info line + warning + main content
-        return new VBox(
-            headerBox,
-            topLine,
-            recurringItemWarningLine,
-            mainContentBox
-        );
+        return mainContentBox;
     }
 }
