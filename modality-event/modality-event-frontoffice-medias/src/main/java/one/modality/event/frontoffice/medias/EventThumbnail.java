@@ -15,7 +15,7 @@ import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
-import one.modality.base.client.cloudinary.ModalityCloudinary;
+import one.modality.base.client.cloudinary.ModalityCloudImageService;
 import one.modality.base.client.i18n.I18nEntities;
 import one.modality.base.client.icons.SvgIcons;
 import one.modality.base.shared.entities.Event;
@@ -130,10 +130,10 @@ public final class EventThumbnail {
 
         MonoPane imageContainer = new MonoPane();
         if (itemType == ItemType.ITEM_TYPE_AUDIO) // for audio recordings, the language is linked to the item, not the user interface
-            ModalityCloudinary.loadHdpiEventCoverImage(event, languageOfTheItem, CONTAINER_WIDTH, CONTAINER_HEIGHT, imageContainer, SvgIcons::createAudioCoverPath);
+            ModalityCloudImageService.loadHdpiEventCoverImage(event, languageOfTheItem, CONTAINER_WIDTH, CONTAINER_HEIGHT, imageContainer, SvgIcons::createAudioCoverPath);
         else // for videos, however, the language is linked to the user interface (EventThumbnail is used for changing the event selection in VideoStreamingActivity)
             FXProperties.runNowAndOnPropertyChange(language ->
-                    ModalityCloudinary.loadHdpiEventCoverImage(event, language, CONTAINER_WIDTH, CONTAINER_HEIGHT, imageContainer, SvgIcons::createAudioCoverPath)
+                    ModalityCloudImageService.loadHdpiEventCoverImage(event, language, CONTAINER_WIDTH, CONTAINER_HEIGHT, imageContainer, SvgIcons::createAudioCoverPath)
                 , I18n.languageProperty());
 
         StackPane thumbnailStackPane = new StackPane(imageContainer, availabilityLabel);

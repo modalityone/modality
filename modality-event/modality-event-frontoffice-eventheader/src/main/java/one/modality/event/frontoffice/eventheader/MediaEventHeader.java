@@ -17,7 +17,7 @@ import javafx.scene.layout.HBox;
 import javafx.scene.layout.Priority;
 import javafx.scene.layout.VBox;
 import javafx.scene.text.Font;
-import one.modality.base.client.cloudinary.ModalityCloudinary;
+import one.modality.base.client.cloudinary.ModalityCloudImageService;
 import one.modality.base.client.i18n.I18nEntities;
 import one.modality.base.client.icons.SvgIcons;
 import one.modality.base.client.time.FrontOfficeTimeFormats;
@@ -74,7 +74,7 @@ public final class MediaEventHeader extends AbstractEventHeader {
             I18nEntities.bindExpressionToTextProperty(eventDescriptionHTMLText.textProperty(), event, "i18n(coalesce(shortDescriptionLabel, shortDescription), '" + language + "')");
 
             // Loading the event image in the header
-            ModalityCloudinary.loadHdpiEventCoverImage(event, language, -1, IMAGE_HEIGHT, eventImageContainer, video ? SvgIcons::createVideoIconPath : SvgIcons::createAudioCoverPath);
+            ModalityCloudImageService.loadHdpiEventCoverImage(event, language, -1, IMAGE_HEIGHT, eventImageContainer, video ? SvgIcons::createVideoIconPath : SvgIcons::createAudioCoverPath);
             // Updating the expiration date in the header
             LocalDateTime expirationDate = video ? event.getVodExpirationDate() : event.getAudioExpirationDate();
             if (expirationDate == null) {

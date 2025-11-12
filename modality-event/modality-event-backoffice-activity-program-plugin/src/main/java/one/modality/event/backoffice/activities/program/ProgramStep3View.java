@@ -5,7 +5,6 @@ import dev.webfx.extras.i18n.I18n;
 import dev.webfx.extras.i18n.controls.I18nControls;
 import dev.webfx.extras.panes.MonoPane;
 import dev.webfx.extras.styles.bootstrap.Bootstrap;
-import dev.webfx.extras.theme.shape.ShapeTheme;
 import dev.webfx.extras.util.control.Controls;
 import dev.webfx.extras.util.dialog.DialogCallback;
 import dev.webfx.extras.util.dialog.DialogUtil;
@@ -27,7 +26,7 @@ import javafx.scene.layout.*;
 import javafx.scene.shape.Line;
 import javafx.scene.shape.SVGPath;
 import one.modality.base.client.bootstrap.ModalityStyle;
-import one.modality.base.client.cloudinary.ModalityCloudinary;
+import one.modality.base.client.cloudinary.ModalityCloudImageService;
 import one.modality.base.client.icons.SvgIcons;
 import one.modality.base.client.mainframe.fx.FXMainFrameDialogArea;
 import one.modality.base.client.util.dialog.ModalityDialog;
@@ -592,7 +591,7 @@ final class ProgramStep3View {
             return;
         }
 
-        eventCoverCloudImagePath = ModalityCloudinary.eventCoverImagePath(event, null);
+        eventCoverCloudImagePath = ModalityCloudImageService.eventCoverImagePath(event, null);
         loadEventCoverImage();
     }
 
@@ -604,7 +603,7 @@ final class ProgramStep3View {
             return;
         }
 
-        ModalityCloudinary.loadHdpiImage(eventCoverCloudImagePath, EVENT_IMAGE_SIZE, EVENT_IMAGE_SIZE, eventImageContainer, this::createImagePlaceholder)
+        ModalityCloudImageService.loadHdpiImage(eventCoverCloudImagePath, EVENT_IMAGE_SIZE, EVENT_IMAGE_SIZE, eventImageContainer, this::createImagePlaceholder)
             .onComplete(ar -> {
                 imageUploadProgressIndicator.setVisible(false);
                 if (ar.succeeded()) {
@@ -628,7 +627,7 @@ final class ProgramStep3View {
         }
 
         imageUploadProgressIndicator.setVisible(true);
-        ModalityCloudinary.replaceImage(eventCoverCloudImagePath, fileToUpload)
+        ModalityCloudImageService.replaceImage(eventCoverCloudImagePath, fileToUpload)
             .inUiThread()
             .onComplete(ar -> {
                 if (ar.failed()) {
@@ -675,7 +674,7 @@ final class ProgramStep3View {
         dialogContent.getChildren().add(closeButton);
 
         // Load the full-size image - it will preserve aspect ratio within max dimensions
-        ModalityCloudinary.loadHdpiImage(eventCoverCloudImagePath, 800, 600, fullImageContainer, null)
+        ModalityCloudImageService.loadHdpiImage(eventCoverCloudImagePath, 800, 600, fullImageContainer, null)
             .onComplete(ar -> dialogProgress.setVisible(false));
     }
 
@@ -690,7 +689,7 @@ final class ProgramStep3View {
         String confirmationMessage = I18n.getI18nText(ProgramI18nKeys.DeleteImageConfirmation);
         ModalityDialog.showConfirmationDialog(confirmationMessage, () -> {
             imageUploadProgressIndicator.setVisible(true);
-            ModalityCloudinary.deleteImage(eventCoverCloudImagePath)
+            ModalityCloudImageService.deleteImage(eventCoverCloudImagePath)
                 .inUiThread()
                 .onSuccess(e -> {
                     // Reset to placeholder

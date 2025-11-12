@@ -7,7 +7,6 @@ import dev.webfx.platform.async.Promise;
 import dev.webfx.platform.blob.Blob;
 import dev.webfx.platform.uischeduler.UiScheduler;
 import dev.webfx.stack.cloud.image.CloudImageService;
-import dev.webfx.stack.cloud.image.impl.client.ClientImageService;
 import dev.webfx.stack.orm.entity.Entities;
 import javafx.scene.Node;
 import javafx.scene.canvas.Canvas;
@@ -20,22 +19,23 @@ import one.modality.base.shared.entities.Event;
 
 import java.util.function.Supplier;
 
-public final class ModalityCloudinary {
-
-    private static final CloudImageService CLOUD_IMAGE_SERVICE = new ClientImageService();
+/**
+ * @author Bruno Salmon
+ */
+public final class ModalityCloudImageService {
 
     // Low-level API
 
     public static Future<Void> deleteImage(String imagePath) {
-        return CLOUD_IMAGE_SERVICE.delete(imagePath, true);
+        return CloudImageService.delete(imagePath, true);
     }
 
     public static Future<Void> uploadImage(String imagePath, Blob fileToUpload) {
-        return CLOUD_IMAGE_SERVICE.upload(fileToUpload, imagePath, true);
+        return CloudImageService.upload(fileToUpload, imagePath, true);
     }
 
     public static Image getImage(String imagePath, int width, int height) {
-        String url = CLOUD_IMAGE_SERVICE.url(imagePath, width, height);
+        String url = CloudImageService.url(imagePath, width, height);
         return new Image(url, true);
     }
 
@@ -45,15 +45,15 @@ public final class ModalityCloudinary {
     }
 
     public static Future<Image> getImageOnReady(String imagePath, int width, int height) {
-        return CLOUD_IMAGE_SERVICE.readyFuture().map(aVoid -> getImage(imagePath, width, height));
+        return CloudImageService.readyFuture().map(aVoid -> getImage(imagePath, width, height));
     }
 
     public static Future<Image> getHdpiImageOnReady(String imagePath, double width, double height) {
-        return CLOUD_IMAGE_SERVICE.readyFuture().map(aVoid -> getHdpiImage(imagePath, width, height));
+        return CloudImageService.readyFuture().map(aVoid -> getHdpiImage(imagePath, width, height));
     }
 
     public static Future<Boolean> imageExists(String imagePath) {
-        return CLOUD_IMAGE_SERVICE.exists(imagePath);
+        return CloudImageService.exists(imagePath);
     }
 
     public static Future<Image> loadHdpiImage(String imagePath, double width, double height, MonoPane imageContainer, Supplier<Node> noImageNodeGetter) {
@@ -62,7 +62,7 @@ public final class ModalityCloudinary {
 
     public static Future<Image> loadHdpiEventCoverImage(Event event, Object language, double width, double height, MonoPane imageContainer, Supplier<Node> noImageNodeGetter) {
         String eventCoverImagePath = eventCoverImagePath(event, language);
-        String defaultLanguageEventCoverImagePath = ModalityCloudinary.eventCoverImagePath(event, null);
+        String defaultLanguageEventCoverImagePath = ModalityCloudImageService.eventCoverImagePath(event, null);
         return loadHdpiImage(eventCoverImagePath, width, height, imageContainer, null)
             .recover(error -> loadHdpiImage(defaultLanguageEventCoverImagePath, width, height, imageContainer, noImageNodeGetter));
     }

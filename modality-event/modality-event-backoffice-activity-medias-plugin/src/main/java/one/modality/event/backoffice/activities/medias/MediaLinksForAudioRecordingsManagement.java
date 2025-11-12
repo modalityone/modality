@@ -21,7 +21,7 @@ import javafx.scene.control.Label;
 import javafx.scene.control.ProgressIndicator;
 import javafx.scene.layout.*;
 import javafx.scene.shape.SVGPath;
-import one.modality.base.client.cloudinary.ModalityCloudinary;
+import one.modality.base.client.cloudinary.ModalityCloudImageService;
 import one.modality.base.client.i18n.BaseI18nKeys;
 import one.modality.base.client.i18n.I18nEntities;
 import one.modality.base.client.icons.SvgIcons;
@@ -54,7 +54,7 @@ public class MediaLinksForAudioRecordingsManagement extends MediaLinksManagement
         parentRecordingView = recordingsTabView;
         //Language code is 'audio-en", audio-fr", "audio-es", ...
         String languageCode = languageItem.getCode().split("-")[1];
-        eventCoverCloudImagePath = ModalityCloudinary.eventCoverImagePath(FXEventId.getEventId(), I18nEntities.convertAudioLanguageCodeToWrittenLanguageCode(languageCode));
+        eventCoverCloudImagePath = ModalityCloudImageService.eventCoverImagePath(FXEventId.getEventId(), I18nEntities.convertAudioLanguageCodeToWrittenLanguageCode(languageCode));
         buildContainer();
     }
 
@@ -84,7 +84,7 @@ public class MediaLinksForAudioRecordingsManagement extends MediaLinksManagement
         //We look if the image for this cover is existing in cloudinary
 
         SvgIcons.armButton(trashImage, () ->
-            ModalityCloudinary.deleteImage(eventCoverCloudImagePath)
+            ModalityCloudImageService.deleteImage(eventCoverCloudImagePath)
                 .onFailure(Console::log)
                 .inUiThread()
                 .onSuccess(e -> {
@@ -118,7 +118,7 @@ public class MediaLinksForAudioRecordingsManagement extends MediaLinksManagement
 
         FXProperties.runOnPropertyChange(fileToUpload -> {
             replaceProgressIndicator.setVisible(true);
-            ModalityCloudinary.replaceImage(eventCoverCloudImagePath, fileToUpload)
+            ModalityCloudImageService.replaceImage(eventCoverCloudImagePath, fileToUpload)
                 .inUiThread()
                 .onComplete(ar -> {
                     if (ar.failed())
@@ -149,7 +149,7 @@ public class MediaLinksForAudioRecordingsManagement extends MediaLinksManagement
     }
 
     private void loadAudioCoverPicture() {
-        ModalityCloudinary.loadHdpiImage(eventCoverCloudImagePath, IMAGE_SIZE, IMAGE_SIZE, eventCoverImageContainer, SvgIcons::createAudioCoverPath)
+        ModalityCloudImageService.loadHdpiImage(eventCoverCloudImagePath, IMAGE_SIZE, IMAGE_SIZE, eventCoverImageContainer, SvgIcons::createAudioCoverPath)
             .onComplete(ar -> {
                 trashImage.setVisible(ar.succeeded());
                 replaceProgressIndicator.setVisible(false);

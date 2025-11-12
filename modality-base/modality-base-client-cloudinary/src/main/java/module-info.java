@@ -12,7 +12,6 @@ module modality.base.client.cloudinary {
     requires webfx.platform.blob;
     requires webfx.platform.uischeduler;
     requires webfx.stack.cloud.image;
-    requires webfx.stack.cloud.image.client;
     requires webfx.stack.orm.entity;
 
     // Exported packages

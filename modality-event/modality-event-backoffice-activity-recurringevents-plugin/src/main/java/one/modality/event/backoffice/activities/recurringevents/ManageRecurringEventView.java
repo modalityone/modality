@@ -62,7 +62,7 @@ import javafx.scene.paint.Color;
 import javafx.scene.shape.Line;
 import javafx.scene.shape.SVGPath;
 import javafx.scene.text.Text;
-import one.modality.base.client.cloudinary.ModalityCloudinary;
+import one.modality.base.client.cloudinary.ModalityCloudImageService;
 import one.modality.base.client.i18n.BaseI18nKeys;
 import one.modality.base.client.icons.SvgIcons;
 import one.modality.base.client.mainframe.fx.FXMainFrameDialogArea;
@@ -529,10 +529,10 @@ final class ManageRecurringEventView {
     }
 
     private void loadEventImageIfExists() {
-        String cloudImagePath = ModalityCloudinary.eventImagePath(currentEditedEvent);
+        String cloudImagePath = ModalityCloudImageService.eventImagePath(currentEditedEvent);
         if (Objects.equals(cloudImagePath, recentlyUploadedCloudPictureId))
             return;
-        ModalityCloudinary.loadHdpiImage(cloudImagePath, EVENT_IMAGE_WIDTH, EVENT_IMAGE_HEIGHT, eventImageContainer, () -> null)
+        ModalityCloudImageService.loadHdpiImage(cloudImagePath, EVENT_IMAGE_WIDTH, EVENT_IMAGE_HEIGHT, eventImageContainer, () -> null)
             .onComplete(ar -> isPictureDisplayed.setValue(eventImageContainer.getContent() != null));
     }
 
@@ -549,7 +549,7 @@ final class ManageRecurringEventView {
 
     public void uploadCloudPictureIfNecessary(String cloudImagePath) {
         if (isCloudPictureToBeUploaded.getValue()) {
-            ModalityCloudinary.uploadImage(cloudImagePath, cloudPictureFileToUpload)
+            ModalityCloudImageService.uploadImage(cloudImagePath, cloudPictureFileToUpload)
                 .onFailure(Console::log)
                 .onSuccess(ok -> {
                     isCloudPictureToBeUploaded.set(false);
@@ -563,7 +563,7 @@ final class ManageRecurringEventView {
         if (isCloudPictureToBeDeleted.getValue()) {
             //We delete the pictures, and all the cached picture in cloudinary that can have been transformed, related
             //to this assets
-            ModalityCloudinary.deleteImage(cloudImagePath)
+            ModalityCloudImageService.deleteImage(cloudImagePath)
                 .onFailure(Console::log)
                 .onSuccess(ok -> {
                     isCloudPictureToBeDeleted.set(false);
@@ -736,7 +736,7 @@ final class ManageRecurringEventView {
                             BorderPane.setAlignment(okErrorButton, Pos.CENTER);
                         })
                         .onSuccess(x -> {
-                            String cloudImagePath = ModalityCloudinary.eventImagePath(currentEditedEvent);
+                            String cloudImagePath = ModalityCloudImageService.eventImagePath(currentEditedEvent);
                             deleteCloudPictureIfNecessary(cloudImagePath);
                             uploadCloudPictureIfNecessary(cloudImagePath);
                         });
@@ -1092,7 +1092,7 @@ final class ManageRecurringEventView {
                     Console.log(ex);
                 })
                 .onSuccess(x -> {
-                    String cloudImagePath = ModalityCloudinary.eventImagePath(currentEditedEvent);
+                    String cloudImagePath = ModalityCloudImageService.eventImagePath(currentEditedEvent);
                     deleteCloudPictureIfNecessary(cloudImagePath);
                     uploadCloudPictureIfNecessary(cloudImagePath);
                     isCloudPictureToBeDeleted.setValue(false);
