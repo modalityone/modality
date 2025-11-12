@@ -81,7 +81,7 @@ public final class ModalityCloudImageService {
 
     public static String eventCoverImagePath(Object eventEntityOrId, Object language) {
         Object primaryKey = Entities.getPrimaryKey(eventEntityOrId);
-        String imagePath = "events-cover/event-" + primaryKey + "-cover";
+        String imagePath = "events/audio-video-covers/event-" + primaryKey + "-cover";
         if (language != null && !"en".equals(language.toString())) {
             imagePath += "-" + language;
         }
@@ -142,7 +142,8 @@ public final class ModalityCloudImageService {
         gc.clearRect(0, 0, canvas.getWidth(), canvas.getHeight());
         // Draw the image scaled and centered
         gc.drawImage(imageToUpload, xOffset, yOffset, scaledWidth, scaledHeight, 0, 0, canvasWidth, canvasHeight);
-        return CanvasBlob.createCanvasBlob(canvas);
+        // Always create PNG blobs - Bunny.net provider requires PNG format
+        return CanvasBlob.createCanvasBlob(canvas, "image/png");
     }
 
     public static Future<Void> replaceImage(String cloudImagePath, Blob fileToUpload) {
