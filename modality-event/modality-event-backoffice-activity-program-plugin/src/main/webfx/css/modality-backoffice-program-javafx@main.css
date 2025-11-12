@@ -1,0 +1,595 @@
+/**
+ * CSS styles for Program View - JavaFX version
+ * Colors and visual styling only - NO padding or sizing (those go in Java code)
+ */
+
+/* ========== Step Indicators ========== */
+
+/* Step circle - completed state (green) */
+.program-step-circle-completed {
+    -fx-background-color: #10b981;
+    -fx-background-radius: 20px;
+    -fx-border-color: #10b981;
+    -fx-border-width: 2px;
+    -fx-border-radius: 20px;
+}
+
+.program-step-check-completed {
+    -fx-text-fill: white;
+    -fx-font-size: 18px;
+    -fx-font-weight: bold;
+}
+
+.program-step-label-completed {
+    -fx-font-size: 14px;
+    -fx-font-weight: 500;
+    -fx-text-fill: #10b981;
+}
+
+/* Step circle - active state (blue) */
+.program-step-circle-active {
+    -fx-background-color: #0ea5e9;
+    -fx-background-radius: 20px;
+    -fx-border-color: #0ea5e9;
+    -fx-border-width: 2px;
+    -fx-border-radius: 20px;
+}
+
+.program-step-number-active {
+    -fx-text-fill: white;
+    -fx-font-size: 16px;
+    -fx-font-weight: bold;
+}
+
+.program-step-label-active {
+    -fx-font-size: 14px;
+    -fx-font-weight: 600;
+    -fx-text-fill: #0ea5e9;
+}
+
+/* Step circle - inactive state (gray) */
+.program-step-circle-inactive {
+    -fx-background-color: white;
+    -fx-background-radius: 20px;
+    -fx-border-color: #e2e8f0;
+    -fx-border-width: 2px;
+    -fx-border-radius: 20px;
+}
+
+.program-step-number-inactive {
+    -fx-text-fill: #94a3b8;
+    -fx-font-size: 16px;
+    -fx-font-weight: bold;
+}
+
+.program-step-label-inactive {
+    -fx-font-size: 14px;
+    -fx-font-weight: 500;
+    -fx-text-fill: #64748b;
+}
+
+/* Step connector lines */
+.program-step-connector-completed {
+    -fx-background-color: #10b981;
+}
+
+.program-step-connector-inactive {
+    -fx-background-color: #e2e8f0;
+}
+
+/* ========== Info Boxes ========== */
+
+/* Blue info box */
+.program-info-box {
+    -fx-background-color: linear-gradient(to bottom right, #e0f2fe, #dbeafe);
+    -fx-border-color: #0ea5e9;
+    -fx-border-width: 2px;
+    -fx-background-radius: 12px;
+    -fx-border-radius: 12px;
+}
+
+.program-info-title {
+    -fx-font-size: 18px;
+    -fx-font-weight: 600;
+    -fx-text-fill: #0c4a6e;
+}
+
+.program-info-content {
+    -fx-font-size: 14px;
+    -fx-text-fill: #0c4a6e;
+    -fx-line-spacing: 0.3em;
+}
+
+.program-info-subtitle {
+    -fx-font-size: 14px;
+    -fx-font-weight: 600;
+    -fx-text-fill: #0c4a6e;
+}
+
+.program-info-text {
+    -fx-font-size: 13px;
+    -fx-text-fill: #0c4a6e;
+    -fx-line-spacing: 0.3em;
+}
+
+.program-info-separator {
+    -fx-background-color: #bae6fd;
+}
+
+/* Warning box (yellow/amber) */
+.program-warning-box {
+    -fx-background-color: #fffbeb;
+    -fx-border-color: #fbbf24;
+    -fx-border-width: 2px;
+    -fx-background-radius: 12px;
+    -fx-border-radius: 12px;
+}
+
+.program-warning-title {
+    -fx-font-size: 16px;
+    -fx-text-fill: #92400e;
+}
+
+.program-warning-message {
+    -fx-font-size: 14px;
+    -fx-text-fill: #78350f;
+    -fx-line-spacing: 0.3em;
+}
+
+/* ========== Language Badges ========== */
+
+.program-language-badge {
+    -fx-background-color: white;
+    -fx-background-radius: 6px;
+    -fx-font-size: 12px;
+    -fx-text-fill: #0369a1;
+    -fx-font-weight: 500;
+    -fx-border-color: #bae6fd;
+    -fx-border-width: 1px;
+    -fx-border-radius: 6px;
+}
+
+/* ========== Status Badges ========== */
+
+.program-status-enabled {
+    -fx-font-weight: 600;
+    -fx-text-fill: #059669;
+}
+
+.program-status-disabled {
+    -fx-font-weight: 600;
+    -fx-text-fill: #dc2626;
+}
+
+/* ========== Session Cards (Step 3) ========== */
+
+/* No data message */
+.no-data-message {
+    -fx-font-size: 16;
+    -fx-text-fill: #666;
+}
+
+/* Day section container */
+.day-section {
+    -fx-background-color: white;
+    -fx-background-radius: 12;
+    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.1), 3, 0, 0, 1);
+}
+
+/* Day icon */
+.day-icon {
+    -fx-background-color: #0891b2;
+    -fx-background-radius: 8;
+}
+
+/* Day status label */
+.day-status-label {
+    -fx-text-fill: #666;
+    -fx-font-size: 14;
+}
+
+/* Session card */
+.session-card {
+    -fx-background-color: white;
+    -fx-border-color: #e5e5e5;
+    -fx-border-radius: 8;
+    -fx-background-radius: 8;
+}
+
+/* Session title (active) */
+.session-title {
+    -fx-font-weight: 600;
+    -fx-font-size: 16;
+    -fx-line-spacing: 2;
+}
+
+/* Session title (cancelled) */
+.session-title-cancelled {
+    -fx-font-weight: 600;
+    -fx-font-size: 16;
+    -fx-strikethrough: true;
+    -fx-text-fill: #999;
+    -fx-line-spacing: 2;
+}
+
+/* Time slot labels */
+.time-slot {
+    -fx-background-color: #f9fafb;
+    -fx-border-color: #e5e5e5;
+    -fx-border-radius: 6;
+    -fx-background-radius: 6;
+    -fx-font-size: 14;
+    -fx-font-weight: 500;
+}
+
+/* Time separator */
+.time-separator {
+    -fx-text-fill: #999;
+}
+
+/* Participant count display */
+.participant-count {
+    -fx-font-size: 14;
+    -fx-font-weight: 500;
+    -fx-text-fill: #0891b2;
+}
+
+/* Audio/video count display (available) */
+.media-count-available {
+    -fx-font-size: 14;
+    -fx-font-weight: 500;
+    -fx-text-fill: #059669;
+}
+
+/* Add session button */
+.add-session-btn {
+    /* Inherits from Bootstrap primary button */
+}
+
+/* ========== Media Toggle Buttons ========== */
+
+.media-toggle-available {
+    -fx-background-color: #dcfce7;
+    -fx-border-color: #10b981;
+    -fx-border-width: 1.5px;
+    -fx-background-radius: 8px;
+    -fx-border-radius: 8px;
+}
+
+.media-toggle-unavailable {
+    -fx-background-color: #f1f5f9;
+    -fx-border-color: #cbd5e1;
+    -fx-border-width: 1.5px;
+    -fx-background-radius: 8px;
+    -fx-border-radius: 8px;
+}
+
+.media-toggle-label-available {
+    -fx-font-size: 12px;
+    -fx-font-weight: 500;
+    -fx-text-fill: #065f46;
+}
+
+.media-toggle-label-unavailable {
+    -fx-font-size: 12px;
+    -fx-font-weight: 500;
+    -fx-text-fill: #64748b;
+}
+
+/* ========== Day Template Panel ========== */
+
+.day-template-panel {
+    -fx-background-color: white;
+}
+
+/* ========== Timeline Container States ========== */
+
+.timeline-container-default {
+    -fx-background-color: white;
+    -fx-border-color: #e2e8f0;
+    -fx-border-width: 2px;
+    -fx-border-radius: 6px;
+    -fx-background-radius: 6px;
+}
+
+.timeline-container-available {
+    -fx-background-color: #dcfce7;
+    -fx-border-color: #10b981;
+    -fx-border-width: 2px;
+    -fx-border-radius: 6px;
+    -fx-background-radius: 6px;
+}
+
+.timeline-container-partial {
+    -fx-background-color: #fef3c7;
+    -fx-border-color: #f59e0b;
+    -fx-border-width: 2px;
+    -fx-border-radius: 6px;
+    -fx-background-radius: 6px;
+}
+
+/* ========== Configuration Status ========== */
+
+.config-status-card {
+    -fx-background-color: white;
+    -fx-border-color: #e5e7eb;
+    -fx-border-width: 1px;
+    -fx-background-radius: 8px;
+    -fx-border-radius: 8px;
+}
+
+.config-status-title {
+    -fx-font-size: 14px;
+    -fx-font-weight: 600;
+    -fx-text-fill: #111827;
+}
+
+.config-status-value {
+    -fx-font-size: 13px;
+    -fx-text-fill: #6b7280;
+}
+
+/* ========== Alert Box (Red Error) ========== */
+
+.program-alert-box {
+    -fx-background-color: #fef2f2;
+    -fx-background-radius: 10px;
+    -fx-border-color: #dc2626;
+    -fx-border-width: 0 0 0 4px;
+}
+
+.program-alert-title {
+    -fx-font-size: 15px;
+    -fx-text-fill: #991b1b;
+}
+
+.program-alert-message {
+    -fx-font-size: 14px;
+    -fx-text-fill: #7f1d1d;
+    -fx-line-spacing: 0.3em;
+}
+
+/* ========== Warning Box (Amber) ========== */
+
+.program-warning-box-amber {
+    -fx-background-color: #fffbeb;
+    -fx-background-radius: 10px;
+    -fx-border-color: #f59e0b;
+    -fx-border-width: 0 0 0 4px;
+}
+
+.program-warning-title-amber {
+    -fx-font-size: 15px;
+    -fx-text-fill: #92400e;
+}
+
+.program-warning-message-amber {
+    -fx-font-size: 14px;
+    -fx-text-fill: #78350f;
+}
+
+/* Warning Box (Yellow - Full Border) */
+
+.program-warning-box-yellow {
+    -fx-background-color: #fffbeb;
+    -fx-border-color: #fbbf24;
+    -fx-border-width: 2px;
+    -fx-background-radius: 12px;
+    -fx-border-radius: 12px;
+}
+
+.program-warning-title-yellow {
+    -fx-font-size: 16px;
+    -fx-text-fill: #92400e;
+}
+
+.program-warning-message-yellow {
+    -fx-font-size: 14px;
+    -fx-text-fill: #78350f;
+    -fx-line-spacing: 0.3em;
+}
+
+/* ========== Form Elements ========== */
+
+.program-step-title {
+    -fx-font-size: 16px;
+}
+
+.program-form-label {
+    -fx-font-size: 14px;
+    -fx-font-weight: bold;
+    -fx-text-fill: #475569;
+}
+
+.program-form-help {
+    -fx-font-size: 13px;
+    -fx-text-fill: #64748b;
+}
+
+.program-selector-button {
+    -fx-background-radius: 8px;
+    -fx-border-radius: 8px;
+}
+
+/* ========== Info Box (Blue) ========== */
+
+.program-info-box-blue {
+    -fx-background-color: #eff6ff;
+    -fx-border-color: #bfdbfe;
+    -fx-border-width: 1px;
+    -fx-background-radius: 8px;
+    -fx-border-radius: 8px;
+}
+
+.program-info-title-blue {
+    -fx-font-size: 14px;
+    -fx-text-fill: #1e40af;
+}
+
+.program-info-content-blue {
+    -fx-font-size: 13px;
+    -fx-text-fill: #1e3a8a;
+}
+
+/* ========== Button Styles ========== */
+
+.program-generate-button {
+    -fx-background-radius: 8px;
+}
+
+/* ========== Step Content Container ========== */
+
+.program-step-content {
+    -fx-background-color: #f8fafc;
+    -fx-background-radius: 10px;
+}
+
+/* ========== Empty State Styles ========== */
+
+.program-empty-heading {
+    -fx-font-weight: 600;
+    -fx-text-fill: #333;
+}
+
+.program-empty-description {
+    -fx-font-size: 16px;
+    -fx-text-fill: #666;
+    -fx-line-spacing: 0.3em;
+}
+
+/* ========== Event Image Upload Section ========== */
+
+.event-image-upload-section {
+    -fx-background-color: white;
+    -fx-background-radius: 8px;
+    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.1), 10, 0, 0, 2);
+}
+
+.image-upload-icon-container {
+    -fx-background-color: linear-gradient(from 0% 0% to 100% 100%, #0096d6 0%, #00b4ff 100%);
+    -fx-background-radius: 8px;
+}
+
+.image-upload-title {
+    -fx-font-size: 18px;
+    -fx-font-weight: 600;
+    -fx-text-fill: #1f2937;
+}
+
+.image-preview-container {
+    -fx-background-color: #f3f4f6;
+    -fx-border-color: #d1d5db;
+    -fx-border-width: 2px;
+    -fx-border-style: dashed;
+    -fx-border-radius: 8px;
+    -fx-background-radius: 8px;
+}
+
+.image-preview-container:hover {
+    -fx-border-color: #0096d6;
+    -fx-background-color: #f0f9ff;
+}
+
+.image-preview-has-image {
+    -fx-background-color: transparent;
+    -fx-border-color: #0096d6;
+    -fx-border-style: solid;
+    -fx-border-radius: 8px;
+}
+
+.image-placeholder-label {
+    -fx-font-size: 14px;
+    -fx-text-fill: #9ca3af;
+}
+
+.image-placeholder-hint {
+    -fx-font-size: 12px;
+    -fx-text-fill: #d1d5db;
+}
+
+.image-overlay {
+    -fx-background-color: rgba(0, 0, 0, 0.6);
+}
+
+.image-overlay-btn {
+    -fx-background-color: white;
+    -fx-background-radius: 20px;
+    -fx-cursor: hand;
+    -fx-border-width: 0;
+    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.2), 4, 0, 0, 2);
+}
+
+.image-overlay-btn:hover {
+    -fx-background-color: white;
+    -fx-background-radius: 20px;
+    -fx-cursor: hand;
+    -fx-border-width: 0;
+    -fx-scale-x: 1.1;
+    -fx-scale-y: 1.1;
+    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.3), 12, 0, 0, 4);
+}
+
+.image-info-card {
+    -fx-background-color: #f0f9ff;
+    -fx-border-color: #bfdbfe;
+    -fx-border-width: 1px;
+    -fx-border-radius: 8px;
+    -fx-background-radius: 8px;
+}
+
+.image-info-card-title {
+    -fx-font-size: 14px;
+    -fx-font-weight: 600;
+    -fx-text-fill: #0096d6;
+}
+
+.image-info-card-text {
+    -fx-font-size: 13px;
+    -fx-text-fill: #374151;
+    -fx-line-spacing: 3px;
+}
+
+.btn-upload-primary {
+    -fx-background-color: linear-gradient(to bottom right, #0096d6 0%, #00b4ff 100%);
+    -fx-text-fill: white;
+    -fx-font-weight: 500;
+    -fx-background-radius: 8px;
+    -fx-cursor: hand;
+    -fx-font-size: 14px;
+    -fx-effect: dropshadow(gaussian, rgba(0,150,214,0.2), 4, 0, 0, 2);
+}
+
+.btn-upload-primary:hover {
+    -fx-background-color: linear-gradient(to bottom right, #0096d6 0%, #00b4ff 100%);
+    -fx-text-fill: white;
+    -fx-font-weight: 500;
+    -fx-background-radius: 8px;
+    -fx-cursor: hand;
+    -fx-font-size: 14px;
+    -fx-effect: dropshadow(gaussian, rgba(0,150,214,0.3), 12, 0, 0, 4);
+    -fx-translate-y: -1px;
+}
+
+.btn-upload-secondary {
+    -fx-background-color: white;
+    -fx-text-fill: #374151;
+    -fx-border-color: #d1d5db;
+    -fx-border-width: 1px;
+    -fx-font-weight: 500;
+    -fx-background-radius: 8px;
+    -fx-border-radius: 8px;
+    -fx-cursor: hand;
+    -fx-font-size: 14px;
+}
+
+.btn-upload-secondary:hover {
+    -fx-background-color: #f9fafb;
+    -fx-text-fill: #374151;
+    -fx-border-color: #9ca3af;
+    -fx-border-width: 1px;
+    -fx-font-weight: 500;
+    -fx-background-radius: 8px;
+    -fx-border-radius: 8px;
+    -fx-cursor: hand;
+    -fx-font-size: 14px;
+}

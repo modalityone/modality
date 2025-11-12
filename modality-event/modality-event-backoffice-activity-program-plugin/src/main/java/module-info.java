@@ -8,6 +8,8 @@ module modality.event.backoffice.activity.program.plugin {
     requires javafx.graphics;
     requires modality.base.backoffice.activity.home.plugin;
     requires modality.base.backoffice.mainframe.fx;
+    requires modality.base.client.bootstrap;
+    requires modality.base.client.cloudinary;
     requires modality.base.client.i18n;
     requires modality.base.client.icons;
     requires modality.base.client.mainframe.fx;
@@ -19,6 +21,7 @@ module modality.event.backoffice.activity.program.plugin {
     requires modality.event.client.event.fx;
     requires webfx.extras.async;
     requires webfx.extras.controlfactory;
+    requires webfx.extras.filepicker;
     requires webfx.extras.i18n;
     requires webfx.extras.i18n.controls;
     requires webfx.extras.operation;
@@ -36,6 +39,8 @@ module modality.event.backoffice.activity.program.plugin {
     requires webfx.kit.util;
     requires webfx.platform.async;
     requires webfx.platform.console;
+    requires webfx.platform.file;
+    requires webfx.platform.scheduler;
     requires webfx.platform.util;
     requires webfx.platform.windowhistory;
     requires webfx.stack.orm.domainmodel;
