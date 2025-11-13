@@ -127,4 +127,16 @@ public interface Invitation extends Entity {
         return getForeignEntity(createdAliasPerson);
     }
 
+    // Token expiry is calculated dynamically: creationDate + 7 days
+    default LocalDateTime getTokenExpiry() {
+        LocalDateTime creationDate = getCreationDate();
+        return creationDate != null ? creationDate.plusDays(7) : null;
+    }
+
+    // Check if token is still valid (not expired)
+    default boolean isTokenValid() {
+        LocalDateTime expiry = getTokenExpiry();
+        return expiry != null && LocalDateTime.now().isBefore(expiry);
+    }
+
 }

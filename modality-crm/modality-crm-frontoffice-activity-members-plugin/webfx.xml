@@ -7,11 +7,15 @@
     </exported-packages>
 
     <dependencies>
-        <used-by-source-modules/>
+        <used-by-source-modules>
+            <used-by-source-module>modality-crm-frontoffice-activity-userprofile-plugin</used-by-source-module>
+        </used-by-source-modules>
     </dependencies>
 
     <providers>
         <provider interface="dev.webfx.stack.routing.uirouter.UiRoute">one.modality.crm.frontoffice.activities.members.MembersRouting$MembersUiRoute</provider>
+        <provider interface="dev.webfx.stack.routing.uirouter.UiRoute">one.modality.crm.frontoffice.activities.members.ApproveInvitationRouting$ApproveInvitationUiRoute</provider>
+        <provider interface="dev.webfx.stack.routing.uirouter.UiRoute">one.modality.crm.frontoffice.activities.members.DeclineInvitationRouting$DeclineInvitationUiRoute</provider>
         <provider interface="dev.webfx.stack.routing.uirouter.operations.RouteRequestEmitter">one.modality.crm.frontoffice.activities.members.MembersRouting$RouteToUserProfileRequestEmitter</provider>
     </providers>
 

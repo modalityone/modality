@@ -1,4 +1,4 @@
-package one.modality.crm.server.authn.gateway.shared;
+package one.modality.base.shared.util;
 
 import dev.webfx.platform.util.Strings;
 

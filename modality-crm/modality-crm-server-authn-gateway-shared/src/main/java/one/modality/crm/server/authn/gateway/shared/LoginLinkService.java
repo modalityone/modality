@@ -16,6 +16,7 @@ import one.modality.base.server.mail.ModalityMailMessage;
 import one.modality.base.shared.context.ModalityContext;
 import one.modality.base.shared.entities.MagicLink;
 import one.modality.base.shared.entities.Person;
+import one.modality.base.shared.util.ActivityHashUtil;
 import one.modality.crm.shared.services.authn.ModalityAuthenticationI18nKeys;
 
 import java.time.Clock;
