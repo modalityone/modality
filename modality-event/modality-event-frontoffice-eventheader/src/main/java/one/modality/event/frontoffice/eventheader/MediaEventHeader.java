@@ -17,7 +17,7 @@ import javafx.scene.layout.HBox;
 import javafx.scene.layout.Priority;
 import javafx.scene.layout.VBox;
 import javafx.scene.text.Font;
-import one.modality.base.client.cloudinary.ModalityCloudImageService;
+import one.modality.base.client.cloud.image.ModalityCloudImageService;
 import one.modality.base.client.i18n.I18nEntities;
 import one.modality.base.client.icons.SvgIcons;
 import one.modality.base.client.time.FrontOfficeTimeFormats;

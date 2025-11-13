@@ -15,7 +15,7 @@ import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
-import one.modality.base.client.cloudinary.ModalityCloudImageService;
+import one.modality.base.client.cloud.image.ModalityCloudImageService;
 import one.modality.base.client.i18n.I18nEntities;
 import one.modality.base.client.icons.SvgIcons;
 import one.modality.base.shared.entities.Event;

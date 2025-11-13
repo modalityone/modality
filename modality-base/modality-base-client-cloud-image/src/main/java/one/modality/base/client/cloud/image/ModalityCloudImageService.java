@@ -1,4 +1,4 @@
-package one.modality.base.client.cloudinary;
+package one.modality.base.client.cloud.image;
 
 import dev.webfx.extras.canvas.blob.CanvasBlob;
 import dev.webfx.extras.panes.MonoPane;

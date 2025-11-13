@@ -21,7 +21,7 @@ import javafx.scene.control.Label;
 import javafx.scene.control.ProgressIndicator;
 import javafx.scene.layout.*;
 import javafx.scene.shape.SVGPath;
-import one.modality.base.client.cloudinary.ModalityCloudImageService;
+import one.modality.base.client.cloud.image.ModalityCloudImageService;
 import one.modality.base.client.i18n.BaseI18nKeys;
 import one.modality.base.client.i18n.I18nEntities;
 import one.modality.base.client.icons.SvgIcons;
