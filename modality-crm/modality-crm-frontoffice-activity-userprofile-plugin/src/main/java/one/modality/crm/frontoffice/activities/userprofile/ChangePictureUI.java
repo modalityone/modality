@@ -28,7 +28,7 @@ import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Circle;
 import javafx.scene.shape.SVGPath;
-import one.modality.base.client.cloudinary.ModalityCloudImageService;
+import one.modality.base.client.cloud.image.ModalityCloudImageService;
 import one.modality.base.client.icons.SvgIcons;
 
 import java.util.Objects;

@@ -1,11 +1,11 @@
 // File managed by WebFX (DO NOT EDIT MANUALLY)
 
-module modality.base.client.cloudinary {
+module modality.base.client.cloud.image {
 
     // Direct dependencies modules
     requires javafx.graphics;
     requires modality.base.shared.entities;
-    requires webfx.extras.canvas.blob;
+    requires transitive webfx.extras.canvas.blob;
     requires webfx.extras.panes;
     requires webfx.kit.util;
     requires webfx.platform.async;
@@ -15,6 +15,6 @@ module modality.base.client.cloudinary {
     requires webfx.stack.orm.entity;
 
     // Exported packages
-    exports one.modality.base.client.cloudinary;
+    exports one.modality.base.client.cloud.image;
 
 }

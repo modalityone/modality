@@ -27,7 +27,7 @@ import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
 import javafx.util.Duration;
 import one.modality.base.client.activity.ModalityButtonFactoryMixin;
-import one.modality.base.client.cloudinary.ModalityCloudImageService;
+import one.modality.base.client.cloud.image.ModalityCloudImageService;
 import one.modality.base.client.mainframe.fx.FXMainFrameDialogArea;
 import one.modality.base.frontoffice.utility.page.FOPageUtil;
 import one.modality.base.shared.entities.Person;

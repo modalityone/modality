@@ -28,6 +28,7 @@
         <plugin-module executable-target="gwt-j2cl">webfx-stack-com-websocket-gwt-j2cl-sockjs</plugin-module>
 
         <plugin-module>webfx-stack-shareddata-cache-localstorage-plugin</plugin-module>
+        <plugin-module>webfx-stack-cloud-image-rest-client-plugin</plugin-module>
 
     </dependencies>
 

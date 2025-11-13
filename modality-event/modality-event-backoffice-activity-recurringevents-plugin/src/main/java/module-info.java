@@ -7,7 +7,7 @@ module modality.event.backoffice.activity.recurringevents.plugin {
     requires javafx.controls;
     requires javafx.graphics;
     requires modality.base.backoffice.mainframe.fx;
-    requires modality.base.client.cloudinary;
+    requires modality.base.client.cloud.image;
     requires modality.base.client.gantt.fx;
     requires modality.base.client.i18n;
     requires modality.base.client.icons;

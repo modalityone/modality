@@ -19,6 +19,8 @@
         <!-- Injection auto-conditions don't work, so adding it manually for now TODO: REMOVE THIS ONCE FIXED -->
         <plugin-module>webfx-stack-push-server-liveclient-interceptor</plugin-module>
 
+        <plugin-module>webfx-stack-cloud-image-rest-server-plugin</plugin-module>
+
     </dependencies>
 
 </project>

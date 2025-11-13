@@ -27,7 +27,7 @@ import javafx.scene.layout.*;
 import javafx.scene.shape.Line;
 import javafx.scene.shape.SVGPath;
 import one.modality.base.client.bootstrap.ModalityStyle;
-import one.modality.base.client.cloudinary.ModalityCloudImageService;
+import one.modality.base.client.cloud.image.ModalityCloudImageService;
 import one.modality.base.client.icons.SvgIcons;
 import one.modality.base.client.mainframe.fx.FXMainFrameDialogArea;
 import one.modality.base.client.util.dialog.ModalityDialog;
