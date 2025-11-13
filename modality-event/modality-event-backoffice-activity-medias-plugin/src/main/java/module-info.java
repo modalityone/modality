@@ -54,6 +54,7 @@ module modality.event.backoffice.activity.medias.plugin {
     requires webfx.stack.orm.reactive.visual;
     requires webfx.stack.routing.router.client;
     requires webfx.stack.routing.uirouter;
+    requires webfx.platform.blob;
 
     // Exported packages
     exports one.modality.event.backoffice.activities.medias;

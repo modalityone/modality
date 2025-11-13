@@ -819,15 +819,28 @@ final class ManageRecurringEventView {
         ShapeTheme.createPrimaryShapeFacet(uploadSVGPath).style();
         uploadButton.setGraphic(uploadSVGPath);
         FilePicker filePicker = FilePicker.create();
-        filePicker.getAcceptedExtensions().addAll("image/*");
+        filePicker.getAcceptedExtensions().addAll("image/*", ".webp", "image/webp");
         filePicker.setGraphic(uploadButton);
         filePicker.getSelectedFiles().addListener((InvalidationListener) obs -> {
             ObservableList<File> fileList = filePicker.getSelectedFiles();
-            cloudPictureFileToUpload = fileList.get(0);
-            Image imageToDisplay = new Image(cloudPictureFileToUpload.getObjectURL());
-            isCloudPictureToBeUploaded.setValue(true);
-            eventImageContainer.setContent(new ImageView(imageToDisplay));
-            isPictureDisplayed.setValue(true);
+            File selectedFile = fileList.get(0);
+            // Load the image from the uploaded file
+            Image originalImage = new Image(selectedFile.getObjectURL(), true);
+            FXProperties.runOnPropertiesChange(property -> {
+                if (originalImage.progressProperty().get() == 1) {
+                    // Convert the image to PNG format before uploading
+                    ModalityCloudImageService.prepareImageForUpload(originalImage, false, 1, 0, 0, EVENT_IMAGE_WIDTH, EVENT_IMAGE_HEIGHT)
+                        .onFailure(e -> Console.log("Failed to prepare image for upload: " + e))
+                        .onSuccess(pngBlob -> {
+                            // Store the PNG blob for upload (cast Blob to File as expected by cloudPictureFileToUpload)
+                            cloudPictureFileToUpload = (File) pngBlob;
+                            isCloudPictureToBeUploaded.setValue(true);
+                            // Display the original image
+                            eventImageContainer.setContent(new ImageView(originalImage));
+                            isPictureDisplayed.setValue(true);
+                        });
+                }
+            }, originalImage.progressProperty());
         });
 
         Label uploadButtonDescription = Bootstrap.small(I18nControls.newLabel(RecurringEventsI18nKeys.SelectYourFile));

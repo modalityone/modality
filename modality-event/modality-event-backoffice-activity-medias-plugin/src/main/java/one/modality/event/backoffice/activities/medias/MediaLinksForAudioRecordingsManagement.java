@@ -7,6 +7,7 @@ import dev.webfx.extras.styles.bootstrap.Bootstrap;
 import dev.webfx.extras.switches.Switch;
 import dev.webfx.extras.theme.shape.ShapeTheme;
 import dev.webfx.extras.util.control.Controls;
+import dev.webfx.extras.util.layout.Layouts;
 import dev.webfx.kit.util.properties.FXProperties;
 import dev.webfx.platform.console.Console;
 import dev.webfx.stack.orm.entity.EntityStore;
@@ -45,7 +46,7 @@ public class MediaLinksForAudioRecordingsManagement extends MediaLinksManagement
     private final Item languageItem;
     private final String eventCoverCloudImagePath;
     private final MonoPane eventCoverImageContainer = new MonoPane();
-    private final ProgressIndicator replaceProgressIndicator = Controls.createProgressIndicator(150);
+    private final ProgressIndicator replaceProgressIndicator = Controls.createProgressIndicator(50);
     private final SVGPath trashImage = SvgIcons.createTrashSVGPath();
 
     public MediaLinksForAudioRecordingsManagement(Item languageItem, EntityStore entityStore, ObservableList<LocalDate> teachingsDates, ObservableList<ScheduledItem> audioScheduledItemsReadFromDatabase, ObservableList<Media> recordingsMediasReadFromDatabase, RecordingsTabView recordingsTabView) {
@@ -88,7 +89,7 @@ public class MediaLinksForAudioRecordingsManagement extends MediaLinksManagement
                 .onFailure(Console::log)
                 .inUiThread()
                 .onSuccess(e -> {
-                    eventCoverImageContainer.setContent(null);
+                    eventCoverImageContainer.setContent(SvgIcons.createAudioCoverPath());
                     trashImage.setVisible(false);
                 })
         );
@@ -101,15 +102,15 @@ public class MediaLinksForAudioRecordingsManagement extends MediaLinksManagement
 
         replaceProgressIndicator.setVisible(false);
         StackPane thumbailStackPane = new StackPane(eventCoverImageContainer, trashImageMonoPane, replaceProgressIndicator);
-        thumbailStackPane.setMaxSize(IMAGE_SIZE, IMAGE_SIZE);
+        Layouts.setFixedSize(thumbailStackPane, IMAGE_SIZE, IMAGE_SIZE);
         thumbailStackPane.setPadding(new Insets(0, 0, 25, 0));
         StackPane.setAlignment(trashImageMonoPane, Pos.BOTTOM_RIGHT);
-        eventCoverImageContainer.setMaxSize(IMAGE_SIZE, IMAGE_SIZE);
+        Layouts.setFixedSize(eventCoverImageContainer, IMAGE_SIZE, IMAGE_SIZE);
 
         topContent.getChildren().add(thumbailStackPane);
 
         FilePicker filePicker = FilePicker.create();
-        filePicker.getAcceptedExtensions().addAll("image/*");
+        filePicker.getAcceptedExtensions().addAll("image/*", ".webp", "image/webp");
         Button uploadButton = Bootstrap.primaryButton(I18nControls.newButton(MediasI18nKeys.Upload));
         uploadButton.setMinWidth(200);
         filePicker.setGraphic(uploadButton);
@@ -118,14 +119,29 @@ public class MediaLinksForAudioRecordingsManagement extends MediaLinksManagement
 
         FXProperties.runOnPropertyChange(fileToUpload -> {
             replaceProgressIndicator.setVisible(true);
-            ModalityCloudImageService.replaceImage(eventCoverCloudImagePath, fileToUpload)
-                .inUiThread()
-                .onComplete(ar -> {
-                    if (ar.failed())
-                        replaceProgressIndicator.setVisible(false);
-                    else
-                        loadAudioCoverPicture();
-                });
+            // Load the image from the uploaded file
+            javafx.scene.image.Image originalImage = new javafx.scene.image.Image(fileToUpload.getObjectURL(), true);
+            FXProperties.runOnPropertiesChange(property -> {
+                if (originalImage.progressProperty().get() == 1) {
+                    // Convert the image to PNG format before uploading
+                    ModalityCloudImageService.prepareImageForUpload(originalImage, false, 1, 0, 0, IMAGE_SIZE, IMAGE_SIZE)
+                        .onFailure(e -> {
+                            Console.log("Failed to prepare image for upload: " + e);
+                            replaceProgressIndicator.setVisible(false);
+                        })
+                        .onSuccess(pngBlob -> {
+                            // Upload the PNG blob
+                            ModalityCloudImageService.replaceImage(eventCoverCloudImagePath, pngBlob)
+                                .inUiThread()
+                                .onComplete(ar -> {
+                                    if (ar.failed())
+                                        replaceProgressIndicator.setVisible(false);
+                                    else
+                                        loadAudioCoverPicture();
+                                });
+                        });
+                }
+            }, originalImage.progressProperty());
         }, filePicker.selectedFileProperty());
 
         topContent.getChildren().add(filePicker.getView());
