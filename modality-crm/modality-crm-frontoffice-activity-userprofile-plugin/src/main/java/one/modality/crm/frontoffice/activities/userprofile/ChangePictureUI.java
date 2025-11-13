@@ -105,6 +105,10 @@ final class ChangePictureUI {
             deltaY = event.getSceneY() - mouseAnchorY[0] + initialTranslateY[0];
             imageView.setTranslateX(deltaX);
             imageView.setTranslateY(deltaY);
+            // Mark that we need to upload the modified image
+            if (imageView.getImage() != null) {
+                isPictureToBeUploaded.setValue(true);
+            }
         });
 
         Label infoMessage = Bootstrap.textDanger(new Label());
@@ -119,6 +123,10 @@ final class ChangePictureUI {
             imageView.setScaleX(zoomFactor);
             imageView.setScaleY(zoomFactor);
             zoomPropertyChanged.setValue(true);
+            // Mark that we need to upload the modified image
+            if (imageView.getImage() != null) {
+                isPictureToBeUploaded.setValue(true);
+            }
         });
         SVGPath zoomOutIcon = SvgIcons.createZoomInOutPath();
         SVGPath zoomInIcon = SvgIcons.createZoomInOutPath();
@@ -280,6 +288,21 @@ final class ChangePictureUI {
         this.callback = callback;
     }
 
+    public void initializeWithCurrentPicture() {
+        String cloudImagePath = ModalityCloudImageService.personImagePath(parentActivity.getCurrentPerson());
+        ModalityCloudImageService.getHdpiImageOnReady(cloudImagePath, MAX_PICTURE_SIZE, MAX_PICTURE_SIZE)
+            .onSuccess(image -> {
+                if (image != null) {
+                    setImage(image);
+                    // Reset flags after initialization - loading the existing picture shouldn't mark it for upload
+                    isPictureToBeUploaded.setValue(false);
+                    isPictureToBeDeleted.setValue(false);
+                    zoomPropertyChanged.setValue(false);
+                }
+            })
+            .onFailure(e -> Console.log("Failed to load profile picture: " + e));
+    }
+
     private void removePicture() {
         setImage(null);
         isPictureToBeDeleted.setValue(true);
@@ -316,6 +339,7 @@ final class ChangePictureUI {
     private void reinitialize() {
         isPictureToBeDeleted.setValue(false);
         isPictureToBeUploaded.setValue(false);
+        zoomPropertyChanged.setValue(false);
         recentlyUploadedCloudPictureId = null;
     }
 
