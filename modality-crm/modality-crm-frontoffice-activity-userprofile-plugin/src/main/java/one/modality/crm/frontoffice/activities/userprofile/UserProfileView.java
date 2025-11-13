@@ -223,6 +223,7 @@ public final class UserProfileView implements ModalityButtonFactoryMixin {
         pickupImageMonoPane.setBackground(new Background(new BackgroundFill(Color.LIGHTGRAY, new CornerRadii(50), Insets.EMPTY)));
         picturePane.getChildren().add(pickupImageMonoPane);
         pickupImageMonoPane.setOnMouseClicked(ev -> {
+            changePictureUI.initializeWithCurrentPicture();
             Region changePictureUIView = changePictureUI.getView();
             DialogCallback callback = DialogUtil.showModalNodeInGoldLayout(changePictureUIView, FXMainFrameDialogArea.getDialogArea());
             FXMainFrameDialogArea.getDialogArea().setOnMouseClicked(e -> callback.closeDialog());
