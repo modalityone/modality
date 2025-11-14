@@ -33,16 +33,16 @@ public final class InvitationLinkService {
     
     // Email templates
     private static final String AUTHORIZATION_REQUEST_SUBJECT = "Authorization Request - Kadampa Booking System";
-    private static final String AUTHORIZATION_REQUEST_BODY = Resource.getText(Resource.toUrl("AuthorizationRequestMailBody.html", InvitationLinkService.class));
-    
+    private static final String AUTHORIZATION_REQUEST_BODY = Resource.getText(Resource.toUrl("emails/AuthorizationRequestMailBody.html", InvitationLinkService.class));
+
     private static final String VALIDATION_REQUEST_SUBJECT = "Validation Required - Kadampa Booking System";
-    private static final String VALIDATION_REQUEST_BODY = Resource.getText(Resource.toUrl("ValidationRequestMailBody.html", InvitationLinkService.class));
-    
+    private static final String VALIDATION_REQUEST_BODY = Resource.getText(Resource.toUrl("emails/ValidationRequestMailBody.html", InvitationLinkService.class));
+
     private static final String INVITATION_TO_MANAGE_SUBJECT = "Booking Manager Invitation - Kadampa Booking System";
-    private static final String INVITATION_TO_MANAGE_BODY = Resource.getText(Resource.toUrl("InvitationToManageMailBody.html", InvitationLinkService.class));
-    
+    private static final String INVITATION_TO_MANAGE_BODY = Resource.getText(Resource.toUrl("emails/InvitationToManageMailBody.html", InvitationLinkService.class));
+
     private static final String REQUEST_APPROVED_SUBJECT = "Request Approved - Kadampa Booking System";
-    private static final String REQUEST_APPROVED_BODY = Resource.getText(Resource.toUrl("RequestApprovedMailBody.html", InvitationLinkService.class));
+    private static final String REQUEST_APPROVED_BODY = Resource.getText(Resource.toUrl("emails/RequestApprovedMailBody.html", InvitationLinkService.class));
 
     /**
      * Sends an authorization request email when someone wants to add a member with an existing account
