@@ -1000,4 +1000,52 @@ public interface ModalityStyle {
         return wrapper;
     }
 
+    // Authorization badge styles for members management
+    String AUTHORIZATION_BADGE = "authorization-badge";
+    String AUTHORIZATION_BADGE_ACTIVE = "authorization-badge-active";
+    String AUTHORIZATION_BADGE_PENDING = "authorization-badge-pending";
+    String AUTHORIZATION_BADGE_NEEDS_VALIDATION = "authorization-badge-needs-validation";
+
+    /**
+     * Creates an authorization badge label with the specified style
+     * Used in members management for showing authorization states
+     *
+     * @param badge The label to style as a badge
+     * @param badgeType The type of badge (active, pending, needs-validation)
+     * @return The styled badge label
+     */
+    static <N extends Node> N authorizationBadge(N badge, String badgeType) {
+        return Bootstrap.style(badge, AUTHORIZATION_BADGE, badgeType);
+    }
+
+    /**
+     * Creates an active authorization badge (green)
+     *
+     * @param badge The label to style
+     * @return The styled badge
+     */
+    static <N extends Node> N authorizationBadgeActive(N badge) {
+        return authorizationBadge(badge, AUTHORIZATION_BADGE_ACTIVE);
+    }
+
+    /**
+     * Creates a pending authorization badge (yellow)
+     *
+     * @param badge The label to style
+     * @return The styled badge
+     */
+    static <N extends Node> N authorizationBadgePending(N badge) {
+        return authorizationBadge(badge, AUTHORIZATION_BADGE_PENDING);
+    }
+
+    /**
+     * Creates a needs validation authorization badge (orange/red)
+     *
+     * @param badge The label to style
+     * @return The styled badge
+     */
+    static <N extends Node> N authorizationBadgeNeedsValidation(N badge) {
+        return authorizationBadge(badge, AUTHORIZATION_BADGE_NEEDS_VALIDATION);
+    }
+
 }

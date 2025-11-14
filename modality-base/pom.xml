@@ -78,6 +78,7 @@
         <module>modality-base-shared-domainmodel</module>
         <module>modality-base-shared-entities</module>
         <module>modality-base-shared-knownitems</module>
+        <module>modality-base-shared-util</module>
     </modules>
 
 </project>

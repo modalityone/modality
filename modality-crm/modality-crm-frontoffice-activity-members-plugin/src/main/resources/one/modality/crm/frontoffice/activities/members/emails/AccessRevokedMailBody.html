@@ -1,0 +1,97 @@
+<html lang="en" dir="ltr"><head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Access Revoked</title>
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #eeeeee;
+        }
+
+        .email-container {
+            max-width: 586px;
+            margin: 60px auto;
+            background: rgba(255, 255, 255, 0.8);
+            border-radius: 52px;
+            box-shadow: 0px 0px 6px 0px rgba(0, 0, 0, 0.25);
+            padding: 54px 56px 76px;
+            text-align: center;
+        }
+
+        .title {
+            font-size: 40px;
+            font-weight: 700;
+            color: #856404;
+            margin-bottom: 34px;
+        }
+
+        .greeting, .message {
+            font-size: 16px;
+            font-weight: 600;
+            color: #838788;
+            line-height: 1.5;
+            margin-bottom: 18px;
+        }
+
+        .divider {
+            width: 100%;
+            height: 1px;
+            background: linear-gradient(to right, transparent, #d0d0d0 20%, #d0d0d0 80%, transparent);
+            margin: 38px 0;
+        }
+
+        .btn-primary {
+            width: 100%;
+            background-color: #0096d6;
+            color: white;
+            padding: 24px 32px;
+            text-decoration: none;
+            border-radius: 8px;
+            font-size: 16px;
+            font-weight: 600;
+            display: inline-block;
+            margin-bottom: 30px;
+        }
+
+        .disclaimer {
+            font-size: 13px;
+            font-weight: 500;
+            color: #bfc0c1;
+            line-height: 1.5;
+        }
+
+        .footer {
+            font-size: 13px;
+            color: #aaaaaa;
+            margin-top: 40px;
+        }
+    </style>
+</head>
+
+<body>
+<div class="email-container">
+    <div class="title">Access Revoked</div>
+
+    <p class="greeting">Hello [managerName],</p>
+
+    <p class="message">
+        <strong>[revokerName]</strong> has revoked your access to manage their bookings. You will no longer be able to view or manage bookings on their behalf.
+    </p>
+
+    <div class="divider"></div>
+
+    <a href="[dashboardLink]" class="btn-primary" style="color: white;">Go to Dashboard</a>
+
+    <p class="disclaimer">
+        If you have any questions, please contact them directly.
+    </p>
+</div>
+
+<div class="footer">
+    <p>© 2025 NKT-IKBU. All rights reserved worldwide.<br>
+    Registered charity 1015054</p>
+</div>
+
+</body></html>

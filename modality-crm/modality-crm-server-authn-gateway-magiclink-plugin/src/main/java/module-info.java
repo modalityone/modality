@@ -4,6 +4,7 @@ module modality.crm.server.authn.gateway.magiclink.plugin {
 
     // Direct dependencies modules
     requires modality.base.shared.entities;
+    requires modality.base.shared.util;
     requires modality.crm.server.authn.gateway.shared;
     requires modality.crm.shared.authn;
     requires webfx.platform.async;

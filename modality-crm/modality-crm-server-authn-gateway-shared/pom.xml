@@ -35,6 +35,12 @@
 
         <dependency>
             <groupId>one.modality</groupId>
+            <artifactId>modality-base-shared-util</artifactId>
+            <version>1.0.0-SNAPSHOT</version>
+        </dependency>
+
+        <dependency>
+            <groupId>one.modality</groupId>
             <artifactId>modality-crm-shared-authn</artifactId>
             <version>1.0.0-SNAPSHOT</version>
         </dependency>
