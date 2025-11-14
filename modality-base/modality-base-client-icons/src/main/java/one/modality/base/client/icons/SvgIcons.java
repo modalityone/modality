@@ -69,6 +69,10 @@ public final class SvgIcons {
     private static final String USER_ICON_PATH = "M16 8C16 10.2091 14.2091 12 12 12C9.79086 12 8 10.2091 8 8C8 5.79086 9.79086 4 12 4C14.2091 4 16 5.79086 16 8Z M12 14C8.68629 14 6 16.6863 6 20V21C6 21.5523 6.44772 22 7 22H17C17.5523 22 18 21.5523 18 21V20C18 16.6863 15.3137 14 12 14Z";
     private static final String USERS_PATH = "M16 11c1.66 0 2.99-1.34 2.99-3S17.66 5 16 5c-1.66 0-3 1.34-3 3s1.34 3 3 3zm-8 0c1.66 0 2.99-1.34 2.99-3S9.66 5 8 5C6.34 5 5 6.34 5 8s1.34 3 3 3zm0 2c-2.33 0-7 1.17-7 3.5V19h14v-2.5c0-2.33-4.67-3.5-7-3.5zm8 0c-.29 0-.62.02-.97.05 1.16.84 1.97 1.97 1.97 3.45V19h6v-2.5c0-2.33-4.67-3.5-7-3.5z";
     private static final String CIRCLE_PATH = "M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 18c-4.42 0-8-3.58-8-8s3.58-8 8-8 8 3.58 8 8-3.58 8-8 8z M12 7c-2.76 0-5 2.24-5 5s2.24 5 5 5 5-2.24 5-5-2.24-5-5-5z";
+    private static final String INFO_PATH = "M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-6h2v6zm0-8h-2V7h2v2z";
+    private static final String ERROR_PATH = "M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-2h2v2zm0-4h-2V7h2v6z";
+    private static final String CHECK_CIRCLE_PATH = "M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z";
+    private static final String X_CIRCLE_PATH = "M12 2C6.47 2 2 6.47 2 12s4.47 10 10 10 10-4.47 10-10S17.53 2 12 2zm5 13.59L15.59 17 12 13.41 8.41 17 7 15.59 10.59 12 7 8.41 8.41 7 12 10.59 15.59 7 17 8.41 13.41 12 17 15.59z";
     // Empty state icons for Members page
     private static final String USERS_EMPTY_PATH = "M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2 M9 11a4 4 0 1 0 0-8 4 4 0 0 0 0 8z M23 21v-2a4 4 0 0 0-3-3.87 M16 3.13a4 4 0 0 1 0 7.75";
     private static final String USERS_WITH_CHECK_PATH = "M16 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2 M8.5 11a4 4 0 1 0 0-8 4 4 0 0 0 0 8z M17 11l2 2 4-4";
@@ -371,6 +375,26 @@ public final class SvgIcons {
         return createSVGPath(USERS_PATH);
     }
 
+    public static SVGPath createUsersEmptyIcon() {
+        return createSVGPath(USERS_PATH);
+    }
+
+    public static SVGPath createInfoCircleIcon() {
+        return createSVGPath(INFO_PATH);
+    }
+
+    public static SVGPath createCheckCircleIcon() {
+        return createSVGPath(CHECK_CIRCLE_PATH);
+    }
+
+    public static SVGPath createExclamationTriangleIcon() {
+        return createSVGPath(WARNING_PATH);
+    }
+
+    public static SVGPath createXCircleIcon() {
+        return createSVGPath(X_CIRCLE_PATH);
+    }
+
     public static SVGPath createCircleSVGPath() {
         return createSVGPath(CIRCLE_PATH);
     }
@@ -388,26 +412,6 @@ public final class SvgIcons {
      */
     public static SVGPath createZoomIconPath() {
         return createSVGPath(ZOOM_PATH);
-    }
-
-    /**
-     * Creates an icon showing multiple users (for "no members" empty state).
-     * Shows silhouettes of people to represent an empty member list.
-     *
-     * @return SVGPath representing multiple users icon
-     */
-    public static SVGPath createUsersEmptyIcon() {
-        return createStrokeSVGPath(USERS_EMPTY_PATH, Color.web("#4a4748"), 2);
-    }
-
-    /**
-     * Creates an icon showing a user with a checkmark (for "no managers" empty state).
-     * Shows a person silhouette with a checkmark to represent booking managers.
-     *
-     * @return SVGPath representing user with checkmark icon
-     */
-    public static SVGPath createUsersWithCheckIcon() {
-        return createStrokeSVGPath(USERS_WITH_CHECK_PATH, Color.web("#4a4748"), 2);
     }
 }
 

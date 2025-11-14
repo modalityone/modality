@@ -341,40 +341,37 @@ public class MembersView {
     }
 
     public void showAddMemberDialog(Consumer<AddMemberData> onDataEntered) {
-        DialogContent dialog = new DialogContent();
-        dialog.setTitle(I18n.getI18nText(MembersI18nKeys.AddMemberModalTitle));
-
-        VBox content = new VBox(20);
-        content.setPadding(new Insets(20));
-
-        // First Name field
+        // Create form fields
         Label firstNameLabel = I18nControls.newLabel(MembersI18nKeys.FirstName);
         TextField firstNameField = new TextField();
         firstNameField.setPromptText(I18n.getI18nText(MembersI18nKeys.FirstNamePlaceholder));
 
-        // Last Name field
         Label lastNameLabel = I18nControls.newLabel(MembersI18nKeys.LastName);
         TextField lastNameField = new TextField();
         lastNameField.setPromptText(I18n.getI18nText(MembersI18nKeys.LastNamePlaceholder));
 
-        // Email field
         Label emailLabel = I18nControls.newLabel(MembersI18nKeys.AddMemberEmailLabel);
         TextField emailField = new TextField();
         emailField.setPromptText(I18n.getI18nText(MembersI18nKeys.AddMemberEmailPlaceholder));
 
-        // Info message
-        Label infoLabel = Bootstrap.small(Bootstrap.textSecondary(
-                I18nControls.newLabel(MembersI18nKeys.AddMemberInfoMessage)));
-        infoLabel.setWrapText(true);
-
-        content.getChildren().addAll(
+        // Create form content
+        VBox formContent = new VBox(16,
                 firstNameLabel, firstNameField,
                 lastNameLabel, lastNameField,
-                emailLabel, emailField,
-                infoLabel);
-        dialog.setContent(content);
+                emailLabel, emailField);
+        formContent.setPadding(new Insets(20, 0, 20, 0));
 
-        dialog.setOkCancel();
+        // Create dialog using factory method
+        DialogContent dialog = DialogContent.createInformationDialogWithTwoActions(
+                I18n.getI18nText(MembersI18nKeys.AddMemberModalTitle),
+                I18n.getI18nText(MembersI18nKeys.AddMemberModalTitle),
+                "",
+                I18n.getI18nText(MembersI18nKeys.AddMemberInfoMessage)
+        );
+
+        // Add form fields to the dialog
+        dialog.setContent(formContent);
+
         DialogBuilderUtil.showModalNodeInGoldLayout(dialog, FXMainFrameDialogArea.getDialogArea());
         DialogBuilderUtil.armDialogContentButtons(dialog, dialogCallback -> {
             String firstName = firstNameField.getText().trim();
@@ -399,10 +396,11 @@ public class MembersView {
      * Show a dialog informing the user that the email was not found.
      */
     public void showEmailNotFoundDialog(String email) {
-        DialogContent dialog = new DialogContent()
-                .setTitle(I18n.getI18nText(MembersI18nKeys.EmailNotFoundTitle))
-                .setContentText(I18n.getI18nText(MembersI18nKeys.EmailNotFoundMessage, email))
-                .setOk();
+        DialogContent dialog = DialogContent.createInformationDialog(
+                I18n.getI18nText(MembersI18nKeys.EmailNotFoundTitle),
+                I18n.getI18nText(MembersI18nKeys.EmailNotFoundTitle),
+                I18n.getI18nText(MembersI18nKeys.EmailNotFoundMessage, email)
+        );
         DialogBuilderUtil.showModalNodeInGoldLayout(dialog, FXMainFrameDialogArea.getDialogArea());
         DialogBuilderUtil.armDialogContentButtons(dialog, DialogCallback::closeDialog);
     }
@@ -411,10 +409,11 @@ public class MembersView {
      * Show a dialog informing the user that authorization request was sent.
      */
     public void showAuthorizationSentDialog(String memberName) {
-        DialogContent dialog = new DialogContent()
-                .setTitle(I18n.getI18nText(MembersI18nKeys.AuthorizationSentTitle))
-                .setContentText(I18n.getI18nText(MembersI18nKeys.AuthorizationSentMessage, memberName))
-                .setOk();
+        DialogContent dialog = DialogContent.createSuccessDialog(
+                I18n.getI18nText(MembersI18nKeys.AuthorizationSentTitle),
+                I18n.getI18nText(MembersI18nKeys.AuthorizationSentTitle),
+                I18n.getI18nText(MembersI18nKeys.AuthorizationSentMessage, memberName)
+        );
         DialogBuilderUtil.showModalNodeInGoldLayout(dialog, FXMainFrameDialogArea.getDialogArea());
         DialogBuilderUtil.armDialogContentButtons(dialog, DialogCallback::closeDialog);
     }
@@ -423,30 +422,31 @@ public class MembersView {
      * Show the "Invite Manager" dialog and return the email entered by the user.
      */
     public void showInviteManagerDialog(Consumer<String> onEmailEntered) {
-        DialogContent dialog = new DialogContent();
-        dialog.setTitle(I18n.getI18nText(MembersI18nKeys.InviteManagerModalTitle));
-
-        VBox content = new VBox(20);
-        content.setPadding(new Insets(20));
-
-        // Description
+        // Create form fields
         Label descLabel = I18nControls.newLabel(MembersI18nKeys.InviteManagerDescription);
         descLabel.setWrapText(true);
 
-        // Email field
         Label emailLabel = I18nControls.newLabel(MembersI18nKeys.InviteManagerEmailLabel);
         TextField emailField = new TextField();
         emailField.setPromptText(I18n.getI18nText(MembersI18nKeys.InviteManagerEmailPlaceholder));
 
-        // Permissions info
-        Label permissionsLabel = Bootstrap.small(Bootstrap.textSecondary(
-                I18nControls.newLabel(MembersI18nKeys.InviteManagerPermissions)));
-        permissionsLabel.setWrapText(true);
+        // Create form content
+        VBox formContent = new VBox(16,
+                descLabel,
+                emailLabel, emailField);
+        formContent.setPadding(new Insets(20, 0, 20, 0));
 
-        content.getChildren().addAll(descLabel, emailLabel, emailField, permissionsLabel);
-        dialog.setContent(content);
+        // Create dialog using factory method
+        DialogContent dialog = DialogContent.createInformationDialogWithTwoActions(
+                I18n.getI18nText(MembersI18nKeys.InviteManagerModalTitle),
+                I18n.getI18nText(MembersI18nKeys.InviteManagerModalTitle),
+                "",
+                I18n.getI18nText(MembersI18nKeys.InviteManagerPermissions)
+        );
 
-        dialog.setOkCancel();
+        // Add form fields to the dialog
+        dialog.setContent(formContent);
+
         DialogBuilderUtil.showModalNodeInGoldLayout(dialog, FXMainFrameDialogArea.getDialogArea());
         DialogBuilderUtil.armDialogContentButtons(dialog, dialogCallback -> {
             String email = emailField.getText().trim();
@@ -461,10 +461,11 @@ public class MembersView {
      * Show a generic error dialog.
      */
     public void showErrorDialog(String title, String message) {
-        DialogContent dialog = new DialogContent()
-                .setTitle(title)
-                .setContentText(message)
-                .setOk();
+        DialogContent dialog = DialogContent.createErrorDialog(
+                title,
+                title,
+                message
+        );
         DialogBuilderUtil.showModalNodeInGoldLayout(dialog, FXMainFrameDialogArea.getDialogArea());
         DialogBuilderUtil.armDialogContentButtons(dialog, DialogCallback::closeDialog);
     }
@@ -473,24 +474,17 @@ public class MembersView {
      * Show a dialog for editing a member's details.
      */
     public void showEditMemberDialog(Person person, Consumer<MemberUpdateData> onUpdate) {
-        DialogContent dialog = new DialogContent();
-        dialog.setTitle(I18n.getI18nText(MembersI18nKeys.EditMemberTitle));
+        // Check if this is an authorized member (has accountPerson)
+        boolean isAuthorizedMember = person.getAccountPerson() != null;
 
-        VBox content = new VBox(16);
-        content.setPadding(new Insets(20));
-
-        // First Name field
+        // Create form fields
         Label firstNameLabel = I18nControls.newLabel(MembersI18nKeys.FirstName);
         TextField firstNameField = new TextField(person.getFirstName());
         firstNameField.setPromptText(I18n.getI18nText(MembersI18nKeys.FirstNamePlaceholder));
 
-        // Last Name field
         Label lastNameLabel = I18nControls.newLabel(MembersI18nKeys.LastName);
         TextField lastNameField = new TextField(person.getLastName());
         lastNameField.setPromptText(I18n.getI18nText(MembersI18nKeys.LastNamePlaceholder));
-
-        // Check if this is an authorized member (has accountPerson)
-        boolean isAuthorizedMember = person.getAccountPerson() != null;
 
         // Email field - only show for direct members (no accountPerson)
         Label emailLabel = null;
@@ -501,24 +495,28 @@ public class MembersView {
             emailField.setPromptText(I18n.getI18nText(MembersI18nKeys.EmailPlaceholder));
         }
 
-        // Info message - different message for authorized members
-        Label infoLabel = Bootstrap.small(Bootstrap.textSecondary(
-                I18nControls.newLabel(isAuthorizedMember ? MembersI18nKeys.EditAuthorizedMemberInfoMessage : MembersI18nKeys.EditMemberInfoMessage)));
-        infoLabel.setWrapText(true);
-
-        // Build content - conditionally include email field
-        content.getChildren().addAll(
+        // Create form content
+        VBox formContent = new VBox(16);
+        formContent.setPadding(new Insets(20, 0, 20, 0));
+        formContent.getChildren().addAll(
                 firstNameLabel, firstNameField,
                 lastNameLabel, lastNameField
         );
         if (!isAuthorizedMember) {
-            content.getChildren().addAll(emailLabel, emailField);
+            formContent.getChildren().addAll(emailLabel, emailField);
         }
-        content.getChildren().add(infoLabel);
 
-        dialog.setContent(content);
+        // Create dialog using factory method - different info message for authorized members
+        DialogContent dialog = DialogContent.createInformationDialogWithTwoActions(
+                I18n.getI18nText(MembersI18nKeys.EditMemberTitle),
+                null,
+                "",
+                I18n.getI18nText(isAuthorizedMember ? MembersI18nKeys.EditAuthorizedMemberInfoMessage : MembersI18nKeys.EditMemberInfoMessage)
+        );
 
-        dialog.setOkCancel();
+        // Add form fields to the dialog
+        dialog.setContent(formContent);
+
         DialogBuilderUtil.showModalNodeInGoldLayout(dialog, FXMainFrameDialogArea.getDialogArea());
 
         // Capture email field reference for button callback

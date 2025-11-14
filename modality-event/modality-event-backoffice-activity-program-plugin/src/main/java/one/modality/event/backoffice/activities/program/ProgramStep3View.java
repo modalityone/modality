@@ -433,7 +433,7 @@ final class ProgramStep3View {
 
         // Replace button (circular, 40px) - pen icon
         FilePicker replacePicker = FilePicker.create();
-        replacePicker.getAcceptedExtensions().addAll("image/*");
+        replacePicker.getAcceptedExtensions().addAll("image/*", ".webp", "image/webp");
         SVGPath replaceIcon = SvgIcons.createPenPath();
         replaceIcon.setStroke(javafx.scene.paint.Color.web("#374151"));
         replaceIcon.setFill(javafx.scene.paint.Color.TRANSPARENT);
@@ -579,7 +579,7 @@ final class ProgramStep3View {
 
         // Primary upload button with gradient and dynamic text
         FilePicker uploadPicker = FilePicker.create();
-        uploadPicker.getAcceptedExtensions().addAll("image/*");
+        uploadPicker.getAcceptedExtensions().addAll("image/*", ".webp", "image/webp");
 
         Button uploadButton = new Button();
         uploadButton.textProperty().bind(FXProperties.compute(
@@ -689,17 +689,32 @@ final class ProgramStep3View {
         }
 
         imageUploadProgressIndicator.setVisible(true);
-        ModalityCloudImageService.replaceImage(eventCoverCloudImagePath, fileToUpload)
-            .inUiThread()
-            .onComplete(ar -> {
-                if (ar.failed()) {
-                    Console.log("Failed to upload image: " + ar.cause());
-                    imageUploadProgressIndicator.setVisible(false);
-                } else {
-                    Console.log("Image uploaded successfully");
-                    loadEventCoverImage();
-                }
-            });
+        // Load the image from the uploaded file
+        javafx.scene.image.Image originalImage = new javafx.scene.image.Image(fileToUpload.getObjectURL(), true);
+        FXProperties.runOnPropertiesChange(property -> {
+            if (originalImage.progressProperty().get() == 1) {
+                // Convert the image to PNG format before uploading
+                ModalityCloudImageService.prepareImageForUpload(originalImage, false, 1, 0, 0, EVENT_IMAGE_SIZE, EVENT_IMAGE_SIZE)
+                    .onFailure(e -> {
+                        Console.log("Failed to prepare image for upload: " + e);
+                        imageUploadProgressIndicator.setVisible(false);
+                    })
+                    .onSuccess(pngBlob -> {
+                        // Upload the PNG blob
+                        ModalityCloudImageService.replaceImage(eventCoverCloudImagePath, pngBlob)
+                            .inUiThread()
+                            .onComplete(ar -> {
+                                if (ar.failed()) {
+                                    Console.log("Failed to upload image: " + ar.cause());
+                                    imageUploadProgressIndicator.setVisible(false);
+                                } else {
+                                    Console.log("Image uploaded successfully");
+                                    loadEventCoverImage();
+                                }
+                            });
+                    });
+            }
+        }, originalImage.progressProperty());
     }
 
     /**
