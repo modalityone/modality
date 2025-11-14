@@ -34,6 +34,7 @@ public interface MembersI18nKeys {
     Object InviteManagerEmailPlaceholder = "InviteManagerEmailPlaceholder";
     Object EditMemberTitle = "EditMemberTitle";
     Object DeclineAction = "DeclineAction";
+    Object AcceptAction = "AcceptAction";
     Object AddMemberModalTitle = "AddMemberModalTitle";
     Object UsesYourEmail = "UsesYourEmail";
     Object AuthorizationSentTitle = "AuthorizationSentTitle";

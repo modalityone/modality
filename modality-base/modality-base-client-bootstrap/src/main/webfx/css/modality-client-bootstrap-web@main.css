@@ -564,25 +564,34 @@
 
 /* Authorization badges for members management */
 .authorization-badge {
-    -fx-padding: 4px 12px;
-    -fx-background-radius: 12px;
-    -fx-font-size: 11px;
-    -fx-font-weight: 500;
-    -fx-alignment: center;
+    border-radius: 12px;
+    font-size: 11px;
+    font-weight: 500;
+    text-align: center;
+    display: inline-block;
 }
 
 .authorization-badge-active {
-    -fx-background-color: #d4edda;
-    -fx-text-fill: #155724;
+    background-color: #d4edda;
+    color: #155724;
+}
+.authorization-badge-active fx-text {
+    color: #155724;
 }
 
 .authorization-badge-pending {
-    -fx-background-color: #fff3cd;
-    -fx-text-fill: #856404;
+    background-color: #fff3cd;
+    color: #856404;
+}
+.authorization-badge-pending fx-text {
+    color: #856404;
 }
 
 .authorization-badge-needs-validation {
-    -fx-background-color: #ffd6cc;
-    -fx-text-fill: #d63700;
-    -fx-font-weight: 600;
+    background-color: #ffd6cc;
+    color: #d63700;
+    font-weight: 600;
+}
+.authorization-badge-needs-validation fx-text {
+    color: #d63700;
 }

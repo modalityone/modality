@@ -285,8 +285,12 @@ public record MembersItemRendererFactory(MemberActionHandler memberActionHandler
             statusLabel.getStyleClass().add("text-italic");
             infoBox.getChildren().add(statusLabel);
         } else if (type == ManagerItem.ManagerItemType.PENDING_INCOMING_INVITATION) {
+            // Get the inviter's name (the person who wants to manage my bookings)
+            String inviterName = invitation != null && invitation.getInviter() != null
+                    ? invitation.getInviter().getFullName()
+                    : managerItem.getManagerName();
             Label statusLabel = Bootstrap.small(Bootstrap.textSecondary(
-                I18nControls.newLabel(MembersI18nKeys.WantsToManageBookings)));
+                new Label(I18n.getI18nText(MembersI18nKeys.WantsToManageBookings, inviterName))));
             infoBox.getChildren().add(statusLabel);
         }
 

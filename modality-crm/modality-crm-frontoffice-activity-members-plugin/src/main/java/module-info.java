@@ -15,6 +15,7 @@ module modality.crm.frontoffice.activity.members.plugin {
     requires modality.crm.frontoffice.activity.userprofile.plugin;
     requires modality.crm.frontoffice.help;
     requires modality.crm.shared.authn;
+    requires webfx.extras.async;
     requires webfx.extras.i18n;
     requires webfx.extras.i18n.controls;
     requires webfx.extras.operation;
