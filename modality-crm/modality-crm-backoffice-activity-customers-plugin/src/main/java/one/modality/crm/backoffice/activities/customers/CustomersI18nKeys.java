@@ -69,6 +69,7 @@ public interface CustomersI18nKeys {
     Object AccountTypeFrontoffice = "AccountTypeFrontoffice";
     Object OwnerAccountDescription = "OwnerAccountDescription";
     Object AccountTypeBackoffice = "AccountTypeBackoffice";
+    Object LinkedAccountDescription = "LinkedAccountDescription";
     Object RegistrationsTab = "RegistrationsTab";
     Object BookingStatusLabel = "BookingStatusLabel";
     Object MembersDescription = "MembersDescription";
@@ -79,6 +80,7 @@ public interface CustomersI18nKeys {
     Object ActiveStatusFilterInactive = "ActiveStatusFilterInactive";
     Object LoadingRegistrationsText = "LoadingRegistrationsText";
     Object AccountTypeFilterLabel = "AccountTypeFilterLabel";
+    Object LinkedAccountTitle = "LinkedAccountTitle";
     Object StatusPartial = "StatusPartial";
     Object AccountTypeFilterFrontoffice = "AccountTypeFilterFrontoffice";
     Object ActiveStatusFilterActive = "ActiveStatusFilterActive";

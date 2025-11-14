@@ -66,7 +66,7 @@ final class CustomersView {
                 {expression: 'organization.name', label: 'Center', prefWidth: 250, hShrink: true, textAlign: 'center'},
                 {expression: 'this', label: 'Account Type', renderer: 'customerAccountType', prefWidth: 250, hShrink: true, textAlign: 'center'},
                 {expression: 'this', label: 'Status', renderer: 'customerStatus', prefWidth: 120, hShrink: true, textAlign: 'center'},
-                {expression: 'this', label: 'Members', renderer: 'customerRolesLinks', prefWidth: 200, hShrink: true, textAlign: 'center'}
+                {expression: 'this', label: '#Members / Owner', renderer: 'customerRolesLinks', prefWidth: 200, hShrink: true, textAlign: 'center'}
             ]""";
 
     // Table header height for limit calculation
@@ -78,6 +78,8 @@ final class CustomersView {
     private final CustomersPresentationModel pm;
     private final CustomersActivity activity;
     private final EntityStore entityStore = EntityStore.create();
+    private final ProgressIndicator loadingIndicator;
+    private final StackPane gridContainer;
 
     private UpdateStore updateStore;
     private Person personToUpdate;
@@ -162,6 +164,16 @@ final class CustomersView {
         customersGrid.setMaxWidth(Double.MAX_VALUE);
         customersGrid.getStyleClass().addAll("customers-grid");
 
+        // Create loading indicator
+        loadingIndicator = new ProgressIndicator();
+        loadingIndicator.setMaxSize(50, 50);
+        loadingIndicator.setVisible(true); // Initially visible while loading
+
+        // Wrap grid and loading indicator in a StackPane
+        gridContainer = new StackPane();
+        gridContainer.getChildren().addAll(customersGrid, loadingIndicator);
+        StackPane.setAlignment(loadingIndicator, Pos.CENTER);
+
         // Bind limit property - when checkbox is selected, limit to 100, otherwise no limit
         FXProperties.runNowAndOnPropertiesChange(() ->
             pm.limitProperty().setValue(limitCheckBox.isSelected() ? 100 : -1),
@@ -171,14 +183,21 @@ final class CustomersView {
         // We also manually update it when member counts change (see listener below on allMembersForCounting)
         customersGrid.visualResultProperty().bind(pm.masterVisualResultProperty());
 
+        // Show/hide loading indicator based on whether we're waiting for data
+        // Listen to search and filter changes to show loading indicator
+        FXProperties.runOnPropertiesChange(() -> {
+            // Show loading indicator when filters change (data will be reloaded)
+            loadingIndicator.setVisible(true);
+        }, pm.searchTextProperty(), pm.accountTypeFilterProperty(), pm.activeStatusFilterProperty(), pm.limitProperty());
+
         // Create edit panel (initially hidden)
         editPanel = createEditPanel();
 
         // Create split pane with vertical orientation (grid on top, edit panel below)
         splitPane = new SplitPane();
         splitPane.setOrientation(Orientation.VERTICAL);
-        // Initially only show the grid
-        splitPane.getItems().add(customersGrid);
+        // Initially only show the grid container (with loading indicator)
+        splitPane.getItems().add(gridContainer);
         // Set the divider position to 60% for the grid, 40% for the edit panel when visible
         splitPane.setDividerPositions(0.6);
 
@@ -203,7 +222,28 @@ final class CustomersView {
         customerColumns = dev.webfx.stack.orm.reactive.mapping.entities_to_visual.VisualEntityColumnFactory.get()
             .fromJsonArray(CUSTOMER_COLUMNS, dataSourceModel.getDomainModel(), "Person");
 
-        // Set up the reactive mapper for customers
+        // IMPORTANT: Load ALL persons with frontend accounts (both owners and members) FIRST
+        // This must be loaded before the customers table so that owner information is available for rendering
+        // We load both owners and members so we can find the owner for any frontendAccountId
+        //JSON5
+        allMembersMapper = ReactiveEntitiesMapper.<Person>createPushReactiveChain()
+            .setDataSourceModel(dataSourceModel)
+            .always(
+                //JSON5
+                "{class: 'Person', alias: 'alac', " +
+                    "fields: 'id, firstName, lastName, fullName, owner, frontendAccount', " +
+                    "where: '!removed and frontendAccount!=null'}")
+            .storeEntitiesInto(allMembersForCounting)
+            .addEntitiesHandler(entityList -> {
+                Console.log("All members/owners loaded: " + entityList.size() + " persons");
+                // Now that owner data is loaded, start the customers mapper
+                if (customersMapper != null) {
+                    customersMapper.start();
+                }
+            });
+        allMembersMapper.start();
+
+        // Set up the reactive mapper for customers (but don't start it yet - will start after allMembersMapper finishes)
         customersMapper = ReactiveVisualMapper.<Person>createPushReactiveChain(activity)
             .always(
                 //JSON5
@@ -239,21 +279,10 @@ final class CustomersView {
                 Console.log("Customers loaded: " + entityList.size() + " customers");
                 // Store current entities so we can manually recreate visual result when member counts change
                 currentCustomersFeed.setAll(entityList);
-            })
-            .start();
-
-        // Set up a mapper to load ALL members with minimal fields (for counting in the table)
-        // This is loaded once at startup and kept in memory, and refreshed when members are added/removed
-        //JSON5
-        allMembersMapper = ReactiveEntitiesMapper.<Person>createPushReactiveChain()
-            .setDataSourceModel(dataSourceModel)
-            .always(
-                //JSON5
-                "{class: 'Person', alias: 'alac', " +
-                    "fields: 'id, frontendAccount', " +
-                    "where: '!owner and !removed and frontendAccount!=null'}")
-            .storeEntitiesInto(allMembersForCounting);
-        allMembersMapper.start();
+                // Hide loading indicator now that data is loaded
+                UiScheduler.runInUiThread(() -> loadingIndicator.setVisible(false));
+            });
+        // Note: .start() NOT called here - will be called after allMembersMapper finishes loading
 
         // Set up the reactive mapper for members (persons using the selected person's frontend account)
         // Using the same logic as MembersActivity - this loads full details for display in the Account tab
@@ -1039,39 +1068,97 @@ final class CustomersView {
             linkedBox.getChildren().addAll(description, personItems);
             accountTypeSection.getChildren().addAll(title, linkedBox);
 
-        } else if (accountPerson != null) {
-            // Show owner account
-            Label title = I18nControls.newLabel(OwnerAccountTitle);
-            title.getStyleClass().add("form-section-title");
+        } else if (account != null) {
+            // Non-owner with frontend account - show both owner and linked account (if different)
+            Person selectedPerson = selectedPersonProperty.get();
+            if (selectedPerson != null) {
+                // Find the actual owner of this frontend account
+                Person owner = getOwnerForFrontendAccount(account.getPrimaryKey());
+                // Use the accountPerson parameter passed to this method
 
-            VBox ownerBox = new VBox();
-            ownerBox.setSpacing(16);
-            ownerBox.setPadding(new Insets(20));
-            ownerBox.getStyleClass().add("members-box");
+                VBox infoBox = new VBox();
+                infoBox.setSpacing(20);
 
-            Label description = I18nControls.newLabel(OwnerAccountDescription);
-            description.getStyleClass().add("members-description");
+                // Show Owner section
+                if (owner != null) {
+                    Label ownerTitle = I18nControls.newLabel(OwnerAccountTitle);
+                    ownerTitle.getStyleClass().add("form-section-title");
 
-            HBox ownerItem = new HBox();
-            ownerItem.setSpacing(12);
-            ownerItem.setPadding(new Insets(12));
-            ownerItem.getStyleClass().add("member-item");
-            ownerItem.setAlignment(Pos.CENTER_LEFT);
+                    VBox ownerBox = new VBox();
+                    ownerBox.setSpacing(16);
+                    ownerBox.setPadding(new Insets(20));
+                    ownerBox.getStyleClass().add("members-box");
 
-            Text ownerIcon = new Text("\uD83D\uDC64"); // 👤
-            ownerIcon.getStyleClass().add("member-user-icon");
+                    Label ownerDescription = I18nControls.newLabel(OwnerAccountDescription);
+                    ownerDescription.getStyleClass().add("members-description");
 
-            Label ownerName = new Label("#" + accountPerson.getPrimaryKey().toString() + " " + accountPerson.getFirstName() + " " + accountPerson.getLastName());
-            ownerName.getStyleClass().add("member-name");
+                    HBox ownerItem = new HBox();
+                    ownerItem.setSpacing(12);
+                    ownerItem.setPadding(new Insets(12));
+                    ownerItem.getStyleClass().add("member-item");
+                    ownerItem.setAlignment(Pos.CENTER_LEFT);
 
-            Label ownerEmail = new Label(accountPerson.getEmail());
-            ownerEmail.getStyleClass().add("member-email");
-            HBox.setHgrow(ownerEmail, Priority.ALWAYS);
+                    Text ownerIcon = new Text("\uD83D\uDC64"); // 👤
+                    ownerIcon.getStyleClass().add("member-user-icon");
 
-            ownerItem.getChildren().addAll(ownerIcon, ownerName, ownerEmail);
+                    Label ownerName = new Label("#" + owner.getPrimaryKey().toString() + " " + owner.getFirstName() + " " + owner.getLastName());
+                    ownerName.getStyleClass().add("member-name");
 
-            ownerBox.getChildren().addAll(description, ownerItem);
-            accountTypeSection.getChildren().addAll(title, ownerBox);
+                    Label ownerEmail = new Label(owner.getEmail());
+                    ownerEmail.getStyleClass().add("member-email");
+                    HBox.setHgrow(ownerEmail, Priority.ALWAYS);
+
+                    ownerItem.getChildren().addAll(ownerIcon, ownerName, ownerEmail);
+                    ownerBox.getChildren().addAll(ownerDescription, ownerItem);
+                    infoBox.getChildren().addAll(ownerTitle, ownerBox);
+                }
+
+                // Show Linked Account section (if different from owner)
+                if (accountPerson != null && (owner == null || !accountPerson.getPrimaryKey().equals(owner.getPrimaryKey()))) {
+                    Label linkedTitle = I18nControls.newLabel(LinkedAccountTitle);
+                    linkedTitle.getStyleClass().add("form-section-title");
+
+                    VBox linkedBox = new VBox();
+                    linkedBox.setSpacing(16);
+                    linkedBox.setPadding(new Insets(20));
+                    linkedBox.getStyleClass().add("members-box");
+
+                    Label linkedDescription = I18nControls.newLabel(LinkedAccountDescription);
+                    linkedDescription.getStyleClass().add("members-description");
+
+                    HBox linkedItem = new HBox();
+                    linkedItem.setSpacing(12);
+                    linkedItem.setPadding(new Insets(12));
+                    linkedItem.getStyleClass().add("member-item");
+                    linkedItem.setAlignment(Pos.CENTER_LEFT);
+
+                    Text linkedIcon = new Text("🔗"); // Link icon
+                    linkedIcon.getStyleClass().add("member-user-icon");
+
+                    Label linkedName = new Label("#" + accountPerson.getPrimaryKey().toString() + " " + accountPerson.getFirstName() + " " + accountPerson.getLastName());
+                    linkedName.getStyleClass().add("member-name");
+
+                    Label linkedEmail = new Label(accountPerson.getEmail());
+                    linkedEmail.getStyleClass().add("member-email");
+                    HBox.setHgrow(linkedEmail, Priority.ALWAYS);
+
+                    linkedItem.getChildren().addAll(linkedIcon, linkedName, linkedEmail);
+                    linkedBox.getChildren().addAll(linkedDescription, linkedItem);
+                    infoBox.getChildren().addAll(linkedTitle, linkedBox);
+                }
+
+                if (!infoBox.getChildren().isEmpty()) {
+                    accountTypeSection.getChildren().add(infoBox);
+                } else {
+                    VBox placeholderBox = new VBox();
+                    placeholderBox.setSpacing(16);
+                    placeholderBox.setPadding(new Insets(20));
+                    placeholderBox.getStyleClass().add("members-box");
+                    Label placeholder = new Label(I18n.getI18nText(NoOwnerText));
+                    placeholderBox.getChildren().add(placeholder);
+                    accountTypeSection.getChildren().add(placeholderBox);
+                }
+            }
         } else {
             VBox ownerBox = new VBox();
             ownerBox.setSpacing(16);
@@ -1350,9 +1437,9 @@ final class CustomersView {
     }
 
     /**
-     * Helper method for renderers to get the count of members for a specific person.
-     * Returns the number of persons who use the given person's frontend account.
-     * Uses allMembersForCounting which contains minimal data (id, frontendAccount) for all members.
+     * Helper method for renderers to get the count of members (non-owners) for a specific person's frontend account.
+     * Returns the number of persons who use the given person's frontend account but are not owners.
+     * Uses allMembersForCounting which contains data for all persons with frontend accounts.
      */
     int getMembersCount(Person person) {
         if (person == null) return 0;
@@ -1367,13 +1454,30 @@ final class CustomersView {
 
         if (accountId == null) return 0;
 
-        // Count persons in allMembersForCounting who have the same frontendAccount
-        // This list contains minimal data for ALL members, loaded once at startup
+        // Count persons in allMembersForCounting who have the same frontendAccount and are NOT owners
+        // This list contains data for ALL persons with accounts (both owners and members), loaded once at startup
         final Object finalAccountId = accountId;
         return (int) allMembersForCounting.stream()
             .filter(p -> p.getFrontendAccount() != null &&
-                        p.getFrontendAccount().getPrimaryKey().equals(finalAccountId))
+                        p.getFrontendAccount().getPrimaryKey().equals(finalAccountId) &&
+                        !Boolean.TRUE.equals(p.isOwner()))
             .count();
+    }
+
+    /**
+     * Helper method for renderers to find the owner Person for a given frontend account.
+     * Returns the Person who has owner=true for the specified frontendAccountId.
+     * Uses allMembersForCounting which contains data for all persons with frontend accounts.
+     */
+    Person getOwnerForFrontendAccount(Object frontendAccountId) {
+        if (frontendAccountId == null) return null;
+
+        return allMembersForCounting.stream()
+            .filter(p -> p.getFrontendAccount() != null &&
+                        p.getFrontendAccount().getPrimaryKey().equals(frontendAccountId) &&
+                        Boolean.TRUE.equals(p.isOwner()))
+            .findFirst()
+            .orElse(null);
     }
 
 }

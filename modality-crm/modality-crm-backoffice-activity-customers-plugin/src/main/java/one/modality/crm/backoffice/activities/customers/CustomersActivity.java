@@ -56,8 +56,8 @@ final class CustomersActivity extends ViewDomainActivityBase implements FilterBu
         header.setPadding(new Insets(20, 24, 20, 24));
         header.setAlignment(Pos.CENTER);
         Label title = Bootstrap.textPrimary(Bootstrap.h2(I18nControls.newLabel(PageTitle)));
-        title.setContentDisplay(ContentDisplay.TOP);
-        title.setGraphicTextGap(30);
+        title.setContentDisplay(ContentDisplay.LEFT);
+        title.setGraphicTextGap(12);
         header.getChildren().addAll(title);
         return header;
     }
