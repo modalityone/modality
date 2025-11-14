@@ -1015,6 +1015,10 @@ public interface ModalityStyle {
      * @return The styled badge label
      */
     static <N extends Node> N authorizationBadge(N badge, String badgeType) {
+        // Set padding in Java code for cross-platform consistency
+        if (badge instanceof javafx.scene.control.Labeled) {
+            ((javafx.scene.control.Labeled) badge).setPadding(new Insets(4, 12, 4, 12));
+        }
         return Bootstrap.style(badge, AUTHORIZATION_BADGE, badgeType);
     }
 

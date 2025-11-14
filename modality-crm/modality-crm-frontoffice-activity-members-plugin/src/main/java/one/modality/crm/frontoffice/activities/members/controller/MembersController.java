@@ -1,5 +1,6 @@
 package one.modality.crm.frontoffice.activities.members.controller;
 
+import dev.webfx.extras.async.AsyncSpinner;
 import dev.webfx.extras.i18n.I18n;
 import dev.webfx.extras.util.dialog.DialogCallback;
 import dev.webfx.extras.util.dialog.builder.DialogBuilderUtil;
@@ -9,6 +10,7 @@ import dev.webfx.platform.uischeduler.UiScheduler;
 import dev.webfx.stack.orm.domainmodel.DataSourceModel;
 import dev.webfx.stack.orm.entity.EntityStore;
 import dev.webfx.stack.orm.entity.UpdateStore;
+import javafx.scene.control.Button;
 import one.modality.base.client.mainframe.fx.FXMainFrameDialogArea;
 import one.modality.base.shared.entities.Invitation;
 import one.modality.base.shared.entities.Person;
@@ -305,15 +307,8 @@ public class MembersController {
                             "Failed to send validation request: " + error.getMessage()));
                 })
                 .onSuccess(ignored -> UiScheduler.scheduleDeferred(() -> {
-                    DialogContent successDialog = new DialogContent()
-                            .setTitle(I18n.getI18nText(MembersI18nKeys.ValidationRequestSent))
-                            .setContentText(I18n.getI18nText(MembersI18nKeys.ValidationRequestSentTo, invitee.getFullName()))
-                            .setOk();
-                    DialogBuilderUtil.showModalNodeInGoldLayout(successDialog, FXMainFrameDialogArea.getDialogArea());
-                    DialogBuilderUtil.armDialogContentButtons(successDialog, dc -> {
-                        dc.closeDialog();
-                        refreshData();
-                    });
+                    view.showSuccessMessage(I18n.getI18nText(MembersI18nKeys.ValidationRequestSentTo, invitee.getFullName()));
+                    refreshData();
                 }));
     }
 
@@ -359,15 +354,8 @@ public class MembersController {
                                         .onFailure(error -> UiScheduler.scheduleDeferred(() ->
                                                 showErrorDialog("Error", "Failed to send validation request: " + error.getMessage())))
                                         .onSuccess(ignored -> UiScheduler.scheduleDeferred(() -> {
-                                            DialogContent successDialog = new DialogContent()
-                                                    .setTitle(I18n.getI18nText(MembersI18nKeys.ValidationRequestSent))
-                                                    .setContentText(I18n.getI18nText(MembersI18nKeys.ValidationRequestSentMessage, member.getFullName()))
-                                                    .setOk();
-                                            DialogBuilderUtil.showModalNodeInGoldLayout(successDialog, FXMainFrameDialogArea.getDialogArea());
-                                            DialogBuilderUtil.armDialogContentButtons(successDialog, dc -> {
-                                                dc.closeDialog();
-                                                refreshData();
-                                            });
+                                            view.showSuccessMessage(I18n.getI18nText(MembersI18nKeys.ValidationRequestSentMessage, member.getFullName()));
+                                            refreshData();
                                         }));
                             });
                 });
@@ -380,14 +368,9 @@ public class MembersController {
                     UiScheduler.scheduleDeferred(() -> showErrorDialog(I18n.getI18nText(MembersI18nKeys.Error),
                             "Failed to resend invitation: " + error.getMessage()));
                 })
-                .onSuccess(ignored -> UiScheduler.scheduleDeferred(() -> {
-                    DialogContent successDialog = new DialogContent()
-                            .setTitle(I18n.getI18nText(MembersI18nKeys.InvitationSent))
-                            .setContentText(I18n.getI18nText(MembersI18nKeys.InvitationResentSuccessfully))
-                            .setOk();
-                    DialogBuilderUtil.showModalNodeInGoldLayout(successDialog, FXMainFrameDialogArea.getDialogArea());
-                    DialogBuilderUtil.armDialogContentButtons(successDialog, DialogCallback::closeDialog);
-                }));
+                .onSuccess(ignored -> UiScheduler.scheduleDeferred(() ->
+                    view.showSuccessMessage(I18n.getI18nText(MembersI18nKeys.InvitationResentSuccessfully))
+                ));
     }
 
     public void cancelInvitation(Invitation invitation) {
@@ -396,12 +379,21 @@ public class MembersController {
                 I18n.getI18nText(MembersI18nKeys.CancelInvitationMessage));
         confirmDialog.setOkCancel();
         DialogBuilderUtil.showModalNodeInGoldLayout(confirmDialog, FXMainFrameDialogArea.getDialogArea());
-        DialogBuilderUtil.armDialogContentButtons(confirmDialog, dialogCallback -> InvitationOperations.cancelInvitation(invitation, dataSourceModel)
-                .onFailure(dialogCallback::showException)
-                .onSuccess(ignored -> UiScheduler.scheduleDeferred(() -> {
-                    dialogCallback.closeDialog();
-                    refreshData();
-                })));
+
+        DialogBuilderUtil.armDialogContentButtons(confirmDialog, dialogCallback -> {
+            Button primaryButton = confirmDialog.getPrimaryButton();
+            Button secondaryButton = confirmDialog.getSecondaryButton();
+
+            AsyncSpinner.displayButtonSpinnerDuringAsyncExecution(
+                InvitationOperations.cancelInvitation(invitation, dataSourceModel)
+                    .inUiThread()
+                    .onFailure(dialogCallback::showException)
+                    .onSuccess(ignored -> UiScheduler.scheduleDeferred(() -> {
+                        dialogCallback.closeDialog();
+                        refreshData();
+                    })),
+                primaryButton, secondaryButton);
+        });
     }
 
     public void viewMember(Invitation invitation) {
@@ -432,19 +424,27 @@ public class MembersController {
             memberName = invitation.getAliasFirstName() + " " + invitation.getAliasLastName();
         }
 
-        DialogContent confirmDialog = DialogContent.createConfirmationDialog(
+        DialogContent confirmDialog = DialogContent.createDeleteDialog(
+                I18n.getI18nText(MembersI18nKeys.ConfirmRemovalTitle),
                 I18n.getI18nText(MembersI18nKeys.ConfirmRemovalTitle),
                 I18n.getI18nText(MembersI18nKeys.ConfirmRemovalMessage, memberName));
-        confirmDialog.setOkCancel();
+        confirmDialog.setConfirmCancel();
         DialogBuilderUtil.showModalNodeInGoldLayout(confirmDialog, FXMainFrameDialogArea.getDialogArea());
+
         DialogBuilderUtil.armDialogContentButtons(confirmDialog, dialogCallback -> {
+            Button primaryButton = confirmDialog.getPrimaryButton();
+            Button secondaryButton = confirmDialog.getSecondaryButton();
+
             assert invitation != null;
-            InvitationOperations.removeInvitation(invitation)
+            AsyncSpinner.displayButtonSpinnerDuringAsyncExecution(
+                InvitationOperations.removeInvitation(invitation)
+                    .inUiThread()
                     .onFailure(dialogCallback::showException)
                     .onSuccess(ignored -> UiScheduler.scheduleDeferred(() -> {
                         dialogCallback.closeDialog();
                         refreshData();
-                    }));
+                    })),
+                primaryButton, secondaryButton);
         });
     }
 
@@ -473,22 +473,30 @@ public class MembersController {
             memberName = person.getFullName();
         }
 
-        DialogContent confirmDialog = DialogContent.createConfirmationDialog(
+        DialogContent confirmDialog = DialogContent.createDeleteDialog(
+                I18n.getI18nText(MembersI18nKeys.ConfirmRemovalTitle),
                 I18n.getI18nText(MembersI18nKeys.ConfirmRemovalTitle),
                 I18n.getI18nText(MembersI18nKeys.ConfirmRemovalMessage, memberName));
-        confirmDialog.setOkCancel();
+        confirmDialog.setConfirmCancel();
         DialogBuilderUtil.showModalNodeInGoldLayout(confirmDialog, FXMainFrameDialogArea.getDialogArea());
+
         DialogBuilderUtil.armDialogContentButtons(confirmDialog, dialogCallback -> {
+            Button primaryButton = confirmDialog.getPrimaryButton();
+            Button secondaryButton = confirmDialog.getSecondaryButton();
+
             // Use the in-memory Person object directly - no query needed!
             Person personToRemove = updateStore.updateEntity(person);
             personToRemove.setRemoved(true);
 
-            updateStore.submitChanges()
-                .onFailure(dialogCallback::showException)
-                .onSuccess(result -> {
-                    dialogCallback.closeDialog();
-                    refreshData();
-                });
+            AsyncSpinner.displayButtonSpinnerDuringAsyncExecution(
+                updateStore.submitChanges()
+                    .inUiThread()
+                    .onFailure(dialogCallback::showException)
+                    .onSuccess(result -> {
+                        dialogCallback.closeDialog();
+                        refreshData();
+                    }),
+                primaryButton, secondaryButton);
         });
     }
 
@@ -533,15 +541,8 @@ public class MembersController {
                                     I18n.getI18nText(MembersI18nKeys.FailedToUpdateMember) + ": " + error.getMessage()));
                 })
                 .onSuccess(result -> UiScheduler.scheduleDeferred(() -> {
-                    DialogContent successDialog = new DialogContent()
-                            .setTitle(I18n.getI18nText(MembersI18nKeys.Success))
-                            .setContentText(I18n.getI18nText(MembersI18nKeys.MemberUpdatedSuccessfully))
-                            .setOk();
-                    DialogBuilderUtil.showModalNodeInGoldLayout(successDialog, FXMainFrameDialogArea.getDialogArea());
-                    DialogBuilderUtil.armDialogContentButtons(successDialog, dc -> {
-                        dc.closeDialog();
-                        refreshData();
-                    });
+                    view.showSuccessMessage(I18n.getI18nText(MembersI18nKeys.MemberUpdatedSuccessfully));
+                    refreshData();
                 }));
         });
     }
@@ -557,23 +558,31 @@ public class MembersController {
      * Remove member - optimized to use in-memory object directly.
      */
     public void removeMember(Person person) {
-        DialogContent confirmDialog = DialogContent.createConfirmationDialog(
+        DialogContent confirmDialog = DialogContent.createDeleteDialog(
+                I18n.getI18nText(MembersI18nKeys.RemovingAMemberTitle),
                 I18n.getI18nText(MembersI18nKeys.RemovingAMemberTitle),
                 I18n.getI18nText(MembersI18nKeys.RemovingAMemberConfirmation));
-        confirmDialog.setOkCancel();
+        confirmDialog.setConfirmCancel();
         DialogBuilderUtil.showModalNodeInGoldLayout(confirmDialog, FXMainFrameDialogArea.getDialogArea());
+
         DialogBuilderUtil.armDialogContentButtons(confirmDialog, dialogCallback -> {
+            Button primaryButton = confirmDialog.getPrimaryButton();
+            Button secondaryButton = confirmDialog.getSecondaryButton();
+
             // Use the in-memory Person object directly - no query needed!
             UpdateStore removeStore = UpdateStore.createAbove(person.getStore());
             Person personToRemove = removeStore.updateEntity(person);
             personToRemove.setRemoved(true);
 
-            removeStore.submitChanges()
-                .onFailure(dialogCallback::showException)
-                .onSuccess(result -> {
-                    dialogCallback.closeDialog();
-                    refreshData();
-                });
+            AsyncSpinner.displayButtonSpinnerDuringAsyncExecution(
+                removeStore.submitChanges()
+                    .inUiThread()
+                    .onFailure(dialogCallback::showException)
+                    .onSuccess(result -> {
+                        dialogCallback.closeDialog();
+                        refreshData();
+                    }),
+                primaryButton, secondaryButton);
         });
     }
 
@@ -586,14 +595,9 @@ public class MembersController {
                     UiScheduler.scheduleDeferred(() -> showErrorDialog(I18n.getI18nText(MembersI18nKeys.Error),
                             "Failed to resend invitation: " + error.getMessage()));
                 })
-                .onSuccess(ignored -> UiScheduler.scheduleDeferred(() -> {
-                    DialogContent successDialog = new DialogContent()
-                            .setTitle(I18n.getI18nText(MembersI18nKeys.InvitationSent))
-                            .setContentText(I18n.getI18nText(MembersI18nKeys.InvitationResentSuccessfully))
-                            .setOk();
-                    DialogBuilderUtil.showModalNodeInGoldLayout(successDialog, FXMainFrameDialogArea.getDialogArea());
-                    DialogBuilderUtil.armDialogContentButtons(successDialog, DialogCallback::closeDialog);
-                }));
+                .onSuccess(ignored -> UiScheduler.scheduleDeferred(() ->
+                    view.showSuccessMessage(I18n.getI18nText(MembersI18nKeys.InvitationResentSuccessfully))
+                ));
     }
 
     public void cancelManagerInvitation(Invitation invitation) {
@@ -602,12 +606,21 @@ public class MembersController {
                 I18n.getI18nText(MembersI18nKeys.CancelManagerInvitationMessage));
         confirmDialog.setOkCancel();
         DialogBuilderUtil.showModalNodeInGoldLayout(confirmDialog, FXMainFrameDialogArea.getDialogArea());
-        DialogBuilderUtil.armDialogContentButtons(confirmDialog, dialogCallback -> InvitationOperations.removeInvitation(invitation)
-                .onFailure(dialogCallback::showException)
-                .onSuccess(ignored -> UiScheduler.scheduleDeferred(() -> {
-                    dialogCallback.closeDialog();
-                    refreshData();
-                })));
+
+        DialogBuilderUtil.armDialogContentButtons(confirmDialog, dialogCallback -> {
+            Button primaryButton = confirmDialog.getPrimaryButton();
+            Button secondaryButton = confirmDialog.getSecondaryButton();
+
+            AsyncSpinner.displayButtonSpinnerDuringAsyncExecution(
+                InvitationOperations.removeInvitation(invitation)
+                    .inUiThread()
+                    .onFailure(dialogCallback::showException)
+                    .onSuccess(ignored -> UiScheduler.scheduleDeferred(() -> {
+                        dialogCallback.closeDialog();
+                        refreshData();
+                    })),
+                primaryButton, secondaryButton);
+        });
     }
 
     /**
@@ -621,12 +634,17 @@ public class MembersController {
         Invitation invitation = managerItem.getInvitation();
         Person authorizedPerson = managerItem.getAuthorizedPerson();
 
-        DialogContent confirmDialog = DialogContent.createConfirmationDialog(
+        DialogContent confirmDialog = DialogContent.createDeleteDialog(
+                I18n.getI18nText(MembersI18nKeys.ConfirmRevokeTitle),
                 I18n.getI18nText(MembersI18nKeys.ConfirmRevokeTitle),
                 I18n.getI18nText(MembersI18nKeys.ConfirmRevokeMessage, managerName));
-        confirmDialog.setOkCancel();
+        confirmDialog.setConfirmCancel();
         DialogBuilderUtil.showModalNodeInGoldLayout(confirmDialog, FXMainFrameDialogArea.getDialogArea());
+
         DialogBuilderUtil.armDialogContentButtons(confirmDialog, dialogCallback -> {
+            Button primaryButton = confirmDialog.getPrimaryButton();
+            Button secondaryButton = confirmDialog.getSecondaryButton();
+
             // Get current user info from principal (no query needed!)
             ModalityUserPrincipal principal = FXModalityUserPrincipal.modalityUserPrincipalProperty().get();
             if (principal == null) {
@@ -638,7 +656,15 @@ public class MembersController {
             Object currentUserId = principal.getUserPersonId();
             Object currentUserAccountId = principal.getUserAccountId();
 
-            revokeManagerAccessInternal(invitation, authorizedPerson, currentUserId, currentUserAccountId, dialogCallback);
+            AsyncSpinner.displayButtonSpinnerDuringAsyncExecution(
+                revokeManagerAccessInternal(invitation, authorizedPerson, currentUserId, currentUserAccountId)
+                    .inUiThread()
+                    .onFailure(dialogCallback::showException)
+                    .onSuccess(ignored -> UiScheduler.scheduleDeferred(() -> {
+                        dialogCallback.closeDialog();
+                        refreshData();
+                    })),
+                primaryButton, secondaryButton);
         });
     }
 
@@ -646,13 +672,15 @@ public class MembersController {
      * Internal method to revoke manager access - optimized with minimal database queries.
      * Uses IDs from in-memory objects to directly update/delete records.
      */
-    private void revokeManagerAccessInternal(Invitation invitation, Person personInManagerAccount,
-                                             Object currentUserId, Object currentUserAccountId,
-                                             dev.webfx.extras.util.dialog.DialogCallback dialogCallback) {
+    private dev.webfx.platform.async.Future<Void> revokeManagerAccessInternal(
+            Invitation invitation,
+            Person personInManagerAccount,
+            Object currentUserId,
+            Object currentUserAccountId) {
 
         if (personInManagerAccount == null) {
-            dialogCallback.showException(new IllegalStateException("Cannot revoke access: missing manager information"));
-            return;
+            return dev.webfx.platform.async.Future.failedFuture(
+                new IllegalStateException("Cannot revoke access: missing manager information"));
         }
 
         EntityStore entityStore = EntityStore.create(dataSourceModel);
@@ -666,13 +694,13 @@ public class MembersController {
                 : null;
 
         if (managerAccountId == null || managerPersonId == null) {
-            dialogCallback.showException(new IllegalStateException("Cannot revoke access: incomplete manager data"));
-            return;
+            return dev.webfx.platform.async.Future.failedFuture(
+                new IllegalStateException("Cannot revoke access: incomplete manager data"));
         }
 
         // ONE query to get both Person records that need to be soft-deleted
         // Much more efficient than two separate queries!
-        entityStore.<Person>executeQuery(
+        return entityStore.<Person>executeQuery(
                         "select id,removed,frontendAccount from Person where " +
                         "(frontendAccount=? and accountPerson=?) or " +
                         "(frontendAccount=? and accountPerson=?)",
@@ -693,12 +721,7 @@ public class MembersController {
                     }
 
                     return updateStore.submitChanges().mapEmpty();
-                })
-                .onFailure(dialogCallback::showException)
-                .onSuccess(ignored -> UiScheduler.scheduleDeferred(() -> {
-                    dialogCallback.closeDialog();
-                    refreshData();
-                }));
+                });
     }
 
     // ========== Pending Request Action Handlers ==========
@@ -706,69 +729,79 @@ public class MembersController {
     public void approveAuthorizationRequest(Invitation invitation) {
         Person inviter = invitation.getInviter();
 
-        DialogContent confirmDialog = DialogContent.createConfirmationDialog(
+        DialogContent confirmDialog = DialogContent.createSuccessDialog(
+                I18n.getI18nText(MembersI18nKeys.ApproveInvitationTitle),
                 I18n.getI18nText(MembersI18nKeys.ApproveInvitationTitle),
                 I18n.getI18nText(MembersI18nKeys.WantsToManageBookings, inviter.getFullName() + " (" + inviter.getEmail() + ")"));
-        confirmDialog.setOkCancel();
+        confirmDialog.setCustomButtons(
+                I18n.getI18nText(MembersI18nKeys.AcceptAction),
+                I18n.getI18nText(MembersI18nKeys.CancelAction));
         DialogBuilderUtil.showModalNodeInGoldLayout(confirmDialog, FXMainFrameDialogArea.getDialogArea());
-        DialogBuilderUtil.armDialogContentButtons(confirmDialog, dialogCallback -> InvitationOperations.approveInvitation(invitation, clientOrigin, dataSourceModel)
-                .onFailure(error -> {
-                    Console.log("Error approving authorization request: " + error);
-                    UiScheduler.scheduleDeferred(() -> {
-                        DialogContent errorDialog = new DialogContent()
-                                .setTitle(I18n.getI18nText(MembersI18nKeys.ApprovalFailedTitle))
-                                .setContentText(I18n.getI18nText(MembersI18nKeys.ApprovalFailedDescription))
-                                .setOk();
-                        DialogBuilderUtil.showModalNodeInGoldLayout(errorDialog, FXMainFrameDialogArea.getDialogArea());
-                        DialogBuilderUtil.armDialogContentButtons(errorDialog, DialogCallback::closeDialog);
-                    });
-                })
-                .onSuccess(ignored -> UiScheduler.scheduleDeferred(() -> {
-                    dialogCallback.closeDialog();
-                    DialogContent successDialog = new DialogContent()
-                            .setTitle(I18n.getI18nText(MembersI18nKeys.ApprovalSuccessTitle))
-                            .setContentText(I18n.getI18nText(MembersI18nKeys.ApprovalSuccessDescription))
-                            .setOk();
-                    DialogBuilderUtil.showModalNodeInGoldLayout(successDialog, FXMainFrameDialogArea.getDialogArea());
-                    DialogBuilderUtil.armDialogContentButtons(successDialog, sc -> {
-                        sc.closeDialog();
+
+        DialogBuilderUtil.armDialogContentButtons(confirmDialog, dialogCallback -> {
+            Button primaryButton = confirmDialog.getPrimaryButton();
+            Button secondaryButton = confirmDialog.getSecondaryButton();
+
+            AsyncSpinner.displayButtonSpinnerDuringAsyncExecution(
+                InvitationOperations.approveInvitation(invitation, clientOrigin, dataSourceModel)
+                    .inUiThread()
+                    .onFailure(error -> {
+                        Console.log("Error approving authorization request: " + error);
+                        UiScheduler.scheduleDeferred(() -> {
+                            DialogContent errorDialog = new DialogContent()
+                                    .setTitle(I18n.getI18nText(MembersI18nKeys.ApprovalFailedTitle))
+                                    .setContentText(I18n.getI18nText(MembersI18nKeys.ApprovalFailedDescription))
+                                    .setOk();
+                            DialogBuilderUtil.showModalNodeInGoldLayout(errorDialog, FXMainFrameDialogArea.getDialogArea());
+                            DialogBuilderUtil.armDialogContentButtons(errorDialog, DialogCallback::closeDialog);
+                        });
+                    })
+                    .onSuccess(ignored -> UiScheduler.scheduleDeferred(() -> {
+                        dialogCallback.closeDialog();
+                        view.showSuccessMessage(I18n.getI18nText(MembersI18nKeys.ApprovalSuccessDescription));
                         refreshData();
-                    });
-                })));
+                    })),
+                primaryButton, secondaryButton);
+        });
     }
 
     public void declineAuthorizationRequest(Invitation invitation) {
         Person inviter = invitation.getInviter();
 
-        DialogContent confirmDialog = DialogContent.createConfirmationDialog(
+        DialogContent confirmDialog = DialogContent.createDeleteDialog(
+                I18n.getI18nText(MembersI18nKeys.DeclineInvitationTitle),
                 I18n.getI18nText(MembersI18nKeys.DeclineInvitationTitle),
                 I18n.getI18nText(MembersI18nKeys.WantsToManageBookings, inviter.getFullName() + " (" + inviter.getEmail() + ")"));
-        confirmDialog.setOkCancel();
+        confirmDialog.setCustomButtons(
+                I18n.getI18nText(MembersI18nKeys.DeclineAction),
+                I18n.getI18nText(MembersI18nKeys.CancelAction));
         DialogBuilderUtil.showModalNodeInGoldLayout(confirmDialog, FXMainFrameDialogArea.getDialogArea());
-        DialogBuilderUtil.armDialogContentButtons(confirmDialog, dialogCallback -> InvitationOperations.cancelInvitation(invitation, dataSourceModel)
-                .onFailure(error -> {
-                    Console.log("Error declining authorization request: " + error);
-                    UiScheduler.scheduleDeferred(() -> {
-                        DialogContent errorDialog = new DialogContent()
-                                .setTitle(I18n.getI18nText(MembersI18nKeys.DeclineFailedTitle))
-                                .setContentText(I18n.getI18nText(MembersI18nKeys.DeclineFailedDescription))
-                                .setOk();
-                        DialogBuilderUtil.showModalNodeInGoldLayout(errorDialog, FXMainFrameDialogArea.getDialogArea());
-                        DialogBuilderUtil.armDialogContentButtons(errorDialog, DialogCallback::closeDialog);
-                    });
-                })
-                .onSuccess(ignored -> UiScheduler.scheduleDeferred(() -> {
-                    dialogCallback.closeDialog();
-                    DialogContent successDialog = new DialogContent()
-                            .setTitle(I18n.getI18nText(MembersI18nKeys.DeclineSuccessTitle))
-                            .setContentText(I18n.getI18nText(MembersI18nKeys.DeclineSuccessDescription))
-                            .setOk();
-                    DialogBuilderUtil.showModalNodeInGoldLayout(successDialog, FXMainFrameDialogArea.getDialogArea());
-                    DialogBuilderUtil.armDialogContentButtons(successDialog, sc -> {
-                        sc.closeDialog();
+
+        DialogBuilderUtil.armDialogContentButtons(confirmDialog, dialogCallback -> {
+            Button primaryButton = confirmDialog.getPrimaryButton();
+            Button secondaryButton = confirmDialog.getSecondaryButton();
+
+            AsyncSpinner.displayButtonSpinnerDuringAsyncExecution(
+                InvitationOperations.cancelInvitation(invitation, dataSourceModel)
+                    .inUiThread()
+                    .onFailure(error -> {
+                        Console.log("Error declining authorization request: " + error);
+                        UiScheduler.scheduleDeferred(() -> {
+                            DialogContent errorDialog = new DialogContent()
+                                    .setTitle(I18n.getI18nText(MembersI18nKeys.DeclineFailedTitle))
+                                    .setContentText(I18n.getI18nText(MembersI18nKeys.DeclineFailedDescription))
+                                    .setOk();
+                            DialogBuilderUtil.showModalNodeInGoldLayout(errorDialog, FXMainFrameDialogArea.getDialogArea());
+                            DialogBuilderUtil.armDialogContentButtons(errorDialog, DialogCallback::closeDialog);
+                        });
+                    })
+                    .onSuccess(ignored -> UiScheduler.scheduleDeferred(() -> {
+                        dialogCallback.closeDialog();
+                        view.showSuccessMessage(I18n.getI18nText(MembersI18nKeys.DeclineSuccessDescription));
                         refreshData();
-                    });
-                })));
+                    })),
+                primaryButton, secondaryButton);
+        });
     }
 
     public void approveMemberInvitation(Invitation invitation) {
@@ -779,30 +812,32 @@ public class MembersController {
                 I18n.getI18nText(MembersI18nKeys.WantsToAddYou, inviter.getFullName() + " (" + inviter.getEmail() + ")"));
         confirmDialog.setOkCancel();
         DialogBuilderUtil.showModalNodeInGoldLayout(confirmDialog, FXMainFrameDialogArea.getDialogArea());
-        DialogBuilderUtil.armDialogContentButtons(confirmDialog, dialogCallback -> InvitationOperations.approveInvitation(invitation, clientOrigin, dataSourceModel)
-                .onFailure(error -> {
-                    Console.log("Error approving member invitation: " + error);
-                    UiScheduler.scheduleDeferred(() -> {
-                        DialogContent errorDialog = new DialogContent()
-                                .setTitle(I18n.getI18nText(MembersI18nKeys.ApprovalFailedTitle))
-                                .setContentText(I18n.getI18nText(MembersI18nKeys.ApprovalFailedDescription))
-                                .setOk();
-                        DialogBuilderUtil.showModalNodeInGoldLayout(errorDialog, FXMainFrameDialogArea.getDialogArea());
-                        DialogBuilderUtil.armDialogContentButtons(errorDialog, DialogCallback::closeDialog);
-                    });
-                })
-                .onSuccess(ignored -> UiScheduler.scheduleDeferred(() -> {
-                    dialogCallback.closeDialog();
-                    DialogContent successDialog = new DialogContent()
-                            .setTitle(I18n.getI18nText(MembersI18nKeys.ApprovalSuccessTitle))
-                            .setContentText(I18n.getI18nText(MembersI18nKeys.ApprovalSuccessDescription))
-                            .setOk();
-                    DialogBuilderUtil.showModalNodeInGoldLayout(successDialog, FXMainFrameDialogArea.getDialogArea());
-                    DialogBuilderUtil.armDialogContentButtons(successDialog, sc -> {
-                        sc.closeDialog();
+
+        DialogBuilderUtil.armDialogContentButtons(confirmDialog, dialogCallback -> {
+            Button primaryButton = confirmDialog.getPrimaryButton();
+            Button secondaryButton = confirmDialog.getSecondaryButton();
+
+            AsyncSpinner.displayButtonSpinnerDuringAsyncExecution(
+                InvitationOperations.approveInvitation(invitation, clientOrigin, dataSourceModel)
+                    .inUiThread()
+                    .onFailure(error -> {
+                        Console.log("Error approving member invitation: " + error);
+                        UiScheduler.scheduleDeferred(() -> {
+                            DialogContent errorDialog = new DialogContent()
+                                    .setTitle(I18n.getI18nText(MembersI18nKeys.ApprovalFailedTitle))
+                                    .setContentText(I18n.getI18nText(MembersI18nKeys.ApprovalFailedDescription))
+                                    .setOk();
+                            DialogBuilderUtil.showModalNodeInGoldLayout(errorDialog, FXMainFrameDialogArea.getDialogArea());
+                            DialogBuilderUtil.armDialogContentButtons(errorDialog, DialogCallback::closeDialog);
+                        });
+                    })
+                    .onSuccess(ignored -> UiScheduler.scheduleDeferred(() -> {
+                        dialogCallback.closeDialog();
+                        view.showSuccessMessage(I18n.getI18nText(MembersI18nKeys.ApprovalSuccessDescription));
                         refreshData();
-                    });
-                })));
+                    })),
+                primaryButton, secondaryButton);
+        });
     }
 
     public void declineMemberInvitation(Invitation invitation) {
@@ -813,30 +848,32 @@ public class MembersController {
                 I18n.getI18nText(MembersI18nKeys.WantsToAddYou, inviter.getFullName() + " (" + inviter.getEmail() + ")"));
         confirmDialog.setOkCancel();
         DialogBuilderUtil.showModalNodeInGoldLayout(confirmDialog, FXMainFrameDialogArea.getDialogArea());
-        DialogBuilderUtil.armDialogContentButtons(confirmDialog, dialogCallback -> InvitationOperations.cancelInvitation(invitation, dataSourceModel)
-                .onFailure(error -> {
-                    Console.log("Error declining member invitation: " + error);
-                    UiScheduler.scheduleDeferred(() -> {
-                        DialogContent errorDialog = new DialogContent()
-                                .setTitle(I18n.getI18nText(MembersI18nKeys.DeclineFailedTitle))
-                                .setContentText(I18n.getI18nText(MembersI18nKeys.DeclineFailedDescription))
-                                .setOk();
-                        DialogBuilderUtil.showModalNodeInGoldLayout(errorDialog, FXMainFrameDialogArea.getDialogArea());
-                        DialogBuilderUtil.armDialogContentButtons(errorDialog, DialogCallback::closeDialog);
-                    });
-                })
-                .onSuccess(ignored -> UiScheduler.scheduleDeferred(() -> {
-                    dialogCallback.closeDialog();
-                    DialogContent successDialog = new DialogContent()
-                            .setTitle(I18n.getI18nText(MembersI18nKeys.DeclineSuccessTitle))
-                            .setContentText(I18n.getI18nText(MembersI18nKeys.DeclineSuccessDescription))
-                            .setOk();
-                    DialogBuilderUtil.showModalNodeInGoldLayout(successDialog, FXMainFrameDialogArea.getDialogArea());
-                    DialogBuilderUtil.armDialogContentButtons(successDialog, sc -> {
-                        sc.closeDialog();
+
+        DialogBuilderUtil.armDialogContentButtons(confirmDialog, dialogCallback -> {
+            Button primaryButton = confirmDialog.getPrimaryButton();
+            Button secondaryButton = confirmDialog.getSecondaryButton();
+
+            AsyncSpinner.displayButtonSpinnerDuringAsyncExecution(
+                InvitationOperations.cancelInvitation(invitation, dataSourceModel)
+                    .inUiThread()
+                    .onFailure(error -> {
+                        Console.log("Error declining member invitation: " + error);
+                        UiScheduler.scheduleDeferred(() -> {
+                            DialogContent errorDialog = new DialogContent()
+                                    .setTitle(I18n.getI18nText(MembersI18nKeys.DeclineFailedTitle))
+                                    .setContentText(I18n.getI18nText(MembersI18nKeys.DeclineFailedDescription))
+                                    .setOk();
+                            DialogBuilderUtil.showModalNodeInGoldLayout(errorDialog, FXMainFrameDialogArea.getDialogArea());
+                            DialogBuilderUtil.armDialogContentButtons(errorDialog, DialogCallback::closeDialog);
+                        });
+                    })
+                    .onSuccess(ignored -> UiScheduler.scheduleDeferred(() -> {
+                        dialogCallback.closeDialog();
+                        view.showSuccessMessage(I18n.getI18nText(MembersI18nKeys.DeclineSuccessDescription));
                         refreshData();
-                    });
-                })));
+                    })),
+                primaryButton, secondaryButton);
+        });
     }
 
     // ========== Helper Methods ==========

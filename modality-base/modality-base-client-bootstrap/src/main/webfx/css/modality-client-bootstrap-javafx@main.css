@@ -541,7 +541,6 @@
 
 /* Authorization badges for members management */
 .authorization-badge {
-    -fx-padding: 4px 12px;
     -fx-background-radius: 12px;
     -fx-font-size: 11px;
     -fx-font-weight: 500;

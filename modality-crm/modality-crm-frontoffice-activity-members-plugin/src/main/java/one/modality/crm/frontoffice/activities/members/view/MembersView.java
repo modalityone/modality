@@ -12,7 +12,9 @@ import dev.webfx.platform.console.Console;
 import dev.webfx.stack.orm.domainmodel.DataSourceModel;
 import dev.webfx.stack.orm.entity.EntityStore;
 import dev.webfx.stack.orm.entity.UpdateStore;
+import javafx.animation.FadeTransition;
 import javafx.animation.PauseTransition;
+import javafx.animation.SequentialTransition;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Node;
@@ -370,7 +372,8 @@ public class MembersView {
         );
 
         // Add form fields to the dialog
-        dialog.setContent(formContent);
+        dialog.setContent(formContent)
+                .setCancelConfirm();  // Use Cancel/Confirm instead of Yes/No
 
         DialogBuilderUtil.showModalNodeInGoldLayout(dialog, FXMainFrameDialogArea.getDialogArea());
         DialogBuilderUtil.armDialogContentButtons(dialog, dialogCallback -> {
@@ -406,16 +409,10 @@ public class MembersView {
     }
 
     /**
-     * Show a dialog informing the user that authorization request was sent.
+     * Show a message informing the user that authorization request was sent.
      */
     public void showAuthorizationSentDialog(String memberName) {
-        DialogContent dialog = DialogContent.createSuccessDialog(
-                I18n.getI18nText(MembersI18nKeys.AuthorizationSentTitle),
-                I18n.getI18nText(MembersI18nKeys.AuthorizationSentTitle),
-                I18n.getI18nText(MembersI18nKeys.AuthorizationSentMessage, memberName)
-        );
-        DialogBuilderUtil.showModalNodeInGoldLayout(dialog, FXMainFrameDialogArea.getDialogArea());
-        DialogBuilderUtil.armDialogContentButtons(dialog, DialogCallback::closeDialog);
+        showSuccessMessage(I18n.getI18nText(MembersI18nKeys.AuthorizationSentMessage, memberName));
     }
 
     /**
@@ -445,7 +442,8 @@ public class MembersView {
         );
 
         // Add form fields to the dialog
-        dialog.setContent(formContent);
+        dialog.setContent(formContent)
+                .setCancelConfirm();  // Use Cancel/Confirm instead of Yes/No
 
         DialogBuilderUtil.showModalNodeInGoldLayout(dialog, FXMainFrameDialogArea.getDialogArea());
         DialogBuilderUtil.armDialogContentButtons(dialog, dialogCallback -> {
@@ -509,13 +507,14 @@ public class MembersView {
         // Create dialog using factory method - different info message for authorized members
         DialogContent dialog = DialogContent.createInformationDialogWithTwoActions(
                 I18n.getI18nText(MembersI18nKeys.EditMemberTitle),
-                null,
+                I18n.getI18nText(MembersI18nKeys.EditMemberTitle),
                 "",
                 I18n.getI18nText(isAuthorizedMember ? MembersI18nKeys.EditAuthorizedMemberInfoMessage : MembersI18nKeys.EditMemberInfoMessage)
         );
 
         // Add form fields to the dialog
-        dialog.setContent(formContent);
+        dialog.setContent(formContent)
+                .setCancelSave();
 
         DialogBuilderUtil.showModalNodeInGoldLayout(dialog, FXMainFrameDialogArea.getDialogArea());
 
@@ -542,7 +541,7 @@ public class MembersView {
     // ========== Message Display Methods ==========
 
     /**
-     * Show a success message with auto-hide after 5 seconds.
+     * Show a success message with auto-hide after 8 seconds with fade out animation.
      */
     public void showSuccessMessage(String message) {
         messageContainer.getChildren().clear();
@@ -552,10 +551,18 @@ public class MembersView {
         Bootstrap.alertSuccess(successLabel);
         messageContainer.getChildren().add(successLabel);
 
-        // Auto-hide after 5 seconds
-        PauseTransition pause = new PauseTransition(Duration.seconds(5));
-        pause.setOnFinished(e -> messageContainer.getChildren().clear());
-        pause.play();
+        // Start fully visible
+        successLabel.setOpacity(1.0);
+
+        // Wait for 8 seconds, then fade out over 0.5 seconds, then clear
+        PauseTransition pause = new PauseTransition(Duration.seconds(8));
+        FadeTransition fadeOut = new FadeTransition(Duration.millis(500), successLabel);
+        fadeOut.setFromValue(1.0);
+        fadeOut.setToValue(0.0);
+        fadeOut.setOnFinished(e -> messageContainer.getChildren().clear());
+
+        SequentialTransition sequence = new SequentialTransition(pause, fadeOut);
+        sequence.play();
     }
 
     // ========== Data Classes ==========
