@@ -92,7 +92,7 @@ final class ProvidedGatewayPaymentForm implements GatewayPaymentForm {
         });
         payButton.setMaxWidth(Double.MAX_VALUE);
         cancelButton.setMaxWidth(Double.MAX_VALUE);
-        FlexPane buttonBar = new FlexPane(payButton, cancelButton);
+        FlexPane buttonBar = new FlexPane(cancelButton, payButton);
         buttonBar.setHorizontalSpace(10);
         VBox.setMargin(buttonBar, new Insets(10, 0, 10, 0));
         mainVbox.getChildren().add(buttonBar);
