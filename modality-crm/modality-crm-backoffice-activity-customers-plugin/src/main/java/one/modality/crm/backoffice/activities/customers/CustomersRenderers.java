@@ -111,7 +111,6 @@ final class CustomersRenderers {
             Person person = (Person) value;
             FrontendAccount account = person.getFrontendAccount();
             boolean isOwner = Boolean.TRUE.equals(person.isOwner());
-            Person accountPerson = person.getAccountPerson();
 
             HBox container = new HBox(4);
             container.setAlignment(Pos.CENTER_LEFT);
@@ -130,16 +129,19 @@ final class CustomersRenderers {
                     linkInfo.getStyleClass().add("role-link-text");
                     container.getChildren().addAll(icon, linkInfo);
                 }
-            } else if (accountPerson != null) {
-                // Show owner info
-                Text icon = new Text("✓");
-                icon.getStyleClass().add("role-icon-success");
-                String ownerName = accountPerson.getFullName();
-                Object id = accountPerson.getPrimaryKey();
-                Label linkInfo = new Label();
-                linkInfo.setText(I18n.getI18nText(LinkedToOwnerText, id, ownerName));
-                linkInfo.getStyleClass().add("role-link-text");
-                container.getChildren().addAll(icon, linkInfo);
+            } else if (account != null) {
+                // Non-owner with a frontend account - find and show the owner
+                Person owner = view != null ? view.getOwnerForFrontendAccount(account.getPrimaryKey()) : null;
+                if (owner != null) {
+                    Text icon = new Text("✓");
+                    icon.getStyleClass().add("role-icon-success");
+                    String ownerName = owner.getFullName();
+                    Object id = owner.getPrimaryKey();
+                    Label linkInfo = new Label();
+                    linkInfo.setText(I18n.getI18nText(LinkedToOwnerText, id, ownerName));
+                    linkInfo.getStyleClass().add("role-link-text");
+                    container.getChildren().addAll(icon, linkInfo);
+                }
             }
 
             return container;
