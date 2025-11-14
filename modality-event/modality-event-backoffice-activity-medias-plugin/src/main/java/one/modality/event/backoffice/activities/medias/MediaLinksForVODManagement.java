@@ -2,6 +2,7 @@ package one.modality.event.backoffice.activities.medias;
 
 import dev.webfx.extras.i18n.I18n;
 import dev.webfx.extras.i18n.controls.I18nControls;
+import javafx.scene.control.Separator;
 import dev.webfx.extras.panes.MonoPane;
 import dev.webfx.extras.styles.bootstrap.Bootstrap;
 import dev.webfx.extras.switches.Switch;
@@ -67,7 +68,44 @@ public class MediaLinksForVODManagement extends MediaLinksManagement {
         VBox teachingDatesVBox = new VBox();
         teachingDatesVBox.setSpacing(30);
         mainContainer.setCenter(teachingDatesVBox);
-        teachingsDates.forEach(date -> teachingDatesVBox.getChildren().add(computeTeachingDateLine(date)));
+
+        // Separate dates into future and past
+        LocalDate today = LocalDate.now();
+        List<LocalDate> futureDates = new java.util.ArrayList<>();
+        List<LocalDate> pastDates = new java.util.ArrayList<>();
+
+        for (LocalDate date : teachingsDates) {
+            if (date.isAfter(today) || date.equals(today)) {
+                futureDates.add(date);
+            } else {
+                pastDates.add(date);
+            }
+        }
+
+        // Add Future Sessions section
+        if (!futureDates.isEmpty()) {
+            teachingDatesVBox.getChildren().add(buildDatesSectionSeparator(MediasI18nKeys.FutureSessions));
+            futureDates.forEach(date -> teachingDatesVBox.getChildren().add(computeTeachingDateLine(date)));
+        }
+
+        // Add Past Sessions section
+        if (!pastDates.isEmpty()) {
+            teachingDatesVBox.getChildren().add(buildDatesSectionSeparator(MediasI18nKeys.PastSessions));
+            pastDates.forEach(date -> teachingDatesVBox.getChildren().add(computeTeachingDateLine(date)));
+        }
+    }
+
+    protected VBox buildDatesSectionSeparator(Object i18nKey) {
+        VBox separatorBox = new VBox(10);
+        separatorBox.setPadding(new Insets(20, 20, 10, 20));
+
+        Label sectionLabel = I18nControls.newLabel(i18nKey);
+        sectionLabel.getStyleClass().addAll(Bootstrap.H5, Bootstrap.TEXT_SECONDARY);
+
+        Separator separator = new Separator();
+
+        separatorBox.getChildren().addAll(sectionLabel, separator);
+        return separatorBox;
     }
 
     protected BorderPane computeTeachingDateLine(LocalDate date) {
@@ -104,7 +142,7 @@ public class MediaLinksForVODManagement extends MediaLinksManagement {
             centerVBox.getChildren().add(separator);
 
             /* The content with the list of the teachings per day and the links **/
-            List<ScheduledItem> filteredListForCurrentDay = scheduledItemsReadFromDatabase.stream()
+            List<ScheduledItem> filteredAndSortedList = scheduledItemsReadFromDatabase.stream()
                 .filter(item -> item.getDate().equals(currentDate)) // Filter by date
                 .sorted(Comparator.comparing(item -> {
                     ScheduledItem programScheduledItem = item.getProgramScheduledItem();
@@ -120,7 +158,20 @@ public class MediaLinksForVODManagement extends MediaLinksManagement {
                 }, Comparator.nullsLast(Comparator.naturalOrder()))) // Sort by start date, nulls last
                 .collect(Collectors.toList());
 
-            for (ScheduledItem currentVideoScheduledItem : filteredListForCurrentDay) {
+            for (ScheduledItem currentVideoScheduledItem : filteredAndSortedList) {
+                buildVideoTeachingContainer(currentVideoScheduledItem, centerVBox);
+            }
+
+            container.setBorder(new Border(new BorderStroke(
+                Color.BLACK,
+                BorderStrokeStyle.SOLID,
+                new CornerRadii(3),
+                new BorderWidths(1)
+            )));
+            return container;
+        }
+
+        private void buildVideoTeachingContainer(ScheduledItem currentVideoScheduledItem, VBox centerVBox) {
                 UpdateStore localUpdateStore = UpdateStore.createAbove(entityStore);
                 //We add in the parentView the updateStore.hasChangedProperty so we know if we can or not change the edited event without forgetting the current local changes
                 //made here
@@ -406,12 +457,8 @@ public class MediaLinksForVODManagement extends MediaLinksManagement {
                 saveButtonContainer.setPadding(new Insets(20, 0, 0, 0));
                 currentVBox.getChildren().add(saveButtonContainer);
 
+                // Add the teaching container to the center VBox
                 centerVBox.getChildren().add(currentVBox);
-
-                Separator hSeparator = new Separator();
-                hSeparator.setOrientation(Orientation.HORIZONTAL);
-                hSeparator.setPadding(new Insets(30, 0, 30, 0));
-                centerVBox.getChildren().add(hSeparator);
 
                 //The action on the save button
                 saveButton.setOnAction(e -> {
@@ -436,16 +483,11 @@ public class MediaLinksForVODManagement extends MediaLinksManagement {
                     localUpdateStore.submitChanges().onFailure(Console::log)
                         .onSuccess(Console::log);
                 }
-            }
-            /* ***************** END LINK BOX MANAGEMENT *********************** */
 
-            container.setBorder(new Border(new BorderStroke(
-                Color.BLACK,
-                BorderStrokeStyle.SOLID,
-                new CornerRadii(3),
-                new BorderWidths(1)
-            )));
-            return container;
+                Separator hSeparator = new Separator();
+                hSeparator.setOrientation(Orientation.HORIZONTAL);
+                hSeparator.setPadding(new Insets(30, 0, 30, 0));
+                centerVBox.getChildren().add(hSeparator);
         }
 
         private VBox drawMediaLinkContainer(Media currentMedia, ObservableList<Media> mediaList, UpdateStore localUpdateStore,Switch publishSwitch) {

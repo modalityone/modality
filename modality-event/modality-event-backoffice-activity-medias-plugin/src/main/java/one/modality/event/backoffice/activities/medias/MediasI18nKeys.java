@@ -24,6 +24,7 @@ public interface MediasI18nKeys {
     Object ViewerDetails = "ViewerDetails";
     Object Live = "Live";
     Object CurrentEvent = "CurrentEvent";
+    Object PastSessions = "PastSessions";
     Object LiveInfoMessage = "LiveInfoMessage";
     Object WatchTime = "WatchTime";
     Object SessionDetails = "SessionDetails";
@@ -65,6 +66,7 @@ public interface MediasI18nKeys {
     Object MediaDashboardTitle = "MediaDashboardTitle";
     Object LiveStreamingTitle = "LiveStreamingTitle";
     Object VODPublished = "VODPublished";
+    Object FutureSessions = "FutureSessions";
     Object Recording = "Recording";
     Object AvailableUntil = "AvailableUntil";
 

@@ -32,6 +32,7 @@ import one.modality.base.shared.entities.ScheduledItem;
 import one.modality.event.client.event.fx.FXEventId;
 
 import java.time.LocalDate;
+import java.util.List;
 import java.util.stream.Collectors;
 
 /**
@@ -161,7 +162,31 @@ public class MediaLinksForAudioRecordingsManagement extends MediaLinksManagement
         VBox teachingDatesVBox = new VBox();
         teachingDatesVBox.setSpacing(30);
         mainContainer.setCenter(teachingDatesVBox);
-        teachingsDates.forEach(date -> teachingDatesVBox.getChildren().add(computeTeachingDateLine(date)));
+
+        // Separate dates into future and past
+        LocalDate today = LocalDate.now();
+        List<LocalDate> futureDates = new java.util.ArrayList<>();
+        List<LocalDate> pastDates = new java.util.ArrayList<>();
+
+        for (LocalDate date : teachingsDates) {
+            if (date.isAfter(today) || date.equals(today)) {
+                futureDates.add(date);
+            } else {
+                pastDates.add(date);
+            }
+        }
+
+        // Add Future Sessions section
+        if (!futureDates.isEmpty()) {
+            teachingDatesVBox.getChildren().add(buildDatesSectionSeparator(MediasI18nKeys.FutureSessions));
+            futureDates.forEach(date -> teachingDatesVBox.getChildren().add(computeTeachingDateLine(date)));
+        }
+
+        // Add Past Sessions section
+        if (!pastDates.isEmpty()) {
+            teachingDatesVBox.getChildren().add(buildDatesSectionSeparator(MediasI18nKeys.PastSessions));
+            pastDates.forEach(date -> teachingDatesVBox.getChildren().add(computeTeachingDateLine(date)));
+        }
     }
 
     private void loadAudioCoverPicture() {
@@ -170,6 +195,19 @@ public class MediaLinksForAudioRecordingsManagement extends MediaLinksManagement
                 trashImage.setVisible(ar.succeeded());
                 replaceProgressIndicator.setVisible(false);
             });
+    }
+
+    protected VBox buildDatesSectionSeparator(Object i18nKey) {
+        VBox separatorBox = new VBox(10);
+        separatorBox.setPadding(new Insets(20, 20, 10, 20));
+
+        Label sectionLabel = I18nControls.newLabel(i18nKey);
+        sectionLabel.getStyleClass().addAll(Bootstrap.H5, Bootstrap.TEXT_SECONDARY);
+
+        javafx.scene.control.Separator separator = new javafx.scene.control.Separator();
+
+        separatorBox.getChildren().addAll(sectionLabel, separator);
+        return separatorBox;
     }
 
     protected BorderPane computeTeachingDateLine(LocalDate date) {
