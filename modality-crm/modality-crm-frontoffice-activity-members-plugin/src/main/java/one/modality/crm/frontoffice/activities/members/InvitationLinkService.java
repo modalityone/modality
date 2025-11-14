@@ -1,6 +1,7 @@
 package one.modality.crm.frontoffice.activities.members;
 
 import dev.webfx.platform.async.Future;
+import dev.webfx.platform.async.Promise;
 import dev.webfx.platform.resource.Resource;
 import dev.webfx.platform.util.Strings;
 import dev.webfx.platform.util.uuid.Uuid;
@@ -30,19 +31,19 @@ public final class InvitationLinkService {
 
     // Email configuration
     private static final String EMAIL_FROM = "kbs@kadampa.net";
-    
-    // Email templates
+
+    // Email template paths and subjects
     private static final String AUTHORIZATION_REQUEST_SUBJECT = "Authorization Request - Kadampa Booking System";
-    private static final String AUTHORIZATION_REQUEST_BODY = Resource.getText(Resource.toUrl("emails/AuthorizationRequestMailBody.html", InvitationLinkService.class));
+    private static final String AUTHORIZATION_REQUEST_TEMPLATE = "emails/AuthorizationRequestMailBody.html";
 
     private static final String VALIDATION_REQUEST_SUBJECT = "Validation Required - Kadampa Booking System";
-    private static final String VALIDATION_REQUEST_BODY = Resource.getText(Resource.toUrl("emails/ValidationRequestMailBody.html", InvitationLinkService.class));
+    private static final String VALIDATION_REQUEST_TEMPLATE = "emails/ValidationRequestMailBody.html";
 
     private static final String INVITATION_TO_MANAGE_SUBJECT = "Booking Manager Invitation - Kadampa Booking System";
-    private static final String INVITATION_TO_MANAGE_BODY = Resource.getText(Resource.toUrl("emails/InvitationToManageMailBody.html", InvitationLinkService.class));
+    private static final String INVITATION_TO_MANAGE_TEMPLATE = "emails/InvitationToManageMailBody.html";
 
     private static final String REQUEST_APPROVED_SUBJECT = "Request Approved - Kadampa Booking System";
-    private static final String REQUEST_APPROVED_BODY = Resource.getText(Resource.toUrl("emails/RequestApprovedMailBody.html", InvitationLinkService.class));
+    private static final String REQUEST_APPROVED_TEMPLATE = "emails/RequestApprovedMailBody.html";
 
     /**
      * Sends an authorization request email when someone wants to add a member with an existing account
@@ -60,14 +61,23 @@ public final class InvitationLinkService {
         String approveLink = buildLink(clientOrigin, APPROVE_PATH_FULL, token);
         String declineLink = buildLink(clientOrigin, DECLINE_PATH_FULL, token);
 
-        String body = AUTHORIZATION_REQUEST_BODY
-                .replace("[inviteeName]", invitee.getFullName())
-                .replace("[inviterName]", inviter.getFullName())
-                .replace("[inviterEmail]", inviter.getEmail())
-                .replace("[approveLink]", approveLink)
-                .replace("[declineLink]", declineLink);
+        // Load template asynchronously (GWT-compatible)
+        Promise<String> promise = Promise.promise();
+        Resource.loadText(
+                Resource.toUrl(AUTHORIZATION_REQUEST_TEMPLATE, InvitationLinkService.class),
+                promise::complete,
+                promise::fail
+        );
+        return promise.future().compose(template -> {
+            String body = template
+                    .replace("[inviteeName]", invitee.getFullName())
+                    .replace("[inviterName]", inviter.getFullName())
+                    .replace("[inviterEmail]", inviter.getEmail())
+                    .replace("[approveLink]", approveLink)
+                    .replace("[declineLink]", declineLink);
 
-        return sendEmail(invitee, AUTHORIZATION_REQUEST_SUBJECT, body, dataSourceModel);
+            return sendEmail(invitee, AUTHORIZATION_REQUEST_SUBJECT, body, dataSourceModel);
+        });
     }
 
     /**
@@ -86,13 +96,22 @@ public final class InvitationLinkService {
         String approveLink = buildLink(clientOrigin, APPROVE_PATH_FULL, token);
         String declineLink = buildLink(clientOrigin, DECLINE_PATH_FULL, token);
 
-        String body = VALIDATION_REQUEST_BODY
-                .replace("[inviteeName]", invitee.getFullName())
-                .replace("[inviterName]", inviter.getFullName())
-                .replace("[approveLink]", approveLink)
-                .replace("[declineLink]", declineLink);
+        // Load template asynchronously (GWT-compatible)
+        Promise<String> promise = Promise.promise();
+        Resource.loadText(
+                Resource.toUrl(VALIDATION_REQUEST_TEMPLATE, InvitationLinkService.class),
+                promise::complete,
+                promise::fail
+        );
+        return promise.future().compose(template -> {
+            String body = template
+                    .replace("[inviteeName]", invitee.getFullName())
+                    .replace("[inviterName]", inviter.getFullName())
+                    .replace("[approveLink]", approveLink)
+                    .replace("[declineLink]", declineLink);
 
-        return sendEmail(invitee, VALIDATION_REQUEST_SUBJECT, body, dataSourceModel);
+            return sendEmail(invitee, VALIDATION_REQUEST_SUBJECT, body, dataSourceModel);
+        });
     }
 
     /**
@@ -111,14 +130,23 @@ public final class InvitationLinkService {
         String acceptLink = buildLink(clientOrigin, APPROVE_PATH_FULL, token);
         String declineLink = buildLink(clientOrigin, DECLINE_PATH_FULL, token);
 
-        String body = INVITATION_TO_MANAGE_BODY
-                .replace("[managerName]", manager.getFullName())
-                .replace("[inviterName]", inviter.getFullName())
-                .replace("[inviterEmail]", inviter.getEmail())
-                .replace("[acceptLink]", acceptLink)
-                .replace("[declineLink]", declineLink);
+        // Load template asynchronously (GWT-compatible)
+        Promise<String> promise = Promise.promise();
+        Resource.loadText(
+                Resource.toUrl(INVITATION_TO_MANAGE_TEMPLATE, InvitationLinkService.class),
+                promise::complete,
+                promise::fail
+        );
+        return promise.future().compose(template -> {
+            String body = template
+                    .replace("[managerName]", manager.getFullName())
+                    .replace("[inviterName]", inviter.getFullName())
+                    .replace("[inviterEmail]", inviter.getEmail())
+                    .replace("[acceptLink]", acceptLink)
+                    .replace("[declineLink]", declineLink);
 
-        return sendEmail(manager, INVITATION_TO_MANAGE_SUBJECT, body, dataSourceModel);
+            return sendEmail(manager, INVITATION_TO_MANAGE_SUBJECT, body, dataSourceModel);
+        });
     }
 
     /**
@@ -129,15 +157,24 @@ public final class InvitationLinkService {
             Person approver,
             String clientOrigin,
             DataSourceModel dataSourceModel) {
-        
+
         String accountLink = clientOrigin + "/members";
 
-        String body = REQUEST_APPROVED_BODY
-                .replace("[requesterName]", requester.getFullName())
-                .replace("[approverName]", approver.getFullName())
-                .replace("[accountLink]", accountLink);
+        // Load template asynchronously (GWT-compatible)
+        Promise<String> promise = Promise.promise();
+        Resource.loadText(
+                Resource.toUrl(REQUEST_APPROVED_TEMPLATE, InvitationLinkService.class),
+                promise::complete,
+                promise::fail
+        );
+        return promise.future().compose(template -> {
+            String body = template
+                    .replace("[requesterName]", requester.getFullName())
+                    .replace("[approverName]", approver.getFullName())
+                    .replace("[accountLink]", accountLink);
 
-        return sendEmail(requester, REQUEST_APPROVED_SUBJECT, body, dataSourceModel);
+            return sendEmail(requester, REQUEST_APPROVED_SUBJECT, body, dataSourceModel);
+        });
     }
 
     /**
