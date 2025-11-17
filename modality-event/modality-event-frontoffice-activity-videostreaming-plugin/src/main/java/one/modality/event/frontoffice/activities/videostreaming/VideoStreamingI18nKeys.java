@@ -11,6 +11,7 @@ public interface VideoStreamingI18nKeys {
     Object LiveAnnouncements = "LiveAnnouncements";
     Object LiveAnnouncementsTitle = "LiveAnnouncementsTitle";
     Object LiveNow = "LiveNow";
+    Object LivestreamOnlyWarning = "LivestreamOnlyWarning";
     Object LivestreamTitle = "LivestreamTitle";
     Object NoVideoInYourLibrary = "NoVideoInYourLibrary";
     Object NoVideosForThisEvent = "NoVideosForThisEvent";
@@ -21,6 +22,7 @@ public interface VideoStreamingI18nKeys {
     Object ScheduleForSpecificDate1 = "ScheduleForSpecificDate1";
     Object SelectAnotherEvent = "SelectAnotherEvent";
     Object SelectTheDayBelow = "SelectTheDayBelow";
+    Object SessionCompleted = "SessionCompleted";
     Object StartingIn1 = "StartingIn1";
     Object Unavailable = "Unavailable";
     Object VideoCancelled = "VideoCancelled";
