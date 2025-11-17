@@ -3,28 +3,28 @@ package one.modality.event.backoffice.activities.program;
 
 public interface ProgramI18nKeys {
 
-    Object DuplicateIcon = "DuplicateIcon";
-    Object ProgramTitle = "ProgramTitle";
-    Object Programme = "Programme";
     Object AddDayTemplate = "AddDayTemplate";
     Object AssignDay = "AssignDay";
+    Object CancelProgram = "CancelProgram";
+    Object ChooseAnItemForTheTeachingBookableScheduledItem = "ChooseAnItemForTheTeachingBookableScheduledItem";
+    Object ConfirmGeneration = "ConfirmGeneration";
+    Object DayTicketTeachingsAndAudioScheduledItemInfos = "DayTicketTeachingsAndAudioScheduledItemInfos";
+    Object DayTicketTeachingsAndAudioScheduledItemNotGenerated = "DayTicketTeachingsAndAudioScheduledItemNotGenerated";
     Object DeleteDayTemplate = "DeleteDayTemplate";
-    Object To = "To";
+    Object DeleteProgram = "DeleteProgram";
+    Object DeleteProgramConfirmation = "DeleteProgramConfirmation";
+    Object DuplicateIcon = "DuplicateIcon";
+    Object GeneratePreliminaryBookableSI = "GeneratePreliminaryBookableSI";
+    Object GenerateProgram = "GenerateProgram";
     Object ItemSelectedShouldntBeNull = "ItemSelectedShouldntBeNull";
     Object NameThisLine = "NameThisLine";
-    Object GenerateProgram = "GenerateProgram";
-    Object DeleteProgram = "DeleteProgram";
-    Object CancelProgram = "CancelProgram";
-    Object SaveProgram = "SaveProgram";
+    Object PleaseSelectAnItem = "PleaseSelectAnItem";
     Object ProgramGenerationConfirmation = "ProgramGenerationConfirmation";
-    Object DeleteProgramConfirmation = "DeleteProgramConfirmation";
-    Object ConfirmGeneration = "ConfirmGeneration";
+    Object ProgramTitle = "ProgramTitle";
+    Object Programme = "Programme";
+    Object SaveProgram = "SaveProgram";
     Object ScheduledItemsAlreadyGenerated = "ScheduledItemsAlreadyGenerated";
     Object ScheduledItemsNotYetGenerated = "ScheduledItemsNotYetGenerated";
-    Object DayTicketTeachingsAndAudioScheduledItemNotGenerated = "DayTicketTeachingsAndAudioScheduledItemNotGenerated";
-    Object DayTicketTeachingsAndAudioScheduledItemInfos = "DayTicketTeachingsAndAudioScheduledItemInfos";
-    Object ChooseAnItemForTheTeachingBookableScheduledItem = "ChooseAnItemForTheTeachingBookableScheduledItem";
-    Object GeneratePreliminaryBookableSI = "GeneratePreliminaryBookableSI";
-    Object PleaseSelectAnItem = "PleaseSelectAnItem";
+    Object To = "To";
 
 }

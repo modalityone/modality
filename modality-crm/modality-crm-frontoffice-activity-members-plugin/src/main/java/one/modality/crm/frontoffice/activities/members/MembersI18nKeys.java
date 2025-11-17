@@ -3,17 +3,17 @@ package one.modality.crm.frontoffice.activities.members;
 
 public interface MembersI18nKeys {
 
-    Object MembersMenu = "MembersMenu";
-    Object RemoveMember = "RemoveMember";
-    Object MembersHelp = "MembersHelp";
-    Object NoMembersMessage = "NoMembersMessage";
     Object AddMember = "AddMember";
-    Object MemberInformation = "MemberInformation";
-    Object RemovingAMemberTitle = "RemovingAMemberTitle";
-    Object MainAccount = "MainAccount";
-    Object MembersInYourAccountDescription = "MembersInYourAccountDescription";
-    Object RemovingAMemberConfirmation = "RemovingAMemberConfirmation";
     Object EditMemberDetails = "EditMemberDetails";
+    Object MainAccount = "MainAccount";
+    Object MemberInformation = "MemberInformation";
+    Object MembersHelp = "MembersHelp";
     Object MembersInYourAccount = "MembersInYourAccount";
+    Object MembersInYourAccountDescription = "MembersInYourAccountDescription";
+    Object MembersMenu = "MembersMenu";
+    Object NoMembersMessage = "NoMembersMessage";
+    Object RemoveMember = "RemoveMember";
+    Object RemovingAMemberConfirmation = "RemovingAMemberConfirmation";
+    Object RemovingAMemberTitle = "RemovingAMemberTitle";
 
 }

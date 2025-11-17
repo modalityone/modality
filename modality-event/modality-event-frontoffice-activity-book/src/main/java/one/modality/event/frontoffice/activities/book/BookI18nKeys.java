@@ -3,34 +3,34 @@ package one.modality.event.frontoffice.activities.book;
 
 public interface BookI18nKeys {
 
-    Object PaymentFailedMessage = "PaymentFailedMessage";
+//    Object Authorize.net = "Authorize.net";
+    Object BookAgain = "BookAgain";
+    Object BookingNumber1 = "BookingNumber1";
+    Object BookingSubmitted = "BookingSubmitted";
     Object CancelBooking = "CancelBooking";
     Object ErrorPaymentGatewayFailure = "ErrorPaymentGatewayFailure";
+    Object ErrorPaymentModalityFailure = "ErrorPaymentModalityFailure";
+    Object ErrorWhileCancelingTheBooking = "ErrorWhileCancelingTheBooking";
+    Object ErrorWhileInitializingHTMLPaymentForm = "ErrorWhileInitializingHTMLPaymentForm";
+    Object ErrorWhileInitiatingPayment = "ErrorWhileInitiatingPayment";
+    Object ErrorWhileInsertingBooking = "ErrorWhileInsertingBooking";
+    Object ErrorWhileLoadingPaymentForm = "ErrorWhileLoadingPaymentForm";
+    Object GuestDetails = "GuestDetails";
+    Object LoginBeforeBooking = "LoginBeforeBooking";
+    Object OrBookAsGuest = "OrBookAsGuest";
+    Object OrBookUsingAccount = "OrBookUsingAccount";
     Object Pay1 = "Pay1";
     Object PaymentAndBookingCancelled = "PaymentAndBookingCancelled";
-    Object OrBookUsingAccount = "OrBookUsingAccount";
-    Object ErrorWhileLoadingPaymentForm = "ErrorWhileLoadingPaymentForm";
-    Object TotalBookingPrice1 = "TotalBookingPrice1";
-    Object BookingSubmitted = "BookingSubmitted";
     Object PaymentCancelled = "PaymentCancelled";
-    Object PaymentInformation1 = "PaymentInformation1";
-    Object BookAgain = "BookAgain";
-    Object PaymentPendingMessage = "PaymentPendingMessage";
-    Object ErrorWhileInitiatingPayment = "ErrorWhileInitiatingPayment";
     Object PaymentFailed = "PaymentFailed";
-    Object ErrorWhileCancelingTheBooking = "ErrorWhileCancelingTheBooking";
-    Object OrBookAsGuest = "OrBookAsGuest";
+    Object PaymentFailedMessage = "PaymentFailedMessage";
+    Object PaymentInformation1 = "PaymentInformation1";
     Object PaymentPending = "PaymentPending";
-    Object ErrorPaymentModalityFailure = "ErrorPaymentModalityFailure";
-    Object ThankYouForBooking = "ThankYouForBooking";
-    Object GuestDetails = "GuestDetails";
-    Object ErrorWhileInitializingHTMLPaymentForm = "ErrorWhileInitializingHTMLPaymentForm";
-    Object BookingNumber1 = "BookingNumber1";
-    Object UncancelBooking = "UncancelBooking";
-    Object LoginBeforeBooking = "LoginBeforeBooking";
+    Object PaymentPendingMessage = "PaymentPendingMessage";
     Object RetryPayment = "RetryPayment";
-    Object ErrorWhileInsertingBooking = "ErrorWhileInsertingBooking";
     Object Square = "Square";
-//    Object Authorize.net = "Authorize.net";
+    Object ThankYouForBooking = "ThankYouForBooking";
+    Object TotalBookingPrice1 = "TotalBookingPrice1";
+    Object UncancelBooking = "UncancelBooking";
 
 }

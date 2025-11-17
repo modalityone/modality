@@ -3,8 +3,8 @@ package one.modality.catering.client.i18n;
 
 public interface CateringI18nKeys {
 
-    Object NoMealsData = "NoMealsData";
     Object Index = "Index";
     Object Meals = "Meals";
+    Object NoMealsData = "NoMealsData";
 
 }

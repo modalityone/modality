@@ -3,24 +3,24 @@ package one.modality.crm.frontoffice.activities.createaccount;
 
 public interface CreateAccountI18nKeys {
 
-    Object Or = "Or";
-    Object AgreeTermAndCond = "AgreeTermAndCond";
-    Object CreateAccountButton = "CreateAccountButton";
-    Object AddressInformation = "AddressInformation";
-    Object NoAttendanceToAKadampaCenter = "NoAttendanceToAKadampaCenter";
-    Object LoginTitle = "LoginTitle";
     Object AccountCreatedWithSuccess = "AccountCreatedWithSuccess";
-    Object ReadTermAndCond = "ReadTermAndCond";
+    Object AddressInformation = "AddressInformation";
+    Object AgreeTermAndCond = "AgreeTermAndCond";
+    Object Cancel = "Cancel";
+    Object CountryRequired = "CountryRequired";
+    Object CreateAccountButton = "CreateAccountButton";
+    Object CreatingAccountError = "CreatingAccountError";
+    Object CreatingPersonAssociatedToAccountError = "CreatingPersonAssociatedToAccountError";
     Object FindAddress = "FindAddress";
     Object LoginDetails = "LoginDetails";
-    Object CountryRequired = "CountryRequired";
-    Object SelectKadampaCenter = "SelectKadampaCenter";
-    Object SaveChanges = "SaveChanges";
-    Object TermsAndCondsRequired = "TermsAndCondsRequired";
-    Object CreatingPersonAssociatedToAccountError = "CreatingPersonAssociatedToAccountError";
-    Object PasswordStrength = "PasswordStrength";
-    Object CreatingAccountError = "CreatingAccountError";
+    Object LoginTitle = "LoginTitle";
+    Object NoAttendanceToAKadampaCenter = "NoAttendanceToAKadampaCenter";
+    Object Or = "Or";
     Object PasswordNotMatchingError = "PasswordNotMatchingError";
-    Object Cancel = "Cancel";
+    Object PasswordStrength = "PasswordStrength";
+    Object ReadTermAndCond = "ReadTermAndCond";
+    Object SaveChanges = "SaveChanges";
+    Object SelectKadampaCenter = "SelectKadampaCenter";
+    Object TermsAndCondsRequired = "TermsAndCondsRequired";
 
 }
