@@ -1,0 +1,74 @@
+/* Members Activity Styles - Web (GWT) */
+
+/* Section title styling */
+.section-title-uppercase {
+    font-size: 14px;
+    text-transform: uppercase;
+    color: #4f7cac;
+}
+
+/* Text size utilities */
+.text-size-13 {
+    font-size: 13px;
+}
+
+/* Text style utilities */
+.text-italic {
+    font-style: italic;
+}
+
+/* Action button styling */
+.action-button {
+    font-size: 13px;
+    font-weight: 500;
+}
+
+/* Empty state styling */
+.empty-state-title {
+    font-family: 'Poppins', sans-serif;
+    font-weight: 600;
+    font-size: 20px;
+    color: #4a4748;
+}
+
+.empty-state-description {
+    font-family: 'Poppins', sans-serif;
+    font-weight: 400;
+    font-size: 14px;
+    color: #838788;
+    line-height: 1.6;
+}
+
+/* Item box styling */
+.member-item-box {
+    border-color: #e0e0e0;
+    border-width: 0 0 1px 0;
+    border-style: solid;
+}
+
+/* Section divider */
+.section-divider {
+    background-color: #e0e0e0;
+}
+
+/* Invitation activity styles */
+.invitation-message {
+    font-size: 18px;
+}
+
+.invitation-details {
+    font-size: 14px;
+}
+
+/* Color utilities for invitation activities */
+.text-muted {
+    color: #666;
+}
+
+.text-success {
+    color: #28a745;
+}
+
+.text-danger {
+    color: #dc3545;
+}

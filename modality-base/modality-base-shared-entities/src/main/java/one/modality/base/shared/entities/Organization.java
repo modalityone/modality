@@ -22,6 +22,7 @@ public interface Organization extends
     String longitude = "longitude";
     String importIssue = "importIssue";
     String language = "language";
+    String teachingsDayTicketItem = "teachingsDayTicketItem";
 
     default void setClosed(boolean value) { setFieldValue(closed, value); }
 
@@ -83,6 +84,18 @@ public interface Organization extends
 
     default Language getLanguage() {
         return getForeignEntity(language);
+    }
+
+    default void setTeachingsDayTicketItem(Object value) {
+        setForeignField(teachingsDayTicketItem, value);
+    }
+
+    default EntityId getTeachingsDayTicketItemId() {
+        return getForeignEntityId(teachingsDayTicketItem);
+    }
+
+    default Item getTeachingsDayTicketItem() {
+        return getForeignEntity(teachingsDayTicketItem);
     }
 
 }

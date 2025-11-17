@@ -20,6 +20,7 @@ import dev.webfx.extras.util.dialog.DialogCallback;
 import dev.webfx.extras.util.dialog.DialogUtil;
 import dev.webfx.extras.util.layout.Layouts;
 import dev.webfx.kit.util.properties.FXProperties;
+import dev.webfx.platform.util.Booleans;
 import dev.webfx.stack.orm.datasourcemodel.service.DataSourceModelService;
 import dev.webfx.stack.orm.entity.Entities;
 import dev.webfx.stack.orm.entity.controls.entity.selector.ButtonSelector;
@@ -42,7 +43,6 @@ import one.modality.base.client.time.FrontOfficeTimeFormats;
 import one.modality.base.shared.entities.Country;
 import one.modality.base.shared.entities.Organization;
 import one.modality.base.shared.entities.Person;
-import one.modality.base.shared.entities.markers.HasOnline;
 import one.modality.crm.client.i18n.CrmI18nKeys;
 import one.modality.crm.frontoffice.activities.createaccount.CreateAccountI18nKeys;
 import one.modality.crm.frontoffice.activities.createaccount.UserAccountUI;
@@ -113,10 +113,6 @@ public final class UserProfileView implements ModalityButtonFactoryMixin {
         this.showSaveChangesButton = showSaveChangesButton;
         this.showCancelButton = showCancelButton;
         this.currentEditedPerson = person;
-    }
-
-    public Person getCurrentEditedPerson() {
-        return currentEditedPerson;
     }
 
     public void setCurrentEditedPerson(Person currentEditedPerson) {
@@ -198,7 +194,10 @@ public final class UserProfileView implements ModalityButtonFactoryMixin {
             cityNameTextField.textProperty(),
             countrySelector.selectedItemProperty(),
             organizationSelector.selectedItemProperty(),
-            noOrganizationRadioButton.selectedProperty()
+            noOrganizationRadioButton.selectedProperty(),
+            birthDateField.dateProperty(),
+            optionMale.selectedProperty(),
+            optionLay.selectedProperty()
         );
 
         return container;
@@ -224,6 +223,7 @@ public final class UserProfileView implements ModalityButtonFactoryMixin {
         pickupImageMonoPane.setBackground(new Background(new BackgroundFill(Color.LIGHTGRAY, new CornerRadii(50), Insets.EMPTY)));
         picturePane.getChildren().add(pickupImageMonoPane);
         pickupImageMonoPane.setOnMouseClicked(ev -> {
+            changePictureUI.initializeWithCurrentPicture();
             Region changePictureUIView = changePictureUI.getView();
             DialogCallback callback = DialogUtil.showModalNodeInGoldLayout(changePictureUIView, FXMainFrameDialogArea.getDialogArea());
             FXMainFrameDialogArea.getDialogArea().setOnMouseClicked(e -> callback.closeDialog());
@@ -533,6 +533,11 @@ public final class UserProfileView implements ModalityButtonFactoryMixin {
         cityNameTextField.setText(currentEditedPerson.getCityName());
         countrySelector.setSelectedItem(currentEditedPerson.getCountry());
         organizationSelector.setSelectedItem(currentEditedPerson.getOrganization());
+        birthDateField.setDate(currentEditedPerson.getBirthDate());
+        optionOrdained.setSelected(Booleans.isTrue(currentEditedPerson.isOrdained()));
+        optionLay.setSelected(Booleans.isFalse(currentEditedPerson.isOrdained()));
+        optionMale.setSelected(Booleans.isTrue(currentEditedPerson.isMale()));
+        optionFemale.setSelected(Booleans.isFalse(currentEditedPerson.isMale()));
         noOrganizationRadioButton.setSelected(currentEditedPerson.getOrganization() == null);
 
         syncing = false;
@@ -559,6 +564,9 @@ public final class UserProfileView implements ModalityButtonFactoryMixin {
                 organization = null;
             }
             currentEditedPerson.setOrganization(organization);
+            currentEditedPerson.setBirthDate(birthDateField.getDate());
+            currentEditedPerson.setOrdained(!optionOrdained.isSelected() && !optionLay.isSelected() ? null : optionOrdained.isSelected());
+            currentEditedPerson.setMale(!optionMale.isSelected() && !optionFemale.isSelected() ? null : optionMale.isSelected());
             organizationSelector.setSelectedItem(organization);
             noOrganizationRadioButton.setSelected(organization == null);
         }

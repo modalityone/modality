@@ -27,7 +27,7 @@ import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
 import javafx.util.Duration;
 import one.modality.base.client.activity.ModalityButtonFactoryMixin;
-import one.modality.base.client.cloudinary.ModalityCloudinary;
+import one.modality.base.client.cloud.image.ModalityCloudImageService;
 import one.modality.base.client.mainframe.fx.FXMainFrameDialogArea;
 import one.modality.base.frontoffice.utility.page.FOPageUtil;
 import one.modality.base.shared.entities.Person;
@@ -212,10 +212,10 @@ final class UserProfileActivity extends ViewDomainActivityBase implements Modali
     }
 
     public void loadProfilePictureIfExist() {
-        String cloudImagePath = ModalityCloudinary.personImagePath(currentPerson);
+        String cloudImagePath = ModalityCloudImageService.personImagePath(currentPerson);
         if (Objects.equals(cloudImagePath, changePictureUI.getRecentlyUploadedCloudPictureId()))
             return;
-        ModalityCloudinary.loadHdpiImage(cloudImagePath, 150, 150, view.pictureImageContainer, () -> new ImageView(UserProfileView.NO_PICTURE_IMAGE));
+        ModalityCloudImageService.loadHdpiImage(cloudImagePath, 150, 150, view.pictureImageContainer, () -> new ImageView(UserProfileView.NO_PICTURE_IMAGE));
     }
 
     public Person getCurrentPerson() {

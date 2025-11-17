@@ -22,6 +22,7 @@
         <module>modality-base-backoffice-activity-home-plugin</module>
         <module>modality-base-backoffice-activity-operations-plugin</module>
         <module>modality-base-backoffice-application</module>
+        <module>modality-base-backoffice-formatters-renderers</module>
         <module>modality-base-backoffice-gantt-canvas</module>
         <module>modality-base-backoffice-gantt-canvas-basic-plugin</module>
         <module>modality-base-backoffice-mainframe-activity</module>
@@ -39,7 +40,7 @@
         <module>modality-base-client-application</module>
         <module>modality-base-client-bootstrap</module>
         <module>modality-base-client-brand</module>
-        <module>modality-base-client-cloudinary</module>
+        <module>modality-base-client-cloud-image</module>
         <module>modality-base-client-css</module>
         <module>modality-base-client-entities</module>
         <module>modality-base-client-error</module>
@@ -77,6 +78,7 @@
         <module>modality-base-shared-domainmodel</module>
         <module>modality-base-shared-entities</module>
         <module>modality-base-shared-knownitems</module>
+        <module>modality-base-shared-util</module>
     </modules>
 
 </project>

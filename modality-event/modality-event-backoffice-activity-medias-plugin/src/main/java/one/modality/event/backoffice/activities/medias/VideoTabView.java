@@ -2,7 +2,9 @@ package one.modality.event.backoffice.activities.medias;
 
 import dev.webfx.extras.i18n.I18n;
 import dev.webfx.extras.i18n.controls.I18nControls;
-import dev.webfx.extras.panes.ColumnsPane;
+import javafx.scene.layout.*;
+import dev.webfx.extras.panes.MonoPane;
+import dev.webfx.extras.responsive.ResponsiveDesign;
 import dev.webfx.extras.styles.bootstrap.Bootstrap;
 import dev.webfx.extras.theme.text.TextTheme;
 import dev.webfx.extras.time.format.LocalizedTime;
@@ -24,10 +26,6 @@ import javafx.geometry.Orientation;
 import javafx.geometry.Pos;
 import javafx.scene.Node;
 import javafx.scene.control.*;
-import javafx.scene.layout.BorderPane;
-import javafx.scene.layout.HBox;
-import javafx.scene.layout.Region;
-import javafx.scene.layout.VBox;
 import one.modality.base.client.i18n.BaseI18nKeys;
 import one.modality.base.client.time.BackOfficeTimeFormats;
 import one.modality.base.client.util.masterslave.ModalitySlaveEditor;
@@ -223,15 +221,38 @@ final class VideoTabView {
         masterSettings.getStyleClass().add("media-settings-section");
         individualSettings.getStyleClass().add("media-settings-section");
 
-        // Layout container using ColumnsPane for responsiveness
-        ColumnsPane columnsPane = new ColumnsPane(40);
-        columnsPane.setMaxColumnCount(2);
-        columnsPane.setMinColumnWidth(350);
-        columnsPane.setVgap(20);
-        columnsPane.getChildren().addAll(masterSettings, individualSettings);
+        // Set width constraints
+        masterSettings.setMinWidth(350);
+        masterSettings.setMaxWidth(500);
+        individualSettings.setMinWidth(350);
+        individualSettings.setMaxWidth(Double.MAX_VALUE);
 
-        VBox container = new VBox(columnsPane);
+        // Create responsive container that switches between HBox (wide) and VBox (narrow)
+        MonoPane responsivePane = new MonoPane();
+
+        VBox container = new VBox(responsivePane);
         container.setPadding(new Insets(20));
+
+        // Use ResponsiveDesign to switch layouts based on width
+        new ResponsiveDesign(container)
+            .addResponsiveLayout(
+                width -> width >= 800,
+                () -> {
+                    // Wide screen: side-by-side with different widths
+                    HBox hBox = new HBox(40, masterSettings, individualSettings);
+                    hBox.setAlignment(Pos.TOP_LEFT);
+                    HBox.setHgrow(individualSettings, Priority.ALWAYS);
+                    responsivePane.setContent(hBox);
+                })
+            .addResponsiveLayout(
+                width -> width < 800,
+                () -> {
+                    // Narrow screen: stacked vertically, both full width
+                    VBox vBox = new VBox(20, masterSettings, individualSettings);
+                    vBox.setAlignment(Pos.TOP_LEFT);
+                    responsivePane.setContent(vBox);
+                })
+            .start();
 
         mainFrame.setCenter(container);
 

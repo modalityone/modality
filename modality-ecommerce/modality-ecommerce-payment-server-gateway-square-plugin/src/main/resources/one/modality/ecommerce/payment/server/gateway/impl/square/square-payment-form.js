@@ -29,21 +29,27 @@ var square_card; // Using 'var' declaration so that we can get the object back w
 function modality_injectJavaPaymentForm(jpf) {
     console.log("modality_injectJavaPaymentForm() called");
     modality_javaPaymentForm = jpf;
+    modality_notifyGatewayDebugStep(1);
     if (square_card) { // happens if the customer uses the payment form several times in the same session
+        modality_notifyGatewayDebugStep(2);
         try { // We destroy the previous card, otherwise attaching the new card won't work
             console.log("Destroying previous card");
             square_card.destroy();
         } catch (e) {
+            modality_notifyGatewayDebugStep(3);
             console.error('Destroying previous card failed', e);
             modality_notifyGatewayInitFailure('Destroying previous card failed: ' + e.message);
             return;
         }
     }
     if (modality_initialized) {
-        if (modality_initError)
+        if (modality_initError) {
+            modality_notifyGatewayDebugStep(4);
             modality_notifyGatewayInitFailure(modality_initError);
-        else
+        } else {
+            modality_notifyGatewayDebugStep(5);
             modality_notifyGatewayInitSuccess();
+        }
     }
 }
 
@@ -53,6 +59,12 @@ function modality_submitGatewayPayment(firstName, lastName, email, phone, addres
 }
 
 // Methods called by this JS script to call back the Java WebPaymentForm class to notify about the progress in the gateway process
+
+function modality_notifyGatewayDebugStep(debugStep) {
+    if (modality_javaPaymentForm) {
+        modality_javaPaymentForm.onGatewayDebugStep(debugStep);
+    }
+}
 
 function modality_notifyGatewayInitSuccess() {
     modality_initialized = true;

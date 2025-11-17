@@ -1,0 +1,148 @@
+/* Rights Management Admin Plugin - Web CSS */
+/* Note: This file contains only CSS classes actually used in the admin module Java code */
+
+/* Root variables */
+:root {
+    --admin-primary-color: #00b8d4;
+    --admin-danger-color: #ff5252;
+    --admin-info-bg-color: #e3f2fd;
+    --admin-info-text-color: #1976d2;
+    --admin-info-border-color: #2196f3;
+    --admin-text-secondary: #666;
+}
+
+/* Card styling */
+.admin-card {
+    background-color: white;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+/* Title and subtitle */
+.admin-title {
+    font-size: 24px;
+    font-weight: bold;
+}
+
+.admin-subtitle {
+    font-size: 18px;
+    color: var(--admin-text-secondary);
+}
+
+.admin-card-title {
+    font-size: 18px;
+    font-weight: bold;
+}
+
+/* Assign Role Dialog Styles */
+.dialog-title {
+    font-size: 20px;
+    font-weight: bold;
+}
+
+/* Organization Info Box */
+.organization-info-box {
+    background-color: var(--admin-info-bg-color);
+    border-color: var(--admin-info-border-color);
+    border-width: 1px;
+    border-style: solid;
+    border-radius: 6px;
+}
+
+.organization-info-prefix {
+    color: var(--admin-text-secondary);
+    font-size: 13px;
+}
+
+.organization-info-name {
+    color: var(--admin-info-text-color);
+    font-size: 14px;
+}
+
+.form-label {
+    font-weight: bold;
+}
+
+.form-description {
+    font-size: 13px;
+    color: #666;
+}
+
+/* Scope Card Styles */
+.scope-card {
+    border-radius: 6px;
+    cursor: pointer;
+    border-width: 2px;
+    border-style: solid;
+    border-color: #e0e0e0;
+    background-color: white;
+}
+
+.scope-card.selected {
+    border-color: #00b8d4;
+    background-color: #e1f5fe;
+}
+
+.scope-card-title {
+    font-weight: 600;
+}
+
+.scope-card-description {
+    font-size: 12px;
+    color: #666;
+}
+
+/* Table header styling */
+.grid-head .grid-col {
+    background-color: #e9ecef;
+}
+
+.grid-head Text,
+.grid-head Label {
+    font-weight: bold;
+    font-size: 13px;
+    fill: #495057;
+    color: #495057;
+}
+
+.dialog-summary {
+    font-size: 14px;
+}
+
+/* Modal Dialog Styles */
+.modal-dialog-pane {
+    background-color: white;
+    border-radius: 8px;
+}
+
+/* Error Dialog Styles */
+.error-dialog-title {
+    font-size: 20px;
+    font-weight: 600;
+    color: #dc3545;
+}
+
+.error-dialog-header {
+    font-size: 16px;
+    font-weight: 500;
+}
+
+.error-dialog-content {
+    font-size: 14px;
+    color: #666;
+}
+
+/* Delete Dialog Styles */
+.delete-dialog-title {
+    font-size: 20px;
+    font-weight: 600;
+}
+
+.delete-dialog-message {
+    font-size: 14px;
+}
+
+.delete-dialog-confirm {
+    font-size: 14px;
+    color: #666;
+}

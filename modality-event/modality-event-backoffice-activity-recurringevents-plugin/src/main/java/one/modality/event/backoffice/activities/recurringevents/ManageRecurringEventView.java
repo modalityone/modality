@@ -62,7 +62,7 @@ import javafx.scene.paint.Color;
 import javafx.scene.shape.Line;
 import javafx.scene.shape.SVGPath;
 import javafx.scene.text.Text;
-import one.modality.base.client.cloudinary.ModalityCloudinary;
+import one.modality.base.client.cloud.image.ModalityCloudImageService;
 import one.modality.base.client.i18n.BaseI18nKeys;
 import one.modality.base.client.icons.SvgIcons;
 import one.modality.base.client.mainframe.fx.FXMainFrameDialogArea;
@@ -529,10 +529,10 @@ final class ManageRecurringEventView {
     }
 
     private void loadEventImageIfExists() {
-        String cloudImagePath = ModalityCloudinary.eventImagePath(currentEditedEvent);
+        String cloudImagePath = ModalityCloudImageService.eventImagePath(currentEditedEvent);
         if (Objects.equals(cloudImagePath, recentlyUploadedCloudPictureId))
             return;
-        ModalityCloudinary.loadHdpiImage(cloudImagePath, EVENT_IMAGE_WIDTH, EVENT_IMAGE_HEIGHT, eventImageContainer, () -> null)
+        ModalityCloudImageService.loadHdpiImage(cloudImagePath, EVENT_IMAGE_WIDTH, EVENT_IMAGE_HEIGHT, eventImageContainer, () -> null)
             .onComplete(ar -> isPictureDisplayed.setValue(eventImageContainer.getContent() != null));
     }
 
@@ -549,7 +549,7 @@ final class ManageRecurringEventView {
 
     public void uploadCloudPictureIfNecessary(String cloudImagePath) {
         if (isCloudPictureToBeUploaded.getValue()) {
-            ModalityCloudinary.uploadImage(cloudImagePath, cloudPictureFileToUpload)
+            ModalityCloudImageService.uploadImage(cloudImagePath, cloudPictureFileToUpload)
                 .onFailure(Console::log)
                 .onSuccess(ok -> {
                     isCloudPictureToBeUploaded.set(false);
@@ -563,7 +563,7 @@ final class ManageRecurringEventView {
         if (isCloudPictureToBeDeleted.getValue()) {
             //We delete the pictures, and all the cached picture in cloudinary that can have been transformed, related
             //to this assets
-            ModalityCloudinary.deleteImage(cloudImagePath)
+            ModalityCloudImageService.deleteImage(cloudImagePath)
                 .onFailure(Console::log)
                 .onSuccess(ok -> {
                     isCloudPictureToBeDeleted.set(false);
@@ -736,7 +736,7 @@ final class ManageRecurringEventView {
                             BorderPane.setAlignment(okErrorButton, Pos.CENTER);
                         })
                         .onSuccess(x -> {
-                            String cloudImagePath = ModalityCloudinary.eventImagePath(currentEditedEvent);
+                            String cloudImagePath = ModalityCloudImageService.eventImagePath(currentEditedEvent);
                             deleteCloudPictureIfNecessary(cloudImagePath);
                             uploadCloudPictureIfNecessary(cloudImagePath);
                         });
@@ -819,15 +819,28 @@ final class ManageRecurringEventView {
         ShapeTheme.createPrimaryShapeFacet(uploadSVGPath).style();
         uploadButton.setGraphic(uploadSVGPath);
         FilePicker filePicker = FilePicker.create();
-        filePicker.getAcceptedExtensions().addAll("image/*");
+        filePicker.getAcceptedExtensions().addAll("image/*", ".webp", "image/webp");
         filePicker.setGraphic(uploadButton);
         filePicker.getSelectedFiles().addListener((InvalidationListener) obs -> {
             ObservableList<File> fileList = filePicker.getSelectedFiles();
-            cloudPictureFileToUpload = fileList.get(0);
-            Image imageToDisplay = new Image(cloudPictureFileToUpload.getObjectURL());
-            isCloudPictureToBeUploaded.setValue(true);
-            eventImageContainer.setContent(new ImageView(imageToDisplay));
-            isPictureDisplayed.setValue(true);
+            File selectedFile = fileList.get(0);
+            // Load the image from the uploaded file
+            Image originalImage = new Image(selectedFile.getObjectURL(), true);
+            FXProperties.runOnPropertiesChange(property -> {
+                if (originalImage.progressProperty().get() == 1) {
+                    // Convert the image to PNG format before uploading
+                    ModalityCloudImageService.prepareImageForUpload(originalImage, false, 1, 0, 0, EVENT_IMAGE_WIDTH, EVENT_IMAGE_HEIGHT)
+                        .onFailure(e -> Console.log("Failed to prepare image for upload: " + e))
+                        .onSuccess(pngBlob -> {
+                            // Store the PNG blob for upload (cast Blob to File as expected by cloudPictureFileToUpload)
+                            cloudPictureFileToUpload = (File) pngBlob;
+                            isCloudPictureToBeUploaded.setValue(true);
+                            // Display the original image
+                            eventImageContainer.setContent(new ImageView(originalImage));
+                            isPictureDisplayed.setValue(true);
+                        });
+                }
+            }, originalImage.progressProperty());
         });
 
         Label uploadButtonDescription = Bootstrap.small(I18nControls.newLabel(RecurringEventsI18nKeys.SelectYourFile));
@@ -1092,7 +1105,7 @@ final class ManageRecurringEventView {
                     Console.log(ex);
                 })
                 .onSuccess(x -> {
-                    String cloudImagePath = ModalityCloudinary.eventImagePath(currentEditedEvent);
+                    String cloudImagePath = ModalityCloudImageService.eventImagePath(currentEditedEvent);
                     deleteCloudPictureIfNecessary(cloudImagePath);
                     uploadCloudPictureIfNecessary(cloudImagePath);
                     isCloudPictureToBeDeleted.setValue(false);

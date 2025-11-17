@@ -21,6 +21,7 @@ module modality.booking.backoffice.activity.bookings.plugin {
     requires modality.base.shared.entities;
     requires modality.booking.backoffice.operations.document;
     requires modality.crm.backoffice.bookingdetailspanel;
+    requires modality.crm.backoffice.organization.fx;
     requires modality.ecommerce.backoffice.operations.document;
     requires modality.event.client.activity.eventdependent;
     requires modality.event.client.event.fx;
@@ -32,9 +33,11 @@ module modality.booking.backoffice.activity.bookings.plugin {
     requires webfx.extras.util.control;
     requires webfx.extras.visual;
     requires webfx.extras.visual.grid;
+    requires webfx.platform.util;
     requires webfx.platform.windowhistory;
     requires webfx.stack.orm.domainmodel.activity;
     requires webfx.stack.orm.dql;
+    requires webfx.stack.orm.entity;
     requires webfx.stack.orm.expression;
     requires webfx.stack.orm.reactive.dql;
     requires webfx.stack.orm.reactive.visual;

@@ -1,0 +1,73 @@
+/* Members Activity Styles - JavaFX */
+
+/* Section title styling */
+.section-title-uppercase {
+    -fx-font-size: 14px;
+    -fx-text-transform: uppercase;
+    -fx-text-fill: #4f7cac;
+}
+
+/* Text size utilities */
+.text-size-13 {
+    -fx-font-size: 13px;
+}
+
+/* Text style utilities */
+.text-italic {
+    -fx-font-style: italic;
+}
+
+/* Action button styling */
+.action-button {
+    -fx-font-size: 13px;
+    -fx-font-weight: 500;
+}
+
+/* Empty state styling */
+.empty-state-title {
+    -fx-font-family: 'Poppins', sans-serif;
+    -fx-font-weight: 600;
+    -fx-font-size: 20px;
+    -fx-text-fill: #4a4748;
+}
+
+.empty-state-description {
+    -fx-font-family: 'Poppins', sans-serif;
+    -fx-font-weight: 400;
+    -fx-font-size: 14px;
+    -fx-text-fill: #838788;
+    -fx-line-spacing: 0.6;
+}
+
+/* Item box styling */
+.member-item-box {
+    -fx-border-color: #e0e0e0;
+    -fx-border-width: 0 0 1 0;
+}
+
+/* Section divider */
+.section-divider {
+    -fx-background-color: #e0e0e0;
+}
+
+/* Invitation activity styles */
+.invitation-message {
+    -fx-font-size: 18px;
+}
+
+.invitation-details {
+    -fx-font-size: 14px;
+}
+
+/* Color utilities for invitation activities */
+.text-muted {
+    -fx-text-fill: #666;
+}
+
+.text-success {
+    -fx-text-fill: #28a745;
+}
+
+.text-danger {
+    -fx-text-fill: #dc3545;
+}

@@ -11,7 +11,6 @@
 
         <!-- Including organization map REST API /organization-map/:organizationId required for modality-event-frontoffice-activity-booking-plugin -->
         <plugin-module executable-target="vertx">modality-base-server-rest-map-vertx-plugin</plugin-module>
-        <plugin-module executable-target="vertx">webfx-stack-cloud-image-server-plugin</plugin-module>
     </dependencies>
 
 </project>

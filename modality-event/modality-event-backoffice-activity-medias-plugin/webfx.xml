@@ -7,7 +7,12 @@
     </exported-packages>
 
     <dependencies>
-        <used-by-source-modules/>
+        <used-by-source-modules>
+            <module>webfx-extras-cell</module>
+            <module>webfx-stack-orm-entity-controls</module>
+            <module>modality-base-client-mainframe-fx</module>
+            <module>modality-base-client-presentationmodel</module>
+        </used-by-source-modules>
     </dependencies>
 
     <providers>

@@ -15,7 +15,7 @@ import dev.webfx.platform.console.Console;
 import dev.webfx.platform.meta.Meta;
 import dev.webfx.platform.scheduler.Scheduler;
 import dev.webfx.stack.authz.client.factory.AuthorizationFactory;
-import dev.webfx.stack.authz.client.factory.AuthorizationUtil;
+import dev.webfx.stack.authz.client.binder.AuthorizationBinder;
 import dev.webfx.stack.orm.entity.Entity;
 import dev.webfx.stack.orm.entity.EntityStore;
 import dev.webfx.stack.routing.router.auth.authz.RouteRequest;
@@ -52,7 +52,7 @@ public final class ModalityClientOperationActionsLoader implements ApplicationMo
         hideUnauthorizedRouteOperationActions = config.getBoolean("hideUnauthorizedRouteOperationActions");
         hideUnauthorizedOtherOperationActions = config.getBoolean("hideUnauthorizedOtherOperationActions");
 
-        OperationActionRegistry.setAuthorizer(AuthorizationUtil::authorizedOperationProperty);
+        OperationActionRegistry.setAuthorizer(AuthorizationBinder::authorizedOperationProperty);
 
         String officeType = Meta.isBackoffice() ? "backoffice" : "frontoffice";
         EntityStore.create()

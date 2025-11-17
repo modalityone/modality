@@ -8,6 +8,9 @@ import dev.webfx.extras.time.TimeUtil;
 import dev.webfx.extras.time.YearWeek;
 import dev.webfx.extras.util.control.Controls;
 import dev.webfx.extras.visual.controls.grid.VisualGrid;
+import dev.webfx.platform.util.Strings;
+import dev.webfx.platform.util.collection.Collections;
+import dev.webfx.stack.orm.entity.EntityStore;
 import dev.webfx.stack.orm.reactive.mapping.entities_to_visual.ReactiveVisualMapper;
 import javafx.geometry.Pos;
 import javafx.scene.Node;
@@ -31,6 +34,7 @@ import one.modality.base.shared.entities.Event;
 import one.modality.base.shared.entities.ScheduledItem;
 import one.modality.booking.backoffice.operations.entities.document.registration.ShowNewBookingEditorRequest;
 import one.modality.crm.backoffice.controls.bookingdetailspanel.BookingDetailsPanel;
+import one.modality.crm.backoffice.organization.fx.FXOrganizationId;
 import one.modality.ecommerce.backoffice.operations.entities.document.registration.*;
 import one.modality.ecommerce.backoffice.operations.entities.document.security.MarkDocumentAsKnownRequest;
 import one.modality.ecommerce.backoffice.operations.entities.document.security.MarkDocumentAsUncheckedRequest;
@@ -38,6 +42,7 @@ import one.modality.ecommerce.backoffice.operations.entities.document.security.M
 import one.modality.ecommerce.backoffice.operations.entities.document.security.MarkDocumentAsVerifiedRequest;
 import one.modality.event.client.activity.eventdependent.EventDependentViewDomainActivity;
 import one.modality.event.client.event.fx.FXEvent;
+import one.modality.event.client.event.fx.FXEventId;
 
 import java.time.LocalDate;
 import java.time.Year;
@@ -56,13 +61,32 @@ final class BookingsActivity extends EventDependentViewDomainActivity implements
     ==================================================================================================================*/
 
     private final BookingsPresentationModel pm = new BookingsPresentationModel();
+    private FilterSearchBar filterSearchBar;
 
     @Override
     public BookingsPresentationModel getPresentationModel() {
         return pm; // eventId and organizationId will then be updated from the route
     }
 
-    private FilterSearchBar filterSearchBar;
+    @Override
+    protected void updateModelFromContextParameters() {
+        super.updateModelFromContextParameters();
+        // Considering the documentId parameter if present in the route
+        Object documentId = getParameter("documentId");
+        if (documentId != null) {
+            EntityStore.create(getDataSourceModel())
+                .<Document>executeQuery("select event.organization,ref from Document where id=? limit 1", documentId)
+                .onSuccess(documents -> {
+                    Document document = Collections.first(documents);
+                    if (document != null) {
+                        // TODO: check that the user can actually access this organization and event
+                        FXOrganizationId.setOrganizationId(document.getEvent().getOrganizationId());
+                        FXEventId.setEventId(document.getEventId());
+                        pm.setSearchText(Strings.toSafeString(document.getRef()));
+                    }
+                });
+        }
+    }
 
     @Override
     public Node buildUi() {

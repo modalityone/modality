@@ -1,0 +1,150 @@
+/* Rights Management Admin Plugin - JavaFX CSS */
+/* Note: This file contains only CSS classes actually used in the admin module Java code */
+
+/* Root variables */
+.root {
+    -admin-primary-color: #00b8d4;
+    -admin-danger-color: #ff5252;
+    -admin-info-bg-color: #e3f2fd;
+    -admin-info-text-color: #1976d2;
+    -admin-info-border-color: #2196f3;
+    -admin-text-secondary: #666;
+}
+
+/* Card styling */
+.admin-card {
+    -fx-background-color: white;
+    -fx-background-radius: 8;
+    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.1), 4, 0, 0, 2);
+}
+
+/* Title and subtitle */
+.admin-title {
+    -fx-font-size: 24;
+    -fx-font-weight: bold;
+}
+
+.admin-subtitle {
+    -fx-font-size: 18;
+    -fx-text-fill: -admin-text-secondary;
+}
+
+.admin-card-title {
+    -fx-font-size: 18;
+    -fx-font-weight: bold;
+}
+
+/* Assign Role Dialog Styles */
+.dialog-title {
+    -fx-font-size: 20;
+    -fx-font-weight: bold;
+}
+
+/* Organization Info Box */
+.organization-info-box {
+    -fx-background-color: -admin-info-bg-color;
+    -fx-border-color: -admin-info-border-color;
+    -fx-border-width: 1;
+    -fx-border-radius: 6;
+    -fx-background-radius: 6;
+}
+
+.organization-info-prefix {
+    -fx-text-fill: -admin-text-secondary;
+    -fx-font-size: 13;
+}
+
+.organization-info-name {
+    -fx-text-fill: -admin-info-text-color;
+    -fx-font-size: 14;
+}
+
+.form-label {
+    -fx-font-weight: bold;
+}
+
+.form-description {
+    -fx-font-size: 13;
+    -fx-text-fill: #666;
+}
+
+/* Scope Card Styles */
+.scope-card {
+    -fx-border-radius: 6;
+    -fx-background-radius: 6;
+    -fx-cursor: hand;
+    -fx-border-width: 2;
+    -fx-border-color: #e0e0e0;
+    -fx-background-color: white;
+}
+
+.scope-card.selected {
+    -fx-border-color: #00b8d4;
+    -fx-background-color: #e1f5fe;
+}
+
+.scope-card-title {
+    -fx-font-weight: 600;
+}
+
+.scope-card-description {
+    -fx-font-size: 12;
+    -fx-text-fill: #666;
+}
+
+.dialog-summary {
+    -fx-font-size: 14;
+}
+
+/* Modal Dialog Styles */
+.modal-dialog-pane {
+    -fx-background-color: white;
+    -fx-border-radius: 8;
+    -fx-background-radius: 8;
+}
+
+/* Error Dialog Styles */
+.error-dialog-title {
+    -fx-font-size: 20;
+    -fx-font-weight: 600;
+    -fx-text-fill: #dc3545;
+}
+
+.error-dialog-header {
+    -fx-font-size: 16;
+    -fx-font-weight: 500;
+}
+
+.error-dialog-content {
+    -fx-font-size: 14;
+    -fx-text-fill: #666;
+}
+
+/* Delete Dialog Styles */
+.delete-dialog-title {
+    -fx-font-size: 20;
+    -fx-font-weight: 600;
+}
+
+.delete-dialog-message {
+    -fx-font-size: 14;
+}
+
+.delete-dialog-confirm {
+    -fx-font-size: 14;
+    -fx-text-fill: #666;
+}
+
+
+.grid-head .grid-col {
+    -fx-background-color: #e9ecef;
+}
+
+.grid-head Text,
+.grid-head Label {
+    -fx-font-weight: bold;
+    -fx-font-size: 13;
+    -fx-fill: #495057;
+    -fx-text-fill: #495057;
+}
+

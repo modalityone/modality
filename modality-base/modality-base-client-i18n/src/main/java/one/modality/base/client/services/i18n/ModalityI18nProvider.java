@@ -23,7 +23,7 @@ import java.util.function.Supplier;
  * 1) possibility to evaluate expressions on entities
  *    Ex: new I18nSubKey("expression: 'Event name: ' + name", myEvent)
  *
- * 2) possibility to forward default i18n keys defined in Modality to other i18n keys defined in final application
+ * 2) possibility to forward default i18n keys defined in Modality to other i18n keys defined in the final application
  *    through configuration. Ex:
  *    ModalityI18nKeyForwards:
  *      RecurringEvents:
@@ -34,7 +34,7 @@ import java.util.function.Supplier;
  */
 public final class ModalityI18nProvider extends AstI18nProvider {
 
-    // Loading possible i18n keys forwards from configuration (empty in Modality but might be overridden in final app).
+    // Loading possible i18n keys forwards from configuration (empty in Modality but might be overridden in the final app).
     private static final ReadOnlyAstObject I18N_KEY_FORWARDS = AST.lookupObject(ConfigLoader.getRootConfig(),
         "modality.base.client.i18n.ModalityI18nKeyForwards");
 
@@ -52,8 +52,7 @@ public final class ModalityI18nProvider extends AstI18nProvider {
     @Override
     protected <TK extends Enum<?> & TokenKey> Object getDictionaryTokenValueImpl(Object i18nKey, TK tokenKey, Dictionary dictionary, boolean skipDefaultDictionary, Dictionary originalDictionary, boolean skipMessageKeyInterpretation, boolean skipMessageLoading) {
         Object messageKey = i18nKeyToDictionaryMessageKey(i18nKey);
-        if (messageKey instanceof String) {
-            String stringMessageKey = (String) messageKey;
+        if (messageKey instanceof String stringMessageKey) {
             Entity entity = null;
             String expression = null;
 

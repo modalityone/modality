@@ -16,7 +16,7 @@ import javafx.scene.layout.GridPane;
 import javafx.scene.layout.Region;
 import javafx.scene.layout.VBox;
 import javafx.scene.text.TextAlignment;
-import one.modality.base.client.cloudinary.ModalityCloudinary;
+import one.modality.base.client.cloud.image.ModalityCloudImageService;
 import one.modality.base.client.i18n.I18nEntities;
 import one.modality.base.client.icons.SvgIcons;
 import one.modality.base.frontoffice.utility.page.FOPageUtil;
@@ -103,8 +103,8 @@ public final class LocalEventHeader extends AbstractEventHeader {
     @Override
     public Future<Event> loadAndSetEvent(Event event) {
         //eventImageContainer.setContent(null);
-        String cloudImagePath = ModalityCloudinary.eventImagePath(event);
-        ModalityCloudinary.loadHdpiImage(cloudImagePath, -1, -1, eventImageContainer, null);
+        String cloudImagePath = ModalityCloudImageService.eventImagePath(event);
+        ModalityCloudImageService.loadHdpiImage(cloudImagePath, -1, -1, eventImageContainer, null);
         return super.loadAndSetEvent(event);
     }
 

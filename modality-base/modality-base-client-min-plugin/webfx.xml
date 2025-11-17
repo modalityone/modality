@@ -28,6 +28,7 @@
         <plugin-module executable-target="elemental2">webfx-stack-com-websocket-elemental2-sockjs</plugin-module>
 
         <plugin-module>webfx-stack-shareddata-cache-localstorage-plugin</plugin-module>
+        <plugin-module>webfx-stack-cloud-image-rest-client-plugin</plugin-module>
 
     </dependencies>
 

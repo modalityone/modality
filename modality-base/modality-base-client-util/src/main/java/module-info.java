@@ -25,6 +25,7 @@ module modality.base.client.util {
     requires webfx.stack.orm.expression;
 
     // Exported packages
+    exports one.modality.base.client.util;
     exports one.modality.base.client.util.dialog;
     exports one.modality.base.client.util.functions;
     exports one.modality.base.client.util.log;

@@ -28,7 +28,7 @@ import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Circle;
 import javafx.scene.shape.SVGPath;
-import one.modality.base.client.cloudinary.ModalityCloudinary;
+import one.modality.base.client.cloud.image.ModalityCloudImageService;
 import one.modality.base.client.icons.SvgIcons;
 
 import java.util.Objects;
@@ -105,6 +105,10 @@ final class ChangePictureUI {
             deltaY = event.getSceneY() - mouseAnchorY[0] + initialTranslateY[0];
             imageView.setTranslateX(deltaX);
             imageView.setTranslateY(deltaY);
+            // Mark that we need to upload the modified image
+            if (imageView.getImage() != null) {
+                isPictureToBeUploaded.setValue(true);
+            }
         });
 
         Label infoMessage = Bootstrap.textDanger(new Label());
@@ -119,6 +123,10 @@ final class ChangePictureUI {
             imageView.setScaleX(zoomFactor);
             imageView.setScaleY(zoomFactor);
             zoomPropertyChanged.setValue(true);
+            // Mark that we need to upload the modified image
+            if (imageView.getImage() != null) {
+                isPictureToBeUploaded.setValue(true);
+            }
         });
         SVGPath zoomOutIcon = SvgIcons.createZoomInOutPath();
         SVGPath zoomInIcon = SvgIcons.createZoomInOutPath();
@@ -175,14 +183,14 @@ final class ChangePictureUI {
         saveButton.setOnAction(e -> {
             AsyncSpinner.displayButtonSpinner(saveButton);
             isCurrentlyProcessing.setValue(true);
-            String cloudImagePath = ModalityCloudinary.personImagePath(parentActivity.getCurrentPerson());
+            String cloudImagePath = ModalityCloudImageService.personImagePath(parentActivity.getCurrentPerson());
             // Create a Canvas to draw the original image
             Image originalImage = imageView.getImage();
             if (originalImage == null) {
                 //Here we choose to remove the picture
                 deleteIfNeededAndUploadIfNeededCloudPicture(cloudImagePath);
             } else {
-                ModalityCloudinary.prepareImageForUpload(originalImage, true, zoomFactor, deltaX, deltaY, MAX_PICTURE_SIZE, MAX_PICTURE_SIZE)
+                ModalityCloudImageService.prepareImageForUpload(originalImage, true, zoomFactor, deltaX, deltaY, MAX_PICTURE_SIZE, MAX_PICTURE_SIZE)
                     .onFailure(Console::log)
                     .onSuccess(blob -> {
                         cloudPictureFileToUpload = blob;
@@ -219,7 +227,7 @@ final class ChangePictureUI {
         //We delete the pictures, and all the cached picture in cloudinary that can have been transformed, related
         //to these assets, then upload the new picture
         if (isPictureToBeDeleted.getValue()) {
-            ModalityCloudinary.deleteImage(cloudImagePath)
+            ModalityCloudImageService.deleteImage(cloudImagePath)
                 .onFailure(fail -> Console.log("Error while deleting the picture: " + fail.getMessage()))
                 .onSuccess(ok -> {
                     if (Objects.equals(cloudImagePath, recentlyUploadedCloudPictureId))
@@ -280,6 +288,21 @@ final class ChangePictureUI {
         this.callback = callback;
     }
 
+    public void initializeWithCurrentPicture() {
+        String cloudImagePath = ModalityCloudImageService.personImagePath(parentActivity.getCurrentPerson());
+        ModalityCloudImageService.getHdpiImageOnReady(cloudImagePath, MAX_PICTURE_SIZE, MAX_PICTURE_SIZE)
+            .onSuccess(image -> {
+                if (image != null) {
+                    setImage(image);
+                    // Reset flags after initialization - loading the existing picture shouldn't mark it for upload
+                    isPictureToBeUploaded.setValue(false);
+                    isPictureToBeDeleted.setValue(false);
+                    zoomPropertyChanged.setValue(false);
+                }
+            })
+            .onFailure(e -> Console.log("Failed to load profile picture: " + e));
+    }
+
     private void removePicture() {
         setImage(null);
         isPictureToBeDeleted.setValue(true);
@@ -291,7 +314,7 @@ final class ChangePictureUI {
 
     public void uploadCloudPictureIfNeeded(String cloudImagePath) {
         if (isPictureToBeUploaded.get()) {
-            ModalityCloudinary.uploadImage(cloudImagePath, cloudPictureFileToUpload)
+            ModalityCloudImageService.uploadImage(cloudImagePath, cloudPictureFileToUpload)
                 .onFailure(Console::log)
                 .onSuccess(ok -> {
                     recentlyUploadedCloudPictureId = cloudImagePath;
@@ -316,6 +339,7 @@ final class ChangePictureUI {
     private void reinitialize() {
         isPictureToBeDeleted.setValue(false);
         isPictureToBeUploaded.setValue(false);
+        zoomPropertyChanged.setValue(false);
         recentlyUploadedCloudPictureId = null;
     }
 

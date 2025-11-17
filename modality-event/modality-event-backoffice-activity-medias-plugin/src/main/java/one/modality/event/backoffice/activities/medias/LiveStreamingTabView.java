@@ -73,8 +73,9 @@ final class LiveStreamingTabView {
                 liveMessageTextField.reloadOnNewEntity(FXEvent.getEvent())
             , FXEvent.eventProperty());
 
-        Region spacer = new Region();
-        HBox.setHgrow(spacer, Priority.ALWAYS);
+        // Make the text field grow to fill available space
+        HBox.setHgrow(liveMessageTextField.getView(), Priority.ALWAYS);
+
         Button publishMessageButton = Bootstrap.successButton(new Button(I18n.getI18nText(MediasI18nKeys.PublishMessage)));
         publishMessageButton.disableProperty().bind(EntityBindings.hasChangesProperty(updateStore).not());
 
@@ -111,7 +112,7 @@ final class LiveStreamingTabView {
         buttonVBox.setAlignment(Pos.CENTER_RIGHT);
         buttonVBox.getChildren().addAll(publishMessageButton, removeMessageButton);
 
-        HBox liveMessageHBox = new HBox(liveMessageTextField.getView(), spacer, buttonVBox);
+        HBox liveMessageHBox = new HBox(20, liveMessageTextField.getView(), buttonVBox);
         liveMessageHBox.setAlignment(Pos.CENTER_LEFT);
         VBox liveMessageVBox = new VBox(20, liveMessageLabel, liveMessageHBox);
         MonoPane liveMessageContainer = new MonoPane(liveMessageVBox);

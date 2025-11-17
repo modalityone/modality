@@ -53,6 +53,13 @@
 
         <dependency>
             <groupId>dev.webfx</groupId>
+            <artifactId>webfx-stack-cloud-image-rest-client-plugin</artifactId>
+            <version>0.1.0-SNAPSHOT</version>
+            <scope>runtime</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>dev.webfx</groupId>
             <artifactId>webfx-stack-shareddata-cache-localstorage-plugin</artifactId>
             <version>0.1.0-SNAPSHOT</version>
             <scope>runtime</scope>

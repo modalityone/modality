@@ -7,7 +7,7 @@ module modality.event.backoffice.activity.recurringevents.plugin {
     requires javafx.controls;
     requires javafx.graphics;
     requires modality.base.backoffice.mainframe.fx;
-    requires modality.base.client.cloudinary;
+    requires modality.base.client.cloud.image;
     requires modality.base.client.gantt.fx;
     requires modality.base.client.i18n;
     requires modality.base.client.icons;
@@ -53,6 +53,7 @@ module modality.event.backoffice.activity.recurringevents.plugin {
     requires webfx.stack.orm.reactive.visual;
     requires webfx.stack.routing.router.client;
     requires webfx.stack.routing.uirouter;
+    requires webfx.platform.blob;
 
     // Exported packages
     exports one.modality.event.backoffice.activities.recurringevents;

@@ -53,7 +53,7 @@
 
         <dependency>
             <groupId>one.modality</groupId>
-            <artifactId>modality-base-client-cloudinary</artifactId>
+            <artifactId>modality-base-client-cloud-image</artifactId>
             <version>1.0.0-SNAPSHOT</version>
         </dependency>
 
@@ -71,7 +71,19 @@
 
         <dependency>
             <groupId>one.modality</groupId>
+            <artifactId>modality-base-client-mainframe-fx</artifactId>
+            <version>1.0.0-SNAPSHOT</version>
+        </dependency>
+
+        <dependency>
+            <groupId>one.modality</groupId>
             <artifactId>modality-base-client-messaging</artifactId>
+            <version>1.0.0-SNAPSHOT</version>
+        </dependency>
+
+        <dependency>
+            <groupId>one.modality</groupId>
+            <artifactId>modality-base-client-presentationmodel</artifactId>
             <version>1.0.0-SNAPSHOT</version>
         </dependency>
 
@@ -119,6 +131,12 @@
 
         <dependency>
             <groupId>dev.webfx</groupId>
+            <artifactId>webfx-extras-cell</artifactId>
+            <version>0.1.0-SNAPSHOT</version>
+        </dependency>
+
+        <dependency>
+            <groupId>dev.webfx</groupId>
             <artifactId>webfx-extras-controlfactory</artifactId>
             <version>0.1.0-SNAPSHOT</version>
         </dependency>
@@ -150,6 +168,12 @@
         <dependency>
             <groupId>dev.webfx</groupId>
             <artifactId>webfx-extras-panes</artifactId>
+            <version>0.1.0-SNAPSHOT</version>
+        </dependency>
+
+        <dependency>
+            <groupId>dev.webfx</groupId>
+            <artifactId>webfx-extras-responsive</artifactId>
             <version>0.1.0-SNAPSHOT</version>
         </dependency>
 
@@ -198,6 +222,12 @@
         <dependency>
             <groupId>dev.webfx</groupId>
             <artifactId>webfx-extras-validation</artifactId>
+            <version>0.1.0-SNAPSHOT</version>
+        </dependency>
+
+        <dependency>
+            <groupId>dev.webfx</groupId>
+            <artifactId>webfx-extras-visual</artifactId>
             <version>0.1.0-SNAPSHOT</version>
         </dependency>
 
@@ -266,6 +296,18 @@
         <dependency>
             <groupId>dev.webfx</groupId>
             <artifactId>webfx-stack-orm-entity-binding</artifactId>
+            <version>0.1.0-SNAPSHOT</version>
+        </dependency>
+
+        <dependency>
+            <groupId>dev.webfx</groupId>
+            <artifactId>webfx-stack-orm-entity-controls</artifactId>
+            <version>0.1.0-SNAPSHOT</version>
+        </dependency>
+
+        <dependency>
+            <groupId>dev.webfx</groupId>
+            <artifactId>webfx-stack-orm-reactive-entities</artifactId>
             <version>0.1.0-SNAPSHOT</version>
         </dependency>
 

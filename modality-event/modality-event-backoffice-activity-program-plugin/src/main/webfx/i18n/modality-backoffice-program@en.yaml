@@ -1,34 +1,18 @@
+DuplicateIcon:
+  graphic:DuplicateIcon
+    - fill: "gray"
+      svgPath: "M13.0049 26.169C20.0485 26.169 25.7584 20.4591 25.7584 13.4156C25.7584 6.37203 20.0485 0.662109 13.0049 0.662109C5.96138 0.662109 0.251465 6.37203 0.251465 13.4156C0.251465 20.4591 5.96138 26.169 13.0049 26.169Z"
+    - fill: "white"
+      svgPath: "M18.3996 9.98242H10.5513C10.2912 9.98242 10.0416 10.0858 9.85765 10.2698C9.67367 10.4537 9.57031 10.7033 9.57031 10.9635V18.8117C9.57031 19.0719 9.67367 19.3215 9.85765 19.5054C10.0416 19.6894 10.2912 19.7928 10.5513 19.7928H18.3996C18.6598 19.7928 18.9093 19.6894 19.0933 19.5054C19.2773 19.3215 19.3807 19.0719 19.3807 18.8117V10.9635C19.3807 10.7033 19.2773 10.4537 19.0933 10.2698C18.9093 10.0858 18.6598 9.98242 18.3996 9.98242ZM11.5324 17.8307V11.9445H17.4186V17.8307H11.5324Z M9.57104 16.8494H7.60897C7.34878 16.8494 7.09925 16.7461 6.91527 16.5621C6.73129 16.3781 6.62793 16.1286 6.62793 15.8684V8.0201C6.62793 7.75991 6.73129 7.51038 6.91527 7.3264C7.09925 7.14242 7.34878 7.03906 7.60897 7.03906H15.4572C15.7174 7.03906 15.967 7.14242 16.1509 7.3264C16.3349 7.51038 16.4383 7.75991 16.4383 8.0201V9.98217H14.4762V9.00113H8.59V14.8873H9.57104V16.8494Z"
 ProgramTitle:
-  text: "Program & Timeline"
   graphic:
     fill: "#0096D6"
     svgPath: "M62.4913 76.75L54.0635 68.3325V54H60.5714V65.6675L67.0793 72.1675L62.4913 76.75Z M73.5874 7.34766H61.7265V0.847656H52.9087V7.34766H29.1868V0.847656H20.369V7.34766H8.50808C6.47524 7.34766 4.52598 8.15423 3.08904 9.58942C1.65216 11.0246 0.845215 12.9707 0.845215 14.9996V79.9996C0.845215 82.0284 1.65216 83.9746 3.08904 85.4097C4.52598 86.8449 6.47524 87.6515 8.50808 87.6515H22.6789V78.8477H9.66301V16.1515H20.369V22.6515H29.1868V16.1515H52.9087V22.6515H61.7265V16.1515H72.4325V35.6515H81.2503V14.9996C81.2503 12.9707 80.4434 11.0246 79.0065 9.58942C77.5695 8.15423 75.6203 7.34766 73.5874 7.34766ZM42.2132 89.5754C46.6841 92.5591 51.9406 94.1518 57.3179 94.1518C64.5288 94.1518 71.444 91.2908 76.5424 86.1986C81.6407 81.1065 84.5046 74.2005 84.5046 66.9999C84.5046 61.6301 82.9104 56.3808 79.9233 51.9157C76.9361 47.4506 72.6903 43.9703 67.7224 41.915C62.7544 39.8598 57.2878 39.322 52.0138 40.3698C46.7398 41.4176 41.8955 44.0038 38.0935 47.8012C34.2915 51.5985 31.7025 56.4365 30.6536 61.7031C29.6047 66.9697 30.143 72.4288 32.2005 77.3899C34.258 82.3511 37.7424 86.5918 42.2132 89.5754ZM47.1134 51.7436C50.1341 49.7277 53.6853 48.6518 57.3179 48.6518C62.1891 48.6518 66.8612 50.5845 70.3061 54.0252C73.7511 57.4661 75.6868 62.1331 75.6868 66.9999C75.6868 70.6292 74.6093 74.1768 72.5907 77.1942C70.5721 80.2115 67.7032 82.563 64.3469 83.9515C60.9906 85.3401 57.2975 85.7033 53.7346 84.9955C50.1717 84.2877 46.8988 82.5404 44.3298 79.9745C41.7607 77.4086 40.011 74.1392 39.3021 70.5797C38.5932 67.0202 38.957 63.3307 40.3475 59.9778C41.738 56.625 44.0926 53.7595 47.1134 51.7436Z"
-Programme: "Programme"
 AddDayTemplate:
-  text: "Add day template"
   graphic:
     fill: "#FFFFFF"
     svgPath: "M14.0227 26.5767C21.3147 26.5767 27.226 20.7396 27.226 13.5393C27.226 6.33897 21.3147 0.501953 14.0227 0.501953C6.73067 0.501953 0.819336 6.33897 0.819336 13.5393C0.819336 20.7396 6.73067 26.5767 14.0227 26.5767ZM12.1379 7.33114H15.9103V11.6778H20.3106V15.4027H15.9103V19.7477H12.1379V15.4027H7.73603V11.6778H12.1379V7.33114Z"
-AssignDay: "Assign the dates for this schedule - multiple selection"
-DeleteDayTemplate: "Delete this template"
-To: "to"
-ItemSelectedShouldntBeNull: "Please select an item"
-NameThisLine: "Name this line"
-GenerateProgram: "Lock the schedule and generate the program"
-DeleteProgram: "Unlock the schedule (delete the previous generated program)"
-CancelProgram: "Cancel changes"
-SaveProgram: "Save"
-ProgramGenerationConfirmation: "Are you sure you want to generate the program? \nThe event program can not be modified after the generation."
-DeleteProgramConfirmation: "Are you sure you want to delete the program? \nIf there are registrations or audio/video medias associated to this program, the deletion won't work."
-ConfirmGeneration: "Confirm"
-ScheduledItemsAlreadyGenerated: "The program for this event has already been generated and is locked. Click on Unlock bellow to unlock it before changing the program"
-ScheduledItemsNotYetGenerated: "The program for this event has not yet been generated."
 DayTicketTeachingsAndAudioScheduledItemNotGenerated:
-  text: "The Preliminaries ScheduledItems for the Teachings and the Audio recordings are not yet generated. Don't forget to generate them before locking the program."
   graphic:
     fill: "red"
     svgPath: "M 24 4 L 4 40 h 40 L 24 4 z m -2 14 h 4 v 12 h -4 v -12 z m 2 18 a 2 2 90 1 1 0 -4 a 2 2 90 0 1 0 4 z"
-DayTicketTeachingsAndAudioScheduledItemInfos: "The program will use the item {0} for the bookable teaching scheduledItem and {1} for the bookable audio scheduledItem. \nThis can't be change once the program is generated"
-ChooseAnItemForTheTeachingBookableScheduledItem: "Choose the item type for the Bookable Teaching ScheduledItem:"
-GeneratePreliminaryBookableSI: "Generate Bookable ScheduledItems"
-PleaseSelectAnItem: "Please select an Item for the teaching ScheduledItem"
