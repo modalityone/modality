@@ -64,9 +64,9 @@ public record MembersItemRendererFactory(MemberActionHandler memberActionHandler
      * Callback interface for handling user actions on pending requests.
      */
     public interface PendingRequestActionHandler {
-        void onApproveAuthorizationRequest(Invitation invitation);
+        void onApproveManagingAuthorizationRequest(Invitation invitation);
 
-        void onDeclineAuthorizationRequest(Invitation invitation);
+        void onDeclineManagingAuthorizationRequest(Invitation invitation);
 
         void onApproveMemberInvitation(Invitation invitation);
 
@@ -141,12 +141,44 @@ public record MembersItemRendererFactory(MemberActionHandler memberActionHandler
             infoBox.getChildren().addAll(nameWithBadge, emailLabel);
 
             // Status messages for pending invitations
-            if (type == MemberItem.MemberItemType.PENDING_OUTGOING_INVITATION ||
-                type == MemberItem.MemberItemType.PENDING_INCOMING_INVITATION) {
+            if (type == MemberItem.MemberItemType.PENDING_OUTGOING_INVITATION) {
                 Label statusLabel = Bootstrap.small(Bootstrap.textSecondary(
                     I18nControls.newLabel(MembersI18nKeys.WaitingForAcceptance)));
                 statusLabel.getStyleClass().add("text-italic");
                 infoBox.getChildren().add(statusLabel);
+            } else if (type == MemberItem.MemberItemType.PENDING_INCOMING_INVITATION) {
+                // Get the inviter's name (the person who wants to add you as a member)
+                String inviterName = invitation != null && invitation.getInviter() != null
+                        ? invitation.getInviter().getFullName()
+                        : "";
+                Label statusLabel = Bootstrap.small(Bootstrap.textSecondary(
+                    new Label(I18n.getI18nText(MembersI18nKeys.WantsToAddYou, inviterName))));
+                infoBox.getChildren().add(statusLabel);
+
+                // Add action buttons below the status message for incoming invitations
+                VBox authInfoBox = new VBox(8);
+                authInfoBox.setPadding(new Insets(8, 0, 0, 0));
+
+                HBox authActions = new HBox(12);
+                authActions.setAlignment(Pos.CENTER_LEFT);
+
+                Button approveButton = Bootstrap.successButton(
+                    I18nControls.newButton(MembersI18nKeys.ApproveAction));
+                approveButton.setPadding(new Insets(6, 16, 6, 16));
+                approveButton.getStyleClass().add("action-button");
+                approveButton.setCursor(Cursor.HAND);
+                approveButton.setOnAction(e -> pendingRequestActionHandler.onApproveMemberInvitation(invitation));
+
+                Button declineButton = Bootstrap.dangerButton(
+                    I18nControls.newButton(MembersI18nKeys.DeclineAction));
+                declineButton.setPadding(new Insets(6, 16, 6, 16));
+                declineButton.getStyleClass().add("action-button");
+                declineButton.setCursor(Cursor.HAND);
+                declineButton.setOnAction(e -> pendingRequestActionHandler.onDeclineMemberInvitation(invitation));
+
+                authActions.getChildren().addAll(approveButton, declineButton);
+                authInfoBox.getChildren().add(authActions);
+                infoBox.getChildren().add(authInfoBox);
             }
         }
 
@@ -203,22 +235,8 @@ public record MembersItemRendererFactory(MemberActionHandler memberActionHandler
                 break;
 
             case PENDING_INCOMING_INVITATION:
-                // Pending invitation where I'm the invitee - can Approve and Decline
-                Button approveButton = Bootstrap.successButton(
-                    I18nControls.newButton(MembersI18nKeys.ApproveAction));
-                approveButton.setPadding(new Insets(6, 16, 6, 16));
-                approveButton.getStyleClass().add("action-button");
-                approveButton.setCursor(Cursor.HAND);
-                approveButton.setOnAction(e -> pendingRequestActionHandler.onApproveMemberInvitation(invitation));
-
-                Button declineButton = Bootstrap.dangerButton(
-                    I18nControls.newButton(MembersI18nKeys.DeclineAction));
-                declineButton.setPadding(new Insets(6, 16, 6, 16));
-                declineButton.getStyleClass().add("action-button");
-                declineButton.setCursor(Cursor.HAND);
-                declineButton.setOnAction(e -> pendingRequestActionHandler.onDeclineMemberInvitation(invitation));
-
-                actions.getChildren().addAll(approveButton, declineButton);
+                // Incoming invitation - buttons are now displayed below the name in infoBox
+                // No actions needed on the right side
                 break;
         }
 
@@ -292,6 +310,31 @@ public record MembersItemRendererFactory(MemberActionHandler memberActionHandler
             Label statusLabel = Bootstrap.small(Bootstrap.textSecondary(
                 new Label(I18n.getI18nText(MembersI18nKeys.WantsToManageBookings, inviterName))));
             infoBox.getChildren().add(statusLabel);
+
+            // Add action buttons below the status message for incoming invitations
+            VBox authInfoBox = new VBox(8);
+            authInfoBox.setPadding(new Insets(8, 0, 0, 0));
+
+            HBox authActions = new HBox(12);
+            authActions.setAlignment(Pos.CENTER_LEFT);
+
+            Button approveButton = Bootstrap.successButton(
+                I18nControls.newButton(MembersI18nKeys.ApproveAction));
+            approveButton.setPadding(new Insets(6, 16, 6, 16));
+            approveButton.getStyleClass().add("action-button");
+            approveButton.setCursor(Cursor.HAND);
+            approveButton.setOnAction(e -> pendingRequestActionHandler.onApproveManagingAuthorizationRequest(invitation));
+
+            Button declineButton = Bootstrap.dangerButton(
+                I18nControls.newButton(MembersI18nKeys.DeclineAction));
+            declineButton.setPadding(new Insets(6, 16, 6, 16));
+            declineButton.getStyleClass().add("action-button");
+            declineButton.setCursor(Cursor.HAND);
+            declineButton.setOnAction(e -> pendingRequestActionHandler.onDeclineManagingAuthorizationRequest(invitation));
+
+            authActions.getChildren().addAll(approveButton, declineButton);
+            authInfoBox.getChildren().add(authActions);
+            infoBox.getChildren().add(authInfoBox);
         }
 
         HBox.setHgrow(infoBox, Priority.ALWAYS);
@@ -326,22 +369,8 @@ public record MembersItemRendererFactory(MemberActionHandler memberActionHandler
                 break;
 
             case PENDING_INCOMING_INVITATION:
-                // Incoming invitation - can Approve and Decline
-                Button approveButton = Bootstrap.successButton(
-                    I18nControls.newButton(MembersI18nKeys.ApproveAction));
-                approveButton.setPadding(new Insets(6, 16, 6, 16));
-                approveButton.getStyleClass().add("action-button");
-                approveButton.setCursor(Cursor.HAND);
-                approveButton.setOnAction(e -> pendingRequestActionHandler.onApproveAuthorizationRequest(invitation));
-
-                Button declineButton = Bootstrap.dangerButton(
-                    I18nControls.newButton(MembersI18nKeys.DeclineAction));
-                declineButton.setPadding(new Insets(6, 16, 6, 16));
-                declineButton.getStyleClass().add("action-button");
-                declineButton.setCursor(Cursor.HAND);
-                declineButton.setOnAction(e -> pendingRequestActionHandler.onDeclineAuthorizationRequest(invitation));
-
-                actions.getChildren().addAll(approveButton, declineButton);
+                // Incoming invitation - buttons are now displayed below the name in infoBox
+                // No actions needed on the right side
                 break;
         }
 
@@ -400,14 +429,14 @@ public record MembersItemRendererFactory(MemberActionHandler memberActionHandler
         approveButton.setPadding(new Insets(6, 16, 6, 16));
         approveButton.getStyleClass().add("action-button");
         approveButton.setCursor(Cursor.HAND);
-        approveButton.setOnAction(e -> pendingRequestActionHandler.onApproveAuthorizationRequest(invitation));
+        approveButton.setOnAction(e -> pendingRequestActionHandler.onApproveManagingAuthorizationRequest(invitation));
 
         Button declineButton = Bootstrap.dangerButton(
             I18nControls.newButton(MembersI18nKeys.DeclineAction));
         declineButton.setPadding(new Insets(6, 16, 6, 16));
         declineButton.getStyleClass().add("action-button");
         declineButton.setCursor(Cursor.HAND);
-        declineButton.setOnAction(e -> pendingRequestActionHandler.onDeclineAuthorizationRequest(invitation));
+        declineButton.setOnAction(e -> pendingRequestActionHandler.onDeclineManagingAuthorizationRequest(invitation));
 
         authActions.getChildren().addAll(approveButton, declineButton);
         authInfoBox.getChildren().add(authActions);

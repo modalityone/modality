@@ -37,6 +37,7 @@ public interface MembersI18nKeys {
     Object AcceptAction = "AcceptAction";
     Object AddMemberModalTitle = "AddMemberModalTitle";
     Object UsesYourEmail = "UsesYourEmail";
+    Object ConfirmDeclineManagerInvitationMessage = "ConfirmDeclineManagerInvitationMessage";
     Object AuthorizationSentTitle = "AuthorizationSentTitle";
     Object ConfirmRemovalMessage = "ConfirmRemovalMessage";
     Object InviteBookingManager = "InviteBookingManager";
@@ -77,6 +78,7 @@ public interface MembersI18nKeys {
     Object ExpiredInvitationLink = "ExpiredInvitationLink";
     Object AddMemberEmailPlaceholder = "AddMemberEmailPlaceholder";
     Object InviteManagerDescription = "InviteManagerDescription";
+    Object ConfirmApproveManagerInvitationMessage = "ConfirmApproveManagerInvitationMessage";
     Object LinkedToTheirKBSAccount = "LinkedToTheirKBSAccount";
     Object Email = "Email";
     Object ContinueButton = "ContinueButton";
@@ -96,6 +98,7 @@ public interface MembersI18nKeys {
     Object MemberUpdatedSuccessfully = "MemberUpdatedSuccessfully";
     Object InviteManagerModalTitle = "InviteManagerModalTitle";
     Object ApprovalFailedTitle = "ApprovalFailedTitle";
+    Object ConfirmApproveMemberInvitationMessage = "ConfirmApproveMemberInvitationMessage";
     Object NeedHelpMessage = "NeedHelpMessage";
     Object AboutAuthorizationTitle = "AboutAuthorizationTitle";
     Object DeclineFailedTitle = "DeclineFailedTitle";
@@ -109,9 +112,10 @@ public interface MembersI18nKeys {
     Object WaitingForAcceptance = "WaitingForAcceptance";
     Object FirstLastNameRequired = "FirstLastNameRequired";
     Object AddMemberWithoutEmailTitle = "AddMemberWithoutEmailTitle";
+    Object ConfirmDeclineMemberInvitationMessage = "ConfirmDeclineMemberInvitationMessage";
     Object LinkedAccountDetailsFormat = "LinkedAccountDetailsFormat";
-    Object GoToMembers = "GoToMembers";
     Object InvalidInvitationLinkDescription = "InvalidInvitationLinkDescription";
+    Object GoToMembers = "GoToMembers";
     Object MemberDetailsFormat = "MemberDetailsFormat";
     Object BadgeNeedsApproval = "BadgeNeedsApproval";
     Object EmailPlaceholder = "EmailPlaceholder";

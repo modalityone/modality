@@ -117,13 +117,13 @@ final class MembersActivity extends ViewDomainActivityBase {
     private MembersItemRendererFactory.PendingRequestActionHandler createPendingRequestActionHandler() {
         return new MembersItemRendererFactory.PendingRequestActionHandler() {
             @Override
-            public void onApproveAuthorizationRequest(Invitation invitation) {
-                controller.approveAuthorizationRequest(invitation);
+            public void onApproveManagingAuthorizationRequest(Invitation invitation) {
+                controller.approveManagingInvitationRequest(invitation);
             }
 
             @Override
-            public void onDeclineAuthorizationRequest(Invitation invitation) {
-                controller.declineAuthorizationRequest(invitation);
+            public void onDeclineManagingAuthorizationRequest(Invitation invitation) {
+                controller.declineManagingInvitationRequest(invitation);
             }
 
             @Override

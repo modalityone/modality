@@ -726,13 +726,13 @@ public class MembersController {
 
     // ========== Pending Request Action Handlers ==========
 
-    public void approveAuthorizationRequest(Invitation invitation) {
+    public void approveManagingInvitationRequest(Invitation invitation) {
         Person inviter = invitation.getInviter();
 
         DialogContent confirmDialog = DialogContent.createSuccessDialog(
                 I18n.getI18nText(MembersI18nKeys.ApproveInvitationTitle),
                 I18n.getI18nText(MembersI18nKeys.ApproveInvitationTitle),
-                I18n.getI18nText(MembersI18nKeys.WantsToManageBookings, inviter.getFullName() + " (" + inviter.getEmail() + ")"));
+                I18n.getI18nText(MembersI18nKeys.ConfirmApproveManagerInvitationMessage, inviter.getFullName() + " (" + inviter.getEmail() + ")"));
         confirmDialog.setCustomButtons(
                 I18n.getI18nText(MembersI18nKeys.AcceptAction),
                 I18n.getI18nText(MembersI18nKeys.CancelAction));
@@ -765,13 +765,13 @@ public class MembersController {
         });
     }
 
-    public void declineAuthorizationRequest(Invitation invitation) {
+    public void declineManagingInvitationRequest(Invitation invitation) {
         Person inviter = invitation.getInviter();
 
         DialogContent confirmDialog = DialogContent.createDeleteDialog(
                 I18n.getI18nText(MembersI18nKeys.DeclineInvitationTitle),
                 I18n.getI18nText(MembersI18nKeys.DeclineInvitationTitle),
-                I18n.getI18nText(MembersI18nKeys.WantsToManageBookings, inviter.getFullName() + " (" + inviter.getEmail() + ")"));
+                I18n.getI18nText(MembersI18nKeys.ConfirmDeclineManagerInvitationMessage, inviter.getFullName() + " (" + inviter.getEmail() + ")"));
         confirmDialog.setCustomButtons(
                 I18n.getI18nText(MembersI18nKeys.DeclineAction),
                 I18n.getI18nText(MembersI18nKeys.CancelAction));
@@ -809,7 +809,7 @@ public class MembersController {
 
         DialogContent confirmDialog = DialogContent.createConfirmationDialog(
                 I18n.getI18nText(MembersI18nKeys.ApproveInvitationTitle),
-                I18n.getI18nText(MembersI18nKeys.WantsToAddYou, inviter.getFullName() + " (" + inviter.getEmail() + ")"));
+                I18n.getI18nText(MembersI18nKeys.ConfirmApproveMemberInvitationMessage, inviter.getFullName() + " (" + inviter.getEmail() + ")"));
         confirmDialog.setOkCancel();
         DialogBuilderUtil.showModalNodeInGoldLayout(confirmDialog, FXMainFrameDialogArea.getDialogArea());
 
@@ -845,7 +845,7 @@ public class MembersController {
 
         DialogContent confirmDialog = DialogContent.createConfirmationDialog(
                 I18n.getI18nText(MembersI18nKeys.DeclineInvitationTitle),
-                I18n.getI18nText(MembersI18nKeys.WantsToAddYou, inviter.getFullName() + " (" + inviter.getEmail() + ")"));
+                I18n.getI18nText("ConfirmDeclineMemberInvitationMessage", inviter.getFullName() + " (" + inviter.getEmail() + ")"));
         confirmDialog.setOkCancel();
         DialogBuilderUtil.showModalNodeInGoldLayout(confirmDialog, FXMainFrameDialogArea.getDialogArea());
 
@@ -1088,10 +1088,10 @@ public class MembersController {
                     }
                     Person inviter = persons.get(0);
 
-                    // Check if manager person exists
+                    // Check if manager person exists (must be an account owner)
                     EntityStore checkStore = EntityStore.create(dataSourceModel);
                     checkStore.<Person>executeQuery(
-                            "select id,fullName,firstName,lastName,email,frontendAccount from Person where email=? limit 1",
+                            "select id,fullName,firstName,lastName,email,frontendAccount from Person where email=? and owner=true limit 1",
                             email)
                             .onFailure(error -> UiScheduler.scheduleDeferred(() ->
                                     view.showErrorDialog("Error", "Failed to check email: " + error.getMessage())))
