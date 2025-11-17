@@ -55,6 +55,7 @@ public interface MembersI18nKeys {
     Object CancelManagerInvitationMessage = "CancelManagerInvitationMessage";
     Object LastNamePlaceholder = "LastNamePlaceholder";
     Object WantsToManageBookings = "WantsToManageBookings";
+    Object UpdateMember = "UpdateMember";
     Object FailedToUpdateMember = "FailedToUpdateMember";
     Object EditAuthorizedMemberInfoMessage = "EditAuthorizedMemberInfoMessage";
     Object MemberApprovedRequest = "MemberApprovedRequest";

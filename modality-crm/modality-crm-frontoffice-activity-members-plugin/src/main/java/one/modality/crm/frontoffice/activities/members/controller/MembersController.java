@@ -116,7 +116,10 @@ public class MembersController {
 
         // Single query to get ALL members in my account
         entityStore.<Person>executeQuery(
-                        "select id,fullName,firstName,lastName,email,owner,removed,accountPerson.(id,fullName,email) " +
+                        "select id,fullName,firstName,lastName,email,owner,removed,neverBooked," +
+                        "birthdate,male,ordained,layName,phone,street,postCode,cityName," +
+                        "country.(id,name),organization.(id,name)," +
+                        "accountPerson.(id,fullName,email) " +
                         "from Person " +
                         "where frontendAccount=? and owner=false and removed!=true",
                         accountId)
