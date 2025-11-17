@@ -46,6 +46,7 @@ module modality.crm.frontoffice.activity.members.plugin {
     requires webfx.stack.routing.router.client;
     requires webfx.stack.routing.uirouter;
     requires webfx.stack.orm.entity.binding;
+    requires webfx.extras.responsive;
 
     // Exported packages
     exports one.modality.crm.frontoffice.activities.members;

@@ -70,6 +70,7 @@ public class MembersController {
      * Only updates the ObservableLists when data changes, leveraging JavaFX bindings.
      */
     public void refreshData() {
+        Console.log("=== refreshData() called ===");
         // Clear and set loading states
         model.setLoadingMembers(true);
         model.setLoadingManagers(true);
@@ -82,9 +83,11 @@ public class MembersController {
             return;
         }
 
+        // Create a completely fresh EntityStore - no caching
         EntityStore entityStore = EntityStore.create(dataSourceModel);
         Object personId = principal.getUserPersonId();
         Object accountId = principal.getUserAccountId();
+        Console.log("Created fresh EntityStore for refresh");
 
         // Load current user's email for display
         entityStore.<Person>executeQuery(
@@ -128,11 +131,13 @@ public class MembersController {
                     model.setLoadingMembers(false);
                 })
                 .onSuccess(allMembers -> {
+                    Console.log("=== REFRESH DATA - LOADED " + allMembers.size() + " MEMBERS ===");
                     // Filter into three separate lists in memory
                     List<MemberItem> directMembers = new ArrayList<>();
                     List<MemberItem> authorizedMembers = new ArrayList<>();
 
                     for (Person person : allMembers) {
+                        Console.log("Loaded: " + person.getFirstName() + " " + person.getLastName() + " (ID: " + person.getId() + ", FullName: " + person.getFullName() + ")");
                         if (person.getAccountPerson() == null) {
                             // CASE 1: Direct members (no linked account) - can Edit and Remove
                             directMembers.add(new MemberItem(person, null, MemberItem.MemberItemType.DIRECT_MEMBER));
@@ -142,10 +147,12 @@ public class MembersController {
                         }
                     }
 
+                    Console.log("Setting " + directMembers.size() + " direct members and " + authorizedMembers.size() + " authorized members");
                     UiScheduler.scheduleDeferred(() -> {
                         model.getDirectMembersList().setAll(directMembers);
                         model.getAuthorizedMembersList().setAll(authorizedMembers);
                         model.setLoadingMembers(false);
+                        Console.log("=== LISTS UPDATED ===");
                     });
                 });
     }
@@ -524,37 +531,81 @@ public class MembersController {
      */
     private void editAuthorizedMember(Person person, one.modality.crm.frontoffice.activities.members.view.MembersView view) {
         view.showEditMemberDialog(person, updateData -> {
-            // Use the in-memory Person object directly - no query needed!
-            UpdateStore editStore = UpdateStore.createAbove(person.getStore());
-            Person personToEdit = editStore.updateEntity(person);
+            Console.log("=== EDIT MEMBER DEBUG ===");
+            Console.log("Original: " + person.getFirstName() + " " + person.getLastName() + " (ID: " + person.getId() + ")");
+            Console.log("New values: " + updateData.firstName() + " " + updateData.lastName());
 
-            // Update person entity
-            personToEdit.setFirstName(updateData.firstName());
-            personToEdit.setLastName(updateData.lastName());
+            // Update the in-memory Person object directly
+            person.setFirstName(updateData.firstName());
+            person.setLastName(updateData.lastName());
             if (updateData.email() != null) {
-                personToEdit.setEmail(updateData.email());
+                person.setEmail(updateData.email());
             }
+
+            Console.log("After update in memory: " + person.getFirstName() + " " + person.getLastName() + " (FullName: " + person.getFullName() + ")");
+
+            // Now submit to database
+            UpdateStore editStore = UpdateStore.createAbove(person.getStore());
+            Person personToSubmit = editStore.updateEntity(person);
 
             // Submit changes
             editStore.submitChanges()
                 .onFailure(error -> {
                     Console.log("Error updating member: " + error);
-                    UiScheduler.scheduleDeferred(() ->
-                            showErrorDialog(I18n.getI18nText(MembersI18nKeys.Error),
-                                    I18n.getI18nText(MembersI18nKeys.FailedToUpdateMember) + ": " + error.getMessage()));
+                    // Revert the in-memory changes on failure
+                    UiScheduler.scheduleDeferred(() -> {
+                        refreshData();
+                        showErrorDialog(I18n.getI18nText(MembersI18nKeys.Error),
+                                I18n.getI18nText(MembersI18nKeys.FailedToUpdateMember) + ": " + error.getMessage());
+                    });
                 })
-                .onSuccess(result -> UiScheduler.scheduleDeferred(() -> {
-                    view.showSuccessMessage(I18n.getI18nText(MembersI18nKeys.MemberUpdatedSuccessfully));
-                    refreshData();
-                }));
+                .onSuccess(result -> {
+                    Console.log("=== SUBMIT SUCCESS - Starting UI update ===");
+                    Console.log("Person after submit: " + person.getFirstName() + " " + person.getLastName() + " (FullName: " + person.getFullName() + ")");
+
+                    UiScheduler.scheduleDeferred(() -> {
+                        Console.log("=== IN UI THREAD - Showing success and updating display ===");
+                        view.showSuccessMessage(I18n.getI18nText(MembersI18nKeys.MemberUpdatedSuccessfully));
+                        // Trigger a list refresh to update the UI (without re-querying database)
+                        updateMemberListDisplay();
+                    });
+                });
         });
+    }
+
+    /**
+     * Trigger UI refresh by rebuilding the lists from current in-memory objects.
+     * This forces the ObservableLists to notify their listeners without re-querying the database.
+     */
+    private void updateMemberListDisplay() {
+        Console.log("=== updateMemberListDisplay() called ===");
+        Console.log("Current direct members: " + model.getDirectMembersList().size());
+        Console.log("Current authorized members: " + model.getAuthorizedMembersList().size());
+
+        // Create new lists from existing items to trigger change notifications
+        List<MemberItem> currentDirectMembers = new ArrayList<>(model.getDirectMembersList());
+        List<MemberItem> currentAuthorizedMembers = new ArrayList<>(model.getAuthorizedMembersList());
+
+        // Log the first member if exists
+        if (!currentDirectMembers.isEmpty()) {
+            Person p = currentDirectMembers.get(0).getPerson();
+            Console.log("First direct member: " + p.getFirstName() + " " + p.getLastName() + " (FullName: " + p.getFullName() + ")");
+        }
+        if (!currentAuthorizedMembers.isEmpty()) {
+            Person p = currentAuthorizedMembers.get(0).getPerson();
+            Console.log("First authorized member: " + p.getFirstName() + " " + p.getLastName() + " (FullName: " + p.getFullName() + ")");
+        }
+
+        model.getDirectMembersList().setAll(currentDirectMembers);
+        model.getAuthorizedMembersList().setAll(currentAuthorizedMembers);
+        Console.log("=== UI LISTS REFRESHED FROM MEMORY ===");
     }
 
     /**
      * Edit direct member - comprehensive dialog using UserProfileView
      */
     private void editDirectMember(Person person, one.modality.crm.frontoffice.activities.members.view.MembersView view) {
-        view.showEditDirectMemberDialog(person, dataSourceModel, this::refreshData);
+        view.showEditDirectMemberDialog(person, dataSourceModel, this::updateMemberListDisplay);
     }
 
     /**

@@ -2,7 +2,9 @@ package one.modality.crm.frontoffice.activities.members.view;
 
 import dev.webfx.extras.i18n.I18n;
 import dev.webfx.extras.i18n.controls.I18nControls;
+import dev.webfx.extras.responsive.ResponsiveDesign;
 import dev.webfx.extras.styles.bootstrap.Bootstrap;
+import javafx.beans.value.ObservableDoubleValue;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Cursor;
@@ -32,7 +34,8 @@ import one.modality.crm.frontoffice.activities.members.model.ManagerItem;
  */
 public record MembersItemRendererFactory(MemberActionHandler memberActionHandler,
                                          ManagerActionHandler managerActionHandler,
-                                         PendingRequestActionHandler pendingRequestActionHandler) {
+                                         PendingRequestActionHandler pendingRequestActionHandler,
+                                         ObservableDoubleValue responsiveWidthProperty) {
 
     /**
      * Callback interface for handling user actions on member items.
@@ -74,6 +77,95 @@ public record MembersItemRendererFactory(MemberActionHandler memberActionHandler
     }
 
     /**
+     * Helper method to setup responsive max width for name labels.
+     * Mobile (<600px): 200px max width
+     * Tablet (600-900px): 300px max width
+     * Desktop (>900px): 400px max width
+     */
+    private void setupResponsiveNameLabel(Label nameLabel) {
+        nameLabel.setWrapText(true);
+        new ResponsiveDesign(responsiveWidthProperty)
+                .addResponsiveLayout(width -> width < 600, () -> nameLabel.setMaxWidth(200))
+                .addResponsiveLayout(width -> width >= 600 && width < 900, () -> nameLabel.setMaxWidth(300))
+                .addResponsiveLayout(width -> width >= 900, () -> nameLabel.setMaxWidth(400))
+                .start();
+    }
+
+    /**
+     * Helper method to create a responsive action container that stacks links vertically on mobile.
+     * Returns a VBox that switches between vertical and horizontal orientation based on screen size.
+     */
+    private VBox createResponsiveActionContainer() {
+        VBox actions = new VBox(8);
+        actions.setAlignment(Pos.CENTER_LEFT);
+        return actions;
+    }
+
+    /**
+     * Sets up responsive behavior for action links.
+     * On mobile: links (and optional badge) are stacked vertically in the VBox
+     * On desktop: links are wrapped in an HBox for horizontal layout, badge stays in nameWithBadge
+     */
+    private void setupResponsiveActions(VBox actionsContainer, java.util.List<Node> actionLinks, Label badge, HBox nameWithBadge) {
+        // Create the inner container that will hold the links
+        HBox innerContainer = new HBox(18);
+        innerContainer.setAlignment(Pos.CENTER_RIGHT);
+
+        // Add all action links to the inner container
+        innerContainer.getChildren().addAll(actionLinks);
+
+        // Start with the inner container
+        actionsContainer.getChildren().clear();
+        actionsContainer.getChildren().add(innerContainer);
+
+        // Make it responsive: change orientation and spacing
+        new ResponsiveDesign(responsiveWidthProperty)
+                .addResponsiveLayout(width -> width < 600, () -> {
+                    // Mobile: vertical stacking - move badge to actionsContainer, then links
+                    actionsContainer.getChildren().clear();
+                    actionsContainer.setPadding(Insets.EMPTY);
+
+                    // Set width based on badge size (~100px) but allow expansion for longer text
+                    actionsContainer.setMinWidth(100);
+                    actionsContainer.setPrefWidth(100);
+                    actionsContainer.setMaxWidth(Double.MAX_VALUE);
+
+                    if (badge != null && nameWithBadge != null) {
+                        // Remove badge from nameWithBadge and add to actionsContainer
+                        nameWithBadge.getChildren().remove(badge);
+                        actionsContainer.getChildren().add(badge);
+                    }
+                    actionsContainer.getChildren().addAll(actionLinks);
+                    actionsContainer.setSpacing(8);
+                    actionsContainer.setAlignment(Pos.TOP_LEFT);
+                })
+                .addResponsiveLayout(width -> width >= 600, () -> {
+                    // Desktop: horizontal layout - move links to innerContainer, badge back to nameWithBadge
+                    actionsContainer.setPadding(Insets.EMPTY);
+
+                    // Reset width constraints for desktop
+                    actionsContainer.setMinWidth(Region.USE_COMPUTED_SIZE);
+                    actionsContainer.setPrefWidth(Region.USE_COMPUTED_SIZE);
+                    actionsContainer.setMaxWidth(Double.MAX_VALUE);
+
+                    if (badge != null && nameWithBadge != null) {
+                        // Remove badge from actionsContainer and add back to nameWithBadge
+                        actionsContainer.getChildren().remove(badge);
+                        if (!nameWithBadge.getChildren().contains(badge)) {
+                            nameWithBadge.getChildren().add(badge);
+                        }
+                    }
+                    innerContainer.getChildren().clear();
+                    innerContainer.getChildren().addAll(actionLinks);
+                    innerContainer.setSpacing(18);
+                    innerContainer.setAlignment(Pos.CENTER_RIGHT);
+                    actionsContainer.getChildren().clear();
+                    actionsContainer.getChildren().add(innerContainer);
+                })
+                .start();
+    }
+
+    /**
      * Creates the UI for a single member item.
      * Handles different states: linked accounts, invitations, own accounts, no accounts.
      */
@@ -103,21 +195,23 @@ public record MembersItemRendererFactory(MemberActionHandler memberActionHandler
         }
 
         Label nameLabel = Bootstrap.strong(Bootstrap.h4(new Label(displayName)));
+        setupResponsiveNameLabel(nameLabel);
         nameWithBadge.getChildren().add(nameLabel);
 
-        // Add badge based on type
+        // Add badge based on type (track it for responsive layout)
+        Label statusBadge = null;
         switch (type) {
             case AUTHORIZED_MEMBER:
-                Label linkedBadge = new Label(I18n.getI18nText(MembersI18nKeys.BadgeAuthorized));
-                ModalityStyle.authorizationBadgeActive(linkedBadge);
-                nameWithBadge.getChildren().add(linkedBadge);
+                statusBadge = new Label(I18n.getI18nText(MembersI18nKeys.BadgeAuthorized));
+                ModalityStyle.authorizationBadgeActive(statusBadge);
+                nameWithBadge.getChildren().add(statusBadge);
                 break;
 
             case PENDING_OUTGOING_INVITATION:
             case PENDING_INCOMING_INVITATION:
                 if (invitation != null) {
-                    Label badge = createStatusBadge(invitation);
-                    nameWithBadge.getChildren().add(badge);
+                    statusBadge = createStatusBadge(invitation);
+                    nameWithBadge.getChildren().add(statusBadge);
                 }
                 break;
 
@@ -185,8 +279,8 @@ public record MembersItemRendererFactory(MemberActionHandler memberActionHandler
         HBox.setHgrow(infoBox, Priority.ALWAYS);
 
         // Actions based on member type (using clean switch statement)
-        HBox actions = new HBox(18);
-        actions.setAlignment(Pos.CENTER_RIGHT);
+        VBox actionsContainer = createResponsiveActionContainer();
+        java.util.List<Node> actionLinks = new java.util.ArrayList<>();
 
         switch (memberItem.getType()) {
             case DIRECT_MEMBER:
@@ -201,7 +295,8 @@ public record MembersItemRendererFactory(MemberActionHandler memberActionHandler
                 removeDirectLink.setCursor(Cursor.HAND);
                 removeDirectLink.setOnAction(e -> memberActionHandler.onRemoveMember(person));
 
-                actions.getChildren().addAll(editLink, removeDirectLink);
+                actionLinks.add(editLink);
+                actionLinks.add(removeDirectLink);
                 break;
 
             case AUTHORIZED_MEMBER:
@@ -216,7 +311,8 @@ public record MembersItemRendererFactory(MemberActionHandler memberActionHandler
                 removeAuthorizedLink.setCursor(Cursor.HAND);
                 removeAuthorizedLink.setOnAction(e -> memberActionHandler.onRemoveLinkedAccount(person));
 
-                actions.getChildren().addAll(editAuthorizedLink, removeAuthorizedLink);
+                actionLinks.add(editAuthorizedLink);
+                actionLinks.add(removeAuthorizedLink);
                 break;
 
             case PENDING_OUTGOING_INVITATION:
@@ -231,7 +327,8 @@ public record MembersItemRendererFactory(MemberActionHandler memberActionHandler
                 cancelLink.setCursor(Cursor.HAND);
                 cancelLink.setOnAction(e -> memberActionHandler.onCancelInvitation(invitation));
 
-                actions.getChildren().addAll(resendLink, cancelLink);
+                actionLinks.add(resendLink);
+                actionLinks.add(cancelLink);
                 break;
 
             case PENDING_INCOMING_INVITATION:
@@ -240,7 +337,12 @@ public record MembersItemRendererFactory(MemberActionHandler memberActionHandler
                 break;
         }
 
-        itemBox.getChildren().addAll(infoBox, actions);
+        // Add the action links to the container, wrapping in HBox for desktop
+        if (!actionLinks.isEmpty()) {
+            setupResponsiveActions(actionsContainer, actionLinks, statusBadge, nameWithBadge);
+        }
+
+        itemBox.getChildren().addAll(infoBox, actionsContainer);
         return itemBox;
     }
 
@@ -265,24 +367,26 @@ public record MembersItemRendererFactory(MemberActionHandler memberActionHandler
         nameWithBadge.setAlignment(Pos.CENTER_LEFT);
 
         Label nameLabel = Bootstrap.strong(Bootstrap.h4(new Label(managerItem.getManagerName())));
+        setupResponsiveNameLabel(nameLabel);
         nameWithBadge.getChildren().add(nameLabel);
 
-        // Add badge based on type
+        // Add badge based on type (track it for responsive layout)
+        Label statusBadge = null;
         switch (type) {
             case AUTHORIZED_MANAGER:
                 // No badge needed for authorized managers
                 break;
 
             case PENDING_OUTGOING_INVITATION:
-                Label pendingBadge = new Label(I18n.getI18nText(MembersI18nKeys.BadgePending));
-                ModalityStyle.authorizationBadgePending(pendingBadge);
-                nameWithBadge.getChildren().add(pendingBadge);
+                statusBadge = new Label(I18n.getI18nText(MembersI18nKeys.BadgePending));
+                ModalityStyle.authorizationBadgePending(statusBadge);
+                nameWithBadge.getChildren().add(statusBadge);
                 break;
 
             case PENDING_INCOMING_INVITATION:
-                Label needsApprovalBadge = new Label(I18n.getI18nText(MembersI18nKeys.BadgeNeedsApproval));
-                ModalityStyle.authorizationBadgePending(needsApprovalBadge);
-                nameWithBadge.getChildren().add(needsApprovalBadge);
+                statusBadge = new Label(I18n.getI18nText(MembersI18nKeys.BadgeNeedsApproval));
+                ModalityStyle.authorizationBadgePending(statusBadge);
+                nameWithBadge.getChildren().add(statusBadge);
                 break;
         }
 
@@ -340,8 +444,8 @@ public record MembersItemRendererFactory(MemberActionHandler memberActionHandler
         HBox.setHgrow(infoBox, Priority.ALWAYS);
 
         // Actions based on type (using clean switch statement)
-        HBox actions = new HBox(18);
-        actions.setAlignment(Pos.CENTER_RIGHT);
+        VBox actionsContainer = createResponsiveActionContainer();
+        java.util.List<Node> actionLinks = new java.util.ArrayList<>();
 
         switch (type) {
             case AUTHORIZED_MANAGER:
@@ -350,7 +454,7 @@ public record MembersItemRendererFactory(MemberActionHandler memberActionHandler
                     I18nControls.newHyperlink(MembersI18nKeys.RevokeAccess));
                 revokeLink.setCursor(Cursor.HAND);
                 revokeLink.setOnAction(e -> managerActionHandler.onRevokeManagerAccess(managerItem));
-                actions.getChildren().add(revokeLink);
+                actionLinks.add(revokeLink);
                 break;
 
             case PENDING_OUTGOING_INVITATION:
@@ -365,7 +469,8 @@ public record MembersItemRendererFactory(MemberActionHandler memberActionHandler
                 cancelLink.setCursor(Cursor.HAND);
                 cancelLink.setOnAction(e -> managerActionHandler.onCancelManagerInvitation(invitation));
 
-                actions.getChildren().addAll(resendLink, cancelLink);
+                actionLinks.add(resendLink);
+                actionLinks.add(cancelLink);
                 break;
 
             case PENDING_INCOMING_INVITATION:
@@ -374,7 +479,12 @@ public record MembersItemRendererFactory(MemberActionHandler memberActionHandler
                 break;
         }
 
-        itemBox.getChildren().addAll(infoBox, actions);
+        // Add the action links to the container, wrapping in HBox for desktop
+        if (!actionLinks.isEmpty()) {
+            setupResponsiveActions(actionsContainer, actionLinks, statusBadge, nameWithBadge);
+        }
+
+        itemBox.getChildren().addAll(infoBox, actionsContainer);
         return itemBox;
     }
 

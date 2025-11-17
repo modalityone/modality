@@ -16,6 +16,7 @@ import dev.webfx.extras.validation.ValidationSupport;
 import dev.webfx.kit.util.properties.FXProperties;
 import dev.webfx.kit.util.properties.ObservableLists;
 import dev.webfx.platform.console.Console;
+import dev.webfx.platform.uischeduler.UiScheduler;
 import dev.webfx.stack.orm.domainmodel.DataSourceModel;
 import dev.webfx.stack.orm.entity.EntityStore;
 import dev.webfx.stack.orm.entity.UpdateStore;
@@ -59,7 +60,7 @@ import java.util.function.Consumer;
 public class MembersView implements MaterialFactoryMixin, ModalityButtonFactoryMixin {
 
     private final MembersModel model;
-    private final MembersItemRendererFactory rendererFactory;
+    private MembersItemRendererFactory rendererFactory;
 
     // UI components
     private final MonoPane mainContent = new MonoPane();
@@ -71,9 +72,22 @@ public class MembersView implements MaterialFactoryMixin, ModalityButtonFactoryM
     private Runnable onAddMemberRequested;
     private Runnable onInviteManagerRequested;
 
-    public MembersView(MembersModel model, MembersItemRendererFactory rendererFactory) {
+    public MembersView(MembersModel model) {
         this.model = model;
+    }
+
+    /**
+     * Set the renderer factory (called after construction).
+     */
+    public void setRendererFactory(MembersItemRendererFactory rendererFactory) {
         this.rendererFactory = rendererFactory;
+    }
+
+    /**
+     * Get the responsive width property for the main content area.
+     */
+    public javafx.beans.value.ObservableDoubleValue getResponsiveWidthProperty() {
+        return mainContent.widthProperty();
     }
 
     /**
@@ -234,11 +248,20 @@ public class MembersView implements MaterialFactoryMixin, ModalityButtonFactoryM
      * Build the "Who Can Book For Me" section.
      */
     private void buildManagersSection() {
-        // Section title
-        Label sectionTitle = Bootstrap.strong(Bootstrap.h4(
+        // Section divider with uppercase label
+        Node divider = rendererFactory.createSectionDivider();
+
+        Label dividerLabel = Bootstrap.textPrimary(Bootstrap.strong(
                 I18nControls.newLabel(MembersI18nKeys.WhoCanBookForMe)));
-        sectionTitle.getStyleClass().add("section-title-uppercase");
+        dividerLabel.getStyleClass().add("section-title-uppercase");
+        dividerLabel.setTextAlignment(TextAlignment.CENTER);
+        dividerLabel.setStyle("-fx-font-size: 18px;");
+
+        // Section title (same style as first section)
+        Label sectionTitle = Bootstrap.strong(Bootstrap.h3(
+                I18nControls.newLabel(MembersI18nKeys.PeopleManagingMyBookings)));
         sectionTitle.setTextAlignment(TextAlignment.CENTER);
+        sectionTitle.setPadding(new Insets(20, 0, 0, 0));
 
         // Description
         Label description = Bootstrap.textSecondary(
@@ -323,9 +346,6 @@ public class MembersView implements MaterialFactoryMixin, ModalityButtonFactoryM
         ObservableLists.runNowAndOnListChange(change -> updateVisibility.run(), model.getPendingIncomingManagerInvitationsList());
         ObservableLists.runNowAndOnListChange(change -> updateVisibility.run(), model.getPendingOutgoingManagerInvitationsList());
 
-        // Section divider
-        Node divider = rendererFactory.createSectionDivider();
-
         // Invite Manager button
         Button inviteButton = Bootstrap.largePrimaryButton(
                 I18nControls.newButton(MembersI18nKeys.InviteBookingManager), false);
@@ -337,6 +357,7 @@ public class MembersView implements MaterialFactoryMixin, ModalityButtonFactoryM
 
         managersSection.getChildren().setAll(
                 divider,
+                dividerLabel,
                 sectionTitle,
                 description,
                 loadingBox,
@@ -847,12 +868,29 @@ public class MembersView implements MaterialFactoryMixin, ModalityButtonFactoryM
                                 I18n.getI18nText(MembersI18nKeys.FailedToUpdateMember));
                     })
                     .onSuccess(result -> {
-                        Console.log("Member updated successfully");
-                        dialogCallback.closeDialog();
-                        showSuccessMessage(I18n.getI18nText(MembersI18nKeys.MemberUpdatedSuccessfully));
-                        if (onSuccess != null) {
-                            onSuccess.run();
-                        }
+                        Console.log("Member updated successfully in view dialog");
+
+                        // Update the original person object with new values so UI reflects changes
+                        person.setFirstName(personToUpdate.getFirstName());
+                        person.setLastName(personToUpdate.getLastName());
+                        person.setEmail(personToUpdate.getEmail());
+
+                        Console.log("Updated person object: " + person.getFirstName() + " " + person.getLastName() + " (FullName: " + person.getFullName() + ")");
+
+                        UiScheduler.scheduleDeferred(() -> {
+                            Console.log("In deferred block, about to close dialog");
+                            dialogCallback.closeDialog();
+                            showSuccessMessage(I18n.getI18nText(MembersI18nKeys.MemberUpdatedSuccessfully));
+
+                            Console.log("onSuccess callback: " + (onSuccess != null ? "EXISTS" : "NULL"));
+                            if (onSuccess != null) {
+                                Console.log("Calling onSuccess callback...");
+                                onSuccess.run();
+                                Console.log("onSuccess callback completed");
+                            } else {
+                                Console.log("ERROR: onSuccess callback is NULL!");
+                            }
+                        });
                     });
         });
     }

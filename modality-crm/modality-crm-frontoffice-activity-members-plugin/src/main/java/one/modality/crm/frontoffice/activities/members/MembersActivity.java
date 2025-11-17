@@ -27,15 +27,19 @@ final class MembersActivity extends ViewDomainActivityBase {
 
     @Override
     public Node buildUi() {
-        // Create the item renderer factory with action handlers
+        // Create the view first to get access to its width property
+        view = new MembersView(model);
+
+        // Create the item renderer factory with action handlers and responsive width
         MembersItemRendererFactory rendererFactory = new MembersItemRendererFactory(
                 createMemberActionHandler(),
                 createManagerActionHandler(),
-                createPendingRequestActionHandler()
+                createPendingRequestActionHandler(),
+                view.getResponsiveWidthProperty()
         );
 
-        // Create the view
-        view = new MembersView(model, rendererFactory);
+        // Set the renderer factory on the view
+        view.setRendererFactory(rendererFactory);
 
         // Now that view exists, wire it to the controller
         // (controller was created in startLogic() which runs before buildUi())
