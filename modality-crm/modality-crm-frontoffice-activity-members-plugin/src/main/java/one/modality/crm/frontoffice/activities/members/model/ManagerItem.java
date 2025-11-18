@@ -102,6 +102,12 @@ public class ManagerItem {
                type == ManagerItemType.PENDING_INCOMING_INVITATION;
     }
 
+    /**
+     * Returns the display name for this manager.
+     * Prioritizes account owner's name over Person link record name.
+     *
+     * @return the manager's full name, or "Unknown" if no name is available
+     */
     public String getManagerName() {
         // For authorized managers, show the account owner's name (not the Person link record)
         if (accountOwner != null) {
@@ -122,6 +128,12 @@ public class ManagerItem {
         return "Unknown";
     }
 
+    /**
+     * Returns the email address for this manager.
+     * Prioritizes account owner's email over Person link record email.
+     *
+     * @return the manager's email address, or null if no email is available
+     */
     public String getManagerEmail() {
         // For authorized managers, show the account owner's email (not the Person link record)
         if (accountOwner != null && accountOwner.getEmail() != null) {

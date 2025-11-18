@@ -26,6 +26,8 @@ import one.modality.base.shared.entities.Invitation;
  */
 final class ApproveInvitationActivity extends ViewDomainActivityBase {
 
+    private static final String DEFAULT_CLIENT_ORIGIN = "https://app.kadampabookings.org";
+
     private final StringProperty tokenProperty = new SimpleStringProperty();
     private Label messageLabel;
     private Label detailsLabel;
@@ -168,6 +170,6 @@ final class ApproveInvitationActivity extends ViewDomainActivityBase {
                 return location;
             }
         }
-        return "https://kbs.kadampa.org"; // Fallback
+        return DEFAULT_CLIENT_ORIGIN;
     }
 }

@@ -41,13 +41,12 @@ import one.modality.base.shared.entities.Country;
 import one.modality.base.shared.entities.Organization;
 import one.modality.base.shared.entities.Person;
 import one.modality.crm.client.i18n.CrmI18nKeys;
-import one.modality.crm.frontoffice.activities.createaccount.CreateAccountI18nKeys;
 import one.modality.crm.frontoffice.activities.createaccount.UserAccountUI;
 import one.modality.crm.frontoffice.activities.members.MembersI18nKeys;
+import one.modality.crm.frontoffice.activities.members.model.MemberItem;
 import one.modality.crm.frontoffice.activities.members.model.MembersModel;
 import one.modality.crm.frontoffice.help.HelpPanel;
 
-import java.time.LocalDate;
 import java.util.function.Consumer;
 
 /**
@@ -58,6 +57,10 @@ import java.util.function.Consumer;
  * @author Bruno Salmon
  */
 public class MembersView implements MaterialFactoryMixin, ModalityButtonFactoryMixin {
+
+    // UI dimension constants
+    private static final int DIALOG_SCROLL_PANE_MAX_HEIGHT = 500;
+    private static final int DIALOG_PREFERRED_WIDTH = 700;
 
     private final MembersModel model;
     private MembersItemRendererFactory rendererFactory;
@@ -154,7 +157,7 @@ public class MembersView implements MaterialFactoryMixin, ModalityButtonFactoryM
         // Update warning visibility based on directMembersList
         Runnable updateWarning = () -> {
             long count = model.getDirectMembersList().stream()
-                    .filter(memberItem -> memberItem.hasMatchingAccount())
+                    .filter(MemberItem::hasMatchingAccount)
                     .count();
 
             if (count == 0) {
@@ -186,6 +189,7 @@ public class MembersView implements MaterialFactoryMixin, ModalityButtonFactoryM
         Label sectionTitle = Bootstrap.strong(Bootstrap.h3(
                 I18nControls.newLabel(MembersI18nKeys.MembersICanBookFor)));
         sectionTitle.setTextAlignment(TextAlignment.CENTER);
+        sectionTitle.setWrapText(true);
 
         // Description
         Label description = Bootstrap.textSecondary(
@@ -304,6 +308,7 @@ public class MembersView implements MaterialFactoryMixin, ModalityButtonFactoryM
         Label sectionTitle = Bootstrap.strong(Bootstrap.h3(
                 I18nControls.newLabel(MembersI18nKeys.PeopleManagingMyBookings)));
         sectionTitle.setTextAlignment(TextAlignment.CENTER);
+        sectionTitle.setWrapText(true);
         sectionTitle.setPadding(new Insets(20, 0, 0, 0));
 
         // Description
@@ -692,9 +697,10 @@ public class MembersView implements MaterialFactoryMixin, ModalityButtonFactoryM
 
         // Personal Details - DateField needs a container
         DateField birthDateField = new DateField(formContent);
-        birthDateField.setDate(person.getBirthDate());
         birthDateField.dateTimeFormatterProperty().bind(LocalizedTime.dateFormatterProperty(FrontOfficeTimeFormats.BIRTH_DATE_FORMAT));
+        birthDateField.setDate(person.getBirthDate());
         TextField birthDateTextField = birthDateField.getTextField();
+        birthDateTextField.setPromptText(FrontOfficeTimeFormats.BIRTH_DATE_FORMAT);
         MaterialUtil.makeMaterial(birthDateTextField);
         dev.webfx.extras.styles.materialdesign.textfield.MaterialTextField materialBirthDateField = MaterialUtil.getMaterialTextField(birthDateTextField);
         materialBirthDateField.setAnimateLabel(false);
@@ -843,10 +849,10 @@ public class MembersView implements MaterialFactoryMixin, ModalityButtonFactoryM
         // Wrap form in ScrollPane for long content
         ScrollPane scrollPane = new ScrollPane(formContent);
         scrollPane.setFitToWidth(true);
-        scrollPane.setMaxHeight(500); // Limit max height to ensure scrollbar appears when needed
+        scrollPane.setMaxHeight(DIALOG_SCROLL_PANE_MAX_HEIGHT);
         scrollPane.setPadding(new Insets(0));
-        scrollPane.setPrefWidth(700);  // Set preferred width for wider dialog on desktop
-        scrollPane.setMaxWidth(700);   // Maximum width on large screens
+        scrollPane.setPrefWidth(DIALOG_PREFERRED_WIDTH);
+        scrollPane.setMaxWidth(DIALOG_PREFERRED_WIDTH);
 
         // Create dialog without Bootstrap helper (no info message parameter)
         DialogContent dialog = new DialogContent();
@@ -908,32 +914,21 @@ public class MembersView implements MaterialFactoryMixin, ModalityButtonFactoryM
             // Submit changes
             updateStore.submitChanges()
                     .onFailure(error -> {
-                        Console.log("Error updating member: " + error);
                         showErrorDialog(I18n.getI18nText(MembersI18nKeys.Error),
                                 I18n.getI18nText(MembersI18nKeys.FailedToUpdateMember));
                     })
                     .onSuccess(result -> {
-                        Console.log("Member updated successfully in view dialog");
-
                         // Update the original person object with new values so UI reflects changes
                         person.setFirstName(personToUpdate.getFirstName());
                         person.setLastName(personToUpdate.getLastName());
                         person.setEmail(personToUpdate.getEmail());
 
-                        Console.log("Updated person object: " + person.getFirstName() + " " + person.getLastName() + " (FullName: " + person.getFullName() + ")");
-
                         UiScheduler.scheduleDeferred(() -> {
-                            Console.log("In deferred block, about to close dialog");
                             dialogCallback.closeDialog();
                             showSuccessMessage(I18n.getI18nText(MembersI18nKeys.MemberUpdatedSuccessfully));
 
-                            Console.log("onSuccess callback: " + (onSuccess != null ? "EXISTS" : "NULL"));
                             if (onSuccess != null) {
-                                Console.log("Calling onSuccess callback...");
                                 onSuccess.run();
-                                Console.log("onSuccess callback completed");
-                            } else {
-                                Console.log("ERROR: onSuccess callback is NULL!");
                             }
                         });
                     });

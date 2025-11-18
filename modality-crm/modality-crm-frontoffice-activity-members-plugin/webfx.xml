@@ -25,7 +25,7 @@
         <provider interface="dev.webfx.stack.routing.uirouter.UiRoute">one.modality.crm.frontoffice.activities.members.MembersRouting$MembersUiRoute</provider>
         <provider interface="dev.webfx.stack.routing.uirouter.UiRoute">one.modality.crm.frontoffice.activities.members.ApproveInvitationRouting$ApproveInvitationUiRoute</provider>
         <provider interface="dev.webfx.stack.routing.uirouter.UiRoute">one.modality.crm.frontoffice.activities.members.DeclineInvitationRouting$DeclineInvitationUiRoute</provider>
-        <provider interface="dev.webfx.stack.routing.uirouter.operations.RouteRequestEmitter">one.modality.crm.frontoffice.activities.members.MembersRouting$RouteToUserProfileRequestEmitter</provider>
+        <provider interface="dev.webfx.stack.routing.uirouter.operations.RouteRequestEmitter">one.modality.crm.frontoffice.activities.members.MembersRouting$RouteToMembersRequestEmitter</provider>
     </providers>
 
     <i18n javaKeysClass="one.modality.crm.frontoffice.activities.members.MembersI18nKeys"/>

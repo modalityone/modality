@@ -21,6 +21,8 @@ import one.modality.crm.shared.services.authn.fx.FXModalityUserPrincipal;
  */
 final class MembersActivity extends ViewDomainActivityBase {
 
+    private static final String DEFAULT_CLIENT_ORIGIN = "https://app.kadampabookings.org";
+
     private final MembersModel model = new MembersModel();
     private MembersView view;
     private MembersController controller;
@@ -163,6 +165,6 @@ final class MembersActivity extends ViewDomainActivityBase {
                 }
             }
         }
-        return "https://kbs.kadampa.org";  // fallback
+        return DEFAULT_CLIENT_ORIGIN;
     }
 }

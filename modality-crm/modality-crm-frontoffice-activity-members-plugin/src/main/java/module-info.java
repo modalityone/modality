@@ -59,6 +59,6 @@ module modality.crm.frontoffice.activity.members.plugin {
 
     // Provided services
     provides dev.webfx.stack.routing.uirouter.UiRoute with one.modality.crm.frontoffice.activities.members.MembersRouting.MembersUiRoute, one.modality.crm.frontoffice.activities.members.ApproveInvitationRouting.ApproveInvitationUiRoute, one.modality.crm.frontoffice.activities.members.DeclineInvitationRouting.DeclineInvitationUiRoute;
-    provides dev.webfx.stack.routing.uirouter.operations.RouteRequestEmitter with one.modality.crm.frontoffice.activities.members.MembersRouting.RouteToUserProfileRequestEmitter;
+    provides dev.webfx.stack.routing.uirouter.operations.RouteRequestEmitter with one.modality.crm.frontoffice.activities.members.MembersRouting.RouteToMembersRequestEmitter;
 
 }

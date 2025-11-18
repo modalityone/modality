@@ -32,6 +32,7 @@ public final class InvitationLinkService {
 
     // Email configuration
     private static final String EMAIL_FROM = "kbs@kadampa.net";
+    private static final int KBS_MAIL_ACCOUNT_ID = 27; // Account ID for kbs@kadampa.net
 
     // Email template base names (language suffix will be added dynamically)
     // Authorization Request: Inviter asks invitee for permission to book for them
@@ -48,8 +49,6 @@ public final class InvitationLinkService {
 
     // Manager Accepted: Manager accepted the invitation to manage bookings
     private static final String MANAGER_ACCEPTED_TEMPLATE = "emails/ManagerAccepted_ToInviter";
-
-    private static final String ACCESS_REVOKED_TEMPLATE = "emails/AccessRevokedMailBody";
 
     /**
      * Gets the localized template path based on current i18n locale
@@ -85,8 +84,8 @@ public final class InvitationLinkService {
         // Use existing token from invitation (already set in createInvitation)
         String token = invitation.getToken();
 
-        String approveLink = buildLink(APPROVE_PATH_FULL, token);
-        String declineLink = buildLink(DECLINE_PATH_FULL, token);
+        String approveLink = buildLink(clientOrigin, APPROVE_PATH_FULL, token);
+        String declineLink = buildLink(clientOrigin, DECLINE_PATH_FULL, token);
 
         // Load localized template asynchronously (GWT-compatible)
         String templatePath = getLocalizedTemplatePath(AUTHORIZATION_REQUEST_TEMPLATE);
@@ -122,8 +121,8 @@ public final class InvitationLinkService {
         // Use existing token from invitation (already set in createInvitation)
         String token = invitation.getToken();
 
-        String approveLink = buildLink(APPROVE_PATH_FULL, token);
-        String declineLink = buildLink(DECLINE_PATH_FULL, token);
+        String approveLink = buildLink(clientOrigin, APPROVE_PATH_FULL, token);
+        String declineLink = buildLink(clientOrigin, DECLINE_PATH_FULL, token);
 
         // Load localized template asynchronously (GWT-compatible)
         String templatePath = getLocalizedTemplatePath(VALIDATION_REQUEST_TEMPLATE);
@@ -158,8 +157,8 @@ public final class InvitationLinkService {
         // Use existing token from invitation (already set in createInvitation)
         String token = invitation.getToken();
 
-        String acceptLink = buildLink(APPROVE_PATH_FULL, token);
-        String declineLink = buildLink(DECLINE_PATH_FULL, token);
+        String acceptLink = buildLink(clientOrigin, APPROVE_PATH_FULL, token);
+        String declineLink = buildLink(clientOrigin, DECLINE_PATH_FULL, token);
 
         // Load localized template asynchronously (GWT-compatible)
         String templatePath = getLocalizedTemplatePath(INVITATION_TO_MANAGE_TEMPLATE);
@@ -192,7 +191,7 @@ public final class InvitationLinkService {
             String clientOrigin,
             DataSourceModel dataSourceModel) {
 
-        String accountLink = "${{HTTP_SERVER_ORIGIN}}" + ActivityHashUtil.withHashPrefix("/members");
+        String accountLink = clientOrigin + ActivityHashUtil.withHashPrefix("/members");
 
         // Load localized template asynchronously (GWT-compatible)
         String templatePath = getLocalizedTemplatePath(AUTHORIZATION_APPROVED_TEMPLATE);
@@ -223,7 +222,7 @@ public final class InvitationLinkService {
             String clientOrigin,
             DataSourceModel dataSourceModel) {
 
-        String accountLink = "${{HTTP_SERVER_ORIGIN}}" + ActivityHashUtil.withHashPrefix("/members");
+        String accountLink = clientOrigin + ActivityHashUtil.withHashPrefix("/members");
 
         // Load localized template asynchronously (GWT-compatible)
         String templatePath = getLocalizedTemplatePath(MANAGER_ACCEPTED_TEMPLATE);
@@ -289,6 +288,7 @@ public final class InvitationLinkService {
         Invitation updated = updateStore.updateEntity(invitation);
         updated.setPending(false);
         updated.setAccepted(true);
+        updated.setUsageDate(java.time.LocalDateTime.now());
 
         Person inviter = invitation.getInviter();
         Person invitee = invitation.getInvitee();
@@ -388,11 +388,10 @@ public final class InvitationLinkService {
     // Helper methods
 
     /**
-     * Builds a link with HTTP_SERVER_ORIGIN placeholder for server-side replacement
+     * Builds a link with the client origin and token
      */
-    private static String buildLink(String pathTemplate, String token) {
-        // Use placeholder that will be replaced by server-side mail processor
-        return "${{HTTP_SERVER_ORIGIN}}" + ActivityHashUtil.withHashPrefix(pathTemplate.replace(":token", token));
+    private static String buildLink(String clientOrigin, String pathTemplate, String token) {
+        return clientOrigin + ActivityHashUtil.withHashPrefix(pathTemplate.replace(":token", token));
     }
 
     private static Future<Void> sendEmail(Person recipient, String subject, String body, DataSourceModel dataSourceModel) {
@@ -412,9 +411,7 @@ public final class InvitationLinkService {
         mail.setSubject(subject);
         mail.setContent(body);
         mail.setOut(true);
-        // Note: account_id is required - using 27 for kbs@kadampa.net account
-        // This matches the value used in ModalityServerMailServiceProvider
-        mail.setAccount(27);
+        mail.setAccount(KBS_MAIL_ACCOUNT_ID);
 
         // Create Recipient record in the same transaction
         Recipient recipientEntity = updateStore.insertEntity(Recipient.class);
