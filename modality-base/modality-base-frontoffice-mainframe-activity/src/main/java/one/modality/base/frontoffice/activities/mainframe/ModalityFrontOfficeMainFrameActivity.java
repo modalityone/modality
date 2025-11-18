@@ -31,18 +31,15 @@ import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.ObjectProperty;
 import javafx.collections.ObservableList;
 import javafx.geometry.Insets;
-import javafx.geometry.Point2D;
 import javafx.geometry.Pos;
 import javafx.scene.Cursor;
 import javafx.scene.Node;
-import javafx.scene.Parent;
 import javafx.scene.control.*;
 import javafx.scene.effect.DropShadow;
 import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
 import javafx.scene.paint.Paint;
 import javafx.scene.shape.SVGPath;
-import javafx.stage.Screen;
 import one.modality.base.client.application.ModalityClientMainFrameActivity;
 import one.modality.base.client.application.RoutingActions;
 import one.modality.base.client.brand.Brand;
@@ -65,7 +62,6 @@ import java.util.Objects;
  */
 public final class ModalityFrontOfficeMainFrameActivity extends ModalityClientMainFrameActivity {
 
-    private static final boolean ENABLE_OVERLAY_MENU_BAR = false;
     private static final Transition INITIAL_TRANSITION_EFFECT = new CircleTransition();
     private static final Transition PAGE_TRANSITION_EFFECT = null; // maybe go back to new FadeTransition() after Spring Festival
 
@@ -85,8 +81,6 @@ public final class ModalityFrontOfficeMainFrameActivity extends ModalityClientMa
     private Pane mainFrameContainer;
     private Node backgroundNode; // can be used to hold a WebView and prevent iFrame reload in the web version
     private final TransitionPane pageTransitionPane = new TransitionPane();
-    private CollapsePane overlayMenuBar; // 1 unique instance
-    private CollapsePane mountMainMenuButtonBar; // 1 instance per mount node
     private CollapsePane mobileMenuBar; // 1 unique instance
     private ScalePane[] scaledMobileButtons;
     private Pane dialogArea;
@@ -99,10 +93,7 @@ public final class ModalityFrontOfficeMainFrameActivity extends ModalityClientMa
         pageTransitionPane.setTransition(INITIAL_TRANSITION_EFFECT);
         // And then a fade transition for later activities
         FXProperties.runOnPropertyChange(transiting -> {
-            if (transiting) {
-                if (ENABLE_OVERLAY_MENU_BAR)
-                    overlayMenuBar.setAnimate(false);
-            } else { // Ending a transition
+            if (!transiting) { // Ending a transition
                 pageTransitionPane.setTransition(PAGE_TRANSITION_EFFECT) ;
             }
         }, pageTransitionPane.transitingProperty());
@@ -116,9 +107,6 @@ public final class ModalityFrontOfficeMainFrameActivity extends ModalityClientMa
                 if (isMobileLayout) {
                     footerHeight = mobileMenuBar.prefHeight(width);
                     layoutInArea(mobileMenuBar, 0, height - footerHeight, width, footerHeight);
-                } else if (ENABLE_OVERLAY_MENU_BAR && mountMainMenuButtonBar != null) {
-                    Point2D p = mountMainMenuButtonBar.localToScene(0, 0);
-                    layoutInArea(overlayMenuBar, p.getX(), /*p.getY() < 0 ? 0 : p.getY()*/ 0, mountMainMenuButtonBar.getWidth(), mountMainMenuButtonBar.getHeight());
                 }
                 double mountNodeY = headerHeight;
                 double mountNodeHeight = height - headerHeight - footerHeight;
@@ -133,51 +121,6 @@ public final class ModalityFrontOfficeMainFrameActivity extends ModalityClientMa
             }
         };
         CollapsePane languageMenuBar = createLanguageMenuBar();
-        AriaToggleGroup<Integer> overlayMenuItemGroup = new AriaToggleGroup<>(AriaRole.MENUITEM);
-        VBox overlayMenuBarContent = new VBox(
-            createLanguageMenuBar(),
-            createMainMenuButtonBar(overlayMenuItemGroup, false)
-        );
-        overlayMenuBarContent.setAlignment(Pos.CENTER);
-        overlayMenuBarContent.setMaxWidth(Double.MAX_VALUE);
-        if (ENABLE_OVERLAY_MENU_BAR) {
-            overlayMenuBar = new CollapsePane(overlayMenuBarContent);
-            overlayMenuBar.setAnimate(false);
-            overlayMenuBar.setVisible(false);
-            overlayMenuBar.collapse();
-            double[] lastMouseY = {0};
-            mainFrameContainer.setOnMouseMoved(e -> {
-                double mouseY = e.getY(), mouseX = e.getSceneX();
-                if (Math.abs(mouseY - lastMouseY[0]) > 5 && !FXCollapseMenu.isCollapseMenu()) {
-                    Node mountNode = getMountNode();
-                    ScrollPane scrollPane = getMountNodeEmbeddingScrollPane(mountNode);
-                    boolean isPageOnTop = scrollPane == null || scrollPane.getVvalue() == 0;
-                    boolean up = mouseY < lastMouseY[0];
-                    if (!isPageOnTop && up && mouseY < mainFrameContainer.getHeight() / 3) {
-                        if (overlayMenuBar.isCollapsed()) {
-                            // Searching for the first button (ugly code...)
-                            Node node = overlayMenuBar.getContent(); // should return a vbox;
-                            if (node instanceof VBox)
-                                node = ((VBox) node).getChildren().get(1); // should return a CollapsePane
-                            if (node instanceof CollapsePane)
-                                node = ((CollapsePane) node).getContent(); // should return a MonoPane
-                            if (node instanceof MonoPane)
-                                node = ((MonoPane) node).getContent(); // should return an HBox
-                            if (node instanceof Parent)
-                                node = ((Parent) node).getChildrenUnmodifiable().get(2); // Should be the index for the first button
-                            if (node != null && mouseX >= node.localToScene(0, 0).getX()) {
-                                overlayMenuBar.setAnimate(true);
-                                overlayMenuBar.expand();
-                            }
-                        }
-                    } else if (!up && mouseY > WEB_MAIN_MENU_HEIGHT) {
-                        overlayMenuBar.setAnimate(!isPageOnTop);
-                        overlayMenuBar.collapse();
-                    }
-                }
-                lastMouseY[0] = mouseY;
-            });
-        }
 
         // To be aware: if backgroundNode is set to a WebView (which is actually its main purpose), then modifying the
         // mainFrame children again will cause the iFrame to reload in the web version, which is what we want to prevent
@@ -191,15 +134,13 @@ public final class ModalityFrontOfficeMainFrameActivity extends ModalityClientMa
             List<Node> children = Collections.listOfRemoveNulls(
                 backgroundNode,      // could be a WebView
                 pageTransitionPane,  // contains a standard mount node, or null if we want to display the backgroundNode
-                isMobileLayout ? mobileMenuBar : overlayMenuBar); // mobile menu bar (at bottom) or overlay menu bar (in addition to the one inside mountTransitionPane)
+                isMobileLayout ? mobileMenuBar : null); // mobile menu bar (at bottom) or overlay menu bar (in addition to the one inside mountTransitionPane)
             // We call setAll() only if they differ, because setAll() is basically a clear() + addAll() and this causes
             // unnecessary changes in the DOM which in addition cause iFrames to unload
             if (!Objects.equals(children, mainFrameContainer.getChildren()))
                 mainFrameContainer.getChildren().setAll(children);
             firstOverlayChildIndex = mainFrameContainer.getChildren().size();
             updateOverlayChildren();
-            if (ENABLE_OVERLAY_MENU_BAR && getMountNode() == null)
-                overlayMenuBar.collapse();
         }, FXBackgroundNode.backgroundNodeProperty(), mobileLayoutProperty, mountNodeProperty());
 
         AriaToggleGroup<Integer> mainAndUserMenuItemGroup = new AriaToggleGroup<>(AriaRole.MENUITEM);
@@ -230,35 +171,6 @@ public final class ModalityFrontOfficeMainFrameActivity extends ModalityClientMa
         BorderPane borderPane = new BorderPane(pageVBox);
         ScrollPane scrollPane = Controls.createVerticalScrollPane(borderPane);
         pageTransitionPane.transitToContent(scrollPane);
-
-        if (ENABLE_OVERLAY_MENU_BAR) {
-            double[] lastVTopOffset = {0};
-            FXProperties.runOnPropertiesChange(() -> {
-                mountMainMenuButtonBar = mainMenuButtonBar;
-                if (pageTransitionPane.isTransiting())
-                    return;
-                // Visibility management:
-                double vTopOffset = Controls.computeScrollPaneVTopOffset(scrollPane);
-                if (vTopOffset <= languageMenuBar.getHeight()) { // Making the overlay menu bar invisible when reaching the top
-                    overlayMenuBar.setAnimate(false); // because there is already a web menu on top of that page
-                    overlayMenuBar.collapse();
-                } else if (vTopOffset > Screen.getPrimary().getBounds().getHeight()) {
-                    overlayMenuBar.setVisible(true); // Making it visible when the top one is no more in the view
-                    overlayMenuBar.setAnimate(true); // port (however, it will not be showing while it's collapsed)
-                }
-                // Collapse management:
-                // Collapsing the overlay menu if an activity explicitly asked to do so
-                if (FXCollapseMenu.isCollapseMenu())
-                    overlayMenuBar.collapse();
-                    // otherwise if the user scrolled a bit (at least 5 pixels)
-                else if (Math.abs(vTopOffset - lastVTopOffset[0]) > 5) {
-                    // we expand of collapse the overlay menu depending on the scroll direction
-                    if (overlayMenuBar.isAnimate()) // and only when animated (page scrolled down)
-                        overlayMenuBar.setCollapsed(vTopOffset > lastVTopOffset[0]); // up = expand, down = collapse
-                    lastVTopOffset[0] = vTopOffset;
-                }
-            }, scrollPane.vvalueProperty(), FXCollapseMenu.collapseMenuProperty());
-        }
 
         // Reacting to the mount node changes:
         FXProperties.runNowAndOnPropertyChange(mountNode -> {
@@ -507,14 +419,14 @@ public final class ModalityFrontOfficeMainFrameActivity extends ModalityClientMa
         return collapsePane;
     }
 
-    private Label createBrandLabel(boolean shortVersion, double graphicTextGap) {
+    private static Label createBrandLabel(boolean shortVersion, double graphicTextGap) {
         Label brandLabel = I18nControls.newLabel(shortVersion ? BrandI18nKeys.frontOfficeBrandNameAndLogoShort : BrandI18nKeys.frontOfficeBrandNameAndLogo);
         brandLabel.setGraphicTextGap(graphicTextGap);
         brandLabel.getStyleClass().setAll("brand");
         return brandLabel;
     }
 
-    private ToggleButton createMenuButton(Action routeAction, boolean userMenu, boolean mobileLayout) {
+    private static ToggleButton createMenuButton(Action routeAction, boolean userMenu, boolean mobileLayout) {
         ToggleButton button = ActionBinder.newActionToggleButton(routeAction);
         button.setCursor(Cursor.HAND);
         button.setMinWidth(Region.USE_PREF_SIZE);
