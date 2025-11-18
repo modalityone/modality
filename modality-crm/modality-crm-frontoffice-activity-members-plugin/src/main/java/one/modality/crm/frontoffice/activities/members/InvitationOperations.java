@@ -165,11 +165,20 @@ public final class InvitationOperations {
 
         Person inviter = invitation.getInviter();
         Person invitee = invitation.getInvitee();
+        Boolean inviterPayer = invitation.isInviterPayer();
 
         return InvitationLinkService.approveInvitation(invitation)
-                .compose(ignored ->
-                        InvitationLinkService.sendRequestApproved(inviter, invitee, clientOrigin, dataSourceModel)
-                );
+                .compose(ignored -> {
+                    // inviterPayer=true: Authorization request (inviter wants to book for invitee)
+                    // inviterPayer=false: Manager invitation (manager will book for inviter)
+                    if (Boolean.FALSE.equals(inviterPayer)) {
+                        // Manager accepted - notify inviter that manager can now help
+                        return InvitationLinkService.sendManagerAccepted(inviter, invitee, clientOrigin, dataSourceModel);
+                    } else {
+                        // Authorization approved - notify inviter they can now book for invitee
+                        return InvitationLinkService.sendRequestApproved(inviter, invitee, clientOrigin, dataSourceModel);
+                    }
+                });
     }
 
     /**

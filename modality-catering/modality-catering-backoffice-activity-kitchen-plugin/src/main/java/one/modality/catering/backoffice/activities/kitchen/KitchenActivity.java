@@ -12,19 +12,30 @@ import dev.webfx.extras.util.control.Controls;
 import dev.webfx.extras.util.layout.Layouts;
 import dev.webfx.kit.launcher.WebFxKitLauncher;
 import dev.webfx.kit.util.properties.FXProperties;
+import dev.webfx.platform.async.Future;
+import dev.webfx.platform.console.Console;
 import dev.webfx.platform.uischeduler.UiScheduler;
 import dev.webfx.stack.db.query.QueryArgument;
 import dev.webfx.stack.db.query.QueryArgumentBuilder;
+import dev.webfx.stack.db.submit.SubmitArgument;
+import dev.webfx.stack.db.submit.SubmitArgumentBuilder;
+import dev.webfx.stack.db.submit.SubmitService;
 import dev.webfx.stack.orm.domainmodel.activity.viewdomain.impl.ViewDomainActivityBase;
 import dev.webfx.stack.orm.domainmodel.activity.viewdomain.impl.ViewDomainActivityContextFinal;
 import dev.webfx.stack.orm.entity.EntityId;
+import dev.webfx.stack.orm.entity.EntityList;
+import dev.webfx.stack.orm.entity.EntityStore;
+import dev.webfx.stack.orm.entity.EntityStoreQuery;
+import dev.webfx.stack.orm.entity.UpdateStore;
 import dev.webfx.stack.orm.reactive.call.query.ReactiveQueryCall;
 import dev.webfx.stack.routing.uirouter.activity.uiroute.UiRouteActivityContextMixin;
 import javafx.application.Platform;
 import javafx.beans.property.ObjectProperty;
 import javafx.collections.ListChangeListener;
 import javafx.geometry.Insets;
+import javafx.geometry.Pos;
 import javafx.scene.Node;
+import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.layout.*;
@@ -34,6 +45,10 @@ import one.modality.base.client.gantt.fx.selection.FXGanttSelection;
 import one.modality.base.client.gantt.fx.visibility.FXGanttVisibility;
 import one.modality.base.client.time.theme.TimeFacet;
 import one.modality.base.shared.entities.Item;
+import one.modality.base.shared.entities.ScheduledItem;
+import one.modality.base.shared.entities.Site;
+import one.modality.base.shared.entities.Timeline;
+import one.modality.base.shared.knownitems.KnownItemFamily;
 import one.modality.catering.client.i18n.CateringI18nKeys;
 import one.modality.crm.backoffice.organization.fx.FXOrganization;
 import one.modality.crm.backoffice.organization.fx.FXOrganizationId;
@@ -42,6 +57,10 @@ import java.time.DayOfWeek;
 import java.time.LocalDate;
 import java.time.YearMonth;
 import java.util.*;
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
 
 /**
  * @author Bruno Salmon
@@ -56,6 +75,8 @@ final class KitchenActivity extends ViewDomainActivityBase
     private final Pane keyPane = new HBox();
     private final MealsSelectionPane mealsSelectionPane = new MealsSelectionPane();
     private final DietaryOptionKeyPanel dietaryOptionKeyPanel = new DietaryOptionKeyPanel();
+    private final Button generateScheduledItemsButton = new Button("Generate Scheduled Items");
+    private final Button generateScheduledItemsSqlButton = new Button("Generate Scheduled Items (SQL)");
 
     private final Map<LocalDate, AttendanceDayPanel> attendanceDayPanels = new HashMap<>();
     private final ObjectProperty<YearMonth> selectedYearMonthProperty = FXProperties.newObjectProperty(this::refreshCalendar);
@@ -87,8 +108,20 @@ final class KitchenActivity extends ViewDomainActivityBase
         LuminanceTheme.createTopPanelFacet(daysOfWeekPane).setShadowed(true).style();
         container.setTop(daysOfWeekPane);
 
-        LuminanceTheme.createBottomPanelFacet(keyPane).setShadowed(true).style();
-        container.setBottom(keyPane);
+        // Create bottom panel with buttons and key pane
+        VBox bottomPanel = new VBox(5);
+        HBox buttonContainer = new HBox(10);
+        buttonContainer.setAlignment(Pos.CENTER);
+        buttonContainer.setPadding(new Insets(10));
+        buttonContainer.getChildren().addAll(generateScheduledItemsButton, generateScheduledItemsSqlButton);
+        bottomPanel.getChildren().addAll(buttonContainer, keyPane);
+
+        // Wire buttons to generation methods
+        generateScheduledItemsButton.setOnAction(event -> generateMissingScheduledItems());
+        generateScheduledItemsSqlButton.setOnAction(event -> generateScheduledItemsFromTimelines());
+
+        LuminanceTheme.createBottomPanelFacet(bottomPanel).setShadowed(true).style();
+        container.setBottom(bottomPanel);
 
         LuminanceTheme.createPrimaryPanelFacet(container).style(); // To show the same background if the scroll pane doesn't cover the whole area
 
@@ -250,6 +283,321 @@ final class KitchenActivity extends ViewDomainActivityBase
         }, reactiveQueryCall.resultProperty());
         reactiveQueryCall.setResultCacheEntry("modality/catering/kitchen/year-month-meals-count");
         reactiveQueryCall.start();
+    }
+
+    /**
+     * Generates missing scheduledItems for all meal items in the selected month.
+     * This method:
+     * 1. Queries for existing scheduledItems in the selected month
+     * 2. Queries for all meal items (family.code = 'meals')
+     * 3. Queries for the main site for the organization
+     * 4. Creates scheduledItems for any missing (item, date) combinations
+     * 5. Submits changes to the database
+     */
+    private void generateMissingScheduledItems() {
+        YearMonth selectedYearMonth = selectedYearMonthProperty.get();
+        EntityId organizationId = FXOrganizationId.getOrganizationId();
+
+        if (selectedYearMonth == null || organizationId == null) {
+            Console.log("Cannot generate scheduled items: month or organization not selected");
+            return;
+        }
+
+        LocalDate startDate = selectedYearMonth.atDay(1);
+        LocalDate endDate = selectedYearMonth.atEndOfMonth();
+
+        // Disable button during generation
+        generateScheduledItemsButton.setDisable(true);
+
+        // Create entity store for queries
+        EntityStore entityStore = EntityStore.create(getDataSourceModel());
+
+        // Query for existing scheduled items, meal items, and main site
+        entityStore.executeQueryBatch(
+                // Query 0: Existing scheduled items for the month
+                new EntityStoreQuery("select id, item, date from ScheduledItem si where site.organization=? and si.date between ? and ? and item.family.code=?",
+                        organizationId.getPrimaryKey(), startDate, endDate, KnownItemFamily.MEALS.getCode()),
+
+                // Query 1: All meal items for the organization
+                new EntityStoreQuery("select id, name from Item where organization=? and family.code=? order by name",
+                        organizationId.getPrimaryKey(), KnownItemFamily.MEALS.getCode()),
+
+                // Query 2: Main site for the organization
+                new EntityStoreQuery("select id, name from Site where organization=? and main=true limit 1",
+                        organizationId.getPrimaryKey())
+        ).onFailure(error -> {
+            Console.log("Error querying data: " + error.getMessage());
+            generateScheduledItemsButton.setDisable(false);
+        }).onSuccess(results -> {
+            EntityList<ScheduledItem> existingScheduledItems = results[0];
+            EntityList<Item> mealItems = results[1];
+            EntityList<Site> sites = results[2];
+
+            if (sites.isEmpty()) {
+                Console.log("No main site found for organization");
+                generateScheduledItemsButton.setDisable(false);
+                return;
+            }
+
+            if (mealItems.isEmpty()) {
+                Console.log("No meal items found for organization");
+                generateScheduledItemsButton.setDisable(false);
+                return;
+            }
+
+            Site mainSite = sites.get(0);
+
+            // Build a set of existing (item, date) combinations
+            Set<String> existingCombinations = new HashSet<>();
+            for (ScheduledItem si : existingScheduledItems) {
+                String key = si.getItem().getPrimaryKey() + "|" + si.getDate();
+                existingCombinations.add(key);
+            }
+
+            // Create update store for insertions
+            UpdateStore updateStore = UpdateStore.create(getDataSourceModel());
+            int insertCount = 0;
+
+            // For each meal item and date in the month, create if missing
+            for (Item mealItem : mealItems) {
+                for (LocalDate date = startDate; !date.isAfter(endDate); date = date.plusDays(1)) {
+                    String key = mealItem.getPrimaryKey() + "|" + date;
+                    if (!existingCombinations.contains(key)) {
+                        ScheduledItem newScheduledItem = updateStore.insertEntity(ScheduledItem.class);
+                        newScheduledItem.setItem(mealItem);
+                        newScheduledItem.setDate(date);
+                        newScheduledItem.setSite(mainSite);
+                        insertCount++;
+                    }
+                }
+            }
+
+            final int finalInsertCount = insertCount;
+            if (insertCount > 0) {
+                Console.log("Creating " + insertCount + " scheduled items...");
+                updateStore.submitChanges()
+                        .onFailure(error -> {
+                            Console.log("Error creating scheduled items: " + error.getMessage());
+                            generateScheduledItemsButton.setDisable(false);
+                        })
+                        .onSuccess(result -> {
+                            Console.log("Successfully created " + finalInsertCount + " scheduled items");
+                            generateScheduledItemsButton.setDisable(false);
+                            // Refresh the data by re-triggering the query
+                            updateQueryArgument();
+                        });
+            } else {
+                Console.log("All scheduled items already exist for the selected month");
+                generateScheduledItemsButton.setDisable(false);
+            }
+        });
+    }
+
+    /**
+     * Generates scheduledItems for the selected month using SQL INSERT statements based on timelines.
+     * This method:
+     * 1. Queries for the global site (event_id is null) for the organization
+     * 2. Queries for timelines associated with that site
+     * 3. For each daily timeline, executes SQL INSERT to create scheduled_items
+     * 4. Executes SQL INSERT to create scheduled_resources for accommodation
+     */
+    private void generateScheduledItemsFromTimelines() {
+        YearMonth selectedYearMonth = selectedYearMonthProperty.get();
+        EntityId organizationId = FXOrganizationId.getOrganizationId();
+
+        if (selectedYearMonth == null || organizationId == null) {
+            Console.log("Cannot generate scheduled items: month or organization not selected");
+            return;
+        }
+
+        LocalDate startDate = selectedYearMonth.atDay(1);
+        LocalDate endDate = selectedYearMonth.atEndOfMonth();
+
+        // Disable button during generation
+        generateScheduledItemsSqlButton.setDisable(true);
+
+        // Create entity store for queries
+        EntityStore entityStore = EntityStore.create(getDataSourceModel());
+
+        Console.log("Querying global site and timelines for organization " + organizationId.getPrimaryKey());
+
+        // Query for global site and timelines
+        entityStore.executeQueryBatch(
+                // Query 0: Main global site (event is null and main is true) for the organization
+                new EntityStoreQuery("select id, name from Site where event=null and main and organization=?",
+                        organizationId),
+                // Query 1: Timelines for the main global site
+                new EntityStoreQuery("select id, site, item, startTime, endTime, itemFamily from Timeline where site in (select id from Site where event is null and main=true and organization=?)",
+                        organizationId)
+        ).onFailure(error -> {
+            Console.log("Error querying global site and timelines: " + error.getMessage());
+            generateScheduledItemsSqlButton.setDisable(false);
+        }).onSuccess(results -> {
+            EntityList<Site> globalSites = results[0];
+            EntityList<Timeline> timelines = results[1];
+
+            if (globalSites.isEmpty()) {
+                Console.log("No global site found for organization");
+                generateScheduledItemsSqlButton.setDisable(false);
+                return;
+            }
+
+            if (timelines.isEmpty()) {
+                Console.log("No timelines found for global site");
+                generateScheduledItemsSqlButton.setDisable(false);
+                return;
+            }
+
+            Site globalSite = globalSites.get(0);
+            Console.log("Found global site: " + globalSite.getName() + " (id: " + globalSite.getPrimaryKey() + ")");
+            Console.log("Found " + timelines.size() + " timelines");
+
+            // Process timelines - for now, focus on daily items with item_id specified (meals)
+            Timeline accommodationTimeline = null;
+            List<Timeline> mealTimelines = new ArrayList<>();
+
+            for (Timeline timeline : timelines) {
+                if (timeline.getItem() != null) {
+                    // Timeline has a specific item - likely a meal
+                    mealTimelines.add(timeline);
+                    Console.log("  Meal timeline: item_id=" + timeline.getItem().getPrimaryKey() +
+                               ", start=" + timeline.getStartTime() + ", end=" + timeline.getEndTime());
+                } else if (timeline.getItemFamily() != null) {
+                    // Timeline has only item_family - likely accommodation
+                    accommodationTimeline = timeline;
+                    Console.log("  Accommodation timeline: family_id=" + timeline.getItemFamily().getPrimaryKey() +
+                               ", start=" + timeline.getStartTime() + ", end=" + timeline.getEndTime());
+                }
+            }
+
+            // Generate scheduled_items for meal timelines
+            if (!mealTimelines.isEmpty()) {
+                generateScheduledItemsForMeals(mealTimelines, startDate, endDate, globalSite);
+            } else {
+                Console.log("No meal timelines found");
+                generateScheduledItemsSqlButton.setDisable(false);
+            }
+        });
+    }
+
+    /**
+     * Generates scheduled_items for meal timelines using SQL INSERT.
+     */
+    private void generateScheduledItemsForMeals(List<Timeline> mealTimelines, LocalDate startDate, LocalDate endDate, Site globalSite) {
+        Console.log("Generating scheduled items for " + mealTimelines.size() + " meal timelines from " + startDate + " to " + endDate);
+
+        // Build SQL INSERT for each timeline
+        // insert into scheduled_item (date, timeline_id, event_id, site_id, item_id, start_time, end_time, resource)
+        //     select generate_series(:first_date, :last_date, '1 day')::date as day, id, null, site_id, item_id, start_time, end_time, false
+        //     from timeline
+        //     where id = :timeline_id;
+
+        Timeline firstTimeline = mealTimelines.get(0);
+
+        SubmitArgument submitArgument = new SubmitArgumentBuilder()
+                .setDataSourceId(getDataSourceModel().getDataSourceId())
+                .setStatement(
+                    "insert into scheduled_item (date, timeline_id, event_id, site_id, item_id, start_time, end_time, resource) " +
+                    "select generate_series(?::date, ?::date, '1 day')::date as day, id, null, site_id, item_id, start_time, end_time, false " +
+                    "from timeline " +
+                    "where id = ?"
+                )
+                .setParameters(startDate, endDate, firstTimeline.getPrimaryKey())
+                .build();
+
+        SubmitService.executeSubmit(submitArgument)
+                .onFailure(error -> {
+                    Console.log("Error creating scheduled items for timeline " + firstTimeline.getPrimaryKey() + ": " + error.getMessage());
+                    // Continue with next timeline even if this one fails
+                    processNextMealTimeline(mealTimelines, 1, startDate, endDate, globalSite);
+                })
+                .onSuccess(result -> {
+                    Console.log("Successfully created scheduled items for timeline " + firstTimeline.getPrimaryKey());
+                    // Process next timeline
+                    processNextMealTimeline(mealTimelines, 1, startDate, endDate, globalSite);
+                });
+    }
+
+    /**
+     * Recursively process meal timelines one by one.
+     */
+    private void processNextMealTimeline(List<Timeline> mealTimelines, int index, LocalDate startDate, LocalDate endDate, Site globalSite) {
+        if (index >= mealTimelines.size()) {
+            // All meal timelines processed, now generate scheduled_resources
+            Console.log("All meal timelines processed, generating scheduled resources...");
+            generateScheduledResources(startDate, endDate, globalSite);
+            return;
+        }
+
+        Timeline timeline = mealTimelines.get(index);
+
+        SubmitArgument submitArgument = new SubmitArgumentBuilder()
+                .setDataSourceId(getDataSourceModel().getDataSourceId())
+                .setStatement(
+                    "insert into scheduled_item (date, timeline_id, event_id, site_id, item_id, start_time, end_time, resource) " +
+                    "select generate_series(?::date, ?::date, '1 day')::date as day, id, null, site_id, item_id, start_time, end_time, false " +
+                    "from timeline " +
+                    "where id = ?"
+                )
+                .setParameters(startDate, endDate, timeline.getPrimaryKey())
+                .build();
+
+        SubmitService.executeSubmit(submitArgument)
+                .onFailure(error -> {
+                    Console.log("Error creating scheduled items for timeline " + timeline.getPrimaryKey() + ": " + error.getMessage());
+                    // Continue with next timeline even if this one fails
+                    processNextMealTimeline(mealTimelines, index + 1, startDate, endDate, globalSite);
+                })
+                .onSuccess(result -> {
+                    Console.log("Successfully created scheduled items for timeline " + timeline.getPrimaryKey());
+                    // Process next timeline
+                    processNextMealTimeline(mealTimelines, index + 1, startDate, endDate, globalSite);
+                });
+    }
+
+    /**
+     * Generates scheduled_resources using SQL INSERT.
+     */
+    private void generateScheduledResources(LocalDate startDate, LocalDate endDate, Site globalSite) {
+        Console.log("Generating scheduled resources for global site " + globalSite.getPrimaryKey());
+
+        // insert into scheduled_resource (date, configuration_id, scheduled_item_id, max, online)
+        //     select generate_series(:first_date, :last_date, '1 day')::date as day, rc.id,
+        //            (select si.id from scheduled_item si where si.date=day and si.site_id=r.site_id and si.item_id=rc.item_id),
+        //            rc.max, rc.online
+        //     from resource_configuration rc
+        //     join resource r on r.id=rc.resource_id
+        //     join item i on i.id=rc.item_id
+        //     join site s on s.id=r.site_id
+        //     where s.id = :global_site_id and (rc.end_date is null or rc.end_date > :first_date)
+
+        SubmitArgument submitArgument = new SubmitArgumentBuilder()
+                .setDataSourceId(getDataSourceModel().getDataSourceId())
+                .setStatement(
+                    "insert into scheduled_resource (date, configuration_id, scheduled_item_id, max, online) " +
+                    "select generate_series(?::date, ?::date, '1 day')::date as day, rc.id, " +
+                    "       (select si.id from scheduled_item si where si.date=day and si.site_id=r.site_id and si.item_id=rc.item_id), " +
+                    "       rc.max, rc.online " +
+                    "from resource_configuration rc " +
+                    "join resource r on r.id=rc.resource_id " +
+                    "join item i on i.id=rc.item_id " +
+                    "join site s on s.id=r.site_id " +
+                    "where s.id = ? and (rc.end_date is null or rc.end_date > ?)"
+                )
+                .setParameters(startDate, endDate, globalSite.getPrimaryKey(), startDate)
+                .build();
+
+        SubmitService.executeSubmit(submitArgument)
+                .onFailure(error -> {
+                    Console.log("Error creating scheduled resources: " + error.getMessage());
+                    generateScheduledItemsSqlButton.setDisable(false);
+                })
+                .onSuccess(result -> {
+                    Console.log("Successfully created scheduled resources");
+                    generateScheduledItemsSqlButton.setDisable(false);
+                    // Refresh the data by re-triggering the query
+                    updateQueryArgument();
+                });
     }
 
 }

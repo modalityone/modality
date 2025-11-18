@@ -33,14 +33,24 @@ public class MemberItem {
     private final Person person;
     private final Invitation invitation; // null if no invitation
     private final MemberItemType type;
+    private final Person matchingAccountPerson; // null if no matching account exists
 
     /**
      * Primary constructor - use this for new code.
      */
     public MemberItem(Person person, Invitation invitation, MemberItemType type) {
+        this(person, invitation, type, null);
+    }
+
+    /**
+     * Constructor with matching account detection.
+     * @param matchingAccountPerson The account owner (owner=true) with matching email, or null if none exists
+     */
+    public MemberItem(Person person, Invitation invitation, MemberItemType type, Person matchingAccountPerson) {
         this.person = person;
         this.invitation = invitation;
         this.type = type;
+        this.matchingAccountPerson = matchingAccountPerson;
     }
 
     /**
@@ -51,6 +61,7 @@ public class MemberItem {
     public MemberItem(Person person, Invitation invitation, boolean isLinkedAccount, boolean isInvitee) {
         this.person = person;
         this.invitation = invitation;
+        this.matchingAccountPerson = null; // No matching account detection in deprecated constructor
 
         // Convert boolean flags to enum type
         if (invitation != null && invitation.isPending()) {
@@ -83,6 +94,25 @@ public class MemberItem {
         return type;
     }
 
+    public Person getMatchingAccountPerson() {
+        return matchingAccountPerson;
+    }
+
+    /**
+     * Returns true if a matching account exists for this direct member.
+     * Only relevant for DIRECT_MEMBER type.
+     *
+     * This is used to detect when a member has created their own KBS account
+     * after being added as a direct member, triggering the "Needs Validation" badge.
+     * The validation workflow allows the account manager to send a validation request
+     * to link the existing member record with the newly created account.
+     *
+     * @return true if matchingAccountPerson is set (indicating an account owner with matching email exists)
+     */
+    public boolean hasMatchingAccount() {
+        return matchingAccountPerson != null;
+    }
+
     // ========== Backward Compatibility Methods ==========
 
     /**
@@ -103,6 +133,8 @@ public class MemberItem {
 
     /**
      * Returns the email for this member.
+     *
+     * @return the email address of the person, or null if person is not set
      */
     public String getEmail() {
         return person != null ? person.getEmail() : null;

@@ -9,6 +9,15 @@
     <dependencies>
         <used-by-source-modules>
             <used-by-source-module>modality-crm-frontoffice-activity-userprofile-plugin</used-by-source-module>
+            <used-by-source-module>modality-crm-frontoffice-activity-createaccount-plugin</used-by-source-module>
+            <used-by-source-module>modality-crm-client-i18n</used-by-source-module>
+            <used-by-source-module>modality-base-client-time</used-by-source-module>
+            <used-by-source-module>webfx-extras-time-pickers</used-by-source-module>
+            <used-by-source-module>webfx-extras-time-format</used-by-source-module>
+            <used-by-source-module>webfx-stack-orm-entity-controls</used-by-source-module>
+            <used-by-source-module>webfx-stack-orm-entity-binding</used-by-source-module>
+            <used-by-source-module>modality-base-client-activity</used-by-source-module>
+            <used-by-source-module>webfx-platform-conf</used-by-source-module>
         </used-by-source-modules>
     </dependencies>
 
@@ -16,7 +25,7 @@
         <provider interface="dev.webfx.stack.routing.uirouter.UiRoute">one.modality.crm.frontoffice.activities.members.MembersRouting$MembersUiRoute</provider>
         <provider interface="dev.webfx.stack.routing.uirouter.UiRoute">one.modality.crm.frontoffice.activities.members.ApproveInvitationRouting$ApproveInvitationUiRoute</provider>
         <provider interface="dev.webfx.stack.routing.uirouter.UiRoute">one.modality.crm.frontoffice.activities.members.DeclineInvitationRouting$DeclineInvitationUiRoute</provider>
-        <provider interface="dev.webfx.stack.routing.uirouter.operations.RouteRequestEmitter">one.modality.crm.frontoffice.activities.members.MembersRouting$RouteToUserProfileRequestEmitter</provider>
+        <provider interface="dev.webfx.stack.routing.uirouter.operations.RouteRequestEmitter">one.modality.crm.frontoffice.activities.members.MembersRouting$RouteToMembersRequestEmitter</provider>
     </providers>
 
     <i18n javaKeysClass="one.modality.crm.frontoffice.activities.members.MembersI18nKeys"/>

@@ -55,7 +55,7 @@ public final class MembersRouting {
         }
     }
 
-    public static class RouteToUserProfileRequestEmitter implements RouteRequestEmitter {
+    public static class RouteToMembersRequestEmitter implements RouteRequestEmitter {
 
         @Override
         public RouteRequest instantiateRouteRequest(UiRouteActivityContext context) {

@@ -1,0 +1,125 @@
+<html lang="fr" dir="ltr"><head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Invitation de Gestionnaire de Réservations</title>
+    <style>
+        /* Global Styles */
+        body {
+            margin: 0;
+            padding: 0;
+            font-family: Arial, sans-serif;
+            background-color: #f9fafb;
+        }
+
+        .email-container {
+            max-width: 600px;
+            margin: 20px auto;
+            background: #ffffff;
+            border-radius: 12px;
+            box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1);
+            overflow: hidden;
+            text-align: center;
+        }
+
+        .header {
+            background-color: #ffffff;
+            padding: 20px 0;
+            font-size: 32px;
+            color: #009fe3;
+            font-weight: bold;
+        }
+
+        .content {
+            padding: 20px 40px;
+            font-size: 16px;
+            color: #505050;
+        }
+
+        .content h2 {
+            font-size: 18px;
+            margin-bottom: 10px;
+            font-weight: normal;
+            color: #606060;
+        }
+
+        .divider {
+            width: 80%;
+            margin: 20px auto;
+            border: 0;
+            border-top: 1px solid #dddddd;
+        }
+
+        .info-box {
+            text-align: left;
+            background-color: #f9fafb;
+            padding: 15px;
+            border-radius: 8px;
+            margin: 20px 0;
+            font-size: 14px;
+            line-height: 1.6;
+        }
+
+        .button-container {
+            margin: 20px 0;
+            display: flex;
+            gap: 10px;
+        }
+
+        .button {
+            flex: 1;
+            display: inline-block;
+            color: #ffffff;
+            padding: 12px 25px;
+            text-decoration: none;
+            border-radius: 5px;
+            font-size: 16px;
+        }
+
+        .button-approve {
+            background-color: #009fe3;
+        }
+
+        .button-decline {
+            background-color: #dc3545;
+        }
+
+        .footer {
+            font-size: 12px;
+            color: #aaaaaa;
+            margin: 20px 0;
+        }
+    </style>
+</head>
+
+<body>
+<div class="email-container">
+    <div class="header">Invitation de Gestionnaire de Réservations</div>
+
+    <div class="content">
+        <h2>Cher/Chère [managerName]</h2>
+
+        <p><strong>[inviterName]</strong> ([inviterEmail]) vous a invité à gérer ses Réservations Kadampa.</p>
+
+        <hr class="divider">
+
+        <div class="info-box">
+            <strong>Ce que vous pourrez faire :</strong><br>
+            • Effectuer des réservations au nom de [inviterName]<br>
+            • Consulter les réservations et l'historique de [inviterName]<br>
+            • Modifier ou annuler les réservations de [inviterName]
+        </div>
+
+        <p>Veuillez choisir l'une des options ci-dessous :</p>
+
+        <div class="button-container">
+            <a href="[acceptLink]" style="color:white" class="button button-approve">Accepter l'Invitation</a>
+            <a href="[declineLink]" style="color:white" class="button button-decline">Refuser</a>
+        </div>
+    </div>
+
+    <div class="footer">
+        <p>[inviterName] peut révoquer votre accès à tout moment.<br>Si vous n'attendiez pas cette invitation, vous pouvez l'ignorer en toute sécurité.</p>
+    </div>
+</div>
+
+</body></html>
