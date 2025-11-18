@@ -1,5 +1,6 @@
 package one.modality.crm.frontoffice.activities.members;
 
+import dev.webfx.extras.i18n.I18n;
 import dev.webfx.platform.async.Future;
 import dev.webfx.platform.async.Promise;
 import dev.webfx.platform.resource.Resource;
@@ -32,18 +33,44 @@ public final class InvitationLinkService {
     // Email configuration
     private static final String EMAIL_FROM = "kbs@kadampa.net";
 
-    // Email template paths and subjects
-    private static final String AUTHORIZATION_REQUEST_SUBJECT = "Authorization Request - Kadampa Booking System";
-    private static final String AUTHORIZATION_REQUEST_TEMPLATE = "emails/AuthorizationRequestMailBody.html";
+    // Email template base names (language suffix will be added dynamically)
+    // Authorization Request: Inviter asks invitee for permission to book for them
+    private static final String AUTHORIZATION_REQUEST_TEMPLATE = "emails/AuthorizationRequest_ToInvitee";
 
-    private static final String VALIDATION_REQUEST_SUBJECT = "Validation Required - Kadampa Booking System";
-    private static final String VALIDATION_REQUEST_TEMPLATE = "emails/ValidationRequestMailBody.html";
+    // Validation Request: Account owner needs to validate existing member access
+    private static final String VALIDATION_REQUEST_TEMPLATE = "emails/ValidationRequest_ToAccountOwner";
 
-    private static final String INVITATION_TO_MANAGE_SUBJECT = "Booking Manager Invitation - Kadampa Booking System";
-    private static final String INVITATION_TO_MANAGE_TEMPLATE = "emails/InvitationToManageMailBody.html";
+    // Manager Invitation: Inviter invites someone to manage their bookings
+    private static final String INVITATION_TO_MANAGE_TEMPLATE = "emails/ManagerInvitation_ToManager";
 
-    private static final String REQUEST_APPROVED_SUBJECT = "Request Approved - Kadampa Booking System";
-    private static final String REQUEST_APPROVED_TEMPLATE = "emails/RequestApprovedMailBody.html";
+    // Authorization Approved: Invitee approved inviter's authorization request
+    private static final String AUTHORIZATION_APPROVED_TEMPLATE = "emails/AuthorizationApproved_ToInviter";
+
+    // Manager Accepted: Manager accepted the invitation to manage bookings
+    private static final String MANAGER_ACCEPTED_TEMPLATE = "emails/ManagerAccepted_ToInviter";
+
+    private static final String ACCESS_REVOKED_TEMPLATE = "emails/AccessRevokedMailBody";
+
+    /**
+     * Gets the localized template path based on current i18n locale
+     * @param templateBaseName Base template name without language suffix
+     * @return Full template path with language code (e.g., "emails/Template_de.html" or "emails/Template.html" for English)
+     */
+    private static String getLocalizedTemplatePath(String templateBaseName) {
+        Object langObj = I18n.getLanguage();
+        String languageCode = langObj != null ? langObj.toString() : "en";
+        if (languageCode.isEmpty()) {
+            languageCode = "en";
+        }
+
+        // English templates don't have language suffix
+        if ("en".equals(languageCode)) {
+            return templateBaseName + ".html";
+        }
+
+        // Other languages have _language suffix
+        return templateBaseName + "_" + languageCode + ".html";
+    }
 
     /**
      * Sends an authorization request email when someone wants to add a member with an existing account
@@ -58,13 +85,14 @@ public final class InvitationLinkService {
         // Use existing token from invitation (already set in createInvitation)
         String token = invitation.getToken();
 
-        String approveLink = buildLink(clientOrigin, APPROVE_PATH_FULL, token);
-        String declineLink = buildLink(clientOrigin, DECLINE_PATH_FULL, token);
+        String approveLink = buildLink(APPROVE_PATH_FULL, token);
+        String declineLink = buildLink(DECLINE_PATH_FULL, token);
 
-        // Load template asynchronously (GWT-compatible)
+        // Load localized template asynchronously (GWT-compatible)
+        String templatePath = getLocalizedTemplatePath(AUTHORIZATION_REQUEST_TEMPLATE);
         Promise<String> promise = Promise.promise();
         Resource.loadText(
-                Resource.toUrl(AUTHORIZATION_REQUEST_TEMPLATE, InvitationLinkService.class),
+                Resource.toUrl(templatePath, InvitationLinkService.class),
                 promise::complete,
                 promise::fail
         );
@@ -76,7 +104,8 @@ public final class InvitationLinkService {
                     .replace("[approveLink]", approveLink)
                     .replace("[declineLink]", declineLink);
 
-            return sendEmail(invitee, AUTHORIZATION_REQUEST_SUBJECT, body, dataSourceModel);
+            String subject = I18n.getI18nText(MembersI18nKeys.EmailSubjectAuthorizationRequest);
+            return sendEmail(invitee, subject, body, dataSourceModel);
         });
     }
 
@@ -93,13 +122,14 @@ public final class InvitationLinkService {
         // Use existing token from invitation (already set in createInvitation)
         String token = invitation.getToken();
 
-        String approveLink = buildLink(clientOrigin, APPROVE_PATH_FULL, token);
-        String declineLink = buildLink(clientOrigin, DECLINE_PATH_FULL, token);
+        String approveLink = buildLink(APPROVE_PATH_FULL, token);
+        String declineLink = buildLink(DECLINE_PATH_FULL, token);
 
-        // Load template asynchronously (GWT-compatible)
+        // Load localized template asynchronously (GWT-compatible)
+        String templatePath = getLocalizedTemplatePath(VALIDATION_REQUEST_TEMPLATE);
         Promise<String> promise = Promise.promise();
         Resource.loadText(
-                Resource.toUrl(VALIDATION_REQUEST_TEMPLATE, InvitationLinkService.class),
+                Resource.toUrl(templatePath, InvitationLinkService.class),
                 promise::complete,
                 promise::fail
         );
@@ -110,7 +140,8 @@ public final class InvitationLinkService {
                     .replace("[approveLink]", approveLink)
                     .replace("[declineLink]", declineLink);
 
-            return sendEmail(invitee, VALIDATION_REQUEST_SUBJECT, body, dataSourceModel);
+            String subject = I18n.getI18nText(MembersI18nKeys.EmailSubjectValidationRequest);
+            return sendEmail(invitee, subject, body, dataSourceModel);
         });
     }
 
@@ -127,13 +158,14 @@ public final class InvitationLinkService {
         // Use existing token from invitation (already set in createInvitation)
         String token = invitation.getToken();
 
-        String acceptLink = buildLink(clientOrigin, APPROVE_PATH_FULL, token);
-        String declineLink = buildLink(clientOrigin, DECLINE_PATH_FULL, token);
+        String acceptLink = buildLink(APPROVE_PATH_FULL, token);
+        String declineLink = buildLink(DECLINE_PATH_FULL, token);
 
-        // Load template asynchronously (GWT-compatible)
+        // Load localized template asynchronously (GWT-compatible)
+        String templatePath = getLocalizedTemplatePath(INVITATION_TO_MANAGE_TEMPLATE);
         Promise<String> promise = Promise.promise();
         Resource.loadText(
-                Resource.toUrl(INVITATION_TO_MANAGE_TEMPLATE, InvitationLinkService.class),
+                Resource.toUrl(templatePath, InvitationLinkService.class),
                 promise::complete,
                 promise::fail
         );
@@ -145,12 +177,14 @@ public final class InvitationLinkService {
                     .replace("[acceptLink]", acceptLink)
                     .replace("[declineLink]", declineLink);
 
-            return sendEmail(manager, INVITATION_TO_MANAGE_SUBJECT, body, dataSourceModel);
+            String subject = I18n.getI18nText(MembersI18nKeys.EmailSubjectManagerInvitation);
+            return sendEmail(manager, subject, body, dataSourceModel);
         });
     }
 
     /**
-     * Sends a notification that a request was approved
+     * Sends a notification that an authorization request was approved
+     * Used when invitee approves inviter's request to book for them
      */
     public static Future<Void> sendRequestApproved(
             Person requester,
@@ -158,12 +192,13 @@ public final class InvitationLinkService {
             String clientOrigin,
             DataSourceModel dataSourceModel) {
 
-        String accountLink = clientOrigin + "/members";
+        String accountLink = "${{HTTP_SERVER_ORIGIN}}" + ActivityHashUtil.withHashPrefix("/members");
 
-        // Load template asynchronously (GWT-compatible)
+        // Load localized template asynchronously (GWT-compatible)
+        String templatePath = getLocalizedTemplatePath(AUTHORIZATION_APPROVED_TEMPLATE);
         Promise<String> promise = Promise.promise();
         Resource.loadText(
-                Resource.toUrl(REQUEST_APPROVED_TEMPLATE, InvitationLinkService.class),
+                Resource.toUrl(templatePath, InvitationLinkService.class),
                 promise::complete,
                 promise::fail
         );
@@ -173,7 +208,39 @@ public final class InvitationLinkService {
                     .replace("[approverName]", approver.getFullName())
                     .replace("[accountLink]", accountLink);
 
-            return sendEmail(requester, REQUEST_APPROVED_SUBJECT, body, dataSourceModel);
+            String subject = I18n.getI18nText(MembersI18nKeys.EmailSubjectAuthorizationApproved);
+            return sendEmail(requester, subject, body, dataSourceModel);
+        });
+    }
+
+    /**
+     * Sends a notification that a manager invitation was accepted
+     * Used when manager accepts inviter's invitation to manage their bookings
+     */
+    public static Future<Void> sendManagerAccepted(
+            Person inviter,
+            Person manager,
+            String clientOrigin,
+            DataSourceModel dataSourceModel) {
+
+        String accountLink = "${{HTTP_SERVER_ORIGIN}}" + ActivityHashUtil.withHashPrefix("/members");
+
+        // Load localized template asynchronously (GWT-compatible)
+        String templatePath = getLocalizedTemplatePath(MANAGER_ACCEPTED_TEMPLATE);
+        Promise<String> promise = Promise.promise();
+        Resource.loadText(
+                Resource.toUrl(templatePath, InvitationLinkService.class),
+                promise::complete,
+                promise::fail
+        );
+        return promise.future().compose(template -> {
+            String body = template
+                    .replace("[inviterName]", inviter.getFullName())
+                    .replace("[managerName]", manager.getFullName())
+                    .replace("[accountLink]", accountLink);
+
+            String subject = I18n.getI18nText(MembersI18nKeys.EmailSubjectManagerAccepted);
+            return sendEmail(inviter, subject, body, dataSourceModel);
         });
     }
 
@@ -208,15 +275,17 @@ public final class InvitationLinkService {
     }
 
     /**
-     * Approves an invitation and creates the appropriate Person record.
+     * Approves an invitation and creates or updates the appropriate Person record.
      * Two cases:
      * 1. Authorization request (inviterPayer=true): Inviter wants to book for invitee
-     *    - Creates Person in inviter's account with accountPerson pointing to invitee
+     *    - If Person exists (validation case): updates accountPerson
+     *    - If Person doesn't exist: creates new Person in inviter's account
      * 2. Manager invitation (inviterPayer=false): Invitee will manage inviter's bookings
      *    - Creates Person in invitee's account with accountPerson pointing to inviter
      */
     public static Future<Void> approveInvitation(Invitation invitation) {
-        UpdateStore updateStore = UpdateStore.createAbove(invitation.getStore());
+        EntityStore entityStore = invitation.getStore();
+        UpdateStore updateStore = UpdateStore.createAbove(entityStore);
         Invitation updated = updateStore.updateEntity(invitation);
         updated.setPending(false);
         updated.setAccepted(true);
@@ -226,21 +295,41 @@ public final class InvitationLinkService {
         Boolean inviterPayer = invitation.isInviterPayer();
 
         // CASE 1: Authorization request (inviterPayer=true)
-        // Inviter wants to book for invitee - create Person in INVITER's account
+        // Inviter wants to book for invitee - check if Person exists first (validation case)
         if (Boolean.TRUE.equals(inviterPayer)) {
-            Person newPerson = updateStore.insertEntity(Person.class);
-            newPerson.setFirstName(invitation.getAliasFirstName());
-            newPerson.setLastName(invitation.getAliasLastName());
-            newPerson.setFrontendAccount(inviter.getFrontendAccount());  // Link to INVITER's account
-            newPerson.setAccountPerson(invitee);  // Link to INVITEE (the account owner)
-            newPerson.setOwner(false);  // Not the account owner
+            // Query for existing Person in inviter's account with matching email
+            return entityStore.<Person>executeQuery(
+                    "select id,firstName,lastName,email,frontendAccount,accountPerson,owner " +
+                    "from Person " +
+                    "where frontendAccount=? and lower(email)=? and owner=false and removed!=true limit 1",
+                    inviter.getFrontendAccount().getId(),
+                    invitee.getEmail().toLowerCase())
+                .compose(existingPersons -> {
+                    if (!existingPersons.isEmpty()) {
+                        // Person already exists (validation case) - update accountPerson
+                        Person existingPerson = existingPersons.get(0);
+                        Person personToUpdate = updateStore.updateEntity(existingPerson);
+                        personToUpdate.setAccountPerson(invitee);  // Link to INVITEE (the account owner)
+                    } else {
+                        // Person doesn't exist - create new Person in INVITER's account
+                        Person newPerson = updateStore.insertEntity(Person.class);
+                        newPerson.setFirstName(invitation.getAliasFirstName());
+                        newPerson.setLastName(invitation.getAliasLastName());
+                        newPerson.setFrontendAccount(inviter.getFrontendAccount());  // Link to INVITER's account
+                        newPerson.setAccountPerson(invitee);  // Link to INVITEE (the account owner)
+                        newPerson.setOwner(false);  // Not the account owner
+                    }
+                    return updateStore.submitChanges().mapEmpty();
+                });
         }
         // CASE 2: Manager invitation (inviterPayer=false)
         // Invitee will manage inviter's bookings - create Person in INVITEE's account
         else if (Boolean.FALSE.equals(inviterPayer)) {
             Person newPerson = updateStore.insertEntity(Person.class);
-            newPerson.setFirstName(invitation.getAliasFirstName());
-            newPerson.setLastName(invitation.getAliasLastName());
+            // Use INVITER's name (not alias which contains manager's name)
+            // The Person record represents the inviter in the invitee's (manager's) account
+            newPerson.setFirstName(inviter.getFirstName());
+            newPerson.setLastName(inviter.getLastName());
             newPerson.setFrontendAccount(invitee.getFrontendAccount());  // Link to INVITEE's account
             newPerson.setAccountPerson(inviter);  // Link to INVITER (the account owner)
             newPerson.setOwner(false);  // Not the account owner
@@ -298,11 +387,12 @@ public final class InvitationLinkService {
 
     // Helper methods
 
-    private static String buildLink(String clientOrigin, String pathTemplate, String token) {
-        if (!clientOrigin.startsWith("http")) {
-            clientOrigin = (clientOrigin.contains(":80") ? "http" : "https") + clientOrigin.substring(clientOrigin.indexOf("://"));
-        }
-        return clientOrigin + ActivityHashUtil.withHashPrefix(pathTemplate.replace(":token", token));
+    /**
+     * Builds a link with HTTP_SERVER_ORIGIN placeholder for server-side replacement
+     */
+    private static String buildLink(String pathTemplate, String token) {
+        // Use placeholder that will be replaced by server-side mail processor
+        return "${{HTTP_SERVER_ORIGIN}}" + ActivityHashUtil.withHashPrefix(pathTemplate.replace(":token", token));
     }
 
     private static Future<Void> sendEmail(Person recipient, String subject, String body, DataSourceModel dataSourceModel) {

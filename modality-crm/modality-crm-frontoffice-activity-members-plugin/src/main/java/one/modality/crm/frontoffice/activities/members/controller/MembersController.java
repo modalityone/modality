@@ -102,7 +102,7 @@ public class MembersController {
 
         // ========== LOAD ALL DATA (3 parallel queries total) ==========
         // Query 1: Person records in my account
-        loadMembersData(entityStore, accountId);
+        loadMembersData(entityStore, accountId, personId);
 
         // Query 2: Person records in other accounts pointing to me
         loadManagersData(entityStore, personId, accountId);
@@ -114,46 +114,186 @@ public class MembersController {
     /**
      * Load members data with a single query, then filter in memory.
      * QUERY 1: Get all Person records in my account (owner=false, removed!=true)
+     * Also queries for pending invitations to avoid showing duplicates
      */
-    private void loadMembersData(EntityStore entityStore, Object accountId) {
+    private void loadMembersData(EntityStore entityStore, Object accountId, Object personId) {
 
-        // Single query to get ALL members in my account
-        entityStore.<Person>executeQuery(
-                        "select id,fullName,firstName,lastName,email,owner,removed,neverBooked," +
-                        "birthdate,male,ordained,layName,phone,street,postCode,cityName," +
-                        "country.(id,name),organization.(id,name)," +
-                        "accountPerson.(id,fullName,email) " +
-                        "from Person " +
-                        "where frontendAccount=? and owner=false and removed!=true",
-                        accountId)
+        // First, query for pending invitations where members have validation requests
+        entityStore.<Invitation>executeQuery(
+                        "select id,invitee.(id) from Invitation " +
+                        "where inviter=? and pending=true and inviterPayer=true",
+                        personId)
                 .onFailure(error -> {
-                    Console.log("Error loading members: " + error);
+                    Console.log("Error loading pending invitations: " + error);
                     model.setLoadingMembers(false);
                 })
-                .onSuccess(allMembers -> {
-                    Console.log("=== REFRESH DATA - LOADED " + allMembers.size() + " MEMBERS ===");
-                    // Filter into three separate lists in memory
-                    List<MemberItem> directMembers = new ArrayList<>();
-                    List<MemberItem> authorizedMembers = new ArrayList<>();
+                .onSuccess(pendingInvitations -> {
+                    // Build set of invitee IDs to exclude from direct members list
+                    Set<Object> inviteeIds = pendingInvitations.stream()
+                            .map(inv -> inv.getInvitee().getId())
+                            .collect(Collectors.toSet());
+                    Console.log("=== Found " + inviteeIds.size() + " pending validation requests to exclude ===");
 
+                    // Now query for ALL members in my account
+                    entityStore.<Person>executeQuery(
+                                    "select id,fullName,firstName,lastName,email,owner,removed,neverBooked," +
+                                    "birthdate,male,ordained,layName,phone,street,postCode,cityName," +
+                                    "country.(id,name),organization.(id,name)," +
+                                    "accountPerson.(id,fullName,email) " +
+                                    "from Person " +
+                                    "where frontendAccount=? and owner=false and removed!=true",
+                                    accountId)
+                            .onFailure(error -> {
+                                Console.log("Error loading members: " + error);
+                                model.setLoadingMembers(false);
+                            })
+                            .onSuccess(allMembers -> {
+                    Console.log("=== REFRESH DATA - LOADED " + allMembers.size() + " MEMBERS ===");
+
+                    // Query for accounts (owner=true) that might match member emails
+                    // This helps detect when a direct member has created their own account
+                    // Note: We query across ALL frontendAccounts because when someone creates their own account,
+                    // they get their own frontendAccount (not in our account)
+                    // We exclude both the current frontendAccount AND the current user to prevent false matches
+
+                    // First, collect all member emails to search for
+                    List<String> memberEmails = new ArrayList<>();
                     for (Person person : allMembers) {
-                        Console.log("Loaded: " + person.getFirstName() + " " + person.getLastName() + " (ID: " + person.getId() + ", FullName: " + person.getFullName() + ")");
-                        if (person.getAccountPerson() == null) {
-                            // CASE 1: Direct members (no linked account) - can Edit and Remove
-                            directMembers.add(new MemberItem(person, null, MemberItem.MemberItemType.DIRECT_MEMBER));
-                        } else {
-                            // CASE 2: Authorized members (linked account) - can only Remove
-                            authorizedMembers.add(new MemberItem(person, null, MemberItem.MemberItemType.AUTHORIZED_MEMBER));
+                        if (person.getAccountPerson() == null && person.getEmail() != null && !person.getEmail().isEmpty()) {
+                            memberEmails.add(person.getEmail().toLowerCase());
                         }
                     }
 
-                    Console.log("Setting " + directMembers.size() + " direct members and " + authorizedMembers.size() + " authorized members");
-                    UiScheduler.scheduleDeferred(() -> {
-                        model.getDirectMembersList().setAll(directMembers);
-                        model.getAuthorizedMembersList().setAll(authorizedMembers);
-                        model.setLoadingMembers(false);
-                        Console.log("=== LISTS UPDATED ===");
-                    });
+                    Console.log("=== Searching for accounts matching " + memberEmails.size() + " member emails ===");
+
+                    if (memberEmails.isEmpty()) {
+                        // No members to check, skip account lookup
+                        Console.log("No member emails to check, skipping account lookup");
+                        List<MemberItem> directMembers = new ArrayList<>();
+                        List<MemberItem> authorizedMembers = new ArrayList<>();
+
+                        for (Person person : allMembers) {
+                            if (person.getAccountPerson() == null) {
+                                // No email to check for matching account, just add directly
+                                // (this path is only taken when memberEmails.isEmpty())
+                                directMembers.add(new MemberItem(person, null, MemberItem.MemberItemType.DIRECT_MEMBER));
+                            } else {
+                                authorizedMembers.add(new MemberItem(person, null, MemberItem.MemberItemType.AUTHORIZED_MEMBER));
+                            }
+                        }
+
+                        UiScheduler.scheduleDeferred(() -> {
+                            model.getDirectMembersList().setAll(directMembers);
+                            model.getAuthorizedMembersList().setAll(authorizedMembers);
+                            model.setLoadingMembers(false);
+                            Console.log("=== LISTS UPDATED ===");
+                        });
+                        return;
+                    }
+
+                    // Build WHERE clause for email matching (case insensitive)
+                    StringBuilder emailConditions = new StringBuilder();
+                    for (int i = 0; i < memberEmails.size(); i++) {
+                        if (i > 0) emailConditions.append(" or ");
+                        emailConditions.append("lower(email)=?");
+                    }
+
+                    entityStore.<Person>executeQuery(
+                                    "select id,fullName,firstName,lastName,email,owner,removed,frontendAccount.(id) from Person " +
+                                    "where owner=true and removed!=true and frontendAccount!=? and id!=? and (" + emailConditions + ")",
+                                    // Prepend accountId and personId as first two parameters to exclude same frontendAccount and current user
+                                    prependToArray(accountId, prependToArray(personId, memberEmails.toArray())))
+                            .onSuccess(accountOwners -> {
+                                Console.log("=== Found " + accountOwners.size() + " active account owners (excluding current frontendAccount and current user) ===");
+
+                                // Build email -> accountPerson map for quick lookup
+                                // Only includes ACTIVE account owners from DIFFERENT frontendAccounts (excludes current user)
+                                Map<String, Person> emailToAccountMap = new HashMap<>();
+                                for (Person accountOwner : accountOwners) {
+                                    String email = accountOwner.getEmail();
+                                    Console.log("  Account owner: " + accountOwner.getFullName() + " (" + accountOwner.getId() + "), email: " + email + ", owner: " + accountOwner.isOwner() + ", removed: " + accountOwner.isRemoved() + ", frontendAccount: " + accountOwner.getFrontendAccount().getId());
+
+                                    if (email != null && !email.isEmpty()) {
+                                        emailToAccountMap.put(email.toLowerCase(), accountOwner);
+                                        Console.log("    -> Added to map with key: " + email.toLowerCase());
+                                    }
+                                }
+                                Console.log("=== Built email map with " + emailToAccountMap.size() + " entries ===");
+
+                                // Filter members into two lists and detect matching accounts
+                                // IMPORTANT: Members may appear in three states:
+                                // 1. Direct member (no accountPerson, no matching account) - normal member
+                                // 2. Direct member with matching account - member created their own account
+                                // 3. Authorized member (has accountPerson) - already linked to their account
+                                List<MemberItem> directMembers = new ArrayList<>();
+                                List<MemberItem> authorizedMembers = new ArrayList<>();
+
+                                for (Person person : allMembers) {
+                                    Console.log("Loaded: " + person.getFirstName() + " " + person.getLastName() + " (ID: " + person.getId() + ", FullName: " + person.getFullName() + ", email: " + person.getEmail() + ")");
+
+                                    if (person.getAccountPerson() == null) {
+                                        // Direct member (no linked account) - check if they created their own account
+                                        // If matching account exists, this member will show "Needs Validation" badge
+                                        // and "Send validation request" link
+                                        String memberEmail = person.getEmail();
+                                        Console.log("  Checking for matching account, member email: " + memberEmail);
+                                        Person matchingAccount = null;
+                                        if (memberEmail != null && !memberEmail.isEmpty()) {
+                                            String lookupKey = memberEmail.toLowerCase();
+                                            Console.log("  Looking up in map with key: " + lookupKey);
+                                            matchingAccount = emailToAccountMap.get(lookupKey);
+                                            if (matchingAccount != null) {
+                                                Console.log("  -> ✓ Found matching account for " + person.getFullName() + ": " + matchingAccount.getFullName());
+
+                                                // Skip if the matching account has a pending validation request
+                                                if (inviteeIds.contains(matchingAccount.getId())) {
+                                                    Console.log("  -> Skipping " + person.getFullName() + " - matching account has pending validation request");
+                                                    continue;
+                                                }
+                                            } else {
+                                                Console.log("  -> ✗ No matching account found");
+                                            }
+                                        }
+
+                                        // Note: matchingAccount will be passed to MemberItem constructor
+                                        directMembers.add(new MemberItem(person, null, MemberItem.MemberItemType.DIRECT_MEMBER, matchingAccount));
+                                    } else {
+                                        // Authorized member - already linked to their KBS account via accountPerson
+                                        authorizedMembers.add(new MemberItem(person, null, MemberItem.MemberItemType.AUTHORIZED_MEMBER));
+                                    }
+                                }
+
+                                Console.log("Setting " + directMembers.size() + " direct members and " + authorizedMembers.size() + " authorized members");
+                                UiScheduler.scheduleDeferred(() -> {
+                                    model.getDirectMembersList().setAll(directMembers);
+                                    model.getAuthorizedMembersList().setAll(authorizedMembers);
+                                    model.setLoadingMembers(false);
+                                    Console.log("=== LISTS UPDATED ===");
+                                });
+                            })
+                            .onFailure(error -> {
+                                Console.log("Error loading account owners: " + error);
+                                // Continue without matching account detection
+                                List<MemberItem> directMembers = new ArrayList<>();
+                                List<MemberItem> authorizedMembers = new ArrayList<>();
+
+                                for (Person person : allMembers) {
+                                    if (person.getAccountPerson() == null) {
+                                        // Continue without matching account detection (failure case)
+                                        // We can't check for matching accounts, so just add the member
+                                        directMembers.add(new MemberItem(person, null, MemberItem.MemberItemType.DIRECT_MEMBER));
+                                    } else {
+                                        authorizedMembers.add(new MemberItem(person, null, MemberItem.MemberItemType.AUTHORIZED_MEMBER));
+                                    }
+                                }
+
+                                UiScheduler.scheduleDeferred(() -> {
+                                    model.getDirectMembersList().setAll(directMembers);
+                                    model.getAuthorizedMembersList().setAll(authorizedMembers);
+                                    model.setLoadingMembers(false);
+                                });
+                            });
+                            });
                 });
     }
 
@@ -320,6 +460,42 @@ public class MembersController {
                     view.showSuccessMessage(I18n.getI18nText(MembersI18nKeys.ValidationRequestSentTo, invitee.getFullName()));
                     refreshData();
                 }));
+    }
+
+    /**
+     * Send validation request when we already have both the member and matching account.
+     */
+    public void sendValidationRequest(Person member, Person matchingAccount) {
+        ModalityUserPrincipal principal = FXModalityUserPrincipal.modalityUserPrincipalProperty().get();
+        if (principal == null) {
+            showErrorDialog("Error", "Not authenticated");
+            return;
+        }
+
+        EntityStore entityStore = EntityStore.create(dataSourceModel);
+        entityStore.<Person>executeQuery(
+                        "select id,fullName,email from Person where id=? limit 1",
+                        principal.getUserPersonId())
+                .onFailure(error -> UiScheduler.scheduleDeferred(() ->
+                        showErrorDialog("Error", "Failed to send validation request: " + error.getMessage())))
+                .onSuccess(persons -> {
+                    if (persons.isEmpty()) {
+                        UiScheduler.scheduleDeferred(() -> showErrorDialog("Error", "Current user not found"));
+                        return;
+                    }
+                    Person inviter = persons.get(0);
+
+                    // Create and send validation request using the already-loaded matching account
+                    InvitationOperations.createAndSendValidationRequest(
+                                    inviter, matchingAccount, member.getFirstName(), member.getLastName(),
+                                    clientOrigin, dataSourceModel)
+                            .onFailure(error -> UiScheduler.scheduleDeferred(() ->
+                                    showErrorDialog("Error", "Failed to send validation request: " + error.getMessage())))
+                            .onSuccess(ignored -> UiScheduler.scheduleDeferred(() -> {
+                                view.showSuccessMessage(I18n.getI18nText(MembersI18nKeys.ValidationRequestSentMessage, member.getFullName()));
+                                refreshData();
+                            }));
+                });
     }
 
     public void sendValidationRequestToNewAccount(Person member) {
@@ -605,7 +781,9 @@ public class MembersController {
      * Edit direct member - comprehensive dialog using UserProfileView
      */
     private void editDirectMember(Person person, one.modality.crm.frontoffice.activities.members.view.MembersView view) {
-        view.showEditDirectMemberDialog(person, dataSourceModel, this::updateMemberListDisplay);
+        // Use refreshData() instead of updateMemberListDisplay() to re-check for matching accounts
+        // when email is changed
+        view.showEditDirectMemberDialog(person, dataSourceModel, this::refreshData);
     }
 
     /**
@@ -1077,8 +1255,8 @@ public class MembersController {
                         return;
                     }
 
-                    // Check if there's already an existing invitation
-                    checkExistingInvitation(inviter.getId(), invitee.getId(), existingInvitation -> {
+                    // Check if there's already an existing invitation (for authorization requests: inviterPayer=true)
+                    checkExistingInvitation(inviter.getId(), invitee.getId(), true, existingInvitation -> {
                         if (existingInvitation != null) {
                             String message = existingInvitation.isPending()
                                     ? "An invitation for this person is already pending."
@@ -1165,8 +1343,8 @@ public class MembersController {
                                         return;
                                     }
 
-                                    // Check if there's already a pending invitation
-                                    checkExistingInvitation(inviter.getId(), manager.getId(), existingInvitation -> {
+                                    // Check if there's already a pending invitation (for manager invitations: inviterPayer=false)
+                                    checkExistingInvitation(inviter.getId(), manager.getId(), false, existingInvitation -> {
                                         if (existingInvitation != null) {
                                             String message = existingInvitation.isPending()
                                                     ? "An invitation for this person is already pending."
@@ -1248,15 +1426,21 @@ public class MembersController {
     }
 
     /**
-     * Check if there's already an existing invitation.
+     * Check if there's already an existing invitation with the same inviterPayer flag.
+     * This allows bidirectional invitations (A→B for booking, B→A for managing) to coexist.
+     *
+     * @param inviterId The ID of the inviter
+     * @param inviteeId The ID of the invitee
+     * @param inviterPayer The inviterPayer flag (true = authorization request, false = manager invitation)
+     * @param callback Callback with the found invitation or null
      */
-    private void checkExistingInvitation(Object inviterId, Object inviteeId, java.util.function.Consumer<Invitation> callback) {
+    private void checkExistingInvitation(Object inviterId, Object inviteeId, Boolean inviterPayer, java.util.function.Consumer<Invitation> callback) {
         EntityStore entityStore = EntityStore.create(dataSourceModel);
         entityStore.<Invitation>executeQuery(
-                "select id,pending,accepted,creationDate from Invitation where inviter=? and invitee=? " +
+                "select id,pending,accepted,creationDate,inviterPayer from Invitation where inviter=? and invitee=? and inviterPayer=? " +
                         "and (pending=true or (accepted=true and creationDate >= ?)) " +
                         "order by creationDate desc limit 1",
-                inviterId, inviteeId, java.time.LocalDateTime.now().minusDays(-1))
+                inviterId, inviteeId, inviterPayer, java.time.LocalDateTime.now().minusDays(-1))
                 .onFailure(error -> {
                     Console.log("Error checking existing invitation: " + error);
                     UiScheduler.scheduleDeferred(() -> callback.accept(null));
@@ -1268,5 +1452,15 @@ public class MembersController {
                         callback.accept(invitations.get(0));
                     }
                 }));
+    }
+
+    /**
+     * Helper method to prepend an element to an array.
+     */
+    private static Object[] prependToArray(Object element, Object[] array) {
+        Object[] result = new Object[array.length + 1];
+        result[0] = element;
+        System.arraycopy(array, 0, result, 1, array.length);
+        return result;
     }
 }

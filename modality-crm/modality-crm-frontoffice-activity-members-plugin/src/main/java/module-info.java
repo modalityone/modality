@@ -24,6 +24,7 @@ module modality.crm.frontoffice.activity.members.plugin {
     requires webfx.extras.i18n.controls;
     requires webfx.extras.operation;
     requires webfx.extras.panes;
+    requires webfx.extras.responsive;
     requires webfx.extras.styles.bootstrap;
     requires webfx.extras.styles.materialdesign;
     requires webfx.extras.time.format;
@@ -41,12 +42,11 @@ module modality.crm.frontoffice.activity.members.plugin {
     requires webfx.stack.orm.domainmodel;
     requires webfx.stack.orm.domainmodel.activity;
     requires webfx.stack.orm.entity;
+    requires webfx.stack.orm.entity.binding;
     requires webfx.stack.orm.entity.controls;
     requires webfx.stack.routing.router;
     requires webfx.stack.routing.router.client;
     requires webfx.stack.routing.uirouter;
-    requires webfx.stack.orm.entity.binding;
-    requires webfx.extras.responsive;
 
     // Exported packages
     exports one.modality.crm.frontoffice.activities.members;

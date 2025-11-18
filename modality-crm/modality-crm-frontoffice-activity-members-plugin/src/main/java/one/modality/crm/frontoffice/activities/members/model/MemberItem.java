@@ -33,14 +33,24 @@ public class MemberItem {
     private final Person person;
     private final Invitation invitation; // null if no invitation
     private final MemberItemType type;
+    private final Person matchingAccountPerson; // null if no matching account exists
 
     /**
      * Primary constructor - use this for new code.
      */
     public MemberItem(Person person, Invitation invitation, MemberItemType type) {
+        this(person, invitation, type, null);
+    }
+
+    /**
+     * Constructor with matching account detection.
+     * @param matchingAccountPerson The account owner (owner=true) with matching email, or null if none exists
+     */
+    public MemberItem(Person person, Invitation invitation, MemberItemType type, Person matchingAccountPerson) {
         this.person = person;
         this.invitation = invitation;
         this.type = type;
+        this.matchingAccountPerson = matchingAccountPerson;
     }
 
     /**
@@ -51,6 +61,7 @@ public class MemberItem {
     public MemberItem(Person person, Invitation invitation, boolean isLinkedAccount, boolean isInvitee) {
         this.person = person;
         this.invitation = invitation;
+        this.matchingAccountPerson = null; // No matching account detection in deprecated constructor
 
         // Convert boolean flags to enum type
         if (invitation != null && invitation.isPending()) {
@@ -81,6 +92,18 @@ public class MemberItem {
 
     public MemberItemType getType() {
         return type;
+    }
+
+    public Person getMatchingAccountPerson() {
+        return matchingAccountPerson;
+    }
+
+    /**
+     * Returns true if a matching account exists for this direct member.
+     * Only relevant for DIRECT_MEMBER type.
+     */
+    public boolean hasMatchingAccount() {
+        return matchingAccountPerson != null;
     }
 
     // ========== Backward Compatibility Methods ==========

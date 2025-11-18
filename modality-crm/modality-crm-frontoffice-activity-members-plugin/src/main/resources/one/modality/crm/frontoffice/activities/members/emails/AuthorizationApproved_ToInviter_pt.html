@@ -1,7 +1,7 @@
-<html lang="en" dir="ltr"><head>
+<html lang="pt" dir="ltr"><head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Access Revoked</title>
+    <title>Pedido Aprovado</title>
     <style>
         /* Global Styles */
         body {
@@ -25,7 +25,7 @@
             background-color: #ffffff;
             padding: 20px 0;
             font-size: 32px;
-            color: #856404;
+            color: #28a745;
             font-weight: bold;
         }
 
@@ -73,26 +73,26 @@
 
 <body>
 <div class="email-container">
-    <div class="header">Access Revoked</div>
+    <div class="header">✓ Pedido Aprovado</div>
 
     <div class="content">
-        <h2>Dear [managerName]</h2>
+        <h2>Caro/a [requesterName]</h2>
 
-        <p><strong>[revokerName]</strong> has revoked your access to manage their bookings.</p>
+        <p>Ótimas notícias! <strong>[approverName]</strong> aprovou o seu pedido.</p>
 
-        <p>You will no longer be able to view or manage bookings on their behalf through your Kadampa Bookings account.</p>
+        <p>Pode agora fazer e gerir reservas em nome de [approverName] através da sua conta Reservas Kadampa.</p>
 
         <hr class="divider">
 
-        <p>You can continue to manage your own bookings and other accounts you have access to:</p>
+        <p>Aceda à sua conta para começar a gerir as reservas de [approverName]:</p>
 
         <div class="button-container">
-            <a href="[dashboardLink]" style="color:white" class="button">Go to Dashboard</a>
+            <a href="[accountLink]" style="color:white" class="button">Ver Conta</a>
         </div>
     </div>
 
     <div class="footer">
-        <p>If you have any questions about this change, please contact them directly.</p>
+        <p>[approverName] pode revogar este acesso a qualquer momento nas configurações da sua conta.</p>
     </div>
 </div>
 

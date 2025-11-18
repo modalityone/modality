@@ -69,8 +69,8 @@ final class MembersActivity extends ViewDomainActivityBase {
 
     // ========== Action Handler Factories (delegate to controller) ==========
 
-    private MembersItemRendererFactory.MemberActionHandler createMemberActionHandler() {
-        return new MembersItemRendererFactory.MemberActionHandler() {
+    private MembersItemRendererFactory.MemberActionHandlerWithValidation createMemberActionHandler() {
+        return new MembersItemRendererFactory.MemberActionHandlerWithValidation() {
 
             @Override
             public void onRemoveLinkedAccount(Person person) {
@@ -95,6 +95,11 @@ final class MembersActivity extends ViewDomainActivityBase {
             @Override
             public void onRemoveMember(Person person) {
                 controller.removeMember(person);
+            }
+
+            @Override
+            public void onSendValidationRequest(Person member, Person matchingAccount) {
+                controller.sendValidationRequest(member, matchingAccount);
             }
         };
     }

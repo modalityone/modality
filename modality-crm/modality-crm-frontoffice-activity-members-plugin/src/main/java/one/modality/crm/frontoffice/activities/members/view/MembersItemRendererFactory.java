@@ -53,6 +53,13 @@ public record MembersItemRendererFactory(MemberActionHandler memberActionHandler
     }
 
     /**
+     * Extended callback interface for member actions including validation requests.
+     */
+    public interface MemberActionHandlerWithValidation extends MemberActionHandler {
+        void onSendValidationRequest(Person member, Person matchingAccount);
+    }
+
+    /**
      * Callback interface for handling user actions on manager items.
      */
     public interface ManagerActionHandler {
@@ -186,9 +193,16 @@ public record MembersItemRendererFactory(MemberActionHandler memberActionHandler
         HBox nameWithBadge = new HBox(12);
         nameWithBadge.setAlignment(Pos.CENTER_LEFT);
 
-        // Display name: Use alias names from invitation if available, otherwise use person's full name
+        // Display name logic:
+        // - For PENDING_INCOMING_INVITATION with inviterPayer=false: Use person's full name (inviter's name)
+        //   because alias contains manager's name, but we want to show who invited us
+        // - For other cases: Use alias names if available, otherwise use person's full name
         String displayName;
-        if (invitation != null && invitation.getAliasFirstName() != null && invitation.getAliasLastName() != null) {
+        if (type == MemberItem.MemberItemType.PENDING_INCOMING_INVITATION &&
+            invitation != null && Boolean.FALSE.equals(invitation.isInviterPayer())) {
+            // Manager invitation (inviterPayer=false) - show inviter's name, not alias
+            displayName = person != null && person.getFullName() != null ? person.getFullName() : "";
+        } else if (invitation != null && invitation.getAliasFirstName() != null && invitation.getAliasLastName() != null) {
             displayName = invitation.getAliasFirstName() + " " + invitation.getAliasLastName();
         } else {
             displayName = person != null && person.getFullName() != null ? person.getFullName() : "";
@@ -216,7 +230,12 @@ public record MembersItemRendererFactory(MemberActionHandler memberActionHandler
                 break;
 
             case DIRECT_MEMBER:
-                // No badge for direct members
+                // Show "Needs Validation" badge if member has matching account
+                if (memberItem.hasMatchingAccount()) {
+                    statusBadge = new Label(I18n.getI18nText(MembersI18nKeys.BadgeNeedsValidation));
+                    ModalityStyle.authorizationBadgeNeedsValidation(statusBadge);
+                    nameWithBadge.getChildren().add(statusBadge);
+                }
                 break;
         }
 
@@ -285,17 +304,33 @@ public record MembersItemRendererFactory(MemberActionHandler memberActionHandler
         switch (memberItem.getType()) {
             case DIRECT_MEMBER:
                 // Direct member (no accountPerson) - can Edit and Remove
-                Hyperlink editLink = Bootstrap.textPrimary(
-                    I18nControls.newHyperlink(MembersI18nKeys.EditMemberDetails));
-                editLink.setCursor(Cursor.HAND);
-                editLink.setOnAction(e -> memberActionHandler.onEditMember(person));
+                // If matching account exists, show "Send validation request" instead of Edit
+                if (memberItem.hasMatchingAccount()) {
+                    // Member has created their own account - offer to send validation request
+                    Hyperlink sendValidationLink = Bootstrap.textPrimary(
+                        I18nControls.newHyperlink(MembersI18nKeys.SendRequest));
+                    sendValidationLink.setCursor(Cursor.HAND);
+                    sendValidationLink.setOnAction(e -> {
+                        if (memberActionHandler instanceof MemberActionHandlerWithValidation) {
+                            ((MemberActionHandlerWithValidation) memberActionHandler)
+                                .onSendValidationRequest(person, memberItem.getMatchingAccountPerson());
+                        }
+                    });
+                    actionLinks.add(sendValidationLink);
+                } else {
+                    // Normal direct member - show Edit link
+                    Hyperlink editLink = Bootstrap.textPrimary(
+                        I18nControls.newHyperlink(MembersI18nKeys.EditMemberDetails));
+                    editLink.setCursor(Cursor.HAND);
+                    editLink.setOnAction(e -> memberActionHandler.onEditMember(person));
+                    actionLinks.add(editLink);
+                }
 
                 Hyperlink removeDirectLink = Bootstrap.textDanger(
                     I18nControls.newHyperlink(MembersI18nKeys.RemoveMember));
                 removeDirectLink.setCursor(Cursor.HAND);
                 removeDirectLink.setOnAction(e -> memberActionHandler.onRemoveMember(person));
 
-                actionLinks.add(editLink);
                 actionLinks.add(removeDirectLink);
                 break;
 
@@ -316,18 +351,12 @@ public record MembersItemRendererFactory(MemberActionHandler memberActionHandler
                 break;
 
             case PENDING_OUTGOING_INVITATION:
-                // Pending invitation where I'm the inviter - can Resend and Cancel
-                Hyperlink resendLink = Bootstrap.textPrimary(
-                    I18nControls.newHyperlink(MembersI18nKeys.Resend));
-                resendLink.setCursor(Cursor.HAND);
-                resendLink.setOnAction(e -> memberActionHandler.onResendInvitation(invitation));
-
+                // Pending invitation where I'm the inviter - can Cancel
                 Hyperlink cancelLink = Bootstrap.textSecondary(
                     I18nControls.newHyperlink(MembersI18nKeys.CancelAction));
                 cancelLink.setCursor(Cursor.HAND);
                 cancelLink.setOnAction(e -> memberActionHandler.onCancelInvitation(invitation));
 
-                actionLinks.add(resendLink);
                 actionLinks.add(cancelLink);
                 break;
 
@@ -458,18 +487,12 @@ public record MembersItemRendererFactory(MemberActionHandler memberActionHandler
                 break;
 
             case PENDING_OUTGOING_INVITATION:
-                // Outgoing invitation - can Resend and Cancel
-                Hyperlink resendLink = Bootstrap.textPrimary(
-                    I18nControls.newHyperlink(MembersI18nKeys.Resend));
-                resendLink.setCursor(Cursor.HAND);
-                resendLink.setOnAction(e -> managerActionHandler.onResendManagerInvitation(invitation));
-
+                // Outgoing invitation - can Cancel
                 Hyperlink cancelLink = Bootstrap.textSecondary(
                     I18nControls.newHyperlink(MembersI18nKeys.CancelAction));
                 cancelLink.setCursor(Cursor.HAND);
                 cancelLink.setOnAction(e -> managerActionHandler.onCancelManagerInvitation(invitation));
 
-                actionLinks.add(resendLink);
                 actionLinks.add(cancelLink);
                 break;
 

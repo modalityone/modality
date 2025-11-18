@@ -17,6 +17,7 @@
             <used-by-source-module>webfx-stack-orm-entity-controls</used-by-source-module>
             <used-by-source-module>webfx-stack-orm-entity-binding</used-by-source-module>
             <used-by-source-module>modality-base-client-activity</used-by-source-module>
+            <used-by-source-module>webfx-platform-conf</used-by-source-module>
         </used-by-source-modules>
     </dependencies>
 

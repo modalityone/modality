@@ -140,6 +140,45 @@ public class MembersView implements MaterialFactoryMixin, ModalityButtonFactoryM
     }
 
     /**
+     * Create a warning alert for members with matching accounts that need validation.
+     */
+    private VBox createMatchingAccountsWarning() {
+        VBox warningBox = new VBox(8);
+        warningBox.setMaxWidth(800);
+        warningBox.setPadding(new Insets(16));
+        warningBox.getStyleClass().addAll("alert", "alert-warning");
+
+        Label warningMessage = new Label();
+        warningMessage.setWrapText(true);
+
+        // Update warning visibility based on directMembersList
+        Runnable updateWarning = () -> {
+            long count = model.getDirectMembersList().stream()
+                    .filter(memberItem -> memberItem.hasMatchingAccount())
+                    .count();
+
+            if (count == 0) {
+                warningBox.setVisible(false);
+                warningBox.setManaged(false);
+            } else {
+                warningBox.setVisible(true);
+                warningBox.setManaged(true);
+
+                String message = count == 1
+                    ? "⚠ One of your members has created a KBS account. You can link this account to enable them to manage their own bookings."
+                    : "⚠ " + count + " of your members have created KBS accounts. You can link these accounts to enable them to manage their own bookings.";
+                warningMessage.setText(message);
+            }
+        };
+
+        // Listen to direct members list changes
+        ObservableLists.runNowAndOnListChange(change -> updateWarning.run(), model.getDirectMembersList());
+
+        warningBox.getChildren().add(warningMessage);
+        return warningBox;
+    }
+
+    /**
      * Build the "Members I Can Book For" section.
      */
     private void buildMembersSection() {
@@ -154,6 +193,9 @@ public class MembersView implements MaterialFactoryMixin, ModalityButtonFactoryM
         description.setWrapText(true);
         description.setTextAlignment(TextAlignment.CENTER);
         description.setPadding(new Insets(10, 0, 20, 0));
+
+        // Warning alert for members with matching accounts
+        VBox warningAlert = createMatchingAccountsWarning();
 
         // Loading indicator
         ProgressIndicator loadingIndicator = new ProgressIndicator();
@@ -236,6 +278,7 @@ public class MembersView implements MaterialFactoryMixin, ModalityButtonFactoryM
         membersSection.getChildren().setAll(
                 sectionTitle,
                 description,
+                warningAlert,
                 loadingBox,
                 emptyState,
                 membersListBox,
@@ -645,7 +688,7 @@ public class MembersView implements MaterialFactoryMixin, ModalityButtonFactoryM
         // Create form content container first (needed for DateField)
         VBox formContent = new VBox(16);
         formContent.setPadding(new Insets(20));
-        formContent.setMaxWidth(500);
+        formContent.setMaxWidth(700);
 
         // Personal Details - DateField needs a container
         DateField birthDateField = new DateField(formContent);
@@ -802,6 +845,8 @@ public class MembersView implements MaterialFactoryMixin, ModalityButtonFactoryM
         scrollPane.setFitToWidth(true);
         scrollPane.setMaxHeight(500); // Limit max height to ensure scrollbar appears when needed
         scrollPane.setPadding(new Insets(0));
+        scrollPane.setPrefWidth(700);  // Set preferred width for wider dialog on desktop
+        scrollPane.setMaxWidth(700);   // Maximum width on large screens
 
         // Create dialog without Bootstrap helper (no info message parameter)
         DialogContent dialog = new DialogContent();

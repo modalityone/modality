@@ -1,7 +1,7 @@
-<html lang="en" dir="ltr"><head>
+<html lang="vi" dir="ltr"><head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Access Revoked</title>
+    <title>Yêu Cầu Ủy Quyền</title>
     <style>
         /* Global Styles */
         body {
@@ -25,7 +25,7 @@
             background-color: #ffffff;
             padding: 20px 0;
             font-size: 32px;
-            color: #856404;
+            color: #009fe3;
             font-weight: bold;
         }
 
@@ -49,18 +49,38 @@
             border-top: 1px solid #dddddd;
         }
 
+        .info-box {
+            text-align: left;
+            background-color: #f9fafb;
+            padding: 15px;
+            border-radius: 8px;
+            margin: 20px 0;
+            font-size: 14px;
+            line-height: 1.6;
+        }
+
         .button-container {
             margin: 20px 0;
+            display: flex;
+            gap: 10px;
         }
 
         .button {
+            flex: 1;
             display: inline-block;
-            background-color: #009fe3;
             color: #ffffff;
             padding: 12px 25px;
             text-decoration: none;
             border-radius: 5px;
             font-size: 16px;
+        }
+
+        .button-approve {
+            background-color: #28a745;
+        }
+
+        .button-decline {
+            background-color: #dc3545;
         }
 
         .footer {
@@ -73,26 +93,32 @@
 
 <body>
 <div class="email-container">
-    <div class="header">Access Revoked</div>
+    <div class="header">Yêu Cầu Ủy Quyền</div>
 
     <div class="content">
-        <h2>Dear [managerName]</h2>
+        <h2>Kính gửi [inviteeName]</h2>
 
-        <p><strong>[revokerName]</strong> has revoked your access to manage their bookings.</p>
-
-        <p>You will no longer be able to view or manage bookings on their behalf through your Kadampa Bookings account.</p>
+        <p><strong>[inviterName]</strong> ([inviterEmail]) muốn thêm bạn làm thành viên vào tài khoản Kadampa Bookings của họ.</p>
 
         <hr class="divider">
 
-        <p>You can continue to manage your own bookings and other accounts you have access to:</p>
+        <div class="info-box">
+            <strong>Điều này có nghĩa là:</strong><br>
+            • [inviterName] sẽ có thể đặt chỗ thay mặt bạn<br>
+            • Họ có thể xem và quản lý các đặt chỗ của bạn<br>
+            • Bạn có thể thu hồi quyền truy cập này bất cứ lúc nào từ cài đặt tài khoản của mình
+        </div>
+
+        <p>Vui lòng chọn một trong các tùy chọn bên dưới:</p>
 
         <div class="button-container">
-            <a href="[dashboardLink]" style="color:white" class="button">Go to Dashboard</a>
+            <a href="[approveLink]" style="color:white" class="button button-approve">Chấp Nhận Yêu Cầu</a>
+            <a href="[declineLink]" style="color:white" class="button button-decline">Từ Chối</a>
         </div>
     </div>
 
     <div class="footer">
-        <p>If you have any questions about this change, please contact them directly.</p>
+        <p>Nếu bạn không mong đợi yêu cầu này, vui lòng bỏ qua email này.<br>Không cần thực hiện hành động nào.</p>
     </div>
 </div>
 

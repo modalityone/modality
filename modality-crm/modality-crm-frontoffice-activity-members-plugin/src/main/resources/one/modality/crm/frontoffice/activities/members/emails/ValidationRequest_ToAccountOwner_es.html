@@ -1,7 +1,7 @@
-<html lang="en" dir="ltr"><head>
+<html lang="es" dir="ltr"><head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Access Revoked</title>
+    <title>Validación Requerida</title>
     <style>
         /* Global Styles */
         body {
@@ -25,7 +25,7 @@
             background-color: #ffffff;
             padding: 20px 0;
             font-size: 32px;
-            color: #856404;
+            color: #009fe3;
             font-weight: bold;
         }
 
@@ -49,18 +49,39 @@
             border-top: 1px solid #dddddd;
         }
 
+        .info-box {
+            text-align: left;
+            background-color: #fff3cd;
+            padding: 15px;
+            border-radius: 8px;
+            margin: 20px 0;
+            font-size: 14px;
+            line-height: 1.6;
+            border-left: 4px solid #ffc107;
+        }
+
         .button-container {
             margin: 20px 0;
+            display: flex;
+            gap: 10px;
         }
 
         .button {
+            flex: 1;
             display: inline-block;
-            background-color: #009fe3;
             color: #ffffff;
             padding: 12px 25px;
             text-decoration: none;
             border-radius: 5px;
             font-size: 16px;
+        }
+
+        .button-approve {
+            background-color: #28a745;
+        }
+
+        .button-decline {
+            background-color: #dc3545;
         }
 
         .footer {
@@ -73,26 +94,35 @@
 
 <body>
 <div class="email-container">
-    <div class="header">Access Revoked</div>
+    <div class="header">Validación Requerida</div>
 
     <div class="content">
-        <h2>Dear [managerName]</h2>
+        <h2>Estimado/a [inviteeName]</h2>
 
-        <p><strong>[revokerName]</strong> has revoked your access to manage their bookings.</p>
+        <p>Hemos detectado que recientemente creó una cuenta de Reservas Kadampa. <strong>[inviterName]</strong> ha estado gestionando reservas para usted.</p>
 
-        <p>You will no longer be able to view or manage bookings on their behalf through your Kadampa Bookings account.</p>
+        <p>Por su seguridad, necesitamos su aprobación para que [inviterName] pueda continuar.</p>
 
         <hr class="divider">
 
-        <p>You can continue to manage your own bookings and other accounts you have access to:</p>
+        <div class="info-box">
+            <strong>Lo que [inviterName] podrá hacer si lo aprueba:</strong><br>
+            • Realizar reservas en su nombre<br>
+            • Ver y gestionar sus reservas<br>
+            • Acceder a su historial de reservas<br><br>
+            <em>Puede revocar este acceso en cualquier momento desde la configuración de su cuenta.</em>
+        </div>
+
+        <p>Por favor, elija una de las siguientes opciones:</p>
 
         <div class="button-container">
-            <a href="[dashboardLink]" style="color:white" class="button">Go to Dashboard</a>
+            <a href="[approveLink]" style="color:white" class="button button-approve">Aprobar Acceso</a>
+            <a href="[declineLink]" style="color:white" class="button button-decline">Rechazar</a>
         </div>
     </div>
 
     <div class="footer">
-        <p>If you have any questions about this change, please contact them directly.</p>
+        <p>Esta validación es requerida por su seguridad.<br>Si no creó esta cuenta, póngase en contacto con nosotros inmediatamente.</p>
     </div>
 </div>
 
