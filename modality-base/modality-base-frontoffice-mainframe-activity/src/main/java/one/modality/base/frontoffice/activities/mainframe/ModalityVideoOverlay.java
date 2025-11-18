@@ -136,6 +136,8 @@ public class ModalityVideoOverlay {
             fadeInFullscreenButtonAndScheduleFadeOut();
             // Now we select the node that we will listen to in order to detect when the mouse is over the player
             Player player = FullscreenButton.getSuitableFullscreenPlayingPlayer();
+            if (player == null)
+                return;
             Node mouseOverPlayerDetectionNode;
             // If it's not in the browser (OpenJFX), we can simply take the media view of the player
             if (!UserAgent.isBrowser()) {

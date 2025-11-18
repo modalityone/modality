@@ -3,20 +3,20 @@ package one.modality.event.frontoffice.activities.audiolibrary;
 
 public interface AudioLibraryI18nKeys {
 
-    Object AudioLibraryHeader = "AudioLibraryHeader";
-    Object AudioLibraryMenu = "AudioLibraryMenu";
-    Object CheckoutAudioRecordings = "CheckoutAudioRecordings";
-    Object ListOfTracks = "ListOfTracks";
-    Object Playing = "Playing";
-    Object AudioLibraryHelp = "AudioLibraryHelp";
-    Object ContentExpired = "ContentExpired";
-    Object AudioLibraryNotYetPublished = "AudioLibraryNotYetPublished";
-    Object NoAudioRecordingForThisEvent = "NoAudioRecordingForThisEvent";
-    Object Download = "Download";
     Object AudioCancelled = "AudioCancelled";
+    Object AudioLibraryHeader = "AudioLibraryHeader";
+    Object AudioLibraryHelp = "AudioLibraryHelp";
+    Object AudioLibraryMenu = "AudioLibraryMenu";
+    Object AudioLibraryNotYetPublished = "AudioLibraryNotYetPublished";
+    Object CheckoutAudioRecordings = "CheckoutAudioRecordings";
+    Object ContentExpired = "ContentExpired";
+    Object Download = "Download";
+    Object ListOfTracks = "ListOfTracks";
+    Object NoAudioRecordingForThisEvent = "NoAudioRecordingForThisEvent";
     Object NoAudioRecordingInYourLibrary = "NoAudioRecordingInYourLibrary";
-    Object YourPurchasedRecordingsWillAppearHere = "YourPurchasedRecordingsWillAppearHere";
-    Object PlayAgain = "PlayAgain";
     Object Play = "Play";
+    Object PlayAgain = "PlayAgain";
+    Object Playing = "Playing";
+    Object YourPurchasedRecordingsWillAppearHere = "YourPurchasedRecordingsWillAppearHere";
 
 }

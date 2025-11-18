@@ -51,7 +51,6 @@ module modality.event.backoffice.activity.program.plugin {
     requires webfx.stack.orm.entity.controls;
     requires webfx.stack.routing.router.client;
     requires webfx.stack.routing.uirouter;
-    requires webfx.platform.blob;
 
     // Exported packages
     exports one.modality.event.backoffice.activities.program;

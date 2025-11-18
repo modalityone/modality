@@ -3,25 +3,25 @@ package one.modality.booking.frontoffice.bookingform;
 
 public interface BookingFormI18nKeys {
 
-    Object AnyRequest = "AnyRequest";
-    Object addNewPerson = "addNewPerson";
-    Object TermsAndConditions = "TermsAndConditions";
-    Object PayNow1 = "PayNow1";
-    Object SummaryTopMessage = "SummaryTopMessage";
-    Object PaymentTopMessage = "PaymentTopMessage";
     Object AgreePrivacyNotice = "AgreePrivacyNotice";
-    Object SelectPaymentAmount = "SelectPaymentAmount";
-    Object Payment = "Payment";
-    Object wholeEvent = "wholeEvent";
-    Object SaveBooking = "SaveBooking";
     Object AgreeTermsAndConditions = "AgreeTermsAndConditions";
-    Object PaymentBottomMessage = "PaymentBottomMessage";
-    Object comingSoon = "comingSoon";
-    Object SummarySubTopMessage = "SummarySubTopMessage";
-    Object bookNow = "bookNow";
-    Object Summary = "Summary";
-    Object closed = "closed";
-    Object writeRequest = "writeRequest";
+    Object AnyRequest = "AnyRequest";
     Object BookingOptions = "BookingOptions";
+    Object PayNow1 = "PayNow1";
+    Object Payment = "Payment";
+    Object PaymentBottomMessage = "PaymentBottomMessage";
+    Object PaymentTopMessage = "PaymentTopMessage";
+    Object SaveBooking = "SaveBooking";
+    Object SelectPaymentAmount = "SelectPaymentAmount";
+    Object Summary = "Summary";
+    Object SummarySubTopMessage = "SummarySubTopMessage";
+    Object SummaryTopMessage = "SummaryTopMessage";
+    Object TermsAndConditions = "TermsAndConditions";
+    Object addNewPerson = "addNewPerson";
+    Object bookNow = "bookNow";
+    Object closed = "closed";
+    Object comingSoon = "comingSoon";
+    Object wholeEvent = "wholeEvent";
+    Object writeRequest = "writeRequest";
 
 }

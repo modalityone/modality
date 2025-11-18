@@ -3,17 +3,17 @@ package one.modality.event.frontoffice.activities.booking;
 
 public interface BookingI18nKeys {
 
-    Object ChangeYourLocation = "ChangeYourLocation";
-    Object at = "at";
-    Object findYourLocalCentre = "findYourLocalCentre";
-    Object eventsHeader = "eventsHeader";
     Object Booking = "Booking";
+    Object ChangeYourLocation = "ChangeYourLocation";
     Object InternationalEvents = "InternationalEvents";
+    Object at = "at";
+    Object eventsHeader = "eventsHeader";
+    Object findYourLocalCentre = "findYourLocalCentre";
+    Object localCentreAddress = "localCentreAddress";
+    Object localCentreEmail = "localCentreEmail";
+    Object localCentrePhone = "localCentrePhone";
+    Object localCentreWebsite = "localCentreWebsite";
     Object localEvents = "localEvents";
     Object yourLocalCentre = "yourLocalCentre";
-    Object localCentreWebsite = "localCentreWebsite";
-    Object localCentreAddress = "localCentreAddress";
-    Object localCentrePhone = "localCentrePhone";
-    Object localCentreEmail = "localCentreEmail";
 
 }

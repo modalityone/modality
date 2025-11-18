@@ -3,15 +3,15 @@ package one.modality.event.frontoffice.bookingform.recurringevent;
 
 public interface RecurringEventI18nKeys {
 
+    Object AllClasses = "AllClasses";
     Object BalanceOnPreviousBooking = "BalanceOnPreviousBooking";
+    Object FacilityFee = "FacilityFee";
+    Object PricePerClass0 = "PricePerClass0";
+    Object ProceedCheckout = "ProceedCheckout";
+    Object Schedule = "Schedule";
+    Object SelectAllClasses = "SelectAllClasses";
     Object SelectTheEvent = "SelectTheEvent";
     Object TotalOnPreviousBooking = "TotalOnPreviousBooking";
-    Object FacilityFee = "FacilityFee";
-    Object Schedule = "Schedule";
-    Object AllClasses = "AllClasses";
-    Object ProceedCheckout = "ProceedCheckout";
     Object alreadyBooked = "alreadyBooked";
-    Object SelectAllClasses = "SelectAllClasses";
-    Object PricePerClass0 = "PricePerClass0";
 
 }

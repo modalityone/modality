@@ -3,7 +3,7 @@ package one.modality.crm.backoffice.operations.entities.mail;
 
 public interface MailI18nKeys {
 
-    Object OpenMail = "OpenMail";
     Object ComposeNewMail = "ComposeNewMail";
+    Object OpenMail = "OpenMail";
 
 }

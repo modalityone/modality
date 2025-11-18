@@ -3,24 +3,24 @@ package one.modality.crm.backoffice.controls.bookingdetailspanel;
 
 public interface BookingDetailsI18nKeys {
 
-    Object PersonalDetailsTab = "PersonalDetailsTab";
-    Object OptionsTab = "OptionsTab";
-    Object PaymentsTab = "PaymentsTab";
-    Object CommentsTab = "CommentsTab";
-    Object CartTab = "CartTab";
-    Object MultipleBookingsTab = "MultipleBookingsTab";
-    Object FamilyTab = "FamilyTab";
-    Object MediasTab = "MediasTab";
-    Object MailsTab = "MailsTab";
-    Object HistoryTab = "HistoryTab";
-    Object Options = "Options";
-    Object MultipleBookings = "MultipleBookings";
-    Object Comments = "Comments";
-    Object Mails = "Mails";
-    Object Payments = "Payments";
-    Object Family = "Family";
-    Object Medias = "Medias";
-    Object History = "History";
     Object Cart = "Cart";
+    Object CartTab = "CartTab";
+    Object Comments = "Comments";
+    Object CommentsTab = "CommentsTab";
+    Object Family = "Family";
+    Object FamilyTab = "FamilyTab";
+    Object History = "History";
+    Object HistoryTab = "HistoryTab";
+    Object Mails = "Mails";
+    Object MailsTab = "MailsTab";
+    Object Medias = "Medias";
+    Object MediasTab = "MediasTab";
+    Object MultipleBookings = "MultipleBookings";
+    Object MultipleBookingsTab = "MultipleBookingsTab";
+    Object Options = "Options";
+    Object OptionsTab = "OptionsTab";
+    Object Payments = "Payments";
+    Object PaymentsTab = "PaymentsTab";
+    Object PersonalDetailsTab = "PersonalDetailsTab";
 
 }
