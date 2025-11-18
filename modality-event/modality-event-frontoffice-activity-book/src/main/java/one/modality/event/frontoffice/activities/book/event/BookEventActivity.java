@@ -99,6 +99,8 @@ public final class BookEventActivity extends ViewDomainActivityBase implements B
         FXCollapseMenu.setCollapseMenu(
             // We never collapse the menu for NKT events (Festivals & STTP)
             !Entities.samePrimaryKey(FXOrganizationId.getOrganizationId(), 1)
+            // nor when we modify or pay an order
+            && modifyOrderDocumentIdProperty.get() == null && payOrderDocumentIdProperty.get() == null
             // But we do hide the menu for MKMC GP classes to not distract the user from booking
             && (event == null || event.isRecurring()));
     }
