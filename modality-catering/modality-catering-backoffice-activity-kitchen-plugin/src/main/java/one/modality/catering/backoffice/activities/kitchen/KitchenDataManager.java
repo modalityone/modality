@@ -55,7 +55,8 @@ public class KitchenDataManager {
     private final ObjectProperty<Set<String>> displayedMealNamesProperty = new SimpleObjectProperty<>(new HashSet<>());
     private final ObjectProperty<Map<String, String>> dietaryOptionSvgsProperty = new SimpleObjectProperty<>(new HashMap<>());
 
-    private final ObjectProperty<YearMonth> selectedYearMonthProperty = new SimpleObjectProperty<>();
+    private final ObjectProperty<LocalDate> startDateProperty = new SimpleObjectProperty<>();
+    private final ObjectProperty<LocalDate> endDateProperty = new SimpleObjectProperty<>();
     private final ObjectProperty<EntityId> organizationIdProperty = new SimpleObjectProperty<>();
 
     public KitchenDataManager(DataSourceModel dataSourceModel) {
@@ -63,7 +64,7 @@ public class KitchenDataManager {
         this.reactiveQueryCall = new ReactiveQueryCall();
 
         // Update query when parameters change
-        FXProperties.runOnPropertiesChange(this::updateQueryArgument, selectedYearMonthProperty, organizationIdProperty);
+        FXProperties.runOnPropertiesChange(this::updateQueryArgument, startDateProperty, endDateProperty, organizationIdProperty);
 
         // Process results when they arrive
         FXProperties.runOnPropertyChange(result -> {
@@ -99,9 +100,10 @@ public class KitchenDataManager {
     }
 
     private void updateQueryArgument() {
-        YearMonth selectedYearMonth = selectedYearMonthProperty.get();
+        LocalDate startDate = startDateProperty.get();
+        LocalDate endDate = endDateProperty.get();
         EntityId organizationId = organizationIdProperty.get();
-        if (selectedYearMonth == null || organizationId == null)
+        if (startDate == null || endDate == null || organizationId == null)
             return;
 
         QueryArgument queryArgument = new QueryArgumentBuilder()
@@ -109,8 +111,8 @@ public class KitchenDataManager {
                 .setDataSourceId(dataSourceModel.getDataSourceId())
                 .setParameters(
                         organizationId.getPrimaryKey(),        // $1
-                        selectedYearMonth.atDay(1),            // $2
-                        selectedYearMonth.atEndOfMonth()       // $3
+                        startDate,                             // $2
+                        endDate                                // $3
                 )
                 .build();
 
@@ -118,7 +120,7 @@ public class KitchenDataManager {
     }
 
     public void start() {
-        reactiveQueryCall.setResultCacheEntry("modality/catering/kitchen/year-month-meals-count");
+        reactiveQueryCall.setResultCacheEntry("modality/catering/kitchen/meals-count");
         reactiveQueryCall.start();
     }
 
@@ -151,16 +153,28 @@ public class KitchenDataManager {
         return dietaryOptionSvgsProperty.get();
     }
 
-    public ObjectProperty<YearMonth> selectedYearMonthProperty() {
-        return selectedYearMonthProperty;
+    public ObjectProperty<LocalDate> startDateProperty() {
+        return startDateProperty;
     }
 
-    public void setSelectedYearMonth(YearMonth yearMonth) {
-        selectedYearMonthProperty.set(yearMonth);
+    public void setStartDate(LocalDate startDate) {
+        startDateProperty.set(startDate);
     }
 
-    public YearMonth getSelectedYearMonth() {
-        return selectedYearMonthProperty.get();
+    public LocalDate getStartDate() {
+        return startDateProperty.get();
+    }
+
+    public ObjectProperty<LocalDate> endDateProperty() {
+        return endDateProperty;
+    }
+
+    public void setEndDate(LocalDate endDate) {
+        endDateProperty.set(endDate);
+    }
+
+    public LocalDate getEndDate() {
+        return endDateProperty.get();
     }
 
     public ObjectProperty<EntityId> organizationIdProperty() {

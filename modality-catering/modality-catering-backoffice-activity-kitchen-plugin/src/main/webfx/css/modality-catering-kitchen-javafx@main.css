@@ -1,0 +1,151 @@
+/* Kitchen Activity - JavaFX Styling */
+
+/* Date Range Display */
+.kitchen-date-range-display {
+    -fx-font-family: "Arial";
+    -fx-font-weight: bold;
+    -fx-font-size: 18px;
+    -fx-text-fill: #0096D6;
+}
+
+/* Filter Section */
+.kitchen-filter-label {
+    -fx-text-fill: #999999;
+    -fx-font-size: 12px;
+}
+
+.kitchen-filter-box {
+    -fx-background-color: #f8f9fa;
+    -fx-border-color: #e0e0e0;
+    -fx-border-radius: 4px;
+    -fx-background-radius: 4px;
+}
+
+/* Top Header */
+.kitchen-top-header {
+    -fx-background-color: #f8f9fa;
+    -fx-border-color: #e0e0e0;
+    -fx-border-width: 2px;
+    -fx-border-radius: 8px;
+    -fx-background-radius: 8px;
+}
+
+/* Table Grid */
+.kitchen-grid {
+    -fx-background-color: white;
+    -fx-border-color: #dddddd;
+    -fx-border-width: 1px;
+}
+
+/* Date Headers */
+.kitchen-date-header {
+    -fx-background-color: #d4d4d4;
+}
+
+.kitchen-date-header .kitchen-day-label {
+    -fx-font-size: 9px;
+    -fx-text-fill: #0096D6;
+}
+
+.kitchen-date-header .kitchen-date-label {
+    -fx-font-family: "Arial";
+    -fx-font-weight: bold;
+    -fx-font-size: 14px;
+    -fx-text-fill: #0096D6;
+}
+
+/* Meal Headers */
+.kitchen-meal-header {
+    -fx-background-color: #0096D6;
+}
+
+.kitchen-meal-header .label {
+    -fx-font-family: "Arial";
+    -fx-font-weight: bold;
+    -fx-font-size: 14px;
+    -fx-text-fill: white;
+}
+
+/* Meal Count Cells */
+.kitchen-meal-count-cell {
+    -fx-background-color: #0096D6;
+}
+
+.kitchen-meal-count-cell .label {
+    -fx-font-family: "Arial";
+    -fx-font-weight: bold;
+    -fx-font-size: 13px;
+    -fx-text-fill: white;
+}
+
+/* Meal Total Cells */
+.kitchen-meal-total-cell {
+    -fx-background-color: #007AB8;
+    -fx-border-left-color: #006399;
+    -fx-border-left-width: 3px;
+}
+
+.kitchen-meal-total-cell .label {
+    -fx-font-family: "Arial";
+    -fx-font-weight: bold;
+    -fx-font-size: 14px;
+    -fx-text-fill: white;
+}
+
+/* Diet Label Cells */
+.kitchen-diet-label-cell {
+    -fx-background-color: #f5f5f5;
+}
+
+.kitchen-diet-label-cell .label {
+    -fx-font-family: "Arial";
+    -fx-font-size: 13px;
+    -fx-text-fill: #999999;
+}
+
+/* Diet Value Cells */
+.kitchen-diet-value-cell {
+    -fx-background-color: white;
+}
+
+.kitchen-diet-value-cell.striped {
+    -fx-background-color: #f8f9fa;
+}
+
+.kitchen-diet-value-cell .label {
+    -fx-font-family: "Arial";
+    -fx-font-size: 13px;
+    -fx-text-fill: #666666;
+}
+
+/* Diet Total Cells */
+.kitchen-diet-total-cell {
+    -fx-background-color: #e9ecef;
+    -fx-border-left-color: #0096D6;
+    -fx-border-left-width: 3px;
+}
+
+.kitchen-diet-total-cell .label {
+    -fx-font-family: "Arial";
+    -fx-font-weight: bold;
+    -fx-font-size: 13px;
+    -fx-text-fill: #333333;
+}
+
+/* Total Header */
+.kitchen-total-header {
+    -fx-background-color: #0096D6;
+}
+
+.kitchen-total-header .label {
+    -fx-font-family: "Arial";
+    -fx-font-weight: bold;
+    -fx-font-size: 12px;
+    -fx-text-fill: white;
+}
+
+/* Cell Borders (common for all cells) */
+.kitchen-cell {
+    -fx-border-color: #dddddd;
+    -fx-border-width: 0 1px 1px 0;
+}
