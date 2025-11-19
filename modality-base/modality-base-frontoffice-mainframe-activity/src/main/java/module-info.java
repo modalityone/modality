@@ -33,11 +33,14 @@ module modality.base.frontoffice.mainframe.activity {
     requires webfx.platform.uischeduler;
     requires webfx.platform.useragent;
     requires webfx.platform.util;
-    requires webfx.platform.windowhistory;
     requires webfx.stack.routing.uirouter;
     requires webfx.stack.session.state.client.fx;
 
     // Exported packages
     exports one.modality.base.frontoffice.activities.mainframe;
+    exports one.modality.base.frontoffice.activities.mainframe.menus;
+    exports one.modality.base.frontoffice.activities.mainframe.menus.desktop;
+    exports one.modality.base.frontoffice.activities.mainframe.menus.mobile;
+    exports one.modality.base.frontoffice.activities.mainframe.menus.shared;
 
 }

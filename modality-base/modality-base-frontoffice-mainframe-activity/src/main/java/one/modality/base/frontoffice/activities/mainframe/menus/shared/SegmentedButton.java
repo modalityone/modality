@@ -1,4 +1,4 @@
-package one.modality.base.frontoffice.activities.mainframe;
+package one.modality.base.frontoffice.activities.mainframe.menus.shared;
 
 import dev.webfx.extras.aria.AriaToggleGroup;
 import dev.webfx.kit.util.aria.Aria;
