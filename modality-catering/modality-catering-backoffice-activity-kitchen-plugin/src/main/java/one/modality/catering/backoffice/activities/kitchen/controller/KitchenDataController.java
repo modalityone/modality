@@ -8,7 +8,6 @@ import dev.webfx.stack.orm.entity.EntityId;
 import dev.webfx.stack.orm.entity.EntityList;
 import dev.webfx.stack.orm.entity.EntityStore;
 import one.modality.base.shared.entities.*;
-import one.modality.catering.backoffice.activities.kitchen.model.KitchenData;
 import one.modality.catering.backoffice.activities.kitchen.model.KitchenDisplayModel;
 import one.modality.catering.backoffice.activities.kitchen.service.KitchenDataService;
 import one.modality.catering.backoffice.activities.kitchen.view.AttendeeDetailsDialog;
@@ -78,7 +77,7 @@ public final class KitchenDataController {
                     // Transform KitchenData into KitchenDisplayModel
                     currentDisplayModel = KitchenDisplayModel.from(kitchenData);
                     Console.log("KitchenDisplayModel created with "
-                            + currentDisplayModel.getAttendanceCounts().getDates().size() + " dates");
+                            + currentDisplayModel.attendanceCounts().getDates().size() + " dates");
                     return currentDisplayModel;
                 })
                 .recover(error -> {
@@ -291,7 +290,6 @@ public final class KitchenDataController {
                                         attendeeList.add(new AttendeeDetailsDialog.AttendeeInfo(
                                                 personName,
                                                 eventName,
-                                                eventDate,
                                                 eventId,
                                                 attendancesDates
                                         ));
@@ -303,7 +301,7 @@ public final class KitchenDataController {
 
                                 Console.log("Found " + attendeeList.size() + " attendees");
                                 // Sort by person name
-                                attendeeList.sort(java.util.Comparator.comparing(AttendeeDetailsDialog.AttendeeInfo::getPersonName));
+                                attendeeList.sort(java.util.Comparator.comparing(AttendeeDetailsDialog.AttendeeInfo::personName));
                                 return attendeeList;
                             });
                 })
@@ -349,10 +347,10 @@ public final class KitchenDataController {
         // Get the dietary options from the current display model
         Map<String, String> dietaryOptionNames = new java.util.HashMap<>();
         KitchenDisplayModel displayModel = getCurrentDisplayModel();
-        if (displayModel != null && displayModel.getAttendanceCounts() != null) {
-            for (String dietCode : displayModel.getAttendanceCounts().getSortedDietaryOptions()) {
+        if (displayModel != null && displayModel.attendanceCounts() != null) {
+            for (String dietCode : displayModel.attendanceCounts().getSortedDietaryOptions()) {
                 if (!"Total".equals(dietCode)) {
-                    String name = displayModel.getAttendanceCounts().getNameForDietaryOption(dietCode);
+                    String name = displayModel.attendanceCounts().getNameForDietaryOption(dietCode);
                     dietaryOptionNames.put(dietCode, name != null ? name : dietCode);
                 }
             }
@@ -454,7 +452,6 @@ public final class KitchenDataController {
                                     AttendeeDetailsDialog.AttendeeInfo attendeeInfo = new AttendeeDetailsDialog.AttendeeInfo(
                                             personName,
                                             eventName,
-                                            eventDate,
                                             eventId,
                                             attendancesDates
                                     );
@@ -490,7 +487,7 @@ public final class KitchenDataController {
 
                                 // Sort each list by person name
                                 for (List<AttendeeDetailsDialog.AttendeeInfo> list : attendeesByDiet.values()) {
-                                    list.sort(java.util.Comparator.comparing(AttendeeDetailsDialog.AttendeeInfo::getPersonName));
+                                    list.sort(java.util.Comparator.comparing(AttendeeDetailsDialog.AttendeeInfo::personName));
                                 }
 
                                 Console.log("Grouped attendees by diet:");

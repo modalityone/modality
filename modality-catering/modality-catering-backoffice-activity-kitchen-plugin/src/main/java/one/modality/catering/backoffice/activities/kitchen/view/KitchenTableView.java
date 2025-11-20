@@ -10,19 +10,15 @@ import javafx.scene.control.Label;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.HBox;
-import javafx.scene.layout.Pane;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
 import one.modality.catering.backoffice.activities.kitchen.AttendanceCounts;
-import one.modality.catering.backoffice.activities.kitchen.i18n.KitchenI18nKeys;
+import one.modality.catering.backoffice.activities.kitchen.KitchenI18nKeys;
 
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
-import java.util.LinkedHashMap;
 import java.util.List;
-import java.util.Map;
-import java.util.function.BiConsumer;
 
 /**
  * Table view for Kitchen Activity.
@@ -269,9 +265,7 @@ public class KitchenTableView {
                         final String clickedDietCode = dietCode;
                         final int clickedCount = count;
 
-                        cell.setOnMouseClicked(event -> {
-                            cellClickHandler.onCellClick(clickedDate, clickedMeal, clickedDietCode, clickedCount);
-                        });
+                        cell.setOnMouseClicked(event -> cellClickHandler.onCellClick(clickedDate, clickedMeal, clickedDietCode, clickedCount));
                     }
 
                     gridPane.add(cell, dateCol++, rowIndex);

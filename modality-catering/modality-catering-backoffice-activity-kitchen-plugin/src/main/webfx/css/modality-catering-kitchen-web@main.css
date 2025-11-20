@@ -162,11 +162,6 @@
     background-color: #007AB8;
 }
 
-.kitchen-meal-total-cell > fx-border {
-    border-color: transparent transparent transparent #006399;
-    border-width: 0 0 0 3px;
-    border-style: solid;
-}
 
 .kitchen-meal-total-cell .label {
     font-family: "Arial";
@@ -241,11 +236,6 @@
     background-color: #e9ecef;
 }
 
-.kitchen-diet-total-cell > fx-border {
-    border-color: transparent transparent transparent #0096D6;
-    border-width: 0 0 0 3px;
-    border-style: solid;
-}
 
 .kitchen-diet-total-cell .label {
     font-family: "Arial";
@@ -688,5 +678,57 @@
 .btn.secondary:hover:not(.disabled) fx-background,
 .secondary .btn:hover:not(.disabled) fx-background {
     background-color: #8c8c8c;
+}
+
+/* ========================================
+   Badge Fixes for Striped Rows
+   ======================================== */
+
+/* The badges work from modality-client-bootstrap CSS, but need higher specificity
+   to override when inside striped attendee rows */
+.attendee-row.striped .badge-light-info fx-background,
+.compact-attendee-row.striped .badge-light-info fx-background {
+    background-color: #e1f5fe;
+    border-radius: 12px;
+}
+
+.attendee-row.striped .badge-light-success fx-background,
+.compact-attendee-row.striped .badge-light-success fx-background {
+    background-color: #e8f5e9;
+    border-radius: 12px;
+}
+
+.attendee-row.striped .badge-light-warning fx-background,
+.compact-attendee-row.striped .badge-light-warning fx-background {
+    background-color: #fff3e0;
+    border-radius: 12px;
+}
+
+.attendee-row.striped .badge-light-danger fx-background,
+.compact-attendee-row.striped .badge-light-danger fx-background {
+    background-color: #ffebee;
+    border-radius: 12px;
+}
+
+.attendee-row.striped .badge-light-gray fx-background,
+.attendee-row.striped .badge-gray fx-background,
+.compact-attendee-row.striped .badge-light-gray fx-background,
+.compact-attendee-row.striped .badge-gray fx-background {
+    background-color: #f5f5f5;
+    border-radius: 12px;
+}
+
+.attendee-row.striped .badge-light-purple fx-background,
+.attendee-row.striped .badge-purple fx-background,
+.compact-attendee-row.striped .badge-light-purple fx-background,
+.compact-attendee-row.striped .badge-purple fx-background {
+    background-color: #f3e5f5;
+    border-radius: 12px;
+}
+
+.attendee-row.striped .badge-light-pink fx-background,
+.compact-attendee-row.striped .badge-light-pink fx-background {
+    background-color: #FCE4EC;
+    border-radius: 3px;
 }
 

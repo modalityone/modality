@@ -19,5 +19,6 @@
         </source-modules>
         <used-by-source-modules/>
     </dependencies>
+    <i18n javaKeysClass="one.modality.catering.backoffice.activities.kitchen.KitchenI18nKeys"/>
 
 </project>

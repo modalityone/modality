@@ -110,7 +110,7 @@ public class KitchenDataService {
 
         KitchenData.Builder builder = KitchenData.builder()
                 .scheduledItems(new ArrayList<>(scheduledItems))
-                .mealItems(new ArrayList<>(mealItems))
+                .mealItems()
                 .dietaryItems(activeDietaryItems);
 
         // Index document lines by document ID for fast lookup
@@ -287,9 +287,8 @@ public class KitchenDataService {
         public boolean equals(Object o) {
             if (this == o)
                 return true;
-            if (!(o instanceof AttendanceKey))
+            if (!(o instanceof AttendanceKey that))
                 return false;
-            AttendanceKey that = (AttendanceKey) o;
             return Objects.equals(scheduledItem, that.scheduledItem) &&
                     Objects.equals(dietaryItem, that.dietaryItem);
         }

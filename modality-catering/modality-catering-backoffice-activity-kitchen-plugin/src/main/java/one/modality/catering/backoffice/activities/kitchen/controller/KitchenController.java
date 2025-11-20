@@ -32,7 +32,6 @@ import java.time.LocalDate;
  */
 public final class KitchenController {
 
-    private final DataSourceModel dataSourceModel;
     private final KitchenViewUI view;
     private final KitchenDataController dataController;
 
@@ -40,7 +39,6 @@ public final class KitchenController {
     private final ObjectProperty<LocalDate> endDateProperty = new SimpleObjectProperty<>();
 
     public KitchenController(DataSourceModel dataSourceModel) {
-        this.dataSourceModel = dataSourceModel;
         this.view = new KitchenViewUI();
         this.dataController = new KitchenDataController(dataSourceModel);
     }
@@ -175,14 +173,14 @@ public final class KitchenController {
                 "KitchenController.updateView called with displayModel=" + (displayModel != null ? "present" : "null"));
 
         if (displayModel != null) {
-            Console.log("KitchenController: displayModel has " + displayModel.getAttendanceCounts().getDates().size()
+            Console.log("KitchenController: displayModel has " + displayModel.attendanceCounts().getDates().size()
                     + " dates");
-            Console.log("KitchenController: displayModel meals: " + displayModel.getDisplayedMealNames());
+            Console.log("KitchenController: displayModel meals: " + displayModel.displayedMealNames());
         }
 
         // Update the view
         // We pass null for selectedMeals as we are no longer using the selection pane
-        view.updateData(startDateProperty.get(), endDateProperty.get(), displayModel, null);
+        view.updateData(startDateProperty.get(), endDateProperty.get(), displayModel);
     }
 
     /**
@@ -220,13 +218,13 @@ public final class KitchenController {
         KitchenDisplayModel displayModel = dataController.getCurrentDisplayModel();
 
         // Double-check the count from the model
-        int modelCount = displayModel.getAttendanceCounts().getCount(date, meal, dietaryOptionCode);
+        int modelCount = displayModel.attendanceCounts().getCount(date, meal, dietaryOptionCode);
         Console.log("Count from AttendanceCounts model: " + modelCount);
         if (modelCount != count) {
             Console.log("WARNING: Count mismatch! Cell shows " + count + " but model has " + modelCount);
         }
 
-        String dietaryOptionNameFromModel = displayModel.getAttendanceCounts().getNameForDietaryOption(dietaryOptionCode);
+        String dietaryOptionNameFromModel = displayModel.attendanceCounts().getNameForDietaryOption(dietaryOptionCode);
         final String dietaryOptionName = dietaryOptionNameFromModel != null ? dietaryOptionNameFromModel : dietaryOptionCode;
 
         Console.log("Loading attendee details...");
@@ -269,11 +267,11 @@ public final class KitchenController {
                 })
                 .onFailure(error -> {
                     Console.log("Failed to load attendee details: " + error);
-                    if (error instanceof Throwable) {
-                        ((Throwable) error).printStackTrace();
+                    if (error != null) {
+                        error.printStackTrace();
                     }
                     // Close loading dialog on error
-                    UiScheduler.runInUiThread(() -> loadingDialog.closeDialog());
+                    UiScheduler.runInUiThread(loadingDialog::closeDialog);
                 });
     }
 
@@ -319,11 +317,11 @@ public final class KitchenController {
                 })
                 .onFailure(error -> {
                     Console.log("Failed to load attendees: " + error);
-                    if (error instanceof Throwable) {
-                        ((Throwable) error).printStackTrace();
+                    if (error != null) {
+                        error.printStackTrace();
                     }
                     // Close loading dialog on error
-                    UiScheduler.runInUiThread(() -> loadingDialog.closeDialog());
+                    UiScheduler.runInUiThread(loadingDialog::closeDialog);
                 });
     }
 

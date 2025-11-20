@@ -5,7 +5,6 @@ import dev.webfx.extras.styles.bootstrap.Bootstrap;
 import dev.webfx.extras.util.control.Controls;
 import dev.webfx.extras.util.dialog.DialogCallback;
 import dev.webfx.extras.util.dialog.DialogUtil;
-import dev.webfx.platform.console.Console;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Cursor;
@@ -14,11 +13,12 @@ import javafx.scene.control.ScrollPane;
 import javafx.scene.layout.*;
 import javafx.scene.shape.SVGPath;
 import javafx.scene.text.TextAlignment;
-import one.modality.catering.backoffice.activities.kitchen.i18n.KitchenI18nKeys;
+import one.modality.catering.backoffice.activities.kitchen.KitchenI18nKeys;
 
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
+import java.util.Map;
 
 /**
  * Dialog showing attendee details for a specific meal and dietary option.
@@ -31,42 +31,9 @@ public final class AttendeeDetailsDialog {
     private static final DateTimeFormatter DATE_FORMATTER = DateTimeFormatter.ofPattern("MMM d, yyyy");
 
     /**
-     * Attendee information holder.
-     */
-    public static class AttendeeInfo {
-        private final String personName;
-        private final String eventName;
-        private final LocalDate eventDate;
-        private final Object eventId;
-        private final String attendanceDates;
-
-        public AttendeeInfo(String personName, String eventName, LocalDate eventDate, Object eventId, String attendanceDates) {
-            this.personName = personName;
-            this.eventName = eventName;
-            this.eventDate = eventDate;
-            this.eventId = eventId;
-            this.attendanceDates = attendanceDates;
-        }
-
-        public String getPersonName() {
-            return personName;
-        }
-
-        public String getEventName() {
-            return eventName;
-        }
-
-        public LocalDate getEventDate() {
-            return eventDate;
-        }
-
-        public Object getEventId() {
-            return eventId;
-        }
-
-        public String getAttendanceDates() {
-            return attendanceDates;
-        }
+         * Attendee information holder.
+         */
+        public record AttendeeInfo(String personName, String eventName, Object eventId, String attendanceDates) {
     }
 
     /**
@@ -85,15 +52,14 @@ public final class AttendeeDetailsDialog {
     /**
      * Shows a dialog with attendee details for a specific meal/diet combination.
      *
-     * @param parent Parent pane to show dialog in
-     * @param date Date of the meal
-     * @param mealName Name of the meal (e.g., "Breakfast")
+     * @param parent        Parent pane to show dialog in
+     * @param date          Date of the meal
+     * @param mealName      Name of the meal (e.g., "Breakfast")
      * @param dietaryOption Name of the dietary option (e.g., "Gluten Free")
-     * @param attendees List of attendee information
-     * @param count Number of attendees (for title)
-     * @return DialogCallback for controlling the dialog
+     * @param attendees     List of attendee information
+     * @param count         Number of attendees (for title)
      */
-    public static DialogCallback showAttendeeDialog(
+    public static void showAttendeeDialog(
             Pane parent,
             LocalDate date,
             String mealName,
@@ -109,7 +75,6 @@ public final class AttendeeDetailsDialog {
         // Wire the close button to the dialog callback
         holder.closeButton.setOnAction(e -> dialogCallback.closeDialog());
 
-        return dialogCallback;
     }
 
     private static DialogContentHolder createDialogContent(
@@ -186,16 +151,16 @@ public final class AttendeeDetailsDialog {
 
     private static VBox createAttendeeRow(AttendeeInfo attendee, int index) {
         // Person name (bold)
-        Label nameLabel = new Label(attendee.getPersonName());
+        Label nameLabel = new Label(attendee.personName());
         nameLabel.getStyleClass().add("attendee-name-label");
         nameLabel.setMinWidth(200);
 
         // Event badge - use modulo on event ID to get different colors
-        Label eventBadge = new Label(attendee.getEventName());
-        applyBadgeStyle(eventBadge, attendee.getEventId());
+        Label eventBadge = new Label(attendee.eventName());
+        applyBadgeStyle(eventBadge, attendee.eventId());
 
         // Document date
-        String dateText = attendee.getAttendanceDates();
+        String dateText = attendee.attendanceDates();
         Label dateLabel = new Label(dateText);
         dateLabel.getStyleClass().addAll(Bootstrap.TEXT_SECONDARY, Bootstrap.SMALL);
         dateLabel.setMinWidth(100);
@@ -261,20 +226,19 @@ public final class AttendeeDetailsDialog {
     /**
      * Shows a dialog with all attendees grouped by dietary type.
      *
-     * @param parent Parent pane to show dialog in
-     * @param date Date of the meal
-     * @param mealName Name of the meal
-     * @param attendeesByDiet Map of dietary option code to list of attendees
+     * @param parent             Parent pane to show dialog in
+     * @param date               Date of the meal
+     * @param mealName           Name of the meal
+     * @param attendeesByDiet    Map of dietary option code to list of attendees
      * @param dietaryOptionNames Map of dietary option code to display name
-     * @param totalCount Total number of attendees
-     * @return DialogCallback for controlling the dialog
+     * @param totalCount         Total number of attendees
      */
-    public static DialogCallback showTotalAttendeeDialog(
+    public static void showTotalAttendeeDialog(
             Pane parent,
             LocalDate date,
             String mealName,
-            java.util.Map<String, List<AttendeeInfo>> attendeesByDiet,
-            java.util.Map<String, String> dietaryOptionNames,
+            Map<String, List<AttendeeInfo>> attendeesByDiet,
+            Map<String, String> dietaryOptionNames,
             int totalCount) {
 
         DialogContentHolder holder = createTotalDialogContent(date, mealName, attendeesByDiet, dietaryOptionNames, totalCount);
@@ -285,7 +249,6 @@ public final class AttendeeDetailsDialog {
         // Wire the close button to the dialog callback
         holder.closeButton.setOnAction(e -> dialogCallback.closeDialog());
 
-        return dialogCallback;
     }
 
     private static DialogContentHolder createTotalDialogContent(
@@ -328,7 +291,7 @@ public final class AttendeeDetailsDialog {
             }
 
             String dietName = dietaryOptionNames.getOrDefault(dietCode, dietCode);
-            VBox section = createDietarySection(dietCode, dietName, attendees);
+            VBox section = createDietarySection(dietName, attendees);
             sectionsContainer.getChildren().add(section);
         }
 
@@ -360,7 +323,7 @@ public final class AttendeeDetailsDialog {
     /**
      * Creates a section for one dietary type showing the count and list of attendees.
      */
-    private static VBox createDietarySection(String dietCode, String dietName, List<AttendeeInfo> attendees) {
+    private static VBox createDietarySection(String dietName, List<AttendeeInfo> attendees) {
         // Section header with dietary option name and count
         Label sectionTitle = new Label(dietName);
         sectionTitle.getStyleClass().add("dietary-section-title");
@@ -394,16 +357,16 @@ public final class AttendeeDetailsDialog {
      */
     private static HBox createCompactAttendeeRow(AttendeeInfo attendee, int index) {
         // Person name
-        Label nameLabel = new Label(attendee.getPersonName());
+        Label nameLabel = new Label(attendee.personName());
         nameLabel.getStyleClass().add("compact-attendee-name");
         nameLabel.setMinWidth(250);
 
         // Event badge
-        Label eventBadge = new Label(attendee.getEventName());
-        applyBadgeStyle(eventBadge, attendee.getEventId());
+        Label eventBadge = new Label(attendee.eventName());
+        applyBadgeStyle(eventBadge, attendee.eventId());
 
         // Dates
-        String dateText = attendee.getAttendanceDates();
+        String dateText = attendee.attendanceDates();
         Label dateLabel = new Label(dateText);
         dateLabel.getStyleClass().addAll(Bootstrap.TEXT_SECONDARY, Bootstrap.SMALL);
         dateLabel.setMinWidth(100);

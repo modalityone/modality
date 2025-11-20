@@ -101,16 +101,6 @@ public class AttendanceCounts {
     }
 
     /**
-     * Retrieves the SVG icon graphic for a dietary option.
-     *
-     * @param dietaryOption the dietary option code
-     * @return the SVG graphic string, or null if not found
-     */
-    public String getSvgForDietaryOption(String dietaryOption) {
-        return dietaryOptionSvgs.get(dietaryOption);
-    }
-
-    /**
      * Stores a human-readable name for a dietary option code.
      *
      * @param dietaryOptionCode the dietary option code (e.g., "?")

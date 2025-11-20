@@ -1,22 +1,14 @@
 package one.modality.catering.backoffice.activities.kitchen.view;
 
-import dev.webfx.extras.i18n.controls.I18nControls;
-import dev.webfx.extras.styles.bootstrap.Bootstrap;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
-import javafx.scene.control.Button;
-import javafx.scene.control.Hyperlink;
 import javafx.scene.control.Label;
 import javafx.scene.layout.HBox;
-import javafx.scene.layout.Region;
 import javafx.scene.layout.VBox;
-import javafx.scene.shape.Circle;
-import javafx.scene.shape.Rectangle;
+import javafx.scene.paint.Color;
 import javafx.scene.shape.SVGPath;
-import javafx.scene.text.Text;
 import javafx.scene.text.TextAlignment;
 import one.modality.base.client.icons.SvgIcons;
-import one.modality.catering.backoffice.activities.kitchen.i18n.KitchenI18nKeys;
 
 /**
  * Empty state view displayed when no meal data is configured in the KBS3 system.
@@ -62,7 +54,6 @@ public final class KitchenEmptyStateView {
         messageLabel.getStyleClass().add("kitchen-empty-state-message");
         messageLabel.setWrapText(true);
         messageLabel.setTextAlignment(TextAlignment.CENTER);
-        messageLabel.setMaxWidth(550);
 
         // Info box - What needs to be done?
         VBox infoBox = createInfoBox();
@@ -100,9 +91,11 @@ public final class KitchenEmptyStateView {
 
         // Create SVG configuration icon using SvgIcons
         SVGPath configIcon = SvgIcons.createConfigSetupIcon();
-        configIcon.getStyleClass().add("kitchen-empty-state-config-icon");
-        configIcon.setScaleX(4.5);  // Scale up the 24x24 icon to about 108x108
-        configIcon.setScaleY(4.5);
+        configIcon.setStroke(Color.GRAY);
+        configIcon.setFill(Color.WHITE);
+
+        configIcon.setScaleX(3.5);  // Scale up the 24x24 icon to about 90x90
+        configIcon.setScaleY(3.5);
 
         javafx.scene.layout.StackPane iconStack = new javafx.scene.layout.StackPane(configIcon);
         iconStack.setMaxSize(120, 120);
@@ -120,7 +113,7 @@ public final class KitchenEmptyStateView {
         infoBox.getStyleClass().add("kitchen-empty-state-info-box");
         infoBox.setMaxWidth(550);
 
-        Label infoTitle = new Label("⚙\uFE0F What needs to be done?");
+        Label infoTitle = new Label("⚙️ What needs to be done?");
         infoTitle.getStyleClass().add("kitchen-empty-state-info-title");
 
         Label infoText = new Label(
@@ -129,7 +122,6 @@ public final class KitchenEmptyStateView {
         );
         infoText.getStyleClass().add("kitchen-empty-state-info-text");
         infoText.setWrapText(true);
-        infoText.setMaxWidth(510);
 
         infoBox.getChildren().addAll(infoTitle, infoText);
         return infoBox;
@@ -150,8 +142,6 @@ public final class KitchenEmptyStateView {
 
         // Email contact
         HBox emailContact = createContactRow(
-            createEmailIcon(),
-            "kbs@kadampa.net"
         );
 
         actionBox.getChildren().addAll(actionTitle, emailContact);
@@ -161,27 +151,15 @@ public final class KitchenEmptyStateView {
     /**
      * Creates a contact info row with icon and text.
      */
-    private static HBox createContactRow(SVGPath icon, String contactText) {
+    private static HBox createContactRow() {
         HBox row = new HBox(10);
         row.setAlignment(Pos.CENTER);
 
-        Label textLabel = new Label(contactText);
+        Label textLabel = new Label("kbs@kadampa.net");
         textLabel.getStyleClass().add("kitchen-empty-state-contact-text");
 
-        row.getChildren().addAll(icon, textLabel);
+        row.getChildren().addAll(textLabel);
         return row;
-    }
-
-    /**
-     * Creates email icon SVG.
-     */
-    private static SVGPath createEmailIcon() {
-        SVGPath icon = new SVGPath();
-        icon.setContent("M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z");
-        icon.getStyleClass().add("kitchen-empty-state-contact-icon");
-        icon.setScaleX(1.2);
-        icon.setScaleY(1.2);
-        return icon;
     }
 
 }

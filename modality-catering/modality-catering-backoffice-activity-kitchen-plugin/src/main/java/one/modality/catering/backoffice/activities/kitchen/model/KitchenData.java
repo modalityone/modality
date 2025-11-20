@@ -99,8 +99,8 @@ public class KitchenData {
         private List<ScheduledItem> scheduledItems = new ArrayList<>();
         private List<Item> mealItems = new ArrayList<>();
         private List<Item> dietaryItems = new ArrayList<>();
-        private Map<ScheduledItemKey, Integer> attendanceCounts = new HashMap<>();
-        private Map<String, String> dietaryOptionSvgs = new HashMap<>();
+        private final Map<ScheduledItemKey, Integer> attendanceCounts = new HashMap<>();
+        private final Map<String, String> dietaryOptionSvgs = new HashMap<>();
         private Item totalVirtualItem;
         private Item unknownVirtualItem;
 
@@ -109,7 +109,7 @@ public class KitchenData {
             return this;
         }
 
-        public Builder mealItems(List<Item> mealItems) {
+        public Builder mealItems() {
             this.mealItems = mealItems;
             return this;
         }
@@ -119,25 +119,21 @@ public class KitchenData {
             return this;
         }
 
-        public Builder addAttendanceCount(LocalDate date, Item meal, Item dietaryOption, int count) {
+        public void addAttendanceCount(LocalDate date, Item meal, Item dietaryOption, int count) {
             ScheduledItemKey key = new ScheduledItemKey(date, meal, dietaryOption);
             attendanceCounts.put(key, count);
-            return this;
         }
 
-        public Builder dietaryOptionSvg(String code, String svg) {
+        public void dietaryOptionSvg(String code, String svg) {
             dietaryOptionSvgs.put(code, svg);
-            return this;
         }
 
-        public Builder totalVirtualItem(Item totalVirtualItem) {
+        public void totalVirtualItem(Item totalVirtualItem) {
             this.totalVirtualItem = totalVirtualItem;
-            return this;
         }
 
-        public Builder unknownVirtualItem(Item unknownVirtualItem) {
+        public void unknownVirtualItem(Item unknownVirtualItem) {
             this.unknownVirtualItem = unknownVirtualItem;
-            return this;
         }
 
         public KitchenData build() {

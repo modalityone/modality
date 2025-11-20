@@ -4,7 +4,6 @@ import dev.webfx.extras.i18n.controls.I18nControls;
 import dev.webfx.extras.styles.bootstrap.Bootstrap;
 import dev.webfx.extras.theme.luminance.LuminanceTheme;
 import dev.webfx.extras.time.pickers.DateField;
-import dev.webfx.extras.util.animation.Animations;
 import dev.webfx.platform.console.Console;
 import dev.webfx.platform.uischeduler.UiScheduler;
 import javafx.animation.FadeTransition;
@@ -21,17 +20,14 @@ import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.SVGPath;
 import javafx.util.Duration;
-import one.modality.base.client.i18n.BaseI18nKeys;
-import one.modality.base.shared.entities.Item;
-import one.modality.catering.backoffice.activities.kitchen.i18n.KitchenI18nKeys;
+import one.modality.catering.backoffice.activities.kitchen.AttendanceCounts;
+import one.modality.catering.backoffice.activities.kitchen.KitchenI18nKeys;
 import one.modality.catering.backoffice.activities.kitchen.model.KitchenDisplayModel;
 
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
-import java.time.format.FormatStyle;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Locale;
 
 /**
  * Main view component for Kitchen activity.
@@ -42,7 +38,6 @@ import java.util.Locale;
  */
 public final class KitchenViewUI {
 
-    private final BorderPane container;
     private final KitchenTableView tableView;
     private final Label dateRangeDisplay;
     private final DateField startDateField;
@@ -50,7 +45,6 @@ public final class KitchenViewUI {
     private final Button applyButton;
     private final Button nextWeekButton;
     private final ProgressIndicator progressIndicator;
-    private final StackPane contentStack;
     private final StackPane overlayPane;
     private final Label copiedFeedbackLabel;
     private final Label organizationLabel;
@@ -155,7 +149,7 @@ public final class KitchenViewUI {
         progressIndicator.setVisible(true); // Show initially during page load
 
         // Create a stack to overlay progress indicator on table
-        contentStack = new StackPane();
+        StackPane contentStack = new StackPane();
         contentStack.setMinHeight(400); // Ensure minimum height for centered progress indicator
         contentStack.getChildren().addAll(tableView.getNode(), progressIndicator);
         StackPane.setAlignment(progressIndicator, Pos.CENTER);
@@ -212,7 +206,7 @@ public final class KitchenViewUI {
         StackPane.setAlignment(emptyStateView, Pos.CENTER);
 
         // Create main container
-        container = new BorderPane();
+        BorderPane container = new BorderPane();
         container.setTop(headerContent);
         container.setCenter(centerStack);
         BorderPane.setMargin(headerContent, new Insets(10, 20, 0, 20)); // Top, Right, Bottom, Left - reduced top margin
@@ -263,8 +257,7 @@ public final class KitchenViewUI {
     /**
      * Updates the calendar display with new data.
      */
-    public void updateData(LocalDate startDate, LocalDate endDate, KitchenDisplayModel displayModel,
-            List<Item> selectedMeals) {
+    public void updateData(LocalDate startDate, LocalDate endDate, KitchenDisplayModel displayModel) {
         UiScheduler.runInUiThread(() -> {
             dev.webfx.platform.console.Console.log("KitchenViewUI.updateData called");
             dev.webfx.platform.console.Console
@@ -292,7 +285,7 @@ public final class KitchenViewUI {
                     dev.webfx.platform.console.Console.log("KitchenViewUI: Calling tableView.update");
 
                     // Check if there are any meals to display
-                    var counts = displayModel.getAttendanceCounts();
+                    AttendanceCounts counts = displayModel.attendanceCounts();
                     var allMeals = counts.getUniqueMeals();
 
                     // Filter to only meals that have data (non-zero Total count) in the date range
@@ -337,7 +330,7 @@ public final class KitchenViewUI {
 
                     // Hide loading indicator after table is fully rendered
                     // Use runLater to execute after the scene graph has been updated and rendered
-                    javafx.application.Platform.runLater(() -> hideLoading());
+                    javafx.application.Platform.runLater(this::hideLoading);
                 } catch (Exception e) {
                     dev.webfx.platform.console.Console.log("KitchenViewUI: Exception in tableView.update: " + e);
                     e.printStackTrace();
@@ -364,13 +357,6 @@ public final class KitchenViewUI {
 
     public Button getNextWeekButton() {
         return nextWeekButton;
-    }
-
-    /**
-     * Returns the organization label for placement in the table.
-     */
-    public Label getOrganizationLabel() {
-        return organizationLabel;
     }
 
     /**
@@ -401,8 +387,7 @@ public final class KitchenViewUI {
     private void styleCalendarIcon(DateField dateField) {
         // The DateField view is an HBox containing the text field and calendar icon
         Region dateFieldView = dateField.getView();
-        if (dateFieldView instanceof HBox) {
-            HBox container = (HBox) dateFieldView;
+        if (dateFieldView instanceof HBox container) {
             // Align items vertically center
             container.setAlignment(Pos.CENTER_LEFT);
 
@@ -423,7 +408,7 @@ public final class KitchenViewUI {
      */
     private void styleSVGPath(Node node) {
         if (node instanceof SVGPath) {
-            ((SVGPath) node).getStyleClass().add("kitchen-calendar-icon");
+            node.getStyleClass().add("kitchen-calendar-icon");
         } else if (node instanceof javafx.scene.Parent) {
             for (Node child : ((javafx.scene.Parent) node).getChildrenUnmodifiable()) {
                 styleSVGPath(child);
@@ -439,8 +424,7 @@ public final class KitchenViewUI {
 
         // Listen for when the calendar becomes visible (added to overlay), then force resize
         datePickerView.visibleProperty().addListener((obs, wasVisible, isVisible) -> {
-            if (isVisible && datePickerView instanceof Region) {
-                Region region = (Region) datePickerView;
+            if (isVisible && datePickerView instanceof Region region) {
                 // Use Platform.runLater to ensure this happens after relocateDatePicker
                 javafx.application.Platform.runLater(() -> {
                     region.setMinWidth(280);
@@ -453,8 +437,7 @@ public final class KitchenViewUI {
 
         // Also listen for parent changes (when added to overlay)
         datePickerView.parentProperty().addListener((obs, oldParent, newParent) -> {
-            if (newParent != null && datePickerView instanceof Region) {
-                Region region = (Region) datePickerView;
+            if (newParent != null && datePickerView instanceof Region region) {
                 javafx.application.Platform.runLater(() -> {
                     region.setMinWidth(280);
                     region.setPrefWidth(280);
@@ -476,23 +459,13 @@ public final class KitchenViewUI {
      */
     private void styleCalendarChildren(Node node) {
         if (node instanceof Region) {
-            ((Region) node).getStyleClass().add("kitchen-calendar-picker");
+            node.getStyleClass().add("kitchen-calendar-picker");
         }
         if (node instanceof javafx.scene.Parent) {
             for (Node child : ((javafx.scene.Parent) node).getChildrenUnmodifiable()) {
                 styleCalendarChildren(child);
             }
         }
-    }
-
-    /**
-     * Converts a JavaFX Color to CSS RGB code.
-     */
-    private String toRGBCode(Color color) {
-        int r = (int) (color.getRed() * 255);
-        int g = (int) (color.getGreen() * 255);
-        int b = (int) (color.getBlue() * 255);
-        return "rgb(" + r + ", " + g + ", " + b + ")";
     }
 
     /**
@@ -509,7 +482,7 @@ public final class KitchenViewUI {
         html.append("<table border='1' cellpadding='5' cellspacing='0' style='border-collapse: collapse; font-family: Arial, sans-serif;'>\n");
 
         // Get data from model
-        var counts = currentDisplayModel.getAttendanceCounts();
+        var counts = currentDisplayModel.attendanceCounts();
         var dates = new ArrayList<>(counts.getDates());
         dates.sort(LocalDate::compareTo);
 

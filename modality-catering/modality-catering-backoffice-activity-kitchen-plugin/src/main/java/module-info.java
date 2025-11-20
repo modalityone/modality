@@ -12,9 +12,7 @@ module modality.catering.backoffice.activity.kitchen.plugin {
     requires modality.base.backoffice.activity.home.plugin;
     requires modality.base.client.activity;
     requires modality.base.client.bootstrap;
-    requires modality.base.client.i18n;
     requires modality.base.client.icons;
-    requires modality.base.frontoffice.utility;
     requires modality.base.shared.entities;
     requires modality.base.shared.knownitems;
     requires modality.crm.backoffice.organization.fx;
@@ -24,7 +22,6 @@ module modality.catering.backoffice.activity.kitchen.plugin {
     requires webfx.extras.styles.bootstrap;
     requires webfx.extras.theme;
     requires webfx.extras.time.pickers;
-    requires webfx.extras.util.animation;
     requires webfx.extras.util.control;
     requires webfx.extras.util.dialog;
     requires webfx.kit.util;
@@ -42,7 +39,6 @@ module modality.catering.backoffice.activity.kitchen.plugin {
     // Exported packages
     exports one.modality.catering.backoffice.activities.kitchen;
     exports one.modality.catering.backoffice.activities.kitchen.controller;
-    exports one.modality.catering.backoffice.activities.kitchen.i18n;
     exports one.modality.catering.backoffice.activities.kitchen.model;
     exports one.modality.catering.backoffice.activities.kitchen.service;
     exports one.modality.catering.backoffice.activities.kitchen.view;

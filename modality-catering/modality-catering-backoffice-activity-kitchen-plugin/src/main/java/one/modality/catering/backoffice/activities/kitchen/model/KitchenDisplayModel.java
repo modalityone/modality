@@ -6,6 +6,7 @@ import one.modality.catering.backoffice.activities.kitchen.AttendanceCounts;
 
 import java.time.LocalDate;
 import java.util.*;
+import java.util.stream.Collectors;
 
 /**
  * Presentation model for the Kitchen UI.
@@ -14,35 +15,13 @@ import java.util.*;
  *
  * @author Claude Code (Refactored from KitchenActivity)
  */
-public final class KitchenDisplayModel {
+public record KitchenDisplayModel(AttendanceCounts attendanceCounts, Set<String> displayedMealNames) {
 
-    private final AttendanceCounts attendanceCounts;
-    private final Set<String> displayedMealNames;
-    private final Map<String, String> dietaryOptionSvgs;
-
-    private KitchenDisplayModel(
+    public KitchenDisplayModel(
             AttendanceCounts attendanceCounts,
-            Set<String> displayedMealNames,
-            Map<String, String> dietaryOptionSvgs) {
+            Set<String> displayedMealNames) {
         this.attendanceCounts = attendanceCounts;
         this.displayedMealNames = Collections.unmodifiableSet(displayedMealNames);
-        this.dietaryOptionSvgs = Collections.unmodifiableMap(dietaryOptionSvgs);
-    }
-
-    public AttendanceCounts getAttendanceCounts() {
-        return attendanceCounts;
-    }
-
-    public Set<String> getDisplayedMealNames() {
-        return displayedMealNames;
-    }
-
-    public Map<String, String> getDietaryOptionSvgs() {
-        return dietaryOptionSvgs;
-    }
-
-    public boolean hasData() {
-        return !dietaryOptionSvgs.isEmpty();
     }
 
     /**
@@ -54,7 +33,6 @@ public final class KitchenDisplayModel {
 
         AttendanceCounts attendanceCounts = new AttendanceCounts();
         Set<String> displayedMealNames = new HashSet<>();
-        Map<String, String> dietaryOptionSvgs = new HashMap<>();
 
         // Store virtual dietary option SVGs (Total and ?)
         String totalSvg = kitchenData.getDietaryOptionSvg("Total");
@@ -80,8 +58,6 @@ public final class KitchenDisplayModel {
             String svg = kitchenData.getDietaryOptionSvg(dietaryItem.getCode());
             if (svg != null) {
                 attendanceCounts.storeDietaryOptionSvg(dietaryItem.getCode(), svg);
-                String keyText = dietaryItem.getName() + " (" + dietaryItem.getCode() + ")";
-                dietaryOptionSvgs.put(keyText, svg);
             }
         }
 
@@ -89,7 +65,7 @@ public final class KitchenDisplayModel {
         for (LocalDate date : kitchenData.getDates()) {
             List<Item> mealsForDate = kitchenData.getMealsForDate(date);
             Console.log("Debug: Date " + date + " - Found " + mealsForDate.size() + " meals: "
-                    + mealsForDate.stream().map(Item::getName).collect(java.util.stream.Collectors.joining(", ")));
+                    + mealsForDate.stream().map(Item::getName).collect(Collectors.joining(", ")));
 
             for (Item meal : mealsForDate) {
                 displayedMealNames.add(meal.getName());
@@ -118,7 +94,7 @@ public final class KitchenDisplayModel {
         Console.log("Unique dates found: " + attendanceCounts.getDates().size());
         Console.log("Displayed meals: " + displayedMealNames);
 
-        return new KitchenDisplayModel(attendanceCounts, displayedMealNames, dietaryOptionSvgs);
+        return new KitchenDisplayModel(attendanceCounts, displayedMealNames);
     }
 
     /**
@@ -127,7 +103,7 @@ public final class KitchenDisplayModel {
     public static KitchenDisplayModel empty() {
         return new KitchenDisplayModel(
                 new AttendanceCounts(),
-                Collections.emptySet(),
-                Collections.emptyMap());
+                Collections.emptySet()
+        );
     }
 }
