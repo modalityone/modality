@@ -156,3 +156,210 @@
     -fx-font-weight: bold;
     -fx-font-size: 14px;
 }
+
+/* Kitchen Icon */
+.kitchen-icon {
+    -fx-fill: #0096D6;
+}
+
+/* Organization Label */
+.kitchen-organization-label {
+    -fx-text-fill: #0096D6;
+}
+
+/* Separator */
+.kitchen-separator {
+    -fx-background-color: #d0d0d0;
+}
+
+/* Calendar Icon */
+.kitchen-calendar-icon {
+    -fx-fill: rgb(102, 102, 102);
+}
+
+/* Calendar Picker */
+.kitchen-calendar-picker {
+    -fx-background-color: rgb(245, 245, 245);
+    -fx-text-fill: rgb(102, 102, 102);
+    -fx-border-width: 0;
+}
+
+/* Clickable Cell Hover Effects */
+.kitchen-cell-clickable:hover {
+    -fx-background-color: #0077b3;
+}
+
+.kitchen-diet-cell-clickable:hover {
+    -fx-background-color: #e3f2fd;
+}
+
+/* Attendee Dialog Icon */
+.attendee-dialog-icon {
+    -fx-fill: #0096D6;
+}
+
+.attendee-dialog-icon-total {
+    -fx-fill: #0d6efd;
+}
+
+/* Attendee Dialog Title */
+.attendee-dialog-title {
+    -fx-font-size: 20px;
+    -fx-font-weight: bold;
+}
+
+/* Attendee Dialog Scroll Pane */
+.attendee-dialog-scroll {
+    -fx-background-color: transparent;
+}
+
+/* Attendee Name Label */
+.attendee-name-label {
+    -fx-font-weight: bold;
+    -fx-font-size: 14px;
+}
+
+/* Attendee Row */
+.attendee-row {
+    -fx-background-color: white;
+}
+
+.attendee-row.striped {
+    -fx-background-color: #f8f9fa;
+}
+
+.attendee-row.with-separator {
+    -fx-border-color: #e0e0e0;
+    -fx-border-width: 1 0 0 0;
+}
+
+/* Dietary Section Title */
+.dietary-section-title {
+    -fx-font-size: 16px;
+    -fx-font-weight: bold;
+}
+
+/* Dietary Section Header */
+.dietary-section-header {
+    -fx-background-color: #f8f9fa;
+    -fx-border-color: #dee2e6;
+    -fx-border-width: 0 0 2 0;
+}
+
+/* Dietary Section */
+.dietary-section {
+    -fx-border-color: #dee2e6;
+    -fx-border-width: 1;
+    -fx-border-radius: 6;
+    -fx-background-radius: 6;
+    -fx-background-color: white;
+}
+
+/* Compact Attendee Name */
+.compact-attendee-name {
+    -fx-font-size: 13px;
+}
+
+/* Compact Attendee Row */
+.compact-attendee-row {
+    -fx-background-color: white;
+}
+
+.compact-attendee-row.striped {
+    -fx-background-color: #f8f9fa;
+}
+
+.compact-attendee-row.with-separator {
+    -fx-border-color: #e0e0e0;
+    -fx-border-width: 1 0 0 0;
+}
+
+/* ========================================
+   Empty State Styles
+   ======================================== */
+
+.kitchen-empty-state-container {
+    -fx-background-color: white;
+    -fx-background-radius: 16;
+    -fx-effect: dropshadow(gaussian, rgba(0, 0, 0, 0.1), 40, 0, 0, 10);
+}
+
+.kitchen-empty-state-icon-container {
+    -fx-padding: 0;
+}
+
+.kitchen-empty-state-config-icon {
+    -fx-fill: #6c757d;
+}
+
+.kitchen-empty-state-title {
+    -fx-text-fill: #2c3e50;
+    -fx-font-size: 28px;
+    -fx-font-weight: bold;
+    -fx-line-spacing: 0.3;
+}
+
+.kitchen-empty-state-subtitle {
+    -fx-text-fill: #0096D6;
+    -fx-font-size: 18px;
+    -fx-font-weight: 600;
+}
+
+.kitchen-empty-state-message {
+    -fx-text-fill: #5a6c7d;
+    -fx-font-size: 16px;
+    -fx-line-spacing: 0.6;
+}
+
+.kitchen-empty-state-info-box {
+    -fx-background-color: #fff3cd;
+    -fx-border-color: transparent transparent transparent #ffc107;
+    -fx-border-width: 0 0 0 4;
+    -fx-border-radius: 8;
+    -fx-background-radius: 8;
+}
+
+.kitchen-empty-state-info-title {
+    -fx-text-fill: #856404;
+    -fx-font-size: 15px;
+    -fx-font-weight: 600;
+}
+
+.kitchen-empty-state-info-text {
+    -fx-text-fill: #856404;
+    -fx-font-size: 14px;
+    -fx-line-spacing: 0.5;
+}
+
+.kitchen-empty-state-action-box {
+    -fx-background-color: #e7f3ff;
+    -fx-border-color: #0096D6;
+    -fx-border-width: 2;
+    -fx-border-radius: 8;
+    -fx-background-radius: 8;
+}
+
+.kitchen-empty-state-action-title {
+    -fx-text-fill: #0096D6;
+    -fx-font-size: 16px;
+    -fx-font-weight: 600;
+}
+
+.kitchen-empty-state-contact-text {
+    -fx-text-fill: #2c3e50;
+    -fx-font-size: 15px;
+    -fx-font-weight: bold;
+}
+
+.kitchen-empty-state-contact-icon {
+    -fx-stroke: #0096D6;
+    -fx-stroke-width: 2;
+    -fx-stroke-line-cap: round;
+    -fx-stroke-line-join: round;
+    -fx-fill: transparent;
+}
+
+.kitchen-empty-state-footer {
+    -fx-text-fill: #95a5a6;
+    -fx-font-size: 13px;
+}

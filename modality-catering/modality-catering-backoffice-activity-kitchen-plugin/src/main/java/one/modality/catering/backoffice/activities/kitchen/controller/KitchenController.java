@@ -2,12 +2,14 @@ package one.modality.catering.backoffice.activities.kitchen.controller;
 
 import dev.webfx.kit.util.properties.FXProperties;
 import dev.webfx.platform.console.Console;
+import dev.webfx.platform.uischeduler.UiScheduler;
 import dev.webfx.stack.orm.domainmodel.DataSourceModel;
 import javafx.beans.property.ObjectProperty;
 import javafx.beans.property.SimpleObjectProperty;
 import javafx.scene.Node;
 import one.modality.base.shared.entities.Organization;
 import one.modality.catering.backoffice.activities.kitchen.model.KitchenDisplayModel;
+import one.modality.catering.backoffice.activities.kitchen.view.AttendeeDetailsDialog;
 import one.modality.catering.backoffice.activities.kitchen.view.KitchenViewUI;
 import one.modality.crm.backoffice.organization.fx.FXOrganization;
 import one.modality.crm.backoffice.organization.fx.FXOrganizationId;
@@ -58,6 +60,9 @@ public final class KitchenController {
         // Wire UI Controls
         view.getApplyButton().setOnAction(e -> applyDateFilter());
         view.getNextWeekButton().setOnAction(e -> setNextWeek());
+
+        // Wire cell click handler for showing attendee details
+        view.setCellClickHandler(this::onCellClicked);
 
         // Start the logic immediately after initialization
         Console.log("KitchenController: Calling startLogic from initialize()");
@@ -191,5 +196,158 @@ public final class KitchenController {
         } else {
             view.setOrganizationName(null);
         }
+    }
+
+    /**
+     * Handles cell clicks to show attendee details dialog.
+     */
+    private void onCellClicked(LocalDate date, String meal, String dietaryOptionCode, int count) {
+        Console.log("Cell clicked: " + meal + " / " + dietaryOptionCode + " on " + date + " (" + count + " people)");
+
+        // Check if this is a "Total" cell click (all diets)
+        if ("Total".equals(dietaryOptionCode)) {
+            handleTotalCellClick(date, meal, count);
+        } else {
+            handleDietCellClick(date, meal, dietaryOptionCode, count);
+        }
+    }
+
+    /**
+     * Handles click on a specific dietary option cell.
+     */
+    private void handleDietCellClick(LocalDate date, String meal, String dietaryOptionCode, int count) {
+        // Get dietary option name from current display model
+        KitchenDisplayModel displayModel = dataController.getCurrentDisplayModel();
+
+        // Double-check the count from the model
+        int modelCount = displayModel.getAttendanceCounts().getCount(date, meal, dietaryOptionCode);
+        Console.log("Count from AttendanceCounts model: " + modelCount);
+        if (modelCount != count) {
+            Console.log("WARNING: Count mismatch! Cell shows " + count + " but model has " + modelCount);
+        }
+
+        String dietaryOptionNameFromModel = displayModel.getAttendanceCounts().getNameForDietaryOption(dietaryOptionCode);
+        final String dietaryOptionName = dietaryOptionNameFromModel != null ? dietaryOptionNameFromModel : dietaryOptionCode;
+
+        Console.log("Loading attendee details...");
+
+        // Show loading dialog
+        dev.webfx.extras.util.dialog.DialogCallback loadingDialog = showLoadingDialog();
+
+        // Load attendee details
+        dataController.loadAttendeeDetails(
+                FXOrganizationId.getOrganizationId(),
+                date,
+                meal,
+                dietaryOptionCode)
+                .onSuccess(attendees -> {
+                    Console.log("Attendees loaded successfully: " + attendees.size() + " people");
+
+                    // Run on UI thread
+                    UiScheduler.runInUiThread(() -> {
+                        Console.log("Showing dialog...");
+
+                        // Close loading dialog
+                        loadingDialog.closeDialog();
+
+                        // Show dialog with attendees
+                        try {
+                            AttendeeDetailsDialog.showAttendeeDialog(
+                                    view.getOverlayPane(),
+                                    date,
+                                    meal,
+                                    dietaryOptionName,
+                                    attendees,
+                                    count
+                            );
+                            Console.log("Dialog shown");
+                        } catch (Exception e) {
+                            Console.log("Error showing dialog: " + e);
+                            e.printStackTrace();
+                        }
+                    });
+                })
+                .onFailure(error -> {
+                    Console.log("Failed to load attendee details: " + error);
+                    if (error instanceof Throwable) {
+                        ((Throwable) error).printStackTrace();
+                    }
+                    // Close loading dialog on error
+                    UiScheduler.runInUiThread(() -> loadingDialog.closeDialog());
+                });
+    }
+
+    /**
+     * Handles click on Total cell (all dietary options).
+     */
+    private void handleTotalCellClick(LocalDate date, String meal, int count) {
+        Console.log("Loading all attendees grouped by diet...");
+
+        // Show loading dialog
+        dev.webfx.extras.util.dialog.DialogCallback loadingDialog = showLoadingDialog();
+
+        // Load attendees grouped by dietary option
+        dataController.loadAllAttendeesGroupedByDiet(
+                FXOrganizationId.getOrganizationId(),
+                date,
+                meal)
+                .onSuccess(result -> {
+                    Console.log("Attendees loaded successfully, grouped by diet");
+
+                    // Run on UI thread
+                    UiScheduler.runInUiThread(() -> {
+                        Console.log("Showing total attendees dialog...");
+
+                        // Close loading dialog
+                        loadingDialog.closeDialog();
+
+                        try {
+                            AttendeeDetailsDialog.showTotalAttendeeDialog(
+                                    view.getOverlayPane(),
+                                    date,
+                                    meal,
+                                    result.attendeesByDiet,
+                                    result.dietaryOptionNames,
+                                    count
+                            );
+                            Console.log("Dialog shown");
+                        } catch (Exception e) {
+                            Console.log("Error showing dialog: " + e);
+                            e.printStackTrace();
+                        }
+                    });
+                })
+                .onFailure(error -> {
+                    Console.log("Failed to load attendees: " + error);
+                    if (error instanceof Throwable) {
+                        ((Throwable) error).printStackTrace();
+                    }
+                    // Close loading dialog on error
+                    UiScheduler.runInUiThread(() -> loadingDialog.closeDialog());
+                });
+    }
+
+    /**
+     * Shows a loading dialog with a progress indicator.
+     */
+    private dev.webfx.extras.util.dialog.DialogCallback showLoadingDialog() {
+        javafx.scene.control.ProgressIndicator progressIndicator = new javafx.scene.control.ProgressIndicator();
+        progressIndicator.setMaxSize(60, 60);
+
+        javafx.scene.layout.VBox loadingContent = new javafx.scene.layout.VBox(15);
+        loadingContent.setAlignment(javafx.geometry.Pos.CENTER);
+        loadingContent.setPadding(new javafx.geometry.Insets(40));
+        loadingContent.getChildren().add(progressIndicator);
+
+        javafx.scene.control.Label loadingLabel = new javafx.scene.control.Label("Loading...");
+        loadingLabel.setStyle("-fx-font-size: 14px; -fx-text-fill: #666;");
+        loadingContent.getChildren().add(loadingLabel);
+
+        return dev.webfx.extras.util.dialog.DialogUtil.showModalNodeInGoldLayout(
+                loadingContent,
+                view.getOverlayPane(),
+                20,
+                20
+        );
     }
 }

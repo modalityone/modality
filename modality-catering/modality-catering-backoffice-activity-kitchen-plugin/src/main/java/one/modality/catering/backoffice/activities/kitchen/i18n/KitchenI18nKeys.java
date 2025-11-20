@@ -16,5 +16,7 @@ public interface KitchenI18nKeys {
     Object CopyTable = "CopyTable";
     Object Copied = "Copied";
     Object Total = "Total";
+    Object Print = "Print";
+    Object Close = "Close";
 
 }

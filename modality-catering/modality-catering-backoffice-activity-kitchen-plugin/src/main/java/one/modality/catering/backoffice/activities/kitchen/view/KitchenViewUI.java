@@ -17,11 +17,7 @@ import javafx.scene.control.Label;
 import javafx.scene.control.ProgressIndicator;
 import javafx.scene.input.Clipboard;
 import javafx.scene.input.ClipboardContent;
-import javafx.scene.layout.BorderPane;
-import javafx.scene.layout.HBox;
-import javafx.scene.layout.Region;
-import javafx.scene.layout.StackPane;
-import javafx.scene.layout.VBox;
+import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.SVGPath;
 import javafx.util.Duration;
@@ -58,6 +54,9 @@ public final class KitchenViewUI {
     private final StackPane overlayPane;
     private final Label copiedFeedbackLabel;
     private final Label organizationLabel;
+    private final VBox emptyStateView;
+    private final VBox tableContainer;
+    private final HBox headerContent;
 
     // Store current display model for export
     private KitchenDisplayModel currentDisplayModel;
@@ -78,9 +77,8 @@ public final class KitchenViewUI {
         Label filterLabel = I18nControls.newLabel(KitchenI18nKeys.Filter);
         filterLabel.getStyleClass().add("kitchen-filter-label");
 
-        // Create WebFX DateFields (text field with calendar icon)
+        // Create WebFX DateFields (text field with calendar icon) - compact width
         startDateField = new DateField(overlayPane);
-        startDateField.getView().setPrefWidth(140);
         styleCalendarIcon(startDateField);
         styleCalendarPicker(startDateField);
 
@@ -88,7 +86,6 @@ public final class KitchenViewUI {
         arrowLabel.getStyleClass().add("kitchen-filter-label");
 
         endDateField = new DateField(overlayPane);
-        endDateField.getView().setPrefWidth(140);
         styleCalendarIcon(endDateField);
         styleCalendarPicker(endDateField);
 
@@ -98,44 +95,59 @@ public final class KitchenViewUI {
         nextWeekButton = I18nControls.newButton(KitchenI18nKeys.NextWeek);
         nextWeekButton.getStyleClass().add("btn-secondary");
 
-        // Create kitchen icon (chef hat / restaurant icon)
+        // Create kitchen icon (chef hat / restaurant icon) - smaller size
         SVGPath kitchenIcon = new SVGPath();
         kitchenIcon.setContent("M18.06 22.99h1.66c.84 0 1.53-.64 1.63-1.46L23 5.05h-5V1h-1v4h-1V1h-1v4h-1V1H13v4H8l1.65 16.48c.1.82.79 1.46 1.63 1.46h1.66v-6.03c0-.77.62-1.39 1.39-1.39h1.34c.77 0 1.39.62 1.39 1.39v6.03zM7 2H2v2h5V2z");
-        kitchenIcon.setFill(Color.web("#0096D6"));
-        kitchenIcon.setScaleX(1.2);
-        kitchenIcon.setScaleY(1.2);
+        kitchenIcon.getStyleClass().add("kitchen-icon");
+        kitchenIcon.setScaleX(0.75);
+        kitchenIcon.setScaleY(0.75);
 
-        // Create title with icon
-        Label titleLabel = Bootstrap.textPrimary(Bootstrap.h2(I18nControls.newLabel(KitchenI18nKeys.Meals)));
+        // Create title with icon - smaller font
+        Label titleLabel = Bootstrap.textPrimary(Bootstrap.h4(I18nControls.newLabel(KitchenI18nKeys.Meals)));
         titleLabel.setGraphic(kitchenIcon);
         titleLabel.setContentDisplay(ContentDisplay.LEFT);
-        titleLabel.setGraphicTextGap(12);
+        titleLabel.setGraphicTextGap(6);
 
-        // Create organization label (will be updated with actual organization name)
+        // Create organization label - will be placed in table's top-left cell
         organizationLabel = new Label();
-        organizationLabel.getStyleClass().addAll(Bootstrap.TEXT_SECONDARY, Bootstrap.SMALL);
-        organizationLabel.setPadding(new Insets(5, 0, 0, 0));
+        organizationLabel.getStyleClass().addAll(Bootstrap.TEXT_SECONDARY, Bootstrap.SMALL, "kitchen-organization-label");
+        organizationLabel.setWrapText(true);
+        organizationLabel.setMaxWidth(200);
 
-        // Title area with organization
-        VBox titleArea = new VBox(5, titleLabel, organizationLabel);
-        titleArea.setAlignment(Pos.CENTER_LEFT);
+        // Create a nice vertical separator
+        Region separator = new Region();
+        separator.setPrefWidth(1);
+        separator.setMinHeight(20);
+        separator.setMaxHeight(20);
+        separator.getStyleClass().add("kitchen-separator");
 
-        HBox filterBox = new HBox(10, filterLabel, startDateField.getView(), arrowLabel, endDateField.getView(),
-                applyButton,
-                nextWeekButton);
+        // Compact date range display with "Showing" label
+        Label showingLabel = I18nControls.newLabel(KitchenI18nKeys.Showing);
+        showingLabel.getStyleClass().addAll(Bootstrap.TEXT_SECONDARY, Bootstrap.SMALL);
+
+        HBox dateDisplayBox = new HBox(6, showingLabel, dateRangeDisplay);
+        dateDisplayBox.setAlignment(Pos.CENTER_LEFT);
+
+        // Compact filter controls with reduced date field width
+        startDateField.getView().setPrefWidth(120);
+        endDateField.getView().setPrefWidth(120);
+
+        HBox filterBox = new HBox(6, filterLabel, startDateField.getView(), arrowLabel, endDateField.getView(),
+                applyButton, nextWeekButton);
         filterBox.setAlignment(Pos.CENTER_LEFT);
-        filterBox.setPadding(new Insets(6, 12, 6, 12));
+        filterBox.setPadding(new Insets(3, 8, 3, 8));
         filterBox.getStyleClass().add("kitchen-filter-box");
 
-        Label showingLabel = I18nControls.newLabel(KitchenI18nKeys.Showing);
-        HBox filterArea = new HBox(15, showingLabel, dateRangeDisplay, filterBox);
-        filterArea.setAlignment(Pos.CENTER_LEFT);
+        // Group showing and filter together
+        HBox showingAndFilters = new HBox(12, dateDisplayBox, filterBox);
+        showingAndFilters.setAlignment(Pos.CENTER_LEFT);
 
-        // Combine title and filter areas
-        VBox headerContent = new VBox(20, titleArea, filterArea);
-        headerContent.setPadding(new Insets(20, 20, 15, 20));
+        // Single-line header: title | separator | showing+filters (no spacer)
+        headerContent = new HBox(15, titleLabel, separator, showingAndFilters);
+        headerContent.setAlignment(Pos.CENTER_LEFT);
+        headerContent.setPadding(new Insets(10, 15, 8, 15));
         headerContent.getStyleClass().add("kitchen-top-header");
-        headerContent.setMaxWidth(Region.USE_PREF_SIZE);
+        headerContent.setMaxWidth(Region.USE_PREF_SIZE); // Fit to content width
 
         // Create progress indicator
         progressIndicator = new ProgressIndicator();
@@ -186,14 +198,25 @@ public final class KitchenViewUI {
         copyButtonsBox.setPadding(new Insets(10, 0, 0, 0));
 
         // Wrap table and copy buttons in a VBox
-        VBox tableContainer = new VBox(10, contentStack, copyButtonsBox);
+        tableContainer = new VBox(10, contentStack, copyButtonsBox);
+
+        // Create empty state view
+        emptyStateView = KitchenEmptyStateView.createEmptyStateView();
+        emptyStateView.setVisible(false);
+        emptyStateView.setManaged(false);
+
+        // Create a StackPane to hold either table or empty state
+        StackPane centerStack = new StackPane();
+        centerStack.getChildren().addAll(tableContainer, emptyStateView);
+        StackPane.setAlignment(tableContainer, Pos.TOP_LEFT);
+        StackPane.setAlignment(emptyStateView, Pos.CENTER);
 
         // Create main container
         container = new BorderPane();
         container.setTop(headerContent);
-        container.setCenter(tableContainer);
-        BorderPane.setMargin(headerContent, new Insets(20, 20, 0, 20)); // Top, Right, Bottom, Left
-        BorderPane.setMargin(tableContainer, new Insets(20));
+        container.setCenter(centerStack);
+        BorderPane.setMargin(headerContent, new Insets(10, 20, 0, 20)); // Top, Right, Bottom, Left - reduced top margin
+        BorderPane.setMargin(centerStack, new Insets(20));
 
         // Apply styling to show the same background if the scroll pane doesn't cover
         // the whole area
@@ -207,6 +230,13 @@ public final class KitchenViewUI {
      * Returns the root node of this view (includes overlay pane for date pickers).
      */
     public Node getNode() {
+        return overlayPane;
+    }
+
+    /**
+     * Returns the overlay pane (used for dialogs).
+     */
+    public Pane getOverlayPane() {
         return overlayPane;
     }
 
@@ -260,8 +290,50 @@ public final class KitchenViewUI {
             if (displayModel != null) {
                 try {
                     dev.webfx.platform.console.Console.log("KitchenViewUI: Calling tableView.update");
-                    tableView.update(displayModel.getAttendanceCounts(), startDate, endDate);
-                    dev.webfx.platform.console.Console.log("KitchenViewUI: tableView.update returned");
+
+                    // Check if there are any meals to display
+                    var counts = displayModel.getAttendanceCounts();
+                    var allMeals = counts.getUniqueMeals();
+
+                    // Filter to only meals that have data (non-zero Total count) in the date range
+                    List<LocalDate> dates = new ArrayList<>();
+                    for (LocalDate date = startDate; !date.isAfter(endDate); date = date.plusDays(1)) {
+                        dates.add(date);
+                    }
+
+                    boolean hasMeals = allMeals.stream()
+                        .anyMatch(meal -> {
+                            // Check if this meal has any non-zero Total count in the date range
+                            for (LocalDate date : dates) {
+                                int totalCount = counts.getCount(date, meal, "Total");
+                                if (totalCount > 0) {
+                                    return true; // Has data
+                                }
+                            }
+                            return false; // No data for this meal
+                        });
+
+                    if (hasMeals) {
+                        // Show table view with header
+                        headerContent.setVisible(true);
+                        headerContent.setManaged(true);
+                        tableContainer.setVisible(true);
+                        tableContainer.setManaged(true);
+                        emptyStateView.setVisible(false);
+                        emptyStateView.setManaged(false);
+
+                        tableView.update(counts, startDate, endDate, organizationLabel);
+                        dev.webfx.platform.console.Console.log("KitchenViewUI: tableView.update returned");
+                    } else {
+                        // Show empty state, hide header and table
+                        dev.webfx.platform.console.Console.log("KitchenViewUI: No meals found, showing empty state");
+                        headerContent.setVisible(false);
+                        headerContent.setManaged(false);
+                        tableContainer.setVisible(false);
+                        tableContainer.setManaged(false);
+                        emptyStateView.setVisible(true);
+                        emptyStateView.setManaged(true);
+                    }
 
                     // Hide loading indicator after table is fully rendered
                     // Use runLater to execute after the scene graph has been updated and rendered
@@ -295,7 +367,21 @@ public final class KitchenViewUI {
     }
 
     /**
-     * Sets the organization name displayed in the header.
+     * Returns the organization label for placement in the table.
+     */
+    public Label getOrganizationLabel() {
+        return organizationLabel;
+    }
+
+    /**
+     * Sets the click handler for table cells.
+     */
+    public void setCellClickHandler(KitchenTableView.CellClickHandler handler) {
+        tableView.setCellClickHandler(handler);
+    }
+
+    /**
+     * Sets the organization name displayed in the table's top-left cell.
      */
     public void setOrganizationName(String organizationName) {
         UiScheduler.runInUiThread(() -> {
@@ -333,12 +419,11 @@ public final class KitchenViewUI {
     }
 
     /**
-     * Recursively finds and styles SVGPath nodes to be grey.
+     * Recursively finds and styles SVGPath nodes with CSS class.
      */
     private void styleSVGPath(Node node) {
         if (node instanceof SVGPath) {
-            // Use Java Color instead of web color - grey color (102, 102, 102 = #666666)
-            ((SVGPath) node).setFill(Color.rgb(102, 102, 102));
+            ((SVGPath) node).getStyleClass().add("kitchen-calendar-icon");
         } else if (node instanceof javafx.scene.Parent) {
             for (Node child : ((javafx.scene.Parent) node).getChildrenUnmodifiable()) {
                 styleSVGPath(child);
@@ -347,16 +432,10 @@ public final class KitchenViewUI {
     }
 
     /**
-     * Styles the calendar picker popup to be grey (full size, appears under text
-     * field).
+     * Styles the calendar picker popup (full size, appears under text field).
      */
     private void styleCalendarPicker(DateField dateField) {
         Node datePickerView = dateField.getDatePicker().getView();
-
-        // Use Java colors: light grey background (245, 245, 245 = #f5f5f5) and grey
-        // text (102, 102, 102 = #666666)
-        String greyBg = toRGBCode(Color.rgb(245, 245, 245));
-        String greyText = toRGBCode(Color.rgb(102, 102, 102));
 
         // Listen for when the calendar becomes visible (added to overlay), then force resize
         datePickerView.visibleProperty().addListener((obs, wasVisible, isVisible) -> {
@@ -385,27 +464,23 @@ public final class KitchenViewUI {
             }
         });
 
-        // Remove border and set colors
-        datePickerView.setStyle("-fx-background-color: " + greyBg + "; -fx-text-fill: " + greyText
-                + "; -fx-border-width: 0; -fx-border-color: transparent;");
+        // Apply CSS class for styling
+        datePickerView.getStyleClass().add("kitchen-calendar-picker");
 
-        // Apply grey styling to all children recursively
-        styleCalendarChildren(datePickerView, Color.rgb(102, 102, 102), Color.rgb(245, 245, 245));
+        // Apply styling to all children recursively
+        styleCalendarChildren(datePickerView);
     }
 
     /**
-     * Recursively applies grey styling to calendar picker children.
+     * Recursively applies CSS classes to calendar picker children.
      */
-    private void styleCalendarChildren(Node node, Color textColor, Color bgColor) {
+    private void styleCalendarChildren(Node node) {
         if (node instanceof Region) {
-            Region region = (Region) node;
-            String textRgb = toRGBCode(textColor);
-            String bgRgb = toRGBCode(bgColor);
-            region.setStyle("-fx-text-fill: " + textRgb + "; -fx-background-color: " + bgRgb + ";");
+            ((Region) node).getStyleClass().add("kitchen-calendar-picker");
         }
         if (node instanceof javafx.scene.Parent) {
             for (Node child : ((javafx.scene.Parent) node).getChildrenUnmodifiable()) {
-                styleCalendarChildren(child, textColor, bgColor);
+                styleCalendarChildren(child);
             }
         }
     }

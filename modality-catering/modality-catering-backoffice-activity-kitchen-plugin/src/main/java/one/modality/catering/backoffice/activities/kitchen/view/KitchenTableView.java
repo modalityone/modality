@@ -4,11 +4,13 @@ import dev.webfx.extras.i18n.controls.I18nControls;
 import dev.webfx.extras.util.control.Controls;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
+import javafx.scene.Cursor;
 import javafx.scene.Node;
 import javafx.scene.control.Label;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.HBox;
+import javafx.scene.layout.Pane;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
 import one.modality.catering.backoffice.activities.kitchen.AttendanceCounts;
@@ -20,6 +22,7 @@ import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.function.BiConsumer;
 
 /**
  * Table view for Kitchen Activity.
@@ -31,6 +34,17 @@ public class KitchenTableView {
     private final GridPane gridPane;
     private static final DateTimeFormatter DAY_FORMATTER = DateTimeFormatter.ofPattern("EEE");
     private static final DateTimeFormatter DATE_FORMATTER = DateTimeFormatter.ofPattern("dd");
+
+    // Click handler for cells: (date, meal, dietaryOption, count) -> void
+    private CellClickHandler cellClickHandler;
+
+    /**
+     * Interface for handling cell clicks.
+     */
+    @FunctionalInterface
+    public interface CellClickHandler {
+        void onCellClick(LocalDate date, String meal, String dietaryOption, int count);
+    }
 
     public KitchenTableView() {
         gridPane = new GridPane();
@@ -60,7 +74,14 @@ public class KitchenTableView {
         return scrollPane;
     }
 
-    public void update(AttendanceCounts counts, LocalDate startDate, LocalDate endDate) {
+    /**
+     * Sets the click handler for diet option cells.
+     */
+    public void setCellClickHandler(CellClickHandler handler) {
+        this.cellClickHandler = handler;
+    }
+
+    public void update(AttendanceCounts counts, LocalDate startDate, LocalDate endDate, Label organizationLabel) {
         gridPane.getChildren().clear();
         gridPane.getColumnConstraints().clear();
         gridPane.getRowConstraints().clear();
@@ -95,8 +116,13 @@ public class KitchenTableView {
         gridPane.getColumnConstraints().add(totalCol);
 
         // --- Header Row (Dates) ---
-        // Empty top-left cell
+        // Top-left cell with organization name
         StackPane topLeft = new StackPane();
+        if (organizationLabel != null) {
+            topLeft.getChildren().add(organizationLabel);
+            topLeft.setAlignment(Pos.CENTER_LEFT);
+            topLeft.setPadding(new Insets(8, 10, 8, 10));
+        }
         topLeft.getStyleClass().addAll("kitchen-date-header", "kitchen-cell");
         gridPane.add(topLeft, 0, 0);
 
@@ -155,6 +181,21 @@ public class KitchenTableView {
                 StackPane cell = new StackPane(countLabel);
                 cell.setPadding(new Insets(8, 6, 8, 6));
                 cell.getStyleClass().addAll("kitchen-meal-count-cell", "kitchen-cell");
+
+                // Make cell clickable if count > 0 and handler is set
+                if (count > 0 && cellClickHandler != null) {
+                    cell.setCursor(Cursor.HAND);
+                    cell.getStyleClass().add("kitchen-cell-clickable");
+                    final LocalDate clickedDate = date;
+                    final String clickedMeal = meal;
+                    final int clickedCount = count;
+
+                    cell.setOnMouseClicked(event -> {
+                        // Pass "Total" as the dietary option code to indicate all diets
+                        cellClickHandler.onCellClick(clickedDate, clickedMeal, "Total", clickedCount);
+                    });
+                }
+
                 gridPane.add(cell, dateCol++, rowIndex);
                 mealTotal += count;
             }
@@ -218,6 +259,21 @@ public class KitchenTableView {
                         cell.getStyleClass().add("striped");
                     }
                     cell.getStyleClass().add("kitchen-cell");
+
+                    // Make cell clickable if count > 0
+                    if (count > 0 && cellClickHandler != null) {
+                        cell.setCursor(Cursor.HAND);
+                        cell.getStyleClass().add("kitchen-diet-cell-clickable");
+                        final LocalDate clickedDate = date;
+                        final String clickedMeal = meal;
+                        final String clickedDietCode = dietCode;
+                        final int clickedCount = count;
+
+                        cell.setOnMouseClicked(event -> {
+                            cellClickHandler.onCellClick(clickedDate, clickedMeal, clickedDietCode, clickedCount);
+                        });
+                    }
+
                     gridPane.add(cell, dateCol++, rowIndex);
                     dietTotal += count;
                 }
