@@ -1,9 +1,11 @@
 package one.modality.catering.backoffice.activities.kitchen;
 
+import dev.webfx.extras.util.control.Controls;
 import dev.webfx.stack.orm.domainmodel.activity.viewdomain.impl.ViewDomainActivityBase;
 import dev.webfx.stack.orm.domainmodel.activity.viewdomain.impl.ViewDomainActivityContextFinal;
 import dev.webfx.stack.routing.uirouter.activity.uiroute.UiRouteActivityContextMixin;
 import javafx.scene.Node;
+import javafx.scene.layout.Region;
 import one.modality.base.client.activity.ModalityButtonFactoryMixin;
 import one.modality.catering.backoffice.activities.kitchen.controller.KitchenController;
 
@@ -27,7 +29,9 @@ final class KitchenActivity extends ViewDomainActivityBase
         controller.initialize();
         Node viewNode = controller.getViewNode();
         dev.webfx.platform.console.Console.log("KitchenActivity.buildUi returning node: " + viewNode);
-        return viewNode;
+
+        // Wrap the entire view in a vertical ScrollPane with padding (like RecurringEventsActivity)
+        return Controls.createVerticalScrollPaneWithPadding(10, (Region) viewNode);
     }
 
     @Override

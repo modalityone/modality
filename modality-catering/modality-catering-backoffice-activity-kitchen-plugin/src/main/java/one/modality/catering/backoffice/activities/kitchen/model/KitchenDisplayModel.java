@@ -16,8 +16,6 @@ import java.util.*;
  */
 public final class KitchenDisplayModel {
 
-    private static final Set<String> ALLOWED_MEALS = Set.of("Breakfast", "Lunch", "Dinner");
-
     private final AttendanceCounts attendanceCounts;
     private final Set<String> displayedMealNames;
     private final Map<String, String> dietaryOptionSvgs;
@@ -70,11 +68,14 @@ public final class KitchenDisplayModel {
             attendanceCounts.storeDietaryOptionSvg("?", unknownSvg);
             attendanceCounts.storeDietaryOptionOrder("?", 10000);
         }
+        // Store friendly name for unknown dietary option
+        attendanceCounts.storeDietaryOptionName("?", "Unknown diet");
 
-        // Store actual dietary items SVGs and orders
+        // Store actual dietary items SVGs, names, and orders
         for (Item dietaryItem : kitchenData.getDietaryItems()) {
             Console.log("Debug: Diet Item - Name: " + dietaryItem.getName() + ", Code: " + dietaryItem.getCode());
             attendanceCounts.storeDietaryOptionOrder(dietaryItem.getCode(), dietaryItem.getOrd());
+            attendanceCounts.storeDietaryOptionName(dietaryItem.getCode(), dietaryItem.getName());
 
             String svg = kitchenData.getDietaryOptionSvg(dietaryItem.getCode());
             if (svg != null) {
@@ -91,11 +92,6 @@ public final class KitchenDisplayModel {
                     + mealsForDate.stream().map(Item::getName).collect(java.util.stream.Collectors.joining(", ")));
 
             for (Item meal : mealsForDate) {
-                // Filter to only show Breakfast, Lunch, and Dinner
-                if (!ALLOWED_MEALS.contains(meal.getName())) {
-                    continue;
-                }
-
                 displayedMealNames.add(meal.getName());
 
                 // Add counts for virtual items (Total and ?)

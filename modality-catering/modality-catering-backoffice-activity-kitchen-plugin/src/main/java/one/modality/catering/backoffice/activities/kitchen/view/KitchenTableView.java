@@ -1,5 +1,7 @@
 package one.modality.catering.backoffice.activities.kitchen.view;
 
+import dev.webfx.extras.i18n.controls.I18nControls;
+import dev.webfx.extras.util.control.Controls;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Node;
@@ -10,6 +12,7 @@ import javafx.scene.layout.HBox;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
 import one.modality.catering.backoffice.activities.kitchen.AttendanceCounts;
+import one.modality.catering.backoffice.activities.kitchen.i18n.KitchenI18nKeys;
 
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
@@ -35,9 +38,22 @@ public class KitchenTableView {
         gridPane.setVgap(0);
         gridPane.getStyleClass().add("kitchen-grid");
 
-        scrollPane = new ScrollPane(gridPane);
-        scrollPane.setFitToWidth(true);
+        scrollPane = Controls.createScrollPane(gridPane);
+        scrollPane.setFitToWidth(false);  // Don't force width - let it size to content
         scrollPane.setFitToHeight(true);
+        // Fit height to content - no vertical scrollbar
+
+        // Disable vertical scrollbar, only allow horizontal scrolling
+        scrollPane.setVbarPolicy(ScrollPane.ScrollBarPolicy.NEVER);
+        scrollPane.setHbarPolicy(ScrollPane.ScrollBarPolicy.AS_NEEDED);
+
+        // Size to content - max width will be bound by parent to enable horizontal scrollbar
+        scrollPane.setPrefWidth(javafx.scene.layout.Region.USE_COMPUTED_SIZE);
+        scrollPane.setMinHeight(javafx.scene.layout.Region.USE_PREF_SIZE);
+        scrollPane.setPrefHeight(javafx.scene.layout.Region.USE_COMPUTED_SIZE);
+
+        // Make ScrollPane background transparent so parent background shows through
+        scrollPane.setStyle("-fx-background-color: transparent;");
     }
 
     public Node getNode() {
@@ -90,7 +106,7 @@ public class KitchenTableView {
             gridPane.add(dateHeader, colIndex++, 0);
         }
         // Total Column Header
-        Label totalHeader = new Label("TOTAL");
+        Label totalHeader = I18nControls.newLabel(KitchenI18nKeys.Total);
         StackPane totalHeaderPane = new StackPane(totalHeader);
         totalHeaderPane.setPadding(new Insets(8, 6, 8, 6));
         totalHeaderPane.getStyleClass().addAll("kitchen-total-header", "kitchen-cell");
@@ -98,14 +114,30 @@ public class KitchenTableView {
 
         // --- Data Rows ---
         int rowIndex = 1;
-        // Define diet codes mapping to display names
-        Map<String, String> dietMap = new LinkedHashMap<>();
-        dietMap.put("Vegetarian", "V");
-        dietMap.put("Vegetarian wheat-free", "WF");
-        dietMap.put("Vegan", "VG");
-        dietMap.put("Vegan wheat-free", "VGWF");
 
-        List<String> meals = List.of("Breakfast", "Lunch", "Dinner");
+        // Get all dietary options (codes) sorted by their order from database
+        List<String> dietaryCodes = counts.getSortedDietaryOptions();
+        // Filter out special code "Total" to get only actual dietary options (keep "?" for unknown diet)
+        List<String> actualDietaryCodes = dietaryCodes.stream()
+                .filter(code -> !code.equals("Total"))
+                .collect(java.util.stream.Collectors.toList());
+
+        // Get unique meal names from the data
+        List<String> allMeals = counts.getUniqueMeals();
+
+        // Filter to only show meals that have data (non-zero Total count) in the current date range
+        List<String> meals = allMeals.stream()
+                .filter(meal -> {
+                    // Check if this meal has any non-zero Total count in the date range
+                    for (LocalDate date : dates) {
+                        int totalCount = counts.getCount(date, meal, "Total");
+                        if (totalCount > 0) {
+                            return true; // Has data, include this meal
+                        }
+                    }
+                    return false; // No data for this meal in the date range
+                })
+                .collect(java.util.stream.Collectors.toList());
 
         for (String meal : meals) {
             // Meal Header Row (e.g., "Breakfast")
@@ -137,11 +169,28 @@ public class KitchenTableView {
 
             rowIndex++;
 
-            // Diet Rows
+            // Diet Rows - iterate through dynamic dietary options from database
+            // First, filter out dietary options that have no data for this meal in the date range
+            List<String> visibleDietaryCodes = actualDietaryCodes.stream()
+                    .filter(dietCode -> {
+                        // Check if this dietary option has any non-zero count for this meal in the date range
+                        for (LocalDate date : dates) {
+                            int count = counts.getCount(date, meal, dietCode);
+                            if (count > 0) {
+                                return true; // Has data, include this dietary option
+                            }
+                        }
+                        return false; // No data for this dietary option
+                    })
+                    .collect(java.util.stream.Collectors.toList());
+
             int dietIndex = 0;
-            for (Map.Entry<String, String> dietEntry : dietMap.entrySet()) {
-                String dietName = dietEntry.getKey();
-                String dietCode = dietEntry.getValue();
+            for (String dietCode : visibleDietaryCodes) {
+                // Get the dietary option name from AttendanceCounts
+                String dietName = counts.getNameForDietaryOption(dietCode);
+                if (dietName == null) {
+                    dietName = dietCode; // Fallback to code if name not available
+                }
 
                 Label dietLabel = new Label(dietName);
 
@@ -155,8 +204,8 @@ public class KitchenTableView {
                 int dietTotal = 0;
                 dateCol = 1;
 
-                // Zebra striping: 2nd and 4th rows (indices 1 and 3) are striped
-                boolean isStriped = (dietIndex == 1 || dietIndex == 3);
+                // Zebra striping: alternate rows are striped
+                boolean isStriped = (dietIndex % 2 == 1);
 
                 for (LocalDate date : dates) {
                     int count = counts.getCount(date, meal, dietCode);

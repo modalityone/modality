@@ -13,6 +13,9 @@
     </exported-packages>
 
     <dependencies>
+        <source-modules>
+            <module>webfx-extras-styles-bootstrap</module>
+        </source-modules>
         <used-by-source-modules/>
     </dependencies>
 

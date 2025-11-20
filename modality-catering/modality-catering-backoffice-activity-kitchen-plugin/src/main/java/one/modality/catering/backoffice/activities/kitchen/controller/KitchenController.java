@@ -6,29 +6,29 @@ import dev.webfx.stack.orm.domainmodel.DataSourceModel;
 import javafx.beans.property.ObjectProperty;
 import javafx.beans.property.SimpleObjectProperty;
 import javafx.scene.Node;
+import one.modality.base.shared.entities.Organization;
 import one.modality.catering.backoffice.activities.kitchen.model.KitchenDisplayModel;
 import one.modality.catering.backoffice.activities.kitchen.view.KitchenViewUI;
+import one.modality.crm.backoffice.organization.fx.FXOrganization;
 import one.modality.crm.backoffice.organization.fx.FXOrganizationId;
 
-import java.time.DayOfWeek;
 import java.time.LocalDate;
-import java.time.temporal.ChronoUnit;
 
 /**
  * Main controller coordinating Kitchen activity lifecycle.
  * Manages state, delegates to sub-controllers, updates view.
  *
- * This controller follows the MVC pattern:
- * - Listens to property changes (organization, date range selection)
- * - Delegates data loading to KitchenDataController
- * - Delegates scheduled item operations to ScheduledItemController
- * - Updates KitchenView when model changes
+ * <p>This controller follows the MVC pattern:
+ * <ul>
+ *   <li>Listens to property changes (organization, date range selection)</li>
+ *   <li>Delegates data loading to KitchenDataController</li>
+ *   <li>Updates KitchenViewUI when model changes</li>
+ *   <li>Manages date range filtering and navigation</li>
+ * </ul>
  *
  * @author Claude Code (Refactored from KitchenActivity)
  */
 public final class KitchenController {
-
-    private static final java.util.Set<String> ALLOWED_MEALS = java.util.Set.of("Breakfast", "Lunch", "Dinner");
 
     private final DataSourceModel dataSourceModel;
     private final KitchenViewUI view;
@@ -58,8 +58,6 @@ public final class KitchenController {
         // Wire UI Controls
         view.getApplyButton().setOnAction(e -> applyDateFilter());
         view.getNextWeekButton().setOnAction(e -> setNextWeek());
-        view.getPrevButton().setOnAction(e -> navigate(-20));
-        view.getNextButton().setOnAction(e -> navigate(20));
 
         // Start the logic immediately after initialization
         Console.log("KitchenController: Calling startLogic from initialize()");
@@ -67,8 +65,8 @@ public final class KitchenController {
     }
 
     private void applyDateFilter() {
-        LocalDate start = view.getStartDatePicker().getValue();
-        LocalDate end = view.getEndDatePicker().getValue();
+        LocalDate start = view.getStartDateField().getDate();
+        LocalDate end = view.getEndDateField().getDate();
         if (start != null && end != null && !start.isAfter(end)) {
             startDateProperty.set(start);
             endDateProperty.set(end);
@@ -81,21 +79,6 @@ public final class KitchenController {
 
         startDateProperty.set(today);
         endDateProperty.set(endOfWeek);
-    }
-
-    private void navigate(int days) {
-        LocalDate currentStart = startDateProperty.get();
-        LocalDate currentEnd = endDateProperty.get();
-        long duration = ChronoUnit.DAYS.between(currentStart, currentEnd);
-
-        // If navigating by "page", we might want to shift by the duration + 1
-        // But the requirement says "Next days" button.
-        // Let's assume it shifts by the current duration.
-
-        long shift = (days > 0) ? (duration + 1) : -(duration + 1);
-
-        startDateProperty.set(currentStart.plusDays(shift));
-        endDateProperty.set(currentEnd.plusDays(shift));
     }
 
     private boolean logicStarted = false;
@@ -121,8 +104,14 @@ public final class KitchenController {
                 endDateProperty,
                 FXOrganizationId.organizationIdProperty());
 
-        // Also load data immediately
+        // Update organization label whenever organization changes
+        FXProperties.runOnPropertiesChange(
+                this::updateOrganizationLabel,
+                FXOrganization.organizationProperty());
+
+        // Also load data and update organization label immediately
         loadData();
+        updateOrganizationLabel();
     }
 
     /**
@@ -174,13 +163,6 @@ public final class KitchenController {
     }
 
     /**
-     * Reloads data (called after successful scheduled item generation).
-     */
-    private void reloadData() {
-        loadData();
-    }
-
-    /**
      * Updates the view with the display model and current meal selection.
      */
     private void updateView(KitchenDisplayModel displayModel) {
@@ -196,5 +178,18 @@ public final class KitchenController {
         // Update the view
         // We pass null for selectedMeals as we are no longer using the selection pane
         view.updateData(startDateProperty.get(), endDateProperty.get(), displayModel, null);
+    }
+
+    /**
+     * Updates the organization label in the view.
+     */
+    private void updateOrganizationLabel() {
+        Organization organization = FXOrganization.getOrganization();
+        if (organization != null) {
+            String organizationName = organization.getName();
+            view.setOrganizationName(organizationName);
+        } else {
+            view.setOrganizationName(null);
+        }
     }
 }
