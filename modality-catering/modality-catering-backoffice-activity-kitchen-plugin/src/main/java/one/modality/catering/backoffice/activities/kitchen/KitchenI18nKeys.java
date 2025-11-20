@@ -7,6 +7,13 @@ public interface KitchenI18nKeys {
     Object Close = "Close";
     Object Copied = "Copied";
     Object CopyTable = "CopyTable";
+    Object EmptyStateActionTitle = "EmptyStateActionTitle";
+    Object EmptyStateContactEmail = "EmptyStateContactEmail";
+    Object EmptyStateInfoText = "EmptyStateInfoText";
+    Object EmptyStateInfoTitle = "EmptyStateInfoTitle";
+    Object EmptyStateMessage = "EmptyStateMessage";
+    Object EmptyStateSubtitle = "EmptyStateSubtitle";
+    Object EmptyStateTitle = "EmptyStateTitle";
     Object Filter = "Filter";
     Object GenerateScheduledItems = "GenerateScheduledItems";
     Object GenerateScheduledItemsSql = "GenerateScheduledItemsSql";

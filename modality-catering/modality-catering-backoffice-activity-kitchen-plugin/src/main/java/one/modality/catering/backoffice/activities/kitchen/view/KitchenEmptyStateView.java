@@ -1,5 +1,6 @@
 package one.modality.catering.backoffice.activities.kitchen.view;
 
+import dev.webfx.extras.i18n.controls.I18nControls;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.control.Label;
@@ -9,6 +10,7 @@ import javafx.scene.paint.Color;
 import javafx.scene.shape.SVGPath;
 import javafx.scene.text.TextAlignment;
 import one.modality.base.client.icons.SvgIcons;
+import one.modality.catering.backoffice.activities.kitchen.KitchenI18nKeys;
 
 /**
  * Empty state view displayed when no meal data is configured in the KBS3 system.
@@ -35,22 +37,19 @@ public final class KitchenEmptyStateView {
         VBox iconContainer = createIconSection();
 
         // Title
-        Label titleLabel = new Label("Configuration Setup Required");
+        Label titleLabel = I18nControls.newLabel(KitchenI18nKeys.EmptyStateTitle);
         titleLabel.getStyleClass().add("kitchen-empty-state-title");
         titleLabel.setWrapText(true);
         titleLabel.setTextAlignment(TextAlignment.CENTER);
 
         // Subtitle
-        Label subtitleLabel = new Label("KBS3 Integration Not Yet Configured");
+        Label subtitleLabel = I18nControls.newLabel(KitchenI18nKeys.EmptyStateSubtitle);
         subtitleLabel.getStyleClass().add("kitchen-empty-state-subtitle");
         subtitleLabel.setWrapText(true);
         subtitleLabel.setTextAlignment(TextAlignment.CENTER);
 
         // Message
-        Label messageLabel = new Label(
-            "Your organization's setup is not yet configured to work with the KBS3 meal booking system. " +
-            "To enable this functionality, please contact our technical support team."
-        );
+        Label messageLabel = I18nControls.newLabel(KitchenI18nKeys.EmptyStateMessage);
         messageLabel.getStyleClass().add("kitchen-empty-state-message");
         messageLabel.setWrapText(true);
         messageLabel.setTextAlignment(TextAlignment.CENTER);
@@ -61,11 +60,6 @@ public final class KitchenEmptyStateView {
         // Action box - Contact support
         VBox actionBox = createActionBox();
 
-        // Footer
-        Label footerLabel = new Label("This setup typically takes 1-2 business days to complete.");
-        footerLabel.getStyleClass().add("kitchen-empty-state-footer");
-        footerLabel.setTextAlignment(TextAlignment.CENTER);
-
         // Assemble container
         container.getChildren().addAll(
             iconContainer,
@@ -73,8 +67,7 @@ public final class KitchenEmptyStateView {
             subtitleLabel,
             messageLabel,
             infoBox,
-            actionBox,
-            footerLabel
+            actionBox
         );
 
         return container;
@@ -113,13 +106,10 @@ public final class KitchenEmptyStateView {
         infoBox.getStyleClass().add("kitchen-empty-state-info-box");
         infoBox.setMaxWidth(550);
 
-        Label infoTitle = new Label("⚙️ What needs to be done?");
+        Label infoTitle = I18nControls.newLabel(KitchenI18nKeys.EmptyStateInfoTitle);
         infoTitle.getStyleClass().add("kitchen-empty-state-info-title");
 
-        Label infoText = new Label(
-            "Our technical team will configure the necessary integration settings for your organization " +
-            "to access the KBS3 meal booking calendar and ordering system."
-        );
+        Label infoText = I18nControls.newLabel(KitchenI18nKeys.EmptyStateInfoText);
         infoText.getStyleClass().add("kitchen-empty-state-info-text");
         infoText.setWrapText(true);
 
@@ -137,7 +127,7 @@ public final class KitchenEmptyStateView {
         actionBox.setMaxWidth(550);
         actionBox.setAlignment(Pos.CENTER);
 
-        Label actionTitle = new Label("📧 Contact Technical Support");
+        Label actionTitle = I18nControls.newLabel(KitchenI18nKeys.EmptyStateActionTitle);
         actionTitle.getStyleClass().add("kitchen-empty-state-action-title");
 
         // Email contact
@@ -155,7 +145,7 @@ public final class KitchenEmptyStateView {
         HBox row = new HBox(10);
         row.setAlignment(Pos.CENTER);
 
-        Label textLabel = new Label("kbs@kadampa.net");
+        Label textLabel = I18nControls.newLabel(KitchenI18nKeys.EmptyStateContactEmail);
         textLabel.getStyleClass().add("kitchen-empty-state-contact-text");
 
         row.getChildren().addAll(textLabel);
