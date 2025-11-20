@@ -61,23 +61,24 @@
     --fx-background-radius:  0px 10px 10px 0px;
 }
 
-.main-menu-bar fx-label.brand {
+.main-frame fx-label.brand {
     font-size: 14px;
     font-weight: 500;
     --fx-text-fill: var(--brand-blue-color);
 }
 
-.user-menu-bar fx-label, .user-menu-bar fx-button {
+.user-frame fx-label, .user-menu-bar fx-button {
     font-size: 12px;
     --fx-text-fill: #838788;
 }
 
-.modality-dialog-area .gold-layout {
+.modality-dialog-area {
+    background-color: rgba(0, 0, 0, 0.25);
     backdrop-filter: blur(3px);
     -webkit-backdrop-filter: blur(3px);
 }
 
-fx-collapsepane.menu-bar {
+.menu-bar {
     --fx-background-color: white;
     --fx-border-style: solid;
     --fx-border-color: lightgray;
@@ -85,6 +86,6 @@ fx-collapsepane.menu-bar {
     --fx-border-radius: 0;
 }
 
-fx-collapsepane.menu-bar.lang-menu-bar {
+.menu-bar.lang-menu-bar {
     --fx-border-style: none;
 }

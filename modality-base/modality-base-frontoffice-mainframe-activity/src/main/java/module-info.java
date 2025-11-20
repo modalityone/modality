@@ -35,6 +35,8 @@ module modality.base.frontoffice.mainframe.activity {
     requires webfx.platform.util;
     requires webfx.stack.routing.uirouter;
     requires webfx.stack.session.state.client.fx;
+    requires modality.base.client.icons;
+    requires webfx.extras.util.background;
 
     // Exported packages
     exports one.modality.base.frontoffice.activities.mainframe;

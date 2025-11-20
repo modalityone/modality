@@ -2,7 +2,10 @@ package one.modality.base.frontoffice.activities.mainframe;
 
 import dev.webfx.extras.action.ActionBinder;
 import dev.webfx.extras.aria.FXKeyboardNavigationDetected;
-import dev.webfx.extras.panes.*;
+import dev.webfx.extras.panes.CollapsePane;
+import dev.webfx.extras.panes.LayoutPane;
+import dev.webfx.extras.panes.MonoPane;
+import dev.webfx.extras.panes.TransitionPane;
 import dev.webfx.extras.panes.transitions.CircleTransition;
 import dev.webfx.extras.panes.transitions.Transition;
 import dev.webfx.extras.player.Players;
@@ -28,14 +31,18 @@ import one.modality.base.client.brand.Brand;
 import one.modality.base.client.mainframe.fx.FXMainFrameDialogArea;
 import one.modality.base.client.mainframe.fx.FXMainFrameOverlayArea;
 import one.modality.base.client.mainframe.fx.FXMainFrameTransiting;
+import one.modality.base.frontoffice.activities.mainframe.menus.MenuBarFactory;
+import one.modality.base.frontoffice.activities.mainframe.menus.MenuConfig;
 import one.modality.base.frontoffice.activities.mainframe.menus.desktop.DesktopMainMenuBar;
 import one.modality.base.frontoffice.activities.mainframe.menus.desktop.DesktopUserMenuBar;
+import one.modality.base.frontoffice.activities.mainframe.menus.mobile.UserMenu;
+import one.modality.base.frontoffice.activities.mainframe.menus.mobile.BurgerMenu;
 import one.modality.base.frontoffice.activities.mainframe.menus.mobile.MobileBottomMainMenuBar;
 import one.modality.base.frontoffice.activities.mainframe.menus.shared.LanguageMenuBar;
-import one.modality.base.frontoffice.activities.mainframe.menus.MenuConfig;
 import one.modality.base.frontoffice.mainframe.footernode.MainFrameFooterNodeProvider;
 import one.modality.base.frontoffice.mainframe.fx.FXBackgroundNode;
 import one.modality.base.frontoffice.mainframe.fx.FXShowFooter;
+import one.modality.base.frontoffice.utility.page.FOPageUtil;
 
 import java.util.List;
 import java.util.Objects;
@@ -94,6 +101,10 @@ public final class ModalityFrontOfficeMainFrameActivity extends ModalityClientMa
                 if (dialogArea != null) { // Same position and size as the mount node (if present)
                     layoutInArea(dialogArea, 0, mountNodeY, width, mountNodeHeight);
                 }
+                for (Node overlayChild : FXMainFrameOverlayArea.getOverlayChildren()) {
+                    if (overlayChild.isManaged())
+                        layoutInArea(overlayChild, 0, mountNodeY, width, mountNodeHeight);
+                }
             }
         };
 
@@ -119,17 +130,33 @@ public final class ModalityFrontOfficeMainFrameActivity extends ModalityClientMa
         }, FXBackgroundNode.backgroundNodeProperty(), mobileLayoutProperty, mountNodeProperty());
 
         MonoPane mountNodeContainer = new MonoPane();
-
         CollapsePane languageMenuBar = LanguageMenuBar.createLanguageMenuBar();
-        VBox topPage = new VBox( // its content should be different in desktop and mobile layouts
-            languageMenuBar,
-            desktopMainMenuBar,
-            desktopUserMenuBar
-        );
-        topPage.setAlignment(Pos.CENTER);
+        MonoPane responsiveTopMenusPane = new MonoPane();
+        FXProperties.runNowAndOnPropertyChange(mobileLayoutProperty -> {
+            if (mobileLayoutProperty) {
+                HBox mobileMenus = new HBox(20, BurgerMenu.createBurgerMenuIcon(this), MenuBarFactory.createStretchableBrandPane(), languageMenuBar, UserMenu.createUserMenuIcon(this));
+                mobileMenus.setAlignment(Pos.CENTER);
+                mobileMenus.setPadding(new Insets(10, 0, 10, 0));
+                mobileMenus.getStyleClass().addAll("menu-bar", "non-mobile");
+                FOPageUtil.restrictToMaxPageWidthAndApplyPageLeftRightPadding(mobileMenus);  // to fit like the mount node
+                if (languageMenuBar.getContent() instanceof MonoPane languageSection)
+                    languageSection.setAlignment(Pos.CENTER);
+                responsiveTopMenusPane.setContent(mobileMenus);
+            } else {
+                VBox desktopMenus = new VBox(
+                    languageMenuBar,
+                    desktopMainMenuBar,
+                    desktopUserMenuBar
+                );
+                desktopMenus.setAlignment(Pos.CENTER);
+                if (languageMenuBar.getContent() instanceof MonoPane languageSection)
+                    languageSection.setAlignment(Pos.BOTTOM_LEFT);
+                responsiveTopMenusPane.setContent(desktopMenus);
+            }
+        }, mobileLayoutProperty);
 
         VBox pageVBox = new VBox(
-            topPage,
+            responsiveTopMenusPane,
             mountNodeContainer
         );
         pageVBox.setAlignment(Pos.CENTER);

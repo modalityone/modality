@@ -8,6 +8,7 @@ import javafx.beans.property.ObjectProperty;
 import javafx.scene.Cursor;
 import javafx.scene.control.ToggleButton;
 import javafx.scene.layout.HBox;
+import javafx.scene.layout.Region;
 
 /**
  * @author Bruno Salmon
@@ -45,6 +46,7 @@ final class SegmentedButton<T> {
         button.setText(text);
         button.getStyleClass().add("button-segment");
         button.setCursor(Cursor.HAND);
+        button.setMinWidth(Region.USE_PREF_SIZE);
         button.setMaxHeight(Double.MAX_VALUE); // So the buttons can grow and always fit in HBox container bar
         return button;
     }
