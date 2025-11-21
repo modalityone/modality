@@ -28,6 +28,7 @@
         <module>modality-booking-client-workingbooking</module>
         <module>modality-booking-frontoffice-bookingelements</module>
         <module>modality-booking-frontoffice-bookingform</module>
+        <module>modality-booking-frontoffice-bookingpage</module>
     </modules>
 
 </project>

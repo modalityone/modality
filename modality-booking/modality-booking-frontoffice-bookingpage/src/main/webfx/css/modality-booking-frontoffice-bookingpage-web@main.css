@@ -1,0 +1,5 @@
+.linked-account-message {
+    text-align: center;
+    --fx-line-height: 1.8;
+    --fx-text-fill: var(--bootstrap-grey5);
+}

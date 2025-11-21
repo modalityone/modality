@@ -22,6 +22,7 @@ module modality.base.frontoffice.mainframe.activity {
     requires webfx.extras.operation.action;
     requires webfx.extras.panes;
     requires webfx.extras.player;
+    requires webfx.extras.responsive;
     requires webfx.extras.util.animation;
     requires webfx.extras.util.background;
     requires webfx.extras.util.control;
@@ -37,7 +38,6 @@ module modality.base.frontoffice.mainframe.activity {
     requires webfx.platform.util;
     requires webfx.stack.routing.uirouter;
     requires webfx.stack.session.state.client.fx;
-    requires webfx.extras.responsive;
 
     // Exported packages
     exports one.modality.base.frontoffice.activities.mainframe;

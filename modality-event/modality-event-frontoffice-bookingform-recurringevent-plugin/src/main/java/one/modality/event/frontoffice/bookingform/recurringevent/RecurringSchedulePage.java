@@ -28,7 +28,7 @@ import one.modality.base.shared.entities.ScheduledItem;
 import one.modality.base.shared.entities.formatters.EventPriceFormatter;
 import one.modality.booking.client.workingbooking.WorkingBookingProperties;
 import one.modality.booking.frontoffice.bookingelements.BookingElements;
-import one.modality.booking.frontoffice.bookingform.multipages.BookingFormPage;
+import one.modality.booking.frontoffice.bookingpage.BookingFormPage;
 import one.modality.booking.client.selecteditemsselector.box.BoxScheduledItemsSelector;
 import one.modality.event.frontoffice.activities.book.event.BookEventActivity;
 

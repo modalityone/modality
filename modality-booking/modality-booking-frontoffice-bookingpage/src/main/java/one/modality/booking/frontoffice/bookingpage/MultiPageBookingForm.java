@@ -1,4 +1,4 @@
-package one.modality.booking.frontoffice.bookingform.multipages;
+package one.modality.booking.frontoffice.bookingpage;
 
 import dev.webfx.extras.async.AsyncSpinner;
 import dev.webfx.extras.panes.MonoPane;

@@ -1,0 +1,5 @@
+.linked-account-message {
+    -fx-text-alignment: center;
+    -fx-line-spacing: 7px;
+    -fx-text-fill: -bootstrap-grey5;
+}
