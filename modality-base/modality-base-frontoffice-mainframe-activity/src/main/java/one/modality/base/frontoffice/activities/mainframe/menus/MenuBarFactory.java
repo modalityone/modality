@@ -8,6 +8,7 @@ import dev.webfx.extras.operation.action.OperationActionFactoryMixin;
 import dev.webfx.extras.panes.*;
 import dev.webfx.extras.util.background.BackgroundFactory;
 import dev.webfx.extras.util.control.Controls;
+import dev.webfx.extras.util.layout.Layouts;
 import dev.webfx.kit.launcher.WebFxKitLauncher;
 import dev.webfx.kit.util.aria.Aria;
 import dev.webfx.kit.util.aria.AriaRole;
@@ -17,6 +18,7 @@ import dev.webfx.platform.util.Arrays;
 import dev.webfx.platform.util.collection.Collections;
 import dev.webfx.stack.routing.uirouter.activity.uiroute.UiRouteActivityContext;
 import javafx.beans.property.ObjectProperty;
+import javafx.event.Event;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.geometry.Side;
@@ -59,11 +61,11 @@ public final class MenuBarFactory {
         if (menuBarLayout == MenuBarLayout.MOBILE_BOTTOM) {
             ScalePane[] scaledMobileButtons = Arrays.map(menuItemButtons, MenuBarFactory::scaleButton, ScalePane[]::new);
             buttonBar = new ColumnsPane(scaledMobileButtons);
-        } else if (menuBarLayout != MenuBarLayout.DESKTOP) {
+        } else if (menuBarLayout != MenuBarLayout.DESKTOP) { // MOBILE_LEFT or MOBILE_RIGHT
             VBox vBox = new VBox(13, menuItemButtons);
             vBox.setAlignment(Pos.CENTER_LEFT);
             buttonBar = vBox;
-        } else {
+        } else { // Desktop
             HBox hBox = new HBox(13, menuItemButtons);
             hBox.setFillHeight(true);
             FOPageUtil.restrictToMaxPageWidthAndApplyPageLeftRightPadding(hBox);  // to fit like the mount node
@@ -105,7 +107,16 @@ public final class MenuBarFactory {
             collapsePane.setCollapseSide(Side.RIGHT);
         else if (menuBarLayout == MenuBarLayout.MOBILE_RIGHT)
             collapsePane.setCollapseSide(Side.LEFT);
+        storeMenuItemInCollapsePane(collapsePane, menuItemGroup);
         return collapsePane;
+    }
+
+    private static void storeMenuItemInCollapsePane(CollapsePane collapsePane, AriaToggleGroup<Integer> menuItemGroup) {
+        collapsePane.getProperties().put("menuItemGroup", menuItemGroup);
+    }
+
+    private static AriaToggleGroup<Integer> getMenuItemGroup(CollapsePane collapsePane) {
+        return (AriaToggleGroup<Integer>) collapsePane.getProperties().get("menuItemGroup");
     }
 
     private static ToggleButton createMenuButton(Action routeAction, boolean userMenu, MenuBarLayout menuBarLayout) {
@@ -171,30 +182,75 @@ public final class MenuBarFactory {
     }
 
     public static MonoPane setupSideMenuIconAndBar(Node menuIcon, CollapsePane sideMenuBar, MenuBarLayout menuBarLayout) {
-        MonoPane monoPane = new MonoPane(sideMenuBar);
-        monoPane.setEffect(new DropShadow());
-        MonoClipPane monoClipPane = new MonoClipPane(monoPane);
+        // Creating a close icon (a simple cross) which will be at the top of the side menu bar
+        SVGPath closeIcon = new SVGPath();
+        closeIcon.setContent("M0,0 L16,16 M16,0 L0,16");
+        closeIcon.setStroke(Color.BLACK);
+        closeIcon.setStrokeWidth(3);
+        MonoPane sideBarTop = new MonoPane(closeIcon);
+        sideBarTop.setMaxWidth(Double.MAX_VALUE);
+        sideBarTop.setPadding(new Insets(30, 30, 10, 30));
+        // Then a horizontal separator
+        Region separator = Layouts.createHGrowable();
+        separator.setBackground(BackgroundFactory.newBackground(Color.gray(0.8)));
+        separator.setMinHeight(1);
+        // Setting a minimal width of 300 px. We can't do it directly on the CollapsePane because it resets these values
+        // itself when expanding or collapsing, so we set it on its content instead.
+        Node content = sideMenuBar.getContent();
+        if (content instanceof Region contentBox) // always true
+            contentBox.setMinWidth(300);
+        // A bit hacky, but we extend the content of the side menu bar to include the separator and the close icon
+        VBox sideBarContent = new VBox(20,
+            sideBarTop,
+            separator,
+            content
+        );
+        sideMenuBar.setContent(sideBarContent);
+        // Removing possible padding to ensure the separator touches both sides of the menu bar
+        sideMenuBar.setPadding(Insets.EMPTY);
+        // We apply a drop shadow effect
+        sideMenuBar.setEffect(new DropShadow());
+        sideMenuBar.setClipEnabled(false); // necessarily otherwise the drop shadow will be clipped
+        // Embedding the sideMenuBar in a StackPane and setting its correct alignment as well as its top (the close icon)
+        StackPane wholeOverlayStackPane = new StackPane(sideMenuBar);
         if (menuBarLayout == MenuBarLayout.MOBILE_LEFT) {
-            monoClipPane.setPadding(new Insets(0, 50, 0, 0));
-            StackPane.setAlignment(monoClipPane, Pos.CENTER_LEFT);
+            StackPane.setAlignment(sideMenuBar, Pos.CENTER_LEFT);
+            sideBarTop.setAlignment(Pos.CENTER_RIGHT);
         } else { // MOBILE_RIGHT
-            monoClipPane.setPadding(new Insets(0, 0, 0, 50));
-            StackPane.setAlignment(monoClipPane, Pos.CENTER_RIGHT);
+            StackPane.setAlignment(sideMenuBar, Pos.CENTER_RIGHT);
+            sideBarTop.setAlignment(Pos.CENTER_LEFT);
         }
+        // Collapse management: initially collapsed, then expanded or collapsed depending on the user interaction
         sideMenuBar.collapse();
-        StackPane stackPane = new StackPane(monoClipPane);
-        stackPane.setOnMouseClicked(e -> {
-            sideMenuBar.collapse();
-            stackPane.setBackground(null);
-            FXProperties.onPropertyEquals(sideMenuBar.transitingProperty(), false, x -> {
-                FXMainFrameOverlayArea.getOverlayChildren().remove(stackPane);
-            });
-        });
-        return SvgIcons.createButtonPane(menuIcon, () -> {
-            stackPane.setBackground(BackgroundFactory.newBackground(Color.gray(0.3, 0.5)));
-            FXMainFrameOverlayArea.getOverlayChildren().add(stackPane);
+        // Arming the menu icon to expand it
+        MonoPane menuButton = SvgIcons.createButtonPane(menuIcon, () -> {
+            // Setting a gray transparent background on the wholeOverlayStackPane
+            wholeOverlayStackPane.setBackground(BackgroundFactory.newBackground(Color.gray(0.3, 0.5)));
+            // Adding the wholeOverlayStackPane to the overlay area (will cover the whole page)
+            Collections.addIfNotContains(wholeOverlayStackPane, FXMainFrameOverlayArea.getOverlayChildren());
+            // Expanding the side menu bar (a bit postponed to ensure it is laid out properly)
             UiScheduler.scheduleDelay(100, sideMenuBar::expand);
         });
+        // Arming the close icon to collapse it
+        closeIcon.setCursor(Cursor.HAND);
+        closeIcon.setOnMouseClicked(e -> {
+            // Collapsing the side menu bar (with an animation effect)
+            sideMenuBar.collapse();
+            // Also, removing the gray transparent background immediately (not waiting for the transition to finish)
+            wholeOverlayStackPane.setBackground(null);
+            // Completely removing the wholeOverlayStackPane from the overlay area once the transition is finished
+            FXProperties.onPropertyEquals(sideMenuBar.transitingProperty(), false, x -> {
+                FXMainFrameOverlayArea.getOverlayChildren().remove(wholeOverlayStackPane);
+            });
+        });
+        // We also automatically close the side menu when the user clicks anywhere else on the overlay area
+        wholeOverlayStackPane.setOnMouseClicked(closeIcon.getOnMouseClicked());
+        // But not inside the side menu bar itself
+        sideBarContent.setOnMouseClicked(Event::consume); // will stop the propagation in that case
+        // However, when the user clicks a button inside the side menu bar, we collapse it automatically
+        FXProperties.runOnPropertyChange(() -> closeIcon.getOnMouseClicked().handle(null),
+            getMenuItemGroup(sideMenuBar).firedItemProperty());
+        return menuButton;
 
     }
 

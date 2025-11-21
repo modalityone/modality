@@ -9,6 +9,7 @@ import dev.webfx.extras.panes.TransitionPane;
 import dev.webfx.extras.panes.transitions.CircleTransition;
 import dev.webfx.extras.panes.transitions.Transition;
 import dev.webfx.extras.player.Players;
+import dev.webfx.extras.responsive.ResponsiveDesign;
 import dev.webfx.extras.util.control.Controls;
 import dev.webfx.extras.util.layout.Layouts;
 import dev.webfx.kit.util.properties.FXProperties;
@@ -132,28 +133,34 @@ public final class ModalityFrontOfficeMainFrameActivity extends ModalityClientMa
         MonoPane mountNodeContainer = new MonoPane();
         CollapsePane languageMenuBar = LanguageMenuBar.createLanguageMenuBar();
         MonoPane responsiveTopMenusPane = new MonoPane();
-        FXProperties.runNowAndOnPropertyChange(mobileLayoutProperty -> {
-            if (mobileLayoutProperty) {
-                HBox mobileMenus = new HBox(20, BurgerMenu.createBurgerMenuIcon(this), MenuBarFactory.createStretchableBrandPane(), languageMenuBar, UserMenu.createUserMenuIcon(this));
-                mobileMenus.setAlignment(Pos.CENTER);
-                mobileMenus.setPadding(new Insets(10, 0, 10, 0));
-                mobileMenus.getStyleClass().addAll("menu-bar", "non-mobile");
-                FOPageUtil.restrictToMaxPageWidthAndApplyPageLeftRightPadding(mobileMenus);  // to fit like the mount node
-                if (languageMenuBar.getContent() instanceof MonoPane languageSection)
-                    languageSection.setAlignment(Pos.CENTER);
-                responsiveTopMenusPane.setContent(mobileMenus);
-            } else {
+
+        new ResponsiveDesign(responsiveTopMenusPane)
+            .addResponsiveLayout(/* applicability test for mobile menus mode: */width -> width < 600,
+                () -> { // applying mobile view
+                    HBox mobileMenus = new HBox(20, BurgerMenu.createBurgerMenuIcon(this), MenuBarFactory.createStretchableBrandPane(), languageMenuBar, UserMenu.createUserMenuIcon(this));
+                    mobileMenus.setAlignment(Pos.CENTER);
+                    mobileMenus.setPadding(new Insets(10, 0, 10, 0));
+                    mobileMenus.getStyleClass().addAll("menu-bar", "non-mobile"); //
+                    FOPageUtil.restrictToMaxPageWidthAndApplyPageLeftRightPadding(mobileMenus);  // to fit like the mount node
+                    if (languageMenuBar.getContent() instanceof MonoPane languageSection) {
+                        languageSection.setAlignment(Pos.CENTER);
+                        languageSection.setPadding(Insets.EMPTY);
+                    }
+                    responsiveTopMenusPane.setContent(mobileMenus);
+                }
+            ).addResponsiveLayout(() -> { // otherwise, applying desktop menus mode
                 VBox desktopMenus = new VBox(
                     languageMenuBar,
                     desktopMainMenuBar,
                     desktopUserMenuBar
                 );
                 desktopMenus.setAlignment(Pos.CENTER);
-                if (languageMenuBar.getContent() instanceof MonoPane languageSection)
+                if (languageMenuBar.getContent() instanceof MonoPane languageSection) {
                     languageSection.setAlignment(Pos.BOTTOM_LEFT);
+                    FOPageUtil.restrictToMaxPageWidthAndApplyPageLeftRightPadding(languageSection);  // to fit like the mount node
+                }
                 responsiveTopMenusPane.setContent(desktopMenus);
-            }
-        }, mobileLayoutProperty);
+            }).start();
 
         VBox pageVBox = new VBox(
             responsiveTopMenusPane,

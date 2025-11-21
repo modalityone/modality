@@ -2,7 +2,10 @@ package one.modality.base.frontoffice.activities.mainframe.menus.mobile;
 
 import dev.webfx.extras.operation.action.OperationActionFactoryMixin;
 import dev.webfx.extras.panes.CollapsePane;
+import dev.webfx.extras.panes.MonoPane;
+import dev.webfx.extras.util.layout.Layouts;
 import dev.webfx.stack.routing.uirouter.activity.uiroute.UiRouteActivityContext;
+import dev.webfx.stack.session.state.client.fx.FXLoggedIn;
 import javafx.scene.Node;
 import javafx.scene.shape.SVGPath;
 import one.modality.base.client.brand.Brand;
@@ -16,9 +19,12 @@ import one.modality.base.frontoffice.activities.mainframe.menus.MenuBarLayout;
 public class UserMenu {
 
     public static <A extends UiRouteActivityContext<?> & OperationActionFactoryMixin> Node createUserMenuIcon(A activity) {
-        SVGPath userIcon = SvgIcons.setSVGPathFill(SvgIcons.createUserIcon(), Brand.getBlueColor());
+        SVGPath userIcon = SvgIcons.setSVGPathFill(SvgIcons.createUserIcon(), Brand.getBlueColor()); // Maybe too small
         CollapsePane mobileRightUserMenuBar = MobileRightUserMenuBar.createMobileRightUserMenuBar(activity);
-        return MenuBarFactory.setupSideMenuIconAndBar(userIcon, mobileRightUserMenuBar, MenuBarLayout.MOBILE_RIGHT);
+        MonoPane userButton = MenuBarFactory.setupSideMenuIconAndBar(userIcon, mobileRightUserMenuBar, MenuBarLayout.MOBILE_RIGHT);
+        // We display the user button only when the user is logged in
+        Layouts.bindManagedAndVisiblePropertiesTo(FXLoggedIn.loggedInProperty(), userButton);
+        return userButton;
     }
 
 }

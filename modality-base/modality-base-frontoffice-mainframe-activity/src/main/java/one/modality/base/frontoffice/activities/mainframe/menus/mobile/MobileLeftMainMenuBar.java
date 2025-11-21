@@ -3,9 +3,6 @@ package one.modality.base.frontoffice.activities.mainframe.menus.mobile;
 import dev.webfx.extras.operation.action.OperationActionFactoryMixin;
 import dev.webfx.extras.panes.CollapsePane;
 import dev.webfx.stack.routing.uirouter.activity.uiroute.UiRouteActivityContext;
-import javafx.geometry.Pos;
-import javafx.scene.layout.Region;
-import javafx.scene.layout.StackPane;
 import one.modality.base.frontoffice.activities.mainframe.menus.MenuBarFactory;
 import one.modality.base.frontoffice.activities.mainframe.menus.MenuBarLayout;
 import one.modality.base.frontoffice.activities.mainframe.menus.MenuConfig;
@@ -16,15 +13,12 @@ import one.modality.base.frontoffice.activities.mainframe.menus.MenuConfig;
 public final class MobileLeftMainMenuBar {
 
     public static <A extends UiRouteActivityContext<?> & OperationActionFactoryMixin> CollapsePane createMobileLeftMainMenuBar(A activity) {
-        CollapsePane mainMenuBar = MenuBarFactory.createMenuBar(
+        return MenuBarFactory.createMenuBar(
             MenuConfig.MAIN_MENU_OPERATION_CODES,
             MenuConfig.mobileMenuItemGroup,
             false,
             MenuBarLayout.MOBILE_LEFT,
             activity);
-        mainMenuBar.setMaxWidth(Region.USE_PREF_SIZE);
-        StackPane.setAlignment(mainMenuBar, Pos.CENTER_LEFT);
-        return mainMenuBar;
     }
 
 }

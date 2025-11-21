@@ -8,6 +8,7 @@ module modality.base.frontoffice.mainframe.activity {
     requires javafx.graphics;
     requires modality.base.client.application;
     requires modality.base.client.brand;
+    requires modality.base.client.icons;
     requires modality.base.client.mainframe.fx;
     requires modality.base.frontoffice.mainframe.footernode;
     requires modality.base.frontoffice.mainframe.fx;
@@ -22,6 +23,7 @@ module modality.base.frontoffice.mainframe.activity {
     requires webfx.extras.panes;
     requires webfx.extras.player;
     requires webfx.extras.util.animation;
+    requires webfx.extras.util.background;
     requires webfx.extras.util.control;
     requires webfx.extras.util.layout;
     requires webfx.kit.launcher;
@@ -35,8 +37,7 @@ module modality.base.frontoffice.mainframe.activity {
     requires webfx.platform.util;
     requires webfx.stack.routing.uirouter;
     requires webfx.stack.session.state.client.fx;
-    requires modality.base.client.icons;
-    requires webfx.extras.util.background;
+    requires webfx.extras.responsive;
 
     // Exported packages
     exports one.modality.base.frontoffice.activities.mainframe;
