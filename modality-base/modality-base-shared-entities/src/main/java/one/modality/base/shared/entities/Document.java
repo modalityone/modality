@@ -6,6 +6,8 @@ import one.modality.base.shared.entities.markers.EntityHasEvent;
 import one.modality.base.shared.entities.markers.EntityHasPerson;
 import one.modality.base.shared.entities.markers.EntityHasPersonalDetailsCopy;
 
+import java.time.LocalDate;
+
 /**
  * @author Bruno Salmon
  */
@@ -28,6 +30,7 @@ public interface Document extends
     String flagged = "flagged";
     String personFacilityFee = "person_facilityFee";
     String request = "request";
+    String dates = "dates";
 
     default void setRef(Integer value) {
         setFieldValue(ref, value);
@@ -145,4 +148,5 @@ public interface Document extends
         return getStringFieldValue(request);
     }
 
+    default String getDates() {return getStringFieldValue(dates);}
 }
