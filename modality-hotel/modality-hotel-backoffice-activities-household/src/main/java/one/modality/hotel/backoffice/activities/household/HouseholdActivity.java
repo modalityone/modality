@@ -2,19 +2,25 @@ package one.modality.hotel.backoffice.activities.household;
 
 import dev.webfx.extras.operation.action.OperationActionFactoryMixin;
 import javafx.scene.Node;
-import one.modality.base.backoffice.mainframe.fx.FXEventSelector;
+import javafx.scene.layout.BorderPane;
+import one.modality.base.backoffice.mainframe.fx.FXMainFrameHeaderTabs;
 import one.modality.base.client.activity.organizationdependent.OrganizationDependentViewDomainActivity;
-import one.modality.base.client.gantt.fx.visibility.FXGanttVisibility;
-import one.modality.hotel.backoffice.accommodation.AccommodationBorderPane;
+import one.modality.base.client.tile.TabsBar;
 import one.modality.hotel.backoffice.accommodation.AccommodationPresentationModel;
 import one.modality.hotel.backoffice.accommodation.TodayAccommodationStatus;
+import one.modality.hotel.backoffice.activities.household.dashboard.view.HouseholdDashboardView;
+import one.modality.hotel.backoffice.activities.household.gantt.view.HouseholdGanttView;
 
-final class HouseholdActivity extends OrganizationDependentViewDomainActivity implements
+public final class HouseholdActivity extends OrganizationDependentViewDomainActivity implements
         OperationActionFactoryMixin {
 
     private final AccommodationPresentationModel pm = new AccommodationPresentationModel();
-    private final HouseholdView householdView = new HouseholdView(pm, this);
+    private final HouseholdDashboardView householdView = new HouseholdDashboardView(pm, this);
+    private final HouseholdGanttView householdGanttView = new HouseholdGanttView(pm);
     private final TodayAccommodationStatus todayAccommodationStatus = new TodayAccommodationStatus(pm);
+
+    private final BorderPane container = new BorderPane();
+    private final TabsBar<Node> headerTabsBar = new TabsBar<>(this, container::setCenter);
 
     public HouseholdActivity() {
         pm.doFXBindings();
@@ -22,30 +28,37 @@ final class HouseholdActivity extends OrganizationDependentViewDomainActivity im
 
     @Override
     public Node buildUi() {
-        return AccommodationBorderPane.createAccommodationBorderPane(householdView.getAttendanceGantt(), todayAccommodationStatus);
+        headerTabsBar.setTabs(
+                headerTabsBar.createTab("Dashboard", householdView::buildUi),
+                headerTabsBar.createTab("Gantt", householdGanttView::getNode));
+        return container;
     }
 
     @Override
     public void onResume() {
         super.onResume();
-        FXGanttVisibility.showEvents();
-        FXEventSelector.showEventSelector();
+        FXMainFrameHeaderTabs.setHeaderTabs(headerTabsBar.getTabs());
     }
 
     @Override
     public void onPause() {
-        FXGanttVisibility.resetToDefault();
-        FXEventSelector.resetToDefault();
+        FXMainFrameHeaderTabs.resetToDefault();
         super.onPause();
     }
 
-    /*==================================================================================================================
-    =================================================== Logical layer ==================================================
-    ==================================================================================================================*/
+    /*
+     * =============================================================================
+     * =====================================
+     * =================================================== Logical layer
+     * ==================================================
+     * =============================================================================
+     * =====================================
+     */
 
     @Override
     protected void startLogic() {
         householdView.startLogic(this);
+        householdGanttView.startLogic(this);
         todayAccommodationStatus.startLogic(this);
     }
 

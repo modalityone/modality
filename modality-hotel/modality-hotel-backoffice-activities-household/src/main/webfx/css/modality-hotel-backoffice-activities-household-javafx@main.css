@@ -1,0 +1,665 @@
+/* Household Dashboard JavaFX CSS */
+
+/* Force transparent background for household scroll pane */
+.household-scroll-pane {
+    -fx-background: transparent;
+    -fx-background-color: transparent;
+    -fx-control-inner-background: transparent;
+    -fx-background-insets: 0;
+    -fx-padding: 0;
+}
+
+.household-scroll-pane .viewport {
+    -fx-background-color: transparent;
+}
+
+.household-scroll-pane .corner {
+    -fx-background-color: transparent;
+}
+
+.household-scroll-pane > .viewport {
+    -fx-background-color: transparent;
+}
+
+.household-dashboard {
+    -fx-background-color: transparent;
+}
+
+/* Main Content */
+.main-content {
+    -fx-background-color: transparent;
+}
+
+/* Loading Indicator */
+.loading-indicator {
+    -fx-background-color: transparent;
+}
+
+.loading-message {
+    -fx-font-size: 14px;
+    -fx-text-fill: #667085;
+    -fx-font-weight: 500;
+}
+
+/* Header */
+.header {
+    -fx-background-color: white;
+    -fx-background-radius: 12px;
+    -fx-border-radius: 12px;
+    -fx-effect: dropshadow(three-pass-box, rgba(0, 0, 0, 0.05), 4, 0, 0, 2);
+}
+
+.h1 {
+    -fx-font-size: 28px;
+    -fx-font-weight: bold;
+    -fx-text-fill: #0096D6;
+}
+
+.date-info {
+    -fx-font-size: 13px;
+    -fx-text-fill: #667085;
+    -fx-font-weight: 500;
+}
+
+.today-indicator {
+    -fx-background-color: #E3F2FD;
+    -fx-text-fill: #0096D6;
+    -fx-background-radius: 12px;
+    -fx-border-radius: 12px;
+    -fx-font-size: 11px;
+    -fx-font-weight: bold;
+}
+
+.today-dot {
+    -fx-background-color: #0096D6;
+    -fx-background-radius: 50%;
+    -fx-border-radius: 50%;
+}
+
+.view-range-control {
+    -fx-background-color: #F8F9FA;
+    -fx-background-radius: 8px;
+    -fx-border-radius: 8px;
+    -fx-border-color: #E8E8E8;
+    -fx-border-width: 1.5px;
+}
+
+.view-range-label {
+    -fx-font-size: 12px;
+    -fx-font-weight: bold;
+    -fx-text-fill: #344054;
+}
+
+.days-input {
+    -fx-border-color: #D0D5DD;
+    -fx-border-width: 1.5px;
+    -fx-background-radius: 6px;
+    -fx-border-radius: 6px;
+    -fx-font-size: 14px;
+    -fx-font-weight: bold;
+    -fx-text-fill: #0096D6;
+    -fx-background-color: white;
+    -fx-alignment: center;
+}
+
+.days-input:focused {
+    -fx-border-color: #0096D6;
+    -fx-effect: dropshadow(three-pass-box, rgba(0, 150, 214, 0.1), 3, 0, 0, 0);
+}
+
+.days-unit {
+    -fx-font-size: 12px;
+    -fx-font-weight: bold;
+    -fx-text-fill: #667085;
+}
+
+.quick-view-btn {
+    -fx-border-color: #D0D5DD;
+    -fx-border-width: 1.5px;
+    -fx-background-color: white;
+    -fx-background-radius: 6px;
+    -fx-border-radius: 6px;
+    -fx-cursor: hand;
+    -fx-font-size: 11px;
+    -fx-font-weight: bold;
+    -fx-text-fill: #344054;
+}
+
+.quick-view-btn:hover {
+    -fx-border-color: #0096D6;
+    -fx-background-color: #F0F9FF;
+    -fx-text-fill: #0096D6;
+}
+
+.quick-view-btn.active {
+    -fx-background-color: #0096D6;
+    -fx-text-fill: white;
+    -fx-border-color: #0096D6;
+}
+
+/* Day Section */
+.day-section {
+    -fx-background-color: white;
+    -fx-background-radius: 12px;
+    -fx-border-radius: 12px;
+    -fx-effect: dropshadow(three-pass-box, rgba(0, 0, 0, 0.05), 4, 0, 0, 2);
+}
+
+.day-section.today {
+    -fx-border-color: #0096D6;
+    -fx-border-width: 2px;
+    -fx-effect: dropshadow(three-pass-box, rgba(0, 150, 214, 0.15), 12, 0, 0, 4);
+}
+
+.day-header {
+    -fx-border-color: transparent transparent #F0F0F0 transparent;
+    -fx-border-width: 0 0 2px 0;
+}
+
+.day-section.today .day-header {
+    -fx-border-color: transparent transparent #0096D6 transparent;
+}
+
+.day-date {
+    -fx-font-size: 28px;
+    -fx-font-weight: bold;
+    -fx-text-fill: #0096D6;
+}
+
+.day-section.today .day-date {
+    -fx-text-fill: #0096D6;
+}
+
+.day-name {
+    -fx-font-size: 16px;
+    -fx-font-weight: bold;
+    -fx-text-fill: #838788;
+}
+
+.day-section.today .day-name {
+    -fx-text-fill: #0096D6;
+}
+
+.today-badge {
+    -fx-background-color: #0096D6;
+    -fx-text-fill: white;
+    -fx-background-radius: 6px;
+    -fx-border-radius: 6px;
+    -fx-font-size: 12px;
+    -fx-font-weight: bold;
+    -fx-padding: 4px 12px;
+}
+
+.count-badge {
+    -fx-background-color: #E8F4F8;
+    -fx-text-fill: #0096D6;
+    -fx-background-radius: 20px;
+    -fx-border-radius: 20px;
+    -fx-font-size: 16px;
+    -fx-font-weight: bold;
+}
+
+.day-section.today .count-badge {
+    -fx-background-color: #0096D6;
+    -fx-text-fill: white;
+}
+
+.section-title {
+    -fx-spacing: 8px;
+}
+
+.section-title .label {
+    -fx-font-size: 14px;
+    -fx-font-weight: bold;
+    -fx-text-fill: #0096D6;
+}
+
+.section-count {
+    -fx-background-color: #E8F4F8;
+    -fx-text-fill: #0096D6;
+    -fx-background-radius: 12px;
+    -fx-border-radius: 12px;
+    -fx-font-size: 12px;
+}
+
+.section-filter-label {
+    -fx-font-size: 10px;
+    -fx-font-weight: bold;
+    -fx-text-fill: #667085;
+}
+
+.section-filter-btn {
+    -fx-border-color: #D0D5DD;
+    -fx-border-width: 1.5px;
+    -fx-background-color: white;
+    -fx-background-radius: 5px;
+    -fx-border-radius: 5px;
+    -fx-cursor: hand;
+    -fx-font-size: 10px;
+    -fx-font-weight: bold;
+    -fx-text-fill: #344054;
+}
+
+.section-filter-btn:hover {
+    -fx-border-color: #0096D6;
+    -fx-background-color: #F0F9FF;
+}
+
+.section-filter-btn.active {
+    -fx-background-color: #0096D6;
+    -fx-text-fill: white;
+    -fx-border-color: #0096D6;
+}
+
+/* Room Cards */
+.room-item {
+    -fx-background-color: white;
+    -fx-border-color: #E8E8E8;
+    -fx-border-width: 2px;
+    -fx-background-radius: 8px;
+    -fx-border-radius: 8px;
+    -fx-cursor: hand;
+}
+
+.room-item:hover {
+    -fx-border-color: #0096D6;
+    -fx-effect: dropshadow(three-pass-box, rgba(0, 150, 214, 0.1), 12, 0, 0, 4);
+}
+
+.room-item.urgent.has-urgency {
+    -fx-border-color: #FFA500;
+    -fx-background-color: #FFFEF8;
+}
+
+.room-item.danger.has-danger {
+    -fx-border-color: #FF6B6B;
+    -fx-background-color: #FFF9F9;
+}
+
+.room-item-accent {
+    -fx-background-color: transparent;
+    -fx-background-radius: 8px 0 0 8px;
+    -fx-border-radius: 8px 0 0 8px;
+}
+
+.room-item.to-clean-item .room-item-accent {
+    -fx-background-color: #0096D6;
+}
+
+.room-item.to-inspect-item .room-item-accent {
+    -fx-background-color: #0096D6;
+}
+
+.room-item.urgent.has-urgency .room-item-accent {
+    -fx-background-color: #FFA500;
+}
+
+.room-item.danger.has-danger .room-item-accent {
+    -fx-background-color: #FF6B6B;
+}
+
+.room-number {
+    -fx-font-size: 16px;
+    -fx-font-weight: bold;
+    -fx-text-fill: #0096D6;
+}
+
+.building-tag {
+    -fx-background-radius: 4px;
+    -fx-border-radius: 4px;
+    -fx-font-size: 9px;
+    -fx-font-weight: bold;
+}
+
+.building-tag.building-a {
+    -fx-background-color: #E3F2FD;
+    -fx-text-fill: #1976D2;
+}
+
+.building-tag.building-b {
+    -fx-background-color: #F3E5F5;
+    -fx-text-fill: #7B1FA2;
+}
+
+.building-tag.building-c {
+    -fx-background-color: #FFF3E0;
+    -fx-text-fill: #F57C00;
+}
+
+.status-badge {
+    -fx-background-radius: 4px;
+    -fx-border-radius: 4px;
+    -fx-font-size: 9px;
+    -fx-font-weight: bold;
+}
+
+.status-badge.to-clean {
+    -fx-background-color: #FFF3E0;
+    -fx-text-fill: #FF8C00;
+    -fx-border-color: #FFE0B2;
+    -fx-border-width: 1px;
+}
+
+.status-badge.checkout-pending {
+    -fx-background-color: #FFF9E6;
+    -fx-text-fill: #D97706;
+    -fx-border-color: #FEF3C7;
+    -fx-border-width: 1px;
+}
+
+.status-badge.to-inspect {
+    -fx-background-color: #FFFBEB;
+    -fx-text-fill: #D4A50A;
+    -fx-border-color: #FFF9C4;
+    -fx-border-width: 1px;
+}
+
+.next-checkin {
+    -fx-font-size: 11px;
+    -fx-text-fill: #838788;
+    -fx-font-weight: 500;
+}
+
+.next-checkin-date {
+    -fx-text-fill: #41BA4D;
+    -fx-font-weight: bold;
+}
+
+.next-checkin-urgent {
+    -fx-text-fill: #DC2626;
+    -fx-font-weight: bold;
+}
+
+.next-checkin-tomorrow {
+    -fx-text-fill: #FF6B6B;
+    -fx-font-weight: bold;
+}
+
+.section-divider-line {
+    -fx-background-color: #E0E0E0;
+}
+
+.section-divider-text {
+    -fx-font-size: 13px;
+    -fx-font-weight: bold;
+    -fx-text-fill: #838788;
+}
+
+/* Arrival Cards */
+.arrival-card {
+    -fx-background-color: white;
+    -fx-border-color: #E8F4F8;
+    -fx-border-width: 2px;
+    -fx-background-radius: 8px;
+    -fx-border-radius: 8px;
+}
+
+.arrival-card:hover {
+    -fx-border-color: #0096D6;
+    -fx-effect: dropshadow(three-pass-box, rgba(0, 150, 214, 0.15), 12, 0, 0, 4);
+}
+
+.arrival-card.has-special-needs {
+    -fx-background-color: #FFFEF8;
+}
+
+.arrival-card.urgent.has-urgency {
+    -fx-border-color: #FFA500;
+    -fx-background-color: #FFFEF8;
+}
+
+.arrival-card-accent {
+    -fx-background-color: #0096D6;
+    -fx-background-radius: 8px 0 0 8px;
+    -fx-border-radius: 8px 0 0 8px;
+}
+
+.arrival-card.has-special-needs .arrival-card-accent {
+    -fx-background-color: #FFA500;
+}
+
+.arrival-guest {
+    -fx-font-size: 12px;
+    -fx-font-weight: 500;
+    -fx-text-fill: #666;
+}
+
+.arrival-event {
+    -fx-font-size: 11px;
+    -fx-text-fill: #0096D6;
+    -fx-font-weight: bold;
+}
+
+.special-needs-badge {
+    -fx-background-color: #FFF3E0;
+    -fx-text-fill: #FF8C00;
+    -fx-background-radius: 4px;
+    -fx-border-radius: 4px;
+    -fx-font-size: 10px;
+    -fx-font-weight: bold;
+}
+
+/* Guest Items */
+.guest-item {
+    -fx-border-color: #F0F0F0 transparent transparent transparent;
+    -fx-border-width: 1px 0 0 0;
+}
+
+.guest-name-individual {
+    -fx-font-size: 11px;
+    -fx-font-weight: bold;
+    -fx-text-fill: #333;
+}
+
+.guest-event {
+    -fx-font-size: 9px;
+    -fx-text-fill: #0096D6;
+    -fx-font-weight: bold;
+}
+
+.guest-special-needs {
+    -fx-background-color: #FFF3E0;
+    -fx-text-fill: #FF8C00;
+    -fx-background-radius: 4px;
+    -fx-border-radius: 4px;
+    -fx-font-size: 9px;
+    -fx-font-weight: bold;
+}
+
+/* Checkout Cards */
+.checkout-card-normal {
+    -fx-background-color: white;
+    -fx-border-color: #E8E8E8;
+    -fx-border-width: 2px;
+    -fx-background-radius: 8px;
+    -fx-border-radius: 8px;
+}
+
+.checkout-card-normal:hover {
+    -fx-border-color: #838788;
+    -fx-effect: dropshadow(three-pass-box, rgba(131, 135, 136, 0.15), 12, 0, 0, 4);
+}
+
+.checkout-card-normal-accent {
+    -fx-background-color: #838788;
+    -fx-background-radius: 8px 0 0 8px;
+    -fx-border-radius: 8px 0 0 8px;
+}
+
+.checkout-card {
+    -fx-background-color: #FFF5F5;
+    -fx-border-color: #FFCCCC;
+    -fx-border-width: 2px;
+    -fx-background-radius: 8px;
+    -fx-border-radius: 8px;
+}
+
+.checkout-card:hover {
+    -fx-border-color: #FF6B6B;
+    -fx-effect: dropshadow(three-pass-box, rgba(255, 107, 107, 0.15), 12, 0, 0, 4);
+}
+
+.checkout-card-accent {
+    -fx-background-color: #FF6B6B;
+    -fx-background-radius: 8px 0 0 8px;
+    -fx-border-radius: 8px 0 0 8px;
+}
+
+.checkout-guest {
+    -fx-font-size: 12px;
+    -fx-font-weight: 500;
+    -fx-text-fill: #666;
+}
+
+.urgent-warning {
+    -fx-background-color: #FF6B6B;
+    -fx-text-fill: white;
+    -fx-background-radius: 4px;
+    -fx-border-radius: 4px;
+    -fx-font-size: 10px;
+    -fx-font-weight: bold;
+    -fx-alignment: center;
+}
+
+/* Partial Checkout */
+.partial-checkout-card {
+    -fx-background-color: white;
+    -fx-border-color: #E8E8E8;
+    -fx-border-width: 2px;
+    -fx-background-radius: 8px;
+    -fx-border-radius: 8px;
+}
+
+.partial-checkout-card:hover {
+    -fx-border-color: #0096D6;
+    -fx-effect: dropshadow(three-pass-box, rgba(0, 150, 214, 0.15), 12, 0, 0, 4);
+}
+
+.partial-checkout-card-accent {
+    -fx-background-color: #0096D6;
+    -fx-background-radius: 8px 0 0 8px;
+    -fx-border-radius: 8px 0 0 8px;
+}
+
+.checkout-info {
+    -fx-font-size: 11px;
+    -fx-text-fill: #666;
+}
+
+.remaining-guests {
+    -fx-font-size: 11px;
+    -fx-text-fill: #838788;
+}
+
+/* Empty State */
+.empty-state {
+    -fx-background-color: #FAFAFA;
+    -fx-background-radius: 12px;
+    -fx-border-radius: 12px;
+    -fx-min-height: 200px;
+}
+
+.empty-state-message {
+    -fx-font-size: 16px;
+    -fx-font-weight: 500;
+    -fx-text-fill: #999999;
+    -fx-text-alignment: center;
+}
+
+/* Room Header */
+.room-header-container {
+    -fx-spacing: 8px;
+}
+
+.room-header {
+    -fx-spacing: 8px;
+    -fx-alignment: center-left;
+}
+
+.arrival-room-header {
+    -fx-spacing: 8px;
+    -fx-alignment: center-left;
+}
+
+/* Room Type */
+.room-type-text {
+    -fx-font-size: 10px;
+    -fx-font-weight: 600;
+    -fx-text-fill: #838788;
+}
+
+.room-type-badge {
+    -fx-background-radius: 4px;
+    -fx-border-radius: 4px;
+    -fx-font-size: 9px;
+    -fx-font-weight: bold;
+    -fx-padding: 2px 6px;
+}
+
+/* Badge Colors */
+.badge {
+    -fx-padding: 2px 8px;
+    -fx-border-radius: 4px;
+    -fx-background-radius: 4px;
+    -fx-font-size: 10px;
+    -fx-font-weight: bold;
+}
+
+.badge-light-info {
+    -fx-background-color: #E3F2FD;
+    -fx-text-fill: #0096D6;
+}
+
+.badge-light-purple {
+    -fx-background-color: #F3E5F5;
+    -fx-text-fill: #7B1FA2;
+}
+
+.badge-light-gray {
+    -fx-background-color: #F5F5F5;
+    -fx-text-fill: #667085;
+}
+
+/* Guest Details */
+.guest-details-container {
+    -fx-spacing: 8px;
+}
+
+.checkout-guest-names {
+    -fx-font-size: 11px;
+    -fx-font-weight: bold;
+    -fx-text-fill: #333;
+}
+
+/* Expand/Collapse */
+.expand-icon {
+    -fx-font-size: 10px;
+    -fx-text-fill: #0096D6;
+    -fx-cursor: hand;
+}
+
+.expand-link {
+    -fx-cursor: hand;
+    -fx-text-fill: #0096D6;
+    -fx-font-size: 11px;
+    -fx-font-weight: 600;
+}
+
+.expand-link:hover {
+    -fx-text-fill: #007AB8;
+}
+
+.partial-checkout-summary-text {
+    -fx-font-size: 11px;
+    -fx-text-fill: #838788;
+}
+
+/* Person Icon */
+.person-icon {
+    -fx-font-size: 12px;
+    -fx-text-fill: #838788;
+}
+
+.inline-icon {
+    -fx-font-size: 10px;
+}

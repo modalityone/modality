@@ -18,4 +18,6 @@
         </used-by-source-modules>
     </dependencies>
 
+    <i18n javaKeysClass="one.modality.hotel.backoffice.activities.household.HouseholdI18nKeys"/>
+
 </project>

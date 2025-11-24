@@ -27,6 +27,9 @@ public interface ScheduledItem extends Entity,
     String commentLabel = "commentLabel";
     String vodDelayed = "vodDelayed";
     String published = "published";
+    String available = "available";
+    String online = "online";
+    String resource = "resource";
 
     default void setProgramScheduledItem(Object value) {
         setForeignField(programScheduledItem, value);
@@ -106,5 +109,29 @@ public interface ScheduledItem extends Entity,
 
     default Boolean isPublished() {
         return getBooleanFieldValue(published);
+    }
+
+    default void setAvailable(Boolean value) {
+        setFieldValue(available, value);
+    }
+
+    default Boolean isAvailable() {
+        return getBooleanFieldValue(available);
+    }
+
+    default void setOnline(Boolean value) {
+        setFieldValue(online, value);
+    }
+
+    default Boolean isOnline() {
+        return getBooleanFieldValue(online);
+    }
+
+    default void setResource(Boolean value) {
+        setFieldValue(resource, value);
+    }
+
+    default Boolean isResource() {
+        return getBooleanFieldValue(resource);
     }
 }
