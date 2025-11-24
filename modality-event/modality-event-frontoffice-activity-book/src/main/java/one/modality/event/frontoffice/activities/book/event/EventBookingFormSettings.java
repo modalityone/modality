@@ -10,14 +10,16 @@ import one.modality.event.frontoffice.eventheader.EventHeader;
  */
 @SuppressWarnings("unusable-by-js")
 public record EventBookingFormSettings(
-    Event event,
-    EventHeader eventHeader,
-    Background headerBackground,
-    double headerMaxTopBottomPadding,
-    double extraSpaceBetweenHeaderAndBookingForm, // if between 0 and 1, then it's a percent factor of the booking form width
-    boolean showNavigationBar,
-    boolean autoLoadExistingBooking,
-    boolean showPriceBar,
-    boolean bookAsAGuestAllowed,
-    boolean partialEventAllowed
-) implements BookingFormSettings {}
+        Event event,
+        EventHeader eventHeader,
+        Background headerBackground,
+        double headerMaxTopBottomPadding,
+        double extraSpaceBetweenHeaderAndBookingForm, // if between 0 and 1, then it's a percent factor of the booking
+                                                      // form width
+        boolean showNavigationBar,
+        boolean autoLoadExistingBooking,
+        boolean showPriceBar,
+        boolean bookAsAGuestAllowed,
+        boolean partialEventAllowed,
+        boolean isNavigationClickable) implements BookingFormSettings {
+}

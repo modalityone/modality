@@ -19,7 +19,8 @@ public interface BookingFormPage {
 
     Node getView();
 
-    default void onTransitionFinished() { }
+    default void onTransitionFinished() {
+    }
 
     default MonoPane getEmbeddedLoginContainer() {
         return null;
@@ -61,6 +62,18 @@ public interface BookingFormPage {
 
     default ObservableBooleanValue endReachedProperty() {
         return new SimpleBooleanProperty(false);
+    }
+
+    default boolean isStep() {
+        return true;
+    }
+
+    default boolean isHeaderVisible() {
+        return true;
+    }
+
+    default BookingFormButton[] getButtons() {
+        return null; // Null means use default navigation (Back/Next)
     }
 
 }

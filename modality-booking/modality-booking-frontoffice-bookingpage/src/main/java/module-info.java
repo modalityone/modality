@@ -22,6 +22,7 @@ module modality.booking.frontoffice.bookingpage {
     requires modality.ecommerce.frontoffice.order;
     requires modality.event.client.lifecycle;
     requires modality.event.frontoffice.activity.book;
+    requires webfx.extras.aria;
     requires webfx.extras.async;
     requires webfx.extras.i18n;
     requires webfx.extras.i18n.controls;

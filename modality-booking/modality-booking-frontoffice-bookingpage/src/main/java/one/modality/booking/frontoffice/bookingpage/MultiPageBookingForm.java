@@ -16,6 +16,7 @@ import javafx.scene.control.ContentDisplay;
 import javafx.scene.control.ToggleButton;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.Region;
+import javafx.scene.layout.VBox;
 import one.modality.booking.client.workingbooking.FXPersonToBook;
 import one.modality.booking.client.workingbooking.HasWorkingBookingProperties;
 import one.modality.booking.frontoffice.bookingelements.BookingElements;
@@ -32,7 +33,8 @@ public abstract class MultiPageBookingForm extends BookingFormBase {
     private static final double MAX_WIDTH = 800;
     private static MonoPane LAST_PAGE_EMBEDDED_LOGIN_CONTAINER;
 
-    private final NavigationBar navigationBar;
+    private BookingFormHeader header;
+    private BookingFormNavigation navigation;
     private final TransitionPane transitionPane = new TransitionPane();
     private final BooleanProperty personToBookRequiredProperty = new SimpleBooleanProperty() {
         @Override
@@ -55,15 +57,23 @@ public abstract class MultiPageBookingForm extends BookingFormBase {
             Future<?> future = get();
             if (future != null && !future.isComplete()) {
                 UiScheduler.scheduleDeferred(() -> {
-                    ToggleButton nextButton = navigationBar.getNextButton();
-                    nextButton.setContentDisplay(ContentDisplay.GRAPHIC_ONLY);
-                    AsyncSpinner.displayButtonSpinnerDuringAsyncExecution(
-                        future
-                            .inUiThread()
-                            .onComplete(ar -> {
-                                pageBusyCountProperty.set(pageBusyCountProperty.get() + 1); // To force recomputation of next button disable property
-                                navigationBar.updateButtons(); // To reestablish the content display
-                            }), nextButton);
+                    if (navigation != null) {
+                        ToggleButton nextButton = navigation.getNextButton();
+                        nextButton.setContentDisplay(ContentDisplay.GRAPHIC_ONLY);
+                        AsyncSpinner.displayButtonSpinnerDuringAsyncExecution(
+                                future
+                                        .inUiThread()
+                                        .onComplete(ar -> {
+                                            pageBusyCountProperty.set(pageBusyCountProperty.get() + 1); // To force
+                                                                                                        // recomputation
+                                                                                                        // of next
+                                                                                                        // button
+                                                                                                        // disable
+                                                                                                        // property
+                                            navigation.updateState(); // To reestablish the content display
+                                        }),
+                                nextButton);
+                    }
                 });
             }
         }
@@ -85,61 +95,122 @@ public abstract class MultiPageBookingForm extends BookingFormBase {
 
     public MultiPageBookingForm(HasWorkingBookingProperties activity, BookingFormSettings settings) {
         super(activity, settings);
-        if (!settings.showNavigationBar()) {
-            navigationBar = null;
-        } else {
-            navigationBar = new NavigationBar();
-            navigationBar.getBackButton().setOnMouseClicked(e -> navigateToPreviousPage());
-            navigationBar.getBackButton().disableProperty().bind(new BooleanBinding() {
-                {
-                    super.bind(previousPageApplicableProperty, pageCanGoBackProperty);
-                }
+        if (settings.showNavigationBar()) {
+            setNavigation(new StandardBookingFormNavigation());
+        }
+        setNavigationClickable(settings.isNavigationClickable());
+    }
 
-                @Override
-                protected boolean computeValue() {
-                    return !previousPageApplicableProperty.get() || !pageCanGoBackProperty.get();
-                }
-            });
-            navigationBar.getNextButton().setOnMouseClicked(e -> navigateToNextPage());
-            navigationBar.getNextButton().disableProperty().bind(new BooleanBinding() {
-                {
-                    super.bind(pageValidProperty, pageCanGoForwardProperty, pageEndReachedProperty,
-                        personToBookRequiredProperty, showDefaultSubmitButtonProperty, pageShowingOwnSubmitButtonProperty,
-                        pageBusyFutureProperty, pageBusyCountProperty, FXPersonToBook.personToBookProperty());
-                }
-
-                @Override
-                protected boolean computeValue() {
-                    if (isPageBusy())
-                        return false;
-                    // We disable the "next" button in the following cases:
-                    // When the displayed page is not valid
-                    return !pageValidProperty.get()
-                           || !pageCanGoForwardProperty.get()
-                           || pageEndReachedProperty.get()
-                           // When it is required to specify the person to book, and it's still not set on the booking nor on the person to book button
-                           || personToBookRequiredProperty.get() && getWorkingBooking().getDocument().getPerson() == null && FXPersonToBook.getPersonToBook() == null
-                           // When the page shows a submitButton (either the default one or its own)
-                           || showDefaultSubmitButtonProperty.get() || pageShowingOwnSubmitButtonProperty.get()
-                        ;
-                }
-            });
+    public void setHeader(BookingFormHeader header) {
+        this.header = header;
+        if (header != null) {
+            header.setBookingForm(this);
+            header.setNavigationClickable(settings.isNavigationClickable());
         }
     }
 
-    protected abstract BookingFormPage[] getPages();
+    public void setNavigation(BookingFormNavigation navigation) {
+        this.navigation = navigation;
+        if (navigation != null) {
+            navigation.setBookingForm(this);
+            bindNavigationButtons();
+        }
+    }
+
+    private void bindNavigationButtons() {
+        navigation.getBackButton().setOnMouseClicked(e -> navigateToPreviousPage());
+        navigation.getBackButton().disableProperty().bind(new BooleanBinding() {
+            {
+                super.bind(previousPageApplicableProperty, pageCanGoBackProperty);
+            }
+
+            @Override
+            protected boolean computeValue() {
+                return !previousPageApplicableProperty.get() || !pageCanGoBackProperty.get();
+            }
+        });
+        navigation.getNextButton().setOnMouseClicked(e -> navigateToNextPage());
+        navigation.getNextButton().disableProperty().bind(new BooleanBinding() {
+            {
+                super.bind(pageValidProperty, pageCanGoForwardProperty, pageEndReachedProperty,
+                        personToBookRequiredProperty, showDefaultSubmitButtonProperty,
+                        pageShowingOwnSubmitButtonProperty,
+                        pageBusyFutureProperty, pageBusyCountProperty, FXPersonToBook.personToBookProperty());
+            }
+
+            @Override
+            protected boolean computeValue() {
+                if (isPageBusy())
+                    return false;
+                // We disable the "next" button in the following cases:
+                // When the displayed page is not valid
+                return !pageValidProperty.get()
+                        || !pageCanGoForwardProperty.get()
+                        || pageEndReachedProperty.get()
+                // When it is required to specify the person to book, and it's still not set on
+                // the booking nor on the person to book button
+                        || personToBookRequiredProperty.get() && getWorkingBooking().getDocument().getPerson() == null
+                                && FXPersonToBook.getPersonToBook() == null
+                // When the page shows a submitButton (either the default one or its own)
+                        || showDefaultSubmitButtonProperty.get() || pageShowingOwnSubmitButtonProperty.get();
+            }
+        });
+    }
+
+    public abstract BookingFormPage[] getPages();
+
+    public int getDisplayedPageIndex() {
+        return displayedPageIndex;
+    }
 
     @Override
     public Node buildUi() {
-        BorderPane borderPane = new BorderPane(transitionPane);
-        if (navigationBar != null) {
-            borderPane.setTop(navigationBar.getView());
+        BorderPane borderPane = new BorderPane();
+        borderPane.setCenter(transitionPane);
+        if (header != null) {
+            borderPane.setTop(header.getView());
         }
-        if (settings.showNavigationBar()) {
+        if (navigation != null) {
+            if (header != null) {
+                // If header is present, navigation might be at the bottom or handled
+                // differently.
+                // For now, let's put it at the bottom if it's not null.
+                // But wait, StandardBookingFormNavigation was at the top.
+                // If we have a header (StepProgress), we probably want navigation at the
+                // bottom?
+                // The HTML mockup shows navigation buttons at the bottom.
+                // The existing code put navigationBar at the top.
+                // Let's assume if header is set, we put header at top.
+                // Where to put navigation?
+                // If navigation is StandardBookingFormNavigation (which looks like a header),
+                // it might conflict.
+                // Let's put navigation at the bottom if header is present, or check types?
+                // Actually, the mockup shows "Continue" button at the bottom.
+                // The StandardBookingFormNavigation has Back/Next buttons.
+                // Let's put navigation at the bottom of the center pane or below it.
+                // Let's try putting it at the bottom of the BorderPane.
+                // But PriceBar is also at the bottom.
+                // We can use a VBox for the bottom.
+            } else {
+                borderPane.setTop(navigation.getView());
+            }
+        }
+
+        VBox bottomBox = new VBox();
+        if (navigation != null && header != null) {
+            bottomBox.getChildren().add(navigation.getView());
+        }
+
+        if (settings.showPriceBar()) {
             Node priceBarView = new PriceBar(workingBookingProperties).getView();
             Layouts.bindManagedAndVisiblePropertiesTo(pageIsPriceBarRelevantToShowProperty, priceBarView);
-            borderPane.setBottom(priceBarView);
+            bottomBox.getChildren().add(priceBarView);
         }
+
+        if (!bottomBox.getChildren().isEmpty()) {
+            borderPane.setBottom(bottomBox);
+        }
+
         borderPane.setMaxWidth(MAX_WIDTH); // Max width for desktops
         return BookingElements.styleBookingElementsContainer(borderPane, true);
     }
@@ -176,7 +247,8 @@ public abstract class MultiPageBookingForm extends BookingFormBase {
     }
 
     private int findApplicablePageIndex(boolean forward) {
-        // Not during transitions because 1) Transition is buggy in this case 2) this prevents accidental multiple clicks
+        // Not during transitions because 1) Transition is buggy in this case 2) this
+        // prevents accidental multiple clicks
         if (transitionPane.isTransiting())
             return -1;
         BookingFormPage[] pages = getPages();
@@ -191,8 +263,9 @@ public abstract class MultiPageBookingForm extends BookingFormBase {
         return -1;
     }
 
-    private void navigateToPage(int index) {
-        // Not during transitions because 1) Transition is buggy in this case 2) this prevents accidental multiple clicks
+    public void navigateToPage(int index) {
+        // Not during transitions because 1) Transition is buggy in this case 2) this
+        // prevents accidental multiple clicks
         if (transitionPane.isTransiting())
             return;
         boolean isForward = index > displayedPageIndex;
@@ -224,6 +297,16 @@ public abstract class MultiPageBookingForm extends BookingFormBase {
             embeddedLoginContainer.managedProperty().bind(embeddedLoginNode.managedProperty());
             LAST_PAGE_EMBEDDED_LOGIN_CONTAINER = embeddedLoginContainer;
         }
+
+        // Update Header Visibility
+        if (header != null) {
+            header.getView().setVisible(displayedPage.isHeaderVisible());
+            header.getView().setManaged(displayedPage.isHeaderVisible());
+        }
+
+        // Update Navigation Buttons
+        updateNavigationButtons();
+
         updateNavigationBar();
         updatePersonToBookRequired();
         updateShowDefaultSubmitButton();
@@ -231,14 +314,37 @@ public abstract class MultiPageBookingForm extends BookingFormBase {
         transitionPane.transitToContent(displayedPage.getView(), displayedPage::onTransitionFinished);
     }
 
+    private void updateNavigationButtons() {
+        if (navigation == null)
+            return;
+
+        BookingFormButton[] buttons = displayedPage.getButtons();
+        if (buttons != null) {
+            navigation.setButtons(buttons);
+        } else {
+            // Fallback to default behavior if no custom buttons defined
+            // We might need to reset the navigation to default state if it was changed
+            // But StandardBookingFormNavigation doesn't support "resetting" easily if we
+            // overwrite it.
+            // For now, we assume if getButtons() returns null, the navigation component
+            // handles its default state
+            // or we need to explicitly tell it to use defaults.
+            // Let's pass null to setButtons to indicate "use defaults"
+            navigation.setButtons((BookingFormButton[]) null);
+        }
+    }
+
     private boolean isLastPage() {
         return displayedPageIndex == getPages().length - 1;
     }
 
     protected void updateNavigationBar() {
-        if (navigationBar != null) {
-            navigationBar.setTitleI18nKey(displayedPage.getTitleI18nKey());
+        if (navigation != null) {
+            navigation.updateState();
             previousPageApplicableProperty.set(findApplicablePageIndex(false) != -1);
+        }
+        if (header != null) {
+            header.updateState();
         }
     }
 
@@ -256,6 +362,12 @@ public abstract class MultiPageBookingForm extends BookingFormBase {
 
     protected void setShowDefaultSubmitButton(boolean show) {
         showDefaultSubmitButtonProperty.set(show);
+    }
+
+    public void setNavigationClickable(boolean clickable) {
+        if (header != null) {
+            header.setNavigationClickable(clickable);
+        }
     }
 
 }

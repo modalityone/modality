@@ -28,7 +28,7 @@ public final class RecurringEventBookingForm extends MultiPageBookingForm {
     }
 
     @Override
-    protected BookingFormPage[] getPages() {
+    public BookingFormPage[] getPages() {
         if (pages == null) {
             if (settings.partialEventAllowed()) {
                 pages = new BookingFormPage[]{
