@@ -112,25 +112,18 @@ public class SingleRoomBookingBarRenderer implements BookingBarRenderer {
 
             // Add click handler to show guest info tooltip
             if (bar.getBookingData() != null) {
-                System.out.println("[SingleRoomBookingBarRenderer] Adding click handler to person icon for guest: " + bar.getBookingData().getGuestName());
-
-                // Add hover effect for debugging
+                // Add hover effect
                 personIcon.setOnMouseEntered(event -> {
-                    System.out.println("[SingleRoomBookingBarRenderer] Mouse entered person icon");
                     personIcon.setOpacity(0.7);
                 });
                 personIcon.setOnMouseExited(event -> {
-                    System.out.println("[SingleRoomBookingBarRenderer] Mouse exited person icon");
                     personIcon.setOpacity(1.0);
                 });
 
                 personIcon.setOnMouseClicked(event -> {
-                    System.out.println("[SingleRoomBookingBarRenderer] Person icon clicked!");
                     event.consume();  // Prevent event propagation
                     showGuestInfoTooltip(event, bar.getBookingData());
                 });
-            } else {
-                System.out.println("[SingleRoomBookingBarRenderer] No booking data available for person icon");
             }
 
             iconsBox.getChildren().add(personIcon);
@@ -145,25 +138,18 @@ public class SingleRoomBookingBarRenderer implements BookingBarRenderer {
 
             // Add click handler to show special needs tooltip
             if (bar.getBookingData() != null) {
-                System.out.println("[SingleRoomBookingBarRenderer] Adding click handler to message icon for guest: " + bar.getBookingData().getGuestName());
-
-                // Add hover effect for debugging
+                // Add hover effect
                 messageIcon.setOnMouseEntered(event -> {
-                    System.out.println("[SingleRoomBookingBarRenderer] Mouse entered message icon");
                     messageIcon.setOpacity(0.7);
                 });
                 messageIcon.setOnMouseExited(event -> {
-                    System.out.println("[SingleRoomBookingBarRenderer] Mouse exited message icon");
                     messageIcon.setOpacity(1.0);
                 });
 
                 messageIcon.setOnMouseClicked(event -> {
-                    System.out.println("[SingleRoomBookingBarRenderer] Message icon clicked!");
                     event.consume();  // Prevent event propagation
                     showSpecialNeedsTooltip(event, bar.getBookingData());
                 });
-            } else {
-                System.out.println("[SingleRoomBookingBarRenderer] No booking data available for message icon");
             }
 
             iconsBox.getChildren().add(messageIcon);

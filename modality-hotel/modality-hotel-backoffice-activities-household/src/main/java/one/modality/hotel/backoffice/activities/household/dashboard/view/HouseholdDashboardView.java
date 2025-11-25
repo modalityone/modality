@@ -244,11 +244,6 @@ public final class HouseholdDashboardView {
     }
 
     private void initLogic() {
-        System.out.println("[HouseholdDashboard] === initLogic() called ===");
-        System.out.println("[HouseholdDashboard] Organization: " + pm.organizationIdProperty().get());
-        System.out.println("[HouseholdDashboard] Today: " + FXToday.getToday());
-        System.out.println("[HouseholdDashboard] Days to display: " + daysToDisplay.get());
-
         // Show loading indicator initially
         renderDashboard();
 
@@ -259,45 +254,6 @@ public final class HouseholdDashboardView {
 
         // Re-render when data changes
         attendances.addListener((ListChangeListener<Attendance>) c -> {
-            System.out.println("[HouseholdDashboard] === Attendances changed ===");
-            System.out.println("[HouseholdDashboard] Total attendances: " + attendances.size());
-
-            if (!attendances.isEmpty()) {
-                // Count items by family
-                Map<Object, Long> itemsByFamily = attendances.stream()
-                    .map(a -> {
-                        DocumentLine dl = a.getDocumentLine();
-                        if (dl != null && dl.getItem() != null && dl.getItem().getFamily() != null) {
-                            return dl.getItem().getFamily().getPrimaryKey();
-                        }
-                        return "null";
-                    })
-                    .collect(Collectors.groupingBy(f -> f, Collectors.counting()));
-
-                System.out.println("[HouseholdDashboard] Items by family ID:");
-                itemsByFamily.forEach((familyId, count) ->
-                    System.out.println("  Family " + familyId + ": " + count + " attendances"));
-
-                // Show first 5 accommodation examples if any exist
-                System.out.println("[HouseholdDashboard] First 5 ACCOMMODATION samples:");
-                int accomFound = 0;
-                for (int i = 0; i < attendances.size() && accomFound < 5; i++) {
-                    Attendance a = attendances.get(i);
-                    if (isAccommodation(a)) {
-                        DocumentLine dl = a.getDocumentLine();
-                        Item item = dl != null ? dl.getItem() : null;
-                        String itemName = item != null ? item.getName() : "null";
-                        System.out.println("  [" + i + "] Date: " + a.getDate() + ", Item: " + itemName);
-                        accomFound++;
-                    }
-                }
-                if (accomFound == 0) {
-                    System.out.println("  (No accommodations found in entire dataset!)");
-                }
-            }
-
-            long accommodationCount = attendances.stream().filter(this::isAccommodation).count();
-            System.out.println("[HouseholdDashboard] Accommodations: " + accommodationCount + " / " + attendances.size());
             renderDashboard();
         });
 
@@ -324,12 +280,10 @@ public final class HouseholdDashboardView {
     }
 
     private void renderDashboard() {
-        System.out.println("[HouseholdDashboard] === renderDashboard() called ===");
         mainContent.getChildren().clear();
 
         // If no data yet, show loading indicator
         if (attendances.isEmpty()) {
-            System.out.println("[HouseholdDashboard] No data yet, showing loading indicator");
             mainContent.getChildren().add(loadingIndicator);
             return;
         }
@@ -338,23 +292,16 @@ public final class HouseholdDashboardView {
         LocalDate today = FXToday.getToday();
         int days = daysToDisplay.get();
 
-        System.out.println("[HouseholdDashboard] Rendering " + days + " days starting from " + today);
-        int sectionsAdded = 0;
-
         for (int i = 0; i < days; i++) {
             LocalDate date = today.plus(i, ChronoUnit.DAYS);
             Node daySection = createDaySection(date);
             if (daySection != null) {
                 mainContent.getChildren().add(daySection);
-                sectionsAdded++;
             }
         }
-
-        System.out.println("[HouseholdDashboard] Added " + sectionsAdded + " day sections to UI");
     }
 
     private Node createDaySection(LocalDate date) {
-        System.out.println("[HouseholdDashboard] --- createDaySection for " + date + " ---");
         boolean isToday = date.equals(FXToday.getToday());
 
         LocalDate yesterday = date.minus(1, ChronoUnit.DAYS);
@@ -365,33 +312,6 @@ public final class HouseholdDashboardView {
         List<CheckoutCard> checkoutCards = new ArrayList<>();
         List<PartialCheckoutCard> partialCheckoutCards = new ArrayList<>();
         List<ArrivalCard> arrivalCards = new ArrayList<>();
-
-        // Count attendances for this date
-        long attendancesOnDate = attendances.stream().filter(a -> a.getDate().equals(date)).count();
-        System.out.println("[HouseholdDashboard] Total attendances on " + date + ": " + attendancesOnDate);
-
-        // Debug: Check cancelled status
-        long cancelledCount = attendances.stream()
-                .filter(a -> a.getDate().equals(date))
-                .filter(a -> isAccommodation(a))
-                .filter(a -> isCancelled(a))
-                .count();
-        System.out.println("[HouseholdDashboard] Cancelled accommodations on " + date + ": " + cancelledCount);
-
-        // Debug: Show details of first few cancelled items
-        attendances.stream()
-                .filter(a -> a.getDate().equals(date))
-                .filter(a -> isAccommodation(a))
-                .filter(a -> isCancelled(a))
-                .limit(3)
-                .forEach(a -> {
-                    DocumentLine dl = a.getDocumentLine();
-                    Document doc = dl != null ? dl.getDocument() : null;
-                    System.out.println("[HouseholdDashboard] Cancelled: DL.cancelled=" +
-                        (dl != null ? dl.isCancelled() : "null") +
-                        ", DOC.cancelled=" + (doc != null ? doc.isCancelled() : "null") +
-                        ", Person=" + (doc != null ? doc.getFirstName() + " " + doc.getLastName() : "null"));
-                });
 
         // Group attendances by DocumentLine for this date
         // Filter to only include accommodations (family id = 1) to exclude meals, activities, etc.
@@ -408,8 +328,6 @@ public final class HouseholdDashboardView {
                 .filter(a -> isAccommodation(a))
                 .filter(a -> !isCancelled(a))
                 .collect(Collectors.groupingBy(Attendance::getDocumentLine));
-
-        System.out.println("[HouseholdDashboard] Accommodation document lines on " + date + ": " + attsByDl.size());
 
         // Build room occupancy map - include both today's occupants AND yesterday's (for checkout detection)
         Map<ResourceConfiguration, List<DocumentLine>> roomOccupancy = new HashMap<>();
@@ -633,36 +551,22 @@ public final class HouseholdDashboardView {
             }
         }
 
-        System.out.println("[HouseholdDashboard] Cards BEFORE filtering - Cleaning: " + cleaningCards.size() +
-                ", Inspection: " + inspectionCards.size() +
-                ", Checkouts: " + checkoutCards.size() +
-                ", Partial Checkouts: " + partialCheckoutCards.size() +
-                ", Arrivals: " + arrivalCards.size());
-
         // Apply filters for today
         if (isToday) {
             cleaningCards = applyCleaningFilters(cleaningCards);
             inspectionCards = applyInspectionFilters(inspectionCards);
-            System.out.println("[HouseholdDashboard] Cards AFTER filtering - Cleaning: " + cleaningCards.size() +
-                    ", Inspection: " + inspectionCards.size());
         }
 
         boolean hasActivity = !cleaningCards.isEmpty() || !inspectionCards.isEmpty() ||
                 !checkoutCards.isEmpty() || !partialCheckoutCards.isEmpty() || !arrivalCards.isEmpty();
 
-        System.out.println("[HouseholdDashboard] hasActivity for " + date + ": " + hasActivity + " (isToday=" + isToday + ")");
-
         if (!hasActivity && !isToday) {
-            System.out.println("[HouseholdDashboard] Returning empty day state for " + date);
             return createEmptyDayState(date);
         }
 
         if (!hasActivity) {
-            System.out.println("[HouseholdDashboard] No activity and is today - returning null for " + date);
             return null;
         }
-
-        System.out.println("[HouseholdDashboard] Creating day section UI for " + date);
 
         VBox daySection = new VBox(20);
         daySection.getStyleClass().add("day-section");
