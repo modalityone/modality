@@ -34,7 +34,6 @@ public final class HouseholdGanttDataLoader {
     private static final Integer SITE_ID_FILTER = 1671;
 
     private final AccommodationPresentationModel pm;
-    private final GanttPresenter ganttPresenter;
     private final ObservableList<ResourceConfiguration> resourceConfigurations = FXCollections.observableArrayList();
     private final ObservableList<Attendance> attendances = FXCollections.observableArrayList();
     private Object mixin; // Keep reference for reloading
@@ -42,12 +41,13 @@ public final class HouseholdGanttDataLoader {
     /**
      * Constructor
      *
-     * @param pm The presentation model (provides organization context)
-     * @param ganttPresenter The gantt presenter (provides time window)
+     * @param pm The presentation model (provides organization context and time window)
+     * @param ganttPresenter The gantt presenter (unused, kept for compatibility)
      */
     public HouseholdGanttDataLoader(AccommodationPresentationModel pm, GanttPresenter ganttPresenter) {
         this.pm = pm;
-        this.ganttPresenter = ganttPresenter;
+        // Note: ganttPresenter parameter kept for compatibility but not stored
+        // We use pm.timeWindowStartProperty() and pm.timeWindowEndProperty() instead
     }
 
     /**
@@ -110,16 +110,9 @@ public final class HouseholdGanttDataLoader {
 
     /**
      * Starts the query to load attendances for the current time window.
+     * This query is REACTIVE to time window changes via PM's time window properties.
      */
     private void startAttendanceQuery() {
-        // Get the current time window from the presenter
-        LocalDate start = ganttPresenter.getTimeWindowStart();
-        LocalDate end = ganttPresenter.getTimeWindowEnd();
-
-        // Expand date range by ±1 day to capture boundary attendances
-        LocalDate queryStart = start.minus(1, ChronoUnit.DAYS);
-        LocalDate queryEnd = end.plus(1, ChronoUnit.DAYS);
-
         // Query 2: Load bookings (attendances) for the time window
         ReactiveEntitiesMapper.<Attendance>createPushReactiveChain(mixin)
             // Fetch attendance data with document line, guest info, and room assignment
@@ -133,8 +126,19 @@ public final class HouseholdGanttDataLoader {
             // Filter by organization
             .always(pm.organizationIdProperty(), org ->
                 where("documentLine.document.event.organization=?", org))
-            // Filter by date range
-            .always(where("a.date >= ? and a.date <= ?", queryStart, queryEnd))
+            // Filter by date range - REACTIVE to BOTH time window properties!
+            // When either start or end changes, this will recompute
+            .always(pm.timeWindowStartProperty(), start -> {
+                LocalDate end = pm.getTimeWindowEnd();
+
+                if (start == null || end == null) {
+                    return null;
+                }
+
+                LocalDate queryStart = start.minus(1, ChronoUnit.DAYS);
+                LocalDate queryEnd = end.plus(1, ChronoUnit.DAYS);
+                return where("a.date >= ? and a.date <= ?", queryStart, queryEnd);
+            })
             .storeEntitiesInto(attendances)
             .start();
     }

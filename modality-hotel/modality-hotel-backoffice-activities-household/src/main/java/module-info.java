@@ -15,12 +15,18 @@ module modality.hotel.backoffice.activities.household {
     requires modality.base.client.gantt.fx;
     requires modality.base.client.tile;
     requires modality.base.shared.entities;
+    requires modality.event.backoffice.events.ganttcanvas.plugin;
     requires modality.hotel.backoffice.accommodation;
     requires modality.hotel.backoffice.operations.documentline;
+    requires webfx.extras.canvas.bar;
+    requires webfx.extras.geometry;
     requires webfx.extras.i18n;
     requires webfx.extras.i18n.controls;
     requires webfx.extras.operation;
     requires webfx.extras.operation.action;
+    requires webfx.extras.time.layout;
+    requires webfx.extras.time.layout.gantt;
+    requires webfx.extras.time.window;
     requires webfx.extras.util.control;
     requires webfx.kit.util;
     requires webfx.platform.windowhistory;
@@ -31,6 +37,7 @@ module modality.hotel.backoffice.activities.household {
     requires webfx.stack.routing.router;
     requires webfx.stack.routing.router.client;
     requires webfx.stack.routing.uirouter;
+    requires webfx.kit.launcher;
 
     // Exported packages
     exports one.modality.hotel.backoffice.activities.household;
@@ -38,6 +45,7 @@ module modality.hotel.backoffice.activities.household {
     exports one.modality.hotel.backoffice.activities.household.dashboard.presenter;
     exports one.modality.hotel.backoffice.activities.household.dashboard.view;
     exports one.modality.hotel.backoffice.activities.household.gantt.adapter;
+    exports one.modality.hotel.backoffice.activities.household.gantt.canvas;
     exports one.modality.hotel.backoffice.activities.household.gantt.data;
     exports one.modality.hotel.backoffice.activities.household.gantt.model;
     exports one.modality.hotel.backoffice.activities.household.gantt.presenter;

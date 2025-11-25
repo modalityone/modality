@@ -55,7 +55,6 @@ public class GanttTableView {
      * Uses fade animation for smooth transition.
      */
     private void refreshExpandedState() {
-        System.out.println("[GanttTableView] Refreshing expanded state without reloading data");
         if (currentRooms != null) {
             // Store old grid for animation
             GridPane oldGrid = calendarGrid;
@@ -202,7 +201,6 @@ public class GanttTableView {
 
         // Handle null or empty rooms list
         if (rooms == null || rooms.isEmpty()) {
-            System.out.println("[GanttTableView] No rooms to display");
             return;
         }
 

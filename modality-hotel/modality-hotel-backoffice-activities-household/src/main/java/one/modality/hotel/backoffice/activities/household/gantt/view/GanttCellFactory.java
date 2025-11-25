@@ -107,8 +107,9 @@ public class GanttCellFactory {
         dayLabel.setTextFill(GanttColorScheme.COLOR_BLUE);
         dayLabel.setStyle("-fx-font-size: 12px; -fx-font-weight: 500;");
 
-        // Day of month
-        String dayOfMonth = String.format("%02d", dateCol.getDate().getDayOfMonth());
+        // Day of month (GWT-compatible padding instead of String.format)
+        int day = dateCol.getDate().getDayOfMonth();
+        String dayOfMonth = (day < 10 ? "0" : "") + day;
         Label dateLabel = new Label(dayOfMonth);
         dateLabel.setTextFill(GanttColorScheme.COLOR_BLUE);
         dateLabel.setStyle("-fx-font-size: 12px; -fx-font-weight: 500;");

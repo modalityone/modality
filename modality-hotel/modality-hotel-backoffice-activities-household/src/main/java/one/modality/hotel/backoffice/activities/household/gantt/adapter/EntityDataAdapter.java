@@ -37,9 +37,23 @@ public final class EntityDataAdapter {
             List<Attendance> attendances) {
 
         // Convert each resource configuration to GanttRoomData
-        // Sort by capacity (max) in ascending order - rooms with less capacity first
+        // Sort by category first (to keep same-category rooms together for grandparent headers),
+        // then by capacity (max) in ascending order within each category
         return resourceConfigurations.stream()
             .sorted((rc1, rc2) -> {
+                // Get category names for comparison
+                String category1 = rc1.getItem() != null && rc1.getItem().getName() != null
+                    ? rc1.getItem().getName() : "Rooms";
+                String category2 = rc2.getItem() != null && rc2.getItem().getName() != null
+                    ? rc2.getItem().getName() : "Rooms";
+
+                // First, compare by category (alphabetical)
+                int categoryCompare = category1.compareTo(category2);
+                if (categoryCompare != 0) {
+                    return categoryCompare;
+                }
+
+                // Within same category, sort by capacity (ascending)
                 int max1 = rc1.getMax() != null ? rc1.getMax() : 0;
                 int max2 = rc2.getMax() != null ? rc2.getMax() : 0;
                 return Integer.compare(max1, max2);
@@ -70,7 +84,6 @@ public final class EntityDataAdapter {
             .filter(a -> matchesRoom(a, roomSiteId, roomName))
             .collect(Collectors.toList());
 
-        System.out.println("[EntityDataAdapter] Room '" + roomName + "' matched " + matched.size() + " attendances");
         return matched;
     }
 
@@ -184,7 +197,6 @@ public final class EntityDataAdapter {
             // - Bookings are distributed across bed rows
             // - Room row is empty (shows aggregated bar when collapsed)
             // - Each bed gets its own row with its booking
-            System.out.println("[EntityDataAdapter] Room '" + roomName + "' is multi-bed (" + bedCount + " beds), generating beds with bookings");
             bookings = Collections.emptyList();
             beds = generateBeds(rc, bedCount, roomAttendances);
         } else {
@@ -202,18 +214,10 @@ public final class EntityDataAdapter {
                 .sorted(Comparator.comparing(GanttBookingData::getStartDate))
                 .collect(Collectors.toList());
 
-            System.out.println("[EntityDataAdapter] Room '" + roomName + "' is single, created " + allBookings.size() + " bookings");
-
-            // Debug: Print booking dates
-            for (GanttBookingData booking : allBookings) {
-                System.out.println("[EntityDataAdapter]   - Booking: " + booking.getGuestName() + " from " + booking.getStartDate() + " to " + booking.getEndDate());
-            }
-
             // OVERBOOKING DETECTION:
             // Check if any bookings overlap in time (conflict)
             // If overlapping bookings exist, the room has overbooking
             boolean hasOverbooking = hasConflictingBookings(allBookings);
-            System.out.println("[EntityDataAdapter] Room '" + roomName + "' hasOverbooking = " + hasOverbooking);
 
             if (hasOverbooking) {
                 // PATH 2: SINGLE ROOM WITH OVERBOOKING
@@ -221,7 +225,6 @@ public final class EntityDataAdapter {
                 // - First bed = actual room bed
                 // - Additional beds = overbooking beds (virtual, marked as overbooking)
                 // - Room row shows danger color on conflict dates
-                System.out.println("[EntityDataAdapter] Single room '" + roomName + "' has OVERBOOKING - creating expandable beds");
                 bookings = Collections.emptyList();
                 beds = generateBedsForSingleRoom(rc, allBookings);
             } else {
@@ -328,8 +331,6 @@ public final class EntityDataAdapter {
             .sorted(Comparator.comparing(GanttBookingData::getStartDate))
             .collect(Collectors.toList());
 
-        System.out.println("[EntityDataAdapter] generateBeds: Created " + allBookings.size() + " bookings for distribution across " + bedCount + " beds");
-
         // STEP 3: Create empty booking lists for each bed
         // bedBookingsLists[0] = bookings for Bed A
         // bedBookingsLists[1] = bookings for Bed B, etc.
@@ -362,7 +363,6 @@ public final class EntityDataAdapter {
                 // OVERBOOKING: No bed available (all beds have conflicting bookings)
                 // This booking will get its own "virtual" bed row
                 overbookings.add(booking);
-                System.out.println("[EntityDataAdapter] OVERBOOKING detected for booking: " + booking.getGuestName());
             }
         }
 
@@ -415,8 +415,6 @@ public final class EntityDataAdapter {
         // Each overbooking gets its own dedicated bed row (virtual, not a real bed)
         // These rows appear AFTER regular beds and are styled differently (danger background)
         if (!overbookings.isEmpty()) {
-            System.out.println("[EntityDataAdapter] Adding " + overbookings.size() + " OVERBOOKING row(s)");
-
             for (int i = 0; i < overbookings.size(); i++) {
                 final int overbookingIndex = i + 1;
                 final String overbookingId = rc.getPrimaryKey() + "-OVERBOOKING-" + overbookingIndex;
@@ -516,8 +514,6 @@ public final class EntityDataAdapter {
 
         // Add overbooking rows
         if (!overbookings.isEmpty()) {
-            System.out.println("[EntityDataAdapter] Single room adding " + overbookings.size() + " OVERBOOKING row(s)");
-
             for (int i = 0; i < overbookings.size(); i++) {
                 final int overbookingIndex = i + 1;
                 final String overbookingId = rc.getPrimaryKey() + "-OVERBOOKING-" + overbookingIndex;

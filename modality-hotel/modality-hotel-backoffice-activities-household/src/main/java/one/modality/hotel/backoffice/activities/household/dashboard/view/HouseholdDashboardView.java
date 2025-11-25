@@ -145,13 +145,13 @@ public final class HouseholdDashboardView {
 
         // Date range label
         Label dateRangeLabel = new Label();
-        dateRangeLabel.textProperty().bind(Bindings.createStringBinding(() -> {
+        FXProperties.runNowAndOnPropertiesChange(() -> {
             LocalDate today = FXToday.getToday();
             int days = daysToDisplay.get();
             LocalDate end = today.plus(days - 1, ChronoUnit.DAYS);
-            return today.format(DateTimeFormatter.ofPattern("MMMM d")) + "-"
-                    + end.format(DateTimeFormatter.ofPattern("d, yyyy"));
-        }, FXToday.todayProperty(), daysToDisplay));
+            dateRangeLabel.setText(today.format(DateTimeFormatter.ofPattern("MMMM d")) + "-"
+                    + end.format(DateTimeFormatter.ofPattern("d, yyyy")));
+        }, FXToday.todayProperty(), daysToDisplay);
 
         dateInfo.getChildren().add(dateRangeLabel);
 
@@ -244,11 +244,6 @@ public final class HouseholdDashboardView {
     }
 
     private void initLogic() {
-        System.out.println("[HouseholdDashboard] === initLogic() called ===");
-        System.out.println("[HouseholdDashboard] Organization: " + pm.organizationIdProperty().get());
-        System.out.println("[HouseholdDashboard] Today: " + FXToday.getToday());
-        System.out.println("[HouseholdDashboard] Days to display: " + daysToDisplay.get());
-
         // Show loading indicator initially
         renderDashboard();
 
@@ -259,45 +254,6 @@ public final class HouseholdDashboardView {
 
         // Re-render when data changes
         attendances.addListener((ListChangeListener<Attendance>) c -> {
-            System.out.println("[HouseholdDashboard] === Attendances changed ===");
-            System.out.println("[HouseholdDashboard] Total attendances: " + attendances.size());
-
-            if (!attendances.isEmpty()) {
-                // Count items by family
-                Map<Object, Long> itemsByFamily = attendances.stream()
-                    .map(a -> {
-                        DocumentLine dl = a.getDocumentLine();
-                        if (dl != null && dl.getItem() != null && dl.getItem().getFamily() != null) {
-                            return dl.getItem().getFamily().getPrimaryKey();
-                        }
-                        return "null";
-                    })
-                    .collect(Collectors.groupingBy(f -> f, Collectors.counting()));
-
-                System.out.println("[HouseholdDashboard] Items by family ID:");
-                itemsByFamily.forEach((familyId, count) ->
-                    System.out.println("  Family " + familyId + ": " + count + " attendances"));
-
-                // Show first 5 accommodation examples if any exist
-                System.out.println("[HouseholdDashboard] First 5 ACCOMMODATION samples:");
-                int accomFound = 0;
-                for (int i = 0; i < attendances.size() && accomFound < 5; i++) {
-                    Attendance a = attendances.get(i);
-                    if (isAccommodation(a)) {
-                        DocumentLine dl = a.getDocumentLine();
-                        Item item = dl != null ? dl.getItem() : null;
-                        String itemName = item != null ? item.getName() : "null";
-                        System.out.println("  [" + i + "] Date: " + a.getDate() + ", Item: " + itemName);
-                        accomFound++;
-                    }
-                }
-                if (accomFound == 0) {
-                    System.out.println("  (No accommodations found in entire dataset!)");
-                }
-            }
-
-            long accommodationCount = attendances.stream().filter(this::isAccommodation).count();
-            System.out.println("[HouseholdDashboard] Accommodations: " + accommodationCount + " / " + attendances.size());
             renderDashboard();
         });
 
@@ -324,12 +280,10 @@ public final class HouseholdDashboardView {
     }
 
     private void renderDashboard() {
-        System.out.println("[HouseholdDashboard] === renderDashboard() called ===");
         mainContent.getChildren().clear();
 
         // If no data yet, show loading indicator
         if (attendances.isEmpty()) {
-            System.out.println("[HouseholdDashboard] No data yet, showing loading indicator");
             mainContent.getChildren().add(loadingIndicator);
             return;
         }
@@ -338,23 +292,16 @@ public final class HouseholdDashboardView {
         LocalDate today = FXToday.getToday();
         int days = daysToDisplay.get();
 
-        System.out.println("[HouseholdDashboard] Rendering " + days + " days starting from " + today);
-        int sectionsAdded = 0;
-
         for (int i = 0; i < days; i++) {
             LocalDate date = today.plus(i, ChronoUnit.DAYS);
             Node daySection = createDaySection(date);
             if (daySection != null) {
                 mainContent.getChildren().add(daySection);
-                sectionsAdded++;
             }
         }
-
-        System.out.println("[HouseholdDashboard] Added " + sectionsAdded + " day sections to UI");
     }
 
     private Node createDaySection(LocalDate date) {
-        System.out.println("[HouseholdDashboard] --- createDaySection for " + date + " ---");
         boolean isToday = date.equals(FXToday.getToday());
 
         LocalDate yesterday = date.minus(1, ChronoUnit.DAYS);
@@ -365,33 +312,6 @@ public final class HouseholdDashboardView {
         List<CheckoutCard> checkoutCards = new ArrayList<>();
         List<PartialCheckoutCard> partialCheckoutCards = new ArrayList<>();
         List<ArrivalCard> arrivalCards = new ArrayList<>();
-
-        // Count attendances for this date
-        long attendancesOnDate = attendances.stream().filter(a -> a.getDate().equals(date)).count();
-        System.out.println("[HouseholdDashboard] Total attendances on " + date + ": " + attendancesOnDate);
-
-        // Debug: Check cancelled status
-        long cancelledCount = attendances.stream()
-                .filter(a -> a.getDate().equals(date))
-                .filter(a -> isAccommodation(a))
-                .filter(a -> isCancelled(a))
-                .count();
-        System.out.println("[HouseholdDashboard] Cancelled accommodations on " + date + ": " + cancelledCount);
-
-        // Debug: Show details of first few cancelled items
-        attendances.stream()
-                .filter(a -> a.getDate().equals(date))
-                .filter(a -> isAccommodation(a))
-                .filter(a -> isCancelled(a))
-                .limit(3)
-                .forEach(a -> {
-                    DocumentLine dl = a.getDocumentLine();
-                    Document doc = dl != null ? dl.getDocument() : null;
-                    System.out.println("[HouseholdDashboard] Cancelled: DL.cancelled=" +
-                        (dl != null ? dl.isCancelled() : "null") +
-                        ", DOC.cancelled=" + (doc != null ? doc.isCancelled() : "null") +
-                        ", Person=" + (doc != null ? doc.getFirstName() + " " + doc.getLastName() : "null"));
-                });
 
         // Group attendances by DocumentLine for this date
         // Filter to only include accommodations (family id = 1) to exclude meals, activities, etc.
@@ -408,8 +328,6 @@ public final class HouseholdDashboardView {
                 .filter(a -> isAccommodation(a))
                 .filter(a -> !isCancelled(a))
                 .collect(Collectors.groupingBy(Attendance::getDocumentLine));
-
-        System.out.println("[HouseholdDashboard] Accommodation document lines on " + date + ": " + attsByDl.size());
 
         // Build room occupancy map - include both today's occupants AND yesterday's (for checkout detection)
         Map<ResourceConfiguration, List<DocumentLine>> roomOccupancy = new HashMap<>();
@@ -633,36 +551,20 @@ public final class HouseholdDashboardView {
             }
         }
 
-        System.out.println("[HouseholdDashboard] Cards BEFORE filtering - Cleaning: " + cleaningCards.size() +
-                ", Inspection: " + inspectionCards.size() +
-                ", Checkouts: " + checkoutCards.size() +
-                ", Partial Checkouts: " + partialCheckoutCards.size() +
-                ", Arrivals: " + arrivalCards.size());
-
         // Apply filters for today
         if (isToday) {
             cleaningCards = applyCleaningFilters(cleaningCards);
             inspectionCards = applyInspectionFilters(inspectionCards);
-            System.out.println("[HouseholdDashboard] Cards AFTER filtering - Cleaning: " + cleaningCards.size() +
-                    ", Inspection: " + inspectionCards.size());
         }
 
         boolean hasActivity = !cleaningCards.isEmpty() || !inspectionCards.isEmpty() ||
                 !checkoutCards.isEmpty() || !partialCheckoutCards.isEmpty() || !arrivalCards.isEmpty();
 
-        System.out.println("[HouseholdDashboard] hasActivity for " + date + ": " + hasActivity + " (isToday=" + isToday + ")");
-
+        // For non-today days with no activity, show empty day state
         if (!hasActivity && !isToday) {
-            System.out.println("[HouseholdDashboard] Returning empty day state for " + date);
             return createEmptyDayState(date);
         }
-
-        if (!hasActivity) {
-            System.out.println("[HouseholdDashboard] No activity and is today - returning null for " + date);
-            return null;
-        }
-
-        System.out.println("[HouseholdDashboard] Creating day section UI for " + date);
+        // Note: Today always shows (with cleaning/inspection sections that handle their own empty states)
 
         VBox daySection = new VBox(20);
         daySection.getStyleClass().add("day-section");
@@ -1651,91 +1553,61 @@ public final class HouseholdDashboardView {
     }
 
     private void showSpecialNeedsPopup(Node anchorNode, String specialNeeds) {
-        // Create a popup to show the special needs
-        javafx.stage.Popup popup = new javafx.stage.Popup();
-        popup.setAutoHide(true);
-        popup.setHideOnEscape(true);
+        // Create a tooltip to show the special needs (WebFX compatible - replaces Popup)
+        javafx.scene.control.Tooltip tooltip = new javafx.scene.control.Tooltip();
 
-        // Create popup content
-        VBox popupContent = new VBox(8);
-        popupContent.getStyleClass().addAll("popup-bubble", "special-needs-popup");
-        popupContent.setPadding(new Insets(12));
-        popupContent.setStyle(
-            "-fx-background-color: white; " +
-            "-fx-border-color: #f39c12; " +
-            "-fx-border-width: 2px; " +
-            "-fx-border-radius: 6px; " +
-            "-fx-background-radius: 6px; " +
-            "-fx-effect: dropshadow(gaussian, rgba(0,0,0,0.2), 10, 0, 0, 2);"
-        );
-        popupContent.setMaxWidth(300);
+        // Build content (manually wrap long text since setWrapText not available in WebFX)
+        StringBuilder content = new StringBuilder();
+        content.append("Special Needs\n\n");
+        content.append(wrapText(specialNeeds, 50));
 
-        Label titleLabel = new Label("Special Needs");
-        titleLabel.setStyle("-fx-font-weight: bold; -fx-font-size: 12px; -fx-text-fill: #f39c12;");
+        tooltip.setText(content.toString());
+        tooltip.setStyle("-fx-font-size: 12px;");
 
-        Label specialNeedsLabel = new Label(specialNeeds);
-        specialNeedsLabel.setWrapText(true);
-        specialNeedsLabel.setStyle("-fx-font-size: 12px;");
-
-        popupContent.getChildren().addAll(titleLabel, specialNeedsLabel);
-        popup.getContent().add(popupContent);
-
-        // Show popup below the icon
+        // Show tooltip below the anchor node
         javafx.geometry.Bounds bounds = anchorNode.localToScreen(anchorNode.getBoundsInLocal());
         if (bounds != null) {
-            popup.show(anchorNode, bounds.getMinX(), bounds.getMaxY() + 4);
+            tooltip.show(anchorNode, bounds.getMinX(), bounds.getMaxY() + 4);
+
+            // Auto-hide after 5 seconds
+            javafx.animation.PauseTransition delay = new javafx.animation.PauseTransition(javafx.util.Duration.seconds(5));
+            delay.setOnFinished(e -> tooltip.hide());
+            delay.play();
         }
     }
 
     private void showDocumentInfoPopup(Node anchorNode, DocumentLine dl) {
-        // Create a popup to show document information (dates and event)
-        javafx.stage.Popup popup = new javafx.stage.Popup();
-        popup.setAutoHide(true);
-        popup.setHideOnEscape(true);
+        // Create a tooltip to show document information (WebFX compatible - replaces Popup)
+        javafx.scene.control.Tooltip tooltip = new javafx.scene.control.Tooltip();
 
-        // Create popup content
-        VBox popupContent = new VBox(8);
-        popupContent.getStyleClass().addAll("popup-bubble", "document-info-popup");
-        popupContent.setPadding(new Insets(12));
-        popupContent.setStyle(
-            "-fx-background-color: white; " +
-            "-fx-border-color: #3498db; " +
-            "-fx-border-width: 2px; " +
-            "-fx-border-radius: 6px; " +
-            "-fx-background-radius: 6px; " +
-            "-fx-effect: dropshadow(gaussian, rgba(0,0,0,0.2), 10, 0, 0, 2);"
-        );
-        popupContent.setMaxWidth(300);
-
-        Label titleLabel = new Label(dl.getDocument().getFullName());
-        titleLabel.setStyle("-fx-font-weight: bold; -fx-font-size: 12px; -fx-text-fill: #3498db;");
-
-        popupContent.getChildren().add(titleLabel);
+        // Build content
+        StringBuilder content = new StringBuilder();
+        content.append(dl.getDocument().getFullName()).append("\n");
 
         // Get document dates (formatted string from database)
         String dates = dl.getDates();
         if (dates != null && !dates.trim().isEmpty()) {
-            Label datesLabel = new Label(dates);
-            datesLabel.setWrapText(true);
-            datesLabel.setStyle("-fx-font-size: 12px;");
-            popupContent.getChildren().add(datesLabel);
+            content.append("\n").append(dates);
         }
 
         // Add event information if available
         Document doc = dl.getDocument();
         if (doc.getEvent() != null && doc.getEvent().getName() != null) {
-            Label eventLabel = new Label("Event: " + doc.getEvent().getName());
-            eventLabel.setWrapText(true);
-            eventLabel.setStyle("-fx-font-size: 12px; -fx-text-fill: #555;");
-            popupContent.getChildren().add(eventLabel);
+            content.append("\nEvent: ").append(doc.getEvent().getName());
         }
 
-        popup.getContent().add(popupContent);
+        tooltip.setText(content.toString());
+        tooltip.setStyle("-fx-font-size: 12px;");
 
-        // Show popup below the icon
+        // Show tooltip below the anchor node
         javafx.geometry.Bounds bounds = anchorNode.localToScreen(anchorNode.getBoundsInLocal());
         if (bounds != null) {
-            popup.show(anchorNode, bounds.getMinX(), bounds.getMaxY() + 4);
+            tooltip.show(anchorNode, bounds.getMinX(), bounds.getMaxY() + 4);
+
+            // Auto-hide after 5 seconds
+            javafx.animation.PauseTransition delay = new javafx.animation.PauseTransition(javafx.util.Duration.seconds(5));
+            delay.setOnFinished(e -> tooltip.hide());
+            delay.play();
         }
     }
 
@@ -1821,7 +1693,6 @@ public final class HouseholdDashboardView {
 
             // Measure natural height by temporarily showing content
             container.setMaxHeight(Region.USE_COMPUTED_SIZE);
-            container.applyCss();
             container.layout();
             double targetHeight = container.getHeight();
 
@@ -1860,6 +1731,37 @@ public final class HouseholdDashboardView {
         // Set transparent background - avoid inline styles, let CSS handle it
         scrollPane.getStyleClass().add("household-scroll-pane");
         return scrollPane;
+    }
+
+    /**
+     * Wraps text at word boundaries to fit within a maximum character width.
+     * WebFX-compatible alternative to Tooltip.setWrapText().
+     */
+    private String wrapText(String text, int maxCharsPerLine) {
+        if (text == null || text.length() <= maxCharsPerLine) {
+            return text;
+        }
+
+        StringBuilder result = new StringBuilder();
+        String[] words = text.split(" ");
+        StringBuilder currentLine = new StringBuilder();
+
+        for (String word : words) {
+            if (currentLine.length() == 0) {
+                currentLine.append(word);
+            } else if (currentLine.length() + 1 + word.length() <= maxCharsPerLine) {
+                currentLine.append(" ").append(word);
+            } else {
+                result.append(currentLine).append("\n");
+                currentLine = new StringBuilder(word);
+            }
+        }
+
+        if (currentLine.length() > 0) {
+            result.append(currentLine);
+        }
+
+        return result.toString();
     }
 
     // Data classes
