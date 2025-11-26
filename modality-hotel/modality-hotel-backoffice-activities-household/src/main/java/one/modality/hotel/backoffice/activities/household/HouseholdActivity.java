@@ -25,6 +25,10 @@ public final class HouseholdActivity extends OrganizationDependentViewDomainActi
     private final BorderPane container = new BorderPane();
     private final TabsBar<Node> headerTabsBar = new TabsBar<>(this, container::setCenter);
 
+    // Lazy loading flags - track if logic has been started for each view
+    private boolean dashboardLogicStarted = false;
+    private boolean ganttLogicStarted = false;
+
     public HouseholdActivity() {
         pm.doFXBindings();
     }
@@ -46,11 +50,17 @@ public final class HouseholdActivity extends OrganizationDependentViewDomainActi
 
     /**
      * Called every time the Dashboard tab is selected (including when switching back to it).
-     * Hides the EventsGanttCanvas.
+     * Hides the EventsGanttCanvas and lazy-loads dashboard data on first selection.
      */
     private void onDashboardTabSelected() {
         FXGanttVisibility.resetToDefault(); // Hides events gantt
         FXEventSelector.hideEventSelector();
+
+        // Lazy loading: Start dashboard logic only on first tab selection
+        if (!dashboardLogicStarted) {
+            householdView.startLogic(this);
+            dashboardLogicStarted = true;
+        }
     }
 
     /**
@@ -62,11 +72,17 @@ public final class HouseholdActivity extends OrganizationDependentViewDomainActi
 
     /**
      * Called every time the Gantt tab is selected (including when switching back to it).
-     * Shows the EventsGanttCanvas.
+     * Shows the EventsGanttCanvas and lazy-loads gantt data on first selection.
      */
     private void onGanttTabSelected() {
         FXGanttVisibility.showEvents();
         FXEventSelector.showEventSelector();
+
+        // Lazy loading: Start gantt logic only on first tab selection
+        if (!ganttLogicStarted) {
+            householdGanttView.startLogic(this);
+            ganttLogicStarted = true;
+        }
     }
 
     @Override
@@ -95,8 +111,11 @@ public final class HouseholdActivity extends OrganizationDependentViewDomainActi
 
     @Override
     protected void startLogic() {
-        householdView.startLogic(this);
-        householdGanttView.startLogic(this);
+        // Lazy loading optimization: Views now start their logic only when their tab is first selected
+        // householdView.startLogic(this);   -> Called in onDashboardTabSelected() on first selection
+        // householdGanttView.startLogic(this); -> Called in onGanttTabSelected() on first selection
+
+        // todayAccommodationStatus is always needed, so start it immediately
         todayAccommodationStatus.startLogic(this);
     }
 

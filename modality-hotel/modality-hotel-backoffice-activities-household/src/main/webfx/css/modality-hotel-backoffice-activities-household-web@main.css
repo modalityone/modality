@@ -1,11 +1,50 @@
 /* Household Dashboard Web CSS */
 
+/* Force transparent background for household scroll pane */
+.household-scroll-pane {
+    background-color: transparent;
+}
+
+.household-scroll-pane fx-background {
+    background-color: transparent;
+}
+
 .household-dashboard {
-    background-color: #F5F5F5;
+    background-color: transparent;
 }
 
 .household-dashboard fx-background {
-    background-color: #F5F5F5;
+    background-color: transparent;
+}
+
+/* Main Content */
+.main-content {
+    background-color: transparent;
+}
+
+.main-content fx-background {
+    background-color: transparent;
+}
+
+/* Loading Indicator */
+.loading-indicator {
+    background-color: transparent;
+}
+
+.loading-indicator fx-background {
+    background-color: transparent;
+}
+
+.loading-message {
+    font-size: 14px;
+    color: #667085;
+    font-weight: 500;
+}
+
+.loading-message fx-text {
+    color: #667085;
+    font-size: 14px;
+    font-weight: 500;
 }
 
 /* Header */
@@ -17,6 +56,7 @@
 
 .header fx-background {
     background-color: white;
+    border-radius: 12px;
 }
 
 .h1 {
@@ -53,6 +93,7 @@
 
 .today-indicator fx-background {
     background-color: #E3F2FD;
+    border-radius: 12px;
 }
 
 .today-indicator fx-text {
@@ -68,6 +109,7 @@
 
 .today-dot fx-background {
     background-color: #0096D6;
+    border-radius: 50%;
 }
 
 .view-range-control {
@@ -80,6 +122,7 @@
 
 .view-range-control fx-background {
     background-color: #F8F9FA;
+    border-radius: 8px;
 }
 
 .view-range-control>fx-border {
@@ -114,6 +157,7 @@
 
 .days-input fx-background {
     background-color: white;
+    border-radius: 6px;
 }
 
 .days-input>fx-border {
@@ -164,6 +208,7 @@
 
 .quick-view-btn fx-background {
     background-color: white;
+    border-radius: 6px;
 }
 
 .quick-view-btn>fx-border {
@@ -187,6 +232,7 @@
 
 .quick-view-btn:hover fx-background {
     background-color: #F0F9FF;
+    border-radius: 6px;
 }
 
 .quick-view-btn:hover>fx-border {
@@ -205,6 +251,7 @@
 
 .quick-view-btn.active fx-background {
     background-color: #0096D6;
+    border-radius: 6px;
 }
 
 .quick-view-btn.active>fx-border {
@@ -224,6 +271,7 @@
 
 .day-section fx-background {
     background-color: white;
+    border-radius: 12px;
 }
 
 .day-section.today {
@@ -311,6 +359,7 @@
 
 .today-badge fx-background {
     background-color: #0096D6;
+    border-radius: 6px;
 }
 
 .today-badge fx-text {
@@ -329,6 +378,7 @@
 
 .count-badge fx-background {
     background-color: #E8F4F8;
+    border-radius: 20px;
 }
 
 .count-badge fx-text {
@@ -344,6 +394,7 @@
 
 .day-section.today .count-badge fx-background {
     background-color: #0096D6;
+    border-radius: 20px;
 }
 
 .day-section.today .count-badge fx-text {
@@ -371,6 +422,7 @@
 
 .section-count fx-background {
     background-color: #E8F4F8;
+    border-radius: 12px;
 }
 
 .section-count fx-text {
@@ -404,6 +456,7 @@
 
 .section-filter-btn fx-background {
     background-color: white;
+    border-radius: 5px;
 }
 
 .section-filter-btn>fx-border {
@@ -426,6 +479,7 @@
 
 .section-filter-btn:hover fx-background {
     background-color: #F0F9FF;
+    border-radius: 5px;
 }
 
 .section-filter-btn:hover>fx-border {
@@ -440,6 +494,7 @@
 
 .section-filter-btn.active fx-background {
     background-color: #0096D6;
+    border-radius: 5px;
 }
 
 .section-filter-btn.active>fx-border {
@@ -462,6 +517,7 @@
 
 .room-item fx-background {
     background-color: white;
+    border-radius: 8px;
 }
 
 .room-item>fx-border {
@@ -487,6 +543,7 @@
 
 .room-item.urgent.has-urgency fx-background {
     background-color: #FFFEF8;
+    border-radius: 8px;
 }
 
 .room-item.urgent.has-urgency>fx-border {
@@ -500,6 +557,7 @@
 
 .room-item.danger.has-danger fx-background {
     background-color: #FFF9F9;
+    border-radius: 8px;
 }
 
 .room-item.danger.has-danger>fx-border {
@@ -513,6 +571,7 @@
 
 .room-item-accent fx-background {
     background-color: transparent;
+    border-radius: 8px 0 0 8px;
 }
 
 .room-item.to-clean-item .room-item-accent {
@@ -521,6 +580,7 @@
 
 .room-item.to-clean-item .room-item-accent fx-background {
     background-color: #0096D6;
+    border-radius: 8px 0 0 8px;
 }
 
 .room-item.to-inspect-item .room-item-accent {
@@ -529,6 +589,7 @@
 
 .room-item.to-inspect-item .room-item-accent fx-background {
     background-color: #0096D6;
+    border-radius: 8px 0 0 8px;
 }
 
 .room-item.urgent.has-urgency .room-item-accent {
@@ -537,6 +598,7 @@
 
 .room-item.urgent.has-urgency .room-item-accent fx-background {
     background-color: #FFA500;
+    border-radius: 8px 0 0 8px;
 }
 
 .room-item.danger.has-danger .room-item-accent {
@@ -545,6 +607,7 @@
 
 .room-item.danger.has-danger .room-item-accent fx-background {
     background-color: #FF6B6B;
+    border-radius: 8px 0 0 8px;
 }
 
 .room-number {
@@ -572,6 +635,7 @@
 
 .building-tag.building-a fx-background {
     background-color: #E3F2FD;
+    border-radius: 4px;
 }
 
 .building-tag.building-a fx-text {
@@ -587,6 +651,7 @@
 
 .building-tag.building-b fx-background {
     background-color: #F3E5F5;
+    border-radius: 4px;
 }
 
 .building-tag.building-b fx-text {
@@ -602,6 +667,7 @@
 
 .building-tag.building-c fx-background {
     background-color: #FFF3E0;
+    border-radius: 4px;
 }
 
 .building-tag.building-c fx-text {
@@ -626,6 +692,7 @@
 
 .status-badge.to-clean fx-background {
     background-color: #FFF3E0;
+    border-radius: 4px;
 }
 
 .status-badge.to-clean>fx-border {
@@ -651,6 +718,7 @@
 
 .status-badge.checkout-pending fx-background {
     background-color: #FFF9E6;
+    border-radius: 4px;
 }
 
 .status-badge.checkout-pending>fx-border {
@@ -676,6 +744,7 @@
 
 .status-badge.to-inspect fx-background {
     background-color: #FFFBEB;
+    border-radius: 4px;
 }
 
 .status-badge.to-inspect>fx-border {
@@ -764,6 +833,7 @@
 
 .arrival-card fx-background {
     background-color: white;
+    border-radius: 8px;
 }
 
 .arrival-card>fx-border {
@@ -788,6 +858,7 @@
 
 .arrival-card.has-special-needs fx-background {
     background-color: #FFFEF8;
+    border-radius: 8px;
 }
 
 .arrival-card.urgent.has-urgency {
@@ -797,6 +868,7 @@
 
 .arrival-card.urgent.has-urgency fx-background {
     background-color: #FFFEF8;
+    border-radius: 8px;
 }
 
 .arrival-card.urgent.has-urgency>fx-border {
@@ -810,6 +882,7 @@
 
 .arrival-card-accent fx-background {
     background-color: #0096D6;
+    border-radius: 8px 0 0 8px;
 }
 
 .arrival-card.has-special-needs .arrival-card-accent {
@@ -818,6 +891,7 @@
 
 .arrival-card.has-special-needs .arrival-card-accent fx-background {
     background-color: #FFA500;
+    border-radius: 8px 0 0 8px;
 }
 
 .arrival-guest {
@@ -854,6 +928,7 @@
 
 .special-needs-badge fx-background {
     background-color: #FFF3E0;
+    border-radius: 4px;
 }
 
 .special-needs-badge fx-text {
@@ -909,6 +984,7 @@
 
 .guest-special-needs fx-background {
     background-color: #FFF3E0;
+    border-radius: 4px;
 }
 
 .guest-special-needs fx-text {
@@ -928,6 +1004,7 @@
 
 .checkout-card-normal fx-background {
     background-color: white;
+    border-radius: 8px;
 }
 
 .checkout-card-normal>fx-border {
@@ -953,6 +1030,7 @@
 
 .checkout-card-normal-accent fx-background {
     background-color: #838788;
+    border-radius: 8px 0 0 8px;
 }
 
 .checkout-card {
@@ -965,6 +1043,7 @@
 
 .checkout-card fx-background {
     background-color: #FFF5F5;
+    border-radius: 8px;
 }
 
 .checkout-card>fx-border {
@@ -990,6 +1069,7 @@
 
 .checkout-card-accent fx-background {
     background-color: #FF6B6B;
+    border-radius: 8px 0 0 8px;
 }
 
 .checkout-guest {
@@ -1014,6 +1094,7 @@
 
 .urgent-warning fx-background {
     background-color: #FF6B6B;
+    border-radius: 4px;
 }
 
 .urgent-warning fx-text {
@@ -1033,6 +1114,7 @@
 
 .partial-checkout-card fx-background {
     background-color: white;
+    border-radius: 8px;
 }
 
 .partial-checkout-card>fx-border {
@@ -1058,6 +1140,7 @@
 
 .partial-checkout-card-accent fx-background {
     background-color: #0096D6;
+    border-radius: 8px 0 0 8px;
 }
 
 .checkout-info {
@@ -1089,6 +1172,7 @@
 
 .empty-state fx-background {
     background-color: #FAFAFA;
+    border-radius: 12px;
 }
 
 .empty-state-message {
@@ -1102,4 +1186,169 @@
     color: #999999;
     font-size: 16px;
     font-weight: 500;
+}
+
+/* Room Header */
+.room-header-container {
+    /* spacing handled by Java layout */
+}
+
+.room-header {
+    /* spacing and alignment handled by Java layout */
+}
+
+.arrival-room-header {
+    /* spacing and alignment handled by Java layout */
+}
+
+/* Room Type */
+.room-type-text {
+    font-size: 10px;
+    font-weight: 600;
+    color: #838788;
+}
+
+.room-type-text fx-text {
+    color: #838788;
+    font-size: 10px;
+    font-weight: 600;
+}
+
+.room-type-badge {
+    border-radius: 4px;
+    font-size: 9px;
+    font-weight: bold;
+    padding: 2px 6px;
+}
+
+/* Badge Colors */
+.badge {
+    padding: 2px 8px;
+    border-radius: 4px;
+    font-size: 10px;
+    font-weight: bold;
+}
+
+.badge-light-info {
+    background-color: #E3F2FD;
+    color: #0096D6;
+}
+
+.badge-light-info fx-background {
+    background-color: #E3F2FD;
+}
+
+.badge-light-info fx-text {
+    color: #0096D6;
+    font-size: 10px;
+    font-weight: bold;
+}
+
+.badge-light-purple {
+    background-color: #F3E5F5;
+    color: #7B1FA2;
+}
+
+.badge-light-purple fx-background {
+    background-color: #F3E5F5;
+}
+
+.badge-light-purple fx-text {
+    color: #7B1FA2;
+    font-size: 10px;
+    font-weight: bold;
+}
+
+.badge-light-gray {
+    background-color: #F5F5F5;
+    color: #667085;
+}
+
+.badge-light-gray fx-background {
+    background-color: #F5F5F5;
+}
+
+.badge-light-gray fx-text {
+    color: #667085;
+    font-size: 10px;
+    font-weight: bold;
+}
+
+/* Guest Details */
+.guest-details-container {
+    /* spacing handled by Java layout */
+}
+
+.checkout-guest-names {
+    font-size: 11px;
+    font-weight: bold;
+    color: #333;
+}
+
+.checkout-guest-names fx-text {
+    color: #333;
+    font-size: 11px;
+    font-weight: bold;
+}
+
+/* Expand/Collapse */
+.expand-icon {
+    font-size: 10px;
+    color: #0096D6;
+    cursor: pointer;
+}
+
+.expand-icon fx-text {
+    color: #0096D6;
+    font-size: 10px;
+}
+
+.expand-link {
+    cursor: pointer;
+    color: #0096D6;
+    font-size: 11px;
+    font-weight: 600;
+}
+
+.expand-link fx-text {
+    color: #0096D6;
+    font-size: 11px;
+    font-weight: 600;
+}
+
+.expand-link:hover {
+    color: #007AB8;
+}
+
+.expand-link:hover fx-text {
+    color: #007AB8;
+}
+
+.partial-checkout-summary-text {
+    font-size: 11px;
+    color: #838788;
+}
+
+.partial-checkout-summary-text fx-text {
+    color: #838788;
+    font-size: 11px;
+}
+
+/* Person Icon */
+.person-icon {
+    font-size: 12px;
+    color: #838788;
+}
+
+.person-icon fx-text {
+    color: #838788;
+    font-size: 12px;
+}
+
+.inline-icon {
+    font-size: 10px;
+}
+
+.inline-icon fx-text {
+    font-size: 10px;
 }

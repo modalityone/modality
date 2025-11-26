@@ -352,12 +352,14 @@ public class HouseholdGanttCanvas {
         // Create adjusted bounds:
         // - X: shift right by half a day (to middle of arrival day)
         // - Y: center vertically within row using BAR_HEIGHT
-        // - Width: reduce by one day width (to end at middle of departure day)
+        // - Width: keep same width (shift both start AND end by half day to center the bar)
+        //          Original bounds: [start of arrival day, start of checkout day)
+        //          After shift: [middle of arrival day, middle of checkout day)
         // - Height: use BAR_HEIGHT constant for consistent bar sizing
         dev.webfx.extras.geometry.MutableBounds adjustedBounds = new dev.webfx.extras.geometry.MutableBounds();
         adjustedBounds.setMinX(b.getMinX() + halfDayWidth);
         adjustedBounds.setMinY(b.getMinY() + (b.getHeight() - BAR_HEIGHT) / 2);  // Center bar vertically
-        adjustedBounds.setWidth(b.getWidth() - dayWidth);
+        adjustedBounds.setWidth(b.getWidth());  // Width stays same - both start and end shift by half day
         adjustedBounds.setHeight(BAR_HEIGHT);
 
         // Get bar color based on booking status

@@ -5,7 +5,7 @@ import one.modality.base.shared.entities.Document;
 import one.modality.base.shared.entities.DocumentLine;
 import one.modality.base.shared.entities.Item;
 import one.modality.base.shared.entities.ResourceConfiguration;
-import one.modality.base.shared.entities.ScheduledResource;
+import one.modality.hotel.backoffice.activities.household.gantt.model.DateSegment;
 import one.modality.hotel.backoffice.activities.household.gantt.model.GanttBedData;
 import one.modality.hotel.backoffice.activities.household.gantt.model.GanttBookingData;
 import one.modality.hotel.backoffice.activities.household.gantt.model.GanttRoomData;
@@ -21,110 +21,150 @@ import java.util.stream.Collectors;
  * Adapter that converts database entities to Gantt data interfaces.
  *
  * This class bridges the gap between the database entity model and the Gantt view model,
- * transforming Resource and Attendance entities into GanttRoomData and GanttBookingData.
+ * transforming ResourceConfiguration and DocumentLine entities into GanttRoomData and GanttBookingData.
+ *
+ * PERFORMANCE OPTIMIZATION: Now uses DocumentLine.startDate/endDate fields directly
+ * instead of reconstructing dates from multiple Attendance records.
+ *
+ * ATTENDANCE GAP SUPPORT: For DocumentLines with hasAttendanceGap=true, uses Attendance
+ * records to build accurate date segments for Gantt bar rendering.
  */
 public final class EntityDataAdapter {
 
+    // Thread-local storage for attendance lookup during adaptation
+    // This avoids passing the map through all method calls
+    private static final ThreadLocal<Map<Object, List<Attendance>>> attendancesByDocumentLine = new ThreadLocal<>();
+
     /**
      * Adapts a list of ResourceConfiguration entities to GanttRoomData.
+     * Backwards-compatible version without attendance gap support.
      *
      * @param resourceConfigurations List of room configurations from the database
-     * @param attendances List of attendances (booking instances) for the time window
+     * @param documentLines List of document lines (bookings) for the time window
      * @return List of GanttRoomData ready for display
      */
     public static List<GanttRoomData> adaptRooms(
             List<ResourceConfiguration> resourceConfigurations,
-            List<Attendance> attendances) {
-
-        // Convert each resource configuration to GanttRoomData
-        // Sort by category first (to keep same-category rooms together for grandparent headers),
-        // then by capacity (max) in ascending order within each category
-        return resourceConfigurations.stream()
-            .sorted((rc1, rc2) -> {
-                // Get category names for comparison
-                String category1 = rc1.getItem() != null && rc1.getItem().getName() != null
-                    ? rc1.getItem().getName() : "Rooms";
-                String category2 = rc2.getItem() != null && rc2.getItem().getName() != null
-                    ? rc2.getItem().getName() : "Rooms";
-
-                // First, compare by category (alphabetical)
-                int categoryCompare = category1.compareTo(category2);
-                if (categoryCompare != 0) {
-                    return categoryCompare;
-                }
-
-                // Within same category, sort by capacity (ascending)
-                int max1 = rc1.getMax() != null ? rc1.getMax() : 0;
-                int max2 = rc2.getMax() != null ? rc2.getMax() : 0;
-                return Integer.compare(max1, max2);
-            })
-            .map(rc -> {
-                // Get attendances for this room, supporting both old and new systems
-                List<Attendance> roomAttendances = getAttendancesForRoom(rc, attendances);
-                return adaptRoom(rc, roomAttendances);
-            })
-            .collect(Collectors.toList());
+            List<DocumentLine> documentLines) {
+        return adaptRooms(resourceConfigurations, documentLines, Collections.emptyList());
     }
 
     /**
-     * Gets attendances for a specific room, supporting both old and new systems.
+     * Adapts a list of ResourceConfiguration entities to GanttRoomData.
      *
-     * NEW SYSTEM: attendance.documentLine.resourceConfiguration matches the room
-     * OLD SYSTEM: attendance.scheduledResource.configuration matches by site ID and name
+     * PERFORMANCE OPTIMIZATION: This method has been optimized from O(n×m) to O(n+m) complexity.
+     * Additionally, we now use DocumentLine directly instead of Attendance records,
+     * which reduces the number of records to process (one per booking vs one per day).
      *
-     * @param rc The resource configuration (room)
-     * @param attendances All attendances to filter
-     * @return List of attendances for this room
+     * ATTENDANCE GAP SUPPORT: For DocumentLines with hasAttendanceGap=true, uses the
+     * provided Attendance records to build accurate date segments.
+     *
+     * @param resourceConfigurations List of room configurations from the database
+     * @param documentLines List of document lines (bookings) for the time window
+     * @param attendancesForGaps Attendance records for bookings with gaps (hasAttendanceGap=true)
+     * @return List of GanttRoomData ready for display
      */
-    private static List<Attendance> getAttendancesForRoom(ResourceConfiguration rc, List<Attendance> attendances) {
-        Object roomSiteId = rc.getSite() != null ? rc.getSite().getPrimaryKey() : null;
+    public static List<GanttRoomData> adaptRooms(
+            List<ResourceConfiguration> resourceConfigurations,
+            List<DocumentLine> documentLines,
+            List<Attendance> attendancesForGaps) {
+
+        long startTime = System.currentTimeMillis();
+        System.out.println("[PERF EntityDataAdapter] adaptRooms called with " + resourceConfigurations.size() +
+                " rooms, " + documentLines.size() + " document lines, and " +
+                attendancesForGaps.size() + " gap attendances");
+
+        // Build lookup map for attendance gaps: DocumentLine PK -> List<Attendance>
+        Map<Object, List<Attendance>> attendanceMap = new HashMap<>();
+        for (Attendance att : attendancesForGaps) {
+            DocumentLine dl = att.getDocumentLine();
+            if (dl != null) {
+                Object dlKey = dl.getPrimaryKey();
+                attendanceMap.computeIfAbsent(dlKey, k -> new ArrayList<>()).add(att);
+            }
+        }
+        // Store in thread-local for use by adaptBooking
+        attendancesByDocumentLine.set(attendanceMap);
+
+        try {
+            // OPTIMIZATION: Pre-group document lines by room ONCE instead of scanning for each room
+            long groupStart = System.currentTimeMillis();
+            Map<String, List<DocumentLine>> documentLinesByRoomKey = groupDocumentLinesByRoom(documentLines);
+            System.out.println("[PERF EntityDataAdapter] Grouped document lines by room in " +
+                    (System.currentTimeMillis() - groupStart) + "ms");
+
+            // Convert each resource configuration to GanttRoomData
+            // Sort by category first (to keep same-category rooms together for grandparent headers),
+            // then by capacity (max) in ascending order within each category
+            List<GanttRoomData> result = resourceConfigurations.stream()
+                .sorted((rc1, rc2) -> {
+                    // Get category names for comparison
+                    String category1 = rc1.getItem() != null && rc1.getItem().getName() != null
+                        ? rc1.getItem().getName() : "Rooms";
+                    String category2 = rc2.getItem() != null && rc2.getItem().getName() != null
+                        ? rc2.getItem().getName() : "Rooms";
+
+                    // First, compare by category (alphabetical)
+                    int categoryCompare = category1.compareTo(category2);
+                    if (categoryCompare != 0) {
+                        return categoryCompare;
+                    }
+
+                    // Within same category, sort by capacity (ascending)
+                    int max1 = rc1.getMax() != null ? rc1.getMax() : 0;
+                    int max2 = rc2.getMax() != null ? rc2.getMax() : 0;
+                    return Integer.compare(max1, max2);
+                })
+                .map(rc -> {
+                    // OPTIMIZATION: O(1) lookup instead of O(m) scan
+                    String roomKey = buildRoomKey(rc);
+                    List<DocumentLine> roomDocumentLines = documentLinesByRoomKey.getOrDefault(roomKey, Collections.emptyList());
+                    return adaptRoom(rc, roomDocumentLines);
+                })
+                .collect(Collectors.toList());
+
+            long totalTime = System.currentTimeMillis() - startTime;
+            System.out.println("[PERF EntityDataAdapter] Total adaptation time: " + totalTime + "ms");
+
+            return result;
+        } finally {
+            // Clean up thread-local
+            attendancesByDocumentLine.remove();
+        }
+    }
+
+    /**
+     * Groups all document lines by room key in a single O(n) pass.
+     *
+     * Room key format: "siteId|roomName" to uniquely identify rooms.
+     *
+     * @param documentLines All document lines to group
+     * @return Map of room key -> document lines for that room
+     */
+    private static Map<String, List<DocumentLine>> groupDocumentLinesByRoom(List<DocumentLine> documentLines) {
+        Map<String, List<DocumentLine>> grouped = new HashMap<>();
+
+        for (DocumentLine dl : documentLines) {
+            ResourceConfiguration rc = dl.getResourceConfiguration();
+            if (rc != null) {
+                String roomKey = buildRoomKey(rc);
+                grouped.computeIfAbsent(roomKey, k -> new ArrayList<>()).add(dl);
+            }
+        }
+
+        return grouped;
+    }
+
+    /**
+     * Builds a unique room key from ResourceConfiguration.
+     * Format: "siteId|roomName" (or "null|roomName" if no site)
+     */
+    private static String buildRoomKey(ResourceConfiguration rc) {
+        Object siteId = rc.getSite() != null ? rc.getSite().getPrimaryKey() : null;
         String roomName = rc.getName();
-
-        List<Attendance> matched = attendances.stream()
-            .filter(a -> matchesRoom(a, roomSiteId, roomName))
-            .collect(Collectors.toList());
-
-        return matched;
+        return (siteId != null ? siteId.toString() : "null") + "|" + (roomName != null ? roomName : "");
     }
 
-    /**
-     * Checks if an attendance matches a room by either new or old system logic.
-     */
-    private static boolean matchesRoom(Attendance attendance, Object roomSiteId, String roomName) {
-        if (roomName == null) {
-            return false;
-        }
-
-        // NEW SYSTEM: Check via documentLine.resourceConfiguration
-        DocumentLine documentLine = attendance.getDocumentLine();
-        if (documentLine != null) {
-            ResourceConfiguration dlResourceConfig = documentLine.getResourceConfiguration();
-            if (dlResourceConfig != null && roomName.equals(dlResourceConfig.getName())) {
-                return true;
-            }
-        }
-
-        // OLD SYSTEM: Check via scheduledResource.configuration matching site ID and name
-        ScheduledResource scheduledResource = attendance.getScheduledResource();
-        if (scheduledResource != null) {
-            ResourceConfiguration srResourceConfig = scheduledResource.getResourceConfiguration();
-            if (srResourceConfig != null) {
-                // Match by name
-                if (!roomName.equals(srResourceConfig.getName())) {
-                    return false;
-                }
-                // Match by site ID (if available)
-                if (roomSiteId != null && srResourceConfig.getSite() != null) {
-                    Object srSiteId = srResourceConfig.getSite().getPrimaryKey();
-                    return roomSiteId.equals(srSiteId);
-                }
-                // If no site ID available, just match by name
-                return true;
-            }
-        }
-
-        return false;
-    }
 
     /**
      * Adapts a single ResourceConfiguration (room) to GanttRoomData.
@@ -155,10 +195,10 @@ public final class EntityDataAdapter {
      * - Used for occupancy ratio display (e.g., "3/4" = 3 bookings in 4-bed room)
      *
      * @param rc ResourceConfiguration entity from database (represents a room)
-     * @param roomAttendances List of attendances (booking instances) for this specific room
+     * @param roomDocumentLines List of document lines (bookings) for this specific room
      * @return GanttRoomData with bookings and beds populated based on room type and overbooking
      */
-    private static GanttRoomData adaptRoom(ResourceConfiguration rc, List<Attendance> roomAttendances) {
+    private static GanttRoomData adaptRoom(ResourceConfiguration rc, List<DocumentLine> roomDocumentLines) {
         // Extract room information from ResourceConfiguration
         final String roomName;
         String name = rc.getName();
@@ -180,7 +220,7 @@ public final class EntityDataAdapter {
         // Determine room type from max (bed count)
         // RoomType controls visual rendering logic (single vs multi-bed)
         RoomType roomType = determineRoomType(rc.getMax());
-        RoomStatus status = determineRoomStatus(rc, roomAttendances);
+        RoomStatus status = determineRoomStatus(rc, roomDocumentLines);
 
         // Get bed count from max field - this is the ACTUAL ROOM CAPACITY from database
         // This value excludes overbooking beds (which are added dynamically in UI)
@@ -198,18 +238,12 @@ public final class EntityDataAdapter {
             // - Room row is empty (shows aggregated bar when collapsed)
             // - Each bed gets its own row with its booking
             bookings = Collections.emptyList();
-            beds = generateBeds(rc, bedCount, roomAttendances);
+            beds = generateBeds(rc, bedCount, roomDocumentLines);
         } else {
             // PATH 2 & 3: SINGLE ROOM (may or may not have overbooking)
-            // First, group attendances by document line (each line = one booking)
-            // Multiple attendances can belong to same booking (e.g., multi-day stay)
-            Map<Object, List<Attendance>> attendancesByBooking = roomAttendances.stream()
-                .filter(a -> a.getDocumentLine() != null)
-                .collect(Collectors.groupingBy(a -> a.getDocumentLine().getPrimaryKey()));
-
-            // Convert each group of attendances into a single booking
-            List<GanttBookingData> allBookings = attendancesByBooking.entrySet().stream()
-                .map(entry -> adaptBooking(entry.getKey(), entry.getValue()))
+            // Convert each document line directly into a booking (no grouping needed)
+            List<GanttBookingData> allBookings = roomDocumentLines.stream()
+                .map(EntityDataAdapter::adaptBooking)
                 .filter(Objects::nonNull)
                 .sorted(Comparator.comparing(GanttBookingData::getStartDate))
                 .collect(Collectors.toList());
@@ -310,23 +344,16 @@ public final class EntityDataAdapter {
      *
      * @param rc ResourceConfiguration (room) from database
      * @param bedCount Number of beds to generate (from rc.max)
-     * @param roomAttendances All attendances (booking instances) for this room
+     * @param roomDocumentLines All document lines (bookings) for this room
      * @return List of GanttBedData with bookings distributed across beds
      */
-    private static List<GanttBedData> generateBeds(ResourceConfiguration rc, int bedCount, List<Attendance> roomAttendances) {
+    private static List<GanttBedData> generateBeds(ResourceConfiguration rc, int bedCount, List<DocumentLine> roomDocumentLines) {
         List<GanttBedData> beds = new ArrayList<>();
 
-        // STEP 1: Group attendances by document line
-        // Each document line represents one booking (guest reservation)
-        // Multiple attendances can belong to same booking (one per day of stay)
-        Map<Object, List<Attendance>> attendancesByBooking = roomAttendances.stream()
-            .filter(a -> a.getDocumentLine() != null)
-            .collect(Collectors.groupingBy(a -> a.getDocumentLine().getPrimaryKey()));
-
-        // STEP 2: Convert attendance groups into booking objects
+        // Convert document lines directly into booking objects
         // Sort by start date to process bookings chronologically
-        List<GanttBookingData> allBookings = attendancesByBooking.entrySet().stream()
-            .map(entry -> adaptBooking(entry.getKey(), entry.getValue()))
+        List<GanttBookingData> allBookings = roomDocumentLines.stream()
+            .map(EntityDataAdapter::adaptBooking)
             .filter(Objects::nonNull)
             .sorted(Comparator.comparing(GanttBookingData::getStartDate))
             .collect(Collectors.toList());
@@ -609,17 +636,12 @@ public final class EntityDataAdapter {
     }
 
     /**
-     * Adapts a group of attendances (representing a single booking) to GanttBookingData.
+     * Adapts a DocumentLine (representing a single booking) to GanttBookingData.
+     * Uses the startDate and endDate fields directly from DocumentLine.
+     *
+     * For bookings with hasAttendanceGap=true, builds date segments from Attendance records.
      */
-    private static GanttBookingData adaptBooking(Object documentLineKey, List<Attendance> attendances) {
-        if (attendances.isEmpty()) {
-            return null;
-        }
-
-        // Get the document line (same for all attendances in this booking)
-        Attendance firstAttendance = attendances.get(0);
-        DocumentLine documentLine = firstAttendance.getDocumentLine();
-
+    private static GanttBookingData adaptBooking(DocumentLine documentLine) {
         if (documentLine == null || documentLine.getDocument() == null) {
             return null;
         }
@@ -634,26 +656,10 @@ public final class EntityDataAdapter {
         // Extract event information
         String eventName = document.getEvent() != null ? document.getEvent().getName() : null;
 
-        // Extract date range from attendances
-        final LocalDate startDate = attendances.stream()
-            .map(Attendance::getDate)
-            .filter(Objects::nonNull)
-            .min(LocalDate::compareTo)
-            .orElse(null);
-
-        final LocalDate endDate;
-        LocalDate maxDate = attendances.stream()
-            .map(Attendance::getDate)
-            .filter(Objects::nonNull)
-            .max(LocalDate::compareTo)
-            .orElse(null);
-
-        // Add one day to end date for check-out representation
-        if (maxDate != null) {
-            endDate = maxDate.plusDays(1);
-        } else {
-            endDate = null;
-        }
+        // Get dates directly from DocumentLine fields (much simpler than reconstructing from Attendance)
+        final LocalDate startDate = documentLine.getStartDate();
+        // endDate from DocumentLine is the checkout date (no need to add 1 day)
+        final LocalDate endDate = documentLine.getEndDate();
 
         // Determine booking status (pass endDate to check if departed)
         BookingStatus bookingStatus = determineBookingStatus(document, documentLine, endDate);
@@ -661,6 +667,22 @@ public final class EntityDataAdapter {
         // Extract comments and special needs
         String comments = document.getRequest();
         List<String> specialNeeds = parseSpecialNeeds(comments);
+
+        // Check for attendance gaps and build date segments if needed
+        final boolean hasGaps = Boolean.TRUE.equals(documentLine.hasAttendanceGap());
+        final List<DateSegment> dateSegments;
+
+        if (hasGaps) {
+            // Build date segments from Attendance records
+            dateSegments = buildDateSegmentsFromAttendances(documentLine);
+        } else {
+            // Single continuous segment
+            if (startDate != null && endDate != null) {
+                dateSegments = Collections.singletonList(new DateSegment(startDate, endDate));
+            } else {
+                dateSegments = Collections.emptyList();
+            }
+        }
 
         return new GanttBookingData() {
             @Override
@@ -718,7 +740,91 @@ public final class EntityDataAdapter {
             public boolean isArrived() {
                 return Boolean.TRUE.equals(document.isArrived());
             }
+
+            @Override
+            public boolean hasAttendanceGaps() {
+                return hasGaps;
+            }
+
+            @Override
+            public List<DateSegment> getDateSegments() {
+                return dateSegments;
+            }
         };
+    }
+
+    /**
+     * Builds date segments from Attendance records for a DocumentLine with gaps.
+     *
+     * Algorithm:
+     * 1. Get all attendance dates for this DocumentLine
+     * 2. Sort them chronologically
+     * 3. Group consecutive dates into segments
+     * 4. Each segment represents a continuous stay period
+     *
+     * Example:
+     * - Attendances: June 14, 15, 18, 19, 20
+     * - Segments: [June 14-16], [June 18-21]
+     * (endDate is checkout date, so +1 day from last attendance)
+     */
+    private static List<DateSegment> buildDateSegmentsFromAttendances(DocumentLine documentLine) {
+        Map<Object, List<Attendance>> attendanceMap = attendancesByDocumentLine.get();
+        if (attendanceMap == null) {
+            // Fallback: return single segment if no attendance data available
+            LocalDate start = documentLine.getStartDate();
+            LocalDate end = documentLine.getEndDate();
+            if (start != null && end != null) {
+                return Collections.singletonList(new DateSegment(start, end));
+            }
+            return Collections.emptyList();
+        }
+
+        List<Attendance> attendances = attendanceMap.get(documentLine.getPrimaryKey());
+        if (attendances == null || attendances.isEmpty()) {
+            // No attendances found, return single segment
+            LocalDate start = documentLine.getStartDate();
+            LocalDate end = documentLine.getEndDate();
+            if (start != null && end != null) {
+                return Collections.singletonList(new DateSegment(start, end));
+            }
+            return Collections.emptyList();
+        }
+
+        // Get and sort attendance dates
+        List<LocalDate> dates = attendances.stream()
+                .map(Attendance::getDate)
+                .filter(Objects::nonNull)
+                .sorted()
+                .distinct()
+                .collect(Collectors.toList());
+
+        if (dates.isEmpty()) {
+            return Collections.emptyList();
+        }
+
+        // Group consecutive dates into segments
+        List<DateSegment> segments = new ArrayList<>();
+        LocalDate segmentStart = dates.get(0);
+        LocalDate previousDate = dates.get(0);
+
+        for (int i = 1; i < dates.size(); i++) {
+            LocalDate currentDate = dates.get(i);
+
+            // Check if there's a gap (more than 1 day between dates)
+            if (previousDate.plusDays(1).isBefore(currentDate)) {
+                // End current segment (checkout = previous date + 1)
+                segments.add(new DateSegment(segmentStart, previousDate.plusDays(1)));
+                // Start new segment
+                segmentStart = currentDate;
+            }
+
+            previousDate = currentDate;
+        }
+
+        // Add final segment
+        segments.add(new DateSegment(segmentStart, previousDate.plusDays(1)));
+
+        return segments;
     }
 
     /**
@@ -737,24 +843,25 @@ public final class EntityDataAdapter {
     /**
      * Determines the current status of a room based on occupancy and cleaning status.
      */
-    private static RoomStatus determineRoomStatus(ResourceConfiguration rc, List<Attendance> attendances) {
+    private static RoomStatus determineRoomStatus(ResourceConfiguration rc, List<DocumentLine> documentLines) {
         LocalDate today = LocalDate.now();
 
-        // Check if room is currently occupied (has attendance for today with arrived guest)
-        boolean isOccupied = attendances.stream()
-            .filter(a -> today.equals(a.getDate()))
-            .filter(a -> a.getDocumentLine() != null)
-            .filter(a -> a.getDocumentLine().getDocument() != null)
-            .anyMatch(a -> Boolean.TRUE.equals(a.getDocumentLine().getDocument().isArrived()));
+        // Check if room is currently occupied (today is within booking dates and guest has arrived)
+        boolean isOccupied = documentLines.stream()
+            .filter(dl -> dl.getDocument() != null)
+            .filter(dl -> dl.getStartDate() != null && dl.getEndDate() != null)
+            .filter(dl -> !today.isBefore(dl.getStartDate()) && !today.isAfter(dl.getEndDate()))
+            .anyMatch(dl -> Boolean.TRUE.equals(dl.getDocument().isArrived()));
 
         if (isOccupied) {
             return RoomStatus.OCCUPIED;
         }
 
-        // Check if room needs cleaning (recent departure or uncleaned)
-        boolean needsCleaning = attendances.stream()
-            .filter(a -> a.getDocumentLine() != null)
-            .anyMatch(a -> !a.getDocumentLine().isCleaned());
+        // Check if room needs cleaning (any booking that ended recently and is not cleaned)
+        boolean needsCleaning = documentLines.stream()
+            .filter(dl -> dl.getEndDate() != null)
+            .filter(dl -> !dl.getEndDate().isAfter(today)) // Booking has ended
+            .anyMatch(dl -> !dl.isCleaned());
 
         if (needsCleaning) {
             return RoomStatus.TO_CLEAN;
