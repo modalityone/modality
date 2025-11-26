@@ -3,6 +3,8 @@ package one.modality.base.shared.entities;
 import dev.webfx.stack.orm.entity.EntityId;
 import one.modality.base.shared.entities.markers.*;
 
+import java.time.LocalDate;
+
 /**
  * @author Bruno Salmon
  */
@@ -12,6 +14,8 @@ public interface DocumentLine extends
     EntityHasRead,
     EntityHasArrivalSiteAndItem,
     EntityHasResourceConfiguration {
+    String startDate = "startDate";
+    String endDate = "endDate";
     String dates = "dates";
     String price_net = "price_net";
     String price_minDeposit = "price_minDeposit";
@@ -20,6 +24,22 @@ public interface DocumentLine extends
     String timeline = "timeline";
     String cleaned = "cleaned";
     String bedNumber = "bedNumber";
+
+    default void setStartDate(LocalDate value) {
+        setFieldValue(startDate, value);
+    }
+
+    default LocalDate getStartDate() {
+        return getLocalDateFieldValue(startDate);
+    }
+
+    default void setEndDate(LocalDate value) {
+        setFieldValue(endDate, value);
+    }
+
+    default LocalDate getEndDate() {
+        return getLocalDateFieldValue(endDate);
+    }
 
     default String getDates() {
         return getStringFieldValue(dates);
