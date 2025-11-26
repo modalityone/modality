@@ -16,6 +16,7 @@ public interface DocumentLine extends
     EntityHasResourceConfiguration {
     String startDate = "startDate";
     String endDate = "endDate";
+    String hasAttendanceGap = "hasAttendanceGap";
     String dates = "dates";
     String price_net = "price_net";
     String price_minDeposit = "price_minDeposit";
@@ -39,6 +40,14 @@ public interface DocumentLine extends
 
     default LocalDate getEndDate() {
         return getLocalDateFieldValue(endDate);
+    }
+
+    default Boolean hasAttendanceGap() {
+        return getBooleanFieldValue(hasAttendanceGap);
+    }
+
+    default void setHasAttendanceGap(Boolean value) {
+        setFieldValue(hasAttendanceGap, value);
     }
 
     default String getDates() {
@@ -77,12 +86,12 @@ public interface DocumentLine extends
         setFieldValue(price_discount, value);
     }
 
-    default boolean isCleaned() {
+    default Boolean isCleaned() {
         return getBooleanFieldValue(cleaned);
     }
 
-    default void setCleaned(boolean cleaned) {
-        setFieldValue(cleaned, cleaned);
+    default void setCleaned(Boolean value) {
+        setFieldValue(cleaned, value);
     }
 
     // Non-persistent bedNumber field using by Household screen (allocated arbitrary at runtime)
