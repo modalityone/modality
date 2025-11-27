@@ -44,7 +44,7 @@ public final class HouseholdGanttView {
 
     // Listener references for cleanup to prevent memory leaks
     private final ListChangeListener<Object> resourceConfigListener;
-    private final ListChangeListener<Object> attendanceListener;
+    private final ListChangeListener<Object> documentLineListener;
 
     /**
      * Constructor initializes the Gantt view with database loading.
@@ -86,7 +86,7 @@ public final class HouseholdGanttView {
         // The data loader will:
         // - Execute reactive DSQL queries when the organization changes
         // - Load ResourceConfiguration entities (room definitions)
-        // - Load Attendance entities (booking occupancy records)
+        // - Load DocumentLine entities with startDate/endDate (booking records)
         // - Maintain ObservableLists that update when database changes
         this.dataLoader = new HouseholdGanttDataLoader(pm, presenter);
 
@@ -103,19 +103,19 @@ public final class HouseholdGanttView {
         // Lambda listeners hold strong references to 'this', which prevents garbage collection
         // if the ObservableLists outlive this view instance.
         this.resourceConfigListener = c -> refreshDisplay();
-        this.attendanceListener = c -> refreshDisplay();
+        this.documentLineListener = c -> refreshDisplay();
 
         // Listen to data changes and update view
         // WHY TWO LISTENERS?
         // - ResourceConfigurations can change independently (room added/removed/renamed)
-        // - Attendances can change independently (booking created/updated/cancelled)
+        // - DocumentLines can change independently (booking created/updated/cancelled)
         // - Both need to trigger a full refresh to ensure consistency
         //
         // REACTIVE PATTERN:
         // When EntityStore updates due to database changes, the ObservableLists
         // fire change events, which trigger refreshDisplay() to re-adapt and re-render
         dataLoader.getResourceConfigurations().addListener(resourceConfigListener);
-        dataLoader.getAttendances().addListener(attendanceListener);
+        dataLoader.getDocumentLines().addListener(documentLineListener);
     }
 
     /**
@@ -196,8 +196,8 @@ public final class HouseholdGanttView {
      * Step 2: ADAPT DATABASE ENTITIES TO GANTT MODEL
      *   - EntityDataAdapter.adaptRooms() converts:
      *     * ResourceConfiguration entities -> GanttRoomData objects
-     *     * Attendance entities -> GanttBookingData objects
-     *   - Groups attendances by room
+     *     * DocumentLine entities -> GanttBookingData objects
+     *   - Groups document lines by room
      *   - Extracts relevant fields (name, category, dates, etc.)
      *   - Transforms database model to presentation model
      *
@@ -231,7 +231,7 @@ public final class HouseholdGanttView {
         // This transformation isolates the view from database schema changes
         List<GanttRoomData> rooms = EntityDataAdapter.adaptRooms(
             dataLoader.getResourceConfigurations(),
-            dataLoader.getAttendances()
+            dataLoader.getDocumentLines()
         );
 
         // Step 2: Display data in view with error handling
@@ -331,8 +331,8 @@ public final class HouseholdGanttView {
         if (resourceConfigListener != null) {
             dataLoader.getResourceConfigurations().removeListener(resourceConfigListener);
         }
-        if (attendanceListener != null) {
-            dataLoader.getAttendances().removeListener(attendanceListener);
+        if (documentLineListener != null) {
+            dataLoader.getDocumentLines().removeListener(documentLineListener);
         }
     }
 }

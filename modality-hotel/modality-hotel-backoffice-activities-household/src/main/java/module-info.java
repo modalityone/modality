@@ -28,6 +28,7 @@ module modality.hotel.backoffice.activities.household {
     requires webfx.extras.time.layout.gantt;
     requires webfx.extras.time.window;
     requires webfx.extras.util.control;
+    requires webfx.kit.launcher;
     requires webfx.kit.util;
     requires webfx.platform.windowhistory;
     requires webfx.stack.orm.domainmodel.activity;
@@ -37,7 +38,6 @@ module modality.hotel.backoffice.activities.household {
     requires webfx.stack.routing.router;
     requires webfx.stack.routing.router.client;
     requires webfx.stack.routing.uirouter;
-    requires webfx.kit.launcher;
 
     // Exported packages
     exports one.modality.hotel.backoffice.activities.household;

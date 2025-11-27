@@ -38,7 +38,8 @@ public class HouseholdCanvasGanttView {
 
     // Listener references for cleanup
     private final ListChangeListener<Object> resourceConfigListener;
-    private final ListChangeListener<Object> attendanceListener;
+    private final ListChangeListener<Object> documentLineListener;
+    private final ListChangeListener<Object> attendanceGapListener;
 
     /**
      * Constructor initializes the Canvas-based Gantt view.
@@ -68,7 +69,7 @@ public class HouseholdCanvasGanttView {
 
         // IMPORTANT: We DON'T add listeners to time window changes because:
         // 1. The data loader has reactive queries that automatically re-execute when time window changes
-        // 2. Those reactive queries update the observable lists (resourceConfigurations, attendances)
+        // 2. Those reactive queries update the observable lists (resourceConfigurations, documentLines)
         // 3. Our existing listeners on those lists (below) will trigger refreshDisplay() automatically
         // 4. The bidirectional binding already handles layout time window updates
         //
@@ -76,11 +77,13 @@ public class HouseholdCanvasGanttView {
 
         // Initialize listeners with stored references for cleanup
         this.resourceConfigListener = c -> refreshDisplay();
-        this.attendanceListener = c -> refreshDisplay();
+        this.documentLineListener = c -> refreshDisplay();
+        this.attendanceGapListener = c -> refreshDisplay();
 
         // Listen to data changes and update view
         dataLoader.getResourceConfigurations().addListener(resourceConfigListener);
-        dataLoader.getAttendances().addListener(attendanceListener);
+        dataLoader.getDocumentLines().addListener(documentLineListener);
+        dataLoader.getAttendancesForGaps().addListener(attendanceGapListener);
 
         // Listen to expand/collapse state changes
         presenter.getExpandedRoomIds().addListener((javafx.collections.SetChangeListener<String>) change ->
@@ -470,26 +473,48 @@ public class HouseholdCanvasGanttView {
     /**
      * Refreshes the display with current data.
      * Called when data changes or expand/collapse state changes.
+     *
+     * PERFORMANCE MONITORING: This method tracks time for each phase of the refresh process.
      */
     private void refreshDisplay() {
+        long startTime = System.currentTimeMillis();
+        System.out.println("[PERF HouseholdCanvasGanttView] refreshDisplay started with " +
+                dataLoader.getResourceConfigurations().size() + " resource configs and " +
+                dataLoader.getDocumentLines().size() + " document lines");
+
         // Step 1: Convert database entities to gantt model using adapter pattern
+        // Pass attendances for gap bookings to support split bars where guest doesn't stay certain nights
+        long adaptStart = System.currentTimeMillis();
         List<GanttRoomData> rooms = EntityDataAdapter.adaptRooms(
             dataLoader.getResourceConfigurations(),
-            dataLoader.getAttendances()
+            dataLoader.getDocumentLines(),
+            dataLoader.getAttendancesForGaps()
         );
+        long adaptTime = System.currentTimeMillis() - adaptStart;
+        System.out.println("[PERF HouseholdCanvasGanttView] Entity adaptation completed in " + adaptTime + "ms, produced " + rooms.size() + " rooms");
 
         // Step 2: Convert rooms to Canvas parent rows and bars using HouseholdBarAdapter
         // CRITICAL: Adapter creates parent rows AND bars together to ensure they reference same objects
+        long barAdaptStart = System.currentTimeMillis();
         HouseholdBarAdapter.AdaptedRoomData adapted = barAdapter.adaptAllRoomsWithParents(rooms);
+        long barAdaptTime = System.currentTimeMillis() - barAdaptStart;
+        System.out.println("[PERF HouseholdCanvasGanttView] Bar adaptation completed in " + barAdaptTime + "ms, produced " +
+                adapted.getParentRows().size() + " parent rows and " + adapted.getBars().size() + " bars");
 
         // Step 3: Update Canvas with parent rows and bars
+        long displayStart = System.currentTimeMillis();
         try {
             displayRoomsAndBars(adapted.getParentRows(), adapted.getBars());
+            long displayTime = System.currentTimeMillis() - displayStart;
+            System.out.println("[PERF HouseholdCanvasGanttView] Canvas display updated in " + displayTime + "ms");
         } catch (Exception e) {
             // Catch any rendering errors to prevent UI crash
             System.err.println("[HouseholdCanvasGanttView] Error displaying bars: " + e.getMessage());
             e.printStackTrace();
         }
+
+        long totalTime = System.currentTimeMillis() - startTime;
+        System.out.println("[PERF HouseholdCanvasGanttView] Total refresh time: " + totalTime + "ms");
     }
 
     /**
@@ -545,8 +570,11 @@ public class HouseholdCanvasGanttView {
         if (resourceConfigListener != null) {
             dataLoader.getResourceConfigurations().removeListener(resourceConfigListener);
         }
-        if (attendanceListener != null) {
-            dataLoader.getAttendances().removeListener(attendanceListener);
+        if (documentLineListener != null) {
+            dataLoader.getDocumentLines().removeListener(documentLineListener);
+        }
+        if (attendanceGapListener != null) {
+            dataLoader.getAttendancesForGaps().removeListener(attendanceGapListener);
         }
     }
 }

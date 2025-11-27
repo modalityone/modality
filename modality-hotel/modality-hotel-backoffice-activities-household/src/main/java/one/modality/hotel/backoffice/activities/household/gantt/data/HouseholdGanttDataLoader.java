@@ -4,12 +4,12 @@ import dev.webfx.stack.orm.reactive.entities.dql_to_entities.ReactiveEntitiesMap
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import one.modality.base.shared.entities.Attendance;
+import one.modality.base.shared.entities.DocumentLine;
 import one.modality.base.shared.entities.ResourceConfiguration;
 import one.modality.hotel.backoffice.accommodation.AccommodationPresentationModel;
 import one.modality.hotel.backoffice.activities.household.gantt.presenter.GanttPresenter;
 
 import java.time.LocalDate;
-import java.time.temporal.ChronoUnit;
 
 import static dev.webfx.stack.orm.dql.DqlStatement.where;
 
@@ -17,9 +17,18 @@ import static dev.webfx.stack.orm.dql.DqlStatement.where;
  * Data loader for the Household Gantt view.
  * Loads rooms and bookings from the database using reactive queries.
  *
+ * PERFORMANCE OPTIMIZATION: Uses DocumentLine.startDate/endDate fields directly
+ * instead of querying the Attendance table for most bookings. This significantly
+ * reduces the number of records returned (one per booking vs one per day of stay).
+ *
+ * ATTENDANCE GAP SUPPORT: For bookings with hasAttendanceGap=true, we also load
+ * the individual Attendance records to determine the actual date segments
+ * (nights when the guest stays vs gaps when they don't).
+ *
  * This class coordinates between:
  * - ResourceConfiguration (room data)
- * - Attendance + DocumentLine (booking data)
+ * - DocumentLine with startDate/endDate (booking data)
+ * - Attendance records (for gap bookings only)
  * - The presentation model (organization filter)
  * - The gantt presenter (time window)
  */
@@ -35,7 +44,8 @@ public final class HouseholdGanttDataLoader {
 
     private final AccommodationPresentationModel pm;
     private final ObservableList<ResourceConfiguration> resourceConfigurations = FXCollections.observableArrayList();
-    private final ObservableList<Attendance> attendances = FXCollections.observableArrayList();
+    private final ObservableList<DocumentLine> documentLines = FXCollections.observableArrayList();
+    private final ObservableList<Attendance> attendancesForGaps = FXCollections.observableArrayList();
     private Object mixin; // Keep reference for reloading
 
     /**
@@ -58,10 +68,19 @@ public final class HouseholdGanttDataLoader {
     }
 
     /**
-     * Gets the observable list of attendances (bookings).
+     * Gets the observable list of document lines (bookings with start/end dates).
      */
-    public ObservableList<Attendance> getAttendances() {
-        return attendances;
+    public ObservableList<DocumentLine> getDocumentLines() {
+        return documentLines;
+    }
+
+    /**
+     * Gets the observable list of attendances for bookings with gaps.
+     * Only populated for DocumentLines where hasAttendanceGap = true.
+     * Used by EntityDataAdapter to build date segments for gap bookings.
+     */
+    public ObservableList<Attendance> getAttendancesForGaps() {
+        return attendancesForGaps;
     }
 
     /**
@@ -73,7 +92,8 @@ public final class HouseholdGanttDataLoader {
     public void startLogic(Object mixin) {
         this.mixin = mixin;
         startRoomQuery();
-        startAttendanceQuery();
+        startDocumentLineQuery();
+        startAttendanceGapQuery();
     }
 
     /**
@@ -82,8 +102,8 @@ public final class HouseholdGanttDataLoader {
      */
     public void reload() {
         if (mixin != null) {
-            // Rooms don't change, so we only need to reload attendances
-            startAttendanceQuery();
+            // Rooms don't change, so we only need to reload document lines
+            startDocumentLineQuery();
         }
     }
 
@@ -109,25 +129,31 @@ public final class HouseholdGanttDataLoader {
     }
 
     /**
-     * Starts the query to load attendances for the current time window.
+     * Starts the query to load document lines (bookings) for the current time window.
      * This query is REACTIVE to time window changes via PM's time window properties.
+     *
+     * PERFORMANCE OPTIMIZATION: Uses DocumentLine.startDate/endDate directly instead of
+     * querying Attendance table. This returns one record per booking instead of one per day.
+     *
+     * Includes hasAttendanceGap field to identify bookings that need Attendance records
+     * for accurate date segment rendering.
      */
-    private void startAttendanceQuery() {
-        // Query 2: Load bookings (attendances) for the time window
-        ReactiveEntitiesMapper.<Attendance>createPushReactiveChain(mixin)
-            // Fetch attendance data with document line, guest info, and room assignment
-            // Use documentLine.resourceConfiguration (old data) and scheduledResource.configuration (new data)
-            .always("{class: 'Attendance', alias: 'a', " +
-                "fields: 'date," +
-                "documentLine.document.(arrived,person_firstName,person_lastName,event.name,request)," +
-                "documentLine.(cleaned,resourceConfiguration.(name,item.(name,family.name)))," +
-                "scheduledResource.configuration.(name,item.(name,family.name))', " +
-                "where: 'documentLine.(!cancelled and !document.cancelled)'}")
+    private void startDocumentLineQuery() {
+        // Query 2: Load bookings (document lines) for the time window
+        // Uses startDate/endDate fields for date range filtering (much more efficient than Attendance)
+        // Includes hasAttendanceGap to identify bookings needing Attendance records
+        ReactiveEntitiesMapper.<DocumentLine>createPushReactiveChain(mixin)
+            // Fetch document line data with guest info and room assignment
+            .always("{class: 'DocumentLine', alias: 'dl', " +
+                "fields: 'startDate,endDate,hasAttendanceGap," +
+                "document.(arrived,person_firstName,person_lastName,event.name,request)," +
+                "cleaned,resourceConfiguration.(name,item.(name,family.name))', " +
+                "where: '!cancelled and !document.cancelled and resourceConfiguration is not null'}")
             // Filter by organization
             .always(pm.organizationIdProperty(), org ->
-                where("documentLine.document.event.organization=?", org))
-            // Filter by date range - REACTIVE to BOTH time window properties!
-            // When either start or end changes, this will recompute
+                where("document.event.organization=?", org))
+            // Filter by date range - bookings that overlap with the time window
+            // A booking overlaps if: startDate <= windowEnd AND endDate >= windowStart
             .always(pm.timeWindowStartProperty(), start -> {
                 LocalDate end = pm.getTimeWindowEnd();
 
@@ -135,11 +161,42 @@ public final class HouseholdGanttDataLoader {
                     return null;
                 }
 
-                LocalDate queryStart = start.minus(1, ChronoUnit.DAYS);
-                LocalDate queryEnd = end.plus(1, ChronoUnit.DAYS);
-                return where("a.date >= ? and a.date <= ?", queryStart, queryEnd);
+                // Include bookings that overlap with the time window
+                return where("dl.startDate <= ? and dl.endDate >= ?", end, start);
             })
-            .storeEntitiesInto(attendances)
+            .storeEntitiesInto(documentLines)
+            .start();
+    }
+
+    /**
+     * Starts the query to load Attendance records for bookings with gaps.
+     * Only loads attendances for DocumentLines where hasAttendanceGap = true.
+     *
+     * This allows us to build accurate date segments for bookings where the guest
+     * doesn't stay on certain nights within their booking period.
+     */
+    private void startAttendanceGapQuery() {
+        // Query 3: Load Attendance records for gap bookings only
+        // These are used by EntityDataAdapter to build date segments
+        ReactiveEntitiesMapper.<Attendance>createPushReactiveChain(mixin)
+            .always("{class: 'Attendance', alias: 'a', " +
+                "fields: 'date,documentLine', " +
+                "where: 'documentLine.hasAttendanceGap = true and !documentLine.cancelled and !documentLine.document.cancelled'}")
+            // Filter by organization
+            .always(pm.organizationIdProperty(), org ->
+                where("documentLine.document.event.organization=?", org))
+            // Filter by date range - same as DocumentLine query
+            .always(pm.timeWindowStartProperty(), start -> {
+                LocalDate end = pm.getTimeWindowEnd();
+
+                if (start == null || end == null) {
+                    return null;
+                }
+
+                // Include attendances for bookings that overlap with the time window
+                return where("documentLine.startDate <= ? and documentLine.endDate >= ?", end, start);
+            })
+            .storeEntitiesInto(attendancesForGaps)
             .start();
     }
 }
