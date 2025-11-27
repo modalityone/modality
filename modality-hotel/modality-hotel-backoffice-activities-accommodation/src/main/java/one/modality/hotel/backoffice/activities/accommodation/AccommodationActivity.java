@@ -61,7 +61,7 @@ final class AccommodationActivity extends OrganizationDependentViewDomainActivit
     public void onResume() {
         super.onResume();
         FXMainFrameHeaderTabs.setHeaderTabs(headerTabsBar.getTabs());
-        FXGanttVisibility.showEvents();
+        FXGanttVisibility.showOnsiteAccommodationEvents();
         FXEventSelector.showEventSelector();
     }
 

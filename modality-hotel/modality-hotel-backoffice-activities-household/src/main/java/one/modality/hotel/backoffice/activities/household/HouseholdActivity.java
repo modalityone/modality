@@ -75,7 +75,7 @@ public final class HouseholdActivity extends OrganizationDependentViewDomainActi
      * Shows the EventsGanttCanvas and lazy-loads gantt data on first selection.
      */
     private void onGanttTabSelected() {
-        FXGanttVisibility.showEvents();
+        FXGanttVisibility.showAllEvents();
         FXEventSelector.showEventSelector();
 
         // Lazy loading: Start gantt logic only on first tab selection

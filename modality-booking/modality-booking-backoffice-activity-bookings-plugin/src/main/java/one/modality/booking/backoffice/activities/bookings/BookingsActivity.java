@@ -179,7 +179,7 @@ final class BookingsActivity extends EventDependentViewDomainActivity implements
     public void onResume() {
         super.onResume();
         filterSearchBar.onResume(); // activate search text focus on activity resume
-        FXGanttVisibility.showEvents();
+        FXGanttVisibility.showAllEvents();
         FXGanttInterstice.showGanttInterstice();
         FXEventSelector.showEventSelector();
     }

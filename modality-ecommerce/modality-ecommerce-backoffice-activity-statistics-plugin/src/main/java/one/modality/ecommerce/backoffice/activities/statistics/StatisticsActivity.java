@@ -35,7 +35,7 @@ final class StatisticsActivity extends EventDependentViewDomainActivity implemen
     public void onResume() {
         super.onResume();
         FXMainFrameHeaderTabs.setHeaderTabs(headerTabsBar.getTabs());
-        FXGanttVisibility.showEvents();
+        FXGanttVisibility.showAllEvents();
         FXEventSelector.showEventSelector();
     }
 

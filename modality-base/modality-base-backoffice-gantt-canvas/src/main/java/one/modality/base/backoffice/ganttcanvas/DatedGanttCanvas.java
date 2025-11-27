@@ -254,7 +254,7 @@ public final class DatedGanttCanvas implements TimeWindow<LocalDate> {
         collapsePaneContainer.setManaged(isVisible);
 
         // Setting layers visibility
-        globalLayout.getLayers().forEach(l -> l.setVisible(FXGanttVisibility.isShowEvents()));
+        globalLayout.getLayers().forEach(l -> l.setVisible(FXGanttVisibility.isShowingEvents()));
         yearsLayer.setVisible(isVisible && weekWidth <= 20);
         monthsLayer.setVisible(FXGanttVisibility.isShowingMonths() && monthWidth > 15);
         if (!FXGanttVisibility.isShowingDays()) {
@@ -297,7 +297,7 @@ public final class DatedGanttCanvas implements TimeWindow<LocalDate> {
             daysLayer.setChildFixedHeight(dayHeight);
             y += dayHeight + vSpacing;
         }
-        if (FXGanttVisibility.isShowEvents()) {
+        if (FXGanttVisibility.isShowingEvents()) {
             ObservableList<TimeLayout<?, LocalDate>> layers = globalLayout.getLayers();
             for (int i = 4; i < layers.size(); i++) {
                 TimeLayout<?, LocalDate> layer = layers.get(i);

@@ -21,7 +21,6 @@ import javafx.scene.text.FontWeight;
 import one.modality.base.backoffice.ganttcanvas.DatedGanttCanvas;
 import one.modality.base.client.gantt.fx.timewindow.FXGanttTimeWindow;
 import one.modality.base.client.gantt.fx.visibility.FXGanttVisibility;
-import one.modality.base.client.gantt.fx.visibility.GanttVisibility;
 import one.modality.base.shared.entities.Event;
 import one.modality.base.shared.entities.ScheduledItem;
 import one.modality.crm.backoffice.organization.fx.FXOrganization;
@@ -221,7 +220,12 @@ public final class EventsGanttCanvas {
             .always( // language=JSON5
                 "{class: 'Event', alias: 'e', fields: 'name,startDate,endDate,type.recurringItem'}")
             // Stopping querying the server when then gantt visibility is not set to EVENTS
-            .ifNotEquals(FXGanttVisibility.ganttVisibilityProperty(), GanttVisibility.EVENTS, null)
+            .always(FXGanttVisibility.ganttVisibilityProperty(), ganttVisibility -> switch (ganttVisibility) {
+                case ALL_EVENTS -> where("true");
+                case ONSITE_ACCOMMODATION_EVENTS -> where("venue.main=true and type.(id!=61 and recurringItem=null)"); // 61 = MKMC Guest Stay (hardcoded for now)
+                case RECURRING_EVENTS -> where("type.recurringItem != null");
+                default -> null;
+            })
             // Returning events for the selected organization only (or returning an empty set if no organization is selected)
             .ifNotNullOtherwiseEmpty(pm.organizationIdProperty(), o -> where("e.organization=?", o))
             // Restricting events to those appearing in the time window
@@ -235,14 +239,17 @@ public final class EventsGanttCanvas {
             // We are now ready to start
             .start();
 
-        // Also loading the dates inside the recurring events to be displayed in the gantt canvas
+        // Also, loading the dates inside the recurring events to be displayed in the gantt canvas
         ReactiveEntitiesMapper.<ScheduledItem>createPushReactiveChain(mixin)
             .always( // language=JSON5
                 "{class: 'ScheduledItem', alias: 'si', fields: 'date,event'}")
             // Stopping querying the server when then gantt visibility is not set to EVENTS
-            .ifNotEquals(FXGanttVisibility.ganttVisibilityProperty(), GanttVisibility.EVENTS, null)
+            .always(FXGanttVisibility.ganttVisibilityProperty(), ganttVisibility -> switch (ganttVisibility) {
+                case ALL_EVENTS, RECURRING_EVENTS -> where("event.type.recurringItem != null");
+                default -> null;
+            })
             // Returning events for the selected organization only (or returning an empty set if no organization is selected)
-            .ifNotNullOtherwiseEmpty(pm.organizationIdProperty(), o -> where("si.event.(organization=? and type.recurringItem != null)", o))
+            .ifNotNullOtherwiseEmpty(pm.organizationIdProperty(), o -> where("si.event.organization=?", o))
             // Restricting events to those appearing in the time window
             .always(pm.timeWindowStartProperty(), startDate -> where("si.date >= ?", startDate))
             .always(pm.timeWindowEndProperty(), endDate -> where("si.date <= ?", endDate))
