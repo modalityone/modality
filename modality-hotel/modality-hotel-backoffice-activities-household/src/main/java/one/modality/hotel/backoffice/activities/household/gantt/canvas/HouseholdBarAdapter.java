@@ -6,71 +6,19 @@ import one.modality.hotel.backoffice.activities.household.gantt.model.*;
 import one.modality.hotel.backoffice.activities.household.gantt.presenter.GanttPresenter;
 
 import java.time.LocalDate;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.*;
 
 /**
  * Adapter that converts GanttRoomData bookings to Canvas LocalDateBar format.
- *
+ * <p>
  * This adapter:
  * - Handles both single rooms (bookings on room) and multi-bed rooms (bookings on beds)
- * - Converts GanttBookingData directly into LocalDateBar objects for Canvas rendering
+ * - Conve.printStackTrace();erts GanttBookingData directly into LocalDateBar objects for Canvas rendering
  * - Maintains proper parent/child relationships for tetris packing layout
  *
  * @author Claude Code Assistant
  */
-public class HouseholdBarAdapter {
-
-    private final GanttPresenter presenter;
-
-    public HouseholdBarAdapter(GanttPresenter presenter) {
-        this.presenter = presenter;
-    }
-
-    /**
-     * Converts room bookings into LocalDateBar objects for Canvas rendering.
-     *
-     * IMPORTANT: Multi-bed rooms have bookings in getBeds(), not getBookings()!
-     * - Single rooms: bookings are in room.getBookings()
-     * - Multi-bed rooms: room.getBookings() is EMPTY, bookings are in room.getBeds().get(i).getBookings()
-     *
-     * Multi-bed room behavior:
-     * - When COLLAPSED: Create aggregated bar with room as parent
-     * - When EXPANDED: Create individual bed bars with each bed as parent (NO aggregated bar)
-     *
-     * @param room The room to process
-     * @return List of LocalDateBar objects ready for Canvas rendering
-     */
-    public List<LocalDateBar<HouseholdBookingBlock>> adaptRoomBookings(GanttRoomData room) {
-        // Check if this is a multi-bed room (bookings are in beds, not directly on room)
-        if (!room.getBeds().isEmpty()) {
-            boolean isExpanded = presenter.isRoomExpanded(room.getId());
-            List<LocalDateBar<HouseholdBookingBlock>> allBars = new ArrayList<>();
-
-            if (isExpanded) {
-                // EXPANDED: Create individual bed bars (each bed is a parent row)
-                int bedIndex = 0;
-                for (GanttBedData bed : room.getBeds()) {
-                    GanttParentRow bedParent = GanttParentRow.forBed(room, bed, bedIndex);
-                    List<LocalDateBar<HouseholdBookingBlock>> bedBars = adaptBookingsToBars(
-                        bed.getBookings(), bedParent);
-
-                    allBars.addAll(bedBars);
-                    bedIndex++;
-                }
-            } else {
-                // COLLAPSED: Create aggregated bar (room is the parent)
-                GanttParentRow roomParent = GanttParentRow.forRoom(room);
-                allBars.addAll(createAggregatedBars(room, roomParent));
-            }
-
-            return allBars;
-        }
-
-        // Single room - process room's bookings directly (room is the parent)
-        GanttParentRow roomParent = GanttParentRow.forRoom(room);
-        return adaptBookingsToBars(room.getBookings(), roomParent);
-    }
+public record HouseholdBarAdapter(GanttPresenter presenter) {
 
     /**
      * Converts a list of bookings into LocalDateBar objects.
@@ -94,16 +42,16 @@ public class HouseholdBarAdapter {
 
             // Create booking block
             HouseholdBookingBlock block = new HouseholdBookingBlock(
-                booking.getGuestName(),
-                booking.getStatus(),
-                position,
-                false, // No conflict detection needed for direct conversion
-                booking.getComments() != null && !booking.getComments().isEmpty(),
-                false, // Turnover detection done by presenter
-                !booking.isArrived() && booking.getStartDate().isBefore(LocalDate.now()),
-                booking,
-                1, // Single booking occupancy
-                parentRow.getRoom().getCapacity()
+                    booking.getGuestName(),
+                    booking.getStatus(),
+                    position,
+                    false, // No conflict detection needed for direct conversion
+                    booking.getComments() != null && !booking.getComments().isEmpty(),
+                    false, // Turnover detection done by presenter
+                    !booking.isArrived() && booking.getStartDate().isBefore(LocalDate.now()),
+                    booking,
+                    1, // Single booking occupancy
+                    parentRow.room().getCapacity()
             );
             block.setParentRow(parentRow);
 
@@ -117,7 +65,7 @@ public class HouseholdBarAdapter {
     /**
      * Creates aggregated bars for collapsed multi-bed rooms.
      * Shows occupancy count instead of individual guest names.
-     *
+     * <p>
      * Creates SEPARATE bars for each contiguous segment of occupied days.
      * When occupancy drops to 0, the bar ends and a new bar starts when occupancy resumes.
      */
@@ -159,30 +107,31 @@ public class HouseholdBarAdapter {
         // Calculate total bed capacity from room configuration
         int totalCapacity = room.getCapacity(); // Use room's max capacity from configuration
 
-        // Calculate daily occupancy for each day in the range
-        java.util.Map<LocalDate, Integer> dailyOccupancy = new java.util.HashMap<>();
-        LocalDate currentDate = minStart;
-        while (!currentDate.isAfter(maxEnd)) {
-            int occupancyOnDate = 0;
-            for (GanttBookingData booking : allBookings) {
-                if (booking.getStartDate() == null || booking.getEndDate() == null) continue;
-                // A booking occupies a bed from startDate (inclusive) to endDate (exclusive)
-                if (!currentDate.isBefore(booking.getStartDate()) && currentDate.isBefore(booking.getEndDate())) {
-                    occupancyOnDate++;
-                }
-            }
-            dailyOccupancy.put(currentDate, occupancyOnDate);
-            currentDate = currentDate.plusDays(1);
+        // PERFORMANCE OPTIMIZATION: Use event-sweep algorithm O(B log B) instead of O(D × B)
+        // Create events for check-in (+1) and check-out (-1)
+        List<AbstractMap.SimpleEntry<LocalDate, Integer>> events = new ArrayList<>();
+        for (GanttBookingData booking : allBookings) {
+            if (booking.getStartDate() == null || booking.getEndDate() == null) continue;
+            events.add(new AbstractMap.SimpleEntry<>(booking.getStartDate(), 1));   // Check-in
+            events.add(new AbstractMap.SimpleEntry<>(booking.getEndDate(), -1));    // Check-out
         }
+
+        // Sort events by date, with check-outs before check-ins on same day (for accurate count)
+        // -1 (checkout) before +1 (checkin)
+        events.sort(Comparator.comparing((AbstractMap.SimpleEntry<LocalDate, Integer> a) -> a.getKey()).thenComparingInt(AbstractMap.SimpleEntry::getValue));
+
+        // Sweep through events to build daily occupancy map
+        Map<LocalDate, Integer> dailyOccupancy = getLocalDateIntegerMap(minStart, events, maxEnd);
 
         // Group consecutive days with occupancy > 0 into segments
         // Each segment becomes a separate bar
         LocalDate segmentStart = null;
-        java.util.Map<LocalDate, Integer> segmentOccupancy = new java.util.HashMap<>();
+        Map<LocalDate, Integer> segmentOccupancy = new HashMap<>();
         List<GanttBookingData> segmentBookings = new ArrayList<>();
         int maxOccupancyInSegment = 0;
 
-        currentDate = minStart;
+        LocalDate today = LocalDate.now();
+        LocalDate currentDate = minStart;
         while (!currentDate.isAfter(maxEnd)) {
             Integer occupancy = dailyOccupancy.get(currentDate);
             if (occupancy == null) occupancy = 0;
@@ -215,20 +164,24 @@ public class HouseholdBarAdapter {
                 // Day has no occupancy - end current segment if any
                 if (segmentStart != null) {
                     // Create bar for the segment
-                    LocalDate segmentEnd = currentDate; // Exclusive end
+                    // Exclusive end (currentDate is the first day with 0 occupancy)
+                    LocalDate segmentEnd = currentDate;
+                    // Determine status based on segment bookings - OCCUPIED only if at least one bed is occupied
+                    BookingStatus segmentStatus = determineSegmentStatus(segmentStart, segmentEnd.minusDays(1), today, segmentBookings);
+
                     HouseholdBookingBlock block = new HouseholdBookingBlock(
-                        "", // Guest name not needed for aggregate bars
-                        BookingStatus.CONFIRMED, // Default status for aggregated view
-                        BookingPosition.MIDDLE,
-                        false,
-                        false,
-                        false,
-                        false,
-                        representativeBooking,
-                        maxOccupancyInSegment,
-                        totalCapacity,
-                        new java.util.HashMap<>(segmentOccupancy), // Copy of segment occupancy
-                        new ArrayList<>(segmentBookings) // Copy of segment bookings
+                            "", // Guest name not needed for aggregate bars
+                            segmentStatus,
+                            BookingPosition.MIDDLE,
+                            false,
+                            false,
+                            false,
+                            false,
+                            representativeBooking,
+                            maxOccupancyInSegment,
+                            totalCapacity,
+                            new HashMap<>(segmentOccupancy), // Copy of segment occupancy
+                            new ArrayList<>(segmentBookings) // Copy of segment bookings
                     );
                     block.setParentRow(parentRow);
                     bars.add(new LocalDateBar<>(block, segmentStart, segmentEnd));
@@ -244,19 +197,22 @@ public class HouseholdBarAdapter {
         // Create bar for final segment if it exists
         if (segmentStart != null) {
             LocalDate segmentEnd = maxEnd.plusDays(1); // End is exclusive, so add 1 day
+            // Determine status based on segment bookings - OCCUPIED only if at least one bed is occupied
+            BookingStatus segmentStatus = determineSegmentStatus(segmentStart, segmentEnd.minusDays(1), today, segmentBookings);
+
             HouseholdBookingBlock block = new HouseholdBookingBlock(
-                "", // Guest name not needed for aggregate bars
-                BookingStatus.CONFIRMED, // Default status for aggregated view
-                BookingPosition.MIDDLE,
-                false,
-                false,
-                false,
-                false,
-                representativeBooking,
-                maxOccupancyInSegment,
-                totalCapacity,
-                new java.util.HashMap<>(segmentOccupancy), // Copy of segment occupancy
-                new ArrayList<>(segmentBookings) // Copy of segment bookings
+                    "", // Guest name not needed for aggregate bars
+                    segmentStatus,
+                    BookingPosition.MIDDLE,
+                    false,
+                    false,
+                    false,
+                    false,
+                    representativeBooking,
+                    maxOccupancyInSegment,
+                    totalCapacity,
+                    new HashMap<>(segmentOccupancy), // Copy of segment occupancy
+                    new ArrayList<>(segmentBookings) // Copy of segment bookings
             );
             block.setParentRow(parentRow);
             bars.add(new LocalDateBar<>(block, segmentStart, segmentEnd));
@@ -266,37 +222,65 @@ public class HouseholdBarAdapter {
     }
 
     /**
-     * Adapts all rooms into LocalDateBar format
+     * Determines the booking status for an aggregate bar segment.
+     * - DEPARTED (grey): segment ended before today
+     * - OCCUPIED (red): at least one booking in the segment has OCCUPIED status
+     * - CONFIRMED (blue): segment starts after today OR today is within segment but no bed is occupied yet
      */
-    public List<LocalDateBar<HouseholdBookingBlock>> adaptAllRooms(List<GanttRoomData> rooms) {
-        List<LocalDateBar<HouseholdBookingBlock>> allBars = new ArrayList<>();
+    private BookingStatus determineSegmentStatus(LocalDate segmentStart, LocalDate lastOccupiedDay, LocalDate today,
+                                                  List<GanttBookingData> segmentBookings) {
+        if (lastOccupiedDay.isBefore(today)) {
+            // Segment ended before today - past booking
+            return BookingStatus.DEPARTED;
+        } else if (!segmentStart.isAfter(today) && !lastOccupiedDay.isBefore(today)) {
+            // Today falls within the segment - check if at least one bed is actually occupied
+            boolean hasOccupiedBed = segmentBookings.stream()
+                    .anyMatch(booking -> booking.getStatus() == BookingStatus.OCCUPIED);
+            if (hasOccupiedBed) {
+                return BookingStatus.OCCUPIED;
+            } else {
+                // Today is within segment dates but no guest has arrived yet - show as confirmed (blue)
+                return BookingStatus.CONFIRMED;
+            }
+        } else {
+            // Segment starts after today - future booking
+            return BookingStatus.CONFIRMED;
+        }
+    }
 
-        for (GanttRoomData room : rooms) {
-            allBars.addAll(adaptRoomBookings(room));
+    private static Map<LocalDate, Integer> getLocalDateIntegerMap(LocalDate minStart, List<AbstractMap.SimpleEntry<LocalDate, Integer>> events, LocalDate maxEnd) {
+        Map<LocalDate, Integer> dailyOccupancy = new HashMap<>();
+        int currentOccupancy = 0;
+        LocalDate prevDate = minStart;
+
+        for (AbstractMap.SimpleEntry<LocalDate, Integer> event : events) {
+            LocalDate eventDate = event.getKey();
+
+            // Fill in days between previous event and current event with the current occupancy
+            LocalDate fillDate = prevDate;
+            while (fillDate.isBefore(eventDate)) {
+                dailyOccupancy.put(fillDate, currentOccupancy);
+                fillDate = fillDate.plusDays(1);
+            }
+
+            // Apply the event (check-in or check-out)
+            currentOccupancy += event.getValue();
+            prevDate = eventDate;
         }
 
-        return allBars;
+        // Fill remaining days after last event
+        LocalDate fillDate = prevDate;
+        while (!fillDate.isAfter(maxEnd)) {
+            dailyOccupancy.put(fillDate, currentOccupancy);
+            fillDate = fillDate.plusDays(1);
+        }
+        return dailyOccupancy;
     }
 
     /**
-     * Container class that holds both parent rows and their associated bars.
-     */
-    public static class AdaptedRoomData {
-        private final List<GanttParentRow> parentRows;
-        private final List<LocalDateBar<HouseholdBookingBlock>> bars;
-
-        public AdaptedRoomData(List<GanttParentRow> parentRows, List<LocalDateBar<HouseholdBookingBlock>> bars) {
-            this.parentRows = parentRows;
-            this.bars = bars;
-        }
-
-        public List<GanttParentRow> getParentRows() {
-            return parentRows;
-        }
-
-        public List<LocalDateBar<HouseholdBookingBlock>> getBars() {
-            return bars;
-        }
+         * Container class that holds both parent rows and their associated bars.
+         */
+        public record AdaptedRoomData(List<GanttParentRow> parentRows, List<LocalDateBar<HouseholdBookingBlock>> bars) {
     }
 
     /**
@@ -313,7 +297,7 @@ public class HouseholdBarAdapter {
 
             if (isExpanded) {
                 // EXPANDED multi-bed room: Create room parent WITH aggregated bar + bed parents (with individual bars)
-                GanttParentRow roomParent = GanttParentRow.forRoom(room);
+                GanttParentRow roomParent = GanttParentRow.forRoom(room, true);
                 allParentRows.add(roomParent);
 
                 // Add aggregated bar on room row as summary
@@ -323,29 +307,29 @@ public class HouseholdBarAdapter {
                 // Add bed parents with their booking bars (below the room)
                 int bedIndex = 0;
                 for (GanttBedData bed : room.getBeds()) {
-                    GanttParentRow bedParent = GanttParentRow.forBed(room, bed, bedIndex);
+                    GanttParentRow bedParent = GanttParentRow.forBed(room, bed);
                     allParentRows.add(bedParent);
 
                     List<LocalDateBar<HouseholdBookingBlock>> bedBars = adaptBookingsToBars(
-                        bed.getBookings(), bedParent);
+                            bed.getBookings(), bedParent);
                     allBars.addAll(bedBars);
 
                     bedIndex++;
                 }
             } else if (isMultiBed) {
                 // COLLAPSED multi-bed room: Create room parent with aggregated bar
-                GanttParentRow roomParent = GanttParentRow.forRoom(room);
+                GanttParentRow roomParent = GanttParentRow.forRoom(room, false);
                 allParentRows.add(roomParent);
 
                 List<LocalDateBar<HouseholdBookingBlock>> roomBars = createAggregatedBars(room, roomParent);
                 allBars.addAll(roomBars);
             } else {
                 // Single room: Create room parent with individual booking bars
-                GanttParentRow roomParent = GanttParentRow.forRoom(room);
+                GanttParentRow roomParent = GanttParentRow.forRoom(room, false);
                 allParentRows.add(roomParent);
 
                 List<LocalDateBar<HouseholdBookingBlock>> roomBars = adaptBookingsToBars(
-                    room.getBookings(), roomParent);
+                        room.getBookings(), roomParent);
                 allBars.addAll(roomBars);
             }
         }

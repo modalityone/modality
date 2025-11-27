@@ -74,14 +74,14 @@ public class MultiRoomBookingBarRenderer implements BookingBarRenderer {
         barRegion.setMaxHeight(barHeight);
 
         // Set color based on status
-        Color barColor = colorScheme.getBookingStatusColor(bar.getStatus());
-        CornerRadii radii = getBarRadii(bar.getPosition());
+        Color barColor = colorScheme.getBookingStatusColor(bar.status());
+        CornerRadii radii = getBarRadii(bar.position());
         barRegion.setBackground(new Background(new BackgroundFill(barColor, radii, Insets.EMPTY)));
 
         // Position based on booking position (Pattern B - Gantt flow)
         double leftMargin, rightMargin, width;
 
-        switch (bar.getPosition()) {
+        switch (bar.position()) {
             case ARRIVAL:
                 // Starts at middle (50%), extends to right edge
                 // Use -1px for seamless flow with adjacent cells
@@ -123,10 +123,10 @@ public class MultiRoomBookingBarRenderer implements BookingBarRenderer {
      * Creates the occupancy label (e.g., "3/6")
      */
     private Label createOccupancyLabel(BookingBar bar) {
-        Label label = new Label(bar.getOccupancy() + "/" + bar.getTotalCapacity());
+        Label label = new Label(bar.occupancy() + "/" + bar.totalCapacity());
         label.setTextFill(Color.WHITE);
         label.setStyle("-fx-font-size: 9px; -fx-font-weight: bold;");
-        label.setPadding(new Insets(0,3,0,0));
+        label.setPadding(new Insets(0, 3, 0, 0));
         StackPane.setAlignment(label, Pos.CENTER_RIGHT);
         return label;
     }
@@ -135,20 +135,19 @@ public class MultiRoomBookingBarRenderer implements BookingBarRenderer {
      * Gets the appropriate border radii for a booking bar position
      */
     private CornerRadii getBarRadii(BookingPosition position) {
-        switch (position) {
-            case ARRIVAL:
+        return switch (position) {
+            case ARRIVAL ->
                 // Rounded on LEFT side only
-                return new CornerRadii(10, 0, 0, 10, false);
-            case DEPARTURE:
+                    new CornerRadii(10, 0, 0, 10, false);
+            case DEPARTURE ->
                 // Rounded on RIGHT side only
-                return new CornerRadii(0, 10, 10, 0, false);
-            case SINGLE:
+                    new CornerRadii(0, 10, 10, 0, false);
+            case SINGLE ->
                 // Fully rounded
-                return new CornerRadii(10);
-            case MIDDLE:
-            default:
+                    new CornerRadii(10);
+            default ->
                 // No rounding for seamless flow
-                return CornerRadii.EMPTY;
-        }
+                    CornerRadii.EMPTY;
+        };
     }
 }

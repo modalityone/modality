@@ -2,6 +2,7 @@ package one.modality.hotel.backoffice.activities.household.gantt.canvas;
 
 import dev.webfx.extras.canvas.bar.BarDrawer;
 import dev.webfx.extras.geometry.MutableBounds;
+import dev.webfx.platform.util.Strings;
 import javafx.animation.KeyFrame;
 import javafx.animation.Timeline;
 import javafx.scene.canvas.Canvas;
@@ -15,10 +16,10 @@ import javafx.util.Duration;
 /**
  * Canvas-based tooltip implementation for displaying information overlays.
  * This replaces JavaFX Tooltip which doesn't compile well with WebFX/GWT.
- *
+ * <p>
  * The tooltip is drawn as an overlay layer on the canvas, positioned near
  * the mouse click location. It auto-hides after a configurable duration.
- *
+ * <p>
  * Usage:
  * 1. Create instance with canvas reference
  * 2. Call show() with position and content
@@ -113,26 +114,6 @@ public class CanvasTooltip {
     }
 
     /**
-     * Shows the tooltip at the specified screen position, converting to canvas coordinates.
-     * This is useful when handling MouseEvent screen coordinates.
-     *
-     * @param screenX Screen X coordinate
-     * @param screenY Screen Y coordinate
-     * @param canvasScreenX Canvas screen X position
-     * @param canvasScreenY Canvas screen Y position
-     * @param title The tooltip title
-     * @param body The tooltip body text
-     */
-    public void showAtScreen(double screenX, double screenY,
-                             double canvasScreenX, double canvasScreenY,
-                             String title, String body) {
-        // Convert screen coordinates to canvas-local coordinates
-        double localX = screenX - canvasScreenX + 10; // 10px offset to the right
-        double localY = screenY - canvasScreenY;
-        show(localX, localY, title, body);
-    }
-
-    /**
      * Hides the tooltip immediately.
      */
     public void hide() {
@@ -147,13 +128,6 @@ public class CanvasTooltip {
         if (markDirtyCallback != null) {
             markDirtyCallback.run();
         }
-    }
-
-    /**
-     * Returns whether the tooltip is currently visible.
-     */
-    public boolean isVisible() {
-        return visible;
     }
 
     /**
@@ -245,17 +219,17 @@ public class CanvasTooltip {
         StringBuilder currentLine = new StringBuilder();
 
         for (String word : words) {
-            String testLine = currentLine.length() == 0 ? word : currentLine + " " + word;
+            String testLine = Strings.isEmpty(currentLine) ? word : currentLine + " " + word;
             double testWidth = measureTextWidth(testLine, gc);
 
             if (testWidth <= maxWidth) {
-                if (currentLine.length() > 0) {
+                if (!Strings.isEmpty(currentLine)) {
                     currentLine.append(" ");
                 }
                 currentLine.append(word);
             } else {
                 // Current line is full, start a new line
-                if (currentLine.length() > 0) {
+                if (!Strings.isEmpty(currentLine)) {
                     result.add(currentLine.toString());
                     currentLine = new StringBuilder(word);
                 } else {
@@ -267,7 +241,7 @@ public class CanvasTooltip {
         }
 
         // Add the last line
-        if (currentLine.length() > 0) {
+        if (!Strings.isEmpty(currentLine)) {
             result.add(currentLine.toString());
         }
     }

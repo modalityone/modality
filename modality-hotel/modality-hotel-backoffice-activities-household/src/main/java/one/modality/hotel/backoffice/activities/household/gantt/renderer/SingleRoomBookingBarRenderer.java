@@ -43,8 +43,8 @@ public class SingleRoomBookingBarRenderer implements BookingBarRenderer {
         barRegion.setMaxHeight(barHeight);
 
         // Set color based on status (red border if conflict)
-        Color barColor = colorScheme.getBookingStatusColor(bar.getStatus());
-        CornerRadii radii = getBarRadii(bar.getPosition());
+        Color barColor = colorScheme.getBookingStatusColor(bar.status());
+        CornerRadii radii = getBarRadii(bar.position());
 
         if (bar.hasConflict()) {
             // Add red border for conflicts
@@ -57,7 +57,7 @@ public class SingleRoomBookingBarRenderer implements BookingBarRenderer {
         // Position based on booking position (Gantt flow - continuous bars)
         double leftMargin, rightMargin, width;
 
-        switch (bar.getPosition()) {
+        switch (bar.position()) {
             case ARRIVAL:
                 // Starts at middle (50%), extends to right edge with -1px for seamless flow
                 leftMargin = cellWidth * 0.5;
@@ -101,7 +101,7 @@ public class SingleRoomBookingBarRenderer implements BookingBarRenderer {
         iconsBox.setMouseTransparent(false);  // Allow iconsBox to pass events to children
 
         // Person icon on ARRIVAL position (first cell of booking)
-        if (bar.getPosition() == BookingPosition.ARRIVAL || bar.getPosition() == BookingPosition.SINGLE) {
+        if (bar.position() == BookingPosition.ARRIVAL || bar.position() == BookingPosition.SINGLE) {
             // Use red icon if guest should have arrived but hasn't (late arrival)
             SVGPath personIcon = bar.hasLateArrival()
                 ? SvgIconFactory.createPersonIconRed()
@@ -111,7 +111,7 @@ public class SingleRoomBookingBarRenderer implements BookingBarRenderer {
             personIcon.setMouseTransparent(false);  // Make sure icon can receive mouse events
 
             // Add click handler to show guest info tooltip
-            if (bar.getBookingData() != null) {
+            if (bar.bookingData() != null) {
                 // Add hover effect
                 personIcon.setOnMouseEntered(event -> {
                     personIcon.setOpacity(0.7);
@@ -122,7 +122,7 @@ public class SingleRoomBookingBarRenderer implements BookingBarRenderer {
 
                 personIcon.setOnMouseClicked(event -> {
                     event.consume();  // Prevent event propagation
-                    showGuestInfoTooltip(event, bar.getBookingData());
+                    showGuestInfoTooltip(event, bar.bookingData());
                 });
             }
 
@@ -130,14 +130,14 @@ public class SingleRoomBookingBarRenderer implements BookingBarRenderer {
         }
 
         // Message icon if has comments (on second cell - MIDDLE position)
-        if (bar.hasComments() && bar.getPosition() == BookingPosition.MIDDLE) {
+        if (bar.hasComments() && bar.position() == BookingPosition.MIDDLE) {
             SVGPath messageIcon = SvgIconFactory.createMessageIcon();
             messageIcon.setStyle("-fx-cursor: hand;");
             messageIcon.setPickOnBounds(true);  // Enable mouse event handling
             messageIcon.setMouseTransparent(false);  // Make sure icon can receive mouse events
 
             // Add click handler to show special needs tooltip
-            if (bar.getBookingData() != null) {
+            if (bar.bookingData() != null) {
                 // Add hover effect
                 messageIcon.setOnMouseEntered(event -> {
                     messageIcon.setOpacity(0.7);
@@ -148,7 +148,7 @@ public class SingleRoomBookingBarRenderer implements BookingBarRenderer {
 
                 messageIcon.setOnMouseClicked(event -> {
                     event.consume();  // Prevent event propagation
-                    showSpecialNeedsTooltip(event, bar.getBookingData());
+                    showSpecialNeedsTooltip(event, bar.bookingData());
                 });
             }
 
@@ -160,9 +160,9 @@ public class SingleRoomBookingBarRenderer implements BookingBarRenderer {
             StackPane.setAlignment(iconsBox, Pos.CENTER_LEFT);
             // Shift person icon more to the right on ARRIVAL, comment icon on left with 3px padding for MIDDLE
             double iconShift;
-            if (bar.getPosition() == BookingPosition.ARRIVAL) {
+            if (bar.position() == BookingPosition.ARRIVAL) {
                 iconShift = cellWidth * 0.25 + 20; // Person icon: quarter cell + 20px
-            } else if (bar.getPosition() == BookingPosition.MIDDLE) {
+            } else if (bar.position() == BookingPosition.MIDDLE) {
                 iconShift = 3; // Comment icon: left edge with 3px padding
             } else {
                 iconShift = 15; // SINGLE position

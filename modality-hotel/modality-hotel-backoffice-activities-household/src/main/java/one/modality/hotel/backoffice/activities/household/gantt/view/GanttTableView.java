@@ -1,6 +1,7 @@
 package one.modality.hotel.backoffice.activities.household.gantt.view;
 
 import dev.webfx.extras.util.control.Controls;
+import javafx.animation.FadeTransition;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Node;
@@ -31,7 +32,6 @@ public class GanttTableView {
 
     private final GanttPresenter presenter;
     private final GanttCellFactory cellFactory;
-    private final GanttColorScheme colorScheme;
 
     private BorderPane container;
     private GridPane calendarGrid;
@@ -42,7 +42,7 @@ public class GanttTableView {
 
     public GanttTableView(GanttPresenter presenter) {
         this.presenter = presenter;
-        this.colorScheme = new GanttColorScheme();
+        GanttColorScheme colorScheme = new GanttColorScheme();
         this.cellFactory = new GanttCellFactory(colorScheme, presenter);
         // Wire up expand/collapse callback to refresh the grid WITHOUT reloading data
         this.cellFactory.setOnExpandCollapseCallback(this::refreshExpandedState);
@@ -67,24 +67,29 @@ public class GanttTableView {
             newGrid.setOpacity(0);
 
             // Fade out old grid and fade in new grid simultaneously
-            javafx.animation.FadeTransition fadeOut = new javafx.animation.FadeTransition(
-                javafx.util.Duration.millis(150), oldGrid);
-            fadeOut.setFromValue(1.0);
-            fadeOut.setToValue(0.0);
-
-            javafx.animation.FadeTransition fadeIn = new javafx.animation.FadeTransition(
-                javafx.util.Duration.millis(150), newGrid);
-            fadeIn.setFromValue(0.0);
-            fadeIn.setToValue(1.0);
-
-            // Start fade out, then switch content and fade in
-            fadeOut.setOnFinished(e -> {
-                scrollPane.setContent(newGrid);
-                fadeIn.play();
-            });
+            FadeTransition fadeOut = getFadeTransition(oldGrid, newGrid);
 
             fadeOut.play();
         }
+    }
+
+    private FadeTransition getFadeTransition(GridPane oldGrid, GridPane newGrid) {
+        FadeTransition fadeOut = new FadeTransition(
+            javafx.util.Duration.millis(150), oldGrid);
+        fadeOut.setFromValue(1.0);
+        fadeOut.setToValue(0.0);
+
+        FadeTransition fadeIn = new FadeTransition(
+            javafx.util.Duration.millis(150), newGrid);
+        fadeIn.setFromValue(0.0);
+        fadeIn.setToValue(1.0);
+
+        // Start fade out, then switch content and fade in
+        fadeOut.setOnFinished(e -> {
+            scrollPane.setContent(newGrid);
+            fadeIn.play();
+        });
+        return fadeOut;
     }
 
     /**
@@ -129,7 +134,7 @@ public class GanttTableView {
 
         // Title
         Label title = new Label("Housekeeping Calendar");
-        title.setTextFill(GanttColorScheme.COLOR_BLUE);
+        title.setTextFill(GanttColorScheme.COLOR_ACCENT);
         title.setStyle("-fx-font-size: 20px; -fx-font-weight: bold;");
 
         // Spacer
@@ -278,11 +283,8 @@ public class GanttTableView {
 
         // If room is expanded and has beds, add individual bed rows
         if (presenter.isRoomExpanded(room.getId()) && !room.getBeds().isEmpty()) {
-            int bedIndex = 0;
             for (GanttBedData bed : room.getBeds()) {
-                boolean isFirstBed = (bedIndex == 0);
-                rowIndex = buildBedRow(bed, rowIndex, dateColumns, isFirstBed);
-                bedIndex++;
+                rowIndex = buildBedRow(bed, rowIndex, dateColumns);
             }
         }
 
@@ -292,15 +294,15 @@ public class GanttTableView {
     /**
      * Builds an individual bed row (shown when room is expanded)
      */
-    private int buildBedRow(GanttBedData bed, int rowIndex, List<DateColumn> dateColumns, boolean isFirstBed) {
+    private int buildBedRow(GanttBedData bed, int rowIndex, List<DateColumn> dateColumns) {
         int colIndex = 0;
 
         // Bed name cell (indented to show hierarchy)
-        calendarGrid.add(cellFactory.createBedCell(bed, isFirstBed), colIndex++, rowIndex);
+        calendarGrid.add(cellFactory.createBedCell(bed), colIndex++, rowIndex);
 
         // Date cells for this bed
         for (DateColumn dateCol : dateColumns) {
-            calendarGrid.add(cellFactory.createBedDateCell(bed, dateCol, isFirstBed), colIndex++, rowIndex);
+            calendarGrid.add(cellFactory.createBedDateCell(bed, dateCol), colIndex++, rowIndex);
         }
 
         return rowIndex + 1;

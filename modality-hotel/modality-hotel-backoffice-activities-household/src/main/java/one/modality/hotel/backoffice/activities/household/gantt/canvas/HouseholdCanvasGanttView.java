@@ -1,23 +1,39 @@
 package one.modality.hotel.backoffice.activities.household.gantt.canvas;
 
+import dev.webfx.extras.i18n.I18n;
 import dev.webfx.extras.time.layout.bar.LocalDateBar;
+import dev.webfx.stack.orm.entity.UpdateStore;
 import javafx.collections.ListChangeListener;
+import javafx.collections.SetChangeListener;
+import javafx.geometry.Insets;
+import javafx.geometry.Pos;
 import javafx.scene.Node;
+import javafx.scene.control.Button;
+import javafx.scene.control.Label;
+import javafx.scene.layout.*;
+import javafx.scene.paint.Color;
+import one.modality.base.shared.entities.CleaningState;
+import one.modality.base.shared.entities.Resource;
 import one.modality.hotel.backoffice.accommodation.AccommodationPresentationModel;
+import one.modality.hotel.backoffice.activities.household.HouseholdI18nKeys;
 import one.modality.hotel.backoffice.activities.household.gantt.data.HouseholdGanttDataLoader;
 import one.modality.hotel.backoffice.activities.household.gantt.adapter.EntityDataAdapter;
 import one.modality.hotel.backoffice.activities.household.gantt.model.GanttRoomData;
+import one.modality.hotel.backoffice.activities.household.gantt.model.RoomStatus;
+import one.modality.hotel.backoffice.activities.household.gantt.presenter.GanttFilterManager;
 import one.modality.hotel.backoffice.activities.household.gantt.presenter.GanttPresenter;
+import one.modality.hotel.backoffice.activities.household.gantt.renderer.GanttColorScheme;
 
-import java.util.List;
+import java.time.LocalDateTime;
+import java.util.*;
 
 /**
  * Canvas-based Gantt view implementation for household/housekeeping management.
- *
+ * <p>
  * This class serves as a drop-in replacement for the GridPane-based HouseholdGanttView,
  * using the hybrid approach to preserve all existing business logic while gaining
  * Canvas performance benefits.
- *
+ * <p>
  * Architecture:
  * - Uses HouseholdGanttCanvas for rendering
  * - Uses HouseholdBarAdapter to convert presenter data to Canvas format
@@ -32,9 +48,25 @@ public class HouseholdCanvasGanttView {
     private final HouseholdGanttCanvas canvas;
     private final HouseholdBarAdapter barAdapter;
     private final HouseholdGanttDataLoader dataLoader;
+    private final GanttFilterManager filterManager;
 
     // Cache the container node to avoid rebuilding
-    private final Node containerNode;
+    private final VBox containerNode;
+
+    // Filter bar UI components
+    private final HBox filterBar;
+    private final HBox statusFilterGroup;
+    private final HBox categoryFilterGroup;
+    private final Map<RoomStatus, Button> statusFilterButtons = new LinkedHashMap<>();
+    private final Map<String, Button> categoryFilterButtons = new LinkedHashMap<>();
+    private Button allStatusButton;
+    private Button allCategoryButton;
+
+    // Track available categories from data
+    private Set<String> availableCategories = new LinkedHashSet<>();
+
+    // Track active context menu to allow closing it
+    private javafx.scene.control.ContextMenu activeContextMenu;
 
     // Listener references for cleanup
     private final ListChangeListener<Object> resourceConfigListener;
@@ -50,17 +82,27 @@ public class HouseholdCanvasGanttView {
         // Initialize presenter (handles business logic - PRESERVED from original)
         this.presenter = new GanttPresenter();
 
+        // Initialize filter manager
+        this.filterManager = new GanttFilterManager();
+
         // Initialize Canvas implementation (pass presenter for expand/collapse state)
-        this.canvas = new HouseholdGanttCanvas(pm, presenter);
+        this.canvas = new HouseholdGanttCanvas(pm);
 
         // Initialize adapter (bridges presenter logic with Canvas format)
         this.barAdapter = new HouseholdBarAdapter(presenter);
 
         // Initialize data loader (same as original)
-        this.dataLoader = new HouseholdGanttDataLoader(pm, presenter);
+        this.dataLoader = new HouseholdGanttDataLoader(pm);
 
-        // Build and cache the container node
-        this.containerNode = canvas.buildCanvasContainer();
+        // Build filter bar UI
+        this.statusFilterGroup = new HBox(4);
+        this.categoryFilterGroup = new HBox(4);
+        this.filterBar = buildFilterBar();
+
+        // Build container with filter bar on top of canvas
+        this.containerNode = new VBox();
+        containerNode.getChildren().addAll(filterBar, canvas.buildCanvasContainer());
+        VBox.setVgrow(containerNode.getChildren().get(1), Priority.ALWAYS);
 
         // Sync presenter time window with canvas layout time window (one-time initial sync)
         if (pm.getTimeWindowStart() != null && pm.getTimeWindowEnd() != null) {
@@ -93,10 +135,241 @@ public class HouseholdCanvasGanttView {
         // Add click handler for expand/collapse functionality
         setupClickHandler();
 
+        // Listen to filter changes and update display
+        filterManager.getActiveStatusFilters().addListener((SetChangeListener<RoomStatus>) change -> refreshDisplay());
+        filterManager.getActiveCategoryFilters().addListener((SetChangeListener<String>) change -> refreshDisplay());
+
         // Initial display refresh (will be empty until data loads, but sets up the canvas)
         // Subsequent refreshes will be triggered by data change listeners
         refreshDisplay();
     }
+
+    // ============================================================================
+    // FILTER BAR UI
+    // ============================================================================
+
+    /**
+     * Builds the filter bar with status and category toggle buttons.
+     * Design: Horizontal bar with two filter sections, pill-style toggle buttons.
+     */
+    private HBox buildFilterBar() {
+        HBox bar = new HBox(24);
+        bar.setAlignment(Pos.CENTER_LEFT);
+        bar.setPadding(new Insets(8, 16, 8, 16));
+        bar.setBackground(new Background(new BackgroundFill(Color.TRANSPARENT, CornerRadii.EMPTY, Insets.EMPTY)));  // No background
+        // Bottom border
+        bar.setBorder(new Border(new BorderStroke(Color.rgb(222, 226, 230), BorderStrokeStyle.SOLID,
+                CornerRadii.EMPTY, new BorderWidths(0, 0, 1, 0))));
+
+        // Status filter section
+        HBox statusSection = new HBox(8);
+        statusSection.setAlignment(Pos.CENTER_LEFT);
+        Label statusLabel = new Label(I18n.getI18nText(HouseholdI18nKeys.Status) + ":");
+        statusLabel.setStyle("-fx-font-weight: bold; -fx-text-fill: #374151;");
+        buildStatusFilterButtons();
+        statusSection.getChildren().addAll(statusLabel, statusFilterGroup);
+
+        // Category filter section (dynamic - will be populated when data loads)
+        HBox categorySection = new HBox(8);
+        categorySection.setAlignment(Pos.CENTER_LEFT);
+        Label categoryLabel = new Label("Room type:");
+        categoryLabel.setStyle("-fx-font-weight: bold; -fx-text-fill: #374151;");
+        categorySection.getChildren().addAll(categoryLabel, categoryFilterGroup);
+
+        // Spacer
+        Region spacer = new Region();
+        HBox.setHgrow(spacer, Priority.ALWAYS);
+
+        // Clear filters button
+        Button clearButton = new Button(I18n.getI18nText(HouseholdI18nKeys.All));
+        clearButton.setStyle("-fx-background-color: transparent; -fx-text-fill: #6B7280; -fx-cursor: hand;");
+        clearButton.setOnAction(e -> clearAllFilters());
+
+        bar.getChildren().addAll(statusSection, categorySection, spacer, clearButton);
+        return bar;
+    }
+
+    /**
+     * Builds the status filter toggle buttons with colored status dots.
+     */
+    private void buildStatusFilterButtons() {
+        statusFilterGroup.getChildren().clear();
+        statusFilterButtons.clear();
+
+        // "All" button
+        allStatusButton = createFilterToggleButton(I18n.getI18nText(HouseholdI18nKeys.All), true, null);
+        allStatusButton.setOnAction(e -> {
+            filterManager.getActiveStatusFilters().clear();
+            updateStatusButtonStyles();
+        });
+        statusFilterGroup.getChildren().add(allStatusButton);
+
+        // Status buttons with their corresponding colors
+        Object[][] statusConfigs = {
+            {RoomStatus.TO_CLEAN, HouseholdI18nKeys.ToClean, GanttColorScheme.COLOR_ROOM_TO_CLEAN},
+            {RoomStatus.TO_INSPECT, HouseholdI18nKeys.ToInspect, GanttColorScheme.COLOR_ROOM_TO_INSPECT},
+            {RoomStatus.READY, HouseholdI18nKeys.Ready, GanttColorScheme.COLOR_ROOM_READY},
+            {RoomStatus.OCCUPIED, HouseholdI18nKeys.Occupied, GanttColorScheme.COLOR_ROOM_OCCUPIED}
+        };
+
+        for (Object[] config : statusConfigs) {
+            RoomStatus status = (RoomStatus) config[0];
+            String text = I18n.getI18nText(config[1]);
+            Color statusColor = (Color) config[2];
+            Button btn = createFilterToggleButton(text, false, statusColor);
+            btn.setOnAction(e -> {
+                filterManager.toggleStatusFilter(status);
+                updateStatusButtonStyles();
+            });
+            statusFilterButtons.put(status, btn);
+            statusFilterGroup.getChildren().add(btn);
+        }
+    }
+
+    /**
+     * Updates category filter buttons based on available categories from data.
+     */
+    private void updateCategoryFilterButtons(Set<String> categories) {
+        if (categories.equals(availableCategories)) {
+            return; // No change needed
+        }
+        availableCategories = new LinkedHashSet<>(categories);
+
+        categoryFilterGroup.getChildren().clear();
+        categoryFilterButtons.clear();
+
+        // "All" button
+        allCategoryButton = createFilterToggleButton(I18n.getI18nText(HouseholdI18nKeys.All), true, null);
+        allCategoryButton.setOnAction(e -> {
+            filterManager.getActiveCategoryFilters().clear();
+            updateCategoryButtonStyles();
+        });
+        categoryFilterGroup.getChildren().add(allCategoryButton);
+
+        // Category buttons (dynamically from data)
+        for (String category : categories) {
+            Button btn = createFilterToggleButton(category, false, null);
+            btn.setOnAction(e -> {
+                filterManager.toggleCategoryFilter(category);
+                updateCategoryButtonStyles();
+            });
+            categoryFilterButtons.put(category, btn);
+            categoryFilterGroup.getChildren().add(btn);
+        }
+    }
+
+    /**
+     * Creates a pill-style toggle button for filters.
+     * @param text The button label text
+     * @param isActive Whether the button should be styled as active
+     * @param statusColor Optional color for a status dot (null for no dot)
+     */
+    private Button createFilterToggleButton(String text, boolean isActive, Color statusColor) {
+        Button btn = new Button();
+        btn.setPadding(new Insets(4, 12, 4, 12));
+
+        if (statusColor != null) {
+            // Create button with colored status dot
+            HBox content = new HBox(6);
+            content.setAlignment(Pos.CENTER_LEFT);
+
+            // Status dot (circle)
+            javafx.scene.shape.Circle dot = new javafx.scene.shape.Circle(5);
+            dot.setFill(statusColor);
+
+            Label label = new Label(text);
+            content.getChildren().addAll(dot, label);
+            btn.setGraphic(content);
+        } else {
+            btn.setText(text);
+        }
+
+        updateFilterButtonStyle(btn, isActive, statusColor);
+        return btn;
+    }
+
+    /**
+     * Updates button style based on active state.
+     * @param btn The button to style
+     * @param isActive Whether the button is currently active/selected
+     * @param statusColor Optional status color (for buttons with colored dots)
+     */
+    private void updateFilterButtonStyle(Button btn, boolean isActive, Color statusColor) {
+        if (isActive) {
+            // Active: light grey background, white text
+            btn.setStyle("-fx-background-color: #9CA3AF; -fx-text-fill: white; -fx-background-radius: 16; -fx-cursor: hand;");
+            // Update label text color inside graphic if present
+            if (btn.getGraphic() instanceof HBox hbox) {
+                hbox.getChildren().stream()
+                    .filter(n -> n instanceof Label)
+                    .forEach(n -> ((Label) n).setStyle("-fx-text-fill: white;"));
+            }
+        } else {
+            // Inactive: white background, grey text, subtle border
+            btn.setStyle("-fx-background-color: white; -fx-text-fill: #6B7280; -fx-background-radius: 16; " +
+                        "-fx-border-color: #D1D5DB; -fx-border-radius: 16; -fx-cursor: hand;");
+            // Update label text color inside graphic if present
+            if (btn.getGraphic() instanceof HBox hbox) {
+                hbox.getChildren().stream()
+                    .filter(n -> n instanceof Label)
+                    .forEach(n -> ((Label) n).setStyle("-fx-text-fill: #6B7280;"));
+            }
+        }
+    }
+
+    /**
+     * Updates status button styles based on current filter state.
+     */
+    private void updateStatusButtonStyles() {
+        boolean noFiltersActive = filterManager.getActiveStatusFilters().isEmpty();
+        updateFilterButtonStyle(allStatusButton, noFiltersActive, null);
+
+        for (Map.Entry<RoomStatus, Button> entry : statusFilterButtons.entrySet()) {
+            boolean isActive = filterManager.isStatusFilterActive(entry.getKey());
+            Color statusColor = getStatusColor(entry.getKey());
+            updateFilterButtonStyle(entry.getValue(), isActive, statusColor);
+        }
+    }
+
+    /**
+     * Gets the color for a room status from the color scheme.
+     */
+    private Color getStatusColor(RoomStatus status) {
+        return switch (status) {
+            case OCCUPIED -> GanttColorScheme.COLOR_ROOM_OCCUPIED;
+            case TO_CLEAN -> GanttColorScheme.COLOR_ROOM_TO_CLEAN;
+            case TO_INSPECT -> GanttColorScheme.COLOR_ROOM_TO_INSPECT;
+            case READY -> GanttColorScheme.COLOR_ROOM_READY;
+        };
+    }
+
+    /**
+     * Updates category button styles based on current filter state.
+     */
+    private void updateCategoryButtonStyles() {
+        boolean noFiltersActive = filterManager.getActiveCategoryFilters().isEmpty();
+        if (allCategoryButton != null) {
+            updateFilterButtonStyle(allCategoryButton, noFiltersActive, null);
+        }
+
+        for (Map.Entry<String, Button> entry : categoryFilterButtons.entrySet()) {
+            boolean isActive = filterManager.isCategoryFilterActive(entry.getKey());
+            updateFilterButtonStyle(entry.getValue(), isActive, null);
+        }
+    }
+
+    /**
+     * Clears all active filters.
+     */
+    private void clearAllFilters() {
+        filterManager.clearAllFilters();
+        updateStatusButtonStyles();
+        updateCategoryButtonStyles();
+    }
+
+    // ============================================================================
+    // CLICK HANDLERS
+    // ============================================================================
 
     // Fixed positions for room header layout (must match HouseholdGanttCanvas.drawParentRoom)
     private static final double EXPAND_CLICKABLE_END_X = 26;   // Expand area ends at status dot position
@@ -126,8 +399,7 @@ public class HouseholdCanvasGanttView {
 
                 if (parentRow != null) {
                     Object parent = parentRow.getParent();
-                    if (parent instanceof GanttParentRow) {
-                        GanttParentRow ganttParent = (GanttParentRow) parent;
+                    if (parent instanceof GanttParentRow ganttParent) {
 
                         // Check if hovering over expand/collapse area (only for multi-bed rooms)
                         if (!ganttParent.isBed() && ganttParent.isMultiBedRoom() && mouseX < EXPAND_CLICKABLE_END_X) {
@@ -170,21 +442,28 @@ public class HouseholdCanvasGanttView {
                             double halfDayWidth = dayWidth / 2;
                             double relativeX = adjustedX - bounds.getMinX();
 
-                            // Icon sizes - person icon scaled to 60% of bar height, comment icon at 42%
-                            double personIconWidth = HouseholdGanttIcons.PERSON_ICON_SVG_WIDTH * 0.45;  // ~60% of 18px bar
+                            // Icon sizes - person icon scaled to 80% of bar height (14.4px), comment icon at 42%
+                            double personIconSize = 18 * 0.8; // BAR_HEIGHT * 0.8
+                            double personIconScaledWidth = HouseholdGanttIcons.PERSON_ICON_SVG_WIDTH *
+                                (personIconSize / HouseholdGanttIcons.PERSON_ICON_SVG_HEIGHT);
                             double commentIconWidth = HouseholdGanttIcons.MESSAGE_ICON_SVG_WIDTH * 0.42;
 
-                            // Person icon at 7/12 day from bar start (1/3 + 1/4 = 7/12)
-                            double personIconStart = dayWidth * 7 / 12;
-                            double personIconEnd = personIconStart + personIconWidth;
+                            // Person icon is drawn centered at: adjustedBounds.getMinX() + 8
+                            // adjustedBounds.getMinX() = bounds.getMinX() + halfDayWidth
+                            // So person icon center is at: bounds.getMinX() + halfDayWidth + 8
+                            // In relative terms: halfDayWidth + 8
+                            double personIconCenterX = halfDayWidth + 8;
+                            double iconPadding = 5; // 5px padding around icon for easier clicking
+                            double personIconStart = personIconCenterX - (personIconScaledWidth / 2) - iconPadding;
+                            double personIconEnd = personIconCenterX + (personIconScaledWidth / 2) + iconPadding;
 
                             // Comment icon is rendered centered at halfDayWidth + 3, plus 1/2 day adjustment
                             // Account for centering: icon spans from center - width/2 to center + width/2
                             double commentIconCenter = halfDayWidth + 3 + (dayWidth / 2);
-                            double commentIconStart = commentIconCenter - (commentIconWidth / 2);
-                            double commentIconEnd = commentIconCenter + (commentIconWidth / 2);
+                            double commentIconStart = commentIconCenter - (commentIconWidth / 2) - iconPadding;
+                            double commentIconEnd = commentIconCenter + (commentIconWidth / 2) + iconPadding;
 
-                            // Check if hovering over either icon
+                            // Check if hovering over either icon (with padding for easier interaction)
                             if ((block.hasComments() && relativeX >= commentIconStart && relativeX <= commentIconEnd) ||
                                 (relativeX >= personIconStart && relativeX <= personIconEnd)) {
                                 canvasNode.setCursor(javafx.scene.Cursor.HAND);
@@ -203,6 +482,12 @@ public class HouseholdCanvasGanttView {
             // Hide any visible tooltip when clicking (will be shown again if clicking on an icon)
             canvas.getCanvasTooltip().hide();
 
+            // Hide any active context menu when clicking elsewhere on the canvas
+            if (activeContextMenu != null && activeContextMenu.isShowing()) {
+                activeContextMenu.hide();
+                activeContextMenu = null;
+            }
+
             double clickX = event.getX();
             double clickY = event.getY();
 
@@ -216,7 +501,7 @@ public class HouseholdCanvasGanttView {
 
             if (clickX > parentHeaderWidth) {
                 // Click is in the bars area - check if clicking on an icon
-                handleBarIconClick(clickX, clickY, adjustedY, event);
+                handleBarIconClick(clickX, adjustedY, event);
                 return;
             }
 
@@ -232,11 +517,9 @@ public class HouseholdCanvasGanttView {
 
             // Get the actual parent object (GanttParentRow)
             Object parent = parentRow.getParent();
-            if (!(parent instanceof GanttParentRow)) {
+            if (!(parent instanceof GanttParentRow ganttParent)) {
                 return;
             }
-
-            GanttParentRow ganttParent = (GanttParentRow) parent;
 
             // Check if click is on the action icon (⋮) - for room rows only
             double actionIconX = parentHeaderWidth - ACTION_ICON_OFFSET;
@@ -249,7 +532,7 @@ public class HouseholdCanvasGanttView {
             // Check if click is in expand/collapse area (left side, before status dot)
             // Only toggle if this is a room row (not a bed row), it's multi-bed, AND click is in expand area
             if (!ganttParent.isBed() && ganttParent.isMultiBedRoom() && clickX < EXPAND_CLICKABLE_END_X) {
-                presenter.toggleRoomExpanded(ganttParent.getRoom().getId());
+                presenter.toggleRoomExpanded(ganttParent.room().getId());
             }
         });
     }
@@ -259,44 +542,54 @@ public class HouseholdCanvasGanttView {
      * Shows a context menu for room status changes.
      */
     private void handleActionIconClick(javafx.scene.input.MouseEvent event, GanttParentRow ganttParent) {
-        one.modality.hotel.backoffice.activities.household.gantt.model.GanttRoomData room = ganttParent.getRoom();
+        one.modality.hotel.backoffice.activities.household.gantt.model.GanttRoomData room = ganttParent.room();
         if (room == null) {
             return;
+        }
+
+        // Hide any existing context menu before showing a new one
+        if (activeContextMenu != null && activeContextMenu.isShowing()) {
+            activeContextMenu.hide();
         }
 
         // Create context menu for room actions
         javafx.scene.control.ContextMenu contextMenu = new javafx.scene.control.ContextMenu();
 
+        // Enable auto-hide so menu closes when clicking outside
+        contextMenu.setAutoHide(true);
+
+        // Track the active context menu
+        activeContextMenu = contextMenu;
+
         // Get current room status
         one.modality.hotel.backoffice.activities.household.gantt.model.RoomStatus currentStatus = room.getStatus();
 
         // Add menu items based on UX design status workflow
+        // Workflow: OCCUPIED (no action) -> TO_CLEAN -> TO_INSPECT -> READY
+        // Current status is already visible via the status dot, so only show available actions
         if (currentStatus == one.modality.hotel.backoffice.activities.household.gantt.model.RoomStatus.OCCUPIED) {
-            javafx.scene.control.MenuItem currentItem = new javafx.scene.control.MenuItem("🔴 Occupied (current)");
-            currentItem.setDisable(true);
-            javafx.scene.control.MenuItem toCleanItem = new javafx.scene.control.MenuItem("🧹 Mark To Clean");
-            toCleanItem.setOnAction(e -> updateRoomStatus(room, one.modality.hotel.backoffice.activities.household.gantt.model.RoomStatus.TO_CLEAN));
-            contextMenu.getItems().addAll(currentItem, toCleanItem);
+            // OCCUPIED: No actions possible - guests are in the room
+            // Don't show menu since there are no actions available
+            return;
         } else if (currentStatus == one.modality.hotel.backoffice.activities.household.gantt.model.RoomStatus.TO_CLEAN) {
-            javafx.scene.control.MenuItem currentItem = new javafx.scene.control.MenuItem("🟠 To Clean (current)");
-            currentItem.setDisable(true);
-            javafx.scene.control.MenuItem cleanedItem = new javafx.scene.control.MenuItem("✓ Mark Cleaned");
+            // TO_CLEAN: Can mark as cleaned (-> TO_INSPECT) or mark ready (-> READY, skipping inspection)
+            javafx.scene.control.MenuItem cleanedItem = new javafx.scene.control.MenuItem("✓ " + I18n.getI18nText(HouseholdI18nKeys.MarkCleaned));
             cleanedItem.setOnAction(e -> updateRoomStatus(room, one.modality.hotel.backoffice.activities.household.gantt.model.RoomStatus.TO_INSPECT));
-            contextMenu.getItems().addAll(currentItem, cleanedItem);
-        } else if (currentStatus == one.modality.hotel.backoffice.activities.household.gantt.model.RoomStatus.TO_INSPECT) {
-            javafx.scene.control.MenuItem currentItem = new javafx.scene.control.MenuItem("🟡 To Inspect (current)");
-            currentItem.setDisable(true);
-            javafx.scene.control.MenuItem readyItem = new javafx.scene.control.MenuItem("✓✓ Mark Ready");
+            javafx.scene.control.MenuItem readyItem = new javafx.scene.control.MenuItem("✓✓ " + I18n.getI18nText(HouseholdI18nKeys.MarkReady));
             readyItem.setOnAction(e -> updateRoomStatus(room, one.modality.hotel.backoffice.activities.household.gantt.model.RoomStatus.READY));
-            javafx.scene.control.MenuItem reCleanItem = new javafx.scene.control.MenuItem("🔄 Needs Re-clean");
+            contextMenu.getItems().addAll(cleanedItem, readyItem);
+        } else if (currentStatus == one.modality.hotel.backoffice.activities.household.gantt.model.RoomStatus.TO_INSPECT) {
+            // TO_INSPECT: Room cleaned, needs inspection
+            javafx.scene.control.MenuItem readyItem = new javafx.scene.control.MenuItem("✓✓ " + I18n.getI18nText(HouseholdI18nKeys.MarkReady));
+            readyItem.setOnAction(e -> updateRoomStatus(room, one.modality.hotel.backoffice.activities.household.gantt.model.RoomStatus.READY));
+            javafx.scene.control.MenuItem reCleanItem = new javafx.scene.control.MenuItem("🔄 " + I18n.getI18nText(HouseholdI18nKeys.NeedsReClean));
             reCleanItem.setOnAction(e -> updateRoomStatus(room, one.modality.hotel.backoffice.activities.household.gantt.model.RoomStatus.TO_CLEAN));
-            contextMenu.getItems().addAll(currentItem, readyItem, reCleanItem);
+            contextMenu.getItems().addAll(readyItem, reCleanItem);
         } else if (currentStatus == one.modality.hotel.backoffice.activities.household.gantt.model.RoomStatus.READY) {
-            javafx.scene.control.MenuItem currentItem = new javafx.scene.control.MenuItem("🟢 Ready (current)");
-            currentItem.setDisable(true);
-            javafx.scene.control.MenuItem toCleanItem = new javafx.scene.control.MenuItem("🧹 Mark To Clean");
+            // READY: Room fully ready
+            javafx.scene.control.MenuItem toCleanItem = new javafx.scene.control.MenuItem("🧹 " + I18n.getI18nText(HouseholdI18nKeys.MarkToClean));
             toCleanItem.setOnAction(e -> updateRoomStatus(room, one.modality.hotel.backoffice.activities.household.gantt.model.RoomStatus.TO_CLEAN));
-            contextMenu.getItems().addAll(currentItem, toCleanItem);
+            contextMenu.getItems().add(toCleanItem);
         }
 
         // Show context menu at click position
@@ -305,41 +598,88 @@ public class HouseholdCanvasGanttView {
     }
 
     /**
-     * Updates the room status.
-     * TODO: Implement actual status persistence via UpdateStore when database integration is complete.
+     * Updates the room status by setting lastCleaningDate and/or lastInspectionDate on the Resource entity.
+     * <p>
+     * Status workflow based on Resource dates:
+     * - TO_CLEAN: lastCleaningDate is null or not today
+     * - TO_INSPECT: lastCleaningDate is today, lastInspectionDate is null or not today
+     * - READY: both lastCleaningDate and lastInspectionDate are today
      */
-    private void updateRoomStatus(one.modality.hotel.backoffice.activities.household.gantt.model.GanttRoomData room,
+    private void updateRoomStatus(GanttRoomData room,
                                   one.modality.hotel.backoffice.activities.household.gantt.model.RoomStatus newStatus) {
-        // TODO: Implement actual status update via presenter/data layer
-        // This would need to:
-        // 1. Find the ResourceConfiguration entity for this room
-        // 2. Update its status field using UpdateStore
-        // 3. Submit the update to the database
-        // For now, just log the action
-        System.out.println("[HouseholdCanvasGanttView] Room " + room.getName() +
-                          " status change requested: " + room.getStatus() + " -> " + newStatus);
+        Resource resource = room.getResource();
+        if (resource == null) {
+            System.err.println("[HouseholdCanvasGanttView] Cannot update status: Room " + room.getName() + " has no Resource entity");
+            return;
+        }
 
-        // Show a notification to the user that this feature is not yet implemented
-        javafx.scene.control.Alert alert = new javafx.scene.control.Alert(
-            javafx.scene.control.Alert.AlertType.INFORMATION,
-            "Status update for room " + room.getName() + " to " + newStatus + " is not yet implemented.",
-            javafx.scene.control.ButtonType.OK
-        );
-        alert.setHeaderText("Feature Coming Soon");
-        alert.showAndWait();
+        // Debug: Log resource info
+        System.out.println("[HouseholdCanvasGanttView] Updating room " + room.getName() +
+                " (Resource ID: " + resource.getPrimaryKey() +
+                ", current lastCleaningDate: " + resource.getLastCleaningDate() +
+                ", current lastInspectionDate: " + resource.getLastInspectionDate() + ")");
+
+        UpdateStore updateStore = UpdateStore.createAbove(resource.getStore());
+        Resource r = updateStore.updateEntity(resource);
+        LocalDateTime now = LocalDateTime.now();
+
+        switch (newStatus) {
+            case TO_CLEAN:
+                // Set state to DIRTY - keep date fields for historical tracking
+                r.setCleaningState(CleaningState.DIRTY);
+                System.out.println("[HouseholdCanvasGanttView] Setting cleaningState=DIRTY for TO_CLEAN");
+                break;
+            case TO_INSPECT:
+                // Set state to TO_INSPECT and update cleaning date
+                // Keep lastInspectionDate for historical tracking
+                r.setCleaningState(CleaningState.TO_INSPECT);
+                r.setLastCleaningDate(now);
+                System.out.println("[HouseholdCanvasGanttView] Setting cleaningState=TO_INSPECT, lastCleaningDate=" + now);
+                break;
+            case READY:
+                // Set state to READY
+                r.setCleaningState(CleaningState.READY);
+                // Only update cleaning date if skipping inspection (TO_CLEAN -> READY)
+                // If coming from TO_INSPECT, the cleaning was already done
+                if (room.getStatus() == one.modality.hotel.backoffice.activities.household.gantt.model.RoomStatus.TO_CLEAN) {
+                    r.setLastCleaningDate(now);
+                    System.out.println("[HouseholdCanvasGanttView] Setting cleaningState=READY (skipping inspection), both dates=" + now);
+                } else {
+                    System.out.println("[HouseholdCanvasGanttView] Setting cleaningState=READY (inspection only), lastInspectionDate=" + now);
+                }
+                r.setLastInspectionDate(now);
+                break;
+            case OCCUPIED:
+                // Occupied status is determined by bookings, not by these dates
+                // This case shouldn't be called, but handle gracefully
+                System.out.println("[HouseholdCanvasGanttView] OCCUPIED status is determined by bookings, not manual update");
+                return;
+        }
+
+        // Debug: Log what we're about to submit
+        System.out.println("[HouseholdCanvasGanttView] Updated entity lastCleaningDate: " + r.getLastCleaningDate() +
+                ", lastInspectionDate: " + r.getLastInspectionDate());
+
+        // Submit changes to database
+        updateStore.submitChanges()
+                .onFailure(error -> System.err.println("[HouseholdCanvasGanttView] Failed to update room status: " + error.getMessage()))
+                .onSuccess(ignored -> System.out.println("[HouseholdCanvasGanttView] Room " + room.getName() + " status updated to " + newStatus));
     }
 
     /**
      * Handles clicks on booking bar icons (person icon and special needs icon).
      * Detects which bar and icon was clicked, then shows appropriate tooltip.
      */
-    private void handleBarIconClick(double clickX, double clickY, double adjustedY, javafx.scene.input.MouseEvent event) {
+    private void handleBarIconClick(double clickX, double adjustedY, javafx.scene.input.MouseEvent event) {
         // Adjust coordinates for scroll offset
         double adjustedX = clickX + canvas.getBarsDrawer().getLayoutOriginX();
 
-        // Icon sizes for hit detection - person icon scaled to 60% of bar height, comment icon at 42%
-        double personIconWidth = HouseholdGanttIcons.PERSON_ICON_SVG_WIDTH * 0.45;  // ~60% of 18px bar
+        // Icon sizes for hit detection - person icon scaled to 80% of bar height, comment icon at 42%
+        double personIconSize = 18 * 0.8; // BAR_HEIGHT * 0.8
+        double personIconScaledWidth = HouseholdGanttIcons.PERSON_ICON_SVG_WIDTH *
+            (personIconSize / HouseholdGanttIcons.PERSON_ICON_SVG_HEIGHT);
         double commentIconWidth = HouseholdGanttIcons.MESSAGE_ICON_SVG_WIDTH * 0.42;
+        double iconPadding = 5; // 5px padding around icon for easier clicking
 
         // Iterate through all bars to find one that contains this point
         java.util.List<LocalDateBar<HouseholdGanttCanvas.HouseholdBookingBlock>> children = canvas.getBarsLayout().getChildren();
@@ -367,15 +707,19 @@ public class HouseholdCanvasGanttView {
                     // Calculate relative X position within the bar
                     double relativeX = adjustedX - bounds.getMinX();
 
-                    // Person icon is positioned at 7/12 day from bar start (1/3 + 1/4 = 7/12)
-                    double personIconStart = dayWidth * 7 / 12;
-                    double personIconEnd = personIconStart + personIconWidth;
+                    // Person icon is drawn centered at: adjustedBounds.getMinX() + 8
+                    // adjustedBounds.getMinX() = bounds.getMinX() + halfDayWidth
+                    // So person icon center is at: bounds.getMinX() + halfDayWidth + 8
+                    // In relative terms: halfDayWidth + 8
+                    double personIconCenterX = halfDayWidth + 8;
+                    double personIconStart = personIconCenterX - (personIconScaledWidth / 2) - iconPadding;
+                    double personIconEnd = personIconCenterX + (personIconScaledWidth / 2) + iconPadding;
 
                     // Comment icon is rendered centered at halfDayWidth + 3, plus 1/2 day adjustment
                     // Account for centering: icon spans from center - width/2 to center + width/2
                     double commentIconCenter = halfDayWidth + 3 + (dayWidth / 2);
-                    double commentIconStart = commentIconCenter - (commentIconWidth / 2);
-                    double commentIconEnd = commentIconCenter + (commentIconWidth / 2);
+                    double commentIconStart = commentIconCenter - (commentIconWidth / 2) - iconPadding;
+                    double commentIconEnd = commentIconCenter + (commentIconWidth / 2) + iconPadding;
 
                     // Check which icon was clicked (prioritize comment icon if both present)
                     if (block.hasComments() && relativeX >= commentIconStart && relativeX <= commentIconEnd) {
@@ -414,26 +758,26 @@ public class HouseholdCanvasGanttView {
         StringBuilder body = new StringBuilder();
 
         if (booking.getFirstName() != null && booking.getLastName() != null) {
-            body.append("First Name: ").append(booking.getFirstName()).append("\n");
-            body.append("Last Name: ").append(booking.getLastName()).append("\n");
+            body.append(I18n.getI18nText(HouseholdI18nKeys.FirstName)).append(": ").append(booking.getFirstName()).append("\n");
+            body.append(I18n.getI18nText(HouseholdI18nKeys.LastName)).append(": ").append(booking.getLastName()).append("\n");
         } else if (booking.getGuestName() != null) {
-            body.append("Guest: ").append(booking.getGuestName()).append("\n");
+            body.append(I18n.getI18nText(HouseholdI18nKeys.Guest)).append(": ").append(booking.getGuestName()).append("\n");
         }
 
         if (booking.getGender() != null) {
-            body.append("Gender: ").append(booking.getGender()).append("\n");
+            body.append(I18n.getI18nText(HouseholdI18nKeys.Gender)).append(": ").append(booking.getGender()).append("\n");
         }
 
         if (booking.getEvent() != null) {
-            body.append("Event: ").append(booking.getEvent()).append("\n");
+            body.append(I18n.getI18nText(HouseholdI18nKeys.Event)).append(": ").append(booking.getEvent()).append("\n");
         }
 
-        body.append("\nCheck-in: ").append(booking.getStartDate());
-        body.append("\nCheck-out: ").append(booking.getEndDate());
+        body.append("\n").append(I18n.getI18nText(HouseholdI18nKeys.CheckIn)).append(": ").append(booking.getStartDate());
+        body.append("\n").append(I18n.getI18nText(HouseholdI18nKeys.CheckOut)).append(": ").append(booking.getEndDate());
 
         // Show canvas-based tooltip at mouse position
         CanvasTooltip tooltip = canvas.getCanvasTooltip();
-        tooltip.show(event.getX() + 10, event.getY(), "Guest Information", body.toString());
+        tooltip.show(event.getX() + 10, event.getY(), I18n.getI18nText(HouseholdI18nKeys.GuestInformation), body.toString());
     }
 
     /**
@@ -448,7 +792,7 @@ public class HouseholdCanvasGanttView {
 
         // Build tooltip content
         StringBuilder body = new StringBuilder();
-        body.append("Guest: ").append(booking.getGuestName()).append("\n");
+        body.append(I18n.getI18nText(HouseholdI18nKeys.Guest)).append(": ").append(booking.getGuestName()).append("\n");
         body.append(booking.getStartDate()).append(" - ").append(booking.getEndDate()).append("\n");
 
         if (booking.getComments() != null && !booking.getComments().isEmpty()) {
@@ -457,7 +801,7 @@ public class HouseholdCanvasGanttView {
 
         // Show canvas-based tooltip at mouse position
         CanvasTooltip tooltip = canvas.getCanvasTooltip();
-        tooltip.show(event.getX() + 10, event.getY(), "Special Needs", body.toString());
+        tooltip.show(event.getX() + 10, event.getY(), I18n.getI18nText(HouseholdI18nKeys.SpecialNeeds), body.toString());
     }
 
     /**
@@ -473,7 +817,7 @@ public class HouseholdCanvasGanttView {
     /**
      * Refreshes the display with current data.
      * Called when data changes or expand/collapse state changes.
-     *
+     * <p>
      * PERFORMANCE MONITORING: This method tracks time for each phase of the refresh process.
      */
     private void refreshDisplay() {
@@ -485,32 +829,42 @@ public class HouseholdCanvasGanttView {
         // Step 1: Convert database entities to gantt model using adapter pattern
         // Pass attendances for gap bookings to support split bars where guest doesn't stay certain nights
         long adaptStart = System.currentTimeMillis();
-        List<GanttRoomData> rooms = EntityDataAdapter.adaptRooms(
+        List<GanttRoomData> allRooms = EntityDataAdapter.adaptRooms(
             dataLoader.getResourceConfigurations(),
             dataLoader.getDocumentLines(),
             dataLoader.getAttendancesForGaps()
         );
         long adaptTime = System.currentTimeMillis() - adaptStart;
-        System.out.println("[PERF HouseholdCanvasGanttView] Entity adaptation completed in " + adaptTime + "ms, produced " + rooms.size() + " rooms");
+        System.out.println("[PERF HouseholdCanvasGanttView] Entity adaptation completed in " + adaptTime + "ms, produced " + allRooms.size() + " rooms");
 
-        // Step 2: Convert rooms to Canvas parent rows and bars using HouseholdBarAdapter
+        // Step 1.5: Update category filter buttons dynamically from available data
+        Set<String> categories = allRooms.stream()
+                .map(GanttRoomData::getCategory)
+                .filter(c -> c != null && !c.isEmpty())
+                .collect(java.util.stream.Collectors.toCollection(LinkedHashSet::new));
+        updateCategoryFilterButtons(categories);
+
+        // Step 2: Apply filters to room list
+        List<GanttRoomData> filteredRooms = filterManager.applyFilters(allRooms);
+        System.out.println("[PERF HouseholdCanvasGanttView] After filtering: " + filteredRooms.size() + " rooms (from " + allRooms.size() + ")");
+
+        // Step 3: Convert rooms to Canvas parent rows and bars using HouseholdBarAdapter
         // CRITICAL: Adapter creates parent rows AND bars together to ensure they reference same objects
         long barAdaptStart = System.currentTimeMillis();
-        HouseholdBarAdapter.AdaptedRoomData adapted = barAdapter.adaptAllRoomsWithParents(rooms);
+        HouseholdBarAdapter.AdaptedRoomData adapted = barAdapter.adaptAllRoomsWithParents(filteredRooms);
         long barAdaptTime = System.currentTimeMillis() - barAdaptStart;
         System.out.println("[PERF HouseholdCanvasGanttView] Bar adaptation completed in " + barAdaptTime + "ms, produced " +
-                adapted.getParentRows().size() + " parent rows and " + adapted.getBars().size() + " bars");
+                adapted.parentRows().size() + " parent rows and " + adapted.bars().size() + " bars");
 
-        // Step 3: Update Canvas with parent rows and bars
+        // Step 4: Update Canvas with parent rows and bars
         long displayStart = System.currentTimeMillis();
         try {
-            displayRoomsAndBars(adapted.getParentRows(), adapted.getBars());
+            displayRoomsAndBars(adapted.parentRows(), adapted.bars());
             long displayTime = System.currentTimeMillis() - displayStart;
             System.out.println("[PERF HouseholdCanvasGanttView] Canvas display updated in " + displayTime + "ms");
         } catch (Exception e) {
             // Catch any rendering errors to prevent UI crash
             System.err.println("[HouseholdCanvasGanttView] Error displaying bars: " + e.getMessage());
-            e.printStackTrace();
         }
 
         long totalTime = System.currentTimeMillis() - startTime;
@@ -519,11 +873,11 @@ public class HouseholdCanvasGanttView {
 
     /**
      * Displays rooms and bars in the Canvas.
-     *
+     * <p>
      * CRITICAL: The GanttLayout needs both parents AND children to work correctly.
      * - Parents: Room/bed headers displayed on the left (GanttParentRow objects)
      * - Children: Booking bars displayed in the timeline
-     *
+     * <p>
      * Parent rows are created by the adapter to ensure bars reference the correct parent objects.
      *
      * @param parentRows The parent rows (rooms and/or beds)

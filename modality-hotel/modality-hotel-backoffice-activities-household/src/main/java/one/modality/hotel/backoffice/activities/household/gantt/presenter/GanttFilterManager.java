@@ -1,7 +1,5 @@
 package one.modality.hotel.backoffice.activities.household.gantt.presenter;
 
-import javafx.beans.property.ObjectProperty;
-import javafx.beans.property.SimpleObjectProperty;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableSet;
 import one.modality.hotel.backoffice.activities.household.gantt.model.GanttRoomData;
@@ -10,7 +8,6 @@ import one.modality.hotel.backoffice.activities.household.gantt.model.RoomType;
 
 import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
 import java.util.stream.Collectors;
 
 /**
@@ -24,6 +21,7 @@ public class GanttFilterManager {
     // Active filter sets (empty = show all)
     private final ObservableSet<RoomStatus> activeStatusFilters = FXCollections.observableSet(new HashSet<>());
     private final ObservableSet<RoomType> activeRoomTypeFilters = FXCollections.observableSet(new HashSet<>());
+    private final ObservableSet<String> activeCategoryFilters = FXCollections.observableSet(new HashSet<>());
 
     /**
      * Toggles a status filter on/off
@@ -48,11 +46,23 @@ public class GanttFilterManager {
     }
 
     /**
+     * Toggles a category filter on/off (e.g., "Dormitory", "Twin Room")
+     */
+    public void toggleCategoryFilter(String category) {
+        if (activeCategoryFilters.contains(category)) {
+            activeCategoryFilters.remove(category);
+        } else {
+            activeCategoryFilters.add(category);
+        }
+    }
+
+    /**
      * Clears all active filters
      */
     public void clearAllFilters() {
         activeStatusFilters.clear();
         activeRoomTypeFilters.clear();
+        activeCategoryFilters.clear();
     }
 
     /**
@@ -67,6 +77,13 @@ public class GanttFilterManager {
      */
     public boolean isRoomTypeFilterActive(RoomType roomType) {
         return activeRoomTypeFilters.contains(roomType);
+    }
+
+    /**
+     * Checks if a category filter is active (e.g., "Dormitory", "Twin Room")
+     */
+    public boolean isCategoryFilterActive(String category) {
+        return activeCategoryFilters.contains(category);
     }
 
     /**
@@ -85,8 +102,9 @@ public class GanttFilterManager {
         // If no filters active, show all
         boolean passesStatusFilter = activeStatusFilters.isEmpty() || activeStatusFilters.contains(room.getStatus());
         boolean passesRoomTypeFilter = activeRoomTypeFilters.isEmpty() || activeRoomTypeFilters.contains(room.getRoomType());
+        boolean passesCategoryFilter = activeCategoryFilters.isEmpty() || activeCategoryFilters.contains(room.getCategory());
 
-        return passesStatusFilter && passesRoomTypeFilter;
+        return passesStatusFilter && passesRoomTypeFilter && passesCategoryFilter;
     }
 
     /**
@@ -104,9 +122,16 @@ public class GanttFilterManager {
     }
 
     /**
+     * Gets observable set of active category filters (for UI binding)
+     */
+    public ObservableSet<String> getActiveCategoryFilters() {
+        return activeCategoryFilters;
+    }
+
+    /**
      * Checks if any filters are active
      */
     public boolean hasActiveFilters() {
-        return !activeStatusFilters.isEmpty() || !activeRoomTypeFilters.isEmpty();
+        return !activeStatusFilters.isEmpty() || !activeRoomTypeFilters.isEmpty() || !activeCategoryFilters.isEmpty();
     }
 }

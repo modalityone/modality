@@ -18,13 +18,13 @@ public class BookingAggregator {
      * Aggregates bookings from multiple beds for a given date.
      * This is used for MULTI-BED ROOMS (dormitories, etc.) to display a single aggregated booking bar
      * on the collapsed room row that summarizes all bookings across all beds.
-     *
+     * <p>
      * AGGREGATION LOGIC:
      * - Spans from earliest start date to latest end date across all active bookings
      * - Status uses highest priority (OCCUPIED > CONFIRMED > UNCONFIRMED > DEPARTED)
      * - Occupancy shows count of active bookings
      * - Capacity uses database max field (excludes overbooking beds)
-     *
+     * <p>
      * COMMENT ICON RULE:
      * - Icon appears on a date ONLY if at least one booking on that date is:
      *   1. In MIDDLE position (not arrival/departure day)
@@ -104,17 +104,17 @@ public class BookingAggregator {
     }
 
     /**
-     * Creates a booking bar for a SINGLE ROOM (non-aggregated).
+     * Creates a booking bar for a SINGLE-BED ROOM (non-aggregated).
      * This is used for both:
-     * 1. True single rooms (RoomType.SINGLE) without overbooking
+     * 1. True single-bed rooms (RoomType.SINGLE_BED) without overbooking
      * 2. Individual bed rows within multi-bed rooms (when expanded)
-     * 3. Individual bed rows within single rooms with overbooking (when expanded)
-     *
+     * 3. Individual bed rows within single-bed rooms with overbooking (when expanded)
+     * <p>
      * COMMENT ICON RULE:
      * - Icon appears ONLY when BOTH conditions are met:
      *   1. Position is MIDDLE (not arrival/departure day)
      *   2. Special needs list is non-empty
-     *
+     * <p>
      * LATE ARRIVAL DETECTION:
      * - Red person icon appears when ALL conditions are met:
      *   1. Start date is today or in the past
@@ -159,7 +159,7 @@ public class BookingAggregator {
 
     /**
      * Determines the booking position for visual styling.
-     *
+     * <p>
      * POSITION TYPES:
      * - SINGLE: One-day booking (startDate = endDate)
      *   Visual: Rounded on both sides
@@ -189,15 +189,15 @@ public class BookingAggregator {
 
     /**
      * Gets the aggregated status from multiple bookings using highest priority rule.
-     *
+     * <p>
      * PRIORITY ORDER (highest to lowest):
      * 1. OCCUPIED - At least one guest has checked in (isArrived = true)
      * 2. CONFIRMED - At least one booking is confirmed
      * 3. UNCONFIRMED - At least one booking is unconfirmed
      * 4. DEPARTED - All guests have departed (endDate <= today)
-     *
+     * <p>
      * This ensures the aggregated bar shows the most important status.
-     * Example: If 2 guests are confirmed and 1 is occupied, the bar shows OCCUPIED (green).
+     * Example: If 2 guests are confirmed and 1 is occupied, the bar shows OCCUPIED.
      *
      * @param bookings List of active bookings to aggregate
      * @return The highest priority status among all bookings
@@ -216,7 +216,7 @@ public class BookingAggregator {
 
     /**
      * Builds a comma-separated string of guest names for tooltips.
-     *
+     * <p>
      * Example: "John Smith, Jane Doe, Bob Johnson"
      * Falls back to "Guest" for bookings without a guest name.
      *
@@ -231,10 +231,10 @@ public class BookingAggregator {
 
     /**
      * Checks if a bed has a turnover on a specific date.
-     *
+     * <p>
      * TURNOVER = A bed has BOTH a departure AND an arrival on the same date.
      * This means the bed needs cleaning between guests (same-day checkout/checkin).
-     *
+     * <p>
      * Visual indicator: Turnover icon appears on the booking bar for this date.
      *
      * @param bed The bed to check for turnover
