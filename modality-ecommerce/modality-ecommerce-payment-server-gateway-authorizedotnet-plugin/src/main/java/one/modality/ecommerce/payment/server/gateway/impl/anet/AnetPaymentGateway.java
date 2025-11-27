@@ -21,7 +21,7 @@ import static one.modality.ecommerce.payment.server.gateway.impl.anet.AnetRestAp
 /**
  * @author Bruno Salmon
  */
-public class AnetPaymentGateway implements PaymentGateway {
+public final class AnetPaymentGateway implements PaymentGateway {
 
     static final String GATEWAY_NAME = "Authorize.net";
     private static final String ACCEPT_JS_TEST_URL = "https://jstest.authorize.net/v3/AcceptUI.js";
@@ -235,9 +235,5 @@ public class AnetPaymentGateway implements PaymentGateway {
         }
     }
 
-
-    public Future<GatewayMakeApiPaymentResult> makeApiPayment(GatewayMakeApiPaymentArgument argument) {
-        return Future.failedFuture("makeApiPayment() not yet implemented for Authorize.net");
-    }
 
 }

@@ -1,7 +1,6 @@
 package one.modality.ecommerce.payment.server.gateway.impl.square;
 
 import com.squareup.square.AsyncSquareClient;
-import com.squareup.square.SquareClient;
 import com.squareup.square.core.Environment;
 import com.squareup.square.core.SquareApiException;
 import com.squareup.square.types.CreatePaymentRequest;
@@ -181,11 +180,5 @@ public final class SquarePaymentGateway implements PaymentGateway {
         SquarePaymentStatus squarePaymentStatus = SquarePaymentStatus.valueOf(gatewayStatus.toUpperCase());
         PaymentStatus paymentStatus = squarePaymentStatus.getGenericPaymentStatus();
         return new GatewayCompletePaymentResult(gatewayResponse, gatewayTransactionRef, gatewayStatus, paymentStatus);
-    }
-
-
-    @Override
-    public Future<GatewayMakeApiPaymentResult> makeApiPayment(GatewayMakeApiPaymentArgument argument) {
-        return Future.failedFuture("makeApiPayment() not yet implemented for Square");
     }
 }

@@ -15,15 +15,12 @@
         <provider interface="dev.webfx.stack.com.bus.call.spi.BusCallEndpoint">one.modality.ecommerce.payment.buscall.InitiatePaymentMethodEndpoint</provider>
         <provider interface="dev.webfx.stack.com.bus.call.spi.BusCallEndpoint">one.modality.ecommerce.payment.buscall.CompletePaymentMethodEndpoint</provider>
         <provider interface="dev.webfx.stack.com.bus.call.spi.BusCallEndpoint">one.modality.ecommerce.payment.buscall.CancelPaymentMethodEndpoint</provider>
-        <provider interface="dev.webfx.stack.com.bus.call.spi.BusCallEndpoint">one.modality.ecommerce.payment.buscall.MakeApiPaymentMethodEndpoint</provider>
         <provider interface="dev.webfx.stack.com.serial.spi.SerialCodec">one.modality.ecommerce.payment.buscall.serial.InitiatePaymentArgumentSerialCodec</provider>
         <provider interface="dev.webfx.stack.com.serial.spi.SerialCodec">one.modality.ecommerce.payment.buscall.serial.InitiatePaymentResultSerialCodec</provider>
         <provider interface="dev.webfx.stack.com.serial.spi.SerialCodec">one.modality.ecommerce.payment.buscall.serial.CompletePaymentArgumentSerialCodec</provider>
         <provider interface="dev.webfx.stack.com.serial.spi.SerialCodec">one.modality.ecommerce.payment.buscall.serial.CompletePaymentResultSerialCodec</provider>
         <provider interface="dev.webfx.stack.com.serial.spi.SerialCodec">one.modality.ecommerce.payment.buscall.serial.CancelPaymentArgumentSerialCodec</provider>
         <provider interface="dev.webfx.stack.com.serial.spi.SerialCodec">one.modality.ecommerce.payment.buscall.serial.CancelPaymentResultSerialCodec</provider>
-        <provider interface="dev.webfx.stack.com.serial.spi.SerialCodec">one.modality.ecommerce.payment.buscall.serial.MakeApiPaymentArgumentSerialCodec</provider>
-        <provider interface="dev.webfx.stack.com.serial.spi.SerialCodec">one.modality.ecommerce.payment.buscall.serial.MakeApiPaymentResultSerialCodec</provider>
         <provider interface="dev.webfx.stack.com.serial.spi.SerialCodec">one.modality.ecommerce.payment.buscall.serial.SandboxCardSerialCodec</provider>
     </providers>
 

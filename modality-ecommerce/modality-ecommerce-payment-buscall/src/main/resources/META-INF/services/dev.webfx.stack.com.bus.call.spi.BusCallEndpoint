@@ -1,4 +1,3 @@
 one.modality.ecommerce.payment.buscall.InitiatePaymentMethodEndpoint
 one.modality.ecommerce.payment.buscall.CompletePaymentMethodEndpoint
 one.modality.ecommerce.payment.buscall.CancelPaymentMethodEndpoint
-one.modality.ecommerce.payment.buscall.MakeApiPaymentMethodEndpoint

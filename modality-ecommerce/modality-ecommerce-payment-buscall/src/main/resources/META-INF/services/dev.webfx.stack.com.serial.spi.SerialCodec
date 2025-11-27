@@ -4,6 +4,4 @@ one.modality.ecommerce.payment.buscall.serial.CompletePaymentArgumentSerialCodec
 one.modality.ecommerce.payment.buscall.serial.CompletePaymentResultSerialCodec
 one.modality.ecommerce.payment.buscall.serial.CancelPaymentArgumentSerialCodec
 one.modality.ecommerce.payment.buscall.serial.CancelPaymentResultSerialCodec
-one.modality.ecommerce.payment.buscall.serial.MakeApiPaymentArgumentSerialCodec
-one.modality.ecommerce.payment.buscall.serial.MakeApiPaymentResultSerialCodec
 one.modality.ecommerce.payment.buscall.serial.SandboxCardSerialCodec

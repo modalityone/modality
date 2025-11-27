@@ -28,11 +28,6 @@ public class RemotePaymentServiceProvider implements PaymentServiceProvider {
         return BusCallService.call(PaymentServiceBusAddress.CANCEL_PAYMENT_METHOD_ADDRESS, argument);
     }
 
-    @Override
-    public Future<MakeApiPaymentResult> makeApiPayment(MakeApiPaymentArgument argument) {
-        return BusCallService.call(PaymentServiceBusAddress.MAKE_API_PAYMENT_METHOD_ADDRESS, argument);
-    }
-
     // Internal server-side method only (no serialisation support)
 
     @Override

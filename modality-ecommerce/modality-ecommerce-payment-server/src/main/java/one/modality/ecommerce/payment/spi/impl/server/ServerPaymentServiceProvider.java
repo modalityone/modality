@@ -234,26 +234,6 @@ public class ServerPaymentServiceProvider implements PaymentServiceProvider {
             });
     }
 
-    @Override
-    public Future<MakeApiPaymentResult> makeApiPayment(MakeApiPaymentArgument argument) {
-        return addDocumentPayment(argument.getDocumentPrimaryKey(), argument.getAmount())
-            .compose(moneyTransfer -> {
-                String gatewayName = moneyTransfer.getToMoneyAccount().getGatewayCompany().getName();
-                PaymentGateway paymentGateway = findMatchingPaymentGatewayProvider(gatewayName);
-                if (paymentGateway == null)
-                    return gatewayNotFoundFailedFuture(gatewayName);
-                String currencyCode = moneyTransfer.getToMoneyAccount().getCurrency().getCode();
-                return paymentGateway.makeApiPayment(new GatewayMakeApiPaymentArgument(
-                    argument.getAmount(),
-                    currencyCode,
-                    argument.getCcNumber(),
-                    argument.getCcExpiry()
-                )).map(result -> new MakeApiPaymentResult(
-                    result.isSuccess()
-                ));
-            });
-    }
-
     private Future<MoneyTransfer> addDocumentPayment(Object documentPrimaryKey, int amount) {
         UpdateStore updateStore = UpdateStore.create(DataSourceModelService.getDefaultDataSourceModel());
         MoneyTransfer moneyTransfer = updateStore.insertEntity(MoneyTransfer.class);

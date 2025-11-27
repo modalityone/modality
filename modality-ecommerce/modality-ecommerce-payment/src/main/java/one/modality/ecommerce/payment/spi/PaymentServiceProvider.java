@@ -13,8 +13,6 @@ public interface PaymentServiceProvider {
 
     Future<CancelPaymentResult> cancelPayment(CancelPaymentArgument argument);
 
-    Future<MakeApiPaymentResult> makeApiPayment(MakeApiPaymentArgument argument);
-
     // Internal server-side method only (no serialisation support)
 
     Future<Map<String, String>> loadPaymentGatewayParameters(Object paymentId, boolean live);

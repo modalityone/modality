@@ -12,7 +12,7 @@ import one.modality.ecommerce.payment.server.gateway.*;
 /**
  * @author Bruno Salmon
  */
-public class StripePaymentGateway implements PaymentGateway {
+public final class StripePaymentGateway implements PaymentGateway {
 
     private static final String GATEWAY_NAME = "Stripe";
 
@@ -90,10 +90,5 @@ public class StripePaymentGateway implements PaymentGateway {
         } catch (Exception e) {
             return Future.failedFuture(e);
         }
-    }
-
-    @Override
-    public Future<GatewayMakeApiPaymentResult> makeApiPayment(GatewayMakeApiPaymentArgument argument) {
-        return Future.failedFuture("makeApiPayment() not yet implemented for Stripe");
     }
 }
