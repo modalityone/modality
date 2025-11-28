@@ -25,6 +25,7 @@ public interface ResourceConfiguration extends Entity,
     String allowsResident = "allowsResident";
     String allowsResidentFamily = "allowsResidentFamily";
     String max = "max";
+    String comment = "comment";
 
     default void setResource(Object value) {
         setForeignField(resource, value);
@@ -126,5 +127,13 @@ public interface ResourceConfiguration extends Entity,
 
     default void setMax(int value) {
         setFieldValue(max, value);
+    }
+
+    default String getComment() {
+        return getStringFieldValue(comment);
+    }
+
+    default void setComment(String value) {
+        setFieldValue(comment, value);
     }
 }
