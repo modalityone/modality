@@ -14,15 +14,15 @@ public class GanttColorScheme {
 
     // === BOOKING BAR COLORS (named by booking status) ===
     public static final Color COLOR_BOOKING_CONFIRMED = Color.web("#0096D6");  // Blue - future booking
-    public static final Color COLOR_BOOKING_OCCUPIED = Color.web("#DB2777");   // Hot Berry - guest in room
+    public static final Color COLOR_BOOKING_OCCUPIED = Color.web("#9C27B0");   // Purple - guest in room
     public static final Color COLOR_BOOKING_DEPARTED = Color.web("#D9D9D9");   // Grey - past booking
 
-    // === ROOM STATUS COLORS (for status dots in room headers) ===
-    // Red (to clean - urgent) → Orange (to inspect - warning) → Green (ready) → Pink (occupied)
+    // === ROOM STATUS COLORS (for status indicators in room headers) ===
+    // Red (to clean - urgent) → Orange (to inspect - warning) → Green (ready) → Purple (occupied)
     public static final Color COLOR_ROOM_TO_CLEAN = Color.web("#E53935");      // Red - urgent action needed
     public static final Color COLOR_ROOM_TO_INSPECT = Color.web("#FF9800");    // Warning orange - needs inspection
     public static final Color COLOR_ROOM_READY = Color.web("#43A047");         // Green - success, ready
-    public static final Color COLOR_ROOM_OCCUPIED = Color.web("#DB2777");      // Hot Berry - room in use, can't act
+    public static final Color COLOR_ROOM_OCCUPIED = Color.web("#9C27B0");      // Purple - room in use, can't act
 
     // === BACKGROUND COLORS ===
     public static final Color COLOR_BG_HEADER = Color.web("#F5F5F5");

@@ -106,7 +106,7 @@ public class GanttPresenter {
                 List<GanttBookingData> allBookings = new ArrayList<>();
                 for (GanttBedData bed : room.getBeds()) {
                     for (GanttBookingData booking : bed.getBookings()) {
-                        if (!date.isBefore(booking.getStartDate()) && !date.isAfter(booking.getEndDate())) {
+                        if (BookingDateUtil.isBookingActiveOnDate(booking, date)) {
                             allBookings.add(booking);
                         }
                     }
@@ -123,7 +123,7 @@ public class GanttPresenter {
             } else {
                 // Normal single room (no overbooking) or expanded
                 List<? extends GanttBookingData> activeBookings = room.getBookings().stream()
-                        .filter(b -> !date.isBefore(b.getStartDate()) && !date.isAfter(b.getEndDate()))
+                        .filter(b -> BookingDateUtil.isBookingActiveOnDate(b, date))
                         .collect(Collectors.toList());
 
                 if (activeBookings.isEmpty()) {

@@ -41,10 +41,10 @@ public class BookingAggregator {
         }
 
         // Collect all active bookings across all beds on this specific date
-        // A booking is "active" if the date falls within its start-end range (inclusive)
+        // A booking is "active" if the date falls within its date segments (handles gaps properly)
         List<? extends GanttBookingData> allActiveBookings = room.getBeds().stream()
                 .flatMap(bed -> bed.getBookings().stream())
-                .filter(b -> !date.isBefore(b.getStartDate()) && !date.isAfter(b.getEndDate()))
+                .filter(b -> BookingDateUtil.isBookingActiveOnDate(b, date))
                 .collect(Collectors.toList());
 
         if (allActiveBookings.isEmpty()) {
@@ -97,10 +97,13 @@ public class BookingAggregator {
         boolean hasTurnover = room.getBeds().stream()
                 .anyMatch(bed -> hasBedTurnover(bed, date));
 
+        // Detect overbooking: when occupancy exceeds total bed capacity
+        boolean hasConflict = occupancy > totalBeds;
+
         // Use first booking as representative for tooltip data (shows aggregated info in multi-bed)
         GanttBookingData representativeBooking = allActiveBookings.isEmpty() ? null : allActiveBookings.get(0);
 
-        return new BookingBar(aggregatedStatus, position, occupancy, totalBeds, false, guestInfo, hasComments, hasTurnover, representativeBooking);
+        return new BookingBar(aggregatedStatus, position, occupancy, totalBeds, hasConflict, guestInfo, hasComments, hasTurnover, representativeBooking);
     }
 
     /**

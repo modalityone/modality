@@ -2,6 +2,7 @@ package one.modality.hotel.backoffice.activities.household.dashboard.view;
 
 import dev.webfx.extras.i18n.I18n;
 import dev.webfx.extras.i18n.controls.I18nControls;
+import dev.webfx.platform.console.Console;
 import dev.webfx.platform.util.Strings;
 import dev.webfx.stack.orm.entity.UpdateStore;
 import javafx.animation.*;
@@ -156,7 +157,7 @@ public record DashboardCardFactory(DashboardPresenter presenter, Pane containerP
         r.setCleaningState(CleaningState.TO_INSPECT);
         r.setLastCleaningDate(LocalDateTime.now());
         updateStore.submitChanges()
-                .onFailure(error -> System.err.println("Failed to update room cleaning date: " + error.getMessage()));
+                .onFailure(error -> Console.log("Failed to update room cleaning date: " + error.getMessage()));
     }
 
     /**
@@ -171,7 +172,7 @@ public record DashboardCardFactory(DashboardPresenter presenter, Pane containerP
         r.setCleaningState(CleaningState.READY);
         r.setLastInspectionDate(LocalDateTime.now());
         updateStore.submitChanges()
-                .onFailure(error -> System.err.println("Failed to update room inspection date: " + error.getMessage()));
+                .onFailure(error -> Console.log("Failed to update room inspection date: " + error.getMessage()));
     }
 
     /**
@@ -188,7 +189,7 @@ public record DashboardCardFactory(DashboardPresenter presenter, Pane containerP
         r.setLastCleaningDate(now);
         r.setLastInspectionDate(now);
         updateStore.submitChanges()
-                .onFailure(error -> System.err.println("Failed to update room status: " + error.getMessage()));
+                .onFailure(error -> Console.log("Failed to update room status: " + error.getMessage()));
     }
 
     /**
@@ -202,7 +203,7 @@ public record DashboardCardFactory(DashboardPresenter presenter, Pane containerP
         Resource r = updateStore.updateEntity(resource);
         r.setCleaningState(CleaningState.DIRTY);
         updateStore.submitChanges()
-                .onFailure(error -> System.err.println("Failed to update room cleaning state: " + error.getMessage()));
+                .onFailure(error -> Console.log("Failed to update room cleaning state: " + error.getMessage()));
     }
 
     /**
@@ -363,7 +364,7 @@ public record DashboardCardFactory(DashboardPresenter presenter, Pane containerP
      */
     public Node createPartialCheckoutCard(PartialCheckoutCardData card) {
         VBox cardNode = new VBox(6);
-        cardNode.getStyleClass().add("partial-checkout-card");
+        cardNode.getStyleClass().addAll("partial-checkout-card", "expandable-card");
         cardNode.setPrefWidth(200);
         cardNode.setPadding(new Insets(12));
         // Prevent FlowPane from stretching this card to match row height
@@ -382,26 +383,38 @@ public record DashboardCardFactory(DashboardPresenter presenter, Pane containerP
         roomNumber.setWrapText(true);
         roomHeader.getChildren().add(roomNumber);
 
+        // Second line: Room type with expand icon (matching checkout/arrival card pattern)
+        HBox secondLine = new HBox(8);
+        secondLine.setAlignment(Pos.CENTER_LEFT);
+
         Label roomTypeLabel = new Label(card.getBuildingName());
         roomTypeLabel.getStyleClass().add("room-type-text");
 
-        roomHeaderContainer.getChildren().addAll(roomHeader, roomTypeLabel);
+        int guestCount = card.getCheckingOutCount();
+
+        Label expandIcon = new Label("☰");
+        expandIcon.getStyleClass().add("expand-icon");
+        String guestLabel = guestCount + " " + I18n.getI18nText(guestCount > 1 ? HouseholdI18nKeys.Guests : HouseholdI18nKeys.Guest);
+        expandIcon.setTooltip(new Tooltip(guestLabel));
+
+        Region spacer = new Region();
+        HBox.setHgrow(spacer, Priority.ALWAYS);
+
+        secondLine.getChildren().addAll(roomTypeLabel, spacer, expandIcon);
+        roomHeaderContainer.getChildren().addAll(roomHeader, secondLine);
         cardNode.getChildren().add(roomHeaderContainer);
 
-        // Summary line with expandable link
+        // Summary line showing checkout info
         HBox summaryLine = new HBox(4);
         summaryLine.setAlignment(Pos.CENTER_LEFT);
 
-        int guestCount = card.getCheckingOutCount();
-
-        String guestLabel = guestCount + " " + I18n.getI18nText(guestCount > 1 ? HouseholdI18nKeys.Guests : HouseholdI18nKeys.Guest);
-        Label expandLink = new Label(guestLabel);
-        expandLink.getStyleClass().addAll("expand-link", "partial-checkout-summary-text");
-
-        Label summaryText = I18nControls.newLabel(HouseholdI18nKeys.CheckingOut);
+        Label summaryText = new Label(guestLabel + " ");
         summaryText.getStyleClass().add("partial-checkout-summary-text");
 
-        summaryLine.getChildren().addAll(expandLink, summaryText);
+        Label checkingOutText = I18nControls.newLabel(HouseholdI18nKeys.CheckingOut);
+        checkingOutText.getStyleClass().add("partial-checkout-summary-text");
+
+        summaryLine.getChildren().addAll(summaryText, checkingOutText);
 
         // Expandable guest details
         VBox guestDetailsContainer = createExpandableContainer();
@@ -414,14 +427,8 @@ public record DashboardCardFactory(DashboardPresenter presenter, Pane containerP
 
         cardNode.getChildren().addAll(summaryLine, guestDetailsContainer, remainingGuests);
 
-        // Toggle expand/collapse
-        final boolean[] isExpanded = {false};
-        expandLink.setCursor(Cursor.HAND);
-        expandLink.setOnMouseClicked(e -> {
-            isExpanded[0] = !isExpanded[0];
-            animateExpandCollapse(guestDetailsContainer, isExpanded[0]);
-            e.consume();
-        });
+        // Toggle expand/collapse (using same pattern as checkout/arrival cards)
+        setupExpandCollapse(expandIcon, guestDetailsContainer);
 
         return cardNode;
     }
@@ -446,11 +453,6 @@ public record DashboardCardFactory(DashboardPresenter presenter, Pane containerP
             expandIcon.setRotate(isExpanded[0] ? 180 : 0);
             e.consume();
         });
-    }
-
-    private void animateExpandCollapse(VBox container, boolean expand) {
-        container.setVisible(expand);
-        container.setManaged(expand);
     }
 
     private HBox createGuestRow(DocumentLine dl) {

@@ -54,11 +54,12 @@ public class ConflictDetector {
     }
 
     /**
-     * Gets all bookings active on a specific date
+     * Gets all bookings active on a specific date.
+     * Uses BookingDateUtil to properly handle bookings with attendance gaps.
      */
     private List<? extends GanttBookingData> getActiveBookings(List<? extends GanttBookingData> bookings, LocalDate date) {
         return bookings.stream()
-                .filter(b -> !date.isBefore(b.getStartDate()) && !date.isAfter(b.getEndDate()))
+                .filter(b -> BookingDateUtil.isBookingActiveOnDate(b, date))
                 .collect(Collectors.toList());
     }
 
