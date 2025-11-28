@@ -133,8 +133,8 @@ public class HouseholdGanttCanvas {
         // Add expanded multi-bed room block backgrounds (light grey for room + beds as a group)
         barsDrawer.addOnBeforeDraw(this::drawExpandedBlockBackgrounds);
 
-        // Add overbooking row backgrounds before drawing bars (higher priority than expanded backgrounds)
-        barsDrawer.addOnBeforeDraw(this::drawOverbookingRowBackgrounds);
+        // Overbooking is now indicated with diagonal stripes on bars instead of red background
+        // barsDrawer.addOnBeforeDraw(this::drawOverbookingRowBackgrounds);  // Disabled - using diagonal stripes instead
 
         // Pairing this Gantt canvas with the referent one (ie the event Gantt canvas on top), so it always stays
         // horizontally aligned with the event Gantt dates, even when this canvas is horizontally shifted
@@ -265,23 +265,30 @@ public class HouseholdGanttCanvas {
      * The person icon is clickable to show guest information in a tooltip.
      */
     private void drawRegularBookingBar(HouseholdBookingBlock block, Bounds adjustedBounds, Color barColor, GraphicsContext gc) {
-        // Configure the bar drawer with NO TEXT (only icon)
-        bookingBarDrawer
-                .setBackgroundFill(barColor)
-                .setTextFill(Color.WHITE)
-                .setStroke(block.hasConflict() ? GanttColorScheme.COLOR_CONFLICT : null)
-                .setRadius(BAR_RADIUS)
-                .setMiddleText(null);  // No text - only icon
-
         // Always show person icon on first day of booking (ARRIVAL or SINGLE position)
         // The icon is clickable to show guest info tooltip
         one.modality.hotel.backoffice.activities.household.gantt.model.BookingPosition position = block.getPosition();
 
-        // Clear any icon from BarDrawer - we'll draw person icon manually with proper scaling
-        bookingBarDrawer.setIcon(null, null, 0, 0, null, null, null, 0, 0);
+        // Draw bar - use striped pattern if overbooking, solid color otherwise
+        if (block.hasConflict()) {
+            // Draw overbooked bar (red with white stripes)
+            drawOverbookedDaySegment(adjustedBounds.getMinX(), adjustedBounds.getMinY(),
+                    adjustedBounds.getWidth(), adjustedBounds.getHeight(), true, true, gc);
+        } else {
+            // Configure the bar drawer with NO TEXT (only icon)
+            bookingBarDrawer
+                    .setBackgroundFill(barColor)
+                    .setTextFill(Color.WHITE)
+                    .setStroke(null)
+                    .setRadius(BAR_RADIUS)
+                    .setMiddleText(null);  // No text - only icon
 
-        // Draw the bar with configured properties
-        bookingBarDrawer.drawBar(adjustedBounds, gc);
+            // Clear any icon from BarDrawer - we'll draw person icon manually with proper scaling
+            bookingBarDrawer.setIcon(null, null, 0, 0, null, null, null, 0, 0);
+
+            // Draw the bar with configured properties
+            bookingBarDrawer.drawBar(adjustedBounds, gc);
+        }
 
         // Draw person icon for ARRIVAL or SINGLE positions (manually with proper scaling)
         if (position == one.modality.hotel.backoffice.activities.household.gantt.model.BookingPosition.ARRIVAL ||
@@ -351,41 +358,75 @@ public class HouseholdGanttCanvas {
      */
     private void drawAggregateBar(LocalDateBar<HouseholdBookingBlock> bar, HouseholdBookingBlock block,
                                   Bounds adjustedBounds, Color barColor, double dayWidth, GraphicsContext gc) {
-        // Draw the bar background (no text, no icons - we'll draw occupancy text per day)
-        bookingBarDrawer
-                .setBackgroundFill(barColor)
-                .setTextFill(Color.WHITE)
-                .setStroke(null)
-                .setRadius(BAR_RADIUS)
-                .setMiddleText(null)  // No centered text
-                .setIcon(null, null, 0, 0, null, null, null, 0, 0);  // No icons
-
-        bookingBarDrawer.drawBar(adjustedBounds, gc);
-
-        // Now draw occupancy text for each day
         LocalDate startDate = bar.getStartTime();
         LocalDate endDate = bar.getEndTime();
         java.util.Map<LocalDate, Integer> dailyOccupancy = block.getDailyOccupancy();
         int totalCapacity = block.getTotalCapacity();
 
+        // First pass: Draw bar segments - normal color for regular days, striped for overbooked days
+        LocalDate currentDate = startDate;
+        while (!currentDate.isAfter(endDate)) {
+            // Get occupancy for this day
+            Integer occupancy;
+            if (currentDate.equals(endDate)) {
+                LocalDate lastNight = currentDate.minusDays(1);
+                occupancy = dailyOccupancy != null ? dailyOccupancy.get(lastNight) : null;
+            } else {
+                occupancy = dailyOccupancy != null ? dailyOccupancy.get(currentDate) : null;
+            }
+
+            if (occupancy != null && occupancy > 0) {
+                // Calculate segment bounds for this day
+                double dayX = barsLayout.getTimeProjector().timeToX(currentDate, true, false);
+                double segmentStartX, segmentEndX;
+
+                if (currentDate.equals(startDate)) {
+                    // First day: bar starts at middle of day
+                    segmentStartX = dayX + dayWidth / 2;
+                    segmentEndX = dayX + dayWidth;
+                } else if (currentDate.equals(endDate)) {
+                    // Last day: bar ends at middle of day
+                    segmentStartX = dayX;
+                    segmentEndX = dayX + dayWidth / 2;
+                } else {
+                    // Middle days: full day width
+                    segmentStartX = dayX;
+                    segmentEndX = dayX + dayWidth;
+                }
+
+                double segmentWidth = segmentEndX - segmentStartX;
+                boolean isOverbooked = occupancy > totalCapacity;
+
+                // Draw segment with appropriate style
+                if (isOverbooked) {
+                    // Overbooked day: red background with white stripes
+                    drawOverbookedDaySegment(segmentStartX, adjustedBounds.getMinY(),
+                            segmentWidth, adjustedBounds.getHeight(),
+                            currentDate.equals(startDate), currentDate.equals(endDate), gc);
+                } else {
+                    // Normal day: blue bar color
+                    drawNormalDaySegment(segmentStartX, adjustedBounds.getMinY(),
+                            segmentWidth, adjustedBounds.getHeight(), barColor,
+                            currentDate.equals(startDate), currentDate.equals(endDate), gc);
+                }
+            }
+
+            currentDate = currentDate.plusDays(1);
+        }
+
+        // Second pass: Draw occupancy text for each day
         if (dailyOccupancy == null) {
             return;
         }
 
-        // Set up text drawing
-        gc.setFill(Color.WHITE);
         gc.setFont(javafx.scene.text.Font.font("System", javafx.scene.text.FontWeight.BOLD, 11));
         gc.setTextAlign(javafx.scene.text.TextAlignment.CENTER);
         gc.setTextBaseline(javafx.geometry.VPos.CENTER);
 
-        // Draw occupancy text for each day (including the last day when bar ends at middle)
-        LocalDate currentDate = startDate;
+        currentDate = startDate;
         while (!currentDate.isAfter(endDate)) {
-            // Get occupancy for this day
-            // For the last day (check-out day), use previous day's occupancy since guests check out that morning
             Integer occupancy;
             if (currentDate.equals(endDate)) {
-                // Last visible portion - show occupancy from previous day (last night stayed)
                 LocalDate lastNight = currentDate.minusDays(1);
                 occupancy = dailyOccupancy.get(lastNight);
             } else {
@@ -393,23 +434,19 @@ public class HouseholdGanttCanvas {
             }
 
             if (occupancy != null && occupancy > 0) {
-                // Calculate X position for this day
                 double dayX = barsLayout.getTimeProjector().timeToX(currentDate, true, false);
                 double dayMiddleX;
 
-                // For first day, adjust position to account for bar starting at middle of day
                 if (currentDate.equals(startDate)) {
-                    // Bar starts at middle of first day, so position text at 3/4 of the day
                     dayMiddleX = dayX + (dayWidth * 0.75);
                 } else if (currentDate.equals(endDate)) {
-                    // Last day - bar ends at middle, so position text at 1/4 of the day
                     dayMiddleX = dayX + (dayWidth * 0.25);
                 } else {
-                    // For middle days, center the text
                     dayMiddleX = dayX + dayWidth / 2;
                 }
 
                 // Draw occupancy text
+                gc.setFill(Color.WHITE);
                 String occupancyText = occupancy + "/" + totalCapacity;
                 gc.fillText(occupancyText, dayMiddleX, adjustedBounds.getMinY() + adjustedBounds.getHeight() / 2);
             }
@@ -457,6 +494,159 @@ public class HouseholdGanttCanvas {
                 }
             }
         }
+    }
+
+    /**
+     * Draws a normal (non-overbooked) day segment of an aggregate bar.
+     */
+    private void drawNormalDaySegment(double x, double y, double width, double height,
+                                      Color barColor, boolean isFirstDay, boolean isLastDay, GraphicsContext gc) {
+        gc.save();
+        gc.setFill(barColor);
+
+        // Determine corner radii based on position
+        double leftRadius = isFirstDay ? BAR_RADIUS * 2 : 0;
+        double rightRadius = isLastDay ? BAR_RADIUS * 2 : 0;
+
+        // Draw rounded rectangle segment
+        if (leftRadius > 0 || rightRadius > 0) {
+            // Use path for mixed corners
+            gc.beginPath();
+            if (leftRadius > 0) {
+                gc.moveTo(x + leftRadius / 2, y);
+                gc.arcTo(x, y, x, y + leftRadius / 2, leftRadius / 2);
+                gc.lineTo(x, y + height - leftRadius / 2);
+                gc.arcTo(x, y + height, x + leftRadius / 2, y + height, leftRadius / 2);
+            } else {
+                gc.moveTo(x, y);
+                gc.lineTo(x, y + height);
+            }
+            if (rightRadius > 0) {
+                gc.lineTo(x + width - rightRadius / 2, y + height);
+                gc.arcTo(x + width, y + height, x + width, y + height - rightRadius / 2, rightRadius / 2);
+                gc.lineTo(x + width, y + rightRadius / 2);
+                gc.arcTo(x + width, y, x + width - rightRadius / 2, y, rightRadius / 2);
+            } else {
+                gc.lineTo(x + width, y + height);
+                gc.lineTo(x + width, y);
+            }
+            gc.closePath();
+            gc.fill();
+        } else {
+            // Simple rectangle for middle segments
+            gc.fillRect(x, y, width, height);
+        }
+
+        gc.restore();
+    }
+
+    /**
+     * Draws an overbooked day segment with red background and white diagonal stripes.
+     */
+    private void drawOverbookedDaySegment(double x, double y, double width, double height,
+                                          boolean isFirstDay, boolean isLastDay, GraphicsContext gc) {
+        gc.save();
+
+        // Red background color for overbooking
+        Color redColor = Color.rgb(229, 53, 53);  // #E53935
+
+        // Determine corner radii based on position
+        double leftRadius = isFirstDay ? BAR_RADIUS * 2 : 0;
+        double rightRadius = isLastDay ? BAR_RADIUS * 2 : 0;
+
+        // Draw red background
+        gc.setFill(redColor);
+        if (leftRadius > 0 || rightRadius > 0) {
+            gc.beginPath();
+            if (leftRadius > 0) {
+                gc.moveTo(x + leftRadius / 2, y);
+                gc.arcTo(x, y, x, y + leftRadius / 2, leftRadius / 2);
+                gc.lineTo(x, y + height - leftRadius / 2);
+                gc.arcTo(x, y + height, x + leftRadius / 2, y + height, leftRadius / 2);
+            } else {
+                gc.moveTo(x, y);
+                gc.lineTo(x, y + height);
+            }
+            if (rightRadius > 0) {
+                gc.lineTo(x + width - rightRadius / 2, y + height);
+                gc.arcTo(x + width, y + height, x + width, y + height - rightRadius / 2, rightRadius / 2);
+                gc.lineTo(x + width, y + rightRadius / 2);
+                gc.arcTo(x + width, y, x + width - rightRadius / 2, y, rightRadius / 2);
+            } else {
+                gc.lineTo(x + width, y + height);
+                gc.lineTo(x + width, y);
+            }
+            gc.closePath();
+            gc.fill();
+        } else {
+            gc.fillRect(x, y, width, height);
+        }
+
+        // Draw white diagonal stripes clipped to segment bounds
+        double stripeWidth = 3;
+        double stripeSpacing = 6;
+        gc.setStroke(Color.rgb(255, 255, 255, 0.7));  // Semi-transparent white
+        gc.setLineWidth(stripeWidth);
+
+        double maxDimension = Math.max(width, height) * 2;
+
+        for (double offset = -maxDimension; offset < width + maxDimension; offset += stripeSpacing) {
+            double x1 = x + offset;
+            double y1 = y + height;
+            double x2 = x + offset + height;
+            double y2 = y;
+
+            // Clip line to segment bounds
+            double[] clipped = clipLineToRect(x1, y1, x2, y2, x, y, x + width, y + height);
+            if (clipped != null) {
+                gc.strokeLine(clipped[0], clipped[1], clipped[2], clipped[3]);
+            }
+        }
+
+        gc.restore();
+    }
+
+    /**
+     * Clips a line to a rectangle.
+     * Returns null if line is completely outside, or [x1, y1, x2, y2] of clipped line.
+     */
+    private double[] clipLineToRect(double x1, double y1, double x2, double y2,
+                                    double minX, double minY, double maxX, double maxY) {
+        // Simple clipping using line equation
+        double dx = x2 - x1;
+        double dy = y2 - y1;
+
+        double tMin = 0, tMax = 1;
+
+        // Clip against each edge
+        if (dx != 0) {
+            double t1 = (minX - x1) / dx;
+            double t2 = (maxX - x1) / dx;
+            if (dx < 0) { double tmp = t1; t1 = t2; t2 = tmp; }
+            tMin = Math.max(tMin, t1);
+            tMax = Math.min(tMax, t2);
+        } else if (x1 < minX || x1 > maxX) {
+            return null;
+        }
+
+        if (dy != 0) {
+            double t1 = (minY - y1) / dy;
+            double t2 = (maxY - y1) / dy;
+            if (dy < 0) { double tmp = t1; t1 = t2; t2 = tmp; }
+            tMin = Math.max(tMin, t1);
+            tMax = Math.min(tMax, t2);
+        } else if (y1 < minY || y1 > maxY) {
+            return null;
+        }
+
+        if (tMin > tMax) {
+            return null;
+        }
+
+        return new double[]{
+            x1 + tMin * dx, y1 + tMin * dy,
+            x1 + tMax * dx, y1 + tMax * dy
+        };
     }
 
     /**
@@ -803,22 +993,23 @@ public class HouseholdGanttCanvas {
                 gc.strokeLine(b.getMaxX(), b.getMinY(), b.getMaxX(), b.getMaxY());
                 gc.strokeLine(b.getMinX(), b.getMaxY(), b.getMaxX(), b.getMaxY());
 
-                // Draw status dot for bed
-                double dotX = b.getMinX() + leftPadding + arrowWidth + gap + dotRadius;
-                double dotY = b.getMinY() + b.getHeight() / 2;
-                Color statusColor = ganttParent.bed() != null ?
-                        colorScheme.getRoomStatusColor(ganttParent.bed().getStatus()) : Color.GRAY;
-                gc.setFill(statusColor);
-                gc.fillOval(dotX - dotRadius, dotY - dotRadius, dotRadius * 2, dotRadius * 2);
-
                 // Draw bed name (indented) - white text for overbooking, grey for normal
+                // No status dot here - status indicator is on right edge
+                double textX = b.getMinX() + leftPadding + arrowWidth + gap;
+                double centerY = b.getMinY() + b.getHeight() / 2;
                 Color textColor = isOverbooking ? Color.WHITE : Color.web("#666666");
                 gc.setFill(textColor);
                 gc.setFont(Font.font("System", isOverbooking ? FontWeight.BOLD : FontWeight.NORMAL, 12));
                 gc.setTextAlign(javafx.scene.text.TextAlignment.LEFT);
                 gc.setTextBaseline(javafx.geometry.VPos.CENTER);
-                double textX = dotX + dotRadius + gap;
-                gc.fillText(roomName, textX, dotY);
+                gc.fillText(roomName, textX, centerY);
+
+                // Draw prominent status indicator along entire right edge
+                double indicatorWidth = 6;
+                Color statusColor = ganttParent.bed() != null ?
+                        colorScheme.getRoomStatusColor(ganttParent.bed().getStatus()) : Color.GRAY;
+                gc.setFill(statusColor);
+                gc.fillRect(b.getMaxX() - indicatorWidth, b.getMinY(), indicatorWidth, b.getHeight());
 
             } else {
                 // Room row
@@ -847,26 +1038,25 @@ public class HouseholdGanttCanvas {
                 }
                 currentX += arrowWidth + gap;
 
-                // Draw status dot
-                double dotX = currentX + dotRadius;
-                Color statusColor = ganttParent.room() != null ?
-                        colorScheme.getRoomStatusColor(ganttParent.room().getStatus()) : Color.GRAY;
-                gc.setFill(statusColor);
-                gc.fillOval(dotX - dotRadius, centerY - dotRadius, dotRadius * 2, dotRadius * 2);
-                currentX = dotX + dotRadius + gap;
-
-                // Draw room name
+                // Draw room name (no status dot here - status indicator is on right edge)
                 gc.setFill(Color.web("#333333"));
                 gc.setFont(Font.font("System", FontWeight.BOLD, 13));
                 gc.setTextAlign(javafx.scene.text.TextAlignment.LEFT);
                 gc.setTextBaseline(javafx.geometry.VPos.CENTER);
                 gc.fillText(roomName, currentX, centerY);
 
-                // Draw action icon (⋮) on the right side
+                // Draw action icon (⋮) on the right side before status indicator
                 gc.setFill(Color.grayRgb(100));
                 gc.setFont(Font.font("System", 14));
                 gc.setTextAlign(javafx.scene.text.TextAlignment.CENTER);
-                gc.fillText("⋮", b.getMaxX() - 16, centerY);
+                gc.fillText("⋮", b.getMaxX() - 22, centerY);
+
+                // Draw prominent status indicator along entire right edge
+                double indicatorWidth = 6;
+                Color statusColor = ganttParent.room() != null ?
+                        colorScheme.getRoomStatusColor(ganttParent.room().getStatus()) : Color.GRAY;
+                gc.setFill(statusColor);
+                gc.fillRect(b.getMaxX() - indicatorWidth, b.getMinY(), indicatorWidth, b.getHeight());
             }
         }
     }

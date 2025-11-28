@@ -198,9 +198,11 @@ public final class HouseholdGanttView {
     private void refreshDisplay() {
         // Step 1: Convert database entities to gantt model using adapter pattern
         // This transformation isolates the view from database schema changes
+        // Include attendancesForGaps to properly handle bookings with attendance gaps
         List<GanttRoomData> rooms = EntityDataAdapter.adaptRooms(
             dataLoader.getResourceConfigurations(),
-            dataLoader.getDocumentLines()
+            dataLoader.getDocumentLines(),
+            dataLoader.getAttendancesForGaps()
         );
 
         // Step 2: Display data in view with error handling

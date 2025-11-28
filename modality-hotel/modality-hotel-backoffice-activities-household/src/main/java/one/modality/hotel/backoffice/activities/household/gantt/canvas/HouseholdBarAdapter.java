@@ -13,7 +13,7 @@ import java.util.*;
  * <p>
  * This adapter:
  * - Handles both single rooms (bookings on room) and multi-bed rooms (bookings on beds)
- * - Conve.printStackTrace();erts GanttBookingData directly into LocalDateBar objects for Canvas rendering
+ * - Converts GanttBookingData directly into LocalDateBar objects for Canvas rendering
  * - Maintains proper parent/child relationships for tetris packing layout
  *
  * @author Claude Code Assistant
@@ -23,43 +23,74 @@ public record HouseholdBarAdapter(GanttPresenter presenter) {
     /**
      * Converts a list of bookings into LocalDateBar objects.
      * This is the core adaptation logic used for both single rooms and individual beds in multi-bed rooms.
+     * <p>
+     * For bookings with attendance gaps, creates MULTIPLE bars (one per date segment) to show
+     * the interruption visually in the Gantt chart.
      */
     private List<LocalDateBar<HouseholdBookingBlock>> adaptBookingsToBars(
             List<? extends GanttBookingData> bookings, GanttParentRow parentRow) {
         List<LocalDateBar<HouseholdBookingBlock>> bars = new ArrayList<>();
 
-        // Convert each booking directly to a bar
+        // Convert each booking to bar(s) - may create multiple bars for gap bookings
         for (GanttBookingData booking : bookings) {
-            LocalDate startDate = booking.getStartDate();
-            LocalDate endDate = booking.getEndDate();
+            List<DateSegment> segments = booking.getDateSegments();
 
-            if (startDate == null || endDate == null) {
-                continue;
+            if (segments == null || segments.isEmpty()) {
+                // Fallback to simple start/end dates if no segments
+                LocalDate startDate = booking.getStartDate();
+                LocalDate endDate = booking.getEndDate();
+                if (startDate == null || endDate == null) {
+                    continue;
+                }
+                bars.add(createBarForSegment(booking, startDate, endDate, parentRow, true));
+            } else {
+                // Create a bar for each segment (handles gaps)
+                boolean isFirstSegment = true;
+                for (DateSegment segment : segments) {
+                    bars.add(createBarForSegment(booking, segment.startDate(), segment.endDate(), parentRow, isFirstSegment));
+                    isFirstSegment = false;
+                }
             }
-
-            // Determine position for icon placement (always ARRIVAL for Canvas bars to show person icon)
-            BookingPosition position = BookingPosition.ARRIVAL; // Show person icon on first day
-
-            // Create booking block
-            HouseholdBookingBlock block = new HouseholdBookingBlock(
-                    booking.getGuestName(),
-                    booking.getStatus(),
-                    position,
-                    false, // No conflict detection needed for direct conversion
-                    booking.getComments() != null && !booking.getComments().isEmpty(),
-                    false, // Turnover detection done by presenter
-                    !booking.isArrived() && booking.getStartDate().isBefore(LocalDate.now()),
-                    booking,
-                    1, // Single booking occupancy
-                    parentRow.room().getCapacity()
-            );
-            block.setParentRow(parentRow);
-
-            // Create bar - endDate is already the departure day (day after last night)
-            bars.add(new LocalDateBar<>(block, startDate, endDate));
         }
 
         return bars;
+    }
+
+    /**
+     * Creates a single bar for a date segment of a booking.
+     *
+     * @param booking The booking data
+     * @param startDate Start date of this segment
+     * @param endDate End date of this segment (exclusive - checkout day)
+     * @param parentRow The parent row this bar belongs to
+     * @param isFirstSegment True if this is the first segment (unused - all segments show icons)
+     * @return LocalDateBar for this segment
+     */
+    private LocalDateBar<HouseholdBookingBlock> createBarForSegment(
+            GanttBookingData booking, LocalDate startDate, LocalDate endDate,
+            GanttParentRow parentRow, boolean isFirstSegment) {
+
+        // All segments show person icon and comments - important for gap bookings
+        // so users can identify who the bar belongs to and access actions
+        BookingPosition position = BookingPosition.ARRIVAL;
+
+        // Create booking block
+        HouseholdBookingBlock block = new HouseholdBookingBlock(
+                booking.getGuestName(),
+                booking.getStatus(),
+                position,
+                false, // No conflict detection needed for direct conversion
+                booking.getComments() != null && !booking.getComments().isEmpty(),
+                false, // Turnover detection done by presenter
+                !booking.isArrived() && booking.getStartDate().isBefore(LocalDate.now()),
+                booking,
+                1, // Single booking occupancy
+                parentRow.room().getCapacity()
+        );
+        block.setParentRow(parentRow);
+
+        // Create bar - endDate is already the departure day (day after last night)
+        return new LocalDateBar<>(block, startDate, endDate);
     }
 
     /**
@@ -109,11 +140,23 @@ public record HouseholdBarAdapter(GanttPresenter presenter) {
 
         // PERFORMANCE OPTIMIZATION: Use event-sweep algorithm O(B log B) instead of O(D × B)
         // Create events for check-in (+1) and check-out (-1)
+        // Use date segments to properly handle bookings with attendance gaps
         List<AbstractMap.SimpleEntry<LocalDate, Integer>> events = new ArrayList<>();
         for (GanttBookingData booking : allBookings) {
-            if (booking.getStartDate() == null || booking.getEndDate() == null) continue;
-            events.add(new AbstractMap.SimpleEntry<>(booking.getStartDate(), 1));   // Check-in
-            events.add(new AbstractMap.SimpleEntry<>(booking.getEndDate(), -1));    // Check-out
+            List<DateSegment> segments = booking.getDateSegments();
+            if (segments != null && !segments.isEmpty()) {
+                // Use segments for gap bookings
+                // Note: segment.endDate() is inclusive (last night stayed), so checkout is endDate + 1
+                for (DateSegment segment : segments) {
+                    events.add(new AbstractMap.SimpleEntry<>(segment.startDate(), 1));   // Check-in
+                    events.add(new AbstractMap.SimpleEntry<>(segment.endDate().plusDays(1), -1));    // Check-out (day after last night)
+                }
+            } else {
+                // Fallback to simple dates (endDate is already checkout date for non-gap bookings)
+                if (booking.getStartDate() == null || booking.getEndDate() == null) continue;
+                events.add(new AbstractMap.SimpleEntry<>(booking.getStartDate(), 1));   // Check-in
+                events.add(new AbstractMap.SimpleEntry<>(booking.getEndDate(), -1));    // Check-out
+            }
         }
 
         // Sort events by date, with check-outs before check-ins on same day (for accurate count)
@@ -151,10 +194,9 @@ public record HouseholdBarAdapter(GanttPresenter presenter) {
                     maxOccupancyInSegment = occupancy;
                 }
 
-                // Collect all bookings that overlap with this day
+                // Collect all bookings that overlap with this day (using date segments for gap support)
                 for (GanttBookingData booking : allBookings) {
-                    if (booking.getStartDate() == null || booking.getEndDate() == null) continue;
-                    if (!currentDate.isBefore(booking.getStartDate()) && currentDate.isBefore(booking.getEndDate())) {
+                    if (isBookingActiveOnDate(booking, currentDate)) {
                         if (!segmentBookings.contains(booking)) {
                             segmentBookings.add(booking);
                         }
@@ -169,11 +211,14 @@ public record HouseholdBarAdapter(GanttPresenter presenter) {
                     // Determine status based on segment bookings - OCCUPIED only if at least one bed is occupied
                     BookingStatus segmentStatus = determineSegmentStatus(segmentStart, segmentEnd.minusDays(1), today, segmentBookings);
 
+                    // Detect overbooking: when max occupancy in segment exceeds total capacity
+                    boolean hasConflict = maxOccupancyInSegment > totalCapacity;
+
                     HouseholdBookingBlock block = new HouseholdBookingBlock(
                             "", // Guest name not needed for aggregate bars
                             segmentStatus,
                             BookingPosition.MIDDLE,
-                            false,
+                            hasConflict,
                             false,
                             false,
                             false,
@@ -200,11 +245,14 @@ public record HouseholdBarAdapter(GanttPresenter presenter) {
             // Determine status based on segment bookings - OCCUPIED only if at least one bed is occupied
             BookingStatus segmentStatus = determineSegmentStatus(segmentStart, segmentEnd.minusDays(1), today, segmentBookings);
 
+            // Detect overbooking: when max occupancy in segment exceeds total capacity
+            boolean hasConflict = maxOccupancyInSegment > totalCapacity;
+
             HouseholdBookingBlock block = new HouseholdBookingBlock(
                     "", // Guest name not needed for aggregate bars
                     segmentStatus,
                     BookingPosition.MIDDLE,
-                    false,
+                    hasConflict,
                     false,
                     false,
                     false,
@@ -335,5 +383,29 @@ public record HouseholdBarAdapter(GanttPresenter presenter) {
         }
 
         return new AdaptedRoomData(allParentRows, allBars);
+    }
+
+    /**
+     * Checks if a booking is active on a given date, considering date segments for gap bookings.
+     * For bookings with gaps, checks if date falls within any of the date segments.
+     */
+    private boolean isBookingActiveOnDate(GanttBookingData booking, LocalDate date) {
+        List<DateSegment> segments = booking.getDateSegments();
+
+        if (segments == null || segments.isEmpty()) {
+            // Fallback to simple date range check
+            LocalDate start = booking.getStartDate();
+            LocalDate end = booking.getEndDate();
+            if (start == null || end == null) return false;
+            return !date.isBefore(start) && date.isBefore(end);
+        }
+
+        // Check if date falls within any segment (endDate is inclusive for gap segments)
+        for (DateSegment segment : segments) {
+            if (!date.isBefore(segment.startDate()) && !date.isAfter(segment.endDate())) {
+                return true;
+            }
+        }
+        return false;
     }
 }

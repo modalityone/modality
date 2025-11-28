@@ -219,6 +219,7 @@ public class DashboardPresenter {
             List<DocumentLine> checkingOut = new ArrayList<>();
             List<DocumentLine> staying = new ArrayList<>();
             List<DocumentLine> checkingIn = new ArrayList<>();
+            List<DocumentLine> returningFromGap = new ArrayList<>();
 
             for (DocumentLine dl : guestsInRoom) {
                 if (dl.getStartDate() == null || dl.getEndDate() == null) continue;
@@ -227,7 +228,15 @@ public class DashboardPresenter {
                 boolean presentToday = isPresentOnDate(dl, date, attendanceDatesByDl);
                 boolean presentTomorrow = isPresentOnDate(dl, tomorrow, attendanceDatesByDl);
 
-                if (presentToday && !presentYesterday) checkingIn.add(dl);
+                if (presentToday && !presentYesterday) {
+                    // Distinguish between first-time check-ins and gap returns
+                    boolean isGapReturn = Boolean.TRUE.equals(dl.hasAttendanceGap()) && date.isAfter(dl.getStartDate());
+                    if (isGapReturn) {
+                        returningFromGap.add(dl);
+                    } else {
+                        checkingIn.add(dl);
+                    }
+                }
                 if (presentYesterday && !presentToday) checkingOut.add(dl);
                 if (presentToday && presentTomorrow) staying.add(dl);
             }
@@ -260,6 +269,9 @@ public class DashboardPresenter {
                         new ArrivalCardData(roomName, buildingName, checkingIn, eventName));
                 handledByGroupedCards.addAll(checkingIn);
             }
+
+            // Gap returns are NOT added to handledByGroupedCards - they will be processed individually
+            // in processIndividualDocumentLines to show as separate arrival cards
         }
     }
 
@@ -321,7 +333,7 @@ public class DashboardPresenter {
                 }
             }
 
-            // Arrivals: First day on this date (checking in today)
+            // Arrivals: First day on this date (checking in today OR returning from gap)
             if (presentToday && !presentYesterday) {
                 dayData.getArrivalCards().add(
                         new ArrivalCardData(roomName, buildingName, guestName, eventName, specialRequests, dl));

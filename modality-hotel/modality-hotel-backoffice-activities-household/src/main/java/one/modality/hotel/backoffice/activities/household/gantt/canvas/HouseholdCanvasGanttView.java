@@ -150,43 +150,122 @@ public class HouseholdCanvasGanttView {
 
     /**
      * Builds the filter bar with status and category toggle buttons.
-     * Design: Horizontal bar with two filter sections, pill-style toggle buttons.
+     * Design: Two-row layout - first row has status filters and buttons, second row has room type filter.
      */
     private HBox buildFilterBar() {
-        HBox bar = new HBox(24);
-        bar.setAlignment(Pos.CENTER_LEFT);
-        bar.setPadding(new Insets(8, 16, 8, 16));
-        bar.setBackground(new Background(new BackgroundFill(Color.TRANSPARENT, CornerRadii.EMPTY, Insets.EMPTY)));  // No background
+        // Main container - VBox to stack two rows
+        VBox container = new VBox(8);
+        container.setPadding(new Insets(8, 16, 8, 16));
+        container.setBackground(new Background(new BackgroundFill(Color.TRANSPARENT, CornerRadii.EMPTY, Insets.EMPTY)));
         // Bottom border
-        bar.setBorder(new Border(new BorderStroke(Color.rgb(222, 226, 230), BorderStrokeStyle.SOLID,
+        container.setBorder(new Border(new BorderStroke(Color.rgb(222, 226, 230), BorderStrokeStyle.SOLID,
                 CornerRadii.EMPTY, new BorderWidths(0, 0, 1, 0))));
+
+        // First row: Status filters + action button
+        HBox firstRow = new HBox(24);
+        firstRow.setAlignment(Pos.CENTER_LEFT);
 
         // Status filter section
         HBox statusSection = new HBox(8);
         statusSection.setAlignment(Pos.CENTER_LEFT);
         Label statusLabel = new Label(I18n.getI18nText(HouseholdI18nKeys.Status) + ":");
-        statusLabel.setStyle("-fx-font-weight: bold; -fx-text-fill: #374151;");
+        statusLabel.setStyle("-fx-font-weight: bold; -fx-text-fill: #374151; -fx-min-width: 80px;");  // Fixed width for alignment
         buildStatusFilterButtons();
         statusSection.getChildren().addAll(statusLabel, statusFilterGroup);
-
-        // Category filter section (dynamic - will be populated when data loads)
-        HBox categorySection = new HBox(8);
-        categorySection.setAlignment(Pos.CENTER_LEFT);
-        Label categoryLabel = new Label("Room type:");
-        categoryLabel.setStyle("-fx-font-weight: bold; -fx-text-fill: #374151;");
-        categorySection.getChildren().addAll(categoryLabel, categoryFilterGroup);
 
         // Spacer
         Region spacer = new Region();
         HBox.setHgrow(spacer, Priority.ALWAYS);
 
-        // Clear filters button
-        Button clearButton = new Button(I18n.getI18nText(HouseholdI18nKeys.All));
-        clearButton.setStyle("-fx-background-color: transparent; -fx-text-fill: #6B7280; -fx-cursor: hand;");
-        clearButton.setOnAction(e -> clearAllFilters());
+        // "Go to Today" button - prominent accent button with icon
+        Button goToTodayButton = createGoToTodayButton();
 
-        bar.getChildren().addAll(statusSection, categorySection, spacer, clearButton);
-        return bar;
+        firstRow.getChildren().addAll(statusSection, spacer, goToTodayButton);
+
+        // Second row: Room type filter
+        HBox secondRow = new HBox(8);
+        secondRow.setAlignment(Pos.CENTER_LEFT);
+
+        // Category filter section (dynamic - will be populated when data loads)
+        HBox categorySection = new HBox(8);
+        categorySection.setAlignment(Pos.CENTER_LEFT);
+        Label categoryLabel = new Label("Room type:");
+        categoryLabel.setStyle("-fx-font-weight: bold; -fx-text-fill: #374151; -fx-min-width: 80px;");  // Same width for alignment
+        categorySection.getChildren().addAll(categoryLabel, categoryFilterGroup);
+
+        secondRow.getChildren().add(categorySection);
+
+        // Add both rows to container
+        container.getChildren().addAll(firstRow, secondRow);
+
+        // Wrap in HBox to maintain compatibility with existing code
+        HBox wrapper = new HBox(container);
+        HBox.setHgrow(container, Priority.ALWAYS);
+        return wrapper;
+    }
+
+    /**
+     * Creates a beautiful "Go to Today" button with calendar icon.
+     * Design: Accent-colored pill button with icon, slightly elevated style.
+     */
+    private Button createGoToTodayButton() {
+        // Create button with arrow icon and text
+        // Using Unicode arrow ➜ instead of emoji to ensure white color styling works
+        Button btn = new Button("➜ Today");
+
+        // Modern pill button style with accent color, subtle shadow, and hover effect
+        btn.setStyle(
+            "-fx-background-color: #0096D6; " +          // Accent blue
+            "-fx-text-fill: white; " +
+            "-fx-background-radius: 20; " +              // Pill shape
+            "-fx-padding: 6 16 6 16; " +                 // Comfortable padding
+            "-fx-font-weight: bold; " +
+            "-fx-font-size: 13px; " +
+            "-fx-cursor: hand; " +
+            "-fx-effect: dropshadow(gaussian, rgba(0,0,0,0.1), 4, 0, 0, 1);"  // Subtle shadow
+        );
+
+        // Hover effect - slightly darker blue
+        btn.setOnMouseEntered(e -> btn.setStyle(
+            "-fx-background-color: #007AB8; " +          // Darker blue on hover
+            "-fx-text-fill: white; " +
+            "-fx-background-radius: 20; " +
+            "-fx-padding: 6 16 6 16; " +
+            "-fx-font-weight: bold; " +
+            "-fx-font-size: 13px; " +
+            "-fx-cursor: hand; " +
+            "-fx-effect: dropshadow(gaussian, rgba(0,0,0,0.15), 5, 0, 0, 2);"  // Slightly stronger shadow on hover
+        ));
+
+        btn.setOnMouseExited(e -> btn.setStyle(
+            "-fx-background-color: #0096D6; " +
+            "-fx-text-fill: white; " +
+            "-fx-background-radius: 20; " +
+            "-fx-padding: 6 16 6 16; " +
+            "-fx-font-weight: bold; " +
+            "-fx-font-size: 13px; " +
+            "-fx-cursor: hand; " +
+            "-fx-effect: dropshadow(gaussian, rgba(0,0,0,0.1), 4, 0, 0, 1);"
+        ));
+
+        // Action: Reset to 2 days before today
+        btn.setOnAction(e -> goToToday());
+
+        return btn;
+    }
+
+    /**
+     * Resets the Gantt view to show today (with 2 days before for context).
+     * This restores the initial view that users see when the page first loads.
+     */
+    private void goToToday() {
+        java.time.LocalDate today = java.time.LocalDate.now();
+        java.time.LocalDate startDate = today.minusDays(2);  // 2 days before today
+        java.time.LocalDate endDate = startDate.plusDays(13); // 14 days total (2 before + today + 11 after)
+
+        // Update the time window in the presentation model (which is bound to the canvas)
+        // This will trigger the canvas to scroll/pan to show the new date range
+        canvas.getBarsLayout().setTimeWindow(startDate, endDate);
     }
 
     /**
@@ -817,25 +896,15 @@ public class HouseholdCanvasGanttView {
     /**
      * Refreshes the display with current data.
      * Called when data changes or expand/collapse state changes.
-     * <p>
-     * PERFORMANCE MONITORING: This method tracks time for each phase of the refresh process.
      */
     private void refreshDisplay() {
-        long startTime = System.currentTimeMillis();
-        System.out.println("[PERF HouseholdCanvasGanttView] refreshDisplay started with " +
-                dataLoader.getResourceConfigurations().size() + " resource configs and " +
-                dataLoader.getDocumentLines().size() + " document lines");
-
         // Step 1: Convert database entities to gantt model using adapter pattern
         // Pass attendances for gap bookings to support split bars where guest doesn't stay certain nights
-        long adaptStart = System.currentTimeMillis();
         List<GanttRoomData> allRooms = EntityDataAdapter.adaptRooms(
             dataLoader.getResourceConfigurations(),
             dataLoader.getDocumentLines(),
             dataLoader.getAttendancesForGaps()
         );
-        long adaptTime = System.currentTimeMillis() - adaptStart;
-        System.out.println("[PERF HouseholdCanvasGanttView] Entity adaptation completed in " + adaptTime + "ms, produced " + allRooms.size() + " rooms");
 
         // Step 1.5: Update category filter buttons dynamically from available data
         Set<String> categories = allRooms.stream()
@@ -846,29 +915,18 @@ public class HouseholdCanvasGanttView {
 
         // Step 2: Apply filters to room list
         List<GanttRoomData> filteredRooms = filterManager.applyFilters(allRooms);
-        System.out.println("[PERF HouseholdCanvasGanttView] After filtering: " + filteredRooms.size() + " rooms (from " + allRooms.size() + ")");
 
         // Step 3: Convert rooms to Canvas parent rows and bars using HouseholdBarAdapter
         // CRITICAL: Adapter creates parent rows AND bars together to ensure they reference same objects
-        long barAdaptStart = System.currentTimeMillis();
         HouseholdBarAdapter.AdaptedRoomData adapted = barAdapter.adaptAllRoomsWithParents(filteredRooms);
-        long barAdaptTime = System.currentTimeMillis() - barAdaptStart;
-        System.out.println("[PERF HouseholdCanvasGanttView] Bar adaptation completed in " + barAdaptTime + "ms, produced " +
-                adapted.parentRows().size() + " parent rows and " + adapted.bars().size() + " bars");
 
         // Step 4: Update Canvas with parent rows and bars
-        long displayStart = System.currentTimeMillis();
         try {
             displayRoomsAndBars(adapted.parentRows(), adapted.bars());
-            long displayTime = System.currentTimeMillis() - displayStart;
-            System.out.println("[PERF HouseholdCanvasGanttView] Canvas display updated in " + displayTime + "ms");
         } catch (Exception e) {
             // Catch any rendering errors to prevent UI crash
             System.err.println("[HouseholdCanvasGanttView] Error displaying bars: " + e.getMessage());
         }
-
-        long totalTime = System.currentTimeMillis() - startTime;
-        System.out.println("[PERF HouseholdCanvasGanttView] Total refresh time: " + totalTime + "ms");
     }
 
     /**

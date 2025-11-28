@@ -27,4 +27,18 @@ public interface GanttBookingData {
      */
     boolean isArrived();
 
+    /**
+     * Returns the date segments for this booking.
+     * For bookings without gaps, returns a single segment covering [startDate, endDate).
+     * For bookings with gaps, returns multiple segments representing the actual stay periods.
+     * <p>
+     * Example with gap:
+     * - Overall booking: June 14-25
+     * - Gap: June 16-17 (guest leaves)
+     * - Segments: [June 14-16), [June 18-25)
+     *
+     * @return List of date segments, never null, always at least one segment for valid bookings
+     */
+    List<DateSegment> getDateSegments();
+
 }

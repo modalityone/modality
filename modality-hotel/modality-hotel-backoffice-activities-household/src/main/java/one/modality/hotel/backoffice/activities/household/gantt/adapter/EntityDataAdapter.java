@@ -71,11 +71,6 @@ public final class EntityDataAdapter {
             List<DocumentLine> documentLines,
             List<Attendance> attendancesForGaps) {
 
-        long startTime = System.currentTimeMillis();
-        System.out.println("[PERF EntityDataAdapter] adaptRooms called with " + resourceConfigurations.size() +
-                " rooms, " + documentLines.size() + " document lines, and " +
-                attendancesForGaps.size() + " gap attendances");
-
         // Build lookup map for attendance gaps: DocumentLine PK -> List<Attendance>
         Map<Object, List<Attendance>> attendanceMap = new HashMap<>();
         for (Attendance att : attendancesForGaps) {
@@ -90,15 +85,12 @@ public final class EntityDataAdapter {
 
         try {
             // OPTIMIZATION: Pre-group document lines by room ONCE instead of scanning for each room
-            long groupStart = System.currentTimeMillis();
             Map<String, List<DocumentLine>> documentLinesByRoomKey = groupDocumentLinesByRoom(documentLines);
-            System.out.println("[PERF EntityDataAdapter] Grouped document lines by room in " +
-                    (System.currentTimeMillis() - groupStart) + "ms");
 
             // Convert each resource configuration to GanttRoomData
             // Sort by category first (to keep same-category rooms together for grandparent headers),
             // then by capacity (max) in ascending order within each category
-            List<GanttRoomData> result = resourceConfigurations.stream()
+            return resourceConfigurations.stream()
                 .sorted((rc1, rc2) -> {
                     // Get category names for comparison
                     String category1 = rc1.getItem() != null && rc1.getItem().getName() != null
@@ -124,11 +116,6 @@ public final class EntityDataAdapter {
                     return adaptRoom(rc, roomDocumentLines);
                 })
                 .collect(Collectors.toList());
-
-            long totalTime = System.currentTimeMillis() - startTime;
-            System.out.println("[PERF EntityDataAdapter] Total adaptation time: " + totalTime + "ms");
-
-            return result;
         } finally {
             // Clean up thread-local
             attendancesByDocumentLine.remove();
@@ -756,6 +743,11 @@ public final class EntityDataAdapter {
                 return Boolean.TRUE.equals(document.isArrived());
             }
 
+            @Override
+            public List<DateSegment> getDateSegments() {
+                return dateSegments;
+            }
+
         };
     }
 
@@ -770,8 +762,8 @@ public final class EntityDataAdapter {
      * <p>
      * Example:
      * - Attendances: June 14, 15, 18, 19, 20
-     * - Segments: [June 14-16], [June 18-21]
-     * (endDate is checkout date, so +1 day from last attendance)
+     * - Segments: [June 14-15], [June 18-20]
+     * (endDate is inclusive - the last night stayed, matching LocalDateBar's inclusive semantics)
      */
     private static List<DateSegment> buildDateSegmentsFromAttendances(DocumentLine documentLine) {
         Map<Object, List<Attendance>> attendanceMap = attendancesByDocumentLine.get();
@@ -818,8 +810,8 @@ public final class EntityDataAdapter {
 
             // Check if there's a gap (more than 1 day between dates)
             if (previousDate.plusDays(1).isBefore(currentDate)) {
-                // End current segment (checkout = previous date + 1)
-                segments.add(new DateSegment(segmentStart, previousDate.plusDays(1)));
+                // End current segment (endDate is inclusive - last night stayed)
+                segments.add(new DateSegment(segmentStart, previousDate));
                 // Start new segment
                 segmentStart = currentDate;
             }
@@ -827,8 +819,8 @@ public final class EntityDataAdapter {
             previousDate = currentDate;
         }
 
-        // Add final segment
-        segments.add(new DateSegment(segmentStart, previousDate.plusDays(1)));
+        // Add final segment (endDate is inclusive - last night stayed)
+        segments.add(new DateSegment(segmentStart, previousDate));
 
         return segments;
     }
