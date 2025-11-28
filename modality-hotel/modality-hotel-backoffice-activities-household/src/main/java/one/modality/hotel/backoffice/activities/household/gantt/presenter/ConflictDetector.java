@@ -62,11 +62,4 @@ public class ConflictDetector {
                 .collect(Collectors.toList());
     }
 
-    /**
-     * Gets overlapping bookings for conflict visualization
-     */
-    public List<? extends GanttBookingData> getConflictingBookings(GanttRoomData room, LocalDate date) {
-        List<? extends GanttBookingData> activeBookings = getActiveBookings(room.getBookings(), date);
-        return activeBookings.size() > 1 ? activeBookings : List.of();
-    }
 }

@@ -17,6 +17,7 @@ public class DashboardFilterManager {
 
     // Filter Properties for "To Clean" section
     private final ObjectProperty<String> cleanStatusFilter = new SimpleObjectProperty<>("All");
+    private final ObjectProperty<String> cleanRoomTypeFilter = new SimpleObjectProperty<>("All");
     private final ObjectProperty<String> cleanBuildingFilter = new SimpleObjectProperty<>("All");
     private final ObjectProperty<String> cleanCheckInFilter = new SimpleObjectProperty<>("All");
 
@@ -25,6 +26,7 @@ public class DashboardFilterManager {
     private final ObjectProperty<String> inspectCheckInFilter = new SimpleObjectProperty<>("All");
 
     public ObjectProperty<String> cleanStatusFilterProperty() { return cleanStatusFilter; }
+    public ObjectProperty<String> cleanRoomTypeFilterProperty() { return cleanRoomTypeFilter; }
     public ObjectProperty<String> cleanBuildingFilterProperty() { return cleanBuildingFilter; }
     public ObjectProperty<String> cleanCheckInFilterProperty() { return cleanCheckInFilter; }
     public ObjectProperty<String> inspectBuildingFilterProperty() { return inspectBuildingFilter; }
@@ -37,25 +39,29 @@ public class DashboardFilterManager {
         return cards.stream()
                 .filter(card -> {
                     // Status filter
-                    if ("Ready".equals(cleanStatusFilter.get()) && card.getStatus().name().equals("TO_CLEAN"))
+                    if ("Ready".equals(cleanStatusFilter.get()) && card.status().name().equals("TO_CLEAN"))
                         return false;
-                    if ("Pending".equals(cleanStatusFilter.get()) && card.isCheckoutComplete())
+                    if ("Pending".equals(cleanStatusFilter.get()) && card.checkoutComplete())
                         return false;
+
+                    // Room type filter
+                    if (!"All".equals(cleanRoomTypeFilter.get())) {
+                        String filterRoomType = cleanRoomTypeFilter.get();
+                        if (!card.buildingName().contains(filterRoomType))
+                            return false;
+                    }
 
                     // Building filter
                     if (!"All".equals(cleanBuildingFilter.get())) {
                         String filterBuilding = cleanBuildingFilter.get();
-                        if (!card.getBuildingName().contains(filterBuilding))
+                        if (!card.buildingName().contains(filterBuilding))
                             return false;
                     }
 
                     // Check-in filter
-                    if ("Today".equals(cleanCheckInFilter.get()) && !card.isSameDayNextCheckin())
+                    if ("Today".equals(cleanCheckInFilter.get()) && !card.sameDayNextCheckin())
                         return false;
-                    if ("Tomorrow".equals(cleanCheckInFilter.get()) && !card.isTomorrowNextCheckin())
-                        return false;
-
-                    return true;
+                    return !"Tomorrow".equals(cleanCheckInFilter.get()) || card.tomorrowNextCheckin();
                 })
                 .collect(Collectors.toList());
     }
@@ -69,17 +75,14 @@ public class DashboardFilterManager {
                     // Building filter
                     if (!"All".equals(inspectBuildingFilter.get())) {
                         String filterBuilding = inspectBuildingFilter.get();
-                        if (!card.getBuildingName().contains(filterBuilding))
+                        if (!card.buildingName().contains(filterBuilding))
                             return false;
                     }
 
                     // Check-in filter
-                    if ("Today".equals(inspectCheckInFilter.get()) && !card.isSameDayNextCheckin())
+                    if ("Today".equals(inspectCheckInFilter.get()) && !card.sameDayNextCheckin())
                         return false;
-                    if ("Tomorrow".equals(inspectCheckInFilter.get()) && !card.isTomorrowNextCheckin())
-                        return false;
-
-                    return true;
+                    return !"Tomorrow".equals(inspectCheckInFilter.get()) || card.tomorrowNextCheckin();
                 })
                 .collect(Collectors.toList());
     }

@@ -4,6 +4,8 @@ import one.modality.base.shared.entities.Attendance;
 import one.modality.base.shared.entities.Document;
 import one.modality.base.shared.entities.DocumentLine;
 import one.modality.base.shared.entities.Item;
+import one.modality.base.shared.entities.CleaningState;
+import one.modality.base.shared.entities.Resource;
 import one.modality.base.shared.entities.ResourceConfiguration;
 import one.modality.hotel.backoffice.activities.household.gantt.model.DateSegment;
 import one.modality.hotel.backoffice.activities.household.gantt.model.GanttBedData;
@@ -19,13 +21,13 @@ import java.util.stream.Collectors;
 
 /**
  * Adapter that converts database entities to Gantt data interfaces.
- *
+ * <p>
  * This class bridges the gap between the database entity model and the Gantt view model,
  * transforming ResourceConfiguration and DocumentLine entities into GanttRoomData and GanttBookingData.
- *
+ * <p>
  * PERFORMANCE OPTIMIZATION: Now uses DocumentLine.startDate/endDate fields directly
  * instead of reconstructing dates from multiple Attendance records.
- *
+ * <p>
  * ATTENDANCE GAP SUPPORT: For DocumentLines with hasAttendanceGap=true, uses Attendance
  * records to build accurate date segments for Gantt bar rendering.
  */
@@ -51,11 +53,11 @@ public final class EntityDataAdapter {
 
     /**
      * Adapts a list of ResourceConfiguration entities to GanttRoomData.
-     *
+     * <p>
      * PERFORMANCE OPTIMIZATION: This method has been optimized from O(n×m) to O(n+m) complexity.
      * Additionally, we now use DocumentLine directly instead of Attendance records,
      * which reduces the number of records to process (one per booking vs one per day).
-     *
+     * <p>
      * ATTENDANCE GAP SUPPORT: For DocumentLines with hasAttendanceGap=true, uses the
      * provided Attendance records to build accurate date segments.
      *
@@ -135,7 +137,7 @@ public final class EntityDataAdapter {
 
     /**
      * Groups all document lines by room key in a single O(n) pass.
-     *
+     * <p>
      * Room key format: "siteId|roomName" to uniquely identify rooms.
      *
      * @param documentLines All document lines to group
@@ -165,30 +167,44 @@ public final class EntityDataAdapter {
         return (siteId != null ? siteId.toString() : "null") + "|" + (roomName != null ? roomName : "");
     }
 
+    /**
+     * Adapts and sorts document lines into booking objects.
+     * PERFORMANCE OPTIMIZATION: Extracted to avoid duplicate conversion and sorting.
+     *
+     * @param documentLines Document lines to convert
+     * @return List of bookings sorted by start date
+     */
+    private static List<GanttBookingData> adaptAndSortBookings(List<DocumentLine> documentLines) {
+        return documentLines.stream()
+            .map(EntityDataAdapter::adaptBooking)
+            .filter(Objects::nonNull)
+            .sorted(Comparator.comparing(GanttBookingData::getStartDate))
+            .collect(Collectors.toList());
+    }
 
     /**
      * Adapts a single ResourceConfiguration (room) to GanttRoomData.
-     *
+     * <p>
      * CRITICAL LOGIC - THREE ROOM RENDERING PATHS:
-     *
+     * <p>
      * 1. MULTI-BED ROOM (RoomType != SINGLE && bedCount > 1):
      *    - Bookings are placed in individual bed rows
      *    - Room row shows aggregated booking bar (when collapsed)
      *    - Beds can be expanded/collapsed to show individual bookings
      *    - Example: Dormitory with 6 beds
-     *
+     * <p>
      * 2. SINGLE ROOM WITH OVERBOOKING:
      *    - Detected by hasConflictingBookings() - multiple bookings overlap in time
      *    - Rendered like multi-bed room with expandable bed rows
      *    - Bed rows show individual bookings (including overbooking conflicts)
      *    - Room row shows aggregated bar with danger color on conflict dates
      *    - Example: Single room with 2 bookings on same date (one is overbooking)
-     *
+     * <p>
      * 3. NORMAL SINGLE ROOM (no overbooking):
      *    - Bookings displayed directly on room row
      *    - No bed rows created (beds list is empty)
      *    - Example: Single room with non-overlapping bookings
-     *
+     * <p>
      * CAPACITY (bedCount):
      * - Comes from rc.max field in database
      * - Represents actual room capacity (excludes dynamically added overbooking beds)
@@ -232,22 +248,18 @@ public final class EntityDataAdapter {
         final List<GanttBookingData> bookings;
         final List<GanttBedData> beds;
 
-        if (roomType != RoomType.SINGLE && bedCount > 1) {
+        // PERFORMANCE OPTIMIZATION: Convert and sort bookings once, reuse for both paths
+        List<GanttBookingData> allBookings = adaptAndSortBookings(roomDocumentLines);
+
+        if (roomType != RoomType.SINGLE_BED && bedCount > 1) {
             // PATH 1: MULTI-BED ROOM (Double, Dormitory, etc.)
             // - Bookings are distributed across bed rows
             // - Room row is empty (shows aggregated bar when collapsed)
             // - Each bed gets its own row with its booking
             bookings = Collections.emptyList();
-            beds = generateBeds(rc, bedCount, roomDocumentLines);
+            beds = generateBeds(rc, bedCount, allBookings);
         } else {
             // PATH 2 & 3: SINGLE ROOM (may or may not have overbooking)
-            // Convert each document line directly into a booking (no grouping needed)
-            List<GanttBookingData> allBookings = roomDocumentLines.stream()
-                .map(EntityDataAdapter::adaptBooking)
-                .filter(Objects::nonNull)
-                .sorted(Comparator.comparing(GanttBookingData::getStartDate))
-                .collect(Collectors.toList());
-
             // OVERBOOKING DETECTION:
             // Check if any bookings overlap in time (conflict)
             // If overlapping bookings exist, the room has overbooking
@@ -320,23 +332,28 @@ public final class EntityDataAdapter {
             public List<GanttBedData> getBeds() {
                 return beds;
             }
+
+            @Override
+            public Resource getResource() {
+                return rc.getResource();
+            }
         };
     }
 
     /**
      * Generates bed data for MULTI-BED ROOMS based on the max field (bed count).
-     *
+     * <p>
      * BED GENERATION LOGIC:
      * - Creates bed rows named "Bed A", "Bed B", "Bed C", etc.
      * - Number of beds = bedCount from rc.max (database capacity field)
      * - Each bed gets a unique ID: "{roomId}-A", "{roomId}-B", etc.
-     *
+     * <p>
      * BOOKING DISTRIBUTION:
      * - All bookings for the room are distributed across available beds
      * - Uses first-available strategy: assigns booking to first bed without conflict
      * - Conflict = another booking on same bed with overlapping dates
      * - If no bed available (all have conflicts), booking is marked as OVERBOOKING
-     *
+     * <p>
      * OVERBOOKING HANDLING:
      * - Overbookings are added as additional "virtual" bed rows beyond bedCount
      * - Each overbooking gets its own bed row (marked as isOverbooking = true)
@@ -344,21 +361,13 @@ public final class EntityDataAdapter {
      *
      * @param rc ResourceConfiguration (room) from database
      * @param bedCount Number of beds to generate (from rc.max)
-     * @param roomDocumentLines All document lines (bookings) for this room
+     * @param allBookings Pre-sorted list of bookings for this room (from adaptAndSortBookings)
      * @return List of GanttBedData with bookings distributed across beds
      */
-    private static List<GanttBedData> generateBeds(ResourceConfiguration rc, int bedCount, List<DocumentLine> roomDocumentLines) {
+    private static List<GanttBedData> generateBeds(ResourceConfiguration rc, int bedCount, List<GanttBookingData> allBookings) {
         List<GanttBedData> beds = new ArrayList<>();
 
-        // Convert document lines directly into booking objects
-        // Sort by start date to process bookings chronologically
-        List<GanttBookingData> allBookings = roomDocumentLines.stream()
-            .map(EntityDataAdapter::adaptBooking)
-            .filter(Objects::nonNull)
-            .sorted(Comparator.comparing(GanttBookingData::getStartDate))
-            .collect(Collectors.toList());
-
-        // STEP 3: Create empty booking lists for each bed
+        // Create empty booking lists for each bed
         // bedBookingsLists[0] = bookings for Bed A
         // bedBookingsLists[1] = bookings for Bed B, etc.
         List<List<GanttBookingData>> bedBookingsLists = new ArrayList<>();
@@ -581,31 +590,37 @@ public final class EntityDataAdapter {
 
     /**
      * Checks if there are any conflicting bookings in a list.
-     *
+     * <p>
      * CONFLICT DETECTION:
      * - Two bookings conflict if their date ranges overlap
      * - Used to detect overbooking in single rooms
      * - If this returns true for a single room, the room must show expandable bed rows
+     * <p>
+     * PERFORMANCE OPTIMIZATION: Uses O(n) scan instead of O(n²) pairwise comparison.
+     * Since bookings are already sorted by start date (from caller), we just need to
+     * check if any booking starts before the max end date seen so far.
      *
-     * OVERLAP LOGIC:
-     * - NO overlap: b1.endDate < b2.startDate OR b1.startDate > b2.endDate
-     * - OVERLAP: NOT(no overlap) = date ranges intersect
-     *
-     * @param bookings List of bookings to check for conflicts
+     * @param bookings List of bookings to check for conflicts (must be sorted by start date)
      * @return true if ANY two bookings have overlapping dates
      */
     private static boolean hasConflictingBookings(List<GanttBookingData> bookings) {
-        // Compare every pair of bookings
-        for (int i = 0; i < bookings.size(); i++) {
-            for (int j = i + 1; j < bookings.size(); j++) {
-                GanttBookingData b1 = bookings.get(i);
-                GanttBookingData b2 = bookings.get(j);
-                // Check if date ranges overlap
-                // Logic: NOT (b1 ends before b2 starts OR b1 starts after b2 ends)
-                if (!(b1.getEndDate().isBefore(b2.getStartDate()) ||
-                      b1.getStartDate().isAfter(b2.getEndDate()))) {
-                    return true; // Found overlapping bookings = conflict
-                }
+        if (bookings.size() < 2) {
+            return false;
+        }
+
+        // Since bookings are already sorted by start date,
+        // we track the maximum end date seen and check for overlaps
+        LocalDate maxEndSoFar = bookings.get(0).getEndDate();
+
+        for (int i = 1; i < bookings.size(); i++) {
+            GanttBookingData current = bookings.get(i);
+            // If current booking starts before the max end date we've seen, there's an overlap
+            if (current.getStartDate().isBefore(maxEndSoFar)) {
+                return true; // Overlap found
+            }
+            // Update max end date if current booking ends later
+            if (current.getEndDate().isAfter(maxEndSoFar)) {
+                maxEndSoFar = current.getEndDate();
             }
         }
         return false; // No conflicts found
@@ -613,7 +628,7 @@ public final class EntityDataAdapter {
 
     /**
      * Checks if a new booking conflicts with existing bookings in a bed.
-     *
+     * <p>
      * CONFLICT DETECTION FOR BED ASSIGNMENT:
      * - Used during booking distribution to find available beds
      * - A bed can only hold one booking at a time (no overlapping dates)
@@ -638,7 +653,7 @@ public final class EntityDataAdapter {
     /**
      * Adapts a DocumentLine (representing a single booking) to GanttBookingData.
      * Uses the startDate and endDate fields directly from DocumentLine.
-     *
+     * <p>
      * For bookings with hasAttendanceGap=true, builds date segments from Attendance records.
      */
     private static GanttBookingData adaptBooking(DocumentLine documentLine) {
@@ -662,7 +677,7 @@ public final class EntityDataAdapter {
         final LocalDate endDate = documentLine.getEndDate();
 
         // Determine booking status (pass endDate to check if departed)
-        BookingStatus bookingStatus = determineBookingStatus(document, documentLine, endDate);
+        BookingStatus bookingStatus = determineBookingStatus(document, endDate);
 
         // Extract comments and special needs
         String comments = document.getRequest();
@@ -741,27 +756,18 @@ public final class EntityDataAdapter {
                 return Boolean.TRUE.equals(document.isArrived());
             }
 
-            @Override
-            public boolean hasAttendanceGaps() {
-                return hasGaps;
-            }
-
-            @Override
-            public List<DateSegment> getDateSegments() {
-                return dateSegments;
-            }
         };
     }
 
     /**
      * Builds date segments from Attendance records for a DocumentLine with gaps.
-     *
+     * <p>
      * Algorithm:
      * 1. Get all attendance dates for this DocumentLine
      * 2. Sort them chronologically
      * 3. Group consecutive dates into segments
      * 4. Each segment represents a continuous stay period
-     *
+     * <p>
      * Example:
      * - Attendances: June 14, 15, 18, 19, 20
      * - Segments: [June 14-16], [June 18-21]
@@ -832,16 +838,15 @@ public final class EntityDataAdapter {
      */
     private static RoomType determineRoomType(Integer maxBeds) {
         if (maxBeds == null || maxBeds <= 1) {
-            return RoomType.SINGLE;
-        } else if (maxBeds == 2) {
-            return RoomType.DOUBLE;
+            return RoomType.SINGLE_BED;
         } else {
-            return RoomType.DORMITORY;
+            return RoomType.MULTI_BED;
         }
     }
 
     /**
-     * Determines the current status of a room based on occupancy and cleaning status.
+     * Determines the current status of a room based on occupancy and cleaning state.
+     * Uses the CleaningState enum for simple status determination.
      */
     private static RoomStatus determineRoomStatus(ResourceConfiguration rc, List<DocumentLine> documentLines) {
         LocalDate today = LocalDate.now();
@@ -857,31 +862,24 @@ public final class EntityDataAdapter {
             return RoomStatus.OCCUPIED;
         }
 
-        // Check if room needs cleaning (any booking that ended recently and is not cleaned)
-        boolean needsCleaning = documentLines.stream()
-            .filter(dl -> dl.getEndDate() != null)
-            .filter(dl -> !dl.getEndDate().isAfter(today)) // Booking has ended
-            .anyMatch(dl -> !dl.isCleaned());
+        // Use CleaningState enum for status determination
+        Resource resource = rc != null ? rc.getResource() : null;
+        CleaningState cleaningState = resource != null ? resource.getCleaningState() : null;
 
-        if (needsCleaning) {
+        // Map CleaningState to RoomStatus
+        if (cleaningState == null || cleaningState == CleaningState.DIRTY) {
             return RoomStatus.TO_CLEAN;
+        } else if (cleaningState == CleaningState.TO_INSPECT) {
+            return RoomStatus.TO_INSPECT;
+        } else {
+            return RoomStatus.READY;
         }
-
-        // Check if room needs inspection based on last cleaning date
-        LocalDate lastCleaningDate = rc.getLastCleaningDate();
-        if (lastCleaningDate != null && lastCleaningDate.isBefore(today)) {
-            // Room was cleaned but might need inspection
-            // This is a simplified heuristic
-        }
-
-        // Otherwise, room is ready
-        return RoomStatus.READY;
     }
 
     /**
      * Determines the booking status based on document and attendance flags.
      */
-    private static BookingStatus determineBookingStatus(Document document, DocumentLine documentLine, LocalDate endDate) {
+    private static BookingStatus determineBookingStatus(Document document, LocalDate endDate) {
         // Check if guest has departed (departure date is today or in the past)
         if (endDate != null) {
             LocalDate today = LocalDate.now();

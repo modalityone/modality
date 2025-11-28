@@ -2,6 +2,7 @@ package one.modality.hotel.backoffice.activities.household.gantt.canvas;
 
 import dev.webfx.extras.canvas.bar.BarDrawer;
 import dev.webfx.extras.geometry.Bounds;
+import dev.webfx.extras.geometry.MutableBounds;
 import dev.webfx.extras.time.layout.bar.LocalDateBar;
 import dev.webfx.extras.time.layout.canvas.LocalDateCanvasDrawer;
 import dev.webfx.extras.time.layout.canvas.TimeCanvasUtil;
@@ -14,24 +15,27 @@ import javafx.scene.Node;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.paint.Color;
+import javafx.scene.text.Font;
+import javafx.scene.text.FontWeight;
 import javafx.scene.text.TextAlignment;
 import one.modality.base.client.gantt.fx.highlight.FXGanttHighlight;
 import one.modality.base.client.gantt.fx.selection.FXGanttSelection;
 import one.modality.base.client.gantt.fx.timewindow.FXGanttTimeWindow;
 import one.modality.hotel.backoffice.accommodation.AccommodationPresentationModel;
 import one.modality.hotel.backoffice.activities.household.gantt.model.BookingStatus;
-import one.modality.hotel.backoffice.activities.household.gantt.model.GanttRoomData;
 import one.modality.hotel.backoffice.activities.household.gantt.renderer.GanttColorScheme;
 
 import java.time.LocalDate;
+import java.util.List;
+import java.util.Set;
 
 /**
  * Canvas-based Gantt chart for household/housekeeping management.
  * Replaces the GridPane-based implementation with high-performance Canvas rendering.
- *
+ * <p>
  * This implementation follows the patterns from AccommodationGantt and AttendanceGantt,
  * using LocalDateGanttLayout for positioning and BarDrawer for rendering.
- *
+ * <p>
  * Architecture:
  * - LocalDateGanttLayout: Positions bars in time (handles date-based X coordinates)
  * - ParentsCanvasDrawer: Renders parent (room) and grandparent (category) headers
@@ -46,10 +50,7 @@ public class HouseholdGanttCanvas {
     private static final double ROW_HEIGHT = 34;
     private static final double BAR_HEIGHT = 18;  // Bars are centered vertically within ROW_HEIGHT
     private static final double BAR_RADIUS = 10;
-    private static final double ROOM_HEADER_WIDTH = 130;
-
-    // Presentation model for binding time window
-    private final AccommodationPresentationModel pm;
+    private static final double ROOM_HEADER_WIDTH = 180;  // Increased from 130 for better room name display
 
     // Layout infrastructure - positions bars in time
     protected final LocalDateGanttLayout<LocalDateBar<HouseholdBookingBlock>> barsLayout =
@@ -73,45 +74,44 @@ public class HouseholdGanttCanvas {
                     // Enable canvas interaction (user can move & zoom in/out the time window)
                     .enableCanvasInteraction();
 
-    // Parents drawer - draws room and category headers
-    // IMPORTANT: This must be a field (not local variable) so it stays alive and continues drawing
-    public final ParentsCanvasDrawer parentsCanvasDrawer = ParentsCanvasDrawer.create(barsLayout, barsDrawer)
-            .setParentDrawer(this::drawParentRoom)
-            .setGrandparentDrawer(this::drawGrandparentCategory)
-            // No child row header drawer - beds are now parents themselves when expanded
-            .setHorizontalStroke(Color.rgb(220, 220, 220))
-            .setVerticalStroke(Color.rgb(233, 233, 233), false)
-            .setTetrisAreaFill(Color.rgb(243, 243, 243));
-
     // BarDrawer instances - reusable for all bars/headers
     protected final BarDrawer bookingBarDrawer = new BarDrawer()
             .setTextFill(Color.WHITE)
             .setRadius(BAR_RADIUS);
 
+    // BarDrawer for parent room headers (left column)
     protected final BarDrawer parentRoomDrawer = new BarDrawer()
             .setBackgroundFill(Color.WHITE)
             .setStroke(Color.grayRgb(130))
             .setTextFill(Color.BLACK)
-            .setTextAlignment(TextAlignment.LEFT);
+            .setTextAlignment(TextAlignment.LEFT)
+            .setTextFont(Font.font("System", FontWeight.BOLD, 11));
 
-    protected final BarDrawer grandparentCategoryDrawer = new BarDrawer()
+    // BarDrawer for grandparent room type headers (top row) - light grey background, white text
+    protected final BarDrawer grandparentRoomTypeDrawer = new BarDrawer()
             .setStroke(Color.grayRgb(130))
-            .setBackgroundFill(Color.WHITE)
+            .setBackgroundFill(Color.web("#9CA3AF"))  // Light grey (matches active filter buttons)
             .setTextAlignment(TextAlignment.CENTER)
-            .setTextFill(GanttColorScheme.COLOR_BLUE);
+            .setTextFill(Color.WHITE)
+            .setTextFont(Font.font("System", FontWeight.BOLD, 11));
+
+    // ParentsCanvasDrawer - draws parent (room names) and grandparent (category) headers
+    protected final ParentsCanvasDrawer parentsCanvasDrawer;
 
     // Color scheme for styling
     private final GanttColorScheme colorScheme = new GanttColorScheme();
 
-    // Presenter for expand/collapse state
-    private final one.modality.hotel.backoffice.activities.household.gantt.presenter.GanttPresenter presenter;
-
     // Canvas-based tooltip (replaces JavaFX Tooltip which doesn't compile with WebFX)
-    private CanvasTooltip canvasTooltip;
+    private final CanvasTooltip canvasTooltip;
 
-    public HouseholdGanttCanvas(AccommodationPresentationModel pm, one.modality.hotel.backoffice.activities.household.gantt.presenter.GanttPresenter presenter) {
-        this.pm = pm;
-        this.presenter = presenter;
+    public HouseholdGanttCanvas(AccommodationPresentationModel pm) {
+        // Presentation model for binding time window
+        // Presenter for expand/collapse state
+
+        // Initialize ParentsCanvasDrawer for drawing room names (parent) and category headers (grandparent)
+        this.parentsCanvasDrawer = ParentsCanvasDrawer.create(barsLayout, barsDrawer)
+                .setParentDrawer(this::drawParentRoom)
+                .setGrandparentDrawer(this::drawGrandparentCategory);
 
         // Binding the presentation model and the barsLayout time window
         barsLayout.bindTimeWindowBidirectional(pm);
@@ -130,7 +130,10 @@ public class HouseholdGanttCanvas {
         // Add day backgrounds and grid lines before drawing bars
         barsDrawer.addOnBeforeDraw(this::drawDayBackgroundsAndGrid);
 
-        // Add overbooking row backgrounds before drawing bars
+        // Add expanded multi-bed room block backgrounds (light grey for room + beds as a group)
+        barsDrawer.addOnBeforeDraw(this::drawExpandedBlockBackgrounds);
+
+        // Add overbooking row backgrounds before drawing bars (higher priority than expanded backgrounds)
         barsDrawer.addOnBeforeDraw(this::drawOverbookingRowBackgrounds);
 
         // Pairing this Gantt canvas with the referent one (ie the event Gantt canvas on top), so it always stays
@@ -194,138 +197,9 @@ public class HouseholdGanttCanvas {
     }
 
     /**
-     * Draws a category header (grandparent).
-     * Categories are displayed as vertical headers on the left side.
-     */
-    protected void drawGrandparentCategory(String category, Bounds b, GraphicsContext gc) {
-        grandparentCategoryDrawer
-                .setMiddleText(category)
-                .drawBar(b, gc);
-    }
-
-    /**
-     * Draws a parent row (either room or bed).
-     * - For room rows: Shows expand/collapse arrow (if multi-bed), status dot, room name, action icon
-     * - For bed rows: Shows indented bed label
-     *
-     * Layout uses FIXED positions to ensure alignment across all rows:
-     * - Position 8: Expand arrow (only drawn for multi-bed rooms, but space reserved)
-     * - Position 26: Status dot (always at same X regardless of expand arrow)
-     * - Position 40: Room name
-     * - Right edge - 16: Action icon (⋮)
-     */
-    protected void drawParentRoom(GanttParentRow parentRow, Bounds b, GraphicsContext gc) {
-        GanttRoomData room = parentRow.getRoom();
-
-        // Fixed positions for consistent alignment (based on UX design)
-        final double EXPAND_ARROW_X = b.getMinX() + 8;      // Expand arrow position
-        final double STATUS_DOT_X = b.getMinX() + 26;       // Status dot center X (after expand arrow space)
-        final double ROOM_NAME_X = b.getMinX() + 40;        // Room name start X
-        final double ACTION_ICON_X = b.getMinX() + b.getWidth() - 16;  // Action icon X (right side)
-        final double centerY = b.getMinY() + b.getHeight() / 2;
-
-        // Different styling for bed rows vs room rows
-        if (parentRow.isBed()) {
-            // Draw background for bed row - danger color for overbooking, light gray for normal beds
-            Color bgColor = parentRow.isOverbooking() ?
-                Color.rgb(255, 230, 230) :  // Light red for overbooking
-                Color.rgb(248, 248, 248);   // Light gray for normal beds
-
-            parentRoomDrawer
-                    .setBackgroundFill(bgColor)
-                    .setMiddleText(null)
-                    .drawBar(b, gc);
-
-            // Draw bed label with indent - red text for overbooking
-            // Bed labels use "└" prefix in blue, then bed name at fixed position
-            Color textColor = parentRow.isOverbooking() ?
-                Color.rgb(200, 0, 0) :     // Red for overbooking
-                Color.rgb(130, 130, 130);  // Gray for normal beds
-
-            gc.setFont(javafx.scene.text.Font.font("System", 11));
-            gc.setTextAlign(javafx.scene.text.TextAlignment.LEFT);
-            gc.setTextBaseline(javafx.geometry.VPos.CENTER);
-
-            // Draw indent marker "└" in blue at status dot position
-            gc.setFill(Color.web("#0096D6"));
-            gc.fillText("└", STATUS_DOT_X - 6, centerY);
-
-            // Draw bed name at room name position for alignment
-            gc.setFill(textColor);
-            gc.fillText(parentRow.getDisplayName(), ROOM_NAME_X, centerY);
-        } else {
-            // Draw room row
-            parentRoomDrawer
-                    .setBackgroundFill(Color.WHITE)
-                    .setMiddleText(null)  // Don't draw text yet
-                    .drawBar(b, gc);
-
-            // Erase the left side of the stroke rectangle to match UX design
-            gc.setFill(Color.WHITE);
-            gc.fillRect(b.getMinX(), b.getMinY(), 2, b.getHeight());
-
-            // Draw expand/collapse arrow for multi-bed rooms (at fixed position)
-            if (parentRow.isMultiBedRoom()) {
-                boolean isExpanded = presenter.isRoomExpanded(room.getId());
-                String arrow = isExpanded ? "∨" : "›";  // Down arrow when expanded, right arrow when collapsed
-
-                gc.setFill(Color.web("#333333"));
-                gc.setFont(javafx.scene.text.Font.font("System", javafx.scene.text.FontWeight.BOLD, 14));
-                gc.setTextAlign(javafx.scene.text.TextAlignment.LEFT);
-                gc.setTextBaseline(javafx.geometry.VPos.CENTER);
-                gc.fillText(arrow, EXPAND_ARROW_X, centerY);
-            }
-
-            // Draw status dot (at fixed position - always aligned)
-            if (room.getStatus() != null) {
-                Color statusColor = colorScheme.getRoomStatusColor(room.getStatus());
-                double dotRadius = 4;
-
-                gc.setFill(statusColor);
-                gc.fillOval(STATUS_DOT_X - dotRadius, centerY - dotRadius, dotRadius * 2, dotRadius * 2);
-            }
-
-            // Draw room name (at fixed position - always aligned)
-            gc.setFill(Color.BLACK);
-            gc.setTextAlign(javafx.scene.text.TextAlignment.LEFT);
-            gc.setTextBaseline(javafx.geometry.VPos.CENTER);
-            gc.setFont(javafx.scene.text.Font.font("System", javafx.scene.text.FontWeight.BOLD, 12));
-            gc.fillText(room.getName(), ROOM_NAME_X, centerY);
-
-            // Draw action icon (⋮) at right side of cell
-            gc.setFill(Color.web("#333333"));
-            gc.setFont(javafx.scene.text.Font.font("System", 14));
-            gc.setTextAlign(javafx.scene.text.TextAlignment.CENTER);
-            gc.setTextBaseline(javafx.geometry.VPos.CENTER);
-            gc.fillText("⋮", ACTION_ICON_X, centerY);
-
-            // Draw room comments if present (small italic text after room name, truncated)
-            if (room.getRoomComments() != null && !room.getRoomComments().isEmpty()) {
-                // Calculate available width for comment (between room name and action icon)
-                double roomNameWidth = room.getName().length() * 7.2;  // Approximate width at 12px bold
-                double commentStartX = ROOM_NAME_X + roomNameWidth + 8;
-                double availableWidth = ACTION_ICON_X - commentStartX - 10;
-
-                if (availableWidth > 30) {  // Only show if there's reasonable space
-                    String comment = room.getRoomComments();
-                    // Truncate if needed (approx 6px per char at 10px font)
-                    int maxChars = (int) (availableWidth / 6);
-                    if (comment.length() > maxChars && maxChars > 3) {
-                        comment = comment.substring(0, maxChars - 3) + "...";
-                    }
-                    gc.setFill(Color.web("#666666"));
-                    gc.setFont(javafx.scene.text.Font.font("System", javafx.scene.text.FontPosture.ITALIC, 10));
-                    gc.setTextAlign(javafx.scene.text.TextAlignment.LEFT);
-                    gc.fillText(comment, commentStartX, centerY);
-                }
-            }
-        }
-    }
-
-    /**
      * Draws a booking bar.
      * This is called for each bar by LocalDateCanvasDrawer.
-     *
+     * <p>
      * Booking bars use the Gantt flow pattern:
      * - Bar spans multiple days as a continuous visual element
      * - Rounded corners only on the start/end of the booking
@@ -347,20 +221,7 @@ public class HouseholdGanttCanvas {
         LocalDate dayAfterStart = startDate.plusDays(1);
         double dayWidth = barsLayout.getTimeProjector().timeToX(dayAfterStart, true, false)
                          - barsLayout.getTimeProjector().timeToX(startDate, true, false);
-        double halfDayWidth = dayWidth / 2;
-
-        // Create adjusted bounds:
-        // - X: shift right by half a day (to middle of arrival day)
-        // - Y: center vertically within row using BAR_HEIGHT
-        // - Width: keep same width (shift both start AND end by half day to center the bar)
-        //          Original bounds: [start of arrival day, start of checkout day)
-        //          After shift: [middle of arrival day, middle of checkout day)
-        // - Height: use BAR_HEIGHT constant for consistent bar sizing
-        dev.webfx.extras.geometry.MutableBounds adjustedBounds = new dev.webfx.extras.geometry.MutableBounds();
-        adjustedBounds.setMinX(b.getMinX() + halfDayWidth);
-        adjustedBounds.setMinY(b.getMinY() + (b.getHeight() - BAR_HEIGHT) / 2);  // Center bar vertically
-        adjustedBounds.setWidth(b.getWidth());  // Width stays same - both start and end shift by half day
-        adjustedBounds.setHeight(BAR_HEIGHT);
+        MutableBounds adjustedBounds = getMutableBounds(b, dayWidth);
 
         // Get bar color based on booking status
         Color barColor = colorScheme.getBookingStatusColor(block.getStatus());
@@ -380,6 +241,24 @@ public class HouseholdGanttCanvas {
         }
     }
 
+    private static MutableBounds getMutableBounds(Bounds b, double dayWidth) {
+        double halfDayWidth = dayWidth / 2;
+
+        // Create adjusted bounds:
+        // - X: shift right by half a day (to middle of arrival day)
+        // - Y: center vertically within row using BAR_HEIGHT
+        // - Width: keep same width (shift both start AND end by half day to center the bar)
+        //          Original bounds: [start of arrival day, start of checkout day)
+        //          After shift: [middle of arrival day, middle of checkout day)
+        // - Height: use BAR_HEIGHT constant for consistent bar sizing
+        MutableBounds adjustedBounds = new MutableBounds();
+        adjustedBounds.setMinX(b.getMinX() + halfDayWidth);
+        adjustedBounds.setMinY(b.getMinY() + (b.getHeight() - BAR_HEIGHT) / 2);  // Center bar vertically
+        adjustedBounds.setWidth(b.getWidth());  // Width stays same - both start and end shift by half day
+        adjustedBounds.setHeight(BAR_HEIGHT);
+        return adjustedBounds;
+    }
+
     /**
      * Draws a regular booking bar with person icon on first day (no text).
      * Used for single rooms and individual bed bookings in expanded multi-bed rooms.
@@ -390,7 +269,7 @@ public class HouseholdGanttCanvas {
         bookingBarDrawer
                 .setBackgroundFill(barColor)
                 .setTextFill(Color.WHITE)
-                .setStroke(block.hasConflict() ? GanttColorScheme.COLOR_RED : null)
+                .setStroke(block.hasConflict() ? GanttColorScheme.COLOR_CONFLICT : null)
                 .setRadius(BAR_RADIUS)
                 .setMiddleText(null);  // No text - only icon
 
@@ -499,7 +378,7 @@ public class HouseholdGanttCanvas {
         gc.setTextAlign(javafx.scene.text.TextAlignment.CENTER);
         gc.setTextBaseline(javafx.geometry.VPos.CENTER);
 
-        // Draw occupancy text for each day (including the last day where bar ends at middle)
+        // Draw occupancy text for each day (including the last day when bar ends at middle)
         LocalDate currentDate = startDate;
         while (!currentDate.isAfter(endDate)) {
             // Get occupancy for this day
@@ -548,10 +427,9 @@ public class HouseholdGanttCanvas {
                     // Calculate the X position for this booking's comment icon
                     // The icon should be at the same position as on bed lines
                     LocalDate bookingStart = booking.getStartDate();
-                    LocalDate barStart = startDate;
 
                     // Calculate pixel offset from bar start to booking start
-                    double barStartX = barsLayout.getTimeProjector().timeToX(barStart, true, false);
+                    double barStartX = barsLayout.getTimeProjector().timeToX(startDate, true, false);
                     double bookingStartX = barsLayout.getTimeProjector().timeToX(bookingStart, true, false);
                     double offsetFromBarStart = bookingStartX - barStartX;
 
@@ -669,6 +547,66 @@ public class HouseholdGanttCanvas {
     }
 
     /**
+     * Draws light grey backgrounds for expanded multi-bed room blocks.
+     * When a multi-bed room is unfolded, both the room row and all its bed rows
+     * are highlighted with a light grey background to visually group them together.
+     * This has lower priority than danger backgrounds (overbooking) and today's highlight.
+     */
+    private void drawExpandedBlockBackgrounds() {
+        GraphicsContext gc = barsDrawer.getCanvas().getGraphicsContext2D();
+        double canvasWidth = barsDrawer.getCanvas().getWidth();
+
+        // Get scroll offset to adjust Y coordinates
+        double layoutOriginY = barsDrawer.getLayoutOriginY();
+
+        // Get all parent rows from the layout
+        java.util.List<dev.webfx.extras.time.layout.gantt.impl.ParentRow<LocalDateBar<HouseholdBookingBlock>>> parentRows = barsLayout.getParentRows();
+        if (parentRows.isEmpty()) {
+            return;
+        }
+
+        // Light grey color for expanded block background
+        Color expandedBlockColor = Color.rgb(245, 245, 245); // Very light grey
+
+        // Calculate today's column bounds to skip it (preserve today's yellow highlight)
+        LocalDate today = LocalDate.now();
+        double todayStartX = barsLayout.getTimeProjector().timeToX(today, true, false);
+        double todayEndX = barsLayout.getTimeProjector().timeToX(today.plusDays(1), true, false);
+
+        // Draw expanded block backgrounds
+        for (dev.webfx.extras.time.layout.gantt.impl.ParentRow<LocalDateBar<HouseholdBookingBlock>> parentRow : parentRows) {
+            Object parent = parentRow.getParent();
+            if (parent instanceof GanttParentRow ganttParent) {
+
+                // Get the row bounds from the ParentRow
+                Bounds rowBounds = parentRow.getHeader();
+                if (rowBounds == null) {
+                    continue;
+                }
+
+                // Adjust Y coordinate for scroll position
+                double adjustedY = rowBounds.getMinY() - layoutOriginY;
+
+                // Draw background for expanded room rows and their bed rows
+                // Case 1: Expanded multi-bed room row
+                // Case 2: Bed row (belongs to an expanded multi-bed room)
+                if ((ganttParent.expanded() && ganttParent.isMultiBedRoom()) || ganttParent.isBed()) {
+                    gc.setFill(expandedBlockColor);
+                    // Draw grey background in two parts, skipping today's column
+                    // Part 1: From left edge to today's start
+                    if (todayStartX > 0) {
+                        gc.fillRect(0, adjustedY, todayStartX, rowBounds.getHeight());
+                    }
+                    // Part 2: From today's end to right edge
+                    if (todayEndX < canvasWidth) {
+                        gc.fillRect(todayEndX, adjustedY, canvasWidth - todayEndX, rowBounds.getHeight());
+                    }
+                }
+            }
+        }
+    }
+
+    /**
      * Draws danger-colored backgrounds for overbooking situations.
      * For overbooking beds: highlights the entire row (including label cell)
      * For regular rooms with overbooking: highlights only specific day cells where overbooking occurs
@@ -690,15 +628,14 @@ public class HouseholdGanttCanvas {
 
         // Get all parent rows from the layout
         java.util.List<dev.webfx.extras.time.layout.gantt.impl.ParentRow<LocalDateBar<HouseholdBookingBlock>>> parentRows = barsLayout.getParentRows();
-        if (parentRows == null || parentRows.isEmpty()) {
+        if (parentRows.isEmpty()) {
             return;
         }
 
         // Draw danger backgrounds
         for (dev.webfx.extras.time.layout.gantt.impl.ParentRow<LocalDateBar<HouseholdBookingBlock>> parentRow : parentRows) {
             Object parent = parentRow.getParent();
-            if (parent instanceof GanttParentRow) {
-                GanttParentRow ganttParent = (GanttParentRow) parent;
+            if (parent instanceof GanttParentRow ganttParent) {
 
                 // Get the row bounds from the ParentRow
                 Bounds rowBounds = parentRow.getHeader();
@@ -718,7 +655,7 @@ public class HouseholdGanttCanvas {
                 else if (!ganttParent.isBed()) {
                     // For rooms, check bars to find overbooking situations
                     java.util.List<LocalDateBar<HouseholdBookingBlock>> allBars = barsLayout.getChildren();
-                    int roomCapacity = ganttParent.getRoom().getCapacity();
+                    int roomCapacity = ganttParent.room().getCapacity();
 
                     // Collect ALL daily occupancy data for this room across all aggregate bars
                     java.util.Map<LocalDate, Integer> combinedOccupancy = new java.util.HashMap<>();
@@ -758,45 +695,7 @@ public class HouseholdGanttCanvas {
                     // For single rooms: check for overlapping bookings
                     else if (!hasAggregateBars && roomCapacity == 1) {
                         // Collect all booking bars for this room
-                        java.util.Set<LocalDate> overbookedDates = new java.util.HashSet<>();
-
-                        for (LocalDateBar<HouseholdBookingBlock> bar : allBars) {
-                            HouseholdBookingBlock block = bar.getInstance();
-
-                            if (block.getParentRow() == ganttParent && !block.isAggregateBar()) {
-                                LocalDate startDate = bar.getStartTime();
-                                LocalDate endDate = bar.getEndTime();
-
-                                if (startDate != null && endDate != null) {
-                                    // For each day in this booking, check if other bookings overlap
-                                    LocalDate currentDate = startDate;
-                                    while (currentDate.isBefore(endDate)) {
-                                        final LocalDate checkDate = currentDate;
-
-                                        // Count how many bookings overlap this date
-                                        int overlappingCount = 0;
-                                        for (LocalDateBar<HouseholdBookingBlock> otherBar : allBars) {
-                                            HouseholdBookingBlock otherBlock = otherBar.getInstance();
-                                            if (otherBlock.getParentRow() == ganttParent && !otherBlock.isAggregateBar()) {
-                                                LocalDate otherStart = otherBar.getStartTime();
-                                                LocalDate otherEnd = otherBar.getEndTime();
-                                                if (otherStart != null && otherEnd != null &&
-                                                    !checkDate.isBefore(otherStart) && checkDate.isBefore(otherEnd)) {
-                                                    overlappingCount++;
-                                                }
-                                            }
-                                        }
-
-                                        // If more than capacity bookings overlap, mark this day as overbooked
-                                        if (overlappingCount > roomCapacity) {
-                                            overbookedDates.add(checkDate);
-                                        }
-
-                                        currentDate = currentDate.plusDays(1);
-                                    }
-                                }
-                            }
-                        }
+                        Set<LocalDate> overbookedDates = getLocalDates(ganttParent, allBars, roomCapacity);
 
                         // Draw danger backgrounds for all overbooked dates
                         for (LocalDate date : overbookedDates) {
@@ -810,6 +709,164 @@ public class HouseholdGanttCanvas {
                         }
                     }
                 }
+            }
+        }
+    }
+
+    private static Set<LocalDate> getLocalDates(GanttParentRow ganttParent, List<LocalDateBar<HouseholdBookingBlock>> allBars, int roomCapacity) {
+        Set<LocalDate> overbookedDates = new java.util.HashSet<>();
+
+        for (LocalDateBar<HouseholdBookingBlock> bar : allBars) {
+            HouseholdBookingBlock block = bar.getInstance();
+
+            if (block.getParentRow() == ganttParent && !block.isAggregateBar()) {
+                LocalDate startDate = bar.getStartTime();
+                LocalDate endDate = bar.getEndTime();
+
+                if (startDate != null && endDate != null) {
+                    // For each day in this booking, check if other bookings overlap
+                    LocalDate currentDate = startDate;
+                    while (currentDate.isBefore(endDate)) {
+                        final LocalDate checkDate = currentDate;
+
+                        // Count how many bookings overlap this date
+                        int overlappingCount = getOverlappingCount(ganttParent, allBars, checkDate);
+
+                        // If more than capacity bookings overlap, mark this day as overbooked
+                        if (overlappingCount > roomCapacity) {
+                            overbookedDates.add(checkDate);
+                        }
+
+                        currentDate = currentDate.plusDays(1);
+                    }
+                }
+            }
+        }
+        return overbookedDates;
+    }
+
+    private static int getOverlappingCount(GanttParentRow ganttParent, List<LocalDateBar<HouseholdBookingBlock>> allBars, LocalDate checkDate) {
+        int overlappingCount = 0;
+        for (LocalDateBar<HouseholdBookingBlock> otherBar : allBars) {
+            HouseholdBookingBlock otherBlock = otherBar.getInstance();
+            if (otherBlock.getParentRow() == ganttParent && !otherBlock.isAggregateBar()) {
+                LocalDate otherStart = otherBar.getStartTime();
+                LocalDate otherEnd = otherBar.getEndTime();
+                if (otherStart != null && otherEnd != null &&
+                    !checkDate.isBefore(otherStart) && checkDate.isBefore(otherEnd)) {
+                    overlappingCount++;
+                }
+            }
+        }
+        return overlappingCount;
+    }
+
+    /**
+     * Draws a grandparent category header (room type/category name).
+     * This is called by ParentsCanvasDrawer for each category.
+     */
+    protected void drawGrandparentCategory(Object category, Bounds b, GraphicsContext gc) {
+        String categoryName = category != null ? category.toString() : "";
+        grandparentRoomTypeDrawer
+                .setMiddleText(categoryName)
+                .drawBar(b, gc);
+    }
+
+    /**
+     * Draws a parent room header (room name in the left column).
+     * This is called by ParentsCanvasDrawer for each room/bed row.
+     * Layout: [arrow (if multi-bed)] [status dot] [room name] ... [action icon]
+     */
+    protected void drawParentRoom(Object parent, Bounds b, GraphicsContext gc) {
+        if (parent instanceof GanttParentRow ganttParent) {
+            String roomName = ganttParent.room() != null ? ganttParent.room().getName() : "";
+
+            // Constants for layout
+            double leftPadding = 8;
+            double arrowWidth = 14;
+            double dotRadius = 4;
+            double gap = 6;
+
+            // For bed rows, show bed label instead of room name
+            if (ganttParent.isBed()) {
+                roomName = ganttParent.bed() != null ? ganttParent.bed().getName() : roomName;
+                boolean isOverbooking = ganttParent.isOverbooking();
+
+                // Draw background - danger red for overbooking, grey for normal beds
+                Color bgColor = isOverbooking ? Color.web("#FFCDD2") : Color.grayRgb(248);
+                gc.setFill(bgColor);
+                gc.fillRect(b.getMinX(), b.getMinY(), b.getWidth(), b.getHeight());
+
+                // Draw border (right and bottom)
+                gc.setStroke(Color.grayRgb(200));
+                gc.setLineWidth(1);
+                gc.strokeLine(b.getMaxX(), b.getMinY(), b.getMaxX(), b.getMaxY());
+                gc.strokeLine(b.getMinX(), b.getMaxY(), b.getMaxX(), b.getMaxY());
+
+                // Draw status dot for bed
+                double dotX = b.getMinX() + leftPadding + arrowWidth + gap + dotRadius;
+                double dotY = b.getMinY() + b.getHeight() / 2;
+                Color statusColor = ganttParent.bed() != null ?
+                        colorScheme.getRoomStatusColor(ganttParent.bed().getStatus()) : Color.GRAY;
+                gc.setFill(statusColor);
+                gc.fillOval(dotX - dotRadius, dotY - dotRadius, dotRadius * 2, dotRadius * 2);
+
+                // Draw bed name (indented) - white text for overbooking, grey for normal
+                Color textColor = isOverbooking ? Color.WHITE : Color.web("#666666");
+                gc.setFill(textColor);
+                gc.setFont(Font.font("System", isOverbooking ? FontWeight.BOLD : FontWeight.NORMAL, 12));
+                gc.setTextAlign(javafx.scene.text.TextAlignment.LEFT);
+                gc.setTextBaseline(javafx.geometry.VPos.CENTER);
+                double textX = dotX + dotRadius + gap;
+                gc.fillText(roomName, textX, dotY);
+
+            } else {
+                // Room row
+                // Draw background
+                Color bgColor = ganttParent.expanded() ? Color.web("#ECECEC") : Color.WHITE;
+                gc.setFill(bgColor);
+                gc.fillRect(b.getMinX(), b.getMinY(), b.getWidth(), b.getHeight());
+
+                // Draw border (right and bottom)
+                gc.setStroke(Color.grayRgb(200));
+                gc.setLineWidth(1);
+                gc.strokeLine(b.getMaxX(), b.getMinY(), b.getMaxX(), b.getMaxY());
+                gc.strokeLine(b.getMinX(), b.getMaxY(), b.getMaxX(), b.getMaxY());
+
+                double currentX = b.getMinX() + leftPadding;
+                double centerY = b.getMinY() + b.getHeight() / 2;
+
+                // Draw expand/collapse arrow for multi-bed rooms
+                if (ganttParent.isMultiBedRoom()) {
+                    String arrow = ganttParent.expanded() ? "∨" : "›";
+                    gc.setFill(Color.web("#333333"));
+                    gc.setFont(Font.font("System", FontWeight.BOLD, 14));
+                    gc.setTextAlign(javafx.scene.text.TextAlignment.LEFT);
+                    gc.setTextBaseline(javafx.geometry.VPos.CENTER);
+                    gc.fillText(arrow, currentX, centerY);
+                }
+                currentX += arrowWidth + gap;
+
+                // Draw status dot
+                double dotX = currentX + dotRadius;
+                Color statusColor = ganttParent.room() != null ?
+                        colorScheme.getRoomStatusColor(ganttParent.room().getStatus()) : Color.GRAY;
+                gc.setFill(statusColor);
+                gc.fillOval(dotX - dotRadius, centerY - dotRadius, dotRadius * 2, dotRadius * 2);
+                currentX = dotX + dotRadius + gap;
+
+                // Draw room name
+                gc.setFill(Color.web("#333333"));
+                gc.setFont(Font.font("System", FontWeight.BOLD, 13));
+                gc.setTextAlign(javafx.scene.text.TextAlignment.LEFT);
+                gc.setTextBaseline(javafx.geometry.VPos.CENTER);
+                gc.fillText(roomName, currentX, centerY);
+
+                // Draw action icon (⋮) on the right side
+                gc.setFill(Color.grayRgb(100));
+                gc.setFont(Font.font("System", 14));
+                gc.setTextAlign(javafx.scene.text.TextAlignment.CENTER);
+                gc.fillText("⋮", b.getMaxX() - 16, centerY);
             }
         }
     }
@@ -911,10 +968,6 @@ public class HouseholdGanttCanvas {
 
         public void setParentRow(GanttParentRow parentRow) {
             this.parentRow = parentRow;
-        }
-
-        public boolean isMultiOccupancy() {
-            return totalCapacity > 1;
         }
 
         public java.util.Map<java.time.LocalDate, Integer> getDailyOccupancy() {

@@ -17,7 +17,6 @@ module modality.hotel.backoffice.activities.household {
     requires modality.base.shared.entities;
     requires modality.event.backoffice.events.ganttcanvas.plugin;
     requires modality.hotel.backoffice.accommodation;
-    requires modality.hotel.backoffice.operations.documentline;
     requires webfx.extras.canvas.bar;
     requires webfx.extras.geometry;
     requires webfx.extras.i18n;
@@ -38,9 +37,11 @@ module modality.hotel.backoffice.activities.household {
     requires webfx.stack.routing.router;
     requires webfx.stack.routing.router.client;
     requires webfx.stack.routing.uirouter;
+    requires webfx.platform.util;
 
     // Exported packages
     exports one.modality.hotel.backoffice.activities.household;
+    exports one.modality.hotel.backoffice.activities.household.dashboard.data;
     exports one.modality.hotel.backoffice.activities.household.dashboard.model;
     exports one.modality.hotel.backoffice.activities.household.dashboard.presenter;
     exports one.modality.hotel.backoffice.activities.household.dashboard.view;

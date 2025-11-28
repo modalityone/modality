@@ -6,6 +6,7 @@ import one.modality.hotel.backoffice.activities.household.gantt.model.*;
 
 import java.time.LocalDate;
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.HashSet;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -97,7 +98,7 @@ public class GanttPresenter {
     public List<BookingBar> calculateBookingBars(GanttRoomData room, LocalDate date) {
         List<BookingBar> bars = new ArrayList<>();
 
-        if (room.getRoomType() == RoomType.SINGLE) {
+        if (room.getRoomType() == RoomType.SINGLE_BED) {
             // Single room: check if it has beds (overbooking case when collapsed)
             if (!room.getBeds().isEmpty() && !isRoomExpanded(room.getId())) {
                 // Single room with overbooking, collapsed: show first booking from beds
@@ -113,7 +114,7 @@ public class GanttPresenter {
 
                 if (!allBookings.isEmpty()) {
                     // Sort by start date to get the first booking
-                    allBookings.sort((b1, b2) -> b1.getStartDate().compareTo(b2.getStartDate()));
+                    allBookings.sort(Comparator.comparing(GanttBookingData::getStartDate));
                     GanttBookingData firstBooking = allBookings.get(0);
 
                     // Create bar for the first booking
@@ -137,12 +138,12 @@ public class GanttPresenter {
                     for (GanttBookingData booking : activeBookings) {
                         BookingBar bar = bookingAggregator.createSingleRoomBookingBar(booking, date);
                         BookingBar conflictBar = new BookingBar(
-                                bar.getStatus(),
-                                bar.getPosition(),
-                                bar.getOccupancy(),
-                                bar.getTotalCapacity(),
+                                bar.status(),
+                                bar.position(),
+                                bar.occupancy(),
+                                bar.totalCapacity(),
                                 true, // Mark as conflict
-                                bar.getGuestInfo(),
+                                bar.guestInfo(),
                                 bar.hasComments(),
                                 false
                         );
@@ -153,12 +154,12 @@ public class GanttPresenter {
                     for (GanttBookingData booking : activeBookings) {
                         BookingBar bar = bookingAggregator.createSingleRoomBookingBar(booking, date);
                         BookingBar turnoverBar = new BookingBar(
-                                bar.getStatus(),
-                                bar.getPosition(),
-                                bar.getOccupancy(),
-                                bar.getTotalCapacity(),
+                                bar.status(),
+                                bar.position(),
+                                bar.occupancy(),
+                                bar.totalCapacity(),
                                 false,
-                                bar.getGuestInfo(),
+                                bar.guestInfo(),
                                 bar.hasComments(),
                                 true // Mark as turnover
                         );
@@ -202,13 +203,6 @@ public class GanttPresenter {
     }
 
     /**
-     * Gets the date range as a formatted string
-     */
-    public String getDateRangeText() {
-        return timeWindowStart + " - " + timeWindowEnd;
-    }
-
-    /**
      * Gets the filter manager
      */
     public GanttFilterManager getFilterManager() {
@@ -238,13 +232,6 @@ public class GanttPresenter {
      */
     public ObservableSet<String> getExpandedRoomIds() {
         return expandedRoomIds;
-    }
-
-    /**
-     * Collapses all expanded rooms
-     */
-    public void collapseAllRooms() {
-        expandedRoomIds.clear();
     }
 
     /**

@@ -1,5 +1,7 @@
 package one.modality.hotel.backoffice.activities.household.gantt.model;
 
+import one.modality.base.shared.entities.Resource;
+
 import java.util.List;
 
 /**
@@ -15,6 +17,13 @@ public interface GanttRoomData {
     RoomStatus getStatus();
     RoomType getRoomType();
     String getRoomComments();
+
+    /**
+     * Returns the Resource entity for this room.
+     * Used to update lastCleaningDate and lastInspectionDate for housekeeping operations.
+     * May return null if the room doesn't have an associated Resource entity.
+     */
+    Resource getResource();
 
     /**
      * Returns the actual room capacity from the database (max field).

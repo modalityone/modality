@@ -7,7 +7,6 @@ import one.modality.base.shared.entities.Attendance;
 import one.modality.base.shared.entities.DocumentLine;
 import one.modality.base.shared.entities.ResourceConfiguration;
 import one.modality.hotel.backoffice.accommodation.AccommodationPresentationModel;
-import one.modality.hotel.backoffice.activities.household.gantt.presenter.GanttPresenter;
 
 import java.time.LocalDate;
 
@@ -16,15 +15,15 @@ import static dev.webfx.stack.orm.dql.DqlStatement.where;
 /**
  * Data loader for the Household Gantt view.
  * Loads rooms and bookings from the database using reactive queries.
- *
+ * <p>
  * PERFORMANCE OPTIMIZATION: Uses DocumentLine.startDate/endDate fields directly
  * instead of querying the Attendance table for most bookings. This significantly
  * reduces the number of records returned (one per booking vs one per day of stay).
- *
+ * <p>
  * ATTENDANCE GAP SUPPORT: For bookings with hasAttendanceGap=true, we also load
  * the individual Attendance records to determine the actual date segments
  * (nights when the guest stays vs gaps when they don't).
- *
+ * <p>
  * This class coordinates between:
  * - ResourceConfiguration (room data)
  * - DocumentLine with startDate/endDate (booking data)
@@ -52,9 +51,8 @@ public final class HouseholdGanttDataLoader {
      * Constructor
      *
      * @param pm The presentation model (provides organization context and time window)
-     * @param ganttPresenter The gantt presenter (unused, kept for compatibility)
      */
-    public HouseholdGanttDataLoader(AccommodationPresentationModel pm, GanttPresenter ganttPresenter) {
+    public HouseholdGanttDataLoader(AccommodationPresentationModel pm) {
         this.pm = pm;
         // Note: ganttPresenter parameter kept for compatibility but not stored
         // We use pm.timeWindowStartProperty() and pm.timeWindowEndProperty() instead
@@ -112,18 +110,12 @@ public final class HouseholdGanttDataLoader {
      */
     private void startRoomQuery() {
         // Query 1: Load all ResourceConfigurations (room configurations) for this organization
-        // ResourceConfiguration has: resource (room), item (room type), max (bed count)
+        // ResourceConfiguration has: resource (room with cleaning/inspection dates), item (room type), max (bed count)
         ReactiveEntitiesMapper.<ResourceConfiguration>createPushReactiveChain(mixin)
-            .always("{class: 'ResourceConfiguration', alias: 'rc', fields: 'name,resource.name,item.(name,family.(name,ord)),max', orderBy: 'item.family.ord,item.name,name'}")
+            .always("{class: 'ResourceConfiguration', alias: 'rc', fields: 'name,resource.(id,name,cleaningState,lastCleaningDate,lastInspectionDate),item.(name,family.(name,ord)),max', orderBy: 'item.family.ord,item.name,name'}")
             // Filter by organization and optional site ID
             // Only get current configurations (no end date or future configs)
-            .always(pm.organizationIdProperty(), org -> {
-                if (SITE_ID_FILTER != null) {
-                    return where("resource.site.organization=? and resource.site=? and (endDate is null or endDate >= current_date())", org, SITE_ID_FILTER);
-                } else {
-                    return where("resource.site.organization=? and (endDate is null or endDate >= current_date())", org);
-                }
-            })
+            .always(pm.organizationIdProperty(), org -> where("resource.site.organization=? and resource.site=? and (endDate is null or endDate >= current_date())", org, SITE_ID_FILTER))
             .storeEntitiesInto(resourceConfigurations)
             .start();
     }
@@ -131,10 +123,10 @@ public final class HouseholdGanttDataLoader {
     /**
      * Starts the query to load document lines (bookings) for the current time window.
      * This query is REACTIVE to time window changes via PM's time window properties.
-     *
+     * <p>
      * PERFORMANCE OPTIMIZATION: Uses DocumentLine.startDate/endDate directly instead of
      * querying Attendance table. This returns one record per booking instead of one per day.
-     *
+     * <p>
      * Includes hasAttendanceGap field to identify bookings that need Attendance records
      * for accurate date segment rendering.
      */
@@ -144,10 +136,11 @@ public final class HouseholdGanttDataLoader {
         // Includes hasAttendanceGap to identify bookings needing Attendance records
         ReactiveEntitiesMapper.<DocumentLine>createPushReactiveChain(mixin)
             // Fetch document line data with guest info and room assignment
+            // Includes resource with lastCleaningDate/lastInspectionDate for room status
             .always("{class: 'DocumentLine', alias: 'dl', " +
                 "fields: 'startDate,endDate,hasAttendanceGap," +
                 "document.(arrived,person_firstName,person_lastName,event.name,request)," +
-                "cleaned,resourceConfiguration.(name,item.(name,family.name))', " +
+                "cleaned,resourceConfiguration.(name,item.(name,family.name),resource.(id,cleaningState,lastCleaningDate,lastInspectionDate))'," +
                 "where: '!cancelled and !document.cancelled and resourceConfiguration is not null'}")
             // Filter by organization
             .always(pm.organizationIdProperty(), org ->
@@ -171,7 +164,7 @@ public final class HouseholdGanttDataLoader {
     /**
      * Starts the query to load Attendance records for bookings with gaps.
      * Only loads attendances for DocumentLines where hasAttendanceGap = true.
-     *
+     * <p>
      * This allows us to build accurate date segments for bookings where the guest
      * doesn't stay on certain nights within their booking period.
      */
@@ -185,7 +178,8 @@ public final class HouseholdGanttDataLoader {
             // Filter by organization
             .always(pm.organizationIdProperty(), org ->
                 where("documentLine.document.event.organization=?", org))
-            // Filter by date range - same as DocumentLine query
+            // Filter by date range - both booking overlap AND attendance date within window
+            // This avoids loading all attendance records for long bookings
             .always(pm.timeWindowStartProperty(), start -> {
                 LocalDate end = pm.getTimeWindowEnd();
 
@@ -193,8 +187,9 @@ public final class HouseholdGanttDataLoader {
                     return null;
                 }
 
-                // Include attendances for bookings that overlap with the time window
-                return where("documentLine.startDate <= ? and documentLine.endDate >= ?", end, start);
+                // Include only attendances within the time window for bookings that overlap
+                return where("documentLine.startDate <= ? and documentLine.endDate >= ? and a.date >= ? and a.date < ?",
+                        end, start, start, end);
             })
             .storeEntitiesInto(attendancesForGaps)
             .start();

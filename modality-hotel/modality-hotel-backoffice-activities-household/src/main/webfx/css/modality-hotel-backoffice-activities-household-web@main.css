@@ -735,27 +735,27 @@
 }
 
 .status-badge.to-inspect {
-    background-color: #FFFBEB;
-    color: #D4A50A;
-    border-color: #FFF9C4;
+    background-color: #E0F7FA;
+    color: #00838F;
+    border-color: #B2EBF2;
     border-width: 1px;
     border-style: solid;
 }
 
 .status-badge.to-inspect fx-background {
-    background-color: #FFFBEB;
+    background-color: #E0F7FA;
     border-radius: 4px;
 }
 
 .status-badge.to-inspect>fx-border {
-    border-color: #FFF9C4;
+    border-color: #B2EBF2;
     border-width: 1px;
     border-style: solid;
     border-radius: 4px;
 }
 
 .status-badge.to-inspect fx-text {
-    color: #D4A50A;
+    color: #00838F;
     font-size: 9px;
     font-weight: bold;
 }
@@ -1351,4 +1351,79 @@
 
 .inline-icon fx-text {
     font-size: 10px;
+}
+
+/* Special Request Badge - Card Header */
+.special-request-badge {
+    background-color: #FFF3E0;
+    color: #E65100;
+    border-radius: 4px;
+    font-size: 9px;
+    font-weight: bold;
+    border-color: #FFE0B2;
+    border-width: 1px;
+    border-style: solid;
+}
+
+.special-request-badge fx-background {
+    background-color: #FFF3E0;
+    border-radius: 4px;
+}
+
+.special-request-badge>fx-border {
+    border-color: #FFE0B2;
+    border-width: 1px;
+    border-style: solid;
+    border-radius: 4px;
+}
+
+.special-request-badge fx-text {
+    color: #E65100;
+    font-size: 9px;
+    font-weight: bold;
+}
+
+/* Special Needs Indicator - Guest Row */
+.special-needs-indicator {
+    font-size: 16px;
+    font-weight: bold;
+    color: #FF9800;
+    cursor: pointer;
+}
+
+.special-needs-indicator fx-text {
+    color: #FF9800;
+    font-size: 16px;
+    font-weight: bold;
+}
+
+.special-needs-indicator:hover {
+    color: #E65100;
+}
+
+.special-needs-indicator:hover fx-text {
+    color: #E65100;
+}
+
+/* Action Menu Button */
+.action-menu-button {
+    font-size: 16px;
+    font-weight: bold;
+    color: #667085;
+    cursor: pointer;
+    padding: 0 4px;
+}
+
+.action-menu-button fx-text {
+    font-size: 16px;
+    font-weight: bold;
+    color: #667085;
+}
+
+.action-menu-button:hover {
+    color: #0096D6;
+}
+
+.action-menu-button:hover fx-text {
+    color: #0096D6;
 }

@@ -12,52 +12,51 @@ import one.modality.hotel.backoffice.activities.household.gantt.model.RoomStatus
  */
 public class GanttColorScheme {
 
-    // === DESIGN COLORS ===
-    public static final Color COLOR_BLUE = Color.web("#0096D6");
-    public static final Color COLOR_RED = Color.web("#FF0404");
-    public static final Color COLOR_GREY = Color.web("#D9D9D9");
+    // === BOOKING BAR COLORS (named by booking status) ===
+    public static final Color COLOR_BOOKING_CONFIRMED = Color.web("#0096D6");  // Blue - future booking
+    public static final Color COLOR_BOOKING_OCCUPIED = Color.web("#DB2777");   // Hot Berry - guest in room
+    public static final Color COLOR_BOOKING_DEPARTED = Color.web("#D9D9D9");   // Grey - past booking
+
+    // === ROOM STATUS COLORS (for status dots in room headers) ===
+    // Red (to clean - urgent) → Orange (to inspect - warning) → Green (ready) → Pink (occupied)
+    public static final Color COLOR_ROOM_TO_CLEAN = Color.web("#E53935");      // Red - urgent action needed
+    public static final Color COLOR_ROOM_TO_INSPECT = Color.web("#FF9800");    // Warning orange - needs inspection
+    public static final Color COLOR_ROOM_READY = Color.web("#43A047");         // Green - success, ready
+    public static final Color COLOR_ROOM_OCCUPIED = Color.web("#DB2777");      // Hot Berry - room in use, can't act
+
+    // === BACKGROUND COLORS ===
     public static final Color COLOR_BG_HEADER = Color.web("#F5F5F5");
-    public static final Color COLOR_BG_TODAY = Color.web("#FFF9E6"); // Light yellow/cream - distinct from weekend blue
+    public static final Color COLOR_BG_TODAY = Color.web("#FFF9E6");           // Light yellow/cream - distinct from weekend blue
+
+    // === TEXT AND BORDER COLORS ===
     public static final Color COLOR_TEXT_GREY = Color.web("#333333");
     public static final Color COLOR_BORDER = Color.web("#CCCCCC");
 
-    // Room status colors
-    public static final Color COLOR_STATUS_OCCUPIED = Color.web("#FF0404");
-    public static final Color COLOR_STATUS_TO_CLEAN = Color.web("#FFA500");
-    public static final Color COLOR_STATUS_TO_INSPECT = Color.web("#FFD700");
-    public static final Color COLOR_STATUS_READY = Color.web("#41BA4D");
+    // === UI ACCENT COLORS ===
+    public static final Color COLOR_ACCENT = Color.web("#0096D6");             // Blue - for headers, titles, accents
+    public static final Color COLOR_CONFLICT = Color.web("#E53935");           // Red - for conflict highlighting
 
     /**
-     * Gets the color for a booking status
+     * Gets the color for a booking status (gantt bars)
      */
     public Color getBookingStatusColor(BookingStatus status) {
-        switch (status) {
-            case OCCUPIED:
-                return COLOR_RED;
-            case DEPARTED:
-                return COLOR_GREY;
-            case CONFIRMED:
-            case UNCONFIRMED:
-            default:
-                return COLOR_BLUE;
-        }
+        return switch (status) {
+            case OCCUPIED -> COLOR_BOOKING_OCCUPIED;
+            case DEPARTED -> COLOR_BOOKING_DEPARTED;
+            default -> COLOR_BOOKING_CONFIRMED;
+        };
     }
 
     /**
      * Gets the color for a room status
      */
     public Color getRoomStatusColor(RoomStatus status) {
-        switch (status) {
-            case OCCUPIED:
-                return COLOR_STATUS_OCCUPIED;
-            case TO_CLEAN:
-                return COLOR_STATUS_TO_CLEAN;
-            case TO_INSPECT:
-                return COLOR_STATUS_TO_INSPECT;
-            case READY:
-                return COLOR_STATUS_READY;
-            default:
-                return Color.GRAY;
-        }
+        return switch (status) {
+            case OCCUPIED -> COLOR_ROOM_OCCUPIED;
+            case TO_CLEAN -> COLOR_ROOM_TO_CLEAN;
+            case TO_INSPECT -> COLOR_ROOM_TO_INSPECT;
+            case READY -> COLOR_ROOM_READY;
+            default -> Color.GRAY;
+        };
     }
 }

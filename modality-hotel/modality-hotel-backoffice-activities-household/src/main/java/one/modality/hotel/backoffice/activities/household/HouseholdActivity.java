@@ -1,5 +1,6 @@
 package one.modality.hotel.backoffice.activities.household;
 
+import dev.webfx.extras.i18n.I18n;
 import dev.webfx.extras.operation.action.OperationActionFactoryMixin;
 import javafx.scene.Node;
 import javafx.scene.layout.BorderPane;
@@ -17,7 +18,7 @@ public final class HouseholdActivity extends OrganizationDependentViewDomainActi
         OperationActionFactoryMixin {
 
     private final AccommodationPresentationModel pm = new AccommodationPresentationModel();
-    private final HouseholdDashboardView householdView = new HouseholdDashboardView(pm, this);
+    private final HouseholdDashboardView householdView = new HouseholdDashboardView(pm);
     // CANVAS-BASED: Using new Canvas implementation (EventsGanttCanvas managed by FXGanttVisibility)
     private final HouseholdCanvasGanttView householdGanttView = new HouseholdCanvasGanttView(pm);
     private final TodayAccommodationStatus todayAccommodationStatus = new TodayAccommodationStatus(pm);
@@ -36,8 +37,8 @@ public final class HouseholdActivity extends OrganizationDependentViewDomainActi
     @Override
     public Node buildUi() {
         headerTabsBar.setTabs(
-                headerTabsBar.createTab("Dashboard", this::buildDashboardTab, this::onDashboardTabSelected),
-                headerTabsBar.createTab("Gantt", this::buildGanttTab, this::onGanttTabSelected));
+                headerTabsBar.createTab(I18n.getI18nText(HouseholdI18nKeys.Dashboard), this::buildDashboardTab, this::onDashboardTabSelected),
+                headerTabsBar.createTab(I18n.getI18nText(HouseholdI18nKeys.Gantt), this::buildGanttTab, this::onGanttTabSelected));
         return container;
     }
 
@@ -83,6 +84,7 @@ public final class HouseholdActivity extends OrganizationDependentViewDomainActi
             householdGanttView.startLogic(this);
             ganttLogicStarted = true;
         }
+        FXGanttVisibility.showOnsiteAccommodationEvents();
     }
 
     @Override

@@ -13,7 +13,6 @@ import one.modality.hotel.backoffice.activities.household.gantt.model.DateColumn
 import one.modality.hotel.backoffice.activities.household.gantt.model.GanttBedData;
 import one.modality.hotel.backoffice.activities.household.gantt.model.GanttBookingData;
 import one.modality.hotel.backoffice.activities.household.gantt.model.GanttRoomData;
-import one.modality.hotel.backoffice.activities.household.gantt.model.RoomStatus;
 import one.modality.hotel.backoffice.activities.household.gantt.model.RoomType;
 import one.modality.hotel.backoffice.activities.household.gantt.presenter.GanttPresenter;
 import one.modality.hotel.backoffice.activities.household.gantt.renderer.BookingBarRenderer;
@@ -77,7 +76,7 @@ public class GanttCellFactory {
         cell.setBackground(new Background(new BackgroundFill(bgColor, CornerRadii.EMPTY, Insets.EMPTY)));
 
         // Border
-        Color borderColor = isToday ? GanttColorScheme.COLOR_BLUE : GanttColorScheme.COLOR_BORDER;
+        Color borderColor = isToday ? GanttColorScheme.COLOR_ACCENT : GanttColorScheme.COLOR_BORDER;
         double borderWidth = isToday ? 2 : 1;
         cell.setBorder(new Border(new BorderStroke(borderColor, BorderStrokeStyle.SOLID,
                 CornerRadii.EMPTY, new BorderWidths(borderWidth))));
@@ -101,24 +100,24 @@ public class GanttCellFactory {
         dateHeader.setAlignment(Pos.CENTER);
 
         // Day of week
-        String dayOfWeek = dateCol.getDate().getDayOfWeek()
+        String dayOfWeek = dateCol.date().getDayOfWeek()
                 .getDisplayName(TextStyle.SHORT, Locale.ENGLISH).toUpperCase();
         Label dayLabel = new Label(dayOfWeek);
-        dayLabel.setTextFill(GanttColorScheme.COLOR_BLUE);
+        dayLabel.setTextFill(GanttColorScheme.COLOR_ACCENT);
         dayLabel.setStyle("-fx-font-size: 12px; -fx-font-weight: 500;");
 
         // Day of month (GWT-compatible padding instead of String.format)
-        int day = dateCol.getDate().getDayOfMonth();
+        int day = dateCol.date().getDayOfMonth();
         String dayOfMonth = (day < 10 ? "0" : "") + day;
         Label dateLabel = new Label(dayOfMonth);
-        dateLabel.setTextFill(GanttColorScheme.COLOR_BLUE);
+        dateLabel.setTextFill(GanttColorScheme.COLOR_ACCENT);
         dateLabel.setStyle("-fx-font-size: 12px; -fx-font-weight: 500;");
 
         dateHeader.getChildren().addAll(dayLabel, dateLabel);
 
         if (dateCol.isToday()) {
             Label todayLabel = new Label("(Today)");
-            todayLabel.setTextFill(GanttColorScheme.COLOR_BLUE);
+            todayLabel.setTextFill(GanttColorScheme.COLOR_ACCENT);
             todayLabel.setStyle("-fx-font-size: 10px;");
             dateHeader.getChildren().add(todayLabel);
         }
@@ -132,7 +131,7 @@ public class GanttCellFactory {
      */
     public StackPane createCategoryCell(String categoryName) {
         Label categoryLabel = new Label(categoryName);
-        categoryLabel.setTextFill(GanttColorScheme.COLOR_BLUE);
+        categoryLabel.setTextFill(GanttColorScheme.COLOR_ACCENT);
         categoryLabel.setStyle("-fx-font-size: 13px; -fx-font-weight: 500;");
 
         StackPane categoryCell = new StackPane(categoryLabel);
@@ -200,7 +199,7 @@ public class GanttCellFactory {
 
         // Add room comments if present
         if (room.getRoomComments() != null && !room.getRoomComments().isEmpty()) {
-            Label commentLabel = new Label(truncateText(room.getRoomComments(), 15));
+            Label commentLabel = new Label(truncateText(room.getRoomComments()));
             commentLabel.setTextFill(Color.web("#666666"));
             commentLabel.setStyle("-fx-font-size: 11px; -fx-font-style: italic;");
             content.getChildren().add(commentLabel);
@@ -249,13 +248,13 @@ public class GanttCellFactory {
 
         // Background color - grey if room is expanded, white otherwise (unless today or weekend)
         boolean isExpanded = !room.getBeds().isEmpty() && presenter.isRoomExpanded(room.getId());
-        boolean isWeekend = isWeekend(dateCol.getDate());
+        boolean isWeekend = isWeekend(dateCol.date());
 
         // Check for overbooking on this specific date (when collapsed)
         boolean hasOverbookingOnDate = false;
         if (!room.getBeds().isEmpty() && !isExpanded) {
             // For both single and multi-bed rooms: check if there's overbooking on this date
-            hasOverbookingOnDate = hasOverbookingOnDate(room, dateCol.getDate());
+            hasOverbookingOnDate = hasOverbookingOnDate(room, dateCol.date());
         }
 
         Color bgColor;
@@ -283,10 +282,10 @@ public class GanttCellFactory {
         )));
 
         // Add booking bars
-        List<BookingBar> bookingBars = presenter.calculateBookingBars(room, dateCol.getDate());
+        List<BookingBar> bookingBars = presenter.calculateBookingBars(room, dateCol.date());
         boolean hasTurnover = false;
         for (BookingBar bar : bookingBars) {
-            Node barNode = renderBookingBar(bar, room.getRoomType(), width, ROW_HEIGHT);
+            Node barNode = renderBookingBar(bar, room.getRoomType(), width);
             cell.getChildren().add(barNode);
             if (bar.hasTurnover()) {
                 hasTurnover = true;
@@ -307,17 +306,17 @@ public class GanttCellFactory {
     /**
      * Renders a booking bar using the appropriate renderer
      */
-    private Node renderBookingBar(BookingBar bar, RoomType roomType, double cellWidth, double cellHeight) {
-        BookingBarRenderer renderer = (roomType == RoomType.SINGLE)
+    private Node renderBookingBar(BookingBar bar, RoomType roomType, double cellWidth) {
+        BookingBarRenderer renderer = (roomType == RoomType.SINGLE_BED)
                 ? singleRoomRenderer
                 : multiRoomRenderer;
-        return renderer.render(bar, cellWidth, cellHeight);
+        return renderer.render(bar, cellWidth, GanttCellFactory.ROW_HEIGHT);
     }
 
     /**
      * Creates a bed name cell (indented to show hierarchy)
      */
-    public StackPane createBedCell(GanttBedData bed, boolean isFirstBed) {
+    public StackPane createBedCell(GanttBedData bed) {
         HBox content = new HBox(6);
         content.setAlignment(Pos.CENTER_LEFT);
         content.setPadding(new Insets(0, 8, 0, 24)); // Extra left padding for indentation
@@ -362,7 +361,7 @@ public class GanttCellFactory {
     /**
      * Creates a date cell for an individual bed
      */
-    public StackPane createBedDateCell(GanttBedData bed, DateColumn dateCol, boolean isFirstBed) {
+    public StackPane createBedDateCell(GanttBedData bed, DateColumn dateCol) {
         StackPane cell = new StackPane();
 
         // Cell dimensions
@@ -375,7 +374,7 @@ public class GanttCellFactory {
         cell.setMaxHeight(ROW_HEIGHT);
 
         // Background color - danger red for overbooking, otherwise grey/blue for bed rows
-        boolean isWeekend = isWeekend(dateCol.getDate());
+        boolean isWeekend = isWeekend(dateCol.date());
         Color bgColor;
         if (bed.isOverbooking()) {
             // Overbooking beds get danger red background
@@ -402,19 +401,19 @@ public class GanttCellFactory {
         boolean hasTurnover = false;
         for (GanttBookingData booking : bed.getBookings()) {
             // Check if booking is active on this date
-            if (!dateCol.getDate().isBefore(booking.getStartDate()) && !dateCol.getDate().isAfter(booking.getEndDate())) {
-                BookingPosition position = determinePosition(booking.getStartDate(), booking.getEndDate(), dateCol.getDate());
+            if (!dateCol.date().isBefore(booking.getStartDate()) && !dateCol.date().isAfter(booking.getEndDate())) {
+                BookingPosition position = determinePosition(booking.getStartDate(), booking.getEndDate(), dateCol.date());
                 // Show comment icon if booking has special needs (on MIDDLE position)
                 boolean hasComments = (booking.getSpecialNeeds() != null && !booking.getSpecialNeeds().isEmpty())
                                    && position == BookingPosition.MIDDLE;
 
                 // Check for turnover: another booking ends on this date while this one starts
                 boolean bookingHasTurnover = false;
-                if (dateCol.getDate().equals(booking.getStartDate())) {
+                if (dateCol.date().equals(booking.getStartDate())) {
                     bookingHasTurnover = bed.getBookings().stream()
                             .anyMatch(other -> other != booking &&
-                                     dateCol.getDate().equals(other.getEndDate()) &&
-                                     other.getStartDate().isBefore(dateCol.getDate()));
+                                     dateCol.date().equals(other.getEndDate()) &&
+                                     other.getStartDate().isBefore(dateCol.date()));
                 }
 
                 // Pass booking data for icon click handlers
@@ -471,8 +470,8 @@ public class GanttCellFactory {
             }
         }
 
-        if (room.getRoomType() == RoomType.SINGLE) {
-            // For single rooms: 2 or more active bookings = overbooking
+        if (room.getRoomType() == RoomType.SINGLE_BED) {
+            // For single-bed rooms: 2 or more active bookings = overbooking
             return activeBookingsCount >= 2;
         } else {
             // For multi-bed rooms: active bookings exceeding regular bed capacity = overbooking
@@ -501,31 +500,11 @@ public class GanttCellFactory {
     /**
      * Truncates text to specified length with ellipsis
      */
-    private String truncateText(String text, int maxLength) {
-        if (text == null || text.length() <= maxLength) {
+    private String truncateText(String text) {
+        if (text == null || text.length() <= 15) {
             return text;
         }
-        return text.substring(0, maxLength) + "...";
+        return text.substring(0, 15) + "...";
     }
 
-    /**
-     * Gets the room column width
-     */
-    public double getRoomColumnWidth() {
-        return ROOM_COLUMN_WIDTH;
-    }
-
-    /**
-     * Gets the date column width (normal)
-     */
-    public double getDateColumnWidth() {
-        return DATE_COLUMN_WIDTH;
-    }
-
-    /**
-     * Gets the date column width (wider)
-     */
-    public double getDateColumnWidthWider() {
-        return DATE_COLUMN_WIDTH_WIDER;
-    }
 }

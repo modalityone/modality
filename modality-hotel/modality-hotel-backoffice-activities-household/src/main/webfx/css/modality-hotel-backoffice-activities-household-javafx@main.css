@@ -187,7 +187,7 @@
     -fx-border-radius: 6px;
     -fx-font-size: 12px;
     -fx-font-weight: bold;
-    -fx-padding: 4px 12px;
+    /* padding set in Java for cross-platform consistency */
 }
 
 .count-badge {
@@ -249,6 +249,36 @@
     -fx-background-color: #0096D6;
     -fx-text-fill: white;
     -fx-border-color: #0096D6;
+}
+
+/* Filter Toggle Buttons (GWT-compatible replacement for ChoiceBox) */
+.filter-toggle-btn {
+    -fx-border-color: #D0D5DD;
+    -fx-border-width: 1px;
+    -fx-background-color: white;
+    -fx-background-radius: 4px;
+    -fx-border-radius: 4px;
+    -fx-cursor: hand;
+    -fx-font-size: 11px;
+    -fx-font-weight: 600;
+    -fx-text-fill: #667085;
+}
+
+.filter-toggle-btn:hover {
+    -fx-border-color: #0096D6;
+    -fx-background-color: #F0F9FF;
+}
+
+.filter-toggle-active {
+    -fx-background-color: #0096D6;
+    -fx-text-fill: white;
+    -fx-border-color: #0096D6;
+}
+
+.filter-toggle-inactive {
+    -fx-background-color: white;
+    -fx-text-fill: #667085;
+    -fx-border-color: #D0D5DD;
 }
 
 /* Room Cards */
@@ -348,9 +378,9 @@
 }
 
 .status-badge.to-inspect {
-    -fx-background-color: #FFFBEB;
-    -fx-text-fill: #D4A50A;
-    -fx-border-color: #FFF9C4;
+    -fx-background-color: #E0F7FA;
+    -fx-text-fill: #00838F;
+    -fx-border-color: #B2EBF2;
     -fx-border-width: 1px;
 }
 
@@ -593,12 +623,12 @@
     -fx-border-radius: 4px;
     -fx-font-size: 9px;
     -fx-font-weight: bold;
-    -fx-padding: 2px 6px;
+    /* padding set in Java for cross-platform consistency */
 }
 
 /* Badge Colors */
 .badge {
-    -fx-padding: 2px 8px;
+    /* padding set in Java for cross-platform consistency */
     -fx-border-radius: 4px;
     -fx-background-radius: 4px;
     -fx-font-size: 10px;
@@ -662,4 +692,37 @@
 
 .inline-icon {
     -fx-font-size: 10px;
+}
+
+/* Special Request Badge - Card Header */
+.special-request-badge {
+    -fx-background-color: #FFF3E0;
+    -fx-text-fill: #E65100;
+    -fx-background-radius: 4px;
+    -fx-border-radius: 4px;
+    -fx-font-size: 9px;
+    -fx-font-weight: bold;
+    -fx-border-color: #FFE0B2;
+    -fx-border-width: 1px;
+}
+
+/* Special Needs Indicator - Guest Row */
+.special-needs-indicator {
+    -fx-font-size: 16px;
+    -fx-font-weight: bold;
+    -fx-text-fill: #FF9800;
+    -fx-cursor: hand;
+}
+
+/* Action Menu Button */
+.action-menu-button {
+    -fx-font-size: 16px;
+    -fx-font-weight: bold;
+    -fx-text-fill: #667085;
+    -fx-cursor: hand;
+    -fx-padding: 0 4 0 4;
+}
+
+.action-menu-button:hover {
+    -fx-text-fill: #0096D6;
 }
