@@ -6,6 +6,7 @@ import dev.webfx.extras.geometry.MutableBounds;
 import dev.webfx.extras.time.layout.bar.LocalDateBar;
 import dev.webfx.extras.time.layout.canvas.LocalDateCanvasDrawer;
 import dev.webfx.extras.time.layout.canvas.TimeCanvasUtil;
+import dev.webfx.extras.time.layout.gantt.HeaderPosition;
 import dev.webfx.extras.time.layout.gantt.LocalDateGanttLayout;
 import dev.webfx.extras.time.layout.gantt.canvas.ParentsCanvasDrawer;
 import dev.webfx.extras.time.projector.TimeProjector;
@@ -60,8 +61,8 @@ public class HouseholdGanttCanvas {
                     .setParentGrandparentReader(parent -> ((GanttParentRow) parent).getCategory())
                     .setParentHeaderHeight(ROW_HEIGHT)
                     .setGrandparentHeaderHeight(ROW_HEIGHT)  // Category header takes full row height
-                    .setGrandparentHeaderPosition(dev.webfx.extras.time.layout.gantt.HeaderPosition.TOP)  // Category headers on top (horizontal)
-                    .setParentHeaderPosition(dev.webfx.extras.time.layout.gantt.HeaderPosition.LEFT)  // Room/bed names on left
+                    .setGrandparentHeaderPosition(HeaderPosition.TOP)  // Category headers on top (horizontal)
+                    .setParentHeaderPosition(HeaderPosition.LEFT)  // Room/bed names on left
                     .setParentHeaderWidth(ROOM_HEADER_WIDTH)
                     .setTetrisPacking(false) // Disable tetris packing - each bed is its own parent now
                     .setHSpacing(2)  // Horizontal spacing between bars

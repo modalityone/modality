@@ -5,7 +5,7 @@ import javafx.beans.property.ObjectProperty;
 import javafx.beans.property.SimpleObjectProperty;
 import one.modality.base.client.activity.organizationdependent.OrganizationDependentGenericTablePresentationModel;
 import one.modality.base.client.gantt.fx.timewindow.FXGanttTimeWindow;
-import one.modality.crm.backoffice.organization.fx.FXOrganization;
+import one.modality.crm.backoffice.organization.fx.FXOrganizationId;
 
 import java.time.LocalDate;
 
@@ -19,7 +19,7 @@ public class AccommodationPresentationModel extends OrganizationDependentGeneric
     public ObjectProperty<LocalDate> timeWindowEndProperty() { return timeWindowEndProperty; }
 
     public void doFXBindings() {
-        organizationIdProperty().bind(FXOrganization.organizationProperty());
+        organizationIdProperty().bind(FXOrganizationId.organizationIdProperty());
         bindTimeWindowBidirectional(FXGanttTimeWindow.ganttTimeWindow());
     }
 }

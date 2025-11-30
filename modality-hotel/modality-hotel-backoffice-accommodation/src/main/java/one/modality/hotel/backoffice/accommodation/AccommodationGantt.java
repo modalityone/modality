@@ -18,6 +18,7 @@ import dev.webfx.extras.time.layout.gantt.canvas.ParentsCanvasDrawer;
 import dev.webfx.extras.util.control.Controls;
 import dev.webfx.kit.util.properties.FXProperties;
 import dev.webfx.kit.util.properties.ObservableLists;
+import dev.webfx.platform.useragent.UserAgent;
 import javafx.beans.property.BooleanProperty;
 import javafx.collections.ObservableList;
 import javafx.geometry.HPos;
@@ -30,13 +31,13 @@ import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
 import javafx.scene.text.FontWeight;
 import javafx.scene.text.TextAlignment;
+import javafx.stage.Screen;
 import one.modality.base.client.gantt.fx.highlight.FXGanttHighlight;
 import one.modality.base.client.gantt.fx.selection.FXGanttSelection;
 import one.modality.base.client.gantt.fx.timewindow.FXGanttTimeWindow;
 import one.modality.base.shared.entities.Item;
 import one.modality.base.shared.entities.ResourceConfiguration;
 
-import static one.modality.hotel.backoffice.icons.BedSvgIcon.*;
 import static one.modality.hotel.backoffice.icons.RoomSvgIcon.*;
 
 public abstract class AccommodationGantt<B extends AccommodationBlock> {
@@ -51,63 +52,62 @@ public abstract class AccommodationGantt<B extends AccommodationBlock> {
      * and nothing more (we forget the entityId and other fields). And because at this stage these instances will form
      * blocks (one instance per day), TimeBarUtil will then identify and group all series of identical blocks, and
      * finally transform them into bars (in this terminology, a bar can cover several days as opposed to a block).
-     *
+     * <p>
      * For example if room 208 has 2 beds available for 5 days, this series of 5 blocks (ie 5 Attendance
      * instances with identical fields: resourceConfiguration = of 208 & available = 2) will be grouped and transformed
      * into a 5-days bar (holding 1 single instance of Attendance + first & last day of that series).
-     *
+     * <p>
      * Note that there are 2 conditions for this to work:
      * 1) AttendanceBlock must implement equals(), which is used by TimeBarUtil to identify identical blocks
      * 2) The entities must be sorted so that identical blocks will appear in a consecutive order in that list
-     *    => see order by configuration,date in startLogic()
+     * => see order by configuration, date in startLogic()
      */
 
     private Font barsFont;
 
     // As a result, TimeBarUtil generates a list of bars that will be the input of this barsLayout:
     protected final LocalDateGanttLayout<LocalDateBar<B>> barsLayout =
-            new LocalDateGanttLayout<LocalDateBar<B>>()
-                    .setChildFixedHeight(BAR_HEIGHT)
-                    .setChildParentReader(     bar -> bar.getInstance().getRoomConfiguration())
-                    //.setChildGrandparentReader(bar -> bar.getInstance().getRoomConfiguration().getItem())
-                    .setParentGrandparentReader(ResourceConfiguration::getItem)
-                    .setParentHeaderHeight(BAR_HEIGHT)
-                    .setGrandparentHeaderWidth(20)
-                    .setParentHeaderWidth(90)
-            ;
+        new LocalDateGanttLayout<LocalDateBar<B>>()
+            .setChildFixedHeight(BAR_HEIGHT)
+            .setChildParentReader(bar -> bar.getInstance().getRoomConfiguration())
+            //.setChildGrandparentReader(bar -> bar.getInstance().getRoomConfiguration().getItem())
+            .setParentGrandparentReader(ResourceConfiguration::getItem)
+            .setParentHeaderHeight(BAR_HEIGHT)
+            .setGrandparentHeaderWidth(20)
+            .setParentHeaderWidth(130);
 
-    // Once the position of the bars are computed by barsLayout, they will be automatically drawn in a canvas by this
+    // Once the positions of the bars are computed by barsLayout, they will be automatically drawn in a canvas by this
     // barsDrawer (each bar will be rendered using the drawBar() method provided in this class)
     protected final LocalDateCanvasDrawer<LocalDateBar<B>> barsDrawer =
-            new LocalDateCanvasDrawer<>(barsLayout, this::drawBar)
-                    // Enabling canvas interaction (user can move & zoom in/out the time window)
-                    .enableCanvasInteraction();
+        new LocalDateCanvasDrawer<>(barsLayout, this::drawBar)
+            // Enabling canvas interaction (user can move & zoom in/out the time window)
+            .enableCanvasInteraction();
 
     protected final ParentsCanvasDrawer parentsCanvasDrawer = ParentsCanvasDrawer.create(barsLayout, barsDrawer)
-            .setParentDrawer(this::drawParentRoom)
-            .setGrandparentDrawer(this::drawGrandparentRoomType);
+        .setParentDrawer(this::drawParentRoom)
+        .setGrandparentDrawer(this::drawGrandparentRoomType);
 
-    // We will use the BarDrawer utility class to draw the bars & rooms names & types
+    // We will use the BarDrawer utility class to draw the bars, rooms names and types
     protected final BarDrawer barDrawer = new BarDrawer()  // unique instance to draw all the bars
-            .setTextFill(Color.WHITE);
+        .setTextFill(Color.WHITE);
 
     protected final BarDrawer parentRoomDrawer = new BarDrawer() // unique instance to draw all the room names
-            .setBackgroundFill(Color.WHITE)
-            .setStroke(Color.grayRgb(130))
-            .setIcon(ROOM_ICON_SVG_PATH, ROOM_ICON_SVG_FILL, ROOM_ICON_SVG_WIDTH, ROOM_ICON_SVG_HEIGHT, Pos.CENTER_LEFT, HPos.LEFT, VPos.CENTER, 10, 0)
-            .setTextFill(Color.BLACK)
-            .setTextAlignment(TextAlignment.LEFT);
+        .setBackgroundFill(Color.WHITE)
+        .setStroke(Color.grayRgb(130))
+        .setIcon(ROOM_ICON_SVG_PATH, ROOM_ICON_SVG_FILL, ROOM_ICON_SVG_WIDTH, ROOM_ICON_SVG_HEIGHT, Pos.CENTER_LEFT, HPos.LEFT, VPos.CENTER, 10, 0)
+        .setTextFill(Color.BLACK)
+        .setTextAlignment(TextAlignment.LEFT);
 
     protected final BarDrawer bedDrawer = new BarDrawer()
-            .setBackgroundFill(Color.grayRgb(243))
-            .setIcon(BED_ICON_SVG_PATH, BED_ICON_SVG_FILL, BED_ICON_SVG_WIDTH, BED_ICON_SVG_HEIGHT, Pos.CENTER_LEFT, HPos.LEFT, VPos.CENTER, 10, 0)
-            .setTextFill(Color.grayRgb(130));
+        .setBackgroundFill(Color.WHITE)
+        //.setIcon(BED_ICON_SVG_PATH, BED_ICON_SVG_FILL, BED_ICON_SVG_WIDTH, BED_ICON_SVG_HEIGHT, Pos.CENTER_LEFT, HPos.LEFT, VPos.CENTER, 10, 0)
+        .setTextFill(Color.grayRgb(130));
 
     protected final BarDrawer grandparentRoomTypeDrawer = new BarDrawer() // unique instance to draw all the room types
-            .setStroke(Color.grayRgb(130))
-            .setBackgroundFill(Color.WHITE)
-            .setTextAlignment(TextAlignment.CENTER)
-            .setTextFill(Color.rgb(0, 150, 214));
+        .setStroke(Color.grayRgb(130))
+        .setBackgroundFill(Color.WHITE)
+        .setTextAlignment(TextAlignment.CENTER)
+        .setTextFill(Color.rgb(0, 150, 214));
 
     public AccommodationGantt(AccommodationPresentationModel pm, ObservableList<LocalDateBar<B>> children, ObservableList<ResourceConfiguration> providedParentRooms, double barsFontSize) {
         // Binding the presentation model and the barsLayout time window
@@ -167,7 +167,7 @@ public abstract class AccommodationGantt<B extends AccommodationBlock> {
         // and can have a very long height, the real canvas will be only the size of the scrollPane viewport, and when
         // the user scrolls, VirtualCanvasPane is responsible for redrawing the canvas to the scrolled position.
         VirtualCanvasPane virtualCanvasPane = TimeCanvasUtil.createTimeVirtualCanvasPane(barsLayout, barsDrawer,
-                scrollPane.viewportBoundsProperty(), scrollPane.vvalueProperty());
+            scrollPane.viewportBoundsProperty(), scrollPane.vvalueProperty());
         // We finally set up the scrollPane for vertical scrolling only (no horizontal scrollbar, etc...), and return it
         Controls.setupVerticalScrollPane(scrollPane, virtualCanvasPane);
         return scrollPane;
@@ -175,43 +175,61 @@ public abstract class AccommodationGantt<B extends AccommodationBlock> {
 
     protected void drawGrandparentRoomType(Item item, Bounds b, GraphicsContext gc) {
         grandparentRoomTypeDrawer
-                .setMiddleText(item.getName())
-                .drawBar(b, gc);
+            .setMiddleText(item.getName())
+            .drawBar(b, gc);
     }
 
     protected void drawParentRoom(ResourceConfiguration rc, Bounds b, GraphicsContext gc) {
-        // The only remaining property that needs to be set here is the room name that we display in the bar middle
-        parentRoomDrawer
+        if (!barsLayout.isParentRowCollapseEnabled()) {
+            parentRoomDrawer
                 .setMiddleText(rc.getName())
-                .drawBar(b, gc); // This also draws a rectangle stroke - see properties set in constructor
-        // But the wireframe doesn't show a stroke on the left, so we erase it to match the UX design
-        gc.fillRect(b.getMinX(), b.getMinY(), 2, b.getHeight()); // erasing the left side of the stroke rectangle
+                .drawBar(b, gc);
+        } else {
+            parentRoomDrawer.drawBar(b, gc); // This also draws a rectangle stroke - see properties set in constructor
+            gc.fillRect(b.getMaxX() - 2, b.getMinY(), 2, b.getHeight()); // erasing the left side of the stroke rectangle*/
+            gc.setFont(barsFont);
+            gc.setFill(Color.BLACK);
+            gc.fillText(rc.getName(), b.getMinX() + 20, b.getMinY() + 15 + (UserAgent.isBrowser() ? -4 : 0));
+        }
     }
 
     protected abstract void drawBar(LocalDateBar<B> bar, Bounds b, GraphicsContext gc);
 
     protected void showBeds() {
         barsLayout
-                .setGrandparentHeaderPosition(HeaderPosition.LEFT)
-                .setParentHeaderPosition(HeaderPosition.LEFT)
-                .setTetrisPacking(true)
-                //.setChildTetrisMinWidthReader(bar -> WebFxKitLauncher.measureText(bar.getInstance().getPersonName(), barsFont).getWidth())
-                .setHSpacing(2)
-                .setVSpacing(2);
+            .setGrandparentHeaderPosition(HeaderPosition.LEFT)
+            .setParentHeaderPosition(HeaderPosition.LEFT)
+            .setTetrisPacking(true)
+            .setParentRowCollapseEnabled(true)
+            //.setChildTetrisMinWidthReader(bar -> WebFxKitLauncher.measureText(bar.getInstance().getPersonName(), barsFont).getWidth())
+            .setHSpacing(2)
+            .setVSpacing(2)
+            .setParentHeaderWidth(85);
+        parentRoomDrawer.setIconSVGPath(null, 0, 0);
         parentsCanvasDrawer
-                .setChildRowHeaderDrawer(this::drawBed)
-                .setHorizontalStroke(Color.grayRgb(200))
-                .setVerticalStroke(Color.grayRgb(233), false)
-                .setTetrisAreaFill(Color.grayRgb(243))
-                .setGrandparentHeaderRotation(HeaderRotation.DEG_90_ANTICLOCKWISE);
+            .setChildRowHeaderWidth(23)
+            .setChildRowHeaderDrawer(this::drawBed)
+            .setHorizontalStroke(Color.grayRgb(200))
+            .setVerticalStroke(Color.grayRgb(233), false)
+            .setTetrisAreaFill(Color.grayRgb(243))
+            .setGrandparentHeaderRotation(HeaderRotation.DEG_90_ANTICLOCKWISE);
         barDrawer
             .setRadius(BAR_RADIUS);
     }
 
     protected void drawBed(Integer rowIndex, Bounds b, GraphicsContext gc) {
-        bedDrawer
-                .setMiddleText("Bed " + (rowIndex + 1))
-                .drawBar(b, gc);
+        gc.save();
+        bedDrawer.drawBar(b, gc);
+        gc.setStroke(Color.grayRgb(200));
+        gc.setLineWidth(1 / Screen.getPrimary().getOutputScaleX());
+        gc.strokeLine(b.getMaxX(), b.getMinY(), b.getMaxX(), b.getMaxY());
+        gc.setStroke(Color.BLACK);
+        double diameter = b.getHeight() - 4;
+        gc.strokeOval(b.getMinX(), b.getCenterY() - diameter / 2, diameter, diameter);
+        gc.setTextAlign(TextAlignment.CENTER);
+        gc.setTextBaseline(VPos.CENTER);
+        gc.strokeText(String.valueOf(rowIndex + 1), b.getMinX() + diameter / 2, b.getCenterY());
+        gc.restore();
     }
 
 }
