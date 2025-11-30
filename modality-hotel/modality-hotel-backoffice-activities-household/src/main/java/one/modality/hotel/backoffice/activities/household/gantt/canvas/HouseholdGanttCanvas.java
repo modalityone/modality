@@ -105,6 +105,9 @@ public class HouseholdGanttCanvas {
     // Canvas-based tooltip (replaces JavaFX Tooltip which doesn't compile with WebFX)
     private final CanvasTooltip canvasTooltip;
 
+    // Hovered row tracking for row highlight effects
+    private double hoveredMouseY = -1; // -1 means no hover
+
     public HouseholdGanttCanvas(AccommodationPresentationModel pm) {
         // Presentation model for binding time window
         // Presenter for expand/collapse state
@@ -118,7 +121,12 @@ public class HouseholdGanttCanvas {
         barsLayout.bindTimeWindowBidirectional(pm);
 
         // Telling the bars layout how to read start & end times of bars (CRITICAL!)
-        dev.webfx.extras.time.layout.bar.TimeBarUtil.setBarsLayoutTimeReaders(barsLayout);
+        // For hotel bookings:
+        // - startDate = check-in day (inclusive - bar starts at beginning of this day)
+        // - endDate = checkout day (exclusive - bar ends at beginning of this day, NOT including it)
+        // This ensures back-to-back bookings (checkout = next check-in) don't visually overlap
+        barsLayout.setInclusiveChildStartTimeReader(dev.webfx.extras.time.layout.bar.TimeBar::getStartTime);
+        barsLayout.setExclusiveChildEndTimeReader(dev.webfx.extras.time.layout.bar.TimeBar::getEndTime);
 
         // Configure layout for bed display
         // Grandparent (room type) = TOP (horizontal header spanning category)
@@ -150,6 +158,11 @@ public class HouseholdGanttCanvas {
         // Initialize canvas-based tooltip and add it as an overlay layer (drawn last, on top of everything)
         canvasTooltip = new CanvasTooltip(barsDrawer.getCanvas(), barsDrawer::markDrawAreaAsDirty);
         barsDrawer.addOnAfterDraw(() -> canvasTooltip.drawTooltip(barsDrawer.getCanvas().getGraphicsContext2D()));
+
+        // Add hovered row background drawing (AFTER day backgrounds so it's visible on top)
+        // Note: Mouse events are handled in HouseholdCanvasGanttView.setupClickHandler()
+        // which calls setHoveredMouseY() to update the hover position
+        barsDrawer.addOnBeforeDraw(this::drawHoveredRowBackground);
     }
 
     /**
@@ -172,6 +185,18 @@ public class HouseholdGanttCanvas {
      */
     public CanvasTooltip getCanvasTooltip() {
         return canvasTooltip;
+    }
+
+    /**
+     * Sets the Y position of the mouse for row hover highlighting.
+     * Called from HouseholdCanvasGanttView when mouse moves over the canvas.
+     * @param y The mouse Y coordinate in canvas space, or -1 to clear hover
+     */
+    public void setHoveredMouseY(double y) {
+        if (y != hoveredMouseY) {
+            hoveredMouseY = y;
+            barsDrawer.markDrawAreaAsDirty(); // Trigger redraw to update highlight
+        }
     }
 
     /**
@@ -233,10 +258,11 @@ public class HouseholdGanttCanvas {
             drawAggregateBar(bar, block, adjustedBounds, barColor, dayWidth, gc);
         } else {
             // Draw regular booking bar with guest name
-            drawRegularBookingBar(block, adjustedBounds, barColor, gc);
+            drawRegularBookingBar(block, adjustedBounds, barColor, dayWidth, gc);
         }
 
-        // Draw turnover indicator if needed (orange badge at top center)
+        // Draw turnover indicator if needed (orange badge at top left)
+        // Shows when another booking checks out on the same day this booking checks in
         if (block.hasTurnover()) {
             drawTurnoverIndicator(adjustedBounds, gc);
         }
@@ -265,7 +291,7 @@ public class HouseholdGanttCanvas {
      * Used for single rooms and individual bed bookings in expanded multi-bed rooms.
      * The person icon is clickable to show guest information in a tooltip.
      */
-    private void drawRegularBookingBar(HouseholdBookingBlock block, Bounds adjustedBounds, Color barColor, GraphicsContext gc) {
+    private void drawRegularBookingBar(HouseholdBookingBlock block, Bounds adjustedBounds, Color barColor, double dayWidth, GraphicsContext gc) {
         // Always show person icon on first day of booking (ARRIVAL or SINGLE position)
         // The icon is clickable to show guest info tooltip
         one.modality.hotel.backoffice.activities.household.gantt.model.BookingPosition position = block.getPosition();
@@ -326,9 +352,7 @@ public class HouseholdGanttCanvas {
         // Draw comment icon if booking has comments (positioned on second day of booking)
         if (block.hasComments() && (position == one.modality.hotel.backoffice.activities.household.gantt.model.BookingPosition.ARRIVAL ||
                                      position == one.modality.hotel.backoffice.activities.household.gantt.model.BookingPosition.SINGLE)) {
-            // Get day width from the layout
-            double dayWidth = barsLayout.getTimeProjector().timeToX(java.time.LocalDate.now().plusDays(1), true, false) -
-                              barsLayout.getTimeProjector().timeToX(java.time.LocalDate.now(), true, false);
+            // Use the dayWidth passed from drawBar() for consistent positioning
             double halfDayWidth = dayWidth / 2;
 
             // Position comment icon at halfDayWidth + 3px padding
@@ -351,6 +375,42 @@ public class HouseholdGanttCanvas {
             gc.fill();
             gc.restore();
         }
+
+        // Draw room not ready warning icon if guest arriving today and room needs cleaning/inspection
+        if (block.hasRoomNotReadyWarning()) {
+            drawRoomNotReadyWarning(adjustedBounds, gc);
+        }
+    }
+
+    /**
+     * Draws a "room not ready" warning indicator (red circular badge with "!" icon).
+     * This shows when a guest is arriving today but the room still needs cleaning or inspection.
+     * Positioned at the top-left of the booking bar, slightly offset from the turnover indicator position.
+     */
+    private void drawRoomNotReadyWarning(Bounds b, GraphicsContext gc) {
+        // Badge size
+        double badgeSize = 16;
+
+        // Position at the top-left corner of the bar, above the bar
+        // Offset slightly to the right of bar start to not overlap with turnover indicator
+        double badgeX = b.getMinX() + 4;
+        double badgeY = b.getMinY() - badgeSize + 2; // Position above the bar with slight overlap
+
+        // Draw red circular background (distinct from orange turnover indicator)
+        gc.setFill(Color.web("#DC2626")); // Red-600 - danger color
+        gc.fillOval(badgeX, badgeY, badgeSize, badgeSize);
+
+        // Draw darker red border for visibility
+        gc.setStroke(Color.web("#B91C1C")); // Red-700 - darker border
+        gc.setLineWidth(1.5);
+        gc.strokeOval(badgeX, badgeY, badgeSize, badgeSize);
+
+        // Draw warning symbol "!" in white
+        gc.setFill(Color.WHITE);
+        gc.setFont(Font.font("System", FontWeight.BOLD, 11));
+        gc.setTextAlign(TextAlignment.CENTER);
+        gc.setTextBaseline(javafx.geometry.VPos.CENTER);
+        gc.fillText("!", badgeX + badgeSize / 2, badgeY + badgeSize / 2);
     }
 
     /**
@@ -494,6 +554,11 @@ public class HouseholdGanttCanvas {
                     gc.restore();
                 }
             }
+        }
+
+        // Draw room not ready warning icon if someone is arriving today and room is not ready
+        if (block.hasRoomNotReadyWarning()) {
+            drawRoomNotReadyWarning(adjustedBounds, gc);
         }
     }
 
@@ -651,32 +716,78 @@ public class HouseholdGanttCanvas {
     }
 
     /**
-     * Draws a turnover indicator (orange badge with warning triangle) at the top center of a cell.
+     * Draws a turnover indicator (orange circular badge with warning icon) centered between the two bars.
+     * This indicates that housekeeping needs to clean the room between guests on the same day.
      */
     private void drawTurnoverIndicator(Bounds b, GraphicsContext gc) {
-        double badgeSize = 20;
-        double badgeX = b.getMinX() + (b.getWidth() - badgeSize) / 2;
-        double badgeY = b.getMinY() + 2;
+        // Badge size
+        double badgeSize = 16;
 
-        // Draw orange rounded rectangle background
-        gc.setFill(Color.web("#FFA500"));
-        gc.fillRoundRect(badgeX, badgeY, badgeSize, badgeSize, 3, 3);
+        // Position centered at the junction point between departing and arriving bars
+        // b.getMinX() is the start of the arriving bar (middle of the day)
+        // Center the badge horizontally at the junction, positioned above the bars
+        double badgeX = b.getMinX() - badgeSize / 2;
+        double badgeY = b.getMinY() - badgeSize + 2; // Position above the bar with slight overlap
 
-        // Draw warning triangle icon on top
-        gc.save();
+        // Draw orange circular background
+        gc.setFill(Color.web("#F59E0B")); // Amber-500 - modern warning color
+        gc.fillOval(badgeX, badgeY, badgeSize, badgeSize);
 
-        // Position and scale the icon to fit in the badge
-        double iconScale = badgeSize / HouseholdGanttIcons.WARNING_ICON_SVG_WIDTH;
-        gc.translate(badgeX, badgeY);
-        gc.scale(iconScale, iconScale);
+        // Draw dark border for visibility
+        gc.setStroke(Color.web("#D97706")); // Amber-600 - darker border
+        gc.setLineWidth(1.5);
+        gc.strokeOval(badgeX, badgeY, badgeSize, badgeSize);
 
-        // Draw the SVG path
-        gc.setFill(HouseholdGanttIcons.WARNING_ICON_SVG_FILL);
-        gc.beginPath();
-        gc.appendSVGPath(HouseholdGanttIcons.WARNING_ICON_SVG_PATH);
-        gc.fill();
+        // Draw warning symbol "!" in white
+        gc.setFill(Color.WHITE);
+        gc.setFont(Font.font("System", FontWeight.BOLD, 11));
+        gc.setTextAlign(TextAlignment.CENTER);
+        gc.setTextBaseline(javafx.geometry.VPos.CENTER);
+        gc.fillText("!", badgeX + badgeSize / 2, badgeY + badgeSize / 2);
+    }
 
-        gc.restore();
+    /**
+     * Draws a highlighted background for the row under the mouse cursor.
+     * Uses a light warm color similar to the yellow used for today's column.
+     */
+    private void drawHoveredRowBackground() {
+        if (hoveredMouseY < 0) {
+            return; // No hover
+        }
+
+        GraphicsContext gc = barsDrawer.getCanvas().getGraphicsContext2D();
+        double canvasWidth = barsDrawer.getCanvas().getWidth();
+
+        // Get scroll offset to adjust Y coordinates
+        double layoutOriginY = barsDrawer.getLayoutOriginY();
+
+        // Get all parent rows from the layout
+        java.util.List<dev.webfx.extras.time.layout.gantt.impl.ParentRow<LocalDateBar<HouseholdBookingBlock>>> parentRows = barsLayout.getParentRows();
+        if (parentRows.isEmpty()) {
+            return;
+        }
+
+        // Find the row that contains the mouse Y position
+        for (dev.webfx.extras.time.layout.gantt.impl.ParentRow<LocalDateBar<HouseholdBookingBlock>> parentRow : parentRows) {
+            Bounds rowBounds = parentRow.getHeader();
+            if (rowBounds == null) {
+                continue;
+            }
+
+            // Adjust Y coordinate for scroll position
+            double adjustedY = rowBounds.getMinY() - layoutOriginY;
+            double rowTop = adjustedY;
+            double rowBottom = adjustedY + rowBounds.getHeight();
+
+            // Check if mouse is within this row
+            if (hoveredMouseY >= rowTop && hoveredMouseY < rowBottom) {
+                // Draw light warm highlight - using a soft blue tint for better visibility
+                // This is drawn AFTER day backgrounds so it overlays them
+                gc.setFill(Color.rgb(200, 230, 255, 0.5)); // Light blue with transparency
+                gc.fillRect(0, adjustedY, canvasWidth, rowBounds.getHeight());
+                break; // Found the hovered row, no need to continue
+            }
+        }
     }
 
     /**
@@ -964,6 +1075,67 @@ public class HouseholdGanttCanvas {
     }
 
     /**
+     * Truncates text with ellipsis if it exceeds the available width.
+     * Uses WebFX-compatible text measurement.
+     */
+    private String truncateWithEllipsis(String text, double maxWidth, GraphicsContext gc) {
+        if (text == null || text.isEmpty()) {
+            return text;
+        }
+
+        // Measure the full text width
+        double textWidth = measureTextWidth(text, gc);
+        if (textWidth <= maxWidth) {
+            return text;
+        }
+
+        // Need to truncate - find the longest substring that fits with "..."
+        String ellipsis = "...";
+        double ellipsisWidth = measureTextWidth(ellipsis, gc);
+        double availableWidth = maxWidth - ellipsisWidth;
+
+        if (availableWidth <= 0) {
+            return ellipsis;
+        }
+
+        // Binary search for the optimal truncation point
+        int low = 0;
+        int high = text.length();
+        while (low < high) {
+            int mid = (low + high + 1) / 2;
+            String truncated = text.substring(0, mid);
+            if (measureTextWidth(truncated, gc) <= availableWidth) {
+                low = mid;
+            } else {
+                high = mid - 1;
+            }
+        }
+
+        return low > 0 ? text.substring(0, low) + ellipsis : ellipsis;
+    }
+
+    /**
+     * Measures the width of text using the current font.
+     * WebFX-compatible text measurement.
+     */
+    private double measureTextWidth(String text, GraphicsContext gc) {
+        javafx.geometry.Bounds textBounds = dev.webfx.kit.launcher.WebFxKitLauncher.measureText(text, gc.getFont());
+        return textBounds != null ? textBounds.getWidth() : text.length() * 7; // Fallback estimation
+    }
+
+    /**
+     * Checks if the given bounds correspond to the currently hovered row.
+     */
+    private boolean isRowHovered(Bounds b) {
+        if (hoveredMouseY < 0) {
+            return false;
+        }
+        double layoutOriginY = barsDrawer.getLayoutOriginY();
+        double adjustedY = b.getMinY() - layoutOriginY;
+        return hoveredMouseY >= adjustedY && hoveredMouseY < adjustedY + b.getHeight();
+    }
+
+    /**
      * Draws a parent room header (room name in the left column).
      * This is called by ParentsCanvasDrawer for each room/bed row.
      * Layout: [arrow (if multi-bed)] [status dot] [room name] ... [action icon]
@@ -971,6 +1143,9 @@ public class HouseholdGanttCanvas {
     protected void drawParentRoom(Object parent, Bounds b, GraphicsContext gc) {
         if (parent instanceof GanttParentRow ganttParent) {
             String roomName = ganttParent.room() != null ? ganttParent.room().getName() : "";
+
+            // Check if this row is hovered for highlighting
+            boolean isHovered = isRowHovered(b);
 
             // Constants for layout
             double leftPadding = 8;
@@ -983,8 +1158,15 @@ public class HouseholdGanttCanvas {
                 roomName = ganttParent.bed() != null ? ganttParent.bed().getName() : roomName;
                 boolean isOverbooking = ganttParent.isOverbooking();
 
-                // Draw background - danger red for overbooking, grey for normal beds
-                Color bgColor = isOverbooking ? Color.web("#FFCDD2") : Color.grayRgb(248);
+                // Draw background - hover highlight, danger red for overbooking, or grey for normal beds
+                Color bgColor;
+                if (isHovered) {
+                    bgColor = Color.rgb(200, 230, 255); // Light blue highlight (no transparency for header)
+                } else if (isOverbooking) {
+                    bgColor = Color.web("#FFCDD2");
+                } else {
+                    bgColor = Color.grayRgb(248);
+                }
                 gc.setFill(bgColor);
                 gc.fillRect(b.getMinX(), b.getMinY(), b.getWidth(), b.getHeight());
 
@@ -1014,8 +1196,15 @@ public class HouseholdGanttCanvas {
 
             } else {
                 // Room row
-                // Draw background
-                Color bgColor = ganttParent.expanded() ? Color.web("#ECECEC") : Color.WHITE;
+                // Draw background - hover highlight takes priority
+                Color bgColor;
+                if (isHovered) {
+                    bgColor = Color.rgb(200, 230, 255); // Light blue highlight
+                } else if (ganttParent.expanded()) {
+                    bgColor = Color.web("#ECECEC");
+                } else {
+                    bgColor = Color.WHITE;
+                }
                 gc.setFill(bgColor);
                 gc.fillRect(b.getMinX(), b.getMinY(), b.getWidth(), b.getHeight());
 
@@ -1028,6 +1217,14 @@ public class HouseholdGanttCanvas {
                 double currentX = b.getMinX() + leftPadding;
                 double centerY = b.getMinY() + b.getHeight() / 2;
 
+                // Check if room has a comment to display
+                String roomComment = ganttParent.room() != null ? ganttParent.room().getRoomComments() : null;
+                boolean hasComment = roomComment != null && !roomComment.isEmpty();
+
+                // Adjust vertical positions if comment exists (two-line layout)
+                double roomNameY = hasComment ? centerY - 6 : centerY;
+                double commentY = centerY + 8;
+
                 // Draw expand/collapse arrow for multi-bed rooms
                 if (ganttParent.isMultiBedRoom()) {
                     String arrow = ganttParent.expanded() ? "∨" : "›";
@@ -1035,16 +1232,30 @@ public class HouseholdGanttCanvas {
                     gc.setFont(Font.font("System", FontWeight.BOLD, 14));
                     gc.setTextAlign(javafx.scene.text.TextAlignment.LEFT);
                     gc.setTextBaseline(javafx.geometry.VPos.CENTER);
-                    gc.fillText(arrow, currentX, centerY);
+                    gc.fillText(arrow, currentX, centerY); // Arrow stays centered
                 }
                 currentX += arrowWidth + gap;
 
-                // Draw room name (no status dot here - status indicator is on right edge)
+                // Draw room name (shifted up if comment exists)
                 gc.setFill(Color.web("#333333"));
                 gc.setFont(Font.font("System", FontWeight.BOLD, 13));
                 gc.setTextAlign(javafx.scene.text.TextAlignment.LEFT);
                 gc.setTextBaseline(javafx.geometry.VPos.CENTER);
-                gc.fillText(roomName, currentX, centerY);
+                gc.fillText(roomName, currentX, roomNameY);
+
+                // Draw comment below room name (if exists)
+                if (hasComment) {
+                    // Calculate available width for comment (leave space for action icon and status indicator)
+                    double availableWidth = b.getMaxX() - currentX - 30; // 30 = action icon area + padding
+
+                    // Set smaller font for comment
+                    gc.setFont(Font.font("System", FontWeight.NORMAL, 10));
+                    gc.setFill(Color.web("#666666"));
+
+                    // Truncate with ellipsis if needed
+                    String displayComment = truncateWithEllipsis(roomComment, availableWidth, gc);
+                    gc.fillText(displayComment, currentX, commentY);
+                }
 
                 // Draw action icon (⋮) on the right side before status indicator
                 gc.setFill(Color.grayRgb(100));
@@ -1074,6 +1285,7 @@ public class HouseholdGanttCanvas {
         private final boolean hasComments;
         private final boolean hasTurnover;
         private final boolean hasLateArrival;
+        private final boolean hasRoomNotReadyWarning; // True if guest arriving today and room is not ready
         private final one.modality.hotel.backoffice.activities.household.gantt.model.GanttBookingData bookingData;
         private final int occupancy;
         private final int totalCapacity;
@@ -1087,14 +1299,14 @@ public class HouseholdGanttCanvas {
                                      boolean hasLateArrival,
                                      one.modality.hotel.backoffice.activities.household.gantt.model.GanttBookingData bookingData,
                                      int occupancy, int totalCapacity) {
-            this(guestName, status, position, hasConflict, hasComments, hasTurnover, hasLateArrival,
+            this(guestName, status, position, hasConflict, hasComments, hasTurnover, hasLateArrival, false,
                  bookingData, occupancy, totalCapacity, null, null);
         }
 
         public HouseholdBookingBlock(String guestName, BookingStatus status,
                                      one.modality.hotel.backoffice.activities.household.gantt.model.BookingPosition position,
                                      boolean hasConflict, boolean hasComments, boolean hasTurnover,
-                                     boolean hasLateArrival,
+                                     boolean hasLateArrival, boolean hasRoomNotReadyWarning,
                                      one.modality.hotel.backoffice.activities.household.gantt.model.GanttBookingData bookingData,
                                      int occupancy, int totalCapacity,
                                      java.util.Map<java.time.LocalDate, Integer> dailyOccupancy,
@@ -1106,6 +1318,7 @@ public class HouseholdGanttCanvas {
             this.hasComments = hasComments;
             this.hasTurnover = hasTurnover;
             this.hasLateArrival = hasLateArrival;
+            this.hasRoomNotReadyWarning = hasRoomNotReadyWarning;
             this.bookingData = bookingData;
             this.occupancy = occupancy;
             this.totalCapacity = totalCapacity;
@@ -1139,6 +1352,10 @@ public class HouseholdGanttCanvas {
 
         public boolean hasLateArrival() {
             return hasLateArrival;
+        }
+
+        public boolean hasRoomNotReadyWarning() {
+            return hasRoomNotReadyWarning;
         }
 
         public one.modality.hotel.backoffice.activities.household.gantt.model.GanttBookingData getBookingData() {

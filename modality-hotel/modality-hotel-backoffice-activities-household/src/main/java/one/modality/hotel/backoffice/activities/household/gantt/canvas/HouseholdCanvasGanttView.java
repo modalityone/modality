@@ -2,6 +2,7 @@ package one.modality.hotel.backoffice.activities.household.gantt.canvas;
 
 import dev.webfx.extras.i18n.I18n;
 import dev.webfx.extras.time.layout.bar.LocalDateBar;
+import dev.webfx.platform.console.Console;
 import dev.webfx.stack.orm.entity.UpdateStore;
 import javafx.collections.ListChangeListener;
 import javafx.collections.SetChangeListener;
@@ -23,6 +24,7 @@ import one.modality.hotel.backoffice.activities.household.gantt.model.RoomStatus
 import one.modality.hotel.backoffice.activities.household.gantt.presenter.GanttFilterManager;
 import one.modality.hotel.backoffice.activities.household.gantt.presenter.GanttPresenter;
 import one.modality.hotel.backoffice.activities.household.gantt.renderer.GanttColorScheme;
+import one.modality.base.client.gantt.fx.highlight.FXGanttHighlight;
 
 import java.time.LocalDateTime;
 import java.util.*;
@@ -169,7 +171,8 @@ public class HouseholdCanvasGanttView {
         HBox statusSection = new HBox(8);
         statusSection.setAlignment(Pos.CENTER_LEFT);
         Label statusLabel = new Label(I18n.getI18nText(HouseholdI18nKeys.Status) + ":");
-        statusLabel.setStyle("-fx-font-weight: bold; -fx-text-fill: #374151; -fx-min-width: 80px;");  // Fixed width for alignment
+        statusLabel.getStyleClass().add("gantt-filter-label");
+        statusLabel.setMinWidth(80);  // Fixed width for alignment (set in Java per guidelines)
         buildStatusFilterButtons();
         statusSection.getChildren().addAll(statusLabel, statusFilterGroup);
 
@@ -177,10 +180,10 @@ public class HouseholdCanvasGanttView {
         Region spacer = new Region();
         HBox.setHgrow(spacer, Priority.ALWAYS);
 
-        // "Go to Today" button - prominent accent button with icon
-        Button goToTodayButton = createGoToTodayButton();
+        // Navigation controls group: [◀ Pan Left] [− Zoom Out] [+ Zoom In] [Pan Right ▶] | [Today]
+        HBox navigationGroup = createNavigationControls();
 
-        firstRow.getChildren().addAll(statusSection, spacer, goToTodayButton);
+        firstRow.getChildren().addAll(statusSection, spacer, navigationGroup);
 
         // Second row: Room type filter
         HBox secondRow = new HBox(8);
@@ -190,7 +193,8 @@ public class HouseholdCanvasGanttView {
         HBox categorySection = new HBox(8);
         categorySection.setAlignment(Pos.CENTER_LEFT);
         Label categoryLabel = new Label("Room type:");
-        categoryLabel.setStyle("-fx-font-weight: bold; -fx-text-fill: #374151; -fx-min-width: 80px;");  // Same width for alignment
+        categoryLabel.getStyleClass().add("gantt-filter-label");
+        categoryLabel.setMinWidth(80);  // Same width for alignment (set in Java per guidelines)
         categorySection.getChildren().addAll(categoryLabel, categoryFilterGroup);
 
         secondRow.getChildren().add(categorySection);
@@ -212,41 +216,8 @@ public class HouseholdCanvasGanttView {
         // Create button with arrow icon and text
         // Using Unicode arrow ➜ instead of emoji to ensure white color styling works
         Button btn = new Button("➜ Today");
-
-        // Modern pill button style with accent color, subtle shadow, and hover effect
-        btn.setStyle(
-            "-fx-background-color: #0096D6; " +          // Accent blue
-            "-fx-text-fill: white; " +
-            "-fx-background-radius: 20; " +              // Pill shape
-            "-fx-padding: 6 16 6 16; " +                 // Comfortable padding
-            "-fx-font-weight: bold; " +
-            "-fx-font-size: 13px; " +
-            "-fx-cursor: hand; " +
-            "-fx-effect: dropshadow(gaussian, rgba(0,0,0,0.1), 4, 0, 0, 1);"  // Subtle shadow
-        );
-
-        // Hover effect - slightly darker blue
-        btn.setOnMouseEntered(e -> btn.setStyle(
-            "-fx-background-color: #007AB8; " +          // Darker blue on hover
-            "-fx-text-fill: white; " +
-            "-fx-background-radius: 20; " +
-            "-fx-padding: 6 16 6 16; " +
-            "-fx-font-weight: bold; " +
-            "-fx-font-size: 13px; " +
-            "-fx-cursor: hand; " +
-            "-fx-effect: dropshadow(gaussian, rgba(0,0,0,0.15), 5, 0, 0, 2);"  // Slightly stronger shadow on hover
-        ));
-
-        btn.setOnMouseExited(e -> btn.setStyle(
-            "-fx-background-color: #0096D6; " +
-            "-fx-text-fill: white; " +
-            "-fx-background-radius: 20; " +
-            "-fx-padding: 6 16 6 16; " +
-            "-fx-font-weight: bold; " +
-            "-fx-font-size: 13px; " +
-            "-fx-cursor: hand; " +
-            "-fx-effect: dropshadow(gaussian, rgba(0,0,0,0.1), 4, 0, 0, 1);"
-        ));
+        btn.getStyleClass().add("gantt-today-btn");
+        btn.setPadding(new Insets(6, 16, 6, 16));  // Comfortable padding (set in Java per guidelines)
 
         // Action: Reset to 2 days before today
         btn.setOnAction(e -> goToToday());
@@ -266,6 +237,149 @@ public class HouseholdCanvasGanttView {
         // Update the time window in the presentation model (which is bound to the canvas)
         // This will trigger the canvas to scroll/pan to show the new date range
         canvas.getBarsLayout().setTimeWindow(startDate, endDate);
+    }
+
+    /**
+     * Creates the navigation control group with pan, zoom, and "Today" buttons.
+     * Modern design with clear visual grouping:
+     * - Navigation group: [◂ ▸] for timeline panning
+     * - Zoom group: [−] [+] for zoom control
+     * - Today button: primary action
+     */
+    private HBox createNavigationControls() {
+        HBox container = new HBox(12);
+        container.setAlignment(Pos.CENTER_RIGHT);
+
+        // ═══════════════════════════════════════════════════════════════════
+        // NAVIGATION GROUP: Pan through time [◂] [▸]
+        // ═══════════════════════════════════════════════════════════════════
+        HBox navGroup = new HBox(1);
+        navGroup.setAlignment(Pos.CENTER);
+        navGroup.getStyleClass().add("gantt-nav-group");
+
+        Button panLeftBtn = createIconButton("‹", "left");
+        panLeftBtn.setOnAction(e -> panTimeWindow(-7));
+
+        Button panRightBtn = createIconButton("›", "right");
+        panRightBtn.setOnAction(e -> panTimeWindow(7));
+
+        navGroup.getChildren().addAll(panLeftBtn, panRightBtn);
+
+        // ═══════════════════════════════════════════════════════════════════
+        // ZOOM GROUP: Adjust visible range [−] [2w] [+]
+        // ═══════════════════════════════════════════════════════════════════
+        HBox zoomGroup = new HBox(1);
+        zoomGroup.setAlignment(Pos.CENTER);
+        zoomGroup.getStyleClass().add("gantt-nav-group");
+
+        Button zoomOutBtn = createIconButton("−", "left");
+        zoomOutBtn.setOnAction(e -> zoomTimeWindow(1.5));
+
+        Button zoomResetBtn = createZoomResetButton();
+        zoomResetBtn.setOnAction(e -> resetZoom());
+
+        Button zoomInBtn = createIconButton("+", "right");
+        zoomInBtn.setOnAction(e -> zoomTimeWindow(0.67));
+
+        zoomGroup.getChildren().addAll(zoomOutBtn, zoomResetBtn, zoomInBtn);
+
+        // ═══════════════════════════════════════════════════════════════════
+        // TODAY BUTTON: Primary action
+        // ═══════════════════════════════════════════════════════════════════
+        Button todayBtn = createGoToTodayButton();
+
+        container.getChildren().addAll(navGroup, zoomGroup, todayBtn);
+        return container;
+    }
+
+    /**
+     * Creates an icon button for navigation controls.
+     * Clean, minimal design with subtle hover effects.
+     */
+    private Button createIconButton(String icon, String position) {
+        Button btn = new Button(icon);
+        btn.getStyleClass().add("gantt-nav-btn");
+        btn.setPadding(new Insets(6, 12, 6, 12));  // Padding set in Java per guidelines
+
+        // Position-specific style class for border radius
+        if ("left".equals(position)) {
+            btn.getStyleClass().add("gantt-nav-btn-left");
+        } else if ("right".equals(position)) {
+            btn.getStyleClass().add("gantt-nav-btn-right");
+        }
+
+        return btn;
+    }
+
+    /**
+     * Pans the time window by the specified number of days.
+     * Positive values pan right (forward in time), negative values pan left (back in time).
+     */
+    private void panTimeWindow(int days) {
+        java.time.LocalDate currentStart = canvas.getBarsLayout().getTimeWindowStart();
+        java.time.LocalDate currentEnd = canvas.getBarsLayout().getTimeWindowEnd();
+
+        if (currentStart != null && currentEnd != null) {
+            java.time.LocalDate newStart = currentStart.plusDays(days);
+            java.time.LocalDate newEnd = currentEnd.plusDays(days);
+            canvas.getBarsLayout().setTimeWindow(newStart, newEnd);
+        }
+    }
+
+    /**
+     * Zooms the time window by the specified factor, keeping the center date fixed.
+     * Factor > 1 zooms out (shows more days), factor < 1 zooms in (shows fewer days).
+     * Minimum visible range is 7 days, maximum is 90 days.
+     */
+    private void zoomTimeWindow(double factor) {
+        java.time.LocalDate currentStart = canvas.getBarsLayout().getTimeWindowStart();
+        java.time.LocalDate currentEnd = canvas.getBarsLayout().getTimeWindowEnd();
+
+        if (currentStart != null && currentEnd != null) {
+            long currentDays = java.time.temporal.ChronoUnit.DAYS.between(currentStart, currentEnd);
+            long newDays = Math.round(currentDays * factor);
+
+            // Clamp to reasonable bounds (7 days minimum, 90 days maximum)
+            newDays = Math.max(7, Math.min(90, newDays));
+
+            // Keep the center date fixed
+            java.time.LocalDate centerDate = currentStart.plusDays(currentDays / 2);
+            java.time.LocalDate newStart = centerDate.minusDays(newDays / 2);
+            java.time.LocalDate newEnd = newStart.plusDays(newDays);
+
+            canvas.getBarsLayout().setTimeWindow(newStart, newEnd);
+        }
+    }
+
+    /**
+     * Resets the zoom to the default 14-day view (2 weeks), keeping the center date fixed.
+     */
+    private void resetZoom() {
+        java.time.LocalDate currentStart = canvas.getBarsLayout().getTimeWindowStart();
+        java.time.LocalDate currentEnd = canvas.getBarsLayout().getTimeWindowEnd();
+
+        if (currentStart != null && currentEnd != null) {
+            long currentDays = java.time.temporal.ChronoUnit.DAYS.between(currentStart, currentEnd);
+            java.time.LocalDate centerDate = currentStart.plusDays(currentDays / 2);
+
+            // Reset to 14 days (2 weeks) centered on current view
+            java.time.LocalDate newStart = centerDate.minusDays(7);
+            java.time.LocalDate newEnd = centerDate.plusDays(7);
+
+            canvas.getBarsLayout().setTimeWindow(newStart, newEnd);
+        }
+    }
+
+    /**
+     * Creates the zoom reset button showing "2w" (2 weeks = default view).
+     * Styled to fit in the middle of the zoom button group.
+     */
+    private Button createZoomResetButton() {
+        Button btn = new Button("2w");
+        btn.getStyleClass().add("gantt-zoom-reset-btn");
+        btn.setPadding(new Insets(6, 8, 6, 8));  // Padding set in Java per guidelines
+
+        return btn;
     }
 
     /**
@@ -345,7 +459,8 @@ public class HouseholdCanvasGanttView {
      */
     private Button createFilterToggleButton(String text, boolean isActive, Color statusColor) {
         Button btn = new Button();
-        btn.setPadding(new Insets(4, 12, 4, 12));
+        btn.setPadding(new Insets(4, 12, 4, 12));  // Padding set in Java per guidelines
+        btn.getStyleClass().add("gantt-filter-btn");
 
         if (statusColor != null) {
             // Create button with colored status dot
@@ -357,6 +472,7 @@ public class HouseholdCanvasGanttView {
             dot.setFill(statusColor);
 
             Label label = new Label(text);
+            label.getStyleClass().add("gantt-filter-btn-label");
             content.getChildren().addAll(dot, label);
             btn.setGraphic(content);
         } else {
@@ -369,31 +485,18 @@ public class HouseholdCanvasGanttView {
 
     /**
      * Updates button style based on active state.
+     * Uses CSS classes instead of inline styles for cross-platform compatibility.
      * @param btn The button to style
      * @param isActive Whether the button is currently active/selected
      * @param statusColor Optional status color (for buttons with colored dots)
      */
     private void updateFilterButtonStyle(Button btn, boolean isActive, Color statusColor) {
+        btn.getStyleClass().removeAll("gantt-filter-btn-active");
+
         if (isActive) {
-            // Active: light grey background, white text
-            btn.setStyle("-fx-background-color: #9CA3AF; -fx-text-fill: white; -fx-background-radius: 16; -fx-cursor: hand;");
-            // Update label text color inside graphic if present
-            if (btn.getGraphic() instanceof HBox hbox) {
-                hbox.getChildren().stream()
-                    .filter(n -> n instanceof Label)
-                    .forEach(n -> ((Label) n).setStyle("-fx-text-fill: white;"));
-            }
-        } else {
-            // Inactive: white background, grey text, subtle border
-            btn.setStyle("-fx-background-color: white; -fx-text-fill: #6B7280; -fx-background-radius: 16; " +
-                        "-fx-border-color: #D1D5DB; -fx-border-radius: 16; -fx-cursor: hand;");
-            // Update label text color inside graphic if present
-            if (btn.getGraphic() instanceof HBox hbox) {
-                hbox.getChildren().stream()
-                    .filter(n -> n instanceof Label)
-                    .forEach(n -> ((Label) n).setStyle("-fx-text-fill: #6B7280;"));
-            }
+            btn.getStyleClass().add("gantt-filter-btn-active");
         }
+        // Note: The base styling comes from "gantt-filter-btn" class added in createFilterToggleButton
     }
 
     /**
@@ -466,6 +569,14 @@ public class HouseholdCanvasGanttView {
             double mouseY = event.getY();
             double parentHeaderWidth = canvas.getBarsLayout().getParentHeaderWidth();
 
+            // Update hover position for row highlighting
+            canvas.setHoveredMouseY(mouseY);
+
+            // Update day header highlight in the event Gantt canvas (DatedGanttCanvas)
+            // Convert mouse X position to a date and set it as the highlighted day
+            java.time.LocalDate hoveredDay = canvas.getBarsLayout().getTimeProjector().xToTime(mouseX);
+            FXGanttHighlight.setGanttHighlighted(hoveredDay);
+
             // Check if hovering over the room header area
             if (mouseX <= parentHeaderWidth) {
                 // Adjust Y coordinate for scroll position using layoutOriginY
@@ -490,10 +601,46 @@ public class HouseholdCanvasGanttView {
                         double actionIconX = parentHeaderWidth - ACTION_ICON_OFFSET;
                         if (!ganttParent.isBed() && mouseX >= actionIconX - 8 && mouseX <= actionIconX + 8) {
                             canvasNode.setCursor(javafx.scene.Cursor.HAND);
+                            canvas.getCanvasTooltip().hide();
                             return;
+                        }
+
+                        // Check if hovering over room name/comment area (for rooms with comments)
+                        // Tooltip shows when hovering anywhere on the room name or comment text
+                        if (!ganttParent.isBed() && ganttParent.room() != null) {
+                            String roomComment = ganttParent.room().getRoomComments();
+                            if (roomComment != null && !roomComment.isEmpty()) {
+                                // Get row bounds to calculate text area
+                                dev.webfx.extras.geometry.Bounds headerBounds = parentRow.getHeader();
+                                if (headerBounds != null) {
+                                    double rowTop = headerBounds.getMinY() - canvas.getBarsDrawer().getLayoutOriginY();
+                                    double centerY = rowTop + headerBounds.getHeight() / 2;
+
+                                    // When comment exists, room name is at centerY - 6, comment at centerY + 8
+                                    // Cover both lines: from room name top to comment bottom
+                                    double textAreaYStart = centerY - 14;  // Above room name
+                                    double textAreaYEnd = centerY + 16;    // Below comment
+
+                                    // Text X starts after arrow+gap (around 28px from left)
+                                    double textAreaXStart = 28;
+
+                                    if (mouseY >= textAreaYStart && mouseY <= textAreaYEnd &&
+                                        mouseX >= textAreaXStart && mouseX < parentHeaderWidth - 30) {
+                                        // Show tooltip with full comment
+                                        canvas.getCanvasTooltip().show(
+                                            mouseX + 15, mouseY - 10,
+                                            ganttParent.room().getName(),
+                                            roomComment);
+                                        canvasNode.setCursor(javafx.scene.Cursor.DEFAULT);
+                                        return;
+                                    }
+                                }
+                            }
                         }
                     }
                 }
+                // Hide tooltip when not hovering over comment
+                canvas.getCanvasTooltip().hide();
             } else {
                 // Check if hovering over a booking bar with an icon
                 double adjustedX = mouseX + canvas.getBarsDrawer().getLayoutOriginX();
@@ -552,8 +699,17 @@ public class HouseholdCanvasGanttView {
                         break;
                     }
                 }
+                // Hide tooltip when hovering over bars area (not over room header comment)
+                canvas.getCanvasTooltip().hide();
             }
             canvasNode.setCursor(javafx.scene.Cursor.DEFAULT);
+        });
+
+        // Clear hover highlight when mouse exits the canvas
+        canvasNode.setOnMouseExited(event -> {
+            canvas.setHoveredMouseY(-1);
+            FXGanttHighlight.setGanttHighlighted(null);
+            canvas.getCanvasTooltip().hide();
         });
 
         // Add click handler on the canvas to detect clicks on room headers AND booking bar icons
@@ -688,15 +844,9 @@ public class HouseholdCanvasGanttView {
                                   one.modality.hotel.backoffice.activities.household.gantt.model.RoomStatus newStatus) {
         Resource resource = room.getResource();
         if (resource == null) {
-            System.err.println("[HouseholdCanvasGanttView] Cannot update status: Room " + room.getName() + " has no Resource entity");
+            Console.log("[HouseholdCanvasGanttView] Cannot update status: Room " + room.getName() + " has no Resource entity");
             return;
         }
-
-        // Debug: Log resource info
-        System.out.println("[HouseholdCanvasGanttView] Updating room " + room.getName() +
-                " (Resource ID: " + resource.getPrimaryKey() +
-                ", current lastCleaningDate: " + resource.getLastCleaningDate() +
-                ", current lastInspectionDate: " + resource.getLastInspectionDate() + ")");
 
         UpdateStore updateStore = UpdateStore.createAbove(resource.getStore());
         Resource r = updateStore.updateEntity(resource);
@@ -706,14 +856,12 @@ public class HouseholdCanvasGanttView {
             case TO_CLEAN:
                 // Set state to DIRTY - keep date fields for historical tracking
                 r.setCleaningState(CleaningState.DIRTY);
-                System.out.println("[HouseholdCanvasGanttView] Setting cleaningState=DIRTY for TO_CLEAN");
                 break;
             case TO_INSPECT:
                 // Set state to TO_INSPECT and update cleaning date
                 // Keep lastInspectionDate for historical tracking
                 r.setCleaningState(CleaningState.TO_INSPECT);
                 r.setLastCleaningDate(now);
-                System.out.println("[HouseholdCanvasGanttView] Setting cleaningState=TO_INSPECT, lastCleaningDate=" + now);
                 break;
             case READY:
                 // Set state to READY
@@ -722,27 +870,18 @@ public class HouseholdCanvasGanttView {
                 // If coming from TO_INSPECT, the cleaning was already done
                 if (room.getStatus() == one.modality.hotel.backoffice.activities.household.gantt.model.RoomStatus.TO_CLEAN) {
                     r.setLastCleaningDate(now);
-                    System.out.println("[HouseholdCanvasGanttView] Setting cleaningState=READY (skipping inspection), both dates=" + now);
-                } else {
-                    System.out.println("[HouseholdCanvasGanttView] Setting cleaningState=READY (inspection only), lastInspectionDate=" + now);
                 }
                 r.setLastInspectionDate(now);
                 break;
             case OCCUPIED:
                 // Occupied status is determined by bookings, not by these dates
                 // This case shouldn't be called, but handle gracefully
-                System.out.println("[HouseholdCanvasGanttView] OCCUPIED status is determined by bookings, not manual update");
                 return;
         }
 
-        // Debug: Log what we're about to submit
-        System.out.println("[HouseholdCanvasGanttView] Updated entity lastCleaningDate: " + r.getLastCleaningDate() +
-                ", lastInspectionDate: " + r.getLastInspectionDate());
-
         // Submit changes to database
         updateStore.submitChanges()
-                .onFailure(error -> System.err.println("[HouseholdCanvasGanttView] Failed to update room status: " + error.getMessage()))
-                .onSuccess(ignored -> System.out.println("[HouseholdCanvasGanttView] Room " + room.getName() + " status updated to " + newStatus));
+                .onFailure(error -> Console.log("[HouseholdCanvasGanttView] Failed to update room status: " + error.getMessage()));
     }
 
     /**
@@ -851,12 +990,27 @@ public class HouseholdCanvasGanttView {
             body.append(I18n.getI18nText(HouseholdI18nKeys.Event)).append(": ").append(booking.getEvent()).append("\n");
         }
 
-        body.append("\n").append(I18n.getI18nText(HouseholdI18nKeys.CheckIn)).append(": ").append(booking.getStartDate());
-        body.append("\n").append(I18n.getI18nText(HouseholdI18nKeys.CheckOut)).append(": ").append(booking.getEndDate());
+        body.append("\n").append(I18n.getI18nText(HouseholdI18nKeys.CheckIn)).append(": ").append(formatDate(booking.getStartDate()));
+        // Checkout is the day after the last night stayed (endDate + 1)
+        java.time.LocalDate checkoutDate = booking.getEndDate() != null ? booking.getEndDate().plusDays(1) : null;
+        body.append("\n").append(I18n.getI18nText(HouseholdI18nKeys.CheckOut)).append(": ").append(formatDate(checkoutDate));
 
         // Show canvas-based tooltip at mouse position
         CanvasTooltip tooltip = canvas.getCanvasTooltip();
         tooltip.show(event.getX() + 10, event.getY(), I18n.getI18nText(HouseholdI18nKeys.GuestInformation), body.toString());
+    }
+
+    /**
+     * Formats a date for display in tooltips.
+     * Format: "Friday, 28 November 2025"
+     */
+    private String formatDate(java.time.LocalDate date) {
+        if (date == null) {
+            return "-";
+        }
+        java.time.format.DateTimeFormatter formatter = java.time.format.DateTimeFormatter.ofPattern(
+            "EEEE, d MMMM yyyy", java.util.Locale.ENGLISH);
+        return date.format(formatter);
     }
 
     /**
@@ -872,7 +1026,9 @@ public class HouseholdCanvasGanttView {
         // Build tooltip content
         StringBuilder body = new StringBuilder();
         body.append(I18n.getI18nText(HouseholdI18nKeys.Guest)).append(": ").append(booking.getGuestName()).append("\n");
-        body.append(booking.getStartDate()).append(" - ").append(booking.getEndDate()).append("\n");
+        // Checkout is the day after the last night stayed (endDate + 1)
+        java.time.LocalDate checkoutDate = booking.getEndDate() != null ? booking.getEndDate().plusDays(1) : null;
+        body.append(formatDate(booking.getStartDate())).append(" - ").append(formatDate(checkoutDate)).append("\n");
 
         if (booking.getComments() != null && !booking.getComments().isEmpty()) {
             body.append("\n").append(booking.getComments());
@@ -925,7 +1081,7 @@ public class HouseholdCanvasGanttView {
             displayRoomsAndBars(adapted.parentRows(), adapted.bars());
         } catch (Exception e) {
             // Catch any rendering errors to prevent UI crash
-            System.err.println("[HouseholdCanvasGanttView] Error displaying bars: " + e.getMessage());
+            Console.log("[HouseholdCanvasGanttView] Error displaying bars: " + e.getMessage());
         }
     }
 
@@ -972,6 +1128,17 @@ public class HouseholdCanvasGanttView {
      */
     public GanttPresenter getPresenter() {
         return presenter;
+    }
+
+    /**
+     * Forces a redraw of the canvas.
+     * Should be called when the Gantt tab becomes visible again to ensure the canvas is properly rendered.
+     * This fixes an issue where the canvas may not render after switching away and back to the Gantt tab.
+     */
+    public void forceRedraw() {
+        // Mark both layout and drawer as dirty to ensure full redraw
+        canvas.getBarsLayout().markLayoutAsDirty();
+        canvas.getBarsDrawer().markDrawAreaAsDirty();
     }
 
     /**

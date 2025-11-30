@@ -46,12 +46,10 @@ public class SingleRoomBookingBarRenderer implements BookingBarRenderer {
         Color barColor = colorScheme.getBookingStatusColor(bar.status());
         CornerRadii radii = getBarRadii(bar.position());
 
+        barRegion.setBackground(new Background(new BackgroundFill(barColor, radii, Insets.EMPTY)));
         if (bar.hasConflict()) {
-            // Add red border for conflicts
-            barRegion.setBackground(new Background(new BackgroundFill(barColor, radii, Insets.EMPTY)));
-            barRegion.setStyle("-fx-border-color: #FF0404; -fx-border-width: 2px;");
-        } else {
-            barRegion.setBackground(new Background(new BackgroundFill(barColor, radii, Insets.EMPTY)));
+            // Add red border for conflicts using CSS class
+            barRegion.getStyleClass().add("gantt-bar-conflict");
         }
 
         // Position based on booking position (Gantt flow - continuous bars)
@@ -106,7 +104,7 @@ public class SingleRoomBookingBarRenderer implements BookingBarRenderer {
             SVGPath personIcon = bar.hasLateArrival()
                 ? SvgIconFactory.createPersonIconRed()
                 : SvgIconFactory.createPersonIcon();
-            personIcon.setStyle("-fx-cursor: hand;");
+            personIcon.getStyleClass().add("gantt-clickable-icon");
             personIcon.setPickOnBounds(true);  // Enable mouse event handling
             personIcon.setMouseTransparent(false);  // Make sure icon can receive mouse events
 
@@ -132,7 +130,7 @@ public class SingleRoomBookingBarRenderer implements BookingBarRenderer {
         // Message icon if has comments (on second cell - MIDDLE position)
         if (bar.hasComments() && bar.position() == BookingPosition.MIDDLE) {
             SVGPath messageIcon = SvgIconFactory.createMessageIcon();
-            messageIcon.setStyle("-fx-cursor: hand;");
+            messageIcon.getStyleClass().add("gantt-clickable-icon");
             messageIcon.setPickOnBounds(true);  // Enable mouse event handling
             messageIcon.setMouseTransparent(false);  // Make sure icon can receive mouse events
 
@@ -223,7 +221,7 @@ public class SingleRoomBookingBarRenderer implements BookingBarRenderer {
         content.append("\nCheck-out: ").append(booking.getEndDate());
 
         tooltip.setText(content.toString());
-        tooltip.setStyle("-fx-font-size: 12px;");
+        tooltip.getStyleClass().add("gantt-tooltip");
 
         // Show tooltip at mouse position
         javafx.scene.Node source = (javafx.scene.Node) event.getSource();
@@ -255,7 +253,7 @@ public class SingleRoomBookingBarRenderer implements BookingBarRenderer {
         }
 
         tooltip.setText(content.toString());
-        tooltip.setStyle("-fx-font-size: 12px;");
+        tooltip.getStyleClass().add("gantt-tooltip");
 
         // Show tooltip at mouse position
         javafx.scene.Node source = (javafx.scene.Node) event.getSource();

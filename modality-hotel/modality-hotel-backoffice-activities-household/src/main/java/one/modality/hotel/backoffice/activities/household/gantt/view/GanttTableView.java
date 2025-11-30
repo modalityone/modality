@@ -135,7 +135,7 @@ public class GanttTableView {
         // Title
         Label title = new Label("Housekeeping Calendar");
         title.setTextFill(GanttColorScheme.COLOR_ACCENT);
-        title.setStyle("-fx-font-size: 20px; -fx-font-weight: bold;");
+        title.getStyleClass().add("gantt-title");
 
         // Spacer
         Region spacer = new Region();

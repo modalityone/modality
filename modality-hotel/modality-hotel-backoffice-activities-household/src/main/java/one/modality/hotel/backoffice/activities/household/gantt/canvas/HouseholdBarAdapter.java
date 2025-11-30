@@ -26,13 +26,22 @@ public record HouseholdBarAdapter(GanttPresenter presenter) {
      * <p>
      * For bookings with attendance gaps, creates MULTIPLE bars (one per date segment) to show
      * the interruption visually in the Gantt chart.
+     *
+     * @param bookings The bookings to convert to bars (may be a subset, e.g., one bed's bookings)
+     * @param parentRow The parent row these bars belong to
+     * @param allRoomBookings ALL bookings in the room (for turnover detection across beds)
      */
     private List<LocalDateBar<HouseholdBookingBlock>> adaptBookingsToBars(
-            List<? extends GanttBookingData> bookings, GanttParentRow parentRow) {
+            List<? extends GanttBookingData> bookings, GanttParentRow parentRow,
+            List<GanttBookingData> allRoomBookings) {
         List<LocalDateBar<HouseholdBookingBlock>> bars = new ArrayList<>();
 
         // Convert each booking to bar(s) - may create multiple bars for gap bookings
         for (GanttBookingData booking : bookings) {
+            // Detect turnover: does this booking start when another booking in the ROOM ends?
+            // Use allRoomBookings to detect turnovers across different beds in multi-bed rooms
+            boolean hasTurnover = detectTurnover(booking, allRoomBookings);
+
             List<DateSegment> segments = booking.getDateSegments();
 
             if (segments == null || segments.isEmpty()) {
@@ -42,12 +51,17 @@ public record HouseholdBarAdapter(GanttPresenter presenter) {
                 if (startDate == null || endDate == null) {
                     continue;
                 }
-                bars.add(createBarForSegment(booking, startDate, endDate, parentRow, true));
+                // endDate from booking is last night stayed (inclusive), convert to checkout day (exclusive)
+                LocalDate checkoutDate = endDate.plusDays(1);
+                bars.add(createBarForSegment(booking, startDate, checkoutDate, parentRow, true, hasTurnover));
             } else {
                 // Create a bar for each segment (handles gaps)
                 boolean isFirstSegment = true;
                 for (DateSegment segment : segments) {
-                    bars.add(createBarForSegment(booking, segment.startDate(), segment.endDate(), parentRow, isFirstSegment));
+                    // segment.endDate() is last night stayed (inclusive), convert to checkout day (exclusive)
+                    LocalDate checkoutDate = segment.endDate().plusDays(1);
+                    // Only show turnover on first segment (where guest arrives)
+                    bars.add(createBarForSegment(booking, segment.startDate(), checkoutDate, parentRow, isFirstSegment, isFirstSegment && hasTurnover));
                     isFirstSegment = false;
                 }
             }
@@ -57,22 +71,68 @@ public record HouseholdBarAdapter(GanttPresenter presenter) {
     }
 
     /**
+     * Detects if this booking has a turnover situation (another booking ends when this one starts).
+     * A turnover means the room needs cleaning between guests on the same day.
+     *
+     * @param booking The booking to check
+     * @param allRoomBookings All bookings in the room (including bookings from other beds)
+     * @return true if another booking's checkout day equals this booking's checkin day
+     */
+    private boolean detectTurnover(GanttBookingData booking, List<GanttBookingData> allRoomBookings) {
+        LocalDate startDate = booking.getStartDate();
+        if (startDate == null) {
+            return false;
+        }
+
+        for (GanttBookingData other : allRoomBookings) {
+            if (other == booking) {
+                continue;
+            }
+            // endDate from database is the last night stayed (inclusive)
+            // Checkout day = endDate + 1 day
+            // Turnover occurs when checkout day equals checkin day
+            LocalDate otherEndDate = other.getEndDate();
+            if (otherEndDate != null) {
+                LocalDate otherCheckoutDay = otherEndDate.plusDays(1);
+                if (otherCheckoutDay.equals(startDate)) {
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
+
+    /**
      * Creates a single bar for a date segment of a booking.
      *
      * @param booking The booking data
-     * @param startDate Start date of this segment
-     * @param endDate End date of this segment (exclusive - checkout day)
+     * @param startDate Start date of this segment (check-in day, inclusive)
+     * @param checkoutDate Checkout date of this segment (exclusive - bar ends at start of this day)
      * @param parentRow The parent row this bar belongs to
      * @param isFirstSegment True if this is the first segment (unused - all segments show icons)
+     * @param hasTurnover True if this is a turnover situation (another guest checks out on arrival day)
      * @return LocalDateBar for this segment
      */
     private LocalDateBar<HouseholdBookingBlock> createBarForSegment(
-            GanttBookingData booking, LocalDate startDate, LocalDate endDate,
-            GanttParentRow parentRow, boolean isFirstSegment) {
+            GanttBookingData booking, LocalDate startDate, LocalDate checkoutDate,
+            GanttParentRow parentRow, boolean isFirstSegment, boolean hasTurnover) {
 
         // All segments show person icon and comments - important for gap bookings
         // so users can identify who the bar belongs to and access actions
         BookingPosition position = BookingPosition.ARRIVAL;
+
+        // Check if we need to show the "room not ready" warning icon
+        // Conditions: guest arriving today, hasn't arrived yet, and room is not ready
+        LocalDate today = LocalDate.now();
+        boolean hasRoomNotReadyWarning = false;
+        if (startDate.equals(today) && !booking.isArrived()) {
+            // Get room status from the parent row
+            RoomStatus roomStatus = parentRow.isBed() && parentRow.bed() != null
+                    ? parentRow.bed().getStatus()
+                    : parentRow.room().getStatus();
+            // Room is not ready if it needs cleaning or inspection
+            hasRoomNotReadyWarning = (roomStatus == RoomStatus.TO_CLEAN || roomStatus == RoomStatus.TO_INSPECT);
+        }
 
         // Create booking block
         HouseholdBookingBlock block = new HouseholdBookingBlock(
@@ -81,16 +141,19 @@ public record HouseholdBarAdapter(GanttPresenter presenter) {
                 position,
                 false, // No conflict detection needed for direct conversion
                 booking.getComments() != null && !booking.getComments().isEmpty(),
-                false, // Turnover detection done by presenter
+                hasTurnover, // Show turnover indicator when room needs cleaning before this guest
                 !booking.isArrived() && booking.getStartDate().isBefore(LocalDate.now()),
+                hasRoomNotReadyWarning,
                 booking,
                 1, // Single booking occupancy
-                parentRow.room().getCapacity()
+                parentRow.room().getCapacity(),
+                null, // No daily occupancy for individual bars
+                null  // No segment bookings for individual bars
         );
         block.setParentRow(parentRow);
 
-        // Create bar - endDate is already the departure day (day after last night)
-        return new LocalDateBar<>(block, startDate, endDate);
+        // Create bar - checkoutDate is the departure day (exclusive end for the layout)
+        return new LocalDateBar<>(block, startDate, checkoutDate);
     }
 
     /**
@@ -152,10 +215,11 @@ public record HouseholdBarAdapter(GanttPresenter presenter) {
                     events.add(new AbstractMap.SimpleEntry<>(segment.endDate().plusDays(1), -1));    // Check-out (day after last night)
                 }
             } else {
-                // Fallback to simple dates (endDate is already checkout date for non-gap bookings)
+                // Fallback to simple dates
+                // Note: booking.getEndDate() is last night stayed (inclusive), so checkout is endDate + 1
                 if (booking.getStartDate() == null || booking.getEndDate() == null) continue;
                 events.add(new AbstractMap.SimpleEntry<>(booking.getStartDate(), 1));   // Check-in
-                events.add(new AbstractMap.SimpleEntry<>(booking.getEndDate(), -1));    // Check-out
+                events.add(new AbstractMap.SimpleEntry<>(booking.getEndDate().plusDays(1), -1));    // Check-out (day after last night)
             }
         }
 
@@ -214,6 +278,9 @@ public record HouseholdBarAdapter(GanttPresenter presenter) {
                     // Detect overbooking: when max occupancy in segment exceeds total capacity
                     boolean hasConflict = maxOccupancyInSegment > totalCapacity;
 
+                    // Check for room not ready warning: someone arriving today, not arrived yet, room not ready
+                    boolean hasRoomNotReadyWarning = checkRoomNotReadyForSegment(segmentStart, segmentEnd, today, segmentBookings, parentRow);
+
                     HouseholdBookingBlock block = new HouseholdBookingBlock(
                             "", // Guest name not needed for aggregate bars
                             segmentStatus,
@@ -222,6 +289,7 @@ public record HouseholdBarAdapter(GanttPresenter presenter) {
                             false,
                             false,
                             false,
+                            hasRoomNotReadyWarning,
                             representativeBooking,
                             maxOccupancyInSegment,
                             totalCapacity,
@@ -248,6 +316,9 @@ public record HouseholdBarAdapter(GanttPresenter presenter) {
             // Detect overbooking: when max occupancy in segment exceeds total capacity
             boolean hasConflict = maxOccupancyInSegment > totalCapacity;
 
+            // Check for room not ready warning: someone arriving today, not arrived yet, room not ready
+            boolean hasRoomNotReadyWarning = checkRoomNotReadyForSegment(segmentStart, segmentEnd, today, segmentBookings, parentRow);
+
             HouseholdBookingBlock block = new HouseholdBookingBlock(
                     "", // Guest name not needed for aggregate bars
                     segmentStatus,
@@ -256,6 +327,7 @@ public record HouseholdBarAdapter(GanttPresenter presenter) {
                     false,
                     false,
                     false,
+                    hasRoomNotReadyWarning,
                     representativeBooking,
                     maxOccupancyInSegment,
                     totalCapacity,
@@ -267,6 +339,36 @@ public record HouseholdBarAdapter(GanttPresenter presenter) {
         }
 
         return bars;
+    }
+
+    /**
+     * Checks if the room not ready warning should be shown for an aggregate bar segment.
+     * Returns true if:
+     * 1. Today falls within the segment date range
+     * 2. At least one booking starts today and the guest hasn't arrived yet
+     * 3. The room is not ready (TO_CLEAN or TO_INSPECT status)
+     */
+    private boolean checkRoomNotReadyForSegment(LocalDate segmentStart, LocalDate segmentEnd, LocalDate today,
+                                                 List<GanttBookingData> segmentBookings, GanttParentRow parentRow) {
+        // Check if today is within segment range
+        if (today.isBefore(segmentStart) || !today.isBefore(segmentEnd)) {
+            return false;
+        }
+
+        // Check if room is not ready
+        RoomStatus roomStatus = parentRow.room().getStatus();
+        if (roomStatus != RoomStatus.TO_CLEAN && roomStatus != RoomStatus.TO_INSPECT) {
+            return false;
+        }
+
+        // Check if any booking starts today and guest hasn't arrived
+        for (GanttBookingData booking : segmentBookings) {
+            if (booking.getStartDate() != null && booking.getStartDate().equals(today) && !booking.isArrived()) {
+                return true;
+            }
+        }
+
+        return false;
     }
 
     /**
@@ -343,6 +445,10 @@ public record HouseholdBarAdapter(GanttPresenter presenter) {
             boolean isMultiBed = !room.getBeds().isEmpty();
             boolean isExpanded = isMultiBed && presenter.isRoomExpanded(room.getId());
 
+            // Collect ALL bookings in this room (from all beds) for turnover detection
+            // Turnovers happen at room level, not bed level
+            List<GanttBookingData> allRoomBookings = collectAllRoomBookings(room);
+
             if (isExpanded) {
                 // EXPANDED multi-bed room: Create room parent WITH aggregated bar + bed parents (with individual bars)
                 GanttParentRow roomParent = GanttParentRow.forRoom(room, true);
@@ -353,16 +459,14 @@ public record HouseholdBarAdapter(GanttPresenter presenter) {
                 allBars.addAll(roomBars);
 
                 // Add bed parents with their booking bars (below the room)
-                int bedIndex = 0;
                 for (GanttBedData bed : room.getBeds()) {
                     GanttParentRow bedParent = GanttParentRow.forBed(room, bed);
                     allParentRows.add(bedParent);
 
+                    // Pass ALL room bookings for turnover detection (across beds)
                     List<LocalDateBar<HouseholdBookingBlock>> bedBars = adaptBookingsToBars(
-                            bed.getBookings(), bedParent);
+                            bed.getBookings(), bedParent, allRoomBookings);
                     allBars.addAll(bedBars);
-
-                    bedIndex++;
                 }
             } else if (isMultiBed) {
                 // COLLAPSED multi-bed room: Create room parent with aggregated bar
@@ -376,13 +480,32 @@ public record HouseholdBarAdapter(GanttPresenter presenter) {
                 GanttParentRow roomParent = GanttParentRow.forRoom(room, false);
                 allParentRows.add(roomParent);
 
+                // For single rooms, allRoomBookings is the same as room.getBookings()
                 List<LocalDateBar<HouseholdBookingBlock>> roomBars = adaptBookingsToBars(
-                        room.getBookings(), roomParent);
+                        room.getBookings(), roomParent, allRoomBookings);
                 allBars.addAll(roomBars);
             }
         }
 
         return new AdaptedRoomData(allParentRows, allBars);
+    }
+
+    /**
+     * Collects all bookings from a room (including bookings from all beds).
+     * Used for room-level turnover detection.
+     */
+    private List<GanttBookingData> collectAllRoomBookings(GanttRoomData room) {
+        List<GanttBookingData> allBookings = new ArrayList<>();
+
+        // Add direct room bookings (for single rooms)
+        allBookings.addAll(room.getBookings());
+
+        // Add bookings from all beds (for multi-bed rooms)
+        for (GanttBedData bed : room.getBeds()) {
+            allBookings.addAll(bed.getBookings());
+        }
+
+        return allBookings;
     }
 
     /**

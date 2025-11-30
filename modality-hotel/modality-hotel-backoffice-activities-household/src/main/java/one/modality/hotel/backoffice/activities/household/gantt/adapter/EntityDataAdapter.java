@@ -88,20 +88,18 @@ public final class EntityDataAdapter {
             Map<String, List<DocumentLine>> documentLinesByRoomKey = groupDocumentLinesByRoom(documentLines);
 
             // Convert each resource configuration to GanttRoomData
-            // Sort by category first (to keep same-category rooms together for grandparent headers),
-            // then by capacity (max) in ascending order within each category
+            // Sort by category ord first (from Item.ord), then by capacity (max) ascending
             return resourceConfigurations.stream()
                 .sorted((rc1, rc2) -> {
-                    // Get category names for comparison
-                    String category1 = rc1.getItem() != null && rc1.getItem().getName() != null
-                        ? rc1.getItem().getName() : "Rooms";
-                    String category2 = rc2.getItem() != null && rc2.getItem().getName() != null
-                        ? rc2.getItem().getName() : "Rooms";
+                    // Get Item ord values for category sorting
+                    // Path: ResourceConfiguration -> Item -> ord
+                    int ord1 = getItemOrd(rc1);
+                    int ord2 = getItemOrd(rc2);
 
-                    // First, compare by category (alphabetical)
-                    int categoryCompare = category1.compareTo(category2);
-                    if (categoryCompare != 0) {
-                        return categoryCompare;
+                    // First, compare by Item ord
+                    int ordCompare = Integer.compare(ord1, ord2);
+                    if (ordCompare != 0) {
+                        return ordCompare;
                     }
 
                     // Within same category, sort by capacity (ascending)
@@ -152,6 +150,19 @@ public final class EntityDataAdapter {
         Object siteId = rc.getSite() != null ? rc.getSite().getPrimaryKey() : null;
         String roomName = rc.getName();
         return (siteId != null ? siteId.toString() : "null") + "|" + (roomName != null ? roomName : "");
+    }
+
+    /**
+     * Gets the Item ord value for sorting room types.
+     * Path: ResourceConfiguration -> Item -> ord
+     * Returns Integer.MAX_VALUE if any part of the path is null (sorts last).
+     */
+    private static int getItemOrd(ResourceConfiguration rc) {
+        if (rc == null || rc.getItem() == null) {
+            return Integer.MAX_VALUE;
+        }
+        Integer ord = rc.getItem().getOrd();
+        return ord != null ? ord : Integer.MAX_VALUE;
     }
 
     /**
@@ -219,6 +230,9 @@ public final class EntityDataAdapter {
         } else {
             category = "Rooms"; // Default if item is null or has no name
         }
+
+        // Get room comment from database
+        final String roomComment = rc.getComment();
 
         // Determine room type from max (bed count)
         // RoomType controls visual rendering logic (single vs multi-bed)
@@ -298,8 +312,7 @@ public final class EntityDataAdapter {
 
             @Override
             public String getRoomComments() {
-                // Could be populated from a comments field if it exists
-                return null;
+                return roomComment;
             }
 
             @Override
@@ -660,7 +673,8 @@ public final class EntityDataAdapter {
 
         // Get dates directly from DocumentLine fields (much simpler than reconstructing from Attendance)
         final LocalDate startDate = documentLine.getStartDate();
-        // endDate from DocumentLine is the checkout date (no need to add 1 day)
+        // endDate from DocumentLine is the last night stayed (inclusive), NOT the checkout date
+        // To get checkout date, add 1 day: checkoutDate = endDate + 1
         final LocalDate endDate = documentLine.getEndDate();
 
         // Determine booking status (pass endDate to check if departed)

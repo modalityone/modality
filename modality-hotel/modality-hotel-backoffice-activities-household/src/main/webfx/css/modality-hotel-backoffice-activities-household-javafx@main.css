@@ -726,3 +726,212 @@
 .action-menu-button:hover {
     -fx-text-fill: #0096D6;
 }
+
+/* ============================================================================
+   GANTT VIEW - Navigation Controls
+   ============================================================================ */
+
+/* Filter section labels */
+.gantt-filter-label {
+    -fx-font-weight: bold;
+    -fx-text-fill: #374151;
+}
+
+/* Navigation button group container */
+.gantt-nav-group {
+    -fx-background-color: white;
+    -fx-background-radius: 6px;
+    -fx-border-radius: 6px;
+    -fx-border-color: #E5E7EB;
+    -fx-border-width: 1px;
+}
+
+/* Navigation icon buttons (pan left/right, zoom in/out) */
+.gantt-nav-btn {
+    -fx-background-color: transparent;
+    -fx-text-fill: #6B7280;
+    -fx-font-size: 16px;
+    -fx-cursor: hand;
+}
+
+.gantt-nav-btn:hover {
+    -fx-background-color: #F3F4F6;
+    -fx-text-fill: #374151;
+}
+
+.gantt-nav-btn-left {
+    -fx-background-radius: 5 0 0 5;
+    -fx-border-radius: 5 0 0 5;
+}
+
+.gantt-nav-btn-right {
+    -fx-background-radius: 0 5 5 0;
+    -fx-border-radius: 0 5 5 0;
+}
+
+/* Zoom reset button (2w) */
+.gantt-zoom-reset-btn {
+    -fx-background-color: transparent;
+    -fx-text-fill: #6B7280;
+    -fx-font-size: 11px;
+    -fx-font-weight: bold;
+    -fx-cursor: hand;
+}
+
+.gantt-zoom-reset-btn:hover {
+    -fx-background-color: #F3F4F6;
+    -fx-text-fill: #374151;
+}
+
+/* Go to Today button */
+.gantt-today-btn {
+    -fx-background-color: #0096D6;
+    -fx-text-fill: white;
+    -fx-background-radius: 20px;
+    -fx-border-radius: 20px;
+    -fx-font-weight: bold;
+    -fx-font-size: 13px;
+    -fx-cursor: hand;
+    -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.1), 4, 0, 0, 1);
+}
+
+.gantt-today-btn:hover {
+    -fx-background-color: #007AB8;
+    -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.15), 5, 0, 0, 2);
+}
+
+/* Filter toggle buttons (All, To Clean, etc.) */
+.gantt-filter-btn {
+    -fx-background-color: white;
+    -fx-text-fill: #6B7280;
+    -fx-background-radius: 16px;
+    -fx-border-radius: 16px;
+    -fx-border-color: #D1D5DB;
+    -fx-border-width: 1px;
+    -fx-cursor: hand;
+}
+
+.gantt-filter-btn:hover {
+    -fx-border-color: #0096D6;
+    -fx-background-color: #F0F9FF;
+}
+
+.gantt-filter-btn-active {
+    -fx-background-color: #9CA3AF;
+    -fx-text-fill: white;
+    -fx-border-color: #9CA3AF;
+}
+
+.gantt-filter-btn-active:hover {
+    -fx-background-color: #6B7280;
+    -fx-border-color: #6B7280;
+    -fx-text-fill: white;
+}
+
+/* Filter button label inside HBox graphic */
+.gantt-filter-btn-label {
+    -fx-text-fill: #6B7280;
+}
+
+.gantt-filter-btn-active .gantt-filter-btn-label {
+    -fx-text-fill: white;
+}
+
+.gantt-filter-btn-active:hover .gantt-filter-btn-label {
+    -fx-text-fill: white;
+}
+
+/* ============================================================================
+   GANTT VIEW - Cell Factory and Renderers
+   ============================================================================ */
+
+/* Title styling */
+.gantt-title {
+    -fx-font-size: 20px;
+    -fx-font-weight: bold;
+}
+
+/* Day label in header */
+.gantt-day-label {
+    -fx-font-size: 12px;
+    -fx-font-weight: 500;
+}
+
+/* Date label in header */
+.gantt-date-label {
+    -fx-font-size: 12px;
+    -fx-font-weight: 500;
+}
+
+/* Today label badge */
+.gantt-today-label {
+    -fx-font-size: 10px;
+}
+
+/* Category/Room type label */
+.gantt-category-label {
+    -fx-font-size: 13px;
+    -fx-font-weight: 500;
+}
+
+/* Expand/collapse arrow */
+.gantt-expand-arrow {
+    -fx-font-size: 14px;
+    -fx-text-fill: #333333;
+    -fx-font-weight: bold;
+    -fx-cursor: hand;
+}
+
+/* Room name in cell */
+.gantt-room-name {
+    -fx-font-size: 13px;
+}
+
+/* Room comment in cell */
+.gantt-room-comment {
+    -fx-font-size: 11px;
+    -fx-font-style: italic;
+}
+
+/* Bed name in cell */
+.gantt-bed-name {
+    -fx-font-size: 12px;
+    -fx-font-style: italic;
+}
+
+.gantt-bed-name-overbooking {
+    -fx-font-weight: bold;
+}
+
+/* Booking bar label */
+.gantt-bar-label {
+    -fx-font-size: 9px;
+    -fx-font-weight: bold;
+}
+
+/* Booking bar conflict border */
+.gantt-bar-conflict {
+    -fx-border-color: #FF0404;
+    -fx-border-width: 2px;
+}
+
+/* Clickable icon */
+.gantt-clickable-icon {
+    -fx-cursor: hand;
+}
+
+/* Tooltip styling */
+.gantt-tooltip {
+    -fx-font-size: 12px;
+}
+
+/* Turnover indicator background */
+.gantt-turnover-bg {
+    -fx-background-color: #FFA500;
+    -fx-background-radius: 3px;
+}
+
+/* Turnover indicator with shadow */
+.gantt-turnover-indicator {
+    -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.2), 4, 0, 0, 2);
+}

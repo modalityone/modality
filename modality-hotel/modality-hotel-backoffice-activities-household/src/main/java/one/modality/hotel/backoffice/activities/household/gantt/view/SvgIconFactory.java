@@ -140,7 +140,7 @@ public class SvgIconFactory {
         background.setPrefSize(20, 20);
         background.setMinSize(20, 20);
         background.setMaxSize(20, 20);
-        background.setStyle("-fx-background-color: #FFA500; -fx-background-radius: 3px;");
+        background.getStyleClass().add("gantt-turnover-bg");
 
         // Create white triangle icon
         SVGPath triangle = createWarningTriangleIcon();
@@ -150,7 +150,7 @@ public class SvgIconFactory {
         // Combine in StackPane
         javafx.scene.layout.StackPane indicator = new javafx.scene.layout.StackPane(background, triangle);
         indicator.setAlignment(javafx.geometry.Pos.CENTER);
-        indicator.setStyle("-fx-effect: dropshadow(gaussian, rgba(0,0,0,0.2), 4, 0, 0, 2);");
+        indicator.getStyleClass().add("gantt-turnover-indicator");
 
         return indicator;
     }

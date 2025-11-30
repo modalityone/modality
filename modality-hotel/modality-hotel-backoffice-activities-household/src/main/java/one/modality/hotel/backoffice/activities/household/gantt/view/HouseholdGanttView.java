@@ -1,5 +1,6 @@
 package one.modality.hotel.backoffice.activities.household.gantt.view;
 
+import dev.webfx.platform.console.Console;
 import javafx.collections.ListChangeListener;
 import javafx.scene.Node;
 import one.modality.hotel.backoffice.accommodation.AccommodationPresentationModel;
@@ -212,7 +213,7 @@ public final class HouseholdGanttView {
         } catch (Exception e) {
             // Catch any rendering errors to prevent UI crash
             // This is important for production stability
-            System.err.println("[HouseholdGanttView] Error displaying rooms: " + e.getMessage());
+            Console.log("[HouseholdGanttView] Error displaying rooms: " + e.getMessage());
         }
     }
 

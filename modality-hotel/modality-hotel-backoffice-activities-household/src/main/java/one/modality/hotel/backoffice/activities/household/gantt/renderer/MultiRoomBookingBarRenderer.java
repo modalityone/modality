@@ -125,7 +125,7 @@ public class MultiRoomBookingBarRenderer implements BookingBarRenderer {
     private Label createOccupancyLabel(BookingBar bar) {
         Label label = new Label(bar.occupancy() + "/" + bar.totalCapacity());
         label.setTextFill(Color.WHITE);
-        label.setStyle("-fx-font-size: 9px; -fx-font-weight: bold;");
+        label.getStyleClass().add("gantt-bar-label");
         label.setPadding(new Insets(0, 3, 0, 0));
         StackPane.setAlignment(label, Pos.CENTER_RIGHT);
         return label;

@@ -112,7 +112,7 @@ public final class HouseholdGanttDataLoader {
         // Query 1: Load all ResourceConfigurations (room configurations) for this organization
         // ResourceConfiguration has: resource (room with cleaning/inspection dates), item (room type), max (bed count)
         ReactiveEntitiesMapper.<ResourceConfiguration>createPushReactiveChain(mixin)
-            .always("{class: 'ResourceConfiguration', alias: 'rc', fields: 'name,resource.(id,name,cleaningState,lastCleaningDate,lastInspectionDate),item.(name,family.(name,ord)),max', orderBy: 'item.family.ord,item.name,name'}")
+            .always("{class: 'ResourceConfiguration', alias: 'rc', fields: 'name,comment,resource.(id,name,cleaningState,lastCleaningDate,lastInspectionDate),item.(name,ord,family.name),max', orderBy: 'item.ord,item.name,name'}")
             // Filter by organization and optional site ID
             // Only get current configurations (no end date or future configs)
             .always(pm.organizationIdProperty(), org -> where("resource.site.organization=? and resource.site=? and (endDate is null or endDate >= current_date())", org, SITE_ID_FILTER))

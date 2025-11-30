@@ -2,6 +2,7 @@ package one.modality.hotel.backoffice.activities.household.dashboard.view;
 
 import dev.webfx.extras.i18n.I18n;
 import dev.webfx.extras.i18n.controls.I18nControls;
+import dev.webfx.platform.console.Console;
 import dev.webfx.platform.util.Strings;
 import dev.webfx.stack.orm.entity.UpdateStore;
 import javafx.animation.*;
@@ -156,7 +157,7 @@ public record DashboardCardFactory(DashboardPresenter presenter, Pane containerP
         r.setCleaningState(CleaningState.TO_INSPECT);
         r.setLastCleaningDate(LocalDateTime.now());
         updateStore.submitChanges()
-                .onFailure(error -> System.err.println("Failed to update room cleaning date: " + error.getMessage()));
+                .onFailure(error -> Console.log("Failed to update room cleaning date: " + error.getMessage()));
     }
 
     /**
@@ -171,7 +172,7 @@ public record DashboardCardFactory(DashboardPresenter presenter, Pane containerP
         r.setCleaningState(CleaningState.READY);
         r.setLastInspectionDate(LocalDateTime.now());
         updateStore.submitChanges()
-                .onFailure(error -> System.err.println("Failed to update room inspection date: " + error.getMessage()));
+                .onFailure(error -> Console.log("Failed to update room inspection date: " + error.getMessage()));
     }
 
     /**
@@ -188,7 +189,7 @@ public record DashboardCardFactory(DashboardPresenter presenter, Pane containerP
         r.setLastCleaningDate(now);
         r.setLastInspectionDate(now);
         updateStore.submitChanges()
-                .onFailure(error -> System.err.println("Failed to update room status: " + error.getMessage()));
+                .onFailure(error -> Console.log("Failed to update room status: " + error.getMessage()));
     }
 
     /**
@@ -202,7 +203,7 @@ public record DashboardCardFactory(DashboardPresenter presenter, Pane containerP
         Resource r = updateStore.updateEntity(resource);
         r.setCleaningState(CleaningState.DIRTY);
         updateStore.submitChanges()
-                .onFailure(error -> System.err.println("Failed to update room cleaning state: " + error.getMessage()));
+                .onFailure(error -> Console.log("Failed to update room cleaning state: " + error.getMessage()));
     }
 
     /**

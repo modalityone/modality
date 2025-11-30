@@ -29,6 +29,7 @@ module modality.hotel.backoffice.activities.household {
     requires webfx.extras.util.control;
     requires webfx.kit.launcher;
     requires webfx.kit.util;
+    requires webfx.platform.console;
     requires webfx.platform.util;
     requires webfx.platform.windowhistory;
     requires webfx.stack.orm.domainmodel.activity;

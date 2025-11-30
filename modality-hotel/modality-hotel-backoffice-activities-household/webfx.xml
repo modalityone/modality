@@ -15,6 +15,7 @@
     <dependencies>
         <used-by-source-modules>
             <undetected-module>javafx-controls</undetected-module>
+            <undetected-module>webfx-platform-console</undetected-module>
         </used-by-source-modules>
     </dependencies>
 

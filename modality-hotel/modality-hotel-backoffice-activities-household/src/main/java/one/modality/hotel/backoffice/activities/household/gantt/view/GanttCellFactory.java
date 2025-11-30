@@ -104,21 +104,21 @@ public class GanttCellFactory {
                 .getDisplayName(TextStyle.SHORT, Locale.ENGLISH).toUpperCase();
         Label dayLabel = new Label(dayOfWeek);
         dayLabel.setTextFill(GanttColorScheme.COLOR_ACCENT);
-        dayLabel.setStyle("-fx-font-size: 12px; -fx-font-weight: 500;");
+        dayLabel.getStyleClass().add("gantt-day-label");
 
         // Day of month (GWT-compatible padding instead of String.format)
         int day = dateCol.date().getDayOfMonth();
         String dayOfMonth = (day < 10 ? "0" : "") + day;
         Label dateLabel = new Label(dayOfMonth);
         dateLabel.setTextFill(GanttColorScheme.COLOR_ACCENT);
-        dateLabel.setStyle("-fx-font-size: 12px; -fx-font-weight: 500;");
+        dateLabel.getStyleClass().add("gantt-date-label");
 
         dateHeader.getChildren().addAll(dayLabel, dateLabel);
 
         if (dateCol.isToday()) {
             Label todayLabel = new Label("(Today)");
             todayLabel.setTextFill(GanttColorScheme.COLOR_ACCENT);
-            todayLabel.setStyle("-fx-font-size: 10px;");
+            todayLabel.getStyleClass().add("gantt-today-label");
             dateHeader.getChildren().add(todayLabel);
         }
 
@@ -132,7 +132,7 @@ public class GanttCellFactory {
     public StackPane createCategoryCell(String categoryName) {
         Label categoryLabel = new Label(categoryName);
         categoryLabel.setTextFill(GanttColorScheme.COLOR_ACCENT);
-        categoryLabel.setStyle("-fx-font-size: 13px; -fx-font-weight: 500;");
+        categoryLabel.getStyleClass().add("gantt-category-label");
 
         StackPane categoryCell = new StackPane(categoryLabel);
         categoryCell.setAlignment(Pos.CENTER_LEFT);
@@ -170,7 +170,7 @@ public class GanttCellFactory {
         if (!room.getBeds().isEmpty()) {
             boolean isExpanded = presenter.isRoomExpanded(room.getId());
             Label arrow = new Label(isExpanded ? "∨" : "›"); // Down arrow when expanded, right arrow when collapsed
-            arrow.setStyle("-fx-font-size: 14px; -fx-text-fill: #333333; -fx-font-weight: bold; -fx-cursor: hand;");
+            arrow.getStyleClass().add("gantt-expand-arrow");
             arrow.setCursor(javafx.scene.Cursor.HAND);
 
             // Click handler to expand/collapse individual bed rows
@@ -193,7 +193,7 @@ public class GanttCellFactory {
         // Room name
         Label roomName = new Label(room.getName());
         roomName.setTextFill(GanttColorScheme.COLOR_TEXT_GREY);
-        roomName.setStyle("-fx-font-size: 13px;");
+        roomName.getStyleClass().add("gantt-room-name");
 
         content.getChildren().addAll(statusDot, roomName);
 
@@ -201,7 +201,7 @@ public class GanttCellFactory {
         if (room.getRoomComments() != null && !room.getRoomComments().isEmpty()) {
             Label commentLabel = new Label(truncateText(room.getRoomComments()));
             commentLabel.setTextFill(Color.web("#666666"));
-            commentLabel.setStyle("-fx-font-size: 11px; -fx-font-style: italic;");
+            commentLabel.getStyleClass().add("gantt-room-comment");
             content.getChildren().add(commentLabel);
         }
 
@@ -329,7 +329,10 @@ public class GanttCellFactory {
         Label bedName = new Label(bed.getName());
         // Use white text for overbooking beds (on red background), grey for normal beds
         bedName.setTextFill(bed.isOverbooking() ? Color.WHITE : Color.web("#666666"));
-        bedName.setStyle("-fx-font-size: 12px; -fx-font-weight: " + (bed.isOverbooking() ? "bold" : "normal") + "; -fx-font-style: italic;");
+        bedName.getStyleClass().add("gantt-bed-name");
+        if (bed.isOverbooking()) {
+            bedName.getStyleClass().add("gantt-bed-name-overbooking");
+        }
 
         content.getChildren().addAll(statusDot, bedName);
 
