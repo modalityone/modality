@@ -18,7 +18,6 @@ import dev.webfx.extras.time.layout.gantt.canvas.ParentsCanvasDrawer;
 import dev.webfx.extras.util.control.Controls;
 import dev.webfx.kit.util.properties.FXProperties;
 import dev.webfx.kit.util.properties.ObservableLists;
-import dev.webfx.platform.useragent.UserAgent;
 import javafx.beans.property.BooleanProperty;
 import javafx.collections.ObservableList;
 import javafx.geometry.HPos;
@@ -180,16 +179,26 @@ public abstract class AccommodationGantt<B extends AccommodationBlock> {
     }
 
     protected void drawParentRoom(ResourceConfiguration rc, Bounds b, GraphicsContext gc) {
-        if (!barsLayout.isParentRowCollapseEnabled()) {
+        if (!barsLayout.isParentRowCollapseEnabled()) { // Happens in RoomView where there is 1 row only per room
+            // In that case, we display the room name vertically centered
             parentRoomDrawer
                 .setMiddleText(rc.getName())
                 .drawBar(b, gc);
-        } else {
-            parentRoomDrawer.drawBar(b, gc); // This also draws a rectangle stroke - see properties set in constructor
-            gc.fillRect(b.getMaxX() - 2, b.getMinY(), 2, b.getHeight()); // erasing the left side of the stroke rectangle*/
+        } else { // Happens in GuestView
+            // We use parentRoomDrawer only to paint the area
+            parentRoomDrawer.drawBar(b, gc);
+            // And we erase the left side of the stroke rectangle, so the children headers look joined to it
+            gc.fillRect(b.getMaxX() - 2, b.getMinY(), 2, b.getHeight());
+            // Because the parent row collapse feature is enabled, ParentsCanvasDrawer will automatically draw a chevron
+            // when appropriate (i.e., when the parent row has several children rows and can therefore be collapsed) in
+            // the upper left corner. We position the room name at the right of that chevron (whether the chevron is
+            // displayed so that all room names are aligned vertically).
+            Bounds chevronLocalBounds = barsLayout.getParentRowCollapseChevronLocalBounds();
+            gc.setTextAlign(TextAlignment.LEFT);
+            gc.setTextBaseline(VPos.CENTER);
             gc.setFont(barsFont);
             gc.setFill(Color.BLACK);
-            gc.fillText(rc.getName(), b.getMinX() + 20, b.getMinY() + 15 + (UserAgent.isBrowser() ? -4 : 0));
+            gc.fillText(rc.getName(), b.getMinX() + chevronLocalBounds.getMaxX() + 3, b.getMinY() + chevronLocalBounds.getCenterY());
         }
     }
 
