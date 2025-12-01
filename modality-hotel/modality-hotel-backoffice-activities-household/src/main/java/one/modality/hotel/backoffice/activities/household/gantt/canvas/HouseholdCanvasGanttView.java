@@ -581,7 +581,7 @@ public class HouseholdCanvasGanttView {
             if (mouseX <= parentHeaderWidth) {
                 // Adjust Y coordinate for scroll position using layoutOriginY
                 // layoutOriginY is positive when scrolled down, so we add it to get absolute Y
-                double adjustedY = mouseY + canvas.getBarsDrawer().getLayoutOriginY();
+                double adjustedY = mouseY + canvas.getBarsDrawer().getOriginLayoutY();
 
                 // Use built-in method to find parent at this Y position
                 dev.webfx.extras.time.layout.gantt.impl.ParentRow<?> parentRow =
@@ -613,7 +613,7 @@ public class HouseholdCanvasGanttView {
                                 // Get row bounds to calculate text area
                                 dev.webfx.extras.geometry.Bounds headerBounds = parentRow.getHeader();
                                 if (headerBounds != null) {
-                                    double rowTop = headerBounds.getMinY() - canvas.getBarsDrawer().getLayoutOriginY();
+                                    double rowTop = headerBounds.getMinY() - canvas.getBarsDrawer().getOriginLayoutY();
                                     double centerY = rowTop + headerBounds.getHeight() / 2;
 
                                     // When comment exists, room name is at centerY - 6, comment at centerY + 8
@@ -643,8 +643,8 @@ public class HouseholdCanvasGanttView {
                 canvas.getCanvasTooltip().hide();
             } else {
                 // Check if hovering over a booking bar with an icon
-                double adjustedX = mouseX + canvas.getBarsDrawer().getLayoutOriginX();
-                double adjustedY = mouseY + canvas.getBarsDrawer().getLayoutOriginY();
+                double adjustedX = mouseX + canvas.getBarsDrawer().getOriginLayoutX();
+                double adjustedY = mouseY + canvas.getBarsDrawer().getOriginLayoutY();
 
                 java.util.List<LocalDateBar<HouseholdGanttCanvas.HouseholdBookingBlock>> children = canvas.getBarsLayout().getChildren();
                 for (int i = 0; i < children.size(); i++) {
@@ -731,7 +731,7 @@ public class HouseholdCanvasGanttView {
 
             // Adjust Y coordinate for scroll position (CRITICAL!)
             // layoutOriginY is positive when scrolled down, so we add it to get absolute Y
-            double layoutOriginY = canvas.getBarsDrawer().getLayoutOriginY();
+            double layoutOriginY = canvas.getBarsDrawer().getOriginLayoutY();
             double adjustedY = clickY + layoutOriginY;
 
             if (clickX > parentHeaderWidth) {
@@ -890,7 +890,7 @@ public class HouseholdCanvasGanttView {
      */
     private void handleBarIconClick(double clickX, double adjustedY, javafx.scene.input.MouseEvent event) {
         // Adjust coordinates for scroll offset
-        double adjustedX = clickX + canvas.getBarsDrawer().getLayoutOriginX();
+        double adjustedX = clickX + canvas.getBarsDrawer().getOriginLayoutX();
 
         // Icon sizes for hit detection - person icon scaled to 80% of bar height, comment icon at 42%
         double personIconSize = 18 * 0.8; // BAR_HEIGHT * 0.8

@@ -4,6 +4,7 @@ import dev.webfx.extras.canvas.bar.BarDrawer;
 import dev.webfx.extras.canvas.layer.ChildDrawer;
 import dev.webfx.extras.canvas.pane.CanvasPane;
 import dev.webfx.extras.geometry.Bounds;
+import dev.webfx.extras.i18n.I18n;
 import dev.webfx.extras.panes.CollapsePane;
 import dev.webfx.extras.theme.FontDef;
 import dev.webfx.extras.theme.ThemeRegistry;
@@ -18,7 +19,6 @@ import dev.webfx.extras.time.layout.canvas.MultiLayerLocalDateCanvasDrawer;
 import dev.webfx.extras.time.layout.canvas.TimeCanvasUtil;
 import dev.webfx.extras.time.layout.gantt.GanttLayout;
 import dev.webfx.extras.time.layout.gantt.LocalDateGanttLayout;
-import dev.webfx.extras.time.projector.AnimatedTimeProjector;
 import dev.webfx.extras.time.projector.TimeProjector;
 import dev.webfx.extras.time.window.TimeWindow;
 import dev.webfx.extras.util.animation.Animations;
@@ -26,11 +26,11 @@ import dev.webfx.kit.launcher.WebFxKitLauncher;
 import dev.webfx.kit.util.properties.FXProperties;
 import dev.webfx.platform.resource.Resource;
 import dev.webfx.platform.util.Objects;
-import dev.webfx.extras.i18n.I18n;
 import javafx.animation.Interpolator;
 import javafx.animation.Timeline;
 import javafx.beans.InvalidationListener;
 import javafx.beans.Observable;
+import javafx.beans.property.DoubleProperty;
 import javafx.beans.property.ObjectProperty;
 import javafx.collections.ObservableList;
 import javafx.geometry.HPos;
@@ -85,11 +85,6 @@ public final class DatedGanttCanvas implements TimeWindow<LocalDate> {
     private Timeline animationTimeline; // used for horizontal animation on time window change
 
     public DatedGanttCanvas() {
-        // Setting an animatedTimeProjector on the global layout to allow possible horizontal animation
-        TimeProjector<LocalDate> untranslatedTimeProjector = daysLayer.getTimeProjector();
-        AnimatedTimeProjector<LocalDate> animatedTimeProjector = new AnimatedTimeProjector<>(untranslatedTimeProjector);
-        globalLayout.setTimeProjector(animatedTimeProjector);
-
         // Adding the layers in the gantt canvas.
         addLayer(daysLayer, this::drawDay);
         addLayer(weeksLayer, this::drawWeek);
@@ -114,7 +109,7 @@ public final class DatedGanttCanvas implements TimeWindow<LocalDate> {
                 // 2) when the gantt visibility changes (ex: with/without events) => impact layers visibility
                 FXGanttVisibility.ganttVisibilityProperty()
         );
-        // Also mark canvas as dirty when visibility changes to ensure redraw when becoming visible again
+        // Also, mark canvas as dirty when visibility changes to ensure redrawing when becoming visible again
         FXProperties.runOnPropertyChange(visibility -> {
             if (FXGanttVisibility.isVisible()) {
                 // When becoming visible, ensure both layout and canvas are refreshed
@@ -135,42 +130,34 @@ public final class DatedGanttCanvas implements TimeWindow<LocalDate> {
             @Override
             public void invalidated(Observable observable) {
                 LocalDate newTimeWindowStart = getTimeWindowStart();
-                if (lastTimeWindowStart != null) { // ignoring first call
+                if (lastTimeWindowStart != null) { // ignoring the first call
                     // We compute the horizontal shift
                     double xStartBeforeChange = getTimeProjector().timeToX(lastTimeWindowStart, true, false);
-                    double xStartAfterChange = untranslatedTimeProjector.timeToX(newTimeWindowStart, true, false);
+                    double xStartAfterChange = getTimeProjector().timeToX(newTimeWindowStart, true, false);
                     double deltaX = xStartAfterChange - xStartBeforeChange;
-                    // We translate the animated time projector to the opposite amount so the time window looks unchanged to the user for now
-                    animatedTimeProjector.setTranslateX(-deltaX);
+                    // We translate the animated time projector to the opposite amount, so the time window looks unchanged to the user for now
+                    setTimeWindowTranslateX(-deltaX);
                     // Stopping a possible previous animation
                     if (animationTimeline != null)
                         animationTimeline.stop();
                     // Animating the horizontal translation to go back to 0 (where the time window was asked to start).
-                    animationTimeline = Animations.animateProperty(animatedTimeProjector.translateXProperty(), 0);
+                    animationTimeline = Animations.animateProperty(timeWindowTranslateXProperty(), 0);
                 }
                 lastTimeWindowStart = newTimeWindowStart;
             }
         });
 
-        // Horizontal animation management on time window change (during animation timeline)
-        animatedTimeProjector.translateXProperty().addListener(observable -> {
+        // Slight correction to ensure the entering/leaving day, week, month or year is already/still present during the translateX animation
+        /*timeWindowTranslateXProperty().addListener(observable -> {
             // Getting the start and end of the appearing time window to the user at this time of the animation timeline
-            LocalDate start = animatedTimeProjector.xToTime(0);
-            LocalDate end = animatedTimeProjector.xToTime(canvasPane.getWidth());
-            // Populating the days, weeks, months & years over that appearing time window
-            LocalDateGanttLayout.populateDayLocalDateGanttLayout(daysLayer, start, end); // 0
-            LocalDateGanttLayout.populateYearWeekLocalDateGanttLayout(weeksLayer, start, end); // 1
-            LocalDateGanttLayout.populateYearMonthLocalDateGanttLayout(monthsLayer, start, end); //2
-            LocalDateGanttLayout.populateYearLocalDateGanttLayout(yearsLayer, start, end); // 3
-            // For the following layers (such as events), we don't repopulate, but just invalidate objects so their
-            // layout position is recomputed with the updated animated time projector.
-            for (int i = 4, n = globalLayout.getLayers().size(); i < n; i++) {
-                TimeLayout<?, LocalDate> layer = globalLayout.getLayers().get(i);
-                for (int j = 0, m = layer.getChildren().size(); j < m; j++) {
-                    layer.getChildBounds(j).invalidateObject();
-                }
-            }
-        });
+            LocalDate start = getTimeProjector().xToTime(0);
+            LocalDate end = getTimeProjector().xToTime(canvasPane.getWidth());
+            // Populating the days, weeks, months and years over that appearing time window
+            LocalDateGanttLayout.populateDayLocalDateGanttLayout(daysLayer, start, end);
+            LocalDateGanttLayout.populateYearWeekLocalDateGanttLayout(weeksLayer, start, end);
+            LocalDateGanttLayout.populateYearMonthLocalDateGanttLayout(monthsLayer, start, end);
+            LocalDateGanttLayout.populateYearLocalDateGanttLayout(yearsLayer, start, end);
+        });*/
     }
 
     public Canvas getCanvas() {
@@ -195,6 +182,10 @@ public final class DatedGanttCanvas implements TimeWindow<LocalDate> {
         return globalLayout.timeWindowEndProperty();
     }
 
+    @Override
+    public DoubleProperty timeWindowTranslateXProperty() {
+        return globalLayout.timeWindowTranslateXProperty();
+    }
 
     public void setTimeWindow(LocalDate timeWindowStart, LocalDate timeWindowEnd) {
         globalLayout.setTimeWindow(timeWindowStart, timeWindowEnd); // see globalLayout.setOnTimeWindowChanged() callback in constructor
@@ -365,8 +356,8 @@ public final class DatedGanttCanvas implements TimeWindow<LocalDate> {
         // 1) Properties that apply to all days => set only once here (remain identical for all drawDay() calls)
         double dayOfMonthFontSize = fontSize(dayWidth, dayHeight / 2);
         dayBarDrawer
-                .setTopTextFont(TextTheme.getFont(FontDef.font(0.6 * dayOfMonthFontSize))) // top = day of week => smaller
-                .setBottomTextFont(TextTheme.getFont(FontDef.font(FontWeight.BOLD, dayOfMonthFontSize))) // bottom = day of month
+                .setTopTextFont(TextTheme.getFont(FontDef.font(0.6 * dayOfMonthFontSize))) // top = day of the week => smaller
+                .setBottomTextFont(TextTheme.getFont(FontDef.font(FontWeight.BOLD, dayOfMonthFontSize))) // bottom = day of the month
                 .setStroke(TimeTheme.getDayOfWeekBorderColor())
                 .setRadius(dayWidth < 30 ? 0 : 0.5 * Math.min(dayWidth, dayHeight))
                 .sethPadding(dayWidth < 30 ? 0 : clamp(3, 0.05 * dayWidth, 10));

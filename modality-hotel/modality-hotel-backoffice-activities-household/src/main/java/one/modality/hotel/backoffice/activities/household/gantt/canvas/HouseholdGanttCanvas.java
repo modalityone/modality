@@ -759,7 +759,7 @@ public class HouseholdGanttCanvas {
         double canvasWidth = barsDrawer.getCanvas().getWidth();
 
         // Get scroll offset to adjust Y coordinates
-        double layoutOriginY = barsDrawer.getLayoutOriginY();
+        double layoutOriginY = barsDrawer.getOriginLayoutY();
 
         // Get all parent rows from the layout
         java.util.List<dev.webfx.extras.time.layout.gantt.impl.ParentRow<LocalDateBar<HouseholdBookingBlock>>> parentRows = barsLayout.getParentRows();
@@ -859,7 +859,7 @@ public class HouseholdGanttCanvas {
         double canvasWidth = barsDrawer.getCanvas().getWidth();
 
         // Get scroll offset to adjust Y coordinates
-        double layoutOriginY = barsDrawer.getLayoutOriginY();
+        double layoutOriginY = barsDrawer.getOriginLayoutY();
 
         // Get all parent rows from the layout
         java.util.List<dev.webfx.extras.time.layout.gantt.impl.ParentRow<LocalDateBar<HouseholdBookingBlock>>> parentRows = barsLayout.getParentRows();
@@ -919,7 +919,7 @@ public class HouseholdGanttCanvas {
         double canvasWidth = barsDrawer.getCanvas().getWidth();
 
         // Get scroll offset to adjust Y coordinates
-        double layoutOriginY = barsDrawer.getLayoutOriginY();
+        double layoutOriginY = barsDrawer.getOriginLayoutY();
 
         // Get time window
         LocalDate timeWindowStart = barsLayout.getTimeWindowStart();
@@ -1130,7 +1130,7 @@ public class HouseholdGanttCanvas {
         if (hoveredMouseY < 0) {
             return false;
         }
-        double layoutOriginY = barsDrawer.getLayoutOriginY();
+        double layoutOriginY = barsDrawer.getOriginLayoutY();
         double adjustedY = b.getMinY() - layoutOriginY;
         return hoveredMouseY >= adjustedY && hoveredMouseY < adjustedY + b.getHeight();
     }
