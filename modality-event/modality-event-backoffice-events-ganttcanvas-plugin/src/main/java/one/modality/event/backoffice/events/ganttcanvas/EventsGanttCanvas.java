@@ -54,7 +54,8 @@ public final class EventsGanttCanvas {
     private final DatedGanttCanvas datedGanttCanvas = new DatedGanttCanvas()
         // Activating user interaction (user can move and zoom in/out the time window) and date selection
         .setInteractive(true)
-        .setDateSelectionEnabled(true);
+        .setDateSelectionEnabled(true)
+        .setSmoothHorizontalTranslationEnabled(true);
 
     // The additional layer that will display the events
     private final LocalDateGanttLayout<Event> eventsLayer = new LocalDateGanttLayout<Event>()

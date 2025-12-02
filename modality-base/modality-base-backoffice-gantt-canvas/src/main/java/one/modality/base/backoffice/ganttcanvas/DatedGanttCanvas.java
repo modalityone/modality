@@ -24,12 +24,11 @@ import dev.webfx.extras.time.window.TimeWindow;
 import dev.webfx.extras.util.animation.Animations;
 import dev.webfx.kit.launcher.WebFxKitLauncher;
 import dev.webfx.kit.util.properties.FXProperties;
+import dev.webfx.kit.util.properties.Unregisterable;
 import dev.webfx.platform.resource.Resource;
 import dev.webfx.platform.util.Objects;
 import javafx.animation.Interpolator;
 import javafx.animation.Timeline;
-import javafx.beans.InvalidationListener;
-import javafx.beans.Observable;
 import javafx.beans.property.DoubleProperty;
 import javafx.beans.property.ObjectProperty;
 import javafx.collections.ObservableList;
@@ -123,41 +122,6 @@ public final class DatedGanttCanvas implements TimeWindow<LocalDate> {
         FXProperties.runNowAndOnPropertyChange(this::updateI18nTexts, LocalizedTime.localeProperty());
 
         FXGanttHighlight.addDayHighlight(daysLayer, globalCanvasDrawer);
-
-        // Horizontal animation management on time window change (starting animation timeline)
-        timeWindowEndProperty().addListener(new InvalidationListener() { // end changes after start (so both are updated at this point)
-            private LocalDate lastTimeWindowStart;
-            @Override
-            public void invalidated(Observable observable) {
-                LocalDate newTimeWindowStart = getTimeWindowStart();
-                if (lastTimeWindowStart != null) { // ignoring the first call
-                    // We compute the horizontal shift
-                    double xStartBeforeChange = getTimeProjector().timeToX(lastTimeWindowStart, true, false);
-                    double xStartAfterChange = getTimeProjector().timeToX(newTimeWindowStart, true, false);
-                    double deltaX = xStartAfterChange - xStartBeforeChange;
-                    // We translate the animated time projector to the opposite amount, so the time window looks unchanged to the user for now
-                    setTimeWindowTranslateX(-deltaX);
-                    // Stopping a possible previous animation
-                    if (animationTimeline != null)
-                        animationTimeline.stop();
-                    // Animating the horizontal translation to go back to 0 (where the time window was asked to start).
-                    animationTimeline = Animations.animateProperty(timeWindowTranslateXProperty(), 0);
-                }
-                lastTimeWindowStart = newTimeWindowStart;
-            }
-        });
-
-        // Slight correction to ensure the entering/leaving day, week, month or year is already/still present during the translateX animation
-        /*timeWindowTranslateXProperty().addListener(observable -> {
-            // Getting the start and end of the appearing time window to the user at this time of the animation timeline
-            LocalDate start = getTimeProjector().xToTime(0);
-            LocalDate end = getTimeProjector().xToTime(canvasPane.getWidth());
-            // Populating the days, weeks, months and years over that appearing time window
-            LocalDateGanttLayout.populateDayLocalDateGanttLayout(daysLayer, start, end);
-            LocalDateGanttLayout.populateYearWeekLocalDateGanttLayout(weeksLayer, start, end);
-            LocalDateGanttLayout.populateYearMonthLocalDateGanttLayout(monthsLayer, start, end);
-            LocalDateGanttLayout.populateYearLocalDateGanttLayout(yearsLayer, start, end);
-        });*/
     }
 
     public Canvas getCanvas() {
@@ -223,6 +187,47 @@ public final class DatedGanttCanvas implements TimeWindow<LocalDate> {
         weeksLayer.setSelectionEnabled(dateSelectionEnabled);
         monthsLayer.setSelectionEnabled(dateSelectionEnabled);
         yearsLayer.setSelectionEnabled(dateSelectionEnabled);
+        return this;
+    }
+
+    private Unregisterable smoothHorizontalTranslationListener;
+
+    public DatedGanttCanvas setSmoothHorizontalTranslationEnabled(boolean enabled) {
+        if (!enabled && smoothHorizontalTranslationListener != null) { // Disabling smooth horizontal animation
+            smoothHorizontalTranslationListener.unregister();
+            smoothHorizontalTranslationListener = null;
+        } else if (enabled && smoothHorizontalTranslationListener == null) { // Enabling smooth horizontal animation
+            LocalDate[] lastTimeWindowStart = { null };
+            smoothHorizontalTranslationListener = FXProperties.runOnPropertyChange(x -> {
+                LocalDate newTimeWindowStart = getTimeWindowStart();
+                if (lastTimeWindowStart[0] != null) { // ignoring the first call
+                    // We compute the horizontal shift
+                    double xStartBeforeChange = getTimeProjector().timeToX(lastTimeWindowStart[0], true, false);
+                    double xStartAfterChange = getTimeProjector().timeToX(newTimeWindowStart, true, false);
+                    double deltaX = xStartAfterChange - xStartBeforeChange;
+                    // We translate the animated time projector to the opposite amount, so the time window looks unchanged to the user for now
+                    setTimeWindowTranslateX(-deltaX);
+                    // Stopping a possible previous animation
+                    if (animationTimeline != null)
+                        animationTimeline.stop();
+                    // Animating the horizontal translation to go back to 0 (where the time window was asked to start).
+                    animationTimeline = Animations.animateProperty(timeWindowTranslateXProperty(), 0);
+                }
+                lastTimeWindowStart[0] = newTimeWindowStart;
+            }, timeWindowEndProperty());// end changes after start (so both are updated at this point)
+
+            // Slight correction to ensure the entering/leaving day, week, month or year is already/still present during the translateX animation
+            /*timeWindowTranslateXProperty().addListener(observable -> {
+                // Getting the start and end of the appearing time window to the user at this time of the animation timeline
+                LocalDate start = getTimeProjector().xToTime(0);
+                LocalDate end = getTimeProjector().xToTime(canvasPane.getWidth());
+                // Populating the days, weeks, months and years over that appearing time window
+                LocalDateGanttLayout.populateDayLocalDateGanttLayout(daysLayer, start, end);
+                LocalDateGanttLayout.populateYearWeekLocalDateGanttLayout(weeksLayer, start, end);
+                LocalDateGanttLayout.populateYearMonthLocalDateGanttLayout(monthsLayer, start, end);
+                LocalDateGanttLayout.populateYearLocalDateGanttLayout(yearsLayer, start, end);
+            });*/
+        }
         return this;
     }
 

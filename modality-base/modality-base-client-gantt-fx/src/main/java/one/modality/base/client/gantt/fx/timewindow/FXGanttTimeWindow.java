@@ -29,7 +29,7 @@ public final class FXGanttTimeWindow extends TimeWindowImpl<LocalDate> {
     }
 
     private FXGanttTimeWindow() {
-        TimeWindowUtil.setTimeWindowStartAndDuration(this, LocalDate.now().with(TemporalAdjusters.previous(DayOfWeek.MONDAY)), 2, ChronoUnit.WEEKS);
+        TimeWindowUtil.setTimeWindowStartAndDuration(this, LocalDate.now().with(TemporalAdjusters.previous(DayOfWeek.MONDAY)), 14, ChronoUnit.DAYS);
     }
 
     private final static FXGanttTimeWindow ganttTimeWindow = new FXGanttTimeWindow();
