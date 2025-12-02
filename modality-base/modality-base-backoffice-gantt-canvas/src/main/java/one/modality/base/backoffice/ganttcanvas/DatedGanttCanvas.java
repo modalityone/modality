@@ -22,6 +22,7 @@ import dev.webfx.extras.time.layout.gantt.LocalDateGanttLayout;
 import dev.webfx.extras.time.projector.TimeProjector;
 import dev.webfx.extras.time.window.TimeWindow;
 import dev.webfx.extras.util.animation.Animations;
+import dev.webfx.extras.util.layout.Layouts;
 import dev.webfx.kit.launcher.WebFxKitLauncher;
 import dev.webfx.kit.util.properties.FXProperties;
 import dev.webfx.kit.util.properties.Unregisterable;
@@ -116,6 +117,7 @@ public final class DatedGanttCanvas implements TimeWindow<LocalDate> {
                 markCanvasAsDirty();
             }
         }, FXGanttVisibility.ganttVisibilityProperty());
+        updateVisibility();
         FXProperties.runOnPropertyChange(this::markCanvasAsDirty, FXGanttHighlight.ganttHighlightedDayProperty());
 
         // Updating i18n texts when necessary
@@ -244,18 +246,9 @@ public final class DatedGanttCanvas implements TimeWindow<LocalDate> {
         globalCanvasDrawer.markDrawAreaAsDirty();
     }
 
-    private void setLayoutPropertiesBeforeLayoutPass() { // Called only once before the layout pass
-        // Computing widths for day / week / month / year
-        long timeWindowDuration = ChronoUnit.DAYS.between(getTimeWindowStart(), getTimeWindowEnd());
-        dayWidth = globalLayout.getWidth() / (timeWindowDuration + 1);
-        weekWidth = 7 * dayWidth;
-        yearWidth = 365 * dayWidth;
-        monthWidth = yearWidth / 12;
-
-        // Setting global visibility
+    private void updateVisibility() {
         boolean isVisible = FXGanttVisibility.isVisible();
-        collapsePaneContainer.setVisible(isVisible);
-        collapsePaneContainer.setManaged(isVisible);
+        Layouts.setManagedAndVisibleProperties(collapsePaneContainer, isVisible);
 
         // Setting layers visibility
         globalLayout.getLayers().forEach(l -> l.setVisible(FXGanttVisibility.isShowingEvents()));
@@ -270,6 +263,18 @@ public final class DatedGanttCanvas implements TimeWindow<LocalDate> {
             weeksLayer.setVisible(showWeeks);
             daysLayer.setVisible(showDays);
         }
+    }
+
+    private void setLayoutPropertiesBeforeLayoutPass() { // Called only once before the layout pass
+        // Computing widths for day / week / month / year
+        long timeWindowDuration = ChronoUnit.DAYS.between(getTimeWindowStart(), getTimeWindowEnd());
+        dayWidth = globalLayout.getWidth() / (timeWindowDuration + 1);
+        weekWidth = 7 * dayWidth;
+        yearWidth = 365 * dayWidth;
+        monthWidth = yearWidth / 12;
+
+        // Setting global visibility
+        updateVisibility();
 
         // Computing heights for day / week / month / year
         boolean compactMode = FXLayoutMode.isCompactMode();

@@ -23,6 +23,7 @@ module modality.base.backoffice.gantt.canvas {
     requires webfx.extras.time.layout.gantt;
     requires webfx.extras.time.window;
     requires webfx.extras.util.animation;
+    requires webfx.extras.util.layout;
     requires webfx.kit.launcher;
     requires webfx.kit.util;
     requires webfx.platform.resource;
