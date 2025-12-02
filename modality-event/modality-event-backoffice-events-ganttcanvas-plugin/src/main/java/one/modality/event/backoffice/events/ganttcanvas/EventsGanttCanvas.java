@@ -130,6 +130,8 @@ public final class EventsGanttCanvas {
         eventsLayer.getChildren().addListener((InvalidationListener) observable -> {
             recurringEventDatesLayer.invalidateVerticalLayout(); // will force a new computation of recurring dates Y
         });
+        // Also ensuring it has the same height as the events layer
+        recurringEventDatesLayer.heightProperty().bind(eventsLayer.heightProperty());
 
         // The following properties depend on the theme mode (light/dark mode, etc...):
         ThemeRegistry.runNowAndOnModeChange(() -> eventBarDrawer
@@ -160,7 +162,7 @@ public final class EventsGanttCanvas {
                     eventsLayer.getChildren().clear();
                 } else {
                     eventsLayer.getChildren().setAll(Collections.filter(allOrganizationEventsInTimeWindow, event -> switch (ganttVisibility) {
-                        case ONSITE_ACCOMMODATION_EVENTS -> !event.isRecurring() && event.getVenue() != null && event.getVenue().isMain() && !Entities.samePrimaryKey(event.getTypeId(), 61); // 61 = MKMC Guest Stay (hardcoded for now)
+                        case ONSITE_ACCOMMODATION_EVENTS -> !event.isRecurring() && event.getVenue() != null && event.getVenue().isMain() && !event.getName().toLowerCase().contains("online") && !Entities.samePrimaryKey(event.getTypeId(), 61); // 61 = MKMC Guest Stay (hardcoded for now)
                         case RECURRING_EVENTS -> event.isRecurring();
                         default -> true;
                     }));
