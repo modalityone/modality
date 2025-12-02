@@ -15,6 +15,8 @@ public interface Resource extends Entity,
     String cleaningState = "cleaningState";
     String lastCleaningDate = "lastCleaningDate";
     String lastInspectionDate = "lastInspectionDate";
+    String building = "building";
+    String buildingZone = "buildingZone";
     String kbs2ToKbs3GlobalResource = "kbs2ToKbs3GlobalResource";
 
     default void setCleaningState(Object value) {
@@ -39,6 +41,30 @@ public interface Resource extends Entity,
 
     default LocalDateTime getLastInspectionDate() {
         return getLocalDateTimeFieldValue(lastInspectionDate);
+    }
+
+    default void setBuilding(Object value) {
+        setForeignField(building, value);
+    }
+
+    default EntityId getBuildingId() {
+        return getForeignEntityId(building);
+    }
+
+    default Building getBuilding() {
+        return getForeignEntity(building);
+    }
+
+    default void setBuildingZone(Object value) {
+        setForeignField(buildingZone, value);
+    }
+
+    default EntityId getBuildingZoneId() {
+        return getForeignEntityId(buildingZone);
+    }
+
+    default BuildingZone getBuildingZone() {
+        return getForeignEntity(buildingZone);
     }
 
     default void setKbs2ToKbs3GlobalResource(Object value) {
