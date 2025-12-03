@@ -107,6 +107,7 @@ public interface SuperAdmin18nKeys {
     Object Operations = "Operations";
     Object OperationsInGroup = "OperationsInGroup";
     Object OperationsInfoBox = "OperationsInfoBox";
+    Object OperationsMenu = "OperationsMenu";
     Object OperationsSectionTitle = "OperationsSectionTitle";
     Object OperationsUsingRoute = "OperationsUsingRoute";
     Object OrganizationName = "OrganizationName";

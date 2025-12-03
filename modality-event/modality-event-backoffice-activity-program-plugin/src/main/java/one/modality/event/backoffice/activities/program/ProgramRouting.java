@@ -1,7 +1,8 @@
 package one.modality.event.backoffice.activities.program;
 
-import dev.webfx.platform.windowhistory.spi.BrowsingHistory;
 import dev.webfx.extras.i18n.HasI18nKey;
+import dev.webfx.extras.operation.HasOperationCode;
+import dev.webfx.platform.windowhistory.spi.BrowsingHistory;
 import dev.webfx.stack.orm.domainmodel.activity.viewdomain.impl.ViewDomainActivityContextFinal;
 import dev.webfx.stack.routing.router.auth.authz.RouteRequest;
 import dev.webfx.stack.routing.uirouter.UiRoute;
@@ -9,8 +10,6 @@ import dev.webfx.stack.routing.uirouter.activity.uiroute.UiRouteActivityContext;
 import dev.webfx.stack.routing.uirouter.impl.UiRouteImpl;
 import dev.webfx.stack.routing.uirouter.operations.RoutePushRequest;
 import dev.webfx.stack.routing.uirouter.operations.RouteRequestEmitter;
-import dev.webfx.extras.operation.HasOperationCode;
-import one.modality.base.backoffice.activities.home.BackOfficeHomeI18nKeys;
 
 /**
  * Routing configuration for the Program activity.
@@ -149,7 +148,7 @@ public class ProgramRouting {
          */
         @Override
         public Object getI18nKey() {
-            return BackOfficeHomeI18nKeys.Program;
+            return ProgramI18nKeys.ProgramMenu;
         }
     }
 

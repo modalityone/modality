@@ -1,5 +1,7 @@
 package one.modality.base.backoffice.activities.operations;
 
+import dev.webfx.extras.i18n.HasI18nKey;
+import dev.webfx.extras.operation.HasOperationCode;
 import dev.webfx.platform.windowhistory.spi.BrowsingHistory;
 import dev.webfx.stack.orm.domainmodel.activity.viewdomain.impl.ViewDomainActivityContextFinal;
 import dev.webfx.stack.routing.router.auth.authz.RouteRequest;
@@ -8,7 +10,6 @@ import dev.webfx.stack.routing.uirouter.activity.uiroute.UiRouteActivityContext;
 import dev.webfx.stack.routing.uirouter.impl.UiRouteImpl;
 import dev.webfx.stack.routing.uirouter.operations.RoutePushRequest;
 import dev.webfx.stack.routing.uirouter.operations.RouteRequestEmitter;
-import dev.webfx.extras.operation.HasOperationCode;
 
 /**
  * @author Bruno Salmon
@@ -16,7 +17,7 @@ import dev.webfx.extras.operation.HasOperationCode;
 public final class OperationsRouting {
 
     private final static String PATH = "/operations";
-    private final static String OPERATION_CODE = "RouteToOperations";
+    private final static String OPERATION_CODE = "RouteToOperations2";
 
     public static String getPath() {
         return PATH;
@@ -37,7 +38,7 @@ public final class OperationsRouting {
         }
     }
 
-    public static final class RouteToOperationsRequest extends RoutePushRequest implements HasOperationCode {
+    public static final class RouteToOperationsRequest extends RoutePushRequest implements HasOperationCode, HasI18nKey {
 
         public RouteToOperationsRequest(BrowsingHistory history) {
             super(getPath(), history);
@@ -48,6 +49,10 @@ public final class OperationsRouting {
             return OPERATION_CODE;
         }
 
+        @Override
+        public Object getI18nKey() {
+            return "Titi";
+        }
     }
 
     public static final class RouteToOperationsRequestEmitter implements RouteRequestEmitter {

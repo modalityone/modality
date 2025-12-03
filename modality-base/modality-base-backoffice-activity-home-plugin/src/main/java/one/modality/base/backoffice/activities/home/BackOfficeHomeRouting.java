@@ -52,7 +52,7 @@ public final class BackOfficeHomeRouting {
 
         @Override
         public Object getI18nKey() {
-            return BackOfficeHomeI18nKeys.Home;
+            return BackOfficeHomeI18nKeys.HomeMenu;
         }
 
     }

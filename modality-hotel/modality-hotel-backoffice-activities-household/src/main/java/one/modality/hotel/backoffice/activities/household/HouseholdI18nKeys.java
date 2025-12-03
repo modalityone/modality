@@ -27,7 +27,9 @@ public interface HouseholdI18nKeys {
     Object GuestInformation = "GuestInformation";
     Object Guests = "Guests";
     Object GuestsStaying = "GuestsStaying";
+    Object Household = "Household";
     Object HouseholdDashboard = "HouseholdDashboard";
+    Object HouseholdMenu = "HouseholdMenu";
     Object LastName = "LastName";
     Object LoadingData = "LoadingData";
     Object MarkCleaned = "MarkCleaned";

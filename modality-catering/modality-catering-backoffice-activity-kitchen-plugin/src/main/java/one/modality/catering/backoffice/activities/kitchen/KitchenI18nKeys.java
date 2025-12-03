@@ -4,6 +4,8 @@ package one.modality.catering.backoffice.activities.kitchen;
 public interface KitchenI18nKeys {
 
     Object Apply = "Apply";
+    Object Catering = "Catering";
+    Object CateringMenu = "CateringMenu";
     Object Close = "Close";
     Object Copied = "Copied";
     Object CopyTable = "CopyTable";
