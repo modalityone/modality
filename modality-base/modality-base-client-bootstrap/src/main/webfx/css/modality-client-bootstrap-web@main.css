@@ -628,3 +628,83 @@
 .authorization-badge-needs-validation fx-text {
     color: #d63700;
 }
+
+/* Chip button styles - for filter/toggle button groups */
+.chip-button {
+    background-color: white;
+    color: #78716c;
+    font-weight: 500;
+    border: 1px solid #e5e5e5;
+    border-radius: 6px;
+    cursor: pointer;
+}
+.chip-button:hover:not(.disabled) {
+    background-color: #fafaf9;
+    border-color: #d6d3d1;
+}
+
+.chip-button-selected {
+    background-color: #fef3c7;
+    color: #f59e0b;
+    font-weight: 600;
+    border: 2px solid #f59e0b;
+    border-radius: 6px;
+}
+.chip-button-selected fx-text {
+    color: #f59e0b;
+}
+
+/* Blue/Primary chip button - unselected state */
+.chip-button-primary {
+    background-color: white;
+    color: #3b82f6;
+    font-weight: 500;
+    border: 1px solid #bfdbfe;
+    border-radius: 6px;
+    cursor: pointer;
+}
+.chip-button-primary:hover:not(.disabled) {
+    background-color: #eff6ff;
+    border-color: #93c5fd;
+}
+.chip-button-primary fx-text {
+    color: #3b82f6;
+}
+
+/* Blue/Primary chip button selected state */
+.chip-button-primary-selected {
+    background-color: #dbeafe;
+    color: #2563eb;
+    font-weight: 600;
+    border: 2px solid #2563eb;
+    border-radius: 6px;
+}
+.chip-button-primary-selected fx-text {
+    color: #2563eb;
+}
+
+/* Warning/Amber button style - solid amber background */
+.btn-warning-solid {
+    background-color: #f59e0b;
+    color: white;
+    font-weight: 600;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+}
+.btn-warning-solid:hover:not(.disabled) {
+    background-color: #d97706;
+}
+.btn-warning-solid fx-text {
+    color: white;
+}
+
+/* Info helper box - for contextual tips and explanations */
+.info-helper-box {
+    background-color: #eff6ff;
+    border: 1px solid #bfdbfe;
+    border-radius: 10px;
+}
+.info-helper-box fx-text {
+    color: #1e40af;
+}

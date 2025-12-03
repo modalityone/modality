@@ -563,3 +563,70 @@
     -fx-font-weight: 600;
 }
 
+/* Chip button styles - for filter/toggle button groups */
+.chip-button {
+    -fx-background-color: white;
+    -fx-text-fill: #78716c;
+    -fx-font-weight: 500;
+    -fx-border-color: #e5e5e5;
+    -fx-border-width: 1;
+    -fx-border-radius: 6;
+    -fx-background-radius: 6;
+    -fx-cursor: hand;
+}
+.chip-button:hover {
+    -fx-background-color: #fafaf9;
+    -fx-border-color: #d6d3d1;
+}
+
+.chip-button-selected {
+    -fx-background-color: #fef3c7;
+    -fx-text-fill: #f59e0b;
+    -fx-font-weight: 600;
+    -fx-border-color: #f59e0b;
+    -fx-border-width: 2;
+    -fx-border-radius: 6;
+    -fx-background-radius: 6;
+}
+
+/* Blue/Primary chip button - unselected state */
+.chip-button-primary {
+    -fx-background-color: white;
+    -fx-text-fill: #3b82f6;
+    -fx-font-weight: 500;
+    -fx-border-color: #bfdbfe;
+    -fx-border-width: 1;
+    -fx-border-radius: 6;
+    -fx-background-radius: 6;
+    -fx-cursor: hand;
+}
+.chip-button-primary:hover {
+    -fx-background-color: #eff6ff;
+    -fx-border-color: #93c5fd;
+}
+
+/* Blue/Primary chip button selected state */
+.chip-button-primary-selected {
+    -fx-background-color: #dbeafe;
+    -fx-text-fill: #2563eb;
+    -fx-font-weight: 600;
+    -fx-border-color: #2563eb;
+    -fx-border-width: 2;
+    -fx-border-radius: 6;
+    -fx-background-radius: 6;
+}
+
+/* Warning/Amber button style - solid amber background */
+.btn-warning-solid {
+    -fx-background-color: #f59e0b;
+    -fx-text-fill: white;
+    -fx-font-weight: 600;
+    -fx-border-color: transparent;
+    -fx-border-radius: 8;
+    -fx-background-radius: 8;
+    -fx-cursor: hand;
+}
+.btn-warning-solid:hover {
+    -fx-background-color: #d97706;
+}
+
