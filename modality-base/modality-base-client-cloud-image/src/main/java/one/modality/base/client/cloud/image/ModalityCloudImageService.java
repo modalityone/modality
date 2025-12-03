@@ -79,6 +79,16 @@ public final class ModalityCloudImageService {
         return "events/event-" + primaryKey;
     }
 
+    public static String buildingImagePath(Object buildingEntityOrId) {
+        Object primaryKey = Entities.getPrimaryKey(buildingEntityOrId);
+        return "buildings/building-" + primaryKey;
+    }
+
+    public static String siteImagePath(Object siteEntityOrId) {
+        Object primaryKey = Entities.getPrimaryKey(siteEntityOrId);
+        return "sites/site-" + primaryKey;
+    }
+
     public static String eventCoverImagePath(Object eventEntityOrId, Object language) {
         Object primaryKey = Entities.getPrimaryKey(eventEntityOrId);
         String imagePath = "events/audio-video-covers/event-" + primaryKey + "-cover";
