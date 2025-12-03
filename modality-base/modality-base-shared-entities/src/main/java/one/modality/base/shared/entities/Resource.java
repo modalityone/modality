@@ -12,6 +12,7 @@ public interface Resource extends Entity,
         EntityHasSite,
         EntityHasName {
 
+    String siteItemFamily = "siteItemFamily";
     String cleaningState = "cleaningState";
     String lastCleaningDate = "lastCleaningDate";
     String lastInspectionDate = "lastInspectionDate";
@@ -77,6 +78,18 @@ public interface Resource extends Entity,
 
     default Resource getKbs2ToKbs3GlobalResource() {
         return getForeignEntity(kbs2ToKbs3GlobalResource);
+    }
+
+    default void setSiteItemFamily(Object value) {
+        setForeignField(siteItemFamily, value);
+    }
+
+    default EntityId getSiteItemFamilyId() {
+        return getForeignEntityId(siteItemFamily);
+    }
+
+    default SiteItemFamily getSiteItemFamily() {
+        return getForeignEntity(siteItemFamily);
     }
 
 }
