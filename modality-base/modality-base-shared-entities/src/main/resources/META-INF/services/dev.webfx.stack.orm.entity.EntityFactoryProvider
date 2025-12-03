@@ -48,6 +48,8 @@ one.modality.base.shared.entities.impl.OrganizationImpl$ProvidedFactory
 one.modality.base.shared.entities.impl.OrganizationTypeImpl$ProvidedFactory
 one.modality.base.shared.entities.impl.PersonImpl$ProvidedFactory
 one.modality.base.shared.entities.impl.PodcastImpl$ProvidedFactory
+one.modality.base.shared.entities.impl.PoolImpl$ProvidedFactory
+one.modality.base.shared.entities.impl.PoolAllocationImpl$ProvidedFactory
 one.modality.base.shared.entities.impl.RecipientImpl$ProvidedFactory
 one.modality.base.shared.entities.impl.ResourceConfigurationImpl$ProvidedFactory
 one.modality.base.shared.entities.impl.ResourceImpl$ProvidedFactory

@@ -1,10 +1,7 @@
 package one.modality.base.shared.entities;
 
 import dev.webfx.stack.orm.entity.Entity;
-import one.modality.base.shared.entities.markers.EntityHasOnline;
-import one.modality.base.shared.entities.markers.EntityHasResource;
-import one.modality.base.shared.entities.markers.EntityHasSiteAndItem;
-import one.modality.base.shared.entities.markers.HasName;
+import one.modality.base.shared.entities.markers.*;
 
 import java.time.LocalDate;
 
@@ -12,6 +9,7 @@ public interface ResourceConfiguration extends Entity,
     EntityHasSiteAndItem,
     EntityHasResource,
     EntityHasOnline,
+    EntityHasEvent,
     HasName {
 
     String name = "name";
