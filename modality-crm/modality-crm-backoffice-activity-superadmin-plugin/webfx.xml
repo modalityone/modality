@@ -15,7 +15,10 @@
             <module>webfx-kit-util</module>
             <module>modality-base-client-mainframe-fx</module>
             <module>modality-base-client-bootstrap</module>
+            <module>modality-base-client-tile</module>
+            <module>modality-base-backoffice-mainframe-fx</module>
             <module>webfx-stack-orm-entity-controls</module>
+            <module>webfx-stack-orm-entity-binding</module>
             <module>webfx-stack-orm-datasourcemodel-service</module>
             <module>webfx-stack-orm-reactive-entities</module>
             <module>modality-base-shared-entities</module>

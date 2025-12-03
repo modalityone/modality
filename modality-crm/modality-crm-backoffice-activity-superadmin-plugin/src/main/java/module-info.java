@@ -7,9 +7,11 @@ module modality.crm.backoffice.activity.superadmin.plugin {
     requires javafx.controls;
     requires javafx.graphics;
     requires modality.base.backoffice.formatters.renderers;
+    requires modality.base.backoffice.mainframe.fx;
     requires modality.base.client.bootstrap;
     requires modality.base.client.icons;
     requires modality.base.client.mainframe.fx;
+    requires modality.base.client.tile;
     requires modality.base.shared.domainmodel;
     requires modality.base.shared.entities;
     requires webfx.extras.cell;
@@ -32,6 +34,7 @@ module modality.crm.backoffice.activity.superadmin.plugin {
     requires webfx.stack.orm.domainmodel.activity;
     requires webfx.stack.orm.dql;
     requires webfx.stack.orm.entity;
+    requires webfx.stack.orm.entity.binding;
     requires webfx.stack.orm.entity.controls;
     requires webfx.stack.orm.reactive.dql;
     requires webfx.stack.orm.reactive.entities;
