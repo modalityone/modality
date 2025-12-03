@@ -1,8 +1,8 @@
 package one.modality.base.shared.entities;
 
 import dev.webfx.stack.orm.entity.Entity;
-import dev.webfx.stack.orm.entity.EntityId;
 import one.modality.base.shared.entities.markers.EntityHasOnline;
+import one.modality.base.shared.entities.markers.EntityHasResource;
 import one.modality.base.shared.entities.markers.EntityHasSiteAndItem;
 import one.modality.base.shared.entities.markers.HasName;
 
@@ -10,10 +10,10 @@ import java.time.LocalDate;
 
 public interface ResourceConfiguration extends Entity,
     EntityHasSiteAndItem,
+    EntityHasResource,
     EntityHasOnline,
     HasName {
 
-    String resource = "resource";
     String name = "name";
     String endDate = "endDate";
     String startDate = "startDate";
@@ -26,18 +26,6 @@ public interface ResourceConfiguration extends Entity,
     String allowsResidentFamily = "allowsResidentFamily";
     String max = "max";
     String comment = "comment";
-
-    default void setResource(Object value) {
-        setForeignField(resource, value);
-    }
-
-    default EntityId getResourceId() {
-        return getForeignEntityId(resource);
-    }
-
-    default Resource getResource() {
-        return getForeignEntity(resource);
-    }
 
     @Override
     default String getName() {
