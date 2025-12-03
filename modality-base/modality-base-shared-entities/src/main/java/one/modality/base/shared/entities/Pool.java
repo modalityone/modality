@@ -16,6 +16,7 @@ public interface Pool extends
     String graphic = "graphic";
     String eventType = "eventType";
     String eventPool = "eventPool";
+    String bookable = "bookable";
 
     default void setDescription(String value) {
         setFieldValue(description, value);
@@ -71,6 +72,14 @@ public interface Pool extends
 
     default Boolean isEventPool() {
         return getBooleanFieldValue(eventPool);
+    }
+
+    default void setBookable(Boolean value) {
+        setFieldValue(bookable, value);
+    }
+
+    default Boolean isBookable() {
+        return getBooleanFieldValue(bookable);
     }
 
 }
