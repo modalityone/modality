@@ -9,6 +9,7 @@ public interface Pool extends
     String webColor = "webColor";
     String graphic = "graphic";
     String eventType = "eventType";
+    String eventPool = "eventPool";
 
     default void setWebColor(String value) {
         setFieldValue(webColor, value);
@@ -38,5 +39,12 @@ public interface Pool extends
         return getForeignEntity(eventType);
     }
 
+    default void setEventPool(Boolean value) {
+        setFieldValue(eventPool, value);
+    }
+
+    default Boolean isEventPool() {
+        return getBooleanFieldValue(eventPool);
+    }
 
 }

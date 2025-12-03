@@ -11,6 +11,7 @@ public interface PoolAllocation extends
     EntityHasPerson {
 
     String pool = "pool";
+    String quantity = "quantity";
 
     default void setPool(Object value) {
         setForeignField(pool, value);
@@ -23,4 +24,13 @@ public interface PoolAllocation extends
     default Pool getPool() {
         return getForeignEntity(pool);
     }
+
+    default Integer getQuantity() {
+        return getIntegerFieldValue(quantity);
+    }
+
+    default void setQuantity(Integer value) {
+        setFieldValue(quantity, value);
+    }
+
 }
