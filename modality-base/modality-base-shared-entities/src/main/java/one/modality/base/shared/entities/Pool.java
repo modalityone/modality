@@ -3,10 +3,12 @@ package one.modality.base.shared.entities;
 import dev.webfx.stack.orm.entity.EntityId;
 import one.modality.base.shared.entities.markers.EntityHasLabel;
 import one.modality.base.shared.entities.markers.EntityHasName;
+import one.modality.base.shared.entities.markers.EntityHasOrd;
 
 public interface Pool extends
     EntityHasName,
-    EntityHasLabel {
+    EntityHasLabel,
+    EntityHasOrd {
 
     String description = "description";
     String descriptionLabel = "descriptionLabel";
