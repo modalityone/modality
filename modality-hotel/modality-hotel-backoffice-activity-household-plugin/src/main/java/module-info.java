@@ -3,7 +3,7 @@
 /**
  * The back-office Household activity.
  */
-module modality.hotel.backoffice.activities.household {
+module modality.hotel.backoffice.activity.household.plugin {
 
     // Direct dependencies modules
     requires javafx.base;

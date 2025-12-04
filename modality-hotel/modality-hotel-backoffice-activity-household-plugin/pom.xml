@@ -11,7 +11,7 @@
         <version>1.0.0-SNAPSHOT</version>
     </parent>
 
-    <artifactId>modality-hotel-backoffice-activities-household</artifactId>
+    <artifactId>modality-hotel-backoffice-activity-household-plugin</artifactId>
 
     <description>The back-office Household activity.</description>
 

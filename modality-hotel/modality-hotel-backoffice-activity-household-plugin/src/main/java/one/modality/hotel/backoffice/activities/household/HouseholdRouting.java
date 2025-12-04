@@ -52,7 +52,7 @@ public final class HouseholdRouting {
 
         @Override
         public Object getI18nKey() {
-            return HouseholdI18nKeys.HouseholdMenu;
+            return HouseholdI18nKeys.HouseholdTile;
         }
     }
 
