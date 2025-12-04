@@ -1,0 +1,442 @@
+/* RoomSetup Module - JavaFX CSS
+ * Prefix: roomsetup-
+ *
+ * This CSS follows the module namespacing convention to prevent conflicts
+ * when CSS is merged across different modules.
+ */
+
+/* ============================================================================
+   TYPOGRAPHY
+   ============================================================================ */
+
+.roomsetup-title {
+    -fx-font-size: 20px;
+    -fx-font-weight: 600;
+}
+
+.roomsetup-subtitle {
+    -fx-font-size: 14px;
+    -fx-text-fill: #78716c;
+}
+
+.roomsetup-caption {
+    -fx-font-size: 12px;
+    -fx-font-weight: 600;
+    -fx-text-fill: #78716c;
+}
+
+.roomsetup-body {
+    -fx-font-size: 13px;
+    -fx-text-fill: #78716c;
+}
+
+.roomsetup-body-bold {
+    -fx-font-weight: 600;
+    -fx-text-fill: #1c1917;
+}
+
+.roomsetup-small {
+    -fx-font-size: 11px;
+    -fx-text-fill: #78716c;
+}
+
+.roomsetup-hint {
+    -fx-font-size: 12px;
+    -fx-text-fill: #78716c;
+}
+
+/* ============================================================================
+   BADGES
+   ============================================================================ */
+
+.roomsetup-badge-warning {
+    -fx-font-size: 12px;
+    -fx-text-fill: #92400e;
+    -fx-background-color: #fef3c7;
+    -fx-background-radius: 4;
+    /* padding set in Java for cross-platform consistency */
+}
+
+.roomsetup-badge-success {
+    -fx-background-color: #dcfce7;
+    -fx-text-fill: #166534;
+    -fx-background-radius: 6;
+    -fx-font-size: 11px;
+    -fx-font-weight: 500;
+    /* padding set in Java for cross-platform consistency */
+}
+
+.roomsetup-badge-info {
+    -fx-background-color: #dbeafe;
+    -fx-text-fill: #1e40af;
+    -fx-background-radius: 6;
+    -fx-font-size: 11px;
+    -fx-font-weight: 500;
+    /* padding set in Java for cross-platform consistency */
+}
+
+.roomsetup-badge-split {
+    -fx-font-size: 11px;
+    -fx-text-fill: #7c3aed;
+    -fx-background-color: #f5f3ff;
+    -fx-background-radius: 4;
+    /* padding set in Java for cross-platform consistency */
+}
+
+/* ============================================================================
+   FORM FIELDS
+   ============================================================================ */
+
+.roomsetup-text-field {
+    -fx-background-radius: 10;
+    -fx-border-color: #e5e5e5;
+    -fx-border-radius: 10;
+    /* padding set in Java for cross-platform consistency */
+}
+
+.roomsetup-text-area {
+    -fx-background-radius: 10;
+    -fx-border-color: #e5e5e5;
+    -fx-border-radius: 10;
+    /* padding set in Java for cross-platform consistency */
+}
+
+.roomsetup-field-label {
+    -fx-font-size: 12px;
+    -fx-font-weight: 600;
+    -fx-text-fill: #78716c;
+}
+
+/* ============================================================================
+   CONTAINERS & CARDS
+   ============================================================================ */
+
+.roomsetup-card {
+    -fx-background-color: white;
+    -fx-background-radius: 12;
+    -fx-border-color: #e5e5e5;
+    -fx-border-width: 1;
+    -fx-border-radius: 12;
+}
+
+.roomsetup-card-header {
+    -fx-background-color: #fafaf9;
+    -fx-background-radius: 12 12 0 0;
+    -fx-border-color: #e5e5e5;
+    -fx-border-width: 0 0 1 0;
+    /* padding set in Java for cross-platform consistency */
+}
+
+.roomsetup-dialog-header {
+    -fx-border-color: #e5e5e5;
+    -fx-border-width: 0 0 1 0;
+    /* padding and spacing set in Java for cross-platform consistency */
+}
+
+.roomsetup-dialog-container {
+    -fx-background-color: white;
+    -fx-background-radius: 16;
+    /* spacing, padding, and minWidth set in Java for cross-platform consistency */
+}
+
+.roomsetup-cell {
+    -fx-border-color: #e5e5e5;
+    -fx-border-width: 1 0 0 0;
+    /* padding set in Java for cross-platform consistency */
+}
+
+/* ============================================================================
+   INTERACTIVE ELEMENTS
+   ============================================================================ */
+
+.roomsetup-clickable {
+    -fx-cursor: hand;
+}
+
+/* ============================================================================
+   FILTER CHIPS
+   ============================================================================ */
+
+.roomsetup-filter-chip {
+    -fx-background-color: #f5f5f5;
+    -fx-background-radius: 12;
+    -fx-border-color: #d4d4d4;
+    -fx-border-radius: 12;
+    -fx-border-width: 1;
+    -fx-font-size: 12px;
+    -fx-cursor: hand;
+    /* padding set in Java for cross-platform consistency */
+}
+
+.roomsetup-filter-chip:hover {
+    -fx-background-color: #e5e5e5;
+    -fx-border-color: #a3a3a3;
+}
+
+.roomsetup-filter-chip-active {
+    -fx-background-color: #0096D6;
+    -fx-text-fill: white;
+    -fx-border-color: #0096D6;
+}
+
+.roomsetup-filter-chip-active:hover {
+    -fx-background-color: #007AB8;
+    -fx-border-color: #007AB8;
+}
+
+/* ============================================================================
+   GROUP HEADERS
+   ============================================================================ */
+
+.roomsetup-group-header {
+    -fx-background-color: #f8fafc;
+    -fx-border-color: #e2e8f0;
+    -fx-border-width: 0 0 1 0;
+    /* padding set in Java for cross-platform consistency */
+}
+
+.roomsetup-group-title {
+    -fx-font-size: 14px;
+    -fx-font-weight: 600;
+    -fx-text-fill: #334155;
+}
+
+.roomsetup-group-count {
+    -fx-font-size: 12px;
+    -fx-text-fill: #64748b;
+    -fx-background-color: #e2e8f0;
+    -fx-background-radius: 10;
+    /* padding set in Java for cross-platform consistency */
+}
+
+/* ============================================================================
+   ROOM ITEMS
+   ============================================================================ */
+
+.roomsetup-room-row {
+    -fx-background-color: white;
+    -fx-border-color: #e5e5e5;
+    -fx-border-width: 0 0 1 0;
+    -fx-cursor: hand;
+    /* padding set in Java for cross-platform consistency */
+}
+
+.roomsetup-room-row:hover {
+    -fx-background-color: #f8fafc;
+}
+
+.roomsetup-room-name {
+    -fx-font-size: 14px;
+    -fx-font-weight: 600;
+    -fx-text-fill: #1e293b;
+}
+
+.roomsetup-room-type {
+    -fx-font-size: 12px;
+    -fx-text-fill: #64748b;
+}
+
+.roomsetup-room-capacity {
+    -fx-font-size: 12px;
+    -fx-text-fill: #64748b;
+    -fx-background-color: #f1f5f9;
+    -fx-background-radius: 4;
+    /* padding set in Java for cross-platform consistency */
+}
+
+/* ============================================================================
+   BUILDING/ZONE ITEMS
+   ============================================================================ */
+
+.roomsetup-building-header {
+    -fx-background-color: #f8fafc;
+    -fx-border-color: #e2e8f0;
+    -fx-border-width: 0 0 1 0;
+    -fx-cursor: hand;
+    /* padding set in Java for cross-platform consistency */
+}
+
+.roomsetup-building-header:hover {
+    -fx-background-color: #f1f5f9;
+}
+
+.roomsetup-building-name {
+    -fx-font-size: 14px;
+    -fx-font-weight: 600;
+    -fx-text-fill: #1e293b;
+}
+
+.roomsetup-zone-row {
+    -fx-background-color: white;
+    -fx-border-color: #e5e5e5;
+    -fx-border-width: 0 0 1 0;
+    -fx-cursor: hand;
+    /* padding set in Java for cross-platform consistency */
+}
+
+.roomsetup-zone-row:hover {
+    -fx-background-color: #fafafa;
+}
+
+.roomsetup-zone-name {
+    -fx-font-size: 13px;
+    -fx-text-fill: #334155;
+}
+
+/* ============================================================================
+   POOL ITEMS
+   ============================================================================ */
+
+.roomsetup-pool-card {
+    -fx-background-color: white;
+    -fx-background-radius: 8;
+    -fx-border-color: #e2e8f0;
+    -fx-border-width: 1;
+    -fx-border-radius: 8;
+    -fx-cursor: hand;
+    /* padding set in Java for cross-platform consistency */
+}
+
+.roomsetup-pool-card:hover {
+    -fx-background-color: #f8fafc;
+    -fx-border-color: #94a3b8;
+}
+
+.roomsetup-pool-name {
+    -fx-font-size: 14px;
+    -fx-font-weight: 500;
+    -fx-text-fill: #1e293b;
+}
+
+.roomsetup-pool-badge-source {
+    -fx-font-size: 10px;
+    -fx-text-fill: #0891b2;
+    -fx-background-color: #ecfeff;
+    -fx-background-radius: 4;
+    /* padding set in Java for cross-platform consistency */
+}
+
+.roomsetup-pool-badge-category {
+    -fx-font-size: 10px;
+    -fx-text-fill: #7c3aed;
+    -fx-background-color: #f5f3ff;
+    -fx-background-radius: 4;
+    /* padding set in Java for cross-platform consistency */
+}
+
+/* ============================================================================
+   ALLOCATION ITEMS
+   ============================================================================ */
+
+.roomsetup-allocation-room {
+    -fx-background-color: white;
+    -fx-border-color: #e5e5e5;
+    -fx-border-width: 0 0 1 0;
+    /* padding set in Java for cross-platform consistency */
+}
+
+.roomsetup-allocation-room:hover {
+    -fx-background-color: #fafafa;
+}
+
+.roomsetup-allocation-pool-tag {
+    -fx-font-size: 11px;
+    -fx-background-radius: 4;
+    /* padding set in Java for cross-platform consistency */
+}
+
+.roomsetup-allocation-unassigned {
+    -fx-font-size: 12px;
+    -fx-text-fill: #dc2626;
+    -fx-font-weight: 500;
+}
+
+/* ============================================================================
+   TOOLBAR & ACTIONS
+   ============================================================================ */
+
+.roomsetup-toolbar {
+    -fx-background-color: #fafaf9;
+    -fx-border-color: #e5e5e5;
+    -fx-border-width: 0 0 1 0;
+    /* padding set in Java for cross-platform consistency */
+}
+
+.roomsetup-action-button {
+    -fx-cursor: hand;
+}
+
+.roomsetup-action-button:hover {
+    -fx-background-color: #f5f5f5;
+}
+
+/* ============================================================================
+   EMPTY STATE
+   ============================================================================ */
+
+.roomsetup-empty-state {
+    -fx-background-color: #fafafa;
+    -fx-background-radius: 8;
+    /* padding set in Java for cross-platform consistency */
+}
+
+.roomsetup-empty-state-text {
+    -fx-font-size: 14px;
+    -fx-text-fill: #9ca3af;
+    -fx-font-weight: 500;
+}
+
+/* ============================================================================
+   INFO BAR
+   ============================================================================ */
+
+.roomsetup-info-bar {
+    -fx-background-color: #dbeafe;
+    -fx-background-radius: 8;
+    /* padding set in Java for cross-platform consistency */
+}
+
+.roomsetup-info-bar-text {
+    -fx-font-size: 13px;
+    -fx-text-fill: #1e40af;
+}
+
+.roomsetup-info-bar-link {
+    -fx-font-size: 13px;
+    -fx-text-fill: #1e40af;
+    -fx-font-weight: 600;
+    -fx-underline: true;
+    -fx-cursor: hand;
+}
+
+.roomsetup-info-bar-link:hover {
+    -fx-text-fill: #1e3a8a;
+}
+
+/* ============================================================================
+   WARNING BAR
+   ============================================================================ */
+
+.roomsetup-warning-bar {
+    -fx-background-color: #fef3c7;
+    -fx-background-radius: 8;
+    /* padding set in Java for cross-platform consistency */
+}
+
+.roomsetup-warning-bar-text {
+    -fx-font-size: 13px;
+    -fx-text-fill: #92400e;
+}
+
+/* ============================================================================
+   EXPAND/COLLAPSE
+   ============================================================================ */
+
+.roomsetup-expand-arrow {
+    -fx-font-size: 12px;
+    -fx-text-fill: #64748b;
+}
+
+.roomsetup-expand-arrow-expanded {
+    -fx-rotate: 90;
+}
