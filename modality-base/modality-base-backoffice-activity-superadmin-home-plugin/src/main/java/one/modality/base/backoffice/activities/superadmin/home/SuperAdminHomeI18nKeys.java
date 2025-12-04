@@ -5,7 +5,6 @@ public interface SuperAdminHomeI18nKeys {
 
     Object AdministratorsMenu = "AdministratorsMenu";
     Object Organizations = "Organizations";
-    Object OrganizationsMenu = "OrganizationsMenu";
     Object SuperAdmin = "SuperAdmin";
     Object SuperAdminHomeMenu = "SuperAdminHomeMenu";
 
