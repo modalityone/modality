@@ -9,6 +9,7 @@
 
     <dependencies>
         <used-by-source-modules/>
+        <plugin-module>modality-event-backoffice-activity-eventsetup-home-plugin</plugin-module>
         <plugin-module>modality-event-backoffice-activity-pricing-plugin</plugin-module>
 
         <!-- This will add the event button selector in the main frame header -->
