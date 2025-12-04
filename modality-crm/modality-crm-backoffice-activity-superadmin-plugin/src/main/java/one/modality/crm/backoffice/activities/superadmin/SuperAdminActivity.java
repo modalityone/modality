@@ -107,7 +107,7 @@ final class SuperAdminActivity extends ViewDomainActivityBase implements ButtonF
         private TabPane tabPane;
 
         // Sub-views
-        private AssignAdminToOrganizationsView assignAdminsView;
+        //private AssignAdminToOrganizationsView assignAdminsView;
         private OperationsView operationsView;
         private OperationsView routesView;
         private AuthorizationRulesView rulesView;
@@ -115,7 +115,7 @@ final class SuperAdminActivity extends ViewDomainActivityBase implements ButtonF
         private RolesView rolesView;
 
         // Tabs
-        private Tab assignAdminsTab;
+        //private Tab assignAdminsTab;
         private Tab operationsTab;
         private Tab routesTab;
         private Tab rulesTab;
@@ -131,8 +131,8 @@ final class SuperAdminActivity extends ViewDomainActivityBase implements ButtonF
             descriptionLabel.getStyleClass().add("admin-subtitle");
 
             // Create sub-tabs with padded content
-            assignAdminsView = new AssignAdminToOrganizationsView();
-            assignAdminsTab = createTab(SuperAdmin18nKeys.OrganizationTab, assignAdminsView.getView());
+            //assignAdminsView = new AssignAdminToOrganizationsView();
+            //assignAdminsTab = createTab(SuperAdmin18nKeys.OrganizationTab, assignAdminsView.getView());
 
             operationsView = new OperationsView(false);
             operationsTab = createTab(SuperAdmin18nKeys.Operations, operationsView.getView());
@@ -151,7 +151,7 @@ final class SuperAdminActivity extends ViewDomainActivityBase implements ButtonF
 
             // Create TabPane with sub-tabs
             tabPane = new TabPane(
-                assignAdminsTab,
+                //assignAdminsTab,
                 operationsTab,
                 routesTab,
                 rulesTab,
@@ -177,7 +177,7 @@ final class SuperAdminActivity extends ViewDomainActivityBase implements ButtonF
             FXProperties.runNowAndOnPropertiesChange(() -> {
                 boolean active = activity.isActive();
                 Tab selectedTab = tabPane.getSelectionModel().getSelectedItem();
-                assignAdminsView.setActive(active && selectedTab == assignAdminsTab);
+                //assignAdminsView.setActive(active && selectedTab == assignAdminsTab);
                 operationsView.setActive(active && selectedTab == operationsTab);
                 routesView.setActive(active && selectedTab == routesTab);
                 rulesView.setActive(active && selectedTab == rulesTab);
@@ -189,7 +189,7 @@ final class SuperAdminActivity extends ViewDomainActivityBase implements ButtonF
         void setActive(boolean active) {
             if (!active) {
                 // Deactivate all sub-views
-                if (assignAdminsView != null) assignAdminsView.setActive(false);
+                //if (assignAdminsView != null) assignAdminsView.setActive(false);
                 if (operationsView != null) operationsView.setActive(false);
                 if (routesView != null) routesView.setActive(false);
                 if (rulesView != null) rulesView.setActive(false);

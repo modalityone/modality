@@ -1,4 +1,4 @@
-package one.modality.crm.backoffice.activities.superadmin;
+package one.modality.crm.backoffice.activities.administrators;
 
 import dev.webfx.extras.i18n.I18n;
 import dev.webfx.extras.i18n.controls.I18nControls;
@@ -9,12 +9,11 @@ import dev.webfx.kit.util.properties.FXProperties;
 import dev.webfx.kit.util.properties.ObservableLists;
 import dev.webfx.stack.orm.datasourcemodel.service.DataSourceModelService;
 import dev.webfx.stack.orm.domainmodel.DataSourceModel;
+import dev.webfx.stack.orm.domainmodel.activity.viewdomain.impl.ViewDomainActivityBase;
 import dev.webfx.stack.orm.reactive.entities.dql_to_entities.ReactiveEntitiesMapper;
 import dev.webfx.stack.orm.reactive.entities.entities_to_grid.EntityColumn;
 import dev.webfx.stack.orm.reactive.mapping.entities_to_visual.EntitiesToVisualResultMapper;
 import dev.webfx.stack.orm.reactive.mapping.entities_to_visual.VisualEntityColumnFactory;
-import javafx.beans.property.BooleanProperty;
-import javafx.beans.property.SimpleBooleanProperty;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.geometry.Insets;
@@ -35,17 +34,16 @@ import java.util.Comparator;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import static one.modality.crm.backoffice.activities.superadmin.SuperAdmin18nKeys.*;
 
 /**
- * Organizations tab view showing organizations and their assigned managers.
  *
+ * @author David Hello
  * @author Claude Code
  */
-final class AssignAdminToOrganizationsView {
+final class AdministratorsActivity extends ViewDomainActivityBase {
 
-    private final VBox view;
-    private final VisualGrid organizationsGrid;
+    private final VBox view = new VBox();
+    private final VisualGrid organizationsGrid = VisualGrid.createVisualGridWithTableLayoutSkin();;
     private TextField searchField;
     private Switch showAllSwitch;
     private final ObservableList<Organization> organizationsFeed = FXCollections.observableArrayList();
@@ -53,19 +51,12 @@ final class AssignAdminToOrganizationsView {
     private final ObservableList<AuthorizationOrganizationUserAccess> userAccessFeed = FXCollections.observableArrayList();
     private final ObservableList<Organization> displayedOrganizations = FXCollections.observableArrayList();
     private EntityColumn<Organization>[] columns;
-    private final BooleanProperty activeProperty = new SimpleBooleanProperty();
 
-    static {
-        // Register custom renderers
-        AssignAdminToOrganizationsViewRenderers.registerRenderers();
-    }
-
-    public AssignAdminToOrganizationsView() {
-        view = new VBox();
+    @Override
+    public Node buildUi() {
         view.setSpacing(16);
         view.setAlignment(Pos.TOP_LEFT);
         view.setFillWidth(true);
-        organizationsGrid = VisualGrid.createVisualGridWithTableLayoutSkin();
         organizationsGrid.setMinRowHeight(40);
         organizationsGrid.setPrefRowHeight(40);
         organizationsGrid.setPrefHeight(600);
@@ -73,16 +64,14 @@ final class AssignAdminToOrganizationsView {
         organizationsGrid.setMinWidth(0);
         organizationsGrid.setPrefWidth(Double.MAX_VALUE);
         organizationsGrid.setMaxWidth(Double.MAX_VALUE);
-
-        // Pass this view to renderers
-        AssignAdminToOrganizationsViewRenderers.setOrganizationsView(this);
+        organizationsGrid.setAppContext(this); // Pass this activity to renderers
 
         // Card container
         VBox card = new VBox(16);
         card.getStyleClass().add("section-card");
 
         // Section title
-        Label sectionTitle = I18nControls.newLabel(OrganizationsAndManagers);
+        Label sectionTitle = I18nControls.newLabel(AdministratorsI18nKeys.OrganizationsAndManagers);
         sectionTitle.getStyleClass().add("section-title");
 
         // Search area
@@ -94,86 +83,6 @@ final class AssignAdminToOrganizationsView {
 
         view.getChildren().add(card);
         VBox.setVgrow(card, Priority.ALWAYS);
-
-        // Initialize ReactiveEntitiesMapper and setup logic
-        startLogic();
-    }
-
-    public Node getView() {
-        return view;
-    }
-
-    private HBox createSearchArea() {
-        HBox searchArea = new HBox(12);
-        searchArea.setAlignment(Pos.CENTER_LEFT);
-
-        // Create search field with icon
-        searchField = new TextField();
-        searchField.setPrefWidth(300);
-        searchField.setPadding(new Insets(8, 35, 8, 12));
-        I18n.bindI18nTextProperty(searchField.promptTextProperty(), SearchOrganizations);
-
-        Label searchIcon = new Label("🔍");
-        searchIcon.setMouseTransparent(true);
-
-        StackPane searchContainer = new StackPane();
-        searchContainer.getChildren().addAll(searchField, searchIcon);
-        StackPane.setAlignment(searchIcon, Pos.CENTER_RIGHT);
-        StackPane.setMargin(searchIcon, new Insets(0, 12, 0, 0));
-
-        // Create toggle switch with label beside it
-        HBox switchContainer = new HBox(8);
-        switchContainer.setAlignment(Pos.CENTER_LEFT);
-
-        showAllSwitch = new Switch();
-
-        Label switchLabel = I18nControls.newLabel(ShowOrganizationsWithoutManagers);
-        switchLabel.getStyleClass().add("switch-label");
-
-        switchContainer.getChildren().addAll(showAllSwitch, switchLabel);
-
-        HBox.setHgrow(searchContainer, Priority.SOMETIMES);
-        searchArea.getChildren().addAll(searchContainer, switchContainer);
-
-        return searchArea;
-    }
-
-    private void startLogic() {
-        DataSourceModel dataSourceModel = DataSourceModelService.getDefaultDataSourceModel();
-
-        // Define columns for the grid
-        columns = VisualEntityColumnFactory.get().fromJsonArray( // language=JSON5
-            """
-            [
-                {expression: 'name', label: 'Organization Name', minWidth: 200},
-                {expression: 'this', label: 'Admin(s)', renderer: 'managersList', minWidth: 400},
-                {expression: 'this', label: 'Active Users', renderer: 'activeUsers', minWidth: 100, prefWidth: 120, hShrink: false, textAlign: 'center'},
-                {expression: 'this', label: 'Actions', renderer: 'organizationActions', minWidth: 80, prefWidth: 100, hShrink: false, textAlign: 'center'}
-            ]""", dataSourceModel.getDomainModel(), "Organization");
-
-        // Query all organizations
-        ReactiveEntitiesMapper.<Organization>createPushReactiveChain()
-            .setDataSourceModel(dataSourceModel)
-            .always("{class: 'Organization', alias: 'o', fields: 'name', orderBy: 'name'}")
-            .storeEntitiesInto(organizationsFeed)
-            .bindActivePropertyTo(activeProperty)
-            .start();
-
-        // Query all organization admins
-        ReactiveEntitiesMapper.<AuthorizationOrganizationAdmin>createPushReactiveChain()
-            .setDataSourceModel(dataSourceModel)
-            .always("{class: 'AuthorizationOrganizationAdmin', alias: 'oa', fields: 'organization,admin.(firstName,lastName,email)', orderBy: 'organization,id'}")
-            .storeEntitiesInto(organizationAdminsFeed)
-            .bindActivePropertyTo(activeProperty)
-            .start();
-
-        // Query all user access to count active users per organization
-        ReactiveEntitiesMapper.<AuthorizationOrganizationUserAccess>createPushReactiveChain()
-            .setDataSourceModel(dataSourceModel)
-            .always("{class: 'AuthorizationOrganizationUserAccess', alias: 'ua', fields: 'organization,user', orderBy: 'organization,id'}")
-            .storeEntitiesInto(userAccessFeed)
-            .bindActivePropertyTo(activeProperty)
-            .start();
 
         // Update displayed organizations when organizations feed, org admins, search text, or switch changes
         FXProperties.runNowAndOnPropertiesChange(
@@ -193,6 +102,82 @@ final class AssignAdminToOrganizationsView {
         ObservableLists.runNowAndOnListChange(change -> updateGrid.run(), displayedOrganizations);
         ObservableLists.runNowAndOnListChange(change -> updateGrid.run(), organizationAdminsFeed);
         ObservableLists.runNowAndOnListChange(change -> updateGrid.run(), userAccessFeed);
+
+        return view;
+    }
+
+    public Node getView() {
+        return view;
+    }
+
+    private HBox createSearchArea() {
+        HBox searchArea = new HBox(12);
+        searchArea.setAlignment(Pos.CENTER_LEFT);
+
+        // Create search field with icon
+        searchField = new TextField();
+        searchField.setPrefWidth(300);
+        searchField.setPadding(new Insets(8, 35, 8, 12));
+        I18n.bindI18nTextProperty(searchField.promptTextProperty(), AdministratorsI18nKeys.SearchOrganizations);
+
+        Label searchIcon = new Label("🔍");
+        searchIcon.setMouseTransparent(true);
+
+        StackPane searchContainer = new StackPane();
+        searchContainer.getChildren().addAll(searchField, searchIcon);
+        StackPane.setAlignment(searchIcon, Pos.CENTER_RIGHT);
+        StackPane.setMargin(searchIcon, new Insets(0, 12, 0, 0));
+
+        // Create toggle switch with label beside it
+        HBox switchContainer = new HBox(8);
+        switchContainer.setAlignment(Pos.CENTER_LEFT);
+
+        showAllSwitch = new Switch();
+
+        Label switchLabel = I18nControls.newLabel(AdministratorsI18nKeys.ShowOrganizationsWithoutManagers);
+        switchLabel.getStyleClass().add("switch-label");
+
+        switchContainer.getChildren().addAll(showAllSwitch, switchLabel);
+
+        HBox.setHgrow(searchContainer, Priority.SOMETIMES);
+        searchArea.getChildren().addAll(searchContainer, switchContainer);
+
+        return searchArea;
+    }
+
+    @Override
+    protected void startLogic() {
+        DataSourceModel dataSourceModel = DataSourceModelService.getDefaultDataSourceModel();
+
+        // Register custom renderers
+        AdministratorsRenderers.registerRenderers();
+        // Define columns for the grid
+        columns = VisualEntityColumnFactory.get().fromJsonArray( // language=JSON5
+            """
+            [
+                {expression: 'name', label: 'Organization Name', minWidth: 200},
+                {expression: 'this', label: 'Admin(s)', renderer: 'managersList', minWidth: 400},
+                {expression: 'this', label: 'Active Users', renderer: 'activeUsers', minWidth: 100, prefWidth: 120, hShrink: false, textAlign: 'center'},
+                {expression: 'this', label: 'Actions', renderer: 'organizationActions', minWidth: 80, prefWidth: 100, hShrink: false, textAlign: 'center'}
+            ]""", dataSourceModel.getDomainModel(), "Organization");
+
+        // Query all organizations
+        ReactiveEntitiesMapper.<Organization>createPushReactiveChain(this)
+            .always("{class: 'Organization', alias: 'o', fields: 'name', orderBy: 'name'}")
+            .storeEntitiesInto(organizationsFeed)
+            .start();
+
+        // Query all organization admins
+        ReactiveEntitiesMapper.<AuthorizationOrganizationAdmin>createPushReactiveChain(this)
+            .always("{class: 'AuthorizationOrganizationAdmin', alias: 'oa', fields: 'organization,admin.(firstName,lastName,email)', orderBy: 'organization,id'}")
+            .storeEntitiesInto(organizationAdminsFeed)
+            .start();
+
+        // Query all user access to count active users per organization
+        ReactiveEntitiesMapper.<AuthorizationOrganizationUserAccess>createPushReactiveChain(this)
+            .always("{class: 'AuthorizationOrganizationUserAccess', alias: 'ua', fields: 'organization,user', orderBy: 'organization,id'}")
+            .storeEntitiesInto(userAccessFeed)
+            .start();
     }
 
     /**
@@ -267,7 +252,4 @@ final class AssignAdminToOrganizationsView {
         AssignAdminToOrganizationDialog.show(organization, admins);
     }
 
-    public void setActive(boolean active) {
-        activeProperty.set(active);
-    }
 }

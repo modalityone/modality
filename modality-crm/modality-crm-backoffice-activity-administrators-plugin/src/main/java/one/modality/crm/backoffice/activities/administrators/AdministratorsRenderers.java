@@ -1,4 +1,4 @@
-package one.modality.crm.backoffice.activities.superadmin;
+package one.modality.crm.backoffice.activities.administrators;
 
 import dev.webfx.extras.cell.renderer.ValueRendererRegistry;
 import dev.webfx.extras.panes.MonoPane;
@@ -21,43 +21,33 @@ import java.util.List;
  *
  * @author Claude Code
  */
-final class AssignAdminToOrganizationsViewRenderers {
-
-    private static AssignAdminToOrganizationsView organizationsView;
-
-    static void setOrganizationsView(AssignAdminToOrganizationsView view) {
-        organizationsView = view;
-    }
+final class AdministratorsRenderers {
 
     static void registerRenderers() {
-        // Register common renderers
-        SuperAdminRenderers.registerCommonRenderers();
-
         // Register managers list renderer
         ValueRendererRegistry.registerValueRenderer("managersList", (value, context) -> {
             Organization organization = (Organization) value;
+            AdministratorsActivity activity = context.getAppContext();
 
             HBox flow = new HBox(4);
             flow.setAlignment(Pos.CENTER_LEFT);
 
             // Get admins for this organization from the view's feed
-            if (organizationsView != null) {
-                List<AuthorizationOrganizationAdmin> admins = organizationsView.getAdminsForOrganization(organization);
+            List<AuthorizationOrganizationAdmin> admins = activity.getAdminsForOrganization(organization);
 
-                if (admins == null || admins.isEmpty()) {
-                    Label emptyLabel = new Label("-");
-                    emptyLabel.getStyleClass().add("admin-text-italic");
-                    flow.getChildren().add(emptyLabel);
-                } else {
-                    // Build the chips
-                    for (AuthorizationOrganizationAdmin admin : admins) {
-                        Person person = admin.getAdmin();
-                        if (person != null) {
-                            String managerName = person.getFirstName() + " " + person.getLastName();
-                            Label chip = ModalityStyle.badgeLightInfo(new Label(managerName));
-                            chip.setPadding(new Insets(3, 8, 3, 8));
-                            flow.getChildren().add(chip);
-                        }
+            if (admins == null || admins.isEmpty()) {
+                Label emptyLabel = new Label("-");
+                emptyLabel.getStyleClass().add("admin-text-italic");
+                flow.getChildren().add(emptyLabel);
+            } else {
+                // Build the chips
+                for (AuthorizationOrganizationAdmin admin : admins) {
+                    Person person = admin.getAdmin();
+                    if (person != null) {
+                        String managerName = person.getFirstName() + " " + person.getLastName();
+                        Label chip = ModalityStyle.badgeLightInfo(new Label(managerName));
+                        chip.setPadding(new Insets(3, 8, 3, 8));
+                        flow.getChildren().add(chip);
                     }
                 }
             }
@@ -71,7 +61,8 @@ final class AssignAdminToOrganizationsViewRenderers {
                 return null;
             }
 
-            int userCount = organizationsView != null ? organizationsView.getUserAccessCountForOrganization(organization) : 0;
+            AdministratorsActivity activity = context.getAppContext();
+            int userCount = activity.getUserAccessCountForOrganization(organization);
 
             Label badge =ModalityStyle.badgeLightInfo(new Label(String.valueOf(userCount)));
             badge.setPadding(new Insets(3, 8, 3, 8));
@@ -81,6 +72,7 @@ final class AssignAdminToOrganizationsViewRenderers {
         // Register organization actions renderer
         ValueRendererRegistry.registerValueRenderer("organizationActions", (value, context) -> {
             Organization organization = (Organization) value;
+            AdministratorsActivity activity = context.getAppContext();
 
             HBox actionsBox = new HBox(8);
             actionsBox.setAlignment(Pos.CENTER);
@@ -89,11 +81,7 @@ final class AssignAdminToOrganizationsViewRenderers {
             SVGPath managersIcon = SvgIcons.createSVGPath("M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2M9 11a4 4 0 1 0 0-8 4 4 0 0 0 0 8zM22 21v-2a4 4 0 0 0-3-3.87M16 3.13a4 4 0 0 1 0 7.75");
             managersIcon.setFill(Color.web("#666666"));
             managersIcon.getStyleClass().add("admin-action-icon");
-            MonoPane managersButton = SvgIcons.createButtonPane(managersIcon, () -> {
-                if (organizationsView != null) {
-                    organizationsView.showManageManagersDialog(organization);
-                }
-            });
+            MonoPane managersButton = SvgIcons.createButtonPane(managersIcon, () -> activity.showManageManagersDialog(organization));
             managersButton.getStyleClass().add("admin-action-button");
 
             actionsBox.getChildren().add(managersButton);

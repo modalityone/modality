@@ -1,4 +1,4 @@
-package one.modality.crm.backoffice.activities.superadmin;
+package one.modality.crm.backoffice.activities.administrators;
 
 import dev.webfx.extras.controlfactory.button.ButtonFactoryMixin;
 import dev.webfx.extras.i18n.I18n;
@@ -30,9 +30,6 @@ import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
-
-import static one.modality.base.client.i18n.BaseI18nKeys.SaveChanges;
-import static one.modality.crm.backoffice.activities.superadmin.SuperAdmin18nKeys.*;
 
 /**
  * Dialog for managing admins of an organization.
@@ -68,7 +65,7 @@ final class AssignAdminToOrganizationDialog {
         dialogContent.setMaxWidth(700);
 
         // Title
-        Label titleLabel = Bootstrap.strong(I18nControls.newLabel(ManageManagers));
+        Label titleLabel = Bootstrap.strong(I18nControls.newLabel(AdministratorsI18nKeys.ManageManagers));
         titleLabel.getStyleClass().add("modal-title");
 
         // Organization name
@@ -77,7 +74,7 @@ final class AssignAdminToOrganizationDialog {
 
         // Current admins section
         VBox adminsSection = new VBox(8);
-        Label currentAdminsLabel = I18nControls.newLabel(CurrentManagers);
+        Label currentAdminsLabel = I18nControls.newLabel(AdministratorsI18nKeys.CurrentManagers);
         currentAdminsLabel.getStyleClass().add("form-label");
 
         // Selected admins display panel
@@ -116,14 +113,14 @@ final class AssignAdminToOrganizationDialog {
         updateAdminsDisplayHolder[0] = () -> {
             // Update count
             int totalCount = selectedAdminIds.size() + adminsToAdd.size() - adminsToRemove.size();
-            String countText = I18n.getI18nText(totalCount == 1 ? AdminSingular : AdminPlural);
+            String countText = I18n.getI18nText(totalCount == 1 ? AdministratorsI18nKeys.AdminSingular : AdministratorsI18nKeys.AdminPlural);
             selectedCountLabel.setText(countText + " (" + totalCount + ")");
 
             // Clear and rebuild chips
             adminsChipsPane.getChildren().clear();
 
             if (totalCount == 0) {
-                Label empty = I18nControls.newLabel(None);
+                Label empty = I18nControls.newLabel(AdministratorsI18nKeys.None);
                 empty.getStyleClass().add("admin-text-italic");
                 adminsChipsPane.getChildren().add(empty);
             } else {
@@ -162,7 +159,7 @@ final class AssignAdminToOrganizationDialog {
 
         // Add admin section
         VBox addAdminSection = new VBox(8);
-        Label addAdminLabel = I18nControls.newLabel(SelectManager);
+        Label addAdminLabel = I18nControls.newLabel(AdministratorsI18nKeys.SelectManager);
         addAdminLabel.getStyleClass().add("form-label");
 
         // Create EntityButtonSelector for Person
@@ -180,7 +177,7 @@ final class AssignAdminToOrganizationDialog {
 
         Button adminButton = adminSelector.getButton();
         adminButton.setMaxWidth(Double.MAX_VALUE);
-        adminButton.setText(I18n.getI18nText(SelectManager) + "...");
+        adminButton.setText(I18n.getI18nText(AdministratorsI18nKeys.SelectManager) + "...");
 
         // Listen for person selection
         adminSelector.selectedItemProperty().addListener((obs, oldVal, selectedPerson) -> {
@@ -201,7 +198,7 @@ final class AssignAdminToOrganizationDialog {
                 // Reset selection
                 Platform.runLater(() -> {
                     adminSelector.setSelectedItem(null);
-                    adminButton.setText(I18n.getI18nText(SelectManager) + "...");
+                    adminButton.setText(I18n.getI18nText(AdministratorsI18nKeys.SelectManager) + "...");
                 });
             }
         });
@@ -220,7 +217,7 @@ final class AssignAdminToOrganizationDialog {
         footer.setAlignment(Pos.CENTER_RIGHT);
 
         Button cancelButton = Bootstrap.button(I18nControls.newButton(BaseI18nKeys.Cancel));
-        Button saveButton = Bootstrap.successButton(I18nControls.newButton(SaveChanges));
+        Button saveButton = Bootstrap.successButton(I18nControls.newButton(BaseI18nKeys.SaveChanges));
 
         // Bind save button disable property to hasNoChangesBinding
         saveButton.disableProperty().bind(hasNoChangesBinding);
@@ -300,7 +297,7 @@ final class AssignAdminToOrganizationDialog {
         titleLabel.getStyleClass().add("error-dialog-title");
         titleLabel.setMaxWidth(Double.MAX_VALUE);
 
-        Label headerLabel = I18nControls.newLabel(FailedToAssignAdmin);
+        Label headerLabel = I18nControls.newLabel(AdministratorsI18nKeys.FailedToAssignAdmin);
         headerLabel.setWrapText(true);
         headerLabel.setMaxWidth(Double.MAX_VALUE);
         headerLabel.getStyleClass().add("error-dialog-header");
