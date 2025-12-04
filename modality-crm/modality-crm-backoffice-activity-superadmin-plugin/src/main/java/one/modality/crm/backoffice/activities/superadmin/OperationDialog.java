@@ -13,16 +13,21 @@ import javafx.beans.binding.Bindings;
 import javafx.beans.binding.BooleanBinding;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
-import javafx.scene.control.*;
+import javafx.scene.control.Button;
+import javafx.scene.control.CheckBox;
+import javafx.scene.control.Label;
+import javafx.scene.control.TextField;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
+import one.modality.base.backoffice.claude.FormField;
+import one.modality.base.client.i18n.BaseI18nKeys;
 import one.modality.base.client.mainframe.fx.FXMainFrameDialogArea;
 import one.modality.base.shared.entities.Operation;
 
+import static one.modality.base.backoffice.claude.FormFieldHelper.createTextField;
 import static one.modality.crm.backoffice.activities.superadmin.SuperAdmin18nKeys.*;
-import static one.modality.crm.backoffice.activities.superadmin.FormFieldHelper.*;
 
 /**
  * Dialog for creating and editing operations and routes.
@@ -244,8 +249,8 @@ public class OperationDialog {
         HBox footer = new HBox(12);
         footer.setAlignment(Pos.CENTER_RIGHT);
 
-        Button cancelButton = Bootstrap.button(I18nControls.newButton(Cancel));
-        Object saveButtonKey = isEdit ? SaveChanges : (isRouteEntity ? CreateRouteButton : CreateOperationButton);
+        Button cancelButton = Bootstrap.button(I18nControls.newButton(BaseI18nKeys.Cancel));
+        Object saveButtonKey = isEdit ? BaseI18nKeys.SaveChanges : (isRouteEntity ? CreateRouteButton : CreateOperationButton);
         Button saveButton = Bootstrap.successButton(I18nControls.newButton(saveButtonKey));
 
         // Bind save button disable property to hasNoChangesBinding
@@ -296,7 +301,7 @@ public class OperationDialog {
         dialogContent.setMaxWidth(700);
 
         // Title
-        Label titleLabel = Bootstrap.strong(I18nControls.newLabel(SuperAdmin18nKeys.Error));
+        Label titleLabel = Bootstrap.strong(I18nControls.newLabel(BaseI18nKeys.Error));
         titleLabel.getStyleClass().add("error-dialog-title");
         titleLabel.setMaxWidth(Double.MAX_VALUE);
 
@@ -318,7 +323,7 @@ public class OperationDialog {
         HBox footer = new HBox();
         footer.setAlignment(Pos.CENTER_RIGHT);
 
-        Button okButton = Bootstrap.dangerButton(I18nControls.newButton(OK));
+        Button okButton = Bootstrap.dangerButton(I18nControls.newButton(BaseI18nKeys.OK));
 
         footer.getChildren().add(okButton);
         dialogContent.getChildren().add(footer);

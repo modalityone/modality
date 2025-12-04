@@ -14,22 +14,24 @@ import javafx.beans.binding.BooleanBinding;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.control.*;
+import javafx.scene.control.Label;
 import javafx.scene.layout.BorderPane;
+import javafx.scene.layout.FlowPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
-import javafx.scene.layout.FlowPane;
+import one.modality.base.backoffice.claude.FormField;
+import one.modality.base.client.i18n.BaseI18nKeys;
 import one.modality.base.client.mainframe.fx.FXMainFrameDialogArea;
-import one.modality.base.shared.entities.AuthorizationRole;
-import one.modality.base.shared.entities.AuthorizationRoleOperation;
-import one.modality.base.shared.entities.AuthorizationRule;
-import one.modality.base.shared.entities.Operation;
-import one.modality.base.shared.entities.OperationGroup;
+import one.modality.base.shared.entities.*;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
 
 import static javafx.scene.layout.Region.USE_COMPUTED_SIZE;
+import static one.modality.base.backoffice.claude.FormFieldHelper.*;
 import static one.modality.crm.backoffice.activities.superadmin.SuperAdmin18nKeys.*;
-import static one.modality.crm.backoffice.activities.superadmin.FormFieldHelper.*;
 
 /**
  * Dialog for creating and editing authorization roles.
@@ -415,8 +417,8 @@ public class RolesDialog {
         HBox footer = new HBox(12);
         footer.setAlignment(Pos.CENTER_RIGHT);
 
-        Button cancelButton = Bootstrap.button(I18nControls.newButton(Cancel));
-        Object saveButtonKey = isEdit ? SaveChanges : (CreateRoleButton);
+        Button cancelButton = Bootstrap.button(I18nControls.newButton(BaseI18nKeys.Cancel));
+        Object saveButtonKey = isEdit ? BaseI18nKeys.SaveChanges : (CreateRoleButton);
         Button saveButton = Bootstrap.successButton(I18nControls.newButton(saveButtonKey));
 
         // Disable save button when no operations, groups, or rules are selected
@@ -549,7 +551,7 @@ public class RolesDialog {
         dialogContent.setPrefWidth(500);
         dialogContent.setMaxWidth(700);
 
-        Label titleLabel = Bootstrap.strong(I18nControls.newLabel(Error));
+        Label titleLabel = Bootstrap.strong(I18nControls.newLabel(BaseI18nKeys.Error));
         titleLabel.getStyleClass().add("error-dialog-title");
 
         Label headerLabel = I18nControls.newLabel(FailedToSaveRole);
@@ -566,7 +568,7 @@ public class RolesDialog {
 
         HBox footer = new HBox();
         footer.setAlignment(Pos.CENTER_RIGHT);
-        Button okButton = Bootstrap.dangerButton(I18nControls.newButton(OK));
+        Button okButton = Bootstrap.dangerButton(I18nControls.newButton(BaseI18nKeys.OK));
         footer.getChildren().add(okButton);
         dialogContent.getChildren().add(footer);
 

@@ -15,9 +15,11 @@ import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.control.*;
 import javafx.scene.layout.BorderPane;
+import javafx.scene.layout.FlowPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
-import javafx.scene.layout.FlowPane;
+import one.modality.base.backoffice.claude.FormField;
+import one.modality.base.client.i18n.BaseI18nKeys;
 import one.modality.base.client.mainframe.fx.FXMainFrameDialogArea;
 import one.modality.base.shared.entities.Operation;
 import one.modality.base.shared.entities.OperationGroup;
@@ -28,8 +30,9 @@ import java.util.List;
 import java.util.Set;
 
 import static javafx.scene.layout.Region.USE_COMPUTED_SIZE;
+import static one.modality.base.backoffice.claude.FormFieldHelper.addSearchFilter;
+import static one.modality.base.backoffice.claude.FormFieldHelper.createTextField;
 import static one.modality.crm.backoffice.activities.superadmin.SuperAdmin18nKeys.*;
-import static one.modality.crm.backoffice.activities.superadmin.FormFieldHelper.*;
 
 /**
  * Dialog for creating and editing operation groups.
@@ -296,8 +299,8 @@ public class OperationGroupDialog {
         HBox footer = new HBox(12);
         footer.setAlignment(Pos.CENTER_RIGHT);
 
-        Button cancelButton = Bootstrap.button(I18nControls.newButton(Cancel));
-        Object saveButtonKey = isEdit ? SaveChanges : CreateGroupButton;
+        Button cancelButton = Bootstrap.button(I18nControls.newButton(BaseI18nKeys.Cancel));
+        Object saveButtonKey = isEdit ? BaseI18nKeys.SaveChanges : CreateGroupButton;
         Button saveButton = Bootstrap.successButton(I18nControls.newButton(saveButtonKey));
 
         // Bind save button disable property to hasNoChangesBinding
@@ -346,7 +349,7 @@ public class OperationGroupDialog {
         dialogContent.setMaxWidth(700);
 
         // Title
-        Label titleLabel = Bootstrap.strong(I18nControls.newLabel(SuperAdmin18nKeys.Error));
+        Label titleLabel = Bootstrap.strong(I18nControls.newLabel(BaseI18nKeys.Error));
         titleLabel.getStyleClass().add("error-dialog-title");
         titleLabel.setMaxWidth(Double.MAX_VALUE);
 
@@ -368,7 +371,7 @@ public class OperationGroupDialog {
         HBox footer = new HBox();
         footer.setAlignment(Pos.CENTER_RIGHT);
 
-        Button okButton = Bootstrap.dangerButton(I18nControls.newButton(OK));
+        Button okButton = Bootstrap.dangerButton(I18nControls.newButton(BaseI18nKeys.OK));
 
         footer.getChildren().add(okButton);
         dialogContent.getChildren().add(footer);

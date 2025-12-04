@@ -34,17 +34,17 @@ final class SuperAdminActivity extends ViewDomainActivityBase implements ButtonF
 
     // Lazy loading flags
     private boolean rightsManagementLogicStarted = false;
-    private boolean organizationsLogicStarted = false;
+    //private boolean organizationsLogicStarted = false;
 
     // Views (created lazily)
     private RightsManagementView rightsManagementView;
-    private OrganizationsView organizationsView;
+    //private OrganizationsView organizationsView;
 
     @Override
     public Node buildUi() {
         headerTabsBar.setTabs(
-            headerTabsBar.createTab(I18n.getI18nText(SuperAdmin18nKeys.RightsManagementTab), this::buildRightsManagementTab, this::onRightsManagementTabSelected),
-            headerTabsBar.createTab(I18n.getI18nText(SuperAdmin18nKeys.OrganizationsTab), this::buildOrganizationsTab, this::onOrganizationsTabSelected)
+            headerTabsBar.createTab(I18n.getI18nText(SuperAdmin18nKeys.RightsManagementTab), this::buildRightsManagementTab, this::onRightsManagementTabSelected)
+            //headerTabsBar.createTab(I18n.getI18nText(SuperAdmin18nKeys.OrganizationsTab), this::buildOrganizationsTab, this::onOrganizationsTabSelected)
         );
         return container;
     }
@@ -68,17 +68,9 @@ final class SuperAdminActivity extends ViewDomainActivityBase implements ButtonF
     }
 
     /**
-     * Builds the Organizations tab content (called once, then cached).
-     */
-    private Node buildOrganizationsTab() {
-        organizationsView = new OrganizationsView();
-        return organizationsView.getView();
-    }
-
-    /**
      * Called every time the Organizations tab is selected.
      */
-    private void onOrganizationsTabSelected() {
+    /*private void onOrganizationsTabSelected() {
         if (!organizationsLogicStarted && organizationsView != null) {
             // OrganizationsView starts its own logic in constructor, just set active
             organizationsView.setActive(true);
@@ -86,7 +78,7 @@ final class SuperAdminActivity extends ViewDomainActivityBase implements ButtonF
         } else if (organizationsView != null) {
             organizationsView.setActive(true);
         }
-    }
+    }*/
 
     @Override
     public void onResume() {
@@ -101,9 +93,9 @@ final class SuperAdminActivity extends ViewDomainActivityBase implements ButtonF
         if (rightsManagementView != null) {
             rightsManagementView.setActive(false);
         }
-        if (organizationsView != null) {
+        /*if (organizationsView != null) {
             organizationsView.setActive(false);
-        }
+        }*/
         super.onPause();
     }
 

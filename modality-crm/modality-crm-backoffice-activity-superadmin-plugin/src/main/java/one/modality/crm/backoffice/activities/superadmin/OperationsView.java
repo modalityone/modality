@@ -22,10 +22,13 @@ import javafx.collections.ObservableList;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Node;
-import javafx.scene.control.*;
+import javafx.scene.control.Button;
+import javafx.scene.control.Label;
+import javafx.scene.control.TextField;
 import javafx.scene.layout.*;
 import one.modality.base.backoffice.formattersrenderers.ModalityBackofficeRenderers;
 import one.modality.base.client.bootstrap.ModalityStyle;
+import one.modality.base.client.i18n.BaseI18nKeys;
 import one.modality.base.client.mainframe.fx.FXMainFrameDialogArea;
 import one.modality.base.shared.entities.AuthorizationRoleOperation;
 import one.modality.base.shared.entities.Operation;
@@ -315,7 +318,7 @@ public class OperationsView {
         titleLabel.setMaxWidth(Double.MAX_VALUE);
 
         // Message
-        Label messageLabel = new Label(I18n.getI18nText(Delete) + I18n.getI18nText(Space) + operation.getName() + I18n.getI18nText(QuestionMark));
+        Label messageLabel = new Label(I18n.getI18nText(BaseI18nKeys.Delete) + I18n.getI18nText(Space) + operation.getName() + I18n.getI18nText(QuestionMark));
         messageLabel.setWrapText(true);
         messageLabel.setMaxWidth(Double.MAX_VALUE);
         messageLabel.getStyleClass().add("delete-dialog-message");
@@ -333,8 +336,8 @@ public class OperationsView {
         HBox footer = new HBox(12);
         footer.setAlignment(Pos.CENTER_RIGHT);
 
-        Button cancelButton = Bootstrap.button(I18nControls.newButton(Cancel));
-        Button deleteButton = Bootstrap.dangerButton(I18nControls.newButton(Delete));
+        Button cancelButton = Bootstrap.button(I18nControls.newButton(BaseI18nKeys.Cancel));
+        Button deleteButton = Bootstrap.dangerButton(I18nControls.newButton(BaseI18nKeys.Delete));
 
         footer.getChildren().addAll(cancelButton, deleteButton);
         dialogContent.getChildren().add(footer);

@@ -29,6 +29,7 @@ import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
 import javafx.scene.layout.*;
 import one.modality.base.client.bootstrap.ModalityStyle;
+import one.modality.base.client.i18n.BaseI18nKeys;
 import one.modality.base.client.mainframe.fx.FXMainFrameDialogArea;
 import one.modality.base.shared.entities.AuthorizationOrganizationUserAccess;
 import one.modality.base.shared.entities.AuthorizationRole;
@@ -315,7 +316,7 @@ public class RolesView {
         titleLabel.setMaxWidth(Double.MAX_VALUE);
 
         // Message
-        Label messageLabel = new Label(I18n.getI18nText(Delete) + I18n.getI18nText(Space) + role.getName() + I18n.getI18nText(QuestionMark));
+        Label messageLabel = new Label(I18n.getI18nText(BaseI18nKeys.Delete) + I18n.getI18nText(Space) + role.getName() + I18n.getI18nText(QuestionMark));
         messageLabel.setWrapText(true);
         messageLabel.setMaxWidth(Double.MAX_VALUE);
         messageLabel.getStyleClass().add("delete-dialog-message");
@@ -332,8 +333,8 @@ public class RolesView {
         HBox footer = new HBox(12);
         footer.setAlignment(Pos.CENTER_RIGHT);
 
-        Button cancelButton = Bootstrap.button(I18nControls.newButton(Cancel));
-        Button deleteButton = Bootstrap.dangerButton(I18nControls.newButton(Delete));
+        Button cancelButton = Bootstrap.button(I18nControls.newButton(BaseI18nKeys.Cancel));
+        Button deleteButton = Bootstrap.dangerButton(I18nControls.newButton(BaseI18nKeys.Delete));
 
         footer.getChildren().addAll(cancelButton, deleteButton);
         dialogContent.getChildren().add(footer);
@@ -399,7 +400,7 @@ public class RolesView {
         dialogContent.setPrefWidth(500);
         dialogContent.setMaxWidth(700);
 
-        Label titleLabel = I18nControls.newLabel(Error);
+        Label titleLabel = I18nControls.newLabel(BaseI18nKeys.Error);
         titleLabel.getStyleClass().add("error-dialog-title");
         titleLabel.setMaxWidth(Double.MAX_VALUE);
 
@@ -418,7 +419,7 @@ public class RolesView {
         HBox footer = new HBox();
         footer.setAlignment(Pos.CENTER_RIGHT);
 
-        Button okButton = Bootstrap.dangerButton(I18nControls.newButton(OK));
+        Button okButton = Bootstrap.dangerButton(I18nControls.newButton(BaseI18nKeys.OK));
 
         footer.getChildren().add(okButton);
         dialogContent.getChildren().add(footer);

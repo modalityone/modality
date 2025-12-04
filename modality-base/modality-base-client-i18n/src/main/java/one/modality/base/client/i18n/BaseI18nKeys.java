@@ -9,6 +9,7 @@ public interface BaseI18nKeys {
 //    Object >> = ">>";
 //    Object ? = "?";
     Object Add = "Add";
+    Object AnErrorOccurred = "AnErrorOccurred";
     Object AreYouSure = "AreYouSure";
     Object Available = "Available";
     Object Back = "Back";
@@ -20,6 +21,7 @@ public interface BaseI18nKeys {
     Object CopyAll = "CopyAll";
     Object CopySelection = "CopySelection";
     Object Create = "Create";
+    Object DashSeparator = "DashSeparator";
     Object Date = "Date";
     Object Dates = "Dates";
     Object DefaultPromptText = "DefaultPromptText";
@@ -39,11 +41,16 @@ public interface BaseI18nKeys {
     Object MandarinWithFlag = "MandarinWithFlag";
     Object Name = "Name";
     Object Next = "Next";
+    Object OK = "OK";
     Object Ok = "Ok";
     Object Open = "Open";
     Object Past = "Past";
     Object PortugueseWithFlag = "PortugueseWithFlag";
+    Object QuestionMark = "QuestionMark";
     Object Save = "Save";
+    Object SaveChanges = "SaveChanges";
+    Object Search = "Search";
+    Object Space = "Space";
     Object SpanishWithFlag = "SpanishWithFlag";
     Object Status = "Status";
     Object Submit = "Submit";

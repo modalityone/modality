@@ -14,15 +14,21 @@ import dev.webfx.stack.orm.entity.UpdateStore;
 import javafx.beans.binding.BooleanBinding;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
-import javafx.scene.control.*;
+import javafx.scene.control.Button;
+import javafx.scene.control.Label;
+import javafx.scene.control.TextArea;
+import javafx.scene.control.TextField;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
+import one.modality.base.backoffice.claude.FormField;
+import one.modality.base.client.i18n.BaseI18nKeys;
 import one.modality.base.client.mainframe.fx.FXMainFrameDialogArea;
 import one.modality.base.shared.entities.AuthorizationRule;
 
+import static one.modality.base.backoffice.claude.FormFieldHelper.createTextArea;
+import static one.modality.base.backoffice.claude.FormFieldHelper.createTextField;
 import static one.modality.crm.backoffice.activities.superadmin.SuperAdmin18nKeys.*;
-import static one.modality.crm.backoffice.activities.superadmin.FormFieldHelper.*;
 
 /**
  * Dialog for creating and editing authorization rules.
@@ -117,8 +123,8 @@ public class AuthorizationRulesDialog {
         HBox footer = new HBox(12);
         footer.setAlignment(Pos.CENTER_RIGHT);
 
-        Button cancelButton = Bootstrap.button(I18nControls.newButton(Cancel));
-        Object saveButtonKey = isEdit ? SaveChanges : CreateRuleButton;
+        Button cancelButton = Bootstrap.button(I18nControls.newButton(BaseI18nKeys.Cancel));
+        Object saveButtonKey = isEdit ? BaseI18nKeys.SaveChanges : CreateRuleButton;
         Button saveButton = Bootstrap.successButton(I18nControls.newButton(saveButtonKey));
 
         // Bind save button disable property to hasNoChangesBinding
@@ -170,7 +176,7 @@ public class AuthorizationRulesDialog {
         dialogContent.setMaxWidth(700);
 
         // Title
-        Label titleLabel = Bootstrap.strong(I18nControls.newLabel(Error));
+        Label titleLabel = Bootstrap.strong(I18nControls.newLabel(BaseI18nKeys.Error));
         titleLabel.getStyleClass().add("error-dialog-title");
         titleLabel.setMaxWidth(Double.MAX_VALUE);
 
@@ -192,7 +198,7 @@ public class AuthorizationRulesDialog {
         HBox footer = new HBox();
         footer.setAlignment(Pos.CENTER_RIGHT);
 
-        Button okButton = Bootstrap.dangerButton(I18nControls.newButton(OK));
+        Button okButton = Bootstrap.dangerButton(I18nControls.newButton(BaseI18nKeys.OK));
 
         footer.getChildren().add(okButton);
         dialogContent.getChildren().add(footer);

@@ -19,6 +19,7 @@ import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.FlowPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
+import one.modality.base.client.i18n.BaseI18nKeys;
 import one.modality.base.client.mainframe.fx.FXMainFrameDialogArea;
 import one.modality.base.shared.domainmodel.functions.AbcNames;
 import one.modality.base.shared.entities.AuthorizationOrganizationAdmin;
@@ -30,6 +31,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+import static one.modality.base.client.i18n.BaseI18nKeys.SaveChanges;
 import static one.modality.crm.backoffice.activities.superadmin.SuperAdmin18nKeys.*;
 
 /**
@@ -217,7 +219,7 @@ final class AssignAdminToOrganizationDialog {
         HBox footer = new HBox(12);
         footer.setAlignment(Pos.CENTER_RIGHT);
 
-        Button cancelButton = Bootstrap.button(I18nControls.newButton(Cancel));
+        Button cancelButton = Bootstrap.button(I18nControls.newButton(BaseI18nKeys.Cancel));
         Button saveButton = Bootstrap.successButton(I18nControls.newButton(SaveChanges));
 
         // Bind save button disable property to hasNoChangesBinding
@@ -294,7 +296,7 @@ final class AssignAdminToOrganizationDialog {
         dialogContent.setPrefWidth(500);
         dialogContent.setMaxWidth(700);
 
-        Label titleLabel = Bootstrap.strong(I18nControls.newLabel(Error));
+        Label titleLabel = Bootstrap.strong(I18nControls.newLabel(BaseI18nKeys.Error));
         titleLabel.getStyleClass().add("error-dialog-title");
         titleLabel.setMaxWidth(Double.MAX_VALUE);
 
@@ -313,7 +315,7 @@ final class AssignAdminToOrganizationDialog {
         HBox footer = new HBox();
         footer.setAlignment(Pos.CENTER_RIGHT);
 
-        Button okButton = Bootstrap.dangerButton(I18nControls.newButton(OK));
+        Button okButton = Bootstrap.dangerButton(I18nControls.newButton(BaseI18nKeys.OK));
 
         footer.getChildren().add(okButton);
         dialogContent.getChildren().add(footer);

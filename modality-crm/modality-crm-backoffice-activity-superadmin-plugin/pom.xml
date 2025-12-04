@@ -35,6 +35,12 @@
 
         <dependency>
             <groupId>one.modality</groupId>
+            <artifactId>modality-base-backoffice-claude</artifactId>
+            <version>1.0.0-SNAPSHOT</version>
+        </dependency>
+
+        <dependency>
+            <groupId>one.modality</groupId>
             <artifactId>modality-base-backoffice-formatters-renderers</artifactId>
             <version>1.0.0-SNAPSHOT</version>
         </dependency>
@@ -48,6 +54,12 @@
         <dependency>
             <groupId>one.modality</groupId>
             <artifactId>modality-base-client-bootstrap</artifactId>
+            <version>1.0.0-SNAPSHOT</version>
+        </dependency>
+
+        <dependency>
+            <groupId>one.modality</groupId>
+            <artifactId>modality-base-client-i18n</artifactId>
             <version>1.0.0-SNAPSHOT</version>
         </dependency>
 
