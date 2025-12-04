@@ -16,8 +16,8 @@ import dev.webfx.stack.routing.uirouter.operations.RouteRequestEmitter;
  */
 public final class SuperAdminRouting {
 
-    private final static String PATH = "/superadmin";
-    private final static String OPERATION_CODE = "RouteToSuperAdmin";
+    private final static String PATH = "/operations";
+    private final static String OPERATION_CODE = "RouteToOperations"; // Temporary
 
     public static String getPath() {
         return PATH;
@@ -51,7 +51,7 @@ public final class SuperAdminRouting {
 
         @Override
         public Object getI18nKey() {
-            return SuperAdmin18nKeys.SuperAdminMenu;
+            return SuperAdmin18nKeys.OperationsMenu; // Temporary
         }
     }
 

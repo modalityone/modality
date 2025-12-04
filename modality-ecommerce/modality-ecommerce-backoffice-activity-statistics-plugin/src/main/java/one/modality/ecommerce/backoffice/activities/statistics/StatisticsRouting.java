@@ -59,7 +59,7 @@ public final class StatisticsRouting {
 
         @Override
         public Object getI18nKey() {
-            return BackOfficeHomeI18nKeys.FinancesAndStats;
+            return BackOfficeHomeI18nKeys.FinanceMenu;
         }
     }
 

@@ -38,6 +38,7 @@ public interface MediasI18nKeys {
     Object MasterSettings = "MasterSettings";
     Object MediaConsumptionTabTitle = "MediaConsumptionTabTitle";
     Object MediaDashboardTitle = "MediaDashboardTitle";
+    Object MediasMenu = "MediasMenu";
     Object NoActiveLivestream = "NoActiveLivestream";
     Object NoLinkDefinedYet = "NoLinkDefinedYet";
     Object PastSessions = "PastSessions";

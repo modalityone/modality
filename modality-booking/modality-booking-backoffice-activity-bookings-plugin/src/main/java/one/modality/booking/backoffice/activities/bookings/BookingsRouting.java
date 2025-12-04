@@ -25,7 +25,7 @@ public final class BookingsRouting {
     private final static String ANY_PATH = "/bookings(/organization/:organizationId)?(/event/:eventId)?(/document/:documentId)?(/day/:day)?(/arrivals)?(/departures)?(/minday/:minDay)?(/maxday/:maxDay)?(/filter/:filter)?(/groupby/:groupBy)?(/orderby/:orderBy)?(/columns/:columns)?(/export/:activityStateId)?";
     private final static String EVENT_PATH = "/bookings/event/:eventId";
     private final static String DOCUMENT_PATH = "/bookings/document/:documentId";
-    private final static String OPERATION_CODE = "RouteToBookings";
+    private final static String OPERATION_CODE = "RouteToRegistration"; // Temporary
 
     public static String getAnyPath() {
         return ANY_PATH;
@@ -78,7 +78,7 @@ public final class BookingsRouting {
 
         @Override
         public Object getI18nKey() {
-            return BackOfficeHomeI18nKeys.BookingsAndSearch;
+            return BackOfficeHomeI18nKeys.RegistrationMenu;
         }
     }
 

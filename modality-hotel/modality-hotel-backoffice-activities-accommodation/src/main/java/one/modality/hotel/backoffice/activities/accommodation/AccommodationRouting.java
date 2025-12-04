@@ -19,7 +19,7 @@ import one.modality.base.backoffice.activities.home.BackOfficeHomeI18nKeys;
 public final class AccommodationRouting {
 
     private final static String ANY_PATH = "/accommodation";
-    private final static String OPERATION_CODE = "RouteToAccommodation";
+    private final static String OPERATION_CODE = "RouteToReception"; // Temporary
 
     public static String getAnyPath() {
         return ANY_PATH;
@@ -53,8 +53,8 @@ public final class AccommodationRouting {
 
         @Override
         public Object getI18nKey() {
-            return BackOfficeHomeI18nKeys.Accommodation;
-        }
+            return BackOfficeHomeI18nKeys.ReceptionMenu;
+        } // Temporary
     }
 
     public static final class RouteToAccommodationRequestEmitter implements RouteRequestEmitter {
