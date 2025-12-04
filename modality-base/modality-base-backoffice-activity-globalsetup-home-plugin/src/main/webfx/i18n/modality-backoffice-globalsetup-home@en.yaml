@@ -10,8 +10,6 @@ MoneyFlowsMenu:
   text: "Money Flows"
 EventTypesMenu:
   text: "Event Types"
-LettersMenu:
-  text: "Letters"
 SitesMenu:
   text: "Sites"
 MealsMenu:

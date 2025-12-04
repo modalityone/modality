@@ -13,6 +13,7 @@
         <plugin-module>modality-crm-backoffice-activity-superadmin-plugin</plugin-module>
         <plugin-module>modality-crm-backoffice-activity-admin-plugin</plugin-module>
         <plugin-module>modality-crm-backoffice-activity-customers-plugin</plugin-module>
+        <plugin-module>modality-crm-backoffice-activity-lettersetup-plugin</plugin-module>
 
     </dependencies>
 

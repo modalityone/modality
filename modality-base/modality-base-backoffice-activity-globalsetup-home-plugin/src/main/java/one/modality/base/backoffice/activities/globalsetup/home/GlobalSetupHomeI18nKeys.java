@@ -7,7 +7,6 @@ public interface GlobalSetupHomeI18nKeys {
     Object EventTypesMenu = "EventTypesMenu";
     Object GlobalSetup = "GlobalSetup";
     Object GlobalSetupMenu = "GlobalSetupMenu";
-    Object LettersMenu = "LettersMenu";
     Object MealsMenu = "MealsMenu";
     Object MoneyFlowsMenu = "MoneyFlowsMenu";
     Object OrganizationProfileMenu = "OrganizationProfileMenu";
