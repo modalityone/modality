@@ -93,15 +93,14 @@
     color: #92400e;
     background-color: #fef3c7;
     border-radius: 4px;
-    padding: 4px 8px;
 }
 
-.roomsetup-badge-warning fx-background {
+.roomsetup-badge-warning > fx-background {
     background-color: #fef3c7;
     border-radius: 4px;
 }
 
-.roomsetup-badge-warning fx-text {
+.roomsetup-badge-warning > fx-text {
     font-size: 12px;
     color: #92400e;
 }
@@ -112,10 +111,9 @@
     border-radius: 6px;
     font-size: 11px;
     font-weight: 500;
-    padding: 4px 10px;
 }
 
-.roomsetup-badge-success fx-background {
+.roomsetup-badge-success > fx-background {
     background-color: #dcfce7;
     border-radius: 6px;
 }
@@ -132,7 +130,6 @@
     border-radius: 6px;
     font-size: 11px;
     font-weight: 500;
-    padding: 4px 10px;
 }
 
 .roomsetup-badge-info fx-background {
@@ -151,7 +148,6 @@
     color: #7c3aed;
     background-color: #f5f3ff;
     border-radius: 4px;
-    padding: 4px 8px;
 }
 
 .roomsetup-badge-split fx-background {
@@ -173,7 +169,6 @@
     border-color: #e5e5e5;
     border-width: 1px;
     border-style: solid;
-    padding: 12px 14px;
 }
 
 .roomsetup-text-field fx-background {
@@ -192,7 +187,6 @@
     border-color: #e5e5e5;
     border-width: 1px;
     border-style: solid;
-    padding: 12px 14px;
 }
 
 .roomsetup-text-area fx-background {
@@ -230,7 +224,7 @@
     border-style: solid;
 }
 
-.roomsetup-card fx-background {
+.roomsetup-card > fx-background {
     background-color: white;
     border-radius: 12px;
 }
@@ -248,10 +242,9 @@
     border-color: transparent transparent #e5e5e5 transparent;
     border-width: 0 0 1px 0;
     border-style: solid;
-    padding: 14px 20px;
 }
 
-.roomsetup-card-header fx-background {
+.roomsetup-card-header > fx-background {
     background-color: #fafaf9;
     border-radius: 12px 12px 0 0;
 }
@@ -266,7 +259,6 @@
     border-color: transparent transparent #e5e5e5 transparent;
     border-width: 0 0 1px 0;
     border-style: solid;
-    padding-bottom: 16px;
 }
 
 .roomsetup-dialog-header > fx-border {
@@ -278,10 +270,9 @@
 .roomsetup-dialog-container {
     background-color: white;
     border-radius: 16px;
-    padding: 24px;
 }
 
-.roomsetup-dialog-container fx-background {
+.roomsetup-dialog-container > fx-background {
     background-color: white;
     border-radius: 16px;
 }
@@ -290,7 +281,6 @@
     border-color: #e5e5e5 transparent transparent transparent;
     border-width: 1px 0 0 0;
     border-style: solid;
-    padding: 12px 20px;
 }
 
 .roomsetup-cell > fx-border {
@@ -319,10 +309,9 @@
     border-style: solid;
     font-size: 12px;
     cursor: pointer;
-    padding: 6px 12px;
 }
 
-.roomsetup-filter-chip fx-background {
+.roomsetup-filter-chip > fx-background {
     background-color: #f5f5f5;
     border-radius: 12px;
 }
@@ -339,7 +328,7 @@
     border-color: #a3a3a3;
 }
 
-.roomsetup-filter-chip:hover fx-background {
+.roomsetup-filter-chip:hover > fx-background {
     background-color: #e5e5e5;
 }
 
@@ -353,7 +342,7 @@
     border-color: #0096D6;
 }
 
-.roomsetup-filter-chip-active fx-background {
+.roomsetup-filter-chip-active > fx-background {
     background-color: #0096D6;
     border-radius: 12px;
 }
@@ -371,7 +360,7 @@
     border-color: #007AB8;
 }
 
-.roomsetup-filter-chip-active:hover fx-background {
+.roomsetup-filter-chip-active:hover > fx-background {
     background-color: #007AB8;
 }
 
@@ -388,10 +377,9 @@
     border-color: transparent transparent #e2e8f0 transparent;
     border-width: 0 0 1px 0;
     border-style: solid;
-    padding: 12px 16px;
 }
 
-.roomsetup-group-header fx-background {
+.roomsetup-group-header > fx-background {
     background-color: #f8fafc;
 }
 
@@ -418,7 +406,6 @@
     color: #64748b;
     background-color: #e2e8f0;
     border-radius: 10px;
-    padding: 2px 8px;
 }
 
 .roomsetup-group-count fx-background {
@@ -441,10 +428,9 @@
     border-width: 0 0 1px 0;
     border-style: solid;
     cursor: pointer;
-    padding: 12px 16px;
 }
 
-.roomsetup-room-row fx-background {
+.roomsetup-room-row > fx-background {
     background-color: white;
 }
 
@@ -458,7 +444,7 @@
     background-color: #f8fafc;
 }
 
-.roomsetup-room-row:hover fx-background {
+.roomsetup-room-row:hover > fx-background {
     background-color: #f8fafc;
 }
 
@@ -489,7 +475,6 @@
     color: #64748b;
     background-color: #f1f5f9;
     border-radius: 4px;
-    padding: 2px 6px;
 }
 
 .roomsetup-room-capacity fx-background {
@@ -512,10 +497,9 @@
     border-width: 0 0 1px 0;
     border-style: solid;
     cursor: pointer;
-    padding: 14px 16px;
 }
 
-.roomsetup-building-header fx-background {
+.roomsetup-building-header > fx-background {
     background-color: #f8fafc;
 }
 
@@ -529,7 +513,7 @@
     background-color: #f1f5f9;
 }
 
-.roomsetup-building-header:hover fx-background {
+.roomsetup-building-header:hover > fx-background {
     background-color: #f1f5f9;
 }
 
@@ -551,10 +535,9 @@
     border-width: 0 0 1px 0;
     border-style: solid;
     cursor: pointer;
-    padding: 10px 16px 10px 32px;
 }
 
-.roomsetup-zone-row fx-background {
+.roomsetup-zone-row > fx-background {
     background-color: white;
 }
 
@@ -568,7 +551,7 @@
     background-color: #fafafa;
 }
 
-.roomsetup-zone-row:hover fx-background {
+.roomsetup-zone-row:hover > fx-background {
     background-color: #fafafa;
 }
 
@@ -593,10 +576,9 @@
     border-width: 1px;
     border-style: solid;
     cursor: pointer;
-    padding: 12px 16px;
 }
 
-.roomsetup-pool-card fx-background {
+.roomsetup-pool-card > fx-background {
     background-color: white;
     border-radius: 8px;
 }
@@ -613,7 +595,7 @@
     border-color: #94a3b8;
 }
 
-.roomsetup-pool-card:hover fx-background {
+.roomsetup-pool-card:hover > fx-background {
     background-color: #f8fafc;
 }
 
@@ -638,7 +620,6 @@
     color: #0891b2;
     background-color: #ecfeff;
     border-radius: 4px;
-    padding: 2px 6px;
 }
 
 .roomsetup-pool-badge-source fx-background {
@@ -656,7 +637,6 @@
     color: #7c3aed;
     background-color: #f5f3ff;
     border-radius: 4px;
-    padding: 2px 6px;
 }
 
 .roomsetup-pool-badge-category fx-background {
@@ -678,10 +658,9 @@
     border-color: transparent transparent #e5e5e5 transparent;
     border-width: 0 0 1px 0;
     border-style: solid;
-    padding: 10px 16px;
 }
 
-.roomsetup-allocation-room fx-background {
+.roomsetup-allocation-room > fx-background {
     background-color: white;
 }
 
@@ -695,14 +674,17 @@
     background-color: #fafafa;
 }
 
-.roomsetup-allocation-room:hover fx-background {
+.roomsetup-allocation-room:hover > fx-background {
     background-color: #fafafa;
 }
 
 .roomsetup-allocation-pool-tag {
     font-size: 11px;
     border-radius: 4px;
-    padding: 2px 6px;
+}
+
+.roomsetup-allocation-pool-tag fx-background {
+    border-radius: 4px;
 }
 
 .roomsetup-allocation-unassigned {
@@ -726,10 +708,9 @@
     border-color: transparent transparent #e5e5e5 transparent;
     border-width: 0 0 1px 0;
     border-style: solid;
-    padding: 12px 16px;
 }
 
-.roomsetup-toolbar fx-background {
+.roomsetup-toolbar > fx-background {
     background-color: #fafaf9;
 }
 
@@ -747,7 +728,7 @@
     background-color: #f5f5f5;
 }
 
-.roomsetup-action-button:hover fx-background {
+.roomsetup-action-button:hover > fx-background {
     background-color: #f5f5f5;
 }
 
@@ -758,7 +739,6 @@
 .roomsetup-empty-state {
     background-color: #fafafa;
     border-radius: 8px;
-    padding: 32px;
 }
 
 .roomsetup-empty-state fx-background {
@@ -785,7 +765,6 @@
 .roomsetup-info-bar {
     background-color: #dbeafe;
     border-radius: 8px;
-    padding: 12px 16px;
 }
 
 .roomsetup-info-bar fx-background {
@@ -832,7 +811,6 @@
 .roomsetup-warning-bar {
     background-color: #fef3c7;
     border-radius: 8px;
-    padding: 12px 16px;
 }
 
 .roomsetup-warning-bar fx-background {
@@ -866,4 +844,225 @@
 
 .roomsetup-expand-arrow-expanded {
     transform: rotate(90deg);
+}
+
+/* ============================================================================
+   COLOR PICKER SWATCHES
+   ============================================================================ */
+
+/* Amber color swatch */
+.roomsetup-color-amber {
+    background-color: #d97706;
+    border-radius: 50%;
+}
+
+.roomsetup-color-amber fx-background {
+    background-color: #d97706;
+    border-radius: 50%;
+}
+
+/* Red color swatch */
+.roomsetup-color-red {
+    background-color: #dc2626;
+    border-radius: 50%;
+}
+
+.roomsetup-color-red fx-background {
+    background-color: #dc2626;
+    border-radius: 50%;
+}
+
+/* Pink color swatch */
+.roomsetup-color-pink {
+    background-color: #db2777;
+    border-radius: 50%;
+}
+
+.roomsetup-color-pink fx-background {
+    background-color: #db2777;
+    border-radius: 50%;
+}
+
+/* Purple color swatch */
+.roomsetup-color-purple {
+    background-color: #7c3aed;
+    border-radius: 50%;
+}
+
+.roomsetup-color-purple fx-background {
+    background-color: #7c3aed;
+    border-radius: 50%;
+}
+
+/* Blue color swatch */
+.roomsetup-color-blue {
+    background-color: #2563eb;
+    border-radius: 50%;
+}
+
+.roomsetup-color-blue fx-background {
+    background-color: #2563eb;
+    border-radius: 50%;
+}
+
+/* Cyan color swatch */
+.roomsetup-color-cyan {
+    background-color: #0891b2;
+    border-radius: 50%;
+}
+
+.roomsetup-color-cyan fx-background {
+    background-color: #0891b2;
+    border-radius: 50%;
+}
+
+/* Green color swatch */
+.roomsetup-color-green {
+    background-color: #059669;
+    border-radius: 50%;
+}
+
+.roomsetup-color-green fx-background {
+    background-color: #059669;
+    border-radius: 50%;
+}
+
+/* Slate color swatch */
+.roomsetup-color-slate {
+    background-color: #475569;
+    border-radius: 50%;
+}
+
+.roomsetup-color-slate fx-background {
+    background-color: #475569;
+    border-radius: 50%;
+}
+
+/* Color cell container - unselected */
+.roomsetup-color-cell {
+    cursor: pointer;
+}
+
+/* Color cell container - selected state */
+.roomsetup-color-cell-selected {
+    cursor: pointer;
+}
+
+.roomsetup-color-cell-selected > fx-border {
+    border-width: 2px;
+    border-style: solid;
+    border-radius: 10px;
+}
+
+/* Selected state border colors per color */
+.roomsetup-color-cell-selected.roomsetup-color-cell-amber > fx-border {
+    border-color: #d97706;
+}
+
+.roomsetup-color-cell-selected.roomsetup-color-cell-amber {
+    background-color: rgba(217, 119, 6, 0.13);
+    border-radius: 10px;
+}
+
+.roomsetup-color-cell-selected.roomsetup-color-cell-amber fx-background {
+    background-color: rgba(217, 119, 6, 0.13);
+    border-radius: 10px;
+}
+
+.roomsetup-color-cell-selected.roomsetup-color-cell-red > fx-border {
+    border-color: #dc2626;
+}
+
+.roomsetup-color-cell-selected.roomsetup-color-cell-red {
+    background-color: rgba(220, 38, 38, 0.13);
+    border-radius: 10px;
+}
+
+.roomsetup-color-cell-selected.roomsetup-color-cell-red fx-background {
+    background-color: rgba(220, 38, 38, 0.13);
+    border-radius: 10px;
+}
+
+.roomsetup-color-cell-selected.roomsetup-color-cell-pink > fx-border {
+    border-color: #db2777;
+}
+
+.roomsetup-color-cell-selected.roomsetup-color-cell-pink {
+    background-color: rgba(219, 39, 119, 0.13);
+    border-radius: 10px;
+}
+
+.roomsetup-color-cell-selected.roomsetup-color-cell-pink fx-background {
+    background-color: rgba(219, 39, 119, 0.13);
+    border-radius: 10px;
+}
+
+.roomsetup-color-cell-selected.roomsetup-color-cell-purple > fx-border {
+    border-color: #7c3aed;
+}
+
+.roomsetup-color-cell-selected.roomsetup-color-cell-purple {
+    background-color: rgba(124, 58, 237, 0.13);
+    border-radius: 10px;
+}
+
+.roomsetup-color-cell-selected.roomsetup-color-cell-purple fx-background {
+    background-color: rgba(124, 58, 237, 0.13);
+    border-radius: 10px;
+}
+
+.roomsetup-color-cell-selected.roomsetup-color-cell-blue > fx-border {
+    border-color: #2563eb;
+}
+
+.roomsetup-color-cell-selected.roomsetup-color-cell-blue {
+    background-color: rgba(37, 99, 235, 0.13);
+    border-radius: 10px;
+}
+
+.roomsetup-color-cell-selected.roomsetup-color-cell-blue fx-background {
+    background-color: rgba(37, 99, 235, 0.13);
+    border-radius: 10px;
+}
+
+.roomsetup-color-cell-selected.roomsetup-color-cell-cyan > fx-border {
+    border-color: #0891b2;
+}
+
+.roomsetup-color-cell-selected.roomsetup-color-cell-cyan {
+    background-color: rgba(8, 145, 178, 0.13);
+    border-radius: 10px;
+}
+
+.roomsetup-color-cell-selected.roomsetup-color-cell-cyan fx-background {
+    background-color: rgba(8, 145, 178, 0.13);
+    border-radius: 10px;
+}
+
+.roomsetup-color-cell-selected.roomsetup-color-cell-green > fx-border {
+    border-color: #059669;
+}
+
+.roomsetup-color-cell-selected.roomsetup-color-cell-green {
+    background-color: rgba(5, 150, 105, 0.13);
+    border-radius: 10px;
+}
+
+.roomsetup-color-cell-selected.roomsetup-color-cell-green fx-background {
+    background-color: rgba(5, 150, 105, 0.13);
+    border-radius: 10px;
+}
+
+.roomsetup-color-cell-selected.roomsetup-color-cell-slate > fx-border {
+    border-color: #475569;
+}
+
+.roomsetup-color-cell-selected.roomsetup-color-cell-slate {
+    background-color: rgba(71, 85, 105, 0.13);
+    border-radius: 10px;
+}
+
+.roomsetup-color-cell-selected.roomsetup-color-cell-slate fx-background {
+    background-color: rgba(71, 85, 105, 0.13);
+    border-radius: 10px;
 }
