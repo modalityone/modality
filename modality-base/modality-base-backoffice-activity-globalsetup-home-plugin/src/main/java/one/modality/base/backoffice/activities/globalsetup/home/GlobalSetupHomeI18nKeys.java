@@ -3,7 +3,6 @@ package one.modality.base.backoffice.activities.globalsetup.home;
 
 public interface GlobalSetupHomeI18nKeys {
 
-    Object AccommodationSetupMenu = "AccommodationSetupMenu";
     Object EventTypesMenu = "EventTypesMenu";
     Object GlobalSetup = "GlobalSetup";
     Object GlobalSetupMenu = "GlobalSetupMenu";

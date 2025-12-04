@@ -14,5 +14,4 @@ SitesMenu:
   text: "Sites"
 MealsMenu:
   text: "Meals"
-AccommodationSetupMenu: "[AccommodationMenu]"
 TransportationSetupMenu: "[TransportationMenu]"

@@ -1,4 +1,4 @@
-package one.modality.crm.backoffice.activities.lettersetup;
+package one.modality.hotel.backoffice.activities.roomsetup;
 
 import dev.webfx.extras.i18n.HasI18nKey;
 import dev.webfx.extras.operation.HasOperationCode;
@@ -14,32 +14,33 @@ import dev.webfx.stack.routing.uirouter.operations.RouteRequestEmitter;
 /**
  * @author Bruno Salmon
  */
-public final class LetterSetupRouting {
+public final class RoomSetupRouting {
 
-    private final static String PATH = "/letter-setup";
-    private final static String OPERATION_CODE = "RouteToLetterSetup";
+    private final static String PATH = "/room-setup";
+    private final static String OPERATION_CODE = "RouteToRoomSetup";
+
     public static String getPath() {
         return PATH;
     }
 
-    public static final class LetterSetupUiRoute extends UiRouteImpl {
+    public static final class RoomSetupUiRoute extends UiRouteImpl {
 
-        public LetterSetupUiRoute() {
+        public RoomSetupUiRoute() {
             super(uiRoute());
         }
 
         public static UiRoute<?> uiRoute() {
-            return UiRoute.create(LetterSetupRouting.getPath()
+            return UiRoute.create(RoomSetupRouting.getPath()
                     , true
-                    , LetterSetupActivity::new
+                    , RoomSetupActivity::new
                     , ViewDomainActivityContextFinal::new
             );
         }
     }
 
-    public static class RouteToLetterSetupRequest extends RoutePushRequest implements HasOperationCode, HasI18nKey {
+    public static class RouteToRoomSetupRequest extends RoutePushRequest implements HasOperationCode, HasI18nKey {
 
-        public RouteToLetterSetupRequest(BrowsingHistory browsingHistory) {
+        public RouteToRoomSetupRequest(BrowsingHistory browsingHistory) {
             super(getPath(), browsingHistory);
         }
 
@@ -50,15 +51,15 @@ public final class LetterSetupRouting {
 
         @Override
         public Object getI18nKey() {
-            return LetterSetupI18nKeys.LetterSetupTile;
+            return RoomSetupI18nKeys.RoomSetupTile;
         }
     }
 
-    public static class RouteToLetterSetupRequestEmitter implements RouteRequestEmitter {
+    public static class RouteToRoomSetupRequestEmitter implements RouteRequestEmitter {
 
         @Override
         public RouteRequest instantiateRouteRequest(UiRouteActivityContext context) {
-            return new RouteToLetterSetupRequest(context.getHistory());
+            return new RouteToRoomSetupRequest(context.getHistory());
         }
     }
 }
