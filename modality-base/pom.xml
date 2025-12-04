@@ -24,6 +24,7 @@
         <module>modality-base-backoffice-activity-operations-plugin</module>
         <module>modality-base-backoffice-activity-superadmin-home-plugin</module>
         <module>modality-base-backoffice-application</module>
+        <module>modality-base-backoffice-claude</module>
         <module>modality-base-backoffice-formatters-renderers</module>
         <module>modality-base-backoffice-gantt-canvas</module>
         <module>modality-base-backoffice-gantt-canvas-basic-plugin</module>

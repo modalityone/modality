@@ -1,0 +1,118 @@
+/* Organizations View - Name renderer */
+.organization-name-primary {
+    -fx-font-weight: 600;
+    -fx-font-size: 13;
+    -fx-text-fill: #0096D6;
+}
+
+.organization-name-secondary {
+    -fx-font-size: 11;
+    -fx-text-fill: #6B7280;
+}
+
+/* Organizations View - Location renderer */
+.organization-location-main {
+    -fx-font-size: 12;
+    -fx-text-fill: #374151;
+}
+
+.organization-location-secondary {
+    -fx-font-size: 11;
+    -fx-text-fill: #9CA3AF;
+}
+
+/* Organizations View - Contact renderer */
+.organization-contact-icon {
+    -fx-font-size: 12;
+    -fx-text-fill: #9CA3AF;
+}
+
+.organization-contact-email {
+    -fx-font-size: 12;
+    -fx-text-fill: #0096D6;
+}
+
+.organization-contact-phone {
+    -fx-font-size: 11;
+    -fx-text-fill: #9CA3AF;
+}
+
+/* Organizations View - Status badges */
+.organization-status-active {
+    -fx-background-color: #DCFCE7;
+    -fx-text-fill: #41BA4D;
+    -fx-font-size: 11;
+    -fx-font-weight: 500;
+    -fx-background-radius: 12;
+}
+
+.organization-status-closed {
+    -fx-background-color: #FEE2E2;
+    -fx-text-fill: #DC2626;
+    -fx-font-size: 11;
+    -fx-font-weight: 500;
+    -fx-background-radius: 12;
+}
+
+.organization-status-clickable {
+    -fx-cursor: hand;
+}
+
+/* Organization Dialog - Section dividers */
+.section-divider-line {
+    -fx-min-height: 1;
+    -fx-pref-height: 1;
+    -fx-max-height: 1;
+    -fx-background-color: #E5E7EB;
+}
+
+.section-divider-label {
+    -fx-font-size: 10;
+    -fx-font-weight: bold;
+    -fx-text-fill: #9CA3AF;
+}
+
+/* Organization Dialog - Closed field styling */
+.organization-closed-field {
+    -fx-background-color: #FEF2F2;
+    -fx-border-color: #FECACA;
+    -fx-border-width: 1;
+    -fx-border-radius: 4;
+    -fx-background-radius: 4;
+}
+
+.organization-closed-title {
+    -fx-font-size: 13;
+    -fx-font-weight: 500;
+    -fx-text-fill: #DC2626;
+}
+
+.organization-closed-help {
+    -fx-font-size: 11;
+    -fx-text-fill: #9CA3AF;
+}
+
+/* Modal subtitle */
+.modal-subtitle {
+    -fx-font-size: 13;
+    -fx-text-fill: #6B7280;
+}
+
+/* Organizations Grid - white background */
+.organizations-grid {
+    -fx-background-color: white;
+}
+
+.organizations-grid .grid-body {
+    -fx-background-color: white;
+}
+
+.organizations-grid .grid-body .grid-col {
+    -fx-background-color: white;
+}
+
+/* Organization ID label */
+.organization-id-label {
+    -fx-font-size: 12;
+    -fx-text-fill: #6B7280;
+}
