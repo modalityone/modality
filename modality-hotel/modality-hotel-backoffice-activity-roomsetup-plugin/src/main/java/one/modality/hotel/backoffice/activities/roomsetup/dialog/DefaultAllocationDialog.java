@@ -4,6 +4,8 @@ import dev.webfx.extras.i18n.I18n;
 import dev.webfx.extras.util.dialog.DialogCallback;
 import dev.webfx.platform.console.Console;
 import dev.webfx.stack.orm.entity.UpdateStore;
+import dev.webfx.platform.uischeduler.UiScheduler;
+import javafx.application.Platform;
 import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.SimpleBooleanProperty;
 import javafx.beans.property.SimpleIntegerProperty;
@@ -286,7 +288,10 @@ public class DefaultAllocationDialog implements DialogManager.ManagedDialog {
         String color = pool.getWebColor() != null ? pool.getWebColor() : "#475569";
         boolean isSelected = pool.equals(selectedPool);
 
-        row.setStyle(UIComponentDecorators.getPoolRowStyle(color, isSelected));
+        // Use WebFX-compatible styling (setBackground/setBorder instead of setStyle)
+        // Apply styling using UiScheduler.runLater to ensure DOM peer exists
+        UIComponentDecorators.applyPoolRowStyle(row, color, isSelected);
+        Platform.runLater(() -> UIComponentDecorators.applyPoolRowStyle(row, color, isSelected));
 
         // Icon
         StackPane iconPane = createPoolIcon(pool, 26);
@@ -323,7 +328,11 @@ public class DefaultAllocationDialog implements DialogManager.ManagedDialog {
         IntegerProperty bedsProperty = splitAllocations.get(pool);
         int beds = bedsProperty != null ? bedsProperty.get() : 0;
 
-        row.setStyle(UIComponentDecorators.getPoolRowStyle(color, beds > 0));
+        // Use WebFX-compatible styling (setBackground/setBorder instead of setStyle)
+        // Apply styling using UiScheduler.runLater to ensure DOM peer exists
+        final boolean bedsActive = beds > 0;
+        UIComponentDecorators.applyPoolRowStyle(row, color, bedsActive);
+        UiScheduler.scheduleDeferred(() -> UIComponentDecorators.applyPoolRowStyle(row, color, bedsActive));
 
         // Icon + Name
         HBox leftBox = new HBox();

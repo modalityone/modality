@@ -274,15 +274,8 @@ public class DefaultAllocationView {
             long unassignedCount = countUnassignedRooms();
             Button unassignedBtn = new Button(I18n.getI18nText(RoomSetupI18nKeys.UnassignedCount, unassignedCount));
             boolean isUnassignedSelected = showUnassignedOnlyProperty.get();
-            // Use special styling for unassigned
-            if (isUnassignedSelected) {
-                unassignedBtn.setStyle("-fx-background-color: #fef3c7; -fx-text-fill: #92400e; " +
-                        "-fx-padding: 8 14; -fx-background-radius: 8; -fx-border-color: #92400e; -fx-border-width: 2; -fx-border-radius: 8; -fx-cursor: hand; -fx-font-weight: 600;");
-            } else {
-                unassignedBtn.setStyle("-fx-background-color: " + (unassignedCount > 0 ? "#fef3c7" : "white") + "; " +
-                        "-fx-text-fill: " + (unassignedCount > 0 ? "#92400e" : "#78716c") + "; " +
-                        "-fx-padding: 8 14; -fx-background-radius: 8; -fx-border-color: #e5e5e5; -fx-border-radius: 8; -fx-cursor: hand;");
-            }
+            // Use WebFX-compatible styling for unassigned button
+            UIComponentDecorators.applyUnassignedFilterChipStyle(unassignedBtn, isUnassignedSelected, unassignedCount > 0);
             unassignedBtn.setOnAction(e -> {
                 // Toggle unassigned filter
                 if (showUnassignedOnlyProperty.get()) {
@@ -300,7 +293,8 @@ public class DefaultAllocationView {
                 Button poolBtn = new Button(pool.getName());
                 boolean isSelected = pool.equals(filterPoolProperty.get());
 
-                poolBtn.setStyle(UIComponentDecorators.getPoolFilterChipStyle(color, isSelected));
+                // Use WebFX-compatible styling for pool filter buttons
+                UIComponentDecorators.applyPoolFilterChipStyle(poolBtn, color, isSelected);
 
                 poolBtn.setOnAction(e -> {
                     showUnassignedOnlyProperty.set(false);
@@ -496,11 +490,26 @@ public class DefaultAllocationView {
                 .filter(pa -> pa.getResource() != null && resource != null && pa.getResource().equals(resource) && pa.getEvent() == null)
                 .collect(Collectors.toList());
 
-        boolean isAssigned = !roomAllocations.isEmpty();
-        String borderColor = isAssigned ? "#10b981" : "#f59e0b";
+        // Determine border color based on allocation status
+        // - Unassigned: orange warning color
+        // - Single pool: use pool's color from database
+        // - Split pools: purple color
+        String borderColorHex;
+        if (roomAllocations.isEmpty()) {
+            borderColorHex = "#f59e0b"; // Orange for unassigned
+        } else if (roomAllocations.size() == 1) {
+            Pool pool = roomAllocations.get(0).getPool();
+            borderColorHex = (pool != null && pool.getWebColor() != null) ? pool.getWebColor() : "#10b981";
+        } else {
+            borderColorHex = "#7c3aed"; // Purple for split allocation
+        }
 
-        // Dynamic border color still needs setStyle (CSS can't handle dynamic colors)
-        card.setStyle("-fx-border-color: " + borderColor + "; -fx-border-width: 2; -fx-border-radius: 10;");
+        // Apply border styling using both setStyle (for JavaFX) and setBackground/setBorder (for WebFX)
+        card.setStyle("-fx-border-color: " + borderColorHex + "; -fx-border-width: 2; -fx-border-radius: 10; -fx-background-color: white; -fx-background-radius: 10;");
+        // Also apply programmatically for WebFX compatibility
+        Color borderColor = Color.web(borderColorHex);
+        card.setBackground(new Background(new BackgroundFill(Color.WHITE, new CornerRadii(10), null)));
+        card.setBorder(new Border(new BorderStroke(borderColor, BorderStrokeStyle.SOLID, new CornerRadii(10), new BorderWidths(2))));
 
         // Room name
         VBox infoBox = new VBox();

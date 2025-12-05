@@ -5,12 +5,14 @@ import dev.webfx.extras.i18n.controls.I18nControls;
 import dev.webfx.extras.util.dialog.DialogCallback;
 import dev.webfx.extras.validation.ValidationSupport;
 import dev.webfx.platform.console.Console;
+import dev.webfx.platform.uischeduler.UiScheduler;
 import dev.webfx.stack.orm.entity.EntityId;
 import dev.webfx.stack.orm.entity.EntityStore;
 import dev.webfx.stack.orm.entity.UpdateStore;
 import dev.webfx.stack.orm.entity.controls.entity.selector.ButtonSelector;
 import dev.webfx.stack.orm.entity.controls.entity.selector.EntityButtonSelector;
 import dev.webfx.extras.controlfactory.button.ButtonFactoryMixin;
+import javafx.application.Platform;
 import one.modality.base.client.mainframe.fx.FXMainFrameDialogArea;
 import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.SimpleBooleanProperty;
@@ -291,7 +293,7 @@ public class PoolDialog implements DialogManager.ManagedDialog {
 
         // Large preview
         StackPane previewPane = createIconPreview(48);
-        previewPane.setStyle("-fx-background-color: #f5f5f4; -fx-background-radius: 12; -fx-border-color: #e5e5e5; -fx-border-radius: 12;");
+        UIComponentDecorators.applyBackgroundWithBorder(previewPane, "#f5f5f4", 12, "#e5e5e5", 1);
 
         // Icon grid
         FlowPane iconGrid = new FlowPane();
@@ -313,15 +315,15 @@ public class PoolDialog implements DialogManager.ManagedDialog {
             svg.setScaleY(0.7);
 
             iconCell.getChildren().add(svg);
-            iconCell.setStyle(UIComponentDecorators.getIconCellUnselectedStyle());
+            UIComponentDecorators.applyIconCellUnselectedStyle(iconCell);
 
             // Selection highlight
             selectedIconPath.addListener((obs, oldVal, newVal) -> {
                 if (path.equals(newVal)) {
-                    iconCell.setStyle(UIComponentDecorators.getIconCellSelectedStyle(selectedColor.get()));
+                    UIComponentDecorators.applyIconCellSelectedStyle(iconCell, selectedColor.get());
                     svg.setFill(Color.web(selectedColor.get()));
                 } else {
-                    iconCell.setStyle(UIComponentDecorators.getIconCellUnselectedStyle());
+                    UIComponentDecorators.applyIconCellUnselectedStyle(iconCell);
                     svg.setFill(Color.web("#78716c"));
                 }
             });
@@ -329,14 +331,14 @@ public class PoolDialog implements DialogManager.ManagedDialog {
             // Update on color change too
             selectedColor.addListener((obs, oldVal, newVal) -> {
                 if (path.equals(selectedIconPath.get())) {
-                    iconCell.setStyle(UIComponentDecorators.getIconCellSelectedStyle(newVal));
+                    UIComponentDecorators.applyIconCellSelectedStyle(iconCell, newVal);
                     svg.setFill(Color.web(newVal));
                 }
             });
 
             // Initial state
             if (path.equals(selectedIconPath.get())) {
-                iconCell.setStyle(UIComponentDecorators.getIconCellSelectedStyle(selectedColor.get()));
+                UIComponentDecorators.applyIconCellSelectedStyle(iconCell, selectedColor.get());
                 svg.setFill(Color.web(selectedColor.get()));
             } else {
                 svg.setFill(Color.web("#78716c"));
@@ -386,13 +388,13 @@ public class PoolDialog implements DialogManager.ManagedDialog {
         selectedIconPath.addListener((obs, oldVal, newVal) -> previewSvg.setContent(newVal));
         selectedColor.addListener((obs, oldVal, newVal) -> {
             previewSvg.setFill(Color.web(newVal));
-            previewPane.setStyle(UIComponentDecorators.getIconPreviewStyle(newVal));
+            UIComponentDecorators.applyIconPreviewStyle(previewPane, newVal);
         });
 
         // Initial state
         previewSvg.setContent(selectedIconPath.get());
         previewSvg.setFill(Color.web(selectedColor.get()));
-        previewPane.setStyle(UIComponentDecorators.getIconPreviewStyle(selectedColor.get()));
+        UIComponentDecorators.applyIconPreviewStyle(previewPane, selectedColor.get());
 
         previewPane.getChildren().add(previewSvg);
         return previewPane;
@@ -417,26 +419,31 @@ public class PoolDialog implements DialogManager.ManagedDialog {
             colorCell.setPrefSize(36, 36);
             colorCell.setMinSize(36, 36);
 
+            // Use Region with CSS class for WebFX compatibility
+            // CSS classes properly set background-color on both main element and fx-background
             Region colorCircle = new Region();
             colorCircle.setPrefSize(24, 24);
+            colorCircle.setMinSize(24, 24);
             colorCircle.setMaxSize(24, 24);
-            colorCircle.setStyle("-fx-background-color: " + hex + "; -fx-background-radius: 12;");
+            // Add the color-specific CSS class for the swatch
+            colorCircle.getStyleClass().add(UIComponentDecorators.getColorSwatchClass(hex));
 
             colorCell.getChildren().add(colorCircle);
-            colorCell.setStyle(UIComponentDecorators.getColorCellUnselectedStyle());
+            UIComponentDecorators.applyColorCellUnselectedStyle(colorCell);
 
             // Selection highlight
             selectedColor.addListener((obs, oldVal, newVal) -> {
                 if (hex.equals(newVal)) {
-                    colorCell.setStyle(UIComponentDecorators.getColorCellSelectedStyle(hex));
+                    UIComponentDecorators.applyColorCellSelectedStyle(colorCell, hex);
                 } else {
-                    colorCell.setStyle(UIComponentDecorators.getColorCellUnselectedStyle());
+                    UIComponentDecorators.applyColorCellUnselectedStyle(colorCell);
                 }
             });
 
-            // Initial state
+            // Initial state - apply with UiScheduler.runLater to ensure DOM peer exists
             if (hex.equals(selectedColor.get())) {
-                colorCell.setStyle(UIComponentDecorators.getColorCellSelectedStyle(hex));
+                UIComponentDecorators.applyColorCellSelectedStyle(colorCell, hex);
+                Platform.runLater(() -> UIComponentDecorators.applyColorCellSelectedStyle(colorCell, hex));
             }
 
             // GWT-compatible tooltip: create a label that shows on hover
@@ -498,10 +505,11 @@ public class PoolDialog implements DialogManager.ManagedDialog {
     }
 
     private void updateAllowsBookingsStyle(VBox container, boolean allowsBookings) {
+        container.setPadding(new Insets(14, 16, 14, 16));
         if (allowsBookings) {
-            container.setStyle("-fx-padding: 14 16; -fx-background-color: #f0fdf4; -fx-background-radius: 10; -fx-border-color: #bbf7d0; -fx-border-radius: 10;");
+            UIComponentDecorators.applyBackgroundWithBorder(container, "#f0fdf4", 10, "#bbf7d0", 1);
         } else {
-            container.setStyle("-fx-padding: 14 16; -fx-background-color: #fef2f2; -fx-background-radius: 10; -fx-border-color: #fecaca; -fx-border-radius: 10;");
+            UIComponentDecorators.applyBackgroundWithBorder(container, "#fef2f2", 10, "#fecaca", 1);
         }
     }
 

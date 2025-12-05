@@ -2,11 +2,12 @@ package one.modality.hotel.backoffice.activities.roomsetup.util;
 
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
+import javafx.scene.Cursor;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
 import javafx.scene.control.TextArea;
-import javafx.scene.layout.HBox;
-import javafx.scene.layout.VBox;
+import javafx.scene.layout.*;
+import javafx.scene.paint.Color;
 
 /**
  * Utility class providing styled UI components for the RoomSetup module.
@@ -78,6 +79,27 @@ public final class UIComponentDecorators {
     public static final String CSS_WARNING_BAR_TEXT = "roomsetup-warning-bar-text";
     public static final String CSS_EXPAND_ARROW = "roomsetup-expand-arrow";
     public static final String CSS_EXPAND_ARROW_EXPANDED = "roomsetup-expand-arrow-expanded";
+
+    // Color picker CSS classes
+    public static final String CSS_COLOR_CELL = "roomsetup-color-cell";
+    public static final String CSS_COLOR_CELL_SELECTED = "roomsetup-color-cell-selected";
+    public static final String CSS_COLOR_AMBER = "roomsetup-color-amber";
+    public static final String CSS_COLOR_RED = "roomsetup-color-red";
+    public static final String CSS_COLOR_PINK = "roomsetup-color-pink";
+    public static final String CSS_COLOR_PURPLE = "roomsetup-color-purple";
+    public static final String CSS_COLOR_BLUE = "roomsetup-color-blue";
+    public static final String CSS_COLOR_CYAN = "roomsetup-color-cyan";
+    public static final String CSS_COLOR_GREEN = "roomsetup-color-green";
+    public static final String CSS_COLOR_SLATE = "roomsetup-color-slate";
+    // Color cell classes for selection styling (used with CSS_COLOR_CELL_SELECTED)
+    public static final String CSS_COLOR_CELL_AMBER = "roomsetup-color-cell-amber";
+    public static final String CSS_COLOR_CELL_RED = "roomsetup-color-cell-red";
+    public static final String CSS_COLOR_CELL_PINK = "roomsetup-color-cell-pink";
+    public static final String CSS_COLOR_CELL_PURPLE = "roomsetup-color-cell-purple";
+    public static final String CSS_COLOR_CELL_BLUE = "roomsetup-color-cell-blue";
+    public static final String CSS_COLOR_CELL_CYAN = "roomsetup-color-cell-cyan";
+    public static final String CSS_COLOR_CELL_GREEN = "roomsetup-color-cell-green";
+    public static final String CSS_COLOR_CELL_SLATE = "roomsetup-color-cell-slate";
 
     private UIComponentDecorators() {
         // Utility class - prevent instantiation
@@ -415,5 +437,217 @@ public final class UIComponentDecorators {
                    "-fx-padding: 8 14; -fx-background-radius: 8; " +
                    "-fx-border-color: #e5e5e5; -fx-border-radius: 8; -fx-cursor: hand;";
         }
+    }
+
+    // ============== WebFX-Compatible Styling Methods ==============
+    // These methods apply styles using Background/Border objects instead of setStyle()
+    // which is required for WebFX GWT compilation to work correctly.
+
+    /**
+     * Applies selected icon cell styling using Background/Border objects (WebFX compatible).
+     */
+    public static void applyIconCellSelectedStyle(Region region, String color) {
+        Color baseColor = Color.web(color);
+        Color bgColor = Color.color(baseColor.getRed(), baseColor.getGreen(), baseColor.getBlue(), 0.13);
+        region.setBackground(new Background(new BackgroundFill(bgColor, new CornerRadii(8), null)));
+        region.setBorder(new Border(new BorderStroke(baseColor, BorderStrokeStyle.SOLID, new CornerRadii(8), new BorderWidths(2))));
+        region.setCursor(Cursor.HAND);
+    }
+
+    /**
+     * Applies unselected icon cell styling using Background/Border objects (WebFX compatible).
+     */
+    public static void applyIconCellUnselectedStyle(Region region) {
+        region.setBackground(new Background(new BackgroundFill(Color.web("#f5f5f4"), new CornerRadii(8), null)));
+        region.setBorder(null);
+        region.setCursor(Cursor.HAND);
+    }
+
+    /**
+     * Gets the CSS class for a color swatch based on hex color.
+     * @param hex The hex color code (e.g., "#d97706")
+     * @return The CSS class name for the color swatch
+     */
+    public static String getColorSwatchClass(String hex) {
+        switch (hex.toLowerCase()) {
+            case "#d97706": return CSS_COLOR_AMBER;
+            case "#dc2626": return CSS_COLOR_RED;
+            case "#db2777": return CSS_COLOR_PINK;
+            case "#7c3aed": return CSS_COLOR_PURPLE;
+            case "#2563eb": return CSS_COLOR_BLUE;
+            case "#0891b2": return CSS_COLOR_CYAN;
+            case "#059669": return CSS_COLOR_GREEN;
+            case "#475569": return CSS_COLOR_SLATE;
+            default: return CSS_COLOR_AMBER; // Default fallback
+        }
+    }
+
+    /**
+     * Gets the CSS class for a color cell container based on hex color.
+     * @param hex The hex color code (e.g., "#d97706")
+     * @return The CSS class name for the color cell container
+     */
+    public static String getColorCellClass(String hex) {
+        switch (hex.toLowerCase()) {
+            case "#d97706": return CSS_COLOR_CELL_AMBER;
+            case "#dc2626": return CSS_COLOR_CELL_RED;
+            case "#db2777": return CSS_COLOR_CELL_PINK;
+            case "#7c3aed": return CSS_COLOR_CELL_PURPLE;
+            case "#2563eb": return CSS_COLOR_CELL_BLUE;
+            case "#0891b2": return CSS_COLOR_CELL_CYAN;
+            case "#059669": return CSS_COLOR_CELL_GREEN;
+            case "#475569": return CSS_COLOR_CELL_SLATE;
+            default: return CSS_COLOR_CELL_AMBER; // Default fallback
+        }
+    }
+
+    /**
+     * Applies selected color cell styling using CSS classes (WebFX compatible).
+     * @param region The region to style
+     * @param hex The hex color for selection styling
+     */
+    public static void applyColorCellSelectedStyle(Region region, String hex) {
+        region.getStyleClass().remove(CSS_COLOR_CELL);
+        if (!region.getStyleClass().contains(CSS_COLOR_CELL_SELECTED)) {
+            region.getStyleClass().add(CSS_COLOR_CELL_SELECTED);
+        }
+        // Add the color-specific cell class for border/background styling
+        String cellClass = getColorCellClass(hex);
+        if (!region.getStyleClass().contains(cellClass)) {
+            region.getStyleClass().add(cellClass);
+        }
+        region.setCursor(Cursor.HAND);
+    }
+
+    /**
+     * Applies unselected color cell styling using CSS classes (WebFX compatible).
+     * @param region The region to style
+     */
+    public static void applyColorCellUnselectedStyle(Region region) {
+        region.getStyleClass().remove(CSS_COLOR_CELL_SELECTED);
+        // Remove all color cell classes
+        region.getStyleClass().removeAll(
+            CSS_COLOR_CELL_AMBER, CSS_COLOR_CELL_RED, CSS_COLOR_CELL_PINK,
+            CSS_COLOR_CELL_PURPLE, CSS_COLOR_CELL_BLUE, CSS_COLOR_CELL_CYAN,
+            CSS_COLOR_CELL_GREEN, CSS_COLOR_CELL_SLATE
+        );
+        if (!region.getStyleClass().contains(CSS_COLOR_CELL)) {
+            region.getStyleClass().add(CSS_COLOR_CELL);
+        }
+        region.setCursor(Cursor.HAND);
+    }
+
+    /**
+     * Applies icon preview pane styling using Background/Border objects (WebFX compatible).
+     */
+    public static void applyIconPreviewStyle(Region region, String color) {
+        Color baseColor = Color.web(color);
+        Color bgColor = Color.color(baseColor.getRed(), baseColor.getGreen(), baseColor.getBlue(), 0.13);
+        Color borderColor = Color.color(baseColor.getRed(), baseColor.getGreen(), baseColor.getBlue(), 0.4);
+        region.setBackground(new Background(new BackgroundFill(bgColor, new CornerRadii(12), null)));
+        region.setBorder(new Border(new BorderStroke(borderColor, BorderStrokeStyle.SOLID, new CornerRadii(12), new BorderWidths(1))));
+    }
+
+    /**
+     * Applies pool row styling using Background/Border objects (WebFX compatible).
+     */
+    public static void applyPoolRowStyle(Region region, String color, boolean isActive) {
+        if (isActive) {
+            Color baseColor = Color.web(color);
+            Color bgColor = Color.color(baseColor.getRed(), baseColor.getGreen(), baseColor.getBlue(), 0.08);
+            region.setBackground(new Background(new BackgroundFill(bgColor, new CornerRadii(10), null)));
+            region.setBorder(new Border(new BorderStroke(baseColor, BorderStrokeStyle.SOLID, new CornerRadii(10), new BorderWidths(2))));
+        } else {
+            region.setBackground(new Background(new BackgroundFill(Color.WHITE, new CornerRadii(10), null)));
+            region.setBorder(new Border(new BorderStroke(Color.web("#e5e5e5"), BorderStrokeStyle.SOLID, new CornerRadii(10), new BorderWidths(1))));
+        }
+        region.setCursor(Cursor.HAND);
+    }
+
+    /**
+     * Applies pool icon background styling using Background/Border objects (WebFX compatible).
+     */
+    public static void applyPoolIconStyle(Region region, String color) {
+        Color baseColor = Color.web(color);
+        Color bgColor = Color.color(baseColor.getRed(), baseColor.getGreen(), baseColor.getBlue(), 0.08);
+        region.setBackground(new Background(new BackgroundFill(bgColor, new CornerRadii(10), null)));
+    }
+
+    /**
+     * Applies a simple background color with corner radius (WebFX compatible).
+     */
+    public static void applyBackground(Region region, String hexColor, double cornerRadius) {
+        region.setBackground(new Background(new BackgroundFill(Color.web(hexColor), new CornerRadii(cornerRadius), null)));
+    }
+
+    /**
+     * Applies a background color with corner radius and border (WebFX compatible).
+     */
+    public static void applyBackgroundWithBorder(Region region, String bgHexColor, double cornerRadius, String borderHexColor, double borderWidth) {
+        region.setBackground(new Background(new BackgroundFill(Color.web(bgHexColor), new CornerRadii(cornerRadius), null)));
+        region.setBorder(new Border(new BorderStroke(Color.web(borderHexColor), BorderStrokeStyle.SOLID, new CornerRadii(cornerRadius), new BorderWidths(borderWidth))));
+    }
+
+    /**
+     * Applies pool filter chip styling using Background/Border objects (WebFX compatible).
+     * This replaces setStyle() calls which don't work in WebFX GWT compilation.
+     *
+     * @param region The button/region to style
+     * @param color The pool color (hex string)
+     * @param isSelected Whether the chip is currently selected
+     */
+    public static void applyPoolFilterChipStyle(Region region, String color, boolean isSelected) {
+        Color baseColor = Color.web(color);
+        if (isSelected) {
+            // Selected: colored background (13% opacity), colored border
+            Color bgColor = Color.color(baseColor.getRed(), baseColor.getGreen(), baseColor.getBlue(), 0.13);
+            region.setBackground(new Background(new BackgroundFill(bgColor, new CornerRadii(8), null)));
+            region.setBorder(new Border(new BorderStroke(baseColor, BorderStrokeStyle.SOLID, new CornerRadii(8), new BorderWidths(2))));
+        } else {
+            // Unselected: white background, gray border
+            region.setBackground(new Background(new BackgroundFill(Color.WHITE, new CornerRadii(8), null)));
+            region.setBorder(new Border(new BorderStroke(Color.web("#e5e5e5"), BorderStrokeStyle.SOLID, new CornerRadii(8), new BorderWidths(1))));
+        }
+        region.setPadding(new Insets(8, 14, 8, 14));
+        region.setCursor(Cursor.HAND);
+        // Set text color if it's a Labeled control (Button, Label, etc.)
+        if (region instanceof javafx.scene.control.Labeled) {
+            ((javafx.scene.control.Labeled) region).setTextFill(baseColor);
+        }
+    }
+
+    /**
+     * Applies unassigned filter chip styling using Background/Border objects (WebFX compatible).
+     * This replaces setStyle() calls which don't work in WebFX GWT compilation.
+     *
+     * @param region The button/region to style
+     * @param isSelected Whether the chip is currently selected
+     * @param hasUnassigned Whether there are unassigned rooms (affects inactive state color)
+     */
+    public static void applyUnassignedFilterChipStyle(Region region, boolean isSelected, boolean hasUnassigned) {
+        Color amberBg = Color.web("#fef3c7");
+        Color amberText = Color.web("#92400e");
+        Color grayText = Color.web("#78716c");
+        Color grayBorder = Color.web("#e5e5e5");
+
+        if (isSelected) {
+            // Selected: amber background, amber border
+            region.setBackground(new Background(new BackgroundFill(amberBg, new CornerRadii(8), null)));
+            region.setBorder(new Border(new BorderStroke(amberText, BorderStrokeStyle.SOLID, new CornerRadii(8), new BorderWidths(2))));
+            if (region instanceof javafx.scene.control.Labeled) {
+                ((javafx.scene.control.Labeled) region).setTextFill(amberText);
+            }
+        } else {
+            // Unselected: amber or white background depending on unassigned count
+            Color bgColor = hasUnassigned ? amberBg : Color.WHITE;
+            Color textColor = hasUnassigned ? amberText : grayText;
+            region.setBackground(new Background(new BackgroundFill(bgColor, new CornerRadii(8), null)));
+            region.setBorder(new Border(new BorderStroke(grayBorder, BorderStrokeStyle.SOLID, new CornerRadii(8), new BorderWidths(1))));
+            if (region instanceof javafx.scene.control.Labeled) {
+                ((javafx.scene.control.Labeled) region).setTextFill(textColor);
+            }
+        }
+        region.setPadding(new Insets(8, 14, 8, 14));
+        region.setCursor(Cursor.HAND);
     }
 }

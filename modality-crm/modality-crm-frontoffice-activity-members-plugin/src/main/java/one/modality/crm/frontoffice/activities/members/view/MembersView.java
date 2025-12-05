@@ -111,13 +111,6 @@ public class MembersView implements MaterialFactoryMixin, ModalityButtonFactoryM
      * Build the complete UI for the Members activity.
      */
     public Node buildUi() {
-        // Main title
-        Label titleLabel = Bootstrap.textPrimary(Bootstrap.strong(Bootstrap.h2(
-                I18nControls.newLabel(MembersI18nKeys.PageTitle))));
-        titleLabel.setWrapText(true);
-        titleLabel.setTextAlignment(TextAlignment.CENTER);
-        titleLabel.setPadding(new Insets(100, 0, 48, 0));
-
         // Build all sections
         buildMembersSection();
         buildManagersSection();
@@ -128,7 +121,6 @@ public class MembersView implements MaterialFactoryMixin, ModalityButtonFactoryM
 
         // Main container
         VBox container = new VBox(24,
-                titleLabel,
                 messageContainer,
                 membersSection,
                 managersSection,
@@ -185,10 +177,12 @@ public class MembersView implements MaterialFactoryMixin, ModalityButtonFactoryM
      * Build the "Members I Can Book For" section.
      */
     private void buildMembersSection() {
-        // Section title
-        Label sectionTitle = Bootstrap.strong(Bootstrap.h3(
+        // Section title (same style as "WHO CAN BOOK FOR ME")
+        Label sectionTitle = Bootstrap.textPrimary(Bootstrap.strong(
                 I18nControls.newLabel(MembersI18nKeys.MembersICanBookFor)));
+        sectionTitle.getStyleClass().add("section-title-uppercase");
         sectionTitle.setTextAlignment(TextAlignment.CENTER);
+        sectionTitle.setStyle("-fx-font-size: 18px;");
         sectionTitle.setWrapText(true);
 
         // Description
