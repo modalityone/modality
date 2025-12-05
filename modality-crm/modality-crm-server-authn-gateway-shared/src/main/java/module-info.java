@@ -19,7 +19,4 @@ module modality.crm.server.authn.gateway.shared {
     // Exported packages
     exports one.modality.crm.server.authn.gateway.shared;
 
-    // Resources packages
-    opens one.modality.crm.server.authn.gateway.shared;
-
 }

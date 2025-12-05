@@ -33,10 +33,12 @@ module modality.hotel.backoffice.activity.roomsetup.plugin {
     requires webfx.platform.file;
     requires webfx.platform.uischeduler;
     requires webfx.platform.windowhistory;
+    requires webfx.stack.orm.datasourcemodel.service;
     requires webfx.stack.orm.domainmodel;
     requires webfx.stack.orm.domainmodel.activity;
     requires webfx.stack.orm.dql;
     requires webfx.stack.orm.entity;
+    requires webfx.stack.orm.entity.binding;
     requires webfx.stack.orm.entity.controls;
     requires webfx.stack.orm.reactive.entities;
     requires webfx.stack.routing.activity;
@@ -46,6 +48,11 @@ module modality.hotel.backoffice.activity.roomsetup.plugin {
     // Exported packages
     exports one.modality.hotel.backoffice.activities.roomsetup;
     exports one.modality.hotel.backoffice.activities.roomsetup.dialog;
+    exports one.modality.hotel.backoffice.activities.roomsetup.sitecomparison.data;
+    exports one.modality.hotel.backoffice.activities.roomsetup.sitecomparison.model;
+    exports one.modality.hotel.backoffice.activities.roomsetup.sitecomparison.presenter;
+    exports one.modality.hotel.backoffice.activities.roomsetup.sitecomparison.service;
+    exports one.modality.hotel.backoffice.activities.roomsetup.sitecomparison.view;
     exports one.modality.hotel.backoffice.activities.roomsetup.util;
     exports one.modality.hotel.backoffice.activities.roomsetup.view;
 
