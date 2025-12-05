@@ -80,6 +80,21 @@ public final class UIComponentDecorators {
     public static final String CSS_EXPAND_ARROW = "roomsetup-expand-arrow";
     public static final String CSS_EXPAND_ARROW_EXPANDED = "roomsetup-expand-arrow-expanded";
 
+    // Site comparison CSS classes
+    public static final String CSS_COMPARISON_COLUMN_BOTH = "roomsetup-comparison-column-both";
+    public static final String CSS_COMPARISON_COLUMN_GLOBAL = "roomsetup-comparison-column-global";
+    public static final String CSS_COMPARISON_COLUMN_EVENT = "roomsetup-comparison-column-event";
+    public static final String CSS_COMPARISON_TEXT_BOTH = "roomsetup-comparison-text-both";
+    public static final String CSS_COMPARISON_TEXT_GLOBAL = "roomsetup-comparison-text-global";
+    public static final String CSS_COMPARISON_TEXT_EVENT = "roomsetup-comparison-text-event";
+    public static final String CSS_COMPARISON_RESOURCE_LINKED = "roomsetup-comparison-resource-linked";
+    public static final String CSS_COMPARISON_RESOURCE_SELECTED = "roomsetup-comparison-resource-selected";
+    public static final String CSS_COMPARISON_WARNING_BOX = "roomsetup-comparison-warning-box";
+    public static final String CSS_COMPARISON_WARNING_ICON = "roomsetup-comparison-warning-icon";
+    public static final String CSS_COMPARISON_WARNING_TEXT = "roomsetup-comparison-warning-text";
+    public static final String CSS_COMPARISON_LINK_BADGE = "roomsetup-comparison-link-badge";
+    public static final String CSS_COMPARISON_UNLINK_BTN = "roomsetup-comparison-unlink-btn";
+
     // Color picker CSS classes
     public static final String CSS_COLOR_CELL = "roomsetup-color-cell";
     public static final String CSS_COLOR_CELL_SELECTED = "roomsetup-color-cell-selected";
@@ -649,5 +664,133 @@ public final class UIComponentDecorators {
         }
         region.setPadding(new Insets(8, 14, 8, 14));
         region.setCursor(Cursor.HAND);
+    }
+
+    // ============== Site Comparison Styling Methods ==============
+
+    // Site comparison colors
+    private static final String COLOR_BOTH_BG = "#d4edda";
+    private static final String COLOR_BOTH_TEXT = "#155724";
+    private static final String COLOR_GLOBAL_BG = "#fff3cd";
+    private static final String COLOR_GLOBAL_TEXT = "#856404";
+    private static final String COLOR_EVENT_BG = "#f8d7da";
+    private static final String COLOR_EVENT_TEXT = "#721c24";
+    private static final String COLOR_LINKED = "#2e7d32";
+    private static final String COLOR_SELECTED_BG = "#1976d2";
+    private static final String COLOR_WARNING_BG = "#fff3cd";
+    private static final String COLOR_WARNING_TEXT = "#856404";
+    private static final String COLOR_UNLINK_BTN = "#d32f2f";
+
+    /**
+     * Applies comparison column styling with the given type (WebFX compatible).
+     * @param region The region to style
+     * @param type One of "both", "global", or "event"
+     */
+    public static void applyComparisonColumnStyle(Region region, String type) {
+        String bgColor;
+        switch (type) {
+            case "both": bgColor = COLOR_BOTH_BG; break;
+            case "global": bgColor = COLOR_GLOBAL_BG; break;
+            case "event": bgColor = COLOR_EVENT_BG; break;
+            default: bgColor = COLOR_BOTH_BG;
+        }
+        region.setBackground(new Background(new BackgroundFill(Color.web(bgColor), new CornerRadii(6), null)));
+        region.setMinWidth(200);
+        region.setPadding(new Insets(12));
+    }
+
+    /**
+     * Applies comparison header text styling (WebFX compatible).
+     * @param label The label to style
+     * @param type One of "both", "global", or "event"
+     */
+    public static void applyComparisonHeaderStyle(Label label, String type) {
+        Color textColor;
+        switch (type) {
+            case "both": textColor = Color.web(COLOR_BOTH_TEXT); break;
+            case "global": textColor = Color.web(COLOR_GLOBAL_TEXT); break;
+            case "event": textColor = Color.web(COLOR_EVENT_TEXT); break;
+            default: textColor = Color.web(COLOR_BOTH_TEXT);
+        }
+        label.setTextFill(textColor);
+        label.getStyleClass().add(CSS_BODY_BOLD);
+    }
+
+    /**
+     * Applies comparison resource text styling (WebFX compatible).
+     * @param label The label to style
+     * @param type One of "both", "global", or "event"
+     */
+    public static void applyComparisonTextStyle(Label label, String type) {
+        Color textColor;
+        switch (type) {
+            case "both": textColor = Color.web(COLOR_BOTH_TEXT); break;
+            case "global": textColor = Color.web(COLOR_GLOBAL_TEXT); break;
+            case "event": textColor = Color.web(COLOR_EVENT_TEXT); break;
+            default: textColor = Color.web(COLOR_BOTH_TEXT);
+        }
+        label.setTextFill(textColor);
+    }
+
+    /**
+     * Applies linked resource styling - green italic text (WebFX compatible).
+     */
+    public static void applyLinkedResourceStyle(Label label) {
+        label.setTextFill(Color.web(COLOR_LINKED));
+        label.getStyleClass().add(CSS_COMPARISON_RESOURCE_LINKED);
+    }
+
+    /**
+     * Applies selected resource styling - white on blue background (WebFX compatible).
+     */
+    public static void applySelectedResourceStyle(Label label) {
+        label.setTextFill(Color.WHITE);
+        label.setBackground(new Background(new BackgroundFill(Color.web(COLOR_SELECTED_BG), new CornerRadii(3), null)));
+        label.setPadding(new Insets(2, 6, 2, 6));
+    }
+
+    /**
+     * Applies warning box styling (WebFX compatible).
+     */
+    public static void applyWarningBoxStyle(Region region) {
+        region.setBackground(new Background(new BackgroundFill(Color.web(COLOR_WARNING_BG), new CornerRadii(8), null)));
+        region.setPadding(new Insets(40, 24, 40, 24));
+    }
+
+    /**
+     * Applies warning icon styling (WebFX compatible).
+     */
+    public static void applyWarningIconStyle(Label label) {
+        label.setTextFill(Color.web(COLOR_WARNING_TEXT));
+        label.getStyleClass().add(CSS_TITLE);
+    }
+
+    /**
+     * Applies warning text styling (WebFX compatible).
+     */
+    public static void applyWarningTextStyle(Label label) {
+        label.setTextFill(Color.web(COLOR_WARNING_TEXT));
+        label.setWrapText(true);
+    }
+
+    /**
+     * Applies unlink button styling (WebFX compatible).
+     */
+    public static void applyUnlinkButtonStyle(javafx.scene.control.ButtonBase button) {
+        button.setBackground(new Background(new BackgroundFill(Color.TRANSPARENT, null, null)));
+        button.setTextFill(Color.web(COLOR_UNLINK_BTN));
+        button.getStyleClass().add(CSS_CLICKABLE);
+    }
+
+    /**
+     * Applies link badge styling with the given color (WebFX compatible).
+     * @param label The label to style
+     * @param badgeColor The hex color for the badge background
+     */
+    public static void applyLinkBadgeStyle(Label label, String badgeColor) {
+        label.setBackground(new Background(new BackgroundFill(Color.web(badgeColor), new CornerRadii(3), null)));
+        label.setTextFill(Color.WHITE);
+        label.setPadding(new Insets(1, 4, 1, 4));
+        label.getStyleClass().add(CSS_SMALL);
     }
 }

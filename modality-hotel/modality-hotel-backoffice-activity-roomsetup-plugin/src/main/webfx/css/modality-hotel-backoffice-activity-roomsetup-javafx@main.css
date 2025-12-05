@@ -440,3 +440,98 @@
 .roomsetup-expand-arrow-expanded {
     -fx-rotate: 90;
 }
+
+/* ============================================================================
+   SITE COMPARISON
+   ============================================================================ */
+
+/* Column backgrounds */
+.roomsetup-comparison-column-both {
+    -fx-background-color: #d4edda;
+    -fx-background-radius: 6;
+}
+
+.roomsetup-comparison-column-global {
+    -fx-background-color: #fff3cd;
+    -fx-background-radius: 6;
+}
+
+.roomsetup-comparison-column-event {
+    -fx-background-color: #f8d7da;
+    -fx-background-radius: 6;
+}
+
+/* Column headers */
+.roomsetup-comparison-header-both {
+    -fx-font-weight: bold;
+    -fx-text-fill: #155724;
+}
+
+.roomsetup-comparison-header-global {
+    -fx-font-weight: bold;
+    -fx-text-fill: #856404;
+}
+
+.roomsetup-comparison-header-event {
+    -fx-font-weight: bold;
+    -fx-text-fill: #721c24;
+}
+
+/* Resource text colors */
+.roomsetup-comparison-text-both {
+    -fx-text-fill: #155724;
+}
+
+.roomsetup-comparison-text-global {
+    -fx-text-fill: #856404;
+}
+
+.roomsetup-comparison-text-event {
+    -fx-text-fill: #721c24;
+}
+
+/* Resource states */
+.roomsetup-comparison-resource-linked {
+    -fx-text-fill: #2e7d32;
+    -fx-font-style: italic;
+}
+
+.roomsetup-comparison-resource-selected {
+    -fx-text-fill: white;
+    -fx-background-color: #1976d2;
+    -fx-background-radius: 3;
+    /* padding set in Java */
+}
+
+/* Link badge */
+.roomsetup-comparison-link-badge {
+    -fx-text-fill: white;
+    -fx-background-radius: 3;
+    -fx-font-size: 10;
+    -fx-font-weight: bold;
+    /* padding set in Java */
+}
+
+/* Unlink button */
+.roomsetup-comparison-unlink-btn {
+    -fx-background-color: transparent;
+    -fx-text-fill: #d32f2f;
+}
+
+/* Warning box */
+.roomsetup-comparison-warning {
+    -fx-background-color: #fff3cd;
+    -fx-background-radius: 8;
+    /* padding set in Java */
+}
+
+.roomsetup-comparison-warning-icon {
+    -fx-font-size: 32px;
+    -fx-font-weight: bold;
+    -fx-text-fill: #856404;
+}
+
+.roomsetup-comparison-warning-text {
+    -fx-font-size: 16px;
+    -fx-text-fill: #856404;
+}

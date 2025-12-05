@@ -1066,3 +1066,181 @@
     background-color: rgba(71, 85, 105, 0.13);
     border-radius: 10px;
 }
+
+/* ============================================================================
+   SITE COMPARISON
+   ============================================================================ */
+
+/* Column backgrounds */
+.roomsetup-comparison-column-both {
+    background-color: #d4edda;
+    border-radius: 6px;
+}
+
+.roomsetup-comparison-column-both > fx-background {
+    background-color: #d4edda;
+    border-radius: 6px;
+}
+
+.roomsetup-comparison-column-global {
+    background-color: #fff3cd;
+    border-radius: 6px;
+}
+
+.roomsetup-comparison-column-global > fx-background {
+    background-color: #fff3cd;
+    border-radius: 6px;
+}
+
+.roomsetup-comparison-column-event {
+    background-color: #f8d7da;
+    border-radius: 6px;
+}
+
+.roomsetup-comparison-column-event > fx-background {
+    background-color: #f8d7da;
+    border-radius: 6px;
+}
+
+/* Column headers */
+.roomsetup-comparison-header-both {
+    font-weight: bold;
+    color: #155724;
+}
+
+.roomsetup-comparison-header-both fx-text {
+    font-weight: bold;
+    color: #155724;
+}
+
+.roomsetup-comparison-header-global {
+    font-weight: bold;
+    color: #856404;
+}
+
+.roomsetup-comparison-header-global fx-text {
+    font-weight: bold;
+    color: #856404;
+}
+
+.roomsetup-comparison-header-event {
+    font-weight: bold;
+    color: #721c24;
+}
+
+.roomsetup-comparison-header-event fx-text {
+    font-weight: bold;
+    color: #721c24;
+}
+
+/* Resource text colors */
+.roomsetup-comparison-text-both {
+    color: #155724;
+}
+
+.roomsetup-comparison-text-both fx-text {
+    color: #155724;
+}
+
+.roomsetup-comparison-text-global {
+    color: #856404;
+}
+
+.roomsetup-comparison-text-global fx-text {
+    color: #856404;
+}
+
+.roomsetup-comparison-text-event {
+    color: #721c24;
+}
+
+.roomsetup-comparison-text-event fx-text {
+    color: #721c24;
+}
+
+/* Resource states */
+.roomsetup-comparison-resource-linked {
+    color: #2e7d32;
+    font-style: italic;
+}
+
+.roomsetup-comparison-resource-linked fx-text {
+    color: #2e7d32;
+    font-style: italic;
+}
+
+.roomsetup-comparison-resource-selected {
+    color: white;
+    background-color: #1976d2;
+    border-radius: 3px;
+}
+
+.roomsetup-comparison-resource-selected > fx-background {
+    background-color: #1976d2;
+    border-radius: 3px;
+}
+
+.roomsetup-comparison-resource-selected fx-text {
+    color: white;
+}
+
+/* Link badge */
+.roomsetup-comparison-link-badge {
+    color: white;
+    border-radius: 3px;
+    font-size: 10px;
+    font-weight: bold;
+}
+
+.roomsetup-comparison-link-badge fx-text {
+    color: white;
+    font-size: 10px;
+    font-weight: bold;
+}
+
+/* Unlink button */
+.roomsetup-comparison-unlink-btn {
+    background-color: transparent;
+    color: #d32f2f;
+}
+
+.roomsetup-comparison-unlink-btn fx-background {
+    background-color: transparent;
+}
+
+.roomsetup-comparison-unlink-btn fx-text {
+    color: #d32f2f;
+}
+
+/* Warning box */
+.roomsetup-comparison-warning {
+    background-color: #fff3cd;
+    border-radius: 8px;
+}
+
+.roomsetup-comparison-warning > fx-background {
+    background-color: #fff3cd;
+    border-radius: 8px;
+}
+
+.roomsetup-comparison-warning-icon {
+    font-size: 32px;
+    font-weight: bold;
+    color: #856404;
+}
+
+.roomsetup-comparison-warning-icon fx-text {
+    font-size: 32px;
+    font-weight: bold;
+    color: #856404;
+}
+
+.roomsetup-comparison-warning-text {
+    font-size: 16px;
+    color: #856404;
+}
+
+.roomsetup-comparison-warning-text fx-text {
+    font-size: 16px;
+    color: #856404;
+}
