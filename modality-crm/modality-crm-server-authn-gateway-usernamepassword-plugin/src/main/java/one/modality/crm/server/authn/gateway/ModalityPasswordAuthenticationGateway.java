@@ -19,7 +19,7 @@ import dev.webfx.stack.session.state.StateAccessor;
 import dev.webfx.stack.session.state.ThreadLocalStateHolder;
 import one.modality.base.shared.entities.FrontendAccount;
 import one.modality.base.shared.entities.Person;
-import one.modality.crm.server.authn.gateway.shared.LoginLinkService;
+import one.modality.crm.server.authn.gateway.shared.MagicLinkService;
 import one.modality.crm.shared.services.authn.ModalityAuthenticationI18nKeys;
 import one.modality.crm.shared.services.authn.ModalityUserPrincipal;
 import one.modality.crm.server.authn.gateway.magiclink.ModalityMagicLinkAuthenticationGateway;
@@ -107,8 +107,8 @@ public final class ModalityPasswordAuthenticationGateway implements ServerAuthen
         String runId = ThreadLocalStateHolder.getRunId();
         boolean backoffice = ThreadLocalStateHolder.isBackoffice();
         // Capturing the parameters from the credentials
-        String username = credentials.getUsername();
-        String password = credentials.getPassword();
+        String username = credentials.username();
+        String password = credentials.password();
         if (Strings.isEmpty(username) || Strings.isEmpty(password))
             return Future.failedFuture("[%s] Username and password must not be empty".formatted(ModalityAuthenticationI18nKeys.AuthnUserOrPasswordEmptyError));
         username = username.trim(); // Ignoring leading and tailing spaces in username
@@ -123,7 +123,7 @@ public final class ModalityPasswordAuthenticationGateway implements ServerAuthen
                 FrontendAccount fa = userPerson.getFrontendAccount();
                 if (!isTypedPasswordCorrect(password, fa.getPassword(), fa.getSalt())) {
                     if (LOG_INCORRECT_TYPED_PASSWORDS)
-                        Console.log("🚫🚫🚫🚫🚫 User %s typed this incorrect password: %s".formatted(credentials.getUsername(), password));
+                        Console.log("🚫🚫🚫🚫🚫 User %s typed this incorrect password: %s".formatted(credentials.username(), password));
                     return Future.failedFuture("[%s] Wrong user or password".formatted(ModalityAuthenticationI18nKeys.AuthnWrongUserOrPasswordError));
                 }
                 Object personId = userPerson.getPrimaryKey();
@@ -157,7 +157,7 @@ public final class ModalityPasswordAuthenticationGateway implements ServerAuthen
             .<FrontendAccount>executeQuery("select FrontendAccount where corporation=? and username=? limit 1", 1, credentials.getEmail())
             .compose(accounts -> {
                     boolean doesntExists = accounts.isEmpty();
-                    return LoginLinkService.storeAndSendLoginLink(
+                    return MagicLinkService.createAndSendMagicLink(
                         loginRunId,
                         credentials,
                         null,
@@ -172,8 +172,8 @@ public final class ModalityPasswordAuthenticationGateway implements ServerAuthen
     }
 
     private Future<String> continueAccountCreation(ContinueAccountCreationCredentials credentials) {
-        return LoginLinkService.loadLoginLinkFromTokenAndMarkAsUsed(credentials.getToken(), dataSourceModel)
-            .compose(magicLink -> LoginLinkService.loadUserPersonFromLoginLink(magicLink)
+        return MagicLinkService.loadMagicLinkFromTokenAndMarkAsUsed(credentials.magicLinkTokenOrVerificationCode(), dataSourceModel)
+            .compose(magicLink -> MagicLinkService.loadUserPersonFromMagicLink(magicLink)
                 .compose(userPerson -> {
                     String email = magicLink.getEmail();
                     if (userPerson != null)
@@ -184,7 +184,7 @@ public final class ModalityPasswordAuthenticationGateway implements ServerAuthen
     }
 
     private Future<Object> finaliseAccountCreation(FinaliseAccountCreationCredentials credentials) {
-        return LoginLinkService.loadLoginLinkFromToken(credentials.getToken(), false, dataSourceModel)
+        return MagicLinkService.loadMagicLinkFromTokenOrVerificationCode(credentials.magicLinkTokenOrVerificationCode(), false, dataSourceModel)
             .compose(magicLink -> {
                 UpdateStore updateStore = UpdateStore.create(dataSourceModel);
                 FrontendAccount fa = updateStore.insertEntity(FrontendAccount.class);
@@ -192,7 +192,7 @@ public final class ModalityPasswordAuthenticationGateway implements ServerAuthen
                 String salt = email; // like KBS2 for now
                 fa.setUsername(email);
                 fa.setSalt(salt);
-                fa.setPassword(encryptPassword(credentials.getPassword(), salt));
+                fa.setPassword(encryptPassword(credentials.password(), salt));
                 fa.setCorporation(1);
                 return updateStore.submitChanges()
                     .map(ignored -> fa.getPrimaryKey());
@@ -203,10 +203,10 @@ public final class ModalityPasswordAuthenticationGateway implements ServerAuthen
         // Capturing the required client state info from thread local (before it will be wiped out by the async call)
         String runId = ThreadLocalStateHolder.getRunId();
         return getUserClaims() // to get the old email (the passed credential contains the new email)
-            .compose(userClaims -> LoginLinkService.storeAndSendLoginLink(
+            .compose(userClaims -> MagicLinkService.createAndSendMagicLink(
                     runId,
                     credentials, // contains the new email (the one to send the link to)
-                    userClaims.getEmail(), // current email for this account (= old email)
+                    userClaims.email(), // current email for this account (= old email)
                     UPDATE_EMAIL_ACTIVITY_PATH_FULL,
                 UPDATE_EMAIL_MAIL_FROM,
                 UPDATE_EMAIL_MAIL_SUBJECT,
@@ -218,8 +218,8 @@ public final class ModalityPasswordAuthenticationGateway implements ServerAuthen
 
     private Future<Void> finaliseEmailUpdate(FinaliseEmailUpdateCredentials credentials) {
         // We check the validity of the token, and if valid, we load the user person
-        return LoginLinkService.loadLoginLinkFromTokenAndMarkAsUsed(credentials.getToken(), dataSourceModel)
-            .compose(magicLink -> LoginLinkService.loadUserPersonFromLoginLink(magicLink)
+        return MagicLinkService.loadMagicLinkFromTokenAndMarkAsUsed(credentials.magicLinkTokenOrVerificationCode(), dataSourceModel)
+            .compose(magicLink -> MagicLinkService.loadUserPersonFromMagicLink(magicLink)
                 .compose(userPerson -> {
                     // We change the email in both the account, and the user person
                     UpdateStore updateStore = UpdateStore.create(dataSourceModel);
@@ -289,7 +289,7 @@ public final class ModalityPasswordAuthenticationGateway implements ServerAuthen
         // 1) We first check that the passed old password matches with the one in the database
         return queryModalityUserPerson("frontendAccount.(username, password, salt)")
             .compose(userPerson -> {
-                String oldPassword = passwordUpdate.getOldPassword();
+                String oldPassword = passwordUpdate.oldPassword();
                 // Note: in case of resetting the password from a magic link, the old password is not typed by the user
                 // but loaded again from the database (by the MagicLink gateway) and is therefore already encrypted.
                 // Otherwise (when the password reset originates from the user profile), the old password is in clear
@@ -299,7 +299,7 @@ public final class ModalityPasswordAuthenticationGateway implements ServerAuthen
                 if (!isTypedPasswordCorrect(oldPassword, fa.getPassword(), fa.getSalt()))
                     return Future.failedFuture("[%s] The old password is not matching".formatted(ModalityAuthenticationI18nKeys.AuthnOldPasswordNotMatchingError));
                 // 2) We update the password in the database
-                String storedEncryptedPassword = encryptPassword(passwordUpdate.getNewPassword(), fa.getSalt());
+                String storedEncryptedPassword = encryptPassword(passwordUpdate.newPassword(), fa.getSalt());
                 UpdateStore updateStore = UpdateStore.createAbove(fa.getStore());
                 FrontendAccount ufa = updateStore.updateEntity(fa);
                 ufa.setPassword(storedEncryptedPassword);

@@ -55,7 +55,7 @@ public final class FXModalityUserPrincipal {
                 // Checking UserClaims (when logging through SSO)
                 UserClaims userClaims = FXUserClaims.getUserClaims();
                 if (userClaims != null) { // Yes, the user logged-in through SSO
-                    String email = userClaims.getEmail();
+                    String email = userClaims.email();
                     if (email != null) { // Yes, the user provided an email
                         // Loading the Modality user (i.e., Person) owning a frontend account whose username is that exact same email
                         EntityStore.create()

@@ -18,7 +18,7 @@ import dev.webfx.stack.session.state.ThreadLocalStateHolder;
 import one.modality.base.shared.entities.FrontendAccount;
 import one.modality.base.shared.entities.MagicLink;
 import one.modality.base.shared.util.ActivityHashUtil;
-import one.modality.crm.server.authn.gateway.shared.LoginLinkService;
+import one.modality.crm.server.authn.gateway.shared.MagicLinkService;
 import one.modality.crm.shared.services.authn.ModalityAuthenticationI18nKeys;
 import one.modality.crm.shared.services.authn.ModalityGuestPrincipal;
 import one.modality.crm.shared.services.authn.ModalityUserPrincipal;
@@ -26,7 +26,7 @@ import one.modality.crm.shared.services.authn.ModalityUserPrincipal;
 /**
  * @author Bruno Salmon
  */
-public class ModalityMagicLinkAuthenticationGateway implements ServerAuthenticationGateway, HasDataSourceModel {
+public final class ModalityMagicLinkAuthenticationGateway implements ServerAuthenticationGateway, HasDataSourceModel {
 
     private static final String MAGIC_LINK_ACTIVITY_PATH_PREFIX = "/magic-link";
     public static final String MAGIC_LINK_ACTIVITY_PATH_FULL = MAGIC_LINK_ACTIVITY_PATH_PREFIX + "/:token";
@@ -34,11 +34,12 @@ public class ModalityMagicLinkAuthenticationGateway implements ServerAuthenticat
     // on an existing account. In this case, ModalityPasswordAuthenticationGateway emails him a magic link.
 
     // Temporarily hardcoded (to replace with database letters)
-    private static final String MAGIC_LINK_MAIL_FROM = "kbs@kadampa.net";
-    private static final String MAGIC_LINK_MAIL_SUBJECT = "Password recovery - Kadampa Booking System";
-    private static final String MAGIC_LINK_MAIL_BODY = Resource.getText(Resource.toUrl("MagicLinkMailBody.html", ModalityMagicLinkAuthenticationGateway.class));
-    private static final String MAGIC_LINK_UNKNOWN_ACCOUNT_MAIL_SUBJECT = "Assistance with your Kadampa booking account";
-    private static final String MAGIC_LINK_UNKNOWN_ACCOUNT_MAIL_BODY = Resource.getText(Resource.toUrl("MagicLinkUnknownAccountMailBody.html", ModalityMagicLinkAuthenticationGateway.class));
+    private static final String MAIL_FROM = "kbs@kadampa.net";
+    private static final String RECOVERY_MAIL_SUBJECT = "Password recovery - Kadampa Booking System";
+    private static final String RECOVERY_VERIFICATION_CODE_OR_MAGIC_LINK_MAIL_BODY = Resource.getText(Resource.toUrl("RecoveryWithVerificationCodeOrMagicLinkMailBody.html", ModalityMagicLinkAuthenticationGateway.class));
+    private static final String RECOVERY_VERIFICATION_CODE_ONLY_MAIL_BODY = Resource.getText(Resource.toUrl("RecoveryWithVerificationCodeOnlyMailBody.html", ModalityMagicLinkAuthenticationGateway.class));
+    private static final String UNKNOWN_ACCOUNT_MAIL_SUBJECT = "Assistance with your Kadampa booking account";
+    private static final String UNKNOWN_ACCOUNT_MAIL_BODY = Resource.getText(Resource.toUrl("UnknownAccountMailBody.html", ModalityMagicLinkAuthenticationGateway.class));
 
     private final DataSourceModel dataSourceModel;
 
@@ -58,19 +59,22 @@ public class ModalityMagicLinkAuthenticationGateway implements ServerAuthenticat
     @Override
     public boolean acceptsUserCredentials(Object userCredentials) {
         return userCredentials instanceof SendMagicLinkCredentials
-               || userCredentials instanceof AuthenticateWithMagicLinkCredentials
                || userCredentials instanceof RenewMagicLinkCredentials
+               || userCredentials instanceof AuthenticateWithMagicLinkCredentials
+               || userCredentials instanceof AuthenticateWithVerificationCodeCredentials
             ;
     }
 
     @Override
     public Future<?> authenticate(Object userCredentials) {
-        if (userCredentials instanceof SendMagicLinkCredentials)
-            return createAndSendMagicLink((SendMagicLinkCredentials) userCredentials);
-        if (userCredentials instanceof RenewMagicLinkCredentials)
-            return renewAndSendMagicLink((RenewMagicLinkCredentials) userCredentials);
-        if (userCredentials instanceof AuthenticateWithMagicLinkCredentials)
-            return authenticateWithMagicLink((AuthenticateWithMagicLinkCredentials) userCredentials);
+        if (userCredentials instanceof SendMagicLinkCredentials sendMagicLinkCredentials)
+            return createAndSendMagicLink(sendMagicLinkCredentials);
+        if (userCredentials instanceof RenewMagicLinkCredentials renewMagicLinkCredentials)
+            return renewAndSendMagicLink(renewMagicLinkCredentials);
+        if (userCredentials instanceof AuthenticateWithMagicLinkCredentials authenticateWithMagicLinkCredentials)
+            return authenticateWithMagicLink(authenticateWithMagicLinkCredentials);
+        if (userCredentials instanceof AuthenticateWithVerificationCodeCredentials authenticateWithVerificationCodeCredentials)
+            return authenticateWithVerificationCode(authenticateWithVerificationCodeCredentials);
         return Future.failedFuture("%s.authenticate() requires a %s, %s or %s argument".formatted(getClass().getSimpleName(), SendMagicLinkCredentials.class.getSimpleName(), RenewMagicLinkCredentials.class.getSimpleName(), AuthenticateWithMagicLinkCredentials.class.getSimpleName()));
     }
 
@@ -83,15 +87,15 @@ public class ModalityMagicLinkAuthenticationGateway implements ServerAuthenticat
         return EntityStore.create(dataSourceModel)
             .<FrontendAccount>executeQuery("select FrontendAccount where corporation=? and username=? limit 1", 1, request.getEmail())
             .compose(accounts -> {
-                    boolean exists = !accounts.isEmpty();
-                    return LoginLinkService.storeAndSendLoginLink(
+                    boolean unknown = accounts.isEmpty();
+                    return MagicLinkService.createAndSendMagicLink(
                         loginRunId,
                         request,
                         null,
                         MAGIC_LINK_ACTIVITY_PATH_FULL,
-                        MAGIC_LINK_MAIL_FROM,
-                        exists ? MAGIC_LINK_MAIL_SUBJECT : MAGIC_LINK_UNKNOWN_ACCOUNT_MAIL_SUBJECT,
-                        exists ? MAGIC_LINK_MAIL_BODY : MAGIC_LINK_UNKNOWN_ACCOUNT_MAIL_BODY,
+                        MAIL_FROM,
+                        unknown ? UNKNOWN_ACCOUNT_MAIL_SUBJECT : RECOVERY_MAIL_SUBJECT,
+                        unknown ? UNKNOWN_ACCOUNT_MAIL_BODY : request.isVerificationCodeOnly() ? RECOVERY_VERIFICATION_CODE_ONLY_MAIL_BODY : RECOVERY_VERIFICATION_CODE_OR_MAGIC_LINK_MAIL_BODY,
                         dataSourceModel
                     );
                 }
@@ -100,14 +104,14 @@ public class ModalityMagicLinkAuthenticationGateway implements ServerAuthenticat
 
     private Future<Void> renewAndSendMagicLink(RenewMagicLinkCredentials request) {
         return EntityStore.create(dataSourceModel)
-            .<MagicLink>executeQuery("select loginRunId, lang, link, email, requestedPath from MagicLink where token=? order by id desc limit 1", request.getPreviousToken())
+            .<MagicLink>executeQuery("select loginRunId, lang, link, email, requestedPath from MagicLink where token=? order by id desc limit 1", request.previousToken())
             .map(Collections::first)
             .compose(magicLink -> {
                 if (magicLink == null)
                     return Future.failedFuture("[%s] Magic link token not found".formatted(ModalityAuthenticationI18nKeys.LoginLinkUnrecognisedError));
                 String link = magicLink.getLink();
                 String clientOrigin = ActivityHashUtil.withoutHashSuffix(link.substring(0, link.indexOf(MAGIC_LINK_ACTIVITY_PATH_PREFIX)));
-                return LoginLinkService.storeAndSendLoginLink(
+                return MagicLinkService.createAndSendMagicLink(
                     magicLink.getLoginRunId(),
                     magicLink.getLang(),
                     clientOrigin,
@@ -116,22 +120,30 @@ public class ModalityMagicLinkAuthenticationGateway implements ServerAuthenticat
                     null,
                     null,
                     MAGIC_LINK_ACTIVITY_PATH_FULL,
-                    MAGIC_LINK_MAIL_FROM,
-                    MAGIC_LINK_MAIL_SUBJECT,
-                    MAGIC_LINK_MAIL_BODY,
+                    MAIL_FROM,
+                    RECOVERY_MAIL_SUBJECT,
+                    RECOVERY_VERIFICATION_CODE_OR_MAGIC_LINK_MAIL_BODY,
                     dataSourceModel
                 );
             });
     }
 
     private Future<String> authenticateWithMagicLink(AuthenticateWithMagicLinkCredentials credentials) {
+        return authenticateWithMagicLink(credentials.token());
+    }
+
+    private Future<String> authenticateWithVerificationCode(AuthenticateWithVerificationCodeCredentials credentials) {
+        return authenticateWithMagicLink(credentials.verificationCode());
+    }
+
+    private Future<String> authenticateWithMagicLink(String tokenOrVerificationCode) {
         String usageRunId = ThreadLocalStateHolder.getRunId();
         // 1) Checking the existence of the magic link in the database, and if so, loading it with required info
-        return LoginLinkService.loadLoginLinkFromToken(credentials.getToken(), true, dataSourceModel)
+        return MagicLinkService.loadMagicLinkFromTokenOrVerificationCode(tokenOrVerificationCode, true, dataSourceModel)
             .compose(magicLink -> {
                 // 2) The magic link is valid, so we memorize its usage date and also check if the request comes from
                 // a registered or unregistered user (with or without an account)
-                return LoginLinkService.loadUserPersonFromLoginLink(magicLink)
+                return MagicLinkService.loadUserPersonFromMagicLink(magicLink)
                     .compose(userPerson -> {
                         // 3) Preparing the userId = ModalityUserPrincipal for registered users, ModalityGuestPrincipal for unregistered users
                         Object userId;
@@ -147,7 +159,7 @@ public class ModalityMagicLinkAuthenticationGateway implements ServerAuthenticat
                             .compose(ignored -> { // indicates that the magic link client acknowledged this login push
                                 // 5) Now that we managed to reach the magic link client and have a successful login,
                                 // we mark the magic link as used (to prevent using it again).
-                                return LoginLinkService.markLoginLinkAsUsed(magicLink, usageRunId)
+                                return MagicLinkService.markMagicLinkAsUsed(magicLink, usageRunId)
                                     .map(ignored2 -> magicLink.getRequestedPath())
                                     .onFailure(Console::log)
                                     .onSuccess(ignored2 -> {
@@ -198,7 +210,7 @@ public class ModalityMagicLinkAuthenticationGateway implements ServerAuthenticat
                     return Future.failedFuture("[%s] Magic link not found!".formatted(ModalityAuthenticationI18nKeys.LoginLinkUnrecognisedError));
                 MagicLink magicLink = magicLinks.get(0);
                 // 3) Reading the user person
-                return LoginLinkService.loadUserPersonFromLoginLink(magicLink)
+                return MagicLinkService.loadUserPersonFromMagicLink(magicLink)
                     .compose(userPerson -> {
                         if (userPerson == null)
                             return Future.failedFuture("[%s] No such user account".formatted(ModalityAuthenticationI18nKeys.AuthnNoSuchUserAccountError));
@@ -209,7 +221,7 @@ public class ModalityMagicLinkAuthenticationGateway implements ServerAuthenticat
                         // subsequently a push of the authorizations.
                         UpdatePasswordCredentials updatePasswordCredentials = new UpdatePasswordCredentials(
                             userPerson.evaluate("frontendAccount.password"), // old password
-                            update.getNewPassword() // new password
+                            update.newPassword() // new password
                         );
                         Promise<Void> promise = Promise.promise();
                         ThreadLocalStateHolder.runAsUser(targetUserId,

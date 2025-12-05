@@ -44,7 +44,7 @@ public final class ModalityAuthorizationServerServiceProvider implements Authori
         return AuthenticationService.getUserClaims()
             // Step 2: we load the user authorizations from the database
             .compose(userClaims ->
-                loadAndPushUserAuthorizations(userClaims.getEmail(), backoffice, runId)
+                loadAndPushUserAuthorizations(userClaims.email(), backoffice, runId)
             );
     }
 
