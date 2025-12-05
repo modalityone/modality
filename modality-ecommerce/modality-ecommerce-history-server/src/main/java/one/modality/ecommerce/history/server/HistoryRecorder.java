@@ -66,7 +66,7 @@ public final class HistoryRecorder {
         // Case 2) User not logged in or just through SSO
         return AuthenticationService.getUserClaims()
                 .compose(userClaims -> {
-                    history.setUsername(userClaims.getUsername());
+                    history.setUsername(userClaims.username());
                     return Future.succeededFuture(history);
                 }, ex -> {
                     history.setUsername("Online guest");

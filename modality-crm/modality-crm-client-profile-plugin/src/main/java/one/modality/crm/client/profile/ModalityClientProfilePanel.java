@@ -86,7 +86,7 @@ final class ModalityClientProfilePanel {
                     .start();
             } else {
                 UserClaims userClaims = FXUserClaims.getUserClaims();
-                identityLink.setText(userClaims == null ? null : userClaims.getEmail());
+                identityLink.setText(userClaims == null ? null : userClaims.email());
                 identityLink.setOnAction(null);
                 roleGrid.visualResultProperty().unbind();
                 roleGrid.setVisualResult(null);

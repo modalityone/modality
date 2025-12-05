@@ -37,7 +37,7 @@ final class ModalityClientProfileButton {
             identity = userPerson.getFirstName();
         else {
             UserClaims userClaims = FXUserClaims.getUserClaims();
-            identity = userClaims == null ? null : userClaims.getEmail();
+            identity = userClaims == null ? null : userClaims.email();
         }
         buttonText.setText(identity == null ? "" : getFirstLetter(identity));
     }
