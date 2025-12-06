@@ -1,14 +1,14 @@
 /* Bootstrap style */
 .root {
-    -bootstrap-white: #fff ;
-    
-    -bootstrap-grey1: #e6e6e6 ;
-    -bootstrap-grey2: #d4d4d4 ;
-    -bootstrap-grey3: #ccc ;
-    -bootstrap-grey4: #adadad ;
-    -bootstrap-grey5: #8c8c8c ;
-    -bootstrap-grey6: #777777 ;
-    -bootstrap-grey7: #333 ;
+    -bootstrap-white: #fff;
+
+    -bootstrap-grey1: #e6e6e6;
+    -bootstrap-grey2: #d4d4d4;
+    -bootstrap-grey3: #ccc;
+    -bootstrap-grey4: #adadad;
+    -bootstrap-grey5: #8c8c8c;
+    -bootstrap-grey6: #777777;
+    -bootstrap-grey7: #333;
 
     -bootstrap-blue1: #88c9ff; /* Lightest shade */
     -bootstrap-blue2: #70c0ff;
@@ -22,41 +22,43 @@
     -bootstrap-blue10: #003682; /* Darkest shade */
     -bootstrap-blue11: #00285b;
 
-    -bootstrap-green1: #5cb85c ;
-    -bootstrap-green2: #4cae4c ;
-    -bootstrap-green3: #449d44 ;
-    -bootstrap-green4: #398439 ;
-    -bootstrap-green5: #255625 ;
-    -bootstrap-green6: #41BA4D ;
+    -bootstrap-green1: #5cb85c;
+    -bootstrap-green2: #4cae4c;
+    -bootstrap-green3: #449d44;
+    -bootstrap-green4: #398439;
+    -bootstrap-green5: #255625;
+    -bootstrap-green6: #41BA4D;
 
-    -bootstrap-orange1: #f0ad4e ;
-    -bootstrap-orange2: #eea236 ;
-    -bootstrap-orange3: #ec971f ;
-    -bootstrap-orange4: #d58512 ;
-    -bootstrap-orange5: #985f0d ;
-    -bootstrap-orange6: #8a6d3b ;
+    -bootstrap-orange1: #f0ad4e;
+    -bootstrap-orange2: #eea236;
+    -bootstrap-orange3: #ec971f;
+    -bootstrap-orange4: #d58512;
+    -bootstrap-orange5: #985f0d;
+    -bootstrap-orange6: #8a6d3b;
 
-    -bootstrap-red1: #FF0404 ;
-    -bootstrap-red2: #d43f3a ;
-    -bootstrap-red3: #c9302c ;
-    -bootstrap-red4: #ac2925 ;
-    -bootstrap-red5: #761c19 ;
-    -bootstrap-red6: #FF0404 ;
+    -bootstrap-red1: #FF0404;
+    -bootstrap-red2: #d43f3a;
+    -bootstrap-red3: #c9302c;
+    -bootstrap-red4: #ac2925;
+    -bootstrap-red5: #761c19;
+    -bootstrap-red6: #FF0404;
 
-        -badge-default-bg: -bootstrap-white;
-        -badge-default-txt: -bootstrap-grey7;
-        -badge-primary-bg: #e3f2fd;
-        -badge-primary-txt: #2e7d32;
-        -badge-success-bg: #e8f5e8;
-        -badge-success-txt: #2e7d32;
-        -badge-info-bg: -bootstrap-blue1;
-        -badge-info-txt: -bootstrap-white;
-        -badge-warning-bg: #eceff1;
-        -badge-warning-txt: #546e7a;
-        -badge-danger-bg: #ffebee;
-        -badge-danger-txt: #c62828;
-        -badge-secondary-bg: #eceff1;
-        -badge-secondary-txt: #546e7a;
+    -badge-default-bg: -bootstrap-white;
+    -badge-default-txt: -bootstrap-grey7;
+    -badge-primary-bg: #e3f2fd;
+    -badge-primary-txt: #2e7d32;
+    -badge-success-bg: #e8f5e8;
+    -badge-success-txt: #2e7d32;
+    -badge-info-bg: -bootstrap-blue1;
+    -badge-info-txt: -bootstrap-white;
+    -badge-warning-bg: #eceff1;
+    -badge-warning-txt: #546e7a;
+    -badge-danger-bg: #ffebee;
+    -badge-danger-txt: #c62828;
+    -badge-secondary-bg: #eceff1;
+    -badge-secondary-txt: #546e7a;
+
+    -fx-theme-color: -bootstrap-blue5;
 }
 
 /*.h1 {
@@ -72,7 +74,7 @@
     -fx-font-weight: bold;
     /*-fx-line-spacing: 20px;
     -fx-text-alignment: center;*/
-    }
+}
 
 .btn-black {
     -fx-text-fill: white;
@@ -431,6 +433,7 @@
 .button.readonly-field .text {
     -fx-fill: -bootstrap-grey7;
 }
+
 /* Badge - Light Pink (for admin/role badges) */
 .badge-light-pink {
     -fx-background-color: #FCE4EC;
@@ -574,6 +577,7 @@
     -fx-background-radius: 6;
     -fx-cursor: hand;
 }
+
 .chip-button:hover {
     -fx-background-color: #fafaf9;
     -fx-border-color: #d6d3d1;
@@ -600,6 +604,7 @@
     -fx-background-radius: 6;
     -fx-cursor: hand;
 }
+
 .chip-button-primary:hover {
     -fx-background-color: #eff6ff;
     -fx-border-color: #93c5fd;
@@ -626,6 +631,7 @@
     -fx-background-radius: 8;
     -fx-cursor: hand;
 }
+
 .btn-warning-solid:hover {
     -fx-background-color: #d97706;
 }

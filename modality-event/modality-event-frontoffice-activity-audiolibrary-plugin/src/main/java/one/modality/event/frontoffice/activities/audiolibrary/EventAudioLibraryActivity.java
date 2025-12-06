@@ -283,13 +283,13 @@ final class EventAudioLibraryActivity extends ViewDomainActivityBase {
 
     private void updateMainContent() {
         
-        Node loadingContentIndicator = new GoldenRatioPane(Controls.createProgressIndicator(100));
+        Node loadingContentSpinner = new GoldenRatioPane(Controls.createSpinner(100, 100));
         eventHeader.eventProperty().bind(eventProperty);
         AudioContentState audioState = audioStateProperty.get();
 
         // We display the loading indicator while the data is loading
         if (audioState== AudioContentState.LOADING) { // this indicates that the data has not finished loaded
-            audioTracksContainer.getChildren().setAll(loadingContentIndicator);
+            audioTracksContainer.getChildren().setAll(loadingContentSpinner);
             return;
         }
 
@@ -322,7 +322,7 @@ final class EventAudioLibraryActivity extends ViewDomainActivityBase {
         // We display the loading indicator while the data is loading
         Event event = eventProperty.get();
         if (event == null) { // this indicates that the data has not finished loaded
-            pageContainer.setContent(loadingContentIndicator);
+            pageContainer.setContent(loadingContentSpinner);
             // TODO display something else (ex: next online events to book) when the user is not logged in, or registered
         } else { // otherwise we display loadedContentVBox and set the content of audioTracksContainer
             pageContainer.setContent(loadedContentVBox);

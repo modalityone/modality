@@ -29,7 +29,9 @@ module modality.crm.frontoffice.activity.members.plugin {
     requires webfx.extras.styles.materialdesign;
     requires webfx.extras.time.format;
     requires webfx.extras.time.pickers;
+    requires webfx.extras.util.control;
     requires webfx.extras.util.dialog;
+    requires webfx.extras.util.layout;
     requires webfx.extras.validation;
     requires webfx.kit.util;
     requires webfx.platform.async;

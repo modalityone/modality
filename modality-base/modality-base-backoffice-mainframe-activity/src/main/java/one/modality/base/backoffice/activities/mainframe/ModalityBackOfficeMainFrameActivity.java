@@ -1,6 +1,7 @@
 package one.modality.base.backoffice.activities.mainframe;
 
 import dev.webfx.extras.canvas.pane.CanvasPane;
+import dev.webfx.extras.i18n.I18n;
 import dev.webfx.extras.panes.LayoutPane;
 import dev.webfx.extras.panes.MonoClipPane;
 import dev.webfx.extras.theme.layout.FXLayoutMode;
@@ -21,7 +22,6 @@ import dev.webfx.stack.com.bus.Bus;
 import dev.webfx.stack.com.bus.BusService;
 import dev.webfx.stack.com.bus.call.PendingBusCall;
 import dev.webfx.stack.com.bus.spi.impl.client.NetworkBus;
-import dev.webfx.extras.i18n.I18n;
 import dev.webfx.stack.session.state.client.fx.FXConnected;
 import javafx.animation.Timeline;
 import javafx.collections.ListChangeListener;
@@ -31,7 +31,6 @@ import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.geometry.VPos;
 import javafx.scene.Node;
-import javafx.scene.control.ProgressIndicator;
 import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Circle;
@@ -340,17 +339,15 @@ public final class ModalityBackOfficeMainFrameActivity extends ModalityClientMai
         // Pending operations
         Text pendingText = createStatusText(ModalityBackOfficeMainFrameI18nKeys.PendingCalls);
         Text pendingCountText = createStatusText(null);
-        ProgressIndicator pendingIndicator = Controls.createProgressIndicator(16);
+        Region pendingIndicator = Controls.createProgressIndicator(18);
         Timeline[] pendingFadeTimeline = { new Timeline() };
         PendingBusCall.addPendingCallsCountHandler(pendingCallsCount -> UiScheduler.runInUiThread(() -> {
             pendingCountText.setText("" + pendingCallsCount);
             if (pendingCallsCount > 0) {
-                pendingIndicator.setProgress(ProgressIndicator.INDETERMINATE_PROGRESS);
                 pendingFadeTimeline[0].stop();
                 pendingIndicator.setOpacity(1);
             } else {
                 pendingFadeTimeline[0] = Animations.animateProperty(pendingIndicator.opacityProperty(), 0, Duration.seconds(2));
-                pendingFadeTimeline[0].setOnFinished(e -> pendingIndicator.setProgress(0));
             }
         }));
         StackPane pendingPane = new StackPane(pendingIndicator, pendingCountText);

@@ -19,7 +19,6 @@ import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
-import javafx.scene.control.ProgressIndicator;
 import javafx.scene.layout.*;
 import javafx.scene.shape.SVGPath;
 import one.modality.base.client.cloud.image.ModalityCloudImageService;
@@ -47,7 +46,7 @@ public class MediaLinksForAudioRecordingsManagement extends MediaLinksManagement
     private final Item languageItem;
     private final String eventCoverCloudImagePath;
     private final MonoPane eventCoverImageContainer = new MonoPane();
-    private final ProgressIndicator replaceProgressIndicator = Controls.createProgressIndicator(50);
+    private final Region replaceSpinner = Controls.createSpinner(50);
     private final SVGPath trashImage = SvgIcons.createTrashSVGPath();
 
     public MediaLinksForAudioRecordingsManagement(Item languageItem, EntityStore entityStore, ObservableList<LocalDate> teachingsDates, ObservableList<ScheduledItem> audioScheduledItemsReadFromDatabase, ObservableList<Media> recordingsMediasReadFromDatabase, RecordingsTabView recordingsTabView) {
@@ -101,8 +100,8 @@ public class MediaLinksForAudioRecordingsManagement extends MediaLinksManagement
 
         loadAudioCoverPicture();
 
-        replaceProgressIndicator.setVisible(false);
-        StackPane thumbailStackPane = new StackPane(eventCoverImageContainer, trashImageMonoPane, replaceProgressIndicator);
+        replaceSpinner.setVisible(false);
+        StackPane thumbailStackPane = new StackPane(eventCoverImageContainer, trashImageMonoPane, replaceSpinner);
         Layouts.setFixedSize(thumbailStackPane, IMAGE_SIZE, IMAGE_SIZE);
         thumbailStackPane.setPadding(new Insets(0, 0, 25, 0));
         StackPane.setAlignment(trashImageMonoPane, Pos.BOTTOM_RIGHT);
@@ -119,7 +118,7 @@ public class MediaLinksForAudioRecordingsManagement extends MediaLinksManagement
         ((Region) filePicker.getView()).setPadding(new Insets(0, 0, 40, 0));
 
         FXProperties.runOnPropertyChange(fileToUpload -> {
-            replaceProgressIndicator.setVisible(true);
+            replaceSpinner.setVisible(true);
             // Load the image from the uploaded file
             javafx.scene.image.Image originalImage = new javafx.scene.image.Image(fileToUpload.getObjectURL(), true);
             FXProperties.runOnPropertiesChange(property -> {
@@ -128,7 +127,7 @@ public class MediaLinksForAudioRecordingsManagement extends MediaLinksManagement
                     ModalityCloudImageService.prepareImageForUpload(originalImage, false, 1, 0, 0, IMAGE_SIZE, IMAGE_SIZE)
                         .onFailure(e -> {
                             Console.log("Failed to prepare image for upload: " + e);
-                            replaceProgressIndicator.setVisible(false);
+                            replaceSpinner.setVisible(false);
                         })
                         .onSuccess(pngBlob -> {
                             // Upload the PNG blob
@@ -136,7 +135,7 @@ public class MediaLinksForAudioRecordingsManagement extends MediaLinksManagement
                                 .inUiThread()
                                 .onComplete(ar -> {
                                     if (ar.failed())
-                                        replaceProgressIndicator.setVisible(false);
+                                        replaceSpinner.setVisible(false);
                                     else
                                         loadAudioCoverPicture();
                                 });
@@ -193,7 +192,7 @@ public class MediaLinksForAudioRecordingsManagement extends MediaLinksManagement
         ModalityCloudImageService.loadHdpiImage(eventCoverCloudImagePath, IMAGE_SIZE, IMAGE_SIZE, eventCoverImageContainer, SvgIcons::createAudioCoverPath)
             .onComplete(ar -> {
                 trashImage.setVisible(ar.succeeded());
-                replaceProgressIndicator.setVisible(false);
+                replaceSpinner.setVisible(false);
             });
     }
 

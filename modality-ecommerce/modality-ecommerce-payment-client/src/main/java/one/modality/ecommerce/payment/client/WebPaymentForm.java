@@ -208,20 +208,20 @@ public final class WebPaymentForm {
     private void showLoadingFormOverlay() {
         VBox vBox = new VBox(5,
             createLabel("The " + getGatewayName() + " payment form is loading"),
-            createProgressIndicator()
+            createSpinner()
         );
         vBox.setAlignment(Pos.CENTER);
         showOverlay(vBox);
     }
 
-    private ProgressIndicator createProgressIndicator() {
-        return Controls.createProgressIndicator(32);
+    private Region createSpinner() {
+        return Controls.createSpinner(32);
     }
 
     private void showVerificationProcessOverlay() {
         VBox vBox = new VBox(5,
             createLabel(getGatewayName() + " is capturing your details"),
-            createProgressIndicator()
+            createSpinner()
         );
         vBox.setAlignment(Pos.CENTER);
         showOverlay(vBox);
@@ -232,7 +232,7 @@ public final class WebPaymentForm {
         VBox vBox = new VBox(5,
             createLabel("Your details have been successfully captured by " + getGatewayName()),
             createLabel(getGatewayName() + " is now completing your payment"),
-            createProgressIndicator()
+            createSpinner()
         );
         vBox.setAlignment(Pos.CENTER);
         showOverlay(vBox);
@@ -241,7 +241,7 @@ public final class WebPaymentForm {
     private void showCancellingOverlay() {
         VBox vBox = new VBox(5,
             createLabel("We are cancelling your payment"),
-            createProgressIndicator()
+            createSpinner()
         );
         vBox.setAlignment(Pos.CENTER);
         showOverlay(vBox);

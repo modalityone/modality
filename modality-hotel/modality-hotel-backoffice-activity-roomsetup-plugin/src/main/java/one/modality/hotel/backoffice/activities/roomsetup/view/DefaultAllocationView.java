@@ -2,6 +2,7 @@ package one.modality.hotel.backoffice.activities.roomsetup.view;
 
 import dev.webfx.extras.i18n.I18n;
 import dev.webfx.extras.i18n.controls.I18nControls;
+import dev.webfx.extras.styles.bootstrap.Bootstrap;
 import dev.webfx.extras.util.control.Controls;
 import dev.webfx.kit.util.properties.FXProperties;
 import dev.webfx.stack.orm.domainmodel.DataSourceModel;
@@ -23,13 +24,11 @@ import javafx.scene.Cursor;
 import javafx.scene.Node;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
-import javafx.scene.control.ProgressIndicator;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.SVGPath;
 import one.modality.base.client.bootstrap.ModalityStyle;
-import dev.webfx.extras.styles.bootstrap.Bootstrap;
 import one.modality.base.shared.entities.*;
 import one.modality.base.shared.knownitems.KnownItemFamily;
 import one.modality.hotel.backoffice.activities.roomsetup.RoomSetupI18nKeys;
@@ -39,7 +38,10 @@ import one.modality.hotel.backoffice.activities.roomsetup.dialog.DialogManager;
 import one.modality.hotel.backoffice.activities.roomsetup.util.PoolTypeFilter;
 import one.modality.hotel.backoffice.activities.roomsetup.util.UIComponentDecorators;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 import static dev.webfx.stack.orm.dql.DqlStatement.orderBy;
@@ -117,13 +119,12 @@ public class DefaultAllocationView {
         // Create loading overlay
         loadingOverlay = new StackPane();
         loadingOverlay.setStyle("-fx-background-color: rgba(255,255,255,0.8);");
-        ProgressIndicator progressIndicator = new ProgressIndicator();
-        progressIndicator.setMaxSize(50, 50);
+        Region loadingSpinner = Controls.createSpinner(50);
         VBox loadingBox = new VBox(10);
         loadingBox.setAlignment(Pos.CENTER);
         Label loadingLabel = I18nControls.newLabel(RoomSetupI18nKeys.LoadingAllocations);
         loadingLabel.getStyleClass().add(UIComponentDecorators.CSS_SUBTITLE);
-        loadingBox.getChildren().addAll(progressIndicator, loadingLabel);
+        loadingBox.getChildren().addAll(loadingSpinner, loadingLabel);
         loadingOverlay.getChildren().add(loadingBox);
 
         // Use StackPane to overlay loading indicator on scroll content

@@ -4,6 +4,7 @@ import dev.webfx.extras.i18n.controls.I18nControls;
 import dev.webfx.extras.styles.bootstrap.Bootstrap;
 import dev.webfx.extras.theme.luminance.LuminanceTheme;
 import dev.webfx.extras.time.pickers.DateField;
+import dev.webfx.extras.util.control.Controls;
 import dev.webfx.platform.console.Console;
 import dev.webfx.platform.uischeduler.UiScheduler;
 import javafx.animation.FadeTransition;
@@ -13,7 +14,6 @@ import javafx.scene.Node;
 import javafx.scene.control.Button;
 import javafx.scene.control.ContentDisplay;
 import javafx.scene.control.Label;
-import javafx.scene.control.ProgressIndicator;
 import javafx.scene.input.Clipboard;
 import javafx.scene.input.ClipboardContent;
 import javafx.scene.layout.*;
@@ -44,7 +44,7 @@ public final class KitchenViewUI {
     private final DateField endDateField;
     private final Button applyButton;
     private final Button nextWeekButton;
-    private final ProgressIndicator progressIndicator;
+    private final Region loadingSpinner;
     private final StackPane overlayPane;
     private final Label copiedFeedbackLabel;
     private final Label organizationLabel;
@@ -144,15 +144,14 @@ public final class KitchenViewUI {
         headerContent.setMaxWidth(Region.USE_PREF_SIZE); // Fit to content width
 
         // Create progress indicator
-        progressIndicator = new ProgressIndicator();
-        progressIndicator.setMaxSize(80, 80);
-        progressIndicator.setVisible(true); // Show initially during page load
+        loadingSpinner = Controls.createSpinner(80);
+        loadingSpinner.setVisible(true); // Show initially during page load
 
         // Create a stack to overlay progress indicator on table
         StackPane contentStack = new StackPane();
         contentStack.setMinHeight(400); // Ensure minimum height for centered progress indicator
-        contentStack.getChildren().addAll(tableView.getNode(), progressIndicator);
-        StackPane.setAlignment(progressIndicator, Pos.CENTER);
+        contentStack.getChildren().addAll(tableView.getNode(), loadingSpinner);
+        StackPane.setAlignment(loadingSpinner, Pos.CENTER);
         StackPane.setAlignment(tableView.getNode(), Pos.TOP_LEFT); // Align table to top-left instead of center
 
         // Hide table initially until data loads
@@ -239,7 +238,7 @@ public final class KitchenViewUI {
      */
     public void showLoading() {
         UiScheduler.runInUiThread(() -> {
-            progressIndicator.setVisible(true);
+            loadingSpinner.setVisible(true);
             tableView.getNode().setOpacity(0);
         });
     }
@@ -249,7 +248,7 @@ public final class KitchenViewUI {
      */
     public void hideLoading() {
         UiScheduler.runInUiThread(() -> {
-            progressIndicator.setVisible(false);
+            loadingSpinner.setVisible(false);
             tableView.getNode().setOpacity(1.0);
         });
     }

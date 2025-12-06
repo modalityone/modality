@@ -20,9 +20,11 @@ import javafx.geometry.Pos;
 import javafx.scene.Node;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
-import javafx.scene.control.ProgressIndicator;
 import javafx.scene.control.ScrollPane;
-import javafx.scene.layout.*;
+import javafx.scene.layout.HBox;
+import javafx.scene.layout.Priority;
+import javafx.scene.layout.Region;
+import javafx.scene.layout.VBox;
 import one.modality.base.shared.entities.Event;
 import one.modality.base.shared.entities.Resource;
 import one.modality.base.shared.entities.Site;
@@ -253,8 +255,7 @@ public final class SiteComparisonView {
         loadingBox.setSpacing(16);
         loadingBox.setPadding(new Insets(60, 20, 60, 20));
 
-        ProgressIndicator spinner = new ProgressIndicator();
-        spinner.setPrefSize(50, 50);
+        Region spinner = Controls.createSpinner(50);
 
         Label loadingMessage = I18nControls.newLabel(RoomSetupI18nKeys.LoadingData);
         loadingMessage.getStyleClass().add(UIComponentDecorators.CSS_SUBTITLE);
@@ -271,8 +272,7 @@ public final class SiteComparisonView {
         loadingBox.setAlignment(Pos.CENTER_LEFT);
         loadingBox.setPadding(new Insets(20));
 
-        ProgressIndicator spinner = new ProgressIndicator();
-        spinner.setPrefSize(24, 24);
+        Region spinner = Controls.createSpinner(24);
 
         Label loadingMessage = I18nControls.newLabel(RoomSetupI18nKeys.LoadingData);
         loadingMessage.getStyleClass().add(UIComponentDecorators.CSS_SMALL);
@@ -458,8 +458,7 @@ public final class SiteComparisonView {
 
             statusBox.getChildren().addAll(statusBadge, countsSummary);
         } else if (isLoading) {
-            ProgressIndicator miniSpinner = new ProgressIndicator();
-            miniSpinner.setPrefSize(16, 16);
+            Region miniSpinner = Controls.createSpinner(16);
             statusBox.getChildren().add(miniSpinner);
         } else {
             // Not loaded - show "click to load" indicator

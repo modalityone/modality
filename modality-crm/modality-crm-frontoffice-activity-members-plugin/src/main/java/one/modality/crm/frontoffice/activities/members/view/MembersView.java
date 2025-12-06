@@ -1,7 +1,6 @@
 package one.modality.crm.frontoffice.activities.members.view;
 
 import dev.webfx.extras.controlfactory.MaterialFactoryMixin;
-import one.modality.base.client.activity.ModalityButtonFactoryMixin;
 import dev.webfx.extras.i18n.I18n;
 import dev.webfx.extras.i18n.controls.I18nControls;
 import dev.webfx.extras.panes.MonoPane;
@@ -9,13 +8,14 @@ import dev.webfx.extras.styles.bootstrap.Bootstrap;
 import dev.webfx.extras.styles.materialdesign.util.MaterialUtil;
 import dev.webfx.extras.time.format.LocalizedTime;
 import dev.webfx.extras.time.pickers.DateField;
+import dev.webfx.extras.util.control.Controls;
 import dev.webfx.extras.util.dialog.DialogCallback;
 import dev.webfx.extras.util.dialog.builder.DialogBuilderUtil;
 import dev.webfx.extras.util.dialog.builder.DialogContent;
+import dev.webfx.extras.util.layout.Layouts;
 import dev.webfx.extras.validation.ValidationSupport;
 import dev.webfx.kit.util.properties.FXProperties;
 import dev.webfx.kit.util.properties.ObservableLists;
-import dev.webfx.platform.console.Console;
 import dev.webfx.platform.uischeduler.UiScheduler;
 import dev.webfx.stack.orm.domainmodel.DataSourceModel;
 import dev.webfx.stack.orm.entity.EntityStore;
@@ -31,9 +31,11 @@ import javafx.geometry.Pos;
 import javafx.scene.Node;
 import javafx.scene.control.*;
 import javafx.scene.layout.HBox;
+import javafx.scene.layout.Region;
 import javafx.scene.layout.VBox;
 import javafx.scene.text.TextAlignment;
 import javafx.util.Duration;
+import one.modality.base.client.activity.ModalityButtonFactoryMixin;
 import one.modality.base.client.icons.SvgIcons;
 import one.modality.base.client.mainframe.fx.FXMainFrameDialogArea;
 import one.modality.base.client.time.FrontOfficeTimeFormats;
@@ -196,11 +198,7 @@ public class MembersView implements MaterialFactoryMixin, ModalityButtonFactoryM
         VBox warningAlert = createMatchingAccountsWarning();
 
         // Loading indicator
-        ProgressIndicator loadingIndicator = new ProgressIndicator();
-        loadingIndicator.setPrefSize(60, 60);
-        VBox loadingBox = new VBox(loadingIndicator);
-        loadingBox.setAlignment(Pos.CENTER);
-        loadingBox.setPadding(new Insets(60, 0, 60, 0));
+        Region loadingSpinner = Controls.createSpinner(60, 60);
 
         // Unified members list container - combines the three separate lists
         VBox membersListBox = new VBox(0);
@@ -241,8 +239,7 @@ public class MembersView implements MaterialFactoryMixin, ModalityButtonFactoryM
                     && model.getAuthorizedMembersList().isEmpty()
                     && model.getPendingMemberInvitationsList().isEmpty();
 
-            loadingBox.setVisible(isLoading);
-            loadingBox.setManaged(isLoading);
+            Layouts.setManagedAndVisibleProperties(loadingSpinner, isLoading);
 
             if (!isLoading) {
                 emptyState.setVisible(isMembersEmpty);
@@ -277,7 +274,7 @@ public class MembersView implements MaterialFactoryMixin, ModalityButtonFactoryM
                 sectionTitle,
                 description,
                 warningAlert,
-                loadingBox,
+                loadingSpinner,
                 emptyState,
                 membersListBox,
                 addButton
@@ -313,11 +310,7 @@ public class MembersView implements MaterialFactoryMixin, ModalityButtonFactoryM
         description.setPadding(new Insets(10, 0, 20, 0));
 
         // Loading indicator
-        ProgressIndicator loadingIndicator = new ProgressIndicator();
-        loadingIndicator.setPrefSize(60, 60);
-        VBox loadingBox = new VBox(loadingIndicator);
-        loadingBox.setAlignment(Pos.CENTER);
-        loadingBox.setPadding(new Insets(60, 0, 60, 0));
+        Region loadingSpinner = Controls.createSpinner(60, 60);
 
         // Pending incoming requests (people asking to manage my bookings) - now using ManagerItem
         VBox pendingIncomingList = new VBox(0);
@@ -355,8 +348,7 @@ public class MembersView implements MaterialFactoryMixin, ModalityButtonFactoryM
                     && model.getPendingIncomingManagerInvitationsList().isEmpty()
                     && model.getPendingOutgoingManagerInvitationsList().isEmpty();
 
-            loadingBox.setVisible(isLoading);
-            loadingBox.setManaged(isLoading);
+            Layouts.setManagedAndVisibleProperties(loadingSpinner, isLoading);
 
             if (!isLoading) {
                 emptyState.setVisible(isEmpty);
@@ -402,7 +394,7 @@ public class MembersView implements MaterialFactoryMixin, ModalityButtonFactoryM
                 dividerLabel,
                 sectionTitle,
                 description,
-                loadingBox,
+                loadingSpinner,
                 emptyState,
                 pendingIncomingList,
                 pendingOutgoingList,

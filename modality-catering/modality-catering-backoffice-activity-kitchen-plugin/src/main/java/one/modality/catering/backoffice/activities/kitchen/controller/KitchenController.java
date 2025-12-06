@@ -1,5 +1,8 @@
 package one.modality.catering.backoffice.activities.kitchen.controller;
 
+import dev.webfx.extras.util.control.Controls;
+import dev.webfx.extras.util.dialog.DialogCallback;
+import dev.webfx.extras.util.dialog.DialogUtil;
 import dev.webfx.kit.util.properties.FXProperties;
 import dev.webfx.platform.console.Console;
 import dev.webfx.platform.uischeduler.UiScheduler;
@@ -7,6 +10,8 @@ import dev.webfx.stack.orm.domainmodel.DataSourceModel;
 import javafx.beans.property.ObjectProperty;
 import javafx.beans.property.SimpleObjectProperty;
 import javafx.scene.Node;
+import javafx.scene.layout.Region;
+import javafx.scene.layout.VBox;
 import one.modality.base.shared.entities.Organization;
 import one.modality.catering.backoffice.activities.kitchen.model.KitchenDisplayModel;
 import one.modality.catering.backoffice.activities.kitchen.view.AttendeeDetailsDialog;
@@ -316,10 +321,7 @@ public final class KitchenController {
                     });
                 })
                 .onFailure(error -> {
-                    Console.log("Failed to load attendees: " + error);
-                    if (error != null) {
-                        error.printStackTrace();
-                    }
+                    Console.log("Failed to load attendees", error);
                     // Close loading dialog on error
                     UiScheduler.runInUiThread(loadingDialog::closeDialog);
                 });
@@ -328,20 +330,19 @@ public final class KitchenController {
     /**
      * Shows a loading dialog with a progress indicator.
      */
-    private dev.webfx.extras.util.dialog.DialogCallback showLoadingDialog() {
-        javafx.scene.control.ProgressIndicator progressIndicator = new javafx.scene.control.ProgressIndicator();
-        progressIndicator.setMaxSize(60, 60);
+    private DialogCallback showLoadingDialog() {
+        Region loadingSpinner = Controls.createSpinner(60);
 
-        javafx.scene.layout.VBox loadingContent = new javafx.scene.layout.VBox(15);
+        VBox loadingContent = new VBox(15);
         loadingContent.setAlignment(javafx.geometry.Pos.CENTER);
         loadingContent.setPadding(new javafx.geometry.Insets(40));
-        loadingContent.getChildren().add(progressIndicator);
+        loadingContent.getChildren().add(loadingSpinner);
 
         javafx.scene.control.Label loadingLabel = new javafx.scene.control.Label("Loading...");
         loadingLabel.setStyle("-fx-font-size: 14px; -fx-text-fill: #666;");
         loadingContent.getChildren().add(loadingLabel);
 
-        return dev.webfx.extras.util.dialog.DialogUtil.showModalNodeInGoldLayout(
+        return DialogUtil.showModalNodeInGoldLayout(
                 loadingContent,
                 view.getOverlayPane(),
                 20,

@@ -47,7 +47,7 @@ public class BuildingDialog implements DialogManager.ManagedDialog {
 
     // Image upload components
     private final MonoPane iconImageContainer = new MonoPane();
-    private final ProgressIndicator imageUploadProgressIndicator = Controls.createProgressIndicator(30);
+    private final Region imageUploadSpinner = Controls.createSpinner(30);
     private String buildingCloudImagePath;
 
     private Site resolvedSite;
@@ -169,10 +169,10 @@ public class BuildingDialog implements DialogManager.ManagedDialog {
         iconImageContainer.setContent(placeholder);
 
         // Progress indicator (hidden by default)
-        imageUploadProgressIndicator.setVisible(false);
+        imageUploadSpinner.setVisible(false);
 
         // Stack for image + progress
-        StackPane imageStack = new StackPane(iconImageContainer, imageUploadProgressIndicator);
+        StackPane imageStack = new StackPane(iconImageContainer, imageUploadSpinner);
         imageStack.setPrefSize(ICON_SIZE, ICON_SIZE);
         imageStack.setMinSize(ICON_SIZE, ICON_SIZE);
         imageStack.setMaxSize(ICON_SIZE, ICON_SIZE);
@@ -242,10 +242,10 @@ public class BuildingDialog implements DialogManager.ManagedDialog {
     private void loadBuildingImage() {
         if (buildingCloudImagePath == null) return;
 
-        imageUploadProgressIndicator.setVisible(true);
+        imageUploadSpinner.setVisible(true);
         ModalityCloudImageService.loadHdpiImage(buildingCloudImagePath, ICON_SIZE, ICON_SIZE, iconImageContainer, this::createImagePlaceholder)
                 .onComplete(ar -> {
-                    imageUploadProgressIndicator.setVisible(false);
+                    imageUploadSpinner.setVisible(false);
                     if (ar.succeeded()) {
                         iconImageContainer.getStyleClass().remove("image-preview-container");
                     } else {
@@ -266,7 +266,7 @@ public class BuildingDialog implements DialogManager.ManagedDialog {
             return;
         }
 
-        imageUploadProgressIndicator.setVisible(true);
+        imageUploadSpinner.setVisible(true);
         Image originalImage = new Image(fileToUpload.getObjectURL(), true);
 
         FXProperties.runOnPropertiesChange(property -> {
@@ -275,7 +275,7 @@ public class BuildingDialog implements DialogManager.ManagedDialog {
                 ModalityCloudImageService.prepareImageForUpload(originalImage, true, 1, 0, 0, ICON_SIZE, ICON_SIZE)
                         .onFailure(e -> {
                             Console.log("Failed to prepare image for upload: " + e);
-                            imageUploadProgressIndicator.setVisible(false);
+                            imageUploadSpinner.setVisible(false);
                         })
                         .onSuccess(pngBlob -> {
                             // Upload the PNG blob
@@ -284,7 +284,7 @@ public class BuildingDialog implements DialogManager.ManagedDialog {
                                     .onComplete(ar -> {
                                         if (ar.failed()) {
                                             Console.log("Failed to upload image: " + ar.cause());
-                                            imageUploadProgressIndicator.setVisible(false);
+                                            imageUploadSpinner.setVisible(false);
                                         } else {
                                             Console.log("Building image uploaded successfully");
                                             loadBuildingImage();
@@ -304,16 +304,16 @@ public class BuildingDialog implements DialogManager.ManagedDialog {
         alert.setContentText(I18n.getI18nText(RoomSetupI18nKeys.RemoveImageContent));
         alert.showAndWait().ifPresent(response -> {
             if (response == ButtonType.OK) {
-                imageUploadProgressIndicator.setVisible(true);
+                imageUploadSpinner.setVisible(true);
                 ModalityCloudImageService.deleteImage(buildingCloudImagePath)
                         .inUiThread()
                         .onSuccess(e -> {
                             iconImageContainer.setContent(createImagePlaceholder());
-                            imageUploadProgressIndicator.setVisible(false);
+                            imageUploadSpinner.setVisible(false);
                         })
                         .onFailure(error -> {
                             Console.log("Failed to delete image: " + error);
-                            imageUploadProgressIndicator.setVisible(false);
+                            imageUploadSpinner.setVisible(false);
                         });
             }
         });

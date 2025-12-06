@@ -22,7 +22,6 @@ import javafx.geometry.Pos;
 import javafx.scene.Node;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
-import javafx.scene.control.ProgressIndicator;
 import javafx.scene.layout.*;
 import javafx.scene.shape.Line;
 import javafx.scene.shape.SVGPath;
@@ -76,7 +75,7 @@ final class ProgramStep3View {
     private final HBox stepIndicatorContainer;
     private final VBox titleContainer;
     private final VBox daysContainer;
-    private final ProgressIndicator loadingIndicator;
+    private final Region loadingSpinner;
 
     // Maps to store attendance and media counts per scheduled item
     private final Map<Object, Integer> attendanceCountsByScheduledItemId = new HashMap<>();
@@ -88,7 +87,7 @@ final class ProgramStep3View {
     // Event image upload components
     private static final double EVENT_IMAGE_SIZE = 300; // 1:1 aspect ratio (square)
     private final MonoPane eventImageContainer = new MonoPane();
-    private final ProgressIndicator imageUploadProgressIndicator = Controls.createProgressIndicator(40);
+    private final Region imageUploadSpinner = Controls.createSpinner(40);
     private final StackPane imageOverlay = new StackPane();
     private String eventCoverCloudImagePath;
 
@@ -112,8 +111,7 @@ final class ProgramStep3View {
         daysContainer.setAlignment(Pos.TOP_CENTER);
 
         // Create loading indicator
-        loadingIndicator = new ProgressIndicator();
-        loadingIndicator.setPrefSize(60, 60);
+        loadingSpinner = Controls.createSpinner(60);
 
         mainContainer = buildUi();
 
@@ -462,10 +460,10 @@ final class ProgramStep3View {
         imageOverlay.getChildren().add(overlayButtons);
 
         // Progress indicator
-        imageUploadProgressIndicator.setVisible(false);
+        imageUploadSpinner.setVisible(false);
 
         // Stack: image + overlay + progress
-        StackPane imageStack = new StackPane(eventImageContainer, imageOverlay, imageUploadProgressIndicator);
+        StackPane imageStack = new StackPane(eventImageContainer, imageOverlay, imageUploadSpinner);
         imageStack.setPrefSize(EVENT_IMAGE_SIZE, EVENT_IMAGE_SIZE);
         imageStack.setMinSize(EVENT_IMAGE_SIZE, EVENT_IMAGE_SIZE);
         imageStack.setMaxSize(EVENT_IMAGE_SIZE, EVENT_IMAGE_SIZE);
@@ -667,7 +665,7 @@ final class ProgramStep3View {
 
         ModalityCloudImageService.loadHdpiImage(eventCoverCloudImagePath, EVENT_IMAGE_SIZE, EVENT_IMAGE_SIZE, eventImageContainer, this::createImagePlaceholder)
             .onComplete(ar -> {
-                imageUploadProgressIndicator.setVisible(false);
+                imageUploadSpinner.setVisible(false);
                 if (ar.succeeded()) {
                     // Switch to has-image styling (solid border)
                     eventImageContainer.getStyleClass().remove("image-preview-container");
@@ -688,7 +686,7 @@ final class ProgramStep3View {
             return;
         }
 
-        imageUploadProgressIndicator.setVisible(true);
+        imageUploadSpinner.setVisible(true);
         // Load the image from the uploaded file
         javafx.scene.image.Image originalImage = new javafx.scene.image.Image(fileToUpload.getObjectURL(), true);
         FXProperties.runOnPropertiesChange(property -> {
@@ -697,7 +695,7 @@ final class ProgramStep3View {
                 ModalityCloudImageService.prepareImageForUpload(originalImage, false, 1, 0, 0, EVENT_IMAGE_SIZE, EVENT_IMAGE_SIZE)
                     .onFailure(e -> {
                         Console.log("Failed to prepare image for upload: " + e);
-                        imageUploadProgressIndicator.setVisible(false);
+                        imageUploadSpinner.setVisible(false);
                     })
                     .onSuccess(pngBlob -> {
                         // Upload the PNG blob
@@ -706,7 +704,7 @@ final class ProgramStep3View {
                             .onComplete(ar -> {
                                 if (ar.failed()) {
                                     Console.log("Failed to upload image: " + ar.cause());
-                                    imageUploadProgressIndicator.setVisible(false);
+                                    imageUploadSpinner.setVisible(false);
                                 } else {
                                     Console.log("Image uploaded successfully");
                                     loadEventCoverImage();
@@ -737,8 +735,7 @@ final class ProgramStep3View {
         fullImageContainer.setPrefSize(500, 500);
         fullImageContainer.setMaxSize(500, 500);
 
-        ProgressIndicator dialogProgress = new ProgressIndicator();
-        dialogProgress.setPrefSize(60, 60);
+        Region dialogProgress = Controls.createSpinner(60);
 
         // Stack pane to overlay progress indicator - white background container
         StackPane imagePane = new StackPane(fullImageContainer, dialogProgress);
@@ -769,7 +766,7 @@ final class ProgramStep3View {
 
         String confirmationMessage = I18n.getI18nText(ProgramI18nKeys.DeleteImageConfirmation);
         ModalityDialog.showConfirmationDialog(confirmationMessage, () -> {
-            imageUploadProgressIndicator.setVisible(true);
+            imageUploadSpinner.setVisible(true);
             ModalityCloudImageService.deleteImage(eventCoverCloudImagePath)
                 .inUiThread()
                 .onSuccess(e -> {
@@ -778,11 +775,11 @@ final class ProgramStep3View {
                     // Switch back to placeholder styling (dashed border)
                     eventImageContainer.getStyleClass().remove("image-preview-has-image");
                     eventImageContainer.getStyleClass().add("image-preview-container");
-                    imageUploadProgressIndicator.setVisible(false);
+                    imageUploadSpinner.setVisible(false);
                 })
                 .onFailure(error -> {
                     Console.log("Failed to delete image: " + error);
-                    imageUploadProgressIndicator.setVisible(false);
+                    imageUploadSpinner.setVisible(false);
                 });
         });
     }
@@ -1325,7 +1322,7 @@ final class ProgramStep3View {
      */
     private void showLoadingIndicator() {
         daysContainer.getChildren().clear();
-        VBox loadingBox = new VBox(loadingIndicator);
+        VBox loadingBox = new VBox(loadingSpinner);
         loadingBox.setAlignment(Pos.CENTER);
         loadingBox.setPadding(new Insets(50));
         daysContainer.getChildren().add(loadingBox);

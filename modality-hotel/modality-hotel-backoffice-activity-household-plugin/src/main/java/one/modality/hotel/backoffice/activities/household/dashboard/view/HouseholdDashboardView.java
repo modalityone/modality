@@ -140,8 +140,7 @@ public final class HouseholdDashboardView {
         loadingIndicator.setPadding(new Insets(60, 20, 60, 20));
         loadingIndicator.setBackground(Background.EMPTY);
 
-        javafx.scene.control.ProgressIndicator spinner = new javafx.scene.control.ProgressIndicator();
-        spinner.setPrefSize(50, 50);
+        Region spinner = Controls.createSpinner(50);
 
         Label loadingMessage = I18nControls.newLabel(HouseholdI18nKeys.LoadingData);
         loadingMessage.getStyleClass().add("loading-message");

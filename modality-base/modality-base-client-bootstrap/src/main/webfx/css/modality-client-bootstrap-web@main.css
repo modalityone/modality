@@ -57,6 +57,8 @@
     --badge-danger-txt: #c62828;
     --badge-secondary-bg: #fff3e0;
     --badge-secondary-txt: #f57c00;
+
+    --fx-theme-color: var(--bootstrap-blue5);
 }
 
 .h2 {

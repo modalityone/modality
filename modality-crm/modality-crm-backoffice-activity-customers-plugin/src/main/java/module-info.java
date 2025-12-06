@@ -20,6 +20,7 @@ module modality.crm.backoffice.activity.customers.plugin {
     requires webfx.extras.i18n.controls;
     requires webfx.extras.operation;
     requires webfx.extras.styles.bootstrap;
+    requires webfx.extras.util.control;
     requires webfx.extras.util.dialog;
     requires webfx.extras.util.layout;
     requires webfx.extras.visual;
