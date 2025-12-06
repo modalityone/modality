@@ -19,7 +19,7 @@
 
         <dependency>
             <groupId>org.openjfx</groupId>
-            <artifactId>javafx-base</artifactId>
+            <artifactId>javafx-graphics</artifactId>
             <scope>provided</scope>
         </dependency>
 
