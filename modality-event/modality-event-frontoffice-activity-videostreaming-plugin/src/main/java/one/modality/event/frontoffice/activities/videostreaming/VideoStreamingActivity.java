@@ -95,8 +95,7 @@ final class VideoStreamingActivity extends ViewDomainActivityBase {
         EntityStore entityStore = EntityStore.create(getDataSourceModel());
         reloadProperty.setValue(true);
         // Loading the list of events with videos booked by the user and put it into eventsWithBookedVideos
-        FXProperties.runNowAndOnPropertiesChange(() ->
-        {
+        FXProperties.runNowAndOnPropertiesChange(() -> {
             if (reloadProperty.get()) {
                 ModalityUserPrincipal modalityUserPrincipal = FXModalityUserPrincipal.getModalityUserPrincipal();
                 eventsWithBookedVideos.clear();
@@ -190,15 +189,15 @@ final class VideoStreamingActivity extends ViewDomainActivityBase {
     private void updateContentStateProperty() {
         if (eventsWithBookedVideosLoadingProperty.get()) {
             contentStateProperty.set(VideoContentState.LOADING);
-        }
-        if (eventsWithBookedVideos.isEmpty()) {
+        } else if (eventsWithBookedVideos.isEmpty()) {
             contentStateProperty.set(VideoContentState.NO_CONTENT);
         }
         int balance = 0;
         boolean isConfirmed = true;
-        if (eventProperty.get() != null) {
-            balance = (int) eventProperty.get().getFieldValue("balance");
-            isConfirmed = (boolean) eventProperty.get().getFieldValue("isConfirmed");
+        Event event = eventProperty.get();
+        if (event != null) {
+            balance = event.getIntegerFieldValue("balance");
+            isConfirmed = event.getBooleanFieldValue("isConfirmed");
         }
         if (balance > 0) {
             contentStateProperty.set(VideoContentState.PAYMENT_PENDING);
@@ -301,11 +300,12 @@ final class VideoStreamingActivity extends ViewDomainActivityBase {
         }
 
         if (state == VideoContentState.PAYMENT_PENDING) {
-            int balance = (int) eventProperty.get().getFieldValue("balance");
-            Document orderDocument = (Document) eventProperty.get().getFieldValue("document");
+            Event event = eventProperty.get();
+            int balance = event.getIntegerFieldValue("balance");
+            Document orderDocument = event.getForeignEntity("document");
             PaymentPendingView paymentView = new PaymentPendingView(
                 balance,
-                eventProperty.get(),
+                event,
                 orderDocument,
                 () -> isPaymentCurrentlyProcessing = true,
                 "VIDEO"
