@@ -119,11 +119,11 @@ public final class ModalityBackOfficeMainFrameActivity extends ModalityClientMai
         if (!ganttCanvasContainer.isVisible())
             return false;
         // The previous condition was enough if ganttCanvasContainer is not a CanvasPane
-        if (!(ganttCanvasContainer instanceof CanvasPane))
+        if (!(ganttCanvasContainer instanceof CanvasPane canvasPane))
             return true;
         // A CanvasPane can hide the gantt canvas through animation. What matters here is to know if the gantt canvas
         // is showing at the end of the animation. The height at the end of the animation is requestedCanvasHeight.
-        return ((CanvasPane) ganttCanvasContainer).getRequestedCanvasHeight() > 0;
+        return canvasPane.getRequestedCanvasHeight() > 0;
     }
 
     @Override
@@ -315,8 +315,7 @@ public final class ModalityBackOfficeMainFrameActivity extends ModalityClientMai
         );
         HBox statusBar = new HBox(10, connectionText, connectionLed);
         Bus bus = BusService.bus();
-        if (bus instanceof NetworkBus) { // Actually always true
-            NetworkBus networkBus = (NetworkBus) bus;
+        if (bus instanceof NetworkBus networkBus) { // Actually always true
             Text trafficText = createStatusText(ModalityBackOfficeMainFrameI18nKeys.Traffic);
             // Outgoing traffic (from client to server)
             Shape outgoingTrafficLed = new Circle(8, NO_TRAFFIC_COLOR);
