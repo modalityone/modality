@@ -4,7 +4,10 @@ import dev.webfx.extras.action.Action;
 import dev.webfx.extras.action.ActionBinder;
 import dev.webfx.extras.action.ActionBuilder;
 import dev.webfx.extras.operation.action.OperationActionFactoryMixin;
+import dev.webfx.extras.panes.MonoPane;
 import dev.webfx.extras.theme.luminance.LuminanceTheme;
+import dev.webfx.extras.util.control.Controls;
+import dev.webfx.kit.util.properties.ObservableLists;
 import dev.webfx.kit.util.properties.Unregisterable;
 import dev.webfx.platform.util.Strings;
 import dev.webfx.stack.routing.uirouter.activity.uiroute.UiRouteActivityContext;
@@ -47,7 +50,12 @@ public final class HomeMenu {
     }
 
     public Region getHomePane() {
-        return homePane;
+        if (!homePane.getChildrenUnmodifiable().isEmpty())
+            return homePane;
+        // Displaying a spinner while the home pane is empty
+        MonoPane monoPane = new MonoPane(Controls.createSpinner(80));
+        ObservableLists.runOnListChange(() -> monoPane.setContent(homePane), homePane.getChildrenUnmodifiable());
+        return monoPane;
     }
 
     public void setHomeOperations(String homeOperations) {
