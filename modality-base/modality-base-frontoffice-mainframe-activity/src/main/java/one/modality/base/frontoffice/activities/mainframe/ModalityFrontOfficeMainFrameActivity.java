@@ -241,7 +241,7 @@ public final class ModalityFrontOfficeMainFrameActivity extends ModalityClientMa
     }
 
     private HBox createMobileMenu(CollapsePane languageMenuBar, boolean languageMenuBarCanFit) {
-        HBox mobileMenus = new HBox(20, BurgerMenu.createBurgerMenuIcon(this), MenuBarFactory.createStretchableBrandPane());
+        HBox mobileMenus = new HBox(10, BurgerMenu.createBurgerMenuIcon(this), MenuBarFactory.createStretchableBrandPane());
         if (languageMenuBarCanFit) {
             mobileMenus.getChildren().addAll(languageMenuBar, UserMenu.createUserMenuIcon(null, this));
             if (languageMenuBar.getContent() instanceof MonoPane languageSection) {

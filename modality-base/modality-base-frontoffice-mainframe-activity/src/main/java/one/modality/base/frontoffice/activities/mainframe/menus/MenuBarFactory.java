@@ -187,7 +187,9 @@ public final class MenuBarFactory {
         closeIcon.setContent("M0,0 L16,16 M16,0 L0,16");
         closeIcon.setStroke(Color.BLACK);
         closeIcon.setStrokeWidth(3);
-        MonoPane sideBarTop = new MonoPane(languageMenuBar == null ? closeIcon : new VBox(20, closeIcon, languageMenuBar));
+        MonoPane closeButton = new MonoPane(closeIcon);
+        closeButton.setMinSize(50, 50);
+        MonoPane sideBarTop = new MonoPane(languageMenuBar == null ? closeButton : new VBox(20, closeButton, languageMenuBar));
         sideBarTop.setMaxWidth(Double.MAX_VALUE);
         sideBarTop.setPadding(new Insets(30, 30, 10, 30));
         // Then a horizontal separator
@@ -231,9 +233,11 @@ public final class MenuBarFactory {
             // Expanding the side menu bar (a bit postponed to ensure it is laid out properly)
             UiScheduler.scheduleDelay(100, sideMenuBar::expand);
         });
-        // Arming the close icon to collapse it
-        closeIcon.setCursor(Cursor.HAND);
-        closeIcon.setOnMouseClicked(e -> {
+        // Setting a minimum size to ensure it's easily clickable
+        menuButton.setMinSize(50, 50);
+        // Arming the close button to collapse it
+        closeButton.setCursor(Cursor.HAND);
+        closeButton.setOnMouseClicked(e -> {
             // Collapsing the side menu bar (with an animation effect)
             sideMenuBar.collapse();
             // Also, removing the gray transparent background immediately (not waiting for the transition to finish)
@@ -244,11 +248,11 @@ public final class MenuBarFactory {
             });
         });
         // We also automatically close the side menu when the user clicks anywhere else on the overlay area
-        wholeOverlayStackPane.setOnMouseClicked(closeIcon.getOnMouseClicked());
+        wholeOverlayStackPane.setOnMouseClicked(closeButton.getOnMouseClicked());
         // But not inside the side menu bar itself
         sideBarContent.setOnMouseClicked(Event::consume); // will stop the propagation in that case
         // However, when the user clicks a button inside the side menu bar, we collapse it automatically
-        FXProperties.runOnPropertyChange(() -> closeIcon.getOnMouseClicked().handle(null),
+        FXProperties.runOnPropertyChange(() -> closeButton.getOnMouseClicked().handle(null),
             getMenuItemGroup(sideMenuBar).firedItemProperty());
         return menuButton;
 
