@@ -181,13 +181,13 @@ public final class MenuBarFactory {
         return brandPane;
     }
 
-    public static MonoPane setupSideMenuIconAndBar(Node menuIcon, CollapsePane sideMenuBar, MenuBarLayout menuBarLayout) {
+    public static MonoPane setupSideMenuIconAndBar(Node menuIcon, CollapsePane sideMenuBar, Node languageMenuBar, MenuBarLayout menuBarLayout) {
         // Creating a close icon (a simple cross) which will be at the top of the side menu bar
         SVGPath closeIcon = new SVGPath();
         closeIcon.setContent("M0,0 L16,16 M16,0 L0,16");
         closeIcon.setStroke(Color.BLACK);
         closeIcon.setStrokeWidth(3);
-        MonoPane sideBarTop = new MonoPane(closeIcon);
+        MonoPane sideBarTop = new MonoPane(languageMenuBar == null ? closeIcon : new VBox(20, closeIcon, languageMenuBar));
         sideBarTop.setMaxWidth(Double.MAX_VALUE);
         sideBarTop.setPadding(new Insets(30, 30, 10, 30));
         // Then a horizontal separator

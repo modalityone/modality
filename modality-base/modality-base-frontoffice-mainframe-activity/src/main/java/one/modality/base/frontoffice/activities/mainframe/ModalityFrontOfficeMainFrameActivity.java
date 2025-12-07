@@ -135,18 +135,13 @@ public final class ModalityFrontOfficeMainFrameActivity extends ModalityClientMa
         MonoPane responsiveTopMenusPane = new MonoPane();
 
         new ResponsiveDesign(responsiveTopMenusPane)
-            .addResponsiveLayout(/* applicability test for mobile menus mode: */width -> width < 600,
+            .addResponsiveLayout(/* applicability test for small mobile menus mode: */width -> width < 450,
                 () -> { // applying mobile view
-                    HBox mobileMenus = new HBox(20, BurgerMenu.createBurgerMenuIcon(this), MenuBarFactory.createStretchableBrandPane(), languageMenuBar, UserMenu.createUserMenuIcon(this));
-                    mobileMenus.setAlignment(Pos.CENTER);
-                    mobileMenus.setPadding(new Insets(10, 0, 10, 0));
-                    mobileMenus.getStyleClass().addAll("menu-bar", "non-mobile"); //
-                    FOPageUtil.restrictToMaxPageWidthAndApplyPageLeftRightPadding(mobileMenus);  // to fit like the mount node
-                    if (languageMenuBar.getContent() instanceof MonoPane languageSection) {
-                        languageSection.setAlignment(Pos.CENTER);
-                        languageSection.setPadding(Insets.EMPTY);
-                    }
-                    responsiveTopMenusPane.setContent(mobileMenus);
+                    responsiveTopMenusPane.setContent(createMobileMenu(languageMenuBar, false));
+                }
+            ).addResponsiveLayout(/* applicability test for medium mobile menus mode: */width -> width < 600,
+                () -> { // applying mobile view
+                    responsiveTopMenusPane.setContent(createMobileMenu(languageMenuBar, true));
                 }
             ).addResponsiveLayout(() -> { // otherwise, applying desktop menus mode
                 VBox desktopMenus = new VBox(
@@ -243,6 +238,23 @@ public final class ModalityFrontOfficeMainFrameActivity extends ModalityClientMa
         }, FXKeyboardNavigationDetected.keyboardNavigationDetectedProperty());
 
         return mainFrameContainer;
+    }
+
+    private HBox createMobileMenu(CollapsePane languageMenuBar, boolean languageMenuBarCanFit) {
+        HBox mobileMenus = new HBox(20, BurgerMenu.createBurgerMenuIcon(this), MenuBarFactory.createStretchableBrandPane());
+        if (languageMenuBarCanFit) {
+            mobileMenus.getChildren().addAll(languageMenuBar, UserMenu.createUserMenuIcon(null, this));
+            if (languageMenuBar.getContent() instanceof MonoPane languageSection) {
+                languageSection.setAlignment(Pos.CENTER);
+                languageSection.setPadding(Insets.EMPTY);
+            }
+        } else
+            mobileMenus.getChildren().add(UserMenu.createUserMenuIcon(languageMenuBar, this));
+        mobileMenus.setAlignment(Pos.CENTER);
+        mobileMenus.setPadding(new Insets(10, 0, 10, 0));
+        mobileMenus.getStyleClass().addAll("menu-bar", "non-mobile"); //
+        FOPageUtil.restrictToMaxPageWidthAndApplyPageLeftRightPadding(mobileMenus);  // to fit like the mount node
+        return mobileMenus;
     }
 
     private static final String ARBITRARY_EMBEDDING_SCROLL_PANE_PROPERTIES_KEY = "embeddingScrollPane";

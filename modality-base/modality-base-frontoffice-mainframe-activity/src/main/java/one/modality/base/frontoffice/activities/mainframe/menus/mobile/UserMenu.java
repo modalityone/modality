@@ -18,10 +18,10 @@ import one.modality.base.frontoffice.activities.mainframe.menus.MenuBarLayout;
  */
 public class UserMenu {
 
-    public static <A extends UiRouteActivityContext<?> & OperationActionFactoryMixin> Node createUserMenuIcon(A activity) {
-        SVGPath userIcon = SvgIcons.setSVGPathFill(SvgIcons.createUserIcon(), Brand.getBlueColor()); // Maybe too small
+    public static <A extends UiRouteActivityContext<?> & OperationActionFactoryMixin> Node createUserMenuIcon(Node languageMenuBar, A activity) {
         CollapsePane mobileRightUserMenuBar = MobileRightUserMenuBar.createMobileRightUserMenuBar(activity);
-        MonoPane userButton = MenuBarFactory.setupSideMenuIconAndBar(userIcon, mobileRightUserMenuBar, MenuBarLayout.MOBILE_RIGHT);
+        SVGPath userIcon = SvgIcons.setSVGPathFill(SvgIcons.createUserIcon(), Brand.getBlueColor()); // Maybe too small
+        MonoPane userButton = MenuBarFactory.setupSideMenuIconAndBar(userIcon, mobileRightUserMenuBar, languageMenuBar, MenuBarLayout.MOBILE_RIGHT);
         // We display the user button only when the user is logged in
         Layouts.bindManagedAndVisiblePropertiesTo(FXLoggedIn.loggedInProperty(), userButton);
         return userButton;

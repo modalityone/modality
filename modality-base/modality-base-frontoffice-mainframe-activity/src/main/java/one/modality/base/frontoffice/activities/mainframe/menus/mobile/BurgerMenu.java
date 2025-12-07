@@ -20,7 +20,7 @@ public final class BurgerMenu {
     public static <A extends UiRouteActivityContext<?> & OperationActionFactoryMixin> Node createBurgerMenuIcon(A activity) {
         SVGPath burgerIcon = SvgIcons.createStrokeSVGPath(BURGER_PATH, Brand.getBlueColor(), 3);
         CollapsePane mobileLeftMainMenuBar = MobileLeftMainMenuBar.createMobileLeftMainMenuBar(activity);
-        return MenuBarFactory.setupSideMenuIconAndBar(burgerIcon, mobileLeftMainMenuBar, MenuBarLayout.MOBILE_LEFT);
+        return MenuBarFactory.setupSideMenuIconAndBar(burgerIcon, mobileLeftMainMenuBar, null, MenuBarLayout.MOBILE_LEFT);
     }
 
 }
