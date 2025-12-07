@@ -26,10 +26,6 @@ public abstract class ModalityClientStarterActivity
     private final Factory<Activity<ViewDomainActivityContextFinal>> containerActivityFactory;
     private ViewDomainActivityContext context;
 
-    public ModalityClientStarterActivity(String defaultInitialHistoryPath) {
-        this(defaultInitialHistoryPath, ModalityClientMainFrameActivity::new);
-    }
-
     public ModalityClientStarterActivity(String defaultInitialHistoryPath, Factory<Activity<ViewDomainActivityContextFinal>> containerActivityFactory) {
         this.defaultInitialHistoryPath = Objects.coalesce(Arrays.first(ApplicationBooter.getMainArgs()), defaultInitialHistoryPath);
         this.containerActivityFactory = containerActivityFactory;

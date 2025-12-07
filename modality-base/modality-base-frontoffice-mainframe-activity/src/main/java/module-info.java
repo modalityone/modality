@@ -36,6 +36,7 @@ module modality.base.frontoffice.mainframe.activity {
     requires webfx.platform.uischeduler;
     requires webfx.platform.useragent;
     requires webfx.platform.util;
+    requires webfx.stack.com.bus.call;
     requires webfx.stack.routing.uirouter;
     requires webfx.stack.session.state.client.fx;
 

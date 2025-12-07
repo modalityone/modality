@@ -36,9 +36,9 @@ import one.modality.base.frontoffice.activities.mainframe.menus.MenuBarFactory;
 import one.modality.base.frontoffice.activities.mainframe.menus.MenuConfig;
 import one.modality.base.frontoffice.activities.mainframe.menus.desktop.DesktopMainMenuBar;
 import one.modality.base.frontoffice.activities.mainframe.menus.desktop.DesktopUserMenuBar;
-import one.modality.base.frontoffice.activities.mainframe.menus.mobile.UserMenu;
 import one.modality.base.frontoffice.activities.mainframe.menus.mobile.BurgerMenu;
 import one.modality.base.frontoffice.activities.mainframe.menus.mobile.MobileBottomMainMenuBar;
+import one.modality.base.frontoffice.activities.mainframe.menus.mobile.UserMenu;
 import one.modality.base.frontoffice.activities.mainframe.menus.shared.LanguageMenuBar;
 import one.modality.base.frontoffice.mainframe.footernode.MainFrameFooterNodeProvider;
 import one.modality.base.frontoffice.mainframe.fx.FXBackgroundNode;
@@ -60,6 +60,7 @@ public final class ModalityFrontOfficeMainFrameActivity extends ModalityClientMa
         FXProperties.newBooleanProperty(UserAgent.isNative(), this::onMobileLayoutChange);
 
     private Pane mainFrameContainer;
+    private final ConnectivityIndicator connectivityIndicator = new ConnectivityIndicator();
     private Node backgroundNode; // can be used to hold a WebView and prevent iFrame reload in the web version
     private final TransitionPane pageTransitionPane = new TransitionPane();
     private Pane dialogArea;
@@ -86,6 +87,7 @@ public final class ModalityFrontOfficeMainFrameActivity extends ModalityClientMa
         mainFrameContainer = new LayoutPane() { // Children are set later in updateMountNode()
             @Override
             protected void layoutChildren(double width, double height) {
+                layoutInArea(connectivityIndicator.getConnectivityBar(), 0, 0, width, 5);
                 double headerHeight = 0, footerHeight = 0;
                 boolean isMobileLayout = mobileLayoutProperty.get();
                 if (isMobileLayout) {
@@ -121,7 +123,9 @@ public final class ModalityFrontOfficeMainFrameActivity extends ModalityClientMa
             List<Node> children = Collections.listOfRemoveNulls(
                 backgroundNode,      // could be a WebView
                 pageTransitionPane,  // contains a standard mount node, or null if we want to display the backgroundNode
-                isMobileLayout ? mobileBottomMainMenuBar : null); // mobile menu bar (at bottom) or overlay menu bar (in addition to the one inside mountTransitionPane)
+                isMobileLayout ? mobileBottomMainMenuBar : null, // mobile menu bar (at bottom) or overlay menu bar (in addition to the one inside mountTransitionPane)
+                connectivityIndicator.getConnectivityBar()
+            );
             // We call setAll() only if they differ, because setAll() is basically a clear() + addAll() and this causes
             // unnecessary changes in the DOM which in addition cause iFrames to unload
             if (!Objects.equals(children, mainFrameContainer.getChildren()))

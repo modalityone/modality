@@ -1,5 +1,7 @@
 package one.modality.base.backoffice.activities.mainframe;
 
+import dev.webfx.extras.action.Action;
+import dev.webfx.extras.action.ActionBinder;
 import dev.webfx.extras.canvas.pane.CanvasPane;
 import dev.webfx.extras.i18n.I18n;
 import dev.webfx.extras.panes.LayoutPane;
@@ -18,11 +20,12 @@ import dev.webfx.platform.scheduler.Scheduled;
 import dev.webfx.platform.uischeduler.UiScheduler;
 import dev.webfx.platform.util.Arrays;
 import dev.webfx.platform.util.collection.Collections;
-import dev.webfx.stack.com.bus.Bus;
+import dev.webfx.stack.authn.logout.client.operation.LogoutRequest;
 import dev.webfx.stack.com.bus.BusService;
 import dev.webfx.stack.com.bus.call.PendingBusCall;
 import dev.webfx.stack.com.bus.spi.impl.client.NetworkBus;
 import dev.webfx.stack.session.state.client.fx.FXConnected;
+import dev.webfx.stack.session.state.client.fx.FXLoggedIn;
 import javafx.animation.Timeline;
 import javafx.collections.ListChangeListener;
 import javafx.collections.ObservableList;
@@ -31,6 +34,8 @@ import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.geometry.VPos;
 import javafx.scene.Node;
+import javafx.scene.control.Button;
+import javafx.scene.control.ContentDisplay;
 import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Circle;
@@ -41,6 +46,7 @@ import one.modality.base.backoffice.ganttcanvas.MainFrameGanttCanvas;
 import one.modality.base.backoffice.mainframe.fx.FXMainFrameHeaderTabs;
 import one.modality.base.backoffice.mainframe.headernode.MainFrameHeaderNodeProvider;
 import one.modality.base.client.application.ModalityClientMainFrameActivity;
+import one.modality.base.client.application.RoutingActions;
 import one.modality.base.client.brand.Brand;
 import one.modality.base.client.gantt.fx.interstice.FXGanttInterstice;
 import one.modality.base.client.mainframe.fx.FXMainFrameDialogArea;
@@ -61,7 +67,7 @@ public final class ModalityBackOfficeMainFrameActivity extends ModalityClientMai
     private final Region ganttCanvasContainer = MainFrameGanttCanvas.getCanvasContainer();
     private Pane dialogArea;
     private Node profilePanel;
-    private Insets breathingPadding; // actual value will be computed depending on compact mode
+    private Insets breathingPadding; // the actual value will be computed depending on compact mode
     private boolean wasGanttCanvasShowingBeforeTabsChange;
 
     @Override
@@ -107,9 +113,9 @@ public final class ModalityBackOfficeMainFrameActivity extends ModalityClientMai
             breathingPadding = new Insets(vBreathing, hBreathing, vBreathing, hBreathing);
             mainFrame.requestLayout();
         }, FXLayoutMode.layoutModeProperty(), FXGanttInterstice.ganttIntersticeRequiredProperty(), mainFrame.widthProperty(), mainFrame.heightProperty());
-        // When not in compact mode, the nodes don't cover the whole surface of this container, because there are some
-        // breathing areas (see breathingPadding) which appear as empty areas but with this container background, so we
-        // need to give these areas the same color as the nodes background (seen as primary facets by the LuminanceTheme).
+        // When not in compact mode, the nodes don't cover the whole surface of this container because there are some
+        // breathing areas (see breathingPadding) which appear as empty areas but with this container background. So we
+        // need to give these areas the same color as the node background (seen as primary facets by the LuminanceTheme).
         LuminanceTheme.createPrimaryPanelFacet(mainFrame).style(); // => will have the same background as the nodes
         return mainFrame;
     }
@@ -159,7 +165,7 @@ public final class ModalityBackOfficeMainFrameActivity extends ModalityClientMai
         // otherwise it will be hidden.
         mainFrame.getChildren().setAll(Collections.listOfRemoveNulls(
                 getMountNode(),
-                ganttCanvasContainer, // Also after the mount node because of the circle & chevron collapse decoration
+                ganttCanvasContainer, // Also after the mount node because of the circle and chevron collapse decoration
                 mainFrameHeader,
                 mainFrameFooter,
                 profilePanel));
@@ -172,9 +178,7 @@ public final class ModalityBackOfficeMainFrameActivity extends ModalityClientMai
                 profilePanelAnimation.stop();
             profilePanel.setTranslateX(profilePanel.prefWidth(-1) + 10);
             profilePanelAnimation = Animations.animateProperty(profilePanel.translateXProperty(), 0);
-            profilePanelAnimation.setOnFinished(e -> {
-                profilePanelAnimation = null;
-            });
+            profilePanelAnimation.setOnFinished(e -> profilePanelAnimation = null);
             startProfilePanelEnteringAnimationOnLayout = false;
         }
     }
@@ -244,13 +248,12 @@ public final class ModalityBackOfficeMainFrameActivity extends ModalityClientMai
 
     @Override
     protected Region createHeaderTabsBar() {
-        // We use a FlowPane to display the tabs bar, but we embed it in a clip pane for the animation. We animate the
-        // tabs bar for a smooth transition between screens with no tabs (bar height = 0) and those with tabs (bar
-        // height > 0), to avoid a brutal shift of the gantt canvas located just under the tabs bar.
-        FlowPane headerTabsBar = new FlowPane();
-        LuminanceTheme.createApplicationFrameFacet(headerTabsBar)
-                .style();
-        MonoClipPane clipPane = new MonoClipPane(headerTabsBar);
+        // We use a FlowPane to display the tab bar, but we embed it in a clip pane for the animation. We animate the
+        // tab bar for a smooth transition between screens with no tabs (bar height = 0) and those with tabs (bar
+        // height > 0), to avoid a brutal shift of the gantt canvas located just under the tab bar.
+        FlowPane headerTabBar = new FlowPane();
+        LuminanceTheme.createApplicationFrameFacet(headerTabBar).style();
+        MonoClipPane clipPane = new MonoClipPane(headerTabBar);
         clipPane.setMinHeight(Region.USE_PREF_SIZE);
         clipPane.setMaxHeight(Region.USE_PREF_SIZE);
         clipPane.setAlignment(Pos.TOP_CENTER);
@@ -258,10 +261,10 @@ public final class ModalityBackOfficeMainFrameActivity extends ModalityClientMai
         clipPane.setPrefHeight(0);
         // The tabs are communicated from the activities to this main frame through FXMainFrameHeaderTabsBar
         ObservableList<Tab> tabs = FXMainFrameHeaderTabs.getHeaderTabsObservableList();
-        // We don't bind them directly to the flow pane children, because we want to animate them. So the following code
+        // We don't bind them directly to the flow pane children because we want to animate them. So the following code
         // is the animation management:
-        tabs.addListener((ListChangeListener<Node>) c -> { // We listen to the tabs changes
-            // We capture the state (i.e. showing or not) of the gantt canvas in the exiting screen
+        tabs.addListener((ListChangeListener<Node>) c -> { // We listen to the tab changes
+            // We capture the state (i.e., showing or not) of the gantt canvas in the exiting screen
             boolean capturedWasGanttCanvasShowingBeforeTabsChange = wasGanttCanvasShowingBeforeTabsChange;
             // To know the state of the gantt canvas in the new incoming screen, we need to postpone the call to
             // isGanttCanvasShowing() to give it the time to set up the CanvasPane animation it and set the requestedHeight.
@@ -270,22 +273,22 @@ public final class ModalityBackOfficeMainFrameActivity extends ModalityClientMai
                 boolean isGanttCanvasShowing = isGanttCanvasShowing();
                 // If the new screen has no tabs and doesn't show the gantt canvas (ex: home screen), we don't animate
                 Consumer<Double> animationConsumer = newHeight -> {
-                    // We animate the tabs bar if the gantt canvas is showing in both screens (one screen may have tabs
+                    // We animate the tab bar if the gantt canvas is showing in both screens (one screen may have tabs
                     // but not the other).
                     boolean animate = isGanttCanvasShowing == capturedWasGanttCanvasShowingBeforeTabsChange;
                     // We animate prefHeightProperty to show the tabs (when new height > 0) or hide them (when new height = 0)
                     Timeline timeline = Animations.animateProperty(clipPane.prefHeightProperty(), newHeight, animate);
                     // At the end of the animation, we clear the bar if the new screen has no bars
-                    Animations.setOrCallOnTimelineFinished(timeline, e -> headerTabsBar.getChildren().setAll(tabs));
+                    Animations.setOrCallOnTimelineFinished(timeline, e -> headerTabBar.getChildren().setAll(tabs));
                 };
                 // For other cases, we will animate the height transition and need for that to give the new height
-                if (tabs.isEmpty()) { // Case where we transition from a screen with tabs to a screen with no tabs (but with gantt canvas)
-                    // We will animate the height up to 0, but we don't remove the tabs yes, they are still showing
+                if (tabs.isEmpty()) { // Case where we transition from a screen with tabs to a screen with no tabs (but with gantt canvas).
+                    // We will animate the height up to 0, but we don't remove the tabs yet; they are still showing
                     // until the animation ends (we will remove them at this point)
                     animationConsumer.accept(0d);
                 } else { // Case where we transition to a screen with tabs from a screen with no tabs
                     // We apply the new tabs right now as they are showing during the animation
-                    headerTabsBar.getChildren().setAll(tabs);
+                    headerTabBar.getChildren().setAll(tabs);
                     // We compute the new height we will need to transit to (final height in animation)
                     double currentPrefHeight = clipPane.getPrefHeight();
                     clipPane.setPrefHeight(Region.USE_COMPUTED_SIZE);
@@ -297,6 +300,81 @@ public final class ModalityBackOfficeMainFrameActivity extends ModalityClientMai
             }, 1); // 1 animation frame is enough
         });
         return clipPane;
+    }
+
+    private Region createMainFrameHeader() {
+        // mainFrameHeader consists of 1) headerButtonsBar on top, and eventually 2) headerTabsBar at the bottom.
+
+        // 1) Building headerButtonsBar containing a home button, navigation buttons, customisable center item & logout button
+        // Home button
+        Button homeButton = routeOperationButton("RouteToHome");
+        // Back navigation button (will be hidden in browsers as they already have one)
+        Button backButton = routeOperationButton("RouteBackward");
+        // Forward navigation button (will be hidden in browsers as they already have one)
+        Button forwardButton = routeOperationButton("RouteForward");
+        Node brandNode = createBrandNode();
+        Node headerCenterItem = createMainFrameHeaderCenterItem();
+        headerCenterItem.visibleProperty().bind(FXLoggedIn.loggedInProperty());
+
+        Pane headerButtonsBar = new Pane() { // Children will be set just after
+            @Override
+            protected void layoutChildren() {
+                double width = getWidth(), height = getHeight();
+                double x = 5, y = 3, w, h = height - 6;
+                layoutInArea(homeButton, x, y, w = homeButton.prefWidth(h), h, 0, HPos.LEFT, VPos.CENTER);
+                if (backButton.isManaged())
+                    layoutInArea(backButton, x += w + 5, y, w = backButton.prefWidth(h), h, 0, HPos.LEFT, VPos.CENTER);
+                if (forwardButton.isManaged())
+                    layoutInArea(forwardButton, x += w + 3, y, w = forwardButton.prefWidth(h), h, 0, HPos.LEFT, VPos.CENTER);
+                layoutInArea(brandNode, x += w + 12, y, w = brandNode.prefWidth(h), h, 0, Insets.EMPTY, false, false, HPos.LEFT, VPos.CENTER);
+                layoutInArea(headerCenterItem, x += w + 5, y, w = Math.max(width - 2 * x, headerCenterItem.prefWidth(h)), h, 0, Insets.EMPTY, false, false, HPos.CENTER, VPos.CENTER);
+                Node profileButton = FXProfile.getProfileButton();
+                if (profileButton != null && profileButton.isManaged())
+                    layoutInArea(profileButton, x += w + 8, y, width - 5 - x, h, 0, HPos.RIGHT, VPos.CENTER);
+            }
+
+            @Override
+            protected double computePrefHeight(double width) {
+                return super.computePrefHeight(width) + 6;
+            }
+        };
+
+        // The profile button can be customized (ex: ModalityClientProfileInitJob)
+        if (FXProfile.getProfileButton() == null) { // If not, we just display a logout button instead
+            Button button = actionButton(newOperationAction(LogoutRequest::new));
+            button.setContentDisplay(ContentDisplay.GRAPHIC_ONLY); // We display just the icon, not the text
+            FXProfile.setProfileButton(button);
+        }
+        // Setting all children, including the profile button
+        FXProperties.runNowAndOnPropertiesChange(() -> headerButtonsBar.getChildren().setAll(Collections.listOfRemoveNulls(
+                homeButton, backButton, forwardButton, brandNode, headerCenterItem, FXProfile.getProfileButton()))
+            , FXProfile.profileButtonProperty(), FXProfile.profilePanelProperty());
+
+        // 2) Building a customisable headerTabsBar (used only in the backoffice so far)
+        Region headerTabsBar = createHeaderTabsBar();
+
+        // Assembling 1) & 2) into the mainFrameHeader
+        Region mainFrameHeader = new VBox(headerButtonsBar, headerTabsBar);
+
+        LuminanceTheme.createApplicationFrameFacet(headerButtonsBar)
+            .setBordered(true)
+            .style();
+        // Hiding the center item in compact mode
+        // Commented as headerCenterItem.visibleProperty() is bound
+        //FXLayoutMode.layoutModeProperty().addListener(observable -> headerCenterItem.setVisible(!FXLayoutMode.isCompactMode()));
+        return mainFrameHeader;
+    }
+
+    private Button routeOperationButton(String routeOperationCode) {
+        return actionButton(routeOperationCodeToAction(routeOperationCode));
+    }
+
+    private Action routeOperationCodeToAction(String operationCode) {
+        return RoutingActions.routeOperationCodeToAction(operationCode, this, this);
+    }
+
+    private Button actionButton(Action action) {
+        return ActionBinder.bindButtonToAction(newButton(), action);
     }
 
     private static final Color CONNECTED_COLOR = Color.web("#21BF73");
@@ -314,8 +392,7 @@ public final class ModalityBackOfficeMainFrameActivity extends ModalityClientMai
             connectionLed.setFill(connected ? CONNECTED_COLOR : DISCONNECTED_COLOR), FXConnected.connectedProperty()
         );
         HBox statusBar = new HBox(10, connectionText, connectionLed);
-        Bus bus = BusService.bus();
-        if (bus instanceof NetworkBus networkBus) { // Actually always true
+        if (BusService.bus() instanceof NetworkBus networkBus) { // Actually always true
             Text trafficText = createStatusText(ModalityBackOfficeMainFrameI18nKeys.Traffic);
             // Outgoing traffic (from client to server)
             Shape outgoingTrafficLed = new Circle(8, NO_TRAFFIC_COLOR);
