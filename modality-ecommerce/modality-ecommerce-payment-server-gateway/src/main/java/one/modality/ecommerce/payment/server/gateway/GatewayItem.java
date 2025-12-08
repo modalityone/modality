@@ -5,8 +5,8 @@ package one.modality.ecommerce.payment.server.gateway;
  */
 public record GatewayItem(
     String id,
-    String name,
-    String description,
+    String shortName,
+    String longName,
     int quantity,
-    long price
+    long amount
 ) { }

@@ -49,7 +49,7 @@ public final class AnetPaymentGateway implements PaymentGateway {
 
     @Override
     public Future<GatewayInitiatePaymentResult> initiatePayment(GatewayInitiatePaymentArgument argument) {
-        // Integrating the Authorize.net Hosted Payment Form inside the Modality page
+        // Integrating the Authorize.net Embedded Payment Form inside the Modality page
         try {
             boolean live = argument.isLive();
             String apiLoginID = argument.getRequiredAccountParameter("apiLoginID");
@@ -134,10 +134,10 @@ public final class AnetPaymentGateway implements PaymentGateway {
 
         LineItemType anetItem = new LineItemType();
         anetItem.setItemId(         Strings.truncate(serverItem.id(),                31));
-        anetItem.setName(           Strings.truncate(serverItem.name(),              31));
-        anetItem.setDescription(    Strings.truncate(serverItem.description(),      255));
+        anetItem.setName(           Strings.truncate(serverItem.shortName(),         31));
+        anetItem.setDescription(    Strings.truncate(serverItem.longName(),          255));
         anetItem.setQuantity(BigDecimal.valueOf(serverItem.quantity()));
-        anetItem.setUnitPrice(BigDecimal.valueOf(0.01 * serverItem.price())); // the modality amount is in cents
+        anetItem.setUnitPrice(BigDecimal.valueOf(0.01 * serverItem.amount())); // the modality amount is in cents
 
         ArrayOfLineItem lineItems = new ArrayOfLineItem();
         lineItems.getLineItem().add(anetItem);
@@ -167,8 +167,8 @@ public final class AnetPaymentGateway implements PaymentGateway {
         OrderType order = new OrderType();
         String invoiceNumber = Strings.truncate(serverItem.id(), 20); // Authorize.Net allows up to 20 chars
         order.setInvoiceNumber(invoiceNumber);
-        // Optionally include a concise description
-        order.setDescription(Strings.truncate(serverItem.name(), 255));
+        // Optionally include a concise longName
+        order.setDescription(Strings.truncate(serverItem.shortName(), 255));
         txnRequest.setOrder(order);
 
         // Explicitly disable duplicate transaction check to allow multiple payments with same amount/card

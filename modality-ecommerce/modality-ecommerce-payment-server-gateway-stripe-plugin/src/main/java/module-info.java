@@ -10,6 +10,7 @@ module modality.ecommerce.payment.server.gateway.stripe.plugin {
     requires stripe.java;
     requires webfx.platform.async;
     requires webfx.platform.resource;
+    requires modality.ecommerce.payment;
 
     // Exported packages
     exports one.modality.ecommerce.payment.server.gateway.impl.stripe;

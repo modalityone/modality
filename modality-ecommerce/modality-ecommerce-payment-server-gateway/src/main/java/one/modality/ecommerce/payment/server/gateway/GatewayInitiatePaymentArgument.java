@@ -8,13 +8,12 @@ import java.util.Map;
  * @author Bruno Salmon
  */
 public record GatewayInitiatePaymentArgument(
-    long amount,
+    GatewayItem item,
     String currencyCode,
     boolean isLive, // if false, the payment gateway will use its sandbox environment for this payment
     PaymentFormType preferredFormType,
     boolean favorSeamless,
     boolean isOriginOnHttps,
-    String productName,
     Map<String, String> accountParameters
 ) {
 

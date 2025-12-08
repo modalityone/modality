@@ -68,13 +68,12 @@ public class ServerPaymentServiceProvider implements PaymentServiceProvider {
                         // Step 4: Calling the payment gateway with all the data collected
                         String currencyCode = moneyTransfer.getToMoneyAccount().getCurrency().getCode();
                         return paymentGateway.initiatePayment(new GatewayInitiatePaymentArgument(
-                            argument.amount(),
+                            createGatewayItem(moneyTransfer),
                             currencyCode,
                             live,
                             argument.preferredFormType(),
                             argument.favorSeamless(),
                             argument.isOriginOnHttps(),
-                            null,
                             parameters
                         )).map(gatewayResult -> new InitiatePaymentResult( // Step 5: Returning an InitiatePaymentResult
                             paymentGateway.getName(),
@@ -133,13 +132,7 @@ public class ServerPaymentServiceProvider implements PaymentServiceProvider {
                 document.getAdmin1Name(),
                 document.evaluate("coalesce(person_country.name,person_countryName)")
             );
-            Event event = document.getEvent();
-            GatewayItem item = new GatewayItem(
-                "E#" + event.getPrimaryKey() + " - D#" + document.getRef() + " - P#" + paymentPrimaryKey,
-                "Deposit",
-                event.getName() + " - Booking Ref " + document.getRef(),
-                1,
-                amount);
+            GatewayItem item = createGatewayItem(moneyTransfer);
             // TODO check accessToken is set, otherwise return an error
             return paymentGateway.completePayment(new GatewayCompletePaymentArgument(live, accessToken, argument.gatewayCompletePaymentPayload(), parameters, amount, customer, item))
                 .onFailure(e -> {
@@ -172,6 +165,18 @@ public class ServerPaymentServiceProvider implements PaymentServiceProvider {
                     );
                 });
         });
+    }
+
+    private static GatewayItem createGatewayItem(MoneyTransfer moneyTransfer) {
+        Document document = moneyTransfer.getDocument();
+        Event event = document.getEvent();
+        return new GatewayItem(
+            // Node: Some payment gateways like Square don't allow spaces and # in identifiers
+            "E" + event.getPrimaryKey() + "-REF" + document.getRef() + "-MT" + moneyTransfer.getPrimaryKey(),
+            event.getName() + " #" + document.getRef(),
+            event.getName() + " - " + document.getFullName(),
+            1,
+            moneyTransfer.getAmount());
     }
 
     @Override
@@ -208,20 +213,15 @@ public class ServerPaymentServiceProvider implements PaymentServiceProvider {
                         List<AbstractDocumentEvent> documentEvents = documentAggregate.getNewDocumentEvents();
                         List<AbstractDocumentEvent> removeEvents = new ArrayList<>();
                         documentEvents.stream().dropWhile(e -> {
-                            if (!(e instanceof AbstractExistingMoneyTransferEvent))
+                            if (!(e instanceof AbstractExistingMoneyTransferEvent aemte))
                                 return true;
-                            AbstractExistingMoneyTransferEvent aemte = (AbstractExistingMoneyTransferEvent) e;
                             if (aemte.getMoneyTransfer() != lastSuccessfulPayment)
                                 return true;
-                            if (aemte.isPending() || !aemte.isSuccessful())
-                                return true;
-                            return false;
+                            return aemte.isPending() || !aemte.isSuccessful();
                         }).forEach(e -> {
-                            if (e instanceof AddAttendancesEvent) {
-                                AddAttendancesEvent aae = (AddAttendancesEvent) e;
+                            if (e instanceof AddAttendancesEvent aae) {
                                 removeEvents.add(new RemoveAttendancesEvent(aae.getAttendances()));
-                            } else if (e instanceof AddDocumentLineEvent) {
-                                AddDocumentLineEvent aee = (AddDocumentLineEvent) e;
+                            } else if (e instanceof AddDocumentLineEvent aee) {
                                 removeEvents.add(new RemoveDocumentLineEvent(aee.getDocumentLine()));
                             }
                         });
@@ -249,7 +249,7 @@ public class ServerPaymentServiceProvider implements PaymentServiceProvider {
                 updateStore.submitChanges()
                     // On success, we load the necessary data associated with this moneyTransfer for the payment gateway
                     .compose(batch ->
-                        moneyTransfer.<MoneyTransfer>onExpressionLoaded("toMoneyAccount.(currency.code, gatewayCompany.name), document.event.(live,state)")
+                        moneyTransfer.<MoneyTransfer>onExpressionLoaded("toMoneyAccount.(currency.code, gatewayCompany.name), document.(ref,person_name,event.(live,state))")
                             .compose(result -> // Completing the history recording (changes column with resolved primary keys)
                                 HistoryRecorder.completeDocumentHistoryAfterSubmit(result, history, new AddMoneyTransferEvent(moneyTransfer))
                             )

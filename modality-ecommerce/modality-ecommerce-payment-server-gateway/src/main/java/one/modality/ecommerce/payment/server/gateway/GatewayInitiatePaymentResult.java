@@ -29,16 +29,16 @@ public record GatewayInitiatePaymentResult(
     /*================================================ Redirect API ==================================================*/
     // => payment page hosted by the gateway company
 
-    public static GatewayInitiatePaymentResult createLiveRedirectInitiatePaymentResult(boolean seamless, String url) {
-        return createRedirectInitiatePaymentResult(true, seamless, url, null);
+    public static GatewayInitiatePaymentResult createLiveRedirectInitiatePaymentResult(String url) {
+        return createRedirectInitiatePaymentResult(true, url);
     }
 
-    public static GatewayInitiatePaymentResult createSandboxRedirectInitiatePaymentResult(boolean seamless, String url, SandboxCard[] sandboxCards) {
-        return createRedirectInitiatePaymentResult(false, seamless, url, sandboxCards);
+    public static GatewayInitiatePaymentResult createSandboxRedirectInitiatePaymentResult(boolean seamless, String url) {
+        return createRedirectInitiatePaymentResult(false, url);
     }
 
-    public static GatewayInitiatePaymentResult createRedirectInitiatePaymentResult(boolean live, boolean seamless, String url, SandboxCard[] sandboxCards) {
-        return new GatewayInitiatePaymentResult(live, url, PaymentFormType.REDIRECTED, null, seamless, true, sandboxCards);
+    public static GatewayInitiatePaymentResult createRedirectInitiatePaymentResult(boolean live, String url) {
+        return new GatewayInitiatePaymentResult(live, url, PaymentFormType.REDIRECTED, null, false, false, null);
     }
 
     /*========================================= Embedded API (HTML content)  =========================================*/
