@@ -31,6 +31,7 @@ public class ButtonNavigation implements BookingFormNavigation {
     public ButtonNavigation() {
         container.setAlignment(Pos.CENTER_RIGHT);
         container.setPadding(new javafx.geometry.Insets(40, 0, 0, 0));
+        container.setSpacing(16); // Add spacing between buttons
         container.getStyleClass().add("buttons");
 
         continueButton.getStyleClass().addAll("btn", "btn-primary");

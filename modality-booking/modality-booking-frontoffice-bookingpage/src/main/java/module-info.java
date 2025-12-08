@@ -57,6 +57,8 @@ module modality.booking.frontoffice.bookingpage {
     exports one.modality.booking.frontoffice.bookingpage.pages.payment;
     exports one.modality.booking.frontoffice.bookingpage.pages.personal;
     exports one.modality.booking.frontoffice.bookingpage.pages.prerequisite;
+    exports one.modality.booking.frontoffice.bookingpage.pages.step1;
+    exports one.modality.booking.frontoffice.bookingpage.pages.step2;
     exports one.modality.booking.frontoffice.bookingpage.pages.summary;
     exports one.modality.booking.frontoffice.bookingpage.pages.teaching;
     exports one.modality.booking.frontoffice.bookingpage.pages.terms;

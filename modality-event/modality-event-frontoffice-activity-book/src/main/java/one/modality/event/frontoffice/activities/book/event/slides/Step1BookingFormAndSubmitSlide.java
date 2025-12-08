@@ -9,8 +9,8 @@ import dev.webfx.extras.util.layout.Layouts;
 import dev.webfx.kit.util.properties.FXProperties;
 import dev.webfx.platform.console.Console;
 import dev.webfx.platform.util.Arrays;
-import dev.webfx.platform.util.collection.Collections;
 import dev.webfx.platform.windowhistory.WindowHistory;
+import javafx.beans.binding.Bindings;
 import javafx.beans.binding.BooleanExpression;
 import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.ObjectProperty;
@@ -20,11 +20,16 @@ import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Node;
 import javafx.scene.control.Button;
-import javafx.scene.control.Hyperlink;
+import javafx.scene.control.Label;
 import javafx.scene.layout.BorderPane;
+import javafx.scene.layout.HBox;
 import javafx.scene.layout.Region;
 import javafx.scene.layout.VBox;
+import javafx.scene.paint.Color;
+import javafx.scene.shape.Line;
 import one.modality.base.client.i18n.BaseI18nKeys;
+import dev.webfx.platform.uischeduler.UiScheduler;
+import dev.webfx.stack.orm.entity.EntityStore;
 import one.modality.base.shared.entities.Document;
 import one.modality.base.shared.entities.Person;
 import one.modality.crm.shared.services.authn.fx.FXUserPerson;
@@ -57,11 +62,16 @@ final class Step1BookingFormAndSubmitSlide extends StepSlide implements BookingF
     // Node property that will be managed by the sub-router to mount the CheckoutAccountActivity (when routed)
     private final ObjectProperty<Node> embeddedLoginMountNodeProperty = new SimpleObjectProperty<>();
     private final VBox loginTopVBox = new VBox(10, Bootstrap.textPrimary(Bootstrap.strong(I18nControls.newLabel(BookI18nKeys.LoginBeforeBooking))));
-    private final Hyperlink orGuestLink = Bootstrap.textPrimary(I18nControls.newHyperlink(BookI18nKeys.OrBookAsGuest));
+    // Guest checkout button - more prominent than a simple hyperlink
+    private final Button continueAsGuestButton = Bootstrap.largePrimaryButton(I18nControls.newButton("ContinueAsGuest"));
+    private final Label guestDescLabel = I18nControls.newLabel("GuestCheckoutDesc");
+    private final Label orDividerLabel = I18nControls.newLabel("Or");
+    private final VBox guestOptionBox = new VBox(12);
     private final FlipPane loginGuestFlipPane = new FlipPane();
     private final MonoPane loginContent = new MonoPane();
     private final GuestPanel guestPanel = new GuestPanel();
     private Button[] bookingFormSubmitButtons;
+    private BookingForm currentBookingForm;
 
     public Step1BookingFormAndSubmitSlide(BookEventActivity bookEventActivity) {
         super(bookEventActivity);
@@ -75,19 +85,58 @@ final class Step1BookingFormAndSubmitSlide extends StepSlide implements BookingF
         BorderPane.setMargin(loginTopVBox, new Insets(0, 0, 20, 0));
         signInContainer.setTop(loginTopVBox);
         signInContainer.setCenter(loginContent);
+        // Add the prominent guest option below the login form
+        signInContainer.setBottom(guestOptionBox);
+        BorderPane.setMargin(guestOptionBox, new Insets(10, 0, 0, 0));
         loginGuestFlipPane.setFront(signInContainer);
         FXProperties.runNowAndOnPropertiesChange(this::updateLoginAndSubmitVisibility,
             FXUserPerson.userPersonProperty(), bookingFormPersonToBookRequiredProperty, bookingFormShowDefaultSubmitButtonProperty, bookingFormDisableSubmitButtonProperty, bookingFormTransitingProperty);
-        orGuestLink.setOnAction(e -> {
+
+        // Build the OR divider - a horizontal line with "OR" in the middle
+        Line leftLine = new Line(0, 0, 80, 0);
+        leftLine.setStroke(Color.LIGHTGRAY);
+        Line rightLine = new Line(0, 0, 80, 0);
+        rightLine.setStroke(Color.LIGHTGRAY);
+        orDividerLabel.setStyle("-fx-text-fill: #999; -fx-font-weight: bold;");
+        HBox orDivider = new HBox(15, leftLine, orDividerLabel, rightLine);
+        orDivider.setAlignment(Pos.CENTER);
+        orDivider.setPadding(new Insets(20, 0, 10, 0));
+
+        // Style the guest description
+        guestDescLabel.setStyle("-fx-text-fill: #666; -fx-font-size: 12px;");
+
+        // Build the guest option box
+        guestOptionBox.setAlignment(Pos.CENTER);
+        guestOptionBox.getChildren().addAll(orDivider, continueAsGuestButton, guestDescLabel);
+        continueAsGuestButton.setMaxWidth(300);
+        continueAsGuestButton.getStyleClass().add("guest-checkout-btn");
+
+        // Guest button action
+        continueAsGuestButton.setOnAction(e -> {
             loginGuestFlipPane.flipToBack();
             guestPanel.onShowing();
         });
-        Hyperlink orAccountLink = Bootstrap.textPrimary(I18nControls.newHyperlink(BookI18nKeys.OrBookUsingAccount));
-        orAccountLink.setOnAction(e -> {
+
+        // Handle "Log in here" link click from the GuestPanel
+        guestPanel.setOnLoginLinkClicked(() -> {
             loginGuestFlipPane.flipToFront();
             guestPanel.onHiding();
         });
-        guestPanel.addTopNode(orAccountLink);
+
+        // Set up email existence check callback for guest checkout
+        guestPanel.setEmailCheckCallback(email -> {
+            EntityStore.create(getBookEventActivity().getDataSourceModel())
+                .<Person>executeQuery("select id from Person where email=? and owner=true and removed!=true limit 1", email)
+                .onFailure(e -> Console.log("Error checking email existence: " + e.getMessage()))
+                .onSuccess(persons -> UiScheduler.runInUiThread(() -> {
+                    if (persons.isEmpty()) {
+                        guestPanel.hideEmailExistsAlert();
+                    } else {
+                        guestPanel.showEmailExistsAlert();
+                    }
+                }));
+        });
+
         guestPanel.setOnSubmit(event -> {
             Document document = getWorkingBooking().getLastestDocumentAggregate().getDocument();
             document.setFirstName(guestPanel.getFirstName());
@@ -95,7 +144,12 @@ final class Step1BookingFormAndSubmitSlide extends StepSlide implements BookingF
             document.setEmail(guestPanel.getEmail());
             document.setCountry(getEvent().getOrganization().getCountry());
             FXGuestToBook.setGuestToBook(document);
-            submitBooking();
+            // Call onGuestSubmitted() which allows multi-page forms to navigate to review
+            if (currentBookingForm != null) {
+                currentBookingForm.onGuestSubmitted();
+            } else {
+                submitBooking(); // Fallback to direct submission
+            }
         });
     }
 
@@ -110,6 +164,7 @@ final class Step1BookingFormAndSubmitSlide extends StepSlide implements BookingF
     }
 
     void setBookingForm(BookingForm bookingForm) {
+        this.currentBookingForm = bookingForm;
         bookingForm.setActivityCallback(this);
 
         Node bookingFormUi = bookingForm.buildUi();
@@ -122,7 +177,8 @@ final class Step1BookingFormAndSubmitSlide extends StepSlide implements BookingF
         boolean bookAsAGuestAllowed = settings.bookAsAGuestAllowed();
         if (bookAsAGuestAllowed)
             loginGuestFlipPane.setBack(guestPanel.getContainer());
-        Collections.addIfNotContainsOrRemove(loginTopVBox.getChildren(), bookAsAGuestAllowed, orGuestLink);
+        // Show/hide the prominent guest checkout option below login
+        Layouts.setManagedAndVisibleProperties(guestOptionBox, bookAsAGuestAllowed);
 
         // The booking form decides at which point to show the default submitButton
         showDefaultSubmitButton(false);
@@ -132,7 +188,9 @@ final class Step1BookingFormAndSubmitSlide extends StepSlide implements BookingF
 
         // and if it should be disabled or not, but in addition to that, we disable it if we show the login
         defaultSubmitButton.disableProperty().bind(readyToSubmitBookingProperty.not());
-        guestPanel.getSubmitButton().disableProperty().bind(bookingFormDisableSubmitButtonProperty);
+        // Guest submit button disabled until all required fields are filled AND form allows submission
+        guestPanel.getSubmitButton().disableProperty().bind(
+            bookingFormDisableSubmitButtonProperty.or(Bindings.not(guestPanel.validProperty())));
 
         mainVbox.getChildren().setAll(
             bookingFormUi,
@@ -249,5 +307,12 @@ final class Step1BookingFormAndSubmitSlide extends StepSlide implements BookingF
     @Override
     public void onEndReached() {
         getBookEventActivity().onEndSlideReached();
+    }
+
+    @Override
+    public void navigateToLogin() {
+        // Ensure the flip pane shows the login form (front), not the guest panel (back)
+        loginGuestFlipPane.flipToFront();
+        WindowHistory.getProvider().push(CheckoutAccountRouting.getPath());
     }
 }

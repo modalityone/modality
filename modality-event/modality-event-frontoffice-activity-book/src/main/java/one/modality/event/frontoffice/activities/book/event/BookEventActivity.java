@@ -28,7 +28,6 @@ import one.modality.booking.client.workingbooking.HasWorkingBookingProperties;
 import one.modality.booking.client.workingbooking.WorkingBooking;
 import one.modality.booking.client.workingbooking.WorkingBookingProperties;
 import one.modality.booking.frontoffice.bookingform.GatewayPaymentForm;
-import one.modality.crm.backoffice.organization.fx.FXOrganizationId;
 import one.modality.crm.shared.services.authn.fx.FXUserPersonId;
 import one.modality.ecommerce.document.service.*;
 import one.modality.ecommerce.payment.CancelPaymentResult;
@@ -95,12 +94,8 @@ public final class BookEventActivity extends ViewDomainActivityBase implements B
     }
 
     private void setCollapseMenu() {
-        Event event = FXEvent.getEvent();
-        FXCollapseMenu.setCollapseMenu(
-            // We never collapse the menu for NKT events (Festivals & STTP)
-            !Entities.samePrimaryKey(FXOrganizationId.getOrganizationId(), 1)
-            // But we do hide the menu for MKMC GP classes to not distract the user from booking
-            && (event == null || event.isRecurring()));
+        // Always show the menu - don't collapse it for any event type
+        FXCollapseMenu.setCollapseMenu(false);
     }
 
     @Override
@@ -296,6 +291,14 @@ public final class BookEventActivity extends ViewDomainActivityBase implements B
 
     public HtmlText bindI18nEventExpression(HtmlText text, String eventExpression, Object... args) {
         return lettersSlideController.bindI18nEventExpression(text, eventExpression, args);
+    }
+
+    /**
+     * Navigates to the login page using the activity's routing context.
+     * This navigates to the main /login route which is independent of Step1BookingFormAndSubmitSlide.
+     */
+    public void navigateToLogin() {
+        getHistory().push("/login");
     }
 
 }

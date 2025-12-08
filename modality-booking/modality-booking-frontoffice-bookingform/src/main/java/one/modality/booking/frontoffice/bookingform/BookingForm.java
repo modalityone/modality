@@ -27,4 +27,16 @@ public interface BookingForm {
 
     BookingFormActivityCallback getActivityCallback();
 
+    /**
+     * Called when a guest has submitted their information.
+     * Multi-page forms can override this to navigate to the review page.
+     * Default implementation submits the booking directly.
+     */
+    default void onGuestSubmitted() {
+        BookingFormActivityCallback callback = getActivityCallback();
+        if (callback != null) {
+            callback.submitBooking(0); // Default behavior: submit directly
+        }
+    }
+
 }

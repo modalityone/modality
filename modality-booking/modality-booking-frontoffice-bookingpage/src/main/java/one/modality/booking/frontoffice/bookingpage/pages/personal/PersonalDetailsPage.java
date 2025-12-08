@@ -19,6 +19,7 @@ import dev.webfx.stack.orm.entity.Entities;
 import dev.webfx.stack.orm.entity.UpdateStore;
 import dev.webfx.stack.orm.entity.binding.EntityBindings;
 import dev.webfx.stack.orm.entity.controls.entity.selector.EntityButtonSelector;
+import javafx.beans.binding.Bindings;
 import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.ObjectProperty;
 import javafx.beans.property.SimpleBooleanProperty;
@@ -40,6 +41,7 @@ import one.modality.booking.client.workingbooking.WorkingBooking;
 import one.modality.booking.client.workingbooking.WorkingBookingProperties;
 import one.modality.booking.frontoffice.bookingelements.BookingElements;
 import one.modality.booking.frontoffice.bookingform.BookingForm;
+import one.modality.booking.frontoffice.bookingpage.BookingFormButton;
 import one.modality.booking.frontoffice.bookingpage.BookingFormPage;
 import one.modality.booking.frontoffice.bookingpage.BookingPageI18nKeys;
 import one.modality.crm.client.i18n.CrmI18nKeys;
@@ -83,6 +85,8 @@ public final class PersonalDetailsPage implements BookingFormPage {
     private final ObjectProperty<Future<?>> busyFutureProperty = new SimpleObjectProperty<>();
     private final BooleanProperty alreadyBookedProperty = new SimpleBooleanProperty();
     private final BooleanProperty isLinkedAccountProperty = new SimpleBooleanProperty();
+    private final BooleanProperty isNewPersonProperty = new SimpleBooleanProperty(false);
+    private BookingFormButton[] buttons;
 
     private final ValidationSupport validationSupport = new ValidationSupport();
 
@@ -115,8 +119,11 @@ public final class PersonalDetailsPage implements BookingFormPage {
                     setPersonToBook(person);
                 }
             } else if (personToBook != null) {
+                // Switch to creating a new person (only when updateStore exists from previous selection)
                 setPersonToBook(null);
             }
+            // Note: For initial guest state (no person ever selected, no updateStore),
+            // we don't call setPersonToBook - the guest panel handles initial entry
             isLinkedAccountProperty.set(isLinkedAccount);
             userProfileView.setLoginDetailsVisible(!isLinkedAccount);
             userProfileView.setEmailFieldDisabled(isAccountOwner);
@@ -175,6 +182,7 @@ public final class PersonalDetailsPage implements BookingFormPage {
             userProfileView.setCurrentEditedPerson(personToBook);
 
             isNewPerson = false;
+            isNewPersonProperty.set(false);
             busyFutureProperty.set(DocumentService.loadDocument(event, person)
                 .inUiThread()
                 .onSuccess(documentAggregate -> {
@@ -190,6 +198,7 @@ public final class PersonalDetailsPage implements BookingFormPage {
             personToBook = updateStore.insertEntity(Person.class);
             userProfileView.setCurrentEditedPerson(personToBook);
             isNewPerson = true;
+            isNewPersonProperty.set(true);
             alreadyBookedProperty.set(false);
             FXProperties.onPropertySet(FXUserPerson.userPersonProperty(), p -> personToBook.setFrontendAccount(p.getFrontendAccount()));
         }
@@ -245,12 +254,31 @@ public final class PersonalDetailsPage implements BookingFormPage {
 
     @Override
     public ObservableBooleanValue validProperty() {
-        return userProfileView.saveButton.disableProperty().and(alreadyBookedProperty.not());
+        // When not logged in, GuestPanel handles validation, so always allow proceeding
+        // For logged-in users creating new persons, allow proceeding - validation on button click
+        // For existing persons, require no unsaved changes
+        return Bindings.createBooleanBinding(
+                () -> FXUserPerson.getUserPerson() == null,
+                FXUserPerson.userPersonProperty()
+            )
+            .or(isNewPersonProperty)
+            .or(userProfileView.saveButton.disableProperty())
+            .and(alreadyBookedProperty.not());
     }
 
     @Override
     public ObservableObjectValue<Future<?>> busyFutureProperty() {
         return busyFutureProperty;
+    }
+
+    @Override
+    public BookingFormButton[] getButtons() {
+        return buttons;
+    }
+
+    public PersonalDetailsPage setButtons(BookingFormButton... buttons) {
+        this.buttons = buttons;
+        return this;
     }
 
     private static MonoPane centerInVBoxWithMargin(Node node, Insets margin) {

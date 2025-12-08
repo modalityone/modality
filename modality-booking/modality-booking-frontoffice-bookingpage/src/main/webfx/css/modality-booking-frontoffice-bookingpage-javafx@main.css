@@ -3,3 +3,466 @@
     -fx-line-spacing: 7px;
     -fx-text-fill: -bootstrap-grey5;
 }
+
+/* Step Progress Navigation */
+.step-progress {
+    -fx-padding: 0 0 24px 0;
+    -fx-border-color: transparent transparent #f0f0f0 transparent;
+    -fx-border-width: 0 0 2px 0;
+    -fx-alignment: center;
+    -fx-spacing: 20px;
+}
+
+.step-progress-item {
+    -fx-alignment: center;
+    -fx-spacing: 8px;
+}
+
+.step-bubble {
+    -fx-min-width: 40px;
+    -fx-min-height: 40px;
+    -fx-max-width: 40px;
+    -fx-max-height: 40px;
+    -fx-background-radius: 20px;
+    /* 50% */
+    -fx-background-color: white;
+    -fx-border-color: #e0e0e0;
+    -fx-border-width: 2px;
+    -fx-border-radius: 20px;
+    -fx-alignment: center;
+    -fx-font-weight: bold;
+    -fx-font-size: 16px;
+    -fx-text-fill: #999;
+}
+
+.step-progress-item.active .step-bubble {
+    -fx-background-color: #0096D6;
+    -fx-border-color: #0096D6;
+    -fx-text-fill: white;
+    -fx-effect: dropshadow(three-pass-box, rgba(0, 150, 214, 0.3), 12, 0, 0, 4);
+}
+
+.step-progress-item.completed .step-bubble {
+    -fx-background-color: white;
+    -fx-border-color: #0096D6;
+    -fx-text-fill: #0096D6;
+}
+
+.step-progress-label {
+    -fx-font-size: 11px;
+    -fx-text-fill: #999;
+    -fx-font-weight: 500;
+    -fx-text-alignment: center;
+}
+
+.step-progress-item.active .step-progress-label {
+    -fx-text-fill: #0096D6;
+    -fx-font-weight: bold;
+}
+
+.step-progress-item.completed .step-progress-label {
+    -fx-text-fill: #0096D6;
+}
+
+/* Container */
+.booking-container {
+    -fx-background-color: white;
+    -fx-background-radius: 16px;
+    -fx-padding: 40px;
+    -fx-effect: dropshadow(three-pass-box, rgba(0, 0, 0, 0.1), 8, 0, 0, 2);
+    -fx-max-width: 900px;
+}
+
+/* Step Title & Desc */
+.step-title {
+    -fx-font-family: 'Poppins';
+    -fx-font-weight: bold;
+    -fx-font-size: 24px;
+    -fx-text-fill: #000000;
+    -fx-alignment: center;
+}
+
+.step-desc {
+    -fx-font-family: 'Poppins';
+    -fx-font-size: 13px;
+    -fx-text-fill: #838788;
+    -fx-alignment: center;
+    -fx-padding: 0 0 40px 0;
+}
+
+/* Section */
+.section-title {
+    -fx-font-family: 'Poppins';
+    -fx-font-weight: bold;
+    -fx-font-size: 18px;
+    -fx-text-fill: #292A33;
+    -fx-padding: 14px 18px;
+    -fx-background-color: #F8F9FA;
+    -fx-background-radius: 8px;
+    -fx-border-color: transparent transparent transparent #0096D6;
+    -fx-border-width: 0 0 0 4px;
+}
+
+/* Package Card */
+.package-card {
+    -fx-border-color: #e0e0e0;
+    -fx-border-width: 2px;
+    -fx-border-radius: 12px;
+    -fx-background-radius: 12px;
+    -fx-padding: 24px;
+    -fx-cursor: hand;
+    -fx-background-color: white;
+}
+
+.package-card:hover {
+    -fx-border-color: #0096D6;
+    -fx-effect: dropshadow(three-pass-box, rgba(0, 150, 214, 0.2), 12, 0, 0, 4);
+}
+
+.package-card.selected {
+    -fx-border-color: #0096D6;
+    -fx-background-color: #f0f8ff;
+}
+
+.package-title {
+    -fx-font-family: 'Poppins';
+    -fx-font-size: 18px;
+    -fx-font-weight: bold;
+    -fx-text-fill: #292A33;
+}
+
+.package-price {
+    -fx-font-family: 'Poppins';
+    -fx-font-size: 24px;
+    -fx-text-fill: #0096D6;
+    -fx-font-weight: bold;
+}
+
+.package-desc {
+    -fx-font-family: 'Poppins';
+    -fx-font-size: 13px;
+    -fx-text-fill: #838788;
+}
+
+/* Room Card */
+.room-card {
+    -fx-border-color: #e0e0e0;
+    -fx-border-width: 2px;
+    -fx-border-radius: 12px;
+    -fx-background-radius: 12px;
+    -fx-padding: 24px;
+    -fx-cursor: hand;
+    -fx-background-color: white;
+    -fx-alignment: center-left;
+    -fx-spacing: 20px;
+}
+
+.room-card:hover {
+    -fx-border-color: #0096D6;
+    -fx-effect: dropshadow(three-pass-box, rgba(0, 150, 214, 0.2), 12, 0, 0, 4);
+}
+
+.room-card.selected {
+    -fx-border-color: #0096D6;
+    -fx-background-color: #f0f8ff;
+}
+
+.room-card.soldout {
+    -fx-opacity: 0.6;
+    -fx-cursor: default;
+    -fx-background-color: #f5f5f5;
+}
+
+.room-name {
+    -fx-font-family: 'Poppins';
+    -fx-font-size: 16px;
+    -fx-font-weight: bold;
+    -fx-text-fill: #292A33;
+}
+
+.room-desc {
+    -fx-font-family: 'Poppins';
+    -fx-font-size: 13px;
+    -fx-text-fill: #838788;
+}
+
+.room-price {
+    -fx-font-family: 'Poppins';
+    -fx-font-size: 28px;
+    -fx-text-fill: #0096D6;
+    -fx-font-weight: bold;
+}
+
+/* Badges */
+.availability-badge {
+    -fx-padding: 6px 14px;
+    -fx-background-radius: 20px;
+    -fx-font-size: 12px;
+    -fx-font-weight: bold;
+}
+
+.available {
+    -fx-background-color: #d4edda;
+    -fx-text-fill: #155724;
+}
+
+.soldout-badge {
+    -fx-background-color: #f8d7da;
+    -fx-text-fill: #721c24;
+}
+
+.limited {
+    -fx-background-color: #fff3cd;
+    -fx-text-fill: #856404;
+}
+
+/* Buttons */
+.btn-primary {
+    -fx-background-color: linear-gradient(to bottom right, #0096D6, #007AB8);
+    -fx-text-fill: white;
+    -fx-font-size: 16px;
+    -fx-font-weight: bold;
+    -fx-padding: 16px 40px;
+    -fx-background-radius: 8px;
+    -fx-effect: dropshadow(three-pass-box, rgba(0, 150, 214, 0.3), 12, 0, 0, 4);
+}
+
+.btn-primary:hover {
+    -fx-effect: dropshadow(three-pass-box, rgba(0, 150, 214, 0.4), 20, 0, 0, 6);
+}
+
+.btn-primary:disabled {
+    -fx-opacity: 0.5;
+    -fx-effect: none;
+}
+
+/* Date Tabs */
+.date-tabs {
+    -fx-spacing: 8px;
+    -fx-padding: 2px;
+    -fx-background-color: #E6E7E7;
+    -fx-background-radius: 8px;
+}
+
+.date-tab {
+    -fx-padding: 10px 13px;
+    -fx-background-color: transparent;
+    -fx-background-radius: 8px;
+    -fx-cursor: hand;
+    -fx-alignment: center;
+    -fx-spacing: 8px;
+    -fx-min-width: 150px;
+}
+
+.date-tab:selected {
+    -fx-background-color: #FFFFFF;
+    -fx-effect: dropshadow(three-pass-box, rgba(0, 0, 0, 0.07), 5, 0, 0, 0);
+}
+
+.date-tab-label {
+    -fx-font-family: 'Poppins';
+    -fx-font-weight: 500;
+    -fx-font-size: 16px;
+    -fx-text-fill: #838788;
+}
+
+.date-tab:selected .date-tab-label {
+    -fx-text-fill: #0096D6;
+    -fx-font-weight: bold;
+}
+
+.date-tab-desc {
+    -fx-font-family: 'Poppins';
+    -fx-font-size: 12px;
+    -fx-text-fill: #838788;
+}
+
+.date-tab:selected .date-tab-desc {
+    -fx-text-fill: #0096D6;
+}
+
+/* Checkbox Item */
+.checkbox-item {
+    -fx-spacing: 12px;
+    -fx-cursor: hand;
+    -fx-alignment: center-left;
+}
+
+.checkbox-label {
+    -fx-font-family: 'Poppins';
+    -fx-font-weight: bold;
+    -fx-font-size: 16px;
+    -fx-text-fill: #292A33;
+}
+
+/* Toggle Button */
+.toggle-button {
+    -fx-padding: 14px 20px;
+    -fx-background-color: #FFFFFF;
+    -fx-border-color: #E6E7E7;
+    -fx-border-width: 2px;
+    -fx-border-radius: 9px;
+    -fx-font-family: 'Poppins';
+    -fx-font-weight: bold;
+    -fx-font-size: 16px;
+    -fx-text-fill: #292A33;
+    -fx-cursor: hand;
+    -fx-alignment: center;
+    -fx-spacing: 12px;
+}
+
+.toggle-button:hover {
+    -fx-border-color: #0096D6;
+    -fx-background-color: #F0F8FF;
+}
+
+.toggle-button:selected {
+    -fx-border-color: #0096D6;
+    -fx-background-color: #0096D6;
+    -fx-text-fill: #FFFFFF;
+}
+
+/* Inline Radio Group */
+.inline-radio-group {
+    -fx-spacing: 8px;
+    -fx-alignment: center-left;
+}
+
+.inline-radio-option {
+    -fx-padding: 10px 18px;
+    -fx-background-color: #FFFFFF;
+    -fx-border-color: #E6E7E7;
+    -fx-border-width: 2px;
+    -fx-border-radius: 8px;
+    -fx-cursor: hand;
+    -fx-font-family: 'Poppins';
+    -fx-font-weight: 500;
+    -fx-font-size: 14px;
+    -fx-text-fill: #292A33;
+    -fx-alignment: center;
+    -fx-spacing: 8px;
+}
+
+.inline-radio-option:hover {
+    -fx-border-color: #0096D6;
+    -fx-background-color: #F0F8FF;
+}
+
+.inline-radio-option:selected {
+    -fx-background-color: #F0F8FF;
+    -fx-border-color: #0096D6;
+    -fx-text-fill: #0096D6;
+    -fx-font-weight: bold;
+}
+
+/* Input Field */
+.input-field {
+    -fx-padding: 14px 16px;
+    -fx-background-color: transparent;
+    -fx-border-color: transparent transparent #292A33 transparent;
+    -fx-border-width: 0 0 2px 0;
+    -fx-font-family: 'Poppins';
+    -fx-font-size: 13px;
+    -fx-text-fill: #292A33;
+}
+
+.input-field:focused {
+    -fx-border-color: transparent transparent #0096D6 transparent;
+}
+
+/* Button Group */
+.button-group {
+    -fx-spacing: 12px;
+}
+
+.button-option {
+    -fx-padding: 14px 20px;
+    -fx-background-color: #FFFFFF;
+    -fx-border-color: #E6E7E7;
+    -fx-border-width: 2px;
+    -fx-border-radius: 9px;
+    -fx-font-family: 'Poppins';
+    -fx-font-weight: 500;
+    -fx-font-size: 14px;
+    -fx-text-fill: #292A33;
+    -fx-cursor: hand;
+    -fx-alignment: center-left;
+}
+
+.button-option:hover {
+    -fx-border-color: #0096D6;
+    -fx-background-color: #F0F8FF;
+}
+
+.button-option:selected {
+    -fx-border-color: #0096D6;
+    -fx-background-color: #F0F8FF;
+    -fx-text-fill: #0096D6;
+    -fx-font-weight: bold;
+}
+
+/* Accommodation Button */
+.accommodation-grid {
+    -fx-hgap: 12px;
+    -fx-vgap: 12px;
+}
+
+.accommodation-button {
+    -fx-padding: 16px;
+    -fx-background-color: #FFFFFF;
+    -fx-border-color: #E6E7E7;
+    -fx-border-width: 2px;
+    -fx-border-radius: 9px;
+    -fx-cursor: hand;
+    -fx-alignment: center;
+    -fx-spacing: 6px;
+    -fx-min-width: 200px;
+}
+
+.accommodation-button:hover {
+    -fx-border-color: #0096D6;
+    -fx-background-color: #F0F8FF;
+}
+
+.accommodation-button:selected {
+    -fx-border-color: #0096D6;
+    -fx-background-color: #0096D6;
+}
+
+.accommodation-button:selected .accommodation-name,
+.accommodation-button:selected .accommodation-price,
+.accommodation-button:selected .accommodation-unit {
+    -fx-text-fill: #FFFFFF;
+}
+
+.accommodation-name {
+    -fx-font-family: 'Poppins';
+    -fx-font-weight: 500;
+    -fx-font-size: 14px;
+    -fx-text-fill: #292A33;
+}
+
+.accommodation-price {
+    -fx-font-family: 'Poppins';
+    -fx-font-weight: bold;
+    -fx-font-size: 16px;
+    -fx-text-fill: #0096D6;
+}
+
+.accommodation-unit {
+    -fx-font-family: 'Poppins';
+    -fx-font-size: 12px;
+    -fx-text-fill: #838788;
+}
+
+/* Info Box */
+.info-box {
+    -fx-padding: 14px 16px;
+    -fx-background-color: #FFF9E6;
+    -fx-border-color: transparent transparent transparent #FFC107;
+    -fx-border-width: 0 0 0 4px;
+    -fx-background-radius: 6px;
+    -fx-font-family: 'Poppins';
+    -fx-font-size: 13px;
+    -fx-text-fill: #292A33;
+}
