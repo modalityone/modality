@@ -18,13 +18,14 @@ module modality.ecommerce.payment.client {
     requires webfx.extras.webview.pane;
     requires webfx.kit.util;
     requires webfx.platform.async;
-    requires webfx.platform.conf;
     requires webfx.platform.console;
     requires webfx.platform.scheduler;
     requires webfx.platform.shutdown;
     requires webfx.platform.uischeduler;
+    requires webfx.platform.useragent;
     requires webfx.platform.util;
     requires webfx.platform.windowlocation;
+    requires webfx.stack.com.origin.client;
 
     // Exported packages
     exports one.modality.ecommerce.payment.client;

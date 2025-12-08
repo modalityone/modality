@@ -2,6 +2,7 @@ package one.modality.ecommerce.payment.client;
 
 import dev.webfx.extras.webview.pane.WebViewPane;
 import dev.webfx.platform.windowlocation.WindowLocation;
+import dev.webfx.stack.origin.client.ClientOrigin;
 import one.modality.ecommerce.payment.InitiatePaymentArgument;
 import one.modality.ecommerce.payment.PaymentFormType;
 
@@ -25,7 +26,7 @@ public final class ClientPaymentUtil {
     private static String routeToUrl(String route) {
         if (route == null)
             return null;
-        return WindowLocation.getOrigin() + "/#" + route;
+        return ClientOrigin.getClientAppRouteUrl(route);
     }
 
 }

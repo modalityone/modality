@@ -62,7 +62,10 @@ public class ServerPaymentServiceProvider implements PaymentServiceProvider {
                 // Step 3: Loading the relevant payment gateway parameters
                 Event event = moneyTransfer.getDocument().getEvent();
                 EventState state = event.getState();
-                boolean live = state != null && state.compareTo(EventState.OPEN) >= 0 /* KBS3 way */ || event.isLive() /* KBS2 way */;
+                boolean live = state != null && state.compareTo(EventState.OPEN) >= 0 /* KBS3 way */
+                               || state == null && event.isLive(); /* KBS2 way */
+                String returnUrl = Strings.replaceAll(argument.returnUrl(), ":moneyTransferId", moneyTransfer.getPrimaryKey().toString());
+                String cancelUrl = Strings.replaceAll(argument.cancelUrl(), ":moneyTransferId", moneyTransfer.getPrimaryKey().toString());
                 return loadPaymentGatewayParameters(moneyTransfer, live)
                     .compose(parameters -> {
                         // Step 4: Calling the payment gateway with all the data collected
@@ -74,8 +77,8 @@ public class ServerPaymentServiceProvider implements PaymentServiceProvider {
                             argument.preferredFormType(),
                             argument.favorSeamless(),
                             argument.isOriginOnHttps(),
-                            argument.returnUrl(),
-                            argument.cancelUrl(),
+                            returnUrl,
+                            cancelUrl,
                             parameters
                         )).map(gatewayResult -> new InitiatePaymentResult( // Step 5: Returning an InitiatePaymentResult
                             paymentGateway.getName(),

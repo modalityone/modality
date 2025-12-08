@@ -51,7 +51,7 @@ final class ProvidedGatewayPaymentForm implements GatewayPaymentForm {
         Layouts.setManagedAndVisibleProperties(payButton, !webPaymentForm.hasHtmlPayButton());
         webPaymentForm.setHtmlPayButtonText(payButton.getText());
         webPaymentForm.setHtmlHeaderText("Please enter your payment information");
-        Region paymentRegion = webPaymentForm.buildPaymentForm();
+        Region paymentRegion = webPaymentForm.buildEmbeddedPaymentForm();
         if (paymentRegion == null) { // This indicates a redirected payment form
             // Temporary UI (just spinner)
             paymentRegion = Controls.createSpinner(80);

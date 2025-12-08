@@ -117,8 +117,8 @@ public abstract class StepSlide implements Supplier<Node> {
                     LAST_PAYMENT_DEPOSIT,
                     documentPrimaryKey,
                     PaymentFormType.REDIRECTED, // We were using EMBEDDED so far, now we try REDIRECTED
-                    "/payment-return/:moneyTransfer",
-                    "/payment-cancel/:moneyTransfer")
+                    "/payment-return/:moneyTransferId",
+                    "/payment-cancel/:moneyTransferId")
             )
             .inUiThread()
             .onFailure(paymentResult -> {
@@ -132,11 +132,18 @@ public abstract class StepSlide implements Supplier<Node> {
                 if (buyerDetails == null)
                     buyerDetails = FXGuestToBook.getGuestToBook();
                 WebPaymentForm webPaymentForm = new WebPaymentForm(paymentResult, buyerDetails);
-                GatewayPaymentForm gatewayPaymentForm = new ProvidedGatewayPaymentForm(webPaymentForm, this);
-                if (gatewayPaymentFormDisplayer != null)
-                    gatewayPaymentFormDisplayer.accept(gatewayPaymentForm);
-                else
-                    displayPaymentSlide(gatewayPaymentForm);
+                // If it's a redirected payment form, we just navigate to it
+                if (webPaymentForm.isRedirectedPaymentForm())
+                    webPaymentForm.navigateToRedirectedPaymentForm();
+                    // No more slide to show, we just wait the redirected payment page to replace this app
+                else { // Embedded payment form
+                    // Creating and displaying the gateway payment form
+                    GatewayPaymentForm gatewayPaymentForm = new ProvidedGatewayPaymentForm(webPaymentForm, this);
+                    if (gatewayPaymentFormDisplayer != null)
+                        gatewayPaymentFormDisplayer.accept(gatewayPaymentForm);
+                    else
+                        displayPaymentSlide(gatewayPaymentForm);
+                }
             });
     }
 
