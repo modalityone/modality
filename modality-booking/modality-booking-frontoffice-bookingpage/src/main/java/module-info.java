@@ -28,6 +28,7 @@ module modality.booking.frontoffice.bookingpage {
     requires webfx.extras.i18n.controls;
     requires webfx.extras.operation;
     requires webfx.extras.panes;
+    requires webfx.extras.responsive;
     requires webfx.extras.styles.bootstrap;
     requires webfx.extras.time.format;
     requires webfx.extras.util.border;
@@ -52,15 +53,15 @@ module modality.booking.frontoffice.bookingpage {
 
     // Exported packages
     exports one.modality.booking.frontoffice.bookingpage;
+    exports one.modality.booking.frontoffice.bookingpage.cart;
     exports one.modality.booking.frontoffice.bookingpage.pages.audiorecording;
     exports one.modality.booking.frontoffice.bookingpage.pages.closed;
     exports one.modality.booking.frontoffice.bookingpage.pages.payment;
     exports one.modality.booking.frontoffice.bookingpage.pages.personal;
     exports one.modality.booking.frontoffice.bookingpage.pages.prerequisite;
-    exports one.modality.booking.frontoffice.bookingpage.pages.step1;
-    exports one.modality.booking.frontoffice.bookingpage.pages.step2;
     exports one.modality.booking.frontoffice.bookingpage.pages.summary;
     exports one.modality.booking.frontoffice.bookingpage.pages.teaching;
     exports one.modality.booking.frontoffice.bookingpage.pages.terms;
+    exports one.modality.booking.frontoffice.bookingpage.theme;
 
 }

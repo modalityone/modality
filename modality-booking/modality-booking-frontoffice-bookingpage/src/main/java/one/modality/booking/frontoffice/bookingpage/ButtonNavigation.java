@@ -12,6 +12,7 @@ import javafx.scene.layout.HBox;
 import javafx.scene.layout.Priority;
 import javafx.scene.layout.Region;
 import one.modality.base.client.i18n.BaseI18nKeys;
+import one.modality.booking.frontoffice.bookingpage.theme.BookingFormColorScheme;
 
 /**
  * @author Bruno Salmon
@@ -27,6 +28,7 @@ public class ButtonNavigation implements BookingFormNavigation {
     private final ToggleButton backToggleButton = new ToggleButton();
 
     private MultiPageBookingForm bookingForm;
+    private BookingFormColorScheme colorScheme = BookingFormColorScheme.DEFAULT;
 
     public ButtonNavigation() {
         container.setAlignment(Pos.CENTER_RIGHT);
@@ -75,6 +77,33 @@ public class ButtonNavigation implements BookingFormNavigation {
         this.bookingForm = bookingForm;
     }
 
+    public void setColorScheme(BookingFormColorScheme colorScheme) {
+        this.colorScheme = colorScheme;
+        // Update default button style with new color scheme
+        applyPrimaryButtonStyle(continueButton);
+    }
+
+    private void applyPrimaryButtonStyle(Button button) {
+        String primaryColor = colorScheme.getPrimaryHex();
+        String primaryDarker = colorScheme.getPrimaryDarkerHex();
+        button.setStyle(
+                "-fx-background-color: linear-gradient(to bottom right, " + primaryColor + ", " + primaryDarker + "); " +
+                "-fx-text-fill: white; -fx-font-weight: bold; -fx-padding: 16px 40px; " +
+                "-fx-background-radius: 8px; -fx-cursor: hand; " +
+                "-fx-effect: dropshadow(three-pass-box, rgba(0, 150, 214, 0.3), 12, 0, 0, 4); " +
+                "-fx-font-size: 16px; -fx-font-family: 'Poppins';");
+    }
+
+    private void applyBackButtonStyle(Button button) {
+        String primaryColor = colorScheme.getPrimaryHex();
+        button.setStyle(
+                "-fx-background-color: transparent; -fx-text-fill: " + primaryColor + "; " +
+                "-fx-font-weight: bold; -fx-padding: 16px 40px; -fx-background-radius: 8px; " +
+                "-fx-cursor: hand; -fx-border-color: " + primaryColor + "; " +
+                "-fx-border-width: 2px; -fx-border-radius: 8px; " +
+                "-fx-font-size: 16px; -fx-font-family: 'Poppins';");
+    }
+
     @Override
     public void setButtons(BookingFormButton... buttons) {
         container.getChildren().clear();
@@ -91,13 +120,12 @@ public class ButtonNavigation implements BookingFormNavigation {
             I18nControls.bindI18nProperties(button, buttonDef.getTextI18nKey());
             button.getStyleClass().addAll("btn", buttonDef.getStyleClass());
 
-            // Apply styling based on style class
-            if ("btn-primary".equals(buttonDef.getStyleClass())) {
-                button.setStyle(
-                        "-fx-background-color: linear-gradient(to bottom right, #0096D6, #007AB8); -fx-text-fill: white; -fx-font-weight: bold; -fx-padding: 16px 40px; -fx-background-radius: 8px; -fx-cursor: hand; -fx-effect: dropshadow(three-pass-box, rgba(0, 150, 214, 0.3), 12, 0, 0, 4); -fx-font-size: 16px; -fx-font-family: 'Poppins';");
-            } else if ("btn-back".equals(buttonDef.getStyleClass())) {
-                button.setStyle(
-                        "-fx-background-color: transparent; -fx-text-fill: #0096D6; -fx-font-weight: bold; -fx-padding: 16px 40px; -fx-background-radius: 8px; -fx-cursor: hand; -fx-border-color: #0096D6; -fx-border-width: 2px; -fx-border-radius: 8px; -fx-font-size: 16px; -fx-font-family: 'Poppins';");
+            // Apply styling based on style class using color scheme
+            String styleClass = buttonDef.getStyleClass();
+            if (styleClass != null && styleClass.contains("btn-primary")) {
+                applyPrimaryButtonStyle(button);
+            } else if (styleClass != null && styleClass.contains("btn-back")) {
+                applyBackButtonStyle(button);
             }
 
             if (buttonDef.getDisableProperty() != null) {
