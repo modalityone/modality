@@ -11,6 +11,7 @@ import javafx.scene.Cursor;
 import javafx.scene.control.Label;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.layout.*;
+import javafx.scene.layout.Priority;
 import javafx.scene.shape.SVGPath;
 import javafx.scene.text.TextAlignment;
 import one.modality.catering.backoffice.activities.kitchen.KitchenI18nKeys;
@@ -124,12 +125,12 @@ public final class AttendeeDetailsDialog {
             }
         }
 
-        // Scroll pane for attendee list
+        // Scroll pane for attendee list - grows to fill available vertical space
         ScrollPane scrollPane = Controls.createScrollPane(attendeeList);
         scrollPane.setFitToWidth(true);
         scrollPane.getStyleClass().add("attendee-dialog-scroll");
-        scrollPane.setPrefHeight(450);  // Restored original height
-        scrollPane.setMaxHeight(550);   // Original max height
+        // Let scroll pane grow to use all available vertical space
+        VBox.setVgrow(scrollPane, Priority.ALWAYS);
 
         // Close button - will be wired after dialog is shown
         javafx.scene.control.Button closeButton = Bootstrap.secondaryButton(I18nControls.newButton(KitchenI18nKeys.Close));
@@ -139,12 +140,13 @@ public final class AttendeeDetailsDialog {
         buttonBox.setAlignment(Pos.CENTER);
         buttonBox.setPadding(new Insets(15, 0, 0, 0));
 
-        // Main content
+        // Main content - fills available space
         VBox content = new VBox(20);
         content.getChildren().addAll(headerBox, scrollPane, buttonBox);
         content.setPadding(new Insets(25));
         content.setMinWidth(800);
         content.setMaxWidth(1000);
+        content.setFillWidth(true);
 
         return new DialogContentHolder(content, closeButton);
     }
@@ -295,12 +297,12 @@ public final class AttendeeDetailsDialog {
             sectionsContainer.getChildren().add(section);
         }
 
-        // Scroll pane for sections
+        // Scroll pane for sections - grows to fill available vertical space
         ScrollPane scrollPane = Controls.createScrollPane(sectionsContainer);
         scrollPane.setFitToWidth(true);
         scrollPane.getStyleClass().add("attendee-dialog-scroll");
-        scrollPane.setPrefHeight(450);
-        scrollPane.setMaxHeight(550);
+        // Let scroll pane grow to use all available vertical space
+        VBox.setVgrow(scrollPane, Priority.ALWAYS);
 
         // Close button
         javafx.scene.control.Button closeButton = Bootstrap.secondaryButton(I18nControls.newButton(KitchenI18nKeys.Close));
@@ -310,12 +312,13 @@ public final class AttendeeDetailsDialog {
         buttonBox.setAlignment(Pos.CENTER);
         buttonBox.setPadding(new Insets(15, 0, 0, 0));
 
-        // Main content
+        // Main content - fills available space
         VBox content = new VBox(20);
         content.getChildren().addAll(headerBox, scrollPane, buttonBox);
         content.setPadding(new Insets(25));
         content.setMinWidth(800);
         content.setMaxWidth(1000);
+        content.setFillWidth(true);
 
         return new DialogContentHolder(content, closeButton);
     }

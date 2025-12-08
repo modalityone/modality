@@ -117,24 +117,6 @@ public final class KitchenDataController {
 
         EntityStore entityStore = EntityStore.create(dataSourceModel);
 
-        // DEBUG: First, let's see ALL attendances for this date to understand the discrepancy
-        String debugQuery = "select id, scheduledItem.(id,item.name,site.name) from Attendance " +
-                "where scheduledItem.site.organization=? and scheduledItem.date=?";
-        Console.log("DEBUG: Querying ALL attendances for date " + date);
-        entityStore.executeQuery(debugQuery, organizationId, date)
-                .onSuccess(allAttendances -> {
-                    Console.log("DEBUG: Total attendances on " + date + ": " + allAttendances.size());
-                    Map<String, Integer> countsByMeal = new java.util.HashMap<>();
-                    for (Entity entity : (EntityList<Entity>) allAttendances) {
-                        Attendance att = (Attendance) entity;
-                        if (att.getScheduledItem() != null && att.getScheduledItem().getItem() != null) {
-                            String meal = att.getScheduledItem().getItem().getName();
-                            countsByMeal.put(meal, countsByMeal.getOrDefault(meal, 0) + 1);
-                        }
-                    }
-                    Console.log("DEBUG: Attendances by meal: " + countsByMeal);
-                });
-
         // Step 1: Query to fetch attendances for the given date and organization
         // We'll get the attendances and their documents
         // NOTE: We do NOT filter by item.name in SQL because it doesn't work correctly in DSQL
