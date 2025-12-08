@@ -10,8 +10,9 @@
     <dependencies>
         <used-by-source-modules/>
 
-        <plugin-module>modality-hotel-backoffice-activities-accommodation</plugin-module>
+        <plugin-module>modality-hotel-backoffice-activity-accommodation-plugin</plugin-module>
         <plugin-module>modality-hotel-backoffice-activity-household-plugin</plugin-module>
+        <plugin-module>modality-hotel-backoffice-activity-reception-plugin</plugin-module>
         <plugin-module>modality-hotel-backoffice-activity-roomsetup-plugin</plugin-module>
 
     </dependencies>

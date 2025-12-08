@@ -3,13 +3,12 @@
 /**
  * The back-office Accommodation activity.
  */
-module modality.hotel.backoffice.activities.accommodation {
+module modality.hotel.backoffice.activity.accommodation.plugin {
 
     // Direct dependencies modules
     requires javafx.base;
     requires javafx.controls;
     requires javafx.graphics;
-    requires modality.base.backoffice.activity.home.plugin;
     requires modality.base.backoffice.mainframe.fx;
     requires modality.base.client.activity.organizationdependent;
     requires modality.base.client.gantt.fx;

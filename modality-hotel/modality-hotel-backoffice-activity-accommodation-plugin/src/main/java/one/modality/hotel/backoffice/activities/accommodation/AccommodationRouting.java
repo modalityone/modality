@@ -1,7 +1,8 @@
 package one.modality.hotel.backoffice.activities.accommodation;
 
-import dev.webfx.platform.windowhistory.spi.BrowsingHistory;
 import dev.webfx.extras.i18n.HasI18nKey;
+import dev.webfx.extras.operation.HasOperationCode;
+import dev.webfx.platform.windowhistory.spi.BrowsingHistory;
 import dev.webfx.stack.orm.domainmodel.activity.viewdomain.impl.ViewDomainActivityContextFinal;
 import dev.webfx.stack.routing.router.auth.authz.RouteRequest;
 import dev.webfx.stack.routing.router.util.PathBuilder;
@@ -10,8 +11,6 @@ import dev.webfx.stack.routing.uirouter.activity.uiroute.UiRouteActivityContext;
 import dev.webfx.stack.routing.uirouter.impl.UiRouteImpl;
 import dev.webfx.stack.routing.uirouter.operations.RoutePushRequest;
 import dev.webfx.stack.routing.uirouter.operations.RouteRequestEmitter;
-import dev.webfx.extras.operation.HasOperationCode;
-import one.modality.base.backoffice.activities.home.BackOfficeHomeI18nKeys;
 
 /**
  * @author Bruno Salmon
@@ -19,7 +18,7 @@ import one.modality.base.backoffice.activities.home.BackOfficeHomeI18nKeys;
 public final class AccommodationRouting {
 
     private final static String ANY_PATH = "/accommodation";
-    private final static String OPERATION_CODE = "RouteToReception"; // Temporary
+    private final static String OPERATION_CODE = "RouteToAccommodation";
 
     public static String getAnyPath() {
         return ANY_PATH;
@@ -53,8 +52,8 @@ public final class AccommodationRouting {
 
         @Override
         public Object getI18nKey() {
-            return BackOfficeHomeI18nKeys.ReceptionMenu;
-        } // Temporary
+            return AccommodationI18nKeys.AccommodationTile;
+        }
     }
 
     public static final class RouteToAccommodationRequestEmitter implements RouteRequestEmitter {
