@@ -79,13 +79,13 @@ public final class SquarePaymentGateway implements PaymentGateway {
             locationId = argument.getAccountParameter("order.order.location_id"); // KBS2 (to remove later)
         boolean live = argument.isLive();
         // Our Square gateway script implementation supports seamless integration.
-        boolean seamless = argument.isSeamlessIfSupported()
-            // && argument.isParentPageHttps() // Maybe would be better to not use seamless integration on http, but commented for now as iFrame integration is not working well in browser (ex: WebPaymentForm fitHeight not working well)
+        boolean seamless = argument.favorSeamless()
+            // && argument.isOriginOnHttps() // Maybe would be better to not use seamless integration on http, but commented for now as iFrame integration is not working well in browser (ex: WebPaymentForm fitHeight not working well)
             ;
         String template = seamless ? SCRIPT_TEMPLATE : HTML_TEMPLATE;
         String paymentFormContent = template
-            .replace("${modality_amount}", Long.toString(argument.getAmount()))
-            .replace("${modality_currencyCode}", argument.getCurrencyCode())
+            .replace("${modality_amount}", Long.toString(argument.amount()))
+            .replace("${modality_currencyCode}", argument.currencyCode())
             .replace("${modality_seamless}", String.valueOf(seamless))
             .replace("${square_webPaymentsSDKUrl}", live ? SQUARE_LIVE_WEB_PAYMENTS_SDK_URL : SQUARE_SANDBOX_WEB_PAYMENTS_SDK_URL)
             .replace("${square_appId}", appId)
@@ -108,12 +108,12 @@ public final class SquarePaymentGateway implements PaymentGateway {
     public Future<GatewayCompletePaymentResult> completePayment(GatewayCompletePaymentArgument argument) {
         Promise<GatewayCompletePaymentResult> promise = Promise.promise();
         boolean live = argument.isLive();
-        String accessToken = argument.getAccessToken();
+        String accessToken = argument.accessToken();
         AsyncSquareClient client = AsyncSquareClient.builder()
             .environment(live ? Environment.PRODUCTION : Environment.SANDBOX)
             .token(accessToken)
             .build();
-        ReadOnlyAstObject payload = AST.parseObject(argument.getPayload(), "json");
+        ReadOnlyAstObject payload = AST.parseObject(argument.payload(), "json");
         Long amount = payload.getLong("modality_amount");
         String currencyCode = payload.getString("modality_currencyCode");
         String locationId = payload.getString("square_locationId");
@@ -121,7 +121,7 @@ public final class SquarePaymentGateway implements PaymentGateway {
         String sourceId = payload.getString("square_sourceId");
         String verificationToken = payload.getString("square_verificationToken");
         if (DEBUG_LOG) {
-            Console.log("[Square][DEBUG] completePayment - payload = " + argument.getPayload() + ", amount = " + amount + ", currencyCode = " + currencyCode + ", locationId = " + locationId + ", idempotencyKey = " + idempotencyKey + ", sourceId = " + sourceId + ", verificationToken = " + verificationToken);
+            Console.log("[Square][DEBUG] completePayment - payload = " + argument.payload() + ", amount = " + amount + ", currencyCode = " + currencyCode + ", locationId = " + locationId + ", idempotencyKey = " + idempotencyKey + ", sourceId = " + sourceId + ", verificationToken = " + verificationToken);
         }
 
         // Use Square SDK async client pattern (like AsyncCustomersClient)

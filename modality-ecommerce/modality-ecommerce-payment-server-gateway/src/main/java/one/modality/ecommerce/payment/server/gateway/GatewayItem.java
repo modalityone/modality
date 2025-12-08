@@ -9,5 +9,4 @@ public record GatewayItem(
     String description,
     int quantity,
     long price
-) {
-}
+) { }

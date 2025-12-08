@@ -21,7 +21,7 @@ public final class CancelPaymentArgumentSerialCodec extends SerialCodecBase<Canc
 
     @Override
     public void encode(CancelPaymentArgument arg, AstObject serial) {
-        encodeObject( serial, PAYMENT_PRIMARY_KEY_KEY,        arg.getPaymentPrimaryKey());
+        encodeObject( serial, PAYMENT_PRIMARY_KEY_KEY,        arg.paymentPrimaryKey());
         encodeBoolean(serial, EXPLICIT_USER_CANCELLATION_KEY, arg.isExplicitUserCancellation());
     }
 

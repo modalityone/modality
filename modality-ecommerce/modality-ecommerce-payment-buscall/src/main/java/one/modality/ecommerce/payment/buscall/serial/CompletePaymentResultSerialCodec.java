@@ -21,7 +21,7 @@ public final class CompletePaymentResultSerialCodec extends SerialCodecBase<Comp
 
     @Override
     public void encode(CompletePaymentResult arg, AstObject serial) {
-        encodeString(serial, STATUS_KEY, arg.getPaymentStatus().name());
+        encodeString(serial, STATUS_KEY, arg.paymentStatus().name());
     }
 
     @Override

@@ -52,7 +52,7 @@ public class ServerPaymentServiceProvider implements PaymentServiceProvider {
     @Override
     public Future<InitiatePaymentResult> initiatePayment(InitiatePaymentArgument argument) {
         // Step 1: Adding a payment to the document in the database
-        return addDocumentPayment(argument.getDocumentPrimaryKey(), argument.getAmount())
+        return addDocumentPayment(argument.documentPrimaryKey(), argument.amount())
             .compose(moneyTransfer -> {
                 // Step 2: Finding a Gateway provider registered in the software that matches the money account of the payment
                 String gatewayName = moneyTransfer.getToMoneyAccount().getGatewayCompany().getName();
@@ -68,24 +68,24 @@ public class ServerPaymentServiceProvider implements PaymentServiceProvider {
                         // Step 4: Calling the payment gateway with all the data collected
                         String currencyCode = moneyTransfer.getToMoneyAccount().getCurrency().getCode();
                         return paymentGateway.initiatePayment(new GatewayInitiatePaymentArgument(
-                            argument.getAmount(),
+                            argument.amount(),
                             currencyCode,
                             live,
-                            argument.isSeamlessIfSupported(),
-                            argument.isParentPageHttps(),
+                            argument.favorSeamless(),
+                            argument.isOriginOnHttps(),
                             null,
                             parameters
-                        )).map(gatewayResult -> new InitiatePaymentResult( // Step 5: Returning a InitiatePaymentResult
-                            moneyTransfer.getPrimaryKey(),
-                            argument.getAmount(),
-                            gatewayResult.isLive(),
-                            gatewayResult.isSeamless(),
-                            gatewayResult.getHtmlContent(),
-                            gatewayResult.getUrl(),
-                            gatewayResult.isRedirect(),
-                            gatewayResult.hasHtmlPayButton(),
+                        )).map(gatewayResult -> new InitiatePaymentResult( // Step 5: Returning an InitiatePaymentResult
                             paymentGateway.getName(),
-                            gatewayResult.getSandboxCards()
+                            moneyTransfer.getPrimaryKey(),
+                            argument.amount(),
+                            gatewayResult.isLive(),
+                            gatewayResult.url(),
+                            gatewayResult.isEmbedded(),
+                            gatewayResult.htmlContent(),
+                            gatewayResult.isSeamless(),
+                            gatewayResult.hasHtmlPayButton(),
+                            gatewayResult.sandboxCards()
                         ));
                     });
             });
@@ -93,8 +93,8 @@ public class ServerPaymentServiceProvider implements PaymentServiceProvider {
 
     @Override
     public Future<CompletePaymentResult> completePayment(CompletePaymentArgument argument) {
-        String gatewayName = argument.getGatewayName();
-        Object paymentPrimaryKey = argument.getPaymentPrimaryKey();
+        String gatewayName = argument.gatewayName();
+        Object paymentPrimaryKey = argument.paymentPrimaryKey();
         boolean live = argument.isLive();
         PaymentGateway paymentGateway = findMatchingPaymentGatewayProvider(gatewayName);
         if (paymentGateway == null)
@@ -140,7 +140,7 @@ public class ServerPaymentServiceProvider implements PaymentServiceProvider {
                 1,
                 amount);
             // TODO check accessToken is set, otherwise return an error
-            return paymentGateway.completePayment(new GatewayCompletePaymentArgument(live, accessToken, argument.getGatewayCompletePaymentPayload(), parameters, amount, customer, item))
+            return paymentGateway.completePayment(new GatewayCompletePaymentArgument(live, accessToken, argument.gatewayCompletePaymentPayload(), parameters, amount, customer, item))
                 .onFailure(e -> {
                     Console.log("An error occurred while completing payment: " + e.getMessage());
                     // We finally update the payment status through the payment service (this will also create a history entry)
@@ -151,10 +151,10 @@ public class ServerPaymentServiceProvider implements PaymentServiceProvider {
                     );
                 })
                 .compose(result -> {
-                    String gatewayResponse = result.getGatewayResponse();
-                    String gatewayTransactionRef = result.getGatewayTransactionRef();
-                    String gatewayStatus = result.getGatewayStatus();
-                    PaymentStatus paymentStatus = result.getPaymentStatus();
+                    String gatewayResponse = result.gatewayResponse();
+                    String gatewayTransactionRef = result.gatewayTransactionRef();
+                    String gatewayStatus = result.gatewayStatus();
+                    PaymentStatus paymentStatus = result.paymentStatus();
                     boolean pending = paymentStatus.isPending();
                     boolean successful = paymentStatus.isSuccessful();
                     // We finally update the payment status through the payment service (this will also create a history entry)
@@ -175,7 +175,7 @@ public class ServerPaymentServiceProvider implements PaymentServiceProvider {
 
     @Override
     public Future<CancelPaymentResult> cancelPayment(CancelPaymentArgument argument) {
-        return updatePaymentStatusImpl(UpdatePaymentStatusArgument.createCancelStatusArgument(argument.getPaymentPrimaryKey(), argument.isExplicitUserCancellation()))
+        return updatePaymentStatusImpl(UpdatePaymentStatusArgument.createCancelStatusArgument(argument.paymentPrimaryKey(), argument.isExplicitUserCancellation()))
             // When payments are canceled on recurring events, we automatically un-book unpaid options
             .compose(this::unbookUnpaidOptionsIfRecurringEvent)
             .onFailure(Console::log);
@@ -277,14 +277,14 @@ public class ServerPaymentServiceProvider implements PaymentServiceProvider {
 
     private Future<MoneyTransfer> updatePaymentStatusImpl(UpdatePaymentStatusArgument argument) {
         UpdateStore updateStore = UpdateStore.create(DataSourceModelService.getDefaultDataSourceModel());
-        MoneyTransfer moneyTransfer = updateStore.updateEntity(MoneyTransfer.class, argument.getPaymentPrimaryKey());
-        String gatewayResponse = argument.getGatewayResponse();
-        String gatewayTransactionRef = argument.getGatewayTransactionRef();
-        String gatewayStatus = argument.getGatewayStatus();
+        MoneyTransfer moneyTransfer = updateStore.updateEntity(MoneyTransfer.class, argument.paymentPrimaryKey());
+        String gatewayResponse = argument.gatewayResponse();
+        String gatewayTransactionRef = argument.gatewayTransactionRef();
+        String gatewayStatus = argument.gatewayStatus();
         boolean pending = argument.isPendingStatus();
         boolean successful = argument.isSuccessfulStatus();
         boolean isExplicitUserCancellation = argument.isExplicitUserCancellation();
-        String errorMessage = argument.getErrorMessage();
+        String errorMessage = argument.errorMessage();
         Object userId = ThreadLocalStateHolder.getUserId(); // Capturing userId because we may have an async call
         boolean isGatewayUser = userId instanceof SystemUserId;
         String fieldsToLoad = "amount"; // As it will be required for history anyway

@@ -81,7 +81,7 @@ public final class WebPaymentForm {
     }
 
     public int getAmount() {
-        return result.getAmount();
+        return result.amount();
     }
 
     public WebPaymentForm setOnLoadFailure(Consumer<String> onLoadFailure) {
@@ -122,8 +122,8 @@ public final class WebPaymentForm {
     }
 
     public Region buildPaymentForm() {
-        String url = result.getUrl();
-        if (result.isRedirect()) {
+        String url = result.url();
+        if (!result.isEmbedded()) {
             try {
                 Browser.launchExternalBrowser(url);
             } catch (Exception e) {
@@ -144,7 +144,7 @@ public final class WebPaymentForm {
                     initFailureChecker.cancel(); // we cancel the previous checker to prevent outdated init failure
                 injectPaymentFormToJS(1);
             });
-        String htmlContent = result.getHtmlContent();
+        String htmlContent = result.htmlContent();
         if (htmlContent != null) {
             if (result.isSeamless()) {
                 loadOptions
@@ -255,7 +255,7 @@ public final class WebPaymentForm {
     }
 
     public String getGatewayName() {
-        return result.getGatewayName();
+        return result.gatewayName();
     }
 
     public boolean isLive() {
@@ -267,7 +267,7 @@ public final class WebPaymentForm {
     }
 
     public Node createSandboxBar() {
-        SandboxCard[] sandboxCards = result.getSandboxCards();
+        SandboxCard[] sandboxCards = result.sandboxCards();
         if (sandboxCards == null || sandboxCards.length == 0)
             return new Text("No sandbox cards available");
         Button numbersButton = copyButton("Numbers");
@@ -279,17 +279,17 @@ public final class WebPaymentForm {
         contextMenu.getItems().setAll(Arrays.stream(sandboxCards)
             .map(card -> {
                 MenuItem menuItem = new MenuItem();
-                menuItem.setText(card.getName());
+                menuItem.setText(card.name());
                 menuItem.setOnAction(e -> {
-                    cardButton.setText(card.getName());
-                    numbersButton.setText(card.getNumbers());
-                    String expirationDate = card.getExpirationDate();
+                    cardButton.setText(card.name());
+                    numbersButton.setText(card.numbers());
+                    String expirationDate = card.expirationDate();
                     if (expirationDate == null) {
                         expirationDate = Numbers.twoDigits(LocalDate.now().getMonth().getValue()) + "/" + ((LocalDate.now().getYear() + 1) % 100);
                     }
                     expirationDateButton.setText(expirationDate);
-                    cvvButton.setText(card.getCvv());
-                    zipButton.setText(card.getZip());
+                    cvvButton.setText(card.cvv());
+                    zipButton.setText(card.zip());
                 });
                 return menuItem;
             }).collect(Collectors.toList()));
@@ -355,7 +355,7 @@ public final class WebPaymentForm {
 
     private Future<CancelPaymentResult> cancelPayment(boolean explicitUserCancellation) {
         paymentCancelled = true;
-        return PaymentService.cancelPayment(new CancelPaymentArgument(result.getPaymentPrimaryKey(), explicitUserCancellation))
+        return PaymentService.cancelPayment(new CancelPaymentArgument(result.paymentPrimaryKey(), explicitUserCancellation))
             .onComplete(ar -> allowUserInteraction());
     }
 
@@ -418,9 +418,9 @@ public final class WebPaymentForm {
         logDebug("onGatewayPaymentVerificationSuccess called (gatewayCompletePaymentPayload = " + gatewayCompletePaymentPayload + ")");
         paymentCompleted = true;
         showVerificationSuccessOverlay();
-        PaymentService.completePayment(new CompletePaymentArgument(result.getPaymentPrimaryKey(), result.isLive(), result.getGatewayName(), gatewayCompletePaymentPayload))
+        PaymentService.completePayment(new CompletePaymentArgument(result.paymentPrimaryKey(), result.isLive(), result.gatewayName(), gatewayCompletePaymentPayload))
             .onFailure(e -> onModalityCompletePaymentFailure(e.getMessage()))
-            .onSuccess(r -> onModalityCompletePaymentSuccess(r.getPaymentStatus()));
+            .onSuccess(r -> onModalityCompletePaymentSuccess(r.paymentStatus()));
     }
 
     public void onModalityCompletePaymentFailure(String error) {

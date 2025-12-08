@@ -10,7 +10,12 @@ import one.modality.ecommerce.payment.InitiatePaymentArgument;
 public final class ClientPaymentUtil {
 
     public static InitiatePaymentArgument createInitiatePaymentArgument(int amount, Object documentPrimaryKey) {
-        return new InitiatePaymentArgument(amount, documentPrimaryKey, WebViewPane.isBrowser(), "https".equalsIgnoreCase(WindowLocation.getProtocol()));
+        return new InitiatePaymentArgument(
+            amount,
+            documentPrimaryKey,
+            WebViewPane.isBrowser(),
+            "https".equalsIgnoreCase(WindowLocation.getProtocol())
+        );
     }
 
 }

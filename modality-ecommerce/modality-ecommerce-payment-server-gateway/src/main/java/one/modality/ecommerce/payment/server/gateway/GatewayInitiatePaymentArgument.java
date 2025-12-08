@@ -5,54 +5,20 @@ import java.util.Map;
 /**
  * @author Bruno Salmon
  */
-public final class GatewayInitiatePaymentArgument {
+public record GatewayInitiatePaymentArgument(
+    long amount,
+    String currencyCode,
+    boolean isLive, // if false, the payment gateway will use its sandbox environment for this payment
+    boolean favorSeamless,
+    boolean isParentPageHttps,
+    String productName,
+    Map<String, String> accountParameters
+) {
 
-    private final long amount;
-    private final String currencyCode;
-    private final boolean live;
-    private final boolean seamlessIfSupported;
-    private final boolean parentPageHttps;
-    private final String productName;
-    private final Map<String, String> accountParameters;
-
-    public GatewayInitiatePaymentArgument(long amount, String currencyCode, boolean live, boolean seamlessIfSupported, boolean parentPageHttps, String productName, Map<String, String> accountParameters) {
-        this.amount = amount;
-        this.currencyCode = currencyCode;
-        this.live = live;
-        this.seamlessIfSupported = seamlessIfSupported;
-        this.parentPageHttps = parentPageHttps;
-        this.productName = productName;
-        this.accountParameters = accountParameters;
+    public String getAccountParameter(String key, String defaultValue) {
+        String value = getAccountParameter(key);
+        return value == null ? defaultValue : value;
     }
-
-    public long getAmount() {
-        return amount;
-    }
-
-    public String getCurrencyCode() {
-        return currencyCode;
-    }
-
-    public boolean isLive() {
-        return live;
-    }
-
-    public boolean isSeamlessIfSupported() {
-        return seamlessIfSupported;
-    }
-
-    public boolean isParentPageHttps() {
-        return parentPageHttps;
-    }
-
-    public String getProductName() {
-        return productName;
-    }
-
-    public Map<String, String> getAccountParameters() {
-        return accountParameters;
-    }
-
     public String getAccountParameter(String key) {
         return accountParameters.get(key);
     }
@@ -64,8 +30,4 @@ public final class GatewayInitiatePaymentArgument {
         throw new IllegalArgumentException("Missing required account parameter: " + key);
     }
 
-    public String getAccountParameter(String key, String defaultValue) {
-        String value = getAccountParameter(key);
-        return value == null ? defaultValue : value;
-    }
 }

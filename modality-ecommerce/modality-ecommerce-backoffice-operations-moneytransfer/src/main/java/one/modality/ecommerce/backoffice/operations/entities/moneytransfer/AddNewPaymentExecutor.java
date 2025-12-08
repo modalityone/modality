@@ -35,7 +35,7 @@ final class AddNewPaymentExecutor {
             .inUiThread()
             .onFailure(e -> borderPane.setCenter(new Label(e.getMessage())))
             .onSuccess(r -> {
-                String htmlContent = r.getHtmlContent();
+                String htmlContent = r.htmlContent();
                 webView.getEngine().loadContent(htmlContent);
             });
         Button cancelButton = new Button("Cancel");

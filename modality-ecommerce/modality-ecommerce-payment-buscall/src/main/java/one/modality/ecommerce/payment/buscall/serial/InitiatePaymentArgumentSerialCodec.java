@@ -13,7 +13,7 @@ public final class InitiatePaymentArgumentSerialCodec extends SerialCodecBase<In
     private static final String CODEC_ID = "InitiatePaymentArgument";
     private static final String AMOUNT_KEY = "amount";
     private static final String DOCUMENT_PRIMARY_KEY_KEY = "document";
-    private static final String SEAMLESS_KEY = "seamless";
+    private static final String FAVOR_SEAMLESS_KEY = "seamless";
     private static final String HTTPS_KEY = "https";
 
     public InitiatePaymentArgumentSerialCodec() {
@@ -22,10 +22,10 @@ public final class InitiatePaymentArgumentSerialCodec extends SerialCodecBase<In
 
     @Override
     public void encode(InitiatePaymentArgument arg, AstObject serial) {
-        encodeInteger(serial, AMOUNT_KEY,               arg.getAmount());
-        encodeObject( serial, DOCUMENT_PRIMARY_KEY_KEY, arg.getDocumentPrimaryKey());
-        encodeBoolean(serial, SEAMLESS_KEY,             arg.isSeamlessIfSupported());
-        encodeBoolean(serial, HTTPS_KEY,                arg.isParentPageHttps());
+        encodeInteger(serial, AMOUNT_KEY,               arg.amount());
+        encodeObject( serial, DOCUMENT_PRIMARY_KEY_KEY, arg.documentPrimaryKey());
+        encodeBoolean(serial, FAVOR_SEAMLESS_KEY,       arg.favorSeamless());
+        encodeBoolean(serial, HTTPS_KEY,                arg.isOriginOnHttps());
     }
 
     @Override
@@ -33,7 +33,7 @@ public final class InitiatePaymentArgumentSerialCodec extends SerialCodecBase<In
         return new InitiatePaymentArgument(
                 decodeInteger( serial, AMOUNT_KEY),
                 decodeObject(  serial, DOCUMENT_PRIMARY_KEY_KEY),
-                decodeBoolean( serial, SEAMLESS_KEY),
+                decodeBoolean( serial, FAVOR_SEAMLESS_KEY),
                 decodeBoolean( serial, HTTPS_KEY)
         );
     }

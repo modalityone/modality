@@ -18,7 +18,7 @@ public final class InitiatePaymentResultSerialCodec extends SerialCodecBase<Init
     private static final String SEAMLESS_KEY = "seamless";
     private static final String HTML_CONTENT_KEY = "htmlContent";
     private static final String URL_KEY = "url";
-    private static final String REDIRECT_KEY = "redirect";
+    private static final String EMBEDDED_KEY = "embedded";
     private static final String HAS_HTML_PAY_BUTTON_KEY = "hasHtmlPayButton";
     private static final String GATEWAY_NAME_KEY = "gateway";
     private static final String SANDBOX_CARDS_KEY = "sandboxCards";
@@ -29,31 +29,31 @@ public final class InitiatePaymentResultSerialCodec extends SerialCodecBase<Init
 
     @Override
     public void encode(InitiatePaymentResult arg, AstObject serial) {
-        encodeObject( serial, PAYMENT_PRIMARY_KEY_KEY, arg.getPaymentPrimaryKey());
-        encodeInteger(serial, AMOUNT_KEY,              arg.getAmount());
+        encodeString( serial, GATEWAY_NAME_KEY,        arg.gatewayName());
+        encodeObject( serial, PAYMENT_PRIMARY_KEY_KEY, arg.paymentPrimaryKey());
+        encodeInteger(serial, AMOUNT_KEY,              arg.amount());
         encodeBoolean(serial, LIVE_KEY,                arg.isLive());
+        encodeString( serial, URL_KEY,                 arg.url());
+        encodeBoolean(serial, EMBEDDED_KEY,            arg.isEmbedded());
+        encodeString( serial, HTML_CONTENT_KEY,        arg.htmlContent());
         encodeBoolean(serial, SEAMLESS_KEY,            arg.isSeamless());
-        encodeString( serial, HTML_CONTENT_KEY,        arg.getHtmlContent());
-        encodeString( serial, URL_KEY,                 arg.getUrl());
-        encodeBoolean(serial, REDIRECT_KEY,            arg.isRedirect());
         encodeBoolean(serial, HAS_HTML_PAY_BUTTON_KEY, arg.hasHtmlPayButton());
-        encodeString( serial, GATEWAY_NAME_KEY,        arg.getGatewayName());
-        encodeArray(  serial, SANDBOX_CARDS_KEY,       arg.getSandboxCards());
+        encodeArray(  serial, SANDBOX_CARDS_KEY,       arg.sandboxCards());
     }
 
     @Override
     public InitiatePaymentResult decode(ReadOnlyAstObject serial) {
         return new InitiatePaymentResult(
-                decodeObject( serial, PAYMENT_PRIMARY_KEY_KEY),
-                decodeInteger(serial, AMOUNT_KEY),
-                decodeBoolean(serial, LIVE_KEY),
-                decodeBoolean(serial, SEAMLESS_KEY),
-                decodeString( serial, HTML_CONTENT_KEY),
-                decodeString( serial, URL_KEY),
-                decodeBoolean(serial, REDIRECT_KEY),
-                decodeBoolean(serial, HAS_HTML_PAY_BUTTON_KEY),
-                decodeString( serial, GATEWAY_NAME_KEY),
-                decodeArray(  serial, SANDBOX_CARDS_KEY, SandboxCard.class)
+            decodeString( serial, GATEWAY_NAME_KEY),
+            decodeObject( serial, PAYMENT_PRIMARY_KEY_KEY),
+            decodeInteger(serial, AMOUNT_KEY),
+            decodeBoolean(serial, LIVE_KEY),
+            decodeString( serial, URL_KEY),
+            decodeBoolean(serial, EMBEDDED_KEY),
+            decodeString( serial, HTML_CONTENT_KEY),
+            decodeBoolean(serial, SEAMLESS_KEY),
+            decodeBoolean(serial, HAS_HTML_PAY_BUTTON_KEY),
+            decodeArray(  serial, SANDBOX_CARDS_KEY, SandboxCard.class)
         );
     }
 }

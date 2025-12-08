@@ -24,11 +24,11 @@ public final class SandboxCardSerialCodec extends SerialCodecBase<SandboxCard> {
 
     @Override
     public void encode(SandboxCard arg, AstObject serial) {
-        encodeString(serial, NAME_KEY,            arg.getName());
-        encodeString( serial, NUMBERS_KEY,        arg.getNumbers());
-        encodeString(serial, EXPIRATION_DATE_KEY, arg.getExpirationDate());
-        encodeString(serial, CVV_KEY,             arg.getCvv());
-        encodeString(serial, ZIP_KEY,             arg.getZip());
+        encodeString(serial, NAME_KEY,            arg.name());
+        encodeString( serial, NUMBERS_KEY,        arg.numbers());
+        encodeString(serial, EXPIRATION_DATE_KEY, arg.expirationDate());
+        encodeString(serial, CVV_KEY,             arg.cvv());
+        encodeString(serial, ZIP_KEY,             arg.zip());
     }
 
     @Override
