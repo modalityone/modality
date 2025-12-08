@@ -24,7 +24,9 @@ import one.modality.hotel.backoffice.activities.household.gantt.model.RoomStatus
 import one.modality.hotel.backoffice.activities.household.gantt.presenter.GanttFilterManager;
 import one.modality.hotel.backoffice.activities.household.gantt.presenter.GanttPresenter;
 import one.modality.hotel.backoffice.activities.household.gantt.renderer.GanttColorScheme;
+import one.modality.hotel.backoffice.activities.household.gantt.model.PoolInfo;
 import one.modality.base.client.gantt.fx.highlight.FXGanttHighlight;
+import one.modality.base.shared.entities.Pool;
 
 import java.time.LocalDateTime;
 import java.util.*;
@@ -66,6 +68,16 @@ public class HouseholdCanvasGanttView {
 
     // Track available categories from data
     private Set<String> availableCategories = new LinkedHashSet<>();
+
+    // Pool filter UI components
+    private final HBox poolFilterGroup = new HBox(4);
+    private final Map<Object, Button> poolFilterButtons = new LinkedHashMap<>();
+    private Button allPoolButton;
+    private List<PoolInfo> availablePools = new ArrayList<>();
+
+    // Grouping toggle buttons
+    private Button roomTypeGroupingButton;
+    private Button zoneGroupingButton;
 
     // Track active context menu to allow closing it
     private javafx.scene.control.ContextMenu activeContextMenu;
@@ -140,6 +152,11 @@ public class HouseholdCanvasGanttView {
         // Listen to filter changes and update display
         filterManager.getActiveStatusFilters().addListener((SetChangeListener<RoomStatus>) change -> refreshDisplay());
         filterManager.getActiveCategoryFilters().addListener((SetChangeListener<String>) change -> refreshDisplay());
+        filterManager.getActivePoolFilters().addListener((SetChangeListener<Object>) change -> refreshDisplay());
+
+        // Listen to pool data changes to update filter buttons
+        dataLoader.getSourcePools().addListener((ListChangeListener<Pool>) c -> updatePoolFilterButtons(dataLoader.getSourcePools()));
+        dataLoader.getPoolAllocations().addListener((ListChangeListener<Object>) c -> refreshDisplay());
 
         // Initial display refresh (will be empty until data loads, but sets up the canvas)
         // Subsequent refreshes will be triggered by data change listeners
@@ -176,6 +193,15 @@ public class HouseholdCanvasGanttView {
         buildStatusFilterButtons();
         statusSection.getChildren().addAll(statusLabel, statusFilterGroup);
 
+        // Grouping toggle section
+        HBox groupingSection = new HBox(8);
+        groupingSection.setAlignment(Pos.CENTER_LEFT);
+        Label groupingLabel = new Label(I18n.getI18nText(HouseholdI18nKeys.GroupBy) + ":");
+        groupingLabel.getStyleClass().add("gantt-filter-label");
+        groupingLabel.setMinWidth(60);
+        HBox groupingButtons = buildGroupingToggleButtons();
+        groupingSection.getChildren().addAll(groupingLabel, groupingButtons);
+
         // Spacer
         Region spacer = new Region();
         HBox.setHgrow(spacer, Priority.ALWAYS);
@@ -183,7 +209,7 @@ public class HouseholdCanvasGanttView {
         // Navigation controls group: [◀ Pan Left] [− Zoom Out] [+ Zoom In] [Pan Right ▶] | [Today]
         HBox navigationGroup = createNavigationControls();
 
-        firstRow.getChildren().addAll(statusSection, spacer, navigationGroup);
+        firstRow.getChildren().addAll(statusSection, groupingSection, spacer, navigationGroup);
 
         // Second row: Room type filter
         HBox secondRow = new HBox(8);
@@ -199,8 +225,22 @@ public class HouseholdCanvasGanttView {
 
         secondRow.getChildren().add(categorySection);
 
-        // Add both rows to container
-        container.getChildren().addAll(firstRow, secondRow);
+        // Third row: Pool filter
+        HBox thirdRow = new HBox(8);
+        thirdRow.setAlignment(Pos.CENTER_LEFT);
+
+        // Pool filter section (dynamic - will be populated when data loads)
+        HBox poolSection = new HBox(8);
+        poolSection.setAlignment(Pos.CENTER_LEFT);
+        Label poolLabel = new Label(I18n.getI18nText(HouseholdI18nKeys.Pool) + ":");
+        poolLabel.getStyleClass().add("gantt-filter-label");
+        poolLabel.setMinWidth(80);  // Same width for alignment (set in Java per guidelines)
+        poolSection.getChildren().addAll(poolLabel, poolFilterGroup);
+
+        thirdRow.getChildren().add(poolSection);
+
+        // Add all rows to container
+        container.getChildren().addAll(firstRow, secondRow, thirdRow);
 
         // Wrap in HBox to maintain compatibility with existing code
         HBox wrapper = new HBox(container);
@@ -420,6 +460,43 @@ public class HouseholdCanvasGanttView {
     }
 
     /**
+     * Builds the grouping toggle buttons (Room Type / Zone).
+     * @return HBox containing the toggle buttons
+     */
+    private HBox buildGroupingToggleButtons() {
+        HBox buttons = new HBox(4);
+        buttons.setAlignment(Pos.CENTER_LEFT);
+
+        // Room Type button (default active)
+        roomTypeGroupingButton = createFilterToggleButton(I18n.getI18nText(HouseholdI18nKeys.RoomType), true, null);
+        roomTypeGroupingButton.setOnAction(e -> {
+            canvas.setGrandparentGrouping(HouseholdGanttCanvas.GrandparentGrouping.ROOM_TYPE);
+            updateGroupingButtonStyles();
+            refreshDisplay();
+        });
+
+        // Zone button
+        zoneGroupingButton = createFilterToggleButton(I18n.getI18nText(HouseholdI18nKeys.Zone), false, null);
+        zoneGroupingButton.setOnAction(e -> {
+            canvas.setGrandparentGrouping(HouseholdGanttCanvas.GrandparentGrouping.ZONE);
+            updateGroupingButtonStyles();
+            refreshDisplay();
+        });
+
+        buttons.getChildren().addAll(roomTypeGroupingButton, zoneGroupingButton);
+        return buttons;
+    }
+
+    /**
+     * Updates grouping button styles based on current grouping mode.
+     */
+    private void updateGroupingButtonStyles() {
+        boolean isRoomTypeActive = canvas.getGrandparentGrouping() == HouseholdGanttCanvas.GrandparentGrouping.ROOM_TYPE;
+        updateFilterButtonStyle(roomTypeGroupingButton, isRoomTypeActive, null);
+        updateFilterButtonStyle(zoneGroupingButton, !isRoomTypeActive, null);
+    }
+
+    /**
      * Updates category filter buttons based on available categories from data.
      */
     private void updateCategoryFilterButtons(Set<String> categories) {
@@ -541,12 +618,96 @@ public class HouseholdCanvasGanttView {
     }
 
     /**
+     * Updates pool filter buttons based on available pools from data.
+     * Creates buttons with colored dots using Pool.webColor.
+     */
+    private void updatePoolFilterButtons(List<Pool> pools) {
+        // Convert to PoolInfo for comparison and storage
+        List<PoolInfo> newPools = new ArrayList<>();
+        for (Pool pool : pools) {
+            newPools.add(new PoolInfo(pool.getPrimaryKey(), pool.getName(), pool.getWebColor()));
+        }
+
+        // Check if pools have changed
+        if (newPools.equals(availablePools)) {
+            return; // No change needed
+        }
+        availablePools = newPools;
+
+        poolFilterGroup.getChildren().clear();
+        poolFilterButtons.clear();
+
+        if (pools.isEmpty()) {
+            return; // No pools to show
+        }
+
+        // "All" button
+        allPoolButton = createFilterToggleButton(I18n.getI18nText(HouseholdI18nKeys.All), true, null);
+        allPoolButton.setOnAction(e -> {
+            filterManager.getActivePoolFilters().clear();
+            updatePoolButtonStyles();
+        });
+        poolFilterGroup.getChildren().add(allPoolButton);
+
+        // Pool buttons with colored dots
+        for (PoolInfo poolInfo : availablePools) {
+            Color poolColor = parsePoolColor(poolInfo.webColor());
+            Button btn = createFilterToggleButton(poolInfo.name(), false, poolColor);
+            btn.setOnAction(e -> {
+                filterManager.togglePoolFilter(poolInfo.id());
+                updatePoolButtonStyles();
+            });
+            poolFilterButtons.put(poolInfo.id(), btn);
+            poolFilterGroup.getChildren().add(btn);
+        }
+    }
+
+    /**
+     * Parses a web color string (e.g., "#FF5733") to JavaFX Color.
+     * Returns a default color if parsing fails.
+     */
+    private Color parsePoolColor(String webColor) {
+        if (webColor == null || webColor.isEmpty()) {
+            return Color.GRAY; // Default color
+        }
+        try {
+            return Color.web(webColor);
+        } catch (Exception e) {
+            return Color.GRAY; // Fallback on parse error
+        }
+    }
+
+    /**
+     * Updates pool button styles based on current filter state.
+     */
+    private void updatePoolButtonStyles() {
+        boolean noFiltersActive = filterManager.getActivePoolFilters().isEmpty();
+        if (allPoolButton != null) {
+            updateFilterButtonStyle(allPoolButton, noFiltersActive, null);
+        }
+
+        for (Map.Entry<Object, Button> entry : poolFilterButtons.entrySet()) {
+            boolean isActive = filterManager.isPoolFilterActive(entry.getKey());
+            // Find the pool color for this button
+            Color poolColor = null;
+            for (PoolInfo poolInfo : availablePools) {
+                if (poolInfo.id().equals(entry.getKey())) {
+                    poolColor = parsePoolColor(poolInfo.webColor());
+                    break;
+                }
+            }
+            updateFilterButtonStyle(entry.getValue(), isActive, poolColor);
+        }
+    }
+
+    /**
      * Clears all active filters.
      */
     private void clearAllFilters() {
         filterManager.clearAllFilters();
         updateStatusButtonStyles();
         updateCategoryButtonStyles();
+        updatePoolButtonStyles();
     }
 
     // ============================================================================
@@ -1056,10 +1217,12 @@ public class HouseholdCanvasGanttView {
     private void refreshDisplay() {
         // Step 1: Convert database entities to gantt model using adapter pattern
         // Pass attendances for gap bookings to support split bars where guest doesn't stay certain nights
+        // Pass pool allocations to support pool filtering
         List<GanttRoomData> allRooms = EntityDataAdapter.adaptRooms(
             dataLoader.getResourceConfigurations(),
             dataLoader.getDocumentLines(),
-            dataLoader.getAttendancesForGaps()
+            dataLoader.getAttendancesForGaps(),
+            dataLoader.getPoolAllocations()
         );
 
         // Step 1.5: Update category filter buttons dynamically from available data
@@ -1098,8 +1261,45 @@ public class HouseholdCanvasGanttView {
      * @param bars The booking bars (children)
      */
     private void displayRoomsAndBars(List<GanttParentRow> parentRows, List<LocalDateBar<HouseholdGanttCanvas.HouseholdBookingBlock>> bars) {
+        // DEBUG: Check room 207 specifically - also log category and zone
+        Console.log("[DEBUG-207] displayRoomsAndBars: grouping=" + canvas.getGrandparentGrouping());
+        GanttParentRow first207 = null;
+        GanttParentRow second207 = null;
+        for (GanttParentRow parent : parentRows) {
+            if (parent.room() != null && "207".equals(parent.room().getName())) {
+                Console.log("[DEBUG-207] displayRoomsAndBars: Found 207 in parentRows" +
+                            ", beds=" + parent.room().getBeds().size() +
+                            ", isMultiBedRoom=" + parent.isMultiBedRoom() +
+                            ", category=" + parent.getCategory() +
+                            ", zone=" + parent.getZone() +
+                            ", identityHashCode=" + System.identityHashCode(parent) +
+                            ", record.hashCode()=" + parent.hashCode());
+                if (first207 == null) {
+                    first207 = parent;
+                } else {
+                    second207 = parent;
+                }
+            }
+        }
+        // Check if the two 207 records are equal (they shouldn't be!)
+        if (first207 != null && second207 != null) {
+            Console.log("[DEBUG-207] EQUALITY CHECK: first207.equals(second207)=" + first207.equals(second207) +
+                       ", first207.hashCode()=" + first207.hashCode() +
+                       ", second207.hashCode()=" + second207.hashCode() +
+                       ", room1.equals(room2)=" + first207.room().equals(second207.room()));
+        }
+
         // STEP 1: Set the parent rows in the layout
         canvas.getBarsLayout().getParents().setAll(parentRows);
+
+        // DEBUG: Check what the layout actually contains after setAll
+        Console.log("[DEBUG-207] After setAll - layout.getParents().size()=" + canvas.getBarsLayout().getParents().size());
+        for (Object p : canvas.getBarsLayout().getParents()) {
+            if (p instanceof GanttParentRow gpr && gpr.room() != null && "207".equals(gpr.room().getName())) {
+                Console.log("[DEBUG-207] After setAll - Found 207 in layout.getParents(): beds=" + gpr.room().getBeds().size() +
+                           ", hashCode=" + System.identityHashCode(gpr));
+            }
+        }
 
         // STEP 2: Set the booking bars as children
         canvas.getBarsLayout().getChildren().clear();
@@ -1107,6 +1307,16 @@ public class HouseholdCanvasGanttView {
 
         // STEP 3: Mark layout as dirty to trigger redraw
         canvas.getBarsLayout().markLayoutAsDirty();
+
+        // DEBUG: Check what getParentRows() returns (the processed internal list used for drawing)
+        Console.log("[DEBUG-207] After markLayoutAsDirty - getParentRows().size()=" + canvas.getBarsLayout().getParentRows().size());
+        for (var pr : canvas.getBarsLayout().getParentRows()) {
+            Object p = pr.getParent();
+            if (p instanceof GanttParentRow gpr && gpr.room() != null && "207".equals(gpr.room().getName())) {
+                Console.log("[DEBUG-207] After markLayoutAsDirty - Found 207 in getParentRows(): beds=" + gpr.room().getBeds().size() +
+                           ", hashCode=" + System.identityHashCode(gpr));
+            }
+        }
 
         // STEP 4: Mark the drawer as dirty to ensure canvas is redrawn
         canvas.getBarsDrawer().markDrawAreaAsDirty();

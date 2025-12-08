@@ -1,10 +1,13 @@
 package one.modality.hotel.backoffice.activities.household.gantt.adapter;
 
+import dev.webfx.stack.orm.entity.EntityId;
 import one.modality.base.shared.entities.Attendance;
+import one.modality.base.shared.entities.BuildingZone;
 import one.modality.base.shared.entities.Document;
 import one.modality.base.shared.entities.DocumentLine;
 import one.modality.base.shared.entities.Item;
 import one.modality.base.shared.entities.CleaningState;
+import one.modality.base.shared.entities.PoolAllocation;
 import one.modality.base.shared.entities.Resource;
 import one.modality.base.shared.entities.ResourceConfiguration;
 import one.modality.hotel.backoffice.activities.household.gantt.model.DateSegment;
@@ -36,6 +39,10 @@ public final class EntityDataAdapter {
     // Thread-local storage for attendance lookup during adaptation
     // This avoids passing the map through all method calls
     private static final ThreadLocal<Map<Object, List<Attendance>>> attendancesByDocumentLine = new ThreadLocal<>();
+
+    // Thread-local storage for pool lookup during adaptation
+    // Maps resource ID -> Set of pool IDs that the resource belongs to
+    private static final ThreadLocal<Map<Object, Set<Object>>> poolsByResource = new ThreadLocal<>();
 
     /**
      * Adapts a list of ResourceConfiguration entities to GanttRoomData.
@@ -70,6 +77,26 @@ public final class EntityDataAdapter {
             List<ResourceConfiguration> resourceConfigurations,
             List<DocumentLine> documentLines,
             List<Attendance> attendancesForGaps) {
+        return adaptRooms(resourceConfigurations, documentLines, attendancesForGaps, Collections.emptyList());
+    }
+
+    /**
+     * Adapts a list of ResourceConfiguration entities to GanttRoomData with pool information.
+     * <p>
+     * POOL FILTERING SUPPORT: Builds a lookup map from pool allocations to enable
+     * filtering rooms by their assigned pools.
+     *
+     * @param resourceConfigurations List of room configurations from the database
+     * @param documentLines List of document lines (bookings) for the time window
+     * @param attendancesForGaps Attendance records for bookings with gaps (hasAttendanceGap=true)
+     * @param poolAllocations Pool allocations for default pool assignments (event IS NULL)
+     * @return List of GanttRoomData ready for display
+     */
+    public static List<GanttRoomData> adaptRooms(
+            List<ResourceConfiguration> resourceConfigurations,
+            List<DocumentLine> documentLines,
+            List<Attendance> attendancesForGaps,
+            List<PoolAllocation> poolAllocations) {
 
         // Build lookup map for attendance gaps: DocumentLine PK -> List<Attendance>
         Map<Object, List<Attendance>> attendanceMap = new HashMap<>();
@@ -83,13 +110,41 @@ public final class EntityDataAdapter {
         // Store in thread-local for use by adaptBooking
         attendancesByDocumentLine.set(attendanceMap);
 
+        // Build lookup map for pools: Resource ID -> Set of Pool IDs
+        Map<Object, Set<Object>> poolMap = new HashMap<>();
+        for (PoolAllocation pa : poolAllocations) {
+            Resource resource = pa.getResource();
+            if (resource != null && pa.getPool() != null) {
+                Object resourceId = resource.getPrimaryKey();
+                Object poolId = pa.getPool().getPrimaryKey();
+                poolMap.computeIfAbsent(resourceId, k -> new HashSet<>()).add(poolId);
+            }
+        }
+        // Store in thread-local for use by adaptRoom
+        poolsByResource.set(poolMap);
+
         try {
             // OPTIMIZATION: Pre-group document lines by room ONCE instead of scanning for each room
             Map<String, List<DocumentLine>> documentLinesByRoomKey = groupDocumentLinesByRoom(documentLines);
 
             // Convert each resource configuration to GanttRoomData
+            // Filter to only show global site resources (those without kbs2ToKbs3GlobalResource link)
+            // Event-specific resources have this field set, global ones don't
             // Sort by category ord first (from Item.ord), then by capacity (max) ascending
             return resourceConfigurations.stream()
+                .filter(rc -> {
+                    // Keep global ResourceConfigurations (AND condition):
+                    // KBS3: event_id must be NULL (not event-specific configuration)
+                    // KBS2: resource.kbs2ToKbs3GlobalResource must be NULL (not event-duplicated resource)
+                    if (rc.getEvent() != null) {
+                        return false; // KBS3: Event-specific configuration - filter out
+                    }
+                    Resource resource = rc.getResource();
+                    if (resource != null && resource.getKbs2ToKbs3GlobalResourceId() != null) {
+                        return false; // KBS2: Event-duplicated resource - filter out
+                    }
+                    return true; // Global configuration (both checks passed)
+                })
                 .sorted((rc1, rc2) -> {
                     // Get Item ord values for category sorting
                     // Path: ResourceConfiguration -> Item -> ord
@@ -115,8 +170,9 @@ public final class EntityDataAdapter {
                 })
                 .collect(Collectors.toList());
         } finally {
-            // Clean up thread-local
+            // Clean up thread-locals
             attendancesByDocumentLine.remove();
+            poolsByResource.remove();
         }
     }
 
@@ -144,12 +200,27 @@ public final class EntityDataAdapter {
 
     /**
      * Builds a unique room key from ResourceConfiguration.
-     * Format: "siteId|roomName" (or "null|roomName" if no site)
+     * Uses kbs2ToKbs3GlobalResource.id to group event-specific resources under their global resource.
+     * This merges all bookings from duplicated KBS2 event resources into a single room row.
      */
     private static String buildRoomKey(ResourceConfiguration rc) {
+        Resource resource = rc.getResource();
+
+        if (resource != null) {
+            // If resource has a global resource link, use that ID for grouping
+            // This merges all event-specific resources that map to the same global resource
+            EntityId globalId = resource.getKbs2ToKbs3GlobalResourceId();
+            if (globalId != null) {
+                return "global:" + globalId.toString();
+            }
+            // If this IS the global resource (no link), use its own ID
+            return "resource:" + resource.getPrimaryKey().toString();
+        }
+
+        // Fallback to legacy name-based matching for resources without proper linking
         Object siteId = rc.getSite() != null ? rc.getSite().getPrimaryKey() : null;
         String roomName = rc.getName();
-        return (siteId != null ? siteId.toString() : "null") + "|" + (roomName != null ? roomName : "");
+        return "legacy:" + (siteId != null ? siteId.toString() : "null") + "|" + (roomName != null ? roomName : "");
     }
 
     /**
@@ -233,6 +304,30 @@ public final class EntityDataAdapter {
 
         // Get room comment from database
         final String roomComment = rc.getComment();
+
+        // Get zone name from resource.buildingZone.name for alternative grandparent grouping
+        final String zoneName;
+        final Set<Object> poolIds;
+        Resource resource = rc.getResource();
+        if (resource != null) {
+            BuildingZone zone = resource.getBuildingZone();
+            if (zone != null && zone.getName() != null && !zone.getName().trim().isEmpty()) {
+                zoneName = zone.getName();
+            } else {
+                zoneName = null; // No zone assigned
+            }
+            // Get pool IDs from ThreadLocal lookup map
+            Map<Object, Set<Object>> poolMap = poolsByResource.get();
+            if (poolMap != null) {
+                Set<Object> resourcePools = poolMap.get(resource.getPrimaryKey());
+                poolIds = resourcePools != null ? resourcePools : Collections.emptySet();
+            } else {
+                poolIds = Collections.emptySet();
+            }
+        } else {
+            zoneName = null;
+            poolIds = Collections.emptySet();
+        }
 
         // Determine room type from max (bed count)
         // RoomType controls visual rendering logic (single vs multi-bed)
@@ -336,6 +431,16 @@ public final class EntityDataAdapter {
             @Override
             public Resource getResource() {
                 return rc.getResource();
+            }
+
+            @Override
+            public String getZoneName() {
+                return zoneName;
+            }
+
+            @Override
+            public Set<Object> getPoolIds() {
+                return poolIds;
             }
         };
     }

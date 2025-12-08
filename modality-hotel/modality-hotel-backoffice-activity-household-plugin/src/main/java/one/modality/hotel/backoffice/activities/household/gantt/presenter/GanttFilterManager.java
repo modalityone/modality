@@ -22,6 +22,7 @@ public class GanttFilterManager {
     private final ObservableSet<RoomStatus> activeStatusFilters = FXCollections.observableSet(new HashSet<>());
     private final ObservableSet<RoomType> activeRoomTypeFilters = FXCollections.observableSet(new HashSet<>());
     private final ObservableSet<String> activeCategoryFilters = FXCollections.observableSet(new HashSet<>());
+    private final ObservableSet<Object> activePoolFilters = FXCollections.observableSet(new HashSet<>());
 
     /**
      * Toggles a status filter on/off
@@ -57,12 +58,24 @@ public class GanttFilterManager {
     }
 
     /**
+     * Toggles a pool filter on/off
+     */
+    public void togglePoolFilter(Object poolId) {
+        if (activePoolFilters.contains(poolId)) {
+            activePoolFilters.remove(poolId);
+        } else {
+            activePoolFilters.add(poolId);
+        }
+    }
+
+    /**
      * Clears all active filters
      */
     public void clearAllFilters() {
         activeStatusFilters.clear();
         activeRoomTypeFilters.clear();
         activeCategoryFilters.clear();
+        activePoolFilters.clear();
     }
 
     /**
@@ -87,6 +100,13 @@ public class GanttFilterManager {
     }
 
     /**
+     * Checks if a pool filter is active
+     */
+    public boolean isPoolFilterActive(Object poolId) {
+        return activePoolFilters.contains(poolId);
+    }
+
+    /**
      * Applies active filters to a room list
      */
     public List<GanttRoomData> applyFilters(List<GanttRoomData> rooms) {
@@ -104,7 +124,18 @@ public class GanttFilterManager {
         boolean passesRoomTypeFilter = activeRoomTypeFilters.isEmpty() || activeRoomTypeFilters.contains(room.getRoomType());
         boolean passesCategoryFilter = activeCategoryFilters.isEmpty() || activeCategoryFilters.contains(room.getCategory());
 
-        return passesStatusFilter && passesRoomTypeFilter && passesCategoryFilter;
+        // Pool filter uses OR logic: room passes if it belongs to ANY of the active pools
+        boolean passesPoolFilter = activePoolFilters.isEmpty();
+        if (!passesPoolFilter) {
+            for (Object poolId : activePoolFilters) {
+                if (room.getPoolIds().contains(poolId)) {
+                    passesPoolFilter = true;
+                    break;
+                }
+            }
+        }
+
+        return passesStatusFilter && passesRoomTypeFilter && passesCategoryFilter && passesPoolFilter;
     }
 
     /**
@@ -129,9 +160,17 @@ public class GanttFilterManager {
     }
 
     /**
+     * Gets observable set of active pool filters (for UI binding)
+     */
+    public ObservableSet<Object> getActivePoolFilters() {
+        return activePoolFilters;
+    }
+
+    /**
      * Checks if any filters are active
      */
     public boolean hasActiveFilters() {
-        return !activeStatusFilters.isEmpty() || !activeRoomTypeFilters.isEmpty() || !activeCategoryFilters.isEmpty();
+        return !activeStatusFilters.isEmpty() || !activeRoomTypeFilters.isEmpty()
+                || !activeCategoryFilters.isEmpty() || !activePoolFilters.isEmpty();
     }
 }

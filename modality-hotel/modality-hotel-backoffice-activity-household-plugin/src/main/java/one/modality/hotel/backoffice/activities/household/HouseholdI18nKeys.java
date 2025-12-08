@@ -23,6 +23,7 @@ public interface HouseholdI18nKeys {
     Object FirstName = "FirstName";
     Object Gantt = "Gantt";
     Object Gender = "Gender";
+    Object GroupBy = "GroupBy";
     Object Guest = "Guest";
     Object GuestInformation = "GuestInformation";
     Object Guests = "Guests";
@@ -45,9 +46,11 @@ public interface HouseholdI18nKeys {
     Object OneWeek = "OneWeek";
     Object PartialCheckouts = "PartialCheckouts";
     Object Pending = "Pending";
+    Object Pool = "Pool";
     Object QuietDayMessage = "QuietDayMessage";
     Object QuietMoment = "QuietMoment";
     Object Ready = "Ready";
+    Object RoomType = "RoomType";
     Object RoomsToClean = "RoomsToClean";
     Object RoomsToInspect = "RoomsToInspect";
     Object SameDayCheckIn = "SameDayCheckIn";
@@ -63,5 +66,6 @@ public interface HouseholdI18nKeys {
     Object TwoWeeks = "TwoWeeks";
     Object Unknown = "Unknown";
     Object ViewNext = "ViewNext";
+    Object Zone = "Zone";
 
 }

@@ -34,6 +34,15 @@ public record GanttParentRow(GanttRoomData room, GanttBedData bed, boolean isBed
     }
 
     /**
+     * Returns the zone name for zone-based grouping.
+     * Returns "No Zone" if the room has no zone assigned.
+     */
+    public String getZone() {
+        String zoneName = room.getZoneName();
+        return zoneName != null && !zoneName.isEmpty() ? zoneName : "No Zone";
+    }
+
+    /**
      * Returns true if this is an overbooking bed row.
      */
     public boolean isOverbooking() {
@@ -45,5 +54,15 @@ public record GanttParentRow(GanttRoomData room, GanttBedData bed, boolean isBed
      */
     public boolean isMultiBedRoom() {
         return !isBed && !room.getBeds().isEmpty();
+    }
+
+    @Override
+    public String toString() {
+        if (isBed) {
+            return "GanttParentRow[BED:" + (bed != null ? bed.getName() : "null") + " in room " + room.getName() + "]";
+        } else {
+            return "GanttParentRow[ROOM:" + room.getName() + ", beds=" + room.getBeds().size() +
+                   ", zone=" + getZone() + ", category=" + getCategory() + ", expanded=" + expanded + "]";
+        }
     }
 }

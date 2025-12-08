@@ -12,6 +12,8 @@ import dev.webfx.extras.time.layout.gantt.canvas.ParentsCanvasDrawer;
 import dev.webfx.extras.time.projector.TimeProjector;
 import dev.webfx.extras.util.control.Controls;
 import dev.webfx.kit.util.properties.FXProperties;
+import javafx.beans.property.ObjectProperty;
+import javafx.beans.property.SimpleObjectProperty;
 import javafx.scene.Node;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.control.ScrollPane;
@@ -53,12 +55,31 @@ public class HouseholdGanttCanvas {
     private static final double BAR_RADIUS = 10;
     private static final double ROOM_HEADER_WIDTH = 180;  // Increased from 130 for better room name display
 
+    /**
+     * Enum for grandparent grouping mode.
+     * Controls how rooms are grouped in the Gantt chart.
+     */
+    public enum GrandparentGrouping {
+        ROOM_TYPE,  // Group by room type/category (Item.name) - default
+        ZONE        // Group by BuildingZone.name
+    }
+
+    // Property for tracking grandparent grouping mode
+    private final ObjectProperty<GrandparentGrouping> grandparentGroupingProperty =
+            new SimpleObjectProperty<>(GrandparentGrouping.ROOM_TYPE);
+
     // Layout infrastructure - positions bars in time
     protected final LocalDateGanttLayout<LocalDateBar<HouseholdBookingBlock>> barsLayout =
             new LocalDateGanttLayout<LocalDateBar<HouseholdBookingBlock>>()
                     .setChildFixedHeight(ROW_HEIGHT)
                     .setChildParentReader(bar -> bar.getInstance().getParentRow())
-                    .setParentGrandparentReader(parent -> ((GanttParentRow) parent).getCategory())
+                    // Dynamic grandparent reader - checks grouping mode at runtime
+                    .setParentGrandparentReader(parent -> {
+                        GanttParentRow ganttParent = (GanttParentRow) parent;
+                        return grandparentGroupingProperty.get() == GrandparentGrouping.ZONE
+                                ? ganttParent.getZone()
+                                : ganttParent.getCategory();
+                    })
                     .setParentHeaderHeight(ROW_HEIGHT)
                     .setGrandparentHeaderHeight(ROW_HEIGHT)  // Category header takes full row height
                     .setGrandparentHeaderPosition(HeaderPosition.TOP)  // Category headers on top (horizontal)
@@ -197,6 +218,43 @@ public class HouseholdGanttCanvas {
             hoveredMouseY = y;
             barsDrawer.markDrawAreaAsDirty(); // Trigger redraw to update highlight
         }
+    }
+
+    /**
+     * Gets the grandparent grouping property for binding.
+     * @return The property tracking the current grouping mode
+     */
+    public ObjectProperty<GrandparentGrouping> grandparentGroupingProperty() {
+        return grandparentGroupingProperty;
+    }
+
+    /**
+     * Gets the current grandparent grouping mode.
+     * @return The current grouping mode (ROOM_TYPE or ZONE)
+     */
+    public GrandparentGrouping getGrandparentGrouping() {
+        return grandparentGroupingProperty.get();
+    }
+
+    /**
+     * Sets the grandparent grouping mode.
+     * This affects how rooms are grouped in the Gantt chart.
+     * @param grouping The new grouping mode
+     */
+    public void setGrandparentGrouping(GrandparentGrouping grouping) {
+        grandparentGroupingProperty.set(grouping);
+        // Reset the grandparent reader function to force a complete rebuild of grandparent structure
+        // This is necessary because GanttLayoutImpl caches grandparent groupings internally
+        barsLayout.setParentGrandparentReader(parent -> {
+            GanttParentRow ganttParent = (GanttParentRow) parent;
+            return grandparentGroupingProperty.get() == GrandparentGrouping.ZONE
+                    ? ganttParent.getZone()
+                    : ganttParent.getCategory();
+        });
+        // Note: refreshDisplay() will be called after this which uses setAll() to replace all parents and children
+        // Don't clear here - the intermediate empty state can corrupt the layout engine's grandparent cache
+        barsLayout.markLayoutAsDirty();
+        barsDrawer.markDrawAreaAsDirty();
     }
 
     /**
@@ -1226,6 +1284,14 @@ public class HouseholdGanttCanvas {
                 double commentY = centerY + 8;
 
                 // Draw expand/collapse arrow for multi-bed rooms
+                // DEBUG: Check room 207 specifically - include Y position
+                if (ganttParent.room() != null && "207".equals(ganttParent.room().getName())) {
+                    dev.webfx.platform.console.Console.log("[DEBUG-207] drawParentRoom: room=" + ganttParent.room().getName() +
+                        ", beds=" + ganttParent.room().getBeds().size() +
+                        ", isMultiBedRoom=" + ganttParent.isMultiBedRoom() +
+                        ", Y=" + b.getMinY() + "-" + b.getMaxY() +
+                        ", ganttParent.hashCode=" + System.identityHashCode(ganttParent));
+                }
                 if (ganttParent.isMultiBedRoom()) {
                     String arrow = ganttParent.expanded() ? "∨" : "›";
                     gc.setFill(Color.web("#333333"));

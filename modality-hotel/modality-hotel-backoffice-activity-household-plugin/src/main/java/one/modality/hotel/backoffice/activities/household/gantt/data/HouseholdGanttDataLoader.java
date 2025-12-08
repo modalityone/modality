@@ -5,6 +5,8 @@ import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import one.modality.base.shared.entities.Attendance;
 import one.modality.base.shared.entities.DocumentLine;
+import one.modality.base.shared.entities.Pool;
+import one.modality.base.shared.entities.PoolAllocation;
 import one.modality.base.shared.entities.ResourceConfiguration;
 import one.modality.hotel.backoffice.accommodation.AccommodationPresentationModel;
 
@@ -45,6 +47,8 @@ public final class HouseholdGanttDataLoader {
     private final ObservableList<ResourceConfiguration> resourceConfigurations = FXCollections.observableArrayList();
     private final ObservableList<DocumentLine> documentLines = FXCollections.observableArrayList();
     private final ObservableList<Attendance> attendancesForGaps = FXCollections.observableArrayList();
+    private final ObservableList<Pool> sourcePools = FXCollections.observableArrayList();
+    private final ObservableList<PoolAllocation> poolAllocations = FXCollections.observableArrayList();
     private Object mixin; // Keep reference for reloading
 
     /**
@@ -82,6 +86,22 @@ public final class HouseholdGanttDataLoader {
     }
 
     /**
+     * Gets the observable list of source pools (eventPool = false).
+     * Used for pool filtering in the Gantt view.
+     */
+    public ObservableList<Pool> getSourcePools() {
+        return sourcePools;
+    }
+
+    /**
+     * Gets the observable list of pool allocations (default assignments where event = null).
+     * Used to determine which rooms belong to which pools for filtering.
+     */
+    public ObservableList<PoolAllocation> getPoolAllocations() {
+        return poolAllocations;
+    }
+
+    /**
      * Starts the reactive data loading logic.
      * Must be called after construction to begin loading data.
      *
@@ -92,6 +112,8 @@ public final class HouseholdGanttDataLoader {
         startRoomQuery();
         startDocumentLineQuery();
         startAttendanceGapQuery();
+        startSourcePoolQuery();
+        startPoolAllocationQuery();
     }
 
     /**
@@ -112,7 +134,7 @@ public final class HouseholdGanttDataLoader {
         // Query 1: Load all ResourceConfigurations (room configurations) for this organization
         // ResourceConfiguration has: resource (room with cleaning/inspection dates), item (room type), max (bed count)
         ReactiveEntitiesMapper.<ResourceConfiguration>createPushReactiveChain(mixin)
-            .always("{class: 'ResourceConfiguration', alias: 'rc', fields: 'name,comment,resource.(id,name,cleaningState,lastCleaningDate,lastInspectionDate),item.(name,ord,family.name),max', orderBy: 'item.ord,item.name,name'}")
+            .always("{class: 'ResourceConfiguration', alias: 'rc', fields: 'name,comment,event.id,resource.(id,name,cleaningState,lastCleaningDate,lastInspectionDate,buildingZone.name,kbs2ToKbs3GlobalResource.id),item.(name,ord,family.name),max', orderBy: 'item.ord,item.name,name'}")
             // Filter by organization and optional site ID
             // Only get current configurations (no end date or future configs)
             .always(pm.organizationIdProperty(), org -> where("resource.site.organization=? and resource.site=? and (endDate is null or endDate >= current_date())", org, SITE_ID_FILTER))
@@ -140,7 +162,7 @@ public final class HouseholdGanttDataLoader {
             .always("{class: 'DocumentLine', alias: 'dl', " +
                 "fields: 'startDate,endDate,hasAttendanceGap," +
                 "document.(arrived,person_firstName,person_lastName,event.name,request)," +
-                "cleaned,resourceConfiguration.(name,item.(name,family.name),resource.(id,cleaningState,lastCleaningDate,lastInspectionDate))'," +
+                "cleaned,resourceConfiguration.(name,item.(name,family.name),resource.(id,cleaningState,lastCleaningDate,lastInspectionDate,kbs2ToKbs3GlobalResource.id))'," +
                 "where: '!cancelled and !document.cancelled and resourceConfiguration is not null'}")
             // Filter by organization
             .always(pm.organizationIdProperty(), org ->
@@ -192,6 +214,36 @@ public final class HouseholdGanttDataLoader {
                         end, start, start, end);
             })
             .storeEntitiesInto(attendancesForGaps)
+            .start();
+    }
+
+    /**
+     * Starts the query to load source pools (eventPool = false).
+     * These are the pools used for room grouping (not event-specific pools).
+     */
+    private void startSourcePoolQuery() {
+        ReactiveEntitiesMapper.<Pool>createPushReactiveChain(mixin)
+            .always("{class: 'Pool', alias: 'p', " +
+                "fields: 'name,webColor,ord', " +
+                "where: 'eventPool = false', " +
+                "orderBy: 'ord,name'}")
+            .storeEntitiesInto(sourcePools)
+            .start();
+    }
+
+    /**
+     * Starts the query to load pool allocations (default room-to-pool mappings).
+     * Only loads allocations where event IS NULL (default configuration, not event-specific).
+     */
+    private void startPoolAllocationQuery() {
+        ReactiveEntitiesMapper.<PoolAllocation>createPushReactiveChain(mixin)
+            .always("{class: 'PoolAllocation', alias: 'pa', " +
+                "fields: 'resource.id,pool.(id,name)', " +
+                "where: 'event is null'}")
+            // Filter by organization via resource.site
+            .always(pm.organizationIdProperty(), org ->
+                where("resource.site.organization=?", org))
+            .storeEntitiesInto(poolAllocations)
             .start();
     }
 }
