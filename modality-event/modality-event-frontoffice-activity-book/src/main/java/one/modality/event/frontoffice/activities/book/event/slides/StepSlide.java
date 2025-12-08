@@ -18,6 +18,7 @@ import one.modality.booking.client.workingbooking.WorkingBooking;
 import one.modality.booking.client.workingbooking.WorkingBookingProperties;
 import one.modality.booking.frontoffice.bookingform.GatewayPaymentForm;
 import one.modality.ecommerce.payment.CancelPaymentResult;
+import one.modality.ecommerce.payment.PaymentFormType;
 import one.modality.ecommerce.payment.PaymentService;
 import one.modality.ecommerce.payment.client.ClientPaymentUtil;
 import one.modality.ecommerce.payment.client.WebPaymentForm;
@@ -112,7 +113,7 @@ public abstract class StepSlide implements Supplier<Node> {
         Object documentPrimaryKey = workingBookingProperties.getWorkingBooking().getDocumentPrimaryKey();
         turnOnWaitMode();
         PaymentService.initiatePayment(
-                ClientPaymentUtil.createInitiatePaymentArgument(LAST_PAYMENT_DEPOSIT, documentPrimaryKey)
+                ClientPaymentUtil.createInitiatePaymentArgument(LAST_PAYMENT_DEPOSIT, documentPrimaryKey, PaymentFormType.EMBEDDED)
             )
             .inUiThread()
             .onFailure(paymentResult -> {

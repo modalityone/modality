@@ -123,7 +123,7 @@ public final class WebPaymentForm {
 
     public Region buildPaymentForm() {
         String url = result.url();
-        if (!result.isEmbedded()) {
+        if (result.formType() == PaymentFormType.REDIRECTED) {
             try {
                 Browser.launchExternalBrowser(url);
             } catch (Exception e) {

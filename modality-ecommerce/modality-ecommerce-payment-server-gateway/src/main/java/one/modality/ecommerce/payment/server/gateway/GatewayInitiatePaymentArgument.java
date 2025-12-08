@@ -1,5 +1,7 @@
 package one.modality.ecommerce.payment.server.gateway;
 
+import one.modality.ecommerce.payment.PaymentFormType;
+
 import java.util.Map;
 
 /**
@@ -9,8 +11,9 @@ public record GatewayInitiatePaymentArgument(
     long amount,
     String currencyCode,
     boolean isLive, // if false, the payment gateway will use its sandbox environment for this payment
+    PaymentFormType preferredFormType,
     boolean favorSeamless,
-    boolean isParentPageHttps,
+    boolean isOriginOnHttps,
     String productName,
     Map<String, String> accountParameters
 ) {
@@ -19,6 +22,7 @@ public record GatewayInitiatePaymentArgument(
         String value = getAccountParameter(key);
         return value == null ? defaultValue : value;
     }
+
     public String getAccountParameter(String key) {
         return accountParameters.get(key);
     }

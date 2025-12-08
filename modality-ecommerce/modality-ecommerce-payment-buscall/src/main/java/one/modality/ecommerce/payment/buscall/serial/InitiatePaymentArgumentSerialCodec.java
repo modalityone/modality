@@ -4,6 +4,7 @@ import dev.webfx.platform.ast.AstObject;
 import dev.webfx.platform.ast.ReadOnlyAstObject;
 import dev.webfx.stack.com.serial.spi.impl.SerialCodecBase;
 import one.modality.ecommerce.payment.InitiatePaymentArgument;
+import one.modality.ecommerce.payment.PaymentFormType;
 
 /**
  * @author Bruno Salmon
@@ -13,6 +14,7 @@ public final class InitiatePaymentArgumentSerialCodec extends SerialCodecBase<In
     private static final String CODEC_ID = "InitiatePaymentArgument";
     private static final String AMOUNT_KEY = "amount";
     private static final String DOCUMENT_PRIMARY_KEY_KEY = "document";
+    private static final String PREFERRED_FORM_TYPE_KEY = "preferredFormType";
     private static final String FAVOR_SEAMLESS_KEY = "seamless";
     private static final String HTTPS_KEY = "https";
 
@@ -23,7 +25,8 @@ public final class InitiatePaymentArgumentSerialCodec extends SerialCodecBase<In
     @Override
     public void encode(InitiatePaymentArgument arg, AstObject serial) {
         encodeInteger(serial, AMOUNT_KEY,               arg.amount());
-        encodeObject( serial, DOCUMENT_PRIMARY_KEY_KEY, arg.documentPrimaryKey());
+        encodeObject(serial,  DOCUMENT_PRIMARY_KEY_KEY, arg.documentPrimaryKey());
+        encodeString(serial,  PREFERRED_FORM_TYPE_KEY,  arg.preferredFormType().name());
         encodeBoolean(serial, FAVOR_SEAMLESS_KEY,       arg.favorSeamless());
         encodeBoolean(serial, HTTPS_KEY,                arg.isOriginOnHttps());
     }
@@ -31,10 +34,11 @@ public final class InitiatePaymentArgumentSerialCodec extends SerialCodecBase<In
     @Override
     public InitiatePaymentArgument decode(ReadOnlyAstObject serial) {
         return new InitiatePaymentArgument(
-                decodeInteger( serial, AMOUNT_KEY),
-                decodeObject(  serial, DOCUMENT_PRIMARY_KEY_KEY),
-                decodeBoolean( serial, FAVOR_SEAMLESS_KEY),
-                decodeBoolean( serial, HTTPS_KEY)
+            decodeInteger(serial, AMOUNT_KEY),
+            decodeObject( serial, DOCUMENT_PRIMARY_KEY_KEY),
+            PaymentFormType.valueOf(decodeString(serial, PREFERRED_FORM_TYPE_KEY)),
+            decodeBoolean(serial, FAVOR_SEAMLESS_KEY),
+            decodeBoolean(serial, HTTPS_KEY)
         );
     }
 }

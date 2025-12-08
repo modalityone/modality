@@ -4,6 +4,7 @@ import dev.webfx.platform.ast.AstObject;
 import dev.webfx.platform.ast.ReadOnlyAstObject;
 import dev.webfx.stack.com.serial.spi.impl.SerialCodecBase;
 import one.modality.ecommerce.payment.InitiatePaymentResult;
+import one.modality.ecommerce.payment.PaymentFormType;
 import one.modality.ecommerce.payment.SandboxCard;
 
 /**
@@ -18,7 +19,7 @@ public final class InitiatePaymentResultSerialCodec extends SerialCodecBase<Init
     private static final String SEAMLESS_KEY = "seamless";
     private static final String HTML_CONTENT_KEY = "htmlContent";
     private static final String URL_KEY = "url";
-    private static final String EMBEDDED_KEY = "embedded";
+    private static final String PAYMENT_FORM_TYPE_KEY = "formType";
     private static final String HAS_HTML_PAY_BUTTON_KEY = "hasHtmlPayButton";
     private static final String GATEWAY_NAME_KEY = "gateway";
     private static final String SANDBOX_CARDS_KEY = "sandboxCards";
@@ -34,7 +35,7 @@ public final class InitiatePaymentResultSerialCodec extends SerialCodecBase<Init
         encodeInteger(serial, AMOUNT_KEY,              arg.amount());
         encodeBoolean(serial, LIVE_KEY,                arg.isLive());
         encodeString( serial, URL_KEY,                 arg.url());
-        encodeBoolean(serial, EMBEDDED_KEY,            arg.isEmbedded());
+        encodeString( serial, PAYMENT_FORM_TYPE_KEY,   arg.formType().name());
         encodeString( serial, HTML_CONTENT_KEY,        arg.htmlContent());
         encodeBoolean(serial, SEAMLESS_KEY,            arg.isSeamless());
         encodeBoolean(serial, HAS_HTML_PAY_BUTTON_KEY, arg.hasHtmlPayButton());
@@ -49,7 +50,7 @@ public final class InitiatePaymentResultSerialCodec extends SerialCodecBase<Init
             decodeInteger(serial, AMOUNT_KEY),
             decodeBoolean(serial, LIVE_KEY),
             decodeString( serial, URL_KEY),
-            decodeBoolean(serial, EMBEDDED_KEY),
+            PaymentFormType.valueOf(decodeString(serial, PAYMENT_FORM_TYPE_KEY)),
             decodeString( serial, HTML_CONTENT_KEY),
             decodeBoolean(serial, SEAMLESS_KEY),
             decodeBoolean(serial, HAS_HTML_PAY_BUTTON_KEY),
