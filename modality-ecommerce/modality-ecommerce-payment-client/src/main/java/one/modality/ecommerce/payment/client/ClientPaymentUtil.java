@@ -10,14 +10,22 @@ import one.modality.ecommerce.payment.PaymentFormType;
  */
 public final class ClientPaymentUtil {
 
-    public static InitiatePaymentArgument createInitiatePaymentArgument(int amount, Object documentPrimaryKey, PaymentFormType preferredFormType) {
+    public static InitiatePaymentArgument createInitiatePaymentArgument(int amount, Object documentPrimaryKey, PaymentFormType preferredFormType, String returnRoute, String cancelRoute) {
         return new InitiatePaymentArgument(
             amount,
             documentPrimaryKey,
             preferredFormType,
             WebViewPane.isBrowser(),
-            "https".equalsIgnoreCase(WindowLocation.getProtocol())
+            "https".equalsIgnoreCase(WindowLocation.getProtocol()),
+            routeToUrl(returnRoute),
+            routeToUrl(cancelRoute)
         );
+    }
+
+    private static String routeToUrl(String route) {
+        if (route == null)
+            return null;
+        return WindowLocation.getOrigin() + "/#" + route;
     }
 
 }

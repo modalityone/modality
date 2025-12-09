@@ -12,8 +12,11 @@ public record GatewayInitiatePaymentArgument(
     String currencyCode,
     boolean isLive, // if false, the payment gateway will use its sandbox environment for this payment
     PaymentFormType preferredFormType,
+    // The following fields are only used for embedded payments
     boolean favorSeamless,
     boolean isOriginOnHttps,
+    String returnUrl,
+    String cancelUrl,
     Map<String, String> accountParameters
 ) {
 

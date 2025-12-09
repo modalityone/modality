@@ -5,6 +5,7 @@ import dev.webfx.extras.panes.FlexPane;
 import dev.webfx.extras.panes.MonoPane;
 import dev.webfx.extras.panes.ScalePane;
 import dev.webfx.extras.styles.bootstrap.Bootstrap;
+import dev.webfx.extras.util.control.Controls;
 import dev.webfx.extras.util.layout.Layouts;
 import dev.webfx.kit.util.properties.FXProperties;
 import dev.webfx.platform.async.AsyncResult;
@@ -16,8 +17,8 @@ import javafx.scene.layout.Region;
 import javafx.scene.layout.VBox;
 import one.modality.base.client.i18n.BaseI18nKeys;
 import one.modality.base.shared.entities.formatters.EventPriceFormatter;
-import one.modality.ecommerce.client.i18n.EcommerceI18nKeys;
 import one.modality.booking.frontoffice.bookingform.GatewayPaymentForm;
+import one.modality.ecommerce.client.i18n.EcommerceI18nKeys;
 import one.modality.ecommerce.payment.CancelPaymentResult;
 import one.modality.ecommerce.payment.client.WebPaymentForm;
 import one.modality.event.frontoffice.activities.book.BookI18nKeys;
@@ -51,6 +52,10 @@ final class ProvidedGatewayPaymentForm implements GatewayPaymentForm {
         webPaymentForm.setHtmlPayButtonText(payButton.getText());
         webPaymentForm.setHtmlHeaderText("Please enter your payment information");
         Region paymentRegion = webPaymentForm.buildPaymentForm();
+        if (paymentRegion == null) { // This indicates a redirected payment form
+            // Temporary UI (just spinner)
+            paymentRegion = Controls.createSpinner(80);
+        }
 
         ScalePane scaledGatewayLogo = new ScalePane(new MonoPane(gatewayLogo));
         scaledGatewayLogo.setStretchWidth(true);

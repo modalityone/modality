@@ -154,6 +154,7 @@ public final class SquarePaymentGateway implements PaymentGateway {
             .order(order)
             .checkoutOptions(CheckoutOptions.builder()
                 .allowTipping(false)
+                .redirectUrl(argument.returnUrl())
                 .build())
             .build();
 

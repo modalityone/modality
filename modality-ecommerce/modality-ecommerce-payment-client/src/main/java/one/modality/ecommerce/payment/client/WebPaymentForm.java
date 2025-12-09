@@ -7,7 +7,6 @@ import dev.webfx.extras.webview.pane.LoadOptions;
 import dev.webfx.extras.webview.pane.WebViewPane;
 import dev.webfx.kit.util.properties.FXProperties;
 import dev.webfx.platform.async.Future;
-import dev.webfx.platform.browser.Browser;
 import dev.webfx.platform.conf.ConfigLoader;
 import dev.webfx.platform.console.Console;
 import dev.webfx.platform.scheduler.Scheduled;
@@ -20,7 +19,10 @@ import javafx.beans.property.ReadOnlyBooleanProperty;
 import javafx.geometry.Point2D;
 import javafx.geometry.Pos;
 import javafx.scene.Node;
-import javafx.scene.control.*;
+import javafx.scene.control.Button;
+import javafx.scene.control.ContextMenu;
+import javafx.scene.control.Label;
+import javafx.scene.control.MenuItem;
 import javafx.scene.input.Clipboard;
 import javafx.scene.input.ClipboardContent;
 import javafx.scene.input.DataFormat;
@@ -28,6 +30,7 @@ import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
 import javafx.scene.text.Text;
 import one.modality.base.client.error.ErrorReporter;
+import one.modality.base.frontoffice.utility.browser.BrowserUtil;
 import one.modality.base.shared.entities.Country;
 import one.modality.base.shared.entities.markers.HasPersonalDetails;
 import one.modality.ecommerce.payment.*;
@@ -125,7 +128,11 @@ public final class WebPaymentForm {
         String url = result.url();
         if (result.formType() == PaymentFormType.REDIRECTED) {
             try {
-                Browser.launchExternalBrowser(url);
+                // Opening the page in our internal browser which will fit the whole browser page. The benefit is that
+                // we don't leave the webapp, and we will be able to easily restore the application state exactly where
+                // it was after the payment is done.
+                BrowserUtil.openInternalBrowser(url, "/secured-" + result.gatewayName().toLowerCase() + "-payment-form");
+                //Browser.launchExternalBrowser(url); // Chrome is blocks this current implementation (to investigate)
             } catch (Exception e) {
                 Console.log(e);
             }

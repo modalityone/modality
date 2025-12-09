@@ -13,6 +13,10 @@ public record InitiatePaymentArgument(
     int amount,
     Object documentPrimaryKey,
     PaymentFormType preferredFormType,
+    // The following fields are used only for embedded payments
     boolean favorSeamless,
-    boolean isOriginOnHttps
+    boolean isOriginOnHttps,
+    // The following fields are used only for redirected payments
+    String returnUrl,
+    String cancelUrl
 ) { }

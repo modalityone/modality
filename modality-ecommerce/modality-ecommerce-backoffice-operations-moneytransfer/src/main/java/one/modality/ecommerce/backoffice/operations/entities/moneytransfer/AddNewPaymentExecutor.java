@@ -32,7 +32,7 @@ final class AddNewPaymentExecutor {
         Layouts.setMaxSizeToInfinite(stackPane);
         BorderPane borderPane = new BorderPane(stackPane);
         int amount = document.getPriceNet() - document.getPriceDeposit();
-        PaymentService.initiatePayment(new InitiatePaymentArgument(amount, document.getPrimaryKey(), PaymentFormType.EMBEDDED, false, false))
+        PaymentService.initiatePayment(new InitiatePaymentArgument(amount, document.getPrimaryKey(), PaymentFormType.EMBEDDED, false, false, null, null))
             .inUiThread()
             .onFailure(e -> borderPane.setCenter(new Label(e.getMessage())))
             .onSuccess(r -> {

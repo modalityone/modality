@@ -10,6 +10,7 @@ module modality.ecommerce.payment.client {
     requires javafx.controls;
     requires javafx.graphics;
     requires modality.base.client.error;
+    requires modality.base.frontoffice.utility;
     requires modality.base.shared.entities;
     requires modality.ecommerce.payment;
     requires webfx.extras.panes;
@@ -17,7 +18,6 @@ module modality.ecommerce.payment.client {
     requires webfx.extras.webview.pane;
     requires webfx.kit.util;
     requires webfx.platform.async;
-    requires webfx.platform.browser;
     requires webfx.platform.conf;
     requires webfx.platform.console;
     requires webfx.platform.scheduler;

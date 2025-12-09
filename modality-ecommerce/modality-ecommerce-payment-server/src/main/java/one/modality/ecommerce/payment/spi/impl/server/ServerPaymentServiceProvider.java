@@ -74,6 +74,8 @@ public class ServerPaymentServiceProvider implements PaymentServiceProvider {
                             argument.preferredFormType(),
                             argument.favorSeamless(),
                             argument.isOriginOnHttps(),
+                            argument.returnUrl(),
+                            argument.cancelUrl(),
                             parameters
                         )).map(gatewayResult -> new InitiatePaymentResult( // Step 5: Returning an InitiatePaymentResult
                             paymentGateway.getName(),

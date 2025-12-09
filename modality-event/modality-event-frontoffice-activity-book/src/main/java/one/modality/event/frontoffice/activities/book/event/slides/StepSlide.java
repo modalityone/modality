@@ -113,7 +113,12 @@ public abstract class StepSlide implements Supplier<Node> {
         Object documentPrimaryKey = workingBookingProperties.getWorkingBooking().getDocumentPrimaryKey();
         turnOnWaitMode();
         PaymentService.initiatePayment(
-                ClientPaymentUtil.createInitiatePaymentArgument(LAST_PAYMENT_DEPOSIT, documentPrimaryKey, PaymentFormType.EMBEDDED)
+                ClientPaymentUtil.createInitiatePaymentArgument(
+                    LAST_PAYMENT_DEPOSIT,
+                    documentPrimaryKey,
+                    PaymentFormType.REDIRECTED, // We were using EMBEDDED so far, now we try REDIRECTED
+                    "/payment-return/:moneyTransfer",
+                    "/payment-cancel/:moneyTransfer")
             )
             .inUiThread()
             .onFailure(paymentResult -> {
