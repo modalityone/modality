@@ -16,6 +16,7 @@ module modality.base.client.application {
     requires webfx.extras.operation;
     requires webfx.extras.operation.action;
     requires webfx.extras.time.format;
+    requires webfx.extras.util.control;
     requires webfx.extras.util.layout;
     requires webfx.extras.util.scene;
     requires webfx.kit.util;
