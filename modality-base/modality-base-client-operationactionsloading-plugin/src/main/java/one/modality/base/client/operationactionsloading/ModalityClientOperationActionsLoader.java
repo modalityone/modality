@@ -122,6 +122,7 @@ public final class ModalityClientOperationActionsLoader implements ApplicationMo
                 I18n.refreshMessageTokenProperties(i18nKey);
             }
         });
+        registry.setLoaded(true);
     }
 
     static {

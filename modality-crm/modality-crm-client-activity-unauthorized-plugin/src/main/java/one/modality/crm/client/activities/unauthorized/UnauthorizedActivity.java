@@ -1,6 +1,7 @@
 package one.modality.crm.client.activities.unauthorized;
 
 import dev.webfx.extras.i18n.controls.I18nControls;
+import dev.webfx.extras.operation.action.OperationActionRegistry;
 import dev.webfx.extras.panes.ScalePane;
 import dev.webfx.extras.util.control.Controls;
 import dev.webfx.kit.util.properties.FXProperties;
@@ -76,16 +77,17 @@ final class UnauthorizedActivity extends ViewDomainActivityBase {
         container.getStyleClass().add("unauthorized-container");
 
         // Handle authorization state changes
-        FXProperties.runNowAndOnPropertyChange(() -> {
-            // Always showing a waiting mode for at least 1 s (to prevent showing transitory access denied)
-            Collections.addIfNotContainsOrRemove(svgPath.getStyleClass(), true, "waiting");
-            Collections.addIfNotContainsOrRemove(svgPath.getStyleClass(), false, "denied");
-            I18nControls.bindI18nProperties(titleLabel, "CheckingAuthorization");
-            I18nControls.bindI18nProperties(messageLabel, "AuthorizationCheck");
-            messageLabel.setGraphic(Controls.createSpinner(16));
-            pulse.play();
-            // But if the authorizations are not waiting, we display the access denied after 1 s
-            if (!FXAuthorizationsWaiting.isAuthorizationsWaiting())
+        FXProperties.runNowAndOnPropertiesChange(() -> {
+            if (FXAuthorizationsWaiting.isAuthorizationsWaiting() || !OperationActionRegistry.getInstance().isLoaded()) {
+                // Always showing a waiting mode for at least 1 s (to prevent showing transitory access denied)
+                Collections.addIfNotContainsOrRemove(svgPath.getStyleClass(), true, "waiting");
+                Collections.addIfNotContainsOrRemove(svgPath.getStyleClass(), false, "denied");
+                I18nControls.bindI18nProperties(titleLabel, "CheckingAuthorization");
+                I18nControls.bindI18nProperties(messageLabel, "AuthorizationCheck");
+                messageLabel.setGraphic(Controls.createSpinner(16));
+                pulse.play();
+            } else {
+                // Waiting for at least 1 s to prevent showing transitory access denied
                 UiScheduler.scheduleDelay(1000, () -> {
                     Collections.addIfNotContainsOrRemove(svgPath.getStyleClass(), false, "waiting");
                     Collections.addIfNotContainsOrRemove(svgPath.getStyleClass(), true, "denied");
@@ -96,13 +98,13 @@ final class UnauthorizedActivity extends ViewDomainActivityBase {
                     iconPane.setScaleX(1.0);
                     iconPane.setScaleY(1.0);
                 });
-
+            }
             // Fade in the message
             messageLabel.setOpacity(0);
             FadeTransition fade = new FadeTransition(Duration.millis(400), messageLabel);
             fade.setToValue(1.0);
             fade.play();
-        }, FXAuthorizationsWaiting.authorizationsWaitingProperty());
+        }, FXAuthorizationsWaiting.authorizationsWaitingProperty(), OperationActionRegistry.getInstance().loadedProperty());
 
         return container;
     }

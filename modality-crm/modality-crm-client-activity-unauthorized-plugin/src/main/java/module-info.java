@@ -10,6 +10,7 @@ module modality.crm.client.activity.unauthorized.plugin {
     requires javafx.controls;
     requires javafx.graphics;
     requires webfx.extras.i18n.controls;
+    requires webfx.extras.operation.action;
     requires webfx.extras.panes;
     requires webfx.extras.util.control;
     requires webfx.kit.util;
