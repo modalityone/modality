@@ -5,6 +5,7 @@ import dev.webfx.extras.util.dialog.DialogUtil;
 import dev.webfx.extras.util.scene.SceneUtil;
 import dev.webfx.platform.browser.Browser;
 import dev.webfx.platform.console.Console;
+import dev.webfx.platform.uischeduler.UiScheduler;
 import dev.webfx.stack.routing.uirouter.UiRouter;
 import dev.webfx.stack.routing.uirouter.activity.view.ViewActivityContext;
 import dev.webfx.stack.routing.uirouter.activity.view.impl.ViewActivityBase;
@@ -35,12 +36,8 @@ import java.util.Set;
 public final class BrowserUtil {
 
     private static UiRouter uiRouter;
-    private static final WebView internalBrowser = new WebView();
+    private static WebView internalBrowser;
     private static final Set<String> REGISTERED_ROUTES = new HashSet<>();
-
-    static {
-        internalBrowser.setMaxHeight(Double.MAX_VALUE);
-    }
 
     public static void openExternalBrowser(String url) {
         // The following code is commented because HostServices is not working on Gluon mobiles.
@@ -58,6 +55,15 @@ public final class BrowserUtil {
     }
 
     public static void openInternalBrowser(String url, String displayedRoute) {
+        if (internalBrowser == null) {
+            // Ensuring that the internal browser is created in the UI thread (OpenJFX raises an exception otherwise)
+            if (!UiScheduler.isUiThread()) {
+                UiScheduler.runInUiThread(() -> openInternalBrowser(url, displayedRoute));
+                return;
+            }
+            internalBrowser = new WebView();
+            internalBrowser.setMaxHeight(Double.MAX_VALUE);
+        }
         FXBackgroundNode.setBackgroundNode(internalBrowser);
         // Loading the url in the internal browser
         internalBrowser.getEngine().load(url);
