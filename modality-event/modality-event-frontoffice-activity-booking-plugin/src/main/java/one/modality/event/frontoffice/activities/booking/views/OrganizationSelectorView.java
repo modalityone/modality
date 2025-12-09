@@ -138,7 +138,6 @@ public final class OrganizationSelectorView {
     }
 
     public void onResume() {
-        BrowserUtil.setUiRouter(activityBase.getUiRouter());
         if (UserAgent.isBrowser()) {
             // The issue with the browser is that it completely reloads the iFrame (= HTML mapping for WebView) when
             // reintroduced to the DOM, so the thumb video is appearing with the YouTube play button when the user
