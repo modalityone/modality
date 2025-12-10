@@ -24,6 +24,7 @@ final class PaymentReturnActivity extends ViewDomainActivityBase {
     private final ObjectProperty<Object> moneyTransferIdProperty = new SimpleObjectProperty<>();
     private final BooleanProperty loadingMoneyTransferProperty = new SimpleBooleanProperty();
     private final ObjectProperty<MoneyTransfer> moneyTransferProperty = new SimpleObjectProperty<>();
+    private long activityStartTimeMillis;
 
     @Override
     protected void updateModelFromContextParameters() {
@@ -38,11 +39,17 @@ final class PaymentReturnActivity extends ViewDomainActivityBase {
                 monoPane.setContent(Controls.createSpinner(80));
             else {
                 MoneyTransfer moneyTransfer = moneyTransferProperty.get();
-                monoPane.setContent(new Text(
-                    moneyTransfer == null ? "Payment not found!" :
-                    moneyTransfer.isPending() ? "Your payment state is not yet known, it will be checked by our team" :
-                        moneyTransfer.isSuccessful() ? "Payment completed successfully!" : "Payment failed!"
-                ));
+                // If the money transfer is still pending within the 10 first seconds, we try to load it again. This is
+                // because the payment gateway may call this payment return activity a bit before the webhook finished
+                // to update the payment state.
+                if (moneyTransfer != null && moneyTransfer.isPending() && System.currentTimeMillis() - activityStartTimeMillis < 10000)
+                    loadMoneyTransfer();
+                else
+                    monoPane.setContent(new Text(
+                        moneyTransfer == null ? "Payment not found!" :
+                            moneyTransfer.isPending() ? "Your payment state is not yet known, it will be checked by our team" :
+                                moneyTransfer.isSuccessful() ? "Payment completed successfully!" : "Payment failed!"
+                    ));
             }
         }, moneyTransferProperty, loadingMoneyTransferProperty);
         return monoPane;
@@ -50,18 +57,22 @@ final class PaymentReturnActivity extends ViewDomainActivityBase {
 
     @Override
     protected void startLogic() {
-        FXProperties.runNowAndOnPropertyChange(moneyTransferId -> {
-            if (moneyTransferId == null)
-                moneyTransferProperty.set(null);
-            else {
-                loadingMoneyTransferProperty.set(true);
-                EntityStore.create(getDataSourceModel())
-                    .<MoneyTransfer>executeQuery("select pending,successful from MoneyTransfer where id = ?", moneyTransferId)
-                    .onComplete(ar -> {
-                        moneyTransferProperty.set(Collections.first(ar.result()));
-                        loadingMoneyTransferProperty.set(false);
-                    });
-            }
-        }, moneyTransferIdProperty);
+        activityStartTimeMillis = System.currentTimeMillis();
+        FXProperties.runNowAndOnPropertyChange(this::loadMoneyTransfer, moneyTransferIdProperty);
+    }
+
+    private void loadMoneyTransfer() {
+        Object moneyTransferId = moneyTransferIdProperty.get();
+        if (moneyTransferId == null)
+            moneyTransferProperty.set(null);
+        else {
+            loadingMoneyTransferProperty.set(true);
+            EntityStore.create(getDataSourceModel())
+                .<MoneyTransfer>executeQuery("select pending,successful from MoneyTransfer where id = ?", moneyTransferId)
+                .onComplete(ar -> {
+                    moneyTransferProperty.set(Collections.first(ar.result()));
+                    loadingMoneyTransferProperty.set(false);
+                });
+        }
     }
 }
