@@ -10,6 +10,7 @@ module modality.ecommerce.payment.buscall {
     requires webfx.platform.ast;
     requires webfx.stack.com.bus.call;
     requires webfx.stack.com.serial;
+    requires webfx.platform.util;
 
     // Exported packages
     exports one.modality.ecommerce.payment.buscall;

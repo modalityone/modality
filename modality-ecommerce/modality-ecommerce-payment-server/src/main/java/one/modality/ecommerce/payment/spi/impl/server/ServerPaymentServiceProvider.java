@@ -51,8 +51,8 @@ public class ServerPaymentServiceProvider implements PaymentServiceProvider {
 
     @Override
     public Future<InitiatePaymentResult> initiatePayment(InitiatePaymentArgument argument) {
-        // Step 1: Adding a payment to the document in the database
-        return addDocumentPayment(argument.documentPrimaryKey(), argument.amount())
+        // Step 1: Inserting the payment in the database with its payment allocations
+        return insertPayment(argument.amount(), argument.paymentAllocations())
             .compose(moneyTransfer -> {
                 // Step 2: Finding a Gateway provider registered in the software that matches the money account of the payment
                 String gatewayName = moneyTransfer.getToMoneyAccount().getGatewayCompany().getName();
@@ -240,14 +240,28 @@ public class ServerPaymentServiceProvider implements PaymentServiceProvider {
             });
     }
 
-    private Future<MoneyTransfer> addDocumentPayment(Object documentPrimaryKey, int amount) {
+    private Future<MoneyTransfer> insertPayment(int amount, PaymentAllocation[] paymentAllocations) {
         UpdateStore updateStore = UpdateStore.create(DataSourceModelService.getDefaultDataSourceModel());
         MoneyTransfer moneyTransfer = updateStore.insertEntity(MoneyTransfer.class);
-        moneyTransfer.setDocument(documentPrimaryKey);
         moneyTransfer.setAmount(amount);
         moneyTransfer.setPending(true);
         moneyTransfer.setSuccessful(false);
         moneyTransfer.setMethod(Method.ONLINE_METHOD_ID);
+
+        if (paymentAllocations.length == 1) {
+            moneyTransfer.setDocument(paymentAllocations[0].documentPrimaryKey());
+        } else {
+            moneyTransfer.setSpread(true);
+            for (PaymentAllocation paymentAllocation : paymentAllocations) {
+                MoneyTransfer childMoneyTransfer = updateStore.insertEntity(MoneyTransfer.class);
+                childMoneyTransfer.setParent(moneyTransfer);
+                childMoneyTransfer.setDocument(paymentAllocation.documentPrimaryKey());
+                childMoneyTransfer.setAmount(paymentAllocation.amount());
+                childMoneyTransfer.setPending(true);
+                childMoneyTransfer.setSuccessful(false);
+                childMoneyTransfer.setMethod(Method.ONLINE_METHOD_ID);
+            }
+        }
 
         return HistoryRecorder.preparePaymentHistoryBeforeSubmit("Initiated [payment]", moneyTransfer)
             .compose(history ->

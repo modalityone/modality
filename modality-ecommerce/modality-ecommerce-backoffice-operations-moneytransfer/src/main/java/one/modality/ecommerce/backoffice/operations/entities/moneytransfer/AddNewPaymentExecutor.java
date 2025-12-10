@@ -12,6 +12,7 @@ import javafx.scene.layout.StackPane;
 import javafx.scene.web.WebView;
 import one.modality.base.shared.entities.Document;
 import one.modality.ecommerce.payment.InitiatePaymentArgument;
+import one.modality.ecommerce.payment.PaymentAllocation;
 import one.modality.ecommerce.payment.PaymentFormType;
 import one.modality.ecommerce.payment.PaymentService;
 
@@ -32,7 +33,7 @@ final class AddNewPaymentExecutor {
         Layouts.setMaxSizeToInfinite(stackPane);
         BorderPane borderPane = new BorderPane(stackPane);
         int amount = document.getPriceNet() - document.getPriceDeposit();
-        PaymentService.initiatePayment(new InitiatePaymentArgument(amount, document.getPrimaryKey(), PaymentFormType.EMBEDDED, false, false, null, null))
+        PaymentService.initiatePayment(new InitiatePaymentArgument(amount, new PaymentAllocation[]{ new PaymentAllocation(document.getPrimaryKey(), amount)}, PaymentFormType.EMBEDDED, false, false, null, null))
             .inUiThread()
             .onFailure(e -> borderPane.setCenter(new Label(e.getMessage())))
             .onSuccess(r -> {
