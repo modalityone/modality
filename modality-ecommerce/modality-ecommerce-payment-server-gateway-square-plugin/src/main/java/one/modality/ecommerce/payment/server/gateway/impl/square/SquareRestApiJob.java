@@ -185,7 +185,7 @@ public final class SquareRestApiJob implements ApplicationJob {
         } else {
             // We finally update the payment status through the payment service (this will also create a history entry)
             SQUARE_HISTORY_USER_ID.callAndReturn(() ->
-                PaymentService.updatePaymentStatus(UpdatePaymentStatusArgument.createCapturedStatusArgument(paymentPk.toString(), textPayload, id, status, pending, successful))
+                PaymentService.updatePaymentStatus(UpdatePaymentStatusArgument.createCapturedStatusArgument(paymentPk, textPayload, id, status, pending, successful))
                     .onFailure(e -> Console.log(logPrefix + "⛔️️  Failed to update status " + status + " for transactionRef = " + id, e))
                     .onSuccess(v -> Console.log(logPrefix + "✅  Successfully updated status " + status + " for transactionRef = " + id))
             );
