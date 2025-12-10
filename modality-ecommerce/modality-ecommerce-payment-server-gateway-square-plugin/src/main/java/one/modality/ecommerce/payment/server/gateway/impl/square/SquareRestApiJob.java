@@ -121,7 +121,7 @@ public final class SquareRestApiJob implements ApplicationJob {
                     else if (orderId == null)
                         Console.log(logPrefix + "⛔️️  No order_id was found in the payload!");
                     else {
-                        payments.getStore().<GatewayParameter>executeQuery("select value from AccountParameter p where account.gatewayCompany.name='Square' and name='access_token' and live=$1 and exists(select AccountParameter where account=p.account and live=$1 and name='app_id' and value=$2) order by id desc limit 1", live, applicationId)
+                        payments.getStore().<GatewayParameter>executeQuery("select value from GatewayParameter p where account.gatewayCompany.name='Square' and name='access_token' and live=$1 and exists(select GatewayParameter where account=p.account and live=$1 and name='app_id' and value=$2) order by id desc limit 1", live, applicationId)
                             .onFailure(e -> Console.log(logPrefix + "⛔️️  An error occurred when reading the account parameters", e))
                             .onSuccess(parameters -> {
                                 GatewayParameter accessTokenParameter = Collections.first(parameters);
