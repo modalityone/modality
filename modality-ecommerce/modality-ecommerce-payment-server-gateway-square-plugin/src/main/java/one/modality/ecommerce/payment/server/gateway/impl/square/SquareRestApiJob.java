@@ -114,19 +114,19 @@ public final class SquareRestApiJob implements ApplicationJob {
                     // order in the Square API and then read its referenceId (this is where the payment id is stored).
                     // Because we need to access the Square API, we first need to get the Square access token from the
                     // Modality account parameters.
-                    String applicationId = AST.lookupString(payload, "data.object.payment.application_details.application_id");
+                    String merchantId = payload.getString("merchant_id");
                     String orderId = AST.lookupString(payload, "data.object.payment.order_id");
-                    if (applicationId == null)
-                        Console.log(logPrefix + "⛔️️  No application_id was found in the payload!");
+                    if (merchantId == null)
+                        Console.log(logPrefix + "⛔️️  No merchant_id was found in the payload!");
                     else if (orderId == null)
                         Console.log(logPrefix + "⛔️️  No order_id was found in the payload!");
                     else {
-                        payments.getStore().<GatewayParameter>executeQuery("select value from GatewayParameter p where account.gatewayCompany.name='Square' and name='access_token' and live=$1 and exists(select GatewayParameter where account=p.account and live=$1 and name='app_id' and value=$2) order by id desc limit 1", live, applicationId)
+                        payments.getStore().<GatewayParameter>executeQuery("select value from GatewayParameter p where account.gatewayCompany.name='Square' and name='access_token' and live=$1 and exists(select GatewayParameter where account=p.account and name='merchant_id' and value=$2) order by id desc limit 1", live, merchantId)
                             .onFailure(e -> Console.log(logPrefix + "⛔️️  An error occurred when reading the account parameters", e))
                             .onSuccess(parameters -> {
                                 GatewayParameter accessTokenParameter = Collections.first(parameters);
                                 if (accessTokenParameter == null)
-                                    Console.log(logPrefix + "⛔️️  No access token was found in the database for the Square account with applicationId = " + applicationId + " and live = " + live);
+                                    Console.log(logPrefix + "⛔️️  No access token was found in the database for the Square account with merchant_id = " + merchantId + " and live = " + live);
                                 else {
                                     String accessToken = accessTokenParameter.getValue();
                                     AsyncSquareClient client = AsyncSquareClient.builder()
