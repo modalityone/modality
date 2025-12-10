@@ -146,6 +146,7 @@ public final class SquarePaymentGateway implements PaymentGateway {
 
         Order order = Order.builder()
             .locationId(locationId)
+            .referenceId(argument.paymentId()) // This is where we pass the paymentId that will be retrieved by the web hook
             .lineItems(Collections.singletonList(lineItem))
             .build();
 

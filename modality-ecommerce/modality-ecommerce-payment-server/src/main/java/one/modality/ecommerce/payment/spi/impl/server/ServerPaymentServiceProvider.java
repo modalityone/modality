@@ -71,6 +71,7 @@ public class ServerPaymentServiceProvider implements PaymentServiceProvider {
                         // Step 4: Calling the payment gateway with all the data collected
                         String currencyCode = moneyTransfer.getToMoneyAccount().getCurrency().getCode();
                         return paymentGateway.initiatePayment(new GatewayInitiatePaymentArgument(
+                            moneyTransfer.getPrimaryKey().toString(),
                             createGatewayItem(moneyTransfer),
                             currencyCode,
                             live,

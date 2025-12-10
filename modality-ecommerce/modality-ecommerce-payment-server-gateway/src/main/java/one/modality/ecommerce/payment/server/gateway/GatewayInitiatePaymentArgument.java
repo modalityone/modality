@@ -8,6 +8,7 @@ import java.util.Map;
  * @author Bruno Salmon
  */
 public record GatewayInitiatePaymentArgument(
+    String paymentId,
     GatewayItem item,
     String currencyCode,
     boolean isLive, // if false, the payment gateway will use its sandbox environment for this payment
