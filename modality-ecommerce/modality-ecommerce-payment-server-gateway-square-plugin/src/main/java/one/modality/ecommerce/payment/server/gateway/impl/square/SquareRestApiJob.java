@@ -9,6 +9,7 @@ import dev.webfx.platform.ast.AstObject;
 import dev.webfx.platform.ast.ReadOnlyAstObject;
 import dev.webfx.platform.boot.spi.ApplicationJob;
 import dev.webfx.platform.console.Console;
+import dev.webfx.platform.util.Numbers;
 import dev.webfx.platform.util.collection.Collections;
 import dev.webfx.platform.util.http.HttpResponseStatus;
 import dev.webfx.platform.util.vertx.VertxInstance;
@@ -98,7 +99,7 @@ public final class SquareRestApiJob implements ApplicationJob {
         ctx.response().setStatusCode(HttpResponseStatus.OK_200).end();
     }
 
-    private static void loadAndUpdatePaymentStatus(String field, String value, boolean live, AstObject payload, String textPayload, String logPrefix) {
+    private static void loadAndUpdatePaymentStatus(String field, Object value, boolean live, AstObject payload, String textPayload, String logPrefix) {
         EntityStore.create()
             .<MoneyTransfer>executeQuery("select pending,successful,status,gatewayResponse from MoneyTransfer where " + field + " = ?", value)
             .onFailure(e -> Console.log(logPrefix + "⛔️️  An error occurred when reading the payment with " + field + " = " + value, e))
@@ -145,7 +146,7 @@ public final class SquareRestApiJob implements ApplicationJob {
                                             if (referenceId == null)
                                                 Console.log(logPrefix + "⛔️️  No referenceId was found in the Square API for orderId = " + orderId);
                                             else
-                                                loadAndUpdatePaymentStatus("id", referenceId, live, payload, textPayload, logPrefix);
+                                                loadAndUpdatePaymentStatus("id", Numbers.toShortestNumber(referenceId), live, payload, textPayload, logPrefix);
                                         }
                                     });
                                 }
