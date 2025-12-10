@@ -78,7 +78,7 @@ public final class WebPaymentForm {
         // If the user closes the window while he hasn't canceled or completed the payment, we consider this as a
         // user cancellation
         Shutdown.addShutdownHook(e -> {
-            if (!paymentCancelled && !paymentCompleted) {
+            if (isEmbeddedPaymentForm() && !paymentCancelled && !paymentCompleted) {
                 cancelPayment(false); // false indicates it's not an explicit user cancellation
             }
         });
@@ -129,8 +129,8 @@ public final class WebPaymentForm {
         return result.formType() == PaymentFormType.REDIRECTED;
     }
 
-    public String getRedirectedPaymentFormUrl() {
-        return result.url();
+    public boolean isEmbeddedPaymentForm() {
+        return result.formType() == PaymentFormType.EMBEDDED;
     }
 
     public void navigateToRedirectedPaymentForm() {
