@@ -11,6 +11,7 @@ import javafx.beans.property.ObjectProperty;
 import javafx.beans.property.SimpleBooleanProperty;
 import javafx.beans.property.SimpleObjectProperty;
 import javafx.scene.Node;
+import javafx.scene.layout.Region;
 import javafx.scene.text.Text;
 import one.modality.base.shared.entities.MoneyTransfer;
 
@@ -34,9 +35,10 @@ final class PaymentReturnActivity extends ViewDomainActivityBase {
     @Override
     public Node buildUi() {
         MonoPane monoPane = new MonoPane();
+        Region spinner = Controls.createSpinner(80);
         FXProperties.runNowAndOnPropertiesChange(() -> {
             if (loadingMoneyTransferProperty.get())
-                monoPane.setContent(Controls.createSpinner(80));
+                monoPane.setContent(spinner);
             else {
                 MoneyTransfer moneyTransfer = moneyTransferProperty.get();
                 // If the money transfer is still pending within the 10 first seconds, we try to load it again. This is
