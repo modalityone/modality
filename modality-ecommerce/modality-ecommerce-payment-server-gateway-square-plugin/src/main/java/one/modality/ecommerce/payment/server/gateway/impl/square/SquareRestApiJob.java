@@ -110,7 +110,7 @@ public final class SquareRestApiJob implements ApplicationJob {
     private static Future<Void> loadAndUpdatePaymentStatus(String field, Object value, boolean live, AstObject payload, String textPayload, String logPrefix) {
         return EntityStore.create()
             .<MoneyTransfer>executeQuery("select pending,successful,status,gatewayResponse from MoneyTransfer where " + field + " = ?", value)
-            //.onFailure(e -> Console.log(logPrefix + "⛔️️  An error occurred when reading the payment with " + field + " = " + value, e))
+            .onFailure(e -> Console.log(logPrefix + "⛔️️  An error occurred when reading the payment with " + field + " = " + value, e))
             .compose(payments -> {
                 int n = payments.size();
                 if (n == 1)
@@ -130,7 +130,7 @@ public final class SquareRestApiJob implements ApplicationJob {
                     } else if (orderId == null) {
                         return Future.failedFuture("No order_id was found in the payload!");
                     } else {
-                        return payments.getStore().<GatewayParameter>executeQuery("select value from GatewayParameter p where account.gatewayCompany.name='Square' and name='access_token' and live=$1 and exists(select GatewayParameter where account=p.account and name='merchant_id' and value=$2) order by id desc limit 1", live, merchantId)
+                        return payments.getStore().<GatewayParameter>executeQuery("select value from GatewayParameter p where account.gatewayCompany.name='Square' and name='access_token' and ($1 ? live : test) and exists(select GatewayParameter where account=p.account and name='merchant_id' and value=$2) order by id desc limit 1", live, merchantId)
                             //.onFailure(e -> Console.log(logPrefix + "⛔️️  An error occurred when reading the account parameters", e))
                             .compose(parameters -> {
                                 GatewayParameter accessTokenParameter = Collections.first(parameters);
@@ -149,11 +149,11 @@ public final class SquareRestApiJob implements ApplicationJob {
                                     ).thenAccept(response -> {
                                         Order order = response.getOrder().orElse(null);
                                         if (order == null)
-                                            Console.log(logPrefix + "⛔️️  No order was found in the Square API for orderId = " + orderId);
+                                            promise.fail("No order was found in the Square API for orderId = " + orderId);
                                         else {
                                             String referenceId = order.getReferenceId().orElse(null);
                                             if (referenceId == null)
-                                                Console.log(logPrefix + "⛔️️  No referenceId was found in the Square API for orderId = " + orderId);
+                                                promise.fail("No referenceId was found in the Square API for orderId = " + orderId);
                                             else
                                                 promise.handle(loadAndUpdatePaymentStatus("id", Numbers.toShortestNumber(referenceId), live, payload, textPayload, logPrefix));
                                         }
@@ -193,7 +193,7 @@ public final class SquareRestApiJob implements ApplicationJob {
                 payment = updateStore.updateEntity(payment);
                 payment.setGatewayResponse(textPayload);
                 return updateStore.submitChanges()
-                    //.onFailure(e -> Console.log(logPrefix + "⛔️️  Failed to update gatewayResponse for payment " + paymentPk, e))
+                    .onFailure(e -> Console.log(logPrefix + "⛔️️  Failed to update gatewayResponse for payment " + paymentPk, e))
                     .onSuccess(v -> Console.log(logPrefix + "✅  Successfully updated gatewayResponse for payment " + paymentPk))
                     .mapEmpty();
             }
@@ -201,7 +201,7 @@ public final class SquareRestApiJob implements ApplicationJob {
             // We finally update the payment status through the payment service (this will also create a history entry)
             return SQUARE_HISTORY_USER_ID.callAndReturn(() ->
                 PaymentService.updatePaymentStatus(UpdatePaymentStatusArgument.createCapturedStatusArgument(paymentPk, textPayload, id, status, pending, successful))
-                    //.onFailure(e -> Console.log(logPrefix + "⛔️️  Failed to update status " + status + " for transactionRef = " + id, e))
+                    .onFailure(e -> Console.log(logPrefix + "⛔️️  Failed to update status " + status + " for transactionRef = " + id, e))
                     .onSuccess(v -> Console.log(logPrefix + "✅  Successfully updated status " + status + " for transactionRef = " + id))
             );
         }
