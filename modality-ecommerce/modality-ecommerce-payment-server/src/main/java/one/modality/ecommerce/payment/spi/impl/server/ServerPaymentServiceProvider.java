@@ -335,7 +335,7 @@ public final class ServerPaymentServiceProvider implements PaymentServiceProvide
         String errorMessage = argument.errorMessage();
         Object userId = ThreadLocalStateHolder.getUserId(); // Capturing userId because we may have an async call
         boolean isGatewayUser = userId instanceof SystemUserId;
-        String fieldsToLoad = "amount"; // As it will be required for history anyway
+        String fieldsToLoad = "amount,spread"; // As it will be required for history anyway
         if (!pending && successful) { // If the payment is successful, we check if it was pending before (to adjust the history comment)
             fieldsToLoad += ",pending";
         }
@@ -359,19 +359,30 @@ public final class ServerPaymentServiceProvider implements PaymentServiceProvide
                             pending && successful ? "Reported payment [amount] is authorised (not yet completed)" :
                                 /*pending && !successful?*/ "Reported payment [amount] is pending";
 
-            return HistoryRecorder.preparePaymentHistoriesBeforeSubmit(historyComment, new DatabasePayment(moneyTransfer, null), userId)
-                .compose(histories ->
-                    updateStore.submitChanges(Triggers.frontOfficeTransaction(updateStore))
-                        .compose(result -> { // Checking that something happened in the database
-                            int rowCount = result.getRowCount();
-                            if (rowCount == 0)
-                                return Future.failedFuture("Unknown payment");
-                            // Completing the histories recording (changes column with resolved primary keys)
-                            return HistoryRecorder.completeDocumentHistoriesAfterSubmit(histories, new UpdateMoneyTransferEvent(moneyTransfer))
-                                .map(ignoredVoid -> moneyTransfer);
-                        })
+            return loadDatabasePayment(moneyTransfer)
+                .compose(databasePayment ->
+                    HistoryRecorder.preparePaymentHistoriesBeforeSubmit(historyComment, databasePayment, userId)
+                        .compose(histories ->
+                            updateStore.submitChanges(Triggers.frontOfficeTransaction(updateStore))
+                                .compose(result -> { // Checking that something happened in the database
+                                    int rowCount = result.getRowCount();
+                                    if (rowCount == 0)
+                                        return Future.failedFuture("Unknown payment");
+                                    // Completing the histories recording (changes column with resolved primary keys)
+                                    return HistoryRecorder.completeDocumentHistoriesAfterSubmit(histories, new UpdateMoneyTransferEvent(moneyTransfer))
+                                        .map(ignoredVoid -> moneyTransfer);
+                                })
+                        )
                 );
         });
+    }
+
+    private Future<DatabasePayment> loadDatabasePayment(MoneyTransfer moneyTransfer) {
+        if (!moneyTransfer.isSpread())
+            return Future.succeededFuture(new DatabasePayment(moneyTransfer, null));
+        return moneyTransfer.getStore()
+            .executeQuery("select amount,document.id from MoneyTransfer where parent=$1", moneyTransfer)
+            .map(allocatedTransfers -> new DatabasePayment(moneyTransfer, allocatedTransfers.toArray(new MoneyTransfer[0])));
     }
 
 }

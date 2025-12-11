@@ -5,7 +5,6 @@ import com.squareup.square.core.Environment;
 import com.squareup.square.types.GetOrdersRequest;
 import com.squareup.square.types.Order;
 import dev.webfx.platform.ast.AST;
-import dev.webfx.platform.ast.AstObject;
 import dev.webfx.platform.ast.ReadOnlyAstObject;
 import dev.webfx.platform.async.Future;
 import dev.webfx.platform.async.Promise;
@@ -81,11 +80,17 @@ public final class SquareRestApiJob implements ApplicationJob {
 
     private void handleWebhook(RoutingContext ctx, boolean live) {
         JsonObject vertxPayload = ctx.body().asJsonObject();
-        String logPrefix = "[Square] " + (live ? "Live" : "Sandbox") + " webhook - ";
         String textPayload = vertxPayload.encode();
-        Console.log(logPrefix + "Called with payload = " + textPayload);
+        handleWebhook(textPayload, AST.createObject(vertxPayload), ctx, live);
+    }
 
-        AstObject payload = AST.createObject(vertxPayload);
+    private void handleWebhook(String textPayload, boolean live) { // Can be use for testing
+        handleWebhook(textPayload, AST.parseObjectSilently(textPayload, "json"), null, live);
+    }
+
+    private void handleWebhook(String textPayload, ReadOnlyAstObject payload, RoutingContext ctx, boolean live) {
+        String logPrefix = "[Square] " + (live ? "Live" : "Sandbox") + " webhook - ";
+        Console.log(logPrefix + "Called with payload = " + textPayload);
         String squareEventType = AST.lookupString(payload, "type");
         if (!"payment.updated".equals(squareEventType)) {
             Console.log(logPrefix + "⚠️  Received an event type that is not managed by this webhook: " + squareEventType);
@@ -107,7 +112,7 @@ public final class SquareRestApiJob implements ApplicationJob {
         }
     }
 
-    private static Future<Void> loadAndUpdatePaymentStatus(String field, Object value, boolean live, AstObject payload, String textPayload, String logPrefix) {
+    private static Future<Void> loadAndUpdatePaymentStatus(String field, Object value, boolean live, ReadOnlyAstObject payload, String textPayload, String logPrefix) {
         return EntityStore.create()
             .<MoneyTransfer>executeQuery("select pending,successful,status,gatewayResponse from MoneyTransfer where " + field + " = ?", value)
             .onFailure(e -> Console.log(logPrefix + "⛔️️  An error occurred when reading the payment with " + field + " = " + value, e))
@@ -169,7 +174,7 @@ public final class SquareRestApiJob implements ApplicationJob {
             });
     }
 
-    private static Future<Void> updatePaymentStatus(MoneyTransfer payment, AstObject payload, String textPayload, String logPrefix) {
+    private static Future<Void> updatePaymentStatus(MoneyTransfer payment, ReadOnlyAstObject payload, String textPayload, String logPrefix) {
         ReadOnlyAstObject paymentObject = AST.lookupObject(payload, "data.object.payment");
         String id = paymentObject.getString("id"); // Corresponds to transactionRef in Modality
         String status = paymentObject.getString("status");
