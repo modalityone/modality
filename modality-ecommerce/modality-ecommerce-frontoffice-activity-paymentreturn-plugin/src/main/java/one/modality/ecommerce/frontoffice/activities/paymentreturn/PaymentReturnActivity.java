@@ -41,9 +41,9 @@ final class PaymentReturnActivity extends ViewDomainActivityBase {
                 monoPane.setContent(spinner);
             else {
                 MoneyTransfer moneyTransfer = moneyTransferProperty.get();
-                // If the money transfer is still pending within the 10 first seconds, we try to load it again. This is
-                // because the payment gateway may call this payment return activity a bit before the webhook finished
-                // to update the payment state.
+                // If the money transfer is still pending within the 10 first seconds, we try to load it again. This
+                // might be because the payment gateway called this payment return activity a bit before too early, i.e.,
+                // before the webhook finished updating the payment state.
                 if (moneyTransfer != null && moneyTransfer.isPending() && System.currentTimeMillis() - activityStartTimeMillis < 10000)
                     loadMoneyTransfer();
                 else
