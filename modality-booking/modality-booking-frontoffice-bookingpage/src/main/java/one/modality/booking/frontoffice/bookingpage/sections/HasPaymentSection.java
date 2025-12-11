@@ -6,9 +6,10 @@ import javafx.beans.value.ObservableBooleanValue;
 import one.modality.booking.frontoffice.bookingpage.BookingFormSection;
 import one.modality.booking.frontoffice.bookingpage.theme.BookingFormColorScheme;
 
+import dev.webfx.platform.util.uuid.Uuid;
+
 import java.util.List;
 import java.util.Map;
-import java.util.UUID;
 import java.util.function.Consumer;
 
 /**
@@ -71,7 +72,7 @@ public interface HasPaymentSection extends BookingFormSection {
          * Creates a booking item with an auto-generated ID.
          */
         public PaymentBookingItem(String personName, String details, double amount) {
-            this(UUID.randomUUID().toString(), personName, details, amount);
+            this(Uuid.randomUuid(), personName, details, amount);
         }
 
         public String getId() { return id; }

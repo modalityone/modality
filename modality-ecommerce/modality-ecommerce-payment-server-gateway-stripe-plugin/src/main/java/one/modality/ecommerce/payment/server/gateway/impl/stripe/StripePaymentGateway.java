@@ -7,6 +7,7 @@ import com.stripe.param.PaymentIntentCreateParams;
 import com.stripe.param.checkout.SessionCreateParams;
 import dev.webfx.platform.async.Future;
 import dev.webfx.platform.resource.Resource;
+import one.modality.ecommerce.payment.PaymentFormType;
 import one.modality.ecommerce.payment.server.gateway.*;
 
 /**
@@ -26,11 +27,18 @@ public final class StripePaymentGateway implements PaymentGateway {
 
     @Override
     public Future<GatewayInitiatePaymentResult> initiatePayment(GatewayInitiatePaymentArgument argument) {
+        if (argument.preferredFormType() == PaymentFormType.EMBEDDED)
+            return initiatePaymentEmbedded(argument);
+        return initiatePaymentRedirect(argument);
+    }
+
+    private Future<GatewayInitiatePaymentResult> initiatePaymentEmbedded(GatewayInitiatePaymentArgument argument) {
         try {
             Stripe.apiKey = API_SECRET_KEY;
+            GatewayItem item = argument.item();
             PaymentIntentCreateParams params = PaymentIntentCreateParams.builder()
-                    .setAmount(argument.getAmount())
-                    .setCurrency(argument.getCurrencyCode())
+                    .setAmount(item.amount())
+                    .setCurrency(argument.currencyCode())
                     .setAutomaticPaymentMethods(
                             PaymentIntentCreateParams.AutomaticPaymentMethods.builder().setEnabled(true).build()
                     )
@@ -46,32 +54,28 @@ public final class StripePaymentGateway implements PaymentGateway {
         }
     }
 
-    @Override
-    public Future<GatewayCompletePaymentResult> completePayment(GatewayCompletePaymentArgument argument) {
-        return Future.failedFuture("completePayment() not yet implemented for Stripe");
-    }
-
-    public Future<GatewayInitiatePaymentResult> initiatePaymentRedirect(GatewayInitiatePaymentArgument argument) {
+    private Future<GatewayInitiatePaymentResult> initiatePaymentRedirect(GatewayInitiatePaymentArgument argument) {
         Stripe.apiKey = API_SECRET_KEY;
         // Extract the following to a 'StripeClient'
         // Assemble the purchase objects
+        GatewayItem item = argument.item();
         SessionCreateParams.LineItem.PriceData.ProductData productData =
                 SessionCreateParams.LineItem.PriceData.ProductData.builder()
-                        .setName(argument.getProductName())
+                        .setName(item.shortName())
                         .build();
 
         // Create the price data and add the product data to this
         SessionCreateParams.LineItem.PriceData priceData =
                 SessionCreateParams.LineItem.PriceData.builder()
-                        .setCurrency(argument.getCurrencyCode())
-                        .setUnitAmount(argument.getAmount())
+                        .setCurrency(argument.currencyCode())
+                        .setUnitAmount(item.amount())
                         .setProductData(productData)
                         .build();
 
         // Create the line item and add the price data
         SessionCreateParams.LineItem lineItem =
                 SessionCreateParams.LineItem.builder()
-                        .setQuantity(1L)
+                        .setQuantity((long) item.quantity())
                         .setPriceData(priceData)
                         .build();
 
@@ -86,9 +90,15 @@ public final class StripePaymentGateway implements PaymentGateway {
 
         try {
             Session session = Session.create(params);
-            return Future.succeededFuture(GatewayInitiatePaymentResult.createRedirectInitiatePaymentResult(argument.isLive(), false, session.getUrl(), null));
+            return Future.succeededFuture(GatewayInitiatePaymentResult.createRedirectInitiatePaymentResult(argument.isLive(), session.getUrl()));
         } catch (Exception e) {
             return Future.failedFuture(e);
         }
     }
+
+    @Override
+    public Future<GatewayCompletePaymentResult> completePayment(GatewayCompletePaymentArgument argument) {
+        return Future.failedFuture("completePayment() not yet implemented for Stripe");
+    }
+
 }

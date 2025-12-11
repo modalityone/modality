@@ -6,7 +6,9 @@ module modality.base.frontoffice.application {
     requires javafx.graphics;
     requires modality.base.client.application;
     requires modality.base.frontoffice.mainframe.activity;
+    requires modality.base.frontoffice.utility;
     requires webfx.platform.conf;
+    requires webfx.stack.routing.uirouter;
 
     // Exported packages
     exports one.modality.base.frontoffice.application;

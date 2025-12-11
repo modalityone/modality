@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project>
+
+    <description>The back-office Accommodation activity.</description>
+
+    <exported-packages>
+        <source-packages/>
+    </exported-packages>
+
+    <dependencies>
+        <used-by-source-modules>
+            <undetected-module>javafx-controls</undetected-module>
+        </used-by-source-modules>
+    </dependencies>
+
+    <providers>
+        <provider interface="dev.webfx.stack.routing.uirouter.UiRoute">one.modality.hotel.backoffice.activities.accommodation.AccommodationRouting$AccommodationUiRoute</provider>
+        <provider interface="dev.webfx.stack.routing.uirouter.operations.RouteRequestEmitter">one.modality.hotel.backoffice.activities.accommodation.AccommodationRouting$RouteToAccommodationRequestEmitter</provider>
+    </providers>
+
+    <i18n javaKeysClass="one.modality.hotel.backoffice.activities.accommodation.AccommodationI18nKeys"/>
+
+</project>

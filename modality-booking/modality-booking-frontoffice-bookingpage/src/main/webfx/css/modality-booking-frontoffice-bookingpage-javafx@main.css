@@ -360,6 +360,53 @@
     -fx-background-color: -booking-form-selected-bg;
 }
 
+/* Primary Button (CSS-based theming) */
+.booking-form-primary-btn {
+    -fx-background-color: -booking-form-primary;
+    -fx-background-radius: 8;
+    -fx-padding: 14 32 14 32;
+    -fx-cursor: hand;
+}
+
+.booking-form-primary-btn:hover {
+    -fx-effect: dropshadow(three-pass-box, rgba(0, 0, 0, 0.2), 12, 0, 0, 4);
+}
+
+.booking-form-primary-btn:disabled,
+.booking-form-primary-btn.disabled {
+    -fx-background-color: #adb5bd;
+    -fx-cursor: default;
+}
+
+.booking-form-primary-btn-text {
+    -fx-text-fill: white;
+    -fx-font-weight: 600;
+    -fx-font-size: 16px;
+}
+
+/* Back Button (CSS-based theming) */
+.booking-form-back-btn {
+    -fx-background-color: transparent;
+    -fx-border-color: transparent;
+    -fx-padding: 14 32 14 32;
+    -fx-cursor: hand;
+}
+
+.booking-form-back-btn:hover {
+    -fx-background-color: #f8f9fa;
+    -fx-background-radius: 8;
+}
+
+.booking-form-back-btn-text {
+    -fx-text-fill: #6c757d;
+    -fx-font-weight: 500;
+    -fx-font-size: 15px;
+}
+
+.booking-form-back-btn:hover .booking-form-back-btn-text {
+    -fx-text-fill: #212529;
+}
+
 /* Date Tabs */
 .date-tabs {
     -fx-spacing: 8px;
@@ -791,6 +838,17 @@
     -fx-border-color: -booking-form-primary;
 }
 
+/* Toggle Button Text */
+.booking-form-toggle-button-text {
+    -fx-text-fill: #212529;
+    -fx-font-weight: 600;
+    -fx-font-size: 16px;
+}
+
+.booking-form-toggle-button.selected .booking-form-toggle-button-text {
+    -fx-text-fill: white;
+}
+
 /* Checkbox Option Row */
 .booking-form-checkbox-option {
     -fx-cursor: hand;
@@ -819,6 +877,12 @@
 .booking-form-radio-option.selected {
     -fx-border-color: -booking-form-primary;
     -fx-background-color: -booking-form-selected-bg;
+}
+
+/* Info Box Base */
+.booking-form-info-box {
+    -fx-padding: 12 16 12 16;
+    -fx-background-radius: 8;
 }
 
 /* Info Box Types */
@@ -854,6 +918,27 @@
     -fx-border-radius: 8;
 }
 
+/* Option Row (common base for checkbox/radio options) */
+.booking-form-option-row {
+    -fx-padding: 16 20 16 16;
+    -fx-cursor: hand;
+    -fx-background-color: white;
+    -fx-border-color: #e9ecef;
+    -fx-border-width: 2;
+    -fx-border-radius: 8;
+    -fx-background-radius: 8;
+}
+
+.booking-form-option-row:hover {
+    -fx-background-color: -booking-form-selected-bg;
+    -fx-border-color: -booking-form-hover-border;
+}
+
+.booking-form-option-row.selected {
+    -fx-background-color: -booking-form-selected-bg;
+    -fx-border-color: -booking-form-primary;
+}
+
 /* Checkbox Indicator (CSS-based theming) */
 .booking-form-checkbox-indicator {
     -fx-cursor: hand;
@@ -886,6 +971,33 @@
     -fx-stroke: white;
     -fx-stroke-width: 2.5;
     -fx-fill: transparent;
+}
+
+/* Radio Indicator (CSS-based theming) */
+.booking-form-radio-indicator {
+    -fx-cursor: hand;
+}
+
+.booking-form-radio-outer {
+    -fx-fill: white;
+    -fx-stroke: #dee2e6;
+    -fx-stroke-width: 2;
+}
+
+.booking-form-radio-indicator:hover .booking-form-radio-outer {
+    -fx-stroke: -booking-form-primary;
+}
+
+.booking-form-radio-outer.selected {
+    -fx-stroke: -booking-form-primary;
+}
+
+.booking-form-radio-inner {
+    -fx-fill: transparent;
+}
+
+.booking-form-radio-inner.selected {
+    -fx-fill: -booking-form-primary;
 }
 
 /* Checkmark Badge (CSS-based theming for circular badges) */

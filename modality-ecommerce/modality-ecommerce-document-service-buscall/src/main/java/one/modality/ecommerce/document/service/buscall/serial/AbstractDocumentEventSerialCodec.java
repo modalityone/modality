@@ -17,7 +17,7 @@ public abstract class AbstractDocumentEventSerialCodec<T extends AbstractDocumen
 
     @Override
     public void encode(T o, AstObject serial) {
-        encode(o, serial, false);
+        encode(o, serial, true); // TODO null document primary key should be allowed only for spread payments (AddMoneyTransferEvent)
     }
 
     protected void encode(T o, AstObject serial, boolean nullDocumentPkAllowed) {

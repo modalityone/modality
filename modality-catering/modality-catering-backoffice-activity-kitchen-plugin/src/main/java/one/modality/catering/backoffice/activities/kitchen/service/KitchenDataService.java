@@ -137,11 +137,21 @@ public class KitchenDataService {
         builder.totalVirtualItem(totalVirtualItem);
         builder.unknownVirtualItem(unknownVirtualItem);
 
-        // Process attendances to count bookings per meal/dietary option
-        Map<AttendanceKey, Long> attendanceCounts = calculateAttendanceCounts(attendances, dietaryItems,
-                documentLinesByDocumentId);
+        // Pre-compute dietary item IDs set ONCE for O(1) lookups
+        Set<Object> dietaryItemIds = dietaryItems.stream()
+                .map(Item::getId)
+                .collect(Collectors.toSet());
 
-        // For each scheduled item, calculate counts for all dietary options
+        // Create a map from dietary item ID to Item for reverse lookup
+        Map<Object, Item> dietaryItemById = dietaryItems.stream()
+                .collect(Collectors.toMap(Item::getId, item -> item));
+
+        // SINGLE-PASS: Process all attendances once and compute ALL counts
+        // (total, unknown, and per-dietary-option) in one iteration
+        AllAttendanceCounts allCounts = calculateAllAttendanceCounts(
+                attendances, dietaryItemIds, dietaryItemById, documentLinesByDocumentId);
+
+        // Build the attendance counts from the single-pass results
         for (ScheduledItem si : scheduledItems) {
             LocalDate date = si.getDate();
             Item meal = si.getItem();
@@ -149,18 +159,18 @@ public class KitchenDataService {
             if (date == null || meal == null)
                 continue;
 
-            // Count total attendances for this meal on this date
-            int totalCount = countAttendancesForScheduledItem(si, attendances);
+            // Get total count from single-pass result
+            int totalCount = allCounts.totalCounts.getOrDefault(si, 0);
             builder.addAttendanceCount(date, meal, totalVirtualItem, totalCount);
 
-            // Count attendances without dietary info
-            int unknownCount = countAttendancesWithoutDiet(si, attendances, dietaryItems, documentLinesByDocumentId);
+            // Get unknown count from single-pass result
+            int unknownCount = allCounts.unknownCounts.getOrDefault(si, 0);
             builder.addAttendanceCount(date, meal, unknownVirtualItem, unknownCount);
 
-            // Count attendances for each dietary option
+            // Get dietary option counts from single-pass result
             for (Item dietaryItem : dietaryItems) {
                 AttendanceKey key = new AttendanceKey(si, dietaryItem);
-                int count = attendanceCounts.getOrDefault(key, 0L).intValue();
+                int count = allCounts.dietaryCounts.getOrDefault(key, 0);
                 builder.addAttendanceCount(date, meal, dietaryItem, count);
             }
         }
@@ -169,62 +179,27 @@ public class KitchenDataService {
     }
 
     /**
-     * Count total attendances for a scheduled item (non-cancelled bookings only)
+     * Result container for single-pass attendance counting.
+     * Holds total counts, unknown (no diet) counts, and per-dietary-option counts.
      */
-    private static int countAttendancesForScheduledItem(ScheduledItem si, EntityList<Attendance> attendances) {
-        return (int) attendances.stream()
-                .filter(a -> Objects.equals(a.getScheduledItem(), si))
-                .filter(a -> a.getDocumentLine() != null && !a.getDocumentLine().isCancelled())
-                .count();
+    private static class AllAttendanceCounts {
+        final Map<ScheduledItem, Integer> totalCounts = new HashMap<>();
+        final Map<ScheduledItem, Integer> unknownCounts = new HashMap<>();
+        final Map<AttendanceKey, Integer> dietaryCounts = new HashMap<>();
     }
 
     /**
-     * Count attendances without dietary information
+     * SINGLE-PASS algorithm to calculate ALL attendance counts in one iteration.
+     * Computes total, unknown, and per-dietary-option counts simultaneously.
+     * This replaces the previous triple iteration approach.
      */
-    private static int countAttendancesWithoutDiet(ScheduledItem si, EntityList<Attendance> attendances,
-            EntityList<Item> dietaryItems, Map<EntityId, List<DocumentLine>> documentLinesByDocumentId) {
-        return (int) attendances.stream()
-                .filter(a -> Objects.equals(a.getScheduledItem(), si))
-                .filter(a -> a.getDocumentLine() != null && !a.getDocumentLine().isCancelled())
-                .filter(a -> !hasDietaryOption(a, dietaryItems, documentLinesByDocumentId))
-                .count();
-    }
-
-    /**
-     * Check if an attendance has any dietary option in its booking
-     */
-    private static boolean hasDietaryOption(Attendance attendance, EntityList<Item> dietaryItems,
-            Map<EntityId, List<DocumentLine>> documentLinesByDocumentId) {
-        DocumentLine dl = attendance.getDocumentLine();
-        if (dl == null || dl.getDocument() == null)
-            return false;
-
-        // Get all document lines for the document from the map
-        List<DocumentLine> documentLines = documentLinesByDocumentId.get(dl.getDocument().getId());
-        if (documentLines == null)
-            return false;
-
-        Set<Object> dietaryItemIds = dietaryItems.stream()
-                .map(Item::getId)
-                .collect(Collectors.toSet());
-
-        return documentLines.stream()
-                .filter(docLine -> !docLine.isCancelled())
-                .map(DocumentLine::getItem)
-                .filter(Objects::nonNull)
-                .map(Item::getId)
-                .anyMatch(dietaryItemIds::contains);
-    }
-
-    /**
-     * Calculate attendance counts grouped by scheduled item and dietary option
-     */
-    private static Map<AttendanceKey, Long> calculateAttendanceCounts(
+    private static AllAttendanceCounts calculateAllAttendanceCounts(
             EntityList<Attendance> attendances,
-            EntityList<Item> dietaryItems,
+            Set<Object> dietaryItemIds,
+            Map<Object, Item> dietaryItemById,
             Map<EntityId, List<DocumentLine>> documentLinesByDocumentId) {
 
-        Map<AttendanceKey, Long> counts = new HashMap<>();
+        AllAttendanceCounts result = new AllAttendanceCounts();
 
         for (Attendance attendance : attendances) {
             DocumentLine dl = attendance.getDocumentLine();
@@ -235,27 +210,38 @@ public class KitchenDataService {
             if (si == null)
                 continue;
 
-            // Find dietary items in this booking
+            // Count this attendance toward total
+            result.totalCounts.merge(si, 1, Integer::sum);
+
+            // Find dietary items in this booking's document
             List<DocumentLine> documentLines = documentLinesByDocumentId.get(dl.getDocument().getId());
-            if (documentLines == null)
-                continue;
 
-            Set<Object> dietaryItemIds = dietaryItems.stream()
-                    .map(Item::getId)
-                    .collect(Collectors.toSet());
-
-            for (DocumentLine docLine : documentLines) {
-                if (docLine.isCancelled())
-                    continue;
-                Item item = docLine.getItem();
-                if (item != null && dietaryItemIds.contains(item.getId())) {
-                    AttendanceKey key = new AttendanceKey(si, item);
-                    counts.merge(key, 1L, Long::sum);
+            // Check if this attendance has any dietary option
+            boolean hasDiet = false;
+            if (documentLines != null) {
+                for (DocumentLine docLine : documentLines) {
+                    if (docLine.isCancelled())
+                        continue;
+                    Item item = docLine.getItem();
+                    if (item != null && dietaryItemIds.contains(item.getId())) {
+                        hasDiet = true;
+                        // Count toward this dietary option
+                        Item dietaryItem = dietaryItemById.get(item.getId());
+                        if (dietaryItem != null) {
+                            AttendanceKey key = new AttendanceKey(si, dietaryItem);
+                            result.dietaryCounts.merge(key, 1, Integer::sum);
+                        }
+                    }
                 }
+            }
+
+            // If no dietary option found, count toward unknown
+            if (!hasDiet) {
+                result.unknownCounts.merge(si, 1, Integer::sum);
             }
         }
 
-        return counts;
+        return result;
     }
 
     /**

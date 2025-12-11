@@ -182,13 +182,6 @@ public final class ModalityFrontOfficeMainFrameActivity extends ModalityClientMa
 
         // Reacting to the mount node changes:
         FXProperties.runNowAndOnPropertyChange(mountNode -> {
-            if (footer != null) {
-                boolean isLoginPage = mountNode != null && Collections.findFirst(mountNode.getStyleClass(), styleClass -> styleClass.contains("login")) != null;
-                if (isLoginPage) {
-                    FXProperties.setEvenIfBound(footer.visibleProperty(), false);
-                } else
-                    footer.visibleProperty().bind(FXShowFooter.showFooterProperty());
-            }
             // Updating the mount node container with the new mount node
             if (mountNode != null && getMountNodeEmbeddingScrollPane(mountNode) == null) {
                 if (mountNode instanceof Region mountRegion) {
@@ -213,6 +206,13 @@ public final class ModalityFrontOfficeMainFrameActivity extends ModalityClientMa
             // Also, when we display the background node, we need to make the mount node container transparent to the
             // mouse (as the background node is behind) to allow the user to interact with it (ex: WebView).
             pageTransitionPane.setMouseTransparent(displayBackgroundNode);
+            if (footer != null) {
+                boolean isLoginPage = mountNode != null && Collections.findFirst(mountNode.getStyleClass(), styleClass -> styleClass.contains("login")) != null;
+                if (isLoginPage || displayBackgroundNode) {
+                    FXProperties.setEvenIfBound(footer.visibleProperty(), false);
+                } else
+                    footer.visibleProperty().bind(FXShowFooter.showFooterProperty());
+            }
             updateDialogArea();
         }, mountNodeProperty());
 

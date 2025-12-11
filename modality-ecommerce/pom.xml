@@ -32,6 +32,9 @@
         <module>modality-ecommerce-document-service-buscall</module>
         <module>modality-ecommerce-document-service-remote</module>
         <module>modality-ecommerce-document-service-server</module>
+        <module>modality-ecommerce-frontoffice-activity-paymentreturn-plugin</module>
+        <module>modality-ecommerce-frontoffice-max-plugin</module>
+        <module>modality-ecommerce-frontoffice-min-plugin</module>
         <module>modality-ecommerce-frontoffice-order</module>
         <module>modality-ecommerce-history-server</module>
         <module>modality-ecommerce-payment</module>

@@ -23,10 +23,10 @@ public final class CompletePaymentArgumentSerialCodec extends SerialCodecBase<Co
 
     @Override
     public void encode(CompletePaymentArgument arg, AstObject serial) {
-        encodeObject( serial, PAYMENT_PRIMARY_KEY_KEY, arg.getPaymentPrimaryKey());
+        encodeObject( serial, PAYMENT_PRIMARY_KEY_KEY, arg.paymentPrimaryKey());
         encodeBoolean(serial, LIVE_KEY,                arg.isLive());
-        encodeString( serial, GATEWAY_NAME_KEY,        arg.getGatewayName());
-        encodeString( serial, GATEWAY_PAYLOAD_KEY,     arg.getGatewayCompletePaymentPayload());
+        encodeString( serial, GATEWAY_NAME_KEY,        arg.gatewayName());
+        encodeString( serial, GATEWAY_PAYLOAD_KEY,     arg.gatewayCompletePaymentPayload());
     }
 
     @Override

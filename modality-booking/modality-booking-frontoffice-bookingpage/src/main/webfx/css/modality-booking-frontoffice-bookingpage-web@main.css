@@ -186,6 +186,18 @@
     border-color: var(--booking-form-primary);
 }
 
+/* Toggle Button Text */
+.booking-form-toggle-button-text {
+    color: #212529;
+    font-weight: 600;
+    font-size: 16px;
+    transition: color 0.2s ease;
+}
+
+.booking-form-toggle-button.selected .booking-form-toggle-button-text {
+    color: white;
+}
+
 /* Checkbox Option Row */
 .booking-form-checkbox-option {
     cursor: pointer;
@@ -218,6 +230,12 @@
     background-color: var(--booking-form-selected-bg);
 }
 
+/* Info Box Base */
+.booking-form-info-box {
+    padding: 12px 16px;
+    border-radius: 8px;
+}
+
 /* Info Box Types */
 .booking-form-info-box-success {
     background-color: #d4edda;
@@ -241,6 +259,26 @@
     background-color: var(--booking-form-selected-bg);
     border-left: 4px solid var(--booking-form-primary);
     border-radius: 8px;
+}
+
+/* Option Row (common base for checkbox/radio options) */
+.booking-form-option-row {
+    padding: 16px 20px 16px 16px;
+    cursor: pointer;
+    background-color: white;
+    border: 2px solid #e9ecef;
+    border-radius: 8px;
+    transition: border-color 0.2s ease, background-color 0.2s ease;
+}
+
+.booking-form-option-row:hover {
+    background-color: var(--booking-form-selected-bg);
+    border-color: var(--booking-form-hover-border);
+}
+
+.booking-form-option-row.selected {
+    background-color: var(--booking-form-selected-bg);
+    border-color: var(--booking-form-primary);
 }
 
 /* Checkbox Indicator (CSS-based theming) */
@@ -276,6 +314,35 @@
     stroke: white;
     stroke-width: 2.5;
     fill: transparent;
+}
+
+/* Radio Indicator (CSS-based theming) */
+.booking-form-radio-indicator {
+    cursor: pointer;
+}
+
+.booking-form-radio-outer {
+    fill: white;
+    stroke: #dee2e6;
+    stroke-width: 2;
+    transition: all 0.15s ease;
+}
+
+.booking-form-radio-indicator:hover .booking-form-radio-outer {
+    stroke: var(--booking-form-primary);
+}
+
+.booking-form-radio-outer.selected {
+    stroke: var(--booking-form-primary);
+}
+
+.booking-form-radio-inner {
+    fill: transparent;
+    transition: all 0.15s ease;
+}
+
+.booking-form-radio-inner.selected {
+    fill: var(--booking-form-primary);
 }
 
 /* Checkmark Badge (CSS-based theming for circular badges) */
@@ -324,6 +391,56 @@
     border-color: var(--booking-form-primary);
     color: var(--booking-form-primary);
     background-color: var(--booking-form-selected-bg);
+}
+
+/* Primary Button (CSS-based theming) */
+.booking-form-primary-btn {
+    background-color: var(--booking-form-primary);
+    border-radius: 8px;
+    padding: 14px 32px;
+    cursor: pointer;
+    transition: filter 0.2s ease;
+}
+
+.booking-form-primary-btn:hover {
+    filter: brightness(1.1);
+}
+
+.booking-form-primary-btn:disabled,
+.booking-form-primary-btn.disabled {
+    background-color: #adb5bd;
+    cursor: default;
+}
+
+.booking-form-primary-btn-text {
+    color: white;
+    font-weight: 600;
+    font-size: 16px;
+}
+
+/* Back Button (CSS-based theming) */
+.booking-form-back-btn {
+    background-color: transparent;
+    border: none;
+    padding: 14px 32px;
+    cursor: pointer;
+    transition: background-color 0.2s ease;
+}
+
+.booking-form-back-btn:hover {
+    background-color: #f8f9fa;
+    border-radius: 8px;
+}
+
+.booking-form-back-btn-text {
+    color: #6c757d;
+    font-weight: 500;
+    font-size: 15px;
+    transition: color 0.2s ease;
+}
+
+.booking-form-back-btn:hover .booking-form-back-btn-text {
+    color: #212529;
 }
 
 /* Toggle Buttons (within booking containers) */

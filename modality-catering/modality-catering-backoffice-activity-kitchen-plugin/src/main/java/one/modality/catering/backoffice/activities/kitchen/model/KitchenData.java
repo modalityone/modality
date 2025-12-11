@@ -10,49 +10,70 @@ import java.util.stream.Collectors;
 /**
  * Immutable data model representing all kitchen data for a given time period.
  * Holds scheduled items, meals, dietary options, and attendance counts.
+ * Uses pre-computed indexes for O(1) lookups.
  *
  * @author Bruno Salmon (refactored)
  */
 public class KitchenData {
 
-    private final List<ScheduledItem> scheduledItems;
-    private final List<Item> mealItems;
     private final List<Item> dietaryItems;
     private final Map<ScheduledItemKey, Integer> attendanceCounts;
     private final Map<String, String> dietaryOptionSvgs;
     private final Item totalVirtualItem;
     private final Item unknownVirtualItem;
 
+    // Pre-computed caches for O(1) lookup
+    private final Set<LocalDate> cachedDates;
+    private final Map<LocalDate, List<Item>> mealsByDate;
+
     private KitchenData(Builder builder) {
-        this.scheduledItems = Collections.unmodifiableList(builder.scheduledItems);
-        this.mealItems = Collections.unmodifiableList(builder.mealItems);
+        List<ScheduledItem> scheduledItems = Collections.unmodifiableList(builder.scheduledItems);
         this.dietaryItems = Collections.unmodifiableList(builder.dietaryItems);
         this.attendanceCounts = Collections.unmodifiableMap(builder.attendanceCounts);
         this.dietaryOptionSvgs = Collections.unmodifiableMap(builder.dietaryOptionSvgs);
         this.totalVirtualItem = builder.totalVirtualItem;
         this.unknownVirtualItem = builder.unknownVirtualItem;
-    }
 
-    public Set<LocalDate> getDates() {
-        return scheduledItems.stream()
+        // Pre-compute dates set (O(1) lookup instead of streaming every time)
+        this.cachedDates = scheduledItems.stream()
                 .map(ScheduledItem::getDate)
-                .collect(Collectors.toSet());
-    }
-
-    public List<Item> getMealsForDate(LocalDate date) {
-        return scheduledItems.stream()
-                .filter(si -> si.getDate().equals(date))
-                .map(ScheduledItem::getItem)
                 .filter(Objects::nonNull)
-                .distinct()
-                .sorted(Comparator.comparingInt(Item::getOrd))
-                .collect(Collectors.toList());
+                .collect(Collectors.toSet());
+
+        // Pre-compute meals indexed by date (O(1) lookup instead of filtering every time)
+        Map<LocalDate, List<Item>> tempMealsByDate = new HashMap<>();
+        for (ScheduledItem si : scheduledItems) {
+            LocalDate date = si.getDate();
+            Item meal = si.getItem();
+            if (date != null && meal != null) {
+                tempMealsByDate.computeIfAbsent(date, k -> new ArrayList<>()).add(meal);
+            }
+        }
+        // Sort and deduplicate meals for each date
+        for (Map.Entry<LocalDate, List<Item>> entry : tempMealsByDate.entrySet()) {
+            List<Item> meals = entry.getValue().stream()
+                    .distinct()
+                    .sorted(Comparator.comparingInt(Item::getOrd))
+                    .collect(Collectors.toList());
+            entry.setValue(meals);
+        }
+        this.mealsByDate = Collections.unmodifiableMap(tempMealsByDate);
     }
 
-    public List<Item> getSortedDietaryOptions() {
-        List<Item> sorted = new ArrayList<>(dietaryItems);
-        sorted.sort(Comparator.comparingInt(Item::getOrd));
-        return sorted;
+    /**
+     * Returns all dates that have attendance data.
+     * O(1) operation using pre-computed cache.
+     */
+    public Set<LocalDate> getDates() {
+        return cachedDates;
+    }
+
+    /**
+     * Returns meals for a specific date.
+     * O(1) operation using pre-computed index.
+     */
+    public List<Item> getMealsForDate(LocalDate date) {
+        return mealsByDate.getOrDefault(date, Collections.emptyList());
     }
 
     public int getAttendanceCount(LocalDate date, Item meal, Item dietaryOption) {
@@ -62,10 +83,6 @@ public class KitchenData {
 
     public String getDietaryOptionSvg(String dietaryOptionCode) {
         return dietaryOptionSvgs.get(dietaryOptionCode);
-    }
-
-    public List<Item> getMealItems() {
-        return mealItems;
     }
 
     public List<Item> getDietaryItems() {
@@ -80,24 +97,12 @@ public class KitchenData {
         return unknownVirtualItem;
     }
 
-    /**
-     * Get all dietary options including virtual items (Total, ?)
-     */
-    public List<Item> getAllDietaryOptions() {
-        List<Item> all = new ArrayList<>();
-        if (unknownVirtualItem != null) all.add(unknownVirtualItem);
-        all.addAll(dietaryItems);
-        if (totalVirtualItem != null) all.add(totalVirtualItem);
-        return all;
-    }
-
     public static Builder builder() {
         return new Builder();
     }
 
     public static class Builder {
         private List<ScheduledItem> scheduledItems = new ArrayList<>();
-        private List<Item> mealItems = new ArrayList<>();
         private List<Item> dietaryItems = new ArrayList<>();
         private final Map<ScheduledItemKey, Integer> attendanceCounts = new HashMap<>();
         private final Map<String, String> dietaryOptionSvgs = new HashMap<>();
@@ -110,7 +115,6 @@ public class KitchenData {
         }
 
         public Builder mealItems() {
-            this.mealItems = mealItems;
             return this;
         }
 
@@ -158,8 +162,7 @@ public class KitchenData {
         @Override
         public boolean equals(Object o) {
             if (this == o) return true;
-            if (!(o instanceof ScheduledItemKey)) return false;
-            ScheduledItemKey that = (ScheduledItemKey) o;
+            if (!(o instanceof ScheduledItemKey that)) return false;
             return Objects.equals(date, that.date) &&
                    Objects.equals(meal, that.meal) &&
                    Objects.equals(dietaryOption, that.dietaryOption);

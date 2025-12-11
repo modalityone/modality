@@ -20,6 +20,7 @@ module modality.base.shared.entities {
     // Exported packages
     exports one.modality.base.shared.entities;
     exports one.modality.base.shared.entities.converters;
+    exports one.modality.base.shared.entities.db;
     exports one.modality.base.shared.entities.formatters;
     exports one.modality.base.shared.entities.impl;
     exports one.modality.base.shared.entities.markers;

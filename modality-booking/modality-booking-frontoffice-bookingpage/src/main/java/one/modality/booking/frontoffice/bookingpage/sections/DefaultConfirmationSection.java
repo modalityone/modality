@@ -15,6 +15,7 @@ import one.modality.booking.client.workingbooking.WorkingBookingProperties;
 import one.modality.booking.frontoffice.bookingpage.BookingPageI18nKeys;
 import one.modality.booking.frontoffice.bookingpage.theme.BookingFormColorScheme;
 
+import static one.modality.booking.frontoffice.bookingpage.components.BookingPageUIBuilder.formatAmountNoDecimals;
 import static one.modality.booking.frontoffice.bookingpage.theme.BookingFormStyles.*;
 
 import java.time.LocalDate;
@@ -132,7 +133,7 @@ public class DefaultConfirmationSection implements HasConfirmationSection {
         // Subtitle
         String email = confirmedBookings.isEmpty() ? "" : confirmedBookings.get(0).getEmail();
         Label subtitleLabel = new Label("Thank you for your booking. We've received your payment of " +
-                currencySymbol + String.format("%.0f", paidAmount) + " and sent a booking receipt to " + email + ".");
+                currencySymbol + formatAmountNoDecimals(paidAmount) + " and sent a booking receipt to " + email + ".");
         subtitleLabel.getStyleClass().addAll("bookingpage-text-md", "bookingpage-text-muted");
         subtitleLabel.setWrapText(true);
         subtitleLabel.setAlignment(Pos.CENTER);
@@ -287,10 +288,10 @@ public class DefaultConfirmationSection implements HasConfirmationSection {
         content.getStyleClass().add("bookingpage-card");
 
         // Total Amount row
-        HBox totalRow = createPaymentRow("Total Amount", currencySymbol + String.format("%.0f", totalAmount), false);
+        HBox totalRow = createPaymentRow("Total Amount", currencySymbol + formatAmountNoDecimals(totalAmount), false);
 
         // Paid Today row
-        HBox paidRow = createPaymentRow("Paid Today", currencySymbol + String.format("%.0f", paidAmount), false);
+        HBox paidRow = createPaymentRow("Paid Today", currencySymbol + formatAmountNoDecimals(paidAmount), false);
 
         content.getChildren().addAll(totalRow, paidRow);
 
@@ -303,7 +304,7 @@ public class DefaultConfirmationSection implements HasConfirmationSection {
             divider.getStyleClass().add("bookingpage-bg-light");
 
             // Balance row
-            HBox balanceRow = createPaymentRow("Balance Remaining", currencySymbol + String.format("%.0f", balanceDue), true);
+            HBox balanceRow = createPaymentRow("Balance Remaining", currencySymbol + formatAmountNoDecimals(balanceDue), true);
 
             // Info note
             VBox infoNote = new VBox();
@@ -311,7 +312,7 @@ public class DefaultConfirmationSection implements HasConfirmationSection {
             infoNote.getStyleClass().addAll("bookingpage-bg-light", "bookingpage-rounded");
             VBox.setMargin(infoNote, new Insets(12, 0, 0, 0));
 
-            Label noteLabel = new Label("The remaining balance of " + currencySymbol + String.format("%.0f", balanceDue) +
+            Label noteLabel = new Label("The remaining balance of " + currencySymbol + formatAmountNoDecimals(balanceDue) +
                     " can be paid online through your account anytime before the event, or at the reception desk when you arrive.");
             noteLabel.getStyleClass().addAll("bookingpage-text-sm", "bookingpage-text-secondary");
             noteLabel.setWrapText(true);
@@ -393,7 +394,7 @@ public class DefaultConfirmationSection implements HasConfirmationSection {
             HBox balanceStep = createWhatsNextStep(
                     createSmallCardIcon(colors),
                     "Pay the Balance When Ready",
-                    "The remaining " + currencySymbol + String.format("%.0f", balanceDue) +
+                    "The remaining " + currencySymbol + formatAmountNoDecimals(balanceDue) +
                             " can be paid online through your account, or at reception when you arrive.",
                     colors
             );

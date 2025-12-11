@@ -6,6 +6,7 @@ import one.modality.booking.frontoffice.bookingpage.MultiPageBookingForm;
 
 import dev.webfx.extras.i18n.controls.I18nControls;
 import dev.webfx.extras.responsive.ResponsiveDesign;
+import dev.webfx.kit.util.properties.FXProperties;
 import javafx.beans.property.IntegerProperty;
 import javafx.beans.property.ObjectProperty;
 import javafx.beans.property.SimpleIntegerProperty;
@@ -478,14 +479,13 @@ public class ResponsiveStepProgressHeader implements BookingFormHeader {
         // Update current step label to show "Step X: [Step Name]"
         if (currentStepIndex >= 0 && currentStepIndex < steps.size()) {
             StepInfo current = steps.get(currentStepIndex);
-            // Use a hidden label to get the translated step name, then bind visible label to formatted version
+            // Use a hidden label to get the translated step name, then update visible label when translation changes
             Label translationHolder = new Label();
             I18nControls.bindI18nProperties(translationHolder, current.titleKey);
-            currentLabel.textProperty().bind(
-                javafx.beans.binding.Bindings.createStringBinding(
-                    () -> "Step " + current.stepNumber + ": " + translationHolder.getText(),
-                    translationHolder.textProperty()
-                )
+            // Update label text immediately and whenever translation changes
+            FXProperties.runNowAndOnPropertyChange(
+                text -> currentLabel.setText("Step " + current.stepNumber + ": " + text),
+                translationHolder.textProperty()
             );
         }
 

@@ -1,6 +1,7 @@
 package one.modality.booking.frontoffice.bookingpage.sections;
 
 import dev.webfx.extras.i18n.controls.I18nControls;
+import dev.webfx.extras.webtext.HtmlText;
 import dev.webfx.platform.async.Future;
 import dev.webfx.platform.async.Promise;
 import javafx.beans.property.*;
@@ -21,6 +22,7 @@ import one.modality.booking.frontoffice.bookingpage.BookingPageI18nKeys;
 import one.modality.booking.frontoffice.bookingpage.components.BookingPageUIBuilder;
 import one.modality.booking.frontoffice.bookingpage.theme.BookingFormColorScheme;
 
+import static one.modality.booking.frontoffice.bookingpage.components.BookingPageUIBuilder.formatAmountNoDecimals;
 import static one.modality.booking.frontoffice.bookingpage.theme.BookingFormStyles.*;
 
 import java.util.HashMap;
@@ -153,7 +155,7 @@ public class DefaultPaymentSection implements HasPaymentSection {
      */
     protected void updatePayButtonText() {
         double amount = getPaymentAmount();
-        String formattedAmount = String.format("%.0f", amount);
+        String formattedAmount = formatAmountNoDecimals(amount);
         payButtonText.set("Pay " + currencySymbol + formattedAmount + " Now →");
     }
 
@@ -198,7 +200,7 @@ public class DefaultPaymentSection implements HasPaymentSection {
         Region spacer = new Region();
         HBox.setHgrow(spacer, Priority.ALWAYS);
 
-        totalAmountLabel = new Label(currencySymbol + String.format("%.0f", totalAmount));
+        totalAmountLabel = new Label(currencySymbol + formatAmountNoDecimals(totalAmount));
         totalAmountLabel.setFont(fontBold(24));
         totalAmountLabel.setTextFill(colorScheme.get().getPrimary());
 
@@ -238,7 +240,7 @@ public class DefaultPaymentSection implements HasPaymentSection {
         infoBox.getChildren().addAll(nameLabel, detailsLabel);
         HBox.setHgrow(infoBox, Priority.ALWAYS);
 
-        Label priceLabel = new Label(currencySymbol + String.format("%.0f", item.getAmount()));
+        Label priceLabel = new Label(currencySymbol + formatAmountNoDecimals(item.getAmount()));
         priceLabel.setFont(fontBold(18));
         priceLabel.setTextFill(colorScheme.get().getPrimary());
 
@@ -296,7 +298,7 @@ public class DefaultPaymentSection implements HasPaymentSection {
         currencyLabel.getStyleClass().addAll("bookingpage-text-2xl", "bookingpage-font-semibold", "bookingpage-text-dark");
 
         customAmountTextField = new TextField();
-        customAmountTextField.setText(String.format("%.0f", customAmountProperty.get()));
+        customAmountTextField.setText(formatAmountNoDecimals(customAmountProperty.get()));
         customAmountTextField.setFont(fontSemiBold(24));
         customAmountTextField.setPadding(new Insets(12, 16, 12, 16));
         customAmountTextField.setBorder(border(BORDER_GRAY, 2, RADII_8));
@@ -317,20 +319,19 @@ public class DefaultPaymentSection implements HasPaymentSection {
         inputRow.getChildren().addAll(currencyLabel, customAmountTextField);
 
         // Range helper text
-        Label rangeLabel = new Label("Between " + currencySymbol + String.format("%.0f", depositAmount) +
-                " (minimum) and " + currencySymbol + String.format("%.0f", totalAmount) + " (full amount)");
+        Label rangeLabel = new Label("Between " + currencySymbol + formatAmountNoDecimals(depositAmount) +
+                " (minimum) and " + currencySymbol + formatAmountNoDecimals(totalAmount) + " (full amount)");
         rangeLabel.getStyleClass().add("bookingpage-label-small");
 
         // Slider
         customAmountSlider = new Slider(depositAmount, totalAmount, customAmountProperty.get());
-        customAmountSlider.setShowTickMarks(false);
-        customAmountSlider.setShowTickLabels(false);
-        // Note: Slider track color requires CSS styling in JavaFX
+        // Note: setShowTickMarks and setShowTickLabels are not supported in WebFX
+        // Slider track color requires CSS styling in JavaFX
 
         // Bind slider to property bidirectionally
         customAmountSlider.valueProperty().addListener((obs, old, newVal) -> {
             handleCustomAmountChange(newVal.doubleValue());
-            customAmountTextField.setText(String.format("%.0f", newVal.doubleValue()));
+            customAmountTextField.setText(formatAmountNoDecimals(newVal.doubleValue()));
         });
 
         section.getChildren().addAll(titleLabel, inputRow, rangeLabel, customAmountSlider);
@@ -410,7 +411,7 @@ public class DefaultPaymentSection implements HasPaymentSection {
         row.getStyleClass().addAll("bookingpage-bg-white", "bookingpage-rounded");
 
         // Person name and total
-        Label nameLabel = new Label(index + ". " + item.getPersonName() + " (" + currencySymbol + String.format("%.0f", item.getAmount()) + ")");
+        Label nameLabel = new Label(index + ". " + item.getPersonName() + " (" + currencySymbol + formatAmountNoDecimals(item.getAmount()) + ")");
         nameLabel.getStyleClass().addAll("bookingpage-text-sm", "bookingpage-font-medium", "bookingpage-text-dark");
         HBox.setHgrow(nameLabel, Priority.ALWAYS);
 
@@ -423,7 +424,7 @@ public class DefaultPaymentSection implements HasPaymentSection {
 
         TextField allocationField = new TextField();
         DoubleProperty allocationProp = allocationProperties.computeIfAbsent(item.getId(), k -> new SimpleDoubleProperty(0));
-        allocationField.setText(String.format("%.0f", allocationProp.get()));
+        allocationField.setText(formatAmountNoDecimals(allocationProp.get()));
         allocationField.setPrefWidth(100);
         allocationField.setFont(fontSemiBold(14));
         allocationField.setPadding(new Insets(8, 12, 8, 12));
@@ -444,7 +445,7 @@ public class DefaultPaymentSection implements HasPaymentSection {
 
         // Update text when property changes
         allocationProp.addListener((obs, old, newVal) -> {
-            String newText = String.format("%.0f", newVal.doubleValue());
+            String newText = formatAmountNoDecimals(newVal.doubleValue());
             if (!allocationField.getText().equals(newText)) {
                 allocationField.setText(newText);
             }
@@ -565,11 +566,11 @@ public class DefaultPaymentSection implements HasPaymentSection {
         long roundedPayment = Math.round(paymentAmount);
         boolean matches = roundedAllocated == roundedPayment;
 
-        allocationTotalLabel.setText(currencySymbol + String.format("%.0f", allocatedTotal));
+        allocationTotalLabel.setText(currencySymbol + formatAmountNoDecimals(allocatedTotal));
         allocationTotalLabel.setTextFill(matches ? colors.getPrimary() : DANGER);
 
         if (!matches) {
-            allocationWarningLabel.setText("⚠️ Allocated amount doesn't match payment amount (" + currencySymbol + String.format("%.0f", paymentAmount) + ")");
+            allocationWarningLabel.setText("⚠️ Allocated amount doesn't match payment amount (" + currencySymbol + formatAmountNoDecimals(paymentAmount) + ")");
             allocationWarningLabel.setVisible(true);
             allocationWarningLabel.setManaged(true);
         } else {
@@ -601,7 +602,7 @@ public class DefaultPaymentSection implements HasPaymentSection {
     protected VBox createPaymentOptionCard(PaymentOption option, String title, String description) {
         boolean selected = paymentOptionProperty.get() == option;
         double amount = getAmountForOption(option);
-        String amountText = currencySymbol + String.format("%.0f", amount);
+        String amountText = currencySymbol + formatAmountNoDecimals(amount);
 
         // Use helper to create the card (CSS-based styling)
         return BookingPageUIBuilder.createPaymentOptionCard(
@@ -737,31 +738,18 @@ public class DefaultPaymentSection implements HasPaymentSection {
         // Use helper for checkbox indicator (CSS-based styling)
         StackPane checkboxIndicator = BookingPageUIBuilder.createCheckboxIndicator(termsAcceptedProperty);
 
-        // Create text flow with hyperlink for Terms & Conditions
-        javafx.scene.text.Text prefixText = new javafx.scene.text.Text("I accept the ");
-        prefixText.getStyleClass().addAll("bookingpage-text-base", "bookingpage-text-secondary");
+        // Create HtmlText with hyperlink for Terms & Conditions
+        HtmlText termsText = new HtmlText();
+        termsText.setText("I accept the <a href=\"#terms\">Terms & Conditions</a> and understand the cancellation policy.");
+        termsText.getStyleClass().addAll("bookingpage-text-base", "bookingpage-text-secondary");
+        HBox.setHgrow(termsText, Priority.ALWAYS);
 
-        Hyperlink termsLink = new Hyperlink("Terms & Conditions");
-        termsLink.getStyleClass().addAll("bookingpage-text-base", "bookingpage-text-primary");
-        termsLink.setBorder(Border.EMPTY);
-        // TODO: Navigate to terms and conditions page
-        // Prevent checkbox toggle
-        termsLink.setOnAction(Event::consume);
-
-        javafx.scene.text.Text suffixText = new javafx.scene.text.Text(" and understand the cancellation policy.");
-        suffixText.getStyleClass().addAll("bookingpage-text-base", "bookingpage-text-secondary");
-
-        javafx.scene.text.TextFlow termsTextFlow = new javafx.scene.text.TextFlow(prefixText, termsLink, suffixText);
-        termsTextFlow.setLineSpacing(2);
-        HBox.setHgrow(termsTextFlow, Priority.ALWAYS);
-
-        checkboxRow.getChildren().addAll(checkboxIndicator, termsTextFlow);
+        checkboxRow.getChildren().addAll(checkboxIndicator, termsText);
         checkboxRow.setCursor(Cursor.HAND);
         checkboxRow.setOnMouseClicked(e -> {
-            // Only toggle if not clicking the hyperlink
-            if (!(e.getTarget() instanceof Hyperlink)) {
-                termsAcceptedProperty.set(!termsAcceptedProperty.get());
-            }
+            // Toggle checkbox when clicking anywhere on the row
+            // Note: HtmlText handles link clicks internally
+            termsAcceptedProperty.set(!termsAcceptedProperty.get());
         });
 
         section.getChildren().add(checkboxRow);
@@ -770,7 +758,7 @@ public class DefaultPaymentSection implements HasPaymentSection {
 
     protected void updateTotalDisplay() {
         if (totalAmountLabel != null) {
-            totalAmountLabel.setText(currencySymbol + String.format("%.0f", totalAmount));
+            totalAmountLabel.setText(currencySymbol + formatAmountNoDecimals(totalAmount));
             totalAmountLabel.setTextFill(colorScheme.get().getPrimary());
         }
     }

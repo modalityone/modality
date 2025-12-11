@@ -106,6 +106,32 @@ public final class BookingPageUIBuilder {
     }
 
     // =============================================
+    // UTILITY METHODS
+    // =============================================
+
+    /**
+     * Formats a double amount with 2 decimal places (GWT-compatible).
+     * @param amount The amount to format
+     * @return Formatted string (e.g., "12.50")
+     */
+    public static String formatAmount(double amount) {
+        long cents = Math.round(amount * 100);
+        long wholePart = cents / 100;
+        long decimalPart = Math.abs(cents % 100);
+        String decimal = decimalPart < 10 ? "0" + decimalPart : String.valueOf(decimalPart);
+        return wholePart + "." + decimal;
+    }
+
+    /**
+     * Formats a double amount with no decimal places (GWT-compatible).
+     * @param amount The amount to format
+     * @return Formatted string (e.g., "12")
+     */
+    public static String formatAmountNoDecimals(double amount) {
+        return String.valueOf(Math.round(amount));
+    }
+
+    // =============================================
     // ICON CREATION
     // =============================================
 
@@ -243,21 +269,44 @@ public final class BookingPageUIBuilder {
      * Creates a radio indicator (circular, 20px, with inner dot when selected).
      * Per JSX mockup: 2px border, 50% radius, white inner dot (10px) when selected.
      *
+     * <p>Uses pure CSS for theming via CSS variables. This overload with colorScheme
+     * is kept for API compatibility but the colorScheme parameter is ignored.</p>
+     *
      * @param selectedProperty Property to bind selection state
-     * @param colorScheme      Color scheme for theming
+     * @param colorScheme      Color scheme (ignored - kept for API compatibility, use CSS theme classes instead)
      * @return A StackPane containing the radio indicator
      */
     public static StackPane createRadioIndicator(BooleanProperty selectedProperty, BookingFormColorScheme colorScheme) {
+        return createRadioIndicator(selectedProperty);
+    }
+
+    /**
+     * Creates a radio indicator (circular, 20px, with inner dot when selected).
+     * Uses pure CSS for theming via CSS variables.
+     *
+     * <p>CSS classes used:</p>
+     * <ul>
+     *   <li>{@code .booking-form-radio-indicator} - container</li>
+     *   <li>{@code .booking-form-radio-outer} - outer circle (styled via CSS)</li>
+     *   <li>{@code .booking-form-radio-inner} - inner dot (styled via CSS)</li>
+     *   <li>{@code .selected} - added when selected</li>
+     * </ul>
+     *
+     * @param selectedProperty Property to bind selection state
+     * @return A StackPane containing the radio indicator
+     */
+    public static StackPane createRadioIndicator(BooleanProperty selectedProperty) {
         double size = 20;
         double dotSize = 10;
 
-        // Outer circle
+        // Outer circle - styled via CSS
         Circle outer = new Circle(size / 2);
-        outer.setStrokeWidth(2);
+        outer.getStyleClass().add("booking-form-radio-outer");
 
-        // Inner dot
+        // Inner dot - styled via CSS
         Circle inner = new Circle(dotSize / 2);
         inner.setVisible(false);
+        inner.getStyleClass().add("booking-form-radio-inner");
 
         StackPane container = new StackPane(outer, inner);
         container.setMinSize(size, size);
@@ -265,18 +314,17 @@ public final class BookingPageUIBuilder {
         container.setAlignment(Pos.CENTER);
         container.getStyleClass().add("booking-form-radio-indicator");
 
-        // Update appearance based on selection
+        // Update CSS classes based on selection (colors handled by CSS)
         Runnable updateStyle = () -> {
             boolean selected = selectedProperty.get();
             if (selected) {
-                outer.setFill(Color.WHITE);
-                outer.setStroke(colorScheme.getPrimary());
-                inner.setFill(colorScheme.getPrimary());
+                outer.getStyleClass().add("selected");
+                inner.getStyleClass().add("selected");
                 inner.setVisible(true);
                 container.getStyleClass().add("selected");
             } else {
-                outer.setFill(Color.WHITE);
-                outer.setStroke(BORDER_LIGHT);
+                outer.getStyleClass().remove("selected");
+                inner.getStyleClass().remove("selected");
                 inner.setVisible(false);
                 container.getStyleClass().remove("selected");
             }
@@ -432,12 +480,20 @@ public final class BookingPageUIBuilder {
 
     /**
      * Creates a selectable card with specified indicator style.
+     * Uses CSS for background/border styling including hover and selected states.
+     *
+     * <p>CSS classes used:</p>
+     * <ul>
+     *   <li>{@code .bookingpage-card} - base card styling with hover/selected states (styled via CSS)</li>
+     *   <li>{@code .booking-form-selectable-card} - additional selectable card styling</li>
+     *   <li>{@code .selected} - added when selected</li>
+     * </ul>
      *
      * @param title            Card title
      * @param description      Card description (can be null)
      * @param selectedProperty Property to bind selection state
      * @param onSelect         Action to run when card is clicked
-     * @param colorScheme      Color scheme for theming
+     * @param colorScheme      Color scheme (used for checkmark badge only)
      * @param indicatorStyle   Style of selection indicator
      * @return A styled VBox containing the card
      */
@@ -469,25 +525,24 @@ public final class BookingPageUIBuilder {
         }
 
         // Selection indicator based on style
-        StackPane indicator = null;
         switch (indicatorStyle) {
             case CHECKBOX:
-                indicator = createCheckboxIndicator(selectedProperty, colorScheme);
+                StackPane checkboxIndicator = createCheckboxIndicator(selectedProperty);
                 // Position checkbox on the left
                 HBox contentWithCheckbox = new HBox(12);
                 contentWithCheckbox.setAlignment(Pos.CENTER_LEFT);
-                contentWithCheckbox.getChildren().add(0, indicator);
+                contentWithCheckbox.getChildren().add(0, checkboxIndicator);
                 contentWithCheckbox.getChildren().addAll(card.getChildren());
                 card.getChildren().clear();
                 card.getChildren().add(contentWithCheckbox);
                 break;
 
             case RADIO:
-                indicator = createRadioIndicator(selectedProperty, colorScheme);
+                StackPane radioIndicator = createRadioIndicator(selectedProperty);
                 // Position radio on the left
                 HBox contentWithRadio = new HBox(12);
                 contentWithRadio.setAlignment(Pos.CENTER_LEFT);
-                contentWithRadio.getChildren().add(0, indicator);
+                contentWithRadio.getChildren().add(0, radioIndicator);
                 contentWithRadio.getChildren().addAll(card.getChildren());
                 card.getChildren().clear();
                 card.getChildren().add(contentWithRadio);
@@ -499,23 +554,27 @@ public final class BookingPageUIBuilder {
                 cardContent.getChildren().addAll(card.getChildren());
                 card.getChildren().clear();
 
-                StackPane badgeWrapper = wrapWithCheckmarkBadge(cardContent, selectedProperty, colorScheme, 28, 12);
+                StackPane badgeWrapper = wrapWithCheckmarkBadgeCss(cardContent, selectedProperty, 28, 12);
                 card.getChildren().add(badgeWrapper);
                 break;
         }
 
-        // Update card appearance based on selection
-        updateSelectableCardStyle(card, selectedProperty.get(), colorScheme);
-        selectedProperty.addListener((obs, old, selected) -> updateSelectableCardStyle(card, selected, colorScheme));
-
-        // Hover effects
-        card.setOnMouseEntered(e -> {
-            if (!selectedProperty.get()) {
-                card.setBackground(bg(colorScheme.getSelectedBg(), RADII_12));
-                card.setBorder(border(colorScheme.getHoverBorder(), 2, RADII_12));
+        // Update CSS classes based on selection (colors handled by CSS)
+        Runnable updateStyle = () -> {
+            boolean selected = selectedProperty.get();
+            if (selected) {
+                if (!card.getStyleClass().contains("selected")) {
+                    card.getStyleClass().add("selected");
+                }
+            } else {
+                card.getStyleClass().remove("selected");
             }
-        });
-        card.setOnMouseExited(e -> updateSelectableCardStyle(card, selectedProperty.get(), colorScheme));
+        };
+
+        updateStyle.run();
+        selectedProperty.addListener((obs, old, selected) -> updateStyle.run());
+
+        // Hover effects handled entirely by CSS via .bookingpage-card:hover
 
         // Click handler
         card.setOnMouseClicked(e -> {
@@ -527,18 +586,25 @@ public final class BookingPageUIBuilder {
         return card;
     }
 
-    private static void updateSelectableCardStyle(VBox card, boolean selected, BookingFormColorScheme colorScheme) {
-        if (selected) {
-            card.setBackground(bg(colorScheme.getSelectedBg(), RADII_12));
-            card.setBorder(border(colorScheme.getPrimary(), 2, RADII_12));
-            if (!card.getStyleClass().contains("selected")) {
-                card.getStyleClass().add("selected");
-            }
-        } else {
-            card.setBackground(bg(BG_WHITE, RADII_12));
-            card.setBorder(border(BORDER_LIGHT, 2, RADII_12));
-            card.getStyleClass().remove("selected");
-        }
+    /**
+     * Wraps content with a CSS-based checkmark badge that appears when selected.
+     *
+     * @param content          The content to wrap
+     * @param selectedProperty Property to bind visibility
+     * @param badgeSize        Badge size
+     * @param badgeOffset      Offset from corner
+     * @return A StackPane with content and badge
+     */
+    private static StackPane wrapWithCheckmarkBadgeCss(Region content, BooleanProperty selectedProperty, double badgeSize, double badgeOffset) {
+        StackPane badge = createCheckmarkBadgeCss(badgeSize);
+        badge.setVisible(selectedProperty.get());
+        selectedProperty.addListener((obs, old, val) -> badge.setVisible(val));
+
+        StackPane wrapper = new StackPane(content, badge);
+        StackPane.setAlignment(badge, Pos.TOP_RIGHT);
+        StackPane.setMargin(badge, new Insets(badgeOffset, badgeOffset, 0, 0));
+
+        return wrapper;
     }
 
     /**
@@ -609,11 +675,12 @@ public final class BookingPageUIBuilder {
 
     /**
      * Creates a toggle button (small selection button for rate types, time slots).
+     * This overload with colorScheme is kept for API compatibility.
      *
      * @param label            Button label
      * @param selectedProperty Property to bind selection state
      * @param onSelect         Action to run when button is clicked
-     * @param colorScheme      Color scheme for theming
+     * @param colorScheme      Color scheme (ignored - kept for API compatibility, use CSS theme classes instead)
      * @return A styled HBox containing the toggle button
      */
     public static HBox createToggleButton(
@@ -621,6 +688,29 @@ public final class BookingPageUIBuilder {
             BooleanProperty selectedProperty,
             Runnable onSelect,
             BookingFormColorScheme colorScheme) {
+        return createToggleButton(label, selectedProperty, onSelect);
+    }
+
+    /**
+     * Creates a toggle button (small selection button for rate types, time slots).
+     * Uses pure CSS for theming via CSS variables.
+     *
+     * <p>CSS classes used:</p>
+     * <ul>
+     *   <li>{@code .booking-form-toggle-button} - container with background/border (styled via CSS)</li>
+     *   <li>{@code .booking-form-toggle-button-text} - text label (styled via CSS)</li>
+     *   <li>{@code .selected} - added when selected</li>
+     * </ul>
+     *
+     * @param label            Button label
+     * @param selectedProperty Property to bind selection state
+     * @param onSelect         Action to run when button is clicked
+     * @return A styled HBox containing the toggle button
+     */
+    public static HBox createToggleButton(
+            String label,
+            BooleanProperty selectedProperty,
+            Runnable onSelect) {
 
         HBox button = new HBox();
         button.setAlignment(Pos.CENTER);
@@ -629,21 +719,17 @@ public final class BookingPageUIBuilder {
         button.getStyleClass().add("booking-form-toggle-button");
 
         Label textLabel = new Label(label);
-        textLabel.getStyleClass().addAll("bookingpage-text-md", "bookingpage-font-semibold");
+        textLabel.getStyleClass().add("booking-form-toggle-button-text");
         button.getChildren().add(textLabel);
 
-        // Update appearance
+        // Update CSS classes based on selection (colors handled by CSS)
         Runnable updateStyle = () -> {
             boolean selected = selectedProperty.get();
             if (selected) {
-                button.setBackground(bg(colorScheme.getPrimary(), RADII_8));
-                button.setBorder(border(colorScheme.getPrimary(), 2, RADII_8));
-                textLabel.setTextFill(Color.WHITE);
-                button.getStyleClass().add("selected");
+                if (!button.getStyleClass().contains("selected")) {
+                    button.getStyleClass().add("selected");
+                }
             } else {
-                button.setBackground(bg(BG_WHITE, RADII_8));
-                button.setBorder(border(BORDER_GRAY, 2, RADII_8));
-                textLabel.setTextFill(TEXT_DARK);
                 button.getStyleClass().remove("selected");
             }
         };
@@ -651,14 +737,7 @@ public final class BookingPageUIBuilder {
         updateStyle.run();
         selectedProperty.addListener((obs, old, val) -> updateStyle.run());
 
-        // Hover effects
-        button.setOnMouseEntered(e -> {
-            if (!selectedProperty.get()) {
-                button.setBackground(bg(colorScheme.getSelectedBg(), RADII_8));
-                button.setBorder(border(colorScheme.getHoverBorder(), 2, RADII_8));
-            }
-        });
-        button.setOnMouseExited(e -> updateStyle.run());
+        // Hover effects handled entirely by CSS
 
         // Click handler
         button.setOnMouseClicked(e -> {
@@ -672,11 +751,12 @@ public final class BookingPageUIBuilder {
 
     /**
      * Creates a checkbox option row (for audio recording, create account, etc.).
+     * This overload with colorScheme is kept for API compatibility.
      *
      * @param label            Option label
      * @param description      Description text (can be null)
      * @param selectedProperty Property to bind selection state
-     * @param colorScheme      Color scheme for theming
+     * @param colorScheme      Color scheme (ignored - kept for API compatibility, use CSS theme classes instead)
      * @return A styled HBox containing the option
      */
     public static HBox createCheckboxOption(
@@ -684,15 +764,37 @@ public final class BookingPageUIBuilder {
             String description,
             BooleanProperty selectedProperty,
             BookingFormColorScheme colorScheme) {
+        return createCheckboxOption(label, description, selectedProperty);
+    }
+
+    /**
+     * Creates a checkbox option row (for audio recording, create account, etc.).
+     * Uses pure CSS for theming via CSS variables.
+     *
+     * <p>CSS classes used:</p>
+     * <ul>
+     *   <li>{@code .booking-form-option-row} - container with background/border (styled via CSS)</li>
+     *   <li>{@code .booking-form-checkbox-option} - checkbox-specific styling</li>
+     *   <li>{@code .selected} - added when selected</li>
+     * </ul>
+     *
+     * @param label            Option label
+     * @param description      Description text (can be null)
+     * @param selectedProperty Property to bind selection state
+     * @return A styled HBox containing the option
+     */
+    public static HBox createCheckboxOption(
+            String label,
+            String description,
+            BooleanProperty selectedProperty) {
 
         HBox row = new HBox(12);
         row.setAlignment(Pos.CENTER_LEFT);
-        row.setPadding(new Insets(16, 20, 16, 16));
         row.setCursor(Cursor.HAND);
-        row.getStyleClass().add("booking-form-checkbox-option");
+        row.getStyleClass().addAll("booking-form-option-row", "booking-form-checkbox-option");
 
         // Checkbox indicator
-        StackPane checkbox = createCheckboxIndicator(selectedProperty, colorScheme);
+        StackPane checkbox = createCheckboxIndicator(selectedProperty);
 
         // Text content
         VBox textBox = new VBox(4);
@@ -709,18 +811,22 @@ public final class BookingPageUIBuilder {
 
         row.getChildren().addAll(checkbox, textBox);
 
-        // Update card style based on selection
-        updateOptionRowStyle(row, selectedProperty.get(), colorScheme);
-        selectedProperty.addListener((obs, old, val) -> updateOptionRowStyle(row, val, colorScheme));
-
-        // Hover effects
-        row.setOnMouseEntered(e -> {
-            if (!selectedProperty.get()) {
-                row.setBackground(bg(colorScheme.getSelectedBg(), RADII_8));
-                row.setBorder(border(colorScheme.getHoverBorder(), 2, RADII_8));
+        // Update CSS classes based on selection (colors handled by CSS)
+        Runnable updateStyle = () -> {
+            boolean selected = selectedProperty.get();
+            if (selected) {
+                if (!row.getStyleClass().contains("selected")) {
+                    row.getStyleClass().add("selected");
+                }
+            } else {
+                row.getStyleClass().remove("selected");
             }
-        });
-        row.setOnMouseExited(e -> updateOptionRowStyle(row, selectedProperty.get(), colorScheme));
+        };
+
+        updateStyle.run();
+        selectedProperty.addListener((obs, old, val) -> updateStyle.run());
+
+        // Hover effects handled entirely by CSS
 
         // Click toggles selection
         row.setOnMouseClicked(e -> selectedProperty.set(!selectedProperty.get()));
@@ -730,11 +836,12 @@ public final class BookingPageUIBuilder {
 
     /**
      * Creates a radio option row (for meals yes/no, exclusive choices).
+     * This overload with colorScheme is kept for API compatibility.
      *
      * @param label            Option label
      * @param description      Description text (can be null)
      * @param selectedProperty Property to bind selection state
-     * @param colorScheme      Color scheme for theming
+     * @param colorScheme      Color scheme (ignored - kept for API compatibility, use CSS theme classes instead)
      * @return A styled HBox containing the option
      */
     public static HBox createRadioOption(
@@ -742,15 +849,37 @@ public final class BookingPageUIBuilder {
             String description,
             BooleanProperty selectedProperty,
             BookingFormColorScheme colorScheme) {
+        return createRadioOption(label, description, selectedProperty);
+    }
+
+    /**
+     * Creates a radio option row (for meals yes/no, exclusive choices).
+     * Uses pure CSS for theming via CSS variables.
+     *
+     * <p>CSS classes used:</p>
+     * <ul>
+     *   <li>{@code .booking-form-option-row} - container with background/border (styled via CSS)</li>
+     *   <li>{@code .booking-form-radio-option} - radio-specific styling</li>
+     *   <li>{@code .selected} - added when selected</li>
+     * </ul>
+     *
+     * @param label            Option label
+     * @param description      Description text (can be null)
+     * @param selectedProperty Property to bind selection state
+     * @return A styled HBox containing the option
+     */
+    public static HBox createRadioOption(
+            String label,
+            String description,
+            BooleanProperty selectedProperty) {
 
         HBox row = new HBox(12);
         row.setAlignment(Pos.CENTER_LEFT);
-        row.setPadding(new Insets(16, 20, 16, 16));
         row.setCursor(Cursor.HAND);
-        row.getStyleClass().add("booking-form-radio-option");
+        row.getStyleClass().addAll("booking-form-option-row", "booking-form-radio-option");
 
         // Radio indicator
-        StackPane radio = createRadioIndicator(selectedProperty, colorScheme);
+        StackPane radio = createRadioIndicator(selectedProperty);
 
         // Text content
         VBox textBox = new VBox(4);
@@ -767,33 +896,27 @@ public final class BookingPageUIBuilder {
 
         row.getChildren().addAll(radio, textBox);
 
-        // Update row style based on selection
-        updateOptionRowStyle(row, selectedProperty.get(), colorScheme);
-        selectedProperty.addListener((obs, old, val) -> updateOptionRowStyle(row, val, colorScheme));
-
-        // Hover effects
-        row.setOnMouseEntered(e -> {
-            if (!selectedProperty.get()) {
-                row.setBackground(bg(colorScheme.getSelectedBg(), RADII_8));
-                row.setBorder(border(colorScheme.getHoverBorder(), 2, RADII_8));
+        // Update CSS classes based on selection (colors handled by CSS)
+        Runnable updateStyle = () -> {
+            boolean selected = selectedProperty.get();
+            if (selected) {
+                if (!row.getStyleClass().contains("selected")) {
+                    row.getStyleClass().add("selected");
+                }
+            } else {
+                row.getStyleClass().remove("selected");
             }
-        });
-        row.setOnMouseExited(e -> updateOptionRowStyle(row, selectedProperty.get(), colorScheme));
+        };
+
+        updateStyle.run();
+        selectedProperty.addListener((obs, old, val) -> updateStyle.run());
+
+        // Hover effects handled entirely by CSS
 
         // Click handler (note: for radio, caller should manage exclusive selection)
         row.setOnMouseClicked(e -> selectedProperty.set(true));
 
         return row;
-    }
-
-    private static void updateOptionRowStyle(HBox row, boolean selected, BookingFormColorScheme colorScheme) {
-        if (selected) {
-            row.setBackground(bg(colorScheme.getSelectedBg(), RADII_8));
-            row.setBorder(border(colorScheme.getPrimary(), 2, RADII_8));
-        } else {
-            row.setBackground(bg(BG_WHITE, RADII_8));
-            row.setBorder(border(BORDER_LIGHT, 2, RADII_8));
-        }
     }
 
     // =============================================
@@ -973,10 +1096,11 @@ public final class BookingPageUIBuilder {
 
     /**
      * Creates an info/warning/error box with appropriate styling.
+     * This overload with colorScheme is kept for API compatibility.
      *
      * @param message     The message to display
      * @param type        The type of info box
-     * @param colorScheme Color scheme for INFO type
+     * @param colorScheme Color scheme (ignored for SUCCESS/WARNING/ERROR - they use CSS, only used for INFO icon color)
      * @return A styled HBox containing the message
      */
     public static HBox createInfoBox(String message, InfoBoxType type, BookingFormColorScheme colorScheme) {
@@ -998,68 +1122,142 @@ public final class BookingPageUIBuilder {
     }
 
     /**
+     * Creates an info/warning/error box with appropriate styling.
+     * Uses CSS for background/border, Java only for SVGPath icon coloring.
+     *
+     * <p>CSS classes used:</p>
+     * <ul>
+     *   <li>{@code .booking-form-info-box} - base styling with padding</li>
+     *   <li>{@code .booking-form-info-box-success} - green theme</li>
+     *   <li>{@code .booking-form-info-box-warning} - yellow theme</li>
+     *   <li>{@code .booking-form-info-box-error} - red theme</li>
+     *   <li>{@code .booking-form-info-box-info} - primary color theme</li>
+     * </ul>
+     *
+     * @param message The message to display
+     * @param type    The type of info box
+     * @return A styled HBox containing the message
+     */
+    public static HBox createInfoBox(String message, InfoBoxType type) {
+        String iconPath;
+        switch (type) {
+            case SUCCESS:
+                iconPath = ICON_CHECK_CIRCLE;
+                break;
+            case WARNING:
+                iconPath = ICON_WARNING;
+                break;
+            case ERROR:
+                iconPath = ICON_ERROR;
+                break;
+            default:
+                iconPath = ICON_INFO;
+        }
+        return createInfoBox(iconPath, message, type);
+    }
+
+    /**
      * Creates an info/warning/error box with custom icon.
+     * Uses CSS for background/border, Java only for SVGPath icon coloring.
      *
      * @param svgPath     Custom SVG icon path
      * @param message     The message to display
      * @param type        The type of info box
-     * @param colorScheme Color scheme for INFO type
+     * @return A styled HBox containing the message
+     */
+    public static HBox createInfoBox(String svgPath, String message, InfoBoxType type) {
+        HBox box = new HBox(12);
+        box.setAlignment(Pos.TOP_LEFT);
+        box.getStyleClass().add("booking-form-info-box");
+
+        // Icon color based on type (must stay in Java - SVGPath limitation)
+        Color iconColor;
+        String textClass;
+
+        switch (type) {
+            case SUCCESS:
+                iconColor = SUCCESS;
+                textClass = "bookingpage-text-dark";
+                box.getStyleClass().add("booking-form-info-box-success");
+                break;
+            case WARNING:
+                iconColor = WARNING_ICON;
+                textClass = "bookingpage-text-warning";
+                box.getStyleClass().add("booking-form-info-box-warning");
+                break;
+            case ERROR:
+                iconColor = DANGER;
+                textClass = "bookingpage-text-danger";
+                box.getStyleClass().add("booking-form-info-box-error");
+                break;
+            default: // INFO
+                iconColor = Color.web("#4CAF50"); // Default primary, but CSS handles theming
+                textClass = "bookingpage-text-dark";
+                box.getStyleClass().add("booking-form-info-box-info");
+        }
+
+        // Icon (SVGPath must use Java coloring)
+        SVGPath icon = createIcon(svgPath, iconColor, 0.75);
+        StackPane iconWrapper = wrapIcon(icon, 20);
+
+        // Message - use CSS class for text color
+        Label messageLabel = new Label(message);
+        messageLabel.getStyleClass().addAll("bookingpage-text-sm", textClass);
+        messageLabel.setWrapText(true);
+        HBox.setHgrow(messageLabel, Priority.ALWAYS);
+
+        box.getChildren().addAll(iconWrapper, messageLabel);
+        return box;
+    }
+
+    /**
+     * Creates an info/warning/error box with custom icon.
+     * This overload with colorScheme is kept for API compatibility.
+     *
+     * @param svgPath     Custom SVG icon path
+     * @param message     The message to display
+     * @param type        The type of info box
+     * @param colorScheme Color scheme (used for icon color on INFO type only)
      * @return A styled HBox containing the message
      */
     public static HBox createInfoBox(String svgPath, String message, InfoBoxType type, BookingFormColorScheme colorScheme) {
         HBox box = new HBox(12);
         box.setAlignment(Pos.TOP_LEFT);
-        box.setPadding(new Insets(12, 16, 12, 16));
+        box.getStyleClass().add("booking-form-info-box");
 
-        // Determine colors based on type
-        Color bgColor, borderColor, iconColor, textColor;
+        // Icon color based on type (must stay in Java - SVGPath limitation)
+        Color iconColor;
+        String textClass;
+
         switch (type) {
             case SUCCESS:
-                bgColor = Color.web("#d4edda");
-                borderColor = colorScheme.getPrimary();
                 iconColor = SUCCESS;
-                textColor = TEXT_DARK;
+                textClass = "bookingpage-text-dark";
                 box.getStyleClass().add("booking-form-info-box-success");
-                // Left border style
-                box.setBackground(bg(bgColor, RADII_8));
-                box.setBorder(borderLeft(borderColor, 4, RADII_8));
                 break;
             case WARNING:
-                bgColor = WARNING_BG;
-                borderColor = WARNING_BORDER;
                 iconColor = WARNING_ICON;
-                textColor = WARNING_TEXT;
-                box.getStyleClass().addAll("bookingpage-warning-box", "booking-form-info-box-warning");
-                box.setBackground(bg(bgColor, RADII_8));
-                box.setBorder(border(borderColor, 1, RADII_8));
+                textClass = "bookingpage-text-warning";
+                box.getStyleClass().add("booking-form-info-box-warning");
                 break;
             case ERROR:
-                bgColor = ERROR_BG;
-                borderColor = ERROR_BORDER;
                 iconColor = DANGER;
-                textColor = Color.web("#842029");
-                box.getStyleClass().addAll("bookingpage-error-box", "booking-form-info-box-error");
-                box.setBackground(bg(bgColor, RADII_8));
-                box.setBorder(border(borderColor, 1, RADII_8));
+                textClass = "bookingpage-text-danger";
+                box.getStyleClass().add("booking-form-info-box-error");
                 break;
             default: // INFO
-                bgColor = colorScheme.getSelectedBg();
-                borderColor = colorScheme.getPrimary();
-                iconColor = colorScheme.getPrimary();
-                textColor = TEXT_DARK;
+                iconColor = colorScheme != null ? colorScheme.getPrimary() : Color.web("#4CAF50");
+                textClass = "bookingpage-text-dark";
                 box.getStyleClass().add("booking-form-info-box-info");
-                box.setBackground(bg(bgColor, RADII_8));
-                box.setBorder(borderLeft(borderColor, 4, RADII_8));
         }
 
-        // Icon
+        // Icon (SVGPath must use Java coloring)
         SVGPath icon = createIcon(svgPath, iconColor, 0.75);
         StackPane iconWrapper = wrapIcon(icon, 20);
 
-        // Message
+        // Message - use CSS class for text color
         Label messageLabel = new Label(message);
-        messageLabel.setTextFill(textColor);
-        messageLabel.getStyleClass().add("bookingpage-text-sm");
+        messageLabel.getStyleClass().addAll("bookingpage-text-sm", textClass);
         messageLabel.setWrapText(true);
         HBox.setHgrow(messageLabel, Priority.ALWAYS);
 
@@ -1089,7 +1287,7 @@ public final class BookingPageUIBuilder {
         Region spacer = new Region();
         HBox.setHgrow(spacer, Priority.ALWAYS);
 
-        Label amountText = new Label(currencySymbol + String.format("%.2f", amount));
+        Label amountText = new Label(currencySymbol + formatAmount(amount));
         amountText.getStyleClass().addAll("bookingpage-text-md", "bookingpage-font-semibold", "bookingpage-text-dark");
 
         row.getChildren().addAll(labelText, spacer, amountText);
@@ -1136,7 +1334,7 @@ public final class BookingPageUIBuilder {
         Region spacer = new Region();
         HBox.setHgrow(spacer, Priority.ALWAYS);
 
-        Label amountText = new Label(currencySymbol + String.format("%.2f", amount));
+        Label amountText = new Label(currencySymbol + formatAmount(amount));
         amountText.getStyleClass().addAll("bookingpage-price-medium", "bookingpage-font-bold");
         amountText.setTextFill(colorScheme.getPrimary());
 
@@ -1150,139 +1348,119 @@ public final class BookingPageUIBuilder {
 
     /**
      * Creates a primary action button (Continue, Sign In, Submit, etc.).
-     * Styled with the color scheme's primary color, with hover and disabled states.
-     * This version uses a static color scheme - use the ObjectProperty version for dynamic theming.
+     * This overload with colorScheme is kept for API compatibility.
      *
      * @param i18nKey     The i18n key for the button text
-     * @param colorScheme Color scheme for theming
+     * @param colorScheme Color scheme (ignored - kept for API compatibility, use CSS theme classes instead)
      * @return A styled Button
      */
     public static Button createPrimaryButton(Object i18nKey, BookingFormColorScheme colorScheme) {
-        Button btn = I18nControls.newButton(i18nKey);
-        applyPrimaryButtonStyle(btn, colorScheme);
-        return btn;
+        return createPrimaryButton(i18nKey);
     }
 
     /**
      * Creates a primary action button with dynamic color scheme support.
-     * The button will automatically update when the color scheme property changes.
+     * This overload with colorSchemeProperty is kept for API compatibility.
      *
      * @param i18nKey            The i18n key for the button text
-     * @param colorSchemeProperty Property containing the color scheme (for dynamic updates)
-     * @return A styled Button that reacts to color scheme changes
+     * @param colorSchemeProperty Property (ignored - kept for API compatibility, use CSS theme classes instead)
+     * @return A styled Button
      */
     public static Button createPrimaryButton(Object i18nKey, ObjectProperty<BookingFormColorScheme> colorSchemeProperty) {
+        return createPrimaryButton(i18nKey);
+    }
+
+    /**
+     * Creates a primary action button (Continue, Sign In, Submit, etc.).
+     * Uses CSS for theming via CSS variables.
+     *
+     * <p>CSS classes used:</p>
+     * <ul>
+     *   <li>{@code .booking-form-primary-btn} - button styling with hover state (styled via CSS)</li>
+     *   <li>{@code .booking-form-primary-btn-text} - text styling</li>
+     *   <li>{@code .disabled} - added when disabled</li>
+     * </ul>
+     *
+     * @param i18nKey The i18n key for the button text
+     * @return A styled Button
+     */
+    public static Button createPrimaryButton(Object i18nKey) {
         Button btn = I18nControls.newButton(i18nKey);
-        applyPrimaryButtonStyle(btn, colorSchemeProperty);
+        btn.setCursor(Cursor.HAND);
+        btn.getStyleClass().addAll("booking-form-primary-btn", "booking-form-primary-btn-text");
+
+        // Disabled state - update CSS class and cursor
+        btn.disabledProperty().addListener((obs, old, disabled) -> {
+            if (disabled) {
+                if (!btn.getStyleClass().contains("disabled")) {
+                    btn.getStyleClass().add("disabled");
+                }
+                btn.setCursor(Cursor.DEFAULT);
+            } else {
+                btn.getStyleClass().remove("disabled");
+                btn.setCursor(Cursor.HAND);
+            }
+        });
+
+        // Hover effects handled by CSS via .booking-form-primary-btn:hover
+
         return btn;
     }
 
     /**
      * Applies primary button styling to an existing button.
-     * Useful when you need to customize the button further after creation.
+     * This overload with colorScheme is kept for API compatibility.
      *
      * @param btn         The button to style
-     * @param colorScheme Color scheme for theming
+     * @param colorScheme Color scheme (ignored - kept for API compatibility)
      */
     public static void applyPrimaryButtonStyle(Button btn, BookingFormColorScheme colorScheme) {
-        btn.setPadding(new Insets(14, 32, 14, 32));
-        btn.setCursor(Cursor.HAND);
-        applyPrimaryButtonNormalStyle(btn, colorScheme);
-
-        // Hover effects
-        btn.setOnMouseEntered(e -> {
-            if (!btn.isDisabled()) {
-                applyPrimaryButtonHoverStyle(btn, colorScheme);
-            }
-        });
-        btn.setOnMouseExited(e -> {
-            if (!btn.isDisabled()) {
-                applyPrimaryButtonNormalStyle(btn, colorScheme);
-            }
-        });
-
-        // Disabled state
-        btn.disabledProperty().addListener((obs, old, disabled) -> {
-            if (disabled) {
-                applyPrimaryButtonDisabledStyle(btn);
-                btn.setCursor(Cursor.DEFAULT);
-            } else {
-                applyPrimaryButtonNormalStyle(btn, colorScheme);
-                btn.setCursor(Cursor.HAND);
-            }
-        });
+        applyPrimaryButtonStyle(btn);
     }
 
     /**
      * Applies primary button styling with dynamic color scheme support.
-     * The button will automatically update when the color scheme property changes.
+     * This overload with colorSchemeProperty is kept for API compatibility.
      *
      * @param btn                 The button to style
-     * @param colorSchemeProperty Property containing the color scheme (for dynamic updates)
+     * @param colorSchemeProperty Property (ignored - kept for API compatibility)
      */
     public static void applyPrimaryButtonStyle(Button btn, ObjectProperty<BookingFormColorScheme> colorSchemeProperty) {
-        btn.setPadding(new Insets(14, 32, 14, 32));
+        applyPrimaryButtonStyle(btn);
+    }
+
+    /**
+     * Applies primary button styling to an existing button using CSS classes.
+     *
+     * @param btn The button to style
+     */
+    public static void applyPrimaryButtonStyle(Button btn) {
         btn.setCursor(Cursor.HAND);
-        applyPrimaryButtonNormalStyle(btn, colorSchemeProperty.get());
+        btn.getStyleClass().addAll("booking-form-primary-btn", "booking-form-primary-btn-text");
 
-        // Hover effects - use property.get() to get current value
-        btn.setOnMouseEntered(e -> {
-            if (!btn.isDisabled()) {
-                applyPrimaryButtonHoverStyle(btn, colorSchemeProperty.get());
-            }
-        });
-        btn.setOnMouseExited(e -> {
-            if (!btn.isDisabled()) {
-                applyPrimaryButtonNormalStyle(btn, colorSchemeProperty.get());
-            }
-        });
-
-        // Disabled state - use property.get() to get current value
+        // Disabled state - update CSS class and cursor
         btn.disabledProperty().addListener((obs, old, disabled) -> {
             if (disabled) {
-                applyPrimaryButtonDisabledStyle(btn);
+                if (!btn.getStyleClass().contains("disabled")) {
+                    btn.getStyleClass().add("disabled");
+                }
                 btn.setCursor(Cursor.DEFAULT);
             } else {
-                applyPrimaryButtonNormalStyle(btn, colorSchemeProperty.get());
+                btn.getStyleClass().remove("disabled");
                 btn.setCursor(Cursor.HAND);
             }
         });
-
-        // Update style when color scheme changes
-        colorSchemeProperty.addListener((obs, old, newScheme) -> {
-            if (!btn.isDisabled()) {
-                applyPrimaryButtonNormalStyle(btn, newScheme);
-            }
-        });
-    }
-
-    private static void applyPrimaryButtonNormalStyle(Button btn, BookingFormColorScheme colorScheme) {
-        btn.setTranslateY(0);
-        btn.setBackground(bg(colorScheme.getPrimary(), RADII_8));
-        btn.setTextFill(Color.WHITE);
-        btn.setFont(fontSemiBold(16));
-        btn.setEffect(SHADOW_BUTTON);
-    }
-
-    private static void applyPrimaryButtonHoverStyle(Button btn, BookingFormColorScheme colorScheme) {
-        btn.setTranslateY(-2);
-        btn.setBackground(bg(colorScheme.getPrimary(), RADII_8));
-        btn.setTextFill(Color.WHITE);
-        btn.setFont(fontSemiBold(16));
-        btn.setEffect(SHADOW_BUTTON_HOVER);
-    }
-
-    private static void applyPrimaryButtonDisabledStyle(Button btn) {
-        btn.setTranslateY(0);
-        btn.setBackground(bg(BORDER_MEDIUM, RADII_8));
-        btn.setTextFill(Color.WHITE);
-        btn.setFont(fontSemiBold(16));
-        btn.setEffect(null);
     }
 
     /**
      * Creates a back/secondary button with arrow prefix.
-     * Styled with transparent background and subtle hover effect.
+     * Uses CSS for theming via CSS variables.
+     *
+     * <p>CSS classes used:</p>
+     * <ul>
+     *   <li>{@code .booking-form-back-btn} - button styling with hover state (styled via CSS)</li>
+     *   <li>{@code .booking-form-back-btn-text} - text styling</li>
+     * </ul>
      *
      * @param i18nKey The i18n key for the button text (typically "Back")
      * @return A styled Button
@@ -1291,34 +1469,17 @@ public final class BookingPageUIBuilder {
         Button btn = new Button();
         // Arrow prefix as graphic
         Label arrowLabel = new Label("\u2190 "); // ←
-        arrowLabel.getStyleClass().addAll("bookingpage-text-lg", "bookingpage-text-secondary");
+        arrowLabel.getStyleClass().add("booking-form-back-btn-text");
         btn.setGraphic(arrowLabel);
         btn.setContentDisplay(ContentDisplay.LEFT);
         I18nControls.bindI18nProperties(btn, i18nKey);
 
-        btn.setPadding(new Insets(14, 32, 14, 32));
         btn.setCursor(Cursor.HAND);
-        applyBackButtonNormalStyle(btn);
+        btn.getStyleClass().addAll("booking-form-back-btn", "booking-form-back-btn-text");
 
-        // Hover effects
-        btn.setOnMouseEntered(e -> applyBackButtonHoverStyle(btn));
-        btn.setOnMouseExited(e -> applyBackButtonNormalStyle(btn));
+        // Hover effects handled by CSS via .booking-form-back-btn:hover
 
         return btn;
-    }
-
-    private static void applyBackButtonNormalStyle(Button btn) {
-        btn.setBackground(Background.EMPTY);
-        btn.setBorder(Border.EMPTY);
-        btn.setTextFill(TEXT_SECONDARY);
-        btn.setFont(fontMedium(15));
-    }
-
-    private static void applyBackButtonHoverStyle(Button btn) {
-        btn.setBackground(bg(Color.web("#f8f9fa"), RADII_8));
-        btn.setBorder(Border.EMPTY);
-        btn.setTextFill(TEXT_DARK);
-        btn.setFont(fontMedium(15));
     }
 
     /**

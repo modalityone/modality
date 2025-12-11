@@ -8,6 +8,7 @@ module modality.ecommerce.payment.buscall {
     // Direct dependencies modules
     requires modality.ecommerce.payment;
     requires webfx.platform.ast;
+    requires webfx.platform.util;
     requires webfx.stack.com.bus.call;
     requires webfx.stack.com.serial;
 

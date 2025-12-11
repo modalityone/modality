@@ -2,6 +2,7 @@ package one.modality.booking.frontoffice.bookingpage.sections;
 
 import dev.webfx.extras.i18n.I18n;
 import dev.webfx.extras.i18n.controls.I18nControls;
+import dev.webfx.extras.webtext.HtmlText;
 import javafx.beans.property.*;
 import javafx.beans.value.ObservableBooleanValue;
 import javafx.geometry.Insets;
@@ -255,7 +256,7 @@ public class DefaultSummarySection implements HasSummarySection {
 
         String rateType = rateTypeProperty.get();
         if (rateType != null && !rateType.isEmpty()) {
-            if (!sb.isEmpty()) sb.append(" • ");
+            if (sb.length() > 0) sb.append(" • ");
             sb.append(rateType).append(" rate");
         }
 
@@ -351,19 +352,14 @@ public class DefaultSummarySection implements HasSummarySection {
         iconStack.setScaleX(0.75);
         iconStack.setScaleY(0.75);
 
-        // Text content with "Ready to submit?" in bold
-        javafx.scene.text.Text boldText = new javafx.scene.text.Text("Ready to submit? ");
-        boldText.getStyleClass().addAll("bookingpage-text-sm", "bookingpage-font-bold");
-        boldText.setFill(colors.getDarkText());
+        // Text content with "Ready to submit?" in bold using HtmlText
+        HtmlText htmlText = new HtmlText();
+        htmlText.setText("<b>Ready to submit?</b> Your registration will be saved and you can then proceed to payment or register another person.");
+        htmlText.getStyleClass().addAll("bookingpage-text-sm", "bookingpage-text-secondary");
+        htmlText.setFill(colors.getDarkText());
+        HBox.setHgrow(htmlText, Priority.ALWAYS);
 
-        javafx.scene.text.Text normalText = new javafx.scene.text.Text("Your registration will be saved and you can then proceed to payment or register another person.");
-        normalText.getStyleClass().addAll("bookingpage-text-sm", "bookingpage-text-secondary");
-
-        javafx.scene.text.TextFlow textFlow = new javafx.scene.text.TextFlow(boldText, normalText);
-        textFlow.setLineSpacing(2);
-        HBox.setHgrow(textFlow, Priority.ALWAYS);
-
-        box.getChildren().addAll(iconStack, textFlow);
+        box.getChildren().addAll(iconStack, htmlText);
         return box;
     }
 
@@ -550,7 +546,7 @@ public class DefaultSummarySection implements HasSummarySection {
         Region spacer = new Region();
         HBox.setHgrow(spacer, Priority.ALWAYS);
 
-        Label amountLabel = new Label(currencySymbol + String.format("%.2f", line.getAmount()));
+        Label amountLabel = new Label(currencySymbol + formatAmount(line.getAmount()));
         amountLabel.getStyleClass().addAll("bookingpage-text-base", "bookingpage-font-semibold", "bookingpage-text-dark");
 
         row.getChildren().addAll(labelBox, spacer, amountLabel);
@@ -559,7 +555,7 @@ public class DefaultSummarySection implements HasSummarySection {
 
     protected void updateTotalLabel() {
         if (totalAmountLabel != null) {
-            totalAmountLabel.setText(currencySymbol + String.format("%.2f", totalAmount));
+            totalAmountLabel.setText(currencySymbol + formatAmount(totalAmount));
             totalAmountLabel.setTextFill(colorScheme.get().getPrimary());
         }
     }

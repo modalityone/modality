@@ -12,7 +12,6 @@ import dev.webfx.stack.orm.domainmodel.activity.viewdomain.impl.ViewDomainActivi
 import dev.webfx.stack.orm.domainmodel.activity.viewdomain.impl.ViewDomainActivityContextFinal;
 import dev.webfx.stack.orm.entity.Entities;
 import dev.webfx.stack.routing.uirouter.UiRouter;
-import javafx.application.Platform;
 import javafx.beans.property.ObjectProperty;
 import javafx.beans.property.ReadOnlyObjectProperty;
 import javafx.beans.property.SimpleObjectProperty;
@@ -122,12 +121,8 @@ public final class BookEventActivity extends ViewDomainActivityBase implements B
 
     @Override
     public void onPause() {
-        // Showing the footer again when leaving this activity. However, the router sometimes calls onPause() and then
-        // onResume() immediately after, so we need to check the user really left this activity.
-        Platform.runLater(() -> { // we postpone the check to ensure the situation is now stable
-            if (!isActive()) // final check to see if the user left
-                FXCollapseMenu.resetToDefault(); // showing the menu in this case
-        });
+        // Showing the footer again when leaving this activity.
+        FXCollapseMenu.resetToDefault();
         super.onPause();
     }
 

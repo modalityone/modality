@@ -29,6 +29,7 @@ import one.modality.ecommerce.document.service.PolicyAggregate;
 import java.time.LocalDate;
 import java.util.*;
 import java.util.function.Consumer;
+import java.util.stream.Collectors;
 
 /**
  * Default implementation of the audio recording section.
@@ -135,7 +136,7 @@ public class DefaultAudioRecordingSection implements HasAudioRecordingSection {
 
         List<Rate> audioRecordingRates = policyAggregate.getDailyRates().stream()
                 .filter(rate -> Items.isOfFamily(rate.getItem(), KnownItemFamily.AUDIO_RECORDING))
-                .toList();
+                .collect(Collectors.toList());
 
         for (Map.Entry<Item, List<ScheduledItem>> entry : audioRecordingsByItem.entrySet()) {
             Item recordingItem = entry.getKey();
@@ -400,7 +401,7 @@ public class DefaultAudioRecordingSection implements HasAudioRecordingSection {
 
         private String formatPrice(int priceInCents) {
             double priceValue = priceInCents / 100.0;
-            return String.format("\u00a3%.0f", priceValue);
+            return "\u00a3" + Math.round(priceValue);
         }
 
         Label getTitleLabel() {

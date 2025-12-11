@@ -871,8 +871,9 @@ public class HouseholdGanttCanvas {
         // Draw background for each day
         while (!currentDate.isAfter(endDate)) {
             TimeProjector<LocalDate> timeProjector = barsLayout.getTimeProjector();
-            double x = timeProjector.timeToX(currentDate, true, false);
-            double nextX = barsLayout.getTimeProjector().timeToX(currentDate.plusDays(1), true, false);
+            double timeWindowTranslateX = barsLayout.getTimeWindowTranslateX(); // To follow the possible smooth horizontal translation scrolling
+            double x = timeProjector.timeToX(currentDate, true, false) - timeWindowTranslateX;
+            double nextX = timeProjector.timeToX(currentDate.plusDays(1), true, false) - timeWindowTranslateX;
             double dayWidth = nextX - x;
 
             // Determine background color

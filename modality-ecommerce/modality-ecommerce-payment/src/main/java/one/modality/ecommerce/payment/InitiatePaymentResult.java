@@ -1,73 +1,28 @@
 package one.modality.ecommerce.payment;
 
 /**
+ * @param gatewayName       Name of the payment gateway (ex: Square, Stripe, etc...)
+ * @param paymentPrimaryKey PK of the generated payment in the database (MoneyTransfer in Modality)
+ * @param amount            Amount of the payment (same as in InitiatePaymentArgument and also stored in the database)
+ * @param isLive            Indicates if it's a live payment (false indicates a test / sandbox payment)
+ * @param url               URL of the page that can handle the payment (redirect will tell what to do with it)
+ * @param formType          Indicates the payment form type (embedded or redirected)
+ * @param htmlContent       Direct HTML content that can handle the payment (CC details, etc...) in an embedded WebView (ex: Stripe)
+ * @param isSeamless        indicates if the HTML content can be integrated seamlessly in the browser page
+ * @param hasHtmlPayButton  indicates if a "Pay" button is already integrated in the gateway HTML code
+ *
  * @author Bruno Salmon
  */
-public final class InitiatePaymentResult {
-
-    private final Object paymentPrimaryKey; // PK of the generated payment in the database (MoneyTransfer in Modality)
-    private final int amount; // Amount of the payment (same as in InitiatePaymentArgument and also stored in the database)
-    private final boolean live; // indicates if it's a live payment (false indicates a test / sandbox payment)
-    private final boolean seamless; // indicates if the HTML content can be integrated seamlessly in the browser page
-    private final String htmlContent; // Direct HTML content that can handle the payment (CC details, etc...) in an embedded WebView (ex: Stripe)
-    private final String url; // URL of the page that can handle the payment (redirect will tell what to do with it)
-    private final boolean redirect; // true => URL needs to be opened in a separate browser window, false => URL can be opened in an embedded WebView (ex: Square)
-    private final boolean hasHtmlPayButton; // indicates if a "Pay" button is already integrated in the gateway HTML code
-    private final String gatewayName;
-    private final SandboxCard[] sandboxCards;
-
-    public InitiatePaymentResult(Object paymentPrimaryKey, int amount, boolean live, boolean seamless, String htmlContent, String url, boolean redirect, boolean hasHtmlPayButton, String gatewayName, SandboxCard[] sandboxCards) {
-        this.paymentPrimaryKey = paymentPrimaryKey;
-        this.amount = amount;
-        this.live = live;
-        this.seamless = seamless;
-        this.htmlContent = htmlContent;
-        this.url = url;
-        this.redirect = redirect;
-        this.hasHtmlPayButton = hasHtmlPayButton;
-        this.gatewayName = gatewayName;
-        this.sandboxCards = sandboxCards;
-    }
-
-    public Object getPaymentPrimaryKey() {
-        return paymentPrimaryKey;
-    }
-
-    public int getAmount() {
-        return amount;
-    }
-
-    public boolean isLive() {
-        return live;
-    }
-
-    public boolean isSeamless() {
-        return seamless;
-    }
-
-    public String getHtmlContent() {
-        return htmlContent;
-    }
-
-    public String getUrl() {
-        return url;
-    }
-
-    public boolean isRedirect() {
-        return redirect;
-    }
-
-    public boolean hasHtmlPayButton() {
-        return hasHtmlPayButton;
-    }
-
-    public String getGatewayName() {
-        return gatewayName;
-    }
-
-    public SandboxCard[] getSandboxCards() {
-        return sandboxCards;
-    }
-
-
-}
+public record InitiatePaymentResult(
+    String gatewayName,
+    Object paymentPrimaryKey,
+    int amount,
+    boolean isLive,
+    String url,
+    PaymentFormType formType,
+    // The following fields are only used when the payment form type is EMBEDDED
+    String htmlContent,
+    boolean isSeamless,
+    boolean hasHtmlPayButton,
+    SandboxCard[] sandboxCards
+) { }

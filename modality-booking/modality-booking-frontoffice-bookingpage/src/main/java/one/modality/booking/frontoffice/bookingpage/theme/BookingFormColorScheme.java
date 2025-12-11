@@ -277,10 +277,18 @@ public final class BookingFormColorScheme {
      * Converts a Color to hex string (e.g., "#4CAF50").
      */
     public static String toHex(Color color) {
-        return String.format("#%02X%02X%02X",
-                (int) (color.getRed() * 255),
-                (int) (color.getGreen() * 255),
-                (int) (color.getBlue() * 255));
+        int r = (int) (color.getRed() * 255);
+        int g = (int) (color.getGreen() * 255);
+        int b = (int) (color.getBlue() * 255);
+        return "#" + toHexByte(r) + toHexByte(g) + toHexByte(b);
+    }
+
+    /**
+     * Converts an integer (0-255) to a two-character hex string (GWT-compatible).
+     */
+    private static String toHexByte(int value) {
+        String hex = Integer.toHexString(value).toUpperCase();
+        return hex.length() == 1 ? "0" + hex : hex;
     }
 
     /**
