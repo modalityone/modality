@@ -1,4 +1,8 @@
-package one.modality.booking.frontoffice.bookingpage;
+package one.modality.booking.frontoffice.bookingpage.navigation;
+
+import one.modality.booking.frontoffice.bookingpage.BookingFormButton;
+import one.modality.booking.frontoffice.bookingpage.BookingFormNavigation;
+import one.modality.booking.frontoffice.bookingpage.MultiPageBookingForm;
 
 import dev.webfx.extras.aria.AriaToggleGroup;
 import dev.webfx.extras.i18n.controls.I18nControls;
@@ -93,8 +97,8 @@ public class StandardBookingFormNavigation implements BookingFormNavigation {
 
     @Override
     public void updateState() {
-        if (bookingForm != null && bookingForm.displayedPage != null) {
-            titleI18nKeyProperty.set(bookingForm.displayedPage.getTitleI18nKey());
+        if (bookingForm != null && bookingForm.getDisplayedPage() != null) {
+            titleI18nKeyProperty.set(bookingForm.getDisplayedPage().getTitleI18nKey());
             boolean lastPage = bookingForm.getDisplayedPageIndex() == bookingForm.getPages().length - 1;
             I18nControls.bindI18nProperties(nextButton, lastPage ? BaseI18nKeys.Submit : BaseI18nKeys.Next);
         }

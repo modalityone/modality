@@ -1,4 +1,8 @@
-package one.modality.booking.frontoffice.bookingpage;
+package one.modality.booking.frontoffice.bookingpage.navigation;
+
+import one.modality.booking.frontoffice.bookingpage.BookingFormHeader;
+import one.modality.booking.frontoffice.bookingpage.BookingFormPage;
+import one.modality.booking.frontoffice.bookingpage.MultiPageBookingForm;
 
 import dev.webfx.extras.i18n.controls.I18nControls;
 import dev.webfx.extras.panes.MonoPane;
@@ -132,8 +136,41 @@ public class StepProgressHeader implements BookingFormHeader {
         return stepItem;
     }
 
-    private void updateStepsState() {
+    /**
+     * Gets the effective "current step" page index for highlighting purposes.
+     * If the current page is a step, returns its page index.
+     * If the current page is NOT a step (e.g., a sub-step like Member Selection),
+     * returns the page index of the NEXT step so that the previous step appears completed.
+     */
+    private int getEffectiveStepPageIndex() {
         int displayedPageIndex = currentStepIndexProperty.get();
+
+        // Check if current page is a step
+        for (Node node : stepsBox.getChildren()) {
+            if (node instanceof VBox) {
+                int stepPageIndex = (int) ((VBox) node).getUserData();
+                if (stepPageIndex == displayedPageIndex) {
+                    return displayedPageIndex; // Current page is a step
+                }
+            }
+        }
+
+        // Current page is not a step - find the next step after this page
+        for (Node node : stepsBox.getChildren()) {
+            if (node instanceof VBox) {
+                int stepPageIndex = (int) ((VBox) node).getUserData();
+                if (stepPageIndex > displayedPageIndex) {
+                    return stepPageIndex; // Return next step's page index
+                }
+            }
+        }
+
+        // If no step after, return a value larger than all steps
+        return displayedPageIndex;
+    }
+
+    private void updateStepsState() {
+        int effectivePageIndex = getEffectiveStepPageIndex();
 
         for (int i = 0; i < stepsBox.getChildren().size(); i++) {
             Node node = stepsBox.getChildren().get(i);
@@ -146,8 +183,8 @@ public class StepProgressHeader implements BookingFormHeader {
                 Label numberLabel = (Label) bubble.getChildren().get(0);
                 Label label = (Label) stepItem.getChildren().get(1);
 
-                boolean isActive = stepPageIndex == displayedPageIndex;
-                boolean isCompleted = stepPageIndex < displayedPageIndex;
+                boolean isActive = stepPageIndex == effectivePageIndex;
+                boolean isCompleted = stepPageIndex < effectivePageIndex;
 
                 // Remove all state classes first
                 stepItem.getStyleClass().removeAll("active", "completed");

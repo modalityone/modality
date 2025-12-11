@@ -6,6 +6,8 @@ module modality.booking.frontoffice.bookingpage {
     requires javafx.base;
     requires javafx.controls;
     requires javafx.graphics;
+    requires modality.base.client.cloud.image;
+    requires modality.base.client.entities;
     requires modality.base.client.i18n;
     requires modality.base.client.icons;
     requires modality.base.client.time;
@@ -17,6 +19,7 @@ module modality.booking.frontoffice.bookingpage {
     requires modality.crm.client.authn.fx;
     requires modality.crm.client.i18n;
     requires modality.crm.frontoffice.activity.userprofile.plugin;
+    requires modality.crm.shared.authn;
     requires modality.ecommerce.client.i18n;
     requires modality.ecommerce.document.service;
     requires modality.ecommerce.frontoffice.order;
@@ -45,8 +48,11 @@ module modality.booking.frontoffice.bookingpage {
     requires webfx.platform.util;
     requires webfx.platform.util.time;
     requires webfx.platform.windowhistory;
+    requires webfx.platform.windowlocation;
+    requires webfx.stack.authn;
     requires webfx.stack.authn.login.ui.gateway.password.plugin;
     requires webfx.stack.authn.logout.client;
+    requires webfx.stack.orm.datasourcemodel.service;
     requires webfx.stack.orm.entity;
     requires webfx.stack.orm.entity.binding;
     requires webfx.stack.orm.entity.controls;
@@ -54,6 +60,8 @@ module modality.booking.frontoffice.bookingpage {
     // Exported packages
     exports one.modality.booking.frontoffice.bookingpage;
     exports one.modality.booking.frontoffice.bookingpage.cart;
+    exports one.modality.booking.frontoffice.bookingpage.components;
+    exports one.modality.booking.frontoffice.bookingpage.navigation;
     exports one.modality.booking.frontoffice.bookingpage.pages.audiorecording;
     exports one.modality.booking.frontoffice.bookingpage.pages.closed;
     exports one.modality.booking.frontoffice.bookingpage.pages.payment;
@@ -62,6 +70,8 @@ module modality.booking.frontoffice.bookingpage {
     exports one.modality.booking.frontoffice.bookingpage.pages.summary;
     exports one.modality.booking.frontoffice.bookingpage.pages.teaching;
     exports one.modality.booking.frontoffice.bookingpage.pages.terms;
+    exports one.modality.booking.frontoffice.bookingpage.sections;
+    exports one.modality.booking.frontoffice.bookingpage.standard;
     exports one.modality.booking.frontoffice.bookingpage.theme;
 
 }

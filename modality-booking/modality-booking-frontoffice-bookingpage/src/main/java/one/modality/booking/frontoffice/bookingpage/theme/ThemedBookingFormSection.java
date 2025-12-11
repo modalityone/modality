@@ -4,7 +4,6 @@ import javafx.beans.value.ObservableBooleanValue;
 import javafx.geometry.Insets;
 import javafx.scene.Node;
 import javafx.scene.layout.*;
-import javafx.scene.paint.Color;
 import one.modality.booking.client.workingbooking.WorkingBooking;
 import one.modality.booking.client.workingbooking.WorkingBookingProperties;
 import one.modality.booking.frontoffice.bookingpage.BookingFormSection;
@@ -40,7 +39,7 @@ public class ThemedBookingFormSection implements BookingFormSection {
         this.delegate = section;
         this.colorScheme = colorScheme;
         this.themedContainer = new VBox();
-        themedContainer.setPadding(new Insets(0, 0, 16, 0)); // Bottom padding for content
+        themedContainer.setPadding(new Insets(0, 0, 32, 0)); // 32px bottom margin between sections (per JSX mockup)
         themedContainer.getChildren().add(delegate.getView());
         applyTheme();
     }
@@ -58,14 +57,7 @@ public class ThemedBookingFormSection implements BookingFormSection {
         // Set spacing between header and content
         themedContainer.setSpacing(0);
 
-        // Apply transparent background with no border for BOTH platforms
-        // JavaFX version (setStyle)
-        themedContainer.setStyle(
-                "-fx-background-color: transparent;" +
-                "-fx-border-width: 0;"
-        );
-
-        // WebFX version (programmatic) - ensures cross-platform compatibility
+        // Apply transparent background with no border - using pure JavaFX API for cross-platform compatibility
         themedContainer.setBackground(Background.EMPTY);
         themedContainer.setBorder(Border.EMPTY);
 

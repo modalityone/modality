@@ -4,6 +4,8 @@ import javafx.geometry.Pos;
 import javafx.scene.Node;
 import javafx.scene.control.Label;
 import javafx.scene.layout.VBox;
+import javafx.scene.paint.Color;
+import javafx.scene.text.Font;
 import one.modality.booking.client.workingbooking.WorkingBookingProperties;
 
 /**
@@ -11,16 +13,15 @@ import one.modality.booking.client.workingbooking.WorkingBookingProperties;
  */
 public class MessagePage implements BookingFormPage {
 
-    private final String message;
     private final VBox container = new VBox();
     private boolean isStep = false;
     private boolean isHeaderVisible = false;
     private BookingFormButton[] buttons;
 
     public MessagePage(String message) {
-        this.message = message;
         Label label = new Label(message);
-        label.setStyle("-fx-font-size: 18px; -fx-text-fill: #333;");
+        label.setFont(Font.font(18));
+        label.setTextFill(Color.web("#333"));
         container.getChildren().add(label);
         container.setAlignment(Pos.CENTER);
         container.setPadding(new javafx.geometry.Insets(50));

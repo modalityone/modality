@@ -1,6 +1,5 @@
 package one.modality.booking.frontoffice.bookingpage;
 
-import dev.webfx.extras.panes.MonoPane;
 import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.SimpleBooleanProperty;
 import javafx.beans.value.ObservableBooleanValue;
@@ -19,10 +18,12 @@ public class CompositeBookingFormPage implements BookingFormPage {
 
     private final Object titleI18nKey;
     private final List<BookingFormSection> sections = new ArrayList<>();
-    private final VBox container = new VBox(20); // Spacing between sections
+    private final VBox container = new VBox(32); // Spacing between sections (per JSX mockup)
+    { container.setMinWidth(0); } // Allow shrinking for responsive design
     private final BooleanProperty validProperty = new SimpleBooleanProperty(true);
     private boolean isStep = true;
     private boolean isHeaderVisible = true;
+    private boolean showingOwnSubmitButton = false;
     private BookingFormButton[] buttons;
 
     public CompositeBookingFormPage(Object titleI18nKey, BookingFormSection... sections) {
@@ -121,6 +122,16 @@ public class CompositeBookingFormPage implements BookingFormPage {
     }
 
     @Override
+    public boolean isShowingOwnSubmitButton() {
+        return showingOwnSubmitButton;
+    }
+
+    public CompositeBookingFormPage setShowingOwnSubmitButton(boolean showingOwnSubmitButton) {
+        this.showingOwnSubmitButton = showingOwnSubmitButton;
+        return this;
+    }
+
+    @Override
     public BookingFormButton[] getButtons() {
         return buttons;
     }
@@ -128,5 +139,13 @@ public class CompositeBookingFormPage implements BookingFormPage {
     public CompositeBookingFormPage setButtons(BookingFormButton... buttons) {
         this.buttons = buttons;
         return this;
+    }
+
+    /**
+     * Returns the list of sections in this page.
+     * Useful for finding sections implementing specific interfaces.
+     */
+    public List<BookingFormSection> getSections() {
+        return sections;
     }
 }

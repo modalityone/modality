@@ -1,4 +1,8 @@
-package one.modality.booking.frontoffice.bookingpage;
+package one.modality.booking.frontoffice.bookingpage.navigation;
+
+import one.modality.booking.frontoffice.bookingpage.BookingFormHeader;
+import one.modality.booking.frontoffice.bookingpage.BookingFormPage;
+import one.modality.booking.frontoffice.bookingpage.MultiPageBookingForm;
 
 import dev.webfx.extras.i18n.controls.I18nControls;
 import dev.webfx.extras.responsive.ResponsiveDesign;
@@ -15,7 +19,11 @@ import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Circle;
 import javafx.scene.shape.Line;
+import javafx.scene.text.Font;
+import javafx.scene.text.FontWeight;
 import one.modality.booking.frontoffice.bookingpage.theme.BookingFormColorScheme;
+
+import static one.modality.booking.frontoffice.bookingpage.theme.BookingFormStyles.*;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -33,7 +41,9 @@ public class ResponsiveStepProgressHeader implements BookingFormHeader {
     private static final int MOBILE_BREAKPOINT = 600;
     private static final int TABLET_BREAKPOINT = 768;
 
+    private final VBox wrapper = new VBox(); // Wrapper for container + divider + bottom spacing
     private final StackPane container = new StackPane();
+    private final Region dividerLine = new Region(); // Separator line below step indicators
     private final HBox mobileLayout = new HBox(8);
     private final HBox tabletLayout = new HBox();
     private final HBox desktopLayout = new HBox();
@@ -79,6 +89,19 @@ public class ResponsiveStepProgressHeader implements BookingFormHeader {
         // Stack all layouts - visibility controlled by responsive design
         container.getChildren().addAll(mobileLayout, tabletLayout, desktopLayout);
         container.getStyleClass().add("booking-form-step-progress");
+        container.setPadding(new Insets(0, 0, 12, 0)); // 12px space between steps and divider line
+
+        // Divider line (1px) - separate element so we can control spacing above and below
+        dividerLine.setMinHeight(1);
+        dividerLine.setPrefHeight(1);
+        dividerLine.setMaxHeight(1);
+        dividerLine.setBackground(bg(PROGRESS_TRACK));
+
+        // Wrapper contains: [step indicators] + [divider line] + [bottom spacing]
+        // More breathing room below the divider line before content starts
+        wrapper.getChildren().addAll(container, dividerLine);
+        wrapper.setPadding(new Insets(0, 0, 48, 0)); // 48px space below divider line
+        wrapper.getStyleClass().add("booking-form-step-progress-wrapper");
     }
 
     private void setupResponsiveDesign() {
@@ -127,7 +150,7 @@ public class ResponsiveStepProgressHeader implements BookingFormHeader {
 
     @Override
     public Node getView() {
-        return container;
+        return wrapper;
     }
 
     @Override
@@ -205,8 +228,8 @@ public class ResponsiveStepProgressHeader implements BookingFormHeader {
         // Current step info (label)
         Label currentStepLabel = new Label();
         currentStepLabel.getStyleClass().add("booking-form-step-current-label");
-        currentStepLabel.setStyle("-fx-font-size: 14px; -fx-font-weight: bold;");
-        currentStepLabel.setTextFill(scheme.getDarkText());
+        currentStepLabel.setFont(fontSemiBold(14)); // Per JSX mockup
+        currentStepLabel.setTextFill(TEXT_MUTED); // Neutral grey
 
         // Progress bar (shows overall completion)
         StackPane progressBarContainer = new StackPane();
@@ -221,8 +244,7 @@ public class ResponsiveStepProgressHeader implements BookingFormHeader {
         Region progressTrack = new Region();
         progressTrack.setMinHeight(4);
         progressTrack.setMaxHeight(4);
-        progressTrack.setStyle("-fx-background-color: #dee2e6; -fx-background-radius: 2;");
-        progressTrack.setBackground(new Background(new BackgroundFill(Color.web("#dee2e6"), new CornerRadii(2), null)));
+        progressTrack.setBackground(bg(BORDER_LIGHT, RADII_2));
 
         // Filled portion
         Region progressFill = new Region();
@@ -249,7 +271,13 @@ public class ResponsiveStepProgressHeader implements BookingFormHeader {
             stepItem.setUserData(i);
             HBox.setHgrow(stepItem, Priority.ALWAYS);
 
-            // Small circle with number
+            // Small circle with number (32x32px)
+            // Use Circle shape for reliable rendering in GWT (instead of Background on StackPane)
+            Circle circleShape = new Circle(14); // 14px radius (28px diameter) + 2px border = ~32px
+            circleShape.setFill(Color.WHITE);
+            circleShape.setStroke(Color.web("#D1D5DB"));
+            circleShape.setStrokeWidth(2);
+
             StackPane circle = new StackPane();
             circle.setMinSize(32, 32);
             circle.setMaxSize(32, 32);
@@ -258,14 +286,14 @@ public class ResponsiveStepProgressHeader implements BookingFormHeader {
 
             Label numberLabel = new Label(String.valueOf(step.stepNumber));
             numberLabel.getStyleClass().add("booking-form-step-number");
-            numberLabel.setStyle("-fx-font-size: 12px; -fx-font-weight: bold;");
-            circle.getChildren().add(numberLabel);
+            numberLabel.setFont(fontSemiBold(12)); // Per JSX mockup
+            circle.getChildren().addAll(circleShape, numberLabel); // Circle first, label on top
 
             // Short label (abbreviated)
             Label label = new Label();
             I18nControls.bindI18nProperties(label, step.titleKey);
             label.getStyleClass().add("booking-form-step-label-tablet");
-            label.setStyle("-fx-font-size: 10px;");
+            label.setFont(font(11)); // Per JSX: 11px, weight changes with state
             label.setWrapText(false);
             label.setMaxWidth(60);
             label.setAlignment(Pos.CENTER);
@@ -291,29 +319,31 @@ public class ResponsiveStepProgressHeader implements BookingFormHeader {
     private void rebuildDesktopLayout() {
         desktopLayout.getChildren().clear();
 
-        // Create a StackPane to layer the progress line behind the steps
-        StackPane desktopContainer = new StackPane();
-        desktopContainer.setAlignment(Pos.TOP_CENTER);
-
-        // Progress line container (behind bubbles)
-        HBox progressLineContainer = new HBox();
-        progressLineContainer.setAlignment(Pos.TOP_CENTER);
-        progressLineContainer.setPadding(new Insets(20, 40, 0, 40)); // Align with bubble centers
-
-        // Steps row (on top)
+        // Single HBox with interleaved steps and lines
+        // Structure: [Step1] [Line] [Step2] [Line] [Step3] ...
         HBox stepsRow = new HBox();
-        stepsRow.setAlignment(Pos.CENTER);
+        stepsRow.setAlignment(Pos.TOP_CENTER);
+        stepsRow.setPadding(new Insets(0, 20, 0, 20));
 
         for (int i = 0; i < steps.size(); i++) {
             StepInfo step = steps.get(i);
 
+            // Step item container (bubble + label)
             VBox stepItem = new VBox(8);
             stepItem.setAlignment(Pos.TOP_CENTER);
             stepItem.setUserData(i);
             stepItem.getStyleClass().add("booking-form-step-item");
-            HBox.setHgrow(stepItem, Priority.ALWAYS);
+            stepItem.setMinWidth(80);
+            stepItem.setPrefWidth(80);
+            stepItem.setMaxWidth(100);
 
-            // Circle with number
+            // Circle with number (40x40px)
+            // Use Circle shape for reliable rendering in GWT (instead of Background on StackPane)
+            Circle circleShape = new Circle(18); // 18px radius (36px diameter) + 2px border = ~40px
+            circleShape.setFill(Color.WHITE);
+            circleShape.setStroke(Color.web("#D1D5DB"));
+            circleShape.setStrokeWidth(2);
+
             StackPane bubble = new StackPane();
             bubble.setMinSize(40, 40);
             bubble.setMaxSize(40, 40);
@@ -322,17 +352,18 @@ public class ResponsiveStepProgressHeader implements BookingFormHeader {
 
             Label numberLabel = new Label(String.valueOf(step.stepNumber));
             numberLabel.getStyleClass().add("booking-form-step-number");
-            numberLabel.setStyle("-fx-font-weight: bold;");
-            bubble.getChildren().add(numberLabel);
+            numberLabel.setFont(fontSemiBold(13)); // Per JSX mockup
+            bubble.getChildren().addAll(circleShape, numberLabel); // Circle first, label on top
 
-            // Full label
+            // Full label - centered under bubble
             Label label = new Label();
             I18nControls.bindI18nProperties(label, step.titleKey);
             label.getStyleClass().add("booking-form-step-label");
             label.setWrapText(true);
-            label.setAlignment(Pos.CENTER);
-            label.setMaxWidth(80);
-            label.setStyle("-fx-font-size: 12px;");
+            label.setAlignment(Pos.TOP_CENTER);
+            label.setTextAlignment(javafx.scene.text.TextAlignment.CENTER);
+            label.setMaxWidth(90); // Per JSX mockup: maxWidth 90px
+            label.setFont(font(12)); // Initial state, updated by applyStepState
 
             stepItem.getChildren().addAll(bubble, label);
 
@@ -350,30 +381,26 @@ public class ResponsiveStepProgressHeader implements BookingFormHeader {
 
             // Add line segment between steps (except after last step)
             if (i < steps.size() - 1) {
+                // Line positioned at vertical center of bubble (20px from top)
                 Region lineSegment = new Region();
-                lineSegment.setMinHeight(2);
-                lineSegment.setPrefHeight(2);
-                lineSegment.setMaxHeight(2);
+                lineSegment.setMinHeight(1);
+                lineSegment.setPrefHeight(1);
+                lineSegment.setMaxHeight(1);
+                lineSegment.setMinWidth(20);
                 HBox.setHgrow(lineSegment, Priority.ALWAYS);
                 lineSegment.getStyleClass().add("booking-form-step-line");
                 lineSegment.setUserData("line-" + i);
-                progressLineContainer.getChildren().add(lineSegment);
+                // Position line at center of 40px bubble = 20px from top
+                // Use negative horizontal margins to extend into the VBox padding and touch circles
+                // VBox is 80px, circle is 40px centered, so 20px padding on each side
+                HBox.setMargin(lineSegment, new Insets(20, -20, 0, -20));
 
-                // Spacer in progress line to align with step items
-                if (i < steps.size() - 2) {
-                    Region spacer = new Region();
-                    spacer.setMinWidth(40);
-                    spacer.setPrefWidth(40);
-                    spacer.setMaxWidth(40);
-                    progressLineContainer.getChildren().add(spacer);
-                }
+                stepsRow.getChildren().add(lineSegment);
             }
         }
 
-        // Stack progress line behind steps
-        desktopContainer.getChildren().addAll(progressLineContainer, stepsRow);
-        desktopLayout.getChildren().add(desktopContainer);
-        HBox.setHgrow(desktopContainer, Priority.ALWAYS);
+        desktopLayout.getChildren().add(stepsRow);
+        HBox.setHgrow(stepsRow, Priority.ALWAYS);
     }
 
     // === State Updates ===
@@ -386,14 +413,34 @@ public class ResponsiveStepProgressHeader implements BookingFormHeader {
         updateDesktopLayoutState(currentIndex);
     }
 
+    /**
+     * Gets the current step index for highlighting purposes.
+     * If the current page is a step, returns its index.
+     * If the current page is NOT a step (e.g., a sub-step like Member Selection),
+     * returns the index of the NEXT step so that the previous step appears completed
+     * and the next step appears "in progress".
+     */
     private int getCurrentStepIndex() {
         int displayedPageIndex = currentStepIndexProperty.get();
+
+        // First, check if current page is a step
         for (int i = 0; i < steps.size(); i++) {
             if (steps.get(i).pageIndex == displayedPageIndex) {
                 return i;
             }
         }
-        return -1;
+
+        // Current page is not a step (e.g., Member Selection sub-step).
+        // Find the next step after this page to show as "active",
+        // so previous steps appear completed.
+        for (int i = 0; i < steps.size(); i++) {
+            if (steps.get(i).pageIndex > displayedPageIndex) {
+                return i; // Return next step index (this step will show as active)
+            }
+        }
+
+        // If no step after, return the last step (we're past all steps)
+        return steps.isEmpty() ? -1 : steps.size() - 1;
     }
 
     private void updateMobileLayoutState(int currentStepIndex) {
@@ -420,18 +467,26 @@ public class ResponsiveStepProgressHeader implements BookingFormHeader {
                 dot.setFill(scheme.getPrimary());
                 dot.setRadius(6);
             } else {
-                // Pending
-                dot.setFill(Color.web("#dee2e6"));
+                // Pending - per JSX mockup uses #D1D5DB
+                dot.setFill(Color.web("#D1D5DB"));
                 dot.setRadius(6);
             }
 
             dot.setCursor(navigationClickable ? Cursor.HAND : Cursor.DEFAULT);
         }
 
-        // Update current step label
+        // Update current step label to show "Step X: [Step Name]"
         if (currentStepIndex >= 0 && currentStepIndex < steps.size()) {
             StepInfo current = steps.get(currentStepIndex);
-            I18nControls.bindI18nProperties(currentLabel, "Step", current.stepNumber, ":", current.titleKey);
+            // Use a hidden label to get the translated step name, then bind visible label to formatted version
+            Label translationHolder = new Label();
+            I18nControls.bindI18nProperties(translationHolder, current.titleKey);
+            currentLabel.textProperty().bind(
+                javafx.beans.binding.Bindings.createStringBinding(
+                    () -> "Step " + current.stepNumber + ": " + translationHolder.getText(),
+                    translationHolder.textProperty()
+                )
+            );
         }
 
         // Update progress bar fill
@@ -446,9 +501,7 @@ public class ResponsiveStepProgressHeader implements BookingFormHeader {
             progressFill.setPrefWidth(fillWidth);
             progressFill.setMaxWidth(fillWidth);
 
-            String primaryHex = scheme.getPrimaryHex();
-            progressFill.setStyle("-fx-background-color: " + primaryHex + "; -fx-background-radius: 2;");
-            progressFill.setBackground(new Background(new BackgroundFill(scheme.getPrimary(), new CornerRadii(2), null)));
+            progressFill.setBackground(bg(scheme.getPrimary(), RADII_2));
         }
     }
 
@@ -458,7 +511,8 @@ public class ResponsiveStepProgressHeader implements BookingFormHeader {
         for (int i = 0; i < tabletLayout.getChildren().size(); i++) {
             VBox stepItem = (VBox) tabletLayout.getChildren().get(i);
             StackPane circle = (StackPane) stepItem.getChildren().get(0);
-            Label numberLabel = (Label) circle.getChildren().get(0);
+            // Circle shape is at index 0, Label is at index 1
+            Label numberLabel = (Label) circle.getChildren().get(1);
             Label label = (Label) stepItem.getChildren().get(1);
 
             boolean isActive = i == currentStepIndex;
@@ -474,60 +528,59 @@ public class ResponsiveStepProgressHeader implements BookingFormHeader {
 
         if (desktopLayout.getChildren().isEmpty()) return;
 
-        // Desktop layout now contains a StackPane with progressLineContainer and stepsRow
+        // Desktop layout now contains a single HBox with interleaved steps and lines
         Node firstChild = desktopLayout.getChildren().get(0);
-        if (!(firstChild instanceof StackPane)) return;
+        if (!(firstChild instanceof HBox)) return;
 
-        StackPane desktopContainer = (StackPane) firstChild;
-        if (desktopContainer.getChildren().size() < 2) return;
+        HBox stepsRow = (HBox) firstChild;
 
-        HBox progressLineContainer = (HBox) desktopContainer.getChildren().get(0);
-        HBox stepsRow = (HBox) desktopContainer.getChildren().get(1);
-
-        // Update progress line segments
+        // Track step index for state calculation (lines are between steps)
+        int stepIndex = 0;
         int lineIndex = 0;
-        for (Node child : progressLineContainer.getChildren()) {
-            if (child instanceof Region && child.getUserData() != null && child.getUserData().toString().startsWith("line-")) {
+
+        for (Node child : stepsRow.getChildren()) {
+            // Handle step items (VBox)
+            if (child instanceof VBox) {
+                VBox stepItem = (VBox) child;
+                if (stepItem.getChildren().size() < 2) continue;
+
+                StackPane bubble = (StackPane) stepItem.getChildren().get(0);
+                // Circle shape is at index 0, Label is at index 1
+                Label numberLabel = (Label) bubble.getChildren().get(1);
+                Label label = (Label) stepItem.getChildren().get(1);
+
+                boolean isActive = stepIndex == currentStepIndex;
+                boolean isCompleted = stepIndex < currentStepIndex;
+
+                applyStepState(bubble, numberLabel, label, isActive, isCompleted, scheme, stepIndex + 1);
+                stepItem.setCursor(navigationClickable ? Cursor.HAND : Cursor.DEFAULT);
+
+                // Update styleclass for CSS targeting
+                stepItem.getStyleClass().removeAll("active", "completed");
+                if (isActive) {
+                    stepItem.getStyleClass().add("active");
+                } else if (isCompleted) {
+                    stepItem.getStyleClass().add("completed");
+                }
+
+                stepIndex++;
+            }
+            // Handle line segments (Region)
+            else if (child instanceof Region && child.getUserData() != null &&
+                     child.getUserData().toString().startsWith("line-")) {
                 Region lineSegment = (Region) child;
                 Color lineColor;
 
                 // Line is completed if the step after it is completed or active
+                // Per JSX mockup: inactive lines use #D1D5DB
                 if (lineIndex < currentStepIndex) {
                     lineColor = scheme.getPrimary();
                 } else {
-                    lineColor = Color.web("#dee2e6");
+                    lineColor = Color.web("#D1D5DB");
                 }
 
-                lineSegment.setStyle("-fx-background-color: " + BookingFormColorScheme.toHex(lineColor) + ";");
-                lineSegment.setBackground(new Background(new BackgroundFill(lineColor, null, null)));
+                lineSegment.setBackground(bg(lineColor));
                 lineIndex++;
-            }
-        }
-
-        // Update step items
-        for (int i = 0; i < stepsRow.getChildren().size(); i++) {
-            Node child = stepsRow.getChildren().get(i);
-            if (!(child instanceof VBox)) continue;
-
-            VBox stepItem = (VBox) child;
-            if (stepItem.getChildren().size() < 2) continue;
-
-            StackPane bubble = (StackPane) stepItem.getChildren().get(0);
-            Label numberLabel = (Label) bubble.getChildren().get(0);
-            Label label = (Label) stepItem.getChildren().get(1);
-
-            boolean isActive = i == currentStepIndex;
-            boolean isCompleted = i < currentStepIndex;
-
-            applyStepState(bubble, numberLabel, label, isActive, isCompleted, scheme, i + 1);
-            stepItem.setCursor(navigationClickable ? Cursor.HAND : Cursor.DEFAULT);
-
-            // Update styleclass for CSS targeting
-            stepItem.getStyleClass().removeAll("active", "completed");
-            if (isActive) {
-                stepItem.getStyleClass().add("active");
-            } else if (isCompleted) {
-                stepItem.getStyleClass().add("completed");
             }
         }
     }
@@ -540,9 +593,13 @@ public class ResponsiveStepProgressHeader implements BookingFormHeader {
         Color borderColor;
         String displayText;
 
+        // Per JSX mockup EventRegistrationFlow.jsx:
+        // Active: white bg, primary border, primary text (outlined circle with number)
+        // Completed: primary bg, primary border, white text (filled circle with checkmark)
+        // Inactive: white bg, #D1D5DB border, #9CA3AF text
         if (isActive) {
-            bgColor = scheme.getPrimary();
-            textColor = Color.WHITE;
+            bgColor = Color.WHITE;
+            textColor = scheme.getPrimary();
             borderColor = scheme.getPrimary();
             displayText = String.valueOf(stepNumber);
         } else if (isCompleted) {
@@ -552,27 +609,32 @@ public class ResponsiveStepProgressHeader implements BookingFormHeader {
             displayText = "\u2713"; // Checkmark
         } else {
             bgColor = Color.WHITE;
-            textColor = Color.web("#6c757d");
-            borderColor = Color.web("#dee2e6");
+            textColor = Color.web("#9CA3AF");
+            borderColor = Color.web("#D1D5DB");
             displayText = String.valueOf(stepNumber);
         }
 
-        // Apply styles for both platforms (setStyle + programmatic)
-        bubble.setStyle(
-            "-fx-background-color: " + BookingFormColorScheme.toHex(bgColor) + ";" +
-            "-fx-background-radius: 50%;" +
-            "-fx-border-color: " + BookingFormColorScheme.toHex(borderColor) + ";" +
-            "-fx-border-width: 2;" +
-            "-fx-border-radius: 50%;"
-        );
-        bubble.setBackground(new Background(new BackgroundFill(bgColor, new CornerRadii(50, true), null)));
-        bubble.setBorder(new Border(new BorderStroke(borderColor, BorderStrokeStyle.SOLID, new CornerRadii(50, true), new BorderWidths(2))));
+        // Apply styles to Circle shape (first child of bubble) - more reliable in GWT than Background on StackPane
+        // Ensure colors are never null (fallback to default blue if scheme returns null)
+        Color bg = bgColor != null ? bgColor : Color.web("#2563EB");
+        Color border = borderColor != null ? borderColor : Color.web("#2563EB");
+        Color text = textColor != null ? textColor : Color.WHITE;
+
+        // Get the Circle shape (first child) and update its fill/stroke
+        if (!bubble.getChildren().isEmpty() && bubble.getChildren().get(0) instanceof Circle) {
+            Circle circleShape = (Circle) bubble.getChildren().get(0);
+            circleShape.setFill(bg);
+            circleShape.setStroke(border);
+        }
 
         numberLabel.setText(displayText);
-        numberLabel.setTextFill(textColor);
+        numberLabel.setTextFill(text);
+        numberLabel.setFont(fontSemiBold(13)); // Per JSX mockup
 
         if (textLabel != null) {
-            textLabel.setTextFill(isActive ? scheme.getDarkText() : (isCompleted ? scheme.getLightText() : Color.web("#6c757d")));
+            textLabel.setTextFill(isActive ? scheme.getDarkText() : (isCompleted ? scheme.getLightText() : Color.web("#9CA3AF")));
+            // Active step label should be bold (700), inactive should be normal (400)
+            textLabel.setFont(isActive ? fontBold(12) : font(12));
         }
     }
 

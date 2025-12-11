@@ -20,10 +20,10 @@ import javafx.scene.layout.VBox;
 import one.modality.booking.client.workingbooking.FXPersonToBook;
 import one.modality.booking.client.workingbooking.HasWorkingBookingProperties;
 import one.modality.booking.frontoffice.bookingelements.BookingElements;
-import one.modality.booking.frontoffice.bookingelements.NavigationBar;
 import one.modality.booking.frontoffice.bookingelements.PriceBar;
 import one.modality.booking.frontoffice.bookingform.BookingFormBase;
 import one.modality.booking.frontoffice.bookingform.BookingFormSettings;
+import one.modality.booking.frontoffice.bookingpage.navigation.StandardBookingFormNavigation;
 
 /**
  * @author Bruno Salmon
@@ -118,7 +118,9 @@ public abstract class MultiPageBookingForm extends BookingFormBase {
     }
 
     private void bindNavigationButtons() {
-        navigation.getBackButton().setOnMouseClicked(e -> navigateToPreviousPage());
+        // Use setOnAction instead of setOnMouseClicked because ButtonNavigation uses
+        // nextToggleButton.fire() which triggers onAction, not onMouseClicked
+        navigation.getBackButton().setOnAction(e -> navigateToPreviousPage());
         navigation.getBackButton().disableProperty().bind(new BooleanBinding() {
             {
                 super.bind(previousPageApplicableProperty, pageCanGoBackProperty);
@@ -129,7 +131,7 @@ public abstract class MultiPageBookingForm extends BookingFormBase {
                 return !previousPageApplicableProperty.get() || !pageCanGoBackProperty.get();
             }
         });
-        navigation.getNextButton().setOnMouseClicked(e -> navigateToNextPage());
+        navigation.getNextButton().setOnAction(e -> navigateToNextPage());
         navigation.getNextButton().disableProperty().bind(new BooleanBinding() {
             {
                 super.bind(pageValidProperty, pageCanGoForwardProperty, pageEndReachedProperty,
@@ -161,6 +163,10 @@ public abstract class MultiPageBookingForm extends BookingFormBase {
 
     public int getDisplayedPageIndex() {
         return displayedPageIndex;
+    }
+
+    public BookingFormPage getDisplayedPage() {
+        return displayedPage;
     }
 
     @Override
@@ -198,7 +204,11 @@ public abstract class MultiPageBookingForm extends BookingFormBase {
 
         VBox bottomBox = new VBox();
         if (navigation != null && header != null) {
-            bottomBox.getChildren().add(navigation.getView());
+            Node navigationView = navigation.getView();
+            // Hide navigation bar when page shows its own submit button (to avoid duplicate buttons)
+            navigationView.visibleProperty().bind(pageShowingOwnSubmitButtonProperty.not());
+            navigationView.managedProperty().bind(pageShowingOwnSubmitButtonProperty.not());
+            bottomBox.getChildren().add(navigationView);
         }
 
         if (settings.showPriceBar()) {
@@ -284,9 +294,7 @@ public abstract class MultiPageBookingForm extends BookingFormBase {
         pageEndReachedProperty.bind(displayedPage.endReachedProperty());
         if (bookingFormPageValidListener != null)
             bookingFormPageValidListener.unregister();
-        bookingFormPageValidListener = FXProperties.runNowAndOnPropertyChange(valid -> {
-            getActivityCallback().disableSubmitButton(!valid);
-        }, displayedPage.validProperty());
+        bookingFormPageValidListener = FXProperties.runNowAndOnPropertyChange(valid -> getActivityCallback().disableSubmitButton(!valid), displayedPage.validProperty());
         MonoPane embeddedLoginContainer = displayedPage.getEmbeddedLoginContainer();
         if (embeddedLoginContainer != null && embeddedLoginContainer != LAST_PAGE_EMBEDDED_LOGIN_CONTAINER) {
             if (LAST_PAGE_EMBEDDED_LOGIN_CONTAINER != null)

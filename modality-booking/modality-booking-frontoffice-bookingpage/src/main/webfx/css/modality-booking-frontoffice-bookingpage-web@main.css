@@ -1,5 +1,731 @@
+/* ==========================================
+   Booking Form Theme Variables (Web/CSS)
+   ========================================== */
+
+/* Default theme: Journey Green */
+:root {
+    --booking-form-primary: #4CAF50;
+    --booking-form-primary-dark: #2E7D32;
+    --booking-form-selected-bg: #E8F5E9;
+    --booking-form-hover-border: #8DD39E;
+    --booking-form-text-primary: #292A33;
+    --booking-form-text-secondary: #838788;
+    --booking-form-text-on-primary: white;
+}
+
+/* Wisdom Blue theme */
+.theme-wisdom-blue {
+    --booking-form-primary: #1976D2;
+    --booking-form-primary-dark: #0D47A1;
+    --booking-form-selected-bg: #E3F2FD;
+    --booking-form-hover-border: #90CAF9;
+}
+
+/* Compassion Rose theme */
+.theme-compassion-rose {
+    --booking-form-primary: #D81B60;
+    --booking-form-primary-dark: #880E4F;
+    --booking-form-selected-bg: #FCE4EC;
+    --booking-form-hover-border: #F48FB1;
+}
+
+/* Peace Purple theme */
+.theme-peace-purple {
+    --booking-form-primary: #7B1FA2;
+    --booking-form-primary-dark: #4A148C;
+    --booking-form-selected-bg: #F3E5F5;
+    --booking-form-hover-border: #CE93D8;
+}
+
+/* Joy Amber theme */
+.theme-joy-amber {
+    --booking-form-primary: #F57C00;
+    --booking-form-primary-dark: #E65100;
+    --booking-form-selected-bg: #FFF3E0;
+    --booking-form-hover-border: #FFB74D;
+}
+
+/* Calm Teal theme */
+.theme-calm-teal {
+    --booking-form-primary: #00897B;
+    --booking-form-primary-dark: #004D40;
+    --booking-form-selected-bg: #E0F2F1;
+    --booking-form-hover-border: #80CBC4;
+}
+
+/* Clarity Indigo theme */
+.theme-clarity-indigo {
+    --booking-form-primary: #3949AB;
+    --booking-form-primary-dark: #1A237E;
+    --booking-form-selected-bg: #E8EAF6;
+    --booking-form-hover-border: #9FA8DA;
+}
+
+/* Vajrayogini Red theme */
+.theme-vajrayogini-red {
+    --booking-form-primary: #D32F2F;
+    --booking-form-primary-dark: #B71C1C;
+    --booking-form-selected-bg: #FFEBEE;
+    --booking-form-hover-border: #EF5350;
+}
+
+/* Vajrasattva White theme */
+.theme-vajrasattva-white {
+    --booking-form-primary: #455A64;
+    --booking-form-primary-dark: #263238;
+    --booking-form-selected-bg: #FAFAFA;
+    --booking-form-hover-border: #78909C;
+}
+
+/* ==========================================
+   Component Styles
+   ========================================== */
+
 .linked-account-message {
     text-align: center;
     --fx-line-height: 1.8;
     --fx-text-fill: var(--bootstrap-grey5);
+}
+
+/* Step Progress */
+.step-bubble {
+    transition: all 0.2s ease;
+}
+
+.step-progress-label {
+    transition: color 0.2s ease;
+}
+
+.step-progress-item.active .step-bubble {
+    background-color: var(--booking-form-primary);
+    border-color: var(--booking-form-primary);
+    color: var(--booking-form-text-on-primary);
+}
+
+.step-progress-item.completed .step-bubble {
+    border-color: var(--booking-form-primary);
+    color: var(--booking-form-primary);
+}
+
+.step-progress-item.active .step-progress-label,
+.step-progress-item.completed .step-progress-label {
+    color: var(--booking-form-primary);
+}
+
+/* Section Title */
+.section-title {
+    border-left: 4px solid var(--booking-form-primary);
+    color: var(--booking-form-text-primary);
+}
+
+/* Package/Room Cards */
+.package-card,
+.room-card {
+    transition: border-color 0.2s ease, background-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+.package-card:hover,
+.room-card:hover {
+    border-color: var(--booking-form-hover-border);
+}
+
+.package-card.selected,
+.room-card.selected {
+    border-color: var(--booking-form-primary);
+    background-color: var(--booking-form-selected-bg);
+}
+
+/* Audio Recording Cards */
+.booking-form-audio-recording-card {
+    transition: border-color 0.2s ease, background-color 0.2s ease;
+}
+
+.booking-form-audio-recording-card:hover {
+    border-color: var(--booking-form-hover-border);
+    background-color: var(--booking-form-selected-bg);
+}
+
+.booking-form-audio-recording-card.selected {
+    border-color: var(--booking-form-primary);
+    background-color: var(--booking-form-selected-bg);
+}
+
+/* ==========================================
+   Booking Page UI Builder Components
+   ========================================== */
+
+/* Selectable Card */
+.booking-form-selectable-card {
+    cursor: pointer;
+    transition: border-color 0.2s ease, background-color 0.2s ease;
+}
+
+.booking-form-selectable-card:hover {
+    border-color: var(--booking-form-hover-border);
+    background-color: var(--booking-form-selected-bg);
+}
+
+.booking-form-selectable-card.selected {
+    border-color: var(--booking-form-primary);
+    background-color: var(--booking-form-selected-bg);
+}
+
+/* Toggle Button */
+.booking-form-toggle-button {
+    cursor: pointer;
+    transition: border-color 0.2s ease, background-color 0.2s ease;
+}
+
+.booking-form-toggle-button:hover {
+    border-color: var(--booking-form-hover-border);
+    background-color: var(--booking-form-selected-bg);
+}
+
+.booking-form-toggle-button.selected {
+    background-color: var(--booking-form-primary);
+    border-color: var(--booking-form-primary);
+}
+
+/* Checkbox Option Row */
+.booking-form-checkbox-option {
+    cursor: pointer;
+    transition: border-color 0.2s ease, background-color 0.2s ease;
+}
+
+.booking-form-checkbox-option:hover {
+    border-color: var(--booking-form-hover-border);
+    background-color: var(--booking-form-selected-bg);
+}
+
+.booking-form-checkbox-option.selected {
+    border-color: var(--booking-form-primary);
+    background-color: var(--booking-form-selected-bg);
+}
+
+/* Radio Option Row */
+.booking-form-radio-option {
+    cursor: pointer;
+    transition: border-color 0.2s ease, background-color 0.2s ease;
+}
+
+.booking-form-radio-option:hover {
+    border-color: var(--booking-form-hover-border);
+    background-color: var(--booking-form-selected-bg);
+}
+
+.booking-form-radio-option.selected {
+    border-color: var(--booking-form-primary);
+    background-color: var(--booking-form-selected-bg);
+}
+
+/* Info Box Types */
+.booking-form-info-box-success {
+    background-color: #d4edda;
+    border-left: 4px solid var(--booking-form-primary);
+    border-radius: 8px;
+}
+
+.booking-form-info-box-warning {
+    background-color: #FFF9E6;
+    border: 1px solid #FFE58F;
+    border-radius: 8px;
+}
+
+.booking-form-info-box-error {
+    background-color: #f8d7da;
+    border: 1px solid #f5c2c7;
+    border-radius: 8px;
+}
+
+.booking-form-info-box-info {
+    background-color: var(--booking-form-selected-bg);
+    border-left: 4px solid var(--booking-form-primary);
+    border-radius: 8px;
+}
+
+/* Checkbox Indicator (CSS-based theming) */
+.booking-form-checkbox-indicator {
+    cursor: pointer;
+}
+
+.booking-form-checkbox-rect {
+    fill: white;
+    stroke: #dee2e6;
+    stroke-width: 2;
+    transition: all 0.15s ease;
+}
+
+/* Hover on container affects the rect child */
+.booking-form-checkbox-indicator:hover .booking-form-checkbox-rect {
+    stroke: var(--booking-form-primary);
+    fill: var(--booking-form-selected-bg);
+}
+
+.booking-form-checkbox-rect.selected {
+    fill: var(--booking-form-primary);
+    stroke: var(--booking-form-primary);
+}
+
+/* Selected state stays the same on hover */
+.booking-form-checkbox-indicator:hover .booking-form-checkbox-rect.selected {
+    fill: var(--booking-form-primary);
+    stroke: var(--booking-form-primary);
+}
+
+.booking-form-checkbox-checkmark {
+    stroke: white;
+    stroke-width: 2.5;
+    fill: transparent;
+}
+
+/* Checkmark Badge (CSS-based theming for circular badges) */
+.booking-form-checkmark-circle {
+    fill: var(--booking-form-primary);
+}
+
+.booking-form-checkmark-icon {
+    stroke: white;
+    stroke-width: 2.5;
+    fill: transparent;
+}
+
+/* Section Header */
+.booking-form-section-header {
+    background-color: var(--booking-form-selected-bg);
+    border-left: 4px solid var(--booking-form-primary);
+    border-radius: 8px;
+}
+
+.booking-form-section-header-title {
+    font-size: 20px;
+    font-weight: 600;
+    color: #475569;
+}
+
+.package-price,
+.room-price {
+    color: var(--booking-form-primary);
+}
+
+/* Buttons */
+.btn-primary,
+.booking-form-btn-primary {
+    background-color: var(--booking-form-primary);
+    color: var(--booking-form-text-on-primary);
+}
+
+.btn-back,
+.booking-form-btn-back {
+    color: var(--booking-form-text-secondary);
+}
+
+.btn-secondary:hover,
+.booking-form-btn-secondary:hover {
+    border-color: var(--booking-form-primary);
+    color: var(--booking-form-primary);
+    background-color: var(--booking-form-selected-bg);
+}
+
+/* Toggle Buttons (within booking containers) */
+.booking-container .toggle-button:hover {
+    border-color: var(--booking-form-hover-border);
+    background-color: var(--booking-form-selected-bg);
+}
+
+.booking-container .toggle-button:selected {
+    border-color: var(--booking-form-primary);
+    background-color: var(--booking-form-primary);
+    color: var(--booking-form-text-on-primary);
+}
+
+/* Date Tabs */
+.date-tab:selected .date-tab-label,
+.date-tab:selected .date-tab-desc {
+    color: var(--booking-form-primary);
+}
+
+/* ==========================================
+   Static Bootstrap-Derived Utility Classes
+   These replace hardcoded setStyle() calls
+   ========================================== */
+
+/* Text Colors (static, not theme-dependent) */
+.bookingpage-text-dark {
+    color: #212529;
+}
+
+.bookingpage-text-muted {
+    color: #6c757d;
+}
+
+.bookingpage-text-secondary {
+    color: #495057;
+}
+
+.bookingpage-text-success {
+    color: #198754;
+}
+
+.bookingpage-text-danger {
+    color: #dc3545;
+}
+
+.bookingpage-text-warning {
+    color: #8B6914;
+}
+
+.bookingpage-text-primary {
+    color: var(--booking-form-primary);
+}
+
+.bookingpage-text-center {
+    text-align: center;
+}
+
+/* Icon Colors (match text colors for SVGPath stroke icons) */
+.bookingpage-icon-dark {
+    stroke: #212529;
+    fill: transparent;
+}
+
+.bookingpage-icon-muted {
+    stroke: #6c757d;
+    fill: transparent;
+}
+
+.bookingpage-icon-primary {
+    stroke: var(--booking-form-primary);
+    fill: transparent;
+}
+
+/* Section header icon - matches dark text */
+.booking-form-section-header-icon {
+    stroke: #212529;
+    fill: transparent;
+}
+
+/* Font Sizes */
+.bookingpage-text-xs {
+    font-size: 12px;
+}
+
+.bookingpage-text-sm {
+    font-size: 13px;
+}
+
+.bookingpage-text-base {
+    font-size: 14px;
+}
+
+.bookingpage-text-md {
+    font-size: 15px;
+}
+
+.bookingpage-text-lg {
+    font-size: 16px;
+}
+
+.bookingpage-text-xl {
+    font-size: 18px;
+}
+
+.bookingpage-text-2xl {
+    font-size: 24px;
+}
+
+/* Font Weights */
+.bookingpage-font-normal {
+    font-weight: normal;
+}
+
+.bookingpage-font-medium {
+    font-weight: 500;
+}
+
+.bookingpage-font-semibold {
+    font-weight: 600;
+}
+
+.bookingpage-font-bold {
+    font-weight: 700;
+}
+
+.bookingpage-font-mono {
+    font-family: monospace;
+}
+
+/* Background Colors (static) */
+.bookingpage-bg-white {
+    background-color: white;
+}
+
+.bookingpage-bg-light {
+    background-color: #f8f9fa;
+}
+
+.bookingpage-bg-lighter {
+    background-color: #F4F4F4;
+}
+
+.bookingpage-bg-success-light {
+    background-color: #d4edda;
+}
+
+.bookingpage-bg-warning-light {
+    background-color: #FFF9E6;
+}
+
+.bookingpage-bg-danger-light {
+    background-color: #f8d7da;
+}
+
+/* Border Colors (static) */
+.bookingpage-border-light {
+    border-color: #dee2e6;
+}
+
+.bookingpage-border-gray {
+    border-color: #E6E7E7;
+}
+
+.bookingpage-border-warning {
+    border-color: #FFE69C;
+}
+
+/* Border Radius */
+.bookingpage-rounded {
+    border-radius: 8px;
+}
+
+.bookingpage-rounded-lg {
+    border-radius: 12px;
+}
+
+.bookingpage-rounded-full {
+    border-radius: 50%;
+}
+
+/* Common Card Styles */
+.bookingpage-card {
+    background-color: white;
+    border-radius: 8px;
+    border: 2px solid #dee2e6;
+    cursor: pointer;
+    transition: border-color 0.2s ease, background-color 0.2s ease;
+}
+
+.bookingpage-card:hover {
+    border-color: var(--booking-form-hover-border);
+    background-color: var(--booking-form-selected-bg);
+}
+
+.bookingpage-card.selected {
+    border-color: var(--booking-form-primary);
+    background-color: var(--booking-form-selected-bg);
+}
+
+/* Selected cards don't change on hover */
+.bookingpage-card.selected:hover {
+    border-color: var(--booking-form-primary);
+    background-color: var(--booking-form-selected-bg);
+}
+
+.bookingpage-card.disabled {
+    opacity: 0.7;
+    cursor: default;
+}
+
+.bookingpage-card.disabled:hover {
+    border-color: #dee2e6;
+    background-color: white;
+}
+
+/* Static/informative card - no hover effects */
+.bookingpage-card-static {
+    background-color: white;
+    border-radius: 8px;
+    border: 2px solid #dee2e6;
+    cursor: default;
+}
+
+.bookingpage-card-light {
+    background-color: #f8f9fa;
+    border-radius: 8px;
+    border: 1px solid #dee2e6;
+}
+
+.bookingpage-card-lighter {
+    background-color: #F4F4F4;
+    border-radius: 12px;
+}
+
+/* Warning/Info Box */
+.bookingpage-warning-box {
+    background-color: #FFF9E6;
+    border-radius: 8px;
+    border: 1px solid #FFE58F;
+}
+
+/* Error Box */
+.bookingpage-error-box {
+    background-color: #f8d7da;
+    border-radius: 8px;
+    border: 1px solid #f5c2c7;
+}
+
+/* Success Circle (e.g., checkmarks) */
+.bookingpage-success-circle {
+    background-color: #198754;
+    border-radius: 50%;
+}
+
+/* Form Input Styling */
+.bookingpage-input {
+    background-color: white;
+    border: 1px solid #ced4da;
+    border-radius: 6px;
+    font-size: 15px;
+}
+
+.bookingpage-input:focus {
+    border-color: var(--booking-form-primary);
+}
+
+/* Label Combinations (font-size + weight + color) */
+.bookingpage-label-title {
+    font-size: 16px;
+    font-weight: 700;
+    color: #212529;
+}
+
+.bookingpage-label-subtitle {
+    font-size: 14px;
+    font-weight: 600;
+    color: #212529;
+}
+
+.bookingpage-label-body {
+    font-size: 14px;
+    color: #212529;
+}
+
+.bookingpage-label-caption {
+    font-size: 13px;
+    color: #6c757d;
+}
+
+.bookingpage-label-small {
+    font-size: 12px;
+    color: #6c757d;
+}
+
+/* Price Labels */
+.bookingpage-price-large {
+    font-size: 24px;
+    font-weight: 700;
+}
+
+.bookingpage-price-medium {
+    font-size: 18px;
+    font-weight: 700;
+}
+
+/* Section Headers */
+.bookingpage-section-header {
+    background-color: #f8f9fa;
+    border-radius: 8px;
+    border-left: 4px solid var(--booking-form-primary);
+}
+
+/* Divider/Separator Lines */
+.bookingpage-divider-top {
+    border-top: 2px solid #E6E7E7;
+}
+
+.bookingpage-divider-thin-top {
+    border-top: 1px solid #E6E7E7;
+}
+
+.bookingpage-divider-thin-bottom {
+    border-bottom: 1px solid #F4F4F4;
+}
+
+/* Gray Background (for dividers) */
+.bookingpage-bg-gray {
+    background-color: #E6E7E7;
+}
+
+/* Transparent/Link Button Base */
+.bookingpage-btn-link {
+    background-color: transparent;
+    cursor: pointer;
+}
+
+/* Benefit Tag (semi-transparent pill) */
+.bookingpage-benefit-tag {
+    background-color: rgba(255,255,255,0.7);
+    border-radius: 20px;
+}
+
+/* Verification Code Digit Field */
+.bookingpage-digit-field {
+    font-size: 24px;
+    font-weight: 600;
+    background-color: white;
+    border-color: #dee2e6;
+    border-width: 2px;
+    border-radius: 8px;
+}
+
+/* Back Button Styles */
+.bookingpage-btn-back {
+    border-radius: 8px;
+    font-size: 16px;
+    font-weight: 500;
+    border-color: #dee2e6;
+    border-width: 1px;
+    background-color: white;
+    color: #495057;
+}
+
+.bookingpage-btn-back-hover {
+    border-radius: 8px;
+    font-size: 16px;
+    font-weight: 500;
+    border-color: #adb5bd;
+    border-width: 1px;
+    background-color: #f8f9fa;
+    color: #495057;
+}
+
+/* Primary Button Disabled */
+.bookingpage-btn-primary-disabled {
+    border-radius: 8px;
+    font-size: 16px;
+    font-weight: 600;
+    background-color: #adb5bd;
+    color: white;
+}
+
+/* Disabled Text (grayed out) */
+.bookingpage-text-disabled {
+    color: #adb5bd;
+}
+
+/* ==========================================
+   Booking Form Event Header
+   ========================================== */
+
+.booking-form-event-header {
+    background-color: #f8f9fa;
+    border-radius: 12px;
+    border-width: 0 0 0 4px;
+    border-style: solid;
+    border-color: var(--booking-form-primary);
+}
+
+.booking-form-event-header-title {
+    font-size: 28px;
+    font-weight: 600;
+    color: #212529;
 }

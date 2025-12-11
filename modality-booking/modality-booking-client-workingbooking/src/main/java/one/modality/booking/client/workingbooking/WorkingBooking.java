@@ -250,6 +250,20 @@ public final class WorkingBooking {
         }
     }
 
+    /**
+     * Prepares this WorkingBooking for a completely new booking, discarding any
+     * previously submitted booking data. This should be called when the user wants
+     * to make a new booking (e.g., for another person) after completing a previous one.
+     *
+     * Unlike cancelChanges() which reverts to the last submitted state, this method
+     * truly starts fresh with a new Document entity.
+     */
+    public void startNewBooking() {
+        initialDocumentAggregate = null;
+        documentPrimaryKey = null;
+        cancelChanges(); // Will create a new Document because initialDocumentAggregate is null
+    }
+
     public Future<SubmitDocumentChangesResult> submitChanges(String historyComment) {
         // In case the booking is not linked to the booker account - because the user was not logged in at the start of
         // the booking process - we set it now. (the front-office probably forced the user to log in before submit).
