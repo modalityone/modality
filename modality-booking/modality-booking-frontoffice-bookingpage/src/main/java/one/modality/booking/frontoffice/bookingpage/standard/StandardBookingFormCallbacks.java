@@ -112,12 +112,12 @@ public interface StandardBookingFormCallbacks {
      * Result of a payment operation.
      */
     class PaymentResult {
-        private final double amount;
+        private final int amount;
 
-        public PaymentResult(double amount) {
+        public PaymentResult(int amount) {
             this.amount = amount;
         }
 
-        public double getAmount() { return amount; }
+        public int getAmount() { return amount; }
     }
 }

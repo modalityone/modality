@@ -16,17 +16,18 @@ import one.modality.base.shared.entities.Event;
 import one.modality.booking.client.workingbooking.WorkingBooking;
 import one.modality.booking.client.workingbooking.WorkingBookingProperties;
 import one.modality.booking.frontoffice.bookingpage.BookingPageI18nKeys;
+import one.modality.booking.frontoffice.bookingpage.PriceFormatter;
 import one.modality.booking.frontoffice.bookingpage.components.BookingPageUIBuilder;
 import one.modality.booking.frontoffice.bookingpage.theme.BookingFormColorScheme;
-
-import static one.modality.booking.frontoffice.bookingpage.components.BookingPageUIBuilder.*;
-import static one.modality.booking.frontoffice.bookingpage.theme.BookingFormStyles.*;
 
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
+
+import static one.modality.booking.frontoffice.bookingpage.components.BookingPageUIBuilder.*;
+import static one.modality.booking.frontoffice.bookingpage.theme.BookingFormStyles.*;
 
 /**
  * Default implementation of the Summary section.
@@ -55,8 +56,7 @@ public class DefaultSummarySection implements HasSummarySection {
 
     // === PRICING ===
     protected final List<PriceLine> priceLines = new ArrayList<>();
-    protected double totalAmount = 0;
-    protected String currencySymbol = "£";
+    protected int totalAmount = 0;
 
     // === ADDITIONAL OPTIONS ===
     protected final List<AdditionalOption> additionalOptions = new ArrayList<>();
@@ -308,7 +308,7 @@ public class DefaultSummarySection implements HasSummarySection {
         Region spacer = new Region();
         HBox.setHgrow(spacer, Priority.ALWAYS);
 
-        totalAmountLabel = new Label(currencySymbol + "0.00");
+        totalAmountLabel = new Label(PriceFormatter.formatPriceWithCurrencyWithDecimals(0));
         totalAmountLabel.getStyleClass().addAll("bookingpage-price-medium", "bookingpage-font-bold");
         totalAmountLabel.setTextFill(colorScheme.get().getPrimary());
 
@@ -546,7 +546,7 @@ public class DefaultSummarySection implements HasSummarySection {
         Region spacer = new Region();
         HBox.setHgrow(spacer, Priority.ALWAYS);
 
-        Label amountLabel = new Label(currencySymbol + formatAmount(line.getAmount()));
+        Label amountLabel = new Label(PriceFormatter.formatPriceWithCurrencyWithDecimals(line.getAmount()));
         amountLabel.getStyleClass().addAll("bookingpage-text-base", "bookingpage-font-semibold", "bookingpage-text-dark");
 
         row.getChildren().addAll(labelBox, spacer, amountLabel);
@@ -555,7 +555,7 @@ public class DefaultSummarySection implements HasSummarySection {
 
     protected void updateTotalLabel() {
         if (totalAmountLabel != null) {
-            totalAmountLabel.setText(currencySymbol + formatAmount(totalAmount));
+            totalAmountLabel.setText(PriceFormatter.formatPriceWithCurrencyNoDecimals(totalAmount));
             totalAmountLabel.setTextFill(colorScheme.get().getPrimary());
         }
     }
@@ -686,13 +686,7 @@ public class DefaultSummarySection implements HasSummarySection {
     }
 
     @Override
-    public void setCurrencySymbol(String symbol) {
-        this.currencySymbol = symbol;
-        refreshPriceBreakdown();
-    }
-
-    @Override
-    public void addPriceLine(String name, String description, double amount) {
+    public void addPriceLine(String name, String description, int amount) {
         priceLines.add(new PriceLine(name, description, amount));
         refreshPriceBreakdown();
     }

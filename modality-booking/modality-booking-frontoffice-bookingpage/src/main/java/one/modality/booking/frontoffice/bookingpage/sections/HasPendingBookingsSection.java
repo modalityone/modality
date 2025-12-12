@@ -2,6 +2,7 @@ package one.modality.booking.frontoffice.bookingpage.sections;
 
 import javafx.beans.property.ObjectProperty;
 import javafx.collections.ObservableList;
+import one.modality.base.shared.entities.Document;
 import one.modality.booking.frontoffice.bookingpage.BookingFormSection;
 import one.modality.booking.frontoffice.bookingpage.theme.BookingFormColorScheme;
 
@@ -23,15 +24,15 @@ public interface HasPendingBookingsSection extends BookingFormSection {
      */
     class BookingLineItem {
         private final String name;
-        private final double amount;
+        private final int amount;
         private final boolean included;
         private final String familyCode;
 
-        public BookingLineItem(String name, double amount, boolean included) {
+        public BookingLineItem(String name, int amount, boolean included) {
             this(name, amount, included, null);
         }
 
-        public BookingLineItem(String name, double amount, boolean included, String familyCode) {
+        public BookingLineItem(String name, int amount, boolean included, String familyCode) {
             this.name = name;
             this.amount = amount;
             this.included = included;
@@ -39,7 +40,7 @@ public interface HasPendingBookingsSection extends BookingFormSection {
         }
 
         public String getName() { return name; }
-        public double getAmount() { return amount; }
+        public int getAmount() { return amount; }
         public boolean isIncluded() { return included; }
         public String getFamilyCode() { return familyCode; }
     }
@@ -48,32 +49,22 @@ public interface HasPendingBookingsSection extends BookingFormSection {
      * Represents a booking item in the cart.
      */
     class BookingItem {
-        private final Object cartItemId;
+        private final Document document;
         private final String personName;
         private final String personEmail;
         private final String eventName;
         private final String eventDetails;
         private final List<BookingLineItem> lineItems;
-        private double totalAmount;
+        private int totalAmount;
         private boolean paid;
-        private double paidAmount;
+        private int paidAmount;
         private String bookingReference;
-
-        public BookingItem(Object cartItemId, String personName, String personEmail,
-                          String eventName, String eventDetails) {
-            this.cartItemId = cartItemId;
-            this.personName = personName;
-            this.personEmail = personEmail;
-            this.eventName = eventName;
-            this.eventDetails = eventDetails;
-            this.lineItems = new ArrayList<>();
-        }
 
         /**
          * Simplified constructor for database-loaded bookings.
          */
-        public BookingItem(String personName, String personEmail, String eventName, double totalAmount) {
-            this.cartItemId = null;
+        public BookingItem(Document document, String personName, String personEmail, String eventName, int totalAmount) {
+            this.document = document;
             this.personName = personName;
             this.personEmail = personEmail;
             this.eventName = eventName;
@@ -82,24 +73,14 @@ public interface HasPendingBookingsSection extends BookingFormSection {
             this.totalAmount = totalAmount;
         }
 
-        public Object getCartItemId() { return cartItemId; }
+        public Document getDocument() {return document;}
         public String getPersonName() { return personName; }
         public String getPersonEmail() { return personEmail; }
         public String getEventName() { return eventName; }
         public String getEventDetails() { return eventDetails; }
         public List<BookingLineItem> getLineItems() { return lineItems; }
 
-        public void addLineItem(String name, double amount) {
-            lineItems.add(new BookingLineItem(name, amount, false));
-            calculateTotal();
-        }
-
-        public void addLineItem(String name, double amount, boolean included) {
-            lineItems.add(new BookingLineItem(name, amount, included));
-            calculateTotal();
-        }
-
-        public void addLineItem(String name, String familyCode, double amount) {
+        public void addLineItem(String name, String familyCode, int amount) {
             lineItems.add(new BookingLineItem(name, amount, false, familyCode));
             calculateTotal();
         }
@@ -112,18 +93,18 @@ public interface HasPendingBookingsSection extends BookingFormSection {
         private void calculateTotal() {
             totalAmount = lineItems.stream()
                     .filter(item -> !item.isIncluded())
-                    .mapToDouble(BookingLineItem::getAmount)
+                    .mapToInt(BookingLineItem::getAmount)
                     .sum();
         }
 
-        public double getTotalAmount() { return totalAmount; }
-        public void setTotalAmount(double amount) { this.totalAmount = amount; }
+        public int getTotalAmount() { return totalAmount; }
+        public void setTotalAmount(int amount) { this.totalAmount = amount; }
 
         public boolean isPaid() { return paid; }
         public void setPaid(boolean paid) { this.paid = paid; }
 
         public double getPaidAmount() { return paidAmount; }
-        public void setPaidAmount(double paidAmount) { this.paidAmount = paidAmount; }
+        public void setPaidAmount(int paidAmount) { this.paidAmount = paidAmount; }
 
         public double getBalance() { return totalAmount - paidAmount; }
 
@@ -169,7 +150,7 @@ public interface HasPendingBookingsSection extends BookingFormSection {
     /**
      * Returns the total amount of all bookings.
      */
-    double getTotalAmount();
+    int getTotalAmount();
 
     /**
      * Returns the number of bookings in the cart.

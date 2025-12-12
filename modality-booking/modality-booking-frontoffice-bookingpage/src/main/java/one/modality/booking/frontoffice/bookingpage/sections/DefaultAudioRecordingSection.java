@@ -21,6 +21,7 @@ import one.modality.base.shared.knownitems.KnownItemFamily;
 import one.modality.booking.client.workingbooking.WorkingBooking;
 import one.modality.booking.client.workingbooking.WorkingBookingProperties;
 import one.modality.booking.frontoffice.bookingpage.BookingPageI18nKeys;
+import one.modality.booking.frontoffice.bookingpage.PriceFormatter;
 import one.modality.booking.frontoffice.bookingpage.components.BookingPageUIBuilder;
 import one.modality.booking.frontoffice.bookingpage.components.StyledSectionHeader;
 import one.modality.booking.frontoffice.bookingpage.theme.BookingFormColorScheme;
@@ -371,7 +372,7 @@ public class DefaultAudioRecordingSection implements HasAudioRecordingSection {
             HBox.setHgrow(titleLabel, Priority.ALWAYS);
 
             // Price - styled via CSS
-            Label priceLabel = new Label(formatPrice(price));
+            Label priceLabel = new Label(PriceFormatter.formatPriceWithCurrencyNoDecimals(price));
             priceLabel.getStyleClass().addAll("bookingpage-font-bold", "bookingpage-text-base", "bookingpage-text-dark");
 
             // Layout
@@ -397,11 +398,6 @@ public class DefaultAudioRecordingSection implements HasAudioRecordingSection {
                     onClick.run();
                 }
             });
-        }
-
-        private String formatPrice(int priceInCents) {
-            double priceValue = priceInCents / 100.0;
-            return "\u00a3" + Math.round(priceValue);
         }
 
         Label getTitleLabel() {

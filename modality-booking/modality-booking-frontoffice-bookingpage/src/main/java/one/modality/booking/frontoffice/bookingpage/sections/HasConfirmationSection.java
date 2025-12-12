@@ -46,11 +46,6 @@ public interface HasConfirmationSection extends BookingFormSection {
     void setColorScheme(BookingFormColorScheme scheme);
 
     /**
-     * Sets the currency symbol for price display.
-     */
-    void setCurrencySymbol(String symbol);
-
-    /**
      * Sets the event name to display.
      */
     void setEventName(String name);
@@ -63,7 +58,7 @@ public interface HasConfirmationSection extends BookingFormSection {
     /**
      * Sets the payment amounts (total and paid).
      */
-    void setPaymentAmounts(double total, double paid);
+    void setPaymentAmounts(int total, int paid);
 
     /**
      * Adds a confirmed booking to display.

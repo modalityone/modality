@@ -13,14 +13,14 @@ import javafx.scene.paint.Color;
 import javafx.scene.shape.SVGPath;
 import one.modality.booking.client.workingbooking.WorkingBookingProperties;
 import one.modality.booking.frontoffice.bookingpage.BookingPageI18nKeys;
+import one.modality.booking.frontoffice.bookingpage.PriceFormatter;
 import one.modality.booking.frontoffice.bookingpage.theme.BookingFormColorScheme;
-
-import static one.modality.booking.frontoffice.bookingpage.components.BookingPageUIBuilder.formatAmountNoDecimals;
-import static one.modality.booking.frontoffice.bookingpage.theme.BookingFormStyles.*;
 
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.Locale;
+
+import static one.modality.booking.frontoffice.bookingpage.theme.BookingFormStyles.*;
 
 /**
  * Default implementation of the Confirmation section.
@@ -39,9 +39,8 @@ public class DefaultConfirmationSection implements HasConfirmationSection {
     protected final StringProperty eventNameProperty = new SimpleStringProperty("");
     protected final ObjectProperty<LocalDate> eventStartDateProperty = new SimpleObjectProperty<>();
     protected final ObjectProperty<LocalDate> eventEndDateProperty = new SimpleObjectProperty<>();
-    protected double totalAmount = 0;
-    protected double paidAmount = 0;
-    protected String currencySymbol = "£";
+    protected int totalAmount = 0;
+    protected int paidAmount = 0;
 
     // === UI COMPONENTS ===
     protected final VBox container = new VBox();
@@ -133,7 +132,7 @@ public class DefaultConfirmationSection implements HasConfirmationSection {
         // Subtitle
         String email = confirmedBookings.isEmpty() ? "" : confirmedBookings.get(0).getEmail();
         Label subtitleLabel = new Label("Thank you for your booking. We've received your payment of " +
-                currencySymbol + formatAmountNoDecimals(paidAmount) + " and sent a booking receipt to " + email + ".");
+                                        PriceFormatter.formatPriceWithCurrencyNoDecimals(paidAmount) + " and sent a booking receipt to " + email + ".");
         subtitleLabel.getStyleClass().addAll("bookingpage-text-md", "bookingpage-text-muted");
         subtitleLabel.setWrapText(true);
         subtitleLabel.setAlignment(Pos.CENTER);
@@ -288,14 +287,14 @@ public class DefaultConfirmationSection implements HasConfirmationSection {
         content.getStyleClass().add("bookingpage-card");
 
         // Total Amount row
-        HBox totalRow = createPaymentRow("Total Amount", currencySymbol + formatAmountNoDecimals(totalAmount), false);
+        HBox totalRow = createPaymentRow("Total Amount", PriceFormatter.formatPriceWithCurrencyNoDecimals(totalAmount), false);
 
         // Paid Today row
-        HBox paidRow = createPaymentRow("Paid Today", currencySymbol + formatAmountNoDecimals(paidAmount), false);
+        HBox paidRow = createPaymentRow("Paid Today", PriceFormatter.formatPriceWithCurrencyNoDecimals(paidAmount), false);
 
         content.getChildren().addAll(totalRow, paidRow);
 
-        double balanceDue = totalAmount - paidAmount;
+        int balanceDue = totalAmount - paidAmount;
         if (balanceDue > 0) {
             // Divider
             Region divider = new Region();
@@ -304,7 +303,7 @@ public class DefaultConfirmationSection implements HasConfirmationSection {
             divider.getStyleClass().add("bookingpage-bg-light");
 
             // Balance row
-            HBox balanceRow = createPaymentRow("Balance Remaining", currencySymbol + formatAmountNoDecimals(balanceDue), true);
+            HBox balanceRow = createPaymentRow("Balance Remaining", PriceFormatter.formatPriceWithCurrencyNoDecimals((int) balanceDue), true);
 
             // Info note
             VBox infoNote = new VBox();
@@ -312,8 +311,8 @@ public class DefaultConfirmationSection implements HasConfirmationSection {
             infoNote.getStyleClass().addAll("bookingpage-bg-light", "bookingpage-rounded");
             VBox.setMargin(infoNote, new Insets(12, 0, 0, 0));
 
-            Label noteLabel = new Label("The remaining balance of " + currencySymbol + formatAmountNoDecimals(balanceDue) +
-                    " can be paid online through your account anytime before the event, or at the reception desk when you arrive.");
+            Label noteLabel = new Label("The remaining balance of " + PriceFormatter.formatPriceWithCurrencyWithDecimals(balanceDue) +
+                                        " can be paid online through your account anytime before the event, or at the reception desk when you arrive.");
             noteLabel.getStyleClass().addAll("bookingpage-text-sm", "bookingpage-text-secondary");
             noteLabel.setWrapText(true);
 
@@ -389,13 +388,13 @@ public class DefaultConfirmationSection implements HasConfirmationSection {
         content.getChildren().addAll(emailStep, confirmStep);
 
         // Balance step (if applicable)
-        double balanceDue = totalAmount - paidAmount;
+        int balanceDue = totalAmount - paidAmount;
         if (balanceDue > 0) {
             HBox balanceStep = createWhatsNextStep(
                     createSmallCardIcon(colors),
                     "Pay the Balance When Ready",
-                    "The remaining " + currencySymbol + formatAmountNoDecimals(balanceDue) +
-                            " can be paid online through your account, or at reception when you arrive.",
+                "The remaining " + PriceFormatter.formatPriceWithCurrencyNoDecimals(balanceDue) +
+                " can be paid online through your account, or at reception when you arrive.",
                     colors
             );
             content.getChildren().add(balanceStep);
@@ -578,12 +577,6 @@ public class DefaultConfirmationSection implements HasConfirmationSection {
     }
 
     @Override
-    public void setCurrencySymbol(String symbol) {
-        this.currencySymbol = symbol;
-        rebuildUI();
-    }
-
-    @Override
     public void setEventName(String name) {
         eventNameProperty.set(name);
     }
@@ -595,7 +588,7 @@ public class DefaultConfirmationSection implements HasConfirmationSection {
     }
 
     @Override
-    public void setPaymentAmounts(double total, double paid) {
+    public void setPaymentAmounts(int total, int paid) {
         this.totalAmount = total;
         this.paidAmount = paid;
         rebuildUI();

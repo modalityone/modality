@@ -23,9 +23,9 @@ public interface HasSummarySection extends BookingFormSection {
     class PriceLine {
         private final String name;
         private final String description;
-        private final double amount;
+        private final int amount;
 
-        public PriceLine(String name, String description, double amount) {
+        public PriceLine(String name, String description, int amount) {
             this.name = name;
             this.description = description;
             this.amount = amount;
@@ -33,7 +33,7 @@ public interface HasSummarySection extends BookingFormSection {
 
         public String getName() { return name; }
         public String getDescription() { return description; }
-        public double getAmount() { return amount; }
+        public int getAmount() { return amount; }
     }
 
     /**
@@ -101,14 +101,9 @@ public interface HasSummarySection extends BookingFormSection {
     void setRateType(String rateType);
 
     /**
-     * Sets the currency symbol for price display.
-     */
-    void setCurrencySymbol(String symbol);
-
-    /**
      * Adds a price line item to the breakdown.
      */
-    void addPriceLine(String name, String description, double amount);
+    void addPriceLine(String name, String description, int amount);
 
     /**
      * Clears all price lines.

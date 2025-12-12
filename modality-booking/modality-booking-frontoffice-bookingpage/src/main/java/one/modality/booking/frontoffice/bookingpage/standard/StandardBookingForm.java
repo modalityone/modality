@@ -9,28 +9,33 @@ import dev.webfx.platform.windowlocation.WindowLocation;
 import dev.webfx.stack.authn.AuthenticationService;
 import dev.webfx.stack.authn.InitiateAccountCreationCredentials;
 import dev.webfx.stack.orm.datasourcemodel.service.DataSourceModelService;
+import dev.webfx.stack.orm.entity.Entities;
+import dev.webfx.stack.orm.entity.EntityList;
 import dev.webfx.stack.orm.entity.EntityStore;
 import javafx.beans.binding.Bindings;
 import one.modality.base.shared.entities.*;
-import one.modality.booking.client.workingbooking.FXPersonToBook;
-import one.modality.booking.client.workingbooking.HasWorkingBookingProperties;
-import one.modality.booking.client.workingbooking.WorkingBooking;
-import one.modality.booking.client.workingbooking.WorkingBookingHistoryHelper;
-import one.modality.booking.client.workingbooking.WorkingBookingProperties;
-import one.modality.crm.shared.services.authn.ModalityUserPrincipal;
-import one.modality.crm.shared.services.authn.fx.FXModalityUserPrincipal;
+import one.modality.base.shared.entities.markers.HasPersonalDetails;
+import one.modality.booking.client.workingbooking.*;
 import one.modality.booking.frontoffice.bookingpage.*;
 import one.modality.booking.frontoffice.bookingpage.navigation.ButtonNavigation;
 import one.modality.booking.frontoffice.bookingpage.navigation.ResponsiveStepProgressHeader;
 import one.modality.booking.frontoffice.bookingpage.sections.*;
 import one.modality.booking.frontoffice.bookingpage.theme.BookingFormColorScheme;
 import one.modality.booking.frontoffice.bookingpage.theme.ThemedBookingFormSection;
+import one.modality.crm.shared.services.authn.ModalityUserPrincipal;
+import one.modality.crm.shared.services.authn.fx.FXModalityUserPrincipal;
 import one.modality.crm.shared.services.authn.fx.FXUserPerson;
+import one.modality.ecommerce.document.service.DocumentAggregate;
+import one.modality.ecommerce.document.service.PolicyAggregate;
+import one.modality.ecommerce.payment.PaymentAllocation;
+import one.modality.ecommerce.payment.PaymentFormType;
+import one.modality.ecommerce.payment.PaymentService;
+import one.modality.ecommerce.payment.client.ClientPaymentUtil;
+import one.modality.ecommerce.payment.client.WebPaymentForm;
 import one.modality.event.frontoffice.activities.book.event.EventBookingFormSettings;
 import one.modality.event.frontoffice.activities.book.fx.FXGuestToBook;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.*;
 import java.util.function.Supplier;
 
 /**
@@ -621,7 +626,7 @@ public class StandardBookingForm extends MultiPageBookingForm {
      * Load document lines for the given documents.
      */
     private void loadDocumentLinesForDocuments(
-            dev.webfx.stack.orm.entity.EntityList<Document> documents,
+            EntityList<Document> documents,
             EntityStore entityStore,
             Object eventId,
             Object accountId,
@@ -638,7 +643,7 @@ public class StandardBookingForm extends MultiPageBookingForm {
         )
         .onFailure(error -> {
             Console.log("Error loading document lines: " + error.getMessage());
-            loadPaymentStatusForDocuments(documents, java.util.Collections.emptyList(), entityStore, eventId, accountId, onComplete);
+            loadPaymentStatusForDocuments(documents, Collections.emptyList(), entityStore, eventId, accountId, onComplete);
         })
         .onSuccess(documentLines -> {
             Console.log("Found " + documentLines.size() + " document lines");
@@ -650,8 +655,8 @@ public class StandardBookingForm extends MultiPageBookingForm {
      * Load payment status for the given documents and update UI sections.
      */
     private void loadPaymentStatusForDocuments(
-            dev.webfx.stack.orm.entity.EntityList<Document> documents,
-            java.util.List<DocumentLine> documentLines,
+            EntityList<Document> documents,
+            List<DocumentLine> documentLines,
             EntityStore entityStore,
             Object eventId,
             Object accountId,
@@ -669,7 +674,7 @@ public class StandardBookingForm extends MultiPageBookingForm {
         .onFailure(error -> {
             Console.log("Error loading payment status: " + error.getMessage());
             UiScheduler.runInUiThread(() -> {
-                populateBookingsFromDocuments(documents, documentLines, java.util.Collections.emptyList());
+                populateBookingsFromDocuments(documents, documentLines, Collections.emptyList());
                 if (onComplete != null) onComplete.run();
             });
         })
@@ -686,9 +691,9 @@ public class StandardBookingForm extends MultiPageBookingForm {
      * Populate PendingBookingsSection from database documents.
      */
     private void populateBookingsFromDocuments(
-            dev.webfx.stack.orm.entity.EntityList<Document> documents,
-            java.util.List<DocumentLine> documentLines,
-            java.util.List<MoneyTransfer> payments) {
+            EntityList<Document> documents,
+            List<DocumentLine> documentLines,
+            List<MoneyTransfer> payments) {
 
         Console.log("populateBookingsFromDocuments() called with " + documents.size() + " documents and " + documentLines.size() + " lines");
 
@@ -698,7 +703,7 @@ public class StandardBookingForm extends MultiPageBookingForm {
         }
 
         // Build map of document ID -> total paid amount
-        java.util.Map<Object, Integer> paidAmounts = new java.util.HashMap<>();
+        Map<Object, Integer> paidAmounts = new HashMap<>();
         for (MoneyTransfer mt : payments) {
             if (mt.isSuccessful() && !mt.isPending()) {
                 Object docId = mt.getDocument() != null ? mt.getDocument().getId() : null;
@@ -709,12 +714,12 @@ public class StandardBookingForm extends MultiPageBookingForm {
         }
 
         // Build map of document ID -> list of document lines
-        java.util.Map<Object, java.util.List<DocumentLine>> linesByDocument = new java.util.HashMap<>();
+        Map<Object, List<DocumentLine>> linesByDocument = new HashMap<>();
         for (DocumentLine line : documentLines) {
             Document lineDoc = line.getDocument();
             if (lineDoc != null) {
                 Object docId = lineDoc.getId();
-                linesByDocument.computeIfAbsent(docId, k -> new java.util.ArrayList<>()).add(line);
+                linesByDocument.computeIfAbsent(docId, k -> new ArrayList<>()).add(line);
             }
         }
 
@@ -735,7 +740,7 @@ public class StandardBookingForm extends MultiPageBookingForm {
             String personEmail = person != null ? person.getEmail() : "";
 
             // Get document lines for this booking
-            java.util.List<DocumentLine> lines = linesByDocument.get(doc.getId());
+            List<DocumentLine> lines = linesByDocument.get(doc.getId());
 
             // First, try to use doc.getPriceNet() but if it's 0 or null, calculate from lines
             Integer priceNetObj = doc.getPriceNet();
@@ -759,15 +764,16 @@ public class StandardBookingForm extends MultiPageBookingForm {
 
             // Create booking item
             HasPendingBookingsSection.BookingItem bookingItem = new HasPendingBookingsSection.BookingItem(
+                doc,
                 personName,
                 personEmail,
                 eventName,
-                totalPrice / 100.0  // Convert cents to currency
+                totalPrice  // Convert cents to currency
             );
 
             // Mark as paid if balance is zero or negative
             bookingItem.setPaid(balance <= 0);
-            bookingItem.setPaidAmount(paidAmount / 100.0);
+            bookingItem.setPaidAmount(paidAmount);
             Object refObj = doc.getRef();
             bookingItem.setBookingReference(refObj != null ? refObj.toString() : null);
 
@@ -785,7 +791,7 @@ public class StandardBookingForm extends MultiPageBookingForm {
                         int linePrice = linePriceObj != null ? linePriceObj : 0;
 
                         Console.log("  Line item: " + displayName + " = " + linePrice);
-                        bookingItem.addLineItem(displayName, familyCode, linePrice / 100.0);
+                        bookingItem.addLineItem(displayName, familyCode, linePrice);
                     }
                 }
             } else {
@@ -814,8 +820,7 @@ public class StandardBookingForm extends MultiPageBookingForm {
         if (defaultPaymentSection == null) {
             return Future.failedFuture("Payment section not available");
         }
-        return defaultPaymentSection.submitPaymentAsync()
-            .onSuccess(this::handlePaymentSubmit);
+        return defaultPaymentSection.submitPaymentAsync();
     }
 
     // === Internal Event Handlers ===
@@ -933,10 +938,46 @@ public class StandardBookingForm extends MultiPageBookingForm {
         navigateToPayment();
     }
 
-    private void handlePaymentSubmit(HasPaymentSection.PaymentResult sectionResult) {
+    private Future<Void> handlePaymentSubmit(HasPaymentSection.PaymentResult sectionResult) {
+
+        // Converting into paymentAllocations (required for InitiatePaymentArgument)
+        PaymentAllocation[] paymentAllocations = sectionResult.getAllocations().entrySet().stream()
+            .map(entry -> new PaymentAllocation(Entities.getPrimaryKey(entry.getKey()), entry.getValue()))
+            .toArray(PaymentAllocation[]::new);
+
+        return PaymentService.initiatePayment(
+                ClientPaymentUtil.createInitiatePaymentArgument(
+                    sectionResult.getAmount(),
+                    paymentAllocations,
+                    PaymentFormType.REDIRECTED, // We were using EMBEDDED so far, now we try REDIRECTED
+                    "/payment-return/:moneyTransferId",
+                    "/payment-cancel/:moneyTransferId")
+            )
+            .inUiThread()
+            .onFailure(paymentResult -> {
+                // TODO: show an error message to the user
+                Console.log(paymentResult);
+            })
+            .compose(paymentResult -> {
+                HasPersonalDetails buyerDetails = FXUserPerson.getUserPerson();
+                if (buyerDetails == null)
+                    buyerDetails = FXGuestToBook.getGuestToBook();
+                WebPaymentForm webPaymentForm = new WebPaymentForm(paymentResult, buyerDetails);
+                // If it's a redirected payment form, we just navigate to it
+                if (webPaymentForm.isRedirectedPaymentForm()) {
+                    webPaymentForm.navigateToRedirectedPaymentForm();
+                    return Future.succeededFuture();
+                } else {
+                    return Future.failedFuture("Embedded payment form is not yet implemented in " + getClass().getSimpleName());
+                }
+            });
+    }
+
+    // TODO: once embedded payment is implemented, call back this method on payment success
+    private void handleEmbeddedPaymentSuccess(HasPaymentSection.PaymentResult sectionResult) {
         // Convert to callbacks result type
         StandardBookingFormCallbacks.PaymentResult result = new StandardBookingFormCallbacks.PaymentResult(
-                sectionResult.getAmount()
+            sectionResult.getAmount()
         );
 
         // Update confirmation section
@@ -1019,11 +1060,11 @@ public class StandardBookingForm extends MultiPageBookingForm {
         if (props == null) return;
 
         WorkingBooking workingBooking = props.getWorkingBooking();
-        one.modality.ecommerce.document.service.DocumentAggregate documentAggregate = workingBooking.getLastestDocumentAggregate();
+        DocumentAggregate documentAggregate = workingBooking.getLastestDocumentAggregate();
         if (documentAggregate == null) return;
 
         // Get policy aggregate to access daily rates
-        one.modality.ecommerce.document.service.PolicyAggregate policyAggregate = documentAggregate.getPolicyAggregate();
+        PolicyAggregate policyAggregate = documentAggregate.getPolicyAggregate();
         if (policyAggregate == null) return;
 
         // Get all attendances
@@ -1034,7 +1075,7 @@ public class StandardBookingForm extends MultiPageBookingForm {
         List<Rate> dailyRates = policyAggregate.getDailyRates();
 
         // Group attendances by item family and calculate prices using date-specific rates
-        java.util.Map<ItemFamily, Integer> pricesByFamily = new java.util.LinkedHashMap<>();
+        Map<ItemFamily, Integer> pricesByFamily = new LinkedHashMap<>();
         for (Attendance attendance : attendances) {
             DocumentLine line = attendance.getDocumentLine();
             if (line == null) continue;
@@ -1055,11 +1096,11 @@ public class StandardBookingForm extends MultiPageBookingForm {
         }
 
         // Add a price line for each item family
-        for (java.util.Map.Entry<ItemFamily, Integer> entry : pricesByFamily.entrySet()) {
+        for (Map.Entry<ItemFamily, Integer> entry : pricesByFamily.entrySet()) {
             ItemFamily family = entry.getKey();
             int priceInCents = entry.getValue();
             String displayName = family.getName() != null ? family.getName() : "Item";
-            defaultSummarySection.addPriceLine(displayName, null, priceInCents / 100.0);
+            defaultSummarySection.addPriceLine(displayName, null, priceInCents);
         }
     }
 
@@ -1100,10 +1141,11 @@ public class StandardBookingForm extends MultiPageBookingForm {
         if (defaultPaymentSection == null || defaultPendingBookingsSection == null) return;
 
         defaultPaymentSection.clearBookingItems();
-        double total = 0;
+        int total = 0;
 
         for (HasPendingBookingsSection.BookingItem booking : defaultPendingBookingsSection.getBookings()) {
             defaultPaymentSection.addBookingItem(new HasPaymentSection.PaymentBookingItem(
+                booking.getDocument(),
                 booking.getPersonName(),
                 booking.getEventName(),
                 booking.getTotalAmount()));
@@ -1111,7 +1153,7 @@ public class StandardBookingForm extends MultiPageBookingForm {
         }
 
         defaultPaymentSection.setTotalAmount(total);
-        defaultPaymentSection.setDepositAmount(total * 0.1);
+        defaultPaymentSection.setDepositAmount(total / 10);
     }
 
     /**
@@ -1134,7 +1176,7 @@ public class StandardBookingForm extends MultiPageBookingForm {
             return;
         }
 
-        double total = props.getTotal();
+        int total = props.getTotal();
         Event event = props.getWorkingBooking().getEvent();
         String eventName = event != null ? event.getName() : "";
 
@@ -1144,6 +1186,7 @@ public class StandardBookingForm extends MultiPageBookingForm {
 
         // Create booking item for new user
         HasPendingBookingsSection.BookingItem bookingItem = new HasPendingBookingsSection.BookingItem(
+            props.getWorkingBooking().getDocument(),
             userName != null ? userName : "Guest",
             userEmail != null ? userEmail : "",
             eventName,
@@ -1204,7 +1247,7 @@ public class StandardBookingForm extends MultiPageBookingForm {
         }
 
         // Set payment amounts
-        double totalAmount;
+        int totalAmount;
         if (hasBookingsFromPendingSection) {
             totalAmount = defaultPendingBookingsSection.getTotalAmount();
         } else {

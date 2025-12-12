@@ -2,33 +2,34 @@ package one.modality.booking.frontoffice.bookingpage.sections;
 
 import dev.webfx.extras.i18n.controls.I18nControls;
 import dev.webfx.extras.webtext.HtmlText;
+import dev.webfx.platform.async.AsyncFunction;
 import dev.webfx.platform.async.Future;
-import dev.webfx.platform.async.Promise;
 import javafx.beans.property.*;
 import javafx.beans.value.ObservableBooleanValue;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
-import javafx.event.Event;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Cursor;
 import javafx.scene.Node;
-import javafx.scene.control.*;
+import javafx.scene.control.Hyperlink;
+import javafx.scene.control.Label;
+import javafx.scene.control.Slider;
+import javafx.scene.control.TextField;
 import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.SVGPath;
 import one.modality.booking.client.workingbooking.WorkingBookingProperties;
 import one.modality.booking.frontoffice.bookingpage.BookingPageI18nKeys;
+import one.modality.booking.frontoffice.bookingpage.PriceFormatter;
 import one.modality.booking.frontoffice.bookingpage.components.BookingPageUIBuilder;
 import one.modality.booking.frontoffice.bookingpage.theme.BookingFormColorScheme;
-
-import static one.modality.booking.frontoffice.bookingpage.components.BookingPageUIBuilder.formatAmountNoDecimals;
-import static one.modality.booking.frontoffice.bookingpage.theme.BookingFormStyles.*;
 
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.function.Consumer;
+
+import static one.modality.booking.frontoffice.bookingpage.theme.BookingFormStyles.*;
 
 /**
  * Default implementation of the Payment section.
@@ -47,20 +48,19 @@ public class DefaultPaymentSection implements HasPaymentSection {
     // === PAYMENT STATE ===
     protected final ObjectProperty<PaymentOption> paymentOptionProperty = new SimpleObjectProperty<>(PaymentOption.DEPOSIT);
     protected final ObjectProperty<PaymentMethod> paymentMethodProperty = new SimpleObjectProperty<>(PaymentMethod.CARD);
-    protected final DoubleProperty customAmountProperty = new SimpleDoubleProperty(0);
+    protected final IntegerProperty customAmountProperty = new SimpleIntegerProperty(0);
     protected final BooleanProperty termsAcceptedProperty = new SimpleBooleanProperty(false);
     protected final BooleanProperty processingProperty = new SimpleBooleanProperty(false);
     protected final SimpleBooleanProperty payButtonDisabled = new SimpleBooleanProperty(true);
     protected final SimpleStringProperty payButtonText = new SimpleStringProperty("Pay Now →");
 
     // === ALLOCATION STATE ===
-    protected final Map<String, DoubleProperty> allocationProperties = new HashMap<>();
+    protected final Map<Object, IntegerProperty> allocationProperties = new HashMap<>();
 
     // === BOOKING DATA ===
     protected final ObservableList<PaymentBookingItem> bookingItems = FXCollections.observableArrayList();
-    protected double totalAmount = 0;
-    protected double depositAmount = 0;
-    protected String currencySymbol = "£";
+    protected int totalAmount = 0;
+    protected int depositAmount = 0;
 
     // === UI COMPONENTS ===
     protected final VBox container = new VBox();
@@ -77,7 +77,7 @@ public class DefaultPaymentSection implements HasPaymentSection {
     protected TextField customAmountTextField;
 
     // === CALLBACKS ===
-    protected Consumer<PaymentResult> onPaymentSubmit;
+    protected AsyncFunction<PaymentResult, Void> onPaymentSubmit;
     protected Runnable onBackPressed;
 
     // === DATA ===
@@ -154,9 +154,9 @@ public class DefaultPaymentSection implements HasPaymentSection {
      * Format: "Pay £{amount} Now →"
      */
     protected void updatePayButtonText() {
-        double amount = getPaymentAmount();
-        String formattedAmount = formatAmountNoDecimals(amount);
-        payButtonText.set("Pay " + currencySymbol + formattedAmount + " Now →");
+        int amount = getPaymentAmount();
+        String formattedAmount = PriceFormatter.formatPriceWithCurrencyNoDecimals(amount);
+        payButtonText.set("Pay " + formattedAmount + " Now →");
     }
 
     protected void updateValidity() {
@@ -200,7 +200,7 @@ public class DefaultPaymentSection implements HasPaymentSection {
         Region spacer = new Region();
         HBox.setHgrow(spacer, Priority.ALWAYS);
 
-        totalAmountLabel = new Label(currencySymbol + formatAmountNoDecimals(totalAmount));
+        totalAmountLabel = new Label(PriceFormatter.formatPriceWithCurrencyNoDecimals(totalAmount));
         totalAmountLabel.setFont(fontBold(24));
         totalAmountLabel.setTextFill(colorScheme.get().getPrimary());
 
@@ -240,7 +240,7 @@ public class DefaultPaymentSection implements HasPaymentSection {
         infoBox.getChildren().addAll(nameLabel, detailsLabel);
         HBox.setHgrow(infoBox, Priority.ALWAYS);
 
-        Label priceLabel = new Label(currencySymbol + formatAmountNoDecimals(item.getAmount()));
+        Label priceLabel = new Label(PriceFormatter.formatPriceWithCurrencyNoDecimals(item.getAmount()));
         priceLabel.setFont(fontBold(18));
         priceLabel.setTextFill(colorScheme.get().getPrimary());
 
@@ -294,11 +294,11 @@ public class DefaultPaymentSection implements HasPaymentSection {
         HBox inputRow = new HBox(12);
         inputRow.setAlignment(Pos.CENTER_LEFT);
 
-        Label currencyLabel = new Label(currencySymbol);
+        Label currencyLabel = new Label(PriceFormatter.getCurrencySymbol());
         currencyLabel.getStyleClass().addAll("bookingpage-text-2xl", "bookingpage-font-semibold", "bookingpage-text-dark");
 
         customAmountTextField = new TextField();
-        customAmountTextField.setText(formatAmountNoDecimals(customAmountProperty.get()));
+        customAmountTextField.setText(PriceFormatter.formatPriceNoCurrencyNoDecimals(customAmountProperty.get()));
         customAmountTextField.setFont(fontSemiBold(24));
         customAmountTextField.setPadding(new Insets(12, 16, 12, 16));
         customAmountTextField.setBorder(border(BORDER_GRAY, 2, RADII_8));
@@ -309,7 +309,7 @@ public class DefaultPaymentSection implements HasPaymentSection {
         // Update property when text changes
         customAmountTextField.textProperty().addListener((obs, old, newVal) -> {
             try {
-                double value = Double.parseDouble(newVal);
+                int value = PriceFormatter.parsePrice(newVal);
                 handleCustomAmountChange(value);
             } catch (NumberFormatException ignored) {
                 // Ignore invalid input
@@ -319,8 +319,8 @@ public class DefaultPaymentSection implements HasPaymentSection {
         inputRow.getChildren().addAll(currencyLabel, customAmountTextField);
 
         // Range helper text
-        Label rangeLabel = new Label("Between " + currencySymbol + formatAmountNoDecimals(depositAmount) +
-                " (minimum) and " + currencySymbol + formatAmountNoDecimals(totalAmount) + " (full amount)");
+        Label rangeLabel = new Label("Between " + PriceFormatter.formatPriceWithCurrencyNoDecimals(depositAmount) +
+                                     " (minimum) and " + PriceFormatter.formatPriceWithCurrencyNoDecimals(totalAmount) + " (full amount)");
         rangeLabel.getStyleClass().add("bookingpage-label-small");
 
         // Slider
@@ -330,8 +330,9 @@ public class DefaultPaymentSection implements HasPaymentSection {
 
         // Bind slider to property bidirectionally
         customAmountSlider.valueProperty().addListener((obs, old, newVal) -> {
-            handleCustomAmountChange(newVal.doubleValue());
-            customAmountTextField.setText(formatAmountNoDecimals(newVal.doubleValue()));
+            int value = newVal.intValue();
+            handleCustomAmountChange(value);
+            customAmountTextField.setText(PriceFormatter.formatPriceNoCurrencyNoDecimals(value));
         });
 
         section.getChildren().addAll(titleLabel, inputRow, rangeLabel, customAmountSlider);
@@ -369,7 +370,7 @@ public class DefaultPaymentSection implements HasPaymentSection {
         Region footerSpacer = new Region();
         HBox.setHgrow(footerSpacer, Priority.ALWAYS);
 
-        allocationTotalLabel = new Label(currencySymbol + "0");
+        allocationTotalLabel = new Label(PriceFormatter.formatPriceWithCurrencyNoDecimals(0));
         allocationTotalLabel.setFont(fontBold(18));
         allocationTotalLabel.setTextFill(colors.getPrimary());
 
@@ -411,7 +412,7 @@ public class DefaultPaymentSection implements HasPaymentSection {
         row.getStyleClass().addAll("bookingpage-bg-white", "bookingpage-rounded");
 
         // Person name and total
-        Label nameLabel = new Label(index + ". " + item.getPersonName() + " (" + currencySymbol + formatAmountNoDecimals(item.getAmount()) + ")");
+        Label nameLabel = new Label(index + ". " + item.getPersonName() + " (" + PriceFormatter.formatPriceWithCurrencyNoDecimals(item.getAmount()) + ")");
         nameLabel.getStyleClass().addAll("bookingpage-text-sm", "bookingpage-font-medium", "bookingpage-text-dark");
         HBox.setHgrow(nameLabel, Priority.ALWAYS);
 
@@ -419,12 +420,12 @@ public class DefaultPaymentSection implements HasPaymentSection {
         HBox inputBox = new HBox(8);
         inputBox.setAlignment(Pos.CENTER_RIGHT);
 
-        Label currencyLabel = new Label(currencySymbol);
+        Label currencyLabel = new Label(PriceFormatter.getCurrencySymbol());
         currencyLabel.getStyleClass().addAll("bookingpage-text-base", "bookingpage-font-semibold", "bookingpage-text-muted");
 
         TextField allocationField = new TextField();
-        DoubleProperty allocationProp = allocationProperties.computeIfAbsent(item.getId(), k -> new SimpleDoubleProperty(0));
-        allocationField.setText(formatAmountNoDecimals(allocationProp.get()));
+        IntegerProperty allocationProp = allocationProperties.computeIfAbsent(item.getDocumentPrimaryKey(), k -> new SimpleIntegerProperty(0));
+        allocationField.setText(PriceFormatter.formatPriceNoCurrencyNoDecimals(allocationProp.get()));
         allocationField.setPrefWidth(100);
         allocationField.setFont(fontSemiBold(14));
         allocationField.setPadding(new Insets(8, 12, 8, 12));
@@ -435,7 +436,7 @@ public class DefaultPaymentSection implements HasPaymentSection {
         // Update property when text changes
         allocationField.textProperty().addListener((obs, old, newVal) -> {
             try {
-                double value = Math.max(0, Math.min(item.getAmount(), Double.parseDouble(newVal)));
+                int value = Math.max(0, Math.min(item.getAmount(), PriceFormatter.parsePrice(newVal)));
                 allocationProp.set(value);
                 updateAllocationTotal();
             } catch (NumberFormatException ignored) {
@@ -445,7 +446,7 @@ public class DefaultPaymentSection implements HasPaymentSection {
 
         // Update text when property changes
         allocationProp.addListener((obs, old, newVal) -> {
-            String newText = formatAmountNoDecimals(newVal.doubleValue());
+            String newText = PriceFormatter.formatPriceNoCurrencyNoDecimals(newVal.intValue());
             if (!allocationField.getText().equals(newText)) {
                 allocationField.setText(newText);
             }
@@ -486,14 +487,14 @@ public class DefaultPaymentSection implements HasPaymentSection {
 
     // === ALLOCATION HELPER METHODS ===
 
-    protected double getAllocationTotal() {
+    protected int getAllocationTotal() {
         return allocationProperties.values().stream()
-                .mapToDouble(DoubleProperty::get)
+                .mapToInt(IntegerProperty::get)
                 .sum();
     }
 
     protected void autoAllocate() {
-        double paymentAmount = getPaymentAmount();
+        double paymentAmount = PriceFormatter.centsPriceToDoublePrice(getPaymentAmount());
 
         if (bookingItems.isEmpty() || totalAmount <= 0) {
             updateAllocationTotal();
@@ -507,7 +508,7 @@ public class DefaultPaymentSection implements HasPaymentSection {
 
         for (int i = 0; i < bookingItems.size(); i++) {
             PaymentBookingItem item = bookingItems.get(i);
-            double proportion = item.getAmount() / totalAmount;
+            double proportion = PriceFormatter.centsPriceToDoublePrice(item.getAmount()) / PriceFormatter.centsPriceToDoublePrice(totalAmount);
             exactAllocations[i] = paymentAmount * proportion;
             flooredAllocations[i] = Math.floor(exactAllocations[i]);
             sumFloored += flooredAllocations[i];
@@ -540,15 +541,16 @@ public class DefaultPaymentSection implements HasPaymentSection {
         // Step 4: Apply allocations to properties
         for (int i = 0; i < bookingItems.size(); i++) {
             PaymentBookingItem item = bookingItems.get(i);
-            DoubleProperty prop = allocationProperties.computeIfAbsent(item.getId(), k -> new SimpleDoubleProperty(0));
-            prop.set(flooredAllocations[i]);
+            IntegerProperty prop = allocationProperties.computeIfAbsent(item.getDocumentPrimaryKey(), k -> new SimpleIntegerProperty(0));
+            int allocatedAmount = PriceFormatter.doublePriceToCentsPrice(flooredAllocations[i]);
+            prop.setValue(allocatedAmount);
         }
 
         updateAllocationTotal();
     }
 
-    protected void handleCustomAmountChange(double value) {
-        double bounded = Math.max(depositAmount, Math.min(totalAmount, value));
+    protected void handleCustomAmountChange(int value) {
+        int bounded = Math.max(depositAmount, Math.min(totalAmount, value));
         customAmountProperty.set(bounded);
         autoAllocate();
         rebuildPaymentOptions(); // To update displayed amount
@@ -557,20 +559,18 @@ public class DefaultPaymentSection implements HasPaymentSection {
     protected void updateAllocationTotal() {
         if (allocationTotalLabel == null || allocationWarningLabel == null) return;
 
-        double allocatedTotal = getAllocationTotal();
-        double paymentAmount = getPaymentAmount();
+        int allocatedTotal = getAllocationTotal();
+        int paymentAmount = getPaymentAmount();
         BookingFormColorScheme colors = colorScheme.get();
 
         // Compare rounded values since allocations are whole numbers
-        long roundedAllocated = Math.round(allocatedTotal);
-        long roundedPayment = Math.round(paymentAmount);
-        boolean matches = roundedAllocated == roundedPayment;
+        boolean matches = allocatedTotal == paymentAmount;
 
-        allocationTotalLabel.setText(currencySymbol + formatAmountNoDecimals(allocatedTotal));
+        allocationTotalLabel.setText(PriceFormatter.formatPriceWithCurrencyNoDecimals(allocatedTotal));
         allocationTotalLabel.setTextFill(matches ? colors.getPrimary() : DANGER);
 
         if (!matches) {
-            allocationWarningLabel.setText("⚠️ Allocated amount doesn't match payment amount (" + currencySymbol + formatAmountNoDecimals(paymentAmount) + ")");
+            allocationWarningLabel.setText("⚠️ Allocated amount doesn't match payment amount (" + PriceFormatter.formatPriceWithCurrencyNoDecimals(paymentAmount) + ")");
             allocationWarningLabel.setVisible(true);
             allocationWarningLabel.setManaged(true);
         } else {
@@ -602,7 +602,7 @@ public class DefaultPaymentSection implements HasPaymentSection {
     protected VBox createPaymentOptionCard(PaymentOption option, String title, String description) {
         boolean selected = paymentOptionProperty.get() == option;
         double amount = getAmountForOption(option);
-        String amountText = currencySymbol + formatAmountNoDecimals(amount);
+        String amountText = PriceFormatter.formatPriceWithCurrencyNoDecimals((int) amount);
 
         // Use helper to create the card (CSS-based styling)
         return BookingPageUIBuilder.createPaymentOptionCard(
@@ -618,10 +618,10 @@ public class DefaultPaymentSection implements HasPaymentSection {
         );
     }
 
-    protected double getAmountForOption(PaymentOption option) {
+    protected int getAmountForOption(PaymentOption option) {
         return switch (option) {
             case DEPOSIT -> depositAmount;
-            case CUSTOM -> customAmountProperty.get() > 0 ? customAmountProperty.get() : totalAmount * 0.5;
+            case CUSTOM -> customAmountProperty.get() > 0 ? customAmountProperty.get() : totalAmount / 2;
             case FULL -> totalAmount;
         };
     }
@@ -758,7 +758,7 @@ public class DefaultPaymentSection implements HasPaymentSection {
 
     protected void updateTotalDisplay() {
         if (totalAmountLabel != null) {
-            totalAmountLabel.setText(currencySymbol + formatAmountNoDecimals(totalAmount));
+            totalAmountLabel.setText(PriceFormatter.formatPriceWithCurrencyNoDecimals(totalAmount));
             totalAmountLabel.setTextFill(colorScheme.get().getPrimary());
         }
     }
@@ -831,16 +831,10 @@ public class DefaultPaymentSection implements HasPaymentSection {
     }
 
     @Override
-    public void setCurrencySymbol(String symbol) {
-        this.currencySymbol = symbol;
-        updateTotalDisplay();
-    }
-
-    @Override
-    public void setTotalAmount(double amount) {
+    public void setTotalAmount(int amount) {
         this.totalAmount = amount;
-        this.depositAmount = amount * 0.1; // 10% deposit
-        this.customAmountProperty.set(amount * 0.5); // Default 50%
+        this.depositAmount = amount / 10; // 10% deposit
+        this.customAmountProperty.set(amount / 2); // Default 50%
         updateTotalDisplay();
         rebuildPaymentOptions();
         updateCustomAmountSectionVisibility();
@@ -849,12 +843,12 @@ public class DefaultPaymentSection implements HasPaymentSection {
     }
 
     @Override
-    public double getTotalAmount() {
+    public int getTotalAmount() {
         return totalAmount;
     }
 
     @Override
-    public void setDepositAmount(double amount) {
+    public void setDepositAmount(int amount) {
         this.depositAmount = amount;
         rebuildPaymentOptions();
         updateCustomAmountSectionVisibility();
@@ -865,7 +859,7 @@ public class DefaultPaymentSection implements HasPaymentSection {
     public void addBookingItem(PaymentBookingItem item) {
         bookingItems.add(item);
         // Initialize allocation for this item
-        allocationProperties.computeIfAbsent(item.getId(), k -> new SimpleDoubleProperty(0));
+        allocationProperties.computeIfAbsent(item.getDocumentPrimaryKey(), k -> new SimpleIntegerProperty(0));
         rebuildBookingSummary();
         updateAllocationSectionVisibility();
     }
@@ -877,7 +871,7 @@ public class DefaultPaymentSection implements HasPaymentSection {
         bookingItems.addAll(items);
         // Initialize allocations for all items
         for (PaymentBookingItem item : items) {
-            allocationProperties.computeIfAbsent(item.getId(), k -> new SimpleDoubleProperty(0));
+            allocationProperties.computeIfAbsent(item.getDocumentPrimaryKey(), k -> new SimpleIntegerProperty(0));
         }
         rebuildBookingSummary();
         updateAllocationSectionVisibility();
@@ -902,7 +896,7 @@ public class DefaultPaymentSection implements HasPaymentSection {
     }
 
     @Override
-    public double getPaymentAmount() {
+    public int getPaymentAmount() {
         return getAmountForOption(paymentOptionProperty.get());
     }
 
@@ -912,7 +906,7 @@ public class DefaultPaymentSection implements HasPaymentSection {
     }
 
     @Override
-    public void setOnPaymentSubmit(Consumer<PaymentResult> callback) {
+    public void setOnPaymentSubmit(AsyncFunction<PaymentResult, Void> callback) {
         this.onPaymentSubmit = callback;
     }
 
@@ -922,21 +916,7 @@ public class DefaultPaymentSection implements HasPaymentSection {
     }
 
     @Override
-    public void submitPayment() {
-        if (onPaymentSubmit != null) {
-            PaymentResult result = new PaymentResult(
-                    paymentOptionProperty.get(),
-                    paymentMethodProperty.get(),
-                    getPaymentAmount(),
-                    getAllocations()
-            );
-            onPaymentSubmit.accept(result);
-        }
-    }
-
-    @Override
     public Future<PaymentResult> submitPaymentAsync() {
-        Promise<PaymentResult> promise = Promise.promise();
 
         PaymentResult result = new PaymentResult(
                 paymentOptionProperty.get(),
@@ -947,13 +927,12 @@ public class DefaultPaymentSection implements HasPaymentSection {
 
         // Notify callback if set
         if (onPaymentSubmit != null) {
-            onPaymentSubmit.accept(result);
+            return onPaymentSubmit.apply(result)
+                .map(ignored -> result);
         }
 
-        // Complete the promise with the result
-        promise.complete(result);
-
-        return promise.future();
+        // Should be for testing only (skipping actual payment)
+        return Future.succeededFuture(result);
     }
 
     @Override
@@ -972,17 +951,17 @@ public class DefaultPaymentSection implements HasPaymentSection {
     }
 
     @Override
-    public Map<String, Double> getAllocations() {
-        Map<String, Double> result = new HashMap<>();
-        for (Map.Entry<String, DoubleProperty> entry : allocationProperties.entrySet()) {
+    public Map<Object, Integer> getAllocations() {
+        Map<Object, Integer> result = new HashMap<>();
+        for (Map.Entry<Object, IntegerProperty> entry : allocationProperties.entrySet()) {
             result.put(entry.getKey(), entry.getValue().get());
         }
         return result;
     }
 
     @Override
-    public void setAllocation(String itemId, double amount) {
-        DoubleProperty prop = allocationProperties.get(itemId);
+    public void setAllocation(Object itemId, int amount) {
+        IntegerProperty prop = allocationProperties.get(itemId);
         if (prop != null) {
             prop.set(amount);
             updateAllocationTotal();

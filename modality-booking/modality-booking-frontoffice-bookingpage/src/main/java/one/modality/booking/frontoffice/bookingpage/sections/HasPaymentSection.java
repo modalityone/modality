@@ -1,16 +1,15 @@
 package one.modality.booking.frontoffice.bookingpage.sections;
 
+import dev.webfx.platform.async.AsyncFunction;
 import dev.webfx.platform.async.Future;
 import javafx.beans.property.ObjectProperty;
 import javafx.beans.value.ObservableBooleanValue;
+import one.modality.base.shared.entities.Document;
 import one.modality.booking.frontoffice.bookingpage.BookingFormSection;
 import one.modality.booking.frontoffice.bookingpage.theme.BookingFormColorScheme;
 
-import dev.webfx.platform.util.uuid.Uuid;
-
 import java.util.List;
 import java.util.Map;
-import java.util.function.Consumer;
 
 /**
  * Interface for the "Payment" section of a booking form.
@@ -53,32 +52,27 @@ public interface HasPaymentSection extends BookingFormSection {
      * Represents a booking item displayed in the payment summary.
      */
     class PaymentBookingItem {
-        private final String id;
+        private final Document document;
         private final String personName;
         private final String details;
-        private final double amount;
+        private final int amount;
 
         /**
          * Creates a booking item with a specific ID.
          */
-        public PaymentBookingItem(String id, String personName, String details, double amount) {
-            this.id = id;
+        public PaymentBookingItem(Document document, String personName, String details, int amount) {
+            this.document = document;
             this.personName = personName;
             this.details = details;
             this.amount = amount;
         }
 
-        /**
-         * Creates a booking item with an auto-generated ID.
-         */
-        public PaymentBookingItem(String personName, String details, double amount) {
-            this(Uuid.randomUuid(), personName, details, amount);
-        }
 
-        public String getId() { return id; }
+        public Document getDocument() { return document; }
         public String getPersonName() { return personName; }
         public String getDetails() { return details; }
-        public double getAmount() { return amount; }
+        public int getAmount() { return amount; }
+        Object getDocumentPrimaryKey() { return document.getPrimaryKey(); }
     }
 
     /**
@@ -87,10 +81,10 @@ public interface HasPaymentSection extends BookingFormSection {
     class PaymentResult {
         private final PaymentOption paymentOption;
         private final PaymentMethod paymentMethod;
-        private final double amount;
-        private final Map<String, Double> allocations;
+        private final int amount;
+        private final Map<Object, Integer> allocations;
 
-        public PaymentResult(PaymentOption paymentOption, PaymentMethod paymentMethod, double amount, Map<String, Double> allocations) {
+        public PaymentResult(PaymentOption paymentOption, PaymentMethod paymentMethod, int amount, Map<Object, Integer> allocations) {
             this.paymentOption = paymentOption;
             this.paymentMethod = paymentMethod;
             this.amount = amount;
@@ -99,8 +93,8 @@ public interface HasPaymentSection extends BookingFormSection {
 
         public PaymentOption getPaymentOption() { return paymentOption; }
         public PaymentMethod getPaymentMethod() { return paymentMethod; }
-        public double getAmount() { return amount; }
-        public Map<String, Double> getAllocations() { return allocations; }
+        public int getAmount() { return amount; }
+        public Map<Object, Integer> getAllocations() { return allocations; }
     }
 
     /**
@@ -114,24 +108,19 @@ public interface HasPaymentSection extends BookingFormSection {
     void setColorScheme(BookingFormColorScheme scheme);
 
     /**
-     * Sets the currency symbol for price display.
-     */
-    void setCurrencySymbol(String symbol);
-
-    /**
      * Sets the total amount to be paid.
      */
-    void setTotalAmount(double amount);
+    void setTotalAmount(int amount);
 
     /**
      * Returns the total amount.
      */
-    double getTotalAmount();
+    int getTotalAmount();
 
     /**
      * Sets the minimum deposit amount.
      */
-    void setDepositAmount(double amount);
+    void setDepositAmount(int amount);
 
     /**
      * Adds a booking item to the payment summary.
@@ -161,7 +150,7 @@ public interface HasPaymentSection extends BookingFormSection {
     /**
      * Returns the amount to be charged based on selected option.
      */
-    double getPaymentAmount();
+    int getPaymentAmount();
 
     /**
      * Returns whether the terms and conditions have been accepted.
@@ -171,17 +160,12 @@ public interface HasPaymentSection extends BookingFormSection {
     /**
      * Sets the callback for when payment is submitted.
      */
-    void setOnPaymentSubmit(Consumer<PaymentResult> callback);
+    void setOnPaymentSubmit(AsyncFunction<PaymentResult, Void> callback);
 
     /**
      * Sets the callback for when back is pressed.
      */
     void setOnBackPressed(Runnable callback);
-
-    /**
-     * Submits the payment synchronously.
-     */
-    void submitPayment();
 
     /**
      * Submits the payment asynchronously.
@@ -211,12 +195,12 @@ public interface HasPaymentSection extends BookingFormSection {
      * Returns the current payment allocations by booking item ID.
      * @return map of item ID to allocated amount
      */
-    Map<String, Double> getAllocations();
+    Map<Object, Integer> getAllocations();
 
     /**
      * Sets the allocation amount for a specific booking item.
      * @param itemId the booking item ID
      * @param amount the amount to allocate
      */
-    void setAllocation(String itemId, double amount);
+    void setAllocation(Object itemId, int amount);
 }
