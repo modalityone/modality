@@ -1,4 +1,4 @@
-package one.modality.hotel.backoffice.activities.reception;
+package one.modality.booking.backoffice.activities.registration;
 
 import dev.webfx.extras.i18n.HasI18nKey;
 import dev.webfx.extras.operation.HasOperationCode;
@@ -14,32 +14,32 @@ import dev.webfx.stack.routing.uirouter.operations.RouteRequestEmitter;
 /**
  * @author Bruno Salmon
  */
-public final class ReceptionRouting {
+public final class RegistrationRouting {
 
-    private final static String PATH = "/reception";
-    private final static String OPERATION_CODE = "RouteToReception";
+    private final static String PATH = "/registration";
+    private final static String OPERATION_CODE = "RouteToRegistration";
     public static String getPath() {
         return PATH;
     }
 
-    public static final class ReceptionUiRoute extends UiRouteImpl {
+    public static final class RegistrationUiRoute extends UiRouteImpl {
 
-        public ReceptionUiRoute() {
+        public RegistrationUiRoute() {
             super(uiRoute());
         }
 
         public static UiRoute<?> uiRoute() {
-            return UiRoute.create(ReceptionRouting.getPath()
+            return UiRoute.create(RegistrationRouting.getPath()
                     , true
-                    , ReceptionActivity::new
+                    , RegistrationActivity::new
                     , ViewDomainActivityContextFinal::new
             );
         }
     }
 
-    public static class RouteToReceptionRequest extends RoutePushRequest implements HasOperationCode, HasI18nKey {
+    public static class RouteToRegistrationRequest extends RoutePushRequest implements HasOperationCode, HasI18nKey {
 
-        public RouteToReceptionRequest(BrowsingHistory browsingHistory) {
+        public RouteToRegistrationRequest(BrowsingHistory browsingHistory) {
             super(getPath(), browsingHistory);
         }
 
@@ -50,15 +50,15 @@ public final class ReceptionRouting {
 
         @Override
         public Object getI18nKey() {
-            return ReceptionI18nKeys.ReceptionTile;
+            return RegistrationI18nKeys.RegistrationMenu;
         }
     }
 
-    public static class RouteToReceptionRequestEmitter implements RouteRequestEmitter {
+    public static class RouteToRegistrationRequestEmitter implements RouteRequestEmitter {
 
         @Override
         public RouteRequest instantiateRouteRequest(UiRouteActivityContext context) {
-            return new RouteToReceptionRequest(context.getHistory());
+            return new RouteToRegistrationRequest(context.getHistory());
         }
     }
 }

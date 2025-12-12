@@ -8,7 +8,6 @@ public interface BackOfficeHomeI18nKeys {
     Object FinanceMenu = "FinanceMenu";
     Object HomeMenu = "HomeMenu";
     Object Registration = "Registration";
-    Object RegistrationMenu = "RegistrationMenu";
     Object SecurityMenu = "SecurityMenu";
     Object Transportation = "Transportation";
     Object TransportationMenu = "TransportationMenu";

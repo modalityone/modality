@@ -1,7 +1,8 @@
 package one.modality.booking.backoffice.activities.bookings;
 
-import dev.webfx.platform.windowhistory.spi.BrowsingHistory;
 import dev.webfx.extras.i18n.HasI18nKey;
+import dev.webfx.extras.operation.HasOperationCode;
+import dev.webfx.platform.windowhistory.spi.BrowsingHistory;
 import dev.webfx.stack.orm.domainmodel.activity.viewdomain.impl.ViewDomainActivityContextFinal;
 import dev.webfx.stack.routing.router.auth.authz.RouteRequest;
 import dev.webfx.stack.routing.router.util.PathBuilder;
@@ -10,9 +11,7 @@ import dev.webfx.stack.routing.uirouter.activity.uiroute.UiRouteActivityContext;
 import dev.webfx.stack.routing.uirouter.impl.UiRouteImpl;
 import dev.webfx.stack.routing.uirouter.operations.RoutePushRequest;
 import dev.webfx.stack.routing.uirouter.operations.RouteRequestEmitter;
-import dev.webfx.extras.operation.HasOperationCode;
 import one.modality.base.client.util.routing.ModalityRoutingUtil;
-import one.modality.base.backoffice.activities.home.BackOfficeHomeI18nKeys;
 
 import java.time.LocalDate;
 
@@ -25,7 +24,7 @@ public final class BookingsRouting {
     private final static String ANY_PATH = "/bookings(/organization/:organizationId)?(/event/:eventId)?(/document/:documentId)?(/day/:day)?(/arrivals)?(/departures)?(/minday/:minDay)?(/maxday/:maxDay)?(/filter/:filter)?(/groupby/:groupBy)?(/orderby/:orderBy)?(/columns/:columns)?(/export/:activityStateId)?";
     private final static String EVENT_PATH = "/bookings/event/:eventId";
     private final static String DOCUMENT_PATH = "/bookings/document/:documentId";
-    private final static String OPERATION_CODE = "RouteToRegistration"; // Temporary
+    private final static String OPERATION_CODE = "RouteToBookings";
 
     public static String getAnyPath() {
         return ANY_PATH;
@@ -78,7 +77,7 @@ public final class BookingsRouting {
 
         @Override
         public Object getI18nKey() {
-            return BackOfficeHomeI18nKeys.RegistrationMenu;
+            return BookingsI18nKeys.BookingsAndSearch;
         }
     }
 

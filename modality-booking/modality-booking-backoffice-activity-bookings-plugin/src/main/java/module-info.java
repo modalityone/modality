@@ -9,7 +9,6 @@ module modality.booking.backoffice.activity.bookings.plugin {
     requires javafx.base;
     requires javafx.controls;
     requires javafx.graphics;
-    requires modality.base.backoffice.activity.home.plugin;
     requires modality.base.backoffice.mainframe.fx;
     requires modality.base.backoffice.masterslave;
     requires modality.base.backoffice.operations.generic;
