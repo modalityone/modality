@@ -1,0 +1,53 @@
+/* Modern Tab Design for Super Admin Sub-Tabs */
+.tab-header-area {
+    -fx-background-color: white;
+    -fx-padding: 0;
+    -fx-border-radius: 8 8 0 0;
+    -fx-background-radius: 8 8 0 0;
+}
+
+.tab-header-background {
+    -fx-background-color: white;
+    -fx-border-radius: 8 8 0 0;
+    -fx-background-radius: 8 8 0 0;
+}
+
+.headers-region {
+    -fx-background-color: white;
+}
+
+.tab {
+    -fx-background-color: transparent;
+    -fx-background-radius: 0;
+    -fx-border-color: transparent transparent transparent transparent;
+    -fx-border-width: 0 0 3 0;
+    -fx-padding: 12 24 12 24;
+}
+
+.tab-label {
+    -fx-text-fill: #666;
+    -fx-font-size: 14;
+}
+
+.tab:hover .tab-label {
+    -fx-text-fill: #00b8d4;
+}
+
+.tab:selected {
+    -fx-background-color: transparent;
+    -fx-border-color: transparent transparent #00b8d4 transparent;
+}
+
+.tab:selected .tab-label {
+    -fx-text-fill: #00b8d4;
+}
+
+.tab .focus-indicator {
+    -fx-border-color: transparent;
+}
+
+.tab-content-area {
+    -fx-background-color: white;
+    -fx-border-color: transparent;
+}
+

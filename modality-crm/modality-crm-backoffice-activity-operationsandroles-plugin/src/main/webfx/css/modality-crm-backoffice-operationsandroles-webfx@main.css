@@ -1,5 +1,7 @@
-/* Rights Management Super Admin Plugin - Web CSS */
-/* Note: This file contains only CSS classes actually used in the superadmin module Java code */
+/* Rights Management Super Admin Plugin - Unified WebFX CSS (v1 subset)
+   Contains only rules supported by the WebFX unified translator:
+   - background-*, border-*, and custom properties like --fx-text-fill
+   Keep unsupported shorthands and web/JavaFX-only rules in their respective files. */
 
 /* Root variables */
 :root {
@@ -21,17 +23,19 @@
 
 /* Route label (monospace) - used in Operations view */
 .admin-route-label {
-    font-family: 'Courier New', monospace;
     background-color: var(--admin-background-light);
     border-radius: 4px;
+    --fx-background-radius: 4px;
     --fx-text-fill: var(--admin-text-secondary);
+    font-family: 'Courier New', monospace;
 }
 
 /* Info banner - used in dialogs */
 .admin-info-banner {
     background-color: var(--admin-info-bg-color);
-    border-left: 3px solid var(--admin-info-border-color);
     border-radius: 4px;
+    --fx-background-radius: 4px;
+    border-left: 3px solid var(--admin-info-border-color);
 }
 
 .admin-info-banner-text {
@@ -41,14 +45,14 @@
 
 /* Role Dialog - Selected Permissions */
 .role-dialog-permissions-title {
+    --fx-text-fill: #333;
     font-weight: bold;
     font-size: 14px;
-    --fx-text-fill: #333;
 }
 
 .role-dialog-permissions-count {
-    font-size: 12px;
     --fx-text-fill: #666;
+    font-size: 12px;
 }
 
 .role-dialog-permissions-pane {
@@ -57,6 +61,7 @@
     border-width: 1px;
     border-radius: 4px;
     border-style: solid;
+    --fx-background-radius: 4px;
 }
 
 .role-dialog-empty-message {
@@ -68,20 +73,23 @@
 /* Permission Chip Styles - used in Roles dialog */
 .permission-chip-operation {
     background-color: #d1ecf1;
-    border: 1px solid rgba(12, 84, 96, 0.13);
     border-radius: 4px;
+    --fx-background-radius: 4px;
+    border: 1px solid rgba(12, 84, 96, 0.13);
 }
 
 .permission-chip-group {
     background-color: #fff8e1;
-    border: 1px solid rgba(245, 127, 23, 0.13);
     border-radius: 4px;
+    --fx-background-radius: 4px;
+    border: 1px solid rgba(245, 127, 23, 0.13);
 }
 
 .permission-chip-rule {
     background-color: #e8f5e9;
-    border: 1px solid rgba(46, 125, 50, 0.13);
     border-radius: 4px;
+    --fx-background-radius: 4px;
+    border: 1px solid rgba(46, 125, 50, 0.13);
 }
 
 .permission-chip-label-operation {
@@ -99,26 +107,31 @@
     font-size: 13px;
 }
 
-.permission-chip-remove-btn {
-    font-size: 16px;
-    font-weight: bold;
-    cursor: pointer;
-}
-
 .permission-chip-remove-btn-operation {
     --fx-text-fill: #0c5460;
+    font-size: 16px;
+    font-weight: bold;
 }
 
 .permission-chip-remove-btn-group {
     --fx-text-fill: #f57f17;
+    font-size: 16px;
+    font-weight: bold;
 }
 
 .permission-chip-remove-btn-rule {
     --fx-text-fill: #2e7d32;
+    font-size: 16px;
+    font-weight: bold;
 }
 
 .permission-chip-remove-btn-operation:hover {
     --fx-text-fill: #dc3545;
+}
+
+/* Shared cursor interactions */
+.permission-chip-remove-btn {
+    cursor: pointer;
 }
 
 .permission-chip-remove-btn-group:hover {
@@ -132,14 +145,15 @@
 /* Operation Group Selection Panel - used in OperationGroupDialog */
 .operation-selection-panel {
     background-color: #f9f9f9;
-    border: 1px dashed #ddd;
     border-radius: 4px;
+    --fx-background-radius: 4px;
+    border: 1px dashed #ddd;
 }
 
 .operation-selection-count-label {
+    --fx-text-fill: #666;
     font-weight: bold;
     font-size: 13px;
-    --fx-text-fill: #666;
 }
 
 .operation-selection-empty-message {
@@ -150,8 +164,9 @@
 /* Operation Selection Chip Styles - used in OperationGroupDialog */
 .operation-selection-chip {
     background-color: #d1ecf1;
-    border: 1px solid #bee5eb;
     border-radius: 4px;
+    --fx-background-radius: 4px;
+    border: 1px solid #bee5eb;
 }
 
 .operation-selection-chip-label {
@@ -175,10 +190,14 @@
     background-color: #e9ecef;
 }
 
-.grid-head Text,
-.grid-head Label {
+/* Table header text & labels (migrated from web@; selector tags translated for JavaFX) */
+.grid-head fx-text,
+.grid-head fx-label {
     font-weight: bold;
     font-size: 13px;
+    /* Web: fill applies to SVG/Text; JavaFX: color → -fx-text-fill, and --fx-fill → -fx-fill for Text */
+    color: #495057;
     fill: #495057;
-    --fx-text-fill: #495057;
+    --fx-fill: #495057;
 }
+
