@@ -179,7 +179,7 @@ public class DefaultYourInformationSection implements HasYourInformationSection 
     protected void createFormFields() {
         // Email field
         emailField = new TextField();
-        emailField.setPromptText("your.email@example.com");
+        I18n.bindI18nPromptProperty(emailField.promptTextProperty(), BookingPageI18nKeys.EmailPlaceholder);
         emailField.textProperty().bindBidirectional(emailProperty);
         styleInput(emailField);
 
@@ -190,12 +190,12 @@ public class DefaultYourInformationSection implements HasYourInformationSection 
 
         // Password fields (both visible and hidden versions)
         passwordField = new PasswordField();
-        passwordField.setPromptText("Enter your password");
+        I18n.bindI18nPromptProperty(passwordField.promptTextProperty(), BookingPageI18nKeys.EnterYourPassword);
         passwordField.textProperty().bindBidirectional(passwordProperty);
         styleInput(passwordField);
 
         visiblePasswordField = new TextField();
-        visiblePasswordField.setPromptText("Enter your password");
+        I18n.bindI18nPromptProperty(visiblePasswordField.promptTextProperty(), BookingPageI18nKeys.EnterYourPassword);
         visiblePasswordField.textProperty().bindBidirectional(passwordProperty);
         styleInput(visiblePasswordField);
         visiblePasswordField.setVisible(false);
@@ -213,13 +213,13 @@ public class DefaultYourInformationSection implements HasYourInformationSection 
 
         // Name fields
         firstNameField = new TextField();
-        firstNameField.setPromptText("Sarah");
+        I18n.bindI18nPromptProperty(firstNameField.promptTextProperty(), BookingPageI18nKeys.FirstNamePlaceholder);
         firstNameField.textProperty().bindBidirectional(firstNameProperty);
         styleInput(firstNameField);
         firstNameErrorLabel = createErrorLabel();
 
         lastNameField = new TextField();
-        lastNameField.setPromptText("Johnson");
+        I18n.bindI18nPromptProperty(lastNameField.promptTextProperty(), BookingPageI18nKeys.LastNamePlaceholder);
         lastNameField.textProperty().bindBidirectional(lastNameProperty);
         styleInput(lastNameField);
         lastNameErrorLabel = createErrorLabel();
@@ -279,7 +279,10 @@ public class DefaultYourInformationSection implements HasYourInformationSection 
                 }
             });
 
-            // Focus styling - only border color changes dynamically
+            // Set initial border (before any focus change)
+            digitField.setBorder(border(BORDER_LIGHT, 1, RADII_8));
+
+            // Focus styling - border color changes dynamically on focus
             digitField.focusedProperty().addListener((obs, wasFocused, isFocused) -> {
                 BookingFormColorScheme colors = colorScheme.get();
                 Color borderColor = isFocused ? colors.getPrimary() : BORDER_LIGHT;
@@ -1282,7 +1285,7 @@ public class DefaultYourInformationSection implements HasYourInformationSection 
 
         // Validate email
         if (email.isEmpty() || !isValidEmail(email)) {
-            showError(emailErrorLabel, "Please enter a valid email address");
+            showError(emailErrorLabel, I18n.getI18nText(BookingPageI18nKeys.InvalidEmail));
             return;
         }
 
@@ -1308,14 +1311,14 @@ public class DefaultYourInformationSection implements HasYourInformationSection 
         String password = passwordProperty.get();
 
         if (password == null || password.isEmpty()) {
-            showError(passwordErrorLabel, "Please enter your password");
+            showError(passwordErrorLabel, I18n.getI18nText(BookingPageI18nKeys.PasswordRequired));
             return;
         }
 
         // Check rate limiting
         int cooldownRemaining = getLoginCooldownRemaining();
         if (cooldownRemaining > 0) {
-            showError(passwordErrorLabel, "Please wait " + cooldownRemaining + " seconds before trying again");
+            showError(passwordErrorLabel, I18n.getI18nText(BookingPageI18nKeys.WaitSeconds, cooldownRemaining));
             playShakeAnimation(signInButton);
             return;
         }
@@ -1338,7 +1341,7 @@ public class DefaultYourInformationSection implements HasYourInformationSection 
                             loginAttemptCount++;
                             lastLoginAttemptTime = System.currentTimeMillis();
 
-                            showError(passwordErrorLabel, "Incorrect login or password");
+                            showError(passwordErrorLabel, I18n.getI18nText(BookingPageI18nKeys.IncorrectPassword));
                             playShakeAnimation(passwordField.isVisible() ? passwordField : visiblePasswordField);
 
                             // Start cooldown timer - defer to ensure it runs AFTER AsyncSpinner restores button state
@@ -1372,14 +1375,14 @@ public class DefaultYourInformationSection implements HasYourInformationSection 
         boolean hasError = false;
 
         if (firstName.length() < 2) {
-            showError(firstNameErrorLabel, "First name required (min 2 characters)");
+            showError(firstNameErrorLabel, I18n.getI18nText(BookingPageI18nKeys.FirstNameRequired));
             hasError = true;
         } else {
             clearError(firstNameErrorLabel);
         }
 
         if (lastName.length() < 2) {
-            showError(lastNameErrorLabel, "Last name required (min 2 characters)");
+            showError(lastNameErrorLabel, I18n.getI18nText(BookingPageI18nKeys.LastNameRequired));
             hasError = true;
         } else {
             clearError(lastNameErrorLabel);
@@ -1430,14 +1433,14 @@ public class DefaultYourInformationSection implements HasYourInformationSection 
         String code = verificationCodeProperty.get();
 
         if (code == null || code.length() != 6) {
-            showError(codeErrorLabel, "Please enter the 6-digit code");
+            showError(codeErrorLabel, I18n.getI18nText(BookingPageI18nKeys.VerificationCodeRequired));
             return;
         }
 
         // Check rate limiting
         int cooldownRemaining = getCodeCooldownRemaining();
         if (cooldownRemaining > 0) {
-            showError(codeErrorLabel, "Please wait " + cooldownRemaining + " seconds before trying again");
+            showError(codeErrorLabel, I18n.getI18nText(BookingPageI18nKeys.WaitSeconds, cooldownRemaining));
             playShakeAnimation(codeDigitsContainer);
             return;
         }

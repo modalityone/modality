@@ -51,7 +51,6 @@ public final class BookingFormStyles {
 
     // Background colors
     public static final Color BG_WHITE = Color.WHITE;
-    public static final Color BG_LIGHT = Color.web("#f8f9fa");
     public static final Color BG_LIGHTER = Color.web("#F4F4F4");
 
     // Text colors
@@ -59,19 +58,7 @@ public final class BookingFormStyles {
     public static final Color TEXT_MUTED = Color.web("#6c757d");
     public static final Color TEXT_SECONDARY = Color.web("#495057");
 
-    // Status colors
-    public static final Color SUCCESS = Color.web("#198754");
     public static final Color DANGER = Color.web("#dc3545");
-    public static final Color WARNING_TEXT = Color.web("#8B6914");
-    public static final Color WARNING_ICON = Color.web("#D97706");
-
-    // Warning box colors
-    public static final Color WARNING_BG = Color.web("#FFF9E6");
-    public static final Color WARNING_BORDER = Color.web("#FFE58F");
-
-    // Error box colors
-    public static final Color ERROR_BG = Color.web("#f8d7da");
-    public static final Color ERROR_BORDER = Color.web("#f5c2c7");
 
     // Progress/divider colors
     public static final Color PROGRESS_TRACK = Color.web("#e0e0e0");
@@ -85,9 +72,6 @@ public final class BookingFormStyles {
     public static final CornerRadii RADII_8 = new CornerRadii(8);
     public static final CornerRadii RADII_12 = new CornerRadii(12);
     public static final CornerRadii RADII_14 = new CornerRadii(14);
-    public static final CornerRadii RADII_18 = new CornerRadii(18);
-    public static final CornerRadii RADII_20 = new CornerRadii(20);
-    public static final CornerRadii RADII_FULL = new CornerRadii(1000); // For pills/circles
 
     // =============================================
     // STANDARD DROP SHADOWS
@@ -95,12 +79,6 @@ public final class BookingFormStyles {
 
     /** Standard card shadow */
     public static final DropShadow SHADOW_CARD = createDropShadow(8, 0.1, 0, 2);
-
-    /** Subtle button shadow */
-    public static final DropShadow SHADOW_BUTTON = createDropShadow(4, 0.1, 0, 2);
-
-    /** Elevated button shadow (hover state) */
-    public static final DropShadow SHADOW_BUTTON_HOVER = createDropShadow(8, 0.15, 0, 4);
 
     // =============================================
     // BACKGROUND HELPER METHODS
@@ -201,65 +179,6 @@ public final class BookingFormStyles {
     }
 
     // =============================================
-    // COMBINED STYLE HELPER METHODS
-    // =============================================
-
-    /**
-     * Applies a card style with background, border and corner radius to a Region.
-     *
-     * @deprecated Use CSS class instead. For standard cards use {@code .bookingpage-card}.
-     * For custom colors, add theme CSS classes to parent container.
-     */
-    @Deprecated
-    public static void applyCardStyle(Region node, Color bgColor, Color borderColor, CornerRadii radii, double borderWidth) {
-        node.setBackground(bg(bgColor, radii));
-        node.setBorder(border(borderColor, borderWidth, radii));
-    }
-
-    /**
-     * Applies a card style with background, border, corner radius and shadow.
-     *
-     * @deprecated Use CSS class {@code .bookingpage-card} with appropriate shadow styling.
-     */
-    @Deprecated
-    public static void applyCardStyleWithShadow(Region node, Color bgColor, Color borderColor, CornerRadii radii, double borderWidth) {
-        applyCardStyle(node, bgColor, borderColor, radii, borderWidth);
-        node.setEffect(SHADOW_CARD);
-    }
-
-    /**
-     * Applies a section header style with background and left border accent.
-     *
-     * @deprecated Use CSS class {@code .booking-form-section-header} instead.
-     * Theme colors are handled via CSS variables.
-     */
-    @Deprecated
-    public static void applySectionHeaderStyle(Region node, Color bgColor, Color accentColor, CornerRadii radii) {
-        node.setBackground(bg(bgColor, radii));
-        node.setBorder(borderLeft(accentColor, 4, radii));
-    }
-
-    /**
-     * Applies warning box style.
-     *
-     * @deprecated Use CSS class {@code .bookingpage-warning-box} instead.
-     */
-    @Deprecated
-    public static void applyWarningBoxStyle(Region node) {
-        applyCardStyle(node, WARNING_BG, WARNING_BORDER, RADII_8, 1);
-    }
-
-    /**
-     * Applies error box style.
-     *
-     * @deprecated Use CSS class {@code .bookingpage-error-box} instead.
-     */
-    @Deprecated
-    public static void applyErrorBoxStyle(Region node) {
-        applyCardStyle(node, ERROR_BG, ERROR_BORDER, RADII_8, 1);
-    }
-
-    // =============================================
     // DROP SHADOW HELPER METHODS
     // =============================================
 
@@ -268,13 +187,6 @@ public final class BookingFormStyles {
      */
     public static DropShadow createDropShadow(double radius, double opacity, double offsetX, double offsetY) {
         return new DropShadow(BlurType.THREE_PASS_BOX, Color.rgb(0, 0, 0, opacity), radius, 0, offsetX, offsetY);
-    }
-
-    /**
-     * Creates a gaussian drop shadow effect.
-     */
-    public static DropShadow createGaussianDropShadow(double radius, double opacity, double offsetX, double offsetY) {
-        return new DropShadow(BlurType.GAUSSIAN, Color.rgb(0, 0, 0, opacity), radius, 0, offsetX, offsetY);
     }
 
     // =============================================
@@ -314,72 +226,5 @@ public final class BookingFormStyles {
      */
     public static Font fontMedium(double size) {
         return Font.font("System", FontWeight.MEDIUM, size);
-    }
-
-    // =============================================
-    // COMMON STYLING PATTERNS
-    // =============================================
-
-    /**
-     * Standard white card with light border and 8px radius.
-     * @deprecated Use CSS class {@code .bookingpage-card} instead.
-     */
-    @Deprecated
-    public static void applyStandardCard(Region node) {
-        applyCardStyle(node, BG_WHITE, BORDER_LIGHT, RADII_8, 1);
-    }
-
-    /**
-     * Standard white card with light border and 12px radius.
-     * @deprecated Use CSS classes {@code .bookingpage-card .bookingpage-rounded-lg} instead.
-     */
-    @Deprecated
-    public static void applyStandardCardLarge(Region node) {
-        applyCardStyle(node, BG_WHITE, BORDER_LIGHT, RADII_12, 1);
-    }
-
-    /**
-     * Light gray card with border and 8px radius.
-     * @deprecated Use CSS class {@code .bookingpage-card-light} instead.
-     */
-    @Deprecated
-    public static void applyLightCard(Region node) {
-        applyCardStyle(node, BG_LIGHT, BORDER_LIGHT, RADII_8, 1);
-    }
-
-    /**
-     * Lighter gray background with 12px radius, no border.
-     * @deprecated Use CSS class {@code .bookingpage-card-lighter} instead.
-     */
-    @Deprecated
-    public static void applyLighterBackground(Region node) {
-        node.setBackground(bg(BG_LIGHTER, RADII_12));
-    }
-
-    /**
-     * Success circle background (green, fully rounded).
-     * @deprecated Use CSS class {@code .bookingpage-success-circle} instead.
-     */
-    @Deprecated
-    public static void applySuccessCircle(Region node) {
-        node.setBackground(bg(SUCCESS, RADII_FULL));
-    }
-
-    /**
-     * Applies a divider line at the top.
-     * @deprecated Use CSS class {@code .bookingpage-divider-top} or {@code .bookingpage-divider-thin-top} instead.
-     */
-    @Deprecated
-    public static void applyTopDivider(Region node, double width) {
-        node.setBorder(borderTop(BORDER_GRAY, width));
-    }
-
-    /**
-     * Applies a divider line at the bottom.
-     * @deprecated Use CSS class {@code .bookingpage-divider-thin-bottom} instead.
-     */
-    @Deprecated
-    public static void applyBottomDivider(Region node, double width) {
-        node.setBorder(borderBottom(BG_LIGHTER, width));
     }
 }

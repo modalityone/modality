@@ -1,7 +1,6 @@
 package one.modality.booking.frontoffice.bookingpage.sections;
 
 import javafx.beans.property.ObjectProperty;
-import javafx.beans.property.StringProperty;
 import one.modality.booking.frontoffice.bookingpage.BookingFormSection;
 import one.modality.booking.frontoffice.bookingpage.theme.BookingFormColorScheme;
 
@@ -111,21 +110,6 @@ public interface HasSummarySection extends BookingFormSection {
     void clearPriceLines();
 
     /**
-     * Returns the calculated total amount.
-     */
-    double getTotalAmount();
-
-    /**
-     * Adds an audio recording to the additional options.
-     */
-    void addAudioRecording(String name, String description);
-
-    /**
-     * Adds a meal option to the additional options.
-     */
-    void addMealOption(String name, String description);
-
-    /**
      * Adds a generic additional option.
      */
     void addAdditionalOption(AdditionalOptionType type, String name, String description);
@@ -134,21 +118,6 @@ public interface HasSummarySection extends BookingFormSection {
      * Clears all additional options.
      */
     void clearAdditionalOptions();
-
-    /**
-     * Sets the booking reference number (after submission).
-     */
-    void setBookingReference(String reference);
-
-    /**
-     * Returns the booking reference number.
-     */
-    String getBookingReference();
-
-    /**
-     * Returns the booking reference property for binding.
-     */
-    StringProperty bookingReferenceProperty();
 
     /**
      * Refreshes the price breakdown display.

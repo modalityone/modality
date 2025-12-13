@@ -11,7 +11,6 @@ import javafx.geometry.Pos;
 import javafx.scene.Cursor;
 import javafx.scene.Node;
 import javafx.scene.control.Button;
-import javafx.scene.control.ContentDisplay;
 import javafx.scene.control.Label;
 import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
@@ -19,6 +18,7 @@ import javafx.scene.shape.SVGPath;
 import one.modality.booking.client.workingbooking.WorkingBookingProperties;
 import one.modality.booking.frontoffice.bookingpage.BookingPageI18nKeys;
 import one.modality.booking.frontoffice.bookingpage.components.BookingPageUIBuilder;
+import one.modality.booking.frontoffice.bookingpage.components.StyledSectionHeader;
 import one.modality.booking.frontoffice.bookingpage.theme.BookingFormColorScheme;
 
 import java.util.HashMap;
@@ -36,12 +36,12 @@ import java.util.function.Consumer;
  *
  * <p>CSS classes used:</p>
  * <ul>
- *   <li>{@code .booking-form-member-card} - member card container</li>
- *   <li>{@code .booking-form-member-card.selected} - selected state</li>
- *   <li>{@code .booking-form-member-card.disabled} - disabled state (already booked)</li>
+ *   <li>{@code .bookingpage-selectable-card} - member card container (generic selectable card)</li>
+ *   <li>{@code .bookingpage-selectable-card.selected} - selected state</li>
+ *   <li>{@code .bookingpage-selectable-card.disabled} - disabled state (already booked)</li>
  *   <li>{@code .booking-form-section-header} - section header</li>
- *   <li>{@code .booking-form-btn-primary} - primary button</li>
- *   <li>{@code .booking-form-btn-back} - back button</li>
+ *   <li>{@code .booking-form-primary-btn} - primary button (via BookingPageUIBuilder)</li>
+ *   <li>{@code .booking-form-back-btn} - back button (via BookingPageUIBuilder)</li>
  * </ul>
  *
  * @author Bruno Salmon
@@ -61,6 +61,7 @@ public class DefaultMemberSelectionSection implements HasMemberSelectionSection 
     // === MEMBERS LIST ===
     protected final ObservableList<MemberInfo> householdMembers = FXCollections.observableArrayList();
     protected final Set<Object> alreadyBookedPersonIds = new HashSet<>();
+    protected final BooleanProperty hasAvailableMembers = new SimpleBooleanProperty(false);
 
     // === UI COMPONENTS ===
     protected final VBox container = new VBox();
@@ -141,35 +142,18 @@ public class DefaultMemberSelectionSection implements HasMemberSelectionSection 
     }
 
     protected Button buildBackButton() {
-        Button button = new Button();
-        Label arrowLabel = new Label("\u2190 "); // ← arrow
-        arrowLabel.getStyleClass().addAll("bookingpage-text-lg", "bookingpage-text-secondary");
-        button.setGraphic(arrowLabel);
-        button.setContentDisplay(ContentDisplay.LEFT);
-        I18nControls.bindI18nProperties(button, BookingPageI18nKeys.Back);
-
-        // Apply CSS class - all styling handled by CSS
-        button.getStyleClass().add("booking-form-btn-back");
-        button.setPadding(new Insets(14, 32, 14, 32));
-        button.setCursor(Cursor.HAND);
-
+        Button button = createBackButton();
         button.setOnAction(e -> {
             if (onBackPressed != null) {
                 onBackPressed.run();
             }
         });
-
         return button;
     }
 
     protected Button buildContinueButton() {
-        Button button = I18nControls.newButton(BookingPageI18nKeys.Continue);
+        Button button = createPrimaryButton();
         button.setDisable(true);
-        button.setPadding(new Insets(14, 32, 14, 32));
-
-        // Apply CSS class - all styling handled by CSS
-        button.getStyleClass().add("booking-form-btn-primary");
-
         button.setOnAction(e -> {
             MemberInfo selected = selectedMemberProperty.get();
             if (selected != null && onContinuePressed != null) {
@@ -179,7 +163,6 @@ public class DefaultMemberSelectionSection implements HasMemberSelectionSection 
                 onContinuePressed.run();
             }
         });
-
         return button;
     }
 
@@ -218,26 +201,7 @@ public class DefaultMemberSelectionSection implements HasMemberSelectionSection 
     }
 
     protected HBox buildSectionHeader() {
-        HBox header = new HBox(10);
-        header.setAlignment(Pos.CENTER_LEFT);
-        header.setPadding(new Insets(14, 18, 14, 18));
-        header.getStyleClass().add("booking-form-section-header");
-
-        // Users icon
-        SVGPath icon = new SVGPath();
-        icon.setContent("M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2 M9 3a4 4 0 100 8 4 4 0 000-8z M23 21v-2a4 4 0 00-3-3.87 M16 3.13a4 4 0 010 7.75");
-        icon.getStyleClass().add("booking-form-section-header-icon");
-        icon.setStrokeWidth(2);
-        icon.setFill(Color.TRANSPARENT);
-        icon.setScaleX(0.7);
-        icon.setScaleY(0.7);
-
-        Label titleLabel = I18nControls.newLabel(BookingPageI18nKeys.PeopleOnYourAccount);
-        titleLabel.getStyleClass().addAll("bookingpage-text-xl", "bookingpage-font-semibold", "bookingpage-text-dark");
-
-        header.getChildren().addAll(icon, titleLabel);
-
-        return header;
+        return new StyledSectionHeader(BookingPageI18nKeys.PeopleOnYourAccount, StyledSectionHeader.ICON_USERS);
     }
 
     protected VBox buildErrorBox() {
@@ -250,7 +214,7 @@ public class DefaultMemberSelectionSection implements HasMemberSelectionSection 
         errorRow.setPadding(new Insets(12, 16, 12, 16));
         errorRow.getStyleClass().add("bookingpage-error-box");
 
-        Label warningIcon = new Label("\u26A0"); // ⚠ warning
+        Label warningIcon = new Label("⚠"); // ⚠ warning
         warningIcon.getStyleClass().add("bookingpage-text-base");
 
         errorLabel = new Label();
@@ -328,7 +292,7 @@ public class DefaultMemberSelectionSection implements HasMemberSelectionSection 
         card.setMaxWidth(350);
         card.setPadding(new Insets(20));
         card.setCursor(isBookable ? Cursor.HAND : Cursor.DEFAULT);
-        card.getStyleClass().add("bookingpage-card"); // Use standard card class for proper theming
+        card.getStyleClass().add("bookingpage-selectable-card"); // Use selectable card class for proper theming
 
         // Apply state classes
         if (!isBookable) {
@@ -355,16 +319,16 @@ public class DefaultMemberSelectionSection implements HasMemberSelectionSection 
         // Status indicators
         if (isBooked) {
             VBox.setMargin(emailLabel, new Insets(0, 0, 8, 0));
-            contentBox.getChildren().add(createStatusBadge("\u2717", BookingPageI18nKeys.AlreadyBookedForEvent, "#dc3545", "#dc3545")); // ✗
+            contentBox.getChildren().add(createStatusBadge("✗", BookingPageI18nKeys.AlreadyBookedForEvent, "#dc3545", "#dc3545")); // ✗
             card.setOpacity(0.6);
             card.getStyleClass().add("already-booked");
         } else if (status == MemberStatus.PENDING_INVITATION) {
             VBox.setMargin(emailLabel, new Insets(0, 0, 8, 0));
-            contentBox.getChildren().add(createStatusBadge("\u23F3", BookingPageI18nKeys.Pending, "#6c757d", "#6c757d")); // ⏳
+            contentBox.getChildren().add(createStatusBadge("⏳", BookingPageI18nKeys.Pending, "#6c757d", "#6c757d")); // ⏳
             card.setOpacity(0.7);
         } else if (status == MemberStatus.NEEDS_VALIDATION) {
             VBox.setMargin(emailLabel, new Insets(0, 0, 8, 0));
-            contentBox.getChildren().add(createStatusBadge("\u26A0", BookingPageI18nKeys.NeedsValidation, "#dc3545", "#dc3545")); // ⚠
+            contentBox.getChildren().add(createStatusBadge("⚠", BookingPageI18nKeys.NeedsValidation, "#dc3545", "#dc3545")); // ⚠
             card.setOpacity(0.7);
         }
 
@@ -435,6 +399,18 @@ public class DefaultMemberSelectionSection implements HasMemberSelectionSection 
         errorLabel.setText("");
         errorBox.setVisible(false);
         errorBox.setManaged(false);
+    }
+
+    // ========================================
+    // BUTTON HELPERS
+    // ========================================
+
+    protected Button createBackButton() {
+        return BookingPageUIBuilder.createBackButton(BookingPageI18nKeys.Back);
+    }
+
+    protected Button createPrimaryButton() {
+        return BookingPageUIBuilder.createPrimaryButton(BookingPageI18nKeys.Continue, colorScheme);
     }
 
     // ========================================
@@ -525,11 +501,13 @@ public class DefaultMemberSelectionSection implements HasMemberSelectionSection 
     @Override
     public void addMember(MemberInfo member) {
         householdMembers.add(member);
+        updateHasAvailableMembers();
     }
 
     @Override
     public void clearMembers() {
         householdMembers.clear();
+        updateHasAvailableMembers();
     }
 
     @Override
@@ -546,12 +524,29 @@ public class DefaultMemberSelectionSection implements HasMemberSelectionSection 
             alreadyBookedPersonIds.addAll(personIds);
         }
         rebuildMemberCards();
+        updateHasAvailableMembers();
     }
 
     @Override
     public void clearAlreadyBooked() {
         alreadyBookedPersonIds.clear();
         rebuildMemberCards();
+        updateHasAvailableMembers();
+    }
+
+    @Override
+    public ObservableBooleanValue hasAvailableMembersProperty() {
+        return hasAvailableMembers;
+    }
+
+    /**
+     * Updates the hasAvailableMembers property based on current members and bookings.
+     */
+    protected void updateHasAvailableMembers() {
+        long availableCount = householdMembers.stream()
+            .filter(m -> !isAlreadyBooked(m))
+            .count();
+        hasAvailableMembers.set(availableCount > 0);
     }
 
 }

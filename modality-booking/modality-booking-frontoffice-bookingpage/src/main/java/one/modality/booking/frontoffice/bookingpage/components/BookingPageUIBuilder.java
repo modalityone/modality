@@ -3,20 +3,26 @@ package one.modality.booking.frontoffice.bookingpage.components;
 import dev.webfx.extras.i18n.controls.I18nControls;
 import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.ObjectProperty;
+import javafx.beans.property.StringProperty;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Cursor;
 import javafx.scene.control.Button;
 import javafx.scene.control.ContentDisplay;
 import javafx.scene.control.Label;
-import javafx.scene.layout.HBox;
-import javafx.scene.layout.StackPane;
-import javafx.scene.layout.VBox;
+import javafx.scene.control.TextField;
+import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Circle;
 import javafx.scene.shape.Rectangle;
 import javafx.scene.shape.SVGPath;
+import dev.webfx.extras.webtext.HtmlText;
 import one.modality.booking.frontoffice.bookingpage.theme.BookingFormColorScheme;
+
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
+import java.time.format.TextStyle;
+import java.util.Locale;
 
 import static one.modality.booking.frontoffice.bookingpage.theme.BookingFormStyles.*;
 
@@ -81,7 +87,9 @@ public final class BookingPageUIBuilder {
         /** Red background, error icon */
         ERROR,
         /** Theme colored border, light background */
-        INFO
+        INFO,
+        /** Transparent background, theme colored border all around */
+        OUTLINE_PRIMARY
     }
 
     // =============================================
@@ -112,21 +120,6 @@ public final class BookingPageUIBuilder {
      */
     public static SVGPath createIcon(String svgPath, Color strokeColor) {
         return createIcon(svgPath, strokeColor, 0.7);
-    }
-
-    /**
-     * Wraps an SVG icon in a StackPane for proper centering.
-     *
-     * @param icon The SVG icon
-     * @param size The wrapper size (width and height)
-     * @return A StackPane containing the centered icon
-     */
-    public static StackPane wrapIcon(SVGPath icon, double size) {
-        StackPane wrapper = new StackPane(icon);
-        wrapper.setMinSize(size, size);
-        wrapper.setMaxSize(size, size);
-        wrapper.setAlignment(Pos.CENTER);
-        return wrapper;
     }
 
     // =============================================
@@ -161,19 +154,19 @@ public final class BookingPageUIBuilder {
      * @return A StackPane containing the checkbox indicator
      */
     public static StackPane createCheckboxIndicator(BooleanProperty selectedProperty) {
-        double size = 24;
+        double size = 20;
 
         // Background rectangle - styled entirely via CSS
         Rectangle rect = new Rectangle(size, size);
-        rect.setArcWidth(8);  // 4px radius * 2
-        rect.setArcHeight(8);
+        rect.setArcWidth(6);  // 3px radius * 2
+        rect.setArcHeight(6);
         rect.getStyleClass().add("booking-form-checkbox-rect");
 
         // Checkmark - styled via CSS
         SVGPath checkmark = new SVGPath();
         checkmark.setContent(ICON_CHECK);
-        checkmark.setScaleX(0.5);
-        checkmark.setScaleY(0.5);
+        checkmark.setScaleX(0.42);
+        checkmark.setScaleY(0.42);
         checkmark.setVisible(false);
         checkmark.getStyleClass().add("booking-form-checkbox-checkmark");
 
@@ -260,37 +253,6 @@ public final class BookingPageUIBuilder {
     }
 
     /**
-     * Creates a checkmark badge (circular, positioned in corner).
-     * Per JSX mockup: absolute positioned top-right, colored bg, white checkmark.
-     *
-     * @param colorScheme Color scheme for theming
-     * @param size        Badge size (24, 28, or 32px)
-     * @return A StackPane containing the checkmark badge
-     */
-    public static StackPane createCheckmarkBadge(BookingFormColorScheme colorScheme, double size) {
-        // Circular background
-        Circle circle = new Circle(size / 2);
-        circle.setFill(colorScheme.getPrimary());
-
-        // Checkmark
-        SVGPath checkmark = new SVGPath();
-        checkmark.setContent(ICON_CHECK);
-        checkmark.setStroke(Color.WHITE);
-        checkmark.setStrokeWidth(2.5);
-        checkmark.setFill(Color.TRANSPARENT);
-        checkmark.setScaleX(size / 48);  // Scale based on size
-        checkmark.setScaleY(size / 48);
-
-        StackPane badge = new StackPane(circle, checkmark);
-        badge.setMinSize(size, size);
-        badge.setMaxSize(size, size);
-        badge.setAlignment(Pos.CENTER);
-        badge.getStyleClass().add("booking-form-checkmark-badge");
-
-        return badge;
-    }
-
-    /**
      * Creates a checkmark badge that uses CSS for theming (circular, positioned in corner).
      * The badge color comes from CSS variables, allowing dynamic theme switching.
      *
@@ -336,6 +298,7 @@ public final class BookingPageUIBuilder {
      * @param selected        Whether this option is currently selected
      * @param onSelect        Action to run when card is clicked
      * @return A styled VBox containing the payment option card
+     * This method bundles content creation with card creation - prefer building content separately.
      */
     public static VBox createPaymentOptionCard(
             String title,
@@ -392,32 +355,32 @@ public final class BookingPageUIBuilder {
     }
 
     // =============================================
-    // STATIC/INFORMATIVE CARDS
+    // PASSIVE (NON-INTERACTIVE) CARDS
     // =============================================
 
     /**
-     * Creates a static (non-interactive) card for displaying information.
+     * Creates a passive (non-interactive) card for displaying information.
      * No hover effects, no cursor pointer - purely informative display.
      *
-     * <p>Uses CSS class {@code .bookingpage-card-static}</p>
+     * <p>Uses CSS class {@code .bookingpage-passive-card}</p>
      *
      * @return A styled VBox for adding content
      */
-    public static VBox createStaticCard() {
+    public static VBox createPassiveCard() {
         VBox card = new VBox(0);
-        card.getStyleClass().add("bookingpage-card-static");
+        card.getStyleClass().add("bookingpage-passive-card");
         card.setPadding(new Insets(20));
         return card;
     }
 
     /**
-     * Creates a static card with themed background (for info boxes like "Standard Rate Applied").
+     * Creates a passive card with themed background (for info boxes like "Standard Rate Applied").
      * Uses the color scheme's selected background color for a subtle themed appearance.
      *
      * @param colorScheme Color scheme for theming
      * @return A styled HBox for adding content
      */
-    public static HBox createThemedInfoCard(BookingFormColorScheme colorScheme) {
+    public static HBox createThemedPassiveCard(BookingFormColorScheme colorScheme) {
         HBox card = new HBox(12);
         card.setAlignment(Pos.TOP_LEFT);
         card.setPadding(new Insets(14, 16, 14, 16));
@@ -425,6 +388,169 @@ public final class BookingPageUIBuilder {
         Color borderColor = colorScheme.getHoverBorder() != null ? colorScheme.getHoverBorder() : BORDER_LIGHT;
         card.setBackground(bg(bgColor, RADII_8));
         card.setBorder(border(borderColor, 1, RADII_8));
+        return card;
+    }
+
+    // =============================================
+    // CHECKBOX AND RADIO CARDS
+    // =============================================
+
+    /**
+     * Creates a card with an embedded checkbox indicator on the left, with color scheme support.
+     * Applies border and checkbox colors in Java per project guidelines for WebFX/GWT compatibility.
+     *
+     * @param content              The content to display (typically labels/descriptions)
+     * @param selectedProperty     Property to bind selection state (toggles on click)
+     * @param colorSchemeProperty  Property for color scheme (used for card border and checkbox when selected)
+     * @return A styled HBox containing checkbox indicator + content
+     */
+    public static HBox createCheckboxCard(javafx.scene.Node content, BooleanProperty selectedProperty,
+            ObjectProperty<BookingFormColorScheme> colorSchemeProperty) {
+        HBox card = new HBox(12);
+        card.setAlignment(Pos.CENTER_LEFT);
+        card.setPadding(new Insets(16));
+        card.setCursor(Cursor.HAND);
+        card.getStyleClass().add("bookingpage-checkbox-card");
+
+        // Checkbox indicator on left - with color scheme support
+        StackPane checkbox = createColorSchemeCheckboxIndicator(selectedProperty, colorSchemeProperty);
+
+        card.getChildren().addAll(checkbox, content);
+
+        // Apply Java-based styling when color scheme is provided (CSS unreliable in WebFX/GWT)
+        if (colorSchemeProperty != null) {
+            CornerRadii radii = new CornerRadii(8);
+            Runnable updateCardStyle = () -> {
+                boolean selected = selectedProperty.get();
+                BookingFormColorScheme scheme = colorSchemeProperty.get();
+                if (scheme == null) scheme = BookingFormColorScheme.DEFAULT;
+
+                if (selected) {
+                    card.setBorder(new Border(new BorderStroke(
+                        scheme.getPrimary(), BorderStrokeStyle.SOLID, radii, new BorderWidths(2))));
+                } else {
+                    card.setBorder(new Border(new BorderStroke(
+                        Color.web("#dee2e6"), BorderStrokeStyle.SOLID, radii, new BorderWidths(2))));
+                }
+            };
+
+            updateCardStyle.run();
+            selectedProperty.addListener((obs, old, val) -> updateCardStyle.run());
+            colorSchemeProperty.addListener((obs, old, val) -> updateCardStyle.run());
+
+            // Click handler
+            card.setOnMouseClicked(e -> selectedProperty.set(!selectedProperty.get()));
+        } else {
+            // Fall back to CSS-based styling
+            makeSelectable(card, selectedProperty);
+        }
+
+        return card;
+    }
+
+    /**
+     * Creates a checkbox indicator with color scheme support applied in Java.
+     * For WebFX/GWT compatibility, colors are set programmatically.
+     */
+    private static StackPane createColorSchemeCheckboxIndicator(BooleanProperty selectedProperty,
+            ObjectProperty<BookingFormColorScheme> colorSchemeProperty) {
+        if (colorSchemeProperty == null) {
+            return createCheckboxIndicator(selectedProperty);
+        }
+
+        double size = 20;
+
+        // Background rectangle
+        Rectangle rect = new Rectangle(size, size);
+        rect.setArcWidth(6);
+        rect.setArcHeight(6);
+
+        // Checkmark
+        SVGPath checkmark = new SVGPath();
+        checkmark.setContent(ICON_CHECK);
+        checkmark.setScaleX(0.42);
+        checkmark.setScaleY(0.42);
+        checkmark.setVisible(false);
+
+        StackPane container = new StackPane(rect, checkmark);
+        container.setMinSize(size, size);
+        container.setMaxSize(size, size);
+        container.setAlignment(Pos.CENTER);
+
+        // Apply colors from color scheme in Java
+        Runnable updateStyle = () -> {
+            boolean selected = selectedProperty.get();
+            BookingFormColorScheme scheme = colorSchemeProperty.get();
+            if (scheme == null) scheme = BookingFormColorScheme.DEFAULT;
+
+            if (selected) {
+                rect.setFill(scheme.getPrimary());
+                rect.setStroke(scheme.getPrimary());
+                checkmark.setFill(Color.WHITE);
+                checkmark.setStroke(Color.WHITE);
+                checkmark.setVisible(true);
+            } else {
+                rect.setFill(Color.WHITE);
+                rect.setStroke(Color.web("#D1D5DB"));
+                checkmark.setVisible(false);
+            }
+        };
+
+        updateStyle.run();
+        selectedProperty.addListener((obs, old, val) -> updateStyle.run());
+        colorSchemeProperty.addListener((obs, old, val) -> updateStyle.run());
+
+        return container;
+    }
+
+    /**
+     * Creates a card with an embedded radio indicator on the left.
+     * Ideal for single-select groups (payment methods, rate types, etc.).
+     *
+     * <p>CSS classes used:</p>
+     * <ul>
+     *   <li>{@code .bookingpage-radio-card} - card styling</li>
+     *   <li>{@code .selected} - added when selected</li>
+     * </ul>
+     *
+     * @param content          The content to display (typically icon + labels)
+     * @param selectedProperty Property to bind selection state
+     * @param onSelect         Action to run when card is selected (for radio group management)
+     * @return A styled HBox containing radio indicator + content
+     */
+    public static HBox createRadioCard(javafx.scene.Node content, BooleanProperty selectedProperty, Runnable onSelect) {
+        HBox card = new HBox(12);
+        card.setAlignment(Pos.CENTER_LEFT);
+        card.setPadding(new Insets(16));
+        card.setCursor(Cursor.HAND);
+        card.getStyleClass().add("bookingpage-radio-card");
+
+        // Radio indicator on left
+        StackPane radio = createRadioIndicator(selectedProperty);
+
+        card.getChildren().addAll(radio, content);
+
+        // Click triggers the onSelect callback (for radio group management)
+        card.setOnMouseClicked(e -> {
+            if (onSelect != null) {
+                onSelect.run();
+            }
+        });
+
+        // Update CSS class based on selection
+        if (selectedProperty.get()) {
+            card.getStyleClass().add("selected");
+        }
+        selectedProperty.addListener((obs, oldVal, newVal) -> {
+            if (newVal) {
+                if (!card.getStyleClass().contains("selected")) {
+                    card.getStyleClass().add("selected");
+                }
+            } else {
+                card.getStyleClass().remove("selected");
+            }
+        });
+
         return card;
     }
 
@@ -461,6 +587,7 @@ public final class BookingPageUIBuilder {
     public static Button createPrimaryButton(Object i18nKey) {
         Button btn = I18nControls.newButton(i18nKey);
         btn.setCursor(Cursor.HAND);
+        btn.setPadding(new Insets(14, 32, 14, 32)); // Set in Java for WebFX/GWT compatibility
         btn.getStyleClass().addAll("booking-form-primary-btn", "booking-form-primary-btn-text");
 
         // Disabled state - update CSS class and cursor
@@ -497,13 +624,14 @@ public final class BookingPageUIBuilder {
     public static Button createBackButton(Object i18nKey) {
         Button btn = new Button();
         // Arrow prefix as graphic
-        Label arrowLabel = new Label("\u2190 "); // ←
+        Label arrowLabel = new Label("← "); // ←
         arrowLabel.getStyleClass().add("booking-form-back-btn-text");
         btn.setGraphic(arrowLabel);
         btn.setContentDisplay(ContentDisplay.LEFT);
         I18nControls.bindI18nProperties(btn, i18nKey);
 
         btn.setCursor(Cursor.HAND);
+        btn.setPadding(new Insets(14, 32, 14, 32)); // Set in Java for WebFX/GWT compatibility
         btn.getStyleClass().addAll("booking-form-back-btn", "booking-form-back-btn-text");
 
         // Hover effects handled by CSS via .booking-form-back-btn:hover
@@ -522,4 +650,358 @@ public final class BookingPageUIBuilder {
         row.setAlignment(Pos.CENTER);
         return row;
     }
+
+    // =============================================
+    // TEXT & LABEL FACTORIES
+    // =============================================
+
+    /**
+     * Creates a label with muted/secondary styling.
+     * Uses CSS classes: bookingpage-text-base, bookingpage-text-muted
+     *
+     * @param i18nKey The i18n key for the label text
+     * @return A styled Label
+     */
+    public static Label createMutedLabel(Object i18nKey) {
+        Label label = I18nControls.newLabel(i18nKey);
+        label.getStyleClass().addAll("bookingpage-text-base", "bookingpage-text-muted");
+        return label;
+    }
+
+    /**
+     * Creates a bullet point with HTML text (supports bold text).
+     * The format is: "• prefix<b>boldText</b>suffix"
+     *
+     * @param prefix   Text before the bold part
+     * @param boldText Text to be bold
+     * @param suffix   Text after the bold part
+     * @param cssClasses Additional CSS classes to add
+     * @return An HtmlText with the bullet point
+     */
+    public static HtmlText createBulletPoint(String prefix, String boldText, String suffix, String... cssClasses) {
+        HtmlText htmlText = new HtmlText();
+        String html = "• " + (prefix != null ? prefix : "") +
+                      (boldText != null ? "<b>" + boldText + "</b>" : "") +
+                      (suffix != null ? suffix : "");
+        htmlText.setText(html);
+        if (cssClasses != null && cssClasses.length > 0) {
+            htmlText.getStyleClass().addAll(cssClasses);
+        }
+        return htmlText;
+    }
+
+    /**
+     * Creates an info/warning/error box for displaying messages.
+     * Uses CSS classes based on the box type.
+     *
+     * <p>CSS classes used:</p>
+     * <ul>
+     *   <li>{@code .bookingpage-info-box} - base container styling</li>
+     *   <li>{@code .bookingpage-info-box-success} - green styling</li>
+     *   <li>{@code .bookingpage-info-box-warning} - yellow/amber styling</li>
+     *   <li>{@code .bookingpage-info-box-error} - red styling</li>
+     *   <li>{@code .bookingpage-info-box-info} - theme-colored styling</li>
+     * </ul>
+     *
+     * @param message The message text to display
+     * @param type    The type of info box (SUCCESS, WARNING, ERROR, INFO)
+     * @return A styled HBox containing an icon and message
+     */
+    public static HBox createInfoBox(String message, InfoBoxType type) {
+        HBox box = new HBox(12);
+        box.setAlignment(Pos.CENTER_LEFT);
+        box.setPadding(new Insets(14, 16, 14, 16));
+        box.getStyleClass().add("bookingpage-info-box");
+
+        // Icon based on type
+        String iconUnicode;
+        String typeClass = switch (type) {
+            case SUCCESS -> {
+                iconUnicode = "✓"; // ✓
+                yield "bookingpage-info-box-success";
+            }
+            case WARNING -> {
+                iconUnicode = "⚠"; // ⚠
+                yield "bookingpage-info-box-warning";
+            }
+            case ERROR -> {
+                iconUnicode = "✖"; // ✖
+                yield "bookingpage-info-box-error";
+            }
+            case OUTLINE_PRIMARY -> {
+                iconUnicode = "ℹ"; // ℹ
+                yield "bookingpage-info-box-outline-primary";
+            }
+            default -> {
+                iconUnicode = "ℹ"; // ℹ
+                yield "bookingpage-info-box-info";
+            }
+        };
+
+        box.getStyleClass().add(typeClass);
+
+        Label iconLabel = new Label(iconUnicode);
+        iconLabel.getStyleClass().add("bookingpage-info-box-icon");
+
+        Label messageLabel = new Label(message);
+        messageLabel.getStyleClass().add("bookingpage-info-box-message");
+        messageLabel.setWrapText(true);
+
+        box.getChildren().addAll(iconLabel, messageLabel);
+        return box;
+    }
+
+    /**
+     * Creates an info box with an i18n key for the message.
+     *
+     * @param i18nKey The i18n key for the message
+     * @param type    The type of info box
+     * @return A styled HBox containing an icon and message
+     */
+    public static HBox createInfoBox(Object i18nKey, InfoBoxType type) {
+        HBox box = new HBox(12);
+        box.setAlignment(Pos.CENTER_LEFT);
+        box.setPadding(new Insets(14, 16, 14, 16));
+        box.getStyleClass().add("bookingpage-info-box");
+
+        // Icon based on type
+        String iconUnicode;
+        String typeClass = switch (type) {
+            case SUCCESS -> {
+                iconUnicode = "✓"; // ✓
+                yield "bookingpage-info-box-success";
+            }
+            case WARNING -> {
+                iconUnicode = "⚠"; // ⚠
+                yield "bookingpage-info-box-warning";
+            }
+            case ERROR -> {
+                iconUnicode = "✖"; // ✖
+                yield "bookingpage-info-box-error";
+            }
+            case OUTLINE_PRIMARY -> {
+                iconUnicode = "ℹ"; // ℹ
+                yield "bookingpage-info-box-outline-primary";
+            }
+            default -> {
+                iconUnicode = "ℹ"; // ℹ
+                yield "bookingpage-info-box-info";
+            }
+        };
+
+        box.getStyleClass().add(typeClass);
+
+        Label iconLabel = new Label(iconUnicode);
+        iconLabel.getStyleClass().add("bookingpage-info-box-icon");
+
+        Label messageLabel = I18nControls.newLabel(i18nKey);
+        messageLabel.getStyleClass().add("bookingpage-info-box-message");
+        messageLabel.setWrapText(true);
+
+        box.getChildren().addAll(iconLabel, messageLabel);
+        return box;
+    }
+
+    // =============================================
+    // FORM ELEMENTS
+    // =============================================
+
+    /**
+     * Creates a labeled text field with standard styling.
+     * The label is placed above the text field.
+     *
+     * <p>CSS classes used:</p>
+     * <ul>
+     *   <li>{@code .bookingpage-text-sm} - label styling</li>
+     *   <li>{@code .bookingpage-font-medium} - label font weight</li>
+     *   <li>{@code .bookingpage-input} - text field styling</li>
+     * </ul>
+     *
+     * @param labelI18nKey  The i18n key for the label
+     * @param valueProperty Property to bind the text field value
+     * @param promptText    Prompt text to show when empty (optional)
+     * @return A VBox containing the label and text field
+     */
+    public static VBox createLabeledTextField(Object labelI18nKey, StringProperty valueProperty, String promptText) {
+        VBox container = new VBox(8);
+
+        Label label = I18nControls.newLabel(labelI18nKey);
+        label.getStyleClass().addAll("bookingpage-text-sm", "bookingpage-font-medium", "bookingpage-text-dark");
+
+        TextField textField = new TextField();
+        if (promptText != null) {
+            textField.setPromptText(promptText);
+        }
+        if (valueProperty != null) {
+            textField.textProperty().bindBidirectional(valueProperty);
+        }
+        textField.getStyleClass().add("bookingpage-input");
+        textField.setPadding(new Insets(12, 16, 12, 16));
+
+        container.getChildren().addAll(label, textField);
+        return container;
+    }
+
+    /**
+     * Result class for verification code field creation.
+     * Contains both the container and the individual digit fields for further customization.
+     */
+    public static class VerificationCodeResult {
+        private final HBox container;
+
+        public VerificationCodeResult(HBox container, TextField[] digitFields) {
+            this.container = container;
+        }
+
+        /** Returns the HBox container with all digit fields */
+        public HBox getContainer() {
+            return container;
+        }
+
+    }
+
+    // =============================================
+    // UTILITY METHODS
+    // =============================================
+
+    /**
+     * Formats a date range for display.
+     * Handles same month, different month, and different year cases.
+     *
+     * <p>Examples with shortMonth=true:</p>
+     * <ul>
+     *   <li>Same month: "1 - 5 Jan 2026"</li>
+     *   <li>Different months: "27 Feb - 1 Mar 2026"</li>
+     *   <li>Different years: "27 Dec 2025 - 1 Jan 2026"</li>
+     * </ul>
+     *
+     * <p>Examples with shortMonth=false:</p>
+     * <ul>
+     *   <li>Same month: "1 - 5 January 2026"</li>
+     *   <li>Different months: "27 February - 1 March 2026"</li>
+     *   <li>Different years: "27 December 2025 - 1 January 2026"</li>
+     * </ul>
+     *
+     * @param start      Start date
+     * @param end        End date
+     * @param shortMonth Whether to use short month names (Jan) or full names (January)
+     * @return Formatted date range string
+     */
+    public static String formatDateRange(LocalDate start, LocalDate end, boolean shortMonth) {
+        if (start == null || end == null) {
+            return "";
+        }
+
+        if (shortMonth) {
+            // Use TextStyle for short month names (e.g., "Jan", "Feb")
+            String firstDay = String.valueOf(start.getDayOfMonth());
+            String firstMonth = start.getMonth().getDisplayName(TextStyle.SHORT, Locale.ENGLISH);
+
+            String lastDay = String.valueOf(end.getDayOfMonth());
+            String lastMonth = end.getMonth().getDisplayName(TextStyle.SHORT, Locale.ENGLISH);
+            int endYear = end.getYear();
+
+            if (start.getMonth() == end.getMonth() && start.getYear() == end.getYear()) {
+                // Same month: "1 - 5 Jan 2026"
+                return firstDay + " - " + lastDay + " " + lastMonth + " " + endYear;
+            } else if (start.getYear() == end.getYear()) {
+                // Different months, same year: "27 Feb - 1 Mar 2026"
+                return firstDay + " " + firstMonth + " - " + lastDay + " " + lastMonth + " " + endYear;
+            } else {
+                // Different years: "27 Dec 2025 - 1 Jan 2026"
+                return firstDay + " " + firstMonth + " " + start.getYear() + " - " + lastDay + " " + lastMonth + " " + endYear;
+            }
+        } else {
+            // Use DateTimeFormatter for full month names
+            DateTimeFormatter dayFormatter = DateTimeFormatter.ofPattern("d", Locale.ENGLISH);
+            DateTimeFormatter dayMonthFormatter = DateTimeFormatter.ofPattern("d MMMM", Locale.ENGLISH);
+            DateTimeFormatter fullFormatter = DateTimeFormatter.ofPattern("d MMMM yyyy", Locale.ENGLISH);
+
+            if (start.getMonth() == end.getMonth() && start.getYear() == end.getYear()) {
+                // Same month: "1 - 5 January 2026"
+                return start.format(dayFormatter) + " - " + end.format(fullFormatter);
+            } else if (start.getYear() == end.getYear()) {
+                // Different months, same year: "27 February - 1 March 2026"
+                return start.format(dayMonthFormatter) + " - " + end.format(fullFormatter);
+            } else {
+                // Different years: "27 December 2025 - 1 January 2026"
+                return start.format(fullFormatter) + " - " + end.format(fullFormatter);
+            }
+        }
+    }
+
+    /**
+     * Formats a date range with short month names (e.g., "Jan", "Feb").
+     * Convenience method that calls {@link #formatDateRange(LocalDate, LocalDate, boolean)} with shortMonth=true.
+     *
+     * @param start Start date
+     * @param end   End date
+     * @return Formatted date range string with short month names
+     */
+    public static String formatDateRangeShort(LocalDate start, LocalDate end) {
+        return formatDateRange(start, end, true);
+    }
+
+    /**
+     * Formats a date range with full month names (e.g., "January", "February").
+     * Convenience method that calls {@link #formatDateRange(LocalDate, LocalDate, boolean)} with shortMonth=false.
+     *
+     * @param start Start date
+     * @param end   End date
+     * @return Formatted date range string with full month names
+     */
+    public static String formatDateRangeFull(LocalDate start, LocalDate end) {
+        return formatDateRange(start, end, false);
+    }
+
+    /**
+     * Makes a region (typically a card) selectable by clicking.
+     * Adds/removes the "selected" CSS class based on the selection state.
+     * Also sets the cursor to HAND for better UX.
+     *
+     * <p>This is a common pattern used in booking forms for:</p>
+     * <ul>
+     *   <li>Payment option cards</li>
+     *   <li>Rate type cards</li>
+     *   <li>Member selection cards</li>
+     *   <li>Any toggleable option</li>
+     * </ul>
+     *
+     * @param card             The region to make selectable
+     * @param selectedProperty Property to bind selection state (will be toggled on click)
+     */
+    public static void makeSelectable(Region card, BooleanProperty selectedProperty) {
+        makeSelectable(card, selectedProperty, "selected");
+    }
+
+    /**
+     * Makes a region (typically a card) selectable by clicking with a custom CSS class.
+     * Adds/removes the specified CSS class based on the selection state.
+     * Also sets the cursor to HAND for better UX.
+     *
+     * @param card             The region to make selectable
+     * @param selectedProperty Property to bind selection state (will be toggled on click)
+     * @param selectedClass    CSS class to add when selected (default: "selected")
+     */
+    public static void makeSelectable(Region card, BooleanProperty selectedProperty, String selectedClass) {
+        card.setCursor(Cursor.HAND);
+        card.setOnMouseClicked(e -> selectedProperty.set(!selectedProperty.get()));
+
+        // Initial state
+        if (selectedProperty.get()) {
+            card.getStyleClass().add(selectedClass);
+        }
+
+        // Listen for changes
+        selectedProperty.addListener((obs, oldVal, newVal) -> {
+            if (newVal) {
+                if (!card.getStyleClass().contains(selectedClass)) {
+                    card.getStyleClass().add(selectedClass);
+                }
+            } else {
+                card.getStyleClass().remove(selectedClass);
+            }
+        });
+    }
+
 }

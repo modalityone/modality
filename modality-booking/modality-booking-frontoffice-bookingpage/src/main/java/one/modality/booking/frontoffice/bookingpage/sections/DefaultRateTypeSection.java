@@ -13,6 +13,7 @@ import one.modality.base.shared.entities.BookablePeriod;
 import one.modality.base.shared.entities.Rate;
 import one.modality.booking.client.workingbooking.WorkingBooking;
 import one.modality.booking.client.workingbooking.WorkingBookingProperties;
+import dev.webfx.extras.i18n.controls.I18nControls;
 import one.modality.booking.frontoffice.bookingpage.BookingPageI18nKeys;
 import one.modality.booking.frontoffice.bookingpage.components.StyledSectionHeader;
 import one.modality.booking.frontoffice.bookingpage.theme.BookingFormColorScheme;
@@ -29,7 +30,7 @@ import java.util.function.Consumer;
  *
  * <p>CSS classes used:</p>
  * <ul>
- *   <li>{@code .booking-form-rate-type-card} - card container</li>
+ *   <li>{@code .bookingpage-passive-card} - card container (generic passive/info card)</li>
  *   <li>{@code .booking-form-rate-type-badge} - rate type badge</li>
  * </ul>
  *
@@ -72,12 +73,15 @@ public class DefaultRateTypeSection implements HasRateTypeSection {
         card = new VBox(12);
         card.setPadding(new Insets(20, 24, 20, 24));
         card.setAlignment(Pos.CENTER_LEFT);
-        card.getStyleClass().add("booking-form-rate-type-card");
+        card.getStyleClass().add("bookingpage-passive-card");
 
         // Rate badge - styled via CSS
-        rateBadge = new Label("Standard Rate");
+        rateBadge = I18nControls.newLabel(BookingPageI18nKeys.StandardRate);
         rateBadge.setPadding(new Insets(4, 10, 4, 10));
         rateBadge.getStyleClass().add("booking-form-rate-type-badge");
+
+        // Price label (optional - can be set later)
+        priceLabel = new Label();
 
         card.getChildren().addAll(rateBadge, priceLabel);
 

@@ -4,8 +4,10 @@ import one.modality.booking.frontoffice.bookingpage.BookingFormHeader;
 import one.modality.booking.frontoffice.bookingpage.BookingFormPage;
 import one.modality.booking.frontoffice.bookingpage.MultiPageBookingForm;
 
+import dev.webfx.extras.i18n.I18n;
 import dev.webfx.extras.i18n.controls.I18nControls;
 import dev.webfx.extras.responsive.ResponsiveDesign;
+import one.modality.booking.frontoffice.bookingpage.BookingPageI18nKeys;
 import dev.webfx.kit.util.properties.FXProperties;
 import javafx.beans.property.IntegerProperty;
 import javafx.beans.property.ObjectProperty;
@@ -484,7 +486,7 @@ public class ResponsiveStepProgressHeader implements BookingFormHeader {
             I18nControls.bindI18nProperties(translationHolder, current.titleKey);
             // Update label text immediately and whenever translation changes
             FXProperties.runNowAndOnPropertyChange(
-                text -> currentLabel.setText("Step " + current.stepNumber + ": " + text),
+                text -> currentLabel.setText(I18n.getI18nText(BookingPageI18nKeys.StepPrefix, current.stepNumber, text)),
                 translationHolder.textProperty()
             );
         }
@@ -632,7 +634,8 @@ public class ResponsiveStepProgressHeader implements BookingFormHeader {
         numberLabel.setFont(fontSemiBold(13)); // Per JSX mockup
 
         if (textLabel != null) {
-            textLabel.setTextFill(isActive ? scheme.getDarkText() : (isCompleted ? scheme.getLightText() : Color.web("#9CA3AF")));
+            // Active/completed step label uses primary color (same as circle border), inactive uses gray
+            textLabel.setTextFill(isActive || isCompleted ? scheme.getPrimary() : Color.web("#9CA3AF"));
             // Active step label should be bold (700), inactive should be normal (400)
             textLabel.setFont(isActive ? fontBold(12) : font(12));
         }

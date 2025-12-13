@@ -1,6 +1,7 @@
 package one.modality.booking.frontoffice.bookingpage.sections;
 
 import javafx.beans.property.ObjectProperty;
+import javafx.beans.value.ObservableBooleanValue;
 import one.modality.base.shared.entities.Person;
 import one.modality.booking.frontoffice.bookingpage.BookingFormSection;
 import one.modality.booking.frontoffice.bookingpage.theme.BookingFormColorScheme;
@@ -36,8 +37,6 @@ public interface HasMemberSelectionSection extends BookingFormSection {
      */
     class MemberInfo {
         private final Object personId;
-        private final String firstName;
-        private final String lastName;
         private final String name;
         private final String email;
         private final Person personEntity;
@@ -51,9 +50,6 @@ public interface HasMemberSelectionSection extends BookingFormSection {
             this.status = status;
 
             // Split name into first/last
-            String[] parts = name != null ? name.trim().split("\\s+", 2) : new String[]{"", ""};
-            this.firstName = parts[0];
-            this.lastName = parts.length > 1 ? parts[1] : "";
         }
 
         public Object getPersonId() { return personId; }
@@ -67,13 +63,6 @@ public interface HasMemberSelectionSection extends BookingFormSection {
             return status == MemberStatus.ACTIVE || status == MemberStatus.OWNER;
         }
 
-        public String getFirstName() {
-            return firstName;
-        }
-
-        public String getLastName() {
-            return lastName;
-        }
     }
 
     /**
@@ -125,5 +114,11 @@ public interface HasMemberSelectionSection extends BookingFormSection {
      * Clears all already-booked markers.
      */
     void clearAlreadyBooked();
+
+    /**
+     * Returns an observable property indicating if there are members available to book.
+     * Returns true if householdMembers contains at least one member not in alreadyBookedPersonIds.
+     */
+    ObservableBooleanValue hasAvailableMembersProperty();
 
 }

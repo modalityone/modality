@@ -340,11 +340,15 @@ public class StandardBookingForm extends MultiPageBookingForm {
         }
 
         // Pending Bookings page: Register Another Person + Proceed to Payment
+        // Register Another Person is disabled when no available members to book
         if (pendingBookingsPage instanceof CompositeBookingFormPage compositePending) {
             compositePending.setButtons(
                 new BookingFormButton(BookingPageI18nKeys.RegisterAnotherPerson,
                     e -> handleRegisterAnotherPerson(),
-                    "btn-secondary booking-form-btn-secondary"),
+                    "btn-secondary booking-form-btn-secondary",
+                    defaultMemberSelectionSection != null
+                        ? Bindings.not(defaultMemberSelectionSection.hasAvailableMembersProperty())
+                        : null),
                 new BookingFormButton(BookingPageI18nKeys.ProceedToPaymentArrow,
                     e -> handleProceedToPayment(),
                     "btn-primary booking-form-btn-primary")
@@ -783,6 +787,10 @@ public class StandardBookingForm extends MultiPageBookingForm {
                     Item item = line.getItem();
                     if (item != null) {
                         ItemFamily family = item.getFamily();
+                        // Skip items where family has summaryHidden = true (e.g., rounding)
+                        if (family != null && Boolean.TRUE.equals(family.isSummaryHidden())) {
+                            continue;
+                        }
                         String familyCode = family != null ? family.getCode() : "";
                         // Use family name for display, fall back to item name if no family
                         String familyName = (family != null && family.getName() != null) ? family.getName() : null;
@@ -799,6 +807,20 @@ public class StandardBookingForm extends MultiPageBookingForm {
             }
 
             defaultPendingBookingsSection.addBooking(bookingItem);
+        }
+
+        // Update alreadyBookedPersonIds in member selection section
+        // This ensures the "Register Another Person" button is correctly enabled/disabled
+        if (defaultMemberSelectionSection != null) {
+            Set<Object> bookedPersonIds = new HashSet<>();
+            for (Document doc : documents) {
+                Person person = doc.getPerson();
+                if (person != null) {
+                    // MUST use getPrimaryKey() to match how MemberInfo stores person IDs
+                    bookedPersonIds.add(person.getPrimaryKey());
+                }
+            }
+            defaultMemberSelectionSection.setAlreadyBookedPersonIds(bookedPersonIds);
         }
 
         Console.log("Added " + documents.size() + " bookings to pending bookings section");
@@ -945,6 +967,7 @@ public class StandardBookingForm extends MultiPageBookingForm {
             .map(entry -> new PaymentAllocation(Entities.getPrimaryKey(entry.getKey()), entry.getValue()))
             .toArray(PaymentAllocation[]::new);
 
+        // TODO: show an error message to the user
         return PaymentService.initiatePayment(
                 ClientPaymentUtil.createInitiatePaymentArgument(
                     sectionResult.getAmount(),
@@ -954,10 +977,7 @@ public class StandardBookingForm extends MultiPageBookingForm {
                     "/payment-cancel/:moneyTransferId")
             )
             .inUiThread()
-            .onFailure(paymentResult -> {
-                // TODO: show an error message to the user
-                Console.log(paymentResult);
-            })
+            .onFailure(Console::log)
             .compose(paymentResult -> {
                 HasPersonalDetails buyerDetails = FXUserPerson.getUserPerson();
                 if (buyerDetails == null)

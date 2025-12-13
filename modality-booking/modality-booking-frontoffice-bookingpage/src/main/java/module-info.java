@@ -11,6 +11,7 @@ module modality.booking.frontoffice.bookingpage {
     requires modality.base.client.i18n;
     requires modality.base.client.icons;
     requires modality.base.client.time;
+    requires modality.base.shared.domainmodel;
     requires modality.base.shared.entities;
     requires modality.base.shared.knownitems;
     requires modality.booking.client.workingbooking;
@@ -23,6 +24,8 @@ module modality.booking.frontoffice.bookingpage {
     requires modality.ecommerce.client.i18n;
     requires modality.ecommerce.document.service;
     requires modality.ecommerce.frontoffice.order;
+    requires modality.ecommerce.payment;
+    requires modality.ecommerce.payment.client;
     requires modality.event.client.lifecycle;
     requires modality.event.frontoffice.activity.book;
     requires webfx.extras.aria;
@@ -56,8 +59,6 @@ module modality.booking.frontoffice.bookingpage {
     requires webfx.stack.orm.entity;
     requires webfx.stack.orm.entity.binding;
     requires webfx.stack.orm.entity.controls;
-    requires modality.base.shared.domainmodel;
-    requires modality.ecommerce.payment.client;
 
     // Exported packages
     exports one.modality.booking.frontoffice.bookingpage;

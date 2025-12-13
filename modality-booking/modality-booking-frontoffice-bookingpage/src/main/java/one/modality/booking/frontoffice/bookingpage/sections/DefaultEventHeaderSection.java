@@ -1,6 +1,7 @@
 package one.modality.booking.frontoffice.bookingpage.sections;
 
 import dev.webfx.extras.i18n.I18n;
+import dev.webfx.extras.i18n.controls.I18nControls;
 import dev.webfx.extras.panes.MonoPane;
 import dev.webfx.extras.responsive.ResponsiveDesign;
 import javafx.beans.property.ObjectProperty;
@@ -347,7 +348,7 @@ public class DefaultEventHeaderSection implements HasEventHeaderSection {
         if (org != null) {
             I18nEntities.bindTranslatedEntityToTextProperty(locationLabel, org);
         } else {
-            locationLabel.setText("Online");
+            I18nControls.bindI18nProperties(locationLabel, BookingPageI18nKeys.Online);
         }
 
         // Set description from shortDescriptionLabel field using Labels.translateLabel
@@ -372,11 +373,7 @@ public class DefaultEventHeaderSection implements HasEventHeaderSection {
                 IMAGE_REQUEST_HEIGHT,
                 imageContainer,
                 null
-        ).onSuccess(image -> {
-            imageVisible.set(true);
-        }).onFailure(error -> {
-            imageVisible.set(false);
-        });
+        ).onSuccess(image -> imageVisible.set(true)).onFailure(error -> imageVisible.set(false));
     }
 
     private void updateDatesLabel() {

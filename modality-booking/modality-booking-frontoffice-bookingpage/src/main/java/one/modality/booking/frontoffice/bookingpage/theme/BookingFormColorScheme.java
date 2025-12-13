@@ -186,19 +186,6 @@ public final class BookingFormColorScheme {
     }
 
     /**
-     * Retrieves a color scheme by its ID.
-     *
-     * @param id The color scheme ID (e.g., "journey-green", "wisdom-blue")
-     * @return The matching color scheme, or DEFAULT if not found
-     */
-    public static BookingFormColorScheme fromId(String id) {
-        if (id == null || id.isEmpty()) {
-            return DEFAULT;
-        }
-        return SCHEMES_BY_ID.getOrDefault(id, DEFAULT);
-    }
-
-    /**
      * Returns all available color schemes.
      *
      * @return Iterable of all registered color schemes
@@ -289,41 +276,6 @@ public final class BookingFormColorScheme {
     private static String toHexByte(int value) {
         String hex = Integer.toHexString(value).toUpperCase();
         return hex.length() == 1 ? "0" + hex : hex;
-    }
-
-    /**
-     * Returns the primary color as a hex string.
-     */
-    public String getPrimaryHex() {
-        return toHex(primary);
-    }
-
-    /**
-     * Returns the selected background color as a hex string.
-     */
-    public String getSelectedBgHex() {
-        return toHex(selectedBg);
-    }
-
-    /**
-     * Returns the hover border color as a hex string.
-     */
-    public String getHoverBorderHex() {
-        return toHex(hoverBorder);
-    }
-
-    /**
-     * Returns the dark text color as a hex string.
-     */
-    public String getDarkTextHex() {
-        return toHex(darkText);
-    }
-
-    /**
-     * Returns the light text color as a hex string.
-     */
-    public String getLightTextHex() {
-        return toHex(lightText);
     }
 
     /**

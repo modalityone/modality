@@ -1,5 +1,7 @@
 package one.modality.booking.frontoffice.bookingpage.sections;
 
+import dev.webfx.extras.i18n.I18n;
+import dev.webfx.extras.i18n.controls.I18nControls;
 import javafx.beans.property.*;
 import javafx.beans.value.ObservableBooleanValue;
 import javafx.collections.FXCollections;
@@ -11,9 +13,10 @@ import javafx.scene.control.Label;
 import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.SVGPath;
+import one.modality.base.shared.entities.formatters.EventPriceFormatter;
 import one.modality.booking.client.workingbooking.WorkingBookingProperties;
 import one.modality.booking.frontoffice.bookingpage.BookingPageI18nKeys;
-import one.modality.booking.frontoffice.bookingpage.PriceFormatter;
+import one.modality.booking.frontoffice.bookingpage.components.StyledSectionHeader;
 import one.modality.booking.frontoffice.bookingpage.theme.BookingFormColorScheme;
 
 import java.time.LocalDate;
@@ -46,8 +49,6 @@ public class DefaultConfirmationSection implements HasConfirmationSection {
     protected final VBox container = new VBox();
     protected VBox bookingReferencesContent;
 
-    // === CALLBACKS ===
-    protected Runnable onDownloadConfirmation;
     protected Runnable onMakeAnotherBooking;
 
     // === DATA ===
@@ -124,15 +125,18 @@ public class DefaultConfirmationSection implements HasConfirmationSection {
         VBox.setMargin(checkCircle, new Insets(0, 0, 24, 0));
 
         // Title
-        Label titleLabel = new Label("Payment Confirmed");
+        Label titleLabel = I18nControls.newLabel(BookingPageI18nKeys.PaymentConfirmed);
         titleLabel.setFont(fontBold(28));
         titleLabel.setTextFill(colors.getPrimary());
         VBox.setMargin(titleLabel, new Insets(0, 0, 12, 0));
 
         // Subtitle
         String email = confirmedBookings.isEmpty() ? "" : confirmedBookings.get(0).getEmail();
-        Label subtitleLabel = new Label("Thank you for your booking. We've received your payment of " +
-                                        PriceFormatter.formatPriceWithCurrencyNoDecimals(paidAmount) + " and sent a booking receipt to " + email + ".");
+        String formattedAmount = workingBookingProperties != null
+            ? EventPriceFormatter.formatWithCurrency(paidAmount, workingBookingProperties.getEvent())
+            : String.valueOf(paidAmount);
+        Label subtitleLabel = new Label();
+        I18nControls.bindI18nProperties(subtitleLabel, BookingPageI18nKeys.PaymentConfirmedMessage, formattedAmount, email);
         subtitleLabel.getStyleClass().addAll("bookingpage-text-md", "bookingpage-text-muted");
         subtitleLabel.setWrapText(true);
         subtitleLabel.setAlignment(Pos.CENTER);
@@ -146,8 +150,10 @@ public class DefaultConfirmationSection implements HasConfirmationSection {
         VBox section = new VBox(0);
 
         // Section header
-        HBox header = buildSectionHeader("Booking Reference" +
-                (confirmedBookings.size() > 1 ? "s" : ""), createTicketIcon());
+        Object headerKey = confirmedBookings.size() > 1
+            ? BookingPageI18nKeys.BookingReferences
+            : BookingPageI18nKeys.BookingReference;
+        HBox header = new StyledSectionHeader(headerKey, StyledSectionHeader.ICON_TICKET);
 
         // Content
         bookingReferencesContent = new VBox(0);
@@ -206,7 +212,7 @@ public class DefaultConfirmationSection implements HasConfirmationSection {
         VBox section = new VBox(0);
 
         // Section header
-        HBox header = buildSectionHeader("Details", createCalendarIcon());
+        HBox header = new StyledSectionHeader(BookingPageI18nKeys.Details, StyledSectionHeader.ICON_CALENDAR);
 
         // Content
         VBox content = new VBox(12);
@@ -215,7 +221,7 @@ public class DefaultConfirmationSection implements HasConfirmationSection {
 
         // Event
         VBox eventBox = new VBox(4);
-        Label eventTitleLabel = new Label("Event");
+        Label eventTitleLabel = I18nControls.newLabel(BookingPageI18nKeys.Event);
         eventTitleLabel.getStyleClass().addAll("bookingpage-text-xs", "bookingpage-text-muted");
 
         Label eventValueLabel = new Label();
@@ -229,7 +235,7 @@ public class DefaultConfirmationSection implements HasConfirmationSection {
 
         // Dates
         VBox datesBox = new VBox(4);
-        Label datesTitleLabel = new Label("Dates");
+        Label datesTitleLabel = I18nControls.newLabel(BookingPageI18nKeys.Dates);
         datesTitleLabel.getStyleClass().addAll("bookingpage-text-xs", "bookingpage-text-muted");
 
         Label datesValueLabel = new Label(formatDateRange());
@@ -240,11 +246,13 @@ public class DefaultConfirmationSection implements HasConfirmationSection {
 
         // Attendees
         VBox attendeesBox = new VBox(4);
-        Label attendeesTitleLabel = new Label("Attendees");
+        Label attendeesTitleLabel = I18nControls.newLabel(BookingPageI18nKeys.Attendees);
         attendeesTitleLabel.getStyleClass().addAll("bookingpage-text-xs", "bookingpage-text-muted");
 
         int count = confirmedBookings.size();
-        Label attendeesValueLabel = new Label(count + (count == 1 ? " person" : " people"));
+        Object personKey = count == 1 ? BookingPageI18nKeys.Person : BookingPageI18nKeys.People;
+        String personText = I18n.getI18nText(personKey);
+        Label attendeesValueLabel = new Label(count + " " + personText);
         attendeesValueLabel.getStyleClass().addAll("bookingpage-text-base", "bookingpage-font-semibold", "bookingpage-text-dark");
 
         attendeesBox.getChildren().addAll(attendeesTitleLabel, attendeesValueLabel);
@@ -279,7 +287,7 @@ public class DefaultConfirmationSection implements HasConfirmationSection {
         VBox section = new VBox(0);
 
         // Section header
-        HBox header = buildSectionHeader("Payment Summary", createCardIcon());
+        HBox header = new StyledSectionHeader(BookingPageI18nKeys.PaymentSummary, StyledSectionHeader.ICON_CREDIT_CARD);
 
         // Content
         VBox content = new VBox(12);
@@ -287,10 +295,16 @@ public class DefaultConfirmationSection implements HasConfirmationSection {
         content.getStyleClass().add("bookingpage-card");
 
         // Total Amount row
-        HBox totalRow = createPaymentRow("Total Amount", PriceFormatter.formatPriceWithCurrencyNoDecimals(totalAmount), false);
+        String formattedTotal = workingBookingProperties != null
+            ? EventPriceFormatter.formatWithCurrency(totalAmount, workingBookingProperties.getEvent())
+            : String.valueOf(totalAmount);
+        HBox totalRow = createPaymentRow(BookingPageI18nKeys.TotalAmount, formattedTotal, false);
 
         // Paid Today row
-        HBox paidRow = createPaymentRow("Paid Today", PriceFormatter.formatPriceWithCurrencyNoDecimals(paidAmount), false);
+        String formattedPaid = workingBookingProperties != null
+            ? EventPriceFormatter.formatWithCurrency(paidAmount, workingBookingProperties.getEvent())
+            : String.valueOf(paidAmount);
+        HBox paidRow = createPaymentRow(BookingPageI18nKeys.PaidToday, formattedPaid, false);
 
         content.getChildren().addAll(totalRow, paidRow);
 
@@ -303,7 +317,10 @@ public class DefaultConfirmationSection implements HasConfirmationSection {
             divider.getStyleClass().add("bookingpage-bg-light");
 
             // Balance row
-            HBox balanceRow = createPaymentRow("Balance Remaining", PriceFormatter.formatPriceWithCurrencyNoDecimals((int) balanceDue), true);
+            String formattedBalance = workingBookingProperties != null
+                ? EventPriceFormatter.formatWithCurrency(balanceDue, workingBookingProperties.getEvent())
+                : String.valueOf(balanceDue);
+            HBox balanceRow = createPaymentRow(BookingPageI18nKeys.BalanceRemaining, formattedBalance, true);
 
             // Info note
             VBox infoNote = new VBox();
@@ -311,8 +328,11 @@ public class DefaultConfirmationSection implements HasConfirmationSection {
             infoNote.getStyleClass().addAll("bookingpage-bg-light", "bookingpage-rounded");
             VBox.setMargin(infoNote, new Insets(12, 0, 0, 0));
 
-            Label noteLabel = new Label("The remaining balance of " + PriceFormatter.formatPriceWithCurrencyWithDecimals(balanceDue) +
-                                        " can be paid online through your account anytime before the event, or at the reception desk when you arrive.");
+            String formattedBalanceNote = workingBookingProperties != null
+                ? EventPriceFormatter.formatWithCurrency(balanceDue, workingBookingProperties.getEvent())
+                : String.valueOf(balanceDue);
+            Label noteLabel = new Label();
+            I18nControls.bindI18nProperties(noteLabel, BookingPageI18nKeys.BalanceRemainingNote, formattedBalanceNote);
             noteLabel.getStyleClass().addAll("bookingpage-text-sm", "bookingpage-text-secondary");
             noteLabel.setWrapText(true);
 
@@ -327,11 +347,11 @@ public class DefaultConfirmationSection implements HasConfirmationSection {
         return section;
     }
 
-    protected HBox createPaymentRow(String label, String value, boolean isTotal) {
+    protected HBox createPaymentRow(Object labelKey, String value, boolean isTotal) {
         HBox row = new HBox();
         row.setAlignment(Pos.CENTER_LEFT);
 
-        Label labelNode = new Label(label);
+        Label labelNode = I18nControls.newLabel(labelKey);
         labelNode.setTextFill(TEXT_SECONDARY);
         if (isTotal) {
             labelNode.setFont(fontSemiBold(16));
@@ -361,7 +381,7 @@ public class DefaultConfirmationSection implements HasConfirmationSection {
         VBox section = new VBox(0);
 
         // Section header
-        HBox header = buildSectionHeader("What's Next?", createChecklistIcon());
+        HBox header = new StyledSectionHeader(BookingPageI18nKeys.WhatsNext, StyledSectionHeader.ICON_CHECKLIST);
 
         // Content
         VBox content = new VBox(16);
@@ -372,16 +392,18 @@ public class DefaultConfirmationSection implements HasConfirmationSection {
         String email = confirmedBookings.isEmpty() ? "" : confirmedBookings.get(0).getEmail();
         HBox emailStep = createWhatsNextStep(
                 createEnvelopeIcon(colors),
-                "Check Your Email",
-                "Your booking receipt has been sent to " + email + ". If you don't see it within a few minutes, please check your spam folder.",
+                BookingPageI18nKeys.CheckYourEmailTitle,
+                BookingPageI18nKeys.CheckYourEmailDesc,
+                email,
                 colors
         );
 
         // Confirmation Letter
         HBox confirmStep = createWhatsNextStep(
                 createSmallCheckIcon(colors),
-                "Confirmation Letter Coming Soon",
-                "Your booking will be processed by our registration team. You'll receive your confirmation letter within 48 hours.",
+                BookingPageI18nKeys.ConfirmationLetterTitle,
+                BookingPageI18nKeys.ConfirmationLetterDesc,
+                null,
                 colors
         );
 
@@ -390,11 +412,14 @@ public class DefaultConfirmationSection implements HasConfirmationSection {
         // Balance step (if applicable)
         int balanceDue = totalAmount - paidAmount;
         if (balanceDue > 0) {
+            String formattedBalanceStep = workingBookingProperties != null
+                ? EventPriceFormatter.formatWithCurrency(balanceDue, workingBookingProperties.getEvent())
+                : String.valueOf(balanceDue);
             HBox balanceStep = createWhatsNextStep(
                     createSmallCardIcon(colors),
-                    "Pay the Balance When Ready",
-                "The remaining " + PriceFormatter.formatPriceWithCurrencyNoDecimals(balanceDue) +
-                " can be paid online through your account, or at reception when you arrive.",
+                    BookingPageI18nKeys.PayBalanceTitle,
+                    BookingPageI18nKeys.PayBalanceDesc,
+                    formattedBalanceStep,
                     colors
             );
             content.getChildren().add(balanceStep);
@@ -407,7 +432,7 @@ public class DefaultConfirmationSection implements HasConfirmationSection {
         return section;
     }
 
-    protected HBox createWhatsNextStep(Node icon, String title, String description, BookingFormColorScheme colors) {
+    protected HBox createWhatsNextStep(Node icon, Object titleKey, Object descKey, String param, BookingFormColorScheme colors) {
         HBox step = new HBox(12);
         step.setAlignment(Pos.TOP_LEFT);
 
@@ -421,10 +446,15 @@ public class DefaultConfirmationSection implements HasConfirmationSection {
         // Text content
         VBox textBox = new VBox(4);
 
-        Label titleLabel = new Label(title);
+        Label titleLabel = I18nControls.newLabel(titleKey);
         titleLabel.getStyleClass().addAll("bookingpage-text-md", "bookingpage-font-semibold", "bookingpage-text-dark");
 
-        Label descLabel = new Label(description);
+        Label descLabel = new Label();
+        if (param != null) {
+            I18nControls.bindI18nProperties(descLabel, descKey, param);
+        } else {
+            I18nControls.bindI18nProperties(descLabel, descKey);
+        }
         descLabel.getStyleClass().addAll("bookingpage-text-sm", "bookingpage-text-muted");
         descLabel.setWrapText(true);
 
@@ -435,69 +465,9 @@ public class DefaultConfirmationSection implements HasConfirmationSection {
         return step;
     }
 
-    protected HBox buildSectionHeader(String title, Node icon) {
-        BookingFormColorScheme colors = colorScheme.get();
-
-        HBox header = new HBox(10);
-        header.setAlignment(Pos.CENTER_LEFT);
-        header.setPadding(new Insets(14, 18, 14, 18));
-        header.setBackground(bg(colors.getSelectedBg(), RADII_8));
-        header.setBorder(borderLeft(colors.getPrimary(), 4, RADII_8));
-
-        Label titleLabel = new Label(title);
-        titleLabel.getStyleClass().addAll("bookingpage-text-xl", "bookingpage-font-semibold", "bookingpage-text-dark");
-
-        header.getChildren().addAll(icon, titleLabel);
-        return header;
-    }
-
     // ========================================
     // ICON HELPERS
     // ========================================
-
-    protected SVGPath createTicketIcon() {
-        SVGPath icon = new SVGPath();
-        icon.setContent("M2 9a3 3 0 0 1 3-3h14a3 3 0 0 1 3 3a3 3 0 0 1-3 3a3 3 0 0 1 3 3a3 3 0 0 1-3 3H5a3 3 0 0 1-3-3a3 3 0 0 1 3-3a3 3 0 0 1-3-3z");
-        icon.setStroke(colorScheme.get().getPrimary());
-        icon.setStrokeWidth(2);
-        icon.setFill(Color.TRANSPARENT);
-        icon.setScaleX(0.7);
-        icon.setScaleY(0.7);
-        return icon;
-    }
-
-    protected SVGPath createCalendarIcon() {
-        SVGPath icon = new SVGPath();
-        icon.setContent("M3 4h18a2 2 0 012 2v14a2 2 0 01-2 2H3a2 2 0 01-2-2V6a2 2 0 012-2z M16 2v4 M8 2v4 M3 10h18");
-        icon.setStroke(colorScheme.get().getPrimary());
-        icon.setStrokeWidth(2);
-        icon.setFill(Color.TRANSPARENT);
-        icon.setScaleX(0.7);
-        icon.setScaleY(0.7);
-        return icon;
-    }
-
-    protected SVGPath createCardIcon() {
-        SVGPath icon = new SVGPath();
-        icon.setContent("M2 5h20a2 2 0 012 2v10a2 2 0 01-2 2H2a2 2 0 01-2-2V7a2 2 0 012-2z M2 10h20");
-        icon.setStroke(colorScheme.get().getPrimary());
-        icon.setStrokeWidth(2);
-        icon.setFill(Color.TRANSPARENT);
-        icon.setScaleX(0.7);
-        icon.setScaleY(0.7);
-        return icon;
-    }
-
-    protected SVGPath createChecklistIcon() {
-        SVGPath icon = new SVGPath();
-        icon.setContent("M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2 M9 3h6v4H9V3 M9 14l2 2 4-4");
-        icon.setStroke(colorScheme.get().getPrimary());
-        icon.setStrokeWidth(2);
-        icon.setFill(Color.TRANSPARENT);
-        icon.setScaleX(0.7);
-        icon.setScaleY(0.7);
-        return icon;
-    }
 
     protected SVGPath createEnvelopeIcon(BookingFormColorScheme colors) {
         SVGPath icon = new SVGPath();

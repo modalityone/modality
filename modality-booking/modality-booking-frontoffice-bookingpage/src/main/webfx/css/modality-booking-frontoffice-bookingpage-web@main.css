@@ -98,23 +98,46 @@
 
 .step-progress-item.active .step-bubble {
     background-color: var(--booking-form-primary);
-    border-color: var(--booking-form-primary);
+    --fx-border-color: var(--booking-form-primary);
+    --fx-text-fill: var(--booking-form-text-on-primary);
+}
+
+.step-progress-item.active .step-bubble fx-text {
     color: var(--booking-form-text-on-primary);
 }
 
 .step-progress-item.completed .step-bubble {
-    border-color: var(--booking-form-primary);
+    --fx-border-color: var(--booking-form-primary);
+}
+
+.step-progress-item.completed .step-bubble fx-text {
     color: var(--booking-form-primary);
 }
 
-.step-progress-item.active .step-progress-label,
+.step-progress-item.active .step-progress-label {
+    --fx-text-fill: var(--booking-form-primary);
+}
+
+.step-progress-item.active .step-progress-label fx-text {
+    color: var(--booking-form-primary);
+}
+
 .step-progress-item.completed .step-progress-label {
+    --fx-text-fill: var(--booking-form-primary);
+}
+
+.step-progress-item.completed .step-progress-label fx-text {
     color: var(--booking-form-primary);
 }
 
 /* Section Title */
 .section-title {
-    border-left: 4px solid var(--booking-form-primary);
+    --fx-border-color: transparent transparent transparent var(--booking-form-primary);
+    --fx-border-width: 0 0 0 4px;
+    --fx-border-style: solid;
+}
+
+.section-title fx-text {
     color: var(--booking-form-text-primary);
 }
 
@@ -126,12 +149,12 @@
 
 .package-card:hover,
 .room-card:hover {
-    border-color: var(--booking-form-hover-border);
+    --fx-border-color: var(--booking-form-hover-border);
 }
 
 .package-card.selected,
 .room-card.selected {
-    border-color: var(--booking-form-primary);
+    --fx-border-color: var(--booking-form-primary);
     background-color: var(--booking-form-selected-bg);
 }
 
@@ -141,12 +164,12 @@
 }
 
 .booking-form-audio-recording-card:hover {
-    border-color: var(--booking-form-hover-border);
+    --fx-border-color: var(--booking-form-hover-border);
     background-color: var(--booking-form-selected-bg);
 }
 
 .booking-form-audio-recording-card.selected {
-    border-color: var(--booking-form-primary);
+    --fx-border-color: var(--booking-form-primary);
     background-color: var(--booking-form-selected-bg);
 }
 
@@ -161,12 +184,12 @@
 }
 
 .booking-form-selectable-card:hover {
-    border-color: var(--booking-form-hover-border);
+    --fx-border-color: var(--booking-form-hover-border);
     background-color: var(--booking-form-selected-bg);
 }
 
 .booking-form-selectable-card.selected {
-    border-color: var(--booking-form-primary);
+    --fx-border-color: var(--booking-form-primary);
     background-color: var(--booking-form-selected-bg);
 }
 
@@ -177,24 +200,27 @@
 }
 
 .booking-form-toggle-button:hover {
-    border-color: var(--booking-form-hover-border);
+    --fx-border-color: var(--booking-form-hover-border);
     background-color: var(--booking-form-selected-bg);
 }
 
 .booking-form-toggle-button.selected {
     background-color: var(--booking-form-primary);
-    border-color: var(--booking-form-primary);
+    --fx-border-color: var(--booking-form-primary);
 }
 
 /* Toggle Button Text */
 .booking-form-toggle-button-text {
-    color: #212529;
     font-weight: 600;
     font-size: 16px;
+}
+
+.booking-form-toggle-button-text fx-text {
+    color: #212529;
     transition: color 0.2s ease;
 }
 
-.booking-form-toggle-button.selected .booking-form-toggle-button-text {
+.booking-form-toggle-button.selected .booking-form-toggle-button-text fx-text {
     color: white;
 }
 
@@ -205,12 +231,12 @@
 }
 
 .booking-form-checkbox-option:hover {
-    border-color: var(--booking-form-hover-border);
+    --fx-border-color: var(--booking-form-hover-border);
     background-color: var(--booking-form-selected-bg);
 }
 
 .booking-form-checkbox-option.selected {
-    border-color: var(--booking-form-primary);
+    --fx-border-color: var(--booking-form-primary);
     background-color: var(--booking-form-selected-bg);
 }
 
@@ -221,44 +247,52 @@
 }
 
 .booking-form-radio-option:hover {
-    border-color: var(--booking-form-hover-border);
+    --fx-border-color: var(--booking-form-hover-border);
     background-color: var(--booking-form-selected-bg);
 }
 
 .booking-form-radio-option.selected {
-    border-color: var(--booking-form-primary);
+    --fx-border-color: var(--booking-form-primary);
     background-color: var(--booking-form-selected-bg);
 }
 
 /* Info Box Base */
 .booking-form-info-box {
     padding: 12px 16px;
-    border-radius: 8px;
+    --fx-border-radius: 8px;
 }
 
 /* Info Box Types */
 .booking-form-info-box-success {
     background-color: #d4edda;
-    border-left: 4px solid var(--booking-form-primary);
-    border-radius: 8px;
+    --fx-border-color: transparent transparent transparent var(--booking-form-primary);
+    --fx-border-width: 0 0 0 4px;
+    --fx-border-style: solid;
+    --fx-border-radius: 8px;
 }
 
 .booking-form-info-box-warning {
     background-color: #FFF9E6;
-    border: 1px solid #FFE58F;
-    border-radius: 8px;
+    --fx-border-color: #FFE58F;
+    --fx-border-width: 1px;
+    --fx-border-style: solid;
+    --fx-border-radius: 8px;
 }
 
 .booking-form-info-box-error {
     background-color: #f8d7da;
-    border: 1px solid #f5c2c7;
-    border-radius: 8px;
+    --fx-border-color: #f5c2c7;
+    --fx-border-width: 1px;
+    --fx-border-style: solid;
+    --fx-border-radius: 8px;
 }
 
 .booking-form-info-box-info {
     background-color: var(--booking-form-selected-bg);
-    border-left: 4px solid var(--booking-form-primary);
-    border-radius: 8px;
+    --fx-border-color: transparent transparent transparent var(--booking-form-primary);
+    --fx-border-width: 0 0 0 4px;
+    --fx-border-style: solid;
+    --fx-border-radius: 8px;
 }
 
 /* Option Row (common base for checkbox/radio options) */
@@ -266,137 +300,195 @@
     padding: 16px 20px 16px 16px;
     cursor: pointer;
     background-color: white;
-    border: 2px solid #e9ecef;
-    border-radius: 8px;
+    --fx-border-color: #e9ecef;
+    --fx-border-width: 2px;
+    --fx-border-style: solid;
+    --fx-border-radius: 8px;
     transition: border-color 0.2s ease, background-color 0.2s ease;
 }
 
 .booking-form-option-row:hover {
     background-color: var(--booking-form-selected-bg);
-    border-color: var(--booking-form-hover-border);
+    --fx-border-color: var(--booking-form-hover-border);
 }
 
 .booking-form-option-row.selected {
     background-color: var(--booking-form-selected-bg);
-    border-color: var(--booking-form-primary);
+    --fx-border-color: var(--booking-form-primary);
 }
 
 /* Checkbox Indicator (CSS-based theming) */
+/* Note: fx-rectangle uses HTML CSS properties, not SVG properties */
 .booking-form-checkbox-indicator {
     cursor: pointer;
 }
 
 .booking-form-checkbox-rect {
-    fill: white;
-    stroke: #dee2e6;
-    stroke-width: 2;
+    background-color: white;
+    border-color: #dee2e6;
+    border-style: solid;
+    border-width: 2px;
     transition: all 0.15s ease;
 }
 
 /* Hover on container affects the rect child */
 .booking-form-checkbox-indicator:hover .booking-form-checkbox-rect {
-    stroke: var(--booking-form-primary);
-    fill: var(--booking-form-selected-bg);
+    border-color: var(--booking-form-primary);
+    background-color: var(--booking-form-selected-bg);
 }
 
 .booking-form-checkbox-rect.selected {
-    fill: var(--booking-form-primary);
-    stroke: var(--booking-form-primary);
+    background-color: var(--booking-form-primary);
+    border-color: var(--booking-form-primary);
 }
 
 /* Selected state stays the same on hover */
 .booking-form-checkbox-indicator:hover .booking-form-checkbox-rect.selected {
-    fill: var(--booking-form-primary);
-    stroke: var(--booking-form-primary);
+    background-color: var(--booking-form-primary);
+    border-color: var(--booking-form-primary);
 }
 
-.booking-form-checkbox-checkmark {
-    stroke: white;
-    stroke-width: 2.5;
-    fill: transparent;
+/* SVGPath checkmark - target the actual SVG path inside fx-svgpath */
+/* Use !important to override JavaFX default fill="black" attribute */
+.booking-form-checkbox-checkmark svg path {
+    stroke: white !important;
+    stroke-width: 2.5 !important;
+    fill: none !important;
 }
 
 /* Radio Indicator (CSS-based theming) */
+/* Note: fx-circle uses HTML CSS properties, not SVG properties */
 .booking-form-radio-indicator {
     cursor: pointer;
 }
 
 .booking-form-radio-outer {
-    fill: white;
-    stroke: #dee2e6;
-    stroke-width: 2;
+    background-color: white;
+    border-color: #dee2e6;
+    border-style: solid;
+    border-width: 2px;
     transition: all 0.15s ease;
 }
 
 .booking-form-radio-indicator:hover .booking-form-radio-outer {
-    stroke: var(--booking-form-primary);
+    border-color: var(--booking-form-primary);
 }
 
 .booking-form-radio-outer.selected {
-    stroke: var(--booking-form-primary);
+    border-color: var(--booking-form-primary);
 }
 
 .booking-form-radio-inner {
-    fill: transparent;
+    background-color: transparent;
     transition: all 0.15s ease;
 }
 
 .booking-form-radio-inner.selected {
-    fill: var(--booking-form-primary);
+    background-color: var(--booking-form-primary);
 }
 
 /* Checkmark Badge (CSS-based theming for circular badges) */
+/* Note: fx-circle uses HTML CSS properties, fx-svgpath needs svg path selector */
 .booking-form-checkmark-circle {
-    fill: var(--booking-form-primary);
+    background-color: var(--booking-form-primary);
 }
 
-.booking-form-checkmark-icon {
-    stroke: white;
-    stroke-width: 2.5;
-    fill: transparent;
+.booking-form-checkmark-icon svg path {
+    stroke: white !important;
+    stroke-width: 2.5 !important;
+    fill: none !important;
 }
 
 /* Section Header */
 .booking-form-section-header {
     background-color: var(--booking-form-selected-bg);
-    border-left: 4px solid var(--booking-form-primary);
-    border-radius: 8px;
+    --fx-border-color: transparent transparent transparent var(--booking-form-primary);
+    --fx-border-width: 0 0 0 4px;
+    --fx-border-style: solid;
+    --fx-border-radius: 8px;
 }
 
 .booking-form-section-header-title {
     font-size: 20px;
     font-weight: 600;
+}
+
+.booking-form-section-header-title fx-text {
     color: #475569;
 }
 
-.package-price,
-.room-price {
+.package-price fx-text,
+.room-price fx-text {
     color: var(--booking-form-primary);
 }
 
 /* Buttons */
 .btn-primary,
 .booking-form-btn-primary {
-    background-color: var(--booking-form-primary);
+    --fx-button-background-color: var(--booking-form-primary);
+    border-radius: 8px;
+    cursor: pointer;
+    transition: filter 0.2s ease;
+}
+
+.btn-primary:hover,
+.booking-form-btn-primary:hover {
+    filter: brightness(1.1);
+}
+
+.btn-primary:active,
+.booking-form-btn-primary:active {
+    --fx-button-background-color: var(--booking-form-primary);
+    filter: brightness(0.95);
+}
+
+.btn-primary.disabled,
+.btn-primary[disabled],
+.booking-form-btn-primary.disabled,
+.booking-form-btn-primary[disabled] {
+    --fx-button-background-color: var(--booking-form-primary);
+    opacity: 0.7;
+    cursor: default;
+}
+
+.btn-primary fx-text,
+.booking-form-btn-primary fx-text {
     color: var(--booking-form-text-on-primary);
 }
 
 .btn-back,
 .booking-form-btn-back {
+    background-color: white;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: background-color 0.2s ease;
+}
+
+.btn-back:hover,
+.booking-form-btn-back:hover {
+    background-color: #f8f9fa;
+}
+
+.btn-back fx-text,
+.booking-form-btn-back fx-text {
     color: var(--booking-form-text-secondary);
 }
 
 .btn-secondary:hover,
 .booking-form-btn-secondary:hover {
-    border-color: var(--booking-form-primary);
-    color: var(--booking-form-primary);
+    --fx-border-color: var(--booking-form-primary);
     background-color: var(--booking-form-selected-bg);
+}
+
+.btn-secondary:hover fx-text,
+.booking-form-btn-secondary:hover fx-text {
+    color: var(--booking-form-primary);
 }
 
 /* Primary Button (CSS-based theming) */
 .booking-form-primary-btn {
     background-color: var(--booking-form-primary);
-    border-radius: 8px;
+    --fx-border-radius: 8px;
     padding: 14px 32px;
     cursor: pointer;
     transition: filter 0.2s ease;
@@ -408,20 +500,33 @@
 
 .booking-form-primary-btn:disabled,
 .booking-form-primary-btn.disabled {
-    background-color: #adb5bd;
+    background-color: var(--booking-form-primary);
+    opacity: 0.5;
     cursor: default;
 }
 
 .booking-form-primary-btn-text {
-    color: white;
     font-weight: 600;
     font-size: 16px;
+}
+
+.booking-form-primary-btn-text fx-text {
+    color: white;
+}
+
+/* Async spinner color on primary buttons - white for contrast */
+.booking-form-btn-primary .webfx-extras-spinner,
+.booking-form-primary-btn .webfx-extras-spinner {
+    --fx-spinner-color: white;
 }
 
 /* Back Button (CSS-based theming) */
 .booking-form-back-btn {
     background-color: transparent;
-    border: none;
+    --fx-border-color: #dee2e6;
+    --fx-border-style: solid;
+    --fx-border-width: 1px;
+    --fx-border-radius: 8px;
     padding: 14px 32px;
     cursor: pointer;
     transition: background-color 0.2s ease;
@@ -429,35 +534,40 @@
 
 .booking-form-back-btn:hover {
     background-color: #f8f9fa;
-    border-radius: 8px;
 }
 
 .booking-form-back-btn-text {
-    color: #6c757d;
     font-weight: 500;
     font-size: 15px;
+}
+
+.booking-form-back-btn-text fx-text {
+    color: #6c757d;
     transition: color 0.2s ease;
 }
 
-.booking-form-back-btn:hover .booking-form-back-btn-text {
+.booking-form-back-btn:hover .booking-form-back-btn-text fx-text {
     color: #212529;
 }
 
 /* Toggle Buttons (within booking containers) */
 .booking-container .toggle-button:hover {
-    border-color: var(--booking-form-hover-border);
+    --fx-border-color: var(--booking-form-hover-border);
     background-color: var(--booking-form-selected-bg);
 }
 
 .booking-container .toggle-button:selected {
-    border-color: var(--booking-form-primary);
+    --fx-border-color: var(--booking-form-primary);
     background-color: var(--booking-form-primary);
+}
+
+.booking-container .toggle-button:selected fx-text {
     color: var(--booking-form-text-on-primary);
 }
 
 /* Date Tabs */
-.date-tab:selected .date-tab-label,
-.date-tab:selected .date-tab-desc {
+.date-tab:selected .date-tab-label fx-text,
+.date-tab:selected .date-tab-desc fx-text {
     color: var(--booking-form-primary);
 }
 
@@ -467,31 +577,31 @@
    ========================================== */
 
 /* Text Colors (static, not theme-dependent) */
-.bookingpage-text-dark {
+.bookingpage-text-dark fx-text {
     color: #212529;
 }
 
-.bookingpage-text-muted {
+.bookingpage-text-muted fx-text {
     color: #6c757d;
 }
 
-.bookingpage-text-secondary {
+.bookingpage-text-secondary fx-text {
     color: #495057;
 }
 
-.bookingpage-text-success {
+.bookingpage-text-success fx-text {
     color: #198754;
 }
 
-.bookingpage-text-danger {
+.bookingpage-text-danger fx-text {
     color: #dc3545;
 }
 
-.bookingpage-text-warning {
+.bookingpage-text-warning fx-text {
     color: #8B6914;
 }
 
-.bookingpage-text-primary {
+.bookingpage-text-primary fx-text {
     color: var(--booking-form-primary);
 }
 
@@ -500,25 +610,27 @@
 }
 
 /* Icon Colors (match text colors for SVGPath stroke icons) */
-.bookingpage-icon-dark {
-    stroke: #212529;
-    fill: transparent;
+/* Note: fx-svgpath contains actual SVG element, must target svg path */
+/* Use !important to override JavaFX default fill="black" attribute */
+.bookingpage-icon-dark svg path {
+    stroke: #212529 !important;
+    fill: none !important;
 }
 
-.bookingpage-icon-muted {
-    stroke: #6c757d;
-    fill: transparent;
+.bookingpage-icon-muted svg path {
+    stroke: #6c757d !important;
+    fill: none !important;
 }
 
-.bookingpage-icon-primary {
-    stroke: var(--booking-form-primary);
-    fill: transparent;
+.bookingpage-icon-primary svg path {
+    stroke: var(--booking-form-primary) !important;
+    fill: none !important;
 }
 
 /* Section header icon - matches dark text */
-.booking-form-section-header-icon {
-    stroke: #212529;
-    fill: transparent;
+.booking-form-section-header-icon svg path {
+    stroke: #212529 !important;
+    fill: none !important;
 }
 
 /* Font Sizes */
@@ -596,54 +708,59 @@
     background-color: #f8d7da;
 }
 
-/* Border Colors (static) */
+/* Border Colors (static) - use CSS variables for WebFX ::before border */
 .bookingpage-border-light {
-    border-color: #dee2e6;
+    --fx-border-color: #dee2e6;
+    --fx-border-style: solid;
 }
 
 .bookingpage-border-gray {
-    border-color: #E6E7E7;
+    --fx-border-color: #E6E7E7;
+    --fx-border-style: solid;
 }
 
 .bookingpage-border-warning {
-    border-color: #FFE69C;
+    --fx-border-color: #FFE69C;
+    --fx-border-style: solid;
 }
 
-/* Border Radius */
+/* Border Radius - use CSS variables for WebFX */
 .bookingpage-rounded {
-    border-radius: 8px;
+    --fx-border-radius: 8px;
 }
 
 .bookingpage-rounded-lg {
-    border-radius: 12px;
+    --fx-border-radius: 12px;
 }
 
 .bookingpage-rounded-full {
-    border-radius: 50%;
+    --fx-border-radius: 50%;
 }
 
 /* Common Card Styles */
 .bookingpage-card {
     background-color: white;
-    border-radius: 8px;
-    border: 2px solid #dee2e6;
+    --fx-border-color: #dee2e6;
+    --fx-border-width: 2px;
+    --fx-border-style: solid;
+    --fx-border-radius: 8px;
     cursor: pointer;
     transition: border-color 0.2s ease, background-color 0.2s ease;
 }
 
 .bookingpage-card:hover {
-    border-color: var(--booking-form-hover-border);
+    --fx-border-color: var(--booking-form-hover-border);
     background-color: var(--booking-form-selected-bg);
 }
 
 .bookingpage-card.selected {
-    border-color: var(--booking-form-primary);
+    --fx-border-color: var(--booking-form-primary);
     background-color: var(--booking-form-selected-bg);
 }
 
 /* Selected cards don't change on hover */
 .bookingpage-card.selected:hover {
-    border-color: var(--booking-form-primary);
+    --fx-border-color: var(--booking-form-primary);
     background-color: var(--booking-form-selected-bg);
 }
 
@@ -653,86 +770,213 @@
 }
 
 .bookingpage-card.disabled:hover {
-    border-color: #dee2e6;
+    --fx-border-color: #dee2e6;
     background-color: white;
 }
 
 /* Static/informative card - no hover effects */
 .bookingpage-card-static {
     background-color: white;
-    border-radius: 8px;
-    border: 2px solid #dee2e6;
+    --fx-border-color: #dee2e6;
+    --fx-border-width: 2px;
+    --fx-border-style: solid;
+    --fx-border-radius: 8px;
     cursor: default;
 }
 
 .bookingpage-card-light {
     background-color: #f8f9fa;
-    border-radius: 8px;
-    border: 1px solid #dee2e6;
+    --fx-border-color: #dee2e6;
+    --fx-border-width: 1px;
+    --fx-border-style: solid;
+    --fx-border-radius: 8px;
 }
 
 .bookingpage-card-lighter {
     background-color: #F4F4F4;
-    border-radius: 12px;
+    --fx-border-radius: 12px;
+}
+
+/* =============================================
+   GENERIC CARD TYPES (by selection pattern)
+   ============================================= */
+
+/* Passive Card - non-interactive, display only (new generic name for card-static) */
+.bookingpage-passive-card {
+    background-color: white;
+    --fx-border-color: #dee2e6;
+    --fx-border-width: 2px;
+    --fx-border-style: solid;
+    --fx-border-radius: 8px;
+    cursor: default;
+}
+
+/* Selectable Card - card with checkmark badge in corner when selected */
+.bookingpage-selectable-card {
+    background-color: white;
+    --fx-border-color: #dee2e6;
+    --fx-border-width: 2px;
+    --fx-border-style: solid;
+    --fx-border-radius: 8px;
+    cursor: pointer;
+    transition: border-color 0.2s ease, background-color 0.2s ease;
+}
+
+.bookingpage-selectable-card:hover {
+    --fx-border-color: var(--booking-form-hover-border);
+    background-color: var(--booking-form-selected-bg);
+}
+
+.bookingpage-selectable-card.selected {
+    --fx-border-color: var(--booking-form-primary);
+    background-color: var(--booking-form-selected-bg);
+}
+
+.bookingpage-selectable-card.selected:hover {
+    --fx-border-color: var(--booking-form-primary);
+    background-color: var(--booking-form-selected-bg);
+}
+
+.bookingpage-selectable-card.disabled {
+    opacity: 0.7;
+    cursor: default;
+}
+
+.bookingpage-selectable-card.disabled:hover {
+    --fx-border-color: #dee2e6;
+    background-color: white;
+}
+
+/* Checkbox Card - card with embedded checkbox on left */
+.bookingpage-checkbox-card {
+    background-color: white;
+    --fx-border-color: #dee2e6;
+    --fx-border-width: 2px;
+    --fx-border-style: solid;
+    --fx-border-radius: 8px;
+    cursor: pointer;
+    transition: border-color 0.2s ease, background-color 0.2s ease;
+}
+
+.bookingpage-checkbox-card:hover {
+    --fx-border-color: var(--booking-form-hover-border);
+    background-color: var(--booking-form-selected-bg);
+}
+
+.bookingpage-checkbox-card.selected {
+    --fx-border-color: var(--booking-form-primary);
+    background-color: var(--booking-form-selected-bg);
+}
+
+.bookingpage-checkbox-card.selected:hover {
+    --fx-border-color: var(--booking-form-primary);
+    background-color: var(--booking-form-selected-bg);
+}
+
+/* Radio Card - card with embedded radio on left */
+.bookingpage-radio-card {
+    background-color: white;
+    --fx-border-color: #dee2e6;
+    --fx-border-width: 2px;
+    --fx-border-style: solid;
+    --fx-border-radius: 8px;
+    cursor: pointer;
+    transition: border-color 0.2s ease, background-color 0.2s ease;
+}
+
+.bookingpage-radio-card:hover {
+    --fx-border-color: var(--booking-form-hover-border);
+    background-color: var(--booking-form-selected-bg);
+}
+
+.bookingpage-radio-card.selected {
+    --fx-border-color: var(--booking-form-primary);
+    background-color: var(--booking-form-selected-bg);
+}
+
+.bookingpage-radio-card.selected:hover {
+    --fx-border-color: var(--booking-form-primary);
+    background-color: var(--booking-form-selected-bg);
 }
 
 /* Warning/Info Box */
 .bookingpage-warning-box {
     background-color: #FFF9E6;
-    border-radius: 8px;
-    border: 1px solid #FFE58F;
+    --fx-border-color: #FFE58F;
+    --fx-border-width: 1px;
+    --fx-border-style: solid;
+    --fx-border-radius: 8px;
 }
 
 /* Error Box */
 .bookingpage-error-box {
     background-color: #f8d7da;
-    border-radius: 8px;
-    border: 1px solid #f5c2c7;
+    --fx-border-color: #f5c2c7;
+    --fx-border-width: 1px;
+    --fx-border-style: solid;
+    --fx-border-radius: 8px;
 }
 
 /* Success Circle (e.g., checkmarks) */
 .bookingpage-success-circle {
     background-color: #198754;
-    border-radius: 50%;
+    --fx-border-radius: 50%;
 }
 
 /* Form Input Styling */
 .bookingpage-input {
     background-color: white;
-    border: 1px solid #ced4da;
-    border-radius: 6px;
+    --fx-border-color: #ced4da;
+    --fx-border-width: 1px;
+    --fx-border-style: solid;
+    --fx-border-radius: 6px;
     font-size: 15px;
 }
 
 .bookingpage-input:focus {
-    border-color: var(--booking-form-primary);
+    --fx-border-color: var(--booking-form-primary);
 }
 
 /* Label Combinations (font-size + weight + color) */
 .bookingpage-label-title {
     font-size: 16px;
     font-weight: 700;
+}
+
+.bookingpage-label-title fx-text {
     color: #212529;
 }
 
 .bookingpage-label-subtitle {
     font-size: 14px;
     font-weight: 600;
+}
+
+.bookingpage-label-subtitle fx-text {
     color: #212529;
 }
 
 .bookingpage-label-body {
     font-size: 14px;
+}
+
+.bookingpage-label-body fx-text {
     color: #212529;
 }
 
 .bookingpage-label-caption {
     font-size: 13px;
+}
+
+.bookingpage-label-caption fx-text {
     color: #6c757d;
 }
 
 .bookingpage-label-small {
     font-size: 12px;
+}
+
+.bookingpage-label-small fx-text {
     color: #6c757d;
 }
 
@@ -750,21 +994,29 @@
 /* Section Headers */
 .bookingpage-section-header {
     background-color: #f8f9fa;
-    border-radius: 8px;
-    border-left: 4px solid var(--booking-form-primary);
+    --fx-border-color: transparent transparent transparent var(--booking-form-primary);
+    --fx-border-width: 0 0 0 4px;
+    --fx-border-style: solid;
+    --fx-border-radius: 8px;
 }
 
 /* Divider/Separator Lines */
 .bookingpage-divider-top {
-    border-top: 2px solid #E6E7E7;
+    --fx-border-color: #E6E7E7 transparent transparent transparent;
+    --fx-border-width: 2px 0 0 0;
+    --fx-border-style: solid;
 }
 
 .bookingpage-divider-thin-top {
-    border-top: 1px solid #E6E7E7;
+    --fx-border-color: #E6E7E7 transparent transparent transparent;
+    --fx-border-width: 1px 0 0 0;
+    --fx-border-style: solid;
 }
 
 .bookingpage-divider-thin-bottom {
-    border-bottom: 1px solid #F4F4F4;
+    --fx-border-color: transparent transparent #F4F4F4 transparent;
+    --fx-border-width: 0 0 1px 0;
+    --fx-border-style: solid;
 }
 
 /* Gray Background (for dividers) */
@@ -775,13 +1027,14 @@
 /* Transparent/Link Button Base */
 .bookingpage-btn-link {
     background-color: transparent;
+    --fx-border-style: none;
     cursor: pointer;
 }
 
 /* Benefit Tag (semi-transparent pill) */
 .bookingpage-benefit-tag {
     background-color: rgba(255,255,255,0.7);
-    border-radius: 20px;
+    --fx-border-radius: 20px;
 }
 
 /* Verification Code Digit Field */
@@ -789,43 +1042,55 @@
     font-size: 24px;
     font-weight: 600;
     background-color: white;
-    border-color: #dee2e6;
-    border-width: 2px;
-    border-radius: 8px;
+    --fx-border-color: #dee2e6;
+    --fx-border-width: 2px;
+    --fx-border-style: solid;
+    --fx-border-radius: 8px;
 }
 
 /* Back Button Styles */
 .bookingpage-btn-back {
-    border-radius: 8px;
     font-size: 16px;
     font-weight: 500;
-    border-color: #dee2e6;
-    border-width: 1px;
     background-color: white;
+    --fx-border-color: #dee2e6;
+    --fx-border-width: 1px;
+    --fx-border-style: solid;
+    --fx-border-radius: 8px;
+}
+
+.bookingpage-btn-back fx-text {
     color: #495057;
 }
 
 .bookingpage-btn-back-hover {
-    border-radius: 8px;
     font-size: 16px;
     font-weight: 500;
-    border-color: #adb5bd;
-    border-width: 1px;
     background-color: #f8f9fa;
+    --fx-border-color: #adb5bd;
+    --fx-border-width: 1px;
+    --fx-border-style: solid;
+    --fx-border-radius: 8px;
+}
+
+.bookingpage-btn-back-hover fx-text {
     color: #495057;
 }
 
 /* Primary Button Disabled */
 .bookingpage-btn-primary-disabled {
-    border-radius: 8px;
     font-size: 16px;
     font-weight: 600;
     background-color: #adb5bd;
+    --fx-border-radius: 8px;
+}
+
+.bookingpage-btn-primary-disabled fx-text {
     color: white;
 }
 
 /* Disabled Text (grayed out) */
-.bookingpage-text-disabled {
+.bookingpage-text-disabled fx-text {
     color: #adb5bd;
 }
 
@@ -835,14 +1100,163 @@
 
 .booking-form-event-header {
     background-color: #f8f9fa;
-    border-radius: 12px;
-    border-width: 0 0 0 4px;
-    border-style: solid;
-    border-color: var(--booking-form-primary);
+    --fx-border-color: transparent transparent transparent var(--booking-form-primary);
+    --fx-border-width: 0 0 0 4px;
+    --fx-border-style: solid;
+    --fx-border-radius: 12px;
 }
 
 .booking-form-event-header-title {
     font-size: 28px;
     font-weight: 600;
+}
+
+.booking-form-event-header-title fx-text {
     color: #212529;
+}
+
+/* ==========================================
+   BookingPageUIBuilder Info Box Components
+   ========================================== */
+
+/* Info Box Base */
+.bookingpage-info-box {
+    --fx-border-radius: 8px;
+}
+
+/* Info Box - Success (green) */
+.bookingpage-info-box-success {
+    background-color: #d4edda;
+    --fx-border-color: transparent transparent transparent #198754;
+    --fx-border-width: 0 0 0 4px;
+    --fx-border-style: solid;
+}
+
+/* Info Box - Warning (yellow/amber) */
+.bookingpage-info-box-warning {
+    background-color: #FFF9E6;
+    --fx-border-color: #FFE58F;
+    --fx-border-width: 1px;
+    --fx-border-style: solid;
+}
+
+/* Info Box - Error (red) */
+.bookingpage-info-box-error {
+    background-color: #f8d7da;
+    --fx-border-color: #f5c2c7;
+    --fx-border-width: 1px;
+    --fx-border-style: solid;
+}
+
+/* Info Box - Info (theme colored) */
+.bookingpage-info-box-info {
+    background-color: var(--booking-form-selected-bg);
+    --fx-border-color: transparent transparent transparent var(--booking-form-primary);
+    --fx-border-width: 0 0 0 4px;
+    --fx-border-style: solid;
+}
+
+/* Info Box Icon */
+.bookingpage-info-box-icon {
+    font-size: 18px;
+}
+
+.bookingpage-info-box-success .bookingpage-info-box-icon {
+    color: #198754;
+}
+
+.bookingpage-info-box-warning .bookingpage-info-box-icon {
+    color: #D97706;
+}
+
+.bookingpage-info-box-error .bookingpage-info-box-icon {
+    color: #dc3545;
+}
+
+.bookingpage-info-box-info .bookingpage-info-box-icon {
+    color: var(--booking-form-primary);
+}
+
+/* Info Box - Outline Primary (transparent bg, primary color border all around) */
+.bookingpage-info-box-outline-primary {
+    background-color: transparent;
+    --fx-border-color: var(--booking-form-primary);
+    --fx-border-width: 1px;
+    --fx-border-style: solid;
+}
+
+.bookingpage-info-box-outline-primary .bookingpage-info-box-icon {
+    color: var(--booking-form-primary);
+}
+
+/* Info Box Message */
+.bookingpage-info-box-message {
+    font-size: 14px;
+}
+
+.bookingpage-info-box-message fx-text {
+    color: #212529;
+}
+
+/* ==========================================
+   Loading & Status Indicators
+   ========================================== */
+
+/* Loading Overlay - semi-transparent white background */
+.bookingpage-loading-overlay {
+    background-color: rgba(255, 255, 255, 0.8);
+}
+
+/* Themed Success Circle - uses theme primary color for border */
+.bookingpage-success-circle-themed {
+    background-color: var(--booking-form-selected-bg);
+    --fx-border-color: var(--booking-form-primary);
+    --fx-border-width: 4px;
+    --fx-border-style: solid;
+    --fx-border-radius: 40px;
+}
+
+/* Light divider line (1px) */
+.bookingpage-divider-light {
+    background-color: #f0f0f0;
+}
+
+/* ==========================================
+   Status Badges
+   ========================================== */
+
+/* Status badge - upcoming (blue) */
+.booking-form-status-upcoming {
+    --fx-background-color: #DBEAFE;
+    --fx-background-radius: 4px;
+}
+.booking-form-status-upcoming fx-text {
+    color: #1D4ED8;
+}
+
+/* Status badge - in progress (amber) */
+.booking-form-status-in-progress {
+    --fx-background-color: #FEF3C7;
+    --fx-background-radius: 4px;
+}
+.booking-form-status-in-progress fx-text {
+    color: #B45309;
+}
+
+/* Status badge - completed (green) */
+.booking-form-status-completed {
+    --fx-background-color: #D1FAE5;
+    --fx-background-radius: 4px;
+}
+.booking-form-status-completed fx-text {
+    color: #047857;
+}
+
+/* Badge - purchased (green) */
+.bookingpage-badge-purchased {
+    --fx-background-color: #E8F5E9;
+    --fx-background-radius: 4px;
+}
+.bookingpage-badge-purchased fx-text {
+    color: #2E7D32;
 }

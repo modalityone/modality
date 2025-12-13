@@ -9,6 +9,8 @@ import one.modality.booking.frontoffice.bookingpage.ResettableSection;
 import one.modality.booking.frontoffice.bookingpage.theme.BookingFormColorScheme;
 
 import java.util.List;
+import java.util.Set;
+import java.util.function.Consumer;
 
 /**
  * Interface for an audio recording selection section of a booking form.
@@ -66,4 +68,12 @@ public interface HasAudioRecordingSection extends BookingFormSection, Resettable
      * Resets the section to its initial state (clears all selections).
      */
     void reset();
+
+    /**
+     * Sets a callback to be notified when the audio recording selection changes.
+     * @param callback The callback that receives the set of selected recording Items
+     */
+    default void setOnSelectionChanged(Consumer<Set<Item>> callback) {
+        // Default no-op implementation for backwards compatibility
+    }
 }

@@ -8,8 +8,10 @@ import one.modality.base.shared.entities.Document;
 import one.modality.booking.frontoffice.bookingpage.BookingFormSection;
 import one.modality.booking.frontoffice.bookingpage.theme.BookingFormColorScheme;
 
+import java.util.EnumSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 /**
  * Interface for the "Payment" section of a booking form.
@@ -203,4 +205,30 @@ public interface HasPaymentSection extends BookingFormSection {
      * @param amount the amount to allocate
      */
     void setAllocation(Object itemId, int amount);
+    void setAllocation(String itemId, double amount);
+
+    /**
+     * Sets which payment options are available for selection.
+     * By default, all options (DEPOSIT, CUSTOM, FULL) are available.
+     * @param options The set of payment options to show (e.g., EnumSet.of(PaymentOption.FULL))
+     */
+    void setAvailablePaymentOptions(Set<PaymentOption> options);
+
+    /**
+     * Returns the currently available payment options.
+     */
+    Set<PaymentOption> getAvailablePaymentOptions();
+
+    /**
+     * Convenience method to allow only full payment (no deposit or custom options).
+     * Equivalent to setAvailablePaymentOptions(EnumSet.of(PaymentOption.FULL))
+     * @param fullPaymentOnly true to only allow full payment, false to allow all options
+     */
+    default void setFullPaymentOnly(boolean fullPaymentOnly) {
+        if (fullPaymentOnly) {
+            setAvailablePaymentOptions(EnumSet.of(PaymentOption.FULL));
+        } else {
+            setAvailablePaymentOptions(EnumSet.allOf(PaymentOption.class));
+        }
+    }
 }
