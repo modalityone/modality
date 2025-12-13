@@ -17,11 +17,11 @@
     font-weight: bold;
 }
 
-.program-step-check-completed fx-children {
+.program-step-check-completed {
     --fx-text-fill: white;
 }
 
-.program-step-check-completed fx-children fx-text {
+.program-step-check-completed fx-text {
     color: white;
 }
 
@@ -30,11 +30,11 @@
     font-weight: 500;
 }
 
-.program-step-label-completed fx-children {
+.program-step-label-completed {
     --fx-text-fill: #10b981;
 }
 
-.program-step-label-completed fx-children fx-text {
+.program-step-label-completed fx-text {
     color: #10b981;
 }
 
@@ -50,11 +50,11 @@
     font-weight: bold;
 }
 
-.program-step-number-active fx-children {
+.program-step-number-active {
     --fx-text-fill: white;
 }
 
-.program-step-number-active fx-children fx-text {
+.program-step-number-active fx-text {
     color: white;
 }
 
@@ -63,11 +63,11 @@
     font-weight: 600;
 }
 
-.program-step-label-active fx-children {
+.program-step-label-active {
     --fx-text-fill: #0ea5e9;
 }
 
-.program-step-label-active fx-children fx-text {
+.program-step-label-active fx-text {
     color: #0ea5e9;
 }
 
@@ -83,11 +83,11 @@
     font-weight: bold;
 }
 
-.program-step-number-inactive fx-children {
+.program-step-number-inactive {
     --fx-text-fill: #94a3b8;
 }
 
-.program-step-number-inactive fx-children fx-text {
+.program-step-number-inactive fx-text {
     color: #94a3b8;
 }
 
@@ -96,11 +96,11 @@
     font-weight: 500;
 }
 
-.program-step-label-inactive fx-children {
+.program-step-label-inactive {
     --fx-text-fill: #64748b;
 }
 
-.program-step-label-inactive fx-children fx-text {
+.program-step-label-inactive fx-text {
     color: #64748b;
 }
 

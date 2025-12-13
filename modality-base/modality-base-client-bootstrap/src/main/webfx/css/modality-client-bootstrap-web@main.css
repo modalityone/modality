@@ -444,10 +444,9 @@
     font-size: 11px;
     font-weight: 600;
     border-radius: 3px;
-}
-.badge-light-pink fx-background {
-    background-color: #FCE4EC;
-    border-radius: 3px;
+    /* New single-host model */
+    --fx-background-color: #FCE4EC;
+    --fx-border-radius: 3px;
 }
 .badge-light-pink fx-text {
     color: #C2185B;
@@ -458,10 +457,9 @@
     background-color: #e1f5fe;
     color: #00b8d4;
     border-radius: 12px;
-}
-.badge-light-info fx-background {
-    background-color: #e1f5fe;
-    border-radius: 12px;
+    /* New single-host model */
+    --fx-background-color: #e1f5fe;
+    --fx-border-radius: 12px;
 }
 .badge-light-info fx-text {
     color: #00b8d4;
@@ -471,10 +469,9 @@
     background-color: #e8f5e9;
     color: #4caf50;
     border-radius: 12px;
-}
-.badge-light-success fx-background {
-    background-color: #e8f5e9;
-    border-radius: 12px;
+    /* New single-host model */
+    --fx-background-color: #e8f5e9;
+    --fx-border-radius: 12px;
 }
 .badge-light-success fx-text {
     color: #4caf50;
@@ -484,10 +481,9 @@
     background-color: #fff3e0;
     color: #ffa726;
     border-radius: 12px;
-}
-.badge-light-warning fx-background {
-    background-color: #fff3e0;
-    border-radius: 12px;
+    /* New single-host model */
+    --fx-background-color: #fff3e0;
+    --fx-border-radius: 12px;
 }
 .badge-light-warning fx-text {
     color: #ffa726;
@@ -497,10 +493,9 @@
     background-color: #ffebee;
     color: #ff5252;
     border-radius: 12px;
-}
-.badge-light-danger fx-background {
-    background-color: #ffebee;
-    border-radius: 12px;
+    /* New single-host model */
+    --fx-background-color: #ffebee;
+    --fx-border-radius: 12px;
 }
 .badge-light-danger fx-text {
     color: #ff5252;
@@ -510,11 +505,9 @@
     background-color: #f5f5f5;
     color: #666;
     border-radius: 12px;
-}
-.badge-light-gray fx-background,
-.badge-gray fx-background {
-    background-color: #f5f5f5;
-    border-radius: 12px;
+    /* New single-host model */
+    --fx-background-color: #f5f5f5;
+    --fx-border-radius: 12px;
 }
 .badge-light-gray fx-text,
 .badge-gray fx-text {
@@ -525,11 +518,9 @@
     background-color: #f3e5f5;
     color: #9c27b0;
     border-radius: 12px;
-}
-.badge-light-purple fx-background,
-.badge-purple fx-background {
-    background-color: #f3e5f5;
-    border-radius: 12px;
+    /* New single-host model */
+    --fx-background-color: #f3e5f5;
+    --fx-border-radius: 12px;
 }
 .badge-light-purple fx-text,
 .badge-purple fx-text {
