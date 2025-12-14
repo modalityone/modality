@@ -285,35 +285,35 @@ public final class BookingFormStyles {
      * Creates a font with the specified size and weight.
      */
     public static Font font(double size, FontWeight weight) {
-        return Font.font("System", weight, size);
+        return Font.font(null, weight, size);
     }
 
     /**
      * Creates a regular font with the specified size.
      */
     public static Font font(double size) {
-        return Font.font("System", FontWeight.NORMAL, size);
+        return Font.font(null, FontWeight.NORMAL, size);
     }
 
     /**
      * Creates a bold font with the specified size.
      */
     public static Font fontBold(double size) {
-        return Font.font("System", FontWeight.BOLD, size);
+        return Font.font(null, FontWeight.BOLD, size);
     }
 
     /**
      * Creates a semi-bold (600) font with the specified size.
      */
     public static Font fontSemiBold(double size) {
-        return Font.font("System", FontWeight.SEMI_BOLD, size);
+        return Font.font(null, FontWeight.SEMI_BOLD, size);
     }
 
     /**
      * Creates a medium (500) font with the specified size.
      */
     public static Font fontMedium(double size) {
-        return Font.font("System", FontWeight.MEDIUM, size);
+        return Font.font(null, FontWeight.MEDIUM, size);
     }
 
     // =============================================
