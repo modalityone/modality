@@ -1,78 +1,5 @@
 /* Customer Management Styles - JavaFX */
 
-/* Root variables */
-.root {
-    -kbs-primary-color: #00A3FF;
-    -kbs-primary-hover-color: #0088D9;
-    -kbs-danger-color: #F44336;
-    -kbs-text-primary-color: #2C3E50;
-    -kbs-text-secondary-color: #7F8C8D;
-    -kbs-border-color: #E8EAED;
-    -kbs-bg-light-color: #F8F9FA;
-    -kbs-white-color: #FFFFFF;
-}
-
-/* Page Header */
-.page-header {
-    -fx-background-color: transparent;
-    -fx-border-color: transparent transparent -kbs-border-color transparent;
-    -fx-border-width: 0 0 1px 0;
-}
-
-.page-title {
-    -fx-font-size: 24px;
-    -fx-font-weight: 600;
-    -fx-text-fill: -kbs-text-primary-color;
-}
-
-.page-subtitle {
-    -fx-font-size: 13px;
-    -fx-text-fill: -kbs-text-secondary-color;
-}
-
-/* Customers container */
-#customers {
-    -fx-background-color: transparent;
-}
-
-/* Customers grid styling */
-.customers-grid {
-    -fx-background-color: -kbs-white-color;
-}
-
-.customers-grid .table-view {
-    -fx-background-color: -kbs-white-color;
-}
-
-.customers-grid .table-view .column-header {
-    -fx-background-color: -kbs-bg-light-color;
-    -fx-border-color: -kbs-border-color;
-    -fx-text-fill: -kbs-text-secondary-color;
-    -fx-font-weight: 600;
-    -fx-font-size: 12px;
-    -fx-min-height: 28;
-    -fx-pref-height: 28;
-    -fx-max-height: 28;
-}
-
-.customers-grid .table-view .table-row-cell {
-    -fx-border-color: transparent transparent -kbs-border-color transparent;
-    -fx-min-height: 32;
-    -fx-pref-height: 32;
-    -fx-max-height: 32;
-}
-
-.customers-grid .table-view .table-row-cell:hover {
-    -fx-background-color: -kbs-bg-light-color;
-}
-
-.customers-grid .table-view .table-row-cell:selected {
-    -fx-background-color: #E3F2FD;
-    -fx-border-color: transparent transparent -kbs-border-color -kbs-primary-color;
-    -fx-border-width: 0 0 1px 4px;
-    -fx-font-weight: 500;
-}
-
 /* Edit Panel */
 .edit-panel {
     -fx-background-color: -kbs-white-color;
@@ -206,55 +133,10 @@
     -fx-border-width: 1px;
 }
 
-/* Members Box */
-.members-box {
-    -fx-background-color: #F0F8FF;
-    -fx-border-color: #B3D9FF;
-    -fx-border-radius: 8px;
-    -fx-background-radius: 8px;
-    -fx-border-width: 1px;
-}
-
-.members-description {
-    -fx-text-fill: -kbs-text-secondary-color;
-    -fx-font-size: 13px;
-}
-
-.member-items {
-    /* No padding/spacing here - set in Java code */
-}
-
-.member-item {
-    /* No padding/spacing here - set in Java code */
-    -fx-background-color: -kbs-white-color;
-    -fx-border-color: -kbs-border-color;
-    -fx-border-radius: 6px;
-    -fx-background-radius: 6px;
-    -fx-border-width: 1px;
-}
 
 .member-check-icon {
-    -fx-font-size: 14px;
+    /* keep fill (webfx 'color' maps to -fx-text-fill, not -fx-fill) */
     -fx-fill: #2E7D32;
-}
-
-.member-user-icon {
-    -fx-font-size: 20px;
-}
-
-.member-name {
-    -fx-font-weight: 600;
-    -fx-text-fill: -kbs-text-primary-color;
-}
-
-.member-email {
-    -fx-font-size: 12px;
-    -fx-text-fill: -kbs-text-secondary-color;
-}
-
-.member-id {
-    -fx-font-size: 11px;
-    -fx-text-fill: -kbs-text-secondary-color;
 }
 
 /* Account Type Badges */
@@ -358,23 +240,6 @@
     /* No padding/spacing here - set in Java code */
 }
 
-.account-type-toggle {
-    -fx-background-color: -kbs-white-color;
-    -fx-border-color: -kbs-border-color;
-    -fx-border-width: 1px;
-    -fx-border-radius: 6px;
-    -fx-background-radius: 6px;
-    -fx-text-fill: -kbs-text-secondary-color;
-    -fx-font-size: 13px;
-    -fx-font-weight: 500;
-    -fx-cursor: hand;
-}
-
-.account-type-toggle:hover {
-    -fx-background-color: -kbs-bg-light-color;
-    -fx-text-fill: -kbs-text-primary-color;
-}
-
 .account-type-toggle:selected {
     -fx-background-color: -kbs-primary-color;
     -fx-text-fill: -kbs-white-color;
@@ -386,11 +251,7 @@
     -fx-border-color: -kbs-primary-hover-color;
 }
 
-/* Filter Group Separator */
-.filter-group-separator {
-    -fx-background-color: -kbs-border-color;
-    -fx-opacity: 0.5;
-}
+/* Filter Group Separator (base styles moved to webfx@) */
 
 .filter-group-separator .line {
     -fx-border-color: -kbs-border-color;
@@ -404,29 +265,10 @@
     -fx-opacity: 1.0;
 }
 
-/* Customer ID - monospace display */
-.customer-id {
-    -fx-font-family: "Courier New", monospace;
-}
-
-/* Panel header icon */
-.panel-header-icon {
-    -fx-font-size: 20px;
-}
-
 /* Role/Link icons and text */
-.role-icon {
-    -fx-font-size: 13px;
-}
-
 .role-icon-success {
-    -fx-font-size: 13px;
+    /* font-size moved to webfx@ */
     -fx-fill: #2E7D32;
-}
-
-.role-link-text {
-    -fx-font-size: 13px;
-    -fx-text-fill: -kbs-text-secondary-color;
 }
 
 /* Close Button */

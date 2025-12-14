@@ -39,39 +39,6 @@
     background-color: var(--kbs-white-color);
 }
 
-.customers-grid table {
-    width: 100%;
-    border-collapse: collapse;
-    background-color: var(--kbs-white-color);
-}
-
-.customers-grid thead {
-    background-color: var(--kbs-bg-light-color);
-    border-bottom: 1px solid var(--kbs-border-color);
-}
-
-.customers-grid th {
-    text-align: left;
-    font-size: 12px;
-    font-weight: 600;
-    color: var(--kbs-text-secondary-color);
-    text-transform: uppercase;
-}
-
-.customers-grid td {
-    border-bottom: 1px solid var(--kbs-border-color);
-    font-size: 14px;
-}
-
-.customers-grid tbody tr:hover {
-    background-color: var(--kbs-bg-light-color);
-}
-
-.customers-grid tbody tr.selected {
-    background-color: #FFF3CD;
-    border-left: 3px solid var(--kbs-primary-color);
-}
-
 /* Customer ID - monospace display */
 .customer-id {
     font-family: 'Courier New', monospace;
@@ -97,38 +64,28 @@
     color: var(--kbs-text-secondary-color);
 }
 
-/* Account Type Toggle Buttons */
-.account-type-toggle-container {
-    /* No padding/spacing here - set in Java code */
-    display: flex;
-    align-items: center;
-}
-
 .account-type-toggle {
     background-color: var(--kbs-white-color);
     border: 1px solid var(--kbs-border-color);
     border-radius: 6px;
-    color: var(--kbs-text-secondary-color);
+    --fx-text-fill: var(--kbs-text-secondary-color);
     font-size: 13px;
     font-weight: 500;
     cursor: pointer;
-    transition: all 0.2s ease;
 }
 
 .account-type-toggle:hover {
     background-color: var(--kbs-bg-light-color);
-    color: var(--kbs-text-primary-color);
+    --fx-text-fill: var(--kbs-text-primary-color);
 }
 
-.account-type-toggle:selected,
-.account-type-toggle.selected {
+.account-type-toggle.pseudo-selected {
     background-color: var(--kbs-primary-color);
-    color: var(--kbs-white-color);
+    --fx-text-fill: var(--kbs-white-color);
     border-color: var(--kbs-primary-color);
 }
 
-.account-type-toggle:selected:hover,
-.account-type-toggle.selected:hover {
+.account-type-toggle.pseudo-selected:hover {
     background-color: var(--kbs-primary-hover-color);
     border-color: var(--kbs-primary-hover-color);
 }
@@ -136,7 +93,6 @@
 /* Filter Group Separator */
 .filter-group-separator {
     background-color: var(--kbs-border-color);
-    width: 1px;
     opacity: 0.5;
 }
 
@@ -158,8 +114,6 @@
 
 .member-item {
     /* No padding/spacing here - set in Java code */
-    display: flex;
-    align-items: center;
     background: white;
     border-radius: 6px;
     border: 1px solid var(--kbs-border-color);
@@ -180,7 +134,6 @@
 }
 
 .member-email {
-    flex: 1;
     font-size: 12px;
     color: var(--kbs-text-secondary-color);
 }
@@ -190,3 +143,66 @@
     color: var(--kbs-text-secondary-color);
 }
 
+/* Action Buttons */
+.action-button {
+    background-color: transparent;
+    border-color: transparent;
+    border-radius: 4px;
+    cursor: pointer;
+}
+
+.action-button:hover {
+    background-color: var(--kbs-bg-light-color);
+}
+
+.action-button.danger:hover {
+    background-color: #FFEBEE;
+}
+
+.action-icon {
+    color: #666666;
+}
+
+.action-icon.danger {
+    color: var(--kbs-danger-color);
+}
+
+.action-button:hover .action-icon {
+    color: var(--kbs-text-primary-color);
+}
+
+.action-button.danger:hover .action-icon.danger {
+    color: var(--kbs-danger-color);
+}
+
+/* Filter Group Separator Line */
+.filter-group-separator .line {
+    border-color: var(--kbs-border-color);
+    background-color: var(--kbs-border-color);
+    opacity: 0.5;
+}
+
+/* Readonly field styling */
+.readonly-field {
+    background-color: var(--kbs-bg-light-color);
+    opacity: 1.0;
+}
+
+/* Close Button */
+.btn-close {
+    background-color: transparent;
+    color: #666666;
+    font-size: 20px;
+    font-weight: 300;
+    cursor: pointer;
+    border-radius: 4px;
+}
+
+.btn-close:hover {
+    background-color: #E3F2FD;
+    color: var(--kbs-primary-color);
+}
+
+.btn-close.pressed {
+    background-color: #BBDEFB;
+}
