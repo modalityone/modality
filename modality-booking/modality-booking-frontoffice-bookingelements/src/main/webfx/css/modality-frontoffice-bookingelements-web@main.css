@@ -1,7 +1,11 @@
 .booking-elements {
     font-family: "Poppins", sans-serif;
-    --fx-textarea-border-color: black;
-    --fx-textarea-border-radius: 19px;
+}
+
+.booking-elements fx-textarea {
+    --fx-border-color: black;
+    --fx-border-radius: 19px;
+    --fx-background-radius: 19px;
 }
 
 .booking-elements.booking-form {
@@ -31,15 +35,22 @@
 
 .booking-elements .navigation-bar {
     font-weight: bold;
-    --fx-button-background-color: transparent;
-    --fx-button-border-color: transparent;
     --fx-border-color-focus: transparent;
-    --fx-togglebutton-border-color-hover: transparent;
     --fx-togglebutton-border-color-selected: transparent;
     --webfx-aria-toggle-button-background-color: transparent;
     --webfx-aria-toggle-button-background-color-hover: transparent;
     --webfx-aria-toggle-button-background-color-fired: transparent;
 }
+
+.booking-elements .navigation-bar fx-button {
+    --fx-background-color: transparent;
+    --fx-border-color: transparent;
+}
+
+.booking-elements .navigation-bar fx-button:hover {
+    --fx-border-color: transparent;
+}
+
 
 .booking-elements .navigation-bar .title {
     --fx-background-color: white;
@@ -78,7 +89,7 @@
 .booking-elements .price-textfield {
     font-size: 15px;
     font-weight: bold;
-    --fx-textfield-border-style: none;
+    --fx-border-style: none;
 }
 
 .booking-elements .badge { /* badges don't look vertically centered with Poppins font on the web version */
