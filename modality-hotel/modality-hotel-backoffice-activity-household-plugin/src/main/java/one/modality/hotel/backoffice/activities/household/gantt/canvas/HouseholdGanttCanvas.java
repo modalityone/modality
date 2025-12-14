@@ -102,20 +102,21 @@ public class HouseholdGanttCanvas {
             .setRadius(BAR_RADIUS);
 
     // BarDrawer for parent room headers (left column)
+    /* Not used anymore
     protected final BarDrawer parentRoomDrawer = new BarDrawer()
             .setBackgroundFill(Color.WHITE)
             .setStroke(Color.grayRgb(130))
             .setTextFill(Color.BLACK)
             .setTextAlignment(TextAlignment.LEFT)
-            .setTextFont(Font.font("System", FontWeight.BOLD, 11));
-
+            .setTextFont(Font.font("Poppins", FontWeight.BOLD, 11));
+*/
     // BarDrawer for grandparent room type headers (top row) - light grey background, white text
     protected final BarDrawer grandparentRoomTypeDrawer = new BarDrawer()
             .setStroke(Color.grayRgb(130))
             .setBackgroundFill(Color.web("#9CA3AF"))  // Light grey (matches active filter buttons)
             .setTextAlignment(TextAlignment.CENTER)
             .setTextFill(Color.WHITE)
-            .setTextFont(Font.font("System", FontWeight.BOLD, 11));
+            .setTextFont(Font.font("Poppins", FontWeight.BOLD, 11));
 
     // ParentsCanvasDrawer - draws parent (room names) and grandparent (category) headers
     protected final ParentsCanvasDrawer parentsCanvasDrawer;
