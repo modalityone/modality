@@ -408,7 +408,7 @@ public class DefaultExistingBookingSummarySection implements HasExistingBookingS
                             StringBuilder name = new StringBuilder();
                             if (firstName != null) name.append(firstName);
                             if (lastName != null) {
-                                if (!name.isEmpty()) name.append(" ");
+                                if (name.length() > 0) name.append(" ");
                                 name.append(lastName);
                             }
                             attendeeName = name.toString();
@@ -424,7 +424,7 @@ public class DefaultExistingBookingSummarySection implements HasExistingBookingS
                             StringBuilder name = new StringBuilder();
                             if (firstName != null) name.append(firstName);
                             if (lastName != null) {
-                                if (!name.isEmpty()) name.append(" ");
+                                if (name.length() > 0) name.append(" ");
                                 name.append(lastName);
                             }
                             attendeeName = name.toString();

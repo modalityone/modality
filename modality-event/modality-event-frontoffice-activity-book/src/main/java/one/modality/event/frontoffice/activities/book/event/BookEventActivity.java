@@ -1,13 +1,16 @@
 package one.modality.event.frontoffice.activities.book.event;
 
 import dev.webfx.extras.controlfactory.button.ButtonFactoryMixin;
+import dev.webfx.extras.panes.MonoPane;
 import dev.webfx.extras.webtext.HtmlText;
 import dev.webfx.kit.util.properties.FXProperties;
 import dev.webfx.platform.async.Future;
 import dev.webfx.platform.console.Console;
+import dev.webfx.platform.service.MultipleServiceProviders;
 import dev.webfx.platform.uischeduler.UiScheduler;
 import dev.webfx.platform.util.Numbers;
 import dev.webfx.platform.util.Objects;
+import dev.webfx.platform.util.collection.Collections;
 import dev.webfx.stack.orm.domainmodel.activity.viewdomain.impl.ViewDomainActivityBase;
 import dev.webfx.stack.orm.domainmodel.activity.viewdomain.impl.ViewDomainActivityContextFinal;
 import dev.webfx.stack.orm.entity.Entities;
@@ -26,6 +29,9 @@ import one.modality.booking.client.workingbooking.FXPersonToBook;
 import one.modality.booking.client.workingbooking.HasWorkingBookingProperties;
 import one.modality.booking.client.workingbooking.WorkingBooking;
 import one.modality.booking.client.workingbooking.WorkingBookingProperties;
+import one.modality.booking.frontoffice.bookingform.BookingForm;
+import one.modality.booking.frontoffice.bookingform.BookingFormEntryPoint;
+import one.modality.booking.frontoffice.bookingform.BookingFormProvider;
 import one.modality.booking.frontoffice.bookingform.GatewayPaymentForm;
 import one.modality.crm.shared.services.authn.fx.FXUserPersonId;
 import one.modality.ecommerce.document.service.*;
@@ -35,20 +41,33 @@ import one.modality.event.client.event.fx.FXEventId;
 import one.modality.event.frontoffice.activities.book.account.CheckoutAccountRouting;
 import one.modality.event.frontoffice.activities.book.event.slides.LettersSlideController;
 
+import java.util.List;
+import java.util.ServiceLoader;
+
 
 /**
  * @author Bruno Salmon
  */
 public final class BookEventActivity extends ViewDomainActivityBase implements ButtonFactoryMixin, HasWorkingBookingProperties {
 
+    private static final List<BookingFormProvider> ALL_BOOKING_FORM_PROVIDERS_SORTED_BY_PRIORITY = MultipleServiceProviders
+            .getProviders(BookingFormProvider.class, () -> ServiceLoader.load(BookingFormProvider.class));
+    static {
+        ALL_BOOKING_FORM_PROVIDERS_SORTED_BY_PRIORITY.sort((p1, p2) -> p2.getPriority() - p1.getPriority());
+    }
+
     private final WorkingBookingProperties workingBookingProperties = new WorkingBookingProperties();
     private final LettersSlideController lettersSlideController = new LettersSlideController(this);
+    // Container that can switch between legacy slides and modification form
+    private final MonoPane activityContainer = new MonoPane();
     // When routed through /modify-order/:modifyOrderDocumentId, this property will store the documentId to modify
     private final ObjectProperty<Object> modifyOrderDocumentIdProperty = new SimpleObjectProperty<>();
     // When routed through /pay-order/:payOrderDocumentId, this property will store the documentId to pay
     private final ObjectProperty<Object> payOrderDocumentIdProperty = new SimpleObjectProperty<>();
     // When routed through /book-event/:eventId, FXEventId and FXEvent are used to store the event to book
     private boolean reachingEndSlide;
+    // Track if we're showing a modification form
+    private boolean showingModificationForm;
 
     @Override
     public WorkingBookingProperties getWorkingBookingProperties() {
@@ -73,7 +92,8 @@ public final class BookEventActivity extends ViewDomainActivityBase implements B
 
     @Override
     public Node buildUi() {
-        Region activityContainer = lettersSlideController.getContainer();
+        // Initially show the legacy slides container
+        activityContainer.setContent(lettersSlideController.getContainer());
         activityContainer.getStyleClass().add("book-event-activity");
         return activityContainer;
     }
@@ -199,9 +219,10 @@ public final class BookEventActivity extends ViewDomainActivityBase implements B
     private void onPolityAndDocumentAggregatesLoaded(PolicyAggregate policyAggregate, DocumentAggregate existingBooking) {
         UiScheduler.runInUiThread(() -> {
             // Ensuring the policy aggregate has rebuilt entities (not automatically done when modifying bookings)
-            if (policyAggregate.getEvent() == null && existingBooking != null) {
+            Event event = policyAggregate.getEvent();
+            if (event == null && existingBooking != null) {
                 Object eventPrimaryKey = existingBooking.getEventPrimaryKey();
-                Event event = FXEvent.getEvent();
+                event = FXEvent.getEvent();
                 if (!Entities.samePrimaryKey(event, eventPrimaryKey)) {
                     FXEventId.setEventPrimaryKey(eventPrimaryKey);
                     event = FXEvent.getEvent();
@@ -212,12 +233,31 @@ public final class BookEventActivity extends ViewDomainActivityBase implements B
                     }
                 }
                 policyAggregate.rebuildEntities(event);
-                // Ensuring the appropriate booking form for that event is set (required before calling onWorkingBookingLoaded())
-                lettersSlideController.onEventChanged(event);
             }
+
             // We also pass getPayOrderDocumentId() which will be used to initialize paymentRequestedByUser in WorkingBooking
             WorkingBooking workingBooking = new WorkingBooking(policyAggregate, existingBooking, getPayOrderDocumentId());
             workingBookingProperties.setWorkingBooking(workingBooking);
+
+            // For modification flow, use the unified provider-based approach
+            // Capture event in effectively final variable for lambda
+            Event finalEvent = event;
+            if (getModifyOrderDocumentId() != null && finalEvent != null) {
+                BookingFormProvider modificationProvider = Collections.findFirst(ALL_BOOKING_FORM_PROVIDERS_SORTED_BY_PRIORITY,
+                        provider -> provider.acceptEvent(finalEvent, BookingFormEntryPoint.MODIFY_BOOKING));
+                if (modificationProvider != null) {
+                    BookingForm modificationForm = modificationProvider.createBookingForm(finalEvent, this, BookingFormEntryPoint.MODIFY_BOOKING);
+                    Node modificationView = modificationForm.getView();
+                    if (modificationView != null) {
+                        activityContainer.setContent(modificationView);
+                        showingModificationForm = true;
+                        return;
+                    }
+                }
+            }
+
+            // For new booking and payment flows, use the legacy approach (for now)
+            lettersSlideController.onEventChanged(event);
             lettersSlideController.onWorkingBookingLoaded();
         });
     }

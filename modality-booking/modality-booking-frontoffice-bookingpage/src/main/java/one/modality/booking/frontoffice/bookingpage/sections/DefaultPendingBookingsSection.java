@@ -18,12 +18,13 @@ import javafx.scene.shape.SVGPath;
 import one.modality.booking.client.workingbooking.WorkingBookingProperties;
 import one.modality.booking.frontoffice.bookingpage.BookingPageI18nKeys;
 import one.modality.booking.frontoffice.bookingpage.PriceFormatter;
+import one.modality.booking.frontoffice.bookingpage.components.BookingPageUIBuilder;
 import one.modality.booking.frontoffice.bookingpage.theme.BookingFormColorScheme;
 import one.modality.base.shared.entities.formatters.EventPriceFormatter;
 
 import java.util.function.Consumer;
 
-import static one.modality.booking.frontoffice.bookingpage.theme.BookingFormStyles.*;
+import static one.modality.booking.frontoffice.bookingpage.components.BookingPageUIBuilder.BadgeType;
 
 /**
  * Default implementation of the Pending Bookings (basket) section.
@@ -99,8 +100,7 @@ public class DefaultPendingBookingsSection implements HasPendingBookingsSection 
             validProperty.set(!bookings.isEmpty());
         });
 
-        // Update styles when color scheme changes
-        colorScheme.addListener((obs, old, newScheme) -> rebuildUI());
+        // Note: Color scheme listener removed - CSS handles theme changes via CSS variables
     }
 
     protected void rebuildUI() {
@@ -115,18 +115,13 @@ public class DefaultPendingBookingsSection implements HasPendingBookingsSection 
         section.setAlignment(Pos.CENTER);
         VBox.setMargin(section, new Insets(0, 0, 24, 0));
 
-        BookingFormColorScheme colors = colorScheme.get();
-
         // Title with checkmark icon
         HBox titleRow = new HBox(12);
         titleRow.setAlignment(Pos.CENTER);
 
-        // Checkmark circle
-        StackPane checkCircle = new StackPane();
-        checkCircle.setMinSize(28, 28);
-        checkCircle.setMaxSize(28, 28);
-        checkCircle.setBackground(bg(colors.getPrimary(), RADII_14));
-
+        // Checkmark circle - uses CSS for theming with solid primary background
+        StackPane checkCircle = BookingPageUIBuilder.createThemedIconCircle(28);
+        checkCircle.getStyleClass().add("bookingpage-icon-circle-primary");
         SVGPath checkmark = new SVGPath();
         checkmark.setContent("M8 12l3 3 5-6");
         checkmark.setStroke(Color.WHITE);
@@ -146,35 +141,26 @@ public class DefaultPendingBookingsSection implements HasPendingBookingsSection 
     }
 
     protected HBox buildInfoBox() {
-        BookingFormColorScheme colors = colorScheme.get();
-
         HBox box = new HBox(14);
         box.setAlignment(Pos.TOP_LEFT);
         box.setPadding(new Insets(20, 24, 20, 24));
-        box.setBackground(bg(colors.getSelectedBg(), RADII_8));
-        box.setBorder(borderLeft(colors.getPrimary(), 4, RADII_8));
+        // CSS class handles background and left border with theme colors
+        box.getStyleClass().add("bookingpage-info-box-info");
 
-        // Clipboard icon
-        SVGPath icon = new SVGPath();
-        icon.setContent("M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2 " +
-                "M8 2h8v4H8V2 M9 12l2 2 4-4");
-        icon.setStroke(colors.getPrimary());
-        icon.setStrokeWidth(2);
-        icon.setFill(Color.TRANSPARENT);
-        icon.setScaleX(0.7);
-        icon.setScaleY(0.7);
+        // Clipboard icon - uses themed primary color
+        SVGPath icon = BookingPageUIBuilder.createThemedIcon(
+                "M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2 " +
+                "M8 2h8v4H8V2 M9 12l2 2 4-4", 0.7);
 
         VBox content = new VBox(6);
 
         // Title - per JSX: fontWeight: 600, fontSize: 15px
         Label titleLabel = I18nControls.newLabel(BookingPageI18nKeys.YourRegisteredAttendees);
-        titleLabel.setFont(fontSemiBold(15));
-        titleLabel.setTextFill(colors.getDarkText());
+        titleLabel.getStyleClass().addAll("bookingpage-text-base", "bookingpage-font-semibold", "bookingpage-text-dark");
 
         // Description - per JSX: fontSize: 13px, color: muted
         Label descLabel = I18nControls.newLabel(BookingPageI18nKeys.ReviewDetailsSubtitle);
-        descLabel.setFont(font(13));
-        descLabel.setTextFill(TEXT_MUTED);
+        descLabel.getStyleClass().addAll("bookingpage-text-sm", "bookingpage-text-muted");
         descLabel.setWrapText(true);
 
         content.getChildren().addAll(titleLabel, descLabel);
@@ -196,19 +182,15 @@ public class DefaultPendingBookingsSection implements HasPendingBookingsSection 
     }
 
     protected VBox createBookingCard(BookingItem booking, int bookingNumber) {
-        BookingFormColorScheme colors = colorScheme.get();
-
         VBox card = new VBox(0);
         card.getStyleClass().addAll("bookingpage-bg-white", "bookingpage-rounded-lg");
-        card.setEffect(SHADOW_CARD);
+        card.setEffect(BookingPageUIBuilder.SHADOW_CARD);
 
-        // Header
+        // Header - CSS classes handle background, border-radius, and bottom border
         HBox header = new HBox();
         header.setAlignment(Pos.CENTER_LEFT);
         header.setPadding(new Insets(20, 24, 20, 24));
-        header.getStyleClass().add("bookingpage-bg-lighter");
-        header.setBackground(bg(BG_LIGHTER, new CornerRadii(12, 12, 0, 0, false)));
-        header.setBorder(borderBottom(BORDER_GRAY, 2));
+        header.getStyleClass().addAll("bookingpage-card-header", "bookingpage-divider-bottom-gray");
 
         VBox nameBox = new VBox(4);
         Label nameLabel = new Label(booking.getPersonName());
@@ -229,25 +211,18 @@ public class DefaultPendingBookingsSection implements HasPendingBookingsSection 
         } else {
             I18nControls.bindI18nProperties(bookingNumLabel, BookingPageI18nKeys.BookingNumberPrefix, bookingNumber);
         }
-        bookingNumLabel.setFont(fontSemiBold(14));
-        bookingNumLabel.setTextFill(colors.getPrimary());
+        bookingNumLabel.getStyleClass().addAll("bookingpage-text-sm", "bookingpage-font-semibold", "bookingpage-text-primary");
         rightBox.getChildren().add(bookingNumLabel);
 
-        // Paid status badge
+        // Paid status badge - using CSS-styled badges
         if (booking.isPaid()) {
-            Label paidBadge = I18nControls.newLabel(BookingPageI18nKeys.PaidStatus);
-            paidBadge.setFont(fontSemiBold(12));
-            paidBadge.setTextFill(Color.WHITE);
-            paidBadge.setBackground(bg(Color.web("#28a745"), new CornerRadii(4)));
-            paidBadge.setPadding(new Insets(2, 8, 2, 8));
+            Label paidBadge = BookingPageUIBuilder.createStatusBadge(null, BadgeType.SUCCESS);
+            I18nControls.bindI18nProperties(paidBadge, BookingPageI18nKeys.PaidStatus);
             rightBox.getChildren().add(paidBadge);
         } else if (booking.getPaidAmount() > 0) {
             // Partially paid
-            Label partialBadge = I18nControls.newLabel(BookingPageI18nKeys.DepositPaid);
-            partialBadge.setFont(fontSemiBold(12));
-            partialBadge.setTextFill(Color.WHITE);
-            partialBadge.setBackground(bg(Color.web("#ffc107"), new CornerRadii(4)));
-            partialBadge.setPadding(new Insets(2, 8, 2, 8));
+            Label partialBadge = BookingPageUIBuilder.createStatusBadge(null, BadgeType.WARNING);
+            I18nControls.bindI18nProperties(partialBadge, BookingPageI18nKeys.DepositPaid);
             rightBox.getChildren().add(partialBadge);
         }
 
@@ -279,7 +254,7 @@ public class DefaultPendingBookingsSection implements HasPendingBookingsSection 
         // Line items
         VBox lineItems = new VBox(0);
         for (BookingLineItem item : booking.getLineItems()) {
-            HBox row = createLineItemRow(item, colors);
+            HBox row = createLineItemRow(item);
             lineItems.getChildren().add(row);
         }
 
@@ -299,8 +274,7 @@ public class DefaultPendingBookingsSection implements HasPendingBookingsSection 
         HBox.setHgrow(spacer, Priority.ALWAYS);
 
         Label totalPriceLabel = new Label(currencySymbol + PriceFormatter.formatPriceNoCurrencyWithDecimals(booking.getTotalAmount()));
-        totalPriceLabel.setFont(fontBold(20));
-        totalPriceLabel.setTextFill(colors.getPrimary());
+        totalPriceLabel.getStyleClass().addAll("bookingpage-price-large", "bookingpage-text-primary");
 
         totalRow.getChildren().addAll(totalTextLabel, spacer, totalPriceLabel);
         totalSection.getChildren().add(totalRow);
@@ -332,8 +306,7 @@ public class DefaultPendingBookingsSection implements HasPendingBookingsSection 
             HBox.setHgrow(balanceSpacer, Priority.ALWAYS);
 
             Label balanceAmountLabel = new Label(currencySymbol + PriceFormatter.formatPriceNoCurrencyWithDecimals((int) booking.getBalance()));
-            balanceAmountLabel.setFont(fontBold(18));
-            balanceAmountLabel.setTextFill(colors.getPrimary());
+            balanceAmountLabel.getStyleClass().addAll("bookingpage-price-medium", "bookingpage-text-primary");
 
             balanceRow.getChildren().addAll(balanceTextLabel, balanceSpacer, balanceAmountLabel);
             totalSection.getChildren().add(balanceRow);
@@ -345,7 +318,7 @@ public class DefaultPendingBookingsSection implements HasPendingBookingsSection 
         return card;
     }
 
-    protected HBox createLineItemRow(BookingLineItem item, BookingFormColorScheme colors) {
+    protected HBox createLineItemRow(BookingLineItem item) {
         HBox row = new HBox(16);
         row.setAlignment(Pos.CENTER_LEFT);
         row.setPadding(new Insets(8, 0, 8, 0));
@@ -362,11 +335,11 @@ public class DefaultPendingBookingsSection implements HasPendingBookingsSection 
         Label priceLabel;
         if (isIncluded) {
             priceLabel = I18nControls.newLabel(BookingPageI18nKeys.Included);
+            priceLabel.getStyleClass().addAll("bookingpage-text-sm", "bookingpage-font-semibold", "bookingpage-text-muted");
         } else {
             priceLabel = new Label(currencySymbol + PriceFormatter.formatPriceNoCurrencyNoDecimals(item.getAmount()));
+            priceLabel.getStyleClass().addAll("bookingpage-text-sm", "bookingpage-font-bold", "bookingpage-text-primary");
         }
-        priceLabel.setFont(isIncluded ? fontSemiBold(13) : fontBold(13));
-        priceLabel.setTextFill(isIncluded ? TEXT_MUTED : colors.getPrimary());
         priceLabel.setAlignment(Pos.CENTER_RIGHT);
 
         row.getChildren().addAll(nameLabel, spacer, priceLabel);
@@ -374,24 +347,21 @@ public class DefaultPendingBookingsSection implements HasPendingBookingsSection 
     }
 
     protected VBox buildPaymentSummaryBox() {
-        BookingFormColorScheme colors = colorScheme.get();
-
         VBox box = new VBox(0);
         box.setPadding(new Insets(32));
         box.getStyleClass().addAll("bookingpage-bg-white", "bookingpage-rounded-lg");
-        box.setEffect(SHADOW_CARD);
+        box.setEffect(BookingPageUIBuilder.SHADOW_CARD);
 
         // Title
         Label titleLabel = I18nControls.newLabel(BookingPageI18nKeys.PaymentSummary);
-        titleLabel.getStyleClass().addAll("bookingpage-font-bold", "bookingpage-text-dark");
-        titleLabel.setFont(fontBold(20));
+        titleLabel.getStyleClass().addAll("bookingpage-text-xl", "bookingpage-font-bold", "bookingpage-text-dark");
         VBox.setMargin(titleLabel, new Insets(0, 0, 20, 0));
 
         // Total bookings row
         HBox bookingsRow = new HBox();
         bookingsRow.setAlignment(Pos.CENTER_LEFT);
         bookingsRow.setPadding(new Insets(12, 0, 12, 0));
-        bookingsRow.setBorder(borderBottom(BG_LIGHTER, 1));
+        bookingsRow.getStyleClass().add("bookingpage-divider-thin-bottom");
 
         Label bookingsTextLabel = I18nControls.newLabel(BookingPageI18nKeys.TotalBookings);
         bookingsTextLabel.getStyleClass().addAll("bookingpage-text-md", "bookingpage-font-medium", "bookingpage-text-muted");
@@ -407,7 +377,7 @@ public class DefaultPendingBookingsSection implements HasPendingBookingsSection 
         HBox costRow = new HBox();
         costRow.setAlignment(Pos.CENTER_LEFT);
         costRow.setPadding(new Insets(12, 0, 12, 0));
-        costRow.setBorder(borderBottom(BG_LIGHTER, 1));
+        costRow.getStyleClass().add("bookingpage-divider-thin-bottom");
 
         Label costTextLabel = I18nControls.newLabel(BookingPageI18nKeys.TotalCost);
         costTextLabel.getStyleClass().addAll("bookingpage-text-md", "bookingpage-font-medium", "bookingpage-text-muted");
@@ -419,22 +389,20 @@ public class DefaultPendingBookingsSection implements HasPendingBookingsSection 
 
         costRow.getChildren().addAll(costTextLabel, spacer2, totalCostLabel);
 
-        // Total amount row (prominent)
+        // Total amount row (prominent) - CSS handles the themed border
         HBox amountRow = new HBox();
         amountRow.setAlignment(Pos.CENTER_LEFT);
         amountRow.setPadding(new Insets(16, 0, 0, 0));
-        amountRow.setBorder(borderTop(colors.getPrimary(), 2));
+        amountRow.getStyleClass().add("bookingpage-divider-top-primary");
         VBox.setMargin(amountRow, new Insets(16, 0, 0, 0));
 
         Label amountTextLabel = I18nControls.newLabel(BookingPageI18nKeys.TotalAmount);
-        amountTextLabel.getStyleClass().addAll("bookingpage-font-bold", "bookingpage-text-dark");
-        amountTextLabel.setFont(fontBold(22));
+        amountTextLabel.getStyleClass().addAll("bookingpage-text-2xl", "bookingpage-font-bold", "bookingpage-text-dark");
         Region spacer3 = new Region();
         HBox.setHgrow(spacer3, Priority.ALWAYS);
 
         totalAmountLabel = new Label();
-        totalAmountLabel.setFont(fontBold(28));
-        totalAmountLabel.setTextFill(colors.getPrimary());
+        totalAmountLabel.getStyleClass().addAll("bookingpage-price-large", "bookingpage-text-primary");
 
         amountRow.getChildren().addAll(amountTextLabel, spacer3, totalAmountLabel);
 

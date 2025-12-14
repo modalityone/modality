@@ -94,8 +94,23 @@ public class DefaultTermsSection implements HasTermsSection {
         HBox row = new HBox(12);
         row.setAlignment(Pos.TOP_LEFT);
         row.setCursor(Cursor.HAND);
-        row.getStyleClass().add("booking-form-terms-checkbox");
+        row.getStyleClass().addAll("booking-form-terms-checkbox", "bookingpage-checkbox-card");
         row.setPadding(new Insets(16, 20, 16, 16));
+
+        // Toggle 'selected' class based on terms accepted state
+        Runnable updateSelectedClass = () -> {
+            if (termsAcceptedProperty.get()) {
+                if (!row.getStyleClass().contains("selected")) {
+                    row.getStyleClass().add("selected");
+                }
+            } else {
+                row.getStyleClass().remove("selected");
+            }
+        };
+        // Set initial state
+        updateSelectedClass.run();
+        // Listen for changes
+        termsAcceptedProperty.addListener((obs, old, accepted) -> updateSelectedClass.run());
 
         // Checkbox indicator
         StackPane checkbox = BookingPageUIBuilder.createCheckboxIndicator(termsAcceptedProperty);

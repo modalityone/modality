@@ -21,7 +21,6 @@ import one.modality.booking.frontoffice.bookingpage.navigation.ButtonNavigation;
 import one.modality.booking.frontoffice.bookingpage.navigation.ResponsiveStepProgressHeader;
 import one.modality.booking.frontoffice.bookingpage.sections.*;
 import one.modality.booking.frontoffice.bookingpage.theme.BookingFormColorScheme;
-import one.modality.booking.frontoffice.bookingpage.theme.ThemedBookingFormSection;
 import one.modality.crm.shared.services.authn.ModalityUserPrincipal;
 import one.modality.crm.shared.services.authn.fx.FXModalityUserPrincipal;
 import one.modality.crm.shared.services.authn.fx.FXUserPerson;
@@ -235,7 +234,7 @@ public class StandardBookingForm extends MultiPageBookingForm {
         defaultYourInformationSection = new DefaultYourInformationSection();
         defaultYourInformationSection.setColorScheme(colorScheme);
         return new CompositeBookingFormPage(BookingPageI18nKeys.YourInformation,
-                new ThemedBookingFormSection(defaultYourInformationSection, colorScheme))
+                defaultYourInformationSection)
             .setStep(false)
             .setShowingOwnSubmitButton(true);
     }
@@ -244,7 +243,7 @@ public class StandardBookingForm extends MultiPageBookingForm {
         defaultMemberSelectionSection = new DefaultMemberSelectionSection();
         defaultMemberSelectionSection.setColorScheme(colorScheme);
         return new CompositeBookingFormPage(BookingPageI18nKeys.MemberSelection,
-                new ThemedBookingFormSection(defaultMemberSelectionSection, colorScheme))
+                defaultMemberSelectionSection)
             .setStep(true)
             .setShowingOwnSubmitButton(true);
     }
@@ -253,7 +252,7 @@ public class StandardBookingForm extends MultiPageBookingForm {
         defaultSummarySection = new DefaultSummarySection();
         defaultSummarySection.setColorScheme(colorScheme);
         return new CompositeBookingFormPage(BookingPageI18nKeys.Summary,
-                new ThemedBookingFormSection(defaultSummarySection, colorScheme))
+                defaultSummarySection)
             .setStep(true);
     }
 
@@ -261,7 +260,7 @@ public class StandardBookingForm extends MultiPageBookingForm {
         defaultPendingBookingsSection = new DefaultPendingBookingsSection();
         defaultPendingBookingsSection.setColorScheme(colorScheme);
         return new CompositeBookingFormPage(BookingPageI18nKeys.PendingBookings,
-                new ThemedBookingFormSection(defaultPendingBookingsSection, colorScheme))
+                defaultPendingBookingsSection)
             .setStep(true);
     }
 
@@ -269,7 +268,7 @@ public class StandardBookingForm extends MultiPageBookingForm {
         defaultPaymentSection = new DefaultPaymentSection();
         defaultPaymentSection.setColorScheme(colorScheme);
         return new CompositeBookingFormPage(BookingPageI18nKeys.Payment,
-                new ThemedBookingFormSection(defaultPaymentSection, colorScheme))
+                defaultPaymentSection)
             .setStep(true);
     }
 
@@ -277,7 +276,7 @@ public class StandardBookingForm extends MultiPageBookingForm {
         defaultConfirmationSection = new DefaultConfirmationSection();
         defaultConfirmationSection.setColorScheme(colorScheme);
         return new CompositeBookingFormPage(BookingPageI18nKeys.Confirmation,
-                new ThemedBookingFormSection(defaultConfirmationSection, colorScheme))
+                defaultConfirmationSection)
             .setStep(true)
             .setButtons() // No navigation buttons on confirmation page
             .setShowingOwnSubmitButton(true); // Prevents default activity-level submit button from showing
@@ -939,13 +938,6 @@ public class StandardBookingForm extends MultiPageBookingForm {
                     // Reset sections implementing ResettableSection
                     if (section instanceof ResettableSection) {
                         ((ResettableSection) section).reset();
-                    }
-                    // Check wrapped sections (ThemedBookingFormSection delegates)
-                    if (section instanceof ThemedBookingFormSection) {
-                        BookingFormSection delegate = ((ThemedBookingFormSection) section).getDelegate();
-                        if (delegate instanceof ResettableSection) {
-                            ((ResettableSection) delegate).reset();
-                        }
                     }
                 }
             }

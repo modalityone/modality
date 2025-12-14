@@ -347,7 +347,7 @@
     -fx-background-color: #f8f9fa;
     -fx-text-fill: -booking-form-text-secondary;
     -fx-font-size: 16px;
-    -fx-font-weight: 600;
+    -fx-font-weight: bold;
     -fx-background-radius: 8px;
     -fx-border-color: #e0e0e0;
     -fx-border-width: 2px;
@@ -380,7 +380,7 @@
 
 .booking-form-primary-btn-text {
     -fx-text-fill: white;
-    -fx-font-weight: 600;
+    -fx-font-weight: bold;
     -fx-font-size: 16px;
 }
 
@@ -766,6 +766,14 @@
     -fx-wrap-text: true;
 }
 
+/* Mobile-specific title styling - smaller font for narrow screens */
+.booking-form-event-header-title-mobile {
+    -fx-font-size: 20px;
+    -fx-font-weight: 600;
+    -fx-text-fill: #212529;
+    -fx-wrap-text: true;
+}
+
 /* ==========================================
    Booking Form Audio Recording Card
    ========================================== */
@@ -1084,6 +1092,10 @@
 
 .bookingpage-text-2xl {
     -fx-font-size: 24px;
+}
+
+.bookingpage-text-3xl {
+    -fx-font-size: 28px;
 }
 
 /* Font Weights */
@@ -1410,6 +1422,92 @@
     -fx-border-width: 0 0 1 0;
 }
 
+/* Gray bottom border divider (2px) - replaces borderBottom(BORDER_GRAY, 2) */
+.bookingpage-divider-bottom-gray {
+    -fx-border-color: transparent transparent #E6E7E7 transparent;
+    -fx-border-width: 0 0 2 0;
+}
+
+/* ==========================================
+   Input Field Styling (for focus state toggling)
+   ========================================== */
+
+/* Input field with standard border (replaces border(BORDER_LIGHT, 1/2, RADII_8)) */
+.bookingpage-input-bordered {
+    -fx-background-color: white;
+    -fx-border-color: #dee2e6;
+    -fx-border-width: 2;
+    -fx-border-radius: 8;
+    -fx-background-radius: 8;
+}
+
+/* Focus state for inputs (theme colored border - uses CSS variable) */
+.bookingpage-input-focused {
+    -fx-border-color: -booking-form-primary;
+    -fx-border-width: 2;
+    -fx-border-radius: 8;
+    -fx-background-radius: 8;
+}
+
+/* ==========================================
+   Checkbox Box Styling (square checkbox indicator)
+   ========================================== */
+
+/* Checkbox unchecked state (replaces bg(BG_WHITE, RADII_6) + border(BORDER_MEDIUM, 2, RADII_6)) */
+.bookingpage-checkbox {
+    -fx-background-color: white;
+    -fx-border-color: #adb5bd;
+    -fx-border-width: 2;
+    -fx-border-radius: 6;
+    -fx-background-radius: 6;
+}
+
+/* Checkbox checked state (uses theme CSS variables) */
+.bookingpage-checkbox-selected {
+    -fx-background-color: -booking-form-primary;
+    -fx-border-color: -booking-form-primary;
+    -fx-border-width: 2;
+    -fx-border-radius: 6;
+    -fx-background-radius: 6;
+}
+
+/* ==========================================
+   Card Header & Bordered Card Styling
+   ========================================== */
+
+/* Card header with light background (replaces bg(BG_LIGHTER) + borderBottom(BORDER_GRAY, 2)) */
+.bookingpage-card-header {
+    -fx-background-color: #F4F4F4;
+    -fx-border-color: transparent transparent #E6E7E7 transparent;
+    -fx-border-width: 0 0 2 0;
+    -fx-background-radius: 12 12 0 0;
+    -fx-border-radius: 12 12 0 0;
+}
+
+/* Gray bordered card (replaces border(BORDER_GRAY, 2, RADII_12)) */
+.bookingpage-card-bordered {
+    -fx-border-color: #E6E7E7;
+    -fx-border-width: 2;
+    -fx-border-radius: 12;
+    -fx-background-radius: 12;
+}
+
+/* ==========================================
+   Progress Bar Styling
+   ========================================== */
+
+/* Progress track background (static gray - replaces bg(PROGRESS_TRACK)) */
+.bookingpage-progress-track {
+    -fx-background-color: #e0e0e0;
+    -fx-background-radius: 2;
+}
+
+/* Progress fill (uses theme CSS variable - replaces bg(scheme.getPrimary(), RADII_2)) */
+.bookingpage-progress-fill {
+    -fx-background-color: -booking-form-primary;
+    -fx-background-radius: 2;
+}
+
 /* Gray Background (for dividers) */
 .bookingpage-bg-gray {
     -fx-background-color: #E6E7E7;
@@ -1511,8 +1609,10 @@
 /* Info Box - Info (theme colored) */
 .bookingpage-info-box-info {
     -fx-background-color: -booking-form-selected-bg;
-    -fx-border-width: 0 0 0 4;
+    -fx-border-width: 1;
     -fx-border-color: -booking-form-primary;
+    -fx-border-radius: 8;
+    -fx-background-radius: 8;
 }
 
 /* Info Box Icon */
@@ -1613,4 +1713,96 @@
     -fx-text-fill: #2E7D32;
     -fx-padding: 2 6;
     -fx-background-radius: 4;
+}
+
+/* ==========================================
+   Themed Icon Circle (for icon backgrounds)
+   ========================================== */
+
+/* Icon circle with theme colors */
+.bookingpage-icon-circle-themed {
+    -fx-background-color: -booking-form-selected-bg;
+    -fx-border-color: -booking-form-primary;
+    -fx-border-width: 2;
+    -fx-background-radius: 50%;
+    -fx-border-radius: 50%;
+}
+
+/* Solid primary circle (for checkmarks, success indicators) */
+.bookingpage-icon-circle-primary {
+    -fx-background-color: -booking-form-primary;
+    -fx-background-radius: 50%;
+}
+
+/* Large confirmation circle with solid primary background */
+.bookingpage-confirmation-check-circle {
+    -fx-background-color: -booking-form-primary;
+    -fx-border-color: -booking-form-primary;
+    -fx-border-width: 4;
+}
+
+/* Checkmark inside confirmation circle should be white for contrast */
+.bookingpage-confirmation-check-circle .bookingpage-icon-primary {
+    -fx-stroke: white;
+}
+
+/* ==========================================
+   Themed Hyperlinks
+   ========================================== */
+
+/* Hyperlink with theme primary color */
+.bookingpage-link-primary {
+    -fx-font-size: 13px;
+    -fx-font-weight: 500;
+    -fx-cursor: hand;
+    -fx-text-fill: -booking-form-primary;
+}
+
+.bookingpage-link-primary:hover {
+    -fx-text-fill: -booking-form-primary-dark;
+}
+
+/* ==========================================
+   Generic Status Badges (BookingPageUIBuilder)
+   ========================================== */
+
+/* Base badge styling */
+.bookingpage-badge {
+    -fx-font-size: 12px;
+    -fx-font-weight: 600;
+    -fx-background-radius: 4;
+}
+
+/* Badge - success (green) */
+.bookingpage-badge-success {
+    -fx-background-color: #d4edda;
+    -fx-background-radius: 4;
+    -fx-text-fill: #155724;
+}
+
+/* Badge - warning (yellow/amber) */
+.bookingpage-badge-warning {
+    -fx-background-color: #fff3cd;
+    -fx-background-radius: 4;
+    -fx-text-fill: #856404;
+}
+
+/* Badge - danger (red) */
+.bookingpage-badge-danger {
+    -fx-background-color: #f8d7da;
+    -fx-background-radius: 4;
+    -fx-text-fill: #721c24;
+}
+
+/* Badge - info (theme colored) */
+.bookingpage-badge-info {
+    -fx-background-color: -booking-form-selected-bg;
+    -fx-background-radius: 4;
+    -fx-text-fill: -booking-form-primary;
+}
+
+/* Primary-colored divider for emphasis (uses theme color) */
+.bookingpage-divider-top-primary {
+    -fx-border-color: -booking-form-primary transparent transparent transparent;
+    -fx-border-width: 2 0 0 0;
 }

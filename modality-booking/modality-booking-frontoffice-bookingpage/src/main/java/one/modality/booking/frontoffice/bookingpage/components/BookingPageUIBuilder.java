@@ -3,28 +3,24 @@ package one.modality.booking.frontoffice.bookingpage.components;
 import dev.webfx.extras.i18n.controls.I18nControls;
 import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.ObjectProperty;
-import javafx.beans.property.StringProperty;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Cursor;
 import javafx.scene.control.Button;
 import javafx.scene.control.ContentDisplay;
+import javafx.scene.control.Hyperlink;
 import javafx.scene.control.Label;
-import javafx.scene.control.TextField;
 import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Circle;
 import javafx.scene.shape.Rectangle;
 import javafx.scene.shape.SVGPath;
-import dev.webfx.extras.webtext.HtmlText;
 import one.modality.booking.frontoffice.bookingpage.theme.BookingFormColorScheme;
 
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.time.format.TextStyle;
 import java.util.Locale;
-
-import static one.modality.booking.frontoffice.bookingpage.theme.BookingFormStyles.*;
 
 /**
  * Factory class for creating common UI elements used across booking form pages.
@@ -59,6 +55,39 @@ public final class BookingPageUIBuilder {
 
     // Other common icons
     public static final String ICON_TAG = "M20.59 13.41l-7.17 7.17a2 2 0 0 1-2.83 0L2 12V2h10l8.59 8.59a2 2 0 0 1 0 2.82zM7 7h.01";
+    public static final String ICON_ENVELOPE = "M2 4h20a2 2 0 012 2v12a2 2 0 01-2 2H2a2 2 0 01-2-2V6a2 2 0 012-2z M22 6l-10 7L2 6";
+    public static final String ICON_CREDIT_CARD = "M2 5h20a2 2 0 012 2v10a2 2 0 01-2 2H2a2 2 0 01-2-2V7a2 2 0 012-2z M2 10h20";
+
+    // =============================================
+    // EFFECTS AND SHADOWS
+    // =============================================
+
+    /** Standard card shadow - moved from BookingFormStyles for GWT compatibility */
+    public static final javafx.scene.effect.DropShadow SHADOW_CARD = createDropShadow(8, 0.1, 0, 2);
+
+    /**
+     * Creates a drop shadow effect.
+     * @param radius Blur radius
+     * @param opacity Shadow opacity (0.0 to 1.0)
+     * @param offsetX Horizontal offset
+     * @param offsetY Vertical offset
+     * @return A configured DropShadow effect
+     */
+    public static javafx.scene.effect.DropShadow createDropShadow(double radius, double opacity, double offsetX, double offsetY) {
+        return new javafx.scene.effect.DropShadow(
+            javafx.scene.effect.BlurType.THREE_PASS_BOX,
+            Color.rgb(0, 0, 0, opacity),
+            radius, 0, offsetX, offsetY
+        );
+    }
+
+    /**
+     * Creates a focus shadow effect for input fields.
+     * @return A subtle focus shadow
+     */
+    public static javafx.scene.effect.DropShadow createFocusShadow() {
+        return createDropShadow(3, 0.3, 0, 0);
+    }
 
     // =============================================
     // SELECTION INDICATOR STYLES
@@ -92,6 +121,20 @@ public final class BookingPageUIBuilder {
         OUTLINE_PRIMARY
     }
 
+    /**
+     * Types of status badges.
+     */
+    public enum BadgeType {
+        /** Green badge for success/paid/completed states */
+        SUCCESS,
+        /** Yellow/amber badge for warning/partial states */
+        WARNING,
+        /** Red badge for error/danger states */
+        DANGER,
+        /** Theme-colored badge for info states */
+        INFO
+    }
+
     // =============================================
     // ICON CREATION
     // =============================================
@@ -120,6 +163,46 @@ public final class BookingPageUIBuilder {
      */
     public static SVGPath createIcon(String svgPath, Color strokeColor) {
         return createIcon(svgPath, strokeColor, 0.7);
+    }
+
+    /**
+     * Creates a themed SVG icon with custom scale that uses the theme primary color via CSS.
+     *
+     * <p>CSS class: {@code .bookingpage-icon-primary}</p>
+     *
+     * @param svgPath The SVG path content
+     * @param scale   Scale factor (e.g., 0.7 for 70% size)
+     * @return A styled SVGPath node with theme primary color
+     */
+    public static SVGPath createThemedIcon(String svgPath, double scale) {
+        SVGPath icon = new SVGPath();
+        icon.setContent(svgPath);
+        icon.getStyleClass().add("bookingpage-icon-primary");
+        icon.setStrokeWidth(2);
+        icon.setFill(Color.TRANSPARENT);
+        icon.setScaleX(scale);
+        icon.setScaleY(scale);
+        return icon;
+    }
+
+    /**
+     * Creates a muted/gray SVG icon with custom scale via CSS.
+     *
+     * <p>CSS class: {@code .bookingpage-icon-muted}</p>
+     *
+     * @param svgPath The SVG path content
+     * @param scale   Scale factor (e.g., 0.7 for 70% size)
+     * @return A styled SVGPath node with muted gray color
+     */
+    public static SVGPath createMutedIcon(String svgPath, double scale) {
+        SVGPath icon = new SVGPath();
+        icon.setContent(svgPath);
+        icon.getStyleClass().add("bookingpage-icon-muted");
+        icon.setStrokeWidth(2);
+        icon.setFill(Color.TRANSPARENT);
+        icon.setScaleX(scale);
+        icon.setScaleY(scale);
+        return icon;
     }
 
     // =============================================
@@ -373,24 +456,6 @@ public final class BookingPageUIBuilder {
         return card;
     }
 
-    /**
-     * Creates a passive card with themed background (for info boxes like "Standard Rate Applied").
-     * Uses the color scheme's selected background color for a subtle themed appearance.
-     *
-     * @param colorScheme Color scheme for theming
-     * @return A styled HBox for adding content
-     */
-    public static HBox createThemedPassiveCard(BookingFormColorScheme colorScheme) {
-        HBox card = new HBox(12);
-        card.setAlignment(Pos.TOP_LEFT);
-        card.setPadding(new Insets(14, 16, 14, 16));
-        Color bgColor = colorScheme.getSelectedBg() != null ? colorScheme.getSelectedBg() : BG_WHITE;
-        Color borderColor = colorScheme.getHoverBorder() != null ? colorScheme.getHoverBorder() : BORDER_LIGHT;
-        card.setBackground(bg(bgColor, RADII_8));
-        card.setBorder(border(borderColor, 1, RADII_8));
-        return card;
-    }
-
     // =============================================
     // CHECKBOX AND RADIO CARDS
     // =============================================
@@ -417,33 +482,9 @@ public final class BookingPageUIBuilder {
 
         card.getChildren().addAll(checkbox, content);
 
-        // Apply Java-based styling when color scheme is provided (CSS unreliable in WebFX/GWT)
-        if (colorSchemeProperty != null) {
-            CornerRadii radii = new CornerRadii(8);
-            Runnable updateCardStyle = () -> {
-                boolean selected = selectedProperty.get();
-                BookingFormColorScheme scheme = colorSchemeProperty.get();
-                if (scheme == null) scheme = BookingFormColorScheme.DEFAULT;
-
-                if (selected) {
-                    card.setBorder(new Border(new BorderStroke(
-                        scheme.getPrimary(), BorderStrokeStyle.SOLID, radii, new BorderWidths(2))));
-                } else {
-                    card.setBorder(new Border(new BorderStroke(
-                        Color.web("#dee2e6"), BorderStrokeStyle.SOLID, radii, new BorderWidths(2))));
-                }
-            };
-
-            updateCardStyle.run();
-            selectedProperty.addListener((obs, old, val) -> updateCardStyle.run());
-            colorSchemeProperty.addListener((obs, old, val) -> updateCardStyle.run());
-
-            // Click handler
-            card.setOnMouseClicked(e -> selectedProperty.set(!selectedProperty.get()));
-        } else {
-            // Fall back to CSS-based styling
-            makeSelectable(card, selectedProperty);
-        }
+        // Use CSS for all visual styling (hover, selected states)
+        // Java only toggles the 'selected' class
+        makeSelectable(card, selectedProperty);
 
         return card;
     }
@@ -656,38 +697,63 @@ public final class BookingPageUIBuilder {
     // =============================================
 
     /**
-     * Creates a label with muted/secondary styling.
-     * Uses CSS classes: bookingpage-text-base, bookingpage-text-muted
+     * Creates a themed hyperlink with primary color styling via CSS.
+     * The hyperlink color is applied via CSS.
      *
-     * @param i18nKey The i18n key for the label text
-     * @return A styled Label
+     * <p>CSS classes: {@code .bookingpage-link-primary}</p>
+     *
+     * @param i18nKey The i18n key for the hyperlink text
+     * @return A styled Hyperlink
      */
-    public static Label createMutedLabel(Object i18nKey) {
-        Label label = I18nControls.newLabel(i18nKey);
-        label.getStyleClass().addAll("bookingpage-text-base", "bookingpage-text-muted");
-        return label;
+    public static Hyperlink createThemedHyperlink(Object i18nKey) {
+        Hyperlink link = new Hyperlink();
+        I18nControls.bindI18nProperties(link, i18nKey);
+        link.getStyleClass().add("bookingpage-link-primary");
+        link.setCursor(Cursor.HAND);
+        return link;
     }
 
     /**
-     * Creates a bullet point with HTML text (supports bold text).
-     * The format is: "• prefix<b>boldText</b>suffix"
+     * Creates a status badge for displaying states like "Paid", "Pending", etc.
+     * Uses CSS classes for styling based on badge type.
      *
-     * @param prefix   Text before the bold part
-     * @param boldText Text to be bold
-     * @param suffix   Text after the bold part
-     * @param cssClasses Additional CSS classes to add
-     * @return An HtmlText with the bullet point
+     * <p>CSS classes used:</p>
+     * <ul>
+     *   <li>{@code .bookingpage-badge} - base styling</li>
+     *   <li>{@code .bookingpage-badge-success} - green for SUCCESS</li>
+     *   <li>{@code .bookingpage-badge-warning} - yellow/amber for WARNING</li>
+     *   <li>{@code .bookingpage-badge-danger} - red for DANGER</li>
+     *   <li>{@code .bookingpage-badge-info} - theme color for INFO</li>
+     * </ul>
+     *
+     * @param text The badge text (e.g., "Paid", "Pending")
+     * @param type The badge type (SUCCESS, WARNING, DANGER, INFO)
+     * @return A styled Label
      */
-    public static HtmlText createBulletPoint(String prefix, String boldText, String suffix, String... cssClasses) {
-        HtmlText htmlText = new HtmlText();
-        String html = "• " + (prefix != null ? prefix : "") +
-                      (boldText != null ? "<b>" + boldText + "</b>" : "") +
-                      (suffix != null ? suffix : "");
-        htmlText.setText(html);
-        if (cssClasses != null && cssClasses.length > 0) {
-            htmlText.getStyleClass().addAll(cssClasses);
-        }
-        return htmlText;
+    public static Label createStatusBadge(String text, BadgeType type) {
+        Label badge = new Label(text);
+        badge.getStyleClass().add("bookingpage-badge");
+        badge.getStyleClass().add("bookingpage-badge-" + type.name().toLowerCase());
+        badge.setPadding(new Insets(4, 8, 4, 8));
+        return badge;
+    }
+
+    /**
+     * Creates a themed circle for icon backgrounds using CSS.
+     * The circle uses the theme's selected background color.
+     *
+     * <p>CSS class: {@code .bookingpage-icon-circle-themed}</p>
+     *
+     * @param size Circle diameter in pixels
+     * @return A styled StackPane that can contain an icon
+     */
+    public static StackPane createThemedIconCircle(double size) {
+        StackPane circle = new StackPane();
+        circle.setMinSize(size, size);
+        circle.setMaxSize(size, size);
+        circle.getStyleClass().add("bookingpage-icon-circle-themed");
+        circle.setAlignment(Pos.CENTER);
+        return circle;
     }
 
     /**
@@ -807,49 +873,13 @@ public final class BookingPageUIBuilder {
     // =============================================
 
     /**
-     * Creates a labeled text field with standard styling.
-     * The label is placed above the text field.
-     *
-     * <p>CSS classes used:</p>
-     * <ul>
-     *   <li>{@code .bookingpage-text-sm} - label styling</li>
-     *   <li>{@code .bookingpage-font-medium} - label font weight</li>
-     *   <li>{@code .bookingpage-input} - text field styling</li>
-     * </ul>
-     *
-     * @param labelI18nKey  The i18n key for the label
-     * @param valueProperty Property to bind the text field value
-     * @param promptText    Prompt text to show when empty (optional)
-     * @return A VBox containing the label and text field
-     */
-    public static VBox createLabeledTextField(Object labelI18nKey, StringProperty valueProperty, String promptText) {
-        VBox container = new VBox(8);
-
-        Label label = I18nControls.newLabel(labelI18nKey);
-        label.getStyleClass().addAll("bookingpage-text-sm", "bookingpage-font-medium", "bookingpage-text-dark");
-
-        TextField textField = new TextField();
-        if (promptText != null) {
-            textField.setPromptText(promptText);
-        }
-        if (valueProperty != null) {
-            textField.textProperty().bindBidirectional(valueProperty);
-        }
-        textField.getStyleClass().add("bookingpage-input");
-        textField.setPadding(new Insets(12, 16, 12, 16));
-
-        container.getChildren().addAll(label, textField);
-        return container;
-    }
-
-    /**
      * Result class for verification code field creation.
      * Contains both the container and the individual digit fields for further customization.
      */
     public static class VerificationCodeResult {
         private final HBox container;
 
-        public VerificationCodeResult(HBox container, TextField[] digitFields) {
+        public VerificationCodeResult(HBox container) {
             this.container = container;
         }
 

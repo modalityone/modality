@@ -27,9 +27,7 @@
  *     public MyBookingForm(HasWorkingBookingProperties activity, EventBookingFormSettings settings) {
  *         // Create custom step
  *         optionsSection = new MyOptionsSection();
- *         BookingFormPage optionsPage = new CompositeBookingFormPage(
- *             "Options",
- *             new ThemedBookingFormSection(optionsSection, BookingFormColorScheme.WISDOM_BLUE));
+ *         BookingFormPage optionsPage = new CompositeBookingFormPage("Options", optionsSection);
  *
  *         // Build form
  *         this.form = new StandardBookingFormBuilder(activity, settings)

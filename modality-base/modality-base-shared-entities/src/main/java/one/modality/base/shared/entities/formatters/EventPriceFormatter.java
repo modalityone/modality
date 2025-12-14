@@ -15,6 +15,9 @@ public class EventPriceFormatter extends PriceFormatter {
     }
 
     public static String getEventCurrencyCode(Event event) {
+        // Handle null event - default to GBP
+        if (event == null)
+            return "GBP";
         // Temporary hardcoded
         if (Entities.samePrimaryKey(event, 1647)) // Fall Festival 2025 - Arizona
             return "USD";

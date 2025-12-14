@@ -11,11 +11,11 @@ import javafx.geometry.Pos;
 import javafx.scene.Node;
 import javafx.scene.control.Label;
 import javafx.scene.layout.*;
-import javafx.scene.paint.Color;
 import javafx.scene.shape.SVGPath;
 import one.modality.base.shared.entities.formatters.EventPriceFormatter;
 import one.modality.booking.client.workingbooking.WorkingBookingProperties;
 import one.modality.booking.frontoffice.bookingpage.BookingPageI18nKeys;
+import one.modality.booking.frontoffice.bookingpage.components.BookingPageUIBuilder;
 import one.modality.booking.frontoffice.bookingpage.components.StyledSectionHeader;
 import one.modality.booking.frontoffice.bookingpage.theme.BookingFormColorScheme;
 
@@ -23,7 +23,7 @@ import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.Locale;
 
-import static one.modality.booking.frontoffice.bookingpage.theme.BookingFormStyles.*;
+import static one.modality.booking.frontoffice.bookingpage.components.BookingPageUIBuilder.*;
 
 /**
  * Default implementation of the Confirmation section.
@@ -89,8 +89,7 @@ public class DefaultConfirmationSection implements HasConfirmationSection {
     }
 
     protected void setupBindings() {
-        // Update on color scheme change
-        colorScheme.addListener((obs, old, newScheme) -> rebuildUI());
+        // Note: Color scheme listener removed - CSS handles theme changes via CSS variables
     }
 
     protected void rebuildUI() {
@@ -100,34 +99,21 @@ public class DefaultConfirmationSection implements HasConfirmationSection {
     }
 
     protected VBox buildSuccessHeader() {
-        BookingFormColorScheme colors = colorScheme.get();
-
         VBox header = new VBox(0);
         header.setAlignment(Pos.CENTER);
         VBox.setMargin(header, new Insets(0, 0, 40, 0));
 
-        // Checkmark circle
-        StackPane checkCircle = new StackPane();
-        checkCircle.setMinSize(80, 80);
-        checkCircle.setMaxSize(80, 80);
-        CornerRadii circleRadii = new CornerRadii(40);
-        checkCircle.setBackground(bg(colors.getSelectedBg(), circleRadii));
-        checkCircle.setBorder(border(colors.getPrimary(), 4, circleRadii));
-
-        SVGPath checkmark = new SVGPath();
-        checkmark.setContent("M20 6L9 17l-5-5");
-        checkmark.setStroke(colors.getPrimary());
+        // Checkmark circle - uses CSS for themed background and border
+        StackPane checkCircle = BookingPageUIBuilder.createThemedIconCircle(80);
+        checkCircle.getStyleClass().add("bookingpage-confirmation-check-circle");
+        SVGPath checkmark = createThemedIcon("M20 6L9 17l-5-5", 1.2);
         checkmark.setStrokeWidth(3);
-        checkmark.setFill(Color.TRANSPARENT);
-        checkmark.setScaleX(1.2);
-        checkmark.setScaleY(1.2);
         checkCircle.getChildren().add(checkmark);
         VBox.setMargin(checkCircle, new Insets(0, 0, 24, 0));
 
         // Title
         Label titleLabel = I18nControls.newLabel(BookingPageI18nKeys.PaymentConfirmed);
-        titleLabel.setFont(fontBold(28));
-        titleLabel.setTextFill(colors.getPrimary());
+        titleLabel.getStyleClass().addAll("bookingpage-text-3xl", "bookingpage-font-bold", "bookingpage-text-primary");
         VBox.setMargin(titleLabel, new Insets(0, 0, 12, 0));
 
         // Subtitle
@@ -352,11 +338,10 @@ public class DefaultConfirmationSection implements HasConfirmationSection {
         row.setAlignment(Pos.CENTER_LEFT);
 
         Label labelNode = I18nControls.newLabel(labelKey);
-        labelNode.setTextFill(TEXT_SECONDARY);
         if (isTotal) {
-            labelNode.setFont(fontSemiBold(16));
+            labelNode.getStyleClass().addAll("bookingpage-text-lg", "bookingpage-font-semibold", "bookingpage-text-secondary");
         } else {
-            labelNode.setFont(font(14));
+            labelNode.getStyleClass().addAll("bookingpage-text-sm", "bookingpage-text-secondary");
         }
 
         // Add spacer to push value to the right
@@ -364,11 +349,10 @@ public class DefaultConfirmationSection implements HasConfirmationSection {
         HBox.setHgrow(spacer, Priority.ALWAYS);
 
         Label valueNode = new Label(value);
-        valueNode.setTextFill(TEXT_DARK);
         if (isTotal) {
-            valueNode.setFont(fontBold(18));
+            valueNode.getStyleClass().addAll("bookingpage-text-lg", "bookingpage-font-bold", "bookingpage-text-dark");
         } else {
-            valueNode.setFont(fontSemiBold(14));
+            valueNode.getStyleClass().addAll("bookingpage-text-sm", "bookingpage-font-semibold", "bookingpage-text-dark");
         }
 
         row.getChildren().addAll(labelNode, spacer, valueNode);
@@ -376,8 +360,6 @@ public class DefaultConfirmationSection implements HasConfirmationSection {
     }
 
     protected VBox buildWhatsNextSection() {
-        BookingFormColorScheme colors = colorScheme.get();
-
         VBox section = new VBox(0);
 
         // Section header
@@ -391,20 +373,18 @@ public class DefaultConfirmationSection implements HasConfirmationSection {
         // Check Your Email
         String email = confirmedBookings.isEmpty() ? "" : confirmedBookings.get(0).getEmail();
         HBox emailStep = createWhatsNextStep(
-                createEnvelopeIcon(colors),
+                createThemedIcon(ICON_ENVELOPE, 0.6),
                 BookingPageI18nKeys.CheckYourEmailTitle,
                 BookingPageI18nKeys.CheckYourEmailDesc,
-                email,
-                colors
+                email
         );
 
         // Confirmation Letter
         HBox confirmStep = createWhatsNextStep(
-                createSmallCheckIcon(colors),
+                createThemedIcon(ICON_CHECK, 0.6),
                 BookingPageI18nKeys.ConfirmationLetterTitle,
                 BookingPageI18nKeys.ConfirmationLetterDesc,
-                null,
-                colors
+                null
         );
 
         content.getChildren().addAll(emailStep, confirmStep);
@@ -416,11 +396,10 @@ public class DefaultConfirmationSection implements HasConfirmationSection {
                 ? EventPriceFormatter.formatWithCurrency(balanceDue, workingBookingProperties.getEvent())
                 : String.valueOf(balanceDue);
             HBox balanceStep = createWhatsNextStep(
-                    createSmallCardIcon(colors),
+                    createThemedIcon(ICON_CREDIT_CARD, 0.6),
                     BookingPageI18nKeys.PayBalanceTitle,
                     BookingPageI18nKeys.PayBalanceDesc,
-                    formattedBalanceStep,
-                    colors
+                    formattedBalanceStep
             );
             content.getChildren().add(balanceStep);
         }
@@ -432,15 +411,12 @@ public class DefaultConfirmationSection implements HasConfirmationSection {
         return section;
     }
 
-    protected HBox createWhatsNextStep(Node icon, Object titleKey, Object descKey, String param, BookingFormColorScheme colors) {
+    protected HBox createWhatsNextStep(Node icon, Object titleKey, Object descKey, String param) {
         HBox step = new HBox(12);
         step.setAlignment(Pos.TOP_LEFT);
 
-        // Icon circle
-        StackPane iconCircle = new StackPane();
-        iconCircle.setMinSize(36, 36);
-        iconCircle.setMaxSize(36, 36);
-        iconCircle.setBackground(bg(colors.getSelectedBg(), new CornerRadii(18)));
+        // Icon circle - uses CSS for themed background
+        StackPane iconCircle = BookingPageUIBuilder.createThemedIconCircle(36);
         iconCircle.getChildren().add(icon);
 
         // Text content
@@ -463,43 +439,6 @@ public class DefaultConfirmationSection implements HasConfirmationSection {
 
         step.getChildren().addAll(iconCircle, textBox);
         return step;
-    }
-
-    // ========================================
-    // ICON HELPERS
-    // ========================================
-
-    protected SVGPath createEnvelopeIcon(BookingFormColorScheme colors) {
-        SVGPath icon = new SVGPath();
-        icon.setContent("M2 4h20a2 2 0 012 2v12a2 2 0 01-2 2H2a2 2 0 01-2-2V6a2 2 0 012-2z M22 6l-10 7L2 6");
-        icon.setStroke(colors.getPrimary());
-        icon.setStrokeWidth(2);
-        icon.setFill(Color.TRANSPARENT);
-        icon.setScaleX(0.6);
-        icon.setScaleY(0.6);
-        return icon;
-    }
-
-    protected SVGPath createSmallCheckIcon(BookingFormColorScheme colors) {
-        SVGPath icon = new SVGPath();
-        icon.setContent("M20 6L9 17l-5-5");
-        icon.setStroke(colors.getPrimary());
-        icon.setStrokeWidth(2);
-        icon.setFill(Color.TRANSPARENT);
-        icon.setScaleX(0.6);
-        icon.setScaleY(0.6);
-        return icon;
-    }
-
-    protected SVGPath createSmallCardIcon(BookingFormColorScheme colors) {
-        SVGPath icon = new SVGPath();
-        icon.setContent("M2 5h20a2 2 0 012 2v10a2 2 0 01-2 2H2a2 2 0 01-2-2V7a2 2 0 012-2z M2 10h20");
-        icon.setStroke(colors.getPrimary());
-        icon.setStrokeWidth(2);
-        icon.setFill(Color.TRANSPARENT);
-        icon.setScaleX(0.6);
-        icon.setScaleY(0.6);
-        return icon;
     }
 
     // === BookingFormSection INTERFACE ===

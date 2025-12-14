@@ -9,7 +9,6 @@ import javafx.geometry.Pos;
 import javafx.scene.Node;
 import javafx.scene.control.Label;
 import javafx.scene.layout.*;
-import javafx.scene.paint.Color;
 import javafx.scene.shape.SVGPath;
 import one.modality.base.shared.entities.Event;
 import one.modality.booking.client.workingbooking.WorkingBooking;
@@ -27,7 +26,6 @@ import java.util.List;
 import java.util.Locale;
 
 import static one.modality.booking.frontoffice.bookingpage.components.BookingPageUIBuilder.*;
-import static one.modality.booking.frontoffice.bookingpage.theme.BookingFormStyles.*;
 
 /**
  * Default implementation of the Summary section.
@@ -152,8 +150,7 @@ public class DefaultSummarySection implements HasSummarySection {
             updateRateTypeInfoBox();
         });
 
-        // Update styles when color scheme changes
-        colorScheme.addListener((obs, old, newScheme) -> rebuildUI());
+        // Note: Color scheme listener removed - CSS handles theme changes via CSS variables
     }
 
     protected void updateRateTypeInfoBox() {
@@ -205,8 +202,8 @@ public class DefaultSummarySection implements HasSummarySection {
         HBox row = new HBox(12);
         row.setAlignment(Pos.TOP_LEFT);
 
-        // Person icon using BookingPageUIBuilder
-        SVGPath icon = createIcon(ICON_USER, colorScheme.get().getPrimary());
+        // Person icon - uses themed primary color via CSS
+        SVGPath icon = createThemedIcon(ICON_USER, 0.7);
 
         // Content
         VBox content = new VBox(2);
@@ -257,7 +254,7 @@ public class DefaultSummarySection implements HasSummarySection {
 
         String rateType = rateTypeProperty.get();
         if (rateType != null && !rateType.isEmpty()) {
-            if (!sb.isEmpty()) sb.append(" • ");
+            if (sb.length() > 0) sb.append(" • ");
             sb.append(rateType).append(" rate");
         }
 
@@ -310,8 +307,7 @@ public class DefaultSummarySection implements HasSummarySection {
         HBox.setHgrow(spacer, Priority.ALWAYS);
 
         totalAmountLabel = new Label(event != null ? EventPriceFormatter.formatWithCurrency(0, event) : "£0");
-        totalAmountLabel.getStyleClass().addAll("bookingpage-price-medium", "bookingpage-font-bold");
-        totalAmountLabel.setTextFill(colorScheme.get().getPrimary());
+        totalAmountLabel.getStyleClass().addAll("bookingpage-price-medium", "bookingpage-font-bold", "bookingpage-text-primary");
 
         totalRow.getChildren().addAll(totalTextLabel, spacer, totalAmountLabel);
 
@@ -330,13 +326,14 @@ public class DefaultSummarySection implements HasSummarySection {
     }
 
     protected HBox buildRateTypeInfoBox() {
-        BookingFormColorScheme colors = colorScheme.get();
-
         // Use themed info card helper (light background, no hover effects)
-        HBox box = BookingPageUIBuilder.createThemedPassiveCard(colors);
+        HBox box = new HBox(12);
+        box.setAlignment(Pos.TOP_LEFT);
+        box.setPadding(new Insets(14, 16, 14, 16));
+        box.getStyleClass().add("bookingpage-info-box-info");
 
-        // Price tag icon using BookingPageUIBuilder
-        SVGPath icon = createIcon(ICON_TAG, colors.getPrimary(), 0.65);
+        // Price tag icon - uses themed primary color
+        SVGPath icon = createThemedIcon(ICON_TAG, 0.65);
 
         VBox content = new VBox(4);
 
@@ -346,8 +343,7 @@ public class DefaultSummarySection implements HasSummarySection {
                 : I18n.getI18nText(BookingPageI18nKeys.StandardRate);
 
         rateTypeInfoLabel = new Label(I18n.getI18nText(BookingPageI18nKeys.RateApplied, capitalizedRate));
-        rateTypeInfoLabel.setFont(fontSemiBold(13));
-        rateTypeInfoLabel.setTextFill(colors.getDarkText());
+        rateTypeInfoLabel.getStyleClass().addAll("bookingpage-text-sm", "bookingpage-font-semibold", "bookingpage-text-dark");
 
         rateTypeDescLabel = new Label(I18n.getI18nText(BookingPageI18nKeys.PricesReflectRate, rateType != null ? rateType.toLowerCase() : "standard"));
         rateTypeDescLabel.getStyleClass().addAll("bookingpage-text-xs", "bookingpage-text-muted");
@@ -408,13 +404,9 @@ public class DefaultSummarySection implements HasSummarySection {
         row.setAlignment(Pos.TOP_LEFT);
         row.setPadding(new Insets(12, 0, 12, 0));
 
-        // Icon based on type
-        SVGPath icon = createOptionIcon(option.getType());
-        icon.setStroke(Color.web("#838788"));
-        icon.setStrokeWidth(2);
-        icon.setFill(Color.TRANSPARENT);
-        icon.setScaleX(0.7);
-        icon.setScaleY(0.7);
+        // Icon based on type - uses muted gray color
+        String iconPath = getOptionIconPath(option.getType());
+        SVGPath icon = createMutedIcon(iconPath, 0.7);
 
         VBox content = new VBox(2);
 
@@ -436,23 +428,17 @@ public class DefaultSummarySection implements HasSummarySection {
         return row;
     }
 
-    protected SVGPath createOptionIcon(AdditionalOptionType type) {
-        SVGPath icon = new SVGPath();
+    protected String getOptionIconPath(AdditionalOptionType type) {
         switch (type) {
             case AUDIO_RECORDING:
-                icon.setContent("M12 1a3 3 0 00-3 3v8a3 3 0 006 0V4a3 3 0 00-3-3z M19 10v2a7 7 0 01-14 0v-2 M12 19v4 M8 23h8");
-                break;
+                return "M12 1a3 3 0 00-3 3v8a3 3 0 006 0V4a3 3 0 00-3-3z M19 10v2a7 7 0 01-14 0v-2 M12 19v4 M8 23h8";
             case MEAL:
-                icon.setContent("M8 2v9m0 0c-2.21 0-4 1.79-4 4v7h8v-7c0-2.21-1.79-4-4-4z M16 2v20 M19 2v5c0 1.66-1.34 3-3 3");
-                break;
+                return "M8 2v9m0 0c-2.21 0-4 1.79-4 4v7h8v-7c0-2.21-1.79-4-4-4z M16 2v20 M19 2v5c0 1.66-1.34 3-3 3";
             case PARKING:
-                icon.setContent("M3 3h18v18H3V3z M9 17V7h4a3 3 0 010 6H9");
-                break;
+                return "M3 3h18v18H3V3z M9 17V7h4a3 3 0 010 6H9";
             default:
-                icon.setContent("M20 6L9 17l-5-5");
-                break;
+                return "M20 6L9 17l-5-5";
         }
-        return icon;
     }
 
     @Override
@@ -501,7 +487,7 @@ public class DefaultSummarySection implements HasSummarySection {
     protected void updateTotalLabel() {
         if (totalAmountLabel != null) {
             totalAmountLabel.setText(event != null ? EventPriceFormatter.formatWithCurrency(totalAmount, event) : "£" + (totalAmount / 100));
-            totalAmountLabel.setTextFill(colorScheme.get().getPrimary());
+            // Note: CSS class "bookingpage-text-primary" handles theme color
         }
     }
 
@@ -532,7 +518,7 @@ public class DefaultSummarySection implements HasSummarySection {
         String dharmaWheelPath = "M12 3a9 9 0 100 18 9 9 0 000-18z " +
                 "M12 9a3 3 0 100 6 3 3 0 000-6z " +
                 "M12 3v6 M12 15v6 M3 12h6 M15 12h6";
-        return createIcon(dharmaWheelPath, colorScheme.get().getPrimary());
+        return createThemedIcon(dharmaWheelPath, 0.7);
     }
 
     // ========================================

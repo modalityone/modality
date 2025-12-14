@@ -38,8 +38,6 @@ import one.modality.booking.frontoffice.bookingpage.BookingPageI18nKeys;
 import one.modality.booking.frontoffice.bookingpage.components.BookingPageUIBuilder;
 import one.modality.booking.frontoffice.bookingpage.theme.BookingFormColorScheme;
 
-import static one.modality.booking.frontoffice.bookingpage.theme.BookingFormStyles.*;
-
 import java.util.function.Consumer;
 
 /**
@@ -279,14 +277,18 @@ public class DefaultYourInformationSection implements HasYourInformationSection 
                 }
             });
 
-            // Set initial border (before any focus change)
-            digitField.setBorder(border(BORDER_LIGHT, 1, RADII_8));
+            // Set initial border styling via CSS class
+            digitField.getStyleClass().add("bookingpage-input-bordered");
 
-            // Focus styling - border color changes dynamically on focus
+            // Focus styling - toggle CSS class on focus (theme colors via CSS variables)
             digitField.focusedProperty().addListener((obs, wasFocused, isFocused) -> {
-                BookingFormColorScheme colors = colorScheme.get();
-                Color borderColor = isFocused ? colors.getPrimary() : BORDER_LIGHT;
-                digitField.setBorder(border(borderColor, 1, RADII_8));
+                if (isFocused) {
+                    digitField.getStyleClass().remove("bookingpage-input-bordered");
+                    digitField.getStyleClass().add("bookingpage-input-focused");
+                } else {
+                    digitField.getStyleClass().remove("bookingpage-input-focused");
+                    digitField.getStyleClass().add("bookingpage-input-bordered");
+                }
             });
 
             codeDigitFields[i] = digitField;
@@ -497,7 +499,8 @@ public class DefaultYourInformationSection implements HasYourInformationSection 
         HBox banner = new HBox(12);
         banner.setAlignment(Pos.TOP_LEFT);
         banner.setPadding(new Insets(16, 20, 16, 20));
-        updateBannerStyle(banner);
+        // CSS class handles theming - no method call needed
+        banner.getStyleClass().add("bookingpage-info-box-info");
 
         // Checkmark circle
         StackPane checkCircle = createCheckmarkCircle();
@@ -519,28 +522,16 @@ public class DefaultYourInformationSection implements HasYourInformationSection 
 
         banner.getChildren().addAll(checkCircle, content);
 
-        // Update style when color scheme changes
-        colorScheme.addListener((obs, old, newScheme) -> updateBannerStyle(banner));
+        // CSS class handles theming - no listener needed
+        banner.getStyleClass().add("bookingpage-info-box-info");
 
         return banner;
     }
 
-    protected void updateBannerStyle(HBox banner) {
-        BookingFormColorScheme colors = colorScheme.get();
-        banner.setBackground(bg(colors.getSelectedBg(), RADII_8));
-        banner.setBorder(borderLeft(colors.getPrimary(), 4, RADII_8));
-    }
-
     protected StackPane createCheckmarkCircle() {
-        StackPane circle = new StackPane();
-        circle.setMinSize(24, 24);
-        circle.setMaxSize(24, 24);
-
-        // Apply initial style using color scheme
-        updateCheckmarkCircleStyle(circle);
-
-        // Update when color scheme changes
-        colorScheme.addListener((obs, old, newScheme) -> updateCheckmarkCircleStyle(circle));
+        // Uses primary solid circle with white checkmark - CSS handles theming
+        StackPane circle = BookingPageUIBuilder.createThemedIconCircle(24);
+        circle.getStyleClass().add("bookingpage-icon-circle-primary");
 
         SVGPath checkmark = new SVGPath();
         checkmark.setContent("M20 6L9 17l-5-5");
@@ -552,11 +543,6 @@ public class DefaultYourInformationSection implements HasYourInformationSection 
 
         circle.getChildren().add(checkmark);
         return circle;
-    }
-
-    protected void updateCheckmarkCircleStyle(StackPane circle) {
-        BookingFormColorScheme colors = colorScheme.get();
-        circle.setBackground(bg(colors.getPrimary(), new CornerRadii(12))); // 50% of 24px = circular
     }
 
     protected Button createEyeToggleButton() {
@@ -707,15 +693,14 @@ public class DefaultYourInformationSection implements HasYourInformationSection 
 
         createAccountUserIcon = new SVGPath();
         createAccountUserIcon.setContent("M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2 M12 3a4 4 0 100 8 4 4 0 000-8z");
-        createAccountUserIcon.setStroke(colors.getPrimary());
+        createAccountUserIcon.getStyleClass().add("bookingpage-icon-primary");
         createAccountUserIcon.setStrokeWidth(2);
         createAccountUserIcon.setFill(Color.TRANSPARENT);
         createAccountUserIcon.setScaleX(0.8);
         createAccountUserIcon.setScaleY(0.8);
 
         createAccountTitleLabel = I18nControls.newLabel(BookingPageI18nKeys.CreateAnAccount);
-        createAccountTitleLabel.setFont(fontBold(16));
-        createAccountTitleLabel.setTextFill(colors.getDarkText());
+        createAccountTitleLabel.getStyleClass().addAll("bookingpage-text-lg", "bookingpage-font-bold", "bookingpage-text-dark");
 
         titleRow.getChildren().addAll(createAccountUserIcon, createAccountTitleLabel);
 
@@ -748,7 +733,7 @@ public class DefaultYourInformationSection implements HasYourInformationSection 
 
         createAccountNoteIcon = new SVGPath();
         createAccountNoteIcon.setContent("M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z M22 6l-10 7L2 6");
-        createAccountNoteIcon.setStroke(colors.getPrimary());
+        createAccountNoteIcon.getStyleClass().add("bookingpage-icon-primary");
         createAccountNoteIcon.setStrokeWidth(2);
         createAccountNoteIcon.setFill(Color.TRANSPARENT);
         createAccountNoteIcon.setScaleX(0.65);
@@ -771,57 +756,19 @@ public class DefaultYourInformationSection implements HasYourInformationSection 
         // Update style when checkbox changes
         createAccountProperty.addListener((obs, old, checked) -> updateCreateAccountBoxStyle(box));
 
-        // Update all colors when color scheme changes
-        colorScheme.addListener((obs, old, newScheme) -> {
-            updateCreateAccountBoxStyle(box);
-            updateCreateAccountBoxColors();
-        });
+        // Note: Color scheme listener removed - CSS handles theme changes via CSS variables
 
         return box;
     }
 
-    /**
-     * Updates all color-scheme-aware components in the Create Account box.
-     * Called when the color scheme changes.
-     */
-    protected void updateCreateAccountBoxColors() {
-        BookingFormColorScheme colors = colorScheme.get();
-
-        // Update user icon
-        if (createAccountUserIcon != null) {
-            createAccountUserIcon.setStroke(colors.getPrimary());
-        }
-
-        // Update title text color
-        if (createAccountTitleLabel != null) {
-            createAccountTitleLabel.setFont(fontBold(16));
-            createAccountTitleLabel.setTextFill(colors.getDarkText());
-        }
-
-        // Update note/email icon
-        if (createAccountNoteIcon != null) {
-            createAccountNoteIcon.setStroke(colors.getPrimary());
-        }
-
-        // Update benefit check icons
-        for (SVGPath checkIcon : benefitCheckIcons) {
-            checkIcon.setStroke(colors.getPrimary());
-        }
-
-        // Update benefit label colors
-        for (Label label : benefitLabels) {
-            label.setFont(font(12));
-            label.setTextFill(colors.getDarkText());
-        }
-    }
-
     protected void updateCreateAccountBoxStyle(VBox box) {
-        BookingFormColorScheme colors = colorScheme.get();
         boolean checked = createAccountProperty.get();
-
-        Color borderColor = checked ? colors.getPrimary() : (colors.getHoverBorder() != null ? colors.getHoverBorder() : Color.web("#b6d4fe"));
-        box.setBackground(bg(colors.getSelectedBg(), RADII_12));
-        box.setBorder(border(borderColor, 2, RADII_12));
+        // Use CSS class with theme variables - toggle 'selected' class for checked state
+        box.getStyleClass().removeAll("bookingpage-selectable-card", "selected");
+        box.getStyleClass().add("bookingpage-selectable-card");
+        if (checked) {
+            box.getStyleClass().add("selected");
+        }
     }
 
     protected StackPane createCustomCheckbox() {
@@ -829,33 +776,33 @@ public class DefaultYourInformationSection implements HasYourInformationSection 
         checkbox.setMinSize(24, 24);
         checkbox.setMaxSize(24, 24);
 
-        // Update checkbox appearance based on state
+        // Checkmark icon (always present, shown/hidden via parent style)
+        SVGPath checkIcon = new SVGPath();
+        checkIcon.setContent("M20 6L9 17l-5-5");
+        checkIcon.setStroke(Color.WHITE);
+        checkIcon.setStrokeWidth(3);
+        checkIcon.setFill(Color.TRANSPARENT);
+        checkIcon.setScaleX(0.5);
+        checkIcon.setScaleY(0.5);
+
+        // Update checkbox appearance based on state using CSS classes
         Runnable updateCheckbox = () -> {
-            BookingFormColorScheme currentColors = colorScheme.get();
             boolean checked = createAccountProperty.get();
 
-            checkbox.getChildren().clear();
+            checkbox.getStyleClass().removeAll("bookingpage-checkbox", "bookingpage-checkbox-selected");
 
             if (checked) {
-                checkbox.setBackground(bg(currentColors.getPrimary(), RADII_6));
-                checkbox.setBorder(border(currentColors.getPrimary(), 2, RADII_6));
-
-                SVGPath check = new SVGPath();
-                check.setContent("M20 6L9 17l-5-5");
-                check.setStroke(Color.WHITE);
-                check.setStrokeWidth(3);
-                check.setFill(Color.TRANSPARENT);
-                check.setScaleX(0.5);
-                check.setScaleY(0.5);
-                checkbox.getChildren().add(check);
+                checkbox.getStyleClass().add("bookingpage-checkbox-selected");
+                if (!checkbox.getChildren().contains(checkIcon)) {
+                    checkbox.getChildren().add(checkIcon);
+                }
             } else {
-                checkbox.setBackground(bg(BG_WHITE, RADII_6));
-                checkbox.setBorder(border(BORDER_MEDIUM, 2, RADII_6));
+                checkbox.getStyleClass().add("bookingpage-checkbox");
+                checkbox.getChildren().remove(checkIcon);
             }
         };
 
         createAccountProperty.addListener((obs, old, checked) -> updateCheckbox.run());
-        colorScheme.addListener((obs, old, newScheme) -> updateCheckbox.run());
         updateCheckbox.run();
 
         return checkbox;
@@ -879,10 +826,9 @@ public class DefaultYourInformationSection implements HasYourInformationSection 
         benefitCheckIcons.add(check);
 
         Label label = I18nControls.newLabel(i18nKey);
-        label.setFont(font(12));
-        label.setTextFill(colors.getDarkText());
+        label.getStyleClass().addAll("bookingpage-text-xs", "bookingpage-text-dark");
 
-        // Store reference for color scheme updates
+        // Store reference for potential updates
         benefitLabels.add(label);
 
         tag.getChildren().addAll(check, label);
@@ -1019,20 +965,20 @@ public class DefaultYourInformationSection implements HasYourInformationSection 
     protected void styleInput(TextInputControl input) {
         input.setPadding(new Insets(14, 16, 14, 16));
         input.setMaxWidth(Double.MAX_VALUE);
-        updateInputStyle(input, false);
+        input.getStyleClass().addAll("bookingpage-input-bordered", "bookingpage-text-base");
 
-        // Focus styling
-        input.focusedProperty().addListener((obs, old, focused) -> updateInputStyle(input, focused));
-    }
-
-    protected void updateInputStyle(TextInputControl input, boolean focused) {
-        BookingFormColorScheme colors = colorScheme.get();
-        Color borderColor = (focused ? colors.getPrimary() : BORDER_LIGHT);
-
-        input.setFont(font(15));
-        input.setBackground(bg(BG_WHITE, RADII_8));
-        input.setBorder(border(borderColor, 2, RADII_8));
-        input.setEffect(focused ? createDropShadow(3, 0.3, 0, 0) : null);
+        // Focus styling - toggle CSS class on focus
+        input.focusedProperty().addListener((obs, old, focused) -> {
+            if (focused) {
+                input.getStyleClass().remove("bookingpage-input-bordered");
+                input.getStyleClass().add("bookingpage-input-focused");
+                input.setEffect(BookingPageUIBuilder.createFocusShadow());
+            } else {
+                input.getStyleClass().remove("bookingpage-input-focused");
+                input.getStyleClass().add("bookingpage-input-bordered");
+                input.setEffect(null);
+            }
+        });
     }
 
     protected Label createPageTitle(Object i18nKey) {
@@ -1065,8 +1011,8 @@ public class DefaultYourInformationSection implements HasYourInformationSection 
     protected HBox createRequiredFieldLabel(Object i18nKey) {
         Label label = createFieldLabel(i18nKey);
         Text asterisk = new Text(" *");
-        asterisk.setFill(DANGER);
-        asterisk.setFont(fontSemiBold(14));
+        asterisk.setFill(Color.web("#dc3545")); // Danger red
+        asterisk.setFont(javafx.scene.text.Font.font("System", javafx.scene.text.FontWeight.SEMI_BOLD, 14));
         HBox wrapper = new HBox(label, asterisk);
         wrapper.setAlignment(Pos.CENTER_LEFT);
         return wrapper;
@@ -1090,19 +1036,7 @@ public class DefaultYourInformationSection implements HasYourInformationSection 
     }
 
     protected Hyperlink createHyperlink(Object i18nKey) {
-        Hyperlink link = I18nControls.newHyperlink(i18nKey);
-        BookingFormColorScheme colors = colorScheme.get();
-        link.setFont(fontMedium(13));
-        link.setTextFill(colors.getPrimary());
-        link.setBorder(Border.EMPTY);
-        link.setPadding(Insets.EMPTY);
-
-        // Update color when scheme changes
-        colorScheme.addListener((obs, old, newScheme) -> {
-            link.setFont(fontMedium(13));
-            link.setTextFill(newScheme.getPrimary());
-        });
-
+        Hyperlink link = BookingPageUIBuilder.createThemedHyperlink(i18nKey);
         return link;
     }
 
@@ -1542,7 +1476,7 @@ public class DefaultYourInformationSection implements HasYourInformationSection 
         resendLink.setDisable(true);
         resendLink.setText(I18n.getI18nText(BookingPageI18nKeys.ResendInSeconds, resendSecondsRemaining));
         resendLink.getStyleClass().addAll("bookingpage-text-base", "bookingpage-text-disabled");
-        resendLink.setTextFill(TEXT_MUTED); // Clear dynamic color, use muted for disabled state
+        resendLink.setTextFill(Color.web("#6c757d")); // Muted gray for disabled state
 
         // Create countdown timer (fires every second)
         resendCountdownTimer = new Timeline(

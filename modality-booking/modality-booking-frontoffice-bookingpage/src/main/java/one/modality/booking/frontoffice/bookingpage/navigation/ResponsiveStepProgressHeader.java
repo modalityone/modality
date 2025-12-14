@@ -26,8 +26,6 @@ import javafx.scene.text.Font;
 import javafx.scene.text.FontWeight;
 import one.modality.booking.frontoffice.bookingpage.theme.BookingFormColorScheme;
 
-import static one.modality.booking.frontoffice.bookingpage.theme.BookingFormStyles.*;
-
 import java.util.ArrayList;
 import java.util.List;
 
@@ -64,8 +62,7 @@ public class ResponsiveStepProgressHeader implements BookingFormHeader {
         buildLayouts();
         setupResponsiveDesign();
 
-        // React to color scheme changes
-        colorScheme.addListener((obs, oldScheme, newScheme) -> rebuildAllLayouts());
+        // Note: Color scheme listener removed - CSS handles theme changes via CSS variables
     }
 
     private void buildLayouts() {
@@ -98,7 +95,7 @@ public class ResponsiveStepProgressHeader implements BookingFormHeader {
         dividerLine.setMinHeight(1);
         dividerLine.setPrefHeight(1);
         dividerLine.setMaxHeight(1);
-        dividerLine.setBackground(bg(PROGRESS_TRACK));
+        dividerLine.getStyleClass().add("bookingpage-progress-track");
 
         // Wrapper contains: [step indicators] + [divider line] + [bottom spacing]
         // More breathing room below the divider line before content starts
@@ -231,8 +228,8 @@ public class ResponsiveStepProgressHeader implements BookingFormHeader {
         // Current step info (label)
         Label currentStepLabel = new Label();
         currentStepLabel.getStyleClass().add("booking-form-step-current-label");
-        currentStepLabel.setFont(fontSemiBold(14)); // Per JSX mockup
-        currentStepLabel.setTextFill(TEXT_MUTED); // Neutral grey
+        currentStepLabel.setFont(javafx.scene.text.Font.font("System", javafx.scene.text.FontWeight.SEMI_BOLD, 14)); // Per JSX mockup
+        currentStepLabel.setTextFill(Color.web("#6c757d")); // Neutral grey
 
         // Progress bar (shows overall completion)
         StackPane progressBarContainer = new StackPane();
@@ -247,7 +244,7 @@ public class ResponsiveStepProgressHeader implements BookingFormHeader {
         Region progressTrack = new Region();
         progressTrack.setMinHeight(4);
         progressTrack.setMaxHeight(4);
-        progressTrack.setBackground(bg(BORDER_LIGHT, RADII_2));
+        progressTrack.getStyleClass().add("bookingpage-progress-track");
 
         // Filled portion
         Region progressFill = new Region();
@@ -289,14 +286,14 @@ public class ResponsiveStepProgressHeader implements BookingFormHeader {
 
             Label numberLabel = new Label(String.valueOf(step.stepNumber));
             numberLabel.getStyleClass().add("booking-form-step-number");
-            numberLabel.setFont(fontSemiBold(12)); // Per JSX mockup
+            numberLabel.setFont(javafx.scene.text.Font.font("System", javafx.scene.text.FontWeight.SEMI_BOLD, 12)); // Per JSX mockup
             circle.getChildren().addAll(circleShape, numberLabel); // Circle first, label on top
 
             // Short label (abbreviated)
             Label label = new Label();
             I18nControls.bindI18nProperties(label, step.titleKey);
             label.getStyleClass().add("booking-form-step-label-tablet");
-            label.setFont(font(11)); // Per JSX: 11px, weight changes with state
+            label.setFont(javafx.scene.text.Font.font("System", javafx.scene.text.FontWeight.NORMAL, 11)); // Per JSX: 11px, weight changes with state
             label.setWrapText(false);
             label.setMaxWidth(60);
             label.setAlignment(Pos.CENTER);
@@ -355,7 +352,7 @@ public class ResponsiveStepProgressHeader implements BookingFormHeader {
 
             Label numberLabel = new Label(String.valueOf(step.stepNumber));
             numberLabel.getStyleClass().add("booking-form-step-number");
-            numberLabel.setFont(fontSemiBold(13)); // Per JSX mockup
+            numberLabel.setFont(javafx.scene.text.Font.font("System", javafx.scene.text.FontWeight.SEMI_BOLD, 13)); // Per JSX mockup
             bubble.getChildren().addAll(circleShape, numberLabel); // Circle first, label on top
 
             // Full label - centered under bubble
@@ -366,7 +363,7 @@ public class ResponsiveStepProgressHeader implements BookingFormHeader {
             label.setAlignment(Pos.TOP_CENTER);
             label.setTextAlignment(javafx.scene.text.TextAlignment.CENTER);
             label.setMaxWidth(90); // Per JSX mockup: maxWidth 90px
-            label.setFont(font(12)); // Initial state, updated by applyStepState
+            label.setFont(javafx.scene.text.Font.font("System", javafx.scene.text.FontWeight.NORMAL, 12)); // Initial state, updated by applyStepState
 
             stepItem.getChildren().addAll(bubble, label);
 
@@ -503,7 +500,8 @@ public class ResponsiveStepProgressHeader implements BookingFormHeader {
             progressFill.setPrefWidth(fillWidth);
             progressFill.setMaxWidth(fillWidth);
 
-            progressFill.setBackground(bg(scheme.getPrimary(), RADII_2));
+            progressFill.getStyleClass().removeAll("bookingpage-progress-fill");
+            progressFill.getStyleClass().add("bookingpage-progress-fill");
         }
     }
 
@@ -581,7 +579,8 @@ public class ResponsiveStepProgressHeader implements BookingFormHeader {
                     lineColor = Color.web("#D1D5DB");
                 }
 
-                lineSegment.setBackground(bg(lineColor));
+                // Dynamic line color must stay in Java (per-step state)
+                lineSegment.setBackground(new Background(new BackgroundFill(lineColor, javafx.scene.layout.CornerRadii.EMPTY, javafx.geometry.Insets.EMPTY)));
                 lineIndex++;
             }
         }
@@ -631,13 +630,13 @@ public class ResponsiveStepProgressHeader implements BookingFormHeader {
 
         numberLabel.setText(displayText);
         numberLabel.setTextFill(text);
-        numberLabel.setFont(fontSemiBold(13)); // Per JSX mockup
+        numberLabel.setFont(javafx.scene.text.Font.font("System", javafx.scene.text.FontWeight.SEMI_BOLD, 13)); // Per JSX mockup
 
         if (textLabel != null) {
             // Active/completed step label uses primary color (same as circle border), inactive uses gray
             textLabel.setTextFill(isActive || isCompleted ? scheme.getPrimary() : Color.web("#9CA3AF"));
             // Active step label should be bold (700), inactive should be normal (400)
-            textLabel.setFont(isActive ? fontBold(12) : font(12));
+            textLabel.setFont(javafx.scene.text.Font.font("System", isActive ? javafx.scene.text.FontWeight.BOLD : javafx.scene.text.FontWeight.NORMAL, 12));
         }
     }
 
