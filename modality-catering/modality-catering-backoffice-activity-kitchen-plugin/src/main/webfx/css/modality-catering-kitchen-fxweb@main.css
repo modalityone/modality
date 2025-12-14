@@ -1,22 +1,31 @@
-/* Kitchen Activity - JavaFX Styling */
+/* Kitchen Activity - Styling */
 
 /* Date Range Display */
 .kitchen-date-range-display {
     -fx-font-family: "Arial";
     -fx-font-weight: bold;
-    -fx-font-size: 18px;
+    -fx-font-size: 18;
     -fx-text-fill: #0096D6;
 }
 
 /* Filter Section */
 .kitchen-filter-label {
     -fx-text-fill: #999999;
-    -fx-font-size: 12px;
+    -fx-font-size: 12;
 }
 
 .kitchen-filter-box {
     -fx-background-color: #f8f9fa;
+    -fx-border-radius: 4px;
+    -fx-background-radius: 4px;
+}
+
+.kitchen-filter-box {
+    /* New single-host model */
+    -fx-background-color: #f8f9fa;
     -fx-border-color: #e0e0e0;
+    -fx-border-width: 1px;
+    -fx-border-style: solid;
     -fx-border-radius: 4px;
     -fx-background-radius: 4px;
 }
@@ -24,8 +33,16 @@
 /* Top Header */
 .kitchen-top-header {
     -fx-background-color: #f8f9fa;
+    -fx-border-radius: 8px;
+    -fx-background-radius: 8px;
+}
+
+.kitchen-top-header {
+    /* New single-host model */
+    -fx-background-color: #f8f9fa;
     -fx-border-color: #e0e0e0;
     -fx-border-width: 2px;
+    -fx-border-style: solid;
     -fx-border-radius: 8px;
     -fx-background-radius: 8px;
 }
@@ -33,8 +50,14 @@
 /* Table Grid */
 .kitchen-grid {
     -fx-background-color: white;
+}
+
+.kitchen-grid {
+    /* New single-host model */
+    -fx-background-color: white;
     -fx-border-color: #dddddd;
     -fx-border-width: 1px;
+    -fx-border-style: solid;
 }
 
 /* Date Headers */
@@ -43,14 +66,19 @@
 }
 
 .kitchen-date-header .kitchen-day-label {
-    -fx-font-size: 9px;
+    -fx-font-size: 9;
     -fx-text-fill: #0096D6;
+}
+
+.kitchen-date-header .kitchen-day-label Text {
+    -fx-text-fill: #0096D6;
+    -fx-font-size: 9;
 }
 
 .kitchen-date-header .kitchen-date-label {
     -fx-font-family: "Arial";
     -fx-font-weight: bold;
-    -fx-font-size: 14px;
+    -fx-font-size: 14;
     -fx-text-fill: #0096D6;
 }
 
@@ -62,9 +90,10 @@
 .kitchen-meal-header .label {
     -fx-font-family: "Arial";
     -fx-font-weight: bold;
-    -fx-font-size: 14px;
+    -fx-font-size: 14;
     -fx-text-fill: white;
 }
+
 
 /* Meal Count Cells */
 .kitchen-meal-count-cell {
@@ -74,21 +103,19 @@
 .kitchen-meal-count-cell .label {
     -fx-font-family: "Arial";
     -fx-font-weight: bold;
-    -fx-font-size: 13px;
+    -fx-font-size: 13;
     -fx-text-fill: white;
 }
 
 /* Meal Total Cells */
 .kitchen-meal-total-cell {
     -fx-background-color: #007AB8;
-    -fx-border-left-color: #006399;
-    -fx-border-left-width: 3px;
 }
 
 .kitchen-meal-total-cell .label {
     -fx-font-family: "Arial";
     -fx-font-weight: bold;
-    -fx-font-size: 14px;
+    -fx-font-size: 14;
     -fx-text-fill: white;
 }
 
@@ -99,7 +126,7 @@
 
 .kitchen-diet-label-cell .label {
     -fx-font-family: "Arial";
-    -fx-font-size: 13px;
+    -fx-font-size: 13;
     -fx-text-fill: #999999;
 }
 
@@ -114,21 +141,20 @@
 
 .kitchen-diet-value-cell .label {
     -fx-font-family: "Arial";
-    -fx-font-size: 13px;
+    -fx-font-size: 13;
     -fx-text-fill: #666666;
 }
 
 /* Diet Total Cells */
 .kitchen-diet-total-cell {
     -fx-background-color: #e9ecef;
-    -fx-border-left-color: #0096D6;
-    -fx-border-left-width: 3px;
 }
+
 
 .kitchen-diet-total-cell .label {
     -fx-font-family: "Arial";
     -fx-font-weight: bold;
-    -fx-font-size: 13px;
+    -fx-font-size: 13;
     -fx-text-fill: #333333;
 }
 
@@ -140,21 +166,23 @@
 .kitchen-total-header .label {
     -fx-font-family: "Arial";
     -fx-font-weight: bold;
-    -fx-font-size: 12px;
+    -fx-font-size: 12;
     -fx-text-fill: white;
 }
 
 /* Cell Borders (common for all cells) */
 .kitchen-cell {
+    /* New single-host model */
     -fx-border-color: #dddddd;
     -fx-border-width: 0 1px 1px 0;
+    -fx-border-style: solid;
 }
 
 /* Copied Feedback Label */
 .copied-feedback {
     -fx-text-fill: #28a745;
     -fx-font-weight: bold;
-    -fx-font-size: 14px;
+    -fx-font-size: 14;
 }
 
 /* Kitchen Icon */
@@ -179,9 +207,10 @@
 
 /* Calendar Picker */
 .kitchen-calendar-picker {
-    -fx-background-color: rgb(245, 245, 245);
     -fx-text-fill: rgb(102, 102, 102);
+    -fx-background-color: rgb(245, 245, 245);
     -fx-border-width: 0;
+    -fx-border-style: none;
 }
 
 /* Clickable Cell Hover Effects */
@@ -204,7 +233,7 @@
 
 /* Attendee Dialog Title */
 .attendee-dialog-title {
-    -fx-font-size: 20px;
+    -fx-font-size: 20;
     -fx-font-weight: bold;
 }
 
@@ -216,7 +245,7 @@
 /* Attendee Name Label */
 .attendee-name-label {
     -fx-font-weight: bold;
-    -fx-font-size: 14px;
+    -fx-font-size: 14;
 }
 
 /* Attendee Row */
@@ -230,12 +259,13 @@
 
 .attendee-row.with-separator {
     -fx-border-color: #e0e0e0;
-    -fx-border-width: 1 0 0 0;
+    -fx-border-width: 1px 0 0 0;
+    -fx-border-style: solid;
 }
 
 /* Dietary Section Title */
 .dietary-section-title {
-    -fx-font-size: 16px;
+    -fx-font-size: 16;
     -fx-font-weight: bold;
 }
 
@@ -243,21 +273,29 @@
 .dietary-section-header {
     -fx-background-color: #f8f9fa;
     -fx-border-color: #dee2e6;
-    -fx-border-width: 0 0 2 0;
+    -fx-border-width: 0 0 2px 0;
+    -fx-border-style: solid;
 }
 
 /* Dietary Section */
 .dietary-section {
-    -fx-border-color: #dee2e6;
-    -fx-border-width: 1;
-    -fx-border-radius: 6;
-    -fx-background-radius: 6;
+    -fx-border-radius: 6px;
+    -fx-background-radius: 6px;
     -fx-background-color: white;
+}
+
+.dietary-section {
+    -fx-background-color: white;
+    -fx-border-color: #dee2e6;
+    -fx-border-width: 1px;
+    -fx-border-style: solid;
+    -fx-border-radius: 6px;
+    -fx-background-radius: 6px;
 }
 
 /* Compact Attendee Name */
 .compact-attendee-name {
-    -fx-font-size: 13px;
+    -fx-font-size: 13;
 }
 
 /* Compact Attendee Row */
@@ -271,7 +309,8 @@
 
 .compact-attendee-row.with-separator {
     -fx-border-color: #e0e0e0;
-    -fx-border-width: 1 0 0 0;
+    -fx-border-width: 1px 0 0 0;
+    -fx-border-style: solid;
 }
 
 /* ========================================
@@ -280,12 +319,9 @@
 
 .kitchen-empty-state-container {
     -fx-background-color: white;
-    -fx-background-radius: 16;
+    -fx-border-radius: 16px;
+    -fx-background-radius: 16px;
     -fx-effect: dropshadow(gaussian, rgba(0, 0, 0, 0.1), 40, 0, 0, 10);
-}
-
-.kitchen-empty-state-icon-container {
-    -fx-padding: 0;
 }
 
 .kitchen-empty-state-config-icon {
@@ -294,72 +330,74 @@
 
 .kitchen-empty-state-title {
     -fx-text-fill: #2c3e50;
-    -fx-font-size: 28px;
+    -fx-font-size: 28;
     -fx-font-weight: bold;
-    -fx-line-spacing: 0.3;
+    /*line-height: 1.3;*/
 }
 
 .kitchen-empty-state-subtitle {
     -fx-text-fill: #0096D6;
-    -fx-font-size: 18px;
-    -fx-font-weight: 600;
+    -fx-font-size: 18;
+    -fx-font-weight: bold;
 }
 
 .kitchen-empty-state-message {
     -fx-text-fill: #5a6c7d;
-    -fx-font-size: 16px;
-    -fx-line-spacing: 0.6;
+    -fx-font-size: 16;
+    /*line-height: 1.6;*/
 }
 
 .kitchen-empty-state-info-box {
     -fx-background-color: #fff3cd;
     -fx-border-color: transparent transparent transparent #ffc107;
-    -fx-border-width: 0 0 0 4;
-    -fx-border-radius: 8;
-    -fx-background-radius: 8;
+    -fx-border-width: 0 0 0 4px;
+    -fx-border-style: solid;
+    -fx-border-radius: 8px;
+    -fx-background-radius: 8px;
 }
 
 .kitchen-empty-state-info-title {
     -fx-text-fill: #856404;
-    -fx-font-size: 15px;
-    -fx-font-weight: 600;
+    -fx-font-size: 15;
+    -fx-font-weight: bold;
 }
 
 .kitchen-empty-state-info-text {
     -fx-text-fill: #856404;
-    -fx-font-size: 14px;
-    -fx-line-spacing: 0.5;
+    -fx-font-size: 14;
+    /*line-height: 1.5;*/
 }
 
 .kitchen-empty-state-action-box {
     -fx-background-color: #e7f3ff;
     -fx-border-color: #0096D6;
-    -fx-border-width: 2;
-    -fx-border-radius: 8;
-    -fx-background-radius: 8;
+    -fx-border-width: 2px;
+    -fx-border-style: solid;
+    -fx-border-radius: 8px;
+    -fx-background-radius: 8px;
 }
 
 .kitchen-empty-state-action-title {
     -fx-text-fill: #0096D6;
-    -fx-font-size: 16px;
-    -fx-font-weight: 600;
+    -fx-font-size: 16;
+    -fx-font-weight: bold;
 }
 
 .kitchen-empty-state-contact-text {
     -fx-text-fill: #2c3e50;
-    -fx-font-size: 15px;
+    -fx-font-size: 15;
     -fx-font-weight: bold;
 }
 
 .kitchen-empty-state-contact-icon {
     -fx-stroke: #0096D6;
     -fx-stroke-width: 2;
-    -fx-stroke-line-cap: round;
-    -fx-stroke-line-join: round;
+    -fx-stroke-linecap: round;
+    -fx-stroke-linejoin: round;
     -fx-fill: transparent;
 }
 
 .kitchen-empty-state-footer {
     -fx-text-fill: #95a5a6;
-    -fx-font-size: 13px;
+    -fx-font-size: 13;
 }
