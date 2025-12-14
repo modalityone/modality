@@ -1,91 +1,57 @@
-/* Household Dashboard JavaFX CSS */
-
-/* Force transparent background for household scroll pane */
-.household-scroll-pane {
-    -fx-background: transparent;
-    -fx-background-color: transparent;
-    -fx-control-inner-background: transparent;
-    -fx-background-insets: 0;
-    -fx-padding: 0;
-}
-
-.household-scroll-pane .viewport {
-    -fx-background-color: transparent;
-}
-
-.household-scroll-pane .corner {
-    -fx-background-color: transparent;
-}
-
-.household-scroll-pane > .viewport {
-    -fx-background-color: transparent;
-}
-
-.household-dashboard {
-    -fx-background-color: transparent;
-}
-
-/* Main Content */
-.main-content {
-    -fx-background-color: transparent;
-}
-
-/* Loading Indicator */
-.loading-indicator {
-    -fx-background-color: transparent;
-}
+/* Household Dashboard CSS */
 
 .loading-message {
-    -fx-font-size: 14px;
+    -fx-font-size: 14;
     -fx-text-fill: #667085;
-    -fx-font-weight: 500;
+    -fx-font-weight: bold;
 }
 
 /* Header */
 .header {
     -fx-background-color: white;
-    -fx-background-radius: 12px;
     -fx-border-radius: 12px;
-    -fx-effect: dropshadow(three-pass-box, rgba(0, 0, 0, 0.05), 4, 0, 0, 2);
+    -fx-background-radius: 12px;
+    -fx-effect: dropshadow(gaussian, rgba(0, 0, 0, 0.05), 4, 0, 0, 2);
 }
 
 .h1 {
-    -fx-font-size: 28px;
+    -fx-font-size: 28;
     -fx-font-weight: bold;
     -fx-text-fill: #0096D6;
 }
 
 .date-info {
-    -fx-font-size: 13px;
+    -fx-font-size: 13;
     -fx-text-fill: #667085;
-    -fx-font-weight: 500;
+    -fx-font-weight: bold;
 }
 
 .today-indicator {
     -fx-background-color: #E3F2FD;
     -fx-text-fill: #0096D6;
-    -fx-background-radius: 12px;
     -fx-border-radius: 12px;
-    -fx-font-size: 11px;
+    -fx-background-radius: 12px;
+    -fx-font-size: 11;
     -fx-font-weight: bold;
 }
 
 .today-dot {
     -fx-background-color: #0096D6;
-    -fx-background-radius: 50%;
     -fx-border-radius: 50%;
+    -fx-background-radius: 50%;
 }
 
 .view-range-control {
     -fx-background-color: #F8F9FA;
-    -fx-background-radius: 8px;
     -fx-border-radius: 8px;
+    -fx-background-radius: 8px;
     -fx-border-color: #E8E8E8;
-    -fx-border-width: 1.5px;
+    -fx-border-width: 1.5;
+    -fx-border-style: solid;
 }
 
 .view-range-label {
-    -fx-font-size: 12px;
+    -fx-font-size: 12;
     -fx-font-weight: bold;
     -fx-text-fill: #344054;
 }
@@ -93,22 +59,22 @@
 .days-input {
     -fx-border-color: #D0D5DD;
     -fx-border-width: 1.5px;
-    -fx-background-radius: 6px;
+    -fx-border-style: solid;
     -fx-border-radius: 6px;
-    -fx-font-size: 14px;
+    -fx-background-radius: 6px;
+    -fx-font-size: 14;
     -fx-font-weight: bold;
     -fx-text-fill: #0096D6;
     -fx-background-color: white;
-    -fx-alignment: center;
 }
 
-.days-input:focused {
+.days-input:focus {
     -fx-border-color: #0096D6;
-    -fx-effect: dropshadow(three-pass-box, rgba(0, 150, 214, 0.1), 3, 0, 0, 0);
+    -fx-effect: dropshadow(gaussian, rgba(0,150,214,0.1), 3, 1.0, 0, 0);
 }
 
 .days-unit {
-    -fx-font-size: 12px;
+    -fx-font-size: 12;
     -fx-font-weight: bold;
     -fx-text-fill: #667085;
 }
@@ -116,11 +82,12 @@
 .quick-view-btn {
     -fx-border-color: #D0D5DD;
     -fx-border-width: 1.5px;
+    -fx-border-style: solid;
     -fx-background-color: white;
-    -fx-background-radius: 6px;
     -fx-border-radius: 6px;
+    -fx-background-radius: 6px;
     -fx-cursor: hand;
-    -fx-font-size: 11px;
+    -fx-font-size: 11;
     -fx-font-weight: bold;
     -fx-text-fill: #344054;
 }
@@ -140,20 +107,22 @@
 /* Day Section */
 .day-section {
     -fx-background-color: white;
-    -fx-background-radius: 12px;
     -fx-border-radius: 12px;
-    -fx-effect: dropshadow(three-pass-box, rgba(0, 0, 0, 0.05), 4, 0, 0, 2);
+    -fx-background-radius: 12px;
+    -fx-effect: dropshadow(gaussian, rgba(0, 0, 0, 0.05), 4, 0, 0, 2);
 }
 
 .day-section.today {
     -fx-border-color: #0096D6;
     -fx-border-width: 2px;
-    -fx-effect: dropshadow(three-pass-box, rgba(0, 150, 214, 0.15), 12, 0, 0, 4);
+    -fx-border-style: solid;
+    -fx-effect: dropshadow(gaussian, rgba(0,150,214,0.15), 12, 0, 0, 4);
 }
 
 .day-header {
     -fx-border-color: transparent transparent #F0F0F0 transparent;
     -fx-border-width: 0 0 2px 0;
+    -fx-border-style: solid;
 }
 
 .day-section.today .day-header {
@@ -161,7 +130,7 @@
 }
 
 .day-date {
-    -fx-font-size: 28px;
+    -fx-font-size: 28;
     -fx-font-weight: bold;
     -fx-text-fill: #0096D6;
 }
@@ -171,7 +140,7 @@
 }
 
 .day-name {
-    -fx-font-size: 16px;
+    -fx-font-size: 16;
     -fx-font-weight: bold;
     -fx-text-fill: #838788;
 }
@@ -183,19 +152,19 @@
 .today-badge {
     -fx-background-color: #0096D6;
     -fx-text-fill: white;
-    -fx-background-radius: 6px;
     -fx-border-radius: 6px;
-    -fx-font-size: 12px;
+    -fx-background-radius: 6px;
+    -fx-font-size: 12;
     -fx-font-weight: bold;
-    /* padding set in Java for cross-platform consistency */
+    /*padding: 4px 12px;*/
 }
 
 .count-badge {
     -fx-background-color: #E8F4F8;
     -fx-text-fill: #0096D6;
-    -fx-background-radius: 20px;
     -fx-border-radius: 20px;
-    -fx-font-size: 16px;
+    -fx-background-radius: 20px;
+    -fx-font-size: 16;
     -fx-font-weight: bold;
 }
 
@@ -205,11 +174,7 @@
 }
 
 .section-title {
-    -fx-spacing: 8px;
-}
-
-.section-title .label {
-    -fx-font-size: 14px;
+    -fx-font-size: 14;
     -fx-font-weight: bold;
     -fx-text-fill: #0096D6;
 }
@@ -217,13 +182,13 @@
 .section-count {
     -fx-background-color: #E8F4F8;
     -fx-text-fill: #0096D6;
-    -fx-background-radius: 12px;
     -fx-border-radius: 12px;
-    -fx-font-size: 12px;
+    -fx-background-radius: 12px;
+    -fx-font-size: 12;
 }
 
 .section-filter-label {
-    -fx-font-size: 10px;
+    -fx-font-size: 10;
     -fx-font-weight: bold;
     -fx-text-fill: #667085;
 }
@@ -231,11 +196,12 @@
 .section-filter-btn {
     -fx-border-color: #D0D5DD;
     -fx-border-width: 1.5px;
+    -fx-border-style: solid;
     -fx-background-color: white;
-    -fx-background-radius: 5px;
     -fx-border-radius: 5px;
+    -fx-background-radius: 5px;
     -fx-cursor: hand;
-    -fx-font-size: 10px;
+    -fx-font-size: 10;
     -fx-font-weight: bold;
     -fx-text-fill: #344054;
 }
@@ -251,49 +217,20 @@
     -fx-border-color: #0096D6;
 }
 
-/* Filter Toggle Buttons (GWT-compatible replacement for ChoiceBox) */
-.filter-toggle-btn {
-    -fx-border-color: #D0D5DD;
-    -fx-border-width: 1px;
-    -fx-background-color: white;
-    -fx-background-radius: 4px;
-    -fx-border-radius: 4px;
-    -fx-cursor: hand;
-    -fx-font-size: 11px;
-    -fx-font-weight: 600;
-    -fx-text-fill: #667085;
-}
-
-.filter-toggle-btn:hover {
-    -fx-border-color: #0096D6;
-    -fx-background-color: #F0F9FF;
-}
-
-.filter-toggle-active {
-    -fx-background-color: #0096D6;
-    -fx-text-fill: white;
-    -fx-border-color: #0096D6;
-}
-
-.filter-toggle-inactive {
-    -fx-background-color: white;
-    -fx-text-fill: #667085;
-    -fx-border-color: #D0D5DD;
-}
-
 /* Room Cards */
 .room-item {
     -fx-background-color: white;
     -fx-border-color: #E8E8E8;
     -fx-border-width: 2px;
-    -fx-background-radius: 8px;
+    -fx-border-style: solid;
     -fx-border-radius: 8px;
+    -fx-background-radius: 8px;
     -fx-cursor: hand;
 }
 
 .room-item:hover {
     -fx-border-color: #0096D6;
-    -fx-effect: dropshadow(three-pass-box, rgba(0, 150, 214, 0.1), 12, 0, 0, 4);
+    -fx-effect: dropshadow(gaussian, rgba(0, 150, 214, 0.1), 12, 0, 0, 4);
 }
 
 .room-item.urgent.has-urgency {
@@ -308,15 +245,11 @@
 
 .room-item-accent {
     -fx-background-color: transparent;
-    -fx-background-radius: 8px 0 0 8px;
     -fx-border-radius: 8px 0 0 8px;
+    -fx-background-radius: 8px 0 0 8px;
 }
 
 .room-item.to-clean-item .room-item-accent {
-    -fx-background-color: #0096D6;
-}
-
-.room-item.to-inspect-item .room-item-accent {
     -fx-background-color: #0096D6;
 }
 
@@ -329,15 +262,15 @@
 }
 
 .room-number {
-    -fx-font-size: 16px;
+    -fx-font-size: 16;
     -fx-font-weight: bold;
     -fx-text-fill: #0096D6;
 }
 
 .building-tag {
-    -fx-background-radius: 4px;
     -fx-border-radius: 4px;
-    -fx-font-size: 9px;
+    -fx-background-radius: 4px;
+    -fx-font-size: 9;
     -fx-font-weight: bold;
 }
 
@@ -357,9 +290,9 @@
 }
 
 .status-badge {
-    -fx-background-radius: 4px;
     -fx-border-radius: 4px;
-    -fx-font-size: 9px;
+    -fx-background-radius: 4px;
+    -fx-font-size: 9;
     -fx-font-weight: bold;
 }
 
@@ -368,6 +301,7 @@
     -fx-text-fill: #FF8C00;
     -fx-border-color: #FFE0B2;
     -fx-border-width: 1px;
+    -fx-border-style: solid;
 }
 
 .status-badge.checkout-pending {
@@ -375,6 +309,7 @@
     -fx-text-fill: #D97706;
     -fx-border-color: #FEF3C7;
     -fx-border-width: 1px;
+    -fx-border-style: solid;
 }
 
 .status-badge.to-inspect {
@@ -382,12 +317,13 @@
     -fx-text-fill: #00838F;
     -fx-border-color: #B2EBF2;
     -fx-border-width: 1px;
+    -fx-border-style: solid;
 }
 
 .next-checkin {
-    -fx-font-size: 11px;
+    -fx-font-size: 11;
     -fx-text-fill: #838788;
-    -fx-font-weight: 500;
+    -fx-font-weight: bold;
 }
 
 .next-checkin-date {
@@ -410,7 +346,7 @@
 }
 
 .section-divider-text {
-    -fx-font-size: 13px;
+    -fx-font-size: 13;
     -fx-font-weight: bold;
     -fx-text-fill: #838788;
 }
@@ -420,13 +356,14 @@
     -fx-background-color: white;
     -fx-border-color: #E8F4F8;
     -fx-border-width: 2px;
-    -fx-background-radius: 8px;
+    -fx-border-style: solid;
     -fx-border-radius: 8px;
+    -fx-background-radius: 8px;
 }
 
 .arrival-card:hover {
     -fx-border-color: #0096D6;
-    -fx-effect: dropshadow(three-pass-box, rgba(0, 150, 214, 0.15), 12, 0, 0, 4);
+    -fx-effect: dropshadow(gaussian, rgba(0,150,214,0.15), 12, 0, 0, 4);
 }
 
 .arrival-card.has-special-needs {
@@ -440,8 +377,8 @@
 
 .arrival-card-accent {
     -fx-background-color: #0096D6;
-    -fx-background-radius: 8px 0 0 8px;
     -fx-border-radius: 8px 0 0 8px;
+    -fx-background-radius: 8px 0 0 8px;
 }
 
 .arrival-card.has-special-needs .arrival-card-accent {
@@ -449,13 +386,13 @@
 }
 
 .arrival-guest {
-    -fx-font-size: 12px;
-    -fx-font-weight: 500;
+    -fx-font-size: 12;
+    -fx-font-weight: bold;
     -fx-text-fill: #666;
 }
 
 .arrival-event {
-    -fx-font-size: 11px;
+    -fx-font-size: 11;
     -fx-text-fill: #0096D6;
     -fx-font-weight: bold;
 }
@@ -463,9 +400,9 @@
 .special-needs-badge {
     -fx-background-color: #FFF3E0;
     -fx-text-fill: #FF8C00;
-    -fx-background-radius: 4px;
     -fx-border-radius: 4px;
-    -fx-font-size: 10px;
+    -fx-background-radius: 4px;
+    -fx-font-size: 10;
     -fx-font-weight: bold;
 }
 
@@ -473,16 +410,17 @@
 .guest-item {
     -fx-border-color: #F0F0F0 transparent transparent transparent;
     -fx-border-width: 1px 0 0 0;
+    -fx-border-style: solid;
 }
 
 .guest-name-individual {
-    -fx-font-size: 11px;
+    -fx-font-size: 11;
     -fx-font-weight: bold;
     -fx-text-fill: #333;
 }
 
 .guest-event {
-    -fx-font-size: 9px;
+    -fx-font-size: 9;
     -fx-text-fill: #0096D6;
     -fx-font-weight: bold;
 }
@@ -490,9 +428,9 @@
 .guest-special-needs {
     -fx-background-color: #FFF3E0;
     -fx-text-fill: #FF8C00;
-    -fx-background-radius: 4px;
     -fx-border-radius: 4px;
-    -fx-font-size: 9px;
+    -fx-background-radius: 4px;
+    -fx-font-size: 9;
     -fx-font-weight: bold;
 }
 
@@ -501,54 +439,55 @@
     -fx-background-color: white;
     -fx-border-color: #E8E8E8;
     -fx-border-width: 2px;
-    -fx-background-radius: 8px;
+    -fx-border-style: solid;
     -fx-border-radius: 8px;
+    -fx-background-radius: 8px;
 }
 
 .checkout-card-normal:hover {
     -fx-border-color: #838788;
-    -fx-effect: dropshadow(three-pass-box, rgba(131, 135, 136, 0.15), 12, 0, 0, 4);
+    -fx-effect: dropshadow(gaussian, rgba(0, 150, 214, 0.1), 12, 0, 0, 4);
 }
 
 .checkout-card-normal-accent {
     -fx-background-color: #838788;
-    -fx-background-radius: 8px 0 0 8px;
     -fx-border-radius: 8px 0 0 8px;
+    -fx-background-radius: 8px 0 0 8px;
 }
 
 .checkout-card {
     -fx-background-color: #FFF5F5;
     -fx-border-color: #FFCCCC;
     -fx-border-width: 2px;
-    -fx-background-radius: 8px;
+    -fx-border-style: solid;
     -fx-border-radius: 8px;
+    -fx-background-radius: 8px;
 }
 
 .checkout-card:hover {
     -fx-border-color: #FF6B6B;
-    -fx-effect: dropshadow(three-pass-box, rgba(255, 107, 107, 0.15), 12, 0, 0, 4);
+    -fx-effect: dropshadow(gaussian, rgba(255, 107, 107, 0.15), 12, 0, 0, 4);
 }
 
 .checkout-card-accent {
     -fx-background-color: #FF6B6B;
-    -fx-background-radius: 8px 0 0 8px;
     -fx-border-radius: 8px 0 0 8px;
+    -fx-background-radius: 8px 0 0 8px;
 }
 
 .checkout-guest {
-    -fx-font-size: 12px;
-    -fx-font-weight: 500;
+    -fx-font-size: 12;
+    -fx-font-weight: bold;
     -fx-text-fill: #666;
 }
 
 .urgent-warning {
     -fx-background-color: #FF6B6B;
     -fx-text-fill: white;
-    -fx-background-radius: 4px;
     -fx-border-radius: 4px;
-    -fx-font-size: 10px;
+    -fx-background-radius: 4px;
+    -fx-font-size: 10;
     -fx-font-weight: bold;
-    -fx-alignment: center;
 }
 
 /* Partial Checkout */
@@ -556,82 +495,81 @@
     -fx-background-color: white;
     -fx-border-color: #E8E8E8;
     -fx-border-width: 2px;
-    -fx-background-radius: 8px;
+    -fx-border-style: solid;
     -fx-border-radius: 8px;
+    -fx-background-radius: 8px;
 }
 
 .partial-checkout-card:hover {
     -fx-border-color: #0096D6;
-    -fx-effect: dropshadow(three-pass-box, rgba(0, 150, 214, 0.15), 12, 0, 0, 4);
+    -fx-effect: dropshadow(gaussian, rgba(0,150,214,0.15), 12, 0, 0, 4);
 }
 
 .partial-checkout-card-accent {
     -fx-background-color: #0096D6;
-    -fx-background-radius: 8px 0 0 8px;
     -fx-border-radius: 8px 0 0 8px;
+    -fx-background-radius: 8px 0 0 8px;
 }
 
 .checkout-info {
-    -fx-font-size: 11px;
+    -fx-font-size: 11;
     -fx-text-fill: #666;
 }
 
 .remaining-guests {
-    -fx-font-size: 11px;
+    -fx-font-size: 11;
     -fx-text-fill: #838788;
 }
 
 /* Empty State */
 .empty-state {
     -fx-background-color: #FAFAFA;
-    -fx-background-radius: 12px;
     -fx-border-radius: 12px;
-    -fx-min-height: 200px;
+    -fx-background-radius: 12px;
+    /*min-height: 200px;*/
 }
 
 .empty-state-message {
-    -fx-font-size: 16px;
-    -fx-font-weight: 500;
+    -fx-font-size: 16;
+    -fx-font-weight: bold;
     -fx-text-fill: #999999;
     -fx-text-alignment: center;
 }
 
 /* Room Header */
 .room-header-container {
-    -fx-spacing: 8px;
+    /* spacing handled by Java layout */
 }
 
 .room-header {
-    -fx-spacing: 8px;
-    -fx-alignment: center-left;
+    /* spacing and alignment handled by Java layout */
 }
 
 .arrival-room-header {
-    -fx-spacing: 8px;
-    -fx-alignment: center-left;
+    /* spacing and alignment handled by Java layout */
 }
 
 /* Room Type */
 .room-type-text {
-    -fx-font-size: 10px;
-    -fx-font-weight: 600;
+    -fx-font-size: 10;
+    -fx-font-weight: bold;
     -fx-text-fill: #838788;
 }
 
 .room-type-badge {
-    -fx-background-radius: 4px;
     -fx-border-radius: 4px;
-    -fx-font-size: 9px;
+    -fx-background-radius: 4px;
+    -fx-font-size: 9;
     -fx-font-weight: bold;
-    /* padding set in Java for cross-platform consistency */
+    /*padding: 2px 6px;*/
 }
 
 /* Badge Colors */
 .badge {
-    /* padding set in Java for cross-platform consistency */
+    /*padding: 2px 8px;*/
     -fx-border-radius: 4px;
     -fx-background-radius: 4px;
-    -fx-font-size: 10px;
+    -fx-font-size: 10;
     -fx-font-weight: bold;
 }
 
@@ -652,18 +590,18 @@
 
 /* Guest Details */
 .guest-details-container {
-    -fx-spacing: 8px;
+    /* spacing handled by Java layout */
 }
 
 .checkout-guest-names {
-    -fx-font-size: 11px;
+    -fx-font-size: 11;
     -fx-font-weight: bold;
     -fx-text-fill: #333;
 }
 
 /* Expand/Collapse */
 .expand-icon {
-    -fx-font-size: 10px;
+    -fx-font-size: 10;
     -fx-text-fill: #0096D6;
     -fx-cursor: hand;
 }
@@ -671,8 +609,8 @@
 .expand-link {
     -fx-cursor: hand;
     -fx-text-fill: #0096D6;
-    -fx-font-size: 11px;
-    -fx-font-weight: 600;
+    -fx-font-size: 11;
+    -fx-font-weight: bold;
 }
 
 .expand-link:hover {
@@ -680,47 +618,52 @@
 }
 
 .partial-checkout-summary-text {
-    -fx-font-size: 11px;
+    -fx-font-size: 11;
     -fx-text-fill: #838788;
 }
 
 /* Person Icon */
 .person-icon {
-    -fx-font-size: 12px;
+    -fx-font-size: 12;
     -fx-text-fill: #838788;
 }
 
 .inline-icon {
-    -fx-font-size: 10px;
+    -fx-font-size: 10;
 }
 
 /* Special Request Badge - Card Header */
 .special-request-badge {
     -fx-background-color: #FFF3E0;
     -fx-text-fill: #E65100;
-    -fx-background-radius: 4px;
     -fx-border-radius: 4px;
-    -fx-font-size: 9px;
+    -fx-background-radius: 4px;
+    -fx-font-size: 9;
     -fx-font-weight: bold;
     -fx-border-color: #FFE0B2;
     -fx-border-width: 1px;
+    -fx-border-style: solid;
 }
 
 /* Special Needs Indicator - Guest Row */
 .special-needs-indicator {
-    -fx-font-size: 16px;
+    -fx-font-size: 16;
     -fx-font-weight: bold;
     -fx-text-fill: #FF9800;
     -fx-cursor: hand;
 }
 
+.special-needs-indicator:hover {
+    -fx-text-fill: #E65100;
+}
+
 /* Action Menu Button */
 .action-menu-button {
-    -fx-font-size: 16px;
+    -fx-font-size: 16;
     -fx-font-weight: bold;
     -fx-text-fill: #667085;
     -fx-cursor: hand;
-    -fx-padding: 0 4 0 4;
+    /*padding: 0 4px;*/
 }
 
 .action-menu-button:hover {
@@ -740,17 +683,20 @@
 /* Navigation button group container */
 .gantt-nav-group {
     -fx-background-color: white;
-    -fx-background-radius: 6px;
     -fx-border-radius: 6px;
+    -fx-background-radius: 6px;
     -fx-border-color: #E5E7EB;
     -fx-border-width: 1px;
+    -fx-border-style: solid;
 }
 
 /* Navigation icon buttons (pan left/right, zoom in/out) */
 .gantt-nav-btn {
     -fx-background-color: transparent;
+    -fx-border-width: 0;
+    -fx-border-style: none;
     -fx-text-fill: #6B7280;
-    -fx-font-size: 16px;
+    -fx-font-size: 16;
     -fx-cursor: hand;
 }
 
@@ -760,20 +706,22 @@
 }
 
 .gantt-nav-btn-left {
-    -fx-background-radius: 5 0 0 5;
-    -fx-border-radius: 5 0 0 5;
+    -fx-border-radius: 5px 0 0 5px;
+    -fx-background-radius: 5px 0 0 5px;
 }
 
 .gantt-nav-btn-right {
-    -fx-background-radius: 0 5 5 0;
-    -fx-border-radius: 0 5 5 0;
+    -fx-border-radius: 0 5px 5px 0;
+    -fx-background-radius: 0 5px 5px 0;
 }
 
 /* Zoom reset button (2w) */
 .gantt-zoom-reset-btn {
     -fx-background-color: transparent;
+    -fx-border-width: 0;
+    -fx-border-style: none;
     -fx-text-fill: #6B7280;
-    -fx-font-size: 11px;
+    -fx-font-size: 11;
     -fx-font-weight: bold;
     -fx-cursor: hand;
 }
@@ -787,27 +735,30 @@
 .gantt-today-btn {
     -fx-background-color: #0096D6;
     -fx-text-fill: white;
-    -fx-background-radius: 20px;
     -fx-border-radius: 20px;
+    -fx-background-radius: 20px;
     -fx-font-weight: bold;
-    -fx-font-size: 13px;
+    -fx-font-size: 13;
     -fx-cursor: hand;
-    -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.1), 4, 0, 0, 1);
+    -fx-effect: dropshadow(gaussian, rgba(0, 0, 0, 0.1), 4, 0, 0, 1);
+    -fx-border-width: 0;
+    -fx-border-style: none;
 }
 
 .gantt-today-btn:hover {
     -fx-background-color: #007AB8;
-    -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.15), 5, 0, 0, 2);
+    -fx-effect: dropshadow(gaussian, rgba(0, 0, 0, 0.15), 5, 0, 0, 2);
 }
 
 /* Filter toggle buttons (All, To Clean, etc.) */
 .gantt-filter-btn {
     -fx-background-color: white;
     -fx-text-fill: #6B7280;
-    -fx-background-radius: 16px;
     -fx-border-radius: 16px;
+    -fx-background-radius: 16px;
     -fx-border-color: #D1D5DB;
     -fx-border-width: 1px;
+    -fx-border-style: solid;
     -fx-cursor: hand;
 }
 
@@ -824,8 +775,8 @@
 
 .gantt-filter-btn-active:hover {
     -fx-background-color: #6B7280;
-    -fx-border-color: #6B7280;
     -fx-text-fill: white;
+    -fx-border-color: #6B7280;
 }
 
 /* Filter button label inside HBox graphic */
@@ -847,36 +798,36 @@
 
 /* Title styling */
 .gantt-title {
-    -fx-font-size: 20px;
+    -fx-font-size: 20;
     -fx-font-weight: bold;
 }
 
 /* Day label in header */
 .gantt-day-label {
-    -fx-font-size: 12px;
-    -fx-font-weight: 500;
+    -fx-font-size: 12;
+    -fx-font-weight: bold;
 }
 
 /* Date label in header */
 .gantt-date-label {
-    -fx-font-size: 12px;
-    -fx-font-weight: 500;
+    -fx-font-size: 12;
+    -fx-font-weight: bold;
 }
 
 /* Today label badge */
 .gantt-today-label {
-    -fx-font-size: 10px;
+    -fx-font-size: 10;
 }
 
 /* Category/Room type label */
 .gantt-category-label {
-    -fx-font-size: 13px;
-    -fx-font-weight: 500;
+    -fx-font-size: 13;
+    -fx-font-weight: bold;
 }
 
 /* Expand/collapse arrow */
 .gantt-expand-arrow {
-    -fx-font-size: 14px;
+    -fx-font-size: 14;
     -fx-text-fill: #333333;
     -fx-font-weight: bold;
     -fx-cursor: hand;
@@ -884,18 +835,18 @@
 
 /* Room name in cell */
 .gantt-room-name {
-    -fx-font-size: 13px;
+    -fx-font-size: 13;
 }
 
 /* Room comment in cell */
 .gantt-room-comment {
-    -fx-font-size: 11px;
+    -fx-font-size: 11;
     -fx-font-style: italic;
 }
 
 /* Bed name in cell */
 .gantt-bed-name {
-    -fx-font-size: 12px;
+    -fx-font-size: 12;
     -fx-font-style: italic;
 }
 
@@ -905,7 +856,7 @@
 
 /* Booking bar label */
 .gantt-bar-label {
-    -fx-font-size: 9px;
+    -fx-font-size: 9;
     -fx-font-weight: bold;
 }
 
@@ -913,6 +864,7 @@
 .gantt-bar-conflict {
     -fx-border-color: #FF0404;
     -fx-border-width: 2px;
+    -fx-border-style: solid;
 }
 
 /* Clickable icon */
@@ -922,16 +874,47 @@
 
 /* Tooltip styling */
 .gantt-tooltip {
-    -fx-font-size: 12px;
+    -fx-font-size: 12;
 }
 
 /* Turnover indicator background */
 .gantt-turnover-bg {
     -fx-background-color: #FFA500;
+    -fx-border-radius: 3px;
     -fx-background-radius: 3px;
 }
 
 /* Turnover indicator with shadow */
 .gantt-turnover-indicator {
-    -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.2), 4, 0, 0, 2);
+    -fx-effect: dropshadow(gaussian, rgba(0, 0, 0, 0.2), 3, 0, 0, 2);
+}
+
+/* Filter Toggle Buttons (GWT-compatible replacement for ChoiceBox) */
+.filter-toggle-btn {
+    -fx-border-color: #D0D5DD;
+    -fx-border-width: 1px;
+    -fx-background-color: white;
+    -fx-border-radius: 4px;
+    -fx-background-radius: 4px;
+    -fx-cursor: hand;
+    -fx-font-size: 11;
+    -fx-font-weight: bold;
+    -fx-text-fill: #667085;
+}
+
+.filter-toggle-btn:hover {
+    -fx-border-color: #0096D6;
+    -fx-background-color: #F0F9FF;
+}
+
+.filter-toggle-active {
+    -fx-background-color: #0096D6;
+    -fx-text-fill: white;
+    -fx-border-color: #0096D6;
+}
+
+.filter-toggle-inactive {
+    -fx-background-color: white;
+    -fx-text-fill: #667085;
+    -fx-border-color: #D0D5DD;
 }

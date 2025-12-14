@@ -1,0 +1,23 @@
+/* Household Dashboard JavaFX CSS */
+
+/* Force transparent background for household scroll pane */
+.household-scroll-pane {
+    -fx-background: transparent;
+    -fx-background-color: transparent;
+    -fx-control-inner-background: transparent;
+    -fx-background-insets: 0;
+    -fx-padding: 0;
+}
+
+.household-scroll-pane .viewport {
+    -fx-background-color: transparent;
+}
+
+.household-scroll-pane .corner {
+    -fx-background-color: transparent;
+}
+
+.household-scroll-pane > .viewport {
+    -fx-background-color: transparent;
+}
+
