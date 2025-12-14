@@ -60,9 +60,9 @@
 
 /* Organization Dialog - Section dividers */
 .section-divider-line {
-    -fx-min-height: 1;
+    /*-fx-min-height: 1;
     -fx-pref-height: 1;
-    -fx-max-height: 1;
+    -fx-max-height: 1;*/
     -fx-background-color: #E5E7EB;
 }
 
