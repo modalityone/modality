@@ -5,6 +5,7 @@ import dev.webfx.extras.i18n.controls.I18nControls;
 import dev.webfx.platform.async.Future;
 import javafx.beans.property.ObjectProperty;
 import javafx.beans.property.SimpleObjectProperty;
+import javafx.beans.property.StringProperty;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Node;
@@ -20,6 +21,9 @@ import one.modality.booking.frontoffice.bookingpage.BookingFormButton;
 import one.modality.booking.frontoffice.bookingpage.BookingFormNavigation;
 import one.modality.booking.frontoffice.bookingpage.MultiPageBookingForm;
 import one.modality.booking.frontoffice.bookingpage.theme.BookingFormColorScheme;
+
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Navigation buttons for the booking form.
@@ -57,6 +61,7 @@ public class ButtonNavigation implements BookingFormNavigation {
         continueButton.getStyleClass().add("booking-form-btn-primary");
         // Padding set in Java per project conventions (CSS handles colors only)
         continueButton.setPadding(new Insets(14, 32, 14, 32));
+        continueButton.setGraphicTextGap(16);
 
         // Bind ToggleButton (logic) to Button (UI)
         continueButton.disableProperty().bind(nextToggleButton.disableProperty());
@@ -119,8 +124,8 @@ public class ButtonNavigation implements BookingFormNavigation {
         }
 
         // Separate back buttons from other buttons
-        java.util.List<BookingFormButton> backButtons = new java.util.ArrayList<>();
-        java.util.List<BookingFormButton> otherButtons = new java.util.ArrayList<>();
+        List<BookingFormButton> backButtons = new ArrayList<>();
+        List<BookingFormButton> otherButtons = new ArrayList<>();
 
         for (BookingFormButton buttonDef : buttons) {
             String styleClass = buttonDef.getStyleClass();
@@ -161,7 +166,7 @@ public class ButtonNavigation implements BookingFormNavigation {
             Region spacer = new Region();
             HBox.setHgrow(spacer, Priority.ALWAYS);
             container.getChildren().add(spacer);
-        } else if (backButtons.isEmpty() && !otherButtons.isEmpty()) {
+        } else if (backButtons.isEmpty()) {
             // No back button, add spacer at start to push buttons to right
             Region spacer = new Region();
             HBox.setHgrow(spacer, Priority.ALWAYS);
@@ -173,9 +178,9 @@ public class ButtonNavigation implements BookingFormNavigation {
             Button button = new Button();
             // Support both i18n keys and StringProperty for dynamic text
             Object textKey = buttonDef.getTextI18nKey();
-            if (textKey instanceof javafx.beans.property.StringProperty) {
+            if (textKey instanceof StringProperty textKeyProperty) {
                 // Bind directly to StringProperty for dynamic text (e.g., "Pay £123 Now →")
-                button.textProperty().bind((javafx.beans.property.StringProperty) textKey);
+                button.textProperty().bind(textKeyProperty);
             } else {
                 // Use i18n binding for translation keys
                 I18nControls.bindI18nProperties(button, textKey);
@@ -190,6 +195,7 @@ public class ButtonNavigation implements BookingFormNavigation {
             }
             // Padding set in Java per project conventions
             button.setPadding(new Insets(14, 32, 14, 32));
+            button.setGraphicTextGap(16);
 
             if (buttonDef.getDisableProperty() != null) {
                 button.disableProperty().bind(buttonDef.getDisableProperty());
