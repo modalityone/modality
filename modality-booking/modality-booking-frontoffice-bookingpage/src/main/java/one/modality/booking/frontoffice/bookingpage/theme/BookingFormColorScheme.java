@@ -24,6 +24,9 @@ public final class BookingFormColorScheme {
     private final String name;
     private final String description;
     private final Color primary;
+    private final Color selectedBg;
+    private final Color darkText;
+    private final Color hoverBorder;
 
     // === PREDEFINED COLOR SCHEMES ===
 
@@ -35,7 +38,10 @@ public final class BookingFormColorScheme {
             "journey-green",
             "Journey Green",
             "Growth & Renewal",
-            Color.web("#4CAF50")
+            Color.web("#4CAF50"),  // primary
+            Color.web("#E8F5E9"),  // selectedBg
+            Color.web("#2E7D32"),  // darkText
+            Color.web("#8DD39E")   // hoverBorder
     );
 
     /**
@@ -46,7 +52,10 @@ public final class BookingFormColorScheme {
             "wisdom-blue",
             "Wisdom Blue",
             "Clarity & Study",
-            Color.web("#1976D2")
+            Color.web("#1976D2"),  // primary
+            Color.web("#E3F2FD"),  // selectedBg
+            Color.web("#0D47A1"),  // darkText
+            Color.web("#90CAF9")   // hoverBorder
     );
 
     /**
@@ -57,7 +66,10 @@ public final class BookingFormColorScheme {
             "compassion-rose",
             "Compassion Rose",
             "Love & Kindness",
-            Color.web("#D81B60")
+            Color.web("#D81B60"),  // primary
+            Color.web("#FCE4EC"),  // selectedBg
+            Color.web("#880E4F"),  // darkText
+            Color.web("#F48FB1")   // hoverBorder
     );
 
     /**
@@ -68,7 +80,10 @@ public final class BookingFormColorScheme {
             "peace-purple",
             "Peace Purple",
             "Deep Practice",
-            Color.web("#7B1FA2")
+            Color.web("#7B1FA2"),  // primary
+            Color.web("#F3E5F5"),  // selectedBg
+            Color.web("#4A148C"),  // darkText
+            Color.web("#CE93D8")   // hoverBorder
     );
 
     /**
@@ -79,7 +94,10 @@ public final class BookingFormColorScheme {
             "joy-amber",
             "Joy Amber",
             "Celebration & Festivals",
-            Color.web("#F57C00")
+            Color.web("#F57C00"),  // primary
+            Color.web("#FFF3E0"),  // selectedBg
+            Color.web("#E65100"),  // darkText
+            Color.web("#FFB74D")   // hoverBorder
     );
 
     /**
@@ -90,7 +108,10 @@ public final class BookingFormColorScheme {
             "calm-teal",
             "Calm Teal",
             "Balance & Healing",
-            Color.web("#00897B")
+            Color.web("#00897B"),  // primary
+            Color.web("#E0F2F1"),  // selectedBg
+            Color.web("#004D40"),  // darkText
+            Color.web("#80CBC4")   // hoverBorder
     );
 
     /**
@@ -101,7 +122,10 @@ public final class BookingFormColorScheme {
             "clarity-indigo",
             "Clarity Indigo",
             "Focus & Concentration",
-            Color.web("#3949AB")
+            Color.web("#3949AB"),  // primary
+            Color.web("#E8EAF6"),  // selectedBg
+            Color.web("#1A237E"),  // darkText
+            Color.web("#9FA8DA")   // hoverBorder
     );
 
     /**
@@ -112,7 +136,10 @@ public final class BookingFormColorScheme {
             "vajrayogini-red",
             "Vajrayogini Red",
             "Power & Transformation",
-            Color.web("#D32F2F")
+            Color.web("#D32F2F"),  // primary
+            Color.web("#FFEBEE"),  // selectedBg
+            Color.web("#B71C1C"),  // darkText
+            Color.web("#EF9A9A")   // hoverBorder
     );
 
     /**
@@ -123,7 +150,10 @@ public final class BookingFormColorScheme {
             "vajrasattva-white",
             "Vajrasattva White",
             "Purification & Clarity",
-            Color.web("#455A64")
+            Color.web("#455A64"),  // primary
+            Color.web("#ECEFF1"),  // selectedBg
+            Color.web("#263238"),  // darkText
+            Color.web("#B0BEC5")   // hoverBorder
     );
 
     /**
@@ -162,11 +192,15 @@ public final class BookingFormColorScheme {
 
     // === CONSTRUCTOR ===
 
-    private BookingFormColorScheme(String id, String name, String description, Color primary) {
+    private BookingFormColorScheme(String id, String name, String description, Color primary,
+                                   Color selectedBg, Color darkText, Color hoverBorder) {
         this.id = id;
         this.name = name;
         this.description = description;
         this.primary = primary;
+        this.selectedBg = selectedBg;
+        this.darkText = darkText;
+        this.hoverBorder = hoverBorder;
     }
 
     // === GETTERS ===
@@ -193,6 +227,27 @@ public final class BookingFormColorScheme {
      */
     public Color getPrimary() {
         return primary;
+    }
+
+    /**
+     * Light background color for selected/highlighted states (e.g., user badge background).
+     */
+    public Color getSelectedBg() {
+        return selectedBg;
+    }
+
+    /**
+     * Dark accent text color that complements the primary color.
+     */
+    public Color getDarkText() {
+        return darkText;
+    }
+
+    /**
+     * Border color used for hover states on interactive elements.
+     */
+    public Color getHoverBorder() {
+        return hoverBorder;
     }
 
     @Override

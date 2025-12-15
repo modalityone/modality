@@ -1707,10 +1707,10 @@
     -fx-background-radius: 4;
 }
 
-/* Badge - purchased (green) */
+/* Badge - purchased (theme colored) */
 .bookingpage-badge-purchased {
-    -fx-background-color: #E8F5E9;
-    -fx-text-fill: #2E7D32;
+    -fx-background-color: -booking-form-selected-bg;
+    -fx-text-fill: -booking-form-primary;
     -fx-padding: 2 6;
     -fx-background-radius: 4;
 }
@@ -1805,4 +1805,97 @@
 .bookingpage-divider-top-primary {
     -fx-border-color: -booking-form-primary transparent transparent transparent;
     -fx-border-width: 2 0 0 0;
+}
+
+/* ==========================================
+   Date Card - Past Date Styling
+   ========================================== */
+
+/* Date Card - Past date styling (displayed but not selectable) */
+.bookingpage-date-card-past {
+    -fx-opacity: 0.5;
+    -fx-cursor: default;
+}
+
+.bookingpage-date-card-past:hover {
+    /* Override hover effects - keep original styling */
+    -fx-border-color: #dee2e6;
+    -fx-background-color: white;
+}
+
+/* ==========================================
+   Select All Bar
+   ========================================== */
+
+/* Select All Bar container */
+.bookingpage-select-all-bar {
+    -fx-background-color: -booking-form-selected-bg;
+    -fx-background-radius: 8;
+    -fx-border-color: -booking-form-hover-border;
+    -fx-border-width: 1;
+    -fx-border-radius: 8;
+    -fx-padding: 12 16;
+}
+
+/* Select All Bar message - default state */
+.bookingpage-select-all-message {
+    -fx-font-size: 13;
+    -fx-text-fill: -booking-form-text-secondary;
+}
+
+/* Select All Bar message - all selected state (uses theme primary color) */
+.bookingpage-select-all-message.all-selected {
+    -fx-text-fill: -booking-form-primary;
+    -fx-font-weight: 500;
+}
+
+/* Discount row styling (uses theme colors) */
+.bookingpage-discount-row {
+    -fx-background-color: -booking-form-selected-bg;
+    -fx-background-radius: 6;
+    -fx-padding: 8 12;
+}
+
+.bookingpage-discount-label {
+    -fx-text-fill: -booking-form-primary;
+    -fx-font-weight: 500;
+}
+
+.bookingpage-discount-value {
+    -fx-text-fill: -booking-form-primary;
+    -fx-font-weight: 600;
+}
+
+/* Small primary button (Select All) - uses theme color */
+.bookingpage-btn-small-primary {
+    -fx-padding: 6 14;
+    -fx-background-color: -booking-form-primary;
+    -fx-background-radius: 6;
+    -fx-font-size: 12;
+    -fx-font-weight: 500;
+    -fx-cursor: hand;
+    -fx-text-fill: -booking-form-text-on-primary;
+}
+
+.bookingpage-btn-small-primary:hover {
+    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.15), 4, 0, 0, 2);
+}
+
+/* Small outline button (Clear All) */
+.bookingpage-btn-small-outline {
+    -fx-padding: 6 14;
+    -fx-background-color: transparent;
+    -fx-border-color: -booking-form-hover-border;
+    -fx-border-width: 1;
+    -fx-border-radius: 6;
+    -fx-background-radius: 6;
+    -fx-font-size: 12;
+    -fx-font-weight: 500;
+    -fx-cursor: hand;
+    -fx-text-fill: -booking-form-text-secondary;
+}
+
+.bookingpage-btn-small-outline:hover {
+    -fx-border-color: -booking-form-primary;
+    -fx-background-color: -booking-form-selected-bg;
 }

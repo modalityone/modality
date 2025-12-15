@@ -1376,13 +1376,13 @@ fx-textfield.bookingpage-digit-field input {
     color: #047857;
 }
 
-/* Badge - purchased (green) */
+/* Badge - purchased (theme colored) */
 .bookingpage-badge-purchased {
-    --fx-background-color: #E8F5E9;
+    background-color: var(--booking-form-selected-bg);
     --fx-background-radius: 4px;
 }
 .bookingpage-badge-purchased fx-text {
-    color: #2E7D32;
+    color: var(--booking-form-primary);
 }
 
 /* ==========================================
@@ -1478,4 +1478,109 @@ fx-textfield.bookingpage-digit-field input {
 /* Checkmark inside confirmation circle should be white for contrast */
 .bookingpage-confirmation-check-circle .bookingpage-icon-primary svg path {
     stroke: white !important;
+}
+
+/* ==========================================
+   Date Card - Past Date Styling
+   ========================================== */
+
+/* Date Card - Past date styling (displayed but not selectable) */
+.bookingpage-date-card-past {
+    opacity: 0.5;
+    cursor: default;
+    pointer-events: none;  /* Disables all mouse events in web */
+}
+
+/* ==========================================
+   Select All Bar
+   ========================================== */
+
+/* Select All Bar container */
+.bookingpage-select-all-bar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 10px;
+    padding: 12px 16px;
+    background-color: var(--booking-form-selected-bg);
+    --fx-border-radius: 8px;
+    --fx-border-color: var(--booking-form-hover-border);
+    --fx-border-width: 1px;
+    --fx-border-style: solid;
+}
+
+/* Select All Bar message - default state */
+.bookingpage-select-all-message {
+    font-size: 13px;
+    flex: 1;
+}
+
+.bookingpage-select-all-message fx-text {
+    color: var(--booking-form-text-secondary);
+}
+
+/* Select All Bar message - all selected state (uses theme primary color) */
+.bookingpage-select-all-message.all-selected fx-text {
+    color: var(--booking-form-primary);
+    font-weight: 500;
+}
+
+/* Discount row styling (uses theme colors) */
+.bookingpage-discount-row {
+    background-color: var(--booking-form-selected-bg);
+    --fx-background-radius: 6px;
+    padding: 8px 12px;
+}
+
+.bookingpage-discount-label fx-text {
+    color: var(--booking-form-primary);
+    font-weight: 500;
+}
+
+.bookingpage-discount-value fx-text {
+    color: var(--booking-form-primary);
+    font-weight: 600;
+}
+
+/* Small primary button (Select All) - uses theme color */
+.bookingpage-btn-small-primary {
+    padding: 6px 14px;
+    background-color: var(--booking-form-primary);
+    --fx-border-radius: 6px;
+    font-size: 12px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: filter 0.2s ease;
+}
+
+.bookingpage-btn-small-primary fx-text {
+    color: var(--booking-form-text-on-primary);
+}
+
+.bookingpage-btn-small-primary:hover {
+    filter: brightness(1.1);
+}
+
+/* Small outline button (Clear All) */
+.bookingpage-btn-small-outline {
+    padding: 6px 14px;
+    background-color: transparent;
+    --fx-border-color: var(--booking-form-hover-border);
+    --fx-border-width: 1px;
+    --fx-border-style: solid;
+    --fx-border-radius: 6px;
+    font-size: 12px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.bookingpage-btn-small-outline fx-text {
+    color: var(--booking-form-text-secondary);
+}
+
+.bookingpage-btn-small-outline:hover {
+    --fx-border-color: var(--booking-form-primary);
+    background-color: var(--booking-form-selected-bg);
 }

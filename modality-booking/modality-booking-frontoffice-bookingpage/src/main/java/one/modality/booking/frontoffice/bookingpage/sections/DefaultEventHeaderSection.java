@@ -20,7 +20,7 @@ import one.modality.base.client.cloud.image.ModalityCloudImageService;
 import one.modality.base.client.entities.Labels;
 import one.modality.base.client.i18n.I18nEntities;
 import one.modality.base.shared.entities.Event;
-import one.modality.base.shared.entities.Organization;
+import one.modality.base.shared.entities.Site;
 import one.modality.booking.client.workingbooking.WorkingBooking;
 import one.modality.booking.client.workingbooking.WorkingBookingProperties;
 import one.modality.booking.frontoffice.bookingpage.BookingPageI18nKeys;
@@ -399,10 +399,10 @@ public class DefaultEventHeaderSection implements HasEventHeaderSection {
         endDate = event.getEndDate();
         updateDatesLabel();
 
-        // Set location from organization with i18n binding
-        Organization org = event.getOrganization();
-        if (org != null) {
-            I18nEntities.bindTranslatedEntityToTextProperty(locationLabel, org);
+        // Set location from venue (site) with i18n binding
+        Site venue = event.getVenue();
+        if (venue != null) {
+            I18nEntities.bindTranslatedEntityToTextProperty(locationLabel, venue);
         } else {
             I18nControls.bindI18nProperties(locationLabel, BookingPageI18nKeys.Online);
         }

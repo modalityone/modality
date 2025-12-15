@@ -1034,4 +1034,35 @@ public final class BookingPageUIBuilder {
         });
     }
 
+    // =============================================
+    // DATE CARD PAST STATE STYLING
+    // =============================================
+
+    /**
+     * CSS class for past/disabled date cards.
+     */
+    public static final String CSS_DATE_CARD_PAST = "bookingpage-date-card-past";
+
+    /**
+     * Applies past date styling to a card using pure CSS.
+     * Past dates are displayed but not selectable (grayed out, no hover effects).
+     *
+     * <p>CSS classes used:</p>
+     * <ul>
+     *   <li>{@code .bookingpage-date-card-past} - grayed out, no pointer events</li>
+     * </ul>
+     *
+     * @param card The card node to style
+     * @param isPastDate Whether the card represents a past date
+     */
+    public static void applyPastDateStyle(Region card, boolean isPastDate) {
+        if (isPastDate) {
+            if (!card.getStyleClass().contains(CSS_DATE_CARD_PAST)) {
+                card.getStyleClass().add(CSS_DATE_CARD_PAST);
+            }
+        } else {
+            card.getStyleClass().remove(CSS_DATE_CARD_PAST);
+        }
+    }
+
 }

@@ -67,6 +67,7 @@ public class StandardBookingForm extends MultiPageBookingForm {
 
     // Configuration
     private final BookingFormColorScheme colorScheme;
+    private final boolean showUserBadge;
     private final BookingFormPage[] pages;
     private final StandardBookingFormCallbacks callbacks;
 
@@ -101,6 +102,7 @@ public class StandardBookingForm extends MultiPageBookingForm {
             HasWorkingBookingProperties activity,
             EventBookingFormSettings settings,
             BookingFormColorScheme colorScheme,
+            boolean showUserBadge,
             List<BookingFormPage> customSteps,
             Supplier<BookingFormPage> yourInformationPageSupplier,
             Supplier<BookingFormPage> memberSelectionPageSupplier,
@@ -114,6 +116,7 @@ public class StandardBookingForm extends MultiPageBookingForm {
 
         super(activity, settings);
         this.colorScheme = colorScheme;
+        this.showUserBadge = showUserBadge;
         this.callbacks = callbacks;
         this.customStepPages = new ArrayList<>(customSteps);
 
@@ -180,6 +183,18 @@ public class StandardBookingForm extends MultiPageBookingForm {
             : createDefaultSummaryPage();
         allPages.add(summaryPage);
 
+        // Extract DefaultSummarySection from custom summary page if present
+        // This allows updateSummaryWithAttendee() to work with custom summary pages
+        if (summaryPageSupplier != null && defaultSummarySection == null && summaryPage instanceof CompositeBookingFormPage compositeSummary) {
+            for (BookingFormSection section : compositeSummary.getSections()) {
+                if (section instanceof DefaultSummarySection dss) {
+                    defaultSummarySection = dss;
+                    defaultSummarySection.setColorScheme(colorScheme);
+                    break;
+                }
+            }
+        }
+
         // 5. Pending Bookings page (optional)
         if (!skipPendingBookings) {
             // -1 if skipped
@@ -208,6 +223,7 @@ public class StandardBookingForm extends MultiPageBookingForm {
         // Set up responsive header with color scheme
         ResponsiveStepProgressHeader header = new ResponsiveStepProgressHeader();
         header.setColorScheme(colorScheme);
+        header.setShowUserBadge(showUserBadge);
         setHeader(header);
 
         // Set navigation with color scheme
