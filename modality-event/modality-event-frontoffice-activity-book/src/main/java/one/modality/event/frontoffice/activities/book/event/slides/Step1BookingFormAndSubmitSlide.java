@@ -198,6 +198,25 @@ final class Step1BookingFormAndSubmitSlide extends StepSlide implements BookingF
         );
     }
 
+    /**
+     * Sets a modification view to display instead of the normal booking form.
+     * Used when the user is modifying an existing booking to add options.
+     *
+     * @param modificationView The modification view to display
+     */
+    void setModificationView(Node modificationView) {
+        this.currentBookingForm = null; // No booking form for modification view
+
+        if (modificationView == null) {
+            mainVbox.getChildren().clear();
+            return;
+        }
+
+        // For modification view, we don't need the login/submit logic -
+        // the modification form handles its own navigation and payment
+        mainVbox.getChildren().setAll(modificationView);
+    }
+
     private void updateLoginAndSubmitVisibility() {
         boolean transiting = bookingFormTransitingProperty.get();
         // Updating login visibility

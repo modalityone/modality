@@ -8,7 +8,13 @@ import java.util.Map;
 /**
  * Defines color schemes for booking forms. Each event can have its own color scheme
  * based on the type of retreat/course, stored as event.colorScheme in the database.
- * All schemes maintain WCAG AAA accessibility.
+ *
+ * <p>Color scheme theming is now primarily handled via CSS classes (e.g., "theme-wisdom-blue")
+ * applied to the root container. This class provides:</p>
+ * <ul>
+ *   <li>{@link #getId()} - Returns the ID used for CSS theme class names</li>
+ *   <li>{@link #getPrimary()} - Returns the primary color for SVG icons (WebFX/GWT requires Java colors)</li>
+ * </ul>
  *
  * @author Bruno Salmon
  */
@@ -19,9 +25,8 @@ public final class BookingFormColorScheme {
     private final String description;
     private final Color primary;
     private final Color selectedBg;
-    private final Color hoverBorder;
     private final Color darkText;
-    private final Color lightText;
+    private final Color hoverBorder;
 
     // === PREDEFINED COLOR SCHEMES ===
 
@@ -33,11 +38,10 @@ public final class BookingFormColorScheme {
             "journey-green",
             "Journey Green",
             "Growth & Renewal",
-            Color.web("#4CAF50"),
-            Color.web("#E8F5E9"),
-            Color.web("#8DD39E"),
-            Color.web("#2E7D32"),
-            Color.web("#4CAF50")
+            Color.web("#4CAF50"),  // primary
+            Color.web("#E8F5E9"),  // selectedBg
+            Color.web("#2E7D32"),  // darkText
+            Color.web("#8DD39E")   // hoverBorder
     );
 
     /**
@@ -48,11 +52,10 @@ public final class BookingFormColorScheme {
             "wisdom-blue",
             "Wisdom Blue",
             "Clarity & Study",
-            Color.web("#1976D2"),
-            Color.web("#E3F2FD"),
-            Color.web("#90CAF9"),
-            Color.web("#0D47A1"),
-            Color.web("#42A5F5")
+            Color.web("#1976D2"),  // primary
+            Color.web("#E3F2FD"),  // selectedBg
+            Color.web("#0D47A1"),  // darkText
+            Color.web("#90CAF9")   // hoverBorder
     );
 
     /**
@@ -63,11 +66,10 @@ public final class BookingFormColorScheme {
             "compassion-rose",
             "Compassion Rose",
             "Love & Kindness",
-            Color.web("#D81B60"),
-            Color.web("#FCE4EC"),
-            Color.web("#F48FB1"),
-            Color.web("#880E4F"),
-            Color.web("#EC407A")
+            Color.web("#D81B60"),  // primary
+            Color.web("#FCE4EC"),  // selectedBg
+            Color.web("#880E4F"),  // darkText
+            Color.web("#F48FB1")   // hoverBorder
     );
 
     /**
@@ -78,11 +80,10 @@ public final class BookingFormColorScheme {
             "peace-purple",
             "Peace Purple",
             "Deep Practice",
-            Color.web("#7B1FA2"),
-            Color.web("#F3E5F5"),
-            Color.web("#CE93D8"),
-            Color.web("#4A148C"),
-            Color.web("#9C27B0")
+            Color.web("#7B1FA2"),  // primary
+            Color.web("#F3E5F5"),  // selectedBg
+            Color.web("#4A148C"),  // darkText
+            Color.web("#CE93D8")   // hoverBorder
     );
 
     /**
@@ -93,11 +94,10 @@ public final class BookingFormColorScheme {
             "joy-amber",
             "Joy Amber",
             "Celebration & Festivals",
-            Color.web("#F57C00"),
-            Color.web("#FFF3E0"),
-            Color.web("#FFB74D"),
-            Color.web("#E65100"),
-            Color.web("#FF9800")
+            Color.web("#F57C00"),  // primary
+            Color.web("#FFF3E0"),  // selectedBg
+            Color.web("#E65100"),  // darkText
+            Color.web("#FFB74D")   // hoverBorder
     );
 
     /**
@@ -108,11 +108,10 @@ public final class BookingFormColorScheme {
             "calm-teal",
             "Calm Teal",
             "Balance & Healing",
-            Color.web("#00897B"),
-            Color.web("#E0F2F1"),
-            Color.web("#80CBC4"),
-            Color.web("#004D40"),
-            Color.web("#26A69A")
+            Color.web("#00897B"),  // primary
+            Color.web("#E0F2F1"),  // selectedBg
+            Color.web("#004D40"),  // darkText
+            Color.web("#80CBC4")   // hoverBorder
     );
 
     /**
@@ -123,11 +122,10 @@ public final class BookingFormColorScheme {
             "clarity-indigo",
             "Clarity Indigo",
             "Focus & Concentration",
-            Color.web("#3949AB"),
-            Color.web("#E8EAF6"),
-            Color.web("#9FA8DA"),
-            Color.web("#1A237E"),
-            Color.web("#5C6BC0")
+            Color.web("#3949AB"),  // primary
+            Color.web("#E8EAF6"),  // selectedBg
+            Color.web("#1A237E"),  // darkText
+            Color.web("#9FA8DA")   // hoverBorder
     );
 
     /**
@@ -138,11 +136,10 @@ public final class BookingFormColorScheme {
             "vajrayogini-red",
             "Vajrayogini Red",
             "Power & Transformation",
-            Color.web("#D32F2F"),
-            Color.web("#FFEBEE"),
-            Color.web("#EF5350"),
-            Color.web("#B71C1C"),
-            Color.web("#E57373")
+            Color.web("#D32F2F"),  // primary
+            Color.web("#FFEBEE"),  // selectedBg
+            Color.web("#B71C1C"),  // darkText
+            Color.web("#EF9A9A")   // hoverBorder
     );
 
     /**
@@ -153,11 +150,10 @@ public final class BookingFormColorScheme {
             "vajrasattva-white",
             "Vajrasattva White",
             "Purification & Clarity",
-            Color.web("#455A64"),
-            Color.web("#FAFAFA"),
-            Color.web("#78909C"),
-            Color.web("#263238"),
-            Color.web("#90A4AE")
+            Color.web("#455A64"),  // primary
+            Color.web("#ECEFF1"),  // selectedBg
+            Color.web("#263238"),  // darkText
+            Color.web("#B0BEC5")   // hoverBorder
     );
 
     /**
@@ -186,19 +182,6 @@ public final class BookingFormColorScheme {
     }
 
     /**
-     * Retrieves a color scheme by its ID.
-     *
-     * @param id The color scheme ID (e.g., "journey-green", "wisdom-blue")
-     * @return The matching color scheme, or DEFAULT if not found
-     */
-    public static BookingFormColorScheme fromId(String id) {
-        if (id == null || id.isEmpty()) {
-            return DEFAULT;
-        }
-        return SCHEMES_BY_ID.getOrDefault(id, DEFAULT);
-    }
-
-    /**
      * Returns all available color schemes.
      *
      * @return Iterable of all registered color schemes
@@ -209,21 +192,23 @@ public final class BookingFormColorScheme {
 
     // === CONSTRUCTOR ===
 
-    private BookingFormColorScheme(String id, String name, String description,
-                                   Color primary, Color selectedBg, Color hoverBorder,
-                                   Color darkText, Color lightText) {
+    private BookingFormColorScheme(String id, String name, String description, Color primary,
+                                   Color selectedBg, Color darkText, Color hoverBorder) {
         this.id = id;
         this.name = name;
         this.description = description;
         this.primary = primary;
         this.selectedBg = selectedBg;
-        this.hoverBorder = hoverBorder;
         this.darkText = darkText;
-        this.lightText = lightText;
+        this.hoverBorder = hoverBorder;
     }
 
     // === GETTERS ===
 
+    /**
+     * Returns the unique identifier for this color scheme.
+     * Used to apply CSS theme classes (e.g., "theme-wisdom-blue").
+     */
     public String getId() {
         return id;
     }
@@ -237,108 +222,32 @@ public final class BookingFormColorScheme {
     }
 
     /**
-     * Primary accent color used for main interactive elements.
+     * Primary accent color used for SVG icons and dynamic elements.
+     * This is needed because WebFX/GWT has unreliable CSS color rendering for SVG strokes/fills.
      */
     public Color getPrimary() {
         return primary;
     }
 
     /**
-     * Background color for selected/active states.
+     * Light background color for selected/highlighted states (e.g., user badge background).
      */
     public Color getSelectedBg() {
         return selectedBg;
     }
 
     /**
-     * Border color on hover states.
-     */
-    public Color getHoverBorder() {
-        return hoverBorder;
-    }
-
-    /**
-     * Dark text color for headings and important text.
+     * Dark accent text color that complements the primary color.
      */
     public Color getDarkText() {
         return darkText;
     }
 
     /**
-     * Lighter text color for secondary text.
+     * Border color used for hover states on interactive elements.
      */
-    public Color getLightText() {
-        return lightText;
-    }
-
-    // === UTILITY METHODS ===
-
-    /**
-     * Converts a Color to hex string (e.g., "#4CAF50").
-     */
-    public static String toHex(Color color) {
-        int r = (int) (color.getRed() * 255);
-        int g = (int) (color.getGreen() * 255);
-        int b = (int) (color.getBlue() * 255);
-        return "#" + toHexByte(r) + toHexByte(g) + toHexByte(b);
-    }
-
-    /**
-     * Converts an integer (0-255) to a two-character hex string (GWT-compatible).
-     */
-    private static String toHexByte(int value) {
-        String hex = Integer.toHexString(value).toUpperCase();
-        return hex.length() == 1 ? "0" + hex : hex;
-    }
-
-    /**
-     * Returns the primary color as a hex string.
-     */
-    public String getPrimaryHex() {
-        return toHex(primary);
-    }
-
-    /**
-     * Returns the selected background color as a hex string.
-     */
-    public String getSelectedBgHex() {
-        return toHex(selectedBg);
-    }
-
-    /**
-     * Returns the hover border color as a hex string.
-     */
-    public String getHoverBorderHex() {
-        return toHex(hoverBorder);
-    }
-
-    /**
-     * Returns the dark text color as a hex string.
-     */
-    public String getDarkTextHex() {
-        return toHex(darkText);
-    }
-
-    /**
-     * Returns the light text color as a hex string.
-     */
-    public String getLightTextHex() {
-        return toHex(lightText);
-    }
-
-    /**
-     * Returns a darker version of the primary color for hover states.
-     * This is calculated by reducing the brightness by 15%.
-     */
-    public Color getPrimaryDarker() {
-        return primary.darker();
-    }
-
-    /**
-     * Returns the darker primary color as a hex string.
-     */
-    public String getPrimaryDarkerHex() {
-        return toHex(getPrimaryDarker());
+    public Color getHoverBorder() {
+        return hoverBorder;
     }
 
     @Override

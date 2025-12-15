@@ -21,7 +21,6 @@ import one.modality.booking.frontoffice.bookingpage.navigation.ButtonNavigation;
 import one.modality.booking.frontoffice.bookingpage.navigation.ResponsiveStepProgressHeader;
 import one.modality.booking.frontoffice.bookingpage.sections.*;
 import one.modality.booking.frontoffice.bookingpage.theme.BookingFormColorScheme;
-import one.modality.booking.frontoffice.bookingpage.theme.ThemedBookingFormSection;
 import one.modality.crm.shared.services.authn.ModalityUserPrincipal;
 import one.modality.crm.shared.services.authn.fx.FXModalityUserPrincipal;
 import one.modality.crm.shared.services.authn.fx.FXUserPerson;
@@ -68,6 +67,7 @@ public class StandardBookingForm extends MultiPageBookingForm {
 
     // Configuration
     private final BookingFormColorScheme colorScheme;
+    private final boolean showUserBadge;
     private final BookingFormPage[] pages;
     private final StandardBookingFormCallbacks callbacks;
 
@@ -102,6 +102,7 @@ public class StandardBookingForm extends MultiPageBookingForm {
             HasWorkingBookingProperties activity,
             EventBookingFormSettings settings,
             BookingFormColorScheme colorScheme,
+            boolean showUserBadge,
             List<BookingFormPage> customSteps,
             Supplier<BookingFormPage> yourInformationPageSupplier,
             Supplier<BookingFormPage> memberSelectionPageSupplier,
@@ -115,6 +116,7 @@ public class StandardBookingForm extends MultiPageBookingForm {
 
         super(activity, settings);
         this.colorScheme = colorScheme;
+        this.showUserBadge = showUserBadge;
         this.callbacks = callbacks;
         this.customStepPages = new ArrayList<>(customSteps);
 
@@ -181,6 +183,18 @@ public class StandardBookingForm extends MultiPageBookingForm {
             : createDefaultSummaryPage();
         allPages.add(summaryPage);
 
+        // Extract DefaultSummarySection from custom summary page if present
+        // This allows updateSummaryWithAttendee() to work with custom summary pages
+        if (summaryPageSupplier != null && defaultSummarySection == null && summaryPage instanceof CompositeBookingFormPage compositeSummary) {
+            for (BookingFormSection section : compositeSummary.getSections()) {
+                if (section instanceof DefaultSummarySection dss) {
+                    defaultSummarySection = dss;
+                    defaultSummarySection.setColorScheme(colorScheme);
+                    break;
+                }
+            }
+        }
+
         // 5. Pending Bookings page (optional)
         if (!skipPendingBookings) {
             // -1 if skipped
@@ -209,6 +223,7 @@ public class StandardBookingForm extends MultiPageBookingForm {
         // Set up responsive header with color scheme
         ResponsiveStepProgressHeader header = new ResponsiveStepProgressHeader();
         header.setColorScheme(colorScheme);
+        header.setShowUserBadge(showUserBadge);
         setHeader(header);
 
         // Set navigation with color scheme
@@ -235,7 +250,7 @@ public class StandardBookingForm extends MultiPageBookingForm {
         defaultYourInformationSection = new DefaultYourInformationSection();
         defaultYourInformationSection.setColorScheme(colorScheme);
         return new CompositeBookingFormPage(BookingPageI18nKeys.YourInformation,
-                new ThemedBookingFormSection(defaultYourInformationSection, colorScheme))
+                defaultYourInformationSection)
             .setStep(false)
             .setShowingOwnSubmitButton(true);
     }
@@ -244,7 +259,7 @@ public class StandardBookingForm extends MultiPageBookingForm {
         defaultMemberSelectionSection = new DefaultMemberSelectionSection();
         defaultMemberSelectionSection.setColorScheme(colorScheme);
         return new CompositeBookingFormPage(BookingPageI18nKeys.MemberSelection,
-                new ThemedBookingFormSection(defaultMemberSelectionSection, colorScheme))
+                defaultMemberSelectionSection)
             .setStep(true)
             .setShowingOwnSubmitButton(true);
     }
@@ -253,7 +268,7 @@ public class StandardBookingForm extends MultiPageBookingForm {
         defaultSummarySection = new DefaultSummarySection();
         defaultSummarySection.setColorScheme(colorScheme);
         return new CompositeBookingFormPage(BookingPageI18nKeys.Summary,
-                new ThemedBookingFormSection(defaultSummarySection, colorScheme))
+                defaultSummarySection)
             .setStep(true);
     }
 
@@ -261,7 +276,7 @@ public class StandardBookingForm extends MultiPageBookingForm {
         defaultPendingBookingsSection = new DefaultPendingBookingsSection();
         defaultPendingBookingsSection.setColorScheme(colorScheme);
         return new CompositeBookingFormPage(BookingPageI18nKeys.PendingBookings,
-                new ThemedBookingFormSection(defaultPendingBookingsSection, colorScheme))
+                defaultPendingBookingsSection)
             .setStep(true);
     }
 
@@ -269,7 +284,7 @@ public class StandardBookingForm extends MultiPageBookingForm {
         defaultPaymentSection = new DefaultPaymentSection();
         defaultPaymentSection.setColorScheme(colorScheme);
         return new CompositeBookingFormPage(BookingPageI18nKeys.Payment,
-                new ThemedBookingFormSection(defaultPaymentSection, colorScheme))
+                defaultPaymentSection)
             .setStep(true);
     }
 
@@ -277,7 +292,7 @@ public class StandardBookingForm extends MultiPageBookingForm {
         defaultConfirmationSection = new DefaultConfirmationSection();
         defaultConfirmationSection.setColorScheme(colorScheme);
         return new CompositeBookingFormPage(BookingPageI18nKeys.Confirmation,
-                new ThemedBookingFormSection(defaultConfirmationSection, colorScheme))
+                defaultConfirmationSection)
             .setStep(true)
             .setButtons() // No navigation buttons on confirmation page
             .setShowingOwnSubmitButton(true); // Prevents default activity-level submit button from showing
@@ -340,11 +355,15 @@ public class StandardBookingForm extends MultiPageBookingForm {
         }
 
         // Pending Bookings page: Register Another Person + Proceed to Payment
+        // Register Another Person is disabled when no available members to book
         if (pendingBookingsPage instanceof CompositeBookingFormPage compositePending) {
             compositePending.setButtons(
                 new BookingFormButton(BookingPageI18nKeys.RegisterAnotherPerson,
                     e -> handleRegisterAnotherPerson(),
-                    "btn-secondary booking-form-btn-secondary"),
+                    "btn-secondary booking-form-btn-secondary",
+                    defaultMemberSelectionSection != null
+                        ? Bindings.not(defaultMemberSelectionSection.hasAvailableMembersProperty())
+                        : null),
                 new BookingFormButton(BookingPageI18nKeys.ProceedToPaymentArrow,
                     e -> handleProceedToPayment(),
                     "btn-primary booking-form-btn-primary")
@@ -783,6 +802,10 @@ public class StandardBookingForm extends MultiPageBookingForm {
                     Item item = line.getItem();
                     if (item != null) {
                         ItemFamily family = item.getFamily();
+                        // Skip items where family has summaryHidden = true (e.g., rounding)
+                        if (family != null && Boolean.TRUE.equals(family.isSummaryHidden())) {
+                            continue;
+                        }
                         String familyCode = family != null ? family.getCode() : "";
                         // Use family name for display, fall back to item name if no family
                         String familyName = (family != null && family.getName() != null) ? family.getName() : null;
@@ -799,6 +822,20 @@ public class StandardBookingForm extends MultiPageBookingForm {
             }
 
             defaultPendingBookingsSection.addBooking(bookingItem);
+        }
+
+        // Update alreadyBookedPersonIds in member selection section
+        // This ensures the "Register Another Person" button is correctly enabled/disabled
+        if (defaultMemberSelectionSection != null) {
+            Set<Object> bookedPersonIds = new HashSet<>();
+            for (Document doc : documents) {
+                Person person = doc.getPerson();
+                if (person != null) {
+                    // MUST use getPrimaryKey() to match how MemberInfo stores person IDs
+                    bookedPersonIds.add(person.getPrimaryKey());
+                }
+            }
+            defaultMemberSelectionSection.setAlreadyBookedPersonIds(bookedPersonIds);
         }
 
         Console.log("Added " + documents.size() + " bookings to pending bookings section");
@@ -918,13 +955,6 @@ public class StandardBookingForm extends MultiPageBookingForm {
                     if (section instanceof ResettableSection) {
                         ((ResettableSection) section).reset();
                     }
-                    // Check wrapped sections (ThemedBookingFormSection delegates)
-                    if (section instanceof ThemedBookingFormSection) {
-                        BookingFormSection delegate = ((ThemedBookingFormSection) section).getDelegate();
-                        if (delegate instanceof ResettableSection) {
-                            ((ResettableSection) delegate).reset();
-                        }
-                    }
                 }
             }
         }
@@ -945,6 +975,7 @@ public class StandardBookingForm extends MultiPageBookingForm {
             .map(entry -> new PaymentAllocation(Entities.getPrimaryKey(entry.getKey()), entry.getValue()))
             .toArray(PaymentAllocation[]::new);
 
+        // TODO: show an error message to the user
         return PaymentService.initiatePayment(
                 ClientPaymentUtil.createInitiatePaymentArgument(
                     sectionResult.getAmount(),
@@ -954,10 +985,7 @@ public class StandardBookingForm extends MultiPageBookingForm {
                     "/payment-cancel/:moneyTransferId")
             )
             .inUiThread()
-            .onFailure(paymentResult -> {
-                // TODO: show an error message to the user
-                Console.log(paymentResult);
-            })
+            .onFailure(Console::log)
             .compose(paymentResult -> {
                 HasPersonalDetails buyerDetails = FXUserPerson.getUserPerson();
                 if (buyerDetails == null)

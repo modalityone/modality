@@ -64,6 +64,9 @@ public class StandardBookingFormBuilder {
     // Theme
     private BookingFormColorScheme colorScheme = BookingFormColorScheme.DEFAULT;
 
+    // Header options
+    private boolean showUserBadge = false; // Hide user badge in header by default
+
     // Callbacks for inter-step communication
     private StandardBookingFormCallbacks callbacks;
 
@@ -105,7 +108,34 @@ public class StandardBookingFormBuilder {
         return this;
     }
 
+    /**
+     * Sets whether to show the user badge in the step progress header.
+     * When true, shows a badge with the logged-in user's initials and name.
+     * Default is false (badge hidden).
+     *
+     * @param show true to show the badge, false to hide it
+     * @return This builder for chaining
+     */
+    public StandardBookingFormBuilder withShowUserBadge(boolean show) {
+        this.showUserBadge = show;
+        return this;
+    }
+
     // === Common Step Overrides ===
+
+    /**
+     * Sets a custom summary page supplier to use instead of the default summary page.
+     * This allows forms to provide a completely custom summary page with their own sections.
+     *
+     * @param supplier The supplier that creates the custom summary page
+     * @return This builder for chaining
+     */
+    public StandardBookingFormBuilder withSummaryPageSupplier(Supplier<BookingFormPage> supplier) {
+        this.summaryPageSupplier = supplier;
+        return this;
+    }
+
+    // === Other Common Step Overrides ===
 
     // === Callbacks ===
 
@@ -139,6 +169,7 @@ public class StandardBookingFormBuilder {
             activity,
             settings,
             colorScheme,
+            showUserBadge,
             customSteps,
             yourInformationPageSupplier,
             memberSelectionPageSupplier,

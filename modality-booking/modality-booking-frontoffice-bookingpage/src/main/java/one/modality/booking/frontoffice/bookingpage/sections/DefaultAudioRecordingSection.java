@@ -25,6 +25,7 @@ import one.modality.booking.frontoffice.bookingpage.PriceFormatter;
 import one.modality.booking.frontoffice.bookingpage.components.BookingPageUIBuilder;
 import one.modality.booking.frontoffice.bookingpage.components.StyledSectionHeader;
 import one.modality.booking.frontoffice.bookingpage.theme.BookingFormColorScheme;
+import one.modality.ecommerce.document.service.DocumentAggregate;
 import one.modality.ecommerce.document.service.PolicyAggregate;
 
 import java.time.LocalDate;
@@ -41,8 +42,8 @@ import java.util.stream.Collectors;
  *
  * <p>CSS classes used:</p>
  * <ul>
- *   <li>{@code .booking-form-audio-recording-card} - card container</li>
- *   <li>{@code .booking-form-audio-recording-card.selected} - selected state</li>
+ *   <li>{@code .bookingpage-checkbox-card} - card container (generic checkbox card style)</li>
+ *   <li>{@code .bookingpage-checkbox-card.selected} - selected state</li>
  * </ul>
  *
  * @author Bruno Salmon
@@ -57,6 +58,8 @@ public class DefaultAudioRecordingSection implements HasAudioRecordingSection {
     protected final ObjectProperty<BookingFormColorScheme> colorScheme = new SimpleObjectProperty<>(BookingFormColorScheme.DEFAULT);
 
     protected final Set<Item> selectedRecordingItems = new HashSet<>();
+    // Items that were already booked in the initial booking and cannot be deselected
+    protected final Set<Item> lockedItems = new HashSet<>();
 
     protected WorkingBookingProperties workingBookingProperties;
     protected BookablePeriod selectedProgramme;
@@ -77,15 +80,11 @@ public class DefaultAudioRecordingSection implements HasAudioRecordingSection {
         );
         header.colorSchemeProperty().bind(colorScheme);
 
-        // Info box - styled via CSS
-        VBox infoBox = new VBox(8);
-        infoBox.setPadding(new Insets(14, 18, 14, 18));
-        infoBox.getStyleClass().add("booking-form-info-box");
-
-        Label infoText = I18nControls.newLabel(BookingPageI18nKeys.AudioRecordingInfoText);
-        infoText.setWrapText(true);
-        infoText.getStyleClass().addAll("bookingpage-text-sm", "bookingpage-text-secondary");
-        infoBox.getChildren().add(infoText);
+        // Info box - outline style with primary color border
+        HBox infoBox = BookingPageUIBuilder.createInfoBox(
+            BookingPageI18nKeys.AudioRecordingInfoText,
+            BookingPageUIBuilder.InfoBoxType.OUTLINE_PRIMARY
+        );
 
         // Cards container
         cardsPane.setPadding(new Insets(0));
@@ -115,6 +114,7 @@ public class DefaultAudioRecordingSection implements HasAudioRecordingSection {
         cardsPane.getChildren().clear();
         recordingCards.clear();
         selectedRecordingItems.clear();
+        lockedItems.clear();
 
         if (workingBookingProperties == null) {
             return;
@@ -133,6 +133,9 @@ public class DefaultAudioRecordingSection implements HasAudioRecordingSection {
             return;
         }
 
+        // Detect which items are locked (already booked in initial booking)
+        detectLockedItems();
+
         List<LocalDate> programmeDates = getProgrammeDates(policyAggregate);
 
         List<Rate> audioRecordingRates = policyAggregate.getDailyRates().stream()
@@ -144,13 +147,14 @@ public class DefaultAudioRecordingSection implements HasAudioRecordingSection {
             List<ScheduledItem> scheduledItems = entry.getValue();
 
             int totalPrice = calculatePriceForItem(recordingItem, scheduledItems, programmeDates, audioRecordingRates);
+            boolean isLocked = lockedItems.contains(recordingItem);
 
-            createRecordingCard(recordingItem, totalPrice);
+            createRecordingCard(recordingItem, totalPrice, isLocked);
         }
 
-        // Restore previous selections
+        // Restore previous selections (but locked items are always selected)
         for (AudioRecordingCard card : recordingCards) {
-            if (previouslySelectedItemKeys.contains(card.recordingItem.getPrimaryKey())) {
+            if (card.isLocked() || previouslySelectedItemKeys.contains(card.recordingItem.getPrimaryKey())) {
                 selectedRecordingItems.add(card.recordingItem);
                 card.setSelected(true);
             }
@@ -159,10 +163,50 @@ public class DefaultAudioRecordingSection implements HasAudioRecordingSection {
         notifySelectionChanged();
     }
 
+    /**
+     * Detects which audio recording items were already booked in the initial booking.
+     * These items will be marked as "locked" and cannot be deselected.
+     */
+    protected void detectLockedItems() {
+        if (workingBookingProperties == null) {
+            return;
+        }
+
+        WorkingBooking workingBooking = workingBookingProperties.getWorkingBooking();
+        DocumentAggregate initialBooking = workingBooking.getInitialDocumentAggregate();
+
+        if (initialBooking == null) {
+            // No initial booking = new booking, nothing is locked
+            return;
+        }
+
+        // Check which audio recordings were already booked in the initial booking
+        for (Map.Entry<Item, List<ScheduledItem>> entry : audioRecordingsByItem.entrySet()) {
+            Item recordingItem = entry.getKey();
+            List<ScheduledItem> scheduledItems = entry.getValue();
+
+            // Check if there's a document line for this item in the initial booking
+            if (!scheduledItems.isEmpty()) {
+                ScheduledItem sample = scheduledItems.get(0);
+                if (initialBooking.getFirstSiteItemDocumentLine(sample.getSite(), recordingItem) != null) {
+                    lockedItems.add(recordingItem);
+                }
+            }
+        }
+    }
+
     protected List<LocalDate> getProgrammeDates(PolicyAggregate policyAggregate) {
         List<LocalDate> dates = new ArrayList<>();
+        List<ScheduledItem> teachingItems = policyAggregate.filterTeachingScheduledItems();
 
         if (selectedProgramme == null) {
+            // No specific programme selected - use all teaching dates (for booking modification flow)
+            for (ScheduledItem teachingItem : teachingItems) {
+                LocalDate itemDate = teachingItem.getDate();
+                if (itemDate != null && !dates.contains(itemDate)) {
+                    dates.add(itemDate);
+                }
+            }
             return dates;
         }
 
@@ -180,7 +224,6 @@ public class DefaultAudioRecordingSection implements HasAudioRecordingSection {
             return dates;
         }
 
-        List<ScheduledItem> teachingItems = policyAggregate.filterTeachingScheduledItems();
         for (ScheduledItem teachingItem : teachingItems) {
             LocalDate itemDate = teachingItem.getDate();
             if (itemDate != null && !itemDate.isBefore(startDate) && !itemDate.isAfter(endDate)) {
@@ -225,8 +268,8 @@ public class DefaultAudioRecordingSection implements HasAudioRecordingSection {
         return totalPrice;
     }
 
-    protected void createRecordingCard(Item recordingItem, int price) {
-        AudioRecordingCard card = new AudioRecordingCard(recordingItem, price, colorScheme);
+    protected void createRecordingCard(Item recordingItem, int price, boolean isLocked) {
+        AudioRecordingCard card = new AudioRecordingCard(recordingItem, price, isLocked, colorScheme);
         card.setOnClick(() -> handleCardSelection(card, recordingItem));
 
         I18nEntities.bindTranslatedEntityToTextProperty(card.getTitleLabel(), recordingItem);
@@ -236,6 +279,11 @@ public class DefaultAudioRecordingSection implements HasAudioRecordingSection {
     }
 
     protected void handleCardSelection(AudioRecordingCard selectedCard, Item recordingItem) {
+        // Prevent deselecting locked items (already booked in initial booking)
+        if (selectedCard.isLocked()) {
+            return; // Cannot toggle locked items
+        }
+
         boolean wasSelected = selectedRecordingItems.contains(recordingItem);
 
         if (wasSelected) {
@@ -252,6 +300,7 @@ public class DefaultAudioRecordingSection implements HasAudioRecordingSection {
 
     /**
      * Syncs the current audio recording selections to WorkingBooking.
+     * Books selected items and unbooks deselected items (except locked ones).
      */
     protected void syncSelectionsToWorkingBooking() {
         if (workingBookingProperties == null) {
@@ -260,10 +309,20 @@ public class DefaultAudioRecordingSection implements HasAudioRecordingSection {
 
         WorkingBooking workingBooking = workingBookingProperties.getWorkingBooking();
 
-        for (Item recordingItem : selectedRecordingItems) {
+        // Process all available items - book selected, unbook non-selected (except locked)
+        for (Item recordingItem : audioRecordingsByItem.keySet()) {
             List<ScheduledItem> audioItems = getScheduledItemsForRecording(recordingItem);
             if (!audioItems.isEmpty()) {
-                workingBooking.bookScheduledItems(audioItems, true);
+                boolean isSelected = selectedRecordingItems.contains(recordingItem);
+                boolean isLocked = lockedItems.contains(recordingItem);
+
+                if (isSelected) {
+                    // Book the item (addOnly=true to not affect other items)
+                    workingBooking.bookScheduledItems(audioItems, true);
+                } else if (!isLocked) {
+                    // Unbook non-locked, non-selected items
+                    workingBooking.unbookScheduledItems(audioItems);
+                }
             }
         }
     }
@@ -341,35 +400,86 @@ public class DefaultAudioRecordingSection implements HasAudioRecordingSection {
         }
     }
 
+    @Override
+    public void setOnSelectionChanged(Consumer<Set<Item>> callback) {
+        this.onSelectionChanged = callback;
+    }
+
+    /**
+     * Returns the set of locked items (items already purchased in the initial booking).
+     * These items cannot be deselected.
+     */
+    public Set<Item> getLockedItems() {
+        return Collections.unmodifiableSet(lockedItems);
+    }
+
+    /**
+     * Returns true if there are audio recordings available that are not locked.
+     * Used to determine if the user has options to select from.
+     */
+    public boolean hasAvailableRecordings() {
+        if (audioRecordingsByItem == null || audioRecordingsByItem.isEmpty()) {
+            return false;
+        }
+        // Check if there are any items that are not locked
+        for (Item item : audioRecordingsByItem.keySet()) {
+            if (!lockedItems.contains(item)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    /**
+     * Returns true if any recordings are loaded (including locked ones).
+     */
+    public boolean hasAnyRecordings() {
+        return audioRecordingsByItem != null && !audioRecordingsByItem.isEmpty();
+    }
+
     /**
      * Card component for audio recording selection.
      * Uses CSS classes for styling and BookingPageUIBuilder for checkbox indicator.
      *
      * <p>CSS classes:</p>
      * <ul>
-     *   <li>{@code .booking-form-audio-recording-card} - base styling</li>
+     *   <li>{@code .bookingpage-checkbox-card} - base styling (generic checkbox card)</li>
      *   <li>{@code .selected} - added when card is selected</li>
+     *   <li>{@code .locked} - added when card represents an item already in the initial booking</li>
      * </ul>
      */
-    private static class AudioRecordingCard extends HBox {
+    protected static class AudioRecordingCard extends HBox {
 
-        private final Item recordingItem;
+        final Item recordingItem;
         private final SimpleBooleanProperty selected = new SimpleBooleanProperty(false);
+        private final boolean locked;
 
         private final Label titleLabel;
 
         private Runnable onClick;
 
-        AudioRecordingCard(Item recordingItem, int price, ObjectProperty<BookingFormColorScheme> colorSchemeProperty) {
+        AudioRecordingCard(Item recordingItem, int price, boolean locked, ObjectProperty<BookingFormColorScheme> colorSchemeProperty) {
             this.recordingItem = recordingItem;
+            this.locked = locked;
 
             // Checkbox indicator using BookingPageUIBuilder - pass property for reactive theme updates
             StackPane checkboxIndicator = BookingPageUIBuilder.createCheckboxIndicator(selected, colorSchemeProperty);
 
-            // Title - styled via CSS
+            // Title container with optional "PURCHASED" badge for locked items
+            VBox titleContainer = new VBox(2);
+            titleContainer.setAlignment(Pos.CENTER_LEFT);
             titleLabel = new Label();
             titleLabel.getStyleClass().addAll("bookingpage-font-semibold", "bookingpage-text-base", "bookingpage-text-dark");
-            HBox.setHgrow(titleLabel, Priority.ALWAYS);
+
+            if (locked) {
+                // Add "PURCHASED" badge for locked items
+                Label purchasedBadge = I18nControls.newLabel(BookingPageI18nKeys.Purchased);
+                purchasedBadge.getStyleClass().addAll("bookingpage-text-xs", "bookingpage-badge-purchased");
+                titleContainer.getChildren().addAll(titleLabel, purchasedBadge);
+            } else {
+                titleContainer.getChildren().add(titleLabel);
+            }
+            HBox.setHgrow(titleContainer, Priority.ALWAYS);
 
             // Price - styled via CSS
             Label priceLabel = new Label(PriceFormatter.formatPriceWithCurrencyNoDecimals(price));
@@ -379,9 +489,16 @@ public class DefaultAudioRecordingSection implements HasAudioRecordingSection {
             setAlignment(Pos.CENTER_LEFT);
             setSpacing(12);
             setPadding(new Insets(16, 20, 16, 16));
-            getChildren().addAll(checkboxIndicator, titleLabel, priceLabel);
-            getStyleClass().add("booking-form-audio-recording-card");
-            setCursor(Cursor.HAND);
+            getChildren().addAll(checkboxIndicator, titleContainer, priceLabel);
+            getStyleClass().add("bookingpage-checkbox-card");
+
+            // Locked items are not clickable - use default cursor
+            setCursor(locked ? Cursor.DEFAULT : Cursor.HAND);
+
+            // Add locked CSS class
+            if (locked) {
+                getStyleClass().add("locked");
+            }
 
             // React to selection changes - toggle CSS class for card styling
             selected.addListener((obs, oldVal, newVal) -> {
@@ -402,6 +519,10 @@ public class DefaultAudioRecordingSection implements HasAudioRecordingSection {
 
         Label getTitleLabel() {
             return titleLabel;
+        }
+
+        boolean isLocked() {
+            return locked;
         }
 
         void setSelected(boolean selected) {

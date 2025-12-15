@@ -7,6 +7,7 @@ import dev.webfx.platform.util.collection.Collections;
 import javafx.scene.layout.Region;
 import one.modality.base.shared.entities.Event;
 import one.modality.booking.frontoffice.bookingform.BookingForm;
+import one.modality.booking.frontoffice.bookingform.BookingFormEntryPoint;
 import one.modality.booking.frontoffice.bookingform.BookingFormProvider;
 import one.modality.booking.frontoffice.bookingform.GatewayPaymentForm;
 import one.modality.ecommerce.payment.CancelPaymentResult;
@@ -59,15 +60,15 @@ final class DigitsSlideController {
     }
 
     void onEventChanged(Event event) {
-        // Searching for a booking form provider suitable for this event
+        // Searching for a booking form provider suitable for this event (for new bookings)
         BookingFormProvider bookingFormProvider = Collections.findFirst(ALL_BOOKING_FORM_PROVIDERS_SORTED_BY_PRIORITY,
-                provider -> provider.acceptEvent(event));
+                provider -> provider.acceptEvent(event, BookingFormEntryPoint.NEW_BOOKING));
         if (bookingFormProvider == null) {
             bookingForm = null;
             step6ErrorSlide.setErrorMessage("Error: Unmanaged type of event");
             displaySlide(step6ErrorSlide);
         } else {
-            bookingForm = bookingFormProvider.createBookingForm(event, bookEventActivity);
+            bookingForm = bookingFormProvider.createBookingForm(event, bookEventActivity, BookingFormEntryPoint.NEW_BOOKING);
             bookingFormCreated = true;
         }
     }
@@ -89,7 +90,23 @@ final class DigitsSlideController {
             onReadyToReveal.run();
         else {
             if (bookingFormCreated) {
-                step1BookingFormAndSubmitSlide.setBookingForm(bookingForm);
+                // Check if this is a modification flow (not new booking, not payment request)
+                one.modality.booking.client.workingbooking.WorkingBooking workingBooking = bookEventActivity.getWorkingBooking();
+                boolean isModificationFlow = workingBooking != null
+                    && !workingBooking.isNewBooking()
+                    && !workingBooking.isPaymentRequestedByUser()
+                    && bookingForm.supportsModificationView();
+
+                if (isModificationFlow) {
+                    // Use modification view instead of normal booking form
+                    javafx.scene.Node modificationView = bookingForm.getModificationView();
+                    if (modificationView != null) {
+                        step1BookingFormAndSubmitSlide.setModificationView(modificationView);
+                    }
+                } else {
+                    step1BookingFormAndSubmitSlide.setBookingForm(bookingForm);
+                }
+
                 // Sub-routing node binding (displaying the possible sub-routing account node in
                 // the appropriate place in step2)
                 step1BookingFormAndSubmitSlide.accountMountNodeProperty().bind(bookEventActivity.mountNodeProperty());

@@ -1,6 +1,7 @@
 package one.modality.booking.frontoffice.bookingpage.sections;
 
 import dev.webfx.extras.i18n.I18n;
+import dev.webfx.extras.i18n.controls.I18nControls;
 import dev.webfx.extras.panes.MonoPane;
 import dev.webfx.extras.responsive.ResponsiveDesign;
 import javafx.beans.property.ObjectProperty;
@@ -19,7 +20,7 @@ import one.modality.base.client.cloud.image.ModalityCloudImageService;
 import one.modality.base.client.entities.Labels;
 import one.modality.base.client.i18n.I18nEntities;
 import one.modality.base.shared.entities.Event;
-import one.modality.base.shared.entities.Organization;
+import one.modality.base.shared.entities.Site;
 import one.modality.booking.client.workingbooking.WorkingBooking;
 import one.modality.booking.client.workingbooking.WorkingBookingProperties;
 import one.modality.booking.frontoffice.bookingpage.BookingPageI18nKeys;
@@ -115,31 +116,41 @@ public class DefaultEventHeaderSection implements HasEventHeaderSection {
         // Content section
         contentBox.setAlignment(Pos.CENTER_LEFT);
         contentBox.setPadding(new Insets(24, 28, 24, 28));
+        contentBox.setMinWidth(0); // Allow shrinking for responsive design
         HBox.setHgrow(contentBox, Priority.ALWAYS);
 
         // Title - styled via CSS
         titleLabel = new Label();
         titleLabel.setWrapText(true);
+        titleLabel.setMinWidth(0); // Allow shrinking for text wrap
         titleLabel.getStyleClass().add("booking-form-event-header-title");
 
         // Meta row (dates + location) - FlowPane allows wrapping when space is limited
         FlowPane metaBox = new FlowPane(24, 8);
         metaBox.setAlignment(Pos.CENTER_LEFT);
+        metaBox.setMinWidth(0); // Allow shrinking for responsive design
 
         // Dates with calendar icon
         HBox datesBox = new HBox(8);
         datesBox.setAlignment(Pos.CENTER_LEFT);
         SVGPath calendarIcon = createCalendarIcon();
         datesLabel = new Label();
+        datesLabel.setWrapText(true);
+        datesLabel.setMinWidth(0); // Allow shrinking for text wrap
         datesLabel.getStyleClass().addAll("bookingpage-text-md", "bookingpage-text-muted");
         datesBox.getChildren().addAll(calendarIcon, datesLabel);
 
         // Location with pin icon
         HBox locationBox = new HBox(8);
         locationBox.setAlignment(Pos.CENTER_LEFT);
+        locationBox.setMinWidth(0); // Allow shrinking for text wrap
         SVGPath locationIcon = createLocationIcon();
         locationLabel = new Label();
+        locationLabel.setWrapText(true);
+        locationLabel.setMinWidth(0); // Allow shrinking for text wrap
+        locationLabel.setMaxWidth(Double.MAX_VALUE); // Required for text wrap in WebFX
         locationLabel.getStyleClass().addAll("bookingpage-text-md", "bookingpage-text-muted");
+        HBox.setHgrow(locationLabel, Priority.ALWAYS); // Allow label to fill and wrap
         locationBox.getChildren().addAll(locationIcon, locationLabel);
 
         metaBox.getChildren().addAll(datesBox, locationBox);
@@ -147,6 +158,7 @@ public class DefaultEventHeaderSection implements HasEventHeaderSection {
         // Description - styled via CSS
         descriptionLabel = new Label();
         descriptionLabel.setWrapText(true);
+        descriptionLabel.setMinWidth(0); // Allow shrinking for text wrap
         descriptionLabel.getStyleClass().addAll("bookingpage-text-base", "bookingpage-text-secondary");
         descriptionLabel.managedProperty().bind(descriptionLabel.textProperty().isNotEmpty());
         descriptionLabel.visibleProperty().bind(descriptionLabel.textProperty().isNotEmpty());
@@ -230,6 +242,25 @@ public class DefaultEventHeaderSection implements HasEventHeaderSection {
         desktopModeActive = false;
         setImageVisibility(false);
         contentBox.setPadding(new Insets(16, 20, 16, 20));
+        // Smaller title font for mobile
+        titleLabel.getStyleClass().remove("booking-form-event-header-title");
+        if (!titleLabel.getStyleClass().contains("booking-form-event-header-title-mobile")) {
+            titleLabel.getStyleClass().add("booking-form-event-header-title-mobile");
+        }
+        // Smaller meta text for mobile
+        applyMobileMetaStyle();
+    }
+
+    private void applyMobileMetaStyle() {
+        // Switch from bookingpage-text-md to bookingpage-text-sm for dates and location
+        datesLabel.getStyleClass().remove("bookingpage-text-md");
+        if (!datesLabel.getStyleClass().contains("bookingpage-text-sm")) {
+            datesLabel.getStyleClass().add("bookingpage-text-sm");
+        }
+        locationLabel.getStyleClass().remove("bookingpage-text-md");
+        if (!locationLabel.getStyleClass().contains("bookingpage-text-sm")) {
+            locationLabel.getStyleClass().add("bookingpage-text-sm");
+        }
     }
 
     private void applySmallTabletLayout() {
@@ -237,6 +268,7 @@ public class DefaultEventHeaderSection implements HasEventHeaderSection {
         setImageVisibility(imageVisible.get());
         contentBox.setPadding(new Insets(20, 20, 20, 20));
         configureImageSize(IMAGE_MAX_HEIGHT_SMALL_TABLET);
+        restoreDesktopTitleStyle();
     }
 
     private void applyMediumTabletLayout() {
@@ -244,6 +276,7 @@ public class DefaultEventHeaderSection implements HasEventHeaderSection {
         setImageVisibility(imageVisible.get());
         contentBox.setPadding(new Insets(24, 28, 24, 28));
         configureImageSize(IMAGE_MAX_HEIGHT_MEDIUM_TABLET);
+        restoreDesktopTitleStyle();
     }
 
     private void applyLargeTabletLayout() {
@@ -251,6 +284,7 @@ public class DefaultEventHeaderSection implements HasEventHeaderSection {
         setImageVisibility(imageVisible.get());
         contentBox.setPadding(new Insets(24, 28, 24, 28));
         configureImageSize(IMAGE_MAX_HEIGHT_LARGE_TABLET);
+        restoreDesktopTitleStyle();
     }
 
     private void applyDesktopLayout() {
@@ -258,6 +292,29 @@ public class DefaultEventHeaderSection implements HasEventHeaderSection {
         setImageVisibility(imageVisible.get());
         contentBox.setPadding(new Insets(24, 28, 24, 28));
         configureImageSizeDesktop();
+        restoreDesktopTitleStyle();
+    }
+
+    private void restoreDesktopTitleStyle() {
+        // Restore regular title font for non-mobile screens
+        titleLabel.getStyleClass().remove("booking-form-event-header-title-mobile");
+        if (!titleLabel.getStyleClass().contains("booking-form-event-header-title")) {
+            titleLabel.getStyleClass().add("booking-form-event-header-title");
+        }
+        // Restore regular meta text size
+        restoreDesktopMetaStyle();
+    }
+
+    private void restoreDesktopMetaStyle() {
+        // Switch from bookingpage-text-sm back to bookingpage-text-md
+        datesLabel.getStyleClass().remove("bookingpage-text-sm");
+        if (!datesLabel.getStyleClass().contains("bookingpage-text-md")) {
+            datesLabel.getStyleClass().add("bookingpage-text-md");
+        }
+        locationLabel.getStyleClass().remove("bookingpage-text-sm");
+        if (!locationLabel.getStyleClass().contains("bookingpage-text-md")) {
+            locationLabel.getStyleClass().add("bookingpage-text-md");
+        }
     }
 
     private void configureImageSize(double maxHeight) {
@@ -342,12 +399,12 @@ public class DefaultEventHeaderSection implements HasEventHeaderSection {
         endDate = event.getEndDate();
         updateDatesLabel();
 
-        // Set location from organization with i18n binding
-        Organization org = event.getOrganization();
-        if (org != null) {
-            I18nEntities.bindTranslatedEntityToTextProperty(locationLabel, org);
+        // Set location from venue (site) with i18n binding
+        Site venue = event.getVenue();
+        if (venue != null) {
+            I18nEntities.bindTranslatedEntityToTextProperty(locationLabel, venue);
         } else {
-            locationLabel.setText("Online");
+            I18nControls.bindI18nProperties(locationLabel, BookingPageI18nKeys.Online);
         }
 
         // Set description from shortDescriptionLabel field using Labels.translateLabel
@@ -372,11 +429,7 @@ public class DefaultEventHeaderSection implements HasEventHeaderSection {
                 IMAGE_REQUEST_HEIGHT,
                 imageContainer,
                 null
-        ).onSuccess(image -> {
-            imageVisible.set(true);
-        }).onFailure(error -> {
-            imageVisible.set(false);
-        });
+        ).onSuccess(image -> imageVisible.set(true)).onFailure(error -> imageVisible.set(false));
     }
 
     private void updateDatesLabel() {

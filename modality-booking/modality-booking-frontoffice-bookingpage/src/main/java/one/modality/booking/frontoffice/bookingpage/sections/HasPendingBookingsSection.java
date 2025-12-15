@@ -42,7 +42,6 @@ public interface HasPendingBookingsSection extends BookingFormSection {
         public String getName() { return name; }
         public int getAmount() { return amount; }
         public boolean isIncluded() { return included; }
-        public String getFamilyCode() { return familyCode; }
     }
 
     /**
@@ -98,7 +97,6 @@ public interface HasPendingBookingsSection extends BookingFormSection {
         }
 
         public int getTotalAmount() { return totalAmount; }
-        public void setTotalAmount(int amount) { this.totalAmount = amount; }
 
         public boolean isPaid() { return paid; }
         public void setPaid(boolean paid) { this.paid = paid; }
@@ -123,19 +121,9 @@ public interface HasPendingBookingsSection extends BookingFormSection {
     void setColorScheme(BookingFormColorScheme scheme);
 
     /**
-     * Sets the currency symbol for price display.
-     */
-    void setCurrencySymbol(String symbol);
-
-    /**
      * Adds a booking to the cart.
      */
     void addBooking(BookingItem booking);
-
-    /**
-     * Removes a booking from the cart.
-     */
-    void removeBooking(BookingItem booking);
 
     /**
      * Clears all bookings from the cart.
@@ -153,11 +141,6 @@ public interface HasPendingBookingsSection extends BookingFormSection {
     int getTotalAmount();
 
     /**
-     * Returns the number of bookings in the cart.
-     */
-    int getBookingCount();
-
-    /**
      * Sets the callback for when "Register Another Person" is clicked.
      */
     void setOnRegisterAnotherPerson(Runnable callback);
@@ -172,8 +155,4 @@ public interface HasPendingBookingsSection extends BookingFormSection {
      */
     void setOnBackPressed(Runnable callback);
 
-    /**
-     * Sets the callback for when a booking is removed.
-     */
-    void setOnRemoveBooking(java.util.function.Consumer<BookingItem> callback);
 }
