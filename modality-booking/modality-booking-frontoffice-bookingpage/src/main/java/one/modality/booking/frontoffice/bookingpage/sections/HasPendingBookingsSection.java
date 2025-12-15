@@ -55,6 +55,7 @@ public interface HasPendingBookingsSection extends BookingFormSection {
         private final String eventDetails;
         private final List<BookingLineItem> lineItems;
         private int totalAmount;
+        private int minDeposit;
         private boolean paid;
         private int paidAmount;
         private String bookingReference;
@@ -63,6 +64,13 @@ public interface HasPendingBookingsSection extends BookingFormSection {
          * Simplified constructor for database-loaded bookings.
          */
         public BookingItem(Document document, String personName, String personEmail, String eventName, int totalAmount) {
+            this(document, personName, personEmail, eventName, totalAmount, totalAmount / 10); // Default 10% if not specified
+        }
+
+        /**
+         * Full constructor with minDeposit for API-loaded bookings.
+         */
+        public BookingItem(Document document, String personName, String personEmail, String eventName, int totalAmount, int minDeposit) {
             this.document = document;
             this.personName = personName;
             this.personEmail = personEmail;
@@ -70,6 +78,7 @@ public interface HasPendingBookingsSection extends BookingFormSection {
             this.eventDetails = "";
             this.lineItems = new ArrayList<>();
             this.totalAmount = totalAmount;
+            this.minDeposit = minDeposit;
         }
 
         public Document getDocument() {return document;}
@@ -78,6 +87,8 @@ public interface HasPendingBookingsSection extends BookingFormSection {
         public String getEventName() { return eventName; }
         public String getEventDetails() { return eventDetails; }
         public List<BookingLineItem> getLineItems() { return lineItems; }
+        public int getMinDeposit() { return minDeposit; }
+        public void setMinDeposit(int minDeposit) { this.minDeposit = minDeposit; }
 
         public void addLineItem(String name, String familyCode, int amount) {
             lineItems.add(new BookingLineItem(name, amount, false, familyCode));

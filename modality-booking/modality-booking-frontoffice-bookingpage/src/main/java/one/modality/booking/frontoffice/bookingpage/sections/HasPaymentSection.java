@@ -231,4 +231,29 @@ public interface HasPaymentSection extends BookingFormSection {
             setAvailablePaymentOptions(EnumSet.allOf(PaymentOption.class));
         }
     }
+
+    /**
+     * Sets which payment methods are available for selection.
+     * By default, CARD and BANK are available (PAYPAL is not currently implemented).
+     * @param methods The set of payment methods to show (e.g., EnumSet.of(PaymentMethod.CARD))
+     */
+    void setAvailablePaymentMethods(Set<PaymentMethod> methods);
+
+    /**
+     * Returns the currently available payment methods.
+     */
+    Set<PaymentMethod> getAvailablePaymentMethods();
+
+    /**
+     * Convenience method to allow only card payment.
+     * Equivalent to setAvailablePaymentMethods(EnumSet.of(PaymentMethod.CARD))
+     * @param cardOnly true to only allow card payment, false to allow all methods
+     */
+    default void setCardPaymentOnly(boolean cardOnly) {
+        if (cardOnly) {
+            setAvailablePaymentMethods(EnumSet.of(PaymentMethod.CARD));
+        } else {
+            setAvailablePaymentMethods(EnumSet.of(PaymentMethod.CARD, PaymentMethod.BANK));
+        }
+    }
 }

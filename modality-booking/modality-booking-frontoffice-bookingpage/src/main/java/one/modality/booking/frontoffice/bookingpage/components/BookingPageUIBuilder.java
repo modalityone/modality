@@ -371,6 +371,30 @@ public final class BookingPageUIBuilder {
     }
 
     /**
+     * Creates an empty circle indicator for unselected states.
+     * Used alongside checkmark badges to show selection affordance when not selected.
+     *
+     * <p>CSS classes used:</p>
+     * <ul>
+     *   <li>{@code .booking-form-empty-circle} - container with border styling</li>
+     * </ul>
+     *
+     * @param size Circle size in pixels
+     * @return A StackPane containing the empty circle indicator
+     */
+    public static StackPane createEmptyCircleIndicator(double size) {
+        Circle circle = new Circle(size / 2);
+        circle.getStyleClass().add("booking-form-empty-circle");
+
+        StackPane container = new StackPane(circle);
+        container.setMinSize(size, size);
+        container.setMaxSize(size, size);
+        container.setAlignment(Pos.CENTER);
+
+        return container;
+    }
+
+    /**
      * Creates a payment option card (for deposit, custom amount, full payment).
      * Centered layout with title, amount, and description.
      * Uses CSS classes for all styling - no Java-based colors or fonts.

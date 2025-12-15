@@ -1828,13 +1828,13 @@
    ========================================== */
 
 /* Select All Bar container */
+/* Note: Padding is set in Java code (ClassDateSelectionSection.java) */
 .bookingpage-select-all-bar {
     -fx-background-color: -booking-form-selected-bg;
     -fx-background-radius: 8;
     -fx-border-color: -booking-form-hover-border;
     -fx-border-width: 1;
     -fx-border-radius: 8;
-    -fx-padding: 12 16;
 }
 
 /* Select All Bar message - default state */
@@ -1898,4 +1898,133 @@
 .bookingpage-btn-small-outline:hover {
     -fx-border-color: -booking-form-primary;
     -fx-background-color: -booking-form-selected-bg;
+}
+/* ==========================================
+   Empty Circle Indicator (for unselected state)
+   ========================================== */
+
+/* Empty circle - shown when card is not selected */
+.booking-form-empty-circle {
+    -fx-fill: white;
+    -fx-stroke: #dee2e6;
+    -fx-stroke-width: 2;
+}
+
+/* ==========================================
+   GP Class Date Card Selection Styling
+   (Selected and Hovered have same appearance)
+   ========================================== */
+
+/* Selected, Hovered, and Selected+Hover date card - primary background with white text */
+.gpclass-date-card.selected,
+.gpclass-date-card.hovered,
+.gpclass-date-card.selected:hover {
+    -fx-background-color: -booking-form-primary;
+    -fx-border-color: -booking-form-primary;
+}
+
+/* Date box inside selected/hovered card - semi-transparent white background */
+.gpclass-date-card.selected .gpclass-date-box,
+.gpclass-date-card.hovered .gpclass-date-box,
+.gpclass-date-card.selected:hover .gpclass-date-box {
+    -fx-background-color: rgba(255, 255, 255, 0.2);
+}
+
+/* Text colors in selected/hovered card - white */
+.gpclass-date-card.selected .gpclass-date-day,
+.gpclass-date-card.hovered .gpclass-date-day,
+.gpclass-date-card.selected:hover .gpclass-date-day {
+    -fx-text-fill: white;
+}
+
+.gpclass-date-card.selected .gpclass-date-month,
+.gpclass-date-card.hovered .gpclass-date-month,
+.gpclass-date-card.selected:hover .gpclass-date-month {
+    -fx-text-fill: rgba(255, 255, 255, 0.8);
+}
+
+.gpclass-date-card.selected .gpclass-date-dayname,
+.gpclass-date-card.hovered .gpclass-date-dayname,
+.gpclass-date-card.selected:hover .gpclass-date-dayname {
+    -fx-text-fill: white;
+}
+
+.gpclass-date-card.selected .gpclass-date-time,
+.gpclass-date-card.hovered .gpclass-date-time,
+.gpclass-date-card.selected:hover .gpclass-date-time {
+    -fx-text-fill: rgba(255, 255, 255, 0.8);
+}
+
+/* Checkmark badge in selected state - semi-transparent white circle */
+.gpclass-date-card.selected .booking-form-checkmark-circle {
+    -fx-fill: rgba(255, 255, 255, 0.25);
+}
+
+/* ==========================================
+   GP Class Date Card Styling (Base)
+   ========================================== */
+
+/* Date box - default light gray background */
+.gpclass-date-box {
+    -fx-background-color: #f8f9fa;
+    -fx-background-radius: 8;
+}
+
+/* Day number label */
+.gpclass-date-day {
+    -fx-font-size: 16;
+    -fx-font-weight: 700;
+    -fx-text-fill: #212529;
+}
+
+/* Month label */
+.gpclass-date-month {
+    -fx-font-size: 9;
+    -fx-font-weight: 600;
+    -fx-text-fill: #6c757d;
+}
+
+/* Day name label */
+.gpclass-date-dayname {
+    -fx-font-size: 13;
+    -fx-font-weight: 600;
+    -fx-text-fill: #212529;
+}
+
+/* Time label */
+.gpclass-date-time {
+    -fx-font-size: 12;
+    -fx-text-fill: #6c757d;
+}
+
+/* Note: Hover state styling is in the GP Class Date Card Selection Styling section above
+   (hovered and selected share the same appearance - primary background) */
+
+/* ==========================================
+   GP Class Price Summary Styling
+   ========================================== */
+
+/* Price summary title - "Your Selection" */
+.gpclass-price-summary-title {
+    -fx-font-size: 16;
+    -fx-font-weight: 700;
+    -fx-text-fill: #212529;
+}
+
+/* Price summary total label - "Total" */
+.gpclass-price-summary-total-label {
+    -fx-font-size: 18;
+    -fx-font-weight: 700;
+    -fx-text-fill: #212529;
+}
+
+/* Price summary total value - the price amount */
+.gpclass-price-summary-total-value {
+    -fx-font-size: 24;
+    -fx-font-weight: 700;
+}
+
+/* Price summary divider line */
+.gpclass-price-summary-divider {
+    -fx-background-color: #dee2e6;
 }

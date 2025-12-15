@@ -70,6 +70,7 @@ public class StandardBookingForm extends MultiPageBookingForm {
     private final boolean showUserBadge;
     private final BookingFormPage[] pages;
     private final StandardBookingFormCallbacks callbacks;
+    private final boolean cardPaymentOnly;
 
     // State management
     private final BookingFormState state;
@@ -112,12 +113,14 @@ public class StandardBookingForm extends MultiPageBookingForm {
             boolean skipPendingBookings,
             Supplier<BookingFormPage> paymentPageSupplier,
             Supplier<BookingFormPage> confirmationPageSupplier,
-            StandardBookingFormCallbacks callbacks) {
+            StandardBookingFormCallbacks callbacks,
+            boolean cardPaymentOnly) {
 
         super(activity, settings);
         this.colorScheme = colorScheme;
         this.showUserBadge = showUserBadge;
         this.callbacks = callbacks;
+        this.cardPaymentOnly = cardPaymentOnly;
         this.customStepPages = new ArrayList<>(customSteps);
 
         // Initialize state management
@@ -283,6 +286,9 @@ public class StandardBookingForm extends MultiPageBookingForm {
     protected BookingFormPage createDefaultPaymentPage() {
         defaultPaymentSection = new DefaultPaymentSection();
         defaultPaymentSection.setColorScheme(colorScheme);
+        if (cardPaymentOnly) {
+            defaultPaymentSection.setCardPaymentOnly(true);
+        }
         return new CompositeBookingFormPage(BookingPageI18nKeys.Payment,
                 defaultPaymentSection)
             .setStep(true);
@@ -781,13 +787,18 @@ public class StandardBookingForm extends MultiPageBookingForm {
 
             Console.log("Processing booking for " + personName + ": docPriceNet=" + priceNetObj + ", calculatedTotal=" + totalPrice + ", paid=" + paidAmount);
 
+            // Get minDeposit from document (calculated by API/price algorithm)
+            Integer priceMinDepositObj = doc.getPriceMinDeposit();
+            int minDeposit = priceMinDepositObj != null ? priceMinDepositObj : totalPrice; // Default to full amount if not set
+
             // Create booking item
             HasPendingBookingsSection.BookingItem bookingItem = new HasPendingBookingsSection.BookingItem(
                 doc,
                 personName,
                 personEmail,
                 eventName,
-                totalPrice  // Convert cents to currency
+                totalPrice,
+                minDeposit
             );
 
             // Mark as paid if balance is zero or negative
@@ -863,7 +874,11 @@ public class StandardBookingForm extends MultiPageBookingForm {
     // === Internal Event Handlers ===
     // These handle the generic booking flow logic.
 
-    private void handleLoginSuccess(Person person) {
+    /**
+     * Handles login success asynchronously, returning a Future that completes when
+     * household members are loaded and navigation is ready.
+     */
+    private Future<?> handleLoginSuccessAsync(Person person) {
         // Update state
         state.setLoggedInPerson(person);
 
@@ -875,12 +890,21 @@ public class StandardBookingForm extends MultiPageBookingForm {
         // Load household members and navigate
         Event event = getEvent();
         if (defaultMemberSelectionSection != null) {
-            HouseholdMemberLoader.loadMembersAsync(person, defaultMemberSelectionSection, event)
+            return HouseholdMemberLoader.loadMembersAsync(person, defaultMemberSelectionSection, event)
                 .onSuccess(v -> UiScheduler.runInUiThread(this::navigateToMemberSelection));
         } else {
             // Skip member selection if section is not configured
             navigateToMemberSelection();
+            return Future.succeededFuture();
         }
+    }
+
+    /**
+     * Handles login success synchronously (for internal use from Your Information section).
+     * Calls the async version but doesn't return the Future.
+     */
+    private void handleLoginSuccess(Person person) {
+        handleLoginSuccessAsync(person);
     }
 
     private void handleNewUserContinue(HasYourInformationSection.NewUserData newUserData) {
@@ -1170,6 +1194,7 @@ public class StandardBookingForm extends MultiPageBookingForm {
 
         defaultPaymentSection.clearBookingItems();
         int total = 0;
+        int totalMinDeposit = 0;
 
         for (HasPendingBookingsSection.BookingItem booking : defaultPendingBookingsSection.getBookings()) {
             defaultPaymentSection.addBookingItem(new HasPaymentSection.PaymentBookingItem(
@@ -1178,10 +1203,12 @@ public class StandardBookingForm extends MultiPageBookingForm {
                 booking.getEventName(),
                 booking.getTotalAmount()));
             total += booking.getTotalAmount();
+            totalMinDeposit += booking.getMinDeposit();
         }
 
         defaultPaymentSection.setTotalAmount(total);
-        defaultPaymentSection.setDepositAmount(total / 10);
+        // Use the calculated minDeposit from the booking items (comes from API/database)
+        defaultPaymentSection.setDepositAmount(totalMinDeposit);
     }
 
     /**
@@ -1205,6 +1232,7 @@ public class StandardBookingForm extends MultiPageBookingForm {
         }
 
         int total = props.getTotal();
+        int minDeposit = props.getMinDeposit();
         Event event = props.getWorkingBooking().getEvent();
         String eventName = event != null ? event.getName() : "";
 
@@ -1218,7 +1246,8 @@ public class StandardBookingForm extends MultiPageBookingForm {
             userName != null ? userName : "Guest",
             userEmail != null ? userEmail : "",
             eventName,
-            total
+            total,
+            minDeposit
         );
         bookingItem.setBookingReference(bookingRef);
 
@@ -1354,16 +1383,19 @@ public class StandardBookingForm extends MultiPageBookingForm {
     /**
      * Called from custom steps to continue to the next standard step.
      * Handles checking if user is already logged in.
+     *
+     * @return Future that completes when the navigation is ready (including any async loading)
      */
-    public void continueFromCustomSteps() {
+    public Future<?> continueFromCustomSteps() {
         Person userPerson = FXUserPerson.getUserPerson();
 
         if (userPerson != null) {
             // User already logged in - load members and go to member selection
-            handleLoginSuccess(userPerson);
+            return handleLoginSuccessAsync(userPerson);
         } else {
             // Not logged in - go to Your Information
             navigateToYourInformation();
+            return Future.succeededFuture();
         }
     }
 

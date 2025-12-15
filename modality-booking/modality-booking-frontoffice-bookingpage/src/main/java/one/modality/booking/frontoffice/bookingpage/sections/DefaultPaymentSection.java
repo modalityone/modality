@@ -65,11 +65,15 @@ public class DefaultPaymentSection implements HasPaymentSection {
     protected final ObservableList<PaymentBookingItem> bookingItems = FXCollections.observableArrayList();
     protected int totalAmount = 0;
     protected int depositAmount = 0;
+    protected int depositPercentage = 0; // Calculated from depositAmount/totalAmount
     protected Set<PaymentOption> availablePaymentOptions = EnumSet.allOf(PaymentOption.class);
+    protected Set<PaymentMethod> availablePaymentMethods = EnumSet.of(PaymentMethod.CARD, PaymentMethod.BANK); // PAYPAL not implemented
 
     // === UI COMPONENTS ===
     protected final VBox container = new VBox();
     protected VBox bookingSummaryContainer;
+    protected VBox paymentAmountSection;
+    protected VBox paymentMethodsSection;
     protected HBox paymentOptionsContainer;
     protected VBox customAmountSection;
     protected VBox allocationSection;
@@ -109,10 +113,12 @@ public class DefaultPaymentSection implements HasPaymentSection {
         VBox bookingSummarySection = buildBookingSummarySection();
 
         // Payment amount section (includes custom amount slider)
-        VBox paymentAmountSection = buildPaymentAmountSection();
+        // Stored as field so it can be hidden when only one payment option exists
+        paymentAmountSection = buildPaymentAmountSection();
 
         // Payment methods section
-        VBox paymentMethodsSection = buildPaymentMethodsSection();
+        // Stored as field so it can be hidden when only one payment method exists
+        paymentMethodsSection = buildPaymentMethodsSection();
 
         // Terms and conditions
         HBox termsSection = buildTermsSection();
@@ -619,25 +625,27 @@ public class DefaultPaymentSection implements HasPaymentSection {
 
         // Only add cards for available payment options
         if (availablePaymentOptions.contains(PaymentOption.DEPOSIT)) {
-            VBox depositCard = createPaymentOptionCard(PaymentOption.DEPOSIT, BookingPageI18nKeys.MinimumDeposit, BookingPageI18nKeys.DepositRequiredPercent);
+            // Pass the deposit percentage to the description
+            String depositDescription = I18n.getI18nText(BookingPageI18nKeys.DepositRequiredPercent, depositPercentage);
+            VBox depositCard = createPaymentOptionCard(PaymentOption.DEPOSIT, BookingPageI18nKeys.MinimumDeposit, depositDescription);
             HBox.setHgrow(depositCard, Priority.ALWAYS);
             paymentOptionsContainer.getChildren().add(depositCard);
         }
 
         if (availablePaymentOptions.contains(PaymentOption.CUSTOM)) {
-            VBox customCard = createPaymentOptionCard(PaymentOption.CUSTOM, BookingPageI18nKeys.CustomAmount, BookingPageI18nKeys.ChooseYourAmount);
+            VBox customCard = createPaymentOptionCard(PaymentOption.CUSTOM, BookingPageI18nKeys.CustomAmount, I18n.getI18nText(BookingPageI18nKeys.ChooseYourAmount));
             HBox.setHgrow(customCard, Priority.ALWAYS);
             paymentOptionsContainer.getChildren().add(customCard);
         }
 
         if (availablePaymentOptions.contains(PaymentOption.FULL)) {
-            VBox fullCard = createPaymentOptionCard(PaymentOption.FULL, BookingPageI18nKeys.PayInFullTitle, BookingPageI18nKeys.CompletePayment);
+            VBox fullCard = createPaymentOptionCard(PaymentOption.FULL, BookingPageI18nKeys.PayInFullTitle, I18n.getI18nText(BookingPageI18nKeys.CompletePayment));
             HBox.setHgrow(fullCard, Priority.ALWAYS);
             paymentOptionsContainer.getChildren().add(fullCard);
         }
     }
 
-    protected VBox createPaymentOptionCard(PaymentOption option, Object titleKey, Object descriptionKey) {
+    protected VBox createPaymentOptionCard(PaymentOption option, Object titleKey, String description) {
         boolean selected = paymentOptionProperty.get() == option;
         double amount = getAmountForOption(option);
         String amountText = EventPriceFormatter.formatWithCurrency((int) amount, workingBookingProperties != null && workingBookingProperties.getWorkingBooking() != null ? workingBookingProperties.getWorkingBooking().getEvent() : null);
@@ -646,7 +654,7 @@ public class DefaultPaymentSection implements HasPaymentSection {
         return BookingPageUIBuilder.createPaymentOptionCard(
                 I18n.getI18nText(titleKey),
                 amountText,
-                I18n.getI18nText(descriptionKey),
+                description,
                 selected,
                 () -> {
                     paymentOptionProperty.set(option);
@@ -687,21 +695,28 @@ public class DefaultPaymentSection implements HasPaymentSection {
         paymentMethodsContainer.getChildren().clear();
 
         // Card payment
-        VBox cardOption = createPaymentMethodCard(PaymentMethod.CARD, BookingPageI18nKeys.CreditDebitCard,
-                "M3 5a2 2 0 012-2h14a2 2 0 012 2v14a2 2 0 01-2 2H5a2 2 0 01-2-2V5z M3 10h18");
-        HBox.setHgrow(cardOption, Priority.ALWAYS);
+        if (availablePaymentMethods.contains(PaymentMethod.CARD)) {
+            VBox cardOption = createPaymentMethodCard(PaymentMethod.CARD, BookingPageI18nKeys.CreditDebitCard,
+                    "M3 5a2 2 0 012-2h14a2 2 0 012 2v14a2 2 0 01-2 2H5a2 2 0 01-2-2V5z M3 10h18");
+            HBox.setHgrow(cardOption, Priority.ALWAYS);
+            paymentMethodsContainer.getChildren().add(cardOption);
+        }
 
-        // PayPal
-        VBox paypalOption = createPaymentMethodCard(PaymentMethod.PAYPAL, BookingPageI18nKeys.PayPal,
-                "M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2z");
-        HBox.setHgrow(paypalOption, Priority.ALWAYS);
+        // PayPal (not currently implemented, but kept for future use)
+        if (availablePaymentMethods.contains(PaymentMethod.PAYPAL)) {
+            VBox paypalOption = createPaymentMethodCard(PaymentMethod.PAYPAL, BookingPageI18nKeys.PayPal,
+                    "M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2z");
+            HBox.setHgrow(paypalOption, Priority.ALWAYS);
+            paymentMethodsContainer.getChildren().add(paypalOption);
+        }
 
         // Bank Transfer
-        VBox bankOption = createPaymentMethodCard(PaymentMethod.BANK, BookingPageI18nKeys.BankTransfer,
-                "M3 21h18M3 10h18M5 6l7-3 7 3M4 10v11M20 10v11M8 14v3M12 14v3M16 14v3");
-        HBox.setHgrow(bankOption, Priority.ALWAYS);
-
-        paymentMethodsContainer.getChildren().addAll(cardOption, paypalOption, bankOption);
+        if (availablePaymentMethods.contains(PaymentMethod.BANK)) {
+            VBox bankOption = createPaymentMethodCard(PaymentMethod.BANK, BookingPageI18nKeys.BankTransfer,
+                    "M3 21h18M3 10h18M5 6l7-3 7 3M4 10v11M20 10v11M8 14v3M12 14v3M16 14v3");
+            HBox.setHgrow(bankOption, Priority.ALWAYS);
+            paymentMethodsContainer.getChildren().add(bankOption);
+        }
     }
 
     protected VBox createPaymentMethodCard(PaymentMethod method, Object titleKey, String iconPath) {
@@ -850,7 +865,12 @@ public class DefaultPaymentSection implements HasPaymentSection {
     @Override
     public void setTotalAmount(int amount) {
         this.totalAmount = amount;
-        this.depositAmount = roundToWholeCurrencyUnit(amount / 10); // 10% deposit, rounded
+        // Note: depositAmount should be set separately via setDepositAmount()
+        // Only set default deposit here if not yet set
+        if (this.depositAmount == 0) {
+            this.depositAmount = roundToWholeCurrencyUnit(amount / 10); // Default 10% deposit, rounded
+        }
+        updateDepositPercentageAndOptions();
         this.customAmountProperty.set(roundToWholeCurrencyUnit(amount / 2)); // Default 50%, rounded
         updateTotalDisplay();
         rebuildPaymentOptions();
@@ -867,9 +887,49 @@ public class DefaultPaymentSection implements HasPaymentSection {
     @Override
     public void setDepositAmount(int amount) {
         this.depositAmount = roundToWholeCurrencyUnit(amount);
+        updateDepositPercentageAndOptions();
         rebuildPaymentOptions();
         updateCustomAmountSectionVisibility();
         updatePayButtonText();
+    }
+
+    /**
+     * Updates the deposit percentage and adjusts available payment options.
+     * If deposit equals total, only "Pay in Full" option is available.
+     */
+    protected void updateDepositPercentageAndOptions() {
+        if (totalAmount > 0) {
+            // Calculate percentage, rounding to nearest integer
+            this.depositPercentage = Math.round((float) depositAmount * 100 / totalAmount);
+        } else {
+            this.depositPercentage = 0;
+        }
+
+        // If deposit equals total (100%), only "Pay in Full" is available
+        if (depositAmount >= totalAmount) {
+            this.availablePaymentOptions = EnumSet.of(PaymentOption.FULL);
+            paymentOptionProperty.set(PaymentOption.FULL);
+        } else {
+            // Reset to all options if previously restricted
+            if (this.availablePaymentOptions.size() == 1 && this.availablePaymentOptions.contains(PaymentOption.FULL)) {
+                this.availablePaymentOptions = EnumSet.allOf(PaymentOption.class);
+            }
+        }
+
+        // Update payment amount section visibility
+        updatePaymentAmountSectionVisibility();
+    }
+
+    /**
+     * Shows or hides the "How much would you like to pay" section.
+     * If there's only one payment option (e.g., only Pay in Full), hide the entire section.
+     */
+    protected void updatePaymentAmountSectionVisibility() {
+        if (paymentAmountSection == null) return;
+
+        boolean hasMultipleOptions = availablePaymentOptions.size() > 1;
+        paymentAmountSection.setVisible(hasMultipleOptions);
+        paymentAmountSection.setManaged(hasMultipleOptions);
     }
 
     @Override
@@ -882,6 +942,7 @@ public class DefaultPaymentSection implements HasPaymentSection {
         }
 
         rebuildPaymentOptions();
+        updatePaymentAmountSectionVisibility();
         updateCustomAmountSectionVisibility();
         updatePayButtonText();
     }
@@ -889,6 +950,36 @@ public class DefaultPaymentSection implements HasPaymentSection {
     @Override
     public Set<PaymentOption> getAvailablePaymentOptions() {
         return Collections.unmodifiableSet(availablePaymentOptions);
+    }
+
+    @Override
+    public void setAvailablePaymentMethods(Set<PaymentMethod> methods) {
+        this.availablePaymentMethods = methods != null ? methods : EnumSet.of(PaymentMethod.CARD, PaymentMethod.BANK);
+
+        // If current selection is no longer available, switch to first available method
+        if (!availablePaymentMethods.contains(paymentMethodProperty.get())) {
+            paymentMethodProperty.set(availablePaymentMethods.iterator().next());
+        }
+
+        rebuildPaymentMethods();
+        updatePaymentMethodsSectionVisibility();
+    }
+
+    /**
+     * Shows or hides the "Select Payment Method" section.
+     * If there's only one payment method available, hide the entire section.
+     */
+    protected void updatePaymentMethodsSectionVisibility() {
+        if (paymentMethodsSection == null) return;
+
+        boolean hasMultipleMethods = availablePaymentMethods.size() > 1;
+        paymentMethodsSection.setVisible(hasMultipleMethods);
+        paymentMethodsSection.setManaged(hasMultipleMethods);
+    }
+
+    @Override
+    public Set<PaymentMethod> getAvailablePaymentMethods() {
+        return Collections.unmodifiableSet(availablePaymentMethods);
     }
 
     @Override

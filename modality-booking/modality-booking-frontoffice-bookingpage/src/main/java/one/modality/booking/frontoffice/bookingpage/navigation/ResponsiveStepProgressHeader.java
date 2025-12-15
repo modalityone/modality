@@ -335,22 +335,28 @@ public class ResponsiveStepProgressHeader implements BookingFormHeader {
 
         dropdownContent.getChildren().addAll(userInfo, logoutButton);
 
-        // Position dropdown below badge
+        // Position dropdown below badge using absolute positioning
+        // Keep managed=false so the dropdown doesn't affect parent layout size
         userBadgeDropdown.getChildren().clear();
         userBadgeDropdown.getChildren().add(dropdownContent);
-        userBadgeDropdown.setTranslateY(8);
+        userBadgeDropdown.setTranslateY(48); // Position below the badge (40px badge height + 8px gap)
 
         if (!userBadgeContainer.getChildren().contains(userBadgeDropdown)) {
             userBadgeContainer.getChildren().add(userBadgeDropdown);
         }
         userBadgeDropdown.setVisible(true);
-        userBadgeDropdown.setManaged(true);
+        userBadgeDropdown.setManaged(false); // Keep false to not affect layout
+
+        // Align dropdown to the right edge of the badge
+        StackPane.setAlignment(userBadgeDropdown, Pos.TOP_RIGHT);
 
         // Close on click outside (next mouse click anywhere closes it)
         // Note: Using simpler approach since getBoundsInParent() is not GWT-compatible
         wrapper.setOnMouseClicked(e -> {
-            // Close dropdown if click is not on the user badge content itself
-            if (e.getTarget() != userBadgeContent && !isDescendantOf(e.getTarget(), userBadgeContent)) {
+            // Close dropdown if click is not on the badge or the dropdown itself
+            boolean clickedOnBadge = e.getTarget() == userBadgeContent || isDescendantOf(e.getTarget(), userBadgeContent);
+            boolean clickedOnDropdown = e.getTarget() == userBadgeDropdown || isDescendantOf(e.getTarget(), userBadgeDropdown);
+            if (!clickedOnBadge && !clickedOnDropdown) {
                 closeDropdown();
             }
         });

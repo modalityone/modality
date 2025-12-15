@@ -70,6 +70,9 @@ public class StandardBookingFormBuilder {
     // Callbacks for inter-step communication
     private StandardBookingFormCallbacks callbacks;
 
+    // Payment configuration
+    private boolean cardPaymentOnly = false;
+
     /**
      * Creates a new builder for a standard booking form.
      *
@@ -150,6 +153,20 @@ public class StandardBookingFormBuilder {
         return this;
     }
 
+    // === Payment Configuration ===
+
+    /**
+     * Sets whether only card payment should be available (no bank transfer option).
+     * Default is false (both card and bank transfer available).
+     *
+     * @param cardOnly true to only allow card payment, false to allow all methods
+     * @return This builder for chaining
+     */
+    public StandardBookingFormBuilder withCardPaymentOnly(boolean cardOnly) {
+        this.cardPaymentOnly = cardOnly;
+        return this;
+    }
+
     // === Build ===
 
     /**
@@ -179,7 +196,8 @@ public class StandardBookingFormBuilder {
                 skipPendingBookings,
             paymentPageSupplier,
             confirmationPageSupplier,
-            callbacks
+            callbacks,
+            cardPaymentOnly
         );
     }
 }

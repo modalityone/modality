@@ -17,7 +17,6 @@ import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.SVGPath;
 import one.modality.base.client.cloud.image.ModalityCloudImageService;
-import one.modality.base.client.entities.Labels;
 import one.modality.base.client.i18n.I18nEntities;
 import one.modality.base.shared.entities.Event;
 import one.modality.base.shared.entities.Site;
@@ -407,10 +406,10 @@ public class DefaultEventHeaderSection implements HasEventHeaderSection {
             I18nControls.bindI18nProperties(locationLabel, BookingPageI18nKeys.Online);
         }
 
-        // Set description from shortDescriptionLabel field using Labels.translateLabel
-        one.modality.base.shared.entities.Label shortDescLabel = event.getShortDescriptionLabel();
-        if (shortDescLabel != null) {
-            Labels.translateLabel(descriptionLabel, shortDescLabel);
+        // Set description from description field (long description)
+        String longDescription = event.getDescription();
+        if (longDescription != null && !longDescription.isEmpty()) {
+            descriptionLabel.setText(longDescription);
         }
 
         // Load event cover image from cloud

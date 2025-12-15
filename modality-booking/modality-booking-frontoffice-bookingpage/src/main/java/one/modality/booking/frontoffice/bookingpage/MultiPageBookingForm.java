@@ -11,11 +11,13 @@ import dev.webfx.platform.uischeduler.UiScheduler;
 import javafx.beans.binding.BooleanBinding;
 import javafx.beans.property.*;
 import javafx.beans.value.ObservableBooleanValue;
+import javafx.geometry.Pos;
 import javafx.scene.Node;
 import javafx.scene.control.ContentDisplay;
 import javafx.scene.control.ToggleButton;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.Region;
+import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
 import one.modality.booking.client.workingbooking.FXPersonToBook;
 import one.modality.booking.client.workingbooking.HasWorkingBookingProperties;
@@ -222,7 +224,12 @@ public abstract class MultiPageBookingForm extends BookingFormBase {
         }
 
         borderPane.setMaxWidth(MAX_WIDTH); // Max width for desktops
-        return BookingElements.styleBookingElementsContainer(borderPane, true);
+
+        // Wrap in StackPane with TOP_CENTER alignment to position form at the top
+        StackPane wrapper = new StackPane(borderPane);
+        StackPane.setAlignment(borderPane, Pos.TOP_CENTER);
+
+        return BookingElements.styleBookingElementsContainer(wrapper, true);
     }
 
     @Override
