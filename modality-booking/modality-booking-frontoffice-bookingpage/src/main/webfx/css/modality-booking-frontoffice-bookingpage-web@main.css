@@ -425,7 +425,7 @@
 /* Buttons */
 .btn-primary,
 .booking-form-btn-primary {
-    --fx-button-background-color: var(--booking-form-primary);
+    --fx-background-color: var(--booking-form-primary);
     border-radius: 8px;
     cursor: pointer;
     transition: filter 0.2s ease;
@@ -438,7 +438,7 @@
 
 .btn-primary:active,
 .booking-form-btn-primary:active {
-    --fx-button-background-color: var(--booking-form-primary);
+    --fx-background-color: var(--booking-form-primary);
     filter: brightness(0.95);
 }
 
@@ -446,7 +446,7 @@
 .btn-primary[disabled],
 .booking-form-btn-primary.disabled,
 .booking-form-btn-primary[disabled] {
-    --fx-button-background-color: var(--booking-form-primary);
+    --fx-background-color: var(--booking-form-primary);
     opacity: 0.7;
     cursor: default;
 }
