@@ -1,5 +1,6 @@
 package one.modality.booking.frontoffice.bookingpage.sections;
 
+import dev.webfx.extras.i18n.controls.I18nControls;
 import javafx.beans.property.ObjectProperty;
 import javafx.beans.property.SimpleBooleanProperty;
 import javafx.beans.property.SimpleObjectProperty;
@@ -8,12 +9,10 @@ import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Node;
 import javafx.scene.control.Label;
-import javafx.scene.layout.*;
+import javafx.scene.layout.VBox;
 import one.modality.base.shared.entities.BookablePeriod;
-import one.modality.base.shared.entities.Rate;
 import one.modality.booking.client.workingbooking.WorkingBooking;
 import one.modality.booking.client.workingbooking.WorkingBookingProperties;
-import dev.webfx.extras.i18n.controls.I18nControls;
 import one.modality.booking.frontoffice.bookingpage.BookingPageI18nKeys;
 import one.modality.booking.frontoffice.bookingpage.components.StyledSectionHeader;
 import one.modality.booking.frontoffice.bookingpage.theme.BookingFormColorScheme;
@@ -47,7 +46,6 @@ public class DefaultRateTypeSection implements HasRateTypeSection {
     protected final RateType selectedRateType = RateType.STANDARD;
 
     protected WorkingBookingProperties workingBookingProperties;
-    protected Rate currentRate;
     protected StyledSectionHeader header;
     protected Consumer<RateType> onRateTypeChanged;
 
@@ -120,8 +118,6 @@ public class DefaultRateTypeSection implements HasRateTypeSection {
             return;
         }
 
-        currentRate = policyAggregate.getDailyRate();
-
         if (onRateTypeChanged != null) {
             onRateTypeChanged.accept(selectedRateType);
         }
@@ -175,11 +171,6 @@ public class DefaultRateTypeSection implements HasRateTypeSection {
     @Override
     public RateType getSelectedRateType() {
         return selectedRateType;
-    }
-
-    @Override
-    public Rate getCurrentRate() {
-        return currentRate;
     }
 
     @Override

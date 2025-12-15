@@ -2,12 +2,9 @@ package one.modality.booking.frontoffice.bookingpage.sections;
 
 import javafx.beans.property.ObjectProperty;
 import one.modality.base.shared.entities.BookablePeriod;
-import one.modality.base.shared.entities.Rate;
-import one.modality.base.shared.entities.ScheduledItem;
 import one.modality.booking.frontoffice.bookingpage.BookingFormSection;
 import one.modality.booking.frontoffice.bookingpage.theme.BookingFormColorScheme;
 
-import java.util.List;
 import java.util.function.Consumer;
 
 /**
@@ -56,11 +53,6 @@ public interface HasRateTypeSection extends BookingFormSection {
      * Returns the currently selected rate type.
      */
     RateType getSelectedRateType();
-
-    /**
-     * Returns the current rate.
-     */
-    Rate getCurrentRate();
 
     void setOnPackageSelected(Consumer<BookablePeriod> handler);
 
