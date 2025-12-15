@@ -16,7 +16,6 @@ import javafx.beans.binding.Bindings;
 import javafx.scene.layout.Region;
 import javafx.scene.layout.VBox;
 import one.modality.base.shared.entities.*;
-import one.modality.base.shared.entities.markers.HasPersonalDetails;
 import one.modality.booking.client.workingbooking.*;
 import one.modality.booking.frontoffice.bookingform.BookingFormEntryPoint;
 import one.modality.booking.frontoffice.bookingpage.*;
@@ -30,13 +29,10 @@ import one.modality.crm.shared.services.authn.fx.FXUserPerson;
 import one.modality.ecommerce.document.service.DocumentAggregate;
 import one.modality.ecommerce.document.service.PolicyAggregate;
 import one.modality.ecommerce.payment.PaymentAllocation;
-import one.modality.ecommerce.payment.PaymentFormType;
-import one.modality.ecommerce.payment.PaymentService;
 import one.modality.ecommerce.payment.client.ClientPaymentUtil;
-import one.modality.ecommerce.payment.client.WebPaymentForm;
 import one.modality.event.frontoffice.activities.book.event.EventBookingFormSettings;
 import one.modality.event.frontoffice.activities.book.fx.FXGuestToBook;
-import one.modality.event.frontoffice.activities.book.fx.FXResumePaymentMoneyTransfer;
+import one.modality.event.frontoffice.activities.book.fx.FXResumePayment;
 
 import java.util.*;
 import java.util.function.Supplier;
@@ -331,7 +327,7 @@ public class StandardBookingForm extends MultiPageBookingForm {
             navigateToConfirmation();
 
             // Check the MoneyTransfer status and show appropriate content
-            MoneyTransfer moneyTransfer = FXResumePaymentMoneyTransfer.getResumePaymentMoneyTransfer();
+            MoneyTransfer moneyTransfer = FXResumePayment.getMoneyTransfer();
             if (moneyTransfer != null) {
                 handleResumePaymentContent(moneyTransfer);
             }
@@ -433,8 +429,10 @@ public class StandardBookingForm extends MultiPageBookingForm {
 
         // Set callbacks
         failedSection.setOnRetryPayment(() -> {
-            // Navigate back to payment page to retry
-            navigateToPayment();
+            // For now, we do only redirected payments, so we
+            ClientPaymentUtil.initiateRedirectedPaymentAndRedirectToGatewayPaymentPage(FXResumePayment.getAmount(), FXResumePayment.getPaymentAllocations());
+            /*// When embedded payments will be added, we will navigate back to the payment page
+            navigateToPayment();*/
         });
 
         // Show the failed payment content in the transition pane
@@ -1170,30 +1168,7 @@ public class StandardBookingForm extends MultiPageBookingForm {
             .map(entry -> new PaymentAllocation(Entities.getPrimaryKey(entry.getKey()), entry.getValue()))
             .toArray(PaymentAllocation[]::new);
 
-        // TODO: show an error message to the user
-        return PaymentService.initiatePayment(
-                ClientPaymentUtil.createInitiatePaymentArgument(
-                    sectionResult.getAmount(),
-                    paymentAllocations,
-                    PaymentFormType.REDIRECTED, // We were using EMBEDDED so far, now we try REDIRECTED
-                    "/resume-payment/:moneyTransferId",
-                    "/resume-payment/:moneyTransferId")
-            )
-            .inUiThread()
-            .onFailure(Console::log)
-            .compose(paymentResult -> {
-                HasPersonalDetails buyerDetails = FXUserPerson.getUserPerson();
-                if (buyerDetails == null)
-                    buyerDetails = FXGuestToBook.getGuestToBook();
-                WebPaymentForm webPaymentForm = new WebPaymentForm(paymentResult, buyerDetails);
-                // If it's a redirected payment form, we just navigate to it
-                if (webPaymentForm.isRedirectedPaymentForm()) {
-                    webPaymentForm.navigateToRedirectedPaymentForm();
-                    return Future.succeededFuture();
-                } else {
-                    return Future.failedFuture("Embedded payment form is not yet implemented in " + getClass().getSimpleName());
-                }
-            });
+        return ClientPaymentUtil.initiateRedirectedPaymentAndRedirectToGatewayPaymentPage(sectionResult.getAmount(), paymentAllocations);
     }
 
     // TODO: once embedded payment is implemented, call back this method on payment success

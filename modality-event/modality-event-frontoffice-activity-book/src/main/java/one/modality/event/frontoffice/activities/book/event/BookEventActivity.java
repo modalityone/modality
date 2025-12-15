@@ -42,7 +42,7 @@ import one.modality.event.client.event.fx.FXEvent;
 import one.modality.event.client.event.fx.FXEventId;
 import one.modality.event.frontoffice.activities.book.account.CheckoutAccountRouting;
 import one.modality.event.frontoffice.activities.book.event.slides.LettersSlideController;
-import one.modality.event.frontoffice.activities.book.fx.FXResumePaymentMoneyTransfer;
+import one.modality.event.frontoffice.activities.book.fx.FXResumePayment;
 
 import java.util.List;
 import java.util.ServiceLoader;
@@ -178,7 +178,7 @@ public final class BookEventActivity extends ViewDomainActivityBase implements B
         // Initial load of the event policy with the possible existing booking of the user (if logged-in)
         FXProperties.runNowAndOnPropertiesChange(this::loadPolicyAndBooking,
             modifyOrderDocumentIdProperty, payOrderDocumentIdProperty, resumePaymentMoneyTransferIdProperty,
-                FXEvent.eventProperty(), FXResumePaymentMoneyTransfer.resumePaymentMoneyTransferProperty());
+                FXEvent.eventProperty(), FXResumePayment.moneyTransferProperty());
 
         // Later loading when changing the person to book (loading of possible booking and reapplying the newly selected dates)
         FXProperties.runOnPropertyChange(this::onPersonToBookChanged, FXPersonToBook.personToBookProperty());
@@ -191,7 +191,7 @@ public final class BookEventActivity extends ViewDomainActivityBase implements B
         Object resumePaymentMoneyTransferId = getResumePaymentMoneyTransferId();
         Event event = FXEvent.getEvent(); // might be null on the first call (ex: on page reload)
         // Case when resuming after a redirected payment has been made (the payment gateway called back this url)
-        if (resumePaymentMoneyTransferId != null && FXResumePaymentMoneyTransfer.getResumePaymentMoneyTransfer() == null) {
+        if (resumePaymentMoneyTransferId != null && FXResumePayment.getMoneyTransfer() == null) {
             // We load the required information about this payment (its state, amount, and associated document/event)
             EntityStore.create(getDataSourceModel())
                 .<MoneyTransfer>executeQuery("select pending,successful,amount,document.(ref,person.(firstName,lastName,email),event.(" + FXEvent.EXPECTED_FIELDS + ")) from MoneyTransfer where id = $1 or parent = $1 order by id=$1 desc", resumePaymentMoneyTransferId)
@@ -208,7 +208,7 @@ public final class BookEventActivity extends ViewDomainActivityBase implements B
                     // Once the info is loaded, we set FXEvent and FXResumePaymentMoneyTransfer
                     Document document = moneyTransfers.stream().map(MoneyTransfer::getDocument).filter(Objects::nonNull).findFirst().orElse(null);
                     FXEvent.setEvent(document == null ? null : document.getEvent());
-                    FXResumePaymentMoneyTransfer.setResumePaymentMoneyTransfer(moneyTransfer); // will cause loadPolicyAndBooking() to be called again - see startLogic()
+                    FXResumePayment.setMoneyTransfers(moneyTransfers); // will cause loadPolicyAndBooking() to be called again - see startLogic()
                 });
         } else if (modifyOrPayOrderDocumentId != null) {
             // Note: this call doesn't automatically rebuild PolicyAggregate entities
