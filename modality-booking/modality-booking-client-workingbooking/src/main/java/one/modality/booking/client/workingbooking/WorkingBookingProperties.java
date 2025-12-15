@@ -276,6 +276,10 @@ public final class WorkingBookingProperties {
         return formattedTotalWithoutCurrencyProperty;
     }
 
+    public int calculateNoDiscountTotal() {
+        return getLatestBookingPriceCalculator().calculateNoLongStayDiscountTotalPrice();
+    }
+
 
     // Min deposit
 
