@@ -13,7 +13,7 @@ import dev.webfx.stack.orm.entity.Entities;
 import dev.webfx.stack.orm.entity.EntityList;
 import dev.webfx.stack.orm.entity.EntityStore;
 import javafx.beans.binding.Bindings;
-import javafx.geometry.Insets;
+import javafx.scene.layout.Region;
 import javafx.scene.layout.VBox;
 import one.modality.base.shared.entities.*;
 import one.modality.base.shared.entities.markers.HasPersonalDetails;
@@ -316,10 +316,15 @@ public class StandardBookingForm extends MultiPageBookingForm {
     @Override
     public void onWorkingBookingLoaded() {
         if (entryPoint == BookingFormEntryPoint.RESUME_PAYMENT) {
-            // Add 30px top margin for payment return flow (header normally has 0px top padding)
+            // Add 30px spacer at top of header for payment return flow
             BookingFormHeader headerRef = getHeader();
-            if (headerRef != null && headerRef.getView() != null) {
-                VBox.setMargin(headerRef.getView(), new Insets(30, 0, 0, 0));
+            if (headerRef != null && headerRef.getView() instanceof VBox) {
+                VBox headerWrapper = (VBox) headerRef.getView();
+                Region spacer = new Region();
+                spacer.setMinHeight(30);
+                spacer.setPrefHeight(30);
+                spacer.setMaxHeight(30);
+                headerWrapper.getChildren().add(0, spacer);
             }
 
             // Navigate directly to confirmation page (last step) when returning from payment gateway
