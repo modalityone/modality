@@ -1,25 +1,23 @@
 package one.modality.booking.frontoffice.bookingpage.sections;
 
 import dev.webfx.extras.async.AsyncSpinner;
+import dev.webfx.extras.i18n.I18n;
 import dev.webfx.extras.i18n.controls.I18nControls;
 import dev.webfx.extras.responsive.ResponsiveDesign;
 import dev.webfx.kit.util.properties.FXProperties;
 import dev.webfx.platform.console.Console;
 import dev.webfx.platform.uischeduler.UiScheduler;
-import dev.webfx.stack.authn.AuthenticationService;
+import dev.webfx.platform.windowlocation.WindowLocation;
 import dev.webfx.stack.authn.AuthenticateWithUsernamePasswordCredentials;
 import dev.webfx.stack.authn.AuthenticateWithVerificationCodeCredentials;
+import dev.webfx.stack.authn.AuthenticationService;
 import dev.webfx.stack.authn.SendMagicLinkCredentials;
-import dev.webfx.extras.i18n.I18n;
-import dev.webfx.platform.windowlocation.WindowLocation;
+import dev.webfx.stack.orm.datasourcemodel.service.DataSourceModelService;
+import dev.webfx.stack.orm.entity.EntityStore;
 import javafx.animation.Interpolator;
 import javafx.animation.KeyFrame;
 import javafx.animation.KeyValue;
 import javafx.animation.Timeline;
-import javafx.util.Duration;
-import dev.webfx.stack.orm.datasourcemodel.service.DataSourceModelService;
-import dev.webfx.stack.orm.entity.EntityStore;
-import one.modality.crm.shared.services.authn.fx.FXUserPerson;
 import javafx.beans.property.*;
 import javafx.beans.value.ObservableBooleanValue;
 import javafx.geometry.HPos;
@@ -31,12 +29,16 @@ import javafx.scene.control.*;
 import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.SVGPath;
+import javafx.scene.text.Font;
+import javafx.scene.text.FontWeight;
 import javafx.scene.text.Text;
+import javafx.util.Duration;
 import one.modality.base.shared.entities.Person;
 import one.modality.booking.client.workingbooking.WorkingBookingProperties;
 import one.modality.booking.frontoffice.bookingpage.BookingPageI18nKeys;
 import one.modality.booking.frontoffice.bookingpage.components.BookingPageUIBuilder;
 import one.modality.booking.frontoffice.bookingpage.theme.BookingFormColorScheme;
+import one.modality.crm.shared.services.authn.fx.FXUserPerson;
 
 import java.util.function.Consumer;
 
@@ -1012,7 +1014,7 @@ public class DefaultYourInformationSection implements HasYourInformationSection 
         Label label = createFieldLabel(i18nKey);
         Text asterisk = new Text(" *");
         asterisk.setFill(Color.web("#dc3545")); // Danger red
-        asterisk.setFont(javafx.scene.text.Font.font("System", javafx.scene.text.FontWeight.SEMI_BOLD, 14));
+        asterisk.setFont(Font.font(null, FontWeight.SEMI_BOLD, 14));
         HBox wrapper = new HBox(label, asterisk);
         wrapper.setAlignment(Pos.CENTER_LEFT);
         return wrapper;

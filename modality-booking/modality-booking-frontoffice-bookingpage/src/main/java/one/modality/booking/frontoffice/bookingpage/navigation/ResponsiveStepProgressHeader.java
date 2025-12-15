@@ -1,15 +1,9 @@
 package one.modality.booking.frontoffice.bookingpage.navigation;
 
-import one.modality.booking.frontoffice.bookingpage.BookingFormHeader;
-import one.modality.booking.frontoffice.bookingpage.BookingFormPage;
-import one.modality.booking.frontoffice.bookingpage.MultiPageBookingForm;
-
 import dev.webfx.extras.i18n.I18n;
 import dev.webfx.extras.i18n.controls.I18nControls;
 import dev.webfx.extras.operation.OperationDirect;
 import dev.webfx.extras.responsive.ResponsiveDesign;
-import dev.webfx.extras.util.layout.Layouts;
-import one.modality.booking.frontoffice.bookingpage.BookingPageI18nKeys;
 import dev.webfx.kit.util.properties.FXProperties;
 import dev.webfx.stack.authn.logout.client.operation.LogoutI18nKeys;
 import dev.webfx.stack.authn.logout.client.operation.LogoutRequest;
@@ -30,7 +24,11 @@ import javafx.scene.shape.Line;
 import javafx.scene.shape.SVGPath;
 import javafx.scene.text.Font;
 import javafx.scene.text.FontWeight;
+import javafx.scene.text.TextAlignment;
 import one.modality.base.shared.entities.Person;
+import one.modality.booking.frontoffice.bookingpage.BookingFormHeader;
+import one.modality.booking.frontoffice.bookingpage.BookingFormPage;
+import one.modality.booking.frontoffice.bookingpage.MultiPageBookingForm;
 import one.modality.booking.frontoffice.bookingpage.theme.BookingFormColorScheme;
 import one.modality.crm.shared.services.authn.fx.FXUserPerson;
 
@@ -145,9 +143,7 @@ public class ResponsiveStepProgressHeader implements BookingFormHeader {
         userBadgeContainer.getChildren().add(userBadgeContent);
 
         // Bind visibility to user login state
-        FXProperties.runNowAndOnPropertyChange(person -> {
-            updateUserBadge(person);
-        }, FXUserPerson.userPersonProperty());
+        FXProperties.runNowAndOnPropertyChange(this::updateUserBadge, FXUserPerson.userPersonProperty());
 
         // Click handler for badge
         userBadgeContent.setOnMouseClicked(e -> {
@@ -207,7 +203,7 @@ public class ResponsiveStepProgressHeader implements BookingFormHeader {
 
         Label initialsLabel = new Label(initials);
         initialsLabel.setTextFill(Color.WHITE);
-        initialsLabel.setFont(Font.font("System", FontWeight.BOLD, 11));
+        initialsLabel.setFont(Font.font(null, FontWeight.BOLD, 11));
 
         StackPane initialsPane = new StackPane(initialsCircle, initialsLabel);
         initialsPane.setMinSize(28, 28);
@@ -216,7 +212,7 @@ public class ResponsiveStepProgressHeader implements BookingFormHeader {
         // Name label - uses darkText from color scheme
         Label nameLabel = new Label(truncatedName);
         nameLabel.setTextFill(darkTextColor);
-        nameLabel.setFont(Font.font("System", FontWeight.MEDIUM, 14));
+        nameLabel.setFont(Font.font(null, FontWeight.MEDIUM, 14));
         nameLabel.getStyleClass().add("booking-form-user-badge-name");
 
         // Chevron icon - uses darkText from color scheme
@@ -294,11 +290,11 @@ public class ResponsiveStepProgressHeader implements BookingFormHeader {
         String fullName = ((person.getFirstName() != null ? person.getFirstName() : "") + " " +
                           (person.getLastName() != null ? person.getLastName() : "")).trim();
         Label nameLabel = new Label(fullName);
-        nameLabel.setFont(Font.font("System", FontWeight.SEMI_BOLD, 14));
+        nameLabel.setFont(Font.font(null, FontWeight.SEMI_BOLD, 14));
         nameLabel.setTextFill(Color.web("#212529"));
 
         Label emailLabel = new Label(person.getEmail() != null ? person.getEmail() : "");
-        emailLabel.setFont(Font.font("System", FontWeight.NORMAL, 13));
+        emailLabel.setFont(Font.font(null, FontWeight.NORMAL, 13));
         emailLabel.setTextFill(Color.web("#6c757d"));
 
         userInfo.getChildren().addAll(nameLabel, emailLabel);
@@ -308,7 +304,7 @@ public class ResponsiveStepProgressHeader implements BookingFormHeader {
         I18n.bindI18nTextProperty(logoutButton.textProperty(), LogoutI18nKeys.LogoutMenu);
         logoutButton.setMaxWidth(Double.MAX_VALUE);
         logoutButton.setPadding(new Insets(14, 16, 14, 16));
-        logoutButton.setFont(Font.font("System", FontWeight.MEDIUM, 14));
+        logoutButton.setFont(Font.font(null, FontWeight.MEDIUM, 14));
         logoutButton.setTextFill(Color.web("#dc3545"));
         logoutButton.setStyle("-fx-background-color: transparent; -fx-cursor: hand;");
         logoutButton.setCursor(Cursor.HAND);
@@ -564,7 +560,7 @@ public class ResponsiveStepProgressHeader implements BookingFormHeader {
         activeStepCircle.getStyleClass().add("booking-form-step-active-circle");
         Label activeStepNumber = new Label();
         activeStepNumber.setTextFill(Color.WHITE);
-        activeStepNumber.setFont(javafx.scene.text.Font.font("System", javafx.scene.text.FontWeight.BOLD, 16));
+        activeStepNumber.setFont(Font.font(null, FontWeight.BOLD, 16));
 
         StackPane activeStepPane = new StackPane(activeStepCircle, activeStepNumber);
         activeStepPane.setMinSize(44, 44);
@@ -574,12 +570,12 @@ public class ResponsiveStepProgressHeader implements BookingFormHeader {
         VBox stepInfo = new VBox(2);
         Label stepNameLabel = new Label();
         stepNameLabel.getStyleClass().add("booking-form-step-name-label");
-        stepNameLabel.setFont(javafx.scene.text.Font.font("System", javafx.scene.text.FontWeight.SEMI_BOLD, 16));
+        stepNameLabel.setFont(Font.font(null, FontWeight.SEMI_BOLD, 16));
         stepNameLabel.setTextFill(Color.web("#212529"));
 
         Label stepCountLabel = new Label();
         stepCountLabel.getStyleClass().add("booking-form-step-count-label");
-        stepCountLabel.setFont(javafx.scene.text.Font.font("System", javafx.scene.text.FontWeight.NORMAL, 13));
+        stepCountLabel.setFont(Font.font(null, FontWeight.NORMAL, 13));
         stepCountLabel.setTextFill(Color.web("#6c757d"));
 
         stepInfo.getChildren().addAll(stepNameLabel, stepCountLabel);
@@ -667,14 +663,14 @@ public class ResponsiveStepProgressHeader implements BookingFormHeader {
 
             Label numberLabel = new Label(String.valueOf(step.stepNumber));
             numberLabel.getStyleClass().add("booking-form-step-number");
-            numberLabel.setFont(javafx.scene.text.Font.font("System", javafx.scene.text.FontWeight.SEMI_BOLD, 12)); // Per JSX mockup
+            numberLabel.setFont(Font.font(null, FontWeight.SEMI_BOLD, 12)); // Per JSX mockup
             circle.getChildren().addAll(circleShape, numberLabel); // Circle first, label on top
 
             // Short label (abbreviated)
             Label label = new Label();
             I18nControls.bindI18nProperties(label, step.titleKey);
             label.getStyleClass().add("booking-form-step-label-tablet");
-            label.setFont(javafx.scene.text.Font.font("System", javafx.scene.text.FontWeight.NORMAL, 11)); // Per JSX: 11px, weight changes with state
+            label.setFont(Font.font(null, FontWeight.NORMAL, 11)); // Per JSX: 11px, weight changes with state
             label.setWrapText(false);
             label.setMaxWidth(60);
             label.setAlignment(Pos.CENTER);
@@ -734,18 +730,17 @@ public class ResponsiveStepProgressHeader implements BookingFormHeader {
 
             Label numberLabel = new Label(String.valueOf(step.stepNumber));
             numberLabel.getStyleClass().add("booking-form-step-number");
-            numberLabel.setFont(javafx.scene.text.Font.font("System", javafx.scene.text.FontWeight.SEMI_BOLD, 13));
+            numberLabel.setFont(Font.font(null, FontWeight.SEMI_BOLD, 13));
             bubble.getChildren().addAll(circleShape, numberLabel);
 
             // Full label - centered under bubble
-            Label label = new Label();
-            I18nControls.bindI18nProperties(label, step.titleKey);
+            Label label = I18nControls.newLabel(step.titleKey);
             label.getStyleClass().add("booking-form-step-label");
             label.setWrapText(true);
             label.setAlignment(Pos.TOP_CENTER);
-            label.setTextAlignment(javafx.scene.text.TextAlignment.CENTER);
+            label.setTextAlignment(TextAlignment.CENTER);
             label.setMaxWidth(90);
-            label.setFont(javafx.scene.text.Font.font("System", javafx.scene.text.FontWeight.NORMAL, 12));
+            label.setFont(Font.font(null, FontWeight.NORMAL, 12));
 
             stepItem.getChildren().addAll(bubble, label);
 
@@ -1041,13 +1036,13 @@ public class ResponsiveStepProgressHeader implements BookingFormHeader {
 
         numberLabel.setText(displayText);
         numberLabel.setTextFill(text);
-        numberLabel.setFont(javafx.scene.text.Font.font("System", javafx.scene.text.FontWeight.SEMI_BOLD, 13)); // Per JSX mockup
+        numberLabel.setFont(Font.font(null, FontWeight.SEMI_BOLD, 13)); // Per JSX mockup
 
         if (textLabel != null) {
             // Active/completed step label uses primary color (same as circle border), inactive uses gray
             textLabel.setTextFill(isActive || isCompleted ? scheme.getPrimary() : Color.web("#9CA3AF"));
             // Active step label should be bold (700), inactive should be normal (400)
-            textLabel.setFont(javafx.scene.text.Font.font("System", isActive ? javafx.scene.text.FontWeight.BOLD : javafx.scene.text.FontWeight.NORMAL, 12));
+            textLabel.setFont(Font.font(null, isActive ? FontWeight.BOLD : FontWeight.NORMAL, 12));
         }
     }
 
