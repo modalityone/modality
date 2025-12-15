@@ -14,6 +14,7 @@ import dev.webfx.platform.util.collection.Collections;
 import dev.webfx.stack.orm.domainmodel.activity.viewdomain.impl.ViewDomainActivityBase;
 import dev.webfx.stack.orm.domainmodel.activity.viewdomain.impl.ViewDomainActivityContextFinal;
 import dev.webfx.stack.orm.entity.Entities;
+import dev.webfx.stack.orm.entity.EntityStore;
 import dev.webfx.stack.routing.uirouter.UiRouter;
 import javafx.beans.property.ObjectProperty;
 import javafx.beans.property.ReadOnlyObjectProperty;
@@ -22,7 +23,9 @@ import javafx.scene.Node;
 import javafx.scene.control.Labeled;
 import javafx.scene.text.Font;
 import one.modality.base.frontoffice.mainframe.fx.FXCollapseMenu;
+import one.modality.base.shared.entities.Document;
 import one.modality.base.shared.entities.Event;
+import one.modality.base.shared.entities.MoneyTransfer;
 import one.modality.base.shared.entities.Person;
 import one.modality.booking.client.workingbooking.FXPersonToBook;
 import one.modality.booking.client.workingbooking.HasWorkingBookingProperties;
@@ -39,6 +42,7 @@ import one.modality.event.client.event.fx.FXEvent;
 import one.modality.event.client.event.fx.FXEventId;
 import one.modality.event.frontoffice.activities.book.account.CheckoutAccountRouting;
 import one.modality.event.frontoffice.activities.book.event.slides.LettersSlideController;
+import one.modality.event.frontoffice.activities.book.fx.FXResumePaymentMoneyTransfer;
 
 import java.util.List;
 import java.util.ServiceLoader;
@@ -63,6 +67,9 @@ public final class BookEventActivity extends ViewDomainActivityBase implements B
     private final ObjectProperty<Object> modifyOrderDocumentIdProperty = new SimpleObjectProperty<>();
     // When routed through /pay-order/:payOrderDocumentId, this property will store the documentId to pay
     private final ObjectProperty<Object> payOrderDocumentIdProperty = new SimpleObjectProperty<>();
+    //
+    private final ObjectProperty<Object> resumePaymentMoneyTransferIdProperty = new SimpleObjectProperty<>();
+    private long activityStartTimeMillis;
     // When routed through /book-event/:eventId, FXEventId and FXEvent are used to store the event to book
     private boolean reachingEndSlide;
     // Track if we're showing a modification form
@@ -89,6 +96,10 @@ public final class BookEventActivity extends ViewDomainActivityBase implements B
         return payOrderDocumentIdProperty.get();
     }
 
+    public Object getResumePaymentMoneyTransferId() {
+        return resumePaymentMoneyTransferIdProperty.get();
+    }
+
     @Override
     public Node buildUi() {
         // Initially show the legacy slides container
@@ -109,6 +120,7 @@ public final class BookEventActivity extends ViewDomainActivityBase implements B
         }
         modifyOrderDocumentIdProperty.set(getParameter("modifyOrderDocumentId"));
         payOrderDocumentIdProperty.set(getParameter("payOrderDocumentId"));
+        resumePaymentMoneyTransferIdProperty.set(getParameter("paymentReturnMoneyTransferId"));
     }
 
     private void setCollapseMenu() {
@@ -162,9 +174,10 @@ public final class BookEventActivity extends ViewDomainActivityBase implements B
 
     @Override
     protected void startLogic() {
+        activityStartTimeMillis = System.currentTimeMillis();
         // Initial load of the event policy with the possible existing booking of the user (if logged-in)
         FXProperties.runNowAndOnPropertiesChange(this::loadPolicyAndBooking,
-            FXEvent.eventProperty(), modifyOrderDocumentIdProperty, payOrderDocumentIdProperty);
+            FXEvent.eventProperty(), modifyOrderDocumentIdProperty, payOrderDocumentIdProperty, resumePaymentMoneyTransferIdProperty);
 
         // Later loading when changing the person to book (loading of possible booking and reapplying the newly selected dates)
         FXProperties.runOnPropertyChange(this::onPersonToBookChanged, FXPersonToBook.personToBookProperty());
@@ -174,7 +187,29 @@ public final class BookEventActivity extends ViewDomainActivityBase implements B
         Object modifyOrderDocumentId = getModifyOrderDocumentId();
         Object payOrderDocumentId = getPayOrderDocumentId();
         Object modifyOrPayOrderDocumentId = Objects.coalesce(modifyOrderDocumentId, payOrderDocumentId);
-        if (modifyOrPayOrderDocumentId != null) {
+        Object resumePaymentMoneyTransferId = getResumePaymentMoneyTransferId();
+        Event event = FXEvent.getEvent(); // might be null on the first call (ex: on page reload)
+        // Case when resuming after a redirected payment has been made (the payment gateway called back this url)
+        if (resumePaymentMoneyTransferId != null && FXResumePaymentMoneyTransfer.getResumePaymentMoneyTransfer() == null) {
+            // We load the required information about this payment (its state and its associated event)
+            EntityStore.create(getDataSourceModel())
+                .<MoneyTransfer>executeQuery("select pending,successful,document.event.(" + FXEvent.EXPECTED_FIELDS + ") from MoneyTransfer where id = $1 or parent = $1 order by id=$1 desc", resumePaymentMoneyTransferId)
+                .onFailure(Console::log)
+                .onSuccess(moneyTransfers -> {
+                    MoneyTransfer moneyTransfer = Collections.first(moneyTransfers);
+                    // If the money transfer is still pending within the 10 first seconds, we try to load it again. This
+                    // might be because the payment gateway called this activity a bit before too early, i.e., before
+                    // the webhook finished updating the payment state.
+                    if (moneyTransfer != null && moneyTransfer.isPending() && System.currentTimeMillis() - activityStartTimeMillis < 10_000) {
+                        loadPolicyAndBooking();
+                        return;
+                    }
+                    // Once the info is loaded, we set FXEvent and FXResumePaymentMoneyTransfer
+                    Document document = moneyTransfers.stream().map(MoneyTransfer::getDocument).filter(Objects::nonNull).findFirst().orElse(null);
+                    FXEvent.setEvent(document == null ? null : document.getEvent());
+                    FXResumePaymentMoneyTransfer.setResumePaymentMoneyTransfer(moneyTransfer); // will cause loadPolicyAndBooking() to be called again - see startLogic()
+                });
+        } if (modifyOrPayOrderDocumentId != null) {
             // Note: this call doesn't automatically rebuild PolicyAggregate entities
             DocumentService.loadPolicyAndDocument(new LoadDocumentArgument(modifyOrPayOrderDocumentId))
                 .onFailure(Console::log)
@@ -184,8 +219,7 @@ public final class BookEventActivity extends ViewDomainActivityBase implements B
                     }
                 });
         } else {
-            // TODO: if eventId doesn't exist in the database, FXEvent.getEvent() stays null and nothing happens (stuck on loading page)
-            Event event = FXEvent.getEvent(); // might be null on the first call (ex: on page reload)
+            // TODO: if eventId doesn't exist in the database, event stays null and nothing happens (stuck on loading page)
             if (event != null) { // happens when routed through /book-event/:eventId
                 setCollapseMenu(); // Updating the collapse menu policy (because it depends on the event)
                 lettersSlideController.onEventChanged(event);
@@ -241,24 +275,26 @@ public final class BookEventActivity extends ViewDomainActivityBase implements B
 
             // For modification flow, use the unified provider-based approach
             // Capture event in effectively final variable for lambda
-            Event finalEvent = event;
-            if (getModifyOrderDocumentId() != null && finalEvent != null) {
+            BookingFormEntryPoint entryPoint = getModifyOrderDocumentId() != null ? BookingFormEntryPoint.MODIFY_BOOKING :
+                getResumePaymentMoneyTransferId() != null ? BookingFormEntryPoint.RESUME_PAYMENT :
+                    BookingFormEntryPoint.NEW_BOOKING;
+            if (entryPoint == BookingFormEntryPoint.NEW_BOOKING) {
+                // For new booking and payment flows, use the legacy approach (for now)
+                lettersSlideController.onEventChanged(event);
+                lettersSlideController.onWorkingBookingLoaded();
+            } else if (event != null) { // Modifying or resuming payment
+                Event finalEvent = event;
                 BookingFormProvider modificationProvider = Collections.findFirst(ALL_BOOKING_FORM_PROVIDERS_SORTED_BY_PRIORITY,
-                        provider -> provider.acceptEvent(finalEvent, BookingFormEntryPoint.MODIFY_BOOKING));
+                    provider -> provider.acceptEvent(finalEvent));
                 if (modificationProvider != null) {
-                    BookingForm modificationForm = modificationProvider.createBookingForm(finalEvent, this, BookingFormEntryPoint.MODIFY_BOOKING);
-                    Node modificationView = modificationForm.getView();
-                    if (modificationView != null) {
-                        activityContainer.setContent(modificationView);
-                        showingModificationForm = true;
-                        return;
+                    BookingForm bookingForm = modificationProvider.createBookingForm(finalEvent, this, entryPoint);
+                    Node bookingFormView = bookingForm.getView();
+                    if (bookingFormView != null) {
+                        activityContainer.setContent(bookingFormView);
+                        showingModificationForm = entryPoint == BookingFormEntryPoint.MODIFY_BOOKING;
                     }
                 }
             }
-
-            // For new booking and payment flows, use the legacy approach (for now)
-            lettersSlideController.onEventChanged(event);
-            lettersSlideController.onWorkingBookingLoaded();
         });
     }
 

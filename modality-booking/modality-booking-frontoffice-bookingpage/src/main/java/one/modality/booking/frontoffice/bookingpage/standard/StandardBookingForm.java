@@ -981,8 +981,8 @@ public class StandardBookingForm extends MultiPageBookingForm {
                     sectionResult.getAmount(),
                     paymentAllocations,
                     PaymentFormType.REDIRECTED, // We were using EMBEDDED so far, now we try REDIRECTED
-                    "/payment-return/:moneyTransferId",
-                    "/payment-cancel/:moneyTransferId")
+                    "/resume-payment/:moneyTransferId",
+                    "/resume-payment/:moneyTransferId")
             )
             .inUiThread()
             .onFailure(Console::log)

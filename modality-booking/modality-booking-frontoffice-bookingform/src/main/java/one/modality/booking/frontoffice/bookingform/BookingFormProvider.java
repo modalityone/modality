@@ -25,22 +25,9 @@ public interface BookingFormProvider {
      * Returns whether this provider can handle the given event for the specified entry point.
      *
      * @param event the event to check
-     * @param entryPoint the booking form entry point context
      * @return true if this provider can handle the event/entry point combination
      */
-    boolean acceptEvent(Event event, BookingFormEntryPoint entryPoint);
-
-    /**
-     * Legacy method for backward compatibility - defaults to NEW_BOOKING entry point.
-     *
-     * @param event the event to check
-     * @return true if this provider can handle the event for new bookings
-     * @deprecated Use {@link #acceptEvent(Event, BookingFormEntryPoint)} instead
-     */
-    @Deprecated
-    default boolean acceptEvent(Event event) {
-        return acceptEvent(event, BookingFormEntryPoint.NEW_BOOKING);
-    }
+    boolean acceptEvent(Event event);
 
     /**
      * Returns the priority of this provider. Higher priority providers are chosen

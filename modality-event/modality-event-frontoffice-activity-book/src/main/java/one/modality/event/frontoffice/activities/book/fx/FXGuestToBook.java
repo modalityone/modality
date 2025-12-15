@@ -7,7 +7,7 @@ import one.modality.base.shared.entities.markers.HasPersonalDetails;
 /**
  * @author Bruno Salmon
  */
-public class FXGuestToBook {
+public final class FXGuestToBook {
 
     private final static ObjectProperty<HasPersonalDetails> guestToBookProperty = new SimpleObjectProperty<>();
 

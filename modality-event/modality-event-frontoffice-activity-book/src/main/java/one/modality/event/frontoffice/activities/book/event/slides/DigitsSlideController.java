@@ -62,7 +62,7 @@ final class DigitsSlideController {
     void onEventChanged(Event event) {
         // Searching for a booking form provider suitable for this event (for new bookings)
         BookingFormProvider bookingFormProvider = Collections.findFirst(ALL_BOOKING_FORM_PROVIDERS_SORTED_BY_PRIORITY,
-                provider -> provider.acceptEvent(event, BookingFormEntryPoint.NEW_BOOKING));
+                provider -> provider.acceptEvent(event));
         if (bookingFormProvider == null) {
             bookingForm = null;
             step6ErrorSlide.setErrorMessage("Error: Unmanaged type of event");

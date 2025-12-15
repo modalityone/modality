@@ -12,7 +12,9 @@
 
         <plugin-module>modality-ecommerce-client-min-plugin</plugin-module>
 
+<!--
         <plugin-module>modality-ecommerce-frontoffice-activity-paymentreturn-plugin</plugin-module>
+-->
 
     </dependencies>
 
