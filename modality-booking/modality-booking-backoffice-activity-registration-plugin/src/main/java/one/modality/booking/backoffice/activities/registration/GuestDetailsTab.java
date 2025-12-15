@@ -45,7 +45,10 @@ public class GuestDetailsTab {
     private TextField lastNameField;
     private TextField emailField;
     private TextField phoneField;
-    private ComboBox<String> genderCombo;
+    // Gender selection using ToggleButtons (GWT-compatible replacement for ComboBox)
+    private ToggleButton maleToggle;
+    private ToggleButton femaleToggle;
+    private ToggleGroup genderToggleGroup;
     private DatePicker birthDatePicker;
     private TextField streetField;
     private TextField cityField;
@@ -215,13 +218,25 @@ public class GuestDetailsTab {
         lastNameField = createFormField("Last Name", document.getStringFieldValue("person_lastName"));
         addFormRow(grid, 1, "Last Name", lastNameField);
 
-        // Gender
-        genderCombo = new ComboBox<>();
-        genderCombo.getItems().addAll("Male", "Female");
+        // Gender (using ToggleButtons - GWT-compatible)
+        genderToggleGroup = new ToggleGroup();
+        maleToggle = new ToggleButton("Male");
+        maleToggle.setToggleGroup(genderToggleGroup);
+        maleToggle.disableProperty().bind(editingProperty.not());
+        femaleToggle = new ToggleButton("Female");
+        femaleToggle.setToggleGroup(genderToggleGroup);
+        femaleToggle.disableProperty().bind(editingProperty.not());
+
         Object isMale = document.getFieldValue("person_male");
-        genderCombo.setValue(Boolean.TRUE.equals(isMale) ? "Male" : "Female");
-        genderCombo.disableProperty().bind(editingProperty.not());
-        addFormRow(grid, 2, "Gender", genderCombo);
+        if (Boolean.TRUE.equals(isMale)) {
+            maleToggle.setSelected(true);
+        } else {
+            femaleToggle.setSelected(true);
+        }
+
+        HBox genderButtons = new HBox(8);
+        genderButtons.getChildren().addAll(maleToggle, femaleToggle);
+        addFormRow(grid, 2, "Gender", genderButtons);
 
         // Birth Date
         birthDatePicker = new DatePicker();
@@ -316,7 +331,7 @@ public class GuestDetailsTab {
     /**
      * Adds a form row to a grid.
      */
-    private void addFormRow(GridPane grid, int row, String labelText, Control field) {
+    private void addFormRow(GridPane grid, int row, String labelText, Node field) {
         Label label = new Label(labelText);
         label.setFont(FONT_SMALL);
         label.setTextFill(TEXT_MUTED);

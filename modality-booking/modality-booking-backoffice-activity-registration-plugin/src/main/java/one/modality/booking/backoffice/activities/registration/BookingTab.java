@@ -597,38 +597,40 @@ public class BookingTab {
         priceLabel.setTextFill(WARM_BROWN);
         priceLabel.setMinWidth(60);
 
-        // Actions menu
-        MenuButton actionsMenu = new MenuButton("\u22EE"); // Vertical ellipsis
-        actionsMenu.setFont(Font.font("System", 14));
-        actionsMenu.setBackground(Background.EMPTY);
-        actionsMenu.setBorder(Border.EMPTY);
+        // Actions button (GWT-compatible replacement for MenuButton)
+        Button actionsButton = new Button("\u22EE"); // Vertical ellipsis
+        actionsButton.setFont(Font.font("System", 14));
+        actionsButton.setBackground(Background.EMPTY);
+        actionsButton.setBorder(Border.EMPTY);
+        actionsButton.setCursor(Cursor.HAND);
 
         boolean isCancelled = Boolean.TRUE.equals(line.isCancelled());
 
-        if (isCancelled) {
-            // For cancelled lines, show Restore and Delete options
-            MenuItem restoreItem = new MenuItem("↩️ Restore");
-            restoreItem.setOnAction(e -> handleRestoreLine(line));
+        actionsButton.setOnAction(e -> {
+            // Show popup menu using VBox in a dialog
+            VBox menuPopup = new VBox(4);
+            menuPopup.setPadding(new Insets(8));
+            menuPopup.setBackground(createBackground(BG_CARD, BORDER_RADIUS_SMALL));
+            menuPopup.setBorder(createBorder(BORDER, BORDER_RADIUS_SMALL));
 
-            MenuItem deleteItem = new MenuItem("🗑️ Delete");
-            deleteItem.setOnAction(e -> handleDeleteLine(line));
+            if (isCancelled) {
+                // For cancelled lines, show Restore and Delete options
+                Button restoreBtn = createMenuItemButton("↩️ Restore", () -> handleRestoreLine(line));
+                Button deleteBtn = createMenuItemButton("🗑️ Delete", () -> handleDeleteLine(line));
+                menuPopup.getChildren().addAll(restoreBtn, deleteBtn);
+            } else {
+                // For active lines, show Edit, Cancel, Delete options
+                Button editBtn = createMenuItemButton("✏️ Edit", () -> handleEditLine(line));
+                Button cancelBtn = createMenuItemButton("🚫 Cancel", () -> handleCancelLine(line));
+                Button deleteBtn = createMenuItemButton("🗑️ Delete", () -> handleDeleteLine(line));
+                menuPopup.getChildren().addAll(editBtn, cancelBtn, deleteBtn);
+            }
 
-            actionsMenu.getItems().addAll(restoreItem, deleteItem);
-        } else {
-            // For active lines, show Edit, Cancel, Delete options
-            MenuItem editItem = new MenuItem("✏️ Edit");
-            editItem.setOnAction(e -> handleEditLine(line));
+            // Show as popup near the button
+            showPopupMenu(menuPopup, actionsButton);
+        });
 
-            MenuItem cancelItem = new MenuItem("🚫 Cancel");
-            cancelItem.setOnAction(e -> handleCancelLine(line));
-
-            MenuItem deleteItem = new MenuItem("🗑️ Delete");
-            deleteItem.setOnAction(e -> handleDeleteLine(line));
-
-            actionsMenu.getItems().addAll(editItem, cancelItem, deleteItem);
-        }
-
-        card.getChildren().addAll(icon, itemInfo, priceLabel, actionsMenu);
+        card.getChildren().addAll(icon, itemInfo, priceLabel, actionsButton);
 
         // Add cancelled styling if cancelled
         if (Boolean.TRUE.equals(line.isCancelled())) {
@@ -817,7 +819,20 @@ public class BookingTab {
     }
 
     private String formatPrice(int amount) {
-        return "\u00A3" + String.format("%,d", amount); // £ symbol
+        // GWT-compatible: avoid String.format
+        return "\u00A3" + formatWithCommas(amount); // £ symbol
+    }
+
+    private String formatWithCommas(int amount) {
+        if (amount < 1000) return String.valueOf(amount);
+        StringBuilder sb = new StringBuilder();
+        String str = String.valueOf(Math.abs(amount));
+        int len = str.length();
+        for (int i = 0; i < len; i++) {
+            if (i > 0 && (len - i) % 3 == 0) sb.append(',');
+            sb.append(str.charAt(i));
+        }
+        return amount < 0 ? "-" + sb : sb.toString();
     }
 
     // Note: Timeline canvas updates automatically via property binding
@@ -871,5 +886,79 @@ public class BookingTab {
      */
     public BooleanProperty activeProperty() {
         return activeProperty;
+    }
+
+    // Popup menu state
+    private VBox currentPopupMenu = null;
+    private StackPane popupOverlay = null;
+
+    /**
+     * Creates a styled button for use in popup menus.
+     * GWT-compatible replacement for MenuItem.
+     */
+    private Button createMenuItemButton(String text, Runnable action) {
+        Button btn = new Button(text);
+        btn.setMaxWidth(Double.MAX_VALUE);
+        btn.setAlignment(Pos.CENTER_LEFT);
+        btn.setBackground(Background.EMPTY);
+        btn.setBorder(Border.EMPTY);
+        btn.setCursor(Cursor.HAND);
+        btn.setFont(Font.font("System", 12));
+        btn.setPadding(new Insets(6, 12, 6, 12));
+
+        // Hover effect
+        btn.setOnMouseEntered(e -> btn.setBackground(createBackground(BG, BORDER_RADIUS_SMALL)));
+        btn.setOnMouseExited(e -> btn.setBackground(Background.EMPTY));
+
+        btn.setOnAction(e -> {
+            hidePopupMenu();
+            action.run();
+        });
+
+        return btn;
+    }
+
+    /**
+     * Shows a popup menu near the specified button.
+     * GWT-compatible replacement for MenuButton.
+     */
+    private void showPopupMenu(VBox menuContent, Button anchor) {
+        hidePopupMenu(); // Hide any existing popup
+
+        // Create an overlay that covers the whole scene and closes menu when clicked
+        popupOverlay = new StackPane();
+        popupOverlay.setBackground(new Background(new BackgroundFill(Color.TRANSPARENT, null, null)));
+        popupOverlay.setOnMouseClicked(e -> hidePopupMenu());
+
+        // Position the menu content
+        menuContent.setMaxWidth(150);
+
+        // Add menu to overlay
+        popupOverlay.getChildren().add(menuContent);
+        StackPane.setAlignment(menuContent, Pos.TOP_LEFT);
+
+        // Add overlay to the scene
+        if (anchor.getScene() != null && anchor.getScene().getRoot() instanceof Pane) {
+            Pane root = (Pane) anchor.getScene().getRoot();
+
+            // Calculate position relative to anchor button (GWT-compatible: use Point2D not Bounds)
+            javafx.geometry.Point2D pos = anchor.localToScene(0, 0);
+            menuContent.setTranslateX(pos.getX());
+            menuContent.setTranslateY(pos.getY() + anchor.getHeight() + 4);
+
+            root.getChildren().add(popupOverlay);
+            currentPopupMenu = menuContent;
+        }
+    }
+
+    /**
+     * Hides the current popup menu.
+     */
+    private void hidePopupMenu() {
+        if (popupOverlay != null && popupOverlay.getParent() instanceof Pane) {
+            ((Pane) popupOverlay.getParent()).getChildren().remove(popupOverlay);
+        }
+        popupOverlay = null;
+        currentPopupMenu = null;
     }
 }

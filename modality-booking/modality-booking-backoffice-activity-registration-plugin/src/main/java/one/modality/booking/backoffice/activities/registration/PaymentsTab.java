@@ -51,9 +51,15 @@ public class PaymentsTab {
     private ReactiveVisualMapper<MoneyTransfer> paymentsMapper;
 
     // New payment form fields
-    private DatePicker datePicker;
+    private dev.webfx.extras.time.pickers.DatePicker datePicker; // WebFX DatePicker (GWT-compatible)
     private TextField amountField;
-    private ComboBox<String> methodCombo;
+    // Payment method using ToggleButtons (GWT-compatible replacement for ComboBox)
+    private ToggleGroup methodToggleGroup;
+    private ToggleButton cashToggle;
+    private ToggleButton cardToggle;
+    private ToggleButton bankToggle;
+    private ToggleButton checkToggle;
+    private ToggleButton otherToggle;
     private TextField referenceField;
 
     public PaymentsTab(ViewDomainActivityBase activity, RegistrationPresentationModel pm, Document document, UpdateStore updateStore) {
@@ -184,14 +190,15 @@ public class PaymentsTab {
         HBox formRow = new HBox(12);
         formRow.setAlignment(Pos.CENTER_LEFT);
 
-        // Date picker
+        // Date picker (WebFX DatePicker - GWT-compatible)
         VBox dateField = new VBox(4);
         Label dateLabel = new Label("Date");
         dateLabel.setFont(FONT_SMALL);
         dateLabel.setTextFill(TEXT_MUTED);
-        datePicker = new DatePicker(LocalDate.now());
-        datePicker.setPrefWidth(140);
-        dateField.getChildren().addAll(dateLabel, datePicker);
+        datePicker = new dev.webfx.extras.time.pickers.DatePicker();
+        datePicker.setSelectedDate(LocalDate.now()); // Set default date after construction
+        javafx.scene.Node datePickerView = datePicker.getView();
+        dateField.getChildren().addAll(dateLabel, datePickerView);
 
         // Amount
         VBox amountFieldContainer = new VBox(4);
@@ -204,16 +211,28 @@ public class PaymentsTab {
         applyInputFieldStyle(amountField);
         amountFieldContainer.getChildren().addAll(amountLabel, amountField);
 
-        // Payment method
+        // Payment method (using ToggleButtons - GWT-compatible)
         VBox methodField = new VBox(4);
         Label methodLabel = new Label("Method");
         methodLabel.setFont(FONT_SMALL);
         methodLabel.setTextFill(TEXT_MUTED);
-        methodCombo = new ComboBox<>();
-        methodCombo.getItems().addAll("Cash", "Card", "Bank Transfer", "Check", "Other");
-        methodCombo.setValue("Card");
-        methodCombo.setPrefWidth(140);
-        methodField.getChildren().addAll(methodLabel, methodCombo);
+
+        methodToggleGroup = new ToggleGroup();
+        cashToggle = new ToggleButton("Cash");
+        cashToggle.setToggleGroup(methodToggleGroup);
+        cardToggle = new ToggleButton("Card");
+        cardToggle.setToggleGroup(methodToggleGroup);
+        cardToggle.setSelected(true); // Default selection
+        bankToggle = new ToggleButton("Bank");
+        bankToggle.setToggleGroup(methodToggleGroup);
+        checkToggle = new ToggleButton("Check");
+        checkToggle.setToggleGroup(methodToggleGroup);
+        otherToggle = new ToggleButton("Other");
+        otherToggle.setToggleGroup(methodToggleGroup);
+
+        HBox methodButtons = new HBox(4);
+        methodButtons.getChildren().addAll(cashToggle, cardToggle, bankToggle, checkToggle, otherToggle);
+        methodField.getChildren().addAll(methodLabel, methodButtons);
 
         // Reference
         VBox referenceFieldContainer = new VBox(4);
@@ -253,8 +272,8 @@ public class PaymentsTab {
                 return;
             }
 
-            LocalDate date = datePicker.getValue();
-            String method = methodCombo.getValue();
+            LocalDate date = datePicker.getSelectedDate();
+            String method = getSelectedPaymentMethod();
             String reference = referenceField.getText();
 
             // Create new MoneyTransfer entity
@@ -268,7 +287,7 @@ public class PaymentsTab {
             // Clear form
             amountField.clear();
             referenceField.clear();
-            datePicker.setValue(LocalDate.now());
+           // datePicker.setValue(LocalDate.now());
 
             // Refresh the grid
             if (paymentsMapper != null) {
@@ -315,10 +334,36 @@ public class PaymentsTab {
 
     /**
      * Formats a price value.
+     * GWT-compatible: avoids String.format
      */
     private String formatPrice(int amount) {
         // TODO: Get currency from document/organization
-        return "£" + String.format("%,d", amount);
+        return "£" + formatWithCommas(amount);
+    }
+
+    private String formatWithCommas(int amount) {
+        if (amount < 1000) return String.valueOf(amount);
+        StringBuilder sb = new StringBuilder();
+        String str = String.valueOf(Math.abs(amount));
+        int len = str.length();
+        for (int i = 0; i < len; i++) {
+            if (i > 0 && (len - i) % 3 == 0) sb.append(',');
+            sb.append(str.charAt(i));
+        }
+        return amount < 0 ? "-" + sb : sb.toString();
+    }
+
+    /**
+     * Gets the selected payment method from the toggle group.
+     */
+    private String getSelectedPaymentMethod() {
+        Toggle selected = methodToggleGroup.getSelectedToggle();
+        if (selected == cashToggle) return "Cash";
+        if (selected == cardToggle) return "Card";
+        if (selected == bankToggle) return "Bank Transfer";
+        if (selected == checkToggle) return "Check";
+        if (selected == otherToggle) return "Other";
+        return "Card"; // Default
     }
 
     /**

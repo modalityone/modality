@@ -268,11 +268,17 @@ public class NotesTab {
 
     /**
      * Converts a Color to hex string.
+     * GWT-compatible: avoids String.format
      */
     private String toHexString(Color color) {
-        return String.format("#%02X%02X%02X",
-            (int) (color.getRed() * 255),
-            (int) (color.getGreen() * 255),
-            (int) (color.getBlue() * 255));
+        int r = (int) (color.getRed() * 255);
+        int g = (int) (color.getGreen() * 255);
+        int b = (int) (color.getBlue() * 255);
+        return "#" + toHex(r) + toHex(g) + toHex(b);
+    }
+
+    private String toHex(int value) {
+        String hex = Integer.toHexString(value).toUpperCase();
+        return hex.length() == 1 ? "0" + hex : hex;
     }
 }

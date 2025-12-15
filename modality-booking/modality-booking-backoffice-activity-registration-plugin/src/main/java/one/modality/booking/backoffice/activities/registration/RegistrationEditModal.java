@@ -378,7 +378,23 @@ public class RegistrationEditModal {
      */
     private String formatPrice(int amount) {
         // TODO: Get currency from document/organization
-        return "£" + String.format("%,d", amount);
+        // GWT-compatible: avoid String.format
+        return "£" + formatWithCommas(amount);
+    }
+
+    /**
+     * Formats a number with thousand separators (GWT-compatible).
+     */
+    private String formatWithCommas(int amount) {
+        if (amount < 1000) return String.valueOf(amount);
+        StringBuilder sb = new StringBuilder();
+        String str = String.valueOf(Math.abs(amount));
+        int len = str.length();
+        for (int i = 0; i < len; i++) {
+            if (i > 0 && (len - i) % 3 == 0) sb.append(',');
+            sb.append(str.charAt(i));
+        }
+        return amount < 0 ? "-" + sb.toString() : sb.toString();
     }
 
     /**

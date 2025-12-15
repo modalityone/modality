@@ -62,7 +62,10 @@ public class RegistrationCreateModal {
     private TextField lastNameField;
     private TextField emailField;
     private TextField phoneField;
-    private ComboBox<String> genderCombo;
+    // Gender selection using ToggleButtons (GWT-compatible replacement for ComboBox)
+    private ToggleButton maleToggle;
+    private ToggleButton femaleToggle;
+    private ToggleGroup genderToggleGroup;
 
     // Event section
     private EntityButtonSelector<Event> eventSelector;
@@ -295,16 +298,23 @@ public class RegistrationCreateModal {
 
         contactRow.getChildren().addAll(emailFieldContainer, phoneFieldContainer);
 
-        // Gender
+        // Gender (using ToggleButtons - GWT-compatible)
         VBox genderFieldContainer = new VBox(4);
         Label genderLabel = new Label("Gender");
         genderLabel.setFont(FONT_SMALL);
         genderLabel.setTextFill(TEXT_MUTED);
-        genderCombo = new ComboBox<>();
-        genderCombo.getItems().addAll("Male", "Female", "Other", "Prefer not to say");
-        genderCombo.setMaxWidth(200);
-        genderCombo.setDisable(true);
-        genderFieldContainer.getChildren().addAll(genderLabel, genderCombo);
+
+        genderToggleGroup = new ToggleGroup();
+        maleToggle = new ToggleButton("Male");
+        maleToggle.setToggleGroup(genderToggleGroup);
+        maleToggle.setDisable(true);
+        femaleToggle = new ToggleButton("Female");
+        femaleToggle.setToggleGroup(genderToggleGroup);
+        femaleToggle.setDisable(true);
+
+        HBox genderButtons = new HBox(8);
+        genderButtons.getChildren().addAll(maleToggle, femaleToggle);
+        genderFieldContainer.getChildren().addAll(genderLabel, genderButtons);
 
         newPersonFields.getChildren().addAll(nameRow, contactRow, genderFieldContainer);
 
@@ -372,14 +382,16 @@ public class RegistrationCreateModal {
         Label arrivalLabel = new Label("Arrival Date *");
         arrivalLabel.setFont(FONT_SMALL);
         arrivalLabel.setTextFill(TEXT_MUTED);
-        arrivalDatePicker = new DatePicker(LocalDate.now());
+        arrivalDatePicker = new DatePicker();
+        arrivalDatePicker.setValue(LocalDate.now()); // GWT-compatible: set value after construction
         arrivalField.getChildren().addAll(arrivalLabel, arrivalDatePicker);
 
         VBox departureField = new VBox(4);
         Label departureLabel = new Label("Departure Date *");
         departureLabel.setFont(FONT_SMALL);
         departureLabel.setTextFill(TEXT_MUTED);
-        departureDatePicker = new DatePicker(LocalDate.now().plusDays(3));
+        departureDatePicker = new DatePicker();
+        departureDatePicker.setValue(LocalDate.now().plusDays(3)); // GWT-compatible: set value after construction
         departureField.getChildren().addAll(departureLabel, departureDatePicker);
 
         datesRow.getChildren().addAll(arrivalField, departureField);
@@ -522,7 +534,8 @@ public class RegistrationCreateModal {
         lastNameField.setDisable(disabled);
         emailField.setDisable(disabled);
         phoneField.setDisable(disabled);
-        genderCombo.setDisable(disabled);
+        maleToggle.setDisable(disabled);
+        femaleToggle.setDisable(disabled);
     }
 
     /**
