@@ -4,7 +4,9 @@ module modality.ecommerce.frontoffice.activity.paymentreturn.plugin {
 
     // Direct dependencies modules
     requires javafx.base;
+    requires javafx.controls;
     requires javafx.graphics;
+    requires modality.base.client.i18n;
     requires modality.base.shared.entities;
     requires webfx.extras.panes;
     requires webfx.extras.util.control;

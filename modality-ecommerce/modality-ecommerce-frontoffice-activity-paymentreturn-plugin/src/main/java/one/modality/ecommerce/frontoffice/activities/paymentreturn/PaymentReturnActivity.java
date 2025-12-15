@@ -10,10 +10,16 @@ import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.ObjectProperty;
 import javafx.beans.property.SimpleBooleanProperty;
 import javafx.beans.property.SimpleObjectProperty;
+import javafx.geometry.Pos;
 import javafx.scene.Node;
+import javafx.scene.control.Label;
 import javafx.scene.layout.Region;
-import javafx.scene.text.Text;
+import javafx.scene.layout.VBox;
+import one.modality.base.client.i18n.I18nEntities;
+import one.modality.base.shared.entities.Document;
 import one.modality.base.shared.entities.MoneyTransfer;
+
+import java.util.Objects;
 
 
 /**
@@ -25,6 +31,7 @@ final class PaymentReturnActivity extends ViewDomainActivityBase {
     private final ObjectProperty<Object> moneyTransferIdProperty = new SimpleObjectProperty<>();
     private final BooleanProperty loadingMoneyTransferProperty = new SimpleBooleanProperty();
     private final ObjectProperty<MoneyTransfer> moneyTransferProperty = new SimpleObjectProperty<>();
+    private Document document;
     private long activityStartTimeMillis;
 
     @Override
@@ -46,12 +53,16 @@ final class PaymentReturnActivity extends ViewDomainActivityBase {
                 // before the webhook finished updating the payment state.
                 if (moneyTransfer != null && moneyTransfer.isPending() && System.currentTimeMillis() - activityStartTimeMillis < 10000)
                     loadMoneyTransfer();
-                else
-                    monoPane.setContent(new Text(
-                        moneyTransfer == null ? "Payment not found!" :
+                else {
+                    VBox content = new VBox(10,
+                        I18nEntities.newTranslatedEntityLabel(document == null ? null : document.getEvent()),
+                        new Label(moneyTransfer == null ? "Payment not found!" :
                             moneyTransfer.isPending() ? "Your payment state is not yet known, it will be checked by our team" :
-                                moneyTransfer.isSuccessful() ? "Payment completed successfully!" : "Payment failed!"
-                    ));
+                                moneyTransfer.isSuccessful() ? "Payment completed successfully!" : "Payment failed!")
+                    );
+                    content.setAlignment(Pos.CENTER);
+                    monoPane.setContent(content);
+                }
             }
         }, moneyTransferProperty, loadingMoneyTransferProperty);
         return monoPane;
@@ -70,9 +81,11 @@ final class PaymentReturnActivity extends ViewDomainActivityBase {
         else {
             loadingMoneyTransferProperty.set(true);
             EntityStore.create(getDataSourceModel())
-                .<MoneyTransfer>executeQuery("select pending,successful from MoneyTransfer where id = ?", moneyTransferId)
-                .onComplete(ar -> {
-                    moneyTransferProperty.set(Collections.first(ar.result()));
+                .<MoneyTransfer>executeQuery("select pending,successful,document.event from MoneyTransfer where id = $1 or parent = $1 order by id=$1 desc", moneyTransferId)
+                .inUiThread()
+                .onSuccess(moneyTransfers -> {
+                    document = moneyTransfers.stream().map(MoneyTransfer::getDocument).filter(Objects::nonNull).findFirst().orElse(null);
+                    moneyTransferProperty.set(Collections.first(moneyTransfers));
                     loadingMoneyTransferProperty.set(false);
                 });
         }
