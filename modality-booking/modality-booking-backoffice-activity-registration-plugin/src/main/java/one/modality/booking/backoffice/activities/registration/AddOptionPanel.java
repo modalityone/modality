@@ -236,7 +236,7 @@ public class AddOptionPanel {
                 Integer ord = Numbers.toInteger(opt.option.getFieldValue("ord"));
                 return ord != null ? ord : 999;
             }))
-            .toList();
+            .collect(java.util.stream.Collectors.toList());
 
         if (categoryOptions.isEmpty()) {
             Label emptyLabel = new Label("No " + selectedCategory + " options available for this event");

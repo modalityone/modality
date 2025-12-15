@@ -427,7 +427,9 @@ public final class RegistrationStyles {
         if (amount == (int) amount) {
             return "£" + (int) amount;
         }
-        return String.format("£%.2f", amount);
+        // GWT-compatible: avoid String.format
+        long pence = Math.round(amount * 100);
+        return "£" + (pence / 100) + "." + String.valueOf(100 + (pence % 100)).substring(1);
     }
 
     /**

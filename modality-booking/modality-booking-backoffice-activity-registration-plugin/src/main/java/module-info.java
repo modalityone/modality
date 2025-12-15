@@ -27,6 +27,7 @@ module modality.booking.backoffice.activity.registration.plugin {
     requires webfx.extras.styles.bootstrap;
     requires webfx.extras.time.layout;
     requires webfx.extras.time.layout.gantt;
+    requires webfx.extras.time.pickers;
     requires webfx.extras.util.dialog;
     requires webfx.extras.validation;
     requires webfx.extras.visual;
