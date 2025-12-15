@@ -9,7 +9,7 @@ import java.util.Map;
  */
 public record GatewayInitiatePaymentArgument(
     String paymentId,
-    GatewayItem item,
+    GatewayOrder order,
     String currencyCode,
     boolean isLive, // if false, the payment gateway will use its sandbox environment for this payment
     PaymentFormType preferredFormType,

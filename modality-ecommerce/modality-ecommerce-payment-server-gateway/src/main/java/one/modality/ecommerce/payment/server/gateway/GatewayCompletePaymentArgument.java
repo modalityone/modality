@@ -16,7 +16,7 @@ public record GatewayCompletePaymentArgument(
     Map<String, String> accountParameters,
     long amount,
     GatewayCustomer customer,
-    GatewayItem item
+    GatewayOrder order
 ) {
 
     public String getAccountParameter(String key) {

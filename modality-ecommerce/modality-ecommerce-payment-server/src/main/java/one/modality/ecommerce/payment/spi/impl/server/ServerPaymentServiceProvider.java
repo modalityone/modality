@@ -4,6 +4,7 @@ import dev.webfx.platform.async.Future;
 import dev.webfx.platform.console.Console;
 import dev.webfx.platform.service.MultipleServiceProviders;
 import dev.webfx.platform.util.Arrays;
+import dev.webfx.platform.util.Booleans;
 import dev.webfx.platform.util.Numbers;
 import dev.webfx.platform.util.Strings;
 import dev.webfx.stack.orm.datasourcemodel.service.DataSourceModelService;
@@ -80,7 +81,7 @@ public final class ServerPaymentServiceProvider implements PaymentServiceProvide
                                 String currencyCode = totalTransfer.getToMoneyAccount().getCurrency().getCode();
                                 return paymentGateway.initiatePayment(new GatewayInitiatePaymentArgument(
                                     moneyTransferId,
-                                    createGatewayItem(databasePayment),
+                                    createGatewayOrder(databasePayment),
                                     currencyCode,
                                     live,
                                     argument.preferredFormType(),
@@ -162,9 +163,9 @@ public final class ServerPaymentServiceProvider implements PaymentServiceProvide
                 document.getAdmin1Name(),
                 document.evaluate("coalesce(person_country.name,person_countryName)")
             );
-            GatewayItem item = createGatewayItem(databasePayment);
+            GatewayOrder order = createGatewayOrder(databasePayment);
             // TODO check accessToken is set, otherwise return an error
-            return paymentGateway.completePayment(new GatewayCompletePaymentArgument(live, accessToken, argument.gatewayCompletePaymentPayload(), parameters, amount, customer, item))
+            return paymentGateway.completePayment(new GatewayCompletePaymentArgument(live, accessToken, argument.gatewayCompletePaymentPayload(), parameters, amount, customer, order))
                 .onFailure(e -> {
                     Console.log("An error occurred while completing payment: " + e.getMessage());
                     // We finally update the payment status through the payment service (this will also create a history entry)
@@ -197,17 +198,47 @@ public final class ServerPaymentServiceProvider implements PaymentServiceProvide
         });
     }
 
-    private static GatewayItem createGatewayItem(DatabasePayment databasePayment) {
+    private static GatewayOrder createGatewayOrder(DatabasePayment databasePayment) {
         MoneyTransfer moneyTransfer = databasePayment.totalTransfer();
-        Document document = getDatabasePaymentPrimaryDocument(databasePayment);
-        Event event = document.getEvent();
-        return new GatewayItem(
+        Document primaryDocument = getDatabasePaymentPrimaryDocument(databasePayment);
+        Event primaryEvent = primaryDocument.getEvent();
+        // Case of a simple payment made on a single booking
+        if (Booleans.isNotTrue(moneyTransfer.isSpread()))
+            return new GatewayOrder(
+                // Node: Some payment gateways like Square don't allow spaces and # in identifiers
+                "E" + primaryEvent.getPrimaryKey() + "-REF" + primaryDocument.getRef() + "-MT" + moneyTransfer.getPrimaryKey(),
+                primaryEvent.getName() + " #" + primaryDocument.getRef(),
+                primaryEvent.getName() + " - " + primaryDocument.getFullName(),
+                moneyTransfer.getAmount(),
+                new GatewayItem[]{
+                    new GatewayItem(
+                        "E" + primaryEvent.getPrimaryKey() + "-REF" + primaryDocument.getRef() + "-MT" + moneyTransfer.getPrimaryKey(),
+                        "Booking #" + primaryDocument.getRef(),
+                        "Booking #" + primaryDocument.getRef() + " - " + primaryDocument.getFullName(),
+                        1,
+                        moneyTransfer.getAmount()
+                    )
+                }
+            );
+
+        // Case of a multiple payment spread over several bookings
+        return new GatewayOrder(
             // Node: Some payment gateways like Square don't allow spaces and # in identifiers
-            "E" + event.getPrimaryKey() + "-REF" + document.getRef() + "-MT" + moneyTransfer.getPrimaryKey(),
-            event.getName() + " #" + document.getRef(),
-            event.getName() + " - " + document.getFullName(),
-            1,
-            moneyTransfer.getAmount());
+            "E" + primaryEvent.getPrimaryKey() + "-MT" + moneyTransfer.getPrimaryKey(),
+            primaryEvent.getName(),
+            primaryEvent.getName(),
+            moneyTransfer.getAmount(),
+            Arrays.map(databasePayment.allocatedTransfers(), allocatedTransfer -> {
+                Document document = allocatedTransfer.getDocument();
+                return new GatewayItem(
+                    "E" + document.getEvent().getPrimaryKey() + "-REF" + document.getRef() + "-MT" + allocatedTransfer.getPrimaryKey(),
+                    "Booking #" + document.getRef(),
+                    "Booking #" + document.getRef() + " - " + document.getFullName(),
+                    1,
+                    allocatedTransfer.getAmount()
+                );
+            }, GatewayItem[]::new)
+        );
     }
 
     @Override

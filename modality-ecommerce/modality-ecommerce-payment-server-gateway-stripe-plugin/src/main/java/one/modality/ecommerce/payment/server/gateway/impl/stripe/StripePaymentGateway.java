@@ -35,9 +35,9 @@ public final class StripePaymentGateway implements PaymentGateway {
     private Future<GatewayInitiatePaymentResult> initiatePaymentEmbedded(GatewayInitiatePaymentArgument argument) {
         try {
             Stripe.apiKey = API_SECRET_KEY;
-            GatewayItem item = argument.item();
+            GatewayOrder order = argument.order();
             PaymentIntentCreateParams params = PaymentIntentCreateParams.builder()
-                    .setAmount(item.amount())
+                    .setAmount(order.amount())
                     .setCurrency(argument.currencyCode())
                     .setAutomaticPaymentMethods(
                             PaymentIntentCreateParams.AutomaticPaymentMethods.builder().setEnabled(true).build()
@@ -58,24 +58,25 @@ public final class StripePaymentGateway implements PaymentGateway {
         Stripe.apiKey = API_SECRET_KEY;
         // Extract the following to a 'StripeClient'
         // Assemble the purchase objects
-        GatewayItem item = argument.item();
+        GatewayOrder order = argument.order();
         SessionCreateParams.LineItem.PriceData.ProductData productData =
                 SessionCreateParams.LineItem.PriceData.ProductData.builder()
-                        .setName(item.shortName())
+                        .setName(order.shortName())
                         .build();
 
         // Create the price data and add the product data to this
         SessionCreateParams.LineItem.PriceData priceData =
                 SessionCreateParams.LineItem.PriceData.builder()
                         .setCurrency(argument.currencyCode())
-                        .setUnitAmount(item.amount())
+                        .setUnitAmount(order.amount())
                         .setProductData(productData)
                         .build();
 
+        // TODO: create
         // Create the line item and add the price data
         SessionCreateParams.LineItem lineItem =
                 SessionCreateParams.LineItem.builder()
-                        .setQuantity((long) item.quantity())
+                        .setQuantity(1L)
                         .setPriceData(priceData)
                         .build();
 

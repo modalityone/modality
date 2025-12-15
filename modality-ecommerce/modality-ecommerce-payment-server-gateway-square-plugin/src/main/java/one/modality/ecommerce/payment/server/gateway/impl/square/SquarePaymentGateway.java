@@ -19,7 +19,8 @@ import one.modality.ecommerce.payment.SandboxCard;
 import one.modality.ecommerce.payment.server.gateway.*;
 import one.modality.ecommerce.payment.server.gateway.impl.util.RestApiOneTimeHtmlResponsesCache;
 
-import java.util.Collections;
+import java.util.ArrayList;
+import java.util.List;
 
 import static one.modality.ecommerce.payment.server.gateway.impl.square.SquareRestApiJob.SQUARE_PAYMENT_FORM_ENDPOINT;
 
@@ -93,7 +94,7 @@ public final class SquarePaymentGateway implements PaymentGateway {
             ;
         String template = seamless ? SCRIPT_TEMPLATE : HTML_TEMPLATE;
         String paymentFormContent = template
-            .replace("${modality_amount}", String.valueOf(argument.item().amount()))
+            .replace("${modality_amount}", String.valueOf(argument.order().amount()))
             .replace("${modality_currencyCode}", argument.currencyCode())
             .replace("${modality_seamless}", String.valueOf(seamless))
             .replace("${square_webPaymentsSDKUrl}", live ? SQUARE_LIVE_WEB_PAYMENTS_SDK_URL : SQUARE_SANDBOX_WEB_PAYMENTS_SDK_URL)
@@ -114,44 +115,42 @@ public final class SquarePaymentGateway implements PaymentGateway {
     }
 
     private Future<GatewayInitiatePaymentResult> initiatePaymentRedirect(GatewayInitiatePaymentArgument argument, String locationId, boolean live) {
-        Promise<GatewayInitiatePaymentResult> promise = Promise.promise();
-
-        GatewayItem item = argument.item();
-        // Reading the account parameters
-        String accessToken = argument.getAccountParameter("access_token");
-
+        GatewayOrder modalityOrder = argument.order();
         if (DEBUG_LOG) {
-            Console.log("[Square][DEBUG] initiatePaymentRedirect - amount = " + item.amount() + ", currencyCode = " + argument.currencyCode() + ", locationId = " + locationId + ", itemName = " + item.longName());
+            Console.log( + modalityOrder.amount() + ", currencyCode = " + argument.currencyCode() + ", live = " + live + ", locationId = " + locationId + ", orderName = " + modalityOrder.longName());
         }
 
-        // Create Square client
+        // Creating the Square client
+        String accessToken = argument.getAccountParameter("access_token"); // Getting the access token from the account parameters
         AsyncSquareClient client = AsyncSquareClient.builder()
             .environment(live ? Environment.PRODUCTION : Environment.SANDBOX)
             .token(accessToken)
             .build();
 
-        // Create a Payment Link using Square's Checkout API
-        String idempotencyKey = Uuid.randomUuid();
-
         // Build the order with line items
-        OrderLineItem lineItem = OrderLineItem.builder()
-            .quantity(String.valueOf(item.quantity()))
-            .uid(item.id())
-            .name(item.longName()) // Obligatory
-            .basePriceMoney(Money.builder()
-                .amount(item.amount())
-                .currency(Currency.valueOf(argument.currencyCode()))
-                .build())
-            .build();
+        List<OrderLineItem> lineItems = new ArrayList<>();
+        for (GatewayItem modalityItem : modalityOrder.items()) {
+            lineItems.add(OrderLineItem.builder()
+                .quantity(String.valueOf(modalityItem.quantity()))
+                .uid(modalityItem.id())
+                .name(modalityItem.longName()) // Obligatory
+                .basePriceMoney(Money.builder()
+                    .amount(modalityItem.amount())
+                    .currency(Currency.valueOf(argument.currencyCode()))
+                    .build())
+                .build()
+            );
+        }
 
         Order order = Order.builder()
             .locationId(locationId)
-            .referenceId(argument.paymentId()) // This is where we pass the paymentId that will be retrieved by the web hook
-            .lineItems(Collections.singletonList(lineItem))
+            .referenceId(argument.paymentId()) // This is where we pass the paymentId to our webhook
+            .lineItems(lineItems)
             .build();
 
+        // Creating a Payment Link using Square's Checkout API
         CreatePaymentLinkRequest request = CreatePaymentLinkRequest.builder()
-            .idempotencyKey(idempotencyKey)
+            .idempotencyKey(Uuid.randomUuid())
             .order(order)
             .checkoutOptions(CheckoutOptions.builder()
                 .allowTipping(false)
@@ -159,6 +158,8 @@ public final class SquarePaymentGateway implements PaymentGateway {
                 .build())
             .build();
 
+        // Finally, calling the Square checkout API to create the payment link
+        Promise<GatewayInitiatePaymentResult> promise = Promise.promise();
         client.checkout()
             .paymentLinks()
             .create(request)
