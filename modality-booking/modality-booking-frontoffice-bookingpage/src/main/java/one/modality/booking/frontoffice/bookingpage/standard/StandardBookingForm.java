@@ -13,9 +13,12 @@ import dev.webfx.stack.orm.entity.Entities;
 import dev.webfx.stack.orm.entity.EntityList;
 import dev.webfx.stack.orm.entity.EntityStore;
 import javafx.beans.binding.Bindings;
+import javafx.geometry.Insets;
+import javafx.scene.layout.VBox;
 import one.modality.base.shared.entities.*;
 import one.modality.base.shared.entities.markers.HasPersonalDetails;
 import one.modality.booking.client.workingbooking.*;
+import one.modality.booking.frontoffice.bookingform.BookingFormEntryPoint;
 import one.modality.booking.frontoffice.bookingpage.*;
 import one.modality.booking.frontoffice.bookingpage.navigation.ButtonNavigation;
 import one.modality.booking.frontoffice.bookingpage.navigation.ResponsiveStepProgressHeader;
@@ -33,6 +36,7 @@ import one.modality.ecommerce.payment.client.ClientPaymentUtil;
 import one.modality.ecommerce.payment.client.WebPaymentForm;
 import one.modality.event.frontoffice.activities.book.event.EventBookingFormSettings;
 import one.modality.event.frontoffice.activities.book.fx.FXGuestToBook;
+import one.modality.event.frontoffice.activities.book.fx.FXResumePaymentMoneyTransfer;
 
 import java.util.*;
 import java.util.function.Supplier;
@@ -71,6 +75,7 @@ public class StandardBookingForm extends MultiPageBookingForm {
     private final BookingFormPage[] pages;
     private final StandardBookingFormCallbacks callbacks;
     private final boolean cardPaymentOnly;
+    private final BookingFormEntryPoint entryPoint;
 
     // State management
     private final BookingFormState state;
@@ -114,13 +119,15 @@ public class StandardBookingForm extends MultiPageBookingForm {
             Supplier<BookingFormPage> paymentPageSupplier,
             Supplier<BookingFormPage> confirmationPageSupplier,
             StandardBookingFormCallbacks callbacks,
-            boolean cardPaymentOnly) {
+            boolean cardPaymentOnly,
+            BookingFormEntryPoint entryPoint) {
 
         super(activity, settings);
         this.colorScheme = colorScheme;
         this.showUserBadge = showUserBadge;
         this.callbacks = callbacks;
         this.cardPaymentOnly = cardPaymentOnly;
+        this.entryPoint = entryPoint;
         this.customStepPages = new ArrayList<>(customSteps);
 
         // Initialize state management
@@ -302,6 +309,165 @@ public class StandardBookingForm extends MultiPageBookingForm {
             .setStep(true)
             .setButtons() // No navigation buttons on confirmation page
             .setShowingOwnSubmitButton(true); // Prevents default activity-level submit button from showing
+    }
+
+    // === Entry Point Handling ===
+
+    @Override
+    public void onWorkingBookingLoaded() {
+        if (entryPoint == BookingFormEntryPoint.RESUME_PAYMENT) {
+            // Add 30px top margin for payment return flow (header normally has 0px top padding)
+            BookingFormHeader headerRef = getHeader();
+            if (headerRef != null && headerRef.getView() != null) {
+                VBox.setMargin(headerRef.getView(), new Insets(30, 0, 0, 0));
+            }
+
+            // Navigate directly to confirmation page (last step) when returning from payment gateway
+            navigateToConfirmation();
+
+            // Check the MoneyTransfer status and show appropriate content
+            MoneyTransfer moneyTransfer = FXResumePaymentMoneyTransfer.getResumePaymentMoneyTransfer();
+            if (moneyTransfer != null) {
+                handleResumePaymentContent(moneyTransfer);
+            }
+        } else {
+            // Normal flow - starts at first applicable page
+            super.onWorkingBookingLoaded();
+        }
+    }
+
+    /**
+     * Shows the appropriate content (Confirmation, Failed, or Pending) based on MoneyTransfer status.
+     * The form stays at the last step (Confirmation) but the content changes.
+     */
+    private void handleResumePaymentContent(MoneyTransfer moneyTransfer) {
+        boolean isSuccessful = moneyTransfer.isSuccessful();
+        boolean isPending = moneyTransfer.isPending();
+
+        Console.log("Resume payment - successful: " + isSuccessful + ", pending: " + isPending);
+
+        if (isSuccessful && !isPending) {
+            // Payment successful - show confirmation content
+            updateConfirmationForResumedPayment(moneyTransfer);
+        } else if (isPending) {
+            // Payment pending - show pending payment content
+            showPendingPaymentContent(moneyTransfer);
+        } else {
+            // Payment failed - show failed payment content
+            showFailedPaymentContent(moneyTransfer);
+        }
+    }
+
+    /**
+     * Updates the confirmation section for a resumed successful payment.
+     */
+    private void updateConfirmationForResumedPayment(MoneyTransfer moneyTransfer) {
+        if (defaultConfirmationSection == null) return;
+
+        defaultConfirmationSection.clearConfirmedBookings();
+
+        // Get booking info from the MoneyTransfer's document
+        Document document = moneyTransfer.getDocument();
+        if (document != null) {
+            Person person = document.getPerson();
+            String personName = person != null ? person.getFullName() : "";
+            String personEmail = person != null ? person.getEmail() : "";
+            Object bookingRefObj = document.getRef();
+            String bookingRef = bookingRefObj != null ? bookingRefObj.toString() : "";
+
+            defaultConfirmationSection.addConfirmedBooking(new HasConfirmationSection.ConfirmedBooking(
+                personName,
+                personEmail,
+                bookingRef));
+
+            // Set event info from document
+            Event event = document.getEvent();
+            if (event != null) {
+                defaultConfirmationSection.setEventName(event.getName());
+                defaultConfirmationSection.setEventDates(event.getStartDate(), event.getEndDate());
+            }
+        }
+
+        // Set payment amounts from the money transfer (with null safety)
+        Integer amountObj = moneyTransfer.getAmount();
+        int amount = amountObj != null ? amountObj : 0;
+        defaultConfirmationSection.setPaymentAmounts(amount, amount);
+    }
+
+    /**
+     * Shows the failed payment content on the confirmation step.
+     */
+    private void showFailedPaymentContent(MoneyTransfer moneyTransfer) {
+        DefaultFailedPaymentSection failedSection = new DefaultFailedPaymentSection();
+        failedSection.setColorScheme(colorScheme);
+
+        // Populate with data from MoneyTransfer
+        Document document = moneyTransfer.getDocument();
+        if (document != null) {
+            Object bookingRefObj = document.getRef();
+            failedSection.setBookingReference(bookingRefObj != null ? bookingRefObj.toString() : "");
+
+            Person person = document.getPerson();
+            if (person != null) {
+                failedSection.setGuestName(person.getFullName());
+            }
+
+            Event event = document.getEvent();
+            if (event != null) {
+                failedSection.setEventName(event.getName());
+                failedSection.setEventDates(event.getStartDate(), event.getEndDate());
+            }
+        }
+
+        Integer amountObj = moneyTransfer.getAmount();
+        int amount = amountObj != null ? amountObj : 0;
+        failedSection.setAmountDue(amount);
+
+        // Set error details (generic for now)
+        failedSection.setErrorDetails(HasFailedPaymentSection.PaymentErrorType.CARD_DECLINED, null, null);
+
+        // Set callbacks
+        failedSection.setOnRetryPayment(() -> {
+            // Navigate back to payment page to retry
+            navigateToPayment();
+        });
+
+        // Show the failed payment content in the transition pane
+        getTransitionPane().transitToContent(failedSection.getView(), null);
+    }
+
+    /**
+     * Shows the pending payment content on the confirmation step.
+     */
+    private void showPendingPaymentContent(MoneyTransfer moneyTransfer) {
+        DefaultPendingPaymentSection pendingSection = new DefaultPendingPaymentSection();
+        pendingSection.setColorScheme(colorScheme);
+
+        // Populate with data from MoneyTransfer
+        Document document = moneyTransfer.getDocument();
+        if (document != null) {
+            Object bookingRefObj = document.getRef();
+            pendingSection.setBookingReference(bookingRefObj != null ? bookingRefObj.toString() : "");
+
+            Person person = document.getPerson();
+            if (person != null) {
+                pendingSection.setGuestName(person.getFullName());
+                pendingSection.setGuestEmail(person.getEmail());
+            }
+
+            Event event = document.getEvent();
+            if (event != null) {
+                pendingSection.setEventName(event.getName());
+                pendingSection.setEventDates(event.getStartDate(), event.getEndDate());
+            }
+        }
+
+        Integer amountObj = moneyTransfer.getAmount();
+        int amount = amountObj != null ? amountObj : 0;
+        pendingSection.setTotalAmount(amount);
+
+        // Show the pending payment content in the transition pane
+        getTransitionPane().transitToContent(pendingSection.getView(), null);
     }
 
     // === Internal Callback Wiring ===

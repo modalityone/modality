@@ -1,6 +1,7 @@
 package one.modality.booking.frontoffice.bookingpage.standard;
 
 import one.modality.booking.client.workingbooking.HasWorkingBookingProperties;
+import one.modality.booking.frontoffice.bookingform.BookingFormEntryPoint;
 import one.modality.booking.frontoffice.bookingpage.BookingFormPage;
 import one.modality.booking.frontoffice.bookingpage.theme.BookingFormColorScheme;
 import one.modality.event.frontoffice.activities.book.event.EventBookingFormSettings;
@@ -72,6 +73,9 @@ public class StandardBookingFormBuilder {
 
     // Payment configuration
     private boolean cardPaymentOnly = false;
+
+    // Entry point for the booking form (new booking, modify, resume payment)
+    private BookingFormEntryPoint entryPoint = BookingFormEntryPoint.NEW_BOOKING;
 
     /**
      * Creates a new builder for a standard booking form.
@@ -167,6 +171,23 @@ public class StandardBookingFormBuilder {
         return this;
     }
 
+    // === Entry Point ===
+
+    /**
+     * Sets the entry point for the booking form.
+     * This determines the initial state and behavior of the form:
+     * - NEW_BOOKING: Standard new booking flow (default)
+     * - MODIFY_BOOKING: Modifying an existing booking
+     * - RESUME_PAYMENT: Returning from payment gateway to show payment result
+     *
+     * @param entryPoint The entry point for this booking form
+     * @return This builder for chaining
+     */
+    public StandardBookingFormBuilder withEntryPoint(BookingFormEntryPoint entryPoint) {
+        this.entryPoint = entryPoint;
+        return this;
+    }
+
     // === Build ===
 
     /**
@@ -197,7 +218,8 @@ public class StandardBookingFormBuilder {
             paymentPageSupplier,
             confirmationPageSupplier,
             callbacks,
-            cardPaymentOnly
+            cardPaymentOnly,
+            entryPoint
         );
     }
 }

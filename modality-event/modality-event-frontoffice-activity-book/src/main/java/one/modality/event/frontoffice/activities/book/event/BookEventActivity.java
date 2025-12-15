@@ -120,7 +120,7 @@ public final class BookEventActivity extends ViewDomainActivityBase implements B
         }
         modifyOrderDocumentIdProperty.set(getParameter("modifyOrderDocumentId"));
         payOrderDocumentIdProperty.set(getParameter("payOrderDocumentId"));
-        resumePaymentMoneyTransferIdProperty.set(getParameter("paymentReturnMoneyTransferId"));
+        resumePaymentMoneyTransferIdProperty.set(getParameter("resumePaymentMoneyTransferId"));
     }
 
     private void setCollapseMenu() {
@@ -177,7 +177,8 @@ public final class BookEventActivity extends ViewDomainActivityBase implements B
         activityStartTimeMillis = System.currentTimeMillis();
         // Initial load of the event policy with the possible existing booking of the user (if logged-in)
         FXProperties.runNowAndOnPropertiesChange(this::loadPolicyAndBooking,
-            FXEvent.eventProperty(), modifyOrderDocumentIdProperty, payOrderDocumentIdProperty, resumePaymentMoneyTransferIdProperty);
+            modifyOrderDocumentIdProperty, payOrderDocumentIdProperty, resumePaymentMoneyTransferIdProperty,
+                FXEvent.eventProperty(), FXResumePaymentMoneyTransfer.resumePaymentMoneyTransferProperty());
 
         // Later loading when changing the person to book (loading of possible booking and reapplying the newly selected dates)
         FXProperties.runOnPropertyChange(this::onPersonToBookChanged, FXPersonToBook.personToBookProperty());
@@ -191,9 +192,9 @@ public final class BookEventActivity extends ViewDomainActivityBase implements B
         Event event = FXEvent.getEvent(); // might be null on the first call (ex: on page reload)
         // Case when resuming after a redirected payment has been made (the payment gateway called back this url)
         if (resumePaymentMoneyTransferId != null && FXResumePaymentMoneyTransfer.getResumePaymentMoneyTransfer() == null) {
-            // We load the required information about this payment (its state and its associated event)
+            // We load the required information about this payment (its state, amount, and associated document/event)
             EntityStore.create(getDataSourceModel())
-                .<MoneyTransfer>executeQuery("select pending,successful,document.event.(" + FXEvent.EXPECTED_FIELDS + ") from MoneyTransfer where id = $1 or parent = $1 order by id=$1 desc", resumePaymentMoneyTransferId)
+                .<MoneyTransfer>executeQuery("select pending,successful,amount,document.(ref,person.(firstName,lastName,email),event.(" + FXEvent.EXPECTED_FIELDS + ")) from MoneyTransfer where id = $1 or parent = $1 order by id=$1 desc", resumePaymentMoneyTransferId)
                 .onFailure(Console::log)
                 .onSuccess(moneyTransfers -> {
                     MoneyTransfer moneyTransfer = Collections.first(moneyTransfers);
@@ -209,7 +210,7 @@ public final class BookEventActivity extends ViewDomainActivityBase implements B
                     FXEvent.setEvent(document == null ? null : document.getEvent());
                     FXResumePaymentMoneyTransfer.setResumePaymentMoneyTransfer(moneyTransfer); // will cause loadPolicyAndBooking() to be called again - see startLogic()
                 });
-        } if (modifyOrPayOrderDocumentId != null) {
+        } else if (modifyOrPayOrderDocumentId != null) {
             // Note: this call doesn't automatically rebuild PolicyAggregate entities
             DocumentService.loadPolicyAndDocument(new LoadDocumentArgument(modifyOrPayOrderDocumentId))
                 .onFailure(Console::log)
@@ -292,6 +293,9 @@ public final class BookEventActivity extends ViewDomainActivityBase implements B
                     if (bookingFormView != null) {
                         activityContainer.setContent(bookingFormView);
                         showingModificationForm = entryPoint == BookingFormEntryPoint.MODIFY_BOOKING;
+                        // Trigger the form to initialize with the working booking
+                        // This is especially important for RESUME_PAYMENT to navigate to confirmation
+                        bookingForm.onWorkingBookingLoaded();
                     }
                 }
             }

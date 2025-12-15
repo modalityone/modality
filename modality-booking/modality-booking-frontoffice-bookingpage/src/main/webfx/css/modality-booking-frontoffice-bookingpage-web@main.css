@@ -1740,3 +1740,600 @@ fx-textfield.bookingpage-digit-field input {
     box-shadow: 0 4px 10px rgba(0, 0, 0, 0.15);
     min-width: 220px;
 }
+
+/* ==========================================
+   Failed Payment Section
+   ========================================== */
+
+/* Main container */
+.bookingpage-failed-payment-section {
+    background-color: white;
+    --fx-border-radius: 16px;
+}
+
+/* Warm amber header - attention without alarm */
+.bookingpage-failed-payment-header {
+    background-color: #FFF8E7;
+    --fx-border-color: transparent transparent #F0E4CC transparent;
+    --fx-border-width: 0 0 1px 0;
+    --fx-border-style: solid;
+    --fx-border-radius: 16px 16px 0 0;
+}
+
+/* Amber icon circle */
+.bookingpage-failed-payment-icon-circle {
+    background-color: white;
+    --fx-border-color: #E5A545;
+    --fx-border-width: 3px;
+    --fx-border-style: solid;
+    --fx-border-radius: 50%;
+}
+
+/* Amber icon stroke for info/alert icon */
+.bookingpage-icon-amber svg path {
+    stroke: #E5A545 !important;
+    fill: none !important;
+}
+
+/* Warm brown title */
+.bookingpage-failed-payment-title {
+    font-size: 24px;
+    font-weight: 700;
+}
+
+.bookingpage-failed-payment-title fx-text {
+    color: #5D4E37;
+}
+
+/* Warm gray subtitle */
+.bookingpage-failed-payment-subtitle {
+    font-size: 15px;
+}
+
+.bookingpage-failed-payment-subtitle fx-text {
+    color: #6B5D4D;
+}
+
+/* Booking reference box - uses theme colors */
+.bookingpage-failed-payment-ref-box {
+    background-color: var(--booking-form-selected-bg);
+    --fx-border-color: var(--booking-form-hover-border);
+    --fx-border-width: 1px;
+    --fx-border-style: solid;
+    --fx-border-radius: 8px;
+}
+
+.bookingpage-failed-payment-ref-label {
+    font-size: 12px;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.bookingpage-failed-payment-ref-label fx-text {
+    color: var(--booking-form-primary-dark);
+    opacity: 0.8;
+}
+
+.bookingpage-failed-payment-ref-value {
+    font-size: 18px;
+    font-weight: 700;
+    font-family: monospace;
+}
+
+.bookingpage-failed-payment-ref-value fx-text {
+    color: var(--booking-form-primary-dark);
+}
+
+/* Error details section - neutral gray, informative */
+.bookingpage-error-details-section {
+    background-color: #F7F6F3;
+    --fx-border-color: #E8E6E1;
+    --fx-border-width: 1px;
+    --fx-border-style: solid;
+    --fx-border-radius: 8px;
+}
+
+/* Warm brown question icon/title */
+.bookingpage-error-details-title {
+    font-size: 15px;
+    font-weight: 600;
+}
+
+.bookingpage-error-details-title fx-text {
+    color: #5D4E37;
+}
+
+.bookingpage-icon-warm-brown svg path {
+    stroke: #5D4E37 !important;
+    fill: none !important;
+}
+
+/* Error description text */
+.bookingpage-error-description {
+    font-size: 14px;
+}
+
+.bookingpage-error-description fx-text {
+    color: #495057;
+}
+
+/* Suggestion item */
+.bookingpage-suggestion-item {
+    font-size: 13px;
+}
+
+.bookingpage-suggestion-item fx-text {
+    color: #495057;
+}
+
+/* Bank error technical box */
+.bookingpage-bank-error-box {
+    --fx-border-color: #DDD9D3 transparent transparent transparent;
+    --fx-border-width: 1px 0 0 0;
+    --fx-border-style: dashed;
+}
+
+.bookingpage-bank-error-label {
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.bookingpage-bank-error-label fx-text {
+    color: #6c757d;
+}
+
+.bookingpage-bank-error-message {
+    background-color: rgba(255,255,255,0.7);
+    --fx-border-radius: 4px;
+    font-family: monospace;
+    font-size: 13px;
+}
+
+.bookingpage-bank-error-message fx-text {
+    color: #8B7355;
+}
+
+.bookingpage-bank-error-meta {
+    font-size: 11px;
+}
+
+.bookingpage-bank-error-meta fx-text {
+    color: #adb5bd;
+}
+
+/* Danger outline button */
+.bookingpage-btn-danger-outline {
+    background-color: white;
+    --fx-border-color: #f5c2c7;
+    --fx-border-width: 1px;
+    --fx-border-style: solid;
+    --fx-border-radius: 8px;
+    font-size: 15px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: background-color 0.2s ease, border-color 0.2s ease;
+}
+
+.bookingpage-btn-danger-outline fx-text {
+    color: #dc3545;
+}
+
+.bookingpage-btn-danger-outline:hover {
+    background-color: #f8d7da;
+    --fx-border-color: #dc3545;
+}
+
+/* Account info box - uses theme colors */
+.bookingpage-account-info-box {
+    background-color: var(--booking-form-selected-bg);
+    --fx-border-color: var(--booking-form-hover-border);
+    --fx-border-width: 1px;
+    --fx-border-style: solid;
+    --fx-border-radius: 8px;
+}
+
+.bookingpage-account-info-title {
+    font-size: 14px;
+    font-weight: 600;
+}
+
+.bookingpage-account-info-title fx-text {
+    color: var(--booking-form-primary-dark);
+}
+
+.bookingpage-account-info-text {
+    font-size: 13px;
+}
+
+.bookingpage-account-info-text fx-text {
+    color: var(--booking-form-primary-dark);
+}
+
+.bookingpage-account-info-link {
+    font-size: 13px;
+    font-weight: 600;
+    cursor: pointer;
+}
+
+.bookingpage-account-info-link fx-text {
+    color: var(--booking-form-primary);
+    text-decoration: underline;
+}
+
+.bookingpage-account-info-link:hover fx-text {
+    color: var(--booking-form-primary-dark);
+}
+
+/* Footer contact text */
+.bookingpage-contact-footer {
+    font-size: 13px;
+}
+
+.bookingpage-contact-footer fx-text {
+    color: #6c757d;
+}
+
+.bookingpage-contact-link {
+    font-size: 13px;
+    cursor: pointer;
+}
+
+.bookingpage-contact-link fx-text {
+    color: var(--booking-form-primary);
+}
+
+.bookingpage-contact-link:hover fx-text {
+    color: var(--booking-form-primary-dark);
+}
+
+/* ==========================================
+   Pending Payment Section
+   Calm blue styling - "we've got this, you're all set"
+   ========================================== */
+
+/* Main container */
+.bookingpage-pending-payment-section {
+    background-color: white;
+    --fx-border-radius: 16px;
+}
+
+/* Calm blue header - reassuring, trustworthy */
+.bookingpage-pending-payment-header {
+    background-color: #EBF5FF;
+    --fx-border-color: transparent transparent #BFDBFE transparent;
+    --fx-border-width: 0 0 1px 0;
+    --fx-border-style: solid;
+    --fx-border-radius: 16px 16px 0 0;
+}
+
+/* Blue icon circle with pulse animation */
+.bookingpage-pending-payment-icon-circle {
+    background-color: white;
+    --fx-border-color: #3B82F6;
+    --fx-border-width: 3px;
+    --fx-border-style: solid;
+    --fx-border-radius: 50%;
+}
+
+/* Blue icon stroke for clock icon */
+.bookingpage-icon-blue svg path {
+    stroke: #3B82F6 !important;
+    fill: none !important;
+}
+
+/* Deep blue title - trustworthy */
+.bookingpage-pending-payment-title {
+    font-size: 24px;
+    font-weight: 700;
+}
+
+.bookingpage-pending-payment-title fx-text {
+    color: #1E40AF;
+}
+
+/* Blue subtitle */
+.bookingpage-pending-payment-subtitle {
+    font-size: 15px;
+}
+
+.bookingpage-pending-payment-subtitle fx-text {
+    color: #3B82F6;
+}
+
+/* Booking reference box - uses theme colors */
+.bookingpage-pending-payment-ref-box {
+    background-color: var(--booking-form-selected-bg);
+    --fx-border-color: var(--booking-form-hover-border);
+    --fx-border-width: 1px;
+    --fx-border-style: solid;
+    --fx-border-radius: 8px;
+}
+
+.bookingpage-pending-payment-ref-label {
+    font-size: 12px;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.bookingpage-pending-payment-ref-label fx-text {
+    color: var(--booking-form-primary-dark);
+    opacity: 0.8;
+}
+
+.bookingpage-pending-payment-ref-value {
+    font-size: 20px;
+    font-weight: 700;
+    font-family: monospace;
+}
+
+.bookingpage-pending-payment-ref-value fx-text {
+    color: var(--booking-form-primary-dark);
+}
+
+/* Status badge - uses theme primary color */
+.bookingpage-pending-payment-status-badge {
+    background-color: var(--booking-form-primary);
+    --fx-border-radius: 6px;
+}
+
+.bookingpage-pending-payment-badge-text {
+    font-size: 11px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.bookingpage-pending-payment-badge-text fx-text {
+    color: white;
+}
+
+/* Booking summary rows */
+.bookingpage-pending-payment-summary-row {
+    --fx-border-color: transparent transparent #f0f0f0 transparent;
+    --fx-border-width: 0 0 1px 0;
+    --fx-border-style: solid;
+}
+
+.bookingpage-pending-payment-summary-row-last {
+    /* No border for last row */
+}
+
+.bookingpage-pending-payment-summary-label {
+    font-size: 14px;
+}
+
+.bookingpage-pending-payment-summary-label fx-text {
+    color: #6c757d;
+}
+
+.bookingpage-pending-payment-summary-value {
+    font-size: 14px;
+    font-weight: 500;
+}
+
+.bookingpage-pending-payment-summary-value fx-text {
+    color: #212529;
+}
+
+.bookingpage-pending-payment-summary-total {
+    font-size: 18px;
+    font-weight: 700;
+}
+
+.bookingpage-pending-payment-summary-total fx-text {
+    color: #212529;
+}
+
+/* Payment info section - calm blue */
+.bookingpage-pending-payment-info-section {
+    background-color: #F0F9FF;
+    --fx-border-color: #BAE6FD;
+    --fx-border-width: 1px;
+    --fx-border-style: solid;
+    --fx-border-radius: 8px;
+}
+
+.bookingpage-pending-payment-info-icon {
+    font-size: 32px;
+}
+
+.bookingpage-pending-payment-info-title {
+    font-size: 16px;
+    font-weight: 600;
+}
+
+.bookingpage-pending-payment-info-title fx-text {
+    color: #0C4A6E;
+}
+
+.bookingpage-pending-payment-info-subtitle {
+    font-size: 13px;
+}
+
+.bookingpage-pending-payment-info-subtitle fx-text {
+    color: #0369A1;
+}
+
+.bookingpage-pending-payment-info-description {
+    font-size: 14px;
+}
+
+.bookingpage-pending-payment-info-description fx-text {
+    color: #495057;
+}
+
+/* Timeline indicator */
+.bookingpage-pending-payment-timeline {
+    background-color: white;
+    --fx-border-color: #BAE6FD;
+    --fx-border-width: 1px;
+    --fx-border-style: solid;
+    --fx-border-radius: 6px;
+}
+
+.bookingpage-pending-payment-timeline-text {
+    font-size: 13px;
+    font-weight: 500;
+}
+
+.bookingpage-pending-payment-timeline-text fx-text {
+    color: #0369A1;
+}
+
+/* What happens next section */
+.bookingpage-pending-payment-next-title {
+    font-size: 15px;
+    font-weight: 600;
+}
+
+.bookingpage-pending-payment-next-title fx-text {
+    color: #212529;
+}
+
+/* Step items */
+.bookingpage-pending-payment-step-item {
+    background-color: #f8f9fa;
+    --fx-border-color: #e9ecef;
+    --fx-border-width: 1px;
+    --fx-border-style: solid;
+    --fx-border-radius: 8px;
+}
+
+/* Step number circle - uses theme color */
+.bookingpage-pending-payment-step-number {
+    background-color: var(--booking-form-primary);
+    --fx-border-radius: 50%;
+}
+
+.bookingpage-pending-payment-step-number-text {
+    font-size: 12px;
+    font-weight: 600;
+}
+
+.bookingpage-pending-payment-step-number-text fx-text {
+    color: white;
+}
+
+.bookingpage-pending-payment-step-title {
+    font-size: 14px;
+    font-weight: 500;
+}
+
+.bookingpage-pending-payment-step-title fx-text {
+    color: #212529;
+}
+
+.bookingpage-pending-payment-step-desc {
+    font-size: 13px;
+}
+
+.bookingpage-pending-payment-step-desc fx-text {
+    color: #6c757d;
+}
+
+/* Account info box - uses theme colors */
+.bookingpage-pending-payment-account-box {
+    background-color: var(--booking-form-selected-bg);
+    --fx-border-color: var(--booking-form-hover-border);
+    --fx-border-width: 1px;
+    --fx-border-style: solid;
+    --fx-border-radius: 8px;
+}
+
+.bookingpage-pending-payment-account-title {
+    font-size: 14px;
+    font-weight: 600;
+}
+
+.bookingpage-pending-payment-account-title fx-text {
+    color: var(--booking-form-primary-dark);
+}
+
+.bookingpage-pending-payment-account-text {
+    font-size: 13px;
+}
+
+.bookingpage-pending-payment-account-text fx-text {
+    color: var(--booking-form-primary-dark);
+}
+
+.bookingpage-pending-payment-account-link {
+    font-size: 13px;
+    font-weight: 600;
+    cursor: pointer;
+}
+
+.bookingpage-pending-payment-account-link fx-text {
+    color: var(--booking-form-primary);
+    text-decoration: underline;
+}
+
+.bookingpage-pending-payment-account-link:hover fx-text {
+    color: var(--booking-form-primary-dark);
+}
+
+/* Secondary outline button */
+.bookingpage-btn-secondary-outline {
+    background-color: white;
+    --fx-border-color: #dee2e6;
+    --fx-border-width: 1px;
+    --fx-border-style: solid;
+    --fx-border-radius: 8px;
+    font-size: 15px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: background-color 0.2s ease, border-color 0.2s ease;
+}
+
+.bookingpage-btn-secondary-outline fx-text {
+    color: #495057;
+}
+
+.bookingpage-btn-secondary-outline:hover {
+    background-color: #f8f9fa;
+    --fx-border-color: #adb5bd;
+}
+
+/* Contact section */
+.bookingpage-pending-payment-contact-section {
+    background-color: #f8f9fa;
+    --fx-border-color: #e9ecef;
+    --fx-border-width: 1px;
+    --fx-border-style: solid;
+    --fx-border-radius: 8px;
+}
+
+.bookingpage-pending-payment-contact-title {
+    font-size: 14px;
+    font-weight: 600;
+}
+
+.bookingpage-pending-payment-contact-title fx-text {
+    color: #212529;
+}
+
+.bookingpage-pending-payment-contact-text {
+    font-size: 13px;
+}
+
+.bookingpage-pending-payment-contact-text fx-text {
+    color: #495057;
+}
+
+.bookingpage-pending-payment-contact-email-box {
+    background-color: white;
+    --fx-border-color: #dee2e6;
+    --fx-border-width: 1px;
+    --fx-border-style: solid;
+    --fx-border-radius: 6px;
+}
+
+.bookingpage-pending-payment-contact-email {
+    font-size: 14px;
+    font-weight: 500;
+}
+
+.bookingpage-pending-payment-contact-email fx-text {
+    color: var(--booking-form-primary);
+}

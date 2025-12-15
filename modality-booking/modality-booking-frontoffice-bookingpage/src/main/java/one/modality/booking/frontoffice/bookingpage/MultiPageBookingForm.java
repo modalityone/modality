@@ -23,6 +23,7 @@ import one.modality.booking.client.workingbooking.FXPersonToBook;
 import one.modality.booking.client.workingbooking.HasWorkingBookingProperties;
 import one.modality.booking.frontoffice.bookingelements.BookingElements;
 import one.modality.booking.frontoffice.bookingelements.PriceBar;
+import one.modality.booking.frontoffice.bookingform.BookingFormActivityCallback;
 import one.modality.booking.frontoffice.bookingform.BookingFormBase;
 import one.modality.booking.frontoffice.bookingform.BookingFormSettings;
 import one.modality.booking.frontoffice.bookingpage.navigation.StandardBookingFormNavigation;
@@ -41,13 +42,17 @@ public abstract class MultiPageBookingForm extends BookingFormBase {
     private final BooleanProperty personToBookRequiredProperty = new SimpleBooleanProperty() {
         @Override
         protected void invalidated() {
-            getActivityCallback().setPersonToBookRequired(get());
+            BookingFormActivityCallback callback = getActivityCallback();
+            if (callback != null)
+                callback.setPersonToBookRequired(get());
         }
     };
     private final BooleanProperty showDefaultSubmitButtonProperty = new SimpleBooleanProperty() {
         @Override
         protected void invalidated() {
-            getActivityCallback().showDefaultSubmitButton(get());
+            BookingFormActivityCallback callback = getActivityCallback();
+            if (callback != null)
+                callback.showDefaultSubmitButton(get());
         }
     };
     private final BooleanProperty pageShowingOwnSubmitButtonProperty = new SimpleBooleanProperty();
@@ -86,8 +91,11 @@ public abstract class MultiPageBookingForm extends BookingFormBase {
     private final BooleanProperty pageEndReachedProperty = new SimpleBooleanProperty() {
         @Override
         protected void invalidated() {
-            if (get())
-                getActivityCallback().onEndReached();
+            if (get()) {
+                BookingFormActivityCallback callback = getActivityCallback();
+                if (callback != null)
+                    callback.onEndReached();
+            }
         }
     };
     private final BooleanProperty pageIsPriceBarRelevantToShowProperty = new SimpleBooleanProperty();
@@ -109,6 +117,10 @@ public abstract class MultiPageBookingForm extends BookingFormBase {
             header.setBookingForm(this);
             header.setNavigationClickable(settings.isNavigationClickable());
         }
+    }
+
+    protected BookingFormHeader getHeader() {
+        return header;
     }
 
     public void setNavigation(BookingFormNavigation navigation) {
@@ -165,6 +177,14 @@ public abstract class MultiPageBookingForm extends BookingFormBase {
 
     public int getDisplayedPageIndex() {
         return displayedPageIndex;
+    }
+
+    /**
+     * Returns the transition pane used to display pages.
+     * This can be used by subclasses to show dynamic content not in the standard pages array.
+     */
+    protected TransitionPane getTransitionPane() {
+        return transitionPane;
     }
 
     public BookingFormPage getDisplayedPage() {
@@ -301,9 +321,12 @@ public abstract class MultiPageBookingForm extends BookingFormBase {
         pageEndReachedProperty.bind(displayedPage.endReachedProperty());
         if (bookingFormPageValidListener != null)
             bookingFormPageValidListener.unregister();
-        bookingFormPageValidListener = FXProperties.runNowAndOnPropertyChange(valid -> getActivityCallback().disableSubmitButton(!valid), displayedPage.validProperty());
+        // Only register callback listener if activityCallback is available (may be null in resume payment flow)
+        if (activityCallback != null) {
+            bookingFormPageValidListener = FXProperties.runNowAndOnPropertyChange(valid -> getActivityCallback().disableSubmitButton(!valid), displayedPage.validProperty());
+        }
         MonoPane embeddedLoginContainer = displayedPage.getEmbeddedLoginContainer();
-        if (embeddedLoginContainer != null && embeddedLoginContainer != LAST_PAGE_EMBEDDED_LOGIN_CONTAINER) {
+        if (embeddedLoginContainer != null && embeddedLoginContainer != LAST_PAGE_EMBEDDED_LOGIN_CONTAINER && activityCallback != null) {
             if (LAST_PAGE_EMBEDDED_LOGIN_CONTAINER != null)
                 LAST_PAGE_EMBEDDED_LOGIN_CONTAINER.setContent(null);
             Region embeddedLoginNode = activityCallback.getEmbeddedLoginNode();
