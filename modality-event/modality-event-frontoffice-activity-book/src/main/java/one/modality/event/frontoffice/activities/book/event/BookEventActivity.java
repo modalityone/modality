@@ -19,6 +19,7 @@ import dev.webfx.stack.routing.uirouter.UiRouter;
 import javafx.beans.property.ObjectProperty;
 import javafx.beans.property.ReadOnlyObjectProperty;
 import javafx.beans.property.SimpleObjectProperty;
+import javafx.geometry.Pos;
 import javafx.scene.Node;
 import javafx.scene.control.Labeled;
 import javafx.scene.text.Font;
@@ -105,6 +106,11 @@ public final class BookEventActivity extends ViewDomainActivityBase implements B
         // Initially show the legacy slides container
         activityContainer.setContent(lettersSlideController.getContainer());
         activityContainer.getStyleClass().add("book-event-activity");
+        // We align the loading spinner in the center, but otherwise the booking form needs to be on top, so it doesn't
+        // move while transitive from one page to another.
+        FXProperties.runOnPropertyChange(loading ->
+                activityContainer.setAlignment(loading ? Pos.CENTER : Pos.TOP_CENTER),
+            lettersSlideController.loadingPropertyProperty());
         return activityContainer;
     }
 
