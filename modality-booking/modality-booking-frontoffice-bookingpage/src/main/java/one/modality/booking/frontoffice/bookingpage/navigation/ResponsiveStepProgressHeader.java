@@ -713,7 +713,7 @@ public class ResponsiveStepProgressHeader implements BookingFormHeader {
             stepItem.setUserData(i);
             stepItem.getStyleClass().add("booking-form-step-item");
             stepItem.setMinWidth(80);
-            stepItem.setPrefWidth(80);
+            stepItem.setPrefWidth(90);
             stepItem.setMaxWidth(100);
 
             // Circle with number (40x40px)
