@@ -20,7 +20,6 @@ import javafx.beans.property.ReadOnlyObjectProperty;
 import javafx.beans.property.SimpleObjectProperty;
 import javafx.scene.Node;
 import javafx.scene.control.Labeled;
-import javafx.scene.layout.Region;
 import javafx.scene.text.Font;
 import one.modality.base.frontoffice.mainframe.fx.FXCollapseMenu;
 import one.modality.base.shared.entities.Event;
@@ -113,8 +112,9 @@ public final class BookEventActivity extends ViewDomainActivityBase implements B
     }
 
     private void setCollapseMenu() {
-        // Always show the menu - don't collapse it for any event type
-        FXCollapseMenu.setCollapseMenu(false);
+        // We don't show the menu for the GP classes (recurring events)
+        Event event = FXEvent.getEvent();
+        FXCollapseMenu.setCollapseMenu(event == null || event.isRecurring());
     }
 
     @Override

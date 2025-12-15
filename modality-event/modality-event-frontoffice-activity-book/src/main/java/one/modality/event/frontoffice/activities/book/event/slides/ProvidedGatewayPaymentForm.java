@@ -31,7 +31,7 @@ import static one.modality.event.frontoffice.activities.book.event.slides.StepSl
 /**
  * @author Bruno Salmon
  */
-final class ProvidedGatewayPaymentForm implements GatewayPaymentForm {
+public final class ProvidedGatewayPaymentForm implements GatewayPaymentForm {
 
     private final String gatewayName;
     private final Button payButton = Bootstrap.largeSuccessButton(new Button());
