@@ -38,6 +38,7 @@ public interface Event extends Entity,
     String description = "description";
     String shortDescription = "shortDescription";
     String shortDescriptionLabel = "shortDescriptionLabel";
+    String longDescriptionLabel = "longDescriptionLabel";
     String externalLink = "externalLink";
     String venue = "venue";
     String teachingsDayTicket = "teachingsDayTicket";
@@ -212,6 +213,17 @@ public interface Event extends Entity,
         return getForeignEntity(shortDescriptionLabel);
     }
 
+    default void setLongDescriptionLabel(Object value) {
+        setForeignField(longDescriptionLabel, value);
+    }
+
+    default EntityId getLongDescriptionLabelId() {
+        return getForeignEntityId(longDescriptionLabel);
+    }
+
+    default Label getLongDescriptionLabel() {
+        return getForeignEntity(longDescriptionLabel);
+    }
 
     default void setExternalLink(String value) {
         setFieldValue(externalLink, value);
