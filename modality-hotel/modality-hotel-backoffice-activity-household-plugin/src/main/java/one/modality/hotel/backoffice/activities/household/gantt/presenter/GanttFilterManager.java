@@ -1,0 +1,176 @@
+package one.modality.hotel.backoffice.activities.household.gantt.presenter;
+
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableSet;
+import one.modality.hotel.backoffice.activities.household.gantt.model.GanttRoomData;
+import one.modality.hotel.backoffice.activities.household.gantt.model.RoomStatus;
+import one.modality.hotel.backoffice.activities.household.gantt.model.RoomType;
+
+import java.util.HashSet;
+import java.util.List;
+import java.util.stream.Collectors;
+
+/**
+ * Manages filtering logic for Gantt calendar rooms.
+ * Tracks active filter states and applies filters to room list.
+ *
+ * @author Claude Code Assistant
+ */
+public class GanttFilterManager {
+
+    // Active filter sets (empty = show all)
+    private final ObservableSet<RoomStatus> activeStatusFilters = FXCollections.observableSet(new HashSet<>());
+    private final ObservableSet<RoomType> activeRoomTypeFilters = FXCollections.observableSet(new HashSet<>());
+    private final ObservableSet<String> activeCategoryFilters = FXCollections.observableSet(new HashSet<>());
+    private final ObservableSet<Object> activePoolFilters = FXCollections.observableSet(new HashSet<>());
+
+    /**
+     * Toggles a status filter on/off
+     */
+    public void toggleStatusFilter(RoomStatus status) {
+        if (activeStatusFilters.contains(status)) {
+            activeStatusFilters.remove(status);
+        } else {
+            activeStatusFilters.add(status);
+        }
+    }
+
+    /**
+     * Toggles a room type filter on/off
+     */
+    public void toggleRoomTypeFilter(RoomType roomType) {
+        if (activeRoomTypeFilters.contains(roomType)) {
+            activeRoomTypeFilters.remove(roomType);
+        } else {
+            activeRoomTypeFilters.add(roomType);
+        }
+    }
+
+    /**
+     * Toggles a category filter on/off (e.g., "Dormitory", "Twin Room")
+     */
+    public void toggleCategoryFilter(String category) {
+        if (activeCategoryFilters.contains(category)) {
+            activeCategoryFilters.remove(category);
+        } else {
+            activeCategoryFilters.add(category);
+        }
+    }
+
+    /**
+     * Toggles a pool filter on/off
+     */
+    public void togglePoolFilter(Object poolId) {
+        if (activePoolFilters.contains(poolId)) {
+            activePoolFilters.remove(poolId);
+        } else {
+            activePoolFilters.add(poolId);
+        }
+    }
+
+    /**
+     * Clears all active filters
+     */
+    public void clearAllFilters() {
+        activeStatusFilters.clear();
+        activeRoomTypeFilters.clear();
+        activeCategoryFilters.clear();
+        activePoolFilters.clear();
+    }
+
+    /**
+     * Checks if a status filter is active
+     */
+    public boolean isStatusFilterActive(RoomStatus status) {
+        return activeStatusFilters.contains(status);
+    }
+
+    /**
+     * Checks if a room type filter is active
+     */
+    public boolean isRoomTypeFilterActive(RoomType roomType) {
+        return activeRoomTypeFilters.contains(roomType);
+    }
+
+    /**
+     * Checks if a category filter is active (e.g., "Dormitory", "Twin Room")
+     */
+    public boolean isCategoryFilterActive(String category) {
+        return activeCategoryFilters.contains(category);
+    }
+
+    /**
+     * Checks if a pool filter is active
+     */
+    public boolean isPoolFilterActive(Object poolId) {
+        return activePoolFilters.contains(poolId);
+    }
+
+    /**
+     * Applies active filters to a room list
+     */
+    public List<GanttRoomData> applyFilters(List<GanttRoomData> rooms) {
+        return rooms.stream()
+                .filter(this::passesFilters)
+                .collect(Collectors.toList());
+    }
+
+    /**
+     * Checks if a room passes all active filters
+     */
+    private boolean passesFilters(GanttRoomData room) {
+        // If no filters active, show all
+        boolean passesStatusFilter = activeStatusFilters.isEmpty() || activeStatusFilters.contains(room.getStatus());
+        boolean passesRoomTypeFilter = activeRoomTypeFilters.isEmpty() || activeRoomTypeFilters.contains(room.getRoomType());
+        boolean passesCategoryFilter = activeCategoryFilters.isEmpty() || activeCategoryFilters.contains(room.getCategory());
+
+        // Pool filter uses OR logic: room passes if it belongs to ANY of the active pools
+        boolean passesPoolFilter = activePoolFilters.isEmpty();
+        if (!passesPoolFilter) {
+            for (Object poolId : activePoolFilters) {
+                if (room.getPoolIds().contains(poolId)) {
+                    passesPoolFilter = true;
+                    break;
+                }
+            }
+        }
+
+        return passesStatusFilter && passesRoomTypeFilter && passesCategoryFilter && passesPoolFilter;
+    }
+
+    /**
+     * Gets observable set of active status filters (for UI binding)
+     */
+    public ObservableSet<RoomStatus> getActiveStatusFilters() {
+        return activeStatusFilters;
+    }
+
+    /**
+     * Gets observable set of active room type filters (for UI binding)
+     */
+    public ObservableSet<RoomType> getActiveRoomTypeFilters() {
+        return activeRoomTypeFilters;
+    }
+
+    /**
+     * Gets observable set of active category filters (for UI binding)
+     */
+    public ObservableSet<String> getActiveCategoryFilters() {
+        return activeCategoryFilters;
+    }
+
+    /**
+     * Gets observable set of active pool filters (for UI binding)
+     */
+    public ObservableSet<Object> getActivePoolFilters() {
+        return activePoolFilters;
+    }
+
+    /**
+     * Checks if any filters are active
+     */
+    public boolean hasActiveFilters() {
+        return !activeStatusFilters.isEmpty() || !activeRoomTypeFilters.isEmpty()
+                || !activeCategoryFilters.isEmpty() || !activePoolFilters.isEmpty();
+    }
+}

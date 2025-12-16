@@ -7,12 +7,13 @@ import com.stripe.param.PaymentIntentCreateParams;
 import com.stripe.param.checkout.SessionCreateParams;
 import dev.webfx.platform.async.Future;
 import dev.webfx.platform.resource.Resource;
+import one.modality.ecommerce.payment.PaymentFormType;
 import one.modality.ecommerce.payment.server.gateway.*;
 
 /**
  * @author Bruno Salmon
  */
-public class StripePaymentGateway implements PaymentGateway {
+public final class StripePaymentGateway implements PaymentGateway {
 
     private static final String GATEWAY_NAME = "Stripe";
 
@@ -26,11 +27,18 @@ public class StripePaymentGateway implements PaymentGateway {
 
     @Override
     public Future<GatewayInitiatePaymentResult> initiatePayment(GatewayInitiatePaymentArgument argument) {
+        if (argument.preferredFormType() == PaymentFormType.EMBEDDED)
+            return initiatePaymentEmbedded(argument);
+        return initiatePaymentRedirect(argument);
+    }
+
+    private Future<GatewayInitiatePaymentResult> initiatePaymentEmbedded(GatewayInitiatePaymentArgument argument) {
         try {
             Stripe.apiKey = API_SECRET_KEY;
+            GatewayOrder order = argument.order();
             PaymentIntentCreateParams params = PaymentIntentCreateParams.builder()
-                    .setAmount(argument.getAmount())
-                    .setCurrency(argument.getCurrencyCode())
+                    .setAmount(order.amount())
+                    .setCurrency(argument.currencyCode())
                     .setAutomaticPaymentMethods(
                             PaymentIntentCreateParams.AutomaticPaymentMethods.builder().setEnabled(true).build()
                     )
@@ -46,28 +54,25 @@ public class StripePaymentGateway implements PaymentGateway {
         }
     }
 
-    @Override
-    public Future<GatewayCompletePaymentResult> completePayment(GatewayCompletePaymentArgument argument) {
-        return Future.failedFuture("completePayment() not yet implemented for Stripe");
-    }
-
-    public Future<GatewayInitiatePaymentResult> initiatePaymentRedirect(GatewayInitiatePaymentArgument argument) {
+    private Future<GatewayInitiatePaymentResult> initiatePaymentRedirect(GatewayInitiatePaymentArgument argument) {
         Stripe.apiKey = API_SECRET_KEY;
         // Extract the following to a 'StripeClient'
         // Assemble the purchase objects
+        GatewayOrder order = argument.order();
         SessionCreateParams.LineItem.PriceData.ProductData productData =
                 SessionCreateParams.LineItem.PriceData.ProductData.builder()
-                        .setName(argument.getProductName())
+                        .setName(order.shortName())
                         .build();
 
         // Create the price data and add the product data to this
         SessionCreateParams.LineItem.PriceData priceData =
                 SessionCreateParams.LineItem.PriceData.builder()
-                        .setCurrency(argument.getCurrencyCode())
-                        .setUnitAmount(argument.getAmount())
+                        .setCurrency(argument.currencyCode())
+                        .setUnitAmount(order.amount())
                         .setProductData(productData)
                         .build();
 
+        // TODO: create
         // Create the line item and add the price data
         SessionCreateParams.LineItem lineItem =
                 SessionCreateParams.LineItem.builder()
@@ -86,14 +91,15 @@ public class StripePaymentGateway implements PaymentGateway {
 
         try {
             Session session = Session.create(params);
-            return Future.succeededFuture(GatewayInitiatePaymentResult.createRedirectInitiatePaymentResult(argument.isLive(), false, session.getUrl(), null));
+            return Future.succeededFuture(GatewayInitiatePaymentResult.createRedirectInitiatePaymentResult(argument.isLive(), session.getUrl()));
         } catch (Exception e) {
             return Future.failedFuture(e);
         }
     }
 
     @Override
-    public Future<GatewayMakeApiPaymentResult> makeApiPayment(GatewayMakeApiPaymentArgument argument) {
-        return Future.failedFuture("makeApiPayment() not yet implemented for Stripe");
+    public Future<GatewayCompletePaymentResult> completePayment(GatewayCompletePaymentArgument argument) {
+        return Future.failedFuture("completePayment() not yet implemented for Stripe");
     }
+
 }

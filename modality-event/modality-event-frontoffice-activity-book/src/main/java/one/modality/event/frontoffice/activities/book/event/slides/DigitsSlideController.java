@@ -7,6 +7,7 @@ import dev.webfx.platform.util.collection.Collections;
 import javafx.scene.layout.Region;
 import one.modality.base.shared.entities.Event;
 import one.modality.booking.frontoffice.bookingform.BookingForm;
+import one.modality.booking.frontoffice.bookingform.BookingFormEntryPoint;
 import one.modality.booking.frontoffice.bookingform.BookingFormProvider;
 import one.modality.booking.frontoffice.bookingform.GatewayPaymentForm;
 import one.modality.ecommerce.payment.CancelPaymentResult;
@@ -20,7 +21,8 @@ import java.util.ServiceLoader;
  */
 final class DigitsSlideController {
 
-    private static final List<BookingFormProvider> ALL_BOOKING_FORM_PROVIDERS_SORTED_BY_PRIORITY = MultipleServiceProviders.getProviders(BookingFormProvider.class, () -> ServiceLoader.load(BookingFormProvider.class));
+    private static final List<BookingFormProvider> ALL_BOOKING_FORM_PROVIDERS_SORTED_BY_PRIORITY = MultipleServiceProviders
+            .getProviders(BookingFormProvider.class, () -> ServiceLoader.load(BookingFormProvider.class));
     static {
         ALL_BOOKING_FORM_PROVIDERS_SORTED_BY_PRIORITY.sort((p1, p2) -> p2.getPriority() - p1.getPriority());
     }
@@ -47,8 +49,10 @@ final class DigitsSlideController {
         step5CancellationSlide = new Step5CancellationSlide(bookEventActivity);
         step6ErrorSlide = new Step6ErrorSlide(bookEventActivity);
         stepSlidetransitionPane.setScrollToTop(true);
-        // The following code is to solve a performance issue that happens on mobiles during the translation transition
-        stepSlidetransitionPane.setUnmanagedDuringTransition(); // For more explanation, read the comment inside this method.
+        // The following code is to solve a performance issue that happens on mobiles
+        // during the translation transition
+        stepSlidetransitionPane.setUnmanagedDuringTransition(); // For more explanation, read the comment inside this
+                                                                // method.
     }
 
     Region getContainer() {
@@ -56,20 +60,21 @@ final class DigitsSlideController {
     }
 
     void onEventChanged(Event event) {
-        // Searching for a booking form provider suitable for this event
-        BookingFormProvider bookingFormProvider = Collections.findFirst(ALL_BOOKING_FORM_PROVIDERS_SORTED_BY_PRIORITY, provider -> provider.acceptEvent(event));
+        // Searching for a booking form provider suitable for this event (for new bookings)
+        BookingFormProvider bookingFormProvider = Collections.findFirst(ALL_BOOKING_FORM_PROVIDERS_SORTED_BY_PRIORITY,
+                provider -> provider.acceptEvent(event));
         if (bookingFormProvider == null) {
             bookingForm = null;
             step6ErrorSlide.setErrorMessage("Error: Unmanaged type of event");
             displaySlide(step6ErrorSlide);
         } else {
-            bookingForm = bookingFormProvider.createBookingForm(event, bookEventActivity);
+            bookingForm = bookingFormProvider.createBookingForm(event, bookEventActivity, BookingFormEntryPoint.NEW_BOOKING);
             bookingFormCreated = true;
         }
     }
 
     boolean autoLoadExistingBooking() {
-        return bookingForm.getSettings().autoLoadExistingBooking();
+        return bookingForm != null && bookingForm.getSettings().autoLoadExistingBooking();
     }
 
     public BookingForm getBookingForm() {
@@ -85,18 +90,35 @@ final class DigitsSlideController {
             onReadyToReveal.run();
         else {
             if (bookingFormCreated) {
-                step1BookingFormAndSubmitSlide.setBookingForm(bookingForm);
-                // Sub-routing node binding (displaying the possible sub-routing account node in the appropriate place in step2)
+                // Check if this is a modification flow (not new booking, not payment request)
+                one.modality.booking.client.workingbooking.WorkingBooking workingBooking = bookEventActivity.getWorkingBooking();
+                boolean isModificationFlow = workingBooking != null
+                    && !workingBooking.isNewBooking()
+                    && !workingBooking.isPaymentRequestedByUser()
+                    && bookingForm.supportsModificationView();
+
+                if (isModificationFlow) {
+                    // Use modification view instead of normal booking form
+                    javafx.scene.Node modificationView = bookingForm.getModificationView();
+                    if (modificationView != null) {
+                        step1BookingFormAndSubmitSlide.setModificationView(modificationView);
+                    }
+                } else {
+                    step1BookingFormAndSubmitSlide.setBookingForm(bookingForm);
+                }
+
+                // Sub-routing node binding (displaying the possible sub-routing account node in
+                // the appropriate place in step2)
                 step1BookingFormAndSubmitSlide.accountMountNodeProperty().bind(bookEventActivity.mountNodeProperty());
                 displayFirstSlide();
                 bookingFormCreated = false;
             }
             bookEventActivity.getWorkingBooking().getEvent().onExpressionLoaded(bookingForm.getEventFieldsToLoad())
-                .inUiThread()
-                .onSuccess(ignored -> {
-                    bookingForm.onWorkingBookingLoaded();
-                    onReadyToReveal.run();
-                });
+                    .inUiThread()
+                    .onSuccess(ignored -> {
+                        bookingForm.onWorkingBookingLoaded();
+                        onReadyToReveal.run();
+                    });
         }
     }
 
@@ -105,7 +127,8 @@ final class DigitsSlideController {
     }
 
     private void displaySlide(StepSlide slide) {
-        boolean animate = slide != step1BookingFormAndSubmitSlide || displayedSlide == step4FailedPaymentSlide || displayedSlide == step5CancellationSlide;
+        boolean animate = slide != step1BookingFormAndSubmitSlide || displayedSlide == step4FailedPaymentSlide
+                || displayedSlide == step5CancellationSlide;
         displayedSlide = slide;
         UiScheduler.runInUiThread((() -> {
             if (animate)

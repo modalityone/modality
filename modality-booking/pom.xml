@@ -19,6 +19,7 @@
 
     <modules>
         <module>modality-booking-backoffice-activity-bookings-plugin</module>
+        <module>modality-booking-backoffice-activity-registration-plugin</module>
         <module>modality-booking-backoffice-bookingeditor</module>
         <module>modality-booking-backoffice-bookingeditor-audiorecording-plugin</module>
         <module>modality-booking-backoffice-bookingeditor-teaching-plugin</module>
@@ -28,6 +29,7 @@
         <module>modality-booking-client-workingbooking</module>
         <module>modality-booking-frontoffice-bookingelements</module>
         <module>modality-booking-frontoffice-bookingform</module>
+        <module>modality-booking-frontoffice-bookingpage</module>
     </modules>
 
 </project>

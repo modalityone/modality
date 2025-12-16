@@ -1,23 +1,20 @@
 package one.modality.base.shared.entities;
 
 import dev.webfx.stack.orm.entity.Entity;
-import dev.webfx.stack.orm.entity.EntityId;
-import one.modality.base.shared.entities.markers.EntityHasOnline;
-import one.modality.base.shared.entities.markers.EntityHasSiteAndItem;
-import one.modality.base.shared.entities.markers.HasName;
+import one.modality.base.shared.entities.markers.*;
 
 import java.time.LocalDate;
 
 public interface ResourceConfiguration extends Entity,
     EntityHasSiteAndItem,
+    EntityHasResource,
     EntityHasOnline,
+    EntityHasEvent,
     HasName {
 
-    String resource = "resource";
     String name = "name";
     String endDate = "endDate";
     String startDate = "startDate";
-    String lastCleaningDate = "lastCleaningDate";
     String allowsMale = "allowsMale";
     String allowsFemale = "allowsFemale";
     String allowsGuest = "allowsGuest";
@@ -26,22 +23,11 @@ public interface ResourceConfiguration extends Entity,
     String allowsResident = "allowsResident";
     String allowsResidentFamily = "allowsResidentFamily";
     String max = "max";
-
-    default void setResource(Object value) {
-        setForeignField(resource, value);
-    }
-
-    default EntityId getResourceId() {
-        return getForeignEntityId(resource);
-    }
-
-    default Resource getResource() {
-        return getForeignEntity(resource);
-    }
+    String comment = "comment";
 
     @Override
     default String getName() {
-        return (String) evaluate(name);
+        return evaluate(name);
     }
 
     @Override
@@ -63,14 +49,6 @@ public interface ResourceConfiguration extends Entity,
 
     default LocalDate getEndDate() {
         return getLocalDateFieldValue(endDate);
-    }
-
-    default void setLastCleaningDate(LocalDate value) {
-        setFieldValue(lastCleaningDate, value);
-    }
-
-    default LocalDate getLastCleaningDate() {
-        return getLocalDateFieldValue(lastCleaningDate);
     }
 
     default Boolean allowsMale() {
@@ -135,5 +113,13 @@ public interface ResourceConfiguration extends Entity,
 
     default void setMax(int value) {
         setFieldValue(max, value);
+    }
+
+    default String getComment() {
+        return getStringFieldValue(comment);
+    }
+
+    default void setComment(String value) {
+        setFieldValue(comment, value);
     }
 }

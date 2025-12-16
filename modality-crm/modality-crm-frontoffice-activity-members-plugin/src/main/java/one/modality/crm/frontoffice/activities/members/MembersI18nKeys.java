@@ -35,6 +35,10 @@ public interface MembersI18nKeys {
     Object CancelManagerInvitationMessage = "CancelManagerInvitationMessage";
     Object CancelManagerInvitationTitle = "CancelManagerInvitationTitle";
     Object CloseWindow = "CloseWindow";
+    Object ConfirmApproveManagerInvitationMessage = "ConfirmApproveManagerInvitationMessage";
+    Object ConfirmApproveMemberInvitationMessage = "ConfirmApproveMemberInvitationMessage";
+    Object ConfirmDeclineManagerInvitationMessage = "ConfirmDeclineManagerInvitationMessage";
+    Object ConfirmDeclineMemberInvitationMessage = "ConfirmDeclineMemberInvitationMessage";
     Object ConfirmRemovalMessage = "ConfirmRemovalMessage";
     Object ConfirmRemovalTitle = "ConfirmRemovalTitle";
     Object ConfirmRevokeMessage = "ConfirmRevokeMessage";
@@ -54,6 +58,11 @@ public interface MembersI18nKeys {
     Object EmailNotFoundMessage = "EmailNotFoundMessage";
     Object EmailNotFoundTitle = "EmailNotFoundTitle";
     Object EmailPlaceholder = "EmailPlaceholder";
+    Object EmailSubjectAuthorizationApproved = "EmailSubjectAuthorizationApproved";
+    Object EmailSubjectAuthorizationRequest = "EmailSubjectAuthorizationRequest";
+    Object EmailSubjectManagerAccepted = "EmailSubjectManagerAccepted";
+    Object EmailSubjectManagerInvitation = "EmailSubjectManagerInvitation";
+    Object EmailSubjectValidationRequest = "EmailSubjectValidationRequest";
     Object Error = "Error";
     Object ExpiredInvitationLink = "ExpiredInvitationLink";
     Object ExpiredInvitationLinkDescription = "ExpiredInvitationLinkDescription";
@@ -113,6 +122,7 @@ public interface MembersI18nKeys {
     Object StatusActive = "StatusActive";
     Object StatusPending = "StatusPending";
     Object Success = "Success";
+    Object UpdateMember = "UpdateMember";
     Object UsesYourEmail = "UsesYourEmail";
     Object ValidationError = "ValidationError";
     Object ValidationRequestSent = "ValidationRequestSent";

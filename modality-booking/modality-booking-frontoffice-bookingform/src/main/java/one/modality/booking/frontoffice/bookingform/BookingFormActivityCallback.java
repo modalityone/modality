@@ -29,4 +29,11 @@ public interface BookingFormActivityCallback {
 
     void onEndReached();
 
+    /**
+     * Navigates to the login page/route.
+     */
+    default void navigateToLogin() {
+        // Default implementation does nothing - to be overridden
+    }
+
 }

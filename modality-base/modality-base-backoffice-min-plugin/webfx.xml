@@ -15,8 +15,12 @@
         <plugin-module>modality-base-client-min-plugin</plugin-module>
 
         <plugin-module>modality-base-backoffice-activity-home-plugin</plugin-module>
+        <plugin-module>modality-base-backoffice-activity-superadmin-home-plugin</plugin-module>
+        <plugin-module>modality-base-backoffice-activity-globalsetup-home-plugin</plugin-module>
+<!--
         <plugin-module>modality-base-backoffice-activity-filters-plugin</plugin-module>
         <plugin-module>modality-base-backoffice-activity-operations-plugin</plugin-module>
+-->
 
     </dependencies>
 

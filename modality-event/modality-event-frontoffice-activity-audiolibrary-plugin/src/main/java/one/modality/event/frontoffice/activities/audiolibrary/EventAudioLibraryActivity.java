@@ -43,7 +43,6 @@ import one.modality.base.frontoffice.utility.page.FOPageUtil;
 import one.modality.base.shared.entities.Event;
 import one.modality.base.shared.entities.Media;
 import one.modality.base.shared.entities.ScheduledItem;
-import one.modality.base.shared.entities.impl.ScheduledItemImpl;
 import one.modality.base.shared.knownitems.KnownItem;
 import one.modality.base.shared.knownitems.KnownItemFamily;
 import one.modality.crm.frontoffice.help.HelpPanel;
@@ -76,7 +75,7 @@ final class EventAudioLibraryActivity extends ViewDomainActivityBase {
     }
 
     private final SimpleObjectProperty<AudioContentState> audioStateProperty =
-            new SimpleObjectProperty<>(AudioContentState.LOADING);
+        new SimpleObjectProperty<>(AudioContentState.LOADING);
     private final ObjectProperty<Object> pathEventIdProperty = new SimpleObjectProperty<>();
     private final StringProperty pathItemCodeProperty = new SimpleStringProperty();
 
@@ -101,7 +100,6 @@ final class EventAudioLibraryActivity extends ViewDomainActivityBase {
     private final MonoPane audioTracksContainer = new MonoPane();
 
 
-
     @Override
     protected void updateModelFromContextParameters() {
         pathEventIdProperty.set(Numbers.toInteger(getParameter(EventAudioLibraryRouting.PATH_EVENT_ID_PARAMETER_NAME)));
@@ -123,11 +121,11 @@ final class EventAudioLibraryActivity extends ViewDomainActivityBase {
             } else {
                 audioStateProperty.set(AudioContentState.LOADING);
                 entityStore.<Event>executeQueryWithCache("modality/event/audio-library/event", """
-                            select name, label, shortDescription, shortDescriptionLabel, audioExpirationDate
-                                    , startDate, endDate, livestreamUrl, vodExpirationDate, repeatAudio, repeatedEvent
-                                from Event
-                                where id=?
-                                limit 1""", eventId)
+                        select name, label, shortDescription, shortDescriptionLabel, audioExpirationDate
+                                , startDate, endDate, livestreamUrl, vodExpirationDate, repeatAudio, repeatedEvent
+                            from Event
+                            where id=?
+                            limit 1""", eventId)
                     .onFailure(Console::log)
                     .onCacheAndOrSuccess(events -> {
                         Event event = events.get(0);
@@ -140,7 +138,7 @@ final class EventAudioLibraryActivity extends ViewDomainActivityBase {
                         event.getStore().executeQueryBatchWithCache("modality/event/audio-library/scheduled-items-medias",
                                 // Index 0: we look for the scheduledItem having a `bookableScheduledItem` which is an audio type (case of festival)
                                 //TODO: optimize the request so we don t need to repeat three times the (select ... from Attendance)
-                                        new EntityStoreQuery("""
+                                new EntityStoreQuery("""
                                     select name, label, date, expirationDate, programScheduledItem.(name, label, startTime, endTime, timeline.(startTime, endTime), cancelled), published, event.(name, type.recurringItem, recurringWithAudio)
                                         , (select id from Attendance where scheduledItem=si.bookableScheduledItem and accountCanAccessPersonMedias($1, documentLine.document.person) limit 1) as attendanceId
                                         , (select jsonb_build_array(documentLine.document.(id,price_deposit,price_net,confirmed)) from Attendance where scheduledItem=si.bookableScheduledItem and documentLine.(!cancelled and !document.cancelled) and accountCanAccessPersonMedias($1, documentLine.document.person) limit 1) as paymentAndConfirmedInfoJSonArray
@@ -185,23 +183,23 @@ final class EventAudioLibraryActivity extends ViewDomainActivityBase {
                                 AstArray parameters;
                                 int paid = 0;
                                 int price = 0;
-                                if(!entityLists[0].isEmpty() && entityLists[0].get(0) != null) {
-                                    parameters = (AstArray) ((ScheduledItemImpl) entityLists[0].get(0)).getFieldValue("paymentAndConfirmedInfoJSonArray");
-                                    event.setFieldValue("documentPk",parameters.getInteger(0));
+                                if (Collections.first(entityLists[0]) instanceof ScheduledItem scheduledItem0) {
+                                    parameters = (AstArray) scheduledItem0.getFieldValue("paymentAndConfirmedInfoJSonArray");
+                                    event.setFieldValue("documentPk", parameters.getInteger(0));
                                     paid = parameters.getInteger(1);
                                     price = parameters.getInteger(2);
                                     balance = price - paid;
                                     isRegistrationConfirmed = parameters.getBoolean(3);
                                 }
-                                if(!entityLists[1].isEmpty() && entityLists[1].get(0) != null) {
-                                    parameters = (AstArray) ((ScheduledItemImpl) entityLists[1].get(0)).getFieldValue("paymentAndConfirmedInfoJSonArray");
-                                    event.setFieldValue("documentPk",parameters.getInteger(0));
+                                if (Collections.first(entityLists[0]) instanceof ScheduledItem scheduledItem1) {
+                                    parameters = (AstArray) scheduledItem1.getFieldValue("paymentAndConfirmedInfoJSonArray");
+                                    event.setFieldValue("documentPk", parameters.getInteger(0));
                                     paid = parameters.getInteger(1);
                                     price = parameters.getInteger(2);
                                     balance = price - paid;
                                     isRegistrationConfirmed = parameters.getBoolean(3);
                                 }
-                                updateContentStateProperty(paid,price,isRegistrationConfirmed, publishedMedias.isEmpty());
+                                updateContentStateProperty(paid, price, isRegistrationConfirmed, publishedMedias.isEmpty());
                                 //noinspection unchecked
                                 Collections.setAll(publishedMedias, entityLists[2]);
                                 //noinspection unchecked
@@ -216,22 +214,22 @@ final class EventAudioLibraryActivity extends ViewDomainActivityBase {
         AudioColumnsRenderers.registerRenderers();
         audioColumns = VisualEntityColumnFactory.get().fromJsonArray( // language=JSON5
             """
-            [
-              {expression: 'this', renderer: 'audioName', minWidth: 300},
-              {expression: 'this', renderer: 'audioButtons', textAlign: 'center', hShrink: false, hGrow: false}
-            ]""", getDomainModel(), "ScheduledItem");
+                [
+                  {expression: 'this', renderer: 'audioName', minWidth: 300},
+                  {expression: 'this', renderer: 'audioButtons', textAlign: 'center', hShrink: false, hGrow: false}
+                ]""", getDomainModel(), "ScheduledItem");
     }
 
     private void updateContentStateProperty(int paid, int price, boolean isConfirmed, boolean emptyContent) {
-            if (emptyContent) {
-                audioStateProperty.set(AudioContentState.NO_CONTENT);
-            }
-            if(price>paid){
-                audioStateProperty.set(AudioContentState.PAYMENT_PENDING);
-            } else if(!isConfirmed){
-                audioStateProperty.set(AudioContentState.NOT_CONFIRMED);
-            } else {
-                audioStateProperty.set(AudioContentState.CONTENT_READY);}
+        if (emptyContent) {
+            audioStateProperty.set(AudioContentState.NO_CONTENT);
+        } else if (price > paid) {
+            audioStateProperty.set(AudioContentState.PAYMENT_PENDING);
+        } else if (!isConfirmed) {
+            audioStateProperty.set(AudioContentState.NOT_CONFIRMED);
+        } else {
+            audioStateProperty.set(AudioContentState.CONTENT_READY);
+        }
     }
 
     @Override
@@ -270,7 +268,7 @@ final class EventAudioLibraryActivity extends ViewDomainActivityBase {
         // *********************************** Reacting to parameter changes *******************************************
         // *************************************************************************************************************
 
-        ObservableLists.runNowAndOnListOrPropertiesChange(change -> Platform.runLater(this::updateMainContent), scheduledAudioItems, eventProperty,audioStateProperty);
+        ObservableLists.runNowAndOnListOrPropertiesChange(change -> Platform.runLater(this::updateMainContent), scheduledAudioItems, eventProperty, audioStateProperty);
 
         // *************************************************************************************************************
         // ************************************* Building final container **********************************************
@@ -282,26 +280,26 @@ final class EventAudioLibraryActivity extends ViewDomainActivityBase {
     }
 
     private void updateMainContent() {
-        
-        Node loadingContentIndicator = new GoldenRatioPane(Controls.createProgressIndicator(100));
+
+        Node loadingContentSpinner = new GoldenRatioPane(Controls.createSpinner(100, 100));
         eventHeader.eventProperty().bind(eventProperty);
         AudioContentState audioState = audioStateProperty.get();
 
         // We display the loading indicator while the data is loading
-        if (audioState== AudioContentState.LOADING) { // this indicates that the data has not finished loaded
-            audioTracksContainer.getChildren().setAll(loadingContentIndicator);
+        if (audioState == AudioContentState.LOADING) { // this indicates that the data has not finished loaded
+            audioTracksContainer.getChildren().setAll(loadingContentSpinner);
             return;
         }
 
         // If the user didn't book any event with videos, we display "no content"
-        if (audioState== AudioContentState.NO_CONTENT) {
+        if (audioState == AudioContentState.NO_CONTENT) {
             NoContentView content = new NoContentView("VIDEO");
             audioTracksContainer.getChildren().setAll(content.getView());
             return;
         }
 
-        if(audioState== AudioContentState.PAYMENT_PENDING){
-            int documentPk =  (int) eventProperty.get().getFieldValue("documentPk");
+        if (audioState == AudioContentState.PAYMENT_PENDING) {
+            int documentPk = (int) eventProperty.get().getFieldValue("documentPk");
             PaymentPendingView paymentView = new PaymentPendingView(
                 balance,
                 eventProperty.get(),
@@ -313,7 +311,7 @@ final class EventAudioLibraryActivity extends ViewDomainActivityBase {
             return;
         }
         //Case where the event is not confirmed
-        if(audioState== AudioContentState.NOT_CONFIRMED){
+        if (audioState == AudioContentState.NOT_CONFIRMED) {
             NotConfirmedView notConfirmedView = new NotConfirmedView();
             audioTracksContainer.getChildren().setAll(notConfirmedView.getView());
             return;
@@ -322,7 +320,7 @@ final class EventAudioLibraryActivity extends ViewDomainActivityBase {
         // We display the loading indicator while the data is loading
         Event event = eventProperty.get();
         if (event == null) { // this indicates that the data has not finished loaded
-            pageContainer.setContent(loadingContentIndicator);
+            pageContainer.setContent(loadingContentSpinner);
             // TODO display something else (ex: next online events to book) when the user is not logged in, or registered
         } else { // otherwise we display loadedContentVBox and set the content of audioTracksContainer
             pageContainer.setContent(loadedContentVBox);
@@ -373,7 +371,7 @@ final class EventAudioLibraryActivity extends ViewDomainActivityBase {
     public void onResume() {
         super.onResume();
         //Ajouter un test si le paiement est en cours, et s'il a aboutit, on recharge les infos avec un property que l'on fait changer de valeur
-        if(isPaymentCurrentlyProcessing) {
+        if (isPaymentCurrentlyProcessing) {
             reloadProperty.setValue(false);
             reloadProperty.setValue(true);
             isPaymentCurrentlyProcessing = false;

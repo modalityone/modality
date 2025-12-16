@@ -10,6 +10,4 @@ public interface PaymentGateway {
 
     Future<GatewayCompletePaymentResult> completePayment(GatewayCompletePaymentArgument argument);
 
-    Future<GatewayMakeApiPaymentResult> makeApiPayment(GatewayMakeApiPaymentArgument argument);
-
 }

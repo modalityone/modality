@@ -8,4 +8,12 @@ public interface BookingFormSettings {
     boolean showNavigationBar();
 
     boolean autoLoadExistingBooking();
+
+    default boolean isNavigationClickable() {
+        return false;
+    }
+
+    default boolean showPriceBar() {
+        return true;
+    }
 }

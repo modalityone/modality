@@ -1,8 +1,10 @@
 package one.modality.base.frontoffice.application;
 
 import dev.webfx.platform.conf.SourcesConfig;
+import dev.webfx.stack.routing.uirouter.UiRouter;
 import one.modality.base.client.application.ModalityClientStarterActivity;
 import one.modality.base.frontoffice.activities.mainframe.ModalityFrontOfficeMainFrameActivity;
+import one.modality.base.frontoffice.utility.browser.BrowserUtil;
 
 /**
  * @author Bruno Salmon
@@ -16,4 +18,9 @@ final class ModalityFrontOfficeStarterActivity extends ModalityClientStarterActi
         super(DEFAULT_START_PATH, ModalityFrontOfficeMainFrameActivity::new);
     }
 
+    @Override
+    protected UiRouter setupContainedRouter(UiRouter containedRouter) {
+        BrowserUtil.setUiRouter(containedRouter);
+        return super.setupContainedRouter(containedRouter);
+    }
 }

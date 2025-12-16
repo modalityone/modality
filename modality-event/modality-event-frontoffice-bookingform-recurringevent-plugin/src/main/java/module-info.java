@@ -16,6 +16,7 @@ module modality.event.frontoffice.bookingform.recurringevent.plugin {
     requires modality.booking.client.workingbooking;
     requires modality.booking.frontoffice.bookingelements;
     requires modality.booking.frontoffice.bookingform;
+    requires modality.booking.frontoffice.bookingpage;
     requires modality.ecommerce.client.i18n;
     requires modality.ecommerce.document.service;
     requires modality.ecommerce.shared.pricecalculator;
@@ -33,8 +34,5 @@ module modality.event.frontoffice.bookingform.recurringevent.plugin {
 
     // Exported packages
     exports one.modality.event.frontoffice.bookingform.recurringevent;
-
-    // Provided services
-    provides one.modality.booking.frontoffice.bookingform.BookingFormProvider with one.modality.event.frontoffice.bookingform.recurringevent.RecurringEventBookingFormProvider;
 
 }

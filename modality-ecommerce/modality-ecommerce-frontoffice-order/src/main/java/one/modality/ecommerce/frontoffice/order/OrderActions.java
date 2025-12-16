@@ -142,7 +142,7 @@ public final class OrderActions {
                 Mail email = updateStore.insertEntity(Mail.class);
                 email.setFromName(d.getFirstName() + ' ' + d.getLastName());
                 email.setFromEmail(d.getEmail());
-                email.setSubject("[" + d.getPrimaryKey() + "-" + d.getRef() + "] Refund of " + formattedPrice + " requested");
+                email.setSubject("[" + Entities.getPrimaryKey(d.getEvent()) + "-" + d.getRef() + "] Refund of " + formattedPrice + " requested");
                 email.setOut(false);
                 email.setDocument(d);
                 String content = "The user has requested a refund for his canceled booking. Amount : " + formattedPrice;

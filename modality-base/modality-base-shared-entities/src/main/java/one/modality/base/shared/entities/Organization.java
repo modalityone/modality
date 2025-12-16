@@ -23,6 +23,7 @@ public interface Organization extends
     String importIssue = "importIssue";
     String language = "language";
     String teachingsDayTicketItem = "teachingsDayTicketItem";
+    String globalSite = "globalSite";
 
     default void setClosed(boolean value) { setFieldValue(closed, value); }
 
@@ -96,6 +97,18 @@ public interface Organization extends
 
     default Item getTeachingsDayTicketItem() {
         return getForeignEntity(teachingsDayTicketItem);
+    }
+
+    default void setGlobalSite(Object value) {
+        setForeignField(globalSite, value);
+    }
+
+    default EntityId getGlobalSiteId() {
+        return getForeignEntityId(globalSite);
+    }
+
+    default Site getGlobalSite() {
+        return getForeignEntity(globalSite);
     }
 
 }

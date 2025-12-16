@@ -1000,6 +1000,126 @@ public interface ModalityStyle {
         return wrapper;
     }
 
+    // Chip button styles - for filter/toggle button groups
+    String CHIP_BUTTON = "chip-button";
+    String CHIP_BUTTON_SELECTED = "chip-button-selected";
+    String CHIP_BUTTON_PRIMARY = "chip-button-primary";
+    String CHIP_BUTTON_PRIMARY_SELECTED = "chip-button-primary-selected";
+
+    // Warning/Amber solid button style
+    String BTN_WARNING_SOLID = "btn-warning-solid";
+
+    /**
+     * Creates a chip button (unselected state) for filter/toggle groups.
+     * Chip buttons have rounded corners with a light border and gray text.
+     *
+     * @param button The button to style
+     * @return The styled button
+     */
+    static <N extends Node> N chipButton(N button) {
+        if (button instanceof javafx.scene.control.Labeled) {
+            ((javafx.scene.control.Labeled) button).setPadding(new Insets(8, 14, 8, 14));
+        }
+        return Bootstrap.style(button, CHIP_BUTTON);
+    }
+
+    /**
+     * Creates a selected chip button for filter/toggle groups.
+     * Selected chip buttons have an amber background with amber border.
+     *
+     * @param button The button to style
+     * @return The styled button
+     */
+    static <N extends Node> N chipButtonSelected(N button) {
+        if (button instanceof javafx.scene.control.Labeled) {
+            ((javafx.scene.control.Labeled) button).setPadding(new Insets(8, 14, 8, 14));
+        }
+        return Bootstrap.style(button, CHIP_BUTTON_SELECTED);
+    }
+
+    /**
+     * Updates a chip button's style based on selection state (amber/warning style).
+     * Removes the opposite style and adds the appropriate one.
+     *
+     * @param button The button to update
+     * @param selected Whether the button is selected
+     * @return The styled button
+     */
+    static <N extends Node> N setChipButtonSelected(N button, boolean selected) {
+        button.getStyleClass().removeAll(CHIP_BUTTON, CHIP_BUTTON_SELECTED);
+        return selected ? chipButtonSelected(button) : chipButton(button);
+    }
+
+    /**
+     * Creates an unselected chip button with primary/blue style for filter/toggle groups.
+     * Unselected chip buttons have white background with light blue border and blue text.
+     *
+     * @param button The button to style
+     * @return The styled button
+     */
+    static <N extends Node> N chipButtonPrimary(N button) {
+        if (button instanceof javafx.scene.control.Labeled) {
+            ((javafx.scene.control.Labeled) button).setPadding(new Insets(8, 14, 8, 14));
+        }
+        return Bootstrap.style(button, CHIP_BUTTON_PRIMARY);
+    }
+
+    /**
+     * Creates a selected chip button with primary/blue style for filter/toggle groups.
+     * Selected chip buttons have a blue background with blue border.
+     *
+     * @param button The button to style
+     * @return The styled button
+     */
+    static <N extends Node> N chipButtonPrimarySelected(N button) {
+        if (button instanceof javafx.scene.control.Labeled) {
+            ((javafx.scene.control.Labeled) button).setPadding(new Insets(8, 14, 8, 14));
+        }
+        return Bootstrap.style(button, CHIP_BUTTON_PRIMARY_SELECTED);
+    }
+
+    /**
+     * Updates a chip button's style based on selection state (primary/blue style).
+     * Removes the opposite style and adds the appropriate one.
+     *
+     * @param button The button to update
+     * @param selected Whether the button is selected
+     * @return The styled button
+     */
+    static <N extends Node> N setChipButtonPrimarySelected(N button, boolean selected) {
+        button.getStyleClass().removeAll(CHIP_BUTTON_PRIMARY, CHIP_BUTTON_PRIMARY_SELECTED);
+        return selected ? chipButtonPrimarySelected(button) : chipButtonPrimary(button);
+    }
+
+    /**
+     * Creates a warning/amber solid button.
+     * Uses solid amber background (#f59e0b) with white text.
+     * Suitable for primary actions in amber-themed UIs.
+     *
+     * @param button The button to style
+     * @return The styled button
+     */
+    static <N extends Node> N warningSolidButton(N button) {
+        if (button instanceof javafx.scene.control.Labeled) {
+            ((javafx.scene.control.Labeled) button).setPadding(new Insets(10, 20, 10, 20));
+        }
+        return Bootstrap.style(Bootstrap.button(button), BTN_WARNING_SOLID);
+    }
+
+    // Info helper box style - for contextual tips and explanations
+    String INFO_HELPER_BOX = "info-helper-box";
+
+    /**
+     * Creates an info helper box for contextual tips and explanations.
+     * Uses a light blue background with blue text.
+     *
+     * @param container The container (typically HBox or VBox) to style
+     * @return The styled container
+     */
+    static <N extends Node> N infoHelperBox(N container) {
+        return Bootstrap.style(container, INFO_HELPER_BOX);
+    }
+
     // Authorization badge styles for members management
     String AUTHORIZATION_BADGE = "authorization-badge";
     String AUTHORIZATION_BADGE_ACTIVE = "authorization-badge-active";

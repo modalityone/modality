@@ -23,9 +23,9 @@ public abstract class ScheduledResourceGantt extends AccommodationGantt<Schedule
                 scheduledResources, // the observable list of ScheduledResource entities to take as input
                 ScheduledResource::getDate, // the entity date reader that will be used to date each block
                 ScheduledResourceBlock::new, // the factory that creates blocks, initially 1 instance per entity, but then grouped into bars
-                barsLayout.getChildren(), // the final list of bars that will receive the result of grouping blocks
+                ganttLayout.getChildren(), // the final list of bars that will receive the result of grouping blocks
                 blocksGroupingProperty); // optional property to eventually disable the blocks grouping (=> 1 bar per block if disabled)
-        barsLayout.setChildFixedHeight(40);
+        ganttLayout.setChildFixedHeight(40);
         parentsCanvasDrawer
                 .setHorizontalStroke(Color.BLACK)
                 .setVerticalStroke(Color.BLACK);

@@ -77,6 +77,7 @@ public interface ProgramI18nKeys {
     Object PreliminariesNotGenerated = "PreliminariesNotGenerated";
     Object PreliminariesNotGeneratedMessage = "PreliminariesNotGeneratedMessage";
     Object ProgramGenerationConfirmation = "ProgramGenerationConfirmation";
+    Object ProgramMenu = "ProgramMenu";
     Object ProgramTitle = "ProgramTitle";
     Object Programme = "Programme";
     Object RecurringItemEventNotSupported = "RecurringItemEventNotSupported";

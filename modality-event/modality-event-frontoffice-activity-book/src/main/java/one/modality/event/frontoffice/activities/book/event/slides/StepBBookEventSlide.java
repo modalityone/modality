@@ -71,6 +71,9 @@ final class StepBBookEventSlide extends StepSlide {
                 .onFailure(ex -> displayErrorMessage(ex.getMessage()))
                 .inUiThread()
                 .onSuccess(x -> onEventDescriptionLoaded());
+        } else {
+            // No event header - immediately trigger event description loaded
+            onEventDescriptionLoaded();
         }
     }
 
@@ -100,17 +103,19 @@ final class StepBBookEventSlide extends StepSlide {
     }
 
     private void displayIfLoaded() {
-        if (workingBookingLoaded && eventHeader != null && eventHeader.isEventLoaded()) {
+        // Display when working booking is loaded AND either:
+        // - There's no event header (null), or
+        // - The event header has finished loading the event
+        if (workingBookingLoaded && (eventHeader == null || eventHeader.isEventLoaded())) {
             displayBookSlide(); // which is me!
         }
     }
 
     public void buildSlideUi() {
-        headerPane.setAlignment(Pos.CENTER);
-        headerPane.setMaxWidth(Double.MAX_VALUE);
-
         Region digitsTransitionPane = digitsSlideController.getContainer();
         mainVbox.setPadding(Insets.EMPTY);
+        headerPane.setAlignment(Pos.CENTER);
+        headerPane.setMaxWidth(Double.MAX_VALUE);
         mainVbox.getChildren().setAll(headerPane, digitsTransitionPane);
 
         FXProperties.runNowAndOnDoublePropertyChange(this::applyWidthConstraints, mainVbox.widthProperty());
@@ -120,17 +125,22 @@ final class StepBBookEventSlide extends StepSlide {
         if (width < 0)
             width = mainVbox.getWidth();
         double maxPageWidth = Math.min(MAX_PAGE_WIDTH, 0.90 * width);
-        double headerTopBottomPadding = maxPageWidth * 0.1;
         BookingForm bookingForm = digitsSlideController.getBookingForm();
         EventBookingFormSettings settings = bookingForm == null ? null : (EventBookingFormSettings) bookingForm.getSettings();
-        if (settings != null) {
-            double headerMaxTopBottomPadding = settings.headerMaxTopBottomPadding();
-            if (headerMaxTopBottomPadding >= 0 && headerTopBottomPadding > headerMaxTopBottomPadding)
-                headerTopBottomPadding = headerMaxTopBottomPadding;
-        }
-        headerPane.setPadding(new Insets(headerTopBottomPadding, 0, headerTopBottomPadding, 0));
-        if (eventHeader != null)
+        // Apply header padding - use 50px when no event header, otherwise use dynamic sizing
+        if (eventHeader != null) {
+            double headerTopBottomPadding = maxPageWidth * 0.1;
+            if (settings != null) {
+                double headerMaxTopBottomPadding = settings.headerMaxTopBottomPadding();
+                if (headerMaxTopBottomPadding >= 0 && headerTopBottomPadding > headerMaxTopBottomPadding)
+                    headerTopBottomPadding = headerMaxTopBottomPadding;
+            }
+            headerPane.setPadding(new Insets(headerTopBottomPadding, 0, headerTopBottomPadding, 0));
             eventHeader.setMaxPageWidth(maxPageWidth);
+        } else {
+            // Fixed 50px top padding when there's no event header
+            headerPane.setPadding(new Insets(50, 0, 0, 0));
+        }
         Region digitsTransitionPane = digitsSlideController.getContainer();
         digitsTransitionPane.setMaxWidth(maxPageWidth);
         // Extra space between the header (with padding) and the digitsTransitionPane (which contains the booking form)
@@ -182,6 +192,11 @@ final class StepBBookEventSlide extends StepSlide {
     }
 
     private void bindI18nEventExpression(Property<String> textProperty, String eventExpression, Object... args) {
-        I18nEntities.bindExpressionToTextProperty(textProperty, FXEvent.lastNonNullEventProperty(), eventExpression, Arrays.add(Object[]::new, args, eventHeader.eventLoadedProperty()));
+        if (eventHeader != null) {
+            I18nEntities.bindExpressionToTextProperty(textProperty, FXEvent.lastNonNullEventProperty(), eventExpression, Arrays.add(Object[]::new, args, eventHeader.eventLoadedProperty()));
+        } else {
+            // When there's no event header, bind without the eventLoaded dependency
+            I18nEntities.bindExpressionToTextProperty(textProperty, FXEvent.lastNonNullEventProperty(), eventExpression, args);
+        }
     }
 }

@@ -6,8 +6,7 @@
 module modality.base.client.operationactionsloading.plugin {
 
     // Direct dependencies modules
-    requires javafx.base;
-    requires javafx.controls;
+    requires javafx.graphics;
     requires webfx.extras.action;
     requires webfx.extras.exceptions;
     requires webfx.extras.i18n;

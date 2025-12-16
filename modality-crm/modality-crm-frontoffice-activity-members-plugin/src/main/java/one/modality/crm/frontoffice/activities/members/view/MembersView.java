@@ -1,34 +1,51 @@
 package one.modality.crm.frontoffice.activities.members.view;
 
+import dev.webfx.extras.controlfactory.MaterialFactoryMixin;
 import dev.webfx.extras.i18n.I18n;
 import dev.webfx.extras.i18n.controls.I18nControls;
 import dev.webfx.extras.panes.MonoPane;
 import dev.webfx.extras.styles.bootstrap.Bootstrap;
+import dev.webfx.extras.styles.materialdesign.util.MaterialUtil;
+import dev.webfx.extras.time.format.LocalizedTime;
+import dev.webfx.extras.time.pickers.DateField;
+import dev.webfx.extras.util.control.Controls;
 import dev.webfx.extras.util.dialog.DialogCallback;
 import dev.webfx.extras.util.dialog.builder.DialogBuilderUtil;
 import dev.webfx.extras.util.dialog.builder.DialogContent;
+import dev.webfx.extras.util.layout.Layouts;
+import dev.webfx.extras.validation.ValidationSupport;
+import dev.webfx.kit.util.properties.FXProperties;
 import dev.webfx.kit.util.properties.ObservableLists;
-import dev.webfx.platform.console.Console;
+import dev.webfx.platform.uischeduler.UiScheduler;
 import dev.webfx.stack.orm.domainmodel.DataSourceModel;
 import dev.webfx.stack.orm.entity.EntityStore;
 import dev.webfx.stack.orm.entity.UpdateStore;
+import dev.webfx.stack.orm.entity.controls.entity.selector.ButtonSelector;
+import dev.webfx.stack.orm.entity.controls.entity.selector.ButtonSelectorParameters;
+import dev.webfx.stack.orm.entity.controls.entity.selector.EntityButtonSelector;
 import javafx.animation.FadeTransition;
 import javafx.animation.PauseTransition;
 import javafx.animation.SequentialTransition;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Node;
-import javafx.scene.control.Button;
-import javafx.scene.control.Label;
-import javafx.scene.control.ProgressIndicator;
-import javafx.scene.control.TextField;
+import javafx.scene.control.*;
+import javafx.scene.layout.HBox;
+import javafx.scene.layout.Region;
 import javafx.scene.layout.VBox;
 import javafx.scene.text.TextAlignment;
 import javafx.util.Duration;
+import one.modality.base.client.activity.ModalityButtonFactoryMixin;
 import one.modality.base.client.icons.SvgIcons;
 import one.modality.base.client.mainframe.fx.FXMainFrameDialogArea;
+import one.modality.base.client.time.FrontOfficeTimeFormats;
+import one.modality.base.shared.entities.Country;
+import one.modality.base.shared.entities.Organization;
 import one.modality.base.shared.entities.Person;
+import one.modality.crm.client.i18n.CrmI18nKeys;
+import one.modality.crm.frontoffice.activities.createaccount.UserAccountUI;
 import one.modality.crm.frontoffice.activities.members.MembersI18nKeys;
+import one.modality.crm.frontoffice.activities.members.model.MemberItem;
 import one.modality.crm.frontoffice.activities.members.model.MembersModel;
 import one.modality.crm.frontoffice.help.HelpPanel;
 
@@ -41,10 +58,14 @@ import java.util.function.Consumer;
  * @author David Hello
  * @author Bruno Salmon
  */
-public class MembersView {
+public class MembersView implements MaterialFactoryMixin, ModalityButtonFactoryMixin {
+
+    // UI dimension constants
+    private static final int DIALOG_SCROLL_PANE_MAX_HEIGHT = 500;
+    private static final int DIALOG_PREFERRED_WIDTH = 700;
 
     private final MembersModel model;
-    private final MembersItemRendererFactory rendererFactory;
+    private MembersItemRendererFactory rendererFactory;
 
     // UI components
     private final MonoPane mainContent = new MonoPane();
@@ -56,9 +77,22 @@ public class MembersView {
     private Runnable onAddMemberRequested;
     private Runnable onInviteManagerRequested;
 
-    public MembersView(MembersModel model, MembersItemRendererFactory rendererFactory) {
+    public MembersView(MembersModel model) {
         this.model = model;
+    }
+
+    /**
+     * Set the renderer factory (called after construction).
+     */
+    public void setRendererFactory(MembersItemRendererFactory rendererFactory) {
         this.rendererFactory = rendererFactory;
+    }
+
+    /**
+     * Get the responsive width property for the main content area.
+     */
+    public javafx.beans.value.ObservableDoubleValue getResponsiveWidthProperty() {
+        return mainContent.widthProperty();
     }
 
     /**
@@ -79,13 +113,6 @@ public class MembersView {
      * Build the complete UI for the Members activity.
      */
     public Node buildUi() {
-        // Main title
-        Label titleLabel = Bootstrap.textPrimary(Bootstrap.strong(Bootstrap.h2(
-                I18nControls.newLabel(MembersI18nKeys.PageTitle))));
-        titleLabel.setWrapText(true);
-        titleLabel.setTextAlignment(TextAlignment.CENTER);
-        titleLabel.setPadding(new Insets(100, 0, 48, 0));
-
         // Build all sections
         buildMembersSection();
         buildManagersSection();
@@ -96,7 +123,6 @@ public class MembersView {
 
         // Main container
         VBox container = new VBox(24,
-                titleLabel,
                 messageContainer,
                 membersSection,
                 managersSection,
@@ -111,13 +137,55 @@ public class MembersView {
     }
 
     /**
+     * Create a warning alert for members with matching accounts that need validation.
+     */
+    private VBox createMatchingAccountsWarning() {
+        VBox warningBox = new VBox(8);
+        warningBox.setMaxWidth(800);
+        warningBox.setPadding(new Insets(16));
+        warningBox.getStyleClass().addAll("alert", "alert-warning");
+
+        Label warningMessage = new Label();
+        warningMessage.setWrapText(true);
+
+        // Update warning visibility based on directMembersList
+        Runnable updateWarning = () -> {
+            long count = model.getDirectMembersList().stream()
+                    .filter(MemberItem::hasMatchingAccount)
+                    .count();
+
+            if (count == 0) {
+                warningBox.setVisible(false);
+                warningBox.setManaged(false);
+            } else {
+                warningBox.setVisible(true);
+                warningBox.setManaged(true);
+
+                String message = count == 1
+                    ? "⚠ One of your members has created a KBS account. You can link this account to enable them to manage their own bookings."
+                    : "⚠ " + count + " of your members have created KBS accounts. You can link these accounts to enable them to manage their own bookings.";
+                warningMessage.setText(message);
+            }
+        };
+
+        // Listen to direct members list changes
+        ObservableLists.runNowAndOnListChange(change -> updateWarning.run(), model.getDirectMembersList());
+
+        warningBox.getChildren().add(warningMessage);
+        return warningBox;
+    }
+
+    /**
      * Build the "Members I Can Book For" section.
      */
     private void buildMembersSection() {
-        // Section title
-        Label sectionTitle = Bootstrap.strong(Bootstrap.h3(
+        // Section title (same style as "WHO CAN BOOK FOR ME")
+        Label sectionTitle = Bootstrap.textPrimary(Bootstrap.strong(
                 I18nControls.newLabel(MembersI18nKeys.MembersICanBookFor)));
+        sectionTitle.getStyleClass().add("section-title-uppercase");
         sectionTitle.setTextAlignment(TextAlignment.CENTER);
+        sectionTitle.setStyle("-fx-font-size: 18px;");
+        sectionTitle.setWrapText(true);
 
         // Description
         Label description = Bootstrap.textSecondary(
@@ -126,12 +194,11 @@ public class MembersView {
         description.setTextAlignment(TextAlignment.CENTER);
         description.setPadding(new Insets(10, 0, 20, 0));
 
+        // Warning alert for members with matching accounts
+        VBox warningAlert = createMatchingAccountsWarning();
+
         // Loading indicator
-        ProgressIndicator loadingIndicator = new ProgressIndicator();
-        loadingIndicator.setPrefSize(60, 60);
-        VBox loadingBox = new VBox(loadingIndicator);
-        loadingBox.setAlignment(Pos.CENTER);
-        loadingBox.setPadding(new Insets(60, 0, 60, 0));
+        Region loadingSpinner = Controls.createSpinner(60, 60);
 
         // Unified members list container - combines the three separate lists
         VBox membersListBox = new VBox(0);
@@ -172,8 +239,7 @@ public class MembersView {
                     && model.getAuthorizedMembersList().isEmpty()
                     && model.getPendingMemberInvitationsList().isEmpty();
 
-            loadingBox.setVisible(isLoading);
-            loadingBox.setManaged(isLoading);
+            Layouts.setManagedAndVisibleProperties(loadingSpinner, isLoading);
 
             if (!isLoading) {
                 emptyState.setVisible(isMembersEmpty);
@@ -207,7 +273,8 @@ public class MembersView {
         membersSection.getChildren().setAll(
                 sectionTitle,
                 description,
-                loadingBox,
+                warningAlert,
+                loadingSpinner,
                 emptyState,
                 membersListBox,
                 addButton
@@ -219,11 +286,21 @@ public class MembersView {
      * Build the "Who Can Book For Me" section.
      */
     private void buildManagersSection() {
-        // Section title
-        Label sectionTitle = Bootstrap.strong(Bootstrap.h4(
+        // Section divider with uppercase label
+        Node divider = rendererFactory.createSectionDivider();
+
+        Label dividerLabel = Bootstrap.textPrimary(Bootstrap.strong(
                 I18nControls.newLabel(MembersI18nKeys.WhoCanBookForMe)));
-        sectionTitle.getStyleClass().add("section-title-uppercase");
+        dividerLabel.getStyleClass().add("section-title-uppercase");
+        dividerLabel.setTextAlignment(TextAlignment.CENTER);
+        dividerLabel.setStyle("-fx-font-size: 18px;");
+
+        // Section title (same style as first section)
+        Label sectionTitle = Bootstrap.strong(Bootstrap.h3(
+                I18nControls.newLabel(MembersI18nKeys.PeopleManagingMyBookings)));
         sectionTitle.setTextAlignment(TextAlignment.CENTER);
+        sectionTitle.setWrapText(true);
+        sectionTitle.setPadding(new Insets(20, 0, 0, 0));
 
         // Description
         Label description = Bootstrap.textSecondary(
@@ -233,11 +310,7 @@ public class MembersView {
         description.setPadding(new Insets(10, 0, 20, 0));
 
         // Loading indicator
-        ProgressIndicator loadingIndicator = new ProgressIndicator();
-        loadingIndicator.setPrefSize(60, 60);
-        VBox loadingBox = new VBox(loadingIndicator);
-        loadingBox.setAlignment(Pos.CENTER);
-        loadingBox.setPadding(new Insets(60, 0, 60, 0));
+        Region loadingSpinner = Controls.createSpinner(60, 60);
 
         // Pending incoming requests (people asking to manage my bookings) - now using ManagerItem
         VBox pendingIncomingList = new VBox(0);
@@ -275,8 +348,7 @@ public class MembersView {
                     && model.getPendingIncomingManagerInvitationsList().isEmpty()
                     && model.getPendingOutgoingManagerInvitationsList().isEmpty();
 
-            loadingBox.setVisible(isLoading);
-            loadingBox.setManaged(isLoading);
+            Layouts.setManagedAndVisibleProperties(loadingSpinner, isLoading);
 
             if (!isLoading) {
                 emptyState.setVisible(isEmpty);
@@ -308,9 +380,6 @@ public class MembersView {
         ObservableLists.runNowAndOnListChange(change -> updateVisibility.run(), model.getPendingIncomingManagerInvitationsList());
         ObservableLists.runNowAndOnListChange(change -> updateVisibility.run(), model.getPendingOutgoingManagerInvitationsList());
 
-        // Section divider
-        Node divider = rendererFactory.createSectionDivider();
-
         // Invite Manager button
         Button inviteButton = Bootstrap.largePrimaryButton(
                 I18nControls.newButton(MembersI18nKeys.InviteBookingManager), false);
@@ -322,9 +391,10 @@ public class MembersView {
 
         managersSection.getChildren().setAll(
                 divider,
+                dividerLabel,
                 sectionTitle,
                 description,
-                loadingBox,
+                loadingSpinner,
                 emptyState,
                 pendingIncomingList,
                 pendingOutgoingList,
@@ -343,24 +413,28 @@ public class MembersView {
     }
 
     public void showAddMemberDialog(Consumer<AddMemberData> onDataEntered) {
-        // Create form fields
-        Label firstNameLabel = I18nControls.newLabel(MembersI18nKeys.FirstName);
-        TextField firstNameField = new TextField();
-        firstNameField.setPromptText(I18n.getI18nText(MembersI18nKeys.FirstNamePlaceholder));
+        // Create MaterialDesign form fields
+        TextField firstNameField = newMaterialTextField(MembersI18nKeys.FirstName);
+        MaterialUtil.getMaterialTextField(firstNameField).setAnimateLabel(false);
 
-        Label lastNameLabel = I18nControls.newLabel(MembersI18nKeys.LastName);
-        TextField lastNameField = new TextField();
-        lastNameField.setPromptText(I18n.getI18nText(MembersI18nKeys.LastNamePlaceholder));
+        TextField lastNameField = newMaterialTextField(MembersI18nKeys.LastName);
+        MaterialUtil.getMaterialTextField(lastNameField).setAnimateLabel(false);
 
-        Label emailLabel = I18nControls.newLabel(MembersI18nKeys.AddMemberEmailLabel);
-        TextField emailField = new TextField();
-        emailField.setPromptText(I18n.getI18nText(MembersI18nKeys.AddMemberEmailPlaceholder));
+        TextField emailField = newMaterialTextField(MembersI18nKeys.AddMemberEmailLabel);
+        MaterialUtil.getMaterialTextField(emailField).setAnimateLabel(false);
+
+        // Create validation support
+        ValidationSupport validationSupport = new ValidationSupport();
+        validationSupport.addRequiredInput(firstNameField);
+        validationSupport.addRequiredInput(lastNameField);
+        // Email is optional, but if provided, must be valid format
+        validationSupport.addOptionalEmailValidation(emailField, emailField, I18n.i18nTextProperty(MembersI18nKeys.ValidationError));
 
         // Create form content
         VBox formContent = new VBox(16,
-                firstNameLabel, firstNameField,
-                lastNameLabel, lastNameField,
-                emailLabel, emailField);
+                firstNameField,
+                lastNameField,
+                emailField);
         formContent.setPadding(new Insets(20, 0, 20, 0));
 
         // Create dialog using factory method
@@ -377,18 +451,14 @@ public class MembersView {
 
         DialogBuilderUtil.showModalNodeInGoldLayout(dialog, FXMainFrameDialogArea.getDialogArea());
         DialogBuilderUtil.armDialogContentButtons(dialog, dialogCallback -> {
+            // Validate using ValidationSupport
+            if (!validationSupport.isValid()) {
+                return;
+            }
+
             String firstName = firstNameField.getText().trim();
             String lastName = lastNameField.getText().trim();
             String email = emailField.getText().trim();
-
-            // Validate first name and last name are not empty
-            if (firstName.isEmpty() || lastName.isEmpty()) {
-                showErrorDialog(
-                    I18n.getI18nText(MembersI18nKeys.ValidationError),
-                    I18n.getI18nText(MembersI18nKeys.FirstLastNameRequired)
-                );
-                return;
-            }
 
             onDataEntered.accept(new AddMemberData(firstName, lastName, email));
             dialogCallback.closeDialog();
@@ -423,14 +493,18 @@ public class MembersView {
         Label descLabel = I18nControls.newLabel(MembersI18nKeys.InviteManagerDescription);
         descLabel.setWrapText(true);
 
-        Label emailLabel = I18nControls.newLabel(MembersI18nKeys.InviteManagerEmailLabel);
-        TextField emailField = new TextField();
-        emailField.setPromptText(I18n.getI18nText(MembersI18nKeys.InviteManagerEmailPlaceholder));
+        TextField emailField = newMaterialTextField(MembersI18nKeys.InviteManagerEmailLabel);
+        MaterialUtil.getMaterialTextField(emailField).setAnimateLabel(false);
+
+        // Create validation support
+        ValidationSupport validationSupport = new ValidationSupport();
+        validationSupport.addRequiredInput(emailField);
+        validationSupport.addEmailValidation(emailField, emailField, I18n.i18nTextProperty(MembersI18nKeys.ValidationError));
 
         // Create form content
         VBox formContent = new VBox(16,
                 descLabel,
-                emailLabel, emailField);
+                emailField);
         formContent.setPadding(new Insets(20, 0, 20, 0));
 
         // Create dialog using factory method
@@ -447,11 +521,14 @@ public class MembersView {
 
         DialogBuilderUtil.showModalNodeInGoldLayout(dialog, FXMainFrameDialogArea.getDialogArea());
         DialogBuilderUtil.armDialogContentButtons(dialog, dialogCallback -> {
-            String email = emailField.getText().trim();
-            if (!email.isEmpty()) {
-                onEmailEntered.accept(email);
-                dialogCallback.closeDialog();
+            // Validate using ValidationSupport
+            if (!validationSupport.isValid()) {
+                return;
             }
+
+            String email = emailField.getText().trim();
+            onEmailEntered.accept(email);
+            dialogCallback.closeDialog();
         });
     }
 
@@ -475,33 +552,38 @@ public class MembersView {
         // Check if this is an authorized member (has accountPerson)
         boolean isAuthorizedMember = person.getAccountPerson() != null;
 
-        // Create form fields
-        Label firstNameLabel = I18nControls.newLabel(MembersI18nKeys.FirstName);
-        TextField firstNameField = new TextField(person.getFirstName());
-        firstNameField.setPromptText(I18n.getI18nText(MembersI18nKeys.FirstNamePlaceholder));
+        // Create MaterialDesign form fields
+        TextField firstNameField = newMaterialTextField(MembersI18nKeys.FirstName);
+        MaterialUtil.getMaterialTextField(firstNameField).setAnimateLabel(false);
+        firstNameField.setText(person.getFirstName());
 
-        Label lastNameLabel = I18nControls.newLabel(MembersI18nKeys.LastName);
-        TextField lastNameField = new TextField(person.getLastName());
-        lastNameField.setPromptText(I18n.getI18nText(MembersI18nKeys.LastNamePlaceholder));
+        TextField lastNameField = newMaterialTextField(MembersI18nKeys.LastName);
+        MaterialUtil.getMaterialTextField(lastNameField).setAnimateLabel(false);
+        lastNameField.setText(person.getLastName());
 
         // Email field - only show for direct members (no accountPerson)
-        Label emailLabel = null;
         TextField emailField = null;
         if (!isAuthorizedMember) {
-            emailLabel = I18nControls.newLabel(MembersI18nKeys.Email);
-            emailField = new TextField(person.getEmail());
-            emailField.setPromptText(I18n.getI18nText(MembersI18nKeys.EmailPlaceholder));
+            emailField = newMaterialTextField(MembersI18nKeys.Email);
+            MaterialUtil.getMaterialTextField(emailField).setAnimateLabel(false);
+            emailField.setText(person.getEmail());
         }
+
+        // Create validation support
+        ValidationSupport validationSupport = new ValidationSupport();
+        validationSupport.addRequiredInput(firstNameField);
+        validationSupport.addRequiredInput(lastNameField);
+        // Email is optional for direct members
 
         // Create form content
         VBox formContent = new VBox(16);
         formContent.setPadding(new Insets(20, 0, 20, 0));
         formContent.getChildren().addAll(
-                firstNameLabel, firstNameField,
-                lastNameLabel, lastNameField
+                firstNameField,
+                lastNameField
         );
         if (!isAuthorizedMember) {
-            formContent.getChildren().addAll(emailLabel, emailField);
+            formContent.getChildren().add(emailField);
         }
 
         // Create dialog using factory method - different info message for authorized members
@@ -521,16 +603,14 @@ public class MembersView {
         // Capture email field reference for button callback
         TextField finalEmailField = emailField;
         DialogBuilderUtil.armDialogContentButtons(dialog, dialogCallback -> {
+            // Validate using ValidationSupport
+            if (!validationSupport.isValid()) {
+                return;
+            }
+
             String firstName = firstNameField.getText().trim();
             String lastName = lastNameField.getText().trim();
             String email = finalEmailField != null ? finalEmailField.getText().trim() : null;
-
-            // Validate
-            if (firstName.isEmpty() || lastName.isEmpty()) {
-                showErrorDialog(I18n.getI18nText(MembersI18nKeys.ValidationError),
-                        I18n.getI18nText(MembersI18nKeys.FirstLastNameRequired));
-                return;
-            }
 
             MemberUpdateData updateData = new MemberUpdateData(firstName, lastName, email != null && !email.isEmpty() ? email : null);
             onUpdate.accept(updateData);
@@ -568,65 +648,282 @@ public class MembersView {
     // ========== Data Classes ==========
 
     /**
-     * Show comprehensive edit dialog for direct members using UserProfileView.
+     * Show comprehensive edit dialog for direct members with all fields.
      */
     public void showEditDirectMemberDialog(Person person, DataSourceModel dataSourceModel, Runnable onSuccess) {
-        // Create UpdateStore for editing
+        // Create UpdateStore early so we can bind to hasChanges
         EntityStore entityStore = EntityStore.create(dataSourceModel);
         UpdateStore updateStore = UpdateStore.createAbove(entityStore);
-        Person personToEdit = updateStore.updateEntity(person);
+        Person personToUpdate = updateStore.updateEntity(person);
 
-        // Create UserProfileView with appropriate sections visible
-        // Note: ChangePictureUI is package-private, so we pass null (no picture editing in this dialog)
-        one.modality.crm.frontoffice.activities.userprofile.UserProfileView userProfileView =
-                new one.modality.crm.frontoffice.activities.userprofile.UserProfileView(
-                        null,  // changePictureUI - no picture editing for members
-                        false,  // showTitle - no title in dialog
-                        false,  // showProfileHeader - no profile picture in dialog
-                        true,   // showName - show first/last name
-                        false,  // showEmail - don't show email change (they can edit in simple field)
-                        false,  // showPassword - no password for members
-                        true,   // showPersonalDetails - birth date, gender, ordained/lay, phone
-                        true,   // showAddress - street, city, postcode, country
-                        true,   // showKadampaCenter - organization selector
-                        true,   // showSaveChangesButton
-                        true,   // showCancelButton
-                        personToEdit
-                );
+        // Check if person has ever made a booking (name fields only editable if neverBooked)
+        boolean canEditName = Boolean.TRUE.equals(person.isNeverBooked());
 
-        VBox dialogContent = userProfileView.buildView();
-        userProfileView.syncUIFromModel();
+        // Create MaterialDesign form fields - Basic Info
+        TextField firstNameField = newMaterialTextField(CrmI18nKeys.FirstName);
+        MaterialUtil.getMaterialTextField(firstNameField).setAnimateLabel(false);
+        firstNameField.setText(person.getFirstName());
+        firstNameField.setEditable(canEditName);
+        firstNameField.setDisable(!canEditName);
 
-        // Create dialog
+        TextField lastNameField = newMaterialTextField(CrmI18nKeys.LastName);
+        MaterialUtil.getMaterialTextField(lastNameField).setAnimateLabel(false);
+        lastNameField.setText(person.getLastName());
+        lastNameField.setEditable(canEditName);
+        lastNameField.setDisable(!canEditName);
+
+        TextField emailField = newMaterialTextField(CrmI18nKeys.Email);
+        MaterialUtil.getMaterialTextField(emailField).setAnimateLabel(false);
+        emailField.setText(person.getEmail());
+
+        // Create form content container first (needed for DateField)
+        VBox formContent = new VBox(16);
+        formContent.setPadding(new Insets(20));
+        formContent.setMaxWidth(700);
+
+        // Personal Details - DateField needs a container
+        DateField birthDateField = new DateField(formContent);
+        birthDateField.dateTimeFormatterProperty().bind(LocalizedTime.dateFormatterProperty(FrontOfficeTimeFormats.BIRTH_DATE_FORMAT));
+        birthDateField.setDate(person.getBirthDate());
+        TextField birthDateTextField = birthDateField.getTextField();
+        birthDateTextField.setPromptText(FrontOfficeTimeFormats.BIRTH_DATE_FORMAT);
+        MaterialUtil.makeMaterial(birthDateTextField);
+        dev.webfx.extras.styles.materialdesign.textfield.MaterialTextField materialBirthDateField = MaterialUtil.getMaterialTextField(birthDateTextField);
+        materialBirthDateField.setAnimateLabel(false);
+        I18n.bindI18nTextProperty(materialBirthDateField.labelTextProperty(), CrmI18nKeys.BirthDate);
+
+        // Gender radio buttons
+        ToggleGroup genderGroup = new ToggleGroup();
+        RadioButton optionMale = new RadioButton();
+        I18nControls.bindI18nProperties(optionMale, CrmI18nKeys.Male);
+        optionMale.setToggleGroup(genderGroup);
+        optionMale.setSelected(Boolean.TRUE.equals(person.isMale()));
+
+        RadioButton optionFemale = new RadioButton();
+        I18nControls.bindI18nProperties(optionFemale, CrmI18nKeys.Female);
+        optionFemale.setToggleGroup(genderGroup);
+        optionFemale.setSelected(Boolean.FALSE.equals(person.isMale()));
+
+        HBox genderBox = new HBox(20, optionMale, optionFemale);
+
+        // Ordained/Lay radio buttons
+        ToggleGroup ordainedGroup = new ToggleGroup();
+        RadioButton optionOrdained = new RadioButton();
+        I18nControls.bindI18nProperties(optionOrdained, CrmI18nKeys.Ordained);
+        optionOrdained.setToggleGroup(ordainedGroup);
+        optionOrdained.setSelected(Boolean.TRUE.equals(person.isOrdained()));
+
+        RadioButton optionLay = new RadioButton();
+        I18nControls.bindI18nProperties(optionLay, CrmI18nKeys.Lay);
+        optionLay.setToggleGroup(ordainedGroup);
+        optionLay.setSelected(Boolean.FALSE.equals(person.isOrdained()));
+
+        HBox ordainedBox = new HBox(20, optionOrdained, optionLay);
+
+        TextField layNameField = newMaterialTextField(CrmI18nKeys.LayName);
+        MaterialUtil.getMaterialTextField(layNameField).setAnimateLabel(false);
+        layNameField.setText(person.getLayName());
+        layNameField.setVisible(Boolean.TRUE.equals(person.isOrdained()));
+        layNameField.setManaged(Boolean.TRUE.equals(person.isOrdained()));
+        optionOrdained.selectedProperty().addListener((obs, old, isOrdained) -> {
+            layNameField.setVisible(isOrdained);
+            layNameField.setManaged(isOrdained);
+        });
+
+        TextField phoneField = newMaterialTextField(CrmI18nKeys.Phone);
+        MaterialUtil.getMaterialTextField(phoneField).setAnimateLabel(false);
+        phoneField.setText(person.getPhone());
+
+        // Address
+        TextField streetField = newMaterialTextField(CrmI18nKeys.Street);
+        MaterialUtil.getMaterialTextField(streetField).setAnimateLabel(false);
+        streetField.setText(person.getStreet());
+
+        TextField postCodeField = newMaterialTextField(CrmI18nKeys.Postcode);
+        MaterialUtil.getMaterialTextField(postCodeField).setAnimateLabel(false);
+        postCodeField.setText(person.getPostCode());
+
+        TextField cityNameField = newMaterialTextField(CrmI18nKeys.City);
+        MaterialUtil.getMaterialTextField(cityNameField).setAnimateLabel(false);
+        cityNameField.setText(person.getCityName());
+
+        ButtonSelectorParameters buttonSelectorParameters = new ButtonSelectorParameters()
+                .setButtonFactory(this)
+                .setDialogParentGetter(FXMainFrameDialogArea::getDialogArea);
+        EntityButtonSelector<Country> countrySelector = UserAccountUI.createCountryButtonSelector(dataSourceModel, buttonSelectorParameters);
+        countrySelector.setSelectedItem(person.getCountry());
+        dev.webfx.extras.styles.materialdesign.textfield.MaterialTextFieldPane countryButton = countrySelector.toMaterialButton(CrmI18nKeys.Country);
+        countryButton.getMaterialTextField().setAnimateLabel(false);
+
+        // Organization
+        ButtonSelector<Organization> organizationSelector = UserAccountUI.createOrganizationButtonSelector(dataSourceModel, buttonSelectorParameters);
+        organizationSelector.setSelectedItem(person.getOrganization());
+        dev.webfx.extras.styles.materialdesign.textfield.MaterialTextFieldPane organizationButton = organizationSelector.toMaterialButton(CrmI18nKeys.Centre);
+        organizationButton.getMaterialTextField().setAnimateLabel(false);
+
+        // Create validation support
+        ValidationSupport validationSupport = new ValidationSupport();
+        validationSupport.addRequiredInput(firstNameField);
+        validationSupport.addRequiredInput(lastNameField);
+        validationSupport.addOptionalEmailValidation(emailField, emailField, I18n.i18nTextProperty(MembersI18nKeys.ValidationError));
+
+        // Sync UI changes to entity model
+        FXProperties.runOnPropertiesChange(() -> {
+            if (canEditName) {
+                personToUpdate.setFirstName(firstNameField.getText());
+                personToUpdate.setLastName(lastNameField.getText());
+            }
+            String email = emailField.getText();
+            personToUpdate.setEmail(email != null && !email.trim().isEmpty() ? email.trim() : null);
+
+            personToUpdate.setBirthDate(birthDateField.getDate());
+            personToUpdate.setMale(optionMale.isSelected());
+            personToUpdate.setOrdained(optionOrdained.isSelected());
+
+            String layName = layNameField.getText();
+            personToUpdate.setLayName(layName != null && !layName.trim().isEmpty() ? layName.trim() : null);
+
+            String phone = phoneField.getText();
+            personToUpdate.setPhone(phone != null && !phone.trim().isEmpty() ? phone.trim() : null);
+
+            String street = streetField.getText();
+            personToUpdate.setStreet(street != null && !street.trim().isEmpty() ? street.trim() : null);
+
+            String postCode = postCodeField.getText();
+            personToUpdate.setPostCode(postCode != null && !postCode.trim().isEmpty() ? postCode.trim() : null);
+
+            String cityName = cityNameField.getText();
+            personToUpdate.setCityName(cityName != null && !cityName.trim().isEmpty() ? cityName.trim() : null);
+
+            personToUpdate.setCountry(countrySelector.getSelectedItem());
+            personToUpdate.setOrganization(organizationSelector.getSelectedItem());
+        },
+        firstNameField.textProperty(),
+        lastNameField.textProperty(),
+        emailField.textProperty(),
+        birthDateField.dateProperty(),
+        optionMale.selectedProperty(),
+        optionFemale.selectedProperty(),
+        optionOrdained.selectedProperty(),
+        optionLay.selectedProperty(),
+        layNameField.textProperty(),
+        phoneField.textProperty(),
+        streetField.textProperty(),
+        postCodeField.textProperty(),
+        cityNameField.textProperty(),
+        countrySelector.selectedItemProperty(),
+        organizationSelector.selectedItemProperty()
+        );
+
+        // Add all fields to form content
+        formContent.getChildren().addAll(
+                firstNameField,
+                lastNameField,
+                emailField,
+                birthDateField.getView(),
+                genderBox,
+                ordainedBox,
+                layNameField,
+                phoneField,
+                streetField,
+                postCodeField,
+                cityNameField,
+                countryButton,
+                organizationButton
+        );
+
+        // Wrap form in ScrollPane for long content
+        ScrollPane scrollPane = new ScrollPane(formContent);
+        scrollPane.setFitToWidth(true);
+        scrollPane.setMaxHeight(DIALOG_SCROLL_PANE_MAX_HEIGHT);
+        scrollPane.setPadding(new Insets(0));
+        scrollPane.setPrefWidth(DIALOG_PREFERRED_WIDTH);
+        scrollPane.setMaxWidth(DIALOG_PREFERRED_WIDTH);
+
+        // Create dialog without Bootstrap helper (no info message parameter)
         DialogContent dialog = new DialogContent();
-        dialog.setTitle(I18n.getI18nText(MembersI18nKeys.EditMemberDetails));
-        dialog.setContent(dialogContent);
+        dialog.setHeaderText(I18n.getI18nText(MembersI18nKeys.UpdateMember));
+        dialog.setContent(scrollPane);
+        dialog.setCancelSave();
 
-        // Show dialog
-        DialogCallback dialogCallback = DialogBuilderUtil.showModalNodeInGoldLayout(dialog, FXMainFrameDialogArea.getDialogArea());
+        // Bind save button disable property to inverse of updateStore.hasChanges
+        Button saveButton = dialog.getPrimaryButton();
+        if (saveButton != null) {
+            saveButton.disableProperty().bind(dev.webfx.stack.orm.entity.binding.EntityBindings.hasChangesProperty(updateStore).not());
+        }
 
-        // Wire up Save button
-        userProfileView.saveButton.setOnAction(e -> updateStore.submitChanges()
-                .onFailure(error -> {
-                    Console.log("Error updating member: " + error);
-                    showErrorDialog(I18n.getI18nText(MembersI18nKeys.Error),
-                            I18n.getI18nText(MembersI18nKeys.FailedToUpdateMember));
-                })
-                .onSuccess(result -> {
-                    Console.log("Member updated successfully");
-                    dialogCallback.closeDialog();
-                    if (onSuccess != null) {
-                        onSuccess.run();
-                    }
-                }));
+        DialogBuilderUtil.showModalNodeInGoldLayout(dialog, FXMainFrameDialogArea.getDialogArea());
+        DialogBuilderUtil.armDialogContentButtons(dialog, dialogCallback -> {
+            // Validate using ValidationSupport
+            if (!validationSupport.isValid()) {
+                return;
+            }
 
-        // Wire up Cancel button
-        userProfileView.cancelButton.setOnAction(e -> dialogCallback.closeDialog());
+            // Apply all field values (UpdateStore already created at top of method)
+            String firstName = firstNameField.getText();
+            personToUpdate.setFirstName(firstName != null ? firstName.trim() : "");
+
+            String lastName = lastNameField.getText();
+            personToUpdate.setLastName(lastName != null ? lastName.trim() : "");
+
+            String email = emailField.getText();
+            email = email != null ? email.trim() : "";
+            personToUpdate.setEmail(email.isEmpty() ? null : email);
+
+            personToUpdate.setBirthDate(birthDateField.getDate());
+            personToUpdate.setMale(optionMale.isSelected());
+            personToUpdate.setOrdained(optionOrdained.isSelected());
+
+            String layName = layNameField.getText();
+            layName = layName != null ? layName.trim() : "";
+            personToUpdate.setLayName(layName.isEmpty() ? null : layName);
+
+            String phone = phoneField.getText();
+            phone = phone != null ? phone.trim() : "";
+            personToUpdate.setPhone(phone.isEmpty() ? null : phone);
+
+            String street = streetField.getText();
+            street = street != null ? street.trim() : "";
+            personToUpdate.setStreet(street.isEmpty() ? null : street);
+
+            String postCode = postCodeField.getText();
+            postCode = postCode != null ? postCode.trim() : "";
+            personToUpdate.setPostCode(postCode.isEmpty() ? null : postCode);
+
+            String cityName = cityNameField.getText();
+            cityName = cityName != null ? cityName.trim() : "";
+            personToUpdate.setCityName(cityName.isEmpty() ? null : cityName);
+
+            personToUpdate.setCountry(countrySelector.getSelectedItem());
+            personToUpdate.setOrganization(organizationSelector.getSelectedItem());
+
+            // Submit changes
+            updateStore.submitChanges()
+                    .onFailure(error -> {
+                        showErrorDialog(I18n.getI18nText(MembersI18nKeys.Error),
+                                I18n.getI18nText(MembersI18nKeys.FailedToUpdateMember));
+                    })
+                    .onSuccess(result -> {
+                        // Update the original person object with new values so UI reflects changes
+                        person.setFirstName(personToUpdate.getFirstName());
+                        person.setLastName(personToUpdate.getLastName());
+                        person.setEmail(personToUpdate.getEmail());
+
+                        UiScheduler.scheduleDeferred(() -> {
+                            dialogCallback.closeDialog();
+                            showSuccessMessage(I18n.getI18nText(MembersI18nKeys.MemberUpdatedSuccessfully));
+
+                            if (onSuccess != null) {
+                                onSuccess.run();
+                            }
+                        });
+                    });
+        });
     }
 
     /**
-         * Data class for member updates.
-         */
-        public record MemberUpdateData(String firstName, String lastName, String email) {
+     * Data class for simple member updates (used by simple edit dialog).
+     */
+    public record MemberUpdateData(String firstName, String lastName, String email) {
     }
 }

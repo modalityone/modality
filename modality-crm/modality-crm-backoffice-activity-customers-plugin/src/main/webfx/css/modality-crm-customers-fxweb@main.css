@@ -1,0 +1,221 @@
+/* Customer Management Styles - Web */
+
+/* Root variables */
+.root {
+    -kbs-primary-color: #00A3FF;
+    -kbs-primary-hover-color: #0088D9;
+    -kbs-danger-color: #F44336;
+    -kbs-text-primary-color: #2C3E50;
+    -kbs-text-secondary-color: #7F8C8D;
+    -kbs-border-color: #E8EAED;
+    -kbs-bg-light-color: #F8F9FA;
+    -kbs-white-color: #FFFFFF;
+}
+
+/* Page Header */
+.page-header {
+    -fx-background-color: transparent;
+    -fx-border-width: 0 0 1px 0;
+    -fx-border-style: none none solid none;
+    -fx-border-color: transparent transparent -kbs-border-color transparent;
+}
+
+.page-title {
+    -fx-font-size: 24;
+    -fx-font-weight: bold;
+    -fx-text-fill: -kbs-text-primary-color;
+}
+
+.page-subtitle {
+    -fx-font-size: 13;
+    -fx-text-fill: -kbs-text-secondary-color;
+}
+
+/* Customers container */
+#customers {
+    -fx-background-color: transparent;
+}
+
+/* Customers grid styling */
+.customers-grid {
+    -fx-background-color: -kbs-white-color;
+}
+
+/* Customer ID - monospace display */
+.customer-id {
+    -fx-font-family: 'Courier New', monospace;
+}
+
+/* Panel header icon */
+.panel-header-icon {
+    -fx-font-size: 20;
+}
+
+/* Role/Link icons and text */
+.role-icon {
+    -fx-font-size: 13;
+}
+
+.role-icon-success {
+    -fx-font-size: 13;
+    -fx-text-fill: #2E7D32;
+}
+
+.role-link-text {
+    -fx-font-size: 13;
+    -fx-text-fill: -kbs-text-secondary-color;
+}
+
+.account-type-toggle {
+    -fx-background-color: -kbs-white-color;
+    -fx-border-width: 1px;
+    -fx-border-style: solid;
+    -fx-border-color: -kbs-border-color;
+    -fx-border-radius: 6px;
+    -fx-background-radius: 6px;
+    -fx-text-fill: -kbs-text-secondary-color;
+    -fx-font-size: 13;
+    -fx-font-weight: bold;
+    -fx-cursor: hand;
+}
+
+.account-type-toggle:hover {
+    -fx-background-color: -kbs-bg-light-color;
+    -fx-text-fill: -kbs-text-primary-color;
+}
+
+.account-type-toggle:selected {
+    -fx-background-color: -kbs-primary-color;
+    -fx-text-fill: -kbs-white-color;
+    -fx-border-color: -kbs-primary-color;
+}
+
+.account-type-toggle:selected:hover {
+    -fx-background-color: -kbs-primary-hover-color;
+    -fx-border-color: -kbs-primary-hover-color;
+}
+
+/* Filter Group Separator */
+.filter-group-separator {
+    -fx-background-color: -kbs-border-color;
+    -fx-opacity: 0.5;
+}
+
+/* Members Box */
+.members-box {
+    -fx-background-color: #F0F8FF;
+    -fx-border-width: 1px;
+    -fx-border-style: solid;
+    -fx-border-color: #B3D9FF;
+    -fx-border-radius: 8px;
+    -fx-background-radius: 8px;
+}
+
+.members-description {
+    -fx-text-fill: -kbs-text-secondary-color;
+    -fx-font-size: 13;
+}
+
+.member-items {
+    /* No padding/spacing here - set in Java code */
+}
+
+.member-item {
+    /* No padding/spacing here - set in Java code */
+    -fx-background-color: white;
+    -fx-border-radius: 6px;
+    -fx-background-radius: 6px;
+    -fx-border-width: 1px;
+    -fx-border-style: solid;
+    -fx-border-color: -kbs-border-color;
+}
+
+.member-check-icon {
+    -fx-font-size: 14;
+    -fx-text-fill: #2E7D32;
+}
+
+.member-user-icon {
+    -fx-font-size: 20;
+}
+
+.member-name {
+    -fx-font-weight: bold;
+    -fx-text-fill: -kbs-text-primary-color;
+}
+
+.member-email {
+    -fx-font-size: 12;
+    -fx-text-fill: -kbs-text-secondary-color;
+}
+
+.member-id {
+    -fx-font-size: 11;
+    -fx-text-fill: -kbs-text-secondary-color;
+}
+
+/* Action Buttons */
+.action-button {
+    -fx-background-color: transparent;
+    -fx-border-color: transparent;
+    -fx-border-radius: 4px;
+    -fx-background-radius: 4px;
+    -fx-cursor: hand;
+}
+
+.action-button:hover {
+    -fx-background-color: -kbs-bg-light-color;
+}
+
+.action-button.danger:hover {
+    -fx-background-color: #FFEBEE;
+}
+
+.action-icon {
+    -fx-text-fill: #666666;
+}
+
+.action-icon.danger {
+    -fx-text-fill: -kbs-danger-color;
+}
+
+.action-button:hover .action-icon {
+    -fx-text-fill: -kbs-text-primary-color;
+}
+
+.action-button.danger:hover .action-icon.danger {
+    -fx-text-fill: -kbs-danger-color;
+}
+
+/* Filter Group Separator Line */
+.filter-group-separator .line {
+    -fx-border-color: -kbs-border-color;
+    -fx-background-color: -kbs-border-color;
+    -fx-opacity: 0.5;
+}
+
+/* Readonly field styling */
+.readonly-field {
+    -fx-background-color: -kbs-bg-light-color;
+    -fx-opacity: 1.0;
+}
+
+/* Close Button */
+.btn-close {
+    -fx-background-color: transparent;
+    -fx-text-fill: #666666;
+    -fx-font-size: 20;
+    -fx-font-weight: normal;
+    -fx-cursor: hand;
+    -fx-border-radius: 4px;
+    -fx-background-radius: 4px;
+}
+
+.btn-close:hover {
+    -fx-background-color: #E3F2FD;
+    -fx-text-fill: -kbs-primary-color;
+}
+
+.btn-close.pressed {
+    -fx-background-color: #BBDEFB;
+}

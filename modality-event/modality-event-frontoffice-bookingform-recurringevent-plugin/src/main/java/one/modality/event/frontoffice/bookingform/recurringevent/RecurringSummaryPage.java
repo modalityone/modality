@@ -31,7 +31,7 @@ import one.modality.booking.client.workingbooking.WorkingBooking;
 import one.modality.booking.client.workingbooking.WorkingBookingProperties;
 import one.modality.ecommerce.document.service.DocumentAggregate;
 import one.modality.booking.frontoffice.bookingform.BookingFormI18nKeys;
-import one.modality.booking.frontoffice.bookingform.multipages.BookingFormPage;
+import one.modality.booking.frontoffice.bookingpage.BookingFormPage;
 import one.modality.ecommerce.shared.pricecalculator.PriceCalculator;
 import one.modality.event.frontoffice.activities.book.event.EventBookingFormSettings;
 

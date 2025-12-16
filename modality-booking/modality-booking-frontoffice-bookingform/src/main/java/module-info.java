@@ -6,20 +6,13 @@ module modality.booking.frontoffice.bookingform {
     requires javafx.base;
     requires javafx.controls;
     requires javafx.graphics;
-    requires modality.base.shared.entities;
+    requires transitive modality.base.shared.entities;
     requires modality.booking.client.workingbooking;
-    requires modality.booking.frontoffice.bookingelements;
     requires modality.ecommerce.document.service;
     requires transitive modality.ecommerce.payment;
-    requires webfx.extras.async;
-    requires webfx.extras.panes;
-    requires webfx.extras.util.layout;
-    requires webfx.kit.util;
     requires webfx.platform.async;
-    requires webfx.platform.uischeduler;
 
     // Exported packages
     exports one.modality.booking.frontoffice.bookingform;
-    exports one.modality.booking.frontoffice.bookingform.multipages;
 
 }

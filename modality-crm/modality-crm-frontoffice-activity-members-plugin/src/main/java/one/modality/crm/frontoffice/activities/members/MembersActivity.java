@@ -21,21 +21,27 @@ import one.modality.crm.shared.services.authn.fx.FXModalityUserPrincipal;
  */
 final class MembersActivity extends ViewDomainActivityBase {
 
+    private static final String DEFAULT_CLIENT_ORIGIN = "https://app.kadampabookings.org";
+
     private final MembersModel model = new MembersModel();
     private MembersView view;
     private MembersController controller;
 
     @Override
     public Node buildUi() {
-        // Create the item renderer factory with action handlers
+        // Create the view first to get access to its width property
+        view = new MembersView(model);
+
+        // Create the item renderer factory with action handlers and responsive width
         MembersItemRendererFactory rendererFactory = new MembersItemRendererFactory(
                 createMemberActionHandler(),
                 createManagerActionHandler(),
-                createPendingRequestActionHandler()
+                createPendingRequestActionHandler(),
+                view.getResponsiveWidthProperty()
         );
 
-        // Create the view
-        view = new MembersView(model, rendererFactory);
+        // Set the renderer factory on the view
+        view.setRendererFactory(rendererFactory);
 
         // Now that view exists, wire it to the controller
         // (controller was created in startLogic() which runs before buildUi())
@@ -65,8 +71,8 @@ final class MembersActivity extends ViewDomainActivityBase {
 
     // ========== Action Handler Factories (delegate to controller) ==========
 
-    private MembersItemRendererFactory.MemberActionHandler createMemberActionHandler() {
-        return new MembersItemRendererFactory.MemberActionHandler() {
+    private MembersItemRendererFactory.MemberActionHandlerWithValidation createMemberActionHandler() {
+        return new MembersItemRendererFactory.MemberActionHandlerWithValidation() {
 
             @Override
             public void onRemoveLinkedAccount(Person person) {
@@ -91,6 +97,11 @@ final class MembersActivity extends ViewDomainActivityBase {
             @Override
             public void onRemoveMember(Person person) {
                 controller.removeMember(person);
+            }
+
+            @Override
+            public void onSendValidationRequest(Person member, Person matchingAccount) {
+                controller.sendValidationRequest(member, matchingAccount);
             }
         };
     }
@@ -117,13 +128,13 @@ final class MembersActivity extends ViewDomainActivityBase {
     private MembersItemRendererFactory.PendingRequestActionHandler createPendingRequestActionHandler() {
         return new MembersItemRendererFactory.PendingRequestActionHandler() {
             @Override
-            public void onApproveAuthorizationRequest(Invitation invitation) {
-                controller.approveAuthorizationRequest(invitation);
+            public void onApproveManagingAuthorizationRequest(Invitation invitation) {
+                controller.approveManagingInvitationRequest(invitation);
             }
 
             @Override
-            public void onDeclineAuthorizationRequest(Invitation invitation) {
-                controller.declineAuthorizationRequest(invitation);
+            public void onDeclineManagingAuthorizationRequest(Invitation invitation) {
+                controller.declineManagingInvitationRequest(invitation);
             }
 
             @Override
@@ -154,6 +165,6 @@ final class MembersActivity extends ViewDomainActivityBase {
                 }
             }
         }
-        return "https://kbs.kadampa.org";  // fallback
+        return DEFAULT_CLIENT_ORIGIN;
     }
 }

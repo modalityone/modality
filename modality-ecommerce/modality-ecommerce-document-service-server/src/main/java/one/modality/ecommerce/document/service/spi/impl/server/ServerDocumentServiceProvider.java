@@ -153,11 +153,12 @@ public class ServerDocumentServiceProvider implements DocumentServiceProvider {
             return Future.failedFuture("No document changes to submit");
 
         // Note: At this point, the document may be null, but in that case we at least have documentLine not null
-        return HistoryRecorder.prepareDocumentHistoryBeforeSubmit(argument.getHistoryComment(), document, documentLine)
-            .compose(history -> // At this point, history.getDocument() is never null (it has eventually been
-                submitChangesAndPrepareResult(updateStore, history.getDocument()) // resolved through DB reading)
+        return HistoryRecorder.prepareDocumentHistoriesBeforeSubmit(argument.getHistoryComment(), document, documentLine)
+            .compose(histories -> // At this point, history.getDocument() is never null (it has eventually been
+                submitChangesAndPrepareResult(updateStore, histories[0].getDocument()) // resolved through DB reading)
                     .compose(result -> // Completing the history recording (changes column with resolved primary keys)
-                        HistoryRecorder.completeDocumentHistoryAfterSubmit(result, history, argument.getDocumentEvents())
+                        HistoryRecorder.completeDocumentHistoriesAfterSubmit(histories, argument.getDocumentEvents())
+                            .map(ignoredVoid -> result)
                     )
             );
     }

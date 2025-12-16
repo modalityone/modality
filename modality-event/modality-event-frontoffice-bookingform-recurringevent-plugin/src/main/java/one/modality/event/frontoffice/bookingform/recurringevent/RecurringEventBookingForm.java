@@ -5,8 +5,8 @@ import one.modality.booking.client.scheduleditemsselector.WorkingBookingSyncer;
 import one.modality.booking.client.selecteditemsselector.box.BoxScheduledItemsSelector;
 import one.modality.event.frontoffice.activities.book.event.BookEventActivity;
 import one.modality.event.frontoffice.activities.book.event.EventBookingFormSettings;
-import one.modality.booking.frontoffice.bookingform.multipages.BookingFormPage;
-import one.modality.booking.frontoffice.bookingform.multipages.MultiPageBookingForm;
+import one.modality.booking.frontoffice.bookingpage.BookingFormPage;
+import one.modality.booking.frontoffice.bookingpage.MultiPageBookingForm;
 
 /**
  * @author Bruno Salmon
@@ -28,7 +28,7 @@ public final class RecurringEventBookingForm extends MultiPageBookingForm {
     }
 
     @Override
-    protected BookingFormPage[] getPages() {
+    public BookingFormPage[] getPages() {
         if (pages == null) {
             if (settings.partialEventAllowed()) {
                 pages = new BookingFormPage[]{

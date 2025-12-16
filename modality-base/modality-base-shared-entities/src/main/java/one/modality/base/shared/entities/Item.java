@@ -13,6 +13,7 @@ public interface Item extends
     EntityHasLabel,
     EntityHasIcon,
     EntityHasOrd,
+    EntityHasSite,
     HasItemFamilyType {
 
     //// Domain fields
@@ -84,7 +85,7 @@ public interface Item extends
     }
 
 
-    //// Enriched fields and methods
+    /// / Enriched fields and methods
 
     @Override
     default KnownItemFamily getItemFamilyType() {

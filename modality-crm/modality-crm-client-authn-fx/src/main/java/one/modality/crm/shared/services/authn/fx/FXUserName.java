@@ -45,7 +45,7 @@ public final class FXUserName {
             } else {
                 UserClaims userClaims = FXUserClaims.getUserClaims();
                 if (userClaims != null)
-                    username = Objects.coalesce(userClaims.getUsername(), userClaims.getEmail(), userClaims.getPhone());
+                    username = Objects.coalesce(userClaims.username(), userClaims.email(), userClaims.phone());
             }
             userNameProperty.set(username);
             userInitialsProperty.set(username != null ? getInitials(username) : null);

@@ -38,7 +38,7 @@ final class RecurringEventsActivity extends ViewDomainActivityBase implements Bu
     public void onResume() {
         super.onResume();
         FXMainFrameHeaderTabs.setHeaderTabs(headerTabsBar.getTabs());
-        FXGanttVisibility.showEvents();
+        FXGanttVisibility.showRecurringEvents();
         FXEventSelector.showEventSelector();
     }
 

@@ -6,8 +6,10 @@ import dev.webfx.extras.webtext.HtmlText;
 import dev.webfx.kit.util.properties.FXProperties;
 import dev.webfx.kit.util.properties.Unregisterable;
 import dev.webfx.platform.uischeduler.UiScheduler;
+import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.ReadOnlyBooleanProperty;
 import javafx.beans.property.ReadOnlyObjectProperty;
+import javafx.beans.property.SimpleBooleanProperty;
 import javafx.scene.control.Labeled;
 import javafx.scene.layout.Region;
 import javafx.scene.text.Font;
@@ -29,6 +31,7 @@ public final class LettersSlideController {
     private final StepBBookEventSlide stepBBookEventSlide;
     private final StepCThankYouSlide stepCThankYouSlide;
     private StepSlide displayedSlide;
+    private final BooleanProperty loadingProperty = new SimpleBooleanProperty();
 
     public LettersSlideController(BookEventActivity bookEventActivity) {
         this.bookEventActivity = bookEventActivity;
@@ -59,6 +62,10 @@ public final class LettersSlideController {
         return stepBBookEventSlide.mediumFontProperty();
     }
 
+    public BooleanProperty loadingPropertyProperty() {
+        return loadingProperty;
+    }
+
     public void onWorkingBookingLoaded() {
         stepBBookEventSlide.onWorkingBookingLoaded();
     }
@@ -79,6 +86,7 @@ public final class LettersSlideController {
                 FXShowFooter.setShowFooter(slide != stepALoadingSlide || stepALoadingSlide.showFooter());
                 if (slide == stepBBookEventSlide)
                     stepBBookEventSlide.onPrepareRevealEvent();
+                loadingProperty.set(slide == stepALoadingSlide);
             }));
         }
     }

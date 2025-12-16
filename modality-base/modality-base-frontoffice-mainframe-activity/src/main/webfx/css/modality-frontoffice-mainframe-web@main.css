@@ -16,18 +16,18 @@
 
 .menu-bar {
     font-family: var(--poppins-font-family), sans-serif;
-    --fx-button-background-color: transparent;
     --fx-border-style: none;
     --fx-text-fill: black;
-    --fx-button-border-style: none;
-    --webfx-aria-toggle-button-background-color-hover: transparent;
-    --webfx-aria-toggle-button-background-color-fired: transparent;
-    --webfx-aria-toggle-button-background-color-focused: transparent;
-    --webfx-aria-toggle-button-text-fill-fired: var(--fx-focus-color);
+}
+
+.menu-bar fx-togglebutton {
+    --fx-background-color: transparent;
+    --fx-border-style: none;
 }
 
 .menu-bar fx-togglebutton.aria-toggle.fired {
     font-weight: bold;
+    --fx-text-fill: #0096D6;
 }
 
 .menu-bar fx-togglebutton.aria-toggle.fired fx-svgpath svg path[fill] {
@@ -38,22 +38,24 @@
     stroke: var(--fx-text-fill);
 }
 
-.lang-menu-bar {
-    --fx-button-border-color: #0096D6;
-    --fx-button-border-style: solid;
-    --fx-button-border-radius: 0;
-    --fx-button-border-width: 1px 1px 1px 0;
-    --fx-button-background-radius: 0;
-    --fx-togglebutton-border-color-hover: var(--fx-button-border-color);
-    --webfx-aria-toggle-button-background-color-focused: #F0F0F0;
-    --webfx-aria-toggle-button-background-color-fired: #0096D6;
-    --webfx-aria-toggle-button-text-fill-fired: white;
+.lang-menu-bar fx-togglebutton {
+    --fx-border-color: #0096D6;
+    --fx-border-style: solid;
+    --fx-border-radius: 0;
+    --fx-border-width: 1px 1px 1px 0;
+    --fx-background-radius: 0;
+    --fx-text-fill: #0096D6;
+}
+
+.lang-menu-bar fx-togglebutton.aria-toggle.fired {
+    --fx-background-color: #0096D6;
+    --fx-text-fill: white;
 }
 
 .lang-menu-bar .first-child {
-    --fx-button-border-width: 1px;
-    --fx-button-border-radius: 10px 0px 0px 10px;
-    --fx-button-background-radius: 10px 0px 0px 10px;
+    --fx-border-width: 1px;
+    --fx-border-radius: 10px 0px 0px 10px;
+    --fx-background-radius: 10px 0px 0px 10px;
 }
 
 .lang-menu-bar .last-child {
@@ -61,23 +63,24 @@
     --fx-background-radius:  0px 10px 10px 0px;
 }
 
-.main-menu-bar fx-label.brand {
+.main-frame fx-label.brand {
     font-size: 14px;
     font-weight: 500;
     --fx-text-fill: var(--brand-blue-color);
 }
 
-.user-menu-bar fx-label, .user-menu-bar fx-button {
+.user-menu-bar fx-label, .user-menu-bar fx-togglebutton {
     font-size: 12px;
     --fx-text-fill: #838788;
 }
 
-.modality-dialog-area .gold-layout {
+.modality-dialog-area {
+    background-color: rgba(0, 0, 0, 0.25);
     backdrop-filter: blur(3px);
     -webkit-backdrop-filter: blur(3px);
 }
 
-fx-collapsepane.menu-bar {
+.menu-bar {
     --fx-background-color: white;
     --fx-border-style: solid;
     --fx-border-color: lightgray;
@@ -85,6 +88,6 @@ fx-collapsepane.menu-bar {
     --fx-border-radius: 0;
 }
 
-fx-collapsepane.menu-bar.lang-menu-bar {
+.menu-bar.lang-menu-bar {
     --fx-border-style: none;
 }

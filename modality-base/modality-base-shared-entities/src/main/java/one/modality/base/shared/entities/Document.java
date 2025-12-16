@@ -28,6 +28,9 @@ public interface Document extends
     String flagged = "flagged";
     String personFacilityFee = "person_facilityFee";
     String request = "request";
+    String dates = "dates";
+    String checkedOut = "checkedOut";
+    String groupDocument = "groupDocument";
 
     default void setRef(Integer value) {
         setFieldValue(ref, value);
@@ -145,4 +148,19 @@ public interface Document extends
         return getStringFieldValue(request);
     }
 
+    default String getDates() {return getStringFieldValue(dates);}
+
+    default void setDates(String value) {setFieldValue(dates, value);}
+
+    default Boolean getCheckedOut() {return getBooleanFieldValue(checkedOut);}
+
+    default void setCheckedOut(Boolean value) {setFieldValue(checkedOut, value);}
+
+    default Document getGroupDocument() {return getForeignEntity(groupDocument);}
+
+    default EntityId getGroupDocumentId() {
+        return getForeignEntityId(groupDocument);
+    }
+
+    default void setGroupDocument(Object value) {setForeignField(groupDocument, value);}
 }

@@ -2,7 +2,9 @@ package one.modality.crm.frontoffice.activities.members.view;
 
 import dev.webfx.extras.i18n.I18n;
 import dev.webfx.extras.i18n.controls.I18nControls;
+import dev.webfx.extras.responsive.ResponsiveDesign;
 import dev.webfx.extras.styles.bootstrap.Bootstrap;
+import javafx.beans.value.ObservableDoubleValue;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Cursor;
@@ -32,7 +34,8 @@ import one.modality.crm.frontoffice.activities.members.model.ManagerItem;
  */
 public record MembersItemRendererFactory(MemberActionHandler memberActionHandler,
                                          ManagerActionHandler managerActionHandler,
-                                         PendingRequestActionHandler pendingRequestActionHandler) {
+                                         PendingRequestActionHandler pendingRequestActionHandler,
+                                         ObservableDoubleValue responsiveWidthProperty) {
 
     /**
      * Callback interface for handling user actions on member items.
@@ -50,6 +53,13 @@ public record MembersItemRendererFactory(MemberActionHandler memberActionHandler
     }
 
     /**
+     * Extended callback interface for member actions including validation requests.
+     */
+    public interface MemberActionHandlerWithValidation extends MemberActionHandler {
+        void onSendValidationRequest(Person member, Person matchingAccount);
+    }
+
+    /**
      * Callback interface for handling user actions on manager items.
      */
     public interface ManagerActionHandler {
@@ -64,13 +74,102 @@ public record MembersItemRendererFactory(MemberActionHandler memberActionHandler
      * Callback interface for handling user actions on pending requests.
      */
     public interface PendingRequestActionHandler {
-        void onApproveAuthorizationRequest(Invitation invitation);
+        void onApproveManagingAuthorizationRequest(Invitation invitation);
 
-        void onDeclineAuthorizationRequest(Invitation invitation);
+        void onDeclineManagingAuthorizationRequest(Invitation invitation);
 
         void onApproveMemberInvitation(Invitation invitation);
 
         void onDeclineMemberInvitation(Invitation invitation);
+    }
+
+    /**
+     * Helper method to setup responsive max width for name labels.
+     * Mobile (<600px): 200px max width
+     * Tablet (600-900px): 300px max width
+     * Desktop (>900px): 400px max width
+     */
+    private void setupResponsiveNameLabel(Label nameLabel) {
+        nameLabel.setWrapText(true);
+        new ResponsiveDesign(responsiveWidthProperty)
+                .addResponsiveLayout(width -> width < 600, () -> nameLabel.setMaxWidth(200))
+                .addResponsiveLayout(width -> width >= 600 && width < 900, () -> nameLabel.setMaxWidth(300))
+                .addResponsiveLayout(width -> width >= 900, () -> nameLabel.setMaxWidth(400))
+                .start();
+    }
+
+    /**
+     * Helper method to create a responsive action container that stacks links vertically on mobile.
+     * Returns a VBox that switches between vertical and horizontal orientation based on screen size.
+     */
+    private VBox createResponsiveActionContainer() {
+        VBox actions = new VBox(8);
+        actions.setAlignment(Pos.CENTER_LEFT);
+        return actions;
+    }
+
+    /**
+     * Sets up responsive behavior for action links.
+     * On mobile: links (and optional badge) are stacked vertically in the VBox
+     * On desktop: links are wrapped in an HBox for horizontal layout, badge stays in nameWithBadge
+     */
+    private void setupResponsiveActions(VBox actionsContainer, java.util.List<Node> actionLinks, Label badge, HBox nameWithBadge) {
+        // Create the inner container that will hold the links
+        HBox innerContainer = new HBox(18);
+        innerContainer.setAlignment(Pos.CENTER_RIGHT);
+
+        // Add all action links to the inner container
+        innerContainer.getChildren().addAll(actionLinks);
+
+        // Start with the inner container
+        actionsContainer.getChildren().clear();
+        actionsContainer.getChildren().add(innerContainer);
+
+        // Make it responsive: change orientation and spacing
+        new ResponsiveDesign(responsiveWidthProperty)
+                .addResponsiveLayout(width -> width < 600, () -> {
+                    // Mobile: vertical stacking - move badge to actionsContainer, then links
+                    actionsContainer.getChildren().clear();
+                    actionsContainer.setPadding(Insets.EMPTY);
+
+                    // Set width based on badge size (~100px) but allow expansion for longer text
+                    actionsContainer.setMinWidth(100);
+                    actionsContainer.setPrefWidth(100);
+                    actionsContainer.setMaxWidth(Double.MAX_VALUE);
+
+                    if (badge != null && nameWithBadge != null) {
+                        // Remove badge from nameWithBadge and add to actionsContainer
+                        nameWithBadge.getChildren().remove(badge);
+                        actionsContainer.getChildren().add(badge);
+                    }
+                    actionsContainer.getChildren().addAll(actionLinks);
+                    actionsContainer.setSpacing(8);
+                    actionsContainer.setAlignment(Pos.TOP_LEFT);
+                })
+                .addResponsiveLayout(width -> width >= 600, () -> {
+                    // Desktop: horizontal layout - move links to innerContainer, badge back to nameWithBadge
+                    actionsContainer.setPadding(Insets.EMPTY);
+
+                    // Reset width constraints for desktop
+                    actionsContainer.setMinWidth(Region.USE_COMPUTED_SIZE);
+                    actionsContainer.setPrefWidth(Region.USE_COMPUTED_SIZE);
+                    actionsContainer.setMaxWidth(Double.MAX_VALUE);
+
+                    if (badge != null && nameWithBadge != null) {
+                        // Remove badge from actionsContainer and add back to nameWithBadge
+                        actionsContainer.getChildren().remove(badge);
+                        if (!nameWithBadge.getChildren().contains(badge)) {
+                            nameWithBadge.getChildren().add(badge);
+                        }
+                    }
+                    innerContainer.getChildren().clear();
+                    innerContainer.getChildren().addAll(actionLinks);
+                    innerContainer.setSpacing(18);
+                    innerContainer.setAlignment(Pos.CENTER_RIGHT);
+                    actionsContainer.getChildren().clear();
+                    actionsContainer.getChildren().add(innerContainer);
+                })
+                .start();
     }
 
     /**
@@ -94,35 +193,49 @@ public record MembersItemRendererFactory(MemberActionHandler memberActionHandler
         HBox nameWithBadge = new HBox(12);
         nameWithBadge.setAlignment(Pos.CENTER_LEFT);
 
-        // Display name: Use alias names from invitation if available, otherwise use person's full name
+        // Display name logic:
+        // - For PENDING_INCOMING_INVITATION with inviterPayer=false: Use person's full name (inviter's name)
+        //   because alias contains manager's name, but we want to show who invited us
+        // - For other cases: Use alias names if available, otherwise use person's full name
         String displayName;
-        if (invitation != null && invitation.getAliasFirstName() != null && invitation.getAliasLastName() != null) {
+        if (type == MemberItem.MemberItemType.PENDING_INCOMING_INVITATION &&
+            invitation != null && Boolean.FALSE.equals(invitation.isInviterPayer())) {
+            // Manager invitation (inviterPayer=false) - show inviter's name, not alias
+            displayName = person != null && person.getFullName() != null ? person.getFullName() : "";
+        } else if (invitation != null && invitation.getAliasFirstName() != null && invitation.getAliasLastName() != null) {
             displayName = invitation.getAliasFirstName() + " " + invitation.getAliasLastName();
         } else {
             displayName = person != null && person.getFullName() != null ? person.getFullName() : "";
         }
 
         Label nameLabel = Bootstrap.strong(Bootstrap.h4(new Label(displayName)));
+        setupResponsiveNameLabel(nameLabel);
         nameWithBadge.getChildren().add(nameLabel);
 
-        // Add badge based on type
+        // Add badge based on type (track it for responsive layout)
+        Label statusBadge = null;
         switch (type) {
             case AUTHORIZED_MEMBER:
-                Label linkedBadge = new Label(I18n.getI18nText(MembersI18nKeys.BadgeAuthorized));
-                ModalityStyle.authorizationBadgeActive(linkedBadge);
-                nameWithBadge.getChildren().add(linkedBadge);
+                statusBadge = new Label(I18n.getI18nText(MembersI18nKeys.BadgeAuthorized));
+                ModalityStyle.authorizationBadgeActive(statusBadge);
+                nameWithBadge.getChildren().add(statusBadge);
                 break;
 
             case PENDING_OUTGOING_INVITATION:
             case PENDING_INCOMING_INVITATION:
                 if (invitation != null) {
-                    Label badge = createStatusBadge(invitation);
-                    nameWithBadge.getChildren().add(badge);
+                    statusBadge = createStatusBadge(invitation);
+                    nameWithBadge.getChildren().add(statusBadge);
                 }
                 break;
 
             case DIRECT_MEMBER:
-                // No badge for direct members
+                // Show "Needs Validation" badge if member has matching account
+                if (memberItem.hasMatchingAccount()) {
+                    statusBadge = new Label(I18n.getI18nText(MembersI18nKeys.BadgeNeedsValidation));
+                    ModalityStyle.authorizationBadgeNeedsValidation(statusBadge);
+                    nameWithBadge.getChildren().add(statusBadge);
+                }
                 break;
         }
 
@@ -141,69 +254,27 @@ public record MembersItemRendererFactory(MemberActionHandler memberActionHandler
             infoBox.getChildren().addAll(nameWithBadge, emailLabel);
 
             // Status messages for pending invitations
-            if (type == MemberItem.MemberItemType.PENDING_OUTGOING_INVITATION ||
-                type == MemberItem.MemberItemType.PENDING_INCOMING_INVITATION) {
+            if (type == MemberItem.MemberItemType.PENDING_OUTGOING_INVITATION) {
                 Label statusLabel = Bootstrap.small(Bootstrap.textSecondary(
                     I18nControls.newLabel(MembersI18nKeys.WaitingForAcceptance)));
                 statusLabel.getStyleClass().add("text-italic");
                 infoBox.getChildren().add(statusLabel);
-            }
-        }
+            } else if (type == MemberItem.MemberItemType.PENDING_INCOMING_INVITATION) {
+                // Get the inviter's name (the person who wants to add you as a member)
+                String inviterName = invitation != null && invitation.getInviter() != null
+                        ? invitation.getInviter().getFullName()
+                        : "";
+                Label statusLabel = Bootstrap.small(Bootstrap.textSecondary(
+                    new Label(I18n.getI18nText(MembersI18nKeys.WantsToAddYou, inviterName))));
+                infoBox.getChildren().add(statusLabel);
 
-        HBox.setHgrow(infoBox, Priority.ALWAYS);
+                // Add action buttons below the status message for incoming invitations
+                VBox authInfoBox = new VBox(8);
+                authInfoBox.setPadding(new Insets(8, 0, 0, 0));
 
-        // Actions based on member type (using clean switch statement)
-        HBox actions = new HBox(18);
-        actions.setAlignment(Pos.CENTER_RIGHT);
+                HBox authActions = new HBox(12);
+                authActions.setAlignment(Pos.CENTER_LEFT);
 
-        switch (memberItem.getType()) {
-            case DIRECT_MEMBER:
-                // Direct member (no accountPerson) - can Edit and Remove
-                Hyperlink editLink = Bootstrap.textPrimary(
-                    I18nControls.newHyperlink(MembersI18nKeys.EditMemberDetails));
-                editLink.setCursor(Cursor.HAND);
-                editLink.setOnAction(e -> memberActionHandler.onEditMember(person));
-
-                Hyperlink removeDirectLink = Bootstrap.textDanger(
-                    I18nControls.newHyperlink(MembersI18nKeys.RemoveMember));
-                removeDirectLink.setCursor(Cursor.HAND);
-                removeDirectLink.setOnAction(e -> memberActionHandler.onRemoveMember(person));
-
-                actions.getChildren().addAll(editLink, removeDirectLink);
-                break;
-
-            case AUTHORIZED_MEMBER:
-                // Authorized member (has accountPerson) - can Edit local name and Remove
-                Hyperlink editAuthorizedLink = Bootstrap.textPrimary(
-                    I18nControls.newHyperlink(MembersI18nKeys.EditMemberDetails));
-                editAuthorizedLink.setCursor(Cursor.HAND);
-                editAuthorizedLink.setOnAction(e -> memberActionHandler.onEditMember(person));
-
-                Hyperlink removeAuthorizedLink = Bootstrap.textDanger(
-                    I18nControls.newHyperlink(MembersI18nKeys.RemoveMember));
-                removeAuthorizedLink.setCursor(Cursor.HAND);
-                removeAuthorizedLink.setOnAction(e -> memberActionHandler.onRemoveLinkedAccount(person));
-
-                actions.getChildren().addAll(editAuthorizedLink, removeAuthorizedLink);
-                break;
-
-            case PENDING_OUTGOING_INVITATION:
-                // Pending invitation where I'm the inviter - can Resend and Cancel
-                Hyperlink resendLink = Bootstrap.textPrimary(
-                    I18nControls.newHyperlink(MembersI18nKeys.Resend));
-                resendLink.setCursor(Cursor.HAND);
-                resendLink.setOnAction(e -> memberActionHandler.onResendInvitation(invitation));
-
-                Hyperlink cancelLink = Bootstrap.textSecondary(
-                    I18nControls.newHyperlink(MembersI18nKeys.CancelAction));
-                cancelLink.setCursor(Cursor.HAND);
-                cancelLink.setOnAction(e -> memberActionHandler.onCancelInvitation(invitation));
-
-                actions.getChildren().addAll(resendLink, cancelLink);
-                break;
-
-            case PENDING_INCOMING_INVITATION:
-                // Pending invitation where I'm the invitee - can Approve and Decline
                 Button approveButton = Bootstrap.successButton(
                     I18nControls.newButton(MembersI18nKeys.ApproveAction));
                 approveButton.setPadding(new Insets(6, 16, 6, 16));
@@ -218,11 +289,89 @@ public record MembersItemRendererFactory(MemberActionHandler memberActionHandler
                 declineButton.setCursor(Cursor.HAND);
                 declineButton.setOnAction(e -> pendingRequestActionHandler.onDeclineMemberInvitation(invitation));
 
-                actions.getChildren().addAll(approveButton, declineButton);
+                authActions.getChildren().addAll(approveButton, declineButton);
+                authInfoBox.getChildren().add(authActions);
+                infoBox.getChildren().add(authInfoBox);
+            }
+        }
+
+        HBox.setHgrow(infoBox, Priority.ALWAYS);
+
+        // Actions based on member type (using clean switch statement)
+        VBox actionsContainer = createResponsiveActionContainer();
+        java.util.List<Node> actionLinks = new java.util.ArrayList<>();
+
+        switch (memberItem.getType()) {
+            case DIRECT_MEMBER:
+                // Direct member (no accountPerson) - can Edit and Remove
+                // If matching account exists, show "Send validation request" instead of Edit
+                if (memberItem.hasMatchingAccount()) {
+                    // Member has created their own account - offer to send validation request
+                    Hyperlink sendValidationLink = Bootstrap.textPrimary(
+                        I18nControls.newHyperlink(MembersI18nKeys.SendRequest));
+                    sendValidationLink.setCursor(Cursor.HAND);
+                    sendValidationLink.setOnAction(e -> {
+                        if (memberActionHandler instanceof MemberActionHandlerWithValidation) {
+                            ((MemberActionHandlerWithValidation) memberActionHandler)
+                                .onSendValidationRequest(person, memberItem.getMatchingAccountPerson());
+                        }
+                    });
+                    actionLinks.add(sendValidationLink);
+                } else {
+                    // Normal direct member - show Edit link
+                    Hyperlink editLink = Bootstrap.textPrimary(
+                        I18nControls.newHyperlink(MembersI18nKeys.EditMemberDetails));
+                    editLink.setCursor(Cursor.HAND);
+                    editLink.setOnAction(e -> memberActionHandler.onEditMember(person));
+                    actionLinks.add(editLink);
+                }
+
+                Hyperlink removeDirectLink = Bootstrap.textDanger(
+                    I18nControls.newHyperlink(MembersI18nKeys.RemoveMember));
+                removeDirectLink.setCursor(Cursor.HAND);
+                removeDirectLink.setOnAction(e -> memberActionHandler.onRemoveMember(person));
+
+                actionLinks.add(removeDirectLink);
+                break;
+
+            case AUTHORIZED_MEMBER:
+                // Authorized member (has accountPerson) - can Edit local name and Remove
+                Hyperlink editAuthorizedLink = Bootstrap.textPrimary(
+                    I18nControls.newHyperlink(MembersI18nKeys.EditMemberDetails));
+                editAuthorizedLink.setCursor(Cursor.HAND);
+                editAuthorizedLink.setOnAction(e -> memberActionHandler.onEditMember(person));
+
+                Hyperlink removeAuthorizedLink = Bootstrap.textDanger(
+                    I18nControls.newHyperlink(MembersI18nKeys.RemoveMember));
+                removeAuthorizedLink.setCursor(Cursor.HAND);
+                removeAuthorizedLink.setOnAction(e -> memberActionHandler.onRemoveLinkedAccount(person));
+
+                actionLinks.add(editAuthorizedLink);
+                actionLinks.add(removeAuthorizedLink);
+                break;
+
+            case PENDING_OUTGOING_INVITATION:
+                // Pending invitation where I'm the inviter - can Cancel
+                Hyperlink cancelLink = Bootstrap.textSecondary(
+                    I18nControls.newHyperlink(MembersI18nKeys.CancelAction));
+                cancelLink.setCursor(Cursor.HAND);
+                cancelLink.setOnAction(e -> memberActionHandler.onCancelInvitation(invitation));
+
+                actionLinks.add(cancelLink);
+                break;
+
+            case PENDING_INCOMING_INVITATION:
+                // Incoming invitation - buttons are now displayed below the name in infoBox
+                // No actions needed on the right side
                 break;
         }
 
-        itemBox.getChildren().addAll(infoBox, actions);
+        // Add the action links to the container, wrapping in HBox for desktop
+        if (!actionLinks.isEmpty()) {
+            setupResponsiveActions(actionsContainer, actionLinks, statusBadge, nameWithBadge);
+        }
+
+        itemBox.getChildren().addAll(infoBox, actionsContainer);
         return itemBox;
     }
 
@@ -247,24 +396,26 @@ public record MembersItemRendererFactory(MemberActionHandler memberActionHandler
         nameWithBadge.setAlignment(Pos.CENTER_LEFT);
 
         Label nameLabel = Bootstrap.strong(Bootstrap.h4(new Label(managerItem.getManagerName())));
+        setupResponsiveNameLabel(nameLabel);
         nameWithBadge.getChildren().add(nameLabel);
 
-        // Add badge based on type
+        // Add badge based on type (track it for responsive layout)
+        Label statusBadge = null;
         switch (type) {
             case AUTHORIZED_MANAGER:
                 // No badge needed for authorized managers
                 break;
 
             case PENDING_OUTGOING_INVITATION:
-                Label pendingBadge = new Label(I18n.getI18nText(MembersI18nKeys.BadgePending));
-                ModalityStyle.authorizationBadgePending(pendingBadge);
-                nameWithBadge.getChildren().add(pendingBadge);
+                statusBadge = new Label(I18n.getI18nText(MembersI18nKeys.BadgePending));
+                ModalityStyle.authorizationBadgePending(statusBadge);
+                nameWithBadge.getChildren().add(statusBadge);
                 break;
 
             case PENDING_INCOMING_INVITATION:
-                Label needsApprovalBadge = new Label(I18n.getI18nText(MembersI18nKeys.BadgeNeedsApproval));
-                ModalityStyle.authorizationBadgePending(needsApprovalBadge);
-                nameWithBadge.getChildren().add(needsApprovalBadge);
+                statusBadge = new Label(I18n.getI18nText(MembersI18nKeys.BadgeNeedsApproval));
+                ModalityStyle.authorizationBadgePending(statusBadge);
+                nameWithBadge.getChildren().add(statusBadge);
                 break;
         }
 
@@ -292,13 +443,38 @@ public record MembersItemRendererFactory(MemberActionHandler memberActionHandler
             Label statusLabel = Bootstrap.small(Bootstrap.textSecondary(
                 new Label(I18n.getI18nText(MembersI18nKeys.WantsToManageBookings, inviterName))));
             infoBox.getChildren().add(statusLabel);
+
+            // Add action buttons below the status message for incoming invitations
+            VBox authInfoBox = new VBox(8);
+            authInfoBox.setPadding(new Insets(8, 0, 0, 0));
+
+            HBox authActions = new HBox(12);
+            authActions.setAlignment(Pos.CENTER_LEFT);
+
+            Button approveButton = Bootstrap.successButton(
+                I18nControls.newButton(MembersI18nKeys.ApproveAction));
+            approveButton.setPadding(new Insets(6, 16, 6, 16));
+            approveButton.getStyleClass().add("action-button");
+            approveButton.setCursor(Cursor.HAND);
+            approveButton.setOnAction(e -> pendingRequestActionHandler.onApproveManagingAuthorizationRequest(invitation));
+
+            Button declineButton = Bootstrap.dangerButton(
+                I18nControls.newButton(MembersI18nKeys.DeclineAction));
+            declineButton.setPadding(new Insets(6, 16, 6, 16));
+            declineButton.getStyleClass().add("action-button");
+            declineButton.setCursor(Cursor.HAND);
+            declineButton.setOnAction(e -> pendingRequestActionHandler.onDeclineManagingAuthorizationRequest(invitation));
+
+            authActions.getChildren().addAll(approveButton, declineButton);
+            authInfoBox.getChildren().add(authActions);
+            infoBox.getChildren().add(authInfoBox);
         }
 
         HBox.setHgrow(infoBox, Priority.ALWAYS);
 
         // Actions based on type (using clean switch statement)
-        HBox actions = new HBox(18);
-        actions.setAlignment(Pos.CENTER_RIGHT);
+        VBox actionsContainer = createResponsiveActionContainer();
+        java.util.List<Node> actionLinks = new java.util.ArrayList<>();
 
         switch (type) {
             case AUTHORIZED_MANAGER:
@@ -307,175 +483,31 @@ public record MembersItemRendererFactory(MemberActionHandler memberActionHandler
                     I18nControls.newHyperlink(MembersI18nKeys.RevokeAccess));
                 revokeLink.setCursor(Cursor.HAND);
                 revokeLink.setOnAction(e -> managerActionHandler.onRevokeManagerAccess(managerItem));
-                actions.getChildren().add(revokeLink);
+                actionLinks.add(revokeLink);
                 break;
 
             case PENDING_OUTGOING_INVITATION:
-                // Outgoing invitation - can Resend and Cancel
-                Hyperlink resendLink = Bootstrap.textPrimary(
-                    I18nControls.newHyperlink(MembersI18nKeys.Resend));
-                resendLink.setCursor(Cursor.HAND);
-                resendLink.setOnAction(e -> managerActionHandler.onResendManagerInvitation(invitation));
-
+                // Outgoing invitation - can Cancel
                 Hyperlink cancelLink = Bootstrap.textSecondary(
                     I18nControls.newHyperlink(MembersI18nKeys.CancelAction));
                 cancelLink.setCursor(Cursor.HAND);
                 cancelLink.setOnAction(e -> managerActionHandler.onCancelManagerInvitation(invitation));
 
-                actions.getChildren().addAll(resendLink, cancelLink);
+                actionLinks.add(cancelLink);
                 break;
 
             case PENDING_INCOMING_INVITATION:
-                // Incoming invitation - can Approve and Decline
-                Button approveButton = Bootstrap.successButton(
-                    I18nControls.newButton(MembersI18nKeys.ApproveAction));
-                approveButton.setPadding(new Insets(6, 16, 6, 16));
-                approveButton.getStyleClass().add("action-button");
-                approveButton.setCursor(Cursor.HAND);
-                approveButton.setOnAction(e -> pendingRequestActionHandler.onApproveAuthorizationRequest(invitation));
-
-                Button declineButton = Bootstrap.dangerButton(
-                    I18nControls.newButton(MembersI18nKeys.DeclineAction));
-                declineButton.setPadding(new Insets(6, 16, 6, 16));
-                declineButton.getStyleClass().add("action-button");
-                declineButton.setCursor(Cursor.HAND);
-                declineButton.setOnAction(e -> pendingRequestActionHandler.onDeclineAuthorizationRequest(invitation));
-
-                actions.getChildren().addAll(approveButton, declineButton);
+                // Incoming invitation - buttons are now displayed below the name in infoBox
+                // No actions needed on the right side
                 break;
         }
 
-        itemBox.getChildren().addAll(infoBox, actions);
-        return itemBox;
-    }
-
-    /**
-     * Creates the UI for a pending authorization request item.
-     * These are requests from people who want to manage my bookings.
-     *
-     * @deprecated Use createManagerItem(ManagerItem) with PENDING_INCOMING_INVITATION type instead
-     */
-    @Deprecated
-    public Node createPendingAuthorizationItem(Invitation invitation) {
-        HBox itemBox = new HBox(20);
-        itemBox.setAlignment(Pos.CENTER_LEFT);
-        itemBox.setPadding(new Insets(16, 0, 16, 0));
-        itemBox.getStyleClass().add("member-item-box");
-
-        // Inviter info (person who wants to manage my bookings)
-        VBox infoBox = new VBox(8);
-
-        // Name with badge
-        HBox nameWithBadge = new HBox(12);
-        nameWithBadge.setAlignment(Pos.CENTER_LEFT);
-
-        Person inviter = invitation.getInviter();
-        Label nameLabel = Bootstrap.strong(Bootstrap.h4(new Label(inviter.getFullName())));
-
-        Label badge = new Label(I18n.getI18nText(MembersI18nKeys.BadgeNeedsApproval));
-        ModalityStyle.authorizationBadgePending(badge);
-
-        nameWithBadge.getChildren().addAll(nameLabel, badge);
-
-        Label emailLabel = Bootstrap.textSecondary(new Label(inviter.getEmail()));
-        emailLabel.getStyleClass().add("text-size-13");
-
-        infoBox.getChildren().addAll(nameWithBadge, emailLabel);
-
-        // Authorization info section
-        VBox authInfoBox = new VBox(8);
-        authInfoBox.setPadding(new Insets(8, 0, 0, 0));
-
-        // Descriptive text explaining what this request is
-        Label authDetailLabel = Bootstrap.small(Bootstrap.textSecondary(
-            I18nControls.newLabel(MembersI18nKeys.WantsToManageBookings)));
-        authInfoBox.getChildren().add(authDetailLabel);
-
-        // Action buttons
-        HBox authActions = new HBox(12);
-        authActions.setAlignment(Pos.CENTER_LEFT);
-
-        Button approveButton = Bootstrap.successButton(
-            I18nControls.newButton(MembersI18nKeys.ApproveAction));
-        approveButton.setPadding(new Insets(6, 16, 6, 16));
-        approveButton.getStyleClass().add("action-button");
-        approveButton.setCursor(Cursor.HAND);
-        approveButton.setOnAction(e -> pendingRequestActionHandler.onApproveAuthorizationRequest(invitation));
-
-        Button declineButton = Bootstrap.dangerButton(
-            I18nControls.newButton(MembersI18nKeys.DeclineAction));
-        declineButton.setPadding(new Insets(6, 16, 6, 16));
-        declineButton.getStyleClass().add("action-button");
-        declineButton.setCursor(Cursor.HAND);
-        declineButton.setOnAction(e -> pendingRequestActionHandler.onDeclineAuthorizationRequest(invitation));
-
-        authActions.getChildren().addAll(approveButton, declineButton);
-        authInfoBox.getChildren().add(authActions);
-
-        infoBox.getChildren().add(authInfoBox);
-
-        HBox.setHgrow(infoBox, Priority.ALWAYS);
-
-        itemBox.getChildren().add(infoBox);
-        return itemBox;
-    }
-
-    /**
-     * Creates the UI for a pending outgoing manager invitation item.
-     * These are invitations where I invited someone to manage MY bookings.
-     * Display shows the invitee's name (the person I invited).
-     *
-     * @deprecated Use createManagerItem(ManagerItem) with PENDING_OUTGOING_INVITATION type instead
-     */
-    @Deprecated
-    public Node createPendingMemberInvitationItem(Invitation invitation) {
-        HBox itemBox = new HBox(20);
-        itemBox.setAlignment(Pos.CENTER_LEFT);
-        itemBox.setPadding(new Insets(16, 0, 16, 0));
-        itemBox.getStyleClass().add("member-item-box");
-
-        // Invitee info (person I invited to manage my bookings)
-        VBox infoBox = new VBox(8);
-
-        // Name with badge
-        HBox nameWithBadge = new HBox(12);
-        nameWithBadge.setAlignment(Pos.CENTER_LEFT);
-
-        // Show INVITEE's name (the person I invited), not inviter
-        Person invitee = invitation.getInvitee();
-        String displayName = invitee != null ? invitee.getFullName() :
-            (invitation.getAliasFirstName() + " " + invitation.getAliasLastName());
-
-        Label nameLabel = Bootstrap.strong(Bootstrap.h4(new Label(displayName)));
-
-        Label badge = new Label(I18n.getI18nText(MembersI18nKeys.BadgeNeedsApproval));
-        ModalityStyle.authorizationBadgePending(badge);
-
-        nameWithBadge.getChildren().addAll(nameLabel, badge);
-
-        String email = invitee != null ? invitee.getEmail() : null;
-        if (email != null) {
-            Label emailLabel = Bootstrap.textSecondary(new Label(email));
-            emailLabel.getStyleClass().add("text-size-13");
-            infoBox.getChildren().addAll(nameWithBadge, emailLabel);
-        } else {
-            infoBox.getChildren().add(nameWithBadge);
+        // Add the action links to the container, wrapping in HBox for desktop
+        if (!actionLinks.isEmpty()) {
+            setupResponsiveActions(actionsContainer, actionLinks, statusBadge, nameWithBadge);
         }
 
-        HBox.setHgrow(infoBox, Priority.ALWAYS);
-
-        // Actions - Only show Cancel for outgoing invitations (I'm the inviter)
-        HBox actions = new HBox(18);
-        actions.setAlignment(Pos.CENTER_RIGHT);
-
-        Hyperlink cancelLink = Bootstrap.textDanger(
-            I18nControls.newHyperlink(MembersI18nKeys.CancelAction));
-        cancelLink.setCursor(Cursor.HAND);
-        cancelLink.setOnAction(e -> managerActionHandler.onCancelManagerInvitation(invitation));
-
-        actions.getChildren().add(cancelLink);
-
-        itemBox.getChildren().addAll(infoBox, actions);
+        itemBox.getChildren().addAll(infoBox, actionsContainer);
         return itemBox;
     }
 

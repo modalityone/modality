@@ -18,6 +18,7 @@ public interface MagicLink extends Entity {
     String lang = "lang";
     String link = "link";
     String requestedPath = "requestedPath";
+    String verificationCode = "verificationCode";
 
     default void setCreationDate(LocalDateTime value) {
         setFieldValue(creationDate, value);
@@ -97,5 +98,13 @@ public interface MagicLink extends Entity {
 
     default String getRequestedPath() {
         return getStringFieldValue(requestedPath);
+    }
+
+    default void setVerificationCode(String value) {
+        setFieldValue(verificationCode, value);
+    }
+
+    default String getVerificationCode() {
+        return getStringFieldValue(verificationCode);
     }
 }

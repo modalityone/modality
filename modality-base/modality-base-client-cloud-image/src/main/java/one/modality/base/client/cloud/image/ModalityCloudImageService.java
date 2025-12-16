@@ -67,6 +67,14 @@ public final class ModalityCloudImageService {
             .recover(error -> loadHdpiImage(defaultLanguageEventCoverImagePath, width, height, imageContainer, noImageNodeGetter));
     }
 
+    public static Future<Image> loadHdpiEventImage(Event event, double width, double height, MonoPane imageContainer, Supplier<Node> noImageNodeGetter) {
+        String eventImagePath = eventImagePath(event);
+        return loadHdpiImage(eventImagePath, width, height, imageContainer, null)
+                .recover(error -> loadHdpiImage(eventImagePath, width, height, imageContainer, noImageNodeGetter));
+    }
+
+
+
     // Image path API
 
     public static String personImagePath(Object personEntityOrId) {
@@ -77,6 +85,16 @@ public final class ModalityCloudImageService {
     public static String eventImagePath(Object eventEntityOrId) {
         Object primaryKey = Entities.getPrimaryKey(eventEntityOrId);
         return "events/event-" + primaryKey;
+    }
+
+    public static String buildingImagePath(Object buildingEntityOrId) {
+        Object primaryKey = Entities.getPrimaryKey(buildingEntityOrId);
+        return "buildings/building-" + primaryKey;
+    }
+
+    public static String siteImagePath(Object siteEntityOrId) {
+        Object primaryKey = Entities.getPrimaryKey(siteEntityOrId);
+        return "sites/site-" + primaryKey;
     }
 
     public static String eventCoverImagePath(Object eventEntityOrId, Object language) {

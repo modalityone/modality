@@ -38,8 +38,8 @@ public final class FXGanttVisibility {
         return getGanttVisibility().ordinal() >= GanttVisibility.DAYS.ordinal();
     }
 
-    public static boolean isShowEvents() {
-        return getGanttVisibility().ordinal() >= GanttVisibility.EVENTS.ordinal();
+    public static boolean isShowingEvents() {
+        return getGanttVisibility().ordinal() >= GanttVisibility.ALL_EVENTS.ordinal();
     }
 
     public static void showMonths() {
@@ -50,8 +50,16 @@ public final class FXGanttVisibility {
         setGanttVisibility(GanttVisibility.DAYS);
     }
 
-    public static void showEvents() {
-        setGanttVisibility(GanttVisibility.EVENTS);
+    public static void showAllEvents() {
+        setGanttVisibility(GanttVisibility.ALL_EVENTS);
+    }
+
+    public static void showOnsiteAccommodationEvents() {
+        setGanttVisibility(GanttVisibility.ONSITE_ACCOMMODATION_EVENTS);
+    }
+
+    public static void showRecurringEvents() {
+        setGanttVisibility(GanttVisibility.RECURRING_EVENTS);
     }
 
     public static void resetToDefault() {

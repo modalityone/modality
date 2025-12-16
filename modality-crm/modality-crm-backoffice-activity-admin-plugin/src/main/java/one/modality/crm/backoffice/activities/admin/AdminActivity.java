@@ -14,7 +14,8 @@ import static one.modality.crm.backoffice.activities.admin.Admin18nKeys.*;
 
 /**
  * Rights Management activity with two main views:
- * 1. Super Admin View - Comprehensive rights management (Organizations, Operations, Routes, Roles)
+ * 1. Super Admin View - Comprehensive rights management (Organizations,
+ * Operations, Routes, Roles)
  * 2. Manage Users - User management for organization managers
  *
  * @author David Hello
@@ -23,7 +24,9 @@ import static one.modality.crm.backoffice.activities.admin.Admin18nKeys.*;
  */
 final class AdminActivity extends ViewDomainActivityBase implements ButtonFactoryMixin {
 
-    private final AssignUserAndRoleToOrganizationView userManagementView = new AssignUserAndRoleToOrganizationView(this);
+    private final AssignUserAndRoleToOrganizationView userManagementView = new AssignUserAndRoleToOrganizationView(
+            this);
+    private final ScheduledItemGenerationView scheduledItemGenerationView = new ScheduledItemGenerationView();
 
     private final BorderPane container = new BorderPane();
     private final TabsBar<Node> mainTabsBar = new TabsBar<>(this, this::changeMainTabSelection);
@@ -35,8 +38,8 @@ final class AdminActivity extends ViewDomainActivityBase implements ButtonFactor
     @Override
     public Node buildUi() {
         mainTabsBar.setTabs(
-            mainTabsBar.createTab(ManageUsers, userManagementView::getView)
-        );
+                mainTabsBar.createTab(ManageUsers, userManagementView::getView),
+                mainTabsBar.createTab("Scheduled Items", scheduledItemGenerationView::getView));
         return container;
     }
 
@@ -49,8 +52,10 @@ final class AdminActivity extends ViewDomainActivityBase implements ButtonFactor
         List<Tab> mainTabs = mainTabsBar.getTabs();
         boolean activityActive = isActive();
         boolean manageUsersActive = activityActive && mainTabs.get(0).isSelected();
+        boolean scheduledItemsActive = activityActive && mainTabs.size() > 1 && mainTabs.get(1).isSelected();
 
         userManagementView.setActive(manageUsersActive);
+        scheduledItemGenerationView.setActive(scheduledItemsActive);
     }
 
     @Override

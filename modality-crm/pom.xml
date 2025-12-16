@@ -19,8 +19,11 @@
 
     <modules>
         <module>modality-crm-backoffice-activity-admin-plugin</module>
+        <module>modality-crm-backoffice-activity-administrators-plugin</module>
         <module>modality-crm-backoffice-activity-customers-plugin</module>
-        <module>modality-crm-backoffice-activity-superadmin-plugin</module>
+        <module>modality-crm-backoffice-activity-lettersetup-plugin</module>
+        <module>modality-crm-backoffice-activity-operationsandroles-plugin</module>
+        <module>modality-crm-backoffice-activity-organizations-plugin</module>
         <module>modality-crm-backoffice-bookingdetailspanel</module>
         <module>modality-crm-backoffice-max-plugin</module>
         <module>modality-crm-backoffice-min-plugin</module>

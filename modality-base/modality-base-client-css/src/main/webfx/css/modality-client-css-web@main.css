@@ -32,8 +32,6 @@ fx-tabpane {
     --fx-border-color: #ddd;
     --fx-border-radius: 8px;
     --fx-background-radius: 8px;
-    --fx-border-color-focus: var(--fx-border-color);
-    --fx-border-style-focus: var(--fx-border-style);
 }
 
 fx-tabheaderskin {

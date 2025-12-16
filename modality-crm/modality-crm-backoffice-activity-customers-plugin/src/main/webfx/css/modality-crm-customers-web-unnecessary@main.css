@@ -1,0 +1,25 @@
+/* Account Type Toggle Buttons */
+.account-type-toggle-container {
+    /* No padding/spacing here - set in Java code */
+    display: flex;
+    align-items: center;
+}
+
+.account-type-toggle {
+    transition: all 0.2s ease;
+}
+
+/* Filter Group Separator */
+.filter-group-separator {
+    width: 1px;
+}
+
+.member-item {
+    /* No padding/spacing here - set in Java code */
+    display: flex;
+    align-items: center;
+}
+
+.member-email {
+    flex: 1;
+}

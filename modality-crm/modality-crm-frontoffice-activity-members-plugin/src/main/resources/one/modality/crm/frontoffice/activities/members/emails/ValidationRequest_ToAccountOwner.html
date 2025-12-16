@@ -1,0 +1,129 @@
+<html lang="en" dir="ltr"><head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Validation Required</title>
+    <style>
+        /* Global Styles */
+        body {
+            margin: 0;
+            padding: 0;
+            font-family: Arial, sans-serif;
+            background-color: #f9fafb;
+        }
+
+        .email-container {
+            max-width: 600px;
+            margin: 20px auto;
+            background: #ffffff;
+            border-radius: 12px;
+            box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1);
+            overflow: hidden;
+            text-align: center;
+        }
+
+        .header {
+            background-color: #ffffff;
+            padding: 20px 0;
+            font-size: 32px;
+            color: #009fe3;
+            font-weight: bold;
+        }
+
+        .content {
+            padding: 20px 40px;
+            font-size: 16px;
+            color: #505050;
+        }
+
+        .content h2 {
+            font-size: 18px;
+            margin-bottom: 10px;
+            font-weight: normal;
+            color: #606060;
+        }
+
+        .divider {
+            width: 80%;
+            margin: 20px auto;
+            border: 0;
+            border-top: 1px solid #dddddd;
+        }
+
+        .info-box {
+            text-align: left;
+            background-color: #fff3cd;
+            padding: 15px;
+            border-radius: 8px;
+            margin: 20px 0;
+            font-size: 14px;
+            line-height: 1.6;
+            border-left: 4px solid #ffc107;
+        }
+
+        .button-container {
+            margin: 20px 0;
+            display: flex;
+            gap: 10px;
+        }
+
+        .button {
+            flex: 1;
+            display: inline-block;
+            color: #ffffff;
+            padding: 12px 25px;
+            text-decoration: none;
+            border-radius: 5px;
+            font-size: 16px;
+        }
+
+        .button-approve {
+            background-color: #28a745;
+        }
+
+        .button-decline {
+            background-color: #dc3545;
+        }
+
+        .footer {
+            font-size: 12px;
+            color: #aaaaaa;
+            margin: 20px 0;
+        }
+    </style>
+</head>
+
+<body>
+<div class="email-container">
+    <div class="header">Validation Required</div>
+
+    <div class="content">
+        <h2>Dear [inviteeName]</h2>
+
+        <p>We detected that you recently created a Kadampa Bookings account. <strong>[inviterName]</strong> has been managing bookings for you.</p>
+
+        <p>For your security, we need your approval for them to continue.</p>
+
+        <hr class="divider">
+
+        <div class="info-box">
+            <strong>What they can do if approved:</strong><br>
+            • Make bookings on your behalf<br>
+            • View and manage your bookings<br>
+            • Access your booking history<br><br>
+            <em>You can revoke this access at any time from your account settings.</em>
+        </div>
+
+        <p>Please choose one of the options below:</p>
+
+        <div class="button-container">
+            <a href="[approveLink]" style="color:white" class="button button-approve">Approve Access</a>
+            <a href="[declineLink]" style="color:white" class="button button-decline">Decline</a>
+        </div>
+    </div>
+
+    <div class="footer">
+        <p>This validation is required for your security.<br>If you did not create this account, please contact us immediately.</p>
+    </div>
+</div>
+
+</body></html>

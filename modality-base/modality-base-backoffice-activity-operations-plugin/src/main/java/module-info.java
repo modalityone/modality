@@ -13,6 +13,7 @@ module modality.base.backoffice.activity.operations.plugin {
     requires modality.base.client.activity;
     requires modality.base.client.mainframe.fx;
     requires modality.base.client.tile;
+    requires webfx.extras.i18n;
     requires webfx.extras.operation;
     requires webfx.extras.visual.grid;
     requires webfx.platform.windowhistory;

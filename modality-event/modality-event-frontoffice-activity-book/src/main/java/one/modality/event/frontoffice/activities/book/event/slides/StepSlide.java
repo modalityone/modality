@@ -1,7 +1,7 @@
 package one.modality.event.frontoffice.activities.book.event.slides;
 
-import dev.webfx.extras.i18n.controls.I18nControls;
 import dev.webfx.extras.async.AsyncSpinner;
+import dev.webfx.extras.i18n.controls.I18nControls;
 import dev.webfx.extras.webtext.HtmlText;
 import dev.webfx.platform.console.Console;
 import javafx.geometry.Pos;
@@ -13,11 +13,12 @@ import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 import one.modality.base.shared.entities.Event;
 import one.modality.base.shared.entities.markers.HasPersonalDetails;
-import one.modality.crm.shared.services.authn.fx.FXUserPerson;
 import one.modality.booking.client.workingbooking.WorkingBooking;
 import one.modality.booking.client.workingbooking.WorkingBookingProperties;
 import one.modality.booking.frontoffice.bookingform.GatewayPaymentForm;
+import one.modality.crm.shared.services.authn.fx.FXUserPerson;
 import one.modality.ecommerce.payment.CancelPaymentResult;
+import one.modality.ecommerce.payment.PaymentFormType;
 import one.modality.ecommerce.payment.PaymentService;
 import one.modality.ecommerce.payment.client.ClientPaymentUtil;
 import one.modality.ecommerce.payment.client.WebPaymentForm;
@@ -112,7 +113,12 @@ public abstract class StepSlide implements Supplier<Node> {
         Object documentPrimaryKey = workingBookingProperties.getWorkingBooking().getDocumentPrimaryKey();
         turnOnWaitMode();
         PaymentService.initiatePayment(
-                ClientPaymentUtil.createInitiatePaymentArgument(LAST_PAYMENT_DEPOSIT, documentPrimaryKey)
+                ClientPaymentUtil.createInitiatePaymentArgumentForSingleDocumentPayment(
+                    LAST_PAYMENT_DEPOSIT,
+                    documentPrimaryKey,
+                    PaymentFormType.REDIRECTED, // We were using EMBEDDED so far, now we try REDIRECTED
+                    "/payment-return/:moneyTransferId",
+                    "/payment-cancel/:moneyTransferId")
             )
             .inUiThread()
             .onFailure(paymentResult -> {
@@ -126,11 +132,18 @@ public abstract class StepSlide implements Supplier<Node> {
                 if (buyerDetails == null)
                     buyerDetails = FXGuestToBook.getGuestToBook();
                 WebPaymentForm webPaymentForm = new WebPaymentForm(paymentResult, buyerDetails);
-                GatewayPaymentForm gatewayPaymentForm = new ProvidedGatewayPaymentForm(webPaymentForm, this);
-                if (gatewayPaymentFormDisplayer != null)
-                    gatewayPaymentFormDisplayer.accept(gatewayPaymentForm);
-                else
-                    displayPaymentSlide(gatewayPaymentForm);
+                // If it's a redirected payment form, we just navigate to it
+                if (webPaymentForm.isRedirectedPaymentForm())
+                    webPaymentForm.navigateToRedirectedPaymentForm();
+                    // No more slide to show, we just wait the redirected payment page to replace this app
+                else { // Embedded payment form
+                    // Creating and displaying the gateway payment form
+                    GatewayPaymentForm gatewayPaymentForm = new ProvidedGatewayPaymentForm(webPaymentForm, this);
+                    if (gatewayPaymentFormDisplayer != null)
+                        gatewayPaymentFormDisplayer.accept(gatewayPaymentForm);
+                    else
+                        displayPaymentSlide(gatewayPaymentForm);
+                }
             });
     }
 

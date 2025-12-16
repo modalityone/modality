@@ -1,0 +1,6 @@
+/* Translation + shadow effect on booking page cards */
+.booking-form .bookingpage-card:hover, .booking-form fx-button:hover {
+    translate: 0 -1px;
+    box-shadow: rgba(0, 0, 0, 0.1) 0 4px 12px;
+    transition: translate 250ms ease-in;
+}

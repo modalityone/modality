@@ -1,10 +1,11 @@
 package one.modality.event.backoffice.activities.program;
 
 
+import dev.webfx.extras.i18n.controls.I18nControls;
 import dev.webfx.extras.styles.bootstrap.Bootstrap;
 import dev.webfx.extras.theme.text.TextTheme;
 import dev.webfx.extras.util.control.Controls;
-import dev.webfx.extras.i18n.controls.I18nControls;
+import dev.webfx.extras.util.layout.Layouts;
 import dev.webfx.kit.util.properties.FXProperties;
 import dev.webfx.platform.console.Console;
 import dev.webfx.stack.orm.domainmodel.activity.viewdomain.impl.ViewDomainActivityBase;
@@ -15,10 +16,10 @@ import javafx.geometry.Pos;
 import javafx.scene.Node;
 import javafx.scene.control.ContentDisplay;
 import javafx.scene.control.Label;
-import javafx.scene.control.ProgressIndicator;
+import javafx.scene.layout.HBox;
+import javafx.scene.layout.Region;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
-import javafx.scene.layout.HBox;
 import javafx.scene.shape.SVGPath;
 import one.modality.base.backoffice.mainframe.fx.FXEventSelector;
 import one.modality.base.shared.knownitems.KnownItemFamily;
@@ -238,11 +239,7 @@ final class ProgramActivity extends ViewDomainActivityBase {
         StackPane viewContainer = new StackPane();
 
         // Create loading indicator
-        StackPane loadingPane = new StackPane();
-        loadingPane.setAlignment(Pos.CENTER);
-        loadingPane.setPadding(new Insets(50));
-        ProgressIndicator loadingSpinner = Controls.createProgressIndicator(50);
-        loadingPane.getChildren().add(loadingSpinner);
+        Region loadingSpinner = Controls.createSpinner(50, 50);
 
         // Create configuration warning view
         Node configWarningNode = buildConfigurationWarningView();
@@ -251,7 +248,7 @@ final class ProgramActivity extends ViewDomainActivityBase {
         Node templateViewNode = programView.getView();
         Node generatedViewNode = step3View.getView();
 
-        viewContainer.getChildren().addAll(loadingPane, configWarningNode, templateViewNode, generatedViewNode);
+        viewContainer.getChildren().addAll(loadingSpinner, configWarningNode, templateViewNode, generatedViewNode);
 
         // Reactive binding: Update event in Step 3 view when event changes
         // Show loading indicator while data is being reloaded
@@ -285,53 +282,29 @@ final class ProgramActivity extends ViewDomainActivityBase {
 
             if (isLoading) {
                 // Show loading indicator, hide all other views
-                loadingPane.setVisible(true);
-                loadingPane.setManaged(true);
-                configWarningNode.setVisible(false);
-                configWarningNode.setManaged(false);
-                templateViewNode.setVisible(false);
-                templateViewNode.setManaged(false);
-                generatedViewNode.setVisible(false);
-                generatedViewNode.setManaged(false);
+                Layouts.setManagedAndVisibleProperties(loadingSpinner, true);
+                Layouts.setAllManagedAndVisibleProperties(false, configWarningNode, templateViewNode, generatedViewNode);
                 Console.log("ProgramActivity: Showing loading indicator");
             } else if (!configValid) {
                 // Show configuration warning if config is invalid (regardless of preliminaries), hide all other views
-                loadingPane.setVisible(false);
-                loadingPane.setManaged(false);
-                configWarningNode.setVisible(true);
-                configWarningNode.setManaged(true);
-                templateViewNode.setVisible(false);
-                templateViewNode.setManaged(false);
-                generatedViewNode.setVisible(false);
-                generatedViewNode.setManaged(false);
+                Layouts.setManagedAndVisibleProperties(loadingSpinner, false);
+                Layouts.setAllManagedAndVisibleProperties(true, configWarningNode, templateViewNode, generatedViewNode);
                 Console.log("ProgramActivity: Showing configuration warning (config invalid)");
             } else if (preliminariesGenerated) {
                 // Config is valid and preliminaries are generated - show appropriate view based on program state
-                loadingPane.setVisible(false);
-                loadingPane.setManaged(false);
-                configWarningNode.setVisible(false);
-                configWarningNode.setManaged(false);
+                Layouts.setAllManagedAndVisibleProperties(false, loadingSpinner, configWarningNode);
 
                 // Show/hide template view (visible when NOT generated)
-                templateViewNode.setVisible(!isGenerated);
-                templateViewNode.setManaged(!isGenerated);
+                Layouts.setManagedAndVisibleProperties(templateViewNode, !isGenerated);
 
                 // Show/hide generated program view (visible when generated)
-                generatedViewNode.setVisible(isGenerated);
-                generatedViewNode.setManaged(isGenerated);
+                Layouts.setManagedAndVisibleProperties(generatedViewNode, isGenerated);
 
                 Console.log("ProgramActivity: Template view visible: " + !isGenerated);
                 Console.log("ProgramActivity: Generated view visible: " + isGenerated);
             } else {
                 // Config is valid but preliminaries NOT generated - show template view
-                loadingPane.setVisible(false);
-                loadingPane.setManaged(false);
-                configWarningNode.setVisible(false);
-                configWarningNode.setManaged(false);
-                templateViewNode.setVisible(true);
-                templateViewNode.setManaged(true);
-                generatedViewNode.setVisible(false);
-                generatedViewNode.setManaged(false);
+                Layouts.setAllManagedAndVisibleProperties(false, loadingSpinner, configWarningNode, templateViewNode, generatedViewNode);
                 Console.log("ProgramActivity: Showing template view (preliminaries not generated but config valid)");
             }
         }, loadingProperty, configurationValidProperty, programModel.getDayTicketPreliminaryScheduledItemProperty(), programModel.programGeneratedProperty());

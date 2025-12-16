@@ -9,16 +9,20 @@ import one.modality.event.frontoffice.eventheader.EventHeader;
  */
 public final class EventBookingFormSettingsBuilder {
 
+    private static final boolean NAVIGATION_CLICKABLE_DEFAULT = false;
+
     private final Event event;
     private EventHeader eventHeader;
     private Background headerBackground;
     private double headerMaxTopBottomPadding = -1;
-    private double extraSpaceBetweenHeaderAndBookingForm; // if between 0 and 1, then it's a percent factor of the booking form width
+    private double extraSpaceBetweenHeaderAndBookingForm; // if between 0 and 1, then it's a percent factor of the
+                                                          // booking form width
     private boolean showNavigationBar;
     private boolean autoLoadExistingBooking;
     private boolean showPriceBar;
     private boolean bookAsAGuestAllowed;
     private boolean partialEventAllowed;
+    private boolean navigationClickable = NAVIGATION_CLICKABLE_DEFAULT;
 
     public EventBookingFormSettingsBuilder(Event event) {
         this.event = event;
@@ -39,7 +43,8 @@ public final class EventBookingFormSettingsBuilder {
         return this;
     }
 
-    public EventBookingFormSettingsBuilder setExtraSpaceBetweenHeaderAndBookingForm(double extraSpaceBetweenHeaderAndBookingForm) {
+    public EventBookingFormSettingsBuilder setExtraSpaceBetweenHeaderAndBookingForm(
+            double extraSpaceBetweenHeaderAndBookingForm) {
         this.extraSpaceBetweenHeaderAndBookingForm = extraSpaceBetweenHeaderAndBookingForm;
         return this;
     }
@@ -69,7 +74,14 @@ public final class EventBookingFormSettingsBuilder {
         return this;
     }
 
+    public EventBookingFormSettingsBuilder setNavigationClickable(boolean navigationClickable) {
+        this.navigationClickable = navigationClickable;
+        return this;
+    }
+
     public EventBookingFormSettings build() {
-        return new EventBookingFormSettings(event, eventHeader, headerBackground, headerMaxTopBottomPadding, extraSpaceBetweenHeaderAndBookingForm, showNavigationBar, autoLoadExistingBooking, showPriceBar, bookAsAGuestAllowed, partialEventAllowed);
+        return new EventBookingFormSettings(event, eventHeader, headerBackground, headerMaxTopBottomPadding,
+                extraSpaceBetweenHeaderAndBookingForm, showNavigationBar, autoLoadExistingBooking, showPriceBar,
+                bookAsAGuestAllowed, partialEventAllowed, navigationClickable);
     }
 }

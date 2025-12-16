@@ -3,6 +3,9 @@ package one.modality.ecommerce.payment.spi.impl.server;
 import dev.webfx.platform.async.Future;
 import dev.webfx.platform.console.Console;
 import dev.webfx.platform.service.MultipleServiceProviders;
+import dev.webfx.platform.util.Arrays;
+import dev.webfx.platform.util.Booleans;
+import dev.webfx.platform.util.Numbers;
 import dev.webfx.platform.util.Strings;
 import dev.webfx.stack.orm.datasourcemodel.service.DataSourceModelService;
 import dev.webfx.stack.orm.entity.Entities;
@@ -12,6 +15,7 @@ import dev.webfx.stack.orm.entity.UpdateStore;
 import dev.webfx.stack.session.state.SystemUserId;
 import dev.webfx.stack.session.state.ThreadLocalStateHolder;
 import one.modality.base.shared.entities.*;
+import one.modality.base.shared.entities.db.DatabasePayment;
 import one.modality.base.shared.entities.triggers.Triggers;
 import one.modality.ecommerce.document.service.DocumentAggregate;
 import one.modality.ecommerce.document.service.DocumentService;
@@ -32,7 +36,7 @@ import java.util.*;
 /**
  * @author Bruno Salmon
  */
-public class ServerPaymentServiceProvider implements PaymentServiceProvider {
+public final class ServerPaymentServiceProvider implements PaymentServiceProvider {
 
     private static List<PaymentGateway> getProvidedPaymentGateways() {
         return MultipleServiceProviders.getProviders(PaymentGateway.class, () -> ServiceLoader.load(PaymentGateway.class));
@@ -51,50 +55,76 @@ public class ServerPaymentServiceProvider implements PaymentServiceProvider {
 
     @Override
     public Future<InitiatePaymentResult> initiatePayment(InitiatePaymentArgument argument) {
-        // Step 1: Adding a payment to the document in the database
-        return addDocumentPayment(argument.getDocumentPrimaryKey(), argument.getAmount())
-            .compose(moneyTransfer -> {
-                // Step 2: Finding a Gateway provider registered in the software that matches the money account of the payment
-                String gatewayName = moneyTransfer.getToMoneyAccount().getGatewayCompany().getName();
-                PaymentGateway paymentGateway = findMatchingPaymentGatewayProvider(gatewayName);
-                if (paymentGateway == null)
-                    return gatewayNotFoundFailedFuture(gatewayName);
-                // Step 3: Loading the relevant payment gateway parameters
-                Event event = moneyTransfer.getDocument().getEvent();
-                EventState state = event.getState();
-                boolean live = state != null && state.compareTo(EventState.OPEN) >= 0 /* KBS3 way */ || event.isLive() /* KBS2 way */;
-                return loadPaymentGatewayParameters(moneyTransfer, live)
-                    .compose(parameters -> {
-                        // Step 4: Calling the payment gateway with all the data collected
-                        String currencyCode = moneyTransfer.getToMoneyAccount().getCurrency().getCode();
-                        return paymentGateway.initiatePayment(new GatewayInitiatePaymentArgument(
-                            argument.getAmount(),
-                            currencyCode,
-                            live,
-                            argument.isSeamlessIfSupported(),
-                            argument.isParentPageHttps(),
-                            null,
-                            parameters
-                        )).map(gatewayResult -> new InitiatePaymentResult( // Step 5: Returning a InitiatePaymentResult
-                            moneyTransfer.getPrimaryKey(),
-                            argument.getAmount(),
-                            gatewayResult.isLive(),
-                            gatewayResult.isSeamless(),
-                            gatewayResult.getHtmlContent(),
-                            gatewayResult.getUrl(),
-                            gatewayResult.isRedirect(),
-                            gatewayResult.hasHtmlPayButton(),
-                            paymentGateway.getName(),
-                            gatewayResult.getSandboxCards()
-                        ));
+        // Step 1: Inserting the payment in the database with its payment allocations
+        return insertPayment(argument.amount(), argument.paymentAllocations()) // insertPayment
+            .compose(databasePayment -> {
+                MoneyTransfer totalTransfer = databasePayment.totalTransfer();
+                // Step 2: Loading the primary document for the database payment
+                return loadDatabasePaymentDocuments(databasePayment)
+                    .compose(v -> {
+                        // Step 3: Finding a Gateway provider registered in the software that matches the money account of the payment
+                        String gatewayName = totalTransfer.getToMoneyAccount().getGatewayCompany().getName();
+                        PaymentGateway paymentGateway = findMatchingPaymentGatewayProvider(gatewayName);
+                        if (paymentGateway == null)
+                            return gatewayNotFoundFailedFuture(gatewayName);
+                        // Step 4: Loading the relevant payment gateway parameters (depending on the event state)
+                        Event event = getDatabasePaymentPrimaryDocument(databasePayment).getEvent();
+                        EventState state = event.getState();
+                        boolean live = state != null && state.compareTo(EventState.OPEN) >= 0 /* KBS3 way */
+                                       || state == null && event.isLive(); /* KBS2 way */
+                        String moneyTransferId = totalTransfer.getPrimaryKey().toString();
+                        String returnUrl = Strings.replaceAll(argument.returnUrl(), ":moneyTransferId", moneyTransferId);
+                        String cancelUrl = Strings.replaceAll(argument.cancelUrl(), ":moneyTransferId", moneyTransferId);
+                        return loadPaymentGatewayParameters(totalTransfer, live)
+                            .compose(parameters -> {
+                                // Step 5: Calling the payment gateway with all the data collected
+                                String currencyCode = totalTransfer.getToMoneyAccount().getCurrency().getCode();
+                                return paymentGateway.initiatePayment(new GatewayInitiatePaymentArgument(
+                                    moneyTransferId,
+                                    createGatewayOrder(databasePayment),
+                                    currencyCode,
+                                    live,
+                                    argument.preferredFormType(),
+                                    argument.favorSeamless(),
+                                    argument.isOriginOnHttps(),
+                                    returnUrl,
+                                    cancelUrl,
+                                    parameters
+                                )).map(gatewayResult -> new InitiatePaymentResult( // Step 5: Returning an InitiatePaymentResult
+                                    paymentGateway.getName(),
+                                    totalTransfer.getPrimaryKey(),
+                                    argument.amount(),
+                                    gatewayResult.isLive(),
+                                    gatewayResult.url(),
+                                    gatewayResult.formType(),
+                                    gatewayResult.htmlContent(),
+                                    gatewayResult.isSeamless(),
+                                    gatewayResult.hasHtmlPayButton(),
+                                    gatewayResult.sandboxCards()
+                                ));
+                            });
                     });
             });
     }
 
+    private Future<Void> loadDatabasePaymentDocuments(DatabasePayment databasePayment) {
+        return databasePayment.totalTransfer().getStore()
+            .executeQuery("select toMoneyAccount.(currency.code, gatewayCompany.name), document.(ref,person_name,event.(state,live)) from MoneyTransfer where id=$1 or parent=$1", databasePayment.totalTransfer())
+            .mapEmpty();
+    }
+
+    private static Document getDatabasePaymentPrimaryDocument(DatabasePayment databasePayment) {
+        Document primaryDocument = databasePayment.totalTransfer().getDocument();
+        if (primaryDocument == null) {
+            primaryDocument = databasePayment.allocatedTransfers()[0].getDocument();
+        }
+        return primaryDocument;
+    }
+
     @Override
     public Future<CompletePaymentResult> completePayment(CompletePaymentArgument argument) {
-        String gatewayName = argument.getGatewayName();
-        Object paymentPrimaryKey = argument.getPaymentPrimaryKey();
+        String gatewayName = argument.gatewayName();
+        Object paymentPrimaryKey = argument.paymentPrimaryKey();
         boolean live = argument.isLive();
         PaymentGateway paymentGateway = findMatchingPaymentGatewayProvider(gatewayName);
         if (paymentGateway == null)
@@ -106,7 +136,8 @@ public class ServerPaymentServiceProvider implements PaymentServiceProvider {
         // booker submitted valid cc details.
         UpdateStore updateStore = UpdateStore.create(DataSourceModelService.getDefaultDataSourceModel());
         MoneyTransfer moneyTransfer = updateStore.updateEntity(MoneyTransfer.class, paymentPrimaryKey);
-        HistoryRecorder.preparePaymentHistoryBeforeSubmit("Submitted card details to " + gatewayName + " for [payment]", moneyTransfer)
+        DatabasePayment databasePayment = new DatabasePayment(moneyTransfer, null);
+        HistoryRecorder.preparePaymentHistoriesBeforeSubmit("Submitted card details to " + gatewayName + " for payment [amount]", databasePayment)
             .onFailure(Console::log)
             .onSuccess(x -> updateStore.submitChanges());
 
@@ -132,15 +163,9 @@ public class ServerPaymentServiceProvider implements PaymentServiceProvider {
                 document.getAdmin1Name(),
                 document.evaluate("coalesce(person_country.name,person_countryName)")
             );
-            Event event = document.getEvent();
-            GatewayItem item = new GatewayItem(
-                "E#" + event.getPrimaryKey() + " - D#" + document.getRef() + " - P#" + paymentPrimaryKey,
-                "Deposit",
-                event.getName() + " - Booking Ref " + document.getRef(),
-                1,
-                amount);
+            GatewayOrder order = createGatewayOrder(databasePayment);
             // TODO check accessToken is set, otherwise return an error
-            return paymentGateway.completePayment(new GatewayCompletePaymentArgument(live, accessToken, argument.getGatewayCompletePaymentPayload(), parameters, amount, customer, item))
+            return paymentGateway.completePayment(new GatewayCompletePaymentArgument(live, accessToken, argument.gatewayCompletePaymentPayload(), parameters, amount, customer, order))
                 .onFailure(e -> {
                     Console.log("An error occurred while completing payment: " + e.getMessage());
                     // We finally update the payment status through the payment service (this will also create a history entry)
@@ -151,10 +176,10 @@ public class ServerPaymentServiceProvider implements PaymentServiceProvider {
                     );
                 })
                 .compose(result -> {
-                    String gatewayResponse = result.getGatewayResponse();
-                    String gatewayTransactionRef = result.getGatewayTransactionRef();
-                    String gatewayStatus = result.getGatewayStatus();
-                    PaymentStatus paymentStatus = result.getPaymentStatus();
+                    String gatewayResponse = result.gatewayResponse();
+                    String gatewayTransactionRef = result.gatewayTransactionRef();
+                    String gatewayStatus = result.gatewayStatus();
+                    PaymentStatus paymentStatus = result.paymentStatus();
                     boolean pending = paymentStatus.isPending();
                     boolean successful = paymentStatus.isSuccessful();
                     // We finally update the payment status through the payment service (this will also create a history entry)
@@ -173,9 +198,52 @@ public class ServerPaymentServiceProvider implements PaymentServiceProvider {
         });
     }
 
+    private static GatewayOrder createGatewayOrder(DatabasePayment databasePayment) {
+        MoneyTransfer moneyTransfer = databasePayment.totalTransfer();
+        Document primaryDocument = getDatabasePaymentPrimaryDocument(databasePayment);
+        Event primaryEvent = primaryDocument.getEvent();
+        // Case of a simple payment made on a single booking
+        if (Booleans.isNotTrue(moneyTransfer.isSpread()))
+            return new GatewayOrder(
+                // Node: Some payment gateways like Square don't allow spaces and # in identifiers
+                "E" + primaryEvent.getPrimaryKey() + "-REF" + primaryDocument.getRef() + "-MT" + moneyTransfer.getPrimaryKey(),
+                primaryEvent.getName() + " #" + primaryDocument.getRef(),
+                primaryEvent.getName() + " - " + primaryDocument.getFullName(),
+                moneyTransfer.getAmount(),
+                new GatewayItem[]{
+                    new GatewayItem(
+                        "E" + primaryEvent.getPrimaryKey() + "-REF" + primaryDocument.getRef() + "-MT" + moneyTransfer.getPrimaryKey(),
+                        "Booking #" + primaryDocument.getRef(),
+                        "Booking #" + primaryDocument.getRef() + " - " + primaryDocument.getFullName(),
+                        1,
+                        moneyTransfer.getAmount()
+                    )
+                }
+            );
+
+        // Case of a multiple payment spread over several bookings
+        return new GatewayOrder(
+            // Node: Some payment gateways like Square don't allow spaces and # in identifiers
+            "E" + primaryEvent.getPrimaryKey() + "-MT" + moneyTransfer.getPrimaryKey(),
+            primaryEvent.getName(),
+            primaryEvent.getName(),
+            moneyTransfer.getAmount(),
+            Arrays.map(databasePayment.allocatedTransfers(), allocatedTransfer -> {
+                Document document = allocatedTransfer.getDocument();
+                return new GatewayItem(
+                    "E" + document.getEvent().getPrimaryKey() + "-REF" + document.getRef() + "-MT" + allocatedTransfer.getPrimaryKey(),
+                    "Booking #" + document.getRef(),
+                    "Booking #" + document.getRef() + " - " + document.getFullName(),
+                    1,
+                    allocatedTransfer.getAmount()
+                );
+            }, GatewayItem[]::new)
+        );
+    }
+
     @Override
     public Future<CancelPaymentResult> cancelPayment(CancelPaymentArgument argument) {
-        return updatePaymentStatusImpl(UpdatePaymentStatusArgument.createCancelStatusArgument(argument.getPaymentPrimaryKey(), argument.isExplicitUserCancellation()))
+        return updatePaymentStatusImpl(UpdatePaymentStatusArgument.createCancelStatusArgument(argument.paymentPrimaryKey(), argument.isExplicitUserCancellation()))
             // When payments are canceled on recurring events, we automatically un-book unpaid options
             .compose(this::unbookUnpaidOptionsIfRecurringEvent)
             .onFailure(Console::log);
@@ -207,20 +275,15 @@ public class ServerPaymentServiceProvider implements PaymentServiceProvider {
                         List<AbstractDocumentEvent> documentEvents = documentAggregate.getNewDocumentEvents();
                         List<AbstractDocumentEvent> removeEvents = new ArrayList<>();
                         documentEvents.stream().dropWhile(e -> {
-                            if (!(e instanceof AbstractExistingMoneyTransferEvent))
+                            if (!(e instanceof AbstractExistingMoneyTransferEvent aemte))
                                 return true;
-                            AbstractExistingMoneyTransferEvent aemte = (AbstractExistingMoneyTransferEvent) e;
                             if (aemte.getMoneyTransfer() != lastSuccessfulPayment)
                                 return true;
-                            if (aemte.isPending() || !aemte.isSuccessful())
-                                return true;
-                            return false;
+                            return aemte.isPending() || !aemte.isSuccessful();
                         }).forEach(e -> {
-                            if (e instanceof AddAttendancesEvent) {
-                                AddAttendancesEvent aae = (AddAttendancesEvent) e;
+                            if (e instanceof AddAttendancesEvent aae) {
                                 removeEvents.add(new RemoveAttendancesEvent(aae.getAttendances()));
-                            } else if (e instanceof AddDocumentLineEvent) {
-                                AddDocumentLineEvent aee = (AddDocumentLineEvent) e;
+                            } else if (e instanceof AddDocumentLineEvent aee) {
                                 removeEvents.add(new RemoveDocumentLineEvent(aee.getDocumentLine()));
                             }
                         });
@@ -234,54 +297,50 @@ public class ServerPaymentServiceProvider implements PaymentServiceProvider {
             });
     }
 
-    @Override
-    public Future<MakeApiPaymentResult> makeApiPayment(MakeApiPaymentArgument argument) {
-        return addDocumentPayment(argument.getDocumentPrimaryKey(), argument.getAmount())
-            .compose(moneyTransfer -> {
-                String gatewayName = moneyTransfer.getToMoneyAccount().getGatewayCompany().getName();
-                PaymentGateway paymentGateway = findMatchingPaymentGatewayProvider(gatewayName);
-                if (paymentGateway == null)
-                    return gatewayNotFoundFailedFuture(gatewayName);
-                String currencyCode = moneyTransfer.getToMoneyAccount().getCurrency().getCode();
-                return paymentGateway.makeApiPayment(new GatewayMakeApiPaymentArgument(
-                    argument.getAmount(),
-                    currencyCode,
-                    argument.getCcNumber(),
-                    argument.getCcExpiry()
-                )).map(result -> new MakeApiPaymentResult(
-                    result.isSuccess()
-                ));
-            });
-    }
-
-    private Future<MoneyTransfer> addDocumentPayment(Object documentPrimaryKey, int amount) {
+    private Future<DatabasePayment> insertPayment(int amount, PaymentAllocation[] paymentAllocations) {
         UpdateStore updateStore = UpdateStore.create(DataSourceModelService.getDefaultDataSourceModel());
         MoneyTransfer moneyTransfer = updateStore.insertEntity(MoneyTransfer.class);
-        moneyTransfer.setDocument(documentPrimaryKey);
         moneyTransfer.setAmount(amount);
         moneyTransfer.setPending(true);
         moneyTransfer.setSuccessful(false);
         moneyTransfer.setMethod(Method.ONLINE_METHOD_ID);
 
-        return HistoryRecorder.preparePaymentHistoryBeforeSubmit("Initiated [payment]", moneyTransfer)
-            .compose(history ->
+        DatabasePayment databasePayment;
+        if (paymentAllocations.length == 1) {
+            moneyTransfer.setDocument(paymentAllocations[0].documentPrimaryKey());
+            databasePayment = new DatabasePayment(moneyTransfer, null);
+        } else {
+            moneyTransfer.setSpread(true);
+            MoneyTransfer[] paymentChildren = Arrays.map(paymentAllocations, paymentAllocation -> {
+                MoneyTransfer allocatedTransfer = updateStore.insertEntity(MoneyTransfer.class);
+                allocatedTransfer.setParent(moneyTransfer);
+                allocatedTransfer.setDocument(paymentAllocation.documentPrimaryKey());
+                allocatedTransfer.setAmount(paymentAllocation.amount());
+                allocatedTransfer.setPending(true);
+                allocatedTransfer.setSuccessful(false);
+                allocatedTransfer.setMethod(Method.ONLINE_METHOD_ID);
+                return allocatedTransfer;
+            }, MoneyTransfer[]::new);
+            databasePayment = new DatabasePayment(moneyTransfer, paymentChildren);
+        }
+
+        return HistoryRecorder.preparePaymentHistoriesBeforeSubmit("Initiated payment [amount]", databasePayment)
+            .compose(histories ->
                 updateStore.submitChanges()
                     // On success, we load the necessary data associated with this moneyTransfer for the payment gateway
                     .compose(batch ->
-                        moneyTransfer.<MoneyTransfer>onExpressionLoaded("toMoneyAccount.(currency.code, gatewayCompany.name), document.event.(live,state)")
-                            .compose(result -> // Completing the history recording (changes column with resolved primary keys)
-                                HistoryRecorder.completeDocumentHistoryAfterSubmit(result, history, new AddMoneyTransferEvent(moneyTransfer))
-                            )
-                    ));
+                        HistoryRecorder.completeDocumentHistoriesAfterSubmit(histories, new AddMoneyTransferEvent(moneyTransfer))
+                            .map(ignoredVoid -> databasePayment)
+                    )
+            );
     }
 
     // Internal server-side method only (no serialization support)
 
     public Future<Map<String, String>> loadPaymentGatewayParameters(Object paymentId, boolean live) {
-        if (paymentId instanceof String)
-            paymentId = Integer.parseInt((String) paymentId);
+        paymentId = Numbers.toShortestNumber(Entities.getPrimaryKey(paymentId));
         return EntityStore.create()
-            .<GatewayParameter>executeQuery("select name,value from GatewayParameter where (account=(select toMoneyAccount from MoneyTransfer where id=?) or account==null and lower(company.name)=lower((select lower(toMoneyAccount.gatewayCompany.name) from MoneyTransfer where id=?))) and (? ? live : test) order by account nulls first", paymentId, paymentId, live)
+            .<GatewayParameter>executeQuery("select name,value from GatewayParameter where (account=(select toMoneyAccount from MoneyTransfer where id=$1) or account==null and lower(company.name)=lower((select lower(toMoneyAccount.gatewayCompany.name) from MoneyTransfer where id=$1))) and ($2 ? live : test) order by account nulls first", paymentId, live)
             .onFailure(e -> Console.log("An error occurred while loading paymentGatewayParameters", e))
             .map(gpList -> {
                 Map<String, String> parameters = new HashMap<>();
@@ -297,17 +356,17 @@ public class ServerPaymentServiceProvider implements PaymentServiceProvider {
 
     private Future<MoneyTransfer> updatePaymentStatusImpl(UpdatePaymentStatusArgument argument) {
         UpdateStore updateStore = UpdateStore.create(DataSourceModelService.getDefaultDataSourceModel());
-        MoneyTransfer moneyTransfer = updateStore.updateEntity(MoneyTransfer.class, argument.getPaymentPrimaryKey());
-        String gatewayResponse = argument.getGatewayResponse();
-        String gatewayTransactionRef = argument.getGatewayTransactionRef();
-        String gatewayStatus = argument.getGatewayStatus();
+        MoneyTransfer moneyTransfer = updateStore.updateEntity(MoneyTransfer.class, argument.paymentPrimaryKey());
+        String gatewayResponse = argument.gatewayResponse();
+        String gatewayTransactionRef = argument.gatewayTransactionRef();
+        String gatewayStatus = argument.gatewayStatus();
         boolean pending = argument.isPendingStatus();
         boolean successful = argument.isSuccessfulStatus();
         boolean isExplicitUserCancellation = argument.isExplicitUserCancellation();
-        String errorMessage = argument.getErrorMessage();
+        String errorMessage = argument.errorMessage();
         Object userId = ThreadLocalStateHolder.getUserId(); // Capturing userId because we may have an async call
         boolean isGatewayUser = userId instanceof SystemUserId;
-        String fieldsToLoad = "amount"; // As it will be required for history anyway
+        String fieldsToLoad = "amount,spread"; // As it will be required for history anyway
         if (!pending && successful) { // If the payment is successful, we check if it was pending before (to adjust the history comment)
             fieldsToLoad += ",pending";
         }
@@ -325,24 +384,36 @@ public class ServerPaymentServiceProvider implements PaymentServiceProvider {
                 moneyTransfer.setComment(errorMessage);
 
             String historyComment =
-                errorMessage != null ?      "Raised an error while processing [payment]" :
-                !pending && successful  ?   (wasPending ? "Processed [payment] successfully" : "Reported [payment] is successful") :
-                !pending && !successful ?   (isGatewayUser ? "Reported [payment] is failed" : isExplicitUserCancellation ? "Cancelled [payment]" : "Abandoned [payment]" /* typically closed window */) :
-                pending && successful   ?   "Reported [payment] is authorised (not yet completed)" :
-                /*pending && !successful?*/ "Reported [payment] is pending";
+                errorMessage != null ? "Raised an error while processing payment [amount]" :
+                    !pending && successful ? (wasPending ? "Processed payment [amount] successfully" : "Reported payment [amount] is successful") :
+                        !pending && !successful ? (isGatewayUser ? "Reported payment [amount] is failed" : isExplicitUserCancellation ? "Cancelled payment [amount]" : "Abandoned payment [amount]" /* typically closed window */) :
+                            pending && successful ? "Reported payment [amount] is authorised (not yet completed)" :
+                                /*pending && !successful?*/ "Reported payment [amount] is pending";
 
-            return HistoryRecorder.preparePaymentHistoryBeforeSubmit(historyComment, moneyTransfer, userId)
-                .compose(history ->
-                    updateStore.submitChanges(Triggers.frontOfficeTransaction(updateStore))
-                        .compose(result -> { // Checking that something happened in the database
-                            int rowCount = result.getRowCount();
-                            if (rowCount == 0)
-                                return Future.failedFuture("Unknown payment");
-                            // Completing the history recording (changes column with resolved primary keys)
-                            return HistoryRecorder.completeDocumentHistoryAfterSubmit(moneyTransfer, history, new UpdateMoneyTransferEvent(moneyTransfer));
-                        })
+            return loadDatabasePayment(moneyTransfer)
+                .compose(databasePayment ->
+                    HistoryRecorder.preparePaymentHistoriesBeforeSubmit(historyComment, databasePayment, userId)
+                        .compose(histories ->
+                            updateStore.submitChanges(Triggers.frontOfficeTransaction(updateStore))
+                                .compose(result -> { // Checking that something happened in the database
+                                    int rowCount = result.getRowCount();
+                                    if (rowCount == 0)
+                                        return Future.failedFuture("Unknown payment");
+                                    // Completing the histories recording (changes column with resolved primary keys)
+                                    return HistoryRecorder.completeDocumentHistoriesAfterSubmit(histories, new UpdateMoneyTransferEvent(moneyTransfer))
+                                        .map(ignoredVoid -> moneyTransfer);
+                                })
+                        )
                 );
         });
+    }
+
+    private Future<DatabasePayment> loadDatabasePayment(MoneyTransfer moneyTransfer) {
+        if (!moneyTransfer.isSpread())
+            return Future.succeededFuture(new DatabasePayment(moneyTransfer, null));
+        return moneyTransfer.getStore()
+            .executeQuery("select amount,document.id from MoneyTransfer where parent=$1", moneyTransfer)
+            .map(allocatedTransfers -> new DatabasePayment(moneyTransfer, allocatedTransfers.toArray(new MoneyTransfer[0])));
     }
 
 }

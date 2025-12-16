@@ -4,14 +4,13 @@ import dev.webfx.extras.controlfactory.button.ButtonFactoryMixin;
 import dev.webfx.extras.i18n.I18n;
 import dev.webfx.extras.i18n.controls.I18nControls;
 import dev.webfx.extras.styles.bootstrap.Bootstrap;
+import dev.webfx.extras.util.control.Controls;
 import dev.webfx.extras.visual.controls.grid.VisualGrid;
 import dev.webfx.kit.util.properties.FXProperties;
 import dev.webfx.kit.util.properties.ObservableLists;
 import dev.webfx.platform.console.Console;
-import dev.webfx.platform.windowhistory.spi.BrowsingHistory;
-import javafx.beans.InvalidationListener;
-import javafx.beans.binding.BooleanBinding;
 import dev.webfx.platform.uischeduler.UiScheduler;
+import dev.webfx.platform.windowhistory.spi.BrowsingHistory;
 import dev.webfx.stack.orm.datasourcemodel.service.DataSourceModelService;
 import dev.webfx.stack.orm.domainmodel.DataSourceModel;
 import dev.webfx.stack.orm.entity.Entity;
@@ -20,9 +19,10 @@ import dev.webfx.stack.orm.entity.EntityStore;
 import dev.webfx.stack.orm.entity.UpdateStore;
 import dev.webfx.stack.orm.entity.controls.entity.selector.ButtonSelectorParameters;
 import dev.webfx.stack.orm.entity.controls.entity.selector.EntityButtonSelector;
-import dev.webfx.stack.orm.reactive.mapping.entities_to_visual.ReactiveVisualMapper;
 import dev.webfx.stack.orm.reactive.entities.dql_to_entities.ReactiveEntitiesMapper;
-import one.modality.base.client.mainframe.fx.FXMainFrameDialogArea;
+import dev.webfx.stack.orm.reactive.mapping.entities_to_visual.ReactiveVisualMapper;
+import javafx.beans.InvalidationListener;
+import javafx.beans.binding.BooleanBinding;
 import javafx.beans.property.ObjectProperty;
 import javafx.beans.property.SimpleObjectProperty;
 import javafx.collections.FXCollections;
@@ -38,6 +38,7 @@ import javafx.scene.shape.SVGPath;
 import javafx.scene.text.Text;
 import one.modality.base.client.bootstrap.ModalityStyle;
 import one.modality.base.client.icons.SvgIcons;
+import one.modality.base.client.mainframe.fx.FXMainFrameDialogArea;
 import one.modality.base.shared.domainmodel.functions.AbcNames;
 import one.modality.base.shared.entities.Document;
 import one.modality.base.shared.entities.FrontendAccount;
@@ -78,15 +79,13 @@ final class CustomersView {
     private final CustomersPresentationModel pm;
     private final CustomersActivity activity;
     private final EntityStore entityStore = EntityStore.create();
-    private final ProgressIndicator loadingIndicator;
-    private final StackPane gridContainer;
+    private final Region loadingSpinner;
 
     private UpdateStore updateStore;
     private Person personToUpdate;
     private BooleanBinding hasNoChangesBinding;
 
     private ReactiveVisualMapper<Person> customersMapper;
-    private dev.webfx.stack.orm.reactive.entities.entities_to_grid.EntityColumn<Person>[] customerColumns;
     private final ObservableList<Person> membersFeed = FXCollections.observableArrayList();
     private final ObservableList<Document> registrationsFeed = FXCollections.observableArrayList();
     private final ObservableList<Person> allMembersForCounting = FXCollections.observableArrayList();
@@ -97,8 +96,6 @@ final class CustomersView {
     private ReactiveEntitiesMapper<Person> allMembersMapper;
 
     // Filter controls
-    private final CheckBox limitCheckBox;
-
     private Label accountTypeBadge;
     private Button editModeButton;
     private Button saveButton;
@@ -150,8 +147,6 @@ final class CustomersView {
         view.setId("customers");
 
         // Create limit checkbox
-        limitCheckBox = I18nControls.newCheckBox(LimitTo100);
-        limitCheckBox.setSelected(true);
 
         // Create customers grid
         customersGrid = VisualGrid.createVisualGridWithTableLayoutSkin();
@@ -165,19 +160,15 @@ final class CustomersView {
         customersGrid.getStyleClass().addAll("customers-grid");
 
         // Create loading indicator
-        loadingIndicator = new ProgressIndicator();
-        loadingIndicator.setMaxSize(50, 50);
-        loadingIndicator.setVisible(true); // Initially visible while loading
+        loadingSpinner = Controls.createSpinner(50);
 
         // Wrap grid and loading indicator in a StackPane
-        gridContainer = new StackPane();
-        gridContainer.getChildren().addAll(customersGrid, loadingIndicator);
-        StackPane.setAlignment(loadingIndicator, Pos.CENTER);
+        StackPane gridContainer = new StackPane();
+        gridContainer.getChildren().addAll(customersGrid, loadingSpinner);
+        StackPane.setAlignment(loadingSpinner, Pos.CENTER);
 
         // Bind limit property - when checkbox is selected, limit to 100, otherwise no limit
-        FXProperties.runNowAndOnPropertiesChange(() ->
-            pm.limitProperty().setValue(limitCheckBox.isSelected() ? 100 : -1),
-            limitCheckBox.selectedProperty());
+        pm.setLimit(100);
 
         // Bind grid to visual result property to receive updates from filter changes
         // We also manually update it when member counts change (see listener below on allMembersForCounting)
@@ -187,7 +178,7 @@ final class CustomersView {
         // Listen to search and filter changes to show loading indicator
         FXProperties.runOnPropertiesChange(() -> {
             // Show loading indicator when filters change (data will be reloaded)
-            loadingIndicator.setVisible(true);
+            loadingSpinner.setVisible(true);
         }, pm.searchTextProperty(), pm.accountTypeFilterProperty(), pm.activeStatusFilterProperty(), pm.limitProperty());
 
         // Create edit panel (initially hidden)
@@ -215,24 +206,18 @@ final class CustomersView {
     }
 
     private void startLogic() {
-        // Parse the columns using VisualEntityColumnFactory to properly register custom renderers
-        DataSourceModel dataSourceModel = DataSourceModelService.getDefaultDataSourceModel();
-
-        // Parse columns once for reuse
-        customerColumns = dev.webfx.stack.orm.reactive.mapping.entities_to_visual.VisualEntityColumnFactory.get()
-            .fromJsonArray(CUSTOMER_COLUMNS, dataSourceModel.getDomainModel(), "Person");
-
         // IMPORTANT: Load ALL persons with frontend accounts (both owners and members) FIRST
         // This must be loaded before the customers table so that owner information is available for rendering
         // We load both owners and members so we can find the owner for any frontendAccountId
         //JSON5
-        allMembersMapper = ReactiveEntitiesMapper.<Person>createPushReactiveChain()
-            .setDataSourceModel(dataSourceModel)
-            .always(
-                //JSON5
-                "{class: 'Person', alias: 'alac', " +
-                    "fields: 'id, firstName, lastName, fullName, owner, frontendAccount', " +
-                    "where: '!removed and frontendAccount!=null'}")
+        allMembersMapper = ReactiveEntitiesMapper.<Person>createPushReactiveChain(activity)
+            .always(//language=JSON5
+                """
+                    { class: 'Person',
+                      fields: 'id, firstName, lastName, fullName, owner, frontendAccount',
+                      where: '!removed and frontendAccount!=null',
+                      limit: 100
+                      }""")
             .storeEntitiesInto(allMembersForCounting)
             .addEntitiesHandler(entityList -> {
                 Console.log("All members/owners loaded: " + entityList.size() + " persons");
@@ -240,16 +225,17 @@ final class CustomersView {
                 if (customersMapper != null) {
                     customersMapper.start();
                 }
-            });
-        allMembersMapper.start();
+            }).start();
 
         // Set up the reactive mapper for customers (but don't start it yet - will start after allMembersMapper finishes)
         customersMapper = ReactiveVisualMapper.<Person>createPushReactiveChain(activity)
-            .always(
-                //JSON5
-                "{class: 'Person', alias: 'p', " +
-                    "fields: 'firstName, lastName, layName,phone,cityName,countryName,street,postCode,owner,removed,male,ordained,accountPerson.(id,fullName,frontendAccount), frontendAccount.(id,username,password,backoffice,disabled)', " +
-                    "orderBy: 'removed, frontendAccount.disabled, id desc'}")
+            .always(//language=JSON5
+                """
+                    { class: 'Person', alias: 'p',
+                      fields: 'firstName, lastName, layName,phone,cityName,countryName,street,postCode,owner,removed,male,ordained,accountPerson.(id,fullName,frontendAccount), frontendAccount.(id,username,password,backoffice,disabled)',
+                      orderBy: 'removed, frontendAccount.disabled, id desc',
+                      limit: 100
+                      }""")
             .setEntityColumns(CUSTOMER_COLUMNS)
             .setStore(entityStore)
             // Apply search filter
@@ -263,7 +249,7 @@ final class CustomersView {
                 case "backoffice" -> where("frontendAccount!=null and frontendAccount.backoffice");
                 case "owner" -> where("frontendAccount!=null and !frontendAccount.backoffice and owner");
                 case "non-owner" -> where("!owner or frontendAccount=null or frontendAccount.backoffice");
-                default -> where("1=1"); // Show all if unknown filter value
+                default -> where("true"); // Show all if unknown filter value
             })
             // Apply active status filter (null = show all, "active" = only active, "inactive" = disabled or removed)
             .ifNotNull(pm.activeStatusFilterProperty(), status ->
@@ -273,29 +259,28 @@ final class CustomersView {
             .ifPositive(pm.limitProperty(), l -> limit(String.valueOf(l.intValue())))
             .setVisualSelectionProperty(customersGrid.visualSelectionProperty())
             .visualizeResultInto(pm.masterVisualResultProperty())
-            .bindActivePropertyTo(pm.activeProperty())
             .setSelectedEntityHandler(this::onPersonSelected)
             .addEntitiesHandler(entityList -> {
                 Console.log("Customers loaded: " + entityList.size() + " customers");
                 // Store current entities so we can manually recreate visual result when member counts change
                 currentCustomersFeed.setAll(entityList);
                 // Hide loading indicator now that data is loaded
-                UiScheduler.runInUiThread(() -> loadingIndicator.setVisible(false));
+                UiScheduler.runInUiThread(() -> loadingSpinner.setVisible(false));
             });
         // Note: .start() NOT called here - will be called after allMembersMapper finishes loading
 
         // Set up the reactive mapper for members (persons using the selected person's frontend account)
         // Using the same logic as MembersActivity - this loads full details for display in the Account tab
         // Note: This mapper is NOT started here - it will be started lazily when the Account & Access tab is selected
-        membersMapper = ReactiveEntitiesMapper.<Person>createPushReactiveChain()
-            .setDataSourceModel(dataSourceModel)
-            .always(
-                //JSON5
-                "{class: 'Person', alias: 'la', " +
-                    "fields: 'firstName, lastName, fullName, email, accountPerson.(id,fullName)', " +
-                    "where: '!owner and !removed', " +
-                    "orderBy: 'id'}")
-            .ifNotNull(selectedPersonProperty, person -> {
+        membersMapper = ReactiveEntitiesMapper.<Person>createPushReactiveChain(activity)
+            .always(// language=JSON5
+                """
+                    { class: 'Person', alias: 'la',
+                      fields: 'firstName, lastName, fullName, email, accountPerson.(id,fullName)',
+                      where: '!owner and !removed',
+                      orderBy: 'id'
+                      }""")
+            .ifNotNullOtherwiseEmpty(selectedPersonProperty, person -> {
                 // Get the frontend account - either from the person directly or from their accountPerson
                 Object accountId = null;
                 if (person.getFrontendAccount() != null) {
@@ -307,7 +292,7 @@ final class CustomersView {
                     return where("frontendAccount=?", accountId);
                 }
                 // If no account found, return empty (no linked accounts)
-                return where("1=0"); // Always false condition
+                return where("false"); // Always false condition
             })
             .storeEntitiesInto(membersFeed);
         // Note: .start() NOT called here - will be called lazily when Account & Access tab is selected
@@ -315,16 +300,16 @@ final class CustomersView {
         // Set up the reactive mapper for registrations (documents for the selected person)
         // Using the same logic as OrdersActivity - accountCanAccessPersonOrders function
         // Note: This mapper is NOT started here - it will be started lazily when the Registrations tab is selected
-        registrationsMapper = ReactiveEntitiesMapper.<Document>createPushReactiveChain()
-            .setDataSourceModel(dataSourceModel)
-            .always(
-                //JSON5
-                "{class: 'Document', alias: 'd', " +
-                    "fields: 'ref, cancelled, price_deposit, price_net, person.(id,firstName,lastName), event.(name, startDate, endDate, organization.(id, name))', " +
-                    "where: '!abandoned or price_deposit>0', " +
-                    "orderBy: 'event.startDate desc', " +
-                    "limit: 20}")
-            .ifNotNull(selectedPersonProperty, person -> {
+        registrationsMapper = ReactiveEntitiesMapper.<Document>createPushReactiveChain(activity)
+            .always(//language=JSON5
+                """
+                    { class: 'Document', alias: 'd',
+                      fields: 'ref, cancelled, price_deposit, price_net, person.(id,firstName,lastName), event.(name, startDate, endDate, organization.(id, name))',
+                      where: '!abandoned or price_deposit>0',
+                      orderBy: 'event.startDate desc',
+                      limit: 20
+                      }""")
+            .ifNotNullOtherwiseEmpty(selectedPersonProperty, person -> {
                 // Get the frontend account - either from the person directly or from their accountPerson
                 Object accountId = null;
                 if (person.getFrontendAccount() != null) {

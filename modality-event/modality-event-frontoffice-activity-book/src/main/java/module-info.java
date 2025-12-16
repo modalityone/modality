@@ -16,7 +16,6 @@ module modality.event.frontoffice.activity.book {
     requires modality.booking.client.workingbooking;
     requires modality.booking.frontoffice.bookingelements;
     requires modality.booking.frontoffice.bookingform;
-    requires modality.crm.backoffice.organization.fx;
     requires modality.crm.client.authn.fx;
     requires modality.crm.client.i18n;
     requires modality.ecommerce.client.i18n;
@@ -35,7 +34,6 @@ module modality.event.frontoffice.activity.book {
     requires webfx.extras.styles.bootstrap;
     requires webfx.extras.util.animation;
     requires webfx.extras.util.control;
-    requires webfx.extras.util.dialog;
     requires webfx.extras.util.layout;
     requires webfx.extras.util.scene;
     requires webfx.extras.validation;

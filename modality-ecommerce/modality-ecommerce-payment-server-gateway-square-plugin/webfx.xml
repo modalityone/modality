@@ -38,6 +38,7 @@
                 <package>com.squareup.square</package>
                 <package>com.squareup.square.core</package>
                 <package>com.squareup.square.types</package>
+                <package>com.squareup.square.checkout.types</package>
             </exported-packages>
         </library>
         <!-- Underlying library used by Square that we use in Modality code to access the http response body -->

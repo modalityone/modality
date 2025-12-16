@@ -1,41 +1,22 @@
 package one.modality.ecommerce.payment;
 
 /**
+ * @param amount              The total amount to pay in cents.
+ * @param paymentAllocations  The payment allocations (which amount on which document).
+ * @param preferredFormType   Indicates the preferred payment form type (embedded or redirected).
+ * @param favorSeamless       Indicates that the client would prefer a seamless integration of the web payment form rather than an HTML code in an iFrame. If the Gateway supports seamless integration, it will send a GatewayInitiatePaymentResult with seamless = true, and htmlContent will actually contain the script to execute in seamless mode.
+ * @param isOriginOnHttps     Indicates that the client already runs on https. If not, gateway may prefer to run the payment form in a secure iFrame, even if the client asked for a seamless integration (favorSeamless = true).
+ *
  * @author Bruno Salmon
  */
-public final class InitiatePaymentArgument {
-
-    private final int amount;
-    private final Object documentPrimaryKey;
-    // TODO: spread payment over several bookings
-    // Indicates that the client would prefer a seamless integration of the web payment form rather than a html code
-    // in an iFrame. If the Gateway support seamless integration, it will send a GatewayInitiatePaymentResult with
-    // seamless = true, and htmlContent will actually contains the script to execute in seamless mode.
-    private final boolean seamlessIfSupported;
-    // Indicates that the client already runs on https. If not, gateway may prefer to run the payment form in a secure
-    // iFrame, even if the client asked for a seamless integration (seamlessIfSupported = true).
-    private final boolean parentPageHttps;
-
-    public InitiatePaymentArgument(int amount, Object documentPrimaryKey, boolean seamlessIfSupported, boolean parentPageHttps) {
-        this.amount = amount;
-        this.documentPrimaryKey = documentPrimaryKey;
-        this.seamlessIfSupported = seamlessIfSupported;
-        this.parentPageHttps = parentPageHttps;
-    }
-
-    public int getAmount() {
-        return amount;
-    }
-
-    public Object getDocumentPrimaryKey() {
-        return documentPrimaryKey;
-    }
-
-    public boolean isSeamlessIfSupported() {
-        return seamlessIfSupported;
-    }
-
-    public boolean isParentPageHttps() {
-        return parentPageHttps;
-    }
-}
+public record InitiatePaymentArgument(
+    int amount,
+    PaymentAllocation[] paymentAllocations,
+    PaymentFormType preferredFormType,
+    // The following fields are used only for embedded payments
+    boolean favorSeamless,
+    boolean isOriginOnHttps,
+    // The following fields are used only for redirected payments
+    String returnUrl,
+    String cancelUrl
+) { }

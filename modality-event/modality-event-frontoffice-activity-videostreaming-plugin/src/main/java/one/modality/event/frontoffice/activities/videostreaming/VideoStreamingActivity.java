@@ -60,7 +60,7 @@ final class VideoStreamingActivity extends ViewDomainActivityBase {
     }
 
     private final SimpleObjectProperty<VideoContentState> contentStateProperty =
-            new SimpleObjectProperty<>(VideoContentState.LOADING);
+        new SimpleObjectProperty<>(VideoContentState.LOADING);
 
 
     // Observable list of events with videos booked by the user (changes on login & logout)
@@ -95,9 +95,8 @@ final class VideoStreamingActivity extends ViewDomainActivityBase {
         EntityStore entityStore = EntityStore.create(getDataSourceModel());
         reloadProperty.setValue(true);
         // Loading the list of events with videos booked by the user and put it into eventsWithBookedVideos
-        FXProperties.runNowAndOnPropertiesChange(() ->
-        {
-            if(reloadProperty.get()) {
+        FXProperties.runNowAndOnPropertiesChange(() -> {
+            if (reloadProperty.get()) {
                 ModalityUserPrincipal modalityUserPrincipal = FXModalityUserPrincipal.getModalityUserPrincipal();
                 eventsWithBookedVideos.clear();
                 if (modalityUserPrincipal != null) {
@@ -105,50 +104,51 @@ final class VideoStreamingActivity extends ViewDomainActivityBase {
                     eventsWithBookedVideosLoadingProperty.set(true);
                     // we look for the scheduledItem having a `bookableScheduledItem` which is an audio type (case of festival)
                     entityStore.<DocumentLine>executeQueryWithCache("modality/event/video-streaming/document-lines",
-                                    "select document.(price_net, price_deposit, confirmed), document.event.(name, label, shortDescription, shortDescriptionLabel, audioExpirationDate, startDate, endDate, livestreamUrl, timezone, vodExpirationDate, repeatVideo, recurringWithVideo, repeatedEvent, livestreamMessageLabel), item.(code, family.code)" +
-                                            // We look if there are published audio ScheduledItem of type video, whose bookableScheduledItem has been booked
-                                            ", (exists(select ScheduledItem where item.family.code=$2 and bookableScheduledItem.(event=coalesce(dl.document.event.repeatedEvent, dl.document.event) and item=dl.item))) as published " +
-                                            // We check if the user has booked, not cancelled and paid the recordings
-                                            " from DocumentLine dl where !cancelled  and dl.document.(accountCanAccessPersonMedias($1, dl.document.person)) " +
-                                            " and dl.document.event.(kbs3 and (repeatedEvent = null or repeatVideo))" +
-                                            // we check if :
-                                            " and (" +
-                                            // 1/ there is a ScheduledItem of `video` family type whose `bookableScheduledItem` has been booked (KBS3 setup)
-                                            " exists(select Attendance a where documentLine=dl and exists(select ScheduledItem where bookableScheduledItem=a.scheduledItem and item.family.code=$2))" +
-                                            // 2/ Or KBS3 / KBS2 setup (this allows displaying the videos that have been booked in the past with KBS2 events, event if we can't display them)
-                                            " or item.family.code=$2)" +
-                                            // we display only the events that have not expired or expired since less than 21 days.
-                                            " and (document.event.(vodExpirationDate = null or date_part('epoch', now()) < date_part('epoch', vodExpirationDate)+21*24*60*60)) " +
-                                            // Ordering with the most relevant events, the first event will be the selected one by default.
-                                            " order by " +
-                                            // 1) Something happening today
-                                            " (exists(select Attendance where documentLine=dl and date=CURRENT_DATE)) desc" +
-                                            // 2) today is within event
-                                            ", document.event.(CURRENT_DATE >= startDate and CURRENT_DATE <= endDate) desc" +
-                                            // 3) Not expired
-                                            ", document.event.(vodExpirationDate = null or now() <= vodExpirationDate)" +
-                                            // 4) Smallest event (ex: favor Spring Festival over STTP)
-                                            ", document.event.(endDate - startDate)",
-                                    userAccountId, KnownItemFamily.VIDEO.getCode())
-                            .onFailure(Console::log)
-                            .inUiThread()
-                            .onCacheAndOrSuccess(documentLines -> {
-                                // Extracting the events with videos from the document lines.
-                                for (DocumentLine dl : documentLines) {
-                                    Event event = dl.getDocument().getEvent();
-                                    event.setFieldValue("document", dl.getDocument());
-                                    event.setFieldValue("balance", dl.getDocument().getPriceNet() - dl.getDocument().getPriceDeposit());
-                                    event.setFieldValue("isConfirmed", dl.getDocument().isConfirmed());
-                                    if (!eventsWithBookedVideos.contains(event)) {
-                                        eventsWithBookedVideos.add(event);
-                                    }
+                            "select document.(price_net, price_deposit, confirmed), document.event.(name, label, shortDescription, shortDescriptionLabel, audioExpirationDate, startDate, endDate, livestreamUrl, timezone, vodExpirationDate, repeatVideo, recurringWithVideo, repeatedEvent, livestreamMessageLabel), item.(code, family.code)" +
+                            // We look if there are published audio ScheduledItem of type video, whose bookableScheduledItem has been booked
+                            ", (exists(select ScheduledItem where item.family.code=$2 and bookableScheduledItem.(event=coalesce(dl.document.event.repeatedEvent, dl.document.event) and item=dl.item))) as published " +
+                            // We check if the user has booked, not cancelled and paid the recordings
+                            " from DocumentLine dl where !cancelled  and dl.document.(accountCanAccessPersonMedias($1, dl.document.person)) " +
+                            " and dl.document.event.(kbs3 and (repeatedEvent = null or repeatVideo))" +
+                            // we check if :
+                            " and (" +
+                            // 1/ there is a ScheduledItem of `video` family type whose `bookableScheduledItem` has been booked (KBS3 setup)
+                            " exists(select Attendance a where documentLine=dl and exists(select ScheduledItem where bookableScheduledItem=a.scheduledItem and item.family.code=$2))" +
+                            // 2/ Or KBS3 / KBS2 setup (this allows displaying the videos that have been booked in the past with KBS2 events, event if we can't display them)
+                            " or item.family.code=$2)" +
+                            // we display only the events that have not expired or expired since less than 21 days.
+                            " and (document.event.(vodExpirationDate = null or date_part('epoch', now()) < date_part('epoch', vodExpirationDate)+21*24*60*60)) " +
+                            // Ordering with the most relevant events, the first event will be the selected one by default.
+                            " order by " +
+                            // 1) Something happening today
+                            " (exists(select Attendance where documentLine=dl and date=CURRENT_DATE)) desc" +
+                            // 2) today is within event
+                            ", document.event.(CURRENT_DATE >= startDate and CURRENT_DATE <= endDate) desc" +
+                            // 3) Not expired
+                            ", document.event.(vodExpirationDate = null or now() <= vodExpirationDate)" +
+                            // 4) Smallest event (ex: favor Spring Festival over STTP)
+                            ", document.event.(endDate - startDate)",
+                            userAccountId, KnownItemFamily.VIDEO.getCode())
+                        .onFailure(Console::log)
+                        .inUiThread()
+                        .onCacheAndOrSuccess(documentLines -> {
+                            // Extracting the events with videos from the document lines.
+                            for (DocumentLine dl : documentLines) {
+                                Event event = dl.getDocument().getEvent();
+                                event.setFieldValue("document", dl.getDocument());
+                                event.setFieldValue("balance", dl.getDocument().getPriceNet() - dl.getDocument().getPriceDeposit());
+                                event.setFieldValue("isConfirmed", dl.getDocument().isConfirmed());
+                                if (!eventsWithBookedVideos.contains(event)) {
+                                    eventsWithBookedVideos.add(event);
                                 }
-                                if(eventProperty.get()==null) eventProperty.set(Collections.first(eventsWithBookedVideos));
-                                updateContentStateProperty();
-                            });
+                            }
+                            if (eventProperty.get() == null)
+                                eventProperty.set(Collections.first(eventsWithBookedVideos));
+                            updateContentStateProperty();
+                        });
                 }
             }
-        }, FXModalityUserPrincipal.modalityUserPrincipalProperty(),reloadProperty);
+        }, FXModalityUserPrincipal.modalityUserPrincipalProperty(), reloadProperty);
 
         // Initial data loading for the event specified in the path
         FXProperties.runNowAndOnPropertiesChange(() -> {
@@ -189,19 +189,19 @@ final class VideoStreamingActivity extends ViewDomainActivityBase {
     private void updateContentStateProperty() {
         if (eventsWithBookedVideosLoadingProperty.get()) {
             contentStateProperty.set(VideoContentState.LOADING);
-        }
-        if (eventsWithBookedVideos.isEmpty()) {
+        } else if (eventsWithBookedVideos.isEmpty()) {
             contentStateProperty.set(VideoContentState.NO_CONTENT);
         }
         int balance = 0;
         boolean isConfirmed = true;
-        if(eventProperty.get()!=null) {
-            balance = (int) eventProperty.get().getFieldValue("balance");
-            isConfirmed = (boolean) eventProperty.get().getFieldValue("isConfirmed");
+        Event event = eventProperty.get();
+        if (event != null) {
+            balance = event.getIntegerFieldValue("balance");
+            isConfirmed = event.getBooleanFieldValue("isConfirmed");
         }
-        if(balance>0){
+        if (balance > 0) {
             contentStateProperty.set(VideoContentState.PAYMENT_PENDING);
-        } else if(!isConfirmed){
+        } else if (!isConfirmed) {
             contentStateProperty.set(VideoContentState.NOT_CONFIRMED);
         } else {
             contentStateProperty.set(VideoContentState.CONTENT_READY);
@@ -226,7 +226,7 @@ final class VideoStreamingActivity extends ViewDomainActivityBase {
         VBox.setMargin(livestreamOnlyWarning, new Insets(0, 0, 20, 0));
 
         mediaContentContainer.getChildren().addAll(livestreamAndVideoPlayers.buildUi(pageContainer),
-                                                    timetable.buildUi());
+            timetable.buildUi());
         VBox loadedContentVBox = new VBox(40,
             eventSelector.buildUi(),
             eventHeader.getView(), // contains the event image and the event title
@@ -249,20 +249,20 @@ final class VideoStreamingActivity extends ViewDomainActivityBase {
         FXProperties.runNowAndOnPropertyChange(event -> {
             boolean isLivestreamOnly = event != null && event.getVodExpirationDate() == null;
             Console.log("Event changed: " + (event != null ? event.getName() : "null") +
-                       ", vodExpirationDate: " + (event != null ? event.getVodExpirationDate() : "N/A") +
-                       ", isLivestreamOnly: " + isLivestreamOnly);
+                        ", vodExpirationDate: " + (event != null ? event.getVodExpirationDate() : "N/A") +
+                        ", isLivestreamOnly: " + isLivestreamOnly);
             Layouts.setManagedAndVisibleProperties(livestreamOnlyWarning, isLivestreamOnly);
         }, eventProperty);
 
         // Reacting to data loading (initially or when the event changes or on login/logout)
         ObservableLists.runNowAndOnListOrPropertiesChange(changes -> {
-            // If not yet initialised, we select the most relevant event to show on start (the first one from order by)
-            if(eventProperty.get()==null) eventProperty.set(Collections.first(eventsWithBookedVideos));
+            // If not yet initialized, we select the most relevant event to show on start (the first one from order by)
+            if (eventProperty.get() == null) eventProperty.set(Collections.first(eventsWithBookedVideos));
             eventsWithBookedVideosLoadingProperty.set(false);
             updateContentStateProperty();
         }, videoScheduledItems, eventProperty, eventsWithBookedVideosLoadingProperty);
 
-        FXProperties.runNowAndOnPropertyChange(this::updateMainContent,contentStateProperty);
+        FXProperties.runNowAndOnPropertyChange(this::updateMainContent, contentStateProperty);
 
         // Some reactions to changes in the timetable couldn't be done in timetable.buildUi() but must be done now,
         // i.e., after the above code, because timetable.updateProgramDisplayMode() has to be called before the other
@@ -282,29 +282,30 @@ final class VideoStreamingActivity extends ViewDomainActivityBase {
     }
 
     private void updateMainContent(VideoContentState state) {
-        Node loadingContentIndicator = new GoldenRatioPane(Controls.createProgressIndicator(100));
+        Node loadingContentSpinner = new GoldenRatioPane(Controls.createSpinner(100));
         EventHeader eventHeader = new MediaEventHeader(true);
         eventHeader.eventProperty().bind(eventProperty);
 
         // We display the loading indicator while the data is loading
-        if (state==VideoContentState.LOADING) { // this indicates that the data has not finished loaded
-            mediaContentContainer.getChildren().setAll(loadingContentIndicator);
+        if (state == VideoContentState.LOADING) { // this indicates that the data has not finished loaded
+            mediaContentContainer.getChildren().setAll(loadingContentSpinner);
             return;
         }
 
         // If the user didn't book any event with videos, we display "no content"
-        if (state==VideoContentState.NO_CONTENT) {
+        if (state == VideoContentState.NO_CONTENT) {
             NoContentView content = new NoContentView("VIDEO");
             mediaContentContainer.getChildren().setAll(content.getView());
             return;
         }
 
-        if(state==VideoContentState.PAYMENT_PENDING){
-            int balance = (int) eventProperty.get().getFieldValue("balance");
-            Document orderDocument = (Document) eventProperty.get().getFieldValue("document");
+        if (state == VideoContentState.PAYMENT_PENDING) {
+            Event event = eventProperty.get();
+            int balance = event.getIntegerFieldValue("balance");
+            Document orderDocument = event.getForeignEntity("document");
             PaymentPendingView paymentView = new PaymentPendingView(
                 balance,
-                eventProperty.get(),
+                event,
                 orderDocument,
                 () -> isPaymentCurrentlyProcessing = true,
                 "VIDEO"
@@ -313,10 +314,9 @@ final class VideoStreamingActivity extends ViewDomainActivityBase {
             return;
         }
         //Case where the event is not confirmed
-        if(state==VideoContentState.NOT_CONFIRMED){
+        if (state == VideoContentState.NOT_CONFIRMED) {
             NotConfirmedView notConfirmedView = new NotConfirmedView();
             mediaContentContainer.getChildren().setAll(notConfirmedView.getView());
-            return;
         }
     }
 
@@ -324,8 +324,8 @@ final class VideoStreamingActivity extends ViewDomainActivityBase {
     @Override
     public void onResume() {
         super.onResume();
-        //Ajouter un test si le paiement est en cours, et s'il a aboutit, on recharge les infos avec un property que l'on fait changer de valeur
-        if(isPaymentCurrentlyProcessing) {
+        //Ajouter un test si le paiement est en cours, et s'il a abouti, on recharge les infos avec un property que l'on fait changer de valeur
+        if (isPaymentCurrentlyProcessing) {
             reloadProperty.setValue(false);
             reloadProperty.setValue(true);
             isPaymentCurrentlyProcessing = false;

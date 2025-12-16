@@ -28,11 +28,7 @@ public final class PaymentService {
         return getProvider().cancelPayment(argument);
     }
 
-    public static Future<MakeApiPaymentResult> makeApiPayment(MakeApiPaymentArgument argument) {
-        return getProvider().makeApiPayment(argument);
-    }
-
-    // Internal server-side method only (no serialisation support)
+    // Internal server-side method only (no serialization support)
 
     public static Future<Map<String, String>> loadPaymentGatewayParameters(Object paymentId, boolean live) {
         return getProvider().loadPaymentGatewayParameters(paymentId, live);

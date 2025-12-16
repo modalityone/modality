@@ -1,0 +1,155 @@
+<html lang="fr" dir="ltr"><head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Email de récupération</title>
+    <style>
+        /* Global Styles */
+        body {
+            margin: 0;
+            padding: 0;
+            font-family: Arial, sans-serif;
+            background-color: #f9fafb;
+        }
+
+        .email-container {
+            max-width: 600px;
+            margin: 20px auto;
+            background: #ffffff;
+            border-radius: 12px;
+            box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1);
+            overflow: hidden;
+            text-align: center;
+        }
+
+        .header {
+            background-color: #ffffff;
+            padding: 20px 0;
+            font-size: 32px;
+            color: #009fe3;
+            font-weight: bold;
+        }
+
+        .content {
+            padding: 20px 40px;
+            font-size: 16px;
+            color: #505050;
+        }
+
+        .content h2 {
+            font-size: 18px;
+            margin-bottom: 10px;
+            font-weight: normal;
+            color: #606060;
+        }
+
+        .divider {
+            width: 80%;
+            margin: 20px auto;
+            border: 0;
+            border-top: 1px solid #dddddd;
+        }
+
+        .verification-code {
+            display: inline-block;
+            background-color: #f0f9ff;
+            color: #009fe3;
+            padding: 20px 40px;
+            border: 2px solid #009fe3;
+            border-radius: 8px;
+            font-size: 32px;
+            font-weight: bold;
+            letter-spacing: 8px;
+            margin: 20px 0;
+            font-family: 'Courier New', monospace;
+        }
+
+        .button-container {
+            margin: 20px 0;
+        }
+
+        .button {
+            display: inline-block;
+            background-color: #009fe3;
+            color: #ffffff;
+            padding: 12px 25px;
+            text-decoration: none;
+            border-radius: 5px;
+            font-size: 16px;
+        }
+
+        .link {
+            font-size: 14px;
+            color: #009fe3;
+            text-decoration: none;
+            word-wrap: break-word;
+        }
+
+        .option-divider {
+            width: 60%;
+            margin: 30px auto;
+            border: 0;
+            border-top: 1px solid #dddddd;
+            position: relative;
+        }
+
+        .option-divider::after {
+            content: 'OU';
+            position: absolute;
+            top: -10px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: #ffffff;
+            padding: 0 10px;
+            color: #aaaaaa;
+            font-size: 14px;
+        }
+
+        .footer {
+            font-size: 12px;
+            color: #aaaaaa;
+            margin: 20px 0;
+        }
+    </style>
+</head>
+
+<body>
+<div class="email-container">
+    <div class="header">Récupération</div>
+
+    <div class="content">
+        <h2>Cher utilisateur,</h2>
+
+        <p>Vous avez reçu cet email car vous avez demandé de récupérer l'accès à votre compte Kadampa Bookings.</p>
+
+        <hr class="divider">
+
+        <p><strong>Option 1 :</strong> Entrez le code de vérification suivant :</p>
+
+        <div class="verification-code">
+            [verificationCode]
+        </div>
+
+        <p style="font-size: 14px; color: #888888;">Ce code n'est valide que pour une seule utilisation et expirera bientôt.</p>
+
+        <hr class="option-divider">
+
+        <p><strong>Option 2 :</strong> Cliquez sur le bouton ci-dessous pour récupérer votre compte automatiquement :</p>
+
+        <div class="button-container">
+            <a href="[magicLink]" style="color:white" class="button">Récupérer mon compte</a>
+        </div>
+
+        <p>Ou copiez et collez ce lien dans votre navigateur :</p>
+        <a href="[magicLink]" class="link">
+            [magicLink]
+        </a>
+    </div>
+
+    <div class="footer">
+        <p>Si vous n'avez pas demandé cela, veuillez ignorer cet email.<br>Aucune action n'est nécessaire.</p>
+    </div>
+</div>
+
+
+
+</body></html>

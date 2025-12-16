@@ -1,0 +1,155 @@
+<html lang="zh" dir="ltr"><head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>恢复邮件</title>
+    <style>
+        /* Global Styles */
+        body {
+            margin: 0;
+            padding: 0;
+            font-family: Arial, sans-serif;
+            background-color: #f9fafb;
+        }
+
+        .email-container {
+            max-width: 600px;
+            margin: 20px auto;
+            background: #ffffff;
+            border-radius: 12px;
+            box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1);
+            overflow: hidden;
+            text-align: center;
+        }
+
+        .header {
+            background-color: #ffffff;
+            padding: 20px 0;
+            font-size: 32px;
+            color: #009fe3;
+            font-weight: bold;
+        }
+
+        .content {
+            padding: 20px 40px;
+            font-size: 16px;
+            color: #505050;
+        }
+
+        .content h2 {
+            font-size: 18px;
+            margin-bottom: 10px;
+            font-weight: normal;
+            color: #606060;
+        }
+
+        .divider {
+            width: 80%;
+            margin: 20px auto;
+            border: 0;
+            border-top: 1px solid #dddddd;
+        }
+
+        .verification-code {
+            display: inline-block;
+            background-color: #f0f9ff;
+            color: #009fe3;
+            padding: 20px 40px;
+            border: 2px solid #009fe3;
+            border-radius: 8px;
+            font-size: 32px;
+            font-weight: bold;
+            letter-spacing: 8px;
+            margin: 20px 0;
+            font-family: 'Courier New', monospace;
+        }
+
+        .button-container {
+            margin: 20px 0;
+        }
+
+        .button {
+            display: inline-block;
+            background-color: #009fe3;
+            color: #ffffff;
+            padding: 12px 25px;
+            text-decoration: none;
+            border-radius: 5px;
+            font-size: 16px;
+        }
+
+        .link {
+            font-size: 14px;
+            color: #009fe3;
+            text-decoration: none;
+            word-wrap: break-word;
+        }
+
+        .option-divider {
+            width: 60%;
+            margin: 30px auto;
+            border: 0;
+            border-top: 1px solid #dddddd;
+            position: relative;
+        }
+
+        .option-divider::after {
+            content: '或者';
+            position: absolute;
+            top: -10px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: #ffffff;
+            padding: 0 10px;
+            color: #aaaaaa;
+            font-size: 14px;
+        }
+
+        .footer {
+            font-size: 12px;
+            color: #aaaaaa;
+            margin: 20px 0;
+        }
+    </style>
+</head>
+
+<body>
+<div class="email-container">
+    <div class="header">恢复</div>
+
+    <div class="content">
+        <h2>亲爱的用户,</h2>
+
+        <p>您收到此邮件是因为您请求恢复对 Kadampa Bookings 账户的访问权限。</p>
+
+        <hr class="divider">
+
+        <p><strong>选项 1 :</strong> 输入以下验证码 :</p>
+
+        <div class="verification-code">
+            [verificationCode]
+        </div>
+
+        <p style="font-size: 14px; color: #888888;">此代码仅有效一次，即将过期。</p>
+
+        <hr class="option-divider">
+
+        <p><strong>选项 2 :</strong> 单击下面的按钮自动恢复您的账户 :</p>
+
+        <div class="button-container">
+            <a href="[magicLink]" style="color:white" class="button">恢复账户</a>
+        </div>
+
+        <p>或者复制此链接并将其粘贴到您的浏览器 :</p>
+        <a href="[magicLink]" class="link">
+            [magicLink]
+        </a>
+    </div>
+
+    <div class="footer">
+        <p>如果您未发起此请求，请忽略此邮件。<br>无需任何操作。</p>
+    </div>
+</div>
+
+
+
+</body></html>

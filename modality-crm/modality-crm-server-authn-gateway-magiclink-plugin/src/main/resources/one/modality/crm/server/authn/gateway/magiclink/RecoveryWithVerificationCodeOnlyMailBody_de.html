@@ -1,0 +1,101 @@
+<html lang="de" dir="ltr"><head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Wiederherstellungs-E-Mail</title>
+    <style>
+        /* Global Styles */
+        body {
+            margin: 0;
+            padding: 0;
+            font-family: Arial, sans-serif;
+            background-color: #f9fafb;
+        }
+
+        .email-container {
+            max-width: 600px;
+            margin: 20px auto;
+            background: #ffffff;
+            border-radius: 12px;
+            box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1);
+            overflow: hidden;
+            text-align: center;
+        }
+
+        .header {
+            background-color: #ffffff;
+            padding: 20px 0;
+            font-size: 32px;
+            color: #009fe3;
+            font-weight: bold;
+        }
+
+        .content {
+            padding: 20px 40px;
+            font-size: 16px;
+            color: #505050;
+        }
+
+        .content h2 {
+            font-size: 18px;
+            margin-bottom: 10px;
+            font-weight: normal;
+            color: #606060;
+        }
+
+        .divider {
+            width: 80%;
+            margin: 20px auto;
+            border: 0;
+            border-top: 1px solid #dddddd;
+        }
+
+        .verification-code {
+            display: inline-block;
+            background-color: #f0f9ff;
+            color: #009fe3;
+            padding: 20px 40px;
+            border: 2px solid #009fe3;
+            border-radius: 8px;
+            font-size: 32px;
+            font-weight: bold;
+            letter-spacing: 8px;
+            margin: 20px 0;
+            font-family: 'Courier New', monospace;
+        }
+
+        .footer {
+            font-size: 12px;
+            color: #aaaaaa;
+            margin: 20px 0;
+        }
+    </style>
+</head>
+
+<body>
+<div class="email-container">
+    <div class="header">Wiederherstellung</div>
+
+    <div class="content">
+        <h2>Lieber Benutzer,</h2>
+
+        <p>Sie erhalten diese E-Mail, weil Sie die Wiederherstellung des Zugriffs auf Ihr Kadampa Bookings-Konto angefordert haben.</p>
+
+        <hr class="divider">
+
+        <p>Geben Sie den folgenden Verifizierungscode ein, um Ihr Konto wiederherzustellen :</p>
+
+        <div class="verification-code">
+            [verificationCode]
+        </div>
+
+        <p style="font-size: 14px; color: #888888;">Dieser Code ist nur für eine einmalige Verwendung gültig und verfällt bald.</p>
+    </div>
+
+    <div class="footer">
+        <p>Wenn Sie dies nicht angefordert haben, ignorieren Sie diese E-Mail bitte.<br>Es ist keine Aktion erforderlich.</p>
+    </div>
+</div>
+
+
+
+</body></html>

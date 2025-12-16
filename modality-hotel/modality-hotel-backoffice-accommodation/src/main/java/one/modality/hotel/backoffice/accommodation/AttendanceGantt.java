@@ -21,7 +21,7 @@ public class AttendanceGantt extends AccommodationGantt<AttendanceBlock> {
     public AttendanceGantt(AccommodationPresentationModel pm, ObservableList<Attendance> attendancesToConvertToBars, ObservableList<LocalDateBar<AttendanceBlock>> convertedBars, ObservableList<LocalDateBar<AttendanceBlock>> barsLayoutChildren, ObservableList<ResourceConfiguration> providedParentRooms) {
         super(pm, barsLayoutChildren, providedParentRooms, 10);
         if (convertedBars == null)
-            convertedBars = barsLayout.getChildren();
+            convertedBars = ganttLayout.getChildren();
         TimeBarUtil.convertToBlocksThenGroupToBars(
                 attendancesToConvertToBars, // the observable list of Attendance entities to take as input
                 Attendance::getDate, // the entity date reader that will be used to date each block

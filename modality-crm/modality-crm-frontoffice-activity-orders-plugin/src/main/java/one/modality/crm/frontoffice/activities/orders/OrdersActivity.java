@@ -24,7 +24,7 @@ import javafx.geometry.Pos;
 import javafx.scene.Node;
 import javafx.scene.control.ContentDisplay;
 import javafx.scene.control.Label;
-import javafx.scene.control.ProgressIndicator;
+import javafx.scene.layout.Region;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 import javafx.scene.text.TextAlignment;
@@ -89,7 +89,7 @@ final class OrdersActivity extends ViewDomainActivityBase implements ModalityBut
         // but keeping the initial progress indicator until the first result arrives.
         FXProperties.runNowAndOnPropertyChange(calling -> UiScheduler.scheduleDeferred(() -> {
             if (calling)
-                activeOrdersContainer.getChildren().setAll(Controls.createProgressIndicator(50));
+                activeOrdersContainer.getChildren().setAll(Controls.createSpinner(50));
             else if (upcomingOrderCards.isEmpty())
                 activeOrdersContainer.getChildren().setAll(Bootstrap.strong(Bootstrap.textSecondary(I18nControls.newLabel(OrdersI18nKeys.NoActiveOrders))));
             else
@@ -118,9 +118,10 @@ final class OrdersActivity extends ViewDomainActivityBase implements ModalityBut
                     });
                 });
         });
+        Region pastLoadingSpinner = Controls.createSpinner(50);
         FXProperties.runNowAndOnPropertyChange(calling -> UiScheduler.scheduleDeferred(() -> {
             if (calling && pastOrdersContainer.getChildren().isEmpty())
-                pastOrdersContainer.getChildren().setAll(Controls.createProgressIndicator(50));
+                pastOrdersContainer.getChildren().setAll(pastLoadingSpinner);
             else if (!calling && pastOrdersContainer.getChildren().size() == 1)
                 pastOrdersContainer.getChildren().setAll(Bootstrap.strong(Bootstrap.textSecondary(I18nControls.newLabel(OrdersI18nKeys.NoCompletedOrders))));
         }), completedOrdersMapper.callingProperty());
@@ -152,8 +153,8 @@ final class OrdersActivity extends ViewDomainActivityBase implements ModalityBut
                         FXProperties.setIfNotEquals(loadPastEventsBeforeDateProperty, startDate);
                     } else if (loadPastEventsBeforeDateProperty.get() != null) {
                         // Removing the progress indicator normally present as the last child
-                        if (Collections.last(pastOrdersContainer.getChildren()) instanceof ProgressIndicator)
-                            pastOrdersContainer.getChildren().remove(pastOrdersContainer.getChildren().size() - 1);
+                        if (Collections.last(pastOrdersContainer.getChildren())  == pastLoadingSpinner)
+                            pastOrdersContainer.getChildren().remove(pastLoadingSpinner);
                         pageContainer.setPadding(Insets.EMPTY);
                     }
                 }

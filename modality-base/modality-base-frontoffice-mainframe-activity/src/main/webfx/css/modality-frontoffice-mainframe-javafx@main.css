@@ -43,10 +43,6 @@ so replaced by the following:
 
 .menu-bar {
     -fx-font-family: "Poppins";
-    -webfx-aria-toggle-button-background-color-hover: transparent;
-    -webfx-aria-toggle-button-background-color-fired: transparent;
-    -webfx-aria-toggle-button-background-color-focused: transparent;
-    -webfx-aria-toggle-button-text-fill-fired: -brand-blue-color;
 }
 
 .menu-bar ToggleButton {
@@ -61,39 +57,34 @@ so replaced by the following:
 /* Highlighting the selected menu items (those with the class "fired") by making them bold (in addition to being colored
    already with the rule defined in .menu-bar { -webfx-aria-toggle-button-text-fill-fired: -brand-blue-color; }). */
 .main-menu-bar ToggleButton.fired, .user-menu-bar ToggleButton.fired {
+    -fx-text-fill: #0096D6;
     -fx-font-weight: bold;
 }
 
-/* Applying also the same blue color to the SVG icons used in those selected menu items. This is done by setting their
-   SVG fill and/or stroke, but only if required (some icons have no fill or no stroke). The presence of a fill or a
-   stroke are detected by the class "hasFill" and "hasStroke" set by ModalityFrontOfficeMainFrameActivity due to the
-   absence of [fill] and [stroke] support in JavaFX CSS. */
-.main-menu-bar ToggleButton.fired.hasFill SVGPath, .user-menu-bar ToggleButton.fired.hasFill SVGPath {
-    -fx-fill: -webfx-aria-toggle-button-text-fill-fired;
+.main-menu-bar ToggleButton.fired SVGPath, .user-menu-bar ToggleButton.fired SVGPath {
+    -fx-fill: #0096D6;
 }
 
-.main-menu-bar ToggleButton.fired.hasStroke SVGPath, .user-menu-bar ToggleButton.fired.hasStroke SVGPath {
-    -fx-stroke: -webfx-aria-toggle-button-text-fill-fired;
-}
 
 .user-menu-bar Label, .user-menu-bar ToggleButton {
     -fx-font-size: 12px;
     -fx-text-fill: #838788;
 }
 
-.main-menu-bar Label.brand {
+.main-frame Label.brand {
     -fx-font-size: 14px;
     -fx-font-weight: bold;
     -fx-text-fill: -brand-blue-color;
 }
 
-.main-menu-bar Label.brand SVGPath {
+.main-frame Label.brand SVGPath {
     -fx-fill: -brand-blue-color;
 }
 
 .lang-menu-bar ToggleButton {
     -fx-border-color: #0096D6;
     -fx-border-width: 1px 1px 1px 0;
+    -fx-text-fill: #0096D6;;
 }
 
 .lang-menu-bar ToggleButton.first-child {
@@ -107,21 +98,22 @@ so replaced by the following:
     -fx-background-radius:  0px 10px 10px 0px;
 }
 
-.lang-menu-bar ToggleButton:selected {
-    -fx-background-color: #F0F0F0;
-}
-
 .lang-menu-bar ToggleButton.fired {
     -fx-background-color: #0096D6;
     -fx-text-fill: white;
+    -fx-font-weight: bold;
 }
 
-CollapsePane.menu-bar.non-mobile {
+.menu-bar.non-mobile {
     -fx-background-color: white;
     -fx-border-width: 0 0 1px 0 ;
     -fx-border-color: lightgray;
 }
 
-CollapsePane.menu-bar.lang-menu-bar {
+.menu-bar.lang-menu-bar {
     -fx-border-width: 0;
+}
+
+.modality-dialog-area {
+    -fx-background-color: #4D4D4D80;
 }

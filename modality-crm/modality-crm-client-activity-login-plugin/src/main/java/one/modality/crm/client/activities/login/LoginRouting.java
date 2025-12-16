@@ -72,6 +72,7 @@ public final class LoginRouting {
 
     static {
         PasswordUiLoginGateway.setCreateAccountEmailConsumer((s) -> {s.toString();});
+        PasswordUiLoginGateway.setCreateAccountLinkVisible(false);
     }
 
 }

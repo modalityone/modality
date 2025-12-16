@@ -1,0 +1,99 @@
+<html lang="pt" dir="ltr"><head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pedido Aprovado</title>
+    <style>
+        /* Global Styles */
+        body {
+            margin: 0;
+            padding: 0;
+            font-family: Arial, sans-serif;
+            background-color: #f9fafb;
+        }
+
+        .email-container {
+            max-width: 600px;
+            margin: 20px auto;
+            background: #ffffff;
+            border-radius: 12px;
+            box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1);
+            overflow: hidden;
+            text-align: center;
+        }
+
+        .header {
+            background-color: #ffffff;
+            padding: 20px 0;
+            font-size: 32px;
+            color: #28a745;
+            font-weight: bold;
+        }
+
+        .content {
+            padding: 20px 40px;
+            font-size: 16px;
+            color: #505050;
+        }
+
+        .content h2 {
+            font-size: 18px;
+            margin-bottom: 10px;
+            font-weight: normal;
+            color: #606060;
+        }
+
+        .divider {
+            width: 80%;
+            margin: 20px auto;
+            border: 0;
+            border-top: 1px solid #dddddd;
+        }
+
+        .button-container {
+            margin: 20px 0;
+        }
+
+        .button {
+            display: inline-block;
+            background-color: #009fe3;
+            color: #ffffff;
+            padding: 12px 25px;
+            text-decoration: none;
+            border-radius: 5px;
+            font-size: 16px;
+        }
+
+        .footer {
+            font-size: 12px;
+            color: #aaaaaa;
+            margin: 20px 0;
+        }
+    </style>
+</head>
+
+<body>
+<div class="email-container">
+    <div class="header">✓ Pedido Aprovado</div>
+
+    <div class="content">
+        <h2>Caro/a [requesterName]</h2>
+
+        <p>Ótimas notícias! <strong>[approverName]</strong> aprovou o seu pedido.</p>
+
+        <p>Pode agora fazer e gerir reservas em nome de [approverName] através da sua conta Reservas Kadampa.</p>
+
+        <hr class="divider">
+
+        <p>Aceda à sua conta para começar a gerir as reservas de [approverName]:</p>
+
+        <div class="button-container">
+            <a href="[accountLink]" style="color:white" class="button">Ver Conta</a>
+        </div>
+    </div>
+
+    <div class="footer">
+        <p>[approverName] pode revogar este acesso a qualquer momento nas configurações da sua conta.</p>
+    </div>
+</div>
+
+</body></html>

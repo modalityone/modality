@@ -16,14 +16,11 @@ public final class BookEventRouting {
     private final static String BOOK_EVENT_PATH = "/book-event/:eventId";
     private final static String MODIFY_BOOKING_PATH = "/modify-order/:modifyOrderDocumentId";
     private final static String PAY_BOOKING_PATH = "/pay-order/:payOrderDocumentId";
+    private final static String RESUME_PAYMENT_PATH = "/resume-payment/:resumePaymentMoneyTransferId";
     private final static String BOOK_EVENT_PATH_DEPRECATED = "/booking/event/:gpClassId"; // Temporarily keeping for GP Class compatibility
 
     public static String getBookEventPath(Object eventId) {
         return ModalityRoutingUtil.interpolateEventIdInPath(eventId, BOOK_EVENT_PATH);
-    }
-
-    public static String getModifyOrderPath(Object orderDocumentId) {
-        return ModalityRoutingUtil.interpolateParamInPath("modifyOrderDocumentId", orderDocumentId, MODIFY_BOOKING_PATH);
     }
 
     public static final class BookEventUiRoute extends UiRouteImpl {
@@ -33,7 +30,7 @@ public final class BookEventRouting {
         }
 
         public static UiRoute<?> uiRoute() {
-            return UiRoute.createRegex(PathBuilder.toRegexOrPath(BOOK_EVENT_PATH, MODIFY_BOOKING_PATH, PAY_BOOKING_PATH, BOOK_EVENT_PATH_DEPRECATED)
+            return UiRoute.createRegex(PathBuilder.toRegexOrPath(BOOK_EVENT_PATH, MODIFY_BOOKING_PATH, PAY_BOOKING_PATH, RESUME_PAYMENT_PATH, BOOK_EVENT_PATH_DEPRECATED)
                     , false
                     , BookEventActivity::new
                     , ViewDomainActivityContextFinal::new

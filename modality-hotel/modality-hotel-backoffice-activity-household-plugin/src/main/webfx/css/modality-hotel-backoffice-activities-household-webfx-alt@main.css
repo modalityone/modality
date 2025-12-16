@@ -1,0 +1,880 @@
+/* Household Dashboard Web CSS */
+
+.loading-message {
+    font-size: 14px;
+    color: #667085;
+    font-weight: 500;
+}
+
+/* Header */
+.header {
+    background-color: white;
+    border-radius: 12px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+}
+
+.h1 {
+    font-size: 28px;
+    font-weight: bold;
+    color: #0096D6;
+}
+
+.date-info {
+    font-size: 13px;
+    color: #667085;
+    font-weight: 500;
+}
+
+.today-indicator {
+    background-color: #E3F2FD;
+    color: #0096D6;
+    border-radius: 12px;
+    font-size: 11px;
+    font-weight: bold;
+}
+
+.today-dot {
+    background-color: #0096D6;
+    border-radius: 50%;
+}
+
+.view-range-control {
+    background-color: #F8F9FA;
+    border-radius: 8px;
+    border-color: #E8E8E8;
+    border-width: 1.5px;
+    border-style: solid;
+}
+
+.view-range-label {
+    font-size: 12px;
+    font-weight: bold;
+    color: #344054;
+}
+
+.days-input {
+    border-color: #D0D5DD;
+    border-width: 1.5px;
+    border-style: solid;
+    border-radius: 6px;
+    font-size: 14px;
+    font-weight: bold;
+    color: #0096D6;
+    background-color: white;
+}
+
+.days-input:focus {
+    border-color: #0096D6;
+    box-shadow: 0 0 0 3px rgba(0, 150, 214, 0.1);
+}
+
+.days-unit {
+    font-size: 12px;
+    font-weight: bold;
+    color: #667085;
+}
+
+.quick-view-btn {
+    border-color: #D0D5DD;
+    border-width: 1.5px;
+    border-style: solid;
+    background-color: white;
+    border-radius: 6px;
+    cursor: pointer;
+    font-size: 11px;
+    font-weight: bold;
+    color: #344054;
+}
+
+.quick-view-btn:hover {
+    border-color: #0096D6;
+    background-color: #F0F9FF;
+    color: #0096D6;
+}
+
+.quick-view-btn.active {
+    background-color: #0096D6;
+    color: white;
+    border-color: #0096D6;
+}
+
+/* Day Section */
+.day-section {
+    background-color: white;
+    border-radius: 12px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+}
+
+.day-section.today {
+    border-color: #0096D6;
+    border-width: 2px;
+    border-style: solid;
+    box-shadow: 0 4px 12px rgba(0, 150, 214, 0.15);
+}
+
+.day-header {
+    border-color: transparent transparent #F0F0F0 transparent;
+    border-width: 0 0 2px 0;
+    border-style: solid;
+}
+
+.day-section.today .day-header {
+    border-color: transparent transparent #0096D6 transparent;
+}
+
+.day-date {
+    font-size: 28px;
+    font-weight: bold;
+    color: #0096D6;
+}
+
+.day-section.today .day-date {
+    color: #0096D6;
+}
+
+.day-name {
+    font-size: 16px;
+    font-weight: bold;
+    color: #838788;
+}
+
+.day-section.today .day-name {
+    color: #0096D6;
+}
+
+.today-badge {
+    background-color: #0096D6;
+    color: white;
+    border-radius: 6px;
+    font-size: 12px;
+    font-weight: bold;
+    /*padding: 4px 12px;*/
+}
+
+.count-badge {
+    background-color: #E8F4F8;
+    color: #0096D6;
+    border-radius: 20px;
+    font-size: 16px;
+    font-weight: bold;
+}
+
+.day-section.today .count-badge {
+    background-color: #0096D6;
+    color: white;
+}
+
+.section-title {
+    font-size: 14px;
+    font-weight: bold;
+    color: #0096D6;
+}
+
+.section-count {
+    background-color: #E8F4F8;
+    color: #0096D6;
+    border-radius: 12px;
+    font-size: 12px;
+}
+
+.section-filter-label {
+    font-size: 10px;
+    font-weight: bold;
+    color: #667085;
+}
+
+.section-filter-btn {
+    border-color: #D0D5DD;
+    border-width: 1.5px;
+    border-style: solid;
+    background-color: white;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 10px;
+    font-weight: bold;
+    color: #344054;
+}
+
+.section-filter-btn:hover {
+    border-color: #0096D6;
+    background-color: #F0F9FF;
+}
+
+.section-filter-btn.active {
+    background-color: #0096D6;
+    color: white;
+    border-color: #0096D6;
+}
+
+/* Room Cards */
+.room-item {
+    background-color: white;
+    border-color: #E8E8E8;
+    border-width: 2px;
+    border-style: solid;
+    border-radius: 8px;
+    cursor: pointer;
+}
+
+.room-item:hover {
+    border-color: #0096D6;
+    box-shadow: 0 4px 12px rgba(0, 150, 214, 0.1);
+}
+
+.room-item.urgent.has-urgency {
+    border-color: #FFA500;
+    background-color: #FFFEF8;
+}
+
+.room-item.danger.has-danger {
+    border-color: #FF6B6B;
+    background-color: #FFF9F9;
+}
+
+.room-item-accent {
+    background-color: transparent;
+    border-radius: 8px 0 0 8px;
+}
+
+.room-item.to-clean-item .room-item-accent {
+    background-color: #0096D6;
+}
+
+.room-item.urgent.has-urgency .room-item-accent {
+    background-color: #FFA500;
+}
+
+.room-item.danger.has-danger .room-item-accent {
+    background-color: #FF6B6B;
+}
+
+.room-number {
+    font-size: 16px;
+    font-weight: bold;
+    color: #0096D6;
+}
+
+.building-tag {
+    border-radius: 4px;
+    font-size: 9px;
+    font-weight: bold;
+}
+
+.building-tag.building-a {
+    background-color: #E3F2FD;
+    color: #1976D2;
+}
+
+.building-tag.building-b {
+    background-color: #F3E5F5;
+    color: #7B1FA2;
+}
+
+.building-tag.building-c {
+    background-color: #FFF3E0;
+    color: #F57C00;
+}
+
+.status-badge {
+    border-radius: 4px;
+    font-size: 9px;
+    font-weight: bold;
+}
+
+.status-badge.to-clean {
+    background-color: #FFF3E0;
+    color: #FF8C00;
+    border-color: #FFE0B2;
+    border-width: 1px;
+    border-style: solid;
+}
+
+.status-badge.checkout-pending {
+    background-color: #FFF9E6;
+    color: #D97706;
+    border-color: #FEF3C7;
+    border-width: 1px;
+    border-style: solid;
+}
+
+.status-badge.to-inspect {
+    background-color: #E0F7FA;
+    color: #00838F;
+    border-color: #B2EBF2;
+    border-width: 1px;
+    border-style: solid;
+}
+
+.next-checkin {
+    font-size: 11px;
+    color: #838788;
+    font-weight: 500;
+}
+
+.next-checkin-date {
+    color: #41BA4D;
+    font-weight: bold;
+}
+
+.next-checkin-urgent {
+    color: #DC2626;
+    font-weight: bold;
+}
+
+.next-checkin-tomorrow {
+    color: #FF6B6B;
+    font-weight: bold;
+}
+
+.section-divider-line {
+    background-color: #E0E0E0;
+}
+
+.section-divider-text {
+    font-size: 13px;
+    font-weight: bold;
+    color: #838788;
+}
+
+/* Arrival Cards */
+.arrival-card {
+    background-color: white;
+    border-color: #E8F4F8;
+    border-width: 2px;
+    border-style: solid;
+    border-radius: 8px;
+}
+
+.arrival-card:hover {
+    border-color: #0096D6;
+    box-shadow: 0 4px 12px rgba(0, 150, 214, 0.15);
+}
+
+.arrival-card.has-special-needs {
+    background-color: #FFFEF8;
+}
+
+.arrival-card.urgent.has-urgency {
+    border-color: #FFA500;
+    background-color: #FFFEF8;
+}
+
+.arrival-card-accent {
+    background-color: #0096D6;
+    border-radius: 8px 0 0 8px;
+}
+
+.arrival-card.has-special-needs .arrival-card-accent {
+    background-color: #FFA500;
+}
+
+.arrival-guest {
+    font-size: 12px;
+    font-weight: 500;
+    color: #666;
+}
+
+.arrival-event {
+    font-size: 11px;
+    color: #0096D6;
+    font-weight: bold;
+}
+
+.special-needs-badge {
+    background-color: #FFF3E0;
+    color: #FF8C00;
+    border-radius: 4px;
+    font-size: 10px;
+    font-weight: bold;
+}
+
+/* Guest Items */
+.guest-item {
+    border-color: #F0F0F0 transparent transparent transparent;
+    border-width: 1px 0 0 0;
+    border-style: solid;
+}
+
+.guest-name-individual {
+    font-size: 11px;
+    font-weight: bold;
+    color: #333;
+}
+
+.guest-event {
+    font-size: 9px;
+    color: #0096D6;
+    font-weight: bold;
+}
+
+.guest-special-needs {
+    background-color: #FFF3E0;
+    color: #FF8C00;
+    border-radius: 4px;
+    font-size: 9px;
+    font-weight: bold;
+}
+
+/* Checkout Cards */
+.checkout-card-normal {
+    background-color: white;
+    border-color: #E8E8E8;
+    border-width: 2px;
+    border-style: solid;
+    border-radius: 8px;
+}
+
+.checkout-card-normal:hover {
+    border-color: #838788;
+    box-shadow: 0 4px 12px rgba(131, 135, 136, 0.15);
+}
+
+.checkout-card-normal-accent {
+    background-color: #838788;
+    border-radius: 8px 0 0 8px;
+}
+
+.checkout-card {
+    background-color: #FFF5F5;
+    border-color: #FFCCCC;
+    border-width: 2px;
+    border-style: solid;
+    border-radius: 8px;
+}
+
+.checkout-card:hover {
+    border-color: #FF6B6B;
+    box-shadow: 0 4px 12px rgba(255, 107, 107, 0.15);
+}
+
+.checkout-card-accent {
+    background-color: #FF6B6B;
+    border-radius: 8px 0 0 8px;
+}
+
+.checkout-guest {
+    font-size: 12px;
+    font-weight: 500;
+    color: #666;
+}
+
+.urgent-warning {
+    background-color: #FF6B6B;
+    color: white;
+    border-radius: 4px;
+    font-size: 10px;
+    font-weight: bold;
+}
+
+/* Partial Checkout */
+.partial-checkout-card {
+    background-color: white;
+    border-color: #E8E8E8;
+    border-width: 2px;
+    border-style: solid;
+    border-radius: 8px;
+}
+
+.partial-checkout-card:hover {
+    border-color: #0096D6;
+    box-shadow: 0 4px 12px rgba(0, 150, 214, 0.15);
+}
+
+.partial-checkout-card-accent {
+    background-color: #0096D6;
+    border-radius: 8px 0 0 8px;
+}
+
+.checkout-info {
+    font-size: 11px;
+    color: #666;
+}
+
+.remaining-guests {
+    font-size: 11px;
+    color: #838788;
+}
+
+/* Empty State */
+.empty-state {
+    background-color: #FAFAFA;
+    border-radius: 12px;
+    /*min-height: 200px;*/
+}
+
+.empty-state-message {
+    font-size: 16px;
+    font-weight: 500;
+    color: #999999;
+    text-align: center;
+}
+
+/* Room Header */
+.room-header-container {
+    /* spacing handled by Java layout */
+}
+
+.room-header {
+    /* spacing and alignment handled by Java layout */
+}
+
+.arrival-room-header {
+    /* spacing and alignment handled by Java layout */
+}
+
+/* Room Type */
+.room-type-text {
+    font-size: 10px;
+    font-weight: 600;
+    color: #838788;
+}
+
+.room-type-badge {
+    border-radius: 4px;
+    font-size: 9px;
+    font-weight: bold;
+    /*padding: 2px 6px;*/
+}
+
+/* Badge Colors */
+.badge {
+    /*padding: 2px 8px;*/
+    border-radius: 4px;
+    font-size: 10px;
+    font-weight: bold;
+}
+
+.badge-light-info {
+    background-color: #E3F2FD;
+    color: #0096D6;
+}
+
+.badge-light-purple {
+    background-color: #F3E5F5;
+    color: #7B1FA2;
+}
+
+.badge-light-gray {
+    background-color: #F5F5F5;
+    color: #667085;
+}
+
+/* Guest Details */
+.guest-details-container {
+    /* spacing handled by Java layout */
+}
+
+.checkout-guest-names {
+    font-size: 11px;
+    font-weight: bold;
+    color: #333;
+}
+
+/* Expand/Collapse */
+.expand-icon {
+    font-size: 10px;
+    color: #0096D6;
+    cursor: pointer;
+}
+
+.expand-link {
+    cursor: pointer;
+    color: #0096D6;
+    font-size: 11px;
+    font-weight: 600;
+}
+
+.expand-link:hover {
+    color: #007AB8;
+}
+
+.partial-checkout-summary-text {
+    font-size: 11px;
+    color: #838788;
+}
+
+/* Person Icon */
+.person-icon {
+    font-size: 12px;
+    color: #838788;
+}
+
+.inline-icon {
+    font-size: 10px;
+}
+
+/* Special Request Badge - Card Header */
+.special-request-badge {
+    background-color: #FFF3E0;
+    color: #E65100;
+    border-radius: 4px;
+    font-size: 9px;
+    font-weight: bold;
+    border-color: #FFE0B2;
+    border-width: 1px;
+    border-style: solid;
+}
+
+/* Special Needs Indicator - Guest Row */
+.special-needs-indicator {
+    font-size: 16px;
+    font-weight: bold;
+    color: #FF9800;
+    cursor: pointer;
+}
+
+.special-needs-indicator:hover {
+    color: #E65100;
+}
+
+/* Action Menu Button */
+.action-menu-button {
+    font-size: 16px;
+    font-weight: bold;
+    color: #667085;
+    cursor: pointer;
+    /*padding: 0 4px;*/
+}
+
+.action-menu-button:hover {
+    color: #0096D6;
+}
+
+/* ============================================================================
+   GANTT VIEW - Navigation Controls
+   ============================================================================ */
+
+/* Filter section labels */
+.gantt-filter-label {
+    font-weight: bold;
+    color: #374151;
+}
+
+/* Navigation button group container */
+.gantt-nav-group {
+    background-color: white;
+    border-radius: 6px;
+    border-color: #E5E7EB;
+    border-width: 1px;
+    border-style: solid;
+}
+
+/* Navigation icon buttons (pan left/right, zoom in/out) */
+.gantt-nav-btn {
+    background-color: transparent;
+    border: none;
+    color: #6B7280;
+    font-size: 16px;
+    cursor: pointer;
+}
+
+.gantt-nav-btn:hover {
+    background-color: #F3F4F6;
+    color: #374151;
+}
+
+.gantt-nav-btn-left {
+    border-radius: 5px 0 0 5px;
+}
+
+.gantt-nav-btn-right {
+    border-radius: 0 5px 5px 0;
+}
+
+/* Zoom reset button (2w) */
+.gantt-zoom-reset-btn {
+    background-color: transparent;
+    border: none;
+    color: #6B7280;
+    font-size: 11px;
+    font-weight: bold;
+    cursor: pointer;
+}
+
+.gantt-zoom-reset-btn:hover {
+    background-color: #F3F4F6;
+    color: #374151;
+}
+
+/* Go to Today button */
+.gantt-today-btn {
+    background-color: #0096D6;
+    color: white;
+    border-radius: 20px;
+    font-weight: bold;
+    font-size: 13px;
+    cursor: pointer;
+    box-shadow: 0 1px 4px rgba(0,0,0,0.1);
+    border: none;
+}
+
+.gantt-today-btn:hover {
+    background-color: #007AB8;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.15);
+}
+
+/* Filter toggle buttons (All, To Clean, etc.) */
+.gantt-filter-btn {
+    background-color: white;
+    color: #6B7280;
+    border-radius: 16px;
+    border-color: #D1D5DB;
+    border-width: 1px;
+    border-style: solid;
+    cursor: pointer;
+}
+
+.gantt-filter-btn:hover {
+    border-color: #0096D6;
+    background-color: #F0F9FF;
+}
+
+.gantt-filter-btn-active {
+    background-color: #9CA3AF;
+    color: white;
+    border-color: #9CA3AF;
+}
+
+.gantt-filter-btn-active:hover {
+    background-color: #6B7280;
+    color: white;
+    border-color: #6B7280;
+}
+
+/* Filter button label inside HBox graphic */
+.gantt-filter-btn-label {
+    color: #6B7280;
+}
+
+.gantt-filter-btn-active .gantt-filter-btn-label {
+    color: white;
+}
+
+.gantt-filter-btn-active:hover .gantt-filter-btn-label {
+    color: white;
+}
+
+/* ============================================================================
+   GANTT VIEW - Cell Factory and Renderers
+   ============================================================================ */
+
+/* Title styling */
+.gantt-title {
+    font-size: 20px;
+    font-weight: bold;
+}
+
+/* Day label in header */
+.gantt-day-label {
+    font-size: 12px;
+    font-weight: 500;
+}
+
+/* Date label in header */
+.gantt-date-label {
+    font-size: 12px;
+    font-weight: 500;
+}
+
+/* Today label badge */
+.gantt-today-label {
+    font-size: 10px;
+}
+
+/* Category/Room type label */
+.gantt-category-label {
+    font-size: 13px;
+    font-weight: 500;
+}
+
+/* Expand/collapse arrow */
+.gantt-expand-arrow {
+    font-size: 14px;
+    color: #333333;
+    font-weight: bold;
+    cursor: pointer;
+}
+
+/* Room name in cell */
+.gantt-room-name {
+    font-size: 13px;
+}
+
+/* Room comment in cell */
+.gantt-room-comment {
+    font-size: 11px;
+    font-style: italic;
+}
+
+/* Bed name in cell */
+.gantt-bed-name {
+    font-size: 12px;
+    font-style: italic;
+}
+
+.gantt-bed-name-overbooking {
+    font-weight: bold;
+}
+
+/* Booking bar label */
+.gantt-bar-label {
+    font-size: 9px;
+    font-weight: bold;
+}
+
+/* Booking bar conflict border */
+.gantt-bar-conflict {
+    border-color: #FF0404;
+    border-width: 2px;
+    border-style: solid;
+}
+
+/* Clickable icon */
+.gantt-clickable-icon {
+    cursor: pointer;
+}
+
+/* Tooltip styling */
+.gantt-tooltip {
+    font-size: 12px;
+}
+
+/* Turnover indicator background */
+.gantt-turnover-bg {
+    background-color: #FFA500;
+    border-radius: 3px;
+}
+
+/* Turnover indicator with shadow */
+.gantt-turnover-indicator {
+    box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+}
+
+/* Filter Toggle Buttons (GWT-compatible replacement for ChoiceBox) */
+.filter-toggle-btn {
+    border-color: #D0D5DD;
+    border-width: 1px;
+    background-color: white;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 11px;
+    font-weight: 600;
+    color: #667085;
+}
+
+.filter-toggle-btn:hover {
+    border-color: #0096D6;
+    background-color: #F0F9FF;
+}
+
+.filter-toggle-active {
+    background-color: #0096D6;
+    color: white;
+    border-color: #0096D6;
+}
+
+.filter-toggle-inactive {
+    background-color: white;
+    color: #667085;
+    border-color: #D0D5DD;
+}

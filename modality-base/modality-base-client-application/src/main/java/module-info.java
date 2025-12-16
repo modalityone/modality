@@ -11,13 +11,12 @@ module modality.base.client.application {
     requires javafx.graphics;
     requires modality.base.client.activity;
     requires modality.base.client.icons;
-    requires modality.base.client.profile.fx;
     requires webfx.extras.action;
     requires webfx.extras.i18n;
     requires webfx.extras.operation;
     requires webfx.extras.operation.action;
-    requires webfx.extras.theme;
     requires webfx.extras.time.format;
+    requires webfx.extras.util.control;
     requires webfx.extras.util.layout;
     requires webfx.extras.util.scene;
     requires webfx.kit.util;

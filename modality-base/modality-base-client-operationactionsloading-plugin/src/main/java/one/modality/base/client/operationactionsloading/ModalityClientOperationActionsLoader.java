@@ -14,12 +14,11 @@ import dev.webfx.platform.conf.ConfigLoader;
 import dev.webfx.platform.console.Console;
 import dev.webfx.platform.meta.Meta;
 import dev.webfx.platform.scheduler.Scheduler;
-import dev.webfx.stack.authz.client.factory.AuthorizationFactory;
 import dev.webfx.stack.authz.client.binder.AuthorizationBinder;
+import dev.webfx.stack.authz.client.factory.AuthorizationFactory;
 import dev.webfx.stack.orm.entity.Entity;
 import dev.webfx.stack.orm.entity.EntityStore;
 import dev.webfx.stack.routing.router.auth.authz.RouteRequest;
-import javafx.scene.control.ProgressIndicator;
 
 import java.util.List;
 
@@ -123,6 +122,7 @@ public final class ModalityClientOperationActionsLoader implements ApplicationMo
                 I18n.refreshMessageTokenProperties(i18nKey);
             }
         });
+        registry.setLoaded(true);
     }
 
     static {
@@ -131,9 +131,7 @@ public final class ModalityClientOperationActionsLoader implements ApplicationMo
             if (operationRequest instanceof RouteRequest) {
                 return null;
             }
-            // Don't inline this variable, otherwise the WebFX CLI won't detect the dependency to javafx-controls
-            ProgressIndicator progressIndicator = Controls.createProgressIndicator(16);
-            return progressIndicator;
+            return Controls.createSpinner(16);
         });
 
         OperationAction.setActionExecutedIconFactory((operationRequest, throwable) -> {

@@ -82,7 +82,7 @@ final class ChangeEmailUI implements MaterialFactoryMixin {
                         })
                         .onSuccess(ignored -> {
                             //Here we send an email
-                            Object emailUpdateCredentials = new InitiateEmailUpdateCredentials(emailField.getText().trim(), WindowLocation.getOrigin(), WindowLocation.getPath(), I18n.getLanguage(), FXLoginContext.getLoginContext());
+                            Object emailUpdateCredentials = new InitiateEmailUpdateCredentials(emailField.getText().trim(), WindowLocation.getOrigin(), WindowLocation.getPath(), I18n.getLanguage(), false, FXLoginContext.getLoginContext());
                             AsyncSpinner.displayButtonSpinner(actionButton);
                             AuthenticationService.authenticate(emailUpdateCredentials)
                                 .inUiThread()
