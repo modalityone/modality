@@ -3,6 +3,7 @@ package one.modality.booking.frontoffice.bookingpage.sections;
 import dev.webfx.extras.i18n.I18n;
 import dev.webfx.extras.i18n.controls.I18nControls;
 import dev.webfx.extras.panes.MonoPane;
+import dev.webfx.extras.webtext.HtmlText;
 import dev.webfx.extras.responsive.ResponsiveDesign;
 import javafx.beans.property.ObjectProperty;
 import javafx.beans.property.SimpleBooleanProperty;
@@ -75,7 +76,7 @@ public class DefaultEventHeaderSection implements HasEventHeaderSection {
     protected Label titleLabel;
     protected Label datesLabel;
     protected Label locationLabel;
-    protected Label descriptionLabel;
+    protected HtmlText descriptionHtmlText;
 
     // === Data ===
     protected WorkingBookingProperties workingBookingProperties;
@@ -154,15 +155,14 @@ public class DefaultEventHeaderSection implements HasEventHeaderSection {
 
         metaBox.getChildren().addAll(datesBox, locationBox);
 
-        // Description - styled via CSS
-        descriptionLabel = new Label();
-        descriptionLabel.setWrapText(true);
-        descriptionLabel.setMinWidth(0); // Allow shrinking for text wrap
-        descriptionLabel.getStyleClass().addAll("bookingpage-text-base", "bookingpage-text-secondary");
-        descriptionLabel.managedProperty().bind(descriptionLabel.textProperty().isNotEmpty());
-        descriptionLabel.visibleProperty().bind(descriptionLabel.textProperty().isNotEmpty());
+        // Description - using HtmlText for HTML content support
+        descriptionHtmlText = new HtmlText();
+        descriptionHtmlText.setMinWidth(0); // Allow shrinking for text wrap
+        descriptionHtmlText.getStyleClass().addAll("bookingpage-text-base", "bookingpage-text-secondary");
+        descriptionHtmlText.managedProperty().bind(descriptionHtmlText.textProperty().isNotEmpty());
+        descriptionHtmlText.visibleProperty().bind(descriptionHtmlText.textProperty().isNotEmpty());
 
-        contentBox.getChildren().addAll(titleLabel, metaBox, descriptionLabel);
+        contentBox.getChildren().addAll(titleLabel, metaBox, descriptionHtmlText);
 
         // Image container (right side) - uses MonoPane for cloud image loading
         imageContainer.setPadding(Insets.EMPTY);
@@ -406,11 +406,8 @@ public class DefaultEventHeaderSection implements HasEventHeaderSection {
             I18nControls.bindI18nProperties(locationLabel, BookingPageI18nKeys.Online);
         }
 
-        // Set description from description field (long description)
-        String longDescription = event.getDescription();
-        if (longDescription != null && !longDescription.isEmpty()) {
-            descriptionLabel.setText(longDescription);
-        }
+        // Set description using longDescriptionLabel (i18n) with fallback to description
+        I18nEntities.bindExpressionToTextProperty(descriptionHtmlText.textProperty(), event, "i18n(coalesce(longDescriptionLabel,description))");
 
         // Load event cover image from cloud
         loadEventImage(event);
