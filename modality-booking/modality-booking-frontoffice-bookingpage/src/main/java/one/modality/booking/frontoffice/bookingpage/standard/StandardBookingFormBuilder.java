@@ -80,6 +80,9 @@ public class StandardBookingFormBuilder {
     // Step skip flags
     private boolean skipMemberSelection = false;
 
+    // Navigation configuration
+    private boolean navigationClickable = true;
+
     /**
      * Creates a new builder for a standard booking form.
      *
@@ -226,6 +229,19 @@ public class StandardBookingFormBuilder {
         return this;
     }
 
+    /**
+     * Sets whether the step progress header circles are clickable for navigation.
+     * When false, users can only navigate using the Next/Back buttons.
+     * Default is true (circles are clickable).
+     *
+     * @param clickable true to allow clicking on step circles, false to disable
+     * @return This builder for chaining
+     */
+    public StandardBookingFormBuilder withNavigationClickable(boolean clickable) {
+        this.navigationClickable = clickable;
+        return this;
+    }
+
     // === Build ===
 
     /**
@@ -256,7 +272,8 @@ public class StandardBookingFormBuilder {
             confirmationPageSupplier,
             callbacks,
             cardPaymentOnly,
-            entryPoint
+            entryPoint,
+            navigationClickable
         );
     }
 }

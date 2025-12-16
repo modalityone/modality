@@ -1,20 +1,20 @@
 package one.modality.booking.frontoffice.bookingpage.sections;
 
+import dev.webfx.extras.i18n.I18n;
 import dev.webfx.extras.i18n.controls.I18nControls;
-import dev.webfx.platform.windowlocation.WindowLocation;
+import dev.webfx.extras.webtext.HtmlText;
+import dev.webfx.kit.util.properties.FXProperties;
 import javafx.beans.property.*;
 import javafx.beans.value.ObservableBooleanValue;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Cursor;
 import javafx.scene.Node;
-import javafx.scene.control.Hyperlink;
 import javafx.scene.control.Label;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Priority;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
-import javafx.scene.text.TextFlow;
 import one.modality.booking.client.workingbooking.WorkingBookingProperties;
 import one.modality.booking.frontoffice.bookingpage.BookingPageI18nKeys;
 import one.modality.booking.frontoffice.bookingpage.components.BookingPageUIBuilder;
@@ -115,47 +115,30 @@ public class DefaultTermsSection implements HasTermsSection {
         // Checkbox indicator
         StackPane checkbox = BookingPageUIBuilder.createCheckboxIndicator(termsAcceptedProperty);
 
-        // Text flow with terms text and link
-        TextFlow textFlow = createTermsTextFlow();
-        HBox.setHgrow(textFlow, Priority.ALWAYS);
+        // HTML text with terms text and link
+        HtmlText htmlText = createTermsHtmlText();
+        HBox.setHgrow(htmlText, Priority.ALWAYS);
 
-        row.getChildren().addAll(checkbox, textFlow);
+        row.getChildren().addAll(checkbox, htmlText);
 
-        // Click on row toggles checkbox (but not on the hyperlink)
-        row.setOnMouseClicked(e -> {
-            if (!(e.getTarget() instanceof Hyperlink)) {
-                termsAcceptedProperty.set(!termsAcceptedProperty.get());
-            }
-        });
+        // Click on row toggles checkbox (HtmlText handles its own link clicks)
+        row.setOnMouseClicked(e -> termsAcceptedProperty.set(!termsAcceptedProperty.get()));
 
         return row;
     }
 
-    protected TextFlow createTermsTextFlow() {
-        TextFlow textFlow = new TextFlow();
+    protected HtmlText createTermsHtmlText() {
+        HtmlText htmlText = new HtmlText();
+        htmlText.getStyleClass().addAll("bookingpage-text-sm", "bookingpage-text-dark");
 
-        // "I have read and accept the "
-        Label prefixLabel = I18nControls.newLabel(BookingPageI18nKeys.AcceptTermsText);
-        prefixLabel.getStyleClass().addAll("bookingpage-text-sm", "bookingpage-text-dark");
+        // Build HTML with link that opens in new window, updating when language changes
+        FXProperties.runNowAndOnPropertiesChange(() -> {
+            String prefix = I18n.getI18nText(BookingPageI18nKeys.AcceptTermsText);
+            String linkText = I18n.getI18nText(BookingPageI18nKeys.TermsLinkText);
+            htmlText.setText(prefix + " <a href=\"https://manjushri.org/booking\" target=\"_blank\" class=\"booking-form-terms-link\">" + linkText + "</a>");
+        }, I18n.dictionaryProperty());
 
-        // Space between prefix and link
-        Label spaceLabel = new Label(" ");
-
-        // "terms and conditions" link
-        Hyperlink termsLink = I18nControls.newHyperlink(BookingPageI18nKeys.TermsLinkText);
-        termsLink.getStyleClass().addAll("booking-form-terms-link", "bookingpage-text-sm");
-        termsLink.setOnAction(e -> openTermsUrl());
-
-        textFlow.getChildren().addAll(prefixLabel, spaceLabel, termsLink);
-        return textFlow;
-    }
-
-    protected void openTermsUrl() {
-        String url = termsUrlProperty.get();
-        if (url != null && !url.isEmpty()) {
-            // Use WindowLocation to open in a new tab (GWT-compatible)
-            WindowLocation.assignHref(url);
-        }
+        return htmlText;
     }
 
     /**

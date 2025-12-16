@@ -418,9 +418,8 @@ public class DefaultEventHeaderSection implements HasEventHeaderSection {
      */
     protected void loadEventImage(Event event) {
         Object language = I18n.getLanguage();
-        ModalityCloudImageService.loadHdpiEventCoverImage(
+        ModalityCloudImageService.loadHdpiEventImage(
                 event,
-                language,
                 -1,
                 IMAGE_REQUEST_HEIGHT,
                 imageContainer,

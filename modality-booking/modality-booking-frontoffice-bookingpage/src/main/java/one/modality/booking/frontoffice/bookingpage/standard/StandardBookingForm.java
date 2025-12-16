@@ -105,6 +105,9 @@ public class StandardBookingForm extends MultiPageBookingForm {
     // Dynamic button text for pending bookings page (changes based on total amount)
     private final StringProperty pendingBookingsButtonText = new SimpleStringProperty();
 
+    // Navigation configuration
+    private final boolean navigationClickable;
+
     /**
      * Package-private constructor - use {@link StandardBookingFormBuilder} to create instances.
      */
@@ -124,9 +127,11 @@ public class StandardBookingForm extends MultiPageBookingForm {
             Supplier<BookingFormPage> confirmationPageSupplier,
             StandardBookingFormCallbacks callbacks,
             boolean cardPaymentOnly,
-            BookingFormEntryPoint entryPoint) {
+            BookingFormEntryPoint entryPoint,
+            boolean navigationClickable) {
 
         super(activity, settings);
+        this.navigationClickable = navigationClickable;
         this.colorScheme = colorScheme;
         this.showUserBadge = showUserBadge;
         this.callbacks = callbacks;
@@ -238,6 +243,7 @@ public class StandardBookingForm extends MultiPageBookingForm {
         ResponsiveStepProgressHeader header = new ResponsiveStepProgressHeader();
         header.setColorScheme(colorScheme);
         header.setShowUserBadge(showUserBadge);
+        header.setNavigationClickable(navigationClickable);
         setHeader(header);
 
         // Set navigation with color scheme

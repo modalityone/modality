@@ -67,6 +67,14 @@ public final class ModalityCloudImageService {
             .recover(error -> loadHdpiImage(defaultLanguageEventCoverImagePath, width, height, imageContainer, noImageNodeGetter));
     }
 
+    public static Future<Image> loadHdpiEventImage(Event event, double width, double height, MonoPane imageContainer, Supplier<Node> noImageNodeGetter) {
+        String eventImagePath = eventImagePath(event);
+        return loadHdpiImage(eventImagePath, width, height, imageContainer, null)
+                .recover(error -> loadHdpiImage(eventImagePath, width, height, imageContainer, noImageNodeGetter));
+    }
+
+
+
     // Image path API
 
     public static String personImagePath(Object personEntityOrId) {

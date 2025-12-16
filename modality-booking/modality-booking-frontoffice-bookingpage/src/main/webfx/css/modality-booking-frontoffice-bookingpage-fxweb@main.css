@@ -1193,13 +1193,13 @@
 }
 
 .bookingpage-checkbox-card:hover {
-    -fx-border-color: #0096D6;
-    -fx-background-color: #F0F9FF;
+    -fx-border-color: -booking-form-hover-border;
+    -fx-background-color: -booking-form-selected-bg;
 }
 
 .bookingpage-checkbox-card.selected {
-    -fx-border-color: #0096D6;
-    -fx-background-color: #F0F9FF;
+    -fx-border-color: -booking-form-primary;
+    -fx-background-color: -booking-form-selected-bg;
 }
 
 /* Radio Card - card with embedded radio on left */
@@ -1213,13 +1213,13 @@
 }
 
 .bookingpage-radio-card:hover {
-    -fx-border-color: #0096D6;
-    -fx-background-color: #F0F9FF;
+    -fx-border-color: -booking-form-hover-border;
+    -fx-background-color: -booking-form-selected-bg;
 }
 
 .bookingpage-radio-card.selected {
-    -fx-border-color: #0096D6;
-    -fx-background-color: #F0F9FF;
+    -fx-border-color: -booking-form-primary;
+    -fx-background-color: -booking-form-selected-bg;
 }
 
 /* Warning/Info Box */
