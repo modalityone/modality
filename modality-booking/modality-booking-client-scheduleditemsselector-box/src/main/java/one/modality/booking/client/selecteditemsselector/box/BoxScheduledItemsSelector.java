@@ -58,14 +58,13 @@ public final class BoxScheduledItemsSelector implements ScheduledItemsSelector {
         this.showDayOfWeek = showDayOfWeek;
         this.showTime = showTime;
 
-        columnsPane.setMaxColumnCount(4);
         columnsPane.setMaxWidth(800);
 
         FXProperties.runOnDoublePropertyChange(width -> {
             double gap = width / 800 * 20;
             columnsPane.setHgap(gap);
             columnsPane.setVgap(gap);
-            columnsPane.setMinColumnWidth(Math.max(100, width / 5));
+            columnsPane.setMinColumnWidth(Math.max(50, width / 8));
             columnsPane.setMinRowHeight(columnsPane.getColWidth() * 0.4);
             double fontFactor = columnsPane.getColWidth() / 200;
             dateFontProperty.set(Font.font(20 * fontFactor));
