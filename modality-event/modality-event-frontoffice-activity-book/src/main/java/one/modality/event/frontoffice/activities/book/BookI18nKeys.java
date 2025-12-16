@@ -4,7 +4,6 @@ package one.modality.event.frontoffice.activities.book;
 public interface BookI18nKeys {
 
     Object AlreadyHaveAccount = "AlreadyHaveAccount";
-//    Object Authorize.net = "Authorize.net";
     Object BookAgain = "BookAgain";
     Object BookingNumber1 = "BookingNumber1";
     Object BookingSubmitted = "BookingSubmitted";
