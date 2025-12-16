@@ -1,6 +1,7 @@
 package one.modality.booking.frontoffice.bookingpage.standard;
 
 import dev.webfx.extras.i18n.I18n;
+import dev.webfx.kit.util.properties.FXProperties;
 import dev.webfx.platform.async.Future;
 import dev.webfx.platform.async.Promise;
 import dev.webfx.platform.console.Console;
@@ -15,6 +16,7 @@ import dev.webfx.stack.orm.entity.EntityStore;
 import javafx.beans.binding.Bindings;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.property.StringProperty;
+import javafx.scene.Node;
 import javafx.scene.layout.Region;
 import javafx.scene.layout.VBox;
 import one.modality.base.shared.entities.*;
@@ -245,13 +247,16 @@ public class StandardBookingForm extends MultiPageBookingForm {
     }
 
     @Override
-    public javafx.scene.Node buildUi() {
-        javafx.scene.Node node = super.buildUi();
+    public Node buildUi() {
+        Node node = super.buildUi();
         // Apply CSS theme class to the root container for CSS variable theming
         // Theme classes like "theme-wisdom-blue" override CSS variables
         if (node != null && colorScheme != null) {
             String themeClass = "theme-" + colorScheme.getId();
             node.getStyleClass().add(themeClass);
+            // Temporary hack to apply the same color on the NKT footer logo by applying the theme globally on the root
+            // node, and see the CSS file applying `-footer-logo-color: -booking-form-primary;`
+            FXProperties.onPropertySet(node.sceneProperty(), scene -> scene.getRoot().getStyleClass().add(themeClass));
         }
         return node;
     }
@@ -323,8 +328,7 @@ public class StandardBookingForm extends MultiPageBookingForm {
         if (entryPoint == BookingFormEntryPoint.RESUME_PAYMENT) {
             // Add 30px spacer at top of header for payment return flow
             BookingFormHeader headerRef = getHeader();
-            if (headerRef != null && headerRef.getView() instanceof VBox) {
-                VBox headerWrapper = (VBox) headerRef.getView();
+            if (headerRef != null && headerRef.getView() instanceof VBox headerWrapper) {
                 Region spacer = new Region();
                 spacer.setMinHeight(30);
                 spacer.setPrefHeight(30);

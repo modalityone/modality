@@ -20,6 +20,7 @@
     -booking-form-primary-dark: #0D47A1;
     -booking-form-selected-bg: #E3F2FD;
     -booking-form-hover-border: #90CAF9;
+    -footer-logo-color: -booking-form-primary;
 }
 
 /* Compassion Rose theme */
@@ -29,6 +30,7 @@
     -booking-form-primary-dark: #880E4F;
     -booking-form-selected-bg: #FCE4EC;
     -booking-form-hover-border: #F48FB1;
+    -footer-logo-color: -booking-form-primary;
 }
 
 /* Peace Purple theme */
@@ -38,6 +40,7 @@
     -booking-form-primary-dark: #4A148C;
     -booking-form-selected-bg: #F3E5F5;
     -booking-form-hover-border: #CE93D8;
+    -footer-logo-color: -booking-form-primary;
 }
 
 /* Joy Amber theme */
@@ -47,6 +50,7 @@
     -booking-form-primary-dark: #E65100;
     -booking-form-selected-bg: #FFF3E0;
     -booking-form-hover-border: #FFB74D;
+    -footer-logo-color: -booking-form-primary;
 }
 
 /* Calm Teal theme */
@@ -56,6 +60,7 @@
     -booking-form-primary-dark: #004D40;
     -booking-form-selected-bg: #E0F2F1;
     -booking-form-hover-border: #80CBC4;
+    -footer-logo-color: -booking-form-primary;
 }
 
 /* Clarity Indigo theme */
@@ -65,6 +70,7 @@
     -booking-form-primary-dark: #1A237E;
     -booking-form-selected-bg: #E8EAF6;
     -booking-form-hover-border: #9FA8DA;
+    -footer-logo-color: -booking-form-primary;
 }
 
 /* Vajrayogini Red theme */
@@ -74,6 +80,7 @@
     -booking-form-primary-dark: #B71C1C;
     -booking-form-selected-bg: #FFEBEE;
     -booking-form-hover-border: #EF5350;
+    -footer-logo-color: -booking-form-primary;
 }
 
 /* Vajrasattva White theme */
@@ -83,6 +90,7 @@
     -booking-form-primary-dark: #263238;
     -booking-form-selected-bg: #FAFAFA;
     -booking-form-hover-border: #78909C;
+    -footer-logo-color: -booking-form-primary;
 }
 
 /* ==========================================
