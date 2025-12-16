@@ -9,6 +9,8 @@ import one.modality.event.frontoffice.eventheader.EventHeader;
  */
 public final class EventBookingFormSettingsBuilder {
 
+    private static final boolean NAVIGATION_CLICKABLE_DEFAULT = true;
+
     private final Event event;
     private EventHeader eventHeader;
     private Background headerBackground;
@@ -20,6 +22,7 @@ public final class EventBookingFormSettingsBuilder {
     private boolean showPriceBar;
     private boolean bookAsAGuestAllowed;
     private boolean partialEventAllowed;
+    private boolean navigationClickable = NAVIGATION_CLICKABLE_DEFAULT;
 
     public EventBookingFormSettingsBuilder(Event event) {
         this.event = event;
@@ -70,8 +73,6 @@ public final class EventBookingFormSettingsBuilder {
         this.showPriceBar = showPriceBar;
         return this;
     }
-
-    private boolean navigationClickable = true;
 
     public EventBookingFormSettingsBuilder setNavigationClickable(boolean navigationClickable) {
         this.navigationClickable = navigationClickable;
