@@ -68,7 +68,7 @@ public class ResponsiveStepProgressHeader implements BookingFormHeader {
     private final IntegerProperty currentStepIndexProperty = new SimpleIntegerProperty(-1);
     private final ObjectProperty<BookingFormColorScheme> colorScheme = new SimpleObjectProperty<>(BookingFormColorScheme.DEFAULT);
 
-    private boolean navigationClickable = true;
+    private boolean navigationClickable;
     private boolean showUserBadge = false; // Whether to show the user badge (default: hidden)
     private boolean stepsNeedRebuild = true; // Track if steps need rebuilding when WorkingBooking is loaded
     private final List<StepInfo> steps = new ArrayList<>();
@@ -732,15 +732,13 @@ public class ResponsiveStepProgressHeader implements BookingFormHeader {
 
             stepItem.getChildren().addAll(bubble, label);
 
-            if (navigationClickable) {
-                stepItem.setCursor(Cursor.HAND);
-                final int pageIndex = step.pageIndex;
-                stepItem.setOnMouseClicked(e -> {
-                    if (bookingForm != null) {
-                        bookingForm.navigateToPage(pageIndex);
-                    }
-                });
-            }
+            stepItem.setCursor(Cursor.HAND);
+            final int pageIndex = step.pageIndex;
+            stepItem.setOnMouseClicked(e -> {
+                if (navigationClickable && bookingForm != null) {
+                    bookingForm.navigateToPage(pageIndex);
+                }
+            });
 
             stepsRow.getChildren().add(stepItem);
 
