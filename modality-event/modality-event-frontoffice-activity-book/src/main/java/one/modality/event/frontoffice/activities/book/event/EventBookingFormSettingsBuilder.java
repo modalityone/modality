@@ -9,7 +9,7 @@ import one.modality.event.frontoffice.eventheader.EventHeader;
  */
 public final class EventBookingFormSettingsBuilder {
 
-    private static final boolean NAVIGATION_CLICKABLE_DEFAULT = true;
+    private static final boolean NAVIGATION_CLICKABLE_DEFAULT = false;
 
     private final Event event;
     private EventHeader eventHeader;
