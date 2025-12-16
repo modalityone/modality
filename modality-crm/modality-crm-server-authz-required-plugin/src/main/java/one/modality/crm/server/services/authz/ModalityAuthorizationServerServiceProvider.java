@@ -56,7 +56,7 @@ public final class ModalityAuthorizationServerServiceProvider implements Authori
                 .map(operations -> grantOperations(operations, new StringBuilder()).toString()),
             // Loading operations and rules granted to the user
             entityStore.<AuthorizationOrganizationUserAccess>executeQuery(
-                    "select organization.id,event.id,role.id from AuthorizationOrganizationUserAccess where user.email=$1 order by organization.id,event.id", userEmail)
+                    "select organization.id,event.id,role.id from AuthorizationOrganizationUserAccess where user.email=$1 order by organization.id,event..id", userEmail)
                 .compose(userAccesses -> {
                     int n = userAccesses.size();
                     return new Batch<>(userAccesses.toArray(new AuthorizationOrganizationUserAccess[n]))
@@ -71,7 +71,11 @@ public final class ModalityAuthorizationServerServiceProvider implements Authori
                                 AuthorizationOrganizationUserAccess userAccess = userAccesses.get(i);
                                 EntityList<Operation> operations = batch.get(i).resultAt(0);
                                 EntityList<AuthorizationRule> rules = batch.get(i).resultAt(1);
-                                sb.append("context:organizationId=").append(Entities.getPrimaryKey(userAccess.getOrganizationId())).append(",eventId=").append(Entities.getPrimaryKey(userAccess.getEventId())).append("\n");
+                                sb.append("context:organizationId=").append(Entities.getPrimaryKey(userAccess.getOrganizationId()));
+                                Object eventId = Entities.getPrimaryKey(userAccess.getEventId());
+                                if (eventId != null)
+                                    sb.append(",eventId=").append(eventId);
+                                sb.append("\n");
                                 grantOperations(operations, sb);
                                 rules.forEach(rule -> sb.append(rule.getRule()).append("\n"));
                             }
