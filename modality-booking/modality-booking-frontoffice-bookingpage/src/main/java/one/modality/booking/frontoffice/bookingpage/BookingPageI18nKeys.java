@@ -50,6 +50,8 @@ public interface BookingPageI18nKeys {
     Object BookingNumberPrefix = "BookingNumberPrefix";
     Object BookingReference = "BookingReference";
     Object BookingReferences = "BookingReferences";
+    Object BookingSubmitted = "BookingSubmitted";
+    Object BookingSubmittedMessage = "BookingSubmittedMessage";
     Object BookingSummary = "BookingSummary";
     Object BookingTotal = "BookingTotal";
     Object BookingsClosed = "BookingsClosed";
@@ -73,6 +75,8 @@ public interface BookingPageI18nKeys {
     Object ChooseYourAmount = "ChooseYourAmount";
     Object CompletePayment = "CompletePayment";
     Object CompleteYourInformationToContinue = "CompleteYourInformationToContinue";
+    Object ConfirmBooking = "ConfirmBooking";
+    Object ConfirmBookingArrow = "ConfirmBookingArrow";
     Object Confirmation = "Confirmation";
     Object ConfirmationEmailSent = "ConfirmationEmailSent";
     Object ConfirmationLetterDesc = "ConfirmationLetterDesc";
@@ -225,6 +229,7 @@ public interface BookingPageI18nKeys {
     Object StatusInProgress = "StatusInProgress";
     Object StatusUpcoming = "StatusUpcoming";
     Object StepPrefix = "StepPrefix";
+    Object StepXOfY = "StepXOfY";
     Object SubmitRegistration = "SubmitRegistration";
     Object Summary = "Summary";
     Object TermsAndConditions = "TermsAndConditions";

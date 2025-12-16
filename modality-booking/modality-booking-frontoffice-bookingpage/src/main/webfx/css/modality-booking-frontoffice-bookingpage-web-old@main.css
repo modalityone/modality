@@ -1726,6 +1726,51 @@ fx-textfield.bookingpage-digit-field input {
 }
 
 /* ==========================================
+   GP Class Date Card - Already Booked Badge
+   ========================================== */
+
+/* Already Booked Badge - Subtle themed style */
+.gpclass-booked-badge {
+    background-color: var(--booking-form-selected-bg);
+    --fx-border-color: var(--booking-form-hover-border);
+    --fx-border-width: 1px;
+    --fx-border-style: solid;
+    --fx-border-radius: 4px;
+    font-size: 9px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.3px;
+}
+
+.gpclass-booked-badge fx-text {
+    color: var(--booking-form-primary);
+}
+
+/* Locked date card styling - already booked, non-interactive */
+.gpclass-date-card.locked {
+    cursor: default;
+    pointer-events: none;
+}
+
+/* Locked cards keep selected appearance, no hover changes */
+.gpclass-date-card.locked:hover {
+    background-color: var(--booking-form-primary);
+    --fx-border-color: var(--booking-form-primary);
+}
+
+/* Badge on selected/locked card - semi-transparent for contrast */
+.gpclass-date-card.selected .gpclass-booked-badge,
+.gpclass-date-card.locked .gpclass-booked-badge {
+    background-color: rgba(255, 255, 255, 0.2);
+    --fx-border-color: rgba(255, 255, 255, 0.3);
+}
+
+.gpclass-date-card.selected .gpclass-booked-badge fx-text,
+.gpclass-date-card.locked .gpclass-booked-badge fx-text {
+    color: white;
+}
+
+/* ==========================================
    User Badge Dropdown Styling
    ========================================== */
 

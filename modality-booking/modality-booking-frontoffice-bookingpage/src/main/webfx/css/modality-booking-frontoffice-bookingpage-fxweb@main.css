@@ -2028,3 +2028,99 @@
 .gpclass-price-summary-divider {
     -fx-background-color: #dee2e6;
 }
+
+/* ==========================================
+   GP Class Date Card - Already Booked Badge
+   ========================================== */
+
+/* Already Booked Badge - Subtle themed style */
+.gpclass-booked-badge {
+    -fx-background-color: -booking-form-selected-bg;
+    -fx-border-color: -booking-form-hover-border;
+    -fx-border-width: 1;
+    -fx-border-radius: 4;
+    -fx-background-radius: 4;
+    -fx-font-size: 9;
+    -fx-font-weight: 600;
+    -fx-text-fill: -booking-form-primary;
+}
+
+/* Locked date card styling - already booked, non-interactive */
+.gpclass-date-card.locked {
+    -fx-cursor: default;
+}
+
+/* Locked cards keep selected appearance, no hover changes */
+.gpclass-date-card.locked:hover {
+    -fx-background-color: -booking-form-primary;
+    -fx-border-color: -booking-form-primary;
+}
+
+/* Badge on selected/locked card - semi-transparent for contrast */
+.gpclass-date-card.selected .gpclass-booked-badge,
+.gpclass-date-card.locked .gpclass-booked-badge {
+    -fx-background-color: rgba(255, 255, 255, 0.2);
+    -fx-border-color: rgba(255, 255, 255, 0.3);
+    -fx-text-fill: white;
+}
+
+/* ==========================================
+   User Badge Component (Step Progress Header)
+   ========================================== */
+
+/* User badge container - pill shape with theme colors */
+.booking-form-user-badge-content {
+    -fx-background-color: -booking-form-selected-bg;
+    -fx-background-radius: 22;
+    -fx-border-color: -booking-form-primary;
+    -fx-border-radius: 22;
+    -fx-border-width: 1;
+}
+
+/* User badge dropdown container */
+.booking-form-user-dropdown {
+    -fx-background-color: white;
+    -fx-background-radius: 12;
+    -fx-border-color: #E6E7E7;
+    -fx-border-radius: 12;
+    -fx-border-width: 1;
+    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.15), 10, 0, 0, 4);
+}
+
+/* User info header in dropdown */
+.booking-form-user-dropdown-header {
+    -fx-background-color: #FAFBFC;
+    -fx-background-radius: 12 12 0 0;
+    -fx-border-color: #E6E7E7;
+    -fx-border-width: 0 0 1 0;
+}
+
+/* Logout button styling */
+.booking-form-logout-btn {
+    -fx-background-color: transparent;
+    -fx-text-fill: #dc3545;
+    -fx-cursor: hand;
+}
+
+.booking-form-logout-btn:hover {
+    -fx-background-color: #dc3545;
+    -fx-text-fill: white;
+}
+
+/* Progress dot - base styling */
+.booking-form-step-dot {
+    -fx-background-color: #D1D5DB;
+    -fx-background-radius: 5;
+}
+
+/* Progress dot - active state (wider pill shape, uses theme color) */
+.booking-form-step-dot-active {
+    -fx-background-color: -booking-form-primary;
+    -fx-background-radius: 5;
+}
+
+/* Progress dot - completed state (uses theme color) */
+.booking-form-step-dot-completed {
+    -fx-background-color: -booking-form-primary;
+    -fx-background-radius: 5;
+}

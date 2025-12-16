@@ -111,16 +111,29 @@ public class DefaultConfirmationSection implements HasConfirmationSection {
         checkCircle.getChildren().add(checkmark);
         VBox.setMargin(checkCircle, new Insets(0, 0, 24, 0));
 
-        // Title
-        Label titleLabel = I18nControls.newLabel(BookingPageI18nKeys.PaymentConfirmed);
+        // Title - dynamic based on payment status
+        Label titleLabel;
+        if (paidAmount <= 0) {
+            // No payment - show "Booking Submitted"
+            titleLabel = I18nControls.newLabel(BookingPageI18nKeys.BookingSubmitted);
+        } else {
+            // Payment made - show "Payment Confirmed"
+            titleLabel = I18nControls.newLabel(BookingPageI18nKeys.PaymentConfirmed);
+        }
         titleLabel.getStyleClass().addAll("bookingpage-text-3xl", "bookingpage-font-bold", "bookingpage-text-primary");
         VBox.setMargin(titleLabel, new Insets(0, 0, 12, 0));
 
-        // Subtitle
-        String email = confirmedBookings.isEmpty() ? "" : confirmedBookings.get(0).getEmail();
-        String formattedAmount = PriceFormatter.formatPriceWithCurrencyNoDecimals(paidAmount);
+        // Subtitle - dynamic based on payment status
         Label subtitleLabel = new Label();
-        I18nControls.bindI18nProperties(subtitleLabel, BookingPageI18nKeys.PaymentConfirmedMessage, formattedAmount, email);
+        if (paidAmount <= 0) {
+            // No payment - show generic booking submitted message
+            I18nControls.bindI18nProperties(subtitleLabel, BookingPageI18nKeys.BookingSubmittedMessage);
+        } else {
+            // Payment made - show payment confirmed message with amount and email
+            String email = confirmedBookings.isEmpty() ? "" : confirmedBookings.get(0).getEmail();
+            String formattedAmount = PriceFormatter.formatPriceWithCurrencyNoDecimals(paidAmount);
+            I18nControls.bindI18nProperties(subtitleLabel, BookingPageI18nKeys.PaymentConfirmedMessage, formattedAmount, email);
+        }
         subtitleLabel.getStyleClass().addAll("bookingpage-text-md", "bookingpage-text-muted");
         subtitleLabel.setWrapText(true);
         subtitleLabel.setAlignment(Pos.CENTER);

@@ -13,6 +13,8 @@ import dev.webfx.stack.orm.entity.Entities;
 import dev.webfx.stack.orm.entity.EntityList;
 import dev.webfx.stack.orm.entity.EntityStore;
 import javafx.beans.binding.Bindings;
+import javafx.beans.property.SimpleStringProperty;
+import javafx.beans.property.StringProperty;
 import javafx.scene.layout.Region;
 import javafx.scene.layout.VBox;
 import one.modality.base.shared.entities.*;
@@ -90,12 +92,16 @@ public class StandardBookingForm extends MultiPageBookingForm {
     private DefaultMemberSelectionSection defaultMemberSelectionSection;
     private DefaultSummarySection defaultSummarySection;
     private DefaultPendingBookingsSection defaultPendingBookingsSection;
+    private DefaultTermsSection defaultTermsSection;
     private DefaultPaymentSection defaultPaymentSection;
     private DefaultConfirmationSection defaultConfirmationSection;
 
     // Stored new user info for payment/confirmation flow (persists after submission clears state)
     private String storedNewUserName;
     private String storedNewUserEmail;
+
+    // Dynamic button text for pending bookings page (changes based on total amount)
+    private final StringProperty pendingBookingsButtonText = new SimpleStringProperty();
 
     /**
      * Package-private constructor - use {@link StandardBookingFormBuilder} to create instances.
@@ -281,8 +287,11 @@ public class StandardBookingForm extends MultiPageBookingForm {
     protected BookingFormPage createDefaultPendingBookingsPage() {
         defaultPendingBookingsSection = new DefaultPendingBookingsSection();
         defaultPendingBookingsSection.setColorScheme(colorScheme);
+        defaultTermsSection = new DefaultTermsSection();
+        defaultTermsSection.setColorScheme(colorScheme);
         return new CompositeBookingFormPage(BookingPageI18nKeys.PendingBookings,
-                defaultPendingBookingsSection)
+                defaultPendingBookingsSection,
+                defaultTermsSection)
             .setStep(true);
     }
 
@@ -496,6 +505,10 @@ public class StandardBookingForm extends MultiPageBookingForm {
             defaultPendingBookingsSection.setOnRegisterAnotherPerson(this::handleRegisterAnotherPerson);
             defaultPendingBookingsSection.setOnProceedToPayment(this::handleProceedToPayment);
             defaultPendingBookingsSection.setOnBackPressed(this::navigateToSummary);
+            // Update button text when bookings change (to switch between "Proceed to Payment" and "Confirm Booking")
+            defaultPendingBookingsSection.getBookings().addListener((javafx.collections.ListChangeListener<HasPendingBookingsSection.BookingItem>) change -> {
+                updatePendingBookingsButtonText();
+            });
         }
 
         // Payment section
@@ -529,9 +542,13 @@ public class StandardBookingForm extends MultiPageBookingForm {
             );
         }
 
-        // Pending Bookings page: Register Another Person + Proceed to Payment
+        // Pending Bookings page: Register Another Person + Proceed to Payment (or Confirm Booking if price is zero)
         // Register Another Person is disabled when no available members to book
+        // Proceed to Payment/Confirm Booking is disabled when terms are not accepted
         if (pendingBookingsPage instanceof CompositeBookingFormPage compositePending) {
+            // Initialize button text based on total (will be updated when bookings change)
+            updatePendingBookingsButtonText();
+
             compositePending.setButtons(
                 new BookingFormButton(BookingPageI18nKeys.RegisterAnotherPerson,
                     e -> handleRegisterAnotherPerson(),
@@ -539,9 +556,13 @@ public class StandardBookingForm extends MultiPageBookingForm {
                     defaultMemberSelectionSection != null
                         ? Bindings.not(defaultMemberSelectionSection.hasAvailableMembersProperty())
                         : null),
-                new BookingFormButton(BookingPageI18nKeys.ProceedToPaymentArrow,
-                    e -> handleProceedToPayment(),
-                    "btn-primary booking-form-btn-primary")
+                // Use dynamic button text that changes based on total amount
+                new BookingFormButton(pendingBookingsButtonText,
+                    e -> handleProceedToPaymentOrConfirm(),
+                    "btn-primary booking-form-btn-primary",
+                    defaultTermsSection != null
+                        ? Bindings.not(defaultTermsSection.termsAcceptedProperty())
+                        : null)
             );
         }
 
@@ -569,14 +590,12 @@ public class StandardBookingForm extends MultiPageBookingForm {
     // === Summary Page Handlers ===
 
     private void handleSummaryBack() {
-        // Go back to Member Selection if available, otherwise Your Information
-        if (memberSelectionPage != null) {
-            // Allow member reselection when going back
-            state.setAllowMemberReselection(true);
-            navigateToMemberSelection();
-        } else {
-            navigateToYourInformation();
-        }
+        // Allow member reselection when going back (if Member Selection is applicable)
+        state.setAllowMemberReselection(true);
+        // Use navigateToPreviousPage() which respects isApplicableToBooking()
+        // For existing bookings: skips Member Selection and Your Information, goes to Select Classes
+        // For new bookings: goes to Member Selection (if logged in) or Your Information
+        navigateToPreviousPage();
     }
 
     private Future<?> handleSummaryContinueAsync() {
@@ -1161,6 +1180,69 @@ public class StandardBookingForm extends MultiPageBookingForm {
         navigateToPayment();
     }
 
+    /**
+     * Handles the "Proceed to Payment" or "Confirm Booking" button on the pending bookings page.
+     * If the total is zero, skips payment and goes directly to confirmation.
+     * Otherwise, proceeds to the payment page.
+     */
+    private void handleProceedToPaymentOrConfirm() {
+        int total = defaultPendingBookingsSection != null ? defaultPendingBookingsSection.getTotalAmount() : 0;
+
+        if (total <= 0) {
+            // Zero price - skip payment and go directly to confirmation
+            updateConfirmationForZeroPrice();
+            navigateToConfirmation();
+        } else {
+            // Normal flow - proceed to payment
+            handleProceedToPayment();
+        }
+    }
+
+    /**
+     * Updates the button text on the pending bookings page based on whether payment is required.
+     * Called when bookings change or on initialization.
+     */
+    private void updatePendingBookingsButtonText() {
+        int total = defaultPendingBookingsSection != null ? defaultPendingBookingsSection.getTotalAmount() : 0;
+
+        if (total <= 0) {
+            // Zero price - show "Confirm Booking" button
+            I18n.bindI18nTextProperty(pendingBookingsButtonText, BookingPageI18nKeys.ConfirmBookingArrow);
+        } else {
+            // Payment required - show "Proceed to Payment" button
+            I18n.bindI18nTextProperty(pendingBookingsButtonText, BookingPageI18nKeys.ProceedToPaymentArrow);
+        }
+    }
+
+    /**
+     * Updates the confirmation section for a zero-price booking (no payment required).
+     */
+    private void updateConfirmationForZeroPrice() {
+        if (defaultConfirmationSection == null) return;
+
+        defaultConfirmationSection.clearConfirmedBookings();
+
+        // Add confirmed bookings from pending bookings section
+        if (defaultPendingBookingsSection != null) {
+            for (HasPendingBookingsSection.BookingItem booking : defaultPendingBookingsSection.getBookings()) {
+                defaultConfirmationSection.addConfirmedBooking(new HasConfirmationSection.ConfirmedBooking(
+                    booking.getPersonName(),
+                    booking.getPersonEmail(),
+                    booking.getBookingReference()));
+            }
+        }
+
+        // Set event info
+        Event event = getEvent();
+        if (event != null) {
+            defaultConfirmationSection.setEventName(event.getName());
+            defaultConfirmationSection.setEventDates(event.getStartDate(), event.getEndDate());
+        }
+
+        // Set payment amounts (both zero for free booking)
+        defaultConfirmationSection.setPaymentAmounts(0, 0);
+    }
+
     private Future<Void> handlePaymentSubmit(HasPaymentSection.PaymentResult sectionResult) {
 
         // Converting into paymentAllocations (required for InitiatePaymentArgument)
@@ -1227,6 +1309,30 @@ public class StandardBookingForm extends MultiPageBookingForm {
         } else if (newUser != null) {
             defaultSummarySection.setAttendeeName(newUser.firstName + " " + newUser.lastName);
             defaultSummarySection.setAttendeeEmail(newUser.email);
+        } else {
+            // Fallback for modifications: get from WorkingBooking document
+            WorkingBookingProperties props = state.getWorkingBookingProperties();
+            WorkingBooking wb = props != null ? props.getWorkingBooking() : null;
+            if (wb != null) {
+                Document doc = wb.getDocument();
+                if (doc != null) {
+                    // Document has direct firstName/lastName/email via EntityHasPersonalDetailsCopy
+                    String firstName = doc.getFirstName();
+                    String lastName = doc.getLastName();
+                    StringBuilder name = new StringBuilder();
+                    if (firstName != null) name.append(firstName);
+                    if (lastName != null) {
+                        if (name.length() > 0) name.append(" ");
+                        name.append(lastName);
+                    }
+                    if (name.length() > 0) {
+                        defaultSummarySection.setAttendeeName(name.toString());
+                    }
+                    if (doc.getEmail() != null) {
+                        defaultSummarySection.setAttendeeEmail(doc.getEmail());
+                    }
+                }
+            }
         }
 
         // Set event info
@@ -1489,9 +1595,18 @@ public class StandardBookingForm extends MultiPageBookingForm {
     }
 
     public void navigateToFirstCustomStep() {
-        if (!customStepPages.isEmpty()) {
-            navigateTo(customStepPages.get(0));
+        // Find the first applicable custom step page
+        // This is important when the first page may not be applicable (e.g., ExistingBookingSection
+        // is only applicable for existing bookings, not new ones)
+        WorkingBooking workingBooking = getWorkingBooking();
+        for (BookingFormPage page : customStepPages) {
+            if (page.isApplicableToBooking(workingBooking)) {
+                navigateTo(page);
+                return;
+            }
         }
+        // If no custom step is applicable, continue to the standard pages
+        navigateToNextPage();
     }
 
     public void navigateToYourInformation() {
@@ -1505,6 +1620,7 @@ public class StandardBookingForm extends MultiPageBookingForm {
     }
 
     public void navigateToSummary() {
+        updateSummaryWithAttendee();
         navigateTo(summaryPage);
     }
 
@@ -1528,7 +1644,8 @@ public class StandardBookingForm extends MultiPageBookingForm {
 
     /**
      * Called from custom steps to continue to the next standard step.
-     * Handles checking if user is already logged in.
+     * Uses navigateToNextPage() which respects isApplicableToBooking() to skip
+     * non-applicable pages (e.g., Your Information and Member Selection for existing bookings).
      *
      * @return Future that completes when the navigation is ready (including any async loading)
      */
@@ -1536,13 +1653,21 @@ public class StandardBookingForm extends MultiPageBookingForm {
         Person userPerson = FXUserPerson.getUserPerson();
 
         if (userPerson != null) {
-            // User already logged in - load members and go to member selection
-            return handleLoginSuccessAsync(userPerson);
-        } else {
-            // Not logged in - go to Your Information
-            navigateToYourInformation();
-            return Future.succeededFuture();
+            // User already logged in - update state and pre-load members (in case member selection is applicable)
+            state.setLoggedInPerson(userPerson);
+            if (callbacks != null) {
+                callbacks.onAfterLogin();
+            }
+            Event event = getEvent();
+            if (defaultMemberSelectionSection != null) {
+                // Pre-load household members, then navigate to next applicable page
+                return HouseholdMemberLoader.loadMembersAsync(userPerson, defaultMemberSelectionSection, event)
+                    .onSuccess(v -> UiScheduler.runInUiThread(this::navigateToNextPage));
+            }
         }
+        // Not logged in, or no member selection section - just navigate to next applicable page
+        navigateToNextPage();
+        return Future.succeededFuture();
     }
 
     // === Accessors ===

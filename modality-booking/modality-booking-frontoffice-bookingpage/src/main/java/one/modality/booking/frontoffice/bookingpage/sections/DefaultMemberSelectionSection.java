@@ -15,6 +15,7 @@ import javafx.scene.control.Label;
 import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.SVGPath;
+import one.modality.booking.client.workingbooking.WorkingBooking;
 import one.modality.booking.client.workingbooking.WorkingBookingProperties;
 import one.modality.booking.frontoffice.bookingpage.BookingPageI18nKeys;
 import one.modality.booking.frontoffice.bookingpage.components.BookingPageUIBuilder;
@@ -458,6 +459,17 @@ public class DefaultMemberSelectionSection implements HasMemberSelectionSection 
     @Override
     public ObservableBooleanValue validProperty() {
         return validProperty;
+    }
+
+    /**
+     * This section is only applicable for new bookings where user needs to select a household member.
+     * For existing bookings, the member selection is handled in the ExistingBookingSection.
+     */
+    @Override
+    public boolean isApplicableToBooking(WorkingBooking workingBooking) {
+        // Skip for existing bookings - member already selected
+        // Show for new bookings - user needs to choose who to book for
+        return workingBooking == null || workingBooking.isNewBooking();
     }
 
     // ========================================

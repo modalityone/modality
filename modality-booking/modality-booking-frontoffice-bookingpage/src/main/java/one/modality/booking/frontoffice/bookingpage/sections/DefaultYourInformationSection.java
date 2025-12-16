@@ -34,6 +34,7 @@ import javafx.scene.text.FontWeight;
 import javafx.scene.text.Text;
 import javafx.util.Duration;
 import one.modality.base.shared.entities.Person;
+import one.modality.booking.client.workingbooking.WorkingBooking;
 import one.modality.booking.client.workingbooking.WorkingBookingProperties;
 import one.modality.booking.frontoffice.bookingpage.BookingPageI18nKeys;
 import one.modality.booking.frontoffice.bookingpage.components.BookingPageUIBuilder;
@@ -1659,6 +1660,24 @@ public class DefaultYourInformationSection implements HasYourInformationSection 
     @Override
     public ObservableBooleanValue validProperty() {
         return validProperty;
+    }
+
+    /**
+     * This section is only applicable for new bookings where user needs to login/register.
+     * For existing bookings or when user is already logged in, this section is skipped.
+     */
+    @Override
+    public boolean isApplicableToBooking(WorkingBooking workingBooking) {
+        // Skip for existing bookings - user is already logged in and member already selected
+        if (workingBooking != null && !workingBooking.isNewBooking()) {
+            return false;
+        }
+        // Skip if user is already logged in
+        if (FXUserPerson.getUserPerson() != null) {
+            return false;
+        }
+        // Show for new bookings where user is not logged in
+        return true;
     }
 
     // ========================================

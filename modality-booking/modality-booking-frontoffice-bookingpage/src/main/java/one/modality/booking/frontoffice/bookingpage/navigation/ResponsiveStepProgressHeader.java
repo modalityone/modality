@@ -26,8 +26,10 @@ import javafx.scene.text.Font;
 import javafx.scene.text.FontWeight;
 import javafx.scene.text.TextAlignment;
 import one.modality.base.shared.entities.Person;
+import one.modality.booking.client.workingbooking.WorkingBooking;
 import one.modality.booking.frontoffice.bookingpage.BookingFormHeader;
 import one.modality.booking.frontoffice.bookingpage.BookingFormPage;
+import one.modality.booking.frontoffice.bookingpage.BookingPageI18nKeys;
 import one.modality.booking.frontoffice.bookingpage.MultiPageBookingForm;
 import one.modality.booking.frontoffice.bookingpage.theme.BookingFormColorScheme;
 import one.modality.crm.shared.services.authn.fx.FXUserPerson;
@@ -68,6 +70,7 @@ public class ResponsiveStepProgressHeader implements BookingFormHeader {
 
     private boolean navigationClickable = true;
     private boolean showUserBadge = false; // Whether to show the user badge (default: hidden)
+    private boolean stepsNeedRebuild = true; // Track if steps need rebuilding when WorkingBooking is loaded
     private final List<StepInfo> steps = new ArrayList<>();
     private ResponsiveDesign responsiveDesign;
 
@@ -226,15 +229,11 @@ public class ResponsiveStepProgressHeader implements BookingFormHeader {
 
         userBadgeContent.getChildren().addAll(initialsPane, nameLabel, chevron);
 
-        // Update badge styling - uses selectedBg background with primary border from scheme
-        userBadgeContent.getStyleClass().add("booking-form-user-badge-content");
-        userBadgeContent.setStyle(
-            "-fx-background-color: " + toHexString(selectedBgColor) + ";" +
-            "-fx-background-radius: 22;" +
-            "-fx-border-color: " + toHexString(primaryColor) + ";" +
-            "-fx-border-radius: 22;" +
-            "-fx-border-width: 1;"
-        );
+        // Update badge styling - uses CSS class with theme variables
+        // Note: CSS class "booking-form-user-badge-content" uses -booking-form-selected-bg and -booking-form-primary
+        if (!userBadgeContent.getStyleClass().contains("booking-form-user-badge-content")) {
+            userBadgeContent.getStyleClass().add("booking-form-user-badge-content");
+        }
     }
 
     /**
@@ -269,23 +268,15 @@ public class ResponsiveStepProgressHeader implements BookingFormHeader {
 
         BookingFormColorScheme scheme = colorScheme.get();
 
-        // Build dropdown content
+        // Build dropdown content - uses CSS class for styling
         VBox dropdownContent = new VBox();
         dropdownContent.getStyleClass().add("booking-form-user-dropdown");
-        dropdownContent.setStyle(
-            "-fx-background-color: white;" +
-            "-fx-background-radius: 12;" +
-            "-fx-border-color: #E6E7E7;" +
-            "-fx-border-radius: 12;" +
-            "-fx-border-width: 1;" +
-            "-fx-effect: dropshadow(gaussian, rgba(0,0,0,0.15), 10, 0, 0, 4);"
-        );
         dropdownContent.setMinWidth(220);
 
-        // User info header
+        // User info header - uses CSS class for styling
         VBox userInfo = new VBox(4);
         userInfo.setPadding(new Insets(16));
-        userInfo.setStyle("-fx-background-color: #FAFBFC; -fx-background-radius: 12 12 0 0; -fx-border-color: #E6E7E7; -fx-border-width: 0 0 1 0;");
+        userInfo.getStyleClass().add("booking-form-user-dropdown-header");
 
         String fullName = ((person.getFirstName() != null ? person.getFirstName() : "") + " " +
                           (person.getLastName() != null ? person.getLastName() : "")).trim();
@@ -299,14 +290,13 @@ public class ResponsiveStepProgressHeader implements BookingFormHeader {
 
         userInfo.getChildren().addAll(nameLabel, emailLabel);
 
-        // Logout button - create manually to avoid i18n binding on graphic
+        // Logout button - uses CSS class for styling and hover effects
         Button logoutButton = new Button();
         I18n.bindI18nTextProperty(logoutButton.textProperty(), LogoutI18nKeys.LogoutMenu);
         logoutButton.setMaxWidth(Double.MAX_VALUE);
         logoutButton.setPadding(new Insets(14, 16, 14, 16));
         logoutButton.setFont(Font.font(null, FontWeight.MEDIUM, 14));
-        logoutButton.setTextFill(Color.web("#dc3545"));
-        logoutButton.setStyle("-fx-background-color: transparent; -fx-cursor: hand;");
+        logoutButton.getStyleClass().add("booking-form-logout-btn");
         logoutButton.setCursor(Cursor.HAND);
         logoutButton.setGraphic(createLogoutIcon());
         logoutButton.setGraphicTextGap(10);
@@ -316,18 +306,7 @@ public class ResponsiveStepProgressHeader implements BookingFormHeader {
             OperationDirect.executeOperation(new LogoutRequest());
         });
 
-        // Hover effect for logout button
-        logoutButton.setOnMouseEntered(e ->
-            logoutButton.setStyle("-fx-background-color: #dc3545; -fx-cursor: hand;"));
-        logoutButton.setOnMouseExited(e ->
-            logoutButton.setStyle("-fx-background-color: transparent; -fx-cursor: hand;"));
-        FXProperties.runOnPropertyChange(hover -> {
-            if (hover) {
-                logoutButton.setTextFill(Color.WHITE);
-            } else {
-                logoutButton.setTextFill(Color.web("#dc3545"));
-            }
-        }, logoutButton.hoverProperty());
+        // Note: Hover effects (background color and text color) are handled by CSS class
 
         dropdownContent.getChildren().addAll(userInfo, logoutButton);
 
@@ -510,6 +489,11 @@ public class ResponsiveStepProgressHeader implements BookingFormHeader {
     @Override
     public void updateState() {
         if (bookingForm != null) {
+            // Rebuild steps if WorkingBooking was not available during initial build
+            if (stepsNeedRebuild && bookingForm.getWorkingBooking() != null) {
+                buildStepsList();
+                rebuildAllLayouts();
+            }
             currentStepIndexProperty.set(bookingForm.getDisplayedPageIndex());
             updateAllLayoutsState();
         }
@@ -524,14 +508,18 @@ public class ResponsiveStepProgressHeader implements BookingFormHeader {
     private void buildStepsList() {
         steps.clear();
         BookingFormPage[] pages = bookingForm.getPages();
+        WorkingBooking workingBooking = bookingForm.getWorkingBooking();
         int stepNumber = 0;
         for (int i = 0; i < pages.length; i++) {
             BookingFormPage page = pages[i];
-            if (page.isStep()) {
+            // Only show steps that are both marked as steps AND applicable to current booking
+            if (page.isStep() && page.isApplicableToBooking(workingBooking)) {
                 stepNumber++;
                 steps.add(new StepInfo(stepNumber, page.getTitleI18nKey(), i));
             }
         }
+        // Need to rebuild once WorkingBooking becomes available
+        stepsNeedRebuild = (workingBooking == null);
     }
 
     private void rebuildAllLayouts() {
@@ -856,7 +844,7 @@ public class ResponsiveStepProgressHeader implements BookingFormHeader {
                         if (currentStepIndex >= 0 && currentStepIndex < steps.size()) {
                             StepInfo current = steps.get(currentStepIndex);
                             I18nControls.bindI18nProperties(stepNameLabel, current.titleKey);
-                            stepCountLabel.setText("Step " + current.stepNumber + " of " + steps.size());
+                            I18nControls.bindI18nProperties(stepCountLabel, BookingPageI18nKeys.StepXOfY, current.stepNumber, steps.size());
                         }
                     }
                 }
@@ -876,7 +864,7 @@ public class ResponsiveStepProgressHeader implements BookingFormHeader {
             progressFill.getStyleClass().add("bookingpage-progress-fill");
         }
 
-        // Update dots
+        // Update dots - uses CSS classes for theming
         for (int i = 0; i < dotsRow.getChildren().size(); i++) {
             Region dot = (Region) dotsRow.getChildren().get(i);
 
@@ -888,9 +876,14 @@ public class ResponsiveStepProgressHeader implements BookingFormHeader {
             dot.setPrefWidth(isActive ? 24 : 10);
             dot.setMaxWidth(isActive ? 24 : 10);
 
-            // Set background color
-            String bgColor = (isActive || isCompleted) ? toHexString(scheme.getPrimary()) : "#D1D5DB";
-            dot.setStyle("-fx-background-color: " + bgColor + "; -fx-background-radius: 5;");
+            // Toggle CSS classes for background color (uses theme CSS variables)
+            dot.getStyleClass().removeAll("booking-form-step-dot-active", "booking-form-step-dot-completed");
+            if (isActive) {
+                dot.getStyleClass().add("booking-form-step-dot-active");
+            } else if (isCompleted) {
+                dot.getStyleClass().add("booking-form-step-dot-completed");
+            }
+            // Base class "booking-form-step-dot" provides inactive styling
 
             dot.setCursor(navigationClickable ? Cursor.HAND : Cursor.DEFAULT);
         }

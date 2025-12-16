@@ -154,10 +154,7 @@ public interface HasPaymentSection extends BookingFormSection {
      */
     int getPaymentAmount();
 
-    /**
-     * Returns whether the terms and conditions have been accepted.
-     */
-    boolean isTermsAccepted();
+    // Note: Terms acceptance is now validated on the Pending Bookings page (DefaultTermsSection)
 
     /**
      * Sets the callback for when payment is submitted.

@@ -15,6 +15,8 @@ import javafx.scene.control.Label;
 import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.SVGPath;
+import one.modality.base.shared.entities.Document;
+import one.modality.base.shared.entities.Event;
 import one.modality.booking.client.workingbooking.WorkingBookingProperties;
 import one.modality.booking.frontoffice.bookingpage.BookingPageI18nKeys;
 import one.modality.booking.frontoffice.bookingpage.PriceFormatter;
@@ -240,15 +242,21 @@ public class DefaultPendingBookingsSection implements HasPendingBookingsSection 
         Label eventNameLabel = new Label(booking.getEventName());
         eventNameLabel.getStyleClass().addAll("bookingpage-text-lg", "bookingpage-font-semibold", "bookingpage-text-dark");
 
-        String eventDetails = booking.getEventDetails();
-        if (eventDetails != null && !eventDetails.isEmpty()) {
-            Label eventDetailsLabel = new Label(eventDetails);
-            eventDetailsLabel.getStyleClass().add("bookingpage-label-caption");
-            eventDetailsLabel.setWrapText(true);
-            eventInfoBox.getChildren().addAll(eventNameLabel, eventDetailsLabel);
+        // Event dates - get from document's event if available
+        Label eventDatesLabel = new Label();
+        Document doc = booking.getDocument();
+        if (doc != null && doc.getEvent() != null) {
+            Event event = doc.getEvent();
+            String dateText = BookingPageUIBuilder.formatDateRangeFull(event.getStartDate(), event.getEndDate());
+            eventDatesLabel.setText(dateText);
         } else {
-            eventInfoBox.getChildren().add(eventNameLabel);
+            // Fallback: use eventDetails if no document available
+            String eventDetails = booking.getEventDetails();
+            eventDatesLabel.setText(eventDetails != null ? eventDetails : "");
         }
+        eventDatesLabel.getStyleClass().add("bookingpage-label-caption");
+        eventDatesLabel.setWrapText(true);
+        eventInfoBox.getChildren().addAll(eventNameLabel, eventDatesLabel);
         VBox.setMargin(eventInfoBox, new Insets(0, 0, 16, 0));
 
         // Line items
@@ -279,38 +287,45 @@ public class DefaultPendingBookingsSection implements HasPendingBookingsSection 
         totalRow.getChildren().addAll(totalTextLabel, spacer, totalPriceLabel);
         totalSection.getChildren().add(totalRow);
 
-        // Show paid amount and balance if partially paid
-        if (booking.getPaidAmount() > 0 && !booking.isPaid()) {
-            // Paid row
-            HBox paidRow = new HBox();
-            paidRow.setAlignment(Pos.CENTER_LEFT);
+        // Always show paid amount and balance due
+        int paidAmount = (int) booking.getPaidAmount();
+        int balance = (int) booking.getBalance();
 
-            Label paidTextLabel = I18nControls.newLabel(BookingPageI18nKeys.AlreadyPaid);
-            paidTextLabel.getStyleClass().addAll("bookingpage-text-base", "bookingpage-font-medium", "bookingpage-text-muted");
-            Region paidSpacer = new Region();
-            HBox.setHgrow(paidSpacer, Priority.ALWAYS);
+        // Already Paid row
+        HBox paidRow = new HBox();
+        paidRow.setAlignment(Pos.CENTER_LEFT);
 
-            Label paidAmountLabel = new Label("-" + currencySymbol + PriceFormatter.formatPriceNoCurrencyWithDecimals((int) booking.getPaidAmount()));
+        Label paidTextLabel = I18nControls.newLabel(BookingPageI18nKeys.AlreadyPaid);
+        paidTextLabel.getStyleClass().addAll("bookingpage-text-base", "bookingpage-font-medium", "bookingpage-text-muted");
+        Region paidSpacer = new Region();
+        HBox.setHgrow(paidSpacer, Priority.ALWAYS);
+
+        Label paidAmountLabel = new Label(currencySymbol + PriceFormatter.formatPriceNoCurrencyWithDecimals(paidAmount));
+        // Green if paid > 0, muted if 0
+        if (paidAmount > 0) {
             paidAmountLabel.getStyleClass().addAll("bookingpage-text-base", "bookingpage-font-semibold", "bookingpage-text-success");
-
-            paidRow.getChildren().addAll(paidTextLabel, paidSpacer, paidAmountLabel);
-            totalSection.getChildren().add(paidRow);
-
-            // Balance row
-            HBox balanceRow = new HBox();
-            balanceRow.setAlignment(Pos.CENTER_LEFT);
-
-            Label balanceTextLabel = I18nControls.newLabel(BookingPageI18nKeys.BalanceDue);
-            balanceTextLabel.getStyleClass().addAll("bookingpage-text-lg", "bookingpage-font-bold", "bookingpage-text-dark");
-            Region balanceSpacer = new Region();
-            HBox.setHgrow(balanceSpacer, Priority.ALWAYS);
-
-            Label balanceAmountLabel = new Label(currencySymbol + PriceFormatter.formatPriceNoCurrencyWithDecimals((int) booking.getBalance()));
-            balanceAmountLabel.getStyleClass().addAll("bookingpage-price-medium", "bookingpage-text-primary");
-
-            balanceRow.getChildren().addAll(balanceTextLabel, balanceSpacer, balanceAmountLabel);
-            totalSection.getChildren().add(balanceRow);
+        } else {
+            paidAmountLabel.getStyleClass().addAll("bookingpage-text-base", "bookingpage-font-semibold", "bookingpage-text-muted");
         }
+
+        paidRow.getChildren().addAll(paidTextLabel, paidSpacer, paidAmountLabel);
+        totalSection.getChildren().add(paidRow);
+
+        // Balance Due row (remaining to pay)
+        HBox balanceRow = new HBox();
+        balanceRow.setAlignment(Pos.CENTER_LEFT);
+
+        Label balanceTextLabel = I18nControls.newLabel(BookingPageI18nKeys.BalanceDue);
+        balanceTextLabel.getStyleClass().addAll("bookingpage-text-lg", "bookingpage-font-bold", "bookingpage-text-dark");
+        Region balanceSpacer = new Region();
+        HBox.setHgrow(balanceSpacer, Priority.ALWAYS);
+
+        Label balanceAmountLabel = new Label(currencySymbol + PriceFormatter.formatPriceNoCurrencyWithDecimals(balance));
+        // Always use theme primary color for balance due
+        balanceAmountLabel.getStyleClass().addAll("bookingpage-price-medium", "bookingpage-text-primary");
+
+        balanceRow.getChildren().addAll(balanceTextLabel, balanceSpacer, balanceAmountLabel);
+        totalSection.getChildren().add(balanceRow);
 
         contentBox.getChildren().addAll(eventInfoBox, lineItems, totalSection);
         card.getChildren().addAll(header, contentBox);

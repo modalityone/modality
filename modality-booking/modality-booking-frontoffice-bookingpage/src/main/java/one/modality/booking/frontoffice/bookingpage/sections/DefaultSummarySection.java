@@ -10,6 +10,7 @@ import javafx.scene.Node;
 import javafx.scene.control.Label;
 import javafx.scene.layout.*;
 import javafx.scene.shape.SVGPath;
+import one.modality.base.shared.entities.Document;
 import one.modality.base.shared.entities.Event;
 import one.modality.booking.client.workingbooking.WorkingBooking;
 import one.modality.booking.client.workingbooking.WorkingBookingProperties;
@@ -547,6 +548,27 @@ public class DefaultSummarySection implements HasSummarySection {
                 eventNameProperty.set(event.getName());
                 eventStartDateProperty.set(event.getStartDate());
                 eventEndDateProperty.set(event.getEndDate());
+            }
+
+            // Auto-populate attendee from document if not already set
+            if ((attendeeNameProperty.get() == null || attendeeNameProperty.get().isEmpty()) && workingBooking != null) {
+                Document doc = workingBooking.getDocument();
+                if (doc != null) {
+                    String firstName = doc.getFirstName();
+                    String lastName = doc.getLastName();
+                    StringBuilder name = new StringBuilder();
+                    if (firstName != null) name.append(firstName);
+                    if (lastName != null) {
+                        if (name.length() > 0) name.append(" ");
+                        name.append(lastName);
+                    }
+                    if (name.length() > 0) {
+                        attendeeNameProperty.set(name.toString());
+                    }
+                    if (doc.getEmail() != null && (attendeeEmailProperty.get() == null || attendeeEmailProperty.get().isEmpty())) {
+                        attendeeEmailProperty.set(doc.getEmail());
+                    }
+                }
             }
         }
     }

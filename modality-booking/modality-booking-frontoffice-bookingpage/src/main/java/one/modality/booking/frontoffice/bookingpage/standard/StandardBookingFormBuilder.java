@@ -77,6 +77,9 @@ public class StandardBookingFormBuilder {
     // Entry point for the booking form (new booking, modify, resume payment)
     private BookingFormEntryPoint entryPoint = BookingFormEntryPoint.NEW_BOOKING;
 
+    // Step skip flags
+    private boolean skipMemberSelection = false;
+
     /**
      * Creates a new builder for a standard booking form.
      *
@@ -142,7 +145,29 @@ public class StandardBookingFormBuilder {
         return this;
     }
 
-    // === Other Common Step Overrides ===
+    /**
+     * Sets a custom Your Information page supplier to use instead of the default.
+     * This allows forms to provide a custom login/registration page or skip it entirely.
+     *
+     * @param supplier The supplier that creates the custom Your Information page
+     * @return This builder for chaining
+     */
+    public StandardBookingFormBuilder withYourInformationPageSupplier(Supplier<BookingFormPage> supplier) {
+        this.yourInformationPageSupplier = supplier;
+        return this;
+    }
+
+    /**
+     * Sets a custom Member Selection page supplier to use instead of the default.
+     * This allows forms to provide a custom member selection page or skip it entirely.
+     *
+     * @param supplier The supplier that creates the custom Member Selection page
+     * @return This builder for chaining
+     */
+    public StandardBookingFormBuilder withMemberSelectionPageSupplier(Supplier<BookingFormPage> supplier) {
+        this.memberSelectionPageSupplier = supplier;
+        return this;
+    }
 
     // === Callbacks ===
 
@@ -188,6 +213,19 @@ public class StandardBookingFormBuilder {
         return this;
     }
 
+    /**
+     * Sets whether to skip the member selection step.
+     * Useful when the form handles member selection in a custom step.
+     * Default is false (member selection step is shown).
+     *
+     * @param skip true to skip member selection, false to show it
+     * @return This builder for chaining
+     */
+    public StandardBookingFormBuilder withSkipMemberSelection(boolean skip) {
+        this.skipMemberSelection = skip;
+        return this;
+    }
+
     // === Build ===
 
     /**
@@ -201,7 +239,6 @@ public class StandardBookingFormBuilder {
         }
 
         // Skip flags for common steps
-        boolean skipMemberSelection = false;
         boolean skipPendingBookings = false;
         return new StandardBookingForm(
             activity,

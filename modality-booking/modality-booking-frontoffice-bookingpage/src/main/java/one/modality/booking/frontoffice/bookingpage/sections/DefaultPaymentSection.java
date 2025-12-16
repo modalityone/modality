@@ -2,7 +2,6 @@ package one.modality.booking.frontoffice.bookingpage.sections;
 
 import dev.webfx.extras.i18n.I18n;
 import dev.webfx.extras.i18n.controls.I18nControls;
-import dev.webfx.extras.webtext.HtmlText;
 import dev.webfx.platform.async.AsyncFunction;
 import dev.webfx.platform.async.Future;
 import javafx.beans.property.*;
@@ -53,7 +52,6 @@ public class DefaultPaymentSection implements HasPaymentSection {
     protected final ObjectProperty<PaymentOption> paymentOptionProperty = new SimpleObjectProperty<>(PaymentOption.DEPOSIT);
     protected final ObjectProperty<PaymentMethod> paymentMethodProperty = new SimpleObjectProperty<>(PaymentMethod.CARD);
     protected final IntegerProperty customAmountProperty = new SimpleIntegerProperty(0);
-    protected final BooleanProperty termsAcceptedProperty = new SimpleBooleanProperty(false);
     protected final BooleanProperty processingProperty = new SimpleBooleanProperty(false);
     protected final SimpleBooleanProperty payButtonDisabled = new SimpleBooleanProperty(true);
     protected final SimpleStringProperty payButtonText = new SimpleStringProperty();
@@ -120,30 +118,26 @@ public class DefaultPaymentSection implements HasPaymentSection {
         // Stored as field so it can be hidden when only one payment method exists
         paymentMethodsSection = buildPaymentMethodsSection();
 
-        // Terms and conditions
-        HBox termsSection = buildTermsSection();
-
         // Note: Pay button is managed via composite API (ButtonNavigation)
         // not created inside this section
+        // Note: Terms and conditions section has been moved to the Pending Bookings page
 
         container.getChildren().addAll(
                 title, subtitle, bookingSummarySection,
-                paymentAmountSection, paymentMethodsSection,
-                termsSection
+                paymentAmountSection, paymentMethodsSection
         );
         VBox.setMargin(subtitle, new Insets(0, 0, 40, 0));
         VBox.setMargin(bookingSummarySection, new Insets(0, 0, 32, 0));
         VBox.setMargin(paymentAmountSection, new Insets(0, 0, 32, 0));
         VBox.setMargin(paymentMethodsSection, new Insets(0, 0, 32, 0));
-        VBox.setMargin(termsSection, new Insets(0, 0, 32, 0));
     }
 
     protected void setupBindings() {
-        // Pay button is disabled until terms accepted and not processing
-        payButtonDisabled.bind(termsAcceptedProperty.not().or(processingProperty));
+        // Pay button is disabled while processing
+        // Note: Terms acceptance is now validated on the Pending Bookings page
+        payButtonDisabled.bind(processingProperty);
 
-        // Validity depends on terms accepted and not processing
-        termsAcceptedProperty.addListener((obs, old, val) -> updateValidity());
+        // Validity depends on not processing
         processingProperty.addListener((obs, old, val) -> updateValidity());
 
         // Note: Color scheme listener removed - CSS handles theme changes via CSS variables
@@ -174,7 +168,8 @@ public class DefaultPaymentSection implements HasPaymentSection {
     }
 
     protected void updateValidity() {
-        validProperty.set(termsAcceptedProperty.get() && !processingProperty.get());
+        // Note: Terms acceptance is now validated on the Pending Bookings page
+        validProperty.set(!processingProperty.get());
     }
 
     protected void rebuildUI() {
@@ -774,20 +769,6 @@ public class DefaultPaymentSection implements HasPaymentSection {
         }
     }
 
-    protected HBox buildTermsSection() {
-        // Create HtmlText with hyperlink for Terms & Conditions
-        HtmlText termsText = new HtmlText();
-        I18n.bindI18nTextProperty(termsText.textProperty(), BookingPageI18nKeys.AcceptTermsHtml);
-        termsText.getStyleClass().addAll("bookingpage-text-base", "bookingpage-text-secondary");
-        HBox.setHgrow(termsText, Priority.ALWAYS);
-
-        // Use checkbox card helper - handles indicator, click, and styling
-        HBox card = BookingPageUIBuilder.createCheckboxCard(termsText, termsAcceptedProperty, colorScheme);
-        card.setPadding(new Insets(20));
-
-        return card;
-    }
-
     protected void updateTotalDisplay() {
         if (totalAmountLabel != null) {
             totalAmountLabel.setText(EventPriceFormatter.formatWithCurrency(totalAmount, workingBookingProperties != null && workingBookingProperties.getWorkingBooking() != null ? workingBookingProperties.getWorkingBooking().getEvent() : null));
@@ -1025,11 +1006,6 @@ public class DefaultPaymentSection implements HasPaymentSection {
     @Override
     public int getPaymentAmount() {
         return getAmountForOption(paymentOptionProperty.get());
-    }
-
-    @Override
-    public boolean isTermsAccepted() {
-        return termsAcceptedProperty.get();
     }
 
     @Override
