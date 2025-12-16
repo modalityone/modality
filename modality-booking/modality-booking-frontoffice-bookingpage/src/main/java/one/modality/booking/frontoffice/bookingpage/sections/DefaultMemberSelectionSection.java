@@ -468,8 +468,17 @@ public class DefaultMemberSelectionSection implements HasMemberSelectionSection 
     @Override
     public boolean isApplicableToBooking(WorkingBooking workingBooking) {
         // Skip for existing bookings - member already selected
-        // Show for new bookings - user needs to choose who to book for
-        return workingBooking == null || workingBooking.isNewBooking();
+        if (workingBooking != null && !workingBooking.isNewBooking()) {
+            return false;
+        }
+        // Skip if member was explicitly selected (e.g., via ExistingBookingSection)
+        // Note: We check the flag on WorkingBooking (not workingBookingProperties) because
+        // isApplicableToBooking() is called before setWorkingBookingProperties() during navigation
+        if (workingBooking != null && workingBooking.isMemberExplicitlySelected()) {
+            return false;
+        }
+        // Show for new bookings where user needs to choose who to book for
+        return true;
     }
 
     // ========================================

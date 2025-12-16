@@ -51,6 +51,9 @@ public final class WorkingBooking {
 
     // Convenient flag to mark working bookings created from a user payment request.
     private final boolean paymentRequestedByUser;
+    // Flag to mark that member was explicitly selected (e.g., via ExistingBookingSection)
+    // When true, member selection page should be skipped
+    private boolean memberExplicitlySelected;
     // Then a booking form can actually distinguish 3 cases from the working booking state:
     // 1) workingBooking.isNewBooking() == true => non-existing, new, initial booking (after pressing a Book Now button)
     // 2) isPaymentRequestedByUser() == true => existing, saved booking the user requested to pay from Orders page
@@ -99,6 +102,14 @@ public final class WorkingBooking {
 
     public boolean isPaymentRequestedByUser() {
         return paymentRequestedByUser;
+    }
+
+    public boolean isMemberExplicitlySelected() {
+        return memberExplicitlySelected;
+    }
+
+    public void setMemberExplicitlySelected(boolean memberExplicitlySelected) {
+        this.memberExplicitlySelected = memberExplicitlySelected;
     }
 
     public void bookScheduledItems(List<ScheduledItem> scheduledItems, boolean addOnly) {

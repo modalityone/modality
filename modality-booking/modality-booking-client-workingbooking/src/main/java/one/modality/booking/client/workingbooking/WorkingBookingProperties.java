@@ -115,6 +115,10 @@ public final class WorkingBookingProperties {
     // Version number (arbitrary number that increases each time there is a change in the working booking - useful for reacting to changes)
     private final IntegerProperty versionNumberProperty = new SimpleIntegerProperty();
 
+    // Flag to track if member was explicitly selected (e.g., via ExistingBookingSection)
+    // When true, member selection page should be skipped
+    private final BooleanProperty memberExplicitlySelectedProperty = new SimpleBooleanProperty(false);
+
     // Submittable (indicates if the booking is suitable to submit, which is the case if there is a balance to pay, or it has changes on document lines)
     private final BooleanBinding submittableProperty = Bindings.createBooleanBinding(() ->
             getBalance() > 0 || getWorkingBooking().hasDocumentLineChanges()
@@ -484,6 +488,21 @@ public final class WorkingBookingProperties {
     public BooleanBinding submittableProperty() {
         return submittableProperty;
     }
+
+    // Member explicitly selected
+
+    public boolean isMemberExplicitlySelected() {
+        return memberExplicitlySelectedProperty.get();
+    }
+
+    public BooleanProperty memberExplicitlySelectedProperty() {
+        return memberExplicitlySelectedProperty;
+    }
+
+    public void setMemberExplicitlySelected(boolean value) {
+        memberExplicitlySelectedProperty.set(value);
+    }
+
 
     // Shorthand methods to workingBooking
 
