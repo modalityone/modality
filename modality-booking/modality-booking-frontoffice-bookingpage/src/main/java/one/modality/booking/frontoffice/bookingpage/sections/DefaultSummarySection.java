@@ -12,6 +12,7 @@ import javafx.scene.layout.*;
 import javafx.scene.shape.SVGPath;
 import one.modality.base.shared.entities.Document;
 import one.modality.base.shared.entities.Event;
+import one.modality.base.shared.entities.Person;
 import one.modality.booking.client.workingbooking.WorkingBooking;
 import one.modality.booking.client.workingbooking.WorkingBookingProperties;
 import one.modality.booking.frontoffice.bookingpage.BookingPageI18nKeys;
@@ -554,8 +555,19 @@ public class DefaultSummarySection implements HasSummarySection {
             if ((attendeeNameProperty.get() == null || attendeeNameProperty.get().isEmpty()) && workingBooking != null) {
                 Document doc = workingBooking.getDocument();
                 if (doc != null) {
+                    // Try document fields first, then fall back to Person entity
                     String firstName = doc.getFirstName();
                     String lastName = doc.getLastName();
+                    String email = doc.getEmail();
+
+                    // Fall back to Person entity if document fields are null
+                    if ((firstName == null || lastName == null || email == null) && doc.getPerson() != null) {
+                        Person person = doc.getPerson();
+                        if (firstName == null) firstName = person.getFirstName();
+                        if (lastName == null) lastName = person.getLastName();
+                        if (email == null) email = person.getEmail();
+                    }
+
                     StringBuilder name = new StringBuilder();
                     if (firstName != null) name.append(firstName);
                     if (lastName != null) {
@@ -565,8 +577,8 @@ public class DefaultSummarySection implements HasSummarySection {
                     if (name.length() > 0) {
                         attendeeNameProperty.set(name.toString());
                     }
-                    if (doc.getEmail() != null && (attendeeEmailProperty.get() == null || attendeeEmailProperty.get().isEmpty())) {
-                        attendeeEmailProperty.set(doc.getEmail());
+                    if (email != null && (attendeeEmailProperty.get() == null || attendeeEmailProperty.get().isEmpty())) {
+                        attendeeEmailProperty.set(email);
                     }
                 }
             }

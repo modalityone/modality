@@ -27,21 +27,28 @@ public interface HasPendingBookingsSection extends BookingFormSection {
         private final int amount;
         private final boolean included;
         private final String familyCode;
+        private final String dates;
 
         public BookingLineItem(String name, int amount, boolean included) {
-            this(name, amount, included, null);
+            this(name, amount, included, null, null);
         }
 
         public BookingLineItem(String name, int amount, boolean included, String familyCode) {
+            this(name, amount, included, familyCode, null);
+        }
+
+        public BookingLineItem(String name, int amount, boolean included, String familyCode, String dates) {
             this.name = name;
             this.amount = amount;
             this.included = included;
             this.familyCode = familyCode;
+            this.dates = dates;
         }
 
         public String getName() { return name; }
         public int getAmount() { return amount; }
         public boolean isIncluded() { return included; }
+        public String getDates() { return dates; }
     }
 
     /**
@@ -92,6 +99,11 @@ public interface HasPendingBookingsSection extends BookingFormSection {
 
         public void addLineItem(String name, String familyCode, int amount) {
             lineItems.add(new BookingLineItem(name, amount, false, familyCode));
+            calculateTotal();
+        }
+
+        public void addLineItem(String name, String familyCode, int amount, String dates) {
+            lineItems.add(new BookingLineItem(name, amount, false, familyCode, dates));
             calculateTotal();
         }
 

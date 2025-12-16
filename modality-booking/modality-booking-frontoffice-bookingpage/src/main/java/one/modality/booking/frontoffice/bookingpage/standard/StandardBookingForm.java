@@ -836,7 +836,7 @@ public class StandardBookingForm extends MultiPageBookingForm {
     }
 
     /**
-     * Load document lines for the given documents.
+     * Load document lines and attendances for the given documents.
      */
     private void loadDocumentLinesForDocuments(
             EntityList<Document> documents,
@@ -847,8 +847,9 @@ public class StandardBookingForm extends MultiPageBookingForm {
 
         Console.log("loadDocumentLinesForDocuments() called for " + documents.size() + " documents");
 
+        // Load document lines
         entityStore.<DocumentLine>executeQuery(
-            "select id,document,item.(id,name,family.(code,name)),price_net " +
+            "select id,document,item.(id,name,family.(code,name)),price_net,dates " +
             "from DocumentLine " +
             "where document.event=? and document.person.frontendAccount=? and !cancelled " +
             "order by document,item.ord",
@@ -856,11 +857,26 @@ public class StandardBookingForm extends MultiPageBookingForm {
         )
         .onFailure(error -> {
             Console.log("Error loading document lines: " + error.getMessage());
-            loadPaymentStatusForDocuments(documents, Collections.emptyList(), entityStore, eventId, accountId, onComplete);
+            loadPaymentStatusForDocuments(documents, Collections.emptyList(), Collections.emptyList(), entityStore, eventId, accountId, onComplete);
         })
         .onSuccess(documentLines -> {
             Console.log("Found " + documentLines.size() + " document lines");
-            loadPaymentStatusForDocuments(documents, documentLines, entityStore, eventId, accountId, onComplete);
+            // Also load attendances for computing dates
+            entityStore.<Attendance>executeQuery(
+                "select id,documentLine,date " +
+                "from Attendance " +
+                "where documentLine.document.event=? and documentLine.document.person.frontendAccount=? " +
+                "order by documentLine,date",
+                eventId, accountId
+            )
+            .onFailure(error -> {
+                Console.log("Error loading attendances: " + error.getMessage());
+                loadPaymentStatusForDocuments(documents, documentLines, Collections.emptyList(), entityStore, eventId, accountId, onComplete);
+            })
+            .onSuccess(attendances -> {
+                Console.log("Found " + attendances.size() + " attendances");
+                loadPaymentStatusForDocuments(documents, documentLines, attendances, entityStore, eventId, accountId, onComplete);
+            });
         });
     }
 
@@ -870,6 +886,7 @@ public class StandardBookingForm extends MultiPageBookingForm {
     private void loadPaymentStatusForDocuments(
             EntityList<Document> documents,
             List<DocumentLine> documentLines,
+            List<Attendance> attendances,
             EntityStore entityStore,
             Object eventId,
             Object accountId,
@@ -887,14 +904,14 @@ public class StandardBookingForm extends MultiPageBookingForm {
         .onFailure(error -> {
             Console.log("Error loading payment status: " + error.getMessage());
             UiScheduler.runInUiThread(() -> {
-                populateBookingsFromDocuments(documents, documentLines, Collections.emptyList());
+                populateBookingsFromDocuments(documents, documentLines, attendances, Collections.emptyList());
                 if (onComplete != null) onComplete.run();
             });
         })
         .onSuccess(payments -> {
             Console.log("Found " + payments.size() + " payment records");
             UiScheduler.runInUiThread(() -> {
-                populateBookingsFromDocuments(documents, documentLines, payments);
+                populateBookingsFromDocuments(documents, documentLines, attendances, payments);
                 if (onComplete != null) onComplete.run();
             });
         });
@@ -906,9 +923,10 @@ public class StandardBookingForm extends MultiPageBookingForm {
     private void populateBookingsFromDocuments(
             EntityList<Document> documents,
             List<DocumentLine> documentLines,
+            List<Attendance> attendances,
             List<MoneyTransfer> payments) {
 
-        Console.log("populateBookingsFromDocuments() called with " + documents.size() + " documents and " + documentLines.size() + " lines");
+        Console.log("populateBookingsFromDocuments() called with " + documents.size() + " documents, " + documentLines.size() + " lines, " + attendances.size() + " attendances");
 
         if (defaultPendingBookingsSection == null) {
             Console.log("defaultPendingBookingsSection is null - skipping population");
@@ -933,6 +951,16 @@ public class StandardBookingForm extends MultiPageBookingForm {
             if (lineDoc != null) {
                 Object docId = lineDoc.getId();
                 linesByDocument.computeIfAbsent(docId, k -> new ArrayList<>()).add(line);
+            }
+        }
+
+        // Build map of document line ID -> list of attendance dates
+        Map<Object, List<java.time.LocalDate>> datesByLine = new HashMap<>();
+        for (Attendance attendance : attendances) {
+            DocumentLine attendanceLine = attendance.getDocumentLine();
+            if (attendanceLine != null && attendance.getDate() != null) {
+                Object lineId = attendanceLine.getId();
+                datesByLine.computeIfAbsent(lineId, k -> new ArrayList<>()).add(attendance.getDate());
             }
         }
 
@@ -1012,8 +1040,18 @@ public class StandardBookingForm extends MultiPageBookingForm {
                         Integer linePriceObj = line.getPriceNet();
                         int linePrice = linePriceObj != null ? linePriceObj : 0;
 
-                        Console.log("  Line item: " + displayName + " = " + linePrice);
-                        bookingItem.addLineItem(displayName, familyCode, linePrice);
+                        // Get dates from database field, or compute from attendances if not available
+                        String lineDates = line.getDates();
+                        if (lineDates == null || lineDates.isEmpty()) {
+                            // Compute dates from attendances
+                            List<java.time.LocalDate> attendanceDates = datesByLine.get(line.getId());
+                            if (attendanceDates != null && !attendanceDates.isEmpty()) {
+                                java.util.Collections.sort(attendanceDates);
+                                lineDates = formatDateListFromLocalDates(attendanceDates);
+                            }
+                        }
+                        Console.log("  Line item: " + displayName + " = " + linePrice + ", dates: " + lineDates);
+                        bookingItem.addLineItem(displayName, familyCode, linePrice, lineDates);
                     }
                 }
             } else {
@@ -1441,6 +1479,98 @@ public class StandardBookingForm extends MultiPageBookingForm {
         return null;
     }
 
+    /**
+     * Computes a formatted dates string from the attendances associated with a document line.
+     * Returns dates in a user-friendly format like "Jan 15, 22, 29" or "Jan 15 - Feb 2".
+     */
+    private String computeDatesFromAttendances(WorkingBooking workingBooking, DocumentLine line) {
+        if (workingBooking == null || line == null) return null;
+
+        List<Attendance> lineAttendances = workingBooking.getLastestDocumentAggregate().getLineAttendances(line);
+        if (lineAttendances == null || lineAttendances.isEmpty()) return null;
+
+        // Collect and sort all dates
+        List<java.time.LocalDate> dates = lineAttendances.stream()
+            .map(Attendance::getDate)
+            .filter(d -> d != null)
+            .sorted()
+            .distinct()
+            .collect(java.util.stream.Collectors.toList());
+
+        if (dates.isEmpty()) return null;
+
+        // Format dates - if consecutive range use "Jan 15 - Jan 20", otherwise list individual dates
+        if (dates.size() == 1) {
+            return formatSingleDate(dates.get(0));
+        }
+
+        // Check if dates are consecutive (a date range)
+        boolean consecutive = true;
+        for (int i = 1; i < dates.size(); i++) {
+            if (!dates.get(i).equals(dates.get(i - 1).plusDays(1))) {
+                consecutive = false;
+                break;
+            }
+        }
+
+        if (consecutive) {
+            // Format as range: "Jan 15 - Jan 20"
+            return formatSingleDate(dates.get(0)) + " - " + formatSingleDate(dates.get(dates.size() - 1));
+        } else {
+            // Format as list of dates, grouping by month
+            return formatDateList(dates);
+        }
+    }
+
+    /**
+     * Formats a single date as "Jan 15" or "15 Jan" depending on locale.
+     */
+    private String formatSingleDate(java.time.LocalDate date) {
+        if (date == null) return "";
+        java.time.format.DateTimeFormatter formatter = java.time.format.DateTimeFormatter.ofPattern("d MMM", java.util.Locale.ENGLISH);
+        return date.format(formatter);
+    }
+
+    /**
+     * Formats a list of LocalDate objects into a user-friendly string.
+     * This is a convenience wrapper for database-loaded attendances.
+     */
+    private String formatDateListFromLocalDates(List<java.time.LocalDate> dates) {
+        return formatDateList(dates);
+    }
+
+    /**
+     * Formats a list of dates, grouping by month.
+     * Example: [Jan 15, Jan 22, Jan 29] -> "Jan 15, 22, 29"
+     * Example: [Jan 15, Feb 5] -> "Jan 15, Feb 5"
+     */
+    private String formatDateList(List<java.time.LocalDate> dates) {
+        if (dates == null || dates.isEmpty()) return "";
+
+        StringBuilder sb = new StringBuilder();
+        java.time.Month currentMonth = null;
+        int currentYear = -1;
+
+        for (int i = 0; i < dates.size(); i++) {
+            java.time.LocalDate date = dates.get(i);
+            if (currentMonth == null || !date.getMonth().equals(currentMonth) || date.getYear() != currentYear) {
+                // New month - add month name
+                if (sb.length() > 0) sb.append(", ");
+                sb.append(date.getMonth().getDisplayName(java.time.format.TextStyle.SHORT, java.util.Locale.ENGLISH));
+                sb.append(" ");
+                sb.append(date.getDayOfMonth());
+                currentMonth = date.getMonth();
+                currentYear = date.getYear();
+            } else {
+                // Same month - just add day
+                sb.append(", ");
+                sb.append(date.getDayOfMonth());
+            }
+        }
+
+        return sb.toString();
+    }
+
     private void updatePaymentFromPendingBookings() {
         if (defaultPaymentSection == null || defaultPendingBookingsSection == null) return;
 
@@ -1503,12 +1633,34 @@ public class StandardBookingForm extends MultiPageBookingForm {
         );
         bookingItem.setBookingReference(bookingRef);
 
-        // Add line items from WorkingBooking document lines (if available)
+        // Add line items from WorkingBooking document lines with dates from attendances
         WorkingBooking workingBooking = props.getWorkingBooking();
-        if (workingBooking != null && workingBooking.getDocument() != null) {
-            // For now, add a single line item with the total
-            // TODO: Could iterate through actual document lines for more detail
-            bookingItem.addLineItem(new HasPendingBookingsSection.BookingLineItem(eventName, total, false));
+        if (workingBooking != null) {
+            List<DocumentLine> documentLines = workingBooking.getDocumentLines();
+            if (documentLines != null && !documentLines.isEmpty()) {
+                for (DocumentLine line : documentLines) {
+                    Item item = line.getItem();
+                    if (item != null) {
+                        ItemFamily family = item.getFamily();
+                        // Skip items where family has summaryHidden = true (e.g., rounding)
+                        if (family != null && Boolean.TRUE.equals(family.isSummaryHidden())) {
+                            continue;
+                        }
+                        String familyCode = family != null ? family.getCode() : "";
+                        String displayName = (family != null && family.getName() != null) ? family.getName() : (item.getName() != null ? item.getName() : "Item");
+                        Integer linePriceObj = line.getPriceNet();
+                        int linePrice = linePriceObj != null ? linePriceObj : 0;
+
+                        // Compute dates from attendances
+                        String lineDates = computeDatesFromAttendances(workingBooking, line);
+                        Console.log("  Line item: " + displayName + " = " + linePrice + ", dates: " + lineDates);
+                        bookingItem.addLineItem(displayName, familyCode, linePrice, lineDates);
+                    }
+                }
+            } else {
+                // Fallback: add a single line item with the total (no line item details available)
+                bookingItem.addLineItem(new HasPendingBookingsSection.BookingLineItem(eventName, total, false));
+            }
         }
 
         defaultPendingBookingsSection.addBooking(bookingItem);

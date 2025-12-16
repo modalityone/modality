@@ -338,9 +338,21 @@ public class DefaultPendingBookingsSection implements HasPendingBookingsSection 
         row.setAlignment(Pos.CENTER_LEFT);
         row.setPadding(new Insets(8, 0, 8, 0));
 
+        // Name and dates container
+        VBox nameBox = new VBox(2);
         Label nameLabel = new Label(item.getName());
         nameLabel.getStyleClass().addAll("bookingpage-text-sm", "bookingpage-font-medium", "bookingpage-text-muted");
         nameLabel.setWrapText(true);
+        nameBox.getChildren().add(nameLabel);
+
+        // Add dates below name if available
+        String dates = item.getDates();
+        if (dates != null && !dates.isEmpty()) {
+            Label datesLabel = new Label(dates);
+            datesLabel.getStyleClass().addAll("bookingpage-text-xs", "bookingpage-text-muted");
+            datesLabel.setWrapText(true);
+            nameBox.getChildren().add(datesLabel);
+        }
 
         // Add spacer to push price to the right
         Region spacer = new Region();
@@ -357,7 +369,7 @@ public class DefaultPendingBookingsSection implements HasPendingBookingsSection 
         }
         priceLabel.setAlignment(Pos.CENTER_RIGHT);
 
-        row.getChildren().addAll(nameLabel, spacer, priceLabel);
+        row.getChildren().addAll(nameBox, spacer, priceLabel);
         return row;
     }
 
