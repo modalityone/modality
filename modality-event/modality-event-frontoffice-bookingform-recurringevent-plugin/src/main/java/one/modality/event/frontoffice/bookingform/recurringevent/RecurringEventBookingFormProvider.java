@@ -18,7 +18,7 @@ public class RecurringEventBookingFormProvider implements BookingFormProvider {
 
     @Override
     public boolean acceptEvent(Event event) {
-        return event != null && event.isRecurring();
+        return false;//event != null && event.isRecurring();
     }
 
     @Override
