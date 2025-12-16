@@ -670,29 +670,11 @@
 }
 
 .booking-form-step-bubble {
-    -fx-min-width: 40px;
-    -fx-min-height: 40px;
-    -fx-max-width: 40px;
-    -fx-max-height: 40px;
-    -fx-background-radius: 50%;
-    -fx-background-color: white;
-    -fx-border-color: #dee2e6;
-    -fx-border-width: 2;
-    -fx-border-radius: 50%;
-    -fx-alignment: center;
+    /* Removed unnecessary gray border already on circle */
 }
 
 .booking-form-step-bubble-tablet {
-    -fx-min-width: 32px;
-    -fx-min-height: 32px;
-    -fx-max-width: 32px;
-    -fx-max-height: 32px;
-    -fx-background-radius: 50%;
-    -fx-background-color: white;
-    -fx-border-color: #dee2e6;
-    -fx-border-width: 2;
-    -fx-border-radius: 50%;
-    -fx-alignment: center;
+    /* Removed unnecessary gray border already on circle */
 }
 
 .booking-form-step-number {
