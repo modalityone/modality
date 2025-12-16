@@ -53,6 +53,9 @@ public final class MultiBookingEditor extends BookingEditorBase {
         if (workingBooking.isNewBooking()) {
             vBox.getChildren().add(0, embedInFrame(createPersonToBookButton(), "Person to book"));
         }
+        // Yeshe was not able to edit STTP bookings because the width was too small and the session boxes were covering
+        // the "Free of charge" button as well as Cancel & Save buttons
+        vBox.setMinWidth(800); // Should be wide enough now
         return vBox;
     }
 
