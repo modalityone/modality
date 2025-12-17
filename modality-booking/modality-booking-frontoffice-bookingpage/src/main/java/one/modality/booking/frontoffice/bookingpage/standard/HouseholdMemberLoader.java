@@ -68,6 +68,7 @@ public final class HouseholdMemberLoader {
 
         // Add the logged-in user as the first option (always bookable as OWNER)
         Object ownerPersonId = userPerson.getPrimaryKey();
+        String ownerEmail = userPerson.getEmail();  // Capture owner's email for validation bypass
         Console.log("Adding OWNER with person ID: " + ownerPersonId);
         memberSection.addMember(new HasMemberSelectionSection.MemberInfo(
                 ownerPersonId,
@@ -94,7 +95,7 @@ public final class HouseholdMemberLoader {
         loadPendingInvitations(entityStore, personId, memberSection)
             .compose(pendingInviteeIds ->
                 // Step 2: Query for all members in my account
-                loadAccountMembers(entityStore, accountId, pendingInviteeIds, memberSection))
+                loadAccountMembers(entityStore, accountId, pendingInviteeIds, memberSection, ownerEmail))
             .compose(context ->
                 // Step 3: Check for existing bookings
                 loadExistingBookings(entityStore, event, accountId, memberSection))
@@ -151,7 +152,8 @@ public final class HouseholdMemberLoader {
             EntityStore entityStore,
             Object accountId,
             Set<Object> pendingInviteeIds,
-            DefaultMemberSelectionSection memberSection) {
+            DefaultMemberSelectionSection memberSection,
+            String ownerEmail) {
 
         return entityStore.<Person>executeQuery(
                 "select id,fullName,firstName,lastName,email,accountPerson.(id,fullName,email) " +
@@ -168,7 +170,7 @@ public final class HouseholdMemberLoader {
 
                 if (memberEmails.isEmpty()) {
                     // No members to check - just add the existing ones
-                    addMembersToSection(allMembers, pendingInviteeIds, new HashSet<>(), memberSection);
+                    addMembersToSection(allMembers, pendingInviteeIds, new HashSet<>(), memberSection, ownerEmail);
                     return Future.succeededFuture(new MemberLoadContext(allMembers, pendingInviteeIds, new HashSet<>()));
                 }
 
@@ -184,7 +186,7 @@ public final class HouseholdMemberLoader {
                                 .map(p -> p.getEmail() != null ? p.getEmail().toLowerCase() : "")
                                 .collect(Collectors.toSet());
 
-                        addMembersToSection(allMembers, pendingInviteeIds, emailsWithAccounts, memberSection);
+                        addMembersToSection(allMembers, pendingInviteeIds, emailsWithAccounts, memberSection, ownerEmail);
                         return new MemberLoadContext(allMembers, pendingInviteeIds, emailsWithAccounts);
                     });
             });
@@ -233,12 +235,19 @@ public final class HouseholdMemberLoader {
 
     /**
      * Helper method to add members to the selection section with proper status.
+     *
+     * @param members List of members to add
+     * @param pendingInviteeIds Set of person IDs with pending invitations
+     * @param emailsWithAccounts Set of emails that have created their own accounts
+     * @param memberSection The section to add members to
+     * @param ownerEmail The logged-in account owner's email (for validation bypass)
      */
     private static void addMembersToSection(
             EntityList<Person> members,
             Set<Object> pendingInviteeIds,
             Set<String> emailsWithAccounts,
-            DefaultMemberSelectionSection memberSection) {
+            DefaultMemberSelectionSection memberSection,
+            String ownerEmail) {
 
         for (Person member : members) {
             // Skip if this is a pending invitee (already added)
@@ -254,8 +263,13 @@ public final class HouseholdMemberLoader {
                 // Already linked to another account - fully authorized
                 status = HasMemberSelectionSection.MemberStatus.ACTIVE;
             } else if (email != null && emailsWithAccounts.contains(email.toLowerCase())) {
-                // Has created their own account - needs validation
-                status = HasMemberSelectionSection.MemberStatus.NEEDS_VALIDATION;
+                // Has created their own account - check if it matches the owner's email
+                // Auto-authorize if the member's email matches the logged-in account owner's email
+                if (ownerEmail != null && email.equalsIgnoreCase(ownerEmail)) {
+                    status = HasMemberSelectionSection.MemberStatus.ACTIVE;
+                } else {
+                    status = HasMemberSelectionSection.MemberStatus.NEEDS_VALIDATION;
+                }
             } else {
                 // Regular direct member
                 status = HasMemberSelectionSection.MemberStatus.ACTIVE;

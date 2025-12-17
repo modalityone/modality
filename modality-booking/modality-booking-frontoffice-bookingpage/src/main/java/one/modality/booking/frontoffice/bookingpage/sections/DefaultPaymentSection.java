@@ -249,6 +249,7 @@ public class DefaultPaymentSection implements HasPaymentSection {
 
         Label priceLabel = new Label(EventPriceFormatter.formatWithCurrency(item.getAmount(), workingBookingProperties != null && workingBookingProperties.getWorkingBooking() != null ? workingBookingProperties.getWorkingBooking().getEvent() : null));
         priceLabel.getStyleClass().addAll("bookingpage-price-medium", "bookingpage-text-primary");
+        priceLabel.setMinWidth(60);  // Ensure price visible for up to 4 digits + currency
 
         row.getChildren().addAll(infoBox, priceLabel);
         return row;
