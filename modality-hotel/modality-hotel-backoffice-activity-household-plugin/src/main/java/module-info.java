@@ -22,6 +22,7 @@ module modality.hotel.backoffice.activity.household.plugin {
     requires webfx.extras.i18n.controls;
     requires webfx.extras.operation;
     requires webfx.extras.operation.action;
+    requires webfx.extras.responsive;
     requires webfx.extras.time.layout;
     requires webfx.extras.time.layout.gantt;
     requires webfx.extras.time.window;

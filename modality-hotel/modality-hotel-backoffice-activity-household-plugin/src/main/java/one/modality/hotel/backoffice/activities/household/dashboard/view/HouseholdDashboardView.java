@@ -2,6 +2,7 @@ package one.modality.hotel.backoffice.activities.household.dashboard.view;
 
 import dev.webfx.extras.i18n.I18n;
 import dev.webfx.extras.i18n.controls.I18nControls;
+import dev.webfx.extras.responsive.ResponsiveDesign;
 import dev.webfx.extras.util.control.Controls;
 import dev.webfx.kit.util.properties.FXProperties;
 import javafx.collections.ListChangeListener;
@@ -52,8 +53,6 @@ public final class HouseholdDashboardView {
     private final VBox mainContent = new VBox();
     private final VBox loadingIndicator = new VBox();
 
-    // Track available room types from data
-    private Set<String> availableRoomTypes = new LinkedHashSet<>();
 
     public HouseholdDashboardView(AccommodationPresentationModel pm) {
         this.pm = pm;
@@ -148,14 +147,12 @@ public final class HouseholdDashboardView {
         loadingIndicator.getChildren().addAll(spinner, loadingMessage);
     }
 
+    private static final int MOBILE_BREAKPOINT = 600;
+
     private VBox createHeader() {
         VBox header = new VBox();
         header.getStyleClass().add("header");
         header.setPadding(new Insets(25));
-
-        HBox headerTop = new HBox();
-        headerTop.getStyleClass().add("header-top");
-        headerTop.setAlignment(Pos.CENTER_LEFT);
 
         // Title Section
         VBox headerTitleSection = new VBox(6);
@@ -180,14 +177,7 @@ public final class HouseholdDashboardView {
         dateInfo.getChildren().add(dateRangeLabel);
         headerTitleSection.getChildren().addAll(title, dateInfo);
 
-        Region spacer = new Region();
-        HBox.setHgrow(spacer, Priority.ALWAYS);
-
-        // Controls
-        HBox headerControls = new HBox(12);
-        headerControls.getStyleClass().add("header-controls");
-        headerControls.setAlignment(Pos.CENTER_LEFT);
-
+        // View range control
         HBox viewRangeControl = new HBox(10);
         viewRangeControl.getStyleClass().add("view-range-control");
         viewRangeControl.setAlignment(Pos.CENTER_LEFT);
@@ -225,8 +215,11 @@ public final class HouseholdDashboardView {
         daysInputWrapper.getChildren().addAll(daysInput, daysUnit);
         viewRangeControl.getChildren().addAll(viewRangeLabel, daysInputWrapper);
 
-        HBox quickViewBtns = new HBox(4);
+        // Quick view buttons - use FlowPane for wrapping on mobile
+        FlowPane quickViewBtns = new FlowPane();
         quickViewBtns.getStyleClass().add("quick-view-btns");
+        quickViewBtns.setHgap(4);
+        quickViewBtns.setVgap(4);
 
         quickViewBtns.getChildren().addAll(
                 createQuickViewBtn(HouseholdI18nKeys.ThreeDays, 3),
@@ -234,10 +227,63 @@ public final class HouseholdDashboardView {
                 createQuickViewBtn(HouseholdI18nKeys.TwoWeeks, 14),
                 createQuickViewBtn(HouseholdI18nKeys.OneMonth, 30));
 
+        // Controls container
+        HBox headerControls = new HBox(12);
+        headerControls.getStyleClass().add("header-controls");
+        headerControls.setAlignment(Pos.CENTER_LEFT);
         headerControls.getChildren().addAll(viewRangeControl, quickViewBtns);
-        headerTop.getChildren().addAll(headerTitleSection, spacer, headerControls);
 
-        header.getChildren().add(headerTop);
+        // Desktop layout: Title on left, controls on right (in same HBox row)
+        HBox desktopLayout = new HBox();
+        desktopLayout.getStyleClass().add("header-top");
+        desktopLayout.setAlignment(Pos.CENTER_LEFT);
+        Region spacer = new Region();
+        HBox.setHgrow(spacer, Priority.ALWAYS);
+        desktopLayout.getChildren().addAll(headerTitleSection, spacer, headerControls);
+
+        // Mobile layout: Title and controls stacked vertically
+        VBox mobileLayout = new VBox(16);
+        mobileLayout.setAlignment(Pos.CENTER_LEFT);
+        // Note: We can't add the same nodes to both layouts, so mobile layout shares nodes via responsive switching
+
+        // Container that holds both layouts (only one visible at a time)
+        StackPane layoutContainer = new StackPane(desktopLayout, mobileLayout);
+        header.getChildren().add(layoutContainer);
+
+        // Setup responsive design based on container width
+        new ResponsiveDesign(header)
+            .addResponsiveLayout(
+                width -> width < MOBILE_BREAKPOINT,
+                () -> {
+                    // Mobile: Stack title and controls vertically
+                    desktopLayout.setVisible(false);
+                    desktopLayout.setManaged(false);
+                    mobileLayout.setVisible(true);
+                    mobileLayout.setManaged(true);
+                    // Move nodes to mobile layout
+                    desktopLayout.getChildren().clear();
+                    mobileLayout.getChildren().clear();
+                    mobileLayout.getChildren().addAll(headerTitleSection, headerControls);
+                }
+            )
+            .addResponsiveLayout(
+                width -> width >= MOBILE_BREAKPOINT,
+                () -> {
+                    // Desktop: Title on left, controls on right
+                    mobileLayout.setVisible(false);
+                    mobileLayout.setManaged(false);
+                    desktopLayout.setVisible(true);
+                    desktopLayout.setManaged(true);
+                    // Move nodes to desktop layout
+                    mobileLayout.getChildren().clear();
+                    desktopLayout.getChildren().clear();
+                    Region newSpacer = new Region();
+                    HBox.setHgrow(newSpacer, Priority.ALWAYS);
+                    desktopLayout.getChildren().addAll(headerTitleSection, newSpacer, headerControls);
+                }
+            )
+            .start();
+
         return header;
     }
 
@@ -270,36 +316,11 @@ public final class HouseholdDashboardView {
             return;
         }
 
-        // Update available room types from current data
-        updateAvailableRoomTypes();
-
         // Render each day from presenter's processed data
         for (DayData dayData : presenter.getDayDataList()) {
             Node daySection = createDaySection(dayData);
             mainContent.getChildren().add(daySection);
         }
-    }
-
-    /**
-     * Extracts available room types from the current day data
-     */
-    private void updateAvailableRoomTypes() {
-        Set<String> roomTypes = new LinkedHashSet<>();
-        for (DayData dayData : presenter.getDayDataList()) {
-            // Extract from cleaning cards
-            for (RoomCardData card : dayData.getCleaningCards()) {
-                if (card.buildingName() != null && !card.buildingName().isEmpty()) {
-                    roomTypes.add(card.buildingName());
-                }
-            }
-            // Extract from inspection cards
-            for (RoomCardData card : dayData.getInspectionCards()) {
-                if (card.buildingName() != null && !card.buildingName().isEmpty()) {
-                    roomTypes.add(card.buildingName());
-                }
-            }
-        }
-        availableRoomTypes = roomTypes;
     }
 
     private Node createDaySection(DayData dayData) {
@@ -376,11 +397,7 @@ public final class HouseholdDashboardView {
         VBox section = new VBox(12);
         section.getStyleClass().add("cleaning-section");
 
-        HBox titleBox = new HBox();
-        titleBox.getStyleClass().add("section-title");
-        titleBox.setAlignment(Pos.CENTER_LEFT);
-        titleBox.setPadding(new Insets(8, 0, 8, 0));
-
+        // Title row with count
         HBox titleLeft = new HBox(8);
         titleLeft.setAlignment(Pos.CENTER_LEFT);
 
@@ -390,15 +407,57 @@ public final class HouseholdDashboardView {
 
         titleLeft.getChildren().addAll(titleLabel, countLabel);
 
+        // Filters - use FlowPane for wrapping on mobile
+        Node filters = createCleaningFilters();
+
+        // Desktop layout: Title on left, filters on right
+        HBox desktopHeader = new HBox();
+        desktopHeader.setAlignment(Pos.CENTER_LEFT);
         Region spacer = new Region();
         HBox.setHgrow(spacer, Priority.ALWAYS);
+        desktopHeader.getChildren().addAll(titleLeft, spacer, filters);
 
-        HBox filters = createCleaningFilters();
+        // Mobile layout: Title and filters stacked vertically
+        VBox mobileHeader = new VBox(8);
+        mobileHeader.setAlignment(Pos.CENTER_LEFT);
 
-        titleBox.getChildren().addAll(titleLeft, spacer, filters);
+        // Section header container
+        StackPane sectionHeader = new StackPane(desktopHeader, mobileHeader);
+        sectionHeader.getStyleClass().add("section-title");
+        sectionHeader.setPadding(new Insets(8, 0, 8, 0));
+
+        // Setup responsive design
+        new ResponsiveDesign(sectionHeader)
+            .addResponsiveLayout(
+                width -> width < MOBILE_BREAKPOINT,
+                () -> {
+                    desktopHeader.setVisible(false);
+                    desktopHeader.setManaged(false);
+                    mobileHeader.setVisible(true);
+                    mobileHeader.setManaged(true);
+                    desktopHeader.getChildren().clear();
+                    mobileHeader.getChildren().clear();
+                    mobileHeader.getChildren().addAll(titleLeft, filters);
+                }
+            )
+            .addResponsiveLayout(
+                width -> width >= MOBILE_BREAKPOINT,
+                () -> {
+                    mobileHeader.setVisible(false);
+                    mobileHeader.setManaged(false);
+                    desktopHeader.setVisible(true);
+                    desktopHeader.setManaged(true);
+                    mobileHeader.getChildren().clear();
+                    desktopHeader.getChildren().clear();
+                    Region newSpacer = new Region();
+                    HBox.setHgrow(newSpacer, Priority.ALWAYS);
+                    desktopHeader.getChildren().addAll(titleLeft, newSpacer, filters);
+                }
+            )
+            .start();
 
         if (cards.isEmpty()) {
-            section.getChildren().addAll(titleBox, createEmptyState());
+            section.getChildren().addAll(sectionHeader, createEmptyState());
         } else {
             FlowPane listPane = new FlowPane();
             listPane.setHgap(10);
@@ -407,7 +466,7 @@ public final class HouseholdDashboardView {
             listPane.getChildren().addAll(cards.stream()
                     .map(cardFactory::createRoomCard)
                     .collect(Collectors.toList()));
-            section.getChildren().addAll(titleBox, listPane);
+            section.getChildren().addAll(sectionHeader, listPane);
         }
 
         return section;
@@ -417,11 +476,7 @@ public final class HouseholdDashboardView {
         VBox section = new VBox(12);
         section.getStyleClass().add("inspection-section");
 
-        HBox titleBox = new HBox();
-        titleBox.getStyleClass().add("section-title");
-        titleBox.setAlignment(Pos.CENTER_LEFT);
-        titleBox.setPadding(new Insets(8, 0, 8, 0));
-
+        // Title row with count
         HBox titleLeft = new HBox(8);
         titleLeft.setAlignment(Pos.CENTER_LEFT);
 
@@ -431,15 +486,57 @@ public final class HouseholdDashboardView {
 
         titleLeft.getChildren().addAll(titleLabel, countLabel);
 
+        // Filters - use FlowPane for wrapping on mobile
+        Node filters = createInspectionFilters();
+
+        // Desktop layout: Title on left, filters on right
+        HBox desktopHeader = new HBox();
+        desktopHeader.setAlignment(Pos.CENTER_LEFT);
         Region spacer = new Region();
         HBox.setHgrow(spacer, Priority.ALWAYS);
+        desktopHeader.getChildren().addAll(titleLeft, spacer, filters);
 
-        HBox filters = createInspectionFilters();
+        // Mobile layout: Title and filters stacked vertically
+        VBox mobileHeader = new VBox(8);
+        mobileHeader.setAlignment(Pos.CENTER_LEFT);
 
-        titleBox.getChildren().addAll(titleLeft, spacer, filters);
+        // Section header container
+        StackPane sectionHeader = new StackPane(desktopHeader, mobileHeader);
+        sectionHeader.getStyleClass().add("section-title");
+        sectionHeader.setPadding(new Insets(8, 0, 8, 0));
+
+        // Setup responsive design
+        new ResponsiveDesign(sectionHeader)
+            .addResponsiveLayout(
+                width -> width < MOBILE_BREAKPOINT,
+                () -> {
+                    desktopHeader.setVisible(false);
+                    desktopHeader.setManaged(false);
+                    mobileHeader.setVisible(true);
+                    mobileHeader.setManaged(true);
+                    desktopHeader.getChildren().clear();
+                    mobileHeader.getChildren().clear();
+                    mobileHeader.getChildren().addAll(titleLeft, filters);
+                }
+            )
+            .addResponsiveLayout(
+                width -> width >= MOBILE_BREAKPOINT,
+                () -> {
+                    mobileHeader.setVisible(false);
+                    mobileHeader.setManaged(false);
+                    desktopHeader.setVisible(true);
+                    desktopHeader.setManaged(true);
+                    mobileHeader.getChildren().clear();
+                    desktopHeader.getChildren().clear();
+                    Region newSpacer = new Region();
+                    HBox.setHgrow(newSpacer, Priority.ALWAYS);
+                    desktopHeader.getChildren().addAll(titleLeft, newSpacer, filters);
+                }
+            )
+            .start();
 
         if (cards.isEmpty()) {
-            section.getChildren().addAll(titleBox, createEmptyState());
+            section.getChildren().addAll(sectionHeader, createEmptyState());
         } else {
             FlowPane listPane = new FlowPane();
             listPane.setHgap(10);
@@ -448,7 +545,7 @@ public final class HouseholdDashboardView {
             listPane.getChildren().addAll(cards.stream()
                     .map(cardFactory::createRoomCard)
                     .collect(Collectors.toList()));
-            section.getChildren().addAll(titleBox, listPane);
+            section.getChildren().addAll(sectionHeader, listPane);
         }
 
         return section;
@@ -529,25 +626,19 @@ public final class HouseholdDashboardView {
         return section;
     }
 
-    private HBox createCleaningFilters() {
-        HBox filters = new HBox(8);
+    private Node createCleaningFilters() {
+        // Use FlowPane: stays on one line when enough space (desktop), wraps on mobile
+        FlowPane filters = new FlowPane();
         filters.getStyleClass().add("filters");
+        filters.setHgap(16);
+        filters.setVgap(8);
         filters.setAlignment(Pos.CENTER_LEFT);
 
         DashboardFilterManager filterManager = presenter.getFilterManager();
 
-        // Build room type options dynamically from available data
-        List<String> roomTypeOptions = new ArrayList<>();
-        roomTypeOptions.add("All");
-        roomTypeOptions.addAll(availableRoomTypes);
-
         filters.getChildren().addAll(
-                // Room type filter replaces Status filter
-                createFilterDropdown("Room type", filterManager.cleanRoomTypeFilterProperty(),
-                        roomTypeOptions.toArray(new String[0])),
-                // Building filter commented out - will be restored later
-                // createFilterDropdown(HouseholdI18nKeys.Building, filterManager.cleanBuildingFilterProperty(),
-                //         new String[]{"All", "A", "B", "C"}),
+                createFilterDropdown(HouseholdI18nKeys.Building, filterManager.cleanBuildingFilterProperty(),
+                        new String[]{"All", "A", "B", "C"}),
                 createFilterDropdown(HouseholdI18nKeys.Next, filterManager.cleanCheckInFilterProperty(),
                         new String[]{"All", "Today", "Tomorrow"})
         );
@@ -555,9 +646,12 @@ public final class HouseholdDashboardView {
         return filters;
     }
 
-    private HBox createInspectionFilters() {
-        HBox filters = new HBox(8);
+    private Node createInspectionFilters() {
+        // Use FlowPane: stays on one line when enough space (desktop), wraps on mobile
+        FlowPane filters = new FlowPane();
         filters.getStyleClass().add("filters");
+        filters.setHgap(16);
+        filters.setVgap(8);
         filters.setAlignment(Pos.CENTER_LEFT);
 
         DashboardFilterManager filterManager = presenter.getFilterManager();
