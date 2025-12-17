@@ -14,9 +14,9 @@ import javafx.scene.paint.Color;
 import javafx.scene.shape.SVGPath;
 import one.modality.base.client.cloud.image.ModalityCloudImageService;
 import one.modality.base.client.i18n.I18nEntities;
+import one.modality.base.client.icons.SvgIcons;
 import one.modality.base.shared.entities.Event;
 import one.modality.base.shared.entities.Site;
-import one.modality.booking.client.workingbooking.WorkingBooking;
 import one.modality.booking.client.workingbooking.WorkingBookingProperties;
 import one.modality.booking.frontoffice.bookingpage.BookingPageI18nKeys;
 import one.modality.booking.frontoffice.bookingpage.theme.BookingFormColorScheme;
@@ -171,8 +171,8 @@ public class DefaultEventHeaderSection implements HasEventHeaderSection {
 
             locationWidth = locationLabel.prefWidth(-1);
             locationHeight = locationLabel.prefHeight(locationWidth);
-            if (datesWidth + 8 + locationWidth <= contentWidth) { // dates and location can fit on the same line
-                locationX = datesX + datesWidth + 8;
+            if (datesWidth + 20 + locationWidth <= contentWidth) { // dates and location can fit on the same line
+                locationX = datesX + datesWidth + 20;
                 locationY = datesY + (datesHeight - locationHeight) / 2;
                 y += datesHeight;
             } else { // dates and location need to be on separate lines
@@ -208,12 +208,14 @@ public class DefaultEventHeaderSection implements HasEventHeaderSection {
         // Dates (no wrapping container, directly managed by hPane)
         datesLabel.setWrapText(true);
         datesLabel.setGraphic(createCalendarIcon());
+        datesLabel.setGraphicTextGap(8);
         datesLabel.setMinWidth(0); // Allow shrinking for text wrap
         datesLabel.getStyleClass().addAll("bookingpage-text-md", "bookingpage-text-muted");
 
         // Location (no wrapping container, directly managed by hPane)
         locationLabel.setWrapText(true);
         locationLabel.setGraphic(createLocationIcon());
+        locationLabel.setGraphicTextGap(8);
         locationLabel.setMinWidth(0); // Allow shrinking for text wrap
         locationLabel.setMaxWidth(Double.MAX_VALUE); // Required for text wrap in WebFX
         locationLabel.getStyleClass().addAll("bookingpage-text-md", "bookingpage-text-muted");
@@ -238,14 +240,13 @@ public class DefaultEventHeaderSection implements HasEventHeaderSection {
             return;
         }
 
-        WorkingBooking workingBooking = workingBookingProperties.getWorkingBooking();
-        Event event = workingBooking.getEvent();
+        Event event = workingBookingProperties.getEvent();
 
         if (event == null) {
             return;
         }
 
-        // Bind event title using the label field (i18n translated), with fallback to name
+        // Bind the event title using the label field (i18n translated), with fallback to name
         I18nEntities.bindExpressionToTextProperty(titleLabel, event, "coalesce(i18n(label),name)");
 
         // Set dates
@@ -296,25 +297,11 @@ public class DefaultEventHeaderSection implements HasEventHeaderSection {
     // === Icon Creation ===
 
     private SVGPath createCalendarIcon() {
-        SVGPath icon = new SVGPath();
-        icon.setContent("M3 6h18v15H3zM16 3v4M8 3v4M3 10h18");
-        icon.setStroke(Color.web("#64748b"));
-        icon.setStrokeWidth(2);
-        icon.setFill(Color.TRANSPARENT);
-        icon.setScaleX(0.67);
-        icon.setScaleY(0.67);
-        return icon;
+        return SvgIcons.createStrokeSVGPath("M0 2h12.1v10.1H0zM8.7 0v2.7M3.4 0v2.7M0 4.7h12.1", Color.web("#64748b"), 2);
     }
 
     private SVGPath createLocationIcon() {
-        SVGPath icon = new SVGPath();
-        icon.setContent("M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z");
-        icon.setStroke(Color.web("#64748b"));
-        icon.setStrokeWidth(2);
-        icon.setFill(Color.TRANSPARENT);
-        icon.setScaleX(0.67);
-        icon.setScaleY(0.67);
-        return icon;
+        return SvgIcons.createStrokeSVGPath("M14.07 6.7c0 4.69-6.03 8.71-6.03 8.71s-6.03-4.02-6.03-8.71a6.03 6.03 90 0112.06 0z", Color.web("#64748b"), 2);
     }
 
     // === BookingFormSection interface ===
