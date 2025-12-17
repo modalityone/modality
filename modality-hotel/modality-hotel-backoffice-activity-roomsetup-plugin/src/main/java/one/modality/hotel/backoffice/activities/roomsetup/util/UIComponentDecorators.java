@@ -116,6 +116,10 @@ public final class UIComponentDecorators {
     public static final String CSS_COLOR_CELL_GREEN = "roomsetup-color-cell-green";
     public static final String CSS_COLOR_CELL_SLATE = "roomsetup-color-cell-slate";
 
+    // Gender toggle button CSS classes
+    public static final String CSS_GENDER_TOGGLE = "roomsetup-gender-toggle";
+    public static final String CSS_GENDER_TOGGLE_SELECTED = "roomsetup-gender-toggle-selected";
+
     private UIComponentDecorators() {
         // Utility class - prevent instantiation
     }
@@ -792,5 +796,58 @@ public final class UIComponentDecorators {
         label.setTextFill(Color.WHITE);
         label.setPadding(new Insets(1, 4, 1, 4));
         label.getStyleClass().add(CSS_SMALL);
+    }
+
+    // ============== Gender Toggle Button Styling ==============
+
+    // Gender toggle colors
+    private static final String COLOR_GENDER_BG_DEFAULT = "#ffffff";
+    private static final String COLOR_GENDER_TEXT_DEFAULT = "#78716c";
+    private static final String COLOR_GENDER_BORDER_DEFAULT = "#e5e5e5";
+    private static final String COLOR_GENDER_BG_SELECTED = "#fef3c7";
+    private static final String COLOR_GENDER_TEXT_SELECTED = "#f59e0b";
+    private static final String COLOR_GENDER_BORDER_SELECTED = "#f59e0b";
+
+    /**
+     * Applies unselected gender toggle button styling (WebFX compatible).
+     * White background, gray text and border.
+     *
+     * @param button The toggle button to style
+     */
+    public static void applyGenderToggleUnselectedStyle(javafx.scene.control.ToggleButton button) {
+        button.setBackground(new Background(new BackgroundFill(Color.web(COLOR_GENDER_BG_DEFAULT), new CornerRadii(10), null)));
+        button.setBorder(new Border(new BorderStroke(Color.web(COLOR_GENDER_BORDER_DEFAULT), BorderStrokeStyle.SOLID, new CornerRadii(10), new BorderWidths(1))));
+        button.setTextFill(Color.web(COLOR_GENDER_TEXT_DEFAULT));
+        button.setCursor(Cursor.HAND);
+        button.setPadding(new Insets(12, 16, 12, 16));
+    }
+
+    /**
+     * Applies selected gender toggle button styling (WebFX compatible).
+     * Yellow/amber background with amber text and border for visual emphasis.
+     *
+     * @param button The toggle button to style
+     */
+    public static void applyGenderToggleSelectedStyle(javafx.scene.control.ToggleButton button) {
+        button.setBackground(new Background(new BackgroundFill(Color.web(COLOR_GENDER_BG_SELECTED), new CornerRadii(10), null)));
+        button.setBorder(new Border(new BorderStroke(Color.web(COLOR_GENDER_BORDER_SELECTED), BorderStrokeStyle.SOLID, new CornerRadii(10), new BorderWidths(2))));
+        button.setTextFill(Color.web(COLOR_GENDER_TEXT_SELECTED));
+        button.setCursor(Cursor.HAND);
+        button.setPadding(new Insets(12, 16, 12, 16));
+    }
+
+    /**
+     * Applies appropriate gender toggle button styling based on selection state (WebFX compatible).
+     * Use this method in selection change listeners for dynamic styling updates.
+     *
+     * @param button The toggle button to style
+     * @param isSelected Whether the button is currently selected
+     */
+    public static void applyGenderToggleStyle(javafx.scene.control.ToggleButton button, boolean isSelected) {
+        if (isSelected) {
+            applyGenderToggleSelectedStyle(button);
+        } else {
+            applyGenderToggleUnselectedStyle(button);
+        }
     }
 }

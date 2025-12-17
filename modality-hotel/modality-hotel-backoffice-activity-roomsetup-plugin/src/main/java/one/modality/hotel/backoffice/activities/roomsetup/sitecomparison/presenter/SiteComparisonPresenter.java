@@ -8,6 +8,7 @@ import one.modality.base.shared.entities.Event;
 import one.modality.base.shared.entities.Resource;
 import one.modality.base.shared.entities.Site;
 import one.modality.hotel.backoffice.activities.roomsetup.sitecomparison.model.EventSiteComparison;
+import one.modality.hotel.backoffice.activities.roomsetup.sitecomparison.model.MatchedResourcePair;
 import one.modality.hotel.backoffice.activities.roomsetup.sitecomparison.model.ResourceLink;
 import one.modality.hotel.backoffice.activities.roomsetup.sitecomparison.model.SiteComparisonData;
 
@@ -149,6 +150,22 @@ public final class SiteComparisonPresenter {
     }
 
     /**
+     * Links all unlinked matched pairs for a site.
+     * @param matchedPairs The list of matched pairs to link
+     * @return The number of pairs that were linked
+     */
+    public int linkAllMatchedPairs(List<MatchedResourcePair> matchedPairs) {
+        int linkedCount = 0;
+        for (MatchedResourcePair pair : matchedPairs) {
+            if (!pair.isLinked() && pair.eventResource() != null && pair.globalResource() != null) {
+                linkResources(pair.eventResource(), pair.globalResource());
+                linkedCount++;
+            }
+        }
+        return linkedCount;
+    }
+
+    /**
      * Check if an event resource is linked (either from DB or pending in UpdateStore).
      */
     public boolean isLinked(Resource eventResource) {
@@ -263,17 +280,24 @@ public final class SiteComparisonPresenter {
         Event siteEvent = eventSite.getEvent();
         List<Event> siteEvents = siteEvent != null ? List.of(siteEvent) : Collections.emptyList();
 
-        // Build HashSet for O(1) event resource name lookups
-        Set<String> eventSiteResourceNames = new HashSet<>(siteResources.size());
+        // Build maps for pair matching
+        Map<String, Resource> eventResourcesByName = new HashMap<>();
         for (Resource r : siteResources) {
             if (r.getName() != null) {
-                eventSiteResourceNames.add(r.getName());
+                eventResourcesByName.put(r.getName(), r);
             }
         }
 
-        // Compare resources using O(1) set lookups
+        Map<String, Resource> globalResourcesByName = new HashMap<>();
+        for (Resource r : cachedGlobalResources) {
+            if (r.getName() != null) {
+                globalResourcesByName.put(r.getName(), r);
+            }
+        }
+
+        // Compare resources and build matched pairs
         List<String> onlyInGlobal = new ArrayList<>();
-        List<String> inBoth = new ArrayList<>();
+        List<MatchedResourcePair> matchedPairs = new ArrayList<>();
         List<String> onlyInEventSite = new ArrayList<>();
         List<Resource> globalOnlyResources = new ArrayList<>();
         List<Resource> eventOnlyResources = new ArrayList<>();
@@ -283,8 +307,10 @@ public final class SiteComparisonPresenter {
             String globalName = globalResource.getName();
             if (globalName == null) continue;
 
-            if (eventSiteResourceNames.contains(globalName)) {
-                inBoth.add(globalName);
+            Resource matchedEventResource = eventResourcesByName.get(globalName);
+            if (matchedEventResource != null) {
+                // Found a match - create pair
+                matchedPairs.add(new MatchedResourcePair(matchedEventResource, globalResource, globalName));
             } else {
                 onlyInGlobal.add(globalName);
                 globalOnlyResources.add(globalResource);
@@ -296,7 +322,7 @@ public final class SiteComparisonPresenter {
             String eventName = eventResource.getName();
             if (eventName == null) continue;
 
-            if (!globalResourceNames.contains(eventName)) {
+            if (!globalResourcesByName.containsKey(eventName)) {
                 onlyInEventSite.add(eventName);
                 eventOnlyResources.add(eventResource);
             }
@@ -304,7 +330,7 @@ public final class SiteComparisonPresenter {
 
         // Sort lists
         Collections.sort(onlyInGlobal);
-        Collections.sort(inBoth);
+        matchedPairs.sort(Comparator.comparing(MatchedResourcePair::name));
         Collections.sort(onlyInEventSite);
         globalOnlyResources.sort(Comparator.comparing(r -> r.getName() != null ? r.getName() : ""));
         eventOnlyResources.sort(Comparator.comparing(r -> r.getName() != null ? r.getName() : ""));
@@ -323,7 +349,7 @@ public final class SiteComparisonPresenter {
                 eventSite.getName(),
                 siteEvents,
                 onlyInGlobal,
-                inBoth,
+                matchedPairs,
                 onlyInEventSite,
                 globalOnlyResources,
                 eventOnlyResources,
@@ -395,6 +421,14 @@ public final class SiteComparisonPresenter {
             }
         }
 
+        // Build map for O(1) global resource lookup by name
+        Map<String, Resource> globalResourcesByName = new HashMap<>(globalSiteResources.size());
+        for (Resource r : globalSiteResources) {
+            if (r.getName() != null) {
+                globalResourcesByName.put(r.getName(), r);
+            }
+        }
+
         // Group event site resources by site: O(E)
         Object globalSiteId = globalSite.getId().getPrimaryKey();
         Map<Site, List<Resource>> resourcesBySite = new HashMap<>();
@@ -420,17 +454,17 @@ public final class SiteComparisonPresenter {
 
             List<Event> siteEvents = List.of(siteEvent);
 
-            // Build HashSet for O(1) event resource name lookups
-            Set<String> eventSiteResourceNames = new HashSet<>(siteResources.size());
+            // Build map for O(1) event resource lookup by name
+            Map<String, Resource> eventResourcesByName = new HashMap<>(siteResources.size());
             for (Resource r : siteResources) {
                 if (r.getName() != null) {
-                    eventSiteResourceNames.add(r.getName());
+                    eventResourcesByName.put(r.getName(), r);
                 }
             }
 
-            // Compare resources using O(1) set lookups
+            // Compare resources and build matched pairs
             List<String> onlyInGlobal = new ArrayList<>();
-            List<String> inBoth = new ArrayList<>();
+            List<MatchedResourcePair> matchedPairs = new ArrayList<>();
             List<String> onlyInEventSite = new ArrayList<>();
             List<Resource> globalOnlyResources = new ArrayList<>();
             List<Resource> eventOnlyResources = new ArrayList<>();
@@ -440,8 +474,10 @@ public final class SiteComparisonPresenter {
                 String globalName = globalResource.getName();
                 if (globalName == null) continue;
 
-                if (eventSiteResourceNames.contains(globalName)) {
-                    inBoth.add(globalName);
+                Resource matchedEventResource = eventResourcesByName.get(globalName);
+                if (matchedEventResource != null) {
+                    // Found a match - create pair
+                    matchedPairs.add(new MatchedResourcePair(matchedEventResource, globalResource, globalName));
                 } else {
                     onlyInGlobal.add(globalName);
                     globalOnlyResources.add(globalResource);
@@ -453,7 +489,7 @@ public final class SiteComparisonPresenter {
                 String eventName = eventResource.getName();
                 if (eventName == null) continue;
 
-                if (!globalResourceNames.contains(eventName)) {
+                if (!globalResourcesByName.containsKey(eventName)) {
                     onlyInEventSite.add(eventName);
                     eventOnlyResources.add(eventResource);
                 }
@@ -461,7 +497,7 @@ public final class SiteComparisonPresenter {
 
             // Sort lists: O(n log n)
             Collections.sort(onlyInGlobal);
-            Collections.sort(inBoth);
+            matchedPairs.sort(Comparator.comparing(MatchedResourcePair::name));
             Collections.sort(onlyInEventSite);
             globalOnlyResources.sort(Comparator.comparing(r -> r.getName() != null ? r.getName() : ""));
             eventOnlyResources.sort(Comparator.comparing(r -> r.getName() != null ? r.getName() : ""));
@@ -483,7 +519,7 @@ public final class SiteComparisonPresenter {
                     eventSite.getName(),
                     siteEvents,
                     onlyInGlobal,
-                    inBoth,
+                    matchedPairs,
                     onlyInEventSite,
                     globalOnlyResources,
                     eventOnlyResources,

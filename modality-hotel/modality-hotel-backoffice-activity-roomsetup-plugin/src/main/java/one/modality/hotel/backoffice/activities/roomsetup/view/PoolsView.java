@@ -56,6 +56,10 @@ public class PoolsView {
     private VBox sourcePoolsContainer;
     private VBox categoryPoolsContainer;
 
+    // Performance optimization: Store label references for direct updates instead of UI tree traversal
+    private Label sourceCountLabel;
+    private Label categoryCountLabel;
+
     public PoolsView(RoomSetupPresentationModel pm) {
         this.pm = pm;
     }
@@ -129,9 +133,9 @@ public class PoolsView {
         titleRow.setSpacing(8);
         Label titleLabel = I18nControls.newLabel(RoomSetupI18nKeys.SourcePools);
         titleLabel.getStyleClass().add(UIComponentDecorators.CSS_BUILDING_NAME);
-        Label countLabel = new Label("(0)");
-        countLabel.getStyleClass().add(UIComponentDecorators.CSS_SUBTITLE);
-        titleRow.getChildren().addAll(titleLabel, countLabel);
+        sourceCountLabel = new Label("(0)"); // Store reference for direct updates
+        sourceCountLabel.getStyleClass().add(UIComponentDecorators.CSS_SUBTITLE);
+        titleRow.getChildren().addAll(titleLabel, sourceCountLabel);
 
         Label subtitleLabel = I18nControls.newLabel(RoomSetupI18nKeys.SourcePoolsDescription);
         subtitleLabel.getStyleClass().add(UIComponentDecorators.CSS_BODY);
@@ -173,9 +177,9 @@ public class PoolsView {
         titleRow.setSpacing(8);
         Label titleLabel = I18nControls.newLabel(RoomSetupI18nKeys.CategoryPools);
         titleLabel.getStyleClass().add(UIComponentDecorators.CSS_BUILDING_NAME);
-        Label countLabel = new Label("(0)");
-        countLabel.getStyleClass().add(UIComponentDecorators.CSS_SUBTITLE);
-        titleRow.getChildren().addAll(titleLabel, countLabel);
+        categoryCountLabel = new Label("(0)"); // Store reference for direct updates
+        categoryCountLabel.getStyleClass().add(UIComponentDecorators.CSS_SUBTITLE);
+        titleRow.getChildren().addAll(titleLabel, categoryCountLabel);
 
         Label subtitleLabel = I18nControls.newLabel(RoomSetupI18nKeys.CategoryPoolsDescription);
         subtitleLabel.getStyleClass().add(UIComponentDecorators.CSS_BODY);
@@ -237,49 +241,12 @@ public class PoolsView {
                 }
             }
 
-            // Update counts in headers
-            int finalSourceCount = sourceCount;
-            int finalCategoryCount = categoryCount;
-
-            // Find and update count labels
-            if (sourcePoolsContainer.getParent() instanceof VBox section) {
-                for (Node child : section.getChildren()) {
-                    if (child instanceof HBox headerRow) {
-                        for (Node headerChild : headerRow.getChildren()) {
-                            if (headerChild instanceof VBox titleBox) {
-                                for (Node titleBoxChild : titleBox.getChildren()) {
-                                    if (titleBoxChild instanceof HBox titleRow) {
-                                        for (Node titleRowChild : titleRow.getChildren()) {
-                                            if (titleRowChild instanceof Label label && label.getText().startsWith("(")) {
-                                                label.setText("(" + finalSourceCount + ")");
-                                            }
-                                        }
-                                    }
-                                }
-                            }
-                        }
-                    }
-                }
+            // Update count labels using direct references - O(1) instead of O(nodes) tree traversal
+            if (sourceCountLabel != null) {
+                sourceCountLabel.setText("(" + sourceCount + ")");
             }
-
-            if (categoryPoolsContainer.getParent() instanceof VBox section) {
-                for (Node child : section.getChildren()) {
-                    if (child instanceof HBox headerRow) {
-                        for (Node headerChild : headerRow.getChildren()) {
-                            if (headerChild instanceof VBox titleBox) {
-                                for (Node titleBoxChild : titleBox.getChildren()) {
-                                    if (titleBoxChild instanceof HBox titleRow) {
-                                        for (Node titleRowChild : titleRow.getChildren()) {
-                                            if (titleRowChild instanceof Label label && label.getText().startsWith("(")) {
-                                                label.setText("(" + finalCategoryCount + ")");
-                                            }
-                                        }
-                                    }
-                                }
-                            }
-                        }
-                    }
-                }
+            if (categoryCountLabel != null) {
+                categoryCountLabel.setText("(" + categoryCount + ")");
             }
 
             // Show empty state if no pools

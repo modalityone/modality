@@ -246,11 +246,17 @@ public class RoomManagementView {
             allBtn.setOnAction(e -> filterTypeProperty.set(null));
             filterChipsContainer.getChildren().add(allBtn);
 
-            // Type filter buttons
+            // Build count map in single pass using Collectors.groupingBy - O(n) instead of O(n*m)
+            Map<Object, Long> countsByItemId = resourceConfigurations.stream()
+                    .filter(rc -> rc.getItem() != null)
+                    .collect(Collectors.groupingBy(
+                            rc -> rc.getItem().getId().getPrimaryKey(),
+                            Collectors.counting()
+                    ));
+
+            // Type filter buttons using O(1) map lookups
             for (Item item : accommodationItems) {
-                long count = resourceConfigurations.stream()
-                        .filter(rc -> rc.getItem() != null && rc.getItem().equals(item))
-                        .count();
+                long count = countsByItemId.getOrDefault(item.getId().getPrimaryKey(), 0L);
                 if (count > 0) {
                     Button typeBtn = new Button(item.getName() + " (" + count + ")");
                     boolean isSelected = item.equals(filterTypeProperty.get());

@@ -37,7 +37,12 @@ import one.modality.hotel.backoffice.activities.roomsetup.dialog.BuildingDialog;
 import one.modality.hotel.backoffice.activities.roomsetup.dialog.BuildingZoneDialog;
 import one.modality.hotel.backoffice.activities.roomsetup.dialog.DialogManager;
 import one.modality.hotel.backoffice.activities.roomsetup.util.UIComponentDecorators;
+
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 import static dev.webfx.stack.orm.dql.DqlStatement.orderBy;
@@ -60,6 +65,12 @@ public class BuildingsView {
     private final ObservableList<Building> buildings = FXCollections.observableArrayList();
     private final ObservableList<BuildingZone> buildingZones = FXCollections.observableArrayList();
     private final ObservableList<ResourceConfiguration> resourceConfigurations = FXCollections.observableArrayList();
+
+    // Performance optimization: Index maps for O(1) lookups
+    // These avoid O(n*m) nested stream operations when rendering building list
+    private Map<Object, List<BuildingZone>> zonesByBuildingId = new HashMap<>();
+    private Map<Object, Long> roomCountByBuildingId = new HashMap<>();
+    private Map<Object, Long> roomCountByZoneId = new HashMap<>();
 
     // Reactive entity mappers
     private ReactiveEntitiesMapper<Building> buildingRem;
@@ -100,10 +111,19 @@ public class BuildingsView {
 
         mainContainer.getChildren().addAll(headerSection, scrollPane);
 
-        // Listen for data changes
-        buildings.addListener((ListChangeListener<? super Building>) change -> updateBuildingList());
-        buildingZones.addListener((ListChangeListener<? super BuildingZone>) change -> updateBuildingList());
-        resourceConfigurations.addListener((ListChangeListener<? super ResourceConfiguration>) change -> updateBuildingList());
+        // Listen for data changes - rebuild index maps before updating UI
+        buildings.addListener((ListChangeListener<? super Building>) change -> {
+            rebuildBuildingMaps();
+            updateBuildingList();
+        });
+        buildingZones.addListener((ListChangeListener<? super BuildingZone>) change -> {
+            rebuildBuildingMaps();
+            updateBuildingList();
+        });
+        resourceConfigurations.addListener((ListChangeListener<? super ResourceConfiguration>) change -> {
+            rebuildBuildingMaps();
+            updateBuildingList();
+        });
 
         // Initialize building list (in case data already loaded before view was built)
         updateBuildingList();
@@ -292,10 +312,8 @@ public class BuildingsView {
 
         HBox.setHgrow(infoBox, Priority.ALWAYS);
 
-        // Stats badges
-        List<BuildingZone> zones = buildingZones.stream()
-                .filter(z -> z.getBuilding() != null && z.getBuilding().equals(building))
-                .collect(Collectors.toList());
+        // Stats badges - use O(1) lookups instead of stream filtering
+        List<BuildingZone> zones = getZonesForBuilding(building);
         long roomCount = countRoomsInBuilding(building);
 
         Label locationsBadge = new Label(zones.size() + " location" + (zones.size() != 1 ? "s" : ""));
@@ -372,14 +390,59 @@ public class BuildingsView {
         return iconContainer;
     }
 
+    /**
+     * Rebuilds all index maps for O(1) lookups.
+     * Called when any of the data lists change.
+     * Complexity: O(z + r) where z = zones, r = resource configurations (single pass each)
+     */
+    private void rebuildBuildingMaps() {
+        // Build zone-by-building map
+        zonesByBuildingId.clear();
+        for (BuildingZone zone : buildingZones) {
+            if (zone.getBuilding() != null) {
+                Object buildingId = zone.getBuilding().getId().getPrimaryKey();
+                zonesByBuildingId.computeIfAbsent(buildingId, k -> new ArrayList<>()).add(zone);
+            }
+        }
+
+        // Build room counts using single pass with Collectors.groupingBy
+        roomCountByBuildingId = resourceConfigurations.stream()
+                .filter(rc -> rc.getResource() != null && rc.getResource().getBuilding() != null)
+                .collect(Collectors.groupingBy(
+                        rc -> rc.getResource().getBuilding().getId().getPrimaryKey(),
+                        Collectors.counting()
+                ));
+
+        roomCountByZoneId = resourceConfigurations.stream()
+                .filter(rc -> rc.getResource() != null && rc.getResource().getBuildingZone() != null)
+                .collect(Collectors.groupingBy(
+                        rc -> rc.getResource().getBuildingZone().getId().getPrimaryKey(),
+                        Collectors.counting()
+                ));
+    }
+
+    /**
+     * Gets zones for a building using O(1) HashMap lookup.
+     */
+    private List<BuildingZone> getZonesForBuilding(Building building) {
+        if (building == null) return Collections.emptyList();
+        return zonesByBuildingId.getOrDefault(building.getId().getPrimaryKey(), Collections.emptyList());
+    }
+
+    /**
+     * Gets room count for a building using O(1) HashMap lookup.
+     */
     private long countRoomsInBuilding(Building building) {
-        return resourceConfigurations.stream()
-                .filter(rc -> {
-                    if (rc.getResource() == null) return false;
-                    Building rcBuilding = rc.getResource().getBuilding();
-                    return rcBuilding != null && rcBuilding.equals(building);
-                })
-                .count();
+        if (building == null) return 0;
+        return roomCountByBuildingId.getOrDefault(building.getId().getPrimaryKey(), 0L);
+    }
+
+    /**
+     * Gets room count for a zone using O(1) HashMap lookup.
+     */
+    private long countRoomsInZone(BuildingZone zone) {
+        if (zone == null) return 0;
+        return roomCountByZoneId.getOrDefault(zone.getId().getPrimaryKey(), 0L);
     }
 
     private VBox createZonesContent(Building building) {
@@ -405,10 +468,8 @@ public class BuildingsView {
         headerRow.getChildren().addAll(sectionLabel, spacer, addZoneBtn);
         content.getChildren().add(headerRow);
 
-        // Zone list
-        List<BuildingZone> zones = buildingZones.stream()
-                .filter(z -> z.getBuilding() != null && z.getBuilding().equals(building))
-                .collect(Collectors.toList());
+        // Zone list - use O(1) lookup instead of stream filtering
+        List<BuildingZone> zones = getZonesForBuilding(building);
 
         if (zones.isEmpty()) {
             Label emptyLabel = I18nControls.newLabel(RoomSetupI18nKeys.NoLocationsYet);
@@ -479,16 +540,6 @@ public class BuildingsView {
         icon.setScaleX(0.7);
         icon.setScaleY(0.7);
         return icon;
-    }
-
-    private long countRoomsInZone(BuildingZone zone) {
-        return resourceConfigurations.stream()
-                .filter(rc -> {
-                    if (rc.getResource() == null) return false;
-                    BuildingZone rcZone = rc.getResource().getBuildingZone();
-                    return rcZone != null && rcZone.equals(zone);
-                })
-                .count();
     }
 
     private void openBuildingDialog(Building building) {

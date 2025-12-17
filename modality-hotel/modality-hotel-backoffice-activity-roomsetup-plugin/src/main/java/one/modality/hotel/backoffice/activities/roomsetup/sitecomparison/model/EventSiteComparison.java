@@ -6,6 +6,7 @@ import one.modality.base.shared.entities.Site;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  * Data transfer object holding comparison results for a single event site.
@@ -17,19 +18,19 @@ public final class EventSiteComparison {
     private final String siteName;
     private final List<Event> futureEvents;
     private final List<String> onlyInGlobal;
-    private final List<String> inBoth;
     private final List<String> onlyInEventSite;
     private final List<Resource> globalOnlyResources;
     private final List<Resource> eventOnlyResources;
     private final List<ResourceLink> confirmedLinks;
     private final List<ResourceLink> suggestedLinks;
+    private final List<MatchedResourcePair> matchedPairs;
 
     public EventSiteComparison(
             Site site,
             String siteName,
             List<Event> futureEvents,
             List<String> onlyInGlobal,
-            List<String> inBoth,
+            List<MatchedResourcePair> matchedPairs,
             List<String> onlyInEventSite,
             List<Resource> globalOnlyResources,
             List<Resource> eventOnlyResources,
@@ -40,7 +41,7 @@ public final class EventSiteComparison {
         this.siteName = siteName;
         this.futureEvents = futureEvents;
         this.onlyInGlobal = onlyInGlobal;
-        this.inBoth = inBoth;
+        this.matchedPairs = matchedPairs;
         this.onlyInEventSite = onlyInEventSite;
         this.globalOnlyResources = globalOnlyResources;
         this.eventOnlyResources = eventOnlyResources;
@@ -50,7 +51,9 @@ public final class EventSiteComparison {
 
     /**
      * Backwards-compatible constructor without Resource objects and links.
+     * @deprecated Use constructor with MatchedResourcePair list instead
      */
+    @Deprecated
     public EventSiteComparison(
             Site site,
             String siteName,
@@ -59,8 +62,9 @@ public final class EventSiteComparison {
             List<String> inBoth,
             List<String> onlyInEventSite
     ) {
-        this(site, siteName, futureEvents, onlyInGlobal, inBoth, onlyInEventSite,
-                new ArrayList<>(), new ArrayList<>(), new ArrayList<>(), new ArrayList<>());
+        this(site, siteName, futureEvents, onlyInGlobal,
+                inBoth.stream().map(name -> new MatchedResourcePair(null, null, name)).collect(Collectors.toList()),
+                onlyInEventSite, new ArrayList<>(), new ArrayList<>(), new ArrayList<>(), new ArrayList<>());
     }
 
     public Site site() {
@@ -79,8 +83,38 @@ public final class EventSiteComparison {
         return onlyInGlobal;
     }
 
+    /**
+     * Returns the names of matched resources (derived from matchedPairs for backwards compatibility).
+     */
     public List<String> inBoth() {
-        return inBoth;
+        return matchedPairs.stream()
+                .map(MatchedResourcePair::name)
+                .collect(Collectors.toList());
+    }
+
+    /**
+     * Returns the list of matched resource pairs (event + global resources with same name).
+     */
+    public List<MatchedResourcePair> matchedPairs() {
+        return matchedPairs;
+    }
+
+    /**
+     * Returns count of matched pairs not yet linked.
+     */
+    public int unlinkedMatchedCount() {
+        return (int) matchedPairs.stream()
+                .filter(pair -> !pair.isLinked())
+                .count();
+    }
+
+    /**
+     * Returns count of matched pairs already linked.
+     */
+    public int linkedMatchedCount() {
+        return (int) matchedPairs.stream()
+                .filter(MatchedResourcePair::isLinked)
+                .count();
     }
 
     public List<String> onlyInEventSite() {
@@ -114,7 +148,7 @@ public final class EventSiteComparison {
      * Returns the total number of resources in the event site.
      */
     public int eventSiteResourceCount() {
-        return inBoth.size() + onlyInEventSite.size();
+        return matchedPairs.size() + onlyInEventSite.size();
     }
 
     /**

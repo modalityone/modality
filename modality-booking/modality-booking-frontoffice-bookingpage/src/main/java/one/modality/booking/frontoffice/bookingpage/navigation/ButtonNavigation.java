@@ -2,6 +2,7 @@ package one.modality.booking.frontoffice.bookingpage.navigation;
 
 import dev.webfx.extras.async.AsyncSpinner;
 import dev.webfx.extras.i18n.controls.I18nControls;
+import dev.webfx.extras.responsive.ResponsiveDesign;
 import dev.webfx.platform.async.Future;
 import javafx.beans.property.ObjectProperty;
 import javafx.beans.property.SimpleObjectProperty;
@@ -13,9 +14,11 @@ import javafx.scene.control.Button;
 import javafx.scene.control.ContentDisplay;
 import javafx.scene.control.Label;
 import javafx.scene.control.ToggleButton;
+import javafx.scene.layout.FlowPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Priority;
 import javafx.scene.layout.Region;
+import javafx.scene.layout.StackPane;
 import one.modality.base.client.i18n.BaseI18nKeys;
 import one.modality.booking.frontoffice.bookingpage.BookingFormButton;
 import one.modality.booking.frontoffice.bookingpage.BookingFormNavigation;
@@ -40,7 +43,13 @@ import java.util.List;
  */
 public class ButtonNavigation implements BookingFormNavigation {
 
-    private final HBox container = new HBox();
+    // Responsive container structure
+    private final StackPane wrapper = new StackPane();
+    private final HBox hboxContainer = new HBox();        // Desktop layout (with spacers)
+    private final FlowPane flowContainer = new FlowPane(); // Mobile layout (wrapping)
+    private final List<Node> currentButtons = new ArrayList<>(); // Track buttons for layout switch
+    private boolean isMobileLayout = false;
+
     private final Button continueButton = new Button();
     // We need to expose ToggleButton for the interface, but we use a Button for UI.
     private final ToggleButton nextToggleButton = new ToggleButton();
@@ -52,10 +61,21 @@ public class ButtonNavigation implements BookingFormNavigation {
     private final ObjectProperty<BookingFormColorScheme> colorScheme = new SimpleObjectProperty<>(BookingFormColorScheme.DEFAULT);
 
     public ButtonNavigation() {
-        container.setAlignment(Pos.CENTER_LEFT);
-        container.setPadding(new Insets(40, 0, 0, 0));
-        container.setSpacing(16);
-        container.getStyleClass().add("buttons");
+        // Initialize HBox for desktop (current behavior with spacers)
+        hboxContainer.setAlignment(Pos.CENTER_LEFT);
+        hboxContainer.setPadding(new Insets(40, 0, 0, 0));
+        hboxContainer.setSpacing(16);
+        hboxContainer.getStyleClass().add("buttons");
+
+        // Initialize FlowPane for mobile (wrapping behavior)
+        flowContainer.setAlignment(Pos.CENTER_LEFT);
+        flowContainer.setPadding(new Insets(40, 0, 0, 0));
+        flowContainer.setHgap(16);
+        flowContainer.setVgap(12);
+        flowContainer.getStyleClass().add("buttons");
+
+        // Start with desktop layout
+        wrapper.getChildren().add(hboxContainer);
 
         // Apply primary button CSS class - all styling handled by CSS
         continueButton.getStyleClass().add("booking-form-btn-primary");
@@ -67,7 +87,7 @@ public class ButtonNavigation implements BookingFormNavigation {
         continueButton.disableProperty().bind(nextToggleButton.disableProperty());
         continueButton.setOnAction(e -> nextToggleButton.fire());
 
-        container.getChildren().add(continueButton);
+        hboxContainer.getChildren().add(continueButton);
 
         // Initialize I18n
         I18nControls.bindI18nProperties(continueButton, BaseI18nKeys.Next);
@@ -75,11 +95,17 @@ public class ButtonNavigation implements BookingFormNavigation {
         // Hidden toggle buttons for interface compatibility
         nextToggleButton.setVisible(false);
         backToggleButton.setVisible(false);
+
+        // Set up responsive design to switch between desktop and mobile layouts
+        new ResponsiveDesign(wrapper)
+            .addResponsiveLayout(width -> width < 500, this::applyMobileLayout)
+            .addResponsiveLayout(width -> width >= 500, this::applyDesktopLayout)
+            .start();
     }
 
     @Override
     public Node getView() {
-        return container;
+        return wrapper;
     }
 
     @Override
@@ -108,18 +134,21 @@ public class ButtonNavigation implements BookingFormNavigation {
 
     @Override
     public void setButtons(BookingFormButton... buttons) {
-        container.getChildren().clear();
+        // Clear tracked buttons
+        currentButtons.clear();
+        hboxContainer.getChildren().clear();
+        flowContainer.getChildren().clear();
 
         if (buttons == null) {
-            // Null means fallback to default Continue button - add spacer to push to right
-            Region spacer = new Region();
-            HBox.setHgrow(spacer, Priority.ALWAYS);
-            container.getChildren().addAll(spacer, continueButton);
+            // Null means fallback to default Continue button
+            currentButtons.add(continueButton);
+            applyCurrentLayout();
             return;
         }
 
         if (buttons.length == 0) {
             // Empty array means hide all buttons (section handles its own buttons)
+            applyCurrentLayout();
             return;
         }
 
@@ -136,7 +165,7 @@ public class ButtonNavigation implements BookingFormNavigation {
             }
         }
 
-        // Add back buttons first (left side) with arrow prefix
+        // Create back buttons first (left side) with arrow prefix
         for (BookingFormButton buttonDef : backButtons) {
             Button button = new Button();
             // Use graphic for arrow prefix (can't modify bound text property)
@@ -158,22 +187,10 @@ public class ButtonNavigation implements BookingFormNavigation {
 
             // Handle async vs sync actions
             setButtonAction(button, buttonDef);
-            container.getChildren().add(button);
+            currentButtons.add(button);
         }
 
-        // Add spacer between back and other buttons to push others to the right
-        if (!backButtons.isEmpty() && !otherButtons.isEmpty()) {
-            Region spacer = new Region();
-            HBox.setHgrow(spacer, Priority.ALWAYS);
-            container.getChildren().add(spacer);
-        } else if (backButtons.isEmpty()) {
-            // No back button, add spacer at start to push buttons to right
-            Region spacer = new Region();
-            HBox.setHgrow(spacer, Priority.ALWAYS);
-            container.getChildren().add(0, spacer);
-        }
-
-        // Add other buttons (right side)
+        // Create other buttons (right side on desktop)
         for (BookingFormButton buttonDef : otherButtons) {
             Button button = new Button();
             // Support both i18n keys and StringProperty for dynamic text
@@ -203,7 +220,77 @@ public class ButtonNavigation implements BookingFormNavigation {
 
             // Handle async vs sync actions
             setButtonAction(button, buttonDef);
-            container.getChildren().add(button);
+            currentButtons.add(button);
+        }
+
+        // Apply layout based on current mode (desktop or mobile)
+        applyCurrentLayout();
+    }
+
+    /**
+     * Applies the current layout (mobile or desktop) to the buttons.
+     */
+    private void applyCurrentLayout() {
+        if (isMobileLayout) {
+            applyMobileLayout();
+        } else {
+            applyDesktopLayout();
+        }
+    }
+
+    /**
+     * Applies mobile layout: FlowPane with wrapping, no spacers.
+     */
+    private void applyMobileLayout() {
+        isMobileLayout = true;
+        flowContainer.getChildren().setAll(currentButtons);
+        if (wrapper.getChildren().isEmpty() || wrapper.getChildren().get(0) != flowContainer) {
+            wrapper.getChildren().setAll(flowContainer);
+        }
+    }
+
+    /**
+     * Applies desktop layout: HBox with spacers for right-alignment.
+     */
+    private void applyDesktopLayout() {
+        isMobileLayout = false;
+        hboxContainer.getChildren().clear();
+
+        // Find where back buttons end and other buttons start
+        int backButtonCount = 0;
+        for (Node node : currentButtons) {
+            if (node instanceof Button button && button.getStyleClass().contains("booking-form-btn-back")) {
+                backButtonCount++;
+            } else {
+                break;
+            }
+        }
+
+        // Add back buttons
+        for (int i = 0; i < backButtonCount; i++) {
+            hboxContainer.getChildren().add(currentButtons.get(i));
+        }
+
+        // Add spacer for right-alignment
+        if (!currentButtons.isEmpty()) {
+            Region spacer = new Region();
+            HBox.setHgrow(spacer, Priority.ALWAYS);
+            if (backButtonCount > 0 && backButtonCount < currentButtons.size()) {
+                // Spacer between back and other buttons
+                hboxContainer.getChildren().add(spacer);
+            } else if (backButtonCount == 0) {
+                // No back buttons - spacer at start to push all buttons right
+                hboxContainer.getChildren().add(0, spacer);
+            }
+        }
+
+        // Add other buttons
+        for (int i = backButtonCount; i < currentButtons.size(); i++) {
+            hboxContainer.getChildren().add(currentButtons.get(i));
+        }
+
+        if (wrapper.getChildren().isEmpty() || wrapper.getChildren().get(0) != hboxContainer) {
+            wrapper.getChildren().setAll(hboxContainer);
         }
     }
 
