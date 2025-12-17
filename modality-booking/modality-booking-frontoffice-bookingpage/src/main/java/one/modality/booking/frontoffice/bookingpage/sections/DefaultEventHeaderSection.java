@@ -2,7 +2,6 @@ package one.modality.booking.frontoffice.bookingpage.sections;
 
 import dev.webfx.extras.i18n.controls.I18nControls;
 import dev.webfx.extras.panes.HPane;
-import dev.webfx.extras.panes.ScaleMode;
 import dev.webfx.extras.panes.ScalePane;
 import dev.webfx.extras.webtext.HtmlText;
 import javafx.beans.property.ObjectProperty;
@@ -11,8 +10,6 @@ import javafx.beans.property.SimpleObjectProperty;
 import javafx.beans.value.ObservableBooleanValue;
 import javafx.scene.Node;
 import javafx.scene.control.Label;
-import javafx.scene.layout.Background;
-import javafx.scene.layout.Region;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.SVGPath;
 import one.modality.base.client.cloud.image.ModalityCloudImageService;
@@ -56,9 +53,9 @@ public class DefaultEventHeaderSection implements HasEventHeaderSection {
     private static final int LARGE_TABLET_BREAKPOINT = 900;
 
     // === Image constraints per breakpoints ===
-    private static final double IMAGE_MAX_HEIGHT_LARGE_TABLET = 160;
-    private static final double IMAGE_MAX_HEIGHT_MEDIUM_TABLET = 130;
     private static final double IMAGE_MAX_HEIGHT_SMALL_TABLET = 100;
+    private static final double IMAGE_MAX_HEIGHT_MEDIUM_TABLET = 130;
+    private static final double IMAGE_MAX_HEIGHT_LARGE_TABLET = 200;
     private static final double IMAGE_REQUEST_HEIGHT = 300;
 
     // === Properties ===
@@ -73,7 +70,7 @@ public class DefaultEventHeaderSection implements HasEventHeaderSection {
     protected LocalDate endDate;
 
     // === UI Components ===
-    protected final ScalePane imageContainer = new ScalePane(ScaleMode.BEST_FIT);
+    protected final ScalePane imageContainer = new ScalePane();
     protected final Label titleLabel = new Label();
     protected final Label datesLabel = new Label();
     protected final Label locationLabel = new Label();
@@ -227,13 +224,8 @@ public class DefaultEventHeaderSection implements HasEventHeaderSection {
         descriptionHtmlText.managedProperty().bind(descriptionHtmlText.textProperty().isNotEmpty());
         descriptionHtmlText.visibleProperty().bind(descriptionHtmlText.textProperty().isNotEmpty());
 
-        // Assemble children directly in hPane and style it
+        // Styling the container
         container.getStyleClass().add("booking-form-event-header");
-        container.setMinHeight(Region.USE_PREF_SIZE);
-        container.setMaxHeight(Region.USE_PREF_SIZE);
-        container.setMinWidth(0);
-
-        imageContainer.setBackground(Background.fill(Color.YELLOWGREEN));
     }
 
     // === Data Loading ===
