@@ -625,14 +625,13 @@ public class ResponsiveStepProgressHeader implements BookingFormHeader {
 
         // Steps container - takes up available space
         HBox stepsContainer = new HBox();
-        stepsContainer.setAlignment(Pos.TOP_CENTER);
         HBox.setHgrow(stepsContainer, Priority.ALWAYS);
 
         for (int i = 0; i < steps.size(); i++) {
             StepInfo step = steps.get(i);
 
             VBox stepItem = new VBox(4);
-            stepItem.setAlignment(Pos.CENTER);
+            stepItem.setAlignment(Pos.TOP_CENTER);
             stepItem.setUserData(i);
             HBox.setHgrow(stepItem, Priority.ALWAYS);
 
