@@ -659,7 +659,7 @@ public class ResponsiveStepProgressHeader implements BookingFormHeader {
             I18nControls.bindI18nProperties(label, step.titleKey);
             label.getStyleClass().add("booking-form-step-label-tablet");
             label.setFont(Font.font(null, FontWeight.NORMAL, 11)); // Per JSX: 11px, weight changes with state
-            label.setWrapText(false);
+            label.setWrapText(true);
             label.setMaxWidth(60);
             label.setAlignment(Pos.CENTER);
 
