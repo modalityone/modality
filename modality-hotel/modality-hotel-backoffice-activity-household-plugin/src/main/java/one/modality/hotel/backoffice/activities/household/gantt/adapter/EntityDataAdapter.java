@@ -211,7 +211,9 @@ public final class EntityDataAdapter {
             // This merges all event-specific resources that map to the same global resource
             EntityId globalId = resource.getKbs2ToKbs3GlobalResourceId();
             if (globalId != null) {
-                return "global:" + globalId.toString();
+                // Use the global resource's primary key with "resource:" prefix
+                // This ensures bookings match global rooms (which also use "resource:" prefix)
+                return "resource:" + globalId.getPrimaryKey().toString();
             }
             // If this IS the global resource (no link), use its own ID
             return "resource:" + resource.getPrimaryKey().toString();
