@@ -39,6 +39,8 @@ import one.modality.hotel.backoffice.activities.roomsetup.util.PoolTypeFilter;
 import one.modality.hotel.backoffice.activities.roomsetup.util.UIComponentDecorators;
 
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -65,6 +67,10 @@ public class DefaultAllocationView {
     private final ObservableList<PoolAllocation> poolAllocations = FXCollections.observableArrayList();
     private final ObservableList<Building> buildings = FXCollections.observableArrayList();
     private final ObservableList<Item> accommodationItems = FXCollections.observableArrayList();
+
+    // Performance optimization: Index for O(1) lookup of allocations by resource ID
+    // This avoids O(n*m) nested stream operations when filtering/counting
+    private Map<Object, List<PoolAllocation>> allocationsByResourceId = new HashMap<>();
 
     // Reactive entity mappers
     private ReactiveEntitiesMapper<ResourceConfiguration> resourceConfigRem;
@@ -140,7 +146,10 @@ public class DefaultAllocationView {
             updateFilterChips();
             updateRoomList();
         });
-        poolAllocations.addListener((ListChangeListener<? super PoolAllocation>) change -> updateRoomList());
+        poolAllocations.addListener((ListChangeListener<? super PoolAllocation>) change -> {
+            rebuildAllocationIndex(); // Rebuild index for O(1) lookups
+            updateRoomList();
+        });
         buildings.addListener((ListChangeListener<? super Building>) change -> updateRoomList());
         accommodationItems.addListener((ListChangeListener<? super Item>) change -> updateRoomList());
 
@@ -306,14 +315,42 @@ public class DefaultAllocationView {
         });
     }
 
+    /**
+     * Rebuilds the allocation index for O(1) lookup by resource ID.
+     * Called when poolAllocations list changes.
+     * Complexity: O(m) where m = number of allocations (single pass)
+     */
+    private void rebuildAllocationIndex() {
+        allocationsByResourceId.clear();
+        for (PoolAllocation pa : poolAllocations) {
+            if (pa.getResource() != null && pa.getEvent() == null) {
+                Object resourceId = pa.getResource().getId().getPrimaryKey();
+                allocationsByResourceId.computeIfAbsent(resourceId, k -> new ArrayList<>()).add(pa);
+            }
+        }
+    }
+
+    /**
+     * Gets allocations for a resource using O(1) HashMap lookup.
+     * @param resource The resource to look up
+     * @return List of pool allocations for the resource (empty list if none)
+     */
+    private List<PoolAllocation> getAllocationsForResource(Resource resource) {
+        if (resource == null) return Collections.emptyList();
+        return allocationsByResourceId.getOrDefault(resource.getId().getPrimaryKey(), Collections.emptyList());
+    }
+
+    /**
+     * Checks if a resource has any pool allocations.
+     * Uses O(1) HashMap lookup instead of O(m) stream.
+     */
+    private boolean hasAllocations(Resource resource) {
+        return !getAllocationsForResource(resource).isEmpty();
+    }
+
     private long countUnassignedRooms() {
         return resourceConfigurations.stream()
-                .filter(rc -> {
-                    Resource resource = rc.getResource();
-                    if (resource == null) return true;
-                    return poolAllocations.stream()
-                            .noneMatch(pa -> pa.getResource() != null && pa.getResource().equals(resource) && pa.getEvent() == null);
-                })
+                .filter(rc -> !hasAllocations(rc.getResource()))
                 .count();
     }
 
@@ -351,39 +388,28 @@ public class DefaultAllocationView {
 
             roomListContainer.getChildren().clear();
 
-            // Filter rooms
+            // Filter rooms using O(1) allocation lookups
             List<ResourceConfiguration> filteredRooms = resourceConfigurations.stream()
                     .filter(rc -> {
                         // Check for unassigned filter
                         if (showUnassignedOnlyProperty.get()) {
-                            Resource resource = rc.getResource();
-                            if (resource == null) return true;
-                            return poolAllocations.stream()
-                                    .noneMatch(pa -> pa.getResource() != null && pa.getResource().equals(resource) && pa.getEvent() == null);
+                            return !hasAllocations(rc.getResource());
                         }
 
                         // Check for pool filter
                         Pool filterPool = filterPoolProperty.get();
                         if (filterPool == null) return true;
 
-                        Resource resource = rc.getResource();
-                        if (resource == null) return false;
-
-                        return poolAllocations.stream()
-                                .anyMatch(pa -> pa.getResource() != null && pa.getResource().equals(resource)
-                                        && pa.getPool() != null && pa.getPool().equals(filterPool)
-                                        && pa.getEvent() == null);
+                        // Use O(1) lookup instead of O(m) stream
+                        List<PoolAllocation> allocations = getAllocationsForResource(rc.getResource());
+                        return allocations.stream()
+                                .anyMatch(pa -> pa.getPool() != null && pa.getPool().equals(filterPool));
                     })
                     .collect(Collectors.toList());
 
-            // Update count
+            // Update count using O(1) lookups
             long assignedCount = filteredRooms.stream()
-                    .filter(rc -> {
-                        Resource resource = rc.getResource();
-                        if (resource == null) return false;
-                        return poolAllocations.stream()
-                                .anyMatch(pa -> pa.getResource() != null && pa.getResource().equals(resource) && pa.getEvent() == null);
-                    })
+                    .filter(rc -> hasAllocations(rc.getResource()))
                     .count();
             roomCountLabel.setText(I18n.getI18nText(RoomSetupI18nKeys.RoomStats, filteredRooms.size(), assignedCount, filteredRooms.size() - assignedCount));
 
@@ -418,13 +444,14 @@ public class DefaultAllocationView {
                     break;
                 case "pool":
                     Resource resource = rc.getResource();
-                    if (resource != null) {
-                        List<String> poolNames = poolAllocations.stream()
-                                .filter(pa -> pa.getResource() != null && pa.getResource().equals(resource) && pa.getEvent() == null)
+                    // Use O(1) lookup instead of O(m) stream filtering
+                    List<PoolAllocation> resourceAllocations = getAllocationsForResource(resource);
+                    if (!resourceAllocations.isEmpty()) {
+                        List<String> poolNames = resourceAllocations.stream()
                                 .map(pa -> pa.getPool() != null ? pa.getPool().getName() : I18n.getI18nText(RoomSetupI18nKeys.UnknownType))
                                 .distinct()
                                 .collect(Collectors.toList());
-                        key = poolNames.isEmpty() ? I18n.getI18nText(RoomSetupI18nKeys.UnassignedWarning) : String.join(", ", poolNames);
+                        key = String.join(", ", poolNames);
                     } else {
                         key = I18n.getI18nText(RoomSetupI18nKeys.UnassignedWarning);
                     }
@@ -485,11 +512,9 @@ public class DefaultAllocationView {
         card.setCursor(Cursor.HAND);
         card.getStyleClass().add(UIComponentDecorators.CSS_ALLOCATION_ROOM);
 
-        // Determine pool allocation for styling
+        // Determine pool allocation for styling using O(1) lookup
         Resource resource = rc.getResource();
-        List<PoolAllocation> roomAllocations = poolAllocations.stream()
-                .filter(pa -> pa.getResource() != null && resource != null && pa.getResource().equals(resource) && pa.getEvent() == null)
-                .collect(Collectors.toList());
+        List<PoolAllocation> roomAllocations = getAllocationsForResource(resource);
 
         // Determine border color based on allocation status
         // - Unassigned: orange warning color

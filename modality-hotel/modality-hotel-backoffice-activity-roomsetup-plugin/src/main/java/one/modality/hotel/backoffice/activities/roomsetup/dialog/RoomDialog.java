@@ -89,7 +89,8 @@ public class RoomDialog implements DialogManager.ManagedDialog {
     public Node buildView() {
         VBox container = new VBox();
         container.setSpacing(20);
-        container.setPadding(new Insets(24));
+        // More bottom padding to create space between notes and save button
+        container.setPadding(new Insets(24, 24, 32, 24));
         container.setMinWidth(480);
         container.getStyleClass().add(UIComponentDecorators.CSS_DIALOG_CONTAINER);
 
@@ -315,8 +316,9 @@ public class RoomDialog implements DialogManager.ManagedDialog {
         femaleBtn.setToggleGroup(genderToggleGroup);
         maleBtn.setToggleGroup(genderToggleGroup);
 
-        // Default to mixed
+        // Default to mixed and apply selected styling
         mixedBtn.setSelected(true);
+        UIComponentDecorators.applyGenderToggleSelectedStyle(mixedBtn);
 
         genderBox.getChildren().addAll(mixedBtn, femaleBtn, maleBtn);
 
@@ -326,17 +328,14 @@ public class RoomDialog implements DialogManager.ManagedDialog {
     private ToggleButton createGenderButton(Object i18nKey, String symbol, String userData) {
         ToggleButton btn = new ToggleButton(symbol + " " + I18n.getI18nText(i18nKey));
         btn.setUserData(userData);
-        btn.setStyle("-fx-background-color: white; -fx-text-fill: #78716c; -fx-font-weight: 500; " +
-                "-fx-padding: 12 16; -fx-background-radius: 10; -fx-border-color: #e5e5e5; -fx-border-radius: 10; -fx-cursor: hand;");
+        btn.getStyleClass().add(UIComponentDecorators.CSS_GENDER_TOGGLE);
 
+        // Apply initial unselected styling (WebFX compatible)
+        UIComponentDecorators.applyGenderToggleUnselectedStyle(btn);
+
+        // Listen for selection changes and update styling dynamically
         btn.selectedProperty().addListener((obs, wasSelected, isSelected) -> {
-            if (isSelected) {
-                btn.setStyle("-fx-background-color: #fef3c7; -fx-text-fill: #f59e0b; -fx-font-weight: 600; " +
-                        "-fx-padding: 12 16; -fx-background-radius: 10; -fx-border-color: #f59e0b; -fx-border-width: 2; -fx-border-radius: 10; -fx-cursor: hand;");
-            } else {
-                btn.setStyle("-fx-background-color: white; -fx-text-fill: #78716c; -fx-font-weight: 500; " +
-                        "-fx-padding: 12 16; -fx-background-radius: 10; -fx-border-color: #e5e5e5; -fx-border-radius: 10; -fx-cursor: hand;");
-            }
+            UIComponentDecorators.applyGenderToggleStyle(btn, isSelected);
         });
 
         return btn;
