@@ -11,6 +11,7 @@ public interface RoomSetupI18nKeys {
     Object AddSourcePool = "AddSourcePool";
     Object AllBedsAssigned = "AllBedsAssigned";
     Object AllCapacityAssigned = "AllCapacityAssigned";
+    Object AllMatchedLinked = "AllMatchedLinked";
     Object AllPools = "AllPools";
     Object AllRoomsAssigned = "AllRoomsAssigned";
     Object AllTypes = "AllTypes";
@@ -77,8 +78,10 @@ public interface RoomSetupI18nKeys {
     Object GroupByType = "GroupByType";
     Object GroupByZone = "GroupByZone";
     Object InBothSites = "InBothSites";
+    Object LinkAllMatched = "LinkAllMatched";
     Object LoadingAllocations = "LoadingAllocations";
     Object LoadingData = "LoadingData";
+    Object MatchedLinkStatus = "MatchedLinkStatus";
     Object MultipleRoomCapacity = "MultipleRoomCapacity";
     Object NamePlaceholder = "NamePlaceholder";
     Object NoBuildingZones = "NoBuildingZones";
