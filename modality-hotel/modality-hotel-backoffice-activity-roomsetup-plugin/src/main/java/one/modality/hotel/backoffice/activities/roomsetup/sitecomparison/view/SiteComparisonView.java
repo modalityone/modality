@@ -32,6 +32,7 @@ import one.modality.hotel.backoffice.activities.roomsetup.RoomSetupI18nKeys;
 import one.modality.hotel.backoffice.activities.roomsetup.RoomSetupPresentationModel;
 import one.modality.hotel.backoffice.activities.roomsetup.sitecomparison.data.SiteComparisonDataLoader;
 import one.modality.hotel.backoffice.activities.roomsetup.sitecomparison.model.EventSiteComparison;
+import one.modality.hotel.backoffice.activities.roomsetup.sitecomparison.model.MatchedResourcePair;
 import one.modality.hotel.backoffice.activities.roomsetup.sitecomparison.model.ResourceLink;
 import one.modality.hotel.backoffice.activities.roomsetup.sitecomparison.presenter.SiteComparisonPresenter;
 import one.modality.hotel.backoffice.activities.roomsetup.util.UIComponentDecorators;
@@ -552,7 +553,7 @@ public final class SiteComparisonView {
                 HBox columns = new HBox(16);
                 columns.setAlignment(Pos.TOP_LEFT);
 
-                VBox inBothCol = createResourceColumn(RoomSetupI18nKeys.InBothSites, comparison.inBoth(), "both");
+                VBox inBothCol = createMatchedPairsColumn(comparison);
                 VBox globalOnlyCol = createResourceColumnWithResources(RoomSetupI18nKeys.OnlyInGlobalSite, comparison.globalOnlyResources(),
                         "global", false, globalResourceBadges);
                 VBox eventOnlyCol = createResourceColumnWithResources(RoomSetupI18nKeys.OnlyInEventSite, comparison.eventOnlyResources(),
@@ -718,6 +719,144 @@ public final class SiteComparisonView {
             clearSelection();
             renderView();
         }
+    }
+
+    /**
+     * Creates the "In Both Sites" column with link status and "Link All" button.
+     */
+    private VBox createMatchedPairsColumn(EventSiteComparison comparison) {
+        VBox column = new VBox(8);
+        UIComponentDecorators.applyComparisonColumnStyle(column, "both");
+
+        List<MatchedResourcePair> matchedPairs = comparison.matchedPairs();
+        int unlinkedCount = comparison.unlinkedMatchedCount();
+        int linkedCount = comparison.linkedMatchedCount();
+        int totalCount = matchedPairs.size();
+
+        // Header with title and count
+        HBox headerBox = new HBox(8);
+        headerBox.setAlignment(Pos.CENTER_LEFT);
+
+        Label titleLabel = I18nControls.newLabel(RoomSetupI18nKeys.InBothSites);
+        UIComponentDecorators.applyComparisonHeaderStyle(titleLabel, "both");
+
+        Label countLabel = new Label("(" + totalCount + ")");
+        UIComponentDecorators.applyComparisonTextStyle(countLabel, "both");
+
+        headerBox.getChildren().addAll(titleLabel, countLabel);
+        column.getChildren().add(headerBox);
+
+        // Status indicator (linked/unlinked count)
+        if (totalCount > 0) {
+            HBox statusBox = new HBox(8);
+            statusBox.setAlignment(Pos.CENTER_LEFT);
+
+            if (linkedCount == totalCount) {
+                // All linked - show success
+                Label allLinkedLabel = new Label("\u2713 " + I18n.getI18nText(RoomSetupI18nKeys.AllMatchedLinked));
+                allLinkedLabel.setStyle("-fx-text-fill: #2e7d32;");
+                statusBox.getChildren().add(allLinkedLabel);
+            } else {
+                // Show linked/unlinked status
+                Label statusLabel = new Label(I18n.getI18nText(RoomSetupI18nKeys.MatchedLinkStatus, linkedCount, totalCount));
+                UIComponentDecorators.applyComparisonTextStyle(statusLabel, "both");
+                statusBox.getChildren().add(statusLabel);
+            }
+            column.getChildren().add(statusBox);
+        }
+
+        // "Link All" button (only show if there are unlinked pairs)
+        if (unlinkedCount > 0) {
+            Button linkAllButton = Bootstrap.successButton(
+                    I18nControls.newButton(RoomSetupI18nKeys.LinkAllMatched, unlinkedCount)
+            );
+            linkAllButton.setOnAction(e -> {
+                int linked = presenter.linkAllMatchedPairs(matchedPairs);
+                if (linked > 0) {
+                    Object siteId = comparison.site().getId().getPrimaryKey();
+                    presenter.clearComparisonCacheForSite(siteId);
+                    renderView();
+                }
+            });
+            column.getChildren().add(linkAllButton);
+        }
+
+        // Resource list with link status
+        if (matchedPairs.isEmpty()) {
+            Label emptyLabel = new Label("-");
+            emptyLabel.getStyleClass().add(UIComponentDecorators.CSS_EMPTY_STATE_TEXT);
+            column.getChildren().add(emptyLabel);
+        } else {
+            for (MatchedResourcePair pair : matchedPairs) {
+                column.getChildren().add(createMatchedPairRow(pair, comparison.site()));
+            }
+        }
+
+        return column;
+    }
+
+    /**
+     * Creates a row for a matched resource pair showing link status.
+     */
+    private HBox createMatchedPairRow(MatchedResourcePair pair, Site site) {
+        HBox row = new HBox(6);
+        row.setAlignment(Pos.CENTER_LEFT);
+
+        // Check link status
+        boolean isLinkedToCorrect = pair.isLinked();
+        boolean isLinkedToDifferent = pair.isLinkedToDifferent();
+
+        // Status icon
+        Label statusIcon;
+        if (isLinkedToCorrect) {
+            statusIcon = new Label("\u2713"); // Checkmark
+            statusIcon.setStyle("-fx-text-fill: #2e7d32;");
+        } else if (isLinkedToDifferent) {
+            statusIcon = new Label("\u26A0"); // Warning
+            statusIcon.setStyle("-fx-text-fill: #ff9800;");
+        } else {
+            statusIcon = new Label("\u25CB"); // Empty circle
+            statusIcon.setStyle("-fx-text-fill: #155724; -fx-opacity: 0.5;");
+        }
+
+        // Resource name
+        Label nameLabel = new Label(pair.name());
+        if (isLinkedToCorrect) {
+            UIComponentDecorators.applyLinkedResourceStyle(nameLabel);
+        } else {
+            UIComponentDecorators.applyComparisonTextStyle(nameLabel, "both");
+        }
+
+        row.getChildren().addAll(statusIcon, nameLabel);
+
+        // Add individual link/unlink action
+        if (!isLinkedToCorrect && !isLinkedToDifferent) {
+            // Show "Link" action for unlinked pairs - click anywhere on row
+            row.getStyleClass().add(UIComponentDecorators.CSS_CLICKABLE);
+            row.setOnMouseClicked(e -> {
+                presenter.linkResources(pair.eventResource(), pair.globalResource());
+                Object siteId = site.getId().getPrimaryKey();
+                presenter.clearComparisonCacheForSite(siteId);
+                renderView();
+            });
+        } else if (isLinkedToCorrect) {
+            // Show unlink option
+            Region spacer = new Region();
+            HBox.setHgrow(spacer, Priority.ALWAYS);
+
+            Button unlinkBtn = new Button("\u2715");
+            UIComponentDecorators.applyUnlinkButtonStyle(unlinkBtn);
+            unlinkBtn.setOnAction(e -> {
+                presenter.unlinkResource(pair.eventResource());
+                Object siteId = site.getId().getPrimaryKey();
+                presenter.clearComparisonCacheForSite(siteId);
+                renderView();
+            });
+
+            row.getChildren().addAll(spacer, unlinkBtn);
+        }
+
+        return row;
     }
 
     private VBox createResourceColumn(Object titleKey, List<String> resources, String columnType) {
