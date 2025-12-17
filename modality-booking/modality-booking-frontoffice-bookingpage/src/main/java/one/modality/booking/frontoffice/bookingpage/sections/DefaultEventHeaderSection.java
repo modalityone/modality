@@ -1,20 +1,18 @@
 package one.modality.booking.frontoffice.bookingpage.sections;
 
-import dev.webfx.extras.i18n.I18n;
 import dev.webfx.extras.i18n.controls.I18nControls;
-import dev.webfx.extras.panes.MonoPane;
+import dev.webfx.extras.panes.HPane;
+import dev.webfx.extras.panes.ScaleMode;
+import dev.webfx.extras.panes.ScalePane;
 import dev.webfx.extras.webtext.HtmlText;
-import dev.webfx.extras.responsive.ResponsiveDesign;
 import javafx.beans.property.ObjectProperty;
 import javafx.beans.property.SimpleBooleanProperty;
 import javafx.beans.property.SimpleObjectProperty;
 import javafx.beans.value.ObservableBooleanValue;
-import javafx.geometry.Insets;
-import javafx.geometry.Pos;
 import javafx.scene.Node;
 import javafx.scene.control.Label;
-import javafx.scene.image.ImageView;
-import javafx.scene.layout.*;
+import javafx.scene.layout.Background;
+import javafx.scene.layout.Region;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.SVGPath;
 import one.modality.base.client.cloud.image.ModalityCloudImageService;
@@ -67,310 +65,175 @@ public class DefaultEventHeaderSection implements HasEventHeaderSection {
     // Kept for API compatibility - theming is now CSS-based
     protected final ObjectProperty<BookingFormColorScheme> colorScheme = new SimpleObjectProperty<>(BookingFormColorScheme.DEFAULT);
     protected final SimpleBooleanProperty validProperty = new SimpleBooleanProperty(true);
-    protected final SimpleBooleanProperty imageVisible = new SimpleBooleanProperty(false);
-
-    // === UI Components ===
-    protected final HBox container;
-    protected final VBox contentBox;
-    protected final MonoPane imageContainer;
-    protected Label titleLabel;
-    protected Label datesLabel;
-    protected Label locationLabel;
-    protected HtmlText descriptionHtmlText;
+    protected boolean imageSuccessfullyLoaded;
 
     // === Data ===
     protected WorkingBookingProperties workingBookingProperties;
     protected LocalDate startDate;
     protected LocalDate endDate;
-    private boolean desktopModeActive = false;
+
+    // === UI Components ===
+    protected final ScalePane imageContainer = new ScalePane(ScaleMode.BEST_FIT);
+    protected final Label titleLabel = new Label();
+    protected final Label datesLabel = new Label();
+    protected final Label locationLabel = new Label();
+    protected final HtmlText descriptionHtmlText = new HtmlText();
+    protected final HPane container = new HPane(titleLabel, datesLabel, locationLabel, descriptionHtmlText, imageContainer) {
+
+        // Input layout field
+        private double width;
+        // Output layout fields
+        private double imageX, imageY, imageWidth, imageHeight;
+        private double titleX, titleY, titleWidth, titleHeight;
+        private double datesX, datesY, datesWidth, datesHeight;
+        private double locationX, locationY, locationWidth, locationHeight;
+        private double descriptionX, descriptionY, descriptionWidth, descriptionHeight;
+        private double contentBottom, imageBottom;
+
+        @Override
+        protected void layoutChildren(double width, double height) {
+            computeLayout(width);
+            layoutInArea(titleLabel,          titleX,       titleY,       titleWidth,       titleHeight);
+            layoutInArea(datesLabel,          datesX,       datesY,       datesWidth,       datesHeight);
+            layoutInArea(locationLabel,       locationX,    locationY,    locationWidth,    locationHeight);
+            layoutInArea(descriptionHtmlText, descriptionX, descriptionY, descriptionWidth, descriptionHeight);
+            layoutInArea(imageContainer,      imageX,       imageY,       imageWidth,       imageHeight);
+        }
+
+        @Override
+        protected double computePrefHeight(double width) {
+            computeLayout(width);
+            return Math.max(contentBottom, imageBottom);
+        }
+
+        private void computeLayout(double width) {
+            this.width = width; // Memorizing the input width
+            if (width < MOBILE_BREAKPOINT) { // mobile layout
+                applyMobileLayout();
+            } else if (width < SMALL_TABLET_BREAKPOINT) { // small tablet layout
+                applySmallTabletLayout();
+            } else if (width < MEDIUM_TABLET_BREAKPOINT) { // medium tablet layout
+                applyMediumTabletLayout();
+            } else if (width < LARGE_TABLET_BREAKPOINT) { // large tablet layout
+                applyLargeTabletLayout();
+            } else { // desktop layout
+                applyDesktopLayout();
+            }
+        }
+
+        private void applyMobileLayout() {
+            applyLayout(16, 20, 0); // 0 => no image
+        }
+
+        private void applySmallTabletLayout() {
+            applyLayout(20, 20, IMAGE_MAX_HEIGHT_SMALL_TABLET);
+        }
+
+        private void applyMediumTabletLayout() {
+            applyLayout(24, 28, IMAGE_MAX_HEIGHT_MEDIUM_TABLET);
+        }
+
+        private void applyLargeTabletLayout() {
+            applyLayout(24, 28, IMAGE_MAX_HEIGHT_LARGE_TABLET);
+        }
+
+        private void applyDesktopLayout() {
+            applyLayout(24, 28, -1); // -1 => full height
+        }
+
+        private void applyLayout(double paddingTopBottom, double paddingLeftRight, double imageMaxHeight) {
+            // 1) Layout the image on the right and compute the remaining content width on the left
+            double contentWidth;
+            if (imageMaxHeight == 0 || !imageSuccessfullyLoaded) { // no image to show (happens on mobile layout)
+                imageContainer.setVisible(false);
+                imageBottom = 0;
+                contentWidth = width - 2 * paddingLeftRight; // padding on both sides in this case
+            } else { // we compute the position and size of the image to show
+                imageContainer.setVisible(true);
+                imageY = 0;
+                imageHeight = Math.min(imageMaxHeight, imageContainer.prefHeight(-1));
+                imageWidth = imageContainer.prefWidth(imageHeight);
+                imageX = width - imageWidth;
+                contentWidth = width - imageWidth - 24 - paddingLeftRight;
+                imageBottom = imageY + imageHeight;
+            }
+
+            // 2) Layout the content elements
+            titleX = datesX = locationX = descriptionX = paddingLeftRight; // locationX will be corrected if it fits after dates
+            double y = paddingTopBottom; // Starting vertical position
+
+            titleY = y;
+            titleWidth = contentWidth;
+            titleHeight = titleLabel.prefHeight(contentWidth);
+            y += titleHeight;
+            y += 12; // Space between title and dates
+
+            datesY = y;
+            datesWidth = datesLabel.prefWidth(-1);
+            datesHeight = datesLabel.prefHeight(datesWidth);
+
+            locationWidth = locationLabel.prefWidth(-1);
+            locationHeight = locationLabel.prefHeight(locationWidth);
+            if (datesWidth + 8 + locationWidth <= contentWidth) { // dates and location can fit on the same line
+                locationX = datesX + datesWidth + 8;
+                locationY = datesY + (datesHeight - locationHeight) / 2;
+                y += datesHeight;
+            } else { // dates and location need to be on separate lines
+                y += datesHeight + 8;
+                locationY = y;
+                y += locationHeight;
+            }
+            y += 12; // Space between dates / location and description
+
+            descriptionY = y;
+            boolean descriptionBelowImage = y > imageBottom; // Ok to take the whole width (less padding) if below image
+            descriptionWidth = descriptionBelowImage ? width - 2 * paddingLeftRight : contentWidth;
+            descriptionHeight = descriptionHtmlText.prefHeight(descriptionWidth);
+            y += descriptionHeight;
+            y += paddingLeftRight; // Final padding to reach the bottom of the content
+            contentBottom = y;
+
+            // Final correction image (displayed on top so far) if the description doesn't fit below the image
+            if (!descriptionBelowImage && y > imageBottom) { // We vertically align the image in the middle of the content
+                double shift = (y - imageBottom) / 2;
+                imageY += shift;
+                imageBottom += shift;
+            }
+        }
+    };
 
     public DefaultEventHeaderSection() {
-        // Create container with layoutChildren override for desktop image sizing
-        container = new HBox() {
-            @Override
-            protected void layoutChildren() {
-                super.layoutChildren();
-                updateDesktopImageHeight();
-            }
-        };
-
-        contentBox = new VBox(12);
-        imageContainer = new MonoPane();
-
-        buildUI();
-        setupResponsiveDesign();
-
-        // When imageVisible changes, update image visibility based on current width
-        imageVisible.addListener((obs, wasVisible, isVisible) -> {
-            double width = container.getWidth();
-            if (width > 0) {
-                applyCurrentBreakpointLayout(width);
-            }
-        });
-    }
-
-    /**
-     * Builds the UI components for the event header section.
-     */
-    protected void buildUI() {
-        // Content section
-        contentBox.setAlignment(Pos.CENTER_LEFT);
-        contentBox.setPadding(new Insets(24, 28, 24, 28));
-        contentBox.setMinWidth(0); // Allow shrinking for responsive design
-        HBox.setHgrow(contentBox, Priority.ALWAYS);
-
         // Title - styled via CSS
-        titleLabel = new Label();
         titleLabel.setWrapText(true);
         titleLabel.setMinWidth(0); // Allow shrinking for text wrap
         titleLabel.getStyleClass().add("booking-form-event-header-title");
 
-        // Meta row (dates + location) - FlowPane allows wrapping when space is limited
-        FlowPane metaBox = new FlowPane(24, 8);
-        metaBox.setAlignment(Pos.CENTER_LEFT);
-        metaBox.setMinWidth(0); // Allow shrinking for responsive design
-
-        // Dates with calendar icon
-        HBox datesBox = new HBox(8);
-        datesBox.setAlignment(Pos.CENTER_LEFT);
-        SVGPath calendarIcon = createCalendarIcon();
-        datesLabel = new Label();
+        // Dates (no wrapping container, directly managed by hPane)
         datesLabel.setWrapText(true);
+        datesLabel.setGraphic(createCalendarIcon());
         datesLabel.setMinWidth(0); // Allow shrinking for text wrap
         datesLabel.getStyleClass().addAll("bookingpage-text-md", "bookingpage-text-muted");
-        datesBox.getChildren().addAll(calendarIcon, datesLabel);
 
-        // Location with pin icon
-        HBox locationBox = new HBox(8);
-        locationBox.setAlignment(Pos.CENTER_LEFT);
-        locationBox.setMinWidth(0); // Allow shrinking for text wrap
-        SVGPath locationIcon = createLocationIcon();
-        locationLabel = new Label();
+        // Location (no wrapping container, directly managed by hPane)
         locationLabel.setWrapText(true);
+        locationLabel.setGraphic(createLocationIcon());
         locationLabel.setMinWidth(0); // Allow shrinking for text wrap
         locationLabel.setMaxWidth(Double.MAX_VALUE); // Required for text wrap in WebFX
         locationLabel.getStyleClass().addAll("bookingpage-text-md", "bookingpage-text-muted");
-        HBox.setHgrow(locationLabel, Priority.ALWAYS); // Allow label to fill and wrap
-        locationBox.getChildren().addAll(locationIcon, locationLabel);
-
-        metaBox.getChildren().addAll(datesBox, locationBox);
 
         // Description - using HtmlText for HTML content support
-        descriptionHtmlText = new HtmlText();
         descriptionHtmlText.setMinWidth(0); // Allow shrinking for text wrap
         descriptionHtmlText.getStyleClass().addAll("bookingpage-text-base", "bookingpage-text-secondary");
         descriptionHtmlText.managedProperty().bind(descriptionHtmlText.textProperty().isNotEmpty());
         descriptionHtmlText.visibleProperty().bind(descriptionHtmlText.textProperty().isNotEmpty());
 
-        contentBox.getChildren().addAll(titleLabel, metaBox, descriptionHtmlText);
-
-        // Image container (right side) - uses MonoPane for cloud image loading
-        imageContainer.setPadding(Insets.EMPTY);
-        imageContainer.setBackground(Background.EMPTY);
-        imageContainer.setVisible(false);
-        imageContainer.setManaged(false);
-
-        // Configure ImageView when content is loaded
-        imageContainer.contentProperty().addListener((obs, oldContent, newContent) -> {
-            if (newContent instanceof ImageView imageView) {
-                imageView.setPreserveRatio(true);
-                double width = container.getWidth();
-                if (width > 0) {
-                    applyCurrentBreakpointLayout(width);
-                }
-            }
-        });
-
-        // Layout - HBox with contentBox (grows) and imageContainer (fixed size when visible)
-        container.setFillHeight(true);
-        container.setAlignment(Pos.CENTER_LEFT);
-        container.setSpacing(0);
-        container.setPadding(Insets.EMPTY);
-        container.getChildren().addAll(contentBox, imageContainer);
+        // Assemble children directly in hPane and style it
         container.getStyleClass().add("booking-form-event-header");
-        container.setMinWidth(0); // Allow shrinking for responsive design
-    }
+        container.setMinHeight(Region.USE_PREF_SIZE);
+        container.setMaxHeight(Region.USE_PREF_SIZE);
+        container.setMinWidth(0);
 
-    // === Responsive Design ===
-
-    private void setupResponsiveDesign() {
-        new ResponsiveDesign(container)
-            .addResponsiveLayout(
-                width -> width < MOBILE_BREAKPOINT,
-                this::applyMobileLayout
-            )
-            .addResponsiveLayout(
-                width -> width >= MOBILE_BREAKPOINT && width < SMALL_TABLET_BREAKPOINT,
-                this::applySmallTabletLayout
-            )
-            .addResponsiveLayout(
-                width -> width >= SMALL_TABLET_BREAKPOINT && width < MEDIUM_TABLET_BREAKPOINT,
-                this::applyMediumTabletLayout
-            )
-            .addResponsiveLayout(
-                width -> width >= MEDIUM_TABLET_BREAKPOINT && width < LARGE_TABLET_BREAKPOINT,
-                this::applyLargeTabletLayout
-            )
-            .addResponsiveLayout(
-                width -> width >= LARGE_TABLET_BREAKPOINT,
-                this::applyDesktopLayout
-            )
-            .start();
-    }
-
-    private void applyCurrentBreakpointLayout(double width) {
-        if (width < MOBILE_BREAKPOINT) {
-            applyMobileLayout();
-        } else if (width < SMALL_TABLET_BREAKPOINT) {
-            applySmallTabletLayout();
-        } else if (width < MEDIUM_TABLET_BREAKPOINT) {
-            applyMediumTabletLayout();
-        } else if (width < LARGE_TABLET_BREAKPOINT) {
-            applyLargeTabletLayout();
-        } else {
-            applyDesktopLayout();
-        }
-    }
-
-    private void setImageVisibility(boolean visible) {
-        imageContainer.setVisible(visible);
-        imageContainer.setManaged(visible);
-    }
-
-    private void applyMobileLayout() {
-        desktopModeActive = false;
-        setImageVisibility(false);
-        contentBox.setPadding(new Insets(16, 20, 16, 20));
-        // Smaller title font for mobile
-        titleLabel.getStyleClass().remove("booking-form-event-header-title");
-        if (!titleLabel.getStyleClass().contains("booking-form-event-header-title-mobile")) {
-            titleLabel.getStyleClass().add("booking-form-event-header-title-mobile");
-        }
-        // Smaller meta text for mobile
-        applyMobileMetaStyle();
-    }
-
-    private void applyMobileMetaStyle() {
-        // Switch from bookingpage-text-md to bookingpage-text-sm for dates and location
-        datesLabel.getStyleClass().remove("bookingpage-text-md");
-        if (!datesLabel.getStyleClass().contains("bookingpage-text-sm")) {
-            datesLabel.getStyleClass().add("bookingpage-text-sm");
-        }
-        locationLabel.getStyleClass().remove("bookingpage-text-md");
-        if (!locationLabel.getStyleClass().contains("bookingpage-text-sm")) {
-            locationLabel.getStyleClass().add("bookingpage-text-sm");
-        }
-    }
-
-    private void applySmallTabletLayout() {
-        desktopModeActive = false;
-        setImageVisibility(imageVisible.get());
-        contentBox.setPadding(new Insets(20, 20, 20, 20));
-        configureImageSize(IMAGE_MAX_HEIGHT_SMALL_TABLET);
-        restoreDesktopTitleStyle();
-    }
-
-    private void applyMediumTabletLayout() {
-        desktopModeActive = false;
-        setImageVisibility(imageVisible.get());
-        contentBox.setPadding(new Insets(24, 28, 24, 28));
-        configureImageSize(IMAGE_MAX_HEIGHT_MEDIUM_TABLET);
-        restoreDesktopTitleStyle();
-    }
-
-    private void applyLargeTabletLayout() {
-        desktopModeActive = false;
-        setImageVisibility(imageVisible.get());
-        contentBox.setPadding(new Insets(24, 28, 24, 28));
-        configureImageSize(IMAGE_MAX_HEIGHT_LARGE_TABLET);
-        restoreDesktopTitleStyle();
-    }
-
-    private void applyDesktopLayout() {
-        desktopModeActive = true;
-        setImageVisibility(imageVisible.get());
-        contentBox.setPadding(new Insets(24, 28, 24, 28));
-        configureImageSizeDesktop();
-        restoreDesktopTitleStyle();
-    }
-
-    private void restoreDesktopTitleStyle() {
-        // Restore regular title font for non-mobile screens
-        titleLabel.getStyleClass().remove("booking-form-event-header-title-mobile");
-        if (!titleLabel.getStyleClass().contains("booking-form-event-header-title")) {
-            titleLabel.getStyleClass().add("booking-form-event-header-title");
-        }
-        // Restore regular meta text size
-        restoreDesktopMetaStyle();
-    }
-
-    private void restoreDesktopMetaStyle() {
-        // Switch from bookingpage-text-sm back to bookingpage-text-md
-        datesLabel.getStyleClass().remove("bookingpage-text-sm");
-        if (!datesLabel.getStyleClass().contains("bookingpage-text-md")) {
-            datesLabel.getStyleClass().add("bookingpage-text-md");
-        }
-        locationLabel.getStyleClass().remove("bookingpage-text-sm");
-        if (!locationLabel.getStyleClass().contains("bookingpage-text-md")) {
-            locationLabel.getStyleClass().add("bookingpage-text-md");
-        }
-    }
-
-    private void configureImageSize(double maxHeight) {
-        imageContainer.setMinHeight(Region.USE_COMPUTED_SIZE);
-        imageContainer.setPrefHeight(Region.USE_COMPUTED_SIZE);
-        imageContainer.setMaxHeight(Region.USE_COMPUTED_SIZE);
-
-        if (imageContainer.getContent() instanceof ImageView imageView) {
-            imageView.fitHeightProperty().unbind();
-            imageView.setFitHeight(maxHeight);
-            imageView.setFitWidth(0);
-            imageView.setPreserveRatio(true);
-        }
-    }
-
-    private void configureImageSizeDesktop() {
-        imageContainer.setMaxHeight(Double.MAX_VALUE);
-        imageContainer.setBackground(Background.EMPTY);
-
-        if (imageContainer.getContent() instanceof ImageView imageView) {
-            imageView.fitHeightProperty().unbind();
-            imageView.fitWidthProperty().unbind();
-            imageView.setFitWidth(0);
-            imageView.setPreserveRatio(true);
-            double currentHeight = container.getHeight();
-            if (currentHeight > 0) {
-                imageView.setFitHeight(currentHeight);
-                imageContainer.setMinHeight(currentHeight);
-                imageContainer.setPrefHeight(currentHeight);
-                imageContainer.setMaxHeight(currentHeight);
-            }
-        }
-    }
-
-    /**
-     * Updates the ImageView height to match the container height in desktop mode.
-     */
-    private void updateDesktopImageHeight() {
-        if (!desktopModeActive) {
-            return;
-        }
-        double targetHeight = container.getHeight();
-        if (targetHeight <= 0) {
-            return;
-        }
-
-        imageContainer.setMinHeight(targetHeight);
-        imageContainer.setPrefHeight(targetHeight);
-        imageContainer.setMaxHeight(targetHeight);
-        imageContainer.setBackground(Background.EMPTY);
-
-        if (imageContainer.getContent() instanceof ImageView imageView) {
-            double currentFitHeight = imageView.getFitHeight();
-            if (Math.abs(currentFitHeight - targetHeight) > 0.5) {
-                imageView.setFitHeight(targetHeight);
-            }
-        }
+        imageContainer.setBackground(Background.fill(Color.YELLOWGREEN));
     }
 
     // === Data Loading ===
@@ -417,14 +280,13 @@ public class DefaultEventHeaderSection implements HasEventHeaderSection {
      * Loads the event cover image from the cloud storage.
      */
     protected void loadEventImage(Event event) {
-        Object language = I18n.getLanguage();
         ModalityCloudImageService.loadHdpiEventImage(
                 event,
-                -1,
+                -1, // => will automatically set preserveRatio(true)
                 IMAGE_REQUEST_HEIGHT,
                 imageContainer,
                 null
-        ).onSuccess(image -> imageVisible.set(true)).onFailure(error -> imageVisible.set(false));
+            ).onComplete(ar -> imageSuccessfullyLoaded = ar.succeeded());
     }
 
     private void updateDatesLabel() {
