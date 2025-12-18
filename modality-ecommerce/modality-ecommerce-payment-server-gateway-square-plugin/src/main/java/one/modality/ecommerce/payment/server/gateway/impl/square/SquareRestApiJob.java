@@ -106,8 +106,13 @@ public final class SquareRestApiJob implements ApplicationJob {
                 loadAndUpdatePaymentStatus("transactionRef", transactionRef, live, payload, textPayload, logPrefix)
                     .onSuccess(v -> ctx.response().setStatusCode(HttpResponseStatus.OK_200).end())
                     .onFailure(ex -> {
-                        Console.log(logPrefix + "⛔️️  An error occurred while processing the Square webhook", ex);
-                        ctx.response().setStatusCode(HttpResponseStatus.INTERNAL_SERVER_ERROR_500).end();
+                        if (ex.getMessage().contains("No referenceId was found")) {
+                            Console.log(logPrefix + "🤷️  Assuming this payment is from another POS (Café or Shop)", ex);
+                            ctx.response().setStatusCode(HttpResponseStatus.OK_200).end();
+                        } else {
+                            Console.log(logPrefix + "⛔️️  An error occurred while processing the Square webhook", ex);
+                            ctx.response().setStatusCode(HttpResponseStatus.INTERNAL_SERVER_ERROR_500).end();
+                        }
                     });
         }
     }
