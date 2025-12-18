@@ -47,10 +47,11 @@ public final class FXOrganizationId {
                 if (organization != null) {
                     FXOrganization.setOrganizationOnceExpectedFieldsAreLoaded(organization);
                 } else { // Otherwise, we request the server to load that organization from that id
-                    organizationStore.<Organization>executeQuery("select " + FXOrganization.EXPECTED_FIELDS + " from Organization where id=?", organizationId)
+                    organizationStore.<Organization>executeQueryWithCache("modality/crm/backoffice/fx-organization",
+                            "select " + FXOrganization.EXPECTED_FIELDS + " from Organization where id=?", organizationId)
                         .onFailure(Console::log)
                         .inUiThread()
-                        .onSuccess(list -> { // on successfully receiving the list (should be a singleton list)
+                        .onCacheAndOrSuccess(list -> { // on successfully receiving the list (should be a singleton list)
                             if (Objects.equals(organizationId, getOrganizationId())) { // final check it is still relevant
                                 Organization loadedOrganization = list.isEmpty() ? null : list.get(0);
                                 FXOrganization.setOrganization(loadedOrganization); // we finally set FXEvent
