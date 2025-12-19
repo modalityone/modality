@@ -24,8 +24,8 @@
         <!-- The default implementation of websocket for GWT/J2CL is using native browser websockets. But by including
           the module below, this will force to use the alternative SockJS implementation instead (SockJS provides http(s)
           fallback for old browsers or when websockets are unavailable due to restrictive firewalls or proxies).
-        -->
         <plugin-module executable-target="elemental2">webfx-stack-com-websocket-elemental2-sockjs</plugin-module>
+        -->
 
         <plugin-module>webfx-stack-shareddata-cache-localstorage-plugin</plugin-module>
         <plugin-module>webfx-stack-cloud-image-rest-client-plugin</plugin-module>
