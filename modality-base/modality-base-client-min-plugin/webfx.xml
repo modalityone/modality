@@ -26,6 +26,8 @@
           fallback for old browsers or when websockets are unavailable due to restrictive firewalls or proxies).
         <plugin-module executable-target="elemental2">webfx-stack-com-websocket-elemental2-sockjs</plugin-module>
         -->
+        <!-- Removed the above and using native browser websockets instead (all browsers should support it now). -->
+        <plugin-module executable-target="elemental2">webfx-stack-com-websocket-elemental2-native</plugin-module>
 
         <plugin-module>webfx-stack-shareddata-cache-localstorage-plugin</plugin-module>
         <plugin-module>webfx-stack-cloud-image-rest-client-plugin</plugin-module>
