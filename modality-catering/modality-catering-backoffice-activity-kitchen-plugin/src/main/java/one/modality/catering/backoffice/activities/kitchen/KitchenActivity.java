@@ -24,11 +24,9 @@ final class KitchenActivity extends ViewDomainActivityBase
 
     @Override
     public Node buildUi() {
-        dev.webfx.platform.console.Console.log("KitchenActivity.buildUi called");
         controller = new KitchenController(getDataSourceModel());
         controller.initialize();
         Node viewNode = controller.getViewNode();
-        dev.webfx.platform.console.Console.log("KitchenActivity.buildUi returning node: " + viewNode);
 
         // Wrap the entire view in a vertical ScrollPane with padding (like RecurringEventsActivity)
         return Controls.createVerticalScrollPaneWithPadding(10, (Region) viewNode);
@@ -36,7 +34,6 @@ final class KitchenActivity extends ViewDomainActivityBase
 
     @Override
     protected void startLogic() {
-        dev.webfx.platform.console.Console.log("KitchenActivity.startLogic called, controller=" + (controller != null ? "present" : "null"));
         if (controller != null) {
             controller.startLogic();
         }

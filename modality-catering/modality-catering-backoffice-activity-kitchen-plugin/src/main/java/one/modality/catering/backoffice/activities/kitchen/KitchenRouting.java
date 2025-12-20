@@ -33,7 +33,7 @@ public final class KitchenRouting {
         public static UiRoute<?> uiRoute() {
             return UiRoute.createRegex(PathBuilder.toRegexPath(KitchenRouting.getPath())
                     , true
-                    , KitchenActivity::new
+                    , KitchenGanttActivity::new
                     , ViewDomainActivityContextFinal::new
             );
         }
