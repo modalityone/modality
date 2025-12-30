@@ -19,6 +19,7 @@ import dev.webfx.stack.routing.uirouter.UiRouter;
 import javafx.beans.property.ObjectProperty;
 import javafx.beans.property.ReadOnlyObjectProperty;
 import javafx.beans.property.SimpleObjectProperty;
+import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Node;
 import javafx.scene.control.Labeled;
@@ -287,9 +288,10 @@ public final class BookEventActivity extends ViewDomainActivityBase implements B
                     BookingFormEntryPoint.NEW_BOOKING;
             if (entryPoint == BookingFormEntryPoint.NEW_BOOKING) {
                 // For new booking and payment flows, use the legacy approach (for now)
+                activityContainer.setPadding(Insets.EMPTY); // Removing new approach padding
                 lettersSlideController.onEventChanged(event);
                 lettersSlideController.onWorkingBookingLoaded();
-            } else if (event != null) { // Modifying or resuming payment
+            } else if (event != null) { // Modifying, paying or resuming payment
                 Event finalEvent = event;
                 BookingFormProvider bookingFormProvider = Collections.findFirst(ALL_BOOKING_FORM_PROVIDERS_SORTED_BY_PRIORITY,
                     provider -> provider.acceptEvent(finalEvent));
@@ -297,6 +299,7 @@ public final class BookEventActivity extends ViewDomainActivityBase implements B
                     BookingForm bookingForm = bookingFormProvider.createBookingForm(finalEvent, this, entryPoint);
                     Node bookingFormView = bookingForm.getView();
                     if (bookingFormView != null) {
+                        activityContainer.setPadding(new Insets(50, 0, 0, 0)); // Adding 50px padding to match legacy approach padding
                         activityContainer.setContent(bookingFormView);
                         // Trigger the form to initialize with the working booking
                         // This is especially important for RESUME_PAYMENT to navigate to confirmation
@@ -371,14 +374,6 @@ public final class BookEventActivity extends ViewDomainActivityBase implements B
 
     public HtmlText bindI18nEventExpression(HtmlText text, String eventExpression, Object... args) {
         return lettersSlideController.bindI18nEventExpression(text, eventExpression, args);
-    }
-
-    /**
-     * Navigates to the login page using the activity's routing context.
-     * This navigates to the main /login route which is independent of Step1BookingFormAndSubmitSlide.
-     */
-    public void navigateToLogin() {
-        getHistory().push("/login");
     }
 
 }
