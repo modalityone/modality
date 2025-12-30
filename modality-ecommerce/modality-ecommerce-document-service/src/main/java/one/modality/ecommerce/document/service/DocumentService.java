@@ -2,10 +2,8 @@ package one.modality.ecommerce.document.service;
 
 import dev.webfx.platform.async.Future;
 import dev.webfx.platform.service.SingleServiceProvider;
-import dev.webfx.stack.orm.entity.Entities;
 import one.modality.base.shared.entities.Document;
 import one.modality.base.shared.entities.Event;
-import one.modality.base.shared.entities.Person;
 import one.modality.ecommerce.document.service.spi.DocumentServiceProvider;
 
 import java.util.ServiceLoader;
@@ -27,19 +25,18 @@ public final class DocumentService {
         return getProvider().loadDocument(argument);
     }
 
+    public static Future<DocumentAggregate[]> loadDocuments(LoadDocumentArgument argument) {
+        return getProvider().loadDocuments(argument);
+    }
+
     public static Future<SubmitDocumentChangesResult> submitDocumentChanges(SubmitDocumentChangesArgument argument) {
         return getProvider().submitDocumentChanges(argument);
     }
 
     // Additional top-level utility methods to load a document (not directly implemented by the provider and not directly serialized)
 
-    public static Future<DocumentAggregate> loadDocument(Event event, Person userPerson) {
-        return loadDocument(Entities.getPrimaryKey(event), Entities.getPrimaryKey(userPerson));
-    }
-
-    public static Future<DocumentAggregate> loadDocument(Object eventPrimaryKey, Object userPersonPrimaryKey) {
-        return eventPrimaryKey == null || userPersonPrimaryKey == null ? Future.succeededFuture(null) :
-            loadDocument(new LoadDocumentArgument(userPersonPrimaryKey, eventPrimaryKey));
+    public static Future<DocumentAggregate> loadDocument(Object event, Object userPerson) {
+        return loadDocument(LoadDocumentArgument.ofPerson(userPerson, event));
     }
 
 
@@ -53,14 +50,14 @@ public final class DocumentService {
         return loadDocumentWithPolicyAndHistory(document, Integer.MAX_VALUE);
     }
 
-    private static Future<PolicyAndDocumentAggregates> loadDocumentWithPolicyAndHistory(Document document, Object historyPrimaryKey) {
+    private static Future<PolicyAndDocumentAggregates> loadDocumentWithPolicyAndHistory(Document document, Object history) {
         return loadPolicyAndDocument(
             document.getEvent(),
-            new LoadDocumentArgument(document.getPrimaryKey(), null, null, historyPrimaryKey));
+            LoadDocumentArgument.ofDocumentFromHistory(document, history));
     }
 
-    public static Future<PolicyAndDocumentAggregates> loadPolicyAndDocument(Event event, Object userPersonPrimaryKey) {
-        return loadPolicyAndDocument(event, userPersonPrimaryKey == null ? null : new LoadDocumentArgument(userPersonPrimaryKey, event.getPrimaryKey()));
+    public static Future<PolicyAndDocumentAggregates> loadPolicyAndDocument(Event event, Object userPerson) {
+        return loadPolicyAndDocument(event, userPerson == null ? null : LoadDocumentArgument.ofPerson(userPerson, event));
     }
 
     private static Future<PolicyAndDocumentAggregates> loadPolicyAndDocument(Event event, LoadDocumentArgument loadDocumentArgument) {

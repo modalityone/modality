@@ -13,6 +13,8 @@ public interface DocumentServiceProvider {
 
     Future<DocumentAggregate> loadDocument(LoadDocumentArgument argument);
 
+    Future<DocumentAggregate[]> loadDocuments(LoadDocumentArgument argument);
+
     Future<SubmitDocumentChangesResult> submitDocumentChanges(SubmitDocumentChangesArgument argument);
 
 }

@@ -73,8 +73,6 @@ public final class BookEventActivity extends ViewDomainActivityBase implements B
     private long activityStartTimeMillis;
     // When routed through /book-event/:eventId, FXEventId and FXEvent are used to store the event to book
     private boolean reachingEndSlide;
-    // Track if we're showing a modification form
-    private boolean showingModificationForm;
 
     @Override
     public WorkingBookingProperties getWorkingBookingProperties() {
@@ -218,10 +216,11 @@ public final class BookEventActivity extends ViewDomainActivityBase implements B
                 });
         } else if (modifyOrPayOrderDocumentId != null) {
             // Note: this call doesn't automatically rebuild PolicyAggregate entities
-            DocumentService.loadPolicyAndDocument(new LoadDocumentArgument(modifyOrPayOrderDocumentId))
+            DocumentService.loadPolicyAndDocument(LoadDocumentArgument.ofDocument(modifyOrPayOrderDocumentId))
                 .onFailure(Console::log)
                 .onSuccess(policyAndDocumentAggregates -> {
-                    if (modifyOrPayOrderDocumentId == Objects.coalesce(getModifyOrderDocumentId(), getPayOrderDocumentId())) { // Double-checking
+                    // Double-checking it's still relevant
+                    if (modifyOrPayOrderDocumentId == Objects.coalesce(getModifyOrderDocumentId(), getPayOrderDocumentId())) {
                         onPolityAndDocumentAggregatesLoaded(policyAndDocumentAggregates);
                     }
                 });
@@ -283,6 +282,7 @@ public final class BookEventActivity extends ViewDomainActivityBase implements B
             // For modification flow, use the unified provider-based approach
             // Capture event in effectively final variable for lambda
             BookingFormEntryPoint entryPoint = getModifyOrderDocumentId() != null ? BookingFormEntryPoint.MODIFY_BOOKING :
+                getPayOrderDocumentId() != null ? BookingFormEntryPoint.PAY_BOOKING :
                 getResumePaymentMoneyTransferId() != null ? BookingFormEntryPoint.RESUME_PAYMENT :
                     BookingFormEntryPoint.NEW_BOOKING;
             if (entryPoint == BookingFormEntryPoint.NEW_BOOKING) {
@@ -291,14 +291,13 @@ public final class BookEventActivity extends ViewDomainActivityBase implements B
                 lettersSlideController.onWorkingBookingLoaded();
             } else if (event != null) { // Modifying or resuming payment
                 Event finalEvent = event;
-                BookingFormProvider modificationProvider = Collections.findFirst(ALL_BOOKING_FORM_PROVIDERS_SORTED_BY_PRIORITY,
+                BookingFormProvider bookingFormProvider = Collections.findFirst(ALL_BOOKING_FORM_PROVIDERS_SORTED_BY_PRIORITY,
                     provider -> provider.acceptEvent(finalEvent));
-                if (modificationProvider != null) {
-                    BookingForm bookingForm = modificationProvider.createBookingForm(finalEvent, this, entryPoint);
+                if (bookingFormProvider != null) {
+                    BookingForm bookingForm = bookingFormProvider.createBookingForm(finalEvent, this, entryPoint);
                     Node bookingFormView = bookingForm.getView();
                     if (bookingFormView != null) {
                         activityContainer.setContent(bookingFormView);
-                        showingModificationForm = entryPoint == BookingFormEntryPoint.MODIFY_BOOKING;
                         // Trigger the form to initialize with the working booking
                         // This is especially important for RESUME_PAYMENT to navigate to confirmation
                         bookingForm.onWorkingBookingLoaded();

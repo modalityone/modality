@@ -6,6 +6,7 @@ import dev.webfx.platform.async.Batch;
 import dev.webfx.platform.async.Future;
 import dev.webfx.platform.util.Arrays;
 import dev.webfx.platform.util.Strings;
+import dev.webfx.platform.util.collection.Collections;
 import dev.webfx.stack.com.serial.SerialCodecManager;
 import dev.webfx.stack.db.query.QueryArgument;
 import dev.webfx.stack.db.query.QueryService;
@@ -25,7 +26,9 @@ import one.modality.ecommerce.document.service.spi.DocumentServiceProvider;
 import one.modality.ecommerce.history.server.HistoryRecorder;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 /**
@@ -65,14 +68,20 @@ public class ServerDocumentServiceProvider implements DocumentServiceProvider {
 
     @Override
     public Future<DocumentAggregate> loadDocument(LoadDocumentArgument argument) {
-        if (argument.getHistoryPrimaryKey() == null) {
-            return loadLatestDocumentFromDatabase(argument);
+        if (argument.historyPrimaryKey() == null) {
+            return loadLatestDocumentsFromDatabase(argument, true)
+                .map(Arrays::first);
         }
         return loadDocumentFromHistory(argument);
     }
 
-    private Future<DocumentAggregate> loadLatestDocumentFromDatabase(LoadDocumentArgument argument) {
-        Object docPk = argument.getDocumentPrimaryKey();
+    @Override
+    public Future<DocumentAggregate[]> loadDocuments(LoadDocumentArgument argument) {
+        return loadLatestDocumentsFromDatabase(argument, false);
+    }
+
+    private Future<DocumentAggregate[]> loadLatestDocumentsFromDatabase(LoadDocumentArgument argument, boolean limit1) {
+        Object docPk = argument.documentPrimaryKey();
         EntityStoreQuery[] queries = {
             new EntityStoreQuery("select event,person,ref,person_lang,person_firstName,person_lastName,person_email,person_facilityFee,request from Document where id=? order by id", docPk),
             new EntityStoreQuery("select document,site,item,price_net,price_minDeposit,price_custom,price_discount from DocumentLine where document=? and site!=null order by id", docPk),
@@ -80,39 +89,55 @@ public class ServerDocumentServiceProvider implements DocumentServiceProvider {
             new EntityStoreQuery("select document,amount,pending,successful from MoneyTransfer where document=? order by id", docPk)
         };
         if (docPk == null) {
+            boolean personProvided = argument.personPrimaryKey() != null;
+            String queryReplacement = "=(select Document where %field%=? and event=? and !cancelled order by id desc %limit%)"
+                .replace("%field%", personProvided ? "person" : "person.frontendAccount")
+                .replace("%limit%", limit1 ? "limit 1" : "");
+            Object[] queryArguments = {personProvided ? argument.personPrimaryKey() : argument.accountPrimaryKey(), argument.eventPrimaryKey()};
             for (int i = 0; i < queries.length; i++) {
-                queries[i] = new EntityStoreQuery(queries[i].getSelect().replace("=?", "=(select Document where person=? and event=? and !cancelled order by id desc limit 1)"), argument.getPersonPrimaryKey(), argument.getEventPrimaryKey());
+                queries[i] = new EntityStoreQuery(queries[i].getSelect().replace("=?", queryReplacement), queryArguments);
             }
         }
         return EntityStore.create()
             .executeQueryBatch(queries)
             .map(entityLists -> {
-                Document document = ((List<Document>) entityLists[0]).stream().findFirst().orElse(null);
-                if (document == null) {
-                    return null;
-                }
-                List<AbstractDocumentEvent> documentEvents = new ArrayList<>();
-                documentEvents.add(new AddDocumentEvent(document));
+                Map<Document, List<AbstractDocumentEvent>> allDocumentEvents = new HashMap<>();
+                // Creating initial document events (with AddDocumentEvent only)
+                Collections.forEach((List<Document>) entityLists[0], document -> {
+                    List<AbstractDocumentEvent> documentEvents = new ArrayList<>();
+                    documentEvents.add(new AddDocumentEvent(document));
+                    allDocumentEvents.put(document, documentEvents);
+                    if (document.isPersonFacilityFee())
+                        documentEvents.add(new ApplyFacilityFeeEvent(document, true));
+                    if (!Strings.isBlank(document.getRequest()))
+                        documentEvents.add(new AddRequestEvent(document, document.getRequest()));
+                });
+                // Aggregating document lines by adding AddDocumentLineEvent and PriceDocumentLineEvent for each document
                 ((List<DocumentLine>) entityLists[1]).forEach(dl -> {
+                    List<AbstractDocumentEvent> documentEvents = allDocumentEvents.get(dl.getDocument());
                     documentEvents.add(new AddDocumentLineEvent(dl));
                     documentEvents.add(new PriceDocumentLineEvent(dl));
                 });
+                // Aggregating attendances by adding AddAttendancesEvent for each document line
                 ((List<Attendance>) entityLists[2]).stream().collect(Collectors.groupingBy(Attendance::getDocumentLine))
-                    .entrySet().forEach(entry -> documentEvents.add(new AddAttendancesEvent(entry.getValue().toArray(new Attendance[0]))));
-                ((List<MoneyTransfer>) entityLists[3]).forEach(mt -> documentEvents.add(new AddMoneyTransferEvent(mt)));
-                if (document.isPersonFacilityFee())
-                    documentEvents.add(new ApplyFacilityFeeEvent(document, true));
-                if (!Strings.isBlank(document.getRequest()))
-                    documentEvents.add(new AddRequestEvent(document, document.getRequest()));
-                return new DocumentAggregate(documentEvents);
+                    .entrySet().forEach(entry -> {
+                        List<AbstractDocumentEvent> documentEvents = allDocumentEvents.get(entry.getKey().getDocument());
+                        documentEvents.add(new AddAttendancesEvent(entry.getValue().toArray(new Attendance[0])));
+                    });
+                // Aggregating money transfers by Adding AddMoneyTransferEvent
+                ((List<MoneyTransfer>) entityLists[3]).forEach(mt -> {
+                    List<AbstractDocumentEvent> documentEvents = allDocumentEvents.get(mt.getDocument());
+                    documentEvents.add(new AddMoneyTransferEvent(mt));
+                });
+                return allDocumentEvents.values().stream().map(DocumentAggregate::new).toArray(DocumentAggregate[]::new);
             });
     }
 
     private Future<DocumentAggregate> loadDocumentFromHistory(LoadDocumentArgument argument) {
         String select = "select changes from History where document=? and id<=? order by id";
-        Object[] parameters = {argument.getDocumentPrimaryKey(), argument.getHistoryPrimaryKey()};
+        Object[] parameters = {argument.documentPrimaryKey(), argument.historyPrimaryKey()};
         if (parameters[0] == null) {
-            parameters = new Object[]{argument.getPersonPrimaryKey(), argument.getEventPrimaryKey(), argument.getHistoryPrimaryKey()};
+            parameters = new Object[]{argument.personPrimaryKey(), argument.eventPrimaryKey(), argument.historyPrimaryKey()};
             select = select.replace("document=?", "document=(select Document where person=? and event=? and !cancelled order by id desc limit 1)");
         }
         return EntityStore.create()

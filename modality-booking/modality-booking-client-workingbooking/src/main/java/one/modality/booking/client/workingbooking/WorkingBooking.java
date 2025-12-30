@@ -298,7 +298,7 @@ public final class WorkingBooking {
             new SubmitDocumentChangesArgument(historyComment, documentChanges.toArray(new AbstractDocumentEvent[0]))
         ).compose(result -> {
             // The submitting was successful at this point, and we reload the latest version of the booking TODO: make this as on option in SubmitDocumentChangesArgument
-            return DocumentService.loadDocument(new LoadDocumentArgument(result.getDocumentPrimaryKey()))
+            return DocumentService.loadDocument(LoadDocumentArgument.ofDocument(result.getDocumentPrimaryKey()))
                 .map(documentAggregate -> {
                     // We set the polityAggregate (was already loaded), and this also rebuilds internal entities (document, changes)
                     documentAggregate.setPolicyAggregate(policyAggregate);

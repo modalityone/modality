@@ -13,6 +13,7 @@
     <providers>
         <provider interface="dev.webfx.stack.com.bus.call.spi.BusCallEndpoint">one.modality.ecommerce.document.service.buscall.LoadPolicyMethodEndpoint</provider>
         <provider interface="dev.webfx.stack.com.bus.call.spi.BusCallEndpoint">one.modality.ecommerce.document.service.buscall.LoadDocumentMethodEndpoint</provider>
+        <provider interface="dev.webfx.stack.com.bus.call.spi.BusCallEndpoint">one.modality.ecommerce.document.service.buscall.LoadDocumentsMethodEndpoint</provider>
         <provider interface="dev.webfx.stack.com.bus.call.spi.BusCallEndpoint">one.modality.ecommerce.document.service.buscall.SubmitDocumentMethodEndpoint</provider>
         <provider interface="dev.webfx.stack.com.serial.spi.SerialCodec">one.modality.ecommerce.document.service.buscall.serial.book.AddAttendancesEventSerialCodec</provider>
         <provider interface="dev.webfx.stack.com.serial.spi.SerialCodec">one.modality.ecommerce.document.service.buscall.serial.book.AddDocumentEventSerialCodec</provider>

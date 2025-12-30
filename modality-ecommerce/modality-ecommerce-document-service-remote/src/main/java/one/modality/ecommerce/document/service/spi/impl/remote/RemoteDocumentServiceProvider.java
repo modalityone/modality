@@ -1,5 +1,6 @@
 package one.modality.ecommerce.document.service.spi.impl.remote;
 
+import dev.webfx.platform.util.Arrays;
 import dev.webfx.stack.com.bus.call.BusCallService;
 import one.modality.ecommerce.document.service.*;
 import one.modality.ecommerce.document.service.buscall.DocumentServiceBusAddress;
@@ -19,6 +20,13 @@ public class RemoteDocumentServiceProvider implements DocumentServiceProvider {
     @Override
     public Future<DocumentAggregate> loadDocument(LoadDocumentArgument argument) {
         return BusCallService.call(DocumentServiceBusAddress.LOAD_DOCUMENT_METHOD_ADDRESS, argument);
+    }
+
+    @Override
+    public Future<DocumentAggregate[]> loadDocuments(LoadDocumentArgument argument) {
+        return BusCallService.call(DocumentServiceBusAddress.LOAD_DOCUMENTS_METHOD_ADDRESS, argument)
+            // The serialization will return an Object[] instead of a DocumentAggregate[], so we map it to a DocumentAggregate[]
+            .map(objects -> Arrays.map((Object[]) objects, o -> (DocumentAggregate) o, DocumentAggregate[]::new));
     }
 
     @Override
