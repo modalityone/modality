@@ -42,12 +42,6 @@ public class BookingFormState {
         this.workingBookingProperties = workingBookingProperties;
     }
 
-    // === Working Booking ===
-
-    public WorkingBookingProperties getWorkingBookingProperties() {
-        return workingBookingProperties;
-    }
-
     // === Logged-in Person ===
 
     public void setLoggedInPerson(Person person) {

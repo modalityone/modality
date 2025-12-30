@@ -68,13 +68,6 @@ public interface HasPendingBookingsSection extends BookingFormSection {
         private String bookingReference;
 
         /**
-         * Simplified constructor for database-loaded bookings.
-         */
-        public BookingItem(Document document, String personName, String personEmail, String eventName, int totalAmount) {
-            this(document, personName, personEmail, eventName, totalAmount, totalAmount / 10); // Default 10% if not specified
-        }
-
-        /**
          * Full constructor with minDeposit for API-loaded bookings.
          */
         public BookingItem(Document document, String personName, String personEmail, String eventName, int totalAmount, int minDeposit) {

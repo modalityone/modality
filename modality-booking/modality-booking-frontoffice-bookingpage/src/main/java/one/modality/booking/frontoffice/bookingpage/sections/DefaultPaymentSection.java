@@ -17,22 +17,16 @@ import javafx.scene.control.Label;
 import javafx.scene.control.Slider;
 import javafx.scene.control.TextField;
 import javafx.scene.layout.*;
-import javafx.scene.paint.Color;
 import javafx.scene.shape.SVGPath;
+import one.modality.base.shared.entities.Event;
+import one.modality.base.shared.entities.formatters.EventPriceFormatter;
 import one.modality.booking.client.workingbooking.WorkingBookingProperties;
 import one.modality.booking.frontoffice.bookingpage.BookingPageI18nKeys;
 import one.modality.booking.frontoffice.bookingpage.PriceFormatter;
 import one.modality.booking.frontoffice.bookingpage.components.BookingPageUIBuilder;
 import one.modality.booking.frontoffice.bookingpage.theme.BookingFormColorScheme;
-import one.modality.base.shared.entities.Event;
-import one.modality.base.shared.entities.formatters.EventPriceFormatter;
 
-import java.util.Collections;
-import java.util.EnumSet;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 
 /**
  * Default implementation of the Payment section.
@@ -92,8 +86,30 @@ public class DefaultPaymentSection implements HasPaymentSection {
     protected WorkingBookingProperties workingBookingProperties;
 
     public DefaultPaymentSection() {
-        buildUI();
         setupBindings();
+        // Note: buildUI() will be called when receiving WorkingBookingProperties (see
+    }
+
+    protected void setupBindings() {
+        // Pay button is disabled while processing
+        // Note: Terms acceptance is now validated on the Pending Bookings page
+        payButtonDisabled.bind(processingProperty);
+
+        // Validity depends on not processing
+        processingProperty.addListener((obs, old, val) -> updateValidity());
+
+        // Note: Color scheme listener removed - CSS handles theme changes via CSS variables
+
+        // Update custom amount section and allocation visibility when payment option changes
+        paymentOptionProperty.addListener((obs, old, newOption) -> {
+            updateCustomAmountSectionVisibility();
+            updateAllocationSectionVisibility();
+            autoAllocate(); // Re-allocate when option changes
+            updatePayButtonText(); // Update button text with new amount
+        });
+
+        // Update pay button text when custom amount changes
+        customAmountProperty.addListener((obs, old, newVal) -> updatePayButtonText());
     }
 
     protected void buildUI() {
@@ -122,36 +138,15 @@ public class DefaultPaymentSection implements HasPaymentSection {
         // not created inside this section
         // Note: Terms and conditions section has been moved to the Pending Bookings page
 
-        container.getChildren().addAll(
+        container.getChildren().setAll(
                 title, subtitle, bookingSummarySection,
                 paymentAmountSection, paymentMethodsSection
         );
         VBox.setMargin(subtitle, new Insets(0, 0, 40, 0));
-        VBox.setMargin(bookingSummarySection, new Insets(0, 0, 32, 0));
-        VBox.setMargin(paymentAmountSection, new Insets(0, 0, 32, 0));
-        VBox.setMargin(paymentMethodsSection, new Insets(0, 0, 32, 0));
-    }
-
-    protected void setupBindings() {
-        // Pay button is disabled while processing
-        // Note: Terms acceptance is now validated on the Pending Bookings page
-        payButtonDisabled.bind(processingProperty);
-
-        // Validity depends on not processing
-        processingProperty.addListener((obs, old, val) -> updateValidity());
-
-        // Note: Color scheme listener removed - CSS handles theme changes via CSS variables
-
-        // Update custom amount section and allocation visibility when payment option changes
-        paymentOptionProperty.addListener((obs, old, newOption) -> {
-            updateCustomAmountSectionVisibility();
-            updateAllocationSectionVisibility();
-            autoAllocate(); // Re-allocate when option changes
-            updatePayButtonText(); // Update button text with new amount
-        });
-
-        // Update pay button text when custom amount changes
-        customAmountProperty.addListener((obs, old, newVal) -> updatePayButtonText());
+        Insets sectionMargin = new Insets(0, 0, 32, 0);
+        VBox.setMargin(bookingSummarySection, sectionMargin);
+        VBox.setMargin(paymentAmountSection, sectionMargin);
+        VBox.setMargin(paymentMethodsSection, sectionMargin);
     }
 
     /**
@@ -159,27 +154,14 @@ public class DefaultPaymentSection implements HasPaymentSection {
      * Format: "Pay £{amount} Now →"
      */
     protected void updatePayButtonText() {
-        if (payButtonText == null) return;
         int amount = getPaymentAmount();
-        Event event = workingBookingProperties != null && workingBookingProperties.getWorkingBooking() != null
-                ? workingBookingProperties.getWorkingBooking().getEvent() : null;
-        String formattedAmount = EventPriceFormatter.formatWithCurrency(amount, event);
+        String formattedAmount = PriceFormatter.formatPriceWithCurrencyNoDecimals(amount);
         I18n.bindI18nTextProperty(payButtonText, BookingPageI18nKeys.PayAmountNow, formattedAmount);
     }
 
     protected void updateValidity() {
         // Note: Terms acceptance is now validated on the Pending Bookings page
         validProperty.set(!processingProperty.get());
-    }
-
-    protected void rebuildUI() {
-        container.getChildren().clear();
-        buildUI();
-        rebuildBookingSummary();
-        rebuildPaymentOptions();
-        rebuildPaymentMethods();
-        updateCustomAmountSectionVisibility();
-        updateAllocationSectionVisibility();
     }
 
     protected VBox buildBookingSummarySection() {
@@ -208,7 +190,7 @@ public class DefaultPaymentSection implements HasPaymentSection {
         Region spacer = new Region();
         HBox.setHgrow(spacer, Priority.ALWAYS);
 
-        totalAmountLabel = new Label(EventPriceFormatter.formatWithCurrency(totalAmount, workingBookingProperties != null && workingBookingProperties.getWorkingBooking() != null ? workingBookingProperties.getWorkingBooking().getEvent() : null));
+        totalAmountLabel = new Label(EventPriceFormatter.formatWithCurrency(totalAmount, workingBookingProperties.getEvent()));
         totalAmountLabel.getStyleClass().addAll("bookingpage-price-large", "bookingpage-text-primary");
 
         totalRow.getChildren().addAll(totalTextLabel, spacer, totalAmountLabel);
@@ -772,7 +754,7 @@ public class DefaultPaymentSection implements HasPaymentSection {
 
     protected void updateTotalDisplay() {
         if (totalAmountLabel != null) {
-            totalAmountLabel.setText(EventPriceFormatter.formatWithCurrency(totalAmount, workingBookingProperties != null && workingBookingProperties.getWorkingBooking() != null ? workingBookingProperties.getWorkingBooking().getEvent() : null));
+            totalAmountLabel.setText(EventPriceFormatter.formatWithCurrency(totalAmount, workingBookingProperties.getEvent()));
             // Note: Color is handled via CSS class "bookingpage-text-primary" set in buildBookingSummarySection
         }
     }
@@ -815,6 +797,7 @@ public class DefaultPaymentSection implements HasPaymentSection {
     @Override
     public void setWorkingBookingProperties(WorkingBookingProperties props) {
         this.workingBookingProperties = props;
+        buildUI();
     }
 
     @Override
@@ -882,19 +865,19 @@ public class DefaultPaymentSection implements HasPaymentSection {
     protected void updateDepositPercentageAndOptions() {
         if (totalAmount > 0) {
             // Calculate percentage, rounding to nearest integer
-            this.depositPercentage = Math.round((float) depositAmount * 100 / totalAmount);
+            depositPercentage = Math.round((float) depositAmount * 100 / totalAmount);
         } else {
-            this.depositPercentage = 0;
+            depositPercentage = 0;
         }
 
         // If deposit equals total (100%), only "Pay in Full" is available
         if (depositAmount >= totalAmount) {
-            this.availablePaymentOptions = EnumSet.of(PaymentOption.FULL);
+            availablePaymentOptions = EnumSet.of(PaymentOption.FULL);
             paymentOptionProperty.set(PaymentOption.FULL);
         } else {
             // Reset to all options if previously restricted
-            if (this.availablePaymentOptions.size() == 1 && this.availablePaymentOptions.contains(PaymentOption.FULL)) {
-                this.availablePaymentOptions = EnumSet.allOf(PaymentOption.class);
+            if (availablePaymentOptions.size() == 1 && availablePaymentOptions.contains(PaymentOption.FULL)) {
+                availablePaymentOptions = EnumSet.allOf(PaymentOption.class);
             }
         }
 
@@ -988,10 +971,7 @@ public class DefaultPaymentSection implements HasPaymentSection {
 
     @Override
     public void clearBookingItems() {
-        bookingItems.clear();
-        allocationProperties.clear();
-        rebuildBookingSummary();
-        updateAllocationSectionVisibility();
+        setBookingItems(Collections.emptyList());
     }
 
     @Override

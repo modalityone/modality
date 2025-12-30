@@ -25,6 +25,7 @@ module modality.booking.frontoffice.bookingpage {
     requires modality.ecommerce.frontoffice.order;
     requires modality.ecommerce.payment;
     requires modality.ecommerce.payment.client;
+    requires modality.ecommerce.shared.pricecalculator;
     requires modality.event.client.lifecycle;
     requires modality.event.frontoffice.activity.book;
     requires webfx.extras.aria;

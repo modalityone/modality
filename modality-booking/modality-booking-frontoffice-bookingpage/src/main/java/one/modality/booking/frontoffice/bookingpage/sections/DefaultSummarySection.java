@@ -42,7 +42,6 @@ public class DefaultSummarySection implements HasSummarySection {
     // === PROPERTIES ===
     protected final ObjectProperty<BookingFormColorScheme> colorScheme = new SimpleObjectProperty<>(BookingFormColorScheme.DEFAULT);
     protected final SimpleBooleanProperty validProperty = new SimpleBooleanProperty(true);
-    protected final StringProperty bookingReferenceProperty = new SimpleStringProperty("");
 
     // === ATTENDEE INFO ===
     protected final StringProperty attendeeNameProperty = new SimpleStringProperty("");

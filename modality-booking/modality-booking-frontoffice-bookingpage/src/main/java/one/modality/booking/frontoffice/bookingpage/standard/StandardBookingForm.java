@@ -6,16 +6,15 @@ import dev.webfx.platform.async.Future;
 import dev.webfx.platform.async.Promise;
 import dev.webfx.platform.console.Console;
 import dev.webfx.platform.uischeduler.UiScheduler;
+import dev.webfx.platform.util.Strings;
 import dev.webfx.platform.windowlocation.WindowLocation;
 import dev.webfx.stack.authn.AuthenticationService;
 import dev.webfx.stack.authn.InitiateAccountCreationCredentials;
-import dev.webfx.stack.orm.datasourcemodel.service.DataSourceModelService;
 import dev.webfx.stack.orm.entity.Entities;
-import dev.webfx.stack.orm.entity.EntityList;
-import dev.webfx.stack.orm.entity.EntityStore;
 import javafx.beans.binding.Bindings;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.property.StringProperty;
+import javafx.collections.ListChangeListener;
 import javafx.scene.Node;
 import javafx.scene.layout.Region;
 import javafx.scene.layout.VBox;
@@ -31,15 +30,21 @@ import one.modality.crm.shared.services.authn.ModalityUserPrincipal;
 import one.modality.crm.shared.services.authn.fx.FXModalityUserPrincipal;
 import one.modality.crm.shared.services.authn.fx.FXUserPerson;
 import one.modality.ecommerce.document.service.DocumentAggregate;
+import one.modality.ecommerce.document.service.DocumentService;
+import one.modality.ecommerce.document.service.LoadDocumentArgument;
 import one.modality.ecommerce.document.service.PolicyAggregate;
 import one.modality.ecommerce.payment.PaymentAllocation;
 import one.modality.ecommerce.payment.client.ClientPaymentUtil;
+import one.modality.ecommerce.shared.pricecalculator.PriceCalculator;
 import one.modality.event.frontoffice.activities.book.event.EventBookingFormSettings;
 import one.modality.event.frontoffice.activities.book.fx.FXGuestToBook;
 import one.modality.event.frontoffice.activities.book.fx.FXResumePayment;
 
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 import java.util.*;
 import java.util.function.Supplier;
+import java.util.stream.Collectors;
 
 /**
  * A standard booking form with a flexible number of custom steps followed by
@@ -112,23 +117,23 @@ public class StandardBookingForm extends MultiPageBookingForm {
      * Package-private constructor - use {@link StandardBookingFormBuilder} to create instances.
      */
     StandardBookingForm(
-            HasWorkingBookingProperties activity,
-            EventBookingFormSettings settings,
-            BookingFormColorScheme colorScheme,
-            boolean showUserBadge,
-            List<BookingFormPage> customSteps,
-            Supplier<BookingFormPage> yourInformationPageSupplier,
-            Supplier<BookingFormPage> memberSelectionPageSupplier,
-            boolean skipMemberSelection,
-            Supplier<BookingFormPage> summaryPageSupplier,
-            Supplier<BookingFormPage> pendingBookingsPageSupplier,
-            boolean skipPendingBookings,
-            Supplier<BookingFormPage> paymentPageSupplier,
-            Supplier<BookingFormPage> confirmationPageSupplier,
-            StandardBookingFormCallbacks callbacks,
-            boolean cardPaymentOnly,
-            BookingFormEntryPoint entryPoint,
-            boolean navigationClickable) {
+        HasWorkingBookingProperties activity,
+        EventBookingFormSettings settings,
+        BookingFormColorScheme colorScheme,
+        boolean showUserBadge,
+        List<BookingFormPage> customSteps,
+        Supplier<BookingFormPage> yourInformationPageSupplier,
+        Supplier<BookingFormPage> memberSelectionPageSupplier,
+        boolean skipMemberSelection,
+        Supplier<BookingFormPage> summaryPageSupplier,
+        Supplier<BookingFormPage> pendingBookingsPageSupplier,
+        boolean skipPendingBookings,
+        Supplier<BookingFormPage> paymentPageSupplier,
+        Supplier<BookingFormPage> confirmationPageSupplier,
+        StandardBookingFormCallbacks callbacks,
+        boolean cardPaymentOnly,
+        BookingFormEntryPoint entryPoint,
+        boolean navigationClickable) {
 
         super(activity, settings);
         this.navigationClickable = navigationClickable;
@@ -167,15 +172,15 @@ public class StandardBookingForm extends MultiPageBookingForm {
     }
 
     private BookingFormPage[] buildPages(
-            List<BookingFormPage> customSteps,
-            Supplier<BookingFormPage> yourInformationPageSupplier,
-            Supplier<BookingFormPage> memberSelectionPageSupplier,
-            boolean skipMemberSelection,
-            Supplier<BookingFormPage> summaryPageSupplier,
-            Supplier<BookingFormPage> pendingBookingsPageSupplier,
-            boolean skipPendingBookings,
-            Supplier<BookingFormPage> paymentPageSupplier,
-            Supplier<BookingFormPage> confirmationPageSupplier) {
+        List<BookingFormPage> customSteps,
+        Supplier<BookingFormPage> yourInformationPageSupplier,
+        Supplier<BookingFormPage> memberSelectionPageSupplier,
+        boolean skipMemberSelection,
+        Supplier<BookingFormPage> summaryPageSupplier,
+        Supplier<BookingFormPage> pendingBookingsPageSupplier,
+        boolean skipPendingBookings,
+        Supplier<BookingFormPage> paymentPageSupplier,
+        Supplier<BookingFormPage> confirmationPageSupplier) {
 
         // 1. Add all custom steps
         List<BookingFormPage> allPages = new ArrayList<>(customSteps);
@@ -273,7 +278,7 @@ public class StandardBookingForm extends MultiPageBookingForm {
         defaultYourInformationSection = new DefaultYourInformationSection();
         defaultYourInformationSection.setColorScheme(colorScheme);
         return new CompositeBookingFormPage(BookingPageI18nKeys.YourInformation,
-                defaultYourInformationSection)
+            defaultYourInformationSection)
             .setStep(false)
             .setShowingOwnSubmitButton(true);
     }
@@ -282,7 +287,7 @@ public class StandardBookingForm extends MultiPageBookingForm {
         defaultMemberSelectionSection = new DefaultMemberSelectionSection();
         defaultMemberSelectionSection.setColorScheme(colorScheme);
         return new CompositeBookingFormPage(BookingPageI18nKeys.MemberSelection,
-                defaultMemberSelectionSection)
+            defaultMemberSelectionSection)
             .setStep(true)
             .setShowingOwnSubmitButton(true);
     }
@@ -291,7 +296,7 @@ public class StandardBookingForm extends MultiPageBookingForm {
         defaultSummarySection = new DefaultSummarySection();
         defaultSummarySection.setColorScheme(colorScheme);
         return new CompositeBookingFormPage(BookingPageI18nKeys.Summary,
-                defaultSummarySection)
+            defaultSummarySection)
             .setStep(true);
     }
 
@@ -301,19 +306,17 @@ public class StandardBookingForm extends MultiPageBookingForm {
         defaultTermsSection = new DefaultTermsSection();
         defaultTermsSection.setColorScheme(colorScheme);
         return new CompositeBookingFormPage(BookingPageI18nKeys.PendingBookings,
-                defaultPendingBookingsSection,
-                defaultTermsSection)
+            defaultPendingBookingsSection,
+            defaultTermsSection)
             .setStep(true);
     }
 
     protected BookingFormPage createDefaultPaymentPage() {
         defaultPaymentSection = new DefaultPaymentSection();
         defaultPaymentSection.setColorScheme(colorScheme);
-        if (cardPaymentOnly) {
-            defaultPaymentSection.setCardPaymentOnly(true);
-        }
+        defaultPaymentSection.setCardPaymentOnly(cardPaymentOnly);
         return new CompositeBookingFormPage(BookingPageI18nKeys.Payment,
-                defaultPaymentSection)
+            defaultPaymentSection)
             .setStep(true);
     }
 
@@ -321,7 +324,7 @@ public class StandardBookingForm extends MultiPageBookingForm {
         defaultConfirmationSection = new DefaultConfirmationSection();
         defaultConfirmationSection.setColorScheme(colorScheme);
         return new CompositeBookingFormPage(BookingPageI18nKeys.Confirmation,
-                defaultConfirmationSection)
+            defaultConfirmationSection)
             .setStep(true)
             .setButtons() // No navigation buttons on confirmation page
             .setShowingOwnSubmitButton(true); // Prevents default activity-level submit button from showing
@@ -331,28 +334,33 @@ public class StandardBookingForm extends MultiPageBookingForm {
 
     @Override
     public void onWorkingBookingLoaded() {
-        if (entryPoint == BookingFormEntryPoint.RESUME_PAYMENT) {
-            // Add 30px spacer at top of header for payment return flow
-            BookingFormHeader headerRef = getHeader();
-            if (headerRef != null && headerRef.getView() instanceof VBox headerWrapper) {
-                Region spacer = new Region();
-                spacer.setMinHeight(30);
-                spacer.setPrefHeight(30);
-                spacer.setMaxHeight(30);
-                headerWrapper.getChildren().add(0, spacer);
+        switch (entryPoint) {
+            case PAY_BOOKING -> {
+                defaultPaymentSection.setWorkingBookingProperties(workingBookingProperties);
+                loadAllBookingsForEvent(this::handleProceedToPayment);
             }
+            case RESUME_PAYMENT -> {
+                // Add 30px spacer at top of header for payment return flow
+                BookingFormHeader headerRef = getHeader();
+                if (headerRef != null && headerRef.getView() instanceof VBox headerWrapper) {
+                    Region spacer = new Region();
+                    spacer.setMinHeight(30);
+                    spacer.setPrefHeight(30);
+                    spacer.setMaxHeight(30);
+                    headerWrapper.getChildren().add(0, spacer);
+                }
 
-            // Navigate directly to confirmation page (last step) when returning from payment gateway
-            navigateToConfirmation();
+                // Navigate directly to confirmation page (last step) when returning from payment gateway
+                navigateToConfirmation();
 
-            // Check the MoneyTransfer status and show appropriate content
-            MoneyTransfer moneyTransfer = FXResumePayment.getMoneyTransfer();
-            if (moneyTransfer != null) {
-                handleResumePaymentContent(moneyTransfer);
+                // Check the MoneyTransfer status and show appropriate content
+                MoneyTransfer moneyTransfer = FXResumePayment.getMoneyTransfer();
+                if (moneyTransfer != null) {
+                    handleResumePaymentContent(moneyTransfer);
+                }
             }
-        } else {
             // Normal flow - starts at first applicable page
-            super.onWorkingBookingLoaded();
+            default -> super.onWorkingBookingLoaded();
         }
     }
 
@@ -516,7 +524,7 @@ public class StandardBookingForm extends MultiPageBookingForm {
             defaultPendingBookingsSection.setOnProceedToPayment(this::handleProceedToPayment);
             defaultPendingBookingsSection.setOnBackPressed(this::navigateToSummary);
             // Update button text when bookings change (to switch between "Proceed to Payment" and "Confirm Booking")
-            defaultPendingBookingsSection.getBookings().addListener((javafx.collections.ListChangeListener<HasPendingBookingsSection.BookingItem>) change -> {
+            defaultPendingBookingsSection.getBookings().addListener((ListChangeListener<HasPendingBookingsSection.BookingItem>) change -> {
                 updatePendingBookingsButtonText();
             });
         }
@@ -622,23 +630,20 @@ public class StandardBookingForm extends MultiPageBookingForm {
         // and maintain guest session via FXGuestToBook (same pattern as Step1BookingFormAndSubmitSlide)
         HasYourInformationSection.NewUserData newUser = state.getPendingNewUserData();
         if (newUser != null) {
-            WorkingBookingProperties props = state.getWorkingBookingProperties();
-            if (props != null) {
-                Document document = props.getWorkingBooking().getDocument();
-                if (document != null) {
-                    document.setFirstName(newUser.firstName);
-                    document.setLastName(newUser.lastName);
-                    document.setEmail(newUser.email);
-                    // Set country from event organization (same as Step1BookingFormAndSubmitSlide)
-                    Event event = props.getWorkingBooking().getEvent();
-                    if (event != null && event.getOrganization() != null) {
-                        document.setCountry(event.getOrganization().getCountry());
-                    }
-                    // Maintain guest session for payment/confirmation
-                    FXGuestToBook.setGuestToBook(document);
-                    Console.log("New user details set on document and FXGuestToBook: " +
-                        newUser.firstName + " " + newUser.lastName + " (" + newUser.email + ")");
+            Document document = getWorkingBooking().getDocument();
+            if (document != null) {
+                document.setFirstName(newUser.firstName);
+                document.setLastName(newUser.lastName);
+                document.setEmail(newUser.email);
+                // Set country from event organization (same as Step1BookingFormAndSubmitSlide)
+                Event event = getWorkingBooking().getEvent();
+                if (event != null && event.getOrganization() != null) {
+                    document.setCountry(event.getOrganization().getCountry());
                 }
+                // Maintain guest session for payment/confirmation
+                FXGuestToBook.setGuestToBook(document);
+                Console.log("New user details set on document and FXGuestToBook: " +
+                            newUser.firstName + " " + newUser.lastName + " (" + newUser.email + ")");
             }
         }
 
@@ -709,13 +714,7 @@ public class StandardBookingForm extends MultiPageBookingForm {
     private void bookSelectedItemsInWorkingBooking() {
         Console.log("bookSelectedItemsInWorkingBooking() called");
 
-        WorkingBookingProperties props = state.getWorkingBookingProperties();
-        if (props == null) {
-            Console.log("ERROR: workingBookingProperties is null");
-            return;
-        }
-
-        WorkingBooking workingBooking = props.getWorkingBooking();
+        WorkingBooking workingBooking = getWorkingBooking();
         Console.log("WorkingBooking obtained, hasChanges: " + workingBooking.hasChanges());
 
         // Only book the whole event if nothing has been booked yet
@@ -737,13 +736,7 @@ public class StandardBookingForm extends MultiPageBookingForm {
      * @return Future that completes when submission is done (or immediately if no changes)
      */
     private Future<Void> submitBookingAsync() {
-        WorkingBookingProperties props = state.getWorkingBookingProperties();
-        if (props == null) {
-            Console.log("ERROR: workingBookingProperties is null in submitBookingAsync");
-            return Future.failedFuture("workingBookingProperties is null");
-        }
-
-        WorkingBooking workingBooking = props.getWorkingBooking();
+        WorkingBooking workingBooking = getWorkingBooking();
         Console.log("WorkingBooking hasNoChanges: " + workingBooking.hasNoChanges());
 
         // Check if there are changes to submit
@@ -765,7 +758,7 @@ public class StandardBookingForm extends MultiPageBookingForm {
                 Console.log("Booking submitted successfully. Reference: " + submitResult.getDocumentRef());
 
                 // Store the booking reference
-                props.setBookingReference(submitResult.getDocumentRef());
+                workingBookingProperties.setBookingReference(submitResult.getDocumentRef());
 
                 // Reset reselection flag - booking is now confirmed
                 state.setAllowMemberReselection(false);
@@ -796,182 +789,33 @@ public class StandardBookingForm extends MultiPageBookingForm {
     private void loadAllBookingsForEvent(Runnable onComplete) {
         Console.log("loadAllBookingsForEvent() called");
 
-        WorkingBookingProperties props = state.getWorkingBookingProperties();
-        if (props == null) {
-            Console.log("ERROR: workingBookingProperties is null");
-            if (onComplete != null) onComplete.run();
-            return;
-        }
+        Object accountId = ModalityUserPrincipal.getUserAccountId(FXModalityUserPrincipal.getModalityUserPrincipal());
+        LoadDocumentArgument argument = accountId != null ? LoadDocumentArgument.ofAccount(accountId, getEvent())
+            : LoadDocumentArgument.ofDocument(getWorkingBooking().getDocument());
 
-        Event event = props.getWorkingBooking().getEvent();
-        if (event == null) {
-            Console.log("ERROR: event is null");
-            if (onComplete != null) onComplete.run();
-            return;
-        }
-
-        ModalityUserPrincipal principal = FXModalityUserPrincipal.modalityUserPrincipalProperty().get();
-        if (principal == null) {
-            Console.log("User not logged in - skipping booking load");
-            if (onComplete != null) onComplete.run();
-            return;
-        }
-
-        Object eventId = event.getPrimaryKey();
-        Object accountId = principal.getUserAccountId();
-
-        Console.log("Querying bookings for event=" + eventId + ", account=" + accountId);
-
-        EntityStore entityStore = EntityStore.create(DataSourceModelService.getDefaultDataSourceModel());
-
-        // Query all documents (bookings) for this event from account members
-        entityStore.<Document>executeQuery(
-            "select id,ref,person.(id,firstName,lastName,email)," +
-            "price_net,price_deposit,price_minDeposit " +
-            "from Document " +
-            "where event=? and person.frontendAccount=? and !cancelled " +
-            "order by person.firstName",
-            eventId, accountId
-        )
-        .onFailure(error -> {
-            Console.log("Error loading bookings for event: " + error.getMessage());
-            UiScheduler.runInUiThread(() -> {
-                if (onComplete != null) onComplete.run();
+        DocumentService.loadDocuments(argument)
+            .onFailure(Console::log)
+            .inUiThread()
+            .onSuccess(documentAggregates -> {
+                PolicyAggregate policyAggregate = workingBookingProperties.getPolicyAggregate();
+                for (DocumentAggregate documentAggregate : documentAggregates)
+                    documentAggregate.setPolicyAggregate(policyAggregate);
+                populateBookingsFromDocuments(documentAggregates);
+                if (onComplete != null)
+                    onComplete.run();
             });
-        })
-        .onSuccess(documents -> {
-            Console.log("Found " + documents.size() + " bookings for event");
-            loadDocumentLinesForDocuments(documents, entityStore, eventId, accountId, onComplete);
-        });
-    }
-
-    /**
-     * Load document lines and attendances for the given documents.
-     */
-    private void loadDocumentLinesForDocuments(
-            EntityList<Document> documents,
-            EntityStore entityStore,
-            Object eventId,
-            Object accountId,
-            Runnable onComplete) {
-
-        Console.log("loadDocumentLinesForDocuments() called for " + documents.size() + " documents");
-
-        // Load document lines
-        entityStore.<DocumentLine>executeQuery(
-            "select id,document,item.(id,name,family.(code,name)),price_net,dates " +
-            "from DocumentLine " +
-            "where document.event=? and document.person.frontendAccount=? and !cancelled " +
-            "order by document,item.ord",
-            eventId, accountId
-        )
-        .onFailure(error -> {
-            Console.log("Error loading document lines: " + error.getMessage());
-            loadPaymentStatusForDocuments(documents, Collections.emptyList(), Collections.emptyList(), entityStore, eventId, accountId, onComplete);
-        })
-        .onSuccess(documentLines -> {
-            Console.log("Found " + documentLines.size() + " document lines");
-            // Also load attendances for computing dates
-            entityStore.<Attendance>executeQuery(
-                "select id,documentLine,date " +
-                "from Attendance " +
-                "where documentLine.document.event=? and documentLine.document.person.frontendAccount=? " +
-                "order by documentLine,date",
-                eventId, accountId
-            )
-            .onFailure(error -> {
-                Console.log("Error loading attendances: " + error.getMessage());
-                loadPaymentStatusForDocuments(documents, documentLines, Collections.emptyList(), entityStore, eventId, accountId, onComplete);
-            })
-            .onSuccess(attendances -> {
-                Console.log("Found " + attendances.size() + " attendances");
-                loadPaymentStatusForDocuments(documents, documentLines, attendances, entityStore, eventId, accountId, onComplete);
-            });
-        });
-    }
-
-    /**
-     * Load payment status for the given documents and update UI sections.
-     */
-    private void loadPaymentStatusForDocuments(
-            EntityList<Document> documents,
-            List<DocumentLine> documentLines,
-            List<Attendance> attendances,
-            EntityStore entityStore,
-            Object eventId,
-            Object accountId,
-            Runnable onComplete) {
-
-        Console.log("loadPaymentStatusForDocuments() called for " + documents.size() + " documents");
-
-        entityStore.<MoneyTransfer>executeQuery(
-            "select id,document,amount,pending,successful " +
-            "from MoneyTransfer " +
-            "where document.event=? and document.person.frontendAccount=? " +
-            "order by document,date desc",
-            eventId, accountId
-        )
-        .onFailure(error -> {
-            Console.log("Error loading payment status: " + error.getMessage());
-            UiScheduler.runInUiThread(() -> {
-                populateBookingsFromDocuments(documents, documentLines, attendances, Collections.emptyList());
-                if (onComplete != null) onComplete.run();
-            });
-        })
-        .onSuccess(payments -> {
-            Console.log("Found " + payments.size() + " payment records");
-            UiScheduler.runInUiThread(() -> {
-                populateBookingsFromDocuments(documents, documentLines, attendances, payments);
-                if (onComplete != null) onComplete.run();
-            });
-        });
     }
 
     /**
      * Populate PendingBookingsSection from database documents.
      */
-    private void populateBookingsFromDocuments(
-            EntityList<Document> documents,
-            List<DocumentLine> documentLines,
-            List<Attendance> attendances,
-            List<MoneyTransfer> payments) {
+    private void populateBookingsFromDocuments(DocumentAggregate[] documentAggregates) {
 
-        Console.log("populateBookingsFromDocuments() called with " + documents.size() + " documents, " + documentLines.size() + " lines, " + attendances.size() + " attendances");
+        Console.log("populateBookingsFromDocuments() called with " + documentAggregates.length + " documents");
 
         if (defaultPendingBookingsSection == null) {
             Console.log("defaultPendingBookingsSection is null - skipping population");
             return;
-        }
-
-        // Build map of document ID -> total paid amount
-        Map<Object, Integer> paidAmounts = new HashMap<>();
-        for (MoneyTransfer mt : payments) {
-            if (mt.isSuccessful() && !mt.isPending()) {
-                Object docId = mt.getDocument() != null ? mt.getDocument().getId() : null;
-                if (docId != null) {
-                    paidAmounts.merge(docId, mt.getAmount(), Integer::sum);
-                }
-            }
-        }
-
-        // Build map of document ID -> list of document lines
-        Map<Object, List<DocumentLine>> linesByDocument = new HashMap<>();
-        for (DocumentLine line : documentLines) {
-            Document lineDoc = line.getDocument();
-            if (lineDoc != null) {
-                Object docId = lineDoc.getId();
-                linesByDocument.computeIfAbsent(docId, k -> new ArrayList<>()).add(line);
-            }
-        }
-
-        // Build map of document line ID -> list of attendance dates
-        Map<Object, List<java.time.LocalDate>> datesByLine = new HashMap<>();
-        for (Attendance attendance : attendances) {
-            DocumentLine attendanceLine = attendance.getDocumentLine();
-            if (attendanceLine != null && attendance.getDate() != null) {
-                Object lineId = attendanceLine.getId();
-                datesByLine.computeIfAbsent(lineId, k -> new ArrayList<>()).add(attendance.getDate());
-            }
         }
 
         // Clear existing bookings
@@ -984,38 +828,20 @@ public class StandardBookingForm extends MultiPageBookingForm {
             eventName = event.getName() != null ? event.getName() : "";
         }
 
+        Set<Object> bookedPersonIds = new HashSet<>();
+
         // Add each document as a booking
-        for (Document doc : documents) {
+        for (DocumentAggregate documentAggregate : documentAggregates) {
+            Document doc = documentAggregate.getDocument();
             Person person = doc.getPerson();
             String personName = getPersonFullName(person);
             String personEmail = person != null ? person.getEmail() : "";
 
-            // Get document lines for this booking
-            List<DocumentLine> lines = linesByDocument.get(doc.getId());
-
-            // First, try to use doc.getPriceNet() but if it's 0 or null, calculate from lines
-            Integer priceNetObj = doc.getPriceNet();
-            int totalPrice = priceNetObj != null ? priceNetObj : 0;
-
-            // If totalPrice is 0, calculate from document lines
-            if (totalPrice == 0 && lines != null) {
-                for (DocumentLine line : lines) {
-                    Integer linePriceObj = line.getPriceNet();
-                    if (linePriceObj != null) {
-                        totalPrice += linePriceObj;
-                    }
-                }
-                Console.log("Calculated total from lines: " + totalPrice);
-            }
-
-            int paidAmount = paidAmounts.getOrDefault(doc.getId(), 0);
+            PriceCalculator priceCalculator = new PriceCalculator(documentAggregate);
+            int totalPrice = priceCalculator.calculateTotalPrice();
+            int minDeposit = priceCalculator.calculateMinDeposit();
+            int paidAmount = documentAggregate.getDeposit();
             int balance = totalPrice - paidAmount;
-
-            Console.log("Processing booking for " + personName + ": docPriceNet=" + priceNetObj + ", calculatedTotal=" + totalPrice + ", paid=" + paidAmount);
-
-            // Get minDeposit from document (calculated by API/price algorithm)
-            Integer priceMinDepositObj = doc.getPriceMinDeposit();
-            int minDeposit = priceMinDepositObj != null ? priceMinDepositObj : totalPrice; // Default to full amount if not set
 
             // Create booking item
             HasPendingBookingsSection.BookingItem bookingItem = new HasPendingBookingsSection.BookingItem(
@@ -1033,6 +859,7 @@ public class StandardBookingForm extends MultiPageBookingForm {
             Object refObj = doc.getRef();
             bookingItem.setBookingReference(refObj != null ? refObj.toString() : null);
 
+            List<DocumentLine> lines = documentAggregate.getDocumentLines();
             // Add line items from DocumentLines
             if (lines != null) {
                 for (DocumentLine line : lines) {
@@ -1054,10 +881,10 @@ public class StandardBookingForm extends MultiPageBookingForm {
                         String lineDates = line.getDates();
                         if (lineDates == null || lineDates.isEmpty()) {
                             // Compute dates from attendances
-                            List<java.time.LocalDate> attendanceDates = datesByLine.get(line.getId());
-                            if (attendanceDates != null && !attendanceDates.isEmpty()) {
-                                java.util.Collections.sort(attendanceDates);
-                                lineDates = formatDateListFromLocalDates(attendanceDates);
+                            List<LocalDate> attendanceDates = documentAggregate.getLineAttendancesStream(line).map(a -> a.getScheduledItem().getDate()).collect(Collectors.toList());
+                            if (!attendanceDates.isEmpty()) {
+                                Collections.sort(attendanceDates);
+                                lineDates = formatDates(attendanceDates);
                             }
                         }
                         Console.log("  Line item: " + displayName + " = " + linePrice + ", dates: " + lineDates);
@@ -1069,23 +896,19 @@ public class StandardBookingForm extends MultiPageBookingForm {
             }
 
             defaultPendingBookingsSection.addBooking(bookingItem);
+            if (defaultMemberSelectionSection != null && person != null) {
+                // MUST use getPrimaryKey() to match how MemberInfo stores person IDs
+                bookedPersonIds.add(person.getPrimaryKey());
+            }
         }
 
         // Update alreadyBookedPersonIds in member selection section
         // This ensures the "Register Another Person" button is correctly enabled/disabled
         if (defaultMemberSelectionSection != null) {
-            Set<Object> bookedPersonIds = new HashSet<>();
-            for (Document doc : documents) {
-                Person person = doc.getPerson();
-                if (person != null) {
-                    // MUST use getPrimaryKey() to match how MemberInfo stores person IDs
-                    bookedPersonIds.add(person.getPrimaryKey());
-                }
-            }
             defaultMemberSelectionSection.setAlreadyBookedPersonIds(bookedPersonIds);
         }
 
-        Console.log("Added " + documents.size() + " bookings to pending bookings section");
+        Console.log("Added " + documentAggregates.length + " bookings to pending bookings section");
     }
 
     /**
@@ -1359,8 +1182,7 @@ public class StandardBookingForm extends MultiPageBookingForm {
             defaultSummarySection.setAttendeeEmail(newUser.email);
         } else {
             // Fallback for modifications: get from WorkingBooking document
-            WorkingBookingProperties props = state.getWorkingBookingProperties();
-            WorkingBooking wb = props != null ? props.getWorkingBooking() : null;
+            WorkingBooking wb = getWorkingBooking();
             if (wb != null) {
                 Document doc = wb.getDocument();
                 if (doc != null) {
@@ -1408,10 +1230,7 @@ public class StandardBookingForm extends MultiPageBookingForm {
      * Groups attendances by item family and calculates prices using date-specific daily rates.
      */
     private void addDefaultSummaryPriceLines() {
-        WorkingBookingProperties props = state.getWorkingBookingProperties();
-        if (props == null) return;
-
-        WorkingBooking workingBooking = props.getWorkingBooking();
+        WorkingBooking workingBooking = getWorkingBooking();
         DocumentAggregate documentAggregate = workingBooking.getLastestDocumentAggregate();
         if (documentAggregate == null) return;
 
@@ -1439,7 +1258,7 @@ public class StandardBookingForm extends MultiPageBookingForm {
             if (family == null) continue;
 
             // Find the rate applicable to this attendance's date
-            java.time.LocalDate attendanceDate = attendance.getDate();
+            LocalDate attendanceDate = attendance.getDate();
             Rate applicableRate = findRateForDate(attendanceDate, item, dailyRates);
 
             if (applicableRate != null && applicableRate.getPrice() != null) {
@@ -1459,15 +1278,15 @@ public class StandardBookingForm extends MultiPageBookingForm {
     /**
      * Finds the daily rate applicable to a specific date for an item.
      */
-    private Rate findRateForDate(java.time.LocalDate date, Item item, List<Rate> dailyRates) {
+    private Rate findRateForDate(LocalDate date, Item item, List<Rate> dailyRates) {
         if (date == null || dailyRates == null) return null;
 
         // Filter rates for this item
         for (Rate rate : dailyRates) {
             if (rate.getItem() == null || !rate.getItem().equals(item)) continue;
 
-            java.time.LocalDate rateStart = rate.getStartDate();
-            java.time.LocalDate rateEnd = rate.getEndDate();
+            LocalDate rateStart = rate.getStartDate();
+            LocalDate rateEnd = rate.getEndDate();
 
             // Check if rate's date range includes the attendance date
             if (rateStart != null && rateEnd != null) {
@@ -1500,9 +1319,9 @@ public class StandardBookingForm extends MultiPageBookingForm {
         if (lineAttendances == null || lineAttendances.isEmpty()) return null;
 
         // Collect and sort all dates
-        List<java.time.LocalDate> dates = lineAttendances.stream()
+        List<LocalDate> dates = lineAttendances.stream()
             .map(Attendance::getDate)
-            .filter(d -> d != null)
+            .filter(Objects::nonNull)
             .sorted()
             .distinct()
             .collect(java.util.stream.Collectors.toList());
@@ -1528,25 +1347,17 @@ public class StandardBookingForm extends MultiPageBookingForm {
             return formatSingleDate(dates.get(0)) + " - " + formatSingleDate(dates.get(dates.size() - 1));
         } else {
             // Format as list of dates, grouping by month
-            return formatDateList(dates);
+            return formatDates(dates);
         }
     }
 
     /**
      * Formats a single date as "Jan 15" or "15 Jan" depending on locale.
      */
-    private String formatSingleDate(java.time.LocalDate date) {
+    private String formatSingleDate(LocalDate date) {
         if (date == null) return "";
-        java.time.format.DateTimeFormatter formatter = java.time.format.DateTimeFormatter.ofPattern("d MMM", java.util.Locale.ENGLISH);
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("d MMM", java.util.Locale.ENGLISH);
         return date.format(formatter);
-    }
-
-    /**
-     * Formats a list of LocalDate objects into a user-friendly string.
-     * This is a convenience wrapper for database-loaded attendances.
-     */
-    private String formatDateListFromLocalDates(List<java.time.LocalDate> dates) {
-        return formatDateList(dates);
     }
 
     /**
@@ -1554,19 +1365,18 @@ public class StandardBookingForm extends MultiPageBookingForm {
      * Example: [Jan 15, Jan 22, Jan 29] -> "Jan 15, 22, 29"
      * Example: [Jan 15, Feb 5] -> "Jan 15, Feb 5"
      */
-    private String formatDateList(List<java.time.LocalDate> dates) {
+    private String formatDates(List<LocalDate> dates) {
         if (dates == null || dates.isEmpty()) return "";
 
         StringBuilder sb = new StringBuilder();
         java.time.Month currentMonth = null;
         int currentYear = -1;
 
-        for (int i = 0; i < dates.size(); i++) {
-            java.time.LocalDate date = dates.get(i);
+        for (LocalDate date : dates) {
             if (currentMonth == null || !date.getMonth().equals(currentMonth) || date.getYear() != currentYear) {
                 // New month - add month name
                 if (sb.length() > 0) sb.append(", ");
-                sb.append(date.getMonth().getDisplayName(java.time.format.TextStyle.SHORT, java.util.Locale.ENGLISH));
+                sb.append(date.getMonth().getDisplayName(java.time.format.TextStyle.SHORT, Locale.ENGLISH));
                 sb.append(" ");
                 sb.append(date.getDayOfMonth());
                 currentMonth = date.getMonth();
@@ -1617,12 +1427,7 @@ public class StandardBookingForm extends MultiPageBookingForm {
         defaultPendingBookingsSection.clearBookings();
 
         // Get booking info from WorkingBookingProperties
-        WorkingBookingProperties props = state.getWorkingBookingProperties();
-        if (props == null) {
-            Console.log("ERROR: WorkingBookingProperties is null in populatePendingBookingsForNewUser");
-            return;
-        }
-
+        WorkingBookingProperties props = workingBookingProperties;
         int total = props.getTotal();
         int minDeposit = props.getMinDeposit();
         Event event = props.getWorkingBooking().getEvent();
@@ -1685,7 +1490,7 @@ public class StandardBookingForm extends MultiPageBookingForm {
 
         // Add confirmed bookings - either from pending bookings or from new user data
         boolean hasBookingsFromPendingSection = defaultPendingBookingsSection != null
-            && !defaultPendingBookingsSection.getBookings().isEmpty();
+                                                && !defaultPendingBookingsSection.getBookings().isEmpty();
 
         if (hasBookingsFromPendingSection) {
             // Logged-in users: get booking info from pending bookings section
@@ -1698,9 +1503,7 @@ public class StandardBookingForm extends MultiPageBookingForm {
         } else {
             // New users (guest or account creation): use stored info from payment flow
             // (state.getPendingNewUserData() is cleared after submission)
-            WorkingBookingProperties props = state.getWorkingBookingProperties();
-            Object bookingRefObj = props != null ? props.getBookingReference() : null;
-            String bookingRef = bookingRefObj != null ? String.valueOf(bookingRefObj) : null;
+            String bookingRef = Strings.toString(workingBookingProperties.getBookingReference());
 
             if (storedNewUserName != null) {
                 defaultConfirmationSection.addConfirmedBooking(new HasConfirmationSection.ConfirmedBooking(
@@ -1723,8 +1526,7 @@ public class StandardBookingForm extends MultiPageBookingForm {
             totalAmount = defaultPendingBookingsSection.getTotalAmount();
         } else {
             // Get total from WorkingBookingProperties for new users
-            WorkingBookingProperties props = state.getWorkingBookingProperties();
-            totalAmount = props != null ? props.getTotal() : 0;
+            totalAmount = workingBookingProperties.getTotal();
         }
         defaultConfirmationSection.setPaymentAmounts(totalAmount, result.getAmount());
     }
@@ -1732,11 +1534,7 @@ public class StandardBookingForm extends MultiPageBookingForm {
     // === Helper Methods ===
 
     private Event getEvent() {
-        WorkingBookingProperties props = state.getWorkingBookingProperties();
-        if (props != null && props.getWorkingBooking() != null) {
-            return props.getWorkingBooking().getEvent();
-        }
-        return null;
+        return workingBookingProperties.getEvent();
     }
 
     // === Navigation Methods ===

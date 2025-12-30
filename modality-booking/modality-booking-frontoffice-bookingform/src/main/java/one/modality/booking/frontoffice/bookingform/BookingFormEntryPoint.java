@@ -21,6 +21,12 @@ public enum BookingFormEntryPoint {
     MODIFY_BOOKING,
 
     /**
+     * User is paying an existing booking (presumably after a failed payment).
+     * The working booking will already contain the existing booking data.
+     */
+    PAY_BOOKING,
+
+    /**
      * User is returning to complete a pending payment.
      * The working booking will contain the partially completed booking.
      */
