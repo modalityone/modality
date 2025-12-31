@@ -37,7 +37,6 @@ import one.modality.base.client.application.RoutingActions;
 import one.modality.base.client.brand.BrandI18nKeys;
 import one.modality.base.client.icons.SvgIcons;
 import one.modality.base.client.mainframe.fx.FXMainFrameOverlayArea;
-import one.modality.base.frontoffice.mainframe.fx.FXCollapseMenu;
 import one.modality.base.frontoffice.utility.page.FOPageUtil;
 import one.modality.crm.shared.services.authn.fx.FXUserName;
 
@@ -90,11 +89,7 @@ public final class MenuBarFactory {
         collapsePane.getStyleClass().setAll("menu-bar", userMenu ? "user-menu-bar" : "main-menu-bar", menuBarLayout == MenuBarLayout.MOBILE_BOTTOM ? "mobile" : "non-mobile");
         collapsePane.setMaxWidth(Double.MAX_VALUE); // necessary to make the (CSS) border fill the whole page width
         collapsePane.setMinWidth(0); // Temporarily allowing menu shrinking on mobiles to prevent stopping page content shrinking (which is even worse as this crops the content on left and right)
-        if (menuBarLayout == MenuBarLayout.DESKTOP) {
-            // Binding collapsedProperty with FXCollapseMenu = general case (will be redefined for the user menu to include login)
-            collapsePane.setAnimate(false);
-            collapsePane.collapsedProperty().bind(FXCollapseMenu.collapseMenuProperty()); // will be redefined in some cases
-        } else if (menuBarLayout == MenuBarLayout.MOBILE_BOTTOM) {
+        if (menuBarLayout == MenuBarLayout.MOBILE_BOTTOM) {
             collapsePane.setEffect(new DropShadow());
             collapsePane.setClipEnabled(false);
             // Considering the bottom of the safe area, in particular for OS like iPadOS with a bar at the bottom

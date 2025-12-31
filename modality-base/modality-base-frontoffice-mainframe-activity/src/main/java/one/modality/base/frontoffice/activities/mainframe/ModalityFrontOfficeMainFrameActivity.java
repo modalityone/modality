@@ -42,6 +42,7 @@ import one.modality.base.frontoffice.activities.mainframe.menus.mobile.UserMenu;
 import one.modality.base.frontoffice.activities.mainframe.menus.shared.LanguageMenuBar;
 import one.modality.base.frontoffice.mainframe.footernode.MainFrameFooterNodeProvider;
 import one.modality.base.frontoffice.mainframe.fx.FXBackgroundNode;
+import one.modality.base.frontoffice.mainframe.fx.FXCollapseMenu;
 import one.modality.base.frontoffice.mainframe.fx.FXShowFooter;
 import one.modality.base.frontoffice.utility.page.FOPageUtil;
 
@@ -80,9 +81,9 @@ public final class ModalityFrontOfficeMainFrameActivity extends ModalityClientMa
         //mountTransitionPane.setKeepsLeavingNodes(true); // Note: activities with video players should call TransitionPane.setKeepsLeavingNode(node, false)
         FXMainFrameTransiting.transitingProperty().bind(pageTransitionPane.transitingProperty());
 
-        CollapsePane desktopMainMenuBar = DesktopMainMenuBar.createDesktopMainMenuBar(this);
-        CollapsePane desktopUserMenuBar = DesktopUserMenuBar.createDesktopUserMenuBar(this);
-        CollapsePane mobileBottomMainMenuBar = MobileBottomMainMenuBar.createMobileBottomMainMenuBar(this);
+        MonoPane desktopMainMenuBar = DesktopMainMenuBar.createDesktopTopMainMenuBar(this);
+        MonoPane desktopUserMenuBar = DesktopUserMenuBar.createDesktopTopUserMenuBar(this);
+        MonoPane mobileBottomMainMenuBar = MobileBottomMainMenuBar.createMobileBottomMainMenuBar(this);
 
         mainFrameContainer = new LayoutPane() { // Children are set later in updateMountNode()
             @Override
@@ -135,17 +136,18 @@ public final class ModalityFrontOfficeMainFrameActivity extends ModalityClientMa
         }, FXBackgroundNode.backgroundNodeProperty(), mobileLayoutProperty, mountNodeProperty());
 
         MonoPane mountNodeContainer = new MonoPane();
-        CollapsePane languageMenuBar = LanguageMenuBar.createLanguageMenuBar();
-        MonoPane responsiveTopMenusPane = new MonoPane();
+        MonoPane languageMenuBar = LanguageMenuBar.createLanguageMenuBar();
+        CollapsePane responsiveTopMenusPane = new CollapsePane();
+        responsiveTopMenusPane.collapsedProperty().bind(FXCollapseMenu.collapseMenuProperty()); // will be redefined in some cases
 
         new ResponsiveDesign(responsiveTopMenusPane)
             .addResponsiveLayout(/* applicability test for small mobile menus mode: */width -> width < 450,
                 () -> { // applying mobile view
-                    responsiveTopMenusPane.setContent(createMobileMenu(languageMenuBar, false));
+                    responsiveTopMenusPane.setContent(createTopMobileMenu(languageMenuBar, false));
                 }
             ).addResponsiveLayout(/* applicability test for medium mobile menus mode: */width -> width < 600,
                 () -> { // applying mobile view
-                    responsiveTopMenusPane.setContent(createMobileMenu(languageMenuBar, true));
+                    responsiveTopMenusPane.setContent(createTopMobileMenu(languageMenuBar, true));
                 }
             ).addResponsiveLayout(() -> { // otherwise, applying desktop menus mode
                 VBox desktopMenus = new VBox(
@@ -244,7 +246,7 @@ public final class ModalityFrontOfficeMainFrameActivity extends ModalityClientMa
         return mainFrameContainer;
     }
 
-    private HBox createMobileMenu(CollapsePane languageMenuBar, boolean languageMenuBarCanFit) {
+    private HBox createTopMobileMenu(MonoPane languageMenuBar, boolean languageMenuBarCanFit) {
         HBox mobileMenus = new HBox(10, BurgerMenu.createBurgerMenuIcon(this), MenuBarFactory.createStretchableBrandPane());
         if (languageMenuBarCanFit) {
             mobileMenus.getChildren().addAll(languageMenuBar, UserMenu.createUserMenuIcon(null, this));
