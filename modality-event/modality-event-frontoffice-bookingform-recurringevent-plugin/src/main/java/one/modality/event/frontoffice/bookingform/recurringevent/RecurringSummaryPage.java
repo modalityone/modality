@@ -167,7 +167,7 @@ final class RecurringSummaryPage implements BookingFormPage {
                 Label scheduledItemLabel = I18nEntities.newExpressionLabel(item,
                     "i18n(this) + ' - {0}' " + (existing ? " + ' ([" + RecurringEventI18nKeys.alreadyBooked + "])'" : ""),
                     LocalizedTime.formatMonthDayProperty(date, FrontOfficeTimeFormats.BOOKING_CHECKOUT_DATE_FORMAT));
-                int dailyRatePrice = workingBookingProperties.getDailyRatePrice();
+                int dailyRatePrice = workingBooking.getDailyRatePrice();
                 totalPrice[0] += dailyRatePrice;
                 Label price = new Label(EventPriceFormatter.formatWithCurrency(dailyRatePrice, event));
 

@@ -26,6 +26,7 @@ import javafx.scene.text.TextAlignment;
 import one.modality.base.shared.entities.Event;
 import one.modality.base.shared.entities.ScheduledItem;
 import one.modality.base.shared.entities.formatters.EventPriceFormatter;
+import one.modality.booking.client.workingbooking.WorkingBooking;
 import one.modality.booking.client.workingbooking.WorkingBookingProperties;
 import one.modality.booking.frontoffice.bookingelements.BookingElements;
 import one.modality.booking.frontoffice.bookingpage.BookingFormPage;
@@ -81,12 +82,12 @@ final class RecurringSchedulePage implements BookingFormPage {
         Pane schedule = bookingForm.getScheduledItemBoxesSelector().buildUi();
         VBox.setMargin(schedule, new Insets(30, 0, 30, 0));
 
-        WorkingBookingProperties workingBookingProperties = activity.getWorkingBookingProperties();
 
         Bootstrap.textPrimary(Bootstrap.h4(selectAllClassesHyperlink));
         selectAllClassesHyperlink.setAlignment(Pos.CENTER);
 
-        Text priceText = new Text(I18n.getI18nText(RecurringEventI18nKeys.PricePerClass0, EventPriceFormatter.formatWithCurrency(workingBookingProperties.getDailyRatePrice(), event)));
+        WorkingBooking workingBooking = activity.getWorkingBooking();
+        Text priceText = new Text(I18n.getI18nText(RecurringEventI18nKeys.PricePerClass0, EventPriceFormatter.formatWithCurrency(workingBooking.getDailyRatePrice(), event)));
         priceText.getStyleClass().add("subtitle-grey");
         VBox.setMargin(priceText, new Insets(20, 0, 0, 0));
 
@@ -115,8 +116,8 @@ final class RecurringSchedulePage implements BookingFormPage {
         container.setAlignment(Pos.CENTER);
 
         // Adding a message if there is a discount for the whole series
-        int allClassesPrice = workingBookingProperties.getWholeEventPrice();
-        int allClassesNoDiscountPrice = workingBookingProperties.getWholeEventNoDiscountPrice();
+        int allClassesPrice = workingBooking.getWholeEventPrice();
+        int allClassesNoDiscountPrice = workingBooking.getWholeEventNoDiscountPrice();
         if (allClassesPrice < allClassesNoDiscountPrice) {
             Text allClassesText = new Text(I18n.getI18nText(RecurringEventI18nKeys.AllClasses + ":"));
             allClassesText.getStyleClass().add("subtitle-grey");
@@ -144,14 +145,15 @@ final class RecurringSchedulePage implements BookingFormPage {
 
     @Override
     public void setWorkingBookingProperties(WorkingBookingProperties workingBookingProperties) {
-        List<ScheduledItem> scheduledItemsOnEvent = workingBookingProperties.getScheduledItemsOnEvent();
+        WorkingBooking workingBooking = workingBookingProperties.getWorkingBooking();
+        List<ScheduledItem> scheduledItemsOnEvent = workingBooking.getPolicyScheduledItems();
 
         // Computing non-selectable and already booked dates to style the event schedule
         List<LocalDate> nonSelectableDate = new ArrayList<>();
         List<LocalDate> alreadyBookedDate = new ArrayList<>();
         scheduledItemsOnEvent.forEach(si -> {
             LocalDate localDate = si.getDate();
-            if (workingBookingProperties.getAlreadyBookedScheduledItems().stream()
+            if (workingBooking.getAlreadyBookedScheduledItems().stream()
                 .map(ScheduledItem::getDate)
                 .anyMatch(date -> date.equals(localDate))) {
                 //Here there is already a date booked in this another booking
