@@ -12,7 +12,6 @@ import one.modality.base.shared.entities.ScheduledItem;
 import one.modality.base.shared.entities.formatters.EventPriceFormatter;
 import one.modality.ecommerce.document.service.DocumentAggregate;
 import one.modality.ecommerce.document.service.PolicyAggregate;
-import one.modality.ecommerce.shared.pricecalculator.PriceCalculator;
 
 import java.util.List;
 
@@ -76,8 +75,8 @@ public final class WorkingBookingProperties {
     private final IntegerProperty totalProperty = new SimpleIntegerProperty(-1) {
         @Override
         protected void invalidated() {
-            setFormattedTotal(EventPriceFormatter.formatWithCurrency(get(), getEvent()));
-            setFormattedTotalWithoutCurrency(EventPriceFormatter.formatWithoutCurrency(get(), false));
+            formattedTotalProperty.set(EventPriceFormatter.formatWithCurrency(get(), getEvent()));
+            formattedTotalWithoutCurrencyProperty.set(EventPriceFormatter.formatWithoutCurrency(get(), false));
         }
     };
 
@@ -87,8 +86,8 @@ public final class WorkingBookingProperties {
     private final IntegerProperty minDepositProperty = new SimpleIntegerProperty(-1) {
         @Override
         protected void invalidated() {
-            setFormattedMinDeposit(EventPriceFormatter.formatWithCurrency(get(), getEvent()));
-            setFormattedMinDepositWithoutCurrency(EventPriceFormatter.formatWithoutCurrency(get(), false));
+            formattedMinDepositProperty.set(EventPriceFormatter.formatWithCurrency(get(), getEvent()));
+            formattedMinDepositWithoutCurrencyProperty.set(EventPriceFormatter.formatWithoutCurrency(get(), false));
         }
     };
 
@@ -98,8 +97,8 @@ public final class WorkingBookingProperties {
     private final IntegerProperty balanceProperty = new SimpleIntegerProperty(-1) {
         @Override
         protected void invalidated() {
-            setFormattedBalance(EventPriceFormatter.formatWithCurrency(get(), getEvent()));
-            setFormattedBalanceWithoutCurrency(EventPriceFormatter.formatWithoutCurrency(get(), false));
+            formattedBalanceProperty.set(EventPriceFormatter.formatWithCurrency(get(), getEvent()));
+            formattedBalanceWithoutCurrencyProperty.set(EventPriceFormatter.formatWithoutCurrency(get(), false));
         }
     };
 
@@ -108,7 +107,7 @@ public final class WorkingBookingProperties {
     private final IntegerProperty previousTotalProperty = new SimpleIntegerProperty(-1) {
         @Override
         protected void invalidated() {
-            setFormattedPreviousTotal(EventPriceFormatter.formatWithCurrency(get(), getEvent()));
+            formattedPreviousTotalProperty.set(EventPriceFormatter.formatWithCurrency(get(), getEvent()));
         }
     };
 
@@ -118,7 +117,6 @@ public final class WorkingBookingProperties {
         @Override
         protected void invalidated() {
             formattedPreviousBalanceProperty.setValue(EventPriceFormatter.formatWithCurrency(previousBalanceProperty.get(), getEvent()));
-            formattedPreviousTotalProperty.setValue(EventPriceFormatter.formatWithCurrency(previousBalanceProperty.get() + getDocumentAggregate().getDeposit(), getEvent()));
         }
     };
 
@@ -150,14 +148,6 @@ public final class WorkingBookingProperties {
         return workingBooking.getDocumentPrimaryKey();
     }
 
-    private PriceCalculator getPreviousBookingPriceCalculator() {
-        return workingBooking.getPreviousBookingPriceCalculator();
-    }
-
-    private PriceCalculator getLatestBookingPriceCalculator() {
-        return workingBooking.getLatestBookingPriceCalculator();
-    }
-
     public DocumentAggregate getDocumentAggregate() {
         return workingBooking.getLastestDocumentAggregate();
     }
@@ -187,12 +177,8 @@ public final class WorkingBookingProperties {
         return depositProperty;
     }
 
-    public int calculateDeposit() {
-        return getLatestBookingPriceCalculator().calculateDeposit();
-    }
-
     public void updateDeposit() {
-        depositProperty.set(calculateDeposit());
+        depositProperty.set(workingBooking.calculateDeposit());
     }
 
     public ReadOnlyStringProperty formattedDepositProperty() {
@@ -222,28 +208,16 @@ public final class WorkingBookingProperties {
         return totalProperty;
     }
 
-    public int calculateTotal() {
-        return getLatestBookingPriceCalculator().calculateTotalPrice();
-    }
-
     public void updateTotal() {
-        totalProperty.set(calculateTotal());
+        totalProperty.set(workingBooking.calculateTotal());
     }
 
     public StringProperty formattedTotalProperty() {
         return formattedTotalProperty;
     }
 
-    private void setFormattedTotal(String formattedTotal) {
-        formattedTotalProperty.set(formattedTotal);
-    }
-
     public String getFormattedTotal() {
         return formattedTotalProperty.getValue();
-    }
-
-    private void setFormattedTotalWithoutCurrency(String formattedTotal) {
-        formattedTotalWithoutCurrencyProperty.set(formattedTotal);
     }
 
     public String getFormattedTotalWithoutCurrency() {
@@ -254,8 +228,8 @@ public final class WorkingBookingProperties {
         return formattedTotalWithoutCurrencyProperty;
     }
 
-    public int calculateNoDiscountTotal() {
-        return getLatestBookingPriceCalculator().calculateNoLongStayDiscountTotalPrice();
+    public int calculateNoDiscountTotal() { // TODO: Move this to a property
+        return workingBooking.calculateNoDiscountTotal();
     }
 
 
@@ -269,20 +243,12 @@ public final class WorkingBookingProperties {
         return minDepositProperty;
     }
 
-    public int calculateMinDeposit() {
-        return getLatestBookingPriceCalculator().calculateMinDeposit();
-    }
-
     public void updateMinDeposit() {
-        minDepositProperty.set(calculateMinDeposit());
+        minDepositProperty.set(workingBooking.calculateMinDeposit());
     }
 
     public ReadOnlyStringProperty formattedMinDepositProperty() {
         return formattedMinDepositProperty;
-    }
-
-    private void setFormattedMinDeposit(String formattedValue) {
-        formattedMinDepositProperty.set(formattedValue);
     }
 
     public String getFormattedMinDeposit() {
@@ -291,10 +257,6 @@ public final class WorkingBookingProperties {
 
     public ReadOnlyStringProperty formattedMinDepositWithoutCurrencyProperty() {
         return formattedMinDepositWithoutCurrencyProperty;
-    }
-
-    private void setFormattedMinDepositWithoutCurrency(String formattedValue) {
-        formattedMinDepositWithoutCurrencyProperty.set(formattedValue);
     }
 
     public String getFormattedMinDepositWithoutCurrency() {
@@ -313,19 +275,11 @@ public final class WorkingBookingProperties {
     }
 
     public void updateBalance() {
-        balanceProperty.set(calculateBalance());
-    }
-
-    public int calculateBalance() {
-        return getLatestBookingPriceCalculator().calculateBalance();
+        balanceProperty.set(workingBooking.calculateBalance());
     }
 
     public ReadOnlyStringProperty formattedBalanceProperty() {
         return formattedBalanceProperty;
-    }
-
-    private void setFormattedBalance(String formattedBalance) {
-        formattedBalanceProperty.set(formattedBalance);
     }
 
     public String getFormattedBalance() {
@@ -334,10 +288,6 @@ public final class WorkingBookingProperties {
 
     public ReadOnlyStringProperty formattedBalanceWithoutCurrencyProperty() {
         return formattedBalanceWithoutCurrencyProperty;
-    }
-
-    private void setFormattedBalanceWithoutCurrency(String formattedBalanceWithoutCurrency) {
-        formattedBalanceWithoutCurrencyProperty.set(formattedBalanceWithoutCurrency);
     }
 
     public String getFormattedBalanceWithoutCurrency() {
@@ -355,20 +305,12 @@ public final class WorkingBookingProperties {
         return previousTotalProperty;
     }
 
-    public int calculatePreviousTotal() {
-        return getPreviousBookingPriceCalculator().calculateTotalPrice();
-    }
-
     public void updatePreviousTotal() {
-        previousTotalProperty.set(calculatePreviousTotal());
+        previousTotalProperty.set(workingBooking.calculatePreviousTotal());
     }
 
     public ReadOnlyStringProperty formattedPreviousTotalProperty() {
         return formattedPreviousTotalProperty;
-    }
-
-    private void setFormattedPreviousTotal(String formattedPreviousTotal) {
-        formattedPreviousTotalProperty.set(formattedPreviousTotal);
     }
 
     public String getFormattedPreviousTotal() {
@@ -387,11 +329,7 @@ public final class WorkingBookingProperties {
     }
 
     public void updatePreviousBalance() {
-        this.previousBalanceProperty.set(calculatePreviousBalance());
-    }
-
-    public int calculatePreviousBalance() {
-        return getPreviousBookingPriceCalculator().calculateBalance();
+        this.previousBalanceProperty.set(workingBooking.calculatePreviousBalance());
     }
 
     public ReadOnlyStringProperty formattedPreviousBalanceProperty() {

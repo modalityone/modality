@@ -840,7 +840,7 @@ public class StandardBookingForm extends MultiPageBookingForm {
             PriceCalculator priceCalculator = new PriceCalculator(documentAggregate);
             int totalPrice = priceCalculator.calculateTotalPrice();
             int minDeposit = priceCalculator.calculateMinDeposit();
-            int paidAmount = documentAggregate.getDeposit();
+            int paidAmount = priceCalculator.calculateDeposit();
             int balance = totalPrice - paidAmount;
 
             // Create booking item

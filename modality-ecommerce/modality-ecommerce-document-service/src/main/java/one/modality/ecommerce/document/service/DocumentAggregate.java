@@ -337,12 +337,4 @@ public final class DocumentAggregate {
         return moneyTransfers.stream().skip(existingMoneyTransfersCount);
     }
 
-    public int getDeposit() {
-        return getSuccessfulMoneyTransfersStream().mapToInt(MoneyTransfer::getAmount).sum();
-    }
-
-    public int getPendingDeposit() {
-        return getPendingMoneyTransfersStream().mapToInt(MoneyTransfer::getAmount).sum();
-    }
-
 }

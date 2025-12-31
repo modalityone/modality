@@ -55,13 +55,14 @@ public final class PriceCalculator {
         DocumentAggregate documentAggregate = getDocumentAggregate();
         if (documentAggregate == null)
             return 0;
-        // TODO: consider ignoreDiscounts flag in KBS2 price algorithm
         return Kbs2PriceAlgorithm.computeBookingMinDeposit(getDocumentAggregate(), ignoreLongStayDiscounts, false);
     }
 
     public int calculateDeposit() {
         DocumentAggregate documentAggregate = getDocumentAggregate();
-        return documentAggregate.getDeposit();
+        if (documentAggregate == null)
+            return 0;
+        return documentAggregate.getSuccessfulMoneyTransfersStream().mapToInt(MoneyTransfer::getAmount).sum();
     }
 
     public int calculateBalance() {

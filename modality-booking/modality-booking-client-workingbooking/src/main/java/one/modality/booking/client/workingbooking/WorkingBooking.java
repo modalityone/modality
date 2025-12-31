@@ -100,6 +100,37 @@ public final class WorkingBooking {
         return latestBookingPriceCalculator;
     }
 
+    // Price calculation shortcuts
+
+    public int calculateDeposit() {
+        return getLatestBookingPriceCalculator().calculateDeposit();
+    }
+
+    public int calculateTotal() {
+        return getLatestBookingPriceCalculator().calculateTotalPrice();
+    }
+
+    public int calculateNoDiscountTotal() {
+        return getLatestBookingPriceCalculator().calculateNoLongStayDiscountTotalPrice();
+    }
+
+    public int calculateMinDeposit() {
+        return getLatestBookingPriceCalculator().calculateMinDeposit();
+    }
+
+    public int calculateBalance() {
+        return getLatestBookingPriceCalculator().calculateBalance();
+    }
+
+    public int calculatePreviousTotal() {
+        return getPreviousBookingPriceCalculator().calculateTotalPrice();
+    }
+
+    public int calculatePreviousBalance() {
+        return getPreviousBookingPriceCalculator().calculateBalance();
+    }
+
+
     public int getVersion() {
         return versionProperty.get();
     }
