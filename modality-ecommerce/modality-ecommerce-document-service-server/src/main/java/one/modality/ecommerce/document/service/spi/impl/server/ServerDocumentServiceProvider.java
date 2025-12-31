@@ -90,7 +90,7 @@ public class ServerDocumentServiceProvider implements DocumentServiceProvider {
         };
         if (docPk == null) {
             boolean personProvided = argument.personPrimaryKey() != null;
-            String queryReplacement = "in (select Document where %field%=? and event=? and !cancelled order by id desc %limit%)"
+            String queryReplacement = " in (select Document where %field%=? and event=? and !cancelled order by id desc %limit%)"
                 .replace("%field%", personProvided ? "person" : "person.frontendAccount")
                 .replace("%limit%", limit1 ? "limit 1" : "");
             Object[] queryArguments = {personProvided ? argument.personPrimaryKey() : argument.accountPrimaryKey(), argument.eventPrimaryKey()};
