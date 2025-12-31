@@ -24,8 +24,6 @@ public final class WorkingBookingProperties {
     // These fields are constant once set, but not declared final because they are not set in the constructor, they are
     // set later in the setWorkingBooking() method (called only once).
     private WorkingBooking workingBooking;
-    private PriceCalculator previousBookingPriceCalculator;
-    private PriceCalculator latestBookingPriceCalculator;
 
     // Booking reference
     private final ObjectProperty<Object> bookingReferenceProperty = new SimpleObjectProperty<>();
@@ -67,8 +65,8 @@ public final class WorkingBookingProperties {
     private final IntegerProperty depositProperty = new SimpleIntegerProperty(-1) {
         @Override
         protected void invalidated() {
-            setFormattedDeposit(EventPriceFormatter.formatWithCurrency(get(), getEvent()));
-            setFormattedDepositWithoutCurrency(EventPriceFormatter.formatWithoutCurrency(get(), false));
+            formattedDepositProperty.set(EventPriceFormatter.formatWithCurrency(get(), getEvent()));
+            formattedDepositWithoutCurrencyProperty.set(EventPriceFormatter.formatWithoutCurrency(get(), false));
         }
     };
 
@@ -131,8 +129,6 @@ public final class WorkingBookingProperties {
 
     public void setWorkingBooking(WorkingBooking workingBooking) {
         this.workingBooking = workingBooking;
-        latestBookingPriceCalculator = new PriceCalculator(workingBooking::getLastestDocumentAggregate);
-        previousBookingPriceCalculator = new PriceCalculator(workingBooking::getInitialDocumentAggregate);
         DocumentAggregate initialDocumentAggregate = workingBooking.getInitialDocumentAggregate();
         if (initialDocumentAggregate != null) {
             setBookingReference(initialDocumentAggregate.getDocument().getRef());
@@ -155,11 +151,11 @@ public final class WorkingBookingProperties {
     }
 
     private PriceCalculator getPreviousBookingPriceCalculator() {
-        return previousBookingPriceCalculator;
+        return workingBooking.getPreviousBookingPriceCalculator();
     }
 
     private PriceCalculator getLatestBookingPriceCalculator() {
-        return latestBookingPriceCalculator;
+        return workingBooking.getLatestBookingPriceCalculator();
     }
 
     public DocumentAggregate getDocumentAggregate() {
@@ -191,24 +187,16 @@ public final class WorkingBookingProperties {
         return depositProperty;
     }
 
-    private void setDeposit(int deposit) {
-        depositProperty.set(deposit);
-    }
-
     public int calculateDeposit() {
-        return getDocumentAggregate().getDeposit();
+        return getLatestBookingPriceCalculator().calculateDeposit();
     }
 
     public void updateDeposit() {
-        setDeposit(calculateDeposit());
+        depositProperty.set(calculateDeposit());
     }
 
     public ReadOnlyStringProperty formattedDepositProperty() {
         return formattedDepositProperty;
-    }
-
-    private void setFormattedDeposit(String formattedDeposit) {
-        formattedDepositProperty.set(formattedDeposit);
     }
 
     public String getFormattedDeposit() {
@@ -217,10 +205,6 @@ public final class WorkingBookingProperties {
 
     public ReadOnlyStringProperty formattedDepositWithoutCurrencyProperty() {
         return formattedDepositWithoutCurrencyProperty;
-    }
-
-    private void setFormattedDepositWithoutCurrency(String formattedDeposit) {
-        formattedDepositWithoutCurrencyProperty.set(formattedDeposit);
     }
 
     public String getFormattedDepositWithoutCurrency() {
@@ -238,16 +222,12 @@ public final class WorkingBookingProperties {
         return totalProperty;
     }
 
-    private void setTotal(int total) {
-        totalProperty.set(total);
-    }
-
     public int calculateTotal() {
         return getLatestBookingPriceCalculator().calculateTotalPrice();
     }
 
     public void updateTotal() {
-        setTotal(calculateTotal());
+        totalProperty.set(calculateTotal());
     }
 
     public StringProperty formattedTotalProperty() {
@@ -289,16 +269,12 @@ public final class WorkingBookingProperties {
         return minDepositProperty;
     }
 
-    private void setMinDeposit(int value) {
-        minDepositProperty.set(value);
-    }
-
     public int calculateMinDeposit() {
         return getLatestBookingPriceCalculator().calculateMinDeposit();
     }
 
     public void updateMinDeposit() {
-        setMinDeposit(calculateMinDeposit());
+        minDepositProperty.set(calculateMinDeposit());
     }
 
     public ReadOnlyStringProperty formattedMinDepositProperty() {
@@ -336,16 +312,12 @@ public final class WorkingBookingProperties {
         return balanceProperty;
     }
 
-    private void setBalance(int balance) {
-        this.balanceProperty.set(balance);
-    }
-
     public void updateBalance() {
-        setBalance(calculateBalance());
+        balanceProperty.set(calculateBalance());
     }
 
     public int calculateBalance() {
-        return calculateTotal() - calculateDeposit();
+        return getLatestBookingPriceCalculator().calculateBalance();
     }
 
     public ReadOnlyStringProperty formattedBalanceProperty() {
@@ -383,16 +355,12 @@ public final class WorkingBookingProperties {
         return previousTotalProperty;
     }
 
-    private void setPreviousTotal(int previousTotal) {
-        previousTotalProperty.set(previousTotal);
-    }
-
     public int calculatePreviousTotal() {
-        return previousBookingPriceCalculator.calculateTotalPrice();
+        return getPreviousBookingPriceCalculator().calculateTotalPrice();
     }
 
     public void updatePreviousTotal() {
-        setPreviousTotal(calculatePreviousTotal());
+        previousTotalProperty.set(calculatePreviousTotal());
     }
 
     public ReadOnlyStringProperty formattedPreviousTotalProperty() {
@@ -418,16 +386,12 @@ public final class WorkingBookingProperties {
         return previousBalanceProperty;
     }
 
-    private void setPreviousBalance(int previousBalance) {
-        this.previousBalanceProperty.set(previousBalance);
-    }
-
     public void updatePreviousBalance() {
-        setPreviousBalance(calculatePreviousBalance());
+        this.previousBalanceProperty.set(calculatePreviousBalance());
     }
 
     public int calculatePreviousBalance() {
-        return calculatePreviousTotal() - calculateDeposit();
+        return getPreviousBookingPriceCalculator().calculateBalance();
     }
 
     public ReadOnlyStringProperty formattedPreviousBalanceProperty() {

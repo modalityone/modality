@@ -59,6 +59,15 @@ public final class PriceCalculator {
         return Kbs2PriceAlgorithm.computeBookingMinDeposit(getDocumentAggregate(), ignoreLongStayDiscounts, false);
     }
 
+    public int calculateDeposit() {
+        DocumentAggregate documentAggregate = getDocumentAggregate();
+        return documentAggregate.getDeposit();
+    }
+
+    public int calculateBalance() {
+        return calculateTotalPrice() - calculateDeposit();
+    }
+
     // The remaining methods are not based on kbs2 price algorithm, they are simpler and meant to be used for simple
     // events with no complex pricing rules, and that needs to display the details for each day (ex: GP classes).
 

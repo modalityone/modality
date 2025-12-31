@@ -46,6 +46,8 @@ public final class WorkingBooking {
     private Object documentPrimaryKey; // null for new booking
     private Document document;
     private DocumentAggregate lastestDocumentAggregate;
+    private final PriceCalculator previousBookingPriceCalculator = new PriceCalculator(this::getInitialDocumentAggregate);
+    private final PriceCalculator latestBookingPriceCalculator = new PriceCalculator(this::getLastestDocumentAggregate);
     // EntityStore used to hold the entities associated with this working booking (ex: Document, DocumentLine, etc...).
     // Note that it's not an update store because the booking submission uses DocumentService instead, which keeps a
     // record of all individual changes made over time. This entity store reflects only the latest version of the booking.
@@ -88,6 +90,14 @@ public final class WorkingBooking {
             lastestDocumentAggregate.setPolicyAggregate(policyAggregate);
         }
         return lastestDocumentAggregate;
+    }
+
+    public PriceCalculator getPreviousBookingPriceCalculator() {
+        return previousBookingPriceCalculator;
+    }
+
+    public PriceCalculator getLatestBookingPriceCalculator() {
+        return latestBookingPriceCalculator;
     }
 
     public int getVersion() {

@@ -35,7 +35,7 @@ public final class OrderDetails {
 
     // This constructor is called by the summary page of a booking form
     public OrderDetails(WorkingBooking workingBooking) {
-        this(workingBooking.getDocument(), workingBookingObservableLines(workingBooking), new PriceCalculator(workingBooking::getLastestDocumentAggregate), true);
+        this(workingBooking.getDocument(), workingBookingObservableLines(workingBooking), workingBooking.getLatestBookingPriceCalculator(), true);
     }
 
     private static ObservableList<DocumentLine> workingBookingObservableLines(WorkingBooking workingBooking) {
