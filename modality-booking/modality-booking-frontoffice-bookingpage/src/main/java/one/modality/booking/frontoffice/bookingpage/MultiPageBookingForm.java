@@ -40,8 +40,6 @@ public abstract class MultiPageBookingForm extends BookingFormBase {
     private BookingFormNavigation navigation;
     private final TransitionPane transitionPane = new TransitionPane(); {
         transitionPane.setScrollToTop(true); // scrolling to top each time the user navigates to a new step
-        // The following code is to solve a performance issue that happens on mobiles during the translation transition
-        transitionPane.setUnmanagedDuringTransition(); // For more explanation, read the comment inside this method.
     }
     private final BooleanProperty personToBookRequiredProperty = new SimpleBooleanProperty() {
         @Override
