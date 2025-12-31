@@ -9,6 +9,7 @@ import dev.webfx.platform.util.collection.Collections;
 import dev.webfx.stack.orm.entity.Entities;
 import dev.webfx.stack.orm.entity.EntityStore;
 import javafx.beans.binding.BooleanBinding;
+import javafx.beans.property.ReadOnlyIntegerProperty;
 import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
@@ -39,6 +40,7 @@ public final class WorkingBooking {
     private final ObservableList<AbstractDocumentEvent> documentChanges = FXCollections.observableArrayList();
     // Making notEmptyBinding a class field to prevent GC in OpenJFX
     private final BooleanBinding notEmptyBinding = ObservableLists.isNotEmpty(documentChanges);
+    private final ReadOnlyIntegerProperty versionProperty = ObservableLists.versionNumber(documentChanges);
     // Note: hasChangesProperty is deferred so that it is always triggered after the changes (when there are several)
     private final ObservableValue<Boolean> hasChangesProperty = FXProperties.deferredProperty(notEmptyBinding);
     private Object documentPrimaryKey; // null for new booking
@@ -86,6 +88,14 @@ public final class WorkingBooking {
             lastestDocumentAggregate.setPolicyAggregate(policyAggregate);
         }
         return lastestDocumentAggregate;
+    }
+
+    public int getVersion() {
+        return versionProperty.get();
+    }
+
+    public ReadOnlyIntegerProperty versionProperty() {
+        return versionProperty;
     }
 
     public Document getDocument() {

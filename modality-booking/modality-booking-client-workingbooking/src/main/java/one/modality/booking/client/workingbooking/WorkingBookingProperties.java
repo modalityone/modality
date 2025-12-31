@@ -1,6 +1,6 @@
 package one.modality.booking.client.workingbooking;
 
-import dev.webfx.kit.util.properties.ObservableLists;
+import dev.webfx.kit.util.properties.FXProperties;
 import dev.webfx.platform.scheduler.Scheduled;
 import dev.webfx.platform.uischeduler.UiScheduler;
 import javafx.beans.binding.Bindings;
@@ -27,6 +27,23 @@ public final class WorkingBookingProperties {
     private PriceCalculator previousBookingPriceCalculator;
     private PriceCalculator latestBookingPriceCalculator;
 
+    // Booking reference
+    private final ObjectProperty<Object> bookingReferenceProperty = new SimpleObjectProperty<>();
+    // Version number (arbitrary number that increases each time there is a change in the working booking - useful for reacting to changes)
+    private final IntegerProperty versionNumberProperty = new SimpleIntegerProperty();
+    private Scheduled updateAllScheduled;
+    {
+        // Listening to changes on the working booking to automatically keep all properties updated
+        FXProperties.runOnPropertyChange(() -> {
+            if (updateAllScheduled == null) {
+                updateAllScheduled = UiScheduler.scheduleDeferred(() -> {
+                    updateAll();
+                    updateAllScheduled = null;
+                });
+            }
+        }, versionNumberProperty);
+    }
+
     public WorkingBookingProperties() {
     }
 
@@ -43,8 +60,6 @@ public final class WorkingBookingProperties {
     public boolean hasChanges() {
         return hasChangesProperty.get();
     }
-
-    private Scheduled updateAllScheduled;
 
     // Deposit (of both the latest booking and previous booking)
     private final StringProperty formattedDepositProperty = new SimpleStringProperty();
@@ -109,20 +124,10 @@ public final class WorkingBookingProperties {
         }
     };
 
-    // Booking reference
-    private final ObjectProperty<Object> bookingReferenceProperty = new SimpleObjectProperty<>();
-
-    // Version number (arbitrary number that increases each time there is a change in the working booking - useful for reacting to changes)
-    private final IntegerProperty versionNumberProperty = new SimpleIntegerProperty();
-
-    // Flag to track if member was explicitly selected (e.g., via ExistingBookingSection)
-    // When true, member selection page should be skipped
-    private final BooleanProperty memberExplicitlySelectedProperty = new SimpleBooleanProperty(false);
-
     // Submittable (indicates if the booking is suitable to submit, which is the case if there is a balance to pay, or it has changes on document lines)
     private final BooleanBinding submittableProperty = Bindings.createBooleanBinding(() ->
             getBalance() > 0 || getWorkingBooking().hasDocumentLineChanges()
-        , versionNumberProperty());
+        , versionNumberProperty);
 
     public void setWorkingBooking(WorkingBooking workingBooking) {
         this.workingBooking = workingBooking;
@@ -132,20 +137,9 @@ public final class WorkingBookingProperties {
         if (initialDocumentAggregate != null) {
             setBookingReference(initialDocumentAggregate.getDocument().getRef());
         }
-        updateAll(); // Updated all price properties
-        setVersionNumber(0);
         hasChangesProperty.bind(workingBooking.hasChangesProperty());
-        // And listening to further changes to automatically keep these properties updated
-        ObservableLists.runOnListChange(c -> {
-            if (updateAllScheduled == null) {
-                updateAllScheduled = UiScheduler.scheduleDeferred(() -> {
-                    updateAll();
-                    incrementVersionNumber();
-                    updateAllScheduled = null;
-                });
-            }
-            incrementVersionNumber();
-        }, workingBooking.getDocumentChanges());
+        versionNumberProperty.bind(workingBooking.versionProperty()); // Should update all properties already unless it's identical to previous
+        updateAll(); // Updated all properties in case the version number is the same as the last working booking
     }
 
     public WorkingBooking getWorkingBooking() {
@@ -464,43 +458,10 @@ public final class WorkingBookingProperties {
     }
 
 
-    // Version number
-
-    public int getVersionNumber() {
-        return versionNumberProperty.get();
-    }
-
-    public ReadOnlyIntegerProperty versionNumberProperty() {
-        return versionNumberProperty;
-    }
-
-    private void setVersionNumber(int versionNumber) {
-        versionNumberProperty.set(versionNumber);
-    }
-
-    private void incrementVersionNumber() {
-        setVersionNumber(getVersionNumber() + 1);
-    }
-
-
     // Submittable
 
     public BooleanBinding submittableProperty() {
         return submittableProperty;
-    }
-
-    // Member explicitly selected
-
-    public boolean isMemberExplicitlySelected() {
-        return memberExplicitlySelectedProperty.get();
-    }
-
-    public BooleanProperty memberExplicitlySelectedProperty() {
-        return memberExplicitlySelectedProperty;
-    }
-
-    public void setMemberExplicitlySelected(boolean value) {
-        memberExplicitlySelectedProperty.set(value);
     }
 
 
