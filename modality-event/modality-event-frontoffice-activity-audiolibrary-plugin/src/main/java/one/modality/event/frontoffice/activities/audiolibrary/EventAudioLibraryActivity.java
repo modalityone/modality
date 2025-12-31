@@ -199,9 +199,10 @@ final class EventAudioLibraryActivity extends ViewDomainActivityBase {
                                     balance = price - paid;
                                     isRegistrationConfirmed = parameters.getBoolean(3);
                                 }
-                                updateContentStateProperty(paid, price, isRegistrationConfirmed, publishedMedias.isEmpty());
+                                // Populate publishedMedias BEFORE checking if it's empty
                                 //noinspection unchecked
                                 Collections.setAll(publishedMedias, entityLists[2]);
+                                updateContentStateProperty(paid, price, isRegistrationConfirmed, publishedMedias.isEmpty());
                                 //noinspection unchecked
                                 entityLists[0].addAll(entityLists[1]);
                                 //noinspection unchecked
