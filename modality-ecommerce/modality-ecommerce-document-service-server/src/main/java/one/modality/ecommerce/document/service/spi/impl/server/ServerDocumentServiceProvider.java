@@ -88,12 +88,17 @@ public class ServerDocumentServiceProvider implements DocumentServiceProvider {
             new EntityStoreQuery("select documentLine,scheduledItem from Attendance where documentLine.document=? order by id", docPk),
             new EntityStoreQuery("select document,amount,pending,successful from MoneyTransfer where document=? order by id", docPk)
         };
-        if (docPk == null) {
-            boolean personProvided = argument.personPrimaryKey() != null;
-            String queryReplacement = " in (select Document where %field%=? and event=? and !cancelled order by id desc %limit%)"
+        boolean personProvided = argument.personPrimaryKey() != null;
+        boolean accountProvided = argument.accountPrimaryKey() != null;
+        if (personProvided || accountProvided) {
+            String queryReplacement = " in (select Document where !cancelled and (%field%=? and event=?) order by id desc %limit%)"
                 .replace("%field%", personProvided ? "person" : "person.frontendAccount")
                 .replace("%limit%", limit1 ? "limit 1" : "");
             Object[] queryArguments = {personProvided ? argument.personPrimaryKey() : argument.accountPrimaryKey(), argument.eventPrimaryKey()};
+            if (docPk != null) {
+                queryReplacement = queryReplacement.replace(") order by", " or id=?) order by");
+                queryArguments = Arrays.add(Object[]::new, queryArguments, docPk);
+            }
             for (int i = 0; i < queries.length; i++) {
                 queries[i] = new EntityStoreQuery(queries[i].getSelect().replace("=?", queryReplacement), queryArguments);
             }
