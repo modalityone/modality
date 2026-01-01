@@ -147,6 +147,11 @@ public class DefaultPaymentSection implements HasPaymentSection {
         VBox.setMargin(bookingSummarySection, sectionMargin);
         VBox.setMargin(paymentAmountSection, sectionMargin);
         VBox.setMargin(paymentMethodsSection, sectionMargin);
+
+        // Rebuild booking summary to render any existing booking items
+        // (needed when buildUI is called after items were already added, e.g., PAY_BOOKING flow)
+        rebuildBookingSummary();
+        updateTotalDisplay();
     }
 
     /**

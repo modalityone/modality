@@ -337,7 +337,8 @@ public class StandardBookingForm extends MultiPageBookingForm {
         switch (entryPoint) {
             case PAY_BOOKING -> {
                 defaultPaymentSection.setWorkingBookingProperties(workingBookingProperties);
-                loadAllBookingsForEvent(this::handleProceedToPayment);
+                populatePaymentFromWorkingBooking();
+                navigateToPayment();
             }
             case RESUME_PAYMENT -> {
                 // Add 30px spacer at top of header for payment return flow
@@ -912,6 +913,48 @@ public class StandardBookingForm extends MultiPageBookingForm {
     }
 
     /**
+     * Populates the payment section directly from the WorkingBooking's DocumentAggregate.
+     * Used for PAY_BOOKING entry point where the document is already loaded.
+     */
+    private void populatePaymentFromWorkingBooking() {
+        if (defaultPaymentSection == null) return;
+
+        WorkingBooking workingBooking = getWorkingBooking();
+        DocumentAggregate documentAggregate = workingBooking.getInitialDocumentAggregate();
+        if (documentAggregate == null) {
+            Console.log("populatePaymentFromWorkingBooking: No initial document aggregate");
+            return;
+        }
+
+        defaultPaymentSection.clearBookingItems();
+
+        Document doc = documentAggregate.getDocument();
+        // Get person name from Document directly (it has personal details copied via EntityHasPersonalDetailsCopy)
+        // Fall back to Person entity if Document doesn't have the name
+        String personName = getDocumentPersonName(doc);
+        String eventName = getEvent() != null ? getEvent().getName() : "";
+
+        PolicyAggregate policyAggregate = workingBookingProperties.getPolicyAggregate();
+        documentAggregate.setPolicyAggregate(policyAggregate);
+
+        PriceCalculator priceCalculator = new PriceCalculator(documentAggregate);
+        int totalPrice = priceCalculator.calculateTotalPrice();
+        int minDeposit = priceCalculator.calculateMinDeposit();
+
+        defaultPaymentSection.addBookingItem(new HasPaymentSection.PaymentBookingItem(
+            doc,
+            personName,
+            eventName,
+            totalPrice
+        ));
+
+        defaultPaymentSection.setTotalAmount(totalPrice);
+        defaultPaymentSection.setDepositAmount(minDeposit);
+
+        Console.log("Payment section populated from WorkingBooking: " + personName + ", total: " + totalPrice);
+    }
+
+    /**
      * Get full name from Person entity.
      */
     private String getPersonFullName(Person person) {
@@ -919,6 +962,32 @@ public class StandardBookingForm extends MultiPageBookingForm {
         String firstName = person.getFirstName() != null ? person.getFirstName() : "";
         String lastName = person.getLastName() != null ? person.getLastName() : "";
         return (firstName + " " + lastName).trim();
+    }
+
+    /**
+     * Get person name from Document entity.
+     * Document has personal details copied directly via EntityHasPersonalDetailsCopy interface.
+     * Falls back to Person entity if Document doesn't have the name.
+     */
+    private String getDocumentPersonName(Document doc) {
+        if (doc == null) return "";
+
+        // Try to get name from Document directly (personal details are copied to Document)
+        String firstName = doc.getFirstName();
+        String lastName = doc.getLastName();
+
+        if (firstName != null || lastName != null) {
+            StringBuilder name = new StringBuilder();
+            if (firstName != null) name.append(firstName);
+            if (lastName != null) {
+                if (name.length() > 0) name.append(" ");
+                name.append(lastName);
+            }
+            return name.toString().trim();
+        }
+
+        // Fall back to Person entity
+        return getPersonFullName(doc.getPerson());
     }
 
     // === Payment Page Handlers ===
