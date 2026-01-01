@@ -331,7 +331,7 @@ public final class KitchenController {
      * Shows a loading dialog with a progress indicator.
      */
     private DialogCallback showLoadingDialog() {
-        Region loadingSpinner = Controls.createSpinner(60);
+        Region loadingSpinner = Controls.createDialogSizeSpinner();
 
         VBox loadingContent = new VBox(15);
         loadingContent.setAlignment(javafx.geometry.Pos.CENTER);

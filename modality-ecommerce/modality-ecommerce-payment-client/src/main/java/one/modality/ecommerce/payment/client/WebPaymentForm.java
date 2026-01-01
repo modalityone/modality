@@ -239,7 +239,7 @@ public final class WebPaymentForm {
     }
 
     private Region createSpinner() {
-        return Controls.createSpinner(32);
+        return Controls.createSectionSizeSpinner();
     }
 
     private void showVerificationProcessOverlay() {

@@ -256,7 +256,7 @@ public final class SiteComparisonView {
         loadingBox.setSpacing(16);
         loadingBox.setPadding(new Insets(60, 20, 60, 20));
 
-        Region spinner = Controls.createSpinner(50);
+        Region spinner = Controls.createPageSizeSpinner();
 
         Label loadingMessage = I18nControls.newLabel(RoomSetupI18nKeys.LoadingData);
         loadingMessage.getStyleClass().add(UIComponentDecorators.CSS_SUBTITLE);
@@ -273,7 +273,7 @@ public final class SiteComparisonView {
         loadingBox.setAlignment(Pos.CENTER_LEFT);
         loadingBox.setPadding(new Insets(20));
 
-        Region spinner = Controls.createSpinner(24);
+        Region spinner = Controls.createSectionSizeSpinner();
 
         Label loadingMessage = I18nControls.newLabel(RoomSetupI18nKeys.LoadingData);
         loadingMessage.getStyleClass().add(UIComponentDecorators.CSS_SMALL);
@@ -459,7 +459,7 @@ public final class SiteComparisonView {
 
             statusBox.getChildren().addAll(statusBadge, countsSummary);
         } else if (isLoading) {
-            Region miniSpinner = Controls.createSpinner(16);
+            Region miniSpinner = Controls.createButtonSizeSpinner();
             statusBox.getChildren().add(miniSpinner);
         } else {
             // Not loaded - show "click to load" indicator

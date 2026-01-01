@@ -47,7 +47,7 @@ public class BuildingDialog implements DialogManager.ManagedDialog {
 
     // Image upload components
     private final MonoPane iconImageContainer = new MonoPane();
-    private final Region imageUploadSpinner = Controls.createSpinner(30);
+    private final Region imageUploadSpinner = Controls.createSectionSizeSpinner();
     private String buildingCloudImagePath;
 
     private Site resolvedSite;

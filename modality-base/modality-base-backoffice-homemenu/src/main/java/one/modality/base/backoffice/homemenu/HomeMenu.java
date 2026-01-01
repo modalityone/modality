@@ -53,7 +53,7 @@ public final class HomeMenu {
         if (!homePane.getChildrenUnmodifiable().isEmpty())
             return homePane;
         // Displaying a spinner while the home pane is empty
-        MonoPane monoPane = new MonoPane(Controls.createSpinner(80));
+        MonoPane monoPane = new MonoPane(Controls.createPageSizeSpinner());
         ObservableLists.runOnListChange(() -> monoPane.setContent(homePane), homePane.getChildrenUnmodifiable());
         return monoPane;
     }

@@ -282,7 +282,7 @@ final class VideoStreamingActivity extends ViewDomainActivityBase {
     }
 
     private void updateMainContent(VideoContentState state) {
-        Node loadingContentSpinner = new GoldenRatioPane(Controls.createSpinner(100));
+        Node loadingContentSpinner = new GoldenRatioPane(Controls.createPageSizeSpinner());
         EventHeader eventHeader = new MediaEventHeader(true);
         eventHeader.eventProperty().bind(eventProperty);
 

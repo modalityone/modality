@@ -160,7 +160,7 @@ final class CustomersView {
         customersGrid.getStyleClass().addAll("customers-grid");
 
         // Create loading indicator
-        loadingSpinner = Controls.createSpinner(50);
+        loadingSpinner = Controls.createPageSizeSpinner();
 
         // Wrap grid and loading indicator in a StackPane
         StackPane gridContainer = new StackPane();

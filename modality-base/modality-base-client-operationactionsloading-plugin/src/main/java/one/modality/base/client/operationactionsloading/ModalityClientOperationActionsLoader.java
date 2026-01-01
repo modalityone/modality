@@ -131,7 +131,7 @@ public final class ModalityClientOperationActionsLoader implements ApplicationMo
             if (operationRequest instanceof RouteRequest) {
                 return null;
             }
-            return Controls.createSpinner(16);
+            return Controls.createButtonSizeSpinner();
         });
 
         OperationAction.setActionExecutedIconFactory((operationRequest, throwable) -> {

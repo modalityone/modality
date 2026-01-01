@@ -51,7 +51,7 @@ final class StepALoadingSlide extends StepSlide {
     public Node get() {
         if (!SHOW_BRAND_LOGO) {
             // It's important to renew the progress indicator each time because it auto-stops when not displayed anymore
-            goldenRatioPane.setContent(Controls.createSpinner(100));
+            goldenRatioPane.setContent(Controls.createPageSizeSpinner());
         }
         return super.get();
     }

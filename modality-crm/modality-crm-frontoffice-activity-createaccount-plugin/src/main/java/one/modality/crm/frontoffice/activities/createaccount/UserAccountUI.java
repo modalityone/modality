@@ -79,7 +79,7 @@ public class UserAccountUI implements ModalityButtonFactoryMixin {
         editModeProperty.set(mode);
         this.browsingHistory = browsingHistory;
         createTitle();
-        MonoPane monopane = new MonoPane(Controls.createSpinner(50));
+        MonoPane monopane = new MonoPane(Controls.createPageSizeSpinner());
         BorderPane.setMargin(monopane, new Insets(200, 0, 200, 0));
         container.setCenter(monopane);
         if (editModeProperty.get() == EDITION_MODE) {

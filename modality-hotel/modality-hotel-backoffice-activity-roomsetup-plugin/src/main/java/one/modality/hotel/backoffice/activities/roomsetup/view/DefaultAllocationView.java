@@ -125,7 +125,7 @@ public class DefaultAllocationView {
         // Create loading overlay
         loadingOverlay = new StackPane();
         loadingOverlay.setStyle("-fx-background-color: rgba(255,255,255,0.8);");
-        Region loadingSpinner = Controls.createSpinner(50);
+        Region loadingSpinner = Controls.createPageSizeSpinner();
         VBox loadingBox = new VBox(10);
         loadingBox.setAlignment(Pos.CENTER);
         Label loadingLabel = I18nControls.newLabel(RoomSetupI18nKeys.LoadingAllocations);

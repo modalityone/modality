@@ -42,7 +42,7 @@ final class PaymentReturnActivity extends ViewDomainActivityBase {
     @Override
     public Node buildUi() {
         MonoPane monoPane = new MonoPane();
-        Region spinner = Controls.createSpinner(80);
+        Region spinner = Controls.createPageSizeSpinner();
         FXProperties.runNowAndOnPropertiesChange(() -> {
             if (loadingMoneyTransferProperty.get())
                 monoPane.setContent(spinner);

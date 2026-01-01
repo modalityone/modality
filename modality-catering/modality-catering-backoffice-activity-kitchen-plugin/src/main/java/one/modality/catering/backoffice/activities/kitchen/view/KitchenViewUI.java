@@ -143,9 +143,8 @@ public final class KitchenViewUI {
         headerContent.getStyleClass().add("kitchen-top-header");
         headerContent.setMaxWidth(Region.USE_PREF_SIZE); // Fit to content width
 
-        // Create progress indicator
-        loadingSpinner = Controls.createSpinner(80);
-        loadingSpinner.setVisible(true); // Show initially during page load
+        // Create loading spinner
+        loadingSpinner = Controls.createPageSizeSpinner();
 
         // Create a stack to overlay progress indicator on table
         StackPane contentStack = new StackPane();

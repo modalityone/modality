@@ -54,7 +54,7 @@ public final class ProvidedGatewayPaymentForm implements GatewayPaymentForm {
         Region paymentRegion = webPaymentForm.buildEmbeddedPaymentForm();
         if (paymentRegion == null) { // This indicates a redirected payment form
             // Temporary UI (just spinner)
-            paymentRegion = Controls.createSpinner(80);
+            paymentRegion = Controls.createPageSizeSpinner();
         }
 
         ScalePane scaledGatewayLogo = new ScalePane(new MonoPane(gatewayLogo));

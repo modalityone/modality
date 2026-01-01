@@ -89,7 +89,7 @@ final class OrdersActivity extends ViewDomainActivityBase implements ModalityBut
         // but keeping the initial progress indicator until the first result arrives.
         FXProperties.runNowAndOnPropertyChange(calling -> UiScheduler.scheduleDeferred(() -> {
             if (calling)
-                activeOrdersContainer.getChildren().setAll(Controls.createSpinner(50));
+                activeOrdersContainer.getChildren().setAll(Controls.createSectionSizeSpinner());
             else if (upcomingOrderCards.isEmpty())
                 activeOrdersContainer.getChildren().setAll(Bootstrap.strong(Bootstrap.textSecondary(I18nControls.newLabel(OrdersI18nKeys.NoActiveOrders))));
             else
@@ -118,7 +118,7 @@ final class OrdersActivity extends ViewDomainActivityBase implements ModalityBut
                     });
                 });
         });
-        Region pastLoadingSpinner = Controls.createSpinner(50);
+        Region pastLoadingSpinner = Controls.createSectionSizeSpinner();
         FXProperties.runNowAndOnPropertyChange(calling -> UiScheduler.scheduleDeferred(() -> {
             if (calling && pastOrdersContainer.getChildren().isEmpty())
                 pastOrdersContainer.getChildren().setAll(pastLoadingSpinner);

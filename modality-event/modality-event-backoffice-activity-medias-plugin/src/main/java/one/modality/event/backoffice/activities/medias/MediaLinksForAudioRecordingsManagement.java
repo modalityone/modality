@@ -46,7 +46,7 @@ public class MediaLinksForAudioRecordingsManagement extends MediaLinksManagement
     private final Item languageItem;
     private final String eventCoverCloudImagePath;
     private final MonoPane eventCoverImageContainer = new MonoPane();
-    private final Region replaceSpinner = Controls.createSpinner(50);
+    private final Region replaceSpinner = Controls.createSectionSizeSpinner();
     private final SVGPath trashImage = SvgIcons.createTrashSVGPath();
 
     public MediaLinksForAudioRecordingsManagement(Item languageItem, EntityStore entityStore, ObservableList<LocalDate> teachingsDates, ObservableList<ScheduledItem> audioScheduledItemsReadFromDatabase, ObservableList<Media> recordingsMediasReadFromDatabase, RecordingsTabView recordingsTabView) {

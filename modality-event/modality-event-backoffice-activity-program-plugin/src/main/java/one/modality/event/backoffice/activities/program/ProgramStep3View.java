@@ -87,7 +87,7 @@ final class ProgramStep3View {
     // Event image upload components
     private static final double EVENT_IMAGE_SIZE = 300; // 1:1 aspect ratio (square)
     private final MonoPane eventImageContainer = new MonoPane();
-    private final Region imageUploadSpinner = Controls.createSpinner(40);
+    private final Region imageUploadSpinner = Controls.createSectionSizeSpinner();
     private final StackPane imageOverlay = new StackPane();
     private String eventCoverCloudImagePath;
 

@@ -84,7 +84,7 @@ final class UnauthorizedActivity extends ViewDomainActivityBase {
                 Collections.addIfNotContainsOrRemove(svgPath.getStyleClass(), false, "denied");
                 I18nControls.bindI18nProperties(titleLabel, "CheckingAuthorization");
                 I18nControls.bindI18nProperties(messageLabel, "AuthorizationCheck");
-                messageLabel.setGraphic(Controls.createSpinner(16));
+                messageLabel.setGraphic(Controls.createButtonSizeSpinner());
                 pulse.play();
             } else {
                 // Waiting for at least 1 s to prevent showing transitory access denied

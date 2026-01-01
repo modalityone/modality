@@ -38,7 +38,7 @@ public class ModalityClientApplication extends Application {
         double width = screenVisualBounds.getWidth() * 0.8;
         double height = screenVisualBounds.getHeight() * 0.9;
         // We first create a scene with an initial spinner (waiting for the ui router to start)
-        Scene scene = DeviceSceneUtil.newScene(Controls.createSpinner(80), width, height);
+        Scene scene = DeviceSceneUtil.newScene(Controls.createPageSizeSpinner(), width, height);
         // When the ui router starts, it will set modalityClientStarterActivity.nodeProperty()
         FXProperties.onPropertySet(modalityClientStarterActivity.nodeProperty(), node -> {
             // From that moment on, we bind the scene root to the ui router activity node
