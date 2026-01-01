@@ -240,6 +240,22 @@ public final class DocumentAggregate {
         return document;
     }
 
+    public String getAttendeeFirstName() {
+        return getAddDocumentEvent().getFirstName();
+    }
+
+    public String getAttendeeLastName() {
+        return getAddDocumentEvent().getLastName();
+    }
+
+    public String getAttendeeFullName() {
+        return getAttendeeFirstName() + " " + getAttendeeLastName();
+    }
+
+    public String getAttendeeEmail() {
+        return getAddDocumentEvent().getEmail();
+    }
+
     // Accessing document lines
 
     public List<DocumentLine> getDocumentLines() {
