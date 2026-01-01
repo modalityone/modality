@@ -21,6 +21,7 @@ public class CompositeBookingFormPage implements BookingFormPage {
     private final VBox container = new VBox(32); // Spacing between sections (per JSX mockup)
     { container.setMinWidth(0); } // Allow shrinking for responsive design
     private final BooleanProperty validProperty = new SimpleBooleanProperty(true);
+    private final BooleanProperty canGoBackProperty = new SimpleBooleanProperty(true);
     private boolean isStep = true;
     private boolean isHeaderVisible = true;
     private boolean showingOwnSubmitButton = false;
@@ -99,6 +100,16 @@ public class CompositeBookingFormPage implements BookingFormPage {
     @Override
     public ObservableBooleanValue validProperty() {
         return validProperty;
+    }
+
+    @Override
+    public ObservableBooleanValue canGoBackProperty() {
+        return canGoBackProperty;
+    }
+
+    public CompositeBookingFormPage setCanGoBack(boolean canGoBack) {
+        canGoBackProperty.set(canGoBack);
+        return this;
     }
 
     @Override

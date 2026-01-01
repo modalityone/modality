@@ -132,16 +132,7 @@ public abstract class MultiPageBookingForm extends BookingFormBase {
         // Use setOnAction instead of setOnMouseClicked because ButtonNavigation uses
         // nextToggleButton.fire() which triggers onAction, not onMouseClicked
         navigation.getBackButton().setOnAction(e -> navigateToPreviousPage());
-        navigation.getBackButton().disableProperty().bind(new BooleanBinding() {
-            {
-                super.bind(previousPageApplicableProperty, pageCanGoBackProperty);
-            }
-
-            @Override
-            protected boolean computeValue() {
-                return !previousPageApplicableProperty.get() || !pageCanGoBackProperty.get();
-            }
-        });
+        navigation.getBackButton().disableProperty().bind(previousPageApplicableProperty.not().or(pageCanGoBackProperty.not()));
         navigation.getNextButton().setOnAction(e -> navigateToNextPage());
         navigation.getNextButton().disableProperty().bind(new BooleanBinding() {
             {

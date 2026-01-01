@@ -250,12 +250,13 @@ public class StandardBookingFormBuilder {
      * @return A new StandardBookingForm instance
      */
     public StandardBookingForm build() {
-        if (customSteps.isEmpty()) {
+        boolean isPayBookingEntryPoint = entryPoint == BookingFormEntryPoint.PAY_BOOKING;
+        // It's ok to have no custom step when the entry point is for paying a booking
+        if (!isPayBookingEntryPoint && customSteps.isEmpty()) {
             throw new IllegalStateException("At least one custom step must be added before building");
         }
 
         // Skip flags for common steps
-        boolean skipPendingBookings = false;
         return new StandardBookingForm(
             activity,
             settings,
@@ -264,10 +265,10 @@ public class StandardBookingFormBuilder {
             customSteps,
             yourInformationPageSupplier,
             memberSelectionPageSupplier,
-                skipMemberSelection,
+            skipMemberSelection,
             summaryPageSupplier,
             pendingBookingsPageSupplier,
-                skipPendingBookings,
+            isPayBookingEntryPoint, // Skipping pending bookings when entry point is for paying a booking
             paymentPageSupplier,
             confirmationPageSupplier,
             callbacks,

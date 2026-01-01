@@ -145,8 +145,7 @@ public class StandardBookingForm extends MultiPageBookingForm {
         this.customStepPages = new ArrayList<>(customSteps);
 
         // Initialize state management
-        WorkingBookingProperties workingBookingProperties = activity.getWorkingBookingProperties();
-        this.state = new BookingFormState(workingBookingProperties);
+        this.state = new BookingFormState(activity.getWorkingBookingProperties());
 
         // Build the pages array
         this.pages = buildPages(
@@ -155,6 +154,7 @@ public class StandardBookingForm extends MultiPageBookingForm {
             memberSelectionPageSupplier,
             skipMemberSelection,
             summaryPageSupplier,
+            entryPoint == BookingFormEntryPoint.PAY_BOOKING, // Skipping summary section when entry point is for paying a booking
             pendingBookingsPageSupplier,
             skipPendingBookings,
             paymentPageSupplier,
@@ -177,6 +177,7 @@ public class StandardBookingForm extends MultiPageBookingForm {
         Supplier<BookingFormPage> memberSelectionPageSupplier,
         boolean skipMemberSelection,
         Supplier<BookingFormPage> summaryPageSupplier,
+        boolean skipSummary,
         Supplier<BookingFormPage> pendingBookingsPageSupplier,
         boolean skipPendingBookings,
         Supplier<BookingFormPage> paymentPageSupplier,
@@ -201,20 +202,22 @@ public class StandardBookingForm extends MultiPageBookingForm {
             allPages.add(memberSelectionPage);
         }
 
-        // 4. Summary page (always present)
-        summaryPage = summaryPageSupplier != null
-            ? summaryPageSupplier.get()
-            : createDefaultSummaryPage();
-        allPages.add(summaryPage);
+        // 4. Summary page (optional)
+        if (!skipSummary) {
+            summaryPage = summaryPageSupplier != null
+                ? summaryPageSupplier.get()
+                : createDefaultSummaryPage();
+            allPages.add(summaryPage);
 
-        // Extract DefaultSummarySection from custom summary page if present
-        // This allows updateSummaryWithAttendee() to work with custom summary pages
-        if (summaryPageSupplier != null && defaultSummarySection == null && summaryPage instanceof CompositeBookingFormPage compositeSummary) {
-            for (BookingFormSection section : compositeSummary.getSections()) {
-                if (section instanceof DefaultSummarySection dss) {
-                    defaultSummarySection = dss;
-                    defaultSummarySection.setColorScheme(colorScheme);
-                    break;
+            // Extract DefaultSummarySection from custom summary page if present
+            // This allows updateSummaryWithAttendee() to work with custom summary pages
+            if (summaryPageSupplier != null && defaultSummarySection == null && summaryPage instanceof CompositeBookingFormPage compositeSummary) {
+                for (BookingFormSection section : compositeSummary.getSections()) {
+                    if (section instanceof DefaultSummarySection dss) {
+                        defaultSummarySection = dss;
+                        defaultSummarySection.setColorScheme(colorScheme);
+                        break;
+                    }
                 }
             }
         }
@@ -317,7 +320,9 @@ public class StandardBookingForm extends MultiPageBookingForm {
         defaultPaymentSection.setCardPaymentOnly(cardPaymentOnly);
         return new CompositeBookingFormPage(BookingPageI18nKeys.Payment,
             defaultPaymentSection)
-            .setStep(true);
+            .setStep(true)
+            .setCanGoBack(entryPoint != BookingFormEntryPoint.PAY_BOOKING)
+            ;
     }
 
     protected BookingFormPage createDefaultConfirmationPage() {
@@ -588,15 +593,19 @@ public class StandardBookingForm extends MultiPageBookingForm {
         // Payment page: Back + Pay Now
         // Pay Now: disabled by payment section's payButtonDisabledProperty
         if (paymentPage instanceof CompositeBookingFormPage compositePayment && defaultPaymentSection != null) {
-            compositePayment.setButtons(
-                new BookingFormButton(BookingPageI18nKeys.Back,
-                    e -> navigateToPendingBookings(),
-                    "btn-back booking-form-btn-back"),
-                BookingFormButton.async(BookingPageI18nKeys.PayNow,
-                    button -> handlePaymentSubmitAsync(),
-                    "btn-primary booking-form-btn-primary",
-                    defaultPaymentSection.payButtonDisabledProperty())
-            );
+            BookingFormButton payNowButton = BookingFormButton.async(BookingPageI18nKeys.PayNow,
+                button -> handlePaymentSubmitAsync(),
+                "btn-primary booking-form-btn-primary",
+                defaultPaymentSection.payButtonDisabledProperty());
+            if (paymentPage.canGoBackProperty().get()) // Not great, should be a real binding
+                compositePayment.setButtons(
+                    new BookingFormButton(BookingPageI18nKeys.Back,
+                        e -> navigateToPendingBookings(),
+                        "btn-back booking-form-btn-back"),
+                    payNowButton
+                );
+            else
+                compositePayment.setButtons(payNowButton);
         }
 
         // Confirmation page: No buttons - this is the final page
