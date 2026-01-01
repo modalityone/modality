@@ -198,7 +198,7 @@ public class MembersView implements MaterialFactoryMixin, ModalityButtonFactoryM
         VBox warningAlert = createMatchingAccountsWarning();
 
         // Loading indicator
-        Region loadingSpinner = Controls.createSpinner(60, 60);
+        Region loadingSpinner = Controls.createSectionSizeSpinner();
 
         // Unified members list container - combines the three separate lists
         VBox membersListBox = new VBox(0);
@@ -310,7 +310,7 @@ public class MembersView implements MaterialFactoryMixin, ModalityButtonFactoryM
         description.setPadding(new Insets(10, 0, 20, 0));
 
         // Loading indicator
-        Region loadingSpinner = Controls.createSpinner(60, 60);
+        Region loadingSpinner = Controls.createSectionSizeSpinner();
 
         // Pending incoming requests (people asking to manage my bookings) - now using ManagerItem
         VBox pendingIncomingList = new VBox(0);

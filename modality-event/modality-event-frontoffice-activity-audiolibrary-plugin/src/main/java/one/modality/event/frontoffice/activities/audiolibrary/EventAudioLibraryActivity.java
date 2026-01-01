@@ -282,7 +282,7 @@ final class EventAudioLibraryActivity extends ViewDomainActivityBase {
 
     private void updateMainContent() {
 
-        Node loadingContentSpinner = new GoldenRatioPane(Controls.createSpinner(100, 100));
+        Node loadingContentSpinner = new GoldenRatioPane(Controls.createPageSizeSpinner());
         eventHeader.eventProperty().bind(eventProperty);
         AudioContentState audioState = audioStateProperty.get();
 

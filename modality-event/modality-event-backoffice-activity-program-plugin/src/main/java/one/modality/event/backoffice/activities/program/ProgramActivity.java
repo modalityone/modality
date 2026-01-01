@@ -239,7 +239,7 @@ final class ProgramActivity extends ViewDomainActivityBase {
         StackPane viewContainer = new StackPane();
 
         // Create loading indicator
-        Region loadingSpinner = Controls.createSpinner(50, 50);
+        Region loadingSpinner = Controls.createPageSizeSpinner();
 
         // Create configuration warning view
         Node configWarningNode = buildConfigurationWarningView();
