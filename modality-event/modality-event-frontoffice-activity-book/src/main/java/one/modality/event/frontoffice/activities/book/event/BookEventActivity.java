@@ -69,11 +69,13 @@ public final class BookEventActivity extends ViewDomainActivityBase implements B
     private final ObjectProperty<Object> modifyOrderDocumentIdProperty = new SimpleObjectProperty<>();
     // When routed through /pay-order/:payOrderDocumentId, this property will store the documentId to pay
     private final ObjectProperty<Object> payOrderDocumentIdProperty = new SimpleObjectProperty<>();
-    //
+    // When routed through /resume-payment/:resumePaymentMoneyTransferId, this property will store the moneyTransferId
     private final ObjectProperty<Object> resumePaymentMoneyTransferIdProperty = new SimpleObjectProperty<>();
+    // Note: when routed through /book-event/:eventId, FXEventId and FXEvent are used to store the event to book
     private long activityStartTimeMillis;
-    // When routed through /book-event/:eventId, FXEventId and FXEvent are used to store the event to book
     private boolean reachingEndSlide;
+    // fields used to prevent multiple loading of the same thing (due to multiple calls to loadPolicyAndBooking)
+    private Object loadingResumePaymentMoneyTransferId, loadingModifyOrPayOrderDocumentId;
 
     @Override
     public WorkingBookingProperties getWorkingBookingProperties() {
@@ -197,11 +199,15 @@ public final class BookEventActivity extends ViewDomainActivityBase implements B
         Event event = FXEvent.getEvent(); // might be null on the first call (ex: on page reload)
         // Case when resuming after a redirected payment has been made (the payment gateway called back this url)
         if (resumePaymentMoneyTransferId != null && FXResumePayment.getMoneyTransfer() == null) {
+            if (Objects.areEquals(resumePaymentMoneyTransferId, loadingResumePaymentMoneyTransferId))
+                return;
+            loadingResumePaymentMoneyTransferId = resumePaymentMoneyTransferId;
             // We load the required information about this payment (its state, amount, and associated document/event)
             EntityStore.create(getDataSourceModel())
                 .<MoneyTransfer>executeQuery("select pending,successful,amount,document.(ref,person.(firstName,lastName,email),event.(" + FXEvent.EXPECTED_FIELDS + ")) from MoneyTransfer where id = $1 or parent = $1 order by id=$1 desc", resumePaymentMoneyTransferId)
                 .onFailure(Console::log)
                 .onSuccess(moneyTransfers -> {
+                    loadingResumePaymentMoneyTransferId = null;
                     MoneyTransfer moneyTransfer = Collections.first(moneyTransfers);
                     // If the money transfer is still pending within the 10 first seconds, we try to load it again. This
                     // might be because the payment gateway called this activity a bit before too early, i.e., before
@@ -216,12 +222,16 @@ public final class BookEventActivity extends ViewDomainActivityBase implements B
                     FXResumePayment.setMoneyTransfers(moneyTransfers); // will cause loadPolicyAndBooking() to be called again - see startLogic()
                 });
         } else if (modifyOrPayOrderDocumentId != null) {
+            if (Objects.areEquals(modifyOrPayOrderDocumentId, loadingModifyOrPayOrderDocumentId))
+                return;
+            loadingModifyOrPayOrderDocumentId = modifyOrPayOrderDocumentId;
             // Note: this call doesn't automatically rebuild PolicyAggregate entities
             DocumentService.loadPolicyAndDocument(LoadDocumentArgument.ofDocument(modifyOrPayOrderDocumentId))
                 .onFailure(Console::log)
                 .onSuccess(policyAndDocumentAggregates -> {
+                    loadingModifyOrPayOrderDocumentId = null;
                     // Double-checking it's still relevant
-                    if (modifyOrPayOrderDocumentId == Objects.coalesce(getModifyOrderDocumentId(), getPayOrderDocumentId())) {
+                    if (Objects.areEquals(modifyOrPayOrderDocumentId, Objects.coalesce(getModifyOrderDocumentId(), getPayOrderDocumentId()))) {
                         onPolityAndDocumentAggregatesLoaded(policyAndDocumentAggregates);
                     }
                 });
