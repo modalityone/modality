@@ -18,6 +18,7 @@ import javafx.collections.ListChangeListener;
 import javafx.scene.Node;
 import javafx.scene.layout.Region;
 import javafx.scene.layout.VBox;
+import one.modality.base.client.i18n.I18nEntities;
 import one.modality.base.shared.entities.*;
 import one.modality.booking.client.workingbooking.*;
 import one.modality.booking.frontoffice.bookingform.BookingFormEntryPoint;
@@ -821,10 +822,8 @@ public class StandardBookingForm extends MultiPageBookingForm {
         Console.log("loadAllBookingsForEvent() called");
 
         Object accountId = ModalityUserPrincipal.getUserAccountId(FXModalityUserPrincipal.getModalityUserPrincipal());
-        LoadDocumentArgument argument = accountId != null ? LoadDocumentArgument.ofAccount(accountId, getEvent())
-            : LoadDocumentArgument.ofDocument(getWorkingBooking().getDocument());
 
-        DocumentService.loadDocuments(argument)
+        DocumentService.loadDocuments(LoadDocumentArgument.ofDocumentOrAccount(getWorkingBooking().getDocument(), accountId, getEvent()))
             .onFailure(Console::log)
             .inUiThread()
             .onSuccess(documentAggregates -> {
@@ -853,22 +852,16 @@ public class StandardBookingForm extends MultiPageBookingForm {
         defaultPendingBookingsSection.clearBookings();
 
         // Get event name for booking items
-        String eventName = "";
         Event event = getEvent();
-        if (event != null) {
-            eventName = event.getName() != null ? event.getName() : "";
-        }
+        String eventName = I18nEntities.translateEntity(event);
 
         Set<Object> bookedPersonIds = new HashSet<>();
 
         // Add each document as a booking
         for (DocumentAggregate documentAggregate : documentAggregates) {
             Document doc = documentAggregate.getDocument();
-            Person person = doc.getPerson();
-            // Use getDocumentPersonName to get name from Document's copied fields first
-            String personName = getDocumentPersonName(doc);
-            // Get email from Document first (copied field), fall back to Person
-            String personEmail = doc.getEmail() != null ? doc.getEmail() : (person != null ? person.getEmail() : "");
+            String personName = documentAggregate.getAttendeeFullName();
+            String personEmail = documentAggregate.getAttendeeEmail();
 
             PriceCalculator priceCalculator = new PriceCalculator(documentAggregate);
             int totalPrice = priceCalculator.calculateTotalPrice();
@@ -929,9 +922,9 @@ public class StandardBookingForm extends MultiPageBookingForm {
             }
 
             defaultPendingBookingsSection.addBooking(bookingItem);
-            if (defaultMemberSelectionSection != null && person != null) {
+            if (defaultMemberSelectionSection != null && doc.getPerson() != null) {
                 // MUST use getPrimaryKey() to match how MemberInfo stores person IDs
-                bookedPersonIds.add(person.getPrimaryKey());
+                bookedPersonIds.add(doc.getPerson().getPrimaryKey());
             }
         }
 

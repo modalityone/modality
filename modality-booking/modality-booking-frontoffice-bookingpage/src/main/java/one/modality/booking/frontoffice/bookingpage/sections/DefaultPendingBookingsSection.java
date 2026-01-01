@@ -22,7 +22,6 @@ import one.modality.booking.frontoffice.bookingpage.BookingPageI18nKeys;
 import one.modality.booking.frontoffice.bookingpage.PriceFormatter;
 import one.modality.booking.frontoffice.bookingpage.components.BookingPageUIBuilder;
 import one.modality.booking.frontoffice.bookingpage.theme.BookingFormColorScheme;
-import one.modality.base.shared.entities.formatters.EventPriceFormatter;
 
 import java.util.function.Consumer;
 
@@ -44,7 +43,6 @@ public class DefaultPendingBookingsSection implements HasPendingBookingsSection 
 
     // === BOOKINGS ===
     protected final ObservableList<BookingItem> bookings = FXCollections.observableArrayList();
-    protected String currencySymbol = "£";
 
     // === UI COMPONENTS ===
     protected final VBox container = new VBox();
@@ -281,7 +279,7 @@ public class DefaultPendingBookingsSection implements HasPendingBookingsSection 
         Region spacer = new Region();
         HBox.setHgrow(spacer, Priority.ALWAYS);
 
-        Label totalPriceLabel = new Label(currencySymbol + PriceFormatter.formatPriceNoCurrencyWithDecimals(booking.getTotalAmount()));
+        Label totalPriceLabel = new Label(PriceFormatter.formatPriceWithCurrencyWithDecimals(booking.getTotalAmount()));
         totalPriceLabel.getStyleClass().addAll("bookingpage-price-large", "bookingpage-text-primary");
 
         totalRow.getChildren().addAll(totalTextLabel, spacer, totalPriceLabel);
@@ -300,7 +298,7 @@ public class DefaultPendingBookingsSection implements HasPendingBookingsSection 
         Region paidSpacer = new Region();
         HBox.setHgrow(paidSpacer, Priority.ALWAYS);
 
-        Label paidAmountLabel = new Label(currencySymbol + PriceFormatter.formatPriceNoCurrencyWithDecimals(paidAmount));
+        Label paidAmountLabel = new Label(PriceFormatter.formatPriceWithCurrencyWithDecimals(paidAmount));
         // Green if paid > 0, muted if 0
         if (paidAmount > 0) {
             paidAmountLabel.getStyleClass().addAll("bookingpage-text-base", "bookingpage-font-semibold", "bookingpage-text-success");
@@ -320,7 +318,7 @@ public class DefaultPendingBookingsSection implements HasPendingBookingsSection 
         Region balanceSpacer = new Region();
         HBox.setHgrow(balanceSpacer, Priority.ALWAYS);
 
-        Label balanceAmountLabel = new Label(currencySymbol + PriceFormatter.formatPriceNoCurrencyWithDecimals(balance));
+        Label balanceAmountLabel = new Label(PriceFormatter.formatPriceWithCurrencyWithDecimals(balance));
         // Always use theme primary color for balance due
         balanceAmountLabel.getStyleClass().addAll("bookingpage-price-medium", "bookingpage-text-primary");
 
@@ -364,7 +362,7 @@ public class DefaultPendingBookingsSection implements HasPendingBookingsSection 
             priceLabel = I18nControls.newLabel(BookingPageI18nKeys.Included);
             priceLabel.getStyleClass().addAll("bookingpage-text-sm", "bookingpage-font-semibold", "bookingpage-text-muted");
         } else {
-            priceLabel = new Label(currencySymbol + PriceFormatter.formatPriceNoCurrencyNoDecimals(item.getAmount()));
+            priceLabel = new Label(PriceFormatter.formatPriceWithCurrencyNoDecimals(item.getAmount()));
             priceLabel.getStyleClass().addAll("bookingpage-text-sm", "bookingpage-font-bold", "bookingpage-text-primary");
         }
         priceLabel.setAlignment(Pos.CENTER_RIGHT);
@@ -439,7 +437,7 @@ public class DefaultPendingBookingsSection implements HasPendingBookingsSection 
 
     protected void updatePaymentSummary() {
         int count = bookings.size();
-        double total = bookings.stream().mapToDouble(BookingItem::getTotalAmount).sum();
+        int total = bookings.stream().mapToInt(BookingItem::getTotalAmount).sum();
 
         if (totalBookingsLabel != null) {
             // Use plural form based on count
@@ -447,10 +445,10 @@ public class DefaultPendingBookingsSection implements HasPendingBookingsSection 
             I18nControls.bindI18nProperties(totalBookingsLabel, i18nKey, count);
         }
         if (totalCostLabel != null) {
-            totalCostLabel.setText(currencySymbol + PriceFormatter.formatPriceNoCurrencyNoDecimals((int) total));
+            totalCostLabel.setText(PriceFormatter.formatPriceWithCurrencyNoDecimals(total));
         }
         if (totalAmountLabel != null) {
-            totalAmountLabel.setText(currencySymbol + PriceFormatter.formatPriceNoCurrencyNoDecimals((int) total));
+            totalAmountLabel.setText(PriceFormatter.formatPriceWithCurrencyNoDecimals(total));
         }
     }
 
@@ -469,9 +467,7 @@ public class DefaultPendingBookingsSection implements HasPendingBookingsSection 
     @Override
     public void setWorkingBookingProperties(WorkingBookingProperties props) {
         this.workingBookingProperties = props;
-        // Update currency symbol from event when working booking is set
         if (props != null && props.getEvent() != null) {
-            this.currencySymbol = EventPriceFormatter.getEventCurrencySymbol(props.getEvent());
             rebuildBookingCards();
             updatePaymentSummary();
         }

@@ -34,4 +34,8 @@ public record LoadDocumentArgument(
         return new LoadDocumentArgument(null, Entities.getPrimaryKey(event), null, Entities.getPrimaryKey(account), null);
     }
 
+    public static LoadDocumentArgument ofDocumentOrAccount(Object document, Object account, Object event) {
+        return new LoadDocumentArgument(Entities.getPrimaryKey(document), Entities.getPrimaryKey(event), null, Entities.getPrimaryKey(account), null);
+    }
+
 }
