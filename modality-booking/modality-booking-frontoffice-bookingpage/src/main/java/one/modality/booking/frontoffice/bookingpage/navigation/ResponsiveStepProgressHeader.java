@@ -499,6 +499,19 @@ public class ResponsiveStepProgressHeader implements BookingFormHeader {
         }
     }
 
+    /**
+     * Forces a rebuild of the steps list.
+     * Call this when conditions affecting page applicability have changed
+     * (e.g., user login/logout state).
+     */
+    @Override
+    public void forceRebuildSteps() {
+        if (bookingForm != null) {
+            buildStepsList();
+            rebuildAllLayouts();
+        }
+    }
+
     @Override
     public void setNavigationClickable(boolean clickable) {
         this.navigationClickable = clickable;
@@ -780,6 +793,8 @@ public class ResponsiveStepProgressHeader implements BookingFormHeader {
      * If the current page is NOT a step (e.g., a sub-step like Member Selection),
      * returns the index of the NEXT step so that the previous step appears completed
      * and the next step appears "in progress".
+     * If the current page is BEFORE all steps (e.g., Your Information page when
+     * user is not logged in), returns -1 so no step is highlighted.
      */
     private int getCurrentStepIndex() {
         int displayedPageIndex = currentStepIndexProperty.get();
@@ -791,7 +806,15 @@ public class ResponsiveStepProgressHeader implements BookingFormHeader {
             }
         }
 
-        // Current page is not a step (e.g., Member Selection sub-step).
+        // Current page is not a step.
+        // Check if we're BEFORE the first step (e.g., on "Your Information" page
+        // before logging in, when the first step is Summary).
+        // In this case, return -1 so no step is highlighted.
+        if (!steps.isEmpty() && displayedPageIndex < steps.get(0).pageIndex) {
+            return -1; // Before first step - don't highlight any step
+        }
+
+        // Otherwise, it's a sub-step between numbered steps.
         // Find the next step after this page to show as "active",
         // so previous steps appear completed.
         for (int i = 0; i < steps.size(); i++) {
@@ -852,8 +875,8 @@ public class ResponsiveStepProgressHeader implements BookingFormHeader {
         if (progressBarContainer.getChildren().size() >= 2) {
             Region progressFill = (Region) progressBarContainer.getChildren().get(1);
 
-            // Calculate progress percentage
-            double progress = steps.size() > 1 ? (double) currentStepIndex / (steps.size() - 1) : 0;
+            // Calculate progress percentage (handle -1 when before first step)
+            double progress = (currentStepIndex >= 0 && steps.size() > 1) ? (double) currentStepIndex / (steps.size() - 1) : 0;
 
             // Use percentage width binding
             progressFill.prefWidthProperty().bind(progressBarContainer.widthProperty().multiply(progress));

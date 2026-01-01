@@ -251,10 +251,8 @@ public class StandardBookingFormBuilder {
      */
     public StandardBookingForm build() {
         boolean isPayBookingEntryPoint = entryPoint == BookingFormEntryPoint.PAY_BOOKING;
-        // It's ok to have no custom step when the entry point is for paying a booking
-        if (!isPayBookingEntryPoint && customSteps.isEmpty()) {
-            throw new IllegalStateException("At least one custom step must be added before building");
-        }
+        // Custom steps are optional - some forms (like STTP) may have no custom steps
+        // and rely entirely on the standard checkout flow
 
         // Skip flags for common steps
         return new StandardBookingForm(

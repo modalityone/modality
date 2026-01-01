@@ -574,27 +574,42 @@ public class StandardBookingForm extends MultiPageBookingForm {
         }
 
         // Pending Bookings page: Register Another Person + Proceed to Payment (or Confirm Booking if price is zero)
+        // Register Another Person is only shown for logged-in users (new users can't register another person)
         // Register Another Person is disabled when no available members to book
         // Proceed to Payment/Confirm Booking is disabled when terms are not accepted
         if (pendingBookingsPage instanceof CompositeBookingFormPage compositePending) {
             // Initialize button text based on total (will be updated when bookings change)
             updatePendingBookingsButtonText();
 
-            compositePending.setButtons(
-                new BookingFormButton(BookingPageI18nKeys.RegisterAnotherPerson,
-                    e -> handleRegisterAnotherPerson(),
-                    "btn-secondary booking-form-btn-secondary",
-                    defaultMemberSelectionSection != null
-                        ? Bindings.not(defaultMemberSelectionSection.hasAvailableMembersProperty())
-                        : null),
-                // Use dynamic button text that changes based on total amount
-                new BookingFormButton(pendingBookingsButtonText,
-                    e -> handleProceedToPaymentOrConfirm(),
-                    "btn-primary booking-form-btn-primary",
-                    defaultTermsSection != null
-                        ? Bindings.not(defaultTermsSection.termsAcceptedProperty())
-                        : null)
-            );
+            // Only show "Register Another Person" button for logged-in users
+            boolean isLoggedIn = FXUserPerson.getUserPerson() != null;
+            if (isLoggedIn) {
+                compositePending.setButtons(
+                    new BookingFormButton(BookingPageI18nKeys.RegisterAnotherPerson,
+                        e -> handleRegisterAnotherPerson(),
+                        "btn-secondary booking-form-btn-secondary",
+                        defaultMemberSelectionSection != null
+                            ? Bindings.not(defaultMemberSelectionSection.hasAvailableMembersProperty())
+                            : null),
+                    // Use dynamic button text that changes based on total amount
+                    new BookingFormButton(pendingBookingsButtonText,
+                        e -> handleProceedToPaymentOrConfirm(),
+                        "btn-primary booking-form-btn-primary",
+                        defaultTermsSection != null
+                            ? Bindings.not(defaultTermsSection.termsAcceptedProperty())
+                            : null)
+                );
+            } else {
+                // New users (not logged in) - only show the proceed button
+                compositePending.setButtons(
+                    new BookingFormButton(pendingBookingsButtonText,
+                        e -> handleProceedToPaymentOrConfirm(),
+                        "btn-primary booking-form-btn-primary",
+                        defaultTermsSection != null
+                            ? Bindings.not(defaultTermsSection.termsAcceptedProperty())
+                            : null)
+                );
+            }
         }
 
         // Payment page: Back + Pay Now
@@ -1306,85 +1321,49 @@ public class StandardBookingForm extends MultiPageBookingForm {
 
     /**
      * Adds default price lines from WorkingBooking.
-     * Groups attendances by item family and calculates prices using date-specific daily rates.
+     * Uses the PriceCalculator for proper price computation including any discounts.
      */
     private void addDefaultSummaryPriceLines() {
         WorkingBooking workingBooking = getWorkingBooking();
+
         DocumentAggregate documentAggregate = workingBooking.getLastestDocumentAggregate();
-        if (documentAggregate == null) return;
+        if (documentAggregate == null) {
+            Console.log("addDefaultSummaryPriceLines: documentAggregate is null");
+            return;
+        }
 
-        // Get policy aggregate to access daily rates
-        PolicyAggregate policyAggregate = documentAggregate.getPolicyAggregate();
-        if (policyAggregate == null) return;
-
-        // Get all attendances
         List<Attendance> attendances = documentAggregate.getAttendances();
-        if (attendances == null || attendances.isEmpty()) return;
+        Console.log("addDefaultSummaryPriceLines: attendances count = " + (attendances != null ? attendances.size() : 0));
 
-        // Get all daily rates
-        List<Rate> dailyRates = policyAggregate.getDailyRates();
-
-        // Group attendances by item family and calculate prices using date-specific rates
-        Map<ItemFamily, Integer> pricesByFamily = new LinkedHashMap<>();
-        for (Attendance attendance : attendances) {
-            DocumentLine line = attendance.getDocumentLine();
-            if (line == null) continue;
-
-            Item item = line.getItem();
-            if (item == null) continue;
-
-            ItemFamily family = item.getFamily();
-            if (family == null) continue;
-
-            // Find the rate applicable to this attendance's date
-            LocalDate attendanceDate = attendance.getDate();
-            Rate applicableRate = findRateForDate(attendanceDate, item, dailyRates);
-
-            if (applicableRate != null && applicableRate.getPrice() != null) {
-                pricesByFamily.merge(family, applicableRate.getPrice(), Integer::sum);
-            }
+        // Book whole event if no attendances exist yet (for simple forms without custom option selection)
+        // This ensures prices are calculated correctly for forms like STTP that don't have date selection
+        if (workingBooking.isNewBooking() && (attendances == null || attendances.isEmpty())) {
+            Console.log("addDefaultSummaryPriceLines: No attendances yet, booking whole event...");
+            PolicyAggregate policyAggregate = workingBooking.getPolicyAggregate();
+            List<ScheduledItem> teachingItems = policyAggregate.filterTeachingScheduledItems();
+            Console.log("addDefaultSummaryPriceLines: teachingItems count = " + teachingItems.size());
+            List<Rate> rates = policyAggregate.getRates();
+            Console.log("addDefaultSummaryPriceLines: rates count = " + rates.size());
+            workingBooking.bookWholeEvent();
+            // Refresh documentAggregate and attendances after booking
+            documentAggregate = workingBooking.getLastestDocumentAggregate();
+            attendances = documentAggregate.getAttendances();
+            Console.log("addDefaultSummaryPriceLines: after bookWholeEvent, attendances count = " + (attendances != null ? attendances.size() : 0));
         }
 
-        // Add a price line for each item family
-        for (Map.Entry<ItemFamily, Integer> entry : pricesByFamily.entrySet()) {
-            ItemFamily family = entry.getKey();
-            int priceInCents = entry.getValue();
-            String displayName = family.getName() != null ? family.getName() : "Item";
-            defaultSummarySection.addPriceLine(displayName, null, priceInCents);
+        // Use PriceCalculator to compute the total price (handles complex pricing rules)
+        PriceCalculator priceCalculator = new PriceCalculator(documentAggregate);
+        int totalPrice = priceCalculator.calculateTotalPrice();
+        Console.log("addDefaultSummaryPriceLines: totalPrice = " + totalPrice);
+
+        // Get the event name for the price line description
+        Event event = getEvent();
+        String eventName = event != null && event.getName() != null ? event.getName() : "Event";
+
+        // Add a single price line for the total
+        if (totalPrice > 0) {
+            defaultSummarySection.addPriceLine(eventName, null, totalPrice);
         }
-    }
-
-    /**
-     * Finds the daily rate applicable to a specific date for an item.
-     */
-    private Rate findRateForDate(LocalDate date, Item item, List<Rate> dailyRates) {
-        if (date == null || dailyRates == null) return null;
-
-        // Filter rates for this item
-        for (Rate rate : dailyRates) {
-            if (rate.getItem() == null || !rate.getItem().equals(item)) continue;
-
-            LocalDate rateStart = rate.getStartDate();
-            LocalDate rateEnd = rate.getEndDate();
-
-            // Check if rate's date range includes the attendance date
-            if (rateStart != null && rateEnd != null) {
-                if (!date.isBefore(rateStart) && !date.isAfter(rateEnd)) {
-                    return rate;
-                }
-            } else if (rateStart != null && rateStart.equals(date)) {
-                return rate;
-            }
-        }
-
-        // Fallback: return first rate for this item (if no date match)
-        for (Rate rate : dailyRates) {
-            if (rate.getItem() != null && rate.getItem().equals(item)) {
-                return rate;
-            }
-        }
-
-        return null;
     }
 
     /**
@@ -1729,5 +1708,18 @@ public class StandardBookingForm extends MultiPageBookingForm {
      */
     public BookingFormState getState() {
         return state;
+    }
+
+    /**
+     * Updates the navigation header (e.g., to rebuild step list when login state changes).
+     * Call this when page applicability conditions change (like user logging in/out).
+     */
+    public void updateHeader() {
+        // Force rebuild of steps list since page applicability may have changed
+        BookingFormHeader header = getHeader();
+        if (header != null) {
+            header.forceRebuildSteps();
+        }
+        updateNavigationBar();
     }
 }
