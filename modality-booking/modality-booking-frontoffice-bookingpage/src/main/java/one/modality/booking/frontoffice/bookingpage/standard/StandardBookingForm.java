@@ -74,6 +74,8 @@ import java.util.stream.Collectors;
  */
 public class StandardBookingForm extends MultiPageBookingForm {
 
+    static final boolean PAY_BOOKING_CAN_BE_MULTIPLE = true;
+
     // Configuration
     private final BookingFormColorScheme colorScheme;
     private final boolean showUserBadge;
@@ -321,7 +323,7 @@ public class StandardBookingForm extends MultiPageBookingForm {
         return new CompositeBookingFormPage(BookingPageI18nKeys.Payment,
             defaultPaymentSection)
             .setStep(true)
-            .setCanGoBack(entryPoint != BookingFormEntryPoint.PAY_BOOKING)
+            .setCanGoBack(entryPoint != BookingFormEntryPoint.PAY_BOOKING || PAY_BOOKING_CAN_BE_MULTIPLE)
             ;
     }
 
@@ -342,8 +344,12 @@ public class StandardBookingForm extends MultiPageBookingForm {
         switch (entryPoint) {
             case PAY_BOOKING -> {
                 defaultPaymentSection.setWorkingBookingProperties(workingBookingProperties);
-                populatePaymentFromWorkingBooking();
-                navigateToPayment();
+                if (PAY_BOOKING_CAN_BE_MULTIPLE)
+                    loadAllBookingsForEvent(this::navigateToPendingBookings);
+                else {
+                    populatePaymentFromWorkingBooking();
+                    navigateToPayment();
+                }
             }
             case RESUME_PAYMENT -> {
                 // Add 30px spacer at top of header for payment return flow

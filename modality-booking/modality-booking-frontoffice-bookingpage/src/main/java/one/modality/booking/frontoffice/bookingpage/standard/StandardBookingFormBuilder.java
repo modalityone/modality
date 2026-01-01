@@ -268,7 +268,7 @@ public class StandardBookingFormBuilder {
             skipMemberSelection,
             summaryPageSupplier,
             pendingBookingsPageSupplier,
-            isPayBookingEntryPoint, // Skipping pending bookings when entry point is for paying a booking
+            isPayBookingEntryPoint && !StandardBookingForm.PAY_BOOKING_CAN_BE_MULTIPLE, // Skipping pending bookings when entry point is for paying a single booking
             paymentPageSupplier,
             confirmationPageSupplier,
             callbacks,
