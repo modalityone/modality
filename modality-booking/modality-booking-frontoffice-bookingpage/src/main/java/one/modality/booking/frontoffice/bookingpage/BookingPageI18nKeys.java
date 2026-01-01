@@ -9,6 +9,8 @@ public interface BookingPageI18nKeys {
     Object AccountFound = "AccountFound";
     Object AccountInfoMessage = "AccountInfoMessage";
     Object AccountOwner = "AccountOwner";
+    Object AccountRequired = "AccountRequired";
+    Object AccountRequiredDescription = "AccountRequiredDescription";
     Object Active = "Active";
     Object AddBookingToStart = "AddBookingToStart";
     Object AddNewPerson = "AddNewPerson";

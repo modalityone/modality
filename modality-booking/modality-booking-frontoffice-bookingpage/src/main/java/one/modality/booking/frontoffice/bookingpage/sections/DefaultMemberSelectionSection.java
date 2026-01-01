@@ -70,6 +70,7 @@ public class DefaultMemberSelectionSection implements HasMemberSelectionSection 
     protected HBox infoBox;
     protected VBox errorBox;
     protected Label errorLabel;
+    protected Button backButton;
     protected Button continueButton;
     protected final Map<MemberInfo, VBox> memberCardMap = new HashMap<>();
     protected final Map<MemberInfo, StackPane> checkmarkBadgeMap = new HashMap<>();
@@ -128,8 +129,8 @@ public class DefaultMemberSelectionSection implements HasMemberSelectionSection 
         HBox row = new HBox(16);
         row.setAlignment(Pos.CENTER_LEFT);
 
-        // Back button - styled via CSS
-        Button backButton = buildBackButton();
+        // Back button - styled via CSS (stored as field for visibility control)
+        backButton = buildBackButton();
 
         // Spacer
         Region spacer = new Region();
@@ -140,6 +141,19 @@ public class DefaultMemberSelectionSection implements HasMemberSelectionSection 
 
         row.getChildren().addAll(backButton, spacer, continueButton);
         return row;
+    }
+
+    /**
+     * Sets the visibility of the back button.
+     * Use this to hide the back button when Member Selection is the first step.
+     *
+     * @param visible true to show, false to hide
+     */
+    public void setBackButtonVisible(boolean visible) {
+        if (backButton != null) {
+            backButton.setVisible(visible);
+            backButton.setManaged(visible);
+        }
     }
 
     protected Button buildBackButton() {

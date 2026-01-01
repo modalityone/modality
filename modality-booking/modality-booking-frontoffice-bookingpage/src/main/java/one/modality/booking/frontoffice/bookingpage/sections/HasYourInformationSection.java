@@ -91,6 +91,22 @@ public interface HasYourInformationSection extends BookingFormSection {
     boolean isCreateAccount();
 
     /**
+     * Sets whether account creation is forced (required) for this form.
+     * When forced, the optional checkbox is replaced with an info box explaining
+     * why an account is required (e.g., for online programs requiring login).
+     *
+     * @param force true to require account creation, false for optional (default)
+     */
+    void setForceAccountCreation(boolean force);
+
+    /**
+     * Returns whether account creation is forced (required).
+     *
+     * @return true if account creation is mandatory
+     */
+    boolean isForceAccountCreation();
+
+    /**
      * Resets the section to initial email input state.
      */
     void resetToEmailInput();

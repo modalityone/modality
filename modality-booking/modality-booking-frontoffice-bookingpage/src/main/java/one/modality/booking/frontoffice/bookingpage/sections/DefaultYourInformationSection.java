@@ -86,6 +86,7 @@ public class DefaultYourInformationSection implements HasYourInformationSection 
     protected final BooleanProperty createAccountProperty = new SimpleBooleanProperty(false);
     protected final StringProperty verificationCodeProperty = new SimpleStringProperty("");
     protected final BooleanProperty showPasswordProperty = new SimpleBooleanProperty(false);
+    protected final BooleanProperty forceAccountCreationProperty = new SimpleBooleanProperty(false);
 
     // === UI COMPONENTS ===
     protected final VBox container = new VBox();
@@ -141,6 +142,9 @@ public class DefaultYourInformationSection implements HasYourInformationSection 
     protected SVGPath createAccountNoteIcon;
     protected java.util.List<SVGPath> benefitCheckIcons = new java.util.ArrayList<>();
     protected java.util.List<Label> benefitLabels = new java.util.ArrayList<>();
+
+    // Page-level back button (for navigating to previous page)
+    protected Button emailInputBackButton;
 
     // === CALLBACKS ===
     protected Consumer<Person> onLoginSuccess;
@@ -398,8 +402,8 @@ public class DefaultYourInformationSection implements HasYourInformationSection 
 
         // Navigation buttons
         HBox buttonRow = createNavigationButtonRow();
-        Button backButton = createBackButton();
-        backButton.setOnAction(e -> {
+        emailInputBackButton = createBackButton();
+        emailInputBackButton.setOnAction(e -> {
             if (onBackPressed != null) onBackPressed.run();
         });
 
@@ -417,7 +421,7 @@ public class DefaultYourInformationSection implements HasYourInformationSection 
 
         Region spacer = new Region();
         HBox.setHgrow(spacer, Priority.ALWAYS);
-        buttonRow.getChildren().addAll(backButton, spacer, continueButton);
+        buttonRow.getChildren().addAll(emailInputBackButton, spacer, continueButton);
 
         view.getChildren().addAll(title, subtitle, emailCard, buttonRow);
         VBox.setMargin(subtitle, new Insets(0, 0, 40, 0));
@@ -607,8 +611,8 @@ public class DefaultYourInformationSection implements HasYourInformationSection 
 
         nameCard.getChildren().add(nameFieldsGrid);
 
-        // Create account option box
-        VBox createAccountBox = buildCreateAccountBox();
+        // Create account container (dynamically shows checkbox or info box based on forceAccountCreation)
+        StackPane createAccountBox = buildAccountCreationContainer();
 
         // Navigation buttons
         HBox buttonRow = createNavigationButtonRow();
@@ -663,6 +667,104 @@ public class DefaultYourInformationSection implements HasYourInformationSection 
         changeLink.setOnAction(e -> resetToEmailInput());
 
         box.getChildren().addAll(emailIcon, emailDisplay, changeLink);
+        return box;
+    }
+
+    /**
+     * Builds a container that dynamically shows either the optional "Create Account" checkbox
+     * or the "Account Required" info box based on the forceAccountCreation property.
+     */
+    protected StackPane buildAccountCreationContainer() {
+        StackPane container = new StackPane();
+        container.setAlignment(Pos.TOP_LEFT);
+
+        // Build both versions
+        VBox optionalCheckbox = buildCreateAccountBox();
+        VBox requiredInfoBox = buildAccountRequiredBox();
+
+        // Update visibility based on property
+        Runnable updateVisibility = () -> {
+            boolean forced = forceAccountCreationProperty.get();
+            optionalCheckbox.setVisible(!forced);
+            optionalCheckbox.setManaged(!forced);
+            requiredInfoBox.setVisible(forced);
+            requiredInfoBox.setManaged(forced);
+        };
+
+        forceAccountCreationProperty.addListener((obs, old, newVal) -> updateVisibility.run());
+        updateVisibility.run();
+
+        container.getChildren().addAll(optionalCheckbox, requiredInfoBox);
+        return container;
+    }
+
+    /**
+     * Builds an info box explaining that account creation is required.
+     * Used for online programs that require login access to resources.
+     */
+    protected VBox buildAccountRequiredBox() {
+        VBox box = new VBox(12);
+        box.setPadding(new Insets(24));
+        box.getStyleClass().add("bookingpage-info-box-info");
+
+        HBox contentRow = new HBox(16);
+        contentRow.setAlignment(Pos.TOP_LEFT);
+
+        // Info icon circle
+        StackPane iconCircle = BookingPageUIBuilder.createThemedIconCircle(28);
+        iconCircle.getStyleClass().add("bookingpage-icon-circle-primary");
+
+        // Info "i" icon
+        SVGPath infoIcon = new SVGPath();
+        infoIcon.setContent("M12 16v-4 M12 8h.01");
+        infoIcon.setStroke(Color.WHITE);
+        infoIcon.setStrokeWidth(2.5);
+        infoIcon.setStrokeLineCap(javafx.scene.shape.StrokeLineCap.ROUND);
+        infoIcon.setFill(Color.TRANSPARENT);
+        infoIcon.setScaleX(0.9);
+        infoIcon.setScaleY(0.9);
+        iconCircle.getChildren().add(infoIcon);
+
+        // Content
+        VBox content = new VBox(8);
+
+        // Title
+        Label titleLabel = I18nControls.newLabel(BookingPageI18nKeys.AccountRequired);
+        titleLabel.getStyleClass().addAll("bookingpage-text-lg", "bookingpage-font-bold", "bookingpage-text-dark");
+
+        // Description
+        Label descLabel = I18nControls.newLabel(BookingPageI18nKeys.AccountRequiredDescription);
+        descLabel.getStyleClass().addAll("bookingpage-text-base", "bookingpage-text-muted");
+        descLabel.setWrapText(true);
+
+        // Email note about password setup (non-interactive, no hover effect)
+        HBox noteBox = new HBox(10);
+        noteBox.setPadding(new Insets(12, 14, 12, 14));
+        noteBox.getStyleClass().addAll("bookingpage-rounded", "bookingpage-bg-muted");
+        noteBox.setAlignment(Pos.TOP_LEFT);
+        noteBox.setCursor(javafx.scene.Cursor.DEFAULT);
+
+        SVGPath emailNoteIcon = new SVGPath();
+        emailNoteIcon.setContent("M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z M22 6l-10 7L2 6");
+        emailNoteIcon.getStyleClass().add("bookingpage-icon-primary");
+        emailNoteIcon.setStrokeWidth(2);
+        emailNoteIcon.setFill(Color.TRANSPARENT);
+        emailNoteIcon.setScaleX(0.65);
+        emailNoteIcon.setScaleY(0.65);
+
+        Label noteText = I18nControls.newLabel(BookingPageI18nKeys.WeWillSendEmailToSetPassword);
+        noteText.getStyleClass().addAll("bookingpage-text-sm", "bookingpage-text-secondary");
+        noteText.setWrapText(true);
+
+        noteBox.getChildren().addAll(emailNoteIcon, noteText);
+        HBox.setHgrow(noteText, Priority.ALWAYS);
+
+        content.getChildren().addAll(titleLabel, descLabel, noteBox);
+
+        contentRow.getChildren().addAll(iconCircle, content);
+        HBox.setHgrow(content, Priority.ALWAYS);
+        box.getChildren().add(contentRow);
+
         return box;
     }
 
@@ -1709,6 +1811,19 @@ public class DefaultYourInformationSection implements HasYourInformationSection 
         this.onBackPressed = callback;
     }
 
+    /**
+     * Sets the visibility of the page-level back button (in the email input view).
+     * Use this to hide the back button when Your Information is the first step.
+     *
+     * @param visible true to show, false to hide
+     */
+    public void setBackButtonVisible(boolean visible) {
+        if (emailInputBackButton != null) {
+            emailInputBackButton.setVisible(visible);
+            emailInputBackButton.setManaged(visible);
+        }
+    }
+
     @Override
     public String getEmail() {
         return emailProperty.get();
@@ -1727,5 +1842,19 @@ public class DefaultYourInformationSection implements HasYourInformationSection 
     @Override
     public boolean isCreateAccount() {
         return createAccountProperty.get();
+    }
+
+    @Override
+    public void setForceAccountCreation(boolean force) {
+        forceAccountCreationProperty.set(force);
+        if (force) {
+            // When forced, always set createAccount to true
+            createAccountProperty.set(true);
+        }
+    }
+
+    @Override
+    public boolean isForceAccountCreation() {
+        return forceAccountCreationProperty.get();
     }
 }
