@@ -478,7 +478,7 @@ public class DefaultSummarySection implements HasSummarySection {
         Region spacer = new Region();
         HBox.setHgrow(spacer, Priority.ALWAYS);
 
-        Label amountLabel = new Label(event != null ? EventPriceFormatter.formatWithCurrency(line.getAmount(), event) : "£" + (line.getAmount() / 100));
+        Label amountLabel = new Label(EventPriceFormatter.formatWithCurrency(line.getAmount(), event));
         amountLabel.getStyleClass().addAll("bookingpage-text-base", "bookingpage-font-semibold", "bookingpage-text-dark");
 
         row.getChildren().addAll(labelBox, spacer, amountLabel);
@@ -487,7 +487,7 @@ public class DefaultSummarySection implements HasSummarySection {
 
     protected void updateTotalLabel() {
         if (totalAmountLabel != null) {
-            totalAmountLabel.setText(event != null ? EventPriceFormatter.formatWithCurrency(totalAmount, event) : "£" + (totalAmount / 100));
+            totalAmountLabel.setText(EventPriceFormatter.formatWithCurrency(totalAmount, event));
             // Note: CSS class "bookingpage-text-primary" handles theme color
         }
     }
