@@ -23,6 +23,7 @@
         <module>modality-event-backoffice-activity-pricing-plugin</module>
         <module>modality-event-backoffice-activity-program-plugin</module>
         <module>modality-event-backoffice-activity-recurringevents-plugin</module>
+        <module>modality-event-backoffice-eventcreator</module>
         <module>modality-event-backoffice-events-ganttcanvas-plugin</module>
         <module>modality-event-backoffice-events-pm</module>
         <module>modality-event-backoffice-header-eventselector-plugin</module>
