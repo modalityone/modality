@@ -75,7 +75,7 @@ import java.util.stream.Collectors;
  */
 public class StandardBookingForm extends MultiPageBookingForm {
 
-    static final boolean PAY_BOOKING_CAN_BE_MULTIPLE = true;
+    static final boolean PAY_BOOKING_CAN_BE_MULTIPLE = false;
 
     // Configuration
     private final BookingFormColorScheme colorScheme;
