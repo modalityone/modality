@@ -464,6 +464,10 @@ public final class WorkingBooking {
         return getLastestDocumentAggregate().findAddRequestEvent(fromChangesOnly);
     }
 
+    public ApplyFacilityFeeEvent findApplyFacilityFeeEvent(boolean fromChangesOnly) {
+        return getLastestDocumentAggregate().findApplyFacilityFeeEvent(fromChangesOnly);
+    }
+
     public PriceDocumentLineEvent findPriceDocumentLineEvent(boolean fromChangesOnly) {
         return getLastestDocumentAggregate().findPriceDocumentLineEvent(fromChangesOnly);
     }

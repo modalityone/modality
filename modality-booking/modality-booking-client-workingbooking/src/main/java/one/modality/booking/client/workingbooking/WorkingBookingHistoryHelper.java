@@ -4,6 +4,7 @@ import dev.webfx.platform.util.collection.Collections;
 import one.modality.base.client.time.ModalityDates;
 import one.modality.base.shared.entities.Attendance;
 import one.modality.ecommerce.document.service.events.book.AddRequestEvent;
+import one.modality.ecommerce.document.service.events.book.ApplyFacilityFeeEvent;
 import one.modality.ecommerce.document.service.events.registration.documentline.PriceDocumentLineEvent;
 
 import java.time.LocalDate;
@@ -26,7 +27,12 @@ public final class WorkingBookingHistoryHelper {
         StringBuilder sb = new StringBuilder();
         appendHistoryCommentFromAttendances(workingBooking.getAttendancesAdded(true), true, sb);
         appendHistoryCommentFromAttendances(workingBooking.getAttendancesRemoved(true), false, sb);
-        // "Wrote a request" comment if the user wrote a request
+        // "Selected member rate" if the user selected the member rate
+        ApplyFacilityFeeEvent applyFacilityFeeEvent = workingBooking.findApplyFacilityFeeEvent(true);
+        if (applyFacilityFeeEvent != null) {
+            newSection(sb).append(applyFacilityFeeEvent.isApply() ? "Selected member rate" : "Unselected member rate");
+        }
+        // "Wrote a request" if the user wrote a request
         AddRequestEvent addRequestEvent = workingBooking.findAddRequestEvent(true);
         if (addRequestEvent != null) {
             newSection(sb).append("Wrote a request"); // No need to say more, as the request itself will be copied in

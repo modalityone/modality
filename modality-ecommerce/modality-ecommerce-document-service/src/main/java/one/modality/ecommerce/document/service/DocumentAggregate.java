@@ -186,6 +186,14 @@ public final class DocumentAggregate {
             .orElse(null);
     }
 
+    public ApplyFacilityFeeEvent findApplyFacilityFeeEvent(boolean excludePreviousVersionEvents) {
+        return getNewDocumentEventsStream(excludePreviousVersionEvents)
+            .filter(e -> e instanceof ApplyFacilityFeeEvent)
+            .map(e -> (ApplyFacilityFeeEvent) e)
+            .findFirst()
+            .orElse(null);
+    }
+
     // Accessing event
 
     public Event getEvent() {
