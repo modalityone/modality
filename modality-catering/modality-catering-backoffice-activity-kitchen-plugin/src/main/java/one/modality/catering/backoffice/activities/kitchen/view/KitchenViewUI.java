@@ -144,7 +144,7 @@ public final class KitchenViewUI {
         headerContent.setMaxWidth(Region.USE_PREF_SIZE); // Fit to content width
 
         // Create loading spinner
-        loadingSpinner = Controls.createPageSizeSpinner();
+        loadingSpinner = Controls.createSectionSizeSpinner();
 
         // Create a stack to overlay progress indicator on table
         StackPane contentStack = new StackPane();
