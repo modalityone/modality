@@ -27,6 +27,7 @@ public interface BaseI18nKeys {
     Object DefaultPromptText = "DefaultPromptText";
     Object Delete = "Delete";
     Object Edit = "Edit";
+    Object EndDate = "EndDate";
     Object English = "English";
     Object EnglishWithFlag = "EnglishWithFlag";
     Object Error = "Error";
@@ -52,6 +53,7 @@ public interface BaseI18nKeys {
     Object Search = "Search";
     Object Space = "Space";
     Object SpanishWithFlag = "SpanishWithFlag";
+    Object StartDate = "StartDate";
     Object Status = "Status";
     Object Submit = "Submit";
     Object Time = "Time";
