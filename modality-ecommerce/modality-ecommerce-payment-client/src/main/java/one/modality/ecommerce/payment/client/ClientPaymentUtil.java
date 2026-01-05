@@ -15,27 +15,18 @@ import one.modality.ecommerce.payment.PaymentService;
  */
 public final class ClientPaymentUtil {
 
-    public static Future<Void> initiateRedirectedPaymentAndRedirectToGatewayPaymentPage(int amount, PaymentAllocation[] paymentAllocations) {
+    public static Future<WebPaymentForm> initiateRedirectedPaymentAndRedirectToGatewayPaymentPage(int amount, PaymentAllocation[] paymentAllocations, PaymentFormType preferredFormType) {
         return PaymentService.initiatePayment(
                 ClientPaymentUtil.createInitiatePaymentArgument(
                     amount,
                     paymentAllocations,
-                    PaymentFormType.REDIRECTED, // We were using EMBEDDED so far, now we try REDIRECTED
+                    preferredFormType,
                     "/resume-payment/:moneyTransferId",
                     "/resume-payment/:moneyTransferId")
             )
             .inUiThread()
             .onFailure(Console::log)
-            .compose(paymentResult -> {
-                WebPaymentForm webPaymentForm = new WebPaymentForm(paymentResult, null);
-                // If it's a redirected payment form, we just navigate to it
-                if (webPaymentForm.isRedirectedPaymentForm()) {
-                    webPaymentForm.navigateToRedirectedPaymentForm();
-                    return Future.succeededFuture();
-                } else {
-                    return Future.failedFuture("Embedded payment form is not yet implemented in ClientPaymentUtil");
-                }
-            });
+            .map(paymentResult -> new WebPaymentForm(paymentResult, null));
 
     }
 

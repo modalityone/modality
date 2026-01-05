@@ -16,10 +16,12 @@ import javafx.scene.control.Label;
 import javafx.scene.layout.Region;
 import javafx.scene.layout.VBox;
 import one.modality.base.client.i18n.BaseI18nKeys;
+import one.modality.base.shared.entities.Event;
 import one.modality.base.shared.entities.formatters.EventPriceFormatter;
 import one.modality.booking.frontoffice.bookingform.GatewayPaymentForm;
 import one.modality.ecommerce.client.i18n.EcommerceI18nKeys;
 import one.modality.ecommerce.payment.CancelPaymentResult;
+import one.modality.ecommerce.payment.PaymentStatus;
 import one.modality.ecommerce.payment.client.WebPaymentForm;
 import one.modality.event.frontoffice.activities.book.BookI18nKeys;
 
@@ -40,14 +42,14 @@ public final class ProvidedGatewayPaymentForm implements GatewayPaymentForm {
     private Button pressedButton;
     private Consumer<AsyncResult<CancelPaymentResult>> cancelPaymentResultHandler;
 
-    public ProvidedGatewayPaymentForm(WebPaymentForm webPaymentForm, StepSlide stepSlide) {
+    public ProvidedGatewayPaymentForm(WebPaymentForm webPaymentForm, Event event, Consumer<Object> errorConsumer, Consumer<CancelPaymentResult> cancelConsumer, Consumer<PaymentStatus> successConsumer) {
         gatewayName = webPaymentForm.getGatewayName();
 
         Label gatewayLogo = new Label();
         I18nControls.bindI18nProperties(gatewayLogo, webPaymentForm.getGatewayName());
         //VBox.setMargin(gatewayLogo, new Insets(10, 0, 20, 0));
 
-        I18nControls.bindI18nProperties(payButton, BookI18nKeys.Pay1, EventPriceFormatter.formatWithCurrency(webPaymentForm.getAmount(), stepSlide.getEvent()));
+        I18nControls.bindI18nProperties(payButton, BookI18nKeys.Pay1, EventPriceFormatter.formatWithCurrency(webPaymentForm.getAmount(), event));
         Layouts.setManagedAndVisibleProperties(payButton, !webPaymentForm.hasHtmlPayButton());
         webPaymentForm.setHtmlPayButtonText(payButton.getText());
         webPaymentForm.setHtmlHeaderText("Please enter your payment information");
@@ -89,9 +91,9 @@ public final class ProvidedGatewayPaymentForm implements GatewayPaymentForm {
                     if (cancelPaymentResultHandler != null) {
                         cancelPaymentResultHandler.accept(ar);
                     } else if (ar.failed())
-                        stepSlide.displayErrorMessage(ar.cause().getMessage());
+                        errorConsumer.accept(ar.cause().getMessage());
                     else {
-                        stepSlide.displayCancellationSlide(ar.result());
+                        cancelConsumer.accept(ar.result());
                     }
                 });
         });
@@ -104,29 +106,23 @@ public final class ProvidedGatewayPaymentForm implements GatewayPaymentForm {
 
         webPaymentForm
             .setOnLoadFailure(errorMsg -> {
-                stepSlide.displayErrorMessage(BookI18nKeys.ErrorWhileLoadingPaymentForm);
+                errorConsumer.accept(BookI18nKeys.ErrorWhileLoadingPaymentForm);
                 Console.log(errorMsg);
             })
             .setOnInitFailure(errorMsg -> {
-                stepSlide.displayErrorMessage(BookI18nKeys.ErrorWhileInitializingHTMLPaymentForm);
+                errorConsumer.accept(BookI18nKeys.ErrorWhileInitializingHTMLPaymentForm);
                 Console.log(errorMsg);
             })
             .setOnVerificationFailure(errorMsg -> {
-                stepSlide.displayErrorMessage(BookI18nKeys.ErrorPaymentGatewayFailure);
+                errorConsumer.accept(BookI18nKeys.ErrorPaymentGatewayFailure);
                 Console.log(errorMsg);
             })
             .setOnPaymentFailure(errorMsg -> {
-                stepSlide.displayErrorMessage(BookI18nKeys.ErrorPaymentModalityFailure);
+                errorConsumer.accept(BookI18nKeys.ErrorPaymentModalityFailure);
                 Console.log(errorMsg);
             })
             .setOnPaymentCompletion(status -> {
-                if (status.isPending()) {
-                    stepSlide.displayPendingPaymentSlide();
-                } else if (status.isSuccessful()) {
-                    stepSlide.displayThankYouSlide();
-                } else { // failed payment
-                    stepSlide.displayFailedPaymentSlide();
-                }
+                successConsumer.accept(status);
             });
     }
 
