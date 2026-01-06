@@ -1,0 +1,607 @@
+/* Room Setup Activity Styles - Unified (JavaFX + Web) */
+
+/* Color Variables (referenced in comments for documentation) */
+/* Primary: #0096D6 (Modality blue) */
+/* Success: #10b981 (Green) */
+/* Warning: #f59e0b (Amber) */
+/* Danger: #ef4444 (Red) */
+/* External: #8b5cf6 (Purple) */
+/* Background: #fafaf9 */
+/* Card: #ffffff */
+/* Border: #e7e5e4 */
+/* Text: #1c1917 */
+/* TextMuted: #78716c */
+
+/* Pool Cards */
+.roomsetup-pool-card {
+    -fx-background-color: white;
+    -fx-background-radius: 12px;
+    -fx-border-color: #e7e5e4;
+    -fx-border-radius: 12px;
+    -fx-border-width: 1px;
+    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.06), 3, 0, 0, 1);
+}
+
+.roomsetup-pool-header {
+    -fx-background-color: #fafaf9;
+    -fx-background-radius: 11px 11px 0 0;
+    -fx-border-color: #e7e5e4;
+    -fx-border-width: 0 0 1px 0;
+}
+
+.roomsetup-pool-title {
+    -fx-font-size: 15px;
+    -fx-font-weight: 600;
+    -fx-text-fill: #1c1917;
+}
+
+.roomsetup-pool-count {
+    -fx-font-size: 13px;
+    -fx-text-fill: #78716c;
+}
+
+/* Room Chips */
+.roomsetup-room-chip {
+    -fx-background-color: white;
+    -fx-border-color: #e7e5e4;
+    -fx-border-radius: 10px;
+    -fx-background-radius: 10px;
+    -fx-border-width: 1px;
+    -fx-cursor: hand;
+}
+
+.roomsetup-room-chip:hover {
+    -fx-border-color: #0096D6;
+    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.08), 8, 0, 0, 2);
+}
+
+.roomsetup-room-chip-selected {
+    -fx-border-color: #0096D6;
+    -fx-background-color: #e0f4fc;
+}
+
+.roomsetup-room-chip-external {
+    -fx-background-color: #f5f3ff;
+    -fx-border-color: #8b5cf6;
+}
+
+.roomsetup-room-chip-external:hover {
+    -fx-border-color: #8b5cf6;
+    -fx-effect: dropshadow(gaussian, rgba(139,92,246,0.15), 8, 0, 0, 2);
+}
+
+.roomsetup-room-chip-override {
+    -fx-background-color: #fef3c7;
+    -fx-border-color: #0096D6;
+}
+
+.roomsetup-room-chip-inactive {
+    -fx-background-color: #f8fafc;
+    -fx-border-color: #e2e8f0;
+    -fx-opacity: 0.7;
+}
+
+.roomsetup-room-id {
+    -fx-font-size: 14px;
+    -fx-font-weight: 600;
+    -fx-text-fill: #1c1917;
+}
+
+.roomsetup-room-id-external {
+    -fx-text-fill: #8b5cf6;
+}
+
+.roomsetup-room-name {
+    -fx-font-size: 13px;
+    -fx-text-fill: #78716c;
+}
+
+/* Beds Badge */
+.roomsetup-beds-badge {
+    -fx-background-color: #f5f5f4;
+    -fx-background-radius: 4px;
+    -fx-font-size: 12px;
+    -fx-font-weight: 600;
+    -fx-text-fill: #78716c;
+}
+
+.roomsetup-beds-badge-override {
+    -fx-background-color: #0096D6;
+    -fx-text-fill: white;
+}
+
+.roomsetup-beds-badge-external {
+    -fx-background-color: #ede9fe;
+    -fx-text-fill: #8b5cf6;
+}
+
+/* Room Type Groups */
+.roomsetup-type-group-header {
+    -fx-background-color: #fafaf9;
+    -fx-border-color: #e7e5e4;
+    -fx-border-radius: 10px;
+    -fx-background-radius: 10px;
+    -fx-border-width: 1px;
+    -fx-cursor: hand;
+}
+
+.roomsetup-type-group-header-expanded {
+    -fx-background-color: rgba(0,150,214,0.03);
+    -fx-border-color: #0096D6;
+    -fx-border-radius: 10px 10px 0 0;
+    -fx-background-radius: 10px 10px 0 0;
+}
+
+.roomsetup-type-icon {
+    -fx-background-color: #e5e5e5;
+    -fx-background-radius: 6px;
+    -fx-text-fill: #78716c;
+}
+
+.roomsetup-type-icon-expanded {
+    -fx-background-color: #0096D6;
+    -fx-text-fill: white;
+}
+
+.roomsetup-type-label {
+    -fx-font-size: 14px;
+    -fx-font-weight: 600;
+    -fx-text-fill: #1c1917;
+}
+
+.roomsetup-type-label-expanded {
+    -fx-text-fill: #0096D6;
+}
+
+.roomsetup-type-count {
+    -fx-background-color: #f0f0f0;
+    -fx-background-radius: 12px;
+    -fx-font-size: 12px;
+    -fx-font-weight: 600;
+    -fx-text-fill: #78716c;
+}
+
+.roomsetup-type-count-active {
+    -fx-background-color: rgba(0,150,214,0.1);
+    -fx-text-fill: #0096D6;
+}
+
+.roomsetup-type-group-content {
+    -fx-background-color: #fafaf9;
+    -fx-border-color: #0096D6;
+    -fx-border-width: 0 1px 1px 1px;
+    -fx-border-radius: 0 0 10px 10px;
+    -fx-background-radius: 0 0 10px 10px;
+}
+
+/* Progress Section */
+.roomsetup-progress-section {
+    -fx-background-color: white;
+    -fx-background-radius: 12px;
+    -fx-border-color: #e7e5e4;
+    -fx-border-radius: 12px;
+    -fx-border-width: 1px;
+    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.06), 3, 0, 0, 1);
+}
+
+.roomsetup-progress-title {
+    -fx-font-size: 14px;
+    -fx-font-weight: 600;
+    -fx-text-fill: #1c1917;
+}
+
+.roomsetup-progress-value {
+    -fx-font-size: 24px;
+    -fx-font-weight: 700;
+    -fx-text-fill: #0096D6;
+}
+
+.roomsetup-progress-value-complete {
+    -fx-text-fill: #10b981;
+}
+
+.roomsetup-progress-value-over {
+    -fx-text-fill: #f59e0b;
+}
+
+.roomsetup-progress-bar {
+    -fx-background-color: #fafaf9;
+    -fx-background-radius: 4px;
+}
+
+.roomsetup-progress-bar-fill {
+    -fx-background-color: linear-gradient(to right, #0096D6, #0077a8);
+    -fx-background-radius: 4px;
+}
+
+.roomsetup-progress-bar-fill-complete {
+    -fx-background-color: #10b981;
+}
+
+.roomsetup-progress-bar-fill-over {
+    -fx-background-color: linear-gradient(to right, #10b981, #f59e0b);
+}
+
+/* Stat Cards */
+.roomsetup-stat-card {
+    -fx-background-color: white;
+    -fx-background-radius: 12px;
+    -fx-border-color: #e7e5e4;
+    -fx-border-radius: 12px;
+    -fx-border-width: 1px;
+    -fx-textalignment: center;
+}
+
+.roomsetup-stat-value {
+    -fx-font-size: 40px;
+    -fx-font-weight: 700;
+    -fx-text-fill: #0096D6;
+}
+
+.roomsetup-stat-value-success {
+    -fx-text-fill: #10b981;
+}
+
+.roomsetup-stat-value-warning {
+    -fx-text-fill: #f59e0b;
+}
+
+.roomsetup-stat-value-external {
+    -fx-text-fill: #8b5cf6;
+}
+
+.roomsetup-stat-label {
+    -fx-font-size: 14px;
+    -fx-text-fill: #78716c;
+}
+
+/* Category Pills */
+.roomsetup-category-pill {
+    -fx-background-radius: 10px;
+    -fx-border-radius: 10px;
+    -fx-border-width: 1px;
+    -fx-border-color: rgba(0,0,0,0.1);
+}
+
+.roomsetup-category-pill-label {
+    -fx-font-size: 14px;
+    -fx-font-weight: 600;
+}
+
+.roomsetup-category-pill-value {
+    -fx-background-radius: 6px;
+    -fx-font-size: 14px;
+    -fx-font-weight: 700;
+    -fx-text-fill: white;
+}
+
+/* Buttons */
+.roomsetup-btn-primary {
+    -fx-background-color: #0096D6;
+    -fx-text-fill: white;
+    -fx-background-radius: 8px;
+    -fx-font-size: 14px;
+    -fx-font-weight: 600;
+    -fx-cursor: hand;
+}
+
+.roomsetup-btn-primary:hover {
+    -fx-background-color: #0077a8;
+    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.15), 8, 0, 0, 4);
+}
+
+.roomsetup-btn-secondary {
+    -fx-background-color: white;
+    -fx-text-fill: #78716c;
+    -fx-border-color: #e7e5e4;
+    -fx-border-width: 1px;
+    -fx-background-radius: 8px;
+    -fx-border-radius: 8px;
+    -fx-font-size: 14px;
+    -fx-font-weight: 500;
+    -fx-cursor: hand;
+}
+
+.roomsetup-btn-secondary:hover {
+    -fx-border-color: #0096D6;
+    -fx-text-fill: #0096D6;
+}
+
+.roomsetup-btn-danger {
+    -fx-background-color: white;
+    -fx-text-fill: #dc2626;
+    -fx-border-color: #fecaca;
+    -fx-border-width: 1px;
+    -fx-background-radius: 8px;
+    -fx-border-radius: 8px;
+    -fx-font-size: 14px;
+    -fx-font-weight: 500;
+    -fx-cursor: hand;
+}
+
+.roomsetup-btn-danger:hover {
+    -fx-background-color: #fef2f2;
+}
+
+/* Assign All Button */
+.roomsetup-assign-all-btn {
+    -fx-background-color: #0096D6;
+    -fx-text-fill: white;
+    -fx-background-radius: 6px;
+    -fx-font-size: 13px;
+    -fx-font-weight: 600;
+    -fx-cursor: hand;
+    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.15), 4, 0, 0, 2);
+}
+
+.roomsetup-assign-all-btn:hover {
+    -fx-scale-x: 1.05;
+    -fx-scale-y: 1.05;
+    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.2), 8, 0, 0, 4);
+}
+
+/* Help Tips */
+.roomsetup-help-tip {
+    -fx-background-color: white;
+    -fx-border-color: #e7e5e4;
+    -fx-border-width: 1px;
+    -fx-background-radius: 12px;
+    -fx-border-radius: 12px;
+}
+
+.roomsetup-help-tip-warning {
+    -fx-background-color: #fefce8;
+    -fx-border-color: #fde047;
+}
+
+.roomsetup-help-tip-info {
+    -fx-background-color: #e0f4fc;
+    -fx-border-color: rgba(0,150,214,0.4);
+}
+
+.roomsetup-help-tip-text {
+    -fx-font-size: 14px;
+    -fx-text-fill: #1c1917;
+}
+
+/* External Site Card */
+.roomsetup-external-site-card {
+    -fx-background-color: #f5f3ff;
+    -fx-background-radius: 12px;
+    -fx-border-color: #8b5cf6;
+    -fx-border-width: 2px;
+    -fx-border-style: dashed;
+    -fx-border-radius: 12px;
+}
+
+.roomsetup-external-site-title {
+    -fx-font-size: 16px;
+    -fx-font-weight: 600;
+    -fx-text-fill: #8b5cf6;
+}
+
+/* Modal Dialog */
+.roomsetup-modal-overlay {
+    -fx-background-color: rgba(0,0,0,0.4);
+}
+
+.roomsetup-modal-content {
+    -fx-background-color: white;
+    -fx-background-radius: 16px;
+    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.2), 40, 0, 0, 20);
+}
+
+.roomsetup-modal-header {
+    -fx-border-color: #e7e5e4;
+    -fx-border-width: 0 0 1px 0;
+}
+
+.roomsetup-modal-footer {
+    -fx-border-color: #e7e5e4;
+    -fx-border-width: 1px 0 0 0;
+    -fx-background-color: #fafaf9;
+    -fx-background-radius: 0 0 16px 16px;
+}
+
+.roomsetup-modal-title {
+    -fx-font-size: 18px;
+    -fx-font-weight: 600;
+    -fx-text-fill: #1c1917;
+}
+
+/* Form Fields */
+.roomsetup-form-label {
+    -fx-font-size: 12px;
+    -fx-font-weight: 600;
+    -fx-text-fill: #78716c;
+}
+
+.roomsetup-form-input {
+    -fx-background-color: white;
+    -fx-border-color: #e7e5e4;
+    -fx-border-width: 1px;
+    -fx-background-radius: 8px;
+    -fx-border-radius: 8px;
+    -fx-font-size: 14px;
+    -fx-text-fill: #1c1917;
+}
+
+.roomsetup-form-input:focused {
+    -fx-border-color: #0096D6;
+    -fx-effect: dropshadow(gaussian, rgba(0,150,214,0.1), 3, 0, 0, 0);
+}
+
+/* Gender Toggle Buttons */
+.roomsetup-gender-btn {
+    -fx-border-color: #e7e5e4;
+    -fx-border-width: 1px;
+    -fx-background-radius: 8px;
+    -fx-border-radius: 8px;
+    -fx-font-size: 13px;
+    -fx-font-weight: 500;
+    -fx-text-fill: #78716c;
+    -fx-background-color: white;
+    -fx-cursor: hand;
+}
+
+.roomsetup-gender-btn-selected {
+    -fx-border-color: #0096D6;
+    -fx-border-width: 2px;
+    -fx-background-color: #e0f4fc;
+    -fx-text-fill: #0096D6;
+}
+
+/* Group By Buttons */
+.roomsetup-groupby-btn {
+    -fx-background-color: white;
+    -fx-border-color: #e7e5e4;
+    -fx-border-width: 1px;
+    -fx-background-radius: 8px;
+    -fx-border-radius: 8px;
+    -fx-font-size: 13px;
+    -fx-text-fill: #78716c;
+    -fx-cursor: hand;
+}
+
+.roomsetup-groupby-btn-active {
+    -fx-background-color: #0096D6;
+    -fx-border-color: #0096D6;
+    -fx-text-fill: white;
+}
+
+/* Search Field */
+.roomsetup-search-input {
+    -fx-background-color: white;
+    -fx-border-color: #e7e5e4;
+    -fx-border-width: 1px;
+    -fx-background-radius: 8px;
+    -fx-border-radius: 8px;
+    -fx-font-size: 14px;
+}
+
+.roomsetup-search-input:focused {
+    -fx-border-color: #0096D6;
+    -fx-effect: dropshadow(gaussian, rgba(0,150,214,0.1), 3, 0, 0, 0);
+}
+
+/* Notes Section */
+.roomsetup-notes-section {
+    -fx-background-color: white;
+    -fx-border-color: #e7e5e4;
+    -fx-border-width: 1px;
+    -fx-background-radius: 12px;
+    -fx-border-radius: 12px;
+}
+
+.roomsetup-note-item {
+    -fx-background-radius: 10px;
+}
+
+.roomsetup-note-success {
+    -fx-background-color: #f0fdf4;
+    -fx-border-color: #a7f3d0;
+    -fx-border-width: 1px;
+    -fx-border-radius: 10px;
+    -fx-background-radius: 10px;
+}
+
+.roomsetup-note-warning {
+    -fx-background-color: #fefce8;
+    -fx-border-color: #fde047;
+    -fx-border-width: 1px;
+    -fx-border-radius: 10px;
+    -fx-background-radius: 10px;
+}
+
+.roomsetup-note-info {
+    -fx-background-color: #eff6ff;
+    -fx-border-color: #bfdbfe;
+    -fx-border-width: 1px;
+    -fx-border-radius: 10px;
+    -fx-background-radius: 10px;
+}
+
+.roomsetup-note-text-success {
+    -fx-text-fill: #166534;
+    -fx-font-size: 14px;
+}
+
+.roomsetup-note-text-warning {
+    -fx-text-fill: #854d0e;
+    -fx-font-size: 14px;
+}
+
+.roomsetup-note-text-info {
+    -fx-text-fill: #1e40af;
+    -fx-font-size: 14px;
+}
+
+/* Additional Components */
+.roomsetup-stat-value-medium {
+    -fx-font-size: 24px;
+    -fx-font-weight: 700;
+}
+
+.roomsetup-icon-container {
+    -fx-background-radius: 10px;
+}
+
+.roomsetup-empty-state {
+    -fx-background-color: white;
+    -fx-background-radius: 16px;
+    -fx-border-color: #e7e5e4;
+    -fx-border-radius: 16px;
+    -fx-border-width: 1px;
+}
+
+.roomsetup-empty-icon {
+    -fx-font-size: 48px;
+}
+
+.roomsetup-empty-title {
+    -fx-font-size: 18px;
+    -fx-font-weight: 600;
+}
+
+.roomsetup-badge-info {
+    -fx-background-color: #e0f4fc;
+    -fx-background-radius: 6px;
+    -fx-text-fill: #0096D6;
+    -fx-font-size: 12px;
+    -fx-font-weight: 600;
+}
+
+.roomsetup-dialog-title {
+    -fx-font-size: 16px;
+    -fx-font-weight: 600;
+}
+
+.roomsetup-modified-indicator {
+    -fx-font-size: 11px;
+    -fx-text-fill: #0096D6;
+}
+
+.roomsetup-section-label {
+    -fx-font-size: 11px;
+    -fx-font-weight: 600;
+    -fx-text-fill: #78716c;
+}
+
+.roomsetup-stepper-button {
+    -fx-background-color: white;
+    -fx-border-color: #e7e5e4;
+    -fx-border-width: 1px;
+    -fx-background-radius: 10px;
+    -fx-border-radius: 10px;
+    -fx-font-size: 20px;
+    -fx-cursor: hand;
+}
+
+.roomsetup-stepper-button:hover {
+    -fx-border-color: #0096D6;
+}
+
+.roomsetup-stepper-value {
+    -fx-font-size: 28px;
+    -fx-font-weight: 700;
+}
