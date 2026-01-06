@@ -7,6 +7,7 @@ import dev.webfx.extras.util.control.Controls;
 import dev.webfx.kit.util.properties.FXProperties;
 import dev.webfx.stack.orm.domainmodel.DataSourceModel;
 import dev.webfx.stack.orm.domainmodel.HasDataSourceModel;
+import dev.webfx.stack.orm.entity.Entities;
 import dev.webfx.stack.orm.reactive.entities.dql_to_entities.ReactiveEntitiesMapper;
 import dev.webfx.stack.routing.activity.impl.elementals.activeproperty.HasActiveProperty;
 import javafx.application.Platform;
@@ -44,6 +45,7 @@ import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.stream.Collectors;
 
 import static dev.webfx.stack.orm.dql.DqlStatement.orderBy;
@@ -90,7 +92,10 @@ public class DefaultAllocationView {
     private Label roomCountLabel;
     private HBox filterChipsContainer;
     private StackPane loadingOverlay;
-    private boolean dataLoaded = false;
+
+    // Track loading status for both critical datasets
+    private boolean roomsLoaded = false;
+    private boolean allocationsLoaded = false;
 
     public DefaultAllocationView(RoomSetupPresentationModel pm) {
         this.pm = pm;
@@ -323,21 +328,27 @@ public class DefaultAllocationView {
     private void rebuildAllocationIndex() {
         allocationsByResourceId.clear();
         for (PoolAllocation pa : poolAllocations) {
-            if (pa.getResource() != null && pa.getEvent() == null) {
-                Object resourceId = pa.getResource().getId().getPrimaryKey();
+            if (pa.getResourceId() != null && pa.getEvent() == null) {
+                Object resourceId = Entities.getPrimaryKey(pa.getResourceId());
                 allocationsByResourceId.computeIfAbsent(resourceId, k -> new ArrayList<>()).add(pa);
             }
         }
     }
 
     /**
-     * Gets allocations for a resource using O(1) HashMap lookup.
+     * Gets allocations for a resource using direct stream comparison.
+     * Uses Entities.getPrimaryKey for consistent ID comparison across different entity instances.
      * @param resource The resource to look up
      * @return List of pool allocations for the resource (empty list if none)
      */
     private List<PoolAllocation> getAllocationsForResource(Resource resource) {
         if (resource == null) return Collections.emptyList();
-        return allocationsByResourceId.getOrDefault(resource.getId().getPrimaryKey(), Collections.emptyList());
+        Object targetId = Entities.getPrimaryKey(resource);
+        // Use direct stream comparison to avoid HashMap key comparison issues
+        return poolAllocations.stream()
+                .filter(pa -> pa.getResourceId() != null && pa.getEvent() == null)
+                .filter(pa -> Objects.equals(Entities.getPrimaryKey(pa.getResourceId()), targetId))
+                .collect(Collectors.toList());
     }
 
     /**
@@ -380,7 +391,8 @@ public class DefaultAllocationView {
         Platform.runLater(() -> {
             if (roomListContainer == null) return;
 
-            // Hide loading overlay once we have data
+            // Hide loading overlay once both rooms AND allocations are loaded
+            boolean dataLoaded = roomsLoaded && allocationsLoaded;
             if (dataLoaded && loadingOverlay != null) {
                 loadingOverlay.setVisible(false);
                 loadingOverlay.setManaged(false);
@@ -641,17 +653,16 @@ public class DefaultAllocationView {
                     .ifNotNullOtherwiseEmpty(pm.organizationIdProperty(), o -> where("resource.site.organization=?", o))
                     .storeEntitiesInto(resourceConfigurations)
                     .addEntitiesHandler(entities -> {
-                        dataLoaded = true;
+                        roomsLoaded = true;
                         Platform.runLater(this::updateRoomList);
                     })
                     .setResultCacheEntry("modality/hotel/roomsetup/default-alloc-rooms")
                     .start();
 
-            // Load Pools
+            // Load Pools - global pools, not filtered by organization
             poolRem = ReactiveEntitiesMapper.<Pool>createPushReactiveChain(mixin)
                     .always("{class: 'Pool', fields: 'name,graphic,webColor,eventPool,eventType'}")
                     .always(orderBy("name"))
-                    .ifNotNullOtherwiseEmpty(pm.organizationIdProperty(), o -> where("eventType.organization=?", o))
                     .storeEntitiesInto(pools)
                     .addEntitiesHandler(entities -> {
                         Platform.runLater(this::updateFilterChips);
@@ -662,11 +673,14 @@ public class DefaultAllocationView {
 
             // Load PoolAllocations (default only - where event is null)
             poolAllocationRem = ReactiveEntitiesMapper.<PoolAllocation>createPushReactiveChain(mixin)
-                    .always("{class: 'PoolAllocation', fields: 'pool.name,pool.graphic,pool.webColor,resource.name,quantity,event'}")
+                    .always("{class: 'PoolAllocation', fields: 'pool.(name,graphic,webColor),resource,resource.name,quantity,event'}")
                     .always(where("event is null"))
                     .ifNotNullOtherwiseEmpty(pm.organizationIdProperty(), o -> where("resource.site.organization=?", o))
                     .storeEntitiesInto(poolAllocations)
-                    .addEntitiesHandler(entities -> Platform.runLater(this::updateRoomList))
+                    .addEntitiesHandler(entities -> {
+                        allocationsLoaded = true;
+                        Platform.runLater(this::updateRoomList);
+                    })
                     .setResultCacheEntry("modality/hotel/roomsetup/default-alloc-allocations")
                     .start();
 

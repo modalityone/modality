@@ -393,11 +393,10 @@ public class PoolsView {
         }
 
         if (poolRem == null) {
-            // Load Pools
+            // Load Pools - global pools, not filtered by organization
             poolRem = ReactiveEntitiesMapper.<Pool>createPushReactiveChain(mixin)
                     .always("{class: 'Pool', fields: 'name,description,graphic,webColor,eventPool,bookable,eventType,label.en'}")
                     .always(orderBy("name"))
-                    .ifNotNullOtherwiseEmpty(pm.organizationIdProperty(), o -> where("eventType.organization=?", o))
                     .storeEntitiesInto(pools)
                     .addEntitiesHandler(entities -> Platform.runLater(this::updatePoolLists))
                     .setResultCacheEntry("modality/hotel/roomsetup/pools")
