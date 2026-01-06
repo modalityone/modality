@@ -5,8 +5,6 @@ package one.modality.ecommerce.document.service.buscall;
  */
 public class DocumentServiceBusAddress {
 
-    public static final String LOAD_POLICY_METHOD_ADDRESS = "service/document/loadPolicy";
-
     public static final String LOAD_DOCUMENT_METHOD_ADDRESS = "service/document/loadDocument";
 
     public static final String LOAD_DOCUMENTS_METHOD_ADDRESS = "service/document/loadDocuments";

@@ -5,6 +5,9 @@ import dev.webfx.platform.service.SingleServiceProvider;
 import one.modality.base.shared.entities.Document;
 import one.modality.base.shared.entities.Event;
 import one.modality.ecommerce.document.service.spi.DocumentServiceProvider;
+import one.modality.ecommerce.policy.service.LoadPolicyArgument;
+import one.modality.ecommerce.policy.service.PolicyAggregate;
+import one.modality.ecommerce.policy.service.PolicyService;
 
 import java.util.ServiceLoader;
 
@@ -15,10 +18,6 @@ public final class DocumentService {
 
     private static DocumentServiceProvider getProvider() {
         return SingleServiceProvider.getProvider(DocumentServiceProvider.class, () -> ServiceLoader.load(DocumentServiceProvider.class));
-    }
-
-    public static Future<PolicyAggregate> loadPolicy(LoadPolicyArgument argument) {
-        return getProvider().loadPolicy(argument);
     }
 
     public static Future<DocumentAggregate> loadDocument(LoadDocumentArgument argument) {
@@ -63,7 +62,7 @@ public final class DocumentService {
     private static Future<PolicyAndDocumentAggregates> loadPolicyAndDocument(Event event, LoadDocumentArgument loadDocumentArgument) {
         return Future.all(
             // 0) We load the policy aggregate for this event
-            loadPolicy(new LoadPolicyArgument(event)),
+            PolicyService.loadPolicy(new LoadPolicyArgument(event)),
             // 1) And eventually the already existing booking of the user (i.e., his last booking for this event)
             loadDocumentArgument == null ? Future.succeededFuture(null) : // unless the user is not provided
                 loadDocument(loadDocumentArgument)
@@ -84,7 +83,7 @@ public final class DocumentService {
     // Note: this method doesn't rebuild the PolicyAggregate entities because no event entity was passed
     public static Future<PolicyAndDocumentAggregates> loadPolicyAndDocument(LoadDocumentArgument loadDocumentArgument) {
         return loadDocument(loadDocumentArgument)
-            .compose(documentAggregate -> loadPolicy(new LoadPolicyArgument(documentAggregate.getEventPrimaryKey()))
+            .compose(documentAggregate -> PolicyService.loadPolicy(new LoadPolicyArgument(documentAggregate.getEventPrimaryKey()))
                 .compose(policyAggregate -> Future.succeededFuture(new PolicyAndDocumentAggregates(policyAggregate, documentAggregate))));
     }
 }

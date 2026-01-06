@@ -22,6 +22,7 @@ module modality.event.frontoffice.activity.book {
     requires modality.ecommerce.document.service;
     requires modality.ecommerce.payment;
     requires modality.ecommerce.payment.client;
+    requires modality.ecommerce.policy.service;
     requires modality.event.client.event.fx;
     requires modality.event.client.lifecycle;
     requires modality.event.frontoffice.eventheader;

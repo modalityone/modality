@@ -38,8 +38,12 @@ import one.modality.booking.frontoffice.bookingform.BookingFormEntryPoint;
 import one.modality.booking.frontoffice.bookingform.BookingFormProvider;
 import one.modality.booking.frontoffice.bookingform.GatewayPaymentForm;
 import one.modality.crm.shared.services.authn.fx.FXUserPersonId;
-import one.modality.ecommerce.document.service.*;
+import one.modality.ecommerce.document.service.DocumentAggregate;
+import one.modality.ecommerce.document.service.DocumentService;
+import one.modality.ecommerce.document.service.LoadDocumentArgument;
+import one.modality.ecommerce.document.service.PolicyAndDocumentAggregates;
 import one.modality.ecommerce.payment.CancelPaymentResult;
+import one.modality.ecommerce.policy.service.PolicyAggregate;
 import one.modality.event.client.event.fx.FXEvent;
 import one.modality.event.client.event.fx.FXEventId;
 import one.modality.event.frontoffice.activities.book.account.CheckoutAccountRouting;
@@ -262,8 +266,8 @@ public final class BookEventActivity extends ViewDomainActivityBase implements B
     }
 
     private void onPolityAndDocumentAggregatesLoaded(PolicyAndDocumentAggregates policyAndDocumentAggregates) {
-        PolicyAggregate policyAggregate = policyAndDocumentAggregates.getPolicyAggregate(); // never null
-        DocumentAggregate existingBooking = policyAndDocumentAggregates.getDocumentAggregate(); // might be null
+        PolicyAggregate policyAggregate = policyAndDocumentAggregates.policyAggregate(); // never null
+        DocumentAggregate existingBooking = policyAndDocumentAggregates.documentAggregate(); // might be null
         onPolityAndDocumentAggregatesLoaded(policyAggregate, existingBooking);
     }
 

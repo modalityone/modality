@@ -19,9 +19,9 @@ import javafx.scene.paint.Color;
 import one.modality.base.backoffice.mainframe.fx.FXEventSelector;
 import one.modality.base.client.util.masterslave.ModalitySlaveEditor;
 import one.modality.base.shared.entities.Event;
-import one.modality.ecommerce.document.service.DocumentService;
-import one.modality.ecommerce.document.service.LoadPolicyArgument;
-import one.modality.ecommerce.document.service.PolicyAggregate;
+import one.modality.ecommerce.policy.service.LoadPolicyArgument;
+import one.modality.ecommerce.policy.service.PolicyAggregate;
+import one.modality.ecommerce.policy.service.PolicyService;
 import one.modality.event.client.event.fx.FXEvent;
 
 import java.util.ArrayList;
@@ -52,7 +52,7 @@ final class EventPricingActivity extends ViewDomainActivityBase {
         if (event == null) {
             eventPolicyProperty.set(null);
         } else {
-            DocumentService.loadPolicy(new LoadPolicyArgument(event))
+            PolicyService.loadPolicy(new LoadPolicyArgument(event))
                 .inUiThread()
                 .onSuccess(eventPolicy -> {
                     eventPolicy.rebuildEntities(event);

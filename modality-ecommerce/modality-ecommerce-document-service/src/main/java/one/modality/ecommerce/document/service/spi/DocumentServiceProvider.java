@@ -9,8 +9,6 @@ import dev.webfx.platform.async.Future;
  */
 public interface DocumentServiceProvider {
 
-    Future<PolicyAggregate> loadPolicy(LoadPolicyArgument argument);
-
     Future<DocumentAggregate> loadDocument(LoadDocumentArgument argument);
 
     Future<DocumentAggregate[]> loadDocuments(LoadDocumentArgument argument);

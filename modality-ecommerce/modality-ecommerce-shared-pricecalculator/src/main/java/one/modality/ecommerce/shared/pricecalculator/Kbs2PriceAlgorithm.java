@@ -6,7 +6,7 @@ import dev.webfx.platform.util.collection.Collections;
 import dev.webfx.platform.util.time.Times;
 import one.modality.base.shared.entities.*;
 import one.modality.ecommerce.document.service.DocumentAggregate;
-import one.modality.ecommerce.document.service.PolicyAggregate;
+import one.modality.ecommerce.policy.service.PolicyAggregate;
 
 import java.time.LocalDate;
 import java.util.*;

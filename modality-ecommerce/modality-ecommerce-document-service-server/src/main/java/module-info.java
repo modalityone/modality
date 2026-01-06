@@ -10,7 +10,6 @@ module modality.ecommerce.document.service.server {
     requires webfx.platform.async;
     requires webfx.platform.util;
     requires webfx.stack.com.serial;
-    requires webfx.stack.db.query;
     requires webfx.stack.orm.datasourcemodel.service;
     requires webfx.stack.orm.entity;
 

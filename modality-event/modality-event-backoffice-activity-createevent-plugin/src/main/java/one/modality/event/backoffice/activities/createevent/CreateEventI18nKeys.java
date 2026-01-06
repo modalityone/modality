@@ -5,5 +5,6 @@ public interface CreateEventI18nKeys {
 
     Object CreateEvent = "CreateEvent";
     Object CreateEventTile = "CreateEventTile";
+    Object EventName = "EventName";
 
 }

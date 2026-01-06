@@ -1,23 +1,10 @@
 package one.modality.ecommerce.document.service;
 
+import one.modality.ecommerce.policy.service.PolicyAggregate;
+
 /**
  * @author Bruno Salmon
  */
-public final class PolicyAndDocumentAggregates {
+public record PolicyAndDocumentAggregates(PolicyAggregate policyAggregate, DocumentAggregate documentAggregate) {
 
-    private final PolicyAggregate policyAggregate;
-    private final DocumentAggregate documentAggregate;
-
-    public PolicyAndDocumentAggregates(PolicyAggregate policyAggregate, DocumentAggregate documentAggregate) {
-        this.policyAggregate = policyAggregate;
-        this.documentAggregate = documentAggregate;
-    }
-
-    public PolicyAggregate getPolicyAggregate() {
-        return policyAggregate;
-    }
-
-    public DocumentAggregate getDocumentAggregate() {
-        return documentAggregate;
-    }
 }

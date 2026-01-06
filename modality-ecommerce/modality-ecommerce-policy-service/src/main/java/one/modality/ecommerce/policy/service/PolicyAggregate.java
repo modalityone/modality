@@ -1,4 +1,4 @@
-package one.modality.ecommerce.document.service;
+package one.modality.ecommerce.policy.service;
 
 import dev.webfx.platform.console.Console;
 import dev.webfx.platform.util.collection.Collections;
@@ -30,6 +30,8 @@ public final class PolicyAggregate {
     private final QueryResult ratesQueryResult;
     private final String bookablePeriodsQueryBase;
     private final QueryResult bookablePeriodsQueryResult;
+    private final String itemPoliciesQueryBase;
+    private final QueryResult itemPoliciesQueryResult;
 
     // Fields intended for application code
     private Event event;
@@ -37,14 +39,21 @@ public final class PolicyAggregate {
     private EntityList<ScheduledItem> scheduledItems;
     private EntityList<Rate> rates;
     private EntityList<BookablePeriod> bookablePeriods;
+    private EntityList<ItemPolicy> itemPolicies;
 
-    public PolicyAggregate(String scheduledItemsQueryBase, QueryResult scheduledItemsQueryResult, String ratesQueryBase, QueryResult ratesQueryResult, String bookablePeriodsQueryBase, QueryResult bookablePeriodsQueryResult) {
+    public PolicyAggregate(String scheduledItemsQueryBase, QueryResult scheduledItemsQueryResult,
+                           String ratesQueryBase, QueryResult ratesQueryResult,
+                           String bookablePeriodsQueryBase, QueryResult bookablePeriodsQueryResult,
+                           String itemPoliciesQueryBase, QueryResult itemPoliciesQueryResult
+    ) {
         this.scheduledItemsQueryBase = scheduledItemsQueryBase;
         this.scheduledItemsQueryResult = scheduledItemsQueryResult;
         this.ratesQueryBase = ratesQueryBase;
         this.ratesQueryResult = ratesQueryResult;
         this.bookablePeriodsQueryBase = bookablePeriodsQueryBase;
         this.bookablePeriodsQueryResult = bookablePeriodsQueryResult;
+        this.itemPoliciesQueryBase = itemPoliciesQueryBase;
+        this.itemPoliciesQueryResult = itemPoliciesQueryResult;
     }
 
     public void rebuildEntities(Event event) {
@@ -55,8 +64,8 @@ public final class PolicyAggregate {
         scheduledItems = QueryResultToEntitiesMapper.mapQueryResultToEntities(scheduledItemsQueryResult, queryMapping, entityStore, "scheduledItems");
         queryMapping = dataSourceModel.parseAndCompileSelect(ratesQueryBase).getQueryMapping();
         rates = QueryResultToEntitiesMapper.mapQueryResultToEntities(ratesQueryResult, queryMapping, entityStore, "rates");
-        queryMapping = dataSourceModel.parseAndCompileSelect(bookablePeriodsQueryBase).getQueryMapping();
-        bookablePeriods = QueryResultToEntitiesMapper.mapQueryResultToEntities(bookablePeriodsQueryResult, queryMapping, entityStore, "bookablePeriods");
+        queryMapping = dataSourceModel.parseAndCompileSelect(itemPoliciesQueryBase).getQueryMapping();
+        itemPolicies = QueryResultToEntitiesMapper.mapQueryResultToEntities(itemPoliciesQueryResult, queryMapping, entityStore, "itemPolicies");
     }
 
     public EntityStore getEntityStore() {
@@ -161,6 +170,10 @@ public final class PolicyAggregate {
         return wholeBookablePeriod;
     }
 
+    public EntityList<ItemPolicy> getItemPolicies() {
+        return itemPolicies;
+    }
+
     // The following methods are meant to be used for serialization, not by the application code
 
     public String getRatesQueryBase() {
@@ -187,4 +200,11 @@ public final class PolicyAggregate {
         return bookablePeriodsQueryResult;
     }
 
+    public String getItemPoliciesQueryBase() {
+        return itemPoliciesQueryBase;
+    }
+
+    public QueryResult getItemPoliciesQueryResult() {
+        return itemPoliciesQueryResult;
+    }
 }

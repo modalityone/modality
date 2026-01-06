@@ -13,8 +13,8 @@ import one.modality.base.shared.entities.BookablePeriod;
 import one.modality.base.shared.entities.Item;
 import one.modality.base.shared.entities.ScheduledItem;
 import one.modality.booking.client.workingbooking.WorkingBooking;
-import one.modality.ecommerce.document.service.PolicyAggregate;
 import one.modality.booking.frontoffice.bookingelements.BookingElements;
+import one.modality.ecommerce.policy.service.PolicyAggregate;
 
 import java.time.LocalDate;
 import java.util.List;
