@@ -8,7 +8,7 @@ import java.time.LocalDate;
 /**
  * @author Bruno Salmon
  */
-public final class LoadPolicyArgument {
+public final class LoadPolicyArgument { // Note: converting it to a record is causing a GWT compilation error
 
     private final Object organizationPk;
     private final Object eventPk;
