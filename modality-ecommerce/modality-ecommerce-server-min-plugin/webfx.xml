@@ -10,8 +10,8 @@
     <dependencies>
         <used-by-source-modules/>
 
+        <plugin-module>modality-ecommerce-policy-service-buscall</plugin-module>
         <plugin-module>modality-ecommerce-document-service-buscall</plugin-module>
-
         <plugin-module>modality-ecommerce-payment-buscall</plugin-module>
 
     </dependencies>

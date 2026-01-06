@@ -33,12 +33,12 @@ import one.modality.base.client.mainframe.fx.FXMainFrameDialogArea;
 import one.modality.base.shared.entities.Person;
 import one.modality.base.shared.entities.ScheduledItem;
 import one.modality.base.shared.entities.formatters.EventPriceFormatter;
-import one.modality.crm.client.i18n.CrmI18nKeys;
-import one.modality.crm.shared.services.authn.fx.FXModalityUserPrincipal;
 import one.modality.booking.client.workingbooking.FXPersonToBook;
 import one.modality.booking.client.workingbooking.WorkingBooking;
 import one.modality.booking.client.workingbooking.WorkingBookingProperties;
-import one.modality.ecommerce.document.service.PolicyAggregate;
+import one.modality.crm.client.i18n.CrmI18nKeys;
+import one.modality.crm.shared.services.authn.fx.FXModalityUserPrincipal;
+import one.modality.ecommerce.policy.service.PolicyAggregate;
 import one.modality.ecommerce.shared.pricecalculator.PriceCalculator;
 
 import java.util.List;

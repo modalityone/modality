@@ -12,6 +12,7 @@ import one.modality.base.shared.entities.ScheduledItem;
 import one.modality.base.shared.knownitems.KnownItemFamily;
 import one.modality.booking.backoffice.bookingeditor.family.FamilyBookingEditorBase;
 import one.modality.booking.client.workingbooking.WorkingBooking;
+import one.modality.ecommerce.policy.service.PolicyAggregate;
 
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -28,8 +29,8 @@ final class AudioRecordingBookingEditor extends FamilyBookingEditorBase {
 
     AudioRecordingBookingEditor(WorkingBooking workingBooking) {
         super(workingBooking, KnownItemFamily.AUDIO_RECORDING);
-        audioRecordingItemsToScheduledItemsMap = workingBooking.getPolicyAggregate()
-            .groupScheduledItemsByAudioRecordingItems();
+        PolicyAggregate policyAggregate = workingBooking.getPolicyAggregate();
+        audioRecordingItemsToScheduledItemsMap = policyAggregate.groupScheduledItemsByAudioRecordingItems();
         // Final subclasses should call this method:
         initiateUiAndSyncFromWorkingBooking();
     }

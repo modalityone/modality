@@ -23,10 +23,10 @@ public final class SubmitDocumentChangesResultSerialCodec extends SerialCodecBas
 
     @Override
     public void encode(SubmitDocumentChangesResult arg, AstObject serial) {
-        encodeObject(serial, DOCUMENT_PRIMARY_KEY_KEY, arg.getDocumentPrimaryKey());
-        encodeObject(serial, DOCUMENT_REF_KEY,         arg.getDocumentRef());
-        encodeObject(serial, CART_PRIMARY_KEY_KEY,     arg.getCartPrimaryKey());
-        encodeString(serial, CART_UUID_KEY,            arg.getCartUuid());
+        encodeObject(serial, DOCUMENT_PRIMARY_KEY_KEY, arg.documentPrimaryKey());
+        encodeObject(serial, DOCUMENT_REF_KEY,         arg.documentRef());
+        encodeObject(serial, CART_PRIMARY_KEY_KEY,     arg.cartPrimaryKey());
+        encodeString(serial, CART_UUID_KEY,            arg.cartUuid());
     }
 
     @Override

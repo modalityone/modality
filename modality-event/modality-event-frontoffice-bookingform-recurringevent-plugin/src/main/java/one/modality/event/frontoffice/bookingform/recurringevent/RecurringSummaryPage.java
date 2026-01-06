@@ -32,6 +32,7 @@ import one.modality.booking.client.workingbooking.WorkingBookingProperties;
 import one.modality.ecommerce.document.service.DocumentAggregate;
 import one.modality.booking.frontoffice.bookingform.BookingFormI18nKeys;
 import one.modality.booking.frontoffice.bookingpage.BookingFormPage;
+import one.modality.ecommerce.policy.service.PolicyAggregate;
 import one.modality.ecommerce.shared.pricecalculator.PriceCalculator;
 import one.modality.event.frontoffice.activities.book.event.EventBookingFormSettings;
 
@@ -90,7 +91,8 @@ final class RecurringSummaryPage implements BookingFormPage {
     public void setWorkingBookingProperties(WorkingBookingProperties workingBookingProperties) {
         WorkingBooking workingBooking = workingBookingProperties.getWorkingBooking();
         // Facility fee checkbox for events with facility fees rates
-        boolean hasFacilityFees = workingBookingProperties.getPolicyAggregate().hasFacilityFees();
+        PolicyAggregate policyAggregate = workingBookingProperties.getPolicyAggregate();
+        boolean hasFacilityFees = policyAggregate.hasFacilityFees();
         Layouts.setManagedAndVisibleProperties(facilityFeeCheckBox, hasFacilityFees);
         Document document = workingBooking.getLastestDocumentAggregate().getDocument();
         facilityFeeCheckBox.setSelected(Booleans.isTrue(document.isPersonFacilityFee()));

@@ -34,10 +34,10 @@ import one.modality.crm.shared.services.authn.fx.FXUserPerson;
 import one.modality.ecommerce.document.service.DocumentAggregate;
 import one.modality.ecommerce.document.service.DocumentService;
 import one.modality.ecommerce.document.service.LoadDocumentArgument;
-import one.modality.ecommerce.document.service.PolicyAggregate;
 import one.modality.ecommerce.payment.PaymentAllocation;
 import one.modality.ecommerce.payment.PaymentFormType;
 import one.modality.ecommerce.payment.client.ClientPaymentUtil;
+import one.modality.ecommerce.policy.service.PolicyAggregate;
 import one.modality.ecommerce.shared.pricecalculator.PriceCalculator;
 import one.modality.event.frontoffice.activities.book.event.EventBookingFormSettings;
 import one.modality.event.frontoffice.activities.book.event.slides.ProvidedGatewayPaymentForm;
@@ -785,10 +785,10 @@ public class StandardBookingForm extends MultiPageBookingForm {
         // Submit changes to the database
         return workingBooking.submitChanges(historyComment)
             .map(submitResult -> {
-                Console.log("Booking submitted successfully. Reference: " + submitResult.getDocumentRef());
+                Console.log("Booking submitted successfully. Reference: " + submitResult.documentRef());
 
                 // Store the booking reference
-                workingBookingProperties.setBookingReference(submitResult.getDocumentRef());
+                workingBookingProperties.setBookingReference(submitResult.documentRef());
 
                 // Reset reselection flag - booking is now confirmed
                 state.setAllowMemberReselection(false);

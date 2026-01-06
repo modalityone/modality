@@ -2,22 +2,21 @@ package one.modality.ecommerce.document.service.spi.impl.server;
 
 import dev.webfx.platform.ast.AST;
 import dev.webfx.platform.ast.ReadOnlyAstArray;
-import dev.webfx.platform.async.Batch;
 import dev.webfx.platform.async.Future;
 import dev.webfx.platform.util.Arrays;
 import dev.webfx.platform.util.Strings;
 import dev.webfx.platform.util.collection.Collections;
 import dev.webfx.stack.com.serial.SerialCodecManager;
-import dev.webfx.stack.db.query.QueryArgument;
-import dev.webfx.stack.db.query.QueryService;
 import dev.webfx.stack.orm.datasourcemodel.service.DataSourceModelService;
-import dev.webfx.stack.orm.entity.DqlQueries;
 import dev.webfx.stack.orm.entity.EntityStore;
 import dev.webfx.stack.orm.entity.EntityStoreQuery;
 import dev.webfx.stack.orm.entity.UpdateStore;
 import one.modality.base.shared.entities.*;
 import one.modality.base.shared.entities.triggers.Triggers;
-import one.modality.ecommerce.document.service.*;
+import one.modality.ecommerce.document.service.DocumentAggregate;
+import one.modality.ecommerce.document.service.LoadDocumentArgument;
+import one.modality.ecommerce.document.service.SubmitDocumentChangesArgument;
+import one.modality.ecommerce.document.service.SubmitDocumentChangesResult;
 import one.modality.ecommerce.document.service.events.AbstractDocumentEvent;
 import one.modality.ecommerce.document.service.events.AbstractDocumentLineEvent;
 import one.modality.ecommerce.document.service.events.book.*;
@@ -35,36 +34,6 @@ import java.util.stream.Collectors;
  * @author Bruno Salmon
  */
 public class ServerDocumentServiceProvider implements DocumentServiceProvider {
-
-    private final static String POLICY_SCHEDULED_ITEMS_QUERY_BASE = "select site.name,item.(name,label,code,family.(code,name,label),ord),date,startTime,timeline.startTime,cancelled from ScheduledItem";
-    private final static String POLICY_RATES_QUERY_BASE = "select site,item,price,perDay,perPerson,facilityFee_price,startDate,endDate,onDate,offDate,minDeposit,cutoffDate,minDeposit2,age1_max,age1_price,age1_discount,age2_max,age2_price,age2_discount,resident_price,resident_discount,resident2_price,resident2_discount from Rate";
-    private final static String POLICY_BOOKABLE_PERIODS_QUERY_BASE = "select startScheduledItem,endScheduledItem,name,label from BookablePeriod";
-
-    @Override
-    public Future<PolicyAggregate> loadPolicy(LoadPolicyArgument argument) {
-        // Managing the case of recurring event only for now
-        Object eventPk = argument.getEventPk();
-        return QueryService.executeQueryBatch(
-                new Batch<>(new QueryArgument[]{
-                    // Loading scheduled items (of this event or of the repeated event if set)
-                    DqlQueries.newQueryArgumentForDefaultDataSource(
-                        POLICY_SCHEDULED_ITEMS_QUERY_BASE + " where event = (select coalesce(repeatedEvent, id) from Event where id=$1) and bookableScheduledItem=id " +
-                        "order by site,item,date", eventPk),
-                    // Loading rates (of this event or of the repeated event if set)
-                    DqlQueries.newQueryArgumentForDefaultDataSource(
-                        POLICY_RATES_QUERY_BASE + " where site.event = (select coalesce(repeatedEvent, id) from Event where id=$1) or site = (select coalesce(repeatedEvent.venue, venue) from Event where id=$1) " +
-                        // Note: TeachingsPricing relies on the following order to work properly
-                        "order by site,item,perDay desc,startDate,endDate,price", eventPk),
-                    // Loading bookable periods (of this event or of the repeated event if set)
-                    DqlQueries.newQueryArgumentForDefaultDataSource(
-                        POLICY_BOOKABLE_PERIODS_QUERY_BASE + " where event = (select coalesce(repeatedEvent, id) from Event where id=$1)" +
-                        "order by startScheduledItem.date,endScheduledItem.date", eventPk)
-                }))
-            .map(batch -> new PolicyAggregate(
-                POLICY_SCHEDULED_ITEMS_QUERY_BASE, batch.get(0),
-                POLICY_RATES_QUERY_BASE, batch.get(1),
-                POLICY_BOOKABLE_PERIODS_QUERY_BASE, batch.get(2)));
-    }
 
     @Override
     public Future<DocumentAggregate> loadDocument(LoadDocumentArgument argument) {
@@ -168,7 +137,7 @@ public class ServerDocumentServiceProvider implements DocumentServiceProvider {
         UpdateStore updateStore = UpdateStore.create(DataSourceModelService.getDefaultDataSourceModel());
         Document document = null;
         DocumentLine documentLine = null;
-        AbstractDocumentEvent[] documentEvents = argument.getDocumentEvents();
+        AbstractDocumentEvent[] documentEvents = argument.documentEvents();
         for (AbstractDocumentEvent e : documentEvents) {
             e.setEntityStore(updateStore); // This indicates it's for submission
             e.replayEvent();
@@ -183,11 +152,11 @@ public class ServerDocumentServiceProvider implements DocumentServiceProvider {
             return Future.failedFuture("No document changes to submit");
 
         // Note: At this point, the document may be null, but in that case we at least have documentLine not null
-        return HistoryRecorder.prepareDocumentHistoriesBeforeSubmit(argument.getHistoryComment(), document, documentLine)
+        return HistoryRecorder.prepareDocumentHistoriesBeforeSubmit(argument.historyComment(), document, documentLine)
             .compose(histories -> // At this point, history.getDocument() is never null (it has eventually been
                 submitChangesAndPrepareResult(updateStore, histories[0].getDocument()) // resolved through DB reading)
                     .compose(result -> // Completing the history recording (changes column with resolved primary keys)
-                        HistoryRecorder.completeDocumentHistoriesAfterSubmit(histories, argument.getDocumentEvents())
+                        HistoryRecorder.completeDocumentHistoriesAfterSubmit(histories, argument.documentEvents())
                             .map(ignoredVoid -> result)
                     )
             );

@@ -1,4 +1,4 @@
-package one.modality.ecommerce.document.service;
+package one.modality.ecommerce.policy.service;
 
 import dev.webfx.platform.console.Console;
 import dev.webfx.platform.util.collection.Collections;

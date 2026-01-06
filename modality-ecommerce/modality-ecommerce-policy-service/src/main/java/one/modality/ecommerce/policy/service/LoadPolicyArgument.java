@@ -1,4 +1,4 @@
-package one.modality.ecommerce.document.service;
+package one.modality.ecommerce.policy.service;
 
 import one.modality.base.shared.entities.Event;
 import one.modality.base.shared.entities.Organization;

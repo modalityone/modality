@@ -13,7 +13,7 @@ module modality.event.backoffice.activity.pricing.plugin {
     requires modality.base.shared.entities;
     requires modality.base.shared.knownitems;
     requires modality.crm.backoffice.organization.fx;
-    requires modality.ecommerce.document.service;
+    requires modality.ecommerce.policy.service;
     requires modality.event.client.event.fx;
     requires webfx.extras.async;
     requires webfx.extras.i18n;

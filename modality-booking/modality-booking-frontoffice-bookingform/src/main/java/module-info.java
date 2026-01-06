@@ -8,8 +8,8 @@ module modality.booking.frontoffice.bookingform {
     requires javafx.graphics;
     requires transitive modality.base.shared.entities;
     requires modality.booking.client.workingbooking;
-    requires modality.ecommerce.document.service;
     requires transitive modality.ecommerce.payment;
+    requires modality.ecommerce.policy.service;
     requires webfx.platform.async;
 
     // Exported packages
