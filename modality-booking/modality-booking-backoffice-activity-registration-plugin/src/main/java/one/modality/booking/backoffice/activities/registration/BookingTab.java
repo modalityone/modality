@@ -20,14 +20,15 @@ import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
 import javafx.scene.text.FontWeight;
+import one.modality.base.shared.entities.Attendance;
 import one.modality.base.shared.entities.Document;
 import one.modality.base.shared.entities.DocumentLine;
 import one.modality.base.shared.entities.Event;
 
 import java.time.LocalDate;
 import java.time.temporal.ChronoUnit;
-import java.util.ArrayList;
-import java.util.Set;
+import java.util.*;
+import java.util.stream.Collectors;
 
 import static dev.webfx.stack.orm.dql.DqlStatement.where;
 import static one.modality.booking.backoffice.activities.registration.RegistrationStyles.*;
@@ -56,11 +57,16 @@ public class BookingTab {
     // Document lines loaded from database
     private final ObservableList<DocumentLine> loadedLines = FXCollections.observableArrayList();
 
+    // Attendance records loaded from database (grouped by DocumentLine ID)
+    private final ObservableList<Attendance> loadedAttendances = FXCollections.observableArrayList();
+    private Map<Object, Set<LocalDate>> attendanceDatesByLineId = new HashMap<>();
+
     // UI Components
     private BookingTimelineCanvas timelineCanvas;
     private AddOptionPanel addOptionPanel;
     private VBox lineItemsList;
     private ReactiveEntitiesMapper<DocumentLine> linesMapper;
+    private ReactiveEntitiesMapper<Attendance> attendancesMapper;
 
     // Booking dates (may differ from document dates if user is editing)
     private final ObjectProperty<LocalDate> arrivalDateProperty = new SimpleObjectProperty<>();
@@ -365,6 +371,7 @@ public class BookingTab {
 
     /**
      * Creates the timeline section with canvas.
+     * The canvas expands to show all booking options with gantt bars.
      */
     private Node createTimelineSection() {
         VBox section = new VBox(8);
@@ -395,11 +402,8 @@ public class BookingTab {
         // Handle day toggle events
         timelineCanvas.setOnDayToggled(this::handleDayToggled);
 
-        // Set min height
-        timelineCanvas.setMinHeight(120);
-
+        // Add canvas directly - it computes its own size based on event dates and lines
         section.getChildren().add(timelineCanvas);
-        VBox.setVgrow(timelineCanvas, Priority.ALWAYS);
 
         return section;
     }
@@ -508,16 +512,17 @@ public class BookingTab {
     }
 
     /**
-     * Creates the line items section.
+     * Creates the line items section for non-temporal items only.
+     * Temporal items (accommodation, meals, diet, program) are shown in the canvas above.
      */
     private Node createLineItemsSection() {
         VBox section = new VBox(8);
 
-        // Header
+        // Header - only shown when there are non-temporal items
         HBox header = new HBox(12);
         header.setAlignment(Pos.CENTER_LEFT);
 
-        Label titleLabel = new Label("Booking Options");
+        Label titleLabel = new Label("Other Options");
         titleLabel.setFont(FONT_SUBTITLE);
         titleLabel.setTextFill(TEXT);
         HBox.setHgrow(titleLabel, Priority.ALWAYS);
@@ -528,14 +533,44 @@ public class BookingTab {
         lineItemsList = new VBox(6);
 
         section.getChildren().addAll(header, lineItemsList);
+
+        // Hide section when empty (will be shown when non-temporal items are added)
+        section.managedProperty().bind(section.visibleProperty());
+        ObservableLists.runNowAndOnListChange(change -> {
+            boolean hasNonTemporalItems = loadedLines.stream()
+                .filter(line -> !Boolean.TRUE.equals(line.getFieldValue("removed")))
+                .anyMatch(line -> !isTemporalCategory(getCategoryFromLine(line)));
+            section.setVisible(hasNonTemporalItems);
+        }, loadedLines);
+
         return section;
     }
 
     /**
      * Refreshes the line items list from loaded data.
+     * Note: Temporal items (accommodation, meals, diet, program) are shown in the canvas only,
+     * not repeated in the line items list below.
      */
     private void refreshLineItems() {
         if (lineItemsList == null) return;
+
+        // DEBUG: Log loaded lines
+        System.out.println("=== DEBUG: refreshLineItems() called ===");
+        System.out.println("Total loadedLines count: " + loadedLines.size());
+        for (DocumentLine line : loadedLines) {
+            String itemName = line.getItem() != null ? line.getItem().getName() : "null";
+            String familyName = (line.getItem() != null && line.getItem().getFamily() != null)
+                ? line.getItem().getFamily().getName() : "null";
+            String category = getCategoryFromLine(line);
+            System.out.println("  - Line: " + itemName +
+                " | Family: " + familyName +
+                " | Category: " + category +
+                " | StartDate: " + line.getStartDate() +
+                " | EndDate: " + line.getEndDate() +
+                " | Cancelled: " + line.isCancelled() +
+                " | Removed: " + line.getFieldValue("removed"));
+        }
+        System.out.println("========================================");
 
         lineItemsList.getChildren().clear();
 
@@ -543,11 +578,15 @@ public class BookingTab {
             // Skip removed lines
             if (Boolean.TRUE.equals(line.getFieldValue("removed"))) continue;
 
+            // Skip temporal items - they're shown in the canvas, not the list below
+            String category = getCategoryFromLine(line);
+            if (isTemporalCategory(category)) continue;
+
             Node card = createLineItemCard(line);
             lineItemsList.getChildren().add(card);
         }
 
-        // Update timeline canvas
+        // Update timeline canvas with ALL lines (removed lines will be shown with reduced opacity)
         if (timelineCanvas != null) {
             timelineCanvas.getDocumentLines().setAll(loadedLines);
         }
@@ -840,7 +879,7 @@ public class BookingTab {
     // No need for manual updateTimelineCanvas() method
 
     /**
-     * Sets up the reactive lines mapper.
+     * Sets up the reactive lines mapper and attendance mapper.
      */
     public void setupLinesMapper() {
         if (linesMapper == null && documentIdProperty.get() != null) {
@@ -856,6 +895,50 @@ public class BookingTab {
 
             // Update UI when loadedLines changes
             ObservableLists.runNowAndOnListChange(change -> refreshLineItems(), loadedLines);
+        }
+
+        // Also load attendance records to know which specific days are booked for each line
+        if (attendancesMapper == null && documentIdProperty.get() != null) {
+            attendancesMapper = ReactiveEntitiesMapper.<Attendance>createPushReactiveChain(activity)
+                // Load attendance with documentLine reference and date
+                .always("{class: 'Attendance', alias: 'a', fields: 'documentLine,date', orderBy: 'date'}")
+                // Filter by document using subquery
+                .always(documentIdProperty, docId -> where("documentLine.document=?", docId))
+                .storeEntitiesInto(loadedAttendances)
+                .start();
+
+            // Update attendance map when attendances change
+            ObservableLists.runNowAndOnListChange(change -> updateAttendanceDatesMap(), loadedAttendances);
+        }
+    }
+
+    /**
+     * Updates the attendance dates map from loaded attendances.
+     * Groups attendance dates by DocumentLine ID for quick lookup.
+     */
+    private void updateAttendanceDatesMap() {
+        attendanceDatesByLineId.clear();
+        for (Attendance att : loadedAttendances) {
+            Object lineId = att.getDocumentLineId() != null ? att.getDocumentLineId().getPrimaryKey() : null;
+            LocalDate date = att.getDate();
+            if (lineId != null && date != null) {
+                attendanceDatesByLineId
+                    .computeIfAbsent(lineId, k -> new HashSet<>())
+                    .add(date);
+            }
+        }
+
+        // Debug output
+        System.out.println("=== DEBUG: updateAttendanceDatesMap() ===");
+        System.out.println("Loaded " + loadedAttendances.size() + " attendance records");
+        for (Map.Entry<Object, Set<LocalDate>> entry : attendanceDatesByLineId.entrySet()) {
+            System.out.println("  LineId " + entry.getKey() + ": " + entry.getValue().size() + " dates - " + entry.getValue());
+        }
+        System.out.println("=========================================");
+
+        // Update canvas with attendance dates
+        if (timelineCanvas != null) {
+            timelineCanvas.setAttendanceDates(attendanceDatesByLineId);
         }
     }
 

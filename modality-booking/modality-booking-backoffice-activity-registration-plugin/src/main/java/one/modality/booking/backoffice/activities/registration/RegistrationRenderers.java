@@ -12,6 +12,8 @@ import javafx.scene.shape.Circle;
 import javafx.scene.text.Font;
 import javafx.scene.text.FontWeight;
 import one.modality.base.shared.entities.Document;
+import one.modality.base.shared.entities.Event;
+import one.modality.base.shared.entities.formatters.EventPriceFormatter;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -243,7 +245,7 @@ final class RegistrationRenderers {
 
     // ═══════════════════════════════════════════════════════════════════════════════
     // DATES COLUMN RENDERER
-    // JSX lines 2425-2444
+    // JSX lines 2440-2456 - displays arrival → departure dates
     // ═══════════════════════════════════════════════════════════════════════════════
 
     private static void registerDatesRenderer() {
@@ -262,21 +264,50 @@ final class RegistrationRenderers {
             calIcon.setTextFill(TEXT_MUTED);
             dateLine.getChildren().add(calIcon);
 
-            // Format dates - use event start/end dates
-            LocalDate startDate = getLocalDateFromField(doc.getFieldValue("event.startDate"));
-            LocalDate endDate = getLocalDateFromField(doc.getFieldValue("event.endDate"));
+            // Parse attendance dates from document's dates field
+            // Format from compute_dates SQL function: "DD/MM" or "DD/MM-DD/MM" or "DD/MM,DD/MM-DD/MM"
+            // Examples: "15/03", "15/03-22/03", "15/03,17/03-22/03"
+            String datesStr = doc.getDates();
+            LocalDate firstAttendanceDay = null;
+            LocalDate lastAttendanceDay = null;
+
+            // Get the year from the event to complete the dates
+            Event event = doc.getEvent();
+            int year = event != null && event.getStartDate() != null
+                ? event.getStartDate().getYear()
+                : LocalDate.now().getYear();
+
+            if (datesStr != null && !datesStr.trim().isEmpty()) {
+                // Parse the first date (before any comma or dash)
+                // and the last date (after the last dash, or last comma segment's last dash)
+                String firstPart = datesStr.split(",")[0].split("-")[0].trim();
+                String[] segments = datesStr.split(",");
+                String lastSegment = segments[segments.length - 1].trim();
+                String lastPart = lastSegment.contains("-")
+                    ? lastSegment.split("-")[1].trim()
+                    : lastSegment.split("-")[0].trim();
+
+                firstAttendanceDay = parseDDMMDate(firstPart, year);
+                lastAttendanceDay = parseDDMMDate(lastPart, year);
+            }
 
             String dateRange = "";
             String yearText = "";
 
-            if (startDate != null && endDate != null) {
-                dateRange = startDate.format(DATE_FORMAT_SHORT) + " → " + endDate.format(DATE_FORMAT_SHORT);
+            if (firstAttendanceDay != null && lastAttendanceDay != null) {
+                // Format: "15 Mar → 22 Mar"
+                dateRange = firstAttendanceDay.format(DATE_FORMAT_SHORT) + " → " + lastAttendanceDay.format(DATE_FORMAT_SHORT);
 
-                int startYear = startDate.getYear();
-                int endYear = endDate.getYear();
-                yearText = startYear == endYear
-                    ? String.valueOf(startYear)
-                    : startYear + " → " + endYear;
+                // Year display: same year shows one year, different years shows range
+                int firstYear = firstAttendanceDay.getYear();
+                int lastYear = lastAttendanceDay.getYear();
+                yearText = firstYear == lastYear
+                    ? String.valueOf(firstYear)
+                    : firstYear + " → " + lastYear;
+            } else if (firstAttendanceDay != null) {
+                // Single day attendance
+                dateRange = firstAttendanceDay.format(DATE_FORMAT_SHORT);
+                yearText = String.valueOf(firstAttendanceDay.getYear());
             }
 
             // Date range: 13px, color: textSecondary
@@ -355,8 +386,11 @@ final class RegistrationRenderers {
                 badge = createBadge("Unpaid", DANGER, DANGER_LIGHT, 12);
             }
 
-            // Amount: 12px, color: textMuted
-            Label amountLabel = new Label("£" + paidAmount + " / £" + total);
+            // Amount: 12px, color: textMuted - format using EventPriceFormatter (converts cents to currency)
+            Event event = doc.getEvent();
+            String paidFormatted = EventPriceFormatter.formatWithCurrency(paidAmount, event);
+            String totalFormatted = EventPriceFormatter.formatWithCurrency(total, event);
+            Label amountLabel = new Label(paidFormatted + " / " + totalFormatted);
             amountLabel.setFont(FONT_12);
             amountLabel.setTextFill(TEXT_MUTED);
 
@@ -377,8 +411,10 @@ final class RegistrationRenderers {
             container.setAlignment(Pos.CENTER_LEFT);
 
             // Get accommodation info from view's batch-loaded lookup map (O(1) access)
+            // Use getPrimaryKey() for reliable HashMap lookup (EntityId objects don't match across queries)
+            Object docPk = doc.getPrimaryKey();
             RegistrationListView.AccommodationInfo accoInfo = view != null ?
-                view.getAccommodationInfo(doc.getId()) : null;
+                view.getAccommodationInfo(docPk) : null;
 
             // Accommodation type line
             HBox typeLine = new HBox(6);
@@ -526,6 +562,25 @@ final class RegistrationRenderers {
         } catch (Exception e) {
             return null;
         }
+    }
+
+    /**
+     * Parses a date in DD/MM format with the given year.
+     * Format: "15/03" -> LocalDate(year, 3, 15)
+     */
+    private static LocalDate parseDDMMDate(String ddmm, int year) {
+        if (ddmm == null || ddmm.isEmpty()) return null;
+        try {
+            String[] parts = ddmm.split("/");
+            if (parts.length == 2) {
+                int day = Integer.parseInt(parts[0].trim());
+                int month = Integer.parseInt(parts[1].trim());
+                return LocalDate.of(year, month, day);
+            }
+        } catch (Exception e) {
+            // Ignore parsing errors
+        }
+        return null;
     }
 
     /**
