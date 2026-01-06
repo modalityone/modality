@@ -23,8 +23,8 @@ public final class SubmitDocumentChangesArgumentSerialCodec extends SerialCodecB
 
     @Override
     public void encode(SubmitDocumentChangesArgument arg, AstObject serial) {
-        encodeString(serial, HISTORY_COMMENT_KEY, arg.getHistoryComment());
-        encodeArray( serial, DOCUMENT_EVENTS_KEY, arg.getDocumentEvents());
+        encodeString(serial, HISTORY_COMMENT_KEY, arg.historyComment());
+        encodeArray( serial, DOCUMENT_EVENTS_KEY, arg.documentEvents());
     }
 
     @Override

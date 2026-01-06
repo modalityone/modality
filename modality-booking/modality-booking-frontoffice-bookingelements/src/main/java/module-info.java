@@ -14,7 +14,7 @@ module modality.booking.frontoffice.bookingelements {
     requires modality.crm.client.authn.fx;
     requires modality.crm.client.i18n;
     requires modality.ecommerce.client.i18n;
-    requires modality.ecommerce.document.service;
+    requires modality.ecommerce.policy.service;
     requires modality.ecommerce.shared.pricecalculator;
     requires webfx.extras.aria;
     requires webfx.extras.controlfactory;

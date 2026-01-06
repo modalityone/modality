@@ -6,9 +6,13 @@ import dev.webfx.extras.i18n.controls.I18nControls;
 import dev.webfx.extras.panes.MonoPane;
 import dev.webfx.extras.util.control.Controls;
 import dev.webfx.extras.util.dialog.DialogCallback;
+import dev.webfx.extras.util.dialog.DialogUtil;
+import dev.webfx.extras.styles.bootstrap.Bootstrap;
 import dev.webfx.extras.validation.ValidationSupport;
 import dev.webfx.kit.util.properties.FXProperties;
 import dev.webfx.platform.console.Console;
+import dev.webfx.platform.uischeduler.UiScheduler;
+import one.modality.base.client.mainframe.fx.FXMainFrameDialogArea;
 import dev.webfx.stack.orm.entity.EntityId;
 import dev.webfx.stack.orm.entity.EntityStore;
 import dev.webfx.stack.orm.entity.UpdateStore;
@@ -381,38 +385,87 @@ public class BuildingDialog implements DialogManager.ManagedDialog {
     }
 
     public void save(DialogCallback dialogCallback) {
+        Console.log("BuildingDialog.save() called");
+
         // Validate required fields first
         if (!validationSupport.isValid()) {
+            Console.log("Validation failed - required fields not filled");
             return;
         }
 
+        Console.log("Validation passed. existingBuilding=" + (existingBuilding != null) + ", resolvedSite=" + (resolvedSite != null));
+
+        // For new buildings, ensure we have the site before saving
+        if (existingBuilding == null && resolvedSite == null) {
+            // Site not loaded yet - query it now before saving
+            EntityId orgId = FXOrganizationId.getOrganizationId();
+            Console.log("Organization ID: " + orgId);
+            if (orgId == null) {
+                Console.log("Error: No organization selected");
+                showError("Cannot save building: No organization selected.");
+                return;
+            }
+            EntityStore entityStore = EntityStore.create(dataSourceModel);
+            entityStore.<Organization>executeQuery("select globalSite from Organization where id=?", orgId)
+                    .onSuccess(organizations -> {
+                        Console.log("Organization query returned " + organizations.size() + " results");
+                        if (!organizations.isEmpty()) {
+                            Organization org = organizations.get(0);
+                            resolvedSite = org.getGlobalSite();
+                            Console.log("Resolved site for new building: " + (resolvedSite != null ? resolvedSite.getName() : "null"));
+                            if (resolvedSite == null) {
+                                Console.log("ERROR: globalSite is null for organization " + orgId);
+                            }
+                            // Now perform the actual save
+                            performSave(dialogCallback);
+                        } else {
+                            Console.log("Error: Could not find organization");
+                            showError("Cannot save building: Organization not found.");
+                        }
+                    })
+                    .onFailure(e -> {
+                        Console.log("Error loading organization site: " + e.getMessage());
+                        showError("Cannot save building: " + e.getMessage());
+                    });
+        } else {
+            performSave(dialogCallback);
+        }
+    }
+
+    private void performSave(DialogCallback dialogCallback) {
+        Console.log("performSave() called, resolvedSite=" + (resolvedSite != null ? resolvedSite.getName() : "null"));
         try {
             String name = nameField.getText();
+            Console.log("Building name: " + name);
 
             UpdateStore updateStore = UpdateStore.create(dataSourceModel);
 
             Building building;
             if (existingBuilding != null) {
+                Console.log("Updating existing building");
                 building = updateStore.updateEntity(existingBuilding);
             } else {
+                Console.log("Creating new building");
                 building = updateStore.insertEntity(Building.class);
                 // Set the site from organization's globalSite
                 if (resolvedSite != null) {
+                    Console.log("Setting site: " + resolvedSite.getName());
                     building.setSite(resolvedSite);
                 } else {
-                    Console.log("Warning: Could not resolve site for new building");
-                    // Try to use organization ID directly to query site
-                    EntityId orgId = FXOrganizationId.getOrganizationId();
-                    if (orgId != null) {
-                        Console.log("Using organization ID to set site: " + orgId);
-                    }
+                    Console.log("Error: Could not resolve site for new building - save aborted");
+                    showError("Cannot save building: No site is configured for this organization. Please contact an administrator.");
+                    return;
                 }
             }
 
             building.setName(name.trim());
+            Console.log("Submitting changes...");
 
             updateStore.submitChanges()
-                    .onFailure(error -> Console.log("Error saving building: " + error.getMessage()))
+                    .onFailure(error -> {
+                        Console.log("Error saving building: " + error.getMessage());
+                        showError("Error saving building: " + error.getMessage());
+                    })
                     .onSuccess(result -> {
                         Console.log("Building saved successfully");
                         // Update image path for newly created building
@@ -430,7 +483,9 @@ public class BuildingDialog implements DialogManager.ManagedDialog {
                     });
 
         } catch (Exception e) {
-            Console.log("Error in save: " + e.getMessage());
+            Console.log("Error in performSave: " + e.getMessage());
+            e.printStackTrace();
+            showError("Error saving building: " + e.getMessage());
         }
     }
 
@@ -449,5 +504,42 @@ public class BuildingDialog implements DialogManager.ManagedDialog {
         //
         // For now, buildings can only be renamed, not deleted.
         dialogCallback.closeDialog();
+    }
+
+    private void showError(String message) {
+        UiScheduler.runInUiThread(() -> {
+            VBox dialogContent = new VBox(20);
+            dialogContent.setPadding(new Insets(30));
+            dialogContent.setMinWidth(350);
+            dialogContent.setPrefWidth(500);
+            dialogContent.setMaxWidth(700);
+
+            // Title
+            Label titleLabel = Bootstrap.strong(new Label("Error"));
+            titleLabel.setMaxWidth(Double.MAX_VALUE);
+
+            // Content
+            Label contentLabel = new Label(message);
+            contentLabel.setWrapText(true);
+            contentLabel.setMaxWidth(Double.MAX_VALUE);
+
+            dialogContent.getChildren().addAll(titleLabel, contentLabel);
+
+            // OK Button
+            HBox footer = new HBox();
+            footer.setAlignment(Pos.CENTER_RIGHT);
+
+            Button okButton = Bootstrap.dangerButton(I18nControls.newButton(RoomSetupI18nKeys.OK));
+
+            footer.getChildren().add(okButton);
+            dialogContent.getChildren().add(footer);
+
+            // Show dialog
+            BorderPane dialogPane = new BorderPane(dialogContent);
+            DialogCallback dialogCallback = DialogUtil.showModalNodeInGoldLayout(dialogPane, FXMainFrameDialogArea.getDialogArea());
+
+            // Button action
+            okButton.setOnAction(e -> dialogCallback.closeDialog());
+        });
     }
 }

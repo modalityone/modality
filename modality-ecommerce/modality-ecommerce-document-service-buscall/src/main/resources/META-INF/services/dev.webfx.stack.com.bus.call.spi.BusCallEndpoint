@@ -1,4 +1,3 @@
-one.modality.ecommerce.document.service.buscall.LoadPolicyMethodEndpoint
 one.modality.ecommerce.document.service.buscall.LoadDocumentMethodEndpoint
 one.modality.ecommerce.document.service.buscall.LoadDocumentsMethodEndpoint
 one.modality.ecommerce.document.service.buscall.SubmitDocumentMethodEndpoint

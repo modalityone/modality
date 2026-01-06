@@ -23,6 +23,7 @@ import one.modality.ecommerce.document.service.events.AbstractDocumentLineEvent;
 import one.modality.ecommerce.document.service.events.book.*;
 import one.modality.ecommerce.document.service.events.registration.documentline.PriceDocumentLineEvent;
 import one.modality.ecommerce.document.service.util.DocumentEvents;
+import one.modality.ecommerce.policy.service.PolicyAggregate;
 import one.modality.ecommerce.shared.pricecalculator.PriceCalculator;
 
 import java.util.List;
@@ -349,7 +350,7 @@ public final class WorkingBooking {
             new SubmitDocumentChangesArgument(historyComment, documentChanges.toArray(new AbstractDocumentEvent[0]))
         ).compose(result -> {
             // The submitting was successful at this point, and we reload the latest version of the booking TODO: make this as on option in SubmitDocumentChangesArgument
-            return DocumentService.loadDocument(LoadDocumentArgument.ofDocument(result.getDocumentPrimaryKey()))
+            return DocumentService.loadDocument(LoadDocumentArgument.ofDocument(result.documentPrimaryKey()))
                 .map(documentAggregate -> {
                     // We set the polityAggregate (was already loaded), and this also rebuilds internal entities (document, changes)
                     documentAggregate.setPolicyAggregate(policyAggregate);
@@ -483,8 +484,8 @@ public final class WorkingBooking {
     public static Future<WorkingBooking> loadWorkingBooking(Document document) {
         return DocumentService.loadDocumentWithPolicy(document)
             .map(policyAndDocumentAggregates -> {
-                PolicyAggregate policyAggregate = policyAndDocumentAggregates.getPolicyAggregate(); // never null
-                DocumentAggregate existingBooking = policyAndDocumentAggregates.getDocumentAggregate(); // might be null
+                PolicyAggregate policyAggregate = policyAndDocumentAggregates.policyAggregate(); // never null
+                DocumentAggregate existingBooking = policyAndDocumentAggregates.documentAggregate(); // might be null
                 return new WorkingBooking(policyAggregate, existingBooking);
             });
     }

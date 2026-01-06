@@ -138,7 +138,15 @@ public abstract class StepSlide implements Supplier<Node> {
                     // No more slide to show, we just wait the redirected payment page to replace this app
                 else { // Embedded payment form
                     // Creating and displaying the gateway payment form
-                    GatewayPaymentForm gatewayPaymentForm = new ProvidedGatewayPaymentForm(webPaymentForm, this);
+                    GatewayPaymentForm gatewayPaymentForm = new ProvidedGatewayPaymentForm(webPaymentForm, getEvent(), this::displayErrorMessage, this::displayCancellationSlide, status -> {
+                        if (status.isPending()) {
+                            displayPendingPaymentSlide();
+                        } else if (status.isSuccessful()) {
+                            displayThankYouSlide();
+                        } else { // failed payment
+                            displayFailedPaymentSlide();
+                        }
+                    });
                     if (gatewayPaymentFormDisplayer != null)
                         gatewayPaymentFormDisplayer.accept(gatewayPaymentForm);
                     else

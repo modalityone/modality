@@ -33,6 +33,13 @@ final class RoomSetupActivity extends OrganizationDependentViewDomainActivity {
     final BorderPane container = new BorderPane();
     private final TabsBar<Node> headerTabsBar = new TabsBar<>(this, container::setCenter);
 
+    // Lazy loading flags - track if logic has been started for each view
+    private boolean roomManagementLogicStarted = false;
+    private boolean buildingsLogicStarted = false;
+    private boolean poolsLogicStarted = false;
+    private boolean defaultAllocationLogicStarted = false;
+    private boolean siteComparisonLogicStarted = false;
+
     public RoomSetupActivity() {
         pm.doFXBindings();
     }
@@ -40,12 +47,13 @@ final class RoomSetupActivity extends OrganizationDependentViewDomainActivity {
     @Override
     public Node buildUi() {
         // Creating the tabs buttons that will appear in the main frame header tabs bar (see onResume())
+        // Using onSelected callbacks for lazy loading - view logic starts only when tab is first selected
         headerTabsBar.setTabs(
-                headerTabsBar.createTab("Room config", this::buildRoomManagementView),
-                headerTabsBar.createTab("Buildings", this::buildBuildingsView),
-                headerTabsBar.createTab("Pools", this::buildPoolsView),
-                headerTabsBar.createTab("Default allocation", this::buildDefaultAllocationView),
-                headerTabsBar.createTab("Site comparison", this::buildSiteComparisonView)
+                headerTabsBar.createTab("Room config", this::buildRoomManagementView, this::onRoomManagementTabSelected),
+                headerTabsBar.createTab("Buildings", this::buildBuildingsView, this::onBuildingsTabSelected),
+                headerTabsBar.createTab("Pools", this::buildPoolsView, this::onPoolsTabSelected),
+                headerTabsBar.createTab("Default allocation", this::buildDefaultAllocationView, this::onDefaultAllocationTabSelected),
+                headerTabsBar.createTab("Site comparison", this::buildSiteComparisonView, this::onSiteComparisonTabSelected)
         );
         // returning the container
         return container;
@@ -71,6 +79,42 @@ final class RoomSetupActivity extends OrganizationDependentViewDomainActivity {
         return siteComparisonView.buildView();
     }
 
+    // Tab selection callbacks for lazy loading - start view logic only on first selection
+    private void onRoomManagementTabSelected() {
+        if (!roomManagementLogicStarted) {
+            roomManagementView.startLogic(this);
+            roomManagementLogicStarted = true;
+        }
+    }
+
+    private void onBuildingsTabSelected() {
+        if (!buildingsLogicStarted) {
+            buildingsView.startLogic(this);
+            buildingsLogicStarted = true;
+        }
+    }
+
+    private void onPoolsTabSelected() {
+        if (!poolsLogicStarted) {
+            poolsView.startLogic(this);
+            poolsLogicStarted = true;
+        }
+    }
+
+    private void onDefaultAllocationTabSelected() {
+        if (!defaultAllocationLogicStarted) {
+            defaultAllocationView.startLogic(this);
+            defaultAllocationLogicStarted = true;
+        }
+    }
+
+    private void onSiteComparisonTabSelected() {
+        if (!siteComparisonLogicStarted) {
+            siteComparisonView.startLogic(this);
+            siteComparisonLogicStarted = true;
+        }
+    }
+
     @Override
     public void onResume() {
         super.onResume();
@@ -89,11 +133,10 @@ final class RoomSetupActivity extends OrganizationDependentViewDomainActivity {
 
     @Override
     protected void startLogic() {
-        roomManagementView.startLogic(this);
-        buildingsView.startLogic(this);
-        poolsView.startLogic(this);
-        defaultAllocationView.startLogic(this);
-        siteComparisonView.startLogic(this);
+        // Lazy loading optimization: Views start logic only when their tab is first selected.
+        // This keeps the DOM light and improves browser responsiveness after GWT compilation.
+        // The first tab (Room config) is selected automatically by TabsBar.addTabs(),
+        // which triggers onRoomManagementTabSelected() and starts that view's logic.
     }
 
     @Override

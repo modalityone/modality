@@ -11,6 +11,7 @@ module modality.booking.backoffice.bookingeditor {
     requires modality.base.shared.entities;
     requires modality.base.shared.knownitems;
     requires modality.booking.client.workingbooking;
+    requires modality.ecommerce.policy.service;
     requires webfx.extras.async;
     requires webfx.extras.controlfactory;
     requires webfx.extras.i18n.controls;

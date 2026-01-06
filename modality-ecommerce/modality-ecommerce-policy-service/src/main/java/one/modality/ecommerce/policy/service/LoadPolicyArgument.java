@@ -1,4 +1,4 @@
-package one.modality.ecommerce.document.service;
+package one.modality.ecommerce.policy.service;
 
 import one.modality.base.shared.entities.Event;
 import one.modality.base.shared.entities.Organization;
@@ -8,7 +8,7 @@ import java.time.LocalDate;
 /**
  * @author Bruno Salmon
  */
-public final class LoadPolicyArgument {
+public final class LoadPolicyArgument { // Note: converting it to a record is causing a GWT compilation error
 
     private final Object organizationPk;
     private final Object eventPk;

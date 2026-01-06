@@ -268,7 +268,7 @@ public final class ServerPaymentServiceProvider implements PaymentServiceProvide
                 // meant to pay all previous options).
                 return DocumentService.loadDocumentWithPolicyAndWholeHistory(document)
                     .compose(policyAndDocumentAggregates -> {
-                        DocumentAggregate documentAggregate = policyAndDocumentAggregates.getDocumentAggregate();
+                        DocumentAggregate documentAggregate = policyAndDocumentAggregates.documentAggregate();
                         // Searching for the last successful payment (shouldn't be null as there is a price deposit)
                         MoneyTransfer lastSuccessfulPayment = documentAggregate.getSuccessfulMoneyTransfersStream().reduce((first, second) -> second).orElse(null);
                         // Searching for the event marking this payment as successful

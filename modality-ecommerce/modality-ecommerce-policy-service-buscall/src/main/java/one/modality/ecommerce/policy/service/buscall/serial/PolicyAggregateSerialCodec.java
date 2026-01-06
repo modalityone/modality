@@ -1,9 +1,9 @@
-package one.modality.ecommerce.document.service.buscall.serial;
+package one.modality.ecommerce.policy.service.buscall.serial;
 
 import dev.webfx.platform.ast.AstObject;
 import dev.webfx.platform.ast.ReadOnlyAstObject;
 import dev.webfx.stack.com.serial.spi.impl.SerialCodecBase;
-import one.modality.ecommerce.document.service.PolicyAggregate;
+import one.modality.ecommerce.policy.service.PolicyAggregate;
 
 /**
  * @author Bruno Salmon
@@ -17,6 +17,8 @@ public final class PolicyAggregateSerialCodec extends SerialCodecBase<PolicyAggr
     private static final String RATES_QUERY_RESULT_KEY = "rqr";
     private static final String BOOKABLE_PERIODS_QUERY_BASE_KEY = "bpqb";
     private static final String BOOKABLE_PERIODS_QUERY_RESULT_KEY = "bpqr";
+    private static final String ITEM_POLICIES_QUERY_BASE_KEY = "ipqb";
+    private static final String ITEM_POLICIES_QUERY_RESULT_KEY = "ipqr";
 
 
     public PolicyAggregateSerialCodec() {
@@ -31,6 +33,8 @@ public final class PolicyAggregateSerialCodec extends SerialCodecBase<PolicyAggr
         encodeObject(serial, RATES_QUERY_RESULT_KEY,            pa.getRatesQueryResult());
         encodeString(serial, BOOKABLE_PERIODS_QUERY_BASE_KEY,   pa.getBookablePeriodsQueryBase());
         encodeObject(serial, BOOKABLE_PERIODS_QUERY_RESULT_KEY, pa.getBookablePeriodsQueryResult());
+        encodeString(serial, ITEM_POLICIES_QUERY_BASE_KEY,      pa.getItemPoliciesQueryBase());
+        encodeObject(serial, ITEM_POLICIES_QUERY_RESULT_KEY,    pa.getItemPoliciesQueryResult());
     }
 
     @Override
@@ -41,6 +45,9 @@ public final class PolicyAggregateSerialCodec extends SerialCodecBase<PolicyAggr
             decodeString(serial, RATES_QUERY_BASE_KEY),
             decodeObject(serial, RATES_QUERY_RESULT_KEY),
             decodeString(serial, BOOKABLE_PERIODS_QUERY_BASE_KEY),
-            decodeObject(serial, BOOKABLE_PERIODS_QUERY_RESULT_KEY));
+            decodeObject(serial, BOOKABLE_PERIODS_QUERY_RESULT_KEY),
+            decodeString(serial, ITEM_POLICIES_QUERY_BASE_KEY),
+            decodeObject(serial, ITEM_POLICIES_QUERY_RESULT_KEY)
+        );
     }
 }

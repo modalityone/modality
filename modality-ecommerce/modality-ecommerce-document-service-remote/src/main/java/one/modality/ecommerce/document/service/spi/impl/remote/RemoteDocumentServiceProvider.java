@@ -13,11 +13,6 @@ import dev.webfx.platform.async.Future;
 public class RemoteDocumentServiceProvider implements DocumentServiceProvider {
 
     @Override
-    public Future<PolicyAggregate> loadPolicy(LoadPolicyArgument argument) {
-        return BusCallService.call(DocumentServiceBusAddress.LOAD_POLICY_METHOD_ADDRESS, argument);
-    }
-
-    @Override
     public Future<DocumentAggregate> loadDocument(LoadDocumentArgument argument) {
         return BusCallService.call(DocumentServiceBusAddress.LOAD_DOCUMENT_METHOD_ADDRESS, argument);
     }

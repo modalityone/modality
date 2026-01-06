@@ -6,6 +6,7 @@ import one.modality.base.shared.entities.ScheduledItem;
 import one.modality.base.shared.entities.util.ScheduledItems;
 import one.modality.base.shared.knownitems.KnownItemFamily;
 import one.modality.booking.client.workingbooking.WorkingBooking;
+import one.modality.ecommerce.policy.service.PolicyAggregate;
 
 import java.time.LocalDate;
 import java.util.List;
@@ -27,7 +28,8 @@ public abstract class FamilyBookingEditorBase extends BookingEditorBase {
     // These methods are not directly used by this class but are provided to be used by the subclasses.
 
     protected List<ScheduledItem> getPolicyFamilyScheduledItems() {
-        return workingBooking.getPolicyAggregate().filterScheduledItemsOfFamily(knownItemFamily);
+        PolicyAggregate policyAggregate = workingBooking.getPolicyAggregate();
+        return policyAggregate.filterScheduledItemsOfFamily(knownItemFamily);
     }
 
     protected List<Attendance> getBookedAttendances() {

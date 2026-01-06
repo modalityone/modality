@@ -308,7 +308,7 @@ final class Step1BookingFormAndSubmitSlide extends StepSlide implements BookingF
                     Console.log(throwable);
                 })
                 .onSuccess(result -> {
-                    workingBookingProperties.setBookingReference(result.getDocumentRef());
+                    workingBookingProperties.setBookingReference(result.documentRef());
                     payOrThankYou(paymentDeposit, gatewayPaymentFormDisplayer);
                 });
         }

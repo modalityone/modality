@@ -8,6 +8,7 @@ import one.modality.ecommerce.document.service.events.book.*;
 import one.modality.ecommerce.document.service.events.registration.documentline.PriceDocumentLineEvent;
 import one.modality.ecommerce.document.service.events.registration.documentline.RemoveDocumentLineEvent;
 import one.modality.ecommerce.document.service.events.registration.moneytransfer.RemoveMoneyTransferEvent;
+import one.modality.ecommerce.policy.service.PolicyAggregate;
 
 import java.util.ArrayList;
 import java.util.Arrays;

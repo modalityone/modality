@@ -12,7 +12,7 @@ import one.modality.base.shared.entities.SiteItem;
 import one.modality.base.shared.knownitems.KnownItemFamily;
 import one.modality.base.shared.knownitems.KnownItemI18nKeys;
 import one.modality.crm.backoffice.organization.fx.FXOrganization;
-import one.modality.ecommerce.document.service.PolicyAggregate;
+import one.modality.ecommerce.policy.service.PolicyAggregate;
 
 /**
  * @author Bruno Salmon

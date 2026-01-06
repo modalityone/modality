@@ -1,7 +1,7 @@
 package one.modality.event.backoffice.activities.pricing;
 
-import dev.webfx.extras.i18n.controls.I18nControls;
 import dev.webfx.extras.async.AsyncSpinner;
+import dev.webfx.extras.i18n.controls.I18nControls;
 import dev.webfx.extras.styles.bootstrap.Bootstrap;
 import dev.webfx.extras.time.TimeUtil;
 import dev.webfx.extras.validation.ValidationSupport;
@@ -37,7 +37,7 @@ import one.modality.base.shared.entities.ScheduledItem;
 import one.modality.base.shared.entities.SiteItem;
 import one.modality.base.shared.entities.formatters.EventPriceFormatter;
 import one.modality.base.shared.knownitems.KnownItemFamily;
-import one.modality.ecommerce.document.service.PolicyAggregate;
+import one.modality.ecommerce.policy.service.PolicyAggregate;
 
 import java.time.LocalDate;
 import java.util.*;

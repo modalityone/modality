@@ -28,6 +28,7 @@ one.modality.base.shared.entities.impl.ImageImpl$ProvidedFactory
 one.modality.base.shared.entities.impl.InvitationImpl$ProvidedFactory
 one.modality.base.shared.entities.impl.ItemFamilyImpl$ProvidedFactory
 one.modality.base.shared.entities.impl.ItemImpl$ProvidedFactory
+one.modality.base.shared.entities.impl.ItemPolicyImpl$ProvidedFactory
 one.modality.base.shared.entities.impl.KdmCenterImpl$ProvidedFactory
 one.modality.base.shared.entities.impl.LanguageImpl$ProvidedFactory
 one.modality.base.shared.entities.impl.LabelImpl$ProvidedFactory
@@ -48,6 +49,7 @@ one.modality.base.shared.entities.impl.OrganizationImpl$ProvidedFactory
 one.modality.base.shared.entities.impl.OrganizationTypeImpl$ProvidedFactory
 one.modality.base.shared.entities.impl.PersonImpl$ProvidedFactory
 one.modality.base.shared.entities.impl.PodcastImpl$ProvidedFactory
+one.modality.base.shared.entities.impl.PolicyScopeImpl$ProvidedFactory
 one.modality.base.shared.entities.impl.PoolImpl$ProvidedFactory
 one.modality.base.shared.entities.impl.PoolAllocationImpl$ProvidedFactory
 one.modality.base.shared.entities.impl.RecipientImpl$ProvidedFactory

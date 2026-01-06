@@ -9,6 +9,7 @@ module modality.booking.client.workingbooking {
     requires modality.base.shared.knownitems;
     requires modality.crm.client.authn.fx;
     requires transitive modality.ecommerce.document.service;
+    requires modality.ecommerce.policy.service;
     requires modality.ecommerce.shared.pricecalculator;
     requires webfx.extras.i18n;
     requires webfx.kit.util;

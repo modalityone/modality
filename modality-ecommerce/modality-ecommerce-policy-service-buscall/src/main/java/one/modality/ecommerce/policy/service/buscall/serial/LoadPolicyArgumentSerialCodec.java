@@ -1,9 +1,9 @@
-package one.modality.ecommerce.document.service.buscall.serial;
+package one.modality.ecommerce.policy.service.buscall.serial;
 
 import dev.webfx.platform.ast.AstObject;
 import dev.webfx.platform.ast.ReadOnlyAstObject;
 import dev.webfx.stack.com.serial.spi.impl.SerialCodecBase;
-import one.modality.ecommerce.document.service.LoadPolicyArgument;
+import one.modality.ecommerce.policy.service.LoadPolicyArgument;
 
 /**
  * @author Bruno Salmon
@@ -22,17 +22,17 @@ public final class LoadPolicyArgumentSerialCodec extends SerialCodecBase<LoadPol
 
     @Override
     public void encode(LoadPolicyArgument o, AstObject serial) {
-        encodeObject(serial, ORGANIZATION_PK_KEY, o.getOrganizationPk());
-        encodeObject(serial, EVENT_PK_KEY, o.getEventPk());
-        encodeLocalDate(serial, START_DATE_KEY, o.getStartDate());
-        encodeLocalDate(serial, END_DATE_KEY, o.getEndDate());
+        encodeObject(   serial, ORGANIZATION_PK_KEY, o.getOrganizationPk());
+        encodeObject(   serial, EVENT_PK_KEY,        o.getEventPk());
+        encodeLocalDate(serial, START_DATE_KEY,      o.getStartDate());
+        encodeLocalDate(serial, END_DATE_KEY,        o.getEndDate());
     }
 
     @Override
     public LoadPolicyArgument decode(ReadOnlyAstObject serial) {
         return new LoadPolicyArgument(
-                decodeObject(serial, ORGANIZATION_PK_KEY),
-                decodeObject(serial, EVENT_PK_KEY),
+                decodeObject(   serial, ORGANIZATION_PK_KEY),
+                decodeObject(   serial, EVENT_PK_KEY),
                 decodeLocalDate(serial, START_DATE_KEY),
                 decodeLocalDate(serial, END_DATE_KEY)
         );

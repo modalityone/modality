@@ -10,6 +10,7 @@ module modality.booking.backoffice.bookingeditor.audiorecording.plugin {
     requires modality.base.shared.knownitems;
     requires modality.booking.backoffice.bookingeditor;
     requires modality.booking.client.workingbooking;
+    requires modality.ecommerce.policy.service;
     requires webfx.extras.styles.bootstrap;
     requires webfx.kit.util;
     requires webfx.platform.util;

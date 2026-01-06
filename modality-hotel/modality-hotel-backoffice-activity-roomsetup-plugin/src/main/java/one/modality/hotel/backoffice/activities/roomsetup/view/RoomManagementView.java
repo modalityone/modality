@@ -33,6 +33,9 @@ import one.modality.hotel.backoffice.activities.roomsetup.dialog.DialogManager;
 import one.modality.hotel.backoffice.activities.roomsetup.dialog.RoomDialog;
 import one.modality.hotel.backoffice.activities.roomsetup.util.UIComponentDecorators;
 
+import dev.webfx.platform.uischeduler.UiScheduler;
+import dev.webfx.platform.scheduler.Scheduled;
+
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -67,6 +70,14 @@ public class RoomManagementView {
     private final ObjectProperty<Item> filterTypeProperty = new SimpleObjectProperty<>();
     private final ObjectProperty<String> groupByProperty = new SimpleObjectProperty<>("type"); // "type", "building", "zone"
 
+    // Debouncing for filter changes - prevents excessive UI updates
+    private static final long FILTER_DEBOUNCE_MS = 150;
+    private Scheduled filterDebounceScheduled;
+
+    // Collapsible groups - track expanded state for lazy content loading
+    private final Set<String> expandedGroups = new HashSet<>();
+    private boolean allGroupsExpanded = true; // Start with all expanded for first load
+
     private VBox roomListContainer;
     private Label roomCountLabel;
     private HBox filterChipsContainer;
@@ -97,21 +108,26 @@ public class RoomManagementView {
 
         mainContainer.getChildren().addAll(headerSection, filterBar, scrollPane);
 
-        // Listen for data changes
-        resourceConfigurations.addListener((ListChangeListener<? super ResourceConfiguration>) change -> updateRoomList());
-        buildings.addListener((ListChangeListener<? super Building>) change -> updateRoomList());
-        buildingZones.addListener((ListChangeListener<? super BuildingZone>) change -> updateRoomList());
+        // Listen for data changes with debouncing to prevent excessive UI updates
+        resourceConfigurations.addListener((ListChangeListener<? super ResourceConfiguration>) change -> scheduleUpdateRoomList());
+        buildings.addListener((ListChangeListener<? super Building>) change -> scheduleUpdateRoomList());
+        buildingZones.addListener((ListChangeListener<? super BuildingZone>) change -> scheduleUpdateRoomList());
         accommodationItems.addListener((ListChangeListener<? super Item>) change -> {
             updateFilterChips();
-            updateRoomList();
+            scheduleUpdateRoomList();
         });
 
-        // Listen for filter and group changes
+        // Listen for filter and group changes with debouncing
         filterTypeProperty.addListener((obs, oldVal, newVal) -> {
             updateFilterChips();
-            updateRoomList();
+            scheduleUpdateRoomList();
         });
-        groupByProperty.addListener((obs, oldVal, newVal) -> updateRoomList());
+        groupByProperty.addListener((obs, oldVal, newVal) -> {
+            // Reset expanded state when grouping changes
+            expandedGroups.clear();
+            allGroupsExpanded = true;
+            scheduleUpdateRoomList();
+        });
 
         // Initialize room list (in case data already loaded before view was built)
         updateFilterChips();
@@ -268,6 +284,17 @@ public class RoomManagementView {
         });
     }
 
+    /**
+     * Schedules a debounced update of the room list.
+     * Prevents excessive UI rebuilds when multiple changes occur rapidly.
+     */
+    private void scheduleUpdateRoomList() {
+        if (filterDebounceScheduled != null) {
+            filterDebounceScheduled.cancel();
+        }
+        filterDebounceScheduled = UiScheduler.scheduleDelay(FILTER_DEBOUNCE_MS, this::updateRoomList);
+    }
+
     private void updateRoomList() {
         Platform.runLater(() -> {
             roomListContainer.getChildren().clear();
@@ -286,9 +313,12 @@ public class RoomManagementView {
             // Group rooms
             Map<String, List<ResourceConfiguration>> groupedRooms = groupRooms(filteredRooms);
 
-            // Create group panels
+            // Create collapsible group panels - content only rendered when expanded
             for (Map.Entry<String, List<ResourceConfiguration>> entry : groupedRooms.entrySet()) {
-                VBox groupPanel = createGroupPanel(entry.getKey(), entry.getValue());
+                String groupName = entry.getKey();
+                List<ResourceConfiguration> rooms = entry.getValue();
+                boolean isExpanded = allGroupsExpanded || expandedGroups.contains(groupName);
+                VBox groupPanel = createCollapsibleGroupPanel(groupName, rooms, isExpanded);
                 roomListContainer.getChildren().add(groupPanel);
             }
         });
@@ -338,16 +368,25 @@ public class RoomManagementView {
         return resource.getBuildingZone();
     }
 
-    private VBox createGroupPanel(String groupName, List<ResourceConfiguration> rooms) {
+    /**
+     * Creates a collapsible group panel with lazy-loaded content.
+     * Room rows are only rendered when the group is expanded, reducing initial DOM weight.
+     */
+    private VBox createCollapsibleGroupPanel(String groupName, List<ResourceConfiguration> rooms, boolean expanded) {
         VBox panel = new VBox();
         panel.getStyleClass().add(UIComponentDecorators.CSS_CARD);
 
-        // Header
+        // Header - clickable to expand/collapse
         HBox header = new HBox();
         header.setAlignment(Pos.CENTER_LEFT);
         header.setSpacing(10);
         header.setPadding(new Insets(14, 20, 14, 20));
         header.getStyleClass().add(UIComponentDecorators.CSS_CARD_HEADER);
+        header.setCursor(javafx.scene.Cursor.HAND);
+
+        // Expand/collapse indicator
+        Label expandIndicator = new Label(expanded ? "▼" : "▶");
+        expandIndicator.setMinWidth(16);
 
         Label groupLabel = new Label(groupName);
         groupLabel.getStyleClass().add(UIComponentDecorators.CSS_BODY_BOLD);
@@ -355,9 +394,47 @@ public class RoomManagementView {
         int totalCapacity = rooms.stream().mapToInt(rc -> rc.getMax() != null ? rc.getMax() : 0).sum();
         Label statsLabel = ModalityStyle.badgeLightInfo(new Label(rooms.size() + " rooms • capacity: " + totalCapacity));
 
-        header.getChildren().addAll(groupLabel, statsLabel);
+        Region spacer = new Region();
+        HBox.setHgrow(spacer, Priority.ALWAYS);
 
-        // Table
+        header.getChildren().addAll(expandIndicator, groupLabel, statsLabel, spacer);
+
+        // Content container for lazy loading
+        VBox contentContainer = new VBox();
+
+        // Only create content if expanded (lazy loading)
+        if (expanded) {
+            GridPane table = createRoomTable(rooms);
+            contentContainer.getChildren().add(table);
+        }
+
+        // Click handler for expand/collapse
+        header.setOnMouseClicked(e -> {
+            boolean isCurrentlyExpanded = !contentContainer.getChildren().isEmpty();
+            if (isCurrentlyExpanded) {
+                // Collapse: remove content, update state
+                contentContainer.getChildren().clear();
+                expandIndicator.setText("▶");
+                expandedGroups.remove(groupName);
+                allGroupsExpanded = false;
+            } else {
+                // Expand: create content lazily
+                GridPane table = createRoomTable(rooms);
+                contentContainer.getChildren().add(table);
+                expandIndicator.setText("▼");
+                expandedGroups.add(groupName);
+            }
+        });
+
+        panel.getChildren().addAll(header, contentContainer);
+        return panel;
+    }
+
+    /**
+     * Creates the room table with header and rows.
+     * Extracted for lazy loading - only called when group is expanded.
+     */
+    private GridPane createRoomTable(List<ResourceConfiguration> rooms) {
         GridPane table = new GridPane();
         table.setHgap(0);
         table.setVgap(0);
@@ -388,8 +465,7 @@ public class RoomManagementView {
             addRoomRow(table, row++, rc);
         }
 
-        panel.getChildren().addAll(header, table);
-        return panel;
+        return table;
     }
 
     private void addRoomRow(GridPane table, int row, ResourceConfiguration rc) {

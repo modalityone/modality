@@ -22,6 +22,7 @@ import one.modality.base.client.i18n.I18nEntities;
 import one.modality.base.shared.entities.*;
 import one.modality.booking.client.workingbooking.*;
 import one.modality.booking.frontoffice.bookingform.BookingFormEntryPoint;
+import one.modality.booking.frontoffice.bookingform.GatewayPaymentForm;
 import one.modality.booking.frontoffice.bookingpage.*;
 import one.modality.booking.frontoffice.bookingpage.navigation.ButtonNavigation;
 import one.modality.booking.frontoffice.bookingpage.navigation.ResponsiveStepProgressHeader;
@@ -33,11 +34,13 @@ import one.modality.crm.shared.services.authn.fx.FXUserPerson;
 import one.modality.ecommerce.document.service.DocumentAggregate;
 import one.modality.ecommerce.document.service.DocumentService;
 import one.modality.ecommerce.document.service.LoadDocumentArgument;
-import one.modality.ecommerce.document.service.PolicyAggregate;
 import one.modality.ecommerce.payment.PaymentAllocation;
+import one.modality.ecommerce.payment.PaymentFormType;
 import one.modality.ecommerce.payment.client.ClientPaymentUtil;
+import one.modality.ecommerce.policy.service.PolicyAggregate;
 import one.modality.ecommerce.shared.pricecalculator.PriceCalculator;
 import one.modality.event.frontoffice.activities.book.event.EventBookingFormSettings;
+import one.modality.event.frontoffice.activities.book.event.slides.ProvidedGatewayPaymentForm;
 import one.modality.event.frontoffice.activities.book.fx.FXGuestToBook;
 import one.modality.event.frontoffice.activities.book.fx.FXResumePayment;
 
@@ -468,12 +471,7 @@ public class StandardBookingForm extends MultiPageBookingForm {
         failedSection.setErrorDetails(HasFailedPaymentSection.PaymentErrorType.CARD_DECLINED, null, null);
 
         // Set callbacks
-        failedSection.setOnRetryPayment(() -> {
-            // For now, we do only redirected payments, so we
-            ClientPaymentUtil.initiateRedirectedPaymentAndRedirectToGatewayPaymentPage(FXResumePayment.getAmount(), FXResumePayment.getPaymentAllocations());
-            /*// When embedded payments will be added, we will navigate back to the payment page
-            navigateToPayment();*/
-        });
+        failedSection.setOnRetryPayment(() -> handlePaymentSubmit(FXResumePayment.getAmount(), FXResumePayment.getPaymentAllocations()));
 
         // Show the failed payment content in the transition pane
         getTransitionPane().transitToContent(failedSection.getView(), null);
@@ -787,10 +785,10 @@ public class StandardBookingForm extends MultiPageBookingForm {
         // Submit changes to the database
         return workingBooking.submitChanges(historyComment)
             .map(submitResult -> {
-                Console.log("Booking submitted successfully. Reference: " + submitResult.getDocumentRef());
+                Console.log("Booking submitted successfully. Reference: " + submitResult.documentRef());
 
                 // Store the booking reference
-                workingBookingProperties.setBookingReference(submitResult.getDocumentRef());
+                workingBookingProperties.setBookingReference(submitResult.documentRef());
 
                 // Reset reselection flag - booking is now confirmed
                 state.setAllowMemberReselection(false);
@@ -1215,15 +1213,37 @@ public class StandardBookingForm extends MultiPageBookingForm {
             .map(entry -> new PaymentAllocation(Entities.getPrimaryKey(entry.getKey()), entry.getValue()))
             .toArray(PaymentAllocation[]::new);
 
-        return ClientPaymentUtil.initiateRedirectedPaymentAndRedirectToGatewayPaymentPage(sectionResult.getAmount(), paymentAllocations);
+        return handlePaymentSubmit(sectionResult.getAmount(), paymentAllocations);
     }
 
-    // TODO: once embedded payment is implemented, call back this method on payment success
-    private void handleEmbeddedPaymentSuccess(HasPaymentSection.PaymentResult sectionResult) {
+    private Future<Void> handlePaymentSubmit(int amount, PaymentAllocation[] paymentAllocations) {
+        PaymentFormType preferredFormType =
+            // Temporarily hardcoded: using embedded payment form for STTP (because the redirected payment form doesn't work)
+            Entities.samePrimaryKey(getEvent().getType(), 48) ? PaymentFormType.EMBEDDED
+                // and the redirected payment form for other events
+                : PaymentFormType.REDIRECTED;
+        return ClientPaymentUtil.initiateRedirectedPaymentAndRedirectToGatewayPaymentPage(amount, paymentAllocations, preferredFormType)
+            .onSuccess(webPaymentForm -> {
+                // If it's a redirected payment form, we just navigate to it
+                if (webPaymentForm.isRedirectedPaymentForm()) {
+                    webPaymentForm.navigateToRedirectedPaymentForm();
+                } else {
+                    // Creating and displaying the gateway payment form
+                    GatewayPaymentForm gatewayPaymentForm = new ProvidedGatewayPaymentForm(webPaymentForm, getEvent(), Console::log, Console::log, paymentStatus -> {
+                        if (paymentStatus.isSuccessful())
+                            handleEmbeddedPaymentSuccess(amount);
+                    });
+                    Node paymentFormView = gatewayPaymentForm.getView();
+                    // TODO: display this in a new page
+                }
+            })
+            .mapEmpty();
+    }
+
+        // TODO: once embedded payment is implemented, call back this method on payment success
+    private void handleEmbeddedPaymentSuccess(int amount) {
         // Convert to callbacks result type
-        StandardBookingFormCallbacks.PaymentResult result = new StandardBookingFormCallbacks.PaymentResult(
-            sectionResult.getAmount()
-        );
+        StandardBookingFormCallbacks.PaymentResult result = new StandardBookingFormCallbacks.PaymentResult(amount);
 
         // Update confirmation section
         updateConfirmationSection(result);
