@@ -7,7 +7,17 @@
     </exported-packages>
 
     <dependencies>
-        <used-by-source-modules/>
+        <used-by-source-modules>
+            <!-- WebFX extras -->
+            <module>webfx-extras-controlfactory</module>
+
+            <!-- WebFX stack ORM -->
+            <module>webfx-stack-orm-entity-controls</module>
+
+            <!-- Modality modules -->
+            <module>modality-base-client-mainframe-fx</module>
+            <module>modality-crm-backoffice-organization-fx</module>
+        </used-by-source-modules>
     </dependencies>
 
     <providers>
