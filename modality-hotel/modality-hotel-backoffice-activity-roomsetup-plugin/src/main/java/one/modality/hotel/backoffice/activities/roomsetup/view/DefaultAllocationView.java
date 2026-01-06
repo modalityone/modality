@@ -7,6 +7,7 @@ import dev.webfx.extras.util.control.Controls;
 import dev.webfx.kit.util.properties.FXProperties;
 import dev.webfx.stack.orm.domainmodel.DataSourceModel;
 import dev.webfx.stack.orm.domainmodel.HasDataSourceModel;
+import dev.webfx.stack.orm.entity.Entities;
 import dev.webfx.stack.orm.reactive.entities.dql_to_entities.ReactiveEntitiesMapper;
 import dev.webfx.stack.routing.activity.impl.elementals.activeproperty.HasActiveProperty;
 import javafx.application.Platform;
@@ -38,12 +39,10 @@ import one.modality.hotel.backoffice.activities.roomsetup.dialog.DialogManager;
 import one.modality.hotel.backoffice.activities.roomsetup.util.PoolTypeFilter;
 import one.modality.hotel.backoffice.activities.roomsetup.util.UIComponentDecorators;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
+import dev.webfx.platform.uischeduler.UiScheduler;
+import dev.webfx.platform.scheduler.Scheduled;
+
+import java.util.*;
 import java.util.stream.Collectors;
 
 import static dev.webfx.stack.orm.dql.DqlStatement.orderBy;
@@ -84,13 +83,24 @@ public class DefaultAllocationView {
     private final BooleanProperty showUnassignedOnlyProperty = new SimpleBooleanProperty(false);
     private final ObjectProperty<String> groupByProperty = new SimpleObjectProperty<>("building"); // "building", "type", "pool"
 
+    // Debouncing for filter changes - prevents excessive UI updates
+    private static final long FILTER_DEBOUNCE_MS = 150;
+    private Scheduled filterDebounceScheduled;
+
+    // Collapsible groups - track expanded state for lazy content loading
+    private final Set<String> expandedGroups = new HashSet<>();
+    private boolean allGroupsExpanded = true; // Start with all expanded for first load
+
     // UI components
     private VBox mainContainer;
     private VBox roomListContainer;
     private Label roomCountLabel;
     private HBox filterChipsContainer;
     private StackPane loadingOverlay;
-    private boolean dataLoaded = false;
+
+    // Track loading status for both critical datasets
+    private boolean roomsLoaded = false;
+    private boolean allocationsLoaded = false;
 
     public DefaultAllocationView(RoomSetupPresentationModel pm) {
         this.pm = pm;
@@ -140,29 +150,34 @@ public class DefaultAllocationView {
 
         mainContainer.getChildren().addAll(headerSection, filterBar, contentWithLoading);
 
-        // Listen for data changes
-        resourceConfigurations.addListener((ListChangeListener<? super ResourceConfiguration>) change -> updateRoomList());
+        // Listen for data changes with debouncing to prevent excessive UI updates
+        resourceConfigurations.addListener((ListChangeListener<? super ResourceConfiguration>) change -> scheduleUpdateRoomList());
         pools.addListener((ListChangeListener<? super Pool>) change -> {
             updateFilterChips();
-            updateRoomList();
+            scheduleUpdateRoomList();
         });
         poolAllocations.addListener((ListChangeListener<? super PoolAllocation>) change -> {
             rebuildAllocationIndex(); // Rebuild index for O(1) lookups
-            updateRoomList();
+            scheduleUpdateRoomList();
         });
-        buildings.addListener((ListChangeListener<? super Building>) change -> updateRoomList());
-        accommodationItems.addListener((ListChangeListener<? super Item>) change -> updateRoomList());
+        buildings.addListener((ListChangeListener<? super Building>) change -> scheduleUpdateRoomList());
+        accommodationItems.addListener((ListChangeListener<? super Item>) change -> scheduleUpdateRoomList());
 
-        // Listen for filter and group changes
+        // Listen for filter and group changes with debouncing
         filterPoolProperty.addListener((obs, oldVal, newVal) -> {
             updateFilterChips();
-            updateRoomList();
+            scheduleUpdateRoomList();
         });
         showUnassignedOnlyProperty.addListener((obs, oldVal, newVal) -> {
             updateFilterChips();
-            updateRoomList();
+            scheduleUpdateRoomList();
         });
-        groupByProperty.addListener((obs, oldVal, newVal) -> updateRoomList());
+        groupByProperty.addListener((obs, oldVal, newVal) -> {
+            // Reset expanded state when grouping changes
+            expandedGroups.clear();
+            allGroupsExpanded = true;
+            scheduleUpdateRoomList();
+        });
 
         // Initial update
         updateFilterChips();
@@ -323,21 +338,27 @@ public class DefaultAllocationView {
     private void rebuildAllocationIndex() {
         allocationsByResourceId.clear();
         for (PoolAllocation pa : poolAllocations) {
-            if (pa.getResource() != null && pa.getEvent() == null) {
-                Object resourceId = pa.getResource().getId().getPrimaryKey();
+            if (pa.getResourceId() != null && pa.getEvent() == null) {
+                Object resourceId = Entities.getPrimaryKey(pa.getResourceId());
                 allocationsByResourceId.computeIfAbsent(resourceId, k -> new ArrayList<>()).add(pa);
             }
         }
     }
 
     /**
-     * Gets allocations for a resource using O(1) HashMap lookup.
+     * Gets allocations for a resource using direct stream comparison.
+     * Uses Entities.getPrimaryKey for consistent ID comparison across different entity instances.
      * @param resource The resource to look up
      * @return List of pool allocations for the resource (empty list if none)
      */
     private List<PoolAllocation> getAllocationsForResource(Resource resource) {
         if (resource == null) return Collections.emptyList();
-        return allocationsByResourceId.getOrDefault(resource.getId().getPrimaryKey(), Collections.emptyList());
+        Object targetId = Entities.getPrimaryKey(resource);
+        // Use direct stream comparison to avoid HashMap key comparison issues
+        return poolAllocations.stream()
+                .filter(pa -> pa.getResourceId() != null && pa.getEvent() == null)
+                .filter(pa -> Objects.equals(Entities.getPrimaryKey(pa.getResourceId()), targetId))
+                .collect(Collectors.toList());
     }
 
     /**
@@ -352,6 +373,17 @@ public class DefaultAllocationView {
         return resourceConfigurations.stream()
                 .filter(rc -> !hasAllocations(rc.getResource()))
                 .count();
+    }
+
+    /**
+     * Schedules a debounced update of the room list.
+     * Prevents excessive UI rebuilds when multiple changes occur rapidly.
+     */
+    private void scheduleUpdateRoomList() {
+        if (filterDebounceScheduled != null) {
+            filterDebounceScheduled.cancel();
+        }
+        filterDebounceScheduled = UiScheduler.scheduleDelay(FILTER_DEBOUNCE_MS, this::updateRoomList);
     }
 
     private HBox createInfoHelper() {
@@ -380,7 +412,8 @@ public class DefaultAllocationView {
         Platform.runLater(() -> {
             if (roomListContainer == null) return;
 
-            // Hide loading overlay once we have data
+            // Hide loading overlay once both rooms AND allocations are loaded
+            boolean dataLoaded = roomsLoaded && allocationsLoaded;
             if (dataLoaded && loadingOverlay != null) {
                 loadingOverlay.setVisible(false);
                 loadingOverlay.setManaged(false);
@@ -416,9 +449,12 @@ public class DefaultAllocationView {
             // Group rooms
             Map<String, List<ResourceConfiguration>> groupedRooms = groupRooms(filteredRooms);
 
-            // Create group panels
+            // Create collapsible group panels - content only rendered when expanded
             for (Map.Entry<String, List<ResourceConfiguration>> entry : groupedRooms.entrySet()) {
-                VBox groupPanel = createGroupPanel(entry.getKey(), entry.getValue());
+                String groupName = entry.getKey();
+                List<ResourceConfiguration> rooms = entry.getValue();
+                boolean isExpanded = allGroupsExpanded || expandedGroups.contains(groupName);
+                VBox groupPanel = createCollapsibleGroupPanel(groupName, rooms, isExpanded);
                 roomListContainer.getChildren().add(groupPanel);
             }
 
@@ -469,25 +505,72 @@ public class DefaultAllocationView {
         return grouped;
     }
 
-    private VBox createGroupPanel(String groupName, List<ResourceConfiguration> rooms) {
+    /**
+     * Creates a collapsible group panel with lazy-loaded content.
+     * Room cards are only rendered when the group is expanded, reducing initial DOM weight.
+     */
+    private VBox createCollapsibleGroupPanel(String groupName, List<ResourceConfiguration> rooms, boolean expanded) {
         VBox panel = new VBox();
         panel.getStyleClass().add(UIComponentDecorators.CSS_CARD);
 
-        // Header
+        // Header - clickable to expand/collapse
         HBox header = new HBox();
         header.setAlignment(Pos.CENTER_LEFT);
         header.setSpacing(10);
         header.setPadding(new Insets(14, 20, 14, 20));
         header.getStyleClass().add(UIComponentDecorators.CSS_CARD_HEADER);
+        header.setCursor(Cursor.HAND);
+
+        // Expand/collapse indicator
+        Label expandIndicator = new Label(expanded ? "▼" : "▶");
+        expandIndicator.setMinWidth(16);
 
         Label groupLabel = new Label(groupName);
         groupLabel.getStyleClass().add(UIComponentDecorators.CSS_BODY_BOLD);
 
         Label countLabel = ModalityStyle.badgeLightInfo(new Label(rooms.size() + " rooms"));
 
-        header.getChildren().addAll(groupLabel, countLabel);
+        Region spacer = new Region();
+        HBox.setHgrow(spacer, Priority.ALWAYS);
 
-        // Room cards
+        header.getChildren().addAll(expandIndicator, groupLabel, countLabel, spacer);
+
+        // Content container for lazy loading
+        VBox contentContainer = new VBox();
+
+        // Only create content if expanded (lazy loading)
+        if (expanded) {
+            FlowPane roomGrid = createRoomGrid(rooms);
+            contentContainer.getChildren().add(roomGrid);
+        }
+
+        // Click handler for expand/collapse
+        header.setOnMouseClicked(e -> {
+            boolean isCurrentlyExpanded = !contentContainer.getChildren().isEmpty();
+            if (isCurrentlyExpanded) {
+                // Collapse: remove content, update state
+                contentContainer.getChildren().clear();
+                expandIndicator.setText("▶");
+                expandedGroups.remove(groupName);
+                allGroupsExpanded = false;
+            } else {
+                // Expand: create content lazily
+                FlowPane roomGrid = createRoomGrid(rooms);
+                contentContainer.getChildren().add(roomGrid);
+                expandIndicator.setText("▼");
+                expandedGroups.add(groupName);
+            }
+        });
+
+        panel.getChildren().addAll(header, contentContainer);
+        return panel;
+    }
+
+    /**
+     * Creates the room cards FlowPane.
+     * Extracted for lazy loading - only called when group is expanded.
+     */
+    private FlowPane createRoomGrid(List<ResourceConfiguration> rooms) {
         FlowPane roomGrid = new FlowPane();
         roomGrid.setHgap(12);
         roomGrid.setVgap(12);
@@ -498,8 +581,7 @@ public class DefaultAllocationView {
             roomGrid.getChildren().add(roomCard);
         }
 
-        panel.getChildren().addAll(header, roomGrid);
-        return panel;
+        return roomGrid;
     }
 
     private HBox createRoomCard(ResourceConfiguration rc) {
@@ -641,17 +723,16 @@ public class DefaultAllocationView {
                     .ifNotNullOtherwiseEmpty(pm.organizationIdProperty(), o -> where("resource.site.organization=?", o))
                     .storeEntitiesInto(resourceConfigurations)
                     .addEntitiesHandler(entities -> {
-                        dataLoaded = true;
+                        roomsLoaded = true;
                         Platform.runLater(this::updateRoomList);
                     })
                     .setResultCacheEntry("modality/hotel/roomsetup/default-alloc-rooms")
                     .start();
 
-            // Load Pools
+            // Load Pools - global pools, not filtered by organization
             poolRem = ReactiveEntitiesMapper.<Pool>createPushReactiveChain(mixin)
                     .always("{class: 'Pool', fields: 'name,graphic,webColor,eventPool,eventType'}")
                     .always(orderBy("name"))
-                    .ifNotNullOtherwiseEmpty(pm.organizationIdProperty(), o -> where("eventType.organization=?", o))
                     .storeEntitiesInto(pools)
                     .addEntitiesHandler(entities -> {
                         Platform.runLater(this::updateFilterChips);
@@ -662,11 +743,14 @@ public class DefaultAllocationView {
 
             // Load PoolAllocations (default only - where event is null)
             poolAllocationRem = ReactiveEntitiesMapper.<PoolAllocation>createPushReactiveChain(mixin)
-                    .always("{class: 'PoolAllocation', fields: 'pool.name,pool.graphic,pool.webColor,resource.name,quantity,event'}")
+                    .always("{class: 'PoolAllocation', fields: 'pool.(name,graphic,webColor),resource,resource.name,quantity,event'}")
                     .always(where("event is null"))
                     .ifNotNullOtherwiseEmpty(pm.organizationIdProperty(), o -> where("resource.site.organization=?", o))
                     .storeEntitiesInto(poolAllocations)
-                    .addEntitiesHandler(entities -> Platform.runLater(this::updateRoomList))
+                    .addEntitiesHandler(entities -> {
+                        allocationsLoaded = true;
+                        Platform.runLater(this::updateRoomList);
+                    })
                     .setResultCacheEntry("modality/hotel/roomsetup/default-alloc-allocations")
                     .start();
 
