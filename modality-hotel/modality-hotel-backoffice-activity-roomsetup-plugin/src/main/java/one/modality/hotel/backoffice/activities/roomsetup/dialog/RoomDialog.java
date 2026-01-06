@@ -2,13 +2,8 @@ package one.modality.hotel.backoffice.activities.roomsetup.dialog;
 
 import dev.webfx.extras.i18n.I18n;
 import dev.webfx.extras.i18n.controls.I18nControls;
-import dev.webfx.extras.type.PrimType;
 import dev.webfx.extras.util.dialog.DialogCallback;
 import dev.webfx.extras.validation.ValidationSupport;
-import dev.webfx.extras.visual.VisualColumn;
-import dev.webfx.extras.visual.VisualResultBuilder;
-import dev.webfx.extras.visual.controls.grid.VisualGrid;
-import dev.webfx.kit.util.properties.FXProperties;
 import dev.webfx.platform.console.Console;
 import dev.webfx.stack.orm.entity.UpdateStore;
 import dev.webfx.extras.controlfactory.button.ButtonFactoryMixin;
@@ -36,8 +31,6 @@ import one.modality.hotel.backoffice.activities.roomsetup.util.UIComponentDecora
 import dev.webfx.stack.orm.entity.EntityStore;
 import dev.webfx.stack.orm.domainmodel.DataSourceModel;
 
-import java.util.stream.IntStream;
-
 /**
  * Dialog for creating and editing rooms.
  * Creates/updates both Resource (physical room) and ResourceConfiguration (room settings with null dates).
@@ -61,7 +54,7 @@ public class RoomDialog implements DialogManager.ManagedDialog {
     private TextField nameField;
     private EntityButtonSelector<BuildingZone> zoneSelector;
     private EntityButtonSelector<Item> typeSelector;
-    private ButtonSelector<Integer> capacitySelector;
+    private TextField capacityField;
     private ToggleGroup genderToggleGroup;
     private TextArea notesArea;
 
@@ -228,11 +221,14 @@ public class RoomDialog implements DialogManager.ManagedDialog {
     private int addCapacitySelector(GridPane form, int row) {
         Label capacityLabel = I18nControls.newLabel(RoomSetupI18nKeys.FieldCapacity);
         capacityLabel.getStyleClass().add(UIComponentDecorators.CSS_FIELD_LABEL);
-        capacitySelector = createCapacitySelector();
-        Node capacitySelectorButton = capacitySelector.getButton();
-        capacitySelectorButton.getStyleClass().add(UIComponentDecorators.CSS_TEXT_FIELD);
+        capacityField = new TextField();
+        capacityField.setPromptText("1-50");
+        capacityField.getStyleClass().add(UIComponentDecorators.CSS_TEXT_FIELD);
+        capacityField.setPadding(new Insets(12, 14, 12, 14));
+        capacityField.setPrefWidth(100);
+        capacityField.setMaxWidth(100);
         form.add(capacityLabel, 0, row);
-        form.add(capacitySelectorButton, 1, row);
+        form.add(capacityField, 1, row);
         return row + 1;
     }
 
@@ -263,43 +259,6 @@ public class RoomDialog implements DialogManager.ManagedDialog {
         ColumnConstraints col2 = new ColumnConstraints();
         col2.setHgrow(Priority.ALWAYS);
         form.getColumnConstraints().addAll(col1, col2);
-    }
-
-    private ButtonSelector<Integer> createCapacitySelector() {
-        final int maxCapacity = 50;
-        VisualResultBuilder vrb = VisualResultBuilder.create(maxCapacity, VisualColumn.create(null, PrimType.INTEGER));
-        IntStream.range(0, maxCapacity).forEach(i -> vrb.setValue(i, 0, i + 1));
-        VisualGrid capacityGrid = new VisualGrid(vrb.build());
-
-        return new ButtonSelector<>(new ButtonFactoryMixin() {
-        }, FXMainFrameDialogArea::getDialogArea) {
-            {
-                setSearchEnabled(false);
-                setShowMode(ShowMode.DROP_DOWN);
-                FXProperties.runOnPropertyChange(selection -> {
-                    if (selection != null) {
-                        setSelectedItem(selection.getSelectedRow() + 1);
-                        closeDialog();
-                    }
-                }, capacityGrid.visualSelectionProperty());
-            }
-
-            @Override
-            protected Region getOrCreateDialogContent() {
-                return capacityGrid;
-            }
-
-            @Override
-            protected Node getOrCreateButtonContentFromSelectedItem() {
-                Integer selectedCapacity = getSelectedItem();
-                return new Label(selectedCapacity != null ? String.valueOf(selectedCapacity) : I18n.getI18nText(RoomSetupI18nKeys.SelectCapacity));
-            }
-
-            @Override
-            protected void startLoading() {
-                // No loading needed - data is static
-            }
-        };
     }
 
     private HBox createGenderSelector() {
@@ -362,7 +321,7 @@ public class RoomDialog implements DialogManager.ManagedDialog {
 
         Integer capacity = existingConfig.getMax();
         if (capacity != null) {
-            capacitySelector.setSelectedItem(capacity);
+            capacityField.setText(String.valueOf(capacity));
         }
 
         // Gender
@@ -429,7 +388,7 @@ public class RoomDialog implements DialogManager.ManagedDialog {
         nameField.textProperty().addListener((obs, oldVal, newVal) -> checkForChanges());
         zoneSelector.selectedItemProperty().addListener((obs, oldVal, newVal) -> checkForChanges());
         typeSelector.selectedItemProperty().addListener((obs, oldVal, newVal) -> checkForChanges());
-        capacitySelector.selectedItemProperty().addListener((obs, oldVal, newVal) -> checkForChanges());
+        capacityField.textProperty().addListener((obs, oldVal, newVal) -> checkForChanges());
         genderToggleGroup.selectedToggleProperty().addListener((obs, oldVal, newVal) -> checkForChanges());
         notesArea.textProperty().addListener((obs, oldVal, newVal) -> checkForChanges());
 
@@ -440,14 +399,14 @@ public class RoomDialog implements DialogManager.ManagedDialog {
     private void setupValidation() {
         validationSupport.addRequiredInput(nameField);
         validationSupport.addRequiredInput(zoneSelector.selectedItemProperty(), zoneSelector.getButton());
-        validationSupport.addRequiredInput(capacitySelector.selectedItemProperty(), capacitySelector.getButton());
+        validationSupport.addRequiredInput(capacityField);
     }
 
     private void checkForChanges() {
         String currentName = nameField.getText() != null ? nameField.getText() : "";
         BuildingZone currentZone = zoneSelector.getSelectedItem();
         Item currentType = typeSelector.getSelectedItem();
-        Integer currentCapacity = capacitySelector.getSelectedItem();
+        Integer currentCapacity = parseCapacity();
         Toggle selectedGender = genderToggleGroup.getSelectedToggle();
         String currentGender = selectedGender != null ? (String) selectedGender.getUserData() : "mixed";
         String currentNotes = notesArea.getText() != null ? notesArea.getText() : "";
@@ -460,6 +419,22 @@ public class RoomDialog implements DialogManager.ManagedDialog {
                 || !currentNotes.equals(initialNotes);
 
         hasChanges.set(changed);
+    }
+
+    /**
+     * Parses the capacity from the text field.
+     * @return The parsed capacity, or null if empty or invalid
+     */
+    private Integer parseCapacity() {
+        String text = capacityField.getText();
+        if (text == null || text.trim().isEmpty()) {
+            return null;
+        }
+        try {
+            return Integer.parseInt(text.trim());
+        } catch (NumberFormatException e) {
+            return null;
+        }
     }
 
     public boolean shouldSave() {
@@ -695,7 +670,7 @@ public class RoomDialog implements DialogManager.ManagedDialog {
             config.setItem(selectedType);
         }
 
-        Integer capacity = capacitySelector.getSelectedItem();
+        Integer capacity = parseCapacity();
         if (capacity != null) {
             config.setMax(capacity);
         }
@@ -738,11 +713,13 @@ public class RoomDialog implements DialogManager.ManagedDialog {
     private void setupAutoFillCapacity() {
         typeSelector.selectedItemProperty().addListener((obs, oldType, newType) -> {
             // Only autofill for new rooms when capacity hasn't been set
-            if (existingConfig == null && capacitySelector.getSelectedItem() == null && newType != null) {
+            String capacityText = capacityField.getText();
+            boolean capacityEmpty = capacityText == null || capacityText.trim().isEmpty();
+            if (existingConfig == null && capacityEmpty && newType != null) {
                 String typeName = newType.getName();
                 Integer inferredCapacity = inferCapacityFromTypeName(typeName);
                 if (inferredCapacity != null) {
-                    capacitySelector.setSelectedItem(inferredCapacity);
+                    capacityField.setText(String.valueOf(inferredCapacity));
                 }
             }
         });

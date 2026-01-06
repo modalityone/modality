@@ -6,10 +6,15 @@ import dev.webfx.extras.util.control.Controls;
 import dev.webfx.kit.util.properties.FXProperties;
 import dev.webfx.stack.orm.domainmodel.DataSourceModel;
 import dev.webfx.stack.orm.domainmodel.HasDataSourceModel;
+import dev.webfx.stack.orm.entity.EntityStore;
 import dev.webfx.stack.orm.reactive.entities.dql_to_entities.ReactiveEntitiesMapper;
 import dev.webfx.stack.routing.activity.impl.elementals.activeproperty.HasActiveProperty;
+import one.modality.base.shared.entities.Organization;
+import one.modality.crm.backoffice.organization.fx.FXOrganizationId;
 import javafx.application.Platform;
+import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.ObjectProperty;
+import javafx.beans.property.SimpleBooleanProperty;
 import javafx.beans.property.SimpleObjectProperty;
 import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
@@ -81,6 +86,10 @@ public class BuildingsView {
     private final ObjectProperty<Building> expandedBuildingProperty = new SimpleObjectProperty<>();
     private Object expandedBuildingId; // Store building ID to preserve expanded state across refreshes
 
+    // Site configuration state
+    private final BooleanProperty globalSiteMissingProperty = new SimpleBooleanProperty(false);
+    private HBox siteWarningBox;
+
     private VBox buildingListContainer;
 
     public BuildingsView(RoomSetupPresentationModel pm) {
@@ -96,6 +105,17 @@ public class BuildingsView {
         // Header section
         VBox headerSection = createHeaderSection();
 
+        // Site configuration warning (hidden by default)
+        siteWarningBox = createSiteWarningBox();
+        siteWarningBox.setVisible(false);
+        siteWarningBox.setManaged(false);
+
+        // Bind warning visibility to globalSiteMissing property
+        globalSiteMissingProperty.addListener((obs, wasVisible, isVisible) -> {
+            siteWarningBox.setVisible(isVisible);
+            siteWarningBox.setManaged(isVisible);
+        });
+
         // Building list container
         buildingListContainer = new VBox();
         buildingListContainer.setSpacing(12);
@@ -109,7 +129,7 @@ public class BuildingsView {
         scrollPane.setFitToWidth(true);
         VBox.setVgrow(scrollPane, Priority.ALWAYS);
 
-        mainContainer.getChildren().addAll(headerSection, scrollPane);
+        mainContainer.getChildren().addAll(headerSection, siteWarningBox, scrollPane);
 
         // Listen for data changes - rebuild index maps before updating UI
         buildings.addListener((ListChangeListener<? super Building>) change -> {
@@ -185,6 +205,25 @@ public class BuildingsView {
         infoBox.getChildren().addAll(iconLabel, textLabel);
 
         return infoBox;
+    }
+
+    private HBox createSiteWarningBox() {
+        HBox warningBox = Bootstrap.alertDanger(new HBox());
+        warningBox.setSpacing(10);
+        warningBox.setAlignment(Pos.CENTER_LEFT);
+        warningBox.setPadding(new Insets(12, 16, 12, 16));
+
+        Label iconLabel = new Label("⚠️");
+
+        Label textLabel = new Label("Site configuration required: This organization does not have a global site defined. " +
+                "Buildings cannot be created until a site is configured. Please contact an administrator to set up the site.");
+        textLabel.getStyleClass().add(UIComponentDecorators.CSS_SMALL);
+        textLabel.setWrapText(true);
+        textLabel.setStyle("-fx-text-fill: #721c24;"); // Dark red text for danger alerts
+
+        warningBox.getChildren().addAll(iconLabel, textLabel);
+
+        return warningBox;
     }
 
     private void updateBuildingList() {
@@ -564,6 +603,24 @@ public class BuildingsView {
         }, true); // supportsDelete = true
     }
 
+    private void checkGlobalSiteConfiguration() {
+        if (dataSourceModel == null) return;
+
+        var orgId = FXOrganizationId.getOrganizationId();
+        if (orgId == null) return;
+
+        EntityStore entityStore = EntityStore.create(dataSourceModel);
+        entityStore.<Organization>executeQuery("select globalSite from Organization where id=?", orgId)
+                .onSuccess(organizations -> {
+                    Platform.runLater(() -> {
+                        if (!organizations.isEmpty()) {
+                            Organization org = organizations.get(0);
+                            globalSiteMissingProperty.set(org.getGlobalSite() == null);
+                        }
+                    });
+                });
+    }
+
     public void startLogic(Object mixin) {
         if (mixin instanceof HasActiveProperty) {
             ObservableValue<Boolean> ap = ((HasActiveProperty) mixin).activeProperty();
@@ -576,6 +633,9 @@ public class BuildingsView {
         if (mixin instanceof HasDataSourceModel) {
             dataSourceModel = ((HasDataSourceModel) mixin).getDataSourceModel();
         }
+
+        // Check if organization has a globalSite configured
+        checkGlobalSiteConfiguration();
 
         if (buildingRem == null) {
             // Load Buildings

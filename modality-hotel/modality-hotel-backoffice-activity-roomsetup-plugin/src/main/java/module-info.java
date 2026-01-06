@@ -31,6 +31,7 @@ module modality.hotel.backoffice.activity.roomsetup.plugin {
     requires webfx.kit.util;
     requires webfx.platform.console;
     requires webfx.platform.file;
+    requires webfx.platform.scheduler;
     requires webfx.platform.uischeduler;
     requires webfx.platform.windowhistory;
     requires webfx.stack.orm.datasourcemodel.service;
