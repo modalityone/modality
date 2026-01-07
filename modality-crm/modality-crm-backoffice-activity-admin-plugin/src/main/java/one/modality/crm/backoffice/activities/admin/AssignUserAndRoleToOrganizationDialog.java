@@ -158,7 +158,7 @@ public class AssignUserAndRoleToOrganizationDialog {
         );
 
         // Event selector (shown only when specific event is selected)
-        EntityButtonSelector<Entity> eventSelector = createEventButtonSelector(dataSourceModel, buttonSelectorParameters);
+        EntityButtonSelector<Entity> eventSelector = createEventButtonSelector(dataSourceModel, buttonSelectorParameters, currentOrg);
         Button eventButton = eventSelector.getButton();
         eventButton.setMaxWidth(Double.MAX_VALUE);
         eventButton.setText(I18n.getI18nText(SelectEventPlaceholder));
@@ -365,10 +365,12 @@ public class AssignUserAndRoleToOrganizationDialog {
      */
     private static EntityButtonSelector<Entity> createEventButtonSelector(
         DataSourceModel dataSourceModel,
-        ButtonSelectorParameters buttonSelectorParameters
+        ButtonSelectorParameters buttonSelectorParameters,
+        Organization organization
     ) {
+        Object orgId = organization != null ? organization.getPrimaryKey() : 1;
         String eventJson = // language=JSON5
-            "{class: 'Event', alias: 'e', where: 'organization=1', orderBy: 'name', columns: 'name,startDate,endDate'}";
+            "{class: 'Event', alias: 'e', where: 'organization=" + orgId + "', orderBy: 'name', columns: 'name,startDate,endDate'}";
 
         return new EntityButtonSelector<>(eventJson, dataSourceModel, buttonSelectorParameters);
     }
