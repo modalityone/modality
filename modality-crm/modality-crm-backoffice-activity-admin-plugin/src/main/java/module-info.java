@@ -28,6 +28,7 @@ module modality.crm.backoffice.activity.admin.plugin {
     requires webfx.kit.util;
     requires webfx.platform.console;
     requires webfx.platform.windowhistory;
+    requires webfx.stack.db.submit;
     requires webfx.stack.orm.datasourcemodel.service;
     requires webfx.stack.orm.domainmodel;
     requires webfx.stack.orm.domainmodel.activity;
