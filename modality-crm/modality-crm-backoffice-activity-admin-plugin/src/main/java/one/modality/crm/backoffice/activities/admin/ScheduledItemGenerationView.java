@@ -552,7 +552,8 @@ public class ScheduledItemGenerationView {
                 // SQL for scheduled_item using generate_series
                 // Only insert dates that don't already exist
                 String sql = "INSERT INTO scheduled_item (date, timeline_id, site_id, item_id, start_time, end_time, available, online, resource) " +
-                        "SELECT day, t.id, t.site_id, " + item.getPrimaryKey() + ", NULL, NULL, true, true, " + generateResources + " " +
+                        "SELECT day, t.id, t.site_id, " + item.getPrimaryKey() + ", NULL, NULL, true, true, " +
+                        "EXISTS (SELECT 1 FROM resource_configuration rc JOIN resource r ON r.id = rc.resource_id WHERE rc.item_id = " + item.getPrimaryKey() + " AND r.site_id = t.site_id) " +
                         "FROM timeline t, " +
                         "LATERAL (SELECT generate_series('" + from + "'::date, '" + to + "'::date, '1 day'::interval)::date AS day) days " +
                         "WHERE t.id = " + timelineId + " " +
@@ -645,7 +646,7 @@ public class ScheduledItemGenerationView {
         // SQL for scheduled_resource - only for resources linked to the global site
         // Uses DISTINCT ON to select one config per (date, resource), prioritizing configs with event_id
         String sql = "INSERT INTO scheduled_resource (date, configuration_id, scheduled_item_id, max, online, available) " +
-                "SELECT DISTINCT ON (si.date, r.id) si.date, rc.id, si.id, rc.max, COALESCE(rc.online, true), true " +
+                "SELECT DISTINCT ON (si.date, r.id) si.date, rc.id, si.id, NULL, COALESCE(rc.online, true), true " +
                 "FROM scheduled_item si " +
                 "JOIN resource_configuration rc ON rc.item_id = si.item_id " +
                 "JOIN resource r ON r.id = rc.resource_id " +
