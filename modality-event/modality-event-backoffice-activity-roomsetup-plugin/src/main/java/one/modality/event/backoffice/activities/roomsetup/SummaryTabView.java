@@ -69,6 +69,8 @@ final class SummaryTabView {
     private final FlowPane categoryBreakdown = new FlowPane(12, 12);
     private final VBox notesSection = new VBox(10);
     private final VBox roomsListSection = new VBox(16);
+    private final VBox nonBookableSection = new VBox(16);
+    private final StackPane noEventSelectedOverlay;
 
     // State
     private Event currentEvent;
@@ -93,8 +95,50 @@ final class SummaryTabView {
         loadingBox.getChildren().addAll(spinner, loadingLabel);
         loadingOverlay.getChildren().add(loadingBox);
 
-        // Container with loading overlay
-        containerWithLoading = new StackPane(mainContainer, loadingOverlay);
+        // Create "no event selected" overlay with styled message
+        noEventSelectedOverlay = createNoEventSelectedOverlay();
+        noEventSelectedOverlay.setVisible(false);
+        noEventSelectedOverlay.setManaged(false);
+
+        // Container with loading and no-event overlays
+        containerWithLoading = new StackPane(mainContainer, loadingOverlay, noEventSelectedOverlay);
+    }
+
+    /**
+     * Creates a styled overlay for when no event is selected.
+     * Uses Bootstrap alert-warning style with an icon and description.
+     */
+    private StackPane createNoEventSelectedOverlay() {
+        StackPane overlay = new StackPane();
+        overlay.getStyleClass().add("roomsetup-modal-overlay");
+
+        // Create message container
+        VBox messageBox = new VBox(16);
+        messageBox.setAlignment(Pos.CENTER);
+        messageBox.setMaxWidth(400);
+        messageBox.setPadding(new Insets(32));
+
+        // Apply warning alert style from Bootstrap
+        Bootstrap.alertWarning(messageBox);
+
+        // Warning icon (using Unicode warning triangle)
+        Label iconLabel = new Label("\u26A0"); // ⚠ symbol
+        iconLabel.setStyle("-fx-font-size: 48px; -fx-text-fill: #f59e0b;");
+
+        // Title
+        Label titleLabel = I18nControls.newLabel(EventRoomSetupI18nKeys.SelectEventRequired);
+        TextTheme.createPrimaryTextFacet(titleLabel).style();
+        Bootstrap.h4(titleLabel);
+
+        // Description
+        Label descLabel = I18nControls.newLabel(EventRoomSetupI18nKeys.SelectEventRequiredDescription);
+        descLabel.setWrapText(true);
+        descLabel.setStyle("-fx-text-fill: #78716c; -fx-text-alignment: center;");
+
+        messageBox.getChildren().addAll(iconLabel, titleLabel, descLabel);
+        overlay.getChildren().add(messageBox);
+
+        return overlay;
     }
 
     Node buildContainer() {
@@ -113,17 +157,9 @@ final class SummaryTabView {
 
         Console.log("SummaryTabView: Starting logic with shared data model");
 
-        // Bind loading state to data model's loading properties
+        // Bind loading/overlay state to data model's loading properties and event selection
         FXProperties.runNowAndOnPropertiesChange(() -> {
-            boolean allLoaded = dataModel.isAllDataLoaded();
-            loadingProperty.set(!allLoaded);
-            if (allLoaded) {
-                Platform.runLater(() -> {
-                    loadingOverlay.setVisible(false);
-                    loadingOverlay.setManaged(false);
-                    refreshUI();
-                });
-            }
+            Platform.runLater(this::updateOverlayState);
         }, dataModel.sourcePoolsLoadedProperty(),
            dataModel.categoryPoolsLoadedProperty(),
            dataModel.resourcesLoadedProperty(),
@@ -131,7 +167,8 @@ final class SummaryTabView {
            dataModel.permanentConfigsLoadedProperty(),
            dataModel.defaultAllocationsLoadedProperty(),
            dataModel.eventConfigsLoadedProperty(),
-           dataModel.eventAllocationsLoadedProperty());
+           dataModel.eventAllocationsLoadedProperty(),
+           FXEvent.eventProperty());
 
         // Listen to shared list changes (when rooms are assigned/unassigned in other tabs)
         dataModel.getEventAllocations().addListener((ListChangeListener<PoolAllocation>) c -> {
@@ -142,6 +179,12 @@ final class SummaryTabView {
             Console.log("SummaryTabView: Event configs changed, refreshing UI");
             Platform.runLater(this::refreshUI);
         });
+
+        // Listen for bed configuration changes from CustomizeTabView
+        FXProperties.runOnPropertyChange(() -> {
+            Console.log("SummaryTabView: Bed configuration changed, refreshing UI");
+            Platform.runLater(this::refreshUI);
+        }, dataModel.bedConfigurationVersionProperty());
 
         // Listen for event changes
         FXProperties.runNowAndOnPropertiesChange(() -> {
@@ -156,10 +199,44 @@ final class SummaryTabView {
                 (currentEvent != null ? currentEvent.getPrimaryKey() : "null") +
                 ", active=" + activeProperty.get() + ", changed=" + eventChanged);
 
-            if (activeProperty.get() && currentEvent != null) {
-                Platform.runLater(this::refreshUI);
-            }
+            Platform.runLater(this::updateOverlayState);
         }, FXEvent.eventProperty());
+    }
+
+    /**
+     * Updates the overlay state based on event selection and data loading status.
+     * Shows:
+     * - "No event selected" overlay if no event is selected
+     * - Loading overlay if event is selected but data is still loading
+     * - Main content if event is selected and data is loaded
+     */
+    private void updateOverlayState() {
+        Event event = FXEvent.getEvent();
+        boolean hasEvent = event != null;
+        boolean allLoaded = dataModel != null && dataModel.isAllDataLoaded();
+
+        Console.log("SummaryTabView: updateOverlayState - hasEvent=" + hasEvent + ", allLoaded=" + allLoaded);
+
+        if (!hasEvent) {
+            // No event selected - show "select event" message
+            noEventSelectedOverlay.setVisible(true);
+            noEventSelectedOverlay.setManaged(true);
+            loadingOverlay.setVisible(false);
+            loadingOverlay.setManaged(false);
+        } else if (!allLoaded) {
+            // Event selected but still loading - show spinner
+            noEventSelectedOverlay.setVisible(false);
+            noEventSelectedOverlay.setManaged(false);
+            loadingOverlay.setVisible(true);
+            loadingOverlay.setManaged(true);
+        } else {
+            // Event selected and data loaded - show content
+            noEventSelectedOverlay.setVisible(false);
+            noEventSelectedOverlay.setManaged(false);
+            loadingOverlay.setVisible(false);
+            loadingOverlay.setManaged(false);
+            refreshUI();
+        }
     }
 
     void setActive(boolean active) {
@@ -207,7 +284,13 @@ final class SummaryTabView {
         // Rooms list section
         roomsListSection.setPadding(new Insets(0));
 
-        mainContent.getChildren().addAll(title, grandTotalsRow, categoryBreakdown, notesSection, toolbar, roomsListSection);
+        // Non-bookable rooms section (hidden by default, shown if non-bookable rooms exist)
+        nonBookableSection.setPadding(new Insets(20));
+        nonBookableSection.getStyleClass().add("roomsetup-notes-section");
+        nonBookableSection.setVisible(false);
+        nonBookableSection.setManaged(false);
+
+        mainContent.getChildren().addAll(title, grandTotalsRow, categoryBreakdown, notesSection, toolbar, roomsListSection, nonBookableSection);
     }
 
     /**
@@ -291,6 +374,7 @@ final class SummaryTabView {
         refreshCategoryBreakdown();
         refreshNotesSection();
         refreshRoomsList();
+        refreshNonBookableSection();
     }
 
     /**
@@ -332,29 +416,42 @@ final class SummaryTabView {
 
     /**
      * Refreshes the grand totals row.
+     * Only counts rooms/beds in bookable pools; non-bookable shown separately.
      */
     private void refreshGrandTotals() {
         grandTotalsRow.getChildren().clear();
 
-        List<Resource> assignedRooms = getAssignedRooms();
-        int totalBeds = assignedRooms.stream().mapToInt(this::getBedCount).sum();
+        // Count only bookable rooms/beds
+        List<Resource> bookableRooms = getBookableAssignedRooms();
+        int bookableBeds = bookableRooms.stream().mapToInt(this::getBedCount).sum();
         long overrideCount = getEventResourceConfigurations().size();
 
-        Console.log("SummaryTabView: Grand totals - " + assignedRooms.size() + " rooms, " + totalBeds + " beds, " + overrideCount + " overrides");
+        // Count non-bookable rooms/beds
+        List<Resource> nonBookableRooms = getNonBookableAssignedRooms();
+        int nonBookableBeds = nonBookableRooms.stream().mapToInt(this::getBedCount).sum();
 
-        // Total beds
-        VBox bedsCard = createGrandTotalCard(String.valueOf(totalBeds), EventRoomSetupI18nKeys.TotalBedsAssigned, "#0096D6");
+        Console.log("SummaryTabView: Grand totals - " + bookableRooms.size() + " bookable rooms, " + bookableBeds + " bookable beds, " +
+            nonBookableRooms.size() + " non-bookable rooms, " + nonBookableBeds + " non-bookable beds, " + overrideCount + " overrides");
 
-        // Rooms allocated
-        VBox roomsCard = createGrandTotalCard(String.valueOf(assignedRooms.size()), EventRoomSetupI18nKeys.RoomsAllocated, "#10b981");
+        // Total beds (bookable only)
+        VBox bedsCard = createGrandTotalCard(String.valueOf(bookableBeds), EventRoomSetupI18nKeys.TotalBedsAssigned, "#0096D6");
 
-        // Category pools count
-        VBox poolsCard = createGrandTotalCard(String.valueOf(getCategoryPools().size()), EventRoomSetupI18nKeys.CategoryPools, "#8b5cf6");
+        // Rooms allocated (bookable only)
+        VBox roomsCard = createGrandTotalCard(String.valueOf(bookableRooms.size()), EventRoomSetupI18nKeys.RoomsAllocated, "#10b981");
+
+        // Category pools count (bookable only)
+        VBox poolsCard = createGrandTotalCard(String.valueOf(getBookableCategoryPools().size()), EventRoomSetupI18nKeys.CategoryPools, "#8b5cf6");
 
         // Room adjustments
         VBox adjustmentsCard = createGrandTotalCard(String.valueOf(overrideCount), EventRoomSetupI18nKeys.RoomAdjustments, "#f59e0b");
 
         grandTotalsRow.getChildren().addAll(bedsCard, roomsCard, poolsCard, adjustmentsCard);
+
+        // Add non-bookable card if there are non-bookable rooms
+        if (!nonBookableRooms.isEmpty()) {
+            VBox nonBookableCard = createGrandTotalCard(String.valueOf(nonBookableRooms.size()), EventRoomSetupI18nKeys.NonBookableRooms, "#78716c");
+            grandTotalsRow.getChildren().add(nonBookableCard);
+        }
     }
 
     /**
@@ -381,46 +478,82 @@ final class SummaryTabView {
 
     /**
      * Refreshes the category breakdown.
+     * Shows bookable pools first with colored styling, then non-bookable with muted styling.
      */
     private void refreshCategoryBreakdown() {
         categoryBreakdown.getChildren().clear();
 
-        for (Pool pool : getCategoryPools()) {
-            String color = pool.getWebColor() != null ? pool.getWebColor() : "#0096D6";
-            String name = pool.getName() != null ? pool.getName() : "Pool";
-            String graphic = pool.getGraphic();
+        // Show bookable pools first
+        for (Pool pool : getBookableCategoryPools()) {
+            categoryBreakdown.getChildren().add(createCategoryPill(pool, false));
+        }
 
-            // Count beds for this pool
-            int bedCount = getBedCountForPool(pool);
-
-            HBox pill = new HBox(10);
-            pill.setAlignment(Pos.CENTER_LEFT);
-            pill.setPadding(new Insets(12, 16, 12, 16));
-            pill.getStyleClass().add("roomsetup-category-pill");
-            // Dynamic color from database - use cross-platform helper
-            applyDynamicBackgroundAndBorder(pill, color + "15", color + "30", 1, new CornerRadii(20));
-
-            // Pool icon (SVG or fallback circle)
-            StackPane iconPane = createPoolIcon(graphic, color, 24);
-
-            Label nameLabel = new Label(name);
-            nameLabel.getStyleClass().add("roomsetup-category-pill-label");
-            // Dynamic color from database - use cross-platform helper
-            applyDynamicTextFill(nameLabel, color);
-
-            Label countBadge = new Label(String.valueOf(bedCount));
-            countBadge.setPadding(new Insets(4, 10, 4, 10));
-            countBadge.getStyleClass().add("roomsetup-category-pill-value");
-            // Dynamic color from database - use cross-platform helper
-            applyDynamicBackground(countBadge, color, new CornerRadii(10));
-
-            pill.getChildren().addAll(iconPane, nameLabel, countBadge);
-            categoryBreakdown.getChildren().add(pill);
+        // Show non-bookable pools with muted styling
+        List<Pool> nonBookablePools = getNonBookableCategoryPools();
+        if (!nonBookablePools.isEmpty()) {
+            for (Pool pool : nonBookablePools) {
+                categoryBreakdown.getChildren().add(createCategoryPill(pool, true));
+            }
         }
     }
 
     /**
+     * Creates a category pill for the breakdown.
+     * @param pool The pool to create a pill for
+     * @param muted True for non-bookable pools (gray styling)
+     */
+    private HBox createCategoryPill(Pool pool, boolean muted) {
+        String color = muted ? "#78716c" : (pool.getWebColor() != null ? pool.getWebColor() : "#0096D6");
+        String name = pool.getName() != null ? pool.getName() : "Pool";
+        String graphic = pool.getGraphic();
+
+        // Count beds for this pool
+        int bedCount = getBedCountForPool(pool);
+
+        HBox pill = new HBox(10);
+        pill.setAlignment(Pos.CENTER_LEFT);
+        pill.setPadding(new Insets(12, 16, 12, 16));
+        pill.getStyleClass().add("roomsetup-category-pill");
+
+        if (muted) {
+            // Muted styling for non-bookable pools
+            applyDynamicBackgroundAndBorder(pill, "#f5f5f4", "#e7e5e4", 1, new CornerRadii(20));
+        } else {
+            // Dynamic color from database - use cross-platform helper
+            applyDynamicBackgroundAndBorder(pill, color + "15", color + "30", 1, new CornerRadii(20));
+        }
+
+        // Pool icon (SVG or fallback circle)
+        StackPane iconPane = createPoolIcon(graphic, color, 24);
+
+        Label nameLabel = new Label(name);
+        nameLabel.getStyleClass().add("roomsetup-category-pill-label");
+        // Dynamic color from database - use cross-platform helper
+        applyDynamicTextFill(nameLabel, color);
+
+        Label countBadge = new Label(String.valueOf(bedCount));
+        countBadge.setPadding(new Insets(4, 10, 4, 10));
+        countBadge.getStyleClass().add("roomsetup-category-pill-value");
+        // Dynamic color from database - use cross-platform helper
+        applyDynamicBackground(countBadge, color, new CornerRadii(10));
+
+        pill.getChildren().addAll(iconPane, nameLabel, countBadge);
+
+        // Add "Non-bookable" indicator for muted pills
+        if (muted) {
+            Label nonBookableLabel = I18nControls.newLabel(EventRoomSetupI18nKeys.NotBookable);
+            nonBookableLabel.setPadding(new Insets(2, 6, 2, 6));
+            nonBookableLabel.getStyleClass().add("roomsetup-category-pill-label");
+            applyDynamicTextFill(nonBookableLabel, "#a8a29e");
+            pill.getChildren().add(nonBookableLabel);
+        }
+
+        return pill;
+    }
+
+    /**
      * Refreshes the notes section.
+     * Only counts bookable beds as "ready for booking".
      */
     private void refreshNotesSection() {
         notesSection.getChildren().clear();
@@ -431,18 +564,60 @@ final class SummaryTabView {
 
         VBox notesList = new VBox(10);
 
-        List<Resource> assignedRooms = getAssignedRooms();
-        int totalBeds = assignedRooms.stream().mapToInt(this::getBedCount).sum();
+        // Check for over-allocated rooms (allocated beds > capacity) - show warning first
+        List<Resource> overAllocatedRooms = getOverAllocatedRooms();
+        if (!overAllocatedRooms.isEmpty()) {
+            String roomNames = overAllocatedRooms.stream()
+                .map(r -> r.getName() != null ? r.getName() : "Room")
+                .collect(Collectors.joining(", "));
+            HBox note = createNoteDanger("⚠️", overAllocatedRooms.size() + " " +
+                I18nControls.newLabel(EventRoomSetupI18nKeys.OverAllocationWarning).getText() +
+                " (" + roomNames + ")");
+            notesList.getChildren().add(note);
+        }
 
-        // Ready for booking note
-        if (totalBeds > 0) {
+        // Check for rooms with unallocated beds (partially allocated)
+        List<Resource> roomsWithUnallocated = getRoomsWithUnallocatedBeds();
+        int totalUnallocated = getTotalUnallocatedBeds();
+        if (totalUnallocated > 0) {
+            String roomNames = roomsWithUnallocated.stream()
+                .map(r -> r.getName() != null ? r.getName() : "Room")
+                .collect(Collectors.joining(", "));
+            HBox note = createNoteWarning("⚠️", totalUnallocated + " " +
+                I18nControls.newLabel(EventRoomSetupI18nKeys.UnallocatedBedsWarning, roomsWithUnallocated.size()).getText() +
+                " (" + roomNames + ")");
+            notesList.getChildren().add(note);
+        }
+
+        // Only count bookable rooms/beds for the "ready for booking" message
+        List<Resource> bookableRooms = getBookableAssignedRooms();
+        int bookableBeds = bookableRooms.stream().mapToInt(this::getBedCount).sum();
+
+        // Count non-bookable rooms for information
+        List<Resource> nonBookableRooms = getNonBookableAssignedRooms();
+        int nonBookableBeds = nonBookableRooms.stream().mapToInt(this::getBedCount).sum();
+
+        // Ready for booking note (bookable beds only)
+        if (bookableBeds > 0) {
             String eventName = currentEvent != null ? currentEvent.getName() : "this event";
-            HBox note = createNoteSuccess("✅", totalBeds + " " +
+            HBox note = createNoteSuccess("✅", bookableBeds + " " +
                 I18nControls.newLabel(EventRoomSetupI18nKeys.BedsReadyForBooking).getText() + " " + eventName + ".");
             notesList.getChildren().add(note);
         } else {
             HBox note = createNoteWarning("💡", I18nControls.newLabel(EventRoomSetupI18nKeys.NoRoomsAssignedYet).getText() + ". " +
                 I18nControls.newLabel(EventRoomSetupI18nKeys.AssignRoomsFirst).getText());
+            notesList.getChildren().add(note);
+        }
+
+        // Non-bookable rooms note (if any exist)
+        if (!nonBookableRooms.isEmpty()) {
+            List<Pool> nonBookablePools = getNonBookableCategoryPools();
+            String poolNames = nonBookablePools.stream()
+                .map(p -> p.getName() != null ? p.getName() : "Unknown")
+                .collect(Collectors.joining(", "));
+            HBox note = createNoteInfo("\u2298", nonBookableRooms.size() + " " +
+                I18nControls.newLabel(EventRoomSetupI18nKeys.RoomsInNonBookableCategories).getText() +
+                " (" + poolNames + ")");
             notesList.getChildren().add(note);
         }
 
@@ -478,6 +653,26 @@ final class SummaryTabView {
     }
 
     /**
+     * Creates a danger/error note item (red).
+     */
+    private HBox createNoteDanger(String icon, String text) {
+        HBox note = new HBox(10);
+        note.setAlignment(Pos.CENTER_LEFT);
+        note.setPadding(new Insets(12, 14, 12, 14));
+        // Apply red warning styling
+        applyDynamicBackgroundAndBorder(note, "#fef2f2", "#ef4444", 1, new CornerRadii(8));
+
+        Label iconLabel = new Label(icon);
+
+        Label textLabel = new Label(text);
+        applyDynamicTextFill(textLabel, "#dc2626");
+        textLabel.setWrapText(true);
+
+        note.getChildren().addAll(iconLabel, textLabel);
+        return note;
+    }
+
+    /**
      * Creates a note item with CSS classes.
      */
     private HBox createNote(String icon, String text, String noteClass, String textClass) {
@@ -497,12 +692,175 @@ final class SummaryTabView {
     }
 
     /**
+     * Refreshes the non-bookable rooms section.
+     * Shows rooms in non-bookable pools in a separate gray section at the bottom.
+     */
+    private void refreshNonBookableSection() {
+        nonBookableSection.getChildren().clear();
+
+        List<Pool> nonBookablePools = getNonBookableCategoryPools();
+        List<Resource> nonBookableRooms = getNonBookableAssignedRooms();
+
+        // Hide section if no non-bookable rooms
+        if (nonBookableRooms.isEmpty()) {
+            nonBookableSection.setVisible(false);
+            nonBookableSection.setManaged(false);
+            return;
+        }
+
+        // Show section
+        nonBookableSection.setVisible(true);
+        nonBookableSection.setManaged(true);
+
+        // Apply muted background styling
+        applyDynamicBackgroundAndBorder(nonBookableSection, "#fafaf9", "#e7e5e4", 1, new CornerRadii(12));
+
+        // Header with icon and title
+        HBox header = new HBox(10);
+        header.setAlignment(Pos.CENTER_LEFT);
+        header.setPadding(new Insets(0, 0, 12, 0));
+
+        Label iconLabel = new Label("\u2298"); // ⊘ symbol
+        iconLabel.getStyleClass().add("roomsetup-pool-title");
+        applyDynamicTextFill(iconLabel, "#78716c");
+
+        Label titleLabel = I18nControls.newLabel(EventRoomSetupI18nKeys.NonBookableRooms);
+        titleLabel.getStyleClass().add("roomsetup-pool-title");
+        applyDynamicTextFill(titleLabel, "#78716c");
+
+        int totalNonBookableBeds = nonBookableRooms.stream().mapToInt(this::getBedCount).sum();
+        Label statsLabel = new Label(nonBookableRooms.size() + " " +
+            I18nControls.newLabel(EventRoomSetupI18nKeys.Rooms).getText() + " • " + totalNonBookableBeds + " " +
+            I18nControls.newLabel(EventRoomSetupI18nKeys.Beds).getText());
+        statsLabel.getStyleClass().add("roomsetup-pool-count");
+
+        header.getChildren().addAll(iconLabel, titleLabel, statsLabel);
+
+        // Description
+        Label descLabel = I18nControls.newLabel(EventRoomSetupI18nKeys.NonBookableBedsDescription);
+        descLabel.getStyleClass().add("roomsetup-pool-count");
+        descLabel.setWrapText(true);
+
+        nonBookableSection.getChildren().addAll(header, descLabel);
+
+        // Group by pool for non-bookable rooms
+        String search = searchText.get().toLowerCase();
+        for (Pool pool : nonBookablePools) {
+            List<PoolAllocation> poolAllocations = getPoolAllocations().stream()
+                .filter(pa -> pa.getResourceId() != null && Entities.samePrimaryKey(pa.getPoolId(), pool))
+                .filter(pa -> {
+                    if (search.isEmpty()) return true;
+                    Resource r = getResourceById(pa.getResourceId());
+                    String name = r != null && r.getName() != null ? r.getName().toLowerCase() : "";
+                    return name.contains(search);
+                })
+                .collect(Collectors.toList());
+
+            if (!poolAllocations.isEmpty()) {
+                int groupBeds = poolAllocations.stream()
+                    .mapToInt(pa -> pa.getQuantity() != null ? pa.getQuantity() : 0)
+                    .sum();
+
+                VBox groupCard = createNonBookableGroupCardForPool(pool, poolAllocations, groupBeds);
+                nonBookableSection.getChildren().add(groupCard);
+            }
+        }
+    }
+
+    /**
+     * Creates a group card for a non-bookable pool with muted styling.
+     */
+    private VBox createNonBookableGroupCardForPool(Pool pool, List<PoolAllocation> allocations, int bedCount) {
+        VBox card = new VBox();
+        card.getStyleClass().add("roomsetup-pool-card");
+
+        String groupName = pool.getName() != null ? pool.getName() : "Unknown";
+        String mutedColor = "#78716c";
+
+        // Header with muted styling
+        HBox header = new HBox(12);
+        header.setAlignment(Pos.CENTER_LEFT);
+        header.setPadding(new Insets(14, 20, 14, 20));
+        header.getStyleClass().add("roomsetup-pool-header");
+        applyDynamicBackground(header, "#f5f5f4", new CornerRadii(8, 8, 0, 0, false));
+
+        // Pool icon with muted color
+        Node iconNode = createPoolIcon(pool.getGraphic(), mutedColor, 28);
+
+        Label nameLabel = new Label(groupName);
+        nameLabel.getStyleClass().add("roomsetup-pool-title");
+        applyDynamicTextFill(nameLabel, mutedColor);
+
+        Label statsLabel = new Label(allocations.size() + " " +
+            I18nControls.newLabel(EventRoomSetupI18nKeys.Rooms).getText() + " • " + bedCount + " " +
+            I18nControls.newLabel(EventRoomSetupI18nKeys.Beds).getText());
+        statsLabel.getStyleClass().add("roomsetup-pool-count");
+
+        header.getChildren().addAll(iconNode, nameLabel, statsLabel);
+
+        // Rooms flow with muted styling
+        FlowPane roomsFlow = new FlowPane(10, 10);
+        roomsFlow.setPadding(new Insets(16, 20, 16, 20));
+
+        for (PoolAllocation allocation : allocations) {
+            Resource room = getResourceById(allocation.getResourceId());
+            if (room != null) {
+                int bedsInPool = allocation.getQuantity() != null ? allocation.getQuantity() : 0;
+                Node roomChip = createNonBookableRoomChip(room, bedsInPool);
+                roomsFlow.getChildren().add(roomChip);
+            }
+        }
+
+        card.getChildren().addAll(header, roomsFlow);
+        return card;
+    }
+
+    /**
+     * Creates a room chip with muted styling for non-bookable rooms.
+     */
+    private Node createNonBookableRoomChip(Resource room, int beds) {
+        String comment = getRoomComment(room);
+        boolean hasComment = comment != null && !comment.isEmpty();
+
+        HBox chip = new HBox(6);
+        chip.setPadding(new Insets(10, 14, 10, 14));
+        chip.setAlignment(Pos.CENTER_LEFT);
+        chip.getStyleClass().add("roomsetup-room-chip");
+
+        // Muted styling
+        applyDynamicBackgroundAndBorder(chip, "#f5f5f4", "#e7e5e4", 1, new CornerRadii(8));
+
+        // Room ID
+        Label idLabel = new Label(room.getName() != null ? room.getName() : "Room");
+        idLabel.getStyleClass().add("roomsetup-room-id");
+        applyDynamicTextFill(idLabel, "#78716c");
+
+        // Bed count
+        Label bedsLabel = new Label(String.valueOf(beds));
+        bedsLabel.setPadding(new Insets(2, 6, 2, 6));
+        bedsLabel.getStyleClass().add("roomsetup-beds-badge");
+        applyDynamicBackgroundAndTextFill(bedsLabel, "#a8a29e", "#ffffff");
+
+        chip.getChildren().addAll(idLabel, bedsLabel);
+
+        // Comment indicator
+        if (hasComment) {
+            StackPane commentIcon = createSvgIcon(COMMENT_SVG_PATH, "#a8a29e", 14, 0);
+            chip.getChildren().add(commentIcon);
+        }
+
+        return chip;
+    }
+
+    /**
      * Refreshes the rooms list.
+     * Only shows bookable rooms; non-bookable rooms are in the separate section.
      */
     private void refreshRoomsList() {
         roomsListSection.getChildren().clear();
 
-        List<Resource> assignedRooms = getAssignedRooms();
+        // Only show bookable rooms in main list; non-bookable are in separate section
+        List<Resource> assignedRooms = getBookableAssignedRooms();
 
         // Filter by search text
         String search = searchText.get().toLowerCase();
@@ -545,12 +903,13 @@ final class SummaryTabView {
     /**
      * Refreshes the rooms list grouped by category, properly handling split allocations.
      * A room with beds split between multiple pools will appear in each pool with its allocated bed count.
+     * Only shows bookable pools; non-bookable are in the separate section.
      */
     private void refreshRoomsListByCategory(List<Resource> assignedRooms, String search) {
-        // Group allocations by pool (not rooms)
+        // Group allocations by pool (not rooms) - only bookable pools
         Map<Pool, List<PoolAllocation>> allocationsByPool = new LinkedHashMap<>();
 
-        for (Pool pool : getCategoryPools()) {
+        for (Pool pool : getBookableCategoryPools()) {
             List<PoolAllocation> poolAllocations = getPoolAllocations().stream()
                 .filter(pa -> pa.getResourceId() != null && Entities.samePrimaryKey(pa.getPoolId(), pool))
                 .filter(pa -> {
@@ -866,6 +1225,61 @@ final class SummaryTabView {
         return getAllocationsForRoom(room).size() > 1;
     }
 
+    /**
+     * Gets the total allocated beds for a room across all pools.
+     */
+    private int getTotalAllocatedBeds(Resource room) {
+        return getAllocationsForRoom(room).stream()
+            .mapToInt(pa -> pa.getQuantity() != null ? pa.getQuantity() : 0)
+            .sum();
+    }
+
+    /**
+     * Checks if a room is over-allocated (more beds allocated than capacity).
+     */
+    private boolean isOverAllocated(Resource room) {
+        int capacity = getBedCount(room);
+        int allocated = getTotalAllocatedBeds(room);
+        return allocated > capacity;
+    }
+
+    /**
+     * Gets all over-allocated rooms.
+     */
+    private List<Resource> getOverAllocatedRooms() {
+        return getAssignedRooms().stream()
+            .filter(this::isOverAllocated)
+            .collect(Collectors.toList());
+    }
+
+    /**
+     * Gets the number of unallocated beds for a room.
+     * This is capacity minus allocated beds (can be negative if over-allocated).
+     */
+    private int getUnallocatedBeds(Resource room) {
+        int capacity = getBedCount(room);
+        int allocated = getTotalAllocatedBeds(room);
+        return Math.max(0, capacity - allocated);
+    }
+
+    /**
+     * Gets rooms that have unallocated beds (partially allocated).
+     */
+    private List<Resource> getRoomsWithUnallocatedBeds() {
+        return getAssignedRooms().stream()
+            .filter(room -> getUnallocatedBeds(room) > 0)
+            .collect(Collectors.toList());
+    }
+
+    /**
+     * Gets total unallocated beds across all assigned rooms.
+     */
+    private int getTotalUnallocatedBeds() {
+        return getAssignedRooms().stream()
+            .mapToInt(this::getUnallocatedBeds)
+            .sum();
+    }
+
     // SVG path for edit/pen icon (Feather-style pencil, naturally diagonal)
     private static final String EDIT_SVG_PATH = "M17 3a2.83 2.83 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5L17 3z";
 
@@ -1018,6 +1432,89 @@ final class SummaryTabView {
      */
     private boolean isCategoryPool(Pool pool) {
         return pool != null && Boolean.TRUE.equals(pool.isEventPool());
+    }
+
+    /**
+     * Checks if a pool is bookable (default to true if null).
+     */
+    private boolean isPoolBookable(Pool pool) {
+        return pool != null && !Boolean.FALSE.equals(pool.isBookable());
+    }
+
+    /**
+     * Gets bookable category pools.
+     */
+    private List<Pool> getBookableCategoryPools() {
+        return getCategoryPools().stream()
+            .filter(this::isPoolBookable)
+            .collect(Collectors.toList());
+    }
+
+    /**
+     * Gets non-bookable category pools.
+     */
+    private List<Pool> getNonBookableCategoryPools() {
+        return getCategoryPools().stream()
+            .filter(p -> !isPoolBookable(p))
+            .collect(Collectors.toList());
+    }
+
+    /**
+     * Gets rooms assigned to bookable pools only.
+     */
+    private List<Resource> getBookableAssignedRooms() {
+        Set<Object> bookablePoolIds = getBookableCategoryPools().stream()
+            .map(Entities::getPrimaryKey)
+            .collect(Collectors.toSet());
+
+        Set<Object> resourceIds = getPoolAllocations().stream()
+            .filter(pa -> pa.getPoolId() != null && bookablePoolIds.contains(Entities.getPrimaryKey(pa.getPoolId())))
+            .filter(pa -> pa.getResourceId() != null)
+            .map(pa -> Entities.getPrimaryKey(pa.getResourceId()))
+            .filter(Objects::nonNull)
+            .collect(Collectors.toSet());
+
+        return getResources().stream()
+            .filter(r -> resourceIds.contains(Entities.getPrimaryKey(r)))
+            .collect(Collectors.toList());
+    }
+
+    /**
+     * Gets rooms assigned to non-bookable pools.
+     */
+    private List<Resource> getNonBookableAssignedRooms() {
+        Set<Object> nonBookablePoolIds = getNonBookableCategoryPools().stream()
+            .map(Entities::getPrimaryKey)
+            .collect(Collectors.toSet());
+
+        Set<Object> resourceIds = getPoolAllocations().stream()
+            .filter(pa -> pa.getPoolId() != null && nonBookablePoolIds.contains(Entities.getPrimaryKey(pa.getPoolId())))
+            .filter(pa -> pa.getResourceId() != null)
+            .map(pa -> Entities.getPrimaryKey(pa.getResourceId()))
+            .filter(Objects::nonNull)
+            .collect(Collectors.toSet());
+
+        return getResources().stream()
+            .filter(r -> resourceIds.contains(Entities.getPrimaryKey(r)))
+            .collect(Collectors.toList());
+    }
+
+    /**
+     * Gets total bed count for bookable pools.
+     */
+    private int getBookableTotalBedCount() {
+        return getBookableAssignedRooms().stream()
+            .mapToInt(this::getBedCount)
+            .sum();
+    }
+
+    /**
+     * Gets total bed count for non-bookable pools.
+     */
+    private int getNonBookableTotalBedCount() {
+        return getNonBookableAssignedRooms().stream()
+            .mapToInt(this::getBedCount)
+            .sum();
     }
 
     /**

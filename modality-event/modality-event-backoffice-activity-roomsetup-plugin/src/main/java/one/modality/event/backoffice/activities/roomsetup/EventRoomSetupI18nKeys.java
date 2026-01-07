@@ -94,11 +94,14 @@ public interface EventRoomSetupI18nKeys {
     Object NoRoomsConfigured = "NoRoomsConfigured";
     Object NoRoomsConfiguredDesc = "NoRoomsConfiguredDesc";
     Object NoRoomsMatchSearch = "NoRoomsMatchSearch";
+    Object NonBookableBedsDescription = "NonBookableBedsDescription";
+    Object NonBookableRooms = "NonBookableRooms";
     Object NotBookable = "NotBookable";
     Object Notes = "Notes";
     Object NotesAddress = "NotesAddress";
     Object NotesAndObservations = "NotesAndObservations";
     Object OtherRoomType = "OtherRoomType";
+    Object OverAllocationWarning = "OverAllocationWarning";
     Object Overflow = "Overflow";
     Object OverrideSettingsFor = "OverrideSettingsFor";
     Object PlusBeds = "PlusBeds";
@@ -123,6 +126,7 @@ public interface EventRoomSetupI18nKeys {
     Object RoomsAndBeds = "RoomsAndBeds";
     Object RoomsAssigned = "RoomsAssigned";
     Object RoomsHaveBeenModified = "RoomsHaveBeenModified";
+    Object RoomsInNonBookableCategories = "RoomsInNonBookableCategories";
     Object RoomsSlashBeds = "RoomsSlashBeds";
     Object Save = "Save";
     Object SaveChanges = "SaveChanges";
@@ -130,6 +134,8 @@ public interface EventRoomSetupI18nKeys {
     Object SelectBedsToAssign = "SelectBedsToAssign";
     Object SelectCategory = "SelectCategory";
     Object SelectCategoryForRooms = "SelectCategoryForRooms";
+    Object SelectEventRequired = "SelectEventRequired";
+    Object SelectEventRequiredDescription = "SelectEventRequiredDescription";
     Object SelectRoomsTabTitle = "SelectRoomsTabTitle";
     Object Shared4 = "Shared4";
     Object SingleCategory = "SingleCategory";
@@ -150,6 +156,7 @@ public interface EventRoomSetupI18nKeys {
     Object TripleEnsuite = "TripleEnsuite";
     Object TwinEnsuite = "TwinEnsuite";
     Object TwinShared = "TwinShared";
+    Object UnallocatedBedsWarning = "UnallocatedBedsWarning";
     Object UnassignAll = "UnassignAll";
     Object UnassignRoom = "UnassignRoom";
     Object UnassignedRooms = "UnassignedRooms";

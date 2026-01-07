@@ -9,7 +9,9 @@ import dev.webfx.stack.orm.entity.UpdateStore;
 import dev.webfx.stack.orm.reactive.entities.dql_to_entities.ReactiveEntitiesMapper;
 import dev.webfx.stack.routing.activity.impl.elementals.activeproperty.HasActiveProperty;
 import javafx.beans.property.BooleanProperty;
+import javafx.beans.property.IntegerProperty;
 import javafx.beans.property.SimpleBooleanProperty;
+import javafx.beans.property.SimpleIntegerProperty;
 import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
@@ -67,6 +69,10 @@ public class EventRoomSetupDataModel {
     private final BooleanProperty defaultAllocationsLoaded = new SimpleBooleanProperty(false);
     private final BooleanProperty eventConfigsLoaded = new SimpleBooleanProperty(false);
     private final BooleanProperty eventAllocationsLoaded = new SimpleBooleanProperty(false);
+
+    // === BED CONFIGURATION CHANGE NOTIFICATION ===
+    // Version number pattern: increments when bed configuration changes, tabs listen and refresh
+    private final IntegerProperty bedConfigurationVersion = new SimpleIntegerProperty(0);
 
     // === SINGLE UPDATE STORE ===
     private UpdateStore updateStore;
@@ -210,6 +216,9 @@ public class EventRoomSetupDataModel {
             .addEntitiesHandler(entities -> {
                 Console.log("EventRoomSetupDataModel: Event configs loaded: " + entities.size());
                 eventConfigsLoaded.set(true);
+                // Notify all tabs that bed configuration data has arrived
+                // This ensures tabs refresh with the actual updated data
+                notifyBedConfigurationChanged();
             })
             .start();
 
@@ -243,6 +252,11 @@ public class EventRoomSetupDataModel {
      * Refreshes only the changed entities after mutations.
      * Called after UpdateStore.submitChanges() completes.
      *
+     * NOTE: We do NOT reset the loaded flags here. The push query mechanism
+     * will automatically push the updated data to the client. Resetting the
+     * flags would show the loading overlay, but the entity handler might not
+     * be called if the push mechanism determines no refresh is needed.
+     *
      * @param changedEntities List of entities that were modified
      */
     public void refreshChangedEntities(List<Entity> changedEntities) {
@@ -253,12 +267,10 @@ public class EventRoomSetupDataModel {
 
         if (hasConfigChanges && eventConfigsRem != null) {
             Console.log("EventRoomSetupDataModel: Refreshing event configs after changes");
-            eventConfigsLoaded.set(false);
             eventConfigsRem.refreshWhenActive();
         }
         if (hasAllocationChanges && eventAllocationsRem != null) {
             Console.log("EventRoomSetupDataModel: Refreshing event allocations after changes");
-            eventAllocationsLoaded.set(false);
             eventAllocationsRem.refreshWhenActive();
         }
     }
@@ -266,14 +278,18 @@ public class EventRoomSetupDataModel {
     /**
      * Refreshes event-specific data (configs and allocations).
      * Use this when returning to the tab after modifications elsewhere.
+     *
+     * NOTE: We do NOT reset the loaded flags here. The push query mechanism
+     * will automatically update the data when it changes on the server.
+     * Resetting the flags would cause the loading overlay to show, but if
+     * the query stream is already established and data hasn't changed,
+     * the entity handler might not be called, leaving the spinner stuck.
      */
     public void refreshEventData() {
         if (eventConfigsRem != null) {
-            eventConfigsLoaded.set(false);
             eventConfigsRem.refreshWhenActive();
         }
         if (eventAllocationsRem != null) {
-            eventAllocationsLoaded.set(false);
             eventAllocationsRem.refreshWhenActive();
         }
     }
@@ -382,5 +398,24 @@ public class EventRoomSetupDataModel {
 
     public DataSourceModel getDataSourceModel() {
         return dataSourceModel;
+    }
+
+    // === BED CONFIGURATION CHANGE NOTIFICATION ===
+
+    /**
+     * Property that increments when bed configuration changes (add/remove beds).
+     * Tabs listen to this property to refresh their UI.
+     */
+    public IntegerProperty bedConfigurationVersionProperty() {
+        return bedConfigurationVersion;
+    }
+
+    /**
+     * Notifies all tabs that bed configuration has changed.
+     * Called after saving room overrides that change bed counts.
+     * Tabs listening to bedConfigurationVersionProperty() will refresh.
+     */
+    public void notifyBedConfigurationChanged() {
+        bedConfigurationVersion.set(bedConfigurationVersion.get() + 1);
     }
 }
