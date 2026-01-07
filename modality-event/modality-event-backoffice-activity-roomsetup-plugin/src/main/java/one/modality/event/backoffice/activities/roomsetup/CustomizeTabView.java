@@ -73,6 +73,7 @@ final class CustomizeTabView {
     private final ScrollPane mainContainer;
     private final StackPane containerWithLoading;
     private final StackPane loadingOverlay;
+    private final StackPane noEventSelectedOverlay;
     private final HBox statsRow = new HBox(12);
     private final VBox roomsSection = new VBox(16);
 
@@ -95,8 +96,50 @@ final class CustomizeTabView {
         loadingBox.getChildren().addAll(spinner, loadingLabel);
         loadingOverlay.getChildren().add(loadingBox);
 
-        // Container with loading overlay
-        containerWithLoading = new StackPane(mainContainer, loadingOverlay);
+        // Create "no event selected" overlay with styled message
+        noEventSelectedOverlay = createNoEventSelectedOverlay();
+        noEventSelectedOverlay.setVisible(false);
+        noEventSelectedOverlay.setManaged(false);
+
+        // Container with loading and no-event overlays
+        containerWithLoading = new StackPane(mainContainer, loadingOverlay, noEventSelectedOverlay);
+    }
+
+    /**
+     * Creates a styled overlay for when no event is selected.
+     * Uses Bootstrap alert-warning style with an icon and description.
+     */
+    private StackPane createNoEventSelectedOverlay() {
+        StackPane overlay = new StackPane();
+        overlay.getStyleClass().add("roomsetup-modal-overlay");
+
+        // Create message container
+        VBox messageBox = new VBox(16);
+        messageBox.setAlignment(Pos.CENTER);
+        messageBox.setMaxWidth(400);
+        messageBox.setPadding(new Insets(32));
+
+        // Apply warning alert style from Bootstrap
+        Bootstrap.alertWarning(messageBox);
+
+        // Warning icon (using Unicode warning triangle)
+        Label iconLabel = new Label("\u26A0"); // ⚠ symbol
+        iconLabel.setStyle("-fx-font-size: 48px; -fx-text-fill: #f59e0b;");
+
+        // Title
+        Label titleLabel = I18nControls.newLabel(EventRoomSetupI18nKeys.SelectEventRequired);
+        TextTheme.createPrimaryTextFacet(titleLabel).style();
+        Bootstrap.h4(titleLabel);
+
+        // Description
+        Label descLabel = I18nControls.newLabel(EventRoomSetupI18nKeys.SelectEventRequiredDescription);
+        descLabel.setWrapText(true);
+        descLabel.setStyle("-fx-text-fill: #78716c; -fx-text-alignment: center;");
+
+        messageBox.getChildren().addAll(iconLabel, titleLabel, descLabel);
+        overlay.getChildren().add(messageBox);
+
+        return overlay;
     }
 
     Node buildContainer() {
@@ -116,17 +159,9 @@ final class CustomizeTabView {
 
         Console.log("CustomizeTabView: Starting logic with shared data model");
 
-        // Bind loading state to data model's loading properties
+        // Bind loading/overlay state to data model's loading properties and event selection
         FXProperties.runNowAndOnPropertiesChange(() -> {
-            boolean allLoaded = dataModel.isAllDataLoaded();
-            loadingProperty.set(!allLoaded);
-            if (allLoaded) {
-                Platform.runLater(() -> {
-                    loadingOverlay.setVisible(false);
-                    loadingOverlay.setManaged(false);
-                    refreshUI();
-                });
-            }
+            Platform.runLater(this::updateOverlayState);
         }, dataModel.sourcePoolsLoadedProperty(),
            dataModel.categoryPoolsLoadedProperty(),
            dataModel.resourcesLoadedProperty(),
@@ -134,7 +169,8 @@ final class CustomizeTabView {
            dataModel.permanentConfigsLoadedProperty(),
            dataModel.defaultAllocationsLoadedProperty(),
            dataModel.eventConfigsLoadedProperty(),
-           dataModel.eventAllocationsLoadedProperty());
+           dataModel.eventAllocationsLoadedProperty(),
+           FXEvent.eventProperty());
 
         // Listen to shared list changes (when rooms are assigned/unassigned in other tabs)
         dataModel.getEventAllocations().addListener((ListChangeListener<PoolAllocation>) c -> {
@@ -146,14 +182,56 @@ final class CustomizeTabView {
             Platform.runLater(this::refreshUI);
         });
 
+        // Listen for bed configuration changes (ensures refresh happens after data arrives)
+        FXProperties.runOnPropertyChange(() -> {
+            Console.log("CustomizeTabView: Bed configuration changed, refreshing UI");
+            Platform.runLater(this::refreshUI);
+        }, dataModel.bedConfigurationVersionProperty());
+
         // Listen for event changes
         FXProperties.runNowAndOnPropertiesChange(() -> {
             currentEvent = FXEvent.getEvent();
             if (currentEvent != null && activeProperty.get()) {
                 Console.log("CustomizeTabView: Event changed to: " + currentEvent.getName());
-                Platform.runLater(this::refreshUI);
             }
+            Platform.runLater(this::updateOverlayState);
         }, FXEvent.eventProperty());
+    }
+
+    /**
+     * Updates the overlay state based on event selection and data loading status.
+     * Shows:
+     * - "No event selected" overlay if no event is selected
+     * - Loading overlay if event is selected but data is still loading
+     * - Main content if event is selected and data is loaded
+     */
+    private void updateOverlayState() {
+        Event event = FXEvent.getEvent();
+        boolean hasEvent = event != null;
+        boolean allLoaded = dataModel != null && dataModel.isAllDataLoaded();
+
+        Console.log("CustomizeTabView: updateOverlayState - hasEvent=" + hasEvent + ", allLoaded=" + allLoaded);
+
+        if (!hasEvent) {
+            // No event selected - show "select event" message
+            noEventSelectedOverlay.setVisible(true);
+            noEventSelectedOverlay.setManaged(true);
+            loadingOverlay.setVisible(false);
+            loadingOverlay.setManaged(false);
+        } else if (!allLoaded) {
+            // Event selected but still loading - show spinner
+            noEventSelectedOverlay.setVisible(false);
+            noEventSelectedOverlay.setManaged(false);
+            loadingOverlay.setVisible(true);
+            loadingOverlay.setManaged(true);
+        } else {
+            // Event selected and data loaded - show content
+            noEventSelectedOverlay.setVisible(false);
+            noEventSelectedOverlay.setManaged(false);
+            loadingOverlay.setVisible(false);
+            loadingOverlay.setManaged(false);
+            refreshUI();
+        }
     }
 
     void setActive(boolean active) {
@@ -814,7 +892,9 @@ final class CustomizeTabView {
         getUpdateStore().submitChanges()
             .onFailure(Console::log)
             .onSuccess(r -> {
-                // Refresh only the changed entities
+                // Refresh only the changed entities - this triggers async data fetch
+                // The reactive mapper's entity handler will call notifyBedConfigurationChanged()
+                // when the new data arrives, ensuring all tabs refresh with correct data
                 dataModel.refreshChangedEntities(Collections.singletonList(changedConfig));
                 Platform.runLater(this::refreshUI);
             });
@@ -909,7 +989,8 @@ final class CustomizeTabView {
             return false;
         }
         Object eventVenueId = currentEvent.getVenueId();
-        return eventVenueId != null && !Objects.equals(room.getSite().getPrimaryKey(), eventVenueId);
+        // Use Entities.samePrimaryKey() for proper EntityId comparison
+        return eventVenueId != null && !Entities.samePrimaryKey(room.getSite(), eventVenueId);
     }
 
     /**
