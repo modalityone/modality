@@ -270,7 +270,7 @@ public final class ModalityPasswordAuthenticationGateway implements ServerAuthen
         if (!(userId instanceof ModalityUserPrincipal modalityUserPrincipal))
             return Future.failedFuture("[%s] This userId object is not recognized by Modality".formatted(ModalityAuthenticationI18nKeys.AuthnUnrecognizedUserIdError));
         return EntityStore.create(dataSourceModel)
-            .<Person>executeQuery("select " + fields + " from Person where id=? and frontendAccount.(id=? and !disabled and (?=false or backoffice)", modalityUserPrincipal.getUserPersonId(), modalityUserPrincipal.getUserAccountId(), isBackofficeAuthentication)
+            .<Person>executeQuery("select " + fields + " from Person where id=? and frontendAccount.(id=? and !disabled and (?=false or backoffice))", modalityUserPrincipal.getUserPersonId(), modalityUserPrincipal.getUserAccountId(), isBackofficeAuthentication)
             .compose(persons -> {
                 if (persons.size() != 1)
                     return Future.failedFuture("[%s] No such user account".formatted(ModalityAuthenticationI18nKeys.AuthnNoSuchUserAccountError));
