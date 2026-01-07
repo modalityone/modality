@@ -30,6 +30,8 @@ public interface ScheduledItem extends Entity,
     String available = "available";
     String online = "online";
     String resource = "resource";
+    // Read-only dynamic field computed by PolicyService
+    String guestsAvailability = "guestAvailability";
 
     default void setProgramScheduledItem(Object value) {
         setForeignField(programScheduledItem, value);
@@ -134,4 +136,9 @@ public interface ScheduledItem extends Entity,
     default Boolean isResource() {
         return getBooleanFieldValue(resource);
     }
+
+    default Integer getGuestsAvailability() {
+        return getIntegerFieldValue(guestsAvailability);
+    }
+
 }
