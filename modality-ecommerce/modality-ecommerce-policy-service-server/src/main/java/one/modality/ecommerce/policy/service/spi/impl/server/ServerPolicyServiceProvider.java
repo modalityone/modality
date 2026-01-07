@@ -29,13 +29,13 @@ public class ServerPolicyServiceProvider implements PolicyServiceProvider {
         " from ScheduledItem si";
     private final static String RATES_QUERY_BASE =
         "select site,item,price,perDay,perPerson,facilityFee_price,startDate,endDate,onDate,offDate,minDeposit,cutoffDate,minDeposit2,age1_max,age1_price,age1_discount,age2_max,age2_price,age2_discount,resident_price,resident_discount,resident2_price,resident2_discount" +
-        " from Rate";
+        " from Rate r";
     private final static String BOOKABLE_PERIODS_QUERY_BASE =
         "select startScheduledItem,endScheduledItem,name,label" +
-        " from BookablePeriod";
+        " from BookablePeriod bp";
     private final static String ITEM_POLICIES_QUERY_BASE =
         "select scope.(organization,site,eventType,event),minDay" +
-        " from ItemPolicy";
+        " from ItemPolicy ip";
 
     @Override
     public Future<PolicyAggregate> loadPolicy(LoadPolicyArgument argument) {
@@ -45,25 +45,26 @@ public class ServerPolicyServiceProvider implements PolicyServiceProvider {
                 new Batch<>(new QueryArgument[]{
                     // Loading scheduled items (of this event or of the repeated event if set)
                     DqlQueries.newQueryArgumentForDefaultDataSource(
-                        SCHEDULED_ITEMS_QUERY_BASE + " where (event = (select coalesce(repeatedEvent, id) from Event where id=$1) or event=null and timeline..site..organization = (select organization from Event where id=$1)) and bookableScheduledItem=id " +
-                        "order by site,item,date", eventPk)
+                        SCHEDULED_ITEMS_QUERY_BASE + " where bookableScheduledItem=id and (select si.event = coalesce(e.repeatedEvent, e) or si.event=null and si.timeline..site..organization = e.organization and si.date >= e.startDate and si.date <= e.endDate from Event e where id=$1)" +
+                        " order by site,item,date", eventPk)
                     // Loading rates (of this event or of the repeated event if set)
                     , DqlQueries.newQueryArgumentForDefaultDataSource(
-                    RATES_QUERY_BASE + " where site.event = (select coalesce(repeatedEvent, id) from Event where id=$1) or site = (select coalesce(repeatedEvent.venue, venue) from Event where id=$1) " +
+                    RATES_QUERY_BASE + " where (select r.site = coalesce(e.repeatedEvent.venue, e.venue) or r.site.event = coalesce(e.repeatedEvent, e) from Event e where id=$1)" +
                     // Note: TeachingsPricing relies on the following order to work properly
-                    "order by site,item,perDay desc,startDate,endDate,price", eventPk)
+                    " order by site,item,perDay desc,startDate,endDate,price", eventPk)
                     // Loading bookable periods (of this event or of the repeated event if set)
                     , DqlQueries.newQueryArgumentForDefaultDataSource(
-                    BOOKABLE_PERIODS_QUERY_BASE + " where event = (select coalesce(repeatedEvent, id) from Event where id=$1)" +
-                    "order by startScheduledItem.date,endScheduledItem.date", eventPk)
+                    BOOKABLE_PERIODS_QUERY_BASE + " where (select bp.event = coalesce(e.repeatedEvent, e) from Event e where id=$1)" +
+                    " order by startScheduledItem.date,endScheduledItem.date", eventPk)
                     // Loading item policies (of this event or of the repeated event if set)
                     , DqlQueries.newQueryArgumentForDefaultDataSource(
-                    ITEM_POLICIES_QUERY_BASE + " where scope.(" +
-                    " organization = (select organization from Event where id=$1)" +
-                    " and (site = null or site..event = null or site..event = (select coalesce(repeatedEvent, id) from Event where id=$1))" +
-                    " and (eventType = null or eventType = (select coalesce(repeatedEvent.type, type) from Event where id=$1))" +
-                    " and (event = null or event = (select coalesce(repeatedEvent, id) from Event where id=$1))" +
-                    ") order by id", eventPk)
+                    ITEM_POLICIES_QUERY_BASE + " where (select ip.scope.(" +
+                    " organization = e.organization" +
+                    " and (site = null or site..event = null or site..event = coalesce(e.repeatedEvent, e))" +
+                    " and (eventType = null or eventType = coalesce(e.repeatedEvent.type, e.type))" +
+                    " and (event = null or event = coalesce(e.repeatedEvent, e))" +
+                    " ) from Event e where id=$1)" +
+                    " order by id", eventPk)
                 }))
             .map(batch -> new PolicyAggregate(
                 SCHEDULED_ITEMS_QUERY_BASE, batch.get(0),
