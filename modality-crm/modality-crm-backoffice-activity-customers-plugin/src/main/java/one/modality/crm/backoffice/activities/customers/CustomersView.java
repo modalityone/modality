@@ -1,6 +1,7 @@
 package one.modality.crm.backoffice.activities.customers;
 
 import dev.webfx.extras.controlfactory.button.ButtonFactoryMixin;
+import dev.webfx.extras.switches.Switch;
 import dev.webfx.extras.i18n.I18n;
 import dev.webfx.extras.i18n.controls.I18nControls;
 import dev.webfx.extras.styles.bootstrap.Bootstrap;
@@ -97,6 +98,8 @@ final class CustomersView {
 
     // Filter controls
     private Label accountTypeBadge;
+    private Label backofficeBadge;
+    private HBox badgesBox;
     private Button editModeButton;
     private Button saveButton;
     private Button cancelButton;
@@ -130,6 +133,9 @@ final class CustomersView {
     private TextField usernameField;
     private TextField passwordHashField;
     private VBox accountTypeSection;
+    private Switch backofficeSwitch;
+    private VBox backofficeBox;
+    private boolean isPopulatingPanel; // Flag to prevent autosave during panel population
 
     // Registrations tab controls
     private VBox registrationsContainer;
@@ -445,14 +451,56 @@ final class CustomersView {
         passwordHashField.getStyleClass().add("password-hash-display");
         VBox passwordBox = ModalityStyle.createFormTextField(passwordLabel, passwordHashField, true);
 
+        // Backoffice toggle with label
+        Label backofficeLabel = I18nControls.newLabel(BackofficeLabel);
+        backofficeSwitch = new Switch();
+        backofficeBox = new VBox(4, backofficeLabel, backofficeSwitch);
+        backofficeBox.setAlignment(Pos.CENTER);
+        backofficeBox.setVisible(false);  // Hidden by default until account is loaded
+        backofficeBox.setManaged(false);
+
+        // Autosave listener for backoffice toggle - saves immediately when user changes it
+        backofficeSwitch.selectedProperty().addListener((obs, oldVal, newVal) -> {
+            // Skip autosave during panel population (only save on user interaction)
+            if (isPopulatingPanel) return;
+
+            Person person = selectedPersonProperty.get();
+            if (person == null) return;
+
+            FrontendAccount account = person.getFrontendAccount();
+            if (account == null) return;
+
+            UpdateStore accountStore = UpdateStore.create(entityStore.getDataSourceModel());
+            FrontendAccount accountToUpdate = accountStore.updateEntity(account);
+            accountToUpdate.setBackoffice(newVal);
+
+            accountStore.submitChanges()
+                .onSuccess(result -> {
+                    UiScheduler.runInUiThread(() -> {
+                        updateAccountBadge(account, Boolean.TRUE.equals(person.isOwner()), person.getAccountPerson());
+                    });
+                })
+                .onFailure(error -> {
+                    Console.log("Failed to update backoffice status: " + error.getMessage());
+                    UiScheduler.runInUiThread(() -> backofficeSwitch.setSelected(oldVal));
+                });
+        });
+
+        // Create badges box with frontoffice type and backoffice badges
         accountTypeBadge = new Label();
+        backofficeBadge = new Label();
+        backofficeBadge.setVisible(false);
+        backofficeBadge.setManaged(false);
+        badgesBox = new HBox(6, accountTypeBadge, backofficeBadge);
+        badgesBox.setAlignment(Pos.CENTER);
 
         fieldsBox.getChildren().addAll(
             iconWrapper,
             firstNameBox,
             lastNameBox,
             usernameBox,
-            passwordBox
+            passwordBox,
+            backofficeBox
         );
 
         // Right side: badge, action buttons and close button
@@ -482,7 +530,7 @@ final class CustomersView {
         Bootstrap.button(closeButton);
         closeButton.setOnAction(e -> closeEditPanel());
 
-        actionsBox.getChildren().addAll(accountTypeBadge, cancelButton, saveButton, editModeButton, closeButton);
+        actionsBox.getChildren().addAll(badgesBox, cancelButton, saveButton, editModeButton, closeButton);
 
         HBox.setHgrow(fieldsBox, Priority.ALWAYS);
         header.getChildren().addAll(fieldsBox, actionsBox);
@@ -866,12 +914,29 @@ final class CustomersView {
         }
 
         // Populate login credentials (now in Personal Info tab)
-        if (account != null) {
-            usernameField.setText(account.getUsername());
-            passwordHashField.setText(account.getPassword());
-        } else {
-            usernameField.setText(I18n.getI18nText(NoAccountText));
-            passwordHashField.setText("");
+        isPopulatingPanel = true; // Prevent autosave during population
+        try {
+            if (account != null) {
+                usernameField.setText(account.getUsername());
+                passwordHashField.setText(account.getPassword());
+                // Backoffice toggle: only visible for account owners
+                if (isOwner) {
+                    backofficeSwitch.setSelected(Boolean.TRUE.equals(account.isBackoffice()));
+                    backofficeBox.setVisible(true);
+                    backofficeBox.setManaged(true);
+                } else {
+                    backofficeBox.setVisible(false);
+                    backofficeBox.setManaged(false);
+                }
+            } else {
+                usernameField.setText(I18n.getI18nText(NoAccountText));
+                passwordHashField.setText("");
+                // Backoffice toggle: hidden when no account
+                backofficeBox.setVisible(false);
+                backofficeBox.setManaged(false);
+            }
+        } finally {
+            isPopulatingPanel = false;
         }
 
         // Populate personal info fields
@@ -937,7 +1002,8 @@ final class CustomersView {
     }
 
     /**
-     * Updates the account type badge in the header based on the person's account status.
+     * Updates the account type badges in the header based on the person's account status.
+     * Shows both the frontoffice type badge AND the backoffice badge (when applicable).
      *
      * @param account The person's frontend account (may be null)
      * @param isOwner Whether the person is the owner of their account
@@ -945,27 +1011,38 @@ final class CustomersView {
      */
     private void updateAccountBadge(FrontendAccount account, boolean isOwner, Person accountPerson) {
         accountTypeBadge.getStyleClass().clear();
+        backofficeBadge.getStyleClass().clear();
 
         if (account != null) {
-            if (Boolean.TRUE.equals(account.isBackoffice())) {
-                // Backoffice account
-                accountTypeBadge.setText(I18n.getI18nText(AccountTypeBackoffice));
-                Bootstrap.warningBadge(accountTypeBadge);
-            } else if (isOwner) {
-                // Frontoffice Owner
+            // Always show the frontoffice type badge
+            if (isOwner) {
                 accountTypeBadge.setText(I18n.getI18nText(AccountTypeFrontofficeOwner));
                 Bootstrap.successBadge(accountTypeBadge);
             } else {
-                // Frontoffice (non-owner)
                 accountTypeBadge.setText(I18n.getI18nText(AccountTypeFrontoffice));
                 Bootstrap.primaryBadge(accountTypeBadge);
+            }
+
+            // Show/hide backoffice badge separately
+            if (Boolean.TRUE.equals(account.isBackoffice())) {
+                backofficeBadge.setText(I18n.getI18nText(AccountTypeBackoffice));
+                Bootstrap.warningBadge(backofficeBadge);
+                backofficeBadge.setVisible(true);
+                backofficeBadge.setManaged(true);
+            } else {
+                backofficeBadge.setVisible(false);
+                backofficeBadge.setManaged(false);
             }
         } else if (accountPerson != null) {
             accountTypeBadge.setText(I18n.getI18nText(AccountTypeLinked));
             ModalityStyle.badgeLightInfo(accountTypeBadge);
+            backofficeBadge.setVisible(false);
+            backofficeBadge.setManaged(false);
         } else {
             accountTypeBadge.setText(I18n.getI18nText(AccountTypeNone));
             ModalityStyle.badgeLightGray(accountTypeBadge);
+            backofficeBadge.setVisible(false);
+            backofficeBadge.setManaged(false);
         }
     }
 

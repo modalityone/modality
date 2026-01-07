@@ -21,6 +21,7 @@ public interface CustomersI18nKeys {
     Object ActiveStatusFilterInactive = "ActiveStatusFilterInactive";
     Object AdditionalInfoSection = "AdditionalInfoSection";
     Object AddressSection = "AddressSection";
+    Object BackofficeLabel = "BackofficeLabel";
     Object BadgeActive = "BadgeActive";
     Object BadgeBackoffice = "BadgeBackoffice";
     Object BadgeDisabled = "BadgeDisabled";

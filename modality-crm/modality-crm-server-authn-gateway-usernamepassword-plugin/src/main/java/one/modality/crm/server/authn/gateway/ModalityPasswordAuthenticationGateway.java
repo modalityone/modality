@@ -105,7 +105,7 @@ public final class ModalityPasswordAuthenticationGateway implements ServerAuthen
     private Future<Void> authenticateWithUsernamePassword(AuthenticateWithUsernamePasswordCredentials credentials) {
         // Capturing the required client state info from thread local (before it will be wiped out by the async call)
         String runId = ThreadLocalStateHolder.getRunId();
-        boolean backoffice = ThreadLocalStateHolder.isBackoffice();
+        boolean isBackofficeAuthentication = ThreadLocalStateHolder.isBackoffice();
         // Capturing the parameters from the credentials
         String username = credentials.username();
         String password = credentials.password();
@@ -115,7 +115,9 @@ public final class ModalityPasswordAuthenticationGateway implements ServerAuthen
         if (username.contains("@")) // If the username is an email address, it shouldn't be case-sensitive
             username = username.toLowerCase(); // emails are stored in lowercase in the database
         return EntityStore.create(dataSourceModel)
-            .<Person>executeQuery("select id,frontendAccount.(password, salt) from Person where frontendAccount.(corporation=? and username=? and !removed and !disabled and backoffice=?) order by owner desc, id limit 1", 1, username, backoffice)
+            // Note: accounts are created from the front-office and can first be used only to log in in the front-office,
+            // but an admin or superadmin can mark them as back-office and can then be used to log in in the back-office as well.
+            .<Person>executeQuery("select id,frontendAccount.(password, salt) from Person where frontendAccount.(corporation=? and username=? and !removed and !disabled and (?=false or backoffice)) order by owner desc, id limit 1", 1, username, isBackofficeAuthentication)
             .compose(persons -> {
                 if (persons.size() != 1)
                     return Future.failedFuture("[%s] Wrong user or password".formatted(ModalityAuthenticationI18nKeys.AuthnWrongUserOrPasswordError));
@@ -264,11 +266,11 @@ public final class ModalityPasswordAuthenticationGateway implements ServerAuthen
     private Future<Person> queryModalityUserPerson(String fields) {
         // Capturing the required client state info from thread local (before it will be wiped out by the async call)
         Object userId = ThreadLocalStateHolder.getUserId();
-        boolean backoffice = ThreadLocalStateHolder.isBackoffice();
+        boolean isBackofficeAuthentication = ThreadLocalStateHolder.isBackoffice();
         if (!(userId instanceof ModalityUserPrincipal modalityUserPrincipal))
             return Future.failedFuture("[%s] This userId object is not recognized by Modality".formatted(ModalityAuthenticationI18nKeys.AuthnUnrecognizedUserIdError));
         return EntityStore.create(dataSourceModel)
-            .<Person>executeQuery("select " + fields + " from Person where id=? and frontendAccount.(id=? and !disabled and backoffice=?)", modalityUserPrincipal.getUserPersonId(), modalityUserPrincipal.getUserAccountId(), backoffice)
+            .<Person>executeQuery("select " + fields + " from Person where id=? and frontendAccount.(id=? and !disabled and (?=false or backoffice))", modalityUserPrincipal.getUserPersonId(), modalityUserPrincipal.getUserAccountId(), isBackofficeAuthentication)
             .compose(persons -> {
                 if (persons.size() != 1)
                     return Future.failedFuture("[%s] No such user account".formatted(ModalityAuthenticationI18nKeys.AuthnNoSuchUserAccountError));
