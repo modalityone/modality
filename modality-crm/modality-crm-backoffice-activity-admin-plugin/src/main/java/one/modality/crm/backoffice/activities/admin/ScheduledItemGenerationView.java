@@ -552,7 +552,7 @@ public class ScheduledItemGenerationView {
                 // SQL for scheduled_item using generate_series
                 // Only insert dates that don't already exist
                 String sql = "INSERT INTO scheduled_item (date, timeline_id, site_id, item_id, start_time, end_time, available, online, resource) " +
-                        "SELECT day, t.id, t.site_id, " + item.getPrimaryKey() + ", t.start_time, t.end_time, true, true, " + generateResources + " " +
+                        "SELECT day, t.id, t.site_id, " + item.getPrimaryKey() + ", NULL, NULL, true, true, " + generateResources + " " +
                         "FROM timeline t, " +
                         "LATERAL (SELECT generate_series('" + from + "'::date, '" + to + "'::date, '1 day'::interval)::date AS day) days " +
                         "WHERE t.id = " + timelineId + " " +
