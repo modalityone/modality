@@ -3,6 +3,7 @@
 module modality.ecommerce.policy.service.server {
 
     // Direct dependencies modules
+    requires modality.base.shared.entities;
     requires modality.ecommerce.policy.service;
     requires webfx.platform.async;
     requires webfx.stack.db.query;
