@@ -11,8 +11,8 @@ module modality.booking.backoffice.activity.registration.plugin {
     requires modality.base.client.gantt.fx;
     requires modality.base.client.mainframe.fx;
     requires modality.base.client.presentationmodel;
+    requires modality.base.shared.domainmodel;
     requires modality.base.shared.entities;
-    requires modality.crm.backoffice.bookingdetailspanel;
     requires modality.crm.backoffice.organization.fx;
     requires modality.event.client.activity.eventdependent;
     requires modality.event.client.event.fx;
@@ -25,6 +25,7 @@ module modality.booking.backoffice.activity.registration.plugin {
     requires webfx.extras.operation.action;
     requires webfx.extras.panes;
     requires webfx.extras.styles.bootstrap;
+    requires webfx.extras.time;
     requires webfx.extras.time.layout;
     requires webfx.extras.time.layout.gantt;
     requires webfx.extras.time.pickers;

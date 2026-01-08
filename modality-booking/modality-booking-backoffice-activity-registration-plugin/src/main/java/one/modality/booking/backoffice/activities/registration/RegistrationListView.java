@@ -1,11 +1,16 @@
 package one.modality.booking.backoffice.activities.registration;
 
+import dev.webfx.extras.time.TimeUtil;
+import dev.webfx.extras.time.YearWeek;
 import dev.webfx.extras.visual.VisualResult;
 import dev.webfx.extras.visual.controls.grid.VisualGrid;
 import dev.webfx.kit.util.properties.FXProperties;
+import dev.webfx.platform.console.Console;
 import dev.webfx.stack.orm.domainmodel.activity.viewdomain.impl.ViewDomainActivityBase;
 import dev.webfx.stack.orm.reactive.entities.dql_to_entities.ReactiveEntitiesMapper;
 import dev.webfx.stack.orm.reactive.mapping.entities_to_visual.ReactiveVisualMapper;
+import javafx.beans.binding.Bindings;
+import javafx.beans.binding.BooleanBinding;
 import javafx.beans.property.IntegerProperty;
 import javafx.beans.property.SimpleIntegerProperty;
 import javafx.collections.FXCollections;
@@ -19,17 +24,23 @@ import javafx.scene.control.ScrollPane;
 import javafx.scene.control.TextField;
 import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
+import one.modality.base.shared.domainmodel.functions.AbcNames;
 import one.modality.base.shared.entities.Document;
 import one.modality.base.shared.entities.DocumentLine;
-import one.modality.crm.backoffice.controls.bookingdetailspanel.BookingDetailsPanel;
+import one.modality.base.shared.entities.Event;
+import one.modality.base.shared.entities.ScheduledItem;
 import one.modality.crm.backoffice.organization.fx.FXOrganizationId;
 import one.modality.event.client.event.fx.FXEventId;
-import dev.webfx.platform.console.Console;
+
+import java.time.LocalDate;
+import java.time.Year;
+import java.time.YearMonth;
 
 import java.util.HashMap;
 import java.util.Map;
 
 import static dev.webfx.stack.orm.dql.DqlStatement.fields;
+import static dev.webfx.stack.orm.dql.DqlStatement.limit;
 import static dev.webfx.stack.orm.dql.DqlStatement.where;
 import static one.modality.booking.backoffice.activities.registration.RegistrationStyles.*;
 
@@ -61,7 +72,8 @@ public class RegistrationListView {
                 {expression: 'this', label: 'Status', renderer: 'regStatus', prefWidth: 100, textAlign: 'center'},
                 {expression: 'this', label: 'Payment', renderer: 'regPayment', prefWidth: 120, textAlign: 'center'},
                 {expression: 'this', label: 'Accommodation', renderer: 'regAccommodation', prefWidth: 150},
-                {expression: 'this', label: 'Actions', renderer: 'regActions', prefWidth: 80, textAlign: 'center'}
+                {expression: 'this', label: 'Actions', renderer: 'regActions', prefWidth: 80, textAlign: 'center'},
+                {expression: '!confirmed and !cancelled ? `registration-pending` : null', role: 'style'}
             ]""";
 
     // Fields required for the renderers
@@ -109,11 +121,15 @@ public class RegistrationListView {
 
     /**
      * Builds the complete list view UI.
+     * Uses BorderPane for proper TOP_CENTER alignment with table filling available space.
      */
     public Node buildUi() {
-        VBox container = new VBox(SPACING_LARGE);
+        BorderPane container = new BorderPane();
         container.setPadding(PADDING_XLARGE);
         container.setBackground(createBackground(BG, 0));
+
+        // Top section: Header + Stats + Search bar
+        VBox topSection = new VBox(SPACING_LARGE);
 
         // Header with title and New Registration button
         HBox header = createHeader();
@@ -124,20 +140,17 @@ public class RegistrationListView {
         // Search and filters bar
         VBox searchBar = createSearchBar();
 
-        // Registration table
+        topSection.getChildren().addAll(header, statsRow, searchBar);
+
+        // Center: Registration table (fills remaining space)
         Node tableSection = createTableSection();
-        VBox.setVgrow(tableSection, Priority.ALWAYS);
 
-        container.getChildren().addAll(header, statsRow, searchBar, tableSection);
+        container.setTop(topSection);
+        container.setCenter(tableSection);
+        BorderPane.setAlignment(topSection, Pos.TOP_CENTER);
+        BorderPane.setMargin(tableSection, new Insets(SPACING_LARGE, 0, 0, 0));
 
-        // Wrap in ScrollPane for responsive scrolling
-        ScrollPane scrollPane = new ScrollPane(container);
-        scrollPane.setFitToWidth(true);
-        scrollPane.setFitToHeight(true);
-        scrollPane.setHbarPolicy(ScrollPane.ScrollBarPolicy.NEVER);
-        scrollPane.setVbarPolicy(ScrollPane.ScrollBarPolicy.AS_NEEDED);
-
-        return scrollPane;
+        return container;
     }
 
     /**
@@ -373,15 +386,24 @@ public class RegistrationListView {
 
     /**
      * Creates the registration table section.
+     * Uses ScrollPane with fixed height for scrolling through all registrations.
      */
     private Node createTableSection() {
-        VBox tableContainer = new VBox();
-        tableContainer.setBackground(createBackground(BG_CARD, BORDER_RADIUS_LARGE));
-        tableContainer.setBorder(createBorder(BORDER, BORDER_RADIUS_LARGE));
+        // Create the visual grid with table layout skin for proper sizing
+        registrationGrid = VisualGrid.createVisualGridWithTableLayoutSkin();
+        // Set ID for CSS styling (enables #registration selectors in CSS)
+        registrationGrid.setId("registration");
+        // Don't use setFullHeight as we want the grid to size to content for scrolling
+        registrationGrid.setFullHeight(false);
 
-        // Create the visual grid
-        registrationGrid = new VisualGrid();
-        registrationGrid.setFullHeight(true);
+        // Set row height for better readability (taller rows to fit multi-line content)
+        registrationGrid.setMinRowHeight(60);
+        registrationGrid.setPrefRowHeight(60);
+
+        // Configure width to fill available space
+        registrationGrid.setMinWidth(0);
+        registrationGrid.setPrefWidth(Double.MAX_VALUE);
+        registrationGrid.setMaxWidth(Double.MAX_VALUE);
 
         // Bind visual result to grid using proper binding (not manual listener to avoid conflicts)
         registrationGrid.visualResultProperty().bind(pm.masterVisualResultProperty());
@@ -401,8 +423,21 @@ public class RegistrationListView {
             }
         }, pm.selectedDocumentProperty());
 
-        tableContainer.getChildren().add(registrationGrid);
-        VBox.setVgrow(registrationGrid, Priority.ALWAYS);
+        // Wrap grid in a ScrollPane for scrolling through all registrations
+        ScrollPane scrollPane = new ScrollPane(registrationGrid);
+        scrollPane.setFitToWidth(true);
+        scrollPane.setHbarPolicy(ScrollPane.ScrollBarPolicy.NEVER);
+        scrollPane.setVbarPolicy(ScrollPane.ScrollBarPolicy.AS_NEEDED);
+        // Fixed height - will show scrollbar when content exceeds this height
+        scrollPane.setPrefHeight(500);
+        scrollPane.setMinHeight(300);
+        scrollPane.setMaxHeight(Double.MAX_VALUE);
+
+        // Wrap ScrollPane in a container with border and background
+        VBox tableContainer = new VBox(scrollPane);
+        tableContainer.setBackground(createBackground(BG_CARD, BORDER_RADIUS_LARGE));
+        tableContainer.setBorder(createBorder(BORDER, BORDER_RADIUS_LARGE));
+        VBox.setVgrow(scrollPane, Priority.ALWAYS);
 
         return tableContainer;
     }
@@ -436,54 +471,117 @@ public class RegistrationListView {
     /**
      * Sets up the reactive data mapper for the registration table.
      * This should be called from the activity's startLogic() method.
+     * <p>
+     * Uses optimized patterns from BookingsActivity:
+     * - AbcNames for efficient name search
+     * - Gantt selection filtering
+     * - Quick filters that actually query the database
      */
     public ReactiveVisualMapper<Document> setupMasterVisualMapper() {
         Console.log("📋 RegistrationListView.setupMasterVisualMapper() called");
-        Console.log("📋 FXOrganizationId = " + FXOrganizationId.getOrganizationId());
-        Console.log("📋 FXEventId = " + FXEventId.getEventId());
 
         // Register custom renderers for the table columns
         RegistrationRenderers.registerRenderers();
         RegistrationRenderers.setView(this);
 
-        // Using createPushReactiveChain instead of createMasterPushReactiveChain
-        // (Master variant requires group mapper setup)
+        // Setup accommodation mapper FIRST - it loads data in parallel with master mapper
+        setupAccommodationMapper();
+
+        // Create and start master mapper
         masterVisualMapper = ReactiveVisualMapper.<Document>createPushReactiveChain(activity)
             // Base query with required fields for renderers
             .always("{class: 'Document', alias: 'd', orderBy: 'ref desc'}")
             .always(fields(REQUIRED_FIELDS))
+            // Limit results to 100 records for performance
+            .always(limit("100"))
             // Filter by organization (required)
             .ifNotNullOtherwiseEmpty(FXOrganizationId.organizationIdProperty(), orgId -> where("event.organization=?", orgId))
             // Optional event filter
             .ifNotNull(FXEventId.eventIdProperty(), eventId -> where("event=?", eventId))
-            // Search filter
+
+            // Gantt selection filtering (like BookingsActivity)
+            .ifInstanceOf(pm.ganttSelectedObjectProperty(), LocalDate.class, day -> where("exists(select Attendance where documentLine.document=d and date = ?)", day))
+            .ifInstanceOf(pm.ganttSelectedObjectProperty(), YearWeek.class, week -> where("exists(select Attendance where documentLine.document=d and date >= ? and date <= ?)", TimeUtil.getFirstDayOfWeek(week), TimeUtil.getLastDayOfWeek(week)))
+            .ifInstanceOf(pm.ganttSelectedObjectProperty(), YearMonth.class, month -> where("exists(select Attendance where documentLine.document=d and date >= ? and date <= ?)", TimeUtil.getFirstDayOfMonth(month), TimeUtil.getLastDayOfMonth(month)))
+            .ifInstanceOf(pm.ganttSelectedObjectProperty(), Year.class, year -> where("exists(select Attendance where documentLine.document=d and date >= ? and date <= ?)", TimeUtil.getFirstDayOfYear(year), TimeUtil.getLastDayOfYear(year)))
+            .ifInstanceOf(pm.ganttSelectedObjectProperty(), ScheduledItem.class, si -> where("exists(select Attendance where documentLine.document=d and scheduledItem = ?)", si))
+            .ifInstanceOf(pm.ganttSelectedObjectProperty(), Event.class, event -> where("event=?", event))
+
+            // Optimized search filter using AbcNames (like BookingsActivity)
             .ifTrimNotEmpty(pm.searchTextProperty(), s ->
-                where("lower(person_firstName) like ? or lower(person_lastName) like ? or lower(person_email) like ? or cast(ref as string) like ?",
-                    "%" + s.toLowerCase() + "%", "%" + s.toLowerCase() + "%", "%" + s.toLowerCase() + "%", "%" + s + "%"))
+                Character.isDigit(s.charAt(0)) ? where("ref = ?", Integer.parseInt(s.replaceAll("[^0-9]", "")))
+                    : s.contains("@") ? where("lower(person_email) like ?", "%" + s.toLowerCase() + "%")
+                    : where("person_abcNames like ?", AbcNames.evaluate(s, true)))
+
+            // Quick filters - these actually query the database when active
+            .ifTrue(createFilterActiveBinding("confirmed"), where("confirmed and !cancelled"))
+            .ifTrue(createFilterActiveBinding("not-confirmed"), where("!confirmed and !cancelled"))
+            .ifTrue(createFilterActiveBinding("cancelled"), where("cancelled"))
+            .ifTrue(createFilterActiveBinding("paid-full"), where("price_deposit >= price_net and price_net > 0"))
+            .ifTrue(createFilterActiveBinding("with-balance"), where("price_deposit > 0 and price_deposit < price_net"))
+            .ifTrue(createFilterActiveBinding("unread"), where("!read"))
+
             // Set the columns for the visual grid
             .setEntityColumns(REGISTRATION_COLUMNS)
             // Explicit binding to presentation model
             .visualizeResultInto(pm.masterVisualResultProperty())
             // Note: Removed applyDomainModelRowStyle() to match JSX - cells have no backgrounds
             .autoSelectSingleRow()
-            // Enable push notifications for real-time updates
-            .setResultCacheEntry("modality/booking/registration/documents")
+            // Note: Removed setResultCacheEntry to allow re-visualization when accommodation data loads
             .addEntitiesHandler(entities -> {
                 Console.log("📋 Entities received: " + (entities != null ? entities.size() : "null"));
+                // Update stats counts from actual entities
+                updateStatsCountsFromEntities(entities);
             })
             .start();
 
-        Console.log("📋 Mapper started, masterVisualMapper = " + masterVisualMapper);
-
-        // Setup accommodation batch query - loads ALL accommodation lines in ONE query
-        // This is O(1) per document lookup instead of O(n) correlated subqueries
-        setupAccommodationMapper();
-
-        // Explicitly trigger refresh after setup
-        masterVisualMapper.refreshWhenActive();
-        Console.log("📋 Called refreshWhenActive()");
+        Console.log("📋 Master mapper started");
 
         return masterVisualMapper;
+    }
+
+    /**
+     * Creates a BooleanBinding that returns true when the specified filter is active.
+     * This binding triggers a database query when the filter state changes.
+     */
+    private BooleanBinding createFilterActiveBinding(String filterId) {
+        return Bindings.createBooleanBinding(
+            () -> pm.getActiveFilters().contains(filterId),
+            pm.activeFiltersProperty()
+        );
+    }
+
+    /**
+     * Updates stats counters from actual entities (not placeholder percentages).
+     */
+    private void updateStatsCountsFromEntities(java.util.List<Document> entities) {
+        if (entities == null || entities.isEmpty()) {
+            totalCountProperty.set(0);
+            confirmedCountProperty.set(0);
+            pendingCountProperty.set(0);
+            cancelledCountProperty.set(0);
+            return;
+        }
+
+        int total = entities.size();
+        int confirmed = 0;
+        int pending = 0;
+        int cancelled = 0;
+
+        for (Document doc : entities) {
+            if (Boolean.TRUE.equals(doc.isCancelled())) {
+                cancelled++;
+            } else if (Boolean.TRUE.equals(doc.isConfirmed())) {
+                confirmed++;
+            } else {
+                pending++;
+            }
+        }
+
+        totalCountProperty.set(total);
+        confirmedCountProperty.set(confirmed);
+        pendingCountProperty.set(pending);
+        cancelledCountProperty.set(cancelled);
     }
 
     /**
@@ -499,8 +597,9 @@ public class RegistrationListView {
     private void setupAccommodationMapper() {
         accommodationMapper = ReactiveEntitiesMapper.<DocumentLine>createPushReactiveChain(activity)
             // Load accommodation lines with required fields - single batch query
+            // Include 'document' to load the foreign entity, then access its fields
             .always("{class: 'DocumentLine', alias: 'dl', " +
-                    "fields: 'document.id, item.name, resourceConfiguration.name, systemAllocated', " +
+                    "fields: 'document, item.name, resourceConfiguration.name, systemAllocated', " +
                     "where: '!cancelled and item.family.code=`acco`', " +
                     "orderBy: 'document.id'}")
             // Same filters as main query to ensure we only load relevant accommodation
@@ -515,7 +614,8 @@ public class RegistrationListView {
                 accommodationByDocumentId.clear();
                 if (lines != null) {
                     for (DocumentLine dl : lines) {
-                        Object docId = dl.getDocument() != null ? dl.getDocument().getId() : null;
+                        // Use primary key value for reliable HashMap lookup
+                        Object docId = dl.getDocument() != null ? dl.getDocument().getPrimaryKey() : null;
                         if (docId != null && !accommodationByDocumentId.containsKey(docId)) {
                             // Take first accommodation per document (like LIMIT 1)
                             String itemName = dl.getItem() != null ? dl.getItem().getName() : null;
@@ -529,6 +629,13 @@ public class RegistrationListView {
                     }
                 }
                 Console.log("📋 Accommodation data loaded: " + accommodationByDocumentId.size() + " documents");
+                // Force master mapper to re-query and re-visualize
+                // Now that cache is disabled, stop/start will trigger fresh query and cell rendering
+                if (masterVisualMapper != null) {
+                    Console.log("📋 Forcing master mapper re-query");
+                    masterVisualMapper.stop();
+                    masterVisualMapper.start();
+                }
             })
             .start();
     }
@@ -569,11 +676,11 @@ public class RegistrationListView {
     }
 
     /**
-     * Gets accommodation info for a document by ID.
+     * Gets accommodation info for a document by its primary key.
      * O(1) lookup from the pre-loaded batch data.
      */
-    public AccommodationInfo getAccommodationInfo(Object documentId) {
-        return accommodationByDocumentId.get(documentId);
+    public AccommodationInfo getAccommodationInfo(Object primaryKey) {
+        return accommodationByDocumentId.get(primaryKey);
     }
 
     /**

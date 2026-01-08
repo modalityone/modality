@@ -1,27 +1,27 @@
 package one.modality.booking.backoffice.activities.registration;
 
-import dev.webfx.extras.visual.VisualResult;
 import dev.webfx.extras.visual.controls.grid.VisualGrid;
-import dev.webfx.kit.util.properties.FXProperties;
+import dev.webfx.platform.console.Console;
+import dev.webfx.platform.util.Strings;
+import dev.webfx.stack.orm.datasourcemodel.service.DataSourceModelService;
 import dev.webfx.stack.orm.domainmodel.activity.viewdomain.impl.ViewDomainActivityBase;
+import dev.webfx.stack.orm.entity.EntityStore;
 import dev.webfx.stack.orm.entity.UpdateStore;
 import dev.webfx.stack.orm.reactive.mapping.entities_to_visual.ReactiveVisualMapper;
 import javafx.beans.property.BooleanProperty;
-import javafx.beans.property.ObjectProperty;
 import javafx.beans.property.SimpleBooleanProperty;
-import javafx.beans.property.SimpleObjectProperty;
-import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Node;
 import javafx.scene.control.*;
 import javafx.scene.layout.*;
 import one.modality.base.shared.entities.Document;
+import one.modality.base.shared.entities.Method;
 import one.modality.base.shared.entities.MoneyTransfer;
 
 import java.time.LocalDate;
-import java.time.format.DateTimeFormatter;
+import java.util.HashMap;
+import java.util.Map;
 
-import static dev.webfx.stack.orm.dql.DqlStatement.where;
 import static one.modality.booking.backoffice.activities.registration.RegistrationStyles.*;
 
 /**
@@ -44,11 +44,13 @@ public class PaymentsTab {
     private final UpdateStore updateStore;
 
     private final BooleanProperty activeProperty = new SimpleBooleanProperty(false);
-    private final ObjectProperty<VisualResult> paymentsVisualResultProperty = new SimpleObjectProperty<>();
 
     // UI Components
     private VisualGrid paymentsGrid;
     private ReactiveVisualMapper<MoneyTransfer> paymentsMapper;
+
+    // Cache for payment methods
+    private final Map<String, Method> methodsByName = new HashMap<>();
 
     // New payment form fields
     private dev.webfx.extras.time.pickers.DatePicker datePicker; // WebFX DatePicker (GWT-compatible)
@@ -155,12 +157,6 @@ public class PaymentsTab {
         paymentsGrid.setFullHeight(true);
         paymentsGrid.setMinHeight(150);
         paymentsGrid.setPrefHeight(200);
-
-        // Bind visual result
-        FXProperties.runNowAndOnPropertiesChange(() -> {
-            VisualResult result = paymentsVisualResultProperty.get();
-            paymentsGrid.setVisualResult(result);
-        }, paymentsVisualResultProperty);
 
         VBox gridContainer = new VBox(paymentsGrid);
         gridContainer.setBackground(createBackground(BG_CARD, BORDER_RADIUS_MEDIUM));
@@ -273,33 +269,58 @@ public class PaymentsTab {
             }
 
             LocalDate date = datePicker.getSelectedDate();
-            String method = getSelectedPaymentMethod();
+            String methodName = getSelectedPaymentMethod();
             String reference = referenceField.getText();
 
+            // Create a new UpdateStore for this payment (separate from the modal's updateStore)
+            UpdateStore paymentStore = UpdateStore.create(DataSourceModelService.getDefaultDataSourceModel());
+
             // Create new MoneyTransfer entity
-            MoneyTransfer payment = updateStore.insertEntity(MoneyTransfer.class);
+            MoneyTransfer payment = paymentStore.insertEntity(MoneyTransfer.class);
             payment.setDocument(document);
-            payment.setAmount((int) (amount * 100)); // Convert to cents if needed
-            // payment.setDate(date); // TODO: Set date field
-            // payment.setMethod(method); // TODO: Set payment method
-            // payment.setComment(reference); // TODO: Set reference/comment
+            payment.setAmount((int) (amount * 100)); // Convert to cents
+            payment.setDate(date != null ? date.atStartOfDay() : LocalDate.now().atStartOfDay());
+            payment.setTransactionRef(reference);
+            payment.setComment(reference);
+            payment.setPending(false);
+            payment.setSuccessful(true);
 
-            // Clear form
-            amountField.clear();
-            referenceField.clear();
-           // datePicker.setValue(LocalDate.now());
-
-            // Refresh the grid
-            if (paymentsMapper != null) {
-                paymentsMapper.refreshWhenActive();
+            // Set payment method from lookup
+            Method method = methodsByName.get(methodName.toLowerCase());
+            if (method != null) {
+                payment.setMethod(method);
+            } else {
+                // Try alternative lookups
+                method = methodsByName.get("card"); // Default fallback
+                if (method != null) {
+                    payment.setMethod(method);
+                }
             }
 
-            System.out.println("Payment added: " + amount + " via " + method + " on " + date);
+            // Submit changes to database
+            paymentStore.submitChanges()
+                .onSuccess(batch -> {
+                    Console.log("Payment added successfully: " + amount + " via " + methodName);
+                    // Clear form
+                    amountField.clear();
+                    referenceField.clear();
+                    datePicker.setSelectedDate(LocalDate.now());
+                    // Refresh the grid
+                    if (paymentsMapper != null) {
+                        paymentsMapper.refreshWhenActive();
+                    }
+                })
+                .onFailure(e -> {
+                    Console.log("Failed to add payment: " + e.getMessage());
+                });
+
         } catch (NumberFormatException e) {
-            // Invalid amount - show error
-            System.err.println("Invalid payment amount: " + amountText);
+            Console.log("Invalid payment amount: " + amountText);
         }
     }
+
+    private static final String PAYMENTS_DQL =
+        "{class: 'MoneyTransfer', columns: 'date,method,transactionRef,comment,amount', where: 'document=${selectedDocument}', orderBy: 'date desc'}";
 
     /**
      * Sets up the reactive payments mapper.
@@ -307,11 +328,41 @@ public class PaymentsTab {
      */
     public void setupPaymentsMapper() {
         if (paymentsMapper == null && document.getId() != null) {
-            paymentsMapper = ReactiveVisualMapper.<MoneyTransfer>createMasterPushReactiveChain(activity, paymentsVisualResultProperty)
-                // Full MoneyTransfer fields from BookingDetailsPanel pattern
-                .always("{class: 'MoneyTransfer', alias: 'mt', columns: 'date,method,transactionRef,comment,amount,verified', orderBy: 'date desc'}")
-                .ifNotNullOtherwiseEmpty(pm.selectedDocumentProperty(), doc -> where("document=?", doc.getId()))
+            // Use BookingDetailsPanel pattern: createPushReactiveChain + visualizeResultInto
+            paymentsMapper = ReactiveVisualMapper.<MoneyTransfer>createPushReactiveChain()
+                .always("{class: 'MoneyTransfer'}")
+                .ifNotNullOtherwiseEmptyString(pm.selectedDocumentProperty(), doc ->
+                    Strings.replaceAll(PAYMENTS_DQL, "${selectedDocument}", doc.getPrimaryKey()))
+                .bindActivePropertyTo(activeProperty)
+                .setDataSourceModel(DataSourceModelService.getDefaultDataSourceModel())
+                .applyDomainModelRowStyle()
+                .visualizeResultInto(paymentsGrid)
                 .start();
+
+            // Load payment methods for the add payment form
+            loadPaymentMethods();
+        }
+    }
+
+    /**
+     * Loads payment methods from the database for the add payment form.
+     */
+    private void loadPaymentMethods() {
+        if (methodsByName.isEmpty()) {
+            EntityStore.create(DataSourceModelService.getDefaultDataSourceModel())
+                .<Method>executeQuery("select code,name from Method")
+                .onSuccess(methods -> {
+                    for (Method m : methods) {
+                        if (m.getName() != null) {
+                            methodsByName.put(m.getName().toLowerCase(), m);
+                        }
+                        if (m.getCode() != null) {
+                            methodsByName.put(m.getCode().toLowerCase(), m);
+                        }
+                    }
+                    Console.log("Loaded " + methodsByName.size() + " payment methods");
+                })
+                .onFailure(e -> Console.log("Failed to load payment methods: " + e.getMessage()));
         }
     }
 

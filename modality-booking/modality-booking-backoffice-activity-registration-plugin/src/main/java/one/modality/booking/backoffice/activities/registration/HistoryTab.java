@@ -1,14 +1,12 @@
 package one.modality.booking.backoffice.activities.registration;
 
-import dev.webfx.extras.visual.VisualResult;
 import dev.webfx.extras.visual.controls.grid.VisualGrid;
-import dev.webfx.kit.util.properties.FXProperties;
+import dev.webfx.platform.util.Strings;
+import dev.webfx.stack.orm.datasourcemodel.service.DataSourceModelService;
 import dev.webfx.stack.orm.domainmodel.activity.viewdomain.impl.ViewDomainActivityBase;
 import dev.webfx.stack.orm.reactive.mapping.entities_to_visual.ReactiveVisualMapper;
 import javafx.beans.property.BooleanProperty;
-import javafx.beans.property.ObjectProperty;
 import javafx.beans.property.SimpleBooleanProperty;
-import javafx.beans.property.SimpleObjectProperty;
 import javafx.geometry.Pos;
 import javafx.scene.Node;
 import javafx.scene.control.Label;
@@ -16,7 +14,6 @@ import javafx.scene.layout.*;
 import one.modality.base.shared.entities.Document;
 import one.modality.base.shared.entities.History;
 
-import static dev.webfx.stack.orm.dql.DqlStatement.where;
 import static one.modality.booking.backoffice.activities.registration.RegistrationStyles.*;
 
 /**
@@ -38,7 +35,6 @@ public class HistoryTab {
     private final Document document;
 
     private final BooleanProperty activeProperty = new SimpleBooleanProperty(false);
-    private final ObjectProperty<VisualResult> historyVisualResultProperty = new SimpleObjectProperty<>();
 
     // UI Components
     private VisualGrid historyGrid;
@@ -87,12 +83,6 @@ public class HistoryTab {
         historyGrid.setMinHeight(200);
         historyGrid.setPrefHeight(400);
 
-        // Bind visual result
-        FXProperties.runNowAndOnPropertiesChange(() -> {
-            VisualResult result = historyVisualResultProperty.get();
-            historyGrid.setVisualResult(result);
-        }, historyVisualResultProperty);
-
         VBox gridContainer = new VBox(historyGrid);
         gridContainer.setBackground(createBackground(BG_CARD, BORDER_RADIUS_MEDIUM));
         gridContainer.setBorder(createBorder(BORDER, BORDER_RADIUS_MEDIUM));
@@ -111,16 +101,24 @@ public class HistoryTab {
         return section;
     }
 
+    private static final String HISTORY_DQL =
+        "{class: 'History', columns: 'date,userDisplay,comment,request', where: 'document=${selectedDocument}', orderBy: 'date desc'}";
+
     /**
      * Sets up the reactive history mapper.
      * Should be called when the tab becomes active.
      */
     public void setupHistoryMapper() {
         if (historyMapper == null && document.getId() != null) {
-            historyMapper = ReactiveVisualMapper.<History>createMasterPushReactiveChain(activity, historyVisualResultProperty)
-                // History entity fields: username, comment, changes, mail, moneyTransfer
-                .always("{class: 'History', alias: 'h', columns: 'username,comment,changes,mail.subject,moneyTransfer.amount,request', orderBy: 'id desc'}")
-                .ifNotNullOtherwiseEmpty(pm.selectedDocumentProperty(), doc -> where("document=?", doc.getId()))
+            // Use BookingDetailsPanel pattern: createPushReactiveChain + visualizeResultInto
+            historyMapper = ReactiveVisualMapper.<History>createPushReactiveChain()
+                .always("{class: 'History'}")
+                .ifNotNullOtherwiseEmptyString(pm.selectedDocumentProperty(), doc ->
+                    Strings.replaceAll(HISTORY_DQL, "${selectedDocument}", doc.getPrimaryKey()))
+                .bindActivePropertyTo(activeProperty)
+                .setDataSourceModel(DataSourceModelService.getDefaultDataSourceModel())
+                .applyDomainModelRowStyle()
+                .visualizeResultInto(historyGrid)
                 .start();
         }
     }

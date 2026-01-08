@@ -17,6 +17,7 @@ import javafx.scene.text.TextAlignment;
 import one.modality.base.shared.entities.DocumentLine;
 import one.modality.base.shared.entities.Event;
 import one.modality.base.shared.entities.ItemFamily;
+import one.modality.base.shared.entities.formatters.EventPriceFormatter;
 
 import java.time.LocalDate;
 import java.time.format.TextStyle;
@@ -41,17 +42,20 @@ import static one.modality.booking.backoffice.activities.registration.Registrati
  */
 public class BookingTimelineCanvas extends Region {
 
-    // Layout constants (from JSX ux object)
-    private static final int ROW_HEADER_WIDTH = 140;   // Left side for option name
-    private static final int DAY_COLUMN_WIDTH = 22;
-    private static final int HEADER_HEIGHT = 40;
-    private static final int PERIOD_BAR_HEIGHT = 24;
-    private static final int ROW_HEIGHT = 28;
-    private static final int CELL_HEIGHT = 16;
-    private static final int CELL_PADDING = 1;
-    private static final int CELL_RADIUS = 4;
-    private static final int PRICE_COLUMN_WIDTH = 70;  // Right side for price
-    private static final int ICON_SIZE = 16;           // Category icon size
+    // Layout constants (from JSX ux object) - increased for better visibility
+    private static final int ROW_HEADER_WIDTH = 160;   // Left side for option name
+    private static final int DAY_COLUMN_WIDTH = 50;    // Wider day columns for better gantt visibility
+    private static final int HEADER_HEIGHT = 45;
+    private static final int PERIOD_BAR_HEIGHT = 28;
+    private static final int ROW_HEIGHT = 36;          // Taller rows for better readability
+    private static final int CELL_HEIGHT = 22;         // Taller cells
+    private static final int CELL_GAP = 6;             // Gap between day cells (white space)
+    private static final int CELL_PADDING = CELL_GAP / 2; // Half gap on each side of cell (3 pixels)
+    private static final int CELL_RADIUS = 6;
+    private static final int PRICE_COLUMN_WIDTH = 80;  // Right side for price
+    private static final int ACTION_COLUMN_WIDTH = 60; // Right side for action buttons (cancel, delete)
+    private static final int ICON_SIZE = 18;           // Category icon size
+    private static final int ACTION_ICON_SIZE = 16;    // Action button icon size
 
     // Color constants for excluded days and hover
     private static final Color EXCLUDED_CELL_BG = SAND;
@@ -63,17 +67,26 @@ public class BookingTimelineCanvas extends Region {
     private final ObjectProperty<LocalDate> bookingStartProperty = new SimpleObjectProperty<>();
     private final ObjectProperty<LocalDate> bookingEndProperty = new SimpleObjectProperty<>();
     private final StringProperty eventNameProperty = new SimpleStringProperty();
+    private final ObjectProperty<Event> eventProperty = new SimpleObjectProperty<>();
     private final ObservableList<DocumentLine> documentLines = FXCollections.observableArrayList();
 
     // Excluded days tracking (key = DocumentLine ID primary key, value = set of excluded dates)
     private final Map<Object, Set<LocalDate>> excludedDaysMap = new HashMap<>();
 
+    // Attendance dates per line (key = DocumentLine ID primary key, value = set of attended dates)
+    // This determines which days to draw cells for each line item
+    private Map<Object, Set<LocalDate>> attendanceDatesMap = new HashMap<>();
+
     // Hover state
     private int hoveredRowIndex = -1;
     private int hoveredDayIndex = -1;
+    private String hoveredAction = null; // "cancel" or "delete" or null
 
     // Callback for toggle events
     private BiConsumer<DocumentLine, LocalDate> onDayToggled;
+    // Callbacks for action buttons
+    private java.util.function.Consumer<DocumentLine> onCancelClicked;
+    private java.util.function.Consumer<DocumentLine> onDeleteClicked;
 
     // Canvas
     private Canvas canvas;
@@ -87,7 +100,10 @@ public class BookingTimelineCanvas extends Region {
         FXProperties.runOnPropertiesChange(this::requestRepaint,
             eventStartProperty, eventEndProperty, bookingStartProperty, bookingEndProperty);
 
-        documentLines.addListener((ListChangeListener<DocumentLine>) c -> requestRepaint());
+        documentLines.addListener((ListChangeListener<DocumentLine>) c -> {
+            requestLayout(); // Request layout to update canvas size for new line count
+            requestRepaint();
+        });
 
         // Set up mouse event handlers for click-to-toggle functionality
         canvas.setOnMouseMoved(this::handleMouseMove);
@@ -123,13 +139,15 @@ public class BookingTimelineCanvas extends Region {
         // Calculate which row and day the mouse is over
         int newRowIndex = getRowIndexAtY(y);
         int newDayIndex = getDayIndexAtX(x);
+        String newAction = getActionAtX(x, newRowIndex);
 
-        if (newRowIndex != hoveredRowIndex || newDayIndex != hoveredDayIndex) {
+        if (newRowIndex != hoveredRowIndex || newDayIndex != hoveredDayIndex || !Objects.equals(newAction, hoveredAction)) {
             hoveredRowIndex = newRowIndex;
             hoveredDayIndex = newDayIndex;
+            hoveredAction = newAction;
 
-            // Update cursor based on whether cell is clickable
-            if (isCellClickable(newRowIndex, newDayIndex)) {
+            // Update cursor based on whether something is clickable
+            if (newAction != null || isCellClickable(newRowIndex, newDayIndex)) {
                 canvas.setCursor(Cursor.HAND);
             } else {
                 canvas.setCursor(Cursor.DEFAULT);
@@ -140,7 +158,7 @@ public class BookingTimelineCanvas extends Region {
     }
 
     /**
-     * Handles mouse click for toggling days.
+     * Handles mouse click for toggling days or action buttons.
      */
     private void handleMouseClick(MouseEvent e) {
         double x = e.getX();
@@ -148,7 +166,20 @@ public class BookingTimelineCanvas extends Region {
 
         int rowIndex = getRowIndexAtY(y);
         int dayIndex = getDayIndexAtX(x);
+        String action = getActionAtX(x, rowIndex);
 
+        // Handle action button clicks
+        if (action != null && rowIndex >= 0 && rowIndex < documentLines.size()) {
+            DocumentLine line = documentLines.get(rowIndex);
+            if ("cancel".equals(action) && onCancelClicked != null) {
+                onCancelClicked.accept(line);
+            } else if ("delete".equals(action) && onDeleteClicked != null) {
+                onDeleteClicked.accept(line);
+            }
+            return;
+        }
+
+        // Handle day cell clicks
         if (isCellClickable(rowIndex, dayIndex)) {
             DocumentLine line = documentLines.get(rowIndex);
             LocalDate date = getDateForDayIndex(dayIndex);
@@ -195,6 +226,33 @@ public class BookingTimelineCanvas extends Region {
         LocalDate eventStart = eventStartProperty.get();
         if (eventStart == null || dayIndex < 0) return null;
         return eventStart.plusDays(dayIndex);
+    }
+
+    /**
+     * Gets the action at an X coordinate for a given row.
+     * @return "cancel", "delete", or null if not over an action button
+     */
+    private String getActionAtX(double x, int rowIndex) {
+        if (rowIndex < 0 || rowIndex >= documentLines.size()) return null;
+
+        LocalDate eventStart = eventStartProperty.get();
+        LocalDate eventEnd = eventEndProperty.get();
+        if (eventStart == null || eventEnd == null) return null;
+
+        int dayCount = (int) ChronoUnit.DAYS.between(eventStart, eventEnd) + 1;
+        double actionAreaStart = ROW_HEADER_WIDTH + dayCount * DAY_COLUMN_WIDTH + PRICE_COLUMN_WIDTH;
+        double actionAreaEnd = actionAreaStart + ACTION_COLUMN_WIDTH;
+
+        if (x >= actionAreaStart && x < actionAreaEnd) {
+            // Determine which button (cancel on left, delete on right)
+            double midPoint = actionAreaStart + ACTION_COLUMN_WIDTH / 2.0;
+            if (x < midPoint) {
+                return "cancel";
+            } else {
+                return "delete";
+            }
+        }
+        return null;
     }
 
     /**
@@ -278,9 +336,47 @@ public class BookingTimelineCanvas extends Region {
     }
 
     /**
+     * Sets the attendance dates map for all document lines.
+     * This determines which days to draw cells for each line item.
+     */
+    public void setAttendanceDates(Map<Object, Set<LocalDate>> attendanceDates) {
+        this.attendanceDatesMap = attendanceDates != null ? attendanceDates : new HashMap<>();
+        requestRepaint();
+    }
+
+    /**
+     * Gets the attendance dates for a document line.
+     */
+    public Set<LocalDate> getAttendanceDates(DocumentLine line) {
+        Object lineId = line.getId() != null ? line.getId().getPrimaryKey() : null;
+        if (lineId != null) {
+            return attendanceDatesMap.getOrDefault(lineId, Collections.emptySet());
+        }
+        return Collections.emptySet();
+    }
+
+    /**
+     * Checks if a line has any attendance dates.
+     */
+    public boolean hasAttendanceDates(DocumentLine line) {
+        return !getAttendanceDates(line).isEmpty();
+    }
+
+    /**
      * Checks if a specific day is included for a line.
+     * A day is included if it's in the attendance dates (or falls within booking period if no attendances)
+     * and is not in the excluded days list.
      */
     public boolean isDayIncluded(DocumentLine line, LocalDate date) {
+        Set<LocalDate> attendanceDates = getAttendanceDates(line);
+
+        // If we have attendance dates, use them to determine inclusion
+        if (!attendanceDates.isEmpty()) {
+            // Day must be in attendance dates AND not excluded
+            return attendanceDates.contains(date) && !getExcludedDays(line).contains(date);
+        }
+
+        // Fallback: use line dates or booking dates
         LocalDate lineStart = line.getStartDate();
         LocalDate lineEnd = line.getEndDate();
 
@@ -304,15 +400,60 @@ public class BookingTimelineCanvas extends Region {
         this.onDayToggled = callback;
     }
 
+    /**
+     * Sets the callback for when the cancel button is clicked on a line.
+     */
+    public void setOnCancelClicked(java.util.function.Consumer<DocumentLine> callback) {
+        this.onCancelClicked = callback;
+    }
+
+    /**
+     * Sets the callback for when the delete button is clicked on a line.
+     */
+    public void setOnDeleteClicked(java.util.function.Consumer<DocumentLine> callback) {
+        this.onDeleteClicked = callback;
+    }
+
     @Override
     protected void layoutChildren() {
-        double width = getWidth();
+        double width = Math.max(getWidth(), computePrefWidth(-1));
         double height = calculateRequiredHeight();
 
         canvas.setWidth(width);
         canvas.setHeight(height);
 
+        // Set the region's min size to match canvas
+        setMinWidth(width);
+        setMinHeight(height);
+
         draw();
+    }
+
+    @Override
+    protected double computePrefWidth(double height) {
+        // Calculate width based on event duration
+        LocalDate eventStart = eventStartProperty.get();
+        LocalDate eventEnd = eventEndProperty.get();
+        if (eventStart != null && eventEnd != null) {
+            int dayCount = (int) ChronoUnit.DAYS.between(eventStart, eventEnd) + 1;
+            return ROW_HEADER_WIDTH + dayCount * DAY_COLUMN_WIDTH + PRICE_COLUMN_WIDTH + ACTION_COLUMN_WIDTH;
+        }
+        return ROW_HEADER_WIDTH + 7 * DAY_COLUMN_WIDTH + PRICE_COLUMN_WIDTH + ACTION_COLUMN_WIDTH; // Default 7 days
+    }
+
+    @Override
+    protected double computePrefHeight(double width) {
+        return calculateRequiredHeight();
+    }
+
+    @Override
+    protected double computeMinWidth(double height) {
+        return computePrefWidth(height);
+    }
+
+    @Override
+    protected double computeMinHeight(double width) {
+        return calculateRequiredHeight();
     }
 
     /**
@@ -448,36 +589,53 @@ public class BookingTimelineCanvas extends Region {
 
     /**
      * Draws a line item row with cells for each day.
-     * Layout: [Category Icon + Option Name] [Gantt Cells...] [Price]
+     * Layout: [Category Icon + Option Name] [Gantt Cells...] [Price] [Actions]
      */
     private void drawLineRow(GraphicsContext gc, DocumentLine line, LocalDate eventStart, int dayCount, double y, int rowIndex) {
-        // Get line dates (fall back to event dates if not set)
-        LocalDate lineStart = line.getStartDate();
-        LocalDate lineEnd = line.getEndDate();
-
-        if (lineStart == null) lineStart = bookingStartProperty.get();
-        if (lineEnd == null) lineEnd = bookingEndProperty.get();
-        if (lineStart == null || lineEnd == null) return;
-
         // Determine category for coloring
         String category = getCategoryFromLine(line);
         Color cellColor = getCategoryBgColor(category);
         Color categoryFgColor = getCategoryFgColor(category);
 
+        boolean isCancelled = Boolean.TRUE.equals(line.isCancelled());
+        boolean isLineHovered = (rowIndex == hoveredRowIndex);
+
+        // Get attendance dates for this line (these are the actual booked days)
+        Set<LocalDate> attendanceDates = getAttendanceDates(line);
+
+        // Determine the date range to draw cells for
+        LocalDate lineStart = null;
+        LocalDate lineEnd = null;
+
+        if (!attendanceDates.isEmpty()) {
+            // Use min/max of attendance dates
+            lineStart = attendanceDates.stream().min(LocalDate::compareTo).orElse(null);
+            lineEnd = attendanceDates.stream().max(LocalDate::compareTo).orElse(null);
+        } else {
+            // Fallback to line dates or booking dates
+            lineStart = line.getStartDate();
+            lineEnd = line.getEndDate();
+            if (lineStart == null) lineStart = bookingStartProperty.get();
+            if (lineEnd == null) lineEnd = bookingEndProperty.get();
+        }
+
+        // Determine if we have valid dates for drawing cells
+        boolean hasDates = (lineStart != null && lineEnd != null);
+
+        // Calculate cell positions (only if we have dates)
+        int startDayOffset = 0;
+        int endDayOffset = -1; // Will cause no cells to be drawn if hasDates is false
+        if (hasDates) {
+            startDayOffset = (int) ChronoUnit.DAYS.between(eventStart, lineStart);
+            endDayOffset = (int) ChronoUnit.DAYS.between(eventStart, lineEnd);
+            // Clamp to visible range
+            startDayOffset = Math.max(0, startDayOffset);
+            endDayOffset = Math.min(dayCount - 1, endDayOffset);
+        }
+
         // Check if this is a night-based (accommodation) item for half-cell offset
         boolean isNightBased = isAccommodationLine(line);
         double halfCellOffset = isNightBased ? DAY_COLUMN_WIDTH / 2.0 : 0;
-
-        // Calculate cell positions
-        int startDayOffset = (int) ChronoUnit.DAYS.between(eventStart, lineStart);
-        int endDayOffset = (int) ChronoUnit.DAYS.between(eventStart, lineEnd);
-
-        // Clamp to visible range
-        startDayOffset = Math.max(0, startDayOffset);
-        endDayOffset = Math.min(dayCount - 1, endDayOffset);
-
-        boolean isCancelled = Boolean.TRUE.equals(line.isCancelled());
-        boolean isLineHovered = (rowIndex == hoveredRowIndex);
 
         // Apply reduced opacity for cancelled lines
         if (isCancelled) {
@@ -553,6 +711,9 @@ public class BookingTimelineCanvas extends Region {
         // ===== 3. Draw Price Column =====
         drawPriceColumn(gc, line, dayCount, y, isCancelled);
 
+        // ===== 4. Draw Action Buttons =====
+        drawActionButtons(gc, line, dayCount, y, rowIndex);
+
         // Reset alpha
         gc.setGlobalAlpha(1.0);
     }
@@ -589,19 +750,20 @@ public class BookingTimelineCanvas extends Region {
     }
 
     /**
-     * Draws the price column on the right side.
+     * Draws the price column on the right side with right alignment.
      */
     private void drawPriceColumn(GraphicsContext gc, DocumentLine line, int dayCount, double y, boolean isCancelled) {
-        double priceX = ROW_HEADER_WIDTH + dayCount * DAY_COLUMN_WIDTH + 8;
+        double priceAreaStart = ROW_HEADER_WIDTH + dayCount * DAY_COLUMN_WIDTH;
+        double priceX = priceAreaStart + PRICE_COLUMN_WIDTH - 8; // Right-aligned within price column
 
         // Get price
         Integer price = line.getPriceNet();
         String priceText = price != null ? formatPrice(price) : "-";
 
-        // Price text
+        // Price text (right-aligned)
         gc.setFill(isCancelled ? TEXT_MUTED : WARM_BROWN);
         gc.setFont(Font.font("System", FontWeight.SEMI_BOLD, 11));
-        gc.setTextAlign(TextAlignment.LEFT);
+        gc.setTextAlign(TextAlignment.RIGHT);
 
         if (isCancelled) {
             // Draw strikethrough for cancelled
@@ -610,10 +772,88 @@ public class BookingTimelineCanvas extends Region {
             double textWidth = priceText.length() * 6; // Approximate
             gc.setStroke(TEXT_MUTED);
             gc.setLineWidth(1);
-            gc.strokeLine(priceX, y + ROW_HEIGHT / 2.0 + 1, priceX + textWidth, y + ROW_HEIGHT / 2.0 + 1);
+            gc.strokeLine(priceX - textWidth, y + ROW_HEIGHT / 2.0 + 1, priceX, y + ROW_HEIGHT / 2.0 + 1);
         } else {
             gc.fillText(priceText, priceX, y + ROW_HEIGHT / 2.0 + 4);
         }
+        gc.setTextAlign(TextAlignment.LEFT); // Reset
+    }
+
+    /**
+     * Draws the action buttons (cancel, delete) on the right side of each row.
+     */
+    private void drawActionButtons(GraphicsContext gc, DocumentLine line, int dayCount, double y, int rowIndex) {
+        double actionX = ROW_HEADER_WIDTH + dayCount * DAY_COLUMN_WIDTH + PRICE_COLUMN_WIDTH;
+        double centerY = y + ROW_HEIGHT / 2.0;
+        boolean isCancelled = Boolean.TRUE.equals(line.isCancelled());
+        boolean isHovered = (rowIndex == hoveredRowIndex);
+
+        // Button positions
+        double cancelBtnX = actionX + ACTION_COLUMN_WIDTH / 4.0;
+        double deleteBtnX = actionX + 3 * ACTION_COLUMN_WIDTH / 4.0;
+
+        // Cancel button (X icon) - only show if not already cancelled
+        if (!isCancelled) {
+            boolean cancelHovered = isHovered && "cancel".equals(hoveredAction);
+            drawCancelIcon(gc, cancelBtnX, centerY, cancelHovered);
+        }
+
+        // Delete button (trash icon)
+        boolean deleteHovered = isHovered && "delete".equals(hoveredAction);
+        drawDeleteIcon(gc, deleteBtnX, centerY, deleteHovered, isCancelled);
+    }
+
+    /**
+     * Draws a cancel (X) icon.
+     */
+    private void drawCancelIcon(GraphicsContext gc, double x, double y, boolean hovered) {
+        double size = ACTION_ICON_SIZE / 2.0;
+
+        // Background circle on hover
+        if (hovered) {
+            gc.setFill(Color.web("#fef3cd")); // Light yellow background
+            gc.fillOval(x - size - 2, y - size - 2, size * 2 + 4, size * 2 + 4);
+        }
+
+        // X icon
+        gc.setStroke(hovered ? Color.web("#856404") : TEXT_MUTED);
+        gc.setLineWidth(1.5);
+        gc.strokeLine(x - size + 2, y - size + 2, x + size - 2, y + size - 2);
+        gc.strokeLine(x - size + 2, y + size - 2, x + size - 2, y - size + 2);
+    }
+
+    /**
+     * Draws a delete (trash) icon.
+     */
+    private void drawDeleteIcon(GraphicsContext gc, double x, double y, boolean hovered, boolean isCancelled) {
+        double size = ACTION_ICON_SIZE / 2.0;
+
+        // Background circle on hover
+        if (hovered) {
+            gc.setFill(Color.web("#f8d7da")); // Light red background
+            gc.fillOval(x - size - 2, y - size - 2, size * 2 + 4, size * 2 + 4);
+        }
+
+        // Trash can icon (simplified)
+        Color iconColor = hovered ? Color.web("#721c24") : (isCancelled ? TEXT_MUTED : TEXT_MUTED);
+        gc.setStroke(iconColor);
+        gc.setFill(iconColor);
+        gc.setLineWidth(1.2);
+
+        // Trash can body (rectangle)
+        double bodyTop = y - size + 3;
+        double bodyBottom = y + size - 1;
+        double bodyLeft = x - size + 3;
+        double bodyRight = x + size - 3;
+        gc.strokeRect(bodyLeft, bodyTop, bodyRight - bodyLeft, bodyBottom - bodyTop);
+
+        // Trash can lid
+        gc.strokeLine(x - size + 1, bodyTop, x + size - 1, bodyTop);
+
+        // Vertical lines inside
+        double lineY1 = bodyTop + 2;
+        double lineY2 = bodyBottom - 2;
+        gc.strokeLine(x, lineY1, x, lineY2);
     }
 
     /**
@@ -657,10 +897,15 @@ public class BookingTimelineCanvas extends Region {
     }
 
     /**
-     * Formats a price value.
+     * Formats a price value using EventPriceFormatter (handles cents to currency conversion).
      */
-    private String formatPrice(int price) {
-        return "£" + price;
+    private String formatPrice(int priceInCents) {
+        Event event = eventProperty.get();
+        if (event != null) {
+            return EventPriceFormatter.formatWithCurrency(priceInCents, event);
+        }
+        // Fallback: manual conversion (divide by 100)
+        return "£" + String.format("%.2f", priceInCents / 100.0);
     }
 
     /**
@@ -712,21 +957,51 @@ public class BookingTimelineCanvas extends Region {
     }
 
     /**
-     * Draws a cell with selective corner rounding.
+     * Draws a cell with selective corner rounding using path-based drawing.
+     * This ensures the cell stays within its specified bounds.
      */
     private void drawCellWithCorners(GraphicsContext gc, double x, double y, double w, double h,
                                      boolean roundLeft, boolean roundRight) {
-        // For simplicity, we'll draw with clip path or just use partial rounding
-        // Since JavaFX Canvas doesn't have selective corner support, we'll approximate
-        if (roundLeft) {
-            // Draw rounded rect clipped on right
-            gc.fillRoundRect(x, y, w + CELL_RADIUS, h, CELL_RADIUS, CELL_RADIUS);
-            gc.fillRect(x + w - CELL_RADIUS, y, CELL_RADIUS, h); // Fill right edge
+        double r = CELL_RADIUS;
+
+        gc.beginPath();
+
+        if (roundLeft && roundRight) {
+            // Both corners rounded (same as fillRoundRect)
+            gc.moveTo(x + r, y);
+            gc.lineTo(x + w - r, y);
+            gc.arcTo(x + w, y, x + w, y + r, r);
+            gc.lineTo(x + w, y + h - r);
+            gc.arcTo(x + w, y + h, x + w - r, y + h, r);
+            gc.lineTo(x + r, y + h);
+            gc.arcTo(x, y + h, x, y + h - r, r);
+            gc.lineTo(x, y + r);
+            gc.arcTo(x, y, x + r, y, r);
+        } else if (roundLeft) {
+            // Only left corners rounded, right side square
+            gc.moveTo(x + r, y);
+            gc.lineTo(x + w, y);
+            gc.lineTo(x + w, y + h);
+            gc.lineTo(x + r, y + h);
+            gc.arcTo(x, y + h, x, y + h - r, r);
+            gc.lineTo(x, y + r);
+            gc.arcTo(x, y, x + r, y, r);
         } else if (roundRight) {
-            // Draw rounded rect clipped on left
-            gc.fillRoundRect(x - CELL_RADIUS, y, w + CELL_RADIUS, h, CELL_RADIUS, CELL_RADIUS);
-            gc.fillRect(x, y, CELL_RADIUS, h); // Fill left edge
+            // Only right corners rounded, left side square
+            gc.moveTo(x, y);
+            gc.lineTo(x + w - r, y);
+            gc.arcTo(x + w, y, x + w, y + r, r);
+            gc.lineTo(x + w, y + h - r);
+            gc.arcTo(x + w, y + h, x + w - r, y + h, r);
+            gc.lineTo(x, y + h);
+            gc.lineTo(x, y);
+        } else {
+            // No rounding (plain rectangle)
+            gc.rect(x, y, w, h);
         }
+
+        gc.closePath();
+        gc.fill();
     }
 
     /**
@@ -810,6 +1085,7 @@ public class BookingTimelineCanvas extends Region {
      * Sets the event for the timeline.
      */
     public void setEvent(Event event) {
+        eventProperty.set(event);
         if (event != null) {
             setEventStart(event.getStartDate());
             setEventEnd(event.getEndDate());
@@ -825,6 +1101,13 @@ public class BookingTimelineCanvas extends Region {
      * Gets the total width needed for the timeline.
      */
     public double getTimelineWidth(int dayCount) {
-        return ROW_HEADER_WIDTH + dayCount * DAY_COLUMN_WIDTH + PRICE_COLUMN_WIDTH;
+        return ROW_HEADER_WIDTH + dayCount * DAY_COLUMN_WIDTH + PRICE_COLUMN_WIDTH + ACTION_COLUMN_WIDTH;
+    }
+
+    /**
+     * Gets the Event property for external binding.
+     */
+    public ObjectProperty<Event> eventProperty() {
+        return eventProperty;
     }
 }

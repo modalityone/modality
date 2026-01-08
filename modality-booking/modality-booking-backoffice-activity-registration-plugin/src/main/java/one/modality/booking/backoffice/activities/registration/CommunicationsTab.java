@@ -1,19 +1,19 @@
 package one.modality.booking.backoffice.activities.registration;
 
 import dev.webfx.extras.controlfactory.button.ButtonFactoryMixin;
-import dev.webfx.extras.visual.VisualResult;
 import dev.webfx.extras.visual.controls.grid.VisualGrid;
 import dev.webfx.kit.util.properties.FXProperties;
+import dev.webfx.platform.console.Console;
+import dev.webfx.platform.util.Strings;
 import dev.webfx.stack.orm.datasourcemodel.service.DataSourceModelService;
 import dev.webfx.stack.orm.domainmodel.DataSourceModel;
 import dev.webfx.stack.orm.domainmodel.activity.viewdomain.impl.ViewDomainActivityBase;
+import dev.webfx.stack.orm.entity.UpdateStore;
 import dev.webfx.stack.orm.entity.controls.entity.selector.ButtonSelectorParameters;
 import dev.webfx.stack.orm.entity.controls.entity.selector.EntityButtonSelector;
 import dev.webfx.stack.orm.reactive.mapping.entities_to_visual.ReactiveVisualMapper;
 import javafx.beans.property.BooleanProperty;
-import javafx.beans.property.ObjectProperty;
 import javafx.beans.property.SimpleBooleanProperty;
-import javafx.beans.property.SimpleObjectProperty;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Node;
@@ -23,8 +23,9 @@ import one.modality.base.client.mainframe.fx.FXMainFrameDialogArea;
 import one.modality.base.shared.entities.Document;
 import one.modality.base.shared.entities.Letter;
 import one.modality.base.shared.entities.Mail;
+import one.modality.base.shared.entities.Person;
+import one.modality.base.shared.entities.Recipient;
 
-import static dev.webfx.stack.orm.dql.DqlStatement.where;
 import static one.modality.booking.backoffice.activities.registration.RegistrationStyles.*;
 
 /**
@@ -47,7 +48,6 @@ public class CommunicationsTab {
     private final Document document;
 
     private final BooleanProperty activeProperty = new SimpleBooleanProperty(false);
-    private final ObjectProperty<VisualResult> mailHistoryVisualResultProperty = new SimpleObjectProperty<>();
 
     // UI Components
     private EntityButtonSelector<Letter> letterSelector;
@@ -175,12 +175,6 @@ public class CommunicationsTab {
         mailHistoryGrid.setMinHeight(150);
         mailHistoryGrid.setPrefHeight(200);
 
-        // Bind visual result
-        FXProperties.runNowAndOnPropertiesChange(() -> {
-            VisualResult result = mailHistoryVisualResultProperty.get();
-            mailHistoryGrid.setVisualResult(result);
-        }, mailHistoryVisualResultProperty);
-
         VBox gridContainer = new VBox(mailHistoryGrid);
         gridContainer.setBackground(createBackground(BG_CARD, BORDER_RADIUS_MEDIUM));
         gridContainer.setBorder(createBorder(BORDER, BORDER_RADIUS_MEDIUM));
@@ -216,6 +210,8 @@ public class CommunicationsTab {
 
     /**
      * Handles the send action.
+     * Creates a Mail record in the database linked to the document and letter template.
+     * The server-side mail job will pick it up and send the actual email.
      */
     private void handleSend() {
         Letter selectedLetter = letterSelector.getSelectedItem();
@@ -225,31 +221,76 @@ public class CommunicationsTab {
 
         String customMessage = customMessageArea.getText();
 
-        // TODO: Implement letter sending via API
-        // Endpoint: POST /api/documents/{id}/send-letter
-        // Body: { letterId: selectedLetter.getId(), customMessage: customMessage }
-        System.out.println("Sending letter: " + selectedLetter.getName() + " with message: " + customMessage);
+        // Get person from document for recipient
+        Person person = document.getPerson();
+        String recipientEmail = person != null ? person.getEmail() : null;
+        String recipientName = person != null ? person.getFullName() : null;
 
-        // Clear form after sending
-        customMessageArea.clear();
-
-        // Show success notification
-        showSuccessNotification("Letter sent successfully!");
-
-        // Refresh history
-        if (mailHistoryMapper != null) {
-            mailHistoryMapper.refreshWhenActive();
+        if (recipientEmail == null || recipientEmail.trim().isEmpty()) {
+            Console.log("Cannot send letter: No email address for this guest");
+            return;
         }
+
+        // Create UpdateStore for this mail operation
+        UpdateStore mailStore = UpdateStore.create(DataSourceModelService.getDefaultDataSourceModel());
+
+        // Create Mail record
+        Mail mail = mailStore.insertEntity(Mail.class);
+        mail.setDocument(document);
+        mail.setForeignField("letter", selectedLetter); // Link to letter template
+        mail.setOut(true); // Outgoing email
+        mail.setSubject(selectedLetter.getName()); // Use letter name as subject
+        if (customMessage != null && !customMessage.trim().isEmpty()) {
+            // Store custom message in content (server will merge with letter template)
+            mail.setContent(customMessage);
+        }
+        mail.setAccount(27); // kbs@kadampa.net mail account ID (per existing patterns)
+
+        // Create Recipient record
+        Recipient recipient = mailStore.insertEntity(Recipient.class);
+        recipient.setMail(mail);
+        recipient.setEmail(recipientEmail);
+        recipient.setName(recipientName);
+        recipient.setTo(true);
+        recipient.setCc(false);
+        recipient.setBcc(false);
+        recipient.setOk(false); // Will be set to true after successful sending
+
+        // Submit to database
+        mailStore.submitChanges()
+            .onSuccess(batch -> {
+                Console.log("Letter queued for sending: " + selectedLetter.getName() + " to " + recipientEmail);
+                // Clear form after sending
+                customMessageArea.clear();
+                // Show success notification
+                showSuccessNotification("Letter queued for sending!");
+                // Refresh history
+                if (mailHistoryMapper != null) {
+                    mailHistoryMapper.refreshWhenActive();
+                }
+            })
+            .onFailure(e -> {
+                Console.log("Failed to queue letter: " + e.getMessage());
+            });
     }
+
+    private static final String MAIL_HISTORY_DQL =
+        "{class: 'Mail', columns: 'date,subject,transmitted,error', where: 'document=${selectedDocument}', orderBy: 'date desc'}";
 
     /**
      * Sets up the reactive mail history mapper.
      */
     public void setupMailHistoryMapper() {
         if (mailHistoryMapper == null && document.getId() != null) {
-            mailHistoryMapper = ReactiveVisualMapper.<Mail>createMasterPushReactiveChain(activity, mailHistoryVisualResultProperty)
-                .always("{class: 'Mail', alias: 'm', columns: ['date', 'letter.name', 'out'], orderBy: 'date desc'}")
-                .ifNotNullOtherwiseEmpty(pm.selectedDocumentProperty(), doc -> where("document=?", doc.getId()))
+            // Use BookingDetailsPanel pattern: createPushReactiveChain + visualizeResultInto
+            mailHistoryMapper = ReactiveVisualMapper.<Mail>createPushReactiveChain()
+                .always("{class: 'Mail'}")
+                .ifNotNullOtherwiseEmptyString(pm.selectedDocumentProperty(), doc ->
+                    Strings.replaceAll(MAIL_HISTORY_DQL, "${selectedDocument}", doc.getPrimaryKey()))
+                .bindActivePropertyTo(activeProperty)
+                .setDataSourceModel(DataSourceModelService.getDefaultDataSourceModel())
+                .applyDomainModelRowStyle()
+                .visualizeResultInto(mailHistoryGrid)
                 .start();
         }
     }
