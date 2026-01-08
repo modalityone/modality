@@ -40,6 +40,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import static dev.webfx.stack.orm.dql.DqlStatement.fields;
+import static dev.webfx.stack.orm.dql.DqlStatement.limit;
 import static dev.webfx.stack.orm.dql.DqlStatement.where;
 import static one.modality.booking.backoffice.activities.registration.RegistrationStyles.*;
 
@@ -491,6 +492,8 @@ public class RegistrationListView {
             // Base query with required fields for renderers
             .always("{class: 'Document', alias: 'd', orderBy: 'ref desc'}")
             .always(fields(REQUIRED_FIELDS))
+            // Limit results to 100 records for performance
+            .always(limit("100"))
             // Filter by organization (required)
             .ifNotNullOtherwiseEmpty(FXOrganizationId.organizationIdProperty(), orgId -> where("event.organization=?", orgId))
             // Optional event filter
